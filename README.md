@@ -1,6 +1,7 @@
 # nim-status
 
-Experiments calling status-go from nim
+Experiments calling status-go from nim, inspired in [nim-stratus](https://github.com/status-im/nim-stratus) by [@arnetheduck](https://github.com/arnetheduck)
+
 
 ![Image](screenRec.gif)
 
@@ -29,5 +30,5 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/dotherside/build/lib
 
 # 6. 
 nimble build
-./nim_libstatus
+./nim_status_client
 ```
