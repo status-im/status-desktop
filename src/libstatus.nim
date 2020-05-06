@@ -1,6 +1,3 @@
-{.passL: "libstatus.a -lm".}
-
-
 proc hashMessage*(p0: cstring): cstring {.importc: "HashMessage".}
 
 proc initKeystore*(keydir: cstring): cstring {.importc: "InitKeystore".}

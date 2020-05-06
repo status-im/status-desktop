@@ -29,6 +29,6 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/dotherside/build/lib
 
 
 # 6. 
-nimble build
+make build
 ./nim_status_client
 ```
