@@ -2,7 +2,6 @@
 
 Experiments calling status-go from nim, inspired in [nim-stratus](https://github.com/status-im/nim-stratus) by [@arnetheduck](https://github.com/arnetheduck)
 
-
 ![Image](screenRec.gif)
 
 ```
@@ -10,7 +9,6 @@ Experiments calling status-go from nim, inspired in [nim-stratus](https://github
 
 # 2. Install QT, and add it to the PATH
 export PATH=$PATH:/path/to/Qt/5.14.2/gcc_64/bin
-
 
 # 3. Clone and build DOtherside
 git clone https://github.com/filcuc/DOtherSide
@@ -28,7 +26,13 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/dotherside/build/lib
 # by executing `make status-go-desktop`
 
 
-# 6. 
+# 6.
+## linux
 make build
+
+## macos
+make build-osx
+
+#7.
 ./nim_status_client
 ```
