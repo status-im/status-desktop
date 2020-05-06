@@ -1,4 +1,4 @@
-# nim-status
+# nim-status-client
 
 Experiments calling status-go from nim, inspired in [nim-stratus](https://github.com/status-im/nim-stratus) by [@arnetheduck](https://github.com/arnetheduck)
 
