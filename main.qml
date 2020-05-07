@@ -4,33 +4,43 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 
 ApplicationWindow {
-    width: 800
-    height: 300
+    width: 1024
+    height: 768
     title: "JSON RPC Caller"
     visible: true
 
-    menuBar: MenuBar {
-        Menu {
-            title: "&File"
-            MenuItem { text: "&Exit"; onTriggered: logic.onExitTriggered() }
-        }
-    }
-
-    ColumnLayout {
+    SplitView {
         anchors.fill: parent
 
-        RowLayout {
-            TextArea { id: callResult; Layout.fillWidth: true; text: logic.callResult; readOnly: true }
+        Item {
+            width: 300
+            height: parent.height
         }
 
-        RowLayout {
-            Label { text: "data" }
-            TextField { id: txtData; Layout.fillWidth: true; text: "" }
-            Button {
-                text: "Send"
-                onClicked: logic.onSend(txtData.text)
-                enabled: txtData.text !== ""
+        Item {
+            width: parent.width/2
+            height: parent.height
+
+            ColumnLayout {
+                anchors.fill: parent
+
+                RowLayout {
+                    TextArea { id: callResult; Layout.fillWidth: true; text: logic.callResult; readOnly: true }
+                }
+
+                RowLayout {
+                    Label { text: "data2" }
+                    TextField { id: txtData; Layout.fillWidth: true; text: "" }
+                    Button {
+                        text: "Send"
+                        onClicked: logic.onSend(txtData.text)
+                        enabled: txtData.text !== ""
+                    }
+                }
             }
+
         }
+
     }
+
 }
