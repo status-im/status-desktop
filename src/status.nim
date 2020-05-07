@@ -11,6 +11,9 @@ proc recreateDir(dirname: string) =
     removeDir(dirname)
   createDir(dirname)
 
+proc setSignalHandler*(something: SignalCallback) =
+  libstatus.setSignalEventCallback(something)
+
 proc setupNewAccount*() =
   # Deleting directories
   recreateDir(datadir)
