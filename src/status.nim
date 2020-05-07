@@ -14,6 +14,51 @@ proc recreateDir(dirname: string) =
 proc setSignalHandler*(something: SignalCallback) =
   libstatus.setSignalEventCallback(something)
 
+proc subscribeToTest*() =
+  var payload = %* {
+    "jasonrpc": "2.0",
+    "id": 2,
+    "method": "waku_generateSymKeyFromPassword",
+    "params": ["test"]
+  }
+  var result = $libstatus.callPrivateRPC($payload)
+  let keyId = $result.parseJson()["result"]
+  
+  var topic = "0x9c22ff5f";  #sha3 of test
+
+  payload = %* {
+    "jsonrpc": "2.0", 
+    "id": 3,
+    "method": "wakuext_loadFilters", 
+    "params": [
+      [{
+        "chatId": "test",
+        "symKeyId": keyId,
+        "topic": topic,
+        "discovery": false,
+        "negotiated": false,
+        "listen": true
+      }]
+    ]
+  }
+
+  result = $libstatus.callPrivateRPC($payload)
+  echo result;
+
+  payload = %* {
+      "jsonrpc": "2.0", 
+      "id": 3,
+      "method": "wakuext_startMessenger", 
+      "params": []
+  }
+  result = $libstatus.callPrivateRPC($payload)
+  
+  
+  
+
+
+
+
 proc setupNewAccount*() =
   # Deleting directories
   recreateDir(datadir)
