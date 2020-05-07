@@ -15,7 +15,7 @@ ApplicationWindow {
         width: parent.width
         height: parent.height
         anchors.fill: parent
-//        spacing: 50
+        //        spacing: 50
 
         TabBar {
             id: tabBar
@@ -84,55 +84,70 @@ ApplicationWindow {
             }
         }
 
-        SplitView {
-            Layout.fillHeight: true
-//            anchors.fill: parent
-//            width: parent.width
-            Layout.leftMargin: 0
-            Layout.fillWidth: true
-            Layout.minimumWidth: 100
-            Layout.preferredWidth: 200
-//            Layout.preferredHeight: 100
+        StackLayout {
+            width: parent.width
+            currentIndex: tabBar.currentIndex
 
-            Item {
-                width: 300
-                height: parent.height
-                Layout.minimumWidth: 200
+            SplitView {
+                x: 9
+                y: 0
+                Layout.fillHeight: true
+                //            anchors.fill: parent
+                //            width: parent.width
+                Layout.leftMargin: 0
+                Layout.fillWidth: true
+                Layout.minimumWidth: 100
+                Layout.preferredWidth: 200
+                //            Layout.preferredHeight: 100
 
-                Button {
-                    id: button
-                    text: qsTr("TEST BUTTON")
-                }
-            }
+                Item {
+                    width: 300
+                    height: parent.height
+                    Layout.minimumWidth: 200
 
-            Item {
-                width: parent.width/2
-                height: parent.height
-
-                ColumnLayout {
-                    anchors.fill: parent
-
-                    RowLayout {
-                        Layout.fillHeight: true
-                        TextArea { id: callResult; Layout.fillWidth: true; text: logic.callResult; readOnly: true }
+                    Button {
+                        id: button
+                        text: qsTr("TEST BUTTON")
                     }
+                }
 
-                    RowLayout {
-                        Layout.bottomMargin: 20
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-                        transformOrigin: Item.Bottom
-                        Label { text: "data2" }
-                        TextField { id: txtData; Layout.fillWidth: true; text: "" }
-                        Button {
-                            text: "Send"
-                            onClicked: logic.onSend(txtData.text)
-                            enabled: txtData.text !== ""
+                Item {
+                    width: parent.width/2
+                    height: parent.height
+
+                    ColumnLayout {
+                        anchors.fill: parent
+
+                        RowLayout {
+                            Layout.fillHeight: true
+                            TextArea { id: callResult; Layout.fillWidth: true; text: logic.callResult; readOnly: true }
+                        }
+
+                        RowLayout {
+                            Layout.bottomMargin: 20
+                            Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
+                            transformOrigin: Item.Bottom
+                            Label { text: "data2" }
+                            TextField { id: txtData; Layout.fillWidth: true; text: "" }
+                            Button {
+                                text: "Send"
+                                onClicked: logic.onSend(txtData.text)
+                                enabled: txtData.text !== ""
+                            }
                         }
                     }
+
                 }
 
             }
 
+            Item {
+
+            }
+
+            Item {
+
+            }
         }
     }
 
