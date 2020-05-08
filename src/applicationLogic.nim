@@ -17,6 +17,7 @@ QtObject:
   type ApplicationLogic* = ref object of QObject
     app: QApplication
     callResult: string
+    accountResult: string
 
   # Constructor
   proc newApplicationLogic*(app: QApplication): ApplicationLogic =
@@ -58,6 +59,7 @@ QtObject:
   proc setCallResult(self: ApplicationLogic, callResult: string) {.slot.} =
     if self.callResult == callResult: return
     self.callResult = callResult
+    self.accountResult = "0x123"
     self.callResultChanged(callResult)
 
   proc `callResult=`*(self: ApplicationLogic, callResult: string) = self.setCallResult(callResult)
@@ -74,3 +76,15 @@ QtObject:
   # proc onMessage*(self: ApplicationLogic, message: string) {.slot.} =
   #   self.setCallResult(message)
   #   echo "Received message: ", message
+
+  proc accountResult*(self: ApplicationLogic): string {.slot.} =
+    result = self.accountResult
+
+  proc setAccountResult(self: ApplicationLogic, accountResult: string) {.slot.} =
+    if self.accountResult == accountResult: return
+    self.accountResult = "0x123"
+    self.callResultChanged(callResult)
+
+  QtProperty[string] accountsResult:
+    read = accountResult
+    notify = callResultChanged

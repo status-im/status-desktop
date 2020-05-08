@@ -21,6 +21,7 @@ ApplicationWindow {
             id: tabBar
             width: 50
             height: width *2 + spacing
+            currentIndex: 0
             transformOrigin: Item.Top
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
@@ -141,9 +142,14 @@ ApplicationWindow {
 
             }
 
-            Item {
+                ColumnLayout {
+                    anchors.fill: parent
 
-            }
+                    RowLayout {
+                        Layout.fillHeight: true
+                        TextArea { id: accountsResult; Layout.fillWidth: true; text: logic.accountsResult; readOnly: true }
+                    }
+                }
 
             Item {
 
