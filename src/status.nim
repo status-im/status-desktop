@@ -11,6 +11,71 @@ proc recreateDir(dirname: string) =
     removeDir(dirname)
   createDir(dirname)
 
+proc setSignalHandler*(something: SignalCallback) =
+  libstatus.setSignalEventCallback(something)
+
+proc subscribeToTest*() =
+  var result = ""
+
+  var payload = %* {
+      "jsonrpc": "2.0", 
+      "id": 3,
+      "method": "wakuext_startMessenger", 
+      "params": []
+  }
+  result = $libstatus.callPrivateRPC($payload)
+  
+  payload = %* {
+    "jsonrpc": "2.0", 
+    "id": 3,
+    "method": "wakuext_loadFilters", 
+    "params": [
+      [{
+        "ChatID":"test",
+        "OneToOne":false
+      }]
+    ]
+  }
+  result = $libstatus.callPrivateRPC($payload)
+
+
+  payload = %* {
+    "jsonrpc": "2.0", 
+    "id": 4,
+    "method": "wakuext_saveChat", 
+    "params": [
+      {
+        "lastClockValue":0,
+        "color":"#51d0f0",
+        "name":"test",
+        "lastMessage":nil,
+        "active":true,
+        "id":"test",
+        "unviewedMessagesCount":0,
+        "chatType":2,
+        "timestamp":1588940692659
+      }
+    ]
+  }
+  result = $libstatus.callPrivateRPC($payload)
+
+
+
+  payload = %* {
+    "jsonrpc": "2.0", 
+    "id": 3,
+    "method": "wakuext_chatMessages", 
+    "params": [
+      "test", nil, 20
+    ]
+  }
+  result = $libstatus.callPrivateRPC($payload)
+
+
+
+
+
+
 proc setupNewAccount*() =
   # Deleting directories
   recreateDir(datadir)
