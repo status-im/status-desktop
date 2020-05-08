@@ -1,6 +1,7 @@
 import NimQml
 import applicationLogic
 import chats
+import state
 
 proc mainProc() =
 
@@ -27,7 +28,19 @@ proc mainProc() =
 
   let chatsVariant = newQVariant(chatsModel)
   defer: chatsVariant.delete
-  chatsModel.addNameTolist("hello")
+
+  var appState = state.newAppState()
+  echo appState.title
+
+  appState.subscribe(proc () =
+    chatsModel.names = @[]
+    for channel in appState.channels:
+      echo channel.name
+      chatsModel.addNameTolist(channel.name)
+  )
+
+  appState.addChannel("test")
+  appState.addChannel("test2")
 
   engine.setRootContextProperty("logic", logicVariant)
   engine.setRootContextProperty("chatsModel", chatsVariant)
