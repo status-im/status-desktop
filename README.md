@@ -8,7 +8,7 @@ Experiments calling status-go from nim, inspired in [nim-stratus](https://github
 
 ```
 # linux
-??? apt-get install nim ???
+apt-get install nim
 
 # macos
 brew install nim
@@ -25,6 +25,12 @@ export PATH=$PATH:/path/to/Qt/5.14.2/clang_64/bin
 ```
 
 ### 3. Clone and build DOtherside
+
+For Linux:
+```
+sudo apt-get install build-essential libgl1-mesa-dev
+sudo apt-get install doxygen
+```
 
 ```
 git clone https://github.com/filcuc/DOtherSide

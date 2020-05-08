@@ -168,9 +168,14 @@ ApplicationWindow {
 
             }
 
-            Item {
+                ColumnLayout {
+                    anchors.fill: parent
 
-            }
+                    RowLayout {
+                        Layout.fillHeight: true
+                        TextArea { id: accountResult; Layout.fillWidth: true; text: logic.accountResult; readOnly: true }
+                    }
+                }
 
             Item {
 

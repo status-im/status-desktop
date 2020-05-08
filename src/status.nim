@@ -11,6 +11,75 @@ proc recreateDir(dirname: string) =
     removeDir(dirname)
   createDir(dirname)
 
+proc setSignalHandler*(something: SignalCallback) =
+  libstatus.setSignalEventCallback(something)
+
+proc queryAccounts*(): string =
+  var payload = %* {
+    "jsonrpc": "2.0",
+    "method": "eth_accounts",
+    "params": [
+      []
+    ]
+  }
+  var response = $libstatus.callPrivateRPC($payload)
+  echo response
+  result = parseJson(response)["result"][0].getStr()
+
+proc subscribeToTest*() =
+  var result = ""
+
+  var payload = %* {
+      "jsonrpc": "2.0", 
+      "id": 3,
+      "method": "wakuext_startMessenger", 
+      "params": []
+  }
+  result = $libstatus.callPrivateRPC($payload)
+
+  payload = %* {
+    "jsonrpc": "2.0", 
+    "id": 3,
+    "method": "wakuext_loadFilters", 
+    "params": [
+      [{
+        "ChatID":"test",
+        "OneToOne":false
+      }]
+    ]
+  }
+  result = $libstatus.callPrivateRPC($payload)
+
+  payload = %* {
+    "jsonrpc": "2.0", 
+    "id": 4,
+    "method": "wakuext_saveChat", 
+    "params": [
+      {
+        "lastClockValue":0,
+        "color":"#51d0f0",
+        "name":"test",
+        "lastMessage":nil,
+        "active":true,
+        "id":"test",
+        "unviewedMessagesCount":0,
+        "chatType":2,
+        "timestamp":1588940692659
+      }
+    ]
+  }
+  result = $libstatus.callPrivateRPC($payload)
+
+  payload = %* {
+    "jsonrpc": "2.0", 
+    "id": 3,
+    "method": "wakuext_chatMessages", 
+    "params": [
+      "test", nil, 20
+    ]
+  }
+  result = $libstatus.callPrivateRPC($payload)
+
 proc setupNewAccount*() =
   # Deleting directories
   recreateDir(datadir)
@@ -269,3 +338,12 @@ proc setupNewAccount*() =
 
 proc callRPC*(inputJSON: string): string =
     return $libstatus.callRPC(inputJSON)
+
+proc callPrivateRPC*(inputJSON: string): string =
+    return $libstatus.callPrivateRPC(inputJSON)
+
+proc addPeer*(peer: string): string =
+    return $libstatus.addPeer(peer)
+
+# proc onMessage*(callback: proc(message: string)): void =
+#     $libstatus.setSignalEventCallback(callback)
