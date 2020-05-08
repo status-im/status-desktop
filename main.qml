@@ -21,6 +21,9 @@ ApplicationWindow {
             id: tabBar
             width: 50
             height: width *2 + spacing
+            topPadding: 57
+            rightPadding: 19
+            leftPadding: 19
             transformOrigin: Item.Top
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
@@ -28,9 +31,9 @@ ApplicationWindow {
             anchors.topMargin: 5
             spacing: 5
             Layout.fillWidth: true
-            Layout.minimumWidth: 50
-            Layout.preferredWidth: 50
-            Layout.maximumWidth: 50
+            Layout.minimumWidth: 85
+            Layout.preferredWidth: 85
+            Layout.maximumWidth: 85
             Layout.minimumHeight: 0
 
             TabButton {
@@ -45,7 +48,7 @@ ApplicationWindow {
                     id: image
                     anchors.fill: parent
                     fillMode: Image.PreserveAspectFit
-                    source: "message.png"
+                    source: "img/message.png"
                 }
             }
 
@@ -54,15 +57,15 @@ ApplicationWindow {
                 width: 50
                 height: 50
                 text: ""
+                anchors.topMargin: 80
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: firstBtn.bottom
-                anchors.topMargin: parent.spacing
+                anchors.top: firstBtn.top
 
                 Image {
                     id: image1
                     anchors.fill: parent
                     fillMode: Image.PreserveAspectFit
-                    source: "wallet.png"
+                    source: "img/wallet.png"
                 }
             }
 
@@ -71,15 +74,15 @@ ApplicationWindow {
                 width: 50
                 height: 50
                 text: ""
-                anchors.topMargin: 0
+                anchors.topMargin: 80
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: secondBtn.bottom
+                anchors.top: secondBtn.top
 
                 Image {
                     id: image2
                     anchors.fill: parent
                     fillMode: Image.PreserveAspectFit
-                    source: "profile.png"
+                    source: "img/profile.png"
                 }
             }
         }
