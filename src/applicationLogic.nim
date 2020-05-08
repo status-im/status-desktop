@@ -2,7 +2,7 @@ import NimQml
 import status
 import libstatus
 import json
-
+import state
 
 var signalHandler: SignalCallback = proc(p0: cstring): void =
   setupForeignThreadGc()
@@ -37,7 +37,21 @@ QtObject:
     result.accountResult = status.queryAccounts()
     status.subscribeToTest()    
 
+    var appState = state.newAppState()
+    echo appState.title
+    appState.subscribe(proc () =
+      echo "1nd subscriber got a new update!"
+    )
 
+    appState.addChannel("test")
+
+    appState.subscribe(proc () =
+      echo "2nd subscriber got a new update!"
+    )
+
+    appState.addChannel("test2")
+    for channel in appState.channels:
+      echo channel.name
 
   # ¯\_(ツ)_/¯ dunno what is this
   proc setup(self: ApplicationLogic) =
