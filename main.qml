@@ -160,93 +160,110 @@ ApplicationWindow {
                     height: parent.height
                     Layout.minimumWidth: 200
 
-                    Text {
-                        id: element
-                        x: 772
-                        text: qsTr("Chat")
-                        anchors.top: parent.top
-                        anchors.topMargin: 17
-                        font.bold: true
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        font.pixelSize: 17
-                    }
+                    ColumnLayout {
+                        anchors.rightMargin: 0
+                        anchors.fill: parent
 
-                    Rectangle {
-                        id: searchBox
-                        height: 36
-                        color: "#EEF2F5"
-                        anchors.top: parent.top
-                        anchors.topMargin: 59
-                        radius: 8
-                        anchors.right: parent.right
-                        anchors.rightMargin: 55
-                        anchors.left: parent.left
-                        anchors.leftMargin: 16
+                        Item {
+                            Layout.preferredHeight: 100
+                            Layout.fillHeight: false
+                            Layout.fillWidth: true
 
-                        TextField {
-                            id: searchText
-                            placeholderText: qsTr("Search")
-                            anchors.left: parent.left
-                            anchors.leftMargin: 32
-                            anchors.verticalCenter: parent.verticalCenter
-                            font.pixelSize: 12
-                            background: {
+                            Text {
+                                id: element
+                                x: 772
+                                text: qsTr("Chat")
+                                anchors.top: parent.top
+                                anchors.topMargin: 17
+                                font.bold: true
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                font.pixelSize: 17
+                            }
+
+                            Rectangle {
+                                id: searchBox
+                                height: 36
+                                color: "#EEF2F5"
+                                anchors.top: parent.top
+                                anchors.topMargin: 59
+                                radius: 8
+                                anchors.right: parent.right
+                                anchors.rightMargin: 55
+                                anchors.left: parent.left
+                                anchors.leftMargin: 16
+
+                                TextField {
+                                    id: searchText
+                                    placeholderText: qsTr("Search")
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 32
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    font.pixelSize: 12
+                                    background: {
+                                    }
+                                }
+
+                                Image {
+                                    id: image4
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 10
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    fillMode: Image.PreserveAspectFit
+                                    source: "img/search.svg"
+                                }
+
+                                MouseArea {
+                                    id: mouseArea
+                                    anchors.fill: parent
+                                    onClicked : {
+                                        searchText.forceActiveFocus(Qt.MouseFocusReason)
+                                    }
+                                }
+                            }
+
+                            Rectangle {
+                                id: addChat
+                                width: 36
+                                height: 36
+                                color: "#4360DF"
+                                radius: 50
+                                anchors.right: parent.right
+                                anchors.rightMargin: 9
+                                anchors.top: parent.top
+                                anchors.topMargin: 59
+
+                                Text {
+                                    id: element3
+                                    color: "#ffffff"
+                                    text: qsTr("+")
+                                    anchors.verticalCenterOffset: -1
+                                    anchors.horizontalCenterOffset: 1
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    lineHeight: 1
+                                    fontSizeMode: Text.FixedSize
+                                    font.bold: true
+                                    font.pixelSize: 28
+                                }
                             }
                         }
 
-                        Image {
-                            id: image4
-                            anchors.left: parent.left
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            fillMode: Image.PreserveAspectFit
-                            source: "img/search.svg"
-                        }
+                        Item {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
 
-                        MouseArea {
-                            id: mouseArea
-                            anchors.fill: parent
-                            onClicked : {
-                                searchText.forceActiveFocus(Qt.MouseFocusReason)
+                            Component {
+                                id: chatViewDelegate
+                                Label { text: "Name:" + name }
+                            }
+
+                            ListView {
+                                id: listView
+                                anchors.fill: parent
+                                model: chatsModel
+                                delegate: chatViewDelegate
                             }
                         }
-                    }
-
-                    Rectangle {
-                        id: addChat
-                        width: 36
-                        height: 36
-                        color: "#4360DF"
-                        radius: 50
-                        anchors.right: parent.right
-                        anchors.rightMargin: 9
-                        anchors.top: parent.top
-                        anchors.topMargin: 59
-
-                        Text {
-                            id: element3
-                            color: "#ffffff"
-                            text: qsTr("+")
-                            anchors.verticalCenterOffset: -1
-                            anchors.horizontalCenterOffset: 1
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.verticalCenter: parent.verticalCenter
-                            lineHeight: 1
-                            fontSizeMode: Text.FixedSize
-                            font.bold: true
-                            font.pixelSize: 28
-                        }
-                    }
-                     Component {
-                         id: chatViewDelegate
-                         Label { text: "Name:" + name }
-                     }
-
-                     ListView {
-                         id: listView
-                         anchors.fill: parent
-                         model: chatsModel
-                         delegate: chatViewDelegate
                     }
                 }
 
@@ -282,14 +299,14 @@ ApplicationWindow {
 
             }
 
-                ColumnLayout {
-                    anchors.fill: parent
+            ColumnLayout {
+                anchors.fill: parent
 
-                    RowLayout {
-                        Layout.fillHeight: true
-                        TextArea { id: accountResult; Layout.fillWidth: true; text: logic.accountResult; readOnly: true }
-                    }
+                RowLayout {
+                    Layout.fillHeight: true
+                    TextArea { id: accountResult; Layout.fillWidth: true; text: logic.accountResult; readOnly: true }
                 }
+            }
 
             Item {
 
