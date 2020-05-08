@@ -43,7 +43,7 @@ ApplicationWindow {
             }
 
             TabButton {
-                id: firstBtn
+                id: chatBtn
                 x: 0
                 width: 40
                 height: 40
@@ -67,13 +67,13 @@ ApplicationWindow {
             }
 
             TabButton {
-                id: secondBtn
+                id: walletBtn
                 width: 40
                 height: 40
                 text: ""
                 anchors.topMargin: 50
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: firstBtn.top
+                anchors.top: chatBtn.top
                 background: Rectangle {
                     color: "#ECEFFC"
                     opacity: parent.checked ? 1 : 0
@@ -90,13 +90,13 @@ ApplicationWindow {
             }
 
             TabButton {
-                id: thirdBtn
+                id: browserBtn
                 width: 40
                 height: 40
                 text: ""
                 anchors.topMargin: 50
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: secondBtn.top
+                anchors.top: walletBtn.top
                 background: Rectangle {
                     color: "#ECEFFC"
                     opacity: parent.checked ? 1 : 0
@@ -105,6 +105,29 @@ ApplicationWindow {
 
                 Image {
                     id: image2
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    fillMode: Image.PreserveAspectFit
+                    source: parent.checked ? "img/compassActive.svg" : "img/compass.svg"
+                }
+            }
+
+            TabButton {
+                id: profileBtn
+                width: 40
+                height: 40
+                text: ""
+                anchors.topMargin: 50
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: browserBtn.top
+                background: Rectangle {
+                    color: "#ECEFFC"
+                    opacity: parent.checked ? 1 : 0
+                    radius: 50
+                }
+
+                Image {
+                    id: image3
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
                     fillMode: Image.PreserveAspectFit
@@ -172,7 +195,7 @@ ApplicationWindow {
                         }
 
                         Image {
-                            id: image3
+                            id: image4
                             anchors.left: parent.left
                             anchors.leftMargin: 10
                             anchors.verticalCenter: parent.verticalCenter
@@ -269,6 +292,6 @@ ApplicationWindow {
 
 /*##^##
 Designer {
-    D{i:9;anchors_height:40;anchors_width:40}D{i:16;anchors_y:0}D{i:20;anchors_height:100;anchors_width:100}
+    D{i:9;anchors_height:40;anchors_width:40}D{i:19;anchors_y:0}D{i:23;anchors_height:100;anchors_width:100}
 }
 ##^##*/
