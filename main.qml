@@ -19,8 +19,10 @@ ApplicationWindow {
 
         TabBar {
             id: tabBar
+            y: 0
             width: 50
             height: width *2 + spacing
+            Layout.preferredHeight: 0
             currentIndex: 0
             topPadding: 57
             rightPadding: 19
@@ -29,13 +31,16 @@ ApplicationWindow {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
             anchors.top: parent.top
-            anchors.topMargin: 5
             spacing: 5
             Layout.fillWidth: true
             Layout.minimumWidth: 80
             Layout.preferredWidth: 80
             Layout.maximumWidth: 80
             Layout.minimumHeight: 0
+            background: Rectangle {
+                color: "#00000000"
+                border.color: "#EEF2F5"
+            }
 
             TabButton {
                 id: firstBtn
@@ -127,13 +132,42 @@ ApplicationWindow {
                 //            Layout.preferredHeight: 100
 
                 Item {
+                    id: element1
                     width: 300
                     height: parent.height
                     Layout.minimumWidth: 200
 
-                    Button {
-                        id: button
-                        text: qsTr("TEST BUTTON")
+                    Text {
+                        id: element
+                        x: 772
+                        text: qsTr("Chat")
+                        anchors.top: parent.top
+                        anchors.topMargin: 17
+                        font.bold: true
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        font.pixelSize: 17
+                    }
+
+                    Rectangle {
+                        id: rectangle
+                        height: 36
+                        color: "#EEF2F5"
+                        anchors.top: parent.top
+                        anchors.topMargin: 59
+                        radius: 8
+                        anchors.right: parent.right
+                        anchors.rightMargin: 55
+                        anchors.left: parent.left
+                        anchors.leftMargin: 16
+
+                        Text {
+                            id: element2
+                            text: qsTr("Search")
+                            anchors.left: parent.left
+                            anchors.leftMargin: 32
+                            anchors.verticalCenter: parent.verticalCenter
+                            font.pixelSize: 12
+                        }
                     }
                 }
 
@@ -166,6 +200,7 @@ ApplicationWindow {
 
                 }
 
+
             }
 
                 ColumnLayout {
@@ -189,6 +224,7 @@ ApplicationWindow {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:1.5}D{i:8;anchors_height:40;anchors_width:40}
+    D{i:0;formeditorZoom:2}D{i:9;anchors_height:40;anchors_width:40}D{i:16;anchors_y:0}
+D{i:17;anchors_width:200}
 }
 ##^##*/
