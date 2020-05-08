@@ -14,6 +14,18 @@ proc recreateDir(dirname: string) =
 proc setSignalHandler*(something: SignalCallback) =
   libstatus.setSignalEventCallback(something)
 
+proc queryAccounts*(): string =
+  var payload = %* {
+    "jsonrpc": "2.0",
+    "method": "eth_accounts",
+    "params": [
+      []
+    ]
+  }
+  var response = $libstatus.callPrivateRPC($payload)
+  echo response
+  result = parseJson(response)["result"][0].getStr()
+
 proc subscribeToTest*() =
   var result = ""
 
@@ -24,7 +36,7 @@ proc subscribeToTest*() =
       "params": []
   }
   result = $libstatus.callPrivateRPC($payload)
-  
+
   payload = %* {
     "jsonrpc": "2.0", 
     "id": 3,
@@ -37,7 +49,6 @@ proc subscribeToTest*() =
     ]
   }
   result = $libstatus.callPrivateRPC($payload)
-
 
   payload = %* {
     "jsonrpc": "2.0", 
@@ -59,8 +70,6 @@ proc subscribeToTest*() =
   }
   result = $libstatus.callPrivateRPC($payload)
 
-
-
   payload = %* {
     "jsonrpc": "2.0", 
     "id": 3,
@@ -70,11 +79,6 @@ proc subscribeToTest*() =
     ]
   }
   result = $libstatus.callPrivateRPC($payload)
-
-
-
-
-
 
 proc setupNewAccount*() =
   # Deleting directories

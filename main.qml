@@ -147,7 +147,7 @@ ApplicationWindow {
 
                     RowLayout {
                         Layout.fillHeight: true
-                        TextArea { id: accountsResult; Layout.fillWidth: true; text: logic.accountsResult; readOnly: true }
+                        TextArea { id: accountResult; Layout.fillWidth: true; text: logic.accountResult; readOnly: true }
                     }
                 }
 
