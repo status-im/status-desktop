@@ -269,3 +269,12 @@ proc setupNewAccount*() =
 
 proc callRPC*(inputJSON: string): string =
     return $libstatus.callRPC(inputJSON)
+
+proc callPrivateRPC*(inputJSON: string): string =
+    return $libstatus.callPrivateRPC(inputJSON)
+
+proc addPeer*(peer: string): string =
+    return $libstatus.addPeer(peer)
+
+# proc onMessage*(callback: proc(message: string)): void =
+#     $libstatus.setSignalEventCallback(callback)

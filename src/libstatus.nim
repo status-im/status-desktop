@@ -11,3 +11,9 @@ proc multiAccountStoreDerivedAccounts*(paramsJSON: cstring): cstring {.importc: 
 proc saveAccountAndLogin*(accountData: cstring, password: cstring, settingsJSON: cstring, configJSON: cstring, subaccountData: cstring): cstring {.importc: "SaveAccountAndLogin".}
 
 proc callRPC*(inputJSON: cstring): cstring {.importc: "CallRPC".}
+
+proc callPrivateRPC*(inputJSON: cstring): cstring {.importc: "CallPrivateRPC".}
+
+proc addPeer*(peer: cstring): cstring {.importc: "AddPeer".}
+
+# proc setSignalEventCallback*(callback: proc): void {.importc: "SetSignalEventCallback".}
