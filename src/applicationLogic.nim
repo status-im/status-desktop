@@ -1,11 +1,16 @@
 import NimQml
 import status
 import libstatus
+import json
 
 
 var signalHandler: SignalCallback = proc(p0: cstring): void =
   setupForeignThreadGc()
-  echo $p0
+
+  var jsonSignal = ($p0).parseJson
+  if $jsonSignal["type"].getStr == "messages.new":
+    echo $p0
+
   tearDownForeignThreadGc()
 
 QtObject:

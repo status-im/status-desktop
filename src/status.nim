@@ -15,37 +15,9 @@ proc setSignalHandler*(something: SignalCallback) =
   libstatus.setSignalEventCallback(something)
 
 proc subscribeToTest*() =
+  var result = ""
+
   var payload = %* {
-    "jasonrpc": "2.0",
-    "id": 2,
-    "method": "waku_generateSymKeyFromPassword",
-    "params": ["test"]
-  }
-  var result = $libstatus.callPrivateRPC($payload)
-  let keyId = $result.parseJson()["result"]
-  
-  var topic = "0x9c22ff5f";  #sha3 of test
-
-  payload = %* {
-    "jsonrpc": "2.0", 
-    "id": 3,
-    "method": "wakuext_loadFilters", 
-    "params": [
-      [{
-        "chatId": "test",
-        "symKeyId": keyId,
-        "topic": topic,
-        "discovery": false,
-        "negotiated": false,
-        "listen": true
-      }]
-    ]
-  }
-
-  result = $libstatus.callPrivateRPC($payload)
-  echo result;
-
-  payload = %* {
       "jsonrpc": "2.0", 
       "id": 3,
       "method": "wakuext_startMessenger", 
@@ -53,8 +25,53 @@ proc subscribeToTest*() =
   }
   result = $libstatus.callPrivateRPC($payload)
   
-  
-  
+  payload = %* {
+    "jsonrpc": "2.0", 
+    "id": 3,
+    "method": "wakuext_loadFilters", 
+    "params": [
+      [{
+        "ChatID":"test",
+        "OneToOne":false
+      }]
+    ]
+  }
+  result = $libstatus.callPrivateRPC($payload)
+
+
+  payload = %* {
+    "jsonrpc": "2.0", 
+    "id": 4,
+    "method": "wakuext_saveChat", 
+    "params": [
+      {
+        "lastClockValue":0,
+        "color":"#51d0f0",
+        "name":"test",
+        "lastMessage":nil,
+        "active":true,
+        "id":"test",
+        "unviewedMessagesCount":0,
+        "chatType":2,
+        "timestamp":1588940692659
+      }
+    ]
+  }
+  result = $libstatus.callPrivateRPC($payload)
+
+
+
+  payload = %* {
+    "jsonrpc": "2.0", 
+    "id": 3,
+    "method": "wakuext_chatMessages", 
+    "params": [
+      "test", nil, 20
+    ]
+  }
+  result = $libstatus.callPrivateRPC($payload)
+
+
 
 
 
