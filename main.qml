@@ -19,8 +19,10 @@ ApplicationWindow {
 
         TabBar {
             id: tabBar
+            y: 0
             width: 50
             height: width *2 + spacing
+            Layout.preferredHeight: 0
             currentIndex: 0
             topPadding: 57
             rightPadding: 19
@@ -29,16 +31,19 @@ ApplicationWindow {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
             anchors.top: parent.top
-            anchors.topMargin: 5
             spacing: 5
             Layout.fillWidth: true
             Layout.minimumWidth: 80
             Layout.preferredWidth: 80
             Layout.maximumWidth: 80
             Layout.minimumHeight: 0
+            background: Rectangle {
+                color: "#00000000"
+                border.color: "#EEF2F5"
+            }
 
             TabButton {
-                id: firstBtn
+                id: chatBtn
                 x: 0
                 width: 40
                 height: 40
@@ -62,13 +67,13 @@ ApplicationWindow {
             }
 
             TabButton {
-                id: secondBtn
+                id: walletBtn
                 width: 40
                 height: 40
                 text: ""
                 anchors.topMargin: 50
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: firstBtn.top
+                anchors.top: chatBtn.top
                 background: Rectangle {
                     color: "#ECEFFC"
                     opacity: parent.checked ? 1 : 0
@@ -85,13 +90,13 @@ ApplicationWindow {
             }
 
             TabButton {
-                id: thirdBtn
+                id: browserBtn
                 width: 40
                 height: 40
                 text: ""
                 anchors.topMargin: 50
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: secondBtn.top
+                anchors.top: walletBtn.top
                 background: Rectangle {
                     color: "#ECEFFC"
                     opacity: parent.checked ? 1 : 0
@@ -100,6 +105,29 @@ ApplicationWindow {
 
                 Image {
                     id: image2
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    fillMode: Image.PreserveAspectFit
+                    source: parent.checked ? "img/compassActive.svg" : "img/compass.svg"
+                }
+            }
+
+            TabButton {
+                id: profileBtn
+                width: 40
+                height: 40
+                text: ""
+                anchors.topMargin: 50
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: browserBtn.top
+                background: Rectangle {
+                    color: "#ECEFFC"
+                    opacity: parent.checked ? 1 : 0
+                    radius: 50
+                }
+
+                Image {
+                    id: image3
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
                     fillMode: Image.PreserveAspectFit
@@ -127,13 +155,87 @@ ApplicationWindow {
                 //            Layout.preferredHeight: 100
 
                 Item {
+                    id: element1
                     width: 300
                     height: parent.height
                     Layout.minimumWidth: 200
 
-                    Button {
-                        id: button
-                        text: qsTr("TEST BUTTON")
+                    Text {
+                        id: element
+                        x: 772
+                        text: qsTr("Chat")
+                        anchors.top: parent.top
+                        anchors.topMargin: 17
+                        font.bold: true
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        font.pixelSize: 17
+                    }
+
+                    Rectangle {
+                        id: searchBox
+                        height: 36
+                        color: "#EEF2F5"
+                        anchors.top: parent.top
+                        anchors.topMargin: 59
+                        radius: 8
+                        anchors.right: parent.right
+                        anchors.rightMargin: 55
+                        anchors.left: parent.left
+                        anchors.leftMargin: 16
+
+                        TextField {
+                            id: searchText
+                            placeholderText: qsTr("Search")
+                            anchors.left: parent.left
+                            anchors.leftMargin: 32
+                            anchors.verticalCenter: parent.verticalCenter
+                            font.pixelSize: 12
+                            background: {
+                            }
+                        }
+
+                        Image {
+                            id: image4
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            fillMode: Image.PreserveAspectFit
+                            source: "img/search.svg"
+                        }
+
+                        MouseArea {
+                            id: mouseArea
+                            anchors.fill: parent
+                            onClicked : {
+                                searchText.forceActiveFocus(Qt.MouseFocusReason)
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        id: addChat
+                        width: 36
+                        height: 36
+                        color: "#4360DF"
+                        radius: 50
+                        anchors.right: parent.right
+                        anchors.rightMargin: 9
+                        anchors.top: parent.top
+                        anchors.topMargin: 59
+
+                        Text {
+                            id: element3
+                            color: "#ffffff"
+                            text: qsTr("+")
+                            anchors.verticalCenterOffset: -1
+                            anchors.horizontalCenterOffset: 1
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.verticalCenter: parent.verticalCenter
+                            lineHeight: 1
+                            fontSizeMode: Text.FixedSize
+                            font.bold: true
+                            font.pixelSize: 28
+                        }
                     }
                 }
 
@@ -166,6 +268,7 @@ ApplicationWindow {
 
                 }
 
+
             }
 
                 ColumnLayout {
@@ -189,6 +292,6 @@ ApplicationWindow {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:1.5}D{i:8;anchors_height:40;anchors_width:40}
+    D{i:9;anchors_height:40;anchors_width:40}D{i:19;anchors_y:0}D{i:23;anchors_height:100;anchors_width:100}
 }
 ##^##*/
