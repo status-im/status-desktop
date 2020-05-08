@@ -21,6 +21,7 @@ ApplicationWindow {
             id: tabBar
             width: 50
             height: width *2 + spacing
+            currentIndex: 0
             topPadding: 57
             rightPadding: 19
             leftPadding: 19
@@ -31,67 +32,89 @@ ApplicationWindow {
             anchors.topMargin: 5
             spacing: 5
             Layout.fillWidth: true
-            Layout.minimumWidth: 85
-            Layout.preferredWidth: 85
-            Layout.maximumWidth: 85
+            Layout.minimumWidth: 80
+            Layout.preferredWidth: 80
+            Layout.maximumWidth: 80
             Layout.minimumHeight: 0
 
             TabButton {
                 id: firstBtn
-                width: 50
-                height: 50
+                x: 0
+                width: 40
+                height: 40
                 text: ""
+                padding: 0
                 transformOrigin: Item.Center
                 anchors.horizontalCenter: parent.horizontalCenter
+                background: Rectangle {
+                    color: "#ECEFFC"
+                    opacity: parent.checked ? 1 : 0
+                    radius: 50
+                }
 
                 Image {
                     id: image
-                    anchors.fill: parent
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
                     fillMode: Image.PreserveAspectFit
-                    source: "img/message.png"
+                    source: parent.checked ? "img/messageActive.svg" : "img/message.svg"
                 }
             }
 
             TabButton {
                 id: secondBtn
-                width: 50
-                height: 50
+                width: 40
+                height: 40
                 text: ""
-                anchors.topMargin: 80
+                anchors.topMargin: 50
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: firstBtn.top
+                background: Rectangle {
+                    color: "#ECEFFC"
+                    opacity: parent.checked ? 1 : 0
+                    radius: 50
+                }
 
                 Image {
                     id: image1
-                    anchors.fill: parent
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
                     fillMode: Image.PreserveAspectFit
-                    source: "img/wallet.png"
+                    source: parent.checked ? "img/walletActive.svg" : "img/wallet.svg"
                 }
             }
 
             TabButton {
                 id: thirdBtn
-                width: 50
-                height: 50
+                width: 40
+                height: 40
                 text: ""
-                anchors.topMargin: 80
+                anchors.topMargin: 50
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: secondBtn.top
+                background: Rectangle {
+                    color: "#ECEFFC"
+                    opacity: parent.checked ? 1 : 0
+                    radius: 50
+                }
 
                 Image {
                     id: image2
-                    anchors.fill: parent
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
                     fillMode: Image.PreserveAspectFit
-                    source: "img/profile.png"
+                    source: parent.checked ? "img/profileActive.svg" : "img/profile.svg"
                 }
             }
         }
 
         StackLayout {
             width: parent.width
+            Layout.fillWidth: true
             currentIndex: tabBar.currentIndex
 
             SplitView {
+                id: splitView
                 x: 9
                 y: 0
                 Layout.fillHeight: true
@@ -119,6 +142,7 @@ ApplicationWindow {
                     height: parent.height
 
                     ColumnLayout {
+                        anchors.rightMargin: 0
                         anchors.fill: parent
 
                         RowLayout {
@@ -160,6 +184,6 @@ ApplicationWindow {
 
 /*##^##
 Designer {
-    D{i:4;anchors_height:40;anchors_width:40}D{i:6;anchors_height:40;anchors_width:40}
+    D{i:0;formeditorZoom:1.5}D{i:8;anchors_height:40;anchors_width:40}
 }
 ##^##*/
