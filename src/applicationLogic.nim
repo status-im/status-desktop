@@ -17,6 +17,7 @@ QtObject:
   type ApplicationLogic* = ref object of QObject
     app: QApplication
     callResult: string
+    accountResult: string
 
   # Constructor
   proc newApplicationLogic*(app: QApplication): ApplicationLogic =
@@ -31,6 +32,7 @@ QtObject:
     discard status.addPeer("enode://2c8de3cbb27a3d30cbb5b3e003bc722b126f5aef82e2052aaef032ca94e0c7ad219e533ba88c70585ebd802de206693255335b100307645ab5170e88620d2a81@47.244.221.14:443")
     echo status.callPrivateRPC("{\"jsonrpc\":\"2.0\", \"method\":\"wakuext_requestMessages\", \"params\":[{\"topics\": [\"0x7998f3c8\"]}], \"id\": 1}")
 
+    result.accountResult = status.queryAccounts()
     status.subscribeToTest()    
 
 
@@ -74,3 +76,18 @@ QtObject:
   # proc onMessage*(self: ApplicationLogic, message: string) {.slot.} =
   #   self.setCallResult(message)
   #   echo "Received message: ", message
+
+  proc accountResultChanged*(self: ApplicationLogic, callResult: string) {.signal.}
+
+  proc accountResult*(self: ApplicationLogic): string {.slot.} =
+    result = self.accountResult
+
+  proc setAccountResult(self: ApplicationLogic, accountResult: string) {.slot.} =
+    if self.accountResult == accountResult: return
+    self.accountResult = accountResult
+    self.accountResultChanged(accountResult)
+
+  QtProperty[string] accountResult:
+    read = accountResult
+    write = setAccountResult
+    notify = callResultChanged
