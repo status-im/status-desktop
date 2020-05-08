@@ -149,7 +149,7 @@ ApplicationWindow {
                     }
 
                     Rectangle {
-                        id: rectangle
+                        id: searchBox
                         height: 36
                         color: "#EEF2F5"
                         anchors.top: parent.top
@@ -160,13 +160,58 @@ ApplicationWindow {
                         anchors.left: parent.left
                         anchors.leftMargin: 16
 
-                        Text {
-                            id: element2
-                            text: qsTr("Search")
+                        TextField {
+                            id: searchText
+                            placeholderText: qsTr("Search")
                             anchors.left: parent.left
                             anchors.leftMargin: 32
                             anchors.verticalCenter: parent.verticalCenter
                             font.pixelSize: 12
+                            background: {
+                            }
+                        }
+
+                        Image {
+                            id: image3
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            fillMode: Image.PreserveAspectFit
+                            source: "img/search.svg"
+                        }
+
+                        MouseArea {
+                            id: mouseArea
+                            anchors.fill: parent
+                            onClicked : {
+                                searchText.forceActiveFocus(Qt.MouseFocusReason)
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        id: addChat
+                        width: 36
+                        height: 36
+                        color: "#4360DF"
+                        radius: 50
+                        anchors.right: parent.right
+                        anchors.rightMargin: 9
+                        anchors.top: parent.top
+                        anchors.topMargin: 59
+
+                        Text {
+                            id: element3
+                            color: "#ffffff"
+                            text: qsTr("+")
+                            anchors.verticalCenterOffset: -1
+                            anchors.horizontalCenterOffset: 1
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.verticalCenter: parent.verticalCenter
+                            lineHeight: 1
+                            fontSizeMode: Text.FixedSize
+                            font.bold: true
+                            font.pixelSize: 28
                         }
                     }
                 }
@@ -224,7 +269,6 @@ ApplicationWindow {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:2}D{i:9;anchors_height:40;anchors_width:40}D{i:16;anchors_y:0}
-D{i:17;anchors_width:200}
+    D{i:9;anchors_height:40;anchors_width:40}D{i:16;anchors_y:0}D{i:20;anchors_height:100;anchors_width:100}
 }
 ##^##*/
