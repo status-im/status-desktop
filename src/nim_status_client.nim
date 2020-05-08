@@ -1,5 +1,6 @@
 import NimQml
 import applicationLogic
+import chats
 
 proc mainProc() =
 
@@ -11,7 +12,9 @@ proc mainProc() =
   var app = newQApplication()
   defer: app.delete()       # Defer will run this just before mainProc() function ends
 
-  
+  var chatsModel = newChatsModel();
+  defer: chatsModel.delete
+
   var engine = newQQmlApplicationEngine()
   defer: engine.delete()
 
@@ -22,7 +25,12 @@ proc mainProc() =
   let logicVariant = newQVariant(logic)
   defer: logicVariant.delete
 
+  let chatsVariant = newQVariant(chatsModel)
+  defer: chatsVariant.delete
+  chatsModel.addNameTolist("hello")
+
   engine.setRootContextProperty("logic", logicVariant)
+  engine.setRootContextProperty("chatsModel", chatsVariant)
   engine.load("main.qml")
   
   # Qt main event loop is entered here

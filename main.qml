@@ -7,7 +7,7 @@ ApplicationWindow {
     id: applicationWindow
     width: 1024
     height: 768
-    title: "JSON RPC Caller"
+    title: "Nim Status Client"
     visible: true
 
     RowLayout {
@@ -237,6 +237,17 @@ ApplicationWindow {
                             font.pixelSize: 28
                         }
                     }
+                     Component {
+                         id: chatViewDelegate
+                         Label { text: "Name:" + name }
+                     }
+
+                     ListView {
+                         id: listView
+                         anchors.fill: parent
+                         model: chatsModel
+                         delegate: chatViewDelegate
+                    }
                 }
 
                 Item {
@@ -292,6 +303,6 @@ ApplicationWindow {
 
 /*##^##
 Designer {
-    D{i:9;anchors_height:40;anchors_width:40}D{i:19;anchors_y:0}D{i:23;anchors_height:100;anchors_width:100}
+    D{i:9;anchors_height:40;anchors_width:40}
 }
 ##^##*/

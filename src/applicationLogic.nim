@@ -20,6 +20,7 @@ QtObject:
     app: QApplication
     callResult: string
     accountResult: string
+    # chats: seq[ChatView]
 
   # Constructor
   proc newApplicationLogic*(app: QApplication): ApplicationLogic =
@@ -41,17 +42,13 @@ QtObject:
     echo appState.title
     appState.subscribe(proc () =
       echo "1nd subscriber got a new update!"
+      for channel in appState.channels:
+        echo channel.name
     )
 
     appState.addChannel("test")
-
-    appState.subscribe(proc () =
-      echo "2nd subscriber got a new update!"
-    )
-
     appState.addChannel("test2")
-    for channel in appState.channels:
-      echo channel.name
+    # result.chats.add(ChatView(name: "test"))
 
   # ¯\_(ツ)_/¯ dunno what is this
   proc setup(self: ApplicationLogic) =
