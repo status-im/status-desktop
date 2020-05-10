@@ -13,6 +13,8 @@ var signalHandler: SignalCallback = proc(p0: cstring): void =
 
   tearDownForeignThreadGc()
 
+
+# Probably all QT classes will look like this:
 QtObject:
   type ApplicationLogic* = ref object of QObject
     app: QApplication
@@ -52,6 +54,8 @@ QtObject:
   proc onExitTriggered(self: ApplicationLogic) {.slot.} =
     self.app.quit
 
+
+  # Accesors
   proc callResult*(self: ApplicationLogic): string {.slot.} =
     result = self.callResult
 
@@ -64,6 +68,7 @@ QtObject:
 
   proc `callResult=`*(self: ApplicationLogic, callResult: string) = self.setCallResult(callResult)
 
+  # Binding between a QML variable and accesors is done here
   QtProperty[string] callResult:
     read = callResult
     write = setCallResult
@@ -91,3 +96,6 @@ QtObject:
     read = accountResult
     write = setAccountResult
     notify = callResultChanged
+
+  # This class has the metaObject property available which lets 
+  # access all the QProperties which are stored as QVariants
