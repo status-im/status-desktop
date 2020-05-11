@@ -39,50 +39,50 @@ proc subscribeToTest*() =
   var result = ""
 
   var payload = %* {
-      "jsonrpc": "2.0", 
+      "jsonrpc": "2.0",
       "id": 3,
-      "method": "wakuext_startMessenger", 
+      "method": "wakuext_startMessenger",
       "params": []
   }
   result = $libstatus.callPrivateRPC($payload)
 
   payload = %* {
-    "jsonrpc": "2.0", 
+    "jsonrpc": "2.0",
     "id": 3,
-    "method": "wakuext_loadFilters", 
+    "method": "wakuext_loadFilters",
     "params": [
       [{
-        "ChatID":"test",
-        "OneToOne":false
+        "ChatID": "test",
+        "OneToOne": false
       }]
     ]
   }
   result = $libstatus.callPrivateRPC($payload)
 
   payload = %* {
-    "jsonrpc": "2.0", 
+    "jsonrpc": "2.0",
     "id": 4,
-    "method": "wakuext_saveChat", 
+    "method": "wakuext_saveChat",
     "params": [
       {
-        "lastClockValue":0,
-        "color":"#51d0f0",
-        "name":"test",
-        "lastMessage":nil,
-        "active":true,
-        "id":"test",
-        "unviewedMessagesCount":0,
-        "chatType":2,
-        "timestamp":1588940692659
+        "lastClockValue": 0,
+        "color": "#51d0f0",
+        "name": "test",
+        "lastMessage": nil,
+        "active": true,
+        "id": "test",
+        "unviewedMessagesCount": 0,
+        "chatType": 2,
+        "timestamp": 1588940692659
       }
     ]
   }
   result = $libstatus.callPrivateRPC($payload)
 
   payload = %* {
-    "jsonrpc": "2.0", 
+    "jsonrpc": "2.0",
     "id": 3,
-    "method": "wakuext_chatMessages", 
+    "method": "wakuext_chatMessages",
     "params": [
       "test", nil, 20
     ]
@@ -100,17 +100,18 @@ proc setupNewAccount*() =
   # 1
   result = $libstatus.initKeystore(keystoredir);
 
-  # 2 
+  # 2
   result = $libstatus.openAccounts(datadir);
-  
+
   # 3
   let multiAccountConfig = %* {
     "n": 5,
     "mnemonicPhraseLength": 12,
-    "bip39Passphrase": "", 
+    "bip39Passphrase": "",
     "paths": ["m/43'/60'/1581'/0'/0", "m/44'/60'/0'/0/0"]
   }
-  result = $libstatus.multiAccountGenerateAndDeriveAddresses($multiAccountConfig);
+  result = $libstatus.multiAccountGenerateAndDeriveAddresses(
+      $multiAccountConfig);
   let generatedAddresses = result.parseJson
   let account0 = generatedAddresses[0]
 
@@ -118,7 +119,8 @@ proc setupNewAccount*() =
   let password = "0x2cd9bf92c5e20b1b410f5ace94d963a96e89156fbe65b70365e8596b37f1f165" #qwerty
   let multiAccount = %* {
     "accountID": account0["id"].getStr,
-    "paths": ["m/44'/60'/0'/0", "m/43'/60'/1581'", "m/43'/60'/1581'/0'/0", "m/44'/60'/0'/0/0"],
+    "paths": ["m/44'/60'/0'/0", "m/43'/60'/1581'", "m/43'/60'/1581'/0'/0",
+        "m/44'/60'/0'/0/0"],
     "password": password
   }
   result = $libstatus.multiAccountStoreDerivedAccounts($multiAccount);
@@ -138,92 +140,103 @@ proc setupNewAccount*() =
     "mnemonic": account0["mnemonic"].getStr,
     "public-key": multiAccounts["m/43'/60'/1581'/0'/0"]["publicKey"].getStr,
     "name": accountData["name"].getStr,
-    "address":  account0["address"].getStr,
+    "address": account0["address"].getStr,
     "eip1581-address": multiAccounts["m/43'/60'/1581'"]["address"].getStr,
     "dapps-address": multiAccounts["m/44'/60'/0'/0/0"]["address"].getStr,
-    "wallet-root-address":  multiAccounts["m/44'/60'/0'/0"]["address"].getStr,
+    "wallet-root-address": multiAccounts["m/44'/60'/0'/0"]["address"].getStr,
     "preview-privacy?": true,
     "signing-phrase": "dust gear boss",
     "log-level": "INFO",
     "latest-derived-path": 0,
     "networks/networks": [
+    {
+      "id": "testnet_rpc",
+      "etherscan-link": "https://ropsten.etherscan.io/address/",
+      "name": "Ropsten with upstream RPC",
+      "config":
       {
-        "id": "testnet_rpc",
-        "etherscan-link": "https://ropsten.etherscan.io/address/",
-        "name": "Ropsten with upstream RPC",
-        "config": {
-          "NetworkId": 3,
-          "DataDir": "/ethereum/testnet_rpc",
-          "UpstreamConfig": {
-            "Enabled": true,
-            "URL": "https://ropsten.infura.io/v3/f315575765b14720b32382a61a89341a",
-          },
+        "NetworkId": 3,
+        "DataDir": "/ethereum/testnet_rpc",
+        "UpstreamConfig":
+        {
+          "Enabled": true,
+          "URL": "https://ropsten.infura.io/v3/f315575765b14720b32382a61a89341a",
         },
       },
+    },
+    {
+      "id": "rinkeby_rpc",
+      "etherscan-link": "https://rinkeby.etherscan.io/address/",
+      "name": "Rinkeby with upstream RPC",
+      "config":
       {
-        "id": "rinkeby_rpc",
-        "etherscan-link": "https://rinkeby.etherscan.io/address/",
-        "name": "Rinkeby with upstream RPC",
-        "config": {
-          "NetworkId": 4,
-          "DataDir": "/ethereum/rinkeby_rpc",
-          "UpstreamConfig": {
-            "Enabled": true,
-            "URL": "https://rinkeby.infura.io/v3/f315575765b14720b32382a61a89341a",
-          },
+        "NetworkId": 4,
+        "DataDir": "/ethereum/rinkeby_rpc",
+        "UpstreamConfig":
+        {
+          "Enabled": true,
+          "URL": "https://rinkeby.infura.io/v3/f315575765b14720b32382a61a89341a",
         },
       },
+    },
+    {
+      "id": "goerli_rpc",
+      "etherscan-link": "https://goerli.etherscan.io/address/",
+      "name": "Goerli with upstream RPC",
+      "config":
       {
-        "id": "goerli_rpc",
-        "etherscan-link": "https://goerli.etherscan.io/address/",
-        "name": "Goerli with upstream RPC",
-        "config": {
-          "NetworkId": 5,
-          "DataDir": "/ethereum/goerli_rpc",
-          "UpstreamConfig": {
-            "Enabled": true,
-            "URL": "https://goerli.blockscout.com/",
-          },
+        "NetworkId": 5,
+        "DataDir": "/ethereum/goerli_rpc",
+        "UpstreamConfig":
+        {
+          "Enabled": true,
+          "URL": "https://goerli.blockscout.com/",
         },
       },
+    },
+    {
+      "id": "mainnet_rpc",
+      "etherscan-link": "https://etherscan.io/address/",
+      "name": "Mainnet with upstream RPC",
+      "config":
       {
-        "id": "mainnet_rpc",
-        "etherscan-link": "https://etherscan.io/address/",
-        "name": "Mainnet with upstream RPC",
-        "config": {
-          "NetworkId": 1,
-          "DataDir": "/ethereum/mainnet_rpc",
-          "UpstreamConfig": {
-            "Enabled": true,
-            "URL": "https://mainnet.infura.io/v3/f315575765b14720b32382a61a89341a",
-          },
+        "NetworkId": 1,
+        "DataDir": "/ethereum/mainnet_rpc",
+        "UpstreamConfig":
+        {
+          "Enabled": true,
+          "URL": "https://mainnet.infura.io/v3/f315575765b14720b32382a61a89341a",
         },
       },
+    },
+    {
+      "id": "xdai_rpc",
+      "name": "xDai Chain",
+      "config":
       {
-        "id": "xdai_rpc",
-        "name": "xDai Chain",
-        "config": {
-          "NetworkId": 100,
-          "DataDir": "/ethereum/xdai_rpc",
-          "UpstreamConfig": {
-            "Enabled": true,
-            "URL": "https://dai.poa.network"
-          },
+        "NetworkId": 100,
+        "DataDir": "/ethereum/xdai_rpc",
+        "UpstreamConfig":
+        {
+          "Enabled": true,
+          "URL": "https://dai.poa.network"
         },
       },
+    },
+    {
+      "id": "poa_rpc",
+      "name": "POA Network",
+      "config":
       {
-        "id": "poa_rpc",
-        "name": "POA Network",
-        "config": {
-          "NetworkId": 99,
-          "DataDir": "/ethereum/poa_rpc",
-          "UpstreamConfig": {
-            "Enabled": true,
-            "URL": "https://core.poa.network"
-          },
+        "NetworkId": 99,
+        "DataDir": "/ethereum/poa_rpc",
+        "UpstreamConfig":
+        {
+          "Enabled": true,
+          "URL": "https://core.poa.network"
         },
       },
-    ],
+    }],
     "currency": "usd",
     "photo-path": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAmElEQVR4nOzX4QmAIBBA4Yp2aY52aox2ao6mqf+SoajwON73M0J4HBy6TEEYQmMIjSE0htCECVlbDziv+/n6fuzb3OP/UmEmYgiNITRNm+LPqO2UE2YihtAYQlN818ptoZzau1btOakwEzGExhCa5hdi7d2p1zZLhZmIITSG0PhCpDGExhANEmYihtAYQmMIjSE0bwAAAP//kHQdRIWYzToAAAAASUVORK5CYII=",
     "waku-enabled": true,
@@ -234,9 +247,9 @@ proc setupNewAccount*() =
     "networks/current-network": "mainnet_rpc",
     "installation-id": "5d6bc316-a97e-5b89-9541-ad01f8eb7397",
   }
-  
+
   let configJSON = %* {
-    "BrowsersConfig": { 
+    "BrowsersConfig": {
       "Enabled": true
     },
     "ClusterConfig": {
@@ -318,41 +331,42 @@ proc setupNewAccount*() =
       "Enabled": true
     }
   }
-  
+
   let subaccountData = %* [
     {
       "public-key": multiAccounts["m/44'/60'/0'/0/0"]["publicKey"],
       "address": multiAccounts["m/44'/60'/0'/0/0"]["address"],
-      "color":"#4360df",
-      "wallet":true,
-      "path":"m/44'/60'/0'/0/0",
-      "name":"Status account"
+      "color": "#4360df",
+      "wallet": true,
+      "path": "m/44'/60'/0'/0/0",
+      "name": "Status account"
     },
     {
       "public-key": multiAccounts["m/43'/60'/1581'/0'/0"]["publicKey"],
       "address": multiAccounts["m/43'/60'/1581'/0'/0"]["address"],
-      "name":"Delectable Overjoyed Nauplius",
-      "photo-path":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAmElEQVR4nOzX4QmAIBBA4Yp2aY52aox2ao6mqf+SoajwON73M0J4HBy6TEEYQmMIjSE0htCECVlbDziv+/n6fuzb3OP/UmEmYgiNITRNm+LPqO2UE2YihtAYQlN818ptoZzau1btOakwEzGExhCa5hdi7d2p1zZLhZmIITSG0PhCpDGExhANEmYihtAYQmMIjSE0bwAAAP//kHQdRIWYzToAAAAASUVORK5CYII=",
-      "path":"m/43'/60'/1581'/0'/0",
-      "chat":true
+      "name": "Delectable Overjoyed Nauplius",
+      "photo-path": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAmElEQVR4nOzX4QmAIBBA4Yp2aY52aox2ao6mqf+SoajwON73M0J4HBy6TEEYQmMIjSE0htCECVlbDziv+/n6fuzb3OP/UmEmYgiNITRNm+LPqO2UE2YihtAYQlN818ptoZzau1btOakwEzGExhCa5hdi7d2p1zZLhZmIITSG0PhCpDGExhANEmYihtAYQmMIjSE0bwAAAP//kHQdRIWYzToAAAAASUVORK5CYII=",
+      "path": "m/43'/60'/1581'/0'/0",
+      "chat": true
     }
   ]
-  
-  result = $libstatus.saveAccountAndLogin($accountData, password, $settingsJSON, $configJSON, $subaccountData)
+
+  result = $libstatus.saveAccountAndLogin($accountData, password, $settingsJSON,
+      $configJSON, $subaccountData)
   let saveResult = result.parseJson
-  
+
   if saveResult["error"].getStr == "":
     echo "Account saved succesfully"
-  
+
 
 proc callRPC*(inputJSON: string): string =
-    return $libstatus.callRPC(inputJSON)
+  return $libstatus.callRPC(inputJSON)
 
 proc callPrivateRPC*(inputJSON: string): string =
-    return $libstatus.callPrivateRPC(inputJSON)
+  return $libstatus.callPrivateRPC(inputJSON)
 
 proc addPeer*(peer: string): string =
-    return $libstatus.addPeer(peer)
+  return $libstatus.addPeer(peer)
 
 # proc onMessage*(callback: proc(message: string)): void =
 #     $libstatus.setSignalEventCallback(callback)
