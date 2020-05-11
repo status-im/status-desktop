@@ -2,15 +2,9 @@ import QtQuick 2.3
 import QtQuick.Controls 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
-
+import "./imports"
 
 ApplicationWindow {
-    property var greyColor: "#EEF2F5"
-    property var lightBlueColor: "#ECEFFC"
-    property var blueColor: "#4360DF"
-    property var transparentColor: "#ffffff"
-    property var darkGreyColor: "#939BA1"
-
     id: applicationWindow
     width: 1024
     height: 768
@@ -46,7 +40,7 @@ ApplicationWindow {
             Layout.minimumHeight: 0
             background: Rectangle {
                 color: "#00000000"
-                border.color: greyColor
+                border.color: Theme.grey
             }
 
             TabButton {
@@ -59,7 +53,7 @@ ApplicationWindow {
                 transformOrigin: Item.Center
                 anchors.horizontalCenter: parent.horizontalCenter
                 background: Rectangle {
-                    color: lightBlueColor
+                    color: Theme.lightBlue
                     opacity: parent.checked ? 1 : 0
                     radius: 50
                 }
@@ -82,7 +76,7 @@ ApplicationWindow {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: chatBtn.top
                 background: Rectangle {
-                    color: lightBlueColor
+                    color: Theme.lightBlue
                     opacity: parent.checked ? 1 : 0
                     radius: 50
                 }
@@ -105,7 +99,7 @@ ApplicationWindow {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: walletBtn.top
                 background: Rectangle {
-                    color: lightBlueColor
+                    color: Theme.lightBlue
                     opacity: parent.checked ? 1 : 0
                     radius: 50
                 }
@@ -128,7 +122,7 @@ ApplicationWindow {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: browserBtn.top
                 background: Rectangle {
-                    color: lightBlueColor
+                    color: Theme.lightBlue
                     opacity: parent.checked ? 1 : 0
                     radius: 50
                 }
@@ -190,7 +184,7 @@ ApplicationWindow {
                             Rectangle {
                                 id: searchBox
                                 height: 36
-                                color: greyColor
+                                color: Theme.grey
                                 anchors.top: parent.top
                                 anchors.topMargin: 59
                                 radius: 8
@@ -232,7 +226,7 @@ ApplicationWindow {
                                 id: addChat
                                 width: 36
                                 height: 36
-                                color: blueColor
+                                color: Theme.blue
                                 radius: 50
                                 anchors.right: parent.right
                                 anchors.rightMargin: 16
@@ -265,7 +259,7 @@ ApplicationWindow {
                                 Rectangle {
                                    id: wrapper
                                    height: 64
-                                   color: ListView.isCurrentItem ? lightBlueColor : transparentColor
+                                   color: ListView.isCurrentItem ? Theme.lightBlue : Theme.transparent
                                    anchors.right: parent.right
                                    anchors.rightMargin: 16
                                    anchors.top: applicationWindow.top
@@ -282,7 +276,7 @@ ApplicationWindow {
                                    Rectangle {
                                        id: contactImage
                                        width: 40
-                                       color: darkGreyColor
+                                       color: Theme.darkGrey
                                        anchors.left: parent.left
                                        anchors.leftMargin: 16
                                        anchors.top: parent.top
@@ -311,7 +305,7 @@ ApplicationWindow {
                                        font.pixelSize: 15
                                        anchors.left: contactImage.right
                                        anchors.leftMargin: 16
-                                       color: darkGreyColor
+                                       color: Theme.darkGrey
                                    }
                                    Text {
                                        id: contactTime
@@ -321,7 +315,7 @@ ApplicationWindow {
                                        anchors.top: parent.top
                                        anchors.topMargin: 10
                                        font.pixelSize: 11
-                                       color: darkGreyColor
+                                       color: Theme.darkGrey
                                    }
                                    Rectangle {
                                        id: contactNumberChatsCircle
@@ -332,7 +326,7 @@ ApplicationWindow {
                                        anchors.bottomMargin: 10
                                        anchors.right: parent.right
                                        anchors.rightMargin: 16
-                                       color: blueColor
+                                       color: Theme.blue
                                        Text {
                                            id: contactNumberChats
                                            text: qsTr("1")

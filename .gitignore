@@ -5,3 +5,4 @@ nim_libstatus
 data/
 noBackup/
 .idea
+*.pro.user
