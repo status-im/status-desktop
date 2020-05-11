@@ -333,10 +333,9 @@ proc version*(): cstring{.cdecl,  importc: "sqlite3_libversion".}
 proc libversion_number*(): int32{.cdecl, 
                                   importc: "sqlite3_libversion_number".}
 
-proc key*(para1: PSqlite3, para2: cstring, para3: int32): int32{.cdecl, importc: "sqlite3_key".}
+proc key*(db: PSqlite3, pKey: cstring, nKey: int32): int32{.cdecl, importc: "sqlite3_key".}
+proc rekey*(db: PSqlite3, pKey: cstring, nKey: int32): int32{.cdecl, importc: "sqlite3_rekey".}
 
-  #function sqlite3_key(db:Psqlite3; pKey:pointer; nKey:longint):longint;cdecl; external Sqlite3Lib name 'sqlite3_key';
-  #function sqlite3_rekey(db:Psqlite3; pKey:pointer; nKey:longint):longint;cdecl; external Sqlite3Lib name 'sqlite3_rekey';
   #function sqlite3_sleep(_para1:longint):longint;cdecl; external Sqlite3Lib name 'sqlite3_sleep';
   #function sqlite3_expired(_para1:Psqlite3_stmt):longint;cdecl; external Sqlite3Lib name 'sqlite3_expired';
   #function sqlite3_global_recover:longint;cdecl; external Sqlite3Lib name 'sqlite3_global_recover';

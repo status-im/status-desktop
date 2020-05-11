@@ -26,13 +26,21 @@ I found this nim library: [Tiny_SQLite](https://github.com/GULPF/tiny_sqlite/blo
 
 ```nim
 # In sqlite_wrapper.nim
-proc key*(para1: PSqlite3, para2: cstring, para3: int32): int32{.cdecl, importc: "sqlite3_key".}
+proc key*(db: PSqlite3, pKey: cstring, nKey: int32): int32{.cdecl, importc: "sqlite3_key".}
+proc rekey*(db: PSqlite3, pKey: cstring, nKey: int32): int32{.cdecl, importc: "sqlite3_rekey".}
 
 # In tiny_sqlite.nim
 proc key*(db: DbConn, password: string) =
     let rc = sqlite.key(db, password, int32(password.len))
     db.checkRc(rc)
+
+proc rekey*(db: DbConn, password: string) =
+    let rc = sqlite.rekey(db, password, int32(password.len))
+    db.checkRc(rc)
+
 ```
+
+We can either fork this library, or create a new .nim file with the required functions, and use Tiny_SQLite along with the SQLCipher specific functions
 
 **Compile / Run**
 ```
@@ -40,6 +48,10 @@ make build
 ./main
 ```
 
-This will ask for a passwd to encrypt/decrypt the DB. and then insert a timestamp in a table, and select all records from that table
+This will ask for a passwd to encrypt/decrypt the DB. and then insert a timestamp in a table, and select all records from that table. 
+
+**Useful Links**
+
+Docs for Tiny_SQLite are available here: https://gulpf.github.io/tiny_sqlite/tiny_sqlite.html
 
 

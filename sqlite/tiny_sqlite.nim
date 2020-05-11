@@ -253,6 +253,10 @@ proc key*(db: DbConn, password: string) =
     let rc = sqlite.key(db, password, int32(password.len))
     db.checkRc(rc)
 
+proc rekey*(db: DbConn, password: string) =
+    let rc = sqlite.rekey(db, password, int32(password.len))
+    db.checkRc(rc)
+
 proc close*(db: DbConn) =
     ## Closes the database connection.
     let rc = sqlite.close(db)
