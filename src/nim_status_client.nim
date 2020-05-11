@@ -1,5 +1,5 @@
 import NimQml
-import applicationLogic
+import applicationView
 import chats
 import state
 import status
@@ -16,7 +16,6 @@ var signalHandler: SignalCallback = proc(p0: cstring): void =
   tearDownForeignThreadGc()
 
 proc mainProc() =
-
   # From QT docs:
   # For any GUI application using Qt, there is precisely one QApplication object, 
   # no matter whether the application has 0, 1, 2 or more windows at any given time. 
@@ -31,7 +30,6 @@ proc mainProc() =
   var engine = newQQmlApplicationEngine()
   defer: engine.delete()
 
-
   status.setSignalHandler(signalHandler)
 
   status.setupNewAccount()
@@ -41,7 +39,7 @@ proc mainProc() =
   # result.accountResult = status.queryAccounts()
   status.subscribeToTest()
 
-  let logic = newApplicationLogic(app, status.callPrivateRPC)
+  let logic = newApplicationView(app, status.callPrivateRPC)
   defer: logic.delete
   
   let logicVariant = newQVariant(logic)

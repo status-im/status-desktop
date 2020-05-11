@@ -2,15 +2,14 @@ import NimQml
 
 # Probably all QT classes will look like this:
 QtObject:
-  type ApplicationLogic* = ref object of QObject
+  type ApplicationView* = ref object of QObject
     app: QApplication
     callResult: string
     accountResult: string
     sendMessage: proc (msg: string):  string
-    # chats: seq[ChatView]
 
   # Constructor
-  proc newApplicationLogic*(app: QApplication, sendMessage: proc): ApplicationLogic =
+  proc newApplicationView*(app: QApplication, sendMessage: proc): ApplicationView =
     new(result)
     result.app = app
     result.sendMessage = sendMessage
@@ -18,32 +17,31 @@ QtObject:
     result.setup()
 
   # ¯\_(ツ)_/¯ dunno what is this
-  proc setup(self: ApplicationLogic) =
-    # discard status.onMessage(self.onMessage)
+  proc setup(self: ApplicationView) =
     self.QObject.setup
 
   # ¯\_(ツ)_/¯ seems to be a method for garbage collection
-  proc delete*(self: ApplicationLogic) =
+  proc delete*(self: ApplicationView) =
     self.QObject.delete
 
   # Read more about slots and signals here: https://doc.qt.io/qt-5/signalsandslots.html
 
   # This is an EventHandler
-  proc onExitTriggered(self: ApplicationLogic) {.slot.} =
+  proc onExitTriggered(self: ApplicationView) {.slot.} =
     self.app.quit
 
   # Accesors
-  proc callResult*(self: ApplicationLogic): string {.slot.} =
+  proc callResult*(self: ApplicationView): string {.slot.} =
     result = self.callResult
 
-  proc callResultChanged*(self: ApplicationLogic, callResult: string) {.signal.}
+  proc callResultChanged*(self: ApplicationView, callResult: string) {.signal.}
 
-  proc setCallResult(self: ApplicationLogic, callResult: string) {.slot.} =
+  proc setCallResult(self: ApplicationView, callResult: string) {.slot.} =
     if self.callResult == callResult: return
     self.callResult = callResult
     self.callResultChanged(callResult)
 
-  proc `callResult=`*(self: ApplicationLogic, callResult: string) = self.setCallResult(callResult)
+  proc `callResult=`*(self: ApplicationView, callResult: string) = self.setCallResult(callResult)
 
   # Binding between a QML variable and accesors is done here
   QtProperty[string] callResult:
@@ -51,20 +49,20 @@ QtObject:
     write = setCallResult
     notify = callResultChanged
 
-  proc onSend*(self: ApplicationLogic, inputJSON: string) {.slot.} =
+  proc onSend*(self: ApplicationView, inputJSON: string) {.slot.} =
     self.setCallResult(self.sendMessage(inputJSON))
     echo "Done!: ", self.callResult
 
-  # proc onMessage*(self: ApplicationLogic, message: string) {.slot.} =
-  #   self.setCallResult(message)
-  #   echo "Received message: ", message
+  proc onMessage*(self: ApplicationView, message: string) {.slot.} =
+    self.setCallResult(message)
+    echo "Received message: ", message
 
-  proc accountResultChanged*(self: ApplicationLogic, callResult: string) {.signal.}
+  proc accountResultChanged*(self: ApplicationView, callResult: string) {.signal.}
 
-  proc accountResult*(self: ApplicationLogic): string {.slot.} =
+  proc accountResult*(self: ApplicationView): string {.slot.} =
     result = self.accountResult
 
-  proc setAccountResult(self: ApplicationLogic, accountResult: string) {.slot.} =
+  proc setAccountResult(self: ApplicationView, accountResult: string) {.slot.} =
     if self.accountResult == accountResult: return
     self.accountResult = accountResult
     self.accountResultChanged(accountResult)
