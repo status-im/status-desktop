@@ -4,7 +4,7 @@ SQLCipher - Nim / NOTES
 **Notes:**
 This is a experimental project to test how to use SQLCipher with Nim. I tried to use [c2nim](https://github.com/nim-lang/c2nim) to generate a small wrapper for SQLite using the header file generated during the SQLCipher compilation process but I wasn't successful. Someone please try using that software to see if it works for them
 
-[Tiny_SQLite](https://github.com/GULPF/tiny_sqlite/blob/master/src/tiny_sqlite/sqlite_wrapper.nim) that already provides a wrapper for SQLite. It assumes SQLite is dynamically linked. I changed it to static linking so I can use it with SQLCipher and added new functions.
+I ended up using, [Tiny_SQLite](https://github.com/GULPF/tiny_sqlite/blob/master/src/tiny_sqlite/sqlite_wrapper.nim) because it already provides a wrapper for SQLite. It assumes SQLite is dynamically linked so I changed it to static linking so I can use it with the compiled SQLCipher and added new functions.
 
 ```nim
 # In sqlite_wrapper.nim
