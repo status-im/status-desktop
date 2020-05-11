@@ -17,7 +17,7 @@ cd ..
 The make command will generate `sqlite3.c` and `sqlite3.h` which are copied into this folder, I tried to use [c2nim](https://github.com/nim-lang/c2nim) to generate a small wrapper for SQLite using the header but I wasn't successful. Someone please try using that software to see if it works for them
 
 
-**Compiling sqlite3.c**
+**Compiling sqlite3.c to a shared library**
 ```
 gcc -lpthread -DSQLITE_HAS_CODEC -lcrypto -c sqlite3.c
 ```
@@ -34,5 +34,12 @@ proc key*(db: DbConn, password: string) =
     db.checkRc(rc)
 ```
 
+**Compile / Run**
+```
+make build
+./main
+```
+
+This will ask for a passwd to encrypt/decrypt the DB. and then insert a timestamp in a table, and select all records from that table
 
 
