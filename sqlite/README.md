@@ -100,6 +100,8 @@ rm -rf sqlcipher
 gcc -lpthread -DSQLITE_HAS_CODEC -lcrypto -c ./lib/sqlite3.c -o ./lib/sqlite3.a
 rm ./lib/sqlite3.c
 
+```
+
 The build command changes:
 ```
 nim c -d:release -L:./lib/sqlite3.a -L:-lm -L:"-lcrypto" --threads --outdir:. main.nim
