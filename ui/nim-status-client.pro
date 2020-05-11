@@ -30,4 +30,32 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     Theme.qml \
-    imports/qmldir
+    app/AppMain.qml \
+    app/img/compass.svg \
+    app/img/compassActive.svg \
+    app/img/message.svg \
+    app/img/messageActive.svg \
+    app/img/profile.svg \
+    app/img/profileActive.svg \
+    app/img/search.svg \
+    app/img/wallet.svg \
+    app/img/walletActive.svg \
+    app/qmldir \
+    imports/qmldir \
+    onboarding/Intro.qml \
+    onboarding/img/browser-dark@2x.jpg \
+    onboarding/img/browser-dark@3x.jpg \
+    onboarding/img/browser@2x.jpg \
+    onboarding/img/browser@3x.jpg \
+    onboarding/img/chat-dark@2x.jpg \
+    onboarding/img/chat-dark@3x.jpg \
+    onboarding/img/chat@2x.jpg \
+    onboarding/img/chat@3x.jpg \
+    onboarding/img/next.svg \
+    onboarding/img/wallet-dark@2x.jpg \
+    onboarding/img/wallet-dark@3x.jpg \
+    onboarding/img/wallet@2x.jpg \
+    onboarding/img/wallet@3x.jpg \
+    onboarding/qmldir \
+    shared/Image.qml \
+    shared/qmldir
