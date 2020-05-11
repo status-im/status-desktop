@@ -1,7 +1,4 @@
 import NimQml
-# import status
-# import libstatus
-import json
 
 # Probably all QT classes will look like this:
 QtObject:
@@ -9,12 +6,14 @@ QtObject:
     app: QApplication
     callResult: string
     accountResult: string
+    sendMessage: proc (msg: string):  string
     # chats: seq[ChatView]
 
   # Constructor
-  proc newApplicationLogic*(app: QApplication): ApplicationLogic =
+  proc newApplicationLogic*(app: QApplication, sendMessage: proc): ApplicationLogic =
     new(result)
     result.app = app
+    result.sendMessage = sendMessage
     result.callResult = "Use this tool to call JSONRPC methods"
     result.setup()
 
@@ -32,7 +31,6 @@ QtObject:
   # This is an EventHandler
   proc onExitTriggered(self: ApplicationLogic) {.slot.} =
     self.app.quit
-
 
   # Accesors
   proc callResult*(self: ApplicationLogic): string {.slot.} =
@@ -54,7 +52,7 @@ QtObject:
     notify = callResultChanged
 
   proc onSend*(self: ApplicationLogic, inputJSON: string) {.slot.} =
-    # self.setCallResult(status.callPrivateRPC(inputJSON))
+    self.setCallResult(self.sendMessage(inputJSON))
     echo "Done!: ", self.callResult
 
   # proc onMessage*(self: ApplicationLogic, message: string) {.slot.} =

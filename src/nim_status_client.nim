@@ -41,9 +41,7 @@ proc mainProc() =
   # result.accountResult = status.queryAccounts()
   status.subscribeToTest()
 
-
-
-  let logic = newApplicationLogic(app)
+  let logic = newApplicationLogic(app, status.callPrivateRPC)
   defer: logic.delete
   
   let logicVariant = newQVariant(logic)
