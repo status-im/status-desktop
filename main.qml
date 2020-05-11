@@ -3,7 +3,14 @@ import QtQuick.Controls 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 
+
 ApplicationWindow {
+    property var greyColor: "#EEF2F5"
+    property var lightBlueColor: "#ECEFFC"
+    property var blueColor: "#4360DF"
+    property var transparentColor: "#ffffff"
+    property var darkGreyColor: "#939BA1"
+
     id: applicationWindow
     width: 1024
     height: 768
@@ -39,7 +46,7 @@ ApplicationWindow {
             Layout.minimumHeight: 0
             background: Rectangle {
                 color: "#00000000"
-                border.color: "#EEF2F5"
+                border.color: greyColor
             }
 
             TabButton {
@@ -52,7 +59,7 @@ ApplicationWindow {
                 transformOrigin: Item.Center
                 anchors.horizontalCenter: parent.horizontalCenter
                 background: Rectangle {
-                    color: "#ECEFFC"
+                    color: lightBlueColor
                     opacity: parent.checked ? 1 : 0
                     radius: 50
                 }
@@ -75,7 +82,7 @@ ApplicationWindow {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: chatBtn.top
                 background: Rectangle {
-                    color: "#ECEFFC"
+                    color: lightBlueColor
                     opacity: parent.checked ? 1 : 0
                     radius: 50
                 }
@@ -98,7 +105,7 @@ ApplicationWindow {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: walletBtn.top
                 background: Rectangle {
-                    color: "#ECEFFC"
+                    color: lightBlueColor
                     opacity: parent.checked ? 1 : 0
                     radius: 50
                 }
@@ -121,7 +128,7 @@ ApplicationWindow {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: browserBtn.top
                 background: Rectangle {
-                    color: "#ECEFFC"
+                    color: lightBlueColor
                     opacity: parent.checked ? 1 : 0
                     radius: 50
                 }
@@ -183,12 +190,12 @@ ApplicationWindow {
                             Rectangle {
                                 id: searchBox
                                 height: 36
-                                color: "#EEF2F5"
+                                color: greyColor
                                 anchors.top: parent.top
                                 anchors.topMargin: 59
                                 radius: 8
                                 anchors.right: parent.right
-                                anchors.rightMargin: 55
+                                anchors.rightMargin: 65
                                 anchors.left: parent.left
                                 anchors.leftMargin: 16
 
@@ -225,10 +232,10 @@ ApplicationWindow {
                                 id: addChat
                                 width: 36
                                 height: 36
-                                color: "#4360DF"
+                                color: blueColor
                                 radius: 50
                                 anchors.right: parent.right
-                                anchors.rightMargin: 9
+                                anchors.rightMargin: 16
                                 anchors.top: parent.top
                                 anchors.topMargin: 59
 
@@ -254,11 +261,85 @@ ApplicationWindow {
 
                             Component {
                                 id: chatViewDelegate
-                                Label { text: "Name:" + name }
+                                Rectangle {
+                                   id: wrapper
+                                   height: 64
+                                   color: ListView.isCurrentItem ? lightBlueColor : transparentColor
+                                   anchors.right: parent.right
+                                   anchors.rightMargin: 16
+                                   anchors.top: applicationWindow.top
+                                   anchors.topMargin: 0
+                                   anchors.left: parent.left
+                                   anchors.leftMargin: 16
+                                   radius: 8
+                                   Rectangle {
+                                       id: contactImage
+                                       width: 40
+                                       color: darkGreyColor
+                                       anchors.left: parent.left
+                                       anchors.leftMargin: 16
+                                       anchors.top: parent.top
+                                       anchors.topMargin: 12
+                                       anchors.bottom: parent.bottom
+                                       anchors.bottomMargin: 12
+                                       radius: 50
+                                   }
+
+                                   Text {
+                                       id: contactInfo
+                                       text: "Name:" + name
+                                       font.weight: Font.Medium
+                                       font.pixelSize: 15
+                                       anchors.left: contactImage.right
+                                       anchors.leftMargin: 16
+                                       anchors.top: parent.top
+                                       anchors.topMargin: 10
+                                       color: "black"
+                                   }
+                                   Text {
+                                       id: lastChatMessage
+                                       text: "Chatting blah blah..."
+                                       anchors.bottom: parent.bottom
+                                       anchors.bottomMargin: 10
+                                       font.pixelSize: 15
+                                       anchors.left: contactImage.right
+                                       anchors.leftMargin: 16
+                                       color: darkGreyColor
+                                   }
+                                   Text {
+                                       id: contactTime
+                                       text: "12:22 AM"
+                                       anchors.right: parent.right
+                                       anchors.rightMargin: 16
+                                       anchors.top: parent.top
+                                       anchors.topMargin: 10
+                                       font.pixelSize: 11
+                                       color: darkGreyColor
+                                   }
+                                   Rectangle {
+                                       id: contactNumberChatsCircle
+                                       width: 22
+                                       height: 22
+                                       radius: 50
+                                       anchors.bottom: parent.bottom
+                                       anchors.bottomMargin: 10
+                                       anchors.right: parent.right
+                                       anchors.rightMargin: 16
+                                       color: blueColor
+                                       Text {
+                                           id: contactNumberChats
+                                           text: qsTr("1")
+                                           anchors.horizontalCenter: parent.horizontalCenter
+                                           anchors.verticalCenter: parent.verticalCenter
+                                           color: "white"
+                                       }
+                                   }
+                               }
                             }
 
                             ListView {
                                 id: listView
+                                anchors.topMargin: 24
                                 anchors.fill: parent
                                 model: chatsModel
                                 delegate: chatViewDelegate
