@@ -1,17 +1,3 @@
-when defined(windows):
-  when defined(nimOldDlls):
-    const Lib = "sqlite3.dll"
-  elif defined(cpu64):
-    const Lib = "sqlite3_64.dll"
-  else:
-    const Lib = "sqlite3_32.dll"
-elif defined(macosx):
-  const
-    Lib = "libsqlite3(|.0).dylib"
-else:
-  const
-    Lib = "libsqlite3.so(|.0)"
-
 const
   SQLITE_INTEGER* = 1
   SQLITE_FLOAT* = 2
@@ -346,6 +332,9 @@ proc version*(): cstring{.cdecl,  importc: "sqlite3_libversion".}
   # Not published functions
 proc libversion_number*(): int32{.cdecl, 
                                   importc: "sqlite3_libversion_number".}
+
+proc key*(para1: PSqlite3, para2: cstring, para3: int32): int32{.cdecl, importc: "sqlite3_key".}
+
   #function sqlite3_key(db:Psqlite3; pKey:pointer; nKey:longint):longint;cdecl; external Sqlite3Lib name 'sqlite3_key';
   #function sqlite3_rekey(db:Psqlite3; pKey:pointer; nKey:longint):longint;cdecl; external Sqlite3Lib name 'sqlite3_rekey';
   #function sqlite3_sleep(_para1:longint):longint;cdecl; external Sqlite3Lib name 'sqlite3_sleep';
