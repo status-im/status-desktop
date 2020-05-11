@@ -261,6 +261,7 @@ ApplicationWindow {
 
                             Component {
                                 id: chatViewDelegate
+
                                 Rectangle {
                                    id: wrapper
                                    height: 64
@@ -272,6 +273,12 @@ ApplicationWindow {
                                    anchors.left: parent.left
                                    anchors.leftMargin: 16
                                    radius: 8
+
+                                   MouseArea {
+                                       anchors.fill: parent
+                                       onClicked: listView.currentIndex = index
+                                   }
+
                                    Rectangle {
                                        id: contactImage
                                        width: 40
