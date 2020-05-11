@@ -1,4 +1,4 @@
 SHELL := bash
 build:
-	nim c -d:release -L:sqlite3.o -L:-lm -L:"-lcrypto" --threads --outdir:. main.nim
+	nim c -l:lib/sqlite3.a -L:-lm -l:lib/libcrypto.a --threads --outdir:. main.nim
 
