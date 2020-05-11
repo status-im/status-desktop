@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
+import Qt.labs.platform 1.1
 import "./imports"
 
 ApplicationWindow {
@@ -10,6 +11,17 @@ ApplicationWindow {
     height: 768
     title: "Nim Status Client"
     visible: true
+
+    SystemTrayIcon {
+        visible: true
+        icon.source: "status-logo.png"
+
+        onActivated: {
+            applicationWindow.show()
+            applicationWindow.raise()
+            applicationWindow.requestActivate()
+        }
+    }
 
     RowLayout {
         id: rowLayout
