@@ -6,13 +6,22 @@ const datadir = "./data/"
 const keystoredir = "./data/keystore/"
 const nobackupdir = "./noBackup/"
 
+var signalHandler: SignalCallback = proc(p0: cstring): void =
+  setupForeignThreadGc()
+
+  var jsonSignal = ($p0).parseJson
+  if $jsonSignal["type"].getStr == "messages.new":
+    echo $p0
+
+  tearDownForeignThreadGc()
+
 proc recreateDir(dirname: string) =
   if existsDir(dirname):
     removeDir(dirname)
   createDir(dirname)
 
-proc setSignalHandler*(something: SignalCallback) =
-  libstatus.setSignalEventCallback(something)
+proc setSignalHandler*() =
+  libstatus.setSignalEventCallback(signalHandler)
 
 proc queryAccounts*(): string =
   var payload = %* {
