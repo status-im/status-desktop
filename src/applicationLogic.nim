@@ -3,7 +3,6 @@ import status
 import libstatus
 import json
 
-
 var signalHandler: SignalCallback = proc(p0: cstring): void =
   setupForeignThreadGc()
 
@@ -20,6 +19,7 @@ QtObject:
     app: QApplication
     callResult: string
     accountResult: string
+    # chats: seq[ChatView]
 
   # Constructor
   proc newApplicationLogic*(app: QApplication): ApplicationLogic =
@@ -36,8 +36,6 @@ QtObject:
 
     result.accountResult = status.queryAccounts()
     status.subscribeToTest()    
-
-
 
   # ¯\_(ツ)_/¯ dunno what is this
   proc setup(self: ApplicationLogic) =
