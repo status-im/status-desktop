@@ -11,6 +11,7 @@ ApplicationWindow {
     height: 768
     title: "Nim Status Client"
     visible: true
+    font.family: "Inter"
 
     SystemTrayIcon {
         visible: true
@@ -203,7 +204,7 @@ ApplicationWindow {
                                 anchors.right: parent.right
                                 anchors.rightMargin: 65
                                 anchors.left: parent.left
-                                anchors.leftMargin: 16
+                                anchors.leftMargin: Theme.padding
 
                                 TextField {
                                     id: searchText
@@ -219,7 +220,7 @@ ApplicationWindow {
                                 Image {
                                     id: image4
                                     anchors.left: parent.left
-                                    anchors.leftMargin: 10
+                                    anchors.leftMargin: Theme.smallPadding
                                     anchors.verticalCenter: parent.verticalCenter
                                     fillMode: Image.PreserveAspectFit
                                     source: "img/search.svg"
@@ -241,7 +242,7 @@ ApplicationWindow {
                                 color: Theme.blue
                                 radius: 50
                                 anchors.right: parent.right
-                                anchors.rightMargin: 16
+                                anchors.rightMargin: Theme.padding
                                 anchors.top: parent.top
                                 anchors.topMargin: 59
 
@@ -273,11 +274,11 @@ ApplicationWindow {
                                    height: 64
                                    color: ListView.isCurrentItem ? Theme.lightBlue : Theme.transparent
                                    anchors.right: parent.right
-                                   anchors.rightMargin: 16
+                                   anchors.rightMargin: Theme.padding
                                    anchors.top: applicationWindow.top
                                    anchors.topMargin: 0
                                    anchors.left: parent.left
-                                   anchors.leftMargin: 16
+                                   anchors.leftMargin: Theme.padding
                                    radius: 8
 
                                    MouseArea {
@@ -290,7 +291,7 @@ ApplicationWindow {
                                        width: 40
                                        color: Theme.darkGrey
                                        anchors.left: parent.left
-                                       anchors.leftMargin: 16
+                                       anchors.leftMargin: Theme.padding
                                        anchors.top: parent.top
                                        anchors.topMargin: 12
                                        anchors.bottom: parent.bottom
@@ -304,28 +305,28 @@ ApplicationWindow {
                                        font.weight: Font.Medium
                                        font.pixelSize: 15
                                        anchors.left: contactImage.right
-                                       anchors.leftMargin: 16
+                                       anchors.leftMargin: Theme.padding
                                        anchors.top: parent.top
-                                       anchors.topMargin: 10
+                                       anchors.topMargin: Theme.smallPadding
                                        color: "black"
                                    }
                                    Text {
                                        id: lastChatMessage
                                        text: "Chatting blah blah..."
                                        anchors.bottom: parent.bottom
-                                       anchors.bottomMargin: 10
+                                       anchors.bottomMargin: Theme.smallPadding
                                        font.pixelSize: 15
                                        anchors.left: contactImage.right
-                                       anchors.leftMargin: 16
+                                       anchors.leftMargin: Theme.padding
                                        color: Theme.darkGrey
                                    }
                                    Text {
                                        id: contactTime
                                        text: "12:22 AM"
                                        anchors.right: parent.right
-                                       anchors.rightMargin: 16
+                                       anchors.rightMargin: Theme.padding
                                        anchors.top: parent.top
-                                       anchors.topMargin: 10
+                                       anchors.topMargin: Theme.smallPadding
                                        font.pixelSize: 11
                                        color: Theme.darkGrey
                                    }
@@ -335,9 +336,9 @@ ApplicationWindow {
                                        height: 22
                                        radius: 50
                                        anchors.bottom: parent.bottom
-                                       anchors.bottomMargin: 10
+                                       anchors.bottomMargin: Theme.smallPadding
                                        anchors.right: parent.right
-                                       anchors.rightMargin: 16
+                                       anchors.rightMargin: Theme.padding
                                        color: Theme.blue
                                        Text {
                                            id: contactNumberChats
@@ -370,6 +371,72 @@ ApplicationWindow {
                         anchors.fill: parent
 
                         RowLayout {
+                            id: chatContainer
+                            width: 100
+                            height: 100
+                            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+                            Rectangle {
+                                id: chatBox
+                                width: 200
+                                height: 158
+                                color: "#00000000"
+                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                                Layout.fillWidth: true
+                                border.color: "#00000000"
+
+                                Image {
+                                    id: chatImage
+                                    width: 30
+                                    height: 30
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 16
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 16
+                                    fillMode: Image.PreserveAspectFit
+                                    source: "img/placeholder-profile.png"
+                                }
+
+                                Text {
+                                    id: chatName
+                                    text: qsTr("Slushy Welltodo Woodborer")
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 22
+                                    anchors.left: chatImage.right
+                                    anchors.leftMargin: 16
+                                    font.bold: true
+                                    font.pixelSize: 14
+                                }
+
+                                Text {
+                                    id: chatText
+                                    text: qsTr("I’m generally against putting too many rules on social interaction because it makes interaction anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue.")
+                                    font.family: "Inter"
+                                    wrapMode: Text.WordWrap
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 60
+                                    anchors.left: chatName.left
+                                    anchors.leftMargin: 0
+                                    anchors.top: chatName.bottom
+                                    anchors.topMargin: 16
+                                    font.pixelSize: 14
+                                }
+
+                                Text {
+                                    id: chatTime
+                                    color: Theme.darkGrey
+                                    font.family: "Inter"
+                                    text: qsTr("7:30 AM")
+                                    anchors.bottom: parent.bottom
+                                    anchors.bottomMargin: 16
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 16
+                                    font.pixelSize: 10
+                                }
+                            }
+                        }
+
+                        RowLayout {
                             Layout.fillHeight: true
                             TextArea { id: callResult; Layout.fillWidth: true; text: logic.callResult; readOnly: true }
                         }
@@ -386,6 +453,7 @@ ApplicationWindow {
                                 enabled: txtData.text !== ""
                             }
                         }
+
                     }
 
                 }
@@ -414,6 +482,6 @@ ApplicationWindow {
 
 /*##^##
 Designer {
-    D{i:9;anchors_height:40;anchors_width:40}
+    D{i:0;formeditorZoom:0.8999999761581421}
 }
 ##^##*/
