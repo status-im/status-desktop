@@ -488,23 +488,67 @@ ApplicationWindow {
                         }
 
                         RowLayout {
+                            id: resultContainer
                             Layout.fillHeight: true
                             TextArea { id: callResult; Layout.fillWidth: true; text: logic.callResult; readOnly: true }
                         }
 
                         RowLayout {
+                            id: chatInputContainer
+                            height: 70
                             Layout.bottomMargin: 20
                             Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
                             transformOrigin: Item.Bottom
-                            Label { text: "data2" }
-                            TextField { id: txtData; Layout.fillWidth: true; text: "" }
-                            Button {
-                                text: "Send"
-                                onClicked: logic.onSend(txtData.text)
-                                enabled: txtData.text !== ""
-                            }
-                        }
-
+                            anchors.bottom: parent.bottom
+                            anchors.bottomMargin: 0
+                            
+                            Item {
+                                id: element2
+                                width: 200
+                                height: 70
+                                Layout.fillWidth: true
+                                
+                                Rectangle {
+                                    id: rectangle
+                                    color: "#00000000"
+                                    border.color: Theme.grey
+                                    anchors.fill: parent
+                                    
+                                    Button {
+                                        id: chatSendBtn
+                                        x: 100
+                                        width: 30
+                                        height: 30
+                                        text: "\u2191"
+                                        font.bold: true
+                                        font.pointSize: 12
+                                        anchors.top: parent.top
+                                        anchors.topMargin: 20
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 16
+                                        onClicked: logic.onSend(txtData.text)
+                                        enabled: txtData.text !== ""
+                                        background: Rectangle {
+                                            color: parent.enabled ? Theme.blue : Theme.grey
+                                            radius: 50
+                                        }
+                                    }
+                                    
+                                    TextField {
+                                        id: txtData
+                                        text: ""
+                                        leftPadding: 0
+                                        padding: 0
+                                        font.pixelSize: 14
+                                        placeholderText: qsTr("Type a message...")
+                                        anchors.right: chatSendBtn.left
+                                        anchors.rightMargin: 16
+                                        anchors.top: parent.top
+                                        anchors.topMargin: 24
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 24
+                                        background: {}
+                                    }
 
 
                     }
@@ -534,3 +578,9 @@ ApplicationWindow {
 
 
 
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:0.8999999761581421}D{i:61;anchors_height:100;anchors_width:100}
+}
+##^##*/
