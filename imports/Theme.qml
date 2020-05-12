@@ -10,5 +10,5 @@ QtObject {
     readonly property color darkGrey: "#939BA1"
 
     readonly property int padding: 16
-    readonly property int smallPadding: 16
+    readonly property int smallPadding: 10
 }

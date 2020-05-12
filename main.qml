@@ -270,85 +270,85 @@ ApplicationWindow {
                                 id: chatViewDelegate
 
                                 Rectangle {
-                                   id: wrapper
-                                   height: 64
-                                   color: ListView.isCurrentItem ? Theme.lightBlue : Theme.transparent
-                                   anchors.right: parent.right
-                                   anchors.rightMargin: Theme.padding
-                                   anchors.top: applicationWindow.top
-                                   anchors.topMargin: 0
-                                   anchors.left: parent.left
-                                   anchors.leftMargin: Theme.padding
-                                   radius: 8
+                                    id: wrapper
+                                    height: 64
+                                    color: ListView.isCurrentItem ? Theme.lightBlue : Theme.transparent
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: Theme.padding
+                                    anchors.top: applicationWindow.top
+                                    anchors.topMargin: 0
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: Theme.padding
+                                    radius: 8
 
-                                   MouseArea {
-                                       anchors.fill: parent
-                                       onClicked: listView.currentIndex = index
-                                   }
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onClicked: listView.currentIndex = index
+                                    }
 
-                                   Rectangle {
-                                       id: contactImage
-                                       width: 40
-                                       color: Theme.darkGrey
-                                       anchors.left: parent.left
-                                       anchors.leftMargin: Theme.padding
-                                       anchors.top: parent.top
-                                       anchors.topMargin: 12
-                                       anchors.bottom: parent.bottom
-                                       anchors.bottomMargin: 12
-                                       radius: 50
-                                   }
+                                    Rectangle {
+                                        id: contactImage
+                                        width: 40
+                                        color: Theme.darkGrey
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: Theme.padding
+                                        anchors.top: parent.top
+                                        anchors.topMargin: 12
+                                        anchors.bottom: parent.bottom
+                                        anchors.bottomMargin: 12
+                                        radius: 50
+                                    }
 
-                                   Text {
-                                       id: contactInfo
-                                       text: "Name:" + name
-                                       font.weight: Font.Medium
-                                       font.pixelSize: 15
-                                       anchors.left: contactImage.right
-                                       anchors.leftMargin: Theme.padding
-                                       anchors.top: parent.top
-                                       anchors.topMargin: Theme.smallPadding
-                                       color: "black"
-                                   }
-                                   Text {
-                                       id: lastChatMessage
-                                       text: "Chatting blah blah..."
-                                       anchors.bottom: parent.bottom
-                                       anchors.bottomMargin: Theme.smallPadding
-                                       font.pixelSize: 15
-                                       anchors.left: contactImage.right
-                                       anchors.leftMargin: Theme.padding
-                                       color: Theme.darkGrey
-                                   }
-                                   Text {
-                                       id: contactTime
-                                       text: "12:22 AM"
-                                       anchors.right: parent.right
-                                       anchors.rightMargin: Theme.padding
-                                       anchors.top: parent.top
-                                       anchors.topMargin: Theme.smallPadding
-                                       font.pixelSize: 11
-                                       color: Theme.darkGrey
-                                   }
-                                   Rectangle {
-                                       id: contactNumberChatsCircle
-                                       width: 22
-                                       height: 22
-                                       radius: 50
-                                       anchors.bottom: parent.bottom
-                                       anchors.bottomMargin: Theme.smallPadding
-                                       anchors.right: parent.right
-                                       anchors.rightMargin: Theme.padding
-                                       color: Theme.blue
-                                       Text {
-                                           id: contactNumberChats
-                                           text: qsTr("1")
-                                           anchors.horizontalCenter: parent.horizontalCenter
-                                           anchors.verticalCenter: parent.verticalCenter
-                                           color: "white"
-                                       }
-                                   }
-                               }
+                                    Text {
+                                        id: contactInfo
+                                        text: "Name:" + name
+                                        font.weight: Font.Medium
+                                        font.pixelSize: 15
+                                        anchors.left: contactImage.right
+                                        anchors.leftMargin: Theme.padding
+                                        anchors.top: parent.top
+                                        anchors.topMargin: Theme.smallPadding
+                                        color: "black"
+                                    }
+                                    Text {
+                                        id: lastChatMessage
+                                        text: "Chatting blah blah..."
+                                        anchors.bottom: parent.bottom
+                                        anchors.bottomMargin: Theme.smallPadding
+                                        font.pixelSize: 15
+                                        anchors.left: contactImage.right
+                                        anchors.leftMargin: Theme.padding
+                                        color: Theme.darkGrey
+                                    }
+                                    Text {
+                                        id: contactTime
+                                        text: "12:22 AM"
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: Theme.padding
+                                        anchors.top: parent.top
+                                        anchors.topMargin: Theme.smallPadding
+                                        font.pixelSize: 11
+                                        color: Theme.darkGrey
+                                    }
+                                    Rectangle {
+                                        id: contactNumberChatsCircle
+                                        width: 22
+                                        height: 22
+                                        radius: 50
+                                        anchors.bottom: parent.bottom
+                                        anchors.bottomMargin: Theme.smallPadding
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: Theme.padding
+                                        color: Theme.blue
+                                        Text {
+                                            id: contactNumberChats
+                                            text: qsTr("1")
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            color: "white"
+                                        }
+                                    }
+                                }
                             }
 
                             ListView {
@@ -372,14 +372,13 @@ ApplicationWindow {
 
                         RowLayout {
                             id: chatContainer
-                            width: 100
-                            height: 100
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
                             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
                             Rectangle {
                                 id: chatBox
-                                width: 200
-                                height: 158
+                                height: 140
                                 color: "#00000000"
                                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                                 Layout.fillWidth: true
@@ -437,6 +436,58 @@ ApplicationWindow {
                         }
 
                         RowLayout {
+                            id: separator
+                            height: 16
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                            anchors.top: chatContainer.bottom
+                            anchors.topMargin: Theme.padding
+
+                            Item {
+                                id: separatorContent
+                                width: 200
+                                height: 16
+                                Layout.fillHeight: false
+                                Layout.fillWidth: true
+
+                                Rectangle {
+                                    id: lineSeparator1
+                                    height: 1
+                                    color: "#00000000"
+                                    border.color: "#eef2f5"
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 8
+                                    anchors.right: separatorText.left
+                                    anchors.rightMargin: 14
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 16
+                                }
+
+                                Text {
+                                    id: separatorText
+                                    color: Theme.darkGrey
+                                    text: qsTr("Yesterday")
+                                    font.pixelSize: 12
+                                    anchors.centerIn: parent
+                                }
+
+                                Rectangle {
+                                    id: lineSeparator2
+                                    height: 1
+                                    color: "#00000000"
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 16
+                                    anchors.left: separatorText.right
+                                    border.color: "#eef2f5"
+                                    anchors.top: parent.top
+                                    anchors.leftMargin: 14
+                                    anchors.topMargin: 8
+                                }
+                            }
+
+                        }
+
+                        RowLayout {
                             Layout.fillHeight: true
                             TextArea { id: callResult; Layout.fillWidth: true; text: logic.callResult; readOnly: true }
                         }
@@ -453,6 +504,8 @@ ApplicationWindow {
                                 enabled: txtData.text !== ""
                             }
                         }
+
+
 
                     }
 
@@ -480,8 +533,4 @@ ApplicationWindow {
 }
 
 
-/*##^##
-Designer {
-    D{i:0;formeditorZoom:0.8999999761581421}
-}
-##^##*/
+
