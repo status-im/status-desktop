@@ -396,7 +396,7 @@ ApplicationWindow {
                                     source: "img/placeholder-profile.png"
                                 }
 
-                                Text {
+                                TextEdit {
                                     id: chatName
                                     text: qsTr("Slushy Welltodo Woodborer")
                                     anchors.top: parent.top
@@ -405,9 +405,11 @@ ApplicationWindow {
                                     anchors.leftMargin: 16
                                     font.bold: true
                                     font.pixelSize: 14
+                                    readOnly: true
+                                    selectByMouse: true
                                 }
 
-                                Text {
+                                TextEdit {
                                     id: chatText
                                     text: qsTr("I’m generally against putting too many rules on social interaction because it makes interaction anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue.")
                                     font.family: "Inter"
@@ -419,9 +421,11 @@ ApplicationWindow {
                                     anchors.top: chatName.bottom
                                     anchors.topMargin: 16
                                     font.pixelSize: 14
+                                    readOnly: true
+                                    selectByMouse: true
                                 }
 
-                                Text {
+                                TextEdit {
                                     id: chatTime
                                     color: Theme.darkGrey
                                     font.family: "Inter"
@@ -431,6 +435,8 @@ ApplicationWindow {
                                     anchors.right: parent.right
                                     anchors.rightMargin: 16
                                     font.pixelSize: 10
+                                    readOnly: true
+                                    selectByMouse: true
                                 }
                             }
                         }
