@@ -29,5 +29,24 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    Inter-Black.otf \
+    Inter-BlackItalic.otf \
+    Inter-Bold.otf \
+    Inter-BoldItalic.otf \
+    Inter-ExtraBold.otf \
+    Inter-ExtraBoldItalic.otf \
+    Inter-ExtraLight.otf \
+    Inter-ExtraLightItalic.otf \
+    Inter-Italic.otf \
+    Inter-Light.otf \
+    Inter-LightItalic.otf \
+    Inter-Medium.otf \
+    Inter-MediumItalic.otf \
+    Inter-Regular.otf \
+    Inter-SemiBold.otf \
+    Inter-SemiBoldItalic.otf \
+    Inter-Thin.otf \
+    Inter-ThinItalic.otf \
+    Inter-V.otf \
     Theme.qml \
     imports/qmldir
