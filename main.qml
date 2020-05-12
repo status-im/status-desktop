@@ -550,7 +550,17 @@ ApplicationWindow {
                                         background: {}
                                     }
 
-
+                                    MouseArea {
+                                        id: mouseArea1
+                                        anchors.rightMargin: 50
+                                        anchors.fill: parent
+                                        onClicked : {
+                                            txtData.forceActiveFocus(Qt.MouseFocusReason)
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
 
                 }
