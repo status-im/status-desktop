@@ -256,11 +256,11 @@ RowLayout {
                                 height: 64
                                 color: ListView.isCurrentItem ? Theme.lightBlue : Theme.transparent
                                 anchors.right: parent.right
-                                anchors.rightMargin: 16
+                                anchors.rightMargin: Theme.padding
                                 anchors.top: applicationWindow.top
                                 anchors.topMargin: 0
                                 anchors.left: parent.left
-                                anchors.leftMargin: 16
+                                anchors.leftMargin: Theme.padding
                                 radius: 8
 
                                 MouseArea {
@@ -273,7 +273,7 @@ RowLayout {
                                     width: 40
                                     color: Theme.darkGrey
                                     anchors.left: parent.left
-                                    anchors.leftMargin: 16
+                                    anchors.leftMargin: Theme.padding
                                     anchors.top: parent.top
                                     anchors.topMargin: 12
                                     anchors.bottom: parent.bottom
@@ -287,28 +287,28 @@ RowLayout {
                                     font.weight: Font.Medium
                                     font.pixelSize: 15
                                     anchors.left: contactImage.right
-                                    anchors.leftMargin: 16
+                                    anchors.leftMargin: Theme.padding
                                     anchors.top: parent.top
-                                    anchors.topMargin: 10
+                                    anchors.topMargin: Theme.smallPadding
                                     color: "black"
                                 }
                                 Text {
                                     id: lastChatMessage
                                     text: "Chatting blah blah..."
                                     anchors.bottom: parent.bottom
-                                    anchors.bottomMargin: 10
+                                    anchors.bottomMargin: Theme.smallPadding
                                     font.pixelSize: 15
                                     anchors.left: contactImage.right
-                                    anchors.leftMargin: 16
+                                    anchors.leftMargin: Theme.padding
                                     color: Theme.darkGrey
                                 }
                                 Text {
                                     id: contactTime
                                     text: "12:22 AM"
                                     anchors.right: parent.right
-                                    anchors.rightMargin: 16
+                                    anchors.rightMargin: Theme.padding
                                     anchors.top: parent.top
-                                    anchors.topMargin: 10
+                                    anchors.topMargin: Theme.smallPadding
                                     font.pixelSize: 11
                                     color: Theme.darkGrey
                                 }
@@ -318,9 +318,9 @@ RowLayout {
                                     height: 22
                                     radius: 50
                                     anchors.bottom: parent.bottom
-                                    anchors.bottomMargin: 10
+                                    anchors.bottomMargin: Theme.smallPadding
                                     anchors.right: parent.right
-                                    anchors.rightMargin: 16
+                                    anchors.rightMargin: Theme.padding
                                     color: Theme.blue
                                     Text {
                                         id: contactNumberChats
@@ -345,23 +345,208 @@ RowLayout {
             }
 
             ColumnLayout {
+                anchors.right: parent.right
                 anchors.rightMargin: 0
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 0
+                anchors.top: parent.top
+                anchors.topMargin: 0
 
                 RowLayout {
+                    id: chatContainer
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+                    Rectangle {
+                        id: chatBox
+                        height: 140
+                        color: "#00000000"
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                        Layout.fillWidth: true
+                        border.color: "#00000000"
+
+                        Image {
+                            id: chatImage
+                            width: 30
+                            height: 30
+                            anchors.left: parent.left
+                            anchors.leftMargin: 16
+                            anchors.top: parent.top
+                            anchors.topMargin: 16
+                            fillMode: Image.PreserveAspectFit
+                            source: "img/placeholder-profile.png"
+                        }
+
+                        TextEdit {
+                            id: chatName
+                            text: qsTr("Slushy Welltodo Woodborer")
+                            anchors.top: parent.top
+                            anchors.topMargin: 22
+                            anchors.left: chatImage.right
+                            anchors.leftMargin: 16
+                            font.bold: true
+                            font.pixelSize: 14
+                            readOnly: true
+                            selectByMouse: true
+                        }
+
+                        TextEdit {
+                            id: chatText
+                            text: qsTr("I’m generally against putting too many rules on social interaction because it makes interaction anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue.")
+                            font.family: "Inter"
+                            wrapMode: Text.WordWrap
+                            anchors.right: parent.right
+                            anchors.rightMargin: 60
+                            anchors.left: chatName.left
+                            anchors.leftMargin: 0
+                            anchors.top: chatName.bottom
+                            anchors.topMargin: 16
+                            font.pixelSize: 14
+                            readOnly: true
+                            selectByMouse: true
+                        }
+
+                        TextEdit {
+                            id: chatTime
+                            color: Theme.darkGrey
+                            font.family: "Inter"
+                            text: qsTr("7:30 AM")
+                            anchors.bottom: parent.bottom
+                            anchors.bottomMargin: 16
+                            anchors.right: parent.right
+                            anchors.rightMargin: 16
+                            font.pixelSize: 10
+                            readOnly: true
+                            selectByMouse: true
+                        }
+                    }
+                }
+
+                RowLayout {
+                    id: separator
+                    height: 16
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    anchors.top: chatContainer.bottom
+                    anchors.topMargin: Theme.padding
+
+                    Item {
+                        id: separatorContent
+                        width: 200
+                        height: 16
+                        Layout.fillHeight: false
+                        Layout.fillWidth: true
+
+                        Rectangle {
+                            id: lineSeparator1
+                            height: 1
+                            color: "#00000000"
+                            border.color: "#eef2f5"
+                            anchors.top: parent.top
+                            anchors.topMargin: 8
+                            anchors.right: separatorText.left
+                            anchors.rightMargin: 14
+                            anchors.left: parent.left
+                            anchors.leftMargin: 16
+                        }
+
+                        Text {
+                            id: separatorText
+                            color: Theme.darkGrey
+                            text: qsTr("Yesterday")
+                            font.pixelSize: 12
+                            anchors.centerIn: parent
+                        }
+
+                        Rectangle {
+                            id: lineSeparator2
+                            height: 1
+                            color: "#00000000"
+                            anchors.right: parent.right
+                            anchors.rightMargin: 16
+                            anchors.left: separatorText.right
+                            border.color: "#eef2f5"
+                            anchors.top: parent.top
+                            anchors.leftMargin: 14
+                            anchors.topMargin: 8
+                        }
+                    }
+
+                }
+
+                RowLayout {
+                    id: resultContainer
                     Layout.fillHeight: true
                     TextArea { id: callResult; Layout.fillWidth: true; text: logic.callResult; readOnly: true }
                 }
 
                 RowLayout {
+                    id: chatInputContainer
+                    height: 70
                     Layout.bottomMargin: 20
                     Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
                     transformOrigin: Item.Bottom
-                    Label { text: "data2" }
-                    TextField { id: txtData; Layout.fillWidth: true; text: "" }
-                    Button {
-                        text: "Send"
-                        onClicked: logic.onSend(txtData.text)
-                        enabled: txtData.text !== ""
+                   anchors.bottom: parent.bottom
+                   anchors.bottomMargin: 0
+
+                   Item {
+                       id: element2
+                       width: 200
+                       height: 70
+                       Layout.fillWidth: true
+
+                       Rectangle {
+                           id: rectangle
+                           color: "#00000000"
+                           border.color: Theme.grey
+                           anchors.fill: parent
+
+                           Button {
+                               id: chatSendBtn
+                               x: 100
+                               width: 30
+                               height: 30
+                               text: "\u2191"
+                               font.bold: true
+                               font.pointSize: 12
+                               anchors.top: parent.top
+                               anchors.topMargin: 20
+                               anchors.right: parent.right
+                               anchors.rightMargin: 16
+                               onClicked: logic.onSend(txtData.text)
+                               enabled: txtData.text !== ""
+                               background: Rectangle {
+                                   color: parent.enabled ? Theme.blue : Theme.grey
+                                   radius: 50
+                               }
+                           }
+
+                           TextField {
+                               id: txtData
+                               text: ""
+                               leftPadding: 0
+                               padding: 0
+                               font.pixelSize: 14
+                               placeholderText: qsTr("Type a message...")
+                               anchors.right: chatSendBtn.left
+                               anchors.rightMargin: 16
+                               anchors.top: parent.top
+                               anchors.topMargin: 24
+                               anchors.left: parent.left
+                               anchors.leftMargin: 24
+                               background: {}
+                           }
+
+                           MouseArea {
+                               id: mouseArea1
+                               anchors.rightMargin: 50
+                               anchors.fill: parent
+                               onClicked : {
+                                   txtData.forceActiveFocus(Qt.MouseFocusReason)
+                               }
+                           }
+                       }
                     }
                 }
             }
@@ -382,6 +567,6 @@ RowLayout {
 
 /*##^##
 Designer {
-    D{i:0;height:770;width:1232}
+    D{i:0;formeditorZoom:0.75;height:770;width:1232}
 }
 ##^##*/
