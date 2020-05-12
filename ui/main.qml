@@ -12,6 +12,7 @@ ApplicationWindow {
     height: 770
     title: "Nim Status Client"
     visible: true
+    font.family: "Inter"
 
     SystemTrayIcon {
         visible: true
