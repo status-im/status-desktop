@@ -7,4 +7,4 @@ srcDir        = "src"
 bin           = "nim_status_client"
 
 [Deps]
-Requires: "nim >= 1.0.0, nimqml >= 0.7.0"
+Requires: "nim >= 1.0.0, nimqml >= 0.7.0, stint"

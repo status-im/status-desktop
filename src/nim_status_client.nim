@@ -4,11 +4,14 @@ import chats
 import json
 import state
 import status/utils
+import strformat
+import strutils
 
 import status/core as status
 import status/chat as status_chat
 import status/test as status_test
 import status/types as types
+import status/wallet as status_wallet
 
 proc mainProc() =
   # From QT docs:
@@ -33,6 +36,22 @@ proc mainProc() =
   status_test.setupNewAccount()
   discard status_test.addPeer("enode://2c8de3cbb27a3d30cbb5b3e003bc722b126f5aef82e2052aaef032ca94e0c7ad219e533ba88c70585ebd802de206693255335b100307645ab5170e88620d2a81@47.244.221.14:443")
   echo status.callPrivateRPC("{\"jsonrpc\":\"2.0\", \"method\":\"wakuext_requestMessages\", \"params\":[{\"topics\": [\"0x7998f3c8\"]}], \"id\": 1}")
+
+  # 1. get balance of an address
+  var balance = status_wallet.getBalance("0x0000000000000000000000000000000000000000")
+  echo(fmt"balance in hex: {balance}")
+
+  # 2. convert balance to eth
+  var eth_value = status_wallet.hex2Eth(balance)
+  echo(fmt"balance in eth: {eth_value}")
+
+  # 3. get usd price of 1 eth
+  var usd_eth_price = status_wallet.getPrice("ETH", "USD")
+  echo(fmt"usd_price: {usd_eth_price}")
+
+  # 4. convert balance to usd
+  var usd_balance = parseFloat(eth_value) * parseFloat(usd_eth_price)
+  echo(fmt"balance in usd: {usd_balance}")
 
   # result.accountResult = status.queryAccounts()
 
