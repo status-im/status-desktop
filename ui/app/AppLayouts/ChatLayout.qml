@@ -395,7 +395,10 @@ SplitView {
                         anchors.topMargin: 20
                         anchors.right: parent.right
                         anchors.rightMargin: 16
-                        onClicked: logic.onSend(txtData.text)
+                        onClicked: {
+                            logic.onSend(txtData.text)
+                            txtData.text = ""
+                        }
                         enabled: txtData.text !== ""
                         background: Rectangle {
                             color: parent.enabled ? Theme.blue : Theme.grey
@@ -416,6 +419,14 @@ SplitView {
                         anchors.topMargin: 24
                         anchors.left: parent.left
                         anchors.leftMargin: 24
+                        Keys.onEnterPressed: {
+                            logic.onSend(txtData.text)
+                            txtData.text = ""
+                        }
+                        Keys.onReturnPressed: {
+                            logic.onSend(txtData.text)
+                            txtData.text = ""
+                        }
                         background: Rectangle {
                             color: "#00000000"
                         }
