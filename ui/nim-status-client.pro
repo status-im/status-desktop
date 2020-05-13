@@ -50,6 +50,7 @@ DISTFILES += \
     Inter-V.otf \
     Theme.qml \
     app/AppLayouts/ChatLayout.qml \
+    app/AppLayouts/WalletLayout.qml \
     app/AppLayouts/qmldir \
     app/AppMain.qml \
     app/img/compass.svg \

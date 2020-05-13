@@ -8,6 +8,7 @@ QtObject {
     readonly property color blue: "#4360DF"
     readonly property color transparent: "#ffffff"
     readonly property color darkGrey: "#939BA1"
+    readonly property color lightBlueText: "#8f9fec"
 
     readonly property int padding: 16
     readonly property int smallPadding: 10
