@@ -141,6 +141,13 @@ RowLayout {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
         }
+
+        WalletLayout {
+            id: walletLayoutContainer
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.fillHeight: true
+        }
     }
 }
 
