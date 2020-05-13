@@ -1,5 +1,6 @@
 import NimQml
 import Tables
+import chat/core as chat
 
 type
   RoleNames {.pure.} = enum
@@ -18,11 +19,15 @@ QtObject:
 
   proc newChatsModel*(): ChatsModel =
     new(result, delete)
-    result.names = @["test", "test2"]
+    result.names = @[]
     result.setup
 
-  proc addNameTolist*(self: ChatsModel, name: string) =
-      self.names.add(name)
+  proc addNameTolist*(self: ChatsModel, chatId: string) {.slot.} =
+    chat.join(chatId)
+    self.beginInsertRows(newQModelIndex(), self.names.len, self.names.len)
+    self.names.add(chatId)
+    self.endInsertRows()
+  
 
   method rowCount(self: ChatsModel, index: QModelIndex = nil): int =
     return self.names.len

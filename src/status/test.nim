@@ -29,12 +29,6 @@ proc queryAccounts*(): string =
   echo response
   result = parseJson(response)["result"][0].getStr()
 
-
-proc subscribeToTest*() = 
-  loadFilters("test")
-  saveChat("test")
-  chatMessages("test")
-
 proc setupNewAccount*() =
   # Deleting directories
   recreateDir(datadir)

@@ -108,6 +108,13 @@ SplitView {
                         font.bold: true
                         font.pixelSize: 28
                     }
+
+                     MouseArea {
+                        anchors.fill: parent
+                        onClicked : {
+                            chatsModel.addNameTolist(searchText.text)
+                        }
+                    }
                 }
             }
 

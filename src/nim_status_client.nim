@@ -28,7 +28,6 @@ proc mainProc() =
   echo status.callPrivateRPC("{\"jsonrpc\":\"2.0\", \"method\":\"wakuext_requestMessages\", \"params\":[{\"topics\": [\"0x7998f3c8\"]}], \"id\": 1}")
 
   # result.accountResult = status.queryAccounts()
-  status_test.subscribeToTest()
 
   let logic = newApplicationView(app, status.callPrivateRPC)
   defer: logic.delete
@@ -49,11 +48,13 @@ proc mainProc() =
       chatsModel.addNameTolist(channel.name)
   )
 
+  status.startMessenger()
   appState.addChannel("test")
   appState.addChannel("test2")
 
   engine.setRootContextProperty("logic", logicVariant)
   engine.setRootContextProperty("chatsModel", chatsVariant)
+
   engine.load("../ui/main.qml")
 
   # Qt main event loop is entered here
