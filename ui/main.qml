@@ -1,10 +1,9 @@
 import QtQuick 2.3
-import QtQuick.Controls 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
-import "./onboarding" as Onboarding
-import "./app" as App
+import "./onboarding"
+import "./app"
 
 ApplicationWindow {
     id: applicationWindow
@@ -39,13 +38,13 @@ ApplicationWindow {
         anchors.fill: parent
         border.width: 0
 
-        Onboarding.Intro {
+        Intro {
             id: onboarding
             visible: !app.visible
             anchors.fill: parent
         }
 
-        App.AppMain {
+        AppMain {
             id: app
             // TODO: Set this to a logic result determining when we need to show the onboarding screens
             // Set to true to hide the onboarding screens manually
@@ -58,8 +57,4 @@ ApplicationWindow {
 }
 
 
-/*##^##
-Designer {
-    D{i:9;anchors_height:40;anchors_width:40}
-}
-##^##*/
+
