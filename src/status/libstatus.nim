@@ -1,3 +1,5 @@
+import types
+
 proc hashMessage*(p0: cstring): cstring {.importc: "HashMessage".}
 
 proc initKeystore*(keydir: cstring): cstring {.importc: "InitKeystore".}
@@ -15,7 +17,5 @@ proc callRPC*(inputJSON: cstring): cstring {.importc: "CallRPC".}
 proc callPrivateRPC*(inputJSON: cstring): cstring {.importc: "CallPrivateRPC".}
 
 proc addPeer*(peer: cstring): cstring {.importc: "AddPeer".}
-
-type SignalCallback* = proc(eventMessage: cstring): void
 
 proc setSignalEventCallback*(callback: SignalCallback) {.importc: "SetSignalEventCallback".}
