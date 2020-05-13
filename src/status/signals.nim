@@ -8,6 +8,8 @@ proc onSignal*(state: AppState): SignalCallback =
     let jsonSignal = ($p0).parseJson
     let signalType = $jsonSignal["type"].getStr
 
+    # TODO: ideally the signal would receive an object 
+    # formatted for easier usage
     case signalType:
       of "messages.new":
         state.nextSignal(SignalType.Message, $jsonSignal)
