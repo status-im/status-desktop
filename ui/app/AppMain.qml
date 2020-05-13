@@ -7,8 +7,6 @@ import "../imports"
 
 RowLayout {
     id: rowLayout
-    width: parent.height
-    height: parent.width
     Layout.fillHeight: true
     Layout.fillWidth: true
 
@@ -129,6 +127,7 @@ RowLayout {
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
         Layout.fillHeight: true
+        // Those anchors show a warning, but they are the only way to have QT Creator show correctly
         anchors.left: tabBar.right
         anchors.leftMargin: 0
         anchors.right: parent.right
@@ -136,21 +135,24 @@ RowLayout {
         currentIndex: tabBar.currentIndex
 
         SplitView {
-            id: splitView
+            id: chatView
             x: 0
             y: 0
             Layout.fillHeight: true
-            Layout.leftMargin: 0
             Layout.fillWidth: true
+            // Those anchors show a warning too, but whithout them, there is a gap on the right
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 0
 
             Item {
-                id: element1
+                id: contactsColumn
                 width: 300
                 height: parent.height
                 Layout.minimumWidth: 200
 
                 ColumnLayout {
-                    anchors.rightMargin: 0
                     anchors.fill: parent
 
                     Item {
@@ -340,6 +342,9 @@ RowLayout {
 
             ColumnLayout {
                 id: chatColumn
+                spacing: 0
+                anchors.left: contactsColumn.right
+                anchors.leftMargin: 0
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.bottom: parent.bottom
@@ -357,9 +362,9 @@ RowLayout {
                         id: chatBox
                         height: 140
                         color: "#00000000"
+                        border.color: "#00000000"
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                         Layout.fillWidth: true
-                        border.color: "#00000000"
 
                         Image {
                             id: chatImage
@@ -475,6 +480,12 @@ RowLayout {
                 }
 
                 RowLayout {
+                    id: accountResultContainer
+                    Layout.fillHeight: true
+                    TextArea { id: accountResult; Layout.fillWidth: true; text: logic.accountResult; readOnly: true }
+                }
+
+                RowLayout {
                     id: chatInputContainer
                     height: 70
                     Layout.fillWidth: true
@@ -543,18 +554,8 @@ RowLayout {
                         }
                     }
                 }
+
             }
-        }
-
-        ColumnLayout {
-            RowLayout {
-                Layout.fillHeight: true
-                TextArea { id: accountResult; Layout.fillWidth: true; text: logic.accountResult; readOnly: true }
-            }
-        }
-
-        Item {
-
         }
     }
 }
