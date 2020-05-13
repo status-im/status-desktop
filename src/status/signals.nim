@@ -14,6 +14,6 @@ var onSignal*: SignalCallback = proc(p0: cstring): void =
     of "messages.new":
       echo $p0
     else:
-      echo messageType  #TODO: do something
+      discard messageType  #TODO: do something
 
   tearDownForeignThreadGc()
