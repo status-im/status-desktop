@@ -1,7 +1,9 @@
 import NimQml
 import applicationView
 import chats
+import json
 import state
+import status/utils
 
 import status/core as status
 import status/test as status_test
@@ -29,7 +31,25 @@ proc mainProc() =
 
   # result.accountResult = status.queryAccounts()
 
-  let logic = newApplicationView(app, status.callPrivateRPC)
+  var sendMessage = proc (msg: string): string =
+    let payload = %* {
+      "jsonrpc": "2.0",
+      "id": 40,
+      "method": "sendChatMessage".prefix,
+      "params": [
+        {
+          "chatId": "test",
+          "text": msg,
+          "responseTo": nil,
+          "ensName": nil,
+          "sticker": nil,
+          "contentType": 1
+        }
+      ]
+    }
+    status.callPrivateRPC($payload)
+
+  let logic = newApplicationView(app, sendMessage)
   defer: logic.delete
 
   let logicVariant = newQVariant(logic)
