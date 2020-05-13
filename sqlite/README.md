@@ -1,6 +1,9 @@
 SQLCipher - Nim / NOTES
 ===
 
+### A SQLCipher wrapper is being implemented at https://github.com/status-im/nim-sqlcipher
+
+
 **Notes:**
 This is a experimental project to test how to use SQLCipher with Nim. I tried to use [c2nim](https://github.com/nim-lang/c2nim) to generate a small wrapper for SQLite using the header file generated during the SQLCipher compilation process but I wasn't successful. Someone please try using that software to see if it works for them
 
