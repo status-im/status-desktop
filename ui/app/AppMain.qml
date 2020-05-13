@@ -9,15 +9,15 @@ RowLayout {
     id: rowLayout
     width: parent.height
     height: parent.width
-    anchors.fill: parent
-    //        spacing: 50
+    Layout.fillHeight: true
+    Layout.fillWidth: true
 
     TabBar {
         id: tabBar
-        y: 0
-        width: 50
-        height: width *2 + spacing
-        Layout.preferredHeight: 0
+        width: 80
+        Layout.maximumWidth: 80
+        Layout.preferredWidth: 80
+        Layout.minimumWidth: 80
         currentIndex: 0
         topPadding: 57
         rightPadding: 19
@@ -26,11 +26,6 @@ RowLayout {
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
         Layout.fillHeight: true
         spacing: 5
-        Layout.fillWidth: true
-        Layout.minimumWidth: 80
-        Layout.preferredWidth: 80
-        Layout.maximumWidth: 80
-        Layout.minimumHeight: 0
         background: Rectangle {
             color: "#00000000"
             border.color: Theme.grey
@@ -130,13 +125,14 @@ RowLayout {
         }
     }
 
-
     StackLayout {
+        Layout.fillWidth: true
+        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+        Layout.fillHeight: true
         anchors.left: tabBar.right
         anchors.leftMargin: 0
         anchors.right: parent.right
         anchors.rightMargin: 0
-        Layout.fillWidth: true
         currentIndex: tabBar.currentIndex
 
         SplitView {
@@ -144,8 +140,6 @@ RowLayout {
             x: 0
             y: 0
             Layout.fillHeight: true
-            //            anchors.fill: parent
-            //            width: parent.width
             Layout.leftMargin: 0
             Layout.fillWidth: true
 
@@ -345,6 +339,7 @@ RowLayout {
             }
 
             ColumnLayout {
+                id: chatColumn
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.bottom: parent.bottom
@@ -428,8 +423,6 @@ RowLayout {
                     height: 16
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    anchors.top: chatContainer.bottom
-                    anchors.topMargin: Theme.padding
 
                     Item {
                         id: separatorContent
@@ -484,69 +477,70 @@ RowLayout {
                 RowLayout {
                     id: chatInputContainer
                     height: 70
-                    Layout.bottomMargin: 20
+                    Layout.fillWidth: true
+                    Layout.bottomMargin: 0
                     Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
                     transformOrigin: Item.Bottom
-                   anchors.bottom: parent.bottom
-                   anchors.bottomMargin: 0
 
-                   Item {
-                       id: element2
-                       width: 200
-                       height: 70
-                       Layout.fillWidth: true
+                    Item {
+                        id: element2
+                        width: 200
+                        height: 70
+                        Layout.fillWidth: true
 
-                       Rectangle {
-                           id: rectangle
-                           color: "#00000000"
-                           border.color: Theme.grey
-                           anchors.fill: parent
+                        Rectangle {
+                            id: rectangle
+                            color: "#00000000"
+                            border.color: Theme.grey
+                            anchors.fill: parent
 
-                           Button {
-                               id: chatSendBtn
-                               x: 100
-                               width: 30
-                               height: 30
-                               text: "\u2191"
-                               font.bold: true
-                               font.pointSize: 12
-                               anchors.top: parent.top
-                               anchors.topMargin: 20
-                               anchors.right: parent.right
-                               anchors.rightMargin: 16
-                               onClicked: logic.onSend(txtData.text)
-                               enabled: txtData.text !== ""
-                               background: Rectangle {
-                                   color: parent.enabled ? Theme.blue : Theme.grey
-                                   radius: 50
-                               }
-                           }
+                            Button {
+                                id: chatSendBtn
+                                x: 100
+                                width: 30
+                                height: 30
+                                text: "\u2191"
+                                font.bold: true
+                                font.pointSize: 12
+                                anchors.top: parent.top
+                                anchors.topMargin: 20
+                                anchors.right: parent.right
+                                anchors.rightMargin: 16
+                                onClicked: logic.onSend(txtData.text)
+                                enabled: txtData.text !== ""
+                                background: Rectangle {
+                                    color: parent.enabled ? Theme.blue : Theme.grey
+                                    radius: 50
+                                }
+                            }
 
-                           TextField {
-                               id: txtData
-                               text: ""
-                               leftPadding: 0
-                               padding: 0
-                               font.pixelSize: 14
-                               placeholderText: qsTr("Type a message...")
-                               anchors.right: chatSendBtn.left
-                               anchors.rightMargin: 16
-                               anchors.top: parent.top
-                               anchors.topMargin: 24
-                               anchors.left: parent.left
-                               anchors.leftMargin: 24
-                               background: {}
-                           }
+                            TextField {
+                                id: txtData
+                                text: ""
+                                leftPadding: 0
+                                padding: 0
+                                font.pixelSize: 14
+                                placeholderText: qsTr("Type a message...")
+                                anchors.right: chatSendBtn.left
+                                anchors.rightMargin: 16
+                                anchors.top: parent.top
+                                anchors.topMargin: 24
+                                anchors.left: parent.left
+                                anchors.leftMargin: 24
+                                background: Rectangle {
+                                    color: "#00000000"
+                                }
+                            }
 
-                           MouseArea {
-                               id: mouseArea1
-                               anchors.rightMargin: 50
-                               anchors.fill: parent
-                               onClicked : {
-                                   txtData.forceActiveFocus(Qt.MouseFocusReason)
-                               }
-                           }
-                       }
+                            MouseArea {
+                                id: mouseArea1
+                                anchors.rightMargin: 50
+                                anchors.fill: parent
+                                onClicked : {
+                                    txtData.forceActiveFocus(Qt.MouseFocusReason)
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -567,6 +561,6 @@ RowLayout {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.75;height:770;width:1232}
+    D{i:0;formeditorZoom:0.5;height:770;width:1232}
 }
 ##^##*/
