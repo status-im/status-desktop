@@ -8,6 +8,7 @@ import status/utils
 import status/core as status
 import status/chat as status_chat
 import status/test as status_test
+import status/types as types
 
 proc mainProc() =
   # From QT docs:
@@ -18,13 +19,16 @@ proc mainProc() =
   var app = newQApplication()
   defer: app.delete() # Defer will run this just before mainProc() function ends
 
+  var appState = state.newAppState()
+  echo appState.title
+
   var chatsModel = newChatsModel();
   defer: chatsModel.delete
 
   var engine = newQQmlApplicationEngine()
   defer: engine.delete()
 
-  status.init()
+  status.init(appState)
 
   status_test.setupNewAccount()
   discard status_test.addPeer("enode://2c8de3cbb27a3d30cbb5b3e003bc722b126f5aef82e2052aaef032ca94e0c7ad219e533ba88c70585ebd802de206693255335b100307645ab5170e88620d2a81@47.244.221.14:443")
@@ -44,8 +48,7 @@ proc mainProc() =
   let chatsVariant = newQVariant(chatsModel)
   defer: chatsVariant.delete
 
-  var appState = state.newAppState()
-  echo appState.title
+
 
   appState.subscribe(proc () =
     chatsModel.names = @[]
@@ -55,6 +58,7 @@ proc mainProc() =
   )
 
   status.startMessenger()
+
   appState.addChannel("test")
   appState.addChannel("test2")
 
@@ -62,10 +66,23 @@ proc mainProc() =
   engine.setRootContextProperty("chatsModel", chatsVariant)
 
   engine.load("../ui/main.qml")
+  
+  # EXAMPLE: this will be triggered once a message is received
+  appState.onSignal(SignalType.Message, proc(myMessage: string): void =
+    echo "I received a message: ", myMessage
+  );
 
+  # Handle signals as part of the state
+  var signalWorker: Thread[AppState]
+  signalWorker.createThread(proc(s:AppState) = s.processSignals, appState)
+  defer: signalWorker.joinThread()
+  
+  
   # Qt main event loop is entered here
   # The termination of the loop will be performed when exit() or quit() is called
   app.exec()
+
+
 
 when isMainModule:
   mainProc()
