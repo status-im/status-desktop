@@ -58,3 +58,21 @@ proc chatMessages*(chatId: string) =
   }
   discard $libstatus.callPrivateRPC($payload)
   # TODO: create template for error handling
+
+proc sendPublicChatMessage*(chatId: string, msg: string): string =
+  let payload = %* {
+    "jsonrpc": "2.0",
+    "id": 40,
+    "method": "sendChatMessage".prefix,
+    "params": [
+      {
+        "chatId": chatId,
+        "text": msg,
+        "responseTo": nil,
+        "ensName": nil,
+        "sticker": nil,
+        "contentType": 1
+      }
+    ]
+  }
+  $libstatus.callPrivateRPC($payload)

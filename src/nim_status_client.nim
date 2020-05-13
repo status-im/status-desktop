@@ -6,6 +6,7 @@ import state
 import status/utils
 
 import status/core as status
+import status/chat as status_chat
 import status/test as status_test
 
 proc mainProc() =
@@ -32,22 +33,7 @@ proc mainProc() =
   # result.accountResult = status.queryAccounts()
 
   var sendMessage = proc (msg: string): string =
-    let payload = %* {
-      "jsonrpc": "2.0",
-      "id": 40,
-      "method": "sendChatMessage".prefix,
-      "params": [
-        {
-          "chatId": "test",
-          "text": msg,
-          "responseTo": nil,
-          "ensName": nil,
-          "sticker": nil,
-          "contentType": 1
-        }
-      ]
-    }
-    status.callPrivateRPC($payload)
+    status_chat.sendPublicChatMessage("test", msg)
 
   let logic = newApplicationView(app, sendMessage)
   defer: logic.delete
