@@ -28,7 +28,6 @@ QtObject:
     self.names.add(chatId)
     self.endInsertRows()
   
-
   method rowCount(self: ChatsModel, index: QModelIndex = nil): int =
     return self.names.len
 

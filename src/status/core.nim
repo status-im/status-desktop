@@ -2,12 +2,13 @@ import libstatus
 import signals
 import types
 import chat
+import "../state"
 
 proc setSignalHandler(signalHandler: SignalCallback) =
   libstatus.setSignalEventCallback(signalHandler)
 
-proc init*() =
-  setSignalHandler(onSignal)
+proc init*(state: AppState) =
+  setSignalHandler(onSignal(state))
 
 proc startMessenger*() =
   chat.startMessenger()
