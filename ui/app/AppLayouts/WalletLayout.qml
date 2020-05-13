@@ -218,6 +218,89 @@ SplitView {
                 color: "#ffffff"
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+
+                Text {
+                    id: assetsTitle
+                    color: Theme.darkGrey
+                    text: qsTr("Assets")
+                    anchors.left: parent.left
+                    anchors.leftMargin: Theme.padding
+                    anchors.top: parent.top
+                    anchors.topMargin: Theme.smallPadding
+                    font.pixelSize: 14
+                }
+
+                Component {
+                    id: assetViewDelegate
+
+                    Item {
+                        id: element6
+                        height: 56
+                        anchors.right: parent.right
+                        anchors.rightMargin: 0
+                        anchors.left: parent.left
+                        anchors.leftMargin: 0
+
+                        Rectangle {
+                            width: 36
+                            height: 36
+                            color: Theme.blue
+                            radius: 50
+                            anchors.left: parent.left
+                            anchors.leftMargin: Theme.padding
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+                        Text {
+                            id: assetValue
+                            text: value
+                            anchors.verticalCenter: parent.verticalCenter
+                            font.pixelSize: 14
+                            font.strikeout: false
+                            anchors.left: parent.left
+                            anchors.leftMargin: 72
+                        }
+                        Text {
+                            id: assetSymbol
+                            text: symbol
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: Theme.darkGrey
+                            font.pixelSize: 14
+                            anchors.right: assetFiatValue.left
+                            anchors.rightMargin: 10
+                        }
+                        Text {
+                            id: assetFiatValue
+                            color: Theme.darkGrey
+                            text: fiatValue
+                            anchors.verticalCenter: parent.verticalCenter
+                            font.pixelSize: 14
+                            anchors.right: parent.right
+                            anchors.rightMargin: Theme.padding
+                        }
+                    }
+                }
+
+                // Delete this when we have a real model
+                ListModel {
+                    id: exampleAssets
+                    ListElement {
+                        name: "Ethereum"
+                        symbol: "ETH"
+                        value: "0.4564234124124..."
+                        fiatValue: "$268.30"
+                        image: ""
+                    }
+                }
+
+                ListView {
+                    id: listView
+                    anchors.topMargin: 36
+                    anchors.fill: parent
+                    // Change this to the real model
+                    model: exampleAssets
+                    delegate: assetViewDelegate
+                }
             }
         }
     }
@@ -281,12 +364,10 @@ SplitView {
                 anchors.top: parent.top
             }
         }
-
     }
 }
 /*##^##
 Designer {
-    D{i:0;autoSize:true;formeditorZoom:0.75;height:770;width:1152}D{i:4;anchors_x:140;anchors_y:93}
-D{i:8;anchors_width:240}
+    D{i:0;autoSize:true;height:770;width:1152}D{i:4;anchors_x:140;anchors_y:93}D{i:8;anchors_width:240}
 }
 ##^##*/
