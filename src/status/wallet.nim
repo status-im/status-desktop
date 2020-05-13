@@ -1,4 +1,4 @@
-import libstatus
+import core as status
 import json
 import utils
 import httpclient, json
@@ -23,7 +23,7 @@ proc getBalance*(address: string): string =
         "latest"
     ]
   }
-  parseJson($libstatus.callPrivateRPC($payload))["result"].str
+  parseJson(status.callPrivateRPC($payload))["result"].str
 
 proc hex2Eth*(input: string): string =
   var value = fromHex(Stuint[256], input)
