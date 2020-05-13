@@ -12,6 +12,7 @@ Rectangle {
     radius: 50
 
     Image {
+        id: roundedIconImage
         width: 12
         height: 12
         anchors.horizontalCenter: parent.horizontalCenter
