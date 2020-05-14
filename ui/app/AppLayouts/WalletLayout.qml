@@ -6,7 +6,7 @@ import Qt.labs.platform 1.1
 import "../../imports"
 import "../../shared"
 
-SplitView {
+Item {
     id: walletView
     x: 0
     y: 0
@@ -19,8 +19,10 @@ SplitView {
     anchors.leftMargin: 0
 
     ColumnLayout {
+        readonly property int w: 340
+
         id: walletInfoContainer
-        width: 340
+        width: w
         spacing: 0
         anchors.left: parent.left
         anchors.leftMargin: 0
@@ -31,15 +33,14 @@ SplitView {
 
         RowLayout {
             id: walletHeader
-            height: 300
+            height: 375
             Layout.fillWidth: true
+            width: walletInfoContainer.w
 
             Rectangle {
                 id: walletHeaderContent
-                width: 200
-                height: 200
                 color: Theme.blue
-                Layout.fillHeight: true
+                height: 375
                 Layout.fillWidth: true
 
                 Item {
@@ -84,33 +85,29 @@ SplitView {
                 }
 
                 TabBar {
+                    readonly property int btnHeight: 56
+
                     id: walletScreenButtons
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
-                    anchors.left: parent.left
-                    anchors.leftMargin: 0
+                    width: walletInfoContainer.w
+                    height: btnHeight*3
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 0
                     currentIndex: 0
+                    spacing: 0
                     background: Rectangle {
                         color: "#00000000"
                     }
 
                     TabButton {
                         id: sendTabButton
-                        height: 56
+                        width: walletInfoContainer.w
+                        height: walletScreenButtons.btnHeight
                         text: ""
-                        anchors.bottom: depositTabButton.top
-                        Layout.fillWidth: true
-                        anchors.bottomMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
+                        anchors.top: parent.top
+                        anchors.topMargin: 0
                         background: Rectangle {
                             color: parent.checked ? Theme.darkBlue : Theme.transparent
                         }
-
                         Text {
                             id: element
                             color: "#ffffff"
@@ -132,16 +129,16 @@ SplitView {
                             bg: "#19ffffff"
                         }
                     }
+
                     TabButton {
                         id: depositTabButton
-                        height: 56
+                        width: walletInfoContainer.w
+                        height: walletScreenButtons.btnHeight
                         text: ""
-                        anchors.bottom: txHistoryTabButton.top
-                        anchors.bottomMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
                         anchors.left: parent.left
                         anchors.leftMargin: 0
+                        anchors.topMargin: 0
+                        anchors.top: sendTabButton.bottom
                         background: Rectangle {
                             color: parent.checked ? Theme.darkBlue : Theme.transparent
                         }
@@ -167,20 +164,19 @@ SplitView {
                             bg: "#19ffffff"
                         }
                     }
+
                     TabButton {
                         id: txHistoryTabButton
-                        height: 56
+                        width: walletInfoContainer.w
+                        height: walletScreenButtons.btnHeight
                         text: ""
-                        anchors.bottom: parent.bottom
-                        anchors.bottomMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
                         anchors.left: parent.left
                         anchors.leftMargin: 0
+                        anchors.topMargin: 0
+                        anchors.top: depositTabButton.bottom
                         background: Rectangle {
                             color: parent.checked ? Theme.darkBlue : Theme.transparent
                         }
-
                         Text {
                             id: element3
                             color: "#ffffff"
@@ -307,6 +303,14 @@ SplitView {
 
     StackLayout {
         id: walletContainer
+        anchors.top: parent.top
+        anchors.topMargin: 0
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
+        anchors.right: parent.right
+        anchors.rightMargin: 0
+        anchors.left: walletInfoContainer.right
+        anchors.leftMargin: 0
         currentIndex: walletScreenButtons.currentIndex
 
         Item {
@@ -368,6 +372,6 @@ SplitView {
 }
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:770;width:1152}D{i:4;anchors_x:140;anchors_y:93}D{i:8;anchors_width:240}
+    D{i:0;autoSize:true;formeditorZoom:0.75;height:770;width:1152}D{i:10;anchors_width:340}
 }
 ##^##*/
