@@ -72,7 +72,7 @@ SplitView {
                         anchors.leftMargin: 10
                         anchors.verticalCenter: parent.verticalCenter
                         fillMode: Image.PreserveAspectFit
-                        source: "img/search.svg"
+                        source: "../img/search.svg"
                     }
 
                     MouseArea {
@@ -253,7 +253,7 @@ SplitView {
                     anchors.top: parent.top
                     anchors.topMargin: 16
                     fillMode: Image.PreserveAspectFit
-                    source: "img/placeholder-profile.png"
+                    source: "../img/placeholder-profile.png"
                 }
 
                 TextEdit {

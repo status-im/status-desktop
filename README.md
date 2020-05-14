@@ -52,10 +52,10 @@ Copy `libstatus.a` to the `./lib` folder. Can be obtained from `status-react/res
 
 ### 6. Install nim dependencies
 
-Ignore errors about `nim_status_client` failing to build.
+Use `-d` to only install dependencies and not build afterwards.
 
 ```
-nimble install
+nimble install -d
 ```
 
 ### 7. Build `nim-status-client`
