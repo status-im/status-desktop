@@ -224,11 +224,11 @@ ColumnLayout {
                     anchors.left: parent.left
                     anchors.leftMargin: 0
 
-                    Rectangle {
+                    Image {
+                        id: assetInfoContainer
                         width: 36
                         height: 36
-                        color: Theme.blue
-                        radius: 50
+                        source: image
                         anchors.left: parent.left
                         anchors.leftMargin: Theme.padding
                         anchors.verticalCenter: parent.verticalCenter

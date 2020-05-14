@@ -92,7 +92,8 @@ proc mainProc() =
   engine.setRootContextProperty("chatsModel", chatsVariant)
   engine.setRootContextProperty("assetsModel", assetsVariant)
 
-  assetsModel.addAssetToList("Ethereum", "ETH", fmt"{eth_value:.6}", "$" & fmt"{usd_balance:.6}")
+  let symbol = "ETH"
+  assetsModel.addAssetToList("Ethereum", symbol, fmt"{eth_value:.6}", "$" & fmt"{usd_balance:.6}", fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
 
   engine.load("../ui/main.qml")
   

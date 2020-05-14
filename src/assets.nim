@@ -32,13 +32,13 @@ QtObject:
     result.assets = @[]
     result.setup
 
-  proc addAssetToList*(self: AssetsModel, name: string, symbol: string, value: string, fiatValue: string) {.slot.} =
+  proc addAssetToList*(self: AssetsModel, name: string, symbol: string, value: string, fiatValue: string, image: string) {.slot.} =
     self.beginInsertRows(newQModelIndex(), self.assets.len, self.assets.len)
     self.assets.add(Asset(name : name,
                           symbol : symbol,
                           value : value,
                           fiatValue: fiatValue,
-                          image: ""))
+                          image: image))
     self.endInsertRows()
   
   method rowCount(self: AssetsModel, index: QModelIndex = nil): int =
