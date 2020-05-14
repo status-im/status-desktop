@@ -236,69 +236,136 @@ SplitView {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
-            Rectangle {
-                id: chatBox
-                height: 140
-                color: "#00000000"
-                border.color: "#00000000"
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                Layout.fillWidth: true
+            Component {
+                id: chatLogViewDelegate
+                Rectangle {
+                    id: chatBox
+                    height: 140
+                    color: "#00000000"
+                    border.color: "#00000000"
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.fillWidth: true
+                    width: chatLogView.width
 
-                Image {
-                    id: chatImage
-                    width: 30
-                    height: 30
-                    anchors.left: parent.left
-                    anchors.leftMargin: 16
-                    anchors.top: parent.top
-                    anchors.topMargin: 16
-                    fillMode: Image.PreserveAspectFit
-                    source: "../img/placeholder-profile.png"
-                }
+                    Image {
+                        id: chatImage
+                        width: 30
+                        height: 30
+                        anchors.left: parent.left
+                        anchors.leftMargin: 16
+                        anchors.top: parent.top
+                        anchors.topMargin: 16
+                        fillMode: Image.PreserveAspectFit
+                        source: "../img/placeholder-profile.png"
+                    }
 
-                TextEdit {
-                    id: chatName
-                    text: qsTr("Slushy Welltodo Woodborer")
-                    anchors.top: parent.top
-                    anchors.topMargin: 22
-                    anchors.left: chatImage.right
-                    anchors.leftMargin: 16
-                    font.bold: true
-                    font.pixelSize: 14
-                    readOnly: true
-                    selectByMouse: true
-                }
+                    TextEdit {
+                        id: chatName
+                        text: username
+                        anchors.top: parent.top
+                        anchors.topMargin: 22
+                        anchors.left: chatImage.right
+                        anchors.leftMargin: 16
+                        font.bold: true
+                        font.pixelSize: 14
+                        readOnly: true
+                        wrapMode: Text.WordWrap
+                        selectByMouse: true
+                    }
 
-                TextEdit {
-                    id: chatText
-                    text: qsTr("I’m generally against putting too many rules on social interaction because it makes interaction anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue.")
-                    font.family: "Inter"
-                    wrapMode: Text.WordWrap
-                    anchors.right: parent.right
-                    anchors.rightMargin: 60
-                    anchors.left: chatName.left
-                    anchors.leftMargin: 0
-                    anchors.top: chatName.bottom
-                    anchors.topMargin: 16
-                    font.pixelSize: 14
-                    readOnly: true
-                    selectByMouse: true
-                }
+                    TextEdit {
+                        id: chatText
+                        text: message
+                        font.family: "Inter"
+                        wrapMode: Text.WordWrap
+                        anchors.right: parent.right
+                        anchors.rightMargin: 60
+                        anchors.left: chatName.left
+                        anchors.leftMargin: 0
+                        anchors.top: chatName.bottom
+                        anchors.topMargin: 16
+                        font.pixelSize: 14
+                        readOnly: true
+                        selectByMouse: true
+                        Layout.fillWidth: true
+                    }
 
-                TextEdit {
-                    id: chatTime
-                    color: Theme.darkGrey
-                    font.family: "Inter"
-                    text: qsTr("7:30 AM")
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 16
-                    anchors.right: parent.right
-                    anchors.rightMargin: 16
-                    font.pixelSize: 10
-                    readOnly: true
-                    selectByMouse: true
+                    TextEdit {
+                        id: chatTime
+                        color: Theme.darkGrey
+                        font.family: "Inter"
+                        text: timestamp
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 16
+                        anchors.right: parent.right
+                        anchors.rightMargin: 16
+                        font.pixelSize: 10
+                        readOnly: true
+                        selectByMouse: true
+                    }
                 }
             }
+
+//            ScrollView {
+//                id: chatScrollView
+//                anchors.fill: parent
+//                Layout.fillWidth: true
+//                Layout.fillHeight: true
+            ListView {
+                id: chatLogView
+//                anchors.topMargin: 24
+                anchors.fill: parent
+//                model: chatLogModel
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                model: ListModel {
+                    ListElement {
+                        username: "Bill Smith"
+                        message: "First Message - I’m generally against putting too many rules on social interaction because it makes interaction anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
+                        timestamp: "7:30 AM"
+                    }
+                    ListElement {
+                        username: qsTr("Slushy Welltodo Woodborer")
+                        message: "Lorem ipsum ion anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
+                        timestamp: "7:31 AM"
+                    }
+                    ListElement {
+                        username: "Bill Smith"
+                        message: "I’m generally against putting too many rules on social interaction because it makes interaction anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
+                        timestamp: "7:32 AM"
+                    }
+                    ListElement {
+                        username: qsTr("Slushy Welltodo Woodborer")
+                        message: "Lorem ipsum ion anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
+                        timestamp: "7:33 AM"
+                    }
+                    ListElement {
+                        username: "Bill Smith"
+                        message: "I’m generally against putting too many rules on social interaction because it makes interaction anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
+                        timestamp: "7:34 AM"
+                    }
+                    ListElement {
+                        username: qsTr("Slushy Welltodo Woodborer")
+                        message: "Lorem ipsum ion anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
+                        timestamp: "7:35 AM"
+                    }
+                    ListElement {
+                        username: "Bill Smith"
+                        message: "I’m generally against putting too many rules on social interaction because it makes interaction anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
+                        timestamp: "7:36 AM"
+                    }
+                    ListElement {
+                        username: qsTr("Slushy Welltodo Woodborer")
+                        message: "Last Message - Lorem ipsum ion anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
+                        timestamp: "7:36 AM"
+                    }
+                }
+                delegate: chatLogViewDelegate
+                onCountChanged: {
+                    chatLogView.positionViewAtEnd()
+                }
+            }
+//            }
         }
 
 //        RowLayout {
@@ -435,6 +502,6 @@ SplitView {
 }
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.5;height:770;width:1152}
+    D{i:0;height:770;width:1152}
 }
 ##^##*/
