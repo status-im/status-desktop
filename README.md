@@ -47,7 +47,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/dotherside/build/lib
 
 ### 5. Copy libstatus to repo
 
-Copy `libstatus.a` to the root folder. Can be obtained from `status-react/result` by executing `make status-go-desktop`.
+Copy `libstatus.a` to the `./lib` folder. Can be obtained from `status-react/result` by executing `make status-go-desktop`.
 **macos:** rename `libstatus.a` to `libstatus.dylib` _before_ copying over. Alternatively, modify `desktop/default.nix` to output `libstatus.dylib` before copying over.
 
 ### 6. Install nim dependencies
