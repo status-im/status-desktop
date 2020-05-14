@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Nim Status Client
+Exec=nim %F
+Icon=status
+Comment=Hello World
+Terminal=true
+Categories=Network;
