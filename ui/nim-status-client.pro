@@ -79,6 +79,5 @@ DISTFILES += \
     onboarding/img/wallet@2x.jpg \
     onboarding/img/wallet@3x.jpg \
     onboarding/qmldir \
-    shared/Image.qml \
     shared/RoundedIcon.qml \
     shared/qmldir
