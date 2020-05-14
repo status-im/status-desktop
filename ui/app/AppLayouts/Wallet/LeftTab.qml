@@ -193,13 +193,11 @@ ColumnLayout {
 
     RowLayout {
         id: assetInfoContainer
-        width: 100
-        height: 100
+        Layout.fillHeight: true
+        Layout.fillWidth: true
 
         Rectangle {
             id: walletSendBg
-            width: 200
-            height: 200
             color: "#ffffff"
             Layout.fillHeight: true
             Layout.fillWidth: true
@@ -266,26 +264,19 @@ ColumnLayout {
                 }
             }
 
-            // Delete this when we have a real model
-            ListModel {
-                id: exampleAssets
-                ListElement {
-                    name: "Ethereum"
-                    symbol: "ETH"
-                    value: "0.4564234124124..."
-                    fiatValue: "$268.30"
-                    image: ""
-                }
-            }
-
             ListView {
                 id: listView
                 anchors.topMargin: 36
                 anchors.fill: parent
-                // Change this to the real model
-                model: exampleAssets
+                model: assetsModel
                 delegate: assetViewDelegate
             }
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:0.8999999761581421;height:770;width:340}
+}
+##^##*/

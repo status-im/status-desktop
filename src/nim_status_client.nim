@@ -1,6 +1,7 @@
 import NimQml
 import applicationView
 import chats
+import assets
 import json
 import state
 import status/utils
@@ -27,6 +28,9 @@ proc mainProc() =
 
   var chatsModel = newChatsModel();
   defer: chatsModel.delete
+
+  var assetsModel = newAssetsModel();
+  defer: assetsModel.delete
 
   var engine = newQQmlApplicationEngine()
   defer: engine.delete()
@@ -76,6 +80,9 @@ proc mainProc() =
       chatsModel.addNameTolist(channel.name)
   )
 
+  let assetsVariant = newQVariant(assetsModel)
+  defer: chatsVariant.delete
+
   status.startMessenger()
 
   appState.addChannel("test")
@@ -83,6 +90,9 @@ proc mainProc() =
 
   engine.setRootContextProperty("logic", logicVariant)
   engine.setRootContextProperty("chatsModel", chatsVariant)
+  engine.setRootContextProperty("assetsModel", assetsVariant)
+
+  assetsModel.addAssetToList("Ethereum", "ETH", fmt"{eth_value:.6}", "$" & fmt"{usd_balance:.6}")
 
   engine.load("../ui/main.qml")
   
