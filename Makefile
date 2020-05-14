@@ -59,6 +59,12 @@ deps: | deps-common
 
 update: | update-common
 
+DEPLOYQT := linuxdeployqt-continuous-x86_64.AppImage
+
+$(DEPLOYQT):
+	wget https://github.com/probonopd/linuxdeployqt/releases/download/continuous/$(DEPLOYQT)
+	chmod +x $(DEPLOYQT)
+
 DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
 
 $(DOTHERSIDE): | deps
@@ -69,15 +75,37 @@ $(DOTHERSIDE): | deps
 		cmake -DCMAKE_BUILD_TYPE=Release .. $(HANDLE_OUTPUT) && \
 		$(MAKE) # IF WE WANT TO USE LIBDOTHERSIDE AS STATIC LIBRARY, USE `$(MAKE) DOtherSideStatic` INSTEAD
 
-build-linux: $(DOTHERSIDE) src/nim_status_client.nim | deps
-	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c -L:lib/libstatus.a -d:ssl -L:-lm -L:-Lvendor/DOtherSide/build/lib/ $(NIM_PARAMS) --outdir:./bin src/nim_status_client.nim
+STATUSGO := vendor/status-go/build/bin/libstatus.a
 
-build-macos: $(DOTHERSIDE) src/nim_status_client.nim | deps
+$(STATUSGO): | deps
+	echo -e $(BUILD_MSG) "status-go"
+	+ cd vendor/status-go && \
+	  $(MAKE) setup-dev && \
+	  $(MAKE) statusgo-library
+
+build-linux: $(DOTHERSIDE) $(STATUSGO) src/nim_status_client.nim | deps
 	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c -L:lib/libstatus.a -d:ssl -L:-lm -L:"-framework Foundation -framework Security -framework IOKit -framework CoreServices" -L:-Lvendor/DOtherSide/build/lib/ $(NIM_PARAMS) --outdir:./bin src/nim_status_client.nim
+		$(ENV_SCRIPT) nim c -L:$(STATUSGO) -d:ssl -L:-lm -L:-Lvendor/DOtherSide/build/lib/ $(NIM_PARAMS) --outdir:./bin src/nim_status_client.nim
+
+build-macos: $(DOTHERSIDE) $(STATUSGO) src/nim_status_client.nim | deps
+	echo -e $(BUILD_MSG) "$@" && \
+		$(ENV_SCRIPT) nim c -L:$(STATUSGO) -d:ssl -L:-lm -L:"-framework Foundation -framework Security -framework IOKit -framework CoreServices" -L:-Lvendor/DOtherSide/build/lib/ $(NIM_PARAMS) --outdir:./bin src/nim_status_client.nim
+
+APPIMAGE := NimStatusClient-x86_64.AppImage
+
+$(APPIMAGE): $(DEFAULT_TARGET) $(DEPLOYQT) nim-status.desktop
+	rm -rf tmp/dist
+	mkdir -p tmp/dist/usr/bin
+	cp bin/nim_status_client tmp/dist/usr/bin
+	cp nim-status.desktop tmp/dist/.
+	cp status.svg tmp/dist/status.svg
+	cp -R ui tmp/dist/usr/.
+	echo -e $(BUILD_MSG) "AppImage"
+	./$(DEPLOYQT) tmp/dist/nim-status.desktop -no-translations -no-copy-copyright-files -appimage
+
+appimage: $(APPIMAGE)
 
 clean: | clean-common
-	rm -rf vendor/DOtherSide/build tmp/dist
+	rm -rf $(APPIMAGE) bin/* vendor/DOtherSide/build tmp/dist vendor/status-go/build/bin
 
 endif # "variables.mk" was not included

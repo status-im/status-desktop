@@ -2,17 +2,8 @@
 
 Experiments calling status-go from nim, inspired in [nim-stratus](https://github.com/status-im/nim-stratus) by [@arnetheduck](https://github.com/arnetheduck)
 
-### 1. Install nim 1.2.0
 
-```
-# linux
-apt-get install nim
-
-# macos
-brew install nim
-```
-
-### 2. Install QT, and add it to the PATH
+### 1. Install QT, and add it to the PATH
 
 ```
 # Linux
@@ -22,34 +13,24 @@ export PATH=$PATH:/path/to/Qt/5.14.2/gcc_64/bin
 export PATH=$PATH:/path/to/Qt/5.14.2/clang_64/bin
 ```
 
-### 3. Clone the repo
+### 2. Clone the repo and build `nim-status-client`
 ```
-git clone https://github.com/status-im/nim-status-client/ --recurse-submodules
-```
-
-### 4. Copy libstatus to repo
-
-Copy `libstatus.a` to the `./lib` folder. Can be obtained from `status-react/result` by executing `make status-go-desktop`.
-**macos:** rename `libstatus.a` to `libstatus.dylib` _before_ copying over. Alternatively, modify `desktop/default.nix` to output `libstatus.dylib` before copying over.
-
-### 5. Build `nim-status-client`
-
-```
+git clone https://github.com/status-im/nim-status-client/
 make
 ```
 
-### 6. Setup Library Path
+### 3. Setup Library Path
 ```
 export LD_LIBRARY_PATH=vendor/DOtherSide/build/lib/
 ```
 
-### 7. Run the app
+### 4. Run the app
 
 ```
 ./bin/nim_status_client
 ```
 
-### 8. "Cold" reload using VSCode
+### 5. "Cold" reload using VSCode
 
 We can setup a "cold" reload, whereby the app will be rebuilt and restarted when changes in the source are saved. This will not save state, as the app will be restarted, but it will save us some time from manually restarting the app. We can handily force an app rebuild/relaunch with the shortcut `Cmd+Shift+b` (execute the default build task, which we'll setup below).
 
