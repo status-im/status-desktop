@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Nim Status Client
-Exec=nim %F
+Exec=nim_status_client
 Icon=status
 Comment=Hello World
 Terminal=true

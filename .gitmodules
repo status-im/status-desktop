@@ -16,3 +16,6 @@
 [submodule "vendor/nim-stew"]
 	path = vendor/nim-stew
 	url = https://github.com/status-im/nim-stew/
+[submodule "vendor/status-go"]
+	path = vendor/status-go
+	url = https://github.com/status-im/status-go
