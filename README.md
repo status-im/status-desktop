@@ -22,59 +22,34 @@ export PATH=$PATH:/path/to/Qt/5.14.2/gcc_64/bin
 export PATH=$PATH:/path/to/Qt/5.14.2/clang_64/bin
 ```
 
-### 3. Clone and build DOtherside
-
-For Linux:
-
+### 3. Clone the repo
 ```
-sudo apt-get install build-essential libgl1-mesa-dev
-sudo apt-get install doxygen
+git clone https://github.com/status-im/nim-status-client/ --recurse-submodules
 ```
 
-```
-git clone https://github.com/filcuc/DOtherSide
-cd DOtherSide
-mkdir build && cd build
-cmake ..
-make
-```
-
-### 4. Setup Library Path
-
-```
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/dotherside/build/lib
-```
-
-### 5. Copy libstatus to repo
+### 4. Copy libstatus to repo
 
 Copy `libstatus.a` to the `./lib` folder. Can be obtained from `status-react/result` by executing `make status-go-desktop`.
 **macos:** rename `libstatus.a` to `libstatus.dylib` _before_ copying over. Alternatively, modify `desktop/default.nix` to output `libstatus.dylib` before copying over.
 
-### 6. Install nim dependencies
-
-Use `-d` to only install dependencies and not build afterwards.
+### 5. Build `nim-status-client`
 
 ```
-nimble install -d
+make
 ```
 
-### 7. Build `nim-status-client`
-
+### 6. Setup Library Path
 ```
-# linux
-make build
-
-# macos
-make build-osx
+export LD_LIBRARY_PATH=vendor/DOtherSide/build/lib/
 ```
 
-### 8. Run the app
+### 7. Run the app
 
 ```
 ./bin/nim_status_client
 ```
 
-### 9. "Cold" reload using VSCode
+### 8. "Cold" reload using VSCode
 
 We can setup a "cold" reload, whereby the app will be rebuilt and restarted when changes in the source are saved. This will not save state, as the app will be restarted, but it will save us some time from manually restarting the app. We can handily force an app rebuild/relaunch with the shortcut `Cmd+Shift+b` (execute the default build task, which we'll setup below).
 
