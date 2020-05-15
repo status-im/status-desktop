@@ -1,0 +1,21 @@
+[submodule "vendor/DOtherSide"]
+	path = vendor/DOtherSide
+	url = https://github.com/filcuc/DOtherSide
+[submodule "vendor/nim-stint"]
+	path = vendor/nim-stint
+	url = https://github.com/status-im/nim-stint
+[submodule "vendor/nimqml"]
+	path = vendor/nimqml
+	url = https://github.com/filcuc/nimqml/
+[submodule "vendor/nimbus-build-system"]
+	path = vendor/nimbus-build-system
+	url = https://github.com/status-im/nimbus-build-system
+[submodule "vendor/nim-nat-traversal"]
+	path = vendor/nim-nat-traversal
+	url = https://github.com/status-im/nim-nat-traversal/
+[submodule "vendor/nim-stew"]
+	path = vendor/nim-stew
+	url = https://github.com/status-im/nim-stew/
+[submodule "vendor/status-go"]
+	path = vendor/status-go
+	url = https://github.com/status-im/status-go

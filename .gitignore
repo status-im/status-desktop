@@ -9,3 +9,5 @@ noBackup/
 *.pro.autosave
 .vscode
 bin/
+vendor/.nimble
+*.AppImage
