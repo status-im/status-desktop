@@ -40,7 +40,7 @@ QtObject:
                           fiatValue: fiatValue,
                           image: image))
     self.endInsertRows()
-  
+
   method rowCount(self: AssetsModel, index: QModelIndex = nil): int =
     return self.assets.len
 

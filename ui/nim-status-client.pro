@@ -50,6 +50,7 @@ DISTFILES += \
     Inter-V.otf \
     Theme.qml \
     app/AppLayouts/ChatLayout.qml \
+    app/AppLayouts/NodeLayout.qml \
     app/AppLayouts/Wallet/LeftTab.qml \
     app/AppLayouts/Wallet/WalletLayout.qml \
     app/AppLayouts/Wallet/qmldir \
