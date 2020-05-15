@@ -2,7 +2,7 @@ import status/types
 import tables
 
 ##########################################################
-## warning: this section is still very much in flux
+## warning: this file is still very much in flux
 ##########################################################
 
 type 
