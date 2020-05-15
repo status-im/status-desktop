@@ -1,7 +1,7 @@
 import NimQml
 import applicationView
-import chats
-import assets
+import chat/chatView
+import wallet/assetsView
 import json
 import state
 import status/utils
@@ -70,8 +70,6 @@ proc mainProc() =
 
   let chatsVariant = newQVariant(chatsModel)
   defer: chatsVariant.delete
-
-
 
   appState.subscribe(proc () =
     chatsModel.names = @[]

@@ -1,6 +1,6 @@
 import NimQml
 import Tables
-import chat/core as chat
+import core as chat
 
 type
   RoleNames {.pure.} = enum
