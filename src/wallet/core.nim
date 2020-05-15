@@ -5,21 +5,21 @@ import strutils
 import walletView
 import ../status/wallet as status_wallet
 
-type Wallet* = ref object
-  assetsModel*: AssetsModel
-  assetsVariant*: QVariant
+type WalletController* = ref object
+  view*: WalletView
+  variant*: QVariant
 
-proc newWallet*(): Wallet =
+proc newController*(): WalletController =
   echo "new wallet"
-  result = Wallet()
-  result.assetsModel = newAssetsModel()
-  result.assetsVariant = newQVariant(result.assetsModel)
+  result = WalletController()
+  result.view = newWalletView()
+  result.variant = newQVariant(result.view)
 
-proc delete*(self: Wallet) =
-  delete self.assetsModel
-  delete self.assetsVariant
+proc delete*(self: WalletController) =
+  delete self.view
+  delete self.variant
 
-proc init*(self: Wallet) =
+proc init*(self: WalletController) =
   # 1. get balance of an address
   var balance = status_wallet.getBalance("0x0000000000000000000000000000000000000000")
   echo(fmt"balance in hex: {balance}")
@@ -37,4 +37,4 @@ proc init*(self: Wallet) =
   echo(fmt"balance in usd: {usd_balance}")
 
   let symbol = "ETH"
-  self.assetsModel.addAssetToList("Ethereum", symbol, fmt"{eth_value:.6}", "$" & fmt"{usd_balance:.6}", fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
+  self.view.addAssetToList("Ethereum", symbol, fmt"{eth_value:.6}", "$" & fmt"{usd_balance:.6}", fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")

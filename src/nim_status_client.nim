@@ -36,17 +36,17 @@ proc mainProc() =
 
   status.startMessenger()
 
-  var wallet = wallet.newWallet()
+  var wallet = wallet.newController()
   wallet.init()
-  engine.setRootContextProperty("assetsModel", wallet.assetsVariant)
+  engine.setRootContextProperty("assetsModel", wallet.variant)
 
-  var chat = chat.newChat()
+  var chat = chat.newController()
   chat.init()
-  engine.setRootContextProperty("chatsModel", chat.chatsVariant)
+  engine.setRootContextProperty("chatsModel", chat.variant)
 
-  var node = node.newNode()
+  var node = node.newController()
   node.init()
-  engine.setRootContextProperty("nodeModel", node.nodeVariant)
+  engine.setRootContextProperty("nodeModel", node.variant)
 
   engine.load("../ui/main.qml")
 

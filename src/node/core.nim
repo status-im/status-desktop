@@ -2,22 +2,22 @@ import NimQml
 import "../status/core" as status
 import nodeView
 
-type Node* = ref object
-  nodeModel*: NodeView
-  nodeVariant*: QVariant
+type NodeController* = ref object
+  view*: NodeView
+  variant*: QVariant
 
 var sendRPCMessage = proc (msg: string): string =
   echo "sending RPC message"
   status.callPrivateRPC(msg)
 
-proc newNode*(): Node =
-  result = Node()
-  result.nodeModel = newNodeView(sendRPCMessage)
-  result.nodeVariant = newQVariant(result.nodeModel)
+proc newController*(): NodeController =
+  result = NodeController()
+  result.view = newNodeView(sendRPCMessage)
+  result.variant = newQVariant(result.view)
 
-proc delete*(self: Node) =
-  delete self.nodeModel
-  delete self.nodeVariant
+proc delete*(self: NodeController) =
+  delete self.view
+  delete self.variant
 
-proc init*(self: Node) =
+proc init*(self: NodeController) =
   discard

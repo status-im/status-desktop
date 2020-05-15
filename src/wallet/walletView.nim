@@ -15,24 +15,24 @@ type
 
 QtObject:
   type
-    AssetsModel* = ref object of QAbstractListModel
+    WalletView* = ref object of QAbstractListModel
       assets*: seq[Asset]
 
-  proc delete(self: AssetsModel) =
+  proc delete(self: WalletView) =
     self.QAbstractListModel.delete
     for asset in self.assets:
       asset.delete
     self.assets = @[]
 
-  proc setup(self: AssetsModel) =
+  proc setup(self: WalletView) =
     self.QAbstractListModel.setup
 
-  proc newAssetsModel*(): AssetsModel =
+  proc newWalletView*(): WalletView =
     new(result, delete)
     result.assets = @[]
     result.setup
 
-  proc addAssetToList*(self: AssetsModel, name: string, symbol: string, value: string, fiatValue: string, image: string) {.slot.} =
+  proc addAssetToList*(self: WalletView, name: string, symbol: string, value: string, fiatValue: string, image: string) {.slot.} =
     self.beginInsertRows(newQModelIndex(), self.assets.len, self.assets.len)
     self.assets.add(Asset(name : name,
                           symbol : symbol,
@@ -41,10 +41,10 @@ QtObject:
                           image: image))
     self.endInsertRows()
 
-  method rowCount(self: AssetsModel, index: QModelIndex = nil): int =
+  method rowCount(self: WalletView, index: QModelIndex = nil): int =
     return self.assets.len
 
-  method data(self: AssetsModel, index: QModelIndex, role: int): QVariant =
+  method data(self: WalletView, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
     if index.row < 0 or index.row >= self.assets.len:
@@ -59,7 +59,7 @@ QtObject:
     of AssetRoles.FiatValue: result = newQVariant(asset.fiatValue)
     of AssetRoles.Image: result = newQVariant(asset.image)
 
-  method roleNames(self: AssetsModel): Table[int, string] =
+  method roleNames(self: WalletView): Table[int, string] =
     { AssetRoles.Name.int:"name",
     AssetRoles.Symbol.int:"symbol",
     AssetRoles.Value.int:"value",
