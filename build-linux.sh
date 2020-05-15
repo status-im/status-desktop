@@ -5,4 +5,4 @@ docker run -it --rm --device /dev/fuse \
   --cap-add SYS_ADMIN \
   --privileged \
   a12e/docker-qt:5.12-gcc_64 \
-  sh build-in-docker.sh
+  sh docker-linux-app-image.sh

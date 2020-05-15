@@ -8,7 +8,7 @@ sudo apt update
 sudo apt install -y --fix-missing cmake build-essential git libpcre3-dev libssl-dev git
 
 rm -Rf tmp
-make -j2 clean
+make clean
 
 # Installing GO
 # Probably should be part of a dockerfile
@@ -23,7 +23,5 @@ export PKG_CONFIG_PATH="$(echo /opt/qt/*/gcc_64/lib/pkgconfig)"
 export LD_LIBRARY_PATH="$(echo /opt/qt/*/gcc_64/lib/)"
 
 make appimage
-
-rm -f linuxdeployqt-continuous-x86_64.AppImage
 
 rm -Rf tmp
