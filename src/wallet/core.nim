@@ -2,7 +2,7 @@ import NimQml
 import strformat
 import strutils
 
-import assetsView
+import walletView
 import ../status/wallet as status_wallet
 
 type Wallet* = ref object
