@@ -251,10 +251,12 @@ SplitView {
                         id: chatImage
                         width: 30
                         height: 30
-                        anchors.left: parent.left
-                        anchors.leftMargin: 16
+                        anchors.left: !isCurrentUser ? parent.left : undefined
+                        anchors.leftMargin: !isCurrentUser ? Theme.padding : 0
+                        anchors.right: !isCurrentUser ? undefined : parent.right
+                        anchors.rightMargin: !isCurrentUser ? 0 : Theme.padding
                         anchors.top: parent.top
-                        anchors.topMargin: 16
+                        anchors.topMargin: Theme.padding
                         fillMode: Image.PreserveAspectFit
                         source: "../img/placeholder-profile.png"
                     }
@@ -264,8 +266,10 @@ SplitView {
                         text: username
                         anchors.top: parent.top
                         anchors.topMargin: 22
-                        anchors.left: chatImage.right
-                        anchors.leftMargin: 16
+                        anchors.left: !isCurrentUser ? chatImage.right : undefined
+                        anchors.leftMargin: Theme.padding
+                        anchors.right: !isCurrentUser ? undefined : chatImage.left
+                        anchors.rightMargin: !isCurrentUser ? 0 : Theme.padding
                         font.bold: true
                         font.pixelSize: 14
                         readOnly: true
@@ -276,14 +280,15 @@ SplitView {
                     TextEdit {
                         id: chatText
                         text: message
+                        horizontalAlignment: !isCurrentUser ? Text.AlignLeft : Text.AlignRight
                         font.family: "Inter"
                         wrapMode: Text.WordWrap
-                        anchors.right: parent.right
-                        anchors.rightMargin: 60
-                        anchors.left: chatName.left
-                        anchors.leftMargin: 0
+                        anchors.right: !isCurrentUser ? parent.right : chatName.right
+                        anchors.rightMargin: !isCurrentUser ? 60 : 0
+                        anchors.left: !isCurrentUser ? chatName.left : parent.left
+                        anchors.leftMargin: !isCurrentUser ? 0 : 60
                         anchors.top: chatName.bottom
-                        anchors.topMargin: 16
+                        anchors.topMargin: Theme.padding
                         font.pixelSize: 14
                         readOnly: true
                         selectByMouse: true
@@ -295,10 +300,12 @@ SplitView {
                         color: Theme.darkGrey
                         font.family: "Inter"
                         text: timestamp
-                        anchors.bottom: parent.bottom
-                        anchors.bottomMargin: 16
-                        anchors.right: parent.right
-                        anchors.rightMargin: 16
+                        anchors.top: chatText.bottom
+                        anchors.bottomMargin: Theme.padding
+                        anchors.right: !isCurrentUser ? parent.right : undefined
+                        anchors.rightMargin: !isCurrentUser ? Theme.padding : 0
+                        anchors.left: !isCurrentUser ? undefined : parent.left
+                        anchors.leftMargin: !isCurrentUser ? 0 : Theme.padding
                         font.pixelSize: 10
                         readOnly: true
                         selectByMouse: true
@@ -306,58 +313,60 @@ SplitView {
                 }
             }
 
-//            ScrollView {
-//                id: chatScrollView
-//                anchors.fill: parent
-//                Layout.fillWidth: true
-//                Layout.fillHeight: true
             ListView {
                 id: chatLogView
-//                anchors.topMargin: 24
                 anchors.fill: parent
 //                model: chatLogModel
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 model: ListModel {
                     ListElement {
-                        username: "Bill Smith"
+                        username: "You"
                         message: "First Message - I’m generally against putting too many rules on social interaction because it makes interaction anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
                         timestamp: "7:30 AM"
+                        isCurrentUser: true
                     }
                     ListElement {
                         username: qsTr("Slushy Welltodo Woodborer")
                         message: "Lorem ipsum ion anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
                         timestamp: "7:31 AM"
+                        isCurrentUser: false
                     }
                     ListElement {
-                        username: "Bill Smith"
+                        username: "You"
                         message: "I’m generally against putting too many rules on social interaction because it makes interaction anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
                         timestamp: "7:32 AM"
+                        isCurrentUser: true
                     }
                     ListElement {
                         username: qsTr("Slushy Welltodo Woodborer")
-                        message: "Lorem ipsum ion anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
+                        message: "Lorem ipsum ionanything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
                         timestamp: "7:33 AM"
+                        isCurrentUser: false
                     }
                     ListElement {
-                        username: "Bill Smith"
+                        username: "You"
                         message: "I’m generally against putting too many rules on social interaction because it makes interaction anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
                         timestamp: "7:34 AM"
+                        isCurrentUser: true
                     }
                     ListElement {
                         username: qsTr("Slushy Welltodo Woodborer")
                         message: "Lorem ipsum ion anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
                         timestamp: "7:35 AM"
+                        isCurrentUser: false
                     }
                     ListElement {
-                        username: "Bill Smith"
+                        username: "You"
                         message: "I’m generally against putting too many rules on social interaction because it makes interaction anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
                         timestamp: "7:36 AM"
+                        isCurrentUser: true
                     }
                     ListElement {
                         username: qsTr("Slushy Welltodo Woodborer")
                         message: "Last Message - Lorem ipsum ion anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
                         timestamp: "7:36 AM"
+                        isCurrentUser: false
                     }
                 }
                 delegate: chatLogViewDelegate
@@ -365,7 +374,6 @@ SplitView {
                     chatLogView.positionViewAtEnd()
                 }
             }
-//            }
         }
 
 //        RowLayout {
@@ -426,11 +434,13 @@ SplitView {
             Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
             transformOrigin: Item.Bottom
 
-            Item {
+            Rectangle {
                 id: element2
                 width: 200
                 height: 70
                 Layout.fillWidth: true
+                color: "white"
+                border.width: 0
 
                 Rectangle {
                     id: rectangle
@@ -502,6 +512,6 @@ SplitView {
 }
 /*##^##
 Designer {
-    D{i:0;height:770;width:1152}
+    D{i:0;formeditorZoom:0.75;height:770;width:1152}
 }
 ##^##*/
