@@ -1,5 +1,5 @@
 import NimQml
-import "../status/chat" as status_chat
+import "../../status/chat" as status_chat
 import chatView
 
 var sendMessage = proc (msg: string): string =

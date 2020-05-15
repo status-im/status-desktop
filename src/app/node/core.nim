@@ -1,5 +1,5 @@
 import NimQml
-import "../status/core" as status
+import "../../status/core" as status
 import nodeView
 
 type NodeController* = ref object

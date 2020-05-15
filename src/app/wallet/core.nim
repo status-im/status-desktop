@@ -3,7 +3,7 @@ import strformat
 import strutils
 
 import walletView
-import ../status/wallet as status_wallet
+import ../../status/wallet as status_wallet
 
 type WalletController* = ref object
   view*: WalletView

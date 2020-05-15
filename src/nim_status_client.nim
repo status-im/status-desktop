@@ -1,8 +1,8 @@
 import NimQml
-import application/applicationView
-import chat/core as chat
-import wallet/core as wallet
-import node/core as node
+import app/application/applicationView
+import app/chat/core as chat
+import app/wallet/core as wallet
+import app/node/core as node
 import state
 
 import status/core as status
