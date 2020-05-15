@@ -146,8 +146,9 @@ RowLayout {
             }
         }
     }
-
+    
     StackLayout {
+        currentIndex: 4
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
         Layout.fillHeight: true
@@ -156,7 +157,6 @@ RowLayout {
         anchors.leftMargin: 0
         anchors.right: parent.right
         anchors.rightMargin: 0
-        currentIndex: tabBar.currentIndex
 
         ChatLayout {
             id: chatLayoutContainer

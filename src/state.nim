@@ -1,6 +1,10 @@
 import status/types
 import tables
 
+##########################################################
+## warning: this file is still very much in flux
+##########################################################
+
 type 
   ChatChannel = object
     name*: string

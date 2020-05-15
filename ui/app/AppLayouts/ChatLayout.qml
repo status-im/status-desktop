@@ -301,67 +301,55 @@ SplitView {
             }
         }
 
-        RowLayout {
-            id: separator
-            height: 16
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+//        RowLayout {
+//            id: separator
+//            height: 16
+//            Layout.fillWidth: true
+//            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
-            Item {
-                id: separatorContent
-                width: 200
-                height: 16
-                Layout.fillHeight: false
-                Layout.fillWidth: true
+//            Item {
+//                id: separatorContent
+//                width: 200
+//                height: 16
+//                Layout.fillHeight: false
+//                Layout.fillWidth: true
 
-                Rectangle {
-                    id: lineSeparator1
-                    height: 1
-                    color: "#00000000"
-                    border.color: "#eef2f5"
-                    anchors.top: parent.top
-                    anchors.topMargin: 8
-                    anchors.right: separatorText.left
-                    anchors.rightMargin: 14
-                    anchors.left: parent.left
-                    anchors.leftMargin: 16
-                }
+//                Rectangle {
+//                    id: lineSeparator1
+//                    height: 1
+//                    color: "#00000000"
+//                    border.color: "#eef2f5"
+//                    anchors.top: parent.top
+//                    anchors.topMargin: 8
+//                    anchors.right: separatorText.left
+//                    anchors.rightMargin: 14
+//                    anchors.left: parent.left
+//                    anchors.leftMargin: 16
+//                }
 
-                Text {
-                    id: separatorText
-                    color: Theme.darkGrey
-                    text: qsTr("Yesterday")
-                    font.pixelSize: 12
-                    anchors.centerIn: parent
-                }
+//                Text {
+//                    id: separatorText
+//                    color: Theme.darkGrey
+//                    text: qsTr("Yesterday")
+//                    font.pixelSize: 12
+//                    anchors.centerIn: parent
+//                }
 
-                Rectangle {
-                    id: lineSeparator2
-                    height: 1
-                    color: "#00000000"
-                    anchors.right: parent.right
-                    anchors.rightMargin: 16
-                    anchors.left: separatorText.right
-                    border.color: "#eef2f5"
-                    anchors.top: parent.top
-                    anchors.leftMargin: 14
-                    anchors.topMargin: 8
-                }
-            }
+//                Rectangle {
+//                    id: lineSeparator2
+//                    height: 1
+//                    color: "#00000000"
+//                    anchors.right: parent.right
+//                    anchors.rightMargin: 16
+//                    anchors.left: separatorText.right
+//                    border.color: "#eef2f5"
+//                    anchors.top: parent.top
+//                    anchors.leftMargin: 14
+//                    anchors.topMargin: 8
+//                }
+//            }
 
-        }
-
-        RowLayout {
-            id: resultContainer
-            Layout.fillHeight: true
-            TextArea { id: callResult; Layout.fillWidth: true; text: logic.callResult; readOnly: true }
-        }
-
-        RowLayout {
-            id: accountResultContainer
-            Layout.fillHeight: true
-            TextArea { id: accountResult; Layout.fillWidth: true; text: logic.accountResult; readOnly: true }
-        }
+//        }
 
         RowLayout {
             id: chatInputContainer
@@ -396,7 +384,7 @@ SplitView {
                         anchors.right: parent.right
                         anchors.rightMargin: 16
                         onClicked: {
-                            logic.onSend(txtData.text)
+                            chatsModel.onSend(txtData.text)
                             txtData.text = ""
                         }
                         enabled: txtData.text !== ""
@@ -420,11 +408,11 @@ SplitView {
                         anchors.left: parent.left
                         anchors.leftMargin: 24
                         Keys.onEnterPressed: {
-                            logic.onSend(txtData.text)
+                            chatsModel.onSend(txtData.text)
                             txtData.text = ""
                         }
                         Keys.onReturnPressed: {
-                            logic.onSend(txtData.text)
+                            chatsModel.onSend(txtData.text)
                             txtData.text = ""
                         }
                         background: Rectangle {
