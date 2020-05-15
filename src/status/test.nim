@@ -2,7 +2,7 @@ import os
 import core
 import libstatus
 import json
-import chat
+# import chat
 
 # THIS FILE IS FOR TESTING STATUS FUNCTIONALITY
 # ONCE TEST IS DONE, SPLIT THE CODE TO INDIVIDUAL NIM FILES
