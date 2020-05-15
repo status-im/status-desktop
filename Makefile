@@ -59,13 +59,13 @@ deps: | deps-common
 
 update: | update-common
 
-DEPLOYQT := linuxdeployqt-continuous-x86_64.AppImage
+DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSide.so
 
-$(DEPLOYQT):
-	wget https://github.com/probonopd/linuxdeployqt/releases/download/continuous/$(DEPLOYQT)
-	chmod +x $(DEPLOYQT)
+APPIMAGETOOL := appimagetool-x86_64.AppImage
 
-DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
+$(APPIMAGETOOL):
+	wget https://github.com/AppImage/AppImageKit/releases/download/continuous/$(APPIMAGETOOL)
+	chmod +x $(APPIMAGETOOL)
 
 $(DOTHERSIDE): | deps
 	echo -e $(BUILD_MSG) "DOtherSide"
@@ -85,23 +85,45 @@ $(STATUSGO): | deps
 
 build-linux: $(DOTHERSIDE) $(STATUSGO) src/nim_status_client.nim | deps
 	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c -L:$(STATUSGO) -d:ssl -L:-lm -L:-Lvendor/DOtherSide/build/lib/ $(NIM_PARAMS) --outdir:./bin src/nim_status_client.nim
+		$(ENV_SCRIPT) nim c -d:nimDebugDlOpen -L:$(STATUSGO) -d:ssl -L:-lm $(NIM_PARAMS) -L:-LlibDOtherSide.so --outdir:./bin src/nim_status_client.nim
 
 build-macos: $(DOTHERSIDE) $(STATUSGO) src/nim_status_client.nim | deps
 	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c -L:$(STATUSGO) -d:ssl -L:-lm -L:"-framework Foundation -framework Security -framework IOKit -framework CoreServices" -L:-Lvendor/DOtherSide/build/lib/ $(NIM_PARAMS) --outdir:./bin src/nim_status_client.nim
+		$(ENV_SCRIPT) nim c -d:nimDebugDlOpen -L:$(STATUSGO) -d:ssl -L:-lm -L:"-framework Foundation -framework Security -framework IOKit -framework CoreServices" $(NIM_PARAMS) -L:-LlibDOtherSide.so --outdir:./bin src/nim_status_client.nim
 
 APPIMAGE := NimStatusClient-x86_64.AppImage
 
-$(APPIMAGE): $(DEFAULT_TARGET) $(DEPLOYQT) nim-status.desktop
+$(APPIMAGE): $(DEFAULT_TARGET) $(APPIMAGETOOL) nim-status.desktop
 	rm -rf tmp/dist
 	mkdir -p tmp/dist/usr/bin
+	mkdir -p tmp/dist/usr/lib
+	mkdir -p tmp/dist/usr/qml
+	
+	# General Files
 	cp bin/nim_status_client tmp/dist/usr/bin
 	cp nim-status.desktop tmp/dist/.
 	cp status.svg tmp/dist/status.svg
 	cp -R ui tmp/dist/usr/.
+	
+	# Libraries
+	cp vendor/DOtherSide/build/lib/libDOtherSide* tmp/dist/usr/lib/.
+	
+	# QML Plugins due to bug with linuxdeployqt finding qmlimportscanner
+	# This list is obtained with qmlimportscanner -rootPath ui/ -importPath /opt/qt/5.12.6/gcc_64/qml/
+	mkdir -p tmp/dist/usr/qml/Qt/labs/
+	mkdir -p tmp/dist/usr/qml/QtQuick
+	cp -R /opt/qt/5.12.6/gcc_64/qml/Qt/labs/platform tmp/dist/usr/qml/Qt/labs/.
+	cp -R /opt/qt/5.12.6/gcc_64/qml/QtQuick.2 tmp/dist/usr/qml/.
+	cp -R /opt/qt/5.12.6/gcc_64/qml/QtGraphicalEffects tmp/dist/usr/qml/.
+	cp -R /opt/qt/5.12.6/gcc_64/qml/QtQuick/{Controls,Controls.2,Extras,Layouts,Templates.2,Window.2} tmp/dist/usr/qml/QtQuick/.
+
 	echo -e $(BUILD_MSG) "AppImage"
-	./$(DEPLOYQT) tmp/dist/nim-status.desktop -no-translations -no-copy-copyright-files -appimage
+	linuxdeployqt tmp/dist/nim-status.desktop -no-translations -no-copy-copyright-files -qmldir=tmp/dist/usr/ui -bundle-non-qt-libs
+
+	rm tmp/dist/AppRun
+	cp AppRun tmp/dist/.
+
+	./$(APPIMAGETOOL) tmp/dist
 
 appimage: $(APPIMAGE)
 

@@ -11,3 +11,4 @@ noBackup/
 bin/
 vendor/.nimble
 *.AppImage
+tmp
