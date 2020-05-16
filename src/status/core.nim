@@ -1,14 +1,9 @@
 import libstatus
-import signals
-import types
 import chat
-import "../state"
 
-proc setSignalHandler(signalHandler: SignalCallback) =
-  libstatus.setSignalEventCallback(signalHandler)
-
-proc init*(state: AppState) =
-  setSignalHandler(onSignal(state))
+# TODO: move signal handler from nim_status_client.nim
+# proc init*(state: AppState) =
+#  setSignalHandler(onSignal(state))
 
 proc startMessenger*() =
   chat.startMessenger()
