@@ -1,4 +1,4 @@
-type SignalCallback* = proc(eventMessage: cstring): void
+type SignalCallback* = proc(eventMessage: cstring): void {.cdecl.}
 
 type SignalType* {.pure.} = enum
   Message = "messages.new"

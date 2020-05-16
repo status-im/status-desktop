@@ -5,6 +5,7 @@ import Qt.labs.platform 1.1
 import "./onboarding"
 import "./app"
 
+
 ApplicationWindow {
     id: applicationWindow
     width: 1232
@@ -12,46 +13,17 @@ ApplicationWindow {
     title: "Nim Status Client"
     visible: true
     font.family: "Inter"
-
-    SystemTrayIcon {
-        visible: true
-        icon.source: "shared/img/status-logo.png"
-        menu: Menu {
-            MenuItem {
-                text: qsTr("Quit")
-                onTriggered: Qt.quit()
-            }
-        }
-
-        onActivated: {
-            applicationWindow.show()
-            applicationWindow.raise()
-            applicationWindow.requestActivate()
-        }
-    }
-
-    Rectangle {
-        id: rctAppBg
-        color: "#FFFFFF"
-        Layout.fillHeight: true
-        Layout.fillWidth: true
-        anchors.fill: parent
-        border.width: 0
-
-        Intro {
-            id: onboarding
-            visible: !app.visible
-            anchors.fill: parent
-        }
-
-        AppMain {
-            id: app
-            // TODO: Set this to a logic result determining when we need to show the onboarding screens
-            // Set to true to hide the onboarding screens manually
-            // Set to false to show the onboarding screens manually
-            visible: false // logic.accountResult !== ""
-            anchors.fill: parent
-        }
+    
+    
+    Text {
+        id: element
+        x: 772
+        text: logic.lastMessage
+        anchors.top: parent.top
+        anchors.topMargin: 17
+        font.bold: true
+        anchors.horizontalCenter: parent.horizontalCenter
+        font.pixelSize: 17
     }
 
 }
