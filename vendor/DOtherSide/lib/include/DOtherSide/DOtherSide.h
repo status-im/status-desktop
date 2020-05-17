@@ -90,6 +90,10 @@ DOS_API void DOS_CALL dos_qapplication_create(void);
 /// \note A QApplication should have been already created through dos_qapplication_create()
 DOS_API void DOS_CALL dos_qapplication_exec(void);
 
+/// \brief Invokes a QObject's slot by passing a string containing a signal
+/// \note This method was created because status-go has a non-QT event loop
+DOS_API void DOS_CALL dos_signal(DosQObject *vptr, const char *signal, const char *slot);
+
 /// \brief Calls the QApplication::quit() function of the current QGuiApplication
 /// \note A QApplication should have been already created through dos_qapplication_create()
 DOS_API void DOS_CALL dos_qapplication_quit(void);
