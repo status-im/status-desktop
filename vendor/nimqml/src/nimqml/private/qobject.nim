@@ -68,3 +68,6 @@ proc newQObject*(): QObject =
   ## Create a new QObject
   new(result, delete)
   result.setup()
+
+proc vptr*(self: QObject): DosQObject =
+  result = self.vptr

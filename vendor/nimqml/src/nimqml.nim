@@ -29,3 +29,8 @@ include "nimqml/private/qabstracttablemodel.nim"
 include "nimqml/private/qresource.nim"
 include "nimqml/private/qdeclarative.nim"
 include "nimqml/private/nimqmlmacros.nim"
+
+proc signal_handler*(receiver: pointer, signal: cstring, slot: cstring) =
+  var dosqobj = cast[DosQObject](receiver)
+  if(dosqobj.isNil == false):
+    dos_signal(receiver, signal, slot)

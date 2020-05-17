@@ -191,6 +191,9 @@ proc dos_qmetaobject_create(superclassMetaObject: DosQMetaObject,
                             propertyDefinitions: ptr DosPropertyDefinitions): DosQMetaObject {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qmetaobject_delete(vptr: DosQMetaObject) {.cdecl, dynlib: dynLibName, importc.}
 
+# status-go signal handler
+proc dos_signal(vptr: pointer, signal: cstring, slot: cstring) {.cdecl, dynlib: dynLibName, importc.}
+
 # QUrl
 proc dos_qurl_create(url: cstring, parsingMode: cint): DosQUrl {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qurl_delete(vptr: DosQUrl) {.cdecl, dynlib: dynLibName, importc.}
