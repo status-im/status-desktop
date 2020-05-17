@@ -28,6 +28,7 @@
 #include <QtCore/QResource>
 #include <QtGui/QGuiApplication>
 #include <QtQml/QQmlContext>
+#include <QtCore>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickView>
 #include <QtQuick/QQuickImageProvider>
@@ -715,6 +716,12 @@ bool dos_qurl_isValid(const ::DosQUrl *vptr)
                                                             DOS::toVector(*slotDefinitions),
                                                             DOS::toVector(*propertyDefinitions));
     return new DOS::DosIQMetaObjectHolder(std::move(metaObject));
+}
+
+void dos_signal(::DosQObject *vptr, const char *signal, const char *slot) //
+{
+    auto qobject = static_cast<QObject *>(vptr);
+    QMetaObject::invokeMethod(qobject, slot, Qt::QueuedConnection, Q_ARG(QString, signal));  
 }
 
 void dos_qmetaobject_delete(::DosQMetaObject *vptr)
