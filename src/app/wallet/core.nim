@@ -42,4 +42,4 @@ proc init*(self: WalletController) =
 
 method onSignal(self: WalletController, signal: string) =
   echo "Received a signal in the wallet module: ", signal
-  # TODO: do something with the signal
+  self.view.setLastMessage(signal)

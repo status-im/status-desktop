@@ -73,6 +73,16 @@ ColumnLayout {
                 }
             }
 
+             Text {
+                id: test
+                color: Theme.lightBlueText
+                text: assetsModel.lastMessage
+                anchors.left: walletAmountValue.right
+                anchors.leftMargin: 5
+                font.weight: Font.Medium
+                font.pixelSize: 30
+            }
+
             TabBar {
                 readonly property int btnHeight: 56
 
