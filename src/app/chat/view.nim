@@ -1,6 +1,6 @@
 import NimQml
 import Tables
-import chatMessageList
+import messageList
 import ../signals/types
 # import core as chat
 

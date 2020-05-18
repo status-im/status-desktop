@@ -1,6 +1,6 @@
 import NimQml
 import ../../status/chat as status_chat
-import chatView
+import view
 import ../signals/types
 
 var sendMessage = proc (msg: string): string =
