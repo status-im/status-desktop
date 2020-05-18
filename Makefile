@@ -59,7 +59,12 @@ deps: | deps-common
 
 update: | update-common
 
+DOTHERSIDE := None
+ifeq ($(detected_OS), Darwin)
+DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSide.dylib
+else
 DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSide.so
+endif
 
 APPIMAGETOOL := appimagetool-x86_64.AppImage
 
@@ -85,11 +90,11 @@ $(STATUSGO): | deps
 
 build-linux: $(DOTHERSIDE) $(STATUSGO) src/nim_status_client.nim | deps
 	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c -d:nimDebugDlOpen -L:$(STATUSGO) -d:ssl -L:-lm $(NIM_PARAMS) -L:-LlibDOtherSide.so --outdir:./bin src/nim_status_client.nim
+		$(ENV_SCRIPT) nim c -d:nimDebugDlOpen -L:$(STATUSGO) -d:ssl -L:-lm $(NIM_PARAMS) -L:$(DOTHERSIDE) --outdir:./bin src/nim_status_client.nim
 
 build-macos: $(DOTHERSIDE) $(STATUSGO) src/nim_status_client.nim | deps
 	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c -d:nimDebugDlOpen -L:$(STATUSGO) -d:ssl -L:-lm -L:"-framework Foundation -framework Security -framework IOKit -framework CoreServices" $(NIM_PARAMS) -L:-LlibDOtherSide.so --outdir:./bin src/nim_status_client.nim
+		$(ENV_SCRIPT) nim c -d:nimDebugDlOpen -L:$(STATUSGO) -d:ssl -L:-lm -L:"-framework Foundation -framework Security -framework IOKit -framework CoreServices" $(NIM_PARAMS) -L:$(DOTHERSIDE) --outdir:./bin src/nim_status_client.nim
 
 APPIMAGE := NimStatusClient-x86_64.AppImage
 
@@ -98,16 +103,16 @@ $(APPIMAGE): $(DEFAULT_TARGET) $(APPIMAGETOOL) nim-status.desktop
 	mkdir -p tmp/dist/usr/bin
 	mkdir -p tmp/dist/usr/lib
 	mkdir -p tmp/dist/usr/qml
-	
+
 	# General Files
 	cp bin/nim_status_client tmp/dist/usr/bin
 	cp nim-status.desktop tmp/dist/.
 	cp status.svg tmp/dist/status.svg
 	cp -R ui tmp/dist/usr/.
-	
+
 	# Libraries
 	cp vendor/DOtherSide/build/lib/libDOtherSide* tmp/dist/usr/lib/.
-	
+
 	# QML Plugins due to bug with linuxdeployqt finding qmlimportscanner
 	# This list is obtained with qmlimportscanner -rootPath ui/ -importPath /opt/qt/5.12.6/gcc_64/qml/
 	mkdir -p tmp/dist/usr/qml/Qt/labs/
