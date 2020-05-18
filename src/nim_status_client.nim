@@ -14,21 +14,23 @@ import status/wallet as status_wallet
 import status/libstatus
 import state
 
-
-
 # From QT docs:
 # For any GUI application using Qt, there is precisely one QApplication object,
 # no matter whether the application has 0, 1, 2 or more windows at any given time.
 # For non-QWidget based Qt applications, use QGuiApplication instead, as it does
 # not depend on the QtWidgets library. Use QCoreApplication for non GUI apps
 
-# Global variables required due to issue described on line 75
-var app = newQApplication()
-
-var signalController = signals.newController(app)
-var signalsQObjPointer = cast[pointer](signalController.vptr)
+var signalsQObjPointer: pointer
 
 proc mainProc() =
+  var app = newQApplication()
+
+  var signalController = signals.newController(app)
+
+  # We need this global variable in order to be able to access the application
+  # from the non-closure callback passed to `libstatus.setSignalEventCallback`
+  signalsQObjPointer = cast[pointer](signalController.vptr)
+
   defer: app.delete() # Defer will run this just before mainProc() function ends
 
   var engine = newQQmlApplicationEngine()
@@ -54,7 +56,6 @@ proc mainProc() =
   node.init()
   engine.setRootContextProperty("nodeModel", node.variant)
 
-
   signalController.init()
   signalController.addSubscriber(SignalType.Wallet, wallet)
   engine.setRootContextProperty("signals", signalController.variant)
@@ -69,27 +70,18 @@ proc mainProc() =
 
   appState.addChannel("test")
   appState.addChannel("test2")
-  
-  engine.load("../ui/main.qml")
-  
 
-  # In order for status-go to be able to trigger QT events
-  # the signal handler must work with the same pointers
-  # and use the cdecl pragma. If I remove this pragma and use
-  # a normal closure and the `logic` object, the pointer to
-  # this `logic` changes each time the callback is executed
-  # I also had to use a global variable, because Nim complains
-  # "illegal capture 'logicQObjPointer' because ':anonymous' 
-  # has the calling convention: <cdecl>"
-  # TODO: ask nimbus team how to work with raw pointers to avoid
-  #       using global variables
-  var callback:SignalCallback = proc(p0: cstring) {.cdecl.} =
+  engine.load("../ui/main.qml")
+
+  # Please note that this must use the `cdecl` calling convention because
+  # it will be passed as a regular C function to libstatus. This means that
+  # we cannot capture any local variables here (we must rely on globals)
+  var callback: SignalCallback = proc(p0: cstring) {.cdecl.} =
     setupForeignThreadGc()
     signal_handler(signalsQObjPointer, p0, "receiveSignal")
     tearDownForeignThreadGc()
 
   libstatus.setSignalEventCallback(callback)
-  
 
   # Qt main event loop is entered here
   # The termination of the loop will be performed when exit() or quit() is called
