@@ -4,8 +4,9 @@ import strutils
 
 import walletView
 import ../../status/wallet as status_wallet
+import ../signals/signalSubscriber
 
-type WalletController* = ref object
+type WalletController* = ref object of SignalSubscriber
   view*: WalletView
   variant*: QVariant
 
@@ -38,3 +39,7 @@ proc init*(self: WalletController) =
 
   let symbol = "ETH"
   self.view.addAssetToList("Ethereum", symbol, fmt"{eth_value:.6}", "$" & fmt"{usd_balance:.6}", fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
+
+method onSignal(self: WalletController, signal: string) =
+  echo "Received a signal in the wallet module: ", signal
+  # TODO: do something with the signal

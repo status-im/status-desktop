@@ -1,8 +1,8 @@
 import NimQml
-import app/application/applicationView
 import app/chat/core as chat
 import app/wallet/core as wallet
 import app/node/core as node
+import app/signals/core as signals
 import state
 import strformat
 import strutils
@@ -24,8 +24,9 @@ import state
 
 # Global variables required due to issue described on line 75
 var app = newQApplication()
-var logic = newApplicationView(app)
-var logicQObjPointer = cast[pointer](logic.vptr)
+
+var signalController = signals.newController(app)
+var signalsQObjPointer = cast[pointer](signalController.vptr)
 
 proc mainProc() =
   defer: app.delete() # Defer will run this just before mainProc() function ends
@@ -41,11 +42,6 @@ proc mainProc() =
 
   status_test.setupNewAccount()
 
-  let logicVariant = newQVariant(logic)
-  defer: logic.delete
-  defer: logicVariant.delete
-  engine.setRootContextProperty("logic", logicVariant)
-
   var wallet = wallet.newController()
   wallet.init()
   engine.setRootContextProperty("assetsModel", wallet.variant)
@@ -57,6 +53,11 @@ proc mainProc() =
   var node = node.newController()
   node.init()
   engine.setRootContextProperty("nodeModel", node.variant)
+
+
+  signalController.init()
+  signalController.addSubscriber(SignalType.Wallet, wallet)
+  engine.setRootContextProperty("signals", signalController.variant)
 
   appState.subscribe(proc () =
     # chatsModel.names = @[]
@@ -84,7 +85,7 @@ proc mainProc() =
   #       using global variables
   var callback:SignalCallback = proc(p0: cstring) {.cdecl.} =
     setupForeignThreadGc()
-    signal_handler(logicQObjPointer, p0, "setLastMessage")
+    signal_handler(signalsQObjPointer, p0, "receiveSignal")
     tearDownForeignThreadGc()
 
   libstatus.setSignalEventCallback(callback)
