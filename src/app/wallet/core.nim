@@ -4,7 +4,7 @@ import strutils
 
 import walletView
 import ../../status/wallet as status_wallet
-import ../signals/signalSubscriber
+import ../signals/types
 
 type WalletController* = ref object of SignalSubscriber
   view*: WalletView
@@ -41,5 +41,5 @@ proc init*(self: WalletController) =
   self.view.addAssetToList("Ethereum", symbol, fmt"{eth_value:.6}", "$" & fmt"{usd_balance:.6}", fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
 
 method onSignal(self: WalletController, data: Signal) =
-  var msg = cast[WalletMessage](data)
+  var msg = cast[WalletSignal](data)
   self.view.setLastMessage(msg.content)

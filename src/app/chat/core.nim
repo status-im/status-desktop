@@ -1,7 +1,7 @@
 import NimQml
 import ../../status/chat as status_chat
 import chatView
-import ../signals/signalSubscriber
+import ../signals/types
 
 var sendMessage = proc (msg: string): string =
   echo "sending public message"
@@ -40,5 +40,6 @@ proc load*(self: ChatController): seq[string] =
   result = @["test"]
 
 method onSignal(self: ChatController, data: Signal) =
-  echo "Received a signal in the chat module"
-  # result.view.pushMessage(signal)
+  var chatSignal = cast[ChatSignal](data)
+  for message in chatSignal.messages:
+    self.view.pushMessage(message)
