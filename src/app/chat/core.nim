@@ -1,12 +1,13 @@
 import NimQml
-import "../../status/chat" as status_chat
+import ../../status/chat as status_chat
 import chatView
+import ../signals/signalSubscriber
 
 var sendMessage = proc (msg: string): string =
   echo "sending public message"
   status_chat.sendPublicChatMessage("test", msg)
 
-type ChatController* = ref object
+type ChatController* = ref object of SignalSubscriber
   view*: ChatsView
   variant*: QVariant
 
@@ -37,3 +38,7 @@ proc load*(self: ChatController): seq[string] =
   # TODO: retrieve chats from DB
   self.join("test")
   result = @["test"]
+
+method onSignal(self: ChatController, data: Signal) =
+  echo "Received a signal in the chat module"
+  # result.view.pushMessage(signal)

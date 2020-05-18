@@ -44,6 +44,8 @@ proc mainProc() =
 
   status_test.setupNewAccount()
 
+  status_chat.startMessenger()
+
   var wallet = wallet.newController()
   wallet.init()
   engine.setRootContextProperty("assetsModel", wallet.variant)
@@ -58,6 +60,8 @@ proc mainProc() =
 
   signalController.init()
   signalController.addSubscriber(SignalType.Wallet, wallet)
+  signalController.addSubscriber(SignalType.Message, chat)
+  
   engine.setRootContextProperty("signals", signalController.variant)
 
   appState.subscribe(proc () =

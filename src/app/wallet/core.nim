@@ -40,6 +40,6 @@ proc init*(self: WalletController) =
   let symbol = "ETH"
   self.view.addAssetToList("Ethereum", symbol, fmt"{eth_value:.6}", "$" & fmt"{usd_balance:.6}", fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
 
-method onSignal(self: WalletController, signal: string) =
-  echo "Received a signal in the wallet module: ", signal
-  self.view.setLastMessage(signal)
+method onSignal(self: WalletController, data: Signal) =
+  var msg = cast[WalletMessage](data)
+  self.view.setLastMessage(msg.content)
