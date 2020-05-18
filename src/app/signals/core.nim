@@ -1,8 +1,9 @@
 import NimQml
-import ../../status/types as types
+import ../../status/types as status_types
 import tables
 import json
 import signalSubscriber
+import messages
 
 QtObject:
   type SignalsController* = ref object of QObject
@@ -36,15 +37,15 @@ QtObject:
   proc processSignal(self: SignalsController) =
     let jsonSignal = (self.statusSignal).parseJson
     let signalType = $jsonSignal["type"].getStr
-
     # TODO: ideally the signal would receive an object 
     # formatted for easier usage so the controllers dont 
     # have to parse the signal themselves
     case signalType:
       of "messages.new":
-        self.signalSubscribers[SignalType.Message].onSignal($jsonSignal)
+        self.signalSubscribers[SignalType.Message].onSignal(messages.fromEvent(jsonSignal))
       of "wallet":
-        self.signalSubscribers[SignalType.Wallet].onSignal($jsonSignal)
+        var wMsg = WalletMessage(content: $jsonSignal)
+        self.signalSubscribers[SignalType.Wallet].onSignal(wMsg)
       else:
         # TODO: log error?
         discard
