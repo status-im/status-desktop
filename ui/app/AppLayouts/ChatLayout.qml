@@ -263,7 +263,7 @@ SplitView {
 
                     TextEdit {
                         id: chatName
-                        text: username
+                        text: userName
                         anchors.top: parent.top
                         anchors.topMargin: 22
                         anchors.left: !isCurrentUser ? chatImage.right : undefined
@@ -316,59 +316,9 @@ SplitView {
             ListView {
                 id: chatLogView
                 anchors.fill: parent
-//                model: chatLogModel
+                model: chatsModel.messageList
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                model: ListModel {
-                    ListElement {
-                        username: "You"
-                        message: "First Message - I’m generally against putting too many rules on social interaction because it makes interaction anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
-                        timestamp: "7:30 AM"
-                        isCurrentUser: true
-                    }
-                    ListElement {
-                        username: qsTr("Slushy Welltodo Woodborer")
-                        message: "Lorem ipsum ion anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
-                        timestamp: "7:31 AM"
-                        isCurrentUser: false
-                    }
-                    ListElement {
-                        username: "You"
-                        message: "I’m generally against putting too many rules on social interaction because it makes interaction anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
-                        timestamp: "7:32 AM"
-                        isCurrentUser: true
-                    }
-                    ListElement {
-                        username: qsTr("Slushy Welltodo Woodborer")
-                        message: "Lorem ipsum ionanything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
-                        timestamp: "7:33 AM"
-                        isCurrentUser: false
-                    }
-                    ListElement {
-                        username: "You"
-                        message: "I’m generally against putting too many rules on social interaction because it makes interaction anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
-                        timestamp: "7:34 AM"
-                        isCurrentUser: true
-                    }
-                    ListElement {
-                        username: qsTr("Slushy Welltodo Woodborer")
-                        message: "Lorem ipsum ion anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
-                        timestamp: "7:35 AM"
-                        isCurrentUser: false
-                    }
-                    ListElement {
-                        username: "You"
-                        message: "I’m generally against putting too many rules on social interaction because it makes interaction anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
-                        timestamp: "7:36 AM"
-                        isCurrentUser: true
-                    }
-                    ListElement {
-                        username: qsTr("Slushy Welltodo Woodborer")
-                        message: "Last Message - Lorem ipsum ion anything but social, but technical specifics on how to get on board or participate in a team are I think generally useful, especially if they prevent maintainers from pasting the same response to every PR / issue."
-                        timestamp: "7:36 AM"
-                        isCurrentUser: false
-                    }
-                }
                 delegate: chatLogViewDelegate
                 onCountChanged: {
                     chatLogView.positionViewAtEnd()

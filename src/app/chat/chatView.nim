@@ -1,5 +1,7 @@
 import NimQml
 import Tables
+import chatMessageList
+import ../signals/types
 # import core as chat
 
 type
@@ -11,6 +13,7 @@ QtObject:
     ChatsView* = ref object of QAbstractListModel
       names*: seq[string]
       callResult: string
+      messageList: ChatMessageList
       sendMessage: proc (msg: string):  string
 
   proc delete(self: ChatsView) =
@@ -23,6 +26,7 @@ QtObject:
     new(result, delete)
     result.sendMessage = sendMessage
     result.names = @[]
+    result.messageList = newChatMessageList()
     result.setup
 
   proc addNameTolist*(self: ChatsView, chatId: string) {.slot.} =
@@ -69,3 +73,12 @@ QtObject:
   proc onMessage*(self: ChatsView, message: string) {.slot.} =
     self.setCallResult(message)
     echo "Received message: ", message
+
+  proc pushMessage*(self:ChatsView, message: Message) =
+    self.messageList.add(message)
+
+  proc getMessageList(self: ChatsView): QVariant {.slot.} =
+    return newQVariant(self.messageList)
+
+  QtProperty[QVariant] messageList:
+    read = getMessageList
