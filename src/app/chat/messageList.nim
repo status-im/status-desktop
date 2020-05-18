@@ -1,4 +1,4 @@
-import NimQml, chatMessages, Tables
+import NimQml, messages, Tables
 import ../signals/types
 
 type
