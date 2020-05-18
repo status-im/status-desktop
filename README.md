@@ -6,16 +6,6 @@ Experiments calling status-go from nim, inspired in [nim-stratus](https://github
 
 ### 0. Prerequesites
 
-* nim
-
-```
-# linux
-apt-get install nim
-
-# macos
-brew install nim
-```
-
 * QT
 
 install QT https://www.qt.io/download-qt-installer
@@ -26,6 +16,13 @@ export PATH=$PATH:/path/to/Qt/5.14.2/gcc_64/bin
 
 # macos
 export PATH=$PATH:/path/to/Qt/5.14.2/clang_64/bin
+```
+
+Linux users can also install Qt through the system's package manager:
+
+```
+# Debian/Ubuntu:
+sudo apt install qtbase5-dev qtdeclarative5-dev qml-module-qt-labs-platform
 ```
 
 * go - (used to build status-go)
