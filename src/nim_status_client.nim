@@ -14,33 +14,24 @@ import status/wallet as status_wallet
 import status/libstatus
 import state
 
-# From QT docs:
-# For any GUI application using Qt, there is precisely one QApplication object,
-# no matter whether the application has 0, 1, 2 or more windows at any given time.
-# For non-QWidget based Qt applications, use QGuiApplication instead, as it does
-# not depend on the QtWidgets library. Use QCoreApplication for non GUI apps
-
 var signalsQObjPointer: pointer
 
 proc mainProc() =
-  var app = newQApplication()
+  let app = newQApplication()
+  let engine = newQQmlApplicationEngine()
+  let signalController = signals.newController(app)
 
-  var signalController = signals.newController(app)
+  defer: # Defer will run this just before mainProc() function ends
+    app.delete()
+    engine.delete()
+    signalController.delete()
 
   # We need this global variable in order to be able to access the application
   # from the non-closure callback passed to `libstatus.setSignalEventCallback`
   signalsQObjPointer = cast[pointer](signalController.vptr)
 
-  defer: app.delete() # Defer will run this just before mainProc() function ends
-
-  var engine = newQQmlApplicationEngine()
-  defer: engine.delete()
-
   var appState = state.newAppState()
   echo appState.title
-
-  # TODO: @RR: commented until I'm able to fix the global variable issue described below
-  #status.init(appState)
 
   status_test.setupNewAccount()
 
