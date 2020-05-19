@@ -70,7 +70,11 @@ DISTFILES += \
     app/img/walletActive.svg \
     app/qmldir \
     imports/qmldir \
+    onboarding/ExistingKey.qml \
+    onboarding/GenKey.qml \
     onboarding/Intro.qml \
+    onboarding/KeysMain.qml \
+    onboarding/OnboardingMain.qml \
     onboarding/img/browser-dark@2x.jpg \
     onboarding/img/browser-dark@3x.jpg \
     onboarding/img/browser@2x.jpg \
@@ -79,11 +83,14 @@ DISTFILES += \
     onboarding/img/chat-dark@3x.jpg \
     onboarding/img/chat@2x.jpg \
     onboarding/img/chat@3x.jpg \
+    onboarding/img/key.png \
+    onboarding/img/key@2x.png \
     onboarding/img/next.svg \
     onboarding/img/wallet-dark@2x.jpg \
     onboarding/img/wallet-dark@3x.jpg \
     onboarding/img/wallet@2x.jpg \
     onboarding/img/wallet@3x.jpg \
     onboarding/qmldir \
+    shared/StyledButton.qml \
     shared/RoundedIcon.qml \
     shared/qmldir

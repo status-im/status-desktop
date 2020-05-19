@@ -14,3 +14,8 @@ type SignalType* {.pure.} = enum
   SubscriptionsError = "subscriptions.error"
   WhisperFilterAdded = "whisper.filter.added"
   Unknown
+
+type
+  GoString* = object
+    str*: cstring
+    length*: cint

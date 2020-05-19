@@ -21,3 +21,7 @@ proc addPeer*(peer: cstring): cstring {.importc: "AddPeer".}
 proc setSignalEventCallback*(callback: SignalCallback) {.importc: "SetSignalEventCallback".}
 
 proc sendTransaction*(jsonArgs: cstring, password: cstring): cstring {.importc: "SendTransaction".}
+
+proc generateAlias*(p0: GoString): cstring {.importc: "GenerateAlias".}
+
+proc identicon*(p0: GoString): cstring {.importc: "Identicon".}
