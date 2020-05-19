@@ -5,6 +5,21 @@ import httpclient, json
 import strformat
 import stint
 
+proc getAccounts*(): seq[string] =
+  var payload = %* {
+    "jsonrpc": "2.0",
+    "method": "eth_accounts",
+    "params": [
+      []
+    ]
+  }
+  var response = status.callPrivateRPC($payload)
+  result = parseJson(response)["result"].to(seq[string])
+
+proc getAccount*(): string =
+  var accounts = getAccounts()
+  result = accounts[0]
+
 proc getPrice*(crypto: string, fiat: string): string =
     var url: string = fmt"https://min-api.cryptocompare.com/data/price?fsym={crypto}&tsyms={fiat}"
     let client = newHttpClient()
