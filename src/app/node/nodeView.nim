@@ -4,6 +4,7 @@ QtObject:
   type NodeView* = ref object of QObject
     callResult: string
     sendRPCMessage: proc (msg: string):  string
+    lastMessage*: string
 
   proc setup(self: NodeView) =
     self.QObject.setup
@@ -12,6 +13,7 @@ QtObject:
     new(result)
     result.sendRPCMessage = sendRPCMessage
     result.callResult = "Use this tool to call JSONRPC methods"
+    result.lastMessage = ""
     result.setup
 
   proc delete*(self: NodeView) =
@@ -41,3 +43,17 @@ QtObject:
   proc onMessage*(self: NodeView, message: string) {.slot.} =
     self.setCallResult(message)
     echo "Received message: ", message
+
+  proc lastMessage*(self: NodeView): string {.slot.} =
+    result = self.lastMessage
+
+  proc receivedMessage*(self: NodeView, lastMessage: string) {.signal.}
+
+  proc setLastMessage*(self: NodeView, lastMessage: string) {.slot.} =
+    self.lastMessage = lastMessage
+    self.receivedMessage(lastMessage)
+
+  QtProperty[string] lastMessage:
+    read = lastMessage
+    write = setLastMessage
+    notify = receivedMessage

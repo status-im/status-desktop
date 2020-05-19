@@ -1,8 +1,9 @@
 import NimQml
 import "../../status/core" as status
+import ../signals/types
 import nodeView
 
-type NodeController* = ref object
+type NodeController* = ref object of SignalSubscriber
   view*: NodeView
   variant*: QVariant
 
@@ -21,3 +22,8 @@ proc delete*(self: NodeController) =
 
 proc init*(self: NodeController) =
   discard
+
+method onSignal(self: NodeController, data: Signal) =
+  echo "new signal received"
+  var msg = cast[WalletSignal](data)
+  self.view.setLastMessage(msg.content)
