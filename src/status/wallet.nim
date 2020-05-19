@@ -4,6 +4,7 @@ import json
 import httpclient, json
 import strformat
 import stint
+import strutils
 
 proc getAccounts*(): seq[string] =
   var payload = %* {
@@ -19,6 +20,15 @@ proc getAccounts*(): seq[string] =
 proc getAccount*(): string =
   var accounts = getAccounts()
   result = accounts[0]
+
+proc sendTransaction*(from_address: string, to: string, value: string, password: string): string =
+  var args = %* {
+    "value": fmt"0x{toHex(value)}",
+    "from": from_address,
+    "to": to
+  }
+  var response = status.sendTransaction($args, password)
+  result = response
 
 proc getPrice*(crypto: string, fiat: string): string =
     var url: string = fmt"https://min-api.cryptocompare.com/data/price?fsym={crypto}&tsyms={fiat}"

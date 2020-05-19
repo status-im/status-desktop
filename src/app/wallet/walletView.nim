@@ -18,6 +18,9 @@ QtObject:
     WalletView* = ref object of QAbstractListModel
       assets*: seq[Asset]
       lastMessage*: string
+      defaultAccount: string
+      sendTransaction: proc(from_value: string, to: string, value: string, password: string): string
+
 
   proc delete(self: WalletView) =
     self.QAbstractListModel.delete
@@ -28,8 +31,9 @@ QtObject:
   proc setup(self: WalletView) =
     self.QAbstractListModel.setup
 
-  proc newWalletView*(): WalletView =
+  proc newWalletView*(sendTransaction: proc): WalletView =
     new(result, delete)
+    result.sendTransaction = sendTransaction
     result.assets = @[]
     result.lastMessage = ""
     result.setup
@@ -42,6 +46,12 @@ QtObject:
                           fiatValue: fiatValue,
                           image: image))
     self.endInsertRows()
+
+  proc setDefaultAccount*(self: WalletView, account: string) =
+    self.defaultAccount = account
+
+  method getDefaultAccount*(self: WalletView): string {.slot.} =
+    return self.defaultAccount
 
   method rowCount(self: WalletView, index: QModelIndex = nil): int =
     return self.assets.len
@@ -60,6 +70,9 @@ QtObject:
     of AssetRoles.Value: result = newQVariant(asset.value)
     of AssetRoles.FiatValue: result = newQVariant(asset.fiatValue)
     of AssetRoles.Image: result = newQVariant(asset.image)
+
+  proc onSendTransaction*(self: WalletView, from_value: string, to: string, value: string, password: string): string {.slot.} =
+    result = self.sendTransaction(from_value, to, value, password)
 
   method roleNames(self: WalletView): Table[int, string] =
     { AssetRoles.Name.int:"name",
