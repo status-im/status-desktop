@@ -46,6 +46,8 @@ endif
 DEFAULT_TARGET := None
 ifeq ($(detected_OS), Darwin)
 	DEFAULT_TARGET := build-macos
+else ifeq ($(detected_OS), Windows)
+	DEFAULT_TARGET := build-windows
 else
 	DEFAULT_TARGET := build-linux	
 endif
@@ -87,13 +89,29 @@ $(STATUSGO): | deps
 	+ cd vendor/status-go && \
 	  $(MAKE) statusgo-library
 
+
+STATUSGOWINDOWS := vendor/status-go/build/bin/libstatus.lib
+
+$(STATUSGOWINDOWS): | deps
+	echo -e $(BUILD_MSG) "status-go"
+	+ cd vendor/status-go && \
+	  $(MAKE) statusgo-library-windows
+
 build-linux: $(DOTHERSIDE) $(STATUSGO) src/nim_status_client.nim | deps
 	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c -d:nimDebugDlOpen -L:$(STATUSGO) -d:ssl -L:-lm $(NIM_PARAMS) -L:$(DOTHERSIDE) --outdir:./bin src/nim_status_client.nim
+		$(ENV_SCRIPT) nim c -L:$(STATUSGO) -d:ssl -L:-lm $(NIM_PARAMS) -L:$(DOTHERSIDE) --outdir:./bin src/nim_status_client.nim
 
 build-macos: $(DOTHERSIDE) $(STATUSGO) src/nim_status_client.nim | deps
 	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c -d:nimDebugDlOpen -L:$(STATUSGO) -d:ssl -L:-lm -L:"-framework Foundation -framework Security -framework IOKit -framework CoreServices" $(NIM_PARAMS) -L:$(DOTHERSIDE) --outdir:./bin src/nim_status_client.nim
+		$(ENV_SCRIPT) nim c -L:$(STATUSGO) -d:ssl -L:-lm -L:"-framework Foundation -framework Security -framework IOKit -framework CoreServices" $(NIM_PARAMS) -L:$(DOTHERSIDE) --outdir:./bin src/nim_status_client.nim
+
+build-windows: $(DOTHERSIDE) $(STATUSGOWINDOWS) src/nim_status_client.nim | deps
+	echo -e $(BUILD_MSG) "$@" && \
+		$(ENV_SCRIPT) nim c -d:mingw \
+											 -L:$(STATUSGOWINDOWS) \
+											 -d:ssl \
+											 -L:-lsetupapi -L:-lhid \
+											 --outdir:./bin src/nim_status_client.nim
 
 run:
 	LD_LIBRARY_PATH=vendor/DOtherSide/build/lib ./bin/nim_status_client

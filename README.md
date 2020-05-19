@@ -4,12 +4,9 @@ Experiments calling status-go from nim, inspired in [nim-stratus](https://github
 
 ## Building
 
-### 0. Prerequesites
+### 1. Prerequisites
 
-* QT
-
-install QT https://www.qt.io/download-qt-installer
-and add it to the PATH
+* QT: Install QT https://www.qt.io/download-qt-installer and add it to the PATH
 ```
 # Linux
 export PATH=$PATH:/path/to/Qt/5.14.2/gcc_64/bin
@@ -19,30 +16,23 @@ export PATH=$PATH:/path/to/Qt/5.14.2/clang_64/bin
 ```
 
 Linux users can also install Qt through the system's package manager:
-
 ```
 # Debian/Ubuntu:
 sudo apt install qtbase5-dev qtdeclarative5-dev qml-module-qt-labs-platform
 ```
 
 * go - (used to build status-go)
-
 ```
 # linux
-<TODO>
+Follow the instructions on https://golang.org/doc/install
 
 # macos
 brew install go
 ```
 
-### 1. Install QT, and add it to the PATH
-
+* The following packages are required in Ubuntu:
 ```
-# Linux
-export PATH=$PATH:/path/to/Qt/5.14.2/gcc_64/bin
-
-# macos
-export PATH=$PATH:/path/to/Qt/5.14.2/clang_64/bin
+sudo apt install build-essential cmake mesa-common-dev libglu1-mesa-dev libpcre++-dev
 ```
 
 ### 2. Clone the repo and build `nim-status-client`
@@ -155,3 +145,38 @@ To build on save of our source files, first install the "Trigger Task on Save" V
 "triggerTaskOnSave.showStatusBarToggle": true
 
 ```
+
+
+# Building windows release
+This has been tested only on Linux Ubuntu and Windows 10
+
+### Generating the executable
+1. Install the toolchain for cross compiling Linux->Windows
+```
+sudo apt install mingw-w64
+curl https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz > SDL2-devel-2.0.12-mingw.tar.gz
+tar xvfz SDL2-devel-2.0.12-mingw.tar.gz
+sudo cp -r SDL2-2.0.12/x86_64-w64-mingw32/bin/* /usr/x86_64-w64-mingw32/bin/.
+sudo cp -r SDL2-2.0.12/x86_64-w64-mingw32/include/SDL2/* /usr/x86_64-w64-mingw32/include/.
+sudo cp -r SDL2-2.0.12/x86_64-w64-mingw32/include/lib/* /usr/x86_64-w64-mingw32/lib/.
+rm -Rf SDL2-devel-2.0.12-mingw.tar.gz SDL2-2.0.12/
+```
+2. `make build-windows`
+
+### Preparing executable for usage
+> **TODO:** These instructions need to be automated somehow, maybe using AppVeyor since it already has a QT environment installed. 
+All these instructions must be executed in Windows, and you must have QT installed
+1. Create the following structure:
+```
+C:/status 
+--> ui/
+--> client/
+```
+2. Download and unzip the latest DLL release from [status-im/dotherside](https://github.com/status-im/dotherside/releases/download/v0.6.5-win-status-go/libDOtherside-windows-msvc2017_x64-qt-5.13.2.zip)
+3. Place `DOtherSide.dll` inside `C:/status/client/`
+4. From the nim-status-client repo, copy the content of [`ui`](https://github.com/status-im/nim-status-client/tree/master/ui) inside `C:/status/ui`
+5. Copy the QT dlls and plugiins with:
+```
+C:\Qt\5.14.2\msvc2017_64\bin>windeployqt.exe C:\status\client\DOtherSide.dll --qmldir C:\status\ui 
+```
+6. Done, you can now execute `C:/status/client/nim_status_client.exe` in a console
