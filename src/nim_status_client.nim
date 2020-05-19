@@ -51,8 +51,9 @@ proc mainProc() =
 
   signalController.init()
   signalController.addSubscriber(SignalType.Wallet, wallet)
+  signalController.addSubscriber(SignalType.Wallet, node)
   signalController.addSubscriber(SignalType.Message, chat)
-  
+
   engine.setRootContextProperty("signals", signalController.variant)
 
   appState.subscribe(proc () =
