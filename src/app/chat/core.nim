@@ -8,10 +8,10 @@ import ../../status/utils
 var sendMessage = proc (view: ChatsView, chatId: string, msg: string): string =
   echo "sending public message!"
   let chatMessage = newChatMessage()
-  chatMessage.userName = "myself"
+  chatMessage.userName = "me" #TODO get users username
   chatMessage.message = msg
   chatMessage.timestamp = "0" #TODO convert to date/time?
-  chatMessage.isCurrentUser = true #TODO: Determine who originated the message
+  chatMessage.isCurrentUser = true
 
   view.pushMessage(chatMessage)
   status_chat.sendChatMessage(chatId, msg)
