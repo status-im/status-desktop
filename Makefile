@@ -78,7 +78,7 @@ $(DOTHERSIDE): | deps
 		mkdir -p build && \
 		cd build && \
 		cmake -DCMAKE_BUILD_TYPE=Release .. $(HANDLE_OUTPUT) && \
-		$(MAKE) # IF WE WANT TO USE LIBDOTHERSIDE AS STATIC LIBRARY, USE `$(MAKE) DOtherSideStatic` INSTEAD
+		$(MAKE) DOtherSide # IF WE WANT TO USE LIBDOTHERSIDE AS STATIC LIBRARY, USE `$(MAKE) DOtherSideStatic` INSTEAD
 
 STATUSGO := vendor/status-go/build/bin/libstatus.a
 
@@ -95,6 +95,9 @@ build-linux: $(DOTHERSIDE) $(STATUSGO) src/nim_status_client.nim | deps
 build-macos: $(DOTHERSIDE) $(STATUSGO) src/nim_status_client.nim | deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c -d:nimDebugDlOpen -L:$(STATUSGO) -d:ssl -L:-lm -L:"-framework Foundation -framework Security -framework IOKit -framework CoreServices" $(NIM_PARAMS) -L:$(DOTHERSIDE) --outdir:./bin src/nim_status_client.nim
+
+run:
+	LD_LIBRARY_PATH=vendor/DOtherSide/build/lib ./bin/nim_status_client
 
 APPIMAGE := NimStatusClient-x86_64.AppImage
 
@@ -133,6 +136,6 @@ $(APPIMAGE): $(DEFAULT_TARGET) $(APPIMAGETOOL) nim-status.desktop
 appimage: $(APPIMAGE)
 
 clean: | clean-common
-	rm -rf $(APPIMAGE) bin/* vendor/DOtherSide/build tmp/dist vendor/status-go/build/bin
+	rm -rf $(APPIMAGE) bin/* vendor/* tmp/dist
 
 endif # "variables.mk" was not included
