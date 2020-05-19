@@ -270,7 +270,7 @@ SplitView {
                         anchors.top: parent.top
                         anchors.topMargin: Theme.padding
                         fillMode: Image.PreserveAspectFit
-                        source: "../img/placeholder-profile.png"
+                        source: identicon
                     }
 
                     TextEdit {

@@ -5,6 +5,7 @@ QtObject:
     userName: string
     message: string
     timestamp: string
+    identicon: string
     isCurrentUser: bool
 
   proc delete*(self: ChatMessage) =
@@ -18,6 +19,7 @@ QtObject:
     result.userName = ""
     result.message = ""
     result.timestamp = "0"
+    result.identicon = ""
     result.isCurrentUser = false
     result.setup
 
@@ -71,6 +73,23 @@ QtObject:
     read = timestamp
     write = setTimestamp
     notify = timestampChanged
+
+  proc identicon*(self: ChatMessage): string {.slot.} =
+    result = self.identicon
+
+  proc identiconChanged*(self: ChatMessage, identicon: string) {.signal.}
+
+  proc setIdenticon(self: ChatMessage, identicon: string) {.slot.} =
+    if self.identicon == identicon: return
+    self.identicon = identicon
+    self.identiconChanged(identicon)
+
+  proc `identicon=`*(self: ChatMessage, identicon: string) = self.setIdenticon(identicon)
+
+  QtProperty[string] identicon:
+    read = identicon
+    write = setIdenticons
+    notify = identiconsChanged
 
   proc isCurrentUser*(self: ChatMessage): bool {.slot.} =
     result = self.isCurrentUser
