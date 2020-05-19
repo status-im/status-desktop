@@ -157,7 +157,10 @@ SplitView {
 
                         Text {
                             id: contactInfo
-                            text: "Name:" + name
+                            text: name
+                            anchors.right: contactTime.left
+                            anchors.rightMargin: Theme.smallPadding
+                            elide: Text.ElideRight
                             font.weight: Font.Medium
                             font.pixelSize: 15
                             anchors.left: contactImage.right
@@ -169,6 +172,9 @@ SplitView {
                         Text {
                             id: lastChatMessage
                             text: "Chatting blah blah..."
+                            anchors.right: contactNumberChatsCircle.left
+                            anchors.rightMargin: Theme.smallPadding
+                            elide: Text.ElideRight
                             anchors.bottom: parent.bottom
                             anchors.bottomMargin: Theme.smallPadding
                             font.pixelSize: 15
