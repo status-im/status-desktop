@@ -13,3 +13,4 @@ bin/
 vendor/.nimble
 *.AppImage
 tmp
+nimcache
