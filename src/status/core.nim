@@ -13,3 +13,6 @@ proc callRPC*(inputJSON: string): string =
 
 proc callPrivateRPC*(inputJSON: string): string =
   return $libstatus.callPrivateRPC(inputJSON)
+
+proc sendTransaction*(inputJSON: string, password: string): string =
+  return $libstatus.sendTransaction(inputJSON, password)

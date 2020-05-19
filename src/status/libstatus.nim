@@ -19,3 +19,5 @@ proc callPrivateRPC*(inputJSON: cstring): cstring {.importc: "CallPrivateRPC".}
 proc addPeer*(peer: cstring): cstring {.importc: "AddPeer".}
 
 proc setSignalEventCallback*(callback: SignalCallback) {.importc: "SetSignalEventCallback".}
+
+proc sendTransaction*(jsonArgs: cstring, password: cstring): cstring {.importc: "SendTransaction".}
