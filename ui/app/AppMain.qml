@@ -172,12 +172,18 @@ RowLayout {
             Layout.fillHeight: true
         }
 
-        Item {
-            // browser
+        BrowserLayout {
+            id: browserLayoutContainer
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.fillHeight: true
         }
 
-        Item {
-            // profile
+        ProfileLayout {
+            id: profileLayoutContainer
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.fillHeight: true
         }
 
         NodeLayout {
