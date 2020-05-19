@@ -14,7 +14,7 @@ QtObject:
       names*: seq[string]
       callResult: string
       messageList: ChatMessageList
-      sendMessage: proc (chatId: string, msg: string):  string
+      sendMessage: proc (view: ChatsView, chatId: string, msg: string):  string
 
   proc delete(self: ChatsView) =
     self.QAbstractListModel.delete
@@ -68,7 +68,7 @@ QtObject:
 
   proc onSend*(self: ChatsView, inputJSON: string) {.slot.} =
     # TODO unhardcode chatId
-    self.setCallResult(self.sendMessage("test", inputJSON))
+    self.setCallResult(self.sendMessage(self, "test", inputJSON))
     echo "Done!: ", self.callResult
 
   proc onMessage*(self: ChatsView, message: string) {.slot.} =

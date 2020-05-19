@@ -28,6 +28,7 @@ type Message* = object
   text*: string
   timestamp*: string
   whisperTimestamp*: string
+  isCurrentUser*: bool
 
 
 type ChatSignal* = ref object of Signal
