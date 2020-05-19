@@ -35,6 +35,11 @@ QtObject:
     self.names.add(chatId)
     self.endInsertRows()
 
+  proc get*(self: ChatsView, index: int): string {.slot.} =
+    if index < 0 or index >= self.names.len:
+      return
+    return self.names[index]
+
   method rowCount(self: ChatsView, index: QModelIndex = nil): int =
     return self.names.len
 
