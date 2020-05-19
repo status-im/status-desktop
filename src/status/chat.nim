@@ -12,7 +12,7 @@ proc startMessenger*() =
   discard $libstatus.callPrivateRPC($payload)
   # TODO: create template for error handling
 
-proc loadFilters*(chatId: string) =
+proc loadFilters*(chatId: string, oneToOne = false) =
   let payload = %* {
     "jsonrpc": "2.0",
     "id": 3, #TODO:
@@ -20,13 +20,13 @@ proc loadFilters*(chatId: string) =
     "params": [
       [{
         "ChatID": chatId,
-        "OneToOne": false
+        "OneToOne": oneToOne
       }]
     ]
   }
   discard $libstatus.callPrivateRPC($payload)
 
-proc saveChat*(chatId: string) =
+proc saveChat*(chatId: string, oneToOne = false) =
   let payload = %* {
     "jsonrpc": "2.0",
     "id": 4,
@@ -40,7 +40,7 @@ proc saveChat*(chatId: string) =
         "active": true,
         "id": chatId,
         "unviewedMessagesCount": 0,
-        "chatType": 2,
+        "chatType":  if oneToOne: 1 else: 2,
         "timestamp": 1588940692659
       }
     ]
@@ -59,7 +59,8 @@ proc chatMessages*(chatId: string) =
   discard $libstatus.callPrivateRPC($payload)
   # TODO: create template for error handling
 
-proc sendPublicChatMessage*(chatId: string, msg: string): string =
+
+proc sendChatMessage*(chatId: string, msg: string): string =
   let payload = %* {
     "jsonrpc": "2.0",
     "id": 40,
