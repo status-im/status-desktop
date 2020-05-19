@@ -1,5 +1,4 @@
 import NimQml, messages, Tables
-import ../signals/types
 
 type
   ChatMessageRoles {.pure.} = enum
@@ -51,13 +50,7 @@ QtObject:
       ChatMessageRoles.IsCurrentUser.int:"isCurrentUser"
     }.toTable
 
-  proc add*(self: ChatMessageList, message: Message) =
-    let chatMessage = newChatMessage()
-    chatMessage.userName = message.alias
-    chatMessage.message = message.text
-    chatMessage.timestamp = message.timestamp #TODO convert to date/time?
-    chatMessage.isCurrentUser = message.isCurrentUser #TODO: Determine who originated the message
-
+  proc add*(self: ChatMessageList, message: ChatMessage) =
     self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len)
-    self.messages.add(chatMessage)
+    self.messages.add(message)
     self.endInsertRows()

@@ -6,20 +6,14 @@ import ../signals/types
 import ../../status/utils
 
 var sendMessage = proc (view: ChatsView, chatId: string, msg: string): string =
-  echo "sending message!"
-  var message = Message(
-    fromAuthor: "myself",
-    text: msg,
-    timestamp: "0",
-    isCurrentUser: true
-  )
-  # var message = newChatMessage()
-  # message.userName = "myself"
-  # message.message = msg
-  # message.timestamp = "0"
-  # message.isCurrentUser = true
+  echo "sending public message!"
+  let chatMessage = newChatMessage()
+  chatMessage.userName = "myself"
+  chatMessage.message = msg
+  chatMessage.timestamp = "0" #TODO convert to date/time?
+  chatMessage.isCurrentUser = true #TODO: Determine who originated the message
 
-  view.pushMessage(message)
+  view.pushMessage(chatMessage)
   status_chat.sendChatMessage(chatId, msg)
 
 type ChatController* = ref object of SignalSubscriber
@@ -59,4 +53,9 @@ proc load*(self: ChatController): seq[string] =
 method onSignal(self: ChatController, data: Signal) =
   var chatSignal = cast[ChatSignal](data)
   for message in chatSignal.messages:
-    self.view.pushMessage(message)
+    let chatMessage = newChatMessage()
+    chatMessage.userName = message.alias
+    chatMessage.message = message.text
+    chatMessage.timestamp = message.timestamp #TODO convert to date/time?
+    chatMessage.isCurrentUser = message.isCurrentUser #TODO: Determine who originated the message
+    self.view.pushMessage(chatMessage)
