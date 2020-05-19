@@ -30,31 +30,22 @@ ApplicationWindow {
         }
     }
 
-    Rectangle {
-        id: rctAppBg
-        color: "#FFFFFF"
-        Layout.fillHeight: true
-        Layout.fillWidth: true
+    OnboardingMain {
+        id: onboarding
+        visible: !app.visible
         anchors.fill: parent
-        border.width: 0
-
-        Intro {
-            id: onboarding
-            visible: !app.visible
-            anchors.fill: parent
-        }
-
-        AppMain {
-            id: app
-            // TODO: Set this to a logic result determining when we need to show the onboarding screens
-            // Set to true to hide the onboarding screens manually
-            // Set to false to show the onboarding screens manually
-            visible: false // logic.accountResult !== ""
-            anchors.fill: parent
-        }
     }
 
+    AppMain {
+        id: app
+        // TODO: Set this to a logic result determining when we need to show the onboarding screens
+        // Set to true to hide the onboarding screens manually
+        // Set to false to show the onboarding screens manually
+        visible: false // logic.accountResult !== ""
+        anchors.fill: parent
+    }
 }
+
 
 
 

@@ -19,3 +19,17 @@
 [submodule "vendor/nimqml"]
 	path = vendor/nimqml
 	url = https://github.com/status-im/nimqml
+[submodule "vendor/nimcrypto"]
+	path = vendor/nimcrypto
+	url = https://github.com/cheatfate/nimcrypto
+[submodule "vendor/uuids"]
+	path = vendor/uuids
+	url = https://github.com/pragmagic/uuids
+[submodule "vendor/isaac"]
+	path = vendor/isaac
+	url = https://github.com/pragmagic/isaac
+[submodule "vendor/eventemitter"]
+	path = vendor/eventemitter
+	url = https://github.com/al-bimani/eventemitter
+	ignore = dirty
+	branch = master
