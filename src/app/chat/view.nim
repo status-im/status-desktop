@@ -1,5 +1,6 @@
 import NimQml
 import Tables
+import messages
 import messageList
 import ../signals/types
 # import core as chat
@@ -75,7 +76,7 @@ QtObject:
     self.setCallResult(message)
     echo "Received message: ", message
 
-  proc pushMessage*(self:ChatsView, message: Message) =
+  proc pushMessage*(self:ChatsView, message: ChatMessage) =
     self.messageList.add(message)
 
   proc getMessageList(self: ChatsView): QVariant {.slot.} =
