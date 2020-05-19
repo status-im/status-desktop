@@ -6,6 +6,8 @@ import Qt.labs.platform 1.1
 import "../../imports"
 
 SplitView {
+    property alias searchStr: searchText.text
+
     id: chatView
     x: 0
     y: 0
@@ -18,6 +20,7 @@ SplitView {
     anchors.leftMargin: 0
 
     Item {
+
         id: contactsColumn
         width: 300
         height: parent.height
@@ -127,7 +130,6 @@ SplitView {
 
                     Rectangle {
                         id: wrapper
-                        height: 64
                         color: ListView.isCurrentItem ? Theme.lightBlue : Theme.transparent
                         anchors.right: parent.right
                         anchors.rightMargin: Theme.padding
@@ -136,10 +138,14 @@ SplitView {
                         anchors.left: parent.left
                         anchors.leftMargin: Theme.padding
                         radius: 8
+                        // Hide the box if it is filtered out
+                        property bool isVisible: searchStr == "" || name.includes(searchStr)
+                        visible: isVisible ? true : false
+                        height: isVisible ? 64 : 0
 
                         MouseArea {
                             anchors.fill: parent
-                            onClicked: listView.currentIndex = index
+                            onClicked: chatGroupsListView.currentIndex = index
                         }
 
                         Rectangle {
@@ -208,7 +214,7 @@ SplitView {
                 }
 
                 ListView {
-                    id: listView
+                    id: chatGroupsListView
                     anchors.topMargin: 24
                     anchors.fill: parent
                     model: chatsModel
