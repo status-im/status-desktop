@@ -29,9 +29,19 @@ SplitView {
         anchors.top: parent.top
         anchors.topMargin: 0
 
-        RowLayout {
+        ColumnLayout {
             id: messageContainer
             Layout.fillHeight: true
+            Text {
+                id: testDescription
+                color: Theme.lightBlueText
+                text: "latest block (auto updates):"
+                Layout.fillWidth: true
+                anchors.left: walletAmountValue.right
+                anchors.leftMargin: 5
+                font.weight: Font.Medium
+                font.pixelSize: 20
+            }
             Text {
                 id: test
                 color: Theme.lightBlueText
@@ -40,7 +50,7 @@ SplitView {
                 anchors.left: walletAmountValue.right
                 anchors.leftMargin: 5
                 font.weight: Font.Medium
-                font.pixelSize: 30
+                font.pixelSize: 20
             }
         }
 
