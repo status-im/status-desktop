@@ -56,8 +56,8 @@ QtObject:
     chatMessage.userName = message.alias
     chatMessage.message = message.text
     chatMessage.timestamp = message.timestamp #TODO convert to date/time?
-    chatMessage.isCurrentUser = false #TODO: Determine who originated the message
-    
+    chatMessage.isCurrentUser = message.isCurrentUser #TODO: Determine who originated the message
+
     self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len)
     self.messages.add(chatMessage)
     self.endInsertRows()

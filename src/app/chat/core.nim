@@ -1,11 +1,25 @@
 import NimQml
 import ../../status/chat as status_chat
 import view
+import messages
 import ../signals/types
 import ../../status/utils
 
-var sendMessage = proc (chatId: string, msg: string): string =
-  echo "sending message"
+var sendMessage = proc (view: ChatsView, chatId: string, msg: string): string =
+  echo "sending message!"
+  var message = Message(
+    fromAuthor: "myself",
+    text: msg,
+    timestamp: "0",
+    isCurrentUser: true
+  )
+  # var message = newChatMessage()
+  # message.userName = "myself"
+  # message.message = msg
+  # message.timestamp = "0"
+  # message.isCurrentUser = true
+
+  view.pushMessage(message)
   status_chat.sendChatMessage(chatId, msg)
 
 type ChatController* = ref object of SignalSubscriber

@@ -23,9 +23,10 @@ proc fromEvent*(event: JsonNode): Signal =
       seen: jsonMsg["seen"].getBool,
       text: jsonMsg["text"].getStr,
       timestamp: $jsonMsg["timestamp"].getInt,
-      whisperTimestamp: $jsonMsg["whisperTimestamp"].getInt
+      whisperTimestamp: $jsonMsg["whisperTimestamp"].getInt,
+      isCurrentUser: false
     )
-    
+
     signal.messages.add(msg)
 
   result = signal
