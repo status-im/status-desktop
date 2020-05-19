@@ -2,10 +2,11 @@ import NimQml
 import ../../status/chat as status_chat
 import view
 import ../signals/types
+import ../../status/utils
 
-var sendMessage = proc (msg: string): string =
-  echo "sending public message"
-  status_chat.sendPublicChatMessage("test", msg)
+var sendMessage = proc (chatId: string, msg: string): string =
+  echo "sending message"
+  status_chat.sendChatMessage(chatId, msg)
 
 type ChatController* = ref object of SignalSubscriber
   view*: ChatsView
@@ -28,8 +29,10 @@ proc join*(self: ChatController, chatId: string) =
   # TODO: check whether we have joined a chat already or not
   # TODO: save chat list in the db
   echo "Joining chat: ", chatId
-  status_chat.loadFilters(chatId)
-  status_chat.saveChat(chatId)
+  let oneToOne = isOneToOneChat(chatId)
+  echo "Is one to one? ", oneToOne
+  status_chat.loadFilters(chatId, oneToOne)
+  status_chat.saveChat(chatId, oneToOne)
   status_chat.chatMessages(chatId)
   # self.chatsModel.addNameTolist(channel.name)
   self.view.addNameTolist(chatId)
