@@ -1,7 +1,3 @@
-libstatus.a
-libstatus.dylib
-nim_status_client
-nim_libstatus
 data/
 noBackup/
 .idea

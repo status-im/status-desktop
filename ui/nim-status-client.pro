@@ -49,8 +49,10 @@ DISTFILES += \
     Inter-ThinItalic.otf \
     Inter-V.otf \
     Theme.qml \
-    app/AppLayouts/ChatLayout.qml \
-    app/AppLayouts/NodeLayout.qml \
+    app/AppLayouts/Browser/BrowserLayout.qml \
+    app/AppLayouts/Chat/ChatLayout.qml \
+    app/AppLayouts/Node/NodeLayout.qml \
+    app/AppLayouts/Profile/ProfileLayout.qml \
     app/AppLayouts/Wallet/LeftTab.qml \
     app/AppLayouts/Wallet/WalletLayout.qml \
     app/AppLayouts/Wallet/qmldir \
