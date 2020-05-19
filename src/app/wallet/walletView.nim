@@ -17,7 +17,6 @@ QtObject:
   type
     WalletView* = ref object of QAbstractListModel
       assets*: seq[Asset]
-      lastMessage*: string
       defaultAccount: string
       sendTransaction: proc(from_value: string, to: string, value: string, password: string): string
 
@@ -35,9 +34,8 @@ QtObject:
     new(result, delete)
     result.sendTransaction = sendTransaction
     result.assets = @[]
-    result.lastMessage = ""
     result.setup
-    
+
   proc addAssetToList*(self: WalletView, name: string, symbol: string, value: string, fiatValue: string, image: string) {.slot.} =
     self.beginInsertRows(newQModelIndex(), self.assets.len, self.assets.len)
     self.assets.add(Asset(name : name,
@@ -80,20 +78,3 @@ QtObject:
     AssetRoles.Value.int:"value",
     AssetRoles.FiatValue.int:"fiatValue",
     AssetRoles.Image.int:"image" }.toTable
-
-
-
-
-  proc lastMessage*(self: WalletView): string {.slot.} =
-    result = self.lastMessage
-
-  proc receivedMessage*(self: WalletView, lastMessage: string) {.signal.}
-
-  proc setLastMessage*(self: WalletView, lastMessage: string) {.slot.} =
-    self.lastMessage = lastMessage
-    self.receivedMessage(lastMessage)
-
-  QtProperty[string] lastMessage:
-    read = lastMessage
-    write = setLastMessage
-    notify = receivedMessage

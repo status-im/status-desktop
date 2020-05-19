@@ -30,6 +30,21 @@ SplitView {
         anchors.topMargin: 0
 
         RowLayout {
+            id: messageContainer
+            Layout.fillHeight: true
+            Text {
+                id: test
+                color: Theme.lightBlueText
+                text: nodeModel.lastMessage
+                Layout.fillWidth: true
+                anchors.left: walletAmountValue.right
+                anchors.leftMargin: 5
+                font.weight: Font.Medium
+                font.pixelSize: 30
+            }
+        }
+
+        RowLayout {
             id: resultContainer
             Layout.fillHeight: true
             TextArea { id: callResult; Layout.fillWidth: true; text: nodeModel.callResult; readOnly: true }
