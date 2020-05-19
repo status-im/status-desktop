@@ -2,8 +2,11 @@ import QtQuick 2.3
 import QtQuick.Controls 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
+import "../shared"
 
 RowLayout {
+    property alias btnGetStarted: btnGetStarted
+
     id: obLayout
     anchors.fill: parent
     Layout.fillWidth: true
@@ -25,6 +28,21 @@ RowLayout {
 
             Item {
                 id: itmSlide1
+
+                StyledButton {
+                    id: btnGenRandomAcct
+                    width: 250
+                    height: 50
+                    anchors.top: parent.top
+                    anchors.topMargin: 50
+                    anchors.left: parent.left
+                    anchors.leftMargin: 15
+                    label: "Generate random acct and login"
+                    onClicked: {
+                        onboardingLogic.generateRandomAccountAndLogin()
+                        app.visible = true
+                    }
+                }
 
                 Image {
                     id: img1
@@ -301,32 +319,15 @@ RowLayout {
             }
         }
 
-        Button {
+        StyledButton {
             id: btnGetStarted
-            rightPadding: 32
-            leftPadding: 32
-            bottomPadding: 11
-            topPadding: 11
-            width: 146
-            height: 44
+            label: "Get started"
             anchors.top: rctPageIndicator.bottom
             anchors.topMargin: 87
             anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: app.visible = true
-            background: Rectangle {
-                color: "#ECEFFC"
-                radius: 8
-            }
-
-            Text {
-                id: txtGetStarted
-                color: "#4360DF"
-                text: qsTr("Get started")
-                font.weight: Font.DemiBold
-                font.pointSize: 15
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
+//            onClicked: app.visible = true
+            width: 146
+            height: 44
         }
 
         Text {

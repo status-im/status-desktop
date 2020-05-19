@@ -1,1 +1,5 @@
+ExistingKey 1.0 ExistingKey.qml
+GenKey 1.0 GenKey.qml
 Intro 1.0 Intro.qml
+KeysMain 1.0 KeysMain.qml
+OnboardingMain 1.0 OnboardingMain.qml

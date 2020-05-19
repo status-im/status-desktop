@@ -10,3 +10,4 @@ vendor/.nimble
 *.AppImage
 tmp
 nimcache
+.DS_Store

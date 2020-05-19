@@ -31,17 +31,17 @@ proc queryAccounts*(): string =
 
 proc setupNewAccount*(): string =
   # Deleting directories
-  recreateDir(datadir)
-  recreateDir(keystoredir)
-  recreateDir(nobackupdir)
+  # recreateDir(datadir)
+  # recreateDir(keystoredir)
+  # recreateDir(nobackupdir)
 
   var result: string
 
-  # 1
-  result = $libstatus.initKeystore(keystoredir);
+  # # 1
+  # result = $libstatus.initKeystore(keystoredir);
 
-  # 2
-  result = $libstatus.openAccounts(datadir);
+  # # 2
+  # result = $libstatus.openAccounts(datadir);
 
   # 3
   let multiAccountConfig = %* {
