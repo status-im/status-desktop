@@ -1,4 +1,5 @@
 import NimQml
+import json
 import ../../status/chat as status_chat
 import view
 import messages
@@ -7,14 +8,17 @@ import ../../status/utils
 
 var sendMessage = proc (view: ChatsView, chatId: string, msg: string): string =
   echo "sending public message!"
-  let chatMessage = newChatMessage()
-  chatMessage.userName = "me" #TODO get users username
-  chatMessage.message = msg
-  chatMessage.timestamp = "0" #TODO convert to date/time?
-  chatMessage.isCurrentUser = true
+  var sentMessage = status_chat.sendChatMessage(chatId, msg)
+  var parsedMessage = parseJson(sentMessage)["result"]["chats"][0]["lastMessage"]
 
+  let chatMessage = newChatMessage()
+  chatMessage.userName = parsedMessage["alias"].str
+  chatMessage.message = msg
+  chatMessage.timestamp = $parsedMessage["timestamp"]
+  chatMessage.identicon = parsedMessage["identicon"].str
+  chatMessage.isCurrentUser = true
   view.pushMessage(chatMessage)
-  status_chat.sendChatMessage(chatId, msg)
+  sentMessage
 
 type ChatController* = ref object of SignalSubscriber
   view*: ChatsView
@@ -57,5 +61,6 @@ method onSignal(self: ChatController, data: Signal) =
     chatMessage.userName = message.alias
     chatMessage.message = message.text
     chatMessage.timestamp = message.timestamp #TODO convert to date/time?
+    chatMessage.identicon = message.identicon
     chatMessage.isCurrentUser = message.isCurrentUser #TODO: Determine who originated the message
     self.view.pushMessage(chatMessage)

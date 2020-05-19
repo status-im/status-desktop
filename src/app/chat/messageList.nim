@@ -5,7 +5,8 @@ type
     UserName = UserRole + 1,
     Message = UserRole + 2,
     Timestamp = UserRole + 3
-    IsCurrentUser = UserRole + 4
+    Identicon = UserRole + 4
+    IsCurrentUser = UserRole + 5
 
 QtObject:
   type
@@ -40,6 +41,7 @@ QtObject:
       of ChatMessageRoles.UserName: result = newQVariant(message.userName)
       of ChatMessageRoles.Message: result = newQVariant(message.message)
       of ChatMessageRoles.Timestamp: result = newQVariant(message.timestamp)
+      of ChatMessageRoles.Identicon: result = newQVariant(message.identicon)
       of ChatMessageRoles.IsCurrentUser: result = newQVariant(message.isCurrentUser)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
@@ -47,6 +49,7 @@ QtObject:
       ChatMessageRoles.UserName.int:"userName",
       ChatMessageRoles.Message.int:"message",
       ChatMessageRoles.Timestamp.int:"timestamp",
+      ChatMessageRoles.Identicon.int:"identicon",
       ChatMessageRoles.IsCurrentUser.int:"isCurrentUser"
     }.toTable
 
