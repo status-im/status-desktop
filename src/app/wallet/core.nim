@@ -6,14 +6,16 @@ import walletView
 import ../../status/wallet as status_wallet
 import ../signals/types
 
+var sendTransaction = proc(from_value: string, to: string, value: string, password: string): string =
+  status_wallet.sendTransaction(from_value, to, value, password)
+
 type WalletController* = ref object of SignalSubscriber
   view*: WalletView
   variant*: QVariant
 
 proc newController*(): WalletController =
-  echo "new wallet"
   result = WalletController()
-  result.view = newWalletView()
+  result.view = newWalletView(sendTransaction)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: WalletController) =
@@ -36,6 +38,8 @@ proc init*(self: WalletController) =
   # 4. convert balance to usd
   var usd_balance = parseFloat(eth_value) * parseFloat(usd_eth_price)
   echo(fmt"balance in usd: {usd_balance}")
+
+  self.view.setDefaultAccount(status_wallet.getAccount())
 
   let symbol = "ETH"
   self.view.addAssetToList("Ethereum", symbol, fmt"{eth_value:.6}", "$" & fmt"{usd_balance:.6}", fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
