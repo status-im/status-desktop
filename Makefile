@@ -85,7 +85,6 @@ STATUSGO := vendor/status-go/build/bin/libstatus.a
 $(STATUSGO): | deps
 	echo -e $(BUILD_MSG) "status-go"
 	+ cd vendor/status-go && \
-	  $(MAKE) setup-dev && \
 	  $(MAKE) statusgo-library
 
 build-linux: $(DOTHERSIDE) $(STATUSGO) src/nim_status_client.nim | deps
