@@ -142,7 +142,7 @@ RowLayout {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                source: parent.checked ? "img/list.svg" : "img/profile.svg"
+                source: parent.checked ? "img/node.svg" : "img/node.svg"
             }
         }
     }
