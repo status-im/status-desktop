@@ -68,7 +68,7 @@ ColumnLayout {
 
                 Text {
                     id: profileName
-                    text: qsTr("Happy Extraneous Dancer")
+                    text: profileModel.username
                     anchors.top: profileImg.bottom
                     anchors.topMargin: 10
                     anchors.horizontalCenterOffset: 0

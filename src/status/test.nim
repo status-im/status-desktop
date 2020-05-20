@@ -29,7 +29,7 @@ proc queryAccounts*(): string =
   echo response
   result = parseJson(response)["result"][0].getStr()
 
-proc setupNewAccount*() =
+proc setupNewAccount*(): string =
   # Deleting directories
   recreateDir(datadir)
   recreateDir(keystoredir)
@@ -291,12 +291,13 @@ proc setupNewAccount*() =
     }
   ]
 
-  result = $libstatus.saveAccountAndLogin($accountData, password, $settingsJSON,
+  var savedResult = $libstatus.saveAccountAndLogin($accountData, password, $settingsJSON,
       $configJSON, $subaccountData)
-  let saveResult = result.parseJson
+  let parsedSavedResult = savedResult.parseJson
 
-  if saveResult["error"].getStr == "":
+  if parsedSavedResult["error"].getStr == "":
     echo "Account saved succesfully"
+  $subaccountData
 
 proc addPeer*(peer: string): string =
   return $libstatus.addPeer(peer)
