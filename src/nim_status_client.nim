@@ -70,8 +70,12 @@ proc mainProc() =
   var appState = state.newAppState()
   debug "Application State", title=appState.title
 
-  var accounts = status_test.setupNewAccount()
-  debug "Accounts", accounts0 = parseJSON(accounts)[0], accounts1 = parseJSON(accounts)[1]
+  # var accounts = status_test.setupNewAccount()
+  # echo "---------"
+  # echo parseJSON(accounts)[0]
+  # echo parseJSON(accounts)[1]
+  # echo "---------"
+  # discard status_test.setupNewAccount()
 
   events.on("node:ready") do(a: Args):
     status_chat.startMessenger()
@@ -106,7 +110,7 @@ proc mainProc() =
   # discard qmlRegisterSingletonType[LibStatusQml]("im.status.desktop.Status", 1, 0, "Status", initLibStatusQml)
 
   var profile = profile.newController()
-  profile.init(accounts) # TODO: use correct account
+  # profile.init(accounts) # TODO: use correct account
   engine.setRootContextProperty("profileModel", profile.variant)
 
   signalController.init()

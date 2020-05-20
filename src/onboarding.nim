@@ -137,7 +137,7 @@ QtObject:
       echo "Account saved succesfully"
 
   proc generateRandomAccountAndLogin*(self: Onboarding) {.slot.} =
-    status_test.setupNewAccount()
+    discard status_test.setupNewAccount()
     self.events.emit("node:ready", Args())
 
 
