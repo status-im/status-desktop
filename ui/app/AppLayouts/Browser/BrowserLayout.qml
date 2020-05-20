@@ -3,6 +3,7 @@ import QtQuick.Controls 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
+import QtWebView 1.14
 import "../../../imports"
 import "../../../shared"
 
@@ -18,7 +19,7 @@ Item {
     anchors.left: parent.left
     anchors.leftMargin: 0
 
-    StackLayout {
+    WebView {
         id: browserContainer
         anchors.top: parent.top
         anchors.topMargin: 0
@@ -28,16 +29,6 @@ Item {
         anchors.rightMargin: 0
         anchors.left: parent.left
         anchors.leftMargin: 0
-
-        Text {
-            id: element1
-            text: qsTr("Ðapp Browser")
-            anchors.left: parent.left
-            anchors.leftMargin: 24
-            anchors.top: parent.top
-            anchors.topMargin: 24
-            font.weight: Font.Medium
-            font.pixelSize: 20
-      }
+        url: "https://dap.ps/"
   }
 }
