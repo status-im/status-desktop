@@ -2,7 +2,7 @@ import NimQml
 # import "../../status/core" as status
 import ../signals/types
 import eventemitter
-import onboarding
+import view
 
 type OnboardingController* = ref object of SignalSubscriber
   view*: OnboardingView

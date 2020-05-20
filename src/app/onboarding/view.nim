@@ -1,6 +1,6 @@
 import NimQml
 import json
-import ../../status/accounts
+import ../../status/accounts as status_accounts
 import nimcrypto
 import ../../status/utils
 import ../../status/libstatus
@@ -10,29 +10,22 @@ import uuids
 import eventemitter
 import ../../status/test as status_test
 
-# Probably all QT classes will look like this:
 QtObject:
   type OnboardingView* = ref object of QObject
     m_generatedAddresses: string
     events: EventEmitter
 
-  # ¯\_(ツ)_/¯ dunno what is this
   proc setup(self: OnboardingView) =
     self.QObject.setup
 
-  # ¯\_(ツ)_/¯ seems to be a method for garbage collection
   proc delete*(self: OnboardingView) =
     self.QObject.delete
 
-  # Constructor
   proc newOnboardingView*(events: EventEmitter): OnboardingView =
     new(result, delete)
     result.events = events
     result.setup()
 
-  # Read more about slots and signals here: https://doc.qt.io/qt-5/signalsandslots.html
-
-  # Accesors
   proc getGeneratedAddresses*(self: OnboardingView): string {.slot.} =
     result = self.m_generatedAddresses
 
@@ -52,7 +45,7 @@ QtObject:
 
   # QML functions
   proc generateAddresses*(self: OnboardingView) {.slot.} =
-    self.setGeneratedAddresses(generateAddresses())
+    self.setGeneratedAddresses(status_accounts.generateAddresses())
 
   proc generateAlias*(self: OnboardingView, publicKey: string): string {.slot.} =
     result = $libstatus.generateAlias(publicKey.toGoString)
@@ -139,9 +132,3 @@ QtObject:
   proc generateRandomAccountAndLogin*(self: OnboardingView) {.slot.} =
     discard status_test.setupNewAccount()
     self.events.emit("node:ready", Args())
-
-
-
-
-  # This class has the metaObject property available which lets
-  # access all the QProperties which are stored as QVariants
