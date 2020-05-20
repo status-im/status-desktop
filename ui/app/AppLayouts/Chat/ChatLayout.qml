@@ -332,61 +332,22 @@ SplitView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 delegate: chatLogViewDelegate
+                highlightFollowsCurrentItem: true
                 onCountChanged: {
-                    chatLogView.positionViewAtEnd()
+                    if (!this.atYEnd) {
+                        // User has scrolled up, we don't want to scroll back
+                        return;
+                    }
+
+                    // positionViewAtEnd doesn't work well. Instead, we use highlightFollowsCurrentItem
+                    // and set the current Item/Index to the latest item
+                    while (this.currentIndex < this.count - 1) {
+                        this.incrementCurrentIndex()
+                    }
+
                 }
             }
         }
-
-//        RowLayout {
-//            id: separator
-//            height: 16
-//            Layout.fillWidth: true
-//            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-//            Item {
-//                id: separatorContent
-//                width: 200
-//                height: 16
-//                Layout.fillHeight: false
-//                Layout.fillWidth: true
-
-//                Rectangle {
-//                    id: lineSeparator1
-//                    height: 1
-//                    color: "#00000000"
-//                    border.color: "#eef2f5"
-//                    anchors.top: parent.top
-//                    anchors.topMargin: 8
-//                    anchors.right: separatorText.left
-//                    anchors.rightMargin: 14
-//                    anchors.left: parent.left
-//                    anchors.leftMargin: 16
-//                }
-
-//                Text {
-//                    id: separatorText
-//                    color: Theme.darkGrey
-//                    text: qsTr("Yesterday")
-//                    font.pixelSize: 12
-//                    anchors.centerIn: parent
-//                }
-
-//                Rectangle {
-//                    id: lineSeparator2
-//                    height: 1
-//                    color: "#00000000"
-//                    anchors.right: parent.right
-//                    anchors.rightMargin: 16
-//                    anchors.left: separatorText.right
-//                    border.color: "#eef2f5"
-//                    anchors.top: parent.top
-//                    anchors.leftMargin: 14
-//                    anchors.topMargin: 8
-//                }
-//            }
-
-//        }
 
         RowLayout {
             id: chatInputContainer
@@ -474,6 +435,6 @@ SplitView {
 }
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.75;height:770;width:1152}
+    D{i:0;formeditorZoom:0.5;height:770;width:1152}
 }
 ##^##*/
