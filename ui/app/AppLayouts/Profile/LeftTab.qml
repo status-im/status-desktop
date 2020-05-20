@@ -41,7 +41,7 @@ ColumnLayout {
 
                 Image {
                     id: profileImg
-                    source: "../../img/placeholder-profile-large.jpg"
+                    source: profileModel.identicon
                     width: 80
                     height: 80
                     fillMode: Image.PreserveAspectCrop
