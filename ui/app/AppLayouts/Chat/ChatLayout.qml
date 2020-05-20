@@ -252,7 +252,7 @@ SplitView {
                 id: chatLogViewDelegate
                 Rectangle {
                     id: chatBox
-                    height: 140
+                    height: 60 + chatText.height
                     color: "#00000000"
                     border.color: "#00000000"
                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
