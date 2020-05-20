@@ -60,5 +60,6 @@ QtObject:
   proc storeAccountAndLogin(self: OnboardingView, selectedAccount: string, password: string): string {.slot.} =
     result = self.doStoreAccountAndLogin(self.events, selectedAccount, password)
 
+  # TODO: this is temporary and will be removed once accounts import and creation is working
   proc generateRandomAccountAndLogin*(self: OnboardingView) {.slot.} =
     self.doGenerateRandomAccountAndLogin(self.events)

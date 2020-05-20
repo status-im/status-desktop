@@ -89,6 +89,7 @@ proc storeAccountAndLogin(events: EventEmitter, selectedAccount: string, passwor
     events.emit("node:ready", Args())
     echo "Account saved succesfully"
 
+# TODO: this is temporary and will be removed once accounts import and creation is working
 proc generateRandomAccountAndLogin*(events: EventEmitter) =
   discard status_test.setupNewAccount()
   events.emit("node:ready", Args())
