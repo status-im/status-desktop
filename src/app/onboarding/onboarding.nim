@@ -12,20 +12,20 @@ import ../../status/test as status_test
 
 # Probably all QT classes will look like this:
 QtObject:
-  type Onboarding* = ref object of QObject
+  type OnboardingView* = ref object of QObject
     m_generatedAddresses: string
     events: EventEmitter
 
   # ¯\_(ツ)_/¯ dunno what is this
-  proc setup(self: Onboarding) =
+  proc setup(self: OnboardingView) =
     self.QObject.setup
 
   # ¯\_(ツ)_/¯ seems to be a method for garbage collection
-  proc delete*(self: Onboarding) =
+  proc delete*(self: OnboardingView) =
     self.QObject.delete
 
   # Constructor
-  proc newOnboarding*(events: EventEmitter): Onboarding =
+  proc newOnboardingView*(events: EventEmitter): OnboardingView =
     new(result, delete)
     result.events = events
     result.setup()
@@ -33,13 +33,13 @@ QtObject:
   # Read more about slots and signals here: https://doc.qt.io/qt-5/signalsandslots.html
 
   # Accesors
-  proc getGeneratedAddresses*(self: Onboarding): string {.slot.} =
+  proc getGeneratedAddresses*(self: OnboardingView): string {.slot.} =
     result = self.m_generatedAddresses
 
-  proc generatedAddressesChanged*(self: Onboarding,
+  proc generatedAddressesChanged*(self: OnboardingView,
       generatedAddresses: string) {.signal.}
 
-  proc setGeneratedAddresses*(self: Onboarding, generatedAddresses: string) {.slot.} =
+  proc setGeneratedAddresses*(self: OnboardingView, generatedAddresses: string) {.slot.} =
     if self.m_generatedAddresses == generatedAddresses:
       return
     self.m_generatedAddresses = generatedAddresses
@@ -51,16 +51,16 @@ QtObject:
     notify = generatedAddressesChanged
 
   # QML functions
-  proc generateAddresses*(self: Onboarding) {.slot.} =
+  proc generateAddresses*(self: OnboardingView) {.slot.} =
     self.setGeneratedAddresses(generateAddresses())
 
-  proc generateAlias*(self: Onboarding, publicKey: string): string {.slot.} =
+  proc generateAlias*(self: OnboardingView, publicKey: string): string {.slot.} =
     result = $libstatus.generateAlias(publicKey.toGoString)
 
-  proc identicon*(self: Onboarding, publicKey: string): string {.slot.} =
+  proc identicon*(self: OnboardingView, publicKey: string): string {.slot.} =
     result = $libstatus.identicon(publicKey.toGoString)
 
-  proc storeAccountAndLogin(self: Onboarding, selectedAccount: string, password: string): string {.slot.} =
+  proc storeAccountAndLogin(self: OnboardingView, selectedAccount: string, password: string): string {.slot.} =
     let account = to(json.parseJson(selectedAccount), Models.GeneratedAccount)
     let password = "0x" & $keccak_256.digest(password)
     let multiAccount = %* {
@@ -136,7 +136,7 @@ QtObject:
       self.events.emit("node:ready", Args())
       echo "Account saved succesfully"
 
-  proc generateRandomAccountAndLogin*(self: Onboarding) {.slot.} =
+  proc generateRandomAccountAndLogin*(self: OnboardingView) {.slot.} =
     discard status_test.setupNewAccount()
     self.events.emit("node:ready", Args())
 
