@@ -84,7 +84,7 @@ Item {
                 y: 99
                 width: 239
                 height: 40
-                text: "0x2cd9bf92c5e20b1b410f5ace94d963a96e89156fbe65b70365e8596b37f1f165"
+                text: "qwerty"
                 placeholderText: "Enter Password"
                 anchors.topMargin: 32
                 anchors.leftMargin: 24
