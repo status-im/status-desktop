@@ -1,6 +1,7 @@
 import libstatus
 import json
 import utils
+import os
 
 proc generateAddresses*(): string =
   let multiAccountConfig = %* {
@@ -13,3 +14,22 @@ proc generateAddresses*(): string =
 
 proc generateAlias*(publicKey: string): string =
   result = $libstatus.generateAlias(publicKey.toGoString)
+
+proc ensureDir(dirname: string) =
+  if not existsDir(dirname):
+    # removeDir(dirname)
+    createDir(dirname)
+
+proc initNodeAccounts*() =
+  const datadir = "./data/"
+  const keystoredir = "./data/keystore/"
+  const nobackupdir = "./noBackup/"
+
+  ensureDir(datadir)
+  ensureDir(keystoredir)
+  ensureDir(nobackupdir)
+
+  # 1
+  discard $libstatus.initKeystore(keystoredir);
+  # 2
+  discard $libstatus.openAccounts(datadir);
