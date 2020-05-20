@@ -5,8 +5,8 @@ import app/wallet/core as wallet
 import app/node/core as node
 import app/profile/core as profile
 import app/signals/core as signals
+import app/onboarding/onboarding as onboarding
 import state
-import onboarding
 import status/utils
 import strformat
 import strutils

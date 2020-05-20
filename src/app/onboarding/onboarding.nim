@@ -1,14 +1,14 @@
 import NimQml
 import json
-import status/accounts
+import ../../status/accounts
 import nimcrypto
-import status/utils
-import status/libstatus
-import models/accounts as Models
-import constants/constants
+import ../../status/utils
+import ../../status/libstatus
+import ../../models/accounts as Models
+import ../../constants/constants
 import uuids
 import eventemitter
-import status/test as status_test
+import ../../status/test as status_test
 
 # Probably all QT classes will look like this:
 QtObject:
