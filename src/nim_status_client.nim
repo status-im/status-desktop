@@ -79,6 +79,7 @@ proc mainProc() =
   var onboarding = onboarding.newController(events)
   # onboarding.init()
   engine.setRootContextProperty("onboardingLogic", onboarding.variant)
+  engine.setRootContextProperty("onboardingModel", onboarding.variant)
 
 
   # TODO: figure out a way to prevent this from breaking Qt Creator

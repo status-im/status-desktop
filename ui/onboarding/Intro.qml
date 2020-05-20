@@ -37,9 +37,9 @@ RowLayout {
                     anchors.topMargin: 50
                     anchors.left: parent.left
                     anchors.leftMargin: 15
-                    label: "Generate random acct and login"
+                    label: "Generate random account and login"
                     onClicked: {
-                        onboardingLogic.generateRandomAccountAndLogin()
+                        onboardingModel.generateRandomAccountAndLogin()
                         app.visible = true
                     }
                 }
