@@ -5,7 +5,7 @@ import app/wallet/core as wallet
 import app/node/core as node
 import app/profile/core as profile
 import app/signals/core as signals
-import app/onboarding/onboarding as onboarding
+import app/onboarding/core as onboarding
 import state
 import status/utils
 import strformat
@@ -75,13 +75,11 @@ proc mainProc() =
 
   engine.setRootContextProperty("nodeModel", node.variant)
 
-  var onboarding = newOnboarding(events);
-  defer: onboarding.delete
 
-  let onboardingVariant = newQVariant(onboarding)
-  defer: onboardingVariant.delete
+  var onboarding = onboarding.newController(events)
+  # onboarding.init()
+  engine.setRootContextProperty("onboardingLogic", onboarding.variant)
 
-  engine.setRootContextProperty("onboardingLogic", onboardingVariant)
 
   # TODO: figure out a way to prevent this from breaking Qt Creator
   # var initLibStatusQml = proc(): LibStatusQml =
