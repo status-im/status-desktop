@@ -14,6 +14,7 @@ import strformat
 import strutils
 import json
 import status/core as status
+import status/accounts as status_accounts
 import status/chat as status_chat
 import status/test as status_test
 import status/types as types
@@ -30,28 +31,8 @@ var signalsQObjPointer: pointer
 logScope:
   topics = "main"
 
-proc ensureDir(dirname: string) =
-  if not existsDir(dirname):
-    # removeDir(dirname)
-    createDir(dirname)
-
-proc initNode(): string =
-  const datadir = "./data/"
-  const keystoredir = "./data/keystore/"
-  const nobackupdir = "./noBackup/"
-
-  ensureDir(datadir)
-  ensureDir(keystoredir)
-  ensureDir(nobackupdir)
-
-  # 1
-  result = $libstatus.initKeystore(keystoredir);
-
-  # 2
-  result = $libstatus.openAccounts(datadir);
-
 proc mainProc() =
-  discard initNode()
+  status_accounts.initNodeAccounts()
 
   let app = newQApplication()
   let engine = newQQmlApplicationEngine()
@@ -91,17 +72,17 @@ proc mainProc() =
 
   var node = node.newController()
   node.init()
-  
+
   engine.setRootContextProperty("nodeModel", node.variant)
-  
+
   var onboarding = newOnboarding(events);
   defer: onboarding.delete
 
   let onboardingVariant = newQVariant(onboarding)
   defer: onboardingVariant.delete
-  
+
   engine.setRootContextProperty("onboardingLogic", onboardingVariant)
-  
+
   # TODO: figure out a way to prevent this from breaking Qt Creator
   # var initLibStatusQml = proc(): LibStatusQml =
   #   let libStatus = newLibStatusQml();
@@ -129,10 +110,6 @@ proc mainProc() =
   events.on("node:ready") do(a: Args):
     appState.addChannel("test")
     appState.addChannel("test2")
-
-
-
-
   
   engine.load("../ui/main.qml")
 
