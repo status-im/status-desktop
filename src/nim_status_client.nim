@@ -2,10 +2,12 @@ import NimQml
 import app/chat/core as chat
 import app/wallet/core as wallet
 import app/node/core as node
+import app/profile/core as profile
 import app/signals/core as signals
 import state
 import strformat
 import strutils
+import json
 import status/core as status
 import status/chat as status_chat
 import status/test as status_test
@@ -33,7 +35,11 @@ proc mainProc() =
   var appState = state.newAppState()
   echo appState.title
 
-  status_test.setupNewAccount()
+  var accounts = status_test.setupNewAccount()
+  echo "---------"
+  echo parseJSON(accounts)[0]
+  echo parseJSON(accounts)[1]
+  echo "---------"
 
   status_chat.startMessenger()
 
@@ -48,6 +54,10 @@ proc mainProc() =
   var node = node.newController()
   node.init()
   engine.setRootContextProperty("nodeModel", node.variant)
+
+  var profile = profile.newController()
+  profile.init(accounts)
+  engine.setRootContextProperty("profileModel", profile.variant)
 
   signalController.init()
   signalController.addSubscriber(SignalType.Wallet, wallet)
