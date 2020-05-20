@@ -53,8 +53,4 @@ ApplicationWindow {
             anchors.fill: parent
         }
     }
-
 }
-
-
-
