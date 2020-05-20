@@ -21,3 +21,4 @@ proc init*(self: ProfileController, accounts: string) =
     var chatAccount = parseJSON(accounts)[1]
 
     self.view.username = chatAccount["name"].str
+    self.view.identicon = chatAccount["photo-path"].str

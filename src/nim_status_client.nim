@@ -56,7 +56,7 @@ proc mainProc() =
   engine.setRootContextProperty("nodeModel", node.variant)
 
   var profile = profile.newController()
-  profile.init(accounts)
+  profile.init(accounts) # TODO: use correct account
   engine.setRootContextProperty("profileModel", profile.variant)
 
   signalController.init()
