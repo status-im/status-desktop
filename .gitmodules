@@ -46,5 +46,3 @@
 [submodule "vendor/eventemitter"]
 	path = vendor/eventemitter
 	url = https://github.com/al-bimani/eventemitter
-	ignore = dirty
-	branch = master
