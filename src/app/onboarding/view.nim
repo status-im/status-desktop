@@ -15,6 +15,7 @@ QtObject:
     m_generatedAddresses: string
     events: EventEmitter
     doStoreAccountAndLogin: proc(events: EventEmitter, selectedAccount: string, password: string): string
+    doGenerateRandomAccountAndLogin: proc(events: EventEmitter)
 
   proc setup(self: OnboardingView) =
     self.QObject.setup
@@ -22,10 +23,11 @@ QtObject:
   proc delete*(self: OnboardingView) =
     self.QObject.delete
 
-  proc newOnboardingView*(events: EventEmitter, doStoreAccountAndLogin: proc): OnboardingView =
+  proc newOnboardingView*(events: EventEmitter, doStoreAccountAndLogin: proc, doGenerateRandomAccountAndLogin: proc(events: EventEmitter)): OnboardingView =
     new(result, delete)
     result.events = events
     result.doStoreAccountAndLogin = doStoreAccountAndLogin
+    result.doGenerateRandomAccountAndLogin = doGenerateRandomAccountAndLogin
     result.setup()
 
   proc getGeneratedAddresses*(self: OnboardingView): string {.slot.} =
@@ -59,5 +61,4 @@ QtObject:
     result = self.doStoreAccountAndLogin(self.events, selectedAccount, password)
 
   proc generateRandomAccountAndLogin*(self: OnboardingView) {.slot.} =
-    discard status_test.setupNewAccount()
-    self.events.emit("node:ready", Args())
+    self.doGenerateRandomAccountAndLogin(self.events)

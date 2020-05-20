@@ -14,11 +14,6 @@ import eventemitter
 import view
 
 proc storeAccountAndLogin(events: EventEmitter, selectedAccount: string, password: string): string =
-  echo "--------------------"
-  echo "--------------------"
-  echo "storeAccountAndLogin"
-  echo "--------------------"
-  echo "--------------------"
   let account = to(json.parseJson(selectedAccount), Models.GeneratedAccount)
   let password = "0x" & $keccak_256.digest(password)
   let multiAccount = %* {
@@ -94,13 +89,17 @@ proc storeAccountAndLogin(events: EventEmitter, selectedAccount: string, passwor
     events.emit("node:ready", Args())
     echo "Account saved succesfully"
 
+proc generateRandomAccountAndLogin*(events: EventEmitter) =
+  discard status_test.setupNewAccount()
+  events.emit("node:ready", Args())
+
 type OnboardingController* = ref object of SignalSubscriber
   view*: OnboardingView
   variant*: QVariant
 
 proc newController*(events: EventEmitter): OnboardingController =
   result = OnboardingController()
-  result.view = newOnboardingView(events, storeAccountAndLogin)
+  result.view = newOnboardingView(events, storeAccountAndLogin, generateRandomAccountAndLogin)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: OnboardingController) =
