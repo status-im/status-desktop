@@ -196,18 +196,17 @@ SwipeView {
         console.log("confirm clicked " + txtConfirmPassword.text + " : " + txtPassword.text);
 
         if (txtConfirmPassword.text != txtPassword.text) {
-          passwordsDontMatchError.open();
+          return passwordsDontMatchError.open();
         }
-        else {
-          const selectedAccount = swipeView.generatedAccounts[wizardStep2.selectedIndex];
-          const storeResponse = onboardingLogic.storeAccountAndLogin(JSON.stringify(selectedAccount), txtPassword.text)
-          const response = JSON.parse(storeResponse);
-          if (response.error) {
-            storeAccountAndLoginError.text += response.error;
-            return storeAccountAndLoginError.open();
-          }
-          swipeView.storeAccountAndLoginResult(response);
+
+        const selectedAccount = swipeView.generatedAccounts[wizardStep2.selectedIndex];
+        const storeResponse = onboardingModel.storeAccountAndLogin(JSON.stringify(selectedAccount), txtPassword.text)
+        const response = JSON.parse(storeResponse);
+        if (response.error) {
+          storeAccountAndLoginError.text += response.error;
+          return storeAccountAndLoginError.open();
         }
+        swipeView.storeAccountAndLoginResult(response);
       }
     }
   }
