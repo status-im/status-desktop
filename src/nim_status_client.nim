@@ -46,7 +46,7 @@ proc mainProc() =
   var wallet = wallet.newController()
   engine.setRootContextProperty("assetsModel", wallet.variant)
 
-  var chat = chat.newController()
+  var chat = chat.newController(events)
   chat.init()
   engine.setRootContextProperty("chatsModel", chat.variant)
 
@@ -75,9 +75,9 @@ proc mainProc() =
   engine.setRootContextProperty("signals", signalController.variant)
 
   appState.subscribe(proc () =
-    # chatsModel.names = @[]
     for channel in appState.channels:
-      chat.join(channel.name)
+      echo channel.name
+      chat.load(channel.name)
   )
 
   accountsModel.events.on("accountsReady") do(a: Args):

@@ -115,7 +115,8 @@ SplitView {
                      MouseArea {
                         anchors.fill: parent
                         onClicked : {
-                            chatsModel.addNameTolist(searchText.text)
+                            chatGroupsListView.currentIndex = chatsModel.joinChat(searchText.text);
+                            searchText.text = "";
                         }
                     }
                 }
