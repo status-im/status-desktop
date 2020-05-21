@@ -30,9 +30,9 @@ type
     generatedAddresses*: seq[GeneratedAccount]
     events*: EventEmitter
 
-proc newAccountModel*(events: EventEmitter): AccountModel =
+proc newAccountModel*(): AccountModel =
   result = AccountModel()
-  result.events = events
+  result.events = createEventEmitter()
   result.generatedAddresses = @[]
 
 proc delete*(self: AccountModel) =
@@ -65,7 +65,7 @@ proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
 # TODO: this is temporary and will be removed once accounts import and creation is working
 proc generateRandomAccountAndLogin*(self: AccountModel) =
   discard status_test.setupNewAccount()
-  self.events.emit("node:ready", Args())
+  self.events.emit("accountsReady", Args())
 
 proc storeAccountAndLogin*(self: AccountModel, selectedAccountIndex: int, password: string): string =
   # let account = to(json.parseJson(selectedAccount), Models.GeneratedAccount)
@@ -146,5 +146,5 @@ proc storeAccountAndLogin*(self: AccountModel, selectedAccountIndex: int, passwo
   let saveResult = result.parseJson
 
   if saveResult["error"].getStr == "":
-    self.events.emit("node:ready", Args())
+    self.events.emit("accountsReady", Args())
     echo "Account saved succesfully"
