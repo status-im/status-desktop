@@ -6,7 +6,6 @@ import ../../status/utils
 import ../../status/libstatus
 import ../../models/accounts as Models
 import ../../constants/constants
-import ../../status/test as status_test
 import ../signals/types
 import uuids
 import eventemitter

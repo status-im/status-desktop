@@ -2,7 +2,6 @@ import json
 import eventemitter
 import ../status/libstatus
 import ../status/accounts as status_accounts
-import ../status/test as status_test
 import ../constants/constants
 import ../status/utils
 import nimcrypto
@@ -64,17 +63,11 @@ proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
 
 # TODO: this is temporary and will be removed once accounts import and creation is working
 proc generateRandomAccountAndLogin*(self: AccountModel) =
-  discard status_test.setupNewAccount()
+  discard status_accounts.setupRandomTestAccount()
   self.events.emit("accountsReady", Args())
 
 proc storeAccountAndLogin*(self: AccountModel, selectedAccountIndex: int, password: string): string =
-  # let account = to(json.parseJson(selectedAccount), Models.GeneratedAccount)
-  echo "account index selected is "
-  echo selectedAccountIndex
-
   let account: GeneratedAccount = self.generatedAddresses[selectedAccountIndex]
-  echo "account selected is "
-  echo account
   let password = "0x" & $keccak_256.digest(password)
   let multiAccount = %* {
     "accountID": account.id,
