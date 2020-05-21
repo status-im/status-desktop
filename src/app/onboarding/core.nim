@@ -13,8 +13,14 @@ import uuids
 import eventemitter
 import view
 
-proc storeAccountAndLogin(events: EventEmitter, selectedAccount: string, password: string): string =
-  let account = to(json.parseJson(selectedAccount), Models.GeneratedAccount)
+proc storeAccountAndLogin(model: AccountModel, selectedAccountIndex: int, password: string): string =
+  # let account = to(json.parseJson(selectedAccount), Models.GeneratedAccount)
+  echo "account index selected is "
+  echo selectedAccountIndex
+
+  let account: GeneratedAccount = model.generatedAddresses[selectedAccountIndex]
+  echo "account selected is "
+  echo account
   let password = "0x" & $keccak_256.digest(password)
   let multiAccount = %* {
     "accountID": account.id,
@@ -86,7 +92,7 @@ proc storeAccountAndLogin(events: EventEmitter, selectedAccount: string, passwor
   let saveResult = result.parseJson
 
   if saveResult["error"].getStr == "":
-    events.emit("node:ready", Args())
+    model.events.emit("node:ready", Args())
     echo "Account saved succesfully"
 
 # TODO: this is temporary and will be removed once accounts import and creation is working
@@ -97,10 +103,13 @@ proc generateRandomAccountAndLogin*(events: EventEmitter) =
 type OnboardingController* = ref object of SignalSubscriber
   view*: OnboardingView
   variant*: QVariant
+  model*: AccountModel
 
 proc newController*(events: EventEmitter): OnboardingController =
   result = OnboardingController()
-  result.view = newOnboardingView(events, storeAccountAndLogin, generateRandomAccountAndLogin)
+  # TODO: events should be specific to the model itself
+  result.model = newAccountModel(events)
+  result.view = newOnboardingView(result.model, storeAccountAndLogin, generateRandomAccountAndLogin)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: OnboardingController) =
@@ -108,7 +117,17 @@ proc delete*(self: OnboardingController) =
   delete self.variant
 
 proc init*(self: OnboardingController) =
-  discard
+  # let addresses = parseJson(status_accounts.generateAddresses())
+  let accounts = self.model.generateAddresses()
+
+  for account in accounts:
+    # self.view.addAddressToList("account.username", "account.identicon", "account.key")
+    self.view.addAddressToList(account.username, account.identicon, account.key)
+    # echo address
+    # var username = $libstatus.generateAlias(address["publicKey"].str.toGoString)
+    # var identicon = $libstatus.identicon(address["publicKey"].str.toGoString)
+    # var generatedAddress = address["address"].str
+    # self.view.addAddressToList(username, identicon, generatedAddress)
 
 # method onSignal(self: OnboardingController, data: Signal) =
 #   echo "new signal received"
