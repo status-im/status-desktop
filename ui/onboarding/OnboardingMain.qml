@@ -52,7 +52,10 @@ Page {
 
         DSM.State {
             id: genKeyState
-            onEntered: genKey.visible = true
+            onEntered: {
+                genKey.visible = true
+                onboardingModel.generateAddresses()
+            }
             onExited: genKey.visible = false
 
            DSM.SignalTransition {

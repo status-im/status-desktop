@@ -77,7 +77,6 @@ Page {
         anchors.horizontalCenter: parent.horizontalCenter
         label: "I'm new, generate me a key"
         background: Rectangle {color: "transparent"}
-        onClicked: onboardingLogic.generateAddresses()
     }
 
 }
