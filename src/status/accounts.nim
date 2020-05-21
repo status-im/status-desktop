@@ -31,6 +31,9 @@ proc generateAddresses*(): string =
 proc generateAlias*(publicKey: string): string =
   result = $libstatus.generateAlias(publicKey.toGoString)
 
+proc generateIdenticon*(publicKey: string): string =
+  result = $libstatus.identicon(publicKey.toGoString)
+
 proc ensureDir(dirname: string) =
   if not existsDir(dirname):
     # removeDir(dirname)

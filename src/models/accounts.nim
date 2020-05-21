@@ -4,7 +4,6 @@ import ../status/libstatus
 import ../status/accounts as status_accounts
 import ../status/utils
 import ../status/utils
-# import "../../status/core" as status
 
 type
   GeneratedAccount* = object
@@ -35,7 +34,7 @@ proc delete*(self: AccountModel) =
   discard
 
 proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
-  let accounts = parseJson(status_accounts.generateAddresses())
+  let accounts = status_accounts.generateAddresses().parseJson
   for account in accounts:
     var generatedAccount = GeneratedAccount()
 
@@ -46,8 +45,8 @@ proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
     generatedAccount.mnemonic = account["mnemonic"].str
     generatedAccount.derived = account["derived"]
 
-    generatedAccount.username = $libstatus.generateAlias(account["publicKey"].str.toGoString)
-    generatedAccount.identicon = $libstatus.identicon(account["publicKey"].str.toGoString)
+    generatedAccount.username = status_accounts.generateAlias(account["publicKey"].str)
+    generatedAccount.identicon = status_accounts.generateIdenticon(account["publicKey"].str)
     generatedAccount.key = account["address"].str
 
     self.generatedAddresses.add(generatedAccount)

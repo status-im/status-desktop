@@ -9,9 +9,6 @@ SwipeView {
     anchors.fill: parent
     currentIndex: 0
 
-    // property string strGeneratedAccounts: onboardingLogic.generatedAddresses
-    //  property var generatedAccounts: {}
-    // signal storeAccountAndLoginResult(response: var)
     signal loginDone()
 
     onCurrentItemChanged: {
@@ -50,43 +47,12 @@ SwipeView {
                     Component {
                         id: addressViewDelegate
 
-                        // Item {
-                        //   id: addressViewContainer
-                        //   height: 56
-                        //   anchors.right: parent.right
-                        //   anchors.rightMargin: 0
-                        //   anchors.left: parent.left
-                        //   anchors.leftMargin: 0
-
-                        //   Text {
-                        //     text: "address"
-                        //     font.pointSize: 24
-                        //     anchors.verticalCenter: parent.verticalCenter
-                        //     font.pixelSize: 14
-                        //     font.strikeout: false
-                        //     anchors.left: parent.left
-                        //     anchors.leftMargin: 72
-                        //   }
-                        // }
-
                         Item {
                             height: 56
-                            // anchors.leftMargin: 20
-                            // anchors.rightMargin: 20
                             anchors.right: parent.right
                             anchors.rightMargin: 0
                             anchors.left: parent.left
                             anchors.leftMargin: 0
-
-//                            Text {
-//                                id: keyValue
-//                                text: key
-//                                anchors.verticalCenter: parent.verticalCenter
-//                                font.pixelSize: 14
-//                                font.strikeout: false
-//                                anchors.left: parent.left
-//                                anchors.leftMargin: 72
-//                            }
 
                              Row {
                                RadioButton {
@@ -100,7 +66,6 @@ SwipeView {
                                Column {
                                  Image {
                                    source: identicon
-                                  //  source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAF0lEQVR42mPk+c9Qz0ACYBzVMKoBOwAA3IgShVgwlIUAAAAASUVORK5CYII="
                                  }
                                }
                                Column {
@@ -250,15 +215,9 @@ SwipeView {
                 }
 
                 const selectedAccountIndex = wizardStep2.selectedIndex
-
                 const storeResponse = onboardingModel.storeAccountAndLogin(selectedAccountIndex, txtPassword.text)
 
-                // const response = JSON.parse(storeResponse);
-                // if (response.error) {
-                //     storeAccountAndLoginError.text += response.error;
-                //     return storeAccountAndLoginError.open();
-                // }
-                swipeView.loginDone();
+               swipeView.loginDone();
             }
         }
     }
