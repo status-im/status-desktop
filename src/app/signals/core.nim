@@ -4,12 +4,16 @@ import tables
 import json
 import types
 import messages
+import chronicles
+
+logScope:
+  topics = "signals"
 
 QtObject:
   type SignalsController* = ref object of QObject
     app: QApplication
     statusSignal: string
-    signalSubscribers*: Table[SignalType, SignalSubscriber]
+    signalSubscribers*: Table[SignalType, seq[SignalSubscriber]]
     variant*: QVariant
 
   # Constructor
@@ -17,7 +21,7 @@ QtObject:
     new(result)
     result.app = app
     result.statusSignal = ""
-    result.signalSubscribers = initTable[SignalType, SignalSubscriber]()
+    result.signalSubscribers = initTable[SignalType, seq[SignalSubscriber]]()
     result.setup()
     result.variant = newQVariant(result)
 
@@ -31,20 +35,34 @@ QtObject:
     self.QObject.delete
 
   proc addSubscriber*(self: SignalsController, signalType: SignalType, subscriber: SignalSubscriber) =
-    self.signalSubscribers[signalType] = subscriber
+    if not self.signalSubscribers.hasKey(signalType):
+      self.signalSubscribers[signalType] = @[]
+    
+    self.signalSubscribers[signalType].add(subscriber)
 
   proc processSignal(self: SignalsController) =
     let jsonSignal = (self.statusSignal).parseJson
-    let signalType = $jsonSignal["type"].getStr
+    let signalString = $jsonSignal["type"].getStr
 
-    case signalType:
+    var signalType: SignalType
+    var signal: Signal
+
+    case signalString:
       of "messages.new":
-        self.signalSubscribers[SignalType.Message].onSignal(messages.fromEvent(jsonSignal))
+        signalType = SignalType.Message
+        signal = messages.fromEvent(jsonSignal)
       of "wallet":
-        self.signalSubscribers[SignalType.Wallet].onSignal(WalletSignal(content: $jsonSignal))
+        signalType = SignalType.Wallet
+        signal = WalletSignal(content: $jsonSignal)
       else:
-        # TODO: log error?
-        discard
+        warn "Unhandled signal received", type = signalString
+        signalType = SignalType.Unknown
+
+    if not self.signalSubscribers.hasKey(signalType):
+      self.signalSubscribers[signalType] = @[]
+
+    for subscriber in self.signalSubscribers[signalType]:
+      subscriber.onSignal(signal)
 
   proc statusSignal*(self: SignalsController): string {.slot.} =
     result = self.statusSignal
