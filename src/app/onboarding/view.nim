@@ -26,8 +26,8 @@ QtObject:
     addresses*: seq[Address]
     model: AccountModel
     # m_generatedAddresses: string
-    doStoreAccountAndLogin: proc(model: AccountModel, selectedAccount: int, password: string): string
-    doGenerateRandomAccountAndLogin: proc(events: EventEmitter)
+    # doStoreAccountAndLogin: proc(model: AccountModel, selectedAccount: int, password: string): string
+    # doGenerateRandomAccountAndLogin: proc(events: EventEmitter)
 
   proc setup(self: OnboardingView) =
     self.QAbstractListModel.setup
@@ -38,11 +38,12 @@ QtObject:
       address.delete
     self.addresses = @[]
 
-  proc newOnboardingView*(model: AccountModel, doStoreAccountAndLogin: proc, doGenerateRandomAccountAndLogin: proc(events: EventEmitter)): OnboardingView =
+  # proc newOnboardingView*(model: AccountModel, doStoreAccountAndLogin: proc, doGenerateRandomAccountAndLogin: proc(events: EventEmitter)): OnboardingView =
+  proc newOnboardingView*(model: AccountModel): OnboardingView =
     new(result, delete)
     result.model = model
-    result.doStoreAccountAndLogin = doStoreAccountAndLogin
-    result.doGenerateRandomAccountAndLogin = doGenerateRandomAccountAndLogin
+    # result.doStoreAccountAndLogin = doStoreAccountAndLogin
+    # result.doGenerateRandomAccountAndLogin = doGenerateRandomAccountAndLogin
     result.addresses = @[]
     result.setup
 
@@ -109,8 +110,8 @@ QtObject:
     echo "--------------------"
     echo "--------------------"
     # var selectedAccountIndex = self.addresses
-    result = self.doStoreAccountAndLogin(self.model, selectedAccountIndex, password)
+    result = self.model.storeAccountAndLogin(selectedAccountIndex, password)
 
   # TODO: this is temporary and will be removed once accounts import and creation is working
   proc generateRandomAccountAndLogin*(self: OnboardingView) {.slot.} =
-    self.doGenerateRandomAccountAndLogin(self.model.events)
+    self.model.generateRandomAccountAndLogin()
