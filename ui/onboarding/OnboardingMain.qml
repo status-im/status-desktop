@@ -57,7 +57,7 @@ Page {
 
            DSM.SignalTransition {
                targetState: appState
-               signal: genKey.storeAccountAndLoginResult
+               signal: genKey.loginDone
             //    guard: !response.error
            }
         }

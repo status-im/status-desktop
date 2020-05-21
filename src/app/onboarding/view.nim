@@ -25,9 +25,6 @@ QtObject:
   type OnboardingView* = ref object of QAbstractListModel
     addresses*: seq[Address]
     model: AccountModel
-    # m_generatedAddresses: string
-    # doStoreAccountAndLogin: proc(model: AccountModel, selectedAccount: int, password: string): string
-    # doGenerateRandomAccountAndLogin: proc(events: EventEmitter)
 
   proc setup(self: OnboardingView) =
     self.QAbstractListModel.setup
@@ -38,12 +35,9 @@ QtObject:
       address.delete
     self.addresses = @[]
 
-  # proc newOnboardingView*(model: AccountModel, doStoreAccountAndLogin: proc, doGenerateRandomAccountAndLogin: proc(events: EventEmitter)): OnboardingView =
   proc newOnboardingView*(model: AccountModel): OnboardingView =
     new(result, delete)
     result.model = model
-    # result.doStoreAccountAndLogin = doStoreAccountAndLogin
-    # result.doGenerateRandomAccountAndLogin = doGenerateRandomAccountAndLogin
     result.addresses = @[]
     result.setup
 
@@ -75,41 +69,7 @@ QtObject:
     AddressRoles.Identicon.int:"identicon",
     AddressRoles.Key.int:"key" }.toTable
 
-  # proc getGeneratedAddresses*(self: OnboardingView): string {.slot.} =
-  #   result = self.m_generatedAddresses
-
-  # proc generatedAddressesChanged*(self: OnboardingView,
-  #     generatedAddresses: string) {.signal.}
-
-  # proc setGeneratedAddresses*(self: OnboardingView, generatedAddresses: string) {.slot.} =
-  #   if self.m_generatedAddresses == generatedAddresses:
-  #     return
-  #   self.m_generatedAddresses = generatedAddresses
-  #   self.generatedAddressesChanged(generatedAddresses)
-
-  # QtProperty[string]generatedAddresses:
-  #   read = getGeneratedAddresses
-  #   write = setGeneratedAddresses
-  #   notify = generatedAddressesChanged
-
-  # QML functions
-  # proc generateAddresses*(self: OnboardingView) {.slot.} =
-    # self.setGeneratedAddresses(status_accounts.generateAddresses())
-
-  # proc generateAlias*(self: OnboardingView, publicKey: string): string {.slot.} =
-  #   result = $libstatus.generateAlias(publicKey.toGoString)
-
-  # proc identicon*(self: OnboardingView, publicKey: string): string {.slot.} =
-  #   result = $libstatus.identicon(publicKey.toGoString)
-
-  # proc storeAccountAndLogin(self: OnboardingView, selectedAccount: string, password: string): string {.slot.} =
   proc storeAccountAndLogin(self: OnboardingView, selectedAccountIndex: int, password: string): string {.slot.} =
-    echo "--------------------"
-    echo "--------------------"
-    echo selectedAccountIndex
-    echo "--------------------"
-    echo "--------------------"
-    # var selectedAccountIndex = self.addresses
     result = self.model.storeAccountAndLogin(selectedAccountIndex, password)
 
   # TODO: this is temporary and will be removed once accounts import and creation is working

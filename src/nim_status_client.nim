@@ -81,14 +81,6 @@ proc mainProc() =
   engine.setRootContextProperty("onboardingLogic", onboarding.variant)
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
 
-
-  # TODO: figure out a way to prevent this from breaking Qt Creator
-  # var initLibStatusQml = proc(): LibStatusQml =
-  #   let libStatus = newLibStatusQml();
-  #   return libStatus;
-
-  # discard qmlRegisterSingletonType[LibStatusQml]("im.status.desktop.Status", 1, 0, "Status", initLibStatusQml)
-
   var profile = profile.newController()
   # profile.init(accounts) # TODO: use correct account
   engine.setRootContextProperty("profileModel", profile.variant)
