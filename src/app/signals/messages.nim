@@ -24,7 +24,7 @@ proc fromEvent*(event: JsonNode): Signal =
       text: jsonMsg["text"].getStr,
       timestamp: $jsonMsg["timestamp"].getInt,
       whisperTimestamp: $jsonMsg["whisperTimestamp"].getInt,
-      isCurrentUser: false
+      isCurrentUser: false # TODO: this must compare the fromAuthor against current user because the messages received from the mailserver will arrive as signals too, and those include the current user messages
     )
 
     signal.messages.add(msg)

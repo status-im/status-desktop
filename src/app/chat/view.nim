@@ -14,31 +14,34 @@ QtObject:
     ChatsView* = ref object of QAbstractListModel
       names*: seq[string]
       callResult: string
-      messageList: ChatMessageList
-      sendMessage: proc (view: ChatsView, chatId: string, msg: string):  string
+      messageList: Table[string, ChatMessageList]
+      activeChannel: string
+      sendMessage: proc (view: ChatsView, channel: string, msg: string):  string
 
-  proc delete(self: ChatsView) =
-    self.QAbstractListModel.delete
+  proc delete(self: ChatsView) = self.QAbstractListModel.delete
 
-  proc setup(self: ChatsView) =
-    self.QAbstractListModel.setup
+  proc setup(self: ChatsView) = self.QAbstractListModel.setup
 
   proc newChatsView*(sendMessage: proc): ChatsView =
     new(result, delete)
     result.sendMessage = sendMessage
     result.names = @[]
-    result.messageList = newChatMessageList()
+    result.activeChannel = ""
+    result.messageList = initTable[string, ChatMessageList]() # newChatMessageList()
     result.setup
 
-  proc addNameTolist*(self: ChatsView, chatId: string) {.slot.} =
-    self.beginInsertRows(newQModelIndex(), self.names.len, self.names.len)
-    self.names.add(chatId)
-    self.endInsertRows()
+  proc upsertChannel(self: ChatsView, channel: string) =
+    if not self.messageList.hasKey(channel):
+      self.messageList[channel] = newChatMessageList()
 
-  proc get*(self: ChatsView, index: int): string {.slot.} =
-    if index < 0 or index >= self.names.len:
-      return
-    return self.names[index]
+  proc addNameTolist*(self: ChatsView, channel: string) {.slot.} =
+    if(self.activeChannel == ""):
+      self.activeChannel = channel
+
+    self.beginInsertRows(newQModelIndex(), self.names.len, self.names.len)
+    self.names.add(channel)
+    self.upsertChannel(channel)
+    self.endInsertRows()
 
   method rowCount(self: ChatsView, index: QModelIndex = nil): int =
     return self.names.len
@@ -66,26 +69,32 @@ QtObject:
 
   proc `callResult=`*(self: ChatsView, callResult: string) = self.setCallResult(callResult)
 
-  # Binding between a QML variable and accesors is done here
   QtProperty[string] callResult:
     read = callResult
     write = setCallResult
     notify = callResultChanged
 
   proc onSend*(self: ChatsView, inputJSON: string) {.slot.} =
-    # TODO unhardcode chatId
-    self.setCallResult(self.sendMessage(self, "test", inputJSON))
-    echo "Done!: ", self.callResult
+    self.setCallResult(self.sendMessage(self, self.activeChannel, inputJSON))
 
-  proc onMessage*(self: ChatsView, message: string) {.slot.} =
-    self.setCallResult(message)
-    echo "Received message: ", message
+  proc pushMessage*(self:ChatsView, channel: string, message: ChatMessage) =
+    self.upsertChannel(channel)
+    self.messageList[channel].add(message)
 
-  proc pushMessage*(self:ChatsView, message: ChatMessage) =
-    self.messageList.add(message)
+  proc activeChannelChanged*(self: ChatsView) {.signal.}
+
+  proc setActiveChannelByIndex(self: ChatsView, index: int) {.slot.} =
+    if self.activeChannel == self.names[index]: return
+    self.activeChannel = self.names[index]
+    self.activeChannelChanged()
+
+  QtProperty[string] activeChannel:
+    write = setActiveChannel
+    notify = activeChannelChanged
 
   proc getMessageList(self: ChatsView): QVariant {.slot.} =
-    return newQVariant(self.messageList)
+    return newQVariant(self.messageList[self.activeChannel])
 
   QtProperty[QVariant] messageList:
     read = getMessageList
+    notify = activeChannelChanged
