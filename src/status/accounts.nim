@@ -132,10 +132,3 @@ proc setupAccount*(account: JsonNode, password: string): string =
   var settingsJSON = getAccountSettings(account, alias, identicon, multiAccounts, constants.DEFAULT_NETWORKS)
 
   $saveAccountAndLogin(multiAccounts, alias, identicon, $accountData, password, $constants.NODE_CONFIG, $settingsJSON)
-
-proc setupRandomTestAccount*(): string =
-  let generatedAddresses = generateAddresses().parseJson
-  let account = generatedAddresses[0]
-  let password = "qwerty"
-
-  setupAccount(account, password)
