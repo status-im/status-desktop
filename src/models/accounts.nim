@@ -58,12 +58,6 @@ proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
     generatedAccount.identicon = $libstatus.identicon(account["publicKey"].str.toGoString)
     generatedAccount.key = account["address"].str
 
-    # var generatedAccount = cast[GeneratedAccount](account.to(GeneratedAccountBase))
-
-    # generatedAccount.username = $libstatus.generateAlias(account["publicKey"].str.toGoString)
-    # generatedAccount.identicon = $libstatus.identicon(account["publicKey"].str.toGoString)
-    # generatedAccount.key = account["address"].str
-
     self.generatedAddresses.add(generatedAccount)
 
   self.generatedAddresses

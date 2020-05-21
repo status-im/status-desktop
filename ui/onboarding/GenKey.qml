@@ -12,7 +12,7 @@ SwipeView {
     // property string strGeneratedAccounts: onboardingLogic.generatedAddresses
     //  property var generatedAccounts: {}
     // signal storeAccountAndLoginResult(response: var)
-    signal storeAccountAndLoginResult()
+    signal loginDone()
 
     onCurrentItemChanged: {
         currentItem.txtPassword.focus = true;
@@ -38,12 +38,6 @@ SwipeView {
                 anchors.topMargin: 20
                 anchors.horizontalCenter: parent.horizontalCenter
             }
-
-//            Item {
-//                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-//                transformOrigin: Item.Center
-//                anchors.top: parent.top
-//                anchors.topMargin: 50
 
             Row {
                 Layout.fillHeight: true
@@ -134,58 +128,8 @@ SwipeView {
                         Layout.fillWidth: true
                         anchors.topMargin: 36
                         anchors.fill: parent
-
-//                        model: ListModel {
-//                            ListElement {
-//                                username: "Bill Smith"
-//                                key: "0x123"
-//                            }
-//                            ListElement {
-//                                username: "Slushy Welltodo Woodborer"
-//                                key: "0x234"
-//                            }
-//                        }
                     }
-
-                    // Repeater {
-                    //   model: generatedAccountsModel
-                    //   Rectangle {
-                    //     height: 32
-                    //     width: 32
-                    //     anchors.leftMargin: 20
-                    //     anchors.rightMargin: 20
-                    //     Row {
-                    //       RadioButton {
-                    //         checked: index == 0 ? true : false
-                    //         ButtonGroup.group: accountGroup
-                    //         onClicked: {
-                    //           wizardStep2.selectedIndex = index;
-                    //         }
-                    //       }
-                    //       Column {
-                    //         Image {
-                    //           source: identicon
-                    //         }
-                    //       }
-                    //       Column {
-                    //         Text {
-                    //           text: alias
-                    //         }
-                    //         Text {
-                    //           text: publicKey
-                    //           width: 160
-                    //           elide: Text.ElideMiddle
-                    //         }
-
-                    //       }
-                    //     }
-                    //   }
-                    // }
-
                 }
-
-
-//            }
 
             Button {
                 text: "Select"
@@ -198,8 +142,6 @@ SwipeView {
                     swipeView.incrementCurrentIndex();
                 }
             }
-
-
 
         }
     }
@@ -214,7 +156,6 @@ SwipeView {
             anchors.top: parent.top
             anchors.topMargin: 20
             anchors.horizontalCenter: parent.horizontalCenter
-
         }
 
         Rectangle {
@@ -288,15 +229,10 @@ SwipeView {
             }
         }
 
-
-
-
         MessageDialog {
             id: storeAccountAndLoginError
             title: "Error storing account and logging in"
             text: "An error occurred while storing your account and logging in: "
-
-
             // icon: StandardIcon.Error
             standardButtons: StandardButton.Ok
         }
@@ -317,47 +253,16 @@ SwipeView {
 
                 const storeResponse = onboardingModel.storeAccountAndLogin(selectedAccountIndex, txtPassword.text)
 
-                // const storeResponse = onboardingModel.storeAccountAndLogin(JSON.stringify(selectedAccount), txtPassword.text)
-
-                // const selectedAccount = swipeView.generatedAccounts[wizardStep2.selectedIndex];
-                // const storeResponse = onboardingModel.storeAccountAndLogin(JSON.stringify(selectedAccount), txtPassword.text)
                 const response = JSON.parse(storeResponse);
                 // if (response.error) {
                 //     storeAccountAndLoginError.text += response.error;
                 //     return storeAccountAndLoginError.open();
                 // }
-                console.log("=======");
-                console.log(storeResponse);
-                console.log("=======")
-                // swipeView.storeAccountAndLoginResult(response);
-                swipeView.storeAccountAndLoginResult();
+                swipeView.loginDone();
             }
         }
     }
-
-    // handle the serialised result coming from node and deserialise into JSON
-    // TODO: maybe we should figure out a clever to avoid this?
-    //  onStrGeneratedAccountsChanged: {
-    //    if (generatedAccounts === null || generatedAccounts === "") {
-    //      return;
-    //    }
-    //    swipeView.generatedAccounts = JSON.parse(strGeneratedAccounts);
-    //  }
-
-    // handle deserialised data coming from the node
-    //  onGeneratedAccountsChanged: {
-    // generatedAccountsModel.clear();
-    // generatedAccounts.forEach(acc => {
-    //   generatedAccountsModel.append({
-    //     publicKey: acc.publicKey,
-    //     alias: onboardingLogic.generateAlias(acc.publicKey),
-    //     identicon: onboardingLogic.identicon(acc.publicKey)
-    //   });
-    // });
-    //  }
 }
-
-
 
 /*##^##
 Designer {
