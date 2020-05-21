@@ -2,13 +2,9 @@ import json
 import eventemitter
 import ../status/libstatus
 import ../status/accounts as status_accounts
-import ../status/accounts/constants
 import ../status/utils
-import nimcrypto
 import ../status/utils
 # import "../../status/core" as status
-import ../app/signals/types
-import uuids
 
 type
   GeneratedAccount* = object
