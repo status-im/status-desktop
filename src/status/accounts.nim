@@ -92,6 +92,15 @@ proc generateMultiAccounts*(account: JsonNode, password: string): JsonNode =
   var response = $libstatus.multiAccountStoreDerivedAccounts($multiAccount);
   result = response.parseJson
 
+proc getAccountData*(account: JsonNode, alias: string, identicon: string): JsonNode =
+  result = %* {
+    "name": alias,
+    "address": account["address"].getStr,
+    "photo-path": identicon,
+    "key-uid": account["keyUid"].getStr,
+    "keycard-pairing": nil
+  }
+
 proc getAccountSettings*(account: JsonNode, alias: string, identicon: string, multiAccounts: JsonNode, defaultNetworks: JsonNode): JsonNode =
   result = %* {
     "key-uid": account["keyUid"].getStr,
@@ -119,27 +128,17 @@ proc getAccountSettings*(account: JsonNode, alias: string, identicon: string, mu
   }
 
 proc setupRandomTestAccount*(): string =
-  var result: string
-
   let generatedAddresses = generateAddresses().parseJson
 
   let account0 = generatedAddresses[0]
   let password = "0x2cd9bf92c5e20b1b410f5ace94d963a96e89156fbe65b70365e8596b37f1f165" #qwertyh
   let multiAccounts = generateMultiAccounts(account0, password)
 
-  # 5
-  let accountData = %* {
-    "name": "Delectable Overjoyed Nauplius",
-    "address": account0["address"].getStr,
-    "photo-path": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAmElEQVR4nOzX4QmAIBBA4Yp2aY52aox2ao6mqf+SoajwON73M0J4HBy6TEEYQmMIjSE0htCECVlbDziv+/n6fuzb3OP/UmEmYgiNITRNm+LPqO2UE2YihtAYQlN818ptoZzau1btOakwEzGExhCa5hdi7d2p1zZLhZmIITSG0PhCpDGExhANEmYihtAYQmMIjSE0bwAAAP//kHQdRIWYzToAAAAASUVORK5CYII=",
-    "key-uid": account0["keyUid"].getStr,
-    "keycard-pairing": nil
-  }
-
   # let alias = $libstatus.generateAlias(whisperPubKey.toGoString)
   # let identicon = $libstatus.identicon(whisperPubKey.toGoString)
   var alias = "Delectable Overjoyed Nauplius"
   var identicon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAmElEQVR4nOzX4QmAIBBA4Yp2aY52aox2ao6mqf+SoajwON73M0J4HBy6TEEYQmMIjSE0htCECVlbDziv+/n6fuzb3OP/UmEmYgiNITRNm+LPqO2UE2YihtAYQlN818ptoZzau1btOakwEzGExhCa5hdi7d2p1zZLhZmIITSG0PhCpDGExhANEmYihtAYQmMIjSE0bwAAAP//kHQdRIWYzToAAAAASUVORK5CYII="
+  let accountData = getAccountData(account0, alias, identicon)
 
   var settingsJSON = getAccountSettings(account0, alias, identicon, multiAccounts, constants.DEFAULT_NETWORKS)
 
@@ -147,4 +146,3 @@ proc setupRandomTestAccount*(): string =
 
   var subaccountdata = saveAccountAndLogin(multiAccounts, alias, identicon, $accountData, password, $configJSON, $settingsJSON)
   $subaccountData
-

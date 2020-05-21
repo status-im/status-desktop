@@ -69,15 +69,9 @@ proc storeAccountAndLogin*(self: AccountModel, selectedAccountIndex: int, passwo
   let whisperPubKey = account.derived[constants.PATH_WHISPER]["publicKey"].getStr
   let alias = $libstatus.generateAlias(whisperPubKey.toGoString)
   let identicon = $libstatus.identicon(whisperPubKey.toGoString)
-  let accountData = %* {
-    "name": alias,
-    "address": account.address,
-    "photo-path": identicon,
-    "key-uid": account.keyUid,
-    "keycard-pairing": nil
-  }
-  var nodeConfig = constants.NODE_CONFIG
 
+  let accountData = status_accounts.getAccountData(%account, alias, identicon)
+  var nodeConfig = constants.NODE_CONFIG
   var settingsJSON = status_accounts.getAccountSettings(%account, alias, identicon, multiAccounts, constants.DEFAULT_NETWORKS)
 
   discard saveAccountAndLogin(multiAccounts, alias, identicon, $accountData, password, $nodeConfig, $settingsJSON)
