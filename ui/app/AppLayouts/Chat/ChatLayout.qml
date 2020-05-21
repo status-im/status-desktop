@@ -145,7 +145,10 @@ SplitView {
 
                         MouseArea {
                             anchors.fill: parent
-                            onClicked: chatGroupsListView.currentIndex = index
+                            onClicked: {
+                                chatsModel.setActiveChannelByIndex(index)
+                                chatGroupsListView.currentIndex = index
+                            }
                         }
 
                         Rectangle {

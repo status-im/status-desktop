@@ -1,5 +1,5 @@
 import NimQml
-import json
+import json, sets
 import ../../status/chat as status_chat
 import view
 import messages
@@ -17,17 +17,19 @@ var sendMessage = proc (view: ChatsView, chatId: string, msg: string): string =
   chatMessage.timestamp = $parsedMessage["timestamp"]
   chatMessage.identicon = parsedMessage["identicon"].str
   chatMessage.isCurrentUser = true
-  view.pushMessage(chatMessage)
+
+  view.pushMessage(chatId, chatMessage)
   sentMessage
 
 type ChatController* = ref object of SignalSubscriber
   view*: ChatsView
   variant*: QVariant
+  channels: HashSet[string]
 
 proc newController*(): ChatController =
   result = ChatController()
+  result.channels = initHashSet[string]()
   result.view = newChatsView(sendMessage)
-  result.view.names = @[]
   result.variant = newQVariant(result.view)
 
 proc delete*(self: ChatController) =
@@ -38,7 +40,13 @@ proc init*(self: ChatController) =
   discard
 
 proc join*(self: ChatController, chatId: string) =
-  # TODO: check whether we have joined a chat already or not
+  if self.channels.contains(chatId):
+    # TODO: 
+    return
+
+  self.channels.incl chatId
+
+
   # TODO: save chat list in the db
   echo "Joining chat: ", chatId
   let oneToOne = isOneToOneChat(chatId)
@@ -62,5 +70,5 @@ method onSignal(self: ChatController, data: Signal) =
     chatMessage.message = message.text
     chatMessage.timestamp = message.timestamp #TODO convert to date/time?
     chatMessage.identicon = message.identicon
-    chatMessage.isCurrentUser = message.isCurrentUser #TODO: Determine who originated the message
-    self.view.pushMessage(chatMessage)
+    chatMessage.isCurrentUser = message.isCurrentUser
+    self.view.pushMessage(message.chatId, chatMessage)
