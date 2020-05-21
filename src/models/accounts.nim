@@ -38,10 +38,7 @@ proc delete*(self: AccountModel) =
 
 proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
   let accounts = parseJson(status_accounts.generateAddresses())
-
-  echo "----- generating accounts"
   for account in accounts:
-    echo account
     var generatedAccount = GeneratedAccount()
 
     generatedAccount.publicKey = account["publicKey"].str
@@ -56,7 +53,6 @@ proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
     generatedAccount.key = account["address"].str
 
     self.generatedAddresses.add(generatedAccount)
-
   self.generatedAddresses
 
 # TODO: this is temporary and will be removed once accounts import and creation is working
@@ -112,30 +108,7 @@ proc storeAccountAndLogin*(self: AccountModel, selectedAccountIndex: int, passwo
     "installation-id": $genUUID()
   }
 
-  let subaccountData = %* [
-    {
-      "public-key": multiAccounts[constants.PATH_DEFAULT_WALLET]["publicKey"],
-      "address": multiAccounts[constants.PATH_DEFAULT_WALLET]["address"],
-      "color": "#4360df",
-      "wallet": true,
-      "path": constants.PATH_DEFAULT_WALLET,
-      "name": "Status account"
-    },
-    {
-      "public-key": multiAccounts[constants.PATH_WHISPER]["publicKey"],
-      "address": multiAccounts[constants.PATH_WHISPER]["address"],
-      "name": alias,
-      "photo-path": identicon,
-      "path": constants.PATH_WHISPER,
-      "chat": true
-    }
-  ]
+  discard saveAccountAndLogin(multiAccounts, alias, identicon, $accountData, password, $nodeConfig, $settingsJSON)
 
-  result = $libstatus.saveAccountAndLogin($accountData, password, $settingsJSON,
-    $nodeConfig, $subaccountData)
-
-  let saveResult = result.parseJson
-
-  if saveResult["error"].getStr == "":
-    self.events.emit("accountsReady", Args())
-    echo "Account saved succesfully"
+  self.events.emit("accountsReady", Args())
+  ""

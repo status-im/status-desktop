@@ -253,7 +253,7 @@ SwipeView {
 
                 const storeResponse = onboardingModel.storeAccountAndLogin(selectedAccountIndex, txtPassword.text)
 
-                const response = JSON.parse(storeResponse);
+                // const response = JSON.parse(storeResponse);
                 // if (response.error) {
                 //     storeAccountAndLoginError.text += response.error;
                 //     return storeAccountAndLoginError.open();
