@@ -19,6 +19,7 @@ import status/chat as status_chat
 import status/types as types
 import status/wallet as status_wallet
 import status/libstatus
+import models/accounts
 import state
 import status/types
 import eventemitter
@@ -56,12 +57,7 @@ proc mainProc() =
   # echo "---------"
   # discard status_test.setupNewAccount()
 
-  events.on("node:ready") do(a: Args):
-    status_chat.startMessenger()
-
   var wallet = wallet.newController()
-  events.on("node:ready") do(a: Args):
-    wallet.init()
   engine.setRootContextProperty("assetsModel", wallet.variant)
 
   var chat = chat.newController()
@@ -70,16 +66,22 @@ proc mainProc() =
 
   var node = node.newController()
   node.init()
-
   engine.setRootContextProperty("nodeModel", node.variant)
 
-  var onboarding = onboarding.newController(events)
+  var profile = profile.newController()
+  engine.setRootContextProperty("profileModel", profile.variant)
+
+  var accountsModel = newAccountModel()
+  # accountsModel.events.on("accountsReady") do(a: Args):
+  # events.on("node:ready") do(a: Args):
+  accountsModel.events.on("accountsReady") do(a: Args):
+    status_chat.startMessenger()
+    wallet.init()
+    profile.init($accountsModel.subaccounts) # TODO: use correct account
+
+  var onboarding = onboarding.newController(events, accountsModel)
   onboarding.init()
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
-
-  var profile = profile.newController()
-  # profile.init(accounts) # TODO: use correct account
-  engine.setRootContextProperty("profileModel", profile.variant)
 
   signalController.init()
   signalController.addSubscriber(SignalType.Wallet, wallet)
@@ -94,7 +96,8 @@ proc mainProc() =
       chat.join(channel.name)
   )
 
-  events.on("node:ready") do(a: Args):
+  # events.on("node:ready12313asdada") do(a: Args):
+  accountsModel.events.on("accountsReady") do(a: Args):
     appState.addChannel("test")
     appState.addChannel("test2")
   

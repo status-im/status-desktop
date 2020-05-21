@@ -22,11 +22,13 @@ type
   AccountModel* = ref object
     generatedAddresses*: seq[GeneratedAccount]
     events*: EventEmitter
+    subaccounts*: JsonNode #TODO use correct account, etc..
 
 proc newAccountModel*(): AccountModel =
   result = AccountModel()
   result.events = createEventEmitter()
   result.generatedAddresses = @[]
+  result.subaccounts = %*{}
 
 proc delete*(self: AccountModel) =
   # delete self.generatedAddresses
@@ -54,10 +56,11 @@ proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
 # TODO: this is temporary and will be removed once accounts import and creation is working
 proc generateRandomAccountAndLogin*(self: AccountModel) =
   let generatedAccounts = status_accounts.generateAddresses().parseJson
-  discard status_accounts.setupAccount(generatedAccounts[0], "qwerty")
+  self.subaccounts = status_accounts.setupAccount(generatedAccounts[0], "qwerty").parseJson
   self.events.emit("accountsReady", Args())
 
 proc storeAccountAndLogin*(self: AccountModel, selectedAccountIndex: int, password: string): string =
   let account: GeneratedAccount = self.generatedAddresses[selectedAccountIndex]
   result = status_accounts.setupAccount(%account, password)
+  self.subaccounts = result.parseJson
   self.events.emit("accountsReady", Args())
