@@ -1,7 +1,11 @@
 import NimQml
+import chronicles
 import "../../status/core" as status
 import ../signals/types
 import nodeView
+
+logScope:
+  topics = "node"
 
 type NodeController* = ref object of SignalSubscriber
   view*: NodeView
@@ -24,6 +28,6 @@ proc init*(self: NodeController) =
   discard
 
 method onSignal(self: NodeController, data: Signal) =
-  echo "new signal received"
+  debug "New signal received"
   var msg = cast[WalletSignal](data)
   self.view.setLastMessage(msg.content)

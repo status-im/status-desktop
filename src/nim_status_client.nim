@@ -1,4 +1,5 @@
 import NimQml
+import chronicles
 import app/chat/core as chat
 import app/wallet/core as wallet
 import app/node/core as node
@@ -18,6 +19,9 @@ import state
 
 var signalsQObjPointer: pointer
 
+logScope:
+  topics = "main"
+
 proc mainProc() =
   let app = newQApplication()
   let engine = newQQmlApplicationEngine()
@@ -33,13 +37,10 @@ proc mainProc() =
   signalsQObjPointer = cast[pointer](signalController.vptr)
 
   var appState = state.newAppState()
-  echo appState.title
+  debug "Application State", title=appState.title
 
   var accounts = status_test.setupNewAccount()
-  echo "---------"
-  echo parseJSON(accounts)[0]
-  echo parseJSON(accounts)[1]
-  echo "---------"
+  debug "Accounts", accounts0 = parseJSON(accounts)[0], accounts1 = parseJSON(accounts)[1]
 
   status_chat.startMessenger()
 
@@ -69,8 +70,6 @@ proc mainProc() =
   appState.subscribe(proc () =
     # chatsModel.names = @[]
     for channel in appState.channels:
-      echo channel.name
-      # chatsModel.addNameTolist(channel.name)
       chat.join(channel.name)
   )
 
@@ -91,6 +90,7 @@ proc mainProc() =
 
   # Qt main event loop is entered here
   # The termination of the loop will be performed when exit() or quit() is called
+  info "Starting application..."
   app.exec()
 
 when isMainModule:

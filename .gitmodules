@@ -19,3 +19,18 @@
 [submodule "vendor/nimqml"]
 	path = vendor/nimqml
 	url = https://github.com/status-im/nimqml
+[submodule "vendor/nim-chronicles"]
+	path = vendor/nim-chronicles
+	url = https://github.com/status-im/nim-chronicles
+[submodule "vendor/nim-faststreams"]
+	path = vendor/nim-faststreams
+	url = https://github.com/status-im/nim-faststreams/
+[submodule "vendor/nim-chronos"]
+	path = vendor/nim-chronos
+	url = https://github.com/status-im/nim-chronos
+[submodule "vendor/nim-json-serialization"]
+	path = vendor/nim-json-serialization
+	url = https://github.com/status-im/nim-json-serialization
+[submodule "vendor/nim-serialization"]
+	path = vendor/nim-serialization
+	url = https://github.com/status-im/nim-serialization/
