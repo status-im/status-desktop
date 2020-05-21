@@ -1,10 +1,10 @@
 import NimQml
-import json, sets
+import json, sets, eventemitter
 import ../../status/chat as status_chat
 import view
 import messages
 import ../signals/types
-import ../../status/utils
+import ../../models/chat
 
 var sendMessage = proc (view: ChatsView, chatId: string, msg: string): string =
   echo "sending public message!"
@@ -23,13 +23,13 @@ var sendMessage = proc (view: ChatsView, chatId: string, msg: string): string =
 
 type ChatController* = ref object of SignalSubscriber
   view*: ChatsView
+  model*: ChatModel
   variant*: QVariant
-  channels: HashSet[string]
 
-proc newController*(): ChatController =
+proc newController*(events: EventEmitter): ChatController =
   result = ChatController()
-  result.channels = initHashSet[string]()
-  result.view = newChatsView(sendMessage)
+  result.model = newChatModel(events)
+  result.view = newChatsView(result.model, sendMessage)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: ChatController) =
@@ -39,28 +39,11 @@ proc delete*(self: ChatController) =
 proc init*(self: ChatController) =
   discard
 
-proc join*(self: ChatController, chatId: string) =
-  if self.channels.contains(chatId):
-    # TODO: 
-    return
-
-  self.channels.incl chatId
-
-
-  # TODO: save chat list in the db
-  echo "Joining chat: ", chatId
-  let oneToOne = isOneToOneChat(chatId)
-  echo "Is one to one? ", oneToOne
-  status_chat.loadFilters(chatId, oneToOne)
-  status_chat.saveChat(chatId, oneToOne)
-  status_chat.chatMessages(chatId)
-  # self.chatsModel.addNameTolist(channel.name)
-  self.view.addNameTolist(chatId)
-
-proc load*(self: ChatController): seq[string] =
-  # TODO: retrieve chats from DB
-  self.join("test")
-  result = @["test"]
+proc load*(self: ChatController, chatId: string) =
+  # TODO: we need a function to load the channels from the db.
+  #       and... called from init() instead from nim_status_client
+  discard self.view.joinChat(chatId)
+  self.view.setActiveChannelByIndex(0)
 
 method onSignal(self: ChatController, data: Signal) =
   var chatSignal = cast[ChatSignal](data)
