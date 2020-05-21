@@ -76,7 +76,6 @@ proc mainProc() =
 
   var onboarding = onboarding.newController(events)
   onboarding.init()
-  engine.setRootContextProperty("onboardingLogic", onboarding.variant)
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
 
   var profile = profile.newController()
