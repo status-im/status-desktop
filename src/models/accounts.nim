@@ -57,7 +57,8 @@ proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
 
 # TODO: this is temporary and will be removed once accounts import and creation is working
 proc generateRandomAccountAndLogin*(self: AccountModel) =
-  discard status_accounts.setupRandomTestAccount()
+  let generatedAccounts = status_accounts.generateAddresses().parseJson
+  discard status_accounts.setupAccount(generatedAccounts[0], "qwerty")
   self.events.emit("accountsReady", Args())
 
 proc storeAccountAndLogin*(self: AccountModel, selectedAccountIndex: int, password: string): string =
