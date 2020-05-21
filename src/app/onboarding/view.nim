@@ -1,14 +1,8 @@
 import NimQml
 import Tables
 import json
-import eventemitter
-import ../../status/accounts as status_accounts
 import nimcrypto
-import ../../status/utils
-import ../../status/libstatus
 import ../../models/accounts as Models
-# import ../../constants/constants
-import uuids
 
 type
   AddressRoles {.pure.} = enum
