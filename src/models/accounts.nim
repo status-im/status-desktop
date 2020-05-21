@@ -77,31 +77,8 @@ proc storeAccountAndLogin*(self: AccountModel, selectedAccountIndex: int, passwo
     "keycard-pairing": nil
   }
   var nodeConfig = constants.NODE_CONFIG
-  let defaultNetworks = constants.DEFAULT_NETWORKS
-  let settingsJSON = %* {
-    "key-uid": account.keyUid,
-    "mnemonic": account.mnemonic,
-    "public-key": multiAccounts[constants.PATH_WHISPER]["publicKey"].getStr,
-    "name": alias,
-    "address": account.address,
-    "eip1581-address": multiAccounts[constants.PATH_EIP_1581]["address"].getStr,
-    "dapps-address": multiAccounts[constants.PATH_DEFAULT_WALLET]["address"].getStr,
-    "wallet-root-address": multiAccounts[constants.PATH_WALLET_ROOT]["address"].getStr,
-    "preview-privacy?": true,
-    "signing-phrase": generateSigningPhrase(3),
-    "log-level": "INFO",
-    "latest-derived-path": 0,
-    "networks/networks": $defaultNetworks,
-    "currency": "usd",
-    "photo-path": identicon,
-    "waku-enabled": true,
-    "wallet/visible-tokens": {
-      "mainnet": ["SNT"]
-    },
-    "appearance": 0,
-    "networks/current-network": "mainnet_rpc",
-    "installation-id": $genUUID()
-  }
+
+  var settingsJSON = status_accounts.getAccountSettings(%account, alias, identicon, multiAccounts, constants.DEFAULT_NETWORKS)
 
   discard saveAccountAndLogin(multiAccounts, alias, identicon, $accountData, password, $nodeConfig, $settingsJSON)
 

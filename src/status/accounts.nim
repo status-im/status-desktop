@@ -4,6 +4,7 @@ import json
 import utils
 import accounts/constants
 import os
+import uuids
 
 proc queryAccounts*(): string =
   var payload = %* {
@@ -29,9 +30,9 @@ proc generateAddresses*(): string =
 proc generateAlias*(publicKey: string): string =
   result = $libstatus.generateAlias(publicKey.toGoString)
 
-const datadir = "./data/"
-const keystoredir = "./data/keystore/"
-const nobackupdir = "./noBackup/"
+# const datadir = "./data/"
+# const keystoredir = "./data/keystore/"
+# const nobackupdir = "./noBackup/"
 
 proc recreateDir(dirname: string) =
   if existsDir(dirname):
@@ -52,9 +53,7 @@ proc initNodeAccounts*() =
   ensureDir(keystoredir)
   ensureDir(nobackupdir)
 
-  # 1
   discard $libstatus.initKeystore(keystoredir);
-  # 2
   discard $libstatus.openAccounts(datadir);
 
 proc saveAccountAndLogin*(multiAccounts: JsonNode, alias: string, identicon: string, accountData: string, password: string, configJSON: string, settingsJSON: string): JsonNode =
@@ -93,6 +92,32 @@ proc generateMultiAccounts*(account: JsonNode, password: string): JsonNode =
   var response = $libstatus.multiAccountStoreDerivedAccounts($multiAccount);
   result = response.parseJson
 
+proc getAccountSettings*(account: JsonNode, alias: string, identicon: string, multiAccounts: JsonNode, defaultNetworks: JsonNode): JsonNode =
+  result = %* {
+    "key-uid": account["keyUid"].getStr,
+    "mnemonic": account["mnemonic"].getStr,
+    "public-key": multiAccounts[constants.PATH_WHISPER]["publicKey"].getStr,
+    "name": alias,
+    "address": account["address"].getStr,
+    "eip1581-address": multiAccounts[constants.PATH_EIP_1581]["address"].getStr,
+    "dapps-address": multiAccounts[constants.PATH_DEFAULT_WALLET]["address"].getStr,
+    "wallet-root-address": multiAccounts[constants.PATH_WALLET_ROOT]["address"].getStr,
+    "preview-privacy?": true,
+    "signing-phrase": generateSigningPhrase(3),
+    "log-level": "INFO",
+    "latest-derived-path": 0,
+    "networks/networks": defaultNetworks,
+    "currency": "usd",
+    "photo-path": identicon,
+    "waku-enabled": true,
+    "wallet/visible-tokens": {
+      "mainnet": ["SNT"]
+    },
+    "appearance": 0,
+    "networks/current-network": "mainnet_rpc",
+    "installation-id": $genUUID()
+  }
+
 proc setupRandomTestAccount*(): string =
   var result: string
 
@@ -111,37 +136,14 @@ proc setupRandomTestAccount*(): string =
     "keycard-pairing": nil
   }
 
-  let settingsJSON = %* {
-    "key-uid": account0["keyUid"].getStr,
-    "mnemonic": account0["mnemonic"].getStr,
-    "public-key": multiAccounts["m/43'/60'/1581'/0'/0"]["publicKey"].getStr,
-    "name": accountData["name"].getStr,
-    "address": account0["address"].getStr,
-    "eip1581-address": multiAccounts["m/43'/60'/1581'"]["address"].getStr,
-    "dapps-address": multiAccounts["m/44'/60'/0'/0/0"]["address"].getStr,
-    "wallet-root-address": multiAccounts["m/44'/60'/0'/0"]["address"].getStr,
-    "preview-privacy?": true,
-    "signing-phrase": "dust gear boss",
-    "log-level": "INFO",
-    "latest-derived-path": 0,
-    "networks/networks": $constants.DEFAULT_NETWORKS,
-    "currency": "usd",
-    "photo-path": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAmElEQVR4nOzX4QmAIBBA4Yp2aY52aox2ao6mqf+SoajwON73M0J4HBy6TEEYQmMIjSE0htCECVlbDziv+/n6fuzb3OP/UmEmYgiNITRNm+LPqO2UE2YihtAYQlN818ptoZzau1btOakwEzGExhCa5hdi7d2p1zZLhZmIITSG0PhCpDGExhANEmYihtAYQmMIjSE0bwAAAP//kHQdRIWYzToAAAAASUVORK5CYII=",
-    "waku-enabled": true,
-    "wallet/visible-tokens": {
-      "mainnet": ["SNT"]
-    },
-    "appearance": 0,
-    "networks/current-network": "mainnet_rpc",
-    "installation-id": "5d6bc316-a97e-5b89-9541-ad01f8eb7397",
-  }
-
-  let configJSON = constants.NODE_CONFIG
-
   # let alias = $libstatus.generateAlias(whisperPubKey.toGoString)
   # let identicon = $libstatus.identicon(whisperPubKey.toGoString)
   var alias = "Delectable Overjoyed Nauplius"
   var identicon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAmElEQVR4nOzX4QmAIBBA4Yp2aY52aox2ao6mqf+SoajwON73M0J4HBy6TEEYQmMIjSE0htCECVlbDziv+/n6fuzb3OP/UmEmYgiNITRNm+LPqO2UE2YihtAYQlN818ptoZzau1btOakwEzGExhCa5hdi7d2p1zZLhZmIITSG0PhCpDGExhANEmYihtAYQmMIjSE0bwAAAP//kHQdRIWYzToAAAAASUVORK5CYII="
+
+  var settingsJSON = getAccountSettings(account0, alias, identicon, multiAccounts, constants.DEFAULT_NETWORKS)
+
+  let configJSON = constants.NODE_CONFIG
 
   var subaccountdata = saveAccountAndLogin(multiAccounts, alias, identicon, $accountData, password, $configJSON, $settingsJSON)
   $subaccountData
