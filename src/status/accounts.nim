@@ -84,30 +84,23 @@ proc saveAccountAndLogin*(multiAccounts: JsonNode, alias: string, identicon: str
     echo "Account saved succesfully"
   subaccountData
 
-proc setupRandomTestAccount*(): string =
-  var result: string
-  # 3
-  let multiAccountConfig = %* {
-    "n": 5,
-    "mnemonicPhraseLength": 12,
-    "bip39Passphrase": "",
-    "paths": ["m/43'/60'/1581'/0'/0", "m/44'/60'/0'/0/0"]
-  }
-  result = $libstatus.multiAccountGenerateAndDeriveAddresses(
-      $multiAccountConfig);
-  let generatedAddresses = result.parseJson
-  let account0 = generatedAddresses[0]
-
-  # 4
-  let password = "0x2cd9bf92c5e20b1b410f5ace94d963a96e89156fbe65b70365e8596b37f1f165" #qwerty
+proc generateMultiAccounts*(account: JsonNode, password: string): JsonNode =
   let multiAccount = %* {
-    "accountID": account0["id"].getStr,
-    "paths": ["m/44'/60'/0'/0", "m/43'/60'/1581'", "m/43'/60'/1581'/0'/0",
-        "m/44'/60'/0'/0/0"],
+    "accountID": account["id"].getStr,
+    "paths": ["m/44'/60'/0'/0", "m/43'/60'/1581'", "m/43'/60'/1581'/0'/0", "m/44'/60'/0'/0/0"],
     "password": password
   }
-  result = $libstatus.multiAccountStoreDerivedAccounts($multiAccount);
-  let multiAccounts = result.parseJson
+  var response = $libstatus.multiAccountStoreDerivedAccounts($multiAccount);
+  result = response.parseJson
+
+proc setupRandomTestAccount*(): string =
+  var result: string
+
+  let generatedAddresses = generateAddresses().parseJson
+
+  let account0 = generatedAddresses[0]
+  let password = "0x2cd9bf92c5e20b1b410f5ace94d963a96e89156fbe65b70365e8596b37f1f165" #qwertyh
+  let multiAccounts = generateMultiAccounts(account0, password)
 
   # 5
   let accountData = %* {
@@ -315,6 +308,8 @@ proc setupRandomTestAccount*(): string =
     }
   }
 
+  # let alias = $libstatus.generateAlias(whisperPubKey.toGoString)
+  # let identicon = $libstatus.identicon(whisperPubKey.toGoString)
   var alias = "Delectable Overjoyed Nauplius"
   var identicon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAmElEQVR4nOzX4QmAIBBA4Yp2aY52aox2ao6mqf+SoajwON73M0J4HBy6TEEYQmMIjSE0htCECVlbDziv+/n6fuzb3OP/UmEmYgiNITRNm+LPqO2UE2YihtAYQlN818ptoZzau1btOakwEzGExhCa5hdi7d2p1zZLhZmIITSG0PhCpDGExhANEmYihtAYQmMIjSE0bwAAAP//kHQdRIWYzToAAAAASUVORK5CYII="
 

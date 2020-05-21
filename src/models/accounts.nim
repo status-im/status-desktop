@@ -63,14 +63,9 @@ proc generateRandomAccountAndLogin*(self: AccountModel) =
 proc storeAccountAndLogin*(self: AccountModel, selectedAccountIndex: int, password: string): string =
   let account: GeneratedAccount = self.generatedAddresses[selectedAccountIndex]
   let password = "0x" & $keccak_256.digest(password)
-  let multiAccount = %* {
-    "accountID": account.id,
-    "paths": [constants.PATH_WALLET_ROOT, constants.PATH_EIP_1581, constants.PATH_WHISPER,
-      constants.PATH_DEFAULT_WALLET],
-    "password": password
-  }
-  let storeResult = $libstatus.multiAccountStoreDerivedAccounts($multiAccount);
-  let multiAccounts = storeResult.parseJson
+
+  let multiAccounts = status_accounts.generateMultiAccounts(%account, password)
+
   let whisperPubKey = account.derived[constants.PATH_WHISPER]["publicKey"].getStr
   let alias = $libstatus.generateAlias(whisperPubKey.toGoString)
   let identicon = $libstatus.identicon(whisperPubKey.toGoString)
