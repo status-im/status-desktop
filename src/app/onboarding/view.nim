@@ -9,7 +9,6 @@ import ../../status/libstatus
 import ../../models/accounts as Models
 import ../../constants/constants
 import uuids
-import ../../status/test as status_test
 
 type
   AddressRoles {.pure.} = enum

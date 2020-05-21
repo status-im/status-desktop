@@ -16,7 +16,6 @@ import json
 import status/core as status
 import status/accounts as status_accounts
 import status/chat as status_chat
-import status/test as status_test
 import status/types as types
 import status/wallet as status_wallet
 import status/libstatus
