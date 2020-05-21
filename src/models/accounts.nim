@@ -62,7 +62,6 @@ proc generateRandomAccountAndLogin*(self: AccountModel) =
 
 proc storeAccountAndLogin*(self: AccountModel, selectedAccountIndex: int, password: string): string =
   let account: GeneratedAccount = self.generatedAddresses[selectedAccountIndex]
-  let password = "0x" & $keccak_256.digest(password)
 
   let multiAccounts = status_accounts.generateMultiAccounts(%account, password)
 

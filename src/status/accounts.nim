@@ -3,6 +3,7 @@ import core
 import json
 import utils
 import accounts/constants
+import nimcrypto
 import os
 import uuids
 
@@ -57,6 +58,7 @@ proc initNodeAccounts*() =
   discard $libstatus.openAccounts(datadir);
 
 proc saveAccountAndLogin*(multiAccounts: JsonNode, alias: string, identicon: string, accountData: string, password: string, configJSON: string, settingsJSON: string): JsonNode =
+  let hashedPassword = "0x" & $keccak_256.digest(password)
   let subaccountData = %* [
     {
       "public-key": multiAccounts[constants.PATH_DEFAULT_WALLET]["publicKey"],
@@ -76,7 +78,7 @@ proc saveAccountAndLogin*(multiAccounts: JsonNode, alias: string, identicon: str
     }
   ]
 
-  var savedResult = $libstatus.saveAccountAndLogin(accountData, password, settingsJSON, configJSON, $subaccountData)
+  var savedResult = $libstatus.saveAccountAndLogin(accountData, hashedPassword, settingsJSON, configJSON, $subaccountData)
   let parsedSavedResult = savedResult.parseJson
 
   if parsedSavedResult["error"].getStr == "":
@@ -84,10 +86,11 @@ proc saveAccountAndLogin*(multiAccounts: JsonNode, alias: string, identicon: str
   subaccountData
 
 proc generateMultiAccounts*(account: JsonNode, password: string): JsonNode =
+  let hashedPassword = "0x" & $keccak_256.digest(password)
   let multiAccount = %* {
     "accountID": account["id"].getStr,
     "paths": ["m/44'/60'/0'/0", "m/43'/60'/1581'", "m/43'/60'/1581'/0'/0", "m/44'/60'/0'/0/0"],
-    "password": password
+    "password": hashedPassword
   }
   var response = $libstatus.multiAccountStoreDerivedAccounts($multiAccount);
   result = response.parseJson
@@ -131,7 +134,7 @@ proc setupRandomTestAccount*(): string =
   let generatedAddresses = generateAddresses().parseJson
 
   let account0 = generatedAddresses[0]
-  let password = "0x2cd9bf92c5e20b1b410f5ace94d963a96e89156fbe65b70365e8596b37f1f165" #qwertyh
+  let password = "qwerty"
   let multiAccounts = generateMultiAccounts(account0, password)
 
   # let alias = $libstatus.generateAlias(whisperPubKey.toGoString)
