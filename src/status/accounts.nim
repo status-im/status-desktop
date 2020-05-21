@@ -2,6 +2,7 @@ import libstatus
 import core
 import json
 import utils
+import accounts/constants
 import os
 
 proc queryAccounts*(): string =
@@ -55,6 +56,33 @@ proc initNodeAccounts*() =
   discard $libstatus.initKeystore(keystoredir);
   # 2
   discard $libstatus.openAccounts(datadir);
+
+proc saveAccountAndLogin*(multiAccounts: JsonNode, alias: string, identicon: string, accountData: string, password: string, configJSON: string, settingsJSON: string): JsonNode =
+  let subaccountData = %* [
+    {
+      "public-key": multiAccounts[constants.PATH_DEFAULT_WALLET]["publicKey"],
+      "address": multiAccounts[constants.PATH_DEFAULT_WALLET]["address"],
+      "color": "#4360df",
+      "wallet": true,
+      "path": constants.PATH_DEFAULT_WALLET,
+      "name": "Status account"
+    },
+    {
+      "public-key": multiAccounts[constants.PATH_WHISPER]["publicKey"],
+      "address": multiAccounts[constants.PATH_WHISPER]["address"],
+      "name": alias,
+      "photo-path": identicon,
+      "path": constants.PATH_WHISPER,
+      "chat": true
+    }
+  ]
+
+  var savedResult = $libstatus.saveAccountAndLogin(accountData, password, settingsJSON, configJSON, $subaccountData)
+  let parsedSavedResult = savedResult.parseJson
+
+  if parsedSavedResult["error"].getStr == "":
+    echo "Account saved succesfully"
+  subaccountData
 
 proc setupRandomTestAccount*(): string =
   var result: string
@@ -287,30 +315,9 @@ proc setupRandomTestAccount*(): string =
     }
   }
 
-  let subaccountData = %* [
-    {
-      "public-key": multiAccounts["m/44'/60'/0'/0/0"]["publicKey"],
-      "address": multiAccounts["m/44'/60'/0'/0/0"]["address"],
-      "color": "#4360df",
-      "wallet": true,
-      "path": "m/44'/60'/0'/0/0",
-      "name": "Status account"
-    },
-    {
-      "public-key": multiAccounts["m/43'/60'/1581'/0'/0"]["publicKey"],
-      "address": multiAccounts["m/43'/60'/1581'/0'/0"]["address"],
-      "name": "Delectable Overjoyed Nauplius",
-      "photo-path": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAmElEQVR4nOzX4QmAIBBA4Yp2aY52aox2ao6mqf+SoajwON73M0J4HBy6TEEYQmMIjSE0htCECVlbDziv+/n6fuzb3OP/UmEmYgiNITRNm+LPqO2UE2YihtAYQlN818ptoZzau1btOakwEzGExhCa5hdi7d2p1zZLhZmIITSG0PhCpDGExhANEmYihtAYQmMIjSE0bwAAAP//kHQdRIWYzToAAAAASUVORK5CYII=",
-      "path": "m/43'/60'/1581'/0'/0",
-      "chat": true
-    }
-  ]
+  var alias = "Delectable Overjoyed Nauplius"
+  var identicon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAmElEQVR4nOzX4QmAIBBA4Yp2aY52aox2ao6mqf+SoajwON73M0J4HBy6TEEYQmMIjSE0htCECVlbDziv+/n6fuzb3OP/UmEmYgiNITRNm+LPqO2UE2YihtAYQlN818ptoZzau1btOakwEzGExhCa5hdi7d2p1zZLhZmIITSG0PhCpDGExhANEmYihtAYQmMIjSE0bwAAAP//kHQdRIWYzToAAAAASUVORK5CYII="
 
-  var savedResult = $libstatus.saveAccountAndLogin($accountData, password, $settingsJSON,
-      $configJSON, $subaccountData)
-  let parsedSavedResult = savedResult.parseJson
-
-  if parsedSavedResult["error"].getStr == "":
-    echo "Account saved succesfully"
+  var subaccountdata = saveAccountAndLogin(multiAccounts, alias, identicon, $accountData, password, $configJSON, $settingsJSON)
   $subaccountData
 
