@@ -7,7 +7,7 @@ import nimcrypto
 import ../../status/utils
 import ../../status/libstatus
 import ../../models/accounts as Models
-import ../../constants/constants
+# import ../../constants/constants
 import uuids
 
 type

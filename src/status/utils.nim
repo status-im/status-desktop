@@ -3,7 +3,7 @@ import types
 import random
 from times import getTime, toUnix, nanosecond
 import strutils
-import ../constants/signing_phrases
+import accounts/signing_phrases
 
 proc isWakuEnabled(): bool =
   true # TODO:

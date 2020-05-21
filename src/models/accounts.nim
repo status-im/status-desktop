@@ -2,12 +2,10 @@ import json
 import eventemitter
 import ../status/libstatus
 import ../status/accounts as status_accounts
-import ../constants/constants
+import ../status/accounts/constants
 import ../status/utils
 import nimcrypto
 import ../status/utils
-import ../status/libstatus
-import ../constants/constants
 # import "../../status/core" as status
 import ../app/signals/types
 import uuids
