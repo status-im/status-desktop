@@ -20,9 +20,11 @@ type OnboardingController* = ref object of SignalSubscriber
 proc newController*(events: EventEmitter): OnboardingController =
   result = OnboardingController()
   # TODO: events should be specific to the model itself
-  result.model = newAccountModel(events)
+  result.model = newAccountModel()
   result.view = newOnboardingView(result.model)
   result.variant = newQVariant(result.view)
+  result.model.events.on("accountsReady") do(a: Args):
+    events.emit("node:ready", Args())
 
 proc delete*(self: OnboardingController) =
   delete self.view
