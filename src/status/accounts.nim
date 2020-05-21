@@ -31,15 +31,6 @@ proc generateAddresses*(): string =
 proc generateAlias*(publicKey: string): string =
   result = $libstatus.generateAlias(publicKey.toGoString)
 
-# const datadir = "./data/"
-# const keystoredir = "./data/keystore/"
-# const nobackupdir = "./noBackup/"
-
-proc recreateDir(dirname: string) =
-  if existsDir(dirname):
-    removeDir(dirname)
-  createDir(dirname)
-
 proc ensureDir(dirname: string) =
   if not existsDir(dirname):
     # removeDir(dirname)
@@ -130,22 +121,21 @@ proc getAccountSettings*(account: JsonNode, alias: string, identicon: string, mu
     "installation-id": $genUUID()
   }
 
+proc setupAccount*(account: JsonNode, password: string): string =
+  let multiAccounts = generateMultiAccounts(account, password)
+
+  let whisperPubKey = account["derived"][constants.PATH_WHISPER]["publicKey"].getStr
+  let alias = $libstatus.generateAlias(whisperPubKey.toGoString)
+  let identicon = $libstatus.identicon(whisperPubKey.toGoString)
+
+  let accountData = getAccountData(account, alias, identicon)
+  var settingsJSON = getAccountSettings(account, alias, identicon, multiAccounts, constants.DEFAULT_NETWORKS)
+
+  $saveAccountAndLogin(multiAccounts, alias, identicon, $accountData, password, $constants.NODE_CONFIG, $settingsJSON)
+
 proc setupRandomTestAccount*(): string =
   let generatedAddresses = generateAddresses().parseJson
-
-  let account0 = generatedAddresses[0]
+  let account = generatedAddresses[0]
   let password = "qwerty"
-  let multiAccounts = generateMultiAccounts(account0, password)
 
-  # let alias = $libstatus.generateAlias(whisperPubKey.toGoString)
-  # let identicon = $libstatus.identicon(whisperPubKey.toGoString)
-  var alias = "Delectable Overjoyed Nauplius"
-  var identicon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAmElEQVR4nOzX4QmAIBBA4Yp2aY52aox2ao6mqf+SoajwON73M0J4HBy6TEEYQmMIjSE0htCECVlbDziv+/n6fuzb3OP/UmEmYgiNITRNm+LPqO2UE2YihtAYQlN818ptoZzau1btOakwEzGExhCa5hdi7d2p1zZLhZmIITSG0PhCpDGExhANEmYihtAYQmMIjSE0bwAAAP//kHQdRIWYzToAAAAASUVORK5CYII="
-  let accountData = getAccountData(account0, alias, identicon)
-
-  var settingsJSON = getAccountSettings(account0, alias, identicon, multiAccounts, constants.DEFAULT_NETWORKS)
-
-  let configJSON = constants.NODE_CONFIG
-
-  var subaccountdata = saveAccountAndLogin(multiAccounts, alias, identicon, $accountData, password, $configJSON, $settingsJSON)
-  $subaccountData
+  setupAccount(account, password)
