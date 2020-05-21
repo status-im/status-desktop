@@ -21,7 +21,6 @@ import status/types as types
 import status/wallet as status_wallet
 import status/libstatus
 import state
-import status/libstatusqml
 import status/types
 import eventemitter
 import os
@@ -74,7 +73,6 @@ proc mainProc() =
   node.init()
 
   engine.setRootContextProperty("nodeModel", node.variant)
-
 
   var onboarding = onboarding.newController(events)
   onboarding.init()
