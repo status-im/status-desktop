@@ -25,7 +25,7 @@ QtObject:
   type OnboardingView* = ref object of QAbstractListModel
     addresses*: seq[Address]
     model: AccountModel
-    m_generatedAddresses: string
+    # m_generatedAddresses: string
     doStoreAccountAndLogin: proc(model: AccountModel, selectedAccount: int, password: string): string
     doGenerateRandomAccountAndLogin: proc(events: EventEmitter)
 
@@ -45,9 +45,6 @@ QtObject:
     result.doGenerateRandomAccountAndLogin = doGenerateRandomAccountAndLogin
     result.addresses = @[]
     result.setup
-
-
-
 
   proc addAddressToList*(self: OnboardingView, username: string, identicon: string, key: string) {.slot.} =
     self.beginInsertRows(newQModelIndex(), self.addresses.len, self.addresses.len)
@@ -77,35 +74,32 @@ QtObject:
     AddressRoles.Identicon.int:"identicon",
     AddressRoles.Key.int:"key" }.toTable
 
+  # proc getGeneratedAddresses*(self: OnboardingView): string {.slot.} =
+  #   result = self.m_generatedAddresses
 
+  # proc generatedAddressesChanged*(self: OnboardingView,
+  #     generatedAddresses: string) {.signal.}
 
+  # proc setGeneratedAddresses*(self: OnboardingView, generatedAddresses: string) {.slot.} =
+  #   if self.m_generatedAddresses == generatedAddresses:
+  #     return
+  #   self.m_generatedAddresses = generatedAddresses
+  #   self.generatedAddressesChanged(generatedAddresses)
 
-  proc getGeneratedAddresses*(self: OnboardingView): string {.slot.} =
-    result = self.m_generatedAddresses
-
-  proc generatedAddressesChanged*(self: OnboardingView,
-      generatedAddresses: string) {.signal.}
-
-  proc setGeneratedAddresses*(self: OnboardingView, generatedAddresses: string) {.slot.} =
-    if self.m_generatedAddresses == generatedAddresses:
-      return
-    self.m_generatedAddresses = generatedAddresses
-    self.generatedAddressesChanged(generatedAddresses)
-
-  QtProperty[string]generatedAddresses:
-    read = getGeneratedAddresses
-    write = setGeneratedAddresses
-    notify = generatedAddressesChanged
+  # QtProperty[string]generatedAddresses:
+  #   read = getGeneratedAddresses
+  #   write = setGeneratedAddresses
+  #   notify = generatedAddressesChanged
 
   # QML functions
-  proc generateAddresses*(self: OnboardingView) {.slot.} =
-    self.setGeneratedAddresses(status_accounts.generateAddresses())
+  # proc generateAddresses*(self: OnboardingView) {.slot.} =
+    # self.setGeneratedAddresses(status_accounts.generateAddresses())
 
-  proc generateAlias*(self: OnboardingView, publicKey: string): string {.slot.} =
-    result = $libstatus.generateAlias(publicKey.toGoString)
+  # proc generateAlias*(self: OnboardingView, publicKey: string): string {.slot.} =
+  #   result = $libstatus.generateAlias(publicKey.toGoString)
 
-  proc identicon*(self: OnboardingView, publicKey: string): string {.slot.} =
-    result = $libstatus.identicon(publicKey.toGoString)
+  # proc identicon*(self: OnboardingView, publicKey: string): string {.slot.} =
+  #   result = $libstatus.identicon(publicKey.toGoString)
 
   # proc storeAccountAndLogin(self: OnboardingView, selectedAccount: string, password: string): string {.slot.} =
   proc storeAccountAndLogin(self: OnboardingView, selectedAccountIndex: int, password: string): string {.slot.} =

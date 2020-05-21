@@ -9,7 +9,7 @@ SwipeView {
     anchors.fill: parent
     currentIndex: 0
 
-    property string strGeneratedAccounts: onboardingLogic.generatedAddresses
+    // property string strGeneratedAccounts: onboardingLogic.generatedAddresses
     //  property var generatedAccounts: {}
     // signal storeAccountAndLoginResult(response: var)
     signal storeAccountAndLoginResult()
