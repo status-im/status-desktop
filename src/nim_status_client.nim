@@ -63,7 +63,7 @@ proc mainProc() =
     wallet.init()
     profile.init($accountsModel.subaccounts) # TODO: use correct account
 
-  var onboarding = onboarding.newController(events, accountsModel)
+  var onboarding = onboarding.newController(accountsModel)
   onboarding.init()
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
 
@@ -83,7 +83,7 @@ proc mainProc() =
   accountsModel.events.on("accountsReady") do(a: Args):
     appState.addChannel("test")
     appState.addChannel("test2")
-  
+
   engine.load("../ui/main.qml")
 
   # Please note that this must use the `cdecl` calling convention because

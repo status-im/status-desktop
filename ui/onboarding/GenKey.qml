@@ -15,10 +15,6 @@ SwipeView {
         currentItem.txtPassword.focus = true;
     }
 
-    ListModel {
-        id: generatedAccountsModel
-    }
-
     Item {
         id: wizardStep2
         property int selectedIndex: 0

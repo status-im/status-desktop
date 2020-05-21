@@ -10,7 +10,7 @@ type OnboardingController* = ref object of SignalSubscriber
   variant*: QVariant
   model*: AccountModel
 
-proc newController*(events: EventEmitter, model: AccountModel): OnboardingController =
+proc newController*(model: AccountModel): OnboardingController =
   result = OnboardingController()
   result.model = model
   result.view = newOnboardingView(result.model)
