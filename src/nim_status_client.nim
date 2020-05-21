@@ -7,17 +7,10 @@ import app/profile/core as profile
 import app/signals/core as signals
 import app/onboarding/core as onboarding
 import state
-import status/utils
-import strformat
-import strutils
-import strformat
-import strutils
 import json
-import status/core as status
 import status/accounts as status_accounts
 import status/chat as status_chat
 import status/types as types
-import status/wallet as status_wallet
 import status/libstatus
 import models/accounts
 import state
@@ -50,13 +43,6 @@ proc mainProc() =
   var appState = state.newAppState()
   debug "Application State", title=appState.title
 
-  # var accounts = status_test.setupNewAccount()
-  # echo "---------"
-  # echo parseJSON(accounts)[0]
-  # echo parseJSON(accounts)[1]
-  # echo "---------"
-  # discard status_test.setupNewAccount()
-
   var wallet = wallet.newController()
   engine.setRootContextProperty("assetsModel", wallet.variant)
 
@@ -72,8 +58,6 @@ proc mainProc() =
   engine.setRootContextProperty("profileModel", profile.variant)
 
   var accountsModel = newAccountModel()
-  # accountsModel.events.on("accountsReady") do(a: Args):
-  # events.on("node:ready") do(a: Args):
   accountsModel.events.on("accountsReady") do(a: Args):
     status_chat.startMessenger()
     wallet.init()
@@ -96,7 +80,6 @@ proc mainProc() =
       chat.join(channel.name)
   )
 
-  # events.on("node:ready12313asdada") do(a: Args):
   accountsModel.events.on("accountsReady") do(a: Args):
     appState.addChannel("test")
     appState.addChannel("test2")
