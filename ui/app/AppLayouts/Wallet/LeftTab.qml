@@ -268,7 +268,7 @@ ColumnLayout {
                 id: listView
                 anchors.topMargin: 36
                 anchors.fill: parent
-                model: assetsModel
+                model: assetsModel.assets
                 delegate: assetViewDelegate
             }
         }

@@ -56,7 +56,6 @@ type Chat* = object
   # members ?
   # membershipUpdateEvents # ?
 
-
 type MessageSignal* = ref object of Signal
   messages*: seq[Message]
   chats*: seq[Chat]
