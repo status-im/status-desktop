@@ -110,6 +110,25 @@ Item {
                 font.weight: Font.Bold
                 font.pixelSize: 20
             }
+
+
+            Component {
+              id: mailserversList
+
+              RadioButton {
+                text: name
+                checked: index == 0 ? true: false
+              }
+            }
+
+            ListView {
+              id: mailServersListView
+              anchors.topMargin: 48
+              anchors.top: element4.bottom
+              anchors.fill: parent
+              model: profileModel.mailserversList
+              delegate: mailserversList
+            }
         }
 
         Item {
