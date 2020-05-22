@@ -1,23 +1,25 @@
 import NimQml
 import chronicles
+import eventemitter
 import "../../status/core" as status
 import ../../signals/types
+import ../../models/node
 import view
 
 logScope:
   topics = "node"
 
 type NodeController* = ref object of SignalSubscriber
+  model*: NodeModel
   view*: NodeView
   variant*: QVariant
+  appEvents*: EventEmitter
 
-var sendRPCMessage = proc (msg: string): string =
-  echo "sending RPC message"
-  status.callPrivateRPC(msg)
-
-proc newController*(): NodeController =
+proc newController*(appEvents: EventEmitter): NodeController =
   result = NodeController()
-  result.view = newNodeView(sendRPCMessage)
+  result.appEvents = appEvents
+  result.model = newNodeModel()
+  result.view = newNodeView(result.model)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: NodeController) =
