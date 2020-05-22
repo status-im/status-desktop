@@ -59,7 +59,7 @@ SplitView {
 
                     TextField {
                         id: searchText
-                        placeholderText: qsTr("Search")
+                        placeholderText: qsTr("Search or join channel")
                         anchors.left: parent.left
                         anchors.leftMargin: 32
                         anchors.verticalCenter: parent.verticalCenter
