@@ -1,9 +1,18 @@
 import json
 import eventemitter
-import ../status/libstatus
 import ../status/accounts as status_accounts
-import ../status/utils
-import ../status/types
+
+type
+  GeneratedAccount* = object
+    publicKey*: string
+    address*: string
+    id*: string
+    keyUid*: string
+    mnemonic*: string
+    derived*: JsonNode
+    username*: string
+    key*: string
+    identicon*: string
 
 type
   AccountModel* = ref object

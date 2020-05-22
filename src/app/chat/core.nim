@@ -1,5 +1,5 @@
 import NimQml
-import json, sets, eventemitter
+import json, eventemitter
 import ../../status/chat as status_chat
 import view
 import messages
@@ -40,7 +40,7 @@ proc load*(self: ChatController, chatId: string) =
   discard self.view.joinChat(chatId)
   self.view.setActiveChannelByIndex(0)
 
-method onSignal(self: ChatController, data: Signal) =
+proc onSignal(self: ChatController, data: Signal) =
   var chatSignal = cast[ChatSignal](data)
   for message in chatSignal.messages:
     let chatMessage = newChatMessage()

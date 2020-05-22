@@ -32,7 +32,7 @@ SwipeView {
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
-            Row {
+            RowLayout {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 spacing: 10

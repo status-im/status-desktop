@@ -2,7 +2,6 @@ import NimQml
 import Tables
 import messages
 import messageList
-import ../signals/types
 import ../../models/chat
 
 type
