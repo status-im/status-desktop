@@ -3,6 +3,7 @@ import json
 import "../../status/core" as status
 import ../signals/types
 import profileView
+import "../../status/types" as status_types
 
 type ProfileController* = ref object of SignalSubscriber
   view*: ProfileView
@@ -17,8 +18,6 @@ proc delete*(self: ProfileController) =
   delete self.view
   delete self.variant
 
-proc init*(self: ProfileController, accounts: string) =
-    var chatAccount = parseJSON(accounts)[1]
-
-    self.view.setUsername(chatAccount["name"].str)
-    self.view.setIdenticon(chatAccount["photo-path"].str)
+proc init*(self: ProfileController, account: Account) =
+  self.view.setUsername(account.name)
+  self.view.setIdenticon(account.photoPath)

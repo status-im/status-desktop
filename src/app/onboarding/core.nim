@@ -24,4 +24,4 @@ proc init*(self: OnboardingController) =
   let accounts = self.model.generateAddresses()
 
   for account in accounts:
-    self.view.addAddressToList(account.username, account.identicon, account.key)
+    self.view.addAddressToList(account.name, account.photoPath, account.address)
