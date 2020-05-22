@@ -205,6 +205,18 @@ Item {
                 font.weight: Font.Bold
                 font.pixelSize: 20
             }
+
+            Text {
+                anchors.centerIn: parent
+                text: "<a href='https://status.im/docs/FAQs.html'>Frequently asked questions</a>"
+                onLinkActivated: Qt.openUrlExternally(link)
+
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
+                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                }
+            }
         }
 
         Item {

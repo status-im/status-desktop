@@ -145,6 +145,7 @@ SplitView {
                         height: isVisible ? 64 : 0
 
                         MouseArea {
+                            cursorShape: Qt.PointingHandCursor;
                             anchors.fill: parent
                             onClicked: {
                                 chatsModel.setActiveChannelByIndex(index)
