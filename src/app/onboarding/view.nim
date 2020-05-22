@@ -10,10 +10,6 @@ type
     Identicon = UserRole + 2,
     Key = UserRole + 3
 
-type
-  Address* = ref object
-    username*, identicon*, key*: string
-
 QtObject:
   type OnboardingView* = ref object of QAbstractListModel
     addresses*: seq[Address]
@@ -32,11 +28,9 @@ QtObject:
     result.addresses = @[]
     result.setup
 
-  proc addAddressToList*(self: OnboardingView, username: string, identicon: string, key: string) {.slot.} =
+  proc addAddressToList*(self: OnboardingView, address: Address) =
     self.beginInsertRows(newQModelIndex(), self.addresses.len, self.addresses.len)
-    self.addresses.add(Address(username : username,
-                          identicon : identicon,
-                          key : key))
+    self.addresses.add(address)
     self.endInsertRows()
 
   method rowCount(self: OnboardingView, index: QModelIndex = nil): int =

@@ -4,7 +4,7 @@ import app/chat/core as chat
 import app/wallet/core as wallet
 import app/node/core as node
 import app/profile/core as profile
-import app/signals/core as signals
+import signals/core as signals
 import app/onboarding/core as onboarding
 import state
 import json
@@ -41,7 +41,7 @@ proc mainProc() =
   var appState = state.newAppState()
   debug "Application State", title=appState.title
 
-  var wallet = wallet.newController()
+  var wallet = wallet.newController(events)
   engine.setRootContextProperty("assetsModel", wallet.variant)
 
   var chat = chat.newController(events)
@@ -81,6 +81,7 @@ proc mainProc() =
   accountsModel.events.on("accountsReady") do(a: Args):
     appState.addChannel("test")
     appState.addChannel("test2")
+    appState.addChannel("status")
 
   engine.load("../ui/main.qml")
 

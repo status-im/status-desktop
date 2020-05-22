@@ -1,7 +1,6 @@
 import NimQml
 import ../../models/accounts as Models
-# import ../../constants/constants
-import ../signals/types
+import ../../signals/types
 import eventemitter
 import view
 
@@ -24,4 +23,4 @@ proc init*(self: OnboardingController) =
   let accounts = self.model.generateAddresses()
 
   for account in accounts:
-    self.view.addAddressToList(account.name, account.photoPath, account.address)
+    self.view.addAddressToList(account.toAddress())

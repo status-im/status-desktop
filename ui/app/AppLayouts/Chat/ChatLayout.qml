@@ -228,7 +228,7 @@ SplitView {
                     id: chatGroupsListView
                     anchors.topMargin: 24
                     anchors.fill: parent
-                    model: chatsModel
+                    model: chatsModel.chats
                     delegate: chatViewDelegate
                 }
             }

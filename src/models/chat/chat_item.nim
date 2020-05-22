@@ -1,3 +1,5 @@
+import ../../signals/types
+
 type ChatItem* = ref object
   name*: string
   lastMessage*: string
@@ -16,3 +18,11 @@ proc findByName*(self: seq[ChatItem], name: string): int =
   for item in self:
     inc result
     if(item.name == name): break
+
+proc toChatItem*(chat: Chat): ChatItem =
+    result = ChatItem(
+      name: chat.name,
+      lastMessage: chat.lastMessage.text,
+      timestamp: chat.timestamp,
+      unviewedMessagesCount: chat.unviewedMessagesCount
+    )

@@ -3,9 +3,10 @@ import strformat
 import json
 import "../../status/core" as status
 import ../../status/mailservers as status_mailservers
-import ../signals/types
-import profileView
+import ../../signals/types
+import view
 import "../../status/types" as status_types
+import ../../models/profile
 
 type ProfileController* = ref object of SignalSubscriber
   view*: ProfileView
@@ -21,9 +22,10 @@ proc delete*(self: ProfileController) =
   delete self.variant
 
 proc init*(self: ProfileController, account: Account) =
-  self.view.setUsername(account.name)
-  self.view.setIdenticon(account.photoPath)
+  let profile = account.toProfileModel()
+  self.view.setNewProfile(profile)
 
   var mailservers = status_mailservers.getMailservers()
-  for mailserver in mailservers:
-    self.view.addMailserverToList(mailserver[0], mailserver[1])
+  for mailserver_config in mailservers:
+    let mailserver = MailServer(name: mailserver_config[0], endpoint: mailserver_config[1])
+    self.view.addMailServerToList(mailserver)

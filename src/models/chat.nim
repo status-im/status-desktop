@@ -3,6 +3,11 @@ import json, sets, eventemitter
 import ../status/utils
 import ../status/chat as status_chat
 
+import chat/chat_item
+import chat/chat_message
+export chat_item
+export chat_message
+
 type MsgArgs* = ref object of Args
     message*: string
     chatId*: string
