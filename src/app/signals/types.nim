@@ -34,8 +34,7 @@ type Message* = object
 
 # Override this method
 method onSignal*(self: SignalSubscriber, data: Signal) {.base.} =
-  discard
-  # TODO: log signal received
+  error "onSignal must be overriden in controller. Signal is unhandled"
 
 type ChatType* = enum
   ChatTypeOneToOne = 1, 
