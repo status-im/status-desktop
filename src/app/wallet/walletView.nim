@@ -46,13 +46,13 @@ QtObject:
   proc setDefaultAccount*(self: WalletView, account: string) =
     self.defaultAccount = account
 
-  method getDefaultAccount*(self: WalletView): string {.slot.} =
+  proc getDefaultAccount*(self: WalletView): string {.slot.} =
     return self.defaultAccount
 
-  method rowCount(self: WalletView, index: QModelIndex = nil): int =
+  proc rowCount(self: WalletView, index: QModelIndex = nil): int =
     return self.assets.len
 
-  method data(self: WalletView, index: QModelIndex, role: int): QVariant =
+  proc data(self: WalletView, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
     if index.row < 0 or index.row >= self.assets.len:

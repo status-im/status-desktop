@@ -16,7 +16,6 @@ import models/accounts
 import state
 import status/types
 import eventemitter
-import os
 
 var signalsQObjPointer: pointer
 

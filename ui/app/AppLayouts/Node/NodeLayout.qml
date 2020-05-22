@@ -36,9 +36,9 @@ SplitView {
                 id: testDescription
                 color: Theme.lightBlueText
                 text: "latest block (auto updates):"
+                Layout.rightMargin: Theme.padding
+                Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
-                anchors.left: walletAmountValue.right
-                anchors.leftMargin: 5
                 font.weight: Font.Medium
                 font.pixelSize: 20
             }
@@ -46,9 +46,9 @@ SplitView {
                 id: test
                 color: Theme.lightBlueText
                 text: nodeModel.lastMessage
+                Layout.rightMargin: Theme.padding
+                Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
-                anchors.left: walletAmountValue.right
-                anchors.leftMargin: 5
                 font.weight: Font.Medium
                 font.pixelSize: 20
             }
@@ -57,6 +57,8 @@ SplitView {
         RowLayout {
             id: resultContainer
             Layout.fillHeight: true
+            Layout.rightMargin: Theme.padding
+            Layout.leftMargin: Theme.padding
             TextArea { id: callResult; Layout.fillWidth: true; text: nodeModel.callResult; readOnly: true }
         }
 
