@@ -10,7 +10,7 @@ type
     Image = UserRole + 5
 
 type
-  Asset* = ref object of QObject
+  Asset* = ref object
     name*, symbol*, value*, fiatValue*, image*: string
 
 QtObject:
@@ -23,8 +23,6 @@ QtObject:
 
   proc delete(self: WalletView) =
     self.QAbstractListModel.delete
-    for asset in self.assets:
-      asset.delete
     self.assets = @[]
 
   proc setup(self: WalletView) =

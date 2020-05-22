@@ -11,7 +11,7 @@ type
     Key = UserRole + 3
 
 type
-  Address* = ref object of QObject
+  Address* = ref object
     username*, identicon*, key*: string
 
 QtObject:
@@ -24,8 +24,6 @@ QtObject:
 
   proc delete*(self: OnboardingView) =
     self.QAbstractListModel.delete
-    for address in self.addresses:
-      address.delete
     self.addresses = @[]
 
   proc newOnboardingView*(model: AccountModel): OnboardingView =
