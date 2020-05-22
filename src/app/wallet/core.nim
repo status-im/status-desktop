@@ -1,21 +1,25 @@
 import NimQml
+import eventemitter
 import strformat
 import strutils
 
 import walletView
 import ../../status/wallet as status_wallet
+import ../../models/wallet
 import ../signals/types
 
 var sendTransaction = proc(from_value: string, to: string, value: string, password: string): string =
   status_wallet.sendTransaction(from_value, to, value, password)
 
 type WalletController* = ref object of SignalSubscriber
+  model: WalletModel
   view*: WalletView
   variant*: QVariant
 
-proc newController*(): WalletController =
+proc newController*(events: EventEmitter): WalletController =
   result = WalletController()
-  result.view = newWalletView(sendTransaction)
+  result.model = newWalletModel(events)
+  result.view = newWalletView(result.model)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: WalletController) =

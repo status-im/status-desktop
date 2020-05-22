@@ -41,7 +41,7 @@ proc mainProc() =
   var appState = state.newAppState()
   debug "Application State", title=appState.title
 
-  var wallet = wallet.newController()
+  var wallet = wallet.newController(events)
   engine.setRootContextProperty("assetsModel", wallet.variant)
 
   var chat = chat.newController(events)

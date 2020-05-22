@@ -1,5 +1,6 @@
 import NimQml
 import Tables
+import ../../models/wallet
 
 type
   AssetRoles {.pure.} = enum
@@ -18,8 +19,7 @@ QtObject:
     WalletView* = ref object of QAbstractListModel
       assets*: seq[Asset]
       defaultAccount: string
-      sendTransaction: proc(from_value: string, to: string, value: string, password: string): string
-
+      model: WalletModel
 
   proc delete(self: WalletView) =
     self.QAbstractListModel.delete
@@ -28,9 +28,9 @@ QtObject:
   proc setup(self: WalletView) =
     self.QAbstractListModel.setup
 
-  proc newWalletView*(sendTransaction: proc): WalletView =
+  proc newWalletView*(model: WalletModel): WalletView =
     new(result, delete)
-    result.sendTransaction = sendTransaction
+    result.model = model
     result.assets = @[]
     result.setup
 
@@ -68,7 +68,7 @@ QtObject:
     of AssetRoles.Image: result = newQVariant(asset.image)
 
   proc onSendTransaction*(self: WalletView, from_value: string, to: string, value: string, password: string): string {.slot.} =
-    result = self.sendTransaction(from_value, to, value, password)
+    result = self.model.sendTransaction(from_value, to, value, password)
 
   method roleNames(self: WalletView): Table[int, string] =
     { AssetRoles.Name.int:"name",
