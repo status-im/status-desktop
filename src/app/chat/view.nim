@@ -17,16 +17,14 @@ QtObject:
       callResult: string
       messageList: Table[string, ChatMessageList]
       activeChannel: string
-      sendMessage: proc (view: ChatsView, channel: string, msg: string):  string
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
 
   proc delete(self: ChatsView) = self.QAbstractListModel.delete
 
-  proc newChatsView*(model: ChatModel, sendMessage: proc): ChatsView =
+  proc newChatsView*(model: ChatModel): ChatsView =
     new(result, delete)
     result.model = model
-    result.sendMessage = sendMessage
     result.names = @[]
     result.activeChannel = ""
     result.messageList = initTable[string, ChatMessageList]()
@@ -49,7 +47,7 @@ QtObject:
     { RoleNames.Name.int:"name"}.toTable
 
   proc onSend*(self: ChatsView, inputJSON: string) {.slot.} =
-    discard self.sendMessage(self, self.activeChannel, inputJSON)
+    discard self.model.sendMessage(self.activeChannel, inputJSON)
 
   proc pushMessage*(self:ChatsView, channel: string, message: ChatMessage) =
     self.upsertChannel(channel)
@@ -98,4 +96,3 @@ QtObject:
     else:
       self.model.join(channel)
       result = self.addToList(channel)
-
