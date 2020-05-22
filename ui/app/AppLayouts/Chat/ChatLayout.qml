@@ -181,7 +181,7 @@ SplitView {
                         }
                         Text {
                             id: lastChatMessage
-                            text: "Chatting blah blah..."
+                            text: lastMessage || qsTr("No messages")
                             anchors.right: contactNumberChatsCircle.left
                             anchors.rightMargin: Theme.smallPadding
                             elide: Text.ElideRight
@@ -194,7 +194,7 @@ SplitView {
                         }
                         Text {
                             id: contactTime
-                            text: "12:22 AM"
+                            text: timestamp
                             anchors.right: parent.right
                             anchors.rightMargin: Theme.padding
                             anchors.top: parent.top
@@ -212,9 +212,10 @@ SplitView {
                             anchors.right: parent.right
                             anchors.rightMargin: Theme.padding
                             color: Theme.blue
+                            visible: unviewedMessagesCount > 0
                             Text {
                                 id: contactNumberChats
-                                text: qsTr("1")
+                                text: unviewedMessagesCount
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 anchors.verticalCenter: parent.verticalCenter
                                 color: "white"

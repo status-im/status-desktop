@@ -1,3 +1,5 @@
+import chronicles
+
 type SignalSubscriber* = ref object of RootObj
 
 type Signal* = ref object of RootObj
@@ -30,10 +32,32 @@ type Message* = object
   whisperTimestamp*: string
   isCurrentUser*: bool
 
-
-type ChatSignal* = ref object of Signal
-  messages*: seq[Message]
-
 # Override this method
 method onSignal*(self: SignalSubscriber, data: Signal) {.base.} =
-  echo "Received a signal"  # TODO: log signal received
+  discard
+  # TODO: log signal received
+
+type ChatType* = enum
+  ChatTypeOneToOne = 1, 
+  ChatTypePublic = 2,
+  ChatTypePrivateGroupChat = 3
+
+type Chat* = object
+  id*: string # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat
+  name*: string
+  color*: string
+  active*: bool # indicates whether the chat has been soft deleted
+  chatType*: ChatType
+  timestamp*: int64 # indicates the last time this chat has received/sent a message
+  lastClockValue*: int64 # indicates the last clock value to be used when sending messages
+  deletedAtClockValue*: int64 # indicates the clock value at time of deletion, messages with lower clock value of this should be discarded
+  unviewedMessagesCount*: int
+  lastMessage*: Message
+  # Group chat fields
+  # members ?
+  # membershipUpdateEvents # ?
+
+
+type MessageSignal* = ref object of Signal
+  messages*: seq[Message]
+  chats*: seq[Chat]

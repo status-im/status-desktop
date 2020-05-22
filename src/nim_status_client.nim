@@ -75,7 +75,6 @@ proc mainProc() =
 
   appState.subscribe(proc () =
     for channel in appState.channels:
-      echo channel.name
       chat.load(channel.name)
   )
 
