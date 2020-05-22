@@ -194,7 +194,7 @@ SwipeView {
             id: storeAccountAndLoginError
             title: "Error storing account and logging in"
             text: "An error occurred while storing your account and logging in: "
-            // icon: StandardIcon.Error
+            icon: StandardIcon.Warning
             standardButtons: StandardButton.Ok
         }
 

@@ -24,8 +24,7 @@ logScope:
   topics = "main"
 
 proc mainProc() =
-  status_accounts.initNodeAccounts()
-
+  let nodeAccounts = parseJson(status_accounts.initNodeAccounts()).toNodeAccounts # to be used for login
   let app = newQApplication()
   let engine = newQQmlApplicationEngine()
   let signalController = signals.newController(app)
@@ -59,9 +58,10 @@ proc mainProc() =
 
   var accountsModel = newAccountModel()
   accountsModel.events.on("accountsReady") do(a: Args):
+    var args = AccountArgs(a)
     status_chat.startMessenger()
     wallet.init()
-    profile.init($accountsModel.subaccounts) # TODO: use correct account
+    profile.init(args.account) # TODO: use correct account
 
   var onboarding = onboarding.newController(accountsModel)
   onboarding.init()

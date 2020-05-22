@@ -39,7 +39,7 @@ proc ensureDir(dirname: string) =
     # removeDir(dirname)
     createDir(dirname)
 
-proc initNodeAccounts*() =
+proc initNodeAccounts*(): string =
   const datadir = "./data/"
   const keystoredir = "./data/keystore/"
   const nobackupdir = "./noBackup/"
@@ -49,7 +49,7 @@ proc initNodeAccounts*() =
   ensureDir(nobackupdir)
 
   discard $libstatus.initKeystore(keystoredir);
-  discard $libstatus.openAccounts(datadir);
+  result = $libstatus.openAccounts(datadir);
 
 proc saveAccountAndLogin*(multiAccounts: JsonNode, alias: string, identicon: string, accountData: string, password: string, configJSON: string, settingsJSON: string): JsonNode =
   let hashedPassword = "0x" & $keccak_256.digest(password)
