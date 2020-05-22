@@ -10,9 +10,9 @@ type Asset* = ref object
 type WalletModel* = ref object
     events*: EventEmitter
 
-proc newWalletModel*(events: EventEmitter): WalletModel =
+proc newWalletModel*(): WalletModel =
   result = WalletModel()
-  result.events = events
+  result.events = createEventEmitter()
 
 proc delete*(self: WalletModel) =
   discard

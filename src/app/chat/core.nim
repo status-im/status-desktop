@@ -9,10 +9,12 @@ type ChatController* = ref object of SignalSubscriber
   view*: ChatsView
   model*: ChatModel
   variant*: QVariant
+  appEvents*: EventEmitter
 
-proc newController*(events: EventEmitter): ChatController =
+proc newController*(appEvents: EventEmitter): ChatController =
   result = ChatController()
-  result.model = newChatModel(events)
+  result.appEvents = appEvents
+  result.model = newChatModel()
   result.view = newChatsView(result.model)
   result.variant = newQVariant(result.view)
 

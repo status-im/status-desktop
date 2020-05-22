@@ -1,4 +1,5 @@
 import NimQml
+import eventemitter
 import strformat
 import json
 import "../../status/core" as status
@@ -11,9 +12,11 @@ import ../../models/profile
 type ProfileController* = ref object of SignalSubscriber
   view*: ProfileView
   variant*: QVariant
+  appEvents*: EventEmitter
 
-proc newController*(): ProfileController =
+proc newController*(appEvents: EventEmitter): ProfileController =
   result = ProfileController()
+  result.appEvents = appEvents
   result.view = newProfileView()
   result.variant = newQVariant(result.view)
 

@@ -18,10 +18,10 @@ type
     events*: EventEmitter
     channels*: HashSet[string]
 
-proc newChatModel*(events: EventEmitter): ChatModel =
+proc newChatModel*(): ChatModel =
   result = ChatModel()
+  result.events = createEventEmitter()
   result.channels = initHashSet[string]()
-  result.events = events
 
 proc delete*(self: ChatModel) =
   discard

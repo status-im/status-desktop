@@ -8,15 +8,7 @@ import os
 import uuids
 
 proc queryAccounts*(): string =
-  var payload = %* {
-    "jsonrpc": "2.0",
-    "method": "eth_accounts",
-    "params": [
-      []
-    ]
-  }
-  var response = callPrivateRPC($payload)
-  echo response
+  var response = callPrivateRPC("eth_accounts")
   result = parseJson(response)["result"][0].getStr()
 
 proc generateAddresses*(): string =
