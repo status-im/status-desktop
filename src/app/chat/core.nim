@@ -2,9 +2,10 @@ import NimQml
 import json, eventemitter
 import ../../status/chat as status_chat
 import view
+import chatItem
 import messages
 import ../signals/types
-import ../../models/chat
+import ../../models/chat as chat_model
 
 type ChatController* = ref object of SignalSubscriber
   view*: ChatsView
@@ -40,9 +41,18 @@ proc load*(self: ChatController, chatId: string) =
   discard self.view.joinChat(chatId)
   self.view.setActiveChannelByIndex(0)
 
-proc onSignal(self: ChatController, data: Signal) =
-  var chatSignal = cast[ChatSignal](data)
-  for message in chatSignal.messages:
+method onSignal(self: ChatController, data: Signal) =
+  var messageSignal = cast[MessageSignal](data)
+
+  for c in messageSignal.chats:
+    let channel = newChatitem()
+    channel.name = c.name
+    channel.lastMessage = c.lastMessage.text
+    channel.timestamp = c.timestamp
+    channel.unviewedMessagesCount = c.unviewedMessagesCount
+    self.view.updateChat(channel)
+
+  for message in messageSignal.messages:
     let chatMessage = newChatMessage()
     chatMessage.userName = message.alias
     chatMessage.message = message.text
