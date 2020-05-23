@@ -27,25 +27,11 @@ proc delete*(self: WalletController) =
   delete self.variant
 
 proc init*(self: WalletController) =
-  # 1. get balance of an address
-  var balance = status_wallet.getBalance("0x0000000000000000000000000000000000000000")
-  echo(fmt"balance in hex: {balance}")
+  var symbol = "ETH"
+  var eth_balance = self.model.getEthBalance("0x0000000000000000000000000000000000000000")
+  var usd_balance = self.model.getFiatValue(eth_balance, symbol, "USD")
 
-  # 2. convert balance to eth
-  var eth_value = status_wallet.hex2Eth(balance)
-  echo(fmt"balance in eth: {eth_value}")
-
-  # 3. get usd price of 1 eth
-  var usd_eth_price = status_wallet.getPrice("ETH", "USD")
-  echo(fmt"usd_price: {usd_eth_price}")
-
-  # 4. convert balance to usd
-  var usd_balance = parseFloat(eth_value) * parseFloat(usd_eth_price)
-  echo(fmt"balance in usd: {usd_balance}")
+  var asset = Asset(name:"Ethereum", symbol: symbol, value: fmt"{eth_balance:.6}", fiatValue: "$" & fmt"{usd_balance:.6}", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
+  self.view.addAssetToList(asset)
 
   self.view.setDefaultAccount(status_wallet.getAccount())
-
-  var symbol = "ETH"
-  var asset = Asset(name:"Ethereum", symbol: symbol, value: fmt"{eth_value:.6}", fiatValue: "$" & fmt"{usd_balance:.6}", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
-
-  self.view.addAssetToList(asset)
