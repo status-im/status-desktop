@@ -3,7 +3,6 @@ import json, eventemitter
 import ../../status/chat as status_chat
 import view
 import chatItem
-import messages
 import ../signals/types
 import ../../models/chat as chat_model
 
