@@ -3,7 +3,7 @@ import eventemitter
 import strformat
 import strutils
 
-import walletView
+import view
 import ../../status/wallet as status_wallet
 import ../../models/wallet
 import ../signals/types
