@@ -1,5 +1,5 @@
 import NimQml, Tables
-import ../../models/chat
+import ../../../models/chat
 
 type
   ChatMessageRoles {.pure.} = enum
