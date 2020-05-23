@@ -4,7 +4,7 @@ import json
 import "../../status/core" as status
 import ../../status/mailservers as status_mailservers
 import ../signals/types
-import profileView
+import view
 import "../../status/types" as status_types
 import ../../models/profile
 

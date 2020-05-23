@@ -41,7 +41,7 @@ ColumnLayout {
 
                 Image {
                     id: profileImg
-                    source: profileModel.identicon
+                    source: profileModel.profile.identicon
                     width: 80
                     height: 80
                     fillMode: Image.PreserveAspectCrop
@@ -68,7 +68,7 @@ ColumnLayout {
 
                 Text {
                     id: profileName
-                    text: profileModel.username
+                    text: profileModel.profile.username
                     anchors.top: profileImg.bottom
                     anchors.topMargin: 10
                     anchors.horizontalCenterOffset: 0
