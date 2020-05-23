@@ -1,5 +1,5 @@
 import NimQml
-import ../../status/types as status_types
+import ../status/types as status_types
 import tables
 import json
 import types

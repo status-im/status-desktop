@@ -1,4 +1,4 @@
-import ../../app/signals/types
+import ../../signals/types
 
 type ChatItem* = ref object
   name*: string

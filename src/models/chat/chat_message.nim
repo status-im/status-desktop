@@ -1,5 +1,5 @@
 import json
-import ../../app/signals/types
+import ../../signals/types
 
 type ChatMessage* = ref object
   userName*: string

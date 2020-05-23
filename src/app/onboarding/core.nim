@@ -1,6 +1,6 @@
 import NimQml
 import ../../models/accounts as Models
-import ../signals/types
+import ../../signals/types
 import eventemitter
 import view
 

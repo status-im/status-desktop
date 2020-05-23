@@ -1,7 +1,7 @@
 import NimQml
 import chronicles
 import "../../status/core" as status
-import ../signals/types
+import ../../signals/types
 import view
 
 logScope:

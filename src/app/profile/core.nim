@@ -3,7 +3,7 @@ import strformat
 import json
 import "../../status/core" as status
 import ../../status/mailservers as status_mailservers
-import ../signals/types
+import ../../signals/types
 import view
 import "../../status/types" as status_types
 import ../../models/profile

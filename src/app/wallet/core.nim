@@ -6,7 +6,7 @@ import strutils
 import view
 import ../../status/wallet as status_wallet
 import ../../models/wallet
-import ../signals/types
+import ../../signals/types
 
 type WalletController* = ref object of SignalSubscriber
   model: WalletModel
