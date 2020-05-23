@@ -1,6 +1,6 @@
 import NimQml
 import Tables
-import messageList
+import message_list
 import ../../models/chat
 
 type

@@ -40,7 +40,7 @@ method onSignal(self: ChatController, data: Signal) =
 
   for c in messageSignal.chats:
    let channel = c.toChatItem()
-    self.view.updateChat(channel)
+   self.view.updateChat(channel)
 
   for message in messageSignal.messages:
     let chatMessage = message.toChatMessage()

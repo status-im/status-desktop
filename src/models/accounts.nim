@@ -5,6 +5,13 @@ import ../status/utils
 import ../status/types
 
 type
+  Address* = ref object
+    username*, identicon*, key*: string
+
+proc toAddress*(account: GeneratedAccount): Address =
+  result = Address(username: account.name, identicon: account.photoPath, key: account.address)
+
+type
   AccountModel* = ref object
     generatedAddresses*: seq[GeneratedAccount]
     events*: EventEmitter
