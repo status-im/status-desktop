@@ -32,7 +32,6 @@ proc toChat(jsonChat: JsonNode): Chat =
     lastMessage: jsonChat{"lastMessage"}.toMessage
   )
 
-
 proc toMessage(jsonMsg: JsonNode): Message =
   result = Message(
       alias: jsonMsg{"alias"}.getStr,

@@ -92,13 +92,10 @@ QtObject:
     self.activeChannel = channel
     self.activeChannelChanged()
 
-  proc addToList(self: ChatsView, channel: string): int =
-    if(self.activeChannel == ""): self.setActiveChannel(channel)
-    var chatItem = newChatItem()
-    chatItem.name = channel
-    self.upsertChannel(channel)
+  proc addChatItemToList(self: ChatsView, channel: ChatItem): int =
+    self.upsertChannel(channel.name)
     self.beginInsertRows(newQModelIndex(), self.chats.len, self.chats.len)
-    self.chats.add(chatItem)
+    self.chats.add(channel)
     self.endInsertRows()
     
     result = self.chats.len - 1
@@ -109,7 +106,7 @@ QtObject:
       result = self.chats.findByName(channel)
     else:
       self.model.join(channel)
-      result = self.addToList(channel)
+      result = self.addChatItemToList(ChatItem(name: channel))
 
   proc updateChat*(self: ChatsView, chat: ChatItem) =
     var idx = self.chats.findByName(chat.name)

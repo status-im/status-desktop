@@ -1,9 +1,9 @@
 import NimQml
 import json, eventemitter
 import ../../status/chat as status_chat
-import view
-import ../signals/types
 import ../../models/chat as chat_model
+import ../signals/types
+import view
 
 type ChatController* = ref object of SignalSubscriber
   view*: ChatsView
@@ -23,12 +23,8 @@ proc delete*(self: ChatController) =
 proc init*(self: ChatController) =
   self.model.events.on("messageSent") do(e: Args):
     var sentMessage = MsgArgs(e)
-
-    let chatMessage = newChatMessage()
-    chatMessage.userName = sentMessage.payload["alias"].str
+    var chatMessage = sentMessage.payload.toChatMessage()
     chatMessage.message = sentMessage.message
-    chatMessage.timestamp = $sentMessage.payload["timestamp"]
-    chatMessage.identicon = sentMessage.payload["identicon"].str
     chatMessage.isCurrentUser = true
 
     self.view.pushMessage(sentMessage.chatId, chatMessage)
@@ -43,18 +39,9 @@ method onSignal(self: ChatController, data: Signal) =
   var messageSignal = cast[MessageSignal](data)
 
   for c in messageSignal.chats:
-    let channel = newChatitem()
-    channel.name = c.name
-    channel.lastMessage = c.lastMessage.text
-    channel.timestamp = c.timestamp
-    channel.unviewedMessagesCount = c.unviewedMessagesCount
+   let channel = c.toChatItem()
     self.view.updateChat(channel)
 
   for message in messageSignal.messages:
-    let chatMessage = newChatMessage()
-    chatMessage.userName = message.alias
-    chatMessage.message = message.text
-    chatMessage.timestamp = message.timestamp #TODO convert to date/time?
-    chatMessage.identicon = message.identicon
-    chatMessage.isCurrentUser = message.isCurrentUser
+    let chatMessage = message.toChatMessage()
     self.view.pushMessage(message.chatId, chatMessage)
