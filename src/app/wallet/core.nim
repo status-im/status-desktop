@@ -8,9 +8,6 @@ import ../../status/wallet as status_wallet
 import ../../models/wallet
 import ../signals/types
 
-var sendTransaction = proc(from_value: string, to: string, value: string, password: string): string =
-  status_wallet.sendTransaction(from_value, to, value, password)
-
 type WalletController* = ref object of SignalSubscriber
   model: WalletModel
   view*: WalletView

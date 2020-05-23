@@ -4,7 +4,7 @@ import strformat
 import ../../../models/profile
 
 type
-  MailserverRoles {.pure.} = enum
+  MailServerRoles {.pure.} = enum
     Name = UserRole + 1,
     Endpoint = UserRole + 2
 
