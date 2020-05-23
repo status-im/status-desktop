@@ -1,6 +1,6 @@
 import NimQml
 import Tables
-import mailserversList
+import mailservers_list
 
 QtObject:
   type ProfileView* = ref object of QObject
