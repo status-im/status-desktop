@@ -3,42 +3,10 @@ import json, sets, eventemitter
 import ../status/utils
 import ../status/chat as status_chat
 
-type ChatItem* = ref object
-  name*: string
-  lastMessage*: string
-  timestamp*: int64
-  unviewedMessagesCount*: int
-
-proc newChatItem*(): ChatItem =
-  new(result)
-  result.name = ""
-  result.lastMessage = ""
-  result.timestamp = 0
-  result.unviewedMessagesCount = 0
-
-proc findByName*(self: seq[ChatItem], name: string): int =
-  result = -1
-  for item in self:
-    inc result
-    if(item.name == name): break
-
-type ChatMessage* = ref object
-  userName*: string
-  message*: string
-  timestamp*: string
-  identicon*: string
-  isCurrentUser*: bool
-
-proc delete*(self: ChatMessage) =
-  discard
-
-proc newChatMessage*(): ChatMessage =
-  result = ChatMessage()
-  result.userName = ""
-  result.message = ""
-  result.timestamp = "0"
-  result.identicon = ""
-  result.isCurrentUser = false
+import chat/chat_item
+import chat/chat_message
+export chat_item
+export chat_message
 
 type MsgArgs* = ref object of Args
     message*: string
