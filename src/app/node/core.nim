@@ -2,7 +2,7 @@ import NimQml
 import chronicles
 import "../../status/core" as status
 import ../signals/types
-import nodeView
+import view
 
 logScope:
   topics = "node"
