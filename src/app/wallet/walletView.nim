@@ -10,10 +10,6 @@ type
     FiatValue = UserRole + 4,
     Image = UserRole + 5
 
-type
-  Asset* = ref object
-    name*, symbol*, value*, fiatValue*, image*: string
-
 QtObject:
   type
     WalletView* = ref object of QAbstractListModel
@@ -34,13 +30,9 @@ QtObject:
     result.assets = @[]
     result.setup
 
-  proc addAssetToList*(self: WalletView, name: string, symbol: string, value: string, fiatValue: string, image: string) {.slot.} =
+  proc addAssetToList*(self: WalletView, asset: Asset) =
     self.beginInsertRows(newQModelIndex(), self.assets.len, self.assets.len)
-    self.assets.add(Asset(name : name,
-                          symbol : symbol,
-                          value : value,
-                          fiatValue: fiatValue,
-                          image: image))
+    self.assets.add(asset)
     self.endInsertRows()
 
   proc setDefaultAccount*(self: WalletView, account: string) =

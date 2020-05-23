@@ -1,9 +1,11 @@
-import eventemitter, sets
-import json, sets, eventemitter
+import eventemitter
+import json
 import ../status/wallet as status_wallet
 
-type
-  WalletModel* = ref object
+type Asset* = ref object
+    name*, symbol*, value*, fiatValue*, image*: string
+
+type WalletModel* = ref object
     events*: EventEmitter
 
 proc newWalletModel*(events: EventEmitter): WalletModel =

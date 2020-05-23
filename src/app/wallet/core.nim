@@ -45,5 +45,7 @@ proc init*(self: WalletController) =
 
   self.view.setDefaultAccount(status_wallet.getAccount())
 
-  let symbol = "ETH"
-  self.view.addAssetToList("Ethereum", symbol, fmt"{eth_value:.6}", "$" & fmt"{usd_balance:.6}", fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
+  var symbol = "ETH"
+  var asset = Asset(name:"Ethereum", symbol: symbol, value: fmt"{eth_value:.6}", fiatValue: "$" & fmt"{usd_balance:.6}", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
+
+  self.view.addAssetToList(asset)
