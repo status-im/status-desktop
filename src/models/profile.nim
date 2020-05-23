@@ -1,5 +1,9 @@
 import eventemitter
 
+type
+  MailServer* = ref object
+    name*, endpoint*: string
+
 type Profile* = ref object
     username*, identicon*: string
 

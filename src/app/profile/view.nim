@@ -21,8 +21,8 @@ QtObject:
     result.mailserversList = newMailServersList()
     result.setup
 
-  proc addMailserverToList*(self: ProfileView, name: string, endpoint: string) {.slot.} =
-    self.mailserversList.add(name, endpoint)
+  proc addMailServerToList*(self: ProfileView, mailserver: MailServer) =
+    self.mailserversList.addMailServerToList(mailserver)
 
   proc getMailserversList(self: ProfileView): QVariant {.slot.} =
     return newQVariant(self.mailserversList)

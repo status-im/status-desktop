@@ -1,15 +1,12 @@
 import NimQml
 import Tables
 import strformat
+import ../../../models/profile
 
 type
   MailserverRoles {.pure.} = enum
     Name = UserRole + 1,
     Endpoint = UserRole + 2
-
-type
-  MailServer* = ref object of QObject
-    name*, endpoint*: string
 
 QtObject:
   type MailServersList* = ref object of QAbstractListModel
@@ -43,8 +40,7 @@ QtObject:
       MailServerRoles.Endpoint.int:"endpoint",
     }.toTable
 
-  proc add*(self: MailServersList, name: string, endpoint: string) {.slot.} =
+  proc addMailServerToList*(self: MailServersList, mailserver: MailServer) =
     self.beginInsertRows(newQModelIndex(), self.mailservers.len, self.mailservers.len)
-    self.mailservers.add(MailServer(name: name, endpoint: endpoint))
+    self.mailservers.add(mailserver)
     self.endInsertRows()
-

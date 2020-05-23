@@ -26,5 +26,6 @@ proc init*(self: ProfileController, account: Account) =
   self.view.setNewProfile(profile)
 
   var mailservers = status_mailservers.getMailservers()
-  for mailserver in mailservers:
-    self.view.addMailserverToList(mailserver[0], mailserver[1])
+  for mailserver_config in mailservers:
+    let mailserver = MailServer(name: mailserver_config[0], endpoint: mailserver_config[1])
+    self.view.addMailServerToList(mailserver)
