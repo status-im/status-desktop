@@ -45,7 +45,6 @@ QtObject:
 
   proc add*(self: MailServersList, name: string, endpoint: string) {.slot.} =
     self.beginInsertRows(newQModelIndex(), self.mailservers.len, self.mailservers.len)
-    self.mailservers.add(MailServer(name: name,
-                                    endpoint: endpoint))
+    self.mailservers.add(MailServer(name: name, endpoint: endpoint))
     self.endInsertRows()
 
