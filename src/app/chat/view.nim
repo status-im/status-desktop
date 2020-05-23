@@ -31,30 +31,35 @@ QtObject:
   QtProperty[QVariant] chats:
     read = getChatsList
 
-  proc upsertChannel(self: ChatsView, channel: string) =
-    if not self.messageList.hasKey(channel):
-      self.messageList[channel] = newChatMessageList()
-
   proc onSend*(self: ChatsView, inputJSON: string) {.slot.} =
     discard self.model.sendMessage(self.activeChannel, inputJSON)
-
-  proc pushMessage*(self:ChatsView, channel: string, message: ChatMessage) =
-    self.upsertChannel(channel)
-    self.messageList[channel].add(message)
 
   proc activeChannel*(self: ChatsView): string {.slot.} = self.activeChannel
 
   proc activeChannelChanged*(self: ChatsView) {.signal.}
 
   proc setActiveChannelByIndex*(self: ChatsView, index: int) {.slot.} =
-    if self.activeChannel == self.chats.chats[index].name: return
-    self.activeChannel = self.chats.chats[index].name
+    let selectedChannel = self.chats.getChannel(index)
+    if self.activeChannel == selectedChannel.name: return
+    self.activeChannel = selectedChannel.name
+    self.activeChannelChanged()
+
+  proc setActiveChannel*(self: ChatsView, channel: string) =
+    self.activeChannel = channel
     self.activeChannelChanged()
 
   QtProperty[string] activeChannel:
     read = activeChannel
     write = setActiveChannel
     notify = activeChannelChanged
+
+  proc upsertChannel(self: ChatsView, channel: string) =
+    if not self.messageList.hasKey(channel):
+      self.messageList[channel] = newChatMessageList()
+
+  proc pushMessage*(self:ChatsView, channel: string, message: ChatMessage) =
+    self.upsertChannel(channel)
+    self.messageList[channel].add(message)
 
   proc getMessageList(self: ChatsView): QVariant {.slot.} =
     self.upsertChannel(self.activeChannel)
@@ -64,21 +69,13 @@ QtObject:
     read = getMessageList
     notify = activeChannelChanged
 
-  proc setActiveChannel*(self: ChatsView, channel: string) =
-    self.activeChannel = channel
-    self.activeChannelChanged()
-
-  proc addChatItemToList(self: ChatsView, channel: ChatItem): int =
-    self.upsertChannel(channel.name)
-    self.beginInsertRows(newQModelIndex(), self.chats.chats.len, self.chats.chats.len)
-    self.chats.chats.add(channel)
-    self.endInsertRows()
-    
-    result = self.chats.chats.len - 1
-
   proc joinChat*(self: ChatsView, channel: string): int {.slot.} =
     self.setActiveChannel(channel)
-    self.chats.joinChat(channel)
+    if self.model.hasChannel(channel):
+      result = self.chats.chats.findByName(channel)
+    else:
+      self.model.join(channel)
+      result = self.chats.addChatItemToList(ChatItem(name: channel))
 
   proc updateChat*(self: ChatsView, chat: ChatItem) =
     self.chats.updateChat(chat)

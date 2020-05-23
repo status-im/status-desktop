@@ -50,20 +50,14 @@ QtObject:
     }.toTable
 
   proc addChatItemToList*(self: ChannelsList, channel: ChatItem): int =
-    # self.upsertChannel(channel.name)
     self.beginInsertRows(newQModelIndex(), self.chats.len, self.chats.len)
     self.chats.add(channel)
     self.endInsertRows()
     
     result = self.chats.len - 1
 
-  proc joinChat*(self: ChannelsList, channel: string): int {.slot.} =
-    # self.setActiveChannel(channel)
-    if self.model.hasChannel(channel):
-      result = self.chats.findByName(channel)
-    else:
-      self.model.join(channel)
-      result = self.addChatItemToList(ChatItem(name: channel))
+  proc getChannel*(self: ChannelsList, index: int): ChatItem =
+    self.chats[index]
 
   proc updateChat*(self: ChannelsList, chat: ChatItem) =
     var idx = self.chats.findByName(chat.name)
