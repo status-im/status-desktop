@@ -7,14 +7,7 @@ import stint
 import strutils
 
 proc getAccounts*(): seq[string] =
-  var payload = %* {
-    "jsonrpc": "2.0",
-    "method": "eth_accounts",
-    "params": [
-      []
-    ]
-  }
-  var response = status.callPrivateRPC($payload)
+  var response = callPrivateRPC("eth_accounts")
   result = parseJson(response)["result"].to(seq[string])
 
 proc getAccount*(): string =
@@ -31,24 +24,16 @@ proc sendTransaction*(from_address: string, to: string, value: string, password:
   result = response
 
 proc getPrice*(crypto: string, fiat: string): string =
-    var url: string = fmt"https://min-api.cryptocompare.com/data/price?fsym={crypto}&tsyms={fiat}"
-    let client = newHttpClient()
-    client.headers = newHttpHeaders({ "Content-Type": "application/json" })
+  var url: string = fmt"https://min-api.cryptocompare.com/data/price?fsym={crypto}&tsyms={fiat}"
+  let client = newHttpClient()
+  client.headers = newHttpHeaders({ "Content-Type": "application/json" })
 
-    let response = client.request(url)
-    $parseJson(response.body)["USD"]
+  let response = client.request(url)
+  $parseJson(response.body)["USD"]
 
 proc getBalance*(address: string): string =
-  let payload = %* {
-    "jsonrpc": "2.0",
-    "id": 50,
-    "method": "eth_getBalance",
-    "params": [
-        address,
-        "latest"
-    ]
-  }
-  parseJson(status.callPrivateRPC($payload))["result"].str
+  let payload = %* [address, "latest"]
+  parseJson(status.callPrivateRPC("eth_getBalance", payload))["result"].str
 
 proc hex2Eth*(input: string): string =
   var value = fromHex(Stuint[256], input)

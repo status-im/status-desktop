@@ -9,6 +9,7 @@ import app/onboarding/core as onboarding
 import state
 import json
 import status/accounts as status_accounts
+import status/core as status_core
 import status/chat as status_chat
 import status/types as types
 import status/libstatus
@@ -58,7 +59,7 @@ proc mainProc() =
   var accountsModel = newAccountModel()
   accountsModel.events.on("accountsReady") do(a: Args):
     var args = AccountArgs(a)
-    status_chat.startMessenger()
+    status_core.startMessenger()
     wallet.init()
     profile.init(args.account) # TODO: use correct account
 
