@@ -6,6 +6,9 @@ import utils
 proc callRPC*(inputJSON: string): string =
   return $libstatus.callRPC(inputJSON)
 
+proc callPrivateRPCRaw*(inputJSON: string): string =
+  return $libstatus.callPrivateRPC(inputJSON)
+
 proc callPrivateRPC*(methodName: string, payload = %* []): string =
   try:
     let inputJSON = %* {

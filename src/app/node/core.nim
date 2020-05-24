@@ -13,7 +13,7 @@ type NodeController* = ref object of SignalSubscriber
 
 var sendRPCMessage = proc (msg: string): string =
   echo "sending RPC message"
-  status.callPrivateRPC(msg)
+  status.callPrivateRPCRaw(msg)
 
 proc newController*(): NodeController =
   result = NodeController()
