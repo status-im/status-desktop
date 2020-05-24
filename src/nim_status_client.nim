@@ -56,14 +56,15 @@ proc mainProc() =
   var profile = profile.newController()
   engine.setRootContextProperty("profileModel", profile.variant)
 
-  var accountsModel = newAccountModel()
-  accountsModel.events.on("accountsReady") do(a: Args):
+  # var accountsModel = newAccountModel()
+  events.on("accountsReady") do(a: Args):
     var args = AccountArgs(a)
     status_core.startMessenger()
     wallet.init()
     profile.init(args.account) # TODO: use correct account
 
-  var onboarding = onboarding.newController(accountsModel)
+  # var onboarding = onboarding.newController(accountsModel)
+  var onboarding = onboarding.newController(events)
   onboarding.init()
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
 
@@ -79,7 +80,8 @@ proc mainProc() =
       chat.load(channel.name)
   )
 
-  accountsModel.events.on("accountsReady") do(a: Args):
+  # accountsModel.events.on("accountsReady") do(a: Args):
+  events.on("accountsReady") do(a: Args):
     appState.addChannel("test")
     appState.addChannel("test2")
     appState.addChannel("status")

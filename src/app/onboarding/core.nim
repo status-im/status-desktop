@@ -1,5 +1,5 @@
 import NimQml
-import ../../models/accounts as Models
+import ../../models/accounts
 import ../../signals/types
 import eventemitter
 import view
@@ -8,10 +8,14 @@ type OnboardingController* = ref object of SignalSubscriber
   view*: OnboardingView
   variant*: QVariant
   model*: AccountModel
+  events*: EventEmitter
 
-proc newController*(model: AccountModel): OnboardingController =
+# proc newController*(model: AccountModel): OnboardingController =
+proc newController*(events: EventEmitter): OnboardingController =
   result = OnboardingController()
-  result.model = model
+  result.events = events
+  # result.model = model
+  result.model = newAccountModel(events)
   result.view = newOnboardingView(result.model)
   result.variant = newQVariant(result.view)
 

@@ -17,9 +17,10 @@ type
     events*: EventEmitter
     subaccounts*: JsonNode #TODO use correct account, etc..
 
-proc newAccountModel*(): AccountModel =
+proc newAccountModel*(events: EventEmitter): AccountModel =
   result = AccountModel()
-  result.events = createEventEmitter()
+  # result.events = createEventEmitter()
+  result.events = events
   result.generatedAddresses = @[]
   result.subaccounts = %*{}
 
