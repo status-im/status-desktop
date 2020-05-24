@@ -72,6 +72,44 @@ Item {
                 font.weight: Font.Bold
                 font.pixelSize: 20
             }
+
+            Component {
+                id: contactsList
+
+                Item {
+                    height: 56
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+                    anchors.left: parent.left
+                    anchors.leftMargin: 0
+                    Column {
+                        Row {
+                            Text {
+                                text: name
+                                font.weight: Font.Bold
+                                font.pixelSize: 14
+                            }
+                        }
+                        Row {
+                            Text {
+                                text: address
+                                font.weight: Font.Bold
+                                font.pixelSize: 12
+                            }
+                        }
+                    }
+                }
+            }
+
+            ListView {
+              id: contactListView
+              anchors.topMargin: 48
+              anchors.top: element4.bottom
+              anchors.fill: parent
+              model: profileModel.contactList
+              delegate: contactsList
+            }
+
         }
 
         Item {
