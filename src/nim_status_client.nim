@@ -49,7 +49,7 @@ proc mainProc() =
   chat.init()
   engine.setRootContextProperty("chatsModel", chat.variant)
 
-  var node = node.newController()
+  var node = node.newController(events)
   node.init()
   engine.setRootContextProperty("nodeModel", node.variant)
 
