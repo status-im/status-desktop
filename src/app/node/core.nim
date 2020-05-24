@@ -13,10 +13,12 @@ type NodeController* = ref object of SignalSubscriber
   model*: NodeModel
   view*: NodeView
   variant*: QVariant
+  appEvents*: EventEmitter
 
-proc newController*(events: EventEmitter): NodeController =
+proc newController*(appEvents: EventEmitter): NodeController =
   result = NodeController()
-  result.model = newNodeModel(events)
+  result.appEvents = appEvents
+  result.model = newNodeModel()
   result.view = newNodeView(result.model)
   result.variant = newQVariant(result.view)
 

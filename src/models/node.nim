@@ -7,9 +7,9 @@ import "../status/core" as status
 type NodeModel* = ref object
   events*: EventEmitter
 
-proc newNodeModel*(events: EventEmitter): NodeModel =
+proc newNodeModel*(): NodeModel =
   result = NodeModel()
-  result.events = events
+  result.events = createEventEmitter()
 
 proc delete*(self: NodeModel) =
   discard

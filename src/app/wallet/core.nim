@@ -12,10 +12,12 @@ type WalletController* = ref object of SignalSubscriber
   model: WalletModel
   view*: WalletView
   variant*: QVariant
+  appEvents*: EventEmitter
 
-proc newController*(events: EventEmitter): WalletController =
+proc newController*(appEvents: EventEmitter): WalletController =
   result = WalletController()
-  result.model = newWalletModel(events)
+  result.appEvents = appEvents
+  result.model = newWalletModel()
   result.view = newWalletView(result.model)
   result.variant = newQVariant(result.view)
 

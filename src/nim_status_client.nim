@@ -28,7 +28,7 @@ proc mainProc() =
   let app = newQApplication()
   let engine = newQQmlApplicationEngine()
   let signalController = signals.newController(app)
-  let events = createEventEmitter()
+  let appEvents = createEventEmitter()
 
   defer: # Defer will run this just before mainProc() function ends
     app.delete()
@@ -42,29 +42,29 @@ proc mainProc() =
   var appState = state.newAppState()
   debug "Application State", title=appState.title
 
-  var wallet = wallet.newController(events)
+  var wallet = wallet.newController(appEvents)
   engine.setRootContextProperty("assetsModel", wallet.variant)
 
-  var chat = chat.newController(events)
+  var chat = chat.newController(appEvents)
   chat.init()
   engine.setRootContextProperty("chatsModel", chat.variant)
 
-  var node = node.newController(events)
+  var node = node.newController(appEvents)
   node.init()
   engine.setRootContextProperty("nodeModel", node.variant)
 
-  var profile = profile.newController()
+  var profile = profile.newController(appEvents)
   engine.setRootContextProperty("profileModel", profile.variant)
 
   # var accountsModel = newAccountModel()
-  events.on("accountsReady") do(a: Args):
+  appEvents.on("accountsReady") do(a: Args):
     var args = AccountArgs(a)
     status_core.startMessenger()
     wallet.init()
     profile.init(args.account) # TODO: use correct account
 
   # var onboarding = onboarding.newController(accountsModel)
-  var onboarding = onboarding.newController(events)
+  var onboarding = onboarding.newController(appEvents)
   onboarding.init()
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
 
@@ -80,8 +80,8 @@ proc mainProc() =
       chat.load(channel.name)
   )
 
-  # accountsModel.events.on("accountsReady") do(a: Args):
-  events.on("accountsReady") do(a: Args):
+  # accountsModel.appEvents.on("accountsReady") do(a: Args):
+  appEvents.on("accountsReady") do(a: Args):
     appState.addChannel("test")
     appState.addChannel("test2")
     appState.addChannel("status")
