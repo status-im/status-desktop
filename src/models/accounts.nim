@@ -2,7 +2,6 @@ import eventemitter
 import json_serialization
 import ../status/accounts as status_accounts
 import ../status/types
-import ../status/libstatus
 
 type
   Address* = ref object
@@ -37,15 +36,9 @@ proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
 proc generateRandomAccountAndLogin*(self: AccountModel) =
   let generatedAccounts = status_accounts.generateAddresses()
   let account = status_accounts.setupAccount(generatedAccounts[0], "qwerty")
-  # TODO this is needed for now for the retrieving of past messages. We'll either move or remove it later
-  let peer = "enode://44160e22e8b42bd32a06c1532165fa9e096eebedd7fa6d6e5f8bbef0440bc4a4591fe3651be68193a7ec029021cdb496cfe1d7f9f1dc69eb99226e6f39a7a5d4@35.225.221.245:443"
-  discard libstatus.addPeer(peer)
   self.events.emit("accountsReady", AccountArgs(account: account))
 
 proc storeAccountAndLogin*(self: AccountModel, selectedAccountIndex: int, password: string): Account =
   let generatedAccount: GeneratedAccount = self.generatedAddresses[selectedAccountIndex]
   result = status_accounts.setupAccount(generatedAccount, password)
-  # TODO this is needed for now for the retrieving of past messages. We'll either move or remove it later
-  let peer = "enode://44160e22e8b42bd32a06c1532165fa9e096eebedd7fa6d6e5f8bbef0440bc4a4591fe3651be68193a7ec029021cdb496cfe1d7f9f1dc69eb99226e6f39a7a5d4@35.225.221.245:443"
-  discard libstatus.addPeer(peer)
   self.events.emit("accountsReady", AccountArgs(account: result))
