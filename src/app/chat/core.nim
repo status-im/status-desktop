@@ -1,6 +1,5 @@
 import NimQml
 import json, eventemitter
-import ../../status/chat as status_chat
 import ../../models/chat as chat_model
 import ../../signals/types
 import view

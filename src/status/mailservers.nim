@@ -1,6 +1,3 @@
-import core as status
-import json
-
 proc getMailservers*(): array[0..8, (string, string)] =
   result = [
     (
