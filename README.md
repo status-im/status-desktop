@@ -8,34 +8,15 @@ Experiments calling status-go from nim, inspired in [nim-stratus](https://github
 
 * QT
 
-install QT https://www.qt.io/download-qt-installer
-and add it to the PATH
-```
-# Linux
-export PATH=$PATH:/path/to/Qt/5.14.2/gcc_64/bin
-
-# macos
-export PATH=$PATH:/path/to/Qt/5.14.2/clang_64/bin
-```
-
-Linux users can also install Qt through the system's package manager:
+Linux users should install Qt through the system's package manager:
 
 ```
 # Debian/Ubuntu:
 sudo apt install qtbase5-dev qtdeclarative5-dev qml-module-qt-labs-platform
 ```
 
-* go - (used to build status-go)
-
-```
-# linux
-<TODO>
-
-# macos
-brew install go
-```
-
-### 1. Install QT, and add it to the PATH
+If that's not possible, manually install QT from https://www.qt.io/download-qt-installer
+and add it to the PATH
 
 ```
 # Linux
@@ -45,24 +26,43 @@ export PATH=$PATH:/path/to/Qt/5.14.2/gcc_64/bin
 export PATH=$PATH:/path/to/Qt/5.14.2/clang_64/bin
 ```
 
+* Go - (used to build status-go)
+
+```
+# Linux
+<TODO>
+
+# macOS
+brew install go
+```
+
+### 1. Install QT, and add it to the PATH
+
+```
+# Linux users should use their distro's package manager, but in case they do a manual install:
+export PATH=$PATH:/path/to/Qt/5.14.2/gcc_64/bin
+
+# macOS:
+export PATH=$PATH:/path/to/Qt/5.14.2/clang_64/bin
+```
+
 ### 2. Clone the repo and build `nim-status-client`
 ```
-git clone https://github.com/status-im/nim-status-client/ --recurse-submodules
+git clone https://github.com/status-im/nim-status-client
+cd nim-status-client
+make update
 make
 ```
 
-if you previously cloned the repo without the `--recurse-submodule` options, then do
+For more output use `make V=1 ...`.
 
-```
-git submodule update --init --recursive
-make
-```
+Use 4 CPU cores with `make -j4 ...`.
 
-for more output use `make V=1`
+Users with manually installed Qt5 packages need to run `make QTDIR="/path/to/Qt" ...`
 
-**Trouble Shooting**:
+**Troubleshooting**:
 
-If the `make` command fails due to already installed homebrew packages, such as:
+If the `make` command fails due to already installed Homebrew packages, such as:
 
 ```
 Error: protobuf 3.11.4 is already installed
@@ -74,15 +74,12 @@ make: *** [vendor/status-go/build/bin/libstatus.a] Error 2
 This can be fixed by uninstalling the package e.g. `brew uninstall protobuf` followed by rerunning `make`.
 
 
-### 3. Setup Library Path
-```
-export LD_LIBRARY_PATH=vendor/DOtherSide/build/lib/
-```
-
-### 4. Run the app
+### 3. Run the app
 
 ```
-./bin/nim_status_client
+make run
+# or
+LD_LIBRARY_PATH=vendor/DOtherSide/lib ./bin/nim_status_client
 ```
 
 ## Development
@@ -92,7 +89,7 @@ If making changes in the nim code `src/` then doing `make` again is needed (it's
 
 ## Cold Reload
 
-### 5. "Cold" reload using VSCode
+### "Cold" reload using VSCode
 
 We can setup a "cold" reload, whereby the app will be rebuilt and restarted when changes in the source are saved. This will not save state, as the app will be restarted, but it will save us some time from manually restarting the app. We can handily force an app rebuild/relaunch with the shortcut `Cmd+Shift+b` (execute the default build task, which we'll setup below).
 
