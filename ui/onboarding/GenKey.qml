@@ -211,7 +211,7 @@ SwipeView {
                 }
 
                 const selectedAccountIndex = wizardStep2.selectedIndex
-                const storeResponse = onboardingModel.storeAccountAndLogin(selectedAccountIndex, txtPassword.text)
+                onboardingModel.storeAccountAndLogin(selectedAccountIndex, txtPassword.text)
 
                swipeView.loginDone();
             }

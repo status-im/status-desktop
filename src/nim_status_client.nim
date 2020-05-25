@@ -7,7 +7,6 @@ import app/profile/core as profile
 import signals/core as signals
 import app/onboarding/core as onboarding
 import state
-import json
 import status/accounts as status_accounts
 import status/core as status_core
 import status/chat as status_chat
@@ -17,6 +16,7 @@ import models/accounts
 import state
 import status/types
 import eventemitter
+import json_serialization
 
 var signalsQObjPointer: pointer
 
@@ -24,7 +24,7 @@ logScope:
   topics = "main"
 
 proc mainProc() =
-  let nodeAccounts = parseJson(status_accounts.initNodeAccounts()).toNodeAccounts # to be used for login
+  let nodeAccounts = Json.decode(status_accounts.initNodeAccounts(), seq[NodeAccount]) # to be used for login
   let app = newQApplication()
   let engine = newQQmlApplicationEngine()
   let signalController = signals.newController(app)

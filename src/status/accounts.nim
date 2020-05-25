@@ -6,19 +6,22 @@ import accounts/constants
 import nimcrypto
 import os
 import uuids
+import types
+import json_serialization
+import chronicles
 
 proc queryAccounts*(): string =
   var response = callPrivateRPC("eth_accounts")
   result = parseJson(response)["result"][0].getStr()
 
-proc generateAddresses*(): string =
+proc generateAddresses*(): seq[GeneratedAccount] =
   let multiAccountConfig = %* {
     "n": 5,
     "mnemonicPhraseLength": 12,
     "bip39Passphrase": "",
-    "paths": ["m/43'/60'/1581'/0'/0", "m/44'/60'/0'/0/0"]
+    "paths": [PATH_WHISPER, PATH_WALLET_ROOT, PATH_DEFAULT_WALLET]
   }
-  result = $libstatus.multiAccountGenerateAndDeriveAddresses($multiAccountConfig)
+  result = Json.decode($libstatus.multiAccountGenerateAndDeriveAddresses($multiAccountConfig), seq[GeneratedAccount])
 
 proc generateAlias*(publicKey: string): string =
   result = $libstatus.generateAlias(publicKey.toGoString)
@@ -43,20 +46,20 @@ proc initNodeAccounts*(): string =
   discard $libstatus.initKeystore(keystoredir);
   result = $libstatus.openAccounts(datadir);
 
-proc saveAccountAndLogin*(multiAccounts: JsonNode, alias: string, identicon: string, accountData: string, password: string, configJSON: string, settingsJSON: string): JsonNode =
+proc saveAccountAndLogin*(multiAccounts: MultiAccounts, alias: string, identicon: string, accountData: string, password: string, configJSON: string, settingsJSON: string): Account =
   let hashedPassword = "0x" & $keccak_256.digest(password)
   let subaccountData = %* [
     {
-      "public-key": multiAccounts[constants.PATH_DEFAULT_WALLET]["publicKey"],
-      "address": multiAccounts[constants.PATH_DEFAULT_WALLET]["address"],
+      "public-key": multiAccounts.defaultWallet.publicKey,
+      "address": multiAccounts.defaultWallet.address,
       "color": "#4360df",
       "wallet": true,
       "path": constants.PATH_DEFAULT_WALLET,
       "name": "Status account"
     },
     {
-      "public-key": multiAccounts[constants.PATH_WHISPER]["publicKey"],
-      "address": multiAccounts[constants.PATH_WHISPER]["address"],
+      "public-key": multiAccounts.whisper.publicKey,
+      "address": multiAccounts.whisper.address,
       "name": alias,
       "photo-path": identicon,
       "path": constants.PATH_WHISPER,
@@ -68,38 +71,39 @@ proc saveAccountAndLogin*(multiAccounts: JsonNode, alias: string, identicon: str
   let parsedSavedResult = savedResult.parseJson
 
   if parsedSavedResult["error"].getStr == "":
-    echo "Account saved succesfully"
-  subaccountData
+    debug "Account saved succesfully"
 
-proc generateMultiAccounts*(account: JsonNode, password: string): JsonNode =
+  result = Account(name: alias, photoPath: identicon)
+
+proc generateMultiAccounts*(account: GeneratedAccount, password: string): MultiAccounts =
   let hashedPassword = "0x" & $keccak_256.digest(password)
   let multiAccount = %* {
-    "accountID": account["id"].getStr,
-    "paths": ["m/44'/60'/0'/0", "m/43'/60'/1581'", "m/43'/60'/1581'/0'/0", "m/44'/60'/0'/0/0"],
+    "accountID": account.id,
+    "paths": [PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET],
     "password": hashedPassword
   }
   var response = $libstatus.multiAccountStoreDerivedAccounts($multiAccount);
-  result = response.parseJson
+  result = Json.decode($response, MultiAccounts)
 
-proc getAccountData*(account: JsonNode, alias: string, identicon: string): JsonNode =
+proc getAccountData*(account: GeneratedAccount, alias: string, identicon: string): JsonNode =
   result = %* {
     "name": alias,
-    "address": account["address"].getStr,
+    "address": account.address,
     "photo-path": identicon,
-    "key-uid": account["keyUid"].getStr,
+    "key-uid": account.keyUid,
     "keycard-pairing": nil
   }
 
-proc getAccountSettings*(account: JsonNode, alias: string, identicon: string, multiAccounts: JsonNode, defaultNetworks: JsonNode): JsonNode =
+proc getAccountSettings*(account: GeneratedAccount, alias: string, identicon: string, multiAccounts: MultiAccounts, defaultNetworks: JsonNode): JsonNode =
   result = %* {
-    "key-uid": account["keyUid"].getStr,
-    "mnemonic": account["mnemonic"].getStr,
-    "public-key": multiAccounts[constants.PATH_WHISPER]["publicKey"].getStr,
+    "key-uid": account.keyUid,
+    "mnemonic": account.mnemonic,
+    "public-key": multiAccounts.whisper.publicKey,
     "name": alias,
-    "address": account["address"].getStr,
-    "eip1581-address": multiAccounts[constants.PATH_EIP_1581]["address"].getStr,
-    "dapps-address": multiAccounts[constants.PATH_DEFAULT_WALLET]["address"].getStr,
-    "wallet-root-address": multiAccounts[constants.PATH_WALLET_ROOT]["address"].getStr,
+    "address": account.address,
+    "eip1581-address": multiAccounts.eip1581.address,
+    "dapps-address": multiAccounts.defaultWallet.address,
+    "wallet-root-address": multiAccounts.walletRoot.address,
     "preview-privacy?": true,
     "signing-phrase": generateSigningPhrase(3),
     "log-level": "INFO",
@@ -116,14 +120,14 @@ proc getAccountSettings*(account: JsonNode, alias: string, identicon: string, mu
     "installation-id": $genUUID()
   }
 
-proc setupAccount*(account: JsonNode, password: string): string =
+proc setupAccount*(account: GeneratedAccount, password: string): Account =
   let multiAccounts = generateMultiAccounts(account, password)
 
-  let whisperPubKey = account["derived"][constants.PATH_WHISPER]["publicKey"].getStr
-  let alias = $libstatus.generateAlias(whisperPubKey.toGoString)
-  let identicon = $libstatus.identicon(whisperPubKey.toGoString)
+  let whisperPubKey = account.derived.whisper.publicKey
+  let alias = generateAlias(whisperPubKey)
+  let identicon =generateIdenticon(whisperPubKey)
 
   let accountData = getAccountData(account, alias, identicon)
   var settingsJSON = getAccountSettings(account, alias, identicon, multiAccounts, constants.DEFAULT_NETWORKS)
 
-  $saveAccountAndLogin(multiAccounts, alias, identicon, $accountData, password, $constants.NODE_CONFIG, $settingsJSON)
+  saveAccountAndLogin(multiAccounts, alias, identicon, $accountData, password, $constants.NODE_CONFIG, $settingsJSON)
