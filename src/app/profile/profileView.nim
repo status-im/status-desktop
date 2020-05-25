@@ -1,5 +1,4 @@
 import NimQml
-import Tables
 import mailserversList
 
 QtObject:

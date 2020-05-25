@@ -1,6 +1,5 @@
 import NimQml
 import Tables
-import strformat
 
 type
   MailserverRoles {.pure.} = enum

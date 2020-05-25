@@ -1,7 +1,6 @@
 import json
 import eventemitter
 import ../status/accounts as status_accounts
-import ../status/utils
 import ../status/types
 
 type
