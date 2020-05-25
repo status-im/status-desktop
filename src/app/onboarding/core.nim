@@ -4,7 +4,7 @@ import ../../signals/types
 import eventemitter
 import view
 
-type OnboardingController* = ref object of SignalSubscriber
+type OnboardingController* = object
   view*: OnboardingView
   variant*: QVariant
   model*: AccountModel
