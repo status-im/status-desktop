@@ -40,8 +40,8 @@ QtObject:
 
   proc setActiveChannelByIndex*(self: ChatsView, index: int) {.slot.} =
     let selectedChannel = self.chats.getChannel(index)
-    if self.activeChannel == selectedChannel.name: return
-    self.activeChannel = selectedChannel.name
+    if self.activeChannel == selectedChannel.id: return
+    self.activeChannel = selectedChannel.id
     self.activeChannelChanged()
 
   proc setActiveChannel*(self: ChatsView, channel: string) =
@@ -72,10 +72,10 @@ QtObject:
   proc joinChat*(self: ChatsView, channel: string): int {.slot.} =
     self.setActiveChannel(channel)
     if self.model.hasChannel(channel):
-      result = self.chats.chats.findByName(channel)
+      result = self.chats.chats.findById(channel)
     else:
       self.model.join(channel)
-      result = self.chats.addChatItemToList(ChatItem(name: channel))
+      result = self.chats.addChatItemToList(ChatItem(id: channel, name: channel))
 
   proc updateChat*(self: ChatsView, chat: ChatItem) =
     self.chats.updateChat(chat)

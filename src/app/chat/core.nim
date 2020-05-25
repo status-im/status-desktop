@@ -2,7 +2,12 @@ import NimQml
 import json, eventemitter
 import ../../models/chat as chat_model
 import ../../signals/types
+import ../../status/types as status_types
 import view
+import chronicles
+
+logScope:
+  topics = "chat-controller"
 
 type ChatController* = ref object of SignalSubscriber
   view*: ChatsView
@@ -36,7 +41,7 @@ proc load*(self: ChatController, chatId: string) =
   discard self.view.joinChat(chatId)
   self.view.setActiveChannelByIndex(0)
 
-method onSignal(self: ChatController, data: Signal) =
+proc handleMessage(self: ChatController, data: Signal) =
   var messageSignal = cast[MessageSignal](data)
 
   for c in messageSignal.chats:
@@ -45,4 +50,14 @@ method onSignal(self: ChatController, data: Signal) =
 
   for message in messageSignal.messages:
     let chatMessage = message.toChatMessage()
-    self.view.pushMessage(message.chatId, chatMessage)
+    self.view.pushMessage(message.localChatId, chatMessage)
+
+proc handleWhisperFilter(self: ChatController, data: Signal) = 
+  echo "Do something"
+
+method onSignal(self: ChatController, data: Signal) =
+  case data.signalType: 
+  of SignalType.Message: handleMessage(self, data)
+  of SignalType.WhisperFilterAdded: handleWhisperFilter(self, data)
+  else:
+    warn "Unhandled signal received", signalType = data.signalType

@@ -1,7 +1,9 @@
 import ../../signals/types
 
 type ChatItem* = ref object
+  id*: string
   name*: string
+  chatType*: ChatType
   lastMessage*: string
   timestamp*: int64
   unviewedMessagesCount*: int
@@ -13,15 +15,26 @@ proc newChatItem*(): ChatItem =
   result.timestamp = 0
   result.unviewedMessagesCount = 0
 
-proc findByName*(self: seq[ChatItem], name: string): int =
+proc findById*(self: seq[ChatItem], id: string): int =
   result = -1
+  var idx = -1
   for item in self:
-    inc result
-    if(item.name == name): break
+    inc idx
+    if(item.id == id):
+      result = idx
+      break
+
+proc chatName(chat: Chat): string =
+  case chat.chatType
+  of ChatType.OneToOne: result = chat.lastMessage.alias
+  of ChatType.Public: result = chat.name
+  of ChatType.PrivateGroupChat: result = "TODO: determine private group name"
 
 proc toChatItem*(chat: Chat): ChatItem =
     result = ChatItem(
-      name: chat.name,
+      id: chat.id,
+      name: chatName(chat),
+      chatType: chat.chatType,
       lastMessage: chat.lastMessage.text,
       timestamp: chat.timestamp,
       unviewedMessagesCount: chat.unviewedMessagesCount

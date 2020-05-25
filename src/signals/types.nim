@@ -1,8 +1,10 @@
 import chronicles
+import ../status/types
 
 type SignalSubscriber* = ref object of RootObj
 
 type Signal* = ref object of RootObj
+  signalType*: SignalType
 
 type WalletSignal* = ref object of Signal
   content*: string
@@ -37,9 +39,9 @@ method onSignal*(self: SignalSubscriber, data: Signal) {.base.} =
   error "onSignal must be overriden in controller. Signal is unhandled"
 
 type ChatType* = enum
-  ChatTypeOneToOne = 1, 
-  ChatTypePublic = 2,
-  ChatTypePrivateGroupChat = 3
+  OneToOne = 1, 
+  Public = 2,
+  PrivateGroupChat = 3
 
 type Chat* = object
   id*: string # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat
@@ -59,3 +61,14 @@ type Chat* = object
 type MessageSignal* = ref object of Signal
   messages*: seq[Message]
   chats*: seq[Chat]
+  
+type Filter* = object
+  chatId*: string
+  symKeyId*: string
+  listen*: bool
+  filterId*: string
+  identity*: string
+  topic*: string
+
+type WhisperFilterSignal* = ref object of Signal
+  filters*: seq[Filter]

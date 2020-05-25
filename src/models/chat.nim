@@ -38,7 +38,7 @@ proc join*(self: ChatModel, chatId: string) =
 
   let oneToOne = isOneToOneChat(chatId)
 
-  status_chat.loadFilters(chatId, oneToOne)
+  status_chat.loadFilters(chatId = chatId, oneToOne = oneToOne)
   status_chat.saveChat(chatId, oneToOne)
   status_chat.chatMessages(chatId)
 
