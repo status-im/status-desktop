@@ -9,7 +9,7 @@ import view
 import "../../status/types" as status_types
 import ../../models/profile
 
-type ProfileController* = ref object of SignalSubscriber
+type ProfileController* = object
   view*: ProfileView
   variant*: QVariant
   appEvents*: EventEmitter

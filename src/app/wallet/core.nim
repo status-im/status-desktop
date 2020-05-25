@@ -2,6 +2,7 @@ import NimQml
 import eventemitter
 import strformat
 import strutils
+import chronicles
 
 import view
 import ../../status/wallet as status_wallet
@@ -34,3 +35,7 @@ proc init*(self: WalletController) =
   self.view.addAssetToList(asset)
 
   self.view.setDefaultAccount(status_wallet.getAccount())
+
+method onSignal(self: WalletController, data: Signal) =
+  debug "New signal received"
+  discard
