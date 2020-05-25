@@ -65,7 +65,7 @@ proc mainProc() =
 
   login.init(nodeAccounts)
   engine.setRootContextProperty("loginModel", login.variant)
-  
+
   onboarding.init()
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
 
@@ -76,7 +76,7 @@ proc mainProc() =
   signalController.addSubscriber(SignalType.DiscoverySummary, chat)
   signalController.addSubscriber(SignalType.NodeLogin, login)
   signalController.addSubscriber(SignalType.NodeLogin, onboarding)
-  
+
   engine.setRootContextProperty("signals", signalController.variant)
 
   engine.load("../ui/main.qml")
