@@ -54,8 +54,8 @@ QtObject:
     AddressRoles.Identicon.int:"identicon",
     AddressRoles.Key.int:"key" }.toTable
 
-  proc storeAccountAndLogin(self: OnboardingView, selectedAccountIndex: int, password: string): string {.slot.} =
-    result = self.model.storeAccountAndLogin(selectedAccountIndex, password)
+  proc storeAccountAndLogin(self: OnboardingView, selectedAccountIndex: int, password: string) {.slot.} =
+    discard self.model.storeAccountAndLogin(selectedAccountIndex, password)
 
   # TODO: this is temporary and will be removed once accounts import and creation is working
   proc generateRandomAccountAndLogin*(self: OnboardingView) {.slot.} =

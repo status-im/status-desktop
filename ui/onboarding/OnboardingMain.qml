@@ -54,7 +54,6 @@ Page {
             id: genKeyState
             onEntered: {
                 genKey.visible = true
-                onboardingModel.generateAddresses()
             }
             onExited: genKey.visible = false
 
