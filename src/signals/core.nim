@@ -5,6 +5,7 @@ import json
 import types
 import messages
 import chronicles
+import whisperFilter
 
 logScope:
   topics = "signals"
@@ -51,12 +52,18 @@ QtObject:
       of "messages.new":
         signalType = SignalType.Message
         signal = messages.fromEvent(jsonSignal)
+      of "whisper.filter.added":
+        signalType = SignalType.WhisperFilterAdded
+        signal = whisperFilter.fromEvent(jsonSignal)
       of "wallet":
         signalType = SignalType.Wallet
         signal = WalletSignal(content: $jsonSignal)
       else:
         warn "Unhandled signal received", type = signalString
         signalType = SignalType.Unknown
+        return
+
+    signal.signalType = signalType
 
     if not self.signalSubscribers.hasKey(signalType):
       self.signalSubscribers[signalType] = @[]

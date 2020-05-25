@@ -59,10 +59,16 @@ QtObject:
   proc getChannel*(self: ChannelsList, index: int): ChatItem =
     self.chats[index]
 
-  proc updateChat*(self: ChannelsList, chat: ChatItem) =
-    var idx = self.chats.findByName(chat.name)
-    if idx > -1:
-      self.chats[idx] = chat
-      var x = self.createIndex(idx,0,nil)
-      var y = self.createIndex(idx,0,nil)
-      self.dataChanged(x, y, @[ChannelsRoles.Timestamp.int, ChannelsRoles.LastMessage.int, ChannelsRoles.UnreadMessages.int])
+  proc upsertChannel(self: ChannelsList, channel: ChatItem): int =
+    let idx = self.chats.findById(channel.id)
+    if idx == -1:
+      result = self.addChatItemToList(channel)
+    else:
+      result = idx
+
+  proc updateChat*(self: ChannelsList, channel: ChatItem) =
+    let idx = self.upsertChannel(channel)
+    self.chats[idx] = channel
+    let topLeft = self.createIndex(idx, 0, nil)
+    let bottomRight = self.createIndex(idx, 0, nil)
+    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Timestamp.int, ChannelsRoles.LastMessage.int, ChannelsRoles.UnreadMessages.int])

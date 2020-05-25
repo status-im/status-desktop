@@ -2,11 +2,18 @@ import core
 import json
 import utils
 
-proc loadFilters*(chatId: string, oneToOne = false) =
+proc loadFilters*(chatId: string, filterId: string = "", symKeyId: string = "", oneToOne: bool = false, identity: string = "", topic: string = "", discovery: bool = false, negotiated: bool = false, listen: bool = true) =
   discard callPrivateRPC("loadFilters".prefix, %* [
     [{
-      "ChatID": chatId,
-      "OneToOne": oneToOne
+      "ChatID": chatId, # identifier of the chat
+      "FilterID": filterId, # whisper filter id generated
+      "SymKeyID": symKeyId, # symmetric key id used for symmetric filters
+      "OneToOne": oneToOne, # if asymmetric encryption is used for this chat
+      "Identity": identity, # public key of the other recipient for non-public filters.
+      "Topic": topic, # whisper topic
+      "Discovery": discovery, 
+      "Negotiated": negotiated,
+      "Listen": listen # whether we are actually listening for messages on this chat, or the filter is only created in order to be able to post on the topic
     }]
   ])
 
