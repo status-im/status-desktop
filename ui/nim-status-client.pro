@@ -50,7 +50,10 @@ DISTFILES += \
     Inter-V.otf \
     Theme.qml \
     app/AppLayouts/Browser/BrowserLayout.qml \
+    app/AppLayouts/Chat/ChatColumn.qml \
     app/AppLayouts/Chat/ChatLayout.qml \
+    app/AppLayouts/Chat/ContactsColumn.qml \
+    app/AppLayouts/Chat/qmldir \
     app/AppLayouts/Node/NodeLayout.qml \
     app/AppLayouts/Profile/ProfileLayout.qml \
     app/AppLayouts/Wallet/LeftTab.qml \
