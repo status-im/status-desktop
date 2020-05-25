@@ -85,9 +85,11 @@ proc mainProc() =
   # it will be passed as a regular C function to libstatus. This means that
   # we cannot capture any local variables here (we must rely on globals)
   var callback: SignalCallback = proc(p0: cstring) {.cdecl.} =
-    setupForeignThreadGc()
+    when not compileOption("tlsEmulation"):
+      setupForeignThreadGc()
     signal_handler(signalsQObjPointer, p0, "receiveSignal")
-    tearDownForeignThreadGc()
+    when not compileOption("tlsEmulation"):
+      tearDownForeignThreadGc()
 
   libstatus.setSignalEventCallback(callback)
 
