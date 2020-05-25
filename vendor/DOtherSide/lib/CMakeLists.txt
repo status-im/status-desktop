@@ -1,5 +1,7 @@
 project(DOtherSide)
 
+include(GNUInstallDirs)
+
 # Macro for merging common code between static and shared
 macro(add_target name type)
     find_package(Qt5 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets)
@@ -38,34 +40,48 @@ macro(add_target name type)
 
     target_link_libraries(${name} PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Qml Qt5::Quick)
 
+    # for DOtherSide.pc
+    set(PC_REQUIRES "Qt5Core, Qt5Gui, Qt5Widgets, Qt5Qml, Qt5Quick")
     if (${Qt5QuickControls2_FOUND})
         target_link_libraries(${name} PRIVATE Qt5::QuickControls2)
+        set(PC_REQUIRES "${PC_REQUIRES}, Qt5QuickControls2")
     endif()
 endmacro()
 
-# Add shared version
-add_target(${PROJECT_NAME} SHARED)
 set(major 0)
 set(minor 6)
 set(patch 4)
-set_target_properties(${PROJECT_NAME}
-PROPERTIES
-    SOVERSION "${major}.${minor}"
-    VERSION "${major}.${minor}.${patch}"
-)
+set(DOTHERSIDE_VERSION "${major}.${minor}.${patch}")
+
+# Add shared version
+if(ENABLE_DYNAMIC_LIBS)
+    add_target(${PROJECT_NAME} SHARED)
+    set_target_properties(${PROJECT_NAME}
+        PROPERTIES
+        SOVERSION "${major}.${minor}"
+        VERSION "${major}.${minor}.${patch}"
+    )
+    install(TARGETS ${PROJECT_NAME}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    )
+endif(ENABLE_DYNAMIC_LIBS)
 
 # Add static version
-add_target(${PROJECT_NAME}Static STATIC)
+if(ENABLE_STATIC_LIBS)
+    add_target(${PROJECT_NAME}Static STATIC)
+    install(TARGETS ${PROJECT_NAME}Static
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    )
+endif(ENABLE_STATIC_LIBS)
 
 # Install directive for header files
 install(FILES
-  include/DOtherSide/DOtherSide.h
-  include/DOtherSide/DOtherSideTypes.h
-  DESTINATION include/DOtherSide
+    include/DOtherSide/DOtherSide.h
+    include/DOtherSide/DOtherSideTypes.h
+    DESTINATION include/DOtherSide
 )
 
-# Install directive for binaries
-install(TARGETS ${PROJECT_NAME}
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-)
+# pkg-config file
+configure_file(${CMAKE_SOURCE_DIR}/DOtherSide.pc.cmake ${CMAKE_BINARY_DIR}/DOtherSide.pc @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/DOtherSide.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
