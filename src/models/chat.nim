@@ -1,7 +1,8 @@
-import eventemitter, sets
-import json, sets, eventemitter
+import eventemitter, sets, json, strutils
 import ../status/utils
 import ../status/chat as status_chat
+import chronicles
+import ../status/libstatus
 
 import chat/chat_item
 import chat/chat_message
@@ -34,13 +35,29 @@ proc join*(self: ChatModel, chatId: string) =
 
   self.channels.incl chatId
 
-  # TODO: save chat list in the db
+  let generatedSymKey = status_chat.generateSymKeyFromPassword()
 
+  # TODO get this from the connection or something
+  let peer = "enode://44160e22e8b42bd32a06c1532165fa9e096eebedd7fa6d6e5f8bbef0440bc4a4591fe3651be68193a7ec029021cdb496cfe1d7f9f1dc69eb99226e6f39a7a5d4@35.225.221.245:443"
+
+  # TODO: save chat list in the db
   let oneToOne = isOneToOneChat(chatId)
 
-  status_chat.loadFilters(chatId = chatId, oneToOne = oneToOne)
+  let filterResult = status_chat.loadFilters(chatId = chatId, oneToOne = oneToOne)
   status_chat.saveChat(chatId, oneToOne)
   status_chat.chatMessages(chatId)
+
+  let parsedResult = parseJson(filterResult)["result"]
+  var topics = newSeq[string](0)
+  for topicObj in parsedResult:
+    if (($topicObj["chatId"]).strip(chars = {'"'}) == chatId):
+      topics.add(($topicObj["topic"]).strip(chars = {'"'}))
+
+  if (topics.len == 0):
+    warn "No topic found for the chat. Cannot load past messages"
+  else:
+    status_chat.requestMessages(topics, generatedSymKey, peer, 20)
+
 
 proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
   var sentMessage = status_chat.sendChatMessage(chatId, msg)
