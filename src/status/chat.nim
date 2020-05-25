@@ -13,7 +13,8 @@ proc loadFilters*(chatId: string, filterId: string = "", symKeyId: string = "", 
       "SymKeyID": symKeyId, # symmetric key id used for symmetric filters
       "OneToOne": oneToOne, # if asymmetric encryption is used for this chat
       "Identity": identity, # public key of the other recipient for non-public filters.
-      "Topic": topic, # whisper topic
+      # FIXME: passing empty string to the topic makes it error
+      # "Topic": topic, # whisper topic
       "Discovery": discovery, 
       "Negotiated": negotiated,
       "Listen": listen # whether we are actually listening for messages on this chat, or the filter is only created in order to be able to post on the topic
