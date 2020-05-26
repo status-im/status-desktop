@@ -82,10 +82,10 @@ proc mainProc() =
   )
 
   # accountsModel.appEvents.on("accountsReady") do(a: Args):
-  appEvents.on("accountsReady") do(a: Args):
-    appState.addChannel("test")
-    appState.addChannel("test2")
-    appState.addChannel("status")
+  # appEvents.on("accountsReady") do(a: Args):
+  #   appState.addChannel("test")
+  #   appState.addChannel("test2")
+  #   appState.addChannel("status")
 
   engine.load("../ui/main.qml")
 

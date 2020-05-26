@@ -53,6 +53,8 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn.qml \
     app/AppLayouts/Chat/ChatLayout.qml \
     app/AppLayouts/Chat/ContactsColumn.qml \
+    app/AppLayouts/Chat/components/SuggestedChannel.qml \
+    app/AppLayouts/Chat/components/qmldir \
     app/AppLayouts/Chat/qmldir \
     app/AppLayouts/Node/NodeLayout.qml \
     app/AppLayouts/Profile/ProfileLayout.qml \
