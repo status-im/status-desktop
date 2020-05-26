@@ -89,5 +89,14 @@ QtObject:
       let randomColorIndex = rand(channelColors.len - 1)
       result = self.chats.addChatItemToList(ChatItem(id: channel, name: channel, color: channelColors[randomColorIndex]))
 
+  proc leaveActiveChat*(self: ChatsView) {.slot.} =
+    self.model.leave(self.activeChannel)
+    let channelCount = self.chats.removeChatItemFromList(self.activeChannel)
+    if channelCount == 0:
+      self.setActiveChannel("")
+    else:
+      let nextChannel = self.chats.chats[self.chats.chats.len - 1]
+      self.setActiveChannel(nextChannel.name)
+
   proc updateChat*(self: ChatsView, chat: ChatItem) =
     self.chats.updateChat(chat)

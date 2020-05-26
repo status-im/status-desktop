@@ -15,6 +15,22 @@ proc loadFilters*(chatId: string, filterId: string = "", symKeyId: string = "", 
       "Identity": identity, # public key of the other recipient for non-public filters.
       # FIXME: passing empty string to the topic makes it error
       # "Topic": topic, # whisper topic
+      "Discovery": discovery,
+      "Negotiated": negotiated,
+      "Listen": listen # whether we are actually listening for messages on this chat, or the filter is only created in order to be able to post on the topic
+    }]
+  ])
+
+proc removeFilters*(chatId: string, filterId: string = "", symKeyId: string = "", oneToOne: bool = false, identity: string = "", topic: string = "", discovery: bool = false, negotiated: bool = false, listen: bool = true): string =
+  result =  callPrivateRPC("removeFilters".prefix, %* [
+    [{
+      "ChatID": chatId, # identifier of the chat
+      "FilterID": filterId, # whisper filter id generated
+      "SymKeyID": symKeyId, # symmetric key id used for symmetric filters
+      "OneToOne": oneToOne, # if asymmetric encryption is used for this chat
+      "Identity": identity, # public key of the other recipient for non-public filters.
+      # FIXME: passing empty string to the topic makes it error
+      # "Topic": topic, # whisper topic
       "Discovery": discovery, 
       "Negotiated": negotiated,
       "Listen": listen # whether we are actually listening for messages on this chat, or the filter is only created in order to be able to post on the topic

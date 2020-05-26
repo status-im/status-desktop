@@ -109,8 +109,14 @@ StackLayout {
                         anchors.rightMargin: -15
                         anchors.leftMargin: -15
                         anchors.fill: parent
-                        onClicked: console.log("Options click. Will do something later...")
+                        onClicked: contextMenu.open()
                         cursorShape: Qt.PointingHandCursor
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+                        Menu {
+                            id: contextMenu
+                            MenuItem { text: "Leave Chat"; onTriggered: chatsModel.leaveActiveChat() }
+                        }
                     }
                 }
             }
