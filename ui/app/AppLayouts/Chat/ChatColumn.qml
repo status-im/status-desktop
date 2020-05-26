@@ -20,6 +20,7 @@ ColumnLayout {
         id: chatTopBar
         Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
         Layout.fillWidth: true
+        z: 60
 
         Rectangle {
             property string channelNameStr: "#" + chatsModel.activeChannel
