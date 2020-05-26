@@ -48,6 +48,7 @@ proc join*(self: ChatModel, chatId: string) =
   status_chat.chatMessages(chatId)
 
   let parsedResult = parseJson(filterResult)["result"]
+  echo parsedResult
   var topics = newSeq[string](0)
   for topicObj in parsedResult:
     if (($topicObj["chatId"]).strip(chars = {'"'}) == chatId):
@@ -58,9 +59,8 @@ proc join*(self: ChatModel, chatId: string) =
   else:
     status_chat.requestMessages(topics, generatedSymKey, peer, 20)
 
-
-proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
-  var sentMessage = status_chat.sendChatMessage(chatId, msg)
-  var parsedMessage = parseJson(sentMessage)["result"]["chats"][0]["lastMessage"]
-  self.events.emit("messageSent", MsgArgs(message: msg, chatId: chatId, payload: parsedMessage))
-  sentMessage
+proc leave*(self: ChatModel, chatId: string) =
+  let oneToOne = isOneToOneChat(chatId)
+  discard status_chat.removeFilters(chatId = chatId, oneToOne = oneToOne)
+  # TODO: other calls (if any)
+  self.channels.excl(chatId)

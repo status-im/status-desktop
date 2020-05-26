@@ -76,6 +76,14 @@ QtObject:
     
     result = self.chats.len - 1
 
+  proc removeChatItemFromList*(self: ChannelsList, channel: string): int =
+    let idx = self.chats.findById(channel)
+    self.beginRemoveRows(newQModelIndex(), idx, idx)
+    self.chats.delete(idx)
+    self.endRemoveRows()
+
+    result = self.chats.len
+
   proc getChannel*(self: ChannelsList, index: int): ChatItem =
     self.chats[index]
 
