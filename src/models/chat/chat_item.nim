@@ -7,6 +7,7 @@ type ChatItem* = ref object
   lastMessage*: string
   timestamp*: int64
   unviewedMessagesCount*: int
+  color*: string
 
 proc newChatItem*(): ChatItem =
   new(result)
@@ -14,6 +15,7 @@ proc newChatItem*(): ChatItem =
   result.lastMessage = ""
   result.timestamp = 0
   result.unviewedMessagesCount = 0
+  result.color = ""
 
 proc findById*(self: seq[ChatItem], id: string): int =
   result = -1

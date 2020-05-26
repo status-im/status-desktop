@@ -22,7 +22,7 @@ ColumnLayout {
         Layout.fillWidth: true
 
         Rectangle {
-            property string channelNameStr: "#Channel Name"
+            property string channelNameStr: "#" + chatsModel.activeChannel
 
             id: chatTopBarContent
             color: "white"
@@ -40,15 +40,23 @@ ColumnLayout {
                 anchors.leftMargin: Theme.padding
                 anchors.top: parent.top
                 anchors.topMargin: Theme.smallPadding
-                // TODO change this to be dynamic
-                color: "#FA6565"
+                color: {
+                    if (!chatsModel.activeChannel) {
+                        return Theme.transparent
+                    }
+                    const color = chatsModel.getChannelColor(chatsModel.activeChannel)
+                    if (!color) {
+                        return Theme.transparent
+                    }
+                    return color
+                }
                 radius: 50
 
                 Text {
                     id: channelIconText
                     color: "white"
                     opacity: 0.7
-                    text: chatTopBarContent.channelNameStr.substring(1, 2)
+                    text: chatTopBarContent.channelNameStr.substring(1, 2).toUpperCase()
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                     font.weight: Font.Bold
