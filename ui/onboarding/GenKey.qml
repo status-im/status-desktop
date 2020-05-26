@@ -52,12 +52,11 @@ SwipeView {
 
                              Row {
                                RadioButton {
-                                 // checked: index == 0 ? true : false
-                                 checked: false
+                                 checked: index == 0 ? true : false
                                  ButtonGroup.group: accountGroup
-                                 // onClicked: {
-                                   // wizardStep2.selectedIndex = index;
-                                 // }
+                                 onClicked: {
+                                   wizardStep2.selectedIndex = index;
+                                 }
                                }
                                Column {
                                  Image {
