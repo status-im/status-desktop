@@ -1,7 +1,27 @@
 import NimQml
 import Tables
+import strformat
 
 import ../../../models/chat
+
+const accountColors* = [
+  "#9B832F",
+  "#D37EF4",
+  "#1D806F",
+  "#FA6565",
+  "#7CDA00",
+  "#887af9",
+  "#8B3131"
+]
+
+const channelColors* = [
+  "#fa6565",
+  "#7cda00",
+  "#887af9",
+  "#51d0f0",
+  "#FE8F59",
+  "#d37ef4"
+]
 
 type
   ChannelsRoles {.pure.} = enum
@@ -65,6 +85,12 @@ QtObject:
       result = self.addChatItemToList(channel)
     else:
       result = idx
+
+  proc getChannelByName*(self: ChannelsList, name: string): ChatItem =
+    for chat in self.chats:
+      if chat.name == name:
+        return chat
+    raise newException(OSError, fmt"No chat found with the name {name}")
 
   proc updateChat*(self: ChannelsList, channel: ChatItem) =
     let idx = self.upsertChannel(channel)

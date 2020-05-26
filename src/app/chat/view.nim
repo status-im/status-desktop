@@ -3,6 +3,7 @@ import Tables
 import views/channels_list
 import views/message_list
 import ../../models/chat
+import random
 
 QtObject:
   type
@@ -35,6 +36,15 @@ QtObject:
     discard self.model.sendMessage(self.activeChannel, inputJSON)
 
   proc activeChannel*(self: ChatsView): string {.slot.} = self.activeChannel
+
+  proc getChannelColor*(self: ChatsView, channel:string): string {.slot.} =
+    var selectedChannel: ChatItem
+    try:
+      selectedChannel = self.chats.getChannelByName(channel)
+    except:
+      return channelColors[0]
+    
+    result = selectedChannel.color
 
   proc activeChannelChanged*(self: ChatsView) {.signal.}
 
@@ -75,7 +85,9 @@ QtObject:
       result = self.chats.chats.findById(channel)
     else:
       self.model.join(channel)
-      result = self.chats.addChatItemToList(ChatItem(id: channel, name: channel))
+      randomize()
+      let randomColorIndex = rand(channelColors.len - 1)
+      result = self.chats.addChatItemToList(ChatItem(id: channel, name: channel, color: channelColors[randomColorIndex]))
 
   proc updateChat*(self: ChatsView, chat: ChatItem) =
     self.chats.updateChat(chat)
