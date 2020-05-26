@@ -87,13 +87,21 @@ $(STATUSGO): | deps
 	+ cd vendor/status-go && \
 	  $(MAKE) statusgo-library
 
-build-linux: $(DOTHERSIDE) $(STATUSGO) src/nim_status_client.nim | deps
-	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c -d:nimDebugDlOpen -L:$(STATUSGO) -d:ssl -L:-lm $(NIM_PARAMS) -L:$(DOTHERSIDE) --outdir:./bin src/nim_status_client.nim
 
-build-macos: $(DOTHERSIDE) $(STATUSGO) src/nim_status_client.nim | deps
+SQLCIPHER := vendor/sqlcipher/sqlite3.c
+$(SQLCIPHER): | deps
+	echo -e $(BUILD_MSG) "sqlcipher"
+	+ cd vendor/sqlcipher && \
+	  ./configure --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC" LDFLAGS="-lcrypto" && \
+		$(MAKE) sqlite3.c
+
+build-linux: $(DOTHERSIDE) $(SQLCIPHER) $(STATUSGO) src/nim_status_client.nim | deps
 	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c -d:nimDebugDlOpen -L:$(STATUSGO) -d:ssl -L:-lm -L:"-framework Foundation -framework Security -framework IOKit -framework CoreServices" $(NIM_PARAMS) -L:$(DOTHERSIDE) --outdir:./bin src/nim_status_client.nim
+		$(ENV_SCRIPT) nim c -d:nimDebugDlOpen -L:$(STATUSGO) -d:ssl	-L:-lm $(NIM_PARAMS) -L:$(DOTHERSIDE) -L:-lcrypto --outdir:./bin src/nim_status_client.nim
+
+build-macos: $(DOTHERSIDE) $(SQLCIPHER) $(STATUSGO) src/nim_status_client.nim | deps
+	echo -e $(BUILD_MSG) "$@" && \
+		$(ENV_SCRIPT) nim c -d:nimDebugDlOpen -L:$(STATUSGO) -d:ssl -L:-lm -L:"-framework Foundation -framework Security -framework IOKit -framework CoreServices" $(NIM_PARAMS) -L:$(DOTHERSIDE) -L:-lcrypto --outdir:./bin src/nim_status_client.nim
 
 run:
 	LD_LIBRARY_PATH=vendor/DOtherSide/build/lib ./bin/nim_status_client

@@ -46,3 +46,9 @@
 [submodule "vendor/eventemitter"]
 	path = vendor/eventemitter
 	url = https://github.com/al-bimani/eventemitter
+[submodule "vendor/nim-sqlcipher"]
+	path = vendor/nim-sqlcipher
+	url = https://github.com/status-im/nim-sqlcipher
+[submodule "vendor/sqlcipher"]
+	path = vendor/sqlcipher
+	url = https://github.com/sqlcipher/sqlcipher
