@@ -29,6 +29,8 @@ type
     LastMessage = UserRole + 2
     Timestamp = UserRole + 3
     UnreadMessages = UserRole + 4
+    Identicon = UserRole + 5
+    ChatType = UserRole + 6
 
 QtObject:
   type
@@ -60,13 +62,18 @@ QtObject:
       of ChannelsRoles.Timestamp: result = newQVariant($chatItem.timestamp)
       of ChannelsRoles.LastMessage: result = newQVariant(chatItem.lastMessage)
       of ChannelsRoles.UnreadMessages: result = newQVariant(chatItem.unviewedMessagesCount)
+      of ChannelsRoles.Identicon: result = newQVariant(chatItem.identicon)
+      of ChannelsRoles.ChatType: result = newQVariant(chatItem.chatType.int)
 
   method roleNames(self: ChannelsList): Table[int, string] =
-    { 
+    {
       ChannelsRoles.Name.int:"name",
       ChannelsRoles.Timestamp.int:"timestamp",
       ChannelsRoles.LastMessage.int: "lastMessage",
-      ChannelsRoles.UnreadMessages.int: "unviewedMessagesCount"
+      ChannelsRoles.UnreadMessages.int: "unviewedMessagesCount",
+      ChannelsRoles.Identicon.int: "identicon",
+      ChannelsRoles.ChatType.int: "chatType"
+      
     }.toTable
 
   proc addChatItemToList*(self: ChannelsList, channel: ChatItem): int =
