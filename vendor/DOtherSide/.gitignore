@@ -15,6 +15,7 @@ doc
 *.a
 *.so
 *.so.*
+*.dylib
 
 # CMake
 CMakeLists.txt.user
