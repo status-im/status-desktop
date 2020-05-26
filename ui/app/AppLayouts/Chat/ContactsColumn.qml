@@ -1,7 +1,9 @@
-import QtQuick 2.3
+import QtQuick 2.12
 import QtQuick.Controls 2.3
+import QtQuick.Controls 2.12 as QQC2
 import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
+import QtGraphicalEffects 1.12
 import "../../../imports"
 import "./components"
 
@@ -87,7 +89,7 @@ Item {
                 anchors.topMargin: 59
 
                 Text {
-                    id: element3
+                    id: addChatLbl
                     color: "#ffffff"
                     text: qsTr("+")
                     anchors.verticalCenterOffset: -1
@@ -102,9 +104,91 @@ Item {
 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked : {
-                        chatGroupsListView.currentIndex = chatsModel.joinChat(searchText.text);
-                        searchText.text = "";
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    onClicked: {
+                        let x = addChatLbl.x + addChatLbl.width / 2 - newChatMenu.width / 2
+                        newChatMenu.popup(x, addChatLbl.height + 10)
+                    }
+
+                    QQC2.Menu {
+                        id: newChatMenu
+
+                        Action { text: qsTr("Start new chat") }
+                        Action { text: qsTr("Start group chat") }
+                        
+                        Action { 
+                            text: qsTr("Join public chat")
+                            onTriggered: {
+                                chatGroupsListView.currentIndex = chatsModel.joinChat(searchText.text);
+                                searchText.text = "";
+                            }
+                        }
+
+                        topPadding: 16
+                        bottomPadding: 16
+
+                        delegate: QQC2.MenuItem {
+                            id: addChatMenuItem
+                            implicitWidth: 200
+                            implicitHeight: 40
+                            font.pixelSize: 15
+
+                            contentItem: Text {
+                                leftPadding: addChatMenuItem.indicator.width
+                                rightPadding: addChatMenuItem.arrow.width
+                                text: addChatMenuItem.text
+                                font: addChatMenuItem.font
+                                color: addChatMenuItem.highlighted ? Theme.white : Theme.black
+                                horizontalAlignment: Text.AlignLeft
+                                verticalAlignment: Text.AlignVCenter
+                            }
+
+                            background: Rectangle {
+                                implicitWidth: 220
+                                implicitHeight: 40
+                                color: addChatMenuItem.highlighted ? Theme.blue : "transparent"
+                            }
+                        }
+
+                        background: Rectangle {
+                            id: bgAddItemMenu
+                            implicitWidth: 220
+                            implicitHeight: 172
+                            color: "transparent"
+
+                            Rectangle {
+                                id: bgAddItemMenu2
+                                y: 7
+                                implicitWidth: 220
+                                implicitHeight: 152
+                                color: Theme.white2
+                                radius: 16
+                                layer.enabled: true
+                                layer.effect: DropShadow{
+                                    width: bgAddItemMenu2.width
+                                    height: bgAddItemMenu2.height
+                                    x: bgAddItemMenu2.x
+                                    y: bgAddItemMenu2.y + 10
+                                    visible: bgAddItemMenu2.visible
+                                    source: bgAddItemMenu2
+                                    horizontalOffset: 0
+                                    verticalOffset: 5
+                                    radius: 10
+                                    samples: 15
+                                    color: "#22000000"
+                                }
+                            }
+                            
+                            // Trying to create an arrow for the dialog
+                            // TODO: replace this and the prev rectangle by a canvas that draws the menu bg including its arrow
+                            Rectangle {
+                                color: Theme.white2
+                                height: 14
+                                width: 14
+                                rotation: 135
+                                x: bgAddItemMenu.width / 2 - width / 2
+                            }
+                        }
                     }
                 }
             }
