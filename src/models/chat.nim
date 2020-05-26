@@ -64,3 +64,9 @@ proc leave*(self: ChatModel, chatId: string) =
   discard status_chat.removeFilters(chatId = chatId, oneToOne = oneToOne)
   # TODO: other calls (if any)
   self.channels.excl(chatId)
+
+proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
+  var sentMessage = status_chat.sendChatMessage(chatId, msg)
+  var parsedMessage = parseJson(sentMessage)["result"]["chats"][0]["lastMessage"]
+  self.events.emit("messageSent", MsgArgs(message: msg, chatId: chatId, payload: parsedMessage))
+  sentMessage
