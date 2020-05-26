@@ -40,9 +40,6 @@ StackLayout {
                     anchors.top: parent.top
                     anchors.topMargin: Theme.smallPadding
                     color: {
-                        if (!chatsModel.activeChannel) {
-                            return Theme.transparent
-                        }
                         const color = chatsModel.getChannelColor(chatsModel.activeChannel)
                         if (!color) {
                             return Theme.transparent
