@@ -18,6 +18,12 @@ SplitView {
     anchors.left: parent.left
     anchors.leftMargin: 0
 
+    handleDelegate: Rectangle {
+        implicitWidth: 1
+        implicitHeight: 4
+        color: Theme.grey
+    }
+
     ContactsColumn {
         id: contactsColumn
     }
