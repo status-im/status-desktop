@@ -2,10 +2,12 @@ import NimQml
 import Tables
 import json
 import nimcrypto
-import ../../status/types as status_types
 import ../../signals/types
+import ../../status/types as status_types
+import ../../status/accounts as status_accounts
 import strformat
 import json_serialization
+import core
 import ../../models/accounts as AccountModel
 
 type
@@ -15,34 +17,34 @@ type
     Key = UserRole + 3
 
 QtObject:
-  type OnboardingView* = ref object of QAbstractListModel
-    accounts*: seq[GeneratedAccount]
+  type LoginView* = ref object of QAbstractListModel
+    accounts: seq[NodeAccount]
     lastLoginResponse: string
     model*: AccountModel
 
-  proc setup(self: OnboardingView) =
+  proc setup(self: LoginView) =
     self.QAbstractListModel.setup
 
-  proc delete*(self: OnboardingView) =
+  proc delete*(self: LoginView) =
     self.QAbstractListModel.delete
     self.accounts = @[]
 
-  proc newOnboardingView*(model: AccountModel): OnboardingView =
+  proc newLoginView*(model: AccountModel): LoginView =
     new(result, delete)
     result.accounts = @[]
     result.lastLoginResponse = ""
     result.model = model
     result.setup
 
-  proc addAccountToList*(self: OnboardingView, account: GeneratedAccount) =
+  proc addAccountToList*(self: LoginView, account: NodeAccount) =
     self.beginInsertRows(newQModelIndex(), self.accounts.len, self.accounts.len)
     self.accounts.add(account)
     self.endInsertRows()
 
-  method rowCount(self: OnboardingView, index: QModelIndex = nil): int =
+  method rowCount(self: LoginView, index: QModelIndex = nil): int =
     return self.accounts.len
 
-  method data(self: OnboardingView, index: QModelIndex, role: int): QVariant =
+  method data(self: LoginView, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
     if index.row < 0 or index.row >= self.accounts.len:
@@ -55,26 +57,26 @@ QtObject:
     of AccountRoles.Identicon: result = newQVariant(asset.photoPath)
     of AccountRoles.Key: result = newQVariant(asset.keyUid)
 
-  method roleNames(self: OnboardingView): Table[int, string] =
+  method roleNames(self: LoginView): Table[int, string] =
     { AccountRoles.Username.int:"username",
     AccountRoles.Identicon.int:"identicon",
     AccountRoles.Key.int:"key" }.toTable
 
-  proc storeAccountAndLogin(self: OnboardingView, selectedAccountIndex: int, password: string): string {.slot.} =
+  proc login(self: LoginView, selectedAccountIndex: int, password: string): string {.slot.} =
     try:
-      result = self.model.storeAccountAndLogin(selectedAccountIndex, password).toJson
+      result = self.model.login(selectedAccountIndex, password).toJson
     except:
       let
         e = getCurrentException()
         msg = getCurrentExceptionMsg()
       result = SignalError(error: msg).toJson
 
-  proc lastLoginResponse*(self: OnboardingView): string =
+  proc lastLoginResponse*(self: LoginView): string =
     result = self.lastLoginResponse
 
-  proc loginResponseChanged*(self: OnboardingView, response: string) {.signal.}
+  proc loginResponseChanged*(self: LoginView, response: string) {.signal.}
 
-  proc setLastLoginResponse*(self: OnboardingView, loginResponse: string) {.slot.} =
+  proc setLastLoginResponse*(self: LoginView, loginResponse: string) {.slot.} =
     self.lastLoginResponse = loginResponse
     self.loginResponseChanged(loginResponse)
 

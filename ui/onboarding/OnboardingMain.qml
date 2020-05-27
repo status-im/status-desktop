@@ -9,7 +9,7 @@ Page {
 
     DSM.StateMachine {
         id: stateMachine
-        initialState: stateIntro
+        initialState: showLogin ? stateLogin : stateIntro
         running: onboardingMain.visible
 
         DSM.State {
@@ -43,25 +43,36 @@ Page {
             id: existingKeyState
             onEntered: existingKey.visible = true
             onExited: existingKey.visible = false
-
-//            DSM.SignalTransition {
-//                targetState: keysMainState
-//                signal: keysMain.btnExistingKey.clicked
-//            }
         }
 
         DSM.State {
             id: genKeyState
-            onEntered: {
-                genKey.visible = true
-            }
+            onEntered: genKey.visible = true
             onExited: genKey.visible = false
 
-           DSM.SignalTransition {
-               targetState: appState
-               signal: genKey.loginDone
-            //    guard: !response.error
-           }
+            DSM.SignalTransition {
+                targetState: appState
+                signal: onboardingModel.loginResponseChanged
+                guard: {
+                    const resp = JSON.parse(response);
+                    return !resp.error
+                }
+            }
+        }
+
+        DSM.State {
+            id: stateLogin
+            onEntered: login.visible = true
+            onExited: login.visible = false
+
+            DSM.SignalTransition {
+                targetState: appState
+                signal: loginModel.loginResponseChanged
+                guard: {
+                    const resp = JSON.parse(response);
+                    return !resp.error
+                }
+            }
         }
 
         DSM.FinalState {
@@ -74,7 +85,7 @@ Page {
     Intro {
         id: intro
         anchors.fill: parent
-        visible: true
+        visible: false
     }
 
     KeysMain {
@@ -91,6 +102,12 @@ Page {
 
     GenKey {
         id: genKey
+        anchors.fill: parent
+        visible: false
+    }
+
+    Login {
+        id: login
         anchors.fill: parent
         visible: false
     }

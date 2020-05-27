@@ -9,10 +9,8 @@ SwipeView {
     anchors.fill: parent
     currentIndex: 0
 
-    signal loginDone
-
     onCurrentItemChanged: {
-        currentItem.txtPassword.focus = true
+        currentItem.txtPassword.focus = true;
     }
 
     Item {
@@ -87,17 +85,16 @@ SwipeView {
                     anchors.fill: parent
                 }
 
-                Button {
-                    text: "Select"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 20
-                    onClicked: {
-                        console.log("button: " + wizardStep2.selectedIndex)
-
-                        swipeView.incrementCurrentIndex()
-                    }
+            Button {
+                text: "Select"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 20
+                onClicked: {
+                    swipeView.incrementCurrentIndex();
                 }
+            }
+
         }
     }
 
@@ -135,9 +132,7 @@ SwipeView {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
             onClicked: {
-                console.log("password: " + txtPassword.text)
-
-                swipeView.incrementCurrentIndex()
+                swipeView.incrementCurrentIndex();
             }
         }
     }
@@ -178,9 +173,9 @@ SwipeView {
             icon: StandardIcon.Warning
             standardButtons: StandardButton.Ok
             onAccepted: {
-                txtConfirmPassword.clear()
-                swipeView.currentIndex = 1
-                txtPassword.focus = true
+                txtConfirmPassword.clear();
+                swipeView.currentIndex = 1;
+                txtPassword.focus = true;
             }
         }
 
@@ -188,8 +183,19 @@ SwipeView {
             id: storeAccountAndLoginError
             title: "Error storing account and logging in"
             text: "An error occurred while storing your account and logging in: "
-            icon: StandardIcon.Warning
+            icon: StandardIcon.Critical
             standardButtons: StandardButton.Ok
+        }
+
+        Connections {
+            target: onboardingModel
+            onLoginResponseChanged: {
+              const loginResponse = JSON.parse(response);
+              if(loginResponse.error){
+                storeAccountAndLoginError.text += loginResponse.error;
+                storeAccountAndLoginError.open()
+              }
+            }
         }
 
         Button {
@@ -198,17 +204,11 @@ SwipeView {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
             onClicked: {
-                console.log("confirm clicked " + txtConfirmPassword.text + " : " + txtPassword.text)
-
                 if (txtConfirmPassword.text != txtPassword.text) {
-                    return passwordsDontMatchError.open()
+                    return passwordsDontMatchError.open();
                 }
-
                 const selectedAccountIndex = wizardStep2.selectedIndex
-                onboardingModel.storeAccountAndLogin(selectedAccountIndex,
-                                                     txtPassword.text)
-
-                swipeView.loginDone()
+                onboardingModel.storeAccountAndLogin(selectedAccountIndex, txtPassword.text)
             }
         }
     }

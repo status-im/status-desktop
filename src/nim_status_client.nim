@@ -6,13 +6,12 @@ import app/node/core as node
 import app/profile/core as profile
 import signals/core as signals
 import app/onboarding/core as onboarding
+import app/login/core as login
 import state
 import status/accounts as status_accounts
 import status/core as status_core
-import status/chat as status_chat
 import status/types as types
 import status/libstatus
-import models/accounts
 import state
 import status/types
 import eventemitter
@@ -24,7 +23,7 @@ logScope:
   topics = "main"
 
 proc mainProc() =
-  let nodeAccounts = Json.decode(status_accounts.initNodeAccounts(), seq[NodeAccount]) # to be used for login
+  let nodeAccounts = status_accounts.initNodeAccounts()
   let app = newQApplication()
   let engine = newQQmlApplicationEngine()
   let signalController = signals.newController(app)
@@ -56,23 +55,33 @@ proc mainProc() =
   var profile = profile.newController(appEvents)
   engine.setRootContextProperty("profileModel", profile.variant)
 
-  # var accountsModel = newAccountModel()
-  appEvents.on("accountsReady") do(a: Args):
+  appEvents.on("login") do(a: Args):
     var args = AccountArgs(a)
     status_core.startMessenger()
     wallet.init()
-    profile.init(args.account) # TODO: use correct account
+    profile.init(args.account)
 
-  # var onboarding = onboarding.newController(accountsModel)
+  var login = login.newController(appEvents)
   var onboarding = onboarding.newController(appEvents)
-  onboarding.init()
-  engine.setRootContextProperty("onboardingModel", onboarding.variant)
+
+  # TODO: replace this with routing
+  let showLogin = nodeAccounts.len > 0
+  engine.setRootContextProperty("showLogin", newQVariant(showLogin))
+
+  if nodeAccounts.len > 0:
+    login.init(nodeAccounts)
+    engine.setRootContextProperty("loginModel", login.variant)
+  else:
+    onboarding.init()
+    engine.setRootContextProperty("onboardingModel", onboarding.variant)
 
   signalController.init()
   signalController.addSubscriber(SignalType.Wallet, wallet)
   signalController.addSubscriber(SignalType.Wallet, node)
   signalController.addSubscriber(SignalType.Message, chat)
   signalController.addSubscriber(SignalType.WhisperFilterAdded, chat)
+  signalController.addSubscriber(SignalType.NodeLogin, login)
+  signalController.addSubscriber(SignalType.NodeLogin, onboarding)
   
   engine.setRootContextProperty("signals", signalController.variant)
 
@@ -81,8 +90,8 @@ proc mainProc() =
       chat.load(channel.name)
   )
 
-  # accountsModel.appEvents.on("accountsReady") do(a: Args):
-  # appEvents.on("accountsReady") do(a: Args):
+  # accountsModel.appEvents.on("login") do(a: Args):
+  # appEvents.on("login") do(a: Args):
   #   appState.addChannel("test")
   #   appState.addChannel("test2")
   #   appState.addChannel("status")
