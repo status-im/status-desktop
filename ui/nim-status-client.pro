@@ -53,6 +53,7 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn.qml \
     app/AppLayouts/Chat/ChatLayout.qml \
     app/AppLayouts/Chat/ContactsColumn.qml \
+    app/AppLayouts/Chat/components/PublicChatPopup.qml \
     app/AppLayouts/Chat/components/SuggestedChannel.qml \
     app/AppLayouts/Chat/components/qmldir \
     app/AppLayouts/Chat/qmldir \
@@ -64,12 +65,19 @@ DISTFILES += \
     app/AppLayouts/WalletLayout.qml \
     app/AppLayouts/qmldir \
     app/AppMain.qml \
+    app/img/arrow-btn-active.svg \
+    app/img/arrow-btn-inactive.svg \
     app/img/compass.svg \
     app/img/compassActive.svg \
+    app/img/close.svg \
+    app/img/group_chat.svg \
+    app/img/hash.svg \
     app/img/message.svg \
     app/img/messageActive.svg \
+    app/img/new_chat.svg \
     app/img/profile.svg \
     app/img/profileActive.svg \
+    app/img/public_chat.svg \
     app/img/search.svg \
     app/img/wallet.svg \
     app/img/walletActive.svg \
@@ -96,6 +104,8 @@ DISTFILES += \
     onboarding/img/wallet@2x.jpg \
     onboarding/img/wallet@3x.jpg \
     onboarding/qmldir \
+    shared/PopupMenu.qml \
+    shared/Separator.qml \
     shared/StyledButton.qml \
     shared/RoundedIcon.qml \
     shared/qmldir

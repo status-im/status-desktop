@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
 import QtGraphicalEffects 1.12
 import "../../../imports"
-import "../Shared"
+import "../../../shared"
 import "./components"
 
 Item {
