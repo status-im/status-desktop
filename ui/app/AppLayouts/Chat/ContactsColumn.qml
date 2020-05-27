@@ -150,7 +150,9 @@ Item {
                         QQC2.Action { 
                             text: qsTr("Start new chat")
                             icon.source: "../../img/new_chat.svg"
-                            console.log("TODO: Start new chat")
+                            onTriggered: {
+                                console.log("TODO: Start new chat")
+                            }
                         }
                         QQC2.Action { 
                             text: qsTr("Start group chat") 
@@ -172,7 +174,7 @@ Item {
                         }
                         topPadding: 16
                         bottomPadding: 16
-                        
+
                         delegate: QQC2.MenuItem {
                             id: addChatMenuItem
                             implicitWidth: 200
@@ -199,7 +201,7 @@ Item {
                                 width: 14
                                 rotation: 135
                                 x: bgAddItemMenu.width / 2 - width / 2
-                                 layer.enabled: true
+                                layer.enabled: true
                                 layer.effect: DropShadow{
                                     width: bgAddItemMenuArrow.width
                                     height: bgAddItemMenuArrow.height
