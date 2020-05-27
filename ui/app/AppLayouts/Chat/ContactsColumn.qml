@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
 import QtGraphicalEffects 1.12
 import "../../../imports"
+import "../Shared"
 import "./components"
 
 Item {
@@ -147,7 +148,7 @@ Item {
                 newChatMenu.popup(x, addChatLbl.height + 10)
             }
 
-            QQC2.Menu {
+            PopupMenu {
                 id: newChatMenu
                 QQC2.Action {
                     text: qsTr("Start new chat")
@@ -170,74 +171,6 @@ Item {
                 }
                 onAboutToHide: {
                     addChatLbl.state = "default"
-                }
-                topPadding: 16
-                bottomPadding: 16
-
-                delegate: QQC2.MenuItem {
-                    id: addChatMenuItem
-                    implicitWidth: 200
-                    implicitHeight: 40
-                    font.pixelSize: 15
-                    icon.color: addChatMenuItem.highlighted ? "white" : Theme.blue
-                    background: Rectangle {
-                        implicitWidth: 220
-                        implicitHeight: 40
-                        color: addChatMenuItem.highlighted ? Theme.blue : "transparent"
-                    }
-                }
-
-                background: Rectangle {
-                    id: bgAddItemMenu
-                    implicitWidth: 220
-                    implicitHeight: 172
-                    color: "transparent"
-
-                    Rectangle {
-                        id: bgAddItemMenuArrow
-                        color: Theme.white2
-                        height: 14
-                        width: 14
-                        rotation: 135
-                        x: bgAddItemMenu.width / 2 - width / 2
-                        layer.enabled: true
-                        layer.effect: DropShadow {
-                            width: bgAddItemMenuArrow.width
-                            height: bgAddItemMenuArrow.height
-                            x: bgAddItemMenuArrow.x
-                            y: bgAddItemMenuArrow.y + 10
-                            visible: bgAddItemMenuArrow.visible
-                            source: bgAddItemMenuArrow
-                            horizontalOffset: 0
-                            verticalOffset: 5
-                            radius: 10
-                            samples: 15
-                            color: "#22000000"
-                        }
-                    }
-
-                    Rectangle {
-                        id: bgAddItemMenu2
-                        y: 7
-                        implicitWidth: 220
-                        implicitHeight: 152
-                        color: Theme.white2
-                        radius: 16
-                        layer.enabled: true
-                        layer.effect: DropShadow {
-                            width: bgAddItemMenu2.width
-                            height: bgAddItemMenu2.height
-                            x: bgAddItemMenu2.x
-                            y: bgAddItemMenu2.y + 10
-                            visible: bgAddItemMenu2.visible
-                            source: bgAddItemMenu2
-                            horizontalOffset: 0
-                            verticalOffset: 7
-                            radius: 10
-                            samples: 15
-                            color: "#22000000"
-                        }
-                    }
                 }
             }
         }
