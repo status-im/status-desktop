@@ -8,14 +8,12 @@ type ChatItem* = ref object
   timestamp*: int64
   unviewedMessagesCount*: int
   color*: string
-  identicon*: string
 
 proc newChatItem*(): ChatItem =
   new(result)
   result.name = ""
   result.lastMessage = ""
   result.timestamp = 0
-  result.identicon = ""
   result.unviewedMessagesCount = 0
   result.color = ""
 
@@ -41,6 +39,5 @@ proc toChatItem*(chat: Chat): ChatItem =
       chatType: chat.chatType,
       lastMessage: chat.lastMessage.text,
       timestamp: chat.timestamp,
-      identicon: chat.lastMessage.identicon,
       unviewedMessagesCount: chat.unviewedMessagesCount
     )
