@@ -6,10 +6,9 @@ import Qt.labs.platform 1.1
 import "../../../imports"
 import "../../../shared"
 
-Column {
+Item {
     id: walletInfoContainer
     width: 340
-    spacing: 0
 
     Text {
         id: title

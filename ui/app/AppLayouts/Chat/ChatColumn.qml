@@ -115,7 +115,10 @@ StackLayout {
 
                         Menu {
                             id: contextMenu
-                            MenuItem { text: "Leave Chat"; onTriggered: chatsModel.leaveActiveChat() }
+                            MenuItem {
+                                text: "Leave Chat"
+                                onTriggered: chatsModel.leaveActiveChat()
+                            }
                         }
                     }
                 }
@@ -215,7 +218,7 @@ StackLayout {
                 onCountChanged: {
                     if (!this.atYEnd) {
                         // User has scrolled up, we don't want to scroll back
-                        return;
+                        return
                     }
 
                     // positionViewAtEnd doesn't work well. Instead, we use highlightFollowsCurrentItem
@@ -223,7 +226,6 @@ StackLayout {
                     while (this.currentIndex < this.count - 1) {
                         this.incrementCurrentIndex()
                     }
-
                 }
             }
         }
@@ -303,36 +305,39 @@ StackLayout {
                         id: mouseArea1
                         anchors.rightMargin: 50
                         anchors.fill: parent
-                        onClicked : {
+                        onClicked: {
                             txtData.forceActiveFocus(Qt.MouseFocusReason)
                         }
                     }
                 }
             }
         }
-
     }
 
     Item {
-        id: element
-        anchors.left: parent.left
-        anchors.leftMargin: 200
-        anchors.right: parent.right
-        anchors.rightMargin: 200
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 200
-        anchors.top: parent.top
-        anchors.topMargin: 100
-        Image {
-            source: "../../../onboarding/img/chat@2x.jpg"
-        }
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        Item {
+            id: walkieTalkieContainer
+            anchors.left: parent.left
+            anchors.leftMargin: 200
+            anchors.right: parent.right
+            anchors.rightMargin: 200
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 200
+            anchors.top: parent.top
+            anchors.topMargin: 100
+            Image {
+                source: "../../../onboarding/img/chat@2x.jpg"
+            }
 
-        Text {
-            text: "Select a chat to start messaging"
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.weight: Font.DemiBold
-            font.pixelSize: 15
-            color: Theme.darkGrey
+            Text {
+                text: "Select a chat to start messaging"
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.weight: Font.DemiBold
+                font.pixelSize: 15
+                color: Theme.darkGrey
+            }
         }
     }
 }
@@ -342,3 +347,4 @@ Designer {
     D{i:0;formeditorColor:"#ffffff";height:770;width:800}
 }
 ##^##*/
+
