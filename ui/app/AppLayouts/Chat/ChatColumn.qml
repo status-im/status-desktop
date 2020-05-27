@@ -1,8 +1,10 @@
 import QtQuick 2.3
 import QtQuick.Controls 2.3
+import QtQuick.Controls 2.12 as QQC2
 import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
 import "../../../imports"
+import "./components"
 
 StackLayout {
     property int chatGroupsListViewCount: 0
@@ -109,13 +111,20 @@ StackLayout {
                         anchors.rightMargin: -15
                         anchors.leftMargin: -15
                         anchors.fill: parent
-                        onClicked: contextMenu.open()
+                        onClicked: {
+                            contextMenu.arrowX = contextMenu.width - 40
+                            contextMenu.popup(moreActionsBtn.x, moreActionsBtn.height + 10)
+                        }
                         cursorShape: Qt.PointingHandCursor
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-                        Menu {
+                        PopupMenu {
                             id: contextMenu
-                            MenuItem { text: "Leave Chat"; onTriggered: chatsModel.leaveActiveChat() }
+                            QQC2.Action { 
+                                text: qsTr("Leave Chat")
+                                icon.source: "../../img/new_chat.svg"
+                                onTriggered: chatsModel.leaveActiveChat()
+                            }
                         }
                     }
                 }
