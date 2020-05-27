@@ -3,10 +3,12 @@ import QtQuick.Controls 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
+import QtGraphicalEffects 1.0
 import "../../../imports"
 import "../../../shared"
 
 Item {
+    property int selectedWallet: 0
     id: walletInfoContainer
     width: 340
 
@@ -28,6 +30,7 @@ Item {
         anchors.leftMargin: Theme.padding
         anchors.top: title.bottom
         anchors.topMargin: Theme.padding
+        height: walletAmountValue.height + totalValue.height
 
         TextEdit {
             id: walletAmountValue
@@ -64,7 +67,7 @@ Item {
         radius: 50
         anchors.right: parent.right
         anchors.rightMargin: Theme.padding
-        anchors.top: walletValueTextContainer.bottom
+        anchors.top: walletValueTextContainer.top
         anchors.topMargin: 0
 
         Text {
@@ -79,6 +82,113 @@ Item {
             fontSizeMode: Text.FixedSize
             font.bold: true
             font.pixelSize: 28
+        }
+    }
+
+    Component {
+        id: walletDelegate
+
+        Rectangle {
+            property bool selected: index == selectedWallet
+
+            id: rectangle
+            height: 64
+            color: selected ? Theme.blue : Theme.transparent
+            radius: Theme.radius
+            anchors.right: parent.right
+            anchors.rightMargin: Theme.padding
+            anchors.left: parent.left
+            anchors.leftMargin: Theme.padding
+
+            Image {
+                id: walletIcon
+                width: 12
+                height: 12
+                anchors.top: parent.top
+                anchors.topMargin: Theme.smallPadding
+                anchors.left: parent.left
+                anchors.leftMargin: Theme.padding
+                source: "../../img/walletIcon.svg"
+            }
+            ColorOverlay {
+                anchors.fill: walletIcon
+                source: walletIcon
+                color: selected ? undefined : "#7CDA00"  // change image color
+            }
+            Text {
+                id: walletName
+                text: name
+                anchors.top: parent.top
+                anchors.topMargin: Theme.smallPadding
+                anchors.left: walletIcon.right
+                anchors.leftMargin: 10
+                font.pixelSize: 15
+                font.weight: Font.Medium
+                color: selected ? Theme.white : Theme.black
+            }
+            Text {
+                id: walletAddress
+                text: address
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: Theme.smallPadding
+                anchors.left: walletName.left
+                anchors.leftMargin: 0
+                font.pixelSize: 15
+                font.weight: Font.Medium
+                color: selected ? Theme.white : Theme.darkGrey
+                opacity: selected ? 0.7 : 1
+            }
+            Text {
+                id: walletBalance
+                text: balance
+                anchors.top: parent.top
+                anchors.topMargin: Theme.smallPadding
+                anchors.right: parent.right
+                anchors.rightMargin: Theme.padding
+                font.pixelSize: 15
+                font.weight: Font.Medium
+                color: selected ? Theme.white : Theme.black
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    selectedWallet = index
+                    // TODO add call to Nim to change the wallet for real
+                }
+            }
+        }
+    }
+
+    ListView {
+        id: listView
+        height: 160
+        anchors.top: walletValueTextContainer.bottom
+        anchors.topMargin: Theme.padding
+        spacing: 5
+        anchors.right: parent.right
+        anchors.rightMargin: 0
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+
+        delegate: walletDelegate
+
+        model: ListModel {
+            ListElement {
+                name: "Status account"
+                address: "0x2Ef1...E0Ba"
+                balance: "12.00 USD"
+            }
+
+            ListElement {
+                name: "Test account 1"
+                address: "0x2Ef1...E0Ba"
+                balance: "12.00 USD"
+            }
+            ListElement {
+                name: "Status account"
+                address: "0x2Ef1...E0Ba"
+                balance: "12.00 USD"
+            }
         }
     }
 }
