@@ -7,11 +7,10 @@ import "../../../imports"
 import "../../../shared"
 import "."
 
-Item {
+SplitView {
     id: walletView
     x: 0
     y: 0
-    property alias walletContainerCurrentIndex: walletContainer.currentIndex
     Layout.fillHeight: true
     Layout.fillWidth: true
     // Those anchors show a warning too, but whithout them, there is a gap on the right
@@ -24,7 +23,7 @@ Item {
         id: leftTab
     }
 
-    StackLayout {
+    Item {
         id: walletContainer
         anchors.top: parent.top
         anchors.topMargin: 0
@@ -34,12 +33,9 @@ Item {
         anchors.rightMargin: 0
         anchors.left: leftTab.right
         anchors.leftMargin: 0
-        currentIndex: leftTab.currentTab
 
         Item {
-            id: sendContainer
-            width: 200
-            height: 200
+            id: walletInfoContainer
             Layout.fillHeight: true
             Layout.fillWidth: true
 
@@ -104,44 +100,91 @@ Item {
                     console.log(result);
                 }
             }
-        }
 
-        Item {
-            id: depositContainer
-            width: 200
-            height: 200
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            RowLayout {
+                id: assetInfoContainer
+                Layout.fillHeight: true
+                Layout.fillWidth: true
 
-            Text {
-                id: element4
-                text: qsTr("Deposit")
-                font.weight: Font.Bold
-                anchors.topMargin: 24
-                anchors.leftMargin: 24
-                font.pixelSize: 20
-                anchors.left: parent.left
-                anchors.top: parent.top
+                Rectangle {
+                    id: walletSendBg
+                    color: "#ffffff"
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+
+                    Text {
+                        id: assetsTitle
+                        color: Theme.darkGrey
+                        text: qsTr("Assets")
+                        anchors.left: parent.left
+                        anchors.leftMargin: Theme.padding
+                        anchors.top: parent.top
+                        anchors.topMargin: Theme.smallPadding
+                        font.pixelSize: 14
+                    }
+
+                    Component {
+                        id: assetViewDelegate
+
+                        Item {
+                            id: element6
+                            height: 56
+                            anchors.right: parent.right
+                            anchors.rightMargin: 0
+                            anchors.left: parent.left
+                            anchors.leftMargin: 0
+
+                            Image {
+                                id: assetInfoContainer
+                                width: 36
+                                height: 36
+                                source: image
+                                anchors.left: parent.left
+                                anchors.leftMargin: Theme.padding
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+
+                            Text {
+                                id: assetValue
+                                text: value
+                                anchors.verticalCenter: parent.verticalCenter
+                                font.pixelSize: 14
+                                font.strikeout: false
+                                anchors.left: parent.left
+                                anchors.leftMargin: 72
+                            }
+                            Text {
+                                id: assetSymbol
+                                text: symbol
+                                anchors.verticalCenter: parent.verticalCenter
+                                color: Theme.darkGrey
+                                font.pixelSize: 14
+                                anchors.right: assetFiatValue.left
+                                anchors.rightMargin: 10
+                            }
+                            Text {
+                                id: assetFiatValue
+                                color: Theme.darkGrey
+                                text: fiatValue
+                                anchors.verticalCenter: parent.verticalCenter
+                                font.pixelSize: 14
+                                anchors.right: parent.right
+                                anchors.rightMargin: Theme.padding
+                            }
+                        }
+                    }
+
+                    ListView {
+                        id: listView
+                        anchors.topMargin: 36
+                        anchors.fill: parent
+                        model: assetsModel.assets
+                        delegate: assetViewDelegate
+                    }
+                }
             }
         }
 
-        Item {
-            id: txHistoryContainer
-            width: 200
-            height: 200
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Text {
-                id: element5
-                text: qsTr("Transaction History")
-                font.weight: Font.Bold
-                anchors.topMargin: 24
-                anchors.leftMargin: 24
-                font.pixelSize: 20
-                anchors.left: parent.left
-                anchors.top: parent.top
-            }
-        }
     }
 }
 /*##^##
