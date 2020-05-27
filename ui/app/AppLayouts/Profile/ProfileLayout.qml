@@ -99,7 +99,7 @@ Item {
             ListView {
               id: contactListView
               anchors.topMargin: 48
-              anchors.top: element4.bottom
+              anchors.top: element2.bottom
               anchors.fill: parent
               model: profileModel.contactList
               delegate: contactsList
