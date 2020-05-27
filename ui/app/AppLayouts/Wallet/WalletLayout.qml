@@ -13,11 +13,6 @@ SplitView {
     y: 0
     Layout.fillHeight: true
     Layout.fillWidth: true
-    // Those anchors show a warning too, but whithout them, there is a gap on the right
-    anchors.right: parent.right
-    anchors.rightMargin: 0
-    anchors.left: parent.left
-    anchors.leftMargin: 0
 
     LeftTab {
         id: leftTab
