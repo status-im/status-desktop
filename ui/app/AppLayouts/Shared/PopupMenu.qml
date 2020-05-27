@@ -1,5 +1,5 @@
 import QtQuick 2.12
-import QtQuick.Controls 2.3
+import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import "../../../imports"
 
@@ -21,9 +21,9 @@ Menu {
                 anchors.left: parent.left
                 anchors.leftMargin: 12
                 Image {
+                    fillMode: Image.Pad
                     id: popupMenuItemIcon
                     source: popupMenuItem.icon.source
-                    smooth: true
                     visible: false
                 }
 
@@ -31,7 +31,6 @@ Menu {
                     anchors.fill: popupMenuItemIcon
                     anchors.verticalCenter: parent.verticalCenter
                     source: popupMenuItemIcon
-                    antialiasing: true
                     color: popupMenuItem.highlighted ? Theme.white : Theme.blue
                 }
             }
