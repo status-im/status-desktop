@@ -1,0 +1,10 @@
+EnsContainer 1.0 EnsContainer.qml
+ContactsContainer 1.0 ContactsContainer.qml
+PrivacyContainer 1.0 PrivacyContainer.qml
+SyncContainer 1.0 SyncContainer.qml
+LanguageContainer 1.0 LanguageContainer.qml
+NotificationsContainer 1.0 NotificationsContainer.qml
+AdvancedContainer 1.0 AdvancedContainer.qml
+HelpContainer 1.0 HelpContainer.qml
+AboutContainer 1.0 AboutContainer.qml
+SignoutContainer 1.0 SignoutContainer.qml
