@@ -10,7 +10,6 @@ import "./LeftTab"
 
 ColumnLayout {
     readonly property int w: 340
-    // property alias currentTab: profileScreenButtons.currentIndex
     property alias currentTab: profileMenu.profileCurrentIndex
 
     id: profileInfoContainer
@@ -23,12 +22,25 @@ ColumnLayout {
     anchors.bottom: parent.bottom
     anchors.bottomMargin: 0
 
-    Profile {}
+    RowLayout {
+        id: profileHeader
+        height: 240
+        Layout.fillWidth: true
+        width: profileInfoContainer.w
 
-    Menu {
-        id: profileMenu
+        Profile {}
     }
 
+    RowLayout {
+        width: profileInfoContainer.w
+        height: btnheight * 10
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+
+        Menu {
+            id: profileMenu
+        }
+    }
 }
 
 /*##^##
