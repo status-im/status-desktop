@@ -151,11 +151,6 @@ RowLayout {
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
         Layout.fillHeight: true
-        // Those anchors show a warning, but they are the only way to have QT Creator show correctly
-        anchors.left: tabBar.right
-        anchors.leftMargin: 0
-        anchors.right: parent.right
-        anchors.rightMargin: 0
         currentIndex: tabBar.currentIndex
 
         ChatLayout {
