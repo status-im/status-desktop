@@ -9,100 +9,95 @@ SwipeView {
     anchors.fill: parent
     currentIndex: 0
 
-    signal loginDone()
+    signal loginDone
 
     onCurrentItemChanged: {
-        currentItem.txtPassword.focus = true;
+        currentItem.txtPassword.focus = true
     }
 
     Item {
         id: wizardStep2
         property int selectedIndex: 0
+        width: 620
+        height: 427
 
-        ColumnLayout {
-            id: columnLayout
-            width: 620
-            height: 427
+        Text {
+            id: title
+            text: "Generated accounts"
+            font.pointSize: 36
+            anchors.top: parent.top
+            anchors.topMargin: 20
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
 
-            Text {
-                text: "Generated accounts"
-                font.pointSize: 36
-                anchors.top: parent.top
-                anchors.topMargin: 20
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
+        Item {
+            anchors.top: title.bottom
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.topMargin: 20
 
-            RowLayout {
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                spacing: 10
+
                 ButtonGroup {
-                        id: accountGroup
-                    }
+                    id: accountGroup
+                }
 
-                    Component {
-                        id: addressViewDelegate
+                Component {
+                    id: addressViewDelegate
 
-                        Item {
-                            height: 56
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
+                    Item {
+                        height: 56
+                        anchors.right: parent.right
+                        anchors.rightMargin: 0
+                        anchors.left: parent.left
+                        anchors.leftMargin: 0
 
-                             Row {
-                               RadioButton {
-                                 checked: index == 0 ? true : false
-                                 ButtonGroup.group: accountGroup
-                                 onClicked: {
-                                   wizardStep2.selectedIndex = index;
-                                 }
-                               }
-                               Column {
-                                 Image {
-                                   source: identicon
-                                 }
-                               }
-                               Column {
-                                 Text {
-                                   text: username
-                                 }
-                                 Text {
-                                   text: key
-                                   width: 160
-                                   elide: Text.ElideMiddle
-                                 }
-
-                               }
-                             }
+                        Row {
+                            RadioButton {
+                                checked: index == 0 ? true : false
+                                ButtonGroup.group: accountGroup
+                                onClicked: {
+                                    wizardStep2.selectedIndex = index
+                                }
+                            }
+                            Column {
+                                Image {
+                                    source: identicon
+                                }
+                            }
+                            Column {
+                                Text {
+                                    text: username
+                                }
+                                Text {
+                                    text: key
+                                    width: 160
+                                    elide: Text.ElideMiddle
+                                }
+                            }
                         }
-
-                    }
-
-                    ListView {
-                        id: addressesView
-                        contentWidth: 200
-                        model: onboardingModel
-                        delegate: addressViewDelegate
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        anchors.topMargin: 36
-                        anchors.fill: parent
                     }
                 }
 
-            Button {
-                text: "Select"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 20
-                onClicked: {
-                    console.log("button: " + wizardStep2.selectedIndex);
-
-                    swipeView.incrementCurrentIndex();
+                ListView {
+                    id: addressesView
+                    contentWidth: 200
+                    model: onboardingModel
+                    delegate: addressViewDelegate
+                    anchors.fill: parent
                 }
-            }
 
+                Button {
+                    text: "Select"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 20
+                    onClicked: {
+                        console.log("button: " + wizardStep2.selectedIndex)
+
+                        swipeView.incrementCurrentIndex()
+                    }
+                }
         }
     }
 
@@ -140,9 +135,9 @@ SwipeView {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
             onClicked: {
-                console.log("password: " + txtPassword.text);
+                console.log("password: " + txtPassword.text)
 
-                swipeView.incrementCurrentIndex();
+                swipeView.incrementCurrentIndex()
             }
         }
     }
@@ -183,7 +178,7 @@ SwipeView {
             icon: StandardIcon.Warning
             standardButtons: StandardButton.Ok
             onAccepted: {
-                txtConfirmPassword.clear();
+                txtConfirmPassword.clear()
                 swipeView.currentIndex = 1
                 txtPassword.focus = true
             }
@@ -203,16 +198,17 @@ SwipeView {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
             onClicked: {
-                console.log("confirm clicked " + txtConfirmPassword.text + " : " + txtPassword.text);
+                console.log("confirm clicked " + txtConfirmPassword.text + " : " + txtPassword.text)
 
                 if (txtConfirmPassword.text != txtPassword.text) {
-                  return passwordsDontMatchError.open();
+                    return passwordsDontMatchError.open()
                 }
 
                 const selectedAccountIndex = wizardStep2.selectedIndex
-                onboardingModel.storeAccountAndLogin(selectedAccountIndex, txtPassword.text)
+                onboardingModel.storeAccountAndLogin(selectedAccountIndex,
+                                                     txtPassword.text)
 
-               swipeView.loginDone();
+                swipeView.loginDone()
             }
         }
     }
@@ -220,6 +216,7 @@ SwipeView {
 
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:480;width:640}
+    D{i:0;autoSize:true;formeditorColor:"#ffffff";height:480;width:640}
 }
 ##^##*/
+
