@@ -59,6 +59,7 @@ DISTFILES += \
     app/AppLayouts/Node/NodeLayout.qml \
     app/AppLayouts/Profile/ProfileLayout.qml \
     app/AppLayouts/Wallet/LeftTab.qml \
+    app/AppLayouts/Wallet/SendModal.qml \
     app/AppLayouts/Wallet/WalletLayout.qml \
     app/AppLayouts/Wallet/qmldir \
     app/AppLayouts/WalletLayout.qml \
