@@ -313,10 +313,8 @@ StackLayout {
 
     }
 
-    ColumnLayout {
-        Layout.margins: 0
-        Layout.fillHeight: false
-        Layout.fillWidth: false
+    Item {
+        id: element
         anchors.left: parent.left
         anchors.leftMargin: 200
         anchors.right: parent.right
@@ -331,10 +329,10 @@ StackLayout {
 
         Text {
             text: "Select a chat to start messaging"
+            anchors.horizontalCenter: parent.horizontalCenter
             font.weight: Font.DemiBold
             font.pixelSize: 15
             color: Theme.darkGrey
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
         }
     }
 }

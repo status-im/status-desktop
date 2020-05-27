@@ -7,13 +7,12 @@ import QtGraphicalEffects 1.12
 import "../../../imports"
 import "./components"
 
-Column {
+Item {
     property alias chatGroupsListViewCount: chatGroupsListView.count
     property alias searchStr: searchText.text
 
     id: contactsColumn
     width: 300
-    // height: parent.height
     Layout.minimumWidth: 200
 
     Item {
@@ -343,8 +342,7 @@ Column {
                 anchors.leftMargin: Theme.padding
                 radius: 8
                 // Hide the box if it is filtered out
-                property bool isVisible: searchStr == "" || name.includes(
-                                             searchStr)
+                property bool isVisible: searchStr == "" || name.includes(searchStr)
                 visible: isVisible ? true : false
                 height: isVisible ? 64 : 0
 
@@ -441,7 +439,7 @@ Column {
 
 /*##^##
 Designer {
-    D{i:0;height:770;width:300;formeditorColor:"#ffffff"}
+    D{i:0;formeditorColor:"#ffffff";height:770;width:300}
 }
 ##^##*/
 
