@@ -27,6 +27,10 @@ Item {
         font.pixelSize: 17
     }
 
+    PublicChatPopup {
+        id: publicChatPopup
+    }
+
     Rectangle {
         id: searchBox
         height: 36
@@ -41,7 +45,7 @@ Item {
 
         TextField {
             id: searchText
-            placeholderText: qsTr("Search or join channel")
+            placeholderText: qsTr("Search")
             anchors.left: parent.left
             anchors.leftMargin: 32
             anchors.verticalCenter: parent.verticalCenter
@@ -162,11 +166,7 @@ Item {
                 QQC2.Action {
                     text: qsTr("Join public chat")
                     icon.source: "../../img/public_chat.svg"
-                    onTriggered: {
-                        chatGroupsListView.currentIndex = chatsModel.joinChat(
-                                    searchText.text)
-                        searchText.text = ""
-                    }
+                    onTriggered: publicChatPopup.open()
                 }
                 onAboutToHide: {
                     addChatLbl.state = "default"
