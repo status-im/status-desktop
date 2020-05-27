@@ -100,49 +100,85 @@ Item {
                     fontSizeMode: Text.FixedSize
                     font.bold: true
                     font.pixelSize: 28
+                    state: "default"
+                    rotation: 0
+                    states: [
+                        State {
+                            name: "default"
+                            PropertyChanges { target: addChatLbl; rotation: 0 }
+                        },
+                        State {
+                            name: "rotated"
+                            PropertyChanges { target: addChatLbl; rotation: 45 }
+                        }
+                    ]
+
+                    transitions: [
+                        Transition {
+                            from: "default"
+                            to: "rotated"
+                            RotationAnimation { 
+                                duration: 150;
+                                direction: RotationAnimation.Clockwise
+                                easing.type: Easing.InCubic
+                            }
+                        },
+                        Transition {
+                            from: "rotated"
+                            to: "default"
+                            RotationAnimation { 
+                                duration: 150; 
+                                direction: RotationAnimation.Counterclockwise 
+                                easing.type: Easing.OutCubic
+                            }
+                        }
+                    ]
+
                 }
 
                 MouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onClicked: {
+                        addChatLbl.state = "rotated" 
                         let x = addChatLbl.x + addChatLbl.width / 2 - newChatMenu.width / 2
                         newChatMenu.popup(x, addChatLbl.height + 10)
                     }
 
                     QQC2.Menu {
                         id: newChatMenu
-
-                        Action { text: qsTr("Start new chat") }
-                        Action { text: qsTr("Start group chat") }
-                        
-                        Action { 
+                        QQC2.Action { 
+                            text: qsTr("Start new chat")
+                            icon.source: "../../img/new_chat.svg"
+                            console.log("TODO: Start new chat")
+                        }
+                        QQC2.Action { 
+                            text: qsTr("Start group chat") 
+                            icon.source: "../../img/group_chat.svg"
+                            onTriggered: {
+                                console.log("TODO: Start group chat")
+                            }
+                        }
+                        QQC2.Action { 
                             text: qsTr("Join public chat")
+                            icon.source: "../../img/public_chat.svg"
                             onTriggered: {
                                 chatGroupsListView.currentIndex = chatsModel.joinChat(searchText.text);
                                 searchText.text = "";
                             }
                         }
-
+                        onAboutToHide: {
+                            addChatLbl.state = "default" 
+                        }
                         topPadding: 16
                         bottomPadding: 16
-
+                        
                         delegate: QQC2.MenuItem {
                             id: addChatMenuItem
                             implicitWidth: 200
                             implicitHeight: 40
                             font.pixelSize: 15
-
-                            contentItem: Text {
-                                leftPadding: addChatMenuItem.indicator.width
-                                rightPadding: addChatMenuItem.arrow.width
-                                text: addChatMenuItem.text
-                                font: addChatMenuItem.font
-                                color: addChatMenuItem.highlighted ? Theme.white : Theme.black
-                                horizontalAlignment: Text.AlignLeft
-                                verticalAlignment: Text.AlignVCenter
-                            }
-
+                            icon.color: addChatMenuItem.highlighted ? "white" : Theme.blue
                             background: Rectangle {
                                 implicitWidth: 220
                                 implicitHeight: 40
@@ -155,6 +191,29 @@ Item {
                             implicitWidth: 220
                             implicitHeight: 172
                             color: "transparent"
+
+                            Rectangle {
+                                id: bgAddItemMenuArrow
+                                color: Theme.white2
+                                height: 14
+                                width: 14
+                                rotation: 135
+                                x: bgAddItemMenu.width / 2 - width / 2
+                                 layer.enabled: true
+                                layer.effect: DropShadow{
+                                    width: bgAddItemMenuArrow.width
+                                    height: bgAddItemMenuArrow.height
+                                    x: bgAddItemMenuArrow.x
+                                    y: bgAddItemMenuArrow.y + 10
+                                    visible: bgAddItemMenuArrow.visible
+                                    source: bgAddItemMenuArrow
+                                    horizontalOffset: 0
+                                    verticalOffset: 5
+                                    radius: 10
+                                    samples: 15
+                                    color: "#22000000"
+                                }
+                            }
 
                             Rectangle {
                                 id: bgAddItemMenu2
@@ -172,22 +231,13 @@ Item {
                                     visible: bgAddItemMenu2.visible
                                     source: bgAddItemMenu2
                                     horizontalOffset: 0
-                                    verticalOffset: 5
+                                    verticalOffset: 7
                                     radius: 10
                                     samples: 15
                                     color: "#22000000"
                                 }
                             }
                             
-                            // Trying to create an arrow for the dialog
-                            // TODO: replace this and the prev rectangle by a canvas that draws the menu bg including its arrow
-                            Rectangle {
-                                color: Theme.white2
-                                height: 14
-                                width: 14
-                                rotation: 135
-                                x: bgAddItemMenu.width / 2 - width / 2
-                            }
                         }
                     }
                 }
