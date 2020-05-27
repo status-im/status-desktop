@@ -37,7 +37,7 @@ Column {
             selectByMouse: true
             cursorVisible: true
             readOnly: true
-            anchors.left: tild.right
+            anchors.left: parent.left
             anchors.leftMargin: 1
             font.weight: Font.Medium
             font.pixelSize: 30

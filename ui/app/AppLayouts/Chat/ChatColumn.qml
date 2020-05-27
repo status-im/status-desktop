@@ -207,7 +207,6 @@ StackLayout {
 
             ListView {
                 id: chatLogView
-                anchors.fill: parent
                 model: chatsModel.messageList
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -342,6 +341,6 @@ StackLayout {
 
 /*##^##
 Designer {
-    D{i:0;height:770;width:800}
+    D{i:0;formeditorColor:"#ffffff";height:770;width:800}
 }
 ##^##*/
