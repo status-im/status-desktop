@@ -1,10 +1,17 @@
 import chronicles
 import ../status/types
+import json_serialization
 
 type SignalSubscriber* = ref object of RootObj
 
 type Signal* = ref object of RootObj
-  signalType*: SignalType
+  signalType* {.serializedFieldName("type").}: SignalType
+
+type SignalError* = object
+  error*: string
+
+type NodeSignal* = ref object of Signal
+  event*: SignalError
 
 type WalletSignal* = ref object of Signal
   content*: string

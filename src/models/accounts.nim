@@ -1,28 +1,16 @@
-import eventemitter
-import json_serialization
 import ../status/accounts as status_accounts
 import ../status/types
-
-type
-  Address* = ref object
-    username*, identicon*, key*: string
-
-proc toAddress*(account: GeneratedAccount): Address =
-  result = Address(username: account.name, identicon: account.photoPath, key: account.address)
+import options
 
 type
   AccountModel* = ref object
     generatedAddresses*: seq[GeneratedAccount]
-    events*: EventEmitter
+    nodeAccounts*: seq[NodeAccount]
+    currentAccount*: Account
 
 proc newAccountModel*(): AccountModel =
   result = AccountModel()
-  result.events = createEventEmitter()
-  result.generatedAddresses = @[]
-
-proc delete*(self: AccountModel) =
-  # delete self.generatedAddresses
-  discard
+  result.currentAccount = nil
 
 proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
   var accounts = status_accounts.generateAddresses()
@@ -32,13 +20,12 @@ proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
     self.generatedAddresses.add(account)
   self.generatedAddresses
 
-# TODO: this is temporary and will be removed once accounts import and creation is working
-proc generateRandomAccountAndLogin*(self: AccountModel) =
-  let generatedAccounts = status_accounts.generateAddresses()
-  let account = status_accounts.setupAccount(generatedAccounts[0], "qwerty")
-  self.events.emit("accountsReady", AccountArgs(account: account))
+proc login*(self: AccountModel, selectedAccountIndex: int, password: string): NodeAccount =
+  let currentNodeAccount = self.nodeAccounts[selectedAccountIndex]
+  self.currentAccount = currentNodeAccount.toAccount
+  result = status_accounts.login(currentNodeAccount, password)
 
 proc storeAccountAndLogin*(self: AccountModel, selectedAccountIndex: int, password: string): Account =
   let generatedAccount: GeneratedAccount = self.generatedAddresses[selectedAccountIndex]
   result = status_accounts.setupAccount(generatedAccount, password)
-  self.events.emit("accountsReady", AccountArgs(account: result))
+  self.currentAccount = generatedAccount.toAccount

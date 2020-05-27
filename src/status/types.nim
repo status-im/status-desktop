@@ -7,13 +7,16 @@ type SignalCallback* = proc(eventMessage: cstring): void {.cdecl.}
 type SignalType* {.pure.} = enum
   Message = "messages.new"
   Wallet = "wallet"
+  NodeReady = "node.ready"
   NodeStarted = "node.started"
   NodeLogin = "node.login"
   EnvelopeSent = "envelope.sent"
   EnvelopeExpired = "envelope.expired"
   MailserverRequestCompleted = "mailserver.request.completed"
   MailserverRequestExpired = "mailserver.request.expired"
-  DiscoverSummary = "discover.summary"
+  DiscoveryStarted = "discovery.started"
+  DiscoveryStopped = "discovery.stopped"
+  DiscoverySummary = "discovery.summary"
   SubscriptionsData = "subscriptions.data"
   SubscriptionsError = "subscriptions.error"
   WhisperFilterAdded = "whisper.filter.added"
@@ -36,31 +39,38 @@ type MultiAccounts* = object
 
 
 type
-  Account* = object of RootObj
+  Account* = ref object of RootObj
     name*: string
     keyUid* {.serializedFieldName("key-uid").}: string
     photoPath* {.serializedFieldName("photo-path").}: string
 
 type
-  NodeAccount* = object
+  NodeAccount* = ref object of Account
     timestamp*: int
     keycardPairing* {.serializedFieldName("keycard-pairing").}: string
-    # deserialisation does not handle base classes, so flatten
-    name*: string
-    keyUid* {.serializedFieldName("key-uid").}: string
-    photoPath* {.serializedFieldName("photo-path").}: string
 
 type
-  GeneratedAccount* = object
+  GeneratedAccount* = ref object
     publicKey*: string
     address*: string
     id*: string
     mnemonic*: string
     derived*: MultiAccounts
-    # deserialisation does not handle base classes, so flatten
+    # FIXME: should inherit from Account but multiAccountGenerateAndDeriveAddresses
+    # response has a camel-cased properties like "publicKey" and "keyUid", so the
+    # serializedFieldName pragma would need to be different
     name*: string
     keyUid*: string
     photoPath*: string
 
+proc toAccount*(account: GeneratedAccount): Account =
+  result = Account(name: account.name, photoPath: account.photoPath, keyUid: account.address)
+
+proc toAccount*(account: NodeAccount): Account =
+  result = Account(name: account.name, photoPath: account.photoPath, keyUid: account.keyUid)
+
 type AccountArgs* = ref object of Args
     account*: Account
+
+type
+  LoginError* = object of Exception

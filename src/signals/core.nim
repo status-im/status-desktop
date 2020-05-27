@@ -6,6 +6,8 @@ import types
 import messages
 import chronicles
 import whisperFilter
+import strutils
+import json_serialization
 
 logScope:
   topics = "signals"
@@ -45,27 +47,35 @@ QtObject:
     let jsonSignal = (self.statusSignal).parseJson
     let signalString = $jsonSignal["type"].getStr
 
-    var signalType: SignalType
-    var signal: Signal
+    trace "Raw signal data", data = $jsonSignal
 
-    case signalString:
-      of "messages.new":
-        signalType = SignalType.Message
+    var signalType: SignalType
+    
+    try:
+      signalType = parseEnum[SignalType](signalString)
+    except:
+      warn "Unknown signal received", type = signalString
+      signalType = SignalType.Unknown
+      return
+
+    var signal: Signal = Signal(signalType: signalType)
+
+    case signalType:
+      of SignalType.Message:
         signal = messages.fromEvent(jsonSignal)
-      of "whisper.filter.added":
-        signalType = SignalType.WhisperFilterAdded
+      of SignalType.WhisperFilterAdded:
         signal = whisperFilter.fromEvent(jsonSignal)
-      of "wallet":
-        signalType = SignalType.Wallet
+      of SignalType.Wallet:
         signal = WalletSignal(content: $jsonSignal)
+      of SignalType.NodeLogin:
+        signal = Json.decode($jsonSignal, NodeSignal)
       else:
-        warn "Unhandled signal received", type = signalString
-        signalType = SignalType.Unknown
-        return
+        discard
 
     signal.signalType = signalType
 
     if not self.signalSubscribers.hasKey(signalType):
+      warn "Unhandled signal received", type = signalString
       self.signalSubscribers[signalType] = @[]
 
     for subscriber in self.signalSubscribers[signalType]:

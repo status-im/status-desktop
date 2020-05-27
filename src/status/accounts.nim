@@ -34,7 +34,7 @@ proc ensureDir(dirname: string) =
     # removeDir(dirname)
     createDir(dirname)
 
-proc initNodeAccounts*(): string =
+proc initNodeAccounts*(): seq[NodeAccount] =
   const datadir = "./data/"
   const keystoredir = "./data/keystore/"
   const nobackupdir = "./noBackup/"
@@ -44,9 +44,17 @@ proc initNodeAccounts*(): string =
   ensureDir(nobackupdir)
 
   discard $libstatus.initKeystore(keystoredir);
-  result = $libstatus.openAccounts(datadir);
+  let strNodeAccounts = $libstatus.openAccounts(datadir);
+  result = Json.decode(strNodeAccounts, seq[NodeAccount])
 
-proc saveAccountAndLogin*(multiAccounts: MultiAccounts, alias: string, identicon: string, accountData: string, password: string, configJSON: string, settingsJSON: string): Account =
+proc saveAccountAndLogin*(
+  multiAccounts: MultiAccounts, 
+  alias: string,
+  identicon: string,
+  accountData: string,
+  password: string,
+  configJSON: string,
+  settingsJSON: string): Account =
   let hashedPassword = "0x" & $keccak_256.digest(password)
   let subaccountData = %* [
     {
@@ -69,11 +77,14 @@ proc saveAccountAndLogin*(multiAccounts: MultiAccounts, alias: string, identicon
 
   var savedResult = $libstatus.saveAccountAndLogin(accountData, hashedPassword, settingsJSON, configJSON, $subaccountData)
   let parsedSavedResult = savedResult.parseJson
+  let error = parsedSavedResult["error"].getStr
 
-  if parsedSavedResult["error"].getStr == "":
+  if error == "":
     debug "Account saved succesfully"
+    result = Account(name: alias, photoPath: identicon)
+    return
 
-  result = Account(name: alias, photoPath: identicon)
+  raise newException(LoginError, "Error saving account and logging in: " & error)
 
 proc generateMultiAccounts*(account: GeneratedAccount, password: string): MultiAccounts =
   let hashedPassword = "0x" & $keccak_256.digest(password)
@@ -135,3 +146,16 @@ proc setupAccount*(account: GeneratedAccount, password: string): Account =
   # TODO this is needed for now for the retrieving of past messages. We'll either move or remove it later
   let peer = "enode://44160e22e8b42bd32a06c1532165fa9e096eebedd7fa6d6e5f8bbef0440bc4a4591fe3651be68193a7ec029021cdb496cfe1d7f9f1dc69eb99226e6f39a7a5d4@35.225.221.245:443"
   discard libstatus.addPeer(peer)
+
+proc login*(nodeAccount: NodeAccount, password: string): NodeAccount =
+  let hashedPassword = "0x" & $keccak_256.digest(password)
+  let account = nodeAccount.toAccount
+  let loginResult = $libstatus.login($toJson(account), hashedPassword)
+  let error = parseJson(loginResult)["error"].getStr
+
+  if error == "":
+    debug "Login requested", user=nodeAccount.name
+    result = nodeAccount
+    return
+
+  raise newException(LoginError, "Error logging in: " & error)

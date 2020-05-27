@@ -29,21 +29,6 @@ RowLayout {
             Item {
                 id: itmSlide1
 
-                StyledButton {
-                    id: btnGenRandomAcct
-                    width: 250
-                    height: 50
-                    anchors.top: parent.top
-                    anchors.topMargin: 50
-                    anchors.left: parent.left
-                    anchors.leftMargin: 15
-                    label: "Generate random account and login"
-                    onClicked: {
-                        onboardingModel.generateRandomAccountAndLogin()
-                        app.visible = true
-                    }
-                }
-
                 Image {
                     id: img1
                     anchors.horizontalCenter: parent.horizontalCenter

@@ -1,4 +1,5 @@
 import eventemitter
+import ../status/types
 
 type
   MailServer* = ref object
@@ -11,5 +12,5 @@ type
 type Profile* = ref object
     username*, identicon*: string
 
-proc toProfileModel*(obj: object): Profile =
-    result = Profile(username: obj.name, identicon: obj.photoPath)
+proc toProfileModel*(account: Account): Profile =
+    result = Profile(username: account.name, identicon: account.photoPath)
