@@ -57,6 +57,7 @@ DISTFILES += \
     app/AppLayouts/Chat/components/qmldir \
     app/AppLayouts/Chat/qmldir \
     app/AppLayouts/Node/NodeLayout.qml \
+    app/AppLayouts/Profile/LeftTab/qmldir \
     app/AppLayouts/Profile/ProfileLayout.qml \
     app/AppLayouts/Wallet/LeftTab.qml \
     app/AppLayouts/Wallet/WalletLayout.qml \
