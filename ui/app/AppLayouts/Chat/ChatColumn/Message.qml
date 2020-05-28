@@ -13,9 +13,11 @@ Item {
     property bool isCurrentUser: false
     property bool repeatMessageInfo: true
     property int timestamp: 1234567
+    property string sticker: "Qme8vJtyrEHxABcSVGPF95PtozDgUyfr1xGjePmFdZgk9v"
+    property int contentType: 1 // constants don't work in default props
 
     width: parent.width
-    height: isCurrentUser || (!isCurrentUser && !repeatMessageInfo) ? chatBox.height : 24 + chatBox.height
+    height: contentType == Constants.stickerType ? stickerId.height : (isCurrentUser || (!isCurrentUser && !repeatMessageInfo) ? chatBox.height : 24 + chatBox.height)
 
     Image {
         id: chatImage
@@ -50,10 +52,10 @@ Item {
         property int chatHorizontalPadding: 12
 
         id: chatBox
-        height: (2 * chatVerticalPadding) + chatText.height
+        height: (2 * chatVerticalPadding) + (contentType == Constants.stickerType ? stickerId.height : chatText.height)
         color: isCurrentUser ? Theme.blue : Theme.lightBlue
         border.color: Theme.transparent
-        width: message.length > 52 ? 380 : chatText.width + 2 * chatHorizontalPadding
+        width: contentType == Constants.stickerType ? (stickerId.width + (2 * chatHorizontalPadding)) : (message.length > 52 ? 380 : chatText.width + 2 * chatHorizontalPadding)
         radius: 16
         anchors.left: !isCurrentUser ? chatImage.right : undefined
         anchors.leftMargin: !isCurrentUser ? 8 : 0
@@ -93,6 +95,20 @@ Item {
             readOnly: true
             selectByMouse: true
             color: !isCurrentUser ? Theme.black : Theme.white
+            visible: contentType == Constants.messageType
+        }
+
+        Image {
+            id: stickerId
+            horizontalAlignment: !isCurrentUser ? Text.AlignLeft : Text.AlignRight
+            anchors.left: parent.left
+            anchors.leftMargin: parent.chatHorizontalPadding
+            anchors.top: parent.top
+            anchors.topMargin: chatBox.chatVerticalPadding
+            width: 140
+            height: 140
+            source: contentType == Constants.stickerType ? ("https://ipfs.infura.io/ipfs/" + sticker) : ""
+            visible: contentType == Constants.stickerType
         }
 
         TextEdit {
@@ -100,7 +116,7 @@ Item {
             color: Theme.darkGrey
             font.family: "Inter"
             text: timestamp
-            anchors.top: chatText.bottom
+            anchors.top: contentType == Constants.stickerType ? stickerId.bottom : chatText.bottom
             anchors.bottomMargin: Theme.padding
             anchors.right: !isCurrentUser ? parent.right : undefined
             anchors.rightMargin: !isCurrentUser ? Theme.padding : 0
@@ -117,7 +133,7 @@ Item {
 
 /*##^##
 Designer {
-    D{i:0;formeditorColor:"#ffffff";formeditorZoom:1.5;width:600}
+    D{i:0;height:80;width:800}
 }
 ##^##*/
 
