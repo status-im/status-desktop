@@ -7,6 +7,13 @@ import "../../../../shared"
 import "../../../../imports"
 
 Rectangle {
+    property string userName: "Jotaro Kujo"
+    property string message: "That's right. We're friends...  Of justice, that is."
+    property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+    property bool isCurrentUser: false
+    property bool repeatMessageInfo: true
+    property int timestamp: 1234567
+
     id: chatBox
     height: repeatMessageInfo ? 60 + chatText.height : 5 + chatText.height
     color: "#00000000"
@@ -44,7 +51,7 @@ Rectangle {
         readOnly: true
         wrapMode: Text.WordWrap
         selectByMouse: true
-                        visible: repeatMessageInfo
+        visible: repeatMessageInfo
     }
 
     TextEdit {
@@ -82,3 +89,9 @@ Rectangle {
         visible: repeatMessageInfo
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;height:80;width:500}
+}
+##^##*/
