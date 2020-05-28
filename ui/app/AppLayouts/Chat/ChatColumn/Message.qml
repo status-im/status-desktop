@@ -6,7 +6,7 @@ import Qt.labs.platform 1.1
 import "../../../../shared"
 import "../../../../imports"
 
-Rectangle {
+Item {
     property string userName: "Jotaro Kujo"
     property string message: "That's right. We're friends...  Of justice, that is."
     property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
@@ -14,84 +14,110 @@ Rectangle {
     property bool repeatMessageInfo: true
     property int timestamp: 1234567
 
-    id: chatBox
-    height: repeatMessageInfo ? 60 + chatText.height : 5 + chatText.height
-    color: "#00000000"
-    border.color: "#00000000"
-    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-    Layout.fillWidth: true
-    width: chatLogView.width
+    width: parent.width
+    height: isCurrentUser || (!isCurrentUser && !repeatMessageInfo) ? chatBox.height : 24 + chatBox.height
 
     Image {
         id: chatImage
-        width: 30
-        height: 30
-        anchors.left: !isCurrentUser ? parent.left : undefined
-        anchors.leftMargin: !isCurrentUser ? Theme.padding : 0
-        anchors.right: !isCurrentUser ? undefined : parent.right
-        anchors.rightMargin: !isCurrentUser ? 0 : Theme.padding
+        width: 36
+        height: 36
+        anchors.topMargin: 20
+        anchors.left: parent.left
+        anchors.leftMargin: Theme.padding
         anchors.top: parent.top
-        anchors.topMargin: Theme.padding
         fillMode: Image.PreserveAspectFit
         source: identicon
-        visible: repeatMessageInfo
+        visible: repeatMessageInfo && !isCurrentUser
     }
 
     TextEdit {
         id: chatName
         text: userName
+        anchors.leftMargin: 20
         anchors.top: parent.top
-        anchors.topMargin: 22
-        anchors.left: !isCurrentUser ? chatImage.right : undefined
-        anchors.leftMargin: Theme.padding
-        anchors.right: !isCurrentUser ? undefined : chatImage.left
-        anchors.rightMargin: !isCurrentUser ? 0 : Theme.padding
+        anchors.topMargin: 0
+        anchors.left: chatImage.right
         font.bold: true
         font.pixelSize: 14
         readOnly: true
         wrapMode: Text.WordWrap
         selectByMouse: true
-        visible: repeatMessageInfo
+        visible: repeatMessageInfo && !isCurrentUser
     }
 
-    TextEdit {
-        id: chatText
-        text: message
-        horizontalAlignment: !isCurrentUser ? Text.AlignLeft : Text.AlignRight
-        font.family: "Inter"
-        wrapMode: Text.WordWrap
-        anchors.right: !isCurrentUser ? parent.right : chatName.right
-        anchors.rightMargin: !isCurrentUser ? 60 : 0
-        anchors.left: !isCurrentUser ? chatName.left : parent.left
-        anchors.leftMargin: !isCurrentUser ? 0 : 60
-        anchors.top: repeatMessageInfo ? chatName.bottom : parent.top
-        anchors.topMargin: Theme.padding
-        font.pixelSize: 14
-        readOnly: true
-        selectByMouse: true
-        Layout.fillWidth: true
-    }
+    Rectangle {
+        property int chatVerticalPadding: 7
+        property int chatHorizontalPadding: 12
 
-    TextEdit {
-        id: chatTime
-        color: Theme.darkGrey
-        font.family: "Inter"
-        text: timestamp
-        anchors.top: chatText.bottom
-        anchors.bottomMargin: Theme.padding
-        anchors.right: !isCurrentUser ? parent.right : undefined
-        anchors.rightMargin: !isCurrentUser ? Theme.padding : 0
-        anchors.left: !isCurrentUser ? undefined : parent.left
-        anchors.leftMargin: !isCurrentUser ? 0 : Theme.padding
-        font.pixelSize: 10
-        readOnly: true
-        selectByMouse: true
-        visible: repeatMessageInfo
+        id: chatBox
+        height: (2 * chatVerticalPadding) + chatText.height
+        color: isCurrentUser ? Theme.blue : Theme.lightBlue
+        border.color: Theme.transparent
+        width: message.length > 52 ? 380 : chatText.width + 2 * chatHorizontalPadding
+        radius: 16
+        anchors.left: !isCurrentUser ? chatImage.right : undefined
+        anchors.leftMargin: !isCurrentUser ? 8 : 0
+        anchors.right: !isCurrentUser ? undefined : parent.right
+        anchors.rightMargin: !isCurrentUser ? 0 : Theme.padding
+        anchors.top: repeatMessageInfo && !isCurrentUser ? chatImage.top : parent.top
+        anchors.topMargin: 0
+
+        // Thi`s rectangle's only job is to mask the corner to make it less rounded... yep
+        Rectangle {
+            color: parent.color
+            width: 18
+            height: 18
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
+            anchors.left: !isCurrentUser ? parent.left : undefined
+            anchors.leftMargin: 0
+            anchors.right: !isCurrentUser ? undefined : parent.right
+            anchors.rightMargin: 0
+            radius: 4
+            z: -1
+        }
+
+        TextEdit {
+            id: chatText
+            text: message
+            anchors.left: parent.left
+            anchors.leftMargin: parent.chatHorizontalPadding
+            anchors.right: message.length > 52 ? parent.right : undefined
+            anchors.rightMargin: message.length > 52 ? parent.chatHorizontalPadding : 0
+            horizontalAlignment: !isCurrentUser ? Text.AlignLeft : Text.AlignRight
+            font.family: "Inter"
+            wrapMode: Text.WordWrap
+            anchors.top: parent.top
+            anchors.topMargin: chatBox.chatVerticalPadding
+            font.pixelSize: 15
+            readOnly: true
+            selectByMouse: true
+            color: !isCurrentUser ? Theme.black : Theme.white
+        }
+
+        TextEdit {
+            id: chatTime
+            color: Theme.darkGrey
+            font.family: "Inter"
+            text: timestamp
+            anchors.top: chatText.bottom
+            anchors.bottomMargin: Theme.padding
+            anchors.right: !isCurrentUser ? parent.right : undefined
+            anchors.rightMargin: !isCurrentUser ? Theme.padding : 0
+            anchors.left: !isCurrentUser ? undefined : parent.left
+            anchors.leftMargin: !isCurrentUser ? 0 : Theme.padding
+            font.pixelSize: 10
+            readOnly: true
+            selectByMouse: true
+            // Probably only want to show this when clicking?
+            visible: false
+        }
     }
 }
 
 /*##^##
 Designer {
-    D{i:0;height:80;width:500}
+    D{i:0;formeditorColor:"#ffffff";formeditorZoom:1.5;width:600}
 }
 ##^##*/
+
