@@ -142,6 +142,7 @@ Item {
         MouseArea {
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton | Qt.RightButton
+            cursorShape: Qt.PointingHandCursor
             onClicked: {
                 addChatLbl.state = "rotated"
                 let x = addChatLbl.x + addChatLbl.width / 2 - newChatMenu.width / 2
