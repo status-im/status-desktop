@@ -60,6 +60,9 @@ DISTFILES += \
     app/AppLayouts/Node/NodeLayout.qml \
     app/AppLayouts/Profile/LeftTab/qmldir \
     app/AppLayouts/Profile/ProfileLayout.qml \
+    app/AppLayouts/Wallet/AssetsTab.qml \
+    app/AppLayouts/Wallet/CollectiblesTab.qml \
+    app/AppLayouts/Wallet/HistoryTab.qml \
     app/AppLayouts/Wallet/LeftTab.qml \
     app/AppLayouts/Wallet/SendModal.qml \
     app/AppLayouts/Wallet/WalletHeader.qml \
