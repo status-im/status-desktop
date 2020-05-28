@@ -8,6 +8,7 @@ type
     Timestamp = UserRole + 3
     Identicon = UserRole + 4
     IsCurrentUser = UserRole + 5
+    RepeatMessageInfo = UserRole + 6
 
 QtObject:
   type
@@ -37,6 +38,7 @@ QtObject:
     if index.row < 0 or index.row >= self.messages.len:
       return
     let message = self.messages[index.row]
+    let repeatMessageInfo = (index.row == 0) or message.fromAuthor != self.messages[index.row - 1].fromAuthor
     let chatMessageRole = role.ChatMessageRoles
     case chatMessageRole:
       of ChatMessageRoles.UserName: result = newQVariant(message.userName)
@@ -44,17 +46,20 @@ QtObject:
       of ChatMessageRoles.Timestamp: result = newQVariant(message.timestamp)
       of ChatMessageRoles.Identicon: result = newQVariant(message.identicon)
       of ChatMessageRoles.IsCurrentUser: result = newQVariant(message.isCurrentUser)
+      of ChatMessageRoles.RepeatMessageInfo: result = newQVariant(repeatMessageInfo)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
-    { 
+    {
       ChatMessageRoles.UserName.int:"userName",
       ChatMessageRoles.Message.int:"message",
       ChatMessageRoles.Timestamp.int:"timestamp",
       ChatMessageRoles.Identicon.int:"identicon",
-      ChatMessageRoles.IsCurrentUser.int:"isCurrentUser"
+      ChatMessageRoles.IsCurrentUser.int:"isCurrentUser",
+      ChatMessageRoles.RepeatMessageInfo.int:"repeatMessageInfo"
     }.toTable
 
   proc add*(self: ChatMessageList, message: ChatMessage) =
     self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len)
     self.messages.add(message)
     self.endInsertRows()
+

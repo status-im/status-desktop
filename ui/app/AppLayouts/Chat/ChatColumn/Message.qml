@@ -8,7 +8,7 @@ import "../../../../imports"
 
 Rectangle {
     id: chatBox
-    height: 60 + chatText.height
+    height: repeatMessageInfo ? 60 + chatText.height : 5 + chatText.height
     color: "#00000000"
     border.color: "#00000000"
     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -27,6 +27,7 @@ Rectangle {
         anchors.topMargin: Theme.padding
         fillMode: Image.PreserveAspectFit
         source: identicon
+        visible: repeatMessageInfo
     }
 
     TextEdit {
@@ -43,6 +44,7 @@ Rectangle {
         readOnly: true
         wrapMode: Text.WordWrap
         selectByMouse: true
+                        visible: repeatMessageInfo
     }
 
     TextEdit {
@@ -55,7 +57,7 @@ Rectangle {
         anchors.rightMargin: !isCurrentUser ? 60 : 0
         anchors.left: !isCurrentUser ? chatName.left : parent.left
         anchors.leftMargin: !isCurrentUser ? 0 : 60
-        anchors.top: chatName.bottom
+        anchors.top: repeatMessageInfo ? chatName.bottom : parent.top
         anchors.topMargin: Theme.padding
         font.pixelSize: 14
         readOnly: true
@@ -77,5 +79,6 @@ Rectangle {
         font.pixelSize: 10
         readOnly: true
         selectByMouse: true
+        visible: repeatMessageInfo
     }
 }
