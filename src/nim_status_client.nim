@@ -55,7 +55,7 @@ proc mainProc() =
   var profile = profile.newController(appEvents)
   engine.setRootContextProperty("profileModel", profile.variant)
 
-  appEvents.on("login") do(a: Args):
+  appEvents.once("login") do(a: Args):
     var args = AccountArgs(a)
     status_core.startMessenger()
     wallet.init()
@@ -68,12 +68,11 @@ proc mainProc() =
   let showLogin = nodeAccounts.len > 0
   engine.setRootContextProperty("showLogin", newQVariant(showLogin))
 
-  if nodeAccounts.len > 0:
-    login.init(nodeAccounts)
-    engine.setRootContextProperty("loginModel", login.variant)
-  else:
-    onboarding.init()
-    engine.setRootContextProperty("onboardingModel", onboarding.variant)
+  login.init(nodeAccounts)
+  engine.setRootContextProperty("loginModel", login.variant)
+  
+  onboarding.init()
+  engine.setRootContextProperty("onboardingModel", onboarding.variant)
 
   signalController.init()
   signalController.addSubscriber(SignalType.Wallet, wallet)
@@ -90,8 +89,8 @@ proc mainProc() =
       chat.load(channel.name)
   )
 
-  # accountsModel.appEvents.on("login") do(a: Args):
-  # appEvents.on("login") do(a: Args):
+  # accountsModel.appEvents.once("login") do(a: Args):
+  # appEvents.once("login") do(a: Args):
   #   appState.addChannel("test")
   #   appState.addChannel("test2")
   #   appState.addChannel("status")

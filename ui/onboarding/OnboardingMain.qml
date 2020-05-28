@@ -73,6 +73,11 @@ Page {
                     return !resp.error
                 }
             }
+
+            DSM.SignalTransition {
+                targetState: genKeyState
+                signal: login.btnGenKey.clicked
+            }
         }
 
         DSM.FinalState {

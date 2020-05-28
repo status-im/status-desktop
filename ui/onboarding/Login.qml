@@ -9,11 +9,11 @@ SwipeView {
     anchors.fill: parent
     currentIndex: 0
 
-    signal loginDone(response: var)
+    property alias btnGenKey: btnGenKey
 
-      onCurrentItemChanged: {
-          currentItem.txtPassword.focus = true;
-      }
+    onCurrentItemChanged: {
+        currentItem.txtPassword.focus = true;
+    }
 
     Item {
         id: wizardStep2
@@ -37,59 +37,68 @@ SwipeView {
                 Layout.fillWidth: true
                 spacing: 10
                 ButtonGroup {
-                        id: accountGroup
-                    }
-
-                    Component {
-                        id: addressViewDelegate
-
-                        Item {
-                            height: 56
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-
-                             Row {
-                               RadioButton {
-                                 checked: index == 0 ? true : false
-                                 ButtonGroup.group: accountGroup
-                                 onClicked: {
-                                   wizardStep2.selectedIndex = index;
-                                 }
-                               }
-                               Column {
-                                 Image {
-                                   source: identicon
-                                 }
-                               }
-                               Column {
-                                 Text {
-                                   text: username
-                                 }
-                                 Text {
-                                   text: key
-                                   width: 160
-                                   elide: Text.ElideMiddle
-                                 }
-
-                               }
-                             }
-                        }
-
-                    }
-
-                    ListView {
-                        id: addressesView
-                        contentWidth: 200
-                        model: loginModel
-                        delegate: addressViewDelegate
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        anchors.topMargin: 36
-                        anchors.fill: parent
-                    }
+                    id: accountGroup
                 }
+
+                Component {
+                    id: addressViewDelegate
+
+                    Item {
+                        height: 56
+                        anchors.right: parent.right
+                        anchors.rightMargin: 0
+                        anchors.left: parent.left
+                        anchors.leftMargin: 0
+
+                          Row {
+                            RadioButton {
+                              checked: index == 0 ? true : false
+                              ButtonGroup.group: accountGroup
+                              onClicked: {
+                                wizardStep2.selectedIndex = index;
+                              }
+                            }
+                            Column {
+                              Image {
+                                source: identicon
+                              }
+                            }
+                            Column {
+                              Text {
+                                text: username
+                              }
+                              Text {
+                                text: key
+                                width: 160
+                                elide: Text.ElideMiddle
+                              }
+
+                            }
+                          }
+                    }
+
+                }
+
+                ListView {
+                    id: addressesView
+                    contentWidth: 200
+                    model: loginModel
+                    delegate: addressViewDelegate
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    anchors.topMargin: 36
+                    anchors.fill: parent
+                }
+            }
+
+            Button {
+                id: btnGenKey
+                text: "Generate new account"
+                anchors.left: parent.left
+                anchors.leftMargin: 20
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 20
+            }
 
             Button {
                 text: "Select"
