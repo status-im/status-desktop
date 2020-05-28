@@ -15,6 +15,7 @@ QtObject {
     readonly property color darkBlue: "#3c55c9"
     readonly property color darkBlueBtn: "#5a70dd"
 
+    readonly property int bigPadding: 24
     readonly property int padding: 16
     readonly property int smallPadding: 10
     readonly property int radius: 8
