@@ -9,7 +9,6 @@ import "../components"
 
 Rectangle {
     id: addChat
-    x: 183
     width: 36
     height: 36
     color: Theme.blue
@@ -19,18 +18,15 @@ Rectangle {
     anchors.top: parent.top
     anchors.topMargin: 59
 
-    Text {
+    Image {
         id: addChatLbl
-        color: "#ffffff"
-        text: qsTr("+")
-        anchors.verticalCenterOffset: -1
-        anchors.horizontalCenterOffset: 1
+        fillMode: Image.PreserveAspectFit
+        source: "../../../img/plusSign.svg"
+        width: 14
+        height: 14
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        lineHeight: 1
-        fontSizeMode: Text.FixedSize
-        font.bold: true
-        font.pixelSize: 28
+
         state: "default"
         rotation: 0
         states: [
@@ -107,3 +103,9 @@ Rectangle {
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:3}
+}
+##^##*/
