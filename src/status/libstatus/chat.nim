@@ -110,3 +110,6 @@ proc sendChatMessage*(chatId: string, msg: string): string =
       "contentType": 1
     }
   ])
+
+proc markAllRead*(chatId: string): string =
+  callPrivateRPC("markAllRead".prefix, %* [chatId])
