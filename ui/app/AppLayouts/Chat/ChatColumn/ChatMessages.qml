@@ -9,6 +9,7 @@ import "./samples/"
 
 ListView {
     property var messageList: MessagesData {}
+    spacing: 4
     id: chatLogView
     model: messageList
     Layout.fillWidth: true
