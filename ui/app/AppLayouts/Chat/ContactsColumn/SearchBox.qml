@@ -36,7 +36,7 @@ Rectangle {
         anchors.leftMargin: 10
         anchors.verticalCenter: parent.verticalCenter
         fillMode: Image.PreserveAspectFit
-        source: "../../img/search.svg"
+        source: "../../../img/search.svg"
     }
 
     MouseArea {

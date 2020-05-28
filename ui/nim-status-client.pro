@@ -54,6 +54,7 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatLayout.qml \
     app/AppLayouts/Chat/ContactsColumn.qml \
     app/AppLayouts/Chat/components/PublicChatPopup.qml \
+    app/AppLayouts/Chat/components/PrivateChatPopup.qml \
     app/AppLayouts/Chat/components/SuggestedChannel.qml \
     app/AppLayouts/Chat/components/qmldir \
     app/AppLayouts/Chat/qmldir \

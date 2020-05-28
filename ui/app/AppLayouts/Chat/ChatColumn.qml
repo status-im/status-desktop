@@ -11,6 +11,7 @@ StackLayout {
     property int chatGroupsListViewCount: 0
     Layout.fillHeight: true
     Layout.fillWidth: true
+    Layout.minimumWidth: 300
 
     currentIndex: chatGroupsListViewCount > 0 ? 0 : 1
 
