@@ -5,7 +5,7 @@ import "../imports"
 
 Menu {
     property alias arrowX: bgPopupMenuTopArrow.x
-
+    closePolicy: Popup.CloseOnPressOutsideParent
     id: popupMenu
     topPadding: 16
     bottomPadding: 16
