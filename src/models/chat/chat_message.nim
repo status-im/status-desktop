@@ -4,6 +4,7 @@ import ../../signals/types
 type ChatMessage* = ref object
   userName*: string
   message*: string
+  fromAuthor*: string
   timestamp*: string
   identicon*: string
   isCurrentUser*: bool
@@ -15,6 +16,7 @@ proc newChatMessage*(): ChatMessage =
   result = ChatMessage()
   result.userName = ""
   result.message = ""
+  result.fromAuthor = ""
   result.timestamp = "0"
   result.identicon = ""
   result.isCurrentUser = false
@@ -31,6 +33,7 @@ proc toChatMessage*(payload: JsonNode): ChatMessage =
 proc toChatMessage*(message: Message): ChatMessage =
   result = ChatMessage(
     userName: message.alias,
+    fromAuthor: message.fromAuthor,
     message: message.text,
     timestamp: message.timestamp,
     identicon: message.identicon,
