@@ -188,9 +188,9 @@ Item {
                 anchors.fill: parent
                 onClicked : {
                     if(channelName.text === "") return;
-
-                    chatsModel.joinChat(channelName.text)
-                    popup.close()
+                    chatsModel.joinChat(channelName.text);
+                    channelName.text = "";
+                    popup.close();
                 }
             }
         }

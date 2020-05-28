@@ -19,7 +19,9 @@ Menu {
             Item {
                 id: menuIcon
                 anchors.left: parent.left
+                anchors.top: parent.top
                 anchors.leftMargin: 12
+                anchors.topMargin: 4
                 Image {
                     fillMode: Image.Pad
                     id: popupMenuItemIcon
@@ -38,6 +40,7 @@ Menu {
             Text {
                 anchors.left: menuIcon.right
                 anchors.leftMargin: 32
+                topPadding: 4
                 text: popupMenuItem.text
                 font: popupMenuItem.font
                 color: popupMenuItem.highlighted ? Theme.white : Theme.black
