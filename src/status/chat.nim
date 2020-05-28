@@ -4,6 +4,8 @@ import utils
 import times
 import strutils
 import chronicles
+import ../signals/types
+import ../signals/messages
 
 proc loadFilters*(chatId: string, filterId: string = "", symKeyId: string = "", oneToOne: bool = false, identity: string = "", topic: string = "", discovery: bool = false, negotiated: bool = false, listen: bool = true): string =
   result =  callPrivateRPC("loadFilters".prefix, %* [
@@ -40,18 +42,25 @@ proc removeFilters*(chatId: string, filterId: string = "", symKeyId: string = ""
 proc saveChat*(chatId: string, oneToOne = false) =
   discard callPrivateRPC("saveChat".prefix, %* [
     {
-      "lastClockValue": 0,
-      "color": "#51d0f0",
+      "lastClockValue": 0, # TODO:
+      "color": "#51d0f0", # TODO:
       "name": chatId,
-      "lastMessage": nil,
-      "active": true,
+      "lastMessage": nil, # TODO:
+      "active": true, # TODO:
       "id": chatId,
-      "unviewedMessagesCount": 0,
+      "unviewedMessagesCount": 0, # TODO:
       # TODO use constants for those too or use the Date
-      "chatType":  if oneToOne: 1 else: 2,
-      "timestamp": 1588940692659
+      "chatType":  if oneToOne: 1 else: 2,  # TODO: use constants
+      "timestamp": 1588940692659  # TODO:
     }
   ])
+
+proc loadChats*(): seq[Chat] =
+  result = @[]
+  let jsonResponse = parseJson($callPrivateRPC("chats".prefix))
+  if jsonResponse["result"].kind != JNull:
+    for jsonChat in jsonResponse{"result"}:
+      result.add(jsonChat.toChat)
 
 proc chatMessages*(chatId: string) =
   discard callPrivateRPC("chatMessages".prefix, %* [chatId, nil, 20])

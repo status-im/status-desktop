@@ -47,6 +47,7 @@ proc toChatItem*(chat: Chat): ChatItem =
     result = ChatItem(
       id: chat.id,
       name: chatName(chat),
+      color: chat.color,
       chatType: chat.chatType,
       lastMessage: chat.lastMessage.text,
       timestamp: chat.timestamp,

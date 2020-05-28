@@ -44,6 +44,7 @@ QtObject:
 
   proc newChannelsList*(model: ChatModel): ChannelsList =
     new(result, delete)
+    result.chats = @[]
     result.model = model
     result.setup()
 
@@ -90,8 +91,7 @@ QtObject:
 
     result = self.chats.len
 
-  proc getChannel*(self: ChannelsList, index: int): ChatItem =
-    self.chats[index]
+  proc getChannel*(self: ChannelsList, index: int): ChatItem = self.chats[index]
 
   proc upsertChannel(self: ChannelsList, channel: ChatItem): int =
     let idx = self.chats.findById(channel.id)

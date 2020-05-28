@@ -27,18 +27,19 @@ proc delete*(self: ChatController) =
   delete self.variant
 
 proc init*(self: ChatController) =
+  self.model.events.on("chatsLoaded") do(e: Args):
+    var chatArgs = ChatArgs(e)
+    for c in chatArgs.chats:
+      self.view.pushChatItem(c.toChatItem)
+
   self.model.events.on("messageSent") do(e: Args):
     var sentMessage = MsgArgs(e)
     var chatMessage = sentMessage.payload.toChatMessage()
     chatMessage.message = sentMessage.message
     chatMessage.isCurrentUser = true
-
     self.view.pushMessage(sentMessage.chatId, chatMessage)
 
-proc load*(self: ChatController, chatId: string) =
-  # TODO: we need a function to load the channels from the db.
-  #       and... called from init() instead from nim_status_client
-  discard self.view.joinChat(chatId, ChatType.Public.int)
+  self.model.load()
   self.view.setActiveChannelByIndex(0)
 
 proc handleMessage(self: ChatController, data: Signal) =
