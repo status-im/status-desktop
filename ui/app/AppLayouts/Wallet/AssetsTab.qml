@@ -1,14 +1,17 @@
-import QtQuick 2.0
+import QtQuick 2.3
+import "../../../imports"
 
 Item {
     Component {
         id: assetViewDelegate
 
         Item {
+            id: element
             anchors.right: parent.right
             anchors.rightMargin: 0
             anchors.left: parent.left
             anchors.leftMargin: 0
+            height: 40
 
             Image {
                 id: assetInfoImage
@@ -16,45 +19,67 @@ Item {
                 height: 36
                 source: image
                 anchors.left: parent.left
-                anchors.leftMargin: Theme.padding
+                anchors.leftMargin: 0
                 anchors.verticalCenter: parent.verticalCenter
-            }
-
-            Text {
-                id: assetValue
-                text: value
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 14
-                font.strikeout: false
-                anchors.left: parent.left
-                anchors.leftMargin: 72
             }
             Text {
                 id: assetSymbol
                 text: symbol
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: assetInfoImage.right
+                anchors.leftMargin: Theme.smallPadding
+                anchors.top: assetInfoImage.top
+                anchors.topMargin: 0
+                color: Theme.black
+                font.pixelSize: 15
+            }
+            Text {
+                id: assetFullTokenName
+                text: fullTokenName
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 0
+                anchors.left: assetInfoImage.right
+                anchors.leftMargin: Theme.smallPadding
                 color: Theme.darkGrey
-                font.pixelSize: 14
-                anchors.right: assetFiatValue.left
-                anchors.rightMargin: 10
+                font.pixelSize: 15
+            }
+            Text {
+                id: assetValue
+                text: value
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                font.pixelSize: 15
+                font.strikeout: false
             }
             Text {
                 id: assetFiatValue
                 color: Theme.darkGrey
                 text: fiatValue
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 14
                 anchors.right: parent.right
-                anchors.rightMargin: Theme.padding
+                anchors.rightMargin: 0
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 0
+                font.pixelSize: 15
             }
         }
     }
 
+    ListModel {
+        id: exampleModel
+
+        ListElement {
+            value: "123 USD"
+            symbol: "ETH"
+            fullTokenName: "Ethereum"
+            fiatValue: "3423 ETH"
+            image: "../../img/token-icons/eth.svg"
+        }
+    }
 
     ListView {
         id: assetListView
-        anchors.topMargin: 0
+        anchors.topMargin: 20
         anchors.fill: parent
+//        model: exampleModel
         model: assetsModel.assets
         delegate: assetViewDelegate
     }
