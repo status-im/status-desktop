@@ -43,85 +43,104 @@ SplitView {
             anchors.rightMargin: 0
             anchors.top: walletHeader.bottom
             anchors.topMargin: 23
-            Layout.fillHeight: true
-            Layout.fillWidth: true
 
-            Text {
-                id: assetsTitle
-                color: Theme.darkGrey
-                text: qsTr("Assets")
-                anchors.left: parent.left
-                anchors.leftMargin: 24
-                anchors.top: parent.top
-                anchors.topMargin: Theme.smallPadding
-                font.pixelSize: 14
-            }
+            Item {
+                id: element
+                Layout.fillHeight: true
+                Layout.fillWidth: true
 
-            Component {
-                id: assetViewDelegate
-
-                Item {
-                    id: element6
-                    height: 56
+                TabBar {
+                    id: walletTabBar
                     anchors.right: parent.right
-                    anchors.rightMargin: 0
+                    anchors.rightMargin: Theme.bigPadding
                     anchors.left: parent.left
-                    anchors.leftMargin: 0
+                    anchors.leftMargin: Theme.bigPadding
+                    anchors.top: parent.top
+                    anchors.topMargin: Theme.padding
 
-                    Image {
-                        id: assetInfoContainer
-                        width: 36
-                        height: 36
-                        source: image
-                        anchors.left: parent.left
-                        anchors.leftMargin: Theme.padding
-                        anchors.verticalCenter: parent.verticalCenter
+                    StatusTabButton {
+                        id: assetBtn
+                        btnText: "Assets"
                     }
-
-                    Text {
-                        id: assetValue
-                        text: value
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.pixelSize: 14
-                        font.strikeout: false
-                        anchors.left: parent.left
-                        anchors.leftMargin: 72
+                    StatusTabButton {
+                        id: collectiblesBtn
+                        anchors.left: assetBtn.right
+                        anchors.leftMargin: 32
+                        btnText: "Collectibles"
                     }
-                    Text {
-                        id: assetSymbol
-                        text: symbol
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: Theme.darkGrey
-                        font.pixelSize: 14
-                        anchors.right: assetFiatValue.left
-                        anchors.rightMargin: 10
-                    }
-                    Text {
-                        id: assetFiatValue
-                        color: Theme.darkGrey
-                        text: fiatValue
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.pixelSize: 14
-                        anchors.right: parent.right
-                        anchors.rightMargin: Theme.padding
+                    StatusTabButton {
+                        id: historyBtn
+                        anchors.left: collectiblesBtn.right
+                        anchors.leftMargin: 32
+                        btnText: "History"
                     }
                 }
-            }
 
-            ListView {
-                id: listView
-                anchors.topMargin: 36
-                anchors.fill: parent
-                model: assetsModel.assets
-                delegate: assetViewDelegate
+                Component {
+                    id: assetViewDelegate
+
+                    Item {
+                        id: element6
+                        height: 56
+                        anchors.right: parent.right
+                        anchors.rightMargin: 0
+                        anchors.left: parent.left
+                        anchors.leftMargin: 0
+
+                        Image {
+                            id: assetInfoContainer
+                            width: 36
+                            height: 36
+                            source: image
+                            anchors.left: parent.left
+                            anchors.leftMargin: Theme.padding
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+                        Text {
+                            id: assetValue
+                            text: value
+                            anchors.verticalCenter: parent.verticalCenter
+                            font.pixelSize: 14
+                            font.strikeout: false
+                            anchors.left: parent.left
+                            anchors.leftMargin: 72
+                        }
+                        Text {
+                            id: assetSymbol
+                            text: symbol
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: Theme.darkGrey
+                            font.pixelSize: 14
+                            anchors.right: assetFiatValue.left
+                            anchors.rightMargin: 10
+                        }
+                        Text {
+                            id: assetFiatValue
+                            color: Theme.darkGrey
+                            text: fiatValue
+                            anchors.verticalCenter: parent.verticalCenter
+                            font.pixelSize: 14
+                            anchors.right: parent.right
+                            anchors.rightMargin: Theme.padding
+                        }
+                    }
+                }
+
+                ListView {
+                    id: listView
+                    anchors.topMargin: 36
+                    anchors.fill: parent
+                    model: assetsModel.assets
+                    delegate: assetViewDelegate
+                }
             }
         }
     }
 }
 /*##^##
 Designer {
-    D{i:0;autoSize:true;formeditorColor:"#ffffff";formeditorZoom:0.8999999761581421;height:770;width:1152}
-D{i:16;anchors_x:0;anchors_y:0}
+    D{i:0;autoSize:true;formeditorColor:"#ffffff";height:770;width:1152}
 }
 ##^##*/
 

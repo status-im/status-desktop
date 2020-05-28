@@ -112,6 +112,7 @@ DISTFILES += \
     onboarding/qmldir \
     shared/PopupMenu.qml \
     shared/Separator.qml \
+    shared/StatusTabButton.qml \
     shared/StyledButton.qml \
     shared/RoundedIcon.qml \
     shared/qmldir
