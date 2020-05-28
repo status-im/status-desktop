@@ -30,25 +30,24 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    Inter-Black.otf \
-    Inter-BlackItalic.otf \
-    Inter-Bold.otf \
-    Inter-BoldItalic.otf \
-    Inter-ExtraBold.otf \
-    Inter-ExtraBoldItalic.otf \
-    Inter-ExtraLight.otf \
-    Inter-ExtraLightItalic.otf \
-    Inter-Italic.otf \
-    Inter-Light.otf \
-    Inter-LightItalic.otf \
-    Inter-Medium.otf \
-    Inter-MediumItalic.otf \
-    Inter-Regular.otf \
-    Inter-SemiBold.otf \
-    Inter-SemiBoldItalic.otf \
-    Inter-Thin.otf \
-    Inter-ThinItalic.otf \
-    Inter-V.otf \
+    ../fonts/InterStatus/InterStatus-Black.otf \
+    ../fonts/InterStatus/InterStatus-BlackItalic.otf \
+    ../fonts/InterStatus/InterStatus-Bold.otf \
+    ../fonts/InterStatus/InterStatus-BoldItalic.otf \
+    ../fonts/InterStatus/InterStatus-ExtraBold.otf \
+    ../fonts/InterStatus/InterStatus-ExtraBoldItalic.otf \
+    ../fonts/InterStatus/InterStatus-ExtraLight.otf \
+    ../fonts/InterStatus/InterStatus-ExtraLightItalic.otf \
+    ../fonts/InterStatus/InterStatus-Italic.otf \
+    ../fonts/InterStatus/InterStatus-Light.otf \
+    ../fonts/InterStatus/InterStatus-LightItalic.otf \
+    ../fonts/InterStatus/InterStatus-Medium.otf \
+    ../fonts/InterStatus/InterStatus-MediumItalic.otf \
+    ../fonts/InterStatus/InterStatus-Regular.otf \
+    ../fonts/InterStatus/InterStatus-SemiBold.otf \
+    ../fonts/InterStatus/InterStatus-SemiBoldItalic.otf \
+    ../fonts/InterStatus/InterStatus-Thin.otf \
+    ../fonts/InterStatus/InterStatus-ThinItalic.otf \
     Theme.qml \
     app/AppLayouts/Browser/BrowserLayout.qml \
     app/AppLayouts/Chat/ChatColumn.qml \
