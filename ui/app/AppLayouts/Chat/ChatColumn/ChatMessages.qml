@@ -31,6 +31,8 @@ ScrollView {
             isCurrentUser: model.isCurrentUser
             repeatMessageInfo: model.repeatMessageInfo
             timestamp: model.timestamp
+            sticker: model.sticker
+            contentType: model.contentType
         }
         highlightFollowsCurrentItem: true
 

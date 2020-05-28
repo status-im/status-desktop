@@ -1,5 +1,6 @@
 import json
 import ../../signals/types
+import stickers
 
 type ChatMessage* = ref object
   userName*: string
@@ -8,6 +9,8 @@ type ChatMessage* = ref object
   timestamp*: string
   identicon*: string
   isCurrentUser*: bool
+  contentType*: int
+  sticker*: string
 
 proc delete*(self: ChatMessage) =
   discard
@@ -20,6 +23,8 @@ proc newChatMessage*(): ChatMessage =
   result.timestamp = "0"
   result.identicon = ""
   result.isCurrentUser = false
+  result.contentType = 1
+  result.sticker = ""
 
 proc toChatMessage*(payload: JsonNode): ChatMessage =
   result = ChatMessage(
@@ -27,7 +32,9 @@ proc toChatMessage*(payload: JsonNode): ChatMessage =
     message: payload["text"].str,
     timestamp: $payload["timestamp"],
     identicon: payload["identicon"].str,
-    isCurrentUser: false
+    isCurrentUser: false,
+    contentType: payload["contentType"].getInt,
+    sticker: "" # TODO: implement when implementing stickers from user
   )
 
 proc toChatMessage*(message: Message): ChatMessage =
@@ -37,5 +44,7 @@ proc toChatMessage*(message: Message): ChatMessage =
     message: message.text,
     timestamp: message.timestamp,
     identicon: message.identicon,
-    isCurrentUser: message.isCurrentUser
+    isCurrentUser: message.isCurrentUser,
+    contentType: message.contentType,
+    sticker: message.stickerHash.decodeContentHash()
   )

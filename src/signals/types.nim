@@ -1,3 +1,4 @@
+import json
 import chronicles
 import ../status/types
 import json_serialization
@@ -40,6 +41,7 @@ type Message* = object
   timestamp*: string
   whisperTimestamp*: string
   isCurrentUser*: bool
+  stickerHash*: string
 
 # Override this method
 method onSignal*(self: SignalSubscriber, data: Signal) {.base.} =

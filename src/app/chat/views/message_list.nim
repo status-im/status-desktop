@@ -9,6 +9,8 @@ type
     Identicon = UserRole + 4
     IsCurrentUser = UserRole + 5
     RepeatMessageInfo = UserRole + 6
+    ContentType = UserRole + 7
+    Sticker = UserRole + 8
 
 QtObject:
   type
@@ -47,6 +49,8 @@ QtObject:
       of ChatMessageRoles.Identicon: result = newQVariant(message.identicon)
       of ChatMessageRoles.IsCurrentUser: result = newQVariant(message.isCurrentUser)
       of ChatMessageRoles.RepeatMessageInfo: result = newQVariant(repeatMessageInfo)
+      of ChatMessageRoles.ContentType: result = newQVariant(message.contentType)
+      of ChatMessageRoles.Sticker: result = newQVariant(message.sticker)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -55,11 +59,12 @@ QtObject:
       ChatMessageRoles.Timestamp.int:"timestamp",
       ChatMessageRoles.Identicon.int:"identicon",
       ChatMessageRoles.IsCurrentUser.int:"isCurrentUser",
-      ChatMessageRoles.RepeatMessageInfo.int:"repeatMessageInfo"
+      ChatMessageRoles.RepeatMessageInfo.int:"repeatMessageInfo",
+      ChatMessageRoles.ContentType.int:"contentType",
+      ChatMessageRoles.Sticker.int:"sticker"
     }.toTable
 
   proc add*(self: ChatMessageList, message: ChatMessage) =
     self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len)
     self.messages.add(message)
     self.endInsertRows()
-
