@@ -124,3 +124,7 @@ proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
 proc chatMessages*(self: ChatModel, chatId: string) =
   let msgs = status_chat.chatMessages(chatId)
   self.events.emit("messagesLoaded", MsgsLoadedArgs(messages: msgs))
+
+proc markAllChannelMessagesRead*(self: ChatModel, chatId: string): JsonNode =
+  var response = status_chat.markAllRead(chatId)
+  result = parseJson(response)

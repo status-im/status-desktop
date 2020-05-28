@@ -98,3 +98,12 @@ QtObject:
       self.chats[0] = channel
 
     self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.LastMessage.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.LastMessage.int])
+
+  proc clearUnreadMessagesCount*(self: ChannelsList, channel: ChatItem) =
+    let idx = self.chats.findById(channel.id)
+    let topLeft = self.createIndex(0, 0, nil)
+    let bottomRight = self.createIndex(self.chats.len - 1, 0, nil)
+    channel.unviewedMessagesCount = 0
+    self.chats[idx] = channel
+
+    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.LastMessage.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.LastMessage.int])
