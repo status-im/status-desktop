@@ -8,6 +8,7 @@ import "./"
 Item {
   function open(){
     popup.open()
+    channelName.text = "";
     channelName.forceActiveFocus(Qt.MouseFocusReason)
   }
 
@@ -189,7 +190,6 @@ Item {
                 onClicked : {
                     if(channelName.text === "") return;
                     chatsModel.joinChat(channelName.text);
-                    channelName.text = "";
                     popup.close();
                 }
             }
