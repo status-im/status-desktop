@@ -108,6 +108,7 @@ Item {
                 height: 12
                 fillMode: Image.PreserveAspectFit
                 source: "../../img/diagonalArrow.svg"
+                rotation: 180
             }
 
             Text {
@@ -130,3 +131,9 @@ Item {
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorColor:"#ffffff"}
+}
+##^##*/
