@@ -10,9 +10,8 @@ import "./components"
 import "./ContactsColumn"
 
 Item {
-    // property alias chatGroupsListViewCount: chatGroupsListView.count
     property alias chatGroupsListViewCount: channelList.channelListCount
-    property alias searchStr: searchText.text
+    property alias searchStr: searchBox.searchStr
 
     id: contactsColumn
     width: 300
@@ -34,46 +33,8 @@ Item {
         id: publicChatPopup
     }
 
-    Rectangle {
+    SearchBox {
         id: searchBox
-        height: 36
-        color: Theme.grey
-        anchors.top: parent.top
-        anchors.topMargin: 59
-        radius: 8
-        anchors.right: parent.right
-        anchors.rightMargin: 65
-        anchors.left: parent.left
-        anchors.leftMargin: 16
-
-        TextField {
-            id: searchText
-            placeholderText: qsTr("Search")
-            anchors.left: parent.left
-            anchors.leftMargin: 32
-            anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: 12
-            background: Rectangle {
-                color: "#00000000"
-            }
-        }
-
-        Image {
-            id: image4
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.verticalCenter: parent.verticalCenter
-            fillMode: Image.PreserveAspectFit
-            source: "../../img/search.svg"
-        }
-
-        MouseArea {
-            id: mouseArea
-            anchors.fill: parent
-            onClicked: {
-                searchText.forceActiveFocus(Qt.MouseFocusReason)
-            }
-        }
     }
 
     Rectangle {
@@ -197,7 +158,6 @@ Item {
             id: channelList
         }
     }
-
 }
 
 /*##^##
@@ -205,4 +165,3 @@ Designer {
     D{i:0;formeditorColor:"#ffffff";height:770;width:300}
 }
 ##^##*/
-
