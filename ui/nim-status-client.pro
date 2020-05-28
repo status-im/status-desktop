@@ -52,19 +52,46 @@ DISTFILES += \
     app/AppLayouts/Browser/BrowserLayout.qml \
     app/AppLayouts/Chat/ChatColumn.qml \
     app/AppLayouts/Chat/ChatColumn/MessagesData.qml \
+    app/AppLayouts/Chat/ChatColumn/ChatInput.qml \
+    app/AppLayouts/Chat/ChatColumn/ChatMessages.qml \
+    app/AppLayouts/Chat/ChatColumn/EmptyChat.qml \
+    app/AppLayouts/Chat/ChatColumn/Message.qml \
+    app/AppLayouts/Chat/ChatColumn/TopBar.qml \
+    app/AppLayouts/Chat/ChatColumn/qmldir \
     app/AppLayouts/Chat/ChatLayout.qml \
     app/AppLayouts/Chat/ContactsColumn.qml \
+    app/AppLayouts/Chat/ContactsColumn/AddChat.qml \
+    app/AppLayouts/Chat/ContactsColumn/Channel.qml \
+    app/AppLayouts/Chat/ContactsColumn/ChannelList.qml \
+    app/AppLayouts/Chat/ContactsColumn/EmptyView.qml \
+    app/AppLayouts/Chat/ContactsColumn/SearchBox.qml \
+    app/AppLayouts/Chat/ContactsColumn/qmldir \
     app/AppLayouts/Chat/components/PublicChatPopup.qml \
     app/AppLayouts/Chat/components/PrivateChatPopup.qml \
     app/AppLayouts/Chat/components/SuggestedChannel.qml \
     app/AppLayouts/Chat/components/qmldir \
     app/AppLayouts/Chat/qmldir \
     app/AppLayouts/Node/NodeLayout.qml \
+    app/AppLayouts/Profile/LeftTab.qml \
+    app/AppLayouts/Profile/LeftTab/Menu.qml \
+    app/AppLayouts/Profile/LeftTab/Profile.qml \
     app/AppLayouts/Profile/LeftTab/qmldir \
     app/AppLayouts/Profile/ProfileLayout.qml \
     app/AppLayouts/Wallet/AssetsTab.qml \
     app/AppLayouts/Wallet/CollectiblesTab.qml \
     app/AppLayouts/Wallet/HistoryTab.qml \
+    app/AppLayouts/Profile/Sections/AboutContainer.qml \
+    app/AppLayouts/Profile/Sections/AdvancedContainer.qml \
+    app/AppLayouts/Profile/Sections/ContactsContainer.qml \
+    app/AppLayouts/Profile/Sections/EnsContainer.qml \
+    app/AppLayouts/Profile/Sections/HelpContainer.qml \
+    app/AppLayouts/Profile/Sections/LanguageContainer.qml \
+    app/AppLayouts/Profile/Sections/NotificationsContainer.qml \
+    app/AppLayouts/Profile/Sections/PrivacyContainer.qml \
+    app/AppLayouts/Profile/Sections/SignoutContainer.qml \
+    app/AppLayouts/Profile/Sections/SyncContainer.qml \
+    app/AppLayouts/Profile/Sections/qmldir \
+    app/AppLayouts/Profile/qmldir \
     app/AppLayouts/Wallet/LeftTab.qml \
     app/AppLayouts/Wallet/SendModal.qml \
     app/AppLayouts/Wallet/WalletHeader.qml \
