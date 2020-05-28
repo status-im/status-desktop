@@ -17,7 +17,6 @@ Rectangle {
     radius: 8
     // Hide the box if it is filtered out
     property bool isVisible: searchStr == "" || name.includes(searchStr)
-    property int chatTypeOneToOne: 1
     visible: isVisible ? true : false
     height: isVisible ? 64 : 0
 
@@ -43,7 +42,7 @@ Rectangle {
       radius: 50
 
       Loader {
-        sourceComponent: chatType == chatTypeOneToOne ? imageIdenticon : letterIdenticon
+        sourceComponent: chatType == Constants.chatTypeOneToOne ? imageIdenticon : letterIdenticon
         anchors.fill: parent
       }
 
@@ -62,7 +61,13 @@ Rectangle {
           }
 
           Text {
-            text: (name.charAt(0) == "#" ? name.charAt(1) : name.charAt(0)).toUpperCase()
+            text: {
+              if(chatType == Constants.chatTypeOneToOne){
+                return name;
+              } else {
+                return (name.charAt(0) == "#" ? name.charAt(1) : name.charAt(0)).toUpperCase();
+              }
+            }
             opacity: 0.7
             font.weight: Font.Bold
             font.pixelSize: 21
@@ -94,7 +99,7 @@ Rectangle {
 
     Text {
         id: contactInfo
-        text: chatType == chatTypeOneToOne ? name : "#" + name
+        text: chatType == Constants.chatTypeOneToOne ? name : "#" + name
         anchors.right: contactTime.left
         anchors.rightMargin: Theme.smallPadding
         elide: Text.ElideRight

@@ -189,7 +189,7 @@ Item {
                 anchors.fill: parent
                 onClicked : {
                     if(channelName.text === "") return;
-                    chatsModel.joinChat(channelName.text);
+                    chatsModel.joinChat(channelName.text, Constants.chatTypePublic);
                     popup.close();
                 }
             }

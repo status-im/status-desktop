@@ -2,7 +2,6 @@ import eventemitter, sets, json, strutils
 import ../status/utils
 import ../status/chat as status_chat
 import chronicles
-import ../status/libstatus
 
 import chat/chat_item
 import chat/chat_message

@@ -17,5 +17,10 @@ Item {
         anchors.fill: parent
         model: chatsModel.chats
         delegate: Channel {}
+        onCountChanged: {
+            if (count > 0) {
+                currentIndex = count - 1;
+            }
+        }
     }
 }

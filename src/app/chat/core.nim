@@ -38,7 +38,7 @@ proc init*(self: ChatController) =
 proc load*(self: ChatController, chatId: string) =
   # TODO: we need a function to load the channels from the db.
   #       and... called from init() instead from nim_status_client
-  discard self.view.joinChat(chatId)
+  discard self.view.joinChat(chatId, ChatType.Public.int)
   self.view.setActiveChannelByIndex(0)
 
 proc handleMessage(self: ChatController, data: Signal) =

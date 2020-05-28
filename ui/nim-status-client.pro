@@ -15,6 +15,7 @@ SOURCES +=
 
 RESOURCES += \
     imports/Theme.qml \
+    imports/Constants.qml \
     main.qml
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
