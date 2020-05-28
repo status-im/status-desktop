@@ -33,7 +33,9 @@ StackLayout {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
-            ChatMessages {}
+            ChatMessages {
+                messageList: chatsModel.messageList
+            }
        }
 
         RowLayout {

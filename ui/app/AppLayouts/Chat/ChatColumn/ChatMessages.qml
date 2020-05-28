@@ -5,10 +5,12 @@ import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
 import "../../../../shared"
 import "../../../../imports"
+import "./samples/"
 
 ListView {
+    property var messageList: MessagesData {}
     id: chatLogView
-    model: chatsModel.messageList
+    model: messageList
     Layout.fillWidth: true
     Layout.fillHeight: true
     delegate: Message {

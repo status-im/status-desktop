@@ -51,6 +51,7 @@ DISTFILES += \
     Theme.qml \
     app/AppLayouts/Browser/BrowserLayout.qml \
     app/AppLayouts/Chat/ChatColumn.qml \
+    app/AppLayouts/Chat/ChatColumn/MessagesData.qml \
     app/AppLayouts/Chat/ChatLayout.qml \
     app/AppLayouts/Chat/ContactsColumn.qml \
     app/AppLayouts/Chat/components/PublicChatPopup.qml \
