@@ -1,4 +1,5 @@
 import ../../signals/types
+import ../../status/accounts as status_accounts
 
 type ChatItem* = ref object
   id*: string
@@ -10,14 +11,22 @@ type ChatItem* = ref object
   color*: string
   identicon*: string
 
-proc newChatItem*(): ChatItem =
+proc newChatItem*(id: string, chatType: ChatType, lastMessage: string = "", timestamp: int64 = 0, unviewedMessagesCount: int = 0, color: string = "", identicon: string = ""): ChatItem =
   new(result)
-  result.name = ""
-  result.lastMessage = ""
-  result.timestamp = 0
-  result.unviewedMessagesCount = 0
-  result.color = ""
-  result.identicon = ""
+  result.id = id
+  result.name = case chatType
+              of ChatType.Public: id
+              of ChatType.OneToOne: generateAlias(id)
+              of ChatType.PrivateGroupChat: "TODO: Private Group Name"
+  result.chatType = chatType
+  result.lastMessage = lastMessage
+  result.timestamp = timestamp
+  result.unviewedMessagesCount = unviewedMessagesCount
+  result.color = color
+  result.identicon = if identicon == "" and chatType == ChatType.OneToOne: 
+                       generateIdenticon(id) 
+                     else: 
+                       identicon
 
 proc findById*(self: seq[ChatItem], id: string): int =
   result = -1

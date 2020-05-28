@@ -127,8 +127,7 @@ Item {
                 anchors.fill: parent
                 onClicked : {
                     if(chatKey.text === "") return;
-                    // chatsModel.joinChat(chatKey.text);
-                    console.log("TODO: join private chat");
+                    chatsModel.joinChat(chatKey.text, Constants.chatTypeOneToOne);
                     popup.close();
                 }
             }

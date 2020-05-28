@@ -2,6 +2,7 @@ import NimQml
 import Tables
 import views/channels_list
 import views/message_list
+import ../../signals/types
 import ../../models/chat
 import random
 
@@ -79,15 +80,19 @@ QtObject:
     read = getMessageList
     notify = activeChannelChanged
 
-  proc joinChat*(self: ChatsView, channel: string): int {.slot.} =
-    self.setActiveChannel(channel)
+  proc joinChat*(self: ChatsView, channel: string, chatTypeInt: int): int {.slot.} =
+    let chatType = ChatType(chatTypeInt)
+    
     if self.model.hasChannel(channel):
       result = self.chats.chats.findById(channel)
     else:
       self.model.join(channel)
       randomize()
       let randomColorIndex = rand(channelColors.len - 1)
-      result = self.chats.addChatItemToList(ChatItem(id: channel, name: channel, color: channelColors[randomColorIndex]))
+      let chatItem = newChatItem(id = channel, chatType, color = channelColors[randomColorIndex])
+      result = self.chats.addChatItemToList(chatItem)
+
+    self.setActiveChannel(channel)
 
   proc leaveActiveChat*(self: ChatsView) {.slot.} =
     self.model.leave(self.activeChannel)
