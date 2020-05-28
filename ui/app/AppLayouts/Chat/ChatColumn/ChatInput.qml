@@ -22,12 +22,11 @@ Rectangle {
 
         Button {
             id: chatSendBtn
+            visible: txtData.length > 0
             x: 100
             width: 30
             height: 30
-            text: "\u2191"
-            font.bold: true
-            font.pointSize: 12
+            text: ""
             anchors.top: parent.top
             anchors.topMargin: 20
             anchors.right: parent.right
@@ -36,10 +35,16 @@ Rectangle {
                 chatsModel.onSend(txtData.text)
                 txtData.text = ""
             }
-            enabled: txtData.text !== ""
             background: Rectangle {
                 color: parent.enabled ? Theme.blue : Theme.grey
                 radius: 50
+            }
+            Image {
+                source: "../../../img/arrowUp.svg"
+                width: 12
+                fillMode: Image.PreserveAspectFit
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
             }
         }
 
@@ -79,3 +84,8 @@ Rectangle {
         }
     }
 }
+/*##^##
+Designer {
+    D{i:0;width:600}
+}
+##^##*/
