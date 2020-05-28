@@ -50,6 +50,8 @@ QtObject:
   proc activeChannelChanged*(self: ChatsView) {.signal.}
 
   proc setActiveChannelByIndex*(self: ChatsView, index: int) {.slot.} =
+    if(self.chats.chats.len == 0): return
+
     let selectedChannel = self.chats.getChannel(index)
     if self.activeChannel == selectedChannel.id: return
     self.activeChannel = selectedChannel.id
@@ -79,6 +81,9 @@ QtObject:
   QtProperty[QVariant] messageList:
     read = getMessageList
     notify = activeChannelChanged
+
+  proc pushChatItem*(self: ChatsView, chatItem: ChatItem) =
+    discard self.chats.addChatItemToList(chatItem)
 
   proc joinChat*(self: ChatsView, channel: string, chatTypeInt: int): int {.slot.} =
     let chatType = ChatType(chatTypeInt)

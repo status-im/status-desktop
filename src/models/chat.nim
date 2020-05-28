@@ -2,7 +2,7 @@ import eventemitter, sets, json, strutils
 import ../status/utils
 import ../status/chat as status_chat
 import chronicles
-
+import ../signals/types
 import chat/chat_item
 import chat/chat_message
 export chat_item
@@ -12,6 +12,9 @@ type MsgArgs* = ref object of Args
     message*: string
     chatId*: string
     payload*: JsonNode
+
+type ChatArgs* = ref object of Args
+  chats*: seq[Chat]
 
 type
   ChatModel* = ref object
@@ -29,7 +32,7 @@ proc delete*(self: ChatModel) =
 proc hasChannel*(self: ChatModel, chatId: string): bool =
   result = self.channels.contains(chatId)
 
-proc join*(self: ChatModel, chatId: string) =
+proc join*(self: ChatModel, chatId: string, isNewChat: bool = true) =
   if self.hasChannel(chatId): return
 
   self.channels.incl chatId
@@ -39,15 +42,16 @@ proc join*(self: ChatModel, chatId: string) =
   # TODO get this from the connection or something
   let peer = "enode://44160e22e8b42bd32a06c1532165fa9e096eebedd7fa6d6e5f8bbef0440bc4a4591fe3651be68193a7ec029021cdb496cfe1d7f9f1dc69eb99226e6f39a7a5d4@35.225.221.245:443"
 
-  # TODO: save chat list in the db
   let oneToOne = isOneToOneChat(chatId)
 
+  if isNewChat: status_chat.saveChat(chatId, oneToOne)
+
   let filterResult = status_chat.loadFilters(chatId = chatId, oneToOne = oneToOne)
-  status_chat.saveChat(chatId, oneToOne)
+  
   status_chat.chatMessages(chatId)
 
   let parsedResult = parseJson(filterResult)["result"]
-  echo parsedResult
+  
   var topics = newSeq[string](0)
   for topicObj in parsedResult:
     if (($topicObj["chatId"]).strip(chars = {'"'}) == chatId):
@@ -57,6 +61,12 @@ proc join*(self: ChatModel, chatId: string) =
     warn "No topic found for the chat. Cannot load past messages"
   else:
     status_chat.requestMessages(topics, generatedSymKey, peer, 20)
+
+proc load*(self: ChatModel) =
+  let chatList = status_chat.loadChats()
+  for chat in chatList:
+    self.join(chat.id, false)
+  self.events.emit("chatsLoaded", ChatArgs(chats: chatList))
 
 proc leave*(self: ChatModel, chatId: string) =
   let oneToOne = isOneToOneChat(chatId)

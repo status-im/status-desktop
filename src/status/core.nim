@@ -16,7 +16,6 @@ proc callPrivateRPC*(methodName: string, payload = %* []): string =
       "method": methodName,
       "params": %payload
     }
-    echo inputJSON
     result = $libstatus.callPrivateRPC($inputJSON)
   except:
     echo "error doing rpc request"

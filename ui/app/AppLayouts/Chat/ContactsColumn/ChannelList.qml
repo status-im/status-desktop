@@ -19,7 +19,7 @@ Item {
         delegate: Channel {}
         onCountChanged: {
             if (count > 0) {
-                currentIndex = count - 1;
+                currentIndex = 0;
             }
         }
     }

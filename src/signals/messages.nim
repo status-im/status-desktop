@@ -1,8 +1,8 @@
 import json
 import types
 
-proc toMessage(jsonMsg: JsonNode): Message
-proc toChat(jsonChat: JsonNode): Chat
+proc toMessage*(jsonMsg: JsonNode): Message
+proc toChat*(jsonChat: JsonNode): Chat
 
 proc fromEvent*(event: JsonNode): Signal = 
   var signal:MessageSignal = MessageSignal()
@@ -18,7 +18,7 @@ proc fromEvent*(event: JsonNode): Signal =
 
   result = signal
 
-proc toChat(jsonChat: JsonNode): Chat =
+proc toChat*(jsonChat: JsonNode): Chat =
   result = Chat(
     id: jsonChat{"id"}.getStr,
     name: jsonChat{"name"}.getStr,
@@ -32,7 +32,7 @@ proc toChat(jsonChat: JsonNode): Chat =
     lastMessage: jsonChat{"lastMessage"}.toMessage
   )
 
-proc toMessage(jsonMsg: JsonNode): Message =
+proc toMessage*(jsonMsg: JsonNode): Message =
   result = Message(
       alias: jsonMsg{"alias"}.getStr,
       chatId: jsonMsg{"chatId"}.getStr,
