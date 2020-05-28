@@ -11,7 +11,14 @@ ListView {
     model: chatsModel.messageList
     Layout.fillWidth: true
     Layout.fillHeight: true
-    delegate: Message {}
+    delegate: Message {
+        userName: model.userName
+        message: model.message
+        identicon: model.identicon
+        isCurrentUser: model.isCurrentUser
+        repeatMessageInfo: model.repeatMessageInfo
+        timestamp: model.timestamp
+    }
     highlightFollowsCurrentItem: true
 
     onCountChanged: {
@@ -27,3 +34,9 @@ ListView {
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/
