@@ -18,8 +18,21 @@ Item {
         model: chatsModel.chats
         delegate: Channel {}
         onCountChanged: {
+            // If a chat is added or removed, we set the current index to the first value
             if (count > 0) {
                 currentIndex = 0;
+                chatsModel.activeChannelIndex = 0;
+            }
+        }
+    }
+
+    Connections {
+        target: chatsModel.chats
+        onDataChanged: {
+            // If the current active channel receives messages and changes its position,
+            // refresh the currentIndex accordingly
+            if(chatsModel.activeChannelIndex != chatGroupsListView.currentIndex){
+                chatGroupsListView.currentIndex = chatsModel.activeChannelIndex
             }
         }
     }

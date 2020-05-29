@@ -57,6 +57,14 @@ QtObject:
     self.activeChannel = selectedChannel.id
     self.activeChannelChanged()
 
+  proc getActiveChannelIdx(self: ChatsView): QVariant {.slot.} =
+    return newQVariant(self.chats.chats.findById(self.activeChannel))
+
+  QtProperty[QVariant] activeChannelIndex:
+    read = getActiveChannelIdx
+    write = setActiveChannelByIndex
+    notify = activeChannelChanged
+
   proc setActiveChannel*(self: ChatsView, channel: string) =
     self.activeChannel = channel
     self.activeChannelChanged()
