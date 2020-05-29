@@ -77,10 +77,9 @@ QtObject:
     }.toTable
 
   proc addChatItemToList*(self: ChannelsList, channel: ChatItem): int =
-    self.beginInsertRows(newQModelIndex(), self.chats.len, self.chats.len)
-    self.chats.add(channel)
+    self.beginInsertRows(newQModelIndex(), 0, 0)
+    self.chats.insert(channel, 0)
     self.endInsertRows()
-    
     result = self.chats.len - 1
 
   proc removeChatItemFromList*(self: ChannelsList, channel: string): int =
@@ -108,7 +107,12 @@ QtObject:
 
   proc updateChat*(self: ChannelsList, channel: ChatItem) =
     let idx = self.upsertChannel(channel)
-    self.chats[idx] = channel
-    let topLeft = self.createIndex(idx, 0, nil)
-    let bottomRight = self.createIndex(idx, 0, nil)
-    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Timestamp.int, ChannelsRoles.LastMessage.int, ChannelsRoles.UnreadMessages.int])
+    let topLeft = self.createIndex(0, 0, nil)
+    let bottomRight = self.createIndex(self.chats.len - 1, 0, nil)
+    if(idx != 0): # Move last updated chat to the top of the list
+      self.chats.del(idx)
+      self.chats.insert(channel, 0)
+    else:
+      self.chats[0] = channel
+
+    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.LastMessage.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.LastMessage.int])
