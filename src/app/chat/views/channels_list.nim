@@ -36,17 +36,15 @@ type
 QtObject:
   type
     ChannelsList* = ref object of QAbstractListModel
-      model*: ChatModel
       chats*: seq[ChatItem]
 
   proc setup(self: ChannelsList) = self.QAbstractListModel.setup
 
   proc delete(self: ChannelsList) = self.QAbstractListModel.delete
 
-  proc newChannelsList*(model: ChatModel): ChannelsList =
+  proc newChannelsList*(): ChannelsList =
     new(result, delete)
     result.chats = @[]
-    result.model = model
     result.setup()
 
   method rowCount(self: ChannelsList, index: QModelIndex = nil): int = self.chats.len

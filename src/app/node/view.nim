@@ -1,18 +1,19 @@
 import NimQml
 import ../../status/node
+import ../../status/status
 
 QtObject:
   type NodeView* = ref object of QObject
-    model: NodeModel
+    status*: Status
     callResult: string
     lastMessage*: string
 
   proc setup(self: NodeView) =
     self.QObject.setup
 
-  proc newNodeView*(model: NodeModel): NodeView =
+  proc newNodeView*(status: Status): NodeView =
     new(result)
-    result.model = model
+    result.status = status
     result.callResult = "Use this tool to call JSONRPC methods"
     result.lastMessage = ""
     result.setup
@@ -38,7 +39,7 @@ QtObject:
     notify = callResultChanged
 
   proc onSend*(self: NodeView, inputJSON: string) {.slot.} =
-    self.setCallResult(self.model.sendRPCMessageRaw(inputJSON))
+    self.setCallResult(self.status.node.sendRPCMessageRaw(inputJSON))
     echo "Done!: ", self.callResult
 
   proc onMessage*(self: NodeView, message: string) {.slot.} =

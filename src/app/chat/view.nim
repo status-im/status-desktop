@@ -1,14 +1,17 @@
 import NimQml
 import Tables
-import views/channels_list
-import views/message_list
+
 import ../../signals/types
 import ../../status/chat
+import ../../status/status
+
+import views/channels_list
+import views/message_list
 
 QtObject:
   type
     ChatsView* = ref object of QAbstractListModel
-      model: ChatModel
+      status: Status
       chats*: ChannelsList
       callResult: string
       messageList: Table[string, ChatMessageList]
@@ -18,10 +21,10 @@ QtObject:
 
   proc delete(self: ChatsView) = self.QAbstractListModel.delete
 
-  proc newChatsView*(model: ChatModel): ChatsView =
+  proc newChatsView*(status: Status): ChatsView =
     new(result, delete)
-    result.model = model
-    result.chats = newChannelsList(result.model)
+    result.status = status
+    result.chats = newChannelsList()
     result.activeChannel = ""
     result.messageList = initTable[string, ChatMessageList]()
     result.setup()
@@ -84,13 +87,13 @@ QtObject:
     discard self.chats.addChatItemToList(chatItem)
 
   proc sendMessage*(self: ChatsView, message: string) {.slot.} =
-    discard self.model.sendMessage(self.activeChannel, message)
+    discard self.status.chat.sendMessage(self.activeChannel, message)
 
   proc joinChat*(self: ChatsView, channel: string, chatTypeInt: int): int {.slot.} =
-    self.model.join(channel, ChatType(chatTypeInt))
+    self.status.chat.join(channel, ChatType(chatTypeInt))
 
   proc leaveActiveChat*(self: ChatsView) {.slot.} =
-    self.model.leave(self.activeChannel)
+    self.status.chat.leave(self.activeChannel)
 
   proc updateChat*(self: ChatsView, chat: ChatItem) =
     self.chats.updateChat(chat)

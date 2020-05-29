@@ -6,21 +6,20 @@ import ../../status/libstatus/types as status_types
 import views/channels_list
 import view
 import chronicles
+import ../../status/status
 
 logScope:
   topics = "chat-controller"
 
 type ChatController* = ref object of SignalSubscriber
   view*: ChatsView
-  model*: ChatModel
+  status*: Status
   variant*: QVariant
-  appEvents*: EventEmitter
 
-proc newController*(appEvents: EventEmitter): ChatController =
+proc newController*(status: Status): ChatController =
   result = ChatController()
-  result.appEvents = appEvents
-  result.model = newChatModel()
-  result.view = newChatsView(result.model)
+  result.status = status
+  result.view = newChatsView(status)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: ChatController) =
@@ -28,25 +27,25 @@ proc delete*(self: ChatController) =
   delete self.variant
 
 proc init*(self: ChatController) =
-  self.model.events.on("messageSent") do(e: Args):
+  self.status.events.on("messageSent") do(e: Args):
     var sentMessage = MsgArgs(e)
     var chatMessage = sentMessage.payload.toChatMessage()
     chatMessage.message = sentMessage.message
     chatMessage.isCurrentUser = true
     self.view.pushMessage(sentMessage.chatId, chatMessage)
 
-  self.model.events.on("channelJoined") do(e: Args):
+  self.status.events.on("channelJoined") do(e: Args):
     var channelMessage = ChannelArgs(e)
     let chatItem = newChatItem(id = channelMessage.channel, channelMessage.chatTypeInt)
     discard self.view.chats.addChatItemToList(chatItem)
 
-  self.model.events.on("channelLeft") do(e: Args):
+  self.status.events.on("channelLeft") do(e: Args):
     discard self.view.chats.removeChatItemFromList(self.view.activeChannel)
 
-  self.model.events.on("activeChannelChanged") do(e: Args):
+  self.status.events.on("activeChannelChanged") do(e: Args):
     self.view.setActiveChannel(ChannelArgs(e).channel)
 
-  self.model.load()
+  self.status.chat.load()
   self.view.setActiveChannelByIndex(0)
 
 proc handleMessage(self: ChatController, data: Signal) =

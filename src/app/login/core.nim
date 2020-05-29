@@ -1,24 +1,25 @@
 import NimQml
-import ../../status/libstatus/types as status_types
-import ../../signals/types
-import eventemitter
-import view
-import ../../status/accounts as AccountModel
 import chronicles
 import options
 import std/wrapnils
+import eventemitter
+
+import ../../status/libstatus/types as status_types
+import ../../signals/types
+# import ../../status/accounts as AccountModel
+import ../../status/status
+
+import view
 
 type LoginController* = ref object of SignalSubscriber
+  status*: Status
   view*: LoginView
   variant*: QVariant
-  appEvents*: EventEmitter
-  model: AccountModel
 
-proc newController*(appEvents: EventEmitter): LoginController =
+proc newController*(status: Status): LoginController =
   result = LoginController()
-  result.appEvents = appEvents
-  result.model = newAccountModel()
-  result.view = newLoginView(result.model)
+  result.status = status
+  result.view = newLoginView(status)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: LoginController) =
@@ -26,15 +27,15 @@ proc delete*(self: LoginController) =
   delete self.variant
 
 proc init*(self: LoginController, nodeAccounts: seq[NodeAccount]) =
-  self.model.nodeAccounts = nodeAccounts
+  self.status.accounts.nodeAccounts = nodeAccounts
   for nodeAccount in nodeAccounts:
     self.view.addAccountToList(nodeAccount)
 
 proc handleNodeLogin(self: LoginController, data: Signal) =
   var response = NodeSignal(data)
   self.view.setLastLoginResponse($response.event.toJson)
-  if ?.response.event.error == "" and self.model.currentAccount != nil:
-    self.appEvents.emit("login", AccountArgs(account: self.model.currentAccount))
+  if ?.response.event.error == "" and self.status.accounts.currentAccount != nil:
+    self.status.events.emit("login", AccountArgs(account: self.status.accounts.currentAccount))
 
 method onSignal(self: LoginController, data: Signal) =
   if data.signalType == SignalType.NodeLogin:

@@ -10,6 +10,8 @@ import json_serialization
 import core
 import ../../status/accounts as AccountModel
 
+import ../../status/status
+
 type
   AccountRoles {.pure.} = enum
     Username = UserRole + 1,
@@ -18,9 +20,9 @@ type
 
 QtObject:
   type LoginView* = ref object of QAbstractListModel
+    status: Status
     accounts: seq[NodeAccount]
     lastLoginResponse: string
-    model*: AccountModel
 
   proc setup(self: LoginView) =
     self.QAbstractListModel.setup
@@ -29,11 +31,11 @@ QtObject:
     self.QAbstractListModel.delete
     self.accounts = @[]
 
-  proc newLoginView*(model: AccountModel): LoginView =
+  proc newLoginView*(status: Status): LoginView =
     new(result, delete)
     result.accounts = @[]
     result.lastLoginResponse = ""
-    result.model = model
+    result.status = status
     result.setup
 
   proc addAccountToList*(self: LoginView, account: NodeAccount) =
@@ -64,7 +66,7 @@ QtObject:
 
   proc login(self: LoginView, selectedAccountIndex: int, password: string): string {.slot.} =
     try:
-      result = self.model.login(selectedAccountIndex, password).toJson
+      result = self.status.accounts.login(selectedAccountIndex, password).toJson
     except:
       let
         e = getCurrentException()
