@@ -141,6 +141,7 @@ DISTFILES += \
     onboarding/img/wallet@2x.jpg \
     onboarding/img/wallet@3x.jpg \
     onboarding/qmldir \
+    shared/Input.qml \
     shared/PopupMenu.qml \
     shared/Separator.qml \
     shared/StatusTabButton.qml \
