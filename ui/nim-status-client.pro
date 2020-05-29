@@ -124,6 +124,7 @@ DISTFILES += \
     onboarding/GenKey.qml \
     onboarding/Intro.qml \
     onboarding/KeysMain.qml \
+    onboarding/Login.qml \
     onboarding/OnboardingMain.qml \
     onboarding/img/browser-dark@2x.jpg \
     onboarding/img/browser-dark@3x.jpg \

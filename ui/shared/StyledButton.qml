@@ -17,7 +17,7 @@ Button {
     enabled: !disabled
 
     background: Rectangle {
-        color: disabled ? Theme.grey : btnColor
+        color: disabled ? Theme.grey : btnStyled.btnColor
         radius: Theme.radius
         anchors.fill: parent
     }
