@@ -6,6 +6,7 @@ import "../../../../imports"
 import "../../../../shared"
 
 Item {
+    id: element
     property alias valueInput: txtValue
     property string defaultAccount: "0x1234"
 
@@ -111,11 +112,12 @@ Item {
         anchors.bottomMargin: 76
     }
 
-    Button {
-        text: "Send"
-        anchors.horizontalCenter: parent.horizontalCenter
+    StyledButton {
+        anchors.right: parent.right
+        anchors.rightMargin: Theme.padding
+        label: "Send"
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 16
+        anchors.bottomMargin: Theme.padding
         onClicked: {
             let result = assetsModel.onSendTransaction(txtFrom.text,
                                                        txtTo.text,
@@ -128,6 +130,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:480;width:640}
+    D{i:0;autoSize:true;formeditorColor:"#ffffff";formeditorZoom:0.75;height:480;width:640}
 }
 ##^##*/
