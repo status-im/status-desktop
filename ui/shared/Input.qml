@@ -60,6 +60,8 @@ Item {
 
         Image {
             id: iconImg
+            sourceSize.height: 24
+            sourceSize.width: 24
             anchors.left: parent.left
             anchors.leftMargin: 10
             anchors.verticalCenter: parent.verticalCenter

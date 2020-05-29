@@ -9,8 +9,9 @@ import "./Components"
 Item {
     function open() {
         popup.open()
-        sendModalContent.txtValue.text = ""
-        sendModalContent.txtValue.forceActiveFocus(Qt.MouseFocusReason)
+        sendModalContent.valueInput.text = ""
+        sendModalContent.valueInput.forceActiveFocus(Qt.MouseFocusReason)
+        sendModalContent.defaultAccount = assetsModel.getDefaultAccount()
     }
 
     function close() {

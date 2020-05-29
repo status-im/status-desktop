@@ -6,8 +6,8 @@ import "../../../../imports"
 import "../../../../shared"
 
 Item {
-    property alias txtValue: txtValue
-
+    property alias valueInput: txtValue
+    property string defaultAccount: "0x1234"
 
     Text {
         id: modalDialogTitle
@@ -53,8 +53,10 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 32
 
-        TextField {
+        Input {
             id: txtValue
+            label: "Amount"
+            icon: "../../../img/token-icons/eth.svg"
             anchors.top: parent.top
             anchors.topMargin: 0
             anchors.right: parent.right
@@ -64,9 +66,10 @@ Item {
             placeholderText: qsTr("Enter ETH")
         }
 
-        TextField {
+        Input {
             id: txtFrom
-            text: assetsModel.getDefaultAccount()
+            label: "From account"
+            text: defaultAccount
             placeholderText: qsTr("Send from (account)")
             anchors.top: txtValue.bottom
             anchors.topMargin: Theme.padding
@@ -76,9 +79,10 @@ Item {
             anchors.leftMargin: 0
         }
 
-        TextField {
+        Input {
             id: txtTo
-            text: assetsModel.getDefaultAccount()
+            label: "Recipient"
+            text: defaultAccount
             placeholderText: qsTr("Send to")
             anchors.top: txtFrom.bottom
             anchors.topMargin: Theme.padding
@@ -88,9 +92,9 @@ Item {
             anchors.leftMargin: 0
         }
 
-        TextField {
+        Input {
             id: txtPassword
-            text: "qwerty"
+            label: "Password"
             placeholderText: "Enter Password"
             anchors.top: txtTo.bottom
             anchors.topMargin: Theme.padding
