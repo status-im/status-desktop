@@ -1,4 +1,5 @@
 import eventemitter, sets, json, strutils
+import sequtils
 import ../status/utils
 import ../status/chat as status_chat
 import chronicles
@@ -13,6 +14,10 @@ type MsgArgs* = ref object of Args
     message*: string
     chatId*: string
     payload*: JsonNode
+
+type ChannelArgs* = ref object of Args
+    channel*: string
+    chatTypeInt*: ChatType
 
 type ChatArgs* = ref object of Args
   chats*: seq[Chat]
@@ -35,7 +40,10 @@ proc delete*(self: ChatModel) =
 proc hasChannel*(self: ChatModel, chatId: string): bool =
   result = self.channels.contains(chatId)
 
-proc join*(self: ChatModel, chatId: string, isNewChat: bool = true) =
+proc getActiveChannel*(self: ChatModel): string =
+  if (self.channels.len == 0): "" else: self.channels.toSeq[self.channels.len - 1]
+
+proc join*(self: ChatModel, chatId: string, chatTypeInt: ChatType, isNewChat: bool = true) =
   if self.hasChannel(chatId): return
 
   self.channels.incl chatId
@@ -54,7 +62,7 @@ proc join*(self: ChatModel, chatId: string, isNewChat: bool = true) =
   status_chat.chatMessages(chatId)
 
   let parsedResult = parseJson(filterResult)["result"]
-  
+
   var topics = newSeq[string](0)
   for topicObj in parsedResult:
     if (($topicObj["chatId"]).strip(chars = {'"'}) == chatId):
@@ -67,10 +75,14 @@ proc join*(self: ChatModel, chatId: string, isNewChat: bool = true) =
   else:
     status_chat.requestMessages(topics, generatedSymKey, peer, 20)
 
+  self.events.emit("channelJoined", ChannelArgs(channel: chatId, chatTypeInt: chatTypeInt))
+  self.events.emit("activeChannelChanged", ChannelArgs(channel: self.getActiveChannel()))
+
 proc load*(self: ChatModel) =
   let chatList = status_chat.loadChats()
   for chat in chatList:
-    self.join(chat.id, false)
+    # TODO: use correct type of chat instead of hardcoded 2 (assumes it's only public chats)
+    self.join(chat.id, ChatType.Public, false)
   self.events.emit("chatsLoaded", ChatArgs(chats: chatList))
 
 proc leave*(self: ChatModel, chatId: string) =
@@ -81,6 +93,8 @@ proc leave*(self: ChatModel, chatId: string) =
 
   self.filters.del(chatId)
   self.channels.excl(chatId)
+  self.events.emit("channelLeft", ChannelArgs(channel: chatId))
+  self.events.emit("activeChannelChanged", ChannelArgs(channel: self.getActiveChannel()))
 
 proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
   var sentMessage = status_chat.sendChatMessage(chatId, msg)
