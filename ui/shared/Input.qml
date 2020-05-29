@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import "../imports"
 
 Item {
+    property alias textField: inputValue
     property string placeholderText: "My placeholder"
     property string text: ""
     property string label: ""
@@ -11,12 +12,12 @@ Item {
 //    property url icon: "../app/img/hash.svg"
     property url icon: ""
     readonly property bool hasIcon: icon.toString() !== ""
-
     readonly property bool hasLabel: label !== ""
     readonly property var forceActiveFocus: function () {
         inputValue.forceActiveFocus(Qt.MouseFocusReason)
     }
     readonly property int labelMargin: 7
+    property var otherProps // Only used to assign stuff to textField
 
     id: inputBox
     height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0)

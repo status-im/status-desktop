@@ -128,22 +128,20 @@ SwipeView {
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        Rectangle {
-            color: "#EEEEEE"
+        Input {
+            id: txtPassword
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.rightMargin: Theme.padding
+            anchors.leftMargin: Theme.padding
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.centerIn: parent
-            height: 32
-            width: parent.width - 40
-            TextInput {
-                id: txtPassword
-                anchors.fill: parent
-                focus: true
-                echoMode: TextInput.Password
-                selectByMouse: true
-                Keys.onReturnPressed: {
-                    submitBtn.clicked()
-                }
+            otherProps: {
+                this.textField.focus = true
+                this.textField.focus
+                this.textField.echoMode = TextInput.Password
+            }
+            Keys.onReturnPressed: {
+                submitBtn.clicked()
             }
         }
 
@@ -154,8 +152,8 @@ SwipeView {
             icon: StandardIcon.Critical
             standardButtons: StandardButton.Ok
             onAccepted: {
-                txtPassword.clear()
-                txtPassword.focus = true
+                txtPassword.textField.clear()
+                txtPassword.textField.focus = true
             }
         }
 
@@ -177,7 +175,7 @@ SwipeView {
             anchors.bottomMargin: 20
             onClicked: {
                 const selectedAccountIndex = wizardStep1.selectedIndex
-                const response = loginModel.login(selectedAccountIndex, txtPassword.text)
+                const response = loginModel.login(selectedAccountIndex, txtPassword.textField.text)
                 // TODO: replace me with something graphical (ie spinner)
                 console.log("Logging in...")
             }
