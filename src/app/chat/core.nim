@@ -28,11 +28,6 @@ proc delete*(self: ChatController) =
   delete self.variant
 
 proc init*(self: ChatController) =
-  self.model.events.on("chatsLoaded") do(e: Args):
-    var chatArgs = ChatArgs(e)
-    for c in chatArgs.chats:
-      self.view.pushChatItem(c.toChatItem)
-
   self.model.events.on("messageSent") do(e: Args):
     var sentMessage = MsgArgs(e)
     var chatMessage = sentMessage.payload.toChatMessage()
