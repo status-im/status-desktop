@@ -1,28 +1,9 @@
-import NimQml
-import Tables
-import strformat
+import NimQml, Tables
 import random
-
 import ../../../status/chat
 
-const accountColors* = [
-  "#9B832F",
-  "#D37EF4",
-  "#1D806F",
-  "#FA6565",
-  "#7CDA00",
-  "#887af9",
-  "#8B3131"
-]
-
-const channelColors* = [
-  "#fa6565",
-  "#7cda00",
-  "#887af9",
-  "#51d0f0",
-  "#FE8F59",
-  "#d37ef4"
-]
+const accountColors* = ["#9B832F", "#D37EF4", "#1D806F", "#FA6565", "#7CDA00", "#887af9", "#8B3131"]
+const channelColors* = ["#fa6565", "#7cda00", "#887af9", "#51d0f0", "#FE8F59", "#d37ef4"]
 
 type
   ChannelsRoles {.pure.} = enum

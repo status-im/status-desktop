@@ -1,8 +1,7 @@
-import NimQml
-import Tables
-import views/asset_list
+import NimQml, Tables
 import ../../status/wallet
 import ../../status/status
+import views/asset_list
 
 QtObject:
   type

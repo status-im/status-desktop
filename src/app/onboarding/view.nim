@@ -1,5 +1,4 @@
-import NimQml
-import Tables
+import NimQml, Tables
 import json
 import nimcrypto
 import ../../status/libstatus/types as status_types

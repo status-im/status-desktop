@@ -1,15 +1,11 @@
 import NimQml
-import eventemitter
-import strformat
-import json
-
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../signals/types
-import view
 import "../../status/libstatus/types" as status_types
-import ../../status/profile
 
+import ../../status/profile
 import ../../status/status
+import view
 
 type ProfileController* = object
   view*: ProfileView

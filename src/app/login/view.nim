@@ -1,16 +1,17 @@
-import NimQml
-import Tables
+import NimQml, Tables
+
 import json
 import nimcrypto
+import strformat
+import json_serialization
+
 import ../../signals/types
 import ../../status/libstatus/types as status_types
 import ../../status/libstatus/accounts as status_accounts
-import strformat
-import json_serialization
-import core
 import ../../status/accounts as AccountModel
 
 import ../../status/status
+import core
 
 type
   AccountRoles {.pure.} = enum
