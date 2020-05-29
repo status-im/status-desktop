@@ -5,20 +5,20 @@ import ../../signals/types
 import ../../status/node
 import view
 
+import ../../status/status
+
 logScope:
   topics = "node"
 
 type NodeController* = ref object of SignalSubscriber
-  model*: NodeModel
+  status*: Status
   view*: NodeView
   variant*: QVariant
-  appEvents*: EventEmitter
 
-proc newController*(appEvents: EventEmitter): NodeController =
+proc newController*(status: Status): NodeController =
   result = NodeController()
-  result.appEvents = appEvents
-  result.model = newNodeModel()
-  result.view = newNodeView(result.model)
+  result.status = status
+  result.view = newNodeView(status)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: NodeController) =

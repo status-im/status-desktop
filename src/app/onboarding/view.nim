@@ -7,6 +7,7 @@ import ../../signals/types
 import strformat
 import json_serialization
 import ../../status/accounts as AccountModel
+import ../../status/status
 
 type
   AccountRoles {.pure.} = enum
@@ -18,7 +19,7 @@ QtObject:
   type OnboardingView* = ref object of QAbstractListModel
     accounts*: seq[GeneratedAccount]
     lastLoginResponse: string
-    model*: AccountModel
+    status*: Status
 
   proc setup(self: OnboardingView) =
     self.QAbstractListModel.setup
@@ -27,11 +28,11 @@ QtObject:
     self.QAbstractListModel.delete
     self.accounts = @[]
 
-  proc newOnboardingView*(model: AccountModel): OnboardingView =
+  proc newOnboardingView*(status: Status): OnboardingView =
     new(result, delete)
     result.accounts = @[]
     result.lastLoginResponse = ""
-    result.model = model
+    result.status = status
     result.setup
 
   proc addAccountToList*(self: OnboardingView, account: GeneratedAccount) =
@@ -62,7 +63,7 @@ QtObject:
 
   proc storeAccountAndLogin(self: OnboardingView, selectedAccountIndex: int, password: string): string {.slot.} =
     try:
-      result = self.model.storeAccountAndLogin(selectedAccountIndex, password).toJson
+      result = self.status.accounts.storeAccountAndLogin(selectedAccountIndex, password).toJson
     except:
       let
         e = getCurrentException()

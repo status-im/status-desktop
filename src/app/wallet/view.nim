@@ -2,13 +2,14 @@ import NimQml
 import Tables
 import views/asset_list
 import ../../status/wallet
+import ../../status/status
 
 QtObject:
   type
     WalletView* = ref object of QAbstractListModel
       assets*: AssetsList
       defaultAccount: string
-      model: WalletModel
+      status: Status
 
   proc delete(self: WalletView) =
     self.QAbstractListModel.delete
@@ -16,9 +17,9 @@ QtObject:
   proc setup(self: WalletView) =
     self.QAbstractListModel.setup
 
-  proc newWalletView*(model: WalletModel): WalletView =
+  proc newWalletView*(status: Status): WalletView =
     new(result, delete)
-    result.model = model
+    result.status = status
     result.assets = newAssetsList()
     result.setup
 
@@ -32,7 +33,7 @@ QtObject:
     read = getAssetsList
 
   proc onSendTransaction*(self: WalletView, from_value: string, to: string, value: string, password: string): string {.slot.} =
-    result = self.model.sendTransaction(from_value, to, value, password)
+    result = self.status.wallet.sendTransaction(from_value, to, value, password)
 
   proc setDefaultAccount*(self: WalletView, account: string) =
     self.defaultAccount = account

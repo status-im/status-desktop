@@ -8,17 +8,17 @@ import chronicles
 import ../../signals/types
 import std/wrapnils
 
+import ../../status/status
+
 type OnboardingController* = ref object of SignalSubscriber
   view*: OnboardingView
   variant*: QVariant
-  appEvents*: EventEmitter
-  model: AccountModel
+  status: Status
 
-proc newController*(appEvents: EventEmitter): OnboardingController =
+proc newController*(status: Status): OnboardingController =
   result = OnboardingController()
-  result.appEvents = appEvents
-  result.model = newAccountModel()
-  result.view = newOnboardingView(result.model)
+  result.status = status
+  result.view = newOnboardingView(status)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: OnboardingController) =
@@ -26,15 +26,15 @@ proc delete*(self: OnboardingController) =
   delete self.variant
 
 proc init*(self: OnboardingController) =
-  let accounts = self.model.generateAddresses()
+  let accounts = self.status.accounts.generateAddresses()
   for account in accounts:
     self.view.addAccountToList(account)
 
 proc handleNodeLogin(self: OnboardingController, data: Signal) =
   var response = NodeSignal(data)
   self.view.setLastLoginResponse($response.event.toJson)
-  if ?.response.event.error == "" and self.model.currentAccount != nil:
-    self.appEvents.emit("login", AccountArgs(account: self.model.currentAccount))
+  if ?.response.event.error == "" and self.status.accounts.currentAccount != nil:
+    self.status.events.emit("login", AccountArgs(account: self.status.accounts.currentAccount))
 
 method onSignal(self: OnboardingController, data: Signal) =
   if data.signalType == SignalType.NodeLogin:

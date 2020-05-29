@@ -1,21 +1,19 @@
 import NimQml
+import eventemitter
 import chronicles
+import json_serialization
+
 import app/chat/core as chat
 import app/wallet/core as wallet
 import app/node/core as node
 import app/profile/core as profile
-import signals/core as signals
 import app/onboarding/core as onboarding
 import app/login/core as login
-import state
-import status/libstatus/accounts as status_accounts
-import status/libstatus/core as status_core
-import status/libstatus/types as types
-import status/libstatus/libstatus
+import signals/core as signals
+
 import status/libstatus/types
-import state
-import eventemitter
-import json_serialization
+import status/libstatus/libstatus
+import status/status as statuslib
 
 var signalsQObjPointer: pointer
 
@@ -23,11 +21,12 @@ logScope:
   topics = "main"
 
 proc mainProc() =
-  let nodeAccounts = status_accounts.initNodeAccounts()
+  let status = statuslib.newStatusInstance()
+  let nodeAccounts = status.initNodeAccounts()
+
   let app = newQApplication()
   let engine = newQQmlApplicationEngine()
   let signalController = signals.newController(app)
-  let appEvents = createEventEmitter()
 
   defer: # Defer will run this just before mainProc() function ends
     app.delete()
@@ -38,31 +37,28 @@ proc mainProc() =
   # from the non-closure callback passed to `libstatus.setSignalEventCallback`
   signalsQObjPointer = cast[pointer](signalController.vptr)
 
-  var appState = state.newAppState()
-  debug "Application State", title=appState.title
-
-  var wallet = wallet.newController(appEvents)
+  var wallet = wallet.newController(status)
   engine.setRootContextProperty("assetsModel", wallet.variant)
 
-  var chat = chat.newController(appEvents)
+  var chat = chat.newController(status)
   engine.setRootContextProperty("chatsModel", chat.variant)
 
-  var node = node.newController(appEvents)
+  var node = node.newController(status)
   node.init()
   engine.setRootContextProperty("nodeModel", node.variant)
 
-  var profile = profile.newController(appEvents)
+  var profile = profile.newController(status)
   engine.setRootContextProperty("profileModel", profile.variant)
 
-  appEvents.once("login") do(a: Args):
+  status.events.once("login") do(a: Args):
     var args = AccountArgs(a)
-    status_core.startMessenger()
+    status.startMessenger()
     chat.init()
     wallet.init()
     profile.init(args.account)
 
-  var login = login.newController(appEvents)
-  var onboarding = onboarding.newController(appEvents)
+  var login = login.newController(status)
+  var onboarding = onboarding.newController(status)
 
   # TODO: replace this with routing
   let showLogin = nodeAccounts.len > 0

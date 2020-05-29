@@ -2,21 +2,23 @@ import NimQml
 import eventemitter
 import strformat
 import json
-import "../../status/libstatus/core" as status
+
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../signals/types
 import view
 import "../../status/libstatus/types" as status_types
 import ../../status/profile
 
+import ../../status/status
+
 type ProfileController* = object
   view*: ProfileView
   variant*: QVariant
-  appEvents*: EventEmitter
+  status*: Status
 
-proc newController*(appEvents: EventEmitter): ProfileController =
+proc newController*(status: Status): ProfileController =
   result = ProfileController()
-  result.appEvents = appEvents
+  result.status = status
   result.view = newProfileView()
   result.variant = newQVariant(result.view)
 

@@ -28,9 +28,9 @@ type
     channels*: HashSet[string]
     filters*: Table[string, string]
 
-proc newChatModel*(): ChatModel =
+proc newChatModel*(events: EventEmitter): ChatModel =
   result = ChatModel()
-  result.events = createEventEmitter()
+  result.events = events
   result.channels = initHashSet[string]()
   result.filters = initTable[string, string]()
 
