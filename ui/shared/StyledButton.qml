@@ -3,32 +3,29 @@ import QtQuick.Controls 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import QtQml 2.14
-
-
+import "../imports"
 
 Button {
-    property alias label: txtBtnLabel.text
-    font.weight: Font.Medium
+    property string label: "My button"
 
     id: btnStyled
-    rightPadding: 32
-    leftPadding: 32
-    bottomPadding: 11
-    topPadding: 11
+    width: txtBtnLabel.width + 2 * Theme.padding
+    height: 44
 
     background: Rectangle {
         color: "#ECEFFC"
         radius: 8
+        anchors.fill: parent
     }
 
     Text {
         id: txtBtnLabel
-        color: "#4360DF"
-        font.family: "Inter"
+        color: Theme.blue
         font.pointSize: 15
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        text: "Get started"
+        text: label
+        font.weight: Font.Medium
     }
 }
 
