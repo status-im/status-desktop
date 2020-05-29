@@ -6,20 +6,20 @@ import "../../../../shared"
 import "./"
 
 Item {
-  function open(){
+  function open() {
     popup.open()
     chatKey.text = "";
     chatKey.forceActiveFocus(Qt.MouseFocusReason)
   }
 
-  function close(){
+  function close() {
     popup.close()
   }
 
   Popup {
     id: popup
     modal: true
-    closePolicy: Popup.NoAutoClose
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     Overlay.modal: Rectangle {
         color: "#60000000"
     }

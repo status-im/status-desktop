@@ -79,6 +79,8 @@ DISTFILES += \
     app/AppLayouts/Profile/ProfileLayout.qml \
     app/AppLayouts/Wallet/AssetsTab.qml \
     app/AppLayouts/Wallet/CollectiblesTab.qml \
+    app/AppLayouts/Wallet/Components/SendModalContent.qml \
+    app/AppLayouts/Wallet/Components/qmldir \
     app/AppLayouts/Wallet/HistoryTab.qml \
     app/AppLayouts/Profile/Sections/AboutContainer.qml \
     app/AppLayouts/Profile/Sections/AdvancedContainer.qml \
