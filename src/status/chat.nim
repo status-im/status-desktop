@@ -47,7 +47,7 @@ proc saveChat*(chatId: string, oneToOne: bool = false, active: bool = true) =
     }
   ])
 
-proc inactivateChat*(chatId: string) =
+proc deactivateChat*(chatId: string) =
   discard callPrivateRPC("saveChat".prefix, %* [
     {
       "lastClockValue": 0,

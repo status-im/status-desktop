@@ -29,8 +29,9 @@ proc toChat*(jsonChat: JsonNode): Chat =
     lastClockValue: jsonChat{"lastClockValue"}.getBiggestInt,
     deletedAtClockValue: jsonChat{"deletedAtClockValue"}.getBiggestInt, 
     unviewedMessagesCount: jsonChat{"unviewedMessagesCount"}.getInt,
-    lastMessage: jsonChat{"lastMessage"}.toMessage
   )
+  if jsonChat["lastMessage"].kind != JNull: 
+    result.lastMessage = jsonChat{"lastMessage"}.toMessage
 
 proc toMessage*(jsonMsg: JsonNode): Message =
   result = Message(

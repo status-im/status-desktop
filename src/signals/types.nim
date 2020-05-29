@@ -46,6 +46,7 @@ method onSignal*(self: SignalSubscriber, data: Signal) {.base.} =
   error "onSignal must be overriden in controller. Signal is unhandled"
 
 type ChatType* = enum
+  Unknown = 0,
   OneToOne = 1, 
   Public = 2,
   PrivateGroupChat = 3
