@@ -3,7 +3,7 @@ import Tables
 import views/channels_list
 import views/message_list
 import ../../signals/types
-import ../../models/chat
+import ../../status/chat
 
 QtObject:
   type

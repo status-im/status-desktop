@@ -1,9 +1,9 @@
 import NimQml
-import ../../status/types as status_types
+import ../../status/libstatus/types as status_types
 import ../../signals/types
 import eventemitter
 import view
-import ../../models/accounts as AccountModel
+import ../../status/accounts as AccountModel
 import chronicles
 import options
 import std/wrapnils

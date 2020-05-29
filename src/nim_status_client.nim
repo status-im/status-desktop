@@ -8,12 +8,12 @@ import signals/core as signals
 import app/onboarding/core as onboarding
 import app/login/core as login
 import state
-import status/accounts as status_accounts
-import status/core as status_core
-import status/types as types
-import status/libstatus
+import status/libstatus/accounts as status_accounts
+import status/libstatus/core as status_core
+import status/libstatus/types as types
+import status/libstatus/libstatus
+import status/libstatus/types
 import state
-import status/types
 import eventemitter
 import json_serialization
 

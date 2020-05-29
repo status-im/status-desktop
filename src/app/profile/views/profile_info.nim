@@ -1,5 +1,5 @@
 import NimQml
-import ../../../models/profile
+import ../../../status/profile
 
 QtObject:
   type ProfileInfoView* = ref object of QObject

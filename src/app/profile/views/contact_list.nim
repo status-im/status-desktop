@@ -1,7 +1,7 @@
 import NimQml
 import Tables
 import strformat
-import ../../../models/profile
+import ../../../status/profile
 
 type
   ContactRoles {.pure.} = enum

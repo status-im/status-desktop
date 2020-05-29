@@ -2,12 +2,12 @@ import NimQml
 import eventemitter
 import strformat
 import json
-import "../../status/core" as status
-import ../../status/mailservers as status_mailservers
+import "../../status/libstatus/core" as status
+import ../../status/libstatus/mailservers as status_mailservers
 import ../../signals/types
 import view
-import "../../status/types" as status_types
-import ../../models/profile
+import "../../status/libstatus/types" as status_types
+import ../../status/profile
 
 type ProfileController* = object
   view*: ProfileView

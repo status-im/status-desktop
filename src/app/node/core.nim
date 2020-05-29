@@ -1,9 +1,8 @@
 import NimQml
 import chronicles
 import eventemitter
-import "../../status/core" as status
 import ../../signals/types
-import ../../models/node
+import ../../status/node
 import view
 
 logScope:

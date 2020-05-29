@@ -1,7 +1,7 @@
 import NimQml
 import Tables
 import strformat
-import ../../../models/wallet
+import ../../../status/wallet
 
 type
   AssetRoles {.pure.} = enum

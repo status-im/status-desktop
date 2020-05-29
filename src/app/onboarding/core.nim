@@ -1,7 +1,7 @@
 import NimQml
-import ../../status/types as status_types
-import ../../status/accounts as status_accounts
-import ../../models/accounts as AccountModel
+import ../../status/libstatus/types as status_types
+import ../../status/libstatus/accounts as status_accounts
+import ../../status/accounts as AccountModel
 import eventemitter
 import view
 import chronicles

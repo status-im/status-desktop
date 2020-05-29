@@ -3,7 +3,7 @@ import Tables
 import strformat
 import random
 
-import ../../../models/chat
+import ../../../status/chat
 
 const accountColors* = [
   "#9B832F",

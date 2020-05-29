@@ -1,5 +1,5 @@
 import ../../signals/types
-import ../../status/accounts as status_accounts
+import ../libstatus/accounts as status_accounts
 
 type ChatItem* = ref object
   id*: string
