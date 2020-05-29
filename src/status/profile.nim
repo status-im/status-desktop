@@ -1,5 +1,5 @@
 import eventemitter
-import ../status/types
+import libstatus/types
 
 type
   MailServer* = ref object

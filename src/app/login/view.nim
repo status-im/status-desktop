@@ -3,12 +3,12 @@ import Tables
 import json
 import nimcrypto
 import ../../signals/types
-import ../../status/types as status_types
-import ../../status/accounts as status_accounts
+import ../../status/libstatus/types as status_types
+import ../../status/libstatus/accounts as status_accounts
 import strformat
 import json_serialization
 import core
-import ../../models/accounts as AccountModel
+import ../../status/accounts as AccountModel
 
 type
   AccountRoles {.pure.} = enum

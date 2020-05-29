@@ -5,8 +5,8 @@ import strutils
 import chronicles
 
 import view
-import ../../status/wallet as status_wallet
-import ../../models/wallet
+import ../../status/libstatus/wallet as status_wallet
+import ../../status/wallet
 import ../../signals/types
 
 type WalletController* = ref object of SignalSubscriber

@@ -2,7 +2,7 @@ import eventemitter
 # import json
 # import strformat
 # import strutils
-import "../status/core" as status
+import libstatus/core as status
 
 type NodeModel* = ref object
   events*: EventEmitter

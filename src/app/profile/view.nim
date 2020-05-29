@@ -2,7 +2,7 @@ import NimQml
 import views/mailservers_list
 import views/contact_list
 import views/profile_info
-import ../../models/profile
+import ../../status/profile
 
 QtObject:
   type ProfileView* = ref object of QObject

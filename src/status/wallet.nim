@@ -1,43 +1,40 @@
-import core as status
+import eventemitter
 import json
-# import utils
-import httpclient, json
 import strformat
-import stint
 import strutils
+import libstatus/wallet as status_wallet
 
-proc getAccounts*(): seq[string] =
-  var response = callPrivateRPC("eth_accounts")
-  result = parseJson(response)["result"].to(seq[string])
+type Asset* = ref object
+    name*, symbol*, value*, fiatValue*, image*: string
 
-proc getAccount*(): string =
-  var accounts = getAccounts()
-  result = accounts[0]
+type WalletModel* = ref object
+    events*: EventEmitter
 
-proc sendTransaction*(from_address: string, to: string, value: string, password: string): string =
-  var args = %* {
-    "value": fmt"0x{toHex(value)}",
-    "from": from_address,
-    "to": to
-  }
-  var response = status.sendTransaction($args, password)
-  result = response
+proc newWalletModel*(): WalletModel =
+  result = WalletModel()
+  result.events = createEventEmitter()
 
-proc getPrice*(crypto: string, fiat: string): string =
-  var url: string = fmt"https://min-api.cryptocompare.com/data/price?fsym={crypto}&tsyms={fiat}"
-  let client = newHttpClient()
-  client.headers = newHttpHeaders({ "Content-Type": "application/json" })
+proc delete*(self: WalletModel) =
+  discard
 
-  let response = client.request(url)
-  $parseJson(response.body)["USD"]
+proc sendTransaction*(self: WalletModel, from_value: string, to: string, value: string, password: string): string =
+  status_wallet.sendTransaction(from_value, to, value, password)
 
-proc getBalance*(address: string): string =
-  let payload = %* [address, "latest"]
-  parseJson(status.callPrivateRPC("eth_getBalance", payload))["result"].str
+proc getEthBalance*(self: WalletModel, address: string): string =
+  var balance = status_wallet.getBalance(address)
+  echo(fmt"balance in hex: {balance}")
 
-proc hex2Eth*(input: string): string =
-  var value = fromHex(Stuint[256], input)
-  var one_eth = fromHex(Stuint[256], "DE0B6B3A7640000")
+  # 2. convert balance to eth
+  var eth_value = status_wallet.hex2Eth(balance)
+  echo(fmt"balance in eth: {eth_value}")
+  eth_value
 
-  var (eth, remainder) = divmod(value, one_eth)
-  fmt"{eth}.{remainder}"
+proc getFiatValue*(self: WalletModel, eth_balance: string, symbol: string, fiat_symbol: string): float =
+  # 3. get usd price of 1 eth
+  var usd_eth_price = status_wallet.getPrice("ETH", "USD")
+  echo(fmt"usd_price: {usd_eth_price}")
+
+  # 4. convert balance to usd
+  var usd_balance = parseFloat(eth_balance) * parseFloat(usd_eth_price)
+  echo(fmt"balance in usd: {usd_balance}")
+  usd_balance

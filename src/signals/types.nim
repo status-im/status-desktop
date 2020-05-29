@@ -1,6 +1,6 @@
 import json
 import chronicles
-import ../status/types
+import ../status/libstatus/types
 import json_serialization
 
 type SignalSubscriber* = ref object of RootObj
