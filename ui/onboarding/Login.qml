@@ -3,118 +3,121 @@ import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.11
 import QtQuick.Window 2.11
 import QtQuick.Dialogs 1.3
+import "../shared"
+import "../imports"
 
 SwipeView {
     id: swipeView
     anchors.fill: parent
     currentIndex: 0
 
-    property alias btnGenKey: btnGenKey
-
     onCurrentItemChanged: {
-        currentItem.txtPassword.focus = true;
+        currentItem.txtPassword.focus = true
     }
 
     Item {
-        id: wizardStep2
+        id: wizardStep1
         property int selectedIndex: 0
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+//        width: parent.width
+//        height: parent.height
 
-        ColumnLayout {
-            id: columnLayout
-            width: 620
-            height: 427
+        Text {
+            id: title
+            text: "Login"
+            font.pointSize: 36
+            anchors.top: parent.top
+            anchors.topMargin: 20
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
 
-            Text {
-                text: "Login"
-                font.pointSize: 36
-                anchors.top: parent.top
-                anchors.topMargin: 20
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
+        ButtonGroup {
+            id: accountGroup
+        }
 
-            RowLayout {
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                spacing: 10
-                ButtonGroup {
-                    id: accountGroup
-                }
+        Component {
+            id: addressViewDelegate
 
-                Component {
-                    id: addressViewDelegate
-
-                    Item {
-                        height: 56
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-
-                          Row {
-                            RadioButton {
-                              checked: index == 0 ? true : false
-                              ButtonGroup.group: accountGroup
-                              onClicked: {
-                                wizardStep2.selectedIndex = index;
-                              }
-                            }
-                            Column {
-                              Image {
-                                source: identicon
-                              }
-                            }
-                            Column {
-                              Text {
-                                text: username
-                              }
-                              Text {
-                                text: key
-                                width: 160
-                                elide: Text.ElideMiddle
-                              }
-
-                            }
-                          }
-                    }
-
-                }
-
-                ListView {
-                    id: addressesView
-                    contentWidth: 200
-                    model: loginModel
-                    delegate: addressViewDelegate
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    anchors.topMargin: 36
-                    anchors.fill: parent
-                }
-            }
-
-            Button {
-                id: btnGenKey
-                text: "Generate new account"
+            Item {
+                height: 56
+                anchors.right: parent.right
+                anchors.rightMargin: 0
                 anchors.left: parent.left
-                anchors.leftMargin: 20
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 20
-            }
+                anchors.leftMargin: 0
 
-            Button {
-                text: "Select"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 20
-                onClicked: {
-                    swipeView.incrementCurrentIndex();
+                Row {
+                    RadioButton {
+                        checked: index == 0 ? true : false
+                        ButtonGroup.group: accountGroup
+                        onClicked: {
+                            wizardStep1.selectedIndex = index
+                        }
+                    }
+                    Column {
+                        Image {
+                            source: identicon
+                        }
+                    }
+                    Column {
+                        Text {
+                            text: username
+                        }
+                        Text {
+                            text: key
+                            width: 160
+                            elide: Text.ElideMiddle
+                        }
+                    }
                 }
             }
+        }
 
+        ListView {
+            id: addressesView
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+            anchors.bottom: footer.top
+            anchors.bottomMargin: 0
+            anchors.top: title.bottom
+            anchors.topMargin: 16
+            contentWidth: 200
+            model: loginModel
+            delegate: addressViewDelegate
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+        }
+
+        Item {
+            id: footer
+            width: btnGenKey.width + selectBtn.width + Theme.padding
+            height: btnGenKey.height
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: Theme.padding
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            StyledButton {
+                id: btnGenKey
+                label: "Generate new account"
+            }
+
+            StyledButton {
+                id: selectBtn
+                anchors.left: btnGenKey.right
+                anchors.leftMargin: Theme.padding
+                label: "Select"
+
+                onClicked: {
+                    swipeView.incrementCurrentIndex()
+                }
+            }
         }
     }
 
     Item {
-        id: wizardStep3
+        id: wizardStep2
         property Item txtPassword: txtPassword
 
         Text {
@@ -138,6 +141,9 @@ SwipeView {
                 focus: true
                 echoMode: TextInput.Password
                 selectByMouse: true
+                Keys.onReturnPressed: {
+                    submitBtn.clicked()
+                }
             }
         }
 
@@ -148,7 +154,7 @@ SwipeView {
             icon: StandardIcon.Critical
             standardButtons: StandardButton.Ok
             onAccepted: {
-                txtPassword.clear();
+                txtPassword.clear()
                 txtPassword.focus = true
             }
         }
@@ -156,23 +162,24 @@ SwipeView {
         Connections {
             target: loginModel
             onLoginResponseChanged: {
-              const loginResponse = JSON.parse(response);
-              if(loginResponse.error){
-                loginError.open()
-              }
+                const loginResponse = JSON.parse(response)
+                if (loginResponse.error) {
+                    loginError.open()
+                }
             }
         }
 
-        Button {
-            text: "Finish"
+        StyledButton {
+            id: submitBtn
+            label: "Finish"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
             onClicked: {
-              const selectedAccountIndex = wizardStep2.selectedIndex
-              const response = loginModel.login(selectedAccountIndex, txtPassword.text)
-              // TODO: replace me with something graphical (ie spinner)
-              console.log("Logging in...")
+                const selectedAccountIndex = wizardStep1.selectedIndex
+                const response = loginModel.login(selectedAccountIndex, txtPassword.text)
+                // TODO: replace me with something graphical (ie spinner)
+                console.log("Logging in...")
             }
         }
     }
@@ -183,3 +190,4 @@ Designer {
     D{i:0;autoSize:true;height:480;width:640}
 }
 ##^##*/
+

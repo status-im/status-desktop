@@ -3,6 +3,7 @@ import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.11
 import QtQuick.Window 2.11
 import QtQuick.Dialogs 1.3
+import "../shared"
 
 SwipeView {
     id: swipeView
@@ -85,8 +86,8 @@ SwipeView {
                     anchors.fill: parent
                 }
 
-            Button {
-                text: "Select"
+            StyledButton {
+                label: "Select"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 20
@@ -126,8 +127,8 @@ SwipeView {
             }
         }
 
-        Button {
-            text: "Next"
+        StyledButton {
+            label: "Next"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
@@ -198,8 +199,8 @@ SwipeView {
             }
         }
 
-        Button {
-            text: "Finish"
+        StyledButton {
+            label: "Finish"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
