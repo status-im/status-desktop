@@ -6,5 +6,5 @@ Rectangle {
       width: parent.width
       height: 1
       color: Theme.grey
-      anchors.topMargin: 16
+      anchors.topMargin: Theme.padding
 }

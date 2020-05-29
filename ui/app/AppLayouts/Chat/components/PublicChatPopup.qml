@@ -19,7 +19,7 @@ Item {
   Popup {
     id: popup
     modal: true
-    closePolicy: Popup.NoAutoClose
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     Overlay.modal: Rectangle {
         color: "#60000000"
     }

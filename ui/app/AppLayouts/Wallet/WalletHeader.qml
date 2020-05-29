@@ -63,11 +63,14 @@ Item {
         color: Theme.darkGrey
     }
 
+    SendModal{
+        id: sendModal
+    }
+
     Item {
         property int btnMargin: 8
         property int btnOuterMargin: 32
         id: walletMenu
-        // TODO unhardcode this
         width: sendBtn.width + receiveBtn.width + settingsBtn.width
                + walletMenu.btnOuterMargin * 2
         anchors.top: parent.top
@@ -78,6 +81,7 @@ Item {
         Item {
             id: sendBtn
             width: sendImg.width + sendText.width + walletMenu.btnMargin
+            height: sendText.height
 
             Image {
                 id: sendImg
@@ -94,6 +98,15 @@ Item {
                 anchors.leftMargin: walletMenu.btnMargin
                 font.pixelSize: 13
                 color: Theme.blue
+            }
+            MouseArea {
+                anchors.rightMargin: -Theme.smallPadding
+                anchors.leftMargin: -Theme.smallPadding
+                anchors.bottomMargin: -Theme.smallPadding
+                anchors.topMargin: -Theme.smallPadding
+                anchors.fill: parent
+                onClicked: sendModal.open()
+                cursorShape: Qt.PointingHandCursor
             }
         }
         Item {
