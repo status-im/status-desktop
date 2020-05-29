@@ -9,6 +9,11 @@ ModalPopup {
     id: popup
     title: qsTr("New chat")
 
+    onOpened: {
+        chatKey.text = "";
+        chatKey.forceActiveFocus(Qt.MouseFocusReason)
+    }
+
     Rectangle {
         id: chatKeyBox
         height: 44
