@@ -7,24 +7,28 @@ import "../imports"
 
 Button {
     property string label: "My button"
+    property color btnColor: Theme.lightBlue
+    property color textColor: Theme.blue
+    property bool disabled: false
 
     id: btnStyled
     width: txtBtnLabel.width + 2 * Theme.padding
     height: 44
+    enabled: !disabled
 
     background: Rectangle {
-        color: "#ECEFFC"
-        radius: 8
+        color: disabled ? Theme.grey : btnColor
+        radius: Theme.radius
         anchors.fill: parent
     }
 
     Text {
         id: txtBtnLabel
-        color: Theme.blue
-        font.pointSize: 15
+        color: btnStyled.disabled ? Theme.darkGrey : btnStyled.textColor
+        font.pixelSize: 15
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        text: label
+        text: btnStyled.label
         font.weight: Font.Medium
     }
 }
