@@ -5,6 +5,7 @@ import chronicles
 import ../signals/types
 import chat/chat_item
 import chat/chat_message
+import tables
 export chat_item
 export chat_message
 
@@ -20,11 +21,13 @@ type
   ChatModel* = ref object
     events*: EventEmitter
     channels*: HashSet[string]
+    filters*: Table[string, string]
 
 proc newChatModel*(): ChatModel =
   result = ChatModel()
   result.events = createEventEmitter()
   result.channels = initHashSet[string]()
+  result.filters = initTable[string, string]()
 
 proc delete*(self: ChatModel) =
   discard
@@ -57,6 +60,8 @@ proc join*(self: ChatModel, chatId: string, isNewChat: bool = true) =
     if (($topicObj["chatId"]).strip(chars = {'"'}) == chatId):
       topics.add(($topicObj["topic"]).strip(chars = {'"'}))
 
+    if(not self.filters.hasKey(chatId)): self.filters[chatId] = topicObj["filterId"].getStr
+
   if (topics.len == 0):
     warn "No topic found for the chat. Cannot load past messages"
   else:
@@ -69,9 +74,12 @@ proc load*(self: ChatModel) =
   self.events.emit("chatsLoaded", ChatArgs(chats: chatList))
 
 proc leave*(self: ChatModel, chatId: string) =
-  let oneToOne = isOneToOneChat(chatId)
-  discard status_chat.removeFilters(chatId = chatId, oneToOne = oneToOne)
-  # TODO: other calls (if any)
+  status_chat.removeFilters(chatId, self.filters[chatId])
+  status_chat.inactivateChat(chatId)
+  # TODO: REMOVE MAILSERVER TOPIC
+  # TODO: REMOVE HISTORY
+
+  self.filters.del(chatId)
   self.channels.excl(chatId)
 
 proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =

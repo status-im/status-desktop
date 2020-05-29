@@ -23,30 +23,22 @@ proc loadFilters*(chatId: string, filterId: string = "", symKeyId: string = "", 
     }]
   ])
 
-proc removeFilters*(chatId: string, filterId: string = "", symKeyId: string = "", oneToOne: bool = false, identity: string = "", topic: string = "", discovery: bool = false, negotiated: bool = false, listen: bool = true): string =
-  result =  callPrivateRPC("removeFilters".prefix, %* [
+proc removeFilters*(chatId: string, filterId: string) =
+  discard callPrivateRPC("removeFilters".prefix, %* [
     [{
-      "ChatID": chatId, # identifier of the chat
-      "FilterID": filterId, # whisper filter id generated
-      "SymKeyID": symKeyId, # symmetric key id used for symmetric filters
-      "OneToOne": oneToOne, # if asymmetric encryption is used for this chat
-      "Identity": identity, # public key of the other recipient for non-public filters.
-      # FIXME: passing empty string to the topic makes it error
-      # "Topic": topic, # whisper topic
-      "Discovery": discovery, 
-      "Negotiated": negotiated,
-      "Listen": listen # whether we are actually listening for messages on this chat, or the filter is only created in order to be able to post on the topic
+      "ChatID": chatId,
+      "FilterID": filterId
     }]
   ])
 
-proc saveChat*(chatId: string, oneToOne = false) =
+proc saveChat*(chatId: string, oneToOne: bool = false, active: bool = true) =
   discard callPrivateRPC("saveChat".prefix, %* [
     {
       "lastClockValue": 0, # TODO:
       "color": "#51d0f0", # TODO:
       "name": chatId,
       "lastMessage": nil, # TODO:
-      "active": true, # TODO:
+      "active": active,
       "id": chatId,
       "unviewedMessagesCount": 0, # TODO:
       # TODO use constants for those too or use the Date
@@ -55,12 +47,27 @@ proc saveChat*(chatId: string, oneToOne = false) =
     }
   ])
 
+proc inactivateChat*(chatId: string) =
+  discard callPrivateRPC("saveChat".prefix, %* [
+    {
+      "lastClockValue": 0,
+      "color": "",
+      "name": chatId,
+      "lastMessage": nil,
+      "active": false,
+      "id": chatId,
+      "unviewedMessagesCount": 0,
+      "timestamp": 0
+    }
+  ])
+
 proc loadChats*(): seq[Chat] =
   result = @[]
   let jsonResponse = parseJson($callPrivateRPC("chats".prefix))
   if jsonResponse["result"].kind != JNull:
     for jsonChat in jsonResponse{"result"}:
-      result.add(jsonChat.toChat)
+      let chat = jsonChat.toChat
+      if chat.active: result.add(jsonChat.toChat)
 
 proc chatMessages*(chatId: string) =
   discard callPrivateRPC("chatMessages".prefix, %* [chatId, nil, 20])
