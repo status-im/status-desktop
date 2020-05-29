@@ -1,15 +1,16 @@
 import NimQml
-import eventemitter
+# import eventemitter
 import strformat
 import strutils
 import chronicles
 
-import view
 import ../../status/libstatus/wallet as status_wallet
-import ../../status/wallet
 import ../../signals/types
 
+import ../../status/wallet
 import ../../status/status
+
+import view
 
 type WalletController* = ref object of SignalSubscriber
   status: Status

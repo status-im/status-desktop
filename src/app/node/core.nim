@@ -1,11 +1,9 @@
 import NimQml
 import chronicles
-import eventemitter
 import ../../signals/types
 import ../../status/node
-import view
-
 import ../../status/status
+import view
 
 logScope:
   topics = "node"
