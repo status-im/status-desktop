@@ -75,7 +75,7 @@ proc load*(self: ChatModel) =
 
 proc leave*(self: ChatModel, chatId: string) =
   status_chat.removeFilters(chatId, self.filters[chatId])
-  status_chat.inactivateChat(chatId)
+  status_chat.deactivateChat(chatId)
   # TODO: REMOVE MAILSERVER TOPIC
   # TODO: REMOVE HISTORY
 

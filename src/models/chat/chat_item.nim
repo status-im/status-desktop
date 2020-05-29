@@ -18,6 +18,7 @@ proc newChatItem*(id: string, chatType: ChatType, lastMessage: string = "", time
               of ChatType.Public: id
               of ChatType.OneToOne: generateAlias(id)
               of ChatType.PrivateGroupChat: "TODO: Private Group Name"
+              of ChatType.Unknown: "Unknown: " & id
   result.chatType = chatType
   result.lastMessage = lastMessage
   result.timestamp = timestamp
@@ -42,6 +43,7 @@ proc chatName(chat: Chat): string =
   of ChatType.OneToOne: result = chat.lastMessage.alias
   of ChatType.Public: result = chat.name
   of ChatType.PrivateGroupChat: result = "TODO: determine private group name"
+  of ChatType.Unknown: result = "Unknown"
 
 proc toChatItem*(chat: Chat): ChatItem =
     result = ChatItem(
