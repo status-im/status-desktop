@@ -4,13 +4,12 @@ import views/channels_list
 import views/message_list
 import ../../signals/types
 import ../../models/chat
-import random
 
 QtObject:
   type
     ChatsView* = ref object of QAbstractListModel
       model: ChatModel
-      chats: ChannelsList
+      chats*: ChannelsList
       callResult: string
       messageList: Table[string, ChatMessageList]
       activeChannel: string
@@ -33,19 +32,10 @@ QtObject:
   QtProperty[QVariant] chats:
     read = getChatsList
 
-  proc onSend*(self: ChatsView, inputJSON: string) {.slot.} =
-    discard self.model.sendMessage(self.activeChannel, inputJSON)
-
   proc activeChannel*(self: ChatsView): string {.slot.} = self.activeChannel
 
-  proc getChannelColor*(self: ChatsView, channel:string): string {.slot.} =
-    var selectedChannel: ChatItem
-    try:
-      selectedChannel = self.chats.getChannelByName(channel)
-    except:
-      return channelColors[0]
-    
-    result = selectedChannel.color
+  proc getChannelColor*(self: ChatsView, channel: string): string {.slot.} =
+    self.chats.getChannelColor(channel)
 
   proc activeChannelChanged*(self: ChatsView) {.signal.}
 
@@ -93,28 +83,14 @@ QtObject:
   proc pushChatItem*(self: ChatsView, chatItem: ChatItem) =
     discard self.chats.addChatItemToList(chatItem)
 
-  proc joinChat*(self: ChatsView, channel: string, chatTypeInt: int): int {.slot.} =
-    let chatType = ChatType(chatTypeInt)
-    
-    if self.model.hasChannel(channel):
-      result = self.chats.chats.findById(channel)
-    else:
-      self.model.join(channel)
-      randomize()
-      let randomColorIndex = rand(channelColors.len - 1)
-      let chatItem = newChatItem(id = channel, chatType, color = channelColors[randomColorIndex])
-      result = self.chats.addChatItemToList(chatItem)
+  proc sendMessage*(self: ChatsView, message: string) {.slot.} =
+    discard self.model.sendMessage(self.activeChannel, message)
 
-    self.setActiveChannel(channel)
+  proc joinChat*(self: ChatsView, channel: string, chatTypeInt: int): int {.slot.} =
+    self.model.join(channel, ChatType(chatTypeInt))
 
   proc leaveActiveChat*(self: ChatsView) {.slot.} =
     self.model.leave(self.activeChannel)
-    let channelCount = self.chats.removeChatItemFromList(self.activeChannel)
-    if channelCount == 0:
-      self.setActiveChannel("")
-    else:
-      let nextChannel = self.chats.chats[self.chats.chats.len - 1]
-      self.setActiveChannel(nextChannel.name)
 
   proc updateChat*(self: ChatsView, chat: ChatItem) =
     self.chats.updateChat(chat)

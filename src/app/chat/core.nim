@@ -3,6 +3,7 @@ import json, eventemitter
 import ../../models/chat as chat_model
 import ../../signals/types
 import ../../status/types as status_types
+import views/channels_list
 import view
 import chronicles
 
@@ -38,6 +39,17 @@ proc init*(self: ChatController) =
     chatMessage.message = sentMessage.message
     chatMessage.isCurrentUser = true
     self.view.pushMessage(sentMessage.chatId, chatMessage)
+
+  self.model.events.on("channelJoined") do(e: Args):
+    var channelMessage = ChannelArgs(e)
+    let chatItem = newChatItem(id = channelMessage.channel, channelMessage.chatTypeInt)
+    discard self.view.chats.addChatItemToList(chatItem)
+
+  self.model.events.on("channelLeft") do(e: Args):
+    discard self.view.chats.removeChatItemFromList(self.view.activeChannel)
+
+  self.model.events.on("activeChannelChanged") do(e: Args):
+    self.view.setActiveChannel(ChannelArgs(e).channel)
 
   self.model.load()
   self.view.setActiveChannelByIndex(0)

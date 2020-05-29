@@ -1,6 +1,7 @@
 import NimQml
 import Tables
 import strformat
+import random
 
 import ../../../models/chat
 
@@ -77,6 +78,9 @@ QtObject:
     }.toTable
 
   proc addChatItemToList*(self: ChannelsList, channel: ChatItem): int =
+    if channel.color == "":
+      randomize()
+      channel.color = channelColors[rand(channelColors.len - 1)]
     self.beginInsertRows(newQModelIndex(), 0, 0)
     self.chats.insert(channel, 0)
     self.endInsertRows()
@@ -99,11 +103,11 @@ QtObject:
     else:
       result = idx
 
-  proc getChannelByName*(self: ChannelsList, name: string): ChatItem =
+  proc getChannelColor*(self: ChannelsList, name: string): string =
     for chat in self.chats:
       if chat.name == name:
-        return chat
-    raise newException(OSError, fmt"No chat found with the name {name}")
+        return chat.color
+    return channelColors[0]
 
   proc updateChat*(self: ChannelsList, channel: ChatItem) =
     let idx = self.upsertChannel(channel)

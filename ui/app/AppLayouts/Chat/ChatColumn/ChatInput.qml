@@ -32,7 +32,7 @@ Rectangle {
             anchors.right: parent.right
             anchors.rightMargin: 16
             onClicked: {
-                chatsModel.onSend(txtData.text)
+                chatsModel.sendMessage(txtData.text)
                 txtData.text = ""
             }
             background: Rectangle {
@@ -62,11 +62,11 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 24
             Keys.onEnterPressed: {
-                chatsModel.onSend(txtData.text)
+                chatsModel.sendMessage(txtData.text)
                 txtData.text = ""
             }
             Keys.onReturnPressed: {
-                chatsModel.onSend(txtData.text)
+                chatsModel.sendMessage(txtData.text)
                 txtData.text = ""
             }
             background: Rectangle {
