@@ -6,7 +6,7 @@ import Qt.labs.platform 1.1
 import QtGraphicalEffects 1.0
 import "../../../imports"
 import "../../../shared"
-import "./components"
+import "./Components"
 
 Item {
     property int selectedWallet: 0
@@ -89,7 +89,7 @@ Item {
             ColorOverlay {
                 anchors.fill: walletIcon
                 source: walletIcon
-                color: selected ? undefined : "#7CDA00"  // change image color
+                color: selected ? Theme.transparent : "#7CDA00"  // change image color
             }
             Text {
                 id: walletName
