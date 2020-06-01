@@ -6,6 +6,7 @@ import Qt.labs.platform 1.1
 import QtGraphicalEffects 1.0
 import "../../../imports"
 import "../../../shared"
+import "./components"
 
 Item {
     property int selectedWallet: 0
@@ -58,32 +59,7 @@ Item {
         }
     }
 
-    // TODO change this with a reused Component
-    Rectangle {
-        id: addWalletBtn
-        width: 36
-        height: 36
-        color: Theme.blue
-        radius: 50
-        anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
-        anchors.top: walletValueTextContainer.top
-        anchors.topMargin: 0
-
-        Text {
-            id: addChatLbl
-            color: "#ffffff"
-            text: qsTr("+")
-            anchors.verticalCenterOffset: -1
-            anchors.horizontalCenterOffset: 1
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            lineHeight: 1
-            fontSizeMode: Text.FixedSize
-            font.bold: true
-            font.pixelSize: 28
-        }
-    }
+    AddAccount {}
 
     Component {
         id: walletDelegate
