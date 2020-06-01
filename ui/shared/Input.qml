@@ -17,7 +17,6 @@ Item {
         inputValue.forceActiveFocus(Qt.MouseFocusReason)
     }
     readonly property int labelMargin: 7
-    property var otherProps // Only used to assign stuff to textField
 
     id: inputBox
     height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0)

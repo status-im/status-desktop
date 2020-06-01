@@ -7,12 +7,14 @@ import "../shared"
 import "../imports"
 
 SwipeView {
+    property alias btnGenKey: btnGenKey
+
     id: swipeView
     anchors.fill: parent
     currentIndex: 0
 
     onCurrentItemChanged: {
-        currentItem.txtPassword.focus = true
+        currentItem.txtPassword.textField.focus = true
     }
 
     Item {
@@ -135,9 +137,8 @@ SwipeView {
             anchors.leftMargin: Theme.padding
             anchors.left: parent.left
             anchors.right: parent.right
-            otherProps: {
-                this.textField.focus = true
-                this.textField.focus
+
+            Component.onCompleted: {
                 this.textField.echoMode = TextInput.Password
             }
             Keys.onReturnPressed: {
