@@ -5,7 +5,6 @@ import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
 import "../../../../shared"
 import "../../../../imports"
-import "../components"
 
 Rectangle {
     id: addAccount
