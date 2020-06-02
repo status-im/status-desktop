@@ -81,8 +81,7 @@ proc join*(self: ChatModel, chatId: string, chatTypeInt: ChatType, isNewChat: bo
 proc load*(self: ChatModel) =
   let chatList = status_chat.loadChats()
   for chat in chatList:
-    # TODO: use correct type of chat instead of hardcoded 2 (assumes it's only public chats)
-    self.join(chat.id, ChatType.Public, false)
+    self.join(chat.id, chat.chatType, false)
   self.events.emit("chatsLoaded", ChatArgs(chats: chatList))
 
 proc leave*(self: ChatModel, chatId: string) =
