@@ -12,9 +12,12 @@ SwipeView {
     id: swipeView
     anchors.fill: parent
     currentIndex: 0
+    interactive: false
 
     onCurrentItemChanged: {
-        currentItem.txtPassword.textField.focus = true
+        if(currentItem.txtPassword) {
+            currentItem.txtPassword.textField.focus = true
+        }
     }
 
     Item {
@@ -22,8 +25,6 @@ SwipeView {
         property int selectedIndex: 0
         Layout.fillHeight: true
         Layout.fillWidth: true
-//        width: parent.width
-//        height: parent.height
 
         Text {
             id: title
@@ -90,6 +91,10 @@ SwipeView {
             delegate: addressViewDelegate
             Layout.fillHeight: true
             Layout.fillWidth: true
+            focus: true
+            Keys.onReturnPressed: {
+                selectBtn.clicked()
+            }
         }
 
         Item {
@@ -137,6 +142,7 @@ SwipeView {
             anchors.leftMargin: Theme.padding
             anchors.left: parent.left
             anchors.right: parent.right
+            placeholderText: "Enter password"
 
             Component.onCompleted: {
                 this.textField.echoMode = TextInput.Password
@@ -160,11 +166,11 @@ SwipeView {
 
         Connections {
             target: loginModel
+            ignoreUnknownSignals: true
             onLoginResponseChanged: {
-                const loginResponse = JSON.parse(response)
-                if (loginResponse.error) {
-                    loginError.open()
-                }
+              if(error){
+                  loginError.open()
+              }
             }
         }
 

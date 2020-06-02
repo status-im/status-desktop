@@ -9,6 +9,7 @@ import uuids
 import types
 import json_serialization
 import chronicles
+import ../../signals/types as signal_types
 
 proc queryAccounts*(): string =
   var response = callPrivateRPC("eth_accounts")
@@ -19,9 +20,10 @@ proc generateAddresses*(): seq[GeneratedAccount] =
     "n": 5,
     "mnemonicPhraseLength": 12,
     "bip39Passphrase": "",
-    "paths": [PATH_WHISPER, PATH_WALLET_ROOT, PATH_DEFAULT_WALLET]
+    "paths": [PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
   }
-  result = Json.decode($libstatus.multiAccountGenerateAndDeriveAddresses($multiAccountConfig), seq[GeneratedAccount])
+  let generatedAccounts = $libstatus.multiAccountGenerateAndDeriveAddresses($multiAccountConfig)
+  result = Json.decode(generatedAccounts, seq[GeneratedAccount])
 
 proc generateAlias*(publicKey: string): string =
   result = $libstatus.generateAlias(publicKey.toGoString)
@@ -48,9 +50,7 @@ proc initNodeAccounts*(): seq[NodeAccount] =
   result = Json.decode(strNodeAccounts, seq[NodeAccount])
 
 proc saveAccountAndLogin*(
-  multiAccounts: MultiAccounts, 
-  alias: string,
-  identicon: string,
+  account: GeneratedAccount,
   accountData: string,
   password: string,
   configJSON: string,
@@ -58,18 +58,18 @@ proc saveAccountAndLogin*(
   let hashedPassword = "0x" & $keccak_256.digest(password)
   let subaccountData = %* [
     {
-      "public-key": multiAccounts.defaultWallet.publicKey,
-      "address": multiAccounts.defaultWallet.address,
+      "public-key": account.derived.defaultWallet.publicKey,
+      "address": account.derived.defaultWallet.address,
       "color": "#4360df",
       "wallet": true,
       "path": constants.PATH_DEFAULT_WALLET,
       "name": "Status account"
     },
     {
-      "public-key": multiAccounts.whisper.publicKey,
-      "address": multiAccounts.whisper.address,
-      "name": alias,
-      "photo-path": identicon,
+      "public-key": account.derived.whisper.publicKey,
+      "address": account.derived.whisper.address,
+      "name": account.name,
+      "photo-path": account.photoPath,
       "path": constants.PATH_WHISPER,
       "chat": true
     }
@@ -81,47 +81,52 @@ proc saveAccountAndLogin*(
 
   if error == "":
     debug "Account saved succesfully"
-    result = Account(name: alias, photoPath: identicon)
+    result = account.toAccount
     return
 
-  raise newException(LoginError, "Error saving account and logging in: " & error)
+  raise newException(StatusGoException, "Error saving account and logging in: " & error)
 
-proc generateMultiAccounts*(account: GeneratedAccount, password: string): MultiAccounts =
+proc storeDerivedAccounts*(account: GeneratedAccount, password: string): MultiAccounts =
   let hashedPassword = "0x" & $keccak_256.digest(password)
   let multiAccount = %* {
     "accountID": account.id,
     "paths": [PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET],
     "password": hashedPassword
   }
-  var response = $libstatus.multiAccountStoreDerivedAccounts($multiAccount);
-  result = Json.decode($response, MultiAccounts)
+  let response = $libstatus.multiAccountStoreDerivedAccounts($multiAccount);
+  
+  try: 
+    result = Json.decode($response, MultiAccounts)
+  except: 
+    let err = Json.decode($response, StatusGoError)
+    raise newException(StatusGoException, "Error storing multiaccount derived accounts: " & err.error)
 
-proc getAccountData*(account: GeneratedAccount, alias: string, identicon: string): JsonNode =
+proc getAccountData*(account: GeneratedAccount): JsonNode =
   result = %* {
-    "name": alias,
+    "name": account.name,
     "address": account.address,
-    "photo-path": identicon,
+    "photo-path": account.photoPath,
     "key-uid": account.keyUid,
     "keycard-pairing": nil
   }
 
-proc getAccountSettings*(account: GeneratedAccount, alias: string, identicon: string, multiAccounts: MultiAccounts, defaultNetworks: JsonNode): JsonNode =
+proc getAccountSettings*(account: GeneratedAccount, defaultNetworks: JsonNode): JsonNode =
   result = %* {
     "key-uid": account.keyUid,
     "mnemonic": account.mnemonic,
-    "public-key": multiAccounts.whisper.publicKey,
-    "name": alias,
+    "public-key": account.derived.whisper.publicKey,
+    "name": account.name,
     "address": account.address,
-    "eip1581-address": multiAccounts.eip1581.address,
-    "dapps-address": multiAccounts.defaultWallet.address,
-    "wallet-root-address": multiAccounts.walletRoot.address,
+    "eip1581-address": account.derived.eip1581.address,
+    "dapps-address": account.derived.defaultWallet.address,
+    "wallet-root-address": account.derived.walletRoot.address,
     "preview-privacy?": true,
     "signing-phrase": generateSigningPhrase(3),
     "log-level": "INFO",
     "latest-derived-path": 0,
     "networks/networks": defaultNetworks,
     "currency": "usd",
-    "photo-path": identicon,
+    "photo-path": account.photoPath,
     "waku-enabled": true,
     "wallet/visible-tokens": {
       "mainnet": ["SNT"]
@@ -132,20 +137,20 @@ proc getAccountSettings*(account: GeneratedAccount, alias: string, identicon: st
   }
 
 proc setupAccount*(account: GeneratedAccount, password: string): Account =
-  let multiAccounts = generateMultiAccounts(account, password)
+  try:
+    let storeDerivedResult = storeDerivedAccounts(account, password)
+    let accountData = getAccountData(account)
+    var settingsJSON = getAccountSettings(account, constants.DEFAULT_NETWORKS)
 
-  let whisperPubKey = account.derived.whisper.publicKey
-  let alias = generateAlias(whisperPubKey)
-  let identicon =generateIdenticon(whisperPubKey)
+    result = saveAccountAndLogin(account, $accountData, password, $constants.NODE_CONFIG, $settingsJSON)
 
-  let accountData = getAccountData(account, alias, identicon)
-  var settingsJSON = getAccountSettings(account, alias, identicon, multiAccounts, constants.DEFAULT_NETWORKS)
-
-  result = saveAccountAndLogin(multiAccounts, alias, identicon, $accountData, password, $constants.NODE_CONFIG, $settingsJSON)
-
-  # TODO this is needed for now for the retrieving of past messages. We'll either move or remove it later
-  let peer = "enode://44160e22e8b42bd32a06c1532165fa9e096eebedd7fa6d6e5f8bbef0440bc4a4591fe3651be68193a7ec029021cdb496cfe1d7f9f1dc69eb99226e6f39a7a5d4@35.225.221.245:443"
-  discard libstatus.addPeer(peer)
+  except StatusGoException as e:
+    raise newException(StatusGoException, "Error setting up account: " & e.msg)
+  
+  finally:
+    # TODO this is needed for now for the retrieving of past messages. We'll either move or remove it later
+    let peer = "enode://44160e22e8b42bd32a06c1532165fa9e096eebedd7fa6d6e5f8bbef0440bc4a4591fe3651be68193a7ec029021cdb496cfe1d7f9f1dc69eb99226e6f39a7a5d4@35.225.221.245:443"
+    discard libstatus.addPeer(peer)
 
 proc login*(nodeAccount: NodeAccount, password: string): NodeAccount =
   let hashedPassword = "0x" & $keccak_256.digest(password)
@@ -158,4 +163,22 @@ proc login*(nodeAccount: NodeAccount, password: string): NodeAccount =
     result = nodeAccount
     return
 
-  raise newException(LoginError, "Error logging in: " & error)
+  raise newException(StatusGoException, "Error logging in: " & error)
+
+proc multiAccountImportMnemonic*(mnemonic: string): GeneratedAccount =
+  let mnemonicJson = %* {
+    "mnemonicPhrase": mnemonic,
+    "Bip39Passphrase": ""
+  }
+  # libstatus.multiAccountImportMnemonic never results in an error given ANY input
+  let importResult = $libstatus.multiAccountImportMnemonic($mnemonicJson)
+  result = Json.decode(importResult, GeneratedAccount)
+
+proc deriveAccounts*(accountId: string): MultiAccounts =
+  let deriveJson = %* {
+    "accountID": accountId,
+    "paths": [PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
+  }
+  # libstatus.multiAccountImportMnemonic never results in an error given ANY input
+  let deriveResult = $libstatus.multiAccountDeriveAddresses($deriveJson)
+  result = Json.decode(deriveResult, MultiAccounts)

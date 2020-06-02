@@ -73,4 +73,4 @@ type AccountArgs* = ref object of Args
     account*: Account
 
 type
-  LoginError* = object of Exception
+  StatusGoException* = object of Exception

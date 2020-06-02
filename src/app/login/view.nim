@@ -23,7 +23,6 @@ QtObject:
   type LoginView* = ref object of QAbstractListModel
     status: Status
     accounts: seq[NodeAccount]
-    lastLoginResponse: string
 
   proc setup(self: LoginView) =
     self.QAbstractListModel.setup
@@ -35,7 +34,6 @@ QtObject:
   proc newLoginView*(status: Status): LoginView =
     new(result, delete)
     result.accounts = @[]
-    result.lastLoginResponse = ""
     result.status = status
     result.setup
 
@@ -72,18 +70,9 @@ QtObject:
       let
         e = getCurrentException()
         msg = getCurrentExceptionMsg()
-      result = SignalError(error: msg).toJson
+      result = StatusGoError(error: msg).toJson
 
-  proc lastLoginResponse*(self: LoginView): string =
-    result = self.lastLoginResponse
+  proc loginResponseChanged*(self: LoginView, error: string) {.signal.}
 
-  proc loginResponseChanged*(self: LoginView, response: string) {.signal.}
-
-  proc setLastLoginResponse*(self: LoginView, loginResponse: string) {.slot.} =
-    self.lastLoginResponse = loginResponse
-    self.loginResponseChanged(loginResponse)
-
-  QtProperty[string] loginResponse:
-    read = lastLoginResponse
-    write = setLastLoginResponse
-    notify = loginResponseChanged
+  proc setLastLoginResponse*(self: LoginView, loginResponse: StatusGoError) =
+    self.loginResponseChanged(loginResponse.error)

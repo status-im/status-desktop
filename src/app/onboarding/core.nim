@@ -7,7 +7,6 @@ import view
 import chronicles
 import ../../signals/types
 import std/wrapnils
-
 import ../../status/status
 
 type OnboardingController* = ref object of SignalSubscriber
@@ -31,10 +30,11 @@ proc init*(self: OnboardingController) =
     self.view.addAccountToList(account)
 
 proc handleNodeLogin(self: OnboardingController, data: Signal) =
-  var response = NodeSignal(data)
-  self.view.setLastLoginResponse($response.event.toJson)
-  if ?.response.event.error == "" and self.status.accounts.currentAccount != nil:
-    self.status.events.emit("login", AccountArgs(account: self.status.accounts.currentAccount))
+  let response = NodeSignal(data)
+  if self.status.accounts.currentOnboardingAccount != nil:
+    self.view.setLastLoginResponse(response.event)
+    if ?.response.event.error == "":
+      self.status.events.emit("login", AccountArgs(account: self.status.accounts.currentOnboardingAccount))
 
 method onSignal(self: OnboardingController, data: Signal) =
   if data.signalType == SignalType.NodeLogin:

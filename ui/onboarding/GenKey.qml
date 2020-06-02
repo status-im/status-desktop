@@ -3,6 +3,7 @@ import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.11
 import QtQuick.Window 2.11
 import QtQuick.Dialogs 1.3
+import "../imports"
 import "../shared"
 
 SwipeView {
@@ -10,15 +11,17 @@ SwipeView {
     anchors.fill: parent
     currentIndex: 0
 
+    property alias btnExistingKey: btnExistingKey
+
     onCurrentItemChanged: {
-        currentItem.txtPassword.focus = true;
+        currentItem.txtPassword.textField.focus = true;
     }
 
     Item {
-        id: wizardStep2
+        id: wizardStep1
         property int selectedIndex: 0
-        width: 620
-        height: 427
+        Layout.fillHeight: true
+        Layout.fillWidth: true
 
         Text {
             id: title
@@ -37,62 +40,79 @@ SwipeView {
             anchors.topMargin: 20
 
 
-                ButtonGroup {
-                    id: accountGroup
-                }
+            ButtonGroup {
+                id: accountGroup
+            }
 
-                Component {
-                    id: addressViewDelegate
+            Component {
+                id: addressViewDelegate
 
-                    Item {
-                        height: 56
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
+                Item {
+                    height: 56
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+                    anchors.left: parent.left
+                    anchors.leftMargin: 0
 
-                        Row {
-                            RadioButton {
-                                checked: index == 0 ? true : false
-                                ButtonGroup.group: accountGroup
-                                onClicked: {
-                                    wizardStep2.selectedIndex = index
-                                }
+                    Row {
+                        RadioButton {
+                            checked: index == 0 ? true : false
+                            ButtonGroup.group: accountGroup
+                            onClicked: {
+                                wizardStep1.selectedIndex = index
                             }
-                            Column {
-                                Image {
-                                    source: identicon
-                                }
+                        }
+                        Column {
+                            Image {
+                                source: identicon
                             }
-                            Column {
-                                Text {
-                                    text: username
-                                }
-                                Text {
-                                    text: key
-                                    width: 160
-                                    elide: Text.ElideMiddle
-                                }
+                        }
+                        Column {
+                            Text {
+                                text: username
+                            }
+                            Text {
+                                text: key
+                                width: 160
+                                elide: Text.ElideMiddle
                             }
                         }
                     }
                 }
+            }
 
-                ListView {
-                    id: addressesView
-                    contentWidth: 200
-                    model: onboardingModel
-                    delegate: addressViewDelegate
-                    anchors.fill: parent
+            ListView {
+                id: addressesView
+                contentWidth: 200
+                model: onboardingModel
+                delegate: addressViewDelegate
+                anchors.fill: parent
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+            }
+
+            Item {
+                id: footer
+                width: btnExistingKey.width + selectBtn.width + Theme.padding
+                height: btnExistingKey.height
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: Theme.padding
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                StyledButton {
+                    id: btnExistingKey
+                    label: "Access existing key"
                 }
 
-            StyledButton {
-                label: "Select"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 20
-                onClicked: {
-                    swipeView.incrementCurrentIndex();
+                StyledButton {
+                    id: selectBtn
+                    anchors.left: btnExistingKey.right
+                    anchors.leftMargin: Theme.padding
+                    label: "Select"
+
+                    onClicked: {
+                        swipeView.incrementCurrentIndex()
+                    }
                 }
             }
 
@@ -100,7 +120,7 @@ SwipeView {
     }
 
     Item {
-        id: wizardStep3
+        id: wizardStep2
         property Item txtPassword: txtPassword
 
         Text {
@@ -111,23 +131,25 @@ SwipeView {
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        Rectangle {
-            color: "#EEEEEE"
+        Input {
+            id: txtPassword
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.rightMargin: Theme.padding
+            anchors.leftMargin: Theme.padding
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.centerIn: parent
-            height: 32
-            width: parent.width - 40
-            TextInput {
-                id: txtPassword
-                anchors.fill: parent
-                focus: true
-                echoMode: TextInput.Password
-                selectByMouse: true
+            placeholderText: "Enter password"
+
+            Component.onCompleted: {
+                this.textField.echoMode = TextInput.Password
+            }
+            Keys.onReturnPressed: {
+                btnNext.clicked()
             }
         }
 
         StyledButton {
+            id: btnNext
             label: "Next"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
@@ -139,7 +161,7 @@ SwipeView {
     }
 
     Item {
-        id: wizardStep4
+        id: wizardStep3
         property Item txtPassword: txtConfirmPassword
 
         Text {
@@ -150,20 +172,20 @@ SwipeView {
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        Rectangle {
-            color: "#EEEEEE"
+        Input {
+            id: txtConfirmPassword
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.rightMargin: Theme.padding
+            anchors.leftMargin: Theme.padding
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.centerIn: parent
-            height: 32
-            width: parent.width - 40
+            placeholderText: "Confirm entered password"
 
-            TextInput {
-                id: txtConfirmPassword
-                anchors.fill: parent
-                focus: true
-                echoMode: TextInput.Password
-                selectByMouse: true
+            Component.onCompleted: {
+                this.textField.echoMode = TextInput.Password
+            }
+            Keys.onReturnPressed: {
+                btnFinish.clicked()
             }
         }
 
@@ -190,26 +212,27 @@ SwipeView {
 
         Connections {
             target: onboardingModel
+            ignoreUnknownSignals: true
             onLoginResponseChanged: {
-              const loginResponse = JSON.parse(response);
-              if(loginResponse.error){
-                storeAccountAndLoginError.text += loginResponse.error;
+              if(error){
+                storeAccountAndLoginError.text += error;
                 storeAccountAndLoginError.open()
               }
             }
         }
 
         StyledButton {
+            id: btnFinish
             label: "Finish"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
             onClicked: {
-                if (txtConfirmPassword.text != txtPassword.text) {
+                if (txtConfirmPassword.textField.text != txtPassword.textField.text) {
                     return passwordsDontMatchError.open();
                 }
-                const selectedAccountIndex = wizardStep2.selectedIndex
-                onboardingModel.storeAccountAndLogin(selectedAccountIndex, txtPassword.text)
+                const selectedAccountIndex = wizardStep1.selectedIndex
+                onboardingModel.storeAccountAndLogin(selectedAccountIndex, txtPassword.textField.text)
             }
         }
     }
