@@ -8,7 +8,7 @@ import "../../../../imports"
 import "../components"
 
 Rectangle {
-    property string channelNameStr: "#" + chatsModel.activeChannel
+    property string channelNameStr: "#" + chatsModel.activeChannel.id
 
     id: chatTopBarContent
     color: "white"
@@ -20,16 +20,16 @@ Rectangle {
 
     ChannelIcon {
       id: channelIcon
-      channelName: chatsModel.activeChannel
-      /* TODO(pascal): expose chatType from active channel to set it here */
-      channelType: Constants.chatTypeOneToOne
+      channelName: chatsModel.activeChannel.id
+      channelType: chatsModel.activeChannel.chatType
+      channelIdenticon: chatsModel.activeChannel.identicon
     }
 
     TextEdit {
         id: channelName
         width: 80
         height: 20
-        text: chatTopBarContent.channelNameStr
+        text: chatsModel.activeChannel.chatType == Constants.chatTypeOneToOne ? chatsModel.activeChannel.name : channelNameStr
         anchors.left: channelIcon.right
         anchors.leftMargin: Theme.smallPadding
         anchors.top: parent.top
