@@ -6,6 +6,8 @@ import ../../signals/types
 import strformat
 import json_serialization
 import ../../status/accounts as AccountModel
+import views/account_info
+import strutils
 import ../../status/status
 
 type
@@ -17,7 +19,7 @@ type
 QtObject:
   type OnboardingView* = ref object of QAbstractListModel
     accounts*: seq[GeneratedAccount]
-    lastLoginResponse: string
+    importedAccount: AccountInfoView
     status*: Status
 
   proc setup(self: OnboardingView) =
@@ -30,7 +32,7 @@ QtObject:
   proc newOnboardingView*(status: Status): OnboardingView =
     new(result, delete)
     result.accounts = @[]
-    result.lastLoginResponse = ""
+    result.importedAccount = newAccountInfoView()
     result.status = status
     result.setup
 
@@ -53,7 +55,7 @@ QtObject:
     case assetRole:
     of AccountRoles.Username: result = newQVariant(asset.name)
     of AccountRoles.Identicon: result = newQVariant(asset.photoPath)
-    of AccountRoles.Key: result = newQVariant(asset.keyUid)
+    of AccountRoles.Key: result = newQVariant(asset.derived.whisper.address)
 
   method roleNames(self: OnboardingView): Table[int, string] =
     { AccountRoles.Username.int:"username",
@@ -67,18 +69,35 @@ QtObject:
       let
         e = getCurrentException()
         msg = getCurrentExceptionMsg()
-      result = SignalError(error: msg).toJson
+      result = StatusGoError(error: msg).toJson
 
-  proc lastLoginResponse*(self: OnboardingView): string =
-    result = self.lastLoginResponse
+  proc getImportedAccount*(self: OnboardingView): QVariant {.slot.} =
+    result = newQVariant(self.importedAccount)
 
-  proc loginResponseChanged*(self: OnboardingView, response: string) {.signal.}
+  proc setImportedAccount*(self: OnboardingView, importedAccount: GeneratedAccount) =
+    self.importedAccount.setAccount(importedAccount)
 
-  proc setLastLoginResponse*(self: OnboardingView, loginResponse: string) {.slot.} =
-    self.lastLoginResponse = loginResponse
-    self.loginResponseChanged(loginResponse)
+  QtProperty[QVariant] importedAccount:
+    read = getImportedAccount
 
-  QtProperty[string] loginResponse:
-    read = lastLoginResponse
-    write = setLastLoginResponse
-    notify = loginResponseChanged
+  proc importMnemonic(self: OnboardingView, mnemonic: string): string {.slot.} =
+    try:
+      let importResult = self.status.accounts.importMnemonic(mnemonic)
+      result = importResult.toJson
+      self.setImportedAccount(importResult)
+    except StatusGoException as e:
+      result = StatusGoError(error: e.msg).toJson
+
+  proc storeDerivedAndLogin(self: OnboardingView, password: string): string {.slot.} =
+    try:
+      result = self.status.accounts.storeDerivedAndLogin(self.importedAccount.account, password).toJson
+    except StatusGoException as e:
+      var msg = e.msg
+      if e.msg.contains("account already exists"):
+        msg = "Account already exists. Please try importing another account."
+      result = StatusGoError(error: msg).toJson
+
+  proc loginResponseChanged*(self: OnboardingView, error: string) {.signal.}
+
+  proc setLastLoginResponse*(self: OnboardingView, loginResponse: StatusGoError) =
+    self.loginResponseChanged(loginResponse.error)

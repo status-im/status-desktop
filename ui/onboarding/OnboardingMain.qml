@@ -43,6 +43,12 @@ Page {
             id: existingKeyState
             onEntered: existingKey.visible = true
             onExited: existingKey.visible = false
+
+            DSM.SignalTransition {
+                targetState: appState
+                signal: onboardingModel.loginResponseChanged
+                guard: !error
+            }
         }
 
         DSM.State {
@@ -53,10 +59,12 @@ Page {
             DSM.SignalTransition {
                 targetState: appState
                 signal: onboardingModel.loginResponseChanged
-                guard: {
-                    const resp = JSON.parse(response);
-                    return !resp.error
-                }
+                guard: !error
+            }
+
+            DSM.SignalTransition {
+                targetState: existingKeyState
+                signal: genKey.btnExistingKey.clicked
             }
         }
 
@@ -68,10 +76,7 @@ Page {
             DSM.SignalTransition {
                 targetState: appState
                 signal: loginModel.loginResponseChanged
-                guard: {
-                    const resp = JSON.parse(response);
-                    return !resp.error
-                }
+                guard: !error
             }
 
             DSM.SignalTransition {

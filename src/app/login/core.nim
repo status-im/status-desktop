@@ -25,10 +25,11 @@ proc init*(self: LoginController, nodeAccounts: seq[NodeAccount]) =
     self.view.addAccountToList(nodeAccount)
 
 proc handleNodeLogin(self: LoginController, data: Signal) =
-  var response = NodeSignal(data)
-  self.view.setLastLoginResponse($response.event.toJson)
-  if ?.response.event.error == "" and self.status.accounts.currentAccount != nil:
-    self.status.events.emit("login", AccountArgs(account: self.status.accounts.currentAccount))
+  let response = NodeSignal(data)
+  if self.status.accounts.currentLoginAccount != nil:
+    self.view.setLastLoginResponse(response.event)
+    if ?.response.event.error == "":
+      self.status.events.emit("login", AccountArgs(account: self.status.accounts.currentLoginAccount))
 
 method onSignal(self: LoginController, data: Signal) =
   if data.signalType == SignalType.NodeLogin:

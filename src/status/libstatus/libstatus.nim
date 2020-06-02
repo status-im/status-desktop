@@ -10,6 +10,10 @@ proc multiAccountGenerateAndDeriveAddresses*(paramsJSON: cstring): cstring {.imp
 
 proc multiAccountStoreDerivedAccounts*(paramsJSON: cstring): cstring {.importc: "MultiAccountStoreDerivedAccounts".}
 
+proc multiAccountImportMnemonic*(paramsJSON: cstring): cstring {.importc: "MultiAccountImportMnemonic".}
+
+proc multiAccountDeriveAddresses*(paramsJSON: cstring): cstring {.importc: "MultiAccountDeriveAddresses".}
+
 proc saveAccountAndLogin*(accountData: cstring, password: cstring, settingsJSON: cstring, configJSON: cstring, subaccountData: cstring): cstring {.importc: "SaveAccountAndLogin".}
 
 proc callRPC*(inputJSON: cstring): cstring {.importc: "CallRPC".}

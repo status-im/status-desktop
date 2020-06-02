@@ -1,7 +1,6 @@
 import NimQml
 import eventemitter
 import chronicles
-import json_serialization
 
 import app/chat/core as chat
 import app/wallet/core as wallet
