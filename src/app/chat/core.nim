@@ -41,17 +41,17 @@ proc handleChatEvents(self: ChatController) =
     let chatItem = newChatItem(id = channelMessage.channel, channelMessage.chatTypeInt)
     discard self.view.chats.addChatItemToList(chatItem)
 
-  self.chatModel.events.on("channelLeft") do(e: Args):
+  self.status.events.on("channelLeft") do(e: Args):
     discard self.view.chats.removeChatItemFromList(self.view.activeChannel)
 
-  self.chatModel.events.on("activeChannelChanged") do(e: Args):
+  self.status.events.on("activeChannelChanged") do(e: Args):
     self.view.setActiveChannel(ChannelArgs(e).channel)
 
 proc init*(self: ChatController) =
   self.handleChatEvents()
   
-  self.chatModel.init()
-  self.mailserverModel.init()
+  self.status.chat.init()
+  self.status.mailservers.init()
 
   self.view.setActiveChannelByIndex(0)
 
@@ -68,7 +68,7 @@ proc handleMessage(self: ChatController, data: Signal) =
 
 proc handleDiscoverySummary(self: ChatController, data: Signal) =
   var discovery = DiscoverySummarySignal(data)
-  self.mailserverModel.peerSummaryChange(discovery.enodes)
+  self.status.mailservers.peerSummaryChange(discovery.enodes)
 
 method onSignal(self: ChatController, data: Signal) =
   case data.signalType: 

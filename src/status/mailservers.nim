@@ -32,9 +32,9 @@ proc cmpMailserverReply(x, y: (string, int)): int =
 
 proc poolSize(fleetSize: int): int = ceil(fleetSize / 4).int
 
-proc newMailserverModel*(): MailserverModel =
+proc newMailserverModel*(events: EventEmitter): MailserverModel =
   result = MailserverModel()
-  result.events = createEventEmitter()
+  result.events = events
   result.nodes = initTable[string, MailserverStatus]()
 
 proc trustPeer*(self: MailserverModel, enode:string) = 
