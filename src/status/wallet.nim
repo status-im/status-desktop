@@ -1,5 +1,4 @@
 import eventemitter
-import json
 import strformat
 import strutils
 import libstatus/wallet as status_wallet

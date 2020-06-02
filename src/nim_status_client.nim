@@ -38,7 +38,7 @@ proc mainProc() =
   signalsQObjPointer = cast[pointer](signalController.vptr)
 
   var wallet = wallet.newController(status)
-  engine.setRootContextProperty("assetsModel", wallet.variant)
+  engine.setRootContextProperty("walletModel", wallet.variant)
 
   var chat = chat.newController(status)
   engine.setRootContextProperty("chatsModel", chat.variant)

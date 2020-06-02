@@ -119,7 +119,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Theme.padding
         onClicked: {
-            let result = assetsModel.onSendTransaction(txtFrom.text,
+            let result = walletModel.onSendTransaction(txtFrom.text,
                                                        txtTo.text,
                                                        txtValue.text,
                                                        txtPassword.text)

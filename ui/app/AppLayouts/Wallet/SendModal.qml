@@ -11,7 +11,7 @@ Item {
         popup.open()
         sendModalContent.valueInput.text = ""
         sendModalContent.valueInput.forceActiveFocus(Qt.MouseFocusReason)
-        sendModalContent.defaultAccount = assetsModel.getDefaultAccount()
+        sendModalContent.defaultAccount = walletModel.getDefaultAccount()
     }
 
     function close() {

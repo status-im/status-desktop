@@ -8,6 +8,7 @@ Item {
     property string placeholderText: "My placeholder"
     property string text: ""
     property string label: ""
+
 //    property string label: "My Label"
 //    property url icon: "../app/img/hash.svg"
     property url icon: ""
