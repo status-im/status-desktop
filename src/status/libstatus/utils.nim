@@ -8,8 +8,9 @@ import accounts/signing_phrases
 proc isWakuEnabled(): bool =
   true # TODO:
 
-proc prefix*(methodName: string): string =
-  result = if isWakuEnabled(): "wakuext_" else: "shhext_" 
+proc prefix*(methodName: string, isExt:bool = true): string =
+  result = if isWakuEnabled(): "waku" else: "shh" 
+  result = result & (if isExt: "ext_" else: "_")
   result = result & methodName
 
 proc isOneToOneChat*(chatId: string): bool =

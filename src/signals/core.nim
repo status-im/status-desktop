@@ -4,6 +4,7 @@ import tables
 import json
 import types
 import messages
+import discovery
 import chronicles
 import whisperFilter
 import strutils
@@ -69,6 +70,8 @@ QtObject:
         signal = WalletSignal(content: $jsonSignal)
       of SignalType.NodeLogin:
         signal = Json.decode($jsonSignal, NodeSignal)
+      of SignalType.DiscoverySummary:
+        signal = discovery.fromEvent(jsonSignal)
       else:
         discard
 
