@@ -35,10 +35,11 @@ proc init*(self: WalletController) =
   var totalAccountBalance: float = 0
 
   const symbol = "ETH"
+  let defaultCurrency = self.status.wallet.getDefaultCurrency()
   for address in accounts:
     let eth_balance = self.status.wallet.getEthBalance(address)
     # TODO get all user assets and add them to balance
-    let usd_balance = self.status.wallet.getFiatValue(eth_balance, symbol, "USD")
+    let usd_balance = self.status.wallet.getFiatValue(eth_balance, symbol, defaultCurrency)
 
     totalAccountBalance = totalAccountBalance + usd_balance
 
@@ -46,7 +47,7 @@ proc init*(self: WalletController) =
     let asset = Asset(name:"Ethereum", symbol: symbol, value: fmt"{eth_balance:.6}", fiatValue: "$" & fmt"{usd_balance:.2f}", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
     assetList.addAssetToList(asset)
 
-    let account = Account(name: "Status Account", address: address, iconColor: "", balance: fmt"{totalAccountBalance:.2f} USD", assetList: assetList)
+    let account = Account(name: "Status Account", address: address, iconColor: "", balance: fmt"{totalAccountBalance:.2f} {defaultCurrency}", assetList: assetList)
     self.view.addAccountToList(account)
 
   self.view.setDefaultAccount(accounts[0])

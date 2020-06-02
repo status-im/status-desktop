@@ -81,6 +81,7 @@ DISTFILES += \
     app/AppLayouts/Wallet/CollectiblesTab.qml \
     app/AppLayouts/Wallet/Components/AddAccount.qml \
     app/AppLayouts/Wallet/Components/SendModalContent.qml \
+    app/AppLayouts/Wallet/Components/SettingsModalContent.qml \
     app/AppLayouts/Wallet/Components/qmldir \
     app/AppLayouts/Wallet/HistoryTab.qml \
     app/AppLayouts/Profile/Sections/AboutContainer.qml \
@@ -97,6 +98,7 @@ DISTFILES += \
     app/AppLayouts/Profile/qmldir \
     app/AppLayouts/Wallet/LeftTab.qml \
     app/AppLayouts/Wallet/SendModal.qml \
+    app/AppLayouts/Wallet/SettingsModal.qml \
     app/AppLayouts/Wallet/WalletHeader.qml \
     app/AppLayouts/Wallet/WalletLayout.qml \
     app/AppLayouts/Wallet/qmldir \

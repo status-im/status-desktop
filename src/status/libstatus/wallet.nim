@@ -28,8 +28,11 @@ proc getPrice*(crypto: string, fiat: string): string =
   let client = newHttpClient()
   client.headers = newHttpHeaders({ "Content-Type": "application/json" })
 
-  let response = client.request(url)
-  $parseJson(response.body)["USD"]
+  try:
+    let response = client.request(url)
+    result = $parseJson(response.body)[fiat.toUpper]
+  except:
+    echo "error getting price"
 
 proc getBalance*(address: string): string =
   let payload = %* [address, "latest"]

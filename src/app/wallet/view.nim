@@ -62,3 +62,17 @@ QtObject:
 
   proc getDefaultAccount*(self: WalletView): string {.slot.} =
     return self.defaultAccount
+
+  proc defaultCurrency*(self: WalletView): string {.slot.} =
+    self.status.wallet.getDefaultCurrency()
+
+  proc defaultCurrencyChanged*(self: WalletView) {.signal.}
+
+  proc setDefaultCurrency*(self: WalletView, currency: string) {.slot.} =
+    self.status.wallet.setDefaultCurrency(currency)
+    self.defaultCurrencyChanged()
+
+  QtProperty[string] defaultCurrency:
+    read = defaultCurrency
+    write = setDefaultCurrency
+    notify = defaultCurrencyChanged
