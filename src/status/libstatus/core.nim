@@ -2,6 +2,10 @@ import json
 import libstatus
 import nimcrypto
 import utils
+import chronicles
+
+logScope:
+  topics = "rpc"
 
 proc callRPC*(inputJSON: string): string =
   return $libstatus.callRPC(inputJSON)
@@ -16,10 +20,13 @@ proc callPrivateRPC*(methodName: string, payload = %* []): string =
       "method": methodName,
       "params": %payload
     }
-    result = $libstatus.callPrivateRPC($inputJSON)
+    debug "calling json", request = $inputJSON
+    let response = libstatus.callPrivateRPC($inputJSON)
+    result = $response
+    if parseJSON(result).hasKey("error"):
+      error "rpc response error", result = result
   except:
-    echo "error doing rpc request"
-    echo methodName
+    error "error doing rpc request", methodName = methodName
 
 proc sendTransaction*(inputJSON: string, password: string): string =
   var hashed_password = "0x" & $keccak_256.digest(password)

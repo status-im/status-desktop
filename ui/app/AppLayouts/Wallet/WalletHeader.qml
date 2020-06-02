@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.3
 import "../../../imports"
 import "../../../shared"
 
-
 Item {
     id: walletHeader
     height: walletAddress.y + walletAddress.height
@@ -65,6 +64,10 @@ Item {
 
     SendModal{
         id: sendModal
+    }
+
+    SettingsModal{
+        id: settingsModal
     }
 
     Item {
@@ -133,14 +136,27 @@ Item {
                 color: Theme.blue
             }
         }
-        Image {
+        Item {
             id: settingsBtn
             anchors.left: receiveBtn.right
             anchors.leftMargin: walletMenu.btnOuterMargin
-            width: 18
-            height: 18
-            fillMode: Image.PreserveAspectFit
-            source: "../../img/settings.svg"
+            width: settingsImg.width
+            Image {
+                id: settingsImg
+                width: 18
+                height: 18
+                fillMode: Image.PreserveAspectFit
+                source: "../../img/settings.svg"
+            }
+            MouseArea {
+                anchors.rightMargin: -Theme.smallPadding
+                anchors.leftMargin: -Theme.smallPadding
+                anchors.bottomMargin: -Theme.smallPadding
+                anchors.topMargin: -Theme.smallPadding
+                anchors.fill: parent
+                onClicked: settingsModal.open()
+                cursorShape: Qt.PointingHandCursor
+            }
         }
     }
 }
