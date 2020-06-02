@@ -89,7 +89,7 @@ Item {
             ColorOverlay {
                 anchors.fill: walletIcon
                 source: walletIcon
-                color: selected ? Theme.transparent : "#7CDA00"  // change image color
+                color: selected ? Theme.transparent : iconColor  // change image color
             }
             Text {
                 id: walletName
@@ -105,6 +105,9 @@ Item {
             Text {
                 id: walletAddress
                 text: address
+                anchors.right: parent.right
+                anchors.rightMargin: parent.width/2
+                elide: Text.ElideMiddle
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: Theme.smallPadding
                 anchors.left: walletName.left
@@ -148,24 +151,31 @@ Item {
 
         delegate: walletDelegate
 
-        model: ListModel {
+        ListModel {
+            id: exampleWalletModel
             ListElement {
                 name: "Status account"
-                address: "0x2Ef1...E0Ba"
+                address: "0xcfc9f08bbcbcb80760e8cb9a3c1232d19662fc6f"
                 balance: "12.00 USD"
+                iconColor: "#7CDA00"
             }
 
             ListElement {
                 name: "Test account 1"
                 address: "0x2Ef1...E0Ba"
                 balance: "12.00 USD"
+                iconColor: "#FA6565"
             }
             ListElement {
                 name: "Status account"
                 address: "0x2Ef1...E0Ba"
                 balance: "12.00 USD"
+                iconColor: "#7CDA00"
             }
         }
+
+        model: walletModel.getAccountList()
+//        model: exampleWalletModel
     }
 }
 

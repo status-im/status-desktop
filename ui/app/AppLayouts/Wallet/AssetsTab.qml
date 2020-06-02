@@ -34,7 +34,7 @@ Item {
             }
             Text {
                 id: assetFullTokenName
-                text: fullTokenName
+                text: name
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 0
                 anchors.left: assetInfoImage.right
@@ -80,7 +80,7 @@ Item {
         anchors.topMargin: 20
         anchors.fill: parent
 //        model: exampleModel
-        model: assetsModel.assets
+        model: walletModel.assets
         delegate: assetViewDelegate
     }
 }

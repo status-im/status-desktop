@@ -1,14 +1,18 @@
-import NimQml, Tables
+import NimQml
+import Tables
+import views/asset_list
+import views/account_list
 import ../../status/wallet
 import ../../status/status
-import views/asset_list
 
 QtObject:
   type
     WalletView* = ref object of QAbstractListModel
-      assets*: AssetsList
+      accounts*: AccountList
+      currentAssetList*: AssetList
       defaultAccount: string
       status: Status
+      currentAccount: int8
 
   proc delete(self: WalletView) =
     self.QAbstractListModel.delete
@@ -19,17 +23,36 @@ QtObject:
   proc newWalletView*(status: Status): WalletView =
     new(result, delete)
     result.status = status
-    result.assets = newAssetsList()
+    result.accounts = newAccountList()
+    result.currentAccount = 0
+    result.currentAssetList = newAssetList() # Temporarily set to an empty list
     result.setup
 
-  proc addAssetToList*(self: WalletView, asset: Asset) =
-    self.assets.addAssetToList(asset)
+  proc currentAssetListChanged*(self: WalletView) {.signal.}
 
-  proc getAssetsList(self: WalletView): QVariant {.slot.} =
-    return newQVariant(self.assets)
+  proc getCurrentAssetList(self: WalletView): QVariant {.slot.} =
+    return newQVariant(self.currentAssetList)
+
+  proc setCurrentAssetList*(self: WalletView, assetList: AssetList) =
+    self.currentAssetList = assetList
+    self.currentAssetListChanged()
 
   QtProperty[QVariant] assets:
-    read = getAssetsList
+    read = getCurrentAssetList
+    write = setCurrentAssetList
+    notify = currentAssetListChanged
+  
+  proc addAccountToList*(self: WalletView, account: Account) =
+    self.accounts.addAccountToList(account)
+    # If it's the first account we ever get, use its assetList as our currentAssetList
+    if (self.accounts.rowCount == 1):
+      self.setCurrentAssetList(account.assetList)
+
+  proc getAccountList(self: WalletView): QVariant {.slot.} =
+    return newQVariant(self.accounts)
+
+  QtProperty[QVariant] accounts:
+    read = getAccountList
 
   proc onSendTransaction*(self: WalletView, from_value: string, to: string, value: string, password: string): string {.slot.} =
     result = self.status.wallet.sendTransaction(from_value, to, value, password)

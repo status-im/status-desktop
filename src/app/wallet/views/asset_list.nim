@@ -1,6 +1,5 @@
 import NimQml
-import Tables
-import strformat
+import tables
 import ../../../status/wallet
 
 type
@@ -12,24 +11,24 @@ type
     Image = UserRole + 5
 
 QtObject:
-  type AssetsList* = ref object of QAbstractListModel
+  type AssetList* = ref object of QAbstractListModel
     assets*: seq[Asset]
 
-  proc setup(self: AssetsList) = self.QAbstractListModel.setup
+  proc setup(self: AssetList) = self.QAbstractListModel.setup
 
-  proc delete(self: AssetsList) =
+  proc delete(self: AssetList) =
     self.QAbstractListModel.delete
     self.assets = @[]
 
-  proc newAssetsList*(): AssetsList =
+  proc newAssetList*(): AssetList =
     new(result, delete)
     result.assets = @[]
     result.setup
 
-  method rowCount(self: AssetsList, index: QModelIndex = nil): int =
+  method rowCount(self: AssetList, index: QModelIndex = nil): int =
     return self.assets.len
 
-  method data(self: AssetsList, index: QModelIndex, role: int): QVariant =
+  method data(self: AssetList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
     if index.row < 0 or index.row >= self.assets.len:
@@ -43,14 +42,14 @@ QtObject:
     of AssetRoles.FiatValue: result = newQVariant(asset.fiatValue)
     of AssetRoles.Image: result = newQVariant(asset.image)
 
-  method roleNames(self: AssetsList): Table[int, string] =
+  method roleNames(self: AssetList): Table[int, string] =
     { AssetRoles.Name.int:"name",
     AssetRoles.Symbol.int:"symbol",
     AssetRoles.Value.int:"value",
     AssetRoles.FiatValue.int:"fiatValue",
     AssetRoles.Image.int:"image" }.toTable
 
-  proc addAssetToList*(self: AssetsList, asset: Asset) =
+  proc addAssetToList*(self: AssetList, asset: Asset) =
     self.beginInsertRows(newQModelIndex(), self.assets.len, self.assets.len)
     self.assets.add(asset)
     self.endInsertRows()

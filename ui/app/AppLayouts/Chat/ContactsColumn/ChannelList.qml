@@ -31,7 +31,7 @@ Item {
         onDataChanged: {
             // If the current active channel receives messages and changes its position,
             // refresh the currentIndex accordingly
-            if(chatsModel.activeChannelIndex != chatGroupsListView.currentIndex){
+            if(chatsModel.activeChannelIndex !== chatGroupsListView.currentIndex){
                 chatGroupsListView.currentIndex = chatsModel.activeChannelIndex
             }
         }
