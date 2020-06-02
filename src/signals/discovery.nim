@@ -7,3 +7,4 @@ proc fromEvent*(jsonSignal: JsonNode): Signal =
     for discoveryItem in jsonSignal["event"]:
       signal.enodes.add(discoveryItem["enode"].getStr)
   result = signal
+  
