@@ -47,11 +47,20 @@ proc handleChatEvents(self: ChatController) =
   self.status.events.on("activeChannelChanged") do(e: Args):
     self.view.setActiveChannel(ChannelArgs(e).channel)
 
+proc handleMailserverEvents(self: ChatController) =
+  self.status.events.on("mailserverTopics") do(e: Args):
+    self.status.mailservers.addTopics(TopicArgs(e).topics)
+
+  self.status.events.on("mailserverAvailable") do(e:Args):
+    self.status.mailservers.requestMessages()
+
+
 proc init*(self: ChatController) =
+  self.handleMailserverEvents()
   self.handleChatEvents()
   
-  self.status.chat.init()
   self.status.mailservers.init()
+  self.status.chat.init()
 
   self.view.setActiveChannelByIndex(0)
 

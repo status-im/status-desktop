@@ -3,6 +3,7 @@ import libstatus/core as status_core
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
 import tables
+import sets
 import chronicles
 import eventemitter
 
@@ -15,6 +16,7 @@ type
     peer*: string
 
   MailserverStatus* = enum
+    Unknown = -1,
     Disconnected = 0,
     Connecting = 1
     Connected = 2, 
@@ -23,6 +25,8 @@ type
   MailserverModel* = ref object
     events*: EventEmitter
     nodes*: Table[string, MailserverStatus]
+    selectedMailserver*: string
+    topics*: seq[string]
 
 
 proc cmpMailserverReply(x, y: (string, int)): int =
@@ -36,11 +40,26 @@ proc newMailserverModel*(events: EventEmitter): MailserverModel =
   result = MailserverModel()
   result.events = events
   result.nodes = initTable[string, MailserverStatus]()
+  result.selectedMailserver = ""
+  result.topics = @[]
+
+proc addTopics*(self: MailserverModel, topics: seq[string]) =
+  self.topics = self.topics & topics
 
 proc trustPeer*(self: MailserverModel, enode:string) = 
   markTrustedPeer(enode)
+  self.nodes[enode] = MailserverStatus.Trusted
+  if self.selectedMailserver == enode:
+    debug "Mailserver available", enode
+    self.events.emit("mailserverAvailable", Args())
+
+proc selectedServerStatus*(self: MailserverModel): MailserverStatus =
+  if self.selectedMailserver == "": MailserverStatus.Unknown
+  else: self.nodes[self.selectedMailserver]
 
 proc connect*(self: MailserverModel, enode: string) =
+  debug "Connecting to mailserver", enode
+  self.selectedMailserver = enode
   if self.nodes.hasKey(enode):
     if self.nodes[enode] == MailserverStatus.Connected:
       self.trustPeer(enode)
@@ -48,20 +67,27 @@ proc connect*(self: MailserverModel, enode: string) =
     self.nodes[enode] = MailserverStatus.Connecting
     addPeer(enode)
     # TODO: check if connection is made after a connection timeout?
-  
   echo status_mailservers.update(enode)
 
 proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
+  # TODO: check if peer received is a mailserver from the list before doing any operation
+
   for peer in self.nodes.keys: 
     if not peers.contains(peer): 
       self.nodes[peer] = MailserverStatus.Disconnected
       self.events.emit("peerDisconnected", MailserverArg(peer: peer))
     # TODO: reconnect peer up to N times on 'peerDisconnected'
   
+  # TODO: this should come from settings
+  var knownMailservers = initHashSet[string]()
+  for m in getMailservers():
+    knownMailservers.incl m[1]
+
   for peer in peers:
-    if not self.nodes.hasKey(peer) or self.nodes[peer] == MailserverStatus.Disconnected: 
-      self.nodes[peer] = MailserverStatus.Connected
-      self.events.emit("peerConnected", MailserverArg(peer: peer))
+    if not knownMailservers.contains(peer): continue
+    if self.nodes.hasKey(peer) and self.nodes[peer] == MailserverStatus.Trusted: continue
+    self.nodes[peer] = MailserverStatus.Connected
+    self.events.emit("peerConnected", MailserverArg(peer: peer))
 
 
 proc init*(self: MailserverModel) =
@@ -88,4 +114,8 @@ proc init*(self: MailserverModel) =
   let mailServer = availableMailservers[rand(poolSize(availableMailservers.len))][0]
   self.connect(mailserver) 
 
+proc requestMessages*(self: MailserverModel) =
+  debug "Requesting messages from", mailserver=self.selectedMailserver
+  let generatedSymKey = status_chat.generateSymKeyFromPassword()
+  status_chat.requestMessages(self.topics, generatedSymKey, self.selectedMailserver, 1000)
 

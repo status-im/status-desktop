@@ -90,7 +90,7 @@ proc requestMessages*(topics: seq[string], symKeyID: string, peer: string, numbe
         "timeout": 30,
         "limit": numberOfMessages,
         "cursor": nil,
-        "from": times.toUnix(times.getTime()) - 30000 # Unhardcode this. Need to keep the last fetch in a DB
+        "from": (times.toUnix(times.getTime()) - 86400) # Unhardcode this. Need to keep the last fetch in a DB
     }
   ])
 

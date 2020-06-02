@@ -24,17 +24,22 @@ type ChannelArgs* = ref object of Args
 type ChatArgs* = ref object of Args
   chats*: seq[Chat]
 
+type TopicArgs* = ref object of Args
+  topics*: seq[string]
+
 type
   ChatModel* = ref object
     events*: EventEmitter
     channels*: HashSet[string]
     filters*: Table[string, string]
+    topics*: seq[string]
 
 proc newChatModel*(events: EventEmitter): ChatModel =
   result = ChatModel()
   result.events = events
   result.channels = initHashSet[string]()
   result.filters = initTable[string, string]()
+  result.topics = newSeq[string](0)
 
 proc delete*(self: ChatModel) =
   discard
@@ -70,7 +75,7 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
   if (topics.len == 0):
     warn "No topic found for the chat. Cannot load past messages"
   else:
-    status_chat.requestMessages(topics, generatedSymKey, peer, 20)
+    self.events.emit("mailserverTopics", TopicArgs(topics: topics));
 
   self.events.emit("channelJoined", ChannelArgs(channel: chatId, chatTypeInt: chatType))
   self.events.emit("activeChannelChanged", ChannelArgs(channel: self.getActiveChannel()))
@@ -99,15 +104,14 @@ proc init*(self: ChatModel) =
   self.events.emit("chatsLoaded", ChatArgs(chats: chatList))
 
   let parsedResult = parseJson(filterResult)["result"]
-  var topics = newSeq[string](0)
   for topicObj in parsedResult:
-    topics.add($topicObj["topic"].getStr)
+    self.topics.add($topicObj["topic"].getStr)
     self.filters[$topicObj["chatId"].getStr] = topicObj["filterId"].getStr
 
-  if (topics.len == 0):
-    warn "No topic found for the chat. Cannot load past messages"
+  if (self.topics.len == 0): 
+    warn "No topics found for chats. Cannot load past messages"
   else:
-    status_chat.requestMessages(topics, generatedSymKey, peer, 20)
+    self.events.emit("mailserverTopics", TopicArgs(topics: self.topics));
   
 
 proc leave*(self: ChatModel, chatId: string) =
