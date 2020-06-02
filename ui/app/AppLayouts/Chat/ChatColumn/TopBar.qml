@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
 import "../../../../shared"
 import "../../../../imports"
+import "../components"
 
 Rectangle {
     property string channelNameStr: "#" + chatsModel.activeChannel
@@ -16,37 +17,12 @@ Rectangle {
     border.color: Theme.grey
     border.width: 1
 
-    // TODO this should be the Identicon if it's a private chat
-    Rectangle {
-        id: channelIcon
-        width: 36
-        height: 36
-        anchors.left: parent.left
-        anchors.leftMargin: Theme.padding
-        anchors.top: parent.top
-        anchors.topMargin: Theme.smallPadding
-        color: {
-            if (!chatsModel.activeChannel) {
-                return Theme.transparent
-            }
-            const color = chatsModel.getChannelColor(chatsModel.activeChannel)
-            if (!color) {
-                return Theme.transparent
-            }
-            return color
-        }
-        radius: 50
 
-        Text {
-            id: channelIconText
-            color: "white"
-            opacity: 0.7
-            text: chatTopBarContent.channelNameStr.substring(1, 2).toUpperCase()
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            font.weight: Font.Bold
-            font.pixelSize: 18
-        }
+    ChannelIcon {
+      id: channelIcon
+      channelName: chatsModel.activeChannel
+      /* TODO(pascal): expose chatType from active channel to set it here */
+      channelType: Constants.chatTypeOneToOne
     }
 
     TextEdit {

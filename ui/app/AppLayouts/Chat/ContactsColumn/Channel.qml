@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
 import "../../../../shared"
 import "../../../../imports"
+import "../components"
 
 Rectangle {
     id: wrapper
@@ -29,72 +30,14 @@ Rectangle {
         }
     }
 
-    Rectangle {
+    ChannelIcon {
       id: contactImage
-      width: 40
       height: 40
-      anchors.left: parent.left
-      anchors.leftMargin: Theme.padding
-      anchors.top: parent.top
-      anchors.topMargin: 12
-      anchors.bottom: parent.bottom
-      anchors.bottomMargin: 12
-      radius: 50
-
-      Loader {
-        sourceComponent: chatType == Constants.chatTypeOneToOne ? imageIdenticon : letterIdenticon
-        anchors.fill: parent
-      }
-
-      Component {
-        id: letterIdenticon
-        Rectangle {
-          width: 40
-          height: 40
-          radius: 50
-          color: {
-              const color = chatsModel.getChannelColor(name)
-              if (!color) {
-                  return Theme.transparent
-              }
-              return color
-          }
-
-          Text {
-            text: {
-              if(chatType == Constants.chatTypeOneToOne){
-                return name;
-              } else {
-                return (name.charAt(0) == "#" ? name.charAt(1) : name.charAt(0)).toUpperCase();
-              }
-            }
-            opacity: 0.7
-            font.weight: Font.Bold
-            font.pixelSize: 21
-            color: "white"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-          }
-        }
-      }
-
-      Component {
-        id: imageIdenticon
-        Rectangle {
-          width: 40
-          height: 40
-          radius: 50
-          border.color: "#10000000"
-          border.width: 1
-          color: Theme.transparent
-          Image {
-              width: 40
-              height: 40
-              fillMode: Image.PreserveAspectFit
-              source: identicon
-          }
-        }
-      }
+      width: 40
+      topMargin: 12
+      bottomMargin: 12
+      channelName: name
+      channelType: chatType
     }
 
     Text {
