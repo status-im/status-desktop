@@ -6,6 +6,7 @@ import tables
 import sets
 import chronicles
 import eventemitter
+import sequtils
 
 
 logScope:
@@ -26,7 +27,7 @@ type
     events*: EventEmitter
     nodes*: Table[string, MailserverStatus]
     selectedMailserver*: string
-    topics*: seq[string]
+    topics*: HashSet[string]
 
 
 proc cmpMailserverReply(x, y: (string, int)): int =
@@ -41,10 +42,10 @@ proc newMailserverModel*(events: EventEmitter): MailserverModel =
   result.events = events
   result.nodes = initTable[string, MailserverStatus]()
   result.selectedMailserver = ""
-  result.topics = @[]
+  result.topics = initHashSet[string]()
 
 proc addTopics*(self: MailserverModel, topics: seq[string]) =
-  self.topics = self.topics & topics
+  for t in topics: self.topics.incl(t)
 
 proc trustPeer*(self: MailserverModel, enode:string) = 
   markTrustedPeer(enode)
@@ -56,6 +57,9 @@ proc trustPeer*(self: MailserverModel, enode:string) =
 proc selectedServerStatus*(self: MailserverModel): MailserverStatus =
   if self.selectedMailserver == "": MailserverStatus.Unknown
   else: self.nodes[self.selectedMailserver]
+
+proc isSelectedMailserverAvailable*(self:MailserverModel): bool =
+  self.nodes[self.selectedMailserver] == MailserverStatus.Trusted
 
 proc connect*(self: MailserverModel, enode: string) =
   debug "Connecting to mailserver", enode
@@ -117,5 +121,5 @@ proc init*(self: MailserverModel) =
 proc requestMessages*(self: MailserverModel) =
   debug "Requesting messages from", mailserver=self.selectedMailserver
   let generatedSymKey = status_chat.generateSymKeyFromPassword()
-  status_chat.requestMessages(self.topics, generatedSymKey, self.selectedMailserver, 1000)
+  status_chat.requestMessages(toSeq(self.topics), generatedSymKey, self.selectedMailserver, 1000)
 

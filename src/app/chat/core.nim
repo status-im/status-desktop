@@ -50,6 +50,8 @@ proc handleChatEvents(self: ChatController) =
 proc handleMailserverEvents(self: ChatController) =
   self.status.events.on("mailserverTopics") do(e: Args):
     self.status.mailservers.addTopics(TopicArgs(e).topics)
+    if(self.status.mailservers.isSelectedMailserverAvailable):
+      self.status.mailservers.requestMessages()
 
   self.status.events.on("mailserverAvailable") do(e:Args):
     self.status.mailservers.requestMessages()
