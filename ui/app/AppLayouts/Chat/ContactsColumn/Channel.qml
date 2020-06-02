@@ -38,6 +38,7 @@ Rectangle {
       bottomMargin: 12
       channelName: name
       channelType: chatType
+      channelIdenticon: identicon
     }
 
     Text {

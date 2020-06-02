@@ -42,7 +42,7 @@ proc handleChatEvents(self: ChatController) =
     discard self.view.chats.addChatItemToList(chatItem)
 
   self.status.events.on("channelLeft") do(e: Args):
-    discard self.view.chats.removeChatItemFromList(self.view.activeChannel)
+    discard self.view.chats.removeChatItemFromList(self.view.activeChannel.chatItem.id)
 
   self.status.events.on("activeChannelChanged") do(e: Args):
     self.view.setActiveChannel(ChannelArgs(e).channel)
