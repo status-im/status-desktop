@@ -32,14 +32,12 @@ type
     events*: EventEmitter
     channels*: HashSet[string]
     filters*: Table[string, string]
-    topics*: seq[string]
 
 proc newChatModel*(events: EventEmitter): ChatModel =
   result = ChatModel()
   result.events = events
   result.channels = initHashSet[string]()
   result.filters = initTable[string, string]()
-  result.topics = newSeq[string](0)
 
 proc delete*(self: ChatModel) =
   discard
@@ -52,30 +50,23 @@ proc getActiveChannel*(self: ChatModel): string =
 
 proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
   if self.hasChannel(chatId): return
-
   self.channels.incl chatId
-
-  let generatedSymKey = status_chat.generateSymKeyFromPassword()
-
-  #TODO get this from the connection or something
-  let peer = "enode://44160e22e8b42bd32a06c1532165fa9e096eebedd7fa6d6e5f8bbef0440bc4a4591fe3651be68193a7ec029021cdb496cfe1d7f9f1dc69eb99226e6f39a7a5d4@35.225.221.245:443"
-
   status_chat.saveChat(chatId, chatType.isOneToOne)
   let filterResult = status_chat.loadFilters(@[status_chat.buildFilter(chatId = chatId, oneToOne = chatType.isOneToOne)])
 
+  var topics:seq[string] = @[]
   let parsedResult = parseJson(filterResult)["result"]
-
-  var topics = newSeq[string](0)
   for topicObj in parsedResult:
-    if (($topicObj["chatId"]).strip(chars = {'"'}) == chatId):
-      topics.add(($topicObj["topic"]).strip(chars = {'"'}))
+    if ($topicObj["chatId"].getStr == chatId):
+      topics.add($topicObj["topic"].getStr)
+      if(not self.filters.hasKey(chatId)): self.filters[chatId] = topicObj["filterId"].getStr
 
-    if(not self.filters.hasKey(chatId)): self.filters[chatId] = topicObj["filterId"].getStr
-
-  if (topics.len == 0):
-    warn "No topic found for the chat. Cannot load past messages"
+  if (topics.len == 0): 
+    warn "No topics found for chats. Cannot load past messages"
   else:
     self.events.emit("mailserverTopics", TopicArgs(topics: topics));
+
+
 
   self.events.emit("channelJoined", ChannelArgs(channel: chatId, chatTypeInt: chatType))
   self.events.emit("activeChannelChanged", ChannelArgs(channel: self.getActiveChannel()))
@@ -83,11 +74,6 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
 
 proc init*(self: ChatModel) =
   let chatList = status_chat.loadChats()
-  let generatedSymKey = status_chat.generateSymKeyFromPassword()
-
-  let peer = "enode://c42f368a23fa98ee546fd247220759062323249ef657d26d357a777443aec04db1b29a3a22ef3e7c548e18493ddaf51a31b0aed6079bd6ebe5ae838fcfaf3a49@178.128.142.54:443"
-  # TODO this is needed for now for the retrieving of past messages. We'll either move or remove it later
-  status_core.addPeer(peer)
 
   var filters:seq[JsonNode] = @[]
   for chat in chatList:
@@ -103,15 +89,16 @@ proc init*(self: ChatModel) =
 
   self.events.emit("chatsLoaded", ChatArgs(chats: chatList))
 
+  var topics:seq[string] = @[]
   let parsedResult = parseJson(filterResult)["result"]
   for topicObj in parsedResult:
-    self.topics.add($topicObj["topic"].getStr)
+    topics.add($topicObj["topic"].getStr)
     self.filters[$topicObj["chatId"].getStr] = topicObj["filterId"].getStr
 
-  if (self.topics.len == 0): 
+  if (topics.len == 0): 
     warn "No topics found for chats. Cannot load past messages"
   else:
-    self.events.emit("mailserverTopics", TopicArgs(topics: self.topics));
+    self.events.emit("mailserverTopics", TopicArgs(topics: topics));
   
 
 proc leave*(self: ChatModel, chatId: string) =
