@@ -27,3 +27,9 @@ proc sendTransaction*(inputJSON: string, password: string): string =
 
 proc startMessenger*() =
   discard callPrivateRPC("startMessenger".prefix)
+
+proc addPeer*(peer: string) = 
+  echo libstatus.addPeer(peer)
+
+proc markTrustedPeer*(peer: string) = 
+  echo callPrivateRPC("markTrustedPeer".prefix(false), %* [peer])

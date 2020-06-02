@@ -1,3 +1,7 @@
+import core
+import json
+import utils
+
 proc getMailservers*(): array[0..8, (string, string)] =
   result = [
     (
@@ -37,3 +41,17 @@ proc getMailservers*(): array[0..8, (string, string)] =
       "enode://44160e22e8b42bd32a06c1532165fa9e096eebedd7fa6d6e5f8bbef0440bc4a4591fe3651be68193a7ec029021cdb496cfe1d7f9f1dc69eb99226e6f39a7a5d4@35.225.221.245:443"
     )
   ]
+
+proc ping*(timeoutMs: int): string =
+  var addresses: seq[string] = @[]
+  for mailserver in getMailservers():
+    addresses.add(mailserver[1])
+  result = callPrivateRPC("mailservers_ping", %* [
+    {
+      "addresses": addresses,
+      "timeoutMs": timeoutMs
+    }
+  ])
+
+proc update*(peer: string): string =
+  result = callPrivateRPC("updateMailservers".prefix, %* [[peer]])

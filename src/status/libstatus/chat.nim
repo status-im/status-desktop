@@ -7,21 +7,22 @@ import chronicles
 import ../../signals/types
 import ../../signals/messages
 
-proc loadFilters*(chatId: string, filterId: string = "", symKeyId: string = "", oneToOne: bool = false, identity: string = "", topic: string = "", discovery: bool = false, negotiated: bool = false, listen: bool = true): string =
-  result =  callPrivateRPC("loadFilters".prefix, %* [
-    [{
-      "ChatID": chatId, # identifier of the chat
-      "FilterID": filterId, # whisper filter id generated
-      "SymKeyID": symKeyId, # symmetric key id used for symmetric filters
-      "OneToOne": oneToOne, # if asymmetric encryption is used for this chat
-      "Identity": identity, # public key of the other recipient for non-public filters.
-      # FIXME: passing empty string to the topic makes it error
-      # "Topic": topic, # whisper topic
-      "Discovery": discovery,
-      "Negotiated": negotiated,
-      "Listen": listen # whether we are actually listening for messages on this chat, or the filter is only created in order to be able to post on the topic
-    }]
-  ])
+proc buildFilter*(chatId: string, filterId: string = "", symKeyId: string = "", oneToOne: bool = false, identity: string = "", topic: string = "", discovery: bool = false, negotiated: bool = false, listen: bool = true):JsonNode =
+  result = %* {
+    "ChatID": chatId, # identifier of the chat
+    "FilterID": filterId, # whisper filter id generated
+    "SymKeyID": symKeyId, # symmetric key id used for symmetric filters
+    "OneToOne": oneToOne, # if asymmetric encryption is used for this chat
+    "Identity": identity, # public key of the other recipient for non-public filters.
+    # FIXME: passing empty string to the topic makes it error
+    # "Topic": topic, # whisper topic
+    "Discovery": discovery,
+    "Negotiated": negotiated,
+    "Listen": listen # whether we are actually listening for messages on this chat, or the filter is only created in order to be able to post on the topic
+  }
+
+proc loadFilters*(filters: seq[JsonNode]): string =
+  result =  callPrivateRPC("loadFilters".prefix, %* [filters])
 
 proc removeFilters*(chatId: string, filterId: string) =
   discard callPrivateRPC("removeFilters".prefix, %* [
@@ -67,7 +68,8 @@ proc loadChats*(): seq[Chat] =
   if jsonResponse["result"].kind != JNull:
     for jsonChat in jsonResponse{"result"}:
       let chat = jsonChat.toChat
-      if chat.active: result.add(jsonChat.toChat)
+      if chat.active and chat.chatType != ChatType.Unknown:
+        result.add(jsonChat.toChat)
 
 proc chatMessages*(chatId: string) =
   discard callPrivateRPC("chatMessages".prefix, %* [chatId, nil, 20])
@@ -80,7 +82,7 @@ proc generateSymKeyFromPassword*(): string =
   ]))["result"]).strip(chars = {'"'})
 
 proc requestMessages*(topics: seq[string], symKeyID: string, peer: string, numberOfMessages: int) =
-  discard callPrivateRPC("requestMessages".prefix, %* [
+  echo callPrivateRPC("requestMessages".prefix, %* [
     {
         "topics": topics,
         "mailServerPeer": peer,

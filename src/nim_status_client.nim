@@ -74,7 +74,7 @@ proc mainProc() =
   signalController.addSubscriber(SignalType.Wallet, wallet)
   signalController.addSubscriber(SignalType.Wallet, node)
   signalController.addSubscriber(SignalType.Message, chat)
-  signalController.addSubscriber(SignalType.WhisperFilterAdded, chat)
+  signalController.addSubscriber(SignalType.DiscoverySummary, chat)
   signalController.addSubscriber(SignalType.NodeLogin, login)
   signalController.addSubscriber(SignalType.NodeLogin, onboarding)
   
