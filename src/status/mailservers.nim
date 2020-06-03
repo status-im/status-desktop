@@ -1,4 +1,4 @@
-import algorithm, json, random, math
+import algorithm, json, random, math, os
 import libstatus/core as status_core
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
@@ -7,7 +7,7 @@ import sets
 import chronicles
 import eventemitter
 import sequtils
-
+import locks
 
 logScope:
   topics = "mailserver-model"
@@ -28,7 +28,8 @@ type
     nodes*: Table[string, MailserverStatus]
     selectedMailserver*: string
     topics*: HashSet[string]
-
+    connThread*: Thread[ptr MailserverModel]
+    lock*: Lock
 
 proc cmpMailserverReply(x, y: (string, int)): int =
   if x[1] > y[1]: 1
@@ -43,6 +44,7 @@ proc newMailserverModel*(events: EventEmitter): MailserverModel =
   result.nodes = initTable[string, MailserverStatus]()
   result.selectedMailserver = ""
   result.topics = initHashSet[string]()
+  result.lock.initLock()
 
 proc addTopics*(self: MailserverModel, topics: seq[string]) =
   for t in topics: self.topics.incl(t)
@@ -61,24 +63,43 @@ proc selectedServerStatus*(self: MailserverModel): MailserverStatus =
 proc isSelectedMailserverAvailable*(self:MailserverModel): bool =
   self.nodes[self.selectedMailserver] == MailserverStatus.Trusted
 
+proc addPeer(self:MailserverModel, enode: string) =
+  addPeer(enode)
+  update(enode)
+
+proc removePeer(self:MailserverModel, enode: string) =
+  removePeer(enode)
+  delete(enode)
+
 proc connect*(self: MailserverModel, enode: string) =
   debug "Connecting to mailserver", enode
+
+  # TODO: this should come from settings
+  var knownMailservers = initHashSet[string]()
+  for m in getMailservers():
+    knownMailservers.incl m[1]
+  if not knownMailservers.contains(enode): 
+    warn "Mailserver not known", enode
+    return
+
   self.selectedMailserver = enode
   if self.nodes.hasKey(enode):
     if self.nodes[enode] == MailserverStatus.Connected:
       self.trustPeer(enode)
   else:
     self.nodes[enode] = MailserverStatus.Connecting
-    addPeer(enode)
-    # TODO: check if connection is made after a connection timeout?
-  echo status_mailservers.update(enode)
+    self.addPeer(enode)
+    
+  # TODO: check if connection is made after a connection timeout?
+  status_mailservers.update(enode)
 
 proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
-  # TODO: check if peer received is a mailserver from the list before doing any operation
-
+  for p in peers:
+    debug "Peer summary", p
   for peer in self.nodes.keys: 
     if not peers.contains(peer): 
       self.nodes[peer] = MailserverStatus.Disconnected
+      warn "Peer disconnected", peer
       self.events.emit("peerDisconnected", MailserverArg(peer: peer))
     # TODO: reconnect peer up to N times on 'peerDisconnected'
   
@@ -93,33 +114,48 @@ proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
     self.nodes[peer] = MailserverStatus.Connected
     self.events.emit("peerConnected", MailserverArg(peer: peer))
 
+proc requestMessages*(self: MailserverModel) =
+  debug "Requesting messages from", mailserver=self.selectedMailserver
+  let generatedSymKey = status_chat.generateSymKeyFromPassword()
+  status_chat.requestMessages(toSeq(self.topics), generatedSymKey, self.selectedMailserver, 1000)
 
-proc init*(self: MailserverModel) =
-  self.events.on("peerConnected") do(e: Args):
-    let arg = MailserverArg(e)
-    self.trustPeer(arg.peer)
-
-
-  #TODO: connect to current mailserver from the settings
-
-  # or setup a random one:
+proc autoConnect(self: MailserverModel) =
   let mailserversReply = parseJson(status_mailservers.ping(500))["result"]
   var availableMailservers:seq[(string, int)] = @[]
-
   for reply in mailserversReply: 
     if(reply["error"].kind != JNull): continue # The results with error are ignored
     availableMailservers.add((reply["address"].getStr, reply["rttMs"].getInt))
-  
   availableMailservers.sort(cmpMailserverReply)
-  
   # Picks a random mailserver amongs the ones with the lowest latency
   # The pool size is 1/4 of the mailservers were pinged successfully
   randomize()
   let mailServer = availableMailservers[rand(poolSize(availableMailservers.len))][0]
   self.connect(mailserver) 
 
-proc requestMessages*(self: MailserverModel) =
-  debug "Requesting messages from", mailserver=self.selectedMailserver
-  let generatedSymKey = status_chat.generateSymKeyFromPassword()
-  status_chat.requestMessages(toSeq(self.topics), generatedSymKey, self.selectedMailserver, 1000)
+proc changeMailserver*(self: MailserverModel) =
+  warn "Automatically switching mailserver"
+  self.nodes[self.selectedMailserver] = MailserverStatus.Disconnected
+  self.removePeer(self.selectedMailserver)
+  self.selectedMailserver = ""
+  self.autoConnect()
 
+proc checkConnection*(mailserverPtr: ptr MailserverModel) {.thread.} =
+  let sleepDuration = 10000
+  while true:
+    {.gcsafe.}:
+      withLock mailserverPtr[].lock:
+        sleep(sleepDuration)
+        # TODO: have a timeout for reconnection before changing to a different server
+        if not mailserverPtr[].isSelectedMailserverAvailable:
+          mailserverPtr[].changeMailserver()
+
+proc init*(self: MailserverModel) =
+  self.events.on("peerDisconnected") do(e: Args): self.connect(MailserverArg(e).peer) 
+  self.events.on("peerConnected") do(e: Args): self.trustPeer(MailserverArg(e).peer)
+
+  self.connThread.createThread(checkConnection, self.unsafeAddr)
+  
+  #TODO: connect to current mailserver from the settings
+  # or setup a random one:
+  self.autoConnect()
+  

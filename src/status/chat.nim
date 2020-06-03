@@ -27,6 +27,9 @@ type ChatArgs* = ref object of Args
 type TopicArgs* = ref object of Args
   topics*: seq[string]
 
+type MsgsLoadedArgs* = ref object of Args
+  messages*: seq[Message]
+
 type
   ChatModel* = ref object
     events*: EventEmitter
@@ -117,3 +120,7 @@ proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
   var parsedMessage = parseJson(sentMessage)["result"]["chats"][0]["lastMessage"]
   self.events.emit("messageSent", MsgArgs(message: msg, chatId: chatId, payload: parsedMessage))
   sentMessage
+
+proc chatMessages*(self: ChatModel, chatId: string) =
+  let msgs = status_chat.chatMessages(chatId)
+  self.events.emit("messagesLoaded", MsgsLoadedArgs(messages: msgs))

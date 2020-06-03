@@ -53,5 +53,8 @@ proc ping*(timeoutMs: int): string =
     }
   ])
 
-proc update*(peer: string): string =
-  result = callPrivateRPC("updateMailservers".prefix, %* [[peer]])
+proc update*(peer: string) =
+  discard callPrivateRPC("updateMailservers".prefix, %* [[peer]])
+
+proc delete*(peer: string) =
+  discard callPrivateRPC("mailservers_deleteMailserver".prefix, %* [[peer]])
