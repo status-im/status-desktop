@@ -32,7 +32,7 @@ QtObject:
     result.setup()
 
   proc getChatsList(self: ChatsView): QVariant {.slot.} =
-    return newQVariant(self.chats)
+    newQVariant(self.chats)
 
   QtProperty[QVariant] chats:
     read = getChatsList
@@ -53,7 +53,7 @@ QtObject:
     self.activeChannelChanged()
 
   proc getActiveChannelIdx(self: ChatsView): QVariant {.slot.} =
-    return newQVariant(self.chats.chats.findById(self.activeChannel.id))
+    newQVariant(self.chats.chats.findById(self.activeChannel.id))
 
   QtProperty[QVariant] activeChannelIndex:
     read = getActiveChannelIdx
@@ -65,7 +65,7 @@ QtObject:
     self.activeChannelChanged()
 
   proc getActiveChannel*(self: ChatsView): QVariant {.slot.} =
-    result = newQVariant(self.activeChannel)
+    newQVariant(self.activeChannel)
 
   QtProperty[QVariant] activeChannel:
     read = getActiveChannel

@@ -21,14 +21,17 @@ QtObject:
     self.chatItem = chatItem
 
   proc id*(self: ChatItemView): string {.slot.} = result = ?.self.chatItem.id
+  
   QtProperty[string] id:
     read = id
 
   proc name*(self: ChatItemView): string {.slot.} = result = ?.self.chatItem.name
+  
   QtProperty[string] name:
     read = name
 
   proc identicon*(self: ChatItemView): string {.slot.} = result = ?.self.chatItem.identicon
+
   QtProperty[string] identicon:
     read = identicon
 
@@ -37,5 +40,6 @@ QtObject:
       result = self.chatItem.chatType.int
     else:
       result = 0
+
   QtProperty[int] chatType:
     read = chatType
