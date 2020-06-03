@@ -10,6 +10,7 @@ ListModel {
         name:     "Dai Stablecoin"
         address:  "0x6b175474e89094c44da98b954eedeac495271d0f"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -17,6 +18,7 @@ ListModel {
         name:     "Sai Stablecoin v1.0"
         address:  "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -24,6 +26,7 @@ ListModel {
         name:     "MKR"
         address:  "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -31,6 +34,7 @@ ListModel {
         name:     "EOS"
         address:  "0x86fa049857e0209aa7d9e616f7eb3b3b78ecfdb0"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -38,6 +42,7 @@ ListModel {
         name:     "OMGToken"
         address:  "0xd26114cd6ee289accf82350c8d8487fedb8a0c07"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -45,6 +50,7 @@ ListModel {
         name:     "Populous Platform"
         address:  "0xd4fa1460f537bb9085d22c7bccb5dd450ef28e3a"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -52,6 +58,7 @@ ListModel {
         name:     "Reputation"
         address:  "0x1985365e9f78359a9b6ad760e32412f4a445e862"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -59,6 +66,7 @@ ListModel {
         name:     "PowerLedger"
         address:  "0x595832f8fc6bf59c85c527fec3740a1b7a361269"
         decimals: 6
+        hasIcon: true
     }
 
     ListElement {
@@ -66,6 +74,7 @@ ListModel {
         name:     "TenX Pay Token"
         address:  "0xb97048628db6b661d4c2aa833e95dbe1a905b280"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -73,6 +82,7 @@ ListModel {
         name:     "Veros"
         address:  "0x92e78dae1315067a8819efd6dca432de9dcde2e9"
         decimals: 6
+        hasIcon: false
     }
 
     ListElement {
@@ -80,6 +90,7 @@ ListModel {
         name:     "Golem Network Token"
         address:  "0xa74476443119a942de498590fe1f2454d7d4ac0d"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -87,6 +98,7 @@ ListModel {
         name:     "Salt"
         address:  "0x4156d3342d5c385a87d264f90653733592000581"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -94,6 +106,7 @@ ListModel {
         name:     "BNB"
         address:  "0xb8c77482e45f1f44de1745f52c74426c631bdd52"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -101,6 +114,7 @@ ListModel {
         name:     "Basic Attention Token"
         address:  "0x0d8775f648430679a709e98d2b0cb6250d2887ef"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -108,6 +122,7 @@ ListModel {
         name:     "Kyber Network Crystal"
         address:  "0xdd974d5c2e2928dea5f71b9825b8b646686bd200"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -115,6 +130,7 @@ ListModel {
         name:     "BTU Protocol"
         address:  "0xb683D83a532e2Cb7DFa5275eED3698436371cc9f"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -123,6 +139,7 @@ ListModel {
         address:              "0xe0b7927c4af23765cb51314a0e0521a9645f0e2a"
         decimals:             9
         skipDecimalsCheck: true
+        hasIcon: true
     }
 
     ListElement {
@@ -130,6 +147,7 @@ ListModel {
         name:     "Aeternity"
         address:  "0x5ca9a71b1d01849c0a95490cc00559717fcf0d1d"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -137,6 +155,7 @@ ListModel {
         name:     "Tronix"
         address:  "0xf230b790e05390fc8295f4d3f60332c93bed42e2"
         decimals: 6
+        hasIcon: true
     }
 
     ListElement {
@@ -144,6 +163,7 @@ ListModel {
         name:     "Ethos"
         address:  "0x5af2be193a6abca9c8817001f45744777db30756"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -151,6 +171,7 @@ ListModel {
         name:     "Raiden Token"
         address:  "0x255aa6df07540cb5d3d297f0d0d4d84cb52bc8e6"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -158,6 +179,7 @@ ListModel {
         name:     "Status Network Token"
         address:  "0x744d70fdbe2ba4cf95131626614a1763df805b9e"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -165,6 +187,7 @@ ListModel {
         name:     "SingularDTV"
         address:  "0xaec2e87e0a235266d9c5adc9deb4b2e29b54d009"
         decimals: 0
+        hasIcon: true
     }
 
     ListElement {
@@ -172,6 +195,7 @@ ListModel {
         name:     "Gnosis Token"
         address:  "0x6810e776880c02933d47db1b9fc05908e5386b96"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -179,6 +203,7 @@ ListModel {
         name:     "StorjToken"
         address:  "0xb64ef51c888972c908cfacf59b47c1afbc0ab8ac"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -186,6 +211,7 @@ ListModel {
         name:     "AdEx"
         address:  "0x4470bb87d77b963a013db939be332f927f2b992e"
         decimals: 4
+        hasIcon: false
     }
 
     ListElement {
@@ -193,6 +219,7 @@ ListModel {
         name:     "FunFair"
         address:  "0x419d0d8bdd9af5e606ae2232ed285aff190e711b"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -200,6 +227,7 @@ ListModel {
         name:     "Civic"
         address:  "0x41e5560054824ea6b0732e656e3ad64e20e94e45"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -207,6 +235,7 @@ ListModel {
         name:     "ICONOMI"
         address:  "0x888666ca69e0f178ded6d75b5726cee99a87d698"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -214,6 +243,7 @@ ListModel {
         name:     "Walton Token"
         address:  "0xb7cb1c96db6b22b0d3d9536e0108d062bd488f74"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -221,6 +251,7 @@ ListModel {
         name:     "Bytom"
         address:  "0xcb97e65f07da24d46bcdd078ebebd7c6e6e3d750"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -228,6 +259,7 @@ ListModel {
         name:     "0x Protocol Token"
         address:  "0xe41d2489571d322189246dafa5ebde1f4699f498"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -235,6 +267,7 @@ ListModel {
         name:     "Bancor Network Token"
         address:  "0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -242,6 +275,7 @@ ListModel {
         name:     "Metal"
         address:  "0xf433089366899d83a9f26a773d59ec7ecf30355e"
         decimals: 8
+        hasIcon: false
     }
 
     ListElement {
@@ -249,6 +283,7 @@ ListModel {
         name:     "PayPie"
         address:  "0xc42209accc14029c1012fb5680d95fbd6036e2a0"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -256,6 +291,7 @@ ListModel {
         name:     "ChainLink Token"
         address:  "0x514910771af9ca656af840dff83e8264ecf986ca"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -263,6 +299,7 @@ ListModel {
         name:     "Kin"
         address:  "0x818fc6c2ec5986bc6e2cbf00939d90556ab12ce5"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -270,6 +307,7 @@ ListModel {
         name:     "Aragon Network Token"
         address:  "0x960b236a07cf122663c4303350609a66a7b288c0"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -277,6 +315,7 @@ ListModel {
         name:     "MobileGo Token"
         address:  "0x40395044ac3c0c57051906da938b54bd6557f212"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -284,6 +323,7 @@ ListModel {
         name:     "Monaco"
         address:  "0xb63b606ac810a52cca15e44bb630fd42d8d1d83d"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -292,6 +332,7 @@ ListModel {
         address:              "0xef68e7c694f40c8202821edf525de3782458639f"
         decimals:             18
         skipDecimalsCheck: true
+        hasIcon: true
     }
 
     ListElement {
@@ -299,6 +340,7 @@ ListModel {
         name:     "Zeus Shield Coin"
         address:  "0x7a41e0517a5eca4fdbc7fbeba4d4c47b9ff6dc63"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -306,6 +348,7 @@ ListModel {
         name:     "Streamr DATAcoin"
         address:  "0x0cf0ee63788a0849fe5297f3407f701e122cc023"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -313,6 +356,7 @@ ListModel {
         name:     "Ripio Credit Network Token"
         address:  "0xf970b8e36e23f7fc3fd752eea86f8be8d83375a6"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -320,6 +364,7 @@ ListModel {
         name:     "WINGS"
         address:  "0x667088b212ce3d06a1b553a7221e1fd19000d9af"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -327,6 +372,7 @@ ListModel {
         name:     "Edgeless"
         address:  "0x08711d3b02c8758f2fb3ab4e80228418a7f8e39c"
         decimals: 0
+        hasIcon: true
     }
 
     ListElement {
@@ -334,6 +380,7 @@ ListModel {
         name:     "Melon Token"
         address:  "0xbeb9ef514a379b997e0798fdcc901ee474b6d9a1"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -341,6 +388,7 @@ ListModel {
         name:     "Moeda Loyalty Points"
         address:  "0x51db5ad35c671a87207d88fc11d593ac0c8415bd"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -348,6 +396,7 @@ ListModel {
         name:     "PILLAR"
         address:  "0xe3818504c1b32bf1557b16c238b2e01fd3149c17"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -355,6 +404,7 @@ ListModel {
         name:     "QRL"
         address:  "0x697beac28b09e122c4332d163985e8a73121b97f"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -362,6 +412,7 @@ ListModel {
         name:     "Modum Token"
         address:  "0x957c30ab0426e0c93cd8241e2c60392d08c6ac8e"
         decimals: 0
+        hasIcon: true
     }
 
     ListElement {
@@ -369,6 +420,7 @@ ListModel {
         name:     "Token-as-a-Service"
         address:  "0xe7775a6e9bcf904eb39da2b68c5efb4f9360e08c"
         decimals: 6
+        hasIcon: true
     }
 
     ListElement {
@@ -376,6 +428,7 @@ ListModel {
         name:     "GRID Token"
         address:  "0x12b19d3e2ccc14da04fae33e63652ce469b3f2fd"
         decimals: 12
+        hasIcon: true
     }
 
     ListElement {
@@ -383,6 +436,7 @@ ListModel {
         name:     "SANtiment network token"
         address:  "0x7c5a0ce9267ed19b22f8cae653f198e3e8daf098"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -390,6 +444,7 @@ ListModel {
         name:     "SONM Token"
         address:  "0x983f6d60db79ea8ca4eb9968c6aff8cfa04b3c63"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -397,6 +452,7 @@ ListModel {
         name:     "Request Token"
         address:  "0x8f8221afbb33998d8584a2b05749ba73c37a938a"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -404,6 +460,7 @@ ListModel {
         name:     "Substratum"
         address:  "0x12480e24eb5bec1a9d4369cab6a80cad3c0a377a"
         decimals: 2
+        hasIcon: true
     }
 
     ListElement {
@@ -411,6 +468,7 @@ ListModel {
         name:     "Decentraland MANA"
         address:  "0x0f5d2fb29fb7d3cfee444a200298f468908cc942"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -418,6 +476,7 @@ ListModel {
         name:     "AirSwap Token"
         address:  "0x27054b13b1b798b345b591a4d22e6562d47ea75a"
         decimals: 4
+        hasIcon: true
     }
 
     ListElement {
@@ -425,6 +484,7 @@ ListModel {
         name:     "R token"
         address:  "0x48f775efbe4f5ece6e0df2f7b5932df56823b990"
         decimals: 0
+        hasIcon: true
     }
 
     ListElement {
@@ -432,6 +492,7 @@ ListModel {
         name:     "FirstBlood Token"
         address:  "0xaf30d2a7e90d7dc361c8c4585e9bb7d2f6f15bc7"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -439,6 +500,7 @@ ListModel {
         name:     "Cofoundit"
         address:  "0x12fef5e57bf45873cd9b62e9dbd7bfb99e32d73e"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -446,6 +508,7 @@ ListModel {
         name:     "Enigma"
         address:  "0xf0ee6b27b759c9893ce4f094b49ad28fd15a23e4"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -453,6 +516,7 @@ ListModel {
         name:     "Amber Token"
         address:  "0x4dc3643dbc642b72c158e7f3d2ff232df61cb6ce"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -460,6 +524,7 @@ ListModel {
         name:     "XPlay Token"
         address:  "0x90528aeb3a2b736b780fd1b6c478bb7e1d643170"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -467,6 +532,7 @@ ListModel {
         name:     "Open Trading Network"
         address:  "0x881ef48211982d01e2cb7092c915e647cd40d85c"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -474,6 +540,7 @@ ListModel {
         name:     "Trustcoin"
         address:  "0xcb94be6f13a1182e4a4b6140cb7bf2025d28e41b"
         decimals: 6
+        hasIcon: true
     }
 
     ListElement {
@@ -481,6 +548,7 @@ ListModel {
         name:     "Monolith TKN"
         address:  "0xaaaf91d9b90df800df4f55c205fd6989c977e73a"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -488,6 +556,7 @@ ListModel {
         name:     "RHOC"
         address:  "0x168296bb09e24a88805cb9c33356536b980d3fc5"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -495,6 +564,7 @@ ListModel {
         name:     "Target Coin"
         address:  "0xac3da587eac229c9896d919abc235ca4fd7f72c1"
         decimals: 1
+        hasIcon: false
     }
 
     ListElement {
@@ -502,6 +572,7 @@ ListModel {
         name:     "Everex"
         address:  "0xf3db5fa2c66b7af3eb0c0b782510816cbe4813b8"
         decimals: 4
+        hasIcon: true
     }
 
     ListElement {
@@ -509,6 +580,7 @@ ListModel {
         name:     "ICOS"
         address:  "0x014b50466590340d41307cc54dcee990c8d58aa8"
         decimals: 6
+        hasIcon: true
     }
 
     ListElement {
@@ -516,6 +588,7 @@ ListModel {
         name:     "district0x Network Token"
         address:  "0x0abdace70d3790235af448c88547603b945604ea"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -523,6 +596,7 @@ ListModel {
         name:     "Dentacoin"
         address:  "0x08d32b0da63e2c3bcf8019c9c5d849d7a9d791e6"
         decimals: 0
+        hasIcon: false
     }
 
     ListElement {
@@ -530,6 +604,7 @@ ListModel {
         name:     "Eidoo Token"
         address:  "0xced4e93198734ddaff8492d525bd258d49eb388e"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -537,6 +612,7 @@ ListModel {
         name:     "BitDice"
         address:  "0x29d75277ac7f0335b2165d0895e8725cbf658d73"
         decimals: 8
+        hasIcon: false
     }
 
     ListElement {
@@ -544,6 +620,7 @@ ListModel {
         name:     "Cobinhood Token"
         address:  "0xb2f7eb1f2c37645be61d73953035360e768d81e6"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -551,6 +628,7 @@ ListModel {
         name:     "Enjin Coin"
         address:  "0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c"
         decimals: 18
+        hasIcon: false
     }
 
     ListElement {
@@ -558,6 +636,7 @@ ListModel {
         name:     "AVENTUS"
         address:  "0x0d88ed6e74bbfd96b831231638b66c05571e824f"
         decimals: 18
+        hasIcon: false
     }
 
     ListElement {
@@ -565,6 +644,7 @@ ListModel {
         name:     "Chronobank TIME"
         address:  "0x6531f133e6deebe7f2dce5a0441aa7ef330b4e53"
         decimals: 8
+        hasIcon: false
     }
 
     ListElement {
@@ -572,6 +652,7 @@ ListModel {
         name:     "Cindicator Token"
         address:  "0xd4c435f5b09f855c3317c8524cb1f586e42795fa"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -579,6 +660,7 @@ ListModel {
         name:     "Stox"
         address:  "0x006bea43baa3f7a6f765f14f10a1a1b08334ef45"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -586,6 +668,7 @@ ListModel {
         name:     "Xaurum"
         address:  "0x4df812f6064def1e5e029f1ca858777cc98d2d81"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -593,6 +676,7 @@ ListModel {
         name:     "Vibe"
         address:  "0x2c974b2d0ba1716e644c1fc59982a89ddd2ff724"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -600,6 +684,7 @@ ListModel {
         name:     "PRG"
         address:  "0x7728dfef5abd468669eb7f9b48a7f70a501ed29d"
         decimals: 6
+        hasIcon: false
     }
 
     ListElement {
@@ -607,6 +692,7 @@ ListModel {
         name:     "Delphy Token"
         address:  "0x6c2adc2073994fb2ccc5032cc2906fa221e9b391"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -614,6 +700,7 @@ ListModel {
         name:     "CoinDash Token"
         address:  "0x2fe6ab85ebbf7776fee46d191ee4cea322cecf51"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -621,6 +708,7 @@ ListModel {
         name:     "Tierion Network Token"
         address:  "0x08f5a9235b08173b7569f83645d2c7fb55e8ccd8"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -628,6 +716,7 @@ ListModel {
         name:     "DomRaiderToken"
         address:  "0x9af4f26941677c706cfecf6d3379ff01bb85d5ab"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -635,6 +724,7 @@ ListModel {
         name:     "SPANK"
         address:  "0x42d6622dece394b54999fbd73d108123806f6a18"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -642,6 +732,7 @@ ListModel {
         name:     "Berlin Coin"
         address:  "0x80046305aaab08f6033b56a360c184391165dc2d"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -649,6 +740,7 @@ ListModel {
         name:     "USD//C"
         address:  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
         decimals: 6
+        hasIcon: true
     }
 
     ListElement {
@@ -656,6 +748,7 @@ ListModel {
         name:     "Livepeer Token"
         address:  "0x58b6a8a3302369daec383334672404ee733ab239"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -663,6 +756,7 @@ ListModel {
         name:     "Simple Token"
         address:  "0x2c4e8f2d746113d0696ce89b35f0d8bf88e0aeca"
         decimals: 18
+        hasIcon: true
     }
 
     ListElement {
@@ -670,6 +764,7 @@ ListModel {
         name:     "Wrapped BTC"
         address:  "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
         decimals: 8
+        hasIcon: true
     }
 
     ListElement {
@@ -677,6 +772,7 @@ ListModel {
         name:     "Bloom Token"
         address:  "0x107c4504cd79c5d2696ea0030a8dd4e92601b82e"
         decimals: 18
+        hasIcon: true
     }
 
     //  NOTE(goranjovic): the following tokens are collectibles
@@ -686,6 +782,7 @@ ListModel {
         nft:    true
         name:    "CryptoKitties"
         address: "0x06012c8cf97bead5deae237070f9587f8e7a266d"
+        hasIcon: true
     }
 
     ListElement {
@@ -693,6 +790,7 @@ ListModel {
         nft:    true
         name:    "EtheremonAsset"
         address: "0xb2c0782ae4a299f7358758b2d15da9bf29e1dd99"
+        hasIcon: true
     }
 
     ListElement {
@@ -700,6 +798,7 @@ ListModel {
         nft:    true
         name:    "CryptoStrikers"
         address: "0xdcaad9fd9a74144d226dbf94ce6162ca9f09ed7e"
+        hasIcon: true
     }
 
     ListElement {
@@ -707,6 +806,7 @@ ListModel {
         nft:    true
         name:    "SupeRare"
         address: "0x41a322b28d0ff354040e2cbc676f0320d8c8850d"
+        hasIcon: true
     }
 
     ListElement {
@@ -714,6 +814,7 @@ ListModel {
         nft:    true
         name:    "KudosToken"
         address: "0x2aea4add166ebf38b63d09a75de1a7b94aa24163"
+        hasIcon: true
     }
 
     ListElement {
@@ -721,6 +822,7 @@ ListModel {
         decimals: 18
         symbol:   "QSP"
         name:     "Quantstamp Token"
+        hasIcon: true
     }
 
     ListElement {
@@ -728,6 +830,7 @@ ListModel {
         decimals: 18
         symbol:   "LEND"
         name:     "EHTLend"
+        hasIcon: false
     }
 
     ListElement {
@@ -735,6 +838,7 @@ ListModel {
         decimals: 18
         symbol:   "NPXS"
         name:     "Pundi X Token"
+        hasIcon: false
     }
 
     ListElement {
@@ -742,6 +846,7 @@ ListModel {
         decimals: 18
         symbol:   "LOOM"
         name:     "Loom Network"
+        hasIcon: false
     }
 
     ListElement {
@@ -749,6 +854,7 @@ ListModel {
         decimals: 8
         symbol:   "POE"
         name:     "Po.et Tokens"
+        hasIcon: false
     }
 
     ListElement {
@@ -756,6 +862,7 @@ ListModel {
         decimals: 18
         symbol:   "BLZ"
         name:     "Bluzelle"
+        hasIcon: false
     }
 
     ListElement {
@@ -763,6 +870,7 @@ ListModel {
         decimals: 18
         symbol:   "IOST"
         name:     "IOSToken"
+        hasIcon: false
     }
 
     ListElement {
@@ -770,6 +878,7 @@ ListModel {
         decimals: 18
         symbol:   "NMR"
         name:     "Numerai"
+        hasIcon: true
     }
 
     ListElement {
@@ -777,6 +886,7 @@ ListModel {
         decimals: 18
         symbol:   "PAX"
         name:     "Paxos Standard (PAX)"
+        hasIcon: false
     }
 
     ListElement {
@@ -784,6 +894,7 @@ ListModel {
         decimals: 0
         symbol:   "DCN"
         name:     "Dentacoin"
+        hasIcon: true
     }
 
     ListElement {
@@ -791,6 +902,7 @@ ListModel {
         decimals: 18
         symbol:   "QKC"
         name:     "QuarkChain"
+        hasIcon: false
     }
 
     ListElement {
@@ -798,6 +910,7 @@ ListModel {
         decimals: 18
         symbol:   "PAXG"
         name:     "Paxos Gold"
+        hasIcon: false
     }
 
     ListElement {
@@ -805,6 +918,7 @@ ListModel {
         decimals: 18
         symbol:   "MOC"
         name:     "Moss Coin"
+        hasIcon: false
     }
 
     ListElement {
@@ -812,6 +926,7 @@ ListModel {
         decimals: 18
         symbol:   "REN"
         name:     "Republic Token"
+        hasIcon: false
     }
 
     ListElement {
@@ -819,6 +934,7 @@ ListModel {
         decimals: 9
         symbol:   "RLC"
         name:     "IEx.ec"
+        hasIcon: true
     }
 
     ListElement {
@@ -826,6 +942,7 @@ ListModel {
         decimals: 8
         symbol:   "UBT"
         name:     "Unibright"
+        hasIcon: false
     }
 
     ListElement {
@@ -833,6 +950,7 @@ ListModel {
         decimals: 9
         symbol:   "DGX"
         name:     "Digix Gold Token"
+        hasIcon: false
     }
 
     ListElement {
@@ -840,6 +958,7 @@ ListModel {
         decimals: 18
         symbol:   "FUEL"
         name:     "Etherparty FUEL"
+        hasIcon: true
     }
 
     ListElement {
@@ -847,6 +966,7 @@ ListModel {
         decimals: 18
         symbol:   "TCAD"
         name:     "TrueCAD"
+        hasIcon: false
     }
 
     ListElement {
@@ -854,6 +974,7 @@ ListModel {
         decimals: 18
         symbol:   "MFG"
         name:     "SyncFab Smart Manufacturing Blockchain"
+        hasIcon: false
     }
 
     ListElement {
@@ -861,6 +982,7 @@ ListModel {
         decimals: 18
         symbol:   "GEN"
         name:     "DAOstack"
+        hasIcon: false
     }
 
     ListElement {
@@ -868,6 +990,7 @@ ListModel {
         decimals: 18
         symbol:   "ABYSS"
         name:     "The Abyss"
+        hasIcon: false
     }
 
     ListElement {
@@ -875,6 +998,7 @@ ListModel {
         decimals: 18
         symbol:   "NEXO"
         name:     "Nexo"
+        hasIcon: false
     }
 
     ListElement {
@@ -882,6 +1006,7 @@ ListModel {
         decimals: 18
         symbol:   "TUSD"
         name:     "TrueUSD"
+        hasIcon: false
     }
 
     ListElement {
@@ -889,6 +1014,7 @@ ListModel {
         decimals: 18
         symbol:   "STORM"
         name:     "Storm Token"
+        hasIcon: false
     }
 
     ListElement {
@@ -896,6 +1022,7 @@ ListModel {
         decimals: 5
         symbol:   "MTH"
         name:     "Monetha"
+        hasIcon: true
     }
 
     ListElement {
@@ -903,6 +1030,7 @@ ListModel {
         decimals: 18
         symbol:   "TGBP"
         name:     "TrueGBP"
+        hasIcon: false
     }
 
     ListElement {
@@ -910,6 +1038,7 @@ ListModel {
         decimals: 18
         symbol:   "ELF"
         name:     "ELF Token"
+        hasIcon: false
     }
 
     ListElement {
@@ -917,6 +1046,7 @@ ListModel {
         decimals: 18
         symbol:   "POLY"
         name:     "Polymath Network"
+        hasIcon: false
     }
 
     ListElement {
@@ -924,6 +1054,7 @@ ListModel {
         decimals: 6
         symbol:   "SPN"
         name:     "Sapien"
+        hasIcon: false
     }
 
     ListElement {
@@ -931,6 +1062,7 @@ ListModel {
         decimals: 18
         symbol:   "APPC"
         name:     "AppCoins"
+        hasIcon: false
     }
 
     ListElement {
@@ -938,6 +1070,7 @@ ListModel {
         decimals: 6
         symbol:   "USDT"
         name:     "USD Tether (erc20)"
+        hasIcon: false
     }
 
     ListElement {
@@ -945,6 +1078,7 @@ ListModel {
         decimals: 18
         symbol:   "MET"
         name:     "Metronome"
+        hasIcon: false
     }
 
     ListElement {
@@ -952,6 +1086,7 @@ ListModel {
         decimals: 18
         symbol:   "HT"
         name:     "Huobi Token"
+        hasIcon: false
     }
 
     ListElement {
@@ -959,6 +1094,7 @@ ListModel {
         decimals: 18
         symbol:   "WETH"
         name:     "WETH"
+        hasIcon: false
     }
 
     ListElement {
@@ -966,6 +1102,7 @@ ListModel {
         decimals: 18
         symbol:   "VERI"
         name:     "Veritaseum"
+        hasIcon: true
     }
 
     ListElement {
@@ -973,6 +1110,7 @@ ListModel {
         decimals: 18
         symbol:   "TAUD"
         name:     "TrueAUD"
+        hasIcon: false
     }
 
     ListElement {
@@ -980,6 +1118,7 @@ ListModel {
         decimals: 18
         symbol:   "PT"
         name:     "PornToken"
+        hasIcon: false
     }
 
     ListElement {
@@ -987,6 +1126,7 @@ ListModel {
         decimals: 9
         symbol:   "XRL"
         name:     "XRL"
+        hasIcon: true
     }
 
     ListElement {
@@ -994,6 +1134,7 @@ ListModel {
         decimals: 18
         symbol:   "SNX"
         name:     "Synthetix Network Token"
+        hasIcon: false
     }
 
     ListElement {
@@ -1001,6 +1142,7 @@ ListModel {
         decimals: 18
         symbol:   "DLT"
         name:     "Agrello"
+        hasIcon: true
     }
 
     ListElement {
@@ -1008,6 +1150,7 @@ ListModel {
         decimals: 18
         symbol:   "OGN"
         name:     "OriginToken"
+        hasIcon: false
     }
 
     ListElement {
@@ -1015,6 +1158,7 @@ ListModel {
         decimals: 18
         symbol:   "HST"
         name:     "Decision Token"
+        hasIcon: true
     }
 
     ListElement {
@@ -1022,6 +1166,7 @@ ListModel {
         decimals: 18
         symbol:   "WABI"
         name:     "Tael"
+        hasIcon: false
     }
 
     ListElement {
@@ -1029,6 +1174,7 @@ ListModel {
         decimals: 18
         symbol:   "RAE"
         name:     "RAE Token"
+        hasIcon: false
     }
 
     ListElement {
@@ -1036,6 +1182,7 @@ ListModel {
         decimals: 18
         symbol:   "UKG"
         name:     "UnikoinGold"
+        hasIcon: true
     }
 
     ListElement {
@@ -1043,6 +1190,7 @@ ListModel {
         decimals: 9
         symbol:   "AMPL"
         name:     "Ampleforth"
+        hasIcon: false
     }
 
     ListElement {
@@ -1050,6 +1198,7 @@ ListModel {
         decimals: 6
         symbol:   "USDS"
         name:     "StableUSD"
+        hasIcon: false
     }
 
     ListElement {
@@ -1057,6 +1206,7 @@ ListModel {
         decimals: 18
         symbol:   "ABT"
         name:     "ArcBlock Token"
+        hasIcon: false
     }
 
     ListElement {
@@ -1064,6 +1214,7 @@ ListModel {
         decimals: 18
         symbol:   "DAT"
         name:     "Datum Token"
+        hasIcon: false
     }
 
     ListElement {
@@ -1071,6 +1222,7 @@ ListModel {
         decimals: 18
         symbol:   "EKO"
         name:     "EchoLink"
+        hasIcon: false
     }
 
     ListElement {
@@ -1078,6 +1230,7 @@ ListModel {
         decimals: 18
         symbol:   "OST"
         name:     "Simple Token 'OST'"
+        hasIcon: false
     }
 
     ListElement {
@@ -1085,6 +1238,7 @@ ListModel {
         decimals: 8
         symbol:   "FXC"
         name:     "FUTURAX"
+        hasIcon: false
     }
 
     ListElement {
@@ -1092,6 +1246,7 @@ ListModel {
         decimals: 18
         symbol:   "FXC"
         name:     "Flexacoin"
+        hasIcon: false
     }
 
     ListElement {
@@ -1099,6 +1254,7 @@ ListModel {
         decimals: 18
         symbol:   "UPP"
         name:     "Sentinel Protocol"
+        hasIcon: false
     }
 
     ListElement {
@@ -1106,6 +1262,7 @@ ListModel {
         decimals: 8
         symbol:   "BQX"
         name:     "Bitquence"
+        hasIcon: false
     }
 
     ListElement {
@@ -1113,6 +1270,7 @@ ListModel {
         symbol:   "DTA"
         name:     "Data"
         decimals: 18
+        hasIcon: false
     }
 
     ListElement {
@@ -1120,6 +1278,7 @@ ListModel {
         symbol:   "SUSD"
         name:     "Synth sUSD"
         decimals: 18
+        hasIcon: false
     }
 
     ListElement {
@@ -1127,6 +1286,7 @@ ListModel {
         symbol:   "CDAI"
         name:     "Compound Dai"
         decimals: 8
+        hasIcon: false
     }
 
     ListElement {
@@ -1134,6 +1294,7 @@ ListModel {
         symbol:   "BAND"
         name:     "BandToken"
         decimals: 18
+        hasIcon: false
     }
 
     ListElement {
@@ -1141,6 +1302,7 @@ ListModel {
         symbol:   "SPIKE"
         name:     "Spiking"
         decimals: 10
+        hasIcon: false
     }
 
 }
