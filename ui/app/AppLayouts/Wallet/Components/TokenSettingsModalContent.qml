@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
 import "../../../../imports"
 import "../../../../shared"
+import "../../Chat/ContactsColumn"
 import "../tokens/"
 
 Item {
@@ -53,15 +54,24 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 32
 
+        SearchBox {
+            id: searchBox
+            anchors.top: modalBody.top
+            anchors.topMargin: 0
+        }
+
         ListView {
-            anchors.fill: parent
+            anchors.top: searchBox.bottom
+            anchors.topMargin: 10
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
             spacing: 10
             id: tokenListView
             model: Tokens {}
             ScrollBar.vertical: ScrollBar { active: true }
 
             delegate: Component {
-
                 Item {
                     id: element
                     anchors.right: parent.right
@@ -70,6 +80,8 @@ Item {
                     anchors.leftMargin: 10
                     width: parent.width
                     height: 40
+                    property bool isVisible: searchBox.searchStr == "" || name.toLowerCase().includes(searchBox.searchStr.toLowerCase()) || symbol.toLowerCase().includes(searchBox.searchStr.toLowerCase())
+                    visible: isVisible ? true : false
 
                     Image {
                         id: assetInfoImage
