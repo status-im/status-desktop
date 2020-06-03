@@ -49,3 +49,6 @@ proc getFiatValue*(self: WalletModel, eth_balance: string, symbol: string, fiat_
   var fiat_balance = parseFloat(eth_balance) * parseFloat(fiat_eth_price)
   echo(fmt"balance in usd: {fiat_balance}")
   fiat_balance
+
+proc hasAsset*(self: WalletModel, account: string, symbol: string): bool =
+  (symbol == "DAI") or (symbol == "OMG")

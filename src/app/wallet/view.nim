@@ -117,3 +117,6 @@ QtObject:
     read = defaultCurrency
     write = setDefaultCurrency
     notify = defaultCurrencyChanged
+
+  proc hasAsset*(self: WalletView, account: string, symbol: string): bool {.slot.} =
+    self.status.wallet.hasAsset(account, symbol)
