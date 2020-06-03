@@ -26,10 +26,10 @@ proc init*(self: LoginController, nodeAccounts: seq[NodeAccount]) =
 
 proc handleNodeLogin(self: LoginController, data: Signal) =
   let response = NodeSignal(data)
-  if self.status.accounts.currentLoginAccount != nil:
+  if self.view.currentAccount.account != nil:
     self.view.setLastLoginResponse(response.event)
     if ?.response.event.error == "":
-      self.status.events.emit("login", AccountArgs(account: self.status.accounts.currentLoginAccount))
+      self.status.events.emit("login", AccountArgs(account: self.view.currentAccount.account.toAccount))
 
 method onSignal(self: LoginController, data: Signal) =
   if data.signalType == SignalType.NodeLogin:

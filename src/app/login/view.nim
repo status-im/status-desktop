@@ -9,20 +9,20 @@ import ../../signals/types
 import ../../status/libstatus/types as status_types
 import ../../status/libstatus/accounts as status_accounts
 import ../../status/accounts as AccountModel
-
+import ../onboarding/views/account_info
 import ../../status/status
 import core
 
 type
   AccountRoles {.pure.} = enum
     Username = UserRole + 1,
-    Identicon = UserRole + 2,
-    Key = UserRole + 3
+    Identicon = UserRole + 2
 
 QtObject:
   type LoginView* = ref object of QAbstractListModel
     status: Status
     accounts: seq[NodeAccount]
+    currentAccount*: AccountInfoView
 
   proc setup(self: LoginView) =
     self.QAbstractListModel.setup
@@ -34,6 +34,7 @@ QtObject:
   proc newLoginView*(status: Status): LoginView =
     new(result, delete)
     result.accounts = @[]
+    result.currentAccount = newAccountInfoView()
     result.status = status
     result.setup
 
@@ -56,12 +57,21 @@ QtObject:
     case assetRole:
     of AccountRoles.Username: result = newQVariant(asset.name)
     of AccountRoles.Identicon: result = newQVariant(asset.photoPath)
-    of AccountRoles.Key: result = newQVariant(asset.keyUid)
 
   method roleNames(self: LoginView): Table[int, string] =
     { AccountRoles.Username.int:"username",
-    AccountRoles.Identicon.int:"identicon",
-    AccountRoles.Key.int:"key" }.toTable
+    AccountRoles.Identicon.int:"identicon" }.toTable
+
+  proc getCurrentAccount*(self: LoginView): QVariant {.slot.} =
+    result = newQVariant(self.currentAccount)
+
+  proc setCurrentAccount*(self: LoginView, selectedAccountIdx: int) {.slot.} =
+    let currNodeAcct = self.accounts[selectedAccountIdx]
+    self.currentAccount.setAccount(GeneratedAccount(name: currNodeAcct.name, photoPath: currNodeAcct.photoPath))
+
+  QtProperty[QVariant] currentAccount:
+    read = getCurrentAccount
+    write = setCurrentAccount
 
   proc login(self: LoginView, selectedAccountIndex: int, password: string): string {.slot.} =
     try:

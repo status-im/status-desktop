@@ -111,6 +111,7 @@ SwipeView {
                     label: "Select"
 
                     onClicked: {
+                        onboardingModel.setCurrentAccount(wizardStep1.selectedIndex)
                         swipeView.incrementCurrentIndex()
                     }
                 }
@@ -124,11 +125,34 @@ SwipeView {
         property Item txtPassword: txtPassword
 
         Text {
+            id: step2Title
             text: "Enter password"
             font.pointSize: 36
             anchors.top: parent.top
             anchors.topMargin: 20
             anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        Row {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: step2Title.bottom
+            anchors.topMargin: 30
+            Column {
+                Image {
+                  source: onboardingModel.currentAccount.identicon
+                }
+            }
+            Column {
+                Text {
+                  text: onboardingModel.currentAccount.username
+                }
+                Text {
+                  text: onboardingModel.currentAccount.address
+                  width: 160
+                  elide: Text.ElideMiddle
+                }
+
+            }
         }
 
         Input {
@@ -165,11 +189,34 @@ SwipeView {
         property Item txtPassword: txtConfirmPassword
 
         Text {
+            id: step3Title
             text: "Confirm password"
             font.pointSize: 36
             anchors.top: parent.top
             anchors.topMargin: 20
             anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        Row {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: step3Title.bottom
+            anchors.topMargin: 30
+            Column {
+                Image {
+                  source: onboardingModel.currentAccount.identicon
+                }
+            }
+            Column {
+                Text {
+                  text: onboardingModel.currentAccount.username
+                }
+                Text {
+                  text: onboardingModel.currentAccount.address
+                  width: 160
+                  elide: Text.ElideMiddle
+                }
+
+            }
         }
 
         Input {
