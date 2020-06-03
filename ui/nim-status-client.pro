@@ -128,6 +128,12 @@ DISTFILES += \
     onboarding/Intro.qml \
     onboarding/KeysMain.qml \
     onboarding/Login.qml \
+    onboarding/Login/AccountList.qml \
+    onboarding/Login/AccountSelection.qml \
+    onboarding/Login/AddressView.qml \
+    onboarding/Login/qmldir \
+    onboarding/Login/samples/AccountsData.qml \
+    onboarding/Login/samples/qmldir \
     onboarding/OnboardingMain.qml \
     onboarding/Slide.qml \
     onboarding/img/browser-dark@2x.jpg \

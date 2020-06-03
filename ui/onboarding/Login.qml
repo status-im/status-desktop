@@ -5,9 +5,10 @@ import QtQuick.Window 2.11
 import QtQuick.Dialogs 1.3
 import "../shared"
 import "../imports"
+import "./Login"
 
 SwipeView {
-    property alias btnGenKey: btnGenKey
+    property alias btnGenKey: accountSelection.btnGenKey
 
     id: swipeView
     anchors.fill: parent
@@ -20,103 +21,8 @@ SwipeView {
         }
     }
 
-    Item {
-        id: wizardStep1
-        property int selectedIndex: 0
-        Layout.fillHeight: true
-        Layout.fillWidth: true
-
-        Text {
-            id: title
-            text: "Login"
-            font.pointSize: 36
-            anchors.top: parent.top
-            anchors.topMargin: 20
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-
-        ButtonGroup {
-            id: accountGroup
-        }
-
-        Component {
-            id: addressViewDelegate
-
-            Item {
-                height: 56
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-
-                Row {
-                    RadioButton {
-                        checked: index == 0 ? true : false
-                        ButtonGroup.group: accountGroup
-                        onClicked: {
-                            wizardStep1.selectedIndex = index
-                        }
-                    }
-                    Column {
-                        Image {
-                            source: identicon
-                        }
-                    }
-                    Column {
-                        Text {
-                            text: username
-                        }
-                    }
-                }
-            }
-        }
-
-        ListView {
-            id: addressesView
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-            anchors.bottom: footer.top
-            anchors.bottomMargin: 0
-            anchors.top: title.bottom
-            anchors.topMargin: 16
-            contentWidth: 200
-            model: loginModel
-            delegate: addressViewDelegate
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            focus: true
-            Keys.onReturnPressed: {
-                selectBtn.clicked()
-            }
-        }
-
-        Item {
-            id: footer
-            width: btnGenKey.width + selectBtn.width + Theme.padding
-            height: btnGenKey.height
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: Theme.padding
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            StyledButton {
-                id: btnGenKey
-                label: "Generate new account"
-            }
-
-            StyledButton {
-                id: selectBtn
-                anchors.left: btnGenKey.right
-                anchors.leftMargin: Theme.padding
-                label: "Select"
-
-                onClicked: {
-                    loginModel.setCurrentAccount(wizardStep1.selectedIndex)
-                    swipeView.incrementCurrentIndex()
-                }
-            }
-        }
+    AccountSelection {
+        id: accountSelection
     }
 
     Item {
@@ -194,7 +100,7 @@ SwipeView {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
             onClicked: {
-                const selectedAccountIndex = wizardStep1.selectedIndex
+                const selectedAccountIndex = accountSelection.selectedIndex
                 const response = loginModel.login(selectedAccountIndex, txtPassword.textField.text)
                 // TODO: replace me with something graphical (ie spinner)
                 console.log("Logging in...")
