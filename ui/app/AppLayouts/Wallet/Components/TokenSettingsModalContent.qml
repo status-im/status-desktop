@@ -53,74 +53,62 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 32
 
-        ScrollView {
+        ListView {
             anchors.fill: parent
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            spacing: 10
+            id: tokenListView
+            model: Tokens {}
+            ScrollBar.vertical: ScrollBar { active: true }
 
-            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            delegate: Component {
 
-            ListView {
-                anchors.fill: parent
-                spacing: 4
-                id: tokenListView
-                model: Tokens {}
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                delegate: Component {
+                Item {
+                    id: element
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+                    width: parent.width
+                    height: 40
 
-                    Item {
-                        id: element
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
+                    Image {
+                        id: assetInfoImage
+                        width: 36
+                        height: 36
+                        source: "../../../img/tokens/" + symbol + ".png"
                         anchors.left: parent.left
                         anchors.leftMargin: 0
-                        height: 40
-
-                        Image {
-                            id: assetInfoImage
-                            width: 36
-                            height: 36
-                            source: "../../../img/tokens/SNT@3x.png"
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                        Text {
-                            id: assetFullTokenName
-                            text: name
-                            anchors.bottom: parent.bottom
-                            anchors.bottomMargin: 0
-                            anchors.left: assetInfoImage.right
-                            anchors.leftMargin: Theme.smallPadding
-                            color: Theme.darkGrey
-                            font.pixelSize: 15
-                        }
-                        Text {
-                            id: assetSymbol
-                            text: symbol
-                            anchors.left: assetInfoImage.right
-                            anchors.leftMargin: Theme.smallPadding
-                            anchors.top: assetInfoImage.top
-                            anchors.topMargin: 0
-                            color: Theme.black
-                            font.pixelSize: 15
-                        }
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    Text {
+                        id: assetFullTokenName
+                        text: name
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 0
+                        anchors.left: assetInfoImage.right
+                        anchors.leftMargin: Theme.smallPadding
+                        color: Theme.darkGrey
+                        font.pixelSize: 15
+                    }
+                    Text {
+                        id: assetSymbol
+                        text: symbol
+                        anchors.left: assetInfoImage.right
+                        anchors.leftMargin: Theme.smallPadding
+                        anchors.top: assetInfoImage.top
+                        anchors.topMargin: 0
+                        color: Theme.black
+                        font.pixelSize: 15
+                    }
+                    CheckBox  {
+                        id: assetCheck
+                        checked: false //walletModel.hasAsset("0x123", symbol)
+                        anchors.right: parent.right
+                        anchors.rightMargin: 10
                     }
                 }
-                //            delegate: Message {
-                //                userName: model.userName
-                //                message: model.message
-                //                identicon: model.identicon
-                //                isCurrentUser: model.isCurrentUser
-                //                repeatMessageInfo: model.repeatMessageInfo
-                //                timestamp: model.timestamp
-                //                sticker: model.sticker
-                //                contentType: model.contentType
-                //            }
-                highlightFollowsCurrentItem: true
             }
+            highlightFollowsCurrentItem: true
         }
     }
 
@@ -137,8 +125,8 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Theme.padding
         onClicked: {
-            console.log(txtCurrency.textField.text)
-            assetsModel.setDefaultCurrency(txtCurrency.textField.text)
+//            console.log(txtCurrency.textField.text)
+//            assetsModel.setDefaultCurrency(txtCurrency.textField.text)
             popup.close()
         }
     }
