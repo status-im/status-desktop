@@ -19,7 +19,7 @@ type
 QtObject:
   type OnboardingView* = ref object of QAbstractListModel
     accounts*: seq[GeneratedAccount]
-    importedAccount: AccountInfoView
+    currentAccount*: AccountInfoView
     status*: Status
 
   proc setup(self: OnboardingView) =
@@ -32,7 +32,7 @@ QtObject:
   proc newOnboardingView*(status: Status): OnboardingView =
     new(result, delete)
     result.accounts = @[]
-    result.importedAccount = newAccountInfoView()
+    result.currentAccount = newAccountInfoView()
     result.status = status
     result.setup
 
@@ -55,7 +55,7 @@ QtObject:
     case assetRole:
     of AccountRoles.Username: result = newQVariant(asset.name)
     of AccountRoles.Identicon: result = newQVariant(asset.photoPath)
-    of AccountRoles.Key: result = newQVariant(asset.derived.whisper.address)
+    of AccountRoles.Key: result = newQVariant(asset.derived.whisper.publicKey)
 
   method roleNames(self: OnboardingView): Table[int, string] =
     { AccountRoles.Username.int:"username",
@@ -71,26 +71,27 @@ QtObject:
         msg = getCurrentExceptionMsg()
       result = StatusGoError(error: msg).toJson
 
-  proc getImportedAccount*(self: OnboardingView): QVariant {.slot.} =
-    result = newQVariant(self.importedAccount)
+  proc getCurrentAccount*(self: OnboardingView): QVariant {.slot.} =
+    result = newQVariant(self.currentAccount)
 
-  proc setImportedAccount*(self: OnboardingView, importedAccount: GeneratedAccount) =
-    self.importedAccount.setAccount(importedAccount)
+  proc setCurrentAccount*(self: OnboardingView, selectedAccountIdx: int) {.slot.} =
+    self.currentAccount.setAccount(self.accounts[selectedAccountIdx])
 
-  QtProperty[QVariant] importedAccount:
-    read = getImportedAccount
+  QtProperty[QVariant] currentAccount:
+    read = getCurrentAccount
+    write = setCurrentAccount
 
   proc importMnemonic(self: OnboardingView, mnemonic: string): string {.slot.} =
     try:
       let importResult = self.status.accounts.importMnemonic(mnemonic)
       result = importResult.toJson
-      self.setImportedAccount(importResult)
+      self.currentAccount.setAccount(importResult)
     except StatusGoException as e:
       result = StatusGoError(error: e.msg).toJson
 
   proc storeDerivedAndLogin(self: OnboardingView, password: string): string {.slot.} =
     try:
-      result = self.status.accounts.storeDerivedAndLogin(self.importedAccount.account, password).toJson
+      result = self.status.accounts.storeDerivedAndLogin(self.currentAccount.account, password).toJson
     except StatusGoException as e:
       var msg = e.msg
       if e.msg.contains("account already exists"):

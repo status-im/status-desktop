@@ -31,10 +31,10 @@ proc init*(self: OnboardingController) =
 
 proc handleNodeLogin(self: OnboardingController, data: Signal) =
   let response = NodeSignal(data)
-  if self.status.accounts.currentOnboardingAccount != nil:
+  if self.view.currentAccount.account != nil:
     self.view.setLastLoginResponse(response.event)
     if ?.response.event.error == "":
-      self.status.events.emit("login", AccountArgs(account: self.status.accounts.currentOnboardingAccount))
+      self.status.events.emit("login", AccountArgs(account: self.view.currentAccount.account.toAccount))
 
 method onSignal(self: OnboardingController, data: Signal) =
   if data.signalType == SignalType.NodeLogin:

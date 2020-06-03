@@ -66,11 +66,6 @@ SwipeView {
                         Text {
                             text: username
                         }
-                        Text {
-                            text: key
-                            width: 160
-                            elide: Text.ElideMiddle
-                        }
                     }
                 }
             }
@@ -117,6 +112,7 @@ SwipeView {
                 label: "Select"
 
                 onClicked: {
+                    loginModel.setCurrentAccount(wizardStep1.selectedIndex)
                     swipeView.incrementCurrentIndex()
                 }
             }
@@ -128,11 +124,28 @@ SwipeView {
         property Item txtPassword: txtPassword
 
         Text {
+            id: step2Title
             text: "Enter password"
             font.pointSize: 36
             anchors.top: parent.top
             anchors.topMargin: 20
             anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        Row {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: step2Title.bottom
+            anchors.topMargin: 30
+            Column {
+                Image {
+                  source: loginModel.currentAccount.identicon
+                }
+            }
+            Column {
+                Text {
+                  text: loginModel.currentAccount.username
+                }
+            }
         }
 
         Input {

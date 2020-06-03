@@ -77,15 +77,15 @@ SwipeView {
             anchors.topMargin: 30
             Column {
                 Image {
-                  source: onboardingModel.importedAccount.identicon
+                  source: onboardingModel.currentAccount.identicon
                 }
             }
             Column {
                 Text {
-                  text: onboardingModel.importedAccount.username
+                  text: onboardingModel.currentAccount.username
                 }
                 Text {
-                  text: onboardingModel.importedAccount.address
+                  text: onboardingModel.currentAccount.address
                   width: 160
                   elide: Text.ElideMiddle
                 }
@@ -141,15 +141,15 @@ SwipeView {
             anchors.topMargin: 30
             Column {
                 Image {
-                  source: onboardingModel.importedAccount.identicon
+                  source: onboardingModel.currentAccount.identicon
                 }
             }
             Column {
                 Text {
-                  text: onboardingModel.importedAccount.username
+                  text: onboardingModel.currentAccount.username
                 }
                 Text {
-                  text: onboardingModel.importedAccount.address
+                  text: onboardingModel.currentAccount.address
                   width: 160
                   elide: Text.ElideMiddle
                 }

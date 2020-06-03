@@ -6,13 +6,9 @@ type
   AccountModel* = ref object
     generatedAddresses*: seq[GeneratedAccount]
     nodeAccounts*: seq[NodeAccount]
-    currentLoginAccount*: Account
-    currentOnboardingAccount*: Account
 
 proc newAccountModel*(): AccountModel =
   result = AccountModel()
-  result.currentLoginAccount = nil
-  result.currentOnboardingAccount = nil
 
 proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
   var accounts = status_accounts.generateAddresses()
@@ -24,17 +20,14 @@ proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
 
 proc login*(self: AccountModel, selectedAccountIndex: int, password: string): NodeAccount =
   let currentNodeAccount = self.nodeAccounts[selectedAccountIndex]
-  self.currentLoginAccount = currentNodeAccount.toAccount
   result = status_accounts.login(currentNodeAccount, password)
 
 proc storeAccountAndLogin*(self: AccountModel, selectedAccountIndex: int, password: string): Account =
   let generatedAccount: GeneratedAccount = self.generatedAddresses[selectedAccountIndex]
   result = status_accounts.setupAccount(generatedAccount, password)
-  self.currentOnboardingAccount = generatedAccount.toAccount
 
 proc storeDerivedAndLogin*(self: AccountModel, importedAccount: GeneratedAccount, password: string): Account =
   result = status_accounts.setupAccount(importedAccount, password)
-  self.currentOnboardingAccount = importedAccount.toAccount
 
 proc importMnemonic*(self: AccountModel, mnemonic: string): GeneratedAccount =
   let importedAccount = status_accounts.multiAccountImportMnemonic(mnemonic)
