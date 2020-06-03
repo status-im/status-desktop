@@ -75,7 +75,7 @@ Item {
                         id: assetInfoImage
                         width: 36
                         height: 36
-                        source: "../../../img/tokens/" + symbol + ".png"
+                        source: hasIcon ? "../../../img/tokens/" + symbol + ".png" : "../../../img/tokens/0-native.png"
                         anchors.left: parent.left
                         anchors.leftMargin: 0
                         anchors.verticalCenter: parent.verticalCenter
@@ -102,7 +102,7 @@ Item {
                     }
                     CheckBox  {
                         id: assetCheck
-                        checked: false //walletModel.hasAsset("0x123", symbol)
+                        checked: walletModel.hasAsset("0x123", symbol)
                         anchors.right: parent.right
                         anchors.rightMargin: 10
                     }
