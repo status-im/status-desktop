@@ -98,3 +98,4 @@ QtObject:
     read = statusSignal
     write = receiveSignal
     notify = signalReceived
+  

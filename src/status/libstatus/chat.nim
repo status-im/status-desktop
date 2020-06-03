@@ -73,7 +73,7 @@ proc loadChats*(): seq[Chat] =
 
 proc chatMessages*(chatId: string): seq[Message] =
   result = @[]
-  let rpcResult = parseJson(callPrivateRPC("chatMessages".prefix, %* [chatId, nil, 5]))["result"]
+  let rpcResult = parseJson(callPrivateRPC("chatMessages".prefix, %* [chatId, nil, 1000]))["result"]
   if rpcResult["messages"].kind != JNull:
     for jsonMsg in rpcResult["messages"]:
       result.add(jsonMsg.toMessage)
@@ -84,20 +84,6 @@ proc generateSymKeyFromPassword*(): string =
     # TODO unhardcode this for non-status mailservers
     "status-offline-inbox"
   ]))["result"]).strip(chars = {'"'})
-
-proc requestMessages*(topics: seq[string], symKeyID: string, peer: string, numberOfMessages: int) =
-  echo callPrivateRPC("requestMessages".prefix, %* [
-    {
-        "topics": topics,
-        "mailServerPeer": peer,
-        "symKeyID": symKeyID,
-        "timeout": 30,
-        "limit": numberOfMessages,
-        "cursor": nil,
-        "from": (times.toUnix(times.getTime()) - 86400) # Unhardcode this. Need to keep the last fetch in a DB
-    }
-  ])
-
 
 proc sendChatMessage*(chatId: string, msg: string): string =
   callPrivateRPC("sendChatMessage".prefix, %* [

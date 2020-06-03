@@ -1,36 +1,34 @@
-import eventemitter, sets, json, strutils
+import eventemitter, sets, json
 import sequtils
-import libstatus/utils
-import libstatus/core as status_core
 import libstatus/chat as status_chat
-import libstatus/mailservers as status_mailservers
 import chronicles
 import ../signals/types
 import chat/chat_item
 import chat/chat_message
 import tables
+
 export chat_item
 export chat_message
 
-type MsgArgs* = ref object of Args
+type 
+  MsgArgs* = ref object of Args
     message*: string
     chatId*: string
     payload*: JsonNode
 
-type ChannelArgs* = ref object of Args
+  ChannelArgs* = ref object of Args
     channel*: string
     chatTypeInt*: ChatType
 
-type ChatArgs* = ref object of Args
-  chats*: seq[Chat]
+  ChatArgs* = ref object of Args
+    chats*: seq[Chat]
 
-type TopicArgs* = ref object of Args
-  topics*: seq[string]
+  TopicArgs* = ref object of Args
+    topics*: seq[string]
 
-type MsgsLoadedArgs* = ref object of Args
-  messages*: seq[Message]
+  MsgsLoadedArgs* = ref object of Args
+    messages*: seq[Message]
 
-type
   ChatModel* = ref object
     events*: EventEmitter
     channels*: HashSet[string]
@@ -69,11 +67,8 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
   else:
     self.events.emit("mailserverTopics", TopicArgs(topics: topics));
 
-
-
   self.events.emit("channelJoined", ChannelArgs(channel: chatId, chatTypeInt: chatType))
   self.events.emit("activeChannelChanged", ChannelArgs(channel: self.getActiveChannel()))
-  
 
 proc init*(self: ChatModel) =
   let chatList = status_chat.loadChats()
@@ -103,7 +98,6 @@ proc init*(self: ChatModel) =
   else:
     self.events.emit("mailserverTopics", TopicArgs(topics: topics));
   
-
 proc leave*(self: ChatModel, chatId: string) =
   status_chat.removeFilters(chatId, self.filters[chatId])
   status_chat.deactivateChat(chatId)

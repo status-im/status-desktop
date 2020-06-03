@@ -83,7 +83,7 @@ proc connect*(self: MailserverModel, enode: string) =
     return
 
   self.selectedMailserver = enode
-  if self.nodes.hasKey(enode):
+  if self.nodes.hasKey(enode) and self.nodes[enode] == MailserverStatus.Connecting:
     if self.nodes[enode] == MailserverStatus.Connected:
       self.trustPeer(enode)
   else:
@@ -94,12 +94,9 @@ proc connect*(self: MailserverModel, enode: string) =
   status_mailservers.update(enode)
 
 proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
-  for p in peers:
-    debug "Peer summary", p
   for peer in self.nodes.keys: 
     if not peers.contains(peer): 
       self.nodes[peer] = MailserverStatus.Disconnected
-      warn "Peer disconnected", peer
       self.events.emit("peerDisconnected", MailserverArg(peer: peer))
     # TODO: reconnect peer up to N times on 'peerDisconnected'
   
@@ -117,15 +114,17 @@ proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
 proc requestMessages*(self: MailserverModel) =
   debug "Requesting messages from", mailserver=self.selectedMailserver
   let generatedSymKey = status_chat.generateSymKeyFromPassword()
-  status_chat.requestMessages(toSeq(self.topics), generatedSymKey, self.selectedMailserver, 1000)
+  status_mailservers.requestMessages(toSeq(self.topics), generatedSymKey, self.selectedMailserver, 1000)
 
 proc autoConnect(self: MailserverModel) =
   let mailserversReply = parseJson(status_mailservers.ping(500))["result"]
+  
   var availableMailservers:seq[(string, int)] = @[]
   for reply in mailserversReply: 
     if(reply["error"].kind != JNull): continue # The results with error are ignored
     availableMailservers.add((reply["address"].getStr, reply["rttMs"].getInt))
   availableMailservers.sort(cmpMailserverReply)
+
   # Picks a random mailserver amongs the ones with the lowest latency
   # The pool size is 1/4 of the mailservers were pinged successfully
   randomize()
@@ -158,4 +157,3 @@ proc init*(self: MailserverModel) =
   #TODO: connect to current mailserver from the settings
   # or setup a random one:
   self.autoConnect()
-  

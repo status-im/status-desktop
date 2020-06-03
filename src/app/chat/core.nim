@@ -1,5 +1,5 @@
 import NimQml
-import json, eventemitter, chronicles
+import eventemitter, chronicles
 import ../../status/chat as chat_model
 import ../../status/mailservers as mailserver_model
 import ../../signals/types
@@ -29,10 +29,10 @@ proc delete*(self: ChatController) =
   delete self.variant
 
 proc handleChatEvents(self: ChatController) =
+  # Display already saved messages
   self.status.events.on("messagesLoaded") do(e:Args):
     for message in MsgsLoadedArgs(e).messages:
       self.view.pushMessage(message.chatId, message.toChatMessage())
-
 
   self.status.events.on("messageSent") do(e: Args):
     var sentMessage = MsgArgs(e)
@@ -62,7 +62,6 @@ proc handleMailserverEvents(self: ChatController) =
   self.status.events.on("mailserverAvailable") do(e:Args):
     self.status.mailservers.requestMessages()
 
-
 proc init*(self: ChatController) =
   self.handleMailserverEvents()
   self.handleChatEvents()
@@ -72,24 +71,20 @@ proc init*(self: ChatController) =
 
   self.view.setActiveChannelByIndex(0)
 
-proc handleMessage(self: ChatController, data: Signal) =
-  var messageSignal = cast[MessageSignal](data)
+proc handleMessage(self: ChatController, data: MessageSignal) =
+  for c in data.chats:
+   self.view.updateChat(c.toChatItem())
 
-  for c in messageSignal.chats:
-   let channel = c.toChatItem()
-   self.view.updateChat(channel)
+  for message in data.messages:
+    self.view.pushMessage(message.localChatId, message.toChatMessage())
 
-  for message in messageSignal.messages:
-    let chatMessage = message.toChatMessage()
-    self.view.pushMessage(message.localChatId, chatMessage)
-
-proc handleDiscoverySummary(self: ChatController, data: Signal) =
-  var discovery = DiscoverySummarySignal(data)
-  self.status.mailservers.peerSummaryChange(discovery.enodes)
+proc handleDiscoverySummary(self: ChatController, data: DiscoverySummarySignal) =
+  ## Handle mailserver peers being added and removed
+  self.status.mailservers.peerSummaryChange(data.enodes)
 
 method onSignal(self: ChatController, data: Signal) =
   case data.signalType: 
-  of SignalType.Message: handleMessage(self, data)
-  of SignalType.DiscoverySummary: handleDiscoverySummary(self, data)
+  of SignalType.Message: handleMessage(self, MessageSignal(data))
+  of SignalType.DiscoverySummary: handleDiscoverySummary(self, DiscoverySummarySignal(data))
   else:
     warn "Unhandled signal received", signalType = data.signalType

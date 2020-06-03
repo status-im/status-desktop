@@ -39,7 +39,7 @@ proc addPeer*(peer: string) =
   discard callPrivateRPC("admin_addPeer", %* [peer])
 
 proc removePeer*(peer: string) = 
-  echo "TODO: removePeer"
+  discard callPrivateRPC("admin_removePeer", %* [peer])
 
 proc markTrustedPeer*(peer: string) = 
   discard callPrivateRPC("markTrustedPeer".prefix(false), %* [peer])

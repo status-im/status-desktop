@@ -50,7 +50,7 @@ Popup {
 
           Image {
               id: closeModalImg
-              source: "../../../img/close.svg"
+              source: "./img/close.svg"
               anchors.horizontalCenter: parent.horizontalCenter
               anchors.verticalCenter: parent.verticalCenter
           }

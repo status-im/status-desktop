@@ -18,7 +18,7 @@ ModalPopup {
         id: chatKeyBox
         height: 44
         color: Theme.grey
-        anchors.top: separator.bottom
+        anchors.top: parent.top
         anchors.topMargin: 16
         radius: 8
         anchors.right: parent.right
