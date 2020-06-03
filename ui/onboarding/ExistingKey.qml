@@ -15,7 +15,6 @@ SwipeView {
         currentItem.txtPassword.textField.focus = true;
     }
 
-
     Item {
         id: wizardStep1
         property Item txtPassword: txtMnemonic
@@ -77,17 +76,17 @@ SwipeView {
             anchors.topMargin: 30
             Column {
                 Image {
-                  source: onboardingModel.currentAccount.identicon
+                    source: onboardingModel.currentAccount.identicon
                 }
             }
             Column {
                 Text {
-                  text: onboardingModel.currentAccount.username
+                    text: onboardingModel.currentAccount.username
                 }
                 Text {
-                  text: onboardingModel.currentAccount.address
-                  width: 160
-                  elide: Text.ElideMiddle
+                    text: onboardingModel.currentAccount.address
+                    width: 160
+                    elide: Text.ElideMiddle
                 }
 
             }
@@ -127,7 +126,7 @@ SwipeView {
         property Item txtPassword: txtConfirmPassword
 
         Text {
-          id: step3Title
+            id: step3Title
             text: "Confirm password"
             font.pointSize: 36
             anchors.top: parent.top
@@ -141,17 +140,17 @@ SwipeView {
             anchors.topMargin: 30
             Column {
                 Image {
-                  source: onboardingModel.currentAccount.identicon
+                    source: onboardingModel.currentAccount.identicon
                 }
             }
             Column {
                 Text {
-                  text: onboardingModel.currentAccount.username
+                    text: onboardingModel.currentAccount.username
                 }
                 Text {
-                  text: onboardingModel.currentAccount.address
-                  width: 160
-                  elide: Text.ElideMiddle
+                    text: onboardingModel.currentAccount.address
+                    width: 160
+                    elide: Text.ElideMiddle
                 }
 
             }
@@ -197,9 +196,9 @@ SwipeView {
             target: onboardingModel
             ignoreUnknownSignals: true
             onLoginResponseChanged: {
-              if(error){
-                importLoginError.open()
-              }
+                if(error){
+                    importLoginError.open()
+                }
             }
         }
 
