@@ -29,6 +29,11 @@ proc delete*(self: ChatController) =
   delete self.variant
 
 proc handleChatEvents(self: ChatController) =
+  self.status.events.on("messagesLoaded") do(e:Args):
+    for message in MsgsLoadedArgs(e).messages:
+      self.view.pushMessage(message.chatId, message.toChatMessage())
+
+
   self.status.events.on("messageSent") do(e: Args):
     var sentMessage = MsgArgs(e)
     var chatMessage = sentMessage.payload.toChatMessage()
@@ -40,6 +45,7 @@ proc handleChatEvents(self: ChatController) =
     var channelMessage = ChannelArgs(e)
     let chatItem = newChatItem(id = channelMessage.channel, channelMessage.chatTypeInt)
     discard self.view.chats.addChatItemToList(chatItem)
+    self.status.chat.chatMessages(channelMessage.channel)
 
   self.status.events.on("channelLeft") do(e: Args):
     discard self.view.chats.removeChatItemFromList(self.view.activeChannel.chatItem.id)

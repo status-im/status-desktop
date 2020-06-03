@@ -49,7 +49,7 @@ QtObject:
     let signalString = $jsonSignal["type"].getStr
 
     trace "Raw signal data", data = $jsonSignal
-
+    
     var signalType: SignalType
     
     try:

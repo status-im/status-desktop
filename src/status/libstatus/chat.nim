@@ -71,8 +71,12 @@ proc loadChats*(): seq[Chat] =
       if chat.active and chat.chatType != ChatType.Unknown:
         result.add(jsonChat.toChat)
 
-proc chatMessages*(chatId: string) =
-  discard callPrivateRPC("chatMessages".prefix, %* [chatId, nil, 20])
+proc chatMessages*(chatId: string): seq[Message] =
+  result = @[]
+  let rpcResult = parseJson(callPrivateRPC("chatMessages".prefix, %* [chatId, nil, 5]))["result"]
+  if rpcResult["messages"].kind != JNull:
+    for jsonMsg in rpcResult["messages"]:
+      result.add(jsonMsg.toMessage)
 
 # TODO this probably belongs in another file
 proc generateSymKeyFromPassword*(): string =
