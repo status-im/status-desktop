@@ -73,6 +73,10 @@ Item {
         id: settingsModal
     }
 
+    TokenSettingsModal{
+        id: tokenSettingsModal
+    }
+
     Item {
         property int btnMargin: 8
         property int btnOuterMargin: 32
@@ -179,7 +183,7 @@ Item {
                         text: qsTr("Add/Remove Tokens")
                         icon.source: "../../img/add_remove_token.svg"
                         onTriggered: {
-                            console.log("TODO: Add/Remove Tokens")
+                            tokenSettingsModal.open()
                         }
                     }
                     QQC2.Action {
