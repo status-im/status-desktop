@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 2.3
+import QtQuick.Controls 2.12 as QQC2
 import QtQuick.Layouts 1.3
 import "../../../imports"
 import "../../../shared"
@@ -148,14 +149,45 @@ Item {
                 fillMode: Image.PreserveAspectFit
                 source: "../../img/settings.svg"
             }
+
             MouseArea {
                 anchors.rightMargin: -Theme.smallPadding
                 anchors.leftMargin: -Theme.smallPadding
                 anchors.bottomMargin: -Theme.smallPadding
                 anchors.topMargin: -Theme.smallPadding
                 anchors.fill: parent
-                onClicked: settingsModal.open()
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
                 cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    let x = settingsImg.x + settingsImg.width / 2 - newSettingsMenu.width / 2
+                    newSettingsMenu.popup(x, settingsImg.height + 10)
+                }
+
+                PopupMenu {
+                    id: newSettingsMenu
+                    width: 280
+                    QQC2.Action {
+                        text: qsTr("Account Settings")
+                        icon.source: "../../img/account_settings.svg"
+                        onTriggered: {
+                            console.log("TODO: AccountSettings")
+                        }
+                    }
+                    QQC2.Action {
+                        text: qsTr("Add/Remove Tokens")
+                        icon.source: "../../img/add_remove_token.svg"
+                        onTriggered: {
+                            console.log("TODO: Add/Remove Tokens")
+                        }
+                    }
+                    QQC2.Action {
+                        text: qsTr("Set Currency")
+                        icon.source: "../../img/set_currency.svg"
+                        onTriggered: {
+                            settingsModal.open()
+                        }
+                    }
+                }
             }
         }
     }
