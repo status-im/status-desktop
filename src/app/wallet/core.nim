@@ -7,6 +7,7 @@ import chronicles
 import view
 import views/asset_list
 import views/account_list
+import views/account_item
 import ../../status/libstatus/wallet as status_wallet
 import ../../signals/types
 
@@ -47,7 +48,7 @@ proc init*(self: WalletController) =
     let asset = Asset(name:"Ethereum", symbol: symbol, value: fmt"{eth_balance:.6}", fiatValue: "$" & fmt"{usd_balance:.2f}", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
     assetList.addAssetToList(asset)
 
-    let account = Account(name: "Status Account", address: address, iconColor: "", balance: fmt"{totalAccountBalance:.2f} {defaultCurrency}", assetList: assetList)
+    let account = Account(name: "Status Account", address: address, iconColor: "", balance: fmt"{totalAccountBalance:.2f} {defaultCurrency}", assetList: assetList, realFiatBalance: totalAccountBalance)
     self.view.addAccountToList(account)
 
   self.view.setDefaultAccount(accounts[0])

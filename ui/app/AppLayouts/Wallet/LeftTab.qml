@@ -9,7 +9,7 @@ import "../../../shared"
 import "./Components"
 
 Item {
-    property int selectedWallet: 0
+    property int selectedAccount: 0
     id: walletInfoContainer
     width: 340
 
@@ -36,7 +36,7 @@ Item {
         TextEdit {
             id: walletAmountValue
             color: "black"
-            text: qsTr("408.30 USD")
+            text: walletModel.totalFiatBalance
             selectByMouse: true
             cursorVisible: true
             readOnly: true
@@ -65,7 +65,7 @@ Item {
         id: walletDelegate
 
         Rectangle {
-            property bool selected: index == selectedWallet
+            property bool selected: index == selectedAccount
 
             id: rectangle
             height: 64
@@ -131,8 +131,8 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    selectedWallet = index
-                    // TODO add call to Nim to change the wallet for real
+                    selectedAccount = index
+                    walletModel.setCurrentAccountByIndex(index)
                 }
             }
         }
@@ -174,7 +174,7 @@ Item {
             }
         }
 
-        model: walletModel.getAccountList()
+        model: walletModel.accounts
 //        model: exampleWalletModel
     }
 }
