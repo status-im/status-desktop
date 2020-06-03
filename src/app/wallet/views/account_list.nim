@@ -2,12 +2,8 @@ import NimQml
 import Tables
 import random
 import ./asset_list
+import ./account_item
 import ../../../status/wallet
-
-# Need to put the definition here as putting it in status/wallet.nim would create a circular dep
-type Account* = ref object
-    name*, address*, iconColor*, balance*: string
-    assetList*: AssetList
 
 const accountColors* = [
   "#9B832F",
@@ -41,10 +37,7 @@ QtObject:
     result.accounts = @[]
     result.setup
   
-  proc getAccountByIndex*(self: AccountList, index: int8): Account =
-    if (index >= self.accounts.len):
-      raise newException(ValueError, "Index out of bounds for accounts")
-    result = self.accounts[index]
+  proc getAccount*(self: AccountList, index: int): Account = self.accounts[index]
 
   method rowCount*(self: AccountList, index: QModelIndex = nil): int =
     return self.accounts.len

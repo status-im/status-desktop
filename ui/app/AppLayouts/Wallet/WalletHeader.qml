@@ -6,6 +6,8 @@ import "../../../imports"
 import "../../../shared"
 
 Item {
+    property var currentAccount: walletModel.currentAccount
+
     id: walletHeader
     height: walletAddress.y + walletAddress.height
     anchors.right: parent.right
@@ -19,8 +21,7 @@ Item {
 
     Text {
         id: title
-        // TODO this should be the name of the wallet
-        text: qsTr("Status account")
+        text: currentAccount.name
         anchors.top: parent.top
         anchors.topMargin: 56
         anchors.left: parent.left
@@ -43,8 +44,7 @@ Item {
 
     Text {
         id: walletBalance
-        // TODO this should be the balance
-        text: qsTr("12.00 USD")
+        text: currentAccount.balance
         anchors.left: separatorDot.right
         anchors.leftMargin: 8
         anchors.verticalCenter: title.verticalCenter
@@ -53,8 +53,10 @@ Item {
 
     Text {
         id: walletAddress
-        // TODO this should be the address and an actual Address component that can shrink and expend
-        text: qsTr("0X2Ef1...E0Ba")
+        text: currentAccount.address
+        elide: Text.ElideMiddle
+        anchors.right: title.right
+        anchors.rightMargin: 0
         anchors.top: title.bottom
         anchors.topMargin: 0
         anchors.left: title.left
