@@ -6,6 +6,7 @@ import Qt.labs.platform 1.1
 Item {
     property string username: "Jotaro Kujo"
     property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+    property var onAccountSelect: function() {}
 
     id: addressViewDelegate
     height: 56
@@ -18,9 +19,7 @@ Item {
         RadioButton {
             checked: index == 0 ? true : false
             ButtonGroup.group: accountGroup
-            onClicked: {
-                wizardStep1.selectedIndex = index
-            }
+            onClicked: { onAccountSelect(index) }
         }
         Column {
             Image {

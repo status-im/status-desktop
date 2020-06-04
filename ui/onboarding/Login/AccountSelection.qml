@@ -7,17 +7,17 @@ import "../../shared"
 import "../../imports"
 
 Item {
-    property alias btnGenKey: btnGenKey
-//    property alias selectedIndex: selecte
-
     id: wizardStep1
     property int selectedIndex: 0
+    property alias btnGenKey: btnGenKey
+    property var onAccountSelect: function() {}
+
     Layout.fillHeight: true
     Layout.fillWidth: true
 
     Text {
         id: title
-        text: "Login"
+        text: qsTr("Login")
         font.pointSize: 36
         anchors.top: parent.top
         anchors.topMargin: 20
@@ -31,6 +31,9 @@ Item {
     AccountList {
         id: accountList
         accounts: loginModel
+        onAccountSelect: function(index) {
+            wizardStep1.selectedIndex = index
+        }
     }
 
     Item {
@@ -43,19 +46,16 @@ Item {
 
         StyledButton {
             id: btnGenKey
-            label: "Generate new account"
+            label: qsTr("Generate new account")
         }
 
         StyledButton {
             id: selectBtn
             anchors.left: btnGenKey.right
             anchors.leftMargin: Theme.padding
-            label: "Select"
+            label: qsTr("Select")
 
-            onClicked: {
-                loginModel.setCurrentAccount(accountList.selectedAccount)
-                swipeView.incrementCurrentIndex()
-            }
+            onClicked: onAccountSelect()
         }
     }
 }
