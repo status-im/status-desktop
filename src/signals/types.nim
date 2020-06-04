@@ -20,7 +20,7 @@ type WalletSignal* = ref object of Signal
 type Message* = object
   alias*: string
   chatId*: string
-  clock*: string
+  clock*: int
   # commandParameters*:   # ???
   contentType*: int      # ???
   ensName*: string        # ???

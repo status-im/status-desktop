@@ -12,7 +12,7 @@ type
     ContentType = UserRole + 7
     Sticker = UserRole + 8
     FromAuthor = UserRole + 9
-
+    Clock = UserRole + 10
 QtObject:
   type
     ChatMessageList* = ref object of QAbstractListModel
@@ -47,6 +47,7 @@ QtObject:
       of ChatMessageRoles.UserName: result = newQVariant(message.userName)
       of ChatMessageRoles.Message: result = newQVariant(message.message)
       of ChatMessageRoles.Timestamp: result = newQVariant(message.timestamp)
+      of ChatMessageRoles.Clock: result = newQVariant($message.clock)
       of ChatMessageRoles.Identicon: result = newQVariant(message.identicon)
       of ChatMessageRoles.IsCurrentUser: result = newQVariant(message.isCurrentUser)
       of ChatMessageRoles.RepeatMessageInfo: result = newQVariant(repeatMessageInfo)
@@ -59,6 +60,7 @@ QtObject:
       ChatMessageRoles.UserName.int:"userName",
       ChatMessageRoles.Message.int:"message",
       ChatMessageRoles.Timestamp.int:"timestamp",
+      ChatMessageRoles.Clock.int:"clock",
       ChatMessageRoles.Identicon.int:"identicon",
       ChatMessageRoles.IsCurrentUser.int:"isCurrentUser",
       ChatMessageRoles.RepeatMessageInfo.int:"repeatMessageInfo",
