@@ -23,6 +23,10 @@ SwipeView {
 
     AccountSelection {
         id: accountSelection
+        onAccountSelect: function() {
+            loginModel.setCurrentAccount(this.selectedIndex)
+            swipeView.incrementCurrentIndex()
+        }
     }
 
     Item {

@@ -2,12 +2,11 @@ import QtQuick 2.14
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
-//import "../../../../shared"
-//import "../../../../imports"
 import "./samples/"
 
 ListView {
     property var accounts: AccountsData {}
+    property var onAccountSelect: function() {}
 
     id: addressesView
     anchors.right: parent.right
@@ -25,14 +24,13 @@ ListView {
     delegate: AddressView {
       username: model.username
       identicon: model.identicon
+      onAccountSelect: function(index) {
+        addressesView.onAccountSelect(index)
+      }
     }
 
     Layout.fillHeight: true
     Layout.fillWidth: true
     focus: true
-    Keys.onReturnPressed: {
-        selectBtn.clicked()
-    }
 }
-
 

@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.4
-//import "../../../../imports"
+import "../imports"
 
 Item {
     id: slide
@@ -17,7 +17,6 @@ Item {
         anchors.topMargin: 17
         fillMode: Image.PreserveAspectFit
         source: image
-
     }
 
     Text {
@@ -38,13 +37,12 @@ Item {
         font.bold: true
         font.pixelSize: 22
         font.kerning: true
-
     }
 
     Text {
         id: txtDesc1
         x: 772
-        color: "#939BA1"
+        color: Theme.darkGrey
         text: description
         font.weight: Font.Normal
         style: Text.Normal
@@ -70,7 +68,7 @@ Item {
         visible: !isLast
         background: Rectangle {
             id: rctNext1
-            color: "#ECEFFC"
+            color: Theme.grey
             border.width: 0
             radius: 50
 
