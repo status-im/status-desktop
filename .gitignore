@@ -1,4 +1,4 @@
-data/
+/data
 noBackup/
 .idea
 *.pro.user

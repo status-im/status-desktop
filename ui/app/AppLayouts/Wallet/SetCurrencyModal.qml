@@ -9,7 +9,7 @@ import "./Components"
 Item {
     function open() {
         popup.open()
-        settingsModalContent.currency = walletModel.defaultCurrency
+        setCurrencyModalContent.currency = walletModel.defaultCurrency
     }
 
     function close() {
@@ -33,8 +33,8 @@ Item {
             radius: Theme.radius
         }
         padding: 0
-        contentItem: SettingsModalContent {
-            id: settingsModalContent
+        contentItem: SetCurrencyModalContent {
+            id: setCurrencyModalContent
         }
     }
 }

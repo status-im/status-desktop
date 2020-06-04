@@ -5,7 +5,7 @@ import Qt.labs.platform 1.1
 import "../../../../imports"
 import "../../../../shared"
 import "../../Chat/ContactsColumn"
-import "../tokens/"
+import "../data/"
 
 Item {
     id: element
@@ -27,7 +27,7 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: Theme.padding
         anchors.topMargin: Theme.padding
-        source: "../../../img/close.svg"
+        source: "../../../../shared/img/close.svg"
         MouseArea {
             id: closeModalMouseArea
             cursorShape: Qt.PointingHandCursor
