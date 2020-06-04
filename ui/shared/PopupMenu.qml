@@ -7,8 +7,8 @@ Menu {
     property alias arrowX: bgPopupMenuTopArrow.x
     closePolicy: Popup.CloseOnPressOutsideParent
     id: popupMenu
-    topPadding: 16
-    bottomPadding: 16
+    topPadding: Theme.padding
+    bottomPadding: Theme.padding
     delegate: MenuItem {
         id: popupMenuItem
         implicitWidth: 200
@@ -107,3 +107,9 @@ Menu {
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/

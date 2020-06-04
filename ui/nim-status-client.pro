@@ -80,6 +80,7 @@ DISTFILES += \
     app/AppLayouts/Wallet/AssetsTab.qml \
     app/AppLayouts/Wallet/CollectiblesTab.qml \
     app/AppLayouts/Wallet/Components/AddAccount.qml \
+    app/AppLayouts/Wallet/Components/GenerateAccountModal.qml \
     app/AppLayouts/Wallet/Components/SendModalContent.qml \
     app/AppLayouts/Wallet/Components/SettingsModalContent.qml \
     app/AppLayouts/Wallet/Components/qmldir \

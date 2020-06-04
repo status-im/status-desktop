@@ -1,3 +1,4 @@
 SendModalContent 1.0 SendModalContent.qml
 SettingsModalContent 1.0 SettingsModalContent.qml
 AddAccount 1.0 AddAccount.qml
+GenerateAccountModal 1.0 GenerateAccountModal.qml

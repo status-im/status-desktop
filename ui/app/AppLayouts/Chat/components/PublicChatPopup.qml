@@ -20,10 +20,9 @@ ModalPopup {
         Layout.fillHeight: false
         Layout.fillWidth: true
         width: parent.width
-        padding: 20
 
         Text {
-            width: parent.width - 20
+            width: parent.width
             font.pixelSize: 15
             text: qsTr("A public chat is where you get to hang out with others, make friends and talk about subjects of your interest.")
             wrapMode: Text.WordWrap
@@ -38,9 +37,7 @@ ModalPopup {
         anchors.top: description.bottom
         radius: 8
         anchors.right: parent.right
-        anchors.rightMargin: 16
         anchors.left: parent.left
-        anchors.leftMargin: 16
 
         TextField {
             id: channelName

@@ -19,12 +19,9 @@ ModalPopup {
         height: 44
         color: Theme.grey
         anchors.top: parent.top
-        anchors.topMargin: 16
         radius: 8
         anchors.right: parent.right
-        anchors.rightMargin: 16
         anchors.left: parent.left
-        anchors.leftMargin: 16
 
         TextField {
             id: chatKey

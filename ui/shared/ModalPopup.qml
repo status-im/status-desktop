@@ -80,10 +80,13 @@ Popup {
       Item {
         id: popupContent
         anchors.top: separator.bottom
+        anchors.topMargin: Theme.padding
         anchors.bottom: separator2.top
-        anchors.left: popup.left
-        anchors.right: popup.right
-        width: popup.width
+        anchors.bottomMargin: Theme.padding
+        anchors.left: parent.left
+        anchors.leftMargin: Theme.padding
+        anchors.right: parent.right
+        anchors.rightMargin: Theme.padding
       }
 
       Separator {

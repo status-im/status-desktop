@@ -156,10 +156,7 @@ SwipeView {
             anchors.left: parent.left
             anchors.right: parent.right
             placeholderText: "Enter password"
-
-            Component.onCompleted: {
-                this.textField.echoMode = TextInput.Password
-            }
+            textField.echoMode: TextInput.Password
             Keys.onReturnPressed: {
                 submitBtn.clicked()
             }
