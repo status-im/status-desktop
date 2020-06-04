@@ -69,8 +69,8 @@ Item {
         id: sendModal
     }
 
-    SettingsModal{
-        id: settingsModal
+    SetCurrencyModal{
+        id: setCurrencyModal
     }
 
     TokenSettingsModal{
@@ -190,7 +190,7 @@ Item {
                         text: qsTr("Set Currency")
                         icon.source: "../../img/set_currency.svg"
                         onTriggered: {
-                            settingsModal.open()
+                            setCurrencyModal.open()
                         }
                     }
                 }

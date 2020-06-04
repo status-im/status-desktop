@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
 import "../../../../imports"
 import "../../../../shared"
+import "../data/"
 
 Item {
     id: element
@@ -26,7 +27,7 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 16
         anchors.topMargin: 16
-        source: "../../../img/close.svg"
+        source: "../../../../shared/img/close.svg"
         MouseArea {
             id: closeModalMouseArea
             cursorShape: Qt.PointingHandCursor
@@ -42,30 +43,56 @@ Item {
         anchors.top: modalDialogTitle.bottom
     }
 
+    ButtonGroup {
+        id: currencyGroup
+    }
+
     Item {
         id: modalBody
         anchors.right: parent.right
         anchors.rightMargin: 32
-        anchors.top: headerSeparator.bottom
+        anchors.top: headerSeparator.top
         anchors.topMargin: Theme.padding
         anchors.bottom: footerSeparator.top
-        anchors.bottomMargin: 16
+        anchors.bottomMargin: Theme.padding
         anchors.left: parent.left
         anchors.leftMargin: 32
 
-        Input {
-            id: txtCurrency
-            label: "Currency"
+        ListView {
             anchors.top: parent.top
-            anchors.topMargin: 0
-            anchors.right: parent.right
-            anchors.rightMargin: 0
+            anchors.topMargin: 10
             anchors.left: parent.left
-            anchors.leftMargin: 0
-            placeholderText: qsTr("USD")
-            text: currency
-        }
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            spacing: 10
+            id: tokenListView
+            model: Currencies {}
+            ScrollBar.vertical: ScrollBar { active: true }
 
+            delegate: Component {
+                Item {
+                    id: element
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+                    width: parent.width
+                    height: 52
+
+                    Text {
+                        text: name + " (" + code + ")"
+                        font.pixelSize: 15
+                    }
+
+                    RadioButton {
+                        checked: currency === key
+                        anchors.right: parent.right
+                        ButtonGroup.group: currencyGroup
+                        onClicked: { walletModel.setDefaultCurrency(key) }
+                    }
+                }
+            }
+        }
     }
 
     Separator {
@@ -81,8 +108,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Theme.padding
         onClicked: {
-            console.log(txtCurrency.textField.text)
-            assetsModel.setDefaultCurrency(txtCurrency.textField.text)
+            console.log("TODO: apply all accounts")
             popup.close()
         }
     }
