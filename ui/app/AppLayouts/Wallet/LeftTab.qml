@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import "../../../imports"
 import "../../../shared"
-import "./Components"
+import "./components"
 
 Item {
     property int selectedAccount: 0
