@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
 import "../../../../shared"
 import "../../../../imports"
+import "../components"
 
 Item {
     property string userName: "Jotaro Kujo"
@@ -19,6 +20,10 @@ Item {
     width: parent.width
     height: contentType == Constants.stickerType ? stickerId.height : (isCurrentUser || (!isCurrentUser && !repeatMessageInfo) ? chatBox.height : 24 + chatBox.height)
 
+    ProfilePopup {
+      id: profilePopup
+    }
+
     Image {
         id: chatImage
         width: 36
@@ -30,6 +35,14 @@ Item {
         fillMode: Image.PreserveAspectFit
         source: identicon
         visible: repeatMessageInfo && !isCurrentUser
+
+        MouseArea {
+            cursorShape: Qt.PointingHandCursor
+            anchors.fill: parent
+            onClicked: {
+              profilePopup.open()
+            }
+        }
     }
 
     TextEdit {
