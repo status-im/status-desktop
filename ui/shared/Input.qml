@@ -9,10 +9,10 @@ Item {
     property string placeholderText: "My placeholder"
     property alias text: inputValue.text
     property string label: ""
+    property color bgColor: Theme.grey
 
-//    property string label: "My Label"
-//    property url icon: "../app/img/hash.svg"
-    property bool isSelect: false
+    //    property string label: "My Label"
+    //    property url icon: "../app/img/hash.svg"
     property url icon: ""
     readonly property bool hasIcon: icon.toString() !== ""
     readonly property bool hasLabel: label !== ""
@@ -20,6 +20,8 @@ Item {
         inputValue.forceActiveFocus(Qt.MouseFocusReason)
     }
     readonly property int labelMargin: 7
+    property var selectOptions
+    property bool isSelect: !!selectOptions && selectOptions.length > 0
 
     id: inputBox
     height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0)
@@ -41,7 +43,7 @@ Item {
     Rectangle {
         id: inputRectangle
         height: 44
-        color: Theme.grey
+        color: bgColor
         radius: 8
         anchors.top: inputBox.hasLabel ? inputLabel.bottom : parent.top
         anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
@@ -72,46 +74,32 @@ Item {
                 color: Theme.grey
                 radius: Theme.radius
             }
-            property var elements: [
-                {
-                    text: "Element 1",
-                    onTriggered: function () {
-                        console.log("Allo 1")
-                    }
-                },
-                {
-                    text: "Element 2",
-                    onTriggered: function () {
-                        console.log("Allo 2")
-                    }
-                }
-            ]
             Component.onCompleted: {
-                elements.forEach(element => {
-                    addItem(menuItem.createObject(selectMenu, element))
+                if (!selectOptions) {
+                    return
+                }
+
+                selectOptions.forEach(function (element) {
+                    var item = menuItem.createObject(undefined, element)
+                    selectMenu.addItem(item)
                 })
             }
 
-             Component {
-                 id: menuItem
-                 MenuItem {
-                     anchors.right: parent.right
-                     anchors.left: parent.left
-                     background: Rectangle {
-                        color: Theme.white
-                     }
-                 }
-             }
-
-//            MenuItem {
-//                text: "New..."
-//                anchors.right: parent.right
-//                anchors.left: parent.left
-////                onTriggered: document.reset()
-//                background: Rectangle {
-//                   color: Theme.white
-//                }
-//            }
+            Component {
+                id: menuItem
+                MenuItem {
+                    property var onClicked: console.log("Default click function. Override me please")
+                    property color bgColor: Theme.white
+                    anchors.right: parent.right
+                    anchors.left: parent.left
+                    onTriggered: function () {
+                        onClicked()
+                    }
+                    background: Rectangle {
+                        color: bgColor
+                    }
+                }
+            }
         }
 
         Image {

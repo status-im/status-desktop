@@ -9,6 +9,7 @@ ModalPopup {
     title: qsTr("Generate an account")
 
     property int marginBetweenInputs: 38
+    property string selectedColor: Constants.accountColors[0]
 
     onOpened: {
         passwordInput.text = "";
@@ -34,8 +35,18 @@ ModalPopup {
         id: accountColorInput
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs
+        bgColor: selectedColor
         label: qsTr("Account color")
-        isSelect: true
+        selectOptions: Constants.accountColors.map(color => {
+            return {
+                text: "",
+                bgColor: color,
+                height: 52,
+                onClicked: function () {
+                    selectedColor = color
+                }
+           }
+        })
     }
 
     footer: StyledButton {
