@@ -1,5 +1,5 @@
 import NimQml
-# import eventemitter
+import eventemitter
 import strformat
 import strutils
 import chronicles
@@ -13,7 +13,6 @@ import ../../signals/types
 
 import ../../status/wallet
 import ../../status/status
-
 
 type WalletController* = ref object of SignalSubscriber
   status: Status
@@ -31,27 +30,13 @@ proc delete*(self: WalletController) =
   delete self.variant
 
 proc init*(self: WalletController) =
-  let accounts = status_wallet.getAccounts()
+  self.status.events.on("currencyChanged") do(e: Args):
+    echo "currency changed"
 
-  var totalAccountBalance: float = 0
-
-  const symbol = "ETH"
-  let defaultCurrency = self.status.wallet.getDefaultCurrency()
-  for address in accounts:
-    let eth_balance = self.status.wallet.getEthBalance(address)
-    # TODO get all user assets and add them to balance
-    let usd_balance = self.status.wallet.getFiatValue(eth_balance, symbol, defaultCurrency)
-
-    totalAccountBalance = totalAccountBalance + usd_balance
-
-    let assetList = newAssetList()
-    let asset = Asset(name:"Ethereum", symbol: symbol, value: fmt"{eth_balance:.6}", fiatValue: "$" & fmt"{usd_balance:.2f}", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
-    assetList.addAssetToList(asset)
-
-    let account = Account(name: "Status Account", address: address, iconColor: "", balance: fmt"{totalAccountBalance:.2f} {defaultCurrency}", assetList: assetList, realFiatBalance: totalAccountBalance)
+  self.status.wallet.initAccounts()
+  var accounts = self.status.wallet.accounts
+  for account in accounts:
     self.view.addAccountToList(account)
-
-  self.view.setDefaultAccount(accounts[0])
 
 method onSignal(self: WalletController, data: Signal) =
   debug "New signal received"

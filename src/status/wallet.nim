@@ -11,12 +11,19 @@ type CurrencyArgs* = ref object of Args
 type Asset* = ref object
     name*, symbol*, value*, fiatValue*, image*: string
 
+type Account* = ref object
+    name*, address*, iconColor*, balance*: string
+    realFiatBalance*: float
+    assetList*: seq[Asset]
+    # assetList*: AssetList
+
 type WalletModel* = ref object
     events*: EventEmitter
+    accounts*: seq[Account]
 
-proc newWalletModel*(): WalletModel =
+proc newWalletModel*(events: EventEmitter): WalletModel =
   result = WalletModel()
-  result.events = createEventEmitter()
+  result.events = events
 
 proc delete*(self: WalletModel) =
   discard
@@ -52,3 +59,23 @@ proc getFiatValue*(self: WalletModel, eth_balance: string, symbol: string, fiat_
 
 proc hasAsset*(self: WalletModel, account: string, symbol: string): bool =
   (symbol == "DAI") or (symbol == "OMG")
+
+proc initAccounts*(self: WalletModel) =
+  let accounts = status_wallet.getAccounts()
+
+  var totalAccountBalance: float = 0
+  const symbol = "ETH"
+  let defaultCurrency = self.getDefaultCurrency()
+
+  for address in accounts:
+    let eth_balance = self.getEthBalance(address)
+    let usd_balance = self.getFiatValue(eth_balance, symbol, defaultCurrency)
+
+    totalAccountBalance = totalAccountBalance + usd_balance
+
+    var asset = Asset(name:"Ethereum", symbol: symbol, value: fmt"{eth_balance:.6}", fiatValue: "$" & fmt"{usd_balance:.2f}", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
+    var assets: seq[Asset] = @[]
+    assets.add(asset)
+
+    var account = Account(name: "Status Account", address: address, iconColor: "", balance: fmt"{totalAccountBalance:.2f} {defaultCurrency}", assetList: assets, realFiatBalance: totalAccountBalance)
+    self.accounts.add(account)
