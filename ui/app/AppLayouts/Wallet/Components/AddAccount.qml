@@ -77,6 +77,10 @@ Rectangle {
             newAccountMenu.popup(x, addAccountLbl.height + 10)
         }
 
+        GenerateAccountModal {
+            id: generateAccountModal
+        }
+
         PopupMenu {
             id: newAccountMenu
             width: 280
@@ -84,7 +88,7 @@ Rectangle {
                 text: qsTr("Generate an account")
                 icon.source: "../../../img/generate_account.svg"
                 onTriggered: {
-                    console.log("TODO: Generate an account")
+                    generateAccountModal.open()
                 }
             }
             QQC2.Action {
@@ -117,6 +121,6 @@ Rectangle {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:3}
+    D{i:0;height:36;width:36}
 }
 ##^##*/

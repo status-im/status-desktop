@@ -6,7 +6,7 @@ import "../imports"
 Item {
     property alias textField: inputValue
     property string placeholderText: "My placeholder"
-    property string text: ""
+    property alias text: inputValue.text
     property string label: ""
 
 //    property string label: "My Label"
@@ -21,6 +21,8 @@ Item {
 
     id: inputBox
     height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0)
+    anchors.right: parent.right
+    anchors.left: parent.left
 
     Text {
         id: inputLabel
@@ -42,9 +44,7 @@ Item {
         anchors.top: inputBox.hasLabel ? inputLabel.bottom : parent.top
         anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
         anchors.right: parent.right
-        anchors.rightMargin: 0
         anchors.left: parent.left
-        anchors.leftMargin: 0
 
         TextField {
             id: inputValue

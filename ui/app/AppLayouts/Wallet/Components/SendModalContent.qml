@@ -59,11 +59,6 @@ Item {
             label: "Amount"
             icon: "../../../img/token-icons/eth.svg"
             anchors.top: parent.top
-            anchors.topMargin: 0
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
             placeholderText: qsTr("Enter ETH")
         }
 
