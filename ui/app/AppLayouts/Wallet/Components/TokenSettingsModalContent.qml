@@ -12,21 +12,21 @@ Item {
 
     Text {
         id: modalDialogTitle
-        text: "Add/Remove Tokens"
+        text: qsTr("Add/Remove Tokens")
         anchors.top: parent.top
         anchors.left: parent.left
         font.bold: true
         font.pixelSize: 17
-        anchors.leftMargin: 16
-        anchors.topMargin: 16
+        anchors.leftMargin: Theme.padding
+        anchors.topMargin: Theme.padding
     }
 
     Image {
         id: closeModalImg
         anchors.top: parent.top
         anchors.right: parent.right
-        anchors.rightMargin: 16
-        anchors.topMargin: 16
+        anchors.rightMargin: Theme.padding
+        anchors.topMargin: Theme.padding
         source: "../../../img/close.svg"
         MouseArea {
             id: closeModalMouseArea
@@ -50,7 +50,7 @@ Item {
         anchors.top: headerSeparator.bottom
         anchors.topMargin: Theme.padding
         anchors.bottom: footerSeparator.top
-        anchors.bottomMargin: 16
+        anchors.bottomMargin: Theme.padding
         anchors.left: parent.left
         anchors.leftMargin: 32
 
@@ -133,12 +133,10 @@ Item {
     StyledButton {
         anchors.right: parent.right
         anchors.rightMargin: Theme.padding
-        label: "Apply to all accounts"
+        label: qsTr("Apply to all accounts")
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Theme.padding
         onClicked: {
-//            console.log(txtCurrency.textField.text)
-//            assetsModel.setDefaultCurrency(txtCurrency.textField.text)
             popup.close()
         }
     }
