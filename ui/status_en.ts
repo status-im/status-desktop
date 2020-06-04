@@ -115,22 +115,22 @@
 <context>
     <name>AddAccount</name>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccount.qml" line="94"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccount.qml" line="94"/>
         <source>Generate an account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccount.qml" line="101"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccount.qml" line="101"/>
         <source>Add a watch-only address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccount.qml" line="108"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccount.qml" line="108"/>
         <source>Enter a seed phrase</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccount.qml" line="115"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccount.qml" line="115"/>
         <source>Enter a private key</source>
         <translation type="unfinished"></translation>
     </message>
@@ -138,47 +138,47 @@
 <context>
     <name>AddAccountWithPrivateKey</name>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithPrivateKey.qml" line="7"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithPrivateKey.qml" line="7"/>
         <source>Add account from private key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithPrivateKey.qml" line="20"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithPrivateKey.qml" line="20"/>
         <source>Enter your password…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithPrivateKey.qml" line="21"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithPrivateKey.qml" line="21"/>
         <source>Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithPrivateKey.qml" line="30"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithPrivateKey.qml" line="30"/>
         <source>Paste the contents of your private key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithPrivateKey.qml" line="31"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithPrivateKey.qml" line="31"/>
         <source>Private key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithPrivateKey.qml" line="39"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithPrivateKey.qml" line="39"/>
         <source>Enter an account name...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithPrivateKey.qml" line="40"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithPrivateKey.qml" line="40"/>
         <source>Account name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithPrivateKey.qml" line="48"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithPrivateKey.qml" line="48"/>
         <source>Account color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithPrivateKey.qml" line="66"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithPrivateKey.qml" line="66"/>
         <source>Add account &gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -186,42 +186,42 @@
 <context>
     <name>AddAccountWithSeed</name>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithSeed.qml" line="17"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithSeed.qml" line="17"/>
         <source>Add account with a seed phrase</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithSeed.qml" line="21"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithSeed.qml" line="21"/>
         <source>Enter your password…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithSeed.qml" line="22"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithSeed.qml" line="22"/>
         <source>Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithSeed.qml" line="31"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithSeed.qml" line="31"/>
         <source>Enter your seed phrase, separate words with commas or spaces...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithSeed.qml" line="32"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithSeed.qml" line="32"/>
         <source>Seed phrase</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithSeed.qml" line="40"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithSeed.qml" line="40"/>
         <source>Enter an account name...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithSeed.qml" line="41"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithSeed.qml" line="41"/>
         <source>Account name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithSeed.qml" line="49"/>
+        <location filename="app/AppLayouts/Wallet/components/AddAccountWithSeed.qml" line="49"/>
         <source>Account color</source>
         <translation type="unfinished"></translation>
     </message>
@@ -277,32 +277,32 @@
 <context>
     <name>AddWatchOnlyAccount</name>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddWatchOnlyAccount.qml" line="7"/>
+        <location filename="app/AppLayouts/Wallet/components/AddWatchOnlyAccount.qml" line="7"/>
         <source>Add a watch-only account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddWatchOnlyAccount.qml" line="20"/>
+        <location filename="app/AppLayouts/Wallet/components/AddWatchOnlyAccount.qml" line="20"/>
         <source>Enter address...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddWatchOnlyAccount.qml" line="21"/>
+        <location filename="app/AppLayouts/Wallet/components/AddWatchOnlyAccount.qml" line="21"/>
         <source>Account address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddWatchOnlyAccount.qml" line="28"/>
+        <location filename="app/AppLayouts/Wallet/components/AddWatchOnlyAccount.qml" line="28"/>
         <source>Enter an account name...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddWatchOnlyAccount.qml" line="29"/>
+        <location filename="app/AppLayouts/Wallet/components/AddWatchOnlyAccount.qml" line="29"/>
         <source>Account name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/AddWatchOnlyAccount.qml" line="37"/>
+        <location filename="app/AppLayouts/Wallet/components/AddWatchOnlyAccount.qml" line="37"/>
         <source>Account color</source>
         <translation type="unfinished"></translation>
     </message>
@@ -396,32 +396,32 @@
 <context>
     <name>GenerateAccountModal</name>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/GenerateAccountModal.qml" line="7"/>
+        <location filename="app/AppLayouts/Wallet/components/GenerateAccountModal.qml" line="7"/>
         <source>Generate an account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/GenerateAccountModal.qml" line="19"/>
+        <location filename="app/AppLayouts/Wallet/components/GenerateAccountModal.qml" line="19"/>
         <source>Enter your password…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/GenerateAccountModal.qml" line="20"/>
+        <location filename="app/AppLayouts/Wallet/components/GenerateAccountModal.qml" line="20"/>
         <source>Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/GenerateAccountModal.qml" line="28"/>
+        <location filename="app/AppLayouts/Wallet/components/GenerateAccountModal.qml" line="28"/>
         <source>Enter an account name...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/GenerateAccountModal.qml" line="29"/>
+        <location filename="app/AppLayouts/Wallet/components/GenerateAccountModal.qml" line="29"/>
         <source>Account name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/GenerateAccountModal.qml" line="37"/>
+        <location filename="app/AppLayouts/Wallet/components/GenerateAccountModal.qml" line="37"/>
         <source>Account color</source>
         <translation type="unfinished"></translation>
     </message>
@@ -694,17 +694,17 @@
 <context>
     <name>SendModalContent</name>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/SendModalContent.qml" line="59"/>
+        <location filename="app/AppLayouts/Wallet/components/SendModalContent.qml" line="59"/>
         <source>Enter ETH</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/SendModalContent.qml" line="66"/>
+        <location filename="app/AppLayouts/Wallet/components/SendModalContent.qml" line="66"/>
         <source>Send from (account)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/SendModalContent.qml" line="79"/>
+        <location filename="app/AppLayouts/Wallet/components/SendModalContent.qml" line="79"/>
         <source>Send to</source>
         <translation type="unfinished"></translation>
     </message>
@@ -790,57 +790,57 @@
 <context>
     <name>TransactionModal</name>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/TransactionModal.qml" line="8"/>
+        <location filename="app/AppLayouts/Wallet/components/TransactionModal.qml" line="8"/>
         <source>Transaction Details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/TransactionModal.qml" line="22"/>
+        <location filename="app/AppLayouts/Wallet/components/TransactionModal.qml" line="22"/>
         <source>9999 Confirmations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/TransactionModal.qml" line="28"/>
+        <location filename="app/AppLayouts/Wallet/components/TransactionModal.qml" line="28"/>
         <source>When the transaction has 12 confirmations you can consider it settled.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/TransactionModal.qml" line="57"/>
+        <location filename="app/AppLayouts/Wallet/components/TransactionModal.qml" line="57"/>
         <source>Block</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/TransactionModal.qml" line="82"/>
+        <location filename="app/AppLayouts/Wallet/components/TransactionModal.qml" line="82"/>
         <source>Hash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/TransactionModal.qml" line="109"/>
+        <location filename="app/AppLayouts/Wallet/components/TransactionModal.qml" line="109"/>
         <source>From</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/TransactionModal.qml" line="136"/>
+        <location filename="app/AppLayouts/Wallet/components/TransactionModal.qml" line="136"/>
         <source>To</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/TransactionModal.qml" line="163"/>
+        <location filename="app/AppLayouts/Wallet/components/TransactionModal.qml" line="163"/>
         <source>Gas limit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/TransactionModal.qml" line="188"/>
+        <location filename="app/AppLayouts/Wallet/components/TransactionModal.qml" line="188"/>
         <source>Gas price</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/TransactionModal.qml" line="213"/>
+        <location filename="app/AppLayouts/Wallet/components/TransactionModal.qml" line="213"/>
         <source>Gas used</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/TransactionModal.qml" line="238"/>
+        <location filename="app/AppLayouts/Wallet/components/TransactionModal.qml" line="238"/>
         <source>Nonce</source>
         <translation type="unfinished"></translation>
     </message>

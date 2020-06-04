@@ -24,7 +24,7 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 16
         anchors.topMargin: 16
-        source: "../../img/close.svg"
+        source: "../../../../shared/img/close.svg"
         MouseArea {
             id: closeModalMouseArea
             cursorShape: Qt.PointingHandCursor

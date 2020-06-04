@@ -4,7 +4,7 @@ import QtQuick.Controls 2.13
 //import Qt.labs.platform 1.1
 import "../../../imports"
 import "../../../shared"
-import "./Components"
+import "./components"
 
 Item {
     function open() {

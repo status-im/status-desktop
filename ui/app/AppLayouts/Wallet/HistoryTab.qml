@@ -1,5 +1,5 @@
 import QtQuick 2.13
-import "./Components"
+import "./components"
 import "../../../imports"
 import "../../../shared"
 
