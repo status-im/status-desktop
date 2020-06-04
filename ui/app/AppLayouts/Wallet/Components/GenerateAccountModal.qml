@@ -50,6 +50,10 @@ ModalPopup {
     }
 
     footer: StyledButton {
+        anchors.top: parent.top
+        anchors.topMargin: Theme.padding
+        anchors.right: parent.right
+        anchors.rightMargin: Theme.padding
         label: "Add account >"
 
         disabled: passwordInput.text === "" && accountNameInput === ""
