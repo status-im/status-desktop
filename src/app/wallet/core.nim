@@ -30,13 +30,13 @@ proc delete*(self: WalletController) =
   delete self.variant
 
 proc init*(self: WalletController) =
-  self.status.events.on("currencyChanged") do(e: Args):
-    echo "currency changed"
-
   self.status.wallet.initAccounts()
   var accounts = self.status.wallet.accounts
   for account in accounts:
     self.view.addAccountToList(account)
+
+  self.status.events.on("accountsUpdated") do(e: Args):
+    self.view.currentAccountChanged()
 
 method onSignal(self: WalletController, data: Signal) =
   debug "New signal received"

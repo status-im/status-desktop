@@ -24,6 +24,7 @@ proc newStatusInstance*(): Status =
   result.chat = chat.newChatModel(result.events)
   result.accounts = accounts.newAccountModel()
   result.wallet = wallet.newWalletModel(result.events)
+  result.wallet.initEvents()
   result.node = node.newNodeModel()
   result.mailservers = mailservers.newMailserverModel(result.events)
 
