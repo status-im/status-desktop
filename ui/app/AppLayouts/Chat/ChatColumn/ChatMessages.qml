@@ -17,13 +17,12 @@ ScrollView {
     ScrollBar.vertical.policy: chatLogView.contentHeight > chatLogView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-    ListView {
-        anchors.fill: parent
-        spacing: 4
-        id: chatLogView
+    SortFilterModel {
+        id: messageListDelegate
+        lessThan: function(left, right) {
+            return left.clock < right.clock;
+        }
         model: messageList
-        Layout.fillWidth: true
-        Layout.fillHeight: true
         delegate: Message {
             userName: model.userName
             message: model.message
@@ -34,8 +33,16 @@ ScrollView {
             sticker: model.sticker
             contentType: model.contentType
         }
-        highlightFollowsCurrentItem: true
+    }
 
+    ListView {
+        anchors.fill: parent
+        spacing: 4
+        id: chatLogView
+        model: messageListDelegate
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        highlightFollowsCurrentItem: true
         onCountChanged: {
             if (!this.atYEnd) {
                 // User has scrolled up, we don't want to scroll back

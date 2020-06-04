@@ -7,6 +7,7 @@ type ChatMessage* = ref object
   message*: string
   fromAuthor*: string
   timestamp*: string
+  clock*: int
   identicon*: string
   isCurrentUser*: bool
   contentType*: int
@@ -20,6 +21,7 @@ proc newChatMessage*(): ChatMessage =
   result.userName = ""
   result.message = ""
   result.fromAuthor = ""
+  result.clock = 0
   result.timestamp = "0"
   result.identicon = ""
   result.isCurrentUser = false
@@ -31,6 +33,7 @@ proc toChatMessage*(payload: JsonNode): ChatMessage =
     userName: payload["alias"].str,
     message: payload["text"].str,
     timestamp: $payload["timestamp"],
+    clock: payload["clock"].getInt,
     identicon: payload["identicon"].str,
     isCurrentUser: false,
     contentType: payload["contentType"].getInt,
@@ -40,6 +43,7 @@ proc toChatMessage*(payload: JsonNode): ChatMessage =
 proc toChatMessage*(message: Message): ChatMessage =
   result = ChatMessage(
     userName: message.alias,
+    clock: message.clock,
     fromAuthor: message.fromAuthor,
     message: message.text,
     timestamp: message.timestamp,
