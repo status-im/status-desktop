@@ -61,6 +61,7 @@ QtObject:
     notify = activeChannelChanged
 
   proc setActiveChannel*(self: ChatsView, channel: string) =
+    if(channel == ""): return
     self.activeChannel.setChatItem(self.chats.getChannel(self.chats.chats.findById(channel)))
     self.activeChannelChanged()
 
