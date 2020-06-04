@@ -53,3 +53,8 @@ QtObject:
     self.beginInsertRows(newQModelIndex(), self.assets.len, self.assets.len)
     self.assets.add(asset)
     self.endInsertRows()
+
+  proc setNewData*(self: AssetList, assetList: seq[Asset]) =
+    self.beginResetModel()
+    self.assets = assetList
+    self.endResetModel()

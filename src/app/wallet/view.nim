@@ -15,7 +15,6 @@ QtObject:
       accounts*: AccountList
       currentAssetList*: AssetList
       currentAccount: AccountItemView
-      defaultAccount: string
       status: Status
       totalFiatBalance: float
 
@@ -30,7 +29,7 @@ QtObject:
     result.status = status
     result.accounts = newAccountList()
     result.currentAccount = newAccountItemView()
-    result.currentAssetList = newAssetList() # Temporarily set to an empty list
+    result.currentAssetList = newAssetList()
     result.setup
 
   proc currentAccountChanged*(self: WalletView) {.signal.}
@@ -56,8 +55,8 @@ QtObject:
   proc getCurrentAssetList(self: WalletView): QVariant {.slot.} =
     return newQVariant(self.currentAssetList)
 
-  proc setCurrentAssetList*(self: WalletView, assetList: AssetList) =
-    self.currentAssetList = assetList
+  proc setCurrentAssetList*(self: WalletView, assetList: seq[Asset]) =
+    self.currentAssetList.setNewData(assetList)
     self.currentAssetListChanged()
 
   QtProperty[QVariant] assets:
@@ -111,11 +110,8 @@ QtObject:
   proc onSendTransaction*(self: WalletView, from_value: string, to: string, value: string, password: string): string {.slot.} =
     result = self.status.wallet.sendTransaction(from_value, to, value, password)
 
-  proc setDefaultAccount*(self: WalletView, account: string) =
-    self.defaultAccount = account
-
   proc getDefaultAccount*(self: WalletView): string {.slot.} =
-    return self.defaultAccount
+    self.currentAccount.address
 
   proc defaultCurrency*(self: WalletView): string {.slot.} =
     self.status.wallet.getDefaultCurrency()

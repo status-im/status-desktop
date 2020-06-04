@@ -1,11 +1,7 @@
 import NimQml
 import std/wrapnils
 import ./asset_list
-
-type Account* = ref object
-    name*, address*, iconColor*, balance*: string
-    realFiatBalance*: float
-    assetList*: AssetList
+import ../../../status/wallet
 
 QtObject:
   type AccountItemView* = ref object of QObject
