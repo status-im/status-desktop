@@ -35,6 +35,7 @@ ModalPopup {
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs
         label: qsTr("Account color")
+        isSelect: true
     }
 
     footer: StyledButton {
