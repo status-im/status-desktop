@@ -43,6 +43,11 @@ QtObject:
     self.accounts.add(account)
     self.endInsertRows()
 
+  proc removeAccounts*(self: LoginView) =
+    self.beginRemoveRows(newQModelIndex(), self.accounts.len, self.accounts.len)
+    self.accounts = @[]
+    self.endRemoveRows()
+
   method rowCount(self: LoginView, index: QModelIndex = nil): int =
     return self.accounts.len
 
@@ -86,3 +91,5 @@ QtObject:
 
   proc setLastLoginResponse*(self: LoginView, loginResponse: StatusGoError) =
     self.loginResponseChanged(loginResponse.error)
+
+  proc onLoggedOut*(self: LoginView) {.signal.}

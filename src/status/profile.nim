@@ -2,6 +2,7 @@ import json
 import eventemitter
 import libstatus/types
 import libstatus/core as libstatus_core
+import libstatus/accounts as status_accounts
 
 type
   MailServer* = ref object
@@ -44,4 +45,14 @@ proc getContactByID*(id: string): Profile =
   let response = libstatus_core.getContactByID(id)
   let val = parseJSON($response)
   result = toProfileModel(val)
+
+type
+  ProfileModel* = ref object
+
+proc newProfileModel*(): ProfileModel =
+  result = ProfileModel()
+
+proc logout*(self: ProfileModel) =
+  discard status_accounts.logout()
+
 

@@ -175,3 +175,7 @@ let NODE_CONFIG* = %* {
     "Enabled": true
   }
 }
+
+const DATADIR* = "./data/"
+const KEYSTOREDIR* = "./data/keystore/"
+const NOBACKUPDIR* = "./noBackup/"

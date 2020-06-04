@@ -1,14 +1,17 @@
 import libstatus/accounts as status_accounts
 import libstatus/types
 import options
+import eventemitter
 
 type
   AccountModel* = ref object
     generatedAddresses*: seq[GeneratedAccount]
     nodeAccounts*: seq[NodeAccount]
+    events: EventEmitter
 
-proc newAccountModel*(): AccountModel =
+proc newAccountModel*(events: EventEmitter): AccountModel =
   result = AccountModel()
+  result.events = events
 
 proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
   var accounts = status_accounts.generateAddresses()
@@ -16,7 +19,10 @@ proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
     account.name = status_accounts.generateAlias(account.derived.whisper.publicKey)
     account.photoPath = status_accounts.generateIdenticon(account.derived.whisper.publicKey)
     self.generatedAddresses.add(account)
-  self.generatedAddresses
+  result = self.generatedAddresses
+
+proc openAccounts*(self: AccountModel): seq[NodeAccount] =
+  result = status_accounts.openAccounts()
 
 proc login*(self: AccountModel, selectedAccountIndex: int, password: string): NodeAccount =
   let currentNodeAccount = self.nodeAccounts[selectedAccountIndex]
@@ -35,3 +41,7 @@ proc importMnemonic*(self: AccountModel, mnemonic: string): GeneratedAccount =
   importedAccount.name = status_accounts.generateAlias(importedAccount.derived.whisper.publicKey)
   importedAccount.photoPath = status_accounts.generateIdenticon(importedAccount.derived.whisper.publicKey)
   result = importedAccount
+
+proc reset*(self: AccountModel) =
+  self.nodeAccounts = @[]
+  self.generatedAddresses = @[]

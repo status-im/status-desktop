@@ -15,7 +15,7 @@ type ProfileController* = object
 proc newController*(status: Status): ProfileController =
   result = ProfileController()
   result.status = status
-  result.view = newProfileView()
+  result.view = newProfileView(status)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: ProfileController) =

@@ -21,7 +21,7 @@ logScope:
 
 proc mainProc() =
   let status = statuslib.newStatusInstance()
-  let nodeAccounts = status.initNodeAccounts()
+  status.initNode()
 
   let app = newQApplication()
   let engine = newQQmlApplicationEngine()
@@ -43,13 +43,12 @@ proc mainProc() =
   engine.setRootContextProperty("chatsModel", chat.variant)
 
   var node = node.newController(status)
-  node.init()
   engine.setRootContextProperty("nodeModel", node.variant)
 
   var profile = profile.newController(status)
   engine.setRootContextProperty("profileModel", profile.variant)
 
-  status.events.once("login") do(a: Args):
+  status.events.on("login") do(a: Args):
     var args = AccountArgs(a)
     status.startMessenger()
     chat.init()
@@ -59,15 +58,36 @@ proc mainProc() =
   var login = login.newController(status)
   var onboarding = onboarding.newController(status)
 
-  # TODO: replace this with routing
-  let showLogin = nodeAccounts.len > 0
-  engine.setRootContextProperty("showLogin", newQVariant(showLogin))
-
-  login.init(nodeAccounts)
   engine.setRootContextProperty("loginModel", login.variant)
 
-  onboarding.init()
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
+
+  # Initialize only controllers whose init functions
+  # do not need a running node
+  proc initControllers() =
+    node.init()
+    login.init()
+    onboarding.init()
+  
+  initControllers()
+
+  # Handle node.stopped signal when user has logged out
+  status.events.on("nodeStopped") do(a: Args):
+    # TODO: remove this once accounts are not tracked in the AccountsModel
+    status.reset()
+
+    # 1. Reset controller data
+    login.reset()
+    onboarding.reset()
+    # TODO: implement all controller resets
+    # chat.reset()
+    # node.reset()
+    # wallet.reset()
+    # profile.reset()
+    
+    # 2. Re-init controllers that don't require a running node
+    initControllers()
+
 
   signalController.init()
   signalController.addSubscriber(SignalType.Wallet, wallet)
@@ -76,6 +96,9 @@ proc mainProc() =
   signalController.addSubscriber(SignalType.DiscoverySummary, chat)
   signalController.addSubscriber(SignalType.NodeLogin, login)
   signalController.addSubscriber(SignalType.NodeLogin, onboarding)
+  signalController.addSubscriber(SignalType.NodeStopped, login)
+  signalController.addSubscriber(SignalType.NodeStarted, login)
+  signalController.addSubscriber(SignalType.NodeReady, login)
 
   engine.setRootContextProperty("signals", signalController.variant)
 

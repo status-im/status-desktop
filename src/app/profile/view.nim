@@ -3,12 +3,15 @@ import views/mailservers_list
 import views/contact_list
 import views/profile_info
 import ../../status/profile
+import ../../status/accounts as status_accounts
+import ../../status/status
 
 QtObject:
   type ProfileView* = ref object of QObject
     profile*: ProfileInfoView
     mailserversList*: MailServersList
     contactList*: ContactList
+    status*: Status
 
   proc setup(self: ProfileView) =
     self.QObject.setup
@@ -16,12 +19,13 @@ QtObject:
   proc delete*(self: ProfileView) =
     self.QObject.delete
 
-  proc newProfileView*(): ProfileView =
+  proc newProfileView*(status: Status): ProfileView =
     new(result, delete)
     result = ProfileView()
     result.profile = newProfileInfoView()
     result.mailserversList = newMailServersList()
     result.contactList = newContactList()
+    result.status = status
     result.setup
 
   proc addMailServerToList*(self: ProfileView, mailserver: MailServer) =
@@ -50,3 +54,6 @@ QtObject:
 
   QtProperty[QVariant] profile:
     read = getProfile
+
+  proc logout*(self: ProfileView) {.slot.} =
+    self.status.profile.logout()
