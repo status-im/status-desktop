@@ -29,6 +29,9 @@ proc init*(self: OnboardingController) =
   for account in accounts:
     self.view.addAccountToList(account)
 
+proc reset*(self: OnboardingController) =
+  self.view.removeAccounts()
+
 proc handleNodeLogin(self: OnboardingController, data: Signal) =
   let response = NodeSignal(data)
   if self.view.currentAccount.account != nil:
@@ -37,7 +40,7 @@ proc handleNodeLogin(self: OnboardingController, data: Signal) =
       self.status.events.emit("login", AccountArgs(account: self.view.currentAccount.account.toAccount))
 
 method onSignal(self: OnboardingController, data: Signal) =
-  if data.signalType == SignalType.NodeLogin:
-    self.handleNodeLogin(data)
+  case data.signalType: 
+  of SignalType.NodeLogin: handleNodeLogin(self, data)
   else:
     discard

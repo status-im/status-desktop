@@ -36,17 +36,15 @@ proc ensureDir(dirname: string) =
     # removeDir(dirname)
     createDir(dirname)
 
-proc initNodeAccounts*(): seq[NodeAccount] =
-  const datadir = "./data/"
-  const keystoredir = "./data/keystore/"
-  const nobackupdir = "./noBackup/"
+proc initNode*() =
+  ensureDir(DATADIR)
+  ensureDir(KEYSTOREDIR)
+  ensureDir(NOBACKUPDIR)
 
-  ensureDir(datadir)
-  ensureDir(keystoredir)
-  ensureDir(nobackupdir)
+  discard $libstatus.initKeystore(KEYSTOREDIR)
 
-  discard $libstatus.initKeystore(keystoredir);
-  let strNodeAccounts = $libstatus.openAccounts(datadir);
+proc openAccounts*(): seq[NodeAccount] =
+  let strNodeAccounts = $libstatus.openAccounts(DATADIR)
   result = Json.decode(strNodeAccounts, seq[NodeAccount])
 
 proc saveAccountAndLogin*(
@@ -215,6 +213,8 @@ proc deriveAccounts*(accountId: string): MultiAccounts =
     "accountID": accountId,
     "paths": [PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
   }
-  # libstatus.multiAccountImportMnemonic never results in an error given ANY input
   let deriveResult = $libstatus.multiAccountDeriveAddresses($deriveJson)
   result = Json.decode(deriveResult, MultiAccounts)
+
+proc logout*(): StatusGoError =
+  result = Json.decode($libstatus.logout(), StatusGoError)

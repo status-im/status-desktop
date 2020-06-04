@@ -33,3 +33,5 @@ proc generateAlias*(p0: GoString): cstring {.importc: "GenerateAlias".}
 proc identicon*(p0: GoString): cstring {.importc: "Identicon".}
 
 proc login*(acctData: cstring, password: cstring): cstring {.importc: "Login".}
+
+proc logout*(): cstring {.importc: "Logout".}

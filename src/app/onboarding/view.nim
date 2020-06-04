@@ -40,6 +40,11 @@ QtObject:
     self.beginInsertRows(newQModelIndex(), self.accounts.len, self.accounts.len)
     self.accounts.add(account)
     self.endInsertRows()
+  
+  proc removeAccounts*(self: OnboardingView) =
+    self.beginResetModel()
+    self.accounts = @[]
+    self.endResetModel()
 
   method rowCount(self: OnboardingView, index: QModelIndex = nil): int =
     return self.accounts.len

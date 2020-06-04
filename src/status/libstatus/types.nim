@@ -9,6 +9,7 @@ type SignalType* {.pure.} = enum
   Wallet = "wallet"
   NodeReady = "node.ready"
   NodeStarted = "node.started"
+  NodeStopped = "node.stopped"
   NodeLogin = "node.login"
   EnvelopeSent = "envelope.sent"
   EnvelopeExpired = "envelope.expired"

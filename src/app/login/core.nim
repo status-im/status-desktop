@@ -3,6 +3,7 @@ import ../../status/libstatus/types as status_types
 import ../../signals/types
 import ../../status/status
 import view
+import ../../status/accounts as status_accounts
 
 type LoginController* = ref object of SignalSubscriber
   status*: Status
@@ -19,10 +20,18 @@ proc delete*(self: LoginController) =
   delete self.view
   delete self.variant
 
-proc init*(self: LoginController, nodeAccounts: seq[NodeAccount]) =
+proc init*(self: LoginController) =
+  let nodeAccounts = self.status.accounts.openAccounts()
   self.status.accounts.nodeAccounts = nodeAccounts
   for nodeAccount in nodeAccounts:
     self.view.addAccountToList(nodeAccount)
+
+proc reset*(self: LoginController) =
+  self.view.removeAccounts()
+
+proc handleNodeStopped(self: LoginController, data: Signal) =
+  self.status.events.emit("nodeStopped", Args())
+  self.view.onLoggedOut()
 
 proc handleNodeLogin(self: LoginController, data: Signal) =
   let response = NodeSignal(data)
@@ -31,8 +40,13 @@ proc handleNodeLogin(self: LoginController, data: Signal) =
     if ?.response.event.error == "":
       self.status.events.emit("login", AccountArgs(account: self.view.currentAccount.account.toAccount))
 
+proc handleNodeReady(self: LoginController, data: Signal) =
+  self.status.events.emit("nodeReady", Args())
+
 method onSignal(self: LoginController, data: Signal) =
-  if data.signalType == SignalType.NodeLogin:
-    self.handleNodeLogin(data)
+  case data.signalType: 
+  of SignalType.NodeLogin: handleNodeLogin(self, data)
+  of SignalType.NodeStopped: handleNodeStopped(self, data)
+  of SignalType.NodeReady: handleNodeReady(self, data)
   else:
     discard

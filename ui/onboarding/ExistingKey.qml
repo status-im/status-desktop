@@ -192,6 +192,19 @@ SwipeView {
             standardButtons: StandardButton.Ok
         }
 
+        MessageDialog {
+            id: passwordsDontMatchError
+            title: "Error"
+            text: "Passwords don't match"
+            icon: StandardIcon.Warning
+            standardButtons: StandardButton.Ok
+            onAccepted: {
+                txtConfirmPassword.clear();
+                swipeView.currentIndex = 1;
+                txtPassword.focus = true;
+            }
+        }
+
         Connections {
             target: onboardingModel
             ignoreUnknownSignals: true

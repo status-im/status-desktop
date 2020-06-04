@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import "../../../../imports"
+import "../../../../shared"
 
 Item {
     id: signoutContainer
@@ -11,7 +12,7 @@ Item {
     Layout.fillWidth: true
 
     Text {
-        id: element10
+        id: txtTitle
         text: qsTr("Sign out controls")
         anchors.left: parent.left
         anchors.leftMargin: 24
@@ -19,5 +20,16 @@ Item {
         anchors.topMargin: 24
         font.weight: Font.Bold
         font.pixelSize: 20
+    }
+
+    StyledButton {
+        id: btnLogout
+        anchors.top: txtTitle.bottom
+        anchors.topMargin: Theme.padding
+        label: qsTr("Logout")
+
+        onClicked: {
+            profileModel.logout();
+        }
     }
 }
