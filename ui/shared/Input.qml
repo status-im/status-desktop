@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
+import QtGraphicalEffects 1.12
 import "../imports"
 
 Item {
@@ -11,6 +12,7 @@ Item {
 
 //    property string label: "My Label"
 //    property url icon: "../app/img/hash.svg"
+    property bool isSelect: false
     property url icon: ""
     readonly property bool hasIcon: icon.toString() !== ""
     readonly property bool hasLabel: label !== ""
@@ -48,6 +50,7 @@ Item {
 
         TextField {
             id: inputValue
+            visible: !isSelect
             placeholderText: inputBox.placeholderText
             text: inputBox.text
             anchors.left: parent.left
@@ -57,6 +60,58 @@ Item {
             background: Rectangle {
                 color: "#00000000"
             }
+        }
+
+        Menu {
+            id: selectMenu
+            width: parent.width
+            padding: 10
+            background: Rectangle {
+                width: parent.width
+                height: parent.height
+                color: Theme.grey
+                radius: Theme.radius
+            }
+            property var elements: [
+                {
+                    text: "Element 1",
+                    onTriggered: function () {
+                        console.log("Allo 1")
+                    }
+                },
+                {
+                    text: "Element 2",
+                    onTriggered: function () {
+                        console.log("Allo 2")
+                    }
+                }
+            ]
+            Component.onCompleted: {
+                elements.forEach(element => {
+                    addItem(menuItem.createObject(selectMenu, element))
+                })
+            }
+
+             Component {
+                 id: menuItem
+                 MenuItem {
+                     anchors.right: parent.right
+                     anchors.left: parent.left
+                     background: Rectangle {
+                        color: Theme.white
+                     }
+                 }
+             }
+
+//            MenuItem {
+//                text: "New..."
+//                anchors.right: parent.right
+//                anchors.left: parent.left
+////                onTriggered: document.reset()
+//                background: Rectangle {
+//                   color: Theme.white
+//                }
+//            }
         }
 
         Image {
@@ -75,7 +130,7 @@ Item {
         id: mouseArea
         anchors.fill: parent
         onClicked: {
-            inputValue.forceActiveFocus(Qt.MouseFocusReason)
+            isSelect ? selectMenu.open() : inputValue.forceActiveFocus(Qt.MouseFocusReason)
         }
     }
 }
