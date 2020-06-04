@@ -11,6 +11,7 @@ type
     RepeatMessageInfo = UserRole + 6
     ContentType = UserRole + 7
     Sticker = UserRole + 8
+    FromAuthor = UserRole + 9
 
 QtObject:
   type
@@ -51,6 +52,7 @@ QtObject:
       of ChatMessageRoles.RepeatMessageInfo: result = newQVariant(repeatMessageInfo)
       of ChatMessageRoles.ContentType: result = newQVariant(message.contentType)
       of ChatMessageRoles.Sticker: result = newQVariant(message.sticker)
+      of ChatMessageRoles.FromAuthor: result = newQVariant(message.fromAuthor)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -61,7 +63,8 @@ QtObject:
       ChatMessageRoles.IsCurrentUser.int:"isCurrentUser",
       ChatMessageRoles.RepeatMessageInfo.int:"repeatMessageInfo",
       ChatMessageRoles.ContentType.int:"contentType",
-      ChatMessageRoles.Sticker.int:"sticker"
+      ChatMessageRoles.Sticker.int:"sticker",
+      ChatMessageRoles.FromAuthor.int:"fromAuthor"
     }.toTable
 
   proc add*(self: ChatMessageList, message: ChatMessage) =
