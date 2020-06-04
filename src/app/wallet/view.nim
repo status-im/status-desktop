@@ -1,11 +1,13 @@
 import NimQml
 import Tables
 import strformat
+import strutils
 import views/asset_list
 import views/account_list
 import views/account_item
 import ../../status/wallet
 import ../../status/status
+import chronicles
 
 QtObject:
   type
@@ -87,6 +89,17 @@ QtObject:
       self.setCurrentAccountByIndex(0)
     self.setTotalFiatBalance(account.realFiatBalance + self.totalFiatBalance)
     self.accountListChanged()
+
+  proc generateNewAccount*(self: WalletView, password: string, accountName: string, color: string) {.slot.} =
+    # TODO move all this to the model to add a real account
+    let assetList = newAssetList()
+    let symbol = "ETH"
+    let asset = Asset(name:"Ethereum", symbol: symbol, value: fmt"0", fiatValue: "$0.00", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
+    assetList.addAssetToList(asset)
+    let defaultCurrency = "USD" # TODO get real default
+    # TODO get a real address that we unlock with the password
+    let account = Account(name: accountName, address: "0x0r329ru298u392r", iconColor: color, balance: fmt"0.00 {defaultCurrency}", assetList: assetList, realFiatBalance: 0.0)
+    self.addAccountToList(account)
 
   proc getAccountList(self: WalletView): QVariant {.slot.} =
     return newQVariant(self.accounts)
