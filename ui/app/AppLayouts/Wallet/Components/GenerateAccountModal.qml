@@ -55,8 +55,10 @@ ModalPopup {
         disabled: passwordInput.text === "" && accountNameInput === ""
 
         onClicked : {
-            if(chatKey.text === "") return;
-            chatsModel.joinChat(chatKey.text, Constants.chatTypeOneToOne);
+            // TODO add message to show validation errors
+            if (passwordInput.text === "" || accountNameInput.text === "") return;
+            walletModel.generateNewAccount(passwordInput.text, accountNameInput.text, selectedColor);
+            // TODO manage errors adding account
             popup.close();
         }
     }
