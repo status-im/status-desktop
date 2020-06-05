@@ -79,14 +79,14 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: 10
                     width: parent.width
-                    height: 40
                     property bool isVisible: searchBox.searchStr == "" || name.toLowerCase().includes(searchBox.searchStr.toLowerCase()) || symbol.toLowerCase().includes(searchBox.searchStr.toLowerCase())
-                    visible: isVisible ? true : false
+                    visible: isVisible && symbol !== "" ? true : false
+                    height: isVisible && symbol !== "" ? 40 : 0
 
                     Image {
                         id: assetInfoImage
                         width: 36
-                        height: 36
+                        height: isVisible && symbol !== "" ? 36 : 0
                         source: hasIcon ? "../../../img/tokens/" + symbol + ".png" : "../../../img/tokens/0-native.png"
                         anchors.left: parent.left
                         anchors.leftMargin: 0
@@ -117,6 +117,7 @@ Item {
                         checked: walletModel.hasAsset("0x123", symbol)
                         anchors.right: parent.right
                         anchors.rightMargin: 10
+                        onClicked: walletModel.toggleAsset(symbol, assetCheck.checked, address, name, decimals, "eeeeee")
                     }
                 }
             }

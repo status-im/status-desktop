@@ -124,3 +124,13 @@ QtObject:
 
   proc hasAsset*(self: WalletView, account: string, symbol: string): bool {.slot.} =
     self.status.wallet.hasAsset(account, symbol)
+
+  proc toggleAsset*(self: WalletView, symbol: string, checked: bool, address: string, name: string, decimals: int, color: string) {.slot.} =
+    self.status.wallet.toggleAsset(symbol, checked, address, name, decimals, color)
+
+  proc updateView*(self: WalletView) =
+    self.totalFiatBalanceChanged()
+    self.currentAccountChanged()
+    self.accountListChanged()
+    self.accounts.forceUpdate()
+    self.setCurrentAssetList(self.currentAccount.account.assetList)
