@@ -31,15 +31,14 @@ proc delete*(self: ChatController) =
 proc handleChatEvents(self: ChatController) =
   # Display already saved messages
   self.status.events.on("messagesLoaded") do(e:Args):
-    for message in MsgsLoadedArgs(e).messages:
-      self.view.pushMessage(message.chatId, message.toChatMessage())
+    self.view.pushMessages(MsgsLoadedArgs(e).messages)
 
   self.status.events.on("messageSent") do(e: Args):
     var sentMessage = MsgArgs(e)
     var chatMessage = sentMessage.payload.toChatMessage()
     chatMessage.message = sentMessage.message
     chatMessage.isCurrentUser = true
-    self.view.pushMessage(sentMessage.chatId, chatMessage)
+    self.view.pushMessage(chatMessage)
 
   self.status.events.on("channelJoined") do(e: Args):
     var channelMessage = ChannelArgs(e)
@@ -69,13 +68,10 @@ proc init*(self: ChatController) =
   self.status.mailservers.init()
   self.status.chat.init()
 
-
 proc handleMessage(self: ChatController, data: MessageSignal) =
   for c in data.chats:
    self.view.updateChat(c.toChatItem())
-
-  for message in data.messages:
-    self.view.pushMessage(message.localChatId, message.toChatMessage())
+  self.view.pushMessages(data.messages)
 
 proc handleDiscoverySummary(self: ChatController, data: DiscoverySummarySignal) =
   ## Handle mailserver peers being added and removed

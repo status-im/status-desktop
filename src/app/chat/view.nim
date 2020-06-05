@@ -50,6 +50,7 @@ QtObject:
     let selectedChannel = self.chats.getChannel(index)
     if self.activeChannel.id == selectedChannel.id: return
     self.activeChannel.setChatItem(selectedChannel)
+    self.status.chat.setActiveChannel(selectedChannel.id)
     self.activeChannelChanged()
 
   proc getActiveChannelIdx(self: ChatsView): QVariant {.slot.} =
@@ -77,9 +78,14 @@ QtObject:
     if not self.messageList.hasKey(channel):
       self.messageList[channel] = newChatMessageList()
 
-  proc pushMessage*(self:ChatsView, channel: string, message: ChatMessage) =
-    self.upsertChannel(channel)
-    self.messageList[channel].add(message)
+  proc pushMessage*(self:ChatsView, message: ChatMessage) =
+    self.upsertChannel(message.chatId)
+    self.messageList[message.chatId].add(message)
+
+  proc pushMessages*(self:ChatsView, messages: seq[Message]) =
+    for msg in messages:
+      self.upsertChannel(msg.chatId)
+      self.messageList[msg.chatId].add(msg.toChatMessage())
 
   proc getMessageList(self: ChatsView): QVariant {.slot.} =
     self.upsertChannel(self.activeChannel.id)
