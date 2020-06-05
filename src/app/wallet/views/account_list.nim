@@ -5,15 +5,7 @@ import ./asset_list
 import ./account_item
 import ../../../status/wallet
 
-const accountColors* = [
-  "#9B832F",
-  "#D37EF4",
-  "#1D806F",
-  "#FA6565",
-  "#7CDA00",
-  "#887af9",
-  "#8B3131"
-]
+const accountColors* = ["#9B832F", "#D37EF4", "#1D806F", "#FA6565", "#7CDA00", "#887af9", "#8B3131"]
 
 type
   AccountRoles {.pure.} = enum
@@ -68,3 +60,7 @@ QtObject:
     self.beginInsertRows(newQModelIndex(), self.accounts.len, self.accounts.len)
     self.accounts.add(account)
     self.endInsertRows()
+
+  proc forceUpdate*(self: AccountList) =
+    self.beginResetModel()
+    self.endResetModel()

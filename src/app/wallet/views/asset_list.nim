@@ -58,3 +58,7 @@ QtObject:
     self.beginResetModel()
     self.assets = assetList
     self.endResetModel()
+
+  proc forceUpdate*(self: AssetList) =
+    self.beginResetModel()
+    self.endResetModel()
