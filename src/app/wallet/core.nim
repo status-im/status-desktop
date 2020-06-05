@@ -34,9 +34,18 @@ proc init*(self: WalletController) =
   var accounts = self.status.wallet.accounts
   for account in accounts:
     self.view.addAccountToList(account)
+  self.view.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
 
   self.status.events.on("accountsUpdated") do(e: Args):
+    self.view.totalFiatBalanceChanged()
     self.view.currentAccountChanged()
+    self.view.accountListChanged()
+    self.view.accounts.forceUpdate()
+    self.view.currentAssetList.forceUpdate()
+
+  self.status.events.on("newAccountAdded") do(e: Args):
+    var account = AccountArgs(e)
+    self.view.accounts.addAccountToList(account.account)
 
 method onSignal(self: WalletController, data: Signal) =
   debug "New signal received"

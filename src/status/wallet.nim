@@ -16,19 +16,26 @@ type Account* = ref object
     realFiatBalance*: float
     assetList*: seq[Asset]
 
+type AccountArgs* = ref object of Args
+    account*: Account
+
 type WalletModel* = ref object
     events*: EventEmitter
     accounts*: seq[Account]
+    defaultCurrency*: string
 
 proc updateBalance*(self: Account)
+proc getDefaultCurrency*(self: WalletModel): string
 
 proc newWalletModel*(events: EventEmitter): WalletModel =
   result = WalletModel()
   result.accounts = @[]
   result.events = events
+  result.defaultCurrency = ""
 
 proc initEvents*(self: WalletModel) =
   self.events.on("currencyChanged") do(e: Args):
+    self.defaultCurrency = self.getDefaultCurrency()
     for account in self.accounts:
       account.updateBalance()
     self.events.emit("accountsUpdated", Args())
@@ -100,3 +107,20 @@ proc initAccounts*(self: WalletModel) =
     var account = Account(name: "Status Account", address: address, iconColor: "", balance: "", assetList: assets, realFiatBalance: totalAccountBalance)
     account.updateBalance()
     self.accounts.add(account)
+
+proc getTotalFiatBalance*(self: WalletModel): string =
+  var newBalance = 0.0
+  fmt"{newBalance:.2f} {self.defaultCurrency}"
+
+proc generateNewAccount*(self: WalletModel, password: string, accountName: string, color: string) =
+  # TODO get a real address that we unlock with the password
+
+  var symbol = "SNT"
+  var asset = Asset(name:"Status", symbol: symbol, value: fmt"0.0", fiatValue: "$" & fmt"0.0", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
+  var assets: seq[Asset] = @[]
+  assets.add(asset)
+
+  var account = Account(name: accountName, address: "0x0000000000000000000000000000000000000000", iconColor: color, balance: fmt"0.00 {self.defaultCurrency}", assetList: assets, realFiatBalance: 0.0)
+
+  self.accounts.add(account)
+  self.events.emit("newAccountAdded", AccountArgs(account: account))

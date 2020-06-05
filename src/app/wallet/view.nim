@@ -16,7 +16,7 @@ QtObject:
       currentAssetList*: AssetList
       currentAccount: AccountItemView
       status: Status
-      totalFiatBalance: float
+      totalFiatBalance: string
 
   proc delete(self: WalletView) =
     self.QAbstractListModel.delete
@@ -30,9 +30,12 @@ QtObject:
     result.accounts = newAccountList()
     result.currentAccount = newAccountItemView()
     result.currentAssetList = newAssetList()
+    result.totalFiatBalance = ""
     result.setup
 
   proc currentAccountChanged*(self: WalletView) {.signal.}
+
+  proc setCurrentAssetList*(self: WalletView, assetList: seq[Asset])
 
   proc setCurrentAccountByIndex*(self: WalletView, index: int) {.slot.} =
     if(self.accounts.rowCount() == 0): return
@@ -41,6 +44,7 @@ QtObject:
     if self.currentAccount.address == selectedAccount.address: return
     self.currentAccount.setAccountItem(selectedAccount)
     self.currentAccountChanged()
+    self.setCurrentAssetList(selectedAccount.assetList)
 
   proc getCurrentAccount*(self: WalletView): QVariant {.slot.} =
     result = newQVariant(self.currentAccount)
@@ -66,18 +70,18 @@ QtObject:
 
   proc totalFiatBalanceChanged*(self: WalletView) {.signal.}
 
-  proc getTotalFiatBalance(self: WalletView): QVariant {.slot.} =
-    return newQVariant(fmt"{self.totalFiatBalance:.2f} USD") # TODO use user's currency
+  proc getTotalFiatBalance(self: WalletView): string {.slot.} =
+    self.status.wallet.getTotalFiatBalance()
 
-  proc setTotalFiatBalance*(self: WalletView, newBalance: float) =
+  proc setTotalFiatBalance*(self: WalletView, newBalance: string) =
     self.totalFiatBalance = newBalance
     self.totalFiatBalanceChanged()
 
-  QtProperty[QVariant] totalFiatBalance:
+  QtProperty[string] totalFiatBalance:
     read = getTotalFiatBalance
     write = setTotalFiatBalance
-    notify = currentAssetListChanged
-  
+    notify = totalFiatBalanceChanged
+
   proc accountListChanged*(self: WalletView) {.signal.}
 
   proc addAccountToList*(self: WalletView, account: Account) =
@@ -86,20 +90,10 @@ QtObject:
     if (self.accounts.rowCount == 1):
       self.setCurrentAssetList(account.assetList)
       self.setCurrentAccountByIndex(0)
-    self.setTotalFiatBalance(account.realFiatBalance + self.totalFiatBalance)
     self.accountListChanged()
 
   proc generateNewAccount*(self: WalletView, password: string, accountName: string, color: string) {.slot.} =
-    # TODO move all this to the model to add a real account
-    # let assetList = newAssetList()
-    var assetList: seq[Asset] = @[]
-    let symbol = "ETH"
-    let asset = Asset(name:"Ethereum", symbol: symbol, value: fmt"0", fiatValue: "$0.00", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
-    # assetList.addAssetToList(asset)
-    let defaultCurrency = "USD" # TODO get real default
-    # TODO get a real address that we unlock with the password
-    let account = Account(name: accountName, address: "0x0r329ru298u392r", iconColor: color, balance: fmt"0.00 {defaultCurrency}", assetList: assetList, realFiatBalance: 0.0)
-    self.addAccountToList(account)
+    self.status.wallet.generateNewAccount(password, accountName, color)
 
   proc getAccountList(self: WalletView): QVariant {.slot.} =
     return newQVariant(self.accounts)
