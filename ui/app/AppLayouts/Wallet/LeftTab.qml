@@ -140,14 +140,12 @@ Item {
 
     ListView {
         id: listView
-        height: 160
+        anchors.bottom: parent.bottom
         anchors.top: walletValueTextContainer.bottom
         anchors.topMargin: Theme.padding
         spacing: 5
         anchors.right: parent.right
-        anchors.rightMargin: 0
         anchors.left: parent.left
-        anchors.leftMargin: 0
 
         delegate: walletDelegate
 

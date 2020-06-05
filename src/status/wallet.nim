@@ -4,6 +4,8 @@ import strformat
 import strutils
 import libstatus/wallet as status_wallet
 import libstatus/settings as status_settings
+import libstatus/accounts as status_accounts
+import chronicles
 
 type CurrencyArgs* = ref object of Args
     currency*: string
@@ -88,13 +90,14 @@ proc updateBalance*(self: Account) =
   self.balance = fmt"{totalAccountBalance:.2f} {defaultCurrency}"
 
 proc initAccounts*(self: WalletModel) =
-  let accounts = status_wallet.getAccounts()
+  let accounts = status_wallet.getWalletAccounts()
 
   var totalAccountBalance: float = 0
   const symbol = "ETH"
   let defaultCurrency = getDefaultCurrency()
 
-  for address in accounts:
+  for account in accounts:
+    let address = account.address
     let eth_balance = getEthBalance(address)
     let usd_balance = getFiatValue(eth_balance, symbol, defaultCurrency)
 
@@ -104,7 +107,7 @@ proc initAccounts*(self: WalletModel) =
     var assets: seq[Asset] = @[]
     assets.add(asset)
 
-    var account = Account(name: "Status Account", address: address, iconColor: "", balance: "", assetList: assets, realFiatBalance: totalAccountBalance)
+    var account = Account(name: account.name, address: address, iconColor: account.color, balance: "", assetList: assets, realFiatBalance: totalAccountBalance)
     account.updateBalance()
     self.accounts.add(account)
 
@@ -113,14 +116,23 @@ proc getTotalFiatBalance*(self: WalletModel): string =
   fmt"{newBalance:.2f} {self.defaultCurrency}"
 
 proc generateNewAccount*(self: WalletModel, password: string, accountName: string, color: string) =
-  # TODO get a real address that we unlock with the password
+
+  let accounts = status_accounts.generateAddresses(1)
+  var generatedAccount = accounts[0]
+  generatedAccount.name = accountName
+
+  try:
+    status_accounts.saveAccount(generatedAccount, password, color)
+  except:
+    error "Error sotring the new account. Bad password?"
+    return
 
   var symbol = "SNT"
   var asset = Asset(name:"Status", symbol: symbol, value: fmt"0.0", fiatValue: "$" & fmt"0.0", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
   var assets: seq[Asset] = @[]
   assets.add(asset)
 
-  var account = Account(name: accountName, address: "0x0000000000000000000000000000000000000000", iconColor: color, balance: fmt"0.00 {self.defaultCurrency}", assetList: assets, realFiatBalance: 0.0)
+  var account = Account(name: accountName, address: generatedAccount.derived.defaultWallet.address, iconColor: color, balance: fmt"0.00 {self.defaultCurrency}", assetList: assets, realFiatBalance: 0.0)
 
   self.accounts.add(account)
   self.events.emit("newAccountAdded", AccountArgs(account: account))

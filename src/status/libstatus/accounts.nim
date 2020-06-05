@@ -15,9 +15,9 @@ proc queryAccounts*(): string =
   var response = callPrivateRPC("eth_accounts")
   result = parseJson(response)["result"][0].getStr()
 
-proc generateAddresses*(): seq[GeneratedAccount] =
+proc generateAddresses*(n = 5): seq[GeneratedAccount] =
   let multiAccountConfig = %* {
-    "n": 5,
+    "n": n,
     "mnemonicPhraseLength": 12,
     "bip39Passphrase": "",
     "paths": [PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
@@ -173,6 +173,21 @@ proc multiAccountImportMnemonic*(mnemonic: string): GeneratedAccount =
   # libstatus.multiAccountImportMnemonic never results in an error given ANY input
   let importResult = $libstatus.multiAccountImportMnemonic($mnemonicJson)
   result = Json.decode(importResult, GeneratedAccount)
+
+proc saveAccount*(account: GeneratedAccount, password: string, color: string): void =
+  let storeDerivedResult = storeDerivedAccounts(account, password)
+
+  discard callPrivateRPC("accounts_saveAccounts", %* [
+    [{
+      "color": color,
+      "name": account.name,
+      "address": account.derived.defaultWallet.address,
+      "public-key": account.derived.defaultWallet.publicKey,
+      # Do we need to update those?
+      "type": "generated",
+      "path": "m/44'/60'/0'/0/1"
+    }]
+  ])
 
 proc deriveAccounts*(accountId: string): MultiAccounts =
   let deriveJson = %* {
