@@ -8,11 +8,10 @@ type
     Timestamp = UserRole + 3
     Identicon = UserRole + 4
     IsCurrentUser = UserRole + 5
-    RepeatMessageInfo = UserRole + 6
-    ContentType = UserRole + 7
-    Sticker = UserRole + 8
-    FromAuthor = UserRole + 9
-    Clock = UserRole + 10
+    ContentType = UserRole + 6
+    Sticker = UserRole + 7
+    FromAuthor = UserRole + 8
+    Clock = UserRole + 9
 QtObject:
   type
     ChatMessageList* = ref object of QAbstractListModel
@@ -41,7 +40,6 @@ QtObject:
     if index.row < 0 or index.row >= self.messages.len:
       return
     let message = self.messages[index.row]
-    let repeatMessageInfo = (index.row == 0) or message.fromAuthor != self.messages[index.row - 1].fromAuthor
     let chatMessageRole = role.ChatMessageRoles
     case chatMessageRole:
       of ChatMessageRoles.UserName: result = newQVariant(message.userName)
@@ -50,7 +48,6 @@ QtObject:
       of ChatMessageRoles.Clock: result = newQVariant($message.clock)
       of ChatMessageRoles.Identicon: result = newQVariant(message.identicon)
       of ChatMessageRoles.IsCurrentUser: result = newQVariant(message.isCurrentUser)
-      of ChatMessageRoles.RepeatMessageInfo: result = newQVariant(repeatMessageInfo)
       of ChatMessageRoles.ContentType: result = newQVariant(message.contentType)
       of ChatMessageRoles.Sticker: result = newQVariant(message.sticker)
       of ChatMessageRoles.FromAuthor: result = newQVariant(message.fromAuthor)
@@ -63,7 +60,6 @@ QtObject:
       ChatMessageRoles.Clock.int:"clock",
       ChatMessageRoles.Identicon.int:"identicon",
       ChatMessageRoles.IsCurrentUser.int:"isCurrentUser",
-      ChatMessageRoles.RepeatMessageInfo.int:"repeatMessageInfo",
       ChatMessageRoles.ContentType.int:"contentType",
       ChatMessageRoles.Sticker.int:"sticker",
       ChatMessageRoles.FromAuthor.int:"fromAuthor"
@@ -73,3 +69,10 @@ QtObject:
     self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len)
     self.messages.add(message)
     self.endInsertRows()
+
+  proc add*(self: ChatMessageList, messages: seq[ChatMessage]) =
+    self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len)
+    for message in messages:
+      self.messages.add(message)
+    self.endInsertRows()
+

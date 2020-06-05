@@ -108,6 +108,9 @@ proc leave*(self: ChatModel, chatId: string) =
   self.events.emit("channelLeft", ChannelArgs(channel: chatId))
   self.events.emit("activeChannelChanged", ChannelArgs(channel: self.getActiveChannel()))
 
+proc setActiveChannel*(self: ChatModel, chatId: string) =
+  self.events.emit("activeChannelChanged", ChannelArgs(channel: chatId))
+
 proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
   var sentMessage = status_chat.sendChatMessage(chatId, msg)
   var parsedMessage = parseJson(sentMessage)["result"]["chats"][0]["lastMessage"]

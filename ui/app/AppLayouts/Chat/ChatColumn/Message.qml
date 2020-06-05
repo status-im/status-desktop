@@ -12,14 +12,15 @@ Item {
     property string message: "That's right. We're friends...  Of justice, that is."
     property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
     property bool isCurrentUser: false
-    property bool repeatMessageInfo: true
     property int timestamp: 1234567
     property string sticker: "Qme8vJtyrEHxABcSVGPF95PtozDgUyfr1xGjePmFdZgk9v"
     property int contentType: 1 // constants don't work in default props
 
-    width: parent.width
-    height: contentType == Constants.stickerType ? stickerId.height : (isCurrentUser || (!isCurrentUser && !repeatMessageInfo) ? chatBox.height : 24 + chatBox.height)
+    property string authorCurrentMsg: "authorCurrentMsg"
+    property string authorPrevMsg: "authorPrevMsg"
 
+    width: parent.width
+    height: contentType == Constants.stickerType ? stickerId.height + 50 : (isCurrentUser || (!isCurrentUser && authorCurrentMsg == authorPrevMsg) ? chatBox.height : 24 + chatBox.height)
     ProfilePopup {
       id: profilePopup
     }
@@ -34,7 +35,7 @@ Item {
         anchors.top: parent.top
         fillMode: Image.PreserveAspectFit
         source: identicon
-        visible: repeatMessageInfo && !isCurrentUser
+        visible: authorCurrentMsg != authorPrevMsg && !isCurrentUser
 
         MouseArea {
             cursorShape: Qt.PointingHandCursor
@@ -57,7 +58,7 @@ Item {
         readOnly: true
         wrapMode: Text.WordWrap
         selectByMouse: true
-        visible: repeatMessageInfo && !isCurrentUser
+        visible: authorCurrentMsg != authorPrevMsg && !isCurrentUser
     }
 
     Rectangle {
@@ -74,7 +75,7 @@ Item {
         anchors.leftMargin: !isCurrentUser ? 8 : 0
         anchors.right: !isCurrentUser ? undefined : parent.right
         anchors.rightMargin: !isCurrentUser ? 0 : Theme.padding
-        anchors.top: repeatMessageInfo && !isCurrentUser ? chatImage.top : parent.top
+        anchors.top: authorCurrentMsg != authorPrevMsg && !isCurrentUser ? chatImage.top : parent.top
         anchors.topMargin: 0
 
         // Thi`s rectangle's only job is to mask the corner to make it less rounded... yep

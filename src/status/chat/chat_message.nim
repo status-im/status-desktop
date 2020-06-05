@@ -12,6 +12,7 @@ type ChatMessage* = ref object
   isCurrentUser*: bool
   contentType*: int
   sticker*: string
+  chatId*: string
 
 proc delete*(self: ChatMessage) =
   discard
@@ -27,9 +28,11 @@ proc newChatMessage*(): ChatMessage =
   result.isCurrentUser = false
   result.contentType = 1
   result.sticker = ""
+  result.chatId = ""
 
 proc toChatMessage*(payload: JsonNode): ChatMessage =
   result = ChatMessage(
+    chatId: payload["chatId"].str,
     userName: payload["alias"].str,
     message: payload["text"].str,
     timestamp: $payload["timestamp"],
@@ -42,6 +45,7 @@ proc toChatMessage*(payload: JsonNode): ChatMessage =
 
 proc toChatMessage*(message: Message): ChatMessage =
   result = ChatMessage(
+    chatId: message.chatId,
     userName: message.alias,
     clock: message.clock,
     fromAuthor: message.fromAuthor,

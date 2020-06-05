@@ -22,10 +22,6 @@ ScrollView {
     ScrollBar.vertical.policy: ScrollBar.AlwaysOn
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-    function scrollToBottom(goToBottom) {
-        chatLogView.positionViewAtEnd();
-    }
-
     ListView {
         anchors.fill: parent
         spacing: 4
@@ -33,26 +29,26 @@ ScrollView {
         Layout.fillWidth: true
         Layout.fillHeight: true
         onCountChanged: {
-            scrollToBottom();
+            if (!this.atYEnd) {
+                // User has scrolled up, we don't want to scroll back
+                return
+            }
+            
+            Qt.callLater( chatLogView.positionViewAtEnd )
         }
         model: messageListDelegate
+        section.property: "userName"
+        section.criteria: ViewSection.FullString
     }
 
     DelegateModel {
         id: messageListDelegate
-        model: messageList
-        delegate: Message {
-            userName: model.userName
-            message: model.message
-            identicon: model.identicon
-            isCurrentUser: model.isCurrentUser
-            repeatMessageInfo: model.repeatMessageInfo
-            timestamp: model.timestamp
-            sticker: model.sticker
-            contentType: model.contentType
-        }
+        property var lessThan: [
+            function(left, right) { return left.clock < right.clock }
+        ]
 
-        property var lessThan: function(left, right) { return left.clock < right.clock }
+        property int sortOrder: 0
+        onSortOrderChanged: items.setGroups(0, items.count, "unsorted")
 
         function insertPosition(lessThan, item) {
             var lower = 0
@@ -73,22 +69,36 @@ ScrollView {
             while (unsortedItems.count > 0) {
                 var item = unsortedItems.get(0)
                 var index = insertPosition(lessThan, item)
-
                 item.groups = "items"
                 items.move(item.itemsIndex, index)
             }
         }
 
         items.includeByDefault: false
-
         groups: DelegateModelGroup {
             id: unsortedItems
             name: "unsorted"
             includeByDefault: true
             onChanged: {
-                messageListDelegate.sort(messageListDelegate.lessThan)
-                scrollToBottom();
+                if (messageListDelegate.sortOrder == messageListDelegate.lessThan.length)
+                    setGroups(0, count, "items")
+                else {
+                    messageListDelegate.sort(messageListDelegate.lessThan[messageListDelegate.sortOrder])
+                }
             }
+        }
+        model: messageList
+        delegate: Message {
+            id: msgDelegate
+            userName: model.userName
+            message: model.message
+            identicon: model.identicon
+            isCurrentUser: model.isCurrentUser
+            timestamp: model.timestamp
+            sticker: model.sticker
+            contentType: model.contentType
+            authorCurrentMsg: msgDelegate.ListView.section
+            authorPrevMsg: msgDelegate.ListView.previousSection
         }
     }
 
