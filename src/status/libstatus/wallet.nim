@@ -4,15 +4,34 @@ import json
 import httpclient, json
 import strformat
 import stint
-import strutils
+import strutils, sequtils
+import chronicles
 
-proc getAccounts*(): seq[string] =
-  var response = callPrivateRPC("eth_accounts")
-  result = parseJson(response)["result"].to(seq[string])
+type WalletAccount* = object
+  address*, path*, publicKey*, name*, color*: string
+  wallet*, chat*: bool
 
-proc getAccount*(): string =
-  var accounts = getAccounts()
-  result = accounts[0]
+proc getWalletAccounts*(): seq[WalletAccount] =
+  try:
+    var response = callPrivateRPC("accounts_getAccounts")
+    let accounts = parseJson(response)["result"]
+
+    var walletAccounts:seq[WalletAccount] = @[]
+    for account in accounts:
+      if (account["chat"].to(bool) == false): # Might need a better condition
+        walletAccounts.add(WalletAccount(
+          address: $account["address"].getStr,
+          path: $account["path"].getStr,
+          publicKey: $account["public-key"].getStr,
+          name: $account["name"].getStr,
+          color: $account["color"].getStr,
+          wallet: $account["wallet"].getStr == "true",
+          chat: $account["chat"].getStr == "false",
+        ))
+    result = walletAccounts
+  except:
+    error "Failed getting wallet accounts"
+
 
 proc sendTransaction*(from_address: string, to: string, value: string, password: string): string =
   var args = %* {
