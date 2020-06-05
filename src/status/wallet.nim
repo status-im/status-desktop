@@ -6,6 +6,7 @@ import libstatus/wallet as status_wallet
 import libstatus/settings as status_settings
 import libstatus/accounts as status_accounts
 import chronicles
+import libstatus/tokens as status_tokens
 
 type CurrencyArgs* = ref object of Args
     currency*: string
@@ -25,6 +26,7 @@ type WalletModel* = ref object
     events*: EventEmitter
     accounts*: seq[Account]
     defaultCurrency*: string
+    tokens*: JsonNode
 
 proc updateBalance*(self: Account)
 proc getDefaultCurrency*(self: WalletModel): string
@@ -32,11 +34,12 @@ proc getDefaultCurrency*(self: WalletModel): string
 proc newWalletModel*(events: EventEmitter): WalletModel =
   result = WalletModel()
   result.accounts = @[]
+  result.tokens = %* []
   result.events = events
   result.defaultCurrency = ""
 
 proc initEvents*(self: WalletModel) =
-  self.events.on("currencyChanged") do(e: Args):
+ self.events.on("currencyChanged") do(e: Args):
     self.defaultCurrency = self.getDefaultCurrency()
     for account in self.accounts:
       account.updateBalance()
@@ -79,7 +82,10 @@ proc getFiatValue*(eth_balance: string, symbol: string, fiat_symbol: string): fl
   fiat_balance
 
 proc hasAsset*(self: WalletModel, account: string, symbol: string): bool =
-  (symbol == "DAI") or (symbol == "OMG")
+  for token in self.tokens:
+    if symbol == token["symbol"].getStr:
+      return true
+  return false
 
 proc updateBalance*(self: Account) =
   let defaultCurrency = getDefaultCurrency()
@@ -89,7 +95,19 @@ proc updateBalance*(self: Account) =
   var totalAccountBalance = usd_balance
   self.balance = fmt"{totalAccountBalance:.2f} {defaultCurrency}"
 
+proc generateAccountConfiguredAssets*(self: WalletModel): seq[Asset] =
+  var assets: seq[Asset] = @[]
+  var symbol = "ETH"
+  var asset = Asset(name:"Ethereum", symbol: symbol, value: fmt"0.0", fiatValue: "$" & fmt"0.0", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
+  assets.add(asset)
+  for token in self.tokens:
+    var symbol = token["symbol"].getStr
+    var existingToken = Asset(name: token["name"].getStr, symbol: symbol, value: fmt"0.0", fiatValue: "$0.0", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
+    assets.add(existingToken)
+  assets
+
 proc initAccounts*(self: WalletModel) =
+  self.tokens = status_tokens.getCustomTokens()
   let accounts = status_wallet.getWalletAccounts()
 
   var totalAccountBalance: float = 0
@@ -103,9 +121,7 @@ proc initAccounts*(self: WalletModel) =
 
     totalAccountBalance = totalAccountBalance + usd_balance
 
-    var asset = Asset(name:"Ethereum", symbol: symbol, value: fmt"{eth_balance:.6}", fiatValue: "$" & fmt"{usd_balance:.2f}", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
-    var assets: seq[Asset] = @[]
-    assets.add(asset)
+    var assets: seq[Asset] = self.generateAccountConfiguredAssets()
 
     var account = Account(name: account.name, address: address, iconColor: account.color, balance: "", assetList: assets, realFiatBalance: totalAccountBalance)
     account.updateBalance()
@@ -115,8 +131,8 @@ proc getTotalFiatBalance*(self: WalletModel): string =
   var newBalance = 0.0
   fmt"{newBalance:.2f} {self.defaultCurrency}"
 
+# TODO get a real address that we unlock with the password
 proc generateNewAccount*(self: WalletModel, password: string, accountName: string, color: string) =
-
   let accounts = status_accounts.generateAddresses(1)
   var generatedAccount = accounts[0]
   generatedAccount.name = accountName
@@ -129,10 +145,20 @@ proc generateNewAccount*(self: WalletModel, password: string, accountName: strin
 
   var symbol = "SNT"
   var asset = Asset(name:"Status", symbol: symbol, value: fmt"0.0", fiatValue: "$" & fmt"0.0", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
-  var assets: seq[Asset] = @[]
-  assets.add(asset)
 
+  var assets: seq[Asset] = self.generateAccountConfiguredAssets()
   var account = Account(name: accountName, address: generatedAccount.derived.defaultWallet.address, iconColor: color, balance: fmt"0.00 {self.defaultCurrency}", assetList: assets, realFiatBalance: 0.0)
 
   self.accounts.add(account)
   self.events.emit("newAccountAdded", AccountArgs(account: account))
+
+proc toggleAsset*(self: WalletModel, symbol: string, enable: bool, address: string, name: string, decimals: int, color: string) =
+  if enable:
+    discard status_tokens.addCustomToken(address, name, symbol, decimals, color)
+  else:
+    discard status_tokens.removeCustomToken(address)
+  self.tokens = status_tokens.getCustomTokens()
+  for account in self.accounts:
+    var assets: seq[Asset] = self.generateAccountConfiguredAssets()
+    account.assetList = assets
+  self.events.emit("assetChanged", Args())

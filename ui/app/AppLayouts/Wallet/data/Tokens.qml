@@ -5,6 +5,11 @@ import Qt.labs.platform 1.1
 
 ListModel {
 
+    // due to weird bug in which the first checkbox doesn't check
+    ListElement {
+        symbol: ""
+    }
+
     ListElement {
         symbol:   "DAI"
         name:     "Dai Stablecoin"

@@ -25,8 +25,8 @@ proc callPrivateRPC*(methodName: string, payload = %* []): string =
     result = $response
     if parseJSON(result).hasKey("error"):
       error "rpc response error", result = result
-  except:
-    error "error doing rpc request", methodName = methodName
+  except Exception as e:
+    error "error doing rpc request", methodName = methodName, exception=e.msg
 
 proc sendTransaction*(inputJSON: string, password: string): string =
   var hashed_password = "0x" & $keccak_256.digest(password)
