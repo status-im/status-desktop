@@ -4,7 +4,7 @@ template debugMsg(message: string) =
   echo "NimQml: ", message
 
 template debugMsg(typeName: string, procName: string) =
-  when defined(debug):
+  when defined(debugNimQml):
     var message = typeName
     message &= ": "
     message &= procName
