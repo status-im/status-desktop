@@ -79,7 +79,6 @@ proc init*(self: ChatModel) =
     filters.add status_chat.buildFilter(chatId = chat.id, oneToOne = chat.chatType.isOneToOne)
     self.channels.incl chat.id
     self.events.emit("channelJoined", ChannelArgs(channel: chat.id, chatTypeInt: chat.chatType))
-    self.events.emit("activeChannelChanged", ChannelArgs(channel: self.getActiveChannel()))
 
   if filters.len == 0: return
 

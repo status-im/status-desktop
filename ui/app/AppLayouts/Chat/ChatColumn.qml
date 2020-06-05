@@ -13,7 +13,7 @@ StackLayout {
     Layout.fillWidth: true
     Layout.minimumWidth: 300
 
-    currentIndex: chatGroupsListViewCount > 0 ? 0 : 1
+    currentIndex:  chatsModel.activeChannelIndex > -1 && chatGroupsListViewCount > 0 ? 0 : 1
 
     ColumnLayout {
         id: chatColumn
