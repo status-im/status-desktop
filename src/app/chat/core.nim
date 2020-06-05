@@ -69,7 +69,6 @@ proc init*(self: ChatController) =
   self.status.mailservers.init()
   self.status.chat.init()
 
-  self.view.setActiveChannelByIndex(0)
 
 proc handleMessage(self: ChatController, data: MessageSignal) =
   for c in data.chats:
