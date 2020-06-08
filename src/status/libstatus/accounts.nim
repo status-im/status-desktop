@@ -183,29 +183,32 @@ proc MultiAccountImportPrivateKey*(privateKey: string): GeneratedAccount =
   result = Json.decode(importResult, GeneratedAccount)
 
 proc saveAccount*(account: GeneratedAccount, password: string, color: string, accountType: string, isADerivedAccount = true): DerivedAccount =
-  # Only store derived accounts. Private key accounts are not multiaccounts
-  if (isADerivedAccount):
-    discard storeDerivedAccounts(account, password)
+  try:
+    # Only store derived accounts. Private key accounts are not multiaccounts
+    if (isADerivedAccount):
+      discard storeDerivedAccounts(account, password)
 
-  var address = account.derived.defaultWallet.address
-  var publicKey = account.derived.defaultWallet.publicKey
+    var address = account.derived.defaultWallet.address
+    var publicKey = account.derived.defaultWallet.publicKey
 
-  if (address == ""):
-    address = account.address
-    publicKey = account.publicKey
+    if (address == ""):
+      address = account.address
+      publicKey = account.publicKey
 
-  discard callPrivateRPC("accounts_saveAccounts", %* [
-    [{
-      "color": color,
-      "name": account.name,
-      "address": address,
-      "public-key": publicKey,
-      "type": accountType,
-      "path": "m/44'/60'/0'/0/1"
-    }]
-  ])
+    discard callPrivateRPC("accounts_saveAccounts", %* [
+      [{
+        "color": color,
+        "name": account.name,
+        "address": address,
+        "public-key": publicKey,
+        "type": accountType,
+        "path": "m/44'/60'/0'/0/1"
+      }]
+    ])
 
-  result = DerivedAccount(address: address, publicKey: publicKey)
+    result = DerivedAccount(address: address, publicKey: publicKey)
+  except:
+    error "Error storing the new account. Bad password?"
 
 proc deriveAccounts*(accountId: string): MultiAccounts =
   let deriveJson = %* {

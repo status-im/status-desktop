@@ -17,7 +17,7 @@ Item {
                 id: assetInfoImage
                 width: 36
                 height: 36
-                source: image
+                source: hasIcon ? "../../img/tokens/" + symbol + ".png" : "../../img/tokens/0-native.png"
                 anchors.left: parent.left
                 anchors.leftMargin: 0
                 anchors.verticalCenter: parent.verticalCenter
