@@ -80,6 +80,9 @@ Rectangle {
         GenerateAccountModal {
             id: generateAccountModal
         }
+        AddAccountWithSeed {
+            id: addAccountWithSeedModal
+        }
 
         PopupMenu {
             id: newAccountMenu
@@ -102,7 +105,7 @@ Rectangle {
                 text: qsTr("Enter a seed phrase")
                 icon.source: "../../../img/enter_seed_phrase.svg"
                 onTriggered: {
-                    console.log("TODO: Enter a seed phrase")
+                    addAccountWithSeedModal.open()
                 }
             }
             QQC2.Action {
