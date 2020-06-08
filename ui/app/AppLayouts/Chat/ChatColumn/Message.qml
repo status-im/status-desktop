@@ -24,7 +24,7 @@ Item {
     height: {
         switch(contentType){
             case Constants.chatIdentifier:
-                return 196;
+                return parent.parent.height
             case Constants.stickerType:
                 return stickerId.height + 50
             default:
@@ -40,9 +40,8 @@ Item {
         id: channelIdentifier
         visible: authorCurrentMsg == ""
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: 20
-        anchors.top: parent.top
-
+        anchors.verticalCenter: parent.verticalCenter
+        
         Rectangle {
             id: circleId
             anchors.horizontalCenter: parent.horizontalCenter
