@@ -56,7 +56,7 @@ ModalPopup {
         anchors.rightMargin: Theme.padding
         label: "Add account >"
 
-        disabled: passwordInput.text === "" && accountNameInput === ""
+        disabled: passwordInput.text === "" || accountNameInput.text === ""
 
         onClicked : {
             // TODO add message to show validation errors

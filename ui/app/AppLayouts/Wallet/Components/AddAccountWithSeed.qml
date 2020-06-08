@@ -68,13 +68,13 @@ ModalPopup {
         anchors.rightMargin: Theme.padding
         label: "Add account >"
 
-        disabled: passwordInput.text === "" && accountNameInput === "" || accountSeedInput.text == ""
+        disabled: passwordInput.text === "" || accountNameInput.text === "" || accountSeedInput.textAreaText === ""
 
         onClicked : {
             // TODO add message to show validation errors
-            if (passwordInput.text === "" || accountNameInput.text === "" || accountSeedInput.text == "") return;
+            if (passwordInput.text === "" || accountNameInput.text === "" || accountSeedInput.textAreaText === "") return;
 
-            walletModel.addAccountsFromSeed(accountSeedInput.text, passwordInput.text, accountNameInput.text, selectedColor)
+            walletModel.addAccountsFromSeed(accountSeedInput.textAreaText, passwordInput.text, accountNameInput.text, selectedColor)
             // TODO manage errors adding account
             popup.close();
         }
