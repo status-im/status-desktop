@@ -8,6 +8,7 @@ Item {
     property alias textField: inputValue
     property string placeholderText: "My placeholder"
     property alias text: inputValue.text
+    property alias textAreaText: textArea.text
     property string label: ""
     property color bgColor: Theme.grey
 
@@ -22,6 +23,8 @@ Item {
     readonly property int labelMargin: 7
     property var selectOptions
     property bool isSelect: !!selectOptions && selectOptions.length > 0
+    property int customHeight: 44
+    property bool isTextArea: false
 
     id: inputBox
     height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0)
@@ -42,7 +45,7 @@ Item {
 
     Rectangle {
         id: inputRectangle
-        height: 44
+        height: customHeight
         color: bgColor
         radius: 8
         anchors.top: inputBox.hasLabel ? inputLabel.bottom : parent.top
@@ -52,7 +55,7 @@ Item {
 
         TextField {
             id: inputValue
-            visible: !isSelect
+            visible: !inputBox.isTextArea && !inputBox.isSelect
             placeholderText: inputBox.placeholderText
             text: inputBox.text
             anchors.left: parent.left
@@ -62,6 +65,21 @@ Item {
             background: Rectangle {
                 color: "#00000000"
             }
+        }
+
+        TextArea {
+            id: textArea
+            text: ""
+            font.pixelSize: 15
+            wrapMode: Text.WordWrap
+            visible: inputBox.isTextArea
+            placeholderText: inputBox.placeholderText
+            anchors.rightMargin: Theme.padding
+            anchors.leftMargin: inputBox.hasIcon ? 36 : Theme.padding
+            anchors.bottomMargin: Theme.smallPadding
+            anchors.topMargin: Theme.smallPadding
+            anchors.fill: parent
+
         }
 
         Menu {
@@ -118,7 +136,13 @@ Item {
         id: mouseArea
         anchors.fill: parent
         onClicked: {
-            isSelect ? selectMenu.open() : inputValue.forceActiveFocus(Qt.MouseFocusReason)
+            if (inputBox.isSelect) {
+                selectMenu.open()
+            } else if (inputBox.isTextArea) {
+                textArea.forceActiveFocus(Qt.MouseFocusReason)
+            } else {
+                inputValue.forceActiveFocus(Qt.MouseFocusReason)
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ import "../../../../shared"
 ModalPopup {
     id: popup
     title: qsTr("Add account with a seed phrase")
+    height: 600
 
     property int marginBetweenInputs: 38
     property string selectedColor: Constants.accountColors[0]
@@ -25,12 +26,13 @@ ModalPopup {
 
 
     Input {
-        // TODO use a Textarea
         id: accountSeedInput
         anchors.top: passwordInput.bottom
         anchors.topMargin: marginBetweenInputs
         placeholderText: qsTr("Enter your seed phrase, separate words with commas or spaces...")
         label: qsTr("Seed phrase")
+        isTextArea: true
+        customHeight: 88
     }
 
     Input {
