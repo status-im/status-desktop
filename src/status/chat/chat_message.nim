@@ -39,7 +39,7 @@ proc toChatMessage*(payload: JsonNode): ChatMessage =
     timestamp: $payload["timestamp"],
     clock: payload["clock"].getInt,
     identicon: payload["identicon"].str,
-    isCurrentUser: false, # TODO: compare the "from" to the current user
+    isCurrentUser: payload{"outgoingStatus"}.getStr == "sending",
     contentType: payload["contentType"].getInt,
     sticker: "" # TODO: implement when implementing stickers from user
   )
