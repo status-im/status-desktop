@@ -12,6 +12,7 @@ type
     Sticker = UserRole + 7
     FromAuthor = UserRole + 8
     Clock = UserRole + 9
+    ChatId = UserRole + 10
 QtObject:
   type
     ChatMessageList* = ref object of QAbstractListModel
@@ -26,9 +27,15 @@ QtObject:
   proc setup(self: ChatMessageList) =
     self.QAbstractListModel.setup
 
-  proc newChatMessageList*(): ChatMessageList =
+  proc chatIdentifier(self: ChatMessageList, chatId:string): ChatMessage =
+    result = newChatMessage();
+    result.contentType = -1;
+    result.chatId = chatId
+
+
+  proc newChatMessageList*(chatId: string): ChatMessageList =
     new(result, delete)
-    result.messages = @[]
+    result.messages = @[result.chatIdentifier(chatId)]
     result.setup
 
   method rowCount(self: ChatMessageList, index: QModelIndex = nil): int =
@@ -51,6 +58,7 @@ QtObject:
       of ChatMessageRoles.ContentType: result = newQVariant(message.contentType)
       of ChatMessageRoles.Sticker: result = newQVariant(message.sticker)
       of ChatMessageRoles.FromAuthor: result = newQVariant(message.fromAuthor)
+      of ChatMessageRoles.ChatId: result = newQVariant(message.chatId)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -62,7 +70,8 @@ QtObject:
       ChatMessageRoles.IsCurrentUser.int:"isCurrentUser",
       ChatMessageRoles.ContentType.int:"contentType",
       ChatMessageRoles.Sticker.int:"sticker",
-      ChatMessageRoles.FromAuthor.int:"fromAuthor"
+      ChatMessageRoles.FromAuthor.int:"fromAuthor",
+      ChatMessageRoles.ChatId.int:"chatId"
     }.toTable
 
   proc add*(self: ChatMessageList, message: ChatMessage) =

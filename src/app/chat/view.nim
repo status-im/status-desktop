@@ -76,7 +76,7 @@ QtObject:
 
   proc upsertChannel(self: ChatsView, channel: string) =
     if not self.messageList.hasKey(channel):
-      self.messageList[channel] = newChatMessageList()
+      self.messageList[channel] = newChatMessageList(channel)
 
   proc pushMessage*(self:ChatsView, message: ChatMessage) =
     self.upsertChannel(message.chatId)

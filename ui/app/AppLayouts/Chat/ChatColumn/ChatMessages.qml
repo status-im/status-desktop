@@ -37,7 +37,7 @@ ScrollView {
             Qt.callLater( chatLogView.positionViewAtEnd )
         }
         model: messageListDelegate
-        section.property: "userName"
+        section.property: "fromAuthor"
         section.criteria: ViewSection.FullString
     }
 
@@ -88,8 +88,10 @@ ScrollView {
             }
         }
         model: messageList
-        delegate: Message {
+
+        Message {
             id: msgDelegate
+            chatId: model.chatId
             userName: model.userName
             message: model.message
             identicon: model.identicon
