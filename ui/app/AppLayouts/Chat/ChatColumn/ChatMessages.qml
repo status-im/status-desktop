@@ -13,6 +13,7 @@ ScrollView {
     id: scrollView
     
     property var messageList: MessagesData {}
+    property bool loadingMessages: false
 
     contentItem: chatLogView
     anchors.fill: parent
@@ -28,14 +29,36 @@ ScrollView {
         id: chatLogView
         Layout.fillWidth: true
         Layout.fillHeight: true
-        onCountChanged: {
-            if (!this.atYEnd) {
-                // User has scrolled up, we don't want to scroll back
-                return
+
+        Connections {
+            target: chatsModel
+            onMessagesLoaded: {
+                loadingMessages = false;
             }
+
+            onActiveChannelChanged: {
+                Qt.callLater( chatLogView.positionViewAtEnd )
+            }
+
+            onMessagePushed: {
+                if (!chatLogView.atYEnd) {
+                    // User has scrolled up, we don't want to scroll back
+                    return
+                }
             
-            Qt.callLater( chatLogView.positionViewAtEnd )
+                if(chatLogView.atYEnd)
+                    Qt.callLater( chatLogView.positionViewAtEnd )
+            }
         }
+
+        onContentYChanged: {
+            if(atYBeginning && !loadingMessages){
+                loadingMessages = true;
+                chatsModel.loadMoreMessages();
+            }
+        }
+
+
         model: messageListDelegate
         section.property: "fromAuthor"
         section.criteria: ViewSection.FullString
