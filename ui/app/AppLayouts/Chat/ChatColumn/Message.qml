@@ -15,14 +15,94 @@ Item {
     property int timestamp: 1234567
     property string sticker: "Qme8vJtyrEHxABcSVGPF95PtozDgUyfr1xGjePmFdZgk9v"
     property int contentType: 1 // constants don't work in default props
+    property string chatId: "chatId"
 
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
 
     width: parent.width
-    height: contentType == Constants.stickerType ? stickerId.height + 50 : (isCurrentUser || (!isCurrentUser && authorCurrentMsg == authorPrevMsg) ? chatBox.height : 24 + chatBox.height)
+    height: {
+        switch(contentType){
+            case Constants.chatIdentifier:
+                return 196;
+            case Constants.stickerType:
+                return stickerId.height + 50
+            default:
+                return (isCurrentUser || (!isCurrentUser && authorCurrentMsg == authorPrevMsg) ? chatBox.height : 24 + chatBox.height)
+        }
+    }
+
     ProfilePopup {
       id: profilePopup
+    }
+
+    Item {
+        id: channelIdentifier
+        visible: authorCurrentMsg == ""
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.topMargin: 20
+        anchors.top: parent.top
+
+        Rectangle {
+            id: circleId
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: 120
+            height: 120
+            radius: 120
+            border.width: chatsModel.activeChannel.chatType == Constants.chatTypeOneToOne ? 2 : 0
+            border.color: Theme.grey
+            color: {
+                const color = chatsModel.getChannelColor(chatId)
+                if (chatsModel.activeChannel.chatType == Constants.chatTypeOneToOne || !color) {
+                    return Theme.transparent
+                }
+                return color
+            }
+
+            Image {
+                visible: chatsModel.activeChannel.chatType == Constants.chatTypeOneToOne
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                width: 120
+                height: 120
+                fillMode: Image.PreserveAspectFit
+                source: chatsModel.activeChannel.identicon
+            }
+
+            Text {
+                visible: chatsModel.activeChannel.chatType != Constants.chatTypeOneToOne
+                text: {
+                    if (chatsModel.activeChannel.chatType == Constants.chatTypeOneToOne) {
+                        return chatsModel.activeChannel.name;
+                    } else {
+                        return (chatId.charAt(0) == "#" ? chatId.charAt(1) : chatId.charAt(0)).toUpperCase();
+                    }
+                }
+                opacity: 0.7
+                font.weight: Font.Bold
+                font.pixelSize: 51
+                color: "white"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+            }
+        }
+
+        Text {
+            wrapMode: Text.Wrap
+            text: {
+                    if (chatsModel.activeChannel.chatType == Constants.chatTypeOneToOne) {
+                        return chatsModel.activeChannel.name;
+                    } else {
+                        return "#" + chatId;
+                    }
+                }
+            font.weight: Font.Bold
+            font.pixelSize: 22
+            color: Theme.black
+            anchors.top: circleId.bottom
+            anchors.topMargin: 16
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
     }
 
     Image {
@@ -35,7 +115,7 @@ Item {
         anchors.top: parent.top
         fillMode: Image.PreserveAspectFit
         source: identicon
-        visible: authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        visible: contentType > -1 && authorCurrentMsg != authorPrevMsg && !isCurrentUser
 
         MouseArea {
             cursorShape: Qt.PointingHandCursor
@@ -58,7 +138,7 @@ Item {
         readOnly: true
         wrapMode: Text.WordWrap
         selectByMouse: true
-        visible: authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        visible: contentType > -1 && authorCurrentMsg != authorPrevMsg && !isCurrentUser
     }
 
     Rectangle {
@@ -77,6 +157,7 @@ Item {
         anchors.rightMargin: !isCurrentUser ? 0 : Theme.padding
         anchors.top: authorCurrentMsg != authorPrevMsg && !isCurrentUser ? chatImage.top : parent.top
         anchors.topMargin: 0
+        visible: contentType > -1
 
         // Thi`s rectangle's only job is to mask the corner to make it less rounded... yep
         Rectangle {

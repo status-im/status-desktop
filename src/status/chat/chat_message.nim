@@ -32,13 +32,14 @@ proc newChatMessage*(): ChatMessage =
 
 proc toChatMessage*(payload: JsonNode): ChatMessage =
   result = ChatMessage(
-    chatId: payload["chatId"].str,
+    chatId: payload["localChatId"].str,
+    fromAuthor: payload["from"].getStr,
     userName: payload["alias"].str,
     message: payload["text"].str,
     timestamp: $payload["timestamp"],
     clock: payload["clock"].getInt,
     identicon: payload["identicon"].str,
-    isCurrentUser: false,
+    isCurrentUser: false, # TODO: compare the "from" to the current user
     contentType: payload["contentType"].getInt,
     sticker: "" # TODO: implement when implementing stickers from user
   )

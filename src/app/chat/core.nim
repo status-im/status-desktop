@@ -70,7 +70,7 @@ proc init*(self: ChatController) =
 
 proc handleMessage(self: ChatController, data: MessageSignal) =
   for c in data.chats:
-   self.view.updateChat(c.toChatItem())
+    self.view.updateChat(c.toChatItem())
   self.view.pushMessages(data.messages)
 
 proc handleDiscoverySummary(self: ChatController, data: DiscoverySummarySignal) =

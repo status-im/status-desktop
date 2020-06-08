@@ -36,7 +36,7 @@ proc toChat*(jsonChat: JsonNode): Chat =
 proc toMessage*(jsonMsg: JsonNode): Message =
   result = Message(
       alias: jsonMsg{"alias"}.getStr,
-      chatId: jsonMsg{"chatId"}.getStr,
+      chatId: jsonMsg{"localChatId"}.getStr,
       clock: jsonMsg{"clock"}.getInt,
       contentType: jsonMsg{"contentType"}.getInt,
       ensName: jsonMsg{"ensName"}.getStr,
