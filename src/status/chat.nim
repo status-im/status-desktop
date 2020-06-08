@@ -33,12 +33,14 @@ type
     events*: EventEmitter
     channels*: HashSet[string]
     filters*: Table[string, string]
+    msgCursor*: Table[string, string]
 
 proc newChatModel*(events: EventEmitter): ChatModel =
   result = ChatModel()
   result.events = events
   result.channels = initHashSet[string]()
   result.filters = initTable[string, string]()
+  result.msgCursor = initTable[string, string]()
 
 proc delete*(self: ChatModel) =
   discard
@@ -117,9 +119,17 @@ proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
   self.events.emit("messageSent", MsgArgs(message: msg, chatId: chatId, payload: parsedMessage))
   sentMessage
 
-proc chatMessages*(self: ChatModel, chatId: string) =
-  let msgs = status_chat.chatMessages(chatId)
-  self.events.emit("messagesLoaded", MsgsLoadedArgs(messages: msgs))
+proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true) =
+  if not self.msgCursor.hasKey(chatId):
+    self.msgCursor[chatId] = "";
+
+  # Messages were already loaded, since cursor will 
+  # be nil/empty if there are no more messages
+  if(not initialLoad and self.msgCursor[chatId] == ""): return
+
+  let messageTuple = status_chat.chatMessages(chatId, self.msgCursor[chatId])
+  self.msgCursor[chatId] = messageTuple[0];
+  self.events.emit("messagesLoaded", MsgsLoadedArgs(messages: messageTuple[1]))
 
 proc markAllChannelMessagesRead*(self: ChatModel, chatId: string): JsonNode =
   var response = status_chat.markAllRead(chatId)

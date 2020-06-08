@@ -1,6 +1,7 @@
 import NimQml
 import Tables
 import json
+import chronicles
 
 import ../../signals/types
 import ../../status/chat
@@ -9,6 +10,9 @@ import ../../status/status
 import views/channels_list
 import views/message_list
 import views/chat_item
+
+logScope:
+  topics = "chats-view"
 
 QtObject:
   type
@@ -77,15 +81,19 @@ QtObject:
   proc upsertChannel(self: ChatsView, channel: string) =
     if not self.messageList.hasKey(channel):
       self.messageList[channel] = newChatMessageList(channel)
+  
+  proc messagePushed*(self: ChatsView) {.signal.}
 
   proc pushMessage*(self:ChatsView, message: ChatMessage) =
     self.upsertChannel(message.chatId)
     self.messageList[message.chatId].add(message)
+    self.messagePushed()
 
   proc pushMessages*(self:ChatsView, messages: seq[Message]) =
     for msg in messages:
       self.upsertChannel(msg.chatId)
       self.messageList[msg.chatId].add(msg.toChatMessage())
+      self.messagePushed()
 
   proc getMessageList(self: ChatsView): QVariant {.slot.} =
     self.upsertChannel(self.activeChannel.id)
@@ -97,12 +105,20 @@ QtObject:
 
   proc pushChatItem*(self: ChatsView, chatItem: ChatItem) =
     discard self.chats.addChatItemToList(chatItem)
+    self.messagePushed()
 
   proc sendMessage*(self: ChatsView, message: string) {.slot.} =
     discard self.status.chat.sendMessage(self.activeChannel.id, message)
 
   proc joinChat*(self: ChatsView, channel: string, chatTypeInt: int): int {.slot.} =
     self.status.chat.join(channel, ChatType(chatTypeInt))
+
+  proc messagesLoaded*(self: ChatsView) {.signal.}
+
+  proc loadMoreMessages*(self: ChatsView) {.slot.} =
+    trace "Loading more messages", chaId = self.activeChannel.id
+    self.status.chat.chatMessages(self.activeChannel.id, false)
+    self.messagesLoaded();
 
   proc leaveActiveChat*(self: ChatsView) {.slot.} =
     self.status.chat.leave(self.activeChannel.id)
