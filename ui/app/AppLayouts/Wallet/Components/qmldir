@@ -3,3 +3,4 @@ SetCurrencyModalContent 1.0 SetCurrencyModalContent.qml
 TokenSettingsModalContent 1.0 TokenSettingsModalContent.qml
 AddAccount 1.0 AddAccount.qml
 GenerateAccountModal 1.0 GenerateAccountModal.qml
+AddAccountWithSeed 1.0 AddAccountWithSeed.qml

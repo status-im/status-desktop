@@ -174,20 +174,28 @@ proc multiAccountImportMnemonic*(mnemonic: string): GeneratedAccount =
   let importResult = $libstatus.multiAccountImportMnemonic($mnemonicJson)
   result = Json.decode(importResult, GeneratedAccount)
 
-proc saveAccount*(account: GeneratedAccount, password: string, color: string): void =
+proc saveAccount*(account: GeneratedAccount, password: string, color: string, accountType: string): DerivedAccount =
   let storeDerivedResult = storeDerivedAccounts(account, password)
+
+  var address = account.derived.defaultWallet.address
+  var publicKey = account.derived.defaultWallet.publicKey
+
+  if (address == ""):
+    address = account.address
+    publicKey = account.publicKey
 
   discard callPrivateRPC("accounts_saveAccounts", %* [
     [{
       "color": color,
       "name": account.name,
-      "address": account.derived.defaultWallet.address,
-      "public-key": account.derived.defaultWallet.publicKey,
-      # Do we need to update those?
-      "type": "generated",
+      "address": address,
+      "public-key": publicKey,
+      "type": accountType,
       "path": "m/44'/60'/0'/0/1"
     }]
   ])
+
+  result = DerivedAccount(address: address, publicKey: publicKey)
 
 proc deriveAccounts*(accountId: string): MultiAccounts =
   let deriveJson = %* {

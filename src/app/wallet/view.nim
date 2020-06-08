@@ -95,6 +95,9 @@ QtObject:
   proc generateNewAccount*(self: WalletView, password: string, accountName: string, color: string) {.slot.} =
     self.status.wallet.generateNewAccount(password, accountName, color)
 
+  proc addAccountsFromSeed*(self: WalletView, seed: string, password: string, accountName: string, color: string) {.slot.} =
+    self.status.wallet.addAccountsFromSeed(seed, password, accountName, color)
+
   proc getAccountList(self: WalletView): QVariant {.slot.} =
     return newQVariant(self.accounts)
 

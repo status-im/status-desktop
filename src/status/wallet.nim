@@ -5,6 +5,8 @@ import strutils
 import libstatus/wallet as status_wallet
 import libstatus/settings as status_settings
 import libstatus/accounts as status_accounts
+import libstatus/accounts/constants as constants
+import libstatus/types
 import chronicles
 import libstatus/tokens as status_tokens
 
@@ -131,26 +133,34 @@ proc getTotalFiatBalance*(self: WalletModel): string =
   var newBalance = 0.0
   fmt"{newBalance:.2f} {self.defaultCurrency}"
 
-# TODO get a real address that we unlock with the password
-proc generateNewAccount*(self: WalletModel, password: string, accountName: string, color: string) =
-  let accounts = status_accounts.generateAddresses(1)
-  var generatedAccount = accounts[0]
+proc addNewGeneratedAccount(self: WalletModel, generatedAccount: GeneratedAccount, password: string, accountName: string, color: string, accountType: string) =
   generatedAccount.name = accountName
 
+  var derivedAccount: DerivedAccount
   try:
-    status_accounts.saveAccount(generatedAccount, password, color)
+    derivedAccount = status_accounts.saveAccount(generatedAccount, password, color, accountType)
   except:
-    error "Error sotring the new account. Bad password?"
+    error "Error storing the new account. Bad password?"
     return
 
   var symbol = "SNT"
   var asset = Asset(name:"Status", symbol: symbol, value: fmt"0.0", fiatValue: "$" & fmt"0.0", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
 
   var assets: seq[Asset] = self.generateAccountConfiguredAssets()
-  var account = Account(name: accountName, address: generatedAccount.derived.defaultWallet.address, iconColor: color, balance: fmt"0.00 {self.defaultCurrency}", assetList: assets, realFiatBalance: 0.0)
+  var account = Account(name: accountName, address: derivedAccount.address, iconColor: color, balance: fmt"0.00 {self.defaultCurrency}", assetList: assets, realFiatBalance: 0.0)
 
   self.accounts.add(account)
   self.events.emit("newAccountAdded", AccountArgs(account: account))
+
+proc generateNewAccount*(self: WalletModel, password: string, accountName: string, color: string) =
+  let accounts = status_accounts.generateAddresses(1)
+  let generatedAccount = accounts[0]
+  self.addNewGeneratedAccount(generatedAccount, password, accountName, color, constants.GENERATED)
+
+proc addAccountsFromSeed*(self: WalletModel, seed: string, password: string, accountName: string, color: string) =
+  let mnemonic = replace(seed, ',', ' ')
+  let generatedAccount = status_accounts.multiAccountImportMnemonic(mnemonic)
+  self.addNewGeneratedAccount(generatedAccount, password, accountName, color, constants.SEED)
 
 proc toggleAsset*(self: WalletModel, symbol: string, enable: bool, address: string, name: string, decimals: int, color: string) =
   if enable:
