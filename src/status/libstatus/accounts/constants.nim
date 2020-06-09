@@ -3,6 +3,7 @@ import json
 const GENERATED* = "generated"
 const SEED* = "seed"
 const KEY* = "key"
+const WATCH* = "watch"
 
 const PATH_WALLET_ROOT* = "m/44'/60'/0'/0"
 # EIP1581 Root Key, the extended key from which any whisper key/encryption key can be derived

@@ -143,6 +143,7 @@ proc addNewGeneratedAccount(self: WalletModel, generatedAccount: GeneratedAccoun
     error "Error storing the new account. Bad password?"
     return
 
+  # TODO actually fetch the balance for accounts that are not generated
   var symbol = "SNT"
   var asset = Asset(name:"Status", symbol: symbol, value: fmt"0.0", fiatValue: "$" & fmt"0.0", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg")
 
@@ -164,7 +165,11 @@ proc addAccountsFromSeed*(self: WalletModel, seed: string, password: string, acc
 
 proc addAccountsFromPrivateKey*(self: WalletModel, privateKey: string, password: string, accountName: string, color: string) =
   let generatedAccount = status_accounts.MultiAccountImportPrivateKey(privateKey)
-  self.addNewGeneratedAccount(generatedAccount, password, accountName, color, constants.SEED, false)
+  self.addNewGeneratedAccount(generatedAccount, password, accountName, color, constants.KEY, false)
+
+proc addWatchOnlyAccount*(self: WalletModel, address: string, accountName: string, color: string) =
+  let account = GeneratedAccount(address: address)
+  self.addNewGeneratedAccount(account, "", accountName, color, constants.WATCH, false)
 
 proc toggleAsset*(self: WalletModel, symbol: string, enable: bool, address: string, name: string, decimals: int, color: string) =
   if enable:

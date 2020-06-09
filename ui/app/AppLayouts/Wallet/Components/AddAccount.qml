@@ -86,6 +86,9 @@ Rectangle {
         AddAccountWithPrivateKey {
             id: addAccountWithPrivateKeydModal
         }
+        AddWatchOnlyAccount {
+            id: addWatchOnlyAccountModal
+        }
 
         PopupMenu {
             id: newAccountMenu
@@ -101,7 +104,7 @@ Rectangle {
                 text: qsTr("Add a watch-only address")
                 icon.source: "../../../img/add_watch_only.svg"
                 onTriggered: {
-                    console.log("TODO: Add a watch-only address")
+                    addWatchOnlyAccountModal.open()
                 }
             }
             QQC2.Action {
