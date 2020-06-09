@@ -77,6 +77,17 @@ Item {
                 }
             }
         }
+
+        Image {
+            id: caret
+            width: 11
+            height: 6
+            anchors.right: parent.right
+            anchors.rightMargin: Theme.padding
+            anchors.verticalCenter: parent.verticalCenter
+            fillMode: Image.PreserveAspectFit
+            source: "../app/img/caret.svg"
+        }
     }
 
     MouseArea {
