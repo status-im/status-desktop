@@ -51,11 +51,10 @@ Item {
             border.width: chatsModel.activeChannel.chatType == Constants.chatTypeOneToOne ? 2 : 0
             border.color: Theme.grey
             color: {
-                const color = chatsModel.getChannelColor(chatId)
-                if (chatsModel.activeChannel.chatType == Constants.chatTypeOneToOne || !color) {
+                if (chatsModel.activeChannel.chatType == Constants.chatTypeOneToOne) {
                     return Theme.transparent
                 }
-                return color
+                return chatsModel.activeChannel.color
             }
 
             Image {

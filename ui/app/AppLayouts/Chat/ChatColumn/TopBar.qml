@@ -20,7 +20,7 @@ Rectangle {
 
     ChannelIcon {
       id: channelIcon
-      channelName: chatsModel.activeChannel.id
+      channelName: chatsModel.activeChannel.name
       channelType: chatsModel.activeChannel.chatType
       channelIdenticon: chatsModel.activeChannel.identicon
     }

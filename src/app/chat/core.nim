@@ -42,15 +42,14 @@ proc handleChatEvents(self: ChatController) =
 
   self.status.events.on("channelJoined") do(e: Args):
     var channel = ChannelArgs(e)
-    let chatItem = newChatItem(id = channel.channel, name = channel.name, chatType = channel.chatTypeInt)
-    discard self.view.chats.addChatItemToList(chatItem)
-    self.status.chat.chatMessages(channel.channel)
+    discard self.view.chats.addChatItemToList(channel.chat)
+    self.status.chat.chatMessages(channel.chat.id)
 
   self.status.events.on("channelLeft") do(e: Args):
     discard self.view.chats.removeChatItemFromList(self.view.activeChannel.chatItem.id)
 
   self.status.events.on("activeChannelChanged") do(e: Args):
-    self.view.setActiveChannel(ChannelArgs(e).channel)
+    self.view.setActiveChannel(ChatIdArg(e).chatId)
 
 proc handleMailserverEvents(self: ChatController) =
   self.status.events.on("mailserverTopics") do(e: Args):
@@ -69,8 +68,9 @@ proc init*(self: ChatController) =
   self.status.chat.init()
 
 proc handleMessage(self: ChatController, data: MessageSignal) =
-  for c in data.chats:
-    self.view.updateChat(c.toChatItem())
+  for chat in data.chats:
+    var c = chat
+    self.view.updateChat(c)
   self.view.pushMessages(data.messages)
 
 proc handleDiscoverySummary(self: ChatController, data: DiscoverySummarySignal) =

@@ -1,8 +1,6 @@
 import NimQml, Tables
-import random
 import ../../../status/chat
-
-const channelColors* = ["#fa6565", "#7cda00", "#887af9", "#51d0f0", "#FE8F59", "#d37ef4"]
+import ../../../signals/types
 
 type
   ChannelsRoles {.pure.} = enum
@@ -17,7 +15,7 @@ type
 QtObject:
   type
     ChannelsList* = ref object of QAbstractListModel
-      chats*: seq[ChatItem]
+      chats*: seq[Chat]
 
   proc setup(self: ChannelsList) = self.QAbstractListModel.setup
 
@@ -41,7 +39,7 @@ QtObject:
     case chatItemRole:
       of ChannelsRoles.Name: result = newQVariant(chatItem.name)
       of ChannelsRoles.Timestamp: result = newQVariant($chatItem.timestamp)
-      of ChannelsRoles.LastMessage: result = newQVariant(chatItem.lastMessage)
+      of ChannelsRoles.LastMessage: result = newQVariant(chatItem.lastMessage.text)
       of ChannelsRoles.UnreadMessages: result = newQVariant(chatItem.unviewedMessagesCount)
       of ChannelsRoles.Identicon: result = newQVariant(chatItem.identicon)
       of ChannelsRoles.ChatType: result = newQVariant(chatItem.chatType.int)
@@ -58,10 +56,7 @@ QtObject:
       ChannelsRoles.Color.int: "color"
     }.toTable
 
-  proc addChatItemToList*(self: ChannelsList, channel: ChatItem): int =
-    if channel.color == "":
-      randomize()
-      channel.color = channelColors[rand(channelColors.len - 1)]
+  proc addChatItemToList*(self: ChannelsList, channel: var Chat): int =
     self.beginInsertRows(newQModelIndex(), 0, 0)
     self.chats.insert(channel, 0)
     self.endInsertRows()
@@ -75,9 +70,9 @@ QtObject:
 
     result = self.chats.len
 
-  proc getChannel*(self: ChannelsList, index: int): ChatItem = self.chats[index]
+  proc getChannel*(self: ChannelsList, index: int): Chat = self.chats[index]
 
-  proc upsertChannel(self: ChannelsList, channel: ChatItem): int =
+  proc upsertChannel(self: ChannelsList, channel: var Chat): int =
     let idx = self.chats.findById(channel.id)
     if idx == -1:
       result = self.addChatItemToList(channel)
@@ -88,9 +83,9 @@ QtObject:
     for chat in self.chats:
       if chat.name == name:
         return chat.color
-    return channelColors[0]
+    return "#fa6565" # TODO determine if it is possible to have a chat without color
 
-  proc updateChat*(self: ChannelsList, channel: ChatItem) =
+  proc updateChat*(self: ChannelsList, channel: var Chat) =
     let idx = self.upsertChannel(channel)
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.chats.len, 0, nil)
@@ -102,8 +97,10 @@ QtObject:
 
     self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int])
 
-  proc clearUnreadMessagesCount*(self: ChannelsList, channel: ChatItem) =
+  proc clearUnreadMessagesCount*(self: ChannelsList, channel: var Chat) =
     let idx = self.chats.findById(channel.id)
+    if idx == -1: return
+
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.chats.len, 0, nil)
     channel.unviewedMessagesCount = 0

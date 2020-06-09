@@ -32,17 +32,16 @@ proc removeFilters*(chatId: string, filterId: string) =
     }]
   ])
 
-proc saveChat*(chatId: string, oneToOne: bool = false, active: bool = true) =
+proc saveChat*(chatId: string, oneToOne: bool = false, active: bool = true, color: string = "#51d0f0") =
   discard callPrivateRPC("saveChat".prefix, %* [
     {
       "lastClockValue": 0, # TODO:
-      "color": "#51d0f0", # TODO:
+      "color": color,
       "name": chatId,
       "lastMessage": nil, # TODO:
       "active": active,
       "id": chatId,
       "unviewedMessagesCount": 0, # TODO:
-      # TODO use constants for those too or use the Date
       "chatType":  if oneToOne: 1 else: 2,  # TODO: use constants
       "timestamp": 1588940692659  # TODO:
     }

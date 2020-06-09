@@ -55,10 +55,16 @@ type ChatType* = enum
 
 proc isOneToOne*(self: ChatType): bool = self == ChatType.OneToOne
 
-type Chat* = object
+type ChatMember* = object
+  admin*: bool
+  id*: string
+  joined*: bool
+
+type Chat* = ref object
   id*: string # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat
   name*: string
   color*: string
+  identicon*: string
   active*: bool # indicates whether the chat has been soft deleted
   chatType*: ChatType
   timestamp*: int64 # indicates the last time this chat has received/sent a message
@@ -66,8 +72,7 @@ type Chat* = object
   deletedAtClockValue*: int64 # indicates the clock value at time of deletion, messages with lower clock value of this should be discarded
   unviewedMessagesCount*: int
   lastMessage*: Message
-  # Group chat fields
-  # members ?
+  members*: seq[ChatMember]
   # membershipUpdateEvents # ?
 
 type MessageSignal* = ref object of Signal
@@ -87,3 +92,15 @@ type WhisperFilterSignal* = ref object of Signal
 
 type DiscoverySummarySignal* = ref object of Signal
   enodes*: seq[string]
+
+
+
+proc findById*(self: seq[Chat], id: string): int =
+  result = -1
+  var idx = -1
+  for item in self:
+    inc idx
+    if(item.id == id):
+      result = idx
+      break
+

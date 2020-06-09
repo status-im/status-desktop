@@ -3,12 +3,12 @@ import sequtils
 import libstatus/chat as status_chat
 import chronicles
 import ../signals/types
-import chat/chat_item
+import ../signals/messages
 import chat/chat_message
 import tables
 
-export chat_item
 export chat_message
+export Chat
 
 type 
   MsgArgs* = ref object of Args
@@ -16,10 +16,11 @@ type
     chatId*: string
     payload*: JsonNode
 
+  ChatIdArg* = ref object of Args
+    chatId*: string
+
   ChannelArgs* = ref object of Args
-    channel*: string
-    name*: string
-    chatTypeInt*: ChatType
+    chat*: Chat
 
   ChatArgs* = ref object of Args
     chats*: seq[Chat]
@@ -32,14 +33,14 @@ type
 
   ChatModel* = ref object
     events*: EventEmitter
-    channels*: HashSet[string]
+    channels*: Table[string, Chat]
     filters*: Table[string, string]
     msgCursor*: Table[string, string]
 
 proc newChatModel*(events: EventEmitter): ChatModel =
   result = ChatModel()
   result.events = events
-  result.channels = initHashSet[string]()
+  result.channels = initTable[string, Chat]()
   result.filters = initTable[string, string]()
   result.msgCursor = initTable[string, string]()
 
@@ -47,15 +48,17 @@ proc delete*(self: ChatModel) =
   discard
 
 proc hasChannel*(self: ChatModel, chatId: string): bool =
-  result = self.channels.contains(chatId)
+  self.channels.hasKey(chatId)
 
 proc getActiveChannel*(self: ChatModel): string =
-  if (self.channels.len == 0): "" else: self.channels.toSeq[self.channels.len - 1]
+  if (self.channels.len == 0): "" else: toSeq(self.channels.values)[self.channels.len - 1].id
 
 proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
   if self.hasChannel(chatId): return
-  self.channels.incl chatId
-  status_chat.saveChat(chatId, chatType.isOneToOne)
+
+  var chat = newChat(chatId, ChatType(chatType))
+  self.channels[chat.id] = chat
+  status_chat.saveChat(chatId, chatType.isOneToOne, true, chat.color)
   let filterResult = status_chat.loadFilters(@[status_chat.buildFilter(chatId = chatId, oneToOne = chatType.isOneToOne)])
 
   var topics:seq[string] = @[]
@@ -70,8 +73,8 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
   else:
     self.events.emit("mailserverTopics", TopicArgs(topics: topics));
 
-  self.events.emit("channelJoined", ChannelArgs(channel: chatId, chatTypeInt: chatType, name: chatId))
-  self.events.emit("activeChannelChanged", ChannelArgs(channel: self.getActiveChannel()))
+  self.events.emit("channelJoined", ChannelArgs(chat: chat))
+  self.events.emit("activeChannelChanged", ChatIdArg(chatId: self.getActiveChannel()))
 
 proc init*(self: ChatModel) =
   let chatList = status_chat.loadChats()
@@ -80,8 +83,8 @@ proc init*(self: ChatModel) =
   for chat in chatList:
     if self.hasChannel(chat.id): continue
     filters.add status_chat.buildFilter(chatId = chat.id, oneToOne = chat.chatType.isOneToOne)
-    self.channels.incl chat.id
-    self.events.emit("channelJoined", ChannelArgs(channel: chat.id, chatTypeInt: chat.chatType, name: chat.name))
+    self.channels[chat.id] = chat
+    self.events.emit("channelJoined", ChannelArgs(chat: chat))
 
   if filters.len == 0: return
 
@@ -105,14 +108,14 @@ proc leave*(self: ChatModel, chatId: string) =
   status_chat.deactivateChat(chatId)
   # TODO: REMOVE MAILSERVER TOPIC
   # TODO: REMOVE HISTORY
-
   self.filters.del(chatId)
-  self.channels.excl(chatId)
-  self.events.emit("channelLeft", ChannelArgs(channel: chatId))
-  self.events.emit("activeChannelChanged", ChannelArgs(channel: self.getActiveChannel()))
+  self.channels.del(chatId)  
+  self.events.emit("channelLeft", ChatIdArg(chatId: chatId))
+  self.events.emit("activeChannelChanged", ChatIdArg(chatId: self.getActiveChannel()))
+
 
 proc setActiveChannel*(self: ChatModel, chatId: string) =
-  self.events.emit("activeChannelChanged", ChannelArgs(channel: chatId))
+  self.events.emit("activeChannelChanged", ChatIdArg(chatId: chatId))
 
 proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
   var sentMessage = status_chat.sendChatMessage(chatId, msg)

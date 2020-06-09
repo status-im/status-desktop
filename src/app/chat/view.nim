@@ -103,7 +103,7 @@ QtObject:
     read = getMessageList
     notify = activeChannelChanged
 
-  proc pushChatItem*(self: ChatsView, chatItem: ChatItem) =
+  proc pushChatItem*(self: ChatsView, chatItem: var Chat) =
     discard self.chats.addChatItemToList(chatItem)
     self.messagePushed()
 
@@ -123,5 +123,5 @@ QtObject:
   proc leaveActiveChat*(self: ChatsView) {.slot.} =
     self.status.chat.leave(self.activeChannel.id)
 
-  proc updateChat*(self: ChatsView, chat: ChatItem) =
+  proc updateChat*(self: ChatsView, chat: var Chat) =
     self.chats.updateChat(chat)
