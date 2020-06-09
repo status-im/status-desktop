@@ -11,13 +11,13 @@ type ChatItem* = ref object
   color*: string
   identicon*: string
 
-proc newChatItem*(id: string, chatType: ChatType, lastMessage: string = "", timestamp: int64 = 0, unviewedMessagesCount: int = 0, color: string = "", identicon: string = ""): ChatItem =
+proc newChatItem*(id: string, name: string, chatType: ChatType, lastMessage: string = "", timestamp: int64 = 0, unviewedMessagesCount: int = 0, color: string = "", identicon: string = ""): ChatItem =
   new(result)
   result.id = id
   result.name = case chatType
-              of ChatType.Public: id
+              of ChatType.Public: name
               of ChatType.OneToOne: generateAlias(id)
-              of ChatType.PrivateGroupChat: "TODO: Private Group Name"
+              of ChatType.PrivateGroupChat: name
               of ChatType.Unknown: "Unknown: " & id
   result.chatType = chatType
   result.lastMessage = lastMessage
@@ -42,7 +42,7 @@ proc chatName(chat: Chat): string =
   case chat.chatType
   of ChatType.OneToOne: result = chat.lastMessage.alias
   of ChatType.Public: result = chat.name
-  of ChatType.PrivateGroupChat: result = "TODO: determine private group name"
+  of ChatType.PrivateGroupChat: result = chat.name
   of ChatType.Unknown: result = "Unknown"
 
 proc toChatItem*(chat: Chat): ChatItem =

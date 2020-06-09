@@ -24,7 +24,7 @@ Item {
     height: {
         switch(contentType){
             case Constants.chatIdentifier:
-                return parent.parent.height
+                return parent.parent.height - 100
             case Constants.stickerType:
                 return stickerId.height + 50
             default:
@@ -70,13 +70,7 @@ Item {
 
             Text {
                 visible: chatsModel.activeChannel.chatType != Constants.chatTypeOneToOne
-                text: {
-                    if (chatsModel.activeChannel.chatType == Constants.chatTypeOneToOne) {
-                        return chatsModel.activeChannel.name;
-                    } else {
-                        return (chatId.charAt(0) == "#" ? chatId.charAt(1) : chatId.charAt(0)).toUpperCase();
-                    }
-                }
+                text: (chatsModel.activeChannel.name.charAt(0) == "#" ? chatsModel.activeChannel.name.charAt(1) : chatsModel.activeChannel.name.charAt(0)).toUpperCase()
                 opacity: 0.7
                 font.weight: Font.Bold
                 font.pixelSize: 51
@@ -89,10 +83,10 @@ Item {
         Text {
             wrapMode: Text.Wrap
             text: {
-                    if (chatsModel.activeChannel.chatType == Constants.chatTypeOneToOne) {
+                    if (chatsModel.activeChannel.chatType != Constants.chatTypePublic) {
                         return chatsModel.activeChannel.name;
                     } else {
-                        return "#" + chatId;
+                        return "#" + chatsModel.activeChannel.name;
                     }
                 }
             font.weight: Font.Bold

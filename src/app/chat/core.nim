@@ -41,10 +41,10 @@ proc handleChatEvents(self: ChatController) =
     self.view.pushMessage(chatMessage)
 
   self.status.events.on("channelJoined") do(e: Args):
-    var channelMessage = ChannelArgs(e)
-    let chatItem = newChatItem(id = channelMessage.channel, channelMessage.chatTypeInt)
+    var channel = ChannelArgs(e)
+    let chatItem = newChatItem(id = channel.channel, name = channel.name, chatType = channel.chatTypeInt)
     discard self.view.chats.addChatItemToList(chatItem)
-    self.status.chat.chatMessages(channelMessage.channel)
+    self.status.chat.chatMessages(channel.channel)
 
   self.status.events.on("channelLeft") do(e: Args):
     discard self.view.chats.removeChatItemFromList(self.view.activeChannel.chatItem.id)
