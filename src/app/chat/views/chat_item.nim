@@ -1,10 +1,11 @@
 import NimQml
 import std/wrapnils
 import ../../../status/chat
+import ../../../signals/types
 
 QtObject:
   type ChatItemView* = ref object of QObject
-    chatItem*: ChatItem
+    chatItem*: Chat
 
   proc setup(self: ChatItemView) =
     self.QObject.setup
@@ -15,9 +16,10 @@ QtObject:
   proc newChatItemView*(): ChatItemView =
     new(result, delete)
     result = ChatItemView()
+    result.chatItem = nil
     result.setup
 
-  proc setChatItem*(self: ChatItemView, chatItem: ChatItem) =
+  proc setChatItem*(self: ChatItemView, chatItem: Chat) =
     self.chatItem = chatItem
 
   proc id*(self: ChatItemView): string {.slot.} = result = ?.self.chatItem.id
@@ -29,6 +31,11 @@ QtObject:
   
   QtProperty[string] name:
     read = name
+
+  proc color*(self: ChatItemView): string {.slot.} = result = ?.self.chatItem.color
+
+  QtProperty[string] color:
+    read = color
 
   proc identicon*(self: ChatItemView): string {.slot.} = result = ?.self.chatItem.identicon
 
