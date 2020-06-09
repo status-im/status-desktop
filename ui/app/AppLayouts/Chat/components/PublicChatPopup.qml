@@ -9,7 +9,7 @@ import "./"
 ModalPopup {
     id: popup
     title: qsTr("Join public chat")
-    
+
     onOpened: {
         channelName.text = "";
         channelName.forceActiveFocus(Qt.MouseFocusReason)

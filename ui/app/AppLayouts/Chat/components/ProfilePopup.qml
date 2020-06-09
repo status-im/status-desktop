@@ -7,7 +7,16 @@ import "./"
 
 ModalPopup {
     id: popup
-    title: qsTr("User profile")
+    header: Text {
+      text: qsTr("User profile")
+      anchors.top: parent.top
+      anchors.left: parent.left
+      font.bold: true
+      font.pixelSize: 17
+      anchors.leftMargin: 16
+      anchors.topMargin: Theme.padding
+      anchors.bottomMargin: Theme.padding
+    }
 
     Rectangle {
       id: profilePic

@@ -5,8 +5,9 @@ import "../imports"
 import "./"
 
 Popup {
-  property string title: "Default Title"
+  property string title
   default property alias content : popupContent.children
+  property alias header: headerContent.children
 
   id: popup
   modal: true
@@ -27,15 +28,32 @@ Popup {
   }
   padding: 0
   contentItem: Item {
-      Text {
-          id: modalDialogTitle
+      
+      Item {
+        id: headerContent
+        width: parent.width
+        height: {
+          var idx = !!title ? 0 : 1
+          return children[idx] && children[idx].height + Theme.padding
+        }
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottomMargin: Theme.padding
+        anchors.rightMargin: Theme.padding
+        anchors.leftMargin: Theme.padding
+
+        Text {
           text: title
           anchors.top: parent.top
           anchors.left: parent.left
           font.bold: true
           font.pixelSize: 17
           anchors.leftMargin: 16
-          anchors.topMargin: 16
+          anchors.topMargin: Theme.padding
+          anchors.bottomMargin: Theme.padding
+          visible: !!title
+        }
       }
 
       Rectangle {
@@ -74,14 +92,13 @@ Popup {
       
       Separator {
           id: separator
-          anchors.top: modalDialogTitle.bottom
+          anchors.top: headerContent.bottom
       }
 
       Item {
         id: popupContent
         anchors.top: separator.bottom
         anchors.topMargin: Theme.padding
-        anchors.bottom: separator2.top
         anchors.bottomMargin: Theme.padding
         anchors.left: parent.left
         anchors.leftMargin: Theme.padding
@@ -97,6 +114,7 @@ Popup {
 
       Item {
         id: footerContent
+        height: children[0] && children[0].height
         width: parent.width
         anchors.top: separator2.bottom
         anchors.left: parent.left

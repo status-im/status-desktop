@@ -6,7 +6,6 @@ import "../../../../shared"
 
 ModalPopup {
     id: popup
-    title: qsTr("Add account with a seed phrase")
     height: 600
 
     property int marginBetweenInputs: 38
@@ -16,6 +15,8 @@ ModalPopup {
         passwordInput.text = ""
         passwordInput.forceActiveFocus(Qt.MouseFocusReason)
     }
+
+    title: qsTr("Add account with a seed phrase")
 
     Input {
         id: passwordInput
