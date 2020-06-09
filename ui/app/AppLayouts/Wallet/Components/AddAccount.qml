@@ -83,6 +83,9 @@ Rectangle {
         AddAccountWithSeed {
             id: addAccountWithSeedModal
         }
+        AddAccountWithPrivateKey {
+            id: addAccountWithPrivateKeydModal
+        }
 
         PopupMenu {
             id: newAccountMenu
@@ -112,7 +115,7 @@ Rectangle {
                 text: qsTr("Enter a private key")
                 icon.source: "../../../img/enter_private_key.svg"
                 onTriggered: {
-                    console.log("TODO: Enter a private key")
+                    addAccountWithPrivateKeydModal.open()
                 }
             }
             onAboutToHide: {

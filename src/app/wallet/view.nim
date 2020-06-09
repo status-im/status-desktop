@@ -98,6 +98,9 @@ QtObject:
   proc addAccountsFromSeed*(self: WalletView, seed: string, password: string, accountName: string, color: string) {.slot.} =
     self.status.wallet.addAccountsFromSeed(seed, password, accountName, color)
 
+  proc addAccountsFromPrivateKey*(self: WalletView, privateKey: string, password: string, accountName: string, color: string) {.slot.} =
+    self.status.wallet.addAccountsFromPrivateKey(privateKey, password, accountName, color)
+
   proc getAccountList(self: WalletView): QVariant {.slot.} =
     return newQVariant(self.accounts)
 

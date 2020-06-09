@@ -133,12 +133,12 @@ proc getTotalFiatBalance*(self: WalletModel): string =
   var newBalance = 0.0
   fmt"{newBalance:.2f} {self.defaultCurrency}"
 
-proc addNewGeneratedAccount(self: WalletModel, generatedAccount: GeneratedAccount, password: string, accountName: string, color: string, accountType: string) =
+proc addNewGeneratedAccount(self: WalletModel, generatedAccount: GeneratedAccount, password: string, accountName: string, color: string, accountType: string, isADerivedAccount = true) =
   generatedAccount.name = accountName
 
   var derivedAccount: DerivedAccount
   try:
-    derivedAccount = status_accounts.saveAccount(generatedAccount, password, color, accountType)
+    derivedAccount = status_accounts.saveAccount(generatedAccount, password, color, accountType, isADerivedAccount)
   except:
     error "Error storing the new account. Bad password?"
     return
@@ -161,6 +161,10 @@ proc addAccountsFromSeed*(self: WalletModel, seed: string, password: string, acc
   let mnemonic = replace(seed, ',', ' ')
   let generatedAccount = status_accounts.multiAccountImportMnemonic(mnemonic)
   self.addNewGeneratedAccount(generatedAccount, password, accountName, color, constants.SEED)
+
+proc addAccountsFromPrivateKey*(self: WalletModel, privateKey: string, password: string, accountName: string, color: string) =
+  let generatedAccount = status_accounts.MultiAccountImportPrivateKey(privateKey)
+  self.addNewGeneratedAccount(generatedAccount, password, accountName, color, constants.SEED, false)
 
 proc toggleAsset*(self: WalletModel, symbol: string, enable: bool, address: string, name: string, decimals: int, color: string) =
   if enable:
