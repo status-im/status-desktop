@@ -18,6 +18,7 @@ type
 
   ChannelArgs* = ref object of Args
     channel*: string
+    name*: string
     chatTypeInt*: ChatType
 
   ChatArgs* = ref object of Args
@@ -69,7 +70,7 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
   else:
     self.events.emit("mailserverTopics", TopicArgs(topics: topics));
 
-  self.events.emit("channelJoined", ChannelArgs(channel: chatId, chatTypeInt: chatType))
+  self.events.emit("channelJoined", ChannelArgs(channel: chatId, chatTypeInt: chatType, name: chatId))
   self.events.emit("activeChannelChanged", ChannelArgs(channel: self.getActiveChannel()))
 
 proc init*(self: ChatModel) =
@@ -80,7 +81,7 @@ proc init*(self: ChatModel) =
     if self.hasChannel(chat.id): continue
     filters.add status_chat.buildFilter(chatId = chat.id, oneToOne = chat.chatType.isOneToOne)
     self.channels.incl chat.id
-    self.events.emit("channelJoined", ChannelArgs(channel: chat.id, chatTypeInt: chat.chatType))
+    self.events.emit("channelJoined", ChannelArgs(channel: chat.id, chatTypeInt: chat.chatType, name: chat.name))
 
   if filters.len == 0: return
 

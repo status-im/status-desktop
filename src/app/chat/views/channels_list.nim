@@ -12,6 +12,7 @@ type
     UnreadMessages = UserRole + 4
     Identicon = UserRole + 5
     ChatType = UserRole + 6
+    Color = UserRole + 7
 
 QtObject:
   type
@@ -44,6 +45,7 @@ QtObject:
       of ChannelsRoles.UnreadMessages: result = newQVariant(chatItem.unviewedMessagesCount)
       of ChannelsRoles.Identicon: result = newQVariant(chatItem.identicon)
       of ChannelsRoles.ChatType: result = newQVariant(chatItem.chatType.int)
+      of ChannelsRoles.Color: result = newQVariant(chatItem.color)
 
   method roleNames(self: ChannelsList): Table[int, string] =
     {
@@ -52,7 +54,8 @@ QtObject:
       ChannelsRoles.LastMessage.int: "lastMessage",
       ChannelsRoles.UnreadMessages.int: "unviewedMessagesCount",
       ChannelsRoles.Identicon.int: "identicon",
-      ChannelsRoles.ChatType.int: "chatType"
+      ChannelsRoles.ChatType.int: "chatType",
+      ChannelsRoles.Color.int: "color"
     }.toTable
 
   proc addChatItemToList*(self: ChannelsList, channel: ChatItem): int =
@@ -62,7 +65,7 @@ QtObject:
     self.beginInsertRows(newQModelIndex(), 0, 0)
     self.chats.insert(channel, 0)
     self.endInsertRows()
-    result = self.chats.len - 1
+    result = 0
 
   proc removeChatItemFromList*(self: ChannelsList, channel: string): int =
     let idx = self.chats.findById(channel)
@@ -90,20 +93,20 @@ QtObject:
   proc updateChat*(self: ChannelsList, channel: ChatItem) =
     let idx = self.upsertChannel(channel)
     let topLeft = self.createIndex(0, 0, nil)
-    let bottomRight = self.createIndex(self.chats.len - 1, 0, nil)
-    if(idx != 0): # Move last updated chat to the top of the list
-      self.chats.del(idx)
+    let bottomRight = self.createIndex(self.chats.len, 0, nil)
+    if idx != 0: # Move last updated chat to the top of the list
+      self.chats.delete(idx)
       self.chats.insert(channel, 0)
     else:
       self.chats[0] = channel
 
-    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.LastMessage.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.LastMessage.int])
+    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int])
 
   proc clearUnreadMessagesCount*(self: ChannelsList, channel: ChatItem) =
     let idx = self.chats.findById(channel.id)
     let topLeft = self.createIndex(0, 0, nil)
-    let bottomRight = self.createIndex(self.chats.len - 1, 0, nil)
+    let bottomRight = self.createIndex(self.chats.len, 0, nil)
     channel.unviewedMessagesCount = 0
     self.chats[idx] = channel
 
-    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.LastMessage.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.LastMessage.int])
+    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int])

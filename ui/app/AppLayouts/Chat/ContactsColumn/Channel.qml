@@ -43,7 +43,7 @@ Rectangle {
 
     Text {
         id: contactInfo
-        text: chatType == Constants.chatTypeOneToOne ? name : "#" + name
+        text: chatType != Constants.chatTypePublic ? name : "#" + name
         anchors.right: contactTime.left
         anchors.rightMargin: Theme.smallPadding
         elide: Text.ElideRight
@@ -55,6 +55,7 @@ Rectangle {
         anchors.topMargin: Theme.smallPadding
         color: "black"
     }
+    
     Text {
         id: lastChatMessage
         text: lastMessage || qsTr("No messages")

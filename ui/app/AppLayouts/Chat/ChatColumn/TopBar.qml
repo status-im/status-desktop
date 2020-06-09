@@ -29,7 +29,7 @@ Rectangle {
         id: channelName
         width: 80
         height: 20
-        text: chatsModel.activeChannel.chatType == Constants.chatTypeOneToOne ? chatsModel.activeChannel.name : channelNameStr
+        text: chatsModel.activeChannel.chatType != Constants.chatTypePublic ? chatsModel.activeChannel.name : channelNameStr
         anchors.left: channelIcon.right
         anchors.leftMargin: Theme.smallPadding
         anchors.top: parent.top
@@ -44,7 +44,13 @@ Rectangle {
         id: channelIdentifier
         color: Theme.darkGrey
         // TODO change this in case of private message
-        text: "Public chat"
+        text: {
+            switch(chatsModel.activeChannel.chatType){
+                case Constants.chatTypePublic: return qsTr("Public chat")
+                case Constants.chatTypeOneToOne: return qsTr("TODO: Contact/Not a contact")
+                case Constants.chatTypePrivateGroupChat: return qsTr("TODO: N members")
+            }
+        }
         font.pixelSize: 12
         anchors.left: channelIcon.right
         anchors.leftMargin: Theme.smallPadding
