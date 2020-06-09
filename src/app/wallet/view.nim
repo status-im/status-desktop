@@ -101,6 +101,9 @@ QtObject:
   proc addAccountsFromPrivateKey*(self: WalletView, privateKey: string, password: string, accountName: string, color: string) {.slot.} =
     self.status.wallet.addAccountsFromPrivateKey(privateKey, password, accountName, color)
 
+  proc addWatchOnlyAccount*(self: WalletView, address: string, accountName: string, color: string) {.slot.} =
+    self.status.wallet.addWatchOnlyAccount(address, accountName, color)
+
   proc getAccountList(self: WalletView): QVariant {.slot.} =
     return newQVariant(self.accounts)
 

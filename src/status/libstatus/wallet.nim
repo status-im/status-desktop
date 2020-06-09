@@ -22,7 +22,8 @@ proc getWalletAccounts*(): seq[WalletAccount] =
         walletAccounts.add(WalletAccount(
           address: $account["address"].getStr,
           path: $account["path"].getStr,
-          publicKey: $account["public-key"].getStr,
+          # Watch accoutns don't have a public key
+          publicKey: if (account.hasKey("public-key")): $account["public-key"].getStr else: "",
           name: $account["name"].getStr,
           color: $account["color"].getStr,
           wallet: $account["wallet"].getStr == "true",
@@ -30,7 +31,8 @@ proc getWalletAccounts*(): seq[WalletAccount] =
         ))
     result = walletAccounts
   except:
-    error "Failed getting wallet accounts"
+    let msg = getCurrentExceptionMsg()
+    error "Failed getting wallet accounts", msg
 
 
 proc sendTransaction*(from_address: string, to: string, value: string, password: string): string =

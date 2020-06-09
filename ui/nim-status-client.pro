@@ -82,6 +82,8 @@ DISTFILES += \
     app/AppLayouts/Wallet/Components/AddAccount.qml \
     app/AppLayouts/Wallet/Components/AddAccountWithPrivateKey.qml \
     app/AppLayouts/Wallet/Components/AddAccountWithSeed.qml \
+    app/AppLayouts/Wallet/Components/AddWatchOnlyAccount \
+    app/AppLayouts/Wallet/Components/AddWatchOnlyAccount.qml \
     app/AppLayouts/Wallet/Components/GenerateAccountModal.qml \
     app/AppLayouts/Wallet/Components/SendModalContent.qml \
     app/AppLayouts/Wallet/Components/SetCurrencyModalContent.qml \
