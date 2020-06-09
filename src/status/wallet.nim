@@ -15,8 +15,10 @@ type WalletModel* = ref object
     accounts*: seq[Account]
     defaultCurrency*: string
     tokens*: JsonNode
+    totalBalance*: float
 
 proc getDefaultCurrency*(self: WalletModel): string
+proc calculateTotalFiatBalance*(self: WalletModel)
 
 proc newWalletModel*(events: EventEmitter): WalletModel =
   result = WalletModel()
@@ -24,13 +26,18 @@ proc newWalletModel*(events: EventEmitter): WalletModel =
   result.tokens = %* []
   result.events = events
   result.defaultCurrency = ""
+  result.totalBalance = 0.0
 
 proc initEvents*(self: WalletModel) =
  self.events.on("currencyChanged") do(e: Args):
     self.defaultCurrency = self.getDefaultCurrency()
     for account in self.accounts:
       updateBalance(account, self.getDefaultCurrency())
+    self.calculateTotalFiatBalance()
     self.events.emit("accountsUpdated", Args())
+
+ self.events.on("newAccountAdded") do(e: Args):
+   self.calculateTotalFiatBalance()
 
 proc delete*(self: WalletModel) =
   discard
@@ -45,18 +52,18 @@ proc setDefaultCurrency*(self: WalletModel, currency: string) =
   discard status_settings.saveSettings("currency", currency)
   self.events.emit("currencyChanged", CurrencyArgs(currency: currency))
 
-proc generateAccountConfiguredAssets*(self: WalletModel): seq[Asset] =
+proc generateAccountConfiguredAssets*(self: WalletModel, accountAddress: string): seq[Asset] =
   var assets: seq[Asset] = @[]
-  var asset = Asset(name:"Ethereum", symbol: "ETH", value: "0.0", fiatValue: "0.0", image: fmt"../../img/token-icons/eth.svg", hasIcon: true)
+  var asset = Asset(name:"Ethereum", symbol: "ETH", value: "0.0", fiatValue: "0.0", image: fmt"../../img/token-icons/eth.svg", hasIcon: true, accountAddress: accountAddress)
   assets.add(asset)
   for token in self.tokens:
     var symbol = token["symbol"].getStr
-    var existingToken = Asset(name: token["name"].getStr, symbol: symbol, value: fmt"0.0", fiatValue: "$0.0", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg", hasIcon: true)
+    var existingToken = Asset(name: token["name"].getStr, symbol: symbol, value: fmt"0.0", fiatValue: "$0.0", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg", hasIcon: true, accountAddress: accountAddress)
     assets.add(existingToken)
   assets
 
 proc newAccount*(self: WalletModel, name: string, address: string, iconColor: string, balance: string): Account =
-  var assets: seq[Asset] = self.generateAccountConfiguredAssets()
+  var assets: seq[Asset] = self.generateAccountConfiguredAssets(address)
   var account = Account(name: name, address: address, iconColor: iconColor, balance: fmt"{balance} {self.defaultCurrency}", assetList: assets, realFiatBalance: 0.0)
   updateBalance(account, self.getDefaultCurrency())
   account
@@ -67,10 +74,16 @@ proc initAccounts*(self: WalletModel) =
   for account in accounts:
     var account = self.newAccount(account.name, account.address, account.color, "")
     self.accounts.add(account)
+  self.calculateTotalFiatBalance
 
 proc getTotalFiatBalance*(self: WalletModel): string =
   var newBalance = 0.0
-  fmt"{newBalance:.2f} {self.defaultCurrency}"
+  fmt"{self.totalBalance:.2f} {self.defaultCurrency}"
+
+proc calculateTotalFiatBalance*(self: WalletModel) =
+  self.totalBalance = 0.0
+  for account in self.accounts:
+    self.totalBalance += account.realFiatBalance
 
 proc addNewGeneratedAccount(self: WalletModel, generatedAccount: GeneratedAccount, password: string, accountName: string, color: string, accountType: string, isADerivedAccount = true) =
   generatedAccount.name = accountName
@@ -103,6 +116,6 @@ proc hasAsset*(self: WalletModel, account: string, symbol: string): bool =
 proc toggleAsset*(self: WalletModel, symbol: string, enable: bool, address: string, name: string, decimals: int, color: string) =
   self.tokens = addOrRemoveToken(enable, address, name, symbol, decimals, color)
   for account in self.accounts:
-    account.assetList = self.generateAccountConfiguredAssets()
+    account.assetList = self.generateAccountConfiguredAssets(account.address)
     updateBalance(account, self.getDefaultCurrency())
   self.events.emit("assetChanged", Args())
