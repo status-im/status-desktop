@@ -13,53 +13,67 @@ Item {
     id: walletInfoContainer
     width: 340
 
-    Text {
-        id: title
-        x: 143
-        y: 16
-        text: qsTr("Wallet")
-        anchors.top: parent.top
-        anchors.topMargin: Theme.padding
-        anchors.horizontalCenter: parent.horizontalCenter
-        font.weight: Font.Bold
-        font.pixelSize: 17
-    }
-
-    Item {
-        id: walletValueTextContainer
+    Rectangle {
+        id: walletInfoHeader
         anchors.left: parent.left
-        anchors.leftMargin: Theme.padding
-        anchors.top: title.bottom
-        anchors.topMargin: Theme.padding
-        height: walletAmountValue.height + totalValue.height
-
-        TextEdit {
-            id: walletAmountValue
-            color: "black"
-            text: walletModel.totalFiatBalance
-            selectByMouse: true
-            cursorVisible: true
-            readOnly: true
-            anchors.left: parent.left
-            anchors.leftMargin: 1
-            font.weight: Font.Medium
-            font.pixelSize: 30
-        }
+        anchors.leftMargin: 0
+        anchors.right: parent.right
+        anchors.rightMargin: 0
+        height: walletValueTextContainer.y + walletValueTextContainer.height + Theme.padding
+        color: Theme.white
+        z: 1
+        border.width: 0
 
         Text {
-            id: totalValue
-            color: Theme.darkGrey
-            text: "Total value"
-            anchors.left: walletAmountValue.left
-            anchors.leftMargin: 0
-            anchors.top: walletAmountValue.bottom
-            anchors.topMargin: 0
-            font.weight: Font.Medium
-            font.pixelSize: 13
+            id: title
+            x: 143
+            y: 16
+            text: qsTr("Wallet")
+            anchors.top: parent.top
+            anchors.topMargin: Theme.padding
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.weight: Font.Bold
+            font.pixelSize: 17
         }
-    }
 
-    AddAccount {}
+        Item {
+            id: walletValueTextContainer
+            x: 16
+            y: 52
+            anchors.left: parent.left
+            anchors.leftMargin: Theme.padding
+            anchors.top: title.bottom
+            anchors.topMargin: Theme.padding
+            height: walletAmountValue.height + totalValue.height
+
+            TextEdit {
+                id: walletAmountValue
+                color: "black"
+                text: walletModel.totalFiatBalance
+                selectByMouse: true
+                cursorVisible: true
+                readOnly: true
+                anchors.left: parent.left
+                anchors.leftMargin: 1
+                font.weight: Font.Medium
+                font.pixelSize: 30
+            }
+
+            Text {
+                id: totalValue
+                color: Theme.darkGrey
+                text: "Total value"
+                anchors.left: walletAmountValue.left
+                anchors.leftMargin: 0
+                anchors.top: walletAmountValue.bottom
+                anchors.topMargin: 0
+                font.weight: Font.Medium
+                font.pixelSize: 13
+            }
+        }
+
+        AddAccount { x: 288 ;y: 59}
+    }
 
     Component {
         id: walletDelegate
@@ -141,8 +155,7 @@ Item {
     ListView {
         id: listView
         anchors.bottom: parent.bottom
-        anchors.top: walletValueTextContainer.bottom
-        anchors.topMargin: Theme.padding
+        anchors.top: walletInfoHeader.bottom
         spacing: 5
         anchors.right: parent.right
         anchors.left: parent.left
@@ -173,13 +186,14 @@ Item {
         }
 
         model: walletModel.accounts
-//        model: exampleWalletModel
+        //        model: exampleWalletModel
     }
+
 }
 
 /*##^##
 Designer {
-    D{i:0;formeditorColor:"#ffffff";formeditorZoom:0.75;height:770;width:340}D{i:2;anchors_x:82}
+    D{i:0;formeditorColor:"#ffffff";formeditorZoom:0.75;height:770;width:340}
 }
 ##^##*/
 
