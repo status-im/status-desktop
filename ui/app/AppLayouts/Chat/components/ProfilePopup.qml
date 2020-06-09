@@ -7,62 +7,197 @@ import "./"
 
 ModalPopup {
     id: popup
-    header: Text {
-      text: qsTr("User profile")
-      anchors.top: parent.top
-      anchors.left: parent.left
-      font.bold: true
-      font.pixelSize: 17
-      anchors.leftMargin: 16
-      anchors.topMargin: Theme.padding
-      anchors.bottomMargin: Theme.padding
-    }
 
-    Rectangle {
-      id: profilePic
-      width: 120
-      height: 120
-      radius: 100
-      border.color: "#10000000"
-      border.width: 1
-      color: Theme.transparent
-      anchors.horizontalCenter: parent.horizontalCenter
-      anchors.top: parent.top
-      anchors.topMargin: 16
-      Image {
-          width: 120
-          height: 120
-          fillMode: Image.PreserveAspectFit
-          source: identicon
+    header: Item {
+      height: children[0].height
+      width: parent.width
+      Rectangle {
+        id: profilePic
+        width: 40
+        height: 40
+        radius: 30
+        border.color: "#10000000"
+        border.width: 1
+        color: Theme.transparent
+        anchors.top: parent.top
+        anchors.topMargin: Theme.padding
+        Image {
+            width: parent.width
+            height: parent.height
+            fillMode: Image.PreserveAspectFit
+            source: identicon
+        }
       }
+
+      TextEdit {
+          id: profileName
+          text: userName
+          anchors.top: parent.top
+          anchors.topMargin: 18
+          anchors.left: profilePic.right
+          anchors.leftMargin: Theme.smallPadding
+          font.bold: true
+          font.pixelSize: 14
+          readOnly: true
+          wrapMode: Text.WordWrap
+      }
+
+      Text {
+          text: fromAuthor
+          width: 160
+          elide: Text.ElideMiddle
+          anchors.left: profilePic.right
+          anchors.leftMargin: Theme.smallPadding
+          anchors.top: profileName.bottom
+          anchors.topMargin: 2
+          font.pixelSize: 14
+          color: Theme.darkGrey
+          font.family: "Inter"
+      }
+
+      // TODO(pascal): implement qrcode view
+      // Rectangle {
+      //     id: qrCodeButton
+      //     height: 32
+      //     width: 32
+      //     anchors.top: parent.top
+      //     anchors.topMargin: Theme.padding
+      //     anchors.right: parent.right
+      //     anchors.rightMargin: 32 + Theme.smallPadding
+      //     radius: 8
+
+      //     Image {
+      //         source: "../../../../shared/img/qr-code-icon.svg"
+      //         anchors.horizontalCenter: parent.horizontalCenter
+      //         anchors.verticalCenter: parent.verticalCenter
+      //     }
+
+      //     MouseArea {
+      //         cursorShape: Qt.PointingHandCursor
+      //         anchors.fill: parent
+      //         hoverEnabled: true
+      //         onExited: {
+      //             qrCodeButton.color = Theme.white
+      //         }
+      //         onEntered:{
+      //             qrCodeButton.color = Theme.grey
+      //         }
+      //     }
+      // }
     }
 
     Text {
-      id: userNameText
-      text: userName
-      anchors.top: profilePic.bottom
-      anchors.topMargin: 16
-      anchors.horizontalCenter: parent.horizontalCenter
-      font.bold: true
-      font.pixelSize: 16
+      id: labelEnsUsername
+      text: qsTr("ENS username")
+      font.pixelSize: 13
+      font.weight: Font.Medium
+      color: Theme.darkGrey
+      anchors.left: parent.left
+      anchors.leftMargin: Theme.smallPadding
+      anchors.top: parent.top
+      anchors.topMargin: Theme.smallPadding
     }
 
-    TextEdit {
-      text: fromAuthor.substr(0, 6) + "..." + fromAuthor.substr(fromAuthor.length - 4)
-      anchors.top: userNameText.bottom
-      anchors.topMargin: 12
-      anchors.horizontalCenter: parent.horizontalCenter
-      wrapMode: Text.Wrap
-      readOnly: true
-      selectByMouse: true
-      color: Theme.darkGrey
-      font.pixelSize: 15
+    Text {
+      id: valueEnsName
+      text: "@emily.stateofus.eth"
+      font.pixelSize: 14
+      anchors.left: parent.left
+      anchors.leftMargin: Theme.smallPadding
+      anchors.top: labelEnsUsername.bottom
+      anchors.topMargin: Theme.smallPadding
     }
+
+    Text {
+      id: labelChatKey
+      text: qsTr("Chat key")
+      font.pixelSize: 13
+      font.weight: Font.Medium
+      color: Theme.darkGrey
+      anchors.left: parent.left
+      anchors.leftMargin: Theme.smallPadding
+      anchors.top: valueEnsName.bottom
+      anchors.topMargin: Theme.padding
+    }
+
+    Text {
+      id: valueChatKey
+      text: fromAuthor
+      width: 160
+      elide: Text.ElideMiddle
+      font.pixelSize: 14
+      anchors.left: parent.left
+      anchors.leftMargin: Theme.smallPadding
+      anchors.top: labelChatKey.bottom
+      anchors.topMargin: Theme.smallPadding
+    }
+
+    Separator {
+      id: separator
+      anchors.top: valueChatKey.bottom
+      anchors.topMargin: Theme.padding
+      anchors.left: parent.left
+      anchors.leftMargin: -Theme.padding
+      anchors.right: parent.right
+      anchors.rightMargin: -Theme.padding
+    }
+
+    Text {
+      id: labelShareURL
+      text: qsTr("Share Profile URL")
+      font.pixelSize: 13
+      font.weight: Font.Medium
+      color: Theme.darkGrey
+      anchors.left: parent.left
+      anchors.leftMargin: Theme.smallPadding
+      anchors.top: separator.bottom
+      anchors.topMargin: Theme.padding
+    }
+
+    Text {
+      id: valueShareURL
+      text: "https://join.status.im/u/" + fromAuthor.substr(0, 4) + "..." + fromAuthor.substr(fromAuthor.length - 5)
+      font.pixelSize: 14
+      anchors.left: parent.left
+      anchors.leftMargin: Theme.smallPadding
+      anchors.top: labelShareURL.bottom
+      anchors.topMargin: Theme.smallPadding
+    }
+
+    // TODO(pascal): implement copy to clipboard component
+    // Rectangle {
+    //     id: copyToClipboardButton
+    //     height: 32
+    //     width: 32
+    //     anchors.top: labelShareURL.bottom
+    //     anchors.topMargin: Theme.padding
+    //     anchors.left: valueShareURL.right
+    //     anchors.leftMargin: Theme.padding
+    //     radius: 8
+
+    //     Image {
+    //         source: "../../../../shared/img/copy-to-clipboard-icon.svg"
+    //         anchors.horizontalCenter: parent.horizontalCenter
+    //         anchors.verticalCenter: parent.verticalCenter
+    //     }
+
+    //     MouseArea {
+    //         cursorShape: Qt.PointingHandCursor
+    //         anchors.fill: parent
+    //         hoverEnabled: true
+    //         onExited: {
+    //             copyToClipboardButton.color = Theme.white
+    //         }
+    //         onEntered:{
+    //             copyToClipboardButton.color = Theme.grey
+    //         }
+    //     }
+    // }
 
     footer: StyledButton {
         anchors.right: parent.right
         anchors.rightMargin: Theme.smallPadding
-        label: "Close"
+        label: "Add to contacts"
         anchors.bottom: parent.bottom
         onClicked: {
           profilePopup.close()
