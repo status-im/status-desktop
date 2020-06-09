@@ -174,8 +174,18 @@ proc multiAccountImportMnemonic*(mnemonic: string): GeneratedAccount =
   let importResult = $libstatus.multiAccountImportMnemonic($mnemonicJson)
   result = Json.decode(importResult, GeneratedAccount)
 
-proc saveAccount*(account: GeneratedAccount, password: string, color: string, accountType: string): DerivedAccount =
-  let storeDerivedResult = storeDerivedAccounts(account, password)
+proc MultiAccountImportPrivateKey*(privateKey: string): GeneratedAccount =
+  let privateKeyJson = %* {
+    "privateKey": privateKey
+  }
+  # libstatus.MultiAccountImportPrivateKey never results in an error given ANY input
+  let importResult = $libstatus.MultiAccountImportPrivateKey($privateKeyJson)
+  result = Json.decode(importResult, GeneratedAccount)
+
+proc saveAccount*(account: GeneratedAccount, password: string, color: string, accountType: string, isADerivedAccount = true): DerivedAccount =
+  # Only store derived accounts. Private key accounts are not multiaccounts
+  if (isADerivedAccount):
+    discard storeDerivedAccounts(account, password)
 
   var address = account.derived.defaultWallet.address
   var publicKey = account.derived.defaultWallet.publicKey
