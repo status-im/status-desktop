@@ -37,8 +37,8 @@ proc getTokenBalance*(tokenAddress: string, account: string): string =
   let payload = %* [{
     "to": tokenAddress, "from": account, "data": fmt"0x70a08231000000000000000000000000{postfixedAccount}"
   }, "latest"]
-  var response = status.callPrivateRPC("eth_call", payload)
-  var balance = response.parseJson["result"].getStr
+  let response = status.callPrivateRPC("eth_call", payload)
+  let balance = response.parseJson["result"].getStr
   result = $hex2Eth(balance)
 
 proc addOrRemoveToken*(enable: bool, address: string, name: string, symbol: string, decimals: int, color: string): JsonNode =

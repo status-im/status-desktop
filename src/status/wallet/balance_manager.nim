@@ -19,7 +19,7 @@ proc getPrice(crypto: string, fiat: string): string =
   try:
     if balanceManager.pricePairs.hasKey(fiat):
       return balanceManager.pricePairs[fiat]
-    var url: string = fmt"https://min-api.cryptocompare.com/data/price?fsym={crypto}&tsyms={fiat}"
+    let url: string = fmt"https://min-api.cryptocompare.com/data/price?fsym={crypto}&tsyms={fiat}"
     let client = newHttpClient()
     client.headers = newHttpHeaders({ "Content-Type": "application/json" })
 
