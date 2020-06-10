@@ -31,6 +31,7 @@ SplitView {
 
         WalletHeader {
             id: walletHeader
+            changeSelectedAccount: leftTab.changeSelectedAccount
         }
 
         RowLayout {

@@ -1,7 +1,7 @@
 import libstatus
 import core
 import json
-import utils
+import utils as utils
 import accounts/constants
 import nimcrypto
 import os
@@ -214,7 +214,7 @@ proc saveAccount*(account: GeneratedAccount, password: string, color: string, ac
 
 proc changeAccount*(account: WalletAccount): string =
   try:
-    let res=  callPrivateRPC("accounts_saveAccounts", %* [
+    let response = callPrivateRPC("accounts_saveAccounts", %* [
       [{
         "color": account.iconColor,
         "name": account.name,
@@ -224,9 +224,21 @@ proc changeAccount*(account: WalletAccount): string =
         "path": "m/44'/60'/0'/0/1"
       }]
     ])
+
+    utils.handleRPCErrors(response)
     return ""
   except Exception as e:
     error "Error saving the account", msg=e.msg
+    result = e.msg
+
+proc deleteAccount*(address: string): string =
+  try:
+    let response = callPrivateRPC("accounts_deleteAccount", %* [address])
+
+    utils.handleRPCErrors(response)
+    return ""
+  except Exception as e:
+    error "Error removing the account", msg=e.msg
     result = e.msg
 
 proc deriveAccounts*(accountId: string): MultiAccounts =

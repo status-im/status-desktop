@@ -10,6 +10,13 @@ import "./Components"
 
 Item {
     property int selectedAccount: 0
+    property var changeSelectedAccount: function(newIndex) {
+        if (newIndex > walletModel.accounts) {
+            return
+        }
+        selectedAccount = newIndex
+        walletModel.setCurrentAccountByIndex(newIndex)
+    }
     id: walletInfoContainer
     width: 340
 
@@ -145,8 +152,7 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    selectedAccount = index
-                    walletModel.setCurrentAccountByIndex(index)
+                    changeSelectedAccount(index)
                 }
             }
         }

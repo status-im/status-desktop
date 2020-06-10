@@ -1,5 +1,6 @@
 import NimQml
 import Tables
+import sequtils as sequtils
 import random
 import ./account_item
 import ../../../status/wallet
@@ -29,6 +30,17 @@ QtObject:
     result.setup
   
   proc getAccount*(self: AccountList, index: int): WalletAccount = self.accounts[index]
+
+  proc getAccountindexByAddress*(self: AccountList, address: string): int =
+    var i = 0
+    for account in self.accounts:
+      if (account.address == address):
+        return i
+      i = i + 1
+    return -1
+
+  proc deleteAccountAtIndex*(self: AccountList, index: int) =
+    sequtils.delete(self.accounts, index, index)
 
   method rowCount*(self: AccountList, index: QModelIndex = nil): int =
     return self.accounts.len

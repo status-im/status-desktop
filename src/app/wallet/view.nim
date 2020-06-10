@@ -111,6 +111,16 @@ QtObject:
       self.accountListChanged()
       self.accounts.forceUpdate()
 
+  proc deleteAccount*(self: WalletView, address: string): string {.slot.} =
+    result = self.status.wallet.deleteAccount(address)
+    if (result == ""):
+      let index = self.accounts.getAccountindexByAddress(address)
+      if (index == -1):
+        return fmt"Unable to find the account with the address {address}"
+      self.accounts.deleteAccountAtIndex(index)
+      self.accountListChanged()
+      self.accounts.forceUpdate()
+
   proc getAccountList(self: WalletView): QVariant {.slot.} =
     return newQVariant(self.accounts)
 

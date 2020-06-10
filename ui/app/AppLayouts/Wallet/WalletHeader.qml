@@ -7,6 +7,7 @@ import "../../../shared"
 
 Item {
     property var currentAccount: walletModel.currentAccount
+    property var changeSelectedAccount
 
     id: walletHeader
     height: walletAddress.y + walletAddress.height
@@ -79,6 +80,7 @@ Item {
 
     AccountSettingsModal {
         id: accountSettingsModal
+        changeSelectedAccount: walletHeader.changeSelectedAccount
     }
 
     Item {

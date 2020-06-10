@@ -7,6 +7,7 @@ import "../../../shared"
 
 ModalPopup {
     property var currentAccount: walletModel.currentAccount
+    property var changeSelectedAccount
     id: popup
     // TODO add icon when we have that feature
     title: qsTr("Status account settings")
@@ -97,9 +98,24 @@ ModalPopup {
             btnColor: Theme.white
             textColor: Theme.red
 
+            MessageDialog {
+                id: deleteError
+                title: "Deleting account failed"
+                icon: StandardIcon.Critical
+                standardButtons: StandardButton.Ok
+            }
+
             onClicked : {
                 // TODO add a confirmation message
-                console.log('DELETE')
+                const error = walletModel.deleteAccount(currentAccount.address);
+                if (error) {
+                    deleteError.text = error
+                    deleteError.open()
+                    return
+                }
+
+                // Change active account to the first
+                changeSelectedAccount(0)
                 popup.close();
             }
         }
