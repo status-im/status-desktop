@@ -5,18 +5,15 @@ import QtGraphicalEffects 1.12
 import "../imports"
 
 Item {
-    property alias textField: inputValue
+    property alias textField: textArea
     property string placeholderText: "My placeholder"
-    property alias text: inputValue.text
-    property string label: ""
+    property alias text: textArea.text
     //    property string label: "My Label"
+    property string label: ""
     readonly property bool hasLabel: label !== ""
     property color bgColor: Theme.grey
-    //    property url icon: "../app/img/hash.svg"
-    property url icon: ""
-    readonly property bool hasIcon: icon.toString() !== ""
     readonly property var forceActiveFocus: function () {
-        inputValue.forceActiveFocus(Qt.MouseFocusReason)
+        textArea.forceActiveFocus(Qt.MouseFocusReason)
     }
     readonly property int labelMargin: 7
     property int customHeight: 44
@@ -48,29 +45,18 @@ Item {
         anchors.right: parent.right
         anchors.left: parent.left
 
-        TextField {
-            id: inputValue
-            visible: !inputBox.isTextArea && !inputBox.isSelect
-            placeholderText: inputBox.placeholderText
-            text: inputBox.text
-            anchors.left: parent.left
-            anchors.leftMargin: inputBox.hasIcon ? 36 : Theme.padding
-            anchors.verticalCenter: parent.verticalCenter
+        TextArea {
+            id: textArea
+            text: ""
             font.pixelSize: 15
-            background: Rectangle {
-                color: "#00000000"
-            }
-        }
+            wrapMode: Text.WordWrap
+            placeholderText: inputBox.placeholderText
+            anchors.rightMargin: Theme.padding
+            anchors.leftMargin: inputBox.hasIcon ? 36 : Theme.padding
+            anchors.bottomMargin: Theme.smallPadding
+            anchors.topMargin: Theme.smallPadding
+            anchors.fill: parent
 
-        Image {
-            id: iconImg
-            sourceSize.height: 24
-            sourceSize.width: 24
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.verticalCenter: parent.verticalCenter
-            fillMode: Image.PreserveAspectFit
-            source: inputBox.icon
         }
     }
 
@@ -78,7 +64,7 @@ Item {
         id: mouseArea
         anchors.fill: parent
         onClicked: {
-            inputValue.forceActiveFocus(Qt.MouseFocusReason)
+            textArea.forceActiveFocus(Qt.MouseFocusReason)
         }
     }
 }
