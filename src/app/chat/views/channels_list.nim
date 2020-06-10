@@ -56,14 +56,14 @@ QtObject:
       ChannelsRoles.Color.int: "color"
     }.toTable
 
-  proc addChatItemToList*(self: ChannelsList, channel: var Chat): int =
+  proc addChatItemToList*(self: ChannelsList, channel: Chat): int =
     self.beginInsertRows(newQModelIndex(), 0, 0)
     self.chats.insert(channel, 0)
     self.endInsertRows()
     result = 0
 
   proc removeChatItemFromList*(self: ChannelsList, channel: string): int =
-    let idx = self.chats.findById(channel)
+    let idx = self.chats.findIndexById(channel)
     self.beginRemoveRows(newQModelIndex(), idx, idx)
     self.chats.delete(idx)
     self.endRemoveRows()
@@ -72,8 +72,8 @@ QtObject:
 
   proc getChannel*(self: ChannelsList, index: int): Chat = self.chats[index]
 
-  proc upsertChannel(self: ChannelsList, channel: var Chat): int =
-    let idx = self.chats.findById(channel.id)
+  proc upsertChannel(self: ChannelsList, channel: Chat): int =
+    let idx = self.chats.findIndexById(channel.id)
     if idx == -1:
       result = self.addChatItemToList(channel)
     else:
@@ -83,9 +83,8 @@ QtObject:
     for chat in self.chats:
       if chat.name == name:
         return chat.color
-    return "#fa6565" # TODO determine if it is possible to have a chat without color
 
-  proc updateChat*(self: ChannelsList, channel: var Chat) =
+  proc updateChat*(self: ChannelsList, channel: Chat) =
     let idx = self.upsertChannel(channel)
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.chats.len, 0, nil)
@@ -98,7 +97,7 @@ QtObject:
     self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int])
 
   proc clearUnreadMessagesCount*(self: ChannelsList, channel: var Chat) =
-    let idx = self.chats.findById(channel.id)
+    let idx = self.chats.findIndexById(channel.id)
     if idx == -1: return
 
     let topLeft = self.createIndex(0, 0, nil)

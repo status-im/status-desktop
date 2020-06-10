@@ -1,4 +1,4 @@
-import eventemitter, sets, json
+import eventemitter, json
 import sequtils
 import libstatus/chat as status_chat
 import chronicles

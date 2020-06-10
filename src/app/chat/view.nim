@@ -58,7 +58,7 @@ QtObject:
     self.activeChannelChanged()
 
   proc getActiveChannelIdx(self: ChatsView): QVariant {.slot.} =
-    newQVariant(self.chats.chats.findById(self.activeChannel.id))
+    newQVariant(self.chats.chats.findIndexById(self.activeChannel.id))
 
   QtProperty[QVariant] activeChannelIndex:
     read = getActiveChannelIdx
@@ -67,7 +67,7 @@ QtObject:
 
   proc setActiveChannel*(self: ChatsView, channel: string) =
     if(channel == ""): return
-    self.activeChannel.setChatItem(self.chats.getChannel(self.chats.chats.findById(channel)))
+    self.activeChannel.setChatItem(self.chats.getChannel(self.chats.chats.findIndexById(channel)))
     self.activeChannelChanged()
 
   proc getActiveChannel*(self: ChatsView): QVariant {.slot.} =
@@ -103,7 +103,7 @@ QtObject:
     read = getMessageList
     notify = activeChannelChanged
 
-  proc pushChatItem*(self: ChatsView, chatItem: var Chat) =
+  proc pushChatItem*(self: ChatsView, chatItem: Chat) =
     discard self.chats.addChatItemToList(chatItem)
     self.messagePushed()
 
@@ -123,5 +123,5 @@ QtObject:
   proc leaveActiveChat*(self: ChatsView) {.slot.} =
     self.status.chat.leave(self.activeChannel.id)
 
-  proc updateChat*(self: ChatsView, chat: var Chat) =
+  proc updateChat*(self: ChatsView, chat: Chat) =
     self.chats.updateChat(chat)
