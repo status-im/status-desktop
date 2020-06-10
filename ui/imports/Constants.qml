@@ -16,6 +16,11 @@ QtObject {
     readonly property int transactionType: 5
     readonly property int systemMessagePrivateGroupType: 6
 
+    readonly property string watchWalletType: "watch"
+    readonly property string keyWalletType: "key"
+    readonly property string seedWalletType: "seed"
+    readonly property string generatedWalletType: "generated"
+
     readonly property var accountColors: [
         "#9B832F",
         "#D37EF4",

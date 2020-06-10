@@ -36,3 +36,11 @@ QtObject:
   proc balance*(self: AccountItemView): string {.slot.} = result = ?.self.account.balance
   QtProperty[string] balance:
     read = balance
+
+  proc path*(self: AccountItemView): string {.slot.} = result = ?.self.account.path
+  QtProperty[string] path:
+    read = path
+
+  proc walletType*(self: AccountItemView): string {.slot.} = result = ?.self.account.walletType
+  QtProperty[string] walletType:
+    read = walletType
