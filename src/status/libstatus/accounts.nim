@@ -6,10 +6,11 @@ import accounts/constants
 import nimcrypto
 import os
 import uuids
-import types
+import types as types
 import json_serialization
 import chronicles
 import ../../signals/types as signal_types
+import ./wallet as status_wallet
 
 proc queryAccounts*(): string =
   var response = callPrivateRPC("eth_accounts")
@@ -52,7 +53,7 @@ proc saveAccountAndLogin*(
   accountData: string,
   password: string,
   configJSON: string,
-  settingsJSON: string): Account =
+  settingsJSON: string): types.Account =
   let hashedPassword = "0x" & $keccak_256.digest(password)
   let subaccountData = %* [
     {
@@ -134,7 +135,7 @@ proc getAccountSettings*(account: GeneratedAccount, defaultNetworks: JsonNode): 
     "installation-id": $genUUID()
   }
 
-proc setupAccount*(account: GeneratedAccount, password: string): Account =
+proc setupAccount*(account: GeneratedAccount, password: string): types.Account =
   try:
     let storeDerivedResult = storeDerivedAccounts(account, password)
     let accountData = getAccountData(account)
@@ -207,6 +208,23 @@ proc saveAccount*(account: GeneratedAccount, password: string, color: string, ac
     result = DerivedAccount(address: address, publicKey: publicKey)
   except:
     error "Error storing the new account. Bad password?"
+
+proc changeAccount*(account: status_wallet.WalletAccount): string =
+  try:
+    let res=  callPrivateRPC("accounts_saveAccounts", %* [
+      [{
+        "color": account.iconColor,
+        "name": account.name,
+        "address": account.address,
+        "public-key": account.publicKey,
+        "type": account.walletType,
+        "path": "m/44'/60'/0'/0/1"
+      }]
+    ])
+    return ""
+  except Exception as e:
+    error "Error saving the account", msg=e.msg
+    result = e.msg
 
 proc deriveAccounts*(accountId: string): MultiAccounts =
   let deriveJson = %* {

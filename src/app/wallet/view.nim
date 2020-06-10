@@ -84,7 +84,7 @@ QtObject:
 
   proc accountListChanged*(self: WalletView) {.signal.}
 
-  proc addAccountToList*(self: WalletView, account: Account) =
+  proc addAccountToList*(self: WalletView, account: WalletAccount) =
     self.accounts.addAccountToList(account)
     # If it's the first account we ever get, use its assetList as our currentAssetList
     if (self.accounts.rowCount == 1):
@@ -103,6 +103,13 @@ QtObject:
 
   proc addWatchOnlyAccount*(self: WalletView, address: string, accountName: string, color: string) {.slot.} =
     self.status.wallet.addWatchOnlyAccount(address, accountName, color)
+
+  proc changeAccountSettings*(self: WalletView, address: string, accountName: string, color: string): string {.slot.} =
+    result = self.status.wallet.changeAccountSettings(address, accountName, color)
+    if (result == ""):
+      self.currentAccountChanged()
+      self.accountListChanged()
+      self.accounts.forceUpdate()
 
   proc getAccountList(self: WalletView): QVariant {.slot.} =
     return newQVariant(self.accounts)

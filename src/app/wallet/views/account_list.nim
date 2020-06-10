@@ -16,7 +16,7 @@ type
 
 QtObject:
   type AccountList* = ref object of QAbstractListModel
-    accounts*: seq[Account]
+    accounts*: seq[WalletAccount]
 
   proc setup(self: AccountList) = self.QAbstractListModel.setup
 
@@ -29,7 +29,7 @@ QtObject:
     result.accounts = @[]
     result.setup
   
-  proc getAccount*(self: AccountList, index: int): Account = self.accounts[index]
+  proc getAccount*(self: AccountList, index: int): WalletAccount = self.accounts[index]
 
   method rowCount*(self: AccountList, index: QModelIndex = nil): int =
     return self.accounts.len
@@ -53,7 +53,7 @@ QtObject:
     AccountRoles.Color.int:"iconColor",
     AccountRoles.Balance.int:"balance" }.toTable
 
-  proc addAccountToList*(self: AccountList, account: Account) =
+  proc addAccountToList*(self: AccountList, account: WalletAccount) =
     if account.iconColor == "":
       randomize()
       account.iconColor = accountColors[rand(accountColors.len - 1)]

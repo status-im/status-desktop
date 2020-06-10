@@ -5,7 +5,7 @@ import ../../../status/wallet
 
 QtObject:
   type AccountItemView* = ref object of QObject
-    account*: Account
+    account*: WalletAccount
 
   proc setup(self: AccountItemView) =
     self.QObject.setup
@@ -18,7 +18,7 @@ QtObject:
     result = AccountItemView()
     result.setup
 
-  proc setAccountItem*(self: AccountItemView, account: Account) =
+  proc setAccountItem*(self: AccountItemView, account: WalletAccount) =
     self.account = account
 
   proc name*(self: AccountItemView): string {.slot.} = result = ?.self.account.name
