@@ -103,20 +103,31 @@ ModalPopup {
                 title: "Deleting account failed"
                 icon: StandardIcon.Critical
                 standardButtons: StandardButton.Ok
+
+            }
+
+            MessageDialog {
+                id: confirmationDialog
+                title: qsTr("Are you sure?")
+                text: qsTr("A deleted account cannot be retrieved later. Only press yes if you backed up your key/seed or don't care about this account anymore")
+                icon: StandardIcon.Warning
+                standardButtons: StandardButton.Yes |  StandardButton.No
+                onAccepted: {
+                    const error = walletModel.deleteAccount(currentAccount.address);
+                    if (error) {
+                        deleteError.text = error
+                        deleteError.open()
+                        return
+                    }
+
+                    // Change active account to the first
+                    changeSelectedAccount(0)
+                    popup.close();
+                }
             }
 
             onClicked : {
-                // TODO add a confirmation message
-                const error = walletModel.deleteAccount(currentAccount.address);
-                if (error) {
-                    deleteError.text = error
-                    deleteError.open()
-                    return
-                }
-
-                // Change active account to the first
-                changeSelectedAccount(0)
-                popup.close();
+                confirmationDialog.open()
             }
         }
         StyledButton {
