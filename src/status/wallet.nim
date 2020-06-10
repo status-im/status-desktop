@@ -133,6 +133,9 @@ proc changeAccountSettings*(self: WalletModel, address: string, accountName: str
   selectedAccount.iconColor = color
   result = status_accounts.changeAccount(selectedAccount)
 
+proc deleteAccount*(self: WalletModel, address: string): string =
+  result = status_accounts.deleteAccount(address)
+
 proc toggleAsset*(self: WalletModel, symbol: string, enable: bool, address: string, name: string, decimals: int, color: string) =
   self.tokens = addOrRemoveToken(enable, address, name, symbol, decimals, color)
   for account in self.accounts:
