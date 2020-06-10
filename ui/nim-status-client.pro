@@ -77,8 +77,10 @@ DISTFILES += \
     app/AppLayouts/Profile/LeftTab/Profile.qml \
     app/AppLayouts/Profile/LeftTab/qmldir \
     app/AppLayouts/Profile/ProfileLayout.qml \
+    app/AppLayouts/Wallet/AccountSettingsModal.qml \
     app/AppLayouts/Wallet/AssetsTab.qml \
     app/AppLayouts/Wallet/CollectiblesTab.qml \
+    app/AppLayouts/Wallet/Components/AccountSettingsModal.qml \
     app/AppLayouts/Wallet/Components/AddAccount.qml \
     app/AppLayouts/Wallet/Components/AddAccountWithPrivateKey.qml \
     app/AppLayouts/Wallet/Components/AddAccountWithSeed.qml \
@@ -171,4 +173,5 @@ DISTFILES += \
     shared/StyledButton.qml \
     shared/RoundedIcon.qml \
     shared/StyledTextArea.qml \
+    shared/TextWithLabel.qml \
     shared/qmldir

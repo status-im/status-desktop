@@ -77,6 +77,10 @@ Item {
         id: tokenSettingsModal
     }
 
+    AccountSettingsModal {
+        id: accountSettingsModal
+    }
+
     Item {
         property int btnMargin: 8
         property int btnOuterMargin: 32
@@ -176,7 +180,7 @@ Item {
                         text: qsTr("Account Settings")
                         icon.source: "../../img/account_settings.svg"
                         onTriggered: {
-                            console.log("TODO: AccountSettings")
+                            accountSettingsModal.open()
                         }
                     }
                     QQC2.Action {
