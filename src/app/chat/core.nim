@@ -68,6 +68,7 @@ proc init*(self: ChatController) =
 
 proc handleMessage(self: ChatController, data: MessageSignal) =
   for chat in data.chats:
+    self.status.chat.update(chat) # TODO: possible code smell. Try to unify this, by having the view react to the model
     self.view.updateChat(chat)
   self.view.pushMessages(data.messages)
 

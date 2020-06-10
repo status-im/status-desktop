@@ -111,3 +111,6 @@ proc markAllRead*(chatId: string): string =
 
 proc confirmJoiningGroup*(chatId: string): string =
   callPrivateRPC("confirmJoiningGroup".prefix, %* [chatId])
+
+proc leaveGroupChat*(chatId: string): string =
+  callPrivateRPC("leaveGroupChat".prefix, %* [nil, chatId, true])

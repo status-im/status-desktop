@@ -74,6 +74,8 @@ QtObject:
 
   proc upsertChannel(self: ChannelsList, channel: Chat): int =
     let idx = self.chats.findIndexById(channel.id)
+    if not channel.active: return -1
+
     if idx == -1:
       result = self.addChatItemToList(channel)
     else:
@@ -86,6 +88,8 @@ QtObject:
 
   proc updateChat*(self: ChannelsList, channel: Chat) =
     let idx = self.upsertChannel(channel)
+    if idx == -1: return
+    
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.chats.len, 0, nil)
     if idx != 0: # Move last updated chat to the top of the list
