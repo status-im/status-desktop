@@ -11,10 +11,9 @@ export chat_message
 export Chat
 
 type 
-  MsgArgs* = ref object of Args
-    message*: string
-    chatId*: string
-    payload*: JsonNode
+  PushMessageArgs* = ref object of Args
+    chats*: seq[Chat]
+    messages*: seq[Message]
 
   ChatIdArg* = ref object of Args
     chatId*: string
@@ -117,10 +116,21 @@ proc leave*(self: ChatModel, chatId: string) =
 proc setActiveChannel*(self: ChatModel, chatId: string) =
   self.events.emit("activeChannelChanged", ChatIdArg(chatId: chatId))
 
+proc formatChatUpdate(response: JsonNode): (seq[Chat], seq[Message]) =
+  var chats: seq[Chat] = @[]
+  var messages: seq[Message] = @[]
+  if response["result"]{"chats"} != nil:
+    for jsonMsg in response["result"]["messages"]:
+      messages.add(jsonMsg.toMessage)
+  if response["result"]{"chats"} != nil:
+    for jsonChat in response["result"]["chats"]:
+      chats.add(jsonChat.toChat) 
+  result = (chats, messages)
+
 proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
   var sentMessage = status_chat.sendChatMessage(chatId, msg)
-  var parsedMessage = parseJson(sentMessage)["result"]["chats"][0]["lastMessage"]
-  self.events.emit("messageSent", MsgArgs(message: msg, chatId: chatId, payload: parsedMessage))
+  var (chats, messages) = formatChatUpdate(parseJson(sentMessage))
+  self.events.emit("pushMessage", PushMessageArgs(messages: messages, chats: chats))
   sentMessage
 
 proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true) =
@@ -138,3 +148,8 @@ proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true) =
 proc markAllChannelMessagesRead*(self: ChatModel, chatId: string): JsonNode =
   var response = status_chat.markAllRead(chatId)
   result = parseJson(response)
+
+proc confirmJoiningGroup*(self: ChatModel, chatId: string) =
+  var response = parseJson(status_chat.confirmJoiningGroup(chatId))
+  var (chats, messages) = formatChatUpdate(response)
+  self.events.emit("pushMessage", PushMessageArgs(messages: messages, chats: chats))

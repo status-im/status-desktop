@@ -60,7 +60,7 @@ ScrollView {
 
 
         model: messageListDelegate
-        section.property: "fromAuthor"
+        section.property: "sectionIdentifier"
         section.criteria: ViewSection.FullString
     }
 

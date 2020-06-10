@@ -85,7 +85,7 @@ proc toMessage*(jsonMsg: JsonNode): Message =
       alias: jsonMsg{"alias"}.getStr,
       chatId: jsonMsg{"localChatId"}.getStr,
       clock: jsonMsg{"clock"}.getInt,
-      contentType: jsonMsg{"contentType"}.getInt,
+      contentType: ContentType(jsonMsg{"contentType"}.getInt),
       ensName: jsonMsg{"ensName"}.getStr,
       fromAuthor: jsonMsg{"from"}.getStr,
       id: jsonMsg{"identicon"}.getStr,
@@ -104,7 +104,7 @@ proc toMessage*(jsonMsg: JsonNode): Message =
       stickerHash: ""
     )
 
-  if result.contentType == 2:
+  if result.contentType == ContentType.Sticker:
     result.stickerHash = jsonMsg["sticker"]["hash"].getStr
 
 

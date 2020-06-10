@@ -108,3 +108,6 @@ proc sendChatMessage*(chatId: string, msg: string): string =
 
 proc markAllRead*(chatId: string): string =
   callPrivateRPC("markAllRead".prefix, %* [chatId])
+
+proc confirmJoiningGroup*(chatId: string): string =
+  callPrivateRPC("confirmJoiningGroup".prefix, %* [chatId])

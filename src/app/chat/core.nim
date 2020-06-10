@@ -33,12 +33,11 @@ proc handleChatEvents(self: ChatController) =
   self.status.events.on("messagesLoaded") do(e:Args):
     self.view.pushMessages(MsgsLoadedArgs(e).messages)
 
-  self.status.events.on("messageSent") do(e: Args):
-    var sentMessage = MsgArgs(e)
-    var chatMessage = sentMessage.payload.toChatMessage()
-    chatMessage.message = sentMessage.message
-    chatMessage.isCurrentUser = true
-    self.view.pushMessage(chatMessage)
+  self.status.events.on("pushMessage") do(e: Args):
+    var evArgs = PushMessageArgs(e)
+    for chat in evArgs.chats:
+      self.view.updateChat(chat)
+    self.view.pushMessages(evArgs.messages)
 
   self.status.events.on("channelJoined") do(e: Args):
     var channel = ChannelArgs(e)

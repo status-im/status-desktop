@@ -1,5 +1,6 @@
 import NimQml, Tables
 import ../../../status/chat
+import ../../../signals/types
 
 type
   ChatMessageRoles {.pure.} = enum
@@ -13,6 +14,8 @@ type
     FromAuthor = UserRole + 8
     Clock = UserRole + 9
     ChatId = UserRole + 10
+    SectionIdentifier = UserRole + 11
+
 QtObject:
   type
     ChatMessageList* = ref object of QAbstractListModel
@@ -29,7 +32,7 @@ QtObject:
 
   proc chatIdentifier(self: ChatMessageList, chatId:string): ChatMessage =
     result = newChatMessage();
-    result.contentType = -1;
+    result.contentType = ContentType.ChatIdentifier;
     result.chatId = chatId
 
 
@@ -40,6 +43,13 @@ QtObject:
 
   method rowCount(self: ChatMessageList, index: QModelIndex = nil): int =
     return self.messages.len
+
+  proc sectionIdentifier(message: ChatMessage): string =
+    result = message.fromAuthor
+    # Force section change, because group status messages are sent with the
+    # same fromAuthor, and ends up causing the header to not be shown
+    if message.contentType == ContentType.Group:
+      result = "GroupChatMessage"
 
   method data(self: ChatMessageList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
@@ -55,10 +65,12 @@ QtObject:
       of ChatMessageRoles.Clock: result = newQVariant($message.clock)
       of ChatMessageRoles.Identicon: result = newQVariant(message.identicon)
       of ChatMessageRoles.IsCurrentUser: result = newQVariant(message.isCurrentUser)
-      of ChatMessageRoles.ContentType: result = newQVariant(message.contentType)
+      of ChatMessageRoles.ContentType: result = newQVariant(message.contentType.int)
       of ChatMessageRoles.Sticker: result = newQVariant(message.sticker)
       of ChatMessageRoles.FromAuthor: result = newQVariant(message.fromAuthor)
       of ChatMessageRoles.ChatId: result = newQVariant(message.chatId)
+      of ChatMessageRoles.SectionIdentifier: result = newQVariant(sectionIdentifier(message))
+
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -71,7 +83,8 @@ QtObject:
       ChatMessageRoles.ContentType.int:"contentType",
       ChatMessageRoles.Sticker.int:"sticker",
       ChatMessageRoles.FromAuthor.int:"fromAuthor",
-      ChatMessageRoles.ChatId.int:"chatId"
+      ChatMessageRoles.ChatId.int:"chatId",
+      ChatMessageRoles.SectionIdentifier.int: "sectionIdentifier"
     }.toTable
 
   proc add*(self: ChatMessageList, message: ChatMessage) =
