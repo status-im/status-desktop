@@ -1,6 +1,7 @@
 import json
 import types
 import ../status/libstatus/accounts as status_accounts
+import ../status/chat/[chat, message]
 import random
 
 proc toMessage*(jsonMsg: JsonNode): Message

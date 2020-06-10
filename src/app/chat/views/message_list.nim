@@ -1,6 +1,6 @@
 import NimQml, Tables
 import ../../../status/chat
-import ../../../signals/types
+import ../../../status/chat/[message,stickers]
 
 type
   ChatMessageRoles {.pure.} = enum
@@ -19,19 +19,17 @@ type
 QtObject:
   type
     ChatMessageList* = ref object of QAbstractListModel
-      messages*: seq[ChatMessage]
+      messages*: seq[Message]
 
   proc delete(self: ChatMessageList) =
     self.QAbstractListModel.delete
-    for message in self.messages:
-      message.delete
     self.messages = @[]
 
   proc setup(self: ChatMessageList) =
     self.QAbstractListModel.setup
 
-  proc chatIdentifier(self: ChatMessageList, chatId:string): ChatMessage =
-    result = newChatMessage();
+  proc chatIdentifier(self: ChatMessageList, chatId:string): Message =
+    result = Message()
     result.contentType = ContentType.ChatIdentifier;
     result.chatId = chatId
 
@@ -44,7 +42,7 @@ QtObject:
   method rowCount(self: ChatMessageList, index: QModelIndex = nil): int =
     return self.messages.len
 
-  proc sectionIdentifier(message: ChatMessage): string =
+  proc sectionIdentifier(message: Message): string =
     result = message.fromAuthor
     # Force section change, because group status messages are sent with the
     # same fromAuthor, and ends up causing the header to not be shown
@@ -59,14 +57,14 @@ QtObject:
     let message = self.messages[index.row]
     let chatMessageRole = role.ChatMessageRoles
     case chatMessageRole:
-      of ChatMessageRoles.UserName: result = newQVariant(message.userName)
-      of ChatMessageRoles.Message: result = newQVariant(message.message)
+      of ChatMessageRoles.UserName: result = newQVariant(message.alias)
+      of ChatMessageRoles.Message: result = newQVariant(message.text)
       of ChatMessageRoles.Timestamp: result = newQVariant(message.timestamp)
       of ChatMessageRoles.Clock: result = newQVariant($message.clock)
       of ChatMessageRoles.Identicon: result = newQVariant(message.identicon)
       of ChatMessageRoles.IsCurrentUser: result = newQVariant(message.isCurrentUser)
       of ChatMessageRoles.ContentType: result = newQVariant(message.contentType.int)
-      of ChatMessageRoles.Sticker: result = newQVariant(message.sticker)
+      of ChatMessageRoles.Sticker: result = newQVariant(message.stickerHash.decodeContentHash())
       of ChatMessageRoles.FromAuthor: result = newQVariant(message.fromAuthor)
       of ChatMessageRoles.ChatId: result = newQVariant(message.chatId)
       of ChatMessageRoles.SectionIdentifier: result = newQVariant(sectionIdentifier(message))
@@ -87,12 +85,12 @@ QtObject:
       ChatMessageRoles.SectionIdentifier.int: "sectionIdentifier"
     }.toTable
 
-  proc add*(self: ChatMessageList, message: ChatMessage) =
+  proc add*(self: ChatMessageList, message: Message) =
     self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len)
     self.messages.add(message)
     self.endInsertRows()
 
-  proc add*(self: ChatMessageList, messages: seq[ChatMessage]) =
+  proc add*(self: ChatMessageList, messages: seq[Message]) =
     self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len)
     for message in messages:
       self.messages.add(message)

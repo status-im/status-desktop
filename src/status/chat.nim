@@ -2,13 +2,9 @@ import eventemitter, json
 import sequtils
 import libstatus/chat as status_chat
 import chronicles
-import ../signals/types
+import chat/[chat, message]
 import ../signals/messages
-import chat/chat_message
 import tables
-
-export chat_message
-export Chat
 
 type 
   PushMessageArgs* = ref object of Args

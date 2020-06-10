@@ -1,7 +1,6 @@
 import NimQml
 import std/wrapnils
-import ../../../status/chat
-import ../../../signals/types
+import ../../../status/chat/chat
 
 QtObject:
   type ChatItemView* = ref object of QObject
