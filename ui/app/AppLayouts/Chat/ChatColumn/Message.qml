@@ -20,6 +20,9 @@ Item {
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
 
+    property bool isMessage: contentType == Constants.messageType || contentType == Constants.stickerType || contentType == Constants.emojiType 
+    property bool isStatusMessage: contentType == Constants.systemMessagePrivateGroupType
+
     width: parent.width
     height: {
         switch(contentType){
@@ -97,6 +100,21 @@ Item {
         }
     }
 
+
+    // Private group Messages
+    Text {
+        wrapMode: Text.Wrap
+        text:  message
+        visible: isStatusMessage
+        font.pixelSize: 16
+        color: Theme.darkGrey
+        width:  parent.width - 120
+        horizontalAlignment: Text.AlignHCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
+
+
+    // Messages
     Image {
         id: chatImage
         width: 36
@@ -107,7 +125,7 @@ Item {
         anchors.top: parent.top
         fillMode: Image.PreserveAspectFit
         source: identicon
-        visible: contentType > -1 && authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        visible: isMessage && authorCurrentMsg != authorPrevMsg && !isCurrentUser
 
         MouseArea {
             cursorShape: Qt.PointingHandCursor
@@ -130,7 +148,7 @@ Item {
         readOnly: true
         wrapMode: Text.WordWrap
         selectByMouse: true
-        visible: contentType > -1 && authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        visible: isMessage && authorCurrentMsg != authorPrevMsg && !isCurrentUser
     }
 
     Rectangle {
@@ -149,7 +167,7 @@ Item {
         anchors.rightMargin: !isCurrentUser ? 0 : Theme.padding
         anchors.top: authorCurrentMsg != authorPrevMsg && !isCurrentUser ? chatImage.top : parent.top
         anchors.topMargin: 0
-        visible: contentType > -1
+        visible: isMessage
 
         // Thi`s rectangle's only job is to mask the corner to make it less rounded... yep
         Rectangle {

@@ -125,3 +125,6 @@ QtObject:
 
   proc updateChat*(self: ChatsView, chat: Chat) =
     self.chats.updateChat(chat)
+    if(self.activeChannel.id == chat.id):
+      self.activeChannel.setChatItem(chat)
+      self.activeChannelChanged()
