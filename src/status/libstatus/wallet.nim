@@ -7,9 +7,14 @@ import stint
 import strutils, sequtils
 import chronicles
 
-type WalletAccount* = object
-  address*, path*, publicKey*, name*, color*, walletType*: string
-  wallet*, chat*: bool
+type Asset* = ref object
+    name*, symbol*, value*, fiatValue*, image*: string
+
+type WalletAccount* = ref object
+    name*, address*, iconColor*, balance*, path*, walletType*, publicKey*: string
+    realFiatBalance*: float
+    assetList*: seq[Asset]
+    wallet*, chat*: bool
 
 proc getWalletAccounts*(): seq[WalletAccount] =
   try:
@@ -26,7 +31,7 @@ proc getWalletAccounts*(): seq[WalletAccount] =
           # Watch accoutns don't have a public key
           publicKey: if (account.hasKey("public-key")): $account["public-key"].getStr else: "",
           name: $account["name"].getStr,
-          color: $account["color"].getStr,
+          iconColor: $account["color"].getStr,
           wallet: $account["wallet"].getStr == "true",
           chat: $account["chat"].getStr == "false",
         ))

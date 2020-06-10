@@ -116,7 +116,8 @@ ModalPopup {
                 // TODO add message to show validation errors
                 if (accountNameInput.text === "") return;
                 console.log('SAVE')
-    //            walletModel.generateNewAccount(passwordInput.text, accountNameInput.text, selectedColor);
+                const error = walletModel.changeAccountSettings(currentAccount.address, accountNameInput.text, selectedColor);
+                console.log('Error?', error)
                 // TODO manage errors adding account
                 popup.close();
             }

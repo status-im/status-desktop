@@ -10,9 +10,18 @@ import wallet/balance_manager
 import wallet/account
 export account
 
+type WalletAccount* = status_wallet.WalletAccount
+type Asset* = status_wallet.Asset
+
+type CurrencyArgs* = ref object of Args
+    currency*: string
+
+type AccountArgs* = ref object of Args
+    account*: WalletAccount
+
 type WalletModel* = ref object
     events*: EventEmitter
-    accounts*: seq[Account]
+    accounts*: seq[WalletAccount]
     defaultCurrency*: string
     tokens*: JsonNode
     totalBalance*: float
@@ -112,6 +121,19 @@ proc addWatchOnlyAccount*(self: WalletModel, address: string, accountName: strin
 
 proc hasAsset*(self: WalletModel, account: string, symbol: string): bool =
   self.tokens.anyIt(it["symbol"].getStr == symbol)
+
+proc changeAccountSettings*(self: WalletModel, address: string, accountName: string, color: string): string =
+  var selectedAccount: WalletAccount
+  for account in self.accounts:
+    if (account.address == address):
+      selectedAccount = account
+      break
+  if (isNil(selectedAccount)):
+    result = "No account found with that address"
+    error "No account found with that address", address
+  selectedAccount.name = accountName
+  selectedAccount.iconColor = color
+  result = status_accounts.changeAccount(selectedAccount)
 
 proc toggleAsset*(self: WalletModel, symbol: string, enable: bool, address: string, name: string, decimals: int, color: string) =
   self.tokens = addOrRemoveToken(enable, address, name, symbol, decimals, color)
