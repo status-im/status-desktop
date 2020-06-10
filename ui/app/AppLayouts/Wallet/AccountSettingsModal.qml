@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
+import QtQuick.Dialogs 1.3
 import "../../../imports"
 import "../../../shared"
 
@@ -112,13 +113,26 @@ ModalPopup {
 
             disabled: accountNameInput.text === ""
 
+            MessageDialog {
+                id: changeError
+                title: "Changing settings failed"
+                icon: StandardIcon.Critical
+                standardButtons: StandardButton.Ok
+            }
+
             onClicked : {
-                // TODO add message to show validation errors
-                if (accountNameInput.text === "") return;
-                console.log('SAVE')
+                if (accountNameInput.text === "") {
+                    changeError.text = qsTr("Account name cannot be empty")
+                    changeError.open()
+                }
+
                 const error = walletModel.changeAccountSettings(currentAccount.address, accountNameInput.text, selectedColor);
-                console.log('Error?', error)
-                // TODO manage errors adding account
+
+                if (error) {
+                    changeError.text = error
+                    changeError.open()
+                    return
+                }
                 popup.close();
             }
         }
