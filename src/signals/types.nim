@@ -93,9 +93,7 @@ type WhisperFilterSignal* = ref object of Signal
 type DiscoverySummarySignal* = ref object of Signal
   enodes*: seq[string]
 
-
-
-proc findById*(self: seq[Chat], id: string): int =
+proc findIndexById*(self: seq[Chat], id: string): int =
   result = -1
   var idx = -1
   for item in self:

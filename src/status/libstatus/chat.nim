@@ -32,7 +32,7 @@ proc removeFilters*(chatId: string, filterId: string) =
     }]
   ])
 
-proc saveChat*(chatId: string, oneToOne: bool = false, active: bool = true, color: string = "#51d0f0") =
+proc saveChat*(chatId: string, oneToOne: bool = false, active: bool = true, color: string) =
   discard callPrivateRPC("saveChat".prefix, %* [
     {
       "lastClockValue": 0, # TODO:
