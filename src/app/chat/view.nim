@@ -3,9 +3,9 @@ import Tables
 import json
 import chronicles
 
-import ../../signals/types
-import ../../status/chat
 import ../../status/status
+import ../../status/chat as status_chat
+import ../../status/chat/[chat, message]
 
 import views/channels_list
 import views/message_list
@@ -84,7 +84,7 @@ QtObject:
   
   proc messagePushed*(self: ChatsView) {.signal.}
 
-  proc pushMessage*(self:ChatsView, message: ChatMessage) =
+  proc pushMessage*(self:ChatsView, message: Message) =
     self.upsertChannel(message.chatId)
     self.messageList[message.chatId].add(message)
     self.messagePushed()
@@ -92,7 +92,7 @@ QtObject:
   proc pushMessages*(self:ChatsView, messages: seq[Message]) =
     for msg in messages:
       self.upsertChannel(msg.chatId)
-      self.messageList[msg.chatId].add(msg.toChatMessage())
+      self.messageList[msg.chatId].add(msg)
       self.messagePushed()
 
   proc getMessageList(self: ChatsView): QVariant {.slot.} =

@@ -4,7 +4,7 @@ import utils
 import times
 import strutils
 import chronicles
-import ../../signals/types
+import ../chat/[chat, message]
 import ../../signals/messages
 
 proc buildFilter*(chatId: string, filterId: string = "", symKeyId: string = "", oneToOne: bool = false, identity: string = "", topic: string = "", discovery: bool = false, negotiated: bool = false, listen: bool = true):JsonNode =

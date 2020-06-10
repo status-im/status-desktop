@@ -1,6 +1,5 @@
 import NimQml, Tables
-import ../../../status/chat
-import ../../../signals/types
+import ../../../status/chat/[chat, message]
 
 type
   ChannelsRoles {.pure.} = enum
