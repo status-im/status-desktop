@@ -67,13 +67,10 @@ proc toChat*(jsonChat: JsonNode): Chat =
 
   if jsonChat["lastMessage"].kind != JNull: 
     result.lastMessage = jsonChat{"lastMessage"}.toMessage
-    if result.chatType == ChatType.OneToOne:
-      result.name = result.lastMessage.alias
-      result.identicon = result.lastMessage.identicon
-  else:
-    if result.chatType == ChatType.OneToOne:
-      result.identicon = generateIdenticon(result.id)
-      result.name = generateAlias(result.id)
+  
+  if result.chatType == ChatType.OneToOne:
+    result.identicon = generateIdenticon(result.id)
+    result.name = generateAlias(result.id)
 
   if jsonChat["members"].kind != JNull:
     result.members = @[]

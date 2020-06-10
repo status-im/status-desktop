@@ -78,19 +78,38 @@ Rectangle {
             anchors.leftMargin: -15
             anchors.fill: parent
             onClicked: {
-                contextMenu.arrowX = contextMenu.width - 40
-                contextMenu.popup(moreActionsBtn.x, moreActionsBtn.height + 10)
+                var menu = chatContextMenu;
+                if(chatsModel.activeChannel.chatType == Constants.chatTypePrivateGroupChat){
+                    menu = groupContextMenu
+                }
+
+                menu.arrowX = menu.width - 40
+                menu.popup(moreActionsBtn.x, moreActionsBtn.height + 10)
+                
             }
             cursorShape: Qt.PointingHandCursor
             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
             PopupMenu {
-                id: contextMenu
+                id: chatContextMenu
                 QQC2.Action { 
+                    icon.source: "../../../img/leave_chat.svg"
                     text: qsTr("Leave Chat")
                     onTriggered: chatsModel.leaveActiveChat()
                 }
             }
+
+            PopupMenu {
+                id: groupContextMenu
+                QQC2.Action { 
+                    icon.source: "../../../img/leave_chat.svg"
+                    text: qsTr("Leave Group")
+                    onTriggered: chatsModel.leaveActiveChat()
+                }
+            }
+
+            
+
         }
     }
 }

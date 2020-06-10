@@ -46,6 +46,10 @@ proc newChatModel*(events: EventEmitter): ChatModel =
 proc delete*(self: ChatModel) =
   discard
 
+proc update*(self: ChatModel, chat: Chat) =
+  if chat.active:
+    self.channels[chat.id] = chat
+
 proc hasChannel*(self: ChatModel, chatId: string): bool =
   self.channels.hasKey(chatId)
 
@@ -103,7 +107,12 @@ proc init*(self: ChatModel) =
     self.events.emit("mailserverTopics", TopicArgs(topics: topics));
   
 proc leave*(self: ChatModel, chatId: string) =
-  status_chat.removeFilters(chatId, self.filters[chatId])
+  if self.channels[chatId].chatType == ChatType.PrivateGroupChat:
+    discard status_chat.leaveGroupChat(chatId)
+
+  if self.filters.hasKey(chatId):
+    status_chat.removeFilters(chatId, self.filters[chatId])
+    
   status_chat.deactivateChat(chatId)
   # TODO: REMOVE MAILSERVER TOPIC
   # TODO: REMOVE HISTORY

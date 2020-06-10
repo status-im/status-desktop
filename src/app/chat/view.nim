@@ -127,6 +127,7 @@ QtObject:
     self.status.chat.leave(self.activeChannel.id)
 
   proc updateChat*(self: ChatsView, chat: Chat) =
+    self.upsertChannel(chat.id)
     self.chats.updateChat(chat)
     if(self.activeChannel.id == chat.id):
       self.activeChannel.setChatItem(chat)

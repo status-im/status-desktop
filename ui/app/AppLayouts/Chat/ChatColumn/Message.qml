@@ -107,6 +107,7 @@ Item {
             id: joinOrDecline
 
             Text {
+                id: joinChat
                 text: qsTr("Join chat")
                 font.pixelSize: 20
                 color: Theme.blue
@@ -117,6 +118,22 @@ Item {
                     anchors.fill: parent
                     onClicked: {
                         chatsModel.joinGroup()
+                    }
+                }
+            } 
+
+            Text {
+                text: qsTr("Decline invitation")
+                font.pixelSize: 20
+                color: Theme.blue
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: joinChat.bottom
+                anchors.topMargin: Theme.padding
+                MouseArea {
+                    cursorShape: Qt.PointingHandCursor
+                    anchors.fill: parent
+                    onClicked: {
+                        chatsModel.leaveActiveChat()
                     }
                 }
             }            
