@@ -5,13 +5,14 @@ import "../../../imports"
 import "../../../shared"
 
 ModalPopup {
+    property var currentAccount: walletModel.currentAccount
     id: popup
     // TODO add icon when we have that feature
     title: qsTr("Status account settings")
     height: 630
 
     property int marginBetweenInputs: 35
-    property string selectedColor: Constants.accountColors[0] // TODO use old color
+    property string selectedColor: currentAccount.iconColor
 
     onOpened: {
         accountNameInput.forceActiveFocus(Qt.MouseFocusReason)
@@ -21,7 +22,7 @@ ModalPopup {
         id: accountNameInput
         placeholderText: qsTr("Enter an account name...")
         label: qsTr("Account name")
-        text: "Old name"
+        text: currentAccount.name
     }
 
     Select {
@@ -44,32 +45,42 @@ ModalPopup {
 
     TextWithLabel {
         id: typeText
-        label: "Type"
-        text: "On Status"
+        label: qsTr("Type")
+        text: {
+            var result = ""
+            switch (currentAccount.walletType) {
+                case Constants.watchWalletType: result = qsTr("Watch-only"); break;
+                case Constants.keyWalletType:
+                case Constants.seedWalletType: result = qsTr("Off Status tree"); break;
+                default: result = qsTr("On Status tree")
+            }
+            return result
+        }
         anchors.top: accountColorInput.bottom
         anchors.topMargin: marginBetweenInputs
     }
 
     TextWithLabel {
         id: addressText
-        label: "Wallet address"
-        text: "0x0000"
+        label: qsTr("Wallet address")
+        text: currentAccount.address
         anchors.top: typeText.bottom
         anchors.topMargin: marginBetweenInputs
     }
 
     TextWithLabel {
         id: pathText
-        label: "Derivation path"
-        text: "m/stuff"
+        label: qsTr("Derivation path")
+        text: currentAccount.path
         anchors.top: addressText.bottom
         anchors.topMargin: marginBetweenInputs
     }
 
     TextWithLabel {
         id: storageText
-        label: "Storage"
-        text: "This device"
+        visible: currentAccount.walletType !== Constants.watchWalletType
+        label: qsTr("Storage")
+        text: qsTr("This device")
         anchors.top: pathText.bottom
         anchors.topMargin: marginBetweenInputs
     }
@@ -81,7 +92,7 @@ ModalPopup {
             anchors.topMargin: Theme.padding
             anchors.right: saveBtn.left
             anchors.rightMargin: Theme.padding
-            label: "Delete account"
+            label: qsTr("Delete account")
             btnColor: Theme.white
             textColor: Theme.red
 
@@ -97,7 +108,7 @@ ModalPopup {
             anchors.topMargin: Theme.padding
             anchors.right: parent.right
             anchors.rightMargin: Theme.padding
-            label: "Save changes"
+            label: qsTr("Save changes")
 
             disabled: accountNameInput.text === ""
 

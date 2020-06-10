@@ -8,7 +8,7 @@ import strutils, sequtils
 import chronicles
 
 type WalletAccount* = object
-  address*, path*, publicKey*, name*, color*: string
+  address*, path*, publicKey*, name*, color*, walletType*: string
   wallet*, chat*: bool
 
 proc getWalletAccounts*(): seq[WalletAccount] =
@@ -22,6 +22,7 @@ proc getWalletAccounts*(): seq[WalletAccount] =
         walletAccounts.add(WalletAccount(
           address: $account["address"].getStr,
           path: $account["path"].getStr,
+          walletType: if (account.hasKey("type")): $account["type"].getStr else: "",
           # Watch accoutns don't have a public key
           publicKey: if (account.hasKey("public-key")): $account["public-key"].getStr else: "",
           name: $account["name"].getStr,
