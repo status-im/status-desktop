@@ -10,7 +10,7 @@ type ChatMessage* = ref object
   clock*: int
   identicon*: string
   isCurrentUser*: bool
-  contentType*: int
+  contentType*: ContentType
   sticker*: string
   chatId*: string
 
@@ -26,7 +26,7 @@ proc newChatMessage*(): ChatMessage =
   result.timestamp = "0"
   result.identicon = ""
   result.isCurrentUser = false
-  result.contentType = 1
+  result.contentType = ContentType.Unknown
   result.sticker = ""
   result.chatId = ""
 
@@ -40,7 +40,7 @@ proc toChatMessage*(payload: JsonNode): ChatMessage =
     clock: payload["clock"].getInt,
     identicon: payload["identicon"].str,
     isCurrentUser: payload{"outgoingStatus"}.getStr == "sending",
-    contentType: payload["contentType"].getInt,
+    contentType: ContentType(payload["contentType"].getInt),
     sticker: "" # TODO: implement when implementing stickers from user
   )
 

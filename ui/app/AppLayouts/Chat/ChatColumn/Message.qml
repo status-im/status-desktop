@@ -83,6 +83,7 @@ Item {
         }
 
         Text {
+            id: channelName
             wrapMode: Text.Wrap
             text: {
                     if (chatsModel.activeChannel.chatType != Constants.chatTypePublic) {
@@ -98,6 +99,29 @@ Item {
             anchors.topMargin: 16
             anchors.horizontalCenter: parent.horizontalCenter
         }
+
+        Item {
+            visible: chatsModel.activeChannel.chatType == Constants.chatTypePrivateGroupChat // TODO: hide if the user is a member of the group (use chatsModel.activeChannel.isMember?)
+            anchors.top: channelName.bottom
+            anchors.topMargin: 16
+            id: joinOrDecline
+
+            Text {
+                text: qsTr("Join chat")
+                font.pixelSize: 20
+                color: Theme.blue
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                MouseArea {
+                    cursorShape: Qt.PointingHandCursor
+                    anchors.fill: parent
+                    onClicked: {
+                        chatsModel.joinGroup()
+                    }
+                }
+            }            
+        }
+
     }
 
 
@@ -149,6 +173,13 @@ Item {
         wrapMode: Text.WordWrap
         selectByMouse: true
         visible: isMessage && authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        MouseArea {
+            cursorShape: Qt.PointingHandCursor
+            anchors.fill: parent
+            onClicked: {
+              profilePopup.open()
+            }
+        }
     }
 
     Rectangle {

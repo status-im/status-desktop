@@ -17,12 +17,22 @@ type NodeSignal* = ref object of Signal
 type WalletSignal* = ref object of Signal
   content*: string
 
+type ContentType* {.pure.} = enum
+  ChatIdentifier = -1,
+  Unknown = 0,
+  Message = 1,
+  Sticker = 2,
+  Status = 3,
+  Emoji = 4,
+  Transaction = 5,
+  Group = 6
+
 type Message* = object
   alias*: string
   chatId*: string
   clock*: int
   # commandParameters*:   # ???
-  contentType*: int      # ???
+  contentType*: ContentType      # ???
   ensName*: string        # ???
   fromAuthor*: string
   id*: string
@@ -47,7 +57,7 @@ type Message* = object
 method onSignal*(self: SignalSubscriber, data: Signal) {.base.} =
   error "onSignal must be overriden in controller. Signal is unhandled"
 
-type ChatType* = enum
+type ChatType* {.pure.}= enum
   Unknown = 0,
   OneToOne = 1, 
   Public = 2,
@@ -101,4 +111,9 @@ proc findIndexById*(self: seq[Chat], id: string): int =
     if(item.id == id):
       result = idx
       break
+
+proc isMember*(self: Chat, pubKey: string): bool =
+  for member in self.members:
+    if member.id == pubKey and member.joined: return true
+  return false
 
