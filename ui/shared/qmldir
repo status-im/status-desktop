@@ -4,6 +4,7 @@ ModalPopup 1.0 ModalPopup.qml
 PopupMenu 1.0 PopupMenu.qml
 Separator 1.0 Separator.qml
 StatusTabButton 1.0 StatusTabButton.qml
+TextWithLabel 1.0 TextWithLabel.qml
 Input 1.0 Input.qml
 Select 1.0 Select.qml
 StyledTextArea 1.0 StyledTextArea.qml
