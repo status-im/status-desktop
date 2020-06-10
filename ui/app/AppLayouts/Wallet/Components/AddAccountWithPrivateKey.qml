@@ -25,13 +25,12 @@ ModalPopup {
     }
 
 
-    Input {
+    StyledTextArea {
         id: accountPKeyInput
         anchors.top: passwordInput.bottom
         anchors.topMargin: marginBetweenInputs
         placeholderText: qsTr("Paste the contents of your private key")
         label: qsTr("Private key")
-        isTextArea: true
         customHeight: 88
     }
 
@@ -43,7 +42,7 @@ ModalPopup {
         label: qsTr("Account name")
     }
 
-    Input {
+    Select {
         id: accountColorInput
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs

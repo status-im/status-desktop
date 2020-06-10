@@ -165,8 +165,10 @@ DISTFILES += \
     shared/Input.qml \
     shared/ModalPopup.qml \
     shared/PopupMenu.qml \
+    shared/Select.qml \
     shared/Separator.qml \
     shared/StatusTabButton.qml \
     shared/StyledButton.qml \
     shared/RoundedIcon.qml \
+    shared/StyledTextArea.qml \
     shared/qmldir

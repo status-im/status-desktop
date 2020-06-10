@@ -5,20 +5,12 @@ import QtGraphicalEffects 1.12
 import "../imports"
 
 Item {
-    property alias textField: inputValue
-    property string placeholderText: "My placeholder"
-    property alias text: inputValue.text
-    property string label: ""
     //    property string label: "My Label"
+    property string label: ""
     readonly property bool hasLabel: label !== ""
     property color bgColor: Theme.grey
-    //    property url icon: "../app/img/hash.svg"
-    property url icon: ""
-    readonly property bool hasIcon: icon.toString() !== ""
-    readonly property var forceActiveFocus: function () {
-        inputValue.forceActiveFocus(Qt.MouseFocusReason)
-    }
     readonly property int labelMargin: 7
+    property var selectOptions
     property int customHeight: 44
 
     id: inputBox
@@ -48,29 +40,42 @@ Item {
         anchors.right: parent.right
         anchors.left: parent.left
 
-        TextField {
-            id: inputValue
-            visible: !inputBox.isTextArea && !inputBox.isSelect
-            placeholderText: inputBox.placeholderText
-            text: inputBox.text
-            anchors.left: parent.left
-            anchors.leftMargin: inputBox.hasIcon ? 36 : Theme.padding
-            anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: 15
+        Menu {
+            id: selectMenu
+            width: parent.width
+            padding: 10
             background: Rectangle {
-                color: "#00000000"
+                width: parent.width
+                height: parent.height
+                color: Theme.grey
+                radius: Theme.radius
             }
-        }
+            Component.onCompleted: {
+                if (!selectOptions) {
+                    return
+                }
 
-        Image {
-            id: iconImg
-            sourceSize.height: 24
-            sourceSize.width: 24
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.verticalCenter: parent.verticalCenter
-            fillMode: Image.PreserveAspectFit
-            source: inputBox.icon
+                selectOptions.forEach(function (element) {
+                    var item = menuItem.createObject(undefined, element)
+                    selectMenu.addItem(item)
+                })
+            }
+
+            Component {
+                id: menuItem
+                MenuItem {
+                    property var onClicked: console.log("Default click function. Override me please")
+                    property color bgColor: Theme.white
+                    anchors.right: parent.right
+                    anchors.left: parent.left
+                    onTriggered: function () {
+                        onClicked()
+                    }
+                    background: Rectangle {
+                        color: bgColor
+                    }
+                }
+            }
         }
     }
 
@@ -78,7 +83,7 @@ Item {
         id: mouseArea
         anchors.fill: parent
         onClicked: {
-            inputValue.forceActiveFocus(Qt.MouseFocusReason)
+            selectMenu.open()
         }
     }
 }

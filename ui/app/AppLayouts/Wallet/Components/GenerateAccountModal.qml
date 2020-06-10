@@ -31,7 +31,7 @@ ModalPopup {
         label: qsTr("Account name")
     }
 
-    Input {
+    Select {
         id: accountColorInput
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs

@@ -26,13 +26,12 @@ ModalPopup {
     }
 
 
-    Input {
+    StyledTextArea {
         id: accountSeedInput
         anchors.top: passwordInput.bottom
         anchors.topMargin: marginBetweenInputs
         placeholderText: qsTr("Enter your seed phrase, separate words with commas or spaces...")
         label: qsTr("Seed phrase")
-        isTextArea: true
         customHeight: 88
     }
 
@@ -44,7 +43,7 @@ ModalPopup {
         label: qsTr("Account name")
     }
 
-    Input {
+    Select {
         id: accountColorInput
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs
@@ -69,13 +68,13 @@ ModalPopup {
         anchors.rightMargin: Theme.padding
         label: "Add account >"
 
-        disabled: passwordInput.text === "" || accountNameInput.text === "" || accountSeedInput.textAreaText === ""
+        disabled: passwordInput.text === "" || accountNameInput.text === "" || accountSeedInput.text === ""
 
         onClicked : {
             // TODO add message to show validation errors
-            if (passwordInput.text === "" || accountNameInput.text === "" || accountSeedInput.textAreaText === "") return;
+            if (passwordInput.text === "" || accountNameInput.text === "" || accountSeedInput.text === "") return;
 
-            walletModel.addAccountsFromSeed(accountSeedInput.textAreaText, passwordInput.text, accountNameInput.text, selectedColor)
+            walletModel.addAccountsFromSeed(accountSeedInput.text, passwordInput.text, accountNameInput.text, selectedColor)
             // TODO manage errors adding account
             popup.close();
         }
