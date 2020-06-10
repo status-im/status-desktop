@@ -8,8 +8,13 @@ QtObject {
     readonly property int chatTypePrivateGroupChat: 3
 
     readonly property int chatIdentifier: -1
+    readonly property int unknownContentType: 0
     readonly property int messageType: 1
     readonly property int stickerType: 2
+    readonly property int statusType: 3
+    readonly property int emojiType: 4
+    readonly property int transactionType: 5
+    readonly property int systemMessagePrivateGroupType: 6
 
     readonly property var accountColors: [
         "#9B832F",
