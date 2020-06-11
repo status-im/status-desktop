@@ -21,6 +21,11 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: 0
                 anchors.verticalCenter: parent.verticalCenter
+                onStatusChanged: {
+                    if (assetInfoImage.status == Image.Error) {
+                        assetInfoImage.source = "../../img/tokens/0-native.png"
+                    }
+                }
             }
             Text {
                 id: assetSymbol

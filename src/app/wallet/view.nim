@@ -160,3 +160,6 @@ QtObject:
     self.accountListChanged()
     self.accounts.forceUpdate()
     self.setCurrentAssetList(self.currentAccount.account.assetList)
+
+  proc addCustomToken*(self: WalletView, address: string, name: string, symbol: string, decimals: string) {.slot.} =
+    self.status.wallet.toggleAsset(symbol, true, address, name, parseInt(decimals), "")
