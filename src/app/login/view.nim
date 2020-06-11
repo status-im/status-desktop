@@ -16,7 +16,8 @@ import core
 type
   AccountRoles {.pure.} = enum
     Username = UserRole + 1,
-    Identicon = UserRole + 2
+    Identicon = UserRole + 2,
+    Address = UserRole + 3
 
 QtObject:
   type LoginView* = ref object of QAbstractListModel
@@ -38,9 +39,22 @@ QtObject:
     result.status = status
     result.setup
 
+  proc getCurrentAccount*(self: LoginView): QVariant {.slot.} =
+    result = newQVariant(self.currentAccount)
+
+  proc setCurrentAccount*(self: LoginView, selectedAccountIdx: int) {.slot.} =
+    let currNodeAcct = self.accounts[selectedAccountIdx]
+    self.currentAccount.setAccount(GeneratedAccount(name: currNodeAcct.name, photoPath: currNodeAcct.photoPath, address: currNodeAcct.keyUid))
+
+  QtProperty[QVariant] currentAccount:
+    read = getCurrentAccount
+    write = setCurrentAccount
+
   proc addAccountToList*(self: LoginView, account: NodeAccount) =
     self.beginInsertRows(newQModelIndex(), self.accounts.len, self.accounts.len)
     self.accounts.add(account)
+    if (self.accounts.len == 1):
+      self.setCurrentAccount(0)
     self.endInsertRows()
 
   proc removeAccounts*(self: LoginView) =
@@ -62,25 +76,24 @@ QtObject:
     case assetRole:
     of AccountRoles.Username: result = newQVariant(asset.name)
     of AccountRoles.Identicon: result = newQVariant(asset.photoPath)
+    of AccountRoles.Address: result = newQVariant(asset.keyUid)
 
   method roleNames(self: LoginView): Table[int, string] =
     { AccountRoles.Username.int:"username",
-    AccountRoles.Identicon.int:"identicon" }.toTable
+    AccountRoles.Identicon.int:"identicon",
+    AccountRoles.Address.int:"address"  }.toTable
 
-  proc getCurrentAccount*(self: LoginView): QVariant {.slot.} =
-    result = newQVariant(self.currentAccount)
+  proc login(self: LoginView, password: string): string {.slot.} =
+    var currentAccountId = 0
+    var i = 0
+    for account in self.accounts:
+      if (account.keyUid == self.currentAccount.address):
+        currentAccountId = i
+        break
+      i = i + 1
 
-  proc setCurrentAccount*(self: LoginView, selectedAccountIdx: int) {.slot.} =
-    let currNodeAcct = self.accounts[selectedAccountIdx]
-    self.currentAccount.setAccount(GeneratedAccount(name: currNodeAcct.name, photoPath: currNodeAcct.photoPath))
-
-  QtProperty[QVariant] currentAccount:
-    read = getCurrentAccount
-    write = setCurrentAccount
-
-  proc login(self: LoginView, selectedAccountIndex: int, password: string): string {.slot.} =
     try:
-      result = self.status.accounts.login(selectedAccountIndex, password).toJson
+      result = self.status.accounts.login(currentAccountId, password).toJson
     except:
       let
         e = getCurrentException()

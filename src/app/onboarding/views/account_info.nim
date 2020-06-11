@@ -33,7 +33,7 @@ QtObject:
     read = identicon
     notify = accountChanged
 
-  proc address*(self: AccountInfoView): string {.slot.} = result = ?.self.account.derived.whisper.publicKey
+  proc address*(self: AccountInfoView): string {.slot.} = result = ?.self.account.address
   QtProperty[string] address:
     read = address
     notify = accountChanged

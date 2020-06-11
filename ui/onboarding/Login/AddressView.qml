@@ -2,34 +2,72 @@ import QtQuick 2.0
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
+import "../../imports"
+import "../../shared"
 
-Item {
+Rectangle {
     property string username: "Jotaro Kujo"
-    property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+    property string address: "0x123345677890987654321123456"
+    property url identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAg0lEQVR4nOzXwQmAMBAFURV7sQybsgybsgyr0QYUlE1g+Mw7ioQMe9lMQwhDaAyhMYTGEJqYkPnrj/t5XE/ft2UdW1yken7MRAyhMYTGEBpDaAyhKe9JbzvSX9WdLWYihtAYQuMLkcYQGkPUScxEDKExhMYQGkNoDKExhMYQmjsAAP//ZfIUZgXTZXQAAAAASUVORK5CYII="
     property var onAccountSelect: function() {}
+    property bool selected: loginModel.currentAccount.address === address
+    property bool isHovered: false
 
     id: addressViewDelegate
-    height: 56
+    height: 64
     anchors.right: parent.right
-    anchors.rightMargin: 0
     anchors.left: parent.left
-    anchors.leftMargin: 0
+    border.width: 0
+    color: selected || isHovered ? Theme.grey : Theme.transparent
+    radius: Theme.radius
 
-    Row {
-        RadioButton {
-            checked: index == 0 ? true : false
-            ButtonGroup.group: accountGroup
-            onClicked: { onAccountSelect(index) }
+    RoundImage {
+        id: accountImage
+        anchors.left: parent.left
+        anchors.leftMargin: Theme.padding
+        anchors.verticalCenter: parent.verticalCenter
+        source: identicon
+    }
+    Text {
+        id: usernameText
+        text: username
+        font.pixelSize: 17
+        anchors.top: accountImage.top
+        anchors.left: accountImage.right
+        anchors.leftMargin: Theme.padding
+    }
+
+    Text {
+        id: addressText
+        width: 108
+        text: address
+        elide: Text.ElideMiddle
+        anchors.bottom: accountImage.bottom
+        anchors.bottomMargin: 0
+        anchors.left: usernameText.left
+        anchors.leftMargin: 0
+        font.pixelSize: 15
+        color: Theme.darkGrey
+    }
+
+    MouseArea {
+        hoverEnabled: true
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        onClicked: {
+            onAccountSelect(index)
         }
-        Column {
-            Image {
-                source: identicon
-            }
+        onEntered: {
+            addressViewDelegate.isHovered = true
         }
-        Column {
-            Text {
-                text: username
-            }
+        onExited: {
+            addressViewDelegate.isHovered = false
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorColor:"#ffffff";height:64;width:450}
+}
+##^##*/

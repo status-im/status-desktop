@@ -8,3 +8,4 @@ TextWithLabel 1.0 TextWithLabel.qml
 Input 1.0 Input.qml
 Select 1.0 Select.qml
 StyledTextArea 1.0 StyledTextArea.qml
+RoundImage 1.0 RoundImage.qml
