@@ -23,10 +23,14 @@ proc fromEvent*(event: JsonNode): Signal =
   result = signal
 
 proc toChatMember*(jsonMember: JsonNode): ChatMember =
+  let pubkey = jsonMember["id"].getStr
+
   result = ChatMember(
     admin: jsonMember["admin"].getBool,
-    id: jsonMember["id"].getStr,
-    joined: jsonMember["joined"].getBool
+    id: pubkey,
+    joined: jsonMember["joined"].getBool,
+    identicon: generateIdenticon(pubkey),
+    userName: generateAlias(pubkey)
   )
 
 
