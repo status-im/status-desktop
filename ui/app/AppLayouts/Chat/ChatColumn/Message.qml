@@ -12,7 +12,7 @@ Item {
     property string message: "That's right. We're friends...  Of justice, that is."
     property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
     property bool isCurrentUser: false
-    property int timestamp: 1234567
+    property string timestamp: "1234567"
     property string sticker: "Qme8vJtyrEHxABcSVGPF95PtozDgUyfr1xGjePmFdZgk9v"
     property int contentType: 1 // constants don't work in default props
     property string chatId: "chatId"

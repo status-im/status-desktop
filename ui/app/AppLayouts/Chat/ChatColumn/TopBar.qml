@@ -48,7 +48,10 @@ Rectangle {
             switch(chatsModel.activeChannel.chatType){
                 case Constants.chatTypePublic: return qsTr("Public chat")
                 case Constants.chatTypeOneToOne: return qsTr("TODO: Contact/Not a contact")
-                case Constants.chatTypePrivateGroupChat: return qsTr("TODO: N members")
+                case Constants.chatTypePrivateGroupChat: 
+                    let cnt = chatsModel.activeChannel.members.len();
+                    if(cnt > 1) return qsTr("%1 members").arg(cnt);
+                    return qsTr("1 member");
             }
         }
         font.pixelSize: 12
@@ -102,10 +105,20 @@ Rectangle {
             PopupMenu {
                 id: groupContextMenu
                 QQC2.Action { 
+                    icon.source: "../../../img/group_chat.svg"
+                    text: qsTr("Group Information")
+                    onTriggered: groupInfoPopup.open()
+                }
+                QQC2.Action { 
                     icon.source: "../../../img/leave_chat.svg"
                     text: qsTr("Leave Group")
                     onTriggered: chatsModel.leaveActiveChat()
                 }
+            }
+
+
+            GroupInfoPopup {
+                id: groupInfoPopup
             }
 
             
