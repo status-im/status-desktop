@@ -144,6 +144,7 @@ DISTFILES += \
     onboarding/Login/AccountList.qml \
     onboarding/Login/AccountSelection.qml \
     onboarding/Login/AddressView.qml \
+    onboarding/Login/SelectAnotherAccountModal.qml \
     onboarding/Login/qmldir \
     onboarding/Login/samples/AccountsData.qml \
     onboarding/Login/samples/qmldir \
@@ -168,6 +169,7 @@ DISTFILES += \
     shared/Input.qml \
     shared/ModalPopup.qml \
     shared/PopupMenu.qml \
+    shared/RoundImage.qml \
     shared/Select.qml \
     shared/Separator.qml \
     shared/StatusTabButton.qml \
