@@ -56,7 +56,7 @@ proc updateBalance*(asset: Asset, currency: string) =
   asset.value = token_balance
   asset.fiatValue = fmt"{fiat_balance:.2f} {currency}"
 
-proc updateBalance*(account: Account, currency: string) =
+proc updateBalance*(account: WalletAccount, currency: string) =
   let eth_balance = getBalance("ETH", account.address)
   let usd_balance = getFiatValue(eth_balance, "ETH", currency)
   var totalAccountBalance = usd_balance

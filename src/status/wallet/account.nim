@@ -7,10 +7,11 @@ type Asset* = ref object
     name*, symbol*, value*, fiatValue*, image*, accountAddress*: string
     hasIcon*: bool
 
-type Account* = ref object
-    name*, address*, iconColor*, balance*: string
+type WalletAccount* = ref object
+    name*, address*, iconColor*, balance*, path*, walletType*, publicKey*: string
     realFiatBalance*: float
     assetList*: seq[Asset]
+    wallet*, chat*: bool
 
 type AccountArgs* = ref object of Args
-    account*: Account
+    account*: WalletAccount

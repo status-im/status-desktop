@@ -1,7 +1,6 @@
 import NimQml
 import Tables
 import random
-import ./asset_list
 import ./account_item
 import ../../../status/wallet
 

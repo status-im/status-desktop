@@ -73,7 +73,7 @@ ModalPopup {
             // TODO add message to show validation errors
             if (passwordInput.text === "" || accountNameInput.text === "" || accountPKeyInput.textAreaText === "") return;
 
-            walletModel.addAccountsFromPrivateKey(accountPKeyInput.textAreaText, passwordInput.text, accountNameInput.text, selectedColor)
+            walletModel.addAccountsFromPrivateKey(accountPKeyInput.text, passwordInput.text, accountNameInput.text, selectedColor)
             // TODO manage errors adding account
             popup.close();
         }
