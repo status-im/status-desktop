@@ -43,7 +43,6 @@ Rectangle {
     Text {
         id: channelIdentifier
         color: Theme.darkGrey
-        // TODO change this in case of private message
         text: {
             switch(chatsModel.activeChannel.chatType){
                 case Constants.chatTypePublic: return qsTr("Public chat")
