@@ -114,16 +114,17 @@ Popup {
         }
 
         Item {
-            id: footerContent
-            height: children[0] && children[0].height
-            width: parent.width
-            anchors.top: separator2.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: Theme.padding
-            anchors.rightMargin: Theme.padding
-            anchors.leftMargin: Theme.padding
+          id: footerContent
+          height: children[0] && children[0].height
+          width: parent.width
+          anchors.top: separator2.bottom
+          anchors.left: parent.left
+          anchors.right: parent.right
+          anchors.bottom: parent.bottom
+          anchors.topMargin: Theme.padding
+          anchors.bottomMargin: Theme.padding
+          anchors.rightMargin: Theme.padding
+          anchors.leftMargin: Theme.padding
         }
-    }
+  }
 }

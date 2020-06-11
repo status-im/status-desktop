@@ -16,7 +16,8 @@ type Profile* = ref object
   id*, alias*, username*, identicon*: string
   ensVerified*: bool
   ensVerifiedAt*: int
-  ensVerificationEntries*: int
+  ensVerificationRetries*: int
+  systemTags*: seq[string]
 
 proc toProfileModel*(account: Account): Profile =
     result = Profile(
@@ -26,10 +27,15 @@ proc toProfileModel*(account: Account): Profile =
       alias: account.name,
       ensVerified: false,
       ensVerifiedAt: 0,
-      ensVerificationEntries: 0,
+      ensVerificationRetries: 0,
+      systemTags: @[]
     )
 
 proc toProfileModel*(profile: JsonNode): Profile =
+    var systemTags: seq[string] = @[]
+    if profile["systemTags"].kind != JNull:
+      systemTags = profile["systemTags"].to(seq[string])
+
     result = Profile(
       id: profile["id"].str,
       username: profile["alias"].str,
@@ -37,14 +43,13 @@ proc toProfileModel*(profile: JsonNode): Profile =
       alias: profile["alias"].str,
       ensVerified: profile["ensVerified"].getBool,
       ensVerifiedAt: profile["ensVerifiedAt"].getInt,
-      ensVerificationEntries: profile["ensVerificationEntries"].getInt
+      ensVerificationRetries: profile["ensVerificationRetries"].getInt,
+      systemTags: systemTags
     )
-
 
 proc getContactByID*(id: string): Profile =
   let response = libstatus_core.getContactByID(id)
-  let val = parseJSON($response)
-  result = toProfileModel(val)
+  result = toProfileModel(parseJSON($response)["result"])
 
 type
   ProfileModel* = ref object

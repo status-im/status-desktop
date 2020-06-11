@@ -194,13 +194,36 @@ ModalPopup {
     //     }
     // }
 
-    footer: StyledButton {
-        anchors.right: parent.right
-        anchors.rightMargin: Theme.smallPadding
-        label: "Add to contacts"
-        anchors.bottom: parent.bottom
-        onClicked: {
-          profilePopup.close()
+    footer: Item {
+        width: parent.width
+        height: children[0].height
+
+        StyledButton {
+          anchors.right: parent.right
+          anchors.rightMargin: addToContactsButton.width + 32
+          btnColor: "white"
+          btnBorderWidth: 1
+          btnBorderColor: "#EEF2F5"
+          textColor: "#FF2D55"
+          label: "Block User"
+          anchors.bottom: parent.bottom
+          onClicked: {
+            chatsModel.blockContact(fromAuthor)
+            // TODO(pascal): Change block user button state based
+            // on :contact/blocked state
+            profilePopup.close()
+          }
         }
+
+        StyledButton {
+          id: addToContactsButton
+          anchors.right: parent.right
+          anchors.rightMargin: Theme.smallPadding
+          label: "Add to contacts"
+          anchors.bottom: parent.bottom
+          onClicked: {
+            profilePopup.close()
+          }
+      }
     }
 }

@@ -8,6 +8,8 @@ import "../imports"
 Button {
     property string label: "My button"
     property color btnColor: Theme.lightBlue
+    property color btnBorderColor: "transparent"
+    property int btnBorderWidth: 0
     property color textColor: Theme.blue
     property bool disabled: false
 
@@ -20,6 +22,8 @@ Button {
         color: disabled ? Theme.grey : btnStyled.btnColor
         radius: Theme.radius
         anchors.fill: parent
+        border.color: btnBorderColor
+        border.width: btnBorderWidth
     }
 
     Text {

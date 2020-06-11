@@ -132,3 +132,6 @@ QtObject:
     if(self.activeChannel.id == chat.id):
       self.activeChannel.setChatItem(chat)
       self.activeChannelChanged()
+
+  proc blockContact*(self: ChatsView, id: string): string {.slot.} =
+    return self.status.chat.blockContact(id)

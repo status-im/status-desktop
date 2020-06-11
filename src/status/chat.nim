@@ -1,6 +1,8 @@
 import eventemitter, json
 import sequtils
 import libstatus/chat as status_chat
+import libstatus/core as libstatus_core
+import ./profile as status_profile
 import chronicles
 import chat/[chat, message]
 import ../signals/messages
@@ -158,3 +160,9 @@ proc confirmJoiningGroup*(self: ChatModel, chatId: string) =
   var response = parseJson(status_chat.confirmJoiningGroup(chatId))
   var (chats, messages) = formatChatUpdate(response)
   self.events.emit("pushMessage", PushMessageArgs(messages: messages, chats: chats))
+
+proc blockContact*(self: ChatModel, id: string): string =
+  var contact = status_profile.getContactByID(id)
+  contact.systemTags.add(":contact/blocked")
+  result = status_chat.blockContact(contact)
+

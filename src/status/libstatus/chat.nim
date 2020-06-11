@@ -6,6 +6,7 @@ import strutils
 import chronicles
 import ../chat/[chat, message]
 import ../../signals/messages
+import ../profile
 
 proc buildFilter*(chatId: string, filterId: string = "", symKeyId: string = "", oneToOne: bool = false, identity: string = "", topic: string = "", discovery: bool = false, negotiated: bool = false, listen: bool = true):JsonNode =
   result = %* {
@@ -103,6 +104,19 @@ proc sendChatMessage*(chatId: string, msg: string): string =
       "ensName": nil,
       "sticker": nil,
       "contentType": 1
+    }
+  ])
+
+proc blockContact*(contact: Profile): string =
+  callPrivateRPC("blockContact".prefix, %* [
+    {
+      "id": contact.id,
+      "ensVerified": contact.ensVerified,
+      "ensVerifiedAt": contact.ensVerifiedAt,
+      "ensVerificationRetries": contact.ensVerificationRetries,
+      "alias": contact.alias,
+      "identicon": contact.identicon,
+      "systemTags": contact.systemTags
     }
   ])
 
