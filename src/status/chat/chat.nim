@@ -12,6 +12,8 @@ type ChatMember* = object
   admin*: bool
   id*: string
   joined*: bool
+  identicon*: string
+  userName*: string
 
 type Chat* = ref object
   id*: string # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat

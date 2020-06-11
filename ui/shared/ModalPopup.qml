@@ -97,6 +97,7 @@ Popup {
 
       Item {
         id: popupContent
+        anchors.bottom: separator2.top
         anchors.top: separator.bottom
         anchors.topMargin: Theme.padding
         anchors.bottomMargin: Theme.padding
