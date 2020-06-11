@@ -21,6 +21,7 @@ ColumnLayout {
     anchors.topMargin: 0
     anchors.bottom: parent.bottom
     anchors.bottomMargin: 0
+    Layout.minimumWidth: 300
 
     RowLayout {
         id: profileHeader
@@ -43,8 +44,4 @@ ColumnLayout {
     }
 }
 
-/*##^##
-Designer {
-    D{i:15;anchors_height:56}
-}
-##^##*/
+

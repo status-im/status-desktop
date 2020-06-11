@@ -9,12 +9,18 @@ import "../../../shared"
 import "./Sections"
 import "."
 
-Item {
+SplitView {
     id: profileView
     x: 0
     y: 0
     Layout.fillHeight: true
     Layout.fillWidth: true
+
+    handleDelegate: Rectangle {
+        implicitWidth: 1
+        implicitHeight: 4
+        color: Theme.grey
+    }
 
     LeftTab {
         id: leftTab
