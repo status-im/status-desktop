@@ -14,6 +14,12 @@ SplitView {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
+    handleDelegate: Rectangle {
+        implicitWidth: 1
+        implicitHeight: 4
+        color: Theme.grey
+    }
+
     LeftTab {
         id: leftTab
     }
