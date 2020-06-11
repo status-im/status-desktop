@@ -7,9 +7,7 @@ type
     Name = UserRole + 1,
     Symbol = UserRole + 2,
     Value = UserRole + 3,
-    FiatValue = UserRole + 4,
-    Image = UserRole + 5
-    HasIcon = UserRole + 6
+    FiatValue = UserRole + 4
 
 QtObject:
   type AssetList* = ref object of QAbstractListModel
@@ -41,16 +39,12 @@ QtObject:
     of AssetRoles.Symbol: result = newQVariant(asset.symbol)
     of AssetRoles.Value: result = newQVariant(asset.value)
     of AssetRoles.FiatValue: result = newQVariant(asset.fiatValue)
-    of AssetRoles.Image: result = newQVariant(asset.image)
-    of AssetRoles.HasIcon: result = newQVariant(asset.hasIcon)
 
   method roleNames(self: AssetList): Table[int, string] =
     { AssetRoles.Name.int:"name",
     AssetRoles.Symbol.int:"symbol",
     AssetRoles.Value.int:"value",
-    AssetRoles.FiatValue.int:"fiatValue",
-    AssetRoles.Image.int:"image",
-    AssetRoles.Image.int:"hasIcon" }.toTable
+    AssetRoles.FiatValue.int:"fiatValue" }.toTable
 
   proc addAssetToList*(self: AssetList, asset: Asset) =
     self.beginInsertRows(newQModelIndex(), self.assets.len, self.assets.len)
