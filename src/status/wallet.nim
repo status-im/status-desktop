@@ -1,23 +1,13 @@
-import eventemitter, json, strformat, strutils, tables, chronicles, sequtils
+import eventemitter, json, strformat, strutils, chronicles, sequtils
 import libstatus/accounts as status_accounts
 import libstatus/tokens as status_tokens
 import libstatus/settings as status_settings
 import libstatus/wallet as status_wallet
 import libstatus/accounts/constants as constants
 from libstatus/types import GeneratedAccount, DerivedAccount
-import wallet/token_list
 import wallet/balance_manager
 import wallet/account
 export account
-
-type WalletAccount* = status_wallet.WalletAccount
-type Asset* = status_wallet.Asset
-
-type CurrencyArgs* = ref object of Args
-    currency*: string
-
-type AccountArgs* = ref object of Args
-    account*: WalletAccount
 
 type WalletModel* = ref object
     events*: EventEmitter
@@ -71,9 +61,16 @@ proc generateAccountConfiguredAssets*(self: WalletModel, accountAddress: string)
     assets.add(existingToken)
   assets
 
-proc newAccount*(self: WalletModel, name: string, address: string, iconColor: string, balance: string): Account =
+proc populateAccount*(self: WalletModel, walletAccount: var WalletAccount, balance: string) =
+  var assets: seq[Asset] = self.generateAccountConfiguredAssets(walletAccount.address)
+  walletAccount.balance = fmt"{balance} {self.defaultCurrency}"
+  walletAccount.assetList = assets
+  walletAccount.realFiatBalance = 0.0
+  updateBalance(walletAccount, self.getDefaultCurrency())
+
+proc newAccount*(self: WalletModel, name: string, address: string, iconColor: string, balance: string, publicKey: string): WalletAccount =
   var assets: seq[Asset] = self.generateAccountConfiguredAssets(address)
-  var account = Account(name: name, address: address, iconColor: iconColor, balance: fmt"{balance} {self.defaultCurrency}", assetList: assets, realFiatBalance: 0.0)
+  var account = WalletAccount(name: name, address: address, iconColor: iconColor, balance: fmt"{balance} {self.defaultCurrency}", assetList: assets, realFiatBalance: 0.0, publicKey: publicKey)
   updateBalance(account, self.getDefaultCurrency())
   account
 
@@ -81,8 +78,9 @@ proc initAccounts*(self: WalletModel) =
   self.tokens = status_tokens.getCustomTokens()
   let accounts = status_wallet.getWalletAccounts()
   for account in accounts:
-    var account = self.newAccount(account.name, account.address, account.color, "")
-    self.accounts.add(account)
+    var acc = WalletAccount(account)
+    self.populateAccount(acc, "")
+    self.accounts.add(acc)
   self.calculateTotalFiatBalance
 
 proc getTotalFiatBalance*(self: WalletModel): string =
@@ -97,7 +95,7 @@ proc calculateTotalFiatBalance*(self: WalletModel) =
 proc addNewGeneratedAccount(self: WalletModel, generatedAccount: GeneratedAccount, password: string, accountName: string, color: string, accountType: string, isADerivedAccount = true) =
   generatedAccount.name = accountName
   var derivedAccount: DerivedAccount = status_accounts.saveAccount(generatedAccount, password, color, accountType, isADerivedAccount)
-  var account = self.newAccount(accountName, derivedAccount.address, color, fmt"0.00 {self.defaultCurrency}")
+  var account = self.newAccount(accountName, derivedAccount.address, color, fmt"0.00 {self.defaultCurrency}", derivedAccount.publicKey)
   self.accounts.add(account)
   self.events.emit("newAccountAdded", AccountArgs(account: account))
 

@@ -10,7 +10,7 @@ import types as types
 import json_serialization
 import chronicles
 import ../../signals/types as signal_types
-import ./wallet as status_wallet
+import ../wallet/account
 
 proc queryAccounts*(): string =
   var response = callPrivateRPC("eth_accounts")
@@ -180,8 +180,11 @@ proc MultiAccountImportPrivateKey*(privateKey: string): GeneratedAccount =
     "privateKey": privateKey
   }
   # libstatus.MultiAccountImportPrivateKey never results in an error given ANY input
-  let importResult = $libstatus.MultiAccountImportPrivateKey($privateKeyJson)
-  result = Json.decode(importResult, GeneratedAccount)
+  try:
+    let importResult = $libstatus.MultiAccountImportPrivateKey($privateKeyJson)
+    result = Json.decode(importResult, GeneratedAccount)
+  except Exception as e:
+    error "Error getting account from private key", msg=e.msg
 
 proc saveAccount*(account: GeneratedAccount, password: string, color: string, accountType: string, isADerivedAccount = true): DerivedAccount =
   try:
@@ -211,7 +214,7 @@ proc saveAccount*(account: GeneratedAccount, password: string, color: string, ac
   except:
     error "Error storing the new account. Bad password?"
 
-proc changeAccount*(account: status_wallet.WalletAccount): string =
+proc changeAccount*(account: WalletAccount): string =
   try:
     let res=  callPrivateRPC("accounts_saveAccounts", %* [
       [{

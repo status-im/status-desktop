@@ -6,15 +6,7 @@ import strformat
 import stint
 import strutils, sequtils
 import chronicles
-
-type Asset* = ref object
-    name*, symbol*, value*, fiatValue*, image*: string
-
-type WalletAccount* = ref object
-    name*, address*, iconColor*, balance*, path*, walletType*, publicKey*: string
-    realFiatBalance*: float
-    assetList*: seq[Asset]
-    wallet*, chat*: bool
+import ../wallet/account
 
 proc getWalletAccounts*(): seq[WalletAccount] =
   try:

@@ -1,6 +1,5 @@
 import NimQml
 import std/wrapnils
-import ./asset_list
 import ../../../status/wallet
 
 QtObject:

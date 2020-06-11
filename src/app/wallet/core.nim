@@ -12,6 +12,7 @@ import ../../status/libstatus/wallet as status_wallet
 import ../../signals/types
 
 import ../../status/wallet
+import ../../status/wallet/account as WalletTypes
 import ../../status/status
 
 type WalletController* = ref object of SignalSubscriber
@@ -40,7 +41,7 @@ proc init*(self: WalletController) =
     self.view.updateView()
 
   self.status.events.on("newAccountAdded") do(e: Args):
-    var account = AccountArgs(e)
+    var account = WalletTypes.AccountArgs(e)
     self.view.accounts.addAccountToList(account.account)
 
   self.status.events.on("assetChanged") do(e: Args):
