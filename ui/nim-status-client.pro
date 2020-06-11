@@ -78,6 +78,7 @@ DISTFILES += \
     app/AppLayouts/Profile/LeftTab/qmldir \
     app/AppLayouts/Profile/ProfileLayout.qml \
     app/AppLayouts/Wallet/AccountSettingsModal.qml \
+    app/AppLayouts/Wallet/AddCustomTokenModal.qml \
     app/AppLayouts/Wallet/AssetsTab.qml \
     app/AppLayouts/Wallet/CollectiblesTab.qml \
     app/AppLayouts/Wallet/Components/AccountSettingsModal.qml \

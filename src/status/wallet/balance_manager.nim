@@ -2,7 +2,6 @@ import tables, strformat, strutils, stint, httpclient, json
 import ../libstatus/wallet as status_wallet
 import ../libstatus/tokens as status_tokens
 import account
-import token_list
 
 type BalanceManager* = ref object
   pricePairs: Table[string, string]
@@ -29,20 +28,20 @@ proc getPrice(crypto: string, fiat: string): string =
   except Exception as e:
     echo "error getting price"
     echo e.msg
+    result = "0.0"
 
 proc getEthBalance(address: string): string =
   var balance = status_wallet.getBalance(address)
   result = status_wallet.hex2Eth(balance)
 #   balanceManager.tokenBalances["ETH"] = result
 
-proc getBalance*(symbol: string, accountAddress: string): string =
+proc getBalance*(symbol: string, accountAddress: string, tokenAddress: string): string =
   if balanceManager.tokenBalances.hasKey(symbol):
     return balanceManager.tokenBalances[symbol]
 
   if symbol == "ETH":
     return getEthBalance(accountAddress)
-  var token: AssetConfig = getTokenConfig(symbol)
-  result = $status_tokens.getTokenBalance(token.address, accountAddress)
+  result = $status_tokens.getTokenBalance(tokenAddress, accountAddress)
 #   balanceManager.tokenBalances[symbol] = result
 
 proc getFiatValue*(crypto_balance: string, crypto_symbol: string, fiat_symbol: string): float =
@@ -51,13 +50,13 @@ proc getFiatValue*(crypto_balance: string, crypto_symbol: string, fiat_symbol: s
   parseFloat(crypto_balance) * parseFloat(fiat_crypto_price)
 
 proc updateBalance*(asset: Asset, currency: string) =
-  var token_balance = getBalance(asset.symbol, asset.accountAddress)
+  var token_balance = getBalance(asset.symbol, asset.accountAddress, asset.address)
   let fiat_balance = getFiatValue(token_balance, asset.symbol, currency)
   asset.value = token_balance
   asset.fiatValue = fmt"{fiat_balance:.2f} {currency}"
 
 proc updateBalance*(account: WalletAccount, currency: string) =
-  let eth_balance = getBalance("ETH", account.address)
+  let eth_balance = getBalance("ETH", account.address, "")
   let usd_balance = getFiatValue(eth_balance, "ETH", currency)
   var totalAccountBalance = usd_balance
   account.realFiatBalance = totalAccountBalance

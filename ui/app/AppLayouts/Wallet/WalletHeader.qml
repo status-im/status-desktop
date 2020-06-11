@@ -83,6 +83,10 @@ Item {
         changeSelectedAccount: walletHeader.changeSelectedAccount
     }
 
+    AddCustomTokenModal {
+        id: addCustomTokenModal
+    }
+
     Item {
         property int btnMargin: 8
         property int btnOuterMargin: 32

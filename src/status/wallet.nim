@@ -57,7 +57,7 @@ proc generateAccountConfiguredAssets*(self: WalletModel, accountAddress: string)
   assets.add(asset)
   for token in self.tokens:
     var symbol = token["symbol"].getStr
-    var existingToken = Asset(name: token["name"].getStr, symbol: symbol, value: fmt"0.0", fiatValue: "$0.0", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg", hasIcon: true, accountAddress: accountAddress)
+    var existingToken = Asset(name: token["name"].getStr, symbol: symbol, value: fmt"0.0", fiatValue: "$0.0", image: fmt"../../img/token-icons/{toLowerAscii(symbol)}.svg", hasIcon: true, accountAddress: accountAddress, address: token["address"].getStr)
     assets.add(existingToken)
   assets
 

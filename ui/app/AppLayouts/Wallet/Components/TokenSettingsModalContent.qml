@@ -134,11 +134,12 @@ Item {
     StyledButton {
         anchors.right: parent.right
         anchors.rightMargin: Theme.padding
-        label: qsTr("Apply to all accounts")
+        label: qsTr("Add custom token")
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Theme.padding
         onClicked: {
             popup.close()
+            addCustomTokenModal.open()
         }
     }
 }
