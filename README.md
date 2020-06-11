@@ -12,7 +12,7 @@ Linux users should install Qt through the system's package manager:
 
 ```
 # Debian/Ubuntu:
-sudo apt install qtbase5-dev qtdeclarative5-dev qml-module-qt-labs-platform
+sudo apt install qtbase5-dev qtdeclarative5-dev qml-module-qt-labs-platform qtquickcontrols2-5-dev
 ```
 
 If that's not possible, manually install QT from https://www.qt.io/download-qt-installer
