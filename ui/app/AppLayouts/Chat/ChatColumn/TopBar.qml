@@ -52,6 +52,7 @@ Rectangle {
                     let cnt = chatsModel.activeChannel.members.rowCount();
                     if(cnt > 1) return qsTr("%1 members").arg(cnt);
                     return qsTr("1 member");
+                default: return "...";
             }
         }
         font.pixelSize: 12

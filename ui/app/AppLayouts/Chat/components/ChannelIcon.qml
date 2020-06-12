@@ -12,8 +12,8 @@ Rectangle {
   property int channelType
   property string channelIdenticon
   id: contactImage
-  width: width ? width : 36
-  height: height ? height: 36
+  width: 36
+  height: 36
   anchors.left: parent.left
   anchors.leftMargin: Theme.padding
   anchors.top: parent.top
