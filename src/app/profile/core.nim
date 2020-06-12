@@ -6,6 +6,7 @@ import ../../status/libstatus/settings as status_settings
 import json
 
 import ../../status/profile
+import ../../status/contacts
 import ../../status/status
 import view
 

@@ -8,10 +8,6 @@ type
   MailServer* = ref object
     name*, endpoint*: string
 
-type
-  Contact* = ref object
-    name*, address*: string
-
 type Profile* = ref object
   id*, alias*, username*, identicon*: string
   ensVerified*: bool
@@ -47,10 +43,6 @@ proc toProfileModel*(profile: JsonNode): Profile =
       systemTags: systemTags
     )
 
-proc getContactByID*(id: string): Profile =
-  let response = libstatus_core.getContactByID(id)
-  result = toProfileModel(parseJSON($response)["result"])
-
 type
   ProfileModel* = ref object
 
@@ -59,5 +51,3 @@ proc newProfileModel*(): ProfileModel =
 
 proc logout*(self: ProfileModel) =
   discard status_accounts.logout()
-
-

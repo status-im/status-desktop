@@ -162,6 +162,7 @@ proc confirmJoiningGroup*(self: ChatModel, chatId: string) =
   var response = parseJson(status_chat.confirmJoiningGroup(chatId))
   var (chats, messages) = formatChatUpdate(response)
   self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
+  # self.events.emit("pushMessage", PushMessageArgs(messages: messages, chats: chats))
 
 proc blockContact*(self: ChatModel, id: string): string =
   var contact = status_profile.getContactByID(id)

@@ -4,6 +4,7 @@ import views/contact_list
 import views/profile_info
 import ../../status/profile
 import ../../status/accounts as status_accounts
+import ../../status/contacts as status_contacts
 import ../../status/status
 
 QtObject:
