@@ -132,3 +132,9 @@ QtObject:
     if(self.activeChannel.id == chat.id):
       self.activeChannel.setChatItem(chat)
       self.activeChannelChanged()
+
+  proc makeAdmin*(self: ChatsView, chatId: string, pubKey: string) {.slot.} =
+    self.status.chat.makeAdmin(chatId, pubKey)
+
+  proc removeFromGroup*(self: ChatsView, chatId: string, pubKey: string) {.slot.} =
+    self.status.chat.removeParticipant(chatId, pubKey)

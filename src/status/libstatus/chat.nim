@@ -114,3 +114,9 @@ proc confirmJoiningGroup*(chatId: string): string =
 
 proc leaveGroupChat*(chatId: string): string =
   callPrivateRPC("leaveGroupChat".prefix, %* [nil, chatId, true])
+
+proc makeAdmin*(chatId: string, member: string): string =
+  callPrivateRPC("addAdminsToGroupChat".prefix, %* [nil, chatId, [member]])
+
+proc removeParticipant*(chatId: string, member: string): string =
+  callPrivateRPC("removeMemberFromGroupChat".prefix, %* [nil, chatId, member])

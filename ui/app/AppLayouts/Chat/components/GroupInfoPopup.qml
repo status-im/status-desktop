@@ -155,13 +155,13 @@ ModalPopup {
                                 QQC2.Action { 
                                     icon.source: "../../../img/make-admin.svg"
                                     text: qsTr("Make Admin")
-                                    onTriggered: chatsModel.leaveActiveChat()
+                                    onTriggered: chatsModel.makeAdmin(chatsModel.activeChannel.id, model.pubKey)
                                 }
                                 QQC2.Action { 
                                     icon.source: "../../../img/remove-from-group.svg"
                                     icon.color: Theme.red
                                     text: qsTr("Remove From Group")
-                                    onTriggered: chatsModel.leaveActiveChat()
+                                    onTriggered: chatsModel.removeFromGroup(chatsModel.activeChannel.id, model.pubKey)
                                 }
                             }
                         }

@@ -158,3 +158,15 @@ proc confirmJoiningGroup*(self: ChatModel, chatId: string) =
   var response = parseJson(status_chat.confirmJoiningGroup(chatId))
   var (chats, messages) = formatChatUpdate(response)
   self.events.emit("pushMessage", PushMessageArgs(messages: messages, chats: chats))
+
+proc makeAdmin*(self: ChatModel, chatId: string, pubKey: string) =
+  var response = parseJson(status_chat.makeAdmin(chatId, pubKey))
+  var (chats, messages) = formatChatUpdate(response)
+  self.events.emit("pushMessage", PushMessageArgs(messages: messages, chats: chats))
+
+
+proc removeParticipant*(self: ChatModel, chatId: string, pubKey: string) =
+  var response = parseJson(status_chat.removeParticipant(chatId, pubKey))
+  var (chats, messages) = formatChatUpdate(response)
+  self.events.emit("pushMessage", PushMessageArgs(messages: messages, chats: chats))
+
