@@ -73,7 +73,6 @@ QtObject:
 
   proc upsertChannel(self: ChannelsList, channel: Chat): int =
     let idx = self.chats.findIndexById(channel.id)
-    if not channel.active: return -1
 
     if idx == -1:
       result = self.addChatItemToList(channel)

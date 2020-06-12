@@ -9,18 +9,25 @@ import ../../signals/messages
 import ../profile
 
 proc buildFilter*(chatId: string, filterId: string = "", symKeyId: string = "", oneToOne: bool = false, identity: string = "", topic: string = "", discovery: bool = false, negotiated: bool = false, listen: bool = true):JsonNode =
-  result = %* {
-    "ChatID": chatId, # identifier of the chat
-    "FilterID": filterId, # whisper filter id generated
-    "SymKeyID": symKeyId, # symmetric key id used for symmetric filters
-    "OneToOne": oneToOne, # if asymmetric encryption is used for this chat
-    "Identity": identity, # public key of the other recipient for non-public filters.
-    # FIXME: passing empty string to the topic makes it error
-    # "Topic": topic, # whisper topic
-    "Discovery": discovery,
-    "Negotiated": negotiated,
-    "Listen": listen # whether we are actually listening for messages on this chat, or the filter is only created in order to be able to post on the topic
-  }
+  if oneToOne:
+    result = %* {
+      "ChatID": chatId, # identifier of the chat
+      "OneToOne": oneToOne, # if asymmetric encryption is used for this chat
+      "Identity": identity, # public key of the other recipient for non-public filters.
+    }
+  else:
+    result = %* {
+      "ChatID": chatId, # identifier of the chat
+      "FilterID": filterId, # whisper filter id generated
+      "SymKeyID": symKeyId, # symmetric key id used for symmetric filters
+      "OneToOne": oneToOne, # if asymmetric encryption is used for this chat
+      "Identity": identity, # public key of the other recipient for non-public filters.
+      # FIXME: passing empty string to the topic makes it error
+      # "Topic": topic, # whisper topic
+      "Discovery": discovery,
+      "Negotiated": negotiated,
+      "Listen": listen # whether we are actually listening for messages on this chat, or the filter is only created in order to be able to post on the topic
+    }
 
 proc loadFilters*(filters: seq[JsonNode]): string =
   result =  callPrivateRPC("loadFilters".prefix, %* [filters])
@@ -48,17 +55,18 @@ proc saveChat*(chatId: string, oneToOne: bool = false, active: bool = true, colo
     }
   ])
 
-proc deactivateChat*(chatId: string) =
+proc deactivateChat*(chat: Chat) =
   discard callPrivateRPC("saveChat".prefix, %* [
     {
-      "lastClockValue": 0,
-      "color": "",
-      "name": chatId,
-      "lastMessage": nil,
+      "lastClockValue": 0, # TODO:
+      "color": chat.color,
+      "name": chat.name, #TODO:    0x04acde for 1:1?
+      "lastMessage": nil, # TODO:
       "active": false,
-      "id": chatId,
-      "unviewedMessagesCount": 0,
-      "timestamp": 0
+      "id": chat.id, 
+      "unviewedMessagesCount": 0, #TODO:
+      "chatType": chat.chatType.int,
+      "timestamp": 0 # TODO:
     }
   ])
 
@@ -68,7 +76,7 @@ proc loadChats*(): seq[Chat] =
   if jsonResponse["result"].kind != JNull:
     for jsonChat in jsonResponse{"result"}:
       let chat = jsonChat.toChat
-      if chat.active and chat.chatType != ChatType.Unknown:
+      if chat.isActive and chat.chatType != ChatType.Unknown:
         result.add(jsonChat.toChat)
 
 proc chatMessages*(chatId: string, cursor: string = ""): (string, seq[Message]) =

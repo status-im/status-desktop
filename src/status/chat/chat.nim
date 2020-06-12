@@ -20,7 +20,7 @@ type Chat* = ref object
   name*: string
   color*: string
   identicon*: string
-  active*: bool # indicates whether the chat has been soft deleted
+  isActive*: bool # indicates whether the chat has been soft deleted
   chatType*: ChatType
   timestamp*: int64 # indicates the last time this chat has received/sent a message
   lastClockValue*: int64 # indicates the last clock value to be used when sending messages
