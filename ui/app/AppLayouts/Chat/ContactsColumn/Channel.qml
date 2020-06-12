@@ -41,6 +41,19 @@ Rectangle {
       channelIdenticon: identicon
     }
 
+    Image {
+        id: channelIcon
+        width: 16
+        height: 16
+        fillMode: Image.PreserveAspectFit
+        source: "../../../img/channel-icon-" + (chatType == Constants.chatTypePublic ? "public-chat.svg" : "group.svg")
+        anchors.left: contactImage.right
+        anchors.leftMargin: Theme.padding
+        anchors.top: parent.top
+        anchors.topMargin: Theme.smallPadding
+        visible: chatType != Constants.chatTypeOneToOne
+    }
+
     Text {
         id: contactInfo
         text: chatType != Constants.chatTypePublic ? name : "#" + name
@@ -49,8 +62,8 @@ Rectangle {
         elide: Text.ElideRight
         font.weight: Font.Medium
         font.pixelSize: 15
-        anchors.left: contactImage.right
-        anchors.leftMargin: Theme.padding
+        anchors.left: channelIcon.visible ? channelIcon.right : contactImage.right
+        anchors.leftMargin: channelIcon.visible ? 2 : Theme.padding
         anchors.top: parent.top
         anchors.topMargin: Theme.smallPadding
         color: "black"
