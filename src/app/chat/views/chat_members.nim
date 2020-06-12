@@ -28,8 +28,6 @@ QtObject:
     self.members = members
     self.endResetModel()
 
-  proc len*(self: ChatMembersView): int {.slot.} = self.members.len
-
   method rowCount(self: ChatMembersView, index: QModelIndex = nil): int = self.members.len
 
   method data(self: ChatMembersView, index: QModelIndex, role: int): QVariant =
