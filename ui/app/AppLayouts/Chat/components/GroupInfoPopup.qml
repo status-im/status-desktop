@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.3
+import QtQuick.Controls 2.12 as QQC2
 import QtQuick.Layouts 1.3
 import "../../../../imports"
 import "../../../../shared"
@@ -135,17 +136,41 @@ ModalPopup {
                     Text {
                         visible: model.isAdmin
                         text: qsTr("Admin")
-                        Layout.alignment: Qt.AlignRight
                         width: 100
                         font.pixelSize: 13
                     }
                     Text {
-                        visible: !model.isAdmin
+                        id: moreActionsBtn
+                        visible: !model.isAdmin // TODO: && current user is admin
                         text: "..."
-                        Layout.alignment: Qt.AlignRight
                         width: 100
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                contextMenu.popup(moreActionsBtn.x - moreActionsBtn.width, moreActionsBtn.height + 10)
+                            }
+                            cursorShape: Qt.PointingHandCursor
+                            PopupMenu {
+                                id: contextMenu
+                                QQC2.Action { 
+                                    icon.source: "../../../img/make-admin.svg"
+                                    text: qsTr("Make Admin")
+                                    onTriggered: chatsModel.leaveActiveChat()
+                                }
+                                QQC2.Action { 
+                                    icon.source: "../../../img/remove-from-group.svg"
+                                    icon.color: Theme.red
+                                    text: qsTr("Remove From Group")
+                                    onTriggered: chatsModel.leaveActiveChat()
+                                }
+                            }
+                        }
                     }
                 }
+
+                
+
+
             }
         }
     }

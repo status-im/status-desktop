@@ -14,7 +14,7 @@ Menu {
         implicitWidth: 200
         implicitHeight: 40
         font.pixelSize: 15
-        icon.color: popupMenuItem.highlighted ? Theme.white : Theme.blue
+        icon.color: popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Theme.blue
         contentItem: Item {
             Item {
                 id: menuIcon
@@ -33,7 +33,7 @@ Menu {
                     anchors.fill: popupMenuItemIcon
                     anchors.verticalCenter: parent.verticalCenter
                     source: popupMenuItemIcon
-                    color: popupMenuItem.highlighted ? Theme.white : Theme.blue
+                    color: popupMenuItem.highlighted ? Theme.white : popupMenuItem.action.icon.color
                 }
             }
             
@@ -52,7 +52,7 @@ Menu {
         background: Rectangle {
             implicitWidth: 220
             implicitHeight: 40
-            color: popupMenuItem.highlighted ? Theme.blue : "transparent"
+            color: popupMenuItem.highlighted ? popupMenuItem.icon.color : "transparent"
         }
     }
 
