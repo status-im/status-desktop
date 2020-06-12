@@ -9,7 +9,8 @@ import "../imports"
 import "./Login"
 
 Item {
-    property alias btnGenKey: genrateKeysLink
+    property var onGenKeyClicked: function () {}
+    property var onExistingKeyClicked: function () {}
     property bool loading: false
 
     id: loginView
@@ -43,10 +44,20 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
+        ConfirmAddExistingKeyModal {
+            id: confirmAddExstingKeyModal
+            onOpenModalClick: function () {
+                onExistingKeyClicked()
+            }
+        }
+
         SelectAnotherAccountModal {
             id: selectAnotherAccountModal
             onAccountSelect: function (index) {
                 loginModel.setCurrentAccount(index)
+            }
+            onOpenModalClick: function () {
+                confirmAddExstingKeyModal.open()
             }
         }
 
@@ -88,9 +99,11 @@ Item {
                     changeAccountBtn.isHovered = false
                 }
                 onClicked: {
-                    selectAnotherAccountModal.open()
-
-                    // TODO add popup for when there are no other accounts
+                    if (loginModel.rowCount() > 1) {
+                        selectAnotherAccountModal.open()
+                    } else {
+                        onExistingKeyClicked()
+                    }
                 }
             }
         }
@@ -182,16 +195,19 @@ Item {
         }
 
         MouseArea {
-            id: genrateKeysLink
-            width: genrateKeysLinkText.width
-            height: genrateKeysLinkText.height
+            id: generateKeysLink
+            width: generateKeysLinkText.width
+            height: generateKeysLinkText.height
             cursorShape: Qt.PointingHandCursor
             anchors.top: txtPassword.bottom
             anchors.topMargin: 26
             anchors.horizontalCenter: parent.horizontalCenter
+            onClicked: {
+                onGenKeyClicked()
+            }
 
             Text {
-                id: genrateKeysLinkText
+                id: generateKeysLinkText
                 color: Theme.blue
                 text: qsTr("Generate new keys")
                 font.pixelSize: 13

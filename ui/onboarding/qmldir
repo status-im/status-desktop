@@ -5,3 +5,6 @@ KeysMain 1.0 KeysMain.qml
 Login 1.0 Login.qml
 OnboardingMain 1.0 OnboardingMain.qml
 Slide 1.0 Slide.qml
+EnterSeedPhraseModal 1.0 EnterSeedPhraseModal.qml
+CreatePasswordModal 1.0 CreatePasswordModal.qml
+
