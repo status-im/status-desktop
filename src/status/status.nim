@@ -8,6 +8,7 @@ import accounts as accounts
 import wallet as wallet
 import node as node
 import mailservers as mailservers
+import contacts as contacts
 import profile
 
 type Status* = ref object
@@ -18,6 +19,7 @@ type Status* = ref object
   wallet*: WalletModel
   node*: NodeModel
   profile*: ProfileModel
+  contacts*: ContactModel
 
 proc newStatusInstance*(): Status =
   result = Status()
@@ -29,6 +31,7 @@ proc newStatusInstance*(): Status =
   result.node = node.newNodeModel()
   result.mailservers = mailservers.newMailserverModel(result.events)
   result.profile = profile.newProfileModel()
+  result.contacts = contacts.newContactModel(result.events)
 
 proc initNode*(self: Status) = 
   libstatus_accounts.initNode()

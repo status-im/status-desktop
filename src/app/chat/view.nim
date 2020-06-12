@@ -5,6 +5,7 @@ import chronicles
 
 import ../../status/status
 import ../../status/chat as status_chat
+import ../../status/contacts as status_contacts
 import ../../status/chat/[chat, message]
 
 import views/channels_list
@@ -133,4 +134,4 @@ QtObject:
     self.status.chat.renameGroup(self.activeChannel.id, newName)
 
   proc blockContact*(self: ChatsView, id: string): string {.slot.} =
-    return self.status.chat.blockContact(id)
+    return self.status.contacts.blockContact(id)

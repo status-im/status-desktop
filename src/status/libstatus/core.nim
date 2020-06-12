@@ -43,6 +43,3 @@ proc removePeer*(peer: string) =
 
 proc markTrustedPeer*(peer: string) = 
   discard callPrivateRPC("markTrustedPeer".prefix(false), %* [peer])
-
-proc getContactByID*(id: string): string =
-  result = callPrivateRPC("getContactByID".prefix, %* [id])
