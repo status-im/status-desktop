@@ -42,7 +42,7 @@ proc newChat*(id: string, chatType: ChatType): Chat =
   result = Chat(
     id: id,
     color: channelColors[rand(channelColors.len - 1)],
-    active: true,
+    isActive: true,
     chatType: chatType,
     timestamp: 0,
     lastClockValue: 0,
@@ -62,7 +62,7 @@ proc toChat*(jsonChat: JsonNode): Chat =
     name: jsonChat{"name"}.getStr,
     identicon: "",
     color: jsonChat{"color"}.getStr,
-    active: jsonChat{"active"}.getBool,
+    isActive: jsonChat{"active"}.getBool,
     chatType: ChatType(jsonChat{"chatType"}.getInt),
     timestamp: jsonChat{"timestamp"}.getBiggestInt,
     lastClockValue: jsonChat{"lastClockValue"}.getBiggestInt,

@@ -45,8 +45,7 @@ proc delete*(self: ChatModel) =
   discard
 
 proc update*(self: ChatModel, chat: Chat) =
-  if chat.active:
-    self.channels[chat.id] = chat
+  self.channels[chat.id] = chat
 
 proc hasChannel*(self: ChatModel, chatId: string): bool =
   self.channels.hasKey(chatId)
@@ -108,10 +107,11 @@ proc leave*(self: ChatModel, chatId: string) =
   if self.channels[chatId].chatType == ChatType.PrivateGroupChat:
     discard status_chat.leaveGroupChat(chatId)
 
-  if self.filters.hasKey(chatId):
+  # We still want to be able to receive messages unless we block the 1:1 sender
+  if self.filters.hasKey(chatId) and self.channels[chatId].chatType == ChatType.Public:
     status_chat.removeFilters(chatId, self.filters[chatId])
     
-  status_chat.deactivateChat(chatId)
+  status_chat.deactivateChat(self.channels[chatId])
   # TODO: REMOVE MAILSERVER TOPIC
   # TODO: REMOVE HISTORY
   self.filters.del(chatId)
