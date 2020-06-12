@@ -5,20 +5,15 @@ import "../../imports"
 import "../../shared"
 
 ModalPopup {
-    property var onAccountSelect: function () {}
     property var onOpenModalClick: function () {}
     id: popup
-    title: qsTr("Your accounts")
+    title: qsTr("Enter seed phrase")
+    height: 200
 
-    AccountList {
-        id: accountList
-        anchors.fill: parent
-
-        accounts: loginModel
-        onAccountSelect: function(index) {
-            popup.onAccountSelect(index)
-            popup.close()
-        }
+    Text {
+        text: "Do you want to add another existing key?"
+        anchors.left: parent.left
+        anchors.top: parent.top
     }
 
     footer: StyledButton {
@@ -29,8 +24,8 @@ ModalPopup {
         label: "Add another existing key"
 
         onClicked : {
-           onOpenModalClick()
-           popup.close()
+            onOpenModalClick()
+            popup.close()
         }
     }
 }

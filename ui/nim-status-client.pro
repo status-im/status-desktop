@@ -136,6 +136,8 @@ DISTFILES += \
     app/img/walletActive.svg \
     app/qmldir \
     imports/qmldir \
+    onboarding/CreatePasswordModal.qml \
+    onboarding/EnterSeedPhraseModal.qml \
     onboarding/ExistingKey.qml \
     onboarding/GenKey.qml \
     onboarding/Intro.qml \
@@ -144,6 +146,7 @@ DISTFILES += \
     onboarding/Login/AccountList.qml \
     onboarding/Login/AccountSelection.qml \
     onboarding/Login/AddressView.qml \
+    onboarding/Login/ConfirmAddExistingKeyModal.qml \
     onboarding/Login/SelectAnotherAccountModal.qml \
     onboarding/Login/qmldir \
     onboarding/Login/samples/AccountsData.qml \

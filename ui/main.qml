@@ -58,12 +58,6 @@ ApplicationWindow {
                 onEntered: loader.sourceComponent = keysMain
 
                 DSM.SignalTransition {
-                    targetState: existingKeyState
-                    signal: applicationWindow.navigateTo
-                    guard: path === "ExistingKey"
-                }
-
-                DSM.SignalTransition {
                     targetState: genKeyState
                     signal: applicationWindow.navigateTo
                     guard: path === "GenKey"
@@ -90,12 +84,6 @@ ApplicationWindow {
                     signal: onboardingModel.loginResponseChanged
                     guard: !error
                 }
-
-                DSM.SignalTransition {
-                    targetState: existingKeyState
-                    signal: applicationWindow.navigateTo
-                    guard: path === "ExistingKey"
-                }
             }
 
             DSM.State {
@@ -113,6 +101,18 @@ ApplicationWindow {
                     signal: applicationWindow.navigateTo
                     guard: path === "GenKey"
                 }
+            }
+
+            DSM.SignalTransition {
+                targetState: loginModel.rowCount() ? stateLogin : stateIntro
+                signal: applicationWindow.navigateTo
+                guard: path === "InitialState"
+            }
+
+            DSM.SignalTransition {
+                targetState: existingKeyState
+                signal: applicationWindow.navigateTo
+                guard: path === "ExistingKey"
             }
 
             DSM.FinalState {
@@ -158,7 +158,11 @@ ApplicationWindow {
 
     Component {
         id: existingKey
-        ExistingKey {}
+        ExistingKey {
+            onClosed: function () {
+                applicationWindow.navigateTo("InitialState")
+            }
+        }
     }
 
     Component {
@@ -171,7 +175,12 @@ ApplicationWindow {
     Component {
         id: login
         Login {
-            btnGenKey.onClicked: applicationWindow.navigateTo("GenKey")
+            onGenKeyClicked: function () {
+                applicationWindow.navigateTo("GenKey")
+            }
+            onExistingKeyClicked: function () {
+                applicationWindow.navigateTo("ExistingKey")
+            }
         }
     }
 }
