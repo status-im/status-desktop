@@ -59,7 +59,7 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
   var chat = newChat(chatId, ChatType(chatType))
   self.channels[chat.id] = chat
   status_chat.saveChat(chatId, chatType.isOneToOne, true, chat.color)
-  let filterResult = status_chat.loadFilters(@[status_chat.buildFilter(chatId = chatId, oneToOne = chatType.isOneToOne)])
+  let filterResult = status_chat.loadFilters(@[status_chat.buildFilter(chat)])
 
   var topics:seq[string] = @[]
   let parsedResult = parseJson(filterResult)["result"]
@@ -82,7 +82,7 @@ proc init*(self: ChatModel) =
   var filters:seq[JsonNode] = @[]
   for chat in chatList:
     if self.hasChannel(chat.id): continue
-    filters.add status_chat.buildFilter(chatId = chat.id, oneToOne = chat.chatType.isOneToOne)
+    filters.add status_chat.buildFilter(chat)
     self.channels[chat.id] = chat
     self.events.emit("channelJoined", ChannelArgs(chat: chat))
 
