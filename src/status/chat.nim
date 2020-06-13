@@ -119,7 +119,7 @@ proc leave*(self: ChatModel, chatId: string) =
   self.filters.del(chatId)
   self.channels.del(chatId)  
   self.events.emit("channelLeft", ChatIdArg(chatId: chatId))
-  self.events.emit("activeChannelChanged", ChatIdArg(chatId: self.getActiveChannel()))
+  self.events.emit("activeChannelChanged", ChatIdArg(chatId: ""))
 
 
 proc setActiveChannel*(self: ChatModel, chatId: string) =
