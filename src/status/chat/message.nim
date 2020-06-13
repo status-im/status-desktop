@@ -1,3 +1,5 @@
+import strformat
+
 type ContentType* {.pure.} = enum
   ChatIdentifier = -1,
   Unknown = 0,
@@ -33,3 +35,6 @@ type Message* = object
   whisperTimestamp*: string
   isCurrentUser*: bool
   stickerHash*: string
+
+proc `$`*(self: Message): string =
+  result = fmt"Message(id:{self.id}, chatId:{self.chatId}, clock:{self.clock}, from:{self.fromAuthor}, type:{self.contentType})"

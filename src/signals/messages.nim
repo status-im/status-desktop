@@ -90,7 +90,7 @@ proc toMessage*(jsonMsg: JsonNode): Message =
       contentType: ContentType(jsonMsg{"contentType"}.getInt),
       ensName: jsonMsg{"ensName"}.getStr,
       fromAuthor: jsonMsg{"from"}.getStr,
-      id: jsonMsg{"identicon"}.getStr,
+      id: jsonMsg{"id"}.getStr,
       identicon: jsonMsg{"identicon"}.getStr,
       lineCount: jsonMsg{"lineCount"}.getInt,
       localChatId: jsonMsg{"localChatId"}.getStr,
