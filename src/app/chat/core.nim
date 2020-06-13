@@ -61,7 +61,6 @@ proc handleMailserverEvents(self: ChatController) =
 proc init*(self: ChatController) =
   self.handleMailserverEvents()
   self.handleChatEvents()
-  
   self.status.mailservers.init()
   self.status.chat.init()
 

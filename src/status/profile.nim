@@ -9,7 +9,7 @@ type
     name*, endpoint*: string
 
 type Profile* = ref object
-  id*, alias*, username*, identicon*: string
+  id*, alias*, username*, identicon*, address*: string
   ensVerified*: bool
   ensVerifiedAt*: int
   ensVerificationRetries*: int
@@ -36,6 +36,7 @@ proc toProfileModel*(profile: JsonNode): Profile =
       id: profile["id"].str,
       username: profile["alias"].str,
       identicon: profile["identicon"].str,
+      address: profile["id"].str,
       alias: profile["alias"].str,
       ensVerified: profile["ensVerified"].getBool,
       ensVerifiedAt: profile["ensVerifiedAt"].getInt,

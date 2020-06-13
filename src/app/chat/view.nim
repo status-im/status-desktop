@@ -135,3 +135,6 @@ QtObject:
 
   proc blockContact*(self: ChatsView, id: string): string {.slot.} =
     return self.status.contacts.blockContact(id)
+
+  proc addContact*(self: ChatsView, id: string): string {.slot.} =
+    return self.status.contacts.addContact(id)

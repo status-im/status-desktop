@@ -19,3 +19,22 @@ proc blockContact*(contact: Profile): string =
 
 proc getContactByID*(id: string): string =
   callPrivateRPC("getContactByID".prefix, %* [id])
+
+proc getContacts*(): JsonNode =
+  let payload = %* []
+  let response = callPrivateRPC("wakuext_contacts", payload).parseJson
+  if response["result"].kind == JNull:
+    return %* []
+  return response["result"]
+
+proc saveContact*(id: string, ensVerified: bool, ensVerifiedAt: int, ensVerificationRetries: int, alias: string, identicon: string, systemTags: seq[string]): string =
+  let payload = %* [{
+      "id": id,
+      "ensVerified": ensVerified,
+      "ensVerifiedAt": ensVerifiedAt,
+      "ensVerificationRetries": ensVerificationRetries,
+      "alias": alias,
+      "identicon": identicon,
+      "systemTags": systemTags
+    }]
+  callPrivateRPC("shhext_saveContact", payload)
