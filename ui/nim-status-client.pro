@@ -140,6 +140,7 @@ DISTFILES += \
     onboarding/EnterSeedPhraseModal.qml \
     onboarding/ExistingKey.qml \
     onboarding/GenKey.qml \
+    onboarding/GenKeyModal.qml \
     onboarding/Intro.qml \
     onboarding/KeysMain.qml \
     onboarding/Login.qml \

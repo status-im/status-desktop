@@ -15,6 +15,10 @@ ModalPopup {
         anchors.fill: parent
 
         accounts: loginModel
+        isSelected: function (index, address) {
+            return loginModel.currentAccount.address === address
+        }
+
         onAccountSelect: function(index) {
             popup.onAccountSelect(index)
             popup.close()
