@@ -7,6 +7,7 @@ import "../../imports"
 
 ListView {
     property var accounts: AccountsData {}
+    property var isSelected: function () {}
     property var onAccountSelect: function () {}
 
     id: addressesView
@@ -19,6 +20,9 @@ ListView {
         username: model.username
         address: model.address
         identicon: model.identicon
+        isSelected: function (index, address) {
+            return addressesView.isSelected(index, address)
+        }
         onAccountSelect: function (index) {
             addressesView.onAccountSelect(index)
         }

@@ -168,7 +168,9 @@ ApplicationWindow {
     Component {
         id: genKey
         GenKey {
-            btnExistingKey.onClicked: applicationWindow.navigateTo("ExistingKey")
+            onClosed: function () {
+                applicationWindow.navigateTo("InitialState")
+            }
         }
     }
 

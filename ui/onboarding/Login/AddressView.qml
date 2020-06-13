@@ -10,7 +10,10 @@ Rectangle {
     property string address: "0x123345677890987654321123456"
     property url identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAg0lEQVR4nOzXwQmAMBAFURV7sQybsgybsgyr0QYUlE1g+Mw7ioQMe9lMQwhDaAyhMYTGEJqYkPnrj/t5XE/ft2UdW1yken7MRAyhMYTGEBpDaAyhKe9JbzvSX9WdLWYihtAYQuMLkcYQGkPUScxEDKExhMYQGkNoDKExhMYQmjsAAP//ZfIUZgXTZXQAAAAASUVORK5CYII="
     property var onAccountSelect: function() {}
-    property bool selected: loginModel.currentAccount.address === address
+    property var isSelected: function() {}
+    property bool selected: {
+        return isSelected(index, address)
+    }
     property bool isHovered: false
 
     id: addressViewDelegate
@@ -31,6 +34,9 @@ Rectangle {
     Text {
         id: usernameText
         text: username
+        elide: Text.ElideRight
+        anchors.right: parent.right
+        anchors.rightMargin: Theme.padding
         font.pixelSize: 17
         anchors.top: accountImage.top
         anchors.left: accountImage.right
