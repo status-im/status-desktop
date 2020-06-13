@@ -33,10 +33,9 @@ proc handleChatEvents(self: ChatController) =
   self.status.events.on("messagesLoaded") do(e:Args):
     self.view.pushMessages(MsgsLoadedArgs(e).messages)
 
-  self.status.events.on("pushMessage") do(e: Args):
-    var evArgs = PushMessageArgs(e)
-    for chat in evArgs.chats:
-      self.view.updateChat(chat)
+  self.status.events.on("chatUpdate") do(e: Args):
+    var evArgs = ChatUpdateArgs(e)
+    self.view.updateChats(evArgs.chats)
     self.view.pushMessages(evArgs.messages)
 
   self.status.events.on("channelJoined") do(e: Args):
@@ -67,10 +66,7 @@ proc init*(self: ChatController) =
   self.status.chat.init()
 
 proc handleMessage(self: ChatController, data: MessageSignal) =
-  for chat in data.chats:
-    self.status.chat.update(chat) # TODO: possible code smell. Try to unify this, by having the view react to the model
-    self.view.updateChat(chat)
-  self.view.pushMessages(data.messages)
+  self.status.chat.update(data.chats, data.messages)
 
 proc handleDiscoverySummary(self: ChatController, data: DiscoverySummarySignal) =
   ## Handle mailserver peers being added and removed

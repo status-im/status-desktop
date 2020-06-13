@@ -126,12 +126,13 @@ QtObject:
   proc leaveActiveChat*(self: ChatsView) {.slot.} =
     self.status.chat.leave(self.activeChannel.id)
 
-  proc updateChat*(self: ChatsView, chat: Chat) =
-    self.upsertChannel(chat.id)
-    self.chats.updateChat(chat)
-    if(self.activeChannel.id == chat.id):
-      self.activeChannel.setChatItem(chat)
-      self.activeChannelChanged()
+  proc updateChats*(self: ChatsView, chats: seq[Chat]) =
+    for chat in chats:
+      self.upsertChannel(chat.id)
+      self.chats.updateChat(chat)
+      if(self.activeChannel.id == chat.id):
+        self.activeChannel.setChatItem(chat)
+        self.activeChannelChanged()
 
   proc blockContact*(self: ChatsView, id: string): string {.slot.} =
     return self.status.chat.blockContact(id)
