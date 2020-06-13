@@ -3,34 +3,22 @@ import json
 import utils
 import times
 import strutils
+import sequtils
 import chronicles
 import ../chat/[chat, message]
 import ../../signals/messages
 import ../profile
 
-proc buildFilter*(chatId: string, filterId: string = "", symKeyId: string = "", oneToOne: bool = false, identity: string = "", topic: string = "", discovery: bool = false, negotiated: bool = false, listen: bool = true):JsonNode =
-  if oneToOne:
-    result = %* {
-      "ChatID": chatId, # identifier of the chat
-      "OneToOne": oneToOne, # if asymmetric encryption is used for this chat
-      "Identity": identity, # public key of the other recipient for non-public filters.
-    }
-  else:
-    result = %* {
-      "ChatID": chatId, # identifier of the chat
-      "FilterID": filterId, # whisper filter id generated
-      "SymKeyID": symKeyId, # symmetric key id used for symmetric filters
-      "OneToOne": oneToOne, # if asymmetric encryption is used for this chat
-      "Identity": identity, # public key of the other recipient for non-public filters.
-      # FIXME: passing empty string to the topic makes it error
-      # "Topic": topic, # whisper topic
-      "Discovery": discovery,
-      "Negotiated": negotiated,
-      "Listen": listen # whether we are actually listening for messages on this chat, or the filter is only created in order to be able to post on the topic
-    }
+proc buildFilter*(chat: Chat):JsonNode =
+  if chat.chatType == ChatType.PrivateGroupChat:
+    return newJNull()
+  result = %* {
+    "ChatID": chat.id,
+    "OneToOne": chat.chatType == ChatType.OneToOne
+  }
 
 proc loadFilters*(filters: seq[JsonNode]): string =
-  result =  callPrivateRPC("loadFilters".prefix, %* [filters])
+  result =  callPrivateRPC("loadFilters".prefix, %* [filter(filters, proc(x:JsonNode):bool = x.kind != JNull)])
 
 proc removeFilters*(chatId: string, filterId: string) =
   discard callPrivateRPC("removeFilters".prefix, %* [
