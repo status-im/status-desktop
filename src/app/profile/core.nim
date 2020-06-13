@@ -1,4 +1,5 @@
 import NimQml
+import json
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../signals/types
 import "../../status/libstatus/types" as status_types
@@ -41,6 +42,6 @@ proc init*(self: ProfileController, account: Account) =
     let mailserver = MailServer(name: mailserver_config[0], endpoint: mailserver_config[1])
     self.view.addMailServerToList(mailserver)
 
-  self.view.addContactToList(Contact(name: "username1", address: "0x12345"))
-  self.view.addContactToList(Contact(name: "username2", address: "0x23456"))
-  self.view.addContactToList(Contact(name: "username3", address: "0x34567"))
+  let contactList = self.status.contacts.getContacts().elems
+  for contact in contactList:
+    self.view.addContactToList(contact.toProfileModel())

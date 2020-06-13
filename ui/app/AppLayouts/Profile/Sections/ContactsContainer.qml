@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import "../../../../imports"
+import "./Contacts"
 
 Item {
     id: contactsContainer
@@ -21,40 +22,8 @@ Item {
         font.pixelSize: 20
     }
 
-    Component {
-        id: contactsList
-
-        Item {
-            height: 56
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-            Column {
-                Row {
-                    Text {
-                        text: name
-                        font.weight: Font.Bold
-                        font.pixelSize: 14
-                    }
-                }
-                Row {
-                    Text {
-                        text: address
-                        font.weight: Font.Bold
-                        font.pixelSize: 12
-                    }
-                }
-            }
-        }
-    }
-
-    ListView {
+    ContactList {
         id: contactListView
-        anchors.topMargin: 48
-        anchors.top: element2.bottom
-        anchors.fill: parent
-        model: profileModel.contactList
-        delegate: contactsList
+        contacts: profileModel.contactList
     }
 }

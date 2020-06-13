@@ -121,7 +121,6 @@ proc leave*(self: ChatModel, chatId: string) =
   self.events.emit("channelLeft", ChatIdArg(chatId: chatId))
   self.events.emit("activeChannelChanged", ChatIdArg(chatId: ""))
 
-
 proc setActiveChannel*(self: ChatModel, chatId: string) =
   self.events.emit("activeChannelChanged", ChatIdArg(chatId: chatId))
 
@@ -162,7 +161,6 @@ proc confirmJoiningGroup*(self: ChatModel, chatId: string) =
   var response = parseJson(status_chat.confirmJoiningGroup(chatId))
   var (chats, messages) = formatChatUpdate(response)
   self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
-  # self.events.emit("pushMessage", PushMessageArgs(messages: messages, chats: chats))
 
 proc blockContact*(self: ChatModel, id: string): string =
   var contact = status_profile.getContactByID(id)

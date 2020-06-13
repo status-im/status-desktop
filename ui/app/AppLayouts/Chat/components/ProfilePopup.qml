@@ -222,6 +222,9 @@ ModalPopup {
           label: "Add to contacts"
           anchors.bottom: parent.bottom
           onClicked: {
+            chatsModel.addContact(fromAuthor)
+            // TODO(iuri): Change add contact button state based
+            // on contact already added or not
             profilePopup.close()
           }
       }

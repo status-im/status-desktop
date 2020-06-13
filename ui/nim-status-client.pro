@@ -77,6 +77,11 @@ DISTFILES += \
     app/AppLayouts/Profile/LeftTab/Profile.qml \
     app/AppLayouts/Profile/LeftTab/qmldir \
     app/AppLayouts/Profile/ProfileLayout.qml \
+    app/AppLayouts/Profile/Sections/Contacts/Contact.qml \
+    app/AppLayouts/Profile/Sections/Contacts/ContactList.qml \
+    app/AppLayouts/Profile/Sections/Contacts/qmldir \
+    app/AppLayouts/Profile/Sections/Contacts/samples/ContactsData.qml \
+    app/AppLayouts/Profile/Sections/Contacts/samples/qmldir \
     app/AppLayouts/Wallet/AccountSettingsModal.qml \
     app/AppLayouts/Wallet/AddCustomTokenModal.qml \
     app/AppLayouts/Wallet/AssetsTab.qml \
