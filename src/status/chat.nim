@@ -9,7 +9,7 @@ import ../signals/messages
 import tables
 
 type 
-  PushMessageArgs* = ref object of Args
+  ChatUpdateArgs* = ref object of Args
     chats*: seq[Chat]
     messages*: seq[Message]
 
@@ -44,8 +44,10 @@ proc newChatModel*(events: EventEmitter): ChatModel =
 proc delete*(self: ChatModel) =
   discard
 
-proc update*(self: ChatModel, chat: Chat) =
-  self.channels[chat.id] = chat
+proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message]) =
+  for chat in chats:
+    self.channels[chat.id] = chat
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
 
 proc hasChannel*(self: ChatModel, chatId: string): bool =
   self.channels.hasKey(chatId)
@@ -137,7 +139,7 @@ proc formatChatUpdate(response: JsonNode): (seq[Chat], seq[Message]) =
 proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
   var sentMessage = status_chat.sendChatMessage(chatId, msg)
   var (chats, messages) = formatChatUpdate(parseJson(sentMessage))
-  self.events.emit("pushMessage", PushMessageArgs(messages: messages, chats: chats))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
   sentMessage
 
 proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true) =
@@ -159,7 +161,7 @@ proc markAllChannelMessagesRead*(self: ChatModel, chatId: string): JsonNode =
 proc confirmJoiningGroup*(self: ChatModel, chatId: string) =
   var response = parseJson(status_chat.confirmJoiningGroup(chatId))
   var (chats, messages) = formatChatUpdate(response)
-  self.events.emit("pushMessage", PushMessageArgs(messages: messages, chats: chats))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
 
 proc blockContact*(self: ChatModel, id: string): string =
   var contact = status_profile.getContactByID(id)
