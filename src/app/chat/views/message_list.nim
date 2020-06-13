@@ -15,6 +15,7 @@ type
     Clock = UserRole + 9
     ChatId = UserRole + 10
     SectionIdentifier = UserRole + 11
+    Id = UserRole + 12
 
 QtObject:
   type
@@ -68,7 +69,7 @@ QtObject:
       of ChatMessageRoles.FromAuthor: result = newQVariant(message.fromAuthor)
       of ChatMessageRoles.ChatId: result = newQVariant(message.chatId)
       of ChatMessageRoles.SectionIdentifier: result = newQVariant(sectionIdentifier(message))
-
+      of ChatMessageRoles.Id: result = newQVariant(message.id)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -82,7 +83,9 @@ QtObject:
       ChatMessageRoles.Sticker.int:"sticker",
       ChatMessageRoles.FromAuthor.int:"fromAuthor",
       ChatMessageRoles.ChatId.int:"chatId",
-      ChatMessageRoles.SectionIdentifier.int: "sectionIdentifier"
+      ChatMessageRoles.SectionIdentifier.int: "sectionIdentifier",
+      ChatMessageRoles.Id.int: "messageId"
+
     }.toTable
 
   proc add*(self: ChatMessageList, message: Message) =
