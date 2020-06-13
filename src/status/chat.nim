@@ -1,7 +1,6 @@
 import eventemitter, json
 import sequtils
 import libstatus/chat as status_chat
-import libstatus/core as libstatus_core
 import ./profile as status_profile
 import chronicles
 import chat/[chat, message]

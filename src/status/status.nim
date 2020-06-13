@@ -1,6 +1,5 @@
 import eventemitter
 
-import libstatus/types
 import libstatus/accounts as libstatus_accounts
 import libstatus/core as libstatus_core
 
@@ -10,7 +9,6 @@ import wallet as wallet
 import node as node
 import mailservers as mailservers
 import profile
-import ../signals/types as signal_types
 
 type Status* = ref object
   events*: EventEmitter
