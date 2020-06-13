@@ -84,11 +84,6 @@ QtObject:
   
   proc messagePushed*(self: ChatsView) {.signal.}
 
-  proc pushMessage*(self:ChatsView, message: Message) =
-    self.upsertChannel(message.chatId)
-    self.messageList[message.chatId].add(message)
-    self.messagePushed()
-
   proc pushMessages*(self:ChatsView, messages: seq[Message]) =
     for msg in messages:
       self.upsertChannel(msg.chatId)
