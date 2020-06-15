@@ -13,7 +13,6 @@ Item {
 
     ListView {
         id: chatGroupsListView
-        anchors.topMargin: 24
         anchors.fill: parent
         model: chatsModel.chats
         delegate: Channel {}

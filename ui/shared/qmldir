@@ -6,6 +6,7 @@ Separator 1.0 Separator.qml
 StatusTabButton 1.0 StatusTabButton.qml
 TextWithLabel 1.0 TextWithLabel.qml
 Input 1.0 Input.qml
+SearchBox 1.0 SearchBox.qml
 Select 1.0 Select.qml
 StyledTextArea 1.0 StyledTextArea.qml
 RoundImage 1.0 RoundImage.qml

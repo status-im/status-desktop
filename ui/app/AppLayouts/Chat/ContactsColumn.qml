@@ -10,7 +10,7 @@ import "./ContactsColumn"
 
 Item {
     property alias chatGroupsListViewCount: channelList.channelListCount
-    property alias searchStr: searchBox.searchStr
+    property alias searchStr: searchBox.text
 
     id: contactsColumn
     width: 300
@@ -38,9 +38,16 @@ Item {
 
     SearchBox {
         id: searchBox
+        anchors.top: parent.top
+        anchors.topMargin: 59
+        anchors.right: addChat.left
+        anchors.rightMargin: Theme.padding
+        anchors.left: parent.left
+        anchors.leftMargin: Theme.padding
     }
 
     AddChat {
+        id: "addChat"
     }
 
     StackLayout {
