@@ -7,6 +7,14 @@ import "./"
 
 
 ModalPopup {
+    function doJoin() {
+        if(channelName.text === "") return;
+        chatsModel.joinChat(channelName.text, Constants.chatTypePublic);
+        popup.close();
+        
+    }
+
+
     id: popup
     title: qsTr("Join public chat")
 
@@ -30,45 +38,16 @@ ModalPopup {
         }
     }
 
-    Rectangle {
-        id: channelNameBox
-        height: 44
-        color: Theme.grey
+    Input {
+        id: channelName
         anchors.top: description.bottom
-        radius: 8
-        anchors.right: parent.right
-        anchors.left: parent.left
-
-        TextField {
-            id: channelName
-            placeholderText: qsTr("chat-name")
-            anchors.left: parent.left
-            anchors.leftMargin: 32
-            anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: 15
-            background: Rectangle {
-                color: "#00000000"
-            }
-            width: channelNameBox.width - 32
-        }
-
-        Image {
-            id: image4
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.verticalCenter: parent.verticalCenter
-            fillMode: Image.PreserveAspectFit
-            source: "../../../img/hash.svg"
-        }
-
-        MouseArea {
-            id: mouseArea
-            anchors.fill: parent
-            onClicked : {
-                channelName.forceActiveFocus(Qt.MouseFocusReason)
-            }
-        }
+        anchors.topMargin: Theme.padding
+        placeholderText: qsTr("chat-name")
+        Keys.onEnterPressed: doJoin()
+        Keys.onReturnPressed: doJoin()
+        icon: "../../../img/hash.svg"
     }
+    
 
     RowLayout {
         id: row
@@ -78,7 +57,7 @@ ModalPopup {
         anchors.rightMargin: 65
         anchors.left: parent.left
         anchors.leftMargin: 65
-        anchors.top: channelNameBox.bottom
+        anchors.top: channelName.bottom
         anchors.topMargin: 37
 
         Flow {
@@ -120,12 +99,7 @@ ModalPopup {
             id: btnMAJoinChat
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
-            onClicked : {
-                if(channelName.text === "") return;
-                    chatsModel.joinChat(channelName.text, Constants.chatTypePublic);
-                    popup.close();
-                }
-            }
+            onClicked : doJoin()
         }
-    
+    }
 }

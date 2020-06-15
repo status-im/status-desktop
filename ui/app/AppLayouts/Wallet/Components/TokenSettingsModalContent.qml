@@ -56,8 +56,9 @@ Item {
 
         SearchBox {
             id: searchBox
+            customHeight: 36
+            fontPixelSize: 12
             anchors.top: modalBody.top
-            anchors.topMargin: 0
         }
 
         ListView {
@@ -79,7 +80,7 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: 10
                     width: parent.width
-                    property bool isVisible: searchBox.searchStr == "" || name.toLowerCase().includes(searchBox.searchStr.toLowerCase()) || symbol.toLowerCase().includes(searchBox.searchStr.toLowerCase())
+                    property bool isVisible: searchBox.text == "" || name.toLowerCase().includes(searchBox.text.toLowerCase()) || symbol.toLowerCase().includes(searchBox.text.toLowerCase())
                     visible: isVisible && symbol !== "" ? true : false
                     height: isVisible && symbol !== "" ? 40 : 0
 

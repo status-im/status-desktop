@@ -51,16 +51,18 @@ Rectangle {
         TextField {
             id: txtData
             text: ""
-            leftPadding: 0
             padding: 0
             font.pixelSize: 14
             placeholderText: qsTr("Type a message...")
             anchors.right: chatSendBtn.left
             anchors.rightMargin: 16
             anchors.top: parent.top
-            anchors.topMargin: 24
+            anchors.topMargin: 0
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
             anchors.left: parent.left
-            anchors.leftMargin: 24
+            leftPadding: 24
+            selectByMouse: true
             Keys.onEnterPressed: {
                 chatsModel.sendMessage(txtData.text)
                 txtData.text = ""
@@ -71,15 +73,6 @@ Rectangle {
             }
             background: Rectangle {
                 color: "#00000000"
-            }
-        }
-
-        MouseArea {
-            id: mouseArea1
-            anchors.rightMargin: 50
-            anchors.fill: parent
-            onClicked: {
-                txtData.forceActiveFocus(Qt.MouseFocusReason)
             }
         }
     }
