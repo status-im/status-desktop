@@ -15,6 +15,7 @@ ModalPopup {
     AccountList {
         id: accountList
         anchors.fill: parent
+        interactive: false
 
         accounts: onboardingModel
         isSelected: function (index, address) {
