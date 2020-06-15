@@ -67,12 +67,12 @@ Page {
             anchors.top: txtDesc1.bottom
             anchors.topMargin: 40
             anchors.horizontalCenter: parent.horizontalCenter
-            label: "I'm new, generate keys"
+            label: qsTr("I'm new, generate keys")
         }
 
         StyledButton {
             id: btnExistingKey
-            label: "Access existing key"
+            label: qsTr("Access existing key")
             anchors.top: btnGenKey.bottom
             anchors.topMargin: Theme.padding
             anchors.horizontalCenter: parent.horizontalCenter
