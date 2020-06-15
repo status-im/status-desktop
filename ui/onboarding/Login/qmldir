@@ -1,4 +1,3 @@
-AccountSelection 1.0 AccountSelection.qml
 AccountList 1.0 AccountList.qml
 AddressView 1.0 AddressView.qml
 SelectAnotherAccountModal 1.0 SelectAnotherAccountModal.qml
