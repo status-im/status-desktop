@@ -145,7 +145,6 @@ DISTFILES += \
     onboarding/KeysMain.qml \
     onboarding/Login.qml \
     onboarding/Login/AccountList.qml \
-    onboarding/Login/AccountSelection.qml \
     onboarding/Login/AddressView.qml \
     onboarding/Login/ConfirmAddExistingKeyModal.qml \
     onboarding/Login/SelectAnotherAccountModal.qml \
