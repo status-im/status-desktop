@@ -2,6 +2,8 @@ import NimQml
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../signals/types
 import "../../status/libstatus/types" as status_types
+import ../../status/libstatus/settings as status_settings
+import json
 
 import ../../status/profile
 import ../../status/status
@@ -24,6 +26,13 @@ proc delete*(self: ProfileController) =
 
 proc init*(self: ProfileController, account: Account) =
   let profile = account.toProfileModel()
+
+  # (rramos) TODO: I added this because I needed the public key
+  # Ideally, this module should call getSettings once, and fill the 
+  # profile with all the information comming from the settings.
+  let pubKey = status_settings.getSettings().parseJSON()["result"]["public-key"].getStr
+  profile.id = pubKey
+
   self.view.setNewProfile(profile)
 
   var mailservers = status_mailservers.getMailservers()

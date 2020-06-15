@@ -48,3 +48,8 @@ proc isMember*(self: Chat, pubKey: string): bool =
     if member.id == pubKey and member.joined: return true
   return false
 
+proc isAdmin*(self: Chat, pubKey: string): bool =
+  for member in self.members:
+    if member.id == pubKey and member.joined and member.admin: return true
+  return false
+

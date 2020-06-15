@@ -59,3 +59,11 @@ QtObject:
 
   QtProperty[QVariant] members:
     read = getMembers
+
+  proc isMember*(self: ChatItemView, pubKey: string): bool {.slot.} =
+    if self.chatItem.isNil: return false
+    return self.chatItem.isMember(pubKey)
+
+  proc isAdmin*(self: ChatItemView, pubKey: string): bool {.slot.} =
+    if self.chatItem.isNil: return false
+    return self.chatItem.isAdmin(pubKey)

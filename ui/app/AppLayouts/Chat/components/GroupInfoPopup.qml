@@ -64,7 +64,7 @@ ModalPopup {
 
       Rectangle {
             id: editGroupNameBtn
-            visible: true // TODO: only show this if the current user is admin
+            visible: chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
             height: 24
             width: 24
             anchors.top: parent.top
@@ -178,7 +178,7 @@ ModalPopup {
                     }
                     Text {
                         id: moreActionsBtn
-                        visible: !model.isAdmin // TODO: && current user is admin
+                        visible: !model.isAdmin && chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
                         text: "..."
                         width: 100
                         MouseArea {

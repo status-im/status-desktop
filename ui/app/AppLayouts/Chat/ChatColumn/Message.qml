@@ -101,7 +101,7 @@ Item {
         }
 
         Item {
-            visible: chatsModel.activeChannel.chatType == Constants.chatTypePrivateGroupChat // TODO: hide if the user is a member of the group (use chatsModel.activeChannel.isMember?)
+            visible: chatsModel.activeChannel.chatType == Constants.chatTypePrivateGroupChat && !chatsModel.activeChannel.isMember(profileModel.profile.pubKey)
             anchors.top: channelName.bottom
             anchors.topMargin: 16
             id: joinOrDecline
