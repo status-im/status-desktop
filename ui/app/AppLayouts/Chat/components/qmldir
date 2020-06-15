@@ -4,3 +4,4 @@ PrivateChatPopup 1.0 PrivateChatPopup.qml
 GroupInfoPopup 1.0 GroupInfoPopup.qml
 ProfilePropup 1.0 ProfilePopup.qml
 ChannelIcon 1.0 ChannelIcon.qml
+RenameGroupPopup 1.0 RenameGroupPopup.qml

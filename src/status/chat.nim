@@ -168,3 +168,7 @@ proc blockContact*(self: ChatModel, id: string): string =
   contact.systemTags.add(":contact/blocked")
   result = status_chat.blockContact(contact)
 
+proc renameGroup*(self: ChatModel, chatId: string, newName: string) =
+  var response = parseJson(status_chat.renameGroup(chatId, newName))
+  var (chats, messages) = formatChatUpdate(response)
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))

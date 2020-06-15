@@ -68,6 +68,7 @@ DISTFILES += \
     app/AppLayouts/Chat/ContactsColumn/qmldir \
     app/AppLayouts/Chat/components/PublicChatPopup.qml \
     app/AppLayouts/Chat/components/PrivateChatPopup.qml \
+    app/AppLayouts/Chat/components/RenameGroupPopup.qml \
     app/AppLayouts/Chat/components/SuggestedChannel.qml \
     app/AppLayouts/Chat/components/qmldir \
     app/AppLayouts/Chat/qmldir \

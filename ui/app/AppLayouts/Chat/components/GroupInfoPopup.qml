@@ -61,6 +61,43 @@ ModalPopup {
           color: Theme.darkGrey
           font.family: "Inter"
       }
+
+      Rectangle {
+            id: editGroupNameBtn
+            visible: true // TODO: only show this if the current user is admin
+            height: 24
+            width: 24
+            anchors.top: parent.top
+            anchors.topMargin: Theme.padding
+            anchors.leftMargin: 4
+            anchors.left: groupName.right
+            radius: 8
+
+            Image {
+                id: editGroupImg
+                source: "../../../img/edit-group.svg"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            MouseArea {
+                id: closeModalMouseArea
+                cursorShape: Qt.PointingHandCursor
+                anchors.fill: parent
+                hoverEnabled: true
+                onExited: {
+                    editGroupNameBtn.color = Theme.white
+                }
+                onEntered: {
+                    editGroupNameBtn.color = Theme.grey
+                }
+                onClicked: renameGroupPopup.open()
+            }
+        }
+
+        RenameGroupPopup {
+            id: renameGroupPopup
+        }
     }
 
 
