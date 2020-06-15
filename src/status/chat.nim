@@ -45,7 +45,8 @@ proc delete*(self: ChatModel) =
 
 proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message]) =
   for chat in chats:
-    self.channels[chat.id] = chat
+    if chat.isActive:
+      self.channels[chat.id] = chat
   self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
 
 proc hasChannel*(self: ChatModel, chatId: string): bool =
