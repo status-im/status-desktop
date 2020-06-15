@@ -129,5 +129,8 @@ QtObject:
         self.activeChannel.setChatItem(chat)
         self.activeChannelChanged()
 
+  proc renameGroup*(self: ChatsView, newName: string) {.slot.} =
+    self.status.chat.renameGroup(self.activeChannel.id, newName)
+
   proc blockContact*(self: ChatsView, id: string): string {.slot.} =
     return self.status.chat.blockContact(id)

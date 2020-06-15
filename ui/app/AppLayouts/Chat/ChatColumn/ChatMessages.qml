@@ -14,6 +14,7 @@ ScrollView {
     
     property var messageList: MessagesData {}
     property bool loadingMessages: false
+    property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
 
     contentItem: chatLogView
     anchors.fill: parent
@@ -26,6 +27,7 @@ ScrollView {
     ListView {
         anchors.fill: parent
         spacing: 4
+        boundsBehavior: Flickable.StopAtBounds
         id: chatLogView
         Layout.fillWidth: true
         Layout.fillHeight: true
