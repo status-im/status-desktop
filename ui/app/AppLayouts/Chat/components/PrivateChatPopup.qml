@@ -6,6 +6,13 @@ import "../../../../shared"
 import "./"
 
 ModalPopup {
+
+    function doJoin(){
+        if(chatKey.text === "") return;
+        chatsModel.joinChat(chatKey.text, Constants.chatTypeOneToOne);
+        popup.close();
+    }
+
     id: popup
     title: qsTr("New chat")
 
@@ -14,38 +21,12 @@ ModalPopup {
         chatKey.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    Rectangle {
-        id: chatKeyBox
-        height: 44
-        color: Theme.grey
-        anchors.top: parent.top
-        radius: 8
-        anchors.right: parent.right
-        anchors.left: parent.left
-
-        TextField {
-            id: chatKey
-            placeholderText: qsTr("Enter ENS username or chat key")
-            anchors.left: parent.left
-            anchors.leftMargin: 16
-            anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: 15
-            background: Rectangle {
-                color: "#00000000"
-            }
-            width: chatKeyBox.width - 32
-        }
-
-        MouseArea {
-            id: mouseArea
-            anchors.fill: parent
-            onClicked : {
-                chatKey.forceActiveFocus(Qt.MouseFocusReason)
-            }
-        }
+    Input {
+        id: chatKey
+        placeholderText: qsTr("Enter ENS username or chat key")
+        Keys.onEnterPressed: doJoin()
+        Keys.onReturnPressed: doJoin()
     }
-
-
 
     footer: Button {
         width: 44
@@ -62,11 +43,7 @@ ModalPopup {
             id: btnMAnewChat
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
-            onClicked : {
-                if(chatKey.text === "") return;
-                chatsModel.joinChat(chatKey.text, Constants.chatTypeOneToOne);
-                popup.close();
-            }
+            onClicked : doJoin()
         }
     }
 }

@@ -64,7 +64,6 @@ DISTFILES += \
     app/AppLayouts/Chat/ContactsColumn/Channel.qml \
     app/AppLayouts/Chat/ContactsColumn/ChannelList.qml \
     app/AppLayouts/Chat/ContactsColumn/EmptyView.qml \
-    app/AppLayouts/Chat/ContactsColumn/SearchBox.qml \
     app/AppLayouts/Chat/ContactsColumn/qmldir \
     app/AppLayouts/Chat/components/PublicChatPopup.qml \
     app/AppLayouts/Chat/components/PrivateChatPopup.qml \
@@ -174,6 +173,7 @@ DISTFILES += \
     shared/ModalPopup.qml \
     shared/PopupMenu.qml \
     shared/RoundImage.qml \
+    shared/SearchBox.qml \
     shared/Select.qml \
     shared/Separator.qml \
     shared/StatusTabButton.qml \

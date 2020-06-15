@@ -6,6 +6,11 @@ import "../../../../shared"
 import "./"
 
 Popup {
+    function doRename(){
+        chatsModel.renameGroup(groupName.text)
+        popup.close();
+    }
+
     id: popup
     modal: true
 
@@ -42,44 +47,27 @@ Popup {
             anchors.bottomMargin: Theme.padding
         }
 
-        Rectangle {
-            id: groupNameBox
-            height: 44
-            color: Theme.grey
+        Input {
+            id: groupName
             anchors.top: groupTitleLabel.bottom
-            radius: 8
-            anchors.right: parent.right
+            anchors.topMargin: 7
             anchors.left: parent.left
             anchors.leftMargin: Theme.padding
+            anchors.right: parent.right
             anchors.rightMargin: Theme.padding
-            anchors.topMargin: 7
-
-            TextField {
-                id: groupName
-                placeholderText: qsTr("Group Name")
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 15
-                background: Rectangle {
-                    color: "#00000000"
-                }
-                width: groupNameBox.width - 32
-                selectByMouse: true
-            }
+            placeholderText: qsTr("Group Name")
+            Keys.onEnterPressed: doRename()
+            Keys.onReturnPressed: doRename()
         }
 
         StyledButton {
             id: saveBtn
-            anchors.top: groupNameBox.bottom
+            anchors.top: groupName.bottom
             anchors.topMargin: 22
             anchors.right: parent.right
             anchors.rightMargin: Theme.padding
             label: qsTr("Save")
-            onClicked : {
-                chatsModel.renameGroup(groupName.text)
-                popup.close();
-            }
+            onClicked : doRename()
         }
   }
 }
