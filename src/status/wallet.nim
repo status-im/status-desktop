@@ -45,6 +45,8 @@ proc sendTransaction*(self: WalletModel, from_value: string, to: string, value: 
   status_wallet.sendTransaction(from_value, to, value, password)
 
 proc getDefaultCurrency*(self: WalletModel): string =
+  # TODO: this should come from a model? It is going to be used too in the
+  # profile section and ideally we should not call the settings more than once
   status_settings.getSettings().parseJSON()["result"]["currency"].getStr
 
 proc setDefaultCurrency*(self: WalletModel, currency: string) =

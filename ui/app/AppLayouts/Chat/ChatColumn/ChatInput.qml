@@ -14,6 +14,8 @@ Rectangle {
     color: "white"
     border.width: 0
 
+    visible: chatsModel.activeChannel.chatType != Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember(profileModel.profile.pubKey)
+
     Rectangle {
         id: rectangle
         color: "#00000000"
