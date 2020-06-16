@@ -9,7 +9,7 @@ type
     name*, endpoint*: string
 
 type Profile* = ref object
-  id*, alias*, username*, identicon*, address*: string
+  id*, alias*, username*, identicon*, address*, ensName*: string
   ensVerified*: bool
   ensVerifiedAt*: int
   ensVerificationRetries*: int
@@ -21,6 +21,7 @@ proc toProfileModel*(account: Account): Profile =
       username: account.name,
       identicon: account.photoPath,
       alias: account.name,
+      ensName: "",
       ensVerified: false,
       ensVerifiedAt: 0,
       ensVerificationRetries: 0,
@@ -38,6 +39,7 @@ proc toProfileModel*(profile: JsonNode): Profile =
       identicon: profile["identicon"].str,
       address: profile["id"].str,
       alias: profile["alias"].str,
+      ensName: profile["name"].str,
       ensVerified: profile["ensVerified"].getBool,
       ensVerifiedAt: profile["ensVerifiedAt"].getInt,
       ensVerificationRetries: profile["ensVerificationRetries"].getInt,

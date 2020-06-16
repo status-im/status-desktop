@@ -2,6 +2,7 @@ import NimQml
 import Tables
 import strformat
 import ../../../status/profile
+from ../../../status/ens import nil
 
 type
   ContactRoles {.pure.} = enum
@@ -25,6 +26,12 @@ QtObject:
   method rowCount(self: ContactList, index: QModelIndex = nil): int =
     return self.contacts.len
 
+  proc getUserName(contact: Profile): string =
+    if(contact.ensName != "" and contact.ensVerified):
+      result = "@" & ens.userName(contact.ensName)
+    else:
+      result = contact.alias
+
   method data(self: ContactList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
@@ -32,7 +39,7 @@ QtObject:
       return
     let contact = self.contacts[index.row]
     case role.ContactRoles:
-      of ContactRoles.Name: result = newQVariant(contact.username)
+      of ContactRoles.Name: result = newQVariant(getUserName(contact))
       of ContactRoles.Address: result = newQVariant(contact.address)
       of ContactRoles.Identicon: result = newQVariant(contact.identicon)
 
