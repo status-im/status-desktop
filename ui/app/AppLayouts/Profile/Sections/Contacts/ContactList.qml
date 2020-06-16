@@ -7,7 +7,10 @@ import "../../../../../imports"
 import "../../../../../shared"
 
 ListView {
+    id: contactList
     property var contacts: ContactsData {}
+    property var selectable: true
+    property alias selectedContact: contactGroup.checkedButton
 
     anchors.topMargin: 48
     anchors.top: element2.bottom
@@ -18,6 +21,11 @@ ListView {
         name: model.name
         address: model.address
         identicon: model.identicon
+        selectable: contactList.selectable
+    }
+
+    ButtonGroup {
+        id: contactGroup
     }
 }
 /*##^##
