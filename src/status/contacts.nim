@@ -1,11 +1,16 @@
 import eventemitter
 import json
 import libstatus/contacts as status_contacts
-import profile
+import profile/profile
+import sequtils
 
 type
   ContactModel* = ref object
     events*: EventEmitter
+
+type 
+  ContactUpdateArgs* = ref object of Args
+    contacts*: seq[Profile]
 
 proc newContactModel*(events: EventEmitter): ContactModel =
     result = ContactModel()
@@ -20,8 +25,9 @@ proc blockContact*(self: ContactModel, id: string): string =
   contact.systemTags.add(":contact/blocked")
   status_contacts.blockContact(contact)
 
-proc getContacts*(self: ContactModel): JsonNode =
-  status_contacts.getContacts()
+proc getContacts*(self: ContactModel): seq[Profile] =
+  result = map(status_contacts.getContacts().getElems(), proc(x: JsonNode): Profile = x.toProfileModel())
+  self.events.emit("contactUpdate", ContactUpdateArgs(contacts: result))
 
 proc addContact*(self: ContactModel, id: string): string =
   let contact = self.getContactByID(id)

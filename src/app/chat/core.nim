@@ -4,8 +4,8 @@ import ../../status/chat as chat_model
 import ../../status/mailservers as mailserver_model
 import ../../signals/types
 import ../../status/libstatus/types as status_types
-import ../../signals/types
 import ../../status/chat
+import ../../status/contacts
 import ../../status/status
 import views/channels_list
 import view
@@ -33,8 +33,13 @@ proc handleChatEvents(self: ChatController) =
   self.status.events.on("messagesLoaded") do(e:Args):
     self.view.pushMessages(MsgsLoadedArgs(e).messages)
 
+  self.status.events.on("contactUpdate") do(e: Args):
+    var evArgs = ContactUpdateArgs(e)
+    self.view.updateUsernames(evArgs.contacts)
+
   self.status.events.on("chatUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)
+    self.view.updateUsernames(evArgs.contacts)
     self.view.updateChats(evArgs.chats)
     self.view.pushMessages(evArgs.messages)
 

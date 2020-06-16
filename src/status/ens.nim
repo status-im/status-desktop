@@ -1,9 +1,19 @@
 import strutils
+import profile/profile
 
-let domain* = ".statusnet.eth"
+let domain* = ".stateofus.eth"
 
-proc userName*(ensName: string): string =
+proc userName*(ensName: string, removeSuffix: bool = false): string =
   if ensName != "" and ensName.endsWith(domain):
-    result = ensName.split(".")[0]
+    if removeSuffix: 
+      result = ensName.split(".")[0]
+    else:
+      result = ensName
   else:
     result = ensName
+
+proc userNameOrAlias*(contact: Profile): string =
+    if(contact.ensName != "" and contact.ensVerified):
+      result = "@" & userName(contact.ensName, true)
+    else:
+      result = contact.alias

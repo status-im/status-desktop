@@ -2,6 +2,7 @@ import json
 import chronicles
 import ../status/libstatus/types
 import ../status/chat/[chat, message]
+import ../status/profile/profile
 import json_serialization
 import tables
 
@@ -26,7 +27,7 @@ method onSignal*(self: SignalSubscriber, data: Signal) {.base.} =
 type MessageSignal* = ref object of Signal
   messages*: seq[Message]
   chats*: seq[Chat]
-  contacts*: Table[string, ChatContact]
+  contacts*: seq[Profile]
   
 type Filter* = object
   chatId*: string

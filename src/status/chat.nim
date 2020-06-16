@@ -1,16 +1,18 @@
 import eventemitter, json
 import sequtils
 import libstatus/chat as status_chat
-import ./profile as status_profile
 import chronicles
+import profile/profile
 import chat/[chat, message]
 import ../signals/messages
 import tables
+import ens
 
 type 
   ChatUpdateArgs* = ref object of Args
     chats*: seq[Chat]
     messages*: seq[Message]
+    contacts*: seq[Profile]
 
   ChatIdArg* = ref object of Args
     chatId*: string
@@ -29,6 +31,7 @@ type
 
   ChatModel* = ref object
     events*: EventEmitter
+    contacts*: Table[string, Profile]
     channels*: Table[string, Chat]
     filters*: Table[string, string]
     msgCursor*: Table[string, string]
@@ -36,6 +39,7 @@ type
 proc newChatModel*(events: EventEmitter): ChatModel =
   result = ChatModel()
   result.events = events
+  result.contacts = initTable[string, Profile]()
   result.channels = initTable[string, Chat]()
   result.filters = initTable[string, string]()
   result.msgCursor = initTable[string, string]()
@@ -48,7 +52,7 @@ proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message]) =
     if chat.isActive:
       self.channels[chat.id] = chat
 
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
 
 proc hasChannel*(self: ChatModel, chatId: string): bool =
   self.channels.hasKey(chatId)
@@ -124,7 +128,7 @@ proc leave*(self: ChatModel, chatId: string) =
   if self.channels[chatId].chatType == ChatType.PrivateGroupChat:
     let leaveGroupResponse = status_chat.leaveGroupChat(chatId)
     var (chats, messages) = self.processChatUpdate(parseJson(leaveGroupResponse))
-    self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
+    self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
 
   # We still want to be able to receive messages unless we block the 1:1 sender
   if self.filters.hasKey(chatId) and self.channels[chatId].chatType == ChatType.Public:
@@ -155,7 +159,7 @@ proc formatChatUpdate(response: JsonNode): (seq[Chat], seq[Message]) =
 proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
   var sentMessage = status_chat.sendChatMessage(chatId, msg)
   var (chats, messages) = self.processChatUpdate(parseJson(sentMessage))
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
   sentMessage
 
 proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true) =
@@ -177,9 +181,20 @@ proc markAllChannelMessagesRead*(self: ChatModel, chatId: string): JsonNode =
 proc confirmJoiningGroup*(self: ChatModel, chatId: string) =
   var response = parseJson(status_chat.confirmJoiningGroup(chatId))
   var (chats, messages) = self.processChatUpdate(response)
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
 
 proc renameGroup*(self: ChatModel, chatId: string, newName: string) =
   var response = parseJson(status_chat.renameGroup(chatId, newName))
   var (chats, messages) = formatChatUpdate(response)
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
+
+proc getUserName*(self: ChatModel, id: string, defaultUserName: string):string =
+  if(self.contacts.hasKey(id)):
+    return userNameOrAlias(self.contacts[id])
+  else:
+    return defaultUserName
+
+proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
+  for c in contacts:
+    self.contacts[c.id] = c
+  self.events.emit("chatUpdate", ChatUpdateArgs(contacts: contacts))

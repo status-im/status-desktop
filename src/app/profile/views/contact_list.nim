@@ -1,7 +1,7 @@
 import NimQml
 import Tables
 import strformat
-import ../../../status/profile
+import ../../../status/profile/profile
 from ../../../status/ens import nil
 
 type
@@ -20,6 +20,9 @@ QtObject:
 
   proc newContactList*(): ContactList =
     new(result, delete)
+    # TODO: (rramos) contacts should be a table[string, Profile] instead, with the key being the public key
+    # This is to optimize determining if a contact is part of the contact list or not 
+    # (including those that do not have a system tag)
     result.contacts = @[]
     result.setup
 
@@ -28,9 +31,15 @@ QtObject:
 
   proc getUserName(contact: Profile): string =
     if(contact.ensName != "" and contact.ensVerified):
-      result = "@" & ens.userName(contact.ensName)
+      result = "@" & ens.userName(contact.ensName, true)
     else:
       result = contact.alias
+
+  proc userName(self: ContactList, pubKey: string, defaultValue: string = ""): string {.slot.} =
+    for contact in self.contacts:
+      if(contact.id != pubKey): continue
+      return getUserName(contact)
+    return defaultValue
 
   method data(self: ContactList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
@@ -54,3 +63,21 @@ QtObject:
     self.beginInsertRows(newQModelIndex(), self.contacts.len, self.contacts.len)
     self.contacts.add(contact)
     self.endInsertRows()
+
+  proc updateContact*(self: ContactList, contact: Profile) =
+    var found = false
+    let topLeft = self.createIndex(0, 0, nil)
+    let bottomRight = self.createIndex(self.contacts.len, 0, nil)
+    for c in self.contacts:
+      if(c.id != contact.id): continue
+      found = true
+      c.ensName = contact.ensName
+      c.ensVerified = contact.ensVerified
+
+    if not found:
+      self.addContactToList(contact)
+    else:
+      self.dataChanged(topLeft, bottomRight, @[ContactRoles.Name.int])
+    
+
+

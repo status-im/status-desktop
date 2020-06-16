@@ -7,6 +7,7 @@ import ../../status/status
 import ../../status/chat as status_chat
 import ../../status/contacts as status_contacts
 import ../../status/chat/[chat, message]
+import ../../status/profile/profile
 
 import views/channels_list
 import views/message_list
@@ -85,11 +86,18 @@ QtObject:
   
   proc messagePushed*(self: ChatsView) {.signal.}
 
-  proc pushMessages*(self:ChatsView, messages: seq[Message]) =
-    for msg in messages:
+  proc pushMessages*(self:ChatsView, messages: var seq[Message]) =
+    for msg in messages.mitems:
       self.upsertChannel(msg.chatId)
+      msg.alias = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
       self.messageList[msg.chatId].add(msg)
       self.messagePushed()
+
+  proc updateUsernames*(self:ChatsView, contacts: seq[Profile]) =
+    if contacts.len > 0:
+      # Updating usernames for all the messages list
+      for k in self.messageList.keys:
+        self.messageList[k].updateUsernames(contacts)
 
   proc getMessageList(self: ChatsView): QVariant {.slot.} =
     self.upsertChannel(self.activeChannel.id)
