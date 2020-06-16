@@ -104,10 +104,26 @@ proc init*(self: ChatModel) =
     warn "No topics found for chats. Cannot load past messages"
   else:
     self.events.emit("mailserverTopics", TopicArgs(topics: topics));
+
+proc processChatUpdate(self: ChatModel,response: JsonNode): (seq[Chat], seq[Message]) =
+  var chats: seq[Chat] = @[]
+  var messages: seq[Message] = @[]
+  if response["result"]{"chats"} != nil:
+    for jsonMsg in response["result"]["messages"]:
+      messages.add(jsonMsg.toMessage)
+  if response["result"]{"chats"} != nil:
+    for jsonChat in response["result"]["chats"]:
+      let chat = jsonChat.toChat
+      self.channels[chat.id] = chat
+      chats.add(chat) 
+  result = (chats, messages)
+
   
 proc leave*(self: ChatModel, chatId: string) =
   if self.channels[chatId].chatType == ChatType.PrivateGroupChat:
-    discard status_chat.leaveGroupChat(chatId)
+    let leaveGroupResponse = status_chat.leaveGroupChat(chatId)
+    var (chats, messages) = self.processChatUpdate(parseJson(leaveGroupResponse))
+    self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
 
   # We still want to be able to receive messages unless we block the 1:1 sender
   if self.filters.hasKey(chatId) and self.channels[chatId].chatType == ChatType.Public:
@@ -137,7 +153,7 @@ proc formatChatUpdate(response: JsonNode): (seq[Chat], seq[Message]) =
 
 proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
   var sentMessage = status_chat.sendChatMessage(chatId, msg)
-  var (chats, messages) = formatChatUpdate(parseJson(sentMessage))
+  var (chats, messages) = self.processChatUpdate(parseJson(sentMessage))
   self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
   sentMessage
 
@@ -159,7 +175,7 @@ proc markAllChannelMessagesRead*(self: ChatModel, chatId: string): JsonNode =
 
 proc confirmJoiningGroup*(self: ChatModel, chatId: string) =
   var response = parseJson(status_chat.confirmJoiningGroup(chatId))
-  var (chats, messages) = formatChatUpdate(response)
+  var (chats, messages) = self.processChatUpdate(response)
   self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
 
 proc blockContact*(self: ChatModel, id: string): string =

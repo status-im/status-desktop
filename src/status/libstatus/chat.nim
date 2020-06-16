@@ -43,19 +43,8 @@ proc saveChat*(chatId: string, oneToOne: bool = false, active: bool = true, colo
   ])
 
 proc deactivateChat*(chat: Chat) =
-  discard callPrivateRPC("saveChat".prefix, %* [
-    {
-      "lastClockValue": 0, # TODO:
-      "color": chat.color,
-      "name": chat.name, #TODO:    0x04acde for 1:1?
-      "lastMessage": nil, # TODO:
-      "active": false,
-      "id": chat.id, 
-      "unviewedMessagesCount": 0, #TODO:
-      "chatType": chat.chatType.int,
-      "timestamp": 0 # TODO:
-    }
-  ])
+  chat.isActive = false
+  discard callPrivateRPC("saveChat".prefix, %* [chat.toJsonNode])
 
 proc loadChats*(): seq[Chat] =
   result = @[]
