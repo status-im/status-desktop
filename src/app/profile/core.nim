@@ -42,7 +42,9 @@ proc init*(self: ProfileController, account: Account) =
     let mailserver = MailServer(name: mailserver_config[0], endpoint: mailserver_config[1])
     self.view.addMailServerToList(mailserver)
 
-  for contact in self.status.contacts.getContacts():
+  let contacts = self.status.contacts.getContacts()
+  self.status.chat.updateContacts(contacts)
+  for contact in contacts:
     self.view.addContactToList(contact)
 
 method onSignal(self: ProfileController, data: Signal) =
