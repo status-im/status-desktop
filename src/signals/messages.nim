@@ -33,6 +33,20 @@ proc toChatMember*(jsonMember: JsonNode): ChatMember =
     userName: generateAlias(pubkey)
   )
 
+proc toChatMembershipEvent*(jsonMembership: JsonNode): ChatMembershipEvent =
+  result = ChatMembershipEvent(
+    chatId: jsonMembership["chatId"].getStr,
+    clockValue: jsonMembership["clockValue"].getBiggestInt,
+    fromKey: jsonMembership["from"].getStr,
+    rawPayload: jsonMembership["rawPayload"].getStr,
+    signature: jsonMembership["signature"].getStr,
+    eventType: jsonMembership["type"].getInt,
+    members: @[]
+  )
+  if jsonMembership{"members"} != nil:
+    for member in jsonMembership["members"]:
+      result.members.add(member.getStr)
+
 
 const channelColors* = ["#fa6565", "#7cda00", "#887af9", "#51d0f0", "#FE8F59", "#d37ef4"]
 
@@ -81,6 +95,11 @@ proc toChat*(jsonChat: JsonNode): Chat =
     result.members = @[]
     for jsonMember in jsonChat["members"]:
       result.members.add(jsonMember.toChatMember)
+
+  if jsonChat["membershipUpdateEvents"].kind != JNull:
+    result.membershipUpdateEvents = @[]
+    for jsonMember in jsonChat["membershipUpdateEvents"]:
+      result.membershipUpdateEvents.add(jsonMember.toChatMembershipEvent)
 
 proc toMessage*(jsonMsg: JsonNode): Message =
   result = Message(

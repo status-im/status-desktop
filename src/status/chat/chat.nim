@@ -1,5 +1,7 @@
 import message
 import strformat
+import json
+import sequtils
 
 type ChatType* {.pure.}= enum
   Unknown = 0,
@@ -16,6 +18,39 @@ type ChatMember* = object
   identicon*: string
   userName*: string
 
+proc toJsonNode*(self: ChatMember): JsonNode =
+  result = %* {
+    "id": self.id,
+    "admin": self.admin,
+    "joined": self.joined
+  }
+
+proc toJsonNode*(self: seq[ChatMember]): seq[JsonNode] =
+  result = map(self, proc(x: ChatMember): JsonNode = x.toJsonNode)
+
+type ChatMembershipEvent* = object
+  chatId*: string
+  clockValue*: int64
+  fromKey*: string
+  members*: seq[string]
+  rawPayload*: string
+  signature*: string 
+  eventType*: int
+
+proc toJsonNode*(self: ChatMembershipEvent): JsonNode =
+  result = %* {
+    "chatId": self.chatId,
+    "clockValue": self.clockValue,
+    "from": self.fromKey,
+    "members": self.members,
+    "rawPayload": self.rawPayload,
+    "signature": self.signature,
+    "type": self.eventType
+  }
+
+proc toJsonNode*(self: seq[ChatMembershipEvent]): seq[JsonNode] =
+  result = map(self, proc(x: ChatMembershipEvent): JsonNode = x.toJsonNode)
+
 type Chat* = ref object
   id*: string # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat
   name*: string
@@ -29,10 +64,26 @@ type Chat* = ref object
   unviewedMessagesCount*: int
   lastMessage*: Message
   members*: seq[ChatMember]
-  # membershipUpdateEvents # ?
+  membershipUpdateEvents*: seq[ChatMembershipEvent]
 
 proc `$`*(self: Chat): string =
   result = fmt"Chat(id:{self.id}, name:{self.name}, active:{self.isActive}, type:{self.chatType})"
+
+proc toJsonNode*(self: Chat): JsonNode =
+  result = %* {
+    "active": self.isActive,
+    "chatType": self.chatType.int,
+    "color": self.color,
+    "deletedAtClockValue": self.deletedAtClockValue,
+    "id": self.id,
+    "lastClockValue": self.lastClockValue,
+    "lastMessage": nil,
+    "members": self.members.toJsonNode,
+    "membershipUpdateEvents": self.membershipUpdateEvents.toJsonNode,
+    "name": self.name,
+    "timestamp": self.timestamp,
+    "unviewedMessagesCount": self.unviewedMessagesCount
+  }
 
 proc findIndexById*(self: seq[Chat], id: string): int =
   result = -1
