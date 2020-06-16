@@ -25,5 +25,12 @@ Item {
     ContactList {
         id: contactListView
         contacts: profileModel.contactList
+        selectable: false
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;width:600}
+}
+##^##*/
