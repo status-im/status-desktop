@@ -75,3 +75,20 @@ type AccountArgs* = ref object of Args
 
 type
   StatusGoException* = object of Exception
+
+type
+  Transaction* = ref object
+    typeValue*: string
+    address*: string
+    blockNumber*: string
+    blockHash*: string
+    timestamp*: string
+    gasPrice*: string
+    gasLimit*: string
+    gasUsed*: string
+    nonce*: string
+    txStatus*: string
+    value*: string
+    fromAddress*: string
+    to*: string
+

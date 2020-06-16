@@ -4,10 +4,11 @@ import libstatus/tokens as status_tokens
 import libstatus/settings as status_settings
 import libstatus/wallet as status_wallet
 import libstatus/accounts/constants as constants
-from libstatus/types import GeneratedAccount, DerivedAccount
+from libstatus/types import GeneratedAccount, DerivedAccount, Transaction
 import wallet/balance_manager
 import wallet/account
 export account
+export Transaction
 
 type WalletModel* = ref object
     events*: EventEmitter
@@ -144,3 +145,6 @@ proc toggleAsset*(self: WalletModel, symbol: string, enable: bool, address: stri
     account.assetList = self.generateAccountConfiguredAssets(account.address)
     updateBalance(account, self.getDefaultCurrency())
   self.events.emit("assetChanged", Args())
+
+proc getTransfersByAddress*(self: WalletModel, address: string): seq[Transaction] =
+ result = status_wallet.getTransfersByAddress(address)

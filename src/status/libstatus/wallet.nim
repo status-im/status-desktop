@@ -6,6 +6,7 @@ import strformat
 import stint
 import strutils, sequtils
 import chronicles
+import types
 import ../wallet/account
 
 proc getWalletAccounts*(): seq[WalletAccount] =
@@ -31,6 +32,36 @@ proc getWalletAccounts*(): seq[WalletAccount] =
   except:
     let msg = getCurrentExceptionMsg()
     error "Failed getting wallet accounts", msg
+
+proc getTransfersByAddress*(address: string): seq[Transaction] =
+  try:
+    let response = status.getBlockByNumber("latest")
+    let latestBlock = parseJson(response)["result"]
+    
+    let transactionsResponse = status.getTransfersByAddress(address, latestBlock["number"].getStr, "0x14")
+    let transactions = parseJson(transactionsResponse)["result"]
+    var accountTransactions: seq[Transaction] = @[]
+
+    for transaction in transactions:
+      accountTransactions.add(Transaction(
+        typeValue: transaction["type"].getStr,
+        address: transaction["address"].getStr,
+        blockNumber: transaction["blockNumber"].getStr,
+        timestamp: transaction["timestamp"].getStr,
+        gasPrice: transaction["gasPrice"].getStr,
+        gasLimit: transaction["gasLimit"].getStr,
+        gasUsed: transaction["gasUsed"].getStr,
+        nonce: transaction["nonce"].getStr,
+        txStatus: transaction["txStatus"].getStr,
+        value: transaction["value"].getStr,
+        fromAddress: transaction["from"].getStr,
+        to: transaction["to"].getStr
+      ))
+    result = accountTransactions
+  except:
+    let msg = getCurrentExceptionMsg()
+    error "Failed getting wallet account transactions", msg
+    
 
 proc sendTransaction*(from_address: string, to: string, value: string, password: string): string =
   var args = %* {

@@ -81,6 +81,9 @@ SplitView {
                         anchors.left: collectiblesBtn.right
                         anchors.leftMargin: 32
                         btnText: "History"
+                        onClicked: {
+                          walletModel.loadTransactionsForAccount(walletModel.currentAccount.address)
+                        }
                     }
                 }
 
