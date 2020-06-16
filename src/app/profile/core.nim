@@ -4,14 +4,14 @@ import ../../status/libstatus/mailservers as status_mailservers
 import ../../signals/types
 import "../../status/libstatus/types" as status_types
 import ../../status/libstatus/settings as status_settings
-import json
-
-import ../../status/profile
+import ../../status/profile/[profile, mailserver]
 import ../../status/contacts
 import ../../status/status
+import ../../status/chat as status_chat
+import ../../status/chat/chat
 import view
 
-type ProfileController* = object
+type ProfileController* = ref object of SignalSubscriber
   view*: ProfileView
   variant*: QVariant
   status*: Status
@@ -42,6 +42,13 @@ proc init*(self: ProfileController, account: Account) =
     let mailserver = MailServer(name: mailserver_config[0], endpoint: mailserver_config[1])
     self.view.addMailServerToList(mailserver)
 
-  let contactList = self.status.contacts.getContacts().elems
-  for contact in contactList:
-    self.view.addContactToList(contact.toProfileModel())
+  for contact in self.status.contacts.getContacts():
+    self.view.addContactToList(contact)
+
+method onSignal(self: ProfileController, data: Signal) =
+  let msgData = MessageSignal(data);
+  if msgData.contacts.len > 0:
+    # TODO: view should react to model changes
+    self.status.chat.updateContacts(msgData.contacts)
+    self.view.updateContactList(msgData.contacts)
+

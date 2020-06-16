@@ -1,7 +1,7 @@
 import core
 import json
 import utils
-import ../profile
+import ../profile/profile
 
 # TODO: remove Profile from here
 proc blockContact*(contact: Profile): string =

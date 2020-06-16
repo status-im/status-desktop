@@ -2,9 +2,11 @@ import NimQml
 import views/mailservers_list
 import views/contact_list
 import views/profile_info
-import ../../status/profile
+import ../../status/profile/[mailserver, profile]
+import ../../status/profile as status_profile
 import ../../status/accounts as status_accounts
 import ../../status/status
+import ../../status/chat/chat
 
 QtObject:
   type ProfileView* = ref object of QObject
@@ -37,6 +39,10 @@ QtObject:
   QtProperty[QVariant] mailserversList:
     read = getMailserversList
 
+  proc updateContactList*(self: ProfileView, contacts: seq[Profile]) =
+    for contact in contacts:
+      self.contactList.updateContact(contact)
+  
   proc addContactToList*(self: ProfileView, contact: Profile) =
     self.contactList.addContactToList(contact)
 

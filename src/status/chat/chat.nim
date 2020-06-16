@@ -11,11 +11,6 @@ type ChatType* {.pure.}= enum
 
 proc isOneToOne*(self: ChatType): bool = self == ChatType.OneToOne
 
-type ChatContact* = object
-  id*: string
-  name*: string
-  ensVerified*: bool
-
 type ChatMember* = object
   admin*: bool
   id*: string

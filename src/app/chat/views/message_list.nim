@@ -1,6 +1,8 @@
 import NimQml, Tables
 import ../../../status/chat
 import ../../../status/chat/[message,stickers]
+import ../../../status/profile/profile
+import ../../../status/ens
 
 type
   ChatMessageRoles {.pure.} = enum
@@ -33,7 +35,6 @@ QtObject:
     result = Message()
     result.contentType = ContentType.ChatIdentifier;
     result.chatId = chatId
-
 
   proc newChatMessageList*(chatId: string): ChatMessageList =
     new(result, delete)
@@ -98,4 +99,18 @@ QtObject:
     for message in messages:
       self.messages.add(message)
     self.endInsertRows()
+
+  proc updateUsernames*(self: ChatMessageList, contacts: seq[Profile]) =
+    let topLeft = self.createIndex(0, 0, nil)
+    let bottomRight = self.createIndex(self.messages.len, 0, nil)
+
+    # TODO: change this once the contact list uses a table
+    for c in contacts:
+      for m in self.messages.mitems:
+        if m.fromAuthor == c.id:
+          m.alias = userNameOrAlias(c)
+
+    self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.Username.int])
+
+
 
