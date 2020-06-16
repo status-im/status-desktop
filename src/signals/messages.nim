@@ -3,6 +3,7 @@ import types
 import ../status/libstatus/accounts as status_accounts
 import ../status/chat/[chat, message]
 import random
+import tables
 
 proc toMessage*(jsonMsg: JsonNode): Message
 
@@ -11,6 +12,16 @@ proc toChat*(jsonChat: JsonNode): Chat
 proc fromEvent*(event: JsonNode): Signal = 
   var signal:MessageSignal = MessageSignal()
   signal.messages = @[]
+  signal.contacts = initTable[string, ChatContact]()
+
+  if event["event"]{"contacts"} != nil:
+    for jsonContact in event["event"]["contacts"]:
+      let contact = ChatContact(
+        id: jsonContact["id"].getStr,
+        name: jsonContact["name"].getStr,
+        ensVerified: jsonContact["ensVerified"].getBool
+      )
+      signal.contacts[contact.id] = contact
 
   if event["event"]{"messages"} != nil:
     for jsonMsg in event["event"]["messages"]:
