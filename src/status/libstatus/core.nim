@@ -35,11 +35,20 @@ proc sendTransaction*(inputJSON: string, password: string): string =
 proc startMessenger*() =
   discard callPrivateRPC("startMessenger".prefix)
 
-proc addPeer*(peer: string) = 
+proc addPeer*(peer: string) =
   discard callPrivateRPC("admin_addPeer", %* [peer])
 
-proc removePeer*(peer: string) = 
+proc removePeer*(peer: string) =
   discard callPrivateRPC("admin_removePeer", %* [peer])
 
-proc markTrustedPeer*(peer: string) = 
+proc markTrustedPeer*(peer: string) =
   discard callPrivateRPC("markTrustedPeer".prefix(false), %* [peer])
+
+proc getContactByID*(id: string): string =
+  result = callPrivateRPC("getContactByID".prefix, %* [id])
+
+proc getBlockByNumber*(blockNumber: string): string =
+  result = callPrivateRPC("eth_getBlockByNumber", %* [blockNumber, false])
+
+proc getTransfersByAddress*(address: string, toBlock: string, limit: string): string =
+  result = callPrivateRPC("wallet_getTransfersByAddress", %* [address, toBlock, limit])

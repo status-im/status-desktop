@@ -5,6 +5,7 @@ import strutils
 import views/asset_list
 import views/account_list
 import views/account_item
+import views/transaction_list
 import ../../status/wallet
 import ../../status/status
 import chronicles
@@ -15,6 +16,7 @@ QtObject:
       accounts*: AccountList
       currentAssetList*: AssetList
       currentAccount: AccountItemView
+      currentTransactions: TransactionList
       status: Status
       totalFiatBalance: string
 
@@ -30,6 +32,7 @@ QtObject:
     result.accounts = newAccountList()
     result.currentAccount = newAccountItemView()
     result.currentAssetList = newAssetList()
+    result.currentTransactions = newTransactionList()
     result.totalFiatBalance = ""
     result.setup
 
@@ -68,6 +71,20 @@ QtObject:
     write = setCurrentAssetList
     notify = currentAssetListChanged
 
+  proc currentTransactionsChanged*(self: WalletView) {.signal.}
+
+  proc getCurrentTransactions*(self: WalletView): QVariant {.slot.} =
+    return newQVariant(self.currentTransactions)
+
+  proc setCurrentTransactions*(self: WalletView, transactionList: seq[Transaction]) =
+    self.currentTransactions.setNewData(transactionList)
+    self.currentTransactionsChanged()
+
+  QtProperty[QVariant] transactions:
+    read = getCurrentTransactions
+    write = setCurrentTransactions
+    notify = currentTransactionsChanged
+  
   proc totalFiatBalanceChanged*(self: WalletView) {.signal.}
 
   proc getTotalFiatBalance(self: WalletView): string {.slot.} =
@@ -163,3 +180,6 @@ QtObject:
 
   proc addCustomToken*(self: WalletView, address: string, name: string, symbol: string, decimals: string) {.slot.} =
     self.status.wallet.toggleAsset(symbol, true, address, name, parseInt(decimals), "")
+
+  proc loadTransactionsForAccount*(self: WalletView, address: string) {.slot.} =
+    self.setCurrentTransactions(self.status.wallet.getTransfersByAddress(address))
