@@ -178,11 +178,6 @@ proc confirmJoiningGroup*(self: ChatModel, chatId: string) =
   var (chats, messages) = self.processChatUpdate(response)
   self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
 
-proc blockContact*(self: ChatModel, id: string): string =
-  var contact = status_profile.getContactByID(id)
-  contact.systemTags.add(":contact/blocked")
-  result = status_chat.blockContact(contact)
-
 proc renameGroup*(self: ChatModel, chatId: string, newName: string) =
   var response = parseJson(status_chat.renameGroup(chatId, newName))
   var (chats, messages) = formatChatUpdate(response)
