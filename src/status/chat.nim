@@ -198,3 +198,8 @@ proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
   for c in contacts:
     self.contacts[c.id] = c
   self.events.emit("chatUpdate", ChatUpdateArgs(contacts: contacts))
+
+proc createGroup*(self: ChatModel, groupName: string, pubKeys: seq[string]) =
+  var response = parseJson(status_chat.createGroup(groupName, pubKeys))
+  var (chats, messages) = formatChatUpdate(response)
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))

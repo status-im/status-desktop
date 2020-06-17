@@ -1,6 +1,6 @@
 import NimQml
 import Tables
-import json
+import json, sequtils
 import chronicles
 
 import ../../status/status
@@ -146,3 +146,7 @@ QtObject:
 
   proc addContact*(self: ChatsView, id: string): string {.slot.} =
     return self.status.contacts.addContact(id)
+
+  proc createGroup*(self: ChatsView, groupName: string, pubKeys: string) {.slot.} =
+    let pubKeysSeq = map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
+    self.status.chat.createGroup(groupName, pubKeysSeq)

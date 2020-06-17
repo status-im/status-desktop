@@ -32,6 +32,10 @@ Item {
         id: publicChatPopup
     }
 
+    GroupChatPopup {
+        id: groupChatPopup
+    }
+
     PrivateChatPopup {
         id: privateChatPopup
     }
