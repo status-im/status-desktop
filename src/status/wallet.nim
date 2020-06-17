@@ -7,6 +7,8 @@ import libstatus/accounts/constants as constants
 from libstatus/types import GeneratedAccount, DerivedAccount, Transaction
 import wallet/balance_manager
 import wallet/account
+import wallet/collectibles
+from eth/common/utils import parseAddress
 export account
 export Transaction
 
@@ -69,6 +71,9 @@ proc populateAccount*(self: WalletModel, walletAccount: var WalletAccount, balan
   walletAccount.balance = fmt"{balance} {self.defaultCurrency}"
   walletAccount.assetList = assets
   walletAccount.realFiatBalance = 0.0
+  # Get NFTs
+  # TODO(jrainville): make this async because otherwise it can block the thread for a long time
+  var collectibles = getAllCollectibles(parseAddress(walletAccount.address))
   updateBalance(walletAccount, self.getDefaultCurrency())
 
 proc newAccount*(self: WalletModel, name: string, address: string, iconColor: string, balance: string, publicKey: string): WalletAccount =

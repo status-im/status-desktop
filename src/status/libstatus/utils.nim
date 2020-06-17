@@ -38,3 +38,5 @@ proc handleRPCErrors*(response: string) =
   let parsedReponse = parseJson(response)
   if (parsedReponse.hasKey("error")):
     raise newException(ValueError, parsedReponse["error"]["message"].str)
+
+
