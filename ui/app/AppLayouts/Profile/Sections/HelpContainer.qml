@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/xss.js" as XSS
 
 Item {
     id: helpContainer
@@ -10,6 +11,19 @@ Item {
     height: 200
     Layout.fillHeight: true
     Layout.fillWidth: true
+
+    function linkify(inputText) {
+        //URLs starting with http://, https://, or ftp://
+        var replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+        replacedText = inputText.replace(replacePattern1, "<a href='$1'>$1</a>");
+
+        //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+        var replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+        replacedText = replacedText.replace(replacePattern2, "$1<a href='http://$2'>$2</a>");
+
+        replacedText = XSS.filterXSS(replacedText)
+        return replacedText;
+    }
 
     StyledText {
         id: element8
@@ -24,7 +38,7 @@ Item {
 
     StyledText {
         anchors.centerIn: parent
-        text: "<a href='https://status.im/docs/FAQs.html'>Frequently asked questions</a>"
+        text: linkify(link)
         onLinkActivated: Qt.openUrlExternally(link)
 
         MouseArea {
