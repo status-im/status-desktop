@@ -109,7 +109,7 @@ proc getAccountData*(account: GeneratedAccount): JsonNode =
     "keycard-pairing": nil
   }
 
-proc getAccountSettings*(account: GeneratedAccount, defaultNetworks: JsonNode): JsonNode =
+proc getAccountSettings*(account: GeneratedAccount, defaultNetworks: JsonNode, installationId: string): JsonNode =
   result = %* {
     "key-uid": account.keyUid,
     "mnemonic": account.mnemonic,
@@ -132,20 +132,23 @@ proc getAccountSettings*(account: GeneratedAccount, defaultNetworks: JsonNode): 
     },
     "appearance": 0,
     "networks/current-network": "mainnet_rpc",
-    "installation-id": $genUUID()
+    "installation-id": installationId
   }
 
 proc setupAccount*(account: GeneratedAccount, password: string): types.Account =
   try:
     let storeDerivedResult = storeDerivedAccounts(account, password)
     let accountData = getAccountData(account)
-    var settingsJSON = getAccountSettings(account, constants.DEFAULT_NETWORKS)
+    let installationId = $genUUID()
+    var settingsJSON = getAccountSettings(account, constants.DEFAULT_NETWORKS, installationId)
+    var nodeConfig = constants.NODE_CONFIG
+    nodeConfig["ShhextConfig"]["InstallationID"] = newJString(installationId)
 
-    result = saveAccountAndLogin(account, $accountData, password, $constants.NODE_CONFIG, $settingsJSON)
+    result = saveAccountAndLogin(account, $accountData, password, $nodeConfig, $settingsJSON)
 
   except StatusGoException as e:
     raise newException(StatusGoException, "Error setting up account: " & e.msg)
-  
+
   finally:
     # TODO this is needed for now for the retrieving of past messages. We'll either move or remove it later
     let peer = "enode://44160e22e8b42bd32a06c1532165fa9e096eebedd7fa6d6e5f8bbef0440bc4a4591fe3651be68193a7ec029021cdb496cfe1d7f9f1dc69eb99226e6f39a7a5d4@35.225.221.245:443"

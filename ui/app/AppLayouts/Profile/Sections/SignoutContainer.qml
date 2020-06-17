@@ -26,10 +26,12 @@ Item {
         id: btnLogout
         anchors.top: txtTitle.bottom
         anchors.topMargin: Theme.padding
-        label: qsTr("Logout")
+        // label: qsTr("Logout")
+        label: qsTr("Exit")
 
         onClicked: {
-            profileModel.logout();
+            // profileModel.logout();
+            Qt.quit();
         }
     }
 }

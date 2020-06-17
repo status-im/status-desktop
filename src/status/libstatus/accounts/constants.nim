@@ -92,7 +92,7 @@ let DEFAULT_NETWORKS* = %* [
   }
 ]
 
-let NODE_CONFIG* = %* {
+var NODE_CONFIG* = %* {
   "BrowsersConfig": {
     "Enabled": true
   },

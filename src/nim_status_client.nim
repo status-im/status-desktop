@@ -48,7 +48,7 @@ proc mainProc() =
   var profile = profile.newController(status)
   engine.setRootContextProperty("profileModel", profile.variant)
 
-  status.events.on("login") do(a: Args):
+  status.events.once("login") do(a: Args):
     var args = AccountArgs(a)
     status.startMessenger()
     chat.init()
@@ -72,7 +72,7 @@ proc mainProc() =
   initControllers()
 
   # Handle node.stopped signal when user has logged out
-  status.events.on("nodeStopped") do(a: Args):
+  status.events.once("nodeStopped") do(a: Args):
     # TODO: remove this once accounts are not tracked in the AccountsModel
     status.reset()
 
