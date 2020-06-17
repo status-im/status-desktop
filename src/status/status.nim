@@ -2,6 +2,7 @@ import eventemitter
 
 import libstatus/accounts as libstatus_accounts
 import libstatus/core as libstatus_core
+import libstatus/settings as libstatus_settings
 
 import chat as chat
 import accounts as accounts
@@ -50,3 +51,6 @@ proc reset*(self: Status) =
   # NOT NEEDED self.profile.reset()
 
   # TODO: add all resets here
+
+proc getNodeVersion*(self: Status): string =
+  libstatus_settings.getWeb3ClientVersion()

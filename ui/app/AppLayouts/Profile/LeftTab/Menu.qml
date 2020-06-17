@@ -202,8 +202,9 @@ Rectangle {
         TabButton {
             id: helpTabButton
             width: profileInfoContainer.w
-            height: profileTabBar.btnheight
+            height: 0 //profileTabBar.btnheight
             text: ""
+            visible: false
             anchors.left: parent.left
             anchors.leftMargin: 0
             anchors.top: advancedTabButton.bottom
