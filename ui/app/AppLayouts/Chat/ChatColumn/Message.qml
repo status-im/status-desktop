@@ -24,6 +24,8 @@ Item {
     property bool isMessage: contentType == Constants.messageType || contentType == Constants.stickerType || contentType == Constants.emojiType 
     property bool isStatusMessage: contentType == Constants.systemMessagePrivateGroupType
 
+    property var profileClick: function () {}
+
     width: parent.width
     height: {
         switch(contentType){
@@ -34,10 +36,6 @@ Item {
             default:
                 return (isCurrentUser || (!isCurrentUser && authorCurrentMsg == authorPrevMsg) ? chatBox.height : 24 + chatBox.height)
         }
-    }
-
-    ProfilePopup {
-      id: profilePopup
     }
 
     Item {
@@ -155,7 +153,6 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-
     // Messages
     Image {
         id: chatImage
@@ -173,7 +170,7 @@ Item {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
             onClicked: {
-              profilePopup.open()
+              profileClick(userName, fromAuthor, identicon)
             }
         }
     }
@@ -195,7 +192,7 @@ Item {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
             onClicked: {
-              profilePopup.open()
+              profileClick(userName, fromAuthor, identicon)
             }
         }
     }
