@@ -1,14 +1,36 @@
 import QtQuick 2.3
+import "./components"
 import "../../../imports"
 
 Item {
     Component {
-      id: transactionListItem
+      id: transactionListItemCmp
 
-      Item {
+      Rectangle {
+        id: transactionListItem
+        property bool isHovered: false
         anchors.right: parent.right
         anchors.left: parent.left
         height: 64
+        color: isHovered ? "#f0f0f0" : "white"
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: transactionModal.open()
+            cursorShape: Qt.PointingHandCursor
+            hoverEnabled: true
+            onEntered: {
+              transactionListItem.isHovered = true
+            }
+            onExited: {
+              transactionListItem.isHovered = false
+            }
+        }
+
+
+        TransactionModal{
+          id: transactionModal
+        }
 
         Item {
 
@@ -110,9 +132,10 @@ Item {
     }
 
     ListView {
-        anchors.topMargin: 20
-        anchors.fill: parent
-        model: walletModel.transactions
-        delegate: transactionListItem
+      anchors.topMargin: 20
+      anchors.fill: parent
+      model: walletModel.transactions
+      delegate: transactionListItemCmp
     }
+
 }
