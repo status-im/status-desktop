@@ -1,9 +1,8 @@
-import QtQuick 2.3
-import QtQuick.Controls 2.4
-import QtQuick.Layouts 1.11
-import QtQuick.Window 2.11
+import QtQuick 2.13
+import QtQuick.Controls 2.13
+import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
-import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.13
 import "../shared"
 import "../imports"
 import "./Login"
@@ -221,4 +220,3 @@ Designer {
     D{i:0;autoSize:true;formeditorColor:"#ffffff";formeditorZoom:0.75;height:480;width:640}
 }
 ##^##*/
-

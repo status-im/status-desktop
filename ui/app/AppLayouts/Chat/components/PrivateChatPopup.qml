@@ -1,13 +1,12 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.13
+import QtQuick.Controls 2.13
+import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
 import "../../Profile/Sections/Contacts/"
 import "./"
 
 ModalPopup {
-
     function doJoin(){
         if (chatKey.text !== "") {
             chatsModel.joinChat(chatKey.text, Constants.chatTypeOneToOne);

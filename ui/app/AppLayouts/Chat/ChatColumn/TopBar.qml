@@ -1,8 +1,6 @@
-import QtQuick 2.3
-import QtQuick.Controls 2.3
-import QtQuick.Controls 2.12 as QQC2
-import QtQuick.Layouts 1.3
-import Qt.labs.platform 1.1
+import QtQuick 2.13
+import QtQuick.Controls 2.13
+import QtQuick.Layouts 1.13
 import "../../../../shared"
 import "../../../../imports"
 import "../components"
@@ -95,7 +93,7 @@ Rectangle {
 
             PopupMenu {
                 id: chatContextMenu
-                QQC2.Action { 
+                Action {
                     icon.source: "../../../img/leave_chat.svg"
                     text: qsTr("Leave Chat")
                     onTriggered: chatsModel.leaveActiveChat()
@@ -104,25 +102,21 @@ Rectangle {
 
             PopupMenu {
                 id: groupContextMenu
-                QQC2.Action { 
+                Action {
                     icon.source: "../../../img/group_chat.svg"
                     text: qsTr("Group Information")
                     onTriggered: groupInfoPopup.open()
                 }
-                QQC2.Action { 
+                Action {
                     icon.source: "../../../img/leave_chat.svg"
                     text: qsTr("Leave Group")
                     onTriggered: chatsModel.leaveActiveChat()
                 }
             }
 
-
             GroupInfoPopup {
                 id: groupInfoPopup
             }
-
-            
-
         }
     }
 }

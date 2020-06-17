@@ -1,8 +1,6 @@
-import QtQuick 2.3
-import QtQuick.Controls 2.3
-import QtQuick.Controls 2.12 as QQC2
-import QtQuick.Layouts 1.3
-import Qt.labs.platform 1.1
+import QtQuick 2.13
+import QtQuick.Controls 2.13
+import QtQuick.Layouts 1.13
 import "../../../../shared"
 import "../../../../imports"
 import "../components"
@@ -139,7 +137,6 @@ Item {
         }
 
     }
-
 
     // Private group Messages
     Text {
@@ -287,4 +284,3 @@ Designer {
     D{i:0;height:80;width:800}
 }
 ##^##*/
-

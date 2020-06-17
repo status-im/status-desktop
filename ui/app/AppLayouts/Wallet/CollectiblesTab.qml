@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.13
 
 Item {
     Text {
@@ -6,3 +6,9 @@ Item {
         text: "Collectibles"
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/

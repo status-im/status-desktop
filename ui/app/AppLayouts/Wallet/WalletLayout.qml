@@ -1,8 +1,8 @@
-import QtQuick 2.3
+import QtQuick 2.13
+//TODO: update to import QtQuick.Controls 2.13
 import QtQuick.Controls 1.3
 import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
-import Qt.labs.platform 1.1
+import QtQuick.Layouts 1.13
 import "../../../imports"
 import "../../../shared"
 import "."
@@ -14,6 +14,7 @@ SplitView {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
+    // handle for QtQuick.Controls 2.13
     handleDelegate: Rectangle {
         implicitWidth: 1
         implicitHeight: 4
@@ -117,4 +118,3 @@ Designer {
     D{i:0;autoSize:true;formeditorColor:"#ffffff";height:770;width:1152}
 }
 ##^##*/
-

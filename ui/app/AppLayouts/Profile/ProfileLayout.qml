@@ -1,13 +1,9 @@
-import QtGraphicalEffects 1.12
-import QtQuick 2.3
-import QtQuick.Controls 1.3
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
-import Qt.labs.platform 1.1
+import QtQuick 2.13
+import QtQuick.Controls 2.13
+import QtQuick.Layouts 1.13
 import "../../../imports"
 import "../../../shared"
 import "./Sections"
-import "."
 
 SplitView {
     id: profileView
@@ -16,7 +12,7 @@ SplitView {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    handleDelegate: Rectangle {
+    handle: Rectangle {
         implicitWidth: 1
         implicitHeight: 4
         color: Theme.grey

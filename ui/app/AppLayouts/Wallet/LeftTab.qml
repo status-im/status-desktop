@@ -1,9 +1,7 @@
-import QtQuick 2.3
-import QtQuick.Controls 1.3
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
-import Qt.labs.platform 1.1
-import QtGraphicalEffects 1.0
+import QtQuick 2.13
+import QtQuick.Controls 2.13
+import QtQuick.Layouts 1.13
+import QtGraphicalEffects 1.13
 import "../../../imports"
 import "../../../shared"
 import "./Components"
@@ -203,4 +201,3 @@ Designer {
     D{i:0;formeditorColor:"#ffffff";formeditorZoom:0.75;height:770;width:340}
 }
 ##^##*/
-
