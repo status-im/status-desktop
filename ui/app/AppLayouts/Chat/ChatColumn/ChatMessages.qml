@@ -7,6 +7,7 @@ import Qt.labs.platform 1.1
 import QtQml.Models 2.3
 import "../../../../shared"
 import "../../../../imports"
+import "../components"
 import "./samples/"
 
 ScrollView {
@@ -23,6 +24,10 @@ ScrollView {
 
     ScrollBar.vertical.policy: chatLogView.contentHeight > chatLogView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+
+    ProfilePopup {
+      id: profilePopup
+    }
 
     ListView {
         anchors.fill: parent
@@ -127,6 +132,7 @@ ScrollView {
             contentType: model.contentType
             authorCurrentMsg: msgDelegate.ListView.section
             authorPrevMsg: msgDelegate.ListView.previousSection
+            profileClick: profilePopup.openPopup.bind(profilePopup)
         }
     }
 
