@@ -29,7 +29,8 @@ Rectangle {
         TabButton {
             id: ensTabButton
             width: profileInfoContainer.w
-            height: profileTabBar.btnheight
+            height: 0 //profileTabBar.btnheight
+            visible: false
             text: ""
             anchors.top: parent.top
             anchors.topMargin: 0
@@ -77,7 +78,8 @@ Rectangle {
         TabButton {
             id: privacyTabButton
             width: profileInfoContainer.w
-            height: profileTabBar.btnheight
+            height: 0 //profileTabBar.btnheight
+            visible: false
             text: ""
             anchors.left: parent.left
             anchors.leftMargin: 0
@@ -102,7 +104,8 @@ Rectangle {
         TabButton {
             id: syncTabButton
             width: profileInfoContainer.w
-            height: profileTabBar.btnheight
+            height: 0 //profileTabBar.btnheight
+            visible: false
             text: ""
             anchors.left: parent.left
             anchors.leftMargin: 0
@@ -127,7 +130,8 @@ Rectangle {
         TabButton {
             id: languageTabButton
             width: profileInfoContainer.w
-            height: profileTabBar.btnheight
+            height: 0 //profileTabBar.btnheight
+            visible: false
             text: ""
             anchors.left: parent.left
             anchors.leftMargin: 0
@@ -152,7 +156,8 @@ Rectangle {
         TabButton {
             id: notificationsTabButton
             width: profileInfoContainer.w
-            height: profileTabBar.btnheight
+            height: 0 //profileTabBar.btnheight
+            visible: false
             text: ""
             anchors.left: parent.left
             anchors.leftMargin: 0
@@ -177,7 +182,8 @@ Rectangle {
         TabButton {
             id: advancedTabButton
             width: profileInfoContainer.w
-            height: profileTabBar.btnheight
+            height: 0 //profileTabBar.btnheight
+            visible: false
             text: ""
             anchors.left: parent.left
             anchors.leftMargin: 0
@@ -257,8 +263,8 @@ Rectangle {
             text: ""
             anchors.left: parent.left
             anchors.leftMargin: 0
-            anchors.top: aboutTabButton.bottom
-            anchors.topMargin: 0
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
             background: Rectangle {
                 color: Theme.transparent
             }
