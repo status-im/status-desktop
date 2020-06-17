@@ -47,6 +47,7 @@ proc getTransfersByAddress*(address: string): seq[Transaction] =
         typeValue: transaction["type"].getStr,
         address: transaction["address"].getStr,
         blockNumber: transaction["blockNumber"].getStr,
+        blockHash: transaction["blockhash"].getStr,
         timestamp: transaction["timestamp"].getStr,
         gasPrice: transaction["gasPrice"].getStr,
         gasLimit: transaction["gasLimit"].getStr,

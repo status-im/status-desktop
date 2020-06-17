@@ -6,3 +6,4 @@ GenerateAccountModal 1.0 GenerateAccountModal.qml
 AddAccountWithSeed 1.0 AddAccountWithSeed.qml
 AddAccountWithPrivateKey 1.0 AddAccountWithPrivateKey.qml
 AddWatchOnlyAccount 1.0 AddWatchOnlyAccount.qml
+TransactionModal 1.0 TransactionModal.qml
