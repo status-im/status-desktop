@@ -32,6 +32,7 @@ ColumnLayout {
         Profile {
             username: profileModel.profile.username
             identicon: profileModel.profile.identicon
+            pubkey: profileModel.profile.id
         }
     }
 

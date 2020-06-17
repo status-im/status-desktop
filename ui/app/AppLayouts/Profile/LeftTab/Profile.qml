@@ -7,6 +7,7 @@ import "../../../../imports"
 Rectangle {
     property string username: "Jotaro Kujo"
     property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAhklEQVR4nOzWwQ1AQBgFYUQvelKHMtShJ9VwFyvrsExe5jvKXiYv+WPoQhhCYwiNITSG0MSEjLUPt3097r7P09L/8f4qZhFDaAyhqboIT76+TiUxixhCYwhN9b/WW6Xr1ErMIobQGEJjCI0hNIbQGEJjCI0haiRmEUNoDKExhMYQmjMAAP//B2kXcP2uDV8AAAAASUVORK5CYII="
+    property string pubkey: "0x04d8c07dd137bd1b73a6f51df148b4f77ddaa11209d36e43d8344c0a7d6db1cad6085f27cfb75dd3ae21d86ceffebe4cf8a35b9ce8d26baa19dc264efe6d8f221b"
     id: profileHeaderContent
     height: parent.height
     Layout.fillWidth: true
@@ -49,6 +50,18 @@ Rectangle {
             id: profileName
             text: username
             anchors.top: profileImg.bottom
+            anchors.topMargin: 10
+            anchors.horizontalCenterOffset: 0
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.weight: Font.Medium
+            font.pixelSize: 20
+        }
+        Text {
+            id: pubkeyText
+            text: pubkey
+            width: 208
+            elide: Text.ElideMiddle
+            anchors.top: profileName.bottom
             anchors.topMargin: 10
             anchors.horizontalCenterOffset: 0
             anchors.horizontalCenter: parent.horizontalCenter

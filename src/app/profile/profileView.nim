@@ -3,8 +3,7 @@ import mailserversList
 
 QtObject:
   type ProfileView* = ref object of QObject
-    username*: string
-    identicon*: string
+    username*, identicon*, id*: string
     mailserversList*: MailServersList
 
   proc setup(self: ProfileView) =
