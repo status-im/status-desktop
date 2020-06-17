@@ -209,13 +209,25 @@ ModalPopup {
         height: children[0].height
 
         StyledButton {
+          anchors.left: parent.left
+          anchors.leftMargin: 20
+          label: qsTr("Send Message")
+          anchors.bottom: parent.bottom
+          onClicked: {
+            profilePopup.close()
+            if (tabBar.currentIndex !== 0) tabBar.currentIndex = 0
+            chatsModel.joinChat(fromAuthor, Constants.chatTypeOneToOne)
+          }
+        }
+
+        StyledButton {
           anchors.right: parent.right
           anchors.rightMargin: addToContactsButton.width + 32
           btnColor: "white"
           btnBorderWidth: 1
-          btnBorderColor: "#EEF2F5"
-          textColor: "#FF2D55"
-          label: "Block User"
+          btnBorderColor: Theme.grey
+          textColor: Theme.red
+          label: qsTr("Block User")
           anchors.bottom: parent.bottom
           onClicked: {
             chatsModel.blockContact(fromAuthor)
@@ -229,7 +241,7 @@ ModalPopup {
           id: addToContactsButton
           anchors.right: parent.right
           anchors.rightMargin: Theme.smallPadding
-          label: "Add to contacts"
+          label: qsTr("Add to contacts")
           anchors.bottom: parent.bottom
           onClicked: {
             chatsModel.addContact(fromAuthor)
