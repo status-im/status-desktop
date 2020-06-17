@@ -44,7 +44,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
-                font.weight: Font.Medium
+                font.weight: profileScreenButtons.currentIndex === 0 ? Font.Bold : Font.Medium
                 font.pixelSize: 14
             }
         }
@@ -69,7 +69,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
-                font.weight: Font.Medium
+                font.weight: profileScreenButtons.currentIndex === 1 ? Font.Bold : Font.Medium
                 font.pixelSize: 14
             }
         }
@@ -94,7 +94,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
-                font.weight: Font.Medium
+                font.weight: profileScreenButtons.currentIndex === 2 ? Font.Bold : Font.Medium
                 font.pixelSize: 14
             }
         }
@@ -119,7 +119,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
-                font.weight: Font.Medium
+                font.weight: profileScreenButtons.currentIndex === 3 ? Font.Bold : Font.Medium
                 font.pixelSize: 14
             }
         }
@@ -144,7 +144,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
-                font.weight: Font.Medium
+                font.weight: profileScreenButtons.currentIndex === 4 ? Font.Bold : Font.Medium
                 font.pixelSize: 14
             }
         }
@@ -169,7 +169,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
-                font.weight: Font.Medium
+                font.weight: profileScreenButtons.currentIndex === 5 ? Font.Bold : Font.Medium
                 font.pixelSize: 14
             }
         }
@@ -194,7 +194,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
-                font.weight: Font.Medium
+                font.weight: profileScreenButtons.currentIndex === 6 ? Font.Bold : Font.Medium
                 font.pixelSize: 14
             }
         }
@@ -219,7 +219,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
-                font.weight: Font.Medium
+                font.weight: profileScreenButtons.currentIndex === 7 ? Font.Bold : Font.Medium
                 font.pixelSize: 14
             }
         }
@@ -244,7 +244,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
-                font.weight: Font.Medium
+                font.weight: profileScreenButtons.currentIndex === 8 ? Font.Bold : Font.Medium
                 font.pixelSize: 14
             }
         }
@@ -269,8 +269,17 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
-                font.weight: Font.Medium
+                font.weight: profileScreenButtons.currentIndex === 9 ? Font.Bold : Font.Medium
                 font.pixelSize: 14
+
+                MouseArea {
+                    cursorShape: Qt.PointingHandCursor
+                    anchors.fill: parent
+                    onClicked: {
+                        // profileModel.logout();
+                        Qt.quit();
+                    }
+                }
             }
         }
     }
