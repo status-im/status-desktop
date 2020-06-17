@@ -1,7 +1,5 @@
-import QtQuick 2.3
-import QtQuick.Controls 1.3
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.13
+import QtQuick.Controls 2.13
 import QtQml 2.14
 import "../imports"
 
@@ -36,4 +34,3 @@ Button {
         font.weight: Font.Medium
     }
 }
-
