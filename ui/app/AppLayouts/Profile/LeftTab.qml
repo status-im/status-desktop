@@ -29,7 +29,10 @@ ColumnLayout {
         Layout.fillWidth: true
         width: profileInfoContainer.w
 
-        Profile {}
+        Profile {
+            username: profileModel.profile.username
+            identicon: profileModel.profile.identicon
+        }
     }
 
     RowLayout {
@@ -43,5 +46,3 @@ ColumnLayout {
         }
     }
 }
-
-

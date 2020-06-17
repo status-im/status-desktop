@@ -5,6 +5,8 @@ import QtQuick.Controls 2.3
 import "../../../../imports"
 
 Rectangle {
+    property string username: "Jotaro Kujo"
+    property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAhklEQVR4nOzWwQ1AQBgFYUQvelKHMtShJ9VwFyvrsExe5jvKXiYv+WPoQhhCYwiNITSG0MSEjLUPt3097r7P09L/8f4qZhFDaAyhqboIT76+TiUxixhCYwhN9b/WW6Xr1ErMIobQGEJjCI0hNIbQGEJjCI0haiRmEUNoDKExhMYQmjMAAP//B2kXcP2uDV8AAAAASUVORK5CYII="
     id: profileHeaderContent
     height: parent.height
     Layout.fillWidth: true
@@ -18,7 +20,7 @@ Rectangle {
 
         Image {
             id: profileImg
-            source: profileModel.profile.identicon
+            source: identicon
             width: 80
             height: 80
             fillMode: Image.PreserveAspectCrop
@@ -45,7 +47,7 @@ Rectangle {
 
         Text {
             id: profileName
-            text: profileModel.profile.username
+            text: username
             anchors.top: profileImg.bottom
             anchors.topMargin: 10
             anchors.horizontalCenterOffset: 0
