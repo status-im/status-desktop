@@ -5,6 +5,7 @@ import Qt.labs.platform 1.1
 import "./samples/"
 import "../../../../../imports"
 import "../../../../../shared"
+import "../../../Chat/components"
 
 ListView {
     id: contactList
@@ -22,6 +23,11 @@ ListView {
         address: model.address
         identicon: model.identicon
         selectable: contactList.selectable
+        profileClick: profilePopup.openPopup.bind(profilePopup)
+    }
+
+    ProfilePopup {
+      id: profilePopup
     }
 
     ButtonGroup {
