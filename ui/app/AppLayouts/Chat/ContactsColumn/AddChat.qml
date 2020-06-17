@@ -89,7 +89,7 @@ Rectangle {
                 text: qsTr("Start group chat")
                 icon.source: "../../../img/group_chat.svg"
                 onTriggered: {
-                    console.log("TODO: Start group chat")
+                onTriggered: groupChatPopup.open()
                 }
             }
             QQC2.Action {

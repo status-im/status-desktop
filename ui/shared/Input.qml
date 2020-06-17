@@ -16,6 +16,7 @@ Item {
     property url icon: ""
     property int iconHeight: 24
     property int iconWidth: 24
+    property var onKeyReleased: (function(){})
 
     readonly property bool hasIcon: icon.toString() !== ""
     readonly property var forceActiveFocus: function () {
@@ -70,6 +71,7 @@ Item {
             background: Rectangle {
                 color: "#00000000"
             }
+            Keys.onReleased: onKeyReleased()
         }
 
         Image {

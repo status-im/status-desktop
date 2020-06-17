@@ -6,9 +6,10 @@ from ../../../status/ens import nil
 
 type
   ContactRoles {.pure.} = enum
-    Name = UserRole + 1,
-    Address = UserRole + 2
-    Identicon = UserRole + 3
+    PubKey = UserRole + 1
+    Name = UserRole + 2,
+    Address = UserRole + 3
+    Identicon = UserRole + 4
 
 QtObject:
   type ContactList* = ref object of QAbstractListModel
@@ -41,6 +42,14 @@ QtObject:
       return getUserName(contact)
     return defaultValue
 
+  proc rowData(self: ContactList, index: int, column: string): string {.slot.} =
+    let contact = self.contacts[index]
+    case column:
+      of "name": result = getUserName(contact)
+      of "address": result = contact.address
+      of "identicon": result = contact.identicon
+      of "pubKey": result = contact.id
+
   method data(self: ContactList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
@@ -51,12 +60,14 @@ QtObject:
       of ContactRoles.Name: result = newQVariant(getUserName(contact))
       of ContactRoles.Address: result = newQVariant(contact.address)
       of ContactRoles.Identicon: result = newQVariant(contact.identicon)
+      of ContactRoles.PubKey: result = newQVariant(contact.id)
 
   method roleNames(self: ContactList): Table[int, string] =
     {
       ContactRoles.Name.int:"name",
       ContactRoles.Address.int:"address",
       ContactRoles.Identicon.int:"identicon",
+      ContactRoles.PubKey.int:"pubKey"
     }.toTable
 
   proc addContactToList*(self: ContactList, contact: Profile) =

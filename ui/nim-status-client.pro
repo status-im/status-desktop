@@ -65,6 +65,7 @@ DISTFILES += \
     app/AppLayouts/Chat/ContactsColumn/ChannelList.qml \
     app/AppLayouts/Chat/ContactsColumn/EmptyView.qml \
     app/AppLayouts/Chat/ContactsColumn/qmldir \
+    app/AppLayouts/Chat/components/GroupChatPopup.qml \
     app/AppLayouts/Chat/components/PublicChatPopup.qml \
     app/AppLayouts/Chat/components/PrivateChatPopup.qml \
     app/AppLayouts/Chat/components/RenameGroupPopup.qml \
@@ -187,3 +188,4 @@ DISTFILES += \
     shared/StyledTextArea.qml \
     shared/TextWithLabel.qml \
     shared/qmldir
+    
