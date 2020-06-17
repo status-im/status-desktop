@@ -7,6 +7,16 @@ import "./"
 
 ModalPopup {
     id: popup
+    property var identicon: ""
+    property var userName: ""
+    property var fromAuthor: ""
+
+    function openPopup(userNameParam, fromAuthorParam, identiconParam) {
+        this.userName = userNameParam
+        this.fromAuthor = fromAuthorParam
+        this.identicon = identiconParam
+        popup.open()
+    }
 
     header: Item {
       height: children[0].height
