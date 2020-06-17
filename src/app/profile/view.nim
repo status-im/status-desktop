@@ -63,3 +63,6 @@ QtObject:
 
   proc logout*(self: ProfileView) {.slot.} =
     self.status.profile.logout()
+
+  proc nodeVersion*(self: ProfileView): string {.slot.} =
+    self.status.getNodeVersion()
