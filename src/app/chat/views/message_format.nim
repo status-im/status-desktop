@@ -18,7 +18,7 @@ proc renderInline(self: ChatMessageList, elem: TextItem): string =
   of "code": result = fmt("<span style=\"background-color: #1a356b; color: #FFFFFF\">{elem.literal}</span> ")
   of "emph": result = fmt("<span style=\"font-style: italic;\">{elem.literal}</span> ")
   of "strong": result = fmt("<span style=\"font-weight: bold;\">{elem.literal}</span> ")
-  of "link": result = "TODO: write safe link here: " & elem.destination
+  of "link": result = elem.destination
   of "mention": result = fmt("<span style=\"color: #000000;\">{self.mention(elem.literal)}</span> ")
 
 # See render-block in status-react/src/status_im/ui/screens/chat/message/message.cljs

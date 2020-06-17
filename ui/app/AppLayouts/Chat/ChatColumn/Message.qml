@@ -1,7 +1,10 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.3
+import QtQuick.Controls 2.3
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.3
+import Qt.labs.platform 1.1
 import "../../../../shared"
+import "../../../../shared/xss.js" as XSS
 import "../../../../imports"
 import "../components"
 
@@ -34,6 +37,23 @@ Item {
             default:
                 return (isCurrentUser || (!isCurrentUser && authorCurrentMsg == authorPrevMsg) ? chatBox.height : 24 + chatBox.height)
         }
+    }
+
+    function linkify(inputText) {
+        //URLs starting with http://, https://, or ftp://
+        var replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+        replacedText = inputText.replace(replacePattern1, "<a href='$1'>$1</a>");
+
+        //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+        var replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+        replacedText = replacedText.replace(replacePattern2, "$1<a href='http://$2'>$2</a>");
+
+        replacedText = XSS.filterXSS(replacedText)
+        return replacedText;
+    }
+
+    ProfilePopup {
+      id: profilePopup
     }
 
     Item {
@@ -236,7 +256,8 @@ Item {
 
         StyledTextEdit {
             id: chatText
-            text: message
+            text: linkify(message)
+            textFormat: TextEdit.RichText
             anchors.left: parent.left
             anchors.leftMargin: parent.chatHorizontalPadding
             anchors.right: message.length > 52 ? parent.right : undefined
@@ -250,7 +271,12 @@ Item {
             selectByMouse: true
             color: !isCurrentUser ? Theme.black : Theme.white
             visible: contentType == Constants.messageType
-            textFormat: TextEdit.RichText
+            onLinkActivated: Qt.openUrlExternally(link)
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
+                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+            }
         }
 
         Image {
