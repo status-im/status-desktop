@@ -1,10 +1,9 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.13
+import QtQuick.Controls 2.13
+import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
 import "./"
-
 
 ModalPopup {
     function doJoin() {
@@ -13,7 +12,6 @@ ModalPopup {
         popup.close();
         
     }
-
 
     id: popup
     title: qsTr("Join public chat")
@@ -47,7 +45,6 @@ ModalPopup {
         Keys.onReturnPressed: doJoin()
         icon: "../../../img/hash.svg"
     }
-    
 
     RowLayout {
         id: row

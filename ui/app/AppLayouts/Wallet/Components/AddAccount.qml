@@ -1,8 +1,5 @@
-import QtQuick 2.3
-import QtQuick.Controls 2.3
-import QtQuick.Controls 2.12 as QQC2
-import QtQuick.Layouts 1.3
-import Qt.labs.platform 1.1
+import QtQuick 2.13
+import QtQuick.Controls 2.13
 import "../../../../shared"
 import "../../../../imports"
 
@@ -93,28 +90,28 @@ Rectangle {
         PopupMenu {
             id: newAccountMenu
             width: 280
-            QQC2.Action {
+            Action {
                 text: qsTr("Generate an account")
                 icon.source: "../../../img/generate_account.svg"
                 onTriggered: {
                     generateAccountModal.open()
                 }
             }
-            QQC2.Action {
+            Action {
                 text: qsTr("Add a watch-only address")
                 icon.source: "../../../img/add_watch_only.svg"
                 onTriggered: {
                     addWatchOnlyAccountModal.open()
                 }
             }
-            QQC2.Action {
+            Action {
                 text: qsTr("Enter a seed phrase")
                 icon.source: "../../../img/enter_seed_phrase.svg"
                 onTriggered: {
                     addAccountWithSeedModal.open()
                 }
             }
-            QQC2.Action {
+            Action {
                 text: qsTr("Enter a private key")
                 icon.source: "../../../img/enter_private_key.svg"
                 onTriggered: {

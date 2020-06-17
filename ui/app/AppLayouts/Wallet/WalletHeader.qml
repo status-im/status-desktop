@@ -1,7 +1,6 @@
-import QtQuick 2.3
-import QtQuick.Controls 2.3
-import QtQuick.Controls 2.12 as QQC2
-import QtQuick.Layouts 1.3
+import QtQuick 2.13
+import QtQuick.Controls 2.13
+import QtQuick.Layouts 1.13
 import "../../../imports"
 import "../../../shared"
 
@@ -182,21 +181,21 @@ Item {
                 PopupMenu {
                     id: newSettingsMenu
                     width: 280
-                    QQC2.Action {
+                    Action {
                         text: qsTr("Account Settings")
                         icon.source: "../../img/account_settings.svg"
                         onTriggered: {
                             accountSettingsModal.open()
                         }
                     }
-                    QQC2.Action {
+                    Action {
                         text: qsTr("Add/Remove Tokens")
                         icon.source: "../../img/add_remove_token.svg"
                         onTriggered: {
                             tokenSettingsModal.open()
                         }
                     }
-                    QQC2.Action {
+                    Action {
                         text: qsTr("Set Currency")
                         icon.source: "../../img/set_currency.svg"
                         onTriggered: {

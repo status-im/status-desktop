@@ -1,11 +1,6 @@
-import QtQuick 2.3
-import QtQuick.Controls 1.3
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
-import Qt.labs.platform 1.1
+import QtQuick 2.13
+import QtQuick.Layouts 1.13
 import QtWebView 1.14
-import "../../../imports"
-import "../../../shared"
 
 Item {
     id: browserView
@@ -27,3 +22,9 @@ Item {
         url: "https://dap.ps/"
   }
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/

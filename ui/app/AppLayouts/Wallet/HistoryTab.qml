@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.13
 import "./Components"
 import "../../../imports"
 

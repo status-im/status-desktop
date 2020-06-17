@@ -1,7 +1,6 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.3
-import QtQuick.Controls 2.12 as QQC2
-import QtQuick.Layouts 1.3
+import QtQuick 2.13
+import QtQuick.Controls 2.13
+import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
 import "./"
@@ -189,12 +188,12 @@ ModalPopup {
                             cursorShape: Qt.PointingHandCursor
                             PopupMenu {
                                 id: contextMenu
-                                QQC2.Action { 
+                                Action {
                                     icon.source: "../../../img/make-admin.svg"
                                     text: qsTr("Make Admin")
                                     onTriggered: chatsModel.leaveActiveChat()
                                 }
-                                QQC2.Action { 
+                                Action {
                                     icon.source: "../../../img/remove-from-group.svg"
                                     icon.color: Theme.red
                                     text: qsTr("Remove From Group")
@@ -204,10 +203,6 @@ ModalPopup {
                         }
                     }
                 }
-
-                
-
-
             }
         }
     }

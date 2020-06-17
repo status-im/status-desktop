@@ -1,6 +1,6 @@
-import QtQuick 2.3
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.3
+import QtQuick 2.13
+import QtQuick.Controls 2.13
+import QtQuick.Layouts 1.13
 import "../../../../imports"
 
 Item {
@@ -21,13 +21,12 @@ Item {
         font.pixelSize: 20
     }
 
-
     Component {
         id: mailserversList
 
         RadioButton {
-        text: name
-        checked: index == 0 ? true: false
+            text: name
+            checked: index == 0 ? true: false
         }
     }
 
