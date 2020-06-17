@@ -1,5 +1,5 @@
 import QtQuick 2.3
-import "./components"
+import "./Components"
 import "../../../imports"
 
 Item {
@@ -139,3 +139,9 @@ Item {
     }
 
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/
