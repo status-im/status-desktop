@@ -1,6 +1,5 @@
-
-import ../libstatus/types
 import json
+import ../libstatus/types
 
 type Profile* = ref object
   id*, alias*, username*, identicon*, address*, ensName*: string
@@ -33,7 +32,8 @@ proc toProfileModel*(profile: JsonNode): Profile =
       identicon: profile["identicon"].str,
       address: profile["id"].str,
       alias: profile["alias"].str,
-      ensName: profile["name"].str,
+      # ensName: profile["name"].str, // doesn't seems to exist
+      ensName: "",
       ensVerified: profile["ensVerified"].getBool,
       ensVerifiedAt: profile["ensVerifiedAt"].getInt,
       ensVerificationRetries: profile["ensVerificationRetries"].getInt,

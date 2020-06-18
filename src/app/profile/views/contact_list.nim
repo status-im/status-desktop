@@ -83,6 +83,8 @@ QtObject:
       self.addContactToList(contact)
     else:
       self.dataChanged(topLeft, bottomRight, @[ContactRoles.Name.int])
-    
 
-
+  proc setNewData*(self: ContactList, contactList: seq[Profile]) =
+    self.beginResetModel()
+    self.contacts = contactList
+    self.endResetModel()

@@ -42,15 +42,20 @@ QtObject:
   proc updateContactList*(self: ProfileView, contacts: seq[Profile]) =
     for contact in contacts:
       self.contactList.updateContact(contact)
-  
-  proc addContactToList*(self: ProfileView, contact: Profile) =
-    self.contactList.addContactToList(contact)
+
+  proc contactListChanged*(self: ProfileView) {.signal.}
 
   proc getContactList(self: ProfileView): QVariant {.slot.} =
     return newQVariant(self.contactList)
 
+  proc setContactList*(self: ProfileView, contactList: seq[Profile]) =
+    self.contactList.setNewData(contactList)
+    self.contactListChanged()
+
   QtProperty[QVariant] contactList:
     read = getContactList
+    write = setContactList
+    notify = contactListChanged
 
   proc getProfile(self: ProfileView): QVariant {.slot.} =
     return newQVariant(self.profile)
