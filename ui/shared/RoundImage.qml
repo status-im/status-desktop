@@ -9,7 +9,7 @@ Rectangle {
     color: Theme.white
     radius: 50
     border.width: 1
-    border.color: Theme.darkGrey
+    border.color: "#10000000"
 
     Image {
         width: parent.width
