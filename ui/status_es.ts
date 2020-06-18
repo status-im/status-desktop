@@ -177,6 +177,11 @@
         <source>Account color</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithPrivateKey.qml" line="66"/>
+        <source>Add account &gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AddAccountWithSeed</name>
@@ -377,7 +382,7 @@
     <message>
         <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="22"/>
         <source></source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -726,14 +731,14 @@
     </message>
 </context>
 <context>
-    <name>TokenSettingsModalContent</name>
+    <name>TokenSettingsModal</name>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/TokenSettingsModalContent.qml" line="13"/>
+        <location filename="app/AppLayouts/Wallet/TokenSettingsModal.qml" line="9"/>
         <source>Add/Remove Tokens</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/TokenSettingsModalContent.qml" line="136"/>
+        <location filename="app/AppLayouts/Wallet/TokenSettingsModal.qml" line="19"/>
         <source>Add custom token</source>
         <translation type="unfinished"></translation>
     </message>
@@ -762,16 +767,22 @@
     </message>
     <message>
         <location filename="app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="98"/>
+        <location filename="app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="117"/>
+        <source>Clear history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="103"/>
         <source>Leave Chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="107"/>
+        <location filename="app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="112"/>
         <source>Group Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="112"/>
+        <location filename="app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="122"/>
         <source>Leave Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -837,17 +848,17 @@
 <context>
     <name>WalletHeader</name>
     <message>
-        <location filename="app/AppLayouts/Wallet/WalletHeader.qml" line="185"/>
+        <location filename="app/AppLayouts/Wallet/WalletHeader.qml" line="186"/>
         <source>Account Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/WalletHeader.qml" line="192"/>
+        <location filename="app/AppLayouts/Wallet/WalletHeader.qml" line="193"/>
         <source>Add/Remove Tokens</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/WalletHeader.qml" line="199"/>
+        <location filename="app/AppLayouts/Wallet/WalletHeader.qml" line="200"/>
         <source>Set Currency</source>
         <translation type="unfinished"></translation>
     </message>

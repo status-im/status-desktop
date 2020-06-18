@@ -31,6 +31,9 @@ SOURCES = *.qml \
           app/AppLayouts/Wallet/data/*.qml \
 }
 
+TRANSLATIONS = status_en.ts \
+               status_es.ts
+
 RESOURCES += \
     imports/Theme.qml \
     imports/Constants.qml \
