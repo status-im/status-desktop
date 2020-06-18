@@ -1,5 +1,5 @@
 import NimQml
-import json
+import json, eventemitter
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../signals/types
 import "../../status/libstatus/types" as status_types
@@ -44,8 +44,11 @@ proc init*(self: ProfileController, account: Account) =
 
   let contacts = self.status.contacts.getContacts()
   self.status.chat.updateContacts(contacts)
-  for contact in contacts:
-    self.view.addContactToList(contact)
+  self.view.setContactList(contacts)
+
+  self.status.events.on("contactAdded") do(e: Args):
+    let contacts = self.status.contacts.getContacts()
+    self.view.setContactList(contacts)
 
 method onSignal(self: ProfileController, data: Signal) =
   let msgData = MessageSignal(data);
@@ -53,4 +56,3 @@ method onSignal(self: ProfileController, data: Signal) =
     # TODO: view should react to model changes
     self.status.chat.updateContacts(msgData.contacts)
     self.view.updateContactList(msgData.contacts)
-

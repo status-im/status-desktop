@@ -31,4 +31,6 @@ proc getContacts*(self: ContactModel): seq[Profile] =
 
 proc addContact*(self: ContactModel, id: string): string =
   let contact = self.getContactByID(id)
-  status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.systemTags)
+  contact.systemTags.add(":contact/added")
+  result = status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.systemTags)
+  self.events.emit("contactAdded", Args())
