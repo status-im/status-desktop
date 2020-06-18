@@ -26,7 +26,7 @@ proc blockContact*(self: ContactModel, id: string): string =
   status_contacts.blockContact(contact)
 
 proc getContacts*(self: ContactModel): seq[Profile] =
-  result = map(status_contacts.getContacts().getElems(), proc(x: JsonNode): Profile = x.toProfileModel())
+  result = map(status_contacts.getContacts().getElems(), proc(x: JsonNode): Profile = x.toProfileModel()).filterIt(it.systemTags.contains(":contact/added"))
   self.events.emit("contactUpdate", ContactUpdateArgs(contacts: result))
 
 proc addContact*(self: ContactModel, id: string): string =
