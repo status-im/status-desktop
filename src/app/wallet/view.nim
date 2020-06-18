@@ -6,6 +6,7 @@ import views/asset_list
 import views/account_list
 import views/account_item
 import views/transaction_list
+import views/collectibles_list
 import ../../status/wallet
 import ../../status/status
 import chronicles
@@ -15,6 +16,7 @@ QtObject:
     WalletView* = ref object of QAbstractListModel
       accounts*: AccountList
       currentAssetList*: AssetList
+      currentCollectiblesList*: CollectiblesList
       currentAccount: AccountItemView
       currentTransactions: TransactionList
       status: Status
@@ -33,6 +35,7 @@ QtObject:
     result.currentAccount = newAccountItemView()
     result.currentAssetList = newAssetList()
     result.currentTransactions = newTransactionList()
+    result.currentCollectiblesList = newCollectiblesList()
     result.totalFiatBalance = ""
     result.setup
 
@@ -85,6 +88,20 @@ QtObject:
     write = setCurrentTransactions
     notify = currentTransactionsChanged
   
+  proc currentCollectiblesListChanged*(self: WalletView) {.signal.}
+
+  proc getCurrentCollectiblesList(self: WalletView): QVariant {.slot.} =
+    return newQVariant(self.currentCollectiblesList)
+
+  proc setCurrentCollectiblesList*(self: WalletView, collectibles: seq[Collectible]) =
+    self.currentCollectiblesList.setNewData(collectibles)
+    self.currentCollectiblesListChanged()
+
+  QtProperty[QVariant] collectibles:
+    read = getCurrentCollectiblesList
+    write = setCurrentCollectiblesList
+    notify = currentCollectiblesListChanged
+
   proc totalFiatBalanceChanged*(self: WalletView) {.signal.}
 
   proc getTotalFiatBalance(self: WalletView): string {.slot.} =
@@ -103,9 +120,10 @@ QtObject:
 
   proc addAccountToList*(self: WalletView, account: WalletAccount) =
     self.accounts.addAccountToList(account)
-    # If it's the first account we ever get, use its assetList as our currentAssetList
+    # If it's the first account we ever get, use its list as our first lists
     if (self.accounts.rowCount == 1):
       self.setCurrentAssetList(account.assetList)
+      self.setCurrentCollectiblesList(account.collectibles)
       self.setCurrentAccountByIndex(0)
     self.accountListChanged()
 
@@ -177,6 +195,7 @@ QtObject:
     self.accountListChanged()
     self.accounts.forceUpdate()
     self.setCurrentAssetList(self.currentAccount.account.assetList)
+    self.setCurrentCollectiblesList(self.currentAccount.account.collectibles)
 
   proc addCustomToken*(self: WalletView, address: string, name: string, symbol: string, decimals: string) {.slot.} =
     self.status.wallet.toggleAsset(symbol, true, address, name, parseInt(decimals), "")

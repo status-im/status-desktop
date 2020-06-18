@@ -2,9 +2,7 @@ import strformat, httpclient, json, chronicles, sequtils, strutils, tables
 import ../libstatus/core as status
 import ../libstatus/contracts as contracts
 import eth/common/eth_types
-
-type Collectible* = ref object
-    name*, image*: string
+import account
 
 proc getTokenUri(contract: Contract, tokenId: int): string =
   try:
