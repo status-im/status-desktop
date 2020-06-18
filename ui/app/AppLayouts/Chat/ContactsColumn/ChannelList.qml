@@ -7,6 +7,7 @@ import "../components"
 
 Item {
     property alias channelListCount: chatGroupsListView.count
+    property string searchStr: ""
     id: chatGroupsContainer
     Layout.fillHeight: true
     Layout.fillWidth: true
@@ -15,7 +16,14 @@ Item {
         id: chatGroupsListView
         anchors.fill: parent
         model: chatsModel.chats
-        delegate: Channel {}
+        delegate: Channel {
+            name: model.name
+            lastMessage: model.lastMessage
+            timestamp: model.timestamp
+            chatType: model.chatType
+            unviewedMessagesCount: model.unviewedMessagesCount
+            searchStr: chatGroupsContainer.searchStr
+        }
         onCountChanged: {
             if (count > 0 && chatsModel.activeChannelIndex > -1) {
                 // If a chat is added or removed, we set the current index to the first value

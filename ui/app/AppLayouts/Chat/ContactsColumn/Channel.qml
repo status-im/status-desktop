@@ -5,6 +5,13 @@ import "../../../../imports"
 import "../components"
 
 Rectangle {
+    property string name: "channelName"
+    property string lastMessage: "My latest message\n with a return"
+    property string timestamp: "20/2/2020"
+    property string unviewedMessagesCount: "2"
+    property string chatType: Constants.chatTypePublic
+    property string searchStr: ""
+
     id: wrapper
     color: ListView.isCurrentItem ? Theme.lightBlue : Theme.transparent
     anchors.right: parent.right
@@ -34,8 +41,8 @@ Rectangle {
       width: 40
       topMargin: 12
       bottomMargin: 12
-      channelName: name
-      channelType: chatType
+      channelName: wrapper.name
+      channelType: wrapper.chatType
       channelIdenticon: identicon
     }
 
@@ -44,17 +51,17 @@ Rectangle {
         width: 16
         height: 16
         fillMode: Image.PreserveAspectFit
-        source: "../../../img/channel-icon-" + (chatType == Constants.chatTypePublic ? "public-chat.svg" : "group.svg")
+        source: "../../../img/channel-icon-" + (wrapper.chatType === Constants.chatTypePublic ? "public-chat.svg" : "group.svg")
         anchors.left: contactImage.right
         anchors.leftMargin: Theme.padding
         anchors.top: parent.top
         anchors.topMargin: Theme.smallPadding
-        visible: chatType != Constants.chatTypeOneToOne
+        visible: chatType !== Constants.chatTypeOneToOne
     }
 
     Text {
         id: contactInfo
-        text: chatType != Constants.chatTypePublic ? name : "#" + name
+        text: wrapper.chatType !== Constants.chatTypePublic ? wrapper.name : "#" + wrapper.name
         anchors.right: contactTime.left
         anchors.rightMargin: Theme.smallPadding
         elide: Text.ElideRight
@@ -69,7 +76,7 @@ Rectangle {
     
     Text {
         id: lastChatMessage
-        text: lastMessage || qsTr("No messages")
+        text: lastMessage ? lastMessage.replace(/\n|\r/g, ' ') : qsTr("No messages")
         anchors.right: contactNumberChatsCircle.left
         anchors.rightMargin: Theme.smallPadding
         elide: Text.ElideRight
@@ -82,7 +89,7 @@ Rectangle {
     }
     Text {
         id: contactTime
-        text: timestamp
+        text: wrapper.timestamp
         anchors.right: parent.right
         anchors.rightMargin: Theme.padding
         anchors.top: parent.top
@@ -103,7 +110,7 @@ Rectangle {
         visible: unviewedMessagesCount > 0
         Text {
             id: contactNumberChats
-            text: unviewedMessagesCount
+            text: wrapper.unviewedMessagesCount
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             color: "white"
@@ -113,8 +120,10 @@ Rectangle {
 
 
 
+
+
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:480;width:640}
+    D{i:0;formeditorColor:"#ffffff";height:64;width:640}
 }
 ##^##*/
