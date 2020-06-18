@@ -177,6 +177,11 @@
         <source>Account color</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="app/AppLayouts/Wallet/Components/AddAccountWithPrivateKey.qml" line="66"/>
+        <source>Add account &gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AddAccountWithSeed</name>
@@ -377,387 +382,7 @@
     <message>
         <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="22"/>
         <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="29"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="36"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="43"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="50"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="57"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="64"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="71"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="78"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="85"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="92"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="99"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="106"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="113"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="120"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="127"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="134"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="141"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="148"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="155"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="162"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="169"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="176"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="183"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="190"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="197"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="204"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="211"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="218"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="225"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="232"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="239"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="246"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="253"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="260"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="267"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="274"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="281"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="288"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="295"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="302"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="309"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="316"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="323"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="330"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="337"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="344"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="351"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="358"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="365"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="372"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="379"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="386"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="393"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="400"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="407"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="414"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="421"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="428"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="435"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="442"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="449"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="456"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="463"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="470"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="477"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="484"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="491"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="498"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="505"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="512"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="519"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="526"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="533"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="540"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="547"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="app/AppLayouts/Wallet/data/Currencies.qml" line="554"/>
-        <source></source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1106,14 +731,14 @@
     </message>
 </context>
 <context>
-    <name>TokenSettingsModalContent</name>
+    <name>TokenSettingsModal</name>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/TokenSettingsModalContent.qml" line="13"/>
+        <location filename="app/AppLayouts/Wallet/TokenSettingsModal.qml" line="9"/>
         <source>Add/Remove Tokens</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/Components/TokenSettingsModalContent.qml" line="136"/>
+        <location filename="app/AppLayouts/Wallet/TokenSettingsModal.qml" line="19"/>
         <source>Add custom token</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1142,16 +767,22 @@
     </message>
     <message>
         <location filename="app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="98"/>
+        <location filename="app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="117"/>
+        <source>Clear history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="103"/>
         <source>Leave Chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="107"/>
+        <location filename="app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="112"/>
         <source>Group Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="112"/>
+        <location filename="app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="122"/>
         <source>Leave Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1217,23 +848,27 @@
 <context>
     <name>WalletHeader</name>
     <message>
-        <location filename="app/AppLayouts/Wallet/WalletHeader.qml" line="185"/>
+        <location filename="app/AppLayouts/Wallet/WalletHeader.qml" line="186"/>
         <source>Account Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/WalletHeader.qml" line="192"/>
+        <location filename="app/AppLayouts/Wallet/WalletHeader.qml" line="193"/>
         <source>Add/Remove Tokens</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="app/AppLayouts/Wallet/WalletHeader.qml" line="199"/>
+        <location filename="app/AppLayouts/Wallet/WalletHeader.qml" line="200"/>
         <source>Set Currency</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>main</name>
+    <message>
+        <source>appTitle</source>
+        <translation type="vanished">Nim Status Client</translation>
+    </message>
     <message>
         <location filename="main.qml" line="24"/>
         <source>Quit</source>
