@@ -100,6 +100,9 @@ proc confirmJoiningGroup*(chatId: string): string =
 proc leaveGroupChat*(chatId: string): string =
   callPrivateRPC("leaveGroupChat".prefix, %* [nil, chatId, true])
 
+proc clearChatHistory*(chatId: string): string =
+  callPrivateRPC("deleteMessagesByChatID".prefix, %* [chatId])
+
 proc renameGroup*(chatId: string, newName: string): string =
   callPrivateRPC("changeGroupChatName".prefix, %* [nil, chatId, newName])
 

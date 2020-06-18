@@ -86,6 +86,12 @@ QtObject:
   
   proc messagePushed*(self: ChatsView) {.signal.}
 
+  proc messagesCleared*(self: ChatsView) {.signal.}
+
+  proc clearMessages*(self: ChatsView, id: string) =
+    self.messageList[id].clear()
+    self.messagesCleared()
+
   proc pushMessages*(self:ChatsView, messages: var seq[Message]) =
     for msg in messages.mitems:
       self.upsertChannel(msg.chatId)
@@ -129,6 +135,9 @@ QtObject:
 
   proc leaveActiveChat*(self: ChatsView) {.slot.} =
     self.status.chat.leave(self.activeChannel.id)
+
+  proc clearChatHistory*(self: ChatsView, id: string) {.slot.} =
+    self.status.chat.clearHistory(id)
 
   proc updateChats*(self: ChatsView, chats: seq[Chat]) =
     for chat in chats:

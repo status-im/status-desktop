@@ -43,6 +43,10 @@ proc handleChatEvents(self: ChatController) =
     self.view.updateChats(evArgs.chats)
     self.view.pushMessages(evArgs.messages)
 
+  self.status.events.on("chatHistoryCleared") do(e: Args):
+    var args = ChannelArgs(e)
+    self.view.clearMessages(args.chat.id)
+
   self.status.events.on("channelJoined") do(e: Args):
     var channel = ChannelArgs(e)
     discard self.view.chats.addChatItemToList(channel.chat)

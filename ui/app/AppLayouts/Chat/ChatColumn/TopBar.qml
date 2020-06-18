@@ -94,6 +94,11 @@ Rectangle {
             PopupMenu {
                 id: chatContextMenu
                 Action {
+                    icon.source: "../../../img/close.svg"
+                    text: qsTr("Clear history")
+                    onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
+                }
+                Action {
                     icon.source: "../../../img/leave_chat.svg"
                     text: qsTr("Leave Chat")
                     onTriggered: chatsModel.leaveActiveChat()
@@ -106,6 +111,11 @@ Rectangle {
                     icon.source: "../../../img/group_chat.svg"
                     text: qsTr("Group Information")
                     onTriggered: groupInfoPopup.open()
+                }
+                Action {
+                    icon.source: "../../../img/close.svg"
+                    text: qsTr("Clear history")
+                    onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
                 }
                 Action {
                     icon.source: "../../../img/leave_chat.svg"

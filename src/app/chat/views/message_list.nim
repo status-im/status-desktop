@@ -100,6 +100,11 @@ QtObject:
       self.messages.add(message)
     self.endInsertRows()
 
+  proc clear*(self: ChatMessageList) =
+    self.beginResetModel()
+    self.messages = @[]
+    self.endResetModel()
+
   proc updateUsernames*(self: ChatMessageList, contacts: seq[Profile]) =
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.messages.len, 0, nil)

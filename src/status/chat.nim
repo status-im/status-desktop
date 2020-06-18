@@ -136,11 +136,17 @@ proc leave*(self: ChatModel, chatId: string) =
     
   status_chat.deactivateChat(self.channels[chatId])
   # TODO: REMOVE MAILSERVER TOPIC
-  # TODO: REMOVE HISTORY
   self.filters.del(chatId)
-  self.channels.del(chatId)  
+  self.channels.del(chatId)
+  discard status_chat.clearChatHistory(chatId)
   self.events.emit("channelLeft", ChatIdArg(chatId: chatId))
   self.events.emit("activeChannelChanged", ChatIdArg(chatId: ""))
+
+proc clearHistory*(self: ChatModel, chatId: string) =
+  discard status_chat.clearChatHistory(chatId)
+  let chat = self.channels[chatId]
+  self.events.emit("chatHistoryCleared", ChannelArgs(chat: chat))
+  
 
 proc setActiveChannel*(self: ChatModel, chatId: string) =
   self.events.emit("activeChannelChanged", ChatIdArg(chatId: chatId))
