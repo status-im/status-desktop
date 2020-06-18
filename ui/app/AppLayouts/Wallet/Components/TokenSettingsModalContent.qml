@@ -18,49 +18,37 @@ Item {
 
     ListView {
         anchors.top: searchBox.bottom
-        anchors.topMargin: 10
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        spacing: 10
+        spacing: 0
         id: tokenListView
+        anchors.topMargin: Theme.smallPadding
         model: Tokens {}
         ScrollBar.vertical: ScrollBar { active: true }
 
         delegate: Component {
+            id: component
             Item {
-                id: element
+                id: tokenContainer
                 anchors.right: parent.right
-                anchors.rightMargin: 0
                 anchors.left: parent.left
-                anchors.leftMargin: 10
+                anchors.leftMargin: Theme.smallPadding
                 width: parent.width
-                property bool isVisible: searchBox.text == "" || symbol.toLowerCase().includes(searchBox.text.toLowerCase())
-//                    property bool isVisible: index % 2 === 0
-//                    property bool isVisible: searchBox.text == "" || name.toLowerCase().includes(searchBox.text.toLowerCase()) || symbol.toLowerCase().includes(searchBox.text.toLowerCase())
+                property bool isVisible: symbol && (searchBox.text == "" || name.toLowerCase().includes(searchBox.text.toLowerCase()) || symbol.toLowerCase().includes(searchBox.text.toLowerCase()))
 
-
-                visible: isVisible && symbol !== "" ? true : false
-                height: isVisible && symbol !== "" ? 40 : 0
+                visible: isVisible
+                height: isVisible ? 40 + Theme.smallPadding : 0
 
                 Image {
                     id: assetInfoImage
                     width: 36
-                    height: isVisible && symbol !== "" ? 36 : 0
+                    height: tokenContainer.isVisible !== "" ? 36 : 0
+                    anchors.top: parent.top
+                    anchors.topMargin: 0
                     source: hasIcon ? "../../../img/tokens/" + symbol + ".png" : "../../../img/tokens/0-native.png"
                     anchors.left: parent.left
                     anchors.leftMargin: 0
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-                Text {
-                    id: assetFullTokenName
-                    text: name + " -- " + index
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 0
-                    anchors.left: assetInfoImage.right
-                    anchors.leftMargin: Theme.smallPadding
-                    color: Theme.darkGrey
-                    font.pixelSize: 15
                 }
                 Text {
                     id: assetSymbol
@@ -72,11 +60,21 @@ Item {
                     color: Theme.black
                     font.pixelSize: 15
                 }
+                Text {
+                    id: assetFullTokenName
+                    text: name
+                    anchors.bottom: assetInfoImage.bottom
+                    anchors.bottomMargin: 0
+                    anchors.left: assetInfoImage.right
+                    anchors.leftMargin: Theme.smallPadding
+                    color: Theme.darkGrey
+                    font.pixelSize: 15
+                }
                 CheckBox  {
                     id: assetCheck
                     checked: walletModel.hasAsset("0x123", symbol)
                     anchors.right: parent.right
-                    anchors.rightMargin: 10
+                    anchors.rightMargin: Theme.smallPadding
                     onClicked: walletModel.toggleAsset(symbol, assetCheck.checked, address, name, decimals, "eeeeee")
                 }
             }

@@ -157,6 +157,7 @@ Item {
             anchors.left: receiveBtn.right
             anchors.leftMargin: walletMenu.btnOuterMargin
             width: settingsImg.width
+            height: settingsImg.height
             Image {
                 id: settingsImg
                 width: 18
