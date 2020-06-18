@@ -33,7 +33,7 @@ QtObject:
     new(result, delete)
     result.status = status
     result.chats = newChannelsList()
-    result.activeChannel = newChatItemView()
+    result.activeChannel = newChatItemView(status)
     result.messageList = initTable[string, ChatMessageList]()
     result.setup()
 

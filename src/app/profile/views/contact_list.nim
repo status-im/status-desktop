@@ -30,22 +30,16 @@ QtObject:
   method rowCount(self: ContactList, index: QModelIndex = nil): int =
     return self.contacts.len
 
-  proc getUserName(contact: Profile): string =
-    if(contact.ensName != "" and contact.ensVerified):
-      result = "@" & ens.userName(contact.ensName, true)
-    else:
-      result = contact.alias
-
   proc userName(self: ContactList, pubKey: string, defaultValue: string = ""): string {.slot.} =
     for contact in self.contacts:
       if(contact.id != pubKey): continue
-      return getUserName(contact)
+      return ens.userNameOrAlias(contact)
     return defaultValue
 
   proc rowData(self: ContactList, index: int, column: string): string {.slot.} =
     let contact = self.contacts[index]
     case column:
-      of "name": result = getUserName(contact)
+      of "name": result = ens.userNameOrAlias(contact)
       of "address": result = contact.address
       of "identicon": result = contact.identicon
       of "pubKey": result = contact.id
@@ -57,7 +51,7 @@ QtObject:
       return
     let contact = self.contacts[index.row]
     case role.ContactRoles:
-      of ContactRoles.Name: result = newQVariant(getUserName(contact))
+      of ContactRoles.Name: result = newQVariant(ens.userNameOrAlias(contact))
       of ContactRoles.Address: result = newQVariant(contact.address)
       of ContactRoles.Identicon: result = newQVariant(contact.identicon)
       of ContactRoles.PubKey: result = newQVariant(contact.id)
