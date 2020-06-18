@@ -63,7 +63,7 @@ ModalPopup {
         anchors.topMargin: Theme.padding
         anchors.right: parent.right
         anchors.rightMargin: Theme.padding
-        label: "Add account >"
+        label: qsTr("Add account >")
 
         disabled: passwordInput.text === "" || accountNameInput.text === "" || accountPKeyInput.textAreaText === ""
 
