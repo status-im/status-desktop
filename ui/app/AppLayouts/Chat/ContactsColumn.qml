@@ -68,6 +68,7 @@ Item {
 
         ChannelList {
             id: channelList
+            searchStr: contactsColumn.searchStr
         }
     }
 }
