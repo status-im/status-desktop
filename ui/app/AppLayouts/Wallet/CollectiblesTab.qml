@@ -34,6 +34,15 @@ Item {
                 anchors.leftMargin: Theme.padding
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: collectibleImage.right
+                font.pixelSize: 15
+            }
+
+            Text {
+                id: collectibleIdText
+                text: collectibleId
+                anchors.leftMargin: Theme.padding
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: collectibleName.right
                 color: Theme.darkGrey
                 font.pixelSize: 15
             }
@@ -46,6 +55,7 @@ Item {
         ListElement {
             name: "Kitty cat"
             image: "../../img/token-icons/eth.svg"
+            collectibleId: "1337"
         }
     }
 

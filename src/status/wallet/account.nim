@@ -1,7 +1,7 @@
 import eventemitter
 
 type Collectible* = ref object
-    name*, image*: string
+    name*, image*, id*: string
 
 type CurrencyArgs* = ref object of Args
     currency*: string
