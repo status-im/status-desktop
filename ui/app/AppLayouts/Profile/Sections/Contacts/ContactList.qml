@@ -6,6 +6,7 @@ import "./samples/"
 import "../../../../../imports"
 import "../../../../../shared"
 import "../../../Chat/components"
+import "."
 
 ListView {
     id: contactList
