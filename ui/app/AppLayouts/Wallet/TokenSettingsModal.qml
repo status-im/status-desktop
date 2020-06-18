@@ -4,34 +4,24 @@ import "../../../imports"
 import "../../../shared"
 import "./Components"
 
-Item {
-    function open() {
-        popup.open()
+ModalPopup {
+    id: popup
+    title: qsTr("Add/Remove Tokens")
+    
+    
+    TokenSettingsModalContent {
+        id: settingsModalContent
     }
 
-    function close() {
-        popup.close()
-    }
-
-    Popup {
-        id: popup
-        modal: true
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-        Overlay.modal: Rectangle {
-            color: "#60000000"
-        }
-        parent: Overlay.overlay
-        x: Math.round((parent.width - width) / 2)
-        y: Math.round((parent.height - height) / 2)
-        width: 480
-        height: 510
-        background: Rectangle {
-            color: Theme.white
-            radius: Theme.radius
-        }
-        padding: 0
-        contentItem: TokenSettingsModalContent {
-            id: settingsModalContent
+    footer: StyledButton {
+        anchors.right: parent.right
+        anchors.rightMargin: Theme.padding
+        label: qsTr("Add custom token")
+        anchors.top: parent.top
+        anchors.topMargin: Theme.padding
+        onClicked: {
+            popup.close()
+            addCustomTokenModal.open()
         }
     }
 }
