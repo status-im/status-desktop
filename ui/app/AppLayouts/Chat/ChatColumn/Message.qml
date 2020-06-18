@@ -236,7 +236,7 @@ Item {
             anchors.rightMargin: message.length > 52 ? parent.chatHorizontalPadding : 0
             horizontalAlignment: !isCurrentUser ? Text.AlignLeft : Text.AlignRight
             font.family: "Inter"
-            wrapMode: Text.WordWrap
+            wrapMode: Text.WrapAnywhere
             anchors.top: parent.top
             anchors.topMargin: chatBox.chatVerticalPadding
             font.pixelSize: 15
