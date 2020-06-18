@@ -1,5 +1,8 @@
 import eventemitter
 
+type Collectible* = ref object
+    name*, image*: string
+
 type CurrencyArgs* = ref object of Args
     currency*: string
 
@@ -11,6 +14,7 @@ type WalletAccount* = ref object
     realFiatBalance*: float
     assetList*: seq[Asset]
     wallet*, chat*: bool
+    collectibles*: seq[Collectible]
 
 type AccountArgs* = ref object of Args
     account*: WalletAccount
