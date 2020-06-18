@@ -26,8 +26,9 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete*(self: OnboardingView) =
-    self.QAbstractListModel.delete
+    self.currentAccount.delete
     self.accounts = @[]
+    self.QAbstractListModel.delete
 
   proc newOnboardingView*(status: Status): OnboardingView =
     new(result, delete)

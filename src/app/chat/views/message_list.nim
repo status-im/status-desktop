@@ -25,8 +25,8 @@ QtObject:
       messages*: seq[Message]
 
   proc delete(self: ChatMessageList) =
-    self.QAbstractListModel.delete
     self.messages = @[]
+    self.QAbstractListModel.delete
 
   proc setup(self: ChatMessageList) =
     self.QAbstractListModel.setup

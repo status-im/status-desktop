@@ -36,7 +36,9 @@ QtObject:
     discard
 
   proc delete*(self: SignalsController) =
+    self.variant.delete
     self.QObject.delete
+    self.signalSubscribers = initTable[SignalType, seq[SignalSubscriber]]()
 
   proc addSubscriber*(self: SignalsController, signalType: SignalType, subscriber: SignalSubscriber) =
     if not self.signalSubscribers.hasKey(signalType):

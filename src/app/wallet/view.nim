@@ -21,6 +21,10 @@ QtObject:
       totalFiatBalance: string
 
   proc delete(self: WalletView) =
+    self.accounts.delete
+    self.currentAssetList.delete
+    self.currentAccount.delete
+    self.currentTransactions.delete
     self.QAbstractListModel.delete
 
   proc setup(self: WalletView) =

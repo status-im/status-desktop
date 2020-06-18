@@ -20,8 +20,8 @@ proc newController*(status: Status): NodeController =
   result.variant = newQVariant(result.view)
 
 proc delete*(self: NodeController) =
-  delete self.view
   delete self.variant
+  delete self.view
 
 proc init*(self: NodeController) =
   discard

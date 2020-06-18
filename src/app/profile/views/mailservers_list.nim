@@ -13,7 +13,9 @@ QtObject:
 
   proc setup(self: MailServersList) = self.QAbstractListModel.setup
 
-  proc delete(self: MailServersList) = self.QAbstractListModel.delete
+  proc delete(self: MailServersList) = 
+    self.mailservers = @[]
+    self.QAbstractListModel.delete
 
   proc newMailServersList*(): MailServersList =
     new(result, delete)

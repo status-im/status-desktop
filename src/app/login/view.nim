@@ -29,8 +29,9 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete*(self: LoginView) =
-    self.QAbstractListModel.delete
+    self.currentAccount.delete
     self.accounts = @[]
+    self.QAbstractListModel.delete
 
   proc newLoginView*(status: Status): LoginView =
     new(result, delete)

@@ -19,6 +19,9 @@ QtObject:
     self.QObject.setup
 
   proc delete*(self: ProfileView) =
+    if not self.mailserversList.isNil: self.mailserversList.delete
+    if not self.contactList.isNil: self.contactList.delete
+    if not self.profile.isNil: self.profile.delete
     self.QObject.delete
 
   proc newProfileView*(status: Status): ProfileView =

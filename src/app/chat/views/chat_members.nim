@@ -20,7 +20,9 @@ QtObject:
 
   proc setup(self: ChatMembersView) = self.QAbstractListModel.setup
 
-  proc delete(self: ChatMembersView) = self.QAbstractListModel.delete
+  proc delete(self: ChatMembersView) = 
+    self.members = @[]
+    self.QAbstractListModel.delete
 
   proc newChatMembersView*(status: Status): ChatMembersView =
     new(result, delete)

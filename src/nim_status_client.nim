@@ -27,10 +27,7 @@ proc mainProc() =
   let engine = newQQmlApplicationEngine()
   let signalController = signals.newController(app)
 
-  defer: # Defer will run this just before mainProc() function ends
-    app.delete()
-    engine.delete()
-    signalController.delete()
+ 
 
   # We need this global variable in order to be able to access the application
   # from the non-closure callback passed to `libstatus.setSignalEventCallback`
@@ -59,8 +56,19 @@ proc mainProc() =
   var onboarding = onboarding.newController(status)
 
   engine.setRootContextProperty("loginModel", login.variant)
-
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
+
+  defer:
+    error "TODO: if user is logged in, logout"
+    engine.delete()
+    app.delete()
+    signalController.delete()
+    login.delete()
+    onboarding.delete()
+    wallet.delete()
+    chat.delete()
+    profile.delete()
+
 
   # Initialize only controllers whose init functions
   # do not need a running node

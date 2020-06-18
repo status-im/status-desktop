@@ -23,8 +23,8 @@ proc newController*(status: Status): ProfileController =
   result.variant = newQVariant(result.view)
 
 proc delete*(self: ProfileController) =
-  delete self.view
   delete self.variant
+  delete self.view
 
 proc init*(self: ProfileController, account: Account) =
   let profile = account.toProfileModel()

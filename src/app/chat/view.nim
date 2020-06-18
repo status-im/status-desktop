@@ -27,7 +27,13 @@ QtObject:
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
 
-  proc delete(self: ChatsView) = self.QAbstractListModel.delete
+  proc delete(self: ChatsView) = 
+    self.chats.delete
+    self.activeChannel.delete
+    for msg in self.messageList.values:
+      msg.delete
+    self.messageList = initTable[string, ChatMessageList]()
+    self.QAbstractListModel.delete
 
   proc newChatsView*(status: Status): ChatsView =
     new(result, delete)

@@ -10,6 +10,7 @@ QtObject:
     self.QObject.setup
 
   proc delete*(self: ProfileView) =
+    self.mailserversList.delete
     self.QObject.delete
 
   proc newProfileView*(): ProfileView =
