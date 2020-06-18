@@ -1,0 +1,72 @@
+pipeline {
+  agent {
+    docker { 
+      label 'linux'
+      image 'statusteam/nim-status-client-build:latest'
+      /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
+      args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
+    }
+  }
+
+  options {
+    timestamps()
+    /* Prevent Jenkins jobs from running forever */
+    timeout(time: 10, unit: 'MINUTES')
+    /* manage how many builds we keep */
+    buildDiscarder(logRotator(
+      numToKeepStr: '20',
+      daysToKeepStr: '60',
+    ))
+  }
+
+  environment {
+    /* Improve make performance */
+    MAKEFLAGS = '-j4'
+    /* Disable colors in Nim compiler logs */
+    NIMFLAGS = '--colors:off'
+    /* Verbosity of make targets */
+    V = "1"
+    /* Control output the filename */
+    STATUS_CLIENT_APPIMAGE = "pkg/${load('ci/lib.groovy').pkgFilename('linux', 'AppImage')}"
+  }
+
+  stages {
+    stage('Modules') {
+      steps {
+        /* avoid re-compiling Nim by using cache */
+        cache(maxCacheSize: 250, caches: [[
+          $class: 'ArbitraryFileCache',
+          includes: '**/*',
+          path: 'vendor/nimbus-build-system/vendor/Nim/bin'
+        ]]) {
+          sh 'make update'
+        }
+      }
+    }
+
+    stage('Deps') {
+      steps { sh 'make deps' }
+    }
+
+    stage('status-go') {
+      steps { sh 'make status-go' }
+    }
+
+    stage('Client') {
+      steps { sh 'make nim_status_client' }
+    }
+
+    stage('Package') {
+      steps { sh 'make pkg-linux' }
+    }
+
+    stage('Archive') {
+      steps { script {
+        archiveArtifacts(env.STATUS_CLIENT_APPIMAGE)
+      } }
+    }
+  }
+  post {
+    always { cleanWs() }
+  }
+}

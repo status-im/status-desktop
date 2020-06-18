@@ -1,0 +1,83 @@
+pipeline {
+  agent {
+    label 'macos'
+  }
+
+  options {
+    timestamps()
+    /* Prevent Jenkins jobs from running forever */
+    timeout(time: 10, unit: 'MINUTES')
+    /* manage how many builds we keep */
+    buildDiscarder(logRotator(
+      numToKeepStr: '20',
+      daysToKeepStr: '60',
+    ))
+  }
+
+  environment {
+    /* Improve make performance */
+    MAKEFLAGS = '-j4'
+    /* Disable colors in Nim compiler logs */
+    NIMFLAGS = '--colors:off'
+    /* Qt location is pre-defined */
+    QTDIR = '/usr/local/qt'
+    PATH = "${env.QTDIR}/clang_64/bin:${env.PATH}"
+    /* Control output the filename */
+    STATUS_CLIENT_DMG = "pkg/${load('ci/lib.groovy').pkgFilename('macos', 'dmg')}"
+  }
+
+  stages {
+    stage('Modules') {
+      steps { 
+        /* avoid re-compiling Nim by using cache */
+        cache(maxCacheSize: 250, caches: [[
+          $class: 'ArbitraryFileCache',
+          includes: '**/*',
+          path: 'vendor/nimbus-build-system/vendor/Nim/bin'
+        ]]) {
+          sh 'make update'
+        }
+      }
+    }
+
+    stage('Deps') {
+      steps { sh 'make deps' }
+    }
+
+    stage('status-go') {
+      steps { sh 'make status-go' }
+    }
+
+    stage('Client') {
+      steps { sh 'make nim_status_client' }
+    }
+
+    stage('Package') { steps {
+      withCredentials([
+        string(
+          credentialsId: 'macos-keychain-identity',
+          variable: 'MACOS_CODESIGN_IDENT'
+        ),
+        string(
+          credentialsId: 'macos-keychain-pass',
+          variable: 'MACOS_KEYCHAIN_PASS'
+        ),
+        file(
+          credentialsId: 'macos-keychain-file',
+          variable: 'MACOS_KEYCHAIN_FILE'
+        ),
+      ]) {
+        sh 'make pkg-macos'
+      }
+    } }
+
+    stage('Archive') {
+      steps { script {
+        archiveArtifacts(env.STATUS_CLIENT_DMG)
+      } }
+    }
+  }
+  post {
+    always { cleanWs() }
+  }
+}
