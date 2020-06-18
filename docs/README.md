@@ -17,5 +17,9 @@
 * [Tutorial - how to add a new section](https://github.com/status-im/nim-status-client/blob/master/docs/tutorial_adding_section.md)
 * [Tutorial - how to create a custom QML component](https://github.com/status-im/nim-status-client/blob/master/docs/tutorial_custom_component.md)
 
+### Continuous Integration
+* [CI Readme](./ci/README.md)
+* [Jenkins Jobs](https://ci.status.im/job/nim-status-client/) 
+
 ### API
 * [QML Nim-Status-Client API reference](https://github.com/status-im/nim-status-client/blob/master/docs/qml_api.md)

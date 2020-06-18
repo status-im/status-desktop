@@ -25,6 +25,7 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	pkg-linux \
 	pkg-macos \
 	run \
+	status-go \
 	update
 
 ifeq ($(NIM_PARAMS),)
@@ -95,7 +96,9 @@ bottles-macos: | $(BOTTLE_OPENSSL) $(BOTTLE_PCRE)
 	rm -rf bottles/Downloads
 
 ifeq ($(detected_OS), Darwin)
- NIM_PARAMS := $(NIM_PARAMS) -L:"-framework Foundation -framework Security -framework IOKit -framework CoreServices"
+ NIM_PARAMS += -L:"-framework Foundation -framework Security -framework IOKit -framework CoreServices"
+ # Fix for failures due to 'can't allocate code signature data for'
+ NIM_PARAMS += --passL:"-headerpad_max_install_names"
 endif
 
 DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
@@ -105,7 +108,7 @@ QT5_PCFILEDIR := $(shell pkg-config --variable=pcfiledir Qt5Core 2>/dev/null)
 QT5_LIBDIR := $(shell pkg-config --variable=libdir Qt5Core 2>/dev/null)
 ifeq ($(QT5_PCFILEDIR),)
  ifeq ($(QTDIR),)
-  $(error Can't find your Qt5 installation. Please run "$(MAKE) QTDIR=/path/to/your/Qt5/installation/prefix ...")
+  $(error Cannot find your Qt5 installation. Please run "$(MAKE) QTDIR=/path/to/your/Qt5/installation/prefix ...")
  else
   ifeq ($(detected_OS), Darwin)
    QT5_PCFILEDIR := $(QTDIR)/clang_64/lib/pkgconfig
@@ -140,11 +143,18 @@ $(DOTHERSIDE): | deps
 		mkdir -p build && \
 		cd build && \
 		rm -f CMakeCache.txt && \
-		cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_DOCS=OFF -DENABLE_TESTS=OFF -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON .. $(HANDLE_OUTPUT) && \
+		cmake \
+			-DCMAKE_BUILD_TYPE=Release \
+			-DENABLE_DOCS=OFF \
+			-DENABLE_TESTS=OFF \
+			-DENABLE_DYNAMIC_LIBS=OFF \
+			-DENABLE_STATIC_LIBS=ON \
+			.. $(HANDLE_OUTPUT) && \
 		$(MAKE) VERBOSE=$(V) $(HANDLE_OUTPUT)
 
 STATUSGO := vendor/status-go/build/bin/libstatus.a
 
+status-go: $(STATUSGO)
 $(STATUSGO): | deps
 	echo -e $(BUILD_MSG) "status-go"
 	+ cd vendor/status-go && \
@@ -164,9 +174,9 @@ $(APPIMAGE_TOOL):
 	mv $(_APPIMAGE_TOOL) tmp/linux/tools/
 	chmod +x $(APPIMAGE_TOOL)
 
-APPIMAGE := pkg/NimStatusClient-x86_64.AppImage
+STATUS_CLIENT_APPIMAGE ?= pkg/NimStatusClient-x86_64.AppImage
 
-$(APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
+$(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	rm -rf pkg/*.AppImage
 	mkdir -p tmp/linux/dist/usr/bin
 	mkdir -p tmp/linux/dist/usr/lib
@@ -185,7 +195,7 @@ $(APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp AppRun tmp/linux/dist/.
 
 	mkdir -p pkg
-	$(APPIMAGE_TOOL) tmp/linux/dist $(APPIMAGE)
+	$(APPIMAGE_TOOL) tmp/linux/dist $(STATUS_CLIENT_APPIMAGE)
 
 DMG_TOOL := node_modules/.bin/create-dmg
 
@@ -195,17 +205,9 @@ $(DMG_TOOL):
 MACOS_OUTER_BUNDLE := tmp/macos/dist/Status.app
 MACOS_INNER_BUNDLE := $(MACOS_OUTER_BUNDLE)/Contents/Frameworks/QtWebEngineCore.framework/Versions/Current/Helpers/QtWebEngineProcess.app
 
-DMG := pkg/Status.dmg
+STATUS_CLIENT_DMG ?= pkg/Status.dmg
 
-# it's not required to set MACOS_KEYCHAIN if MACOS_CODESIGN_IDENT can be found
-# in e.g. your login keychain; this environment variable is primarily useful
-# for CI; when specified MACOS_KEYCHAIN should be the path to a preferred
-# keychain database file
-ifneq ($(MACOS_KEYCHAIN),)
- MACOS_KEYCHAIN_OPT := --keychain "$(MACOS_KEYCHAIN)"
-endif
-
-$(DMG): nim_status_client $(DMG_TOOL)
+$(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	rm -rf tmp/macos pkg/*.dmg
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/MacOS
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/Resources
@@ -227,26 +229,11 @@ $(DMG): nim_status_client $(DMG_TOOL)
 
 	# if MACOS_CODESIGN_IDENT is not set then the outer and inner .app
 	# bundles are not signed
-	[ -z "$(MACOS_CODESIGN_IDENT)" ] || \
-		codesign \
-			--sign "$(MACOS_CODESIGN_IDENT)" \
-			$(MACOS_KEYCHAIN_OPT) \
-			--options runtime \
-			--deep \
-			--force \
-			--verbose=4 \
-			$(MACOS_OUTER_BUNDLE)
-	[ -z "$(MACOS_CODESIGN_IDENT)" ] || \
-		codesign \
-			--sign "$(MACOS_CODESIGN_IDENT)" \
-			$(MACOS_KEYCHAIN_OPT) \
-			--entitlements QtWebEngineProcess.plist \
-			--options runtime \
-			--deep \
-			--force \
-			--verbose=4 \
-			$(MACOS_INNER_BUNDLE)
-
+ifdef MACOS_CODESIGN_IDENT
+	scripts/sign-macos-pkg.sh $(MACOS_OUTER_BUNDLE) $(MACOS_CODESIGN_IDENT)
+	scripts/sign-macos-pkg.sh $(MACOS_INNER_BUNDLE) $(MACOS_CODESIGN_IDENT) \
+		--entitlements QtWebEngineProcess.plist
+endif
 	mkdir -p pkg
 	# See: https://github.com/sindresorhus/create-dmg#dmg-icon
 	# GraphicsMagick must be installed for create-dmg to make the custom
@@ -255,28 +242,21 @@ $(DMG): nim_status_client $(DMG_TOOL)
 		--identity="NOBODY" \
 		$(MACOS_OUTER_BUNDLE) \
 		pkg || true
-	# `|| true` is used above because code signing will be done manually
-	# below (to allow for MACOS_KEYCHAIN_OPT) but create-dmg doesn't have
-	# an option to not attempt signing. To work around that limitation an
-	# unlikely identity (NOBODY) is specified; this results in a non-zero
-	# exit code even though the .dmg is created successfully (just not code
-	# signed); if the above command failed to create a .dmg then the
-	# following command should result in a non-zero exit code
-	mv "`ls pkg/*.dmg`" pkg/Status.dmg
+	# We ignore failure above create-dmg can't skip signing.
+	# To work around that a dummy identity - 'NOBODY' - is specified.
+	# This causes non-zero exit code despite DMG being created.
+	# It is just not signed, hence the next command should succeed.
+	mv "`ls pkg/*.dmg`" $(STATUS_CLIENT_DMG)
 
-	# if MACOS_CODESIGN_IDENT is not set then the .dmg is not signed
-	[ -z "$(MACOS_CODESIGN_IDENT)" ] || \
-		codesign \
-			--sign "$(MACOS_CODESIGN_IDENT)" \
-			$(MACOS_KEYCHAIN_OPT) \
-			--verbose=4 \
-			pkg/Status.dmg
+ifdef MACOS_CODESIGN_IDENT
+	scripts/sign-macos-pkg.sh $(STATUS_CLIENT_DMG) $(MACOS_CODESIGN_IDENT)
+endif
 
 pkg: $(PKG_TARGET)
 
-pkg-linux: $(APPIMAGE)
+pkg-linux: $(STATUS_CLIENT_APPIMAGE)
 
-pkg-macos: $(DMG)
+pkg-macos: $(STATUS_CLIENT_DMG)
 
 clean: | clean-common
 	rm -rf bin/* node_modules pkg/* tmp/* $(STATUSGO)
