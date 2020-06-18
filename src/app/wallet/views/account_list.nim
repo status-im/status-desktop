@@ -21,8 +21,8 @@ QtObject:
   proc setup(self: AccountList) = self.QAbstractListModel.setup
 
   proc delete(self: AccountList) =
-    self.QAbstractListModel.delete
     self.accounts = @[]
+    self.QAbstractListModel.delete
 
   proc newAccountList*(): AccountList =
     new(result, delete)

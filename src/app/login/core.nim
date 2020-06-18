@@ -17,8 +17,8 @@ proc newController*(status: Status): LoginController =
   result.variant = newQVariant(result.view)
 
 proc delete*(self: LoginController) =
-  delete self.view
-  delete self.variant
+  self.variant.delete
+  self.view.delete
 
 proc init*(self: LoginController) =
   let nodeAccounts = self.status.accounts.openAccounts()

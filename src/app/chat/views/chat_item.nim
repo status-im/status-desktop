@@ -13,6 +13,7 @@ QtObject:
     self.QObject.setup
 
   proc delete*(self: ChatItemView) =
+    if not self.chatMembers.isNil: self.chatMembers.delete
     self.QObject.delete
 
   proc newChatItemView*(status: Status): ChatItemView =

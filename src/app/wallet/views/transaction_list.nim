@@ -25,8 +25,8 @@ QtObject:
   proc setup(self: TransactionList) = self.QAbstractListModel.setup
 
   proc delete(self: TransactionList) =
-    self.QAbstractListModel.delete
     self.transactions = @[]
+    self.QAbstractListModel.delete
 
   proc newTransactionList*(): TransactionList =
     new(result, delete)

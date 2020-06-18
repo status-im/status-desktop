@@ -16,8 +16,8 @@ QtObject:
   proc setup(self: AssetList) = self.QAbstractListModel.setup
 
   proc delete(self: AssetList) =
-    self.QAbstractListModel.delete
     self.assets = @[]
+    self.QAbstractListModel.delete
 
   proc newAssetList*(): AssetList =
     new(result, delete)

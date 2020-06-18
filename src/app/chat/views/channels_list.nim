@@ -18,7 +18,9 @@ QtObject:
 
   proc setup(self: ChannelsList) = self.QAbstractListModel.setup
 
-  proc delete(self: ChannelsList) = self.QAbstractListModel.delete
+  proc delete(self: ChannelsList) = 
+    self.chats = @[]
+    self.QAbstractListModel.delete
 
   proc newChannelsList*(): ChannelsList =
     new(result, delete)

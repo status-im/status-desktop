@@ -21,8 +21,8 @@ proc newController*(status: Status): OnboardingController =
   result.variant = newQVariant(result.view)
 
 proc delete*(self: OnboardingController) =
-  delete self.view
   delete self.variant
+  delete self.view
 
 proc init*(self: OnboardingController) =
   let accounts = self.status.accounts.generateAddresses()

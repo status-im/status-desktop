@@ -17,7 +17,9 @@ QtObject:
 
   proc setup(self: ContactList) = self.QAbstractListModel.setup
 
-  proc delete(self: ContactList) = self.QAbstractListModel.delete
+  proc delete(self: ContactList) = 
+    self.contacts = @[]
+    self.QAbstractListModel.delete
 
   proc newContactList*(): ContactList =
     new(result, delete)

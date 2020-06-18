@@ -27,8 +27,8 @@ proc newController*(status: Status): WalletController =
   result.variant = newQVariant(result.view)
 
 proc delete*(self: WalletController) =
-  delete self.view
   delete self.variant
+  delete self.view
 
 proc init*(self: WalletController) =
   self.status.wallet.initAccounts()

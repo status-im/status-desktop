@@ -25,8 +25,8 @@ proc newController*(status: Status): ChatController =
   result.variant = newQVariant(result.view)
 
 proc delete*(self: ChatController) =
-  delete self.view
   delete self.variant
+  delete self.view
 
 proc handleChatEvents(self: ChatController) =
   # Display already saved messages
