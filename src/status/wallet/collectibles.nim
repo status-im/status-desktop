@@ -57,7 +57,11 @@ proc getCryptoKitties*(address: EthAddress): seq[Collectible] =
     let response = client.request(url)
     let kitties = parseJson(response.body)["kitties"]
     for kitty in kitties:
-      result.add(Collectible(id: kitty["id"].str, name: kitty["name"].str, image: kitty["image_url"].str))
+      var id = kitty["id"]
+      var finalId = ""
+      if (not (id.kind == JNull)):
+        finalId = $id
+      result.add(Collectible(id: finalId, name: kitty["name"].str, image: kitty["image_url"].str))
   except Exception as e:
     error "Error getting Cryptokitties", msg = e.msg
 
@@ -77,9 +81,11 @@ proc getEthermons*(address: EthAddress): seq[Collectible] =
 
     let response = client.request(url)
     let monsters = parseJson(response.body)["data"]
+    var i = 0
     for monsterKey in json.keys(monsters):
       let monster = monsters[monsterKey]
-      result.add(Collectible(id: monster["monster_id"].str, name: monster["class_name"].str, image: monster["image"].str))
+      result.add(Collectible(id: $tokens[i], name: monster["class_name"].str, image: monster["image"].str))
+      i = i + 1
   except Exception as e:
     error "Error getting Ethermons", msg = e.msg
 
