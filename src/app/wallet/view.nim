@@ -43,6 +43,20 @@ QtObject:
 
   proc setCurrentAssetList*(self: WalletView, assetList: seq[Asset])
 
+  proc currentCollectiblesListChanged*(self: WalletView) {.signal.}
+
+  proc getCurrentCollectiblesList(self: WalletView): QVariant {.slot.} =
+    return newQVariant(self.currentCollectiblesList)
+
+  proc setCurrentCollectiblesList*(self: WalletView, collectibles: seq[Collectible]) =
+    self.currentCollectiblesList.setNewData(collectibles)
+    self.currentCollectiblesListChanged()
+
+  QtProperty[QVariant] collectibles:
+    read = getCurrentCollectiblesList
+    write = setCurrentCollectiblesList
+    notify = currentCollectiblesListChanged
+
   proc setCurrentAccountByIndex*(self: WalletView, index: int) {.slot.} =
     if(self.accounts.rowCount() == 0): return
 
@@ -51,6 +65,7 @@ QtObject:
     self.currentAccount.setAccountItem(selectedAccount)
     self.currentAccountChanged()
     self.setCurrentAssetList(selectedAccount.assetList)
+    self.setCurrentCollectiblesList(selectedAccount.collectibles)
 
   proc getCurrentAccount*(self: WalletView): QVariant {.slot.} =
     result = newQVariant(self.currentAccount)
@@ -87,20 +102,6 @@ QtObject:
     read = getCurrentTransactions
     write = setCurrentTransactions
     notify = currentTransactionsChanged
-  
-  proc currentCollectiblesListChanged*(self: WalletView) {.signal.}
-
-  proc getCurrentCollectiblesList(self: WalletView): QVariant {.slot.} =
-    return newQVariant(self.currentCollectiblesList)
-
-  proc setCurrentCollectiblesList*(self: WalletView, collectibles: seq[Collectible]) =
-    self.currentCollectiblesList.setNewData(collectibles)
-    self.currentCollectiblesListChanged()
-
-  QtProperty[QVariant] collectibles:
-    read = getCurrentCollectiblesList
-    write = setCurrentCollectiblesList
-    notify = currentCollectiblesListChanged
 
   proc totalFiatBalanceChanged*(self: WalletView) {.signal.}
 

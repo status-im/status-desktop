@@ -80,6 +80,7 @@ proc newAccount*(self: WalletModel, name: string, address: string, iconColor: st
   var assets: seq[Asset] = self.generateAccountConfiguredAssets(address)
   var account = WalletAccount(name: name, address: address, iconColor: iconColor, balance: fmt"{balance} {self.defaultCurrency}", assetList: assets, realFiatBalance: 0.0, publicKey: publicKey)
   updateBalance(account, self.getDefaultCurrency())
+  account.collectibles = getAllCollectibles(parseAddress(account.address))
   account
 
 proc initAccounts*(self: WalletModel) =
