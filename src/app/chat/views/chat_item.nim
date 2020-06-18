@@ -1,6 +1,7 @@
 import NimQml
 import std/wrapnils
 import ../../../status/chat/chat
+import ../../../status/status
 import chat_members
 
 QtObject:
@@ -14,11 +15,11 @@ QtObject:
   proc delete*(self: ChatItemView) =
     self.QObject.delete
 
-  proc newChatItemView*(): ChatItemView =
+  proc newChatItemView*(status: Status): ChatItemView =
     new(result, delete)
     result = ChatItemView()
     result.chatItem = nil
-    result.chatMembers = newChatMembersView()
+    result.chatMembers = newChatMembersView(status)
     result.setup
 
   proc setChatItem*(self: ChatItemView, chatItem: Chat) =

@@ -1,5 +1,8 @@
 import NimQml, Tables
 import ../../../status/chat/[chat, message]
+import ../../../status/chat as status_chat
+import ../../../status/status
+import ../../../status/ens
 
 type
   ChatMemberRoles {.pure.} = enum
@@ -12,15 +15,17 @@ type
 QtObject:
   type
     ChatMembersView* = ref object of QAbstractListModel
+      status: Status
       members*: seq[ChatMember]
 
   proc setup(self: ChatMembersView) = self.QAbstractListModel.setup
 
   proc delete(self: ChatMembersView) = self.QAbstractListModel.delete
 
-  proc newChatMembersView*(): ChatMembersView =
+  proc newChatMembersView*(status: Status): ChatMembersView =
     new(result, delete)
     result.members = @[]
+    result.status = status
     result.setup()
 
   proc setMembers*(self: ChatMembersView, members: seq[ChatMember]) =
@@ -29,6 +34,12 @@ QtObject:
     self.endResetModel()
 
   method rowCount(self: ChatMembersView, index: QModelIndex = nil): int = self.members.len
+
+  proc userName(self: ChatMembersView, id: string, alias: string): string =
+    if self.status.chat.contacts.hasKey(id):
+      result = ens.userNameOrAlias(self.status.chat.contacts[id])
+    else:
+      result = alias
 
   method data(self: ChatMembersView, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
@@ -39,7 +50,7 @@ QtObject:
     let chatMember = self.members[index.row]
     let chatMemberRole = role.ChatMemberRoles
     case chatMemberRole:
-      of ChatMemberRoles.UserName: result = newQVariant(chatMember.userName)
+      of ChatMemberRoles.UserName: result = newQVariant(self.userName(chatMember.id, chatMember.userName))
       of ChatMemberRoles.PubKey: result = newQVariant(chatMember.id)
       of ChatMemberRoles.IsAdmin: result = newQVariant(chatMember.admin)
       of ChatMemberRoles.Joined: result = newQVariant(chatMember.joined)
