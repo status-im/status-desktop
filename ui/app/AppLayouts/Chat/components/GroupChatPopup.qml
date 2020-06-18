@@ -75,16 +75,13 @@ ModalPopup {
       }
     }
 
-    Input {
+    SearchBox {
         id: searchBox
         visible: selectChatMembers
-        placeholderText: qsTr("Search")
-        icon: "../../../img/search.svg"
         iconWidth: 17
         iconHeight: 17
-        onKeyReleased: function(){
-            
-        }
+        customHeight: 44
+        fontPixelSize: 15
     }
 
     Input {
