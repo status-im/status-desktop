@@ -52,7 +52,7 @@ Item {
             anchors.topMargin: Theme.padding
             height: walletAmountValue.height + totalValue.height
 
-            TextEdit {
+            StyledTextEdit {
                 id: walletAmountValue
                 color: "black"
                 text: walletModel.totalFiatBalance

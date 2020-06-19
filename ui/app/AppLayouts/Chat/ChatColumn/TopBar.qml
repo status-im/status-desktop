@@ -23,7 +23,7 @@ Rectangle {
       channelIdenticon: chatsModel.activeChannel.identicon
     }
 
-    TextEdit {
+    StyledTextEdit {
         id: channelName
         width: 80
         height: 20

@@ -49,7 +49,7 @@ Item {
         anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
         anchors.right: parent.right
         anchors.left: parent.left
-        TextField {
+        StyledTextField {
             id: inputValue
             visible: !inputBox.isTextArea && !inputBox.isSelect
             placeholderText: inputBox.placeholderText

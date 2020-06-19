@@ -48,7 +48,7 @@ Rectangle {
             }
         }
 
-        TextField {
+        StyledTextField {
             id: txtData
             text: ""
             padding: 0

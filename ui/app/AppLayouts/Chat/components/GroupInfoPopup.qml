@@ -32,7 +32,7 @@ ModalPopup {
           }
       }
     
-      TextEdit {
+      StyledTextEdit {
           id: groupName
           text: chatsModel.activeChannel.name
           anchors.top: parent.top

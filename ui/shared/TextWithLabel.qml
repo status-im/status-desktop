@@ -25,7 +25,7 @@ Item {
         color: Theme.darkGrey
     }
 
-    TextEdit {
+    StyledTextEdit {
         id: textItem
         text: inputBox.text
         selectByMouse: true

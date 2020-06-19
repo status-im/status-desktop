@@ -187,6 +187,8 @@ DISTFILES += \
     shared/RoundedIcon.qml \
     shared/StyledText.qml \
     shared/StyledTextArea.qml \
+    shared/StyledTextEdit.qml \
+    shared/StyledTextField.qml \
     shared/TextWithLabel.qml \
     shared/qmldir
     
