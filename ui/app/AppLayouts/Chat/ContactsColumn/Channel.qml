@@ -8,8 +8,8 @@ Rectangle {
     property string name: "channelName"
     property string lastMessage: "My latest message\n with a return"
     property string timestamp: "20/2/2020"
-    property string unviewedMessagesCount: "7"
-    property string chatType: Constants.chatTypePublic
+    property string unviewedMessagesCount: "2"
+    property int chatType: Constants.chatTypePublic
     property string searchStr: ""
 
     id: wrapper
@@ -56,7 +56,7 @@ Rectangle {
         anchors.leftMargin: Theme.padding
         anchors.top: parent.top
         anchors.topMargin: Theme.smallPadding
-        visible: chatType !== Constants.chatTypeOneToOne
+        visible: wrapper.chatType !== Constants.chatTypeOneToOne
     }
 
     StyledText {
