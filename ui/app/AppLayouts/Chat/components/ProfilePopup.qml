@@ -240,12 +240,14 @@ ModalPopup {
           id: addToContactsButton
           anchors.right: parent.right
           anchors.rightMargin: Theme.smallPadding
-          label: qsTr("Add to contacts")
+          label: profileModel.isAdded(fromAuthor) ? qsTr("Remove Contact") : qsTr("Add to contacts")
           anchors.bottom: parent.bottom
           onClicked: {
-            chatsModel.addContact(fromAuthor)
-            // TODO(iuri): Change add contact button state based
-            // on contact already added or not
+            if (profileModel.isAdded(fromAuthor)) {
+              chatsModel.removeContact(fromAuthor)
+            } else {
+              chatsModel.addContact(fromAuthor)
+            }
             profilePopup.close()
           }
       }

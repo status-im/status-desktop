@@ -50,6 +50,10 @@ proc init*(self: ProfileController, account: Account) =
     let contacts = self.status.contacts.getContacts()
     self.view.setContactList(contacts)
 
+  self.status.events.on("contactRemoved") do(e: Args):
+    let contacts = self.status.contacts.getContacts()
+    self.view.setContactList(contacts)
+
 method onSignal(self: ProfileController, data: Signal) =
   let msgData = MessageSignal(data);
   if msgData.contacts.len > 0:

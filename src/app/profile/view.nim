@@ -4,6 +4,7 @@ import views/contact_list
 import views/profile_info
 import ../../status/profile/[mailserver, profile]
 import ../../status/profile as status_profile
+import ../../status/contacts as status_contacts
 import ../../status/accounts as status_accounts
 import ../../status/status
 import ../../status/chat/chat
@@ -71,3 +72,7 @@ QtObject:
 
   proc nodeVersion*(self: ProfileView): string {.slot.} =
     self.status.getNodeVersion()
+
+  proc isAdded*(self: ProfileView, id: string): bool {.slot.} =
+    if id == "": return false
+    self.status.contacts.isAdded(id)
