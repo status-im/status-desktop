@@ -13,11 +13,21 @@ import signals/core as signals
 import status/libstatus/types
 import status/libstatus/libstatus
 import status/status as statuslib
+import os, locks
 
 var signalsQObjPointer: pointer
 
 logScope:
   topics = "main"
+
+var 
+  walletThread*: Thread[ptr WalletController]
+  walletLock*: Lock
+
+proc populateWallet(walletPtr: ptr WalletController) {.thread.} =
+  {.gcsafe.}:
+    withLock walletLock:
+      walletPtr[].populate()
 
 proc mainProc() =
   let status = statuslib.newStatusInstance()
@@ -55,6 +65,8 @@ proc mainProc() =
     wallet.init()
     profile.init(args.account)
 
+    walletThread.createThread(populateWallet, wallet.unsafeAddr)
+  
   var login = login.newController(status)
   var onboarding = onboarding.newController(status)
 

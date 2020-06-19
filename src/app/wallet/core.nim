@@ -3,7 +3,7 @@ import eventemitter
 import strformat
 import strutils
 import chronicles
-
+import json
 import view
 import views/asset_list
 import views/account_list
@@ -31,12 +31,6 @@ proc delete*(self: WalletController) =
   delete self.variant
 
 proc init*(self: WalletController) =
-  self.status.wallet.initAccounts()
-  var accounts = self.status.wallet.accounts
-  for account in accounts:
-    self.view.addAccountToList(account)
-  self.view.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
-
   self.status.events.on("accountsUpdated") do(e: Args):
     self.view.updateView()
 
@@ -46,6 +40,16 @@ proc init*(self: WalletController) =
 
   self.status.events.on("assetChanged") do(e: Args):
     self.view.updateView()
+
+proc populate*(self: WalletController) =
+  var walletViewPtr = cast[pointer](self.view.vptr)
+  self.status.wallet.initAccounts()
+  var accounts = self.status.wallet.accounts
+  for account in accounts:
+    signal_handler(walletViewPtr, $(%* account), "addAccountToList")
+  signal_handler(walletViewPtr, self.status.wallet.getTotalFiatBalance(), "setTotalFiatBalance")
+
+
 
 method onSignal(self: WalletController, data: Signal) =
   debug "New signal received"

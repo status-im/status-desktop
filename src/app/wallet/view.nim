@@ -9,6 +9,7 @@ import views/transaction_list
 import ../../status/wallet
 import ../../status/status
 import chronicles
+import json
 
 QtObject:
   type
@@ -90,7 +91,7 @@ QtObject:
   proc getTotalFiatBalance(self: WalletView): string {.slot.} =
     self.status.wallet.getTotalFiatBalance()
 
-  proc setTotalFiatBalance*(self: WalletView, newBalance: string) =
+  proc setTotalFiatBalance*(self: WalletView, newBalance: string) {.slot.} =
     self.totalFiatBalance = newBalance
     self.totalFiatBalanceChanged()
 
@@ -108,6 +109,9 @@ QtObject:
       self.setCurrentAssetList(account.assetList)
       self.setCurrentAccountByIndex(0)
     self.accountListChanged()
+
+  proc addAccountToList*(self: WalletView, accountStr: string) {.slot.}=
+    self.addAccountToList(to(parseJson(accountStr), WalletAccount))
 
   proc generateNewAccount*(self: WalletView, password: string, accountName: string, color: string) {.slot.} =
     self.status.wallet.generateNewAccount(password, accountName, color)

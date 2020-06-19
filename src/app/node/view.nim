@@ -1,8 +1,6 @@
 import NimQml
 import ../../status/node
 import ../../status/status
-import threadpool
-import os
 
 QtObject:
   type NodeView* = ref object of QObject
@@ -40,23 +38,9 @@ QtObject:
     write = setCallResult
     notify = callResultChanged
 
-
-  proc getPrice*(self: pointer) =
-    sleep(5000)    
-    signal_handler(self, "100 USD", "mySlot")
-
   proc onSend*(self: NodeView, inputJSON: string) {.slot.} =
-    echo "OnSend:::::::::::::::::::::::::::::::::::"
-    var this = cast[pointer](self.vptr)
-    echo "before:::::::::::::::::::::::::::::::::::"
-    spawn getPrice(this)
-    echo "after::::::::::::::::::::::::::::::::::::"
-
-  proc mySlot(self: NodeView, x: string) {.slot.} =
-    echo "RECEIVED DATA::::::::::::::::::::::::::::"
-    echo x
-    echo ".........................................."
-
+    self.setCallResult(self.status.node.sendRPCMessageRaw(inputJSON))
+    echo "Done!: ", self.callResult
 
   proc onMessage*(self: NodeView, message: string) {.slot.} =
     self.setCallResult(message)
