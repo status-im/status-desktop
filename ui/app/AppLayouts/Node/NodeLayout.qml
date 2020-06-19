@@ -99,7 +99,7 @@ SplitView {
                         }
                     }
 
-                    TextField {
+                    StyledTextField {
                         id: txtData
                         text: ""
                         leftPadding: 0

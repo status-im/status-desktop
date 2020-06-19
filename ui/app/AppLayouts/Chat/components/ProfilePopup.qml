@@ -39,7 +39,7 @@ ModalPopup {
         }
       }
 
-      TextEdit {
+      StyledTextEdit {
           id: profileName
           text: userName
           anchors.top: parent.top

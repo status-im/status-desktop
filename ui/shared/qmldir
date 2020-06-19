@@ -10,4 +10,6 @@ SearchBox 1.0 SearchBox.qml
 Select 1.0 Select.qml
 StyledTextArea 1.0 StyledTextArea.qml
 StyledText 1.0 StyledText.qml
+StyledTextField 1.0 StyledTextField.qml
+StyledTextEdit 1.0 StyledTextEdit.qml
 RoundImage 1.0 RoundImage.qml

@@ -172,7 +172,7 @@ Item {
         }
     }
 
-    TextEdit {
+    StyledTextEdit {
         id: chatName
         text: userName
         anchors.leftMargin: 20
@@ -227,7 +227,7 @@ Item {
             z: -1
         }
 
-        TextEdit {
+        StyledTextEdit {
             id: chatText
             text: message
             anchors.left: parent.left
@@ -258,7 +258,7 @@ Item {
             visible: contentType == Constants.stickerType
         }
 
-        TextEdit {
+        StyledTextEdit {
             id: chatTime
             color: Theme.darkGrey
             text: timestamp
