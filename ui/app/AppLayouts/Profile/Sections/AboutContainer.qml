@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
+import "../../../../shared"
 
 Item {
     id: aboutContainer
@@ -10,7 +11,7 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    Text {
+    StyledText {
         id: element9
         text: qsTr("About the app")
         anchors.left: parent.left
@@ -21,7 +22,7 @@ Item {
         font.pixelSize: 20
     }
 
-    Text {
+    StyledText {
         id: element10
         text: qsTr("Status Desktop")
         anchors.left: parent.left
@@ -31,7 +32,7 @@ Item {
         font.weight: Font.Bold
         font.pixelSize: 14
     }
-    Text {
+    StyledText {
         id: element11
         text: qsTr("Version: 1.0")
         anchors.left: parent.left
@@ -41,7 +42,7 @@ Item {
         font.weight: Font.Bold
         font.pixelSize: 14
     }
-    Text {
+    StyledText {
         id: element12
         text: qsTr("Node Version: %1").arg(profileModel.nodeVersion())
         anchors.left: parent.left
@@ -51,7 +52,7 @@ Item {
         font.weight: Font.Bold
         font.pixelSize: 14
     }
-    Text {
+    StyledText {
         id: privacyPolicyLink
         text: "<a href='https://www.iubenda.com/privacy-policy/45710059'>Privacy Policy</a>"
         anchors.left: parent.left
@@ -66,7 +67,7 @@ Item {
             cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
         }
     }
-    Text {
+    StyledText {
         text: "<a href='https://status.im/docs/FAQs.html'>Frequently asked questions</a>"
         anchors.left: parent.left
         anchors.leftMargin: 24

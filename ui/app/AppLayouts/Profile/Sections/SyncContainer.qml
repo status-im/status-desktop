@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
+import "../../../../shared"
 
 Item {
     id: syncContainer
@@ -10,7 +11,7 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    Text {
+    StyledText {
         id: element4
         text: qsTr("Sync settings")
         anchors.left: parent.left

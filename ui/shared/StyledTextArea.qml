@@ -23,7 +23,7 @@ Item {
     anchors.right: parent.right
     anchors.left: parent.left
 
-    Text {
+    StyledText {
         id: inputLabel
         text: inputBox.label
         font.weight: Font.Medium
@@ -56,7 +56,7 @@ Item {
             anchors.bottomMargin: Theme.smallPadding
             anchors.topMargin: Theme.smallPadding
             anchors.fill: parent
-
+            font.family: Theme.fontRegular.name
         }
     }
 

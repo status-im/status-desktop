@@ -13,7 +13,7 @@ Item {
     anchors.right: parent.right
     anchors.left: parent.left
 
-    Text {
+    StyledText {
         id: inputLabel
         text: inputBox.label
         font.weight: Font.Medium

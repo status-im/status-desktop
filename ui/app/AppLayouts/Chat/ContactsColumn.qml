@@ -15,7 +15,7 @@ Item {
     Layout.minimumWidth: 200
     Layout.fillHeight: true
 
-    Text {
+    StyledText {
         id: title
         x: 772
         text: qsTr("Chat")

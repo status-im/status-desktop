@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import "./Components"
 import "../../../imports"
+import "../../../shared"
 
 Item {
     Component {
@@ -45,7 +46,7 @@ Item {
             radius: 50
           }
 
-          Text {
+          StyledText {
             id: transferIcon
             anchors.topMargin: 25
             anchors.top: parent.top
@@ -57,7 +58,7 @@ Item {
             text: to != walletModel.currentAccount.address ? "↑" : "↓"
           }
 
-          Text {
+          StyledText {
             id: transactionValue
             anchors.left: transferIcon.right
             anchors.leftMargin: Theme.smallPadding
@@ -74,7 +75,7 @@ Item {
           anchors.topMargin: Theme.bigPadding
           width: children[0].width + children[1].width
 
-          Text {
+          StyledText {
               text: to != walletModel.currentAccount.address ? "To " : "From "
               anchors.right: addressValue.left
               color: Theme.darkGrey
@@ -83,7 +84,7 @@ Item {
               font.strikeout: false
           }
 
-          Text {
+          StyledText {
               id: addressValue
               text: to
               width: 100
@@ -101,7 +102,7 @@ Item {
           anchors.topMargin: Theme.bigPadding
           width: children[0].width + children[1].width + children[2].width
 
-          Text {
+          StyledText {
               text: "• "
               font.weight: Font.Bold
               anchors.right: timeIndicator.left
@@ -110,7 +111,7 @@ Item {
               font.pixelSize: 15
           }
 
-          Text {
+          StyledText {
               id: timeIndicator
               text: "At "
               anchors.right: timeValue.left
@@ -120,7 +121,7 @@ Item {
               font.strikeout: false
           }
 
-          Text {
+          StyledText {
               id: timeValue
               text: timestamp
               anchors.right: parent.right

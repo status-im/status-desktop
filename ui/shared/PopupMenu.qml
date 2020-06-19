@@ -37,7 +37,7 @@ Menu {
                 }
             }
             
-            Text {
+            StyledText {
                 anchors.left: menuIcon.right
                 anchors.leftMargin: 32
                 topPadding: 4

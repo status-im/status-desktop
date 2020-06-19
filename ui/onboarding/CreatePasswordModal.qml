@@ -40,7 +40,7 @@ ModalPopup {
         }
     }
 
-    Text {
+    StyledText {
         text: qsTr("At least 6 characters. You will use this password to unlock status on this device & sign transactions.")
         wrapMode: Text.WordWrap
         anchors.right: parent.right

@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../imports"
+import "../../../shared"
 
 SplitView {
     id: nodeView
@@ -25,7 +26,7 @@ SplitView {
         ColumnLayout {
             id: messageContainer
             Layout.fillHeight: true
-            Text {
+            StyledText {
                 id: testDescription
                 color: Theme.lightBlueText
                 text: "latest block (auto updates):"
@@ -35,7 +36,7 @@ SplitView {
                 font.weight: Font.Medium
                 font.pixelSize: 20
             }
-            Text {
+            StyledText {
                 id: test
                 color: Theme.lightBlueText
                 text: nodeModel.lastMessage

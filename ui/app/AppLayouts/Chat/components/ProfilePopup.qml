@@ -52,7 +52,7 @@ ModalPopup {
           wrapMode: Text.WordWrap
       }
 
-      Text {
+      StyledText {
           text: fromAuthor
           width: 160
           elide: Text.ElideMiddle
@@ -62,7 +62,6 @@ ModalPopup {
           anchors.topMargin: 2
           font.pixelSize: 14
           color: Theme.darkGrey
-          font.family: "Inter"
       }
 
       // TODO(pascal): implement qrcode view
@@ -96,7 +95,7 @@ ModalPopup {
       // }
     }
 
-    Text {
+    StyledText {
       id: labelEnsUsername
       text: qsTr("ENS username")
       font.pixelSize: 13
@@ -108,7 +107,7 @@ ModalPopup {
       anchors.topMargin: Theme.smallPadding
     }
 
-    Text {
+    StyledText {
       id: valueEnsName
       text: "@emily.stateofus.eth"
       font.pixelSize: 14
@@ -118,7 +117,7 @@ ModalPopup {
       anchors.topMargin: Theme.smallPadding
     }
 
-    Text {
+    StyledText {
       id: labelChatKey
       text: qsTr("Chat key")
       font.pixelSize: 13
@@ -130,7 +129,7 @@ ModalPopup {
       anchors.topMargin: Theme.padding
     }
 
-    Text {
+    StyledText {
       id: valueChatKey
       text: fromAuthor
       width: 160
@@ -152,7 +151,7 @@ ModalPopup {
       anchors.rightMargin: -Theme.padding
     }
 
-    Text {
+    StyledText {
       id: labelShareURL
       text: qsTr("Share Profile URL")
       font.pixelSize: 13
@@ -164,7 +163,7 @@ ModalPopup {
       anchors.topMargin: Theme.padding
     }
 
-    Text {
+    StyledText {
       id: valueShareURL
       text: "https://join.status.im/u/" + fromAuthor.substr(0, 4) + "..." + fromAuthor.substr(fromAuthor.length - 5)
       font.pixelSize: 14

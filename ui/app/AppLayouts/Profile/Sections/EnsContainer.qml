@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import "../../../../imports"
+import "../../../../shared"
 
 Item {
     id: ensContainer
@@ -10,7 +11,7 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    Text {
+    StyledText {
         id: element1
         text: qsTr("ENS usernames")
         anchors.left: parent.left

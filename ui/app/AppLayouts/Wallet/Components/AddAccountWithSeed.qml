@@ -64,7 +64,7 @@ ModalPopup {
         anchors.topMargin: Theme.padding
         anchors.right: parent.right
         anchors.rightMargin: Theme.padding
-        label: "Add account >"
+        label: "Add account 00>"
 
         disabled: passwordInput.text === "" || accountNameInput.text === "" || accountSeedInput.text === ""
 

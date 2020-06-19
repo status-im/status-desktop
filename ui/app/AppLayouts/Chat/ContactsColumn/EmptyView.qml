@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../components"
+import "../../../../shared"
 
 Item {
     id: suggestionsContainer
@@ -15,7 +16,7 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 20
 
-        Text {
+        StyledText {
             width: parent.width
             text: qsTr("Follow your interests in one of the many Public Chats.")
             font.pointSize: 15

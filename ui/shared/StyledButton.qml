@@ -24,7 +24,7 @@ Button {
         border.width: btnBorderWidth
     }
 
-    Text {
+    StyledText {
         id: txtBtnLabel
         color: btnStyled.disabled ? Theme.darkGrey : btnStyled.textColor
         font.pixelSize: 15

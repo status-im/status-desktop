@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import "../imports"
+import "../shared"
 
 Item {
     id: slide
@@ -19,7 +20,7 @@ Item {
         source: image
     }
 
-    Text {
+    StyledText {
         id: txtTitle1
         text: title
         anchors.right: parent.right
@@ -39,7 +40,7 @@ Item {
         font.kerning: true
     }
 
-    Text {
+    StyledText {
         id: txtDesc1
         x: 772
         color: Theme.darkGrey

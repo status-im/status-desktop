@@ -40,7 +40,7 @@ Rectangle {
           return color
       }
 
-      Text {
+      StyledText {
         text: {
           if (channelType == Constants.chatTypeOneToOne) {
             return channelName;

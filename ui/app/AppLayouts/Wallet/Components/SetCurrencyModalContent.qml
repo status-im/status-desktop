@@ -8,7 +8,7 @@ Item {
     id: element
     property string currency: "USD"
 
-    Text {
+    StyledText {
         id: modalDialogTitle
         text: "Settings"
         anchors.top: parent.top
@@ -77,7 +77,7 @@ Item {
                     width: parent.width
                     height: 52
 
-                    Text {
+                    StyledText {
                         text: name + " (" + code + ")"
                         font.pixelSize: 15
                     }

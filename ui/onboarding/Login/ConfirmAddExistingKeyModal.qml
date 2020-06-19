@@ -9,7 +9,7 @@ ModalPopup {
     title: qsTr("Enter seed phrase")
     height: 200
 
-    Text {
+    StyledText {
         text: "Do you want to add another existing key?"
         anchors.left: parent.left
         anchors.top: parent.top

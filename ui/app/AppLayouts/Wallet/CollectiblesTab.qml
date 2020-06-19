@@ -1,8 +1,9 @@
 import QtQuick 2.13
 import "../../../imports"
+import "../../../shared"
 
 Item {
-    Text {
+    StyledText {
         visible: walletModel.collectibles.rowCount() === 0
         text: qsTr("No collectibles in this account")
     }
@@ -28,7 +29,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            Text {
+            StyledText {
                 id: collectibleName
                 text: name
                 anchors.leftMargin: Theme.padding
@@ -37,7 +38,7 @@ Item {
                 font.pixelSize: 15
             }
 
-            Text {
+            StyledText {
                 id: collectibleIdText
                 text: collectibleId
                 anchors.leftMargin: Theme.padding

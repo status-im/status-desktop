@@ -30,7 +30,7 @@ Item {
         z: 1
         border.width: 0
 
-        Text {
+        StyledText {
             id: title
             x: 143
             y: 16
@@ -65,7 +65,7 @@ Item {
                 font.pixelSize: 30
             }
 
-            Text {
+            StyledText {
                 id: totalValue
                 color: Theme.darkGrey
                 text: "Total value"
@@ -111,7 +111,7 @@ Item {
                 source: walletIcon
                 color: selected || !iconColor ? Theme.transparent : iconColor  // change image color
             }
-            Text {
+            StyledText {
                 id: walletName
                 text: name
                 anchors.top: parent.top
@@ -122,7 +122,7 @@ Item {
                 font.weight: Font.Medium
                 color: selected ? Theme.white : Theme.black
             }
-            Text {
+            StyledText {
                 id: walletAddress
                 text: address
                 anchors.right: parent.right
@@ -137,7 +137,7 @@ Item {
                 color: selected ? Theme.white : Theme.darkGrey
                 opacity: selected ? 0.7 : 1
             }
-            Text {
+            StyledText {
                 id: walletBalance
                 text: balance
                 anchors.top: parent.top

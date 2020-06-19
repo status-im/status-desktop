@@ -50,7 +50,7 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: 0
                 }
-                Text {
+                StyledText {
                     id: assetSymbol
                     text: symbol
                     anchors.left: assetInfoImage.right
@@ -60,7 +60,7 @@ Item {
                     color: Theme.black
                     font.pixelSize: 15
                 }
-                Text {
+                StyledText {
                     id: assetFullTokenName
                     text: name
                     anchors.bottom: assetInfoImage.bottom

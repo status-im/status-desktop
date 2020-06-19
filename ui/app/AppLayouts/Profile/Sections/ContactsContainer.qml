@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
+import "../../../../shared"
 import "./Contacts"
 
 Item {
@@ -11,7 +12,7 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    Text {
+    StyledText {
         id: element2
         text: qsTr("Contacts")
         anchors.left: parent.left

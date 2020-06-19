@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
+import "../../../../shared"
 
 Rectangle {
     property alias profileCurrentIndex: profileScreenButtons.currentIndex
@@ -37,7 +38,7 @@ Rectangle {
                 color: Theme.transparent
             }
 
-            Text {
+            StyledText {
                 id: element1
                 color: "#000000"
                 text: qsTr("ENS usernames")
@@ -62,7 +63,7 @@ Rectangle {
                 color: Theme.transparent
             }
 
-            Text {
+            StyledText {
                 id: element2
                 color: "#000000"
                 text: qsTr("Contacts")
@@ -88,7 +89,7 @@ Rectangle {
                 color: Theme.transparent
             }
 
-            Text {
+            StyledText {
                 id: element3
                 color: "#000000"
                 text: qsTr("Privacy and security")
@@ -114,7 +115,7 @@ Rectangle {
                 color: Theme.transparent
             }
 
-            Text {
+            StyledText {
                 id: element4
                 color: "#000000"
                 text: qsTr("Sync settings")
@@ -140,7 +141,7 @@ Rectangle {
                 color: Theme.transparent
             }
 
-            Text {
+            StyledText {
                 id: element5
                 color: "#000000"
                 text: qsTr("Language settings")
@@ -166,7 +167,7 @@ Rectangle {
                 color: Theme.transparent
             }
 
-            Text {
+            StyledText {
                 id: element6
                 color: "#000000"
                 text: qsTr("Notifications settings")
@@ -191,7 +192,7 @@ Rectangle {
                 color: Theme.transparent
             }
 
-            Text {
+            StyledText {
                 id: element7
                 color: "#000000"
                 text: qsTr("Advanced settings")
@@ -217,7 +218,7 @@ Rectangle {
                 color: Theme.transparent
             }
 
-            Text {
+            StyledText {
                 id: element8
                 color: "#000000"
                 text: qsTr("Need help?")
@@ -242,7 +243,7 @@ Rectangle {
                 color: Theme.transparent
             }
 
-            Text {
+            StyledText {
                 id: element9
                 color: "#000000"
                 text: qsTr("About")
@@ -267,7 +268,7 @@ Rectangle {
                 color: Theme.transparent
             }
 
-            Text {
+            StyledText {
                 id: element10
                 color: "#000000"
                 text: qsTr("Sign out")

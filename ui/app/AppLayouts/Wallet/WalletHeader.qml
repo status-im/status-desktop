@@ -19,7 +19,7 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    Text {
+    StyledText {
         id: title
         text: currentAccount.name
         anchors.top: parent.top
@@ -42,7 +42,7 @@ Item {
         radius: 50
     }
 
-    Text {
+    StyledText {
         id: walletBalance
         text: currentAccount.balance
         anchors.left: separatorDot.right
@@ -51,7 +51,7 @@ Item {
         font.pixelSize: 22
     }
 
-    Text {
+    StyledText {
         id: walletAddress
         text: currentAccount.address
         elide: Text.ElideMiddle
@@ -110,7 +110,7 @@ Item {
                 source: "../../img/diagonalArrow.svg"
             }
 
-            Text {
+            StyledText {
                 id: sendText
                 text: "Send"
                 anchors.left: sendImg.right
@@ -143,7 +143,7 @@ Item {
                 rotation: 180
             }
 
-            Text {
+            StyledText {
                 id: receiveText
                 text: "Receive"
                 anchors.left: receiveImg.right

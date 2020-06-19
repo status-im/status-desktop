@@ -15,7 +15,7 @@ TabButton {
         border.color: Theme.transparent
     }
 
-    Text {
+    StyledText {
         id: tabBtnText
         text: btnText
         font.weight: Font.Medium

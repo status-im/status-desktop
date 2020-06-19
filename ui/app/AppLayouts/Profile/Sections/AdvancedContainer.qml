@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
+import "../../../../shared"
 
 Item {
     id: advancedContainer
@@ -10,7 +11,7 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    Text {
+    StyledText {
         id: element7
         text: qsTr("Advanced settings")
         anchors.left: parent.left
@@ -27,7 +28,7 @@ Item {
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 24
-        Text {
+        StyledText {
             text: qsTr("Browser Tab")
         }
         Switch {
@@ -36,7 +37,7 @@ Item {
                 browserBtn.enabled = this.checked
             }
         }
-        Text {
+        StyledText {
             text: qsTr("experimental (web3 not supported yet)")
         }
     }
@@ -46,7 +47,7 @@ Item {
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 24
-        Text {
+        StyledText {
             text: qsTr("Node Management Tab")
         }
         Switch {
@@ -55,7 +56,7 @@ Item {
                 nodeBtn.enabled = this.checked
             }
         }
-        Text {
+        StyledText {
             text: qsTr("under development")
         }
     }
