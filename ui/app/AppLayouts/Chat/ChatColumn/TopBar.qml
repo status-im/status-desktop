@@ -38,7 +38,7 @@ Rectangle {
         readOnly: true
     }
 
-    Text {
+    StyledText {
         id: channelIdentifier
         color: Theme.darkGrey
         text: {
@@ -59,7 +59,7 @@ Rectangle {
         anchors.topMargin: 0
     }
 
-    Text {
+    StyledText {
         id: moreActionsBtn
         text: "..."
         font.letterSpacing: 0.5

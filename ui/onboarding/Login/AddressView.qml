@@ -29,7 +29,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         source: identicon
     }
-    Text {
+    StyledText {
         id: usernameText
         text: username
         elide: Text.ElideRight
@@ -41,7 +41,7 @@ Rectangle {
         anchors.leftMargin: Theme.padding
     }
 
-    Text {
+    StyledText {
         id: addressText
         width: 108
         text: address

@@ -67,7 +67,7 @@ Item {
                 source: chatsModel.activeChannel.identicon
             }
 
-            Text {
+            StyledText {
                 visible: chatsModel.activeChannel.chatType != Constants.chatTypeOneToOne
                 text: (chatsModel.activeChannel.name.charAt(0) == "#" ? chatsModel.activeChannel.name.charAt(1) : chatsModel.activeChannel.name.charAt(0)).toUpperCase()
                 opacity: 0.7
@@ -79,7 +79,7 @@ Item {
             }
         }
 
-        Text {
+        StyledText {
             id: channelName
             wrapMode: Text.Wrap
             text: {
@@ -103,7 +103,7 @@ Item {
             anchors.topMargin: 16
             id: joinOrDecline
 
-            Text {
+            StyledText {
                 id: joinChat
                 text: qsTr("Join chat")
                 font.pixelSize: 20
@@ -119,7 +119,7 @@ Item {
                 }
             } 
 
-            Text {
+            StyledText {
                 text: qsTr("Decline invitation")
                 font.pixelSize: 20
                 color: Theme.blue
@@ -139,7 +139,7 @@ Item {
     }
 
     // Private group Messages
-    Text {
+    StyledText {
         wrapMode: Text.Wrap
         text:  message
         visible: isStatusMessage
@@ -235,7 +235,6 @@ Item {
             anchors.right: message.length > 52 ? parent.right : undefined
             anchors.rightMargin: message.length > 52 ? parent.chatHorizontalPadding : 0
             horizontalAlignment: !isCurrentUser ? Text.AlignLeft : Text.AlignRight
-            font.family: "Inter"
             wrapMode: Text.WrapAnywhere
             anchors.top: parent.top
             anchors.topMargin: chatBox.chatVerticalPadding
@@ -262,7 +261,6 @@ Item {
         TextEdit {
             id: chatTime
             color: Theme.darkGrey
-            font.family: "Inter"
             text: timestamp
             anchors.top: contentType == Constants.stickerType ? stickerId.bottom : chatText.bottom
             anchors.bottomMargin: Theme.padding

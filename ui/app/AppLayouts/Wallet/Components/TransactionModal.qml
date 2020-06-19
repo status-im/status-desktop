@@ -17,13 +17,13 @@ ModalPopup {
     anchors.rightMargin: Theme.smallPadding
     height: children[0].height + children[1].height + Theme.smallPadding
 
-    Text {
+    StyledText {
       id: confirmationsCount
       text: qsTr("9999 Confirmations")
       font.pixelSize: 14
     }
 
-    Text {
+    StyledText {
       id: confirmationsInfo
       text: qsTr("When the transaction has 12 confirmations you can consider it settled.")
       font.pixelSize: 14
@@ -52,7 +52,7 @@ ModalPopup {
     anchors.leftMargin: Theme.smallPadding
     height: children[0].height
 
-    Text {
+    StyledText {
       id: labelBlock
       text: qsTr("Block")
       font.pixelSize: 14
@@ -60,7 +60,7 @@ ModalPopup {
       color: Theme.darkGrey
     }
 
-    Text {
+    StyledText {
       id: valueBlock
       text: blockNumber
       font.pixelSize: 14
@@ -77,7 +77,7 @@ ModalPopup {
     anchors.leftMargin: Theme.smallPadding
     height: children[0].height
 
-    Text {
+    StyledText {
       id: labelHash
       text: qsTr("Hash")
       font.pixelSize: 14
@@ -85,7 +85,7 @@ ModalPopup {
       color: Theme.darkGrey
     }
 
-    Text {
+    StyledText {
       id: valueHash
       text: blockHash
       width: 160
@@ -104,7 +104,7 @@ ModalPopup {
     anchors.leftMargin: Theme.smallPadding
     height: children[0].height
 
-    Text {
+    StyledText {
       id: labelFrom
       text: qsTr("From")
       font.pixelSize: 14
@@ -112,7 +112,7 @@ ModalPopup {
       color: Theme.darkGrey
     }
 
-    Text {
+    StyledText {
       id: valueFrom
       text: fromAddress
       width: 160
@@ -131,7 +131,7 @@ ModalPopup {
     anchors.leftMargin: Theme.smallPadding
     height: children[0].height
 
-    Text {
+    StyledText {
       id: labelTo
       text: qsTr("To")
       font.pixelSize: 14
@@ -139,7 +139,7 @@ ModalPopup {
       color: Theme.darkGrey
     }
 
-    Text {
+    StyledText {
       id: valueTo
       text: to
       width: 160
@@ -158,7 +158,7 @@ ModalPopup {
     anchors.leftMargin: Theme.smallPadding
     height: children[0].height
 
-    Text {
+    StyledText {
       id: labelGasLimit
       text: qsTr("Gas limit")
       font.pixelSize: 14
@@ -166,7 +166,7 @@ ModalPopup {
       color: Theme.darkGrey
     }
 
-    Text {
+    StyledText {
       id: valueGasLimit
       text: gasLimit
       font.pixelSize: 14
@@ -183,7 +183,7 @@ ModalPopup {
     anchors.leftMargin: Theme.smallPadding
     height: children[0].height
 
-    Text {
+    StyledText {
       id: labelGasPrice
       text: qsTr("Gas price")
       font.pixelSize: 14
@@ -191,7 +191,7 @@ ModalPopup {
       color: Theme.darkGrey
     }
 
-    Text {
+    StyledText {
       id: valueGasPrice
       text: gasPrice
       font.pixelSize: 14
@@ -208,7 +208,7 @@ ModalPopup {
     anchors.leftMargin: Theme.smallPadding
     height: children[0].height
 
-    Text {
+    StyledText {
       id: labelGasUsed
       text: qsTr("Gas used")
       font.pixelSize: 14
@@ -216,7 +216,7 @@ ModalPopup {
       color: Theme.darkGrey
     }
 
-    Text {
+    StyledText {
       id: valueGasUsed
       text: gasUsed
       font.pixelSize: 14
@@ -233,7 +233,7 @@ ModalPopup {
     anchors.leftMargin: Theme.smallPadding
     height: children[0].height
 
-    Text {
+    StyledText {
       id: labelNonce
       text: qsTr("Nonce")
       font.pixelSize: 14
@@ -241,7 +241,7 @@ ModalPopup {
       color: Theme.darkGrey
     }
 
-    Text {
+    StyledText {
       id: valueNonce
       text: nonce
       font.pixelSize: 14

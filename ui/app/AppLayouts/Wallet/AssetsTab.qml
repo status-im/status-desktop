@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import "../../../imports"
+import "../../../shared"
 
 Item {
     Component {
@@ -27,7 +28,7 @@ Item {
                     }
                 }
             }
-            Text {
+            StyledText {
                 id: assetSymbol
                 text: symbol
                 anchors.left: assetInfoImage.right
@@ -37,7 +38,7 @@ Item {
                 color: Theme.black
                 font.pixelSize: 15
             }
-            Text {
+            StyledText {
                 id: assetFullTokenName
                 text: name
                 anchors.bottom: parent.bottom
@@ -47,7 +48,7 @@ Item {
                 color: Theme.darkGrey
                 font.pixelSize: 15
             }
-            Text {
+            StyledText {
                 id: assetValue
                 text: value
                 anchors.right: parent.right
@@ -55,7 +56,7 @@ Item {
                 font.pixelSize: 15
                 font.strikeout: false
             }
-            Text {
+            StyledText {
                 id: assetFiatValue
                 color: Theme.darkGrey
                 text: fiatValue

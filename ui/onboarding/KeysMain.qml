@@ -33,7 +33,7 @@ Page {
             source: "img/key@2x.png"
         }
 
-        Text {
+        StyledText {
             id: txtTitle1
             text: qsTr("Get your keys")
             anchors.topMargin: Theme.padding
@@ -44,7 +44,7 @@ Page {
             font.pixelSize: 22
         }
 
-        Text {
+        StyledText {
             id: txtDesc1
             color: Theme.darkGrey
             text: qsTr("A set of keys controls your account. Your keys live on your device, so only you can use them.")

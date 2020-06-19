@@ -51,24 +51,24 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    ../fonts/InterStatus/InterStatus-Black.otf \
-    ../fonts/InterStatus/InterStatus-BlackItalic.otf \
-    ../fonts/InterStatus/InterStatus-Bold.otf \
-    ../fonts/InterStatus/InterStatus-BoldItalic.otf \
-    ../fonts/InterStatus/InterStatus-ExtraBold.otf \
-    ../fonts/InterStatus/InterStatus-ExtraBoldItalic.otf \
-    ../fonts/InterStatus/InterStatus-ExtraLight.otf \
-    ../fonts/InterStatus/InterStatus-ExtraLightItalic.otf \
-    ../fonts/InterStatus/InterStatus-Italic.otf \
-    ../fonts/InterStatus/InterStatus-Light.otf \
-    ../fonts/InterStatus/InterStatus-LightItalic.otf \
-    ../fonts/InterStatus/InterStatus-Medium.otf \
-    ../fonts/InterStatus/InterStatus-MediumItalic.otf \
-    ../fonts/InterStatus/InterStatus-Regular.otf \
-    ../fonts/InterStatus/InterStatus-SemiBold.otf \
-    ../fonts/InterStatus/InterStatus-SemiBoldItalic.otf \
-    ../fonts/InterStatus/InterStatus-Thin.otf \
-    ../fonts/InterStatus/InterStatus-ThinItalic.otf \
+    fonts/InterStatus/InterStatus-Black.otf \
+    fonts/InterStatus/InterStatus-BlackItalic.otf \
+    fonts/InterStatus/InterStatus-Bold.otf \
+    fonts/InterStatus/InterStatus-BoldItalic.otf \
+    fonts/InterStatus/InterStatus-ExtraBold.otf \
+    fonts/InterStatus/InterStatus-ExtraBoldItalic.otf \
+    fonts/InterStatus/InterStatus-ExtraLight.otf \
+    fonts/InterStatus/InterStatus-ExtraLightItalic.otf \
+    fonts/InterStatus/InterStatus-Italic.otf \
+    fonts/InterStatus/InterStatus-Light.otf \
+    fonts/InterStatus/InterStatus-LightItalic.otf \
+    fonts/InterStatus/InterStatus-Medium.otf \
+    fonts/InterStatus/InterStatus-MediumItalic.otf \
+    fonts/InterStatus/InterStatus-Regular.otf \
+    fonts/InterStatus/InterStatus-SemiBold.otf \
+    fonts/InterStatus/InterStatus-SemiBoldItalic.otf \
+    fonts/InterStatus/InterStatus-Thin.otf \
+    fonts/InterStatus/InterStatus-ThinItalic.otf \
     Theme.qml \
     app/AppLayouts/Browser/BrowserLayout.qml \
     app/AppLayouts/Chat/ChatColumn.qml \
@@ -206,6 +206,7 @@ DISTFILES += \
     shared/StatusTabButton.qml \
     shared/StyledButton.qml \
     shared/RoundedIcon.qml \
+    shared/StyledText.qml \
     shared/StyledTextArea.qml \
     shared/TextWithLabel.qml \
     shared/qmldir

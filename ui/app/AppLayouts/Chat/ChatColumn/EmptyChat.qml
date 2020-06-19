@@ -21,7 +21,7 @@ Item {
             source: "../../../../onboarding/img/chat@2x.jpg"
         }
 
-        Text {
+        StyledText {
             text: "Select a chat to start messaging"
             anchors.horizontalCenter: parent.horizontalCenter
             font.weight: Font.DemiBold

@@ -33,7 +33,7 @@ Rectangle {
         source: identicon
     }
     
-    Text {
+    StyledText {
         id: usernameText
         text: name
         elide: Text.ElideRight
@@ -60,7 +60,7 @@ Rectangle {
         }
     }
 
-    Text {
+    StyledText {
         visible: isUser
         text: qsTr("Admin")
         anchors.right: parent.right

@@ -32,7 +32,7 @@ ModalPopup {
         }
     }
 
-    Text {
+    StyledText {
         text: qsTr("Enter 12, 15, 18, 21 or 24 words.\nSeperate words by a single space.")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom

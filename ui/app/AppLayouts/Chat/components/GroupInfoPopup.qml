@@ -21,7 +21,7 @@ ModalPopup {
           anchors.topMargin: Theme.padding
           color: chatsModel.activeChannel.color
   
-          Text {
+          StyledText {
             text: chatsModel.activeChannel.name.charAt(0).toUpperCase();
             opacity: 0.7
             font.weight: Font.Bold
@@ -45,7 +45,7 @@ ModalPopup {
           wrapMode: Text.WordWrap
       }
 
-      Text {
+      StyledText {
           text: {
             let cnt = chatsModel.activeChannel.members.rowCount();
             if(cnt > 1) return qsTr("%1 members").arg(cnt);
@@ -58,7 +58,6 @@ ModalPopup {
           anchors.topMargin: 2
           font.pixelSize: 14
           color: Theme.darkGrey
-          font.family: "Inter"
       }
 
       Rectangle {
@@ -104,7 +103,7 @@ ModalPopup {
         id: container
         anchors.fill: parent
 
-        Text {
+        StyledText {
             id: memberLabel
             text: qsTr("Members")
             anchors.left: parent.left
@@ -160,7 +159,7 @@ ModalPopup {
                     }
                 }
                 Column {
-                    Text {
+                    StyledText {
                         text: model.userName
                         width: 300
                         elide: Text.ElideRight
@@ -169,13 +168,13 @@ ModalPopup {
                     }
                 }
                 Column {
-                    Text {
+                    StyledText {
                         visible: model.isAdmin
                         text: qsTr("Admin")
                         width: 100
                         font.pixelSize: 13
                     }
-                    Text {
+                    StyledText {
                         id: moreActionsBtn
                         visible: !model.isAdmin && chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
                         text: "..."

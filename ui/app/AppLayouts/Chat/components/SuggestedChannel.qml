@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import "../../../../imports"
+import "../../../../shared"
 
 Rectangle {
     property string channel: "status"
@@ -9,7 +10,7 @@ Rectangle {
     width: children[0].width + 10
     height: 32
     border.color: Theme.grey
-    Text {
+    StyledText {
         id: suggestedChannelText
         text: "#" + channel
         font.weight: Font.Medium

@@ -42,7 +42,7 @@ Popup {
             anchors.rightMargin: Theme.padding
             anchors.leftMargin: Theme.padding
 
-            Text {
+            StyledText {
                 text: title
                 anchors.top: parent.top
                 anchors.left: parent.left

@@ -36,7 +36,7 @@ Popup {
     padding: 0
 
     contentItem: Item {
-        Text {
+        StyledText {
             id: groupTitleLabel
             text: qsTr("Group name")
             anchors.top: parent.top

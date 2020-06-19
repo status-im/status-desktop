@@ -11,7 +11,7 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    Text {
+    StyledText {
         id: txtTitle
         text: qsTr("Sign out controls")
         anchors.left: parent.left

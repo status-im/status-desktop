@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import "../../../../imports"
+import "../../../../shared"
 
 Rectangle {
     property string username: "Jotaro Kujo"
@@ -45,7 +46,7 @@ Rectangle {
             }
         }
 
-        Text {
+        StyledText {
             id: profileName
             text: username
             anchors.top: profileImg.bottom
@@ -55,7 +56,7 @@ Rectangle {
             font.weight: Font.Medium
             font.pixelSize: 20
         }
-        Text {
+        StyledText {
             id: pubkeyText
             text: pubkey
             width: 208

@@ -56,7 +56,7 @@ ModalPopup {
       height: 30
       width: parent.width
    
-      Text {
+      StyledText {
           id: lblNewGroup
           text: qsTr("New group chat")
           anchors.left: parent.left
@@ -66,11 +66,10 @@ ModalPopup {
           anchors.topMargin: Theme.padding
       }
 
-      Text {
+      StyledText {
           anchors.top: lblNewGroup.bottom
           text: qsTr("%1 / 10 members").arg(memberCount)
           color: Theme.darkGrey
-          font.family: "Inter"
           font.pixelSize: 15
       }
     }

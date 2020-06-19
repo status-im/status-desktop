@@ -33,7 +33,7 @@ Item {
             source: loginModel.currentAccount.identicon
         }
 
-        Text {
+        StyledText {
             id: usernameText
             text: loginModel.currentAccount.username
             font.weight: Font.Bold
@@ -107,7 +107,7 @@ Item {
             }
         }
 
-        Text {
+        StyledText {
             id: addressText
             width: 90
             color: Theme.darkGrey
@@ -205,7 +205,7 @@ Item {
                 onGenKeyClicked()
             }
 
-            Text {
+            StyledText {
                 id: generateKeysLinkText
                 color: Theme.blue
                 text: qsTr("Generate new keys")

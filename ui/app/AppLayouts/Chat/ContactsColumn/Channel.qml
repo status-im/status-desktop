@@ -59,7 +59,7 @@ Rectangle {
         visible: chatType !== Constants.chatTypeOneToOne
     }
 
-    Text {
+    StyledText {
         id: contactInfo
         text: wrapper.chatType !== Constants.chatTypePublic ? wrapper.name : "#" + wrapper.name
         anchors.right: contactTime.left
@@ -74,7 +74,7 @@ Rectangle {
         color: "black"
     }
     
-    Text {
+    StyledText {
         id: lastChatMessage
         text: lastMessage ? lastMessage.replace(/\n|\r/g, ' ') : qsTr("No messages")
         anchors.right: contactNumberChatsCircle.left
@@ -87,7 +87,7 @@ Rectangle {
         anchors.leftMargin: Theme.padding
         color: Theme.darkGrey
     }
-    Text {
+    StyledText {
         id: contactTime
         text: wrapper.timestamp
         anchors.right: parent.right
@@ -108,7 +108,7 @@ Rectangle {
         anchors.rightMargin: Theme.padding
         color: Theme.blue
         visible: unviewedMessagesCount > 0
-        Text {
+        StyledText {
             id: contactNumberChats
             text: wrapper.unviewedMessagesCount
             anchors.horizontalCenter: parent.horizontalCenter

@@ -78,7 +78,7 @@ RowLayout {
             height: 44
         }
 
-        Text {
+        StyledText {
             id: txtPrivacyPolicy
             x: 772
             text: qsTr("Status does not collect, share or sell any personal data. By continuing you agree with the privacy policy.")

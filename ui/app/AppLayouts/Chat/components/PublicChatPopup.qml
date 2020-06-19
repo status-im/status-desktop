@@ -27,7 +27,7 @@ ModalPopup {
         Layout.fillWidth: true
         width: parent.width
 
-        Text {
+        StyledText {
             width: parent.width
             font.pixelSize: 15
             text: qsTr("A public chat is where you get to hang out with others, make friends and talk about subjects of your interest.")

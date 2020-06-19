@@ -9,4 +9,5 @@ Input 1.0 Input.qml
 SearchBox 1.0 SearchBox.qml
 Select 1.0 Select.qml
 StyledTextArea 1.0 StyledTextArea.qml
+StyledText 1.0 StyledText.qml
 RoundImage 1.0 RoundImage.qml

@@ -7,7 +7,7 @@ Item {
     property alias valueInput: txtValue
     property string defaultAccount: "0x1234"
 
-    Text {
+    StyledText {
         id: modalDialogTitle
         text: "Send"
         anchors.top: parent.top

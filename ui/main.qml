@@ -5,6 +5,7 @@ import Qt.labs.platform 1.1
 import QtQml.StateMachine 1.14 as DSM
 import "./onboarding"
 import "./app"
+import "./imports"
 
 ApplicationWindow {
     id: applicationWindow
@@ -12,7 +13,6 @@ ApplicationWindow {
     height: 770
     title: "Nim Status Client"
     visible: true
-    font.family: "Inter"
 
     signal navigateTo(string path)
 
