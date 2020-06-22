@@ -7,8 +7,24 @@ import "../../Profile/Sections/Contacts/"
 import "./"
 
 ModalPopup {
-    function doJoin(){
+    property string validationError: ""
+
+    function validate() {
+        // TODO change this when we support ENS names
+        if (!Utils.isChatKey(chatKey.text)) {
+            validationError = "This needs to be a valid chat key"
+        } else {
+            validationError = ""
+        }
+        return validationError === ""
+    }
+
+    function doJoin() {
         if (chatKey.text !== "") {
+            if (!validate()) {
+                return
+            }
+
             chatsModel.joinChat(chatKey.text, Constants.chatTypeOneToOne);
         } else if (contactListView.selectedContact.checked) {
             chatsModel.joinChat(contactListView.selectedContact.parent.address, Constants.chatTypeOneToOne);
@@ -24,7 +40,9 @@ ModalPopup {
     onOpened: {
         chatKey.text = "";
         chatKey.forceActiveFocus(Qt.MouseFocusReason)
-        contactListView.selectedContact.checked = false
+        if (contactListView.selectedContact) {
+            contactListView.selectedContact.checked = false
+        }
     }
 
     Input {
@@ -32,6 +50,10 @@ ModalPopup {
         placeholderText: qsTr("Enter ENS username or chat key")
         Keys.onEnterPressed: doJoin()
         Keys.onReturnPressed: doJoin()
+        validationError: popup.validationError
+        textField.onEditingFinished: {
+            validate()
+        }
     }
 
     ContactList {

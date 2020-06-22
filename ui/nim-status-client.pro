@@ -161,6 +161,7 @@ DISTFILES += \
     app/img/wallet.svg \
     app/img/walletActive.svg \
     app/qmldir \
+    imports/Utils.qml \
     imports/qmldir \
     onboarding/CreatePasswordModal.qml \
     onboarding/EnterSeedPhraseModal.qml \
