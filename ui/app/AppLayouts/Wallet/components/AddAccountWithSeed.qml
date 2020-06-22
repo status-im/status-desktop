@@ -8,6 +8,35 @@ ModalPopup {
 
     property int marginBetweenInputs: 38
     property string selectedColor: Constants.accountColors[0]
+    property string passwordValidationError: ""
+    property string seedValidationError: ""
+    property string accountNameValidationError: ""
+
+    function validate() {
+        if (passwordInput.text === "") {
+            passwordValidationError = qsTr("You need to enter a password")
+        } else if (passwordInput.text.length < 4) {
+            passwordValidationError = qsTr("Password needs to be 4 characters or more")
+        } else {
+            passwordValidationError = ""
+        }
+
+        if (accountNameInput.text === "") {
+            accountNameValidationError = qsTr("You need to enter an account name")
+        } else {
+            accountNameValidationError = ""
+        }
+
+        if (accountSeedInput.text === "") {
+            seedValidationError = qsTr("You need to enter a seed phrase")
+        } else if (!Utils.isMnemonic(accountSeedInput.text)) {
+            seedValidationError = qsTr("Enter a valid mnemonic")
+        } else {
+            seedValidationError = ""
+        }
+
+        return passwordValidationError === "" && seedValidationError === "" && accountNameValidationError === ""
+    }
 
     onOpened: {
         passwordInput.text = ""
@@ -21,6 +50,7 @@ ModalPopup {
         placeholderText: qsTr("Enter your password…")
         label: qsTr("Password")
         textField.echoMode: TextInput.Password
+        validationError: popup.passwordValidationError
     }
 
 
@@ -31,6 +61,7 @@ ModalPopup {
         placeholderText: qsTr("Enter your seed phrase, separate words with commas or spaces...")
         label: qsTr("Seed phrase")
         customHeight: 88
+        validationError: popup.seedValidationError
     }
 
     Input {
@@ -39,6 +70,7 @@ ModalPopup {
         anchors.topMargin: marginBetweenInputs
         placeholderText: qsTr("Enter an account name...")
         label: qsTr("Account name")
+        validationError: popup.accountNameValidationError
     }
 
     Select {
@@ -61,16 +93,16 @@ ModalPopup {
 
     footer: StyledButton {
         anchors.top: parent.top
-        anchors.topMargin: Theme.padding
         anchors.right: parent.right
         anchors.rightMargin: Theme.padding
-        label: "Add account 00>"
+        label: "Add account >"
 
         disabled: passwordInput.text === "" || accountNameInput.text === "" || accountSeedInput.text === ""
 
         onClicked : {
-            // TODO add message to show validation errors
-            if (passwordInput.text === "" || accountNameInput.text === "" || accountSeedInput.text === "") return;
+            if (!validate()) {
+                return
+            }
 
             walletModel.addAccountsFromSeed(accountSeedInput.text, passwordInput.text, accountNameInput.text, selectedColor)
             // TODO manage errors adding account

@@ -18,7 +18,6 @@ ModalPopup {
         anchors.rightMargin: Theme.padding
         label: qsTr("Add custom token")
         anchors.top: parent.top
-        anchors.topMargin: Theme.padding
         onClicked: {
             popup.close()
             addCustomTokenModal.open()
