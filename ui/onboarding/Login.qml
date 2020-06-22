@@ -133,7 +133,7 @@ Item {
 
         Button {
             id: submitBtn
-            visible: txtPassword.text.length > 0
+            visible: !loading && txtPassword.text.length > 0
             width: 40
             height: 40
             anchors.left: txtPassword.right
@@ -150,7 +150,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 // TODO replace by a real loading image
-                source: loading ? "../app/img/refresh.svg" : "../app/img/arrowUp.svg"
+                source: "../app/img/arrowUp.svg"
                 width: 13.5
                 height: 17.5
                 fillMode: Image.PreserveAspectFit
@@ -167,6 +167,26 @@ Item {
                 onClicked: {
                     submitBtn.onClicked()
                 }
+            }
+        }
+
+        Image {
+            id: loadingImg
+            visible: loading
+            anchors.left: txtPassword.right
+            anchors.leftMargin: Theme.padding
+            anchors.verticalCenter: txtPassword.verticalCenter
+            source: "../app/img/settings.svg"
+            width: 30
+            height: 30
+            fillMode: Image.Stretch
+            RotationAnimator {
+                target: loadingImg;
+                from: 0;
+                to: 360;
+                duration: 1200
+                running: true
+                loops: Animation.Infinite
             }
         }
 

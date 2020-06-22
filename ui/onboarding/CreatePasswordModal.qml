@@ -54,75 +54,103 @@ ModalPopup {
         font.pixelSize: 12
     }
 
-    footer: StyledButton {
-        id: submitBtn
-        anchors.bottom: parent.bottom
-        anchors.topMargin: Theme.padding
+    footer: Item {
+        anchors.top: parent.bottom
         anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
-        label: loading ? qsTr("Logging in...") : qsTr("Create password")
+        anchors.bottom: popup.bottom
+        anchors.left: parent.left
 
-        disabled: firstPasswordField.text === "" || repeatPasswordField.text === "" || loading
-
-        MessageDialog {
-            id: importError
-            title: qsTr("Error importing account")
-            text: qsTr("An error occurred while importing your account: ")
-            icon: StandardIcon.Critical
-            standardButtons: StandardButton.Ok
-            onVisibilityChanged: {
-                loading = false
+        Image {
+            id: loadingImg
+            visible: loading
+            anchors.top: submitBtn.top
+            anchors.topMargin: Theme.padding
+            anchors.right: submitBtn.left
+            anchors.rightMargin: Theme.padding
+            source: "../app/img/settings.svg"
+            width: 20
+            height: 20
+            fillMode: Image.Stretch
+            RotationAnimator {
+                target: loadingImg;
+                from: 0;
+                to: 360;
+                duration: 1200
+                running: true
+                loops: Animation.Infinite
             }
         }
 
-        MessageDialog {
-            id: importLoginError
-            title: qsTr("Login failed")
-            text: qsTr("Login failed. Please re-enter your password and try again.")
-            icon: StandardIcon.Critical
-            standardButtons: StandardButton.Ok
-            onVisibilityChanged: {
-                loading = false
-            }
-        }
+        StyledButton {
+            id: submitBtn
+            anchors.bottom: parent.bottom
+            anchors.topMargin: Theme.padding
+            anchors.right: parent.right
+            anchors.rightMargin: Theme.padding
+            label: loading ? qsTr("Logging in...") : qsTr("Create password")
 
-        MessageDialog {
-            id: passwordsDontMatchError
-            title: qsTr("Error")
-            text: qsTr("Passwords don't match")
-            icon: StandardIcon.Warning
-            standardButtons: StandardButton.Ok
-            onAccepted: {
-                repeatPasswordField.clear()
-                repeatPasswordField.forceActiveFocus(Qt.MouseFocusReason)
-            }
-        }
+            disabled: firstPasswordField.text === "" || repeatPasswordField.text === "" || loading
 
-        Connections {
-            target: onboardingModel
-            ignoreUnknownSignals: true
-            onLoginResponseChanged: {
-                if (error) {
+            MessageDialog {
+                id: importError
+                title: qsTr("Error importing account")
+                text: qsTr("An error occurred while importing your account: ")
+                icon: StandardIcon.Critical
+                standardButtons: StandardButton.Ok
+                onVisibilityChanged: {
                     loading = false
-                    importLoginError.open()
                 }
             }
-        }
 
-        onClicked : {
-            if (firstPasswordField.text === "" || repeatPasswordField.text === "") {
-                return
+            MessageDialog {
+                id: importLoginError
+                title: qsTr("Login failed")
+                text: qsTr("Login failed. Please re-enter your password and try again.")
+                icon: StandardIcon.Critical
+                standardButtons: StandardButton.Ok
+                onVisibilityChanged: {
+                    loading = false
+                }
             }
-            if (repeatPasswordField.text !== firstPasswordField.text) {
-                return passwordsDontMatchError.open()
+
+            MessageDialog {
+                id: passwordsDontMatchError
+                title: qsTr("Error")
+                text: qsTr("Passwords don't match")
+                icon: StandardIcon.Warning
+                standardButtons: StandardButton.Ok
+                onAccepted: {
+                    repeatPasswordField.clear()
+                    repeatPasswordField.forceActiveFocus(Qt.MouseFocusReason)
+                }
             }
-            // TODO this doesn't seem to work because the function freezes the view
-            loading = true
-            const result = onboardingModel.storeDerivedAndLogin(repeatPasswordField.text);
-            const error = JSON.parse(result).error
-            if (error) {
-                importError.text += error
-                return importError.open()
+
+            Connections {
+                target: onboardingModel
+                ignoreUnknownSignals: true
+                onLoginResponseChanged: {
+                    if (error) {
+                        loading = false
+                        importLoginError.open()
+                    }
+                }
+            }
+
+            onClicked : {
+                if (firstPasswordField.text === "" || repeatPasswordField.text === "") {
+                    return
+                }
+                if (repeatPasswordField.text !== firstPasswordField.text) {
+                    return passwordsDontMatchError.open()
+                }
+                // TODO this doesn't seem to work because the function freezes the view
+                loading = true
+                const result = onboardingModel.storeDerivedAndLogin(repeatPasswordField.text);
+                const error = JSON.parse(result).error
+                if (error) {
+                    importError.text += error
+                    return importError.open()
+                }
             }
         }
     }
