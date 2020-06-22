@@ -22,6 +22,7 @@ ListView {
         name: model.name
         address: model.address
         identicon: model.identicon
+        isContact: model.isContact
         selectable: contactList.selectable
         profileClick: profilePopup.openPopup.bind(profilePopup)
     }

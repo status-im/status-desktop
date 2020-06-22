@@ -10,8 +10,10 @@ Rectangle {
     property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
     property bool selectable: false
     property var profileClick: function() {}
+    property bool isContact: true
 
-    height: 64
+    visible: isContact
+    height: visible ? 64 : 0
     anchors.right: parent.right
     anchors.left: parent.left
     border.width: 0
