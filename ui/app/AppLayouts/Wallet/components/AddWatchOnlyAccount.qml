@@ -8,6 +8,26 @@ ModalPopup {
 
     property int marginBetweenInputs: 38
     property string selectedColor: Constants.accountColors[0]
+    property string addressError: ""
+    property string accountNameValidationError: ""
+
+    function validate() {
+        if (addressInput.text === "") {
+            addressError = qsTr("You need to enter an address")
+        } else if (!Utils.isAddress(addressInput.text)) {
+            addressError = qsTr("This needs to be a valid address (starting with 0x)")
+        } else {
+            addressError = ""
+        }
+
+        if (accountNameInput.text === "") {
+            accountNameValidationError = qsTr("You need to enter an account name")
+        } else {
+            accountNameValidationError = ""
+        }
+
+        return addressError === "" && accountNameValidationError === ""
+    }
 
     onOpened: {
         addressInput.text = "";
@@ -19,6 +39,7 @@ ModalPopup {
         // TODO add QR code reader for the address
         placeholderText: qsTr("Enter address...")
         label: qsTr("Account address")
+        validationError: popup.addressError
     }
 
     Input {
@@ -27,6 +48,7 @@ ModalPopup {
         anchors.topMargin: marginBetweenInputs
         placeholderText: qsTr("Enter an account name...")
         label: qsTr("Account name")
+        validationError: popup.accountNameValidationError
     }
 
     Select {
@@ -49,7 +71,6 @@ ModalPopup {
 
     footer: StyledButton {
         anchors.top: parent.top
-        anchors.topMargin: Theme.padding
         anchors.right: parent.right
         anchors.rightMargin: Theme.padding
         label: "Add account >"
@@ -57,8 +78,10 @@ ModalPopup {
         disabled: addressInput.text === "" || accountNameInput.text === ""
 
         onClicked : {
-            // TODO add message to show validation errors
-            if (addressInput.text === "" || accountNameInput.text === "") return;
+            if (!validate()) {
+                return
+            }
+
             walletModel.addWatchOnlyAccount(addressInput.text, accountNameInput.text, selectedColor);
             // TODO manage errors adding account
             popup.close();
