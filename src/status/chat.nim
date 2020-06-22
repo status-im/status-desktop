@@ -173,4 +173,7 @@ proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
 proc createGroup*(self: ChatModel, groupName: string, pubKeys: seq[string]) =
   var response = parseJson(status_chat.createGroup(groupName, pubKeys))
   var (chats, messages) = formatChatUpdate(response)
+  let chat = chats[0]
+  self.channels[chat.id] = chat
   self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
+  self.events.emit("activeChannelChanged", ChatIdArg(chatId: chat.id))

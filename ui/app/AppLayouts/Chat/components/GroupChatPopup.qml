@@ -40,7 +40,7 @@ ModalPopup {
         data.append({
             name: profileModel.profile.username + " " + qsTr("(You)"),
             pubKey: profileModel.profile.pubKey,
-            address: profileModel.profile.address,
+            address: "",
             identicon: profileModel.profile.identicon,
             isUser: true
         });
