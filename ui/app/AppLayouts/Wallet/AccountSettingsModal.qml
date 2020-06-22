@@ -11,7 +11,7 @@ ModalPopup {
     id: popup
     // TODO add icon when we have that feature
     title: qsTr("Status account settings")
-    height: 630
+    height: 635
 
     property int marginBetweenInputs: 35
     property string selectedColor: currentAccount.iconColor
@@ -91,7 +91,6 @@ ModalPopup {
         anchors.fill: parent
         StyledButton {
             anchors.top: parent.top
-            anchors.topMargin: Theme.padding
             anchors.right: saveBtn.left
             anchors.rightMargin: Theme.padding
             label: qsTr("Delete account")
@@ -133,7 +132,6 @@ ModalPopup {
         StyledButton {
             id: saveBtn
             anchors.top: parent.top
-            anchors.topMargin: Theme.padding
             anchors.right: parent.right
             anchors.rightMargin: Theme.padding
             label: qsTr("Save changes")
