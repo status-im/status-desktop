@@ -23,4 +23,9 @@ QtObject {
         return isHex(value) && ((startsWith0x(value) && value.length === 66) ||
                                 (!startsWith0x(value) && value.length === 64))
     }
+
+    function isMnemonic(value) {
+        // Do we support other length than 12?
+        return value.split(/\s|,/).length === 12
+    }
 }
