@@ -51,6 +51,7 @@ proc handleChatEvents(self: ChatController) =
     var channel = ChannelArgs(e)
     discard self.view.chats.addChatItemToList(channel.chat)
     self.status.chat.chatMessages(channel.chat.id)
+    self.view.setActiveChannel(channel.chat.id)
 
   self.status.events.on("channelLeft") do(e: Args):
     discard self.view.chats.removeChatItemFromList(self.view.activeChannel.chatItem.id)

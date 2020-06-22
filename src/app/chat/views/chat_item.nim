@@ -66,6 +66,10 @@ QtObject:
     if self.chatItem.isNil: return false
     return self.chatItem.isMember(pubKey)
 
+  proc contains*(self: ChatItemView, pubKey: string): bool {.slot.} =
+    if self.chatItem.isNil: return false
+    return self.chatItem.contains(pubKey)
+
   proc isAdmin*(self: ChatItemView, pubKey: string): bool {.slot.} =
     if self.chatItem.isNil: return false
     return self.chatItem.isAdmin(pubKey)
