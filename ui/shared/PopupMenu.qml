@@ -16,12 +16,13 @@ Menu {
         font.pixelSize: 15
         icon.color: popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Theme.blue
         contentItem: Item {
+            id: menuItemContent
             Item {
                 id: menuIcon
                 anchors.left: parent.left
-                anchors.top: parent.top
                 anchors.leftMargin: 12
-                anchors.topMargin: 4
+                height: popupMenuItemIcon.height
+                anchors.verticalCenter: parent.verticalCenter
                 Image {
                     fillMode: Image.Pad
                     id: popupMenuItemIcon

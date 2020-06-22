@@ -109,7 +109,7 @@ Item {
             ColorOverlay {
                 anchors.fill: walletIcon
                 source: walletIcon
-                color: selected || !iconColor ? Theme.transparent : iconColor  // change image color
+                color: selected || !iconColor ? Theme.white : iconColor  // change image color
             }
             StyledText {
                 id: walletName
