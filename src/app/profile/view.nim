@@ -1,4 +1,5 @@
 import NimQml
+import sequtils
 import views/mailservers_list
 import views/contact_list
 import views/profile_info
@@ -14,6 +15,7 @@ QtObject:
     profile*: ProfileInfoView
     mailserversList*: MailServersList
     contactList*: ContactList
+    mnemonic: string
     status*: Status
 
   proc setup(self: ProfileView) =
@@ -31,6 +33,7 @@ QtObject:
     result.profile = newProfileInfoView()
     result.mailserversList = newMailServersList()
     result.contactList = newContactList()
+    result.mnemonic = ""
     result.status = status
     result.setup
 
@@ -60,6 +63,20 @@ QtObject:
     read = getContactList
     write = setContactList
     notify = contactListChanged
+
+  proc mnemonicChanged*(self: ProfileView) {.signal.}
+
+  proc getMnemonic*(self: ProfileView): QVariant {.slot.} =
+    return newQVariant(self.mnemonic)
+
+  proc setMnemonic*(self: ProfileView, mnemonic: string) =
+    self.mnemonic = mnemonic
+    self.mnemonicChanged()
+
+  QtProperty[QVariant] mnemonic:
+    read = getMnemonic
+    write = setMnemonic
+    notify = mnemonicChanged
 
   proc getProfile(self: ProfileView): QVariant {.slot.} =
     return newQVariant(self.profile)

@@ -1,5 +1,6 @@
 import NimQml
 import json, eventemitter
+import strutils
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../signals/types
 import "../../status/libstatus/types" as status_types
@@ -32,10 +33,13 @@ proc init*(self: ProfileController, account: Account) =
   # (rramos) TODO: I added this because I needed the public key
   # Ideally, this module should call getSettings once, and fill the 
   # profile with all the information comming from the settings.
-  let pubKey = status_settings.getSettings().parseJSON()["result"]["public-key"].getStr
+  let response = status_settings.getSettings()
+  let pubKey = parseJSON($response)["result"]["public-key"].getStr
+  let mnemonic = parseJSON($response)["result"]["mnemonic"].getStr
   profile.id = pubKey
 
   self.view.setNewProfile(profile)
+  self.view.setMnemonic(mnemonic)
 
   var mailservers = status_mailservers.getMailservers()
   for mailserver_config in mailservers:

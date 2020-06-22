@@ -78,8 +78,7 @@ Rectangle {
         TabButton {
             id: privacyTabButton
             width: profileInfoContainer.w
-            height: 0 //profileTabBar.btnheight
-            visible: false
+            height: profileTabBar.btnheight
             text: ""
             anchors.left: parent.left
             anchors.leftMargin: 0

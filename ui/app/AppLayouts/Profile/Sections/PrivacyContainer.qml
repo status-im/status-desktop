@@ -21,4 +21,38 @@ Item {
         font.weight: Font.Bold
         font.pixelSize: 20
     }
+
+    Text {
+      id: labelSecurity
+      text: qsTr("Security")
+      font.pixelSize: 13
+      font.weight: Font.Medium
+      color: Theme.darkGrey
+      anchors.left: parent.left
+      anchors.leftMargin: Theme.bigPadding
+      anchors.top: element3.bottom
+      anchors.topMargin: Theme.smallPadding
+    }
+
+    Item {
+      anchors.top: labelSecurity.bottom
+      anchors.topMargin: Theme.padding
+      anchors.left: parent.left
+      anchors.leftMargin: Theme.bigPadding
+      height: children[0].height
+      width: children[0].width
+      Text {
+          text: qsTr("Backup Seed Phrase")
+          font.pixelSize: 14
+      }
+      MouseArea {
+          anchors.fill: parent
+          onClicked: backupSeedModal.open()
+          cursorShape: Qt.PointingHandCursor
+      }
+    }
+
+    BackupSeedModal{
+        id: backupSeedModal
+    }
 }
