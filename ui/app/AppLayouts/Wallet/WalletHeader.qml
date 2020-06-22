@@ -184,7 +184,7 @@ Item {
                     width: 280
                     Action {
                         text: qsTr("Account Settings")
-                        icon.source: "../../img/account_settings.svg"
+                        icon.source: "../../img/walletIcon.svg"
                         onTriggered: {
                             accountSettingsModal.open()
                         }
