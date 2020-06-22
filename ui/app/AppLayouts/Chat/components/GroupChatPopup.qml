@@ -34,7 +34,8 @@ ModalPopup {
                 pubKey: profileModel.contactList.rowData(i, "pubKey"),
                 address: profileModel.contactList.rowData(i, "address"),
                 identicon: profileModel.contactList.rowData(i, "identicon"),
-                isUser: false
+                isUser: false,
+                isContact: profileModel.contactList.rowData(i, "isContact") !== "false"
             });
         }
         data.append({
@@ -117,6 +118,7 @@ ModalPopup {
                 }
                 showCheckbox: selectChatMembers && memberCount < maxMembers
                 pubKey: model.pubKey
+                isContact: model.isContact
                 isUser: model.isUser
                 name: model.name
                 address: model.address

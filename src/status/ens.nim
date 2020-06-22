@@ -13,7 +13,7 @@ proc userName*(ensName: string, removeSuffix: bool = false): string =
     result = ensName
 
 proc userNameOrAlias*(contact: Profile): string =
-    if(contact.ensName != "" and contact.ensVerified):
-      result = "@" & userName(contact.ensName, true)
-    else:
-      result = contact.alias
+  if(contact.ensName != "" and contact.ensVerified):
+    result = "@" & userName(contact.ensName, true)
+  else:
+    result = contact.alias

@@ -26,19 +26,19 @@ proc blockContact*(self: ContactModel, id: string): string =
   status_contacts.blockContact(contact)
 
 proc getContacts*(self: ContactModel): seq[Profile] =
-  result = map(status_contacts.getContacts().getElems(), proc(x: JsonNode): Profile = x.toProfileModel()).filterIt(it.systemTags.contains(":contact/added"))
+  result = map(status_contacts.getContacts().getElems(), proc(x: JsonNode): Profile = x.toProfileModel())
   self.events.emit("contactUpdate", ContactUpdateArgs(contacts: result))
 
 proc addContact*(self: ContactModel, id: string): string =
   let contact = self.getContactByID(id)
   contact.systemTags.add(":contact/added")
-  result = status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.systemTags)
+  result = status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.systemTags)
   self.events.emit("contactAdded", Args())
 
 proc removeContact*(self: ContactModel, id: string) =
   let contact = self.getContactByID(id)
   contact.systemTags.delete(contact.systemTags.find(":contact/added"))
-  discard status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.systemTags)
+  discard status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.systemTags)
   self.events.emit("contactRemoved", Args())
 
 proc isAdded*(self: ContactModel, id: string): bool =

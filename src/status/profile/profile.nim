@@ -8,6 +8,12 @@ type Profile* = ref object
   ensVerificationRetries*: int
   systemTags*: seq[string]
 
+proc isContact*(self: Profile): bool =
+  result = self.systemTags.contains(":contact/added") and not self.systemTags.contains(":contact/blocked")
+
+proc isBlocked*(self: Profile): bool =
+  result = self.systemTags.contains(":contact/blocked")
+
 proc toProfileModel*(account: Account): Profile =
   result = Profile(
     id: "",
@@ -38,5 +44,6 @@ proc toProfileModel*(profile: JsonNode): Profile =
     ensVerificationRetries: profile["ensVerificationRetries"].getInt,
     systemTags: systemTags
   )
+  
   if profile.hasKey("name"):
     result.ensName = profile["name"].str
