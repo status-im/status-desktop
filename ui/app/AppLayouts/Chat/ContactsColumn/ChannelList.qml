@@ -50,6 +50,13 @@ Item {
             }
         }
     }
+
+    Connections {
+        target: chatsModel
+        onActiveChannelChanged: {
+            chatGroupsListView.currentIndex = chatsModel.activeChannelIndex
+        }
+    }
 }
 /*##^##
 Designer {

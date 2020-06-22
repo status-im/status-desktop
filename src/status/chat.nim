@@ -78,7 +78,6 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
     self.events.emit("mailserverTopics", TopicArgs(topics: topics));
 
   self.events.emit("channelJoined", ChannelArgs(chat: chat))
-  self.events.emit("activeChannelChanged", ChatIdArg(chatId: self.getActiveChannel()))
 
 proc init*(self: ChatModel) =
   let chatList = status_chat.loadChats()
@@ -177,3 +176,7 @@ proc createGroup*(self: ChatModel, groupName: string, pubKeys: seq[string]) =
   self.channels[chat.id] = chat
   self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
   self.events.emit("activeChannelChanged", ChatIdArg(chatId: chat.id))
+
+proc addGroupMembers*(self: ChatModel, chatId: string, pubKeys: seq[string]) =
+  var response = status_chat.addGroupMembers(chatId, pubKeys)
+  self.emitUpdate(response)

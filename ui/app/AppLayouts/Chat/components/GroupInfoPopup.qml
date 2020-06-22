@@ -7,6 +7,46 @@ import "./"
 
 ModalPopup {
     id: popup
+    property bool addMembers: false
+    property int currMemberCount: 1
+    property int memberCount: 1
+    readonly property int maxMembers: 10
+    property var pubKeys: []
+
+    function resetSelectedMembers(){
+        pubKeys = [];
+        memberCount = chatsModel.activeChannel.members.rowCount();
+        currMemberCount = memberCount;
+        for(var i in groupMembers.contentItem.children){
+            if (groupMembers.contentItem.children[i].isChecked !== null) {
+                groupMembers.contentItem.children[i].isChecked = false
+            }
+        }
+        data.clear();
+        for(let i = 0; i < profileModel.contactList.rowCount(); i++){
+            if(chatsModel.activeChannel.contains(profileModel.contactList.rowData(i, "pubKey"))) continue;
+            if(profileModel.contactList.rowData(i, "isContact") == "false") continue;
+            data.append({
+                name: profileModel.contactList.rowData(i, "name"),
+                pubKey: profileModel.contactList.rowData(i, "pubKey"),
+                address: profileModel.contactList.rowData(i, "address"),
+                identicon: profileModel.contactList.rowData(i, "identicon"),
+                isUser: false
+            });
+        }
+    }
+
+    onOpened: {
+        addMembers = false;
+        btnSelectMembers.enabled = false;
+        resetSelectedMembers();
+    }
+
+    function doAddMembers(){
+        if(pubKeys.length === 0) return;
+        chatsModel.addGroupMembers(chatsModel.activeChannel.id, JSON.stringify(pubKeys));
+        popup.close();
+    }
 
     header: Item {
       height: children[0].height
@@ -34,7 +74,7 @@ ModalPopup {
     
       StyledTextEdit {
           id: groupName
-          text: chatsModel.activeChannel.name
+          text: addMembers ? qsTr("Add members") : chatsModel.activeChannel.name
           anchors.top: parent.top
           anchors.topMargin: 18
           anchors.left: letterIdenticon.right
@@ -47,9 +87,13 @@ ModalPopup {
 
       StyledText {
           text: {
-            let cnt = chatsModel.activeChannel.members.rowCount();
-            if(cnt > 1) return qsTr("%1 members").arg(cnt);
-            return qsTr("1 member");
+            let cnt = memberCount;
+            if(addMembers){
+                return qsTr("%1 / 10 members").arg(cnt)
+            } else {
+                if(cnt > 1) return qsTr("%1 members").arg(cnt);
+                return qsTr("1 member");
+            }
           }
           width: 160
           anchors.left: letterIdenticon.right
@@ -62,7 +106,7 @@ ModalPopup {
 
       Rectangle {
             id: editGroupNameBtn
-            visible: chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
+            visible: !addMembers && chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
             height: 24
             width: 24
             anchors.top: parent.top
@@ -98,9 +142,68 @@ ModalPopup {
         }
     }
 
+    Item {
+        id: addMembersItem
+        anchors.fill: parent
+
+        SearchBox {
+            id: searchBox
+            visible: addMembers
+            iconWidth: 17
+            iconHeight: 17
+            customHeight: 44
+            fontPixelSize: 15
+        }
+
+        ScrollView {
+            visible: addMembers
+            anchors.fill: parent
+            anchors.topMargin: 50
+            anchors.top: searchBox.bottom
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            ScrollBar.vertical.policy: groupMembers.contentHeight > groupMembers.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+
+            ListView {
+                anchors.fill: parent
+                model: ListModel {
+                    id: data
+                }
+                spacing: 0
+                clip: true
+                id: groupMembers
+                delegate: Contact {
+                    isVisible: searchBox.text == "" || model.name.includes(searchBox.text)
+                    showCheckbox: memberCount < maxMembers
+                    pubKey: model.pubKey
+                    isUser: model.isUser
+                    name: model.name
+                    address: model.address
+                    identicon: model.identicon
+                    onItemChecked: function(pubKey, itemChecked){
+                        var idx = pubKeys.indexOf(pubKey)
+                        if(itemChecked){
+                            if(idx == -1){
+                                pubKeys.push(pubKey)
+                            }
+                        } else {
+                            if(idx > -1){
+                                pubKeys.splice(idx, 1);
+                            }
+                        }
+                        memberCount = chatsModel.activeChannel.members.rowCount() + pubKeys.length;
+                        btnSelectMembers.enabled = pubKeys.length > 0
+                    }
+                }
+            }
+        }
+
+    }
 
     Item {
-        id: container
+        id: groupInfoItem
         anchors.fill: parent
 
         StyledText {
@@ -205,4 +308,54 @@ ModalPopup {
             }
         }
     }
+
+    footer: Item {
+        visible: chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
+        width: parent.width
+        height: children[0].height
+        StyledButton {
+          visible: !addMembers
+          anchors.right: parent.right
+          label: qsTr("Add members")
+          anchors.bottom: parent.bottom
+          onClicked: {
+            addMembers = true;
+          }
+        }
+
+        Button {
+            id: btnBack
+            visible: addMembers
+            width: 44
+            height: 44
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            Image {
+                source: "../../../img/arrow-left-btn-active.svg"
+            }
+            background: Rectangle {
+                color: "transparent"
+            }
+            MouseArea {
+                cursorShape: Qt.PointingHandCursor
+                anchors.fill: parent
+                onClicked : {
+                    addMembers = false;
+                    resetSelectedMembers();
+                }
+            }
+        }
+
+        StyledButton {
+          id: btnSelectMembers
+          visible: addMembers
+          disabled: memberCount <= currMemberCount
+          anchors.right: parent.right
+          label: qsTr("Add selected")
+          anchors.bottom: parent.bottom
+          onClicked: doAddMembers()
+        }
+    }
+
+    content: addMembers ? addMembersItem : groupInfoItem
 }
