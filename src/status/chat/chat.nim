@@ -32,6 +32,7 @@ type ChatMembershipEvent* = object
   chatId*: string
   clockValue*: int64
   fromKey*: string
+  name*: string
   members*: seq[string]
   rawPayload*: string
   signature*: string 
@@ -40,6 +41,7 @@ type ChatMembershipEvent* = object
 proc toJsonNode*(self: ChatMembershipEvent): JsonNode =
   result = %* {
     "chatId": self.chatId,
+    "name": self.name,
     "clockValue": self.clockValue,
     "from": self.fromKey,
     "members": self.members,

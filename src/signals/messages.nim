@@ -47,6 +47,7 @@ proc toChatMembershipEvent*(jsonMembership: JsonNode): ChatMembershipEvent =
     rawPayload: jsonMembership["rawPayload"].getStr,
     signature: jsonMembership["signature"].getStr,
     eventType: jsonMembership["type"].getInt,
+    name: jsonMembership{"name"}.getStr,
     members: @[]
   )
   if jsonMembership{"members"} != nil:
