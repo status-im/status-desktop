@@ -8,6 +8,7 @@ Item {
     property alias textField: textArea
     property string placeholderText: "My placeholder"
     property alias text: textArea.text
+    property string validationError: ""
     //    property string label: "My Label"
     property string label: ""
     readonly property bool hasLabel: label !== ""
@@ -19,7 +20,7 @@ Item {
     property int customHeight: 44
 
     id: inputBox
-    height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0)
+    height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0) + (!!validationError ? validationErrorText.height : 0)
     anchors.right: parent.right
     anchors.left: parent.left
 
@@ -44,6 +45,8 @@ Item {
         anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
         anchors.right: parent.right
         anchors.left: parent.left
+        border.width: !!validationError ? 1 : 0
+        border.color: Theme.red
 
         TextArea {
             id: textArea
@@ -58,14 +61,27 @@ Item {
             anchors.fill: parent
             font.family: Theme.fontRegular.name
         }
+
+        MouseArea {
+            id: mouseArea
+            anchors.fill: parent
+            onClicked: {
+                textArea.forceActiveFocus(Qt.MouseFocusReason)
+            }
+        }
     }
 
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        onClicked: {
-            textArea.forceActiveFocus(Qt.MouseFocusReason)
-        }
+    TextEdit {
+        visible: !!validationError
+        id: validationErrorText
+        text: validationError
+        anchors.top: inputRectangle.bottom
+        anchors.topMargin: 1
+        selectByMouse: true
+        readOnly: true
+        font.pixelSize: 12
+        color: Theme.red
+
     }
 }
 
