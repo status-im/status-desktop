@@ -15,6 +15,17 @@ ModalPopup {
 
     property int marginBetweenInputs: 35
     property string selectedColor: currentAccount.iconColor
+    property string accountNameValidationError: ""
+
+    function validate() {
+        if (accountNameInput.text === "") {
+            accountNameValidationError = qsTr("You need to enter an account name")
+        } else {
+            accountNameValidationError = ""
+        }
+
+        return accountNameValidationError === ""
+    }
 
     onOpened: {
         accountNameInput.forceActiveFocus(Qt.MouseFocusReason)
@@ -25,6 +36,7 @@ ModalPopup {
         placeholderText: qsTr("Enter an account name...")
         label: qsTr("Account name")
         text: currentAccount.name
+        validationError: popup.accountNameValidationError
     }
 
     Select {
@@ -146,9 +158,8 @@ ModalPopup {
             }
 
             onClicked : {
-                if (accountNameInput.text === "") {
-                    changeError.text = qsTr("Account name cannot be empty")
-                    changeError.open()
+                if (!validate()) {
+                    return
                 }
 
                 const error = walletModel.changeAccountSettings(currentAccount.address, accountNameInput.text, selectedColor);
