@@ -8,6 +8,26 @@ ModalPopup {
 
     property int marginBetweenInputs: 38
     property string selectedColor: Constants.accountColors[0]
+    property string passwordValidationError: ""
+    property string accountNameValidationError: ""
+
+    function validate() {
+        if (passwordInput.text === "") {
+            passwordValidationError = qsTr("You need to enter a password")
+        } else if (passwordInput.text.length < 4) {
+            passwordValidationError = qsTr("Password needs to be 4 characters or more")
+        } else {
+            passwordValidationError = ""
+        }
+
+        if (accountNameInput.text === "") {
+            accountNameValidationError = qsTr("You need to enter an account name")
+        } else {
+            accountNameValidationError = ""
+        }
+
+        return passwordValidationError === "" && accountNameValidationError === ""
+    }
 
     onOpened: {
         passwordInput.text = "";
@@ -19,6 +39,7 @@ ModalPopup {
         placeholderText: qsTr("Enter your password…")
         label: qsTr("Password")
         textField.echoMode: TextInput.Password
+        validationError: popup.passwordValidationError
     }
 
     Input {
@@ -27,6 +48,7 @@ ModalPopup {
         anchors.topMargin: marginBetweenInputs
         placeholderText: qsTr("Enter an account name...")
         label: qsTr("Account name")
+        validationError: popup.accountNameValidationError
     }
 
     Select {
@@ -49,7 +71,6 @@ ModalPopup {
 
     footer: StyledButton {
         anchors.top: parent.top
-        anchors.topMargin: Theme.padding
         anchors.right: parent.right
         anchors.rightMargin: Theme.padding
         label: "Add account >"
@@ -57,8 +78,10 @@ ModalPopup {
         disabled: passwordInput.text === "" || accountNameInput.text === ""
 
         onClicked : {
-            // TODO add message to show validation errors
-            if (passwordInput.text === "" || accountNameInput.text === "") return;
+            if (!validate()) {
+                return
+            }
+
             walletModel.generateNewAccount(passwordInput.text, accountNameInput.text, selectedColor);
             // TODO manage errors adding account
             popup.close();
