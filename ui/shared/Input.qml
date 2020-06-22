@@ -6,6 +6,7 @@ Item {
     property alias textField: inputValue
     property string placeholderText: "My placeholder"
     property alias text: inputValue.text
+    property string validationError: ""
     property string label: ""
     //    property string label: "My Label"
     readonly property bool hasLabel: label !== ""
@@ -24,7 +25,7 @@ Item {
     property int fontPixelSize: 15
 
     id: inputBox
-    height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0)
+    height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0) + (!!validationError ? validationErrorText.height : 0)
     anchors.right: parent.right
     anchors.left: parent.left
 
@@ -49,6 +50,9 @@ Item {
         anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
         anchors.right: parent.right
         anchors.left: parent.left
+        border.width: !!validationError ? 1 : 0
+        border.color: Theme.red
+
         StyledTextField {
             id: inputValue
             visible: !inputBox.isTextArea && !inputBox.isSelect
@@ -81,10 +85,23 @@ Item {
             source: inputBox.icon
         }
     }
+
+    TextEdit {
+        visible: !!validationError
+        id: validationErrorText
+        text: validationError
+        anchors.top: inputRectangle.bottom
+        anchors.topMargin: 1
+        selectByMouse: true
+        readOnly: true
+        font.pixelSize: 12
+        color: Theme.red
+
+    }
 }
 
 /*##^##
 Designer {
-    D{i:0;formeditorColor:"#ffffff";formeditorZoom:1.25}
+    D{i:0;formeditorColor:"#c0c0c0";formeditorZoom:1.25}
 }
 ##^##*/
