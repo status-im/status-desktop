@@ -65,6 +65,9 @@ Item {
                 height: 120
                 fillMode: Image.PreserveAspectFit
                 source: chatsModel.activeChannel.identicon
+                mipmap: true
+                smooth: false
+                antialiasing: true
             }
 
             StyledText {
@@ -162,7 +165,10 @@ Item {
         fillMode: Image.PreserveAspectFit
         source: identicon
         visible: isMessage && authorCurrentMsg != authorPrevMsg && !isCurrentUser
-
+        mipmap: true
+        smooth: false
+        antialiasing: true
+        
         MouseArea {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
