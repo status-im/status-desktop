@@ -123,7 +123,8 @@ ModalPopup {
                 name: model.name
                 address: model.address
                 identicon: model.identicon
-                onItemChecked: function(pubKey, itemChecked){
+                ensVerified: model.ensVerified
+                onItemChecked: function(pubKey, itemChecked) {
                     var idx = pubKeys.indexOf(pubKey)
                     if(itemChecked){
                         if(idx == -1){
@@ -140,7 +141,7 @@ ModalPopup {
             }
         }
     }
-    
+
     footer: Item {
         anchors.top: parent.bottom
         anchors.right: parent.right

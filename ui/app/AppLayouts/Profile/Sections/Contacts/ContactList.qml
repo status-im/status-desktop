@@ -25,6 +25,7 @@ ListView {
         isContact: model.isContact
         selectable: contactList.selectable
         profileClick: profilePopup.openPopup.bind(profilePopup)
+        ensVerified: model.ensVerified
     }
 
     ProfilePopup {

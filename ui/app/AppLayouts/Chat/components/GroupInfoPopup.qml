@@ -182,6 +182,7 @@ ModalPopup {
                     name: model.name
                     address: model.address
                     identicon: model.identicon
+                    ensVerified: model.ensVerified
                     onItemChecked: function(pubKey, itemChecked){
                         var idx = pubKeys.indexOf(pubKey)
                         if(itemChecked){

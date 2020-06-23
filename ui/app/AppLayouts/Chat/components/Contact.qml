@@ -14,6 +14,7 @@ Rectangle {
     property bool isContact: true
     property bool isUser: false
     property bool isVisible: true
+    property bool ensVerified: true
 
     property bool showCheckbox: true
     property bool isChecked: false

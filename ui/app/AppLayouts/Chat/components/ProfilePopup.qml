@@ -11,12 +11,14 @@ ModalPopup {
     property var userName: ""
     property var fromAuthor: ""
     property bool showQR: false
+    property var ensVerified: false
 
-    function openPopup(userNameParam, fromAuthorParam, identiconParam) {
+    function openPopup(userNameParam, fromAuthorParam, identiconParam, ensVerifiedParam) {
         this.showQR = false
         this.userName = userNameParam
         this.fromAuthor = fromAuthorParam
         this.identicon = identiconParam
+        this.ensVerified = ensVerifiedParam
         popup.open()
     }
 
@@ -43,6 +45,7 @@ ModalPopup {
 
         StyledTextEdit {
             id: profileName
+            visible: ensVerified
             text: userName
             anchors.top: parent.top
             anchors.topMargin: 18
@@ -56,6 +59,7 @@ ModalPopup {
 
         StyledText {
             text: fromAuthor
+            visible: ensVerified
             width: 160
             elide: Text.ElideMiddle
             anchors.left: profilePic.right

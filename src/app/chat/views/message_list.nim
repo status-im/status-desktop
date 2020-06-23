@@ -21,6 +21,7 @@ type
     ChatId = UserRole + 10
     SectionIdentifier = UserRole + 11
     Id = UserRole + 12
+    EnsVerified = UserRole + 13
 
 QtObject:
   type
@@ -71,6 +72,7 @@ QtObject:
       of ChatMessageRoles.ChatId: result = newQVariant(message.chatId)
       of ChatMessageRoles.SectionIdentifier: result = newQVariant(sectionIdentifier(message))
       of ChatMessageRoles.Id: result = newQVariant(message.id)
+      of ChatMessageRoles.EnsVerified: result = newQVariant(message.ensName != "")
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -85,8 +87,8 @@ QtObject:
       ChatMessageRoles.FromAuthor.int:"fromAuthor",
       ChatMessageRoles.ChatId.int:"chatId",
       ChatMessageRoles.SectionIdentifier.int: "sectionIdentifier",
-      ChatMessageRoles.Id.int: "messageId"
-
+      ChatMessageRoles.Id.int: "messageId",
+      ChatMessageRoles.EnsVerified.int: "ensName"
     }.toTable
 
   proc add*(self: ChatMessageList, message: Message) =
@@ -116,6 +118,3 @@ QtObject:
           m.alias = userNameOrAlias(c)
 
     self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.Username.int])
-
-
-

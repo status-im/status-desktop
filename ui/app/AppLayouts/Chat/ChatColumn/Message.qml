@@ -24,6 +24,7 @@ Item {
 
     property bool isMessage: contentType == Constants.messageType || contentType == Constants.stickerType || contentType == Constants.emojiType 
     property bool isStatusMessage: contentType == Constants.systemMessagePrivateGroupType
+    property bool ensVerified: tru
 
     property var profileClick: function () {}
 
@@ -194,7 +195,7 @@ Item {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
             onClicked: {
-              profileClick(userName, fromAuthor, identicon)
+              profileClick(userName, fromAuthor, identicon, ensVerified)
             }
         }
     }
@@ -216,7 +217,7 @@ Item {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
             onClicked: {
-              profileClick(userName, fromAuthor, identicon)
+              profileClick(userName, fromAuthor, identicon, ensVerified)
             }
         }
     }
