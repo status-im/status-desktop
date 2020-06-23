@@ -6,13 +6,16 @@ import "../../../shared"
 import "./Sections"
 
 SplitView {
+    property var appSettings
+
     id: profileView
-    x: 0
-    y: 0
     Layout.fillHeight: true
     Layout.fillWidth: true
 
     handle: SplitViewHandle {}
+
+    Component.onCompleted: this.restoreState(appSettings.profileSplitView)
+    Component.onDestruction: appSettings.profileSplitView = this.saveState()
 
     LeftTab {
         id: leftTab
