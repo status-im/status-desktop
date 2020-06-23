@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../imports"
+import "../shared"
 import "./AppLayouts"
 
 RowLayout {
@@ -11,7 +12,7 @@ RowLayout {
 
     TabBar {
         id: tabBar
-        width: 80
+        width: 78
         Layout.maximumWidth: 80
         Layout.preferredWidth: 80
         Layout.minimumWidth: 80
@@ -43,8 +44,10 @@ RowLayout {
                 radius: 50
             }
 
-            Image {
+            SVGImage {
                 id: image
+                height: 24
+                width: 24
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
@@ -66,8 +69,10 @@ RowLayout {
                 radius: 50
             }
 
-            Image {
+            SVGImage {
                 id: image1
+                height: 24
+                width: 24
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
@@ -90,8 +95,10 @@ RowLayout {
                 radius: 50
             }
 
-            Image {
+            SVGImage {
                 id: image2
+                height: 24
+                width: 24
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
@@ -113,8 +120,10 @@ RowLayout {
                 radius: 50
             }
 
-            Image {
+            SVGImage {
                 id: image3
+                height: 24
+                width: 24
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
@@ -137,12 +146,14 @@ RowLayout {
                 radius: 50
             }
 
-            Image {
+            SVGImage {
                 id: image4
+                height: 24
+                width: 24
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                source: parent.checked ? "img/node.svg" : "img/node.svg"
+                source: parent.checked ? "img/nodeActive.svg" : "img/node.svg"
             }
         }
     }

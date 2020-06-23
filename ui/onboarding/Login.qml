@@ -170,7 +170,7 @@ Item {
             }
         }
 
-        Image {
+        SVGImage {
             id: loadingImg
             visible: loading
             anchors.left: txtPassword.right
