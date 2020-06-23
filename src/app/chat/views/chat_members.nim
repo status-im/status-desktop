@@ -1,8 +1,5 @@
-import NimQml, Tables
-import ../../../status/chat/[chat, message]
-import ../../../status/chat as status_chat
-import ../../../status/status
-import ../../../status/ens
+import NimQml, Tables,
+  ../../../status/[chat/chat, status, ens]
 
 type
   ChatMemberRoles {.pure.} = enum
@@ -20,7 +17,7 @@ QtObject:
 
   proc setup(self: ChatMembersView) = self.QAbstractListModel.setup
 
-  proc delete(self: ChatMembersView) = 
+  proc delete(self: ChatMembersView) =
     self.members = @[]
     self.QAbstractListModel.delete
 

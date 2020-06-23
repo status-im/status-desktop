@@ -74,7 +74,7 @@ type AccountArgs* = ref object of Args
     account*: Account
 
 type
-  StatusGoException* = object of Exception
+  StatusGoException* = object of CatchableError
 
 type
   Transaction* = ref object

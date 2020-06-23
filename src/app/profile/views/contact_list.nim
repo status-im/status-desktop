@@ -1,6 +1,5 @@
 import NimQml
 import Tables
-import strformat
 import ../../../status/profile/profile
 from ../../../status/ens import nil
 
@@ -18,14 +17,14 @@ QtObject:
 
   proc setup(self: ContactList) = self.QAbstractListModel.setup
 
-  proc delete(self: ContactList) = 
+  proc delete(self: ContactList) =
     self.contacts = @[]
     self.QAbstractListModel.delete
 
   proc newContactList*(): ContactList =
     new(result, delete)
     # TODO: (rramos) contacts should be a table[string, Profile] instead, with the key being the public key
-    # This is to optimize determining if a contact is part of the contact list or not 
+    # This is to optimize determining if a contact is part of the contact list or not
     # (including those that do not have a system tag)
     result.contacts = @[]
     result.setup
