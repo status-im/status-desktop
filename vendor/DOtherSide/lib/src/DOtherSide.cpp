@@ -27,6 +27,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QResource>
 #include <QtGui/QGuiApplication>
+#include <QtGui/QIcon>
 #include <QtQml/QQmlContext>
 #include <QtCore>
 #include <QtQml/QQmlApplicationEngine>
@@ -119,6 +120,11 @@ void dos_qapplication_delete()
 void dos_qapplication_exec()
 {
     qApp->exec();
+}
+
+void dos_qapplication_icon(const char *filename)
+{
+    qApp->setWindowIcon(QIcon(filename));
 }
 
 void dos_qapplication_quit()
