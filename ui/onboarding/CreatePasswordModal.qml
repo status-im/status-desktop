@@ -6,6 +6,30 @@ import "../shared"
 
 ModalPopup {
     property bool loading: false
+    property string passwordValidationError: ""
+    property string repeatPasswordValidationError: ""
+
+    function validate() {
+        if (firstPasswordField.text === "") {
+            passwordValidationError = qsTr("You need to enter a password")
+        } else if (firstPasswordField.text.length < 4) {
+            passwordValidationError = qsTr("Password needs to be 4 characters or more")
+        } else {
+            passwordValidationError = ""
+        }
+
+        if (repeatPasswordField.text === "") {
+            repeatPasswordValidationError = qsTr("You need to repeat your password")
+        } else if (repeatPasswordField.text !== firstPasswordField.text) {
+            repeatPasswordValidationError = qsTr("Both passwords must match")
+        } else {
+            repeatPasswordValidationError = ""
+        }
+        console.log('Validation?', passwordValidationError, repeatPasswordValidationError)
+
+        return passwordValidationError === "" && repeatPasswordValidationError === ""
+    }
+
     id: popup
     title: qsTr("Create a password")
     height: 500
@@ -23,6 +47,7 @@ ModalPopup {
         anchors.topMargin: 88
         placeholderText: qsTr("New password...")
         textField.echoMode: TextInput.Password
+        validationError: popup.passwordValidationError
     }
 
     Input {
@@ -35,6 +60,7 @@ ModalPopup {
         anchors.topMargin: Theme.xlPadding
         placeholderText: qsTr("Confirm password…")
         textField.echoMode: TextInput.Password
+        validationError: popup.repeatPasswordValidationError
         Keys.onReturnPressed: {
             submitBtn.clicked()
         }
@@ -113,18 +139,6 @@ ModalPopup {
                 }
             }
 
-            MessageDialog {
-                id: passwordsDontMatchError
-                title: qsTr("Error")
-                text: qsTr("Passwords don't match")
-                icon: StandardIcon.Warning
-                standardButtons: StandardButton.Ok
-                onAccepted: {
-                    repeatPasswordField.clear()
-                    repeatPasswordField.forceActiveFocus(Qt.MouseFocusReason)
-                }
-            }
-
             Connections {
                 target: onboardingModel
                 ignoreUnknownSignals: true
@@ -136,12 +150,9 @@ ModalPopup {
                 }
             }
 
-            onClicked : {
-                if (firstPasswordField.text === "" || repeatPasswordField.text === "") {
+            onClicked: {
+                if (!validate()) {
                     return
-                }
-                if (repeatPasswordField.text !== firstPasswordField.text) {
-                    return passwordsDontMatchError.open()
                 }
                 // TODO this doesn't seem to work because the function freezes the view
                 loading = true
