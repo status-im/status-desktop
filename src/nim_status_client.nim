@@ -23,6 +23,8 @@ proc mainProc() =
   enableHDPI()
 
   let app = newQApplication()
+  app.icon("./status.svg")
+
   let engine = newQQmlApplicationEngine()
   let signalController = signals.newController(app)
 
