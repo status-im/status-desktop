@@ -12,14 +12,13 @@ SplitView {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    handle: Rectangle {
-        implicitWidth: 1
-        implicitHeight: 4
-        color: Theme.grey
-    }
+    handle: SplitViewHandle {}
 
     LeftTab {
         id: leftTab
+        SplitView.preferredWidth: Theme.leftTabPrefferedSize
+        SplitView.minimumWidth: Theme.leftTabMinimumWidth
+        SplitView.maximumWidth: Theme.leftTabMaximumWidth
     }
 
     StackLayout {

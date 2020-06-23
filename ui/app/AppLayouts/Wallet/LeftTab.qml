@@ -16,8 +16,6 @@ Item {
         walletModel.setCurrentAccountByIndex(newIndex)
     }
     id: walletInfoContainer
-    width: 340
-    Layout.minimumWidth: 300
 
     Rectangle {
         id: walletInfoHeader

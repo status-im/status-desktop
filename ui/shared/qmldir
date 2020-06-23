@@ -13,3 +13,4 @@ StyledText 1.0 StyledText.qml
 StyledTextField 1.0 StyledTextField.qml
 StyledTextEdit 1.0 StyledTextEdit.qml
 RoundImage 1.0 RoundImage.qml
+SplitViewHandle 1.0 SplitViewHandle.qml

@@ -203,6 +203,7 @@ DISTFILES += \
     shared/SearchBox.qml \
     shared/Select.qml \
     shared/Separator.qml \
+    shared/SplitViewHandle.qml \
     shared/StatusTabButton.qml \
     shared/StyledButton.qml \
     shared/RoundedIcon.qml \

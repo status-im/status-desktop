@@ -1,26 +1,19 @@
 import QtQuick 2.13
-//TODO: update to import QtQuick.Controls 2.13
-import QtQuick.Controls 1.3
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.13
+import QtQuick.Controls 2.13
 import "../../../imports"
+import "../../../shared"
 import "."
 
 SplitView {
     id: chatView
-    x: 0
-    y: 0
-    Layout.fillHeight: true
-    Layout.fillWidth: true
 
-    handleDelegate: Rectangle {
-        implicitWidth: 1
-        implicitHeight: 4
-        color: Theme.grey
-    }
+    handle: SplitViewHandle {}
 
     ContactsColumn {
         id: contactsColumn
+        SplitView.preferredWidth: Theme.leftTabPrefferedSize
+        SplitView.minimumWidth: Theme.leftTabMinimumWidth
+        SplitView.maximumWidth: Theme.leftTabMaximumWidth
     }
 
     ChatColumn {
@@ -31,6 +24,6 @@ SplitView {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.5;height:770;width:1152}
+    D{i:0;formeditorColor:"#ffffff";formeditorZoom:1.25;height:770;width:1152}
 }
 ##^##*/

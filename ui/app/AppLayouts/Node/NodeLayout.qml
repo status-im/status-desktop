@@ -4,24 +4,15 @@ import QtQuick.Layouts 1.13
 import "../../../imports"
 import "../../../shared"
 
-SplitView {
+Item {
     id: nodeView
-    x: 0
-    y: 0
     Layout.fillHeight: true
     Layout.fillWidth: true
 
     ColumnLayout {
         id: rpcColumn
         spacing: 0
-//        anchors.left: contactsColumn.right
-        anchors.leftMargin: 0
-        anchors.right: parent.right
-        anchors.rightMargin: 0
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
-        anchors.top: parent.top
-        anchors.topMargin: 0
+        anchors.fill: parent
 
         ColumnLayout {
             id: messageContainer
