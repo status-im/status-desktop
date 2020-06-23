@@ -1,13 +1,8 @@
-import algorithm, json, random, math, os
+import algorithm, json, random, math, os, tables, sets, chronicles, eventemitter, sequtils, locks
+
 import libstatus/core as status_core
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
-import tables
-import sets
-import chronicles
-import eventemitter
-import sequtils
-import locks
 
 logScope:
   topics = "mailserver-model"

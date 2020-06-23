@@ -1,9 +1,7 @@
-import NimQml
-import Tables
+import NimQml, Tables, random
 import sequtils as sequtils
-import random
-import ./account_item
-import ../../../status/wallet
+import account_item
+from ../../../status/wallet import WalletAccount
 
 const accountColors* = ["#9B832F", "#D37EF4", "#1D806F", "#FA6565", "#7CDA00", "#887af9", "#8B3131"]
 

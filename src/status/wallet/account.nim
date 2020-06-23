@@ -1,4 +1,4 @@
-import eventemitter
+from eventemitter import Args
 
 type Collectible* = ref object
     name*, image*, id*: string

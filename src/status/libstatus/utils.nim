@@ -1,8 +1,5 @@
-import json
-import types
-import random
+import json, types, random, strutils
 from times import getTime, toUnix, nanosecond
-import strutils
 import accounts/signing_phrases
 
 proc isWakuEnabled(): bool =

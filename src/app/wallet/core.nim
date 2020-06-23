@@ -1,19 +1,12 @@
-import NimQml
-import eventemitter
-import strformat
-import strutils
-import chronicles
+import NimQml, eventemitter, strformat, strutils, chronicles
 
 import view
-import views/asset_list
-import views/account_list
-import views/account_item
+import views/[asset_list, account_list, account_item]
 import ../../status/libstatus/wallet as status_wallet
 import ../../signals/types
 
-import ../../status/wallet
+import ../../status/[status, wallet]
 import ../../status/wallet/account as WalletTypes
-import ../../status/status
 
 type WalletController* = ref object of SignalSubscriber
   status: Status

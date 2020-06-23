@@ -1,7 +1,6 @@
+import eventemitter, options
 import libstatus/accounts as status_accounts
 import libstatus/types
-import options
-import eventemitter
 
 type
   AccountModel* = ref object

@@ -1,6 +1,5 @@
 import NimQml
-import ../../status/node
-import ../../status/status
+import ../../status/[status, node]
 
 QtObject:
   type NodeView* = ref object of QObject

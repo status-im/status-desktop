@@ -4,8 +4,7 @@ import ../libstatus/types
 type Profile* = ref object
   id*, alias*, username*, identicon*, address*, ensName*: string
   ensVerified*: bool
-  ensVerifiedAt*: int
-  ensVerificationRetries*: int
+  ensVerifiedAt*, ensVerificationRetries*: int
   systemTags*: seq[string]
 
 proc isContact*(self: Profile): bool =

@@ -1,15 +1,6 @@
-import NimQml
-import Tables
-import strformat
-import strutils
-import views/asset_list
-import views/account_list
-import views/account_item
-import views/transaction_list
-import views/collectibles_list
-import ../../status/wallet
-import ../../status/status
-import chronicles
+import NimQml, Tables, strformat, strutils, chronicles
+import ../../status/[status, wallet]
+import views/[asset_list, account_list, account_item, transaction_list, collectibles_list]
 
 QtObject:
   type

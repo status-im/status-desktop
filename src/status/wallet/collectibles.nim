@@ -1,6 +1,5 @@
 import strformat, httpclient, json, chronicles, sequtils, strutils, tables
-import ../libstatus/core as status
-import ../libstatus/contracts as contracts
+import ../libstatus/[core, contracts]
 import eth/common/eth_types
 import account
 
@@ -10,7 +9,7 @@ proc getTokenUri(contract: Contract, tokenId: int): string =
       "to": $contract.address,
       "data": contract.methods["tokenURI"].encodeAbi(tokenId)
     }, "latest"]
-    let response = status.callPrivateRPC("eth_call", payload)
+    let response = callPrivateRPC("eth_call", payload)
     var postfixedResult: string = parseJson($response)["result"].str
     postfixedResult.removeSuffix('0')
     postfixedResult.removePrefix("0x")
@@ -28,7 +27,7 @@ proc tokenOfOwnerByIndex(contract: Contract, address: EthAddress, index: int): i
     "to": $contract.address,
     "data": contract.methods["tokenOfOwnerByIndex"].encodeAbi(address, index)
   }, "latest"]
-  let response = status.callPrivateRPC("eth_call", payload)
+  let response = callPrivateRPC("eth_call", payload)
   let res = parseJson($response)["result"].str
   if (res == "0x"):
     return -1
@@ -68,7 +67,7 @@ proc getCryptoKitties*(address: EthAddress): seq[Collectible] =
 proc getEthermons*(address: EthAddress): seq[Collectible] =
   result = @[]
   try:
-    let contract = contracts.getContract(Network.Mainnet, "ethermon")
+    let contract = getContract(Network.Mainnet, "ethermon")
     let tokens = tokensOfOwnerByIndex(contract, address)
 
     if (tokens.len == 0):
@@ -92,7 +91,7 @@ proc getEthermons*(address: EthAddress): seq[Collectible] =
 proc getKudos*(address: EthAddress): seq[Collectible] =
   result = @[]
   try:
-    let contract = contracts.getContract(Network.Mainnet, "kudos")
+    let contract = getContract(Network.Mainnet, "kudos")
     let tokens = tokensOfOwnerByIndex(contract, address)
 
     if (tokens.len == 0):
@@ -114,7 +113,5 @@ proc getKudos*(address: EthAddress): seq[Collectible] =
   except Exception as e:
     error "Error getting Kudos", msg = e.msg
 
-
 proc getAllCollectibles*(address: EthAddress): seq[Collectible] =
   result = concat(getCryptoKitties(address), getEthermons(address), getKudos(address))
-

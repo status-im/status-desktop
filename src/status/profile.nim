@@ -1,5 +1,4 @@
-import json
-import eventemitter
+import json, eventemitter
 import libstatus/types
 import profile/profile
 import libstatus/core as libstatus_core

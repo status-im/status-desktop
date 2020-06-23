@@ -1,9 +1,8 @@
-import json
-import types
+import json, random
 import ../status/libstatus/accounts as status_accounts
 import ../status/chat/[chat, message]
 import ../status/profile/profile
-import random
+import types
 
 proc toMessage*(jsonMsg: JsonNode): Message
 

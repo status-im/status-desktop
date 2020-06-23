@@ -1,7 +1,5 @@
-import message
-import strformat
-import json
-import sequtils
+import strformat, json, sequtils
+from message import Message
 
 type ChatType* {.pure.}= enum
   Unknown = 0,
@@ -110,4 +108,3 @@ proc isAdmin*(self: Chat, pubKey: string): bool =
   for member in self.members:
     if member.id == pubKey and member.joined and member.admin: return true
   return false
-

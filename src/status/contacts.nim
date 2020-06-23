@@ -1,8 +1,6 @@
-import eventemitter
-import json
+import eventemitter, json, sequtils
 import libstatus/contacts as status_contacts
 import profile/profile
-import sequtils
 
 type
   ContactModel* = ref object

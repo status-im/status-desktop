@@ -1,6 +1,5 @@
-import NimQml
-import tables
-import ../../../status/wallet
+import NimQml, tables
+from ../../../status/wallet import Asset
 
 type
   AssetRoles {.pure.} = enum

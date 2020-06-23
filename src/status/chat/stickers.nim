@@ -1,6 +1,6 @@
 import chronicles
 import libp2p/[multihash, multicodec, cid]
-from strutils import parseHexInt, removePrefix
+from strutils import parseHexInt
 
 logScope:
   topics = "sticker-decoding"

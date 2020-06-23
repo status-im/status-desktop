@@ -1,6 +1,4 @@
-import NimQml
-import eventemitter
-import chronicles
+import NimQml, eventemitter, chronicles
 
 import app/chat/core as chat
 import app/wallet/core as wallet
@@ -10,8 +8,7 @@ import app/onboarding/core as onboarding
 import app/login/core as login
 import signals/core as signals
 
-import status/libstatus/types
-import status/libstatus/libstatus
+import status/libstatus/[types, libstatus]
 import status/status as statuslib
 
 var signalsQObjPointer: pointer
@@ -26,8 +23,6 @@ proc mainProc() =
   let app = newQApplication()
   let engine = newQQmlApplicationEngine()
   let signalController = signals.newController(app)
-
- 
 
   # We need this global variable in order to be able to access the application
   # from the non-closure callback passed to `libstatus.setSignalEventCallback`

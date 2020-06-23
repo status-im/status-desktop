@@ -1,5 +1,4 @@
-import sequtils, strformat, sugar, macros, tables
-import eth/common/eth_types, stew/byteutils, nimcrypto
+import sequtils, strformat, sugar, macros, tables, eth/common/eth_types, stew/byteutils, nimcrypto
 from eth/common/utils import parseAddress
 
 type

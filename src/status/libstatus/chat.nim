@@ -1,30 +1,19 @@
-import core
-import json
-import utils
-import times
-import strutils
-import sequtils
-import chronicles
+import json, times, strutils, sequtils, chronicles
+import core, utils
 import ../chat/[chat, message]
 import ../../signals/messages
 
 proc buildFilter*(chat: Chat):JsonNode =
   if chat.chatType == ChatType.PrivateGroupChat:
     return newJNull()
-  result = %* {
-    "ChatID": chat.id,
-    "OneToOne": chat.chatType == ChatType.OneToOne
-  }
+  result = %* { "ChatID": chat.id, "OneToOne": chat.chatType == ChatType.OneToOne }
 
 proc loadFilters*(filters: seq[JsonNode]): string =
   result =  callPrivateRPC("loadFilters".prefix, %* [filter(filters, proc(x:JsonNode):bool = x.kind != JNull)])
 
 proc removeFilters*(chatId: string, filterId: string) =
   discard callPrivateRPC("removeFilters".prefix, %* [
-    [{
-      "ChatID": chatId,
-      "FilterID": filterId
-    }]
+    [{ "ChatID": chatId, "FilterID": filterId }]
   ])
 
 proc saveChat*(chatId: string, oneToOne: bool = false, active: bool = true, color: string) =

@@ -1,4 +1,5 @@
 import eventemitter, json, strformat, strutils, chronicles, sequtils
+from eth/common/utils import parseAddress
 import libstatus/accounts as status_accounts
 import libstatus/tokens as status_tokens
 import libstatus/settings as status_settings
@@ -8,7 +9,6 @@ from libstatus/types import GeneratedAccount, DerivedAccount, Transaction
 import wallet/balance_manager
 import wallet/account
 import wallet/collectibles
-from eth/common/utils import parseAddress
 export account, collectibles
 export Transaction
 

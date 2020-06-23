@@ -1,14 +1,10 @@
-import NimQml
-import eventemitter, chronicles
+import NimQml, eventemitter, chronicles
 import ../../status/chat as chat_model
 import ../../status/mailservers as mailserver_model
 import ../../signals/types
 import ../../status/libstatus/types as status_types
-import ../../status/chat
-import ../../status/contacts
-import ../../status/status
-import views/channels_list
-import view
+import ../../status/[chat, contacts, status]
+import view, views/channels_list
 
 logScope:
   topics = "chat-controller"

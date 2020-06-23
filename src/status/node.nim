@@ -1,7 +1,4 @@
 import eventemitter
-# import json
-# import strformat
-# import strutils
 import libstatus/core as status
 
 type NodeModel* = ref object
