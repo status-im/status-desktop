@@ -1,6 +1,4 @@
-import strformat
-import strutils
-import qrcodegen
+import strformat, strutils, qrcodegen
 
 proc generateQRCodeSVG*(text: string, border: int = 0): string =
   var qr0: array[0..qrcodegen_BUFFER_LEN_MAX, uint8]
