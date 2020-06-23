@@ -12,8 +12,6 @@ Item {
     property alias searchStr: searchBox.text
 
     id: contactsColumn
-    width: 300
-    Layout.minimumWidth: 200
     Layout.fillHeight: true
 
     StyledText {

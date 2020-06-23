@@ -26,4 +26,8 @@ QtObject {
     readonly property int padding: 16
     readonly property int smallPadding: 10
     readonly property int radius: 8
+
+    readonly property int leftTabPrefferedSize: 340
+    readonly property int leftTabMinimumWidth: 300
+    readonly property int leftTabMaximumWidth: 500
 }
