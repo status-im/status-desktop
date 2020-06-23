@@ -1,13 +1,18 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import Qt.labs.settings 1.0
 import "../../../imports"
 import "../../../shared"
 import "."
 
 SplitView {
-    id: chatView
+    property var appSettings
 
+    id: chatView
     handle: SplitViewHandle {}
+
+    Component.onCompleted: this.restoreState(appSettings.chatSplitView)
+    Component.onDestruction: appSettings.chatSplitView = this.saveState()
 
     ContactsColumn {
         id: contactsColumn
