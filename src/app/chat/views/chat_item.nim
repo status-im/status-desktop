@@ -1,7 +1,5 @@
-import NimQml
-import std/wrapnils
-import ../../../status/chat/chat
-import ../../../status/status
+import NimQml, std/wrapnils
+import ../../../status/[chat/chat, status]
 import chat_members
 
 QtObject:

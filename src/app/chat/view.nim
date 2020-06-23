@@ -1,7 +1,4 @@
-import NimQml
-import Tables
-import json, sequtils
-import chronicles
+import NimQml, Tables, json, sequtils, chronicles
 
 import ../../status/status
 import ../../status/chat as status_chat
@@ -9,9 +6,7 @@ import ../../status/contacts as status_contacts
 import ../../status/chat/[chat, message]
 import ../../status/profile/profile
 
-import views/channels_list
-import views/message_list
-import views/chat_item
+import views/channels_list, views/message_list, views/chat_item
 
 logScope:
   topics = "chats-view"

@@ -1,5 +1,4 @@
-import eventemitter
-import json_serialization
+import eventemitter, json_serialization
 import accounts/constants
 
 type SignalCallback* = proc(eventMessage: cstring): void {.cdecl.}
@@ -91,4 +90,3 @@ type
     value*: string
     fromAddress*: string
     to*: string
-

@@ -1,14 +1,9 @@
-import libstatus
-import core
-import json
+import json, os, nimcrypto, uuids, json_serialization, chronicles
+
+import libstatus, core
 import utils as utils
-import accounts/constants
-import nimcrypto
-import os
-import uuids
 import types as types
-import json_serialization
-import chronicles
+import accounts/constants
 import ../../signals/types as signal_types
 import ../wallet/account
 

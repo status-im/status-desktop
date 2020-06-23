@@ -1,14 +1,6 @@
-import NimQml
+import NimQml, tables, json, chronicles, strutils, json_serialization
 import ../status/libstatus/types as status_types
-import tables
-import json
-import types
-import messages
-import discovery
-import chronicles
-import whisperFilter
-import strutils
-import json_serialization
+import types, messages, discovery, whisperFilter
 
 logScope:
   topics = "signals"
@@ -20,7 +12,6 @@ QtObject:
     signalSubscribers*: Table[SignalType, seq[SignalSubscriber]]
     variant*: QVariant
 
-  # Constructor
   proc newController*(app: QApplication): SignalsController =
     new(result)
     result.app = app

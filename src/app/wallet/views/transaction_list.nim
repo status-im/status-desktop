@@ -1,6 +1,5 @@
-import NimQml
-import tables
-import ../../../status/wallet
+import NimQml, tables
+from ../../../status/wallet import Transaction
 
 type
   TransactionRoles {.pure.} = enum
@@ -86,4 +85,3 @@ QtObject:
   proc forceUpdate*(self: TransactionList) =
     self.beginResetModel()
     self.endResetModel()
-

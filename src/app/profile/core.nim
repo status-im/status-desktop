@@ -1,13 +1,10 @@
-import NimQml
-import json, eventemitter
-import strutils
+import NimQml, json, eventemitter, strutils
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../signals/types
-import "../../status/libstatus/types" as status_types
+import ../../status/libstatus/types as status_types
 import ../../status/libstatus/settings as status_settings
 import ../../status/profile/[profile, mailserver]
-import ../../status/contacts
-import ../../status/status
+import ../../status/[status, contacts]
 import ../../status/chat as status_chat
 import ../../status/chat/chat
 import view

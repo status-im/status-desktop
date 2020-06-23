@@ -1,12 +1,5 @@
-import core as status
-import json
-# import utils
-import httpclient, json
-import strformat
-import stint
-import strutils, sequtils
-import chronicles
-import types
+import json, httpclient, json, strformat, stint, strutils, sequtils, chronicles
+import core, types
 import ../wallet/account
 
 proc getWalletAccounts*(): seq[WalletAccount] =
@@ -35,10 +28,10 @@ proc getWalletAccounts*(): seq[WalletAccount] =
 
 proc getTransfersByAddress*(address: string): seq[Transaction] =
   try:
-    let response = status.getBlockByNumber("latest")
+    let response = getBlockByNumber("latest")
     let latestBlock = parseJson(response)["result"]
     
-    let transactionsResponse = status.getTransfersByAddress(address, latestBlock["number"].getStr, "0x14")
+    let transactionsResponse = getTransfersByAddress(address, latestBlock["number"].getStr, "0x14")
     let transactions = parseJson(transactionsResponse)["result"]
     var accountTransactions: seq[Transaction] = @[]
 
@@ -70,12 +63,12 @@ proc sendTransaction*(from_address: string, to: string, value: string, password:
     "from": from_address,
     "to": to
   }
-  var response = status.sendTransaction($args, password)
+  var response = sendTransaction($args, password)
   result = response
 
 proc getBalance*(address: string): string =
   let payload = %* [address, "latest"]
-  parseJson(status.callPrivateRPC("eth_getBalance", payload))["result"].str
+  parseJson(callPrivateRPC("eth_getBalance", payload))["result"].str
 
 proc hex2Eth*(input: string): string =
   var value = fromHex(Stuint[256], input)

@@ -1,6 +1,5 @@
-import NimQml
-import std/wrapnils
-import ../../../status/wallet
+import NimQml, std/wrapnils
+from ../../../status/wallet import WalletAccount
 
 QtObject:
   type AccountItemView* = ref object of QObject

@@ -1,8 +1,6 @@
-import NimQml
-import chronicles
+import NimQml, chronicles
 import ../../signals/types
-import ../../status/node
-import ../../status/status
+import ../../status/[status, node]
 import view
 
 logScope:

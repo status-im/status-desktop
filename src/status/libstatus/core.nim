@@ -1,8 +1,5 @@
-import json
-import libstatus
-import nimcrypto
-import utils
-import chronicles
+import json, nimcrypto, chronicles
+import libstatus, utils
 
 logScope:
   topics = "rpc"

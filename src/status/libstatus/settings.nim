@@ -1,5 +1,5 @@
-import core
 import json
+import core
 
 proc saveSettings*(key: string, value: string): string =
   callPrivateRPC("settings_saveSetting", %* [

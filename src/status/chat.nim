@@ -1,6 +1,5 @@
-import eventemitter, json, strutils, sequtils, tables
+import eventemitter, json, strutils, sequtils, tables, chronicles
 import libstatus/chat as status_chat
-import chronicles
 import profile/profile
 import chat/[chat, message]
 import ../signals/messages

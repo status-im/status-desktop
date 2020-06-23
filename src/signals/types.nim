@@ -1,10 +1,7 @@
-import json
-import chronicles
+import json, chronicles, json_serialization, tables
 import ../status/libstatus/types
 import ../status/chat/[chat, message]
 import ../status/profile/profile
-import json_serialization
-import tables
 
 type SignalSubscriber* = ref object of RootObj
 

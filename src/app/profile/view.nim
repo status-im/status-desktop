@@ -1,8 +1,5 @@
-import NimQml
-import sequtils
-import views/mailservers_list
-import views/contact_list
-import views/profile_info
+import NimQml, sequtils
+import views/[mailservers_list, contact_list, profile_info]
 import ../../status/profile/[mailserver, profile]
 import ../../status/profile as status_profile
 import ../../status/contacts as status_contacts

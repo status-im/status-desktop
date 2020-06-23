@@ -1,10 +1,4 @@
-import NimQml, Tables
-
-import json
-import nimcrypto
-import strformat
-import json_serialization
-
+import NimQml, Tables, json, nimcrypto, strformat, json_serialization
 import ../../signals/types
 import ../../status/libstatus/types as status_types
 import ../../status/libstatus/accounts as status_accounts
