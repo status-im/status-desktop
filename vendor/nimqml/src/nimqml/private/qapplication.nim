@@ -11,6 +11,9 @@ proc quit*(application: QApplication) =
   ## Quit the Qt event loop
   dos_qapplication_quit()
 
+proc icon*(application: QApplication, filename: string) =
+  dos_qapplication_icon(filename.cstring)
+
 proc delete*(application: QApplication) =
   ## Delete the given QApplication
   if application.deleted:

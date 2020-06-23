@@ -129,6 +129,7 @@ proc dos_qapplication_enable_hdpi() {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qapplication_create() {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qapplication_exec() {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qapplication_quit() {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qapplication_icon(filename: cstring) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qapplication_delete() {.cdecl, dynlib: dynLibName, importc.}
 
 # QGuiApplication
