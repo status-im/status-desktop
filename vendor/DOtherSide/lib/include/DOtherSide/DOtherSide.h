@@ -60,6 +60,8 @@ DOS_API void DOS_CALL dos_qcoreapplication_process_events(DosQEventLoopProcessEv
 /// \brief Force the event loop to spin and process the given events until no more available or timed out
 DOS_API void DOS_CALL dos_qcoreapplication_process_events_timed(DosQEventLoopProcessEventFlag flags, int ms);
 
+DOS_API void DOS_CALL dos_qapplication_enable_hdpi(void);
+
 /// \brief Create a QGuiApplication
 /// \note The created QGuiApplication should be freed by calling dos_qguiapplication_delete()
 DOS_API void DOS_CALL dos_qguiapplication_create(void);
