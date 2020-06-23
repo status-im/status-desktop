@@ -179,3 +179,11 @@ proc createGroup*(self: ChatModel, groupName: string, pubKeys: seq[string]) =
 proc addGroupMembers*(self: ChatModel, chatId: string, pubKeys: seq[string]) =
   var response = status_chat.addGroupMembers(chatId, pubKeys)
   self.emitUpdate(response)
+
+proc kickGroupMember*(self: ChatModel, chatId: string, pubKey: string) =
+  var response = status_chat.kickGroupMember(chatId, pubKey)
+  self.emitUpdate(response)
+
+proc makeAdmin*(self: ChatModel, chatId: string, pubKey: string) =
+  var response = status_chat.makeAdmin(chatId, pubKey)
+  self.emitUpdate(response)
