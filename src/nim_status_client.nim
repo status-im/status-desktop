@@ -23,6 +23,8 @@ proc mainProc() =
   let status = statuslib.newStatusInstance()
   status.initNode()
 
+  enableHDPI()
+
   let app = newQApplication()
   let engine = newQQmlApplicationEngine()
   let signalController = signals.newController(app)
