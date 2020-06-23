@@ -15,7 +15,6 @@ ScrollView {
     property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
 
     contentItem: chatLogView
-    anchors.fill: parent
     Layout.fillWidth: true
     Layout.fillHeight: true
 
