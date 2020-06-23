@@ -113,3 +113,9 @@ proc createGroup*(groupName: string, pubKeys: seq[string]): string =
 
 proc addGroupMembers*(chatId: string, pubKeys: seq[string]): string =
   callPrivateRPC("addMembersToGroupChat".prefix, %* [nil, chatId, pubKeys])
+
+proc kickGroupMember*(chatId: string, pubKey: string): string =
+  callPrivateRPC("removeMemberFromGroupChat".prefix, %* [nil, chatId, pubKey])
+
+proc makeAdmin*(chatId: string, pubKey: string): string =
+  callPrivateRPC("addAdminsToGroupChat".prefix, %* [nil, chatId, [pubKey]])

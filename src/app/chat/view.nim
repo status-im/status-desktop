@@ -172,3 +172,9 @@ QtObject:
   proc addGroupMembers*(self: ChatsView, chatId: string, pubKeys: string) {.slot.} =
     let pubKeysSeq = map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
     self.status.chat.addGroupMembers(chatId, pubKeysSeq)
+
+  proc kickGroupMember*(self: ChatsView, chatId: string, pubKey: string) {.slot.} =
+    self.status.chat.kickGroupMember(chatId, pubKey)
+
+  proc makeAdmin*(self: ChatsView, chatId: string, pubKey: string) {.slot.} =
+    self.status.chat.makeAdmin(chatId, pubKey)
