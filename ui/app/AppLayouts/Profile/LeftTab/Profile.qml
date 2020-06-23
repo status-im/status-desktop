@@ -26,7 +26,9 @@ Rectangle {
             height: 80
             fillMode: Image.PreserveAspectCrop
             anchors.horizontalCenter: parent.horizontalCenter
-
+            mipmap: true
+            smooth: false
+            antialiasing: true
             property bool rounded: true
             property bool adapt: false
             y: 78

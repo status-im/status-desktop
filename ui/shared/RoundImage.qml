@@ -18,6 +18,9 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         source: roundedImage.source
+        mipmap: true
+        smooth: false
+        antialiasing: true
 
     }
 }
