@@ -150,9 +150,16 @@ $(STATUSGO): | deps
 	+ cd vendor/status-go && \
 	  $(MAKE) statusgo-library $(HANDLE_OUTPUT)
 
-nim_status_client: | $(DOTHERSIDE) $(STATUSGO) deps
+QRCODEGEN := vendor/QR-Code-generator/c/libqrcodegen.a
+
+$(QRCODEGEN): | deps
+	echo -e $(BUILD_MSG) "QR-Code-generator"
+	+ cd vendor/QR-Code-generator/c && \
+	  $(MAKE)
+
+nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) deps
 	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"$(STATUSGO)" --passL:"-lm" src/nim_status_client.nim
+		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"$(STATUSGO)" --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim
 
 _APPIMAGE_TOOL := appimagetool-x86_64.AppImage
 APPIMAGE_TOOL := tmp/linux/tools/$(_APPIMAGE_TOOL)

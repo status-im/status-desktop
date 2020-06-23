@@ -10,8 +10,10 @@ ModalPopup {
     property var identicon: ""
     property var userName: ""
     property var fromAuthor: ""
+    property bool showQR: false
 
     function openPopup(userNameParam, fromAuthorParam, identiconParam) {
+        this.showQR = false
         this.userName = userNameParam
         this.fromAuthor = fromAuthorParam
         this.identicon = identiconParam
@@ -63,114 +65,138 @@ ModalPopup {
           font.pixelSize: 14
           color: Theme.darkGrey
       }
+      
 
-      // TODO(pascal): implement qrcode view
-      // Rectangle {
-      //     id: qrCodeButton
-      //     height: 32
-      //     width: 32
-      //     anchors.top: parent.top
-      //     anchors.topMargin: Theme.padding
-      //     anchors.right: parent.right
-      //     anchors.rightMargin: 32 + Theme.smallPadding
-      //     radius: 8
+       Rectangle {
+           id: qrCodeButton
+           height: 32
+           width: 32
+           anchors.top: parent.top
+           anchors.topMargin: Theme.padding
+           anchors.right: parent.right
+           anchors.rightMargin: 32 + Theme.smallPadding
+           radius: 8
 
-      //     Image {
-      //         source: "../../../../shared/img/qr-code-icon.svg"
-      //         anchors.horizontalCenter: parent.horizontalCenter
-      //         anchors.verticalCenter: parent.verticalCenter
-      //     }
-
-      //     MouseArea {
-      //         cursorShape: Qt.PointingHandCursor
-      //         anchors.fill: parent
-      //         hoverEnabled: true
-      //         onExited: {
-      //             qrCodeButton.color = Theme.white
-      //         }
-      //         onEntered:{
-      //             qrCodeButton.color = Theme.grey
-      //         }
-      //     }
-      // }
+           Image {
+               source: "../../../img/qr-code-icon.svg"
+               anchors.horizontalCenter: parent.horizontalCenter
+               anchors.verticalCenter: parent.verticalCenter
+           }
+ 
+           MouseArea {
+               cursorShape: Qt.PointingHandCursor
+               anchors.fill: parent
+               hoverEnabled: true
+               onExited: {
+                   qrCodeButton.color = Theme.white
+               }
+               onEntered:{
+                   qrCodeButton.color = Theme.grey
+               }
+               onClicked: {
+                 showQR = true
+               }
+           }
+      }
     }
 
-    StyledText {
-      id: labelEnsUsername
-      text: qsTr("ENS username")
-      font.pixelSize: 13
-      font.weight: Font.Medium
-      color: Theme.darkGrey
-      anchors.left: parent.left
-      anchors.leftMargin: Theme.smallPadding
-      anchors.top: parent.top
-      anchors.topMargin: Theme.smallPadding
+    Item {
+      anchors.fill: parent
+      visible: showQR
+      Image {
+        asynchronous: true
+        fillMode: QtQuick.Image.PreserveAspectFit
+        source: profileModel.qrCode(fromAuthor)
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        height: 212
+        width: 212
+        mipmap: true
+        smooth: false
+      }
     }
 
-    StyledText {
-      id: valueEnsName
-      text: "@emily.stateofus.eth"
-      font.pixelSize: 14
-      anchors.left: parent.left
-      anchors.leftMargin: Theme.smallPadding
-      anchors.top: labelEnsUsername.bottom
-      anchors.topMargin: Theme.smallPadding
-    }
+    Item {
+      anchors.fill: parent
+      visible: !showQR
 
-    StyledText {
-      id: labelChatKey
-      text: qsTr("Chat key")
-      font.pixelSize: 13
-      font.weight: Font.Medium
-      color: Theme.darkGrey
-      anchors.left: parent.left
-      anchors.leftMargin: Theme.smallPadding
-      anchors.top: valueEnsName.bottom
-      anchors.topMargin: Theme.padding
-    }
+      StyledText {
+        id: labelEnsUsername
+        text: qsTr("ENS username")
+        font.pixelSize: 13
+        font.weight: Font.Medium
+        color: Theme.darkGrey
+        anchors.left: parent.left
+        anchors.leftMargin: Theme.smallPadding
+        anchors.top: parent.top
+        anchors.topMargin: Theme.smallPadding
+      }
 
-    StyledText {
-      id: valueChatKey
-      text: fromAuthor
-      width: 160
-      elide: Text.ElideMiddle
-      font.pixelSize: 14
-      anchors.left: parent.left
-      anchors.leftMargin: Theme.smallPadding
-      anchors.top: labelChatKey.bottom
-      anchors.topMargin: Theme.smallPadding
-    }
+      StyledText {
+        id: valueEnsName
+        text: "@emily.stateofus.eth"
+        font.pixelSize: 14
+        anchors.left: parent.left
+        anchors.leftMargin: Theme.smallPadding
+        anchors.top: labelEnsUsername.bottom
+        anchors.topMargin: Theme.smallPadding
+      }
 
-    Separator {
-      id: separator
-      anchors.top: valueChatKey.bottom
-      anchors.topMargin: Theme.padding
-      anchors.left: parent.left
-      anchors.leftMargin: -Theme.padding
-      anchors.right: parent.right
-      anchors.rightMargin: -Theme.padding
-    }
+      StyledText {
+        id: labelChatKey
+        text: qsTr("Chat key")
+        font.pixelSize: 13
+        font.weight: Font.Medium
+        color: Theme.darkGrey
+        anchors.left: parent.left
+        anchors.leftMargin: Theme.smallPadding
+        anchors.top: valueEnsName.bottom
+        anchors.topMargin: Theme.padding
+      }
 
-    StyledText {
-      id: labelShareURL
-      text: qsTr("Share Profile URL")
-      font.pixelSize: 13
-      font.weight: Font.Medium
-      color: Theme.darkGrey
-      anchors.left: parent.left
-      anchors.leftMargin: Theme.smallPadding
-      anchors.top: separator.bottom
-      anchors.topMargin: Theme.padding
-    }
+      StyledText {
+        id: valueChatKey
+        text: fromAuthor
+        width: 160
+        elide: Text.ElideMiddle
+        font.pixelSize: 14
+        anchors.left: parent.left
+        anchors.leftMargin: Theme.smallPadding
+        anchors.top: labelChatKey.bottom
+        anchors.topMargin: Theme.smallPadding
+      }
 
-    StyledText {
-      id: valueShareURL
-      text: "https://join.status.im/u/" + fromAuthor.substr(0, 4) + "..." + fromAuthor.substr(fromAuthor.length - 5)
-      font.pixelSize: 14
-      anchors.left: parent.left
-      anchors.leftMargin: Theme.smallPadding
-      anchors.top: labelShareURL.bottom
-      anchors.topMargin: Theme.smallPadding
+      Separator {
+        id: separator
+        anchors.top: valueChatKey.bottom
+        anchors.topMargin: Theme.padding
+        anchors.left: parent.left
+        anchors.leftMargin: -Theme.padding
+        anchors.right: parent.right
+        anchors.rightMargin: -Theme.padding
+      }
+
+      StyledText {
+        id: labelShareURL
+        text: qsTr("Share Profile URL")
+        font.pixelSize: 13
+        font.weight: Font.Medium
+        color: Theme.darkGrey
+        anchors.left: parent.left
+        anchors.leftMargin: Theme.smallPadding
+        anchors.top: separator.bottom
+        anchors.topMargin: Theme.padding
+      }
+
+      StyledText {
+        id: valueShareURL
+        text: "https://join.status.im/u/" + fromAuthor.substr(0, 4) + "..." + fromAuthor.substr(fromAuthor.length - 5)
+        font.pixelSize: 14
+        anchors.left: parent.left
+        anchors.leftMargin: Theme.smallPadding
+        anchors.top: labelShareURL.bottom
+        anchors.topMargin: Theme.smallPadding
+      }
     }
 
     // TODO(pascal): implement copy to clipboard component

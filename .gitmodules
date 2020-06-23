@@ -52,3 +52,6 @@
 [submodule "vendor/nim-metrics"]
 	path = vendor/nim-metrics
 	url = https://github.com/status-im/nim-metrics
+[submodule "vendor/QR-Code-generator"]
+	path = vendor/QR-Code-generator
+	url = https://github.com/status-im/QR-Code-generator

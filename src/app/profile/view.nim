@@ -6,6 +6,7 @@ import ../../status/contacts as status_contacts
 import ../../status/accounts as status_accounts
 import ../../status/status
 import ../../status/chat/chat
+import qrcode/qrcode
 
 QtObject:
   type ProfileView* = ref object of QObject
@@ -93,3 +94,6 @@ QtObject:
   proc isAdded*(self: ProfileView, id: string): bool {.slot.} =
     if id == "": return false
     self.status.contacts.isAdded(id)
+
+  proc qrCode*(self: ProfileView, text:string): string {.slot.} =
+    result = "data:image/svg+xml;utf8," & generateQRCodeSVG(text, 2)
