@@ -1,5 +1,4 @@
-import sequtils, strformat, sugar, chronicles, typeinfo, macros, tables
-import ./utils as status_utils
+import sequtils, strformat, sugar, macros, tables
 import eth/common/eth_types, stew/byteutils, nimcrypto
 from eth/common/utils import parseAddress
 
@@ -12,7 +11,7 @@ type Method = object
   name: string
   signature: string
   noPadding: bool
-    
+
 type Contract* = ref object
   name*: string
   network*: Network

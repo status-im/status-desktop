@@ -1,6 +1,6 @@
 import NimQml
 import Tables
-import ../../../status/profile/[profile, mailserver]
+import ../../../status/profile/mailserver
 
 type
   MailServerRoles {.pure.} = enum
@@ -13,7 +13,7 @@ QtObject:
 
   proc setup(self: MailServersList) = self.QAbstractListModel.setup
 
-  proc delete(self: MailServersList) = 
+  proc delete(self: MailServersList) =
     self.mailservers = @[]
     self.QAbstractListModel.delete
 
