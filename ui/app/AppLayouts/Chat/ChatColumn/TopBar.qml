@@ -44,7 +44,7 @@ Rectangle {
         text: {
             switch(chatsModel.activeChannel.chatType){
                 case Constants.chatTypePublic: return qsTr("Public chat")
-                case Constants.chatTypeOneToOne: return qsTr("TODO: Contact/Not a contact")
+                case Constants.chatTypeOneToOne: return (profileModel.isAdded(chatsModel.activeChannel.id) ? qsTr("Contact") : qsTr("Not a contact"))
                 case Constants.chatTypePrivateGroupChat: 
                     let cnt = chatsModel.activeChannel.members.rowCount();
                     if(cnt > 1) return qsTr("%1 members").arg(cnt);
