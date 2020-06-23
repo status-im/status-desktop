@@ -123,6 +123,7 @@ proc dos_chararray_delete(str: cstring) {.cdecl, dynlib: dynLibName, importc.}
 
 # QCoreApplication
 proc dos_qcoreapplication_application_dir_path(): cstring {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qapplication_enable_hdpi() {.cdecl, dynlib: dynLibName, importc.}
 
 # QApplication
 proc dos_qapplication_create() {.cdecl, dynlib: dynLibName, importc.}
