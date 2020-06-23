@@ -6,11 +6,16 @@ import "../../../shared"
 import "."
 
 SplitView {
+    property var appSettings
+
     id: walletView
     Layout.fillHeight: true
     Layout.fillWidth: true
 
     handle: SplitViewHandle {}
+
+    Component.onCompleted: this.restoreState(appSettings.walletSplitView)
+    Component.onDestruction: appSettings.walletSplitView = this.saveState()
 
     LeftTab {
         id: leftTab

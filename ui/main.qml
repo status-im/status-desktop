@@ -3,18 +3,35 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import Qt.labs.platform 1.1
 import QtQml.StateMachine 1.14 as DSM
+import Qt.labs.settings 1.0
+import QtQml 2.13
 import "./onboarding"
 import "./app"
 import "./imports"
 
 ApplicationWindow {
+    property alias appSettings: settings
+
     id: applicationWindow
     width: 1232
     height: 770
-    title: "Nim Status Client"
+    title: {
+        // Set application settings
+        Qt.application.name = qsTr("Nim Status Client")
+        Qt.application.organization = "Status"
+        Qt.application.domain = "status.im"
+        return Qt.application.name
+    }
     visible: true
 
     signal navigateTo(string path)
+
+    Settings {
+       id: settings
+       property var chatSplitView
+       property var walletSplitView
+       property var profileSplitView
+   }
 
     SystemTrayIcon {
         visible: true
@@ -138,7 +155,9 @@ ApplicationWindow {
 
     Component {
         id: app
-        AppMain {}
+        AppMain {
+            appSettings: applicationWindow.appSettings
+        }
     }
 
     Component {

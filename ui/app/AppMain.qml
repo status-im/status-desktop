@@ -5,6 +5,8 @@ import "../imports"
 import "./AppLayouts"
 
 RowLayout {
+    property var appSettings
+
     id: rowLayout
     Layout.fillHeight: true
     Layout.fillWidth: true
@@ -158,6 +160,7 @@ RowLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
+            appSettings: rowLayout.appSettings
         }
 
         WalletLayout {
@@ -165,6 +168,7 @@ RowLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
+            appSettings: rowLayout.appSettings
         }
 
         BrowserLayout {
@@ -179,6 +183,7 @@ RowLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
+            appSettings: rowLayout.appSettings
         }
 
         NodeLayout {
