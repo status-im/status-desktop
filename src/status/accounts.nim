@@ -1,6 +1,7 @@
 import eventemitter, options
 import libstatus/accounts as status_accounts
 import libstatus/types
+import libstatus/utils
 
 type
   AccountModel* = ref object
@@ -44,3 +45,6 @@ proc importMnemonic*(self: AccountModel, mnemonic: string): GeneratedAccount =
 proc reset*(self: AccountModel) =
   self.nodeAccounts = @[]
   self.generatedAddresses = @[]
+
+proc generateAlias*(publicKey: string): string =
+  result = status_accounts.generateAlias(publicKey)

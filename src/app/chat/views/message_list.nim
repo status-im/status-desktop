@@ -1,10 +1,11 @@
 import NimQml, Tables
+import ../../../status/status
+import ../../../status/accounts
 import ../../../status/chat
 import ../../../status/chat/[message,stickers]
 import ../../../status/profile/profile
 import ../../../status/ens
 import strformat
-include message_format
 
 type
   ChatMessageRoles {.pure.} = enum
@@ -25,6 +26,7 @@ QtObject:
   type
     ChatMessageList* = ref object of QAbstractListModel
       messages*: seq[Message]
+      status: Status
 
   proc delete(self: ChatMessageList) =
     self.messages = @[]
@@ -33,14 +35,17 @@ QtObject:
   proc setup(self: ChatMessageList) =
     self.QAbstractListModel.setup
 
+  include message_format
+
   proc chatIdentifier(self: ChatMessageList, chatId:string): Message =
     result = Message()
     result.contentType = ContentType.ChatIdentifier;
     result.chatId = chatId
 
-  proc newChatMessageList*(chatId: string): ChatMessageList =
+  proc newChatMessageList*(chatId: string, status: Status): ChatMessageList =
     new(result, delete)
     result.messages = @[result.chatIdentifier(chatId)]
+    result.status = status
     result.setup
 
   method rowCount(self: ChatMessageList, index: QModelIndex = nil): int =
@@ -55,7 +60,7 @@ QtObject:
     let chatMessageRole = role.ChatMessageRoles
     case chatMessageRole:
       of ChatMessageRoles.UserName: result = newQVariant(message.alias)
-      of ChatMessageRoles.Message: result = newQVariant(renderBlock(message))
+      of ChatMessageRoles.Message: result = newQVariant(self.renderBlock(message))
       of ChatMessageRoles.Timestamp: result = newQVariant(message.timestamp)
       of ChatMessageRoles.Clock: result = newQVariant($message.clock)
       of ChatMessageRoles.Identicon: result = newQVariant(message.identicon)
