@@ -22,8 +22,9 @@ Item {
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
 
-    property bool isMessage: contentType == Constants.messageType || contentType == Constants.stickerType || contentType == Constants.emojiType 
-    property bool isStatusMessage: contentType == Constants.systemMessagePrivateGroupType
+    property bool isEmoji: contentType === Constants.emojiType
+    property bool isMessage: contentType === Constants.messageType || contentType === Constants.stickerType 
+    property bool isStatusMessage: contentType === Constants.systemMessagePrivateGroupType
 
     property var profileClick: function () {}
 
@@ -185,7 +186,7 @@ Item {
         anchors.top: parent.top
         fillMode: Image.PreserveAspectFit
         source: identicon
-        visible: isMessage && authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        visible: (isMessage || isEmoji) && authorCurrentMsg != authorPrevMsg && !isCurrentUser
         mipmap: true
         smooth: false
         antialiasing: true
@@ -211,7 +212,7 @@ Item {
         readOnly: true
         wrapMode: Text.WordWrap
         selectByMouse: true
-        visible: isMessage && authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        visible: (isMessage || isEmoji) && authorCurrentMsg != authorPrevMsg && !isCurrentUser
         MouseArea {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
@@ -229,7 +230,7 @@ Item {
         height: (2 * chatVerticalPadding) + (contentType == Constants.stickerType ? stickerId.height : chatText.height)
         color: isCurrentUser ? Theme.blue : Theme.lightBlue
         border.color: Theme.transparent
-        width: contentType == Constants.stickerType ? (stickerId.width + (2 * chatHorizontalPadding)) : (message.length > 52 ? 380 : chatText.width + 2 * chatHorizontalPadding)
+        width: contentType === Constants.stickerType ? (stickerId.width + (2 * chatHorizontalPadding)) : (message.length > 52 ? 380 : chatText.width + 2 * chatHorizontalPadding)
         radius: 16
         anchors.left: !isCurrentUser ? chatImage.right : undefined
         anchors.leftMargin: !isCurrentUser ? 8 : 0
@@ -237,7 +238,7 @@ Item {
         anchors.rightMargin: !isCurrentUser ? 0 : Theme.padding
         anchors.top: authorCurrentMsg != authorPrevMsg && !isCurrentUser ? chatImage.top : parent.top
         anchors.topMargin: 0
-        visible: isMessage
+        visible: isMessage || isEmoji
 
         // Thi`s rectangle's only job is to mask the corner to make it less rounded... yep
         Rectangle {
@@ -266,11 +267,12 @@ Item {
             wrapMode: Text.Wrap
             anchors.top: parent.top
             anchors.topMargin: chatBox.chatVerticalPadding
-            font.pixelSize: 15
+            font.pixelSize: isEmoji ? 40 : 15
             readOnly: true
             selectByMouse: true
             color: !isCurrentUser ? Theme.black : Theme.white
-            visible: contentType == Constants.messageType
+            visible: contentType == Constants.messageType || isEmoji
+            textFormat: TextEdit.RichText
             onLinkActivated: Qt.openUrlExternally(link)
             MouseArea {
                 anchors.fill: parent
@@ -288,15 +290,15 @@ Item {
             anchors.topMargin: chatBox.chatVerticalPadding
             width: 140
             height: 140
-            source: contentType == Constants.stickerType ? ("https://ipfs.infura.io/ipfs/" + sticker) : ""
-            visible: contentType == Constants.stickerType
+            source: contentType === Constants.stickerType ? ("https://ipfs.infura.io/ipfs/" + sticker) : ""
+            visible: contentType === Constants.stickerType
         }
 
         StyledTextEdit {
             id: chatTime
             color: Theme.darkGrey
             text: timestamp
-            anchors.top: contentType == Constants.stickerType ? stickerId.bottom : chatText.bottom
+            anchors.top: contentType === Constants.stickerType ? stickerId.bottom : chatText.bottom
             anchors.bottomMargin: Theme.padding
             anchors.right: !isCurrentUser ? parent.right : undefined
             anchors.rightMargin: !isCurrentUser ? Theme.padding : 0
