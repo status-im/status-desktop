@@ -2,3 +2,4 @@ TopBar 1.0 TopBar.qml
 ChatMessages 1.0 ChatMessages.qml
 ChatInput 1.0 ChatInput.qml
 EmptyChat 1.0 EmptyChat.qml
+ChatButtons 1.0 ChatButtons.qml

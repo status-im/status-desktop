@@ -19,7 +19,7 @@ Rectangle {
     border.width: 0
     radius: Theme.radius
 
-    RoundImage {
+    Identicon {
         id: accountImage
         anchors.left: parent.left
         anchors.leftMargin: Theme.padding

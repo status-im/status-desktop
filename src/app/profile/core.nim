@@ -31,8 +31,8 @@ proc init*(self: ProfileController, account: Account) =
   # Ideally, this module should call getSettings once, and fill the 
   # profile with all the information comming from the settings.
   let response = status_settings.getSettings()
-  let pubKey = parseJSON($response)["result"]["public-key"].getStr
-  let mnemonic = parseJSON($response)["result"]["mnemonic"].getStr
+  let pubKey = response["public-key"].getStr
+  let mnemonic = response["mnemonic"].getStr
   profile.id = pubKey
 
   self.view.setNewProfile(profile)

@@ -1,67 +1,31 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import "../components"
 import "../../../../shared"
 import "../../../../imports"
 
 Rectangle {
-    id: element2
-    width: 200
-    height: 70
-    Layout.fillWidth: true
-    color: "white"
     border.width: 0
 
     visible: chatsModel.activeChannel.chatType != Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember(profileModel.profile.pubKey)
 
-    Rectangle {
-        id: rectangle
-        color: "#00000000"
-        border.color: Theme.grey
+    RowLayout {
+        spacing: 0
         anchors.fill: parent
 
-        Button {
-            id: chatSendBtn
-            visible: txtData.length > 0
-            x: 100
-            width: 30
-            height: 30
-            text: ""
-            anchors.top: parent.top
-            anchors.topMargin: 20
-            anchors.right: parent.right
-            anchors.rightMargin: 16
-            onClicked: {
-                chatsModel.sendMessage(txtData.text)
-                txtData.text = ""
-            }
-            background: Rectangle {
-                color: parent.enabled ? Theme.blue : Theme.grey
-                radius: 50
-            }
-            Image {
-                source: "../../../img/arrowUp.svg"
-                width: 12
-                fillMode: Image.PreserveAspectFit
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-            }
-        }
-
         StyledTextField {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.preferredWidth: parent.width - sendBtns.width
+
             id: txtData
             text: ""
-            padding: 0
+            leftPadding: 12
+            rightPadding: Theme.padding
             font.pixelSize: 14
             placeholderText: qsTr("Type a message...")
-            anchors.right: chatSendBtn.left
-            anchors.rightMargin: 16
-            anchors.top: parent.top
-            anchors.topMargin: 0
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 0
-            anchors.left: parent.left
-            leftPadding: 24
+
             selectByMouse: true
             Keys.onEnterPressed: {
                 chatsModel.sendMessage(txtData.text)
@@ -75,10 +39,28 @@ Rectangle {
                 color: "#00000000"
             }
         }
+
+        ChatButtons {
+            id: sendBtns
+            Layout.topMargin: 1
+            Layout.fillHeight: true
+            Layout.preferredWidth: 30 + Theme.padding
+            Layout.minimumWidth: 30 + Theme.padding
+            Layout.maximumWidth: 200
+        }
+    }
+
+    MouseArea {
+        id: mouseArea1
+        anchors.rightMargin: 50
+        anchors.fill: parent
+        onClicked: {
+            txtData.forceActiveFocus(Qt.MouseFocusReason)
+        }
     }
 }
 /*##^##
 Designer {
-    D{i:0;width:600}
+    D{i:0;autoSize:true;formeditorColor:"#ffffff";height:100;width:600}
 }
 ##^##*/

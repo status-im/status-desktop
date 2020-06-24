@@ -2,14 +2,16 @@ import QtQuick 2.13
 import "../imports"
 
 Rectangle {
+    id: root
     property int size: 36
     property color bg: Theme.blue
     property url imgPath: ""
+    signal clicked
 
     width: size
     height: size
     color: bg
-    radius: 50
+    radius: size / 2
 
     Image {
         id: roundedIconImage
@@ -19,6 +21,16 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         fillMode: Image.PreserveAspectFit
         source: imgPath
+    }
+
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        cursorShape: Qt.PointingHandCursor
+        onClicked: {
+            root.clicked()
+        }
     }
 }
 

@@ -3,8 +3,11 @@ import ../../status/chat as chat_model
 import ../../status/mailservers as mailserver_model
 import ../../signals/types
 import ../../status/libstatus/types as status_types
+import ../../status/libstatus/wallet as status_wallet
 import ../../status/[chat, contacts, status]
 import view, views/channels_list
+
+from eth/common/utils import parseAddress
 
 logScope:
   topics = "chat-controller"
@@ -69,6 +72,12 @@ proc init*(self: ChatController) =
   self.handleChatEvents()
   self.status.mailservers.init()
   self.status.chat.init()
+
+  let currAcct = status_wallet.getWalletAccounts()[0] # TODO: make generic
+  let currAddr = parseAddress(currAcct.address)
+  let installedStickers = self.status.chat.getInstalledStickers(currAddr)
+  for stickerPack in installedStickers:
+    self.view.addStickerPackToList(stickerPack)
 
 proc handleMessage(self: ChatController, data: MessageSignal) =
   self.status.chat.update(data.chats, data.messages)

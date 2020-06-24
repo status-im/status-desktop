@@ -78,7 +78,22 @@ proc sendChatMessage*(chatId: string, msg: string): string =
       "responseTo": nil,
       "ensName": nil,
       "sticker": nil,
-      "contentType": 1
+      "contentType": ContentType.Message.int
+    }
+  ])
+
+proc sendStickerMessage*(chatId: string, hash: string, pack: int): string =
+  callPrivateRPC("sendChatMessage".prefix, %* [
+    {
+      "chatId": chatId,
+      "text": "Update to latest version to see a nice sticker here!",
+      "responseTo": nil,
+      "ensName": nil,
+      "sticker": {
+        "hash": hash,
+        "pack": pack
+      },
+      "contentType": ContentType.Sticker.int
     }
   ])
 

@@ -4,9 +4,10 @@ import ../../status/status
 import ../../status/chat as status_chat
 import ../../status/contacts as status_contacts
 import ../../status/chat/[chat, message]
+import ../../status/libstatus/types
 import ../../status/profile/profile
 
-import views/channels_list, views/message_list, views/chat_item
+import views/channels_list, views/message_list, views/chat_item, views/sticker_pack_list, views/sticker_list
 
 logScope:
   topics = "chats-view"
@@ -19,6 +20,10 @@ QtObject:
       callResult: string
       messageList: Table[string, ChatMessageList]
       activeChannel*: ChatItemView
+      activeStickerPackId*: int
+      stickerPacks*: StickerPackList
+      stickers*: Table[int, StickerList]
+      emptyStickerList: StickerList
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
 
@@ -28,6 +33,7 @@ QtObject:
     for msg in self.messageList.values:
       msg.delete
     self.messageList = initTable[string, ChatMessageList]()
+    self.stickers = initTable[int, StickerList]()
     self.QAbstractListModel.delete
 
   proc newChatsView*(status: Status): ChatsView =
@@ -35,8 +41,22 @@ QtObject:
     result.status = status
     result.chats = newChannelsList()
     result.activeChannel = newChatItemView(status)
+    result.activeStickerPackId = -1
     result.messageList = initTable[string, ChatMessageList]()
+    result.stickerPacks = newStickerPackList()
+    result.stickers = initTable[int, StickerList]()
+    result.emptyStickerList = newStickerList()
     result.setup()
+
+  proc addStickerPackToList*(self: ChatsView, stickerPack: StickerPack) =
+    discard self.stickerPacks.addStickerPackToList(stickerPack)
+    self.stickers[stickerPack.id] = newStickerList(stickerPack.stickers)
+  
+  proc getStickerPackList(self: ChatsView): QVariant {.slot.} =
+    newQVariant(self.stickerPacks)
+
+  QtProperty[QVariant] stickerPacks:
+    read = getStickerPackList
 
   proc getChatsList(self: ChatsView): QVariant {.slot.} =
     newQVariant(self.chats)
@@ -67,6 +87,24 @@ QtObject:
     read = getActiveChannelIdx
     write = setActiveChannelByIndex
     notify = activeChannelChanged
+  
+  proc activeStickerPackChanged*(self: ChatsView) {.signal.}
+
+  proc setActiveStickerPackById*(self: ChatsView, id: int) {.slot.} =
+    if self.activeStickerPackId == id:
+      return
+
+    self.activeStickerPackId = id
+    self.activeStickerPackChanged()
+
+  proc getStickerList*(self: ChatsView): QVariant {.slot.} =
+    if self.activeStickerPackId <= 0:
+      return newQVariant(self.emptyStickerList)
+    result = newQVariant(self.stickers[self.activeStickerPackId])
+
+  QtProperty[QVariant] stickers:
+    read = getStickerList
+    notify = activeStickerPackChanged
 
   proc setActiveChannel*(self: ChatsView, channel: string) =
     if(channel == ""): return
@@ -120,6 +158,9 @@ QtObject:
 
   proc sendMessage*(self: ChatsView, message: string) {.slot.} =
     discard self.status.chat.sendMessage(self.activeChannel.id, message)
+  
+  proc sendSticker*(self: ChatsView, hash: string, pack: int) {.slot.} =
+    self.status.chat.sendSticker(self.activeChannel.id, hash, pack)
 
   proc joinChat*(self: ChatsView, channel: string, chatTypeInt: int): int {.slot.} =
     self.status.chat.join(channel, ChatType(chatTypeInt))
