@@ -249,6 +249,7 @@ Item {
             selectByMouse: true
             color: !isCurrentUser ? Theme.black : Theme.white
             visible: contentType == Constants.messageType
+            textFormat: TextEdit.RichText
         }
 
         Image {

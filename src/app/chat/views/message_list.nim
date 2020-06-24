@@ -3,6 +3,8 @@ import ../../../status/chat
 import ../../../status/chat/[message,stickers]
 import ../../../status/profile/profile
 import ../../../status/ens
+import strformat
+include message_format
 
 type
   ChatMessageRoles {.pure.} = enum
@@ -44,13 +46,6 @@ QtObject:
   method rowCount(self: ChatMessageList, index: QModelIndex = nil): int =
     return self.messages.len
 
-  proc sectionIdentifier(message: Message): string =
-    result = message.fromAuthor
-    # Force section change, because group status messages are sent with the
-    # same fromAuthor, and ends up causing the header to not be shown
-    if message.contentType == ContentType.Group:
-      result = "GroupChatMessage"
-
   method data(self: ChatMessageList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
@@ -60,7 +55,7 @@ QtObject:
     let chatMessageRole = role.ChatMessageRoles
     case chatMessageRole:
       of ChatMessageRoles.UserName: result = newQVariant(message.alias)
-      of ChatMessageRoles.Message: result = newQVariant(message.text)
+      of ChatMessageRoles.Message: result = newQVariant(renderBlock(message))
       of ChatMessageRoles.Timestamp: result = newQVariant(message.timestamp)
       of ChatMessageRoles.Clock: result = newQVariant($message.clock)
       of ChatMessageRoles.Identicon: result = newQVariant(message.identicon)
