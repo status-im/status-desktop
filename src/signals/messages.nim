@@ -107,6 +107,19 @@ proc toChat*(jsonChat: JsonNode): Chat =
     for jsonMember in jsonChat["membershipUpdateEvents"]:
       result.membershipUpdateEvents.add(jsonMember.toChatMembershipEvent)
 
+proc toTextItem*(jsonText: JsonNode): TextItem =
+  result = TextItem(
+    literal: jsonText{"literal"}.getStr,
+    textType: jsonText{"type"}.getStr,
+    destination: jsonText{"destination"}.getStr,
+    children: @[]
+  )
+
+  if jsonText.hasKey("children") and jsonText["children"].kind != JNull:
+    for child in jsonText["children"]:
+      result.children.add(child.toTextItem)
+
+
 proc toMessage*(jsonMsg: JsonNode): Message =
   result = Message(
       alias: jsonMsg{"alias"}.getStr,
@@ -128,8 +141,13 @@ proc toMessage*(jsonMsg: JsonNode): Message =
       timestamp: $jsonMsg{"timestamp"}.getInt,
       whisperTimestamp: $jsonMsg{"whisperTimestamp"}.getInt,
       isCurrentUser: $jsonMsg{"outgoingStatus"}.getStr == "sending",
-      stickerHash: ""
+      stickerHash: "",
+      parsedText: @[]
     )
+
+  if jsonMsg["parsedText"].kind != JNull: 
+    for text in jsonMsg["parsedText"]:
+      result.parsedText.add(text.toTextItem)
 
   if result.contentType == ContentType.Sticker:
     result.stickerHash = jsonMsg["sticker"]["hash"].getStr
