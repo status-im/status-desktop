@@ -88,6 +88,7 @@ type
     address*: string
     blockNumber*: string
     blockHash*: string
+    contract*: string
     timestamp*: string
     gasPrice*: string
     gasLimit*: string

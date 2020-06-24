@@ -1,19 +1,35 @@
 import QtQuick 2.13
 import "./components"
+import "./data"
 import "../../../imports"
 import "../../../shared"
 
 Item {
+    Tokens {
+      id: tokenList
+    }
+
     Component {
       id: transactionListItemCmp
 
       Rectangle {
         id: transactionListItem
         property bool isHovered: false
+        property string symbol: ""
         anchors.right: parent.right
         anchors.left: parent.left
         height: 64
         color: isHovered ? "#f0f0f0" : "white"
+
+        Component.onCompleted: {
+          for (let i = 0; i < tokenList.count; i++) {
+            let token = tokenList.get(i)
+            if (token.address == contract) {
+              transactionListItem.symbol = token.symbol
+              break;
+            }
+          }
+        }
 
         MouseArea {
             anchors.fill: parent
@@ -28,22 +44,24 @@ Item {
             }
         }
 
-
         TransactionModal{
           id: transactionModal
         }
 
         Item {
-
-          Rectangle {
-            id: assetIcon
-            color: "gray"
-            width: 40
-            height: 40
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.topMargin: 12
-            radius: 50
+          Image {
+              id: assetIcon
+              width: 40
+              height: 40
+              source: "../../img/tokens/" + (transactionListItem.symbol != "" ? transactionListItem.symbol : "ETH") + ".png"
+              anchors.left: parent.left
+              anchors.top: parent.top
+              anchors.topMargin: 12
+              onStatusChanged: {
+                  if (assetIcon.status == Image.Error) {
+                      assetIcon.source = "../../img/tokens/0-native.png"
+                  }
+              }
           }
 
           StyledText {
@@ -65,7 +83,7 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: Theme.bigPadding
             font.pixelSize: 15
-            text: value + " TOKEN"
+            text: value + " " + transactionListItem.symbol
           }
         }
 
