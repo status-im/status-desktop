@@ -151,6 +151,7 @@ Item {
         width:  parent.width - 120
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter
+        textFormat: Text.RichText
     }
 
     // Messages

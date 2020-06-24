@@ -5,27 +5,32 @@ proc sectionIdentifier(message: Message): string =
   if message.contentType == ContentType.Group:
     result = "GroupChatMessage"
 
+proc mention(self: ChatMessageList, pubKey: string): string =
+  if self.status.chat.contacts.hasKey(pubKey):
+    result = ens.userNameOrAlias(self.status.chat.contacts[pubKey])
+  else:
+    result = generateAlias(pubKey)
 
 
 # See render-inline in status-react/src/status_im/ui/screens/chat/message/message.cljs
-proc renderInline(elem: TextItem): string =
+proc renderInline(self: ChatMessageList, elem: TextItem): string =
   case elem.textType:
   of "": result = elem.literal
   of "code": result = fmt("<span style=\"background-color: #1a356b; color: #FFFFFF\">{elem.literal}</span> ")
   of "emph": result = fmt("<span style=\"font-style: italic;\">{elem.literal}</span> ")
   of "strong": result = fmt("<span style=\"font-weight: bold;\">{elem.literal}</span> ")
   of "link": result = "TODO: write safe link here: " & elem.destination
-  of "mention": result = elem.literal  
+  of "mention": result = fmt("<span style=\"color: #000000;\">{self.mention(elem.literal)}</span> ")
 
 # See render-block in status-react/src/status_im/ui/screens/chat/message/message.cljs
-proc renderBlock(message: Message): string =
+proc renderBlock(self: ChatMessageList, message: Message): string =
   # TODO: find out how to extract the css styles
   for pMsg in message.parsedText:
     case pMsg.textType:
       of "paragraph": 
         result = "<p>"
         for children in pMsg.children:
-          result = result & renderInline(children)
+          result = result & self.renderInline(children)
         result = result & "</p>"
       of "blockquote":
         # TODO: extract this from the theme somehow
