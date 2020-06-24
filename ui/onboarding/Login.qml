@@ -25,7 +25,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
 
-        RoundImage {
+        Identicon {
             id: userImage
             width: 40
             height: 40

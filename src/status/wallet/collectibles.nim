@@ -1,5 +1,6 @@
 import strformat, httpclient, json, chronicles, sequtils, strutils, tables
-import ../libstatus/[core, contracts]
+import ../libstatus/core as status
+import ../libstatus/contracts as contracts
 import eth/common/eth_types
 import account
 

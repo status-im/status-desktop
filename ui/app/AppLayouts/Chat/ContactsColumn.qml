@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+
 import "../../../imports"
 import "../../../shared"
 import "./components"
@@ -50,6 +51,10 @@ Item {
 
     AddChat {
         id: addChat
+        anchors.right: parent.right
+        anchors.rightMargin: Theme.padding
+        anchors.top: parent.top
+        anchors.topMargin: 59
     }
 
     StackLayout {

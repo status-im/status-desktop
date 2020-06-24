@@ -36,15 +36,24 @@ StackLayout {
             }
        }
 
-        RowLayout {
+
+
+        Rectangle {
             id: chatInputContainer
             height: 70
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
             Layout.fillWidth: true
-            Layout.bottomMargin: 0
-            Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: height
             transformOrigin: Item.Bottom
+            clip: true
 
-            ChatInput {}
+            ChatInput {
+                anchors.fill: parent
+                anchors.leftMargin:  -border.width
+                border.width: 1
+                border.color: Theme.grey
+            }
         }
     }
 

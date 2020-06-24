@@ -22,7 +22,7 @@ Rectangle {
     color: selected || isHovered ? Theme.grey : Theme.transparent
     radius: Theme.radius
 
-    RoundImage {
+    Identicon {
         id: accountImage
         anchors.left: parent.left
         anchors.leftMargin: Theme.padding

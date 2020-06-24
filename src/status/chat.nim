@@ -1,9 +1,12 @@
 import eventemitter, json, strutils, sequtils, tables, chronicles
 import libstatus/chat as status_chat
+import libstatus/stickers as status_stickers
+import libstatus/types
 import profile/profile
-import chat/[chat, message]
+import chat/[chat, message], wallet
 import ../signals/messages
 import ens
+import eth/common/eth_types
 
 type 
   ChatUpdateArgs* = ref object of Args
@@ -78,8 +81,20 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
 
   self.events.emit("channelJoined", ChannelArgs(chat: chat))
 
+proc getInstalledStickers*(self: ChatModel, address: EthAddress): seq[StickerPack] =
+  # TODO: needs more fleshing out to determine which sticker packs
+  # we own -- owned sticker packs will simply allowed them to be installed
+  discard status_stickers.getBalance(address)
+
+  result = status_stickers.getInstalledStickers()
+
 proc init*(self: ChatModel) =
   let chatList = status_chat.loadChats()
+
+  # TODO: Temporarily install sticker packs as a first step. Later, once installation
+  # of sticker packs is supported, this should be removed, and a default "No
+  # stickers installed" view should show if no sticker packs are installed.
+  status_stickers.installStickers()
 
   var filters:seq[JsonNode] = @[]
   for chat in chatList:
@@ -132,6 +147,10 @@ proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
   var sentMessage = status_chat.sendChatMessage(chatId, msg)
   self.emitUpdate(sentMessage)
   sentMessage
+
+proc sendSticker*(self: ChatModel, chatId: string, hash: string, pack: int) =
+  var response = status_chat.sendStickerMessage(chatId, hash, pack)
+  self.emitUpdate(response)
 
 proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true) =
   if not self.msgCursor.hasKey(chatId):
