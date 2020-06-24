@@ -89,7 +89,25 @@ Rectangle {
     }
     StyledText {
         id: contactTime
-        text: wrapper.timestamp
+        text: {
+          let now = new Date()
+          let yesterday = new Date()
+          yesterday.setDate(now.getDate()-1)
+          let messageDate = new Date(Math.floor(wrapper.timestamp))
+          let lastWeek = new Date()
+          lastWeek.setDate(now.getDate()-7)
+
+          if (now.toDateString() == messageDate.toDateString()) {
+            return messageDate.getHours() + ":" + (messageDate.getMinutes() < 10 ? "0" + messageDate.getMinutes() : messageDate.getMinutes())
+          } else if (yesterday.toDateString() == messageDate.toDateString()) {
+            return qsTr("Yesterday")
+          } else if (lastWeek.getTime() < messageDate.getTime()) {
+            let days = [qsTr('Sunday'), qsTr('Monday'), qsTr('Tuesday'), qsTr('Wednesday'), qsTr('Thursday'), qsTr('Friday'), qsTr('Saturday')];
+            return days[messageDate.getDay()];
+          } else {
+            return messageDate.getMonth()+1+"/"+messageDate.getDay()+"/"+messageDate.getFullYear()
+          }
+        }
         anchors.right: parent.right
         anchors.rightMargin: Theme.padding
         anchors.top: parent.top
