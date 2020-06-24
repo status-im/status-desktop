@@ -16,6 +16,7 @@ type
     Value = UserRole + 11,
     From = UserRole + 12,
     To = UserRole + 13
+    Contract = UserRole + 14
 
 QtObject:
   type TransactionList* = ref object of QAbstractListModel
@@ -56,6 +57,7 @@ QtObject:
     of TransactionRoles.Value: result = newQVariant(transaction.value)
     of TransactionRoles.From: result = newQVariant(transaction.fromAddress)
     of TransactionRoles.To: result = newQVariant(transaction.to)
+    of TransactionRoles.Contract: result = newQVariant(transaction.contract)
 
   method roleNames(self: TransactionList): Table[int, string] =
     { TransactionRoles.Type.int:"typeValue",
@@ -70,7 +72,8 @@ QtObject:
     TransactionRoles.TxStatus.int:"txStatus",
     TransactionRoles.Value.int:"value",
     TransactionRoles.From.int:"fromAddress",
-    TransactionRoles.To.int:"to" }.toTable
+    TransactionRoles.To.int:"to",
+    TransactionRoles.Contract.int:"contract"}.toTable
 
   proc addTransactionToList*(self: TransactionList, transaction: Transaction) =
     self.beginInsertRows(newQModelIndex(), self.transactions.len, self.transactions.len)

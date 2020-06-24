@@ -39,6 +39,7 @@ proc getTransfersByAddress*(address: string): seq[Transaction] =
       accountTransactions.add(Transaction(
         typeValue: transaction["type"].getStr,
         address: transaction["address"].getStr,
+        contract: transaction["contract"].getStr,
         blockNumber: transaction["blockNumber"].getStr,
         blockHash: transaction["blockhash"].getStr,
         timestamp: transaction["timestamp"].getStr,
