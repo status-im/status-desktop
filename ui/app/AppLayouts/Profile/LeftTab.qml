@@ -29,7 +29,7 @@ ColumnLayout {
     }
 
     RowLayout {
-        height: btnheight * 10
+        height: profileMenu.btnheight * 10
         Layout.fillHeight: true
         Layout.fillWidth: true
 
