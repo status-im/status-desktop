@@ -8,8 +8,8 @@ type CachedValues* = Table[string, ValueTime]
 
 proc newCachedValues*(): CachedValues = initTable[string, ValueTime]()
 
-proc isCached*(self: CachedValues, cacheKey: string): bool =
-  self.hasKey(cacheKey) and ((self[cacheKey].timestamp + initDuration(minutes = 5)) >= now())
+proc isCached*(self: CachedValues, cacheKey: string, duration=initDuration(minutes = 5)): bool =
+  self.hasKey(cacheKey) and ((self[cacheKey].timestamp + duration) >= now())
 
 proc cacheValue*(self: var CachedValues, cacheKey: string, value: string) =
   self[cacheKey] = ValueTime(value: value, timestamp: now())
