@@ -60,7 +60,6 @@ QtObject:
     self.currentAccount.setAccountItem(selectedAccount)
     self.currentAccountChanged()
     self.setCurrentAssetList(selectedAccount.assetList)
-    self.setCurrentCollectiblesList(selectedAccount.collectibles)
 
   proc getCurrentAccount*(self: WalletView): QVariant {.slot.} =
     result = newQVariant(self.currentAccount)
@@ -119,7 +118,6 @@ QtObject:
     # If it's the first account we ever get, use its list as our first lists
     if (self.accounts.rowCount == 1):
       self.setCurrentAssetList(account.assetList)
-      self.setCurrentCollectiblesList(account.collectibles)
       self.setCurrentAccountByIndex(0)
     self.accountListChanged()
 
@@ -191,10 +189,12 @@ QtObject:
     self.accountListChanged()
     self.accounts.forceUpdate()
     self.setCurrentAssetList(self.currentAccount.account.assetList)
-    self.setCurrentCollectiblesList(self.currentAccount.account.collectibles)
 
   proc addCustomToken*(self: WalletView, address: string, name: string, symbol: string, decimals: string) {.slot.} =
     self.status.wallet.toggleAsset(symbol, true, address, name, parseInt(decimals), "")
 
   proc loadTransactionsForAccount*(self: WalletView, address: string) {.slot.} =
     self.setCurrentTransactions(self.status.wallet.getTransfersByAddress(address))
+
+  proc loadCollectiblesForAccount*(self: WalletView, address: string) {.slot.} =
+    self.setCurrentCollectiblesList(self.status.wallet.getAllCollectibles(address))
