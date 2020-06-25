@@ -22,7 +22,7 @@ proc mainProc() =
 
   enableHDPI()
 
-  let app = newQApplication()
+  let app = newQApplication("Nim Status Client")
   app.icon("./status.svg")
 
   let engine = newQQmlApplicationEngine()
