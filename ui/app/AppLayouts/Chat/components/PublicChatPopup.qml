@@ -51,9 +51,9 @@ ModalPopup {
         Layout.fillHeight: false
         Layout.fillWidth: true
         anchors.right: parent.right
-        anchors.rightMargin: 65
+        anchors.rightMargin: 35
         anchors.left: parent.left
-        anchors.leftMargin: 65
+        anchors.leftMargin: 35
         anchors.top: channelName.bottom
         anchors.topMargin: 37
 
