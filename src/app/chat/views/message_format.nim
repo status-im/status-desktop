@@ -7,9 +7,8 @@ proc sectionIdentifier(message: Message): string =
 
 proc mention(self: ChatMessageList, pubKey: string): string =
   if self.status.chat.contacts.hasKey(pubKey):
-    result = ens.userNameOrAlias(self.status.chat.contacts[pubKey])
-  else:
-    result = generateAlias(pubKey)
+    return ens.userNameOrAlias(self.status.chat.contacts[pubKey])
+  generateAlias(pubKey)
 
 
 # See render-inline in status-react/src/status_im/ui/screens/chat/message/message.cljs
