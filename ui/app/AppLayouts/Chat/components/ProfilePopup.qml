@@ -104,7 +104,7 @@ ModalPopup {
         visible: showQR
         Image {
             asynchronous: true
-            fillMode: QtQuick.Image.PreserveAspectFit
+            fillMode: Image.PreserveAspectFit
             source: profileModel.qrCode(fromAuthor)
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
