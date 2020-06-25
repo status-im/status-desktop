@@ -21,10 +21,6 @@ ScrollView {
     ScrollBar.vertical.policy: chatLogView.contentHeight > chatLogView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-    ProfilePopup {
-      id: profilePopup
-    }
-
     ListView {
         anchors.fill: parent
         spacing: 4
