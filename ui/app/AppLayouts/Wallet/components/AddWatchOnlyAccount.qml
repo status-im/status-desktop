@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import QtQuick.Dialogs 1.3
 import "../../../../imports"
 import "../../../../shared"
 
@@ -10,6 +11,7 @@ ModalPopup {
     property string selectedColor: Constants.accountColors[0]
     property string addressError: ""
     property string accountNameValidationError: ""
+    property bool loading: false
 
     function validate() {
         if (addressInput.text === "") {
@@ -73,17 +75,31 @@ ModalPopup {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.rightMargin: Theme.padding
-        label: "Add account >"
+        label: loading ? qsTr("Loading...") : qsTr("Add account >")
 
-        disabled: addressInput.text === "" || accountNameInput.text === ""
+        disabled: loading || addressInput.text === "" || accountNameInput.text === ""
+
+        MessageDialog {
+            id: accountError
+            title: "Adding the account failed"
+            icon: StandardIcon.Critical
+            standardButtons: StandardButton.Ok
+        }
 
         onClicked : {
+            // TODO the loaidng doesn't work because the function freezes th eview. Might need to use threads
+            loading = true
             if (!validate()) {
-                return
+                return loading = false
             }
 
-            walletModel.addWatchOnlyAccount(addressInput.text, accountNameInput.text, selectedColor);
-            // TODO manage errors adding account
+            const error = walletModel.addWatchOnlyAccount(addressInput.text, accountNameInput.text, selectedColor);
+            loading = false
+            if (error) {
+                accountError.text = error
+                return accountError.open()
+            }
+
             popup.close();
         }
     }

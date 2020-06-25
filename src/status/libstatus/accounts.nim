@@ -7,7 +7,10 @@ import accounts/constants
 import ../../signals/types as signal_types
 import ../wallet/account
 
-proc queryAccounts*(): string =
+proc hashPassword(password: string): string =
+  result = "0x" & $keccak_256.digest(password)
+
+proc getDefaultAccount*(): string =
   var response = callPrivateRPC("eth_accounts")
   result = parseJson(response)["result"][0].getStr()
 
@@ -49,7 +52,7 @@ proc saveAccountAndLogin*(
   password: string,
   configJSON: string,
   settingsJSON: string): types.Account =
-  let hashedPassword = "0x" & $keccak_256.digest(password)
+  let hashedPassword = hashPassword(password)
   let subaccountData = %* [
     {
       "public-key": account.derived.defaultWallet.publicKey,
@@ -81,7 +84,7 @@ proc saveAccountAndLogin*(
   raise newException(StatusGoException, "Error saving account and logging in: " & error)
 
 proc storeDerivedAccounts*(account: GeneratedAccount, password: string): MultiAccounts =
-  let hashedPassword = "0x" & $keccak_256.digest(password)
+  let hashedPassword = hashPassword(password)
   let multiAccount = %* {
     "accountID": account.id,
     "paths": [PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET],
@@ -150,7 +153,7 @@ proc setupAccount*(account: GeneratedAccount, password: string): types.Account =
     discard libstatus.addPeer(peer)
 
 proc login*(nodeAccount: NodeAccount, password: string): NodeAccount =
-  let hashedPassword = "0x" & $keccak_256.digest(password)
+  let hashedPassword = hashPassword(password)
   let account = nodeAccount.toAccount
   let loginResult = $libstatus.login($toJson(account), hashedPassword)
   let error = parseJson(loginResult)["error"].getStr
@@ -161,6 +164,16 @@ proc login*(nodeAccount: NodeAccount, password: string): NodeAccount =
     return
 
   raise newException(StatusGoException, "Error logging in: " & error)
+
+proc verifyAccountPassword*(address: string, password: string): bool =
+  let hashedPassword = hashPassword(password)
+  let verifyResult = $libstatus.verifyAccountPassword(KEYSTOREDIR, address, hashedPassword)
+  let error = parseJson(verifyResult)["error"].getStr
+
+  if error == "":
+    return true
+
+  return false
 
 proc multiAccountImportMnemonic*(mnemonic: string): GeneratedAccount =
   let mnemonicJson = %* {

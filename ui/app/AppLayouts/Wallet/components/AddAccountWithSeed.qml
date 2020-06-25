@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import QtQuick.Dialogs 1.3
 import "../../../../imports"
 import "../../../../shared"
 
@@ -11,6 +12,7 @@ ModalPopup {
     property string passwordValidationError: ""
     property string seedValidationError: ""
     property string accountNameValidationError: ""
+    property bool loading: false
 
     function validate() {
         if (passwordInput.text === "") {
@@ -95,17 +97,31 @@ ModalPopup {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.rightMargin: Theme.padding
-        label: "Add account >"
+        label: loading ? qsTr("Loading...") : qsTr("Add account >")
 
-        disabled: passwordInput.text === "" || accountNameInput.text === "" || accountSeedInput.text === ""
+        disabled: loading || passwordInput.text === "" || accountNameInput.text === "" || accountSeedInput.text === ""
+
+        MessageDialog {
+            id: accountError
+            title: "Adding the account failed"
+            icon: StandardIcon.Critical
+            standardButtons: StandardButton.Ok
+        }
 
         onClicked : {
+            // TODO the loaidng doesn't work because the function freezes th eview. Might need to use threads
+            loading = true
             if (!validate()) {
-                return
+                return loading = false
             }
 
-            walletModel.addAccountsFromSeed(accountSeedInput.text, passwordInput.text, accountNameInput.text, selectedColor)
-            // TODO manage errors adding account
+            const error = walletModel.addAccountsFromSeed(accountSeedInput.text, passwordInput.text, accountNameInput.text, selectedColor)
+            loading = false
+            if (error) {
+                accountError.text = error
+                return accountError.open()
+            }
+
             popup.close();
         }
     }
