@@ -16,7 +16,12 @@ proc newContactModel*(events: EventEmitter): ContactModel =
 
 proc getContactByID*(self: ContactModel, id: string): Profile =
   let response = status_contacts.getContactByID(id)
-  toProfileModel(parseJSON($response)["result"])
+  # TODO: change to options
+  let responseResult = parseJSON($response)["result"]
+  if responseResult.kind == JNull:
+    result = nil
+  else:
+    result = toProfileModel(parseJSON($response)["result"])
 
 proc blockContact*(self: ContactModel, id: string): string =
   var contact = self.getContactByID(id)
@@ -41,4 +46,5 @@ proc removeContact*(self: ContactModel, id: string) =
 
 proc isAdded*(self: ContactModel, id: string): bool =
   var contact = self.getContactByID(id)
+  if contact.isNil: return false
   contact.systemTags.contains(":contact/added")

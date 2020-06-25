@@ -3,6 +3,7 @@ import NimQml, Tables, json, sequtils, chronicles
 import ../../status/status
 import ../../status/chat as status_chat
 import ../../status/contacts as status_contacts
+import ../../status/ens as status_ens
 import ../../status/chat/[chat, message]
 import ../../status/libstatus/types
 import ../../status/profile/profile
@@ -228,3 +229,9 @@ QtObject:
   proc isEnsVerified*(self: ChatsView, id: string): bool {.slot.} =
     if id == "": return false
     self.status.contacts.getContactByID(id).ensVerified
+
+  proc resolveENS*(self: ChatsView, ens: string): string {.slot.} =
+    result = status_ens.pubkey(ens)
+
+  proc formatENSUsername*(self: ChatsView, username: string): string {.slot.} =
+    result = status_ens.addDomain(username)
