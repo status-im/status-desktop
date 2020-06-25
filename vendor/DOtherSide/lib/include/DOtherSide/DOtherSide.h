@@ -86,7 +86,7 @@ DOS_API void DOS_CALL dos_qguiapplication_delete(void);
 
 /// \brief Create a QApplication
 /// \note The created QApplication should be freed by calling dos_qapplication_delete()
-DOS_API void DOS_CALL dos_qapplication_create(void);
+DOS_API void DOS_CALL dos_qapplication_create(char *filename);
 
 /// \brief Calls the QApplication::exec() function of the current QGuiApplication
 /// \note A QApplication should have been already created through dos_qapplication_create()
