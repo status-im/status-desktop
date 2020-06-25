@@ -71,16 +71,12 @@ proc populateAccount*(self: WalletModel, walletAccount: var WalletAccount, balan
   walletAccount.balance = fmt"{balance} {self.defaultCurrency}"
   walletAccount.assetList = assets
   walletAccount.realFiatBalance = 0.0
-  # Get NFTs
-  # TODO(jrainville): make this async because otherwise it can block the thread for a long time
-  walletAccount.collectibles = getAllCollectibles(parseAddress(walletAccount.address))
   updateBalance(walletAccount, self.getDefaultCurrency())
 
 proc newAccount*(self: WalletModel, name: string, address: string, iconColor: string, balance: string, publicKey: string): WalletAccount =
   var assets: seq[Asset] = self.generateAccountConfiguredAssets(address)
   var account = WalletAccount(name: name, address: address, iconColor: iconColor, balance: fmt"{balance} {self.defaultCurrency}", assetList: assets, realFiatBalance: 0.0, publicKey: publicKey)
   updateBalance(account, self.getDefaultCurrency())
-  account.collectibles = getAllCollectibles(parseAddress(account.address))
   account
 
 proc initAccounts*(self: WalletModel) =
@@ -158,3 +154,4 @@ proc getTransfersByAddress*(self: WalletModel, address: string): seq[Transaction
 proc validateMnemonic*(self: WalletModel, mnemonic: string): string =
   result = status_wallet.validateMnemonic(mnemonic).parseJSON()["error"].getStr
 
+proc getAllCollectibles*(self: WalletModel, address: string): seq[Collectible] = getAllCollectibles(address)
