@@ -101,30 +101,44 @@ proc calculateTotalFiatBalance*(self: WalletModel) =
   for account in self.accounts:
     self.totalBalance += account.realFiatBalance
 
-proc addNewGeneratedAccount(self: WalletModel, generatedAccount: GeneratedAccount, password: string, accountName: string, color: string, accountType: string, isADerivedAccount = true) =
-  generatedAccount.name = accountName
-  var derivedAccount: DerivedAccount = status_accounts.saveAccount(generatedAccount, password, color, accountType, isADerivedAccount)
-  var account = self.newAccount(accountName, derivedAccount.address, color, fmt"0.00 {self.defaultCurrency}", derivedAccount.publicKey)
-  self.accounts.add(account)
-  self.events.emit("newAccountAdded", AccountArgs(account: account))
+proc addNewGeneratedAccount(self: WalletModel, generatedAccount: GeneratedAccount, password: string, accountName: string, color: string, accountType: string, isADerivedAccount = true): string =
+  try:
+    generatedAccount.name = accountName
+    var derivedAccount: DerivedAccount = status_accounts.saveAccount(generatedAccount, password, color, accountType, isADerivedAccount)
+    var account = self.newAccount(accountName, derivedAccount.address, color, fmt"0.00 {self.defaultCurrency}", derivedAccount.publicKey)
+    self.accounts.add(account)
+    self.events.emit("newAccountAdded", AccountArgs(account: account))
+  except Exception as e:
+    return fmt"Error adding new account: {e.msg}"
 
-proc generateNewAccount*(self: WalletModel, password: string, accountName: string, color: string) =
+  return ""
+
+proc addNewGeneratedAccountWithPassword(self: WalletModel, generatedAccount: GeneratedAccount, password: string, accountName: string, color: string, accountType: string, isADerivedAccount = true): string =
+  let defaultAccount = status_accounts.getDefaultAccount()
+  let isPasswordOk = status_accounts.verifyAccountPassword(defaultAccount, password)
+
+  if (not isPasswordOk):
+    return "Wrong password"
+
+  result = self.addNewGeneratedAccount(generatedAccount, password, accountName, color, accountType, isADerivedAccount)
+
+proc generateNewAccount*(self: WalletModel, password: string, accountName: string, color: string): string =
   let accounts = status_accounts.generateAddresses(1)
   let generatedAccount = accounts[0]
-  self.addNewGeneratedAccount(generatedAccount, password, accountName, color, constants.GENERATED)
+  return self.addNewGeneratedAccountWithPassword(generatedAccount, password, accountName, color, constants.GENERATED)
 
-proc addAccountsFromSeed*(self: WalletModel, seed: string, password: string, accountName: string, color: string) =
+proc addAccountsFromSeed*(self: WalletModel, seed: string, password: string, accountName: string, color: string): string =
   let mnemonic = replace(seed, ',', ' ')
   let generatedAccount = status_accounts.multiAccountImportMnemonic(mnemonic)
-  self.addNewGeneratedAccount(generatedAccount, password, accountName, color, constants.SEED)
+  return self.addNewGeneratedAccountWithPassword(generatedAccount, password, accountName, color, constants.SEED)
 
-proc addAccountsFromPrivateKey*(self: WalletModel, privateKey: string, password: string, accountName: string, color: string) =
+proc addAccountsFromPrivateKey*(self: WalletModel, privateKey: string, password: string, accountName: string, color: string): string =
   let generatedAccount = status_accounts.MultiAccountImportPrivateKey(privateKey)
-  self.addNewGeneratedAccount(generatedAccount, password, accountName, color, constants.KEY, false)
+  return self.addNewGeneratedAccountWithPassword(generatedAccount, password, accountName, color, constants.KEY, false)
 
-proc addWatchOnlyAccount*(self: WalletModel, address: string, accountName: string, color: string) =
+proc addWatchOnlyAccount*(self: WalletModel, address: string, accountName: string, color: string): string =
   let account = GeneratedAccount(address: address)
-  self.addNewGeneratedAccount(account, "", accountName, color, constants.WATCH, false)
+  return self.addNewGeneratedAccount(account, "", accountName, color, constants.WATCH, false)
 
 proc hasAsset*(self: WalletModel, account: string, symbol: string): bool =
   self.tokens.anyIt(it["symbol"].getStr == symbol)

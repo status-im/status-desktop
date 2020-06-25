@@ -149,7 +149,6 @@ Item {
             Image {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
-                // TODO replace by a real loading image
                 source: "../app/img/arrowUp.svg"
                 width: 13.5
                 height: 17.5
@@ -176,6 +175,7 @@ Item {
             anchors.left: txtPassword.right
             anchors.leftMargin: Theme.padding
             anchors.verticalCenter: txtPassword.verticalCenter
+            // TODO replace by a real loading image
             source: "../app/img/settings.svg"
             width: 30
             height: 30

@@ -123,17 +123,17 @@ QtObject:
       self.setCurrentAccountByIndex(0)
     self.accountListChanged()
 
-  proc generateNewAccount*(self: WalletView, password: string, accountName: string, color: string) {.slot.} =
-    self.status.wallet.generateNewAccount(password, accountName, color)
+  proc generateNewAccount*(self: WalletView, password: string, accountName: string, color: string): string {.slot.} =
+    result = self.status.wallet.generateNewAccount(password, accountName, color)
 
-  proc addAccountsFromSeed*(self: WalletView, seed: string, password: string, accountName: string, color: string) {.slot.} =
-    self.status.wallet.addAccountsFromSeed(seed, password, accountName, color)
+  proc addAccountsFromSeed*(self: WalletView, seed: string, password: string, accountName: string, color: string): string {.slot.} =
+    result = self.status.wallet.addAccountsFromSeed(seed, password, accountName, color)
 
-  proc addAccountsFromPrivateKey*(self: WalletView, privateKey: string, password: string, accountName: string, color: string) {.slot.} =
-    self.status.wallet.addAccountsFromPrivateKey(privateKey, password, accountName, color)
+  proc addAccountsFromPrivateKey*(self: WalletView, privateKey: string, password: string, accountName: string, color: string): string {.slot.} =
+    result = self.status.wallet.addAccountsFromPrivateKey(privateKey, password, accountName, color)
 
-  proc addWatchOnlyAccount*(self: WalletView, address: string, accountName: string, color: string) {.slot.} =
-    self.status.wallet.addWatchOnlyAccount(address, accountName, color)
+  proc addWatchOnlyAccount*(self: WalletView, address: string, accountName: string, color: string): string {.slot.} =
+    result = self.status.wallet.addWatchOnlyAccount(address, accountName, color)
 
   proc changeAccountSettings*(self: WalletView, address: string, accountName: string, color: string): string {.slot.} =
     result = self.status.wallet.changeAccountSettings(address, accountName, color)
