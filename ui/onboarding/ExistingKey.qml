@@ -14,9 +14,16 @@ Item {
         property bool wentNext: false
         id: enterSeedPhraseModal
         onConfirmSeedClick: function (mnemonic) {
-            wentNext = true
-            onboardingModel.importMnemonic(mnemonic)
-            createPasswordModal.open()
+            let error = onboardingModel.validateMnemonic(mnemonic)
+            if (error != "") {
+              invalidSeedPhraseModal.error = error
+              invalidSeedPhraseModal.open()
+            } else {
+              wentNext = true
+              enterSeedPhraseModal.close()
+              onboardingModel.importMnemonic(mnemonic)
+              createPasswordModal.open()
+            }
         }
         onClosed: function () {
             if (!wentNext) {
@@ -30,6 +37,10 @@ Item {
         onClosed: function () {
             existingKeyView.onClosed()
         }
+    }
+
+    InvalidSeedPhraseModal {
+      id: invalidSeedPhraseModal
     }
 }
 
