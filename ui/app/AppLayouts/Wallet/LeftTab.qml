@@ -76,7 +76,13 @@ Item {
             }
         }
 
-        AddAccount { x: 288 ;y: 59}
+        AddAccount {
+            anchors.topMargin: 3
+            anchors.top: walletValueTextContainer.top
+            anchors.right: parent.right
+            anchors.rightMargin: Theme.padding
+
+        }
     }
 
     Component {
