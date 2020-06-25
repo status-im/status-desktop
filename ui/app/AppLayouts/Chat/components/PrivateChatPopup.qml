@@ -3,34 +3,47 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
-import "../../Profile/Sections/Contacts/"
 import "./"
 
 ModalPopup {
     property string validationError: ""
 
+    property string pubKey : "";
+    property string ensUsername : "";
+    
     function validate() {
-        // TODO change this when we support ENS names
-        if (!Utils.isChatKey(chatKey.text)) {
-            validationError = "This needs to be a valid chat key"
+        if (!Utils.isChatKey(chatKey.text) && !Utils.isValidETHNamePrefix(chatKey.text)) {
+            validationError = "This needs to be a valid chat key or ENS username"
+            pubKey = "";
+            ensUsername = "";
         } else {
             validationError = ""
         }
         return validationError === ""
     }
 
-    function doJoin() {
-        if (chatKey.text !== "") {
-            if (!validate()) {
-                return
-            }
+    function onKeyReleased(){
+        ensUsername.text = "";
+        if (!validate()) return;
+        
+        chatKey.text = chatKey.text.trim();
 
-            chatsModel.joinChat(chatKey.text, Constants.chatTypeOneToOne);
-        } else if (contactListView.selectedContact.checked) {
-            chatsModel.joinChat(contactListView.selectedContact.parent.address, Constants.chatTypeOneToOne);
-        } else {
+        if(Utils.isChatKey(chatKey.text)){
+            pubKey = chatKey.text;
             return;
         }
+
+        pubKey = chatsModel.resolveENS(chatKey.text)
+        if(pubKey == ""){
+            ensUsername.text = qsTr("User not found");
+        } else {
+            ensUsername.text = chatsModel.formatENSUsername(chatKey.text) + " • " + Utils.compactAddress(pubKey, 4)
+        }
+    }
+
+    function doJoin() {
+        if (!validate() || pubKey.trim() === "") return;
+        chatsModel.joinChat(pubKey, Constants.chatTypeOneToOne);
         popup.close();
     }
 
@@ -39,10 +52,9 @@ ModalPopup {
 
     onOpened: {
         chatKey.text = "";
+        pubKey = "";
+        ensUsername = "";
         chatKey.forceActiveFocus(Qt.MouseFocusReason)
-        if (contactListView.selectedContact) {
-            contactListView.selectedContact.checked = false
-        }
     }
 
     Input {
@@ -51,15 +63,56 @@ ModalPopup {
         Keys.onEnterPressed: doJoin()
         Keys.onReturnPressed: doJoin()
         validationError: popup.validationError
-        textField.onEditingFinished: {
-            validate()
+        Keys.onReleased: {
+            onKeyReleased();
         }
     }
+    
+    Text {
+        id: ensUsername
+        anchors.top: chatKey.bottom
+        anchors.topMargin: Theme.padding
+        color: Theme.darkGrey
+        font.pixelSize: 12
+    }
 
-    ContactList {
-        id: contactListView
-        contacts: profileModel.contactList
-        selectable: true
+    Item {
+        anchors.top: ensUsername.bottom
+        anchors.topMargin: 32
+        anchors.fill: parent
+
+        ScrollView {
+            anchors.fill: parent
+            anchors.topMargin: 50
+            anchors.top: searchBox.bottom
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            ScrollBar.vertical.policy: groupMembers.contentHeight > groupMembers.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+
+            ListView {
+                anchors.fill: parent
+                spacing: 0
+                clip: true
+                id: contactListView
+                model: profileModel.contactList
+                delegate: Contact {
+                    showCheckbox: false
+                    pubKey: model.pubKey
+                    isContact: model.isContact
+                    isUser: model.isUser
+                    name: model.name
+                    address: model.address
+                    identicon: model.identicon
+                    showListSelector: true
+                    onItemChecked: function(pubKey, itemChecked){
+                        chatsModel.joinChat(pubKey, Constants.chatTypeOneToOne);
+                        popup.close()
+                    }
+                }
+            }
+        }
     }
 
     footer: Button {
@@ -68,7 +121,7 @@ ModalPopup {
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         SVGImage {
-            source: chatKey.text == "" ? "../../../img/arrow-button-inactive.svg" : "../../../img/arrow-btn-active.svg"
+            source: pubKey === "" ? "../../../img/arrow-button-inactive.svg" : "../../../img/arrow-btn-active.svg"
             width: 50
             height: 50
         }

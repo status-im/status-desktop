@@ -17,6 +17,7 @@ Rectangle {
 
     property bool showCheckbox: true
     property bool isChecked: false
+    property bool showListSelector: false
     property var onItemChecked: (function(pubKey, itemChecked) { console.log(pubKey, itemChecked)  })
 
 
@@ -47,9 +48,29 @@ Rectangle {
         anchors.leftMargin: Theme.padding
     }
 
+    SVGImage {
+        id: image
+        visible: showListSelector && !showCheckbox
+        height: 24
+        width: 24
+        anchors.top: accountImage.top
+        anchors.topMargin: 6
+        anchors.right: parent.right
+        anchors.rightMargin: Theme.padding
+        fillMode: Image.PreserveAspectFit
+        source: "../../../img/list-next.svg"
+        MouseArea {
+            cursorShape: Qt.PointingHandCursor
+            anchors.fill: parent
+            onClicked: {
+            onItemChecked(pubKey, isChecked)
+            }
+        }
+    }
+
     CheckBox  {
         id: assetCheck
-        visible: showCheckbox && !isUser
+        visible: !showListSelector && showCheckbox && !isUser
         anchors.top: accountImage.top
         anchors.topMargin: 6
         anchors.right: parent.right

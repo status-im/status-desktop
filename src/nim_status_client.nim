@@ -47,9 +47,10 @@ proc mainProc() =
   status.events.once("login") do(a: Args):
     var args = AccountArgs(a)
     status.startMessenger()
-    chat.init()
-    wallet.init()
     profile.init(args.account)
+    wallet.init()
+    chat.init()
+    
 
   var login = login.newController(status)
   var onboarding = onboarding.newController(status)
