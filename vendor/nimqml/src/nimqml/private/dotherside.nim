@@ -126,7 +126,7 @@ proc dos_qcoreapplication_application_dir_path(): cstring {.cdecl, dynlib: dynLi
 proc dos_qapplication_enable_hdpi() {.cdecl, dynlib: dynLibName, importc.}
 
 # QApplication
-proc dos_qapplication_create() {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qapplication_create(appName: cstring) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qapplication_exec() {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qapplication_quit() {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qapplication_icon(filename: cstring) {.cdecl, dynlib: dynLibName, importc.}
