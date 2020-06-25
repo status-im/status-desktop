@@ -1,26 +1,17 @@
 import tables, strformat, strutils, stint, httpclient, json, times
 import ../libstatus/wallet as status_wallet
 import ../libstatus/tokens as status_tokens
+import ../utils/cache
 import account
 
-type PriceTime* = ref object
-  price: string
-  timestamp: DateTime
-
 type BalanceManager* = ref object
-  pricePairs: Table[string, PriceTime]
-  tokenBalances: Table[string, PriceTime]
-
-proc isCached(self: Table[string, PriceTime], cacheKey: string): bool =
-  self.hasKey(cacheKey) and ((self[cacheKey].timestamp + initDuration(minutes = 1)) >= now())
-
-proc cacheValue(self: var Table[string, PriceTime], cacheKey: string, value: string) =
-  self[cacheKey] = PriceTime(price: value, timestamp: now())
+  pricePairs: CachedValues
+  tokenBalances: CachedValues
 
 proc newBalanceManager*(): BalanceManager =
   result = BalanceManager()
-  result.pricePairs = initTable[string, PriceTime]()
-  result.tokenBalances = initTable[string, PriceTime]()
+  result.pricePairs = newCachedValues()
+  result.tokenBalances = newCachedValues()
 
 var balanceManager = newBalanceManager()
 
@@ -44,7 +35,7 @@ proc getEthBalance(address: string): string =
 proc getBalance*(symbol: string, accountAddress: string, tokenAddress: string): string =
   let cacheKey = fmt"{symbol}-{accountAddress}-{tokenAddress}"
   if balanceManager.tokenBalances.isCached(cacheKey):
-    return balanceManager.tokenBalances[cacheKey].price
+    return balanceManager.tokenBalances.get(cacheKey)
 
   if symbol == "ETH":
     let ethBalance = getEthBalance(accountAddress)
@@ -58,7 +49,7 @@ proc getFiatValue*(crypto_balance: string, crypto_symbol: string, fiat_symbol: s
   if crypto_balance == "0.0": return 0.0
   let cacheKey = fmt"{crypto_symbol}-{fiat_symbol}"
   if balanceManager.pricePairs.isCached(cacheKey):
-    return parseFloat(crypto_balance) * parseFloat(balanceManager.pricePairs[cacheKey].price)
+    return parseFloat(crypto_balance) * parseFloat(balanceManager.pricePairs.get(cacheKey))
 
   var fiat_crypto_price = getPrice(crypto_symbol, fiat_symbol)
   balanceManager.pricePairs.cacheValue(cacheKey, fiat_crypto_price)
