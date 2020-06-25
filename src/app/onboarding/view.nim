@@ -2,7 +2,7 @@ import NimQml, Tables, json, nimcrypto, strformat, json_serialization, strutils
 import ../../status/libstatus/types as status_types
 import ../../signals/types
 import ../../status/accounts as AccountModel
-import ../../status/status
+import ../../status/[status, wallet]
 import views/account_info
 
 type
@@ -89,6 +89,9 @@ QtObject:
       self.currentAccount.setAccount(importResult)
     except StatusGoException as e:
       result = StatusGoError(error: e.msg).toJson
+
+  proc validateMnemonic*(self: OnboardingView, mnemonic: string): string {.slot.} =
+     result = self.status.wallet.validateMnemonic(mnemonic)
 
   proc storeDerivedAndLogin(self: OnboardingView, password: string): string {.slot.} =
     try:

@@ -68,9 +68,7 @@ ModalPopup {
             if (mnemonicTextField.text === "") {
                 return
             }
-
             onConfirmSeedClick(mnemonicTextField.text)
-            popup.close()
         }
     }
 }

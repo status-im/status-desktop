@@ -154,3 +154,7 @@ proc toggleAsset*(self: WalletModel, symbol: string, enable: bool, address: stri
 
 proc getTransfersByAddress*(self: WalletModel, address: string): seq[Transaction] =
  result = status_wallet.getTransfersByAddress(address)
+
+proc validateMnemonic*(self: WalletModel, mnemonic: string): string =
+  result = status_wallet.validateMnemonic(mnemonic).parseJSON()["error"].getStr
+

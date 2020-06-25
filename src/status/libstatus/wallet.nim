@@ -1,5 +1,5 @@
 import json, httpclient, json, strformat, stint, strutils, sequtils, chronicles
-import core, types
+import libstatus, core, types
 import ../wallet/account
 
 proc getWalletAccounts*(): seq[WalletAccount] =
@@ -77,3 +77,6 @@ proc hex2Eth*(input: string): string =
 
   var (eth, remainder) = divmod(value, one_eth)
   fmt"{eth}.{remainder}"
+
+proc validateMnemonic*(mnemonic: string): string =
+  result = $libstatus.validateMnemonic(mnemonic)
