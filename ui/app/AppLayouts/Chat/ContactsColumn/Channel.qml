@@ -15,11 +15,8 @@ Rectangle {
     id: wrapper
     color: ListView.isCurrentItem ? Theme.lightBlue : Theme.transparent
     anchors.right: parent.right
-    anchors.rightMargin: Theme.padding
     anchors.top: applicationWindow.top
-    anchors.topMargin: 0
     anchors.left: parent.left
-    anchors.leftMargin: Theme.padding
     radius: 8
     // Hide the box if it is filtered out
     property bool isVisible: searchStr == "" || name.includes(searchStr)
