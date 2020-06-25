@@ -7,6 +7,7 @@ import "../../../../shared"
 Rectangle {
     property alias profileCurrentIndex: profileScreenButtons.currentIndex
     readonly property int btnheight: 42
+    readonly property int w: 340
 
     id: profileTabBar
     color: "#ffffff"
@@ -16,7 +17,7 @@ Rectangle {
 
     TabBar {
         id: profileScreenButtons
-        width: profileInfoContainer.w
+        width: profileTabBar.w
         height: parent.height
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
@@ -28,7 +29,7 @@ Rectangle {
 
         TabButton {
             id: ensTabButton
-            width: profileInfoContainer.w
+            width: profileTabBar.w
             height: 0 //profileTabBar.btnheight
             visible: false
             text: ""
@@ -52,7 +53,7 @@ Rectangle {
 
         TabButton {
             id: contactsTabButton
-            width: profileInfoContainer.w
+            width: profileTabBar.w
             height: profileTabBar.btnheight
             text: ""
             anchors.left: parent.left
@@ -77,7 +78,7 @@ Rectangle {
 
         TabButton {
             id: privacyTabButton
-            width: profileInfoContainer.w
+            width: profileTabBar.w
             height: profileTabBar.btnheight
             text: ""
             anchors.left: parent.left
@@ -102,7 +103,7 @@ Rectangle {
 
         TabButton {
             id: syncTabButton
-            width: profileInfoContainer.w
+            width: profileTabBar.w
             height: 0 //profileTabBar.btnheight
             visible: false
             text: ""
@@ -128,7 +129,7 @@ Rectangle {
 
         TabButton {
             id: languageTabButton
-            width: profileInfoContainer.w
+            width: profileTabBar.w
             height: 0 //profileTabBar.btnheight
             visible: false
             text: ""
@@ -154,7 +155,7 @@ Rectangle {
 
         TabButton {
             id: notificationsTabButton
-            width: profileInfoContainer.w
+            width: profileTabBar.w
             height: 0 //profileTabBar.btnheight
             visible: false
             text: ""
@@ -180,7 +181,7 @@ Rectangle {
 
         TabButton {
             id: advancedTabButton
-            width: profileInfoContainer.w
+            width: profileTabBar.w
             height: profileTabBar.btnheight
             text: ""
             anchors.left: parent.left
@@ -205,7 +206,7 @@ Rectangle {
 
         TabButton {
             id: helpTabButton
-            width: profileInfoContainer.w
+            width: profileTabBar.w
             height: 0 //profileTabBar.btnheight
             text: ""
             visible: false
@@ -231,7 +232,7 @@ Rectangle {
 
         TabButton {
             id: aboutTabButton
-            width: profileInfoContainer.w
+            width: profileTabBar.w
             height: profileTabBar.btnheight
             text: ""
             anchors.left: parent.left
@@ -256,7 +257,7 @@ Rectangle {
 
         TabButton {
             id: signoutTabButton
-            width: profileInfoContainer.w
+            width: profileTabBar.w
             height: profileTabBar.btnheight
             text: ""
             anchors.left: parent.left
