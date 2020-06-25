@@ -15,7 +15,6 @@ Rectangle {
     border.color: Theme.grey
     border.width: 1
 
-
     ChannelIcon {
       id: channelIcon
       channelName: chatsModel.activeChannel.name

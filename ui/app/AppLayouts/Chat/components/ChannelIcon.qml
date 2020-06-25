@@ -31,7 +31,7 @@ Rectangle {
     Rectangle {
       width: contactImage.width ? contactImage.width : 36
       height: contactImage.height ? contactImage.height: 36
-      radius: 50
+      radius: 120
       color: {
           const color = chatsModel.getChannelColor(channelName)
           if (!color) {
