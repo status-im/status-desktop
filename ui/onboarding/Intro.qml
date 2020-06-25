@@ -69,15 +69,29 @@ RowLayout {
             }
         }
 
+        StyledText {
+            id: warningMessage
+            x: 772
+            text: qsTr("Thanks for trying Status Desktop! Please note that this is an alpha release and we advise you that using this app should be done for testing purposes only and you assume the full responsibility for all risks concerning your data and funds. Status makes no claims of security or integrity of funds in these builds.")
+            font.bold: true
+            anchors.top: rctPageIndicator.bottom
+            anchors.topMargin: 10
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.pixelSize: 14
+            font.letterSpacing: 0.1
+            width: 700
+            wrapMode: Text.Wrap
+            color: Theme.black
+        }
+
         StyledButton {
             id: btnGetStarted
-            label: "Get started"
-            anchors.top: rctPageIndicator.bottom
-            anchors.topMargin: 87
+            label: "I understand"
+            anchors.top: warningMessage.bottom
+            anchors.topMargin: 17
             anchors.horizontalCenter: parent.horizontalCenter
             width: 146
             height: 44
-
         }
 
         StyledText {
