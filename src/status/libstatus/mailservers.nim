@@ -53,7 +53,7 @@ proc update*(peer: string) =
   discard callPrivateRPC("updateMailservers".prefix, %* [[peer]])
 
 proc delete*(peer: string) =
-  discard callPrivateRPC("mailservers_deleteMailserver".prefix, %* [[peer]])
+  discard callPrivateRPC("mailservers_deleteMailserver", %* [[peer]])
 
 proc requestMessages*(topics: seq[string], symKeyID: string, peer: string, numberOfMessages: int) =
   echo callPrivateRPC("requestMessages".prefix, %* [
