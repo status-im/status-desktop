@@ -10,33 +10,48 @@ Rectangle {
 
     visible: chatsModel.activeChannel.chatType != Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember(profileModel.profile.pubKey)
 
+    function onEnter(event){
+        if(!(event.modifiers & Qt.ControlModifier) && !(event.modifiers & Qt.ShiftModifier)){
+            if(txtData.text.trim().length > 0){
+                chatsModel.sendMessage(txtData.text.trim());
+                txtData.text = "";
+            }
+        } else {
+            txtData.text = txtData.text + "\n";
+            txtData.cursorPosition = txtData.text.length
+        }
+        event.accepted = true;
+    }
+
     RowLayout {
         spacing: 0
         anchors.fill: parent
 
-        StyledTextField {
+
+        ScrollView {
+            anchors.fill: parent
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.preferredWidth: parent.width - sendBtns.width
 
-            id: txtData
-            text: ""
-            leftPadding: 12
-            rightPadding: Theme.padding
-            font.pixelSize: 14
-            placeholderText: qsTr("Type a message...")
+            StyledTArea {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                textFormat: TextArea.PlainText
+                Layout.preferredWidth: parent.width - sendBtns.width
 
-            selectByMouse: true
-            Keys.onEnterPressed: {
-                chatsModel.sendMessage(txtData.text)
-                txtData.text = ""
-            }
-            Keys.onReturnPressed: {
-                chatsModel.sendMessage(txtData.text)
-                txtData.text = ""
-            }
-            background: Rectangle {
-                color: "#00000000"
+                id: txtData
+                text: ""
+                selectByMouse: true
+                topPadding: Theme.padding
+                leftPadding: 12
+                rightPadding: Theme.padding
+                font.pixelSize: 14
+                placeholderText: qsTr("Type a message...")
+                Keys.onEnterPressed: onEnter(event)
+                Keys.onReturnPressed: onEnter(event)
+                background: Rectangle {
+                    color: "#00000000"
+                }
             }
         }
 
@@ -50,14 +65,6 @@ Rectangle {
         }
     }
 
-    MouseArea {
-        id: mouseArea1
-        anchors.rightMargin: 50
-        anchors.fill: parent
-        onClicked: {
-            txtData.forceActiveFocus(Qt.MouseFocusReason)
-        }
-    }
 }
 /*##^##
 Designer {
