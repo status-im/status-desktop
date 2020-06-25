@@ -5,7 +5,7 @@ import ../../../status/chat
 import ../../../status/chat/[message,stickers]
 import ../../../status/profile/profile
 import ../../../status/ens
-import strformat
+import strformat, strutils
 
 type
   ChatMessageRoles {.pure.} = enum

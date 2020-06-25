@@ -34,6 +34,7 @@ proc renderBlock(self: ChatMessageList, message: Message): string =
       of "blockquote":
         # TODO: extract this from the theme somehow
         var color = if message.isCurrentUser: "#FFFFFF" else: "#666666" 
-        result = result & fmt("<span style=\"color: {color}\">▍ ") & pMsg.literal[1 .. ^1] & "</span>"
+        result = result & fmt("<span style=\"color: {color}\">▍ ") & pMsg.literal & "</span>"
       of "codeblock":
         result = "<table style=\"background-color: #1a356b;\"><tr><td style=\"padding: 5px;\"><code style=\"color: #ffffff\">" & pMsg.literal & "</code></td></tr></table>"
+    result = result.replace("\n", "<br />")

@@ -242,7 +242,7 @@ Item {
             anchors.right: message.length > 52 ? parent.right : undefined
             anchors.rightMargin: message.length > 52 ? parent.chatHorizontalPadding : 0
             horizontalAlignment: !isCurrentUser ? Text.AlignLeft : Text.AlignRight
-            wrapMode: Text.WrapAnywhere
+            wrapMode: Text.Wrap
             anchors.top: parent.top
             anchors.topMargin: chatBox.chatVerticalPadding
             font.pixelSize: 15
