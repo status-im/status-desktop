@@ -19,9 +19,9 @@ export PATH="/usr/local/go/bin:${PATH}"
 # $QT_PATH/$QT_VERSION/$QT_PLATFORM/bin is already prepended to $PATH
 # However $QT_VERSION is not exposed to environment so set it here
 export QT_VERSION=$(basename $(echo "${QT_PATH}/*"))
-export QTDIR="${QT_PATH}/${QT_VERSION}"
+export QTDIR="${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}"
 # $OPENSSL_PREFIX is provided by the docker image
 export LIBRARY_PATH="${OPENSSL_PREFIX}/lib:${LIBRARY_PATH}"
-export LD_LIBRARY_PATH="${QTDIR}/${QT_PLATFORM}/lib:${LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="${QTDIR}/lib:${LD_LIBRARY_PATH}"
 make clean; git clean -dfx && rm -rf vendor/*
 make pkg V=1

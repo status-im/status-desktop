@@ -36,12 +36,12 @@ brew install go
 
 ```
 # Linux users should use their distro's package manager, but in case they do a manual install:
-export PATH=$PATH:/path/to/Qt/5.14.2/gcc_64/bin
-export QTDIR=/path/to/Qt/5.14.2/
+export QTDIR="/path/to/Qt/5.14.2/gcc_64"
+export PATH="${QTDIR}/bin:${PATH}"
 
 # macOS:
-export PATH=$PATH:/path/to/Qt/5.14.2/clang_64/bin
-export QTDIR=/path/to/Qt/5.14.2/
+export QTDIR="/path/to/Qt/5.14.2/clang_64"
+export PATH="${QTDIR}/bin:${PATH}"
 ```
 
 ### 2. Clone the repo and build `nim-status-client`

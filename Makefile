@@ -108,13 +108,13 @@ ifeq ($(QT5_PCFILEDIR),)
   $(error Can't find your Qt5 installation. Please run "$(MAKE) QTDIR=/path/to/your/Qt5/installation/prefix ...")
  else
   ifeq ($(detected_OS), Darwin)
-   QT5_PCFILEDIR := $(QTDIR)/clang_64/lib/pkgconfig
-   QT5_LIBDIR := $(QTDIR)/clang_64/lib
+   QT5_PCFILEDIR := $(QTDIR)/lib/pkgconfig
+   QT5_LIBDIR := $(QTDIR)/lib
    # some manually installed Qt5 instances have wrong paths in their *.pc files, so we pass the right one to the linker here
    NIM_PARAMS += --passL:"-F$(QT5_LIBDIR)"
   else
-   QT5_PCFILEDIR := $(QTDIR)/gcc_64/lib/pkgconfig
-   QT5_LIBDIR := $(QTDIR)/gcc_64/lib
+   QT5_PCFILEDIR := $(QTDIR)/lib/pkgconfig
+   QT5_LIBDIR := $(QTDIR)/lib
    NIM_PARAMS += --passL:"-L$(QT5_LIBDIR)"
   endif
  endif
@@ -186,7 +186,7 @@ $(APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp -R ui tmp/linux/dist/usr/.
 
 	echo -e $(BUILD_MSG) "AppImage"
-	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-translations -no-copy-copyright-files -qmldir=tmp/linux/dist/usr/ui -qmlimport=${QTDIR}/gcc_64/qml -bundle-non-qt-libs
+	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-translations -no-copy-copyright-files -qmldir=tmp/linux/dist/usr/ui -qmlimport=$(QTDIR)/qml -bundle-non-qt-libs
 
 	rm tmp/linux/dist/AppRun
 	cp AppRun tmp/linux/dist/.
