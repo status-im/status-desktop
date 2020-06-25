@@ -171,8 +171,10 @@ ModalPopup {
                     }
                 }
             ]
-            Image {
+            SVGImage {
                 id: "btnSelectMembersImg"
+                width: 50
+                height: 50
             }
             background: Rectangle {
                 color: "transparent"
@@ -196,8 +198,10 @@ ModalPopup {
             height: 44
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            Image {
+            SVGImage {
                 source: "../../../img/arrow-left-btn-active.svg"
+                width: 50
+                height: 50
             }
             background: Rectangle {
                 color: "transparent"

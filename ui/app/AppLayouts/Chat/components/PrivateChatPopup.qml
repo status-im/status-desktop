@@ -67,8 +67,10 @@ ModalPopup {
         height: 44
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        Image {
+        SVGImage {
             source: chatKey.text == "" ? "../../../img/arrow-button-inactive.svg" : "../../../img/arrow-btn-active.svg"
+            width: 50
+            height: 50
         }
         background: Rectangle {
             color: "transparent"

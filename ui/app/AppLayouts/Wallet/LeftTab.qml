@@ -100,7 +100,7 @@ Item {
             anchors.left: parent.left
             anchors.leftMargin: Theme.padding
 
-            Image {
+            SVGImage {
                 id: walletIcon
                 width: 12
                 height: 12

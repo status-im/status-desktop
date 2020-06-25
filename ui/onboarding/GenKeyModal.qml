@@ -38,7 +38,7 @@ ModalPopup {
             color: Theme.lightBlue
         }
 
-        Image {
+        SVGImage {
             sourceSize.height: 15
             sourceSize.width: 20
             anchors.horizontalCenter: parent.horizontalCenter

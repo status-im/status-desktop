@@ -8,13 +8,12 @@ Item {
     property string image: "img/chat@2x.jpg"
     property string title: "Truly private communication"
     property string description: "Chat over a peer-to-peer, encrypted network\n where messages can't be censored or hacked"
+    property bool isFirst: false
     property bool isLast: false
 
     Image {
         id: img1
         anchors.horizontalCenter: parent.horizontalCenter
-        sourceSize.width: 414
-        sourceSize.height: 414
         anchors.topMargin: 17
         fillMode: Image.PreserveAspectFit
         source: image
@@ -38,6 +37,35 @@ Item {
         font.bold: true
         font.pixelSize: 22
         font.kerning: true
+    }
+
+    Button {
+        id: btnPrevious1
+        width: 40
+        height: 40
+        anchors.top: txtDesc1.top
+        anchors.bottomMargin: -2
+        anchors.bottom: txtDesc1.bottom
+        anchors.topMargin: -2
+        anchors.right: txtDesc1.left
+        anchors.rightMargin: 32
+        onClicked: vwOnboarding.currentIndex--
+        visible: !isFirst
+        background: Rectangle {
+            id: rctPrevious1
+            color: Theme.grey
+            border.width: 0
+            radius: 50
+
+            SVGImage {
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                source: "img/next.svg"
+                width: 10
+                height: 10
+                mirror: true
+            }
+        }
     }
 
     StyledText {
@@ -73,10 +101,12 @@ Item {
             border.width: 0
             radius: 50
 
-            Image {
+            SVGImage {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 source: "img/next.svg"
+                width: 10
+                height: 10
             }
         }
     }

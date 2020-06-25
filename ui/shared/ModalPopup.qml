@@ -65,9 +65,11 @@ Popup {
             anchors.right: parent.right
             radius: 8
 
-            Image {
+            SVGImage {
                 id: closeModalImg
                 source: "./img/close.svg"
+                width: 25
+                height: 25
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }

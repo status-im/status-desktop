@@ -17,12 +17,12 @@ Item {
             anchors.rightMargin: 0
             anchors.left: parent.left
             anchors.leftMargin: 0
-            height: 40
+            height: 132
 
-            Image {
+            SVGImage {
                 id: collectibleImage
-                width: 36
-                height: 36
+                width: 128
+                height: 128
                 source: image
                 anchors.left: parent.left
                 anchors.leftMargin: 0
@@ -32,9 +32,9 @@ Item {
             StyledText {
                 id: collectibleName
                 text: name
-                anchors.leftMargin: Theme.padding
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: collectibleImage.right
+                anchors.leftMargin: Theme.padding
                 font.pixelSize: 15
             }
 

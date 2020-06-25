@@ -115,7 +115,7 @@ ModalPopup {
             anchors.left: groupName.right
             radius: 8
 
-            Image {
+            SVGImage {
                 id: editGroupImg
                 source: "../../../img/edit-group.svg"
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -259,6 +259,9 @@ ModalPopup {
                 Column {
                     Image {
                         source: model.identicon
+                        mipmap: true
+                        smooth: false
+                        antialiasing: true
                     }
                 }
                 Column {
@@ -330,8 +333,10 @@ ModalPopup {
             height: 44
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            Image {
+            SVGImage {
                 source: "../../../img/arrow-left-btn-active.svg"
+                width: 50
+                height: 50
             }
             background: Rectangle {
                 color: "transparent"

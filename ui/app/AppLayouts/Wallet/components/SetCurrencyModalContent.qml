@@ -19,13 +19,15 @@ Item {
         anchors.topMargin: 16
     }
 
-    Image {
+    SVGImage {
         id: closeModalImg
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.rightMargin: 16
         anchors.topMargin: 16
         source: "../../../../shared/img/close.svg"
+        width: 25
+        height: 25
         MouseArea {
             id: closeModalMouseArea
             cursorShape: Qt.PointingHandCursor

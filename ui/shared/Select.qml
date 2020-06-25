@@ -78,7 +78,7 @@ Item {
             }
         }
 
-        Image {
+        SVGImage {
             id: caret
             width: 11
             height: 6

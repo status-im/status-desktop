@@ -85,7 +85,7 @@ ModalPopup {
         anchors.bottom: popup.bottom
         anchors.left: parent.left
 
-        Image {
+        SVGImage {
             id: loadingImg
             visible: loading
             anchors.top: submitBtn.top

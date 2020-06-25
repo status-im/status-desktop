@@ -33,4 +33,12 @@ Button {
         text: btnStyled.label
         font.weight: Font.Medium
     }
+
+    MouseArea {
+        cursorShape: Qt.PointingHandCursor
+        anchors.fill: parent
+        onClicked: {
+            parent.onClicked()
+        }
+    }
 }

@@ -74,7 +74,7 @@ Item {
             }
         }
 
-        Image {
+        SVGImage {
             id: iconImg
             sourceSize.height: iconHeight
             sourceSize.width: iconWidth

@@ -73,7 +73,7 @@ Item {
 
             radius: 4
 
-            Image {
+            SVGImage {
                 id: caretImg
                 width: 10
                 height: 6
@@ -146,7 +146,7 @@ Item {
                 loading = true
                 loginModel.login(txtPassword.textField.text)
             }
-            Image {
+            SVGImage {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 // TODO replace by a real loading image
