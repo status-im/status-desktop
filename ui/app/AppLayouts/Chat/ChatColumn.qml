@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../shared"
 import "../../../imports"
+import "./components"
 import "./ChatColumn"
 
 StackLayout {
@@ -37,6 +38,9 @@ StackLayout {
        }
 
 
+        ProfilePopup {
+            id: profilePopup
+        }
 
         Rectangle {
             id: chatInputContainer
