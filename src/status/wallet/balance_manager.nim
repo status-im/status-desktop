@@ -1,30 +1,37 @@
-import tables, strformat, strutils, stint, httpclient, json
+import tables, strformat, strutils, stint, httpclient, json, times
 import ../libstatus/wallet as status_wallet
 import ../libstatus/tokens as status_tokens
 import account
 
+type PriceTime* = ref object
+  price: string
+  timestamp: DateTime
+
 type BalanceManager* = ref object
-  pricePairs: Table[string, string]
-  tokenBalances: Table[string, string]
+  pricePairs: Table[string, PriceTime]
+  tokenBalances: Table[string, PriceTime]
+
+proc isCached(self: Table[string, PriceTime], cacheKey: string): bool =
+  self.hasKey(cacheKey) and ((self[cacheKey].timestamp + initDuration(minutes = 1)) >= now())
+
+proc cacheValue(self: var Table[string, PriceTime], cacheKey: string, value: string) =
+  self[cacheKey] = PriceTime(price: value, timestamp: now())
 
 proc newBalanceManager*(): BalanceManager =
   result = BalanceManager()
-  result.pricePairs = initTable[string, string]()
-  result.tokenBalances = initTable[string, string]()
+  result.pricePairs = initTable[string, PriceTime]()
+  result.tokenBalances = initTable[string, PriceTime]()
 
 var balanceManager = newBalanceManager()
 
 proc getPrice(crypto: string, fiat: string): string =
   try:
-    if balanceManager.pricePairs.hasKey(fiat):
-      return balanceManager.pricePairs[fiat]
     let url: string = fmt"https://min-api.cryptocompare.com/data/price?fsym={crypto}&tsyms={fiat}"
     let client = newHttpClient()
     client.headers = newHttpHeaders({ "Content-Type": "application/json" })
 
     let response = client.request(url)
     result = $parseJson(response.body)[fiat.toUpper]
-    # balanceManager.pricePairs[fiat] = result
   except Exception as e:
     echo "error getting price"
     echo e.msg
@@ -33,20 +40,28 @@ proc getPrice(crypto: string, fiat: string): string =
 proc getEthBalance(address: string): string =
   var balance = status_wallet.getBalance(address)
   result = status_wallet.hex2Eth(balance)
-#   balanceManager.tokenBalances["ETH"] = result
 
 proc getBalance*(symbol: string, accountAddress: string, tokenAddress: string): string =
-  if balanceManager.tokenBalances.hasKey(symbol):
-    return balanceManager.tokenBalances[symbol]
+  let cacheKey = fmt"{symbol}-{accountAddress}-{tokenAddress}"
+  if balanceManager.tokenBalances.isCached(cacheKey):
+    return balanceManager.tokenBalances[cacheKey].price
 
   if symbol == "ETH":
-    return getEthBalance(accountAddress)
+    let ethBalance = getEthBalance(accountAddress)
+    balanceManager.tokenBalances.cacheValue(cacheKey, ethBalance)
+    return ethBalance
+
   result = $status_tokens.getTokenBalance(tokenAddress, accountAddress)
-#   balanceManager.tokenBalances[symbol] = result
+  balanceManager.tokenBalances.cacheValue(cacheKey, result)
 
 proc getFiatValue*(crypto_balance: string, crypto_symbol: string, fiat_symbol: string): float =
   if crypto_balance == "0.0": return 0.0
+  let cacheKey = fmt"{crypto_symbol}-{fiat_symbol}"
+  if balanceManager.pricePairs.isCached(cacheKey):
+    return parseFloat(crypto_balance) * parseFloat(balanceManager.pricePairs[cacheKey].price)
+
   var fiat_crypto_price = getPrice(crypto_symbol, fiat_symbol)
+  balanceManager.pricePairs.cacheValue(cacheKey, fiat_crypto_price)
   parseFloat(crypto_balance) * parseFloat(fiat_crypto_price)
 
 proc updateBalance*(asset: Asset, currency: string) =
