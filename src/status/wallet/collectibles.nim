@@ -1,4 +1,5 @@
 import strformat, httpclient, json, chronicles, sequtils, strutils, tables
+from eth/common/utils import parseAddress
 import ../libstatus/core as status
 import ../libstatus/contracts as contracts
 import eth/common/eth_types
@@ -114,5 +115,6 @@ proc getKudos*(address: EthAddress): seq[Collectible] =
   except Exception as e:
     error "Error getting Kudos", msg = e.msg
 
-proc getAllCollectibles*(address: EthAddress): seq[Collectible] =
-  result = concat(getCryptoKitties(address), getEthermons(address), getKudos(address))
+proc getAllCollectibles*(address: string): seq[Collectible] =
+  let eth_address = parseAddress(address)
+  result = concat(getCryptoKitties(eth_address), getEthermons(eth_address), getKudos(eth_address))

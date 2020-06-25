@@ -75,6 +75,9 @@ SplitView {
                         anchors.left: assetBtn.right
                         anchors.leftMargin: 32
                         btnText: "Collectibles"
+                        onClicked: {
+                          walletModel.loadCollectiblesForAccount(walletModel.currentAccount.address)
+                        }
                     }
                     StatusTabButton {
                         id: historyBtn
