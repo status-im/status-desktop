@@ -13,7 +13,7 @@ Rectangle {
     color: bg
     radius: size / 2
 
-    Image {
+    SVGImage {
         id: roundedIconImage
         width: 12
         height: 12

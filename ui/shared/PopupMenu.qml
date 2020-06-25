@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 import "../imports"
+import "../shared"
 
 Menu {
     property alias arrowX: bgPopupMenuTopArrow.x
@@ -23,14 +24,16 @@ Menu {
                 anchors.leftMargin: 12
                 height: popupMenuItemIcon.height
                 anchors.verticalCenter: parent.verticalCenter
-                Image {
-                    fillMode: Image.Pad
+                SVGImage {
                     id: popupMenuItemIcon
                     source: popupMenuItem.icon.source
                     visible: false
+                    width: 25
+                    height: 25
                 }
 
                 ColorOverlay {
+                    cached: true
                     anchors.fill: popupMenuItemIcon
                     anchors.verticalCenter: parent.verticalCenter
                     source: popupMenuItemIcon

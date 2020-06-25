@@ -33,7 +33,7 @@ ModalPopup {
             color: Theme.transparent
             anchors.top: parent.top
             anchors.topMargin: Theme.padding
-            Image {
+            SVGImage {
                 width: parent.width
                 height: parent.height
                 fillMode: Image.PreserveAspectFit
@@ -76,8 +76,10 @@ ModalPopup {
             anchors.rightMargin: 32 + Theme.smallPadding
             radius: 8
 
-            Image {
+            SVGImage {
                 source: "../../../img/qr-code-icon.svg"
+                width: 25
+                height: 25
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -210,7 +212,7 @@ ModalPopup {
     //     anchors.leftMargin: Theme.padding
     //     radius: 8
 
-    //     Image {
+    //     SVGImage {
     //         source: "../../../../shared/img/copy-to-clipboard-icon.svg"
     //         anchors.horizontalCenter: parent.horizontalCenter
     //         anchors.verticalCenter: parent.verticalCenter

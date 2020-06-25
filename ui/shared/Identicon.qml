@@ -21,7 +21,6 @@ Rectangle {
         mipmap: true
         smooth: false
         antialiasing: true
-
     }
 }
 

@@ -102,7 +102,7 @@ Item {
             width: sendImg.width + sendText.width + walletMenu.btnMargin
             height: sendText.height
 
-            Image {
+            SVGImage {
                 id: sendImg
                 width: 12
                 height: 12
@@ -134,7 +134,7 @@ Item {
             anchors.left: sendBtn.right
             anchors.leftMargin: walletMenu.btnOuterMargin
 
-            Image {
+            SVGImage {
                 id: receiveImg
                 width: 12
                 height: 12
@@ -158,7 +158,7 @@ Item {
             anchors.leftMargin: walletMenu.btnOuterMargin
             width: settingsImg.width
             height: settingsImg.height
-            Image {
+            SVGImage {
                 id: settingsImg
                 width: 18
                 height: 18

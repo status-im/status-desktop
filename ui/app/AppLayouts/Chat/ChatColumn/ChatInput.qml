@@ -27,7 +27,6 @@ Rectangle {
         spacing: 0
         anchors.fill: parent
 
-
         ScrollView {
             anchors.fill: parent
             Layout.fillWidth: true

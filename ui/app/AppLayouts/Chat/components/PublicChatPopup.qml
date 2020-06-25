@@ -89,8 +89,10 @@ ModalPopup {
         background: Rectangle {
             color: "transparent"
         }
-        Image {
+        SVGImage {
             source: channelName.text == "" ? "../../../img/arrow-button-inactive.svg" : "../../../img/arrow-btn-active.svg"
+            width: 50
+            height: 50
         }
         MouseArea {
             id: btnMAJoinChat

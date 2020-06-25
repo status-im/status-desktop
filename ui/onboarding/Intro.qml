@@ -29,6 +29,7 @@ RowLayout {
                 image: "img/chat@2x.jpg"
                 title: qsTr("Truly private communication")
                 description: qsTr("Chat over a peer-to-peer, encrypted network\n where messages can't be censored or hacked")
+                isFirst: true
             }
             Slide {
                 image: "img/wallet@2x.jpg"
@@ -76,6 +77,7 @@ RowLayout {
             anchors.horizontalCenter: parent.horizontalCenter
             width: 146
             height: 44
+
         }
 
         StyledText {

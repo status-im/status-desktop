@@ -27,11 +27,9 @@ Page {
         Image {
             id: keysImg
             anchors.horizontalCenter: parent.horizontalCenter
-            sourceSize.width: 160
-            sourceSize.height: 160
             anchors.top: parent.top
             fillMode: Image.PreserveAspectFit
-            source: "img/key@2x.png"
+            source: "img/keys@2x.jpg"
         }
 
         StyledText {

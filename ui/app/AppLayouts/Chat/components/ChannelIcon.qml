@@ -67,7 +67,7 @@ Rectangle {
       border.color: "#10000000"
       border.width: 1
       color: Theme.transparent
-      Image {
+      SVGImage {
           width: contactImage.width ? contactImage.width : 40
           height: contactImage.height ? contactImage.height : 40
           fillMode: Image.PreserveAspectFit
