@@ -25,7 +25,6 @@ ModalPopup {
         } else {
             repeatPasswordValidationError = ""
         }
-        console.log('Validation?', passwordValidationError, repeatPasswordValidationError)
 
         return passwordValidationError === "" && repeatPasswordValidationError === ""
     }
