@@ -75,7 +75,7 @@ private slots:
     void testExecution()
     {
         bool quit = false;
-        dos_qapplication_create();
+        dos_qapplication_create("test");
         QTimer::singleShot(100, [&quit]() {
             quit = true;
             dos_qapplication_quit();
