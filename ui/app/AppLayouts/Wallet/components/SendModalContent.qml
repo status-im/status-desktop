@@ -6,10 +6,11 @@ Item {
     id: sendModalContent
     property alias amountInput: txtAmount
     property alias amountText: txtAmount.text
-    property alias fromText: txtFrom.text
     property alias toText: txtTo.text
     property alias passwordText: txtPassword.text
     property string defaultAccount: "0x1234"
+    property string selectedAccount: "Account 1"
+    property string selectedFromAccountAddress: defaultAccount
 
     anchors.left: parent.left
     anchors.right: parent.right
@@ -22,13 +23,27 @@ Item {
         placeholderText: qsTr("Enter ETH")
     }
 
-    Input {
+
+    Select {
         id: txtFrom
         label: qsTr("From account")
-        text: defaultAccount
-        placeholderText: qsTr("Send from (account)")
         anchors.top: txtAmount.bottom
         anchors.topMargin: Theme.padding
+        selectedText: sendModalContent.selectedAccount
+        selectOptions: [
+            {
+                text: "Acount1",
+                onClicked: function () {
+                    selectedAccount = "Account 1"
+                }
+            },
+            {
+                text: "Acount2",
+                onClicked: function () {
+                    selectedAccount = "Account 2"
+                }
+            }
+        ]
     }
 
     Input {
