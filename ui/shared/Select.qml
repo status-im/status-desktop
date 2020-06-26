@@ -5,13 +5,13 @@ import QtGraphicalEffects 1.13
 import "../imports"
 
 Item {
-    //    property string label: "My Label"
     property string label: ""
     readonly property bool hasLabel: label !== ""
     property color bgColor: Theme.grey
     readonly property int labelMargin: 7
     property var selectOptions
     property int customHeight: 44
+    property string selectedText: ""
 
     id: inputBox
     height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0)
@@ -39,6 +39,32 @@ Item {
         anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
         anchors.right: parent.right
         anchors.left: parent.left
+
+        StyledText {
+            id: selectedTextField
+            visible: inputBox.selectedText !== ""
+            text: inputBox.selectedText
+            anchors.left: parent.left
+            anchors.leftMargin: Theme.padding
+            anchors.verticalCenter: parent.verticalCenter
+            font.pixelSize: 15
+        }
+
+        SVGImage {
+            id: caret
+            width: 11
+            height: 6
+            anchors.right: parent.right
+            anchors.rightMargin: Theme.padding
+            anchors.verticalCenter: parent.verticalCenter
+            fillMode: Image.PreserveAspectFit
+            source: "../app/img/caret.svg"
+        }
+        ColorOverlay {
+            anchors.fill: caret
+            source: caret
+            color: Theme.darkGrey
+        }
 
         Menu {
             id: selectMenu
@@ -76,17 +102,6 @@ Item {
                     }
                 }
             }
-        }
-
-        SVGImage {
-            id: caret
-            width: 11
-            height: 6
-            anchors.right: parent.right
-            anchors.rightMargin: Theme.padding
-            anchors.verticalCenter: parent.verticalCenter
-            fillMode: Image.PreserveAspectFit
-            source: "../app/img/caret.svg"
         }
     }
 
