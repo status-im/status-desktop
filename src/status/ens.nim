@@ -1,15 +1,12 @@
 import strutils
 import profile/profile
 import nimcrypto
-import strmisc
 import json
 import strformat
 import libstatus/core
 import stew/byteutils
-import sequtils
 import unicode
 import algorithm
-import libstatus/settings as status_settings
 
 let domain* = ".stateofus.eth"
 

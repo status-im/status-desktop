@@ -1,4 +1,4 @@
-import tables, strformat, strutils, stint, httpclient, json, times
+import strformat, strutils, stint, httpclient, json
 import ../libstatus/wallet as status_wallet
 import ../libstatus/tokens as status_tokens
 import ../utils/cache

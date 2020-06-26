@@ -1,4 +1,4 @@
-import json, httpclient, json, strformat, stint, strutils, sequtils, chronicles
+import json, json, strformat, stint, strutils, chronicles
 import libstatus, core, types
 import ../wallet/account
 
