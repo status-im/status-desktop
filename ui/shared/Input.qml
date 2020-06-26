@@ -79,7 +79,7 @@ Item {
             sourceSize.height: iconHeight
             sourceSize.width: iconWidth
             anchors.left: parent.left
-            anchors.leftMargin: 10
+            anchors.leftMargin: Theme.smallPadding
             anchors.verticalCenter: parent.verticalCenter
             fillMode: Image.PreserveAspectFit
             source: inputBox.icon

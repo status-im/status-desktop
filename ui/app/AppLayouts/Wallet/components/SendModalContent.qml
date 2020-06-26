@@ -10,8 +10,8 @@ Item {
     property alias passwordText: txtPassword.text
     property var accounts
     property string defaultAccount: "0x1234"
-    property string selectedAccount: accounts[0].name
-    property string selectedFromAccountAddress: defaultAccount
+    property int selectedAccountIndex: 0
+    property string selectedAccountAddress: accounts[selectedAccountIndex].address
 
     anchors.left: parent.left
     anchors.right: parent.right
@@ -24,22 +24,36 @@ Item {
         placeholderText: qsTr("Enter ETH")
     }
 
-
     Select {
         id: txtFrom
+        iconHeight: 12
+        iconWidth: 12
+        icon: "../../../img/walletIcon.svg"
+        iconColor: accounts[selectedAccountIndex].iconColor
         label: qsTr("From account")
         anchors.top: txtAmount.bottom
         anchors.topMargin: Theme.padding
-        selectedText: sendModalContent.selectedAccount
-        selectOptions: sendModalContent.accounts.map(function (account) {
+        selectedText: accounts[selectedAccountIndex].name
+        selectOptions: sendModalContent.accounts.map(function (account, index) {
             return {
                 text: account.name,
                 onClicked: function () {
-                    selectedAccount = account.name
-                    selectedFromAccountAddress = account.address
+                    selectedAccountIndex = index
                 }
             }
         })
+    }
+
+    StyledText {
+        id: textSelectAccountAddress
+        text: accounts[selectedAccountIndex].address
+        anchors.right: parent.right
+        anchors.left: parent.left
+        anchors.leftMargin: 2
+        elide: Text.ElideMiddle
+        anchors.top: txtFrom.bottom
+        font.pixelSize: 12
+        color: Theme.darkGrey
     }
 
     Input {
@@ -47,7 +61,7 @@ Item {
         label: qsTr("Recipient")
         text: defaultAccount
         placeholderText: qsTr("Send to")
-        anchors.top: txtFrom.bottom
+        anchors.top: textSelectAccountAddress.bottom
         anchors.topMargin: Theme.padding
     }
 
@@ -63,6 +77,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:0;autoSize:true;formeditorColor:"#ffffff";formeditorZoom:0.75;height:480;width:640}
+    D{i:0;autoSize:true;formeditorColor:"#ffffff";height:480;width:640}
 }
 ##^##*/
