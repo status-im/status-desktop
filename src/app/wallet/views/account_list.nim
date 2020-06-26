@@ -29,6 +29,19 @@ QtObject:
   
   proc getAccount*(self: AccountList, index: int): WalletAccount = self.accounts[index]
 
+  proc rowData(self: AccountList, index: int, column: string): string {.slot.} =
+    if (index >= self.accounts.len):
+      return
+    let account = self.accounts[index]
+    case column:
+      of "name": result = account.name
+      of "address": result = account.address
+      of "iconColor": result = account.iconColor
+      of "balance": result = account.balance
+      of "path": result = account.path
+      of "walletType": result = account.walletType
+
+
   proc getAccountindexByAddress*(self: AccountList, address: string): int =
     var i = 0
     for account in self.accounts:
