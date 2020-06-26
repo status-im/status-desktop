@@ -58,7 +58,7 @@ Rectangle {
 
     StyledText {
         id: contactInfo
-        text: wrapper.chatType !== Constants.chatTypePublic ? wrapper.name : "#" + wrapper.name
+        text: wrapper.chatType !== Constants.chatTypePublic ? Emoji.parse(wrapper.name, "26x26") : "#" + wrapper.name
         anchors.right: contactTime.left
         anchors.rightMargin: Theme.smallPadding
         elide: Text.ElideRight
@@ -73,7 +73,7 @@ Rectangle {
     
     StyledText {
         id: lastChatMessage
-        text: lastMessage ? lastMessage.replace(/\n|\r/g, ' ') : qsTr("No messages")
+        text: lastMessage ? Emoji.parse(lastMessage, "26x26").replace(/\n|\r/g, ' ') : qsTr("No messages")
         anchors.right: contactNumberChatsCircle.left
         anchors.rightMargin: Theme.smallPadding
         elide: Text.ElideRight

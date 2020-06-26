@@ -3,5 +3,5 @@ import QtQuick.Controls 2.13
 import "../imports"
 
 TextField {
-    font.family: Theme.fontEmoji.name + "," + Theme.fontRegular.name
+    font.family: Theme.fontRegular.name
 }

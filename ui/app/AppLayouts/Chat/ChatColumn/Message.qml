@@ -257,8 +257,16 @@ Item {
 
         StyledTextEdit {
             id: chatText
-            text: linkify(message)
             textFormat: TextEdit.RichText
+            text: {
+                if(contentType === Constants.stickerType) return "";
+                if (isMessage) return linkify(message);
+                if(isEmoji){
+                    return Emoji.parse(message, "72x72");
+                } else {
+                    return Emoji.parse(message, "26x26");
+                }
+            }
             anchors.left: parent.left
             anchors.leftMargin: parent.chatHorizontalPadding
             anchors.right: message.length > 52 ? parent.right : undefined
@@ -267,12 +275,11 @@ Item {
             wrapMode: Text.Wrap
             anchors.top: parent.top
             anchors.topMargin: chatBox.chatVerticalPadding
-            font.pixelSize: isEmoji ? 40 : 15
+            font.pixelSize: 15
             readOnly: true
             selectByMouse: true
             color: !isCurrentUser ? Theme.black : Theme.white
             visible: contentType == Constants.messageType || isEmoji
-            textFormat: TextEdit.RichText
             onLinkActivated: Qt.openUrlExternally(link)
             MouseArea {
                 anchors.fill: parent
