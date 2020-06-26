@@ -11,16 +11,13 @@ Rectangle {
     visible: chatsModel.activeChannel.chatType != Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember(profileModel.profile.pubKey)
 
     function onEnter(event){
-        if(!(event.modifiers & Qt.ControlModifier) && !(event.modifiers & Qt.ShiftModifier)){
+        if (event.modifiers == Qt.NoModifier && (event.key == Qt.Key_Enter || event.key == Qt.Key_Return)) {
             if(txtData.text.trim().length > 0){
                 chatsModel.sendMessage(txtData.text.trim());
                 txtData.text = "";
+                event.accepted = true;
             }
-        } else {
-            txtData.text = txtData.text + "\n";
-            txtData.cursorPosition = txtData.text.length
         }
-        event.accepted = true;
     }
 
     RowLayout {
@@ -46,8 +43,7 @@ Rectangle {
                 rightPadding: Theme.padding
                 font.pixelSize: 14
                 placeholderText: qsTr("Type a message...")
-                Keys.onEnterPressed: onEnter(event)
-                Keys.onReturnPressed: onEnter(event)
+                Keys.onPressed: onEnter(event)
                 background: Rectangle {
                     color: "#00000000"
                 }
