@@ -23,8 +23,28 @@ Item {
     }
 
     RowLayout {
-        id: browserTabSettings
+        id: walletTabSettings
         anchors.top: element7.bottom
+        anchors.topMargin: 20
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+        StyledText {
+            text: qsTr("Wallet Tab")
+        }
+        Switch {
+            checked: walletBtn.enabled
+            onCheckedChanged: function(value) {
+                walletBtn.enabled = this.checked
+            }
+        }
+        StyledText {
+            text: qsTr("NOT RECOMMENDED - Use at your own risk")
+        }
+    }
+
+    RowLayout {
+        id: browserTabSettings
+        anchors.top: walletTabSettings.bottom
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 24

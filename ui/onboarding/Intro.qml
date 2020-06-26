@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../shared"
+import "../imports"
 
 RowLayout {
     property alias btnGetStarted: btnGetStarted
@@ -75,7 +76,7 @@ RowLayout {
             text: qsTr("Thanks for trying Status Desktop! Please note that this is an alpha release and we advise you that using this app should be done for testing purposes only and you assume the full responsibility for all risks concerning your data and funds. Status makes no claims of security or integrity of funds in these builds.")
             font.bold: true
             anchors.top: rctPageIndicator.bottom
-            anchors.topMargin: 10
+            anchors.topMargin: 5
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 14
             font.letterSpacing: 0.1
@@ -84,11 +85,21 @@ RowLayout {
             color: Theme.black
         }
 
+        CheckBox {
+            id: warningCheckBox
+            anchors.top: warningMessage.bottom
+            anchors.topMargin: 0
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: qsTr("I understand")
+        }
+
         StyledButton {
             id: btnGetStarted
-            label: "I understand"
-            anchors.top: warningMessage.bottom
-            anchors.topMargin: 17
+            enabled: warningCheckBox.checked
+            btnColor: this.enabled ? Theme.lightBlue : "lightgrey"
+            label: "Get Started"
+            anchors.top: warningCheckBox.bottom
+            anchors.topMargin: 5
             anchors.horizontalCenter: parent.horizontalCenter
             width: 146
             height: 44
@@ -99,7 +110,7 @@ RowLayout {
             x: 772
             text: qsTr("Status does not collect, share or sell any personal data. By continuing you agree with the privacy policy.")
             anchors.top: btnGetStarted.bottom
-            anchors.topMargin: 17
+            anchors.topMargin: 8
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 12
             font.letterSpacing: 0.1

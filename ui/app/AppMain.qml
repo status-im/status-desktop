@@ -59,10 +59,12 @@ RowLayout {
 
         TabButton {
             id: walletBtn
+            enabled: isExperimental === "1"
+            visible: this.enabled
             width: 40
-            height: 40
+            height: this.enabled ? 40 : 0
             text: ""
-            anchors.topMargin: 50
+            anchors.topMargin: this.enabled ? 50 : 0
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: chatBtn.top
             background: Rectangle {
@@ -84,6 +86,7 @@ RowLayout {
 
         TabButton {
             id: browserBtn
+            enabled: isExperimental === "1"
             visible: this.enabled
             width: 40
             height: this.enabled ? 40 : 0
@@ -135,6 +138,7 @@ RowLayout {
 
         TabButton {
             id: nodeBtn
+            enabled: isExperimental === "1"
             visible: this.enabled
             width: 40
             height: this.enabled ? 40 : 0

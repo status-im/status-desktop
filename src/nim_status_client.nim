@@ -1,4 +1,4 @@
-import NimQml, eventemitter, chronicles
+import NimQml, eventemitter, chronicles, os
 
 import app/chat/core as chat
 import app/wallet/core as wallet
@@ -56,6 +56,10 @@ proc mainProc() =
 
   engine.setRootContextProperty("loginModel", login.variant)
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
+
+  let isExperimental = if getEnv("EXPERIMENTAL") == "1": "1" else: "0" # value explicity passed to avoid trusting input
+  let experimentalFlag = newQVariant(isExperimental)
+  engine.setRootContextProperty("isExperimental", experimentalFlag)
 
   defer:
     error "TODO: if user is logged in, logout"
