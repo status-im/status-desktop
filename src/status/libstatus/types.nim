@@ -102,10 +102,11 @@ type
 type
   RpcException* = object of Exception
 
-type Sticker* = ref object
+type Sticker* = object
   hash*: string
+  packId*: int
 
-type StickerPack* = ref object
+type StickerPack* = object
   author*: string
   id*: int
   name*: string

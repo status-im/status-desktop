@@ -41,9 +41,9 @@ Popup {
             Layout.preferredHeight: 400 - 4
 
             Item {
-                id: stickerHistory
+                id: noStickerPacks
                 anchors.fill: parent
-                visible: true
+                visible: stickerGrid.count <= 0 || stickerPackListView.count <= 0
 
                 Image {
                     id: imgNoStickers
@@ -55,19 +55,38 @@ Popup {
                     source: "../../../img/stickers_sad_icon.svg"
                 }
 
-                Text {
-                    id: lblNoStickers
+                Item {
+                    id: noStickersContainer
                     width: parent.width
-                    font.pixelSize: 15
-                    text: qsTr("You don't have any stickers yet")
-                    horizontalAlignment: Text.AlignHCenter
+                    height: 22
                     anchors.top: imgNoStickers.bottom
                     anchors.topMargin: 8
+
+                    Text {
+                        id: lblNoStickersYet
+                        visible: stickerPackListView.count <= 0
+                        anchors.fill: parent
+                        font.pixelSize: 15
+                        text: qsTr("You don't have any stickers yet")
+                        lineHeight: 22
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    Text {
+                        id: lblNoRecentStickers
+                        visible: stickerPackListView.count > 0 && stickerGrid.count <= 0
+                        anchors.fill: parent
+                        font.pixelSize: 15
+                        text: qsTr("Recently used stickers will appear here")
+                        lineHeight: 22
+                        horizontalAlignment: Text.AlignHCenter
+                    }
                 }
 
                 StyledButton {
+                    visible: stickerPackListView.count <= 0
                     label: qsTr("Get Stickers")
-                    anchors.top: lblNoStickers.bottom
+                    anchors.top: noStickersContainer.bottom
                     anchors.topMargin: Theme.padding
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
@@ -75,7 +94,7 @@ Popup {
 
             GridView {
                 id: stickerGrid
-                visible: false
+                visible: count > 0
                 anchors.fill: parent
                 cellWidth: 88
                 cellHeight: 88
@@ -134,9 +153,8 @@ Popup {
                 anchors.left: btnAddStickerPack.right
                 anchors.leftMargin: Theme.padding
                 onClicked: {
+                    chatsModel.setActiveStickerPackById(-1)
                     packIndicator.updatePosition(-1)
-                    stickerGrid.visible = false;
-                    stickerHistory.visible = true;
                 }
             }
 
@@ -160,8 +178,6 @@ Popup {
                             chatsModel.setActiveStickerPackById(id)
                             popup.selectedPackId = id
                             packIndicator.updatePosition(index)
-                            stickerGrid.visible = true;
-                            stickerHistory.visible = false;
                         }
                     }
                 }

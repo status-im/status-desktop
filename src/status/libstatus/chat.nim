@@ -2,6 +2,7 @@ import json, times, strutils, sequtils, chronicles
 import core, utils
 import ../chat/[chat, message]
 import ../../signals/messages
+import ./types
 
 proc buildFilter*(chat: Chat):JsonNode =
   if chat.chatType == ChatType.PrivateGroupChat:
@@ -82,7 +83,7 @@ proc sendChatMessage*(chatId: string, msg: string): string =
     }
   ])
 
-proc sendStickerMessage*(chatId: string, hash: string, pack: int): string =
+proc sendStickerMessage*(chatId: string, sticker: Sticker): string =
   callPrivateRPC("sendChatMessage".prefix, %* [
     {
       "chatId": chatId,
@@ -90,8 +91,8 @@ proc sendStickerMessage*(chatId: string, hash: string, pack: int): string =
       "responseTo": nil,
       "ensName": nil,
       "sticker": {
-        "hash": hash,
-        "pack": pack
+        "hash": sticker.hash,
+        "pack": sticker.packId
       },
       "contentType": ContentType.Sticker.int
     }

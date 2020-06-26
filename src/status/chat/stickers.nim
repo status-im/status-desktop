@@ -21,7 +21,7 @@ proc decodeContentHash*(value: string): string =
 
   # ipfs-ns
   if value[0] & value[1] != "e3":
-    warn "Could not decode sticker. It may still be valid, but requires a different codec to be used"
+    warn "Could not decode sticker. It may still be valid, but requires a different codec to be used", hash=value
     return ""
 
   try:
