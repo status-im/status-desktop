@@ -13,6 +13,39 @@ Item {
     property int selectedAccountIndex: 0
     property string selectedAccountAddress: accounts[selectedAccountIndex].address
 
+    property string passwordValidationError: ""
+    property string toValidationError: ""
+    property string amountValidationError: ""
+
+    function validate() {
+        if (passwordText === "") {
+            passwordValidationError = qsTr("You need to enter a password")
+        } else if (passwordText.length < 4) {
+            passwordValidationError = qsTr("Password needs to be 4 characters or more")
+        } else {
+            passwordValidationError = ""
+        }
+
+        if (toText === "") {
+            toValidationError = qsTr("You need to enter a destination address")
+        } else if (!Utils.isAddress(toText)) {
+            toValidationError = qsTr("This needs to be a valid address (starting with 0x)")
+        } else {
+            toValidationError = ""
+        }
+
+        if (amountText === "") {
+            amountValidationError = qsTr("You need to enter an amount")
+        } else if (isNaN(amountText)) {
+            amountValidationError = qsTr("This needs to be a number")
+            // TODO check balance?
+        } else {
+            amountValidationError = ""
+        }
+
+        return passwordValidationError === "" && toValidationError === "" && amountValidationError === ""
+    }
+
     anchors.left: parent.left
     anchors.right: parent.right
 
@@ -22,6 +55,7 @@ Item {
         icon: "../../../img/token-icons/eth.svg"
         anchors.top: parent.top
         placeholderText: qsTr("Enter ETH")
+        validationError: amountValidationError
     }
 
     Select {
@@ -63,6 +97,7 @@ Item {
         placeholderText: qsTr("Send to")
         anchors.top: textSelectAccountAddress.bottom
         anchors.topMargin: Theme.padding
+        validationError: toValidationError
     }
 
     Input {
@@ -72,6 +107,7 @@ Item {
         anchors.top: txtTo.bottom
         anchors.topMargin: Theme.padding
         textField.echoMode: TextInput.Password
+        validationError: passwordValidationError
     }
 }
 
