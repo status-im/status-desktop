@@ -18,6 +18,10 @@ Item {
     anchors.right: parent.right
     anchors.left: parent.left
 
+    onSelectOptionsChanged: {
+        selectMenu.setupMenuItems()
+    }
+
     StyledText {
         id: inputLabel
         text: inputBox.label
@@ -67,6 +71,8 @@ Item {
         }
 
         Menu {
+            property var items: []
+
             id: selectMenu
             width: parent.width
             padding: 10
@@ -76,15 +82,28 @@ Item {
                 color: Theme.grey
                 radius: Theme.radius
             }
-            Component.onCompleted: {
+
+            function setupMenuItems() {
+                if (selectMenu.items.length) {
+                    // Remove old items
+                    selectMenu.items.forEach(function (item) {
+                        selectMenu.removeItem(item)
+                    })
+                    selectMenu.items = []
+                }
                 if (!selectOptions) {
                     return
                 }
 
                 selectOptions.forEach(function (element) {
                     var item = menuItem.createObject(undefined, element)
+                    selectMenu.items.push(item)
                     selectMenu.addItem(item)
                 })
+            }
+
+            Component.onCompleted: {
+                setupMenuItems()
             }
 
             Component {

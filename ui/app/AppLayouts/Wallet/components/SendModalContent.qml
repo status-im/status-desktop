@@ -8,8 +8,9 @@ Item {
     property alias amountText: txtAmount.text
     property alias toText: txtTo.text
     property alias passwordText: txtPassword.text
+    property var accounts
     property string defaultAccount: "0x1234"
-    property string selectedAccount: "Account 1"
+    property string selectedAccount: accounts[0].name
     property string selectedFromAccountAddress: defaultAccount
 
     anchors.left: parent.left
@@ -30,20 +31,15 @@ Item {
         anchors.top: txtAmount.bottom
         anchors.topMargin: Theme.padding
         selectedText: sendModalContent.selectedAccount
-        selectOptions: [
-            {
-                text: "Acount1",
+        selectOptions: sendModalContent.accounts.map(function (account) {
+            return {
+                text: account.name,
                 onClicked: function () {
-                    selectedAccount = "Account 1"
-                }
-            },
-            {
-                text: "Acount2",
-                onClicked: function () {
-                    selectedAccount = "Account 2"
+                    selectedAccount = account.name
+                    selectedFromAccountAddress = account.address
                 }
             }
-        ]
+        })
     }
 
     Input {

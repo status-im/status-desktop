@@ -15,10 +15,22 @@ ModalPopup {
         sendModalContent.amountInput.text = ""
         sendModalContent.amountInput.forceActiveFocus(Qt.MouseFocusReason)
         sendModalContent.defaultAccount = walletModel.getDefaultAccount()
+        const accounts = walletModel.accounts
+        const numAccounts = accounts.rowCount()
+        const accountsData = []
+        for (let i = 0; i < numAccounts; i++) {
+            accountsData.push({
+                name: accounts.rowData(i, 'name'),
+                address: accounts.rowData(i, 'address'),
+                iconColor: accounts.rowData(i, 'iconColor')
+            })
+        }
+        sendModalContent.accounts = accountsData
     }
 
     SendModalContent {
         id: sendModalContent
+        accounts: walletModel.accounts
     }
 
     footer: StyledButton {
