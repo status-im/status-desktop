@@ -1,6 +1,6 @@
 import eth/common/eth_types
-import ./core as status, ./types, ./contracts, ./settings, ./utils
-import json, json_serialization, tables, chronicles, strutils, sequtils
+import ./core as status, ./types, ./contracts, ./settings
+import json, json_serialization, tables, strutils, sequtils
 
 # Retrieves number of sticker packs owned by user
 # See https://notes.status.im/Q-sQmQbpTOOWCQcYiXtf5g#Read-Sticker-Packs-owned-by-a-user

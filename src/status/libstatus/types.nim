@@ -100,7 +100,7 @@ type
     to*: string
 
 type
-  RpcException* = object of Exception
+  RpcException* = object of CatchableError
 
 type Sticker* = object
   hash*: string

@@ -1,6 +1,3 @@
-when defined(macosx):
-  import algorithm, strutils
-
 if defined(release):
   switch("nimcache", "nimcache/release/$projectName")
 else:
