@@ -12,6 +12,12 @@ Item {
     property var selectOptions
     property int customHeight: 44
     property string selectedText: ""
+    property url icon: ""
+    property int iconHeight: 24
+    property int iconWidth: 24
+    property color iconColor
+
+    readonly property bool hasIcon: icon.toString() !== ""
 
     id: inputBox
     height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0)
@@ -44,12 +50,28 @@ Item {
         anchors.right: parent.right
         anchors.left: parent.left
 
+        SVGImage {
+            id: iconImg
+            sourceSize.height: iconHeight
+            sourceSize.width: iconWidth
+            anchors.left: parent.left
+            anchors.leftMargin: Theme.smallPadding
+            anchors.verticalCenter: parent.verticalCenter
+            fillMode: Image.PreserveAspectFit
+            source: inputBox.icon
+        }
+        ColorOverlay {
+            anchors.fill: iconImg
+            source: iconImg
+            color: iconColor ? iconColor : Theme.transparent
+        }
+
         StyledText {
             id: selectedTextField
             visible: inputBox.selectedText !== ""
             text: inputBox.selectedText
             anchors.left: parent.left
-            anchors.leftMargin: Theme.padding
+            anchors.leftMargin: inputBox.hasIcon ? iconWidth + 20 : Theme.padding
             anchors.verticalCenter: parent.verticalCenter
             font.pixelSize: 15
         }
