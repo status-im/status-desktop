@@ -12,6 +12,8 @@ import views/channels_list, views/message_list, views/chat_item, views/sticker_p
 logScope:
   topics = "chats-view"
 
+const RECENT_STICKERS = -1
+
 QtObject:
   type
     ChatsView* = ref object of QAbstractListModel
@@ -41,10 +43,12 @@ QtObject:
     result.status = status
     result.chats = newChannelsList()
     result.activeChannel = newChatItemView(status)
-    result.activeStickerPackId = -1
+    result.activeStickerPackId = RECENT_STICKERS
     result.messageList = initTable[string, ChatMessageList]()
     result.stickerPacks = newStickerPackList()
-    result.stickers = initTable[int, StickerList]()
+    result.stickers = [
+      (RECENT_STICKERS, newStickerList())
+    ].toTable
     result.emptyStickerList = newStickerList()
     result.setup()
 
@@ -98,8 +102,6 @@ QtObject:
     self.activeStickerPackChanged()
 
   proc getStickerList*(self: ChatsView): QVariant {.slot.} =
-    if self.activeStickerPackId <= 0:
-      return newQVariant(self.emptyStickerList)
     result = newQVariant(self.stickers[self.activeStickerPackId])
 
   QtProperty[QVariant] stickers:
@@ -158,9 +160,14 @@ QtObject:
 
   proc sendMessage*(self: ChatsView, message: string) {.slot.} =
     discard self.status.chat.sendMessage(self.activeChannel.id, message)
+
+  proc addRecentStickerToList*(self: ChatsView, sticker: Sticker) =
+    self.stickers[RECENT_STICKERS].addStickerToList(sticker)
   
   proc sendSticker*(self: ChatsView, hash: string, pack: int) {.slot.} =
-    self.status.chat.sendSticker(self.activeChannel.id, hash, pack)
+    let sticker = Sticker(hash: hash, packId: pack)
+    self.addRecentStickerToList(sticker)
+    self.status.chat.sendSticker(self.activeChannel.id, sticker)
 
   proc joinChat*(self: ChatsView, channel: string, chatTypeInt: int): int {.slot.} =
     self.status.chat.join(channel, ChatType(chatTypeInt))

@@ -1,9 +1,10 @@
-import core
-import json
+import core, ./types
+import json, tables
+import json_serialization
 
-proc saveSettings*(key: string, value: string): string =
+proc saveSettings*(key: string, value: string | JsonNode): string =
   callPrivateRPC("settings_saveSetting", %* [
-    key, $value
+    key, value
   ])
 
 proc getWeb3ClientVersion*(): string =
@@ -13,6 +14,9 @@ proc getSettings*(): JsonNode =
   callPrivateRPC("settings_getSettings").parseJSON()["result"]
   # TODO: return an Table/Object instead
 
-proc getSetting*(name: string): string =
+
+proc getSetting*[T](name: string, defaultValue: T): T =
   let settings: JsonNode = getSettings()
-  result = settings{name}.getStr
+  if not settings.contains(name):
+    return defaultValue
+  result = Json.decode($settings{name}, T)

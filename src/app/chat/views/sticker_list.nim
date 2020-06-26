@@ -1,6 +1,5 @@
-import NimQml, Tables
+import NimQml, Tables, sequtils
 import ../../../status/chat/stickers
-
 import ../../../status/libstatus/types
 
 type
@@ -41,3 +40,10 @@ QtObject:
       StickerRoles.Url.int:"url",
       StickerRoles.Hash.int:"hash"
     }.toTable
+
+  proc addStickerToList*(self: StickerList, sticker: Sticker) =
+    if(self.stickers.any(proc(existingSticker: Sticker): bool = return existingSticker.hash == sticker.hash)):
+      return
+    self.beginInsertRows(newQModelIndex(), 0, 0)
+    self.stickers.insert(sticker, 0)
+    self.endInsertRows()

@@ -1,4 +1,4 @@
-import NimQml, eventemitter, chronicles
+import NimQml, eventemitter, chronicles, tables
 import ../../status/chat as chat_model
 import ../../status/mailservers as mailserver_model
 import ../../signals/types
@@ -76,8 +76,12 @@ proc init*(self: ChatController) =
   let currAcct = status_wallet.getWalletAccounts()[0] # TODO: make generic
   let currAddr = parseAddress(currAcct.address)
   let installedStickers = self.status.chat.getInstalledStickers(currAddr)
-  for stickerPack in installedStickers:
+  for packId, stickerPack in installedStickers.pairs:
     self.view.addStickerPackToList(stickerPack)
+  let recentStickers = self.status.chat.getRecentStickers()
+  for sticker in recentStickers:
+    self.view.addRecentStickerToList(sticker)
+    self.status.chat.addStickerToRecent(sticker)
 
 proc handleMessage(self: ChatController, data: MessageSignal) =
   self.status.chat.update(data.chats, data.messages)

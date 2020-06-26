@@ -34,6 +34,7 @@ type
     contacts*: Table[string, Profile]
     channels*: Table[string, Chat]
     msgCursor*: Table[string, string]
+    recentStickers*: seq[Sticker]
 
 include chat/utils
 
@@ -43,6 +44,7 @@ proc newChatModel*(events: EventEmitter): ChatModel =
   result.contacts = initTable[string, Profile]()
   result.channels = initTable[string, Chat]()
   result.msgCursor = initTable[string, string]()
+  result.recentStickers = @[]
 
 proc delete*(self: ChatModel) =
   discard
@@ -81,12 +83,15 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
 
   self.events.emit("channelJoined", ChannelArgs(chat: chat))
 
-proc getInstalledStickers*(self: ChatModel, address: EthAddress): seq[StickerPack] =
+proc getInstalledStickers*(self: ChatModel, address: EthAddress): Table[int, StickerPack] =
   # TODO: needs more fleshing out to determine which sticker packs
   # we own -- owned sticker packs will simply allowed them to be installed
   discard status_stickers.getBalance(address)
 
   result = status_stickers.getInstalledStickers()
+
+proc getRecentStickers*(self: ChatModel): seq[Sticker] =
+  result = status_stickers.getRecentStickers()
 
 proc init*(self: ChatModel) =
   let chatList = status_chat.loadChats()
@@ -148,8 +153,16 @@ proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
   self.emitUpdate(sentMessage)
   sentMessage
 
-proc sendSticker*(self: ChatModel, chatId: string, hash: string, pack: int) =
-  var response = status_chat.sendStickerMessage(chatId, hash, pack)
+proc addStickerToRecent*(self: ChatModel, sticker: Sticker) =
+  self.recentStickers.insert(sticker, 0)
+  self.recentStickers = self.recentStickers.deduplicate()
+  if self.recentStickers.len > 24:
+    self.recentStickers = self.recentStickers[0..23] # take top 24 most recent
+  status_stickers.saveRecentStickers(self.recentStickers)
+
+proc sendSticker*(self: ChatModel, chatId: string, sticker: Sticker) =
+  var response = status_chat.sendStickerMessage(chatId, sticker)
+  self.addStickerToRecent(sticker)
   self.emitUpdate(response)
 
 proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true) =
