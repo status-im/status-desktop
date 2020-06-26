@@ -3,122 +3,50 @@ import "../../../../imports"
 import "../../../../shared"
 
 Item {
-    id: element
-    property alias valueInput: txtValue
+    id: sendModalContent
+    property alias amountInput: txtAmount
+    property alias amountText: txtAmount.text
+    property alias fromText: txtFrom.text
+    property alias toText: txtTo.text
+    property alias passwordText: txtPassword.text
     property string defaultAccount: "0x1234"
 
-    StyledText {
-        id: modalDialogTitle
-        text: "Send"
+    anchors.left: parent.left
+    anchors.right: parent.right
+
+    Input {
+        id: txtAmount
+        label: qsTr("Amount")
+        icon: "../../../img/token-icons/eth.svg"
         anchors.top: parent.top
-        anchors.left: parent.left
-        font.bold: true
-        font.pixelSize: 17
-        anchors.leftMargin: 16
-        anchors.topMargin: 16
+        placeholderText: qsTr("Enter ETH")
     }
 
-    SVGImage {
-        id: closeModalImg
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.rightMargin: 16
-        anchors.topMargin: 16
-        source: "../../../../shared/img/close.svg"
-        width: 25
-        height: 25
-        MouseArea {
-            id: closeModalMouseArea
-            cursorShape: Qt.PointingHandCursor
-            anchors.fill: parent
-            onClicked: {
-                popup.close()
-            }
-        }
-    }
-
-    Separator {
-        id: headerSeparator
-        anchors.top: modalDialogTitle.bottom
-    }
-
-    Item {
-        id: modalBody
-        anchors.right: parent.right
-        anchors.rightMargin: 32
-        anchors.top: headerSeparator.bottom
+    Input {
+        id: txtFrom
+        label: qsTr("From account")
+        text: defaultAccount
+        placeholderText: qsTr("Send from (account)")
+        anchors.top: txtAmount.bottom
         anchors.topMargin: Theme.padding
-        anchors.bottom: footerSeparator.top
-        anchors.bottomMargin: 16
-        anchors.left: parent.left
-        anchors.leftMargin: 32
-
-        Input {
-            id: txtValue
-            label: "Amount"
-            icon: "../../../img/token-icons/eth.svg"
-            anchors.top: parent.top
-            placeholderText: qsTr("Enter ETH")
-        }
-
-        Input {
-            id: txtFrom
-            label: "From account"
-            text: defaultAccount
-            placeholderText: qsTr("Send from (account)")
-            anchors.top: txtValue.bottom
-            anchors.topMargin: Theme.padding
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-        }
-
-        Input {
-            id: txtTo
-            label: "Recipient"
-            text: defaultAccount
-            placeholderText: qsTr("Send to")
-            anchors.top: txtFrom.bottom
-            anchors.topMargin: Theme.padding
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-        }
-
-        Input {
-            id: txtPassword
-            label: "Password"
-            placeholderText: "Enter Password"
-            anchors.top: txtTo.bottom
-            anchors.topMargin: Theme.padding
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-        }
     }
 
-    Separator {
-        id: footerSeparator
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 76
+    Input {
+        id: txtTo
+        label: qsTr("Recipient")
+        text: defaultAccount
+        placeholderText: qsTr("Send to")
+        anchors.top: txtFrom.bottom
+        anchors.topMargin: Theme.padding
     }
 
-    StyledButton {
-        anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
-        label: "Send"
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: Theme.padding
-        onClicked: {
-            let result = walletModel.onSendTransaction(txtFrom.text,
-                                                       txtTo.text,
-                                                       txtValue.text,
-                                                       txtPassword.text)
-            console.log(result)
-        }
+    Input {
+        id: txtPassword
+        label: qsTr("Password")
+        placeholderText: qsTr("Enter Password")
+        anchors.top: txtTo.bottom
+        anchors.topMargin: Theme.padding
+        textField.echoMode: TextInput.Password
     }
 }
 

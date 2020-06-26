@@ -66,7 +66,7 @@ Item {
             anchors.rightMargin: parent.rightMargin
             anchors.left: parent.left
             anchors.leftMargin: 0
-            leftPadding: inputBox.hasIcon ? 36 : Theme.padding
+            leftPadding: inputBox.hasIcon ? iconWidth + 20 : Theme.padding
             selectByMouse: true
             font.pixelSize: fontPixelSize
             background: Rectangle {

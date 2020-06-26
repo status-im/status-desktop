@@ -6,37 +6,33 @@ import "../../../imports"
 import "../../../shared"
 import "./components"
 
-Item {
-    function open() {
-        popup.open()
-        sendModalContent.valueInput.text = ""
-        sendModalContent.valueInput.forceActiveFocus(Qt.MouseFocusReason)
+ModalPopup {
+    id: popup
+
+    title: qsTr("Send")
+
+    onOpened: {
+        sendModalContent.amountInput.text = ""
+        sendModalContent.amountInput.forceActiveFocus(Qt.MouseFocusReason)
         sendModalContent.defaultAccount = walletModel.getDefaultAccount()
     }
 
-    function close() {
-        popup.close()
+    SendModalContent {
+        id: sendModalContent
     }
 
-    Popup {
-        id: popup
-        modal: true
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-        Overlay.modal: Rectangle {
-            color: "#60000000"
-        }
-        parent: Overlay.overlay
-        x: Math.round((parent.width - width) / 2)
-        y: Math.round((parent.height - height) / 2)
-        width: 480
-        height: 510
-        background: Rectangle {
-            color: Theme.white
-            radius: Theme.radius
-        }
-        padding: 0
-        contentItem: SendModalContent {
-            id: sendModalContent
+    footer: StyledButton {
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.rightMargin: Theme.padding
+        label: qsTr("Send")
+
+        onClicked: {
+            let result = walletModel.onSendTransaction(sendModalContent.fromText,
+                                                       sendModalContent.toText,
+                                                       sendModalContent.amountText,
+                                                       sendModalContent.passwordText)
+            console.log(result)
         }
     }
 }
