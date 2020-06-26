@@ -168,6 +168,7 @@ DISTFILES += \
     app/img/stickers_sad_icon.svg \
     app/img/walletActive.svg \
     app/qmldir \
+    imports/Emoji.qml \
     imports/Utils.qml \
     imports/qmldir \
     onboarding/CreatePasswordModal.qml \

@@ -7,7 +7,7 @@ QtObject {
     property QtObject fontBold: FontLoader { id: _fontBold; source: "../fonts/InterStatus/InterStatus-Bold.otf"; }
     property QtObject fontLight: FontLoader { id: _fontLight; source: "../fonts/InterStatus/InterStatus-Light.otf"; }
     property QtObject fontRegular: FontLoader { id: _fontRegular; source: "../fonts/InterStatus/InterStatus-Regular.otf"; }
-    property QtObject fontEmoji: FontLoader { id: _fontEmoji; source: "../fonts/TwitterEmoji.ttf"; }
+    
 
     readonly property color white: "#FFFFFF"
     readonly property color white2: "#FCFCFC"
