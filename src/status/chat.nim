@@ -153,16 +153,17 @@ proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
   self.emitUpdate(sentMessage)
   sentMessage
 
-proc addStickerToRecent*(self: ChatModel, sticker: Sticker) =
+proc addStickerToRecent*(self: ChatModel, sticker: Sticker, save: bool = false) =
   self.recentStickers.insert(sticker, 0)
   self.recentStickers = self.recentStickers.deduplicate()
   if self.recentStickers.len > 24:
     self.recentStickers = self.recentStickers[0..23] # take top 24 most recent
-  status_stickers.saveRecentStickers(self.recentStickers)
+  if save:
+    status_stickers.saveRecentStickers(self.recentStickers)
 
 proc sendSticker*(self: ChatModel, chatId: string, sticker: Sticker) =
   var response = status_chat.sendStickerMessage(chatId, sticker)
-  self.addStickerToRecent(sticker)
+  self.addStickerToRecent(sticker, save = true)
   self.emitUpdate(response)
 
 proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true) =

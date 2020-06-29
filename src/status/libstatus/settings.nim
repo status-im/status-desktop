@@ -3,7 +3,7 @@ import json, tables
 import json_serialization
 
 var settings: JsonNode = %*{}
-var dirty: bool = false
+var dirty: bool = true
 
 proc saveSettings*(key: string, value: string | JsonNode): StatusGoError =
   let response = callPrivateRPC("settings_saveSetting", %* [
