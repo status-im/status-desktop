@@ -15,6 +15,11 @@ Item {
     id: loginView
     anchors.fill: parent
 
+    function setCurrentFlow(isLogin) {
+        loginModel.isCurrentFlow = isLogin;
+        onboardingModel.isCurrentFlow = !isLogin;
+    }
+
     Component.onCompleted: {
         txtPassword.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -46,6 +51,7 @@ Item {
         ConfirmAddExistingKeyModal {
             id: confirmAddExstingKeyModal
             onOpenModalClick: function () {
+                setCurrentFlow(false);
                 onExistingKeyClicked()
             }
         }
@@ -56,6 +62,7 @@ Item {
                 loginModel.setCurrentAccount(index)
             }
             onOpenModalClick: function () {
+                setCurrentFlow(true);
                 confirmAddExstingKeyModal.open()
             }
         }
@@ -143,6 +150,7 @@ Item {
                 if (loading) {
                     return;
                 }
+                setCurrentFlow(true);
                 loading = true
                 loginModel.login(txtPassword.textField.text)
             }
@@ -222,6 +230,7 @@ Item {
             anchors.topMargin: 26
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
+                setCurrentFlow(false);
                 onGenKeyClicked()
             }
 

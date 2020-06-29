@@ -18,6 +18,7 @@ QtObject:
     status: Status
     accounts: seq[NodeAccount]
     currentAccount*: AccountInfoView
+    isCurrentFlow*: bool
 
   proc setup(self: LoginView) =
     self.QAbstractListModel.setup
@@ -32,6 +33,7 @@ QtObject:
     result.accounts = @[]
     result.currentAccount = newAccountInfoView()
     result.status = status
+    result.isCurrentFlow = false
     result.setup
 
   proc getCurrentAccount*(self: LoginView): QVariant {.slot.} =
@@ -101,3 +103,20 @@ QtObject:
     self.loginResponseChanged(loginResponse.error)
 
   proc onLoggedOut*(self: LoginView) {.signal.}
+
+  proc isCurrentFlow*(self: LoginView): bool {.slot.} =
+    result = self.isCurrentFlow
+
+  proc currentFlowChanged*(self: LoginView, v: bool) {.signal.}
+
+  proc setCurrentFlow*(self: LoginView, v: bool) {.slot.} =
+    if self.isCurrentFlow == v: return
+    self.isCurrentFlow = v
+    self.currentFlowChanged(v)
+
+  proc `isCurrentFlow=`*(self: LoginView, v: bool) = self.setCurrentFlow(v)
+
+  QtProperty[bool] isCurrentFlow:
+    read = isCurrentFlow
+    write = setCurrentFlow
+    notify = currentFlowChanged
