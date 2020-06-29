@@ -30,6 +30,7 @@
 #include <QtGui/QIcon>
 #include <QtQml/QQmlContext>
 #include <QtCore>
+#include <QClipboard>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickView>
 #include <QtQuick/QQuickImageProvider>
@@ -84,6 +85,11 @@ void dos_qguiapplication_create()
     register_meta_types();
 
     new QGuiApplication(argc, argv);
+}
+
+void dos_qapplication_clipboard_setText(const char* text)
+{
+    QApplication::clipboard()->setText(text);
 }
 
 void dos_qguiapplication_delete()
