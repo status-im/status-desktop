@@ -8,13 +8,19 @@ Item {
     property alias amountText: txtAmount.text
     property alias toText: txtTo.text
     property alias passwordText: txtPassword.text
-    property var accounts
+    property var accounts: []
+    property var assets: []
     property string defaultAccount: "0x1234"
+
     property int selectedAccountIndex: 0
     property string selectedAccountAddress: accounts && accounts.length ? accounts[selectedAccountIndex].address : ""
     property string selectedAccountName: accounts && accounts.length ? accounts[selectedAccountIndex].name : ""
     property string selectedAccountIconColor: accounts && accounts.length ? accounts[selectedAccountIndex].iconColor : ""
 
+    property int selectedAssetIndex: 0
+    property string selectedAssetName: assets && assets.length ? assets[selectedAssetIndex].name : ""
+    property string selectedAssetSymbol: assets && assets.length ? assets[selectedAssetIndex].symbol : ""
+    property string selectedAccountValue: assets && assets.length ? assets[selectedAssetIndex].value : ""
 
     property string passwordValidationError: ""
     property string toValidationError: ""
@@ -55,10 +61,29 @@ Item {
     Input {
         id: txtAmount
         label: qsTr("Amount")
-        icon: "../../../img/token-icons/eth.svg"
         anchors.top: parent.top
-        placeholderText: qsTr("Enter ETH")
+        placeholderText: qsTr("Enter amount...")
         validationError: amountValidationError
+    }
+
+
+    Select {
+        id: assetTypeSelect
+        iconHeight: 24
+        iconWidth: 24
+        icon:  "../../../img/tokens/" + selectedAssetSymbol.toUpperCase() + ".png"
+        label: qsTr("Select the asset")
+        anchors.top: txtAmount.bottom
+        anchors.topMargin: Theme.padding
+        selectedText: selectedAssetName
+        selectOptions: sendModalContent.assets.map(function (asset, index) {
+            return {
+                text: asset.name,
+                onClicked: function () {
+                    selectedAssetIndex = index
+                }
+            }
+        })
     }
 
     Select {
@@ -68,7 +93,7 @@ Item {
         icon: "../../../img/walletIcon.svg"
         iconColor: selectedAccountIconColor
         label: qsTr("From account")
-        anchors.top: txtAmount.bottom
+        anchors.top: assetTypeSelect.bottom
         anchors.topMargin: Theme.padding
         selectedText: selectedAccountName
         selectOptions: sendModalContent.accounts.map(function (account, index) {

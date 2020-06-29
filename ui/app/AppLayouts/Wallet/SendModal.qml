@@ -10,6 +10,7 @@ ModalPopup {
     id: popup
 
     title: qsTr("Send")
+    height: 600
 
     onOpened: {
         sendModalContent.amountInput.text = ""
@@ -26,11 +27,22 @@ ModalPopup {
             })
         }
         sendModalContent.accounts = accountsData
+
+        const assets = walletModel.assets
+        const numAssets = assets.rowCount()
+        const assetsData = []
+        for (let f = 0; f < numAssets; f++) {
+            assetsData.push({
+                name: assets.rowData(f, 'name'),
+                symbol: assets.rowData(f, 'symbol'),
+                value: assets.rowData(f, 'value')
+            })
+        }
+        sendModalContent.assets = assetsData
     }
 
     SendModalContent {
         id: sendModalContent
-        accounts: []
     }
 
     footer: StyledButton {

@@ -15,7 +15,7 @@ Item {
     property url icon: ""
     property int iconHeight: 24
     property int iconWidth: 24
-    property color iconColor
+    property color iconColor: Theme.transparent
 
     readonly property bool hasIcon: icon.toString() !== ""
 
@@ -63,7 +63,7 @@ Item {
         ColorOverlay {
             anchors.fill: iconImg
             source: iconImg
-            color: iconColor ? iconColor : Theme.transparent
+            color: iconColor
         }
 
         StyledText {
