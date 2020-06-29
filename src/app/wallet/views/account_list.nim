@@ -41,7 +41,6 @@ QtObject:
       of "path": result = account.path
       of "walletType": result = account.walletType
 
-
   proc getAccountindexByAddress*(self: AccountList, address: string): int =
     var i = 0
     for account in self.accounts:

@@ -23,6 +23,16 @@ QtObject:
     result.assets = @[]
     result.setup
 
+  proc rowData(self: AssetList, index: int, column: string): string {.slot.} =
+    if (index >= self.assets.len):
+      return
+    let asset = self.assets[index]
+    case column:
+      of "name": result = asset.name
+      of "symbol": result = asset.symbol
+      of "value": result = asset.value
+      of "fiatValue": result = asset.fiatValue
+
   method rowCount(self: AssetList, index: QModelIndex = nil): int =
     return self.assets.len
 
