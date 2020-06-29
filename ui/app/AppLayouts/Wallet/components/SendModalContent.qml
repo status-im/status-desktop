@@ -11,7 +11,10 @@ Item {
     property var accounts
     property string defaultAccount: "0x1234"
     property int selectedAccountIndex: 0
-    property string selectedAccountAddress: accounts[selectedAccountIndex].address
+    property string selectedAccountAddress: accounts && accounts.length ? accounts[selectedAccountIndex].address : ""
+    property string selectedAccountName: accounts && accounts.length ? accounts[selectedAccountIndex].name : ""
+    property string selectedAccountIconColor: accounts && accounts.length ? accounts[selectedAccountIndex].iconColor : ""
+
 
     property string passwordValidationError: ""
     property string toValidationError: ""
@@ -63,11 +66,11 @@ Item {
         iconHeight: 12
         iconWidth: 12
         icon: "../../../img/walletIcon.svg"
-        iconColor: accounts[selectedAccountIndex].iconColor
+        iconColor: selectedAccountIconColor
         label: qsTr("From account")
         anchors.top: txtAmount.bottom
         anchors.topMargin: Theme.padding
-        selectedText: accounts[selectedAccountIndex].name
+        selectedText: selectedAccountName
         selectOptions: sendModalContent.accounts.map(function (account, index) {
             return {
                 text: account.name,
@@ -80,7 +83,7 @@ Item {
 
     StyledText {
         id: textSelectAccountAddress
-        text: accounts[selectedAccountIndex].address
+        text: selectedAccountAddress
         anchors.right: parent.right
         anchors.left: parent.left
         anchors.leftMargin: 2
