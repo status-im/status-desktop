@@ -14,6 +14,9 @@ proc quit*(application: QApplication) =
 proc icon*(application: QApplication, filename: string) =
   dos_qapplication_icon(filename.cstring)
 
+proc setClipboardText*(text: string = "") =
+  dos_qapplication_clipboard_setText(text.cstring)
+
 proc delete*(application: QApplication) =
   ## Delete the given QApplication
   if application.deleted:
