@@ -1,9 +1,9 @@
-import json, httpclient, json, strformat, stint, strutils, sequtils, chronicles, parseutils, tables
-import libstatus, core, types
+import json, httpclient, strformat, stint, strutils, sequtils, chronicles, parseutils, tables
+import libstatus, core, types, utils
 import ../wallet/account
 from ./accounts/constants import ZERO_ADDRESS
 import ./contracts as contractMethods
-from eth/common/utils import parseAddress
+from eth/common/utils as eth_utils import parseAddress
 
 proc getWalletAccounts*(): seq[WalletAccount] =
   try:
@@ -104,12 +104,7 @@ proc getBalance*(address: string): string =
 
 proc hex2Eth*(input: string): string =
   var value = fromHex(Stuint[256], input)
-  var one_eth = fromHex(Stuint[256], "DE0B6B3A7640000")
-
-  var (eth, remainder) = divmod(value, one_eth)
-  let leading_zeros = "0".repeat(($one_eth).len - ($remainder).len - 1)
-
-  fmt"{eth}.{leading_zeros}{remainder}"
+  result = utils.wei2Eth(value)
 
 proc validateMnemonic*(mnemonic: string): string =
   result = $libstatus.validateMnemonic(mnemonic)

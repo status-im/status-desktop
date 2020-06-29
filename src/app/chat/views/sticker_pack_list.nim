@@ -1,6 +1,6 @@
-import NimQml, Tables
-import ../../../status/chat/stickers
-import ../../../status/libstatus/types
+import NimQml, Tables, sequtils
+import ../../../status/chat/stickers, ./sticker_list
+import ../../../status/libstatus/types, ../../../status/libstatus/utils
 
 type
   StickerPackRoles {.pure.} = enum
@@ -9,12 +9,17 @@ type
     Name = UserRole + 3
     Price = UserRole + 4
     Preview = UserRole + 5
-    Thumbnail = UserRole + 6
+    Stickers = UserRole + 6
+    Thumbnail = UserRole + 7
+    Installed = UserRole + 8
+
+type
+  StickerPackView* = tuple[pack: StickerPack, stickers: StickerList, installed: bool]
 
 QtObject:
   type
     StickerPackList* = ref object of QAbstractListModel
-      packs*: seq[StickerPack]
+      packs*: seq[StickerPackView]
 
   proc setup(self: StickerPackList) = self.QAbstractListModel.setup
 
@@ -33,28 +38,70 @@ QtObject:
     if index.row < 0 or index.row >= self.packs.len:
       return
 
-    let stickerPack = self.packs[index.row]
+    let packInfo = self.packs[index.row]
+    let stickerPack = packInfo.pack
     let stickerPackRole = role.StickerPackRoles
     case stickerPackRole:
       of StickerPackRoles.Author: result = newQVariant(stickerPack.author)
       of StickerPackRoles.Id: result = newQVariant($stickerPack.id)
       of StickerPackRoles.Name: result = newQVariant(stickerPack.name)
-      of StickerPackRoles.Price: result = newQVariant(stickerPack.price)
+      of StickerPackRoles.Price: result = newQVariant(stickerPack.price.wei2Eth)
       of StickerPackRoles.Preview: result = newQVariant(decodeContentHash(stickerPack.preview))
+      of StickerPackRoles.Stickers: result = newQVariant(packInfo.stickers)
       of StickerPackRoles.Thumbnail: result = newQVariant(decodeContentHash(stickerPack.thumbnail))
+      of StickerPackRoles.Installed: result = newQVariant(packInfo.installed)
 
   method roleNames(self: StickerPackList): Table[int, string] =
     {
       StickerPackRoles.Author.int:"author",
-      StickerPackRoles.Id.int:"id",
+      StickerPackRoles.Id.int:"packId",
       StickerPackRoles.Name.int: "name",
       StickerPackRoles.Price.int: "price",
       StickerPackRoles.Preview.int: "preview",
-      StickerPackRoles.Thumbnail.int: "thumbnail"
+      StickerPackRoles.Stickers.int: "stickers",
+      StickerPackRoles.Thumbnail.int: "thumbnail",
+      StickerPackRoles.Installed.int: "installed"
     }.toTable
 
-  proc addStickerPackToList*(self: StickerPackList, pack: StickerPack): int =
+
+  proc findIndexById*(self: StickerPackList, packId: int, mustBeInstalled: bool = false): int =
+    result = -1
+    var idx = -1
+    for item in self.packs:
+      inc idx
+      let installed = if mustBeInstalled: item.installed else: true
+      if(item.pack.id == packId and installed):
+        result = idx
+        break
+
+  proc hasKey*(self: StickerPackList, packId: int): bool =
+    result = self.packs.anyIt(it.pack.id == packId)
+  
+  proc `[]`*(self: StickerPackList, packId: int): StickerPack =
+    if not self.hasKey(packId):
+      raise newException(ValueError, "Sticker pack list does not have a pack with id " & $packId)
+    result = self.packs.filterIt(it.pack.id == packId)[0].pack
+
+  proc addStickerPackToList*(self: StickerPackList, pack: StickerPack, stickers: StickerList, installed: bool) =
     self.beginInsertRows(newQModelIndex(), 0, 0)
-    self.packs.insert(pack, 0)
+    self.packs.insert((pack: pack, stickers: stickers, installed: installed), 0)
     self.endInsertRows()
-    result = 0
+
+  proc removeStickerPackFromList*(self: StickerPackList, packId: int) =
+    let idx = self.findIndexById(packId)
+    self.beginRemoveRows(newQModelIndex(), idx, idx)
+    self.packs.keepItIf(it.pack.id != packId)
+    self.endRemoveRows()
+
+  proc updateStickerPackInList*(self: StickerPackList, packId: int, installed: bool) =
+    if not self.hasKey(packId):
+      return
+
+    let topLeft = self.createIndex(0, 0, nil)
+    let bottomRight = self.createIndex(self.packs.len, 0, nil)
+    self.packs.apply(proc(it: var StickerPackView) =
+      if it.pack.id == packId:
+        it.installed = installed)
+
+    self.dataChanged(topLeft, bottomRight, @[StickerPackRoles.Installed.int])
+

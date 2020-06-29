@@ -36,6 +36,8 @@ type
     channels*: Table[string, Chat]
     msgCursor*: Table[string, string]
     recentStickers*: seq[Sticker]
+    availableStickerPacks*: Table[int, StickerPack]
+    installedStickerPacks*: Table[int, StickerPack]
     
   MessageArgs* = ref object of Args
     id*: string
@@ -50,6 +52,9 @@ proc newChatModel*(events: EventEmitter): ChatModel =
   result.channels = initTable[string, Chat]()
   result.msgCursor = initTable[string, string]()
   result.recentStickers = @[]
+  result.availableStickerPacks = initTable[int, StickerPack]()
+  result.installedStickerPacks = initTable[int, StickerPack]()
+
 
 proc delete*(self: ChatModel) =
   discard
@@ -88,23 +93,54 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
 
   self.events.emit("channelJoined", ChannelArgs(chat: chat))
 
-proc getInstalledStickers*(self: ChatModel, address: EthAddress): Table[int, StickerPack] =
+proc getInstalledStickerPacks*(self: ChatModel, address: EthAddress): Table[int, StickerPack] =
+  if self.installedStickerPacks != initTable[int, StickerPack]():
+    return self.installedStickerPacks
+
   # TODO: needs more fleshing out to determine which sticker packs
   # we own -- owned sticker packs will simply allowed them to be installed
   discard status_stickers.getBalance(address)
 
-  result = status_stickers.getInstalledStickers()
+  self.installedStickerPacks = status_stickers.getInstalledStickerPacks()
+  result = self.installedStickerPacks
+
+proc getAvailableStickerPacks*(self: ChatModel, address: EthAddress): Table[int, StickerPack] =
+  if self.availableStickerPacks != initTable[int, StickerPack]():
+    return self.availableStickerPacks
+
+  # TODO: needs more fleshing out to determine which sticker packs
+  # we own -- owned sticker packs will simply allowed them to be installed
+  discard status_stickers.getBalance(address)
+
+  let numPacks = status_stickers.getPackCount()
+  for i in 0..<numPacks:
+    let stickerPack = status_stickers.getPackData(i)
+    self.availableStickerPacks[stickerPack.id] = stickerPack
+  result = self.availableStickerPacks
 
 proc getRecentStickers*(self: ChatModel): seq[Sticker] =
   result = status_stickers.getRecentStickers()
 
+proc installStickerPack*(self: ChatModel, packId: int) =
+  if not self.availableStickerPacks.hasKey(packId):
+    return
+  let pack = self.availableStickerPacks[packId]
+  self.installedStickerPacks[packId] = pack
+  status_stickers.saveInstalledStickerPacks(self.installedStickerPacks)
+
+proc removeRecentStickers*(self: ChatModel, packId: int) =
+  self.recentStickers.keepItIf(it.packId != packId)
+  status_stickers.saveRecentStickers(self.recentStickers)
+
+proc uninstallStickerPack*(self: ChatModel, packId: int) =
+  if not self.installedStickerPacks.hasKey(packId):
+    return
+  let pack = self.availableStickerPacks[packId]
+  self.installedStickerPacks.del(packId)
+  status_stickers.saveInstalledStickerPacks(self.installedStickerPacks)
+
 proc init*(self: ChatModel) =
   let chatList = status_chat.loadChats()
-
-  # TODO: Temporarily install sticker packs as a first step. Later, once installation
-  # of sticker packs is supported, this should be removed, and a default "No
-  # stickers installed" view should show if no sticker packs are installed.
-  status_stickers.installStickers()
 
   var filters:seq[JsonNode] = @[]
   for chat in chatList:

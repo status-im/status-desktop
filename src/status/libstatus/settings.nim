@@ -29,3 +29,9 @@ proc getSetting*[T](name: string, defaultValue: T, useCached: bool = true): T =
   if not settings.contains(name):
     return defaultValue
   result = Json.decode($settings{name}, T)
+
+proc getSetting*[T](name: string, useCached: bool = true): T =
+  let settings: JsonNode = getSettings(useCached)
+  if not settings.contains(name):
+    return default(type(T))
+  result = Json.decode($settings{name}, T)

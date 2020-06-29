@@ -18,6 +18,21 @@ type Contract* = ref object
   address*: EthAddress
   methods*: Table[string, Method]
 
+
+type
+  FixedBytes* [N: static[int]] = distinct array[N, byte]
+  DynamicBytes* [N: static[int]] = distinct array[N, byte]
+  Address* = distinct EthAddress
+  # Bool* = distinct Int256 # TODO: implement Bool as FixedBytes[N]?
+
+type PackData* = object
+  category*: DynamicBytes[32] # bytes4[]
+  owner*: Address # address
+  mintable*: bool # bool
+  timestamp*: Stuint[256] # uint256
+  price*: Stuint[256] # uint256
+  contentHash*: DynamicBytes[64] # bytes
+
 let CONTRACTS: seq[Contract] = @[
   Contract(name: "snt", network: Network.Mainnet, address: parseAddress("0x744d70fdbe2ba4cf95131626614a1763df805b9e"),
     methods: [
@@ -27,7 +42,12 @@ let CONTRACTS: seq[Contract] = @[
   ),
   Contract(name: "snt", network: Network.Testnet, address: parseAddress("0xc55cf4b03948d7ebc8b9e8bad92643703811d162")),
   Contract(name: "tribute-to-talk", network: Network.Testnet, address: parseAddress("0xC61aa0287247a0398589a66fCD6146EC0F295432")),
-  Contract(name: "stickers", network: Network.Mainnet, address: parseAddress("0x0577215622f43a39f4bc9640806dfea9b10d2a36")),
+  Contract(name: "stickers", network: Network.Mainnet, address: parseAddress("0x0577215622f43a39f4bc9640806dfea9b10d2a36"),
+    methods: [
+      ("packCount", Method(signature: "packCount()")),
+      ("getPackData", Method(signature: "getPackData(uint256)", noPadding: true))
+    ].toTable
+  ),
   Contract(name: "stickers", network: Network.Testnet, address: parseAddress("0x8cc272396be7583c65bee82cd7b743c69a87287d")),
   Contract(name: "sticker-market", network: Network.Mainnet, address: parseAddress("0x12824271339304d3a9f7e096e62a2a7e73b4a7e7"),
     methods: [
@@ -90,3 +110,104 @@ macro encodeAbi*(self: Method, params: varargs[untyped]): untyped =
 
 proc `$`*(a: EthAddress): string =
   "0x" & a.toHex()
+
+proc skip0xPrefix*(s: string): int =
+  if s.len > 1 and s[0] == '0' and s[1] in {'x', 'X'}: 2
+  else: 0
+
+proc strip0xPrefix*(s: string): string =
+  let prefixLen = skip0xPrefix(s)
+  if prefixLen != 0:
+    s[prefixLen .. ^1]
+  else:
+    s
+
+proc fromHexAux*(s: string, result: var openarray[byte]) =
+  let prefixLen = skip0xPrefix(s)
+  let meaningfulLen = s.len - prefixLen
+  let requiredChars = result.len * 2
+  if meaningfulLen > requiredChars:
+    let start = s.len - requiredChars
+    hexToByteArray(s[start .. s.len - 1], result)
+  elif meaningfulLen == requiredChars:
+    hexToByteArray(s, result)
+  else:
+    raise newException(ValueError, "Short hex string (" & $meaningfulLen & ") for Bytes[" & $result.len & "]")
+
+func fromHex*[N](x: type FixedBytes[N], s: string): FixedBytes[N] {.inline.} =
+  fromHexAux(s, array[N, byte](result))
+
+func fromHex*(x: type Address, s: string): Address {.inline.} =
+  fromHexAux(s, array[20, byte](result))
+
+template toHex*[N](x: FixedBytes[N]): string =
+  toHex(array[N, byte](x))
+
+template toHex*[N](x: DynamicBytes[N]): string =
+  toHex(array[N, byte](x))
+
+template toHex*(x: Address): string =
+  toHex(array[20, byte](x))
+
+func decode*(input: string, offset: int, to: var Stuint): int =
+  let meaningfulLen = to.bits div 8 * 2
+  to = type(to).fromHex(input[offset .. offset + meaningfulLen - 1])
+  meaningfulLen
+
+func decode*[N](input: string, offset: int, to: var Stint[N]): int =
+  let meaningfulLen = N div 8 * 2
+  fromHex(input[offset .. offset + meaningfulLen], to)
+  meaningfulLen
+  
+func decodeFixed(input: string, offset: int, to: var openarray[byte]): int =
+  let meaningfulLen = to.len * 2
+  var padding = to.len mod 32
+  if padding != 0: padding = (32 - padding) * 2
+  let offset = offset + padding
+  fromHexAux(input[offset .. offset + meaningfulLen - 1], to)
+  meaningfulLen + padding
+
+func decode*[N](input: string, offset: int, to: var FixedBytes[N]): int {.inline.} =
+  decodeFixed(input, offset, array[N, byte](to))
+
+func decode*(input: string, offset: int, to: var Address): int {.inline.} =
+  decodeFixed(input, offset, array[20, byte](to))
+
+func decodeDynamic(input: string, offset: int, to: var openarray[byte]): int =
+  var dataOffset, dataLen: UInt256
+  result = decode(input, offset, dataOffset)
+  discard decode(input, dataOffset.truncate(int) * 2, dataLen)
+  # TODO: Check data len, and raise?
+  let meaningfulLen = to.len * 2
+  let actualDataOffset = (dataOffset.truncate(int) + 32) * 2
+  fromHexAux(input[actualDataOffset .. actualDataOffset + meaningfulLen - 1], to)
+
+func decode*[N](input: string, offset: int, to: var DynamicBytes[N]): int {.inline.} =
+  decodeDynamic(input, offset, array[N, byte](to))
+
+# TODO: Figure out a way to parse a bool as a FixedBytes[N], so that we can allow
+# variance in the number of bytes. The current implementation is a very forceful
+# way of parsing a bool because it assumes the bool is 32 bytes (64 chars).
+func decode*(input: string, offset: int, to: var bool): int {.inline.} =
+  let val = input[offset..offset+63].parse(Int256)
+  to = val.truncate(int) == 1
+  64
+
+func decode*(input: string, offset: int, obj: var object): int =
+  var offset = offset
+  for field in fields(obj):
+    offset += decode(input, offset, field)
+
+func decode*[T](input: string, to: seq[T]): seq[T] =
+  var count = input[0..64].decode(Stuint)
+  result = newSeq[T](count)
+  for i in 0..count:
+    result[i] = input[i*64 .. (i+1)*64].decode(T)
+
+func decode*[T; I: static int](input: string, to: array[0..I, T]): array[0..I, T] =
+  for i in 0..I:
+    result[i] = input[i*64 .. (i+1)*64].decode(T)
+
+func decodeContractResponse*[T](input: string): T =
+  result = T()
+  discard decode(input.strip0xPrefix, 0, result)

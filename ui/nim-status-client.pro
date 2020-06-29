@@ -100,7 +100,10 @@ DISTFILES += \
     app/AppLayouts/Chat/components/PrivateChatPopup.qml \
     app/AppLayouts/Chat/components/RenameGroupPopup.qml \
     app/AppLayouts/Chat/components/SuggestedChannel.qml \
+    app/AppLayouts/Chat/components/StickerButton.qml \
+    app/AppLayouts/Chat/components/StickerMarket.qml \
     app/AppLayouts/Chat/components/StickersPopup.qml \
+    app/AppLayouts/Chat/components/StickerPackIconWithIndicator.qml \
     app/AppLayouts/Chat/components/qmldir \
     app/AppLayouts/Chat/qmldir \
     app/AppLayouts/Node/NodeLayout.qml \
@@ -171,6 +174,7 @@ DISTFILES += \
     app/img/public_chat.svg \
     app/img/search.svg \
     app/img/wallet.svg \
+    app/img/status-logo-no-bg.svg \
     app/img/stickers_icon.svg \
     app/img/stickers_icon_open.svg \
     app/img/stickers_sad_icon.svg \
@@ -236,7 +240,10 @@ DISTFILES += \
     shared/StyledTextEdit.qml \
     shared/StyledTextField.qml \
     shared/TextWithLabel.qml \
+    shared/img/check.svg \
     shared/img/close.svg \
+    shared/img/loading.png \
+    shared/img/loading.svg \
     shared/img/status-logo.png \
     shared/qmldir \
     sounds/ErrorSound.qml
