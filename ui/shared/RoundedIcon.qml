@@ -1,17 +1,21 @@
 import QtQuick 2.13
+import QtGraphicalEffects 1.0
 import "../imports"
 
 Rectangle {
     id: root
-    property int size: 36
-    property color bg: Style.current.blue
-    property url imgPath: ""
+    property alias source: roundedIconImage.source
+    default property alias content: content.children
+    property alias icon: roundedIconImage
     signal clicked
+    width: 36
+    height: 36
+    property alias iconWidth: roundedIconImage.width
+    property alias iconHeight: roundedIconImage.height
+    property alias rotation: roundedIconImage.rotation
 
-    width: size
-    height: size
-    color: bg
-    radius: size / 2
+    color: Style.current.blue
+    radius: width / 2
 
     SVGImage {
         id: roundedIconImage
@@ -20,7 +24,13 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         fillMode: Image.PreserveAspectFit
-        source: imgPath
+        source: "../img/new_chat.svg"
+    }
+
+    Item {
+        id: content
+        anchors.left: roundedIconImage.right
+        anchors.leftMargin: 6 + (root.width - roundedIconImage.width)
     }
 
     MouseArea {

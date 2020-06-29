@@ -6,6 +6,7 @@ type
   StickerRoles {.pure.} = enum
     Url = UserRole + 1
     Hash = UserRole + 2
+    PackId = UserRole + 3
 
 QtObject:
   type
@@ -34,11 +35,13 @@ QtObject:
     case stickerRole:
       of StickerRoles.Url: result = newQVariant(decodeContentHash(sticker.hash))
       of StickerRoles.Hash: result = newQVariant(sticker.hash)
+      of StickerRoles.PackId: result = newQVariant(sticker.packId)
 
   method roleNames(self: StickerList): Table[int, string] =
     {
       StickerRoles.Url.int:"url",
-      StickerRoles.Hash.int:"hash"
+      StickerRoles.Hash.int:"hash",
+      StickerRoles.PackId.int:"packId"
     }.toTable
 
   proc addStickerToList*(self: StickerList, sticker: Sticker) =
@@ -47,3 +50,10 @@ QtObject:
     self.beginInsertRows(newQModelIndex(), 0, 0)
     self.stickers.insert(sticker, 0)
     self.endInsertRows()
+
+  proc removeStickersFromList*(self: StickerList, packId: int) =
+    if not self.stickers.anyIt(it.packId == packId):
+      return
+    self.beginRemoveRows(newQModelIndex(), 0, 0)
+    self.stickers.keepItIf(it.packId != packId)
+    self.endRemoveRows()

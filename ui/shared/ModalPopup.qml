@@ -7,6 +7,7 @@ import "../imports"
 Popup {
     property string title
     default property alias content: popupContent.children
+    property alias contentWrapper: popupContent
     property alias header: headerContent.children
 
     id: popup

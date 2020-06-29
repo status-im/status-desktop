@@ -8,10 +8,9 @@ import "../ChatColumn/samples"
 
 Popup {
     id: popup
-    property var stickerList: StickerData {}
+    property var recentStickers: StickerData {}
     property var stickerPackList: StickerPackData {}
     modal: false
-    property int selectedPackId
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     background: Rectangle {
         radius: 8
@@ -26,12 +25,40 @@ Popup {
             color: "#22000000"
         }
     }
+    onClosed: {
+        stickerMarket.visible = false
+        footerContent.visible = true
+        stickersContainer.visible = true
+    }
     contentItem: ColumnLayout {
-        parent: popup
         anchors.fill: parent
         spacing: 0
 
+        StickerMarket {
+            id: stickerMarket
+            visible: false
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            stickerPacks: stickerPackList
+            onInstallClicked: {
+                chatsModel.installStickerPack(packId)
+                stickerGrid.model = stickers
+                stickerPackListView.itemAt(index).clicked()
+            }
+            onUninstallClicked: {
+                chatsModel.uninstallStickerPack(packId)
+                stickerGrid.model = recentStickers
+                btnHistory.clicked()
+            }
+            onBackClicked: {
+                stickerMarket.visible = false
+                footerContent.visible = true
+                stickersContainer.visible = true
+            }
+        }
+
         Item {
+            id: stickersContainer
             Layout.fillWidth: true
             Layout.leftMargin: 4
             Layout.rightMargin: 4
@@ -92,40 +119,19 @@ Popup {
                     anchors.top: noStickersContainer.bottom
                     anchors.topMargin: Style.current.padding
                     anchors.horizontalCenter: parent.horizontalCenter
+                    onClicked: {
+                        stickersContainer.visible = false
+                        stickerMarket.visible = true
+                        footerContent.visible = false
+                    }
                 }
             }
-
-            GridView {
+            StickerList {
                 id: stickerGrid
-                visible: count > 0
-                anchors.fill: parent
-                cellWidth: 88
-                cellHeight: 88
-                model: stickerList
-                focus: true
-                clip: true
-                delegate: Item {
-                    width: stickerGrid.cellWidth
-                    height: stickerGrid.cellHeight
-                    Column {
-                        anchors.fill: parent
-                        anchors.topMargin: 4
-                        anchors.leftMargin: 4
-                        Image {
-                            width: 80
-                            height: 80
-                            fillMode: Image.PreserveAspectFit
-                            source: "https://ipfs.infura.io/ipfs/" + url
-                            MouseArea {
-                                cursorShape: Qt.PointingHandCursor
-                                anchors.fill: parent
-                                onClicked: {
-                                    chatsModel.sendSticker(hash, popup.selectedPackId)
-                                    popup.close()
-                                }
-                            }
-                        }
-                    }
+                model: recentStickers
+                onStickerClicked: {
+                    chatsModel.sendSticker(hash, packId)
+                    popup.close()
                 }
             }
         }
@@ -140,24 +146,34 @@ Popup {
             Layout.bottomMargin: 8
             Layout.alignment: Qt.AlignTop | Qt.AlignLeft
 
-            AddButton {
+            RoundedIcon {
                 id: btnAddStickerPack
                 anchors.left: parent.left
                 anchors.top: parent.top
                 width: 24
                 height: 24
+                iconWidth: 13.5
+                iconHeight: 13.5
+                source: "../../../img/plusSign.svg"
+                onClicked: {
+                    stickersContainer.visible = false
+                    stickerMarket.visible = true
+                    footerContent.visible = false
+                }
             }
-
-            RoundedIcon {
+            StickerPackIconWithIndicator {
                 id: btnHistory
-                size: 24
-                color: Style.current.darkGrey
-                imgPath: "../../../img/history_icon.svg"
+                width: 24
+                height: 24
+                selected: true
+                useIconInsteadOfImage: true
+                source: "../../../img/history_icon.svg"
                 anchors.left: btnAddStickerPack.right
                 anchors.leftMargin: Style.current.padding
                 onClicked: {
-                    chatsModel.setActiveStickerPackById(-1)
-                    packIndicator.updatePosition(-1)
+                    btnHistory.selected = true
+                    stickerPackListView.selectedPackId = -1
+                    stickerGrid.model = recentStickers
                 }
             }
 
@@ -169,43 +185,28 @@ Popup {
 
                 Repeater {
                     id: stickerPackListView
+                    property int selectedPackId
                     model: stickerPackList
 
-                    delegate: RoundedImage {
-                        Layout.preferredHeight: height
-                        Layout.preferredWidth: width
+                    delegate: StickerPackIconWithIndicator {
+                        id: packIconWithIndicator
+                        visible: installed
                         width: 24
                         height: 24
+                        selected: stickerPackListView.selectedPackId === packId
                         source: "https://ipfs.infura.io/ipfs/" + thumbnail
+                        Layout.preferredHeight: height
+                        Layout.preferredWidth: width
                         onClicked: {
-                            chatsModel.setActiveStickerPackById(id)
-                            popup.selectedPackId = id
-                            packIndicator.updatePosition(index)
+                            btnHistory.selected = false
+                            stickerPackListView.selectedPackId = packId
+                            stickerGrid.model = stickers
                         }
                     }
                 }
             }
-            Rectangle {
-                id: packIndicator
-                border.color: Style.current.blue
-                border.width: 1
-                height: 2
-                width: 16
-                x: 44
-                y: footerContent.height + 8 - height
-
-                function updatePosition(index) {
-                    const startX = 44
-                    const skipX = 40
-                    const idx = index + 1
-                    packIndicator.x = startX + skipX * idx;
-                }
-            }
+            
         }
     }
 }
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";height:440;width:360}
-}
-##^##*/
+

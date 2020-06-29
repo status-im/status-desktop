@@ -39,9 +39,17 @@ proc init*(self: ChatController) =
 
   let currAcct = status_wallet.getWalletAccounts()[0] # TODO: make generic
   let currAddr = parseAddress(currAcct.address)
-  let installedStickers = self.status.chat.getInstalledStickers(currAddr)
-  for packId, stickerPack in installedStickers.pairs:
-    self.view.addStickerPackToList(stickerPack)
+
+  let installedStickerPacks = self.status.chat.getInstalledStickerPacks(currAddr)
+
+  # TODO: getting available stickers should be done in a separate thread as there
+  # a long wait for contract response, decoded, downloading from IPFS, EDN decoding,
+  # etc
+  let availableStickerPacks = self.status.chat.getAvailableStickerPacks(currAddr)
+  for packId, stickerPack in availableStickerPacks.pairs:
+    let isInstalled = installedStickerPacks.hasKey(packId)
+    self.view.addStickerPackToList(stickerPack, isInstalled)
+
   let recentStickers = self.status.chat.getRecentStickers()
   for sticker in recentStickers:
     self.view.addRecentStickerToList(sticker)

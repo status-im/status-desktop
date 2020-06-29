@@ -6,5 +6,8 @@ ProfilePropup 1.0 ProfilePopup.qml
 ChannelIcon 1.0 ChannelIcon.qml
 RenameGroupPopup 1.0 RenameGroupPopup.qml
 GroupChatPopup 1.0 GroupChatPopup.qml
+StickerButton 1.0 StickerButton.qml
+StickerMarket 1.0 StickerMarket.qml
 StickersPopup 1.0 StickersPopup.qml
 InviteFriendsPopup 1.0 InviteFriendsPopup.qml
+StickerPackIconWithIndicator 1.0 StickerPackIconWithIndicator.qml

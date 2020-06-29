@@ -142,7 +142,7 @@ Item {
         height: 440
         x: parent.width - width - 8
         y: parent.height - sendBtns.height - height - 8
-        stickerList: chatsModel.stickers
+        recentStickers: chatsModel.recentStickers
         stickerPackList: chatsModel.stickerPacks
     }
 

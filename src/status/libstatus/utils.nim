@@ -1,4 +1,5 @@
-import json, types, random, strutils
+import json, types, random, strutils, strformat
+import stint
 from times import getTime, toUnix, nanosecond
 import accounts/signing_phrases
 
@@ -35,5 +36,13 @@ proc handleRPCErrors*(response: string) =
   let parsedReponse = parseJson(response)
   if (parsedReponse.hasKey("error")):
     raise newException(ValueError, parsedReponse["error"]["message"].str)
+
+proc wei2Eth*(input: Stuint[256]): string =
+  var one_eth = fromHex(Stuint[256], "DE0B6B3A7640000")
+
+  var (eth, remainder) = divmod(input, one_eth)
+  let leading_zeros = "0".repeat(($one_eth).len - ($remainder).len - 1)
+
+  fmt"{eth}.{leading_zeros}{remainder}"
 
 
