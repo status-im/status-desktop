@@ -5,9 +5,6 @@ import "../../../../shared"
 Item {
     id: sendModalContent
     property alias amountInput: txtAmount
-    property alias amountText: txtAmount.text
-    property alias toText: txtTo.text
-    property alias passwordText: txtPassword.text
     property var accounts: []
     property var assets: []
     property string defaultAccount: "0x1234"
@@ -26,28 +23,41 @@ Item {
     property string toValidationError: ""
     property string amountValidationError: ""
 
+    function send() {
+        if (!validate()) {
+            return;
+        }
+
+        let result = walletModel.onSendTransaction(selectedAccountAddress,
+                                                   txtTo.text,
+                                                   txtAmount.text,
+                                                   txtPassword.text)
+        console.log(result)
+    }
+
     function validate() {
-        if (passwordText === "") {
+        if (txtPassword.text === "") {
             passwordValidationError = qsTr("You need to enter a password")
-        } else if (passwordText.length < 4) {
+        } else if (txtPassword.text.length < 4) {
             passwordValidationError = qsTr("Password needs to be 4 characters or more")
         } else {
             passwordValidationError = ""
         }
 
-        if (toText === "") {
+        if (txtTo.text === "") {
             toValidationError = qsTr("You need to enter a destination address")
-        } else if (!Utils.isAddress(toText)) {
+        } else if (!Utils.isAddress(txtTo.text)) {
             toValidationError = qsTr("This needs to be a valid address (starting with 0x)")
         } else {
             toValidationError = ""
         }
 
-        if (amountText === "") {
+        if (txtAmount.text === "") {
             amountValidationError = qsTr("You need to enter an amount")
-        } else if (isNaN(amountText)) {
+        } else if (isNaN(txtAmount.text)) {
             amountValidationError = qsTr("This needs to be a number")
-            // TODO check balance?
+        } else if (parseInt(txtAmount.text, 10) > parseInt(selectedAccountValue, 10)) {
+            amountValidationError = qsTr("Amount needs to be lower than your balance (%1)").arg(selectedAccountValue)
         } else {
             amountValidationError = ""
         }
@@ -84,6 +94,17 @@ Item {
                 }
             }
         })
+    }
+
+    StyledText {
+        id: currentBalanceText
+        text: qsTr("Balance: %1").arg(selectedAccountValue)
+        font.pixelSize: 13
+        color: Theme.darkGrey
+        anchors.top: assetTypeSelect.top
+        anchors.topMargin: 0
+        anchors.right: assetTypeSelect.right
+        anchors.rightMargin: 0
     }
 
     Select {

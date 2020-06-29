@@ -52,15 +52,7 @@ ModalPopup {
         label: qsTr("Send")
 
         onClicked: {
-            if (!sendModalContent.validate()) {
-                return;
-            }
-
-            let result = walletModel.onSendTransaction(sendModalContent.selectedAccountAddress,
-                                                       sendModalContent.toText,
-                                                       sendModalContent.amountText,
-                                                       sendModalContent.passwordText)
-            console.log(result)
+            sendModalContent.send()
         }
     }
 }
