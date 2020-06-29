@@ -133,8 +133,6 @@ Item {
                 MenuItem {
                     property var onClicked: console.log("Default click function. Override me please")
                     property color bgColor: Theme.white
-                    anchors.right: parent.right
-                    anchors.left: parent.left
                     onTriggered: function () {
                         onClicked()
                     }

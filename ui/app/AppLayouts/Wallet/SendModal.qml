@@ -30,7 +30,7 @@ ModalPopup {
 
     SendModalContent {
         id: sendModalContent
-        accounts: walletModel.accounts
+        accounts: []
     }
 
     footer: StyledButton {
