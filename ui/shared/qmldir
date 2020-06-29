@@ -15,3 +15,4 @@ StyledTextEdit 1.0 StyledTextEdit.qml
 Identicon 1.0 Identicon.qml
 RoundedImage 1.0 RoundedImage.qml
 SplitViewHandle 1.0 SplitViewHandle.qml
+CopyToClipBoardIcon 1.0 CopyToClipBoardIcon.qml
