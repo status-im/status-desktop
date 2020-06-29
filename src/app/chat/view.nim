@@ -164,6 +164,9 @@ QtObject:
   proc addRecentStickerToList*(self: ChatsView, sticker: Sticker) =
     self.stickers[RECENT_STICKERS].addStickerToList(sticker)
   
+  proc copyToClipboard*(self: ChatsView, content: string) {.slot.} =
+    setClipBoardText(content)
+
   proc sendSticker*(self: ChatsView, hash: string, pack: int) {.slot.} =
     let sticker = Sticker(hash: hash, packId: pack)
     self.addRecentStickerToList(sticker)

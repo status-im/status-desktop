@@ -143,6 +143,15 @@ ModalPopup {
             anchors.topMargin: Theme.smallPadding
         }
 
+        CopyToClipBoardIcon {
+          anchors.top: labelEnsUsername.bottom
+          anchors.left: valueEnsName.right
+          anchors.leftMargin: Theme.smallPadding
+          onClick: function (){
+            chatsModel.copyToClipboard(valueEnsName.text)
+          }
+        }
+
         StyledText {
             id: labelChatKey
             text: qsTr("Chat key")
@@ -165,6 +174,15 @@ ModalPopup {
             anchors.leftMargin: Theme.smallPadding
             anchors.top: labelChatKey.bottom
             anchors.topMargin: Theme.smallPadding
+        }
+
+        CopyToClipBoardIcon {
+          anchors.top: labelChatKey.bottom
+          anchors.left: valueChatKey.right
+          anchors.leftMargin: Theme.smallPadding
+          onClick: function (){
+            chatsModel.copyToClipboard(valueChatKey.text)
+          }
         }
 
         Separator {
@@ -199,37 +217,17 @@ ModalPopup {
             anchors.top: labelShareURL.bottom
             anchors.topMargin: Theme.smallPadding
         }
+
+        CopyToClipBoardIcon {
+          anchors.top: labelShareURL.bottom
+          anchors.left: valueShareURL.right
+          anchors.leftMargin: Theme.smallPadding
+          onClick: function (){
+            chatsModel.copyToClipboard("https://join.status.im/u/" + fromAuthor)
+          }
+        }
     }
 
-    // TODO(pascal): implement copy to clipboard component
-    // Rectangle {
-    //     id: copyToClipboardButton
-    //     height: 32
-    //     width: 32
-    //     anchors.top: labelShareURL.bottom
-    //     anchors.topMargin: Theme.padding
-    //     anchors.left: valueShareURL.right
-    //     anchors.leftMargin: Theme.padding
-    //     radius: 8
-
-    //     SVGImage {
-    //         source: "../../../../shared/img/copy-to-clipboard-icon.svg"
-    //         anchors.horizontalCenter: parent.horizontalCenter
-    //         anchors.verticalCenter: parent.verticalCenter
-    //     }
-
-    //     MouseArea {
-    //         cursorShape: Qt.PointingHandCursor
-    //         anchors.fill: parent
-    //         hoverEnabled: true
-    //         onExited: {
-    //             copyToClipboardButton.color = Theme.white
-    //         }
-    //         onEntered:{
-    //             copyToClipboardButton.color = Theme.grey
-    //         }
-    //     }
-    // }
     footer: Item {
         width: parent.width
         height: children[0].height
