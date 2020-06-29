@@ -30,6 +30,7 @@ proc reset*(self: OnboardingController) =
   self.view.removeAccounts()
 
 proc handleNodeLogin(self: OnboardingController, data: Signal) =
+  if not self.view.isCurrentFlow: return
   let response = NodeSignal(data)
   if self.view.currentAccount.account != nil:
     self.view.setLastLoginResponse(response.event)

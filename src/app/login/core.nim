@@ -34,6 +34,7 @@ proc handleNodeStopped(self: LoginController, data: Signal) =
   self.view.onLoggedOut()
 
 proc handleNodeLogin(self: LoginController, data: Signal) =
+  if not self.view.isCurrentFlow: return
   let response = NodeSignal(data)
   if self.view.currentAccount.account != nil:
     self.view.setLastLoginResponse(response.event)

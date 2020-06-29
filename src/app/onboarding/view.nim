@@ -16,6 +16,7 @@ QtObject:
     accounts*: seq[GeneratedAccount]
     currentAccount*: AccountInfoView
     status*: Status
+    isCurrentFlow*: bool
 
   proc setup(self: OnboardingView) =
     self.QAbstractListModel.setup
@@ -30,6 +31,7 @@ QtObject:
     result.accounts = @[]
     result.currentAccount = newAccountInfoView()
     result.status = status
+    result.isCurrentFlow = false
     result.setup
 
   proc addAccountToList*(self: OnboardingView, account: GeneratedAccount) =
@@ -106,3 +108,20 @@ QtObject:
 
   proc setLastLoginResponse*(self: OnboardingView, loginResponse: StatusGoError) =
     self.loginResponseChanged(loginResponse.error)
+
+  proc isCurrentFlow*(self: OnboardingView): bool {.slot.} =
+    result = self.isCurrentFlow
+
+  proc currentFlowChanged*(self: OnboardingView, v: bool) {.signal.}
+
+  proc setCurrentFlow*(self: OnboardingView, v: bool) {.slot.} =
+    if self.isCurrentFlow == v: return
+    self.isCurrentFlow = v
+    self.currentFlowChanged(v)
+
+  proc `isCurrentFlow=`*(self: OnboardingView, v: bool) = self.setCurrentFlow(v)
+
+  QtProperty[bool] isCurrentFlow:
+    read = isCurrentFlow
+    write = setCurrentFlow
+    notify = currentFlowChanged

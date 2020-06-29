@@ -155,6 +155,8 @@ ModalPopup {
                 }
                 // TODO this doesn't seem to work because the function freezes the view
                 loading = true
+                loginModel.isCurrentFlow = false;
+                onboardingModel.isCurrentFlow = true;
                 const result = onboardingModel.storeDerivedAndLogin(repeatPasswordField.text);
                 const error = JSON.parse(result).error
                 if (error) {
