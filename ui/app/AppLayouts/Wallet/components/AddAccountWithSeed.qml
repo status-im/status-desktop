@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Dialogs 1.3
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../sounds"
 
 ModalPopup {
     id: popup
@@ -46,6 +47,12 @@ ModalPopup {
     }
 
     title: qsTr("Add account with a seed phrase")
+
+    Item {
+        ErrorSound {
+            id: errorSound
+        }
+    }
 
     Input {
         id: passwordInput
@@ -112,12 +119,14 @@ ModalPopup {
             // TODO the loaidng doesn't work because the function freezes th eview. Might need to use threads
             loading = true
             if (!validate()) {
+                errorSound.play()
                 return loading = false
             }
 
             const error = walletModel.addAccountsFromSeed(accountSeedInput.text, passwordInput.text, accountNameInput.text, selectedColor)
             loading = false
             if (error) {
+                errorSound.play()
                 accountError.text = error
                 return accountError.open()
             }

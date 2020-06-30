@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 import "../../../imports"
 import "../../../shared"
+import "../../../sounds"
 
 ModalPopup {
     property var currentAccount: walletModel.currentAccount
@@ -29,6 +30,12 @@ ModalPopup {
 
     onOpened: {
         accountNameInput.forceActiveFocus(Qt.MouseFocusReason)
+    }
+
+    Item {
+        ErrorSound {
+            id: errorSound
+        }
     }
 
     Input {
@@ -126,6 +133,7 @@ ModalPopup {
                 onAccepted: {
                     const error = walletModel.deleteAccount(currentAccount.address);
                     if (error) {
+                        errorSound.play()
                         deleteError.text = error
                         deleteError.open()
                         return
@@ -165,6 +173,7 @@ ModalPopup {
                 const error = walletModel.changeAccountSettings(currentAccount.address, accountNameInput.text, selectedColor);
 
                 if (error) {
+                    errorSound.play()
                     changeError.text = error
                     changeError.open()
                     return

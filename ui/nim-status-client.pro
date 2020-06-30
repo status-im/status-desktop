@@ -224,4 +224,5 @@ DISTFILES += \
     shared/TextWithLabel.qml \
     shared/img/close.svg \
     shared/img/status-logo.png \
-    shared/qmldir
+    shared/qmldir \
+    sounds/ErrorSound.qml

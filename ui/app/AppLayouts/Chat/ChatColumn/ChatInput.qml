@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import QtMultimedia 5.13
 import "../components"
 import "../../../../shared"
 import "../../../../imports"
@@ -10,12 +11,19 @@ Rectangle {
 
     visible: chatsModel.activeChannel.chatType != Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember(profileModel.profile.pubKey)
 
+    Audio {
+        id: sendMessageSound
+        source: "../../../../sounds/send_message.wav"
+    }
+
     function onEnter(event){
         if (event.modifiers == Qt.NoModifier && (event.key == Qt.Key_Enter || event.key == Qt.Key_Return)) {
             if(txtData.text.trim().length > 0){
                 chatsModel.sendMessage(txtData.text.trim());
                 txtData.text = "";
                 event.accepted = true;
+                sendMessageSound.stop()
+                Qt.callLater(sendMessageSound.play);
             }
         }
     }

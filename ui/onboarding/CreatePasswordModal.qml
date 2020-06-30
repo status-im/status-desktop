@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Dialogs 1.3
 import "../imports"
 import "../shared"
+import "../sounds"
 
 ModalPopup {
     property bool loading: false
@@ -36,6 +37,12 @@ ModalPopup {
     onOpened: {
         firstPasswordField.text = "";
         firstPasswordField.forceActiveFocus(Qt.MouseFocusReason)
+    }
+
+    Item {
+        ErrorSound {
+            id: errorSound
+        }
     }
 
     Input {
@@ -143,6 +150,7 @@ ModalPopup {
                 ignoreUnknownSignals: true
                 onLoginResponseChanged: {
                     if (error) {
+                        errorSound.play()
                         loading = false
                         importLoginError.open()
                     }
@@ -151,6 +159,7 @@ ModalPopup {
 
             onClicked: {
                 if (!validate()) {
+                    errorSound.play()
                     return
                 }
                 // TODO this doesn't seem to work because the function freezes the view
@@ -160,6 +169,7 @@ ModalPopup {
                 const result = onboardingModel.storeDerivedAndLogin(repeatPasswordField.text);
                 const error = JSON.parse(result).error
                 if (error) {
+                    errorSound.play()
                     importError.text += error
                     return importError.open()
                 }
