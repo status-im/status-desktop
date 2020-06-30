@@ -1,4 +1,7 @@
 # Nim-status-client
+
+![https://github.com/status-im/nim-status-client/blob/master/docs/screenshot.png](https://github.com/status-im/nim-status-client/blob/master/docs/screenshot.png)
+
 *note: this documentation is wip*
 
 ### Getting started
