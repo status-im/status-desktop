@@ -157,7 +157,13 @@ $(QRCODEGEN): | deps
 	+ cd vendor/QR-Code-generator/c && \
 	  $(MAKE)
 
-nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) deps
+rcc:
+	rm -f ./bin/resources.rcc
+	rm -f ./resources.qrc
+	./ui/generate-rcc.sh
+	rcc --binary ui/resources.qrc -o ./resources.rcc
+
+nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) rcc deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"$(STATUSGO)" --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim
 
@@ -183,10 +189,11 @@ $(APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp bin/nim_status_client tmp/linux/dist/usr/bin
 	cp nim-status.desktop tmp/linux/dist/.
 	cp status.svg tmp/linux/dist/status.svg
-	cp -R ui tmp/linux/dist/usr/.
+	cp status.svg tmp/linux/dist/usr/.
+	cp -R resources.rcc tmp/linux/dist/usr/.
 
 	echo -e $(BUILD_MSG) "AppImage"
-	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-translations -no-copy-copyright-files -qmldir=tmp/linux/dist/usr/ui -qmlimport=$(QTDIR)/qml -bundle-non-qt-libs
+	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-translations -no-copy-copyright-files -qmldir=ui -qmlimport=$(QTDIR)/qml -bundle-non-qt-libs
 
 	rm tmp/linux/dist/AppRun
 	cp AppRun tmp/linux/dist/.
@@ -221,7 +228,8 @@ $(DMG): nim_status_client $(DMG_TOOL)
 	cp nim_status_client.sh $(MACOS_OUTER_BUNDLE)/Contents/MacOS/
 	chmod +x $(MACOS_OUTER_BUNDLE)/Contents/MacOS/nim_status_client.sh
 	cp status-icon.icns $(MACOS_OUTER_BUNDLE)/Contents/Resources/
-	cp -R ui $(MACOS_OUTER_BUNDLE)/Contents/
+	cp status.svg $(MACOS_OUTER_BUNDLE)/Contents/
+	cp -R resources.rcc $(MACOS_OUTER_BUNDLE)/Contents/
 
 	macdeployqt \
 		$(MACOS_OUTER_BUNDLE) \
@@ -289,7 +297,7 @@ clean: | clean-common
 	rm -rf bin/* node_modules pkg/* tmp/* $(STATUSGO)
 	+ $(MAKE) -C vendor/DOtherSide/build --no-print-directory clean
 
-run:
+run: | rcc
 	LD_LIBRARY_PATH="$(QT5_LIBDIR)" ./bin/nim_status_client
 
 endif # "variables.mk" was not included

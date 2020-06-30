@@ -23,7 +23,9 @@ proc mainProc() =
   enableHDPI()
 
   let app = newQApplication("Nim Status Client")
-  app.icon("./status.svg")
+  QResource.registerResource(app.applicationDirPath & "/../resources.rcc")
+
+  app.icon(app.applicationDirPath & "/../status.svg")
 
   let engine = newQQmlApplicationEngine()
   let signalController = signals.newController(app)
@@ -115,7 +117,7 @@ proc mainProc() =
 
   engine.setRootContextProperty("signals", signalController.variant)
 
-  engine.load("../ui/main.qml")
+  engine.load(newQUrl("qrc:///main.qml"))
 
   # Please note that this must use the `cdecl` calling convention because
   # it will be passed as a regular C function to libstatus. This means that
