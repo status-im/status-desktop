@@ -224,3 +224,7 @@ QtObject:
 
   proc makeAdmin*(self: ChatsView, chatId: string, pubKey: string) {.slot.} =
     self.status.chat.makeAdmin(chatId, pubKey)
+
+  proc isEnsVerified*(self: ChatsView, id: string): bool {.slot.} =
+    if id == "": return false
+    self.status.contacts.getContactByID(id).ensVerified

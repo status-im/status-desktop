@@ -11,12 +11,14 @@ ModalPopup {
     property var userName: ""
     property var fromAuthor: ""
     property bool showQR: false
+    property bool isEnsVerified: false
 
     function openPopup(userNameParam, fromAuthorParam, identiconParam) {
         this.showQR = false
         this.userName = userNameParam
         this.fromAuthor = fromAuthorParam
         this.identicon = identiconParam
+        this.isEnsVerified = chatsModel.isEnsVerified(this.fromAuthor)
         popup.open()
     }
 
@@ -123,6 +125,8 @@ ModalPopup {
 
         StyledText {
             id: labelEnsUsername
+            height: isEnsVerified ? 20 : 0
+            visible: isEnsVerified
             text: qsTr("ENS username")
             font.pixelSize: 13
             font.weight: Font.Medium
@@ -135,7 +139,9 @@ ModalPopup {
 
         StyledText {
             id: valueEnsName
-            text: "@emily.stateofus.eth"
+            visible: isEnsVerified
+            height: isEnsVerified ? 20 : 0
+            text: userName
             font.pixelSize: 14
             anchors.left: parent.left
             anchors.leftMargin: Theme.smallPadding
@@ -144,6 +150,8 @@ ModalPopup {
         }
 
         CopyToClipBoardIcon {
+          visible: isEnsVerified
+          height: isEnsVerified ? 20 : 0
           anchors.top: labelEnsUsername.bottom
           anchors.left: valueEnsName.right
           anchors.leftMargin: Theme.smallPadding
@@ -160,7 +168,7 @@ ModalPopup {
             color: Theme.darkGrey
             anchors.left: parent.left
             anchors.leftMargin: Theme.smallPadding
-            anchors.top: valueEnsName.bottom
+            anchors.top: isEnsVerified ? valueEnsName.bottom : parent.top
             anchors.topMargin: Theme.padding
         }
 
