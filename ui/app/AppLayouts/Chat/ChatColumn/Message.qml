@@ -261,11 +261,10 @@ Item {
             textFormat: TextEdit.RichText
             text: {
                 if(contentType === Constants.stickerType) return "";
-                if (isMessage) return linkify(message);
                 if(isEmoji){
                     return Emoji.parse(message, "72x72");
                 } else {
-                    return Emoji.parse(message, "26x26");
+                    return Emoji.parse(linkify(message), "26x26");
                 }
             }
             anchors.left: parent.left

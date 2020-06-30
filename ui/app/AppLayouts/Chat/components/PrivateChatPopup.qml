@@ -83,13 +83,11 @@ ModalPopup {
 
         ScrollView {
             anchors.fill: parent
-            anchors.topMargin: 50
-            anchors.top: searchBox.bottom
             Layout.fillWidth: true
             Layout.fillHeight: true
 
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            ScrollBar.vertical.policy: groupMembers.contentHeight > groupMembers.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+            ScrollBar.vertical.policy: contactListView.contentHeight > contactListView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
 
             ListView {
                 anchors.fill: parent
@@ -101,7 +99,7 @@ ModalPopup {
                     showCheckbox: false
                     pubKey: model.pubKey
                     isContact: model.isContact
-                    isUser: model.isUser
+                    isUser: false
                     name: model.name
                     address: model.address
                     identicon: model.identicon
