@@ -86,7 +86,6 @@ QtObject:
       ChatMessageRoles.ChatId.int:"chatId",
       ChatMessageRoles.SectionIdentifier.int: "sectionIdentifier",
       ChatMessageRoles.Id.int: "messageId"
-
     }.toTable
 
   proc add*(self: ChatMessageList, message: Message) =
