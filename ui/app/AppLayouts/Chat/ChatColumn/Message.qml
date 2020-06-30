@@ -42,7 +42,7 @@ Item {
     function linkify(inputText) {
         //URLs starting with http://, https://, or ftp://
         var replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-        replacedText = inputText.replace(replacePattern1, "<a href='$1'>$1</a>");
+        var replacedText = inputText.replace(replacePattern1, "<a href='$1'>$1</a>");
 
         //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
         var replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
