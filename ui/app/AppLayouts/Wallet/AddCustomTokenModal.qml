@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../imports"
 import "../../../shared"
+import "../../../sounds"
 
 ModalPopup {
     id: popup
@@ -13,6 +14,12 @@ ModalPopup {
 
     onOpened: {
         accountNameInput.forceActiveFocus(Qt.MouseFocusReason)
+    }
+
+    Item {
+        ErrorSound {
+            id: errorSound
+        }
     }
 
     Input {
@@ -61,6 +68,7 @@ ModalPopup {
                 const error = walletModel.addCustomToken(addressInput.text, nameInput.text, symbolInput.text, decimalsInput.text);
 
                 if (error) {
+                    errorSound.play()
                     changeError.text = error
                     changeError.open()
                     return

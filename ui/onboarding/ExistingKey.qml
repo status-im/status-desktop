@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import "../sounds"
 
 Item {
     property var onClosed: function () {}
@@ -10,12 +11,17 @@ Item {
         enterSeedPhraseModal.open()
     }
 
+    ErrorSound {
+        id: errorSound
+    }
+
     EnterSeedPhraseModal {
         property bool wentNext: false
         id: enterSeedPhraseModal
         onConfirmSeedClick: function (mnemonic) {
             let error = onboardingModel.validateMnemonic(mnemonic)
             if (error != "") {
+              errorSound.play()
               invalidSeedPhraseModal.error = error
               invalidSeedPhraseModal.open()
             } else {

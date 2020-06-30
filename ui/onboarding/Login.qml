@@ -5,6 +5,7 @@ import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.13
 import "../shared"
 import "../imports"
+import "../sounds"
 import "./Login"
 
 Item {
@@ -23,6 +24,11 @@ Item {
     Component.onCompleted: {
         txtPassword.forceActiveFocus(Qt.MouseFocusReason)
     }
+
+    ErrorSound {
+        id: errorSound
+    }
+
     Item {
         id: element
         width: 360
@@ -216,6 +222,7 @@ Item {
             ignoreUnknownSignals: true
             onLoginResponseChanged: {
                 if (error) {
+                    errorSound.play()
                     loginError.open()
                 }
             }
