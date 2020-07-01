@@ -140,7 +140,8 @@ proc toMessage*(jsonMsg: JsonNode): Message =
       text: jsonMsg{"text"}.getStr,
       timestamp: $jsonMsg{"timestamp"}.getInt,
       whisperTimestamp: $jsonMsg{"whisperTimestamp"}.getInt,
-      isCurrentUser: $jsonMsg{"outgoingStatus"}.getStr == "sending",
+      outgoingStatus: $jsonMsg{"outgoingStatus"}.getStr,
+      isCurrentUser: $jsonMsg{"outgoingStatus"}.getStr == "sending" or $jsonMsg{"outgoingStatus"}.getStr == "sent",
       stickerHash: "",
       parsedText: @[]
     )

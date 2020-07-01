@@ -17,6 +17,9 @@ type NodeSignal* = ref object of Signal
 type WalletSignal* = ref object of Signal
   content*: string
 
+type EnvelopeSentSignal* = ref object of Signal
+  messageIds*: seq[string]
+
 # Override this method
 method onSignal*(self: SignalSubscriber, data: Signal) {.base.} =
   error "onSignal must be overriden in controller. Signal is unhandled"
