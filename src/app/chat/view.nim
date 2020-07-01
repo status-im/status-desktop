@@ -147,6 +147,9 @@ QtObject:
       for k in self.messageList.keys:
         self.messageList[k].updateUsernames(contacts)
 
+  proc markMessageAsSent*(self:ChatsView, chat: string, messageId: string) =
+    self.messageList[chat].markMessageAsSent(messageId)
+
   proc getMessageList(self: ChatsView): QVariant {.slot.} =
     self.upsertChannel(self.activeChannel.id)
     return newQVariant(self.messageList[self.activeChannel.id])
@@ -160,7 +163,7 @@ QtObject:
     self.messagePushed()
 
   proc sendMessage*(self: ChatsView, message: string) {.slot.} =
-    discard self.status.chat.sendMessage(self.activeChannel.id, message)
+    self.status.chat.sendMessage(self.activeChannel.id, message)
 
   proc addRecentStickerToList*(self: ChatsView, sticker: Sticker) =
     self.stickers[RECENT_STICKERS].addStickerToList(sticker)

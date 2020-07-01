@@ -21,6 +21,7 @@ type
     ChatId = UserRole + 10
     SectionIdentifier = UserRole + 11
     Id = UserRole + 12
+    OutgoingStatus = UserRole + 13
 
 QtObject:
   type
@@ -71,6 +72,7 @@ QtObject:
       of ChatMessageRoles.ChatId: result = newQVariant(message.chatId)
       of ChatMessageRoles.SectionIdentifier: result = newQVariant(sectionIdentifier(message))
       of ChatMessageRoles.Id: result = newQVariant(message.id)
+      of ChatMessageRoles.OutgoingStatus: result = newQVariant(message.outgoingStatus)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -85,7 +87,8 @@ QtObject:
       ChatMessageRoles.FromAuthor.int:"fromAuthor",
       ChatMessageRoles.ChatId.int:"chatId",
       ChatMessageRoles.SectionIdentifier.int: "sectionIdentifier",
-      ChatMessageRoles.Id.int: "messageId"
+      ChatMessageRoles.Id.int: "messageId",
+      ChatMessageRoles.OutgoingStatus.int: "outgoingStatus"
     }.toTable
 
   proc add*(self: ChatMessageList, message: Message) =
@@ -104,6 +107,15 @@ QtObject:
     self.messages = @[]
     self.endResetModel()
 
+  proc markMessageAsSent*(self: ChatMessageList, messageId: string)=
+    let topLeft = self.createIndex(0, 0, nil)
+    let bottomRight = self.createIndex(self.messages.len, 0, nil)
+    for m in self.messages.mitems:
+      if m.id == messageId:
+        m.outgoingStatus = "sent"
+    self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.OutgoingStatus.int])
+
+  
   proc updateUsernames*(self: ChatMessageList, contacts: seq[Profile]) =
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.messages.len, 0, nil)

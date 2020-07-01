@@ -18,6 +18,7 @@ Item {
     property string sticker: "Qme8vJtyrEHxABcSVGPF95PtozDgUyfr1xGjePmFdZgk9v"
     property int contentType: 1 // constants don't work in default props
     property string chatId: "chatId"
+    property string outgoingStatus: ""
 
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
@@ -327,6 +328,39 @@ Item {
             selectByMouse: true
             // Probably only want to show this when clicking?
             visible: true
+        }
+
+        StyledTextEdit {
+            id: sentMessage
+            color: Theme.darkGrey
+            text: qsTr("Sent")
+            anchors.top: contentType === Constants.stickerType ? stickerId.bottom : chatText.bottom
+            anchors.bottomMargin: Theme.padding
+            anchors.right: chatTime.left
+            anchors.rightMargin: Theme.padding
+            font.pixelSize: 10
+            readOnly: true
+            visible: isCurrentUser && outgoingStatus == "sent"
+        }
+
+        SVGImage {
+            id: sendingImg
+            visible: isCurrentUser && outgoingStatus == "sending"
+            anchors.top: chatText.top
+            anchors.right: chatText.left
+            anchors.rightMargin: 15
+            source: "../../../img/settings.svg"
+            width: 15
+            height: 15
+            fillMode: Image.Stretch
+            RotationAnimator {
+                target: sendingImg;
+                from: 0;
+                to: 360;
+                duration: 1200
+                running: true
+                loops: Animation.Infinite
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ import libstatus/types
 import profile/profile
 import chat/[chat, message]
 import ../signals/messages
+import ../signals/types as signal_types
 import ens
 import eth/common/eth_types
 
@@ -35,6 +36,10 @@ type
     channels*: Table[string, Chat]
     msgCursor*: Table[string, string]
     recentStickers*: seq[Sticker]
+    
+  MessageArgs* = ref object of Args
+    id*: string
+    channel*: string
 
 include chat/utils
 
@@ -148,10 +153,11 @@ proc clearHistory*(self: ChatModel, chatId: string) =
 proc setActiveChannel*(self: ChatModel, chatId: string) =
   self.events.emit("activeChannelChanged", ChatIdArg(chatId: chatId))
 
-proc sendMessage*(self: ChatModel, chatId: string, msg: string): string =
-  var sentMessage = status_chat.sendChatMessage(chatId, msg)
-  self.emitUpdate(sentMessage)
-  sentMessage
+proc sendMessage*(self: ChatModel, chatId: string, msg: string) =
+  var response = status_chat.sendChatMessage(chatId, msg)
+  var (chats, messages) = self.processChatUpdate(parseJson(response))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
+  self.events.emit("sendingMessage", MessageArgs(id: messages[0].id, channel: messages[0].chatId))
 
 proc addStickerToRecent*(self: ChatModel, sticker: Sticker, save: bool = false) =
   self.recentStickers.insert(sticker, 0)
@@ -164,7 +170,9 @@ proc addStickerToRecent*(self: ChatModel, sticker: Sticker, save: bool = false) 
 proc sendSticker*(self: ChatModel, chatId: string, sticker: Sticker) =
   var response = status_chat.sendStickerMessage(chatId, sticker)
   self.addStickerToRecent(sticker, save = true)
-  self.emitUpdate(response)
+  var (chats, messages) = self.processChatUpdate(parseJson(response))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
+  self.events.emit("sendingMessage", MessageArgs(id: messages[0].id, channel: messages[0].chatId))
 
 proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true) =
   if not self.msgCursor.hasKey(chatId):

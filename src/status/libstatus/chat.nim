@@ -124,3 +124,7 @@ proc kickGroupMember*(chatId: string, pubKey: string): string =
 
 proc makeAdmin*(chatId: string, pubKey: string): string =
   callPrivateRPC("addAdminsToGroupChat".prefix, %* [nil, chatId, [pubKey]])
+
+proc updateOutgoingMessageStatus*(messageId: string, status: string): string =
+  result = callPrivateRPC("updateMessageOutgoingStatus".prefix, %* [messageId, status])
+  # TODO: handle errors

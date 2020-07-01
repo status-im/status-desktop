@@ -122,6 +122,7 @@ ScrollView {
             timestamp: model.timestamp
             sticker: model.sticker
             contentType: model.contentType
+            outgoingStatus: model.outgoingStatus
             authorCurrentMsg: msgDelegate.ListView.section
             authorPrevMsg: msgDelegate.ListView.previousSection
             profileClick: profilePopup.openPopup.bind(profilePopup)

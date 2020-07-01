@@ -9,12 +9,14 @@ import accounts as accounts
 import wallet as wallet
 import node as node
 import mailservers as mailservers
+import messages as messages
 import contacts as contacts
 import profile
 
 type Status* = ref object
   events*: EventEmitter
   chat*: ChatModel
+  messages*: MessagesModel
   mailservers*: MailserverModel
   accounts*: AccountModel
   wallet*: WalletModel
@@ -31,6 +33,7 @@ proc newStatusInstance*(): Status =
   result.wallet.initEvents()
   result.node = node.newNodeModel()
   result.mailservers = mailservers.newMailserverModel(result.events)
+  result.messages = messages.newMessagesModel(result.events)
   result.profile = profile.newProfileModel()
   result.contacts = contacts.newContactModel(result.events)
 
