@@ -280,7 +280,14 @@ Item {
             selectByMouse: true
             color: !isCurrentUser ? Theme.black : Theme.white
             visible: contentType == Constants.messageType || isEmoji
-            onLinkActivated: Qt.openUrlExternally(link)
+            onLinkActivated: {
+                if(link.startsWith("#")){
+                    chatsModel.joinChat(link.substring(1), Constants.chatTypePublic);
+                    return;
+                }
+
+                Qt.openUrlExternally(link)
+            }
             MouseArea {
                 anchors.fill: parent
                 acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
