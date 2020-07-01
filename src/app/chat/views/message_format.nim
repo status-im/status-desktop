@@ -20,6 +20,7 @@ proc renderInline(self: ChatMessageList, elem: TextItem): string =
   of "strong": result = fmt("<span style=\"font-weight: bold;\">{elem.literal}</span> ")
   of "link": result = elem.destination
   of "mention": result = fmt("<span style=\"color: #000000;\">{self.mention(elem.literal)}</span> ")
+  of "status-tag": result = fmt("<a href=\"#{elem.literal}\" class=\"status-tag\">{elem.literal}</a> ")
 
 # See render-block in status-react/src/status_im/ui/screens/chat/message/message.cljs
 proc renderBlock(self: ChatMessageList, message: Message): string =
