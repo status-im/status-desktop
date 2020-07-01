@@ -16,6 +16,7 @@ ApplicationWindow {
     id: applicationWindow
     width: 1232
     height: 770
+    color: Style.current.white
     title: {
         // Set application settings
         Qt.application.name = qsTr("Nim Status Client")
@@ -214,3 +215,9 @@ ApplicationWindow {
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:0.5}
+}
+##^##*/

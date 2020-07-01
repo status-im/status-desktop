@@ -12,7 +12,7 @@ Item {
     Layout.fillWidth: true
 
     StyledText {
-        id: element7
+        id: title
         text: qsTr("Advanced settings")
         anchors.left: parent.left
         anchors.leftMargin: 24
@@ -23,8 +23,32 @@ Item {
     }
 
     RowLayout {
+        // TODO move this to a new panel once we have the appearance panel
+        property bool isDarkTheme: false
+        id: themeSetting
+        anchors.top: title.bottom
+        anchors.topMargin: 20
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+        StyledText {
+            text: qsTr("Theme (Light - Dark)")
+        }
+        Switch {
+            checked: themeSetting.isDarkTheme
+            onCheckedChanged: function(value) {
+                themeSetting.isDarkTheme = !themeSetting.isDarkTheme
+                if (themeSetting.isDarkTheme) {
+                    Style.changeTheme('dark')
+                } else {
+                    Style.changeTheme('light')
+                }
+            }
+        }
+    }
+
+    RowLayout {
         id: walletTabSettings
-        anchors.top: element7.bottom
+        anchors.top: themeSetting.bottom
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 24
