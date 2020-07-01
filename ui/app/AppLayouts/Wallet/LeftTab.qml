@@ -128,6 +128,7 @@ Item {
             }
             StyledText {
                 id: walletAddress
+                font.family: Theme.fontHexRegular.name
                 text: address
                 anchors.right: parent.right
                 anchors.rightMargin: parent.width/2

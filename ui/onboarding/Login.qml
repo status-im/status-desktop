@@ -119,6 +119,7 @@ Item {
             width: 90
             color: Theme.darkGrey
             text: loginModel.currentAccount.address
+            font.family: Theme.fontHexRegular.name
             elide: Text.ElideMiddle
             font.pixelSize: 15
             anchors.top: usernameText.bottom

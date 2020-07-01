@@ -3,10 +3,15 @@ pragma Singleton
 import QtQuick 2.13
 
 QtObject {
-    property QtObject fontMedium: FontLoader { id: _fontMedium; source: "../fonts/InterStatus/InterStatus-Medium.otf"; }
-    property QtObject fontBold: FontLoader { id: _fontBold; source: "../fonts/InterStatus/InterStatus-Bold.otf"; }
-    property QtObject fontLight: FontLoader { id: _fontLight; source: "../fonts/InterStatus/InterStatus-Light.otf"; }
-    property QtObject fontRegular: FontLoader { id: _fontRegular; source: "../fonts/InterStatus/InterStatus-Regular.otf"; }
+    property QtObject fontMedium: FontLoader { id: _fontMedium; source: "../fonts/Inter/Inter-Medium.otf"; }
+    property QtObject fontBold: FontLoader { id: _fontBold; source: "../fonts/Inter/Inter-Bold.otf"; }
+    property QtObject fontLight: FontLoader { id: _fontLight; source: "../fonts/Inter/Inter-Light.otf"; }
+    property QtObject fontRegular: FontLoader { id: _fontRegular; source: "../fonts/Inter/Inter-Regular.otf"; }
+
+    property QtObject fontHexMedium: FontLoader { id: _fontHexMedium; source: "../fonts/InterStatus/InterStatus-Medium.otf"; }
+    property QtObject fontHexBold: FontLoader { id: _fontHexBold; source: "../fonts/InterStatus/InterStatus-Bold.otf"; }
+    property QtObject fontHexLight: FontLoader { id: _fontHexLight; source: "../fonts/InterStatus/InterStatus-Light.otf"; }
+    property QtObject fontHexRegular: FontLoader { id: _fontHexRegular; source: "../fonts/InterStatus/InterStatus-Regular.otf"; }
     
 
     readonly property color white: "#FFFFFF"

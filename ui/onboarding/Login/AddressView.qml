@@ -45,6 +45,7 @@ Rectangle {
         id: addressText
         width: 108
         text: address
+        font.family: Theme.fontHexRegular.name
         elide: Text.ElideMiddle
         anchors.bottom: accountImage.bottom
         anchors.bottomMargin: 0

@@ -104,6 +104,7 @@ Item {
 
           StyledText {
               id: addressValue
+              font.family: Theme.fontHexRegular.name
               text: to
               width: 100
               elide: Text.ElideMiddle

@@ -88,6 +88,7 @@ ModalPopup {
     StyledText {
       id: valueHash
       text: blockHash
+      font.family: Theme.fontHexRegular.name
       width: 160
       elide: Text.ElideMiddle
       font.pixelSize: 14
@@ -115,6 +116,7 @@ ModalPopup {
     StyledText {
       id: valueFrom
       text: fromAddress
+      font.family: Theme.fontHexRegular.name
       width: 160
       elide: Text.ElideMiddle
       font.pixelSize: 14

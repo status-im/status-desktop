@@ -54,6 +54,7 @@ Item {
     StyledText {
         id: walletAddress
         text: currentAccount.address
+        font.family: Theme.fontHexRegular.name
         elide: Text.ElideMiddle
         anchors.right: title.right
         anchors.rightMargin: 0
