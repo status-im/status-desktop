@@ -44,8 +44,8 @@ proc initEvents*(self: WalletModel) =
 proc delete*(self: WalletModel) =
   discard
 
-proc sendTransaction*(self: WalletModel, from_value: string, to: string, value: string, password: string): string =
-  status_wallet.sendTransaction(from_value, to, value, password)
+proc sendTransaction*(self: WalletModel, from_value: string, to: string, assetAddress: string, value: string, password: string): string =
+  status_wallet.sendTransaction(from_value, to, assetAddress, value, password)
 
 proc getDefaultCurrency*(self: WalletModel): string =
   # TODO: this should come from a model? It is going to be used too in the

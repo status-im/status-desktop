@@ -157,8 +157,8 @@ QtObject:
     read = getAccountList
     notify = accountListChanged
 
-  proc onSendTransaction*(self: WalletView, from_value: string, to: string, value: string, password: string): string {.slot.} =
-    result = self.status.wallet.sendTransaction(from_value, to, value, password)
+  proc onSendTransaction*(self: WalletView, from_value: string, to: string, assetAddress: string, value: string, password: string): string {.slot.} =
+    return self.status.wallet.sendTransaction(from_value, to, assetAddress, value, password)
 
   proc getDefaultAccount*(self: WalletView): string {.slot.} =
     self.currentAccount.address
