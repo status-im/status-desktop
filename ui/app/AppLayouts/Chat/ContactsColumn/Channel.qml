@@ -94,8 +94,11 @@ Rectangle {
           let lastWeek = new Date()
           lastWeek.setDate(now.getDate()-7)
 
+          let minutes = messageDate.getMinutes();
+          let hours = messageDate.getHours();
+
           if (now.toDateString() == messageDate.toDateString()) {
-            return messageDate.getHours() + ":" + (messageDate.getMinutes() < 10 ? "0" + messageDate.getMinutes() : messageDate.getMinutes())
+            return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
           } else if (yesterday.toDateString() == messageDate.toDateString()) {
             return qsTr("Yesterday")
           } else if (lastWeek.getTime() < messageDate.getTime()) {

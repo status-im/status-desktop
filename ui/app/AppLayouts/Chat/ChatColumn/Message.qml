@@ -36,7 +36,7 @@ Item {
             case Constants.stickerType:
                 return stickerId.height + 50
             default:
-                return (isCurrentUser || (!isCurrentUser && authorCurrentMsg == authorPrevMsg) ? chatBox.height : 24 + chatBox.height)
+                return (isCurrentUser || (!isCurrentUser && authorCurrentMsg == authorPrevMsg) ? chatBox.height : 24 + chatBox.height) + 10
         }
     }
 
@@ -311,18 +311,22 @@ Item {
         StyledTextEdit {
             id: chatTime
             color: Theme.darkGrey
-            text: timestamp
+            text: {
+                let messageDate = new Date(Math.floor(timestamp))
+                let minutes = messageDate.getMinutes();
+                let hours = messageDate.getHours();
+                return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
+            }
             anchors.top: contentType === Constants.stickerType ? stickerId.bottom : chatText.bottom
+            anchors.topMargin: 8
             anchors.bottomMargin: Theme.padding
-            anchors.right: !isCurrentUser ? parent.right : undefined
-            anchors.rightMargin: !isCurrentUser ? Theme.padding : 0
-            anchors.left: !isCurrentUser ? undefined : parent.left
-            anchors.leftMargin: !isCurrentUser ? 0 : Theme.padding
+            anchors.right: parent.right
+            anchors.rightMargin: isCurrentUser ? 5 : Theme.padding
             font.pixelSize: 10
             readOnly: true
             selectByMouse: true
             // Probably only want to show this when clicking?
-            visible: false
+            visible: true
         }
     }
 }
