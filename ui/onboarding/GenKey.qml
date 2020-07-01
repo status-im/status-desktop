@@ -27,7 +27,7 @@ Item {
     CreatePasswordModal {
         id: createPasswordModal
         onClosed: function () {
-            existingKeyView.onClosed()
+            genKeyView.onClosed()
         }
     }
 }

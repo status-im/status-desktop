@@ -11,6 +11,7 @@ import "./imports"
 
 ApplicationWindow {
     property alias appSettings: settings
+    property bool hasAccounts: !!loginModel.rowCount()
 
     id: applicationWindow
     width: 1232
@@ -57,17 +58,11 @@ ApplicationWindow {
 
         DSM.State {
             id: onboardingState
-            initialState: loginModel.rowCount() ? stateLogin : stateIntro
+            initialState: hasAccounts ? stateLogin : stateIntro
 
             DSM.State {
                 id: stateIntro
                 onEntered: loader.sourceComponent = intro
-
-                DSM.SignalTransition {
-                    targetState: keysMainState
-                    signal: applicationWindow.navigateTo
-                    guard: path === "KeysMain"
-                }
             }
 
             DSM.State {
@@ -121,7 +116,7 @@ ApplicationWindow {
             }
 
             DSM.SignalTransition {
-                targetState: loginModel.rowCount() ? stateLogin : stateIntro
+                targetState: hasAccounts ? stateLogin : stateIntro
                 signal: applicationWindow.navigateTo
                 guard: path === "InitialState"
             }
@@ -130,6 +125,12 @@ ApplicationWindow {
                 targetState: existingKeyState
                 signal: applicationWindow.navigateTo
                 guard: path === "ExistingKey"
+            }
+
+            DSM.SignalTransition {
+                targetState: keysMainState
+                signal: applicationWindow.navigateTo
+                guard: path === "KeysMain"
             }
 
             DSM.FinalState {
@@ -179,7 +180,11 @@ ApplicationWindow {
         id: existingKey
         ExistingKey {
             onClosed: function () {
-                applicationWindow.navigateTo("InitialState")
+                if (hasAccounts) {
+                    applicationWindow.navigateTo("InitialState")
+                } else {
+                    applicationWindow.navigateTo("KeysMain")
+                }
             }
         }
     }
@@ -188,7 +193,11 @@ ApplicationWindow {
         id: genKey
         GenKey {
             onClosed: function () {
-                applicationWindow.navigateTo("InitialState")
+                if (hasAccounts) {
+                    applicationWindow.navigateTo("InitialState")
+                } else {
+                    applicationWindow.navigateTo("KeysMain")
+                }
             }
         }
     }
