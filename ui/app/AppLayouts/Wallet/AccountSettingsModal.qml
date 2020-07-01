@@ -85,6 +85,7 @@ ModalPopup {
         id: addressText
         label: qsTr("Wallet address")
         text: currentAccount.address
+        fontFamily: Theme.fontHexRegular.name
         anchors.top: typeText.bottom
         anchors.topMargin: marginBetweenInputs
     }

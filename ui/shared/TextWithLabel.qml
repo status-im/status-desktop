@@ -6,6 +6,7 @@ import "../imports"
 Item {
     property string text: "My Text"
     property string label: "My Label"
+    property string fontFamily: Theme.fontRegular.name
     readonly property int labelMargin: 7
 
     id: inputBox
@@ -28,6 +29,7 @@ Item {
     StyledTextEdit {
         id: textItem
         text: inputBox.text
+        font.family: fontFamily
         selectByMouse: true
         readOnly: true
         font.weight: Font.Medium

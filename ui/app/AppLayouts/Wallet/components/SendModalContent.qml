@@ -84,6 +84,7 @@ Item {
     StyledText {
         id: textSelectAccountAddress
         text: selectedAccountAddress
+        font.family: Theme.fontHexRegular.name
         anchors.right: parent.right
         anchors.left: parent.left
         anchors.leftMargin: 2

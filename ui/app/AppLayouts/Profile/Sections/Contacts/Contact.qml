@@ -40,6 +40,7 @@ Rectangle {
     StyledText {
         id: addressText
         width: 108
+        font.family: Theme.fontHexRegular.name
         text: address
         elide: Text.ElideMiddle
         anchors.bottom: accountImage.bottom
