@@ -169,6 +169,7 @@ DISTFILES += \
     app/img/walletActive.svg \
     app/qmldir \
     imports/Emoji.qml \
+    imports/Themes/DarkTheme.qml \
     imports/Themes/LightTheme.qml \
     imports/Themes/Theme.qml \
     imports/Themes/qmldir \
