@@ -69,7 +69,7 @@ Item {
             }
             onOpenModalClick: function () {
                 setCurrentFlow(true);
-                confirmAddExstingKeyModal.open()
+                onExistingKeyClicked()()
             }
         }
 
@@ -114,7 +114,7 @@ Item {
                     if (loginModel.rowCount() > 1) {
                         selectAnotherAccountModal.open()
                     } else {
-                        onExistingKeyClicked()
+                        confirmAddExstingKeyModal.open()
                     }
                 }
             }
