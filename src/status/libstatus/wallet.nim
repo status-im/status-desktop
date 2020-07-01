@@ -1,6 +1,9 @@
-import json, json, strformat, stint, strutils, chronicles
+import json, httpclient, json, strformat, stint, strutils, sequtils, chronicles, parseutils, tables
 import libstatus, core, types
 import ../wallet/account
+from ./accounts/constants import ZERO_ADDRESS
+import ./contracts as contractMethods
+from eth/common/utils import parseAddress
 
 proc getWalletAccounts*(): seq[WalletAccount] =
   try:
@@ -26,17 +29,17 @@ proc getWalletAccounts*(): seq[WalletAccount] =
     let msg = getCurrentExceptionMsg()
     error "Failed getting wallet accounts", msg
 
-proc getTransfersByAddress*(address: string): seq[Transaction] =
+proc getTransfersByAddress*(address: string): seq[types.Transaction] =
   try:
     let response = getBlockByNumber("latest")
     let latestBlock = parseJson(response)["result"]
     
     let transactionsResponse = getTransfersByAddress(address, latestBlock["number"].getStr, "0x14")
     let transactions = parseJson(transactionsResponse)["result"]
-    var accountTransactions: seq[Transaction] = @[]
+    var accountTransactions: seq[types.Transaction] = @[]
 
     for transaction in transactions:
-      accountTransactions.add(Transaction(
+      accountTransactions.add(types.Transaction(
         typeValue: transaction["type"].getStr,
         address: transaction["address"].getStr,
         contract: transaction["contract"].getStr,
@@ -58,14 +61,42 @@ proc getTransfersByAddress*(address: string): seq[Transaction] =
     error "Failed getting wallet account transactions", msg
     
 
-proc sendTransaction*(from_address: string, to: string, value: string, password: string): string =
-  var args = %* {
-    "value": fmt"0x{toHex(value)}",
-    "from": from_address,
-    "to": to
-  }
-  var response = sendTransaction($args, password)
-  result = response
+proc sendTransaction*(from_address: string, to: string, assetAddress: string, value: string, password: string): string =
+  try:
+    var args: JsonNode
+    if (assetAddress == ZERO_ADDRESS or assetAddress == ""):
+      var weiValue = value.parseFloat() * float(1000000000000000000)
+      var stringValue =  fmt"{weiValue:<.0f}"
+      stringValue.removeSuffix('.')
+      var hexValue = parseBiggestInt(stringValue).toHex()
+      hexValue.removePrefix('0')
+      args = %* {
+        "value": fmt"0x{hexValue}",
+        "from": from_address,
+        "to": to
+      }
+    else:
+      var bigIntValue = u256(value)
+      # TODO get decimals from the token
+      bigIntValue = bigIntValue * u256(1000000000000000000)
+      # Just using mainnet SNT to get the method ABI
+      let contract = getContract(Network.Mainnet, "snt")
+      let transferEncoded = contract.methods["transfer"].encodeAbi(parseAddress(to), bigIntValue.toHex())
+      
+      args = %* {
+        "from": from_address,
+        "to": assetAddress,
+        "data": transferEncoded
+      }
+
+    let response = sendTransaction($args, password)
+    let parsedResponse = parseJson(response)
+    
+    result = parsedResponse["result"].getStr
+    trace "Transaction sent succesfully", hash=result
+  except Exception as e:
+    error "Error submitting transaction", msg=e.msg
+    result = e.msg
 
 proc getBalance*(address: string): string =
   let payload = %* [address, "latest"]

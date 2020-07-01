@@ -7,10 +7,10 @@ type
     Mainnet,
     Testnet
 
-type Method = object
-  name: string
-  signature: string
-  noPadding: bool
+type Method* = object
+  name*: string
+  signature*: string
+  noPadding*: bool
 
 type Contract* = ref object
   name*: string
@@ -21,7 +21,8 @@ type Contract* = ref object
 let CONTRACTS: seq[Contract] = @[
   Contract(name: "snt", network: Network.Mainnet, address: parseAddress("0x744d70fdbe2ba4cf95131626614a1763df805b9e"),
     methods: [
-      ("approveAndCall", Method(signature: "approveAndCall(address,uint256,bytes)"))
+      ("approveAndCall", Method(signature: "approveAndCall(address,uint256,bytes)")),
+      ("transfer", Method(signature: "transfer(address,uint256)"))
     ].toTable
   ),
   Contract(name: "snt", network: Network.Testnet, address: parseAddress("0xc55cf4b03948d7ebc8b9e8bad92643703811d162")),
@@ -77,6 +78,8 @@ proc encodeParam[T](value: T): string =
     result = toHex(value, 64)
   elif T is EthAddress:
     result = value.toHex()
+  else:
+    result = align(value, 64, '0')
 
 macro encodeAbi*(self: Method, params: varargs[untyped]): untyped =
   result = quote do:

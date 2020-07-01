@@ -7,7 +7,7 @@ Item {
     property alias amountInput: txtAmount
     property var accounts: []
     property var assets: []
-    property string defaultAccount: "0x1234"
+    property string defaultAccount: "0x8558BFe81d00333379Af1Cd4c07F3dc50081FEC4"
 
     property int selectedAccountIndex: 0
     property string selectedAccountAddress: accounts && accounts.length ? accounts[selectedAccountIndex].address : ""
@@ -16,6 +16,7 @@ Item {
 
     property int selectedAssetIndex: 0
     property string selectedAssetName: assets && assets.length ? assets[selectedAssetIndex].name : ""
+    property string selectedAssetAddress: assets && assets.length ? assets[selectedAssetIndex].address : ""
     property string selectedAssetSymbol: assets && assets.length ? assets[selectedAssetIndex].symbol : ""
     property string selectedAccountValue: assets && assets.length ? assets[selectedAssetIndex].value : ""
 
@@ -27,12 +28,22 @@ Item {
         if (!validate()) {
             return;
         }
+        // Convert to Wei
+        // TODO use the decimal value fo the token, it's not always 18
+        // TODO add big number support
+//        const weiValue = parseFloat(txtAmount.text, 10) * 1000000000000000000
 
+        console.log('SENDING', selectedAccountAddress,
+                    txtTo.text,
+                    selectedAssetAddress,
+                    txtAmount.text,
+                    txtPassword.text)
         let result = walletModel.onSendTransaction(selectedAccountAddress,
                                                    txtTo.text,
+                                                   selectedAssetAddress,
                                                    txtAmount.text,
                                                    txtPassword.text)
-        console.log(result)
+        console.log('hash', result)
     }
 
     function validate() {
@@ -56,7 +67,7 @@ Item {
             amountValidationError = qsTr("You need to enter an amount")
         } else if (isNaN(txtAmount.text)) {
             amountValidationError = qsTr("This needs to be a number")
-        } else if (parseInt(txtAmount.text, 10) > parseInt(selectedAccountValue, 10)) {
+        } else if (parseFloat(txtAmount.text) > parseFloat(selectedAccountValue)) {
             amountValidationError = qsTr("Amount needs to be lower than your balance (%1)").arg(selectedAccountValue)
         } else {
             amountValidationError = ""
