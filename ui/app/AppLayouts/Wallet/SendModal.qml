@@ -14,6 +14,7 @@ ModalPopup {
 
     onOpened: {
         sendModalContent.amountInput.text = ""
+        sendModalContent.passwordInput.text = ""
         sendModalContent.amountInput.forceActiveFocus(Qt.MouseFocusReason)
         const accounts = walletModel.accounts
         const numAccounts = accounts.rowCount()
@@ -43,6 +44,9 @@ ModalPopup {
 
     SendModalContent {
         id: sendModalContent
+        closePopup: function () {
+            popup.close()
+        }
     }
 
     footer: StyledButton {
