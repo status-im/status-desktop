@@ -1,13 +1,15 @@
 import QtQuick 2.13
+import QtQuick.Dialogs 1.3
 import "../../../../imports"
 import "../../../../shared"
 
 Item {
     id: sendModalContent
+    property var closePopup: function(){}
     property alias amountInput: txtAmount
+    property alias passwordInput: txtPassword
     property var accounts: []
     property var assets: []
-    property string defaultAccount: "0x8558BFe81d00333379Af1Cd4c07F3dc50081FEC4"
 
     property int selectedAccountIndex: 0
     property string selectedAccountAddress: accounts && accounts.length ? accounts[selectedAccountIndex].address : ""
@@ -28,22 +30,21 @@ Item {
         if (!validate()) {
             return;
         }
-        // Convert to Wei
-        // TODO use the decimal value fo the token, it's not always 18
-        // TODO add big number support
-//        const weiValue = parseFloat(txtAmount.text, 10) * 1000000000000000000
 
-        console.log('SENDING', selectedAccountAddress,
-                    txtTo.text,
-                    selectedAssetAddress,
-                    txtAmount.text,
-                    txtPassword.text)
         let result = walletModel.onSendTransaction(selectedAccountAddress,
                                                    txtTo.text,
                                                    selectedAssetAddress,
                                                    txtAmount.text,
                                                    txtPassword.text)
-        console.log('hash', result)
+
+        if (!result.startsWith('0x')) {
+            // It's an error
+            sendingError.text = result
+            return sendingError.open()
+        }
+
+        sendingSuccess.text = qsTr("Transaction sent to the blockchain. You can watch the progress on Etherscan: https://etherscan.io/tx/%1").arg(result)
+        sendingSuccess.open()
     }
 
     function validate() {
@@ -78,6 +79,22 @@ Item {
 
     anchors.left: parent.left
     anchors.right: parent.right
+
+    MessageDialog {
+        id: sendingError
+        title: "Error sending the transaction"
+        icon: StandardIcon.Critical
+        standardButtons: StandardButton.Ok
+    }
+    MessageDialog {
+        id: sendingSuccess
+        title: qsTr("Success sending the transaction")
+        icon: StandardIcon.NoIcon
+        standardButtons: StandardButton.Ok
+        onAccepted: {
+            closePopup()
+        }
+    }
 
     Input {
         id: txtAmount
@@ -154,7 +171,6 @@ Item {
     Input {
         id: txtTo
         label: qsTr("Recipient")
-        text: defaultAccount
         placeholderText: qsTr("Send to")
         anchors.top: textSelectAccountAddress.bottom
         anchors.topMargin: Theme.padding
