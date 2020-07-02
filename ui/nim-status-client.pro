@@ -51,6 +51,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    app/AppLayouts/Chat/components/EmojiPopup.qml \
     fonts/InterStatus/InterStatus-Black.otf \
     fonts/InterStatus/InterStatus-BlackItalic.otf \
     fonts/InterStatus/InterStatus-Bold.otf \
