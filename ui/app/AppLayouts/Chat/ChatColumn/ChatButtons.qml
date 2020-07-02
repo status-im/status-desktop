@@ -47,11 +47,19 @@ Rectangle {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
             onClicked: {
-                if (stickersPopup.opened) {
-                    stickersPopup.close()
+                console.log('CLICK')
+                if (emojiPopup.opened) {
+                console.log('CLOSE')
+                    emojiPopup.close()
                 } else {
-                    stickersPopup.open()
+                console.log('OPEN')
+                    emojiPopup.open()
                 }
+                // if (stickersPopup.opened) {
+                //     stickersPopup.close()
+                // } else {
+                //     stickersPopup.open()
+                // }
             }
         }
     }
@@ -64,6 +72,14 @@ Rectangle {
         y: parent.height - sendBtns.height - height - 8
         stickerList: chatsModel.stickers
         stickerPackList: chatsModel.stickerPacks
+    }
+
+    EmojiPopup {
+        id: emojiPopup
+        width: 360
+        height: 440
+        x: parent.width - width - 8
+        y: parent.height - sendBtns.height - height - 8
     }
 }
 /*##^##
