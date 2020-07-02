@@ -11,4 +11,7 @@ QtObject {
         Twemoji.twemoji.size = size
         return Twemoji.twemoji.parse(text)
     }
+    function fromCodePoint(value) {
+        return Twemoji.twemoji.convert.fromCodePoint(value)
+    }
 }

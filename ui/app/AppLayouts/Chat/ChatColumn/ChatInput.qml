@@ -9,7 +9,7 @@ import "../../../../imports"
 Rectangle {
     border.width: 0
 
-    visible: chatsModel.activeChannel.chatType != Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember(profileModel.profile.pubKey)
+    visible: chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember(profileModel.profile.pubKey)
 
     Audio {
         id: sendMessageSound
@@ -17,7 +17,7 @@ Rectangle {
     }
 
     function onEnter(event){
-        if (event.modifiers == Qt.NoModifier && (event.key == Qt.Key_Enter || event.key == Qt.Key_Return)) {
+        if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
             if(txtData.text.trim().length > 0){
                 chatsModel.sendMessage(txtData.text.trim());
                 txtData.text = "";
@@ -65,6 +65,9 @@ Rectangle {
             Layout.preferredWidth: 30 + Style.current.padding
             Layout.minimumWidth: 30 + Style.current.padding
             Layout.maximumWidth: 200
+            addToChat: function (text) {
+                txtData.append(text)
+            }
         }
     }
 

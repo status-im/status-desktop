@@ -6,6 +6,7 @@ import "../components"
 
 Item {
     property int iconPadding: 6
+    property var addToChat: function () {}
 
     id: chatButtonsContainer
 
@@ -149,6 +150,7 @@ Item {
         height: 440
         x: parent.width - width - 8
         y: parent.height - sendBtns.height - height - 8
+        addToChat: chatButtonsContainer.addToChat
     }
 }
 /*##^##
