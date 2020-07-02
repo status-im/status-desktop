@@ -8,14 +8,14 @@ Menu {
     property alias arrowX: bgPopupMenuTopArrow.x
     closePolicy: Popup.CloseOnPressOutsideParent
     id: popupMenu
-    topPadding: Theme.padding
-    bottomPadding: Theme.padding
+    topPadding: Style.current.padding
+    bottomPadding: Style.current.padding
     delegate: MenuItem {
         id: popupMenuItem
         implicitWidth: 200
         implicitHeight: 40
         font.pixelSize: 15
-        icon.color: popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Theme.blue
+        icon.color: popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Style.current.blue
         contentItem: Item {
             id: menuItemContent
             Item {
@@ -37,7 +37,7 @@ Menu {
                     anchors.fill: popupMenuItemIcon
                     anchors.verticalCenter: parent.verticalCenter
                     source: popupMenuItemIcon
-                    color: popupMenuItem.highlighted ? Theme.white : popupMenuItem.action.icon.color
+                    color: popupMenuItem.highlighted ? Style.current.white : popupMenuItem.action.icon.color
                 }
             }
             
@@ -47,7 +47,7 @@ Menu {
                 topPadding: 4
                 text: popupMenuItem.text
                 font: popupMenuItem.font
-                color: popupMenuItem.highlighted ? Theme.white : Theme.black
+                color: popupMenuItem.highlighted ? Style.current.white : Style.current.black
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
             }
@@ -66,7 +66,7 @@ Menu {
         color: "transparent"
         Rectangle {
             id: bgPopupMenuTopArrow
-            color: Theme.white2
+            color: Style.current.white2
             height: 14
             width: 14
             rotation: 135
@@ -92,7 +92,7 @@ Menu {
             y: 7
             implicitWidth: bgPopupMenu.width
             implicitHeight: bgPopupMenu.height
-            color: Theme.white2
+            color: Style.current.white2
             radius: 16
             layer.enabled: true
             layer.effect: DropShadow{

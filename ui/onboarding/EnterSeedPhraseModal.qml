@@ -37,21 +37,21 @@ ModalPopup {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
-        color: Theme.darkGrey
+        color: Style.current.darkGrey
         font.pixelSize: 12
     }
 
     footer: Button {
         id: submitBtn
         anchors.bottom: parent.bottom
-        anchors.topMargin: Theme.padding
+        anchors.topMargin: Style.current.padding
         anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         width: 44
         height: 44
         background: Rectangle {
             radius: 50
-            color: Theme.lightBlue
+            color: Style.current.lightBlue
         }
 
         SVGImage {

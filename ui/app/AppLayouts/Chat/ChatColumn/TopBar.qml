@@ -12,7 +12,7 @@ Rectangle {
     color: "white"
     height: 56
     Layout.fillWidth: true
-    border.color: Theme.grey
+    border.color: Style.current.grey
     border.width: 1
 
     ChannelIcon {
@@ -28,9 +28,9 @@ Rectangle {
         height: 20
         text: chatsModel.activeChannel.chatType != Constants.chatTypePublic ? chatsModel.activeChannel.name : channelNameStr
         anchors.left: channelIcon.right
-        anchors.leftMargin: Theme.smallPadding
+        anchors.leftMargin: Style.current.smallPadding
         anchors.top: parent.top
-        anchors.topMargin: Theme.smallPadding
+        anchors.topMargin: Style.current.smallPadding
         font.weight: Font.Medium
         font.pixelSize: 15
         selectByMouse: true
@@ -39,7 +39,7 @@ Rectangle {
 
     StyledText {
         id: channelIdentifier
-        color: Theme.darkGrey
+        color: Style.current.darkGrey
         text: {
             switch(chatsModel.activeChannel.chatType){
                 case Constants.chatTypePublic: return qsTr("Public chat")
@@ -53,7 +53,7 @@ Rectangle {
         }
         font.pixelSize: 12
         anchors.left: channelIcon.right
-        anchors.leftMargin: Theme.smallPadding
+        anchors.leftMargin: Style.current.smallPadding
         anchors.top: channelName.bottom
         anchors.topMargin: 0
     }

@@ -61,7 +61,7 @@ Rectangle {
         StyledText {
             id: pubkeyText
             text: pubkey
-            font.family: Theme.fontHexRegular.name
+            font.family: Style.current.fontHexRegular.name
             width: 208
             elide: Text.ElideMiddle
             anchors.top: profileName.bottom

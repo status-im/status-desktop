@@ -15,7 +15,7 @@ Popup {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     background: Rectangle {
         radius: 8
-        border.color: Theme.grey
+        border.color: Style.current.grey
         layer.enabled: true
         layer.effect: DropShadow{
             verticalOffset: 3
@@ -87,7 +87,7 @@ Popup {
                     visible: stickerPackListView.count <= 0
                     label: qsTr("Get Stickers")
                     anchors.top: noStickersContainer.bottom
-                    anchors.topMargin: Theme.padding
+                    anchors.topMargin: Style.current.padding
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
             }
@@ -148,10 +148,10 @@ Popup {
             RoundedIcon {
                 id: btnHistory
                 size: 24
-                color: Theme.darkGrey
+                color: Style.current.darkGrey
                 imgPath: "../../../img/history_icon.svg"
                 anchors.left: btnAddStickerPack.right
-                anchors.leftMargin: Theme.padding
+                anchors.leftMargin: Style.current.padding
                 onClicked: {
                     chatsModel.setActiveStickerPackById(-1)
                     packIndicator.updatePosition(-1)
@@ -159,10 +159,10 @@ Popup {
             }
 
             RowLayout {
-                spacing: Theme.padding
+                spacing: Style.current.padding
                 anchors.top: parent.top
                 anchors.left: btnHistory.right
-                anchors.leftMargin: Theme.padding
+                anchors.leftMargin: Style.current.padding
 
                 Repeater {
                     id: stickerPackListView
@@ -184,7 +184,7 @@ Popup {
             }
             Rectangle {
                 id: packIndicator
-                border.color: Theme.blue
+                border.color: Style.current.blue
                 border.width: 1
                 height: 2
                 width: 16

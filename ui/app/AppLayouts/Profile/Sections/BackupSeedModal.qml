@@ -21,12 +21,12 @@ ModalPopup {
         id: wrapper
         property int len: profileModel.mnemonic.split(" ").length
         anchors.top: parent.top
-        anchors.topMargin: Theme.padding
+        anchors.topMargin: Style.current.padding
         height: 40*(len/2)
         width: 350
         border.width: 1
-        border.color: Theme.grey
-        radius: Theme.radius
+        border.color: Style.current.grey
+        radius: Style.current.radius
         anchors.horizontalCenter: parent.horizontalCenter
 
         Repeater {
@@ -47,18 +47,18 @@ ModalPopup {
               anchors.bottom: parent.bottom
               anchors.right: parent.right
               anchors.rightMargin: 175
-              color: Theme.grey
+              color: Style.current.grey
               visible: index >= wrapper.len/2
             }
 
             Text {
               id: count
               text: index+1
-              color: Theme.darkGrey
+              color: Style.current.darkGrey
               anchors.bottom: parent.bottom
-              anchors.bottomMargin: Theme.smallPadding
+              anchors.bottomMargin: Style.current.smallPadding
               anchors.left: parent.left
-              anchors.leftMargin: Theme.bigPadding
+              anchors.leftMargin: Style.current.bigPadding
               font.pixelSize: 15
             }
 
@@ -66,9 +66,9 @@ ModalPopup {
               text: modelData
               font.pixelSize: 15
               anchors.bottom: parent.bottom
-              anchors.bottomMargin: Theme.smallPadding
+              anchors.bottomMargin: Style.current.smallPadding
               anchors.left: count.right
-              anchors.leftMargin: Theme.padding
+              anchors.leftMargin: Style.current.padding
               selectByMouse: true
               readOnly: true
             }
@@ -83,20 +83,20 @@ ModalPopup {
       text: qsTr("With this 12 words you can always get your key back. Write it down. Keep it safe, offline, and separate from this device.")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Theme.darkGrey
+      color: Style.current.darkGrey
       anchors.bottom: parent.bottom
-      anchors.bottomMargin: Theme.padding
+      anchors.bottomMargin: Style.current.padding
       anchors.left: parent.left
-      anchors.leftMargin: Theme.smallPadding
+      anchors.leftMargin: Style.current.smallPadding
       anchors.right: parent.right
-      anchors.rightMargin: Theme.smallPadding
+      anchors.rightMargin: Style.current.smallPadding
       wrapMode: Text.WordWrap
     }
 
     footer: StyledButton {
       label: qsTr("Done")
       anchors.right: parent.right
-      anchors.rightMargin: Theme.smallPadding
+      anchors.rightMargin: Style.current.smallPadding
       anchors.bottom: parent.bottom
       onClicked: {
         backupSeedModal.close()

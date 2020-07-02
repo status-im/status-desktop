@@ -82,7 +82,7 @@ RowLayout {
             font.letterSpacing: 0.1
             width: 700
             wrapMode: Text.Wrap
-            color: Theme.black
+            color: Style.current.black
         }
 
         CheckBox {
@@ -96,7 +96,7 @@ RowLayout {
         StyledButton {
             id: btnGetStarted
             enabled: warningCheckBox.checked
-            btnColor: this.enabled ? Theme.lightBlue : "lightgrey"
+            btnColor: this.enabled ? Style.current.lightBlue : "lightgrey"
             label: "Get Started"
             anchors.top: warningCheckBox.bottom
             anchors.topMargin: 5

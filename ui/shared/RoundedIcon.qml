@@ -4,7 +4,7 @@ import "../imports"
 Rectangle {
     id: root
     property int size: 36
-    property color bg: Theme.blue
+    property color bg: Style.current.blue
     property url imgPath: ""
     signal clicked
 

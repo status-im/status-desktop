@@ -23,7 +23,7 @@ Item {
         anchors.bottom: parent.bottom
         spacing: 0
         id: tokenListView
-        anchors.topMargin: Theme.smallPadding
+        anchors.topMargin: Style.current.smallPadding
         model: Tokens {}
         ScrollBar.vertical: ScrollBar { active: true }
 
@@ -33,12 +33,12 @@ Item {
                 id: tokenContainer
                 anchors.right: parent.right
                 anchors.left: parent.left
-                anchors.leftMargin: Theme.smallPadding
+                anchors.leftMargin: Style.current.smallPadding
                 width: parent.width
                 property bool isVisible: symbol && (searchBox.text == "" || name.toLowerCase().includes(searchBox.text.toLowerCase()) || symbol.toLowerCase().includes(searchBox.text.toLowerCase()))
 
                 visible: isVisible
-                height: isVisible ? 40 + Theme.smallPadding : 0
+                height: isVisible ? 40 + Style.current.smallPadding : 0
 
                 Image {
                     id: assetInfoImage
@@ -54,10 +54,10 @@ Item {
                     id: assetSymbol
                     text: symbol
                     anchors.left: assetInfoImage.right
-                    anchors.leftMargin: Theme.smallPadding
+                    anchors.leftMargin: Style.current.smallPadding
                     anchors.top: assetInfoImage.top
                     anchors.topMargin: 0
-                    color: Theme.black
+                    color: Style.current.black
                     font.pixelSize: 15
                 }
                 StyledText {
@@ -66,15 +66,15 @@ Item {
                     anchors.bottom: assetInfoImage.bottom
                     anchors.bottomMargin: 0
                     anchors.left: assetInfoImage.right
-                    anchors.leftMargin: Theme.smallPadding
-                    color: Theme.darkGrey
+                    anchors.leftMargin: Style.current.smallPadding
+                    color: Style.current.darkGrey
                     font.pixelSize: 15
                 }
                 CheckBox  {
                     id: assetCheck
                     checked: walletModel.hasAsset("0x123", symbol)
                     anchors.right: parent.right
-                    anchors.rightMargin: Theme.smallPadding
+                    anchors.rightMargin: Style.current.smallPadding
                     onClicked: walletModel.toggleAsset(symbol, assetCheck.checked, address, name, decimals, "eeeeee")
                 }
             }

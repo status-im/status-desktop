@@ -25,7 +25,7 @@ Item {
     StyledButton {
         id: btnLogout
         anchors.top: txtTitle.bottom
-        anchors.topMargin: Theme.padding
+        anchors.topMargin: Style.current.padding
         // label: qsTr("Logout")
         label: qsTr("Exit")
 

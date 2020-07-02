@@ -58,7 +58,7 @@ ModalPopup {
           height: 36
           radius: 50
           anchors.top: parent.top
-          anchors.topMargin: Theme.padding
+          anchors.topMargin: Style.current.padding
           color: chatsModel.activeChannel.color
   
           StyledText {
@@ -66,7 +66,7 @@ ModalPopup {
             opacity: 0.7
             font.weight: Font.Bold
             font.pixelSize: 21
-            color: Theme.white
+            color: Style.current.white
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
           }
@@ -78,7 +78,7 @@ ModalPopup {
           anchors.top: parent.top
           anchors.topMargin: 18
           anchors.left: letterIdenticon.right
-          anchors.leftMargin: Theme.smallPadding
+          anchors.leftMargin: Style.current.smallPadding
           font.bold: true
           font.pixelSize: 14
           readOnly: true
@@ -97,11 +97,11 @@ ModalPopup {
           }
           width: 160
           anchors.left: letterIdenticon.right
-          anchors.leftMargin: Theme.smallPadding
+          anchors.leftMargin: Style.current.smallPadding
           anchors.top: groupName.bottom
           anchors.topMargin: 2
           font.pixelSize: 14
-          color: Theme.darkGrey
+          color: Style.current.darkGrey
       }
 
       Rectangle {
@@ -110,7 +110,7 @@ ModalPopup {
             height: 24
             width: 24
             anchors.top: parent.top
-            anchors.topMargin: Theme.padding
+            anchors.topMargin: Style.current.padding
             anchors.leftMargin: 4
             anchors.left: groupName.right
             radius: 8
@@ -128,10 +128,10 @@ ModalPopup {
                 anchors.fill: parent
                 hoverEnabled: true
                 onExited: {
-                    editGroupNameBtn.color = Theme.white
+                    editGroupNameBtn.color = Style.current.white
                 }
                 onEntered: {
-                    editGroupNameBtn.color = Theme.grey
+                    editGroupNameBtn.color = Style.current.grey
                 }
                 onClicked: renameGroupPopup.open()
             }
@@ -210,9 +210,9 @@ ModalPopup {
             id: memberLabel
             text: qsTr("Members")
             anchors.left: parent.left
-            anchors.leftMargin: Theme.padding
+            anchors.leftMargin: Style.current.padding
             font.pixelSize: 15
-            color: Theme.darkGrey
+            color: Style.current.darkGrey
         }
 
         ListModel {
@@ -249,7 +249,7 @@ ModalPopup {
             anchors.top: memberLabel.bottom
             anchors.bottom: popup.bottom
             anchors.topMargin: 30
-            anchors.bottomMargin: Theme.padding
+            anchors.bottomMargin: Style.current.padding
             spacing: 4
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -300,7 +300,7 @@ ModalPopup {
                                 }
                                 Action {
                                     icon.source: "../../../img/remove-from-group.svg"
-                                    icon.color: Theme.red
+                                    icon.color: Style.current.red
                                     text: qsTr("Remove From Group")
                                     onTriggered: chatsModel.kickGroupMember(chatsModel.activeChannel.id,  model.pubKey)
                                 }

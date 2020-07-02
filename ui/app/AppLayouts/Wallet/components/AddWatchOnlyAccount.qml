@@ -81,7 +81,7 @@ ModalPopup {
     footer: StyledButton {
         anchors.top: parent.top
         anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         label: loading ? qsTr("Loading...") : qsTr("Add account >")
 
         disabled: loading || addressInput.text === "" || accountNameInput.text === ""

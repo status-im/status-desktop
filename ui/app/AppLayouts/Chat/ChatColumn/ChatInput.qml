@@ -46,9 +46,9 @@ Rectangle {
                 id: txtData
                 text: ""
                 selectByMouse: true
-                topPadding: Theme.padding
+                topPadding: Style.current.padding
                 leftPadding: 12
-                rightPadding: Theme.padding
+                rightPadding: Style.current.padding
                 font.pixelSize: 14
                 placeholderText: qsTr("Type a message...")
                 Keys.onPressed: onEnter(event)
@@ -62,8 +62,8 @@ Rectangle {
             id: sendBtns
             Layout.topMargin: 1
             Layout.fillHeight: true
-            Layout.preferredWidth: 30 + Theme.padding
-            Layout.minimumWidth: 30 + Theme.padding
+            Layout.preferredWidth: 30 + Style.current.padding
+            Layout.minimumWidth: 30 + Style.current.padding
             Layout.maximumWidth: 200
         }
     }

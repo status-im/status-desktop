@@ -39,7 +39,7 @@ ModalPopup {
     Input {
         id: channelName
         anchors.top: description.bottom
-        anchors.topMargin: Theme.padding
+        anchors.topMargin: Style.current.padding
         placeholderText: qsTr("chat-name")
         Keys.onEnterPressed: doJoin()
         Keys.onReturnPressed: doJoin()

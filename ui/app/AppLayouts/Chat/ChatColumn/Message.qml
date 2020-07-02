@@ -71,10 +71,10 @@ Item {
             height: 120
             radius: 120
             border.width: chatsModel.activeChannel.chatType == Constants.chatTypeOneToOne ? 2 : 0
-            border.color: Theme.grey
+            border.color: Style.current.grey
             color: {
                 if (chatsModel.activeChannel.chatType == Constants.chatTypeOneToOne) {
-                    return Theme.transparent
+                    return Style.current.transparent
                 }
                 return chatsModel.activeChannel.color
             }
@@ -116,7 +116,7 @@ Item {
                 }
             font.weight: Font.Bold
             font.pixelSize: 22
-            color: Theme.black
+            color: Style.current.black
             anchors.top: circleId.bottom
             anchors.topMargin: 16
             anchors.horizontalCenter: parent.horizontalCenter
@@ -132,7 +132,7 @@ Item {
                 id: joinChat
                 text: qsTr("Join chat")
                 font.pixelSize: 20
-                color: Theme.blue
+                color: Style.current.blue
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 MouseArea {
@@ -147,10 +147,10 @@ Item {
             StyledText {
                 text: qsTr("Decline invitation")
                 font.pixelSize: 20
-                color: Theme.blue
+                color: Style.current.blue
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: joinChat.bottom
-                anchors.topMargin: Theme.padding
+                anchors.topMargin: Style.current.padding
                 MouseArea {
                     cursorShape: Qt.PointingHandCursor
                     anchors.fill: parent
@@ -169,7 +169,7 @@ Item {
         text:  message
         visible: isStatusMessage
         font.pixelSize: 16
-        color: Theme.darkGrey
+        color: Style.current.darkGrey
         width:  parent.width - 120
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter
@@ -183,7 +183,7 @@ Item {
         height: 36
         anchors.topMargin: 20
         anchors.left: parent.left
-        anchors.leftMargin: Theme.padding
+        anchors.leftMargin: Style.current.padding
         anchors.top: parent.top
         fillMode: Image.PreserveAspectFit
         source: identicon
@@ -229,14 +229,14 @@ Item {
 
         id: chatBox
         height: (2 * chatVerticalPadding) + (contentType == Constants.stickerType ? stickerId.height : chatText.height)
-        color: isCurrentUser ? Theme.blue : Theme.lightBlue
-        border.color: Theme.transparent
+        color: isCurrentUser ? Style.current.blue : Style.current.lightBlue
+        border.color: Style.current.transparent
         width: contentType === Constants.stickerType ? (stickerId.width + (2 * chatHorizontalPadding)) : (message.length > 52 ? 380 : chatText.width + 2 * chatHorizontalPadding)
         radius: 16
         anchors.left: !isCurrentUser ? chatImage.right : undefined
         anchors.leftMargin: !isCurrentUser ? 8 : 0
         anchors.right: !isCurrentUser ? undefined : parent.right
-        anchors.rightMargin: !isCurrentUser ? 0 : Theme.padding
+        anchors.rightMargin: !isCurrentUser ? 0 : Style.current.padding
         anchors.top: authorCurrentMsg != authorPrevMsg && !isCurrentUser ? chatImage.top : parent.top
         anchors.topMargin: 0
         visible: isMessage || isEmoji
@@ -278,7 +278,7 @@ Item {
             font.pixelSize: 15
             readOnly: true
             selectByMouse: true
-            color: !isCurrentUser ? Theme.black : Theme.white
+            color: !isCurrentUser ? Style.current.black : Style.current.white
             visible: contentType == Constants.messageType || isEmoji
             onLinkActivated: {
                 if(link.startsWith("#")){
@@ -310,7 +310,7 @@ Item {
 
         StyledTextEdit {
             id: chatTime
-            color: Theme.darkGrey
+            color: Style.current.darkGrey
             text: {
                 let messageDate = new Date(Math.floor(timestamp))
                 let minutes = messageDate.getMinutes();
@@ -319,9 +319,9 @@ Item {
             }
             anchors.top: contentType === Constants.stickerType ? stickerId.bottom : chatText.bottom
             anchors.topMargin: 8
-            anchors.bottomMargin: Theme.padding
+            anchors.bottomMargin: Style.current.padding
             anchors.right: parent.right
-            anchors.rightMargin: isCurrentUser ? 5 : Theme.padding
+            anchors.rightMargin: isCurrentUser ? 5 : Style.current.padding
             font.pixelSize: 10
             readOnly: true
             selectByMouse: true
@@ -331,12 +331,12 @@ Item {
 
         StyledTextEdit {
             id: sentMessage
-            color: Theme.darkGrey
+            color: Style.current.darkGrey
             text: qsTr("Sent")
             anchors.top: contentType === Constants.stickerType ? stickerId.bottom : chatText.bottom
-            anchors.bottomMargin: Theme.padding
+            anchors.bottomMargin: Style.current.padding
             anchors.right: chatTime.left
-            anchors.rightMargin: Theme.padding
+            anchors.rightMargin: Style.current.padding
             font.pixelSize: 10
             readOnly: true
             visible: isCurrentUser && outgoingStatus == "sent"

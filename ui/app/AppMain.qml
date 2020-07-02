@@ -28,7 +28,7 @@ RowLayout {
         spacing: 5
         background: Rectangle {
             color: "#00000000"
-            border.color: Theme.grey
+            border.color: Style.current.grey
         }
 
         TabButton {
@@ -41,7 +41,7 @@ RowLayout {
             transformOrigin: Item.Center
             anchors.horizontalCenter: parent.horizontalCenter
             background: Rectangle {
-                color: Theme.lightBlue
+                color: Style.current.lightBlue
                 opacity: parent.checked ? 1 : 0
                 radius: 50
             }
@@ -68,7 +68,7 @@ RowLayout {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: chatBtn.top
             background: Rectangle {
-                color: Theme.lightBlue
+                color: Style.current.lightBlue
                 opacity: parent.checked ? 1 : 0
                 radius: 50
             }
@@ -95,7 +95,7 @@ RowLayout {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: walletBtn.top
             background: Rectangle {
-                color: Theme.lightBlue
+                color: Style.current.lightBlue
                 opacity: parent.checked ? 1 : 0
                 radius: 50
             }
@@ -120,7 +120,7 @@ RowLayout {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: browserBtn.top
             background: Rectangle {
-                color: Theme.lightBlue
+                color: Style.current.lightBlue
                 opacity: parent.checked ? 1 : 0
                 radius: 50
             }
@@ -147,7 +147,7 @@ RowLayout {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: profileBtn.top
             background: Rectangle {
-                color: Theme.lightBlue
+                color: Style.current.lightBlue
                 opacity: parent.checked ? 1 : 0
                 radius: 50
             }

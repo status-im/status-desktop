@@ -22,10 +22,10 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         onExited: {
-            parent.color = Theme.white
+            parent.color = Style.current.white
         }
         onEntered:{
-            parent.color = Theme.grey
+            parent.color = Style.current.grey
         }
         onClicked: onClick()
     }

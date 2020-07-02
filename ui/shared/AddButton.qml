@@ -13,7 +13,7 @@ Rectangle {
     id: btnAddContainer
     width: 36
     height: 36
-    color: Theme.blue
+    color: Style.current.blue
     radius: width / 2
     
 

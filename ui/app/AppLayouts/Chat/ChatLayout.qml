@@ -16,9 +16,9 @@ SplitView {
 
     ContactsColumn {
         id: contactsColumn
-        SplitView.preferredWidth: Theme.leftTabPrefferedSize
-        SplitView.minimumWidth: Theme.leftTabMinimumWidth
-        SplitView.maximumWidth: Theme.leftTabMaximumWidth
+        SplitView.preferredWidth: Style.current.leftTabPrefferedSize
+        SplitView.minimumWidth: Style.current.leftTabMinimumWidth
+        SplitView.maximumWidth: Style.current.leftTabMaximumWidth
     }
 
     ChatColumn {

@@ -13,7 +13,7 @@ Rectangle {
     property string searchStr: ""
 
     id: wrapper
-    color: ListView.isCurrentItem ? Theme.lightBlue : Theme.transparent
+    color: ListView.isCurrentItem ? Style.current.lightBlue : Style.current.transparent
     anchors.right: parent.right
     anchors.top: applicationWindow.top
     anchors.left: parent.left
@@ -50,9 +50,9 @@ Rectangle {
         fillMode: Image.PreserveAspectFit
         source: "../../../img/channel-icon-" + (wrapper.chatType === Constants.chatTypePublic ? "public-chat.svg" : "group.svg")
         anchors.left: contactImage.right
-        anchors.leftMargin: Theme.padding
+        anchors.leftMargin: Style.current.padding
         anchors.top: parent.top
-        anchors.topMargin: Theme.smallPadding
+        anchors.topMargin: Style.current.smallPadding
         visible: wrapper.chatType !== Constants.chatTypeOneToOne
     }
 
@@ -60,14 +60,14 @@ Rectangle {
         id: contactInfo
         text: wrapper.chatType !== Constants.chatTypePublic ? Emoji.parse(wrapper.name, "26x26") : "#" + wrapper.name
         anchors.right: contactTime.left
-        anchors.rightMargin: Theme.smallPadding
+        anchors.rightMargin: Style.current.smallPadding
         elide: Text.ElideRight
         font.weight: Font.Medium
         font.pixelSize: 15
         anchors.left: channelIcon.visible ? channelIcon.right : contactImage.right
-        anchors.leftMargin: channelIcon.visible ? 2 : Theme.padding
+        anchors.leftMargin: channelIcon.visible ? 2 : Style.current.padding
         anchors.top: parent.top
-        anchors.topMargin: Theme.smallPadding
+        anchors.topMargin: Style.current.smallPadding
         color: "black"
     }
     
@@ -75,14 +75,14 @@ Rectangle {
         id: lastChatMessage
         text: lastMessage ? Emoji.parse(lastMessage, "26x26").replace(/\n|\r/g, ' ') : qsTr("No messages")
         anchors.right: contactNumberChatsCircle.left
-        anchors.rightMargin: Theme.smallPadding
+        anchors.rightMargin: Style.current.smallPadding
         elide: Text.ElideRight
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Theme.smallPadding
+        anchors.bottomMargin: Style.current.smallPadding
         font.pixelSize: 15
         anchors.left: contactImage.right
-        anchors.leftMargin: Theme.padding
-        color: Theme.darkGrey
+        anchors.leftMargin: Style.current.padding
+        color: Style.current.darkGrey
     }
     StyledText {
         id: contactTime
@@ -109,11 +109,11 @@ Rectangle {
           }
         }
         anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         anchors.top: parent.top
-        anchors.topMargin: Theme.smallPadding
+        anchors.topMargin: Style.current.smallPadding
         font.pixelSize: 11
-        color: Theme.darkGrey
+        color: Style.current.darkGrey
     }
     Rectangle {
         id: contactNumberChatsCircle
@@ -121,10 +121,10 @@ Rectangle {
         height: 22
         radius: 50
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Theme.smallPadding
+        anchors.bottomMargin: Style.current.smallPadding
         anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
-        color: Theme.blue
+        anchors.rightMargin: Style.current.padding
+        color: Style.current.blue
         visible: unviewedMessagesCount > 0
         StyledText {
             id: contactNumberChats

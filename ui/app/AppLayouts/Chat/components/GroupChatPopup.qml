@@ -64,13 +64,13 @@ ModalPopup {
           font.bold: true
           font.pixelSize: 17
           anchors.top: parent.top
-          anchors.topMargin: Theme.padding
+          anchors.topMargin: Style.current.padding
       }
 
       StyledText {
           anchors.top: lblNewGroup.bottom
           text: qsTr("%1 / 10 members").arg(memberCount)
-          color: Theme.darkGrey
+          color: Style.current.darkGrey
           font.pixelSize: 15
       }
     }

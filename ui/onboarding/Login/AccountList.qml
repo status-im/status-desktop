@@ -12,7 +12,7 @@ ListView {
     anchors.fill: parent
     model: accounts
     focus: true
-    spacing: Theme.smallPadding
+    spacing: Style.current.smallPadding
 
     delegate: AddressView {
         username: model.username

@@ -12,7 +12,7 @@ Rectangle {
         width: 30
         height: 30
         text: ""
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         onClicked: {
@@ -20,7 +20,7 @@ Rectangle {
             txtData.text = ""
         }
         background: Rectangle {
-            color: parent.enabled ? Theme.blue : Theme.grey
+            color: parent.enabled ? Style.current.blue : Style.current.grey
             radius: 50
         }
         Image {
@@ -37,7 +37,7 @@ Rectangle {
         visible: txtData.length == 0
         width: 20
         height: 20
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         anchors.right: parent.right
         fillMode: Image.PreserveAspectFit
         source: "../../../img/stickers_icon" + (stickersPopup.opened ? "_open.svg" : ".svg")

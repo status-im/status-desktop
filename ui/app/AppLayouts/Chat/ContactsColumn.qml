@@ -42,15 +42,15 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 59
         anchors.right: addChat.left
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         anchors.left: parent.left
-        anchors.leftMargin: Theme.padding
+        anchors.leftMargin: Style.current.padding
     }
 
     AddChat {
         id: addChat
         anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         anchors.top: parent.top
         anchors.topMargin: 59
     }

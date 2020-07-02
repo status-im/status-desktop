@@ -6,7 +6,7 @@ import "../imports"
 Item {
     property string text: "My Text"
     property string label: "My Label"
-    property string fontFamily: Theme.fontRegular.name
+    property string fontFamily: Style.current.fontRegular.name
     readonly property int labelMargin: 7
 
     id: inputBox
@@ -23,7 +23,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 0
         font.pixelSize: 13
-        color: Theme.darkGrey
+        color: Style.current.darkGrey
     }
 
     StyledTextEdit {
@@ -38,7 +38,7 @@ Item {
         anchors.top: inputLabel.bottom
         anchors.topMargin: inputBox.labelMargin
         font.pixelSize: 15
-        color: Theme.black
+        color: Style.current.black
     }
 }
 

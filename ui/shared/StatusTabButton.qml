@@ -11,8 +11,8 @@ TabButton {
     text: ""
     padding: 0
     background: Rectangle {
-        color: Theme.transparent
-        border.color: Theme.transparent
+        color: Style.current.transparent
+        border.color: Style.current.transparent
     }
 
     StyledText {
@@ -20,11 +20,11 @@ TabButton {
         text: btnText
         font.weight: Font.Medium
         font.pixelSize: 15
-        color: parent.checked ? Theme.black : Theme.darkGrey
+        color: parent.checked ? Style.current.black : Style.current.darkGrey
     }
 
     Rectangle {
-        color: Theme.blue
+        color: Style.current.blue
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         anchors.right: parent.right

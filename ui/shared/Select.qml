@@ -7,7 +7,7 @@ import "../imports"
 Item {
     property string label: ""
     readonly property bool hasLabel: label !== ""
-    property color bgColor: Theme.grey
+    property color bgColor: Style.current.grey
     readonly property int labelMargin: 7
     property var selectOptions
     property int customHeight: 44
@@ -15,7 +15,7 @@ Item {
     property url icon: ""
     property int iconHeight: 24
     property int iconWidth: 24
-    property color iconColor: Theme.transparent
+    property color iconColor: Style.current.transparent
 
     readonly property bool hasIcon: icon.toString() !== ""
 
@@ -37,7 +37,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 0
         font.pixelSize: 13
-        color: Theme.black
+        color: Style.current.black
     }
 
     Rectangle {
@@ -55,7 +55,7 @@ Item {
             sourceSize.height: iconHeight
             sourceSize.width: iconWidth
             anchors.left: parent.left
-            anchors.leftMargin: Theme.smallPadding
+            anchors.leftMargin: Style.current.smallPadding
             anchors.verticalCenter: parent.verticalCenter
             fillMode: Image.PreserveAspectFit
             source: inputBox.icon
@@ -71,7 +71,7 @@ Item {
             visible: inputBox.selectedText !== ""
             text: inputBox.selectedText
             anchors.left: parent.left
-            anchors.leftMargin: inputBox.hasIcon ? iconWidth + 20 : Theme.padding
+            anchors.leftMargin: inputBox.hasIcon ? iconWidth + 20 : Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
             font.pixelSize: 15
         }
@@ -81,7 +81,7 @@ Item {
             width: 11
             height: 6
             anchors.right: parent.right
-            anchors.rightMargin: Theme.padding
+            anchors.rightMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
             fillMode: Image.PreserveAspectFit
             source: "../app/img/caret.svg"
@@ -89,7 +89,7 @@ Item {
         ColorOverlay {
             anchors.fill: caret
             source: caret
-            color: Theme.darkGrey
+            color: Style.current.darkGrey
         }
 
         Menu {
@@ -101,8 +101,8 @@ Item {
             background: Rectangle {
                 width: parent.width
                 height: parent.height
-                color: Theme.grey
-                radius: Theme.radius
+                color: Style.current.grey
+                radius: Style.current.radius
             }
 
             function setupMenuItems() {
@@ -132,7 +132,7 @@ Item {
                 id: menuItem
                 MenuItem {
                     property var onClicked: console.log("Default click function. Override me please")
-                    property color bgColor: Theme.white
+                    property color bgColor: Style.current.white
                     onTriggered: function () {
                         onClicked()
                     }

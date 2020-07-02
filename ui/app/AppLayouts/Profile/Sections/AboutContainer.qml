@@ -94,7 +94,7 @@ Item {
         font.letterSpacing: 0.1
         width: 700
         wrapMode: Text.Wrap
-        color: Theme.black
+        color: Style.current.black
     }
 }
 

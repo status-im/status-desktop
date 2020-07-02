@@ -18,7 +18,7 @@ ModalPopup {
   
   footer: StyledButton {
       anchors.right: parent.right
-      anchors.rightMargin: Theme.smallPadding
+      anchors.rightMargin: Style.current.smallPadding
       label: qsTr("Cancel")
       anchors.bottom: parent.bottom
       onClicked: {

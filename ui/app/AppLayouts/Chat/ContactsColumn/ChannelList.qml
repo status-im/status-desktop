@@ -18,8 +18,8 @@ Item {
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.left: parent.left
-        anchors.rightMargin: Theme.padding
-        anchors.leftMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
+        anchors.leftMargin: Style.current.padding
         model: chatsModel.chats
         delegate: Channel {
             name: model.name

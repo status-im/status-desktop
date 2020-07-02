@@ -27,18 +27,18 @@ Item {
       text: qsTr("Security")
       font.pixelSize: 13
       font.weight: Font.Medium
-      color: Theme.darkGrey
+      color: Style.current.darkGrey
       anchors.left: parent.left
-      anchors.leftMargin: Theme.bigPadding
+      anchors.leftMargin: Style.current.bigPadding
       anchors.top: element3.bottom
-      anchors.topMargin: Theme.smallPadding
+      anchors.topMargin: Style.current.smallPadding
     }
 
     Item {
       anchors.top: labelSecurity.bottom
-      anchors.topMargin: Theme.padding
+      anchors.topMargin: Style.current.padding
       anchors.left: parent.left
-      anchors.leftMargin: Theme.bigPadding
+      anchors.leftMargin: Style.current.bigPadding
       height: children[0].height
       width: children[0].width
       Text {

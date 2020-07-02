@@ -71,8 +71,8 @@ ModalPopup {
     Text {
         id: ensUsername
         anchors.top: chatKey.bottom
-        anchors.topMargin: Theme.padding
-        color: Theme.darkGrey
+        anchors.topMargin: Style.current.padding
+        color: Style.current.darkGrey
         font.pixelSize: 12
     }
 

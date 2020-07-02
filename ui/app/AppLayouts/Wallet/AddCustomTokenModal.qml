@@ -57,9 +57,9 @@ ModalPopup {
         StyledButton {
             id: addBtn
             anchors.top: parent.top
-            anchors.topMargin: Theme.padding
+            anchors.topMargin: Style.current.padding
             anchors.right: parent.right
-            anchors.rightMargin: Theme.padding
+            anchors.rightMargin: Style.current.padding
             label: qsTr("Add")
 
             disabled: addressInput.text === "" || nameInput.text === "" || symbolInput.text === "" || decimalsInput.text === ""

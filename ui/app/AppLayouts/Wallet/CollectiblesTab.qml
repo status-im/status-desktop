@@ -34,17 +34,17 @@ Item {
                 text: name
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: collectibleImage.right
-                anchors.leftMargin: Theme.padding
+                anchors.leftMargin: Style.current.padding
                 font.pixelSize: 15
             }
 
             StyledText {
                 id: collectibleIdText
                 text: collectibleId
-                anchors.leftMargin: Theme.padding
+                anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: collectibleName.right
-                color: Theme.darkGrey
+                color: Style.current.darkGrey
                 font.pixelSize: 15
             }
         }
@@ -62,8 +62,8 @@ Item {
 
     ListView {
         id: assetListView
-        spacing: Theme.smallPadding
-        anchors.topMargin: Theme.bigPadding
+        spacing: Style.current.smallPadding
+        anchors.topMargin: Style.current.bigPadding
         anchors.fill: parent
 //        model: exampleModel
         model: walletModel.collectibles
