@@ -9,6 +9,8 @@ import "../ChatColumn/samples"
 import "./emojiList.js" as EmojiJSON
 
 Popup {
+    property var addToChat: function () {}
+
     id: popup
     modal: false
     property int selectedPackId
@@ -79,8 +81,8 @@ Popup {
                                 cursorShape: Qt.PointingHandCursor
                                 anchors.fill: parent
                                 onClicked: {
-                                    console.log('SELECT')
-//                                    chatsModel.sendSticker(hash, popup.selectedPackId)
+                                    const encodedIcon = Emoji.fromCodePoint(filename.replace(".svg", ""))
+                                    popup.addToChat(encodedIcon)
                                     popup.close()
                                 }
                             }
