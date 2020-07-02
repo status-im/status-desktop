@@ -20,8 +20,8 @@ pipeline {
     /* Disable colors in Nim compiler logs */
     NIMFLAGS = '--colors:off'
     /* Qt location is pre-defined */
-    QTDIR = '/usr/local/qt'
-    PATH = "${env.QTDIR}/clang_64/bin:${env.PATH}"
+    QTDIR = '/usr/local/qt/clang_64'
+    PATH = "${env.QTDIR}/bin:${env.PATH}"
     /* Control output the filename */
     STATUS_CLIENT_DMG = "pkg/${load('ci/lib.groovy').pkgFilename('macos', 'dmg')}"
   }

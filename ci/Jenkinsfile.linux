@@ -26,6 +26,8 @@ pipeline {
     NIMFLAGS = '--colors:off'
     /* Verbosity of make targets */
     V = "1"
+    /* Makefile assumes the compiler folder is included */
+    QTDIR = "/opt/qt/5.14.0/gcc_64"
     /* Control output the filename */
     STATUS_CLIENT_APPIMAGE = "pkg/${load('ci/lib.groovy').pkgFilename('linux', 'AppImage')}"
   }
