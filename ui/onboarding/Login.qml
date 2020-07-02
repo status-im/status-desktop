@@ -82,7 +82,7 @@ Item {
             anchors.leftMargin: 4
             anchors.verticalCenter: usernameText.verticalCenter
 
-            color: isHovered ? Theme.grey : Theme.transparent
+            color: isHovered ? Style.current.grey : Style.current.transparent
 
             radius: 4
 
@@ -98,7 +98,7 @@ Item {
             ColorOverlay {
                 anchors.fill: caretImg
                 source: caretImg
-                color: Theme.darkGrey
+                color: Style.current.darkGrey
             }
             MouseArea {
                 hoverEnabled: true
@@ -123,9 +123,9 @@ Item {
         StyledText {
             id: addressText
             width: 90
-            color: Theme.darkGrey
+            color: Style.current.darkGrey
             text: loginModel.currentAccount.address
-            font.family: Theme.fontHexRegular.name
+            font.family: Style.current.fontHexRegular.name
             elide: Text.ElideMiddle
             font.pixelSize: 15
             anchors.top: usernameText.bottom
@@ -136,7 +136,7 @@ Item {
         Input {
             id: txtPassword
             anchors.top: addressText.bottom
-            anchors.topMargin: Theme.padding * 2
+            anchors.topMargin: Style.current.padding * 2
             placeholderText: "Enter password"
             textField.echoMode: TextInput.Password
             textField.focus: true
@@ -151,7 +151,7 @@ Item {
             width: 40
             height: 40
             anchors.left: txtPassword.right
-            anchors.leftMargin: Theme.padding
+            anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: txtPassword.verticalCenter
             onClicked: {
                 if (loading) {
@@ -171,7 +171,7 @@ Item {
                 rotation: 90
             }
             background: Rectangle {
-                color: Theme.blue
+                color: Style.current.blue
                 radius: 50
             }
 
@@ -188,7 +188,7 @@ Item {
             id: loadingImg
             visible: loading
             anchors.left: txtPassword.right
-            anchors.leftMargin: Theme.padding
+            anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: txtPassword.verticalCenter
             // TODO replace by a real loading image
             source: "../app/img/settings.svg"
@@ -244,7 +244,7 @@ Item {
 
             StyledText {
                 id: generateKeysLinkText
-                color: Theme.blue
+                color: Style.current.blue
                 text: qsTr("Generate new keys")
                 font.pixelSize: 13
             }

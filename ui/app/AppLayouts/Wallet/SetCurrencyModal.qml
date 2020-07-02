@@ -29,8 +29,8 @@ Item {
         width: 480
         height: 510
         background: Rectangle {
-            color: Theme.white
-            radius: Theme.radius
+            color: Style.current.white
+            radius: Style.current.radius
         }
         padding: 0
         contentItem: SetCurrencyModalContent {

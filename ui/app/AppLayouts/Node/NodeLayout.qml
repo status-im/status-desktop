@@ -19,20 +19,20 @@ Item {
             Layout.fillHeight: true
             StyledText {
                 id: testDescription
-                color: Theme.lightBlueText
+                color: Style.current.lightBlueText
                 text: "latest block (auto updates):"
-                Layout.rightMargin: Theme.padding
-                Layout.leftMargin: Theme.padding
+                Layout.rightMargin: Style.current.padding
+                Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
                 font.pixelSize: 20
             }
             StyledText {
                 id: test
-                color: Theme.lightBlueText
+                color: Style.current.lightBlueText
                 text: nodeModel.lastMessage
-                Layout.rightMargin: Theme.padding
-                Layout.leftMargin: Theme.padding
+                Layout.rightMargin: Style.current.padding
+                Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
                 font.pixelSize: 20
@@ -42,8 +42,8 @@ Item {
         RowLayout {
             id: resultContainer
             Layout.fillHeight: true
-            Layout.rightMargin: Theme.padding
-            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Style.current.padding
+            Layout.leftMargin: Style.current.padding
             TextArea { id: callResult; Layout.fillWidth: true; text: nodeModel.callResult; readOnly: true }
         }
 
@@ -64,7 +64,7 @@ Item {
                 Rectangle {
                     id: rectangle
                     color: "#00000000"
-                    border.color: Theme.grey
+                    border.color: Style.current.grey
                     anchors.fill: parent
 
                     Button {
@@ -85,7 +85,7 @@ Item {
                         }
                         enabled: txtData.text !== ""
                         background: Rectangle {
-                            color: parent.enabled ? Theme.blue : Theme.grey
+                            color: parent.enabled ? Style.current.blue : Style.current.grey
                             radius: 50
                         }
                     }

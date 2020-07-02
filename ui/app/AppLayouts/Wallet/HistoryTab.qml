@@ -79,9 +79,9 @@ Item {
           StyledText {
             id: transactionValue
             anchors.left: transferIcon.right
-            anchors.leftMargin: Theme.smallPadding
+            anchors.leftMargin: Style.current.smallPadding
             anchors.top: parent.top
-            anchors.topMargin: Theme.bigPadding
+            anchors.topMargin: Style.current.bigPadding
             font.pixelSize: 15
             text: value + " " + transactionListItem.symbol
           }
@@ -90,13 +90,13 @@ Item {
         Item {
           anchors.right: timeInfo.left
           anchors.top: parent.top
-          anchors.topMargin: Theme.bigPadding
+          anchors.topMargin: Style.current.bigPadding
           width: children[0].width + children[1].width
 
           StyledText {
               text: to != walletModel.currentAccount.address ? "To " : "From "
               anchors.right: addressValue.left
-              color: Theme.darkGrey
+              color: Style.current.darkGrey
               anchors.top: parent.top
               font.pixelSize: 15
               font.strikeout: false
@@ -104,7 +104,7 @@ Item {
 
           StyledText {
               id: addressValue
-              font.family: Theme.fontHexRegular.name
+              font.family: Style.current.fontHexRegular.name
               text: to
               width: 100
               elide: Text.ElideMiddle
@@ -118,14 +118,14 @@ Item {
           id: timeInfo
           anchors.right: parent.right
           anchors.top: parent.top
-          anchors.topMargin: Theme.bigPadding
+          anchors.topMargin: Style.current.bigPadding
           width: children[0].width + children[1].width + children[2].width
 
           StyledText {
               text: "• "
               font.weight: Font.Bold
               anchors.right: timeIndicator.left
-              color: Theme.darkGrey
+              color: Style.current.darkGrey
               anchors.top: parent.top
               font.pixelSize: 15
           }
@@ -134,7 +134,7 @@ Item {
               id: timeIndicator
               text: "At "
               anchors.right: timeValue.left
-              color: Theme.darkGrey
+              color: Style.current.darkGrey
               anchors.top: parent.top
               font.pixelSize: 15
               font.strikeout: false

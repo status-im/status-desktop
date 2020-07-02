@@ -26,7 +26,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             font.weight: Font.DemiBold
             font.pixelSize: 15
-            color: Theme.darkGrey
+            color: Style.current.darkGrey
         }
     }
 }

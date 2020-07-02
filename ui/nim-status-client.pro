@@ -35,8 +35,8 @@ TRANSLATIONS = status_en.ts \
                status_es.ts
 
 RESOURCES += \
-    imports/Theme.qml \
     imports/Constants.qml \
+    imports/Style.qml \
     main.qml
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
@@ -169,6 +169,9 @@ DISTFILES += \
     app/img/walletActive.svg \
     app/qmldir \
     imports/Emoji.qml \
+    imports/Themes/LightTheme.qml \
+    imports/Themes/Theme.qml \
+    imports/Themes/qmldir \
     imports/Utils.qml \
     imports/qmldir \
     onboarding/CreatePasswordModal.qml \

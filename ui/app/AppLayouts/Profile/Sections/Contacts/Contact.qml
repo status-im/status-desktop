@@ -17,12 +17,12 @@ Rectangle {
     anchors.right: parent.right
     anchors.left: parent.left
     border.width: 0
-    radius: Theme.radius
+    radius: Style.current.radius
 
     Identicon {
         id: accountImage
         anchors.left: parent.left
-        anchors.leftMargin: Theme.padding
+        anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
         source: identicon
     }
@@ -31,16 +31,16 @@ Rectangle {
         text: name
         elide: Text.ElideRight
         anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         font.pixelSize: 17
         anchors.top: accountImage.top
         anchors.left: accountImage.right
-        anchors.leftMargin: Theme.padding
+        anchors.leftMargin: Style.current.padding
     }
     StyledText {
         id: addressText
         width: 108
-        font.family: Theme.fontHexRegular.name
+        font.family: Style.current.fontHexRegular.name
         text: address
         elide: Text.ElideMiddle
         anchors.bottom: accountImage.bottom
@@ -48,12 +48,12 @@ Rectangle {
         anchors.left: usernameText.left
         anchors.leftMargin: 0
         font.pixelSize: 15
-        color: Theme.darkGrey
+        color: Style.current.darkGrey
     }
     RadioButton {
         visible: selectable
         anchors.top: parent.top
-        anchors.topMargin: Theme.smallPadding
+        anchors.topMargin: Style.current.smallPadding
         anchors.right: parent.right
         ButtonGroup.group: contactGroup
     }

@@ -5,6 +5,6 @@ Rectangle {
       id: separator
       width: parent.width
       height: 1
-      color: Theme.grey
-      anchors.topMargin: Theme.padding
+      color: Style.current.grey
+      anchors.topMargin: Style.current.padding
 }

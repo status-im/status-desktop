@@ -30,7 +30,7 @@ Popup {
     width: 480
     height: 159
     background: Rectangle {
-        color: Theme.white
+        color: Style.current.white
         radius: 8
     }
     padding: 0
@@ -43,8 +43,8 @@ Popup {
             anchors.left: parent.left
             font.pixelSize: 13
             anchors.leftMargin: 16
-            anchors.topMargin: Theme.padding
-            anchors.bottomMargin: Theme.padding
+            anchors.topMargin: Style.current.padding
+            anchors.bottomMargin: Style.current.padding
         }
 
         Input {
@@ -52,9 +52,9 @@ Popup {
             anchors.top: groupTitleLabel.bottom
             anchors.topMargin: 7
             anchors.left: parent.left
-            anchors.leftMargin: Theme.padding
+            anchors.leftMargin: Style.current.padding
             anchors.right: parent.right
-            anchors.rightMargin: Theme.padding
+            anchors.rightMargin: Style.current.padding
             placeholderText: qsTr("Group Name")
             Keys.onEnterPressed: doRename()
             Keys.onReturnPressed: doRename()
@@ -65,7 +65,7 @@ Popup {
             anchors.top: groupName.bottom
             anchors.topMargin: 22
             anchors.right: parent.right
-            anchors.rightMargin: Theme.padding
+            anchors.rightMargin: Style.current.padding
             label: qsTr("Save")
             onClicked : doRename()
         }

@@ -10,7 +10,7 @@ Item {
     property string label: ""
     //    property string label: "My Label"
     readonly property bool hasLabel: label !== ""
-    property color bgColor: Theme.grey
+    property color bgColor: Style.current.grey
     //    property url icon: "../app/img/hash.svg"
     property url icon: ""
     property int iconHeight: 24
@@ -38,7 +38,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 0
         font.pixelSize: 13
-        color: Theme.black
+        color: Style.current.black
     }
 
     Rectangle {
@@ -51,7 +51,7 @@ Item {
         anchors.right: parent.right
         anchors.left: parent.left
         border.width: !!validationError ? 1 : 0
-        border.color: Theme.red
+        border.color: Style.current.red
 
         StyledTextField {
             id: inputValue
@@ -66,7 +66,7 @@ Item {
             anchors.rightMargin: parent.rightMargin
             anchors.left: parent.left
             anchors.leftMargin: 0
-            leftPadding: inputBox.hasIcon ? iconWidth + 20 : Theme.padding
+            leftPadding: inputBox.hasIcon ? iconWidth + 20 : Style.current.padding
             selectByMouse: true
             font.pixelSize: fontPixelSize
             background: Rectangle {
@@ -79,7 +79,7 @@ Item {
             sourceSize.height: iconHeight
             sourceSize.width: iconWidth
             anchors.left: parent.left
-            anchors.leftMargin: Theme.smallPadding
+            anchors.leftMargin: Style.current.smallPadding
             anchors.verticalCenter: parent.verticalCenter
             fillMode: Image.PreserveAspectFit
             source: inputBox.icon
@@ -95,7 +95,7 @@ Item {
         selectByMouse: true
         readOnly: true
         font.pixelSize: 12
-        color: Theme.red
+        color: Style.current.red
 
     }
 }

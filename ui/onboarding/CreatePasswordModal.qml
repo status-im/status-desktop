@@ -63,7 +63,7 @@ ModalPopup {
         anchors.right: firstPasswordField.right
         anchors.left: firstPasswordField.left
         anchors.top: firstPasswordField.bottom
-        anchors.topMargin: Theme.xlPadding
+        anchors.topMargin: Style.current.xlPadding
         placeholderText: qsTr("Confirm password…")
         textField.echoMode: TextInput.Password
         validationError: popup.repeatPasswordValidationError
@@ -76,13 +76,13 @@ ModalPopup {
         text: qsTr("At least 6 characters. You will use this password to unlock status on this device & sign transactions.")
         wrapMode: Text.WordWrap
         anchors.right: parent.right
-        anchors.rightMargin: Theme.xlPadding
+        anchors.rightMargin: Style.current.xlPadding
         anchors.left: parent.left
-        anchors.leftMargin: Theme.xlPadding
+        anchors.leftMargin: Style.current.xlPadding
         horizontalAlignment: Text.AlignHCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
-        color: Theme.darkGrey
+        color: Style.current.darkGrey
         font.pixelSize: 12
     }
 
@@ -96,9 +96,9 @@ ModalPopup {
             id: loadingImg
             visible: loading
             anchors.top: submitBtn.top
-            anchors.topMargin: Theme.padding
+            anchors.topMargin: Style.current.padding
             anchors.right: submitBtn.left
-            anchors.rightMargin: Theme.padding
+            anchors.rightMargin: Style.current.padding
             source: "../app/img/settings.svg"
             width: 20
             height: 20
@@ -116,9 +116,9 @@ ModalPopup {
         StyledButton {
             id: submitBtn
             anchors.bottom: parent.bottom
-            anchors.topMargin: Theme.padding
+            anchors.topMargin: Style.current.padding
             anchors.right: parent.right
-            anchors.rightMargin: Theme.padding
+            anchors.rightMargin: Style.current.padding
             label: loading ? qsTr("Logging in...") : qsTr("Create password")
 
             disabled: firstPasswordField.text === "" || repeatPasswordField.text === "" || loading

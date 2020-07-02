@@ -26,7 +26,7 @@ Rectangle {
     anchors.right: parent.right
     anchors.left: parent.left
     border.width: 0
-    radius: Theme.radius
+    radius: Style.current.radius
 
     Identicon {
         id: accountImage
@@ -40,12 +40,12 @@ Rectangle {
         text: name
         elide: Text.ElideRight
         anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         font.pixelSize: 17
         anchors.top: accountImage.top
         anchors.topMargin: 10
         anchors.left: accountImage.right
-        anchors.leftMargin: Theme.padding
+        anchors.leftMargin: Style.current.padding
     }
 
     SVGImage {
@@ -56,7 +56,7 @@ Rectangle {
         anchors.top: accountImage.top
         anchors.topMargin: 6
         anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         fillMode: Image.PreserveAspectFit
         source: "../../../img/list-next.svg"
         MouseArea {
@@ -74,7 +74,7 @@ Rectangle {
         anchors.top: accountImage.top
         anchors.topMargin: 6
         anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         checked: isChecked
         onClicked: {
             isChecked = !isChecked
@@ -86,9 +86,9 @@ Rectangle {
         visible: isUser
         text: qsTr("Admin")
         anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         font.pixelSize: 15
-        color: Theme.darkGrey
+        color: Style.current.darkGrey
         anchors.top: accountImage.top
         anchors.topMargin: 10
     }

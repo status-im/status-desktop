@@ -10,12 +10,12 @@ ModalPopup {
   Item {
     id: confirmations
     anchors.left: parent.left
-    anchors.leftMargin: Theme.smallPadding
+    anchors.leftMargin: Style.current.smallPadding
     anchors.top: parent.top
-    anchors.topMargin: Theme.smallPadding
+    anchors.topMargin: Style.current.smallPadding
     anchors.right: parent.right
-    anchors.rightMargin: Theme.smallPadding
-    height: children[0].height + children[1].height + Theme.smallPadding
+    anchors.rightMargin: Style.current.smallPadding
+    height: children[0].height + children[1].height + Style.current.smallPadding
 
     StyledText {
       id: confirmationsCount
@@ -28,28 +28,28 @@ ModalPopup {
       text: qsTr("When the transaction has 12 confirmations you can consider it settled.")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Theme.darkGrey
+      color: Style.current.darkGrey
       anchors.top: confirmationsCount.bottom
-      anchors.topMargin: Theme.smallPadding
+      anchors.topMargin: Style.current.smallPadding
     }
   }
 
   Separator {
     id: separator
     anchors.top: confirmations.bottom
-    anchors.topMargin: Theme.padding
+    anchors.topMargin: Style.current.padding
     anchors.left: parent.left
-    anchors.leftMargin: -Theme.padding
+    anchors.leftMargin: -Style.current.padding
     anchors.right: parent.right
-    anchors.rightMargin: -Theme.padding
+    anchors.rightMargin: -Style.current.padding
   }
 
   Item {
     id: block
     anchors.top: separator.bottom
-    anchors.topMargin: Theme.padding
+    anchors.topMargin: Style.current.padding
     anchors.left: parent.left
-    anchors.leftMargin: Theme.smallPadding
+    anchors.leftMargin: Style.current.smallPadding
     height: children[0].height
 
     StyledText {
@@ -57,7 +57,7 @@ ModalPopup {
       text: qsTr("Block")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Theme.darkGrey
+      color: Style.current.darkGrey
     }
 
     StyledText {
@@ -65,16 +65,16 @@ ModalPopup {
       text: blockNumber
       font.pixelSize: 14
       anchors.left: labelBlock.right
-      anchors.leftMargin: Theme.padding
+      anchors.leftMargin: Style.current.padding
     }
   }
 
   Item {
     id: hash
     anchors.top: block.bottom
-    anchors.topMargin: Theme.padding
+    anchors.topMargin: Style.current.padding
     anchors.left: parent.left
-    anchors.leftMargin: Theme.smallPadding
+    anchors.leftMargin: Style.current.smallPadding
     height: children[0].height
 
     StyledText {
@@ -82,27 +82,27 @@ ModalPopup {
       text: qsTr("Hash")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Theme.darkGrey
+      color: Style.current.darkGrey
     }
 
     StyledText {
       id: valueHash
       text: blockHash
-      font.family: Theme.fontHexRegular.name
+      font.family: Style.current.fontHexRegular.name
       width: 160
       elide: Text.ElideMiddle
       font.pixelSize: 14
       anchors.left: labelHash.right
-      anchors.leftMargin: Theme.padding
+      anchors.leftMargin: Style.current.padding
     }
   }
 
   Item {
     id: from
     anchors.top: hash.bottom
-    anchors.topMargin: Theme.padding
+    anchors.topMargin: Style.current.padding
     anchors.left: parent.left
-    anchors.leftMargin: Theme.smallPadding
+    anchors.leftMargin: Style.current.smallPadding
     height: children[0].height
 
     StyledText {
@@ -110,27 +110,27 @@ ModalPopup {
       text: qsTr("From")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Theme.darkGrey
+      color: Style.current.darkGrey
     }
 
     StyledText {
       id: valueFrom
       text: fromAddress
-      font.family: Theme.fontHexRegular.name
+      font.family: Style.current.fontHexRegular.name
       width: 160
       elide: Text.ElideMiddle
       font.pixelSize: 14
       anchors.left: labelFrom.right
-      anchors.leftMargin: Theme.padding
+      anchors.leftMargin: Style.current.padding
     }
   }
 
   Item {
     id: toItem
     anchors.top: from.bottom
-    anchors.topMargin: Theme.padding
+    anchors.topMargin: Style.current.padding
     anchors.left: parent.left
-    anchors.leftMargin: Theme.smallPadding
+    anchors.leftMargin: Style.current.smallPadding
     height: children[0].height
 
     StyledText {
@@ -138,7 +138,7 @@ ModalPopup {
       text: qsTr("To")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Theme.darkGrey
+      color: Style.current.darkGrey
     }
 
     StyledText {
@@ -148,16 +148,16 @@ ModalPopup {
       elide: Text.ElideMiddle
       font.pixelSize: 14
       anchors.left: labelTo.right
-      anchors.leftMargin: Theme.padding
+      anchors.leftMargin: Style.current.padding
     }
   }
 
   Item {
     id: gasLimitItem
     anchors.top: toItem.bottom
-    anchors.topMargin: Theme.padding
+    anchors.topMargin: Style.current.padding
     anchors.left: parent.left
-    anchors.leftMargin: Theme.smallPadding
+    anchors.leftMargin: Style.current.smallPadding
     height: children[0].height
 
     StyledText {
@@ -165,7 +165,7 @@ ModalPopup {
       text: qsTr("Gas limit")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Theme.darkGrey
+      color: Style.current.darkGrey
     }
 
     StyledText {
@@ -173,16 +173,16 @@ ModalPopup {
       text: gasLimit
       font.pixelSize: 14
       anchors.left: labelGasLimit.right
-      anchors.leftMargin: Theme.padding
+      anchors.leftMargin: Style.current.padding
     }
   }
 
   Item {
     id: gasPriceItem
     anchors.top: gasLimitItem.bottom
-    anchors.topMargin: Theme.padding
+    anchors.topMargin: Style.current.padding
     anchors.left: parent.left
-    anchors.leftMargin: Theme.smallPadding
+    anchors.leftMargin: Style.current.smallPadding
     height: children[0].height
 
     StyledText {
@@ -190,7 +190,7 @@ ModalPopup {
       text: qsTr("Gas price")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Theme.darkGrey
+      color: Style.current.darkGrey
     }
 
     StyledText {
@@ -198,16 +198,16 @@ ModalPopup {
       text: gasPrice
       font.pixelSize: 14
       anchors.left: labelGasPrice.right
-      anchors.leftMargin: Theme.padding
+      anchors.leftMargin: Style.current.padding
     }
   }
 
   Item {
     id: gasUsedItem
     anchors.top: gasPriceItem.bottom
-    anchors.topMargin: Theme.padding
+    anchors.topMargin: Style.current.padding
     anchors.left: parent.left
-    anchors.leftMargin: Theme.smallPadding
+    anchors.leftMargin: Style.current.smallPadding
     height: children[0].height
 
     StyledText {
@@ -215,7 +215,7 @@ ModalPopup {
       text: qsTr("Gas used")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Theme.darkGrey
+      color: Style.current.darkGrey
     }
 
     StyledText {
@@ -223,16 +223,16 @@ ModalPopup {
       text: gasUsed
       font.pixelSize: 14
       anchors.left: labelGasUsed.right
-      anchors.leftMargin: Theme.padding
+      anchors.leftMargin: Style.current.padding
     }
   }
 
   Item {
     id: nonceItem
     anchors.top: gasUsedItem.bottom
-    anchors.topMargin: Theme.padding
+    anchors.topMargin: Style.current.padding
     anchors.left: parent.left
-    anchors.leftMargin: Theme.smallPadding
+    anchors.leftMargin: Style.current.smallPadding
     height: children[0].height
 
     StyledText {
@@ -240,7 +240,7 @@ ModalPopup {
       text: qsTr("Nonce")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Theme.darkGrey
+      color: Style.current.darkGrey
     }
 
     StyledText {
@@ -248,7 +248,7 @@ ModalPopup {
       text: nonce
       font.pixelSize: 14
       anchors.left: labelNonce.right
-      anchors.leftMargin: Theme.padding
+      anchors.leftMargin: Style.current.padding
     }
   }
 }

@@ -19,9 +19,9 @@ SplitView {
 
     LeftTab {
         id: leftTab
-        SplitView.preferredWidth: Theme.leftTabPrefferedSize
-        SplitView.minimumWidth: Theme.leftTabMinimumWidth
-        SplitView.maximumWidth: Theme.leftTabMaximumWidth
+        SplitView.preferredWidth: Style.current.leftTabPrefferedSize
+        SplitView.minimumWidth: Style.current.leftTabMinimumWidth
+        SplitView.maximumWidth: Style.current.leftTabMaximumWidth
     }
 
     Item {
@@ -59,11 +59,11 @@ SplitView {
                 TabBar {
                     id: walletTabBar
                     anchors.right: parent.right
-                    anchors.rightMargin: Theme.bigPadding
+                    anchors.rightMargin: Style.current.bigPadding
                     anchors.left: parent.left
-                    anchors.leftMargin: Theme.bigPadding
+                    anchors.leftMargin: Style.current.bigPadding
                     anchors.top: parent.top
-                    anchors.topMargin: Theme.padding
+                    anchors.topMargin: Style.current.padding
                     height: assetBtn.height
 
                     StatusTabButton {
@@ -92,13 +92,13 @@ SplitView {
 
                 StackLayout {
                     id: stackLayout
-                    anchors.rightMargin: Theme.bigPadding
-                    anchors.leftMargin: Theme.bigPadding
+                    anchors.rightMargin: Style.current.bigPadding
+                    anchors.leftMargin: Style.current.bigPadding
                     anchors.top: walletTabBar.bottom
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
-                    anchors.topMargin: Theme.bigPadding
+                    anchors.topMargin: Style.current.bigPadding
                     currentIndex: walletTabBar.currentIndex
 
                     AssetsTab {

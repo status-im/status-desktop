@@ -85,7 +85,7 @@ ModalPopup {
         id: addressText
         label: qsTr("Wallet address")
         text: currentAccount.address
-        fontFamily: Theme.fontHexRegular.name
+        fontFamily: Style.current.fontHexRegular.name
         anchors.top: typeText.bottom
         anchors.topMargin: marginBetweenInputs
     }
@@ -112,10 +112,10 @@ ModalPopup {
         StyledButton {
             anchors.top: parent.top
             anchors.right: saveBtn.left
-            anchors.rightMargin: Theme.padding
+            anchors.rightMargin: Style.current.padding
             label: qsTr("Delete account")
-            btnColor: Theme.white
-            textColor: Theme.red
+            btnColor: Style.current.white
+            textColor: Style.current.red
 
             MessageDialog {
                 id: deleteError
@@ -154,7 +154,7 @@ ModalPopup {
             id: saveBtn
             anchors.top: parent.top
             anchors.right: parent.right
-            anchors.rightMargin: Theme.padding
+            anchors.rightMargin: Style.current.padding
             label: qsTr("Save changes")
 
             disabled: accountNameInput.text === ""

@@ -34,7 +34,7 @@ Item {
         id: separatorDot
         width: 8
         height: 8
-        color: Theme.blue
+        color: Style.current.blue
         anchors.top: title.verticalCenter
         anchors.topMargin: -3
         anchors.left: title.right
@@ -54,7 +54,7 @@ Item {
     StyledText {
         id: walletAddress
         text: currentAccount.address
-        font.family: Theme.fontHexRegular.name
+        font.family: Style.current.fontHexRegular.name
         elide: Text.ElideMiddle
         anchors.right: title.right
         anchors.rightMargin: 0
@@ -63,7 +63,7 @@ Item {
         anchors.left: title.left
         anchors.leftMargin: 0
         font.pixelSize: 13
-        color: Theme.darkGrey
+        color: Style.current.darkGrey
     }
 
     SendModal{
@@ -117,13 +117,13 @@ Item {
                 anchors.left: sendImg.right
                 anchors.leftMargin: walletMenu.btnMargin
                 font.pixelSize: 13
-                color: Theme.blue
+                color: Style.current.blue
             }
             MouseArea {
-                anchors.rightMargin: -Theme.smallPadding
-                anchors.leftMargin: -Theme.smallPadding
-                anchors.bottomMargin: -Theme.smallPadding
-                anchors.topMargin: -Theme.smallPadding
+                anchors.rightMargin: -Style.current.smallPadding
+                anchors.leftMargin: -Style.current.smallPadding
+                anchors.bottomMargin: -Style.current.smallPadding
+                anchors.topMargin: -Style.current.smallPadding
                 anchors.fill: parent
                 onClicked: sendModal.open()
                 cursorShape: Qt.PointingHandCursor
@@ -150,7 +150,7 @@ Item {
                 anchors.left: receiveImg.right
                 anchors.leftMargin: walletMenu.btnMargin
                 font.pixelSize: 13
-                color: Theme.blue
+                color: Style.current.blue
             }
         }
         Item {
@@ -168,10 +168,10 @@ Item {
             }
 
             MouseArea {
-                anchors.rightMargin: -Theme.smallPadding
-                anchors.leftMargin: -Theme.smallPadding
-                anchors.bottomMargin: -Theme.smallPadding
-                anchors.topMargin: -Theme.smallPadding
+                anchors.rightMargin: -Style.current.smallPadding
+                anchors.leftMargin: -Style.current.smallPadding
+                anchors.bottomMargin: -Style.current.smallPadding
+                anchors.topMargin: -Style.current.smallPadding
                 anchors.fill: parent
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 cursorShape: Qt.PointingHandCursor

@@ -32,10 +32,10 @@ Item {
                 id: assetSymbol
                 text: symbol
                 anchors.left: assetInfoImage.right
-                anchors.leftMargin: Theme.smallPadding
+                anchors.leftMargin: Style.current.smallPadding
                 anchors.top: assetInfoImage.top
                 anchors.topMargin: 0
-                color: Theme.black
+                color: Style.current.black
                 font.pixelSize: 15
             }
             StyledText {
@@ -44,8 +44,8 @@ Item {
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 0
                 anchors.left: assetInfoImage.right
-                anchors.leftMargin: Theme.smallPadding
-                color: Theme.darkGrey
+                anchors.leftMargin: Style.current.smallPadding
+                color: Style.current.darkGrey
                 font.pixelSize: 15
             }
             StyledText {
@@ -58,7 +58,7 @@ Item {
             }
             StyledText {
                 id: assetFiatValue
-                color: Theme.darkGrey
+                color: Style.current.darkGrey
                 text: fiatValue
                 anchors.right: parent.right
                 anchors.rightMargin: 0

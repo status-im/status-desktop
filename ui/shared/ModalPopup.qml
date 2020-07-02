@@ -22,7 +22,7 @@ Popup {
     width: 480
     height: 510 // TODO find a way to make this dynamic
     background: Rectangle {
-        color: Theme.white
+        color: Style.current.white
         radius: 8
     }
     padding: 0
@@ -33,14 +33,14 @@ Popup {
             width: parent.width
             height: {
                 var idx = !!title ? 0 : 1
-                return children[idx] && children[idx].height + Theme.padding
+                return children[idx] && children[idx].height + Style.current.padding
             }
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.bottomMargin: Theme.padding
-            anchors.rightMargin: Theme.padding
-            anchors.leftMargin: Theme.padding
+            anchors.bottomMargin: Style.current.padding
+            anchors.rightMargin: Style.current.padding
+            anchors.leftMargin: Style.current.padding
 
             StyledText {
                 text: title
@@ -49,8 +49,8 @@ Popup {
                 font.bold: true
                 font.pixelSize: 17
                 anchors.leftMargin: 16
-                anchors.topMargin: Theme.padding
-                anchors.bottomMargin: Theme.padding
+                anchors.topMargin: Style.current.padding
+                anchors.bottomMargin: Style.current.padding
                 visible: !!title
             }
         }
@@ -60,8 +60,8 @@ Popup {
             height: 32
             width: 32
             anchors.top: parent.top
-            anchors.topMargin: Theme.padding
-            anchors.rightMargin: Theme.padding
+            anchors.topMargin: Style.current.padding
+            anchors.rightMargin: Style.current.padding
             anchors.right: parent.right
             radius: 8
 
@@ -80,10 +80,10 @@ Popup {
                 anchors.fill: parent
                 hoverEnabled: true
                 onExited: {
-                    closeButton.color = Theme.white
+                    closeButton.color = Style.current.white
                 }
                 onEntered: {
-                    closeButton.color = Theme.grey
+                    closeButton.color = Style.current.grey
                 }
                 onClicked: {
                     popup.close()
@@ -99,13 +99,13 @@ Popup {
         Item {
             id: popupContent
             anchors.top: separator.bottom
-            anchors.topMargin: Theme.padding
+            anchors.topMargin: Style.current.padding
             anchors.bottom: separator2.top
-            anchors.bottomMargin: Theme.padding
+            anchors.bottomMargin: Style.current.padding
             anchors.left: parent.left
-            anchors.leftMargin: Theme.padding
+            anchors.leftMargin: Style.current.padding
             anchors.right: parent.right
-            anchors.rightMargin: Theme.padding
+            anchors.rightMargin: Style.current.padding
         }
 
         Separator {
@@ -122,10 +122,10 @@ Popup {
           anchors.left: parent.left
           anchors.right: parent.right
           anchors.bottom: parent.bottom
-          anchors.topMargin: Theme.padding
-          anchors.bottomMargin: Theme.padding
-          anchors.rightMargin: Theme.padding
-          anchors.leftMargin: Theme.padding
+          anchors.topMargin: Style.current.padding
+          anchors.bottomMargin: Style.current.padding
+          anchors.rightMargin: Style.current.padding
+          anchors.leftMargin: Style.current.padding
         }
   }
 }

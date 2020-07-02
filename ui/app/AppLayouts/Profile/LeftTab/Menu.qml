@@ -36,7 +36,7 @@ Rectangle {
             anchors.top: parent.top
             anchors.topMargin: 0
             background: Rectangle {
-                color: Theme.transparent
+                color: Style.current.transparent
             }
 
             StyledText {
@@ -61,7 +61,7 @@ Rectangle {
             anchors.top: ensTabButton.bottom
             anchors.topMargin: 0
             background: Rectangle {
-                color: Theme.transparent
+                color: Style.current.transparent
             }
 
             StyledText {
@@ -86,7 +86,7 @@ Rectangle {
             anchors.top: contactsTabButton.bottom
             anchors.topMargin: 0
             background: Rectangle {
-                color: Theme.transparent
+                color: Style.current.transparent
             }
 
             StyledText {
@@ -112,7 +112,7 @@ Rectangle {
             anchors.top: privacyTabButton.bottom
             anchors.topMargin: 0
             background: Rectangle {
-                color: Theme.transparent
+                color: Style.current.transparent
             }
 
             StyledText {
@@ -138,7 +138,7 @@ Rectangle {
             anchors.top: syncTabButton.bottom
             anchors.topMargin: 0
             background: Rectangle {
-                color: Theme.transparent
+                color: Style.current.transparent
             }
 
             StyledText {
@@ -164,7 +164,7 @@ Rectangle {
             anchors.top: languageTabButton.bottom
             anchors.topMargin: 0
             background: Rectangle {
-                color: Theme.transparent
+                color: Style.current.transparent
             }
 
             StyledText {
@@ -189,7 +189,7 @@ Rectangle {
             anchors.top: notificationsTabButton.bottom
             anchors.topMargin: 0
             background: Rectangle {
-                color: Theme.transparent
+                color: Style.current.transparent
             }
 
             StyledText {
@@ -215,7 +215,7 @@ Rectangle {
             anchors.top: advancedTabButton.bottom
             anchors.topMargin: 0
             background: Rectangle {
-                color: Theme.transparent
+                color: Style.current.transparent
             }
 
             StyledText {
@@ -240,7 +240,7 @@ Rectangle {
             anchors.top: helpTabButton.bottom
             anchors.topMargin: 0
             background: Rectangle {
-                color: Theme.transparent
+                color: Style.current.transparent
             }
 
             StyledText {
@@ -265,7 +265,7 @@ Rectangle {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
             background: Rectangle {
-                color: Theme.transparent
+                color: Style.current.transparent
             }
 
             StyledText {

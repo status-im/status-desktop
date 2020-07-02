@@ -5,20 +5,20 @@ import "../imports"
 
 Button {
     property string label: "My button"
-    property color btnColor: Theme.lightBlue
+    property color btnColor: Style.current.lightBlue
     property color btnBorderColor: "transparent"
     property int btnBorderWidth: 0
-    property color textColor: Theme.blue
+    property color textColor: Style.current.blue
     property bool disabled: false
 
     id: btnStyled
-    width: txtBtnLabel.width + 2 * Theme.padding
+    width: txtBtnLabel.width + 2 * Style.current.padding
     height: 44
     enabled: !disabled
 
     background: Rectangle {
-        color: disabled ? Theme.grey : btnStyled.btnColor
-        radius: Theme.radius
+        color: disabled ? Style.current.grey : btnStyled.btnColor
+        radius: Style.current.radius
         anchors.fill: parent
         border.color: btnBorderColor
         border.width: btnBorderWidth
@@ -26,7 +26,7 @@ Button {
 
     StyledText {
         id: txtBtnLabel
-        color: btnStyled.disabled ? Theme.darkGrey : btnStyled.textColor
+        color: btnStyled.disabled ? Style.current.darkGrey : btnStyled.textColor
         font.pixelSize: 15
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter

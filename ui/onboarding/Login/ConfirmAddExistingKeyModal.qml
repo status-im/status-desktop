@@ -17,9 +17,9 @@ ModalPopup {
 
     footer: StyledButton {
         anchors.bottom: parent.bottom
-        anchors.topMargin: Theme.padding
+        anchors.topMargin: Style.current.padding
         anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         label: "Add another existing key"
 
         onClicked : {

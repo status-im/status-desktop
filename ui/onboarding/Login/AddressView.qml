@@ -19,13 +19,13 @@ Rectangle {
     anchors.right: parent.right
     anchors.left: parent.left
     border.width: 0
-    color: selected || isHovered ? Theme.grey : Theme.transparent
-    radius: Theme.radius
+    color: selected || isHovered ? Style.current.grey : Style.current.transparent
+    radius: Style.current.radius
 
     Identicon {
         id: accountImage
         anchors.left: parent.left
-        anchors.leftMargin: Theme.padding
+        anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
         source: identicon
     }
@@ -34,25 +34,25 @@ Rectangle {
         text: username
         elide: Text.ElideRight
         anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         font.pixelSize: 17
         anchors.top: accountImage.top
         anchors.left: accountImage.right
-        anchors.leftMargin: Theme.padding
+        anchors.leftMargin: Style.current.padding
     }
 
     StyledText {
         id: addressText
         width: 108
         text: address
-        font.family: Theme.fontHexRegular.name
+        font.family: Style.current.fontHexRegular.name
         elide: Text.ElideMiddle
         anchors.bottom: accountImage.bottom
         anchors.bottomMargin: 0
         anchors.left: usernameText.left
         anchors.leftMargin: 0
         font.pixelSize: 15
-        color: Theme.darkGrey
+        color: Style.current.darkGrey
     }
 
     MouseArea {

@@ -112,7 +112,7 @@ Item {
         icon:  "../../../img/tokens/" + selectedAssetSymbol.toUpperCase() + ".png"
         label: qsTr("Select the asset")
         anchors.top: txtAmount.bottom
-        anchors.topMargin: Theme.padding
+        anchors.topMargin: Style.current.padding
         selectedText: selectedAssetName
         selectOptions: sendModalContent.assets.map(function (asset, index) {
             return {
@@ -128,7 +128,7 @@ Item {
         id: currentBalanceText
         text: qsTr("Balance: %1").arg(selectedAccountValue)
         font.pixelSize: 13
-        color: Theme.darkGrey
+        color: Style.current.darkGrey
         anchors.top: assetTypeSelect.top
         anchors.topMargin: 0
         anchors.right: assetTypeSelect.right
@@ -143,7 +143,7 @@ Item {
         iconColor: selectedAccountIconColor
         label: qsTr("From account")
         anchors.top: assetTypeSelect.bottom
-        anchors.topMargin: Theme.padding
+        anchors.topMargin: Style.current.padding
         selectedText: selectedAccountName
         selectOptions: sendModalContent.accounts.map(function (account, index) {
             return {
@@ -158,14 +158,14 @@ Item {
     StyledText {
         id: textSelectAccountAddress
         text: selectedAccountAddress
-        font.family: Theme.fontHexRegular.name
+        font.family: Style.current.fontHexRegular.name
         anchors.right: parent.right
         anchors.left: parent.left
         anchors.leftMargin: 2
         elide: Text.ElideMiddle
         anchors.top: txtFrom.bottom
         font.pixelSize: 12
-        color: Theme.darkGrey
+        color: Style.current.darkGrey
     }
 
     Input {
@@ -173,7 +173,7 @@ Item {
         label: qsTr("Recipient")
         placeholderText: qsTr("Send to")
         anchors.top: textSelectAccountAddress.bottom
-        anchors.topMargin: Theme.padding
+        anchors.topMargin: Style.current.padding
         validationError: toValidationError
     }
 
@@ -182,7 +182,7 @@ Item {
         label: qsTr("Password")
         placeholderText: qsTr("Enter Password")
         anchors.top: txtTo.bottom
-        anchors.topMargin: Theme.padding
+        anchors.topMargin: Style.current.padding
         textField.echoMode: TextInput.Password
         validationError: passwordValidationError
     }

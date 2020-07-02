@@ -5,8 +5,8 @@ import "../../../../imports"
 import "../../../../shared"
 
 Rectangle {
-  property int topMargin: Theme.smallPadding
-  property int bottomMargin: Theme.smallPadding
+  property int topMargin: Style.current.smallPadding
+  property int bottomMargin: Style.current.smallPadding
   property string channelName
   property int channelType
   property string channelIdenticon
@@ -14,7 +14,7 @@ Rectangle {
   width: 36
   height: 36
   anchors.left: parent.left
-  anchors.leftMargin: Theme.padding
+  anchors.leftMargin: Style.current.padding
   anchors.top: parent.top
   anchors.topMargin: topMargin
   anchors.bottom: parent.bottom
@@ -35,7 +35,7 @@ Rectangle {
       color: {
           const color = chatsModel.getChannelColor(channelName)
           if (!color) {
-              return Theme.transparent
+              return Style.current.transparent
           }
           return color
       }
@@ -66,7 +66,7 @@ Rectangle {
       radius: 50
       border.color: "#10000000"
       border.width: 1
-      color: Theme.transparent
+      color: Style.current.transparent
       SVGImage {
           width: contactImage.width ? contactImage.width : 40
           height: contactImage.height ? contactImage.height : 40

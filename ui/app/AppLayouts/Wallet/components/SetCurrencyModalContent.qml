@@ -52,9 +52,9 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 32
         anchors.top: headerSeparator.top
-        anchors.topMargin: Theme.padding
+        anchors.topMargin: Style.current.padding
         anchors.bottom: footerSeparator.top
-        anchors.bottomMargin: Theme.padding
+        anchors.bottomMargin: Style.current.padding
         anchors.left: parent.left
         anchors.leftMargin: 32
 
@@ -103,10 +103,10 @@ Item {
 
     StyledButton {
         anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         label: "Save"
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Theme.padding
+        anchors.bottomMargin: Style.current.padding
         onClicked: {
             console.log("TODO: apply all accounts")
             popup.close()

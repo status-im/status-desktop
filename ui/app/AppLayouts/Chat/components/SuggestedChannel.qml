@@ -9,12 +9,12 @@ Rectangle {
     radius: 8
     width: children[0].width + 10
     height: 32
-    border.color: Theme.grey
+    border.color: Style.current.grey
     StyledText {
         id: suggestedChannelText
         text: "#" + channel
         font.weight: Font.Medium
-        color: Theme.blue;
+        color: Style.current.blue;
         anchors.top: parent.top;
         anchors.topMargin: 5;
         anchors.left: parent.left;

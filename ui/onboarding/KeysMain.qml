@@ -16,7 +16,7 @@ Page {
             const children = this.children
             Object.keys(children).forEach(function (key) {
                 const child = children[key]
-                h += child.height + Theme.padding
+                h += child.height + Style.current.padding
             })
             return h
         }
@@ -35,7 +35,7 @@ Page {
         StyledText {
             id: txtTitle1
             text: qsTr("Get your keys")
-            anchors.topMargin: Theme.padding
+            anchors.topMargin: Style.current.padding
             font.bold: true
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: keysImg.bottom
@@ -45,14 +45,14 @@ Page {
 
         StyledText {
             id: txtDesc1
-            color: Theme.darkGrey
+            color: Style.current.darkGrey
             text: qsTr("A set of keys controls your account. Your keys live on your device, so only you can use them.")
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             anchors.right: parent.right
             anchors.left: parent.left
             anchors.top: txtTitle1.bottom
-            anchors.topMargin: Theme.padding
+            anchors.topMargin: Style.current.padding
             font.pixelSize: 15
         }
 
@@ -70,7 +70,7 @@ Page {
             id: btnExistingKey
             label: qsTr("Access existing key")
             anchors.top: btnGenKey.bottom
-            anchors.topMargin: Theme.padding
+            anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: parent.horizontalCenter
             height: 44
             background: Rectangle {color: "transparent"}

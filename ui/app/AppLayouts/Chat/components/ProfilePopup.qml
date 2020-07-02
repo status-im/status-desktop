@@ -32,9 +32,9 @@ ModalPopup {
             radius: 30
             border.color: "#10000000"
             border.width: 1
-            color: Theme.transparent
+            color: Style.current.transparent
             anchors.top: parent.top
-            anchors.topMargin: Theme.padding
+            anchors.topMargin: Style.current.padding
             SVGImage {
                 width: parent.width
                 height: parent.height
@@ -49,7 +49,7 @@ ModalPopup {
             anchors.top: parent.top
             anchors.topMargin: 18
             anchors.left: profilePic.right
-            anchors.leftMargin: Theme.smallPadding
+            anchors.leftMargin: Style.current.smallPadding
             font.bold: true
             font.pixelSize: 14
             readOnly: true
@@ -61,11 +61,11 @@ ModalPopup {
             width: 160
             elide: Text.ElideMiddle
             anchors.left: profilePic.right
-            anchors.leftMargin: Theme.smallPadding
+            anchors.leftMargin: Style.current.smallPadding
             anchors.top: profileName.bottom
             anchors.topMargin: 2
             font.pixelSize: 14
-            color: Theme.darkGrey
+            color: Style.current.darkGrey
         }
 
         Rectangle {
@@ -73,9 +73,9 @@ ModalPopup {
             height: 32
             width: 32
             anchors.top: parent.top
-            anchors.topMargin: Theme.padding
+            anchors.topMargin: Style.current.padding
             anchors.right: parent.right
-            anchors.rightMargin: 32 + Theme.smallPadding
+            anchors.rightMargin: 32 + Style.current.smallPadding
             radius: 8
 
             SVGImage {
@@ -91,10 +91,10 @@ ModalPopup {
                 anchors.fill: parent
                 hoverEnabled: true
                 onExited: {
-                    qrCodeButton.color = Theme.white
+                    qrCodeButton.color = Style.current.white
                 }
                 onEntered: {
-                    qrCodeButton.color = Theme.grey
+                    qrCodeButton.color = Style.current.grey
                 }
                 onClicked: {
                     showQR = true
@@ -130,11 +130,11 @@ ModalPopup {
             text: qsTr("ENS username")
             font.pixelSize: 13
             font.weight: Font.Medium
-            color: Theme.darkGrey
+            color: Style.current.darkGrey
             anchors.left: parent.left
-            anchors.leftMargin: Theme.smallPadding
+            anchors.leftMargin: Style.current.smallPadding
             anchors.top: parent.top
-            anchors.topMargin: Theme.smallPadding
+            anchors.topMargin: Style.current.smallPadding
         }
 
         StyledText {
@@ -144,9 +144,9 @@ ModalPopup {
             text: userName
             font.pixelSize: 14
             anchors.left: parent.left
-            anchors.leftMargin: Theme.smallPadding
+            anchors.leftMargin: Style.current.smallPadding
             anchors.top: labelEnsUsername.bottom
-            anchors.topMargin: Theme.smallPadding
+            anchors.topMargin: Style.current.smallPadding
         }
 
         CopyToClipBoardIcon {
@@ -154,7 +154,7 @@ ModalPopup {
           height: isEnsVerified ? 20 : 0
           anchors.top: labelEnsUsername.bottom
           anchors.left: valueEnsName.right
-          anchors.leftMargin: Theme.smallPadding
+          anchors.leftMargin: Style.current.smallPadding
           onClick: function (){
             chatsModel.copyToClipboard(valueEnsName.text)
           }
@@ -165,11 +165,11 @@ ModalPopup {
             text: qsTr("Chat key")
             font.pixelSize: 13
             font.weight: Font.Medium
-            color: Theme.darkGrey
+            color: Style.current.darkGrey
             anchors.left: parent.left
-            anchors.leftMargin: Theme.smallPadding
+            anchors.leftMargin: Style.current.smallPadding
             anchors.top: isEnsVerified ? valueEnsName.bottom : parent.top
-            anchors.topMargin: Theme.padding
+            anchors.topMargin: Style.current.padding
         }
 
         StyledText {
@@ -179,15 +179,15 @@ ModalPopup {
             elide: Text.ElideMiddle
             font.pixelSize: 14
             anchors.left: parent.left
-            anchors.leftMargin: Theme.smallPadding
+            anchors.leftMargin: Style.current.smallPadding
             anchors.top: labelChatKey.bottom
-            anchors.topMargin: Theme.smallPadding
+            anchors.topMargin: Style.current.smallPadding
         }
 
         CopyToClipBoardIcon {
           anchors.top: labelChatKey.bottom
           anchors.left: valueChatKey.right
-          anchors.leftMargin: Theme.smallPadding
+          anchors.leftMargin: Style.current.smallPadding
           onClick: function (){
             chatsModel.copyToClipboard(valueChatKey.text)
           }
@@ -196,11 +196,11 @@ ModalPopup {
         Separator {
             id: separator
             anchors.top: valueChatKey.bottom
-            anchors.topMargin: Theme.padding
+            anchors.topMargin: Style.current.padding
             anchors.left: parent.left
-            anchors.leftMargin: -Theme.padding
+            anchors.leftMargin: -Style.current.padding
             anchors.right: parent.right
-            anchors.rightMargin: -Theme.padding
+            anchors.rightMargin: -Style.current.padding
         }
 
         StyledText {
@@ -208,11 +208,11 @@ ModalPopup {
             text: qsTr("Share Profile URL")
             font.pixelSize: 13
             font.weight: Font.Medium
-            color: Theme.darkGrey
+            color: Style.current.darkGrey
             anchors.left: parent.left
-            anchors.leftMargin: Theme.smallPadding
+            anchors.leftMargin: Style.current.smallPadding
             anchors.top: separator.bottom
-            anchors.topMargin: Theme.padding
+            anchors.topMargin: Style.current.padding
         }
 
         StyledText {
@@ -221,15 +221,15 @@ ModalPopup {
                       0, 4) + "..." + fromAuthor.substr(fromAuthor.length - 5)
             font.pixelSize: 14
             anchors.left: parent.left
-            anchors.leftMargin: Theme.smallPadding
+            anchors.leftMargin: Style.current.smallPadding
             anchors.top: labelShareURL.bottom
-            anchors.topMargin: Theme.smallPadding
+            anchors.topMargin: Style.current.smallPadding
         }
 
         CopyToClipBoardIcon {
           anchors.top: labelShareURL.bottom
           anchors.left: valueShareURL.right
-          anchors.leftMargin: Theme.smallPadding
+          anchors.leftMargin: Style.current.smallPadding
           onClick: function (){
             chatsModel.copyToClipboard("https://join.status.im/u/" + fromAuthor)
           }
@@ -258,8 +258,8 @@ ModalPopup {
             anchors.rightMargin: addToContactsButton.width + 32
             btnColor: "white"
             btnBorderWidth: 1
-            btnBorderColor: Theme.grey
-            textColor: Theme.red
+            btnBorderColor: Style.current.grey
+            textColor: Style.current.red
             label: qsTr("Block User")
             anchors.bottom: parent.bottom
             onClicked: {
@@ -273,7 +273,7 @@ ModalPopup {
         StyledButton {
             id: addToContactsButton
             anchors.right: parent.right
-            anchors.rightMargin: Theme.smallPadding
+            anchors.rightMargin: Style.current.smallPadding
             label: profileModel.isAdded(
                        fromAuthor) ? qsTr("Remove Contact") : qsTr(
                                          "Add to contacts")

@@ -12,7 +12,7 @@ Item {
     //    property string label: "My Label"
     property string label: ""
     readonly property bool hasLabel: label !== ""
-    property color bgColor: Theme.grey
+    property color bgColor: Style.current.grey
     readonly property var forceActiveFocus: function () {
         textArea.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -33,7 +33,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 0
         font.pixelSize: 13
-        color: Theme.black
+        color: Style.current.black
     }
 
     Rectangle {
@@ -46,7 +46,7 @@ Item {
         anchors.right: parent.right
         anchors.left: parent.left
         border.width: !!validationError ? 1 : 0
-        border.color: Theme.red
+        border.color: Style.current.red
 
         TextArea {
             id: textArea
@@ -54,12 +54,12 @@ Item {
             font.pixelSize: 15
             wrapMode: Text.WordWrap
             placeholderText: inputBox.placeholderText
-            anchors.rightMargin: Theme.padding
-            anchors.leftMargin: inputBox.hasIcon ? 36 : Theme.padding
-            anchors.bottomMargin: Theme.smallPadding
-            anchors.topMargin: Theme.smallPadding
+            anchors.rightMargin: Style.current.padding
+            anchors.leftMargin: inputBox.hasIcon ? 36 : Style.current.padding
+            anchors.bottomMargin: Style.current.smallPadding
+            anchors.topMargin: Style.current.smallPadding
             anchors.fill: parent
-            font.family: Theme.fontRegular.name
+            font.family: Style.current.fontRegular.name
         }
 
         MouseArea {
@@ -80,7 +80,7 @@ Item {
         selectByMouse: true
         readOnly: true
         font.pixelSize: 12
-        color: Theme.red
+        color: Style.current.red
 
     }
 }

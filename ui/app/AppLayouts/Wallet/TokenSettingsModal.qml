@@ -15,7 +15,7 @@ ModalPopup {
 
     footer: StyledButton {
         anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         label: qsTr("Add custom token")
         anchors.top: parent.top
         onClicked: {

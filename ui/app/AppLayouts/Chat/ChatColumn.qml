@@ -56,7 +56,7 @@ StackLayout {
                 anchors.fill: parent
                 anchors.leftMargin:  -border.width
                 border.width: 1
-                border.color: Theme.grey
+                border.color: Style.current.grey
             }
         }
     }
