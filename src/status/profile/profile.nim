@@ -4,7 +4,7 @@ import ../libstatus/types
 type Profile* = ref object
   id*, alias*, username*, identicon*, address*, ensName*: string
   ensVerified*: bool
-  ensVerifiedAt*, ensVerificationRetries*: int
+  ensVerifiedAt*, ensVerificationRetries*, appearance*: int
   systemTags*: seq[string]
 
 proc isContact*(self: Profile): bool =
@@ -22,6 +22,7 @@ proc toProfileModel*(account: Account): Profile =
     ensName: "",
     ensVerified: false,
     ensVerifiedAt: 0,
+    appearance: 0,
     ensVerificationRetries: 0,
     systemTags: @[]
   )
@@ -39,6 +40,7 @@ proc toProfileModel*(profile: JsonNode): Profile =
     alias: profile["alias"].str,
     ensName: "",
     ensVerified: profile["ensVerified"].getBool,
+    appearance: 0,
     ensVerifiedAt: profile["ensVerifiedAt"].getInt,
     ensVerificationRetries: profile["ensVerificationRetries"].getInt,
     systemTags: systemTags

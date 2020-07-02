@@ -24,7 +24,15 @@ Item {
 
     RowLayout {
         // TODO move this to a new panel once we have the appearance panel
-        property bool isDarkTheme: false
+        property bool isDarkTheme: {
+            const isDarkTheme = profileModel.profile.appearance === 1
+            if (isDarkTheme) {
+                Style.changeTheme('dark')
+            } else {
+                Style.changeTheme('light')
+            }
+            return isDarkTheme
+        }
         id: themeSetting
         anchors.top: title.bottom
         anchors.topMargin: 20
@@ -36,12 +44,7 @@ Item {
         Switch {
             checked: themeSetting.isDarkTheme
             onCheckedChanged: function(value) {
-                themeSetting.isDarkTheme = !themeSetting.isDarkTheme
-                if (themeSetting.isDarkTheme) {
-                    Style.changeTheme('dark')
-                } else {
-                    Style.changeTheme('light')
-                }
+                profileModel.changeTheme(themeSetting.isDarkTheme ? 0 : 1)
             }
         }
     }

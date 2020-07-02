@@ -1,4 +1,5 @@
 import NimQml, json, eventemitter, strutils
+import json_serialization
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../signals/types
 import ../../status/libstatus/types as status_types
@@ -8,6 +9,7 @@ import ../../status/[status, contacts]
 import ../../status/chat as status_chat
 import ../../status/chat/chat
 import view
+import chronicles
 
 type ProfileController* = ref object of SignalSubscriber
   view*: ProfileView
@@ -33,6 +35,8 @@ proc init*(self: ProfileController, account: Account) =
   let response = status_settings.getSettings()
   let pubKey = status_settings.getSetting[string]("public-key", "0x0")
   let mnemonic = status_settings.getSetting[string]("mnemonic", "")
+  let appearance = Json.decode($response["appearance"], int)
+  profile.appearance = appearance
   profile.id = pubKey
 
   self.view.setNewProfile(profile)
