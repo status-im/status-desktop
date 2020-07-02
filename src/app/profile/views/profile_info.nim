@@ -6,6 +6,7 @@ QtObject:
     username*: string
     identicon*: string
     pubKey*: string
+    appearance*: int
 
   proc setup(self: ProfileInfoView) =
     self.QObject.setup
@@ -19,6 +20,7 @@ QtObject:
     result.pubKey = ""
     result.username = ""
     result.identicon = ""
+    result.appearance = 0
     result.setup
 
   proc profileChanged*(self: ProfileInfoView) {.signal.}
@@ -26,12 +28,22 @@ QtObject:
   proc setProfile*(self: ProfileInfoView, profile: Profile) =
     self.username = profile.username
     self.identicon = profile.identicon
+    self.appearance = profile.appearance
     self.pubKey = profile.id
     self.profileChanged()
 
   proc username*(self: ProfileInfoView): string {.slot.} = result = self.username
   QtProperty[string] username:
     read = username
+    notify = profileChanged
+
+  proc appearance*(self: ProfileInfoView): int {.slot.} = result = self.appearance
+  proc setAppearance*(self: ProfileInfoView, appearance: int) {.slot.} =
+    self.appearance = appearance
+    self.profileChanged()
+  QtProperty[int] appearance:
+    read = appearance
+    write = setAppearance
     notify = profileChanged
 
   proc identicon*(self: ProfileInfoView): string {.slot.} = result = self.identicon

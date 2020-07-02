@@ -97,3 +97,7 @@ QtObject:
 
   proc qrCode*(self: ProfileView, text:string): string {.slot.} =
     result = "data:image/svg+xml;utf8," & generateQRCodeSVG(text, 2)
+
+  proc changeTheme*(self: ProfileView, theme: int) {.slot.} =
+    self.profile.setAppearance(theme)
+    self.status.saveSetting("appearance", $theme)
