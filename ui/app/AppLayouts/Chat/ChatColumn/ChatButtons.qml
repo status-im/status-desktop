@@ -1,10 +1,13 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../components"
 
-Rectangle {
-    border.width: 0
+Item {
+    property int iconPadding: 6
+
+    id: chatButtonsContainer
 
     Button {
         id: chatSendBtn
@@ -32,34 +35,100 @@ Rectangle {
         }
     }
 
-    Image {
-        id: stickersIcon
+    Rectangle {
+        property bool hovered: false
+
+        id: emojiIconContainer
         visible: txtData.length == 0
-        width: 20
-        height: 20
-        anchors.rightMargin: Style.current.padding
-        anchors.right: parent.right
-        fillMode: Image.PreserveAspectFit
-        source: "../../../img/stickers_icon" + (stickersPopup.opened ? "_open.svg" : ".svg")
+        width: emojiIcon.width + chatButtonsContainer.iconPadding * 2
+        height: emojiIcon.height + chatButtonsContainer.iconPadding * 2
+        anchors.right: stickerIconContainer.left
+        anchors.rightMargin: Style.current.padding - chatButtonsContainer.iconPadding * 2
         anchors.verticalCenter: parent.verticalCenter
+        radius: Style.current.radius
+        color: hovered ? Style.current.lightBlue : Style.current.transparent
+
+        Image {
+            id: emojiIcon
+            visible: txtData.length == 0
+            width: 20
+            height: 20
+            fillMode: Image.PreserveAspectFit
+            source: "../../../img/emojiBtn.svg"
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+        ColorOverlay {
+            anchors.fill: emojiIcon
+            source: emojiIcon
+            color: emojiIconContainer.hovered || emojiPopup.opened ? Style.current.blue : Style.current.transparent
+        }
 
         MouseArea {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
+            hoverEnabled: true
+            onEntered: {
+              emojiIconContainer.hovered = true
+            }
+            onExited: {
+              emojiIconContainer.hovered = false
+            }
             onClicked: {
-                console.log('CLICK')
                 if (emojiPopup.opened) {
-                console.log('CLOSE')
                     emojiPopup.close()
                 } else {
-                console.log('OPEN')
                     emojiPopup.open()
                 }
-                // if (stickersPopup.opened) {
-                //     stickersPopup.close()
-                // } else {
-                //     stickersPopup.open()
-                // }
+            }
+        }
+    }
+
+    Rectangle {
+        property bool hovered: false
+
+        id: stickerIconContainer
+        visible: txtData.length == 0
+        width: emojiIcon.width + chatButtonsContainer.iconPadding * 2
+        height: emojiIcon.height + chatButtonsContainer.iconPadding * 2
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding - chatButtonsContainer.iconPadding
+        anchors.verticalCenter: parent.verticalCenter
+        radius: Style.current.radius
+        color: hovered ? Style.current.lightBlue : Style.current.transparent
+
+        Image {
+            id: stickersIcon
+            width: 20
+            height: 20
+            fillMode: Image.PreserveAspectFit
+            source: "../../../img/stickers_icon.svg"
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+
+        }
+        ColorOverlay {
+            anchors.fill: stickersIcon
+            source: stickersIcon
+            color: stickerIconContainer.hovered || stickersPopup.opened ? Style.current.blue : Style.current.transparent
+        }
+
+        MouseArea {
+            cursorShape: Qt.PointingHandCursor
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: {
+              stickerIconContainer.hovered = true
+            }
+            onExited: {
+              stickerIconContainer.hovered = false
+            }
+            onClicked: {
+                 if (stickersPopup.opened) {
+                     stickersPopup.close()
+                 } else {
+                     stickersPopup.open()
+                 }
             }
         }
     }

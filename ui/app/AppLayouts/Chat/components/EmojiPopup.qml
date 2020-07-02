@@ -15,7 +15,7 @@ Popup {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     background: Rectangle {
         radius: 8
-        border.color: Theme.grey
+        border.color: Style.current.grey
         layer.enabled: true
         layer.effect: DropShadow{
             verticalOffset: 3
