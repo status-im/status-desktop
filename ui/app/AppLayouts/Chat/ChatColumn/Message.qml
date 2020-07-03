@@ -332,34 +332,14 @@ Item {
         StyledTextEdit {
             id: sentMessage
             color: Style.current.darkGrey
-            text: qsTr("Sent")
-            anchors.top: contentType === Constants.stickerType ? stickerId.bottom : chatText.bottom
+            text: outgoingStatus == "sent" ? qsTr("Sent") : qsTr("Sending...")
+            anchors.top: chatTime.top
             anchors.bottomMargin: Style.current.padding
             anchors.right: chatTime.left
-            anchors.rightMargin: Style.current.padding
+            anchors.rightMargin: 5
             font.pixelSize: 10
             readOnly: true
-            visible: isCurrentUser && outgoingStatus == "sent"
-        }
-
-        SVGImage {
-            id: sendingImg
-            visible: isCurrentUser && outgoingStatus == "sending"
-            anchors.top: chatText.top
-            anchors.right: chatText.left
-            anchors.rightMargin: 15
-            source: "../../../img/settings.svg"
-            width: 15
-            height: 15
-            fillMode: Image.Stretch
-            RotationAnimator {
-                target: sendingImg;
-                from: 0;
-                to: 360;
-                duration: 1200
-                running: true
-                loops: Animation.Infinite
-            }
+            visible: isCurrentUser
         }
     }
 }
