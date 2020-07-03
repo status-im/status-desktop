@@ -304,13 +304,18 @@ clean: | clean-common
 
 run: rcc $(RUN_TARGET)
 
+NIM_STATUS_CLIENT_DEV ?= t
+
 run-linux-or-macos:
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT5_LIBDIR)" ./bin/nim_status_client
+	NIM_STATUS_CLIENT_DEV="$(NIM_STATUS_CLIENT_DEV)" \
+	LD_LIBRARY_PATH="$(QT5_LIBDIR)" \
+	./bin/nim_status_client
 
 run-windows:
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client.exe"
+	NIM_STATUS_CLIENT_DEV="$(NIM_STATUS_CLIENT_DEV)" \
 	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(PATH)" \
-		./bin/nim_status_client
+	./bin/nim_status_client.exe
 
 endif # "variables.mk" was not included

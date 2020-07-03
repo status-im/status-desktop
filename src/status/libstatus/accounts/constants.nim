@@ -1,4 +1,5 @@
 import json
+import os
 
 const GENERATED* = "generated"
 const SEED* = "seed"
@@ -178,6 +179,35 @@ var NODE_CONFIG* = %* {
   }
 }
 
-const DATADIR* = "./data/"
-const KEYSTOREDIR* = "./data/keystore/"
-const NOBACKUPDIR* = "./noBackup/"
+let sep = if defined(windows): "\\" else: "/"
+
+let homeDir = getHomeDir()
+
+let parentDir =
+  if getEnv("NIM_STATUS_CLIENT_DEV").string != "":
+    "."
+  elif homeDir == "":
+    "."
+  elif defined(macosx):
+    joinPath(homeDir, "Library", "Application Support")
+  elif defined(windows):
+    let targetDir = getEnv("LOCALAPPDATA").string
+    if targetDir == "":
+      joinPath(homeDir, "AppData", "Local")
+    else:
+      targetDir
+  else:
+    let targetDir = getEnv("XDG_CONFIG_HOME").string
+    if targetDir == "":
+      joinPath(homeDir, ".config")
+    else:
+      targetDir
+
+let clientDir =
+  if parentDir != ".":
+    joinPath(parentDir, "Status")
+  else:
+    parentDir
+
+let DATADIR* = joinPath(clientDir, "data") & sep
+let KEYSTOREDIR* = joinPath(clientDir, "data", "keystore") & sep
