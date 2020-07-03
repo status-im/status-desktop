@@ -38,7 +38,6 @@ proc ensureDir(dirname: string) =
 proc initNode*() =
   ensureDir(DATADIR)
   ensureDir(KEYSTOREDIR)
-  ensureDir(NOBACKUPDIR)
 
   discard $libstatus.initKeystore(KEYSTOREDIR)
 
@@ -91,10 +90,10 @@ proc storeDerivedAccounts*(account: GeneratedAccount, password: string): MultiAc
     "password": hashedPassword
   }
   let response = $libstatus.multiAccountStoreDerivedAccounts($multiAccount);
-  
-  try: 
+
+  try:
     result = Json.decode($response, MultiAccounts)
-  except: 
+  except:
     let err = Json.decode($response, StatusGoError)
     raise newException(StatusGoException, "Error storing multiaccount derived accounts: " & err.error)
 
