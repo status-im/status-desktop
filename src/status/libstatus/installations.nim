@@ -6,4 +6,13 @@ proc setInstallationMetadata*(installationId: string, deviceName: string, device
 
 proc getOurInstallations*(): string =
   result = callPrivateRPC("getOurInstallations".prefix, %* [])
-  echo result
+
+proc syncDevices*(): string =
+  # These are not being used at the moment
+  let preferredName = ""
+  let photoPath = ""
+  result = callPrivateRPC("syncDevices".prefix, %* [preferredName, photoPath])
+
+proc sendPairInstallation*(): string =
+  result = callPrivateRPC("sendPairInstallation".prefix)
+

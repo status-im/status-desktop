@@ -6,6 +6,9 @@ import "../../../../shared"
 
 Item {
     id: syncContainer
+
+    property bool isSyncing: false
+
     width: 200
     height: 200
     Layout.fillHeight: true
@@ -25,11 +28,11 @@ Item {
     Item {
         id: firstTimeSetup
         anchors.left: syncContainer.left
-        anchors.leftMargin: Theme.padding
+        anchors.leftMargin: Style.current.padding
         anchors.top: sectionTitle.bottom
-        anchors.topMargin: Theme.padding
+        anchors.topMargin: Style.current.padding
         anchors.right: syncContainer.right
-        anchors.rightMargin: Theme.padding
+        anchors.rightMargin: Style.current.padding
         visible: !profileModel.deviceSetup
 
         StyledText {
@@ -42,7 +45,7 @@ Item {
             id: deviceNameTxt
             placeholderText: qsTr("Specify a name")
             anchors.top: deviceNameLbl.bottom
-            anchors.topMargin: Theme.padding
+            anchors.topMargin: Style.current.padding
         }
 
         StyledButton {
@@ -56,13 +59,101 @@ Item {
         }
     }
 
+    Item {
+        anchors.left: syncContainer.left
+        anchors.leftMargin: Style.current.padding
+        anchors.top: sectionTitle.bottom
+        anchors.topMargin: Style.current.padding
+        anchors.right: syncContainer.right
+        anchors.rightMargin: Style.current.padding
+        visible: profileModel.deviceSetup
+
+        Rectangle {
+            id: advertiseDevice
+            height: childrenRect.height
+            width: 500
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            SVGImage {
+                id: advertiseImg
+                height: 32
+                width: 32
+                anchors.left: parent.left
+                fillMode: Image.PreserveAspectFit
+                source: "/app/img/messageActive.svg"
+            }
+
+            StyledText {
+                id: advertiseDeviceTitle
+                text: qsTr("Advertise device")
+                font.pixelSize: 18
+                font.weight: Font.Bold
+                color: Style.current.blue
+                anchors.left: advertiseImg.right
+                anchors.leftMargin: Style.current.padding
+            }
+
+            StyledText {
+                id: advertiseDeviceDesk
+                text: qsTr("Pair your devices to sync contacts and chats between them")
+                font.pixelSize: 14
+                anchors.top: advertiseDeviceTitle.bottom
+                anchors.topMargin: 6
+                anchors.left: advertiseImg.right
+                anchors.leftMargin: Style.current.padding
+            }
+
+            MouseArea {
+                cursorShape: Qt.PointingHandCursor
+                anchors.fill: parent
+                onClicked: profileModel.advertiseDevice()
+            }
+        }
+
+        StyledText {
+            anchors.top: advertiseDevice.bottom
+            anchors.topMargin: Style.current.padding
+            text: qsTr("Learn more")
+            font.pixelSize: 16
+            color: Style.current.blue
+            anchors.left: parent.left
+            MouseArea {
+                cursorShape: Qt.PointingHandCursor
+                anchors.fill: parent
+                onClicked: Qt.openUrlExternally("https://status.im/tutorials/pairing.html")
+            }
+        }
+    }
+
     StyledButton {
+        id: syncAllBtn
         anchors.bottom: syncContainer.bottom
-        anchors.bottomMargin: Theme.padding
-        anchors.right: deviceNameTxt.right
-        label: qsTr("Sync all devices")
+        anchors.bottomMargin: Style.current.padding
+        anchors.horizontalCenter: parent.horizontalCenter
+        label: isSyncing ? qsTr("Syncing...") : qsTr("Sync all devices")
+        disabled: isSyncing
         onClicked : {
-            console.log("TODO")
+            isSyncing = true;
+            profileModel.syncAllDevices()
+            // Currently we don't know how long it takes, so we just disable for 10s, to avoid spamming
+            timer.setTimeout(function(){ 
+                isSyncing = false
+            }, 10000);
+        }
+    }
+
+    Timer {
+        id: timer
+        function setTimeout(cb, delayTime) {
+            timer.interval = delayTime;
+            timer.repeat = false;
+            timer.triggered.connect(cb);
+            timer.triggered.connect(function release () {
+                timer.triggered.disconnect(cb); // This is important
+                timer.triggered.disconnect(release); // This is important as well
+            });
+            timer.start();
         }
     }
 
