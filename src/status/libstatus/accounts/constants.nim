@@ -135,7 +135,7 @@ var NODE_CONFIG* = %* {
   "MailserversConfig": {
     "Enabled": true
   },
-  "Name": "StatusIM",
+  "Name": "StatusDesktop",
   "NetworkId": 1,
   "NoDiscovery": false,
   "PermissionsConfig": {
