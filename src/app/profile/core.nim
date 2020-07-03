@@ -7,6 +7,7 @@ import ../../status/libstatus/settings as status_settings
 import ../../status/profile/[profile, mailserver]
 import ../../status/[status, contacts]
 import ../../status/chat as status_chat
+import ../../status/devices
 import ../../status/chat/chat
 import view
 import chronicles
@@ -39,6 +40,7 @@ proc init*(self: ProfileController, account: Account) =
   profile.appearance = appearance
   profile.id = pubKey
 
+  self.view.setDeviceSetup(devices.isDeviceSetup())
   self.view.setNewProfile(profile)
   self.view.setMnemonic(mnemonic)
 

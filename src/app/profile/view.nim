@@ -5,6 +5,7 @@ import ../../status/profile as status_profile
 import ../../status/contacts as status_contacts
 import ../../status/accounts as status_accounts
 import ../../status/status
+import ../../status/devices
 import ../../status/chat/chat
 import qrcode/qrcode
 
@@ -15,6 +16,7 @@ QtObject:
     contactList*: ContactList
     mnemonic: string
     status*: Status
+    isDeviceSetup: bool
 
   proc setup(self: ProfileView) =
     self.QObject.setup
@@ -33,6 +35,7 @@ QtObject:
     result.contactList = newContactList()
     result.mnemonic = ""
     result.status = status
+    result.isDeviceSetup = false
     result.setup
 
   proc addMailServerToList*(self: ProfileView, mailserver: MailServer) =
@@ -101,3 +104,25 @@ QtObject:
   proc changeTheme*(self: ProfileView, theme: int) {.slot.} =
     self.profile.setAppearance(theme)
     self.status.saveSetting("appearance", $theme)
+    
+  proc isDeviceSetup*(self: ProfileView): bool {.slot} =
+    result = self.isDeviceSetup
+
+  proc deviceSetupChanged*(self: ProfileView) {.signal.}
+
+  proc setDeviceSetup*(self: ProfileView, isSetup: bool) {.slot} =
+    self.isDeviceSetup = isSetup
+    self.deviceSetupChanged()
+
+  QtProperty[bool] deviceSetup:
+    read = isDeviceSetup
+    notify = deviceSetupChanged
+
+  proc setDeviceName*(self: ProfileView, deviceName: string) {.slot.} =
+    devices.setDeviceName(deviceName)
+    self.isDeviceSetup = true
+    self.deviceSetupChanged()
+
+  proc syncAllDevices*(self: ProfileView) {.slot.} =
+    discard
+    #devices.syncAllDevices()
