@@ -102,6 +102,31 @@ Rectangle {
         }
 
         TabButton {
+            id: devicesTabButton
+            width: profileTabBar.w
+            height: profileTabBar.btnheight
+            visible: true
+            text: ""
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+            anchors.top: privacyTabButton.bottom
+            anchors.topMargin: 0
+            background: Rectangle {
+                color: Theme.transparent
+            }
+
+            StyledText {
+                color: "#000000"
+                text: qsTr("Devices")
+                anchors.left: parent.left
+                anchors.leftMargin: 72
+                anchors.verticalCenter: parent.verticalCenter
+                font.weight: profileScreenButtons.currentIndex === 3 ? Font.Bold : Font.Medium
+                font.pixelSize: 14
+            }
+        }
+
+        TabButton {
             id: syncTabButton
             width: profileTabBar.w
             height: 0 //profileTabBar.btnheight
@@ -109,7 +134,7 @@ Rectangle {
             text: ""
             anchors.left: parent.left
             anchors.leftMargin: 0
-            anchors.top: privacyTabButton.bottom
+            anchors.top: devicesTabButton.bottom
             anchors.topMargin: 0
             background: Rectangle {
                 color: Style.current.transparent

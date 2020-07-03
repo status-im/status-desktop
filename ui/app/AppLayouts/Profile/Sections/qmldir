@@ -2,6 +2,7 @@ EnsContainer 1.0 EnsContainer.qml
 ContactsContainer 1.0 ContactsContainer.qml
 PrivacyContainer 1.0 PrivacyContainer.qml
 SyncContainer 1.0 SyncContainer.qml
+DevicesContainer 1.0 DevicesContainer.qml
 LanguageContainer 1.0 LanguageContainer.qml
 NotificationsContainer 1.0 NotificationsContainer.qml
 AdvancedContainer 1.0 AdvancedContainer.qml

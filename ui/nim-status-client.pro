@@ -133,6 +133,7 @@ DISTFILES += \
     app/AppLayouts/Profile/Sections/PrivacyContainer.qml \
     app/AppLayouts/Profile/Sections/SignoutContainer.qml \
     app/AppLayouts/Profile/Sections/SyncContainer.qml \
+    app/AppLayouts/Profile/Sections/DevicesContainer.qml \
     app/AppLayouts/Profile/Sections/qmldir \
     app/AppLayouts/Profile/qmldir \
     app/AppLayouts/Wallet/LeftTab.qml \

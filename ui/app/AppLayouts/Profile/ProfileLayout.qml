@@ -42,6 +42,8 @@ SplitView {
 
         PrivacyContainer {}
 
+        DevicesContainer {}
+
         SyncContainer {}
 
         LanguageContainer {}
