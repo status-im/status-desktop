@@ -19,4 +19,7 @@ proc isDeviceSetup*():bool =
   result = false
 
 proc syncAllDevices*() =
-  discard  
+  discard syncDevices()
+
+proc advertise*() =
+  discard sendPairInstallation()

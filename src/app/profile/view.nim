@@ -124,5 +124,7 @@ QtObject:
     self.deviceSetupChanged()
 
   proc syncAllDevices*(self: ProfileView) {.slot.} =
-    discard
-    #devices.syncAllDevices()
+    devices.syncAllDevices()
+
+  proc advertiseDevice*(self: ProfileView) {.slot.} =
+    devices.advertise()
