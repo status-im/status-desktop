@@ -1,7 +1,7 @@
 import json, chronicles, json_serialization, tables
 import ../status/libstatus/types
 import ../status/chat/[chat, message]
-import ../status/profile/profile
+import ../status/profile/[profile, devices]
 
 type SignalSubscriber* = ref object of RootObj
 
@@ -28,6 +28,7 @@ type MessageSignal* = ref object of Signal
   messages*: seq[Message]
   chats*: seq[Chat]
   contacts*: seq[Profile]
+  installations*: seq[Installation]
   
 type Filter* = object
   chatId*: string

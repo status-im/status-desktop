@@ -1,7 +1,7 @@
 import json, random
 import ../status/libstatus/accounts as status_accounts
 import ../status/chat/[chat, message]
-import ../status/profile/profile
+import ../status/profile/[profile, devices]
 import types
 
 proc toMessage*(jsonMsg: JsonNode): Message
@@ -24,6 +24,10 @@ proc fromEvent*(event: JsonNode): Signal =
   if event["event"]{"chats"} != nil:
     for jsonChat in event["event"]["chats"]:
       signal.chats.add(jsonChat.toChat)
+
+  if event["event"]{"installations"} != nil:
+    for jsonInstallation in event["event"]["installations"]:
+      signal.installations.add(jsonInstallation.toInstallation)
 
   result = signal
 
