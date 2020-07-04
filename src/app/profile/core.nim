@@ -40,6 +40,7 @@ proc init*(self: ProfileController, account: Account) =
   profile.appearance = appearance
   profile.id = pubKey
 
+  self.view.addDevices(devices.getAllDevices())
   self.view.setDeviceSetup(devices.isDeviceSetup())
   self.view.setNewProfile(profile)
   self.view.setMnemonic(mnemonic)
@@ -67,3 +68,5 @@ method onSignal(self: ProfileController, data: Signal) =
     # TODO: view should react to model changes
     self.status.chat.updateContacts(msgData.contacts)
     self.view.updateContactList(msgData.contacts)
+  if msgData.installations.len > 0:
+    self.view.addDevices(msgData.installations)

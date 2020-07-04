@@ -52,7 +52,6 @@ Item {
         }
 
         StyledButton {
-            visible: !selectChatMembers
             anchors.top: deviceNameTxt.bottom
             anchors.topMargin: 10
             anchors.right: deviceNameTxt.right
@@ -64,6 +63,7 @@ Item {
     }
 
     Item {
+        id: advertiseDeviceItem
         anchors.left: syncContainer.left
         anchors.leftMargin: Style.current.padding
         anchors.top: sectionTitle.bottom
@@ -71,6 +71,7 @@ Item {
         anchors.right: syncContainer.right
         anchors.rightMargin: Style.current.padding
         visible: profileModel.deviceSetup
+        height: childrenRect.height
 
         Rectangle {
             id: advertiseDevice
@@ -130,6 +131,69 @@ Item {
                 anchors.fill: parent
                 onClicked: Qt.openUrlExternally("https://status.im/tutorials/pairing.html")
             }
+        }
+    }
+
+
+    Item {
+        id: deviceListItem
+        anchors.left: syncContainer.left
+        anchors.leftMargin: Style.current.padding
+        anchors.top: advertiseDeviceItem.bottom
+        anchors.topMargin: Style.current.padding * 2
+        anchors.bottom: syncAllBtn.top
+        anchors.bottomMargin: Style.current.padding
+        anchors.right: syncContainer.right
+        anchors.rightMargin: Style.current.padding
+        visible: profileModel.deviceSetup
+
+
+        StyledText {
+            id: deviceListLbl
+            text: qsTr("Paired devices")
+            font.pixelSize: 16
+            font.weight: Font.Bold
+        }
+
+        ListView {
+            id: listView
+            anchors.bottom: parent.bottom
+            anchors.top: deviceListLbl.bottom
+            anchors.topMargin: Style.current.padding
+            spacing: 5
+            anchors.right: syncContainer.right
+            anchors.left: syncContainer.left
+            delegate: Item {
+                height: childrenRect.height
+                SVGImage {
+                    id: enabledIcon
+                    source: "/app/img/" + (devicePairedSwitch.checked ? "messageActive.svg" : "message.svg")
+                    height: 24
+                    width: 24
+                }
+                StyledText {
+                    id: deviceItemLbl
+                    text: {
+                        let deviceId = model.installationId.split("-")[0].substr(0, 5)
+                        let labelText = `${model.name || qsTr("No info")} (${model.isUserDevice ? qsTr("you") + ", ": ""}${deviceId})`;
+                        return labelText;
+                    }
+                    elide: Text.ElideRight
+                    font.pixelSize: 14
+                    anchors.left: enabledIcon.right
+                    anchors.leftMargin: Style.current.padding
+                }
+                Switch { 
+                    id: devicePairedSwitch
+                    visible: !model.isUserDevice
+                    checked: model.isEnabled 
+                    anchors.left: deviceItemLbl.right
+                    anchors.leftMargin: Style.current.padding
+                    anchors.top: deviceItemLbl.top
+                    onClicked: profileModel.enableInstallation(model.installationId, devicePairedSwitch)
+                }
+            }
+            model: profileModel.deviceList
         }
     }
 

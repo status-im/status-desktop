@@ -1,11 +1,18 @@
 import json, core, utils, system
 
+var installations: JsonNode = %*{}
+var dirty: bool = true
+
 proc setInstallationMetadata*(installationId: string, deviceName: string, deviceType: string): string =
   result = callPrivateRPC("setInstallationMetadata".prefix, %* [installationId, {"name": deviceName, "deviceType": deviceType}])
   # TODO: handle errors
 
-proc getOurInstallations*(): string =
-  result = callPrivateRPC("getOurInstallations".prefix, %* [])
+proc getOurInstallations*(useCached: bool = true): JsonNode =
+  if useCached and not dirty:
+    return installations
+  installations = callPrivateRPC("getOurInstallations".prefix, %* []).parseJSON()["result"]
+  dirty = false
+  result = installations
 
 proc syncDevices*(): string =
   # These are not being used at the moment
@@ -16,3 +23,8 @@ proc syncDevices*(): string =
 proc sendPairInstallation*(): string =
   result = callPrivateRPC("sendPairInstallation".prefix)
 
+proc enableInstallation*(installationId: string): string =
+  result = callPrivateRPC("enableInstallation".prefix, %* [installationId])
+
+proc disableInstallation*(installationId: string): string =
+  result = callPrivateRPC("disableInstallation".prefix, %* [installationId])

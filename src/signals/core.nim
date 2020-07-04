@@ -53,7 +53,7 @@ QtObject:
       return
 
     var signal: Signal = Signal(signalType: signalType)
-
+    
     case signalType:
       of SignalType.Message:
         signal = messages.fromEvent(jsonSignal)

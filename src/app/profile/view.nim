@@ -1,11 +1,11 @@
 import NimQml, sequtils
-import views/[mailservers_list, contact_list, profile_info]
-import ../../status/profile/[mailserver, profile]
+import views/[mailservers_list, contact_list, profile_info, device_list]
+import ../../status/profile/[mailserver, profile, devices]
 import ../../status/profile as status_profile
 import ../../status/contacts as status_contacts
 import ../../status/accounts as status_accounts
 import ../../status/status
-import ../../status/devices
+import ../../status/devices as status_devices
 import ../../status/chat/chat
 import qrcode/qrcode
 
@@ -14,6 +14,7 @@ QtObject:
     profile*: ProfileInfoView
     mailserversList*: MailServersList
     contactList*: ContactList
+    deviceList*: DeviceList
     mnemonic: string
     status*: Status
     isDeviceSetup: bool
@@ -24,6 +25,7 @@ QtObject:
   proc delete*(self: ProfileView) =
     if not self.mailserversList.isNil: self.mailserversList.delete
     if not self.contactList.isNil: self.contactList.delete
+    if not self.deviceList.isNil: self.deviceList.delete
     if not self.profile.isNil: self.profile.delete
     self.QObject.delete
 
@@ -33,6 +35,7 @@ QtObject:
     result.profile = newProfileInfoView()
     result.mailserversList = newMailServersList()
     result.contactList = newContactList()
+    result.deviceList = newDeviceList()
     result.mnemonic = ""
     result.status = status
     result.isDeviceSetup = false
@@ -123,7 +126,23 @@ QtObject:
     self.setDeviceSetup(true)
 
   proc syncAllDevices*(self: ProfileView) {.slot.} =
-    devices.syncAllDevices()
+    status_devices.syncAllDevices()
 
   proc advertiseDevice*(self: ProfileView) {.slot.} =
-    devices.advertise()
+    status_devices.advertise()
+
+  proc addDevices*(self: ProfileView, devices: seq[Installation]) =
+    for dev in devices:
+      self.deviceList.addDeviceToList(dev)
+
+  proc getDeviceList(self: ProfileView): QVariant {.slot.} =
+    return newQVariant(self.deviceList)
+
+  QtProperty[QVariant] deviceList:
+    read = getDeviceList
+
+  proc enableInstallation*(self: ProfileView, installationId: string, enable: bool) {.slot.} =
+    if enable:
+      status_devices.enable(installationId)
+    else:
+      status_devices.disable(installationId)
