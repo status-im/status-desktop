@@ -4,11 +4,9 @@ import libstatus/installations
 import json
 
 proc setDeviceName*(name: string) =
-  discard getSettings()
   discard setInstallationMetadata(getSetting[string]("installation-id", "", true), name, hostOs)
 
 proc isDeviceSetup*():bool =
-  discard getSettings()
   let installationId = getSetting[string]("installation-id", "", true)
   let responseResult = parseJSON($getOurInstallations())["result"]
   if responseResult.kind == JNull:
