@@ -26,3 +26,6 @@
 
 ### API
 * [QML Nim-Status-Client API reference](https://github.com/status-im/nim-status-client/blob/master/docs/qml_api.md)
+
+### Translations
+* [How to translate and use automatic scripts](https://github.com/status-im/nim-status-client/blob/master/scripts/translationScripts/README.md)
