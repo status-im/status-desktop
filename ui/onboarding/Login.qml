@@ -69,7 +69,7 @@ Item {
             }
             onOpenModalClick: function () {
                 setCurrentFlow(true);
-                onExistingKeyClicked()()
+                onExistingKeyClicked()
             }
         }
 
