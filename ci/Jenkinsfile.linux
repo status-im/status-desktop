@@ -1,3 +1,5 @@
+library 'status-react-jenkins@v1.2.0'
+
 pipeline {
   agent {
     docker { 
@@ -20,6 +22,7 @@ pipeline {
   }
 
   environment {
+    TARGET = 'linux'
     /* Improve make performance */
     MAKEFLAGS = '-j4'
     /* Disable colors in Nim compiler logs */
@@ -29,7 +32,7 @@ pipeline {
     /* Makefile assumes the compiler folder is included */
     QTDIR = "/opt/qt/5.14.0/gcc_64"
     /* Control output the filename */
-    STATUS_CLIENT_APPIMAGE = "pkg/${load('ci/lib.groovy').pkgFilename('linux', 'AppImage')}"
+    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename('AppImage')}"
   }
 
   stages {
@@ -62,13 +65,24 @@ pipeline {
       steps { sh 'make pkg-linux' }
     }
 
-    stage('Archive') {
-      steps { script {
-        archiveArtifacts(env.STATUS_CLIENT_APPIMAGE)
-      } }
+    stage('Parallel Upload') {
+      parallel {
+        stage('Upload') {
+          steps { script {
+            env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_APPIMAGE)
+          } }
+        }
+        stage('Archive') {
+          steps { script {
+            archiveArtifacts(env.STATUS_CLIENT_APPIMAGE)
+          } }
+        }
+      }
     }
   }
   post {
+    success { script { github.notifyPR(true) } }
+    failure { script { github.notifyPR(false) } }
     always { cleanWs() }
   }
 }

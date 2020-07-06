@@ -1,3 +1,5 @@
+library 'status-react-jenkins@v1.2.0'
+
 pipeline {
   agent {
     label 'macos'
@@ -15,6 +17,7 @@ pipeline {
   }
 
   environment {
+    TARGET = 'macos'
     /* Improve make performance */
     MAKEFLAGS = '-j4'
     /* Disable colors in Nim compiler logs */
@@ -23,7 +26,7 @@ pipeline {
     QTDIR = '/usr/local/qt/clang_64'
     PATH = "${env.QTDIR}/bin:${env.PATH}"
     /* Control output the filename */
-    STATUS_CLIENT_DMG = "pkg/${load('ci/lib.groovy').pkgFilename('macos', 'dmg')}"
+    STATUS_CLIENT_DMG = "pkg/${utils.pkgFilename('dmg')}"
   }
 
   stages {
@@ -71,13 +74,24 @@ pipeline {
       }
     } }
 
-    stage('Archive') {
-      steps { script {
-        archiveArtifacts(env.STATUS_CLIENT_DMG)
-      } }
+    stage('Parallel Upload') {
+      parallel {
+        stage('Upload') {
+          steps { script {
+            env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_DMG)
+          } }
+        }
+        stage('Archive') {
+          steps { script {
+            archiveArtifacts(env.STATUS_CLIENT_DMG)
+          } }
+        }
+      }
     }
   }
   post {
+    success { script { github.notifyPR(true) } }
+    failure { script { github.notifyPR(false) } }
     always { cleanWs() }
   }
 }
