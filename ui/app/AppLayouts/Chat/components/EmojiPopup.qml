@@ -72,11 +72,11 @@ Popup {
                         anchors.fill: parent
                         anchors.topMargin: emojiGrid.imageMargin
                         anchors.leftMargin: emojiGrid.imageMargin
-                        Image {
+                        SVGImage {
                             width: emojiGrid.imageWidth
                             height: emojiGrid.imageWidth
                             source: "../../../../imports/twemoji/26x26/" + filename
-                            fillMode: Image.PreserveAspectFit
+                            // fillMode: Image.PreserveAspectFit
                             MouseArea {
                                 cursorShape: Qt.PointingHandCursor
                                 anchors.fill: parent

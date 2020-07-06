@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 import "../../../../imports"
+import "../../../../shared"
 import "../components"
 
 Item {
@@ -27,10 +28,10 @@ Item {
             color: parent.enabled ? Style.current.blue : Style.current.grey
             radius: 50
         }
-        Image {
+        SVGImage {
             source: "../../../img/arrowUp.svg"
             width: 12
-            fillMode: Image.PreserveAspectFit
+            // fillMode: Image.PreserveAspectFit
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -48,12 +49,12 @@ Item {
         radius: Style.current.radius
         color: hovered ? Style.current.lightBlue : Style.current.transparent
 
-        Image {
+        SVGImage {
             id: emojiIcon
             visible: txtData.length == 0
             width: 20
             height: 20
-            fillMode: Image.PreserveAspectFit
+            // fillMode: Image.PreserveAspectFit
             source: "../../../img/emojiBtn.svg"
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
