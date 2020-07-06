@@ -6,7 +6,8 @@ import "../../../../sounds"
 
 ModalPopup {
     id: popup
-    title: qsTr("Generate an account")
+    //% "Generate an account"
+    title: qsTrId("generate-a-new-account")
 
     property int marginBetweenInputs: 38
     property string selectedColor: Constants.accountColors[0]
@@ -16,15 +17,18 @@ ModalPopup {
 
     function validate() {
         if (passwordInput.text === "") {
-            passwordValidationError = qsTr("You need to enter a password")
+            //% "You need to enter a password"
+            passwordValidationError = qsTrId("you-need-to-enter-a-password")
         } else if (passwordInput.text.length < 4) {
-            passwordValidationError = qsTr("Password needs to be 4 characters or more")
+            //% "Password needs to be 4 characters or more"
+            passwordValidationError = qsTrId("password-needs-to-be-4-characters-or-more")
         } else {
             passwordValidationError = ""
         }
 
         if (accountNameInput.text === "") {
-            accountNameValidationError = qsTr("You need to enter an account name")
+            //% "You need to enter an account name"
+            accountNameValidationError = qsTrId("you-need-to-enter-an-account-name")
         } else {
             accountNameValidationError = ""
         }
@@ -45,8 +49,10 @@ ModalPopup {
 
     Input {
         id: passwordInput
-        placeholderText: qsTr("Enter your password…")
-        label: qsTr("Password")
+        //% "Enter your password…"
+        placeholderText: qsTrId("enter-your-password…")
+        //% "Password"
+        label: qsTrId("password")
         textField.echoMode: TextInput.Password
         validationError: popup.passwordValidationError
     }
@@ -55,8 +61,10 @@ ModalPopup {
         id: accountNameInput
         anchors.top: passwordInput.bottom
         anchors.topMargin: marginBetweenInputs
-        placeholderText: qsTr("Enter an account name...")
-        label: qsTr("Account name")
+        //% "Enter an account name..."
+        placeholderText: qsTrId("enter-an-account-name...")
+        //% "Account name"
+        label: qsTrId("account-name")
         validationError: popup.accountNameValidationError
     }
 
@@ -65,7 +73,8 @@ ModalPopup {
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs
         bgColor: selectedColor
-        label: qsTr("Account color")
+        //% "Account color"
+        label: qsTrId("account-color")
         selectOptions: Constants.accountColors.map(color => {
             return {
                 text: "",
@@ -82,7 +91,11 @@ ModalPopup {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        label: loading ? qsTr("Loading...") : qsTr("Add account >")
+        label: loading ?
+        //% "Loading..."
+        qsTrId("loading") :
+        //% "Add account >"
+        qsTrId("add-account")
 
         disabled: loading || passwordInput.text === "" || accountNameInput.text === ""
 

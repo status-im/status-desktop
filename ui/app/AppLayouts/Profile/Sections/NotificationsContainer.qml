@@ -13,7 +13,8 @@ Item {
 
     StyledText {
         id: element6
-        text: qsTr("Notifications settings")
+        //% "Notifications settings"
+        text: qsTrId("notifications-settings")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top

@@ -9,7 +9,8 @@ ModalPopup {
     property var onClosed: function () {}
     property var onNextClick: function () {}
     id: popup
-    title: qsTr("Choose a chat name")
+    //% "Choose a chat name"
+    title: qsTrId("intro-wizard-title2")
 
     AccountList {
         id: accountList

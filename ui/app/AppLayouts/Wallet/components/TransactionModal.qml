@@ -5,7 +5,8 @@ import "./"
 
 ModalPopup {
   id: popup
-  title: qsTr("Transaction Details")
+  //% "Transaction Details"
+  title: qsTrId("transaction-details")
 
   Item {
     id: confirmations
@@ -19,13 +20,15 @@ ModalPopup {
 
     StyledText {
       id: confirmationsCount
-      text: qsTr("9999 Confirmations")
+      //% "9999 Confirmations"
+      text: qsTrId("9999-confirmations")
       font.pixelSize: 14
     }
 
     StyledText {
       id: confirmationsInfo
-      text: qsTr("When the transaction has 12 confirmations you can consider it settled.")
+      //% "When the transaction has 12 confirmations you can consider it settled."
+      text: qsTrId("confirmations-helper-text")
       font.pixelSize: 14
       font.weight: Font.Medium
       color: Style.current.darkGrey
@@ -54,7 +57,8 @@ ModalPopup {
 
     StyledText {
       id: labelBlock
-      text: qsTr("Block")
+      //% "Block"
+      text: qsTrId("block")
       font.pixelSize: 14
       font.weight: Font.Medium
       color: Style.current.darkGrey
@@ -79,7 +83,8 @@ ModalPopup {
 
     StyledText {
       id: labelHash
-      text: qsTr("Hash")
+      //% "Hash"
+      text: qsTrId("hash")
       font.pixelSize: 14
       font.weight: Font.Medium
       color: Style.current.darkGrey
@@ -107,7 +112,8 @@ ModalPopup {
 
     StyledText {
       id: labelFrom
-      text: qsTr("From")
+      //% "From"
+      text: qsTrId("from")
       font.pixelSize: 14
       font.weight: Font.Medium
       color: Style.current.darkGrey
@@ -135,7 +141,8 @@ ModalPopup {
 
     StyledText {
       id: labelTo
-      text: qsTr("To")
+      //% "To"
+      text: qsTrId("to")
       font.pixelSize: 14
       font.weight: Font.Medium
       color: Style.current.darkGrey
@@ -162,7 +169,8 @@ ModalPopup {
 
     StyledText {
       id: labelGasLimit
-      text: qsTr("Gas limit")
+      //% "Gas limit"
+      text: qsTrId("gas-limit")
       font.pixelSize: 14
       font.weight: Font.Medium
       color: Style.current.darkGrey
@@ -187,7 +195,8 @@ ModalPopup {
 
     StyledText {
       id: labelGasPrice
-      text: qsTr("Gas price")
+      //% "Gas price"
+      text: qsTrId("gas-price")
       font.pixelSize: 14
       font.weight: Font.Medium
       color: Style.current.darkGrey
@@ -212,7 +221,8 @@ ModalPopup {
 
     StyledText {
       id: labelGasUsed
-      text: qsTr("Gas used")
+      //% "Gas used"
+      text: qsTrId("gas-used")
       font.pixelSize: 14
       font.weight: Font.Medium
       color: Style.current.darkGrey
@@ -237,7 +247,8 @@ ModalPopup {
 
     StyledText {
       id: labelNonce
-      text: qsTr("Nonce")
+      //% "Nonce"
+      text: qsTrId("nonce")
       font.pixelSize: 14
       font.weight: Font.Medium
       color: Style.current.darkGrey

@@ -14,7 +14,8 @@ Item {
 
     StyledText {
         id: element2
-        text: qsTr("Contacts")
+        //% "Contacts"
+        text: qsTrId("contacts")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top

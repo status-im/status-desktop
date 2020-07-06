@@ -6,7 +6,8 @@ import "../../../../sounds"
 
 ModalPopup {
     id: popup
-    title: qsTr("Add account from private key")
+    //% "Add account from private key"
+    title: qsTrId("add-private-key-account")
     height: 600
 
     property int marginBetweenInputs: 38
@@ -18,23 +19,28 @@ ModalPopup {
 
     function validate() {
         if (passwordInput.text === "") {
-            passwordValidationError = qsTr("You need to enter a password")
+            //% "You need to enter a password"
+            passwordValidationError = qsTrId("you-need-to-enter-a-password")
         } else if (passwordInput.text.length < 4) {
-            passwordValidationError = qsTr("Password needs to be 4 characters or more")
+            //% "Password needs to be 4 characters or more"
+            passwordValidationError = qsTrId("password-needs-to-be-4-characters-or-more")
         } else {
             passwordValidationError = ""
         }
 
         if (accountNameInput.text === "") {
-            accountNameValidationError = qsTr("You need to enter an account name")
+            //% "You need to enter an account name"
+            accountNameValidationError = qsTrId("you-need-to-enter-an-account-name")
         } else {
             accountNameValidationError = ""
         }
 
         if (accountPKeyInput.text === "") {
-            privateKeyValidationError = qsTr("You need to enter a private key")
+            //% "You need to enter a private key"
+            privateKeyValidationError = qsTrId("you-need-to-enter-a-private-key")
         } else if (!Utils.isPrivateKey(accountPKeyInput.text)) {
-            privateKeyValidationError = qsTr("Enter a valid private key (64 characters hexadecimal string)")
+            //% "Enter a valid private key (64 characters hexadecimal string)"
+            privateKeyValidationError = qsTrId("enter-a-valid-private-key-(64-characters-hexadecimal-string)")
         } else {
             privateKeyValidationError = ""
         }
@@ -55,8 +61,10 @@ ModalPopup {
 
     Input {
         id: passwordInput
-        placeholderText: qsTr("Enter your password…")
-        label: qsTr("Password")
+        //% "Enter your password…"
+        placeholderText: qsTrId("enter-your-password…")
+        //% "Password"
+        label: qsTrId("password")
         textField.echoMode: TextInput.Password
         validationError: popup.passwordValidationError
     }
@@ -66,8 +74,10 @@ ModalPopup {
         id: accountPKeyInput
         anchors.top: passwordInput.bottom
         anchors.topMargin: marginBetweenInputs
-        placeholderText: qsTr("Paste the contents of your private key")
-        label: qsTr("Private key")
+        //% "Paste the contents of your private key"
+        placeholderText: qsTrId("paste-the-contents-of-your-private-key")
+        //% "Private key"
+        label: qsTrId("private-key")
         customHeight: 88
         validationError: popup.privateKeyValidationError
     }
@@ -76,8 +86,10 @@ ModalPopup {
         id: accountNameInput
         anchors.top: accountPKeyInput.bottom
         anchors.topMargin: marginBetweenInputs
-        placeholderText: qsTr("Enter an account name...")
-        label: qsTr("Account name")
+        //% "Enter an account name..."
+        placeholderText: qsTrId("enter-an-account-name...")
+        //% "Account name"
+        label: qsTrId("account-name")
         validationError: popup.accountNameValidationError
     }
 
@@ -86,7 +98,8 @@ ModalPopup {
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs
         bgColor: selectedColor
-        label: qsTr("Account color")
+        //% "Account color"
+        label: qsTrId("account-color")
         selectOptions: Constants.accountColors.map(color => {
             return {
                 text: "",
@@ -103,7 +116,11 @@ ModalPopup {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        label: loading ? qsTr("Loading...") : qsTr("Add account >")
+        label: loading ?
+        //% "Loading..."
+        qsTrId("loading") :
+        //% "Add account >"
+        qsTrId("add-account")
 
         disabled: loading || passwordInput.text === "" || accountNameInput.text === "" || accountPKeyInput.text === ""
 

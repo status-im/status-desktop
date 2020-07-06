@@ -43,33 +43,41 @@ Item {
             return sendingError.open()
         }
 
-        sendingSuccess.text = qsTr("Transaction sent to the blockchain. You can watch the progress on Etherscan: https://etherscan.io/tx/%1").arg(result)
+        //% "Transaction sent to the blockchain. You can watch the progress on Etherscan: https://etherscan.io/tx/%1"
+        sendingSuccess.text = qsTrId("transaction-sent-to-the-blockchain.-you-can-watch-the-progress-on-etherscan:-https://etherscan.io/tx/%1").arg(result)
         sendingSuccess.open()
     }
 
     function validate() {
         if (txtPassword.text === "") {
-            passwordValidationError = qsTr("You need to enter a password")
+            //% "You need to enter a password"
+            passwordValidationError = qsTrId("you-need-to-enter-a-password")
         } else if (txtPassword.text.length < 4) {
-            passwordValidationError = qsTr("Password needs to be 4 characters or more")
+            //% "Password needs to be 4 characters or more"
+            passwordValidationError = qsTrId("password-needs-to-be-4-characters-or-more")
         } else {
             passwordValidationError = ""
         }
 
         if (txtTo.text === "") {
-            toValidationError = qsTr("You need to enter a destination address")
+            //% "You need to enter a destination address"
+            toValidationError = qsTrId("you-need-to-enter-a-destination-address")
         } else if (!Utils.isAddress(txtTo.text)) {
-            toValidationError = qsTr("This needs to be a valid address (starting with 0x)")
+            //% "This needs to be a valid address (starting with 0x)"
+            toValidationError = qsTrId("this-needs-to-be-a-valid-address-(starting-with-0x)")
         } else {
             toValidationError = ""
         }
 
         if (txtAmount.text === "") {
-            amountValidationError = qsTr("You need to enter an amount")
+            //% "You need to enter an amount"
+            amountValidationError = qsTrId("you-need-to-enter-an-amount")
         } else if (isNaN(txtAmount.text)) {
-            amountValidationError = qsTr("This needs to be a number")
+            //% "This needs to be a number"
+            amountValidationError = qsTrId("this-needs-to-be-a-number")
         } else if (parseFloat(txtAmount.text) > parseFloat(selectedAccountValue)) {
-            amountValidationError = qsTr("Amount needs to be lower than your balance (%1)").arg(selectedAccountValue)
+            //% "Amount needs to be lower than your balance (%1)"
+            amountValidationError = qsTrId("amount-needs-to-be-lower-than-your-balance-(%1)").arg(selectedAccountValue)
         } else {
             amountValidationError = ""
         }
@@ -88,7 +96,8 @@ Item {
     }
     MessageDialog {
         id: sendingSuccess
-        title: qsTr("Success sending the transaction")
+        //% "Success sending the transaction"
+        title: qsTrId("success-sending-the-transaction")
         icon: StandardIcon.NoIcon
         standardButtons: StandardButton.Ok
         onAccepted: {
@@ -98,9 +107,11 @@ Item {
 
     Input {
         id: txtAmount
-        label: qsTr("Amount")
+        //% "Amount"
+        label: qsTrId("amount")
         anchors.top: parent.top
-        placeholderText: qsTr("Enter amount...")
+        //% "Enter amount..."
+        placeholderText: qsTrId("enter-amount...")
         validationError: amountValidationError
     }
 
@@ -110,7 +121,8 @@ Item {
         iconHeight: 24
         iconWidth: 24
         icon:  "../../../img/tokens/" + selectedAssetSymbol.toUpperCase() + ".png"
-        label: qsTr("Select the asset")
+        //% "Select the asset"
+        label: qsTrId("select-the-asset")
         anchors.top: txtAmount.bottom
         anchors.topMargin: Style.current.padding
         selectedText: selectedAssetName
@@ -126,7 +138,8 @@ Item {
 
     StyledText {
         id: currentBalanceText
-        text: qsTr("Balance: %1").arg(selectedAccountValue)
+        //% "Balance: %1"
+        text: qsTrId("balance:-%1").arg(selectedAccountValue)
         font.pixelSize: 13
         color: Style.current.darkGrey
         anchors.top: assetTypeSelect.top
@@ -141,7 +154,8 @@ Item {
         iconWidth: 12
         icon: "../../../img/walletIcon.svg"
         iconColor: selectedAccountIconColor
-        label: qsTr("From account")
+        //% "From account"
+        label: qsTrId("from-account")
         anchors.top: assetTypeSelect.bottom
         anchors.topMargin: Style.current.padding
         selectedText: selectedAccountName
@@ -170,8 +184,10 @@ Item {
 
     Input {
         id: txtTo
-        label: qsTr("Recipient")
-        placeholderText: qsTr("Send to")
+        //% "Recipient"
+        label: qsTrId("recipient")
+        //% "Send to"
+        placeholderText: qsTrId("send-to")
         anchors.top: textSelectAccountAddress.bottom
         anchors.topMargin: Style.current.padding
         validationError: toValidationError
@@ -179,8 +195,10 @@ Item {
 
     Input {
         id: txtPassword
-        label: qsTr("Password")
-        placeholderText: qsTr("Enter Password")
+        //% "Password"
+        label: qsTrId("password")
+        //% "Enter Password"
+        placeholderText: qsTrId("biometric-auth-login-ios-fallback-label")
         anchors.top: txtTo.bottom
         anchors.topMargin: Style.current.padding
         textField.echoMode: TextInput.Password

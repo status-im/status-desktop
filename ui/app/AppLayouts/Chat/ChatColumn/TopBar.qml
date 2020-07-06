@@ -42,12 +42,19 @@ Rectangle {
         color: Style.current.darkGrey
         text: {
             switch(chatsModel.activeChannel.chatType){
-                case Constants.chatTypePublic: return qsTr("Public chat")
-                case Constants.chatTypeOneToOne: return (profileModel.isAdded(chatsModel.activeChannel.id) ? qsTr("Contact") : qsTr("Not a contact"))
+                //% "Public chat"
+                case Constants.chatTypePublic: return qsTrId("public-chat")
+                case Constants.chatTypeOneToOne: return (profileModel.isAdded(chatsModel.activeChannel.id) ?
+                //% "Contact"
+                qsTrId("chat-is-a-contact") :
+                //% "Not a contact"
+                qsTrId("chat-is-not-a-contact"))
                 case Constants.chatTypePrivateGroupChat: 
                     let cnt = chatsModel.activeChannel.members.rowCount();
-                    if(cnt > 1) return qsTr("%1 members").arg(cnt);
-                    return qsTr("1 member");
+                    //% "%1 members"
+                    if(cnt > 1) return qsTrId("%1-members").arg(cnt);
+                    //% "1 member"
+                    return qsTrId("1-member");
                 default: return "...";
             }
         }
@@ -94,12 +101,14 @@ Rectangle {
                 id: chatContextMenu
                 Action {
                     icon.source: "../../../img/close.svg"
-                    text: qsTr("Clear history")
+                    //% "Clear history"
+                    text: qsTrId("clear-history")
                     onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
                 }
                 Action {
                     icon.source: "../../../img/leave_chat.svg"
-                    text: qsTr("Leave Chat")
+                    //% "Leave Chat"
+                    text: qsTrId("leave-chat")
                     onTriggered: chatsModel.leaveActiveChat()
                 }
             }
@@ -108,17 +117,20 @@ Rectangle {
                 id: groupContextMenu
                 Action {
                     icon.source: "../../../img/group_chat.svg"
-                    text: qsTr("Group Information")
+                    //% "Group Information"
+                    text: qsTrId("group-information")
                     onTriggered: groupInfoPopup.open()
                 }
                 Action {
                     icon.source: "../../../img/close.svg"
-                    text: qsTr("Clear history")
+                    //% "Clear history"
+                    text: qsTrId("clear-history")
                     onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
                 }
                 Action {
                     icon.source: "../../../img/leave_chat.svg"
-                    text: qsTr("Leave Group")
+                    //% "Leave Group"
+                    text: qsTrId("leave-group")
                     onTriggered: chatsModel.leaveActiveChat()
                 }
             }

@@ -7,7 +7,8 @@ import "../../../sounds"
 
 ModalPopup {
     id: popup
-    title: qsTr("add custom token")
+    //% "Add custom token"
+    title: qsTrId("add-custom-token")
     height: 630
 
     property int marginBetweenInputs: 35
@@ -24,31 +25,38 @@ ModalPopup {
 
     Input {
         id: addressInput
-        placeholderText: qsTr("Enter contract address...")
-        label: qsTr("Contract address")
+        //% "Enter contract address..."
+        placeholderText: qsTrId("enter-contract-address...")
+        //% "Contract address"
+        label: qsTrId("contract-address")
     }
 
     Input {
         id: nameInput
         anchors.top: addressInput.bottom
         anchors.topMargin: marginBetweenInputs
-        placeholderText: qsTr("The name of your token...")
-        label: qsTr("Name")
+        //% "The name of your token..."
+        placeholderText: qsTrId("the-name-of-your-token...")
+        //% "Name"
+        label: qsTrId("name")
     }
 
     Input {
         id: symbolInput
         anchors.top: nameInput.bottom
         anchors.topMargin: marginBetweenInputs
-        placeholderText: qsTr("ABC")
-        label: qsTr("Symbol")
+        //% "ABC"
+        placeholderText: qsTrId("abc")
+        //% "Symbol"
+        label: qsTrId("symbol")
     }
 
     Input {
         id: decimalsInput
         anchors.top: symbolInput.bottom
         anchors.topMargin: marginBetweenInputs
-        label: qsTr("Decimals")
+        //% "Decimals"
+        label: qsTrId("decimals")
         text: "18"
     }
 
@@ -60,7 +68,8 @@ ModalPopup {
             anchors.topMargin: Style.current.padding
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
-            label: qsTr("Add")
+            //% "Add"
+            label: qsTrId("add")
 
             disabled: addressInput.text === "" || nameInput.text === "" || symbolInput.text === "" || decimalsInput.text === ""
 

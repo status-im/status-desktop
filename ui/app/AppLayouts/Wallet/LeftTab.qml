@@ -32,7 +32,8 @@ Item {
             id: title
             x: 143
             y: 16
-            text: qsTr("Wallet")
+            //% "Wallet"
+            text: qsTrId("wallet")
             anchors.top: parent.top
             anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: parent.horizontalCenter

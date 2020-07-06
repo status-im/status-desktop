@@ -35,7 +35,8 @@ ModalPopup {
 
         pubKey = chatsModel.resolveENS(chatKey.text)
         if(pubKey == ""){
-            ensUsername.text = qsTr("User not found");
+            //% "User not found"
+            ensUsername.text = qsTrId("user-not-found");
         } else {
             ensUsername.text = chatsModel.formatENSUsername(chatKey.text) + " • " + Utils.compactAddress(pubKey, 4)
         }
@@ -48,7 +49,8 @@ ModalPopup {
     }
 
     id: popup
-    title: qsTr("New chat")
+    //% "New chat"
+    title: qsTrId("new-chat")
 
     onOpened: {
         chatKey.text = "";
@@ -59,7 +61,8 @@ ModalPopup {
 
     Input {
         id: chatKey
-        placeholderText: qsTr("Enter ENS username or chat key")
+        //% "Enter ENS username or chat key"
+        placeholderText: qsTrId("enter-contact-code")
         Keys.onEnterPressed: doJoin()
         Keys.onReturnPressed: doJoin()
         validationError: popup.validationError

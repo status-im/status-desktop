@@ -13,7 +13,8 @@ Item {
 
     StyledText {
         id: txtTitle
-        text: qsTr("Sign out controls")
+        //% "Sign out controls"
+        text: qsTrId("sign-out-controls")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top
@@ -26,8 +27,10 @@ Item {
         id: btnLogout
         anchors.top: txtTitle.bottom
         anchors.topMargin: Style.current.padding
-        // label: qsTr("Logout")
-        label: qsTr("Exit")
+        //% "Logout"
+        // label: qsTrId("logout")
+        //% "Exit"
+        label: qsTrId("exit")
 
         onClicked: {
             // profileModel.logout();

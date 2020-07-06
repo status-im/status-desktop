@@ -13,7 +13,8 @@ Item {
 
     StyledText {
         id: element1
-        text: qsTr("ENS usernames")
+        //% "ENS usernames"
+        text: qsTrId("ens-usernames")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top

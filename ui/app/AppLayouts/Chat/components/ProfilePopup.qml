@@ -127,7 +127,8 @@ ModalPopup {
             id: labelEnsUsername
             height: isEnsVerified ? 20 : 0
             visible: isEnsVerified
-            text: qsTr("ENS username")
+            //% "ENS username"
+            text: qsTrId("ens-username")
             font.pixelSize: 13
             font.weight: Font.Medium
             color: Style.current.darkGrey
@@ -162,7 +163,8 @@ ModalPopup {
 
         StyledText {
             id: labelChatKey
-            text: qsTr("Chat key")
+            //% "Chat key"
+            text: qsTrId("chat-key")
             font.pixelSize: 13
             font.weight: Font.Medium
             color: Style.current.darkGrey
@@ -205,7 +207,8 @@ ModalPopup {
 
         StyledText {
             id: labelShareURL
-            text: qsTr("Share Profile URL")
+            //% "Share Profile URL"
+            text: qsTrId("share-profile-url")
             font.pixelSize: 13
             font.weight: Font.Medium
             color: Style.current.darkGrey
@@ -243,7 +246,8 @@ ModalPopup {
         StyledButton {
             anchors.left: parent.left
             anchors.leftMargin: 20
-            label: qsTr("Send Message")
+            //% "Send Message"
+            label: qsTrId("send-message")
             anchors.bottom: parent.bottom
             onClicked: {
                 profilePopup.close()
@@ -260,7 +264,8 @@ ModalPopup {
             btnBorderWidth: 1
             btnBorderColor: Style.current.grey
             textColor: Style.current.red
-            label: qsTr("Block User")
+            //% "Block User"
+            label: qsTrId("block-user")
             anchors.bottom: parent.bottom
             onClicked: {
                 chatsModel.blockContact(fromAuthor)
@@ -274,9 +279,11 @@ ModalPopup {
             id: addToContactsButton
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
-            label: profileModel.isAdded(
-                       fromAuthor) ? qsTr("Remove Contact") : qsTr(
-                                         "Add to contacts")
+            label: profileModel.isAdded(fromAuthor) ?
+            //% "Remove Contact"
+            qsTrId("remove-contact") :
+            //% "Add to contacts"
+            qsTrId("add-to-contacts")
             anchors.bottom: parent.bottom
             onClicked: {
                 if (profileModel.isAdded(fromAuthor)) {

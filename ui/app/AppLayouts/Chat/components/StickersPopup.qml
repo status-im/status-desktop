@@ -67,7 +67,8 @@ Popup {
                         visible: stickerPackListView.count <= 0
                         anchors.fill: parent
                         font.pixelSize: 15
-                        text: qsTr("You don't have any stickers yet")
+                        //% "You don't have any stickers yet"
+                        text: qsTrId("you-don't-have-any-stickers-yet")
                         lineHeight: 22
                         horizontalAlignment: Text.AlignHCenter
                     }
@@ -77,7 +78,8 @@ Popup {
                         visible: stickerPackListView.count > 0 && stickerGrid.count <= 0
                         anchors.fill: parent
                         font.pixelSize: 15
-                        text: qsTr("Recently used stickers will appear here")
+                        //% "Recently used stickers will appear here"
+                        text: qsTrId("recently-used-stickers")
                         lineHeight: 22
                         horizontalAlignment: Text.AlignHCenter
                     }
@@ -85,7 +87,8 @@ Popup {
 
                 StyledButton {
                     visible: stickerPackListView.count <= 0
-                    label: qsTr("Get Stickers")
+                    //% "Get Stickers"
+                    label: qsTrId("get-stickers")
                     anchors.top: noStickersContainer.bottom
                     anchors.topMargin: Style.current.padding
                     anchors.horizontalCenter: parent.horizontalCenter

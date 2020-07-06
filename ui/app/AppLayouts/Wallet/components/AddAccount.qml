@@ -27,28 +27,32 @@ AddButton {
         id: newAccountMenu
         width: 280
         Action {
-            text: qsTr("Generate an account")
+            //% "Generate an account"
+            text: qsTrId("generate-a-new-account")
             icon.source: "../../../img/generate_account.svg"
             onTriggered: {
                 generateAccountModal.open()
             }
         }
         Action {
-            text: qsTr("Add a watch-only address")
+            //% "Add a watch-only address"
+            text: qsTrId("add-a-watch-account")
             icon.source: "../../../img/add_watch_only.svg"
             onTriggered: {
                 addWatchOnlyAccountModal.open()
             }
         }
         Action {
-            text: qsTr("Enter a seed phrase")
+            //% "Enter a seed phrase"
+            text: qsTrId("enter-a-seed-phrase")
             icon.source: "../../../img/enter_seed_phrase.svg"
             onTriggered: {
                 addAccountWithSeedModal.open()
             }
         }
         Action {
-            text: qsTr("Enter a private key")
+            //% "Enter a private key"
+            text: qsTrId("enter-a-private-key")
             icon.source: "../../../img/enter_private_key.svg"
             onTriggered: {
                 addAccountWithPrivateKeydModal.open()

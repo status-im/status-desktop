@@ -184,21 +184,24 @@ Item {
                     id: newSettingsMenu
                     width: 280
                     Action {
-                        text: qsTr("Account Settings")
+                        //% "Account Settings"
+                        text: qsTrId("account-settings")
                         icon.source: "../../img/walletIcon.svg"
                         onTriggered: {
                             accountSettingsModal.open()
                         }
                     }
                     Action {
-                        text: qsTr("Add/Remove Tokens")
+                        //% "Add/Remove Tokens"
+                        text: qsTrId("add/remove-tokens")
                         icon.source: "../../img/add_remove_token.svg"
                         onTriggered: {
                             tokenSettingsModal.open()
                         }
                     }
                     Action {
-                        text: qsTr("Set Currency")
+                        //% "Set Currency"
+                        text: qsTrId("set-currency")
                         icon.source: "../../img/set_currency.svg"
                         onTriggered: {
                             setCurrencyModal.open()

@@ -245,7 +245,8 @@ Item {
             StyledText {
                 id: generateKeysLinkText
                 color: Style.current.blue
-                text: qsTr("Generate new keys")
+                //% "Generate new keys"
+                text: qsTrId("generate-new-keys")
                 font.pixelSize: 13
             }
         }

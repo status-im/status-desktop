@@ -17,23 +17,28 @@ ModalPopup {
 
     function validate() {
         if (passwordInput.text === "") {
-            passwordValidationError = qsTr("You need to enter a password")
+            //% "You need to enter a password"
+            passwordValidationError = qsTrId("you-need-to-enter-a-password")
         } else if (passwordInput.text.length < 4) {
-            passwordValidationError = qsTr("Password needs to be 4 characters or more")
+            //% "Password needs to be 4 characters or more"
+            passwordValidationError = qsTrId("password-needs-to-be-4-characters-or-more")
         } else {
             passwordValidationError = ""
         }
 
         if (accountNameInput.text === "") {
-            accountNameValidationError = qsTr("You need to enter an account name")
+            //% "You need to enter an account name"
+            accountNameValidationError = qsTrId("you-need-to-enter-an-account-name")
         } else {
             accountNameValidationError = ""
         }
 
         if (accountSeedInput.text === "") {
-            seedValidationError = qsTr("You need to enter a seed phrase")
+            //% "You need to enter a seed phrase"
+            seedValidationError = qsTrId("you-need-to-enter-a-seed-phrase")
         } else if (!Utils.isMnemonic(accountSeedInput.text)) {
-            seedValidationError = qsTr("Enter a valid mnemonic")
+            //% "Enter a valid mnemonic"
+            seedValidationError = qsTrId("enter-a-valid-mnemonic")
         } else {
             seedValidationError = ""
         }
@@ -46,7 +51,8 @@ ModalPopup {
         passwordInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    title: qsTr("Add account with a seed phrase")
+    //% "Add account with a seed phrase"
+    title: qsTrId("add-seed-account")
 
     Item {
         ErrorSound {
@@ -56,8 +62,10 @@ ModalPopup {
 
     Input {
         id: passwordInput
-        placeholderText: qsTr("Enter your password…")
-        label: qsTr("Password")
+        //% "Enter your password…"
+        placeholderText: qsTrId("enter-your-password…")
+        //% "Password"
+        label: qsTrId("password")
         textField.echoMode: TextInput.Password
         validationError: popup.passwordValidationError
     }
@@ -67,8 +75,10 @@ ModalPopup {
         id: accountSeedInput
         anchors.top: passwordInput.bottom
         anchors.topMargin: marginBetweenInputs
-        placeholderText: qsTr("Enter your seed phrase, separate words with commas or spaces...")
-        label: qsTr("Seed phrase")
+        //% "Enter your seed phrase, separate words with commas or spaces..."
+        placeholderText: qsTrId("enter-your-seed-phrase,-separate-words-with-commas-or-spaces...")
+        //% "Seed phrase"
+        label: qsTrId("recovery-phrase")
         customHeight: 88
         validationError: popup.seedValidationError
     }
@@ -77,8 +87,10 @@ ModalPopup {
         id: accountNameInput
         anchors.top: accountSeedInput.bottom
         anchors.topMargin: marginBetweenInputs
-        placeholderText: qsTr("Enter an account name...")
-        label: qsTr("Account name")
+        //% "Enter an account name..."
+        placeholderText: qsTrId("enter-an-account-name...")
+        //% "Account name"
+        label: qsTrId("account-name")
         validationError: popup.accountNameValidationError
     }
 
@@ -87,7 +99,8 @@ ModalPopup {
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs
         bgColor: selectedColor
-        label: qsTr("Account color")
+        //% "Account color"
+        label: qsTrId("account-color")
         selectOptions: Constants.accountColors.map(color => {
             return {
                 text: "",
@@ -104,7 +117,11 @@ ModalPopup {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        label: loading ? qsTr("Loading...") : qsTr("Add account >")
+        label: loading ?
+        //% "Loading..."
+        qsTrId("loading") :
+        //% "Add account >"
+        qsTrId("add-account")
 
         disabled: loading || passwordInput.text === "" || accountNameInput.text === "" || accountSeedInput.text === ""
 

@@ -39,7 +39,8 @@ ModalPopup {
             });
         }
         data.append({
-            name: profileModel.profile.username + " " + qsTr("(You)"),
+            //% "(You)"
+            name: profileModel.profile.username + " " + qsTrId("(you)"),
             pubKey: profileModel.profile.pubKey,
             address: "",
             identicon: profileModel.profile.identicon,
@@ -59,7 +60,8 @@ ModalPopup {
    
       StyledText {
           id: lblNewGroup
-          text: qsTr("New group chat")
+          //% "New group chat"
+          text: qsTrId("new-group-chat")
           anchors.left: parent.left
           font.bold: true
           font.pixelSize: 17
@@ -69,7 +71,8 @@ ModalPopup {
 
       StyledText {
           anchors.top: lblNewGroup.bottom
-          text: qsTr("%1 / 10 members").arg(memberCount)
+          //% "%1 / 10 members"
+          text: qsTrId("%1-/-10-members").arg(memberCount)
           color: Style.current.darkGrey
           font.pixelSize: 15
       }
@@ -86,7 +89,8 @@ ModalPopup {
 
     Input {
         id: groupName
-        placeholderText: qsTr("Group name")
+        //% "Group name"
+        placeholderText: qsTrId("group-name")
         visible: !selectChatMembers
     }
 
@@ -219,7 +223,8 @@ ModalPopup {
             visible: !selectChatMembers
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            label: qsTr("Create Group Chat")
+            //% "Create Group Chat"
+            label: qsTrId("create-group-chat")
             disabled: groupName.text === ""
             onClicked : doJoin()
         }

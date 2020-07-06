@@ -13,7 +13,8 @@ Item {
 
     StyledText {
         id: element5
-        text: qsTr("Language settings")
+        //% "Language settings"
+        text: qsTrId("language-settings")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top

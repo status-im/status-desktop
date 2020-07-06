@@ -38,7 +38,8 @@ Popup {
     contentItem: Item {
         StyledText {
             id: groupTitleLabel
-            text: qsTr("Group name")
+            //% "Group name"
+            text: qsTrId("group-name")
             anchors.top: parent.top
             anchors.left: parent.left
             font.pixelSize: 13
@@ -55,7 +56,8 @@ Popup {
             anchors.leftMargin: Style.current.padding
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
-            placeholderText: qsTr("Group Name")
+            //% "Group name"
+            placeholderText: qsTrId("group-name")
             Keys.onEnterPressed: doRename()
             Keys.onReturnPressed: doRename()
         }
@@ -66,7 +68,8 @@ Popup {
             anchors.topMargin: 22
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
-            label: qsTr("Save")
+            //% "Save"
+            label: qsTrId("save")
             onClicked : doRename()
         }
   }

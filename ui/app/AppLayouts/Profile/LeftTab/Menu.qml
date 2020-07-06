@@ -42,7 +42,8 @@ Rectangle {
             StyledText {
                 id: element1
                 color: "#000000"
-                text: qsTr("ENS usernames")
+                //% "ENS usernames"
+                text: qsTrId("ens-usernames")
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
@@ -67,7 +68,8 @@ Rectangle {
             StyledText {
                 id: element2
                 color: "#000000"
-                text: qsTr("Contacts")
+                //% "Contacts"
+                text: qsTrId("contacts")
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
@@ -92,7 +94,8 @@ Rectangle {
             StyledText {
                 id: element3
                 color: "#000000"
-                text: qsTr("Privacy and security")
+                //% "Privacy and security"
+                text: qsTrId("privacy-and-security")
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
@@ -117,7 +120,8 @@ Rectangle {
 
             StyledText {
                 color: "#000000"
-                text: qsTr("Devices")
+                //% "Devices"
+                text: qsTrId("devices")
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
@@ -143,7 +147,8 @@ Rectangle {
             StyledText {
                 id: element4
                 color: "#000000"
-                text: qsTr("Sync settings")
+                //% "Sync settings"
+                text: qsTrId("sync-settings")
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
@@ -169,7 +174,8 @@ Rectangle {
             StyledText {
                 id: element5
                 color: "#000000"
-                text: qsTr("Language settings")
+                //% "Language settings"
+                text: qsTrId("language-settings")
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
@@ -195,7 +201,8 @@ Rectangle {
             StyledText {
                 id: element6
                 color: "#000000"
-                text: qsTr("Notifications settings")
+                //% "Notifications settings"
+                text: qsTrId("notifications-settings")
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
@@ -220,7 +227,8 @@ Rectangle {
             StyledText {
                 id: element7
                 color: "#000000"
-                text: qsTr("Advanced settings")
+                //% "Advanced settings"
+                text: qsTrId("advanced-settings")
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
@@ -246,7 +254,8 @@ Rectangle {
             StyledText {
                 id: element8
                 color: "#000000"
-                text: qsTr("Need help?")
+                //% "Need help?"
+                text: qsTrId("need-help")
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
@@ -271,7 +280,8 @@ Rectangle {
             StyledText {
                 id: element9
                 color: "#000000"
-                text: qsTr("About")
+                //% "About"
+                text: qsTrId("about-app")
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter
@@ -296,7 +306,8 @@ Rectangle {
             StyledText {
                 id: element10
                 color: "#000000"
-                text: qsTr("Sign out")
+                //% "Sign out"
+                text: qsTrId("sign-out")
                 anchors.left: parent.left
                 anchors.leftMargin: 72
                 anchors.verticalCenter: parent.verticalCenter

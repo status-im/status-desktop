@@ -130,7 +130,8 @@ Item {
 
             StyledText {
                 id: joinChat
-                text: qsTr("Join chat")
+                //% "Join chat"
+                text: qsTrId("join-chat")
                 font.pixelSize: 20
                 color: Style.current.blue
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -145,7 +146,8 @@ Item {
             } 
 
             StyledText {
-                text: qsTr("Decline invitation")
+                //% "Decline invitation"
+                text: qsTrId("group-chat-decline-invitation")
                 font.pixelSize: 20
                 color: Style.current.blue
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -332,7 +334,11 @@ Item {
         StyledTextEdit {
             id: sentMessage
             color: Style.current.darkGrey
-            text: outgoingStatus == "sent" ? qsTr("Sent") : qsTr("Sending...")
+            text: outgoingStatus == "sent" ?
+            //% "Sent"
+            qsTrId("status-sent") :
+            //% "Sending..."
+            qsTrId("sending")
             anchors.top: chatTime.top
             anchors.bottomMargin: Style.current.padding
             anchors.right: chatTime.left
