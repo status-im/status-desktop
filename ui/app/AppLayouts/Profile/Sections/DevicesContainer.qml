@@ -16,7 +16,8 @@ Item {
 
     StyledText {
         id: sectionTitle
-        text: qsTr("Devices")
+        //% "Devices"
+        text: qsTrId("devices")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top
@@ -37,13 +38,15 @@ Item {
 
         StyledText {
             id: deviceNameLbl
-            text: qsTr("Please set a name for your device.")
+            //% "Please set a name for your device."
+            text: qsTrId("pairing-please-set-a-name")
             font.pixelSize: 14
         }
 
         Input {
             id: deviceNameTxt
-            placeholderText: qsTr("Specify a name")
+            //% "Specify a name"
+            placeholderText: qsTrId("specify-name")
             anchors.top: deviceNameLbl.bottom
             anchors.topMargin: Style.current.padding
         }
@@ -53,7 +56,8 @@ Item {
             anchors.top: deviceNameTxt.bottom
             anchors.topMargin: 10
             anchors.right: deviceNameTxt.right
-            label: qsTr("Continue")
+            //% "Continue"
+            label: qsTrId("continue")
             disabled: deviceNameTxt.text === ""
             onClicked : profileModel.setDeviceName(deviceNameTxt.text.trim())
         }
@@ -86,7 +90,8 @@ Item {
 
             StyledText {
                 id: advertiseDeviceTitle
-                text: qsTr("Advertise device")
+                //% "Advertise device"
+                text: qsTrId("pair-this-device")
                 font.pixelSize: 18
                 font.weight: Font.Bold
                 color: Style.current.blue
@@ -96,7 +101,8 @@ Item {
 
             StyledText {
                 id: advertiseDeviceDesk
-                text: qsTr("Pair your devices to sync contacts and chats between them")
+                //% "Pair your devices to sync contacts and chats between them"
+                text: qsTrId("pair-this-device-description")
                 font.pixelSize: 14
                 anchors.top: advertiseDeviceTitle.bottom
                 anchors.topMargin: 6
@@ -114,7 +120,8 @@ Item {
         StyledText {
             anchors.top: advertiseDevice.bottom
             anchors.topMargin: Style.current.padding
-            text: qsTr("Learn more")
+            //% "Learn more"
+            text: qsTrId("learn-more")
             font.pixelSize: 16
             color: Style.current.blue
             anchors.left: parent.left
@@ -131,7 +138,11 @@ Item {
         anchors.bottom: syncContainer.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        label: isSyncing ? qsTr("Syncing...") : qsTr("Sync all devices")
+        label: isSyncing ?
+        //% "Syncing..."
+        qsTrId("sync-in-progress") :
+        //% "Sync all devices"
+        qsTrId("sync-all-devices")
         disabled: isSyncing
         onClicked : {
             isSyncing = true;

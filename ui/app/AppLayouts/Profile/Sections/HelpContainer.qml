@@ -27,7 +27,8 @@ Item {
 
     StyledText {
         id: element8
-        text: qsTr("Help menus: FAQ, Glossary, etc.")
+        //% "Help menus: FAQ, Glossary, etc."
+        text: qsTrId("help-menus:-faq,-glossary,-etc.")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top

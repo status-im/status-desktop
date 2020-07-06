@@ -11,7 +11,8 @@ ModalPopup {
     property var changeSelectedAccount
     id: popup
     // TODO add icon when we have that feature
-    title: qsTr("Status account settings")
+    //% "Status account settings"
+    title: qsTrId("status-account-settings")
     height: 635
 
     property int marginBetweenInputs: 35
@@ -20,7 +21,8 @@ ModalPopup {
 
     function validate() {
         if (accountNameInput.text === "") {
-            accountNameValidationError = qsTr("You need to enter an account name")
+            //% "You need to enter an account name"
+            accountNameValidationError = qsTrId("you-need-to-enter-an-account-name")
         } else {
             accountNameValidationError = ""
         }
@@ -40,8 +42,10 @@ ModalPopup {
 
     Input {
         id: accountNameInput
-        placeholderText: qsTr("Enter an account name...")
-        label: qsTr("Account name")
+        //% "Enter an account name..."
+        placeholderText: qsTrId("enter-an-account-name...")
+        //% "Account name"
+        label: qsTrId("account-name")
         text: currentAccount.name
         validationError: popup.accountNameValidationError
     }
@@ -51,7 +55,8 @@ ModalPopup {
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs
         bgColor: selectedColor
-        label: qsTr("Account color")
+        //% "Account color"
+        label: qsTrId("account-color")
         selectOptions: Constants.accountColors.map(color => {
             return {
                 text: "",
@@ -66,14 +71,18 @@ ModalPopup {
 
     TextWithLabel {
         id: typeText
-        label: qsTr("Type")
+        //% "Type"
+        label: qsTrId("type")
         text: {
             var result = ""
             switch (currentAccount.walletType) {
-                case Constants.watchWalletType: result = qsTr("Watch-only"); break;
+                //% "Watch-only"
+                case Constants.watchWalletType: result = qsTrId("watch-only"); break;
                 case Constants.keyWalletType:
-                case Constants.seedWalletType: result = qsTr("Off Status tree"); break;
-                default: result = qsTr("On Status tree")
+                //% "Off Status tree"
+                case Constants.seedWalletType: result = qsTrId("off-status-tree"); break;
+                //% "On Status tree"
+                default: result = qsTrId("on-status-tree")
             }
             return result
         }
@@ -83,7 +92,8 @@ ModalPopup {
 
     TextWithLabel {
         id: addressText
-        label: qsTr("Wallet address")
+        //% "Wallet address"
+        label: qsTrId("wallet-address")
         text: currentAccount.address
         fontFamily: Style.current.fontHexRegular.name
         anchors.top: typeText.bottom
@@ -92,7 +102,8 @@ ModalPopup {
 
     TextWithLabel {
         id: pathText
-        label: qsTr("Derivation path")
+        //% "Derivation path"
+        label: qsTrId("derivation-path")
         text: currentAccount.path
         anchors.top: addressText.bottom
         anchors.topMargin: marginBetweenInputs
@@ -101,8 +112,10 @@ ModalPopup {
     TextWithLabel {
         id: storageText
         visible: currentAccount.walletType !== Constants.watchWalletType
-        label: qsTr("Storage")
-        text: qsTr("This device")
+        //% "Storage"
+        label: qsTrId("storage")
+        //% "This device"
+        text: qsTrId("this-device")
         anchors.top: pathText.bottom
         anchors.topMargin: marginBetweenInputs
     }
@@ -113,7 +126,8 @@ ModalPopup {
             anchors.top: parent.top
             anchors.right: saveBtn.left
             anchors.rightMargin: Style.current.padding
-            label: qsTr("Delete account")
+            //% "Delete account"
+            label: qsTrId("delete-account")
             btnColor: Style.current.white
             textColor: Style.current.red
 
@@ -127,8 +141,10 @@ ModalPopup {
 
             MessageDialog {
                 id: confirmationDialog
-                title: qsTr("Are you sure?")
-                text: qsTr("A deleted account cannot be retrieved later. Only press yes if you backed up your key/seed or don't care about this account anymore")
+                //% "Are you sure?"
+                title: qsTrId("are-you-sure?")
+                //% "A deleted account cannot be retrieved later. Only press yes if you backed up your key/seed or don't care about this account anymore"
+                text: qsTrId("a-deleted-account-cannot-be-retrieved-later.-only-press-yes-if-you-backed-up-your-key/seed-or-don't-care-about-this-account-anymore")
                 icon: StandardIcon.Warning
                 standardButtons: StandardButton.Yes |  StandardButton.No
                 onAccepted: {
@@ -155,7 +171,8 @@ ModalPopup {
             anchors.top: parent.top
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
-            label: qsTr("Save changes")
+            //% "Save changes"
+            label: qsTrId("save-changes")
 
             disabled: accountNameInput.text === ""
 

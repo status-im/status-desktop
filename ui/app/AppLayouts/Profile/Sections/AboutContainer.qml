@@ -13,7 +13,8 @@ Item {
 
     StyledText {
         id: element9
-        text: qsTr("About the app")
+        //% "About the app"
+        text: qsTrId("about-the-app")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top
@@ -24,7 +25,8 @@ Item {
 
     StyledText {
         id: element10
-        text: qsTr("Status Desktop")
+        //% "Status Desktop"
+        text: qsTrId("status-desktop")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: element9.top
@@ -34,7 +36,8 @@ Item {
     }
     StyledText {
         id: element11
-        text: qsTr("Version: alpha.0")
+        //% "Version: alpha.0"
+        text: qsTrId("version:-alpha.0")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: element10.top
@@ -44,7 +47,8 @@ Item {
     }
     StyledText {
         id: element12
-        text: qsTr("Node Version: %1").arg(profileModel.nodeVersion())
+        //% "Node Version: %1"
+        text: qsTrId("node-version:-%1").arg(profileModel.nodeVersion())
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: element11.top
@@ -85,7 +89,8 @@ Item {
     StyledText {
         id: warningMessage
         x: 772
-        text: qsTr("Thanks for trying Status Desktop! Please note that this is an alpha release and we advise you that using this app should be done for testing purposes only and you assume the full responsibility for all risks concerning your data and funds. Status makes no claims of security or integrity of funds in these builds.")
+        //% "Thanks for trying Status Desktop! Please note that this is an alpha release and we advise you that using this app should be done for testing purposes only and you assume the full responsibility for all risks concerning your data and funds. Status makes no claims of security or integrity of funds in these builds."
+        text: qsTrId("thanks-for-trying-status-desktop!-please-note-that-this-is-an-alpha-release-and-we-advise-you-that-using-this-app-should-be-done-for-testing-purposes-only-and-you-assume-the-full-responsibility-for-all-risks-concerning-your-data-and-funds.-status-makes-no-claims-of-security-or-integrity-of-funds-in-these-builds.")
         font.bold: true
         anchors.top: faqLink.bottom
         anchors.topMargin: 30

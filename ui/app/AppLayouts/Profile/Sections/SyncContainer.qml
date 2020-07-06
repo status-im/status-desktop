@@ -13,7 +13,8 @@ Item {
 
     StyledText {
         id: element4
-        text: qsTr("Sync settings")
+        //% "Sync settings"
+        text: qsTrId("sync-settings")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top

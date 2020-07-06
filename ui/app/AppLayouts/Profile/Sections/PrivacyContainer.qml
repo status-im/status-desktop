@@ -13,7 +13,8 @@ Item {
 
     StyledText {
         id: element3
-        text: qsTr("Privacy and security settings")
+        //% "Privacy and security settings"
+        text: qsTrId("privacy-and-security-settings")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top
@@ -24,7 +25,8 @@ Item {
 
     Text {
       id: labelSecurity
-      text: qsTr("Security")
+      //% "Security"
+      text: qsTrId("security")
       font.pixelSize: 13
       font.weight: Font.Medium
       color: Style.current.darkGrey
@@ -42,7 +44,8 @@ Item {
       height: children[0].height
       width: children[0].width
       Text {
-          text: qsTr("Backup Seed Phrase")
+          //% "Backup Seed Phrase"
+          text: qsTrId("backup-seed-phrase")
           font.pixelSize: 14
       }
       MouseArea {

@@ -6,7 +6,8 @@ import "../../shared"
 ModalPopup {
     property var onOpenModalClick: function () {}
     id: popup
-    title: qsTr("Enter seed phrase")
+    //% "Enter seed phrase"
+    title: qsTrId("enter-seed-phrase")
     height: 200
 
     StyledText {

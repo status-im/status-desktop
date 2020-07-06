@@ -73,7 +73,8 @@ Rectangle {
     
     StyledText {
         id: lastChatMessage
-        text: lastMessage ? Emoji.parse(lastMessage, "26x26").replace(/\n|\r/g, ' ') : qsTr("No messages")
+        //% "No messages"
+        text: lastMessage ? Emoji.parse(lastMessage, "26x26").replace(/\n|\r/g, ' ') : qsTrId("no-messages")
         clip: true // This is needed because emojis don't ellide correctly
         anchors.right: contactNumberChatsCircle.left
         anchors.rightMargin: Style.current.smallPadding
@@ -101,9 +102,17 @@ Rectangle {
           if (now.toDateString() == messageDate.toDateString()) {
             return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
           } else if (yesterday.toDateString() == messageDate.toDateString()) {
-            return qsTr("Yesterday")
+            //% "Yesterday"
+            return qsTrId("yesterday")
           } else if (lastWeek.getTime() < messageDate.getTime()) {
-            let days = [qsTr('Sunday'), qsTr('Monday'), qsTr('Tuesday'), qsTr('Wednesday'), qsTr('Thursday'), qsTr('Friday'), qsTr('Saturday')];
+            //% "Sunday"
+            //% "Monday"
+            //% "Tuesday"
+            //% "Wednesday"
+            //% "Thursday"
+            //% "Friday"
+            //% "Saturday"
+            let days = [qsTrId("sunday"), qsTrId("monday"), qsTrId("tuesday"), qsTrId("wednesday"), qsTrId("thursday"), qsTrId("friday"), qsTrId("saturday")];
             return days[messageDate.getDay()];
           } else {
             return messageDate.getMonth()+1+"/"+messageDate.getDay()+"/"+messageDate.getFullYear()

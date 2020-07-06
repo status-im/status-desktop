@@ -5,553 +5,632 @@ ListModel {
    ListElement {
        key: "usd"
        code: "USD"
-       name: qsTr("US Dollars")
+       //% "US Dollars"
+       name: qsTrId("us-dollars")
        symbol: "$"
    }
 
    ListElement {
        key: "eur"
        code: "EUR"
-       name: qsTr("Euros")
+       //% "Euros"
+       name: qsTrId("euros")
        symbol: "€"
    }
 
    ListElement {
        key: "aed"
        code: "AED"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "د.إ"
    }
 
    ListElement {
        key: "afn"
        code: "AFN"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "؋"
    }
 
    ListElement {
        key: "ars"
        code: "ARS"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "$"
    }
 
    ListElement {
        key: "aud"
        code: "AUD"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "$"
    }
 
    ListElement {
        key: "bbd"
        code: "BBD"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "$"
    }
 
    ListElement {
        key: "bdt"
        code: "BDT"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: " Tk"
    }
 
    ListElement {
        key: "bgn"
        code: "BGN"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "лв"
    }
 
    ListElement {
        key: "bhd"
        code: "BHD"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "BD"
    }
 
    ListElement {
        key: "bnd"
        code: "BND"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "$"
    }
 
    ListElement {
        key: "bob"
        code: "BOB"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "$b"
    }
 
    ListElement {
        key: "brl"
        code: "BRL"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "R$"
    }
 
    ListElement {
        key: "btn"
        code: "BTN"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "Nu."
    }
 
    ListElement {
        key: "cad"
        code: "CAD"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "$"
    }
 
    ListElement {
        key: "chf"
        code: "CHF"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "CHF"
    }
 
    ListElement {
        key: "clp"
        code: "CLP"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "$"
    }
 
    ListElement {
        key: "cny"
        code: "CNY"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "¥"
    }
 
    ListElement {
        key: "cop"
        code: "COP"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "$"
    }
 
    ListElement {
        key: "crc"
        code: "CRC"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "₡"
    }
 
    ListElement {
        key: "czk"
        code: "CZK"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "Kč"
    }
 
    ListElement {
        key: "dkk"
        code: "DKK"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "kr"
    }
 
    ListElement {
        key: "dop"
        code: "DOP"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "RD$"
    }
 
    ListElement {
        key: "egp"
        code: "EGP"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "£"
    }
 
    ListElement {
        key: "etb"
        code: "ETB"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "Br"
    }
 
    ListElement {
        key: "gbp"
        code: "GBP"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "£"
    }
 
    ListElement {
        key: "gel"
        code: "GEL"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "₾"
    }
 
    ListElement {
        key: "ghs"
        code: "GHS"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "¢"
    }
 
    ListElement {
        key: "hkd"
        code: "HKD"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "$"
    }
 
    ListElement {
        key: "hrk"
        code: "HRK"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "kn"
    }
 
    ListElement {
        key: "huf"
        code: "HUF"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "Ft"
    }
 
    ListElement {
        key: "idr"
        code: "IDR"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "Rp"
    }
 
    ListElement {
        key: "ils"
        code: "ILS"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "₪"
    }
 
    ListElement {
        key: "inr"
        code: "INR"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "₹"
    }
 
    ListElement {
        key: "isk"
        code: "ISK"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "kr"
    }
 
    ListElement {
        key: "jmd"
        code: "JMD"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "J$"
    }
 
    ListElement {
        key: "jpy"
        code: "JPY"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "¥"
    }
 
    ListElement {
        key: "kes"
        code: "KES"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "KSh"
    }
 
    ListElement {
        key: "krw"
        code: "KRW"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "₩"
    }
 
    ListElement {
        key: "kwd"
        code: "KWD"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "د.ك"
    }
 
    ListElement {
        key: "kzt"
        code: "KZT"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "лв"
    }
 
    ListElement {
        key: "lkr"
        code: "LKR"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "₨"
    }
 
    ListElement {
        key: "mad"
        code: "MAD"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "MAD"
    }
 
    ListElement {
        key: "mdl"
        code: "MDL"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "MDL"
    }
 
    ListElement {
        key: "mur"
        code: "MUR"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "₨"
    }
 
    ListElement {
        key: "mwk"
        code: "MWK"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "MK"
    }
 
    ListElement {
        key: "mxn"
        code: "MXN"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "$"
    }
 
    ListElement {
        key: "myr"
        code: "MYR"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "RM"
    }
 
    ListElement {
        key: "mzn"
        code: "MZN"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "MT"
    }
 
    ListElement {
        key: "nad"
        code: "NAD"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "$"
    }
 
    ListElement {
        key: "ngn"
        code: "NGN"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "₦"
    }
 
    ListElement {
        key: "nok"
        code: "NOK"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "kr"
    }
 
    ListElement {
        key: "npr"
        code: "NPR"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "₨"
    }
 
    ListElement {
        key: "nzd"
        code: "NZD"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "$"
    }
 
    ListElement {
        key: "omr"
        code: "OMR"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "﷼"
    }
 
    ListElement {
        key: "pen"
        code: "PEN"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "S/."
    }
 
    ListElement {
        key: "pgk"
        code: "PGK"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "K"
    }
 
    ListElement {
        key: "php"
        code: "PHP"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "₱"
    }
 
    ListElement {
        key: "pkr"
        code: "PKR"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "₨"
    }
 
    ListElement {
        key: "pln"
        code: "PLN"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "zł"
    }
 
    ListElement {
        key: "pyg"
        code: "PYG"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "Gs"
    }
 
    ListElement {
        key: "qar"
        code: "QAR"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "﷼"
    }
 
    ListElement {
        key: "ron"
        code: "RON"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "lei"
    }
 
    ListElement {
        key: "rsd"
        code: "RSD"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "Дин."
    }
 
    ListElement {
        key: "rub"
        code: "RUB"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "₽"
    }
 
    ListElement {
        key: "sar"
        code: "SAR"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "﷼"
    }
 
    ListElement {
        key: "sek"
        code: "SEK"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "kr"
    }
 
    ListElement {
        key: "sgd"
        code: "SGD"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "$"
    }
 
    ListElement {
        key: "thb"
        code: "THB"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "฿"
    }
 
    ListElement {
        key: "ttd"
        code: "TTD"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "TT$"
    }
 
    ListElement {
        key: "twd"
        code: "TWD"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "NT$"
    }
 
    ListElement {
        key: "tzs"
        code: "TZS"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "TSh"
    }
 
    ListElement {
        key: "try"
        code: "TRY"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "₺"
    }
 
    ListElement {
        key: "uah"
        code: "UAH"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "₴"
    }
 
    ListElement {
        key: "ugx"
        code: "UGX"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "USh"
    }
 
    ListElement {
        key: "uyu"
        code: "UYU"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "$U"
    }
 
    ListElement {
        key: "vef"
        code: "VEF"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "Bs"
    }
 
    ListElement {
        key: "vnd"
        code: "VND"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "₫"
    }
 
    ListElement {
        key: "zar"
        code: "ZAR"
-       name: qsTr("")
+       //% ""
+       name: qsTrId("")
        symbol: "R"
    }
 

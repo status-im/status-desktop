@@ -14,7 +14,8 @@ ModalPopup {
     }
 
     id: popup
-    title: qsTr("Join public chat")
+    //% "Join public chat"
+    title: qsTrId("new-public-group-chat")
 
     onOpened: {
         channelName.text = "";
@@ -30,7 +31,8 @@ ModalPopup {
         StyledText {
             width: parent.width
             font.pixelSize: 15
-            text: qsTr("A public chat is where you get to hang out with others, make friends and talk about subjects of your interest.")
+            //% "A public chat is where you get to hang out with others, make friends and talk about subjects of your interest."
+            text: qsTrId("a-public-chat-is-where-you-get-to-hang-out-with-others,-make-friends-and-talk-about-subjects-of-your-interest.")
             wrapMode: Text.WordWrap
             verticalAlignment: Text.AlignTop
         }
@@ -40,7 +42,8 @@ ModalPopup {
         id: channelName
         anchors.top: description.bottom
         anchors.topMargin: Style.current.padding
-        placeholderText: qsTr("chat-name")
+        //% "chat-name"
+        placeholderText: qsTrId("chat-name")
         Keys.onEnterPressed: doJoin()
         Keys.onReturnPressed: doJoin()
         icon: "../../../img/hash.svg"

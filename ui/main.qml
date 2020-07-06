@@ -19,7 +19,8 @@ ApplicationWindow {
     color: Style.current.white
     title: {
         // Set application settings
-        Qt.application.name = qsTr("Nim Status Client")
+        //% "Nim Status Client"
+        Qt.application.name = qsTrId("nim-status-client")
         Qt.application.organization = "Status"
         Qt.application.domain = "status.im"
         return Qt.application.name
@@ -40,7 +41,8 @@ ApplicationWindow {
         icon.source: "shared/img/status-logo.png"
         menu: Menu {
             MenuItem {
-                text: qsTr("Quit")
+                //% "Quit"
+                text: qsTrId("quit")
                 onTriggered: Qt.quit()
             }
         }

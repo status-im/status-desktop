@@ -17,7 +17,8 @@ Item {
     StyledText {
         id: title
         x: 772
-        text: qsTr("Chat")
+        //% "Chat"
+        text: qsTrId("chat")
         anchors.top: parent.top
         anchors.topMargin: 17
         font.bold: true

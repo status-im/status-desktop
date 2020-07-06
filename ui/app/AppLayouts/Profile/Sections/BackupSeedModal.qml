@@ -7,7 +7,8 @@ import "../../../../shared"
 ModalPopup {
     id: popup
 
-    title: qsTr("Write down your seed phrase")
+    //% "Write down your seed phrase"
+    title: qsTrId("write-down-your-seed-phrase")
 
     Item {
 
@@ -80,7 +81,8 @@ ModalPopup {
 
     Text {
       id: confirmationsInfo
-      text: qsTr("With this 12 words you can always get your key back. Write it down. Keep it safe, offline, and separate from this device.")
+      //% "With this 12 words you can always get your key back. Write it down. Keep it safe, offline, and separate from this device."
+      text: qsTrId("with-this-12-words-you-can-always-get-your-key-back.-write-it-down.-keep-it-safe,-offline,-and-separate-from-this-device.")
       font.pixelSize: 14
       font.weight: Font.Medium
       color: Style.current.darkGrey
@@ -94,7 +96,8 @@ ModalPopup {
     }
 
     footer: StyledButton {
-      label: qsTr("Done")
+      //% "Done"
+      label: qsTrId("done")
       anchors.right: parent.right
       anchors.rightMargin: Style.current.smallPadding
       anchors.bottom: parent.bottom

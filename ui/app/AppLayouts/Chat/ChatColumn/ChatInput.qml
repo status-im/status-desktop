@@ -49,7 +49,8 @@ Rectangle {
                 leftPadding: 12
                 rightPadding: Style.current.padding
                 font.pixelSize: 14
-                placeholderText: qsTr("Type a message...")
+                //% "Type a message..."
+                placeholderText: qsTrId("type-a-message")
                 Keys.onPressed: onEnter(event)
                 background: Rectangle {
                     color: "#00000000"

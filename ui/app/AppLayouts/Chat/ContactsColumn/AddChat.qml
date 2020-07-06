@@ -16,17 +16,20 @@ AddButton {
     PopupMenu {
         id: newChatMenu
         Action {
-            text: qsTr("Start new chat")
+            //% "Start new chat"
+            text: qsTrId("start-new-chat")
             icon.source: "../../../img/new_chat.svg"
             onTriggered: privateChatPopup.open()
         }
         Action {
-            text: qsTr("Start group chat")
+            //% "Start group chat"
+            text: qsTrId("start-group-chat")
             icon.source: "../../../img/group_chat.svg"
             onTriggered: groupChatPopup.open()
         }
         Action {
-            text: qsTr("Join public chat")
+            //% "Join public chat"
+            text: qsTrId("new-public-group-chat")
             icon.source: "../../../img/public_chat.svg"
             onTriggered: publicChatPopup.open()
         }

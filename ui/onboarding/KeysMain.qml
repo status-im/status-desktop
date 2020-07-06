@@ -34,7 +34,8 @@ Page {
 
         StyledText {
             id: txtTitle1
-            text: qsTr("Get your keys")
+            //% "Get your keys"
+            text: qsTrId("intro-wizard-title1")
             anchors.topMargin: Style.current.padding
             font.bold: true
             anchors.horizontalCenter: parent.horizontalCenter
@@ -46,7 +47,8 @@ Page {
         StyledText {
             id: txtDesc1
             color: Style.current.darkGrey
-            text: qsTr("A set of keys controls your account. Your keys live on your device, so only you can use them.")
+            //% "A set of keys controls your account. Your keys live on your device, so only you can use them."
+            text: qsTrId("a-set-of-keys-controls-your-account.-your-keys-live-on-your-device,-so-only-you-can-use-them.")
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             anchors.right: parent.right
@@ -63,12 +65,14 @@ Page {
             anchors.top: txtDesc1.bottom
             anchors.topMargin: 40
             anchors.horizontalCenter: parent.horizontalCenter
-            label: qsTr("I'm new, generate keys")
+            //% "I'm new, generate keys"
+            label: qsTrId("i'm-new,-generate-keys")
         }
 
         StyledButton {
             id: btnExistingKey
-            label: qsTr("Access existing key")
+            //% "Access existing key"
+            label: qsTrId("access-existing-key")
             anchors.top: btnGenKey.bottom
             anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: parent.horizontalCenter

@@ -12,17 +12,21 @@ ModalPopup {
 
     function validate() {
         if (firstPasswordField.text === "") {
-            passwordValidationError = qsTr("You need to enter a password")
+            //% "You need to enter a password"
+            passwordValidationError = qsTrId("you-need-to-enter-a-password")
         } else if (firstPasswordField.text.length < 4) {
-            passwordValidationError = qsTr("Password needs to be 4 characters or more")
+            //% "Password needs to be 4 characters or more"
+            passwordValidationError = qsTrId("password-needs-to-be-4-characters-or-more")
         } else {
             passwordValidationError = ""
         }
 
         if (repeatPasswordField.text === "") {
-            repeatPasswordValidationError = qsTr("You need to repeat your password")
+            //% "You need to repeat your password"
+            repeatPasswordValidationError = qsTrId("you-need-to-repeat-your-password")
         } else if (repeatPasswordField.text !== firstPasswordField.text) {
-            repeatPasswordValidationError = qsTr("Both passwords must match")
+            //% "Both passwords must match"
+            repeatPasswordValidationError = qsTrId("both-passwords-must-match")
         } else {
             repeatPasswordValidationError = ""
         }
@@ -31,7 +35,8 @@ ModalPopup {
     }
 
     id: popup
-    title: qsTr("Create a password")
+    //% "Create a password"
+    title: qsTrId("intro-wizard-title-alt4")
     height: 500
 
     onOpened: {
@@ -51,7 +56,8 @@ ModalPopup {
         anchors.leftMargin: 56
         anchors.top: parent.top
         anchors.topMargin: 88
-        placeholderText: qsTr("New password...")
+        //% "New password..."
+        placeholderText: qsTrId("new-password...")
         textField.echoMode: TextInput.Password
         validationError: popup.passwordValidationError
     }
@@ -64,7 +70,8 @@ ModalPopup {
         anchors.left: firstPasswordField.left
         anchors.top: firstPasswordField.bottom
         anchors.topMargin: Style.current.xlPadding
-        placeholderText: qsTr("Confirm password…")
+        //% "Confirm password…"
+        placeholderText: qsTrId("confirm-password…")
         textField.echoMode: TextInput.Password
         validationError: popup.repeatPasswordValidationError
         Keys.onReturnPressed: {
@@ -73,7 +80,8 @@ ModalPopup {
     }
 
     StyledText {
-        text: qsTr("At least 6 characters. You will use this password to unlock status on this device & sign transactions.")
+        //% "At least 6 characters. You will use this password to unlock status on this device & sign transactions."
+        text: qsTrId("at-least-6-characters.-you-will-use-this-password-to-unlock-status-on-this-device-&-sign-transactions.")
         wrapMode: Text.WordWrap
         anchors.right: parent.right
         anchors.rightMargin: Style.current.xlPadding
@@ -119,14 +127,18 @@ ModalPopup {
             anchors.topMargin: Style.current.padding
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
-            label: loading ? qsTr("Logging in...") : qsTr("Create password")
+            //% "Logging in..."
+            //% "Create password"
+            label: loading ? qsTrId("logging-in...") : qsTrId("create-password")
 
             disabled: firstPasswordField.text === "" || repeatPasswordField.text === "" || loading
 
             MessageDialog {
                 id: importError
-                title: qsTr("Error importing account")
-                text: qsTr("An error occurred while importing your account: ")
+                //% "Error importing account"
+                title: qsTrId("error-importing-account")
+                //% "An error occurred while importing your account: "
+                text: qsTrId("an-error-occurred-while-importing-your-account:-")
                 icon: StandardIcon.Critical
                 standardButtons: StandardButton.Ok
                 onVisibilityChanged: {
@@ -136,8 +148,10 @@ ModalPopup {
 
             MessageDialog {
                 id: importLoginError
-                title: qsTr("Login failed")
-                text: qsTr("Login failed. Please re-enter your password and try again.")
+                //% "Login failed"
+                title: qsTrId("login-failed")
+                //% "Login failed. Please re-enter your password and try again."
+                text: qsTrId("login-failed.-please-re-enter-your-password-and-try-again.")
                 icon: StandardIcon.Critical
                 standardButtons: StandardButton.Ok
                 onVisibilityChanged: {

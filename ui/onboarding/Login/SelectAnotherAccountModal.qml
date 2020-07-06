@@ -7,7 +7,8 @@ ModalPopup {
     property var onAccountSelect: function () {}
     property var onOpenModalClick: function () {}
     id: popup
-    title: qsTr("Your accounts")
+    //% "Your accounts"
+    title: qsTrId("your-accounts")
 
     AccountList {
         id: accountList

@@ -3,7 +3,8 @@ import "../imports"
 
 Input {
     id: searchBox
-    placeholderText: qsTr("Search")
+    //% "Search"
+    placeholderText: qsTrId("search")
     icon: "../app/img/search.svg"
     iconWidth: 17
     iconHeight: 17

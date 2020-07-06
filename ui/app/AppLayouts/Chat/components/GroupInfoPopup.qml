@@ -74,7 +74,8 @@ ModalPopup {
     
       StyledTextEdit {
           id: groupName
-          text: addMembers ? qsTr("Add members") : chatsModel.activeChannel.name
+          //% "Add members"
+          text: addMembers ? qsTrId("add-members") : chatsModel.activeChannel.name
           anchors.top: parent.top
           anchors.topMargin: 18
           anchors.left: letterIdenticon.right
@@ -89,10 +90,13 @@ ModalPopup {
           text: {
             let cnt = memberCount;
             if(addMembers){
-                return qsTr("%1 / 10 members").arg(cnt)
+                //% "%1 / 10 members"
+                return qsTrId("%1-/-10-members").arg(cnt)
             } else {
-                if(cnt > 1) return qsTr("%1 members").arg(cnt);
-                return qsTr("1 member");
+                //% "%1 members"
+                if(cnt > 1) return qsTrId("%1-members").arg(cnt);
+                //% "1 member"
+                return qsTrId("1-member");
             }
           }
           width: 160
@@ -208,7 +212,8 @@ ModalPopup {
 
         StyledText {
             id: memberLabel
-            text: qsTr("Members")
+            //% "Members"
+            text: qsTrId("members-title")
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
             font.pixelSize: 15
@@ -276,7 +281,8 @@ ModalPopup {
                 Column {
                     StyledText {
                         visible: model.isAdmin
-                        text: qsTr("Admin")
+                        //% "Admin"
+                        text: qsTrId("group-chat-admin")
                         width: 100
                         font.pixelSize: 13
                     }
@@ -295,13 +301,15 @@ ModalPopup {
                                 id: contextMenu
                                 Action {
                                     icon.source: "../../../img/make-admin.svg"
-                                    text: qsTr("Make Admin")
+                                    //% "Make Admin"
+                                    text: qsTrId("make-admin")
                                     onTriggered: chatsModel.makeAdmin(chatsModel.activeChannel.id,  model.pubKey)
                                 }
                                 Action {
                                     icon.source: "../../../img/remove-from-group.svg"
                                     icon.color: Style.current.red
-                                    text: qsTr("Remove From Group")
+                                    //% "Remove From Group"
+                                    text: qsTrId("remove-from-group")
                                     onTriggered: chatsModel.kickGroupMember(chatsModel.activeChannel.id,  model.pubKey)
                                 }
                             }
@@ -319,7 +327,8 @@ ModalPopup {
         StyledButton {
           visible: !addMembers
           anchors.right: parent.right
-          label: qsTr("Add members")
+          //% "Add members"
+          label: qsTrId("add-members")
           anchors.bottom: parent.bottom
           onClicked: {
             addMembers = true;
@@ -356,7 +365,8 @@ ModalPopup {
           visible: addMembers
           disabled: memberCount <= currMemberCount
           anchors.right: parent.right
-          label: qsTr("Add selected")
+          //% "Add selected"
+          label: qsTrId("add-selected")
           anchors.bottom: parent.bottom
           onClicked: doAddMembers()
         }

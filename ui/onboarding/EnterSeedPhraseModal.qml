@@ -6,7 +6,8 @@ import "../shared"
 ModalPopup {
     property var onConfirmSeedClick: function () {}
     id: popup
-    title: qsTr("Add key")
+    //% "Add key"
+    title: qsTrId("add-key")
     height: 400
 
     onOpened: {
@@ -33,7 +34,8 @@ ModalPopup {
     }
 
     StyledText {
-        text: qsTr("Enter 12, 15, 18, 21 or 24 words.\nSeperate words by a single space.")
+        //% "Enter 12, 15, 18, 21 or 24 words.\nSeperate words by a single space."
+        text: qsTrId("enter-12,-15,-18,-21-or-24-words.\nseperate-words-by-a-single-space.")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0

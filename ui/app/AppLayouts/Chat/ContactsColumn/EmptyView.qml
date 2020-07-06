@@ -18,7 +18,8 @@ Item {
 
         StyledText {
             width: parent.width
-            text: qsTr("Follow your interests in one of the many Public Chats.")
+            //% "Follow your interests in one of the many Public Chats."
+            text: qsTrId("follow-your-interests-in-one-of-the-many-public-chats.")
             font.pointSize: 15
             wrapMode: Text.WordWrap
             verticalAlignment: Text.AlignTop

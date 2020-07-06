@@ -5,7 +5,8 @@ import "../../../shared"
 Item {
     StyledText {
         visible: walletModel.collectibles.rowCount() === 0
-        text: qsTr("No collectibles in this account")
+        //% "No collectibles in this account"
+        text: qsTrId("no-collectibles-in-this-account")
     }
 
     Component {

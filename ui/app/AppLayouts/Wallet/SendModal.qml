@@ -9,7 +9,8 @@ import "./components"
 ModalPopup {
     id: popup
 
-    title: qsTr("Send")
+    //% "Send"
+    title: qsTrId("command-button-send")
     height: 600
 
     onOpened: {
@@ -53,7 +54,8 @@ ModalPopup {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        label: qsTr("Send")
+        //% "Send"
+        label: qsTrId("command-button-send")
 
         onClicked: {
             sendModalContent.send()

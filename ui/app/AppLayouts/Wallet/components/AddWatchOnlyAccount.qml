@@ -6,7 +6,8 @@ import "../../../../sounds"
 
 ModalPopup {
     id: popup
-    title: qsTr("Add a watch-only account")
+    //% "Add a watch-only account"
+    title: qsTrId("add-watch-account")
 
     property int marginBetweenInputs: 38
     property string selectedColor: Constants.accountColors[0]
@@ -16,15 +17,18 @@ ModalPopup {
 
     function validate() {
         if (addressInput.text === "") {
-            addressError = qsTr("You need to enter an address")
+            //% "You need to enter an address"
+            addressError = qsTrId("you-need-to-enter-an-address")
         } else if (!Utils.isAddress(addressInput.text)) {
-            addressError = qsTr("This needs to be a valid address (starting with 0x)")
+            //% "This needs to be a valid address (starting with 0x)"
+            addressError = qsTrId("this-needs-to-be-a-valid-address-(starting-with-0x)")
         } else {
             addressError = ""
         }
 
         if (accountNameInput.text === "") {
-            accountNameValidationError = qsTr("You need to enter an account name")
+            //% "You need to enter an account name"
+            accountNameValidationError = qsTrId("you-need-to-enter-an-account-name")
         } else {
             accountNameValidationError = ""
         }
@@ -46,8 +50,10 @@ ModalPopup {
     Input {
         id: addressInput
         // TODO add QR code reader for the address
-        placeholderText: qsTr("Enter address...")
-        label: qsTr("Account address")
+        //% "Enter address..."
+        placeholderText: qsTrId("enter-address...")
+        //% "Account address"
+        label: qsTrId("wallet-key-title")
         validationError: popup.addressError
     }
 
@@ -55,8 +61,10 @@ ModalPopup {
         id: accountNameInput
         anchors.top: addressInput.bottom
         anchors.topMargin: marginBetweenInputs
-        placeholderText: qsTr("Enter an account name...")
-        label: qsTr("Account name")
+        //% "Enter an account name..."
+        placeholderText: qsTrId("enter-an-account-name...")
+        //% "Account name"
+        label: qsTrId("account-name")
         validationError: popup.accountNameValidationError
     }
 
@@ -65,7 +73,8 @@ ModalPopup {
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs
         bgColor: selectedColor
-        label: qsTr("Account color")
+        //% "Account color"
+        label: qsTrId("account-color")
         selectOptions: Constants.accountColors.map(color => {
             return {
                 text: "",
@@ -82,7 +91,11 @@ ModalPopup {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        label: loading ? qsTr("Loading...") : qsTr("Add account >")
+        label: loading ?
+        //% "Loading..."
+        qsTrId("loading") :
+        //% "Add account >"
+        qsTrId("add-account")
 
         disabled: loading || addressInput.text === "" || accountNameInput.text === ""
 

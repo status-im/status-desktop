@@ -13,7 +13,8 @@ Item {
 
     StyledText {
         id: title
-        text: qsTr("Advanced settings")
+        //% "Advanced settings"
+        text: qsTrId("advanced-settings")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top
@@ -39,7 +40,8 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 24
         StyledText {
-            text: qsTr("Theme (Light - Dark)")
+            //% "Theme (Light - Dark)"
+            text: qsTrId("theme-(light---dark)")
         }
         Switch {
             checked: themeSetting.isDarkTheme
@@ -56,7 +58,8 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 24
         StyledText {
-            text: qsTr("Wallet Tab")
+            //% "Wallet Tab"
+            text: qsTrId("wallet-tab")
         }
         Switch {
             checked: walletBtn.enabled
@@ -65,7 +68,8 @@ Item {
             }
         }
         StyledText {
-            text: qsTr("NOT RECOMMENDED - Use at your own risk")
+            //% "NOT RECOMMENDED - Use at your own risk"
+            text: qsTrId("not-recommended---use-at-your-own-risk")
         }
     }
 
@@ -76,7 +80,8 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 24
         StyledText {
-            text: qsTr("Browser Tab")
+            //% "Browser Tab"
+            text: qsTrId("browser-tab")
         }
         Switch {
             checked: browserBtn.enabled
@@ -85,7 +90,8 @@ Item {
             }
         }
         StyledText {
-            text: qsTr("experimental (web3 not supported yet)")
+            //% "experimental (web3 not supported yet)"
+            text: qsTrId("experimental-(web3-not-supported-yet)")
         }
     }
 
@@ -95,7 +101,8 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 24
         StyledText {
-            text: qsTr("Node Management Tab")
+            //% "Node Management Tab"
+            text: qsTrId("node-management-tab")
         }
         Switch {
             checked: nodeBtn.enabled
@@ -104,7 +111,8 @@ Item {
             }
         }
         StyledText {
-            text: qsTr("under development")
+            //% "under development"
+            text: qsTrId("under-development")
         }
     }
 }

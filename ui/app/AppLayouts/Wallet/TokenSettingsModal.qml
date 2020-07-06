@@ -6,7 +6,8 @@ import "./components"
 
 ModalPopup {
     id: popup
-    title: qsTr("Add/Remove Tokens")
+    //% "Add/Remove Tokens"
+    title: qsTrId("add/remove-tokens")
     
     
     TokenSettingsModalContent {
@@ -16,7 +17,8 @@ ModalPopup {
     footer: StyledButton {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        label: qsTr("Add custom token")
+        //% "Add custom token"
+        label: qsTrId("add-custom-token")
         anchors.top: parent.top
         onClicked: {
             popup.close()

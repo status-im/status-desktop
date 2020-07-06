@@ -84,7 +84,8 @@ Rectangle {
 
     StyledText {
         visible: isUser
-        text: qsTr("Admin")
+        //% "Admin"
+        text: qsTrId("group-chat-admin")
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         font.pixelSize: 15
