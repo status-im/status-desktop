@@ -141,6 +141,7 @@ proc setupAccount*(account: GeneratedAccount, password: string): types.Account =
     var settingsJSON = getAccountSettings(account, constants.DEFAULT_NETWORKS, installationId)
     var nodeConfig = constants.NODE_CONFIG
     nodeConfig["ShhextConfig"]["InstallationID"] = newJString(installationId)
+    nodeConfig["ListenAddr"] = if existsEnv("STATUS_PORT"): newJString("0.0.0.0:" & $getEnv("STATUS_PORT")) else: newJString("0.0.0.0:30305")
 
     result = saveAccountAndLogin(account, $accountData, password, $nodeConfig, $settingsJSON)
 
