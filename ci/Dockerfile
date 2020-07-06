@@ -6,7 +6,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
  && sudo add-apt-repository -y ppa:git-core/ppa \
  && sudo apt update -yq \
  && sudo apt install -yq --fix-missing \
-        build-essential cmake git libpcre3-dev
+        build-essential cmake git libpcre3-dev s3cmd
 
 # Installing Golang
 RUN GOLANG_SHA256="aed845e4185a0b2a3c3d5e1d0a35491702c55889192bb9c30e67a3de6849c067" \
