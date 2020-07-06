@@ -81,8 +81,20 @@ Popup {
                                 cursorShape: Qt.PointingHandCursor
                                 anchors.fill: parent
                                 onClicked: {
-                                    const encodedIcon = Emoji.fromCodePoint(filename.replace(".svg", ""))
-                                    popup.addToChat(encodedIcon)
+                                    const extenstionIndex = filename.lastIndexOf('.');
+                                    let iconCodePoint = filename
+                                    if (extenstionIndex > -1) {
+                                        iconCodePoint = iconCodePoint.substring(0, extenstionIndex)
+                                    }
+
+                                    // Split the filename to get all the parts and then encode them from hex to utf8
+                                    const splitCodePoint = iconCodePoint.split('-')
+                                    let codePointParts = []
+                                    splitCodePoint.forEach(function (codePoint) {
+                                        codePointParts.push(`0x${codePoint}`)
+                                    })
+                                    const encodedIcon = String.fromCodePoint(...codePointParts);
+                                    popup.addToChat(encodedIcon + ' ') // Adding a space because otherwise, some emojis would fuse since it's just an emoji is just a string
                                     popup.close()
                                 }
                             }

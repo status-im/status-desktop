@@ -74,6 +74,7 @@ Rectangle {
     StyledText {
         id: lastChatMessage
         text: lastMessage ? Emoji.parse(lastMessage, "26x26").replace(/\n|\r/g, ' ') : qsTr("No messages")
+        clip: true // This is needed because emojis don't ellide correctly
         anchors.right: contactNumberChatsCircle.left
         anchors.rightMargin: Style.current.smallPadding
         elide: Text.ElideRight

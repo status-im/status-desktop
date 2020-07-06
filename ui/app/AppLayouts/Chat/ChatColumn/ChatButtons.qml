@@ -40,10 +40,9 @@ Item {
         property bool hovered: false
 
         id: emojiIconContainer
-        visible: txtData.length == 0
         width: emojiIcon.width + chatButtonsContainer.iconPadding * 2
         height: emojiIcon.height + chatButtonsContainer.iconPadding * 2
-        anchors.right: stickerIconContainer.left
+        anchors.right: txtData.length == 0 ? stickerIconContainer.left : chatSendBtn.left
         anchors.rightMargin: Style.current.padding - chatButtonsContainer.iconPadding * 2
         anchors.verticalCenter: parent.verticalCenter
         radius: Style.current.radius
