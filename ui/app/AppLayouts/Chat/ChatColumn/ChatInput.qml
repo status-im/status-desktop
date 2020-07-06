@@ -33,7 +33,6 @@ Rectangle {
         anchors.fill: parent
 
         ScrollView {
-            anchors.fill: parent
             Layout.fillWidth: true
             Layout.fillHeight: true
 
@@ -66,7 +65,7 @@ Rectangle {
             Layout.minimumWidth: 30 + Style.current.padding
             Layout.maximumWidth: 200
             addToChat: function (text) {
-                txtData.append(text)
+                txtData.insert(txtData.length, text)
             }
         }
     }
