@@ -66,7 +66,7 @@ Page {
             anchors.topMargin: 40
             anchors.horizontalCenter: parent.horizontalCenter
             //% "I'm new, generate keys"
-            label: qsTrId("i'm-new,-generate-keys")
+            label: qsTrId("im-new,-generate-keys")
         }
 
         StyledButton {

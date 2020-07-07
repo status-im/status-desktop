@@ -15,6 +15,8 @@ lupdate_only{
 SOURCES = *.qml \
           app/*.qml \
           shared/*.qml \
+          onboarding/*.qml \
+          onboarding/Login/*.qml \
           app/AppLayouts/*.qml \
           app/AppLayouts/Browser/*.qml \
           app/AppLayouts/Chat/*.qml \
@@ -31,8 +33,9 @@ SOURCES = *.qml \
           app/AppLayouts/Wallet/data/*.qml \
 }
 
-TRANSLATIONS = status_en.ts \
-               status_es.ts
+TRANSLATIONS += \
+    i18n/base.ts \
+    i18n/qml_en.ts
 
 RESOURCES += \
     imports/Constants.qml \
