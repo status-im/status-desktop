@@ -1,6 +1,7 @@
 import NimQml, Tables, json, sequtils, chronicles
 
 import ../../status/status
+import ../../status/accounts as status_accounts
 import ../../status/chat as status_chat
 import ../../status/contacts as status_contacts
 import ../../status/ens as status_ens
@@ -238,3 +239,11 @@ QtObject:
 
   proc formatENSUsername*(self: ChatsView, username: string): string {.slot.} =
     result = status_ens.addDomain(username)
+
+  proc generateIdenticon*(self: ChatsView, pk: string): string {.slot.} =
+    result = status_accounts.generateIdenticon(pk)
+
+  proc userNameOrAlias*(self: ChatsView, pubKey: string): string {.slot.} =
+    if self.status.chat.contacts.hasKey(pubKey):
+      return status_ens.userNameOrAlias(self.status.chat.contacts[pubKey])
+    generateAlias(pubKey)

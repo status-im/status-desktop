@@ -48,3 +48,6 @@ proc reset*(self: AccountModel) =
 
 proc generateAlias*(publicKey: string): string =
   result = status_accounts.generateAlias(publicKey)
+
+proc generateIdenticon*(publicKey: string): string =
+  result = status_accounts.generateIdenticon(publicKey)
