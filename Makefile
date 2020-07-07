@@ -168,8 +168,8 @@ $(QRCODEGEN): | deps
 	  $(MAKE)
 
 rcc:
-	rm -f ./bin/resources.rcc
-	rm -f ./resources.qrc
+	rm -f ./resources.rcc
+	rm -f ./ui/resources.qrc
 	./ui/generate-rcc.sh
 	rcc --binary ui/resources.qrc -o ./resources.rcc
 
