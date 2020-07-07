@@ -13,33 +13,32 @@ ModalPopup {
     
     function validate() {
         if (!Utils.isChatKey(chatKey.text) && !Utils.isValidETHNamePrefix(chatKey.text)) {
-            validationError = "This needs to be a valid chat key or ENS username"
-            pubKey = "";
-            ensUsername = "";
+            validationError = "This needs to be a valid chat key or ENS username";
+            ensUsername.text = "";
         } else {
             validationError = ""
         }
         return validationError === ""
     }
 
-    function onKeyReleased(){
-        ensUsername.text = "";
-        if (!validate()) return;
-        
-        chatKey.text = chatKey.text.trim();
+    function resolveENS(ensName){
+        chatsModel.resolveENS(ensName)
+    }
 
-        if(Utils.isChatKey(chatKey.text)){
-            pubKey = chatKey.text;
+    function onKeyReleased(){
+        if (!validate()) {
             return;
         }
 
-        pubKey = chatsModel.resolveENS(chatKey.text)
-        if(pubKey == ""){
-            //% "User not found"
-            ensUsername.text = qsTrId("user-not-found");
-        } else {
-            ensUsername.text = chatsModel.formatENSUsername(chatKey.text) + " • " + Utils.compactAddress(pubKey, 4)
+        chatKey.text = chatKey.text.trim();
+        
+        if(Utils.isChatKey(chatKey.text)){
+            pubKey = chatKey.text;
+            ensUsername.text = "";
+            return;
         }
+        
+        Qt.callLater(resolveENS, chatKey.text)
     }
 
     function doJoin() {
@@ -55,7 +54,7 @@ ModalPopup {
     onOpened: {
         chatKey.text = "";
         pubKey = "";
-        ensUsername = "";
+        ensUsername.text = "";
         chatKey.forceActiveFocus(Qt.MouseFocusReason)
     }
 
@@ -68,6 +67,22 @@ ModalPopup {
         validationError: popup.validationError
         Keys.onReleased: {
             onKeyReleased();
+        }
+
+        Connections {
+            target: chatsModel
+            onEnsWasResolved: {
+                if(chatKey.text == ""){
+                    ensUsername.text == "";
+                    pubKey = "";
+                } else if(resolvedPubKey == ""){
+                    ensUsername.text = qsTrId("user-not-found");
+                    pubKey = "";
+                } else {
+                    ensUsername.text = chatsModel.formatENSUsername(chatKey.text) + " • " + Utils.compactAddress(resolvedPubKey, 4)
+                    pubKey = resolvedPubKey;
+                }
+            }
         }
     }
     
