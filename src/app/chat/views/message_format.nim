@@ -19,7 +19,7 @@ proc renderInline(self: ChatMessageList, elem: TextItem): string =
   of "emph": result = fmt("<span style=\"font-style: italic;\">{elem.literal}</span> ")
   of "strong": result = fmt("<span style=\"font-weight: bold;\">{elem.literal}</span> ")
   of "link": result = elem.destination
-  of "mention": result = fmt("<span style=\"color: #000000;\">{self.mention(elem.literal)}</span> ")
+  of "mention": result = fmt("<a href=\"//{elem.literal}\" style=\"font-weight: bold; color: #000000;\">@{self.mention(elem.literal)}</a> ")
   of "status-tag": result = fmt("<a href=\"#{elem.literal}\" class=\"status-tag\">{elem.literal}</a> ")
 
 # See render-block in status-react/src/status_im/ui/screens/chat/message/message.cljs
