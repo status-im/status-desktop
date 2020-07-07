@@ -9,6 +9,8 @@ import ../../status/chat/[chat, message]
 import ../../status/libstatus/types
 import ../../status/profile/profile
 
+import ../../status/threads
+
 import views/channels_list, views/message_list, views/chat_item, views/sticker_pack_list, views/sticker_list
 
 logScope:
@@ -234,9 +236,6 @@ QtObject:
     if id == "": return false
     self.status.contacts.getContactByID(id).ensVerified
 
-  proc resolveENS*(self: ChatsView, ens: string): string {.slot.} =
-    result = status_ens.pubkey(ens)
-
   proc formatENSUsername*(self: ChatsView, username: string): string {.slot.} =
     result = status_ens.addDomain(username)
 
@@ -247,3 +246,15 @@ QtObject:
     if self.status.chat.contacts.hasKey(pubKey):
       return status_ens.userNameOrAlias(self.status.chat.contacts[pubKey])
     generateAlias(pubKey)
+    
+  # Resolving a ENS name
+
+  proc resolveENS*(self: ChatsView, ens: string) {.slot.} =
+    spawnAndSend(self, "ensResolved") do: # Call self.ensResolved(string) when ens is resolved
+      status_ens.pubkey(ens)
+
+  proc ensWasResolved*(self: ChatsView, resolvedPubKey: string) {.signal.}
+
+  proc ensResolved(self: ChatsView, pubKey: string) {.slot.} =
+    self.ensWasResolved(pubKey)
+

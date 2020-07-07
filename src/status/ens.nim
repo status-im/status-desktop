@@ -8,7 +8,7 @@ import stew/byteutils
 import unicode
 import algorithm
 
-let domain* = ".stateofus.eth"
+const domain* = ".stateofus.eth"
 
 proc userName*(ensName: string, removeSuffix: bool = false): string =
   if ensName != "" and ensName.endsWith(domain):
