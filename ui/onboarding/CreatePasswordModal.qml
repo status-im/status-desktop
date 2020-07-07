@@ -81,7 +81,7 @@ ModalPopup {
 
     StyledText {
         //% "At least 6 characters. You will use this password to unlock status on this device & sign transactions."
-        text: qsTrId("at-least-6-characters.-you-will-use-this-password-to-unlock-status-on-this-device-&-sign-transactions.")
+        text: qsTrId("at-least-6-characters-you-will-use-this-password-to-unlock-status-on-this-device-sign-transactions.")
         wrapMode: Text.WordWrap
         anchors.right: parent.right
         anchors.rightMargin: Style.current.xlPadding
@@ -127,9 +127,11 @@ ModalPopup {
             anchors.topMargin: Style.current.padding
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
+            label: loading ?
             //% "Logging in..."
+            qsTrId("logging-in...") :
             //% "Create password"
-            label: loading ? qsTrId("logging-in...") : qsTrId("create-password")
+            qsTrId("create-password")
 
             disabled: firstPasswordField.text === "" || repeatPasswordField.text === "" || loading
 

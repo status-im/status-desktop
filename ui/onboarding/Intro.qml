@@ -31,7 +31,7 @@ RowLayout {
                 //% "Truly private communication"
                 title: qsTrId("intro-title1")
                 //% "Chat over a peer-to-peer, encrypted network\n where messages can't be censored or hacked"
-                description: qsTrId("chat-over-a-peer-to-peer,-encrypted-network\n-where-messages-can't-be-censored-or-hacked")
+                description: qsTrId("chat-over-a-peer-to-peer--encrypted-network-n-where-messages-can-t-be-censored-or-hacked")
                 isFirst: true
             }
             Slide {
@@ -39,14 +39,14 @@ RowLayout {
                 //% "Secure crypto wallet"
                 title: qsTrId("intro-title2")
                 //% "Send and receive digital assets anywhere in the\nworld--no bank account required"
-                description: qsTrId("send-and-receive-digital-assets-anywhere-in-the\nworld--no-bank-account-required")
+                description: qsTrId("send-and-receive-digital-assets-anywhere-in-the-nworld--no-bank-account-required")
             }
             Slide {
                 image: "img/browser@2x.jpg"
                 //% "Decentralized apps"
                 title: qsTrId("intro-title3")
                 //% "Explore games, exchanges and social networks\nwhere you alone own your data"
-                description: qsTrId("explore-games,-exchanges-and-social-networks\nwhere-you-alone-own-your-data")
+                description: qsTrId("explore-games--exchanges-and-social-networks-nwhere-you-alone-own-your-data")
                 isLast: true
             }
         }

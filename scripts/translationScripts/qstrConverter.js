@@ -43,8 +43,7 @@ qmlFiles.forEach(file => {
             replacementId = translationKeys[enTranslationIndex]
         } else {
             // We need to replace all qsTr because we can't mix qsTrId and qsTr
-            // TODO remove chars that are not alphanumarical
-            replacementId = replaceableText.replace(/\s/g, '-').toLowerCase();
+            replacementId = replaceableText.replace(/[^a-zA-Z\d]/g, '-').toLowerCase();
         }
 
         quote = match[0][5];
