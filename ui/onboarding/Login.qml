@@ -137,7 +137,8 @@ Item {
             id: txtPassword
             anchors.top: addressText.bottom
             anchors.topMargin: Style.current.padding * 2
-            placeholderText: "Enter password"
+            //% "Enter password"
+            placeholderText: qsTrId("enter-password")
             textField.echoMode: TextInput.Password
             textField.focus: true
             Keys.onReturnPressed: {
