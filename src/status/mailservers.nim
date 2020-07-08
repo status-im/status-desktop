@@ -1,8 +1,20 @@
 import algorithm, json, random, math, os, tables, sets, chronicles, eventemitter, sequtils, locks
-
 import libstatus/core as status_core
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
+
+
+# How do mailserver should work ?
+#
+# - We send a request to the mailserver, we are only interested in the
+#   messages since `last-request` up to the last seven days
+#   and the last 24 hours for topics that were just joined  TODO:
+# - The mailserver doesn't directly respond to the request and
+#   instead we start receiving messages in the filters for the requested
+#   topics.
+# - If the mailserver was not ready when we tried for instance to request
+#   the history of a topic after joining a chat, the request will be done
+#   as soon as the mailserver becomes available TODO:
 
 logScope:
   topics = "mailserver-model"
@@ -56,6 +68,7 @@ proc selectedServerStatus*(self: MailserverModel): MailserverStatus =
   else: self.nodes[self.selectedMailserver]
 
 proc isSelectedMailserverAvailable*(self:MailserverModel): bool =
+  if not self.nodes.hasKey(self.selectedMailserver): return false
   self.nodes[self.selectedMailserver] == MailserverStatus.Trusted
 
 proc addPeer(self:MailserverModel, enode: string) =
@@ -111,7 +124,7 @@ proc requestMessages*(self: MailserverModel) =
   let generatedSymKey = status_chat.generateSymKeyFromPassword()
   status_mailservers.requestMessages(toSeq(self.topics), generatedSymKey, self.selectedMailserver, 1000)
 
-proc autoConnect(self: MailserverModel) =
+proc autoConnect*(self: MailserverModel) =
   let mailserversReply = parseJson(status_mailservers.ping(500))["result"]
   
   var availableMailservers:seq[(string, int)] = @[]
@@ -134,9 +147,13 @@ proc changeMailserver*(self: MailserverModel) =
   self.autoConnect()
 
 proc checkConnection*(mailserverPtr: ptr MailserverModel) {.thread.} =
-  let sleepDuration = 10000
-  while true:
-    {.gcsafe.}:
+  {.gcsafe.}:
+    discard #TODO: connect to current mailserver from the settings
+    # or setup a random mailserver:
+    mailserverPtr[].autoConnect()
+
+    let sleepDuration = 10000
+    while true:
       withLock mailserverPtr[].lock:
         sleep(sleepDuration)
         # TODO: have a timeout for reconnection before changing to a different server
@@ -149,6 +166,3 @@ proc init*(self: MailserverModel) =
 
   self.connThread.createThread(checkConnection, self.unsafeAddr)
   
-  #TODO: connect to current mailserver from the settings
-  # or setup a random one:
-  self.autoConnect()
