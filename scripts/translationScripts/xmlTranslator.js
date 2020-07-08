@@ -17,7 +17,7 @@ tsFiles.forEach(file => {
     const json = convert.xml2js(fileContent, options);
 
     const doctype = json["_doctype"];
-    const language = json[doctype]._attributes.language;
+    let language = json[doctype]._attributes.language;
     const isEn = language === 'en_US'
 
     let translations;
@@ -25,12 +25,10 @@ tsFiles.forEach(file => {
         translations = require(`./status-react-translations/${language}.json`)
     } catch (e) {
         // No translation file for the exact match, let's use the file name instead
-        const fileParts = file.split('_');
-        let langString = fileParts[fileParts.length - 1];
-        // Remove the .ts
-        langString = langString.substring(0, langString.length - 3)
+        const match = /qml_([a-zA-Z0-9_]+)\.ts/.exec(file)
+        language = language || match[1];
         try {
-            translations = require(`./status-react-translations/${langString}.json`)
+            translations = require(`./status-react-translations/${match[1]}.json`)
         } catch (e) {
             console.error(`No translation file found for ${language}`);
             return;
