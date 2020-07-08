@@ -192,6 +192,11 @@ QtObject:
   proc leaveActiveChat*(self: ChatsView) {.slot.} =
     self.status.chat.leave(self.activeChannel.id)
 
+  proc removeChat*(self: ChatsView, chatId: string) = 
+    discard self.chats.removeChatItemFromList(chatId)
+    self.messageList[chatId].delete
+    self.messageList.del(chatId)
+
   proc clearChatHistory*(self: ChatsView, id: string) {.slot.} =
     self.status.chat.clearHistory(id)
 
