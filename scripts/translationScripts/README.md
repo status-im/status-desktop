@@ -7,6 +7,8 @@ These scripts are used to translate the app automatically by reusing the existin
 1. Copy the translation files from https://github.com/status-im/status-react/tree/develop/translations to `/nim-status-client/scripts/translationScripts/status-react-translations`
 2. Run `node qstrConverter.js` in the `translationScripts/` directory
 3. Run `lupdate` in the `ui/` directory
+4. [Optional] Manually translate the remaining strings in QT Linguist
+5. Run `lrelease -idbased i18n/*.ts` in the `ui/` directory
 
 :tada: You're files are converted to use `qsTrId` and the translation files are updated.
 
@@ -24,9 +26,30 @@ First, copy the translation files from https://github.com/status-im/status-react
 
 Then, run `node qstrConverter.js` in the `translationScripts/` directory.
 
+## Run XML translator script
+
+Most translations are already done in Status-React. To add those translations to the right `.ts` file, run `node xmlTranslator.js` in the `translationScripts/` directory. 
+
+It will check all the TS files and get the good translation from the JSON file and set the translation as done.
+
+Some translations will not be done, check the next section to know how to translate.
+
+## Manually translate remaining strings
+
+Since not all strings used in the desktop app are also used in Status-React, the remaining will need to be translated manually.
+
+If the strings are not translated, it is not the end f the world, the English strings will be shown instead.
+
+To do so, you can use QT Linguist to help with the process. Check here to see the Linguist docs: https://doc.qt.io/qt-5/linguist-translators.html
+
+To open a TS file in QT Linguist, either open the software and use the `Open` feature it has, or go in the `ui/i18n` directory and run `linguist nameOfFile.ts`
+
 ## Updating translation files
 
 Updating the QML translation files is then very easy, as it comes with QT directly. It will scan all files in the projects (those listed in the `SOURCE` section of the `.pro` file) and then add or modify them in the XML-like `.ts` files.
 
 Just run `lupdate` in the `ui/` directory.
 
+## Generating binary translation files
+
+To have the final translation files that will be used by the app, just run `lrelease -idbased i18n/*.ts` in the `ui/` directory
