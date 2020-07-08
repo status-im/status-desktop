@@ -1,22 +1,9 @@
 const fs = require('fs');
-const path = require("path")
+const {getAllFiles} = require('./utils');
+
 const enTranslations = require('./status-react-translations/en.json');
 
-const getAllFiles = function(dirPath, ext, arrayOfFiles = []) {
-    const files = fs.readdirSync(dirPath)
-
-    files.forEach(file => {
-        if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-            arrayOfFiles = getAllFiles(dirPath + "/" + file, ext, arrayOfFiles)
-        } else if (!ext || file.endsWith(ext)) {
-            arrayOfFiles.push(path.join(__dirname, dirPath, "/", file))
-        }
-    })
-
-    return arrayOfFiles
-}
-
-console.log('Scanning files...')
+console.log('Scanning QML files...')
 const qmlFiles = getAllFiles('../../ui', 'qml');
 
 const translationKeys = Object.keys(enTranslations)
