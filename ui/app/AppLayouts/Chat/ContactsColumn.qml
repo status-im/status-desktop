@@ -76,3 +76,9 @@ Item {
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;formeditorColor:"#ffffff";height:480;width:640}
+}
+##^##*/
