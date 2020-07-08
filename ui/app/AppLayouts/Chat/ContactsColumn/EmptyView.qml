@@ -7,11 +7,14 @@ import "../../../../shared"
 import "../../../../imports"
 
 Item {
+    property var onCloseButtonPressed: function () {}
+
+    id: emptyView
     Layout.fillHeight: true
     Layout.fillWidth: true
 
     Rectangle {
-        id: emptyView
+        id: emptyViewContent
         border.color: Style.current.grey
         radius: 16
         anchors.right: parent.right
@@ -54,8 +57,15 @@ Item {
                 source: closeImg
                 color: Style.current.darkGrey
             }
+            MouseArea {
+                anchors.fill: closeImg
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    emptyView.onCloseButtonPressed()
+                }
+            }
 
-            Text {
+            StyledText {
                 id: chatAndTransactText
                 text: qsTr("Chat and transact privately with your friends")
                 anchors.top: parent.top
