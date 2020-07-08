@@ -57,23 +57,34 @@ Item {
     }
 
     StackLayout {
+        id: contactsStackView
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
         anchors.left: parent.left
-        anchors.leftMargin: 0
         anchors.right: parent.right
-        anchors.rightMargin: 0
         anchors.top: searchBox.bottom
-        anchors.topMargin: 16
+        anchors.topMargin: Style.current.padding
 
-        currentIndex: channelList.channelListCount > 0 ? 1 : 0
+        function getCurrentIndex() {
+            return channelList.channelListCount > 0 ? 1 : 0
+        }
 
-        EmptyView {}
+        currentIndex: getCurrentIndex()
+
+        EmptyView {
+            onCloseButtonPressed: function () {
+                contactsStackView.currentIndex = 2
+            }
+        }
 
         ChannelList {
             id: channelList
             searchStr: contactsColumn.searchStr
+            onChannelListCountChanged: {
+                contactsStackView.currentIndex = contactsStackView.getCurrentIndex()
+            }
         }
+
+        ClosedEmptyView {}
     }
 }
 
