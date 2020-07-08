@@ -122,7 +122,7 @@ QtObject:
     notify = deviceSetupChanged
 
   proc setDeviceName*(self: ProfileView, deviceName: string) {.slot.} =
-    devices.setDeviceName(deviceName)
+    status_devices.setDeviceName(deviceName)
     self.setDeviceSetup(true)
 
   proc syncAllDevices*(self: ProfileView) {.slot.} =
