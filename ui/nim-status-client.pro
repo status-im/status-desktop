@@ -21,6 +21,7 @@ SOURCES = *.qml \
           app/AppLayouts/Browser/*.qml \
           app/AppLayouts/Chat/*.qml \
           app/AppLayouts/Chat/ChatColumn/*.qml \
+          app/AppLayouts/Chat/ContactsColumn/*.qml \
           app/AppLayouts/Chat/components/*.qml \
           app/AppLayouts/Chat/Contacts/*.qml \
           app/AppLayouts/Node/*.qml \
