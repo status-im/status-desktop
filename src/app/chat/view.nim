@@ -45,7 +45,7 @@ QtObject:
   proc newChatsView*(status: Status): ChatsView =
     new(result, delete)
     result.status = status
-    result.chats = newChannelsList()
+    result.chats = newChannelsList(status)
     result.activeChannel = newChatItemView(status)
     result.activeStickerPackId = RECENT_STICKERS
     result.messageList = initTable[string, ChatMessageList]()

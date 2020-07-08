@@ -1,5 +1,8 @@
 import NimQml, Tables
 import ../../../status/chat/[chat, message]
+import ../../../status/status
+import ../../../status/ens
+import ../../../status/accounts
 
 type
   ChannelsRoles {.pure.} = enum
@@ -15,6 +18,7 @@ QtObject:
   type
     ChannelsList* = ref object of QAbstractListModel
       chats*: seq[Chat]
+      status: Status
 
   proc setup(self: ChannelsList) = self.QAbstractListModel.setup
 
@@ -22,12 +26,15 @@ QtObject:
     self.chats = @[]
     self.QAbstractListModel.delete
 
-  proc newChannelsList*(): ChannelsList =
+  proc newChannelsList*(status: Status): ChannelsList =
     new(result, delete)
     result.chats = @[]
+    result.status = status
     result.setup()
 
   method rowCount(self: ChannelsList, index: QModelIndex = nil): int = self.chats.len
+
+  proc renderBlock(self: ChannelsList, message: Message): string
 
   method data(self: ChannelsList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
@@ -40,7 +47,7 @@ QtObject:
     case chatItemRole:
       of ChannelsRoles.Name: result = newQVariant(chatItem.name)
       of ChannelsRoles.Timestamp: result = newQVariant($chatItem.timestamp)
-      of ChannelsRoles.LastMessage: result = newQVariant(chatItem.lastMessage.text)
+      of ChannelsRoles.LastMessage: result = newQVariant(self.renderBlock(chatItem.lastMessage))
       of ChannelsRoles.UnreadMessages: result = newQVariant(chatItem.unviewedMessagesCount)
       of ChannelsRoles.Identicon: result = newQVariant(chatItem.identicon)
       of ChannelsRoles.ChatType: result = newQVariant(chatItem.chatType.int)
@@ -114,3 +121,23 @@ QtObject:
     self.chats[idx] = channel
 
     self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int])
+
+  proc mention(self: ChannelsList, pubKey: string): string =
+    if self.status.chat.contacts.hasKey(pubKey):
+      return ens.userNameOrAlias(self.status.chat.contacts[pubKey])
+    generateAlias(pubKey)
+
+  proc renderInline(self: ChannelsList, elem: TextItem): string =
+    case elem.textType:
+    of "mention": result = self.mention(elem.literal)
+    of "link": result = elem.destination
+    else: result = elem.literal
+
+  proc renderBlock(self: ChannelsList, message: Message): string =
+    for pMsg in message.parsedText:
+      case pMsg.textType:
+        of "paragraph": 
+          for children in pMsg.children:
+            result = result & self.renderInline(children)
+        else:
+          result = pMsg.literal
