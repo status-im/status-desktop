@@ -122,7 +122,10 @@ proc init*(self: ChatModel) =
   var topics:seq[string] = @[]
   let parsedResult = parseJson(filterResult)["result"]
   for topicObj in parsedResult:
-    topics.add($topicObj["topic"].getStr)
+    # Only add topics for chats the user has joined
+    let topic_chat = topicObj["chatId"].getStr
+    if self.channels.hasKey(topic_chat) and self.channels[topic_chat].isActive:
+      topics.add($topicObj["topic"].getStr)
 
   if (topics.len == 0): 
     warn "No topics found for chats. Cannot load past messages"
