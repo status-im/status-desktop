@@ -91,10 +91,18 @@ proc connect*(self: MailserverModel, enode: string) =
     return
 
   self.selectedMailserver = enode
+
+  # Adding a peer and marking it as trusted can't be executed sync, because
+  # There's a delay between requesting a peer being added, and a signal being 
+  # received after the peer was added. So we first set the peer status as 
+  # Connecting and once a peerConnected signal is received, we mark it as 
+  # Connected and then as Trusted
+
   if self.nodes.hasKey(enode) and self.nodes[enode] == MailserverStatus.Connecting:
     if self.nodes[enode] == MailserverStatus.Connected:
       self.trustPeer(enode)
   else:
+    # Attempt to connect to mailserver by adding it as a peer
     self.nodes[enode] = MailserverStatus.Connecting
     self.addPeer(enode)
     
@@ -102,13 +110,18 @@ proc connect*(self: MailserverModel, enode: string) =
   status_mailservers.update(enode)
 
 proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
+  # When a node is added as a peer, or disconnected
+  # a DiscoverySummary signal is emitted. In here we
+  # change the status of the nodes the app is connected to
+  # Connected / Disconnected and emit peerConnected / peerDisconnected
+  # events.
+
   for peer in self.nodes.keys: 
     if not peers.contains(peer): 
       self.nodes[peer] = MailserverStatus.Disconnected
       self.events.emit("peerDisconnected", MailserverArg(peer: peer))
     # TODO: reconnect peer up to N times on 'peerDisconnected'
   
-  # TODO: this should come from settings
   var knownMailservers = initHashSet[string]()
   for m in getMailservers():
     knownMailservers.incl m[1]
@@ -133,6 +146,9 @@ proc autoConnect*(self: MailserverModel) =
     availableMailservers.add((reply["address"].getStr, reply["rttMs"].getInt))
   availableMailservers.sort(cmpMailserverReply)
 
+  # No mailservers where returned... do nothing.
+  if availableMailservers.len == 0: return
+
   # Picks a random mailserver amongs the ones with the lowest latency
   # The pool size is 1/4 of the mailservers were pinged successfully
   randomize()
@@ -141,27 +157,31 @@ proc autoConnect*(self: MailserverModel) =
 
 proc changeMailserver*(self: MailserverModel) =
   warn "Automatically switching mailserver"
-  self.nodes[self.selectedMailserver] = MailserverStatus.Disconnected
-  self.removePeer(self.selectedMailserver)
-  self.selectedMailserver = ""
+  if self.selectedMailserver != "":
+    self.nodes[self.selectedMailserver] = MailserverStatus.Disconnected
+    self.removePeer(self.selectedMailserver)
+    self.selectedMailserver = ""
   self.autoConnect()
 
 proc checkConnection*(mailserverPtr: ptr MailserverModel) {.thread.} =
   {.gcsafe.}:
-    discard #TODO: connect to current mailserver from the settings
-    # or setup a random mailserver:
-    mailserverPtr[].autoConnect()
+    #TODO: connect to current mailserver from the settings
 
+    # or setup a random mailserver:
     let sleepDuration = 10000
     while true:
       withLock mailserverPtr[].lock:
-        sleep(sleepDuration)
         # TODO: have a timeout for reconnection before changing to a different server
         if not mailserverPtr[].isSelectedMailserverAvailable:
           mailserverPtr[].changeMailserver()
+        sleep(sleepDuration)
 
 proc init*(self: MailserverModel) =
+  # Reconnect to peer
+  # Might be a good idea to have a timeout / limit of max number of reconnect attempts?
   self.events.on("peerDisconnected") do(e: Args): self.connect(MailserverArg(e).peer) 
+
+  # Peer was added. Mark it as trusted.  
   self.events.on("peerConnected") do(e: Args): self.trustPeer(MailserverArg(e).peer)
 
   self.connThread.createThread(checkConnection, self.unsafeAddr)
