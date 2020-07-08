@@ -18,6 +18,7 @@ tsFiles.forEach(file => {
 
     const doctype = json["_doctype"];
     const language = json[doctype]._attributes.language;
+    const isEn = language === 'en_US'
 
     let translations;
     try {
@@ -25,7 +26,6 @@ tsFiles.forEach(file => {
     } catch (e) {
         // No translation file for the exact match, let's use the file name instead
         const fileParts = file.split('_');
-        console.log('Filep', fileParts);
         let langString = fileParts[fileParts.length - 1];
         // Remove the .ts
         langString = langString.substring(0, langString.length - 3)
@@ -39,8 +39,16 @@ tsFiles.forEach(file => {
 
     const messages = json[doctype].context.message;
 
+    console.log(`Modying ${language}...`)
     messages.forEach(message => {
         if (!message._attributes || !message._attributes.id) {
+            return;
+        }
+        if (isEn) {
+            // We just put the source string in the tranlsation
+            message.translation = {
+                "_text": message.source._text
+            }
             return;
         }
         const messageId = message._attributes.id;
@@ -58,3 +66,5 @@ tsFiles.forEach(file => {
 
     fs.writeFileSync(file, xml);
 });
+
+console.log('All done!')
