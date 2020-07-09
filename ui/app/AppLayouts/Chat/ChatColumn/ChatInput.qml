@@ -7,7 +7,9 @@ import "../../../../shared"
 import "../../../../imports"
 
 Rectangle {
+    id: rectangle
     border.width: 0
+    height: 52
 
     visible: chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember(profileModel.profile.pubKey)
 
@@ -23,52 +25,50 @@ Rectangle {
         }
     }
 
-    RowLayout {
-        spacing: 0
-        anchors.fill: parent
 
-        ScrollView {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
 
-            StyledTArea {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                textFormat: TextArea.PlainText
-                Layout.preferredWidth: parent.width - sendBtns.width
+    ScrollView {
+        id: scrollView
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.right: sendBtns.left
+        anchors.rightMargin: 0
 
-                id: txtData
-                text: ""
-                selectByMouse: true
-                topPadding: Style.current.padding
-                leftPadding: 12
-                rightPadding: Style.current.padding
-                font.pixelSize: 14
-                //% "Type a message..."
-                placeholderText: qsTrId("type-a-message")
-                Keys.onPressed: onEnter(event)
-                background: Rectangle {
-                    color: "#00000000"
-                }
-            }
-        }
+        StyledTArea {
+            textFormat: TextArea.PlainText
 
-        ChatButtons {
-            id: sendBtns
-            Layout.topMargin: 1
-            Layout.fillHeight: true
-            Layout.preferredWidth: 30 + Style.current.padding
-            Layout.minimumWidth: 30 + Style.current.padding
-            Layout.maximumWidth: 200
-            addToChat: function (text) {
-                txtData.insert(txtData.length, text)
+            id: txtData
+            text: ""
+            selectByMouse: true
+
+            anchors.top: parent.top
+            // The normal padding doesn't work for some reason
+            topPadding: Style.current.padding + 9
+            leftPadding: 12
+            rightPadding: Style.current.padding
+
+            font.pixelSize: 15
+            //% "Type a message..."
+            placeholderText: qsTrId("type-a-message")
+            Keys.onPressed: onEnter(event)
+            background: Rectangle {
+                color: "#00000000"
             }
         }
     }
 
+    ChatButtons {
+        id: sendBtns
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+        addToChat: function (text) {
+            txtData.insert(txtData.length, text)
+        }
+    }
 }
 /*##^##
 Designer {
-    D{i:0;autoSize:true;formeditorColor:"#ffffff";height:100;width:600}
+    D{i:0;formeditorColor:"#ffffff";formeditorZoom:1.25}
 }
 ##^##*/
