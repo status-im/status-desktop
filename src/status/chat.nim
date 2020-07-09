@@ -111,7 +111,7 @@ proc init*(self: ChatModel) =
     if self.hasChannel(chat.id): continue
     filters.add status_chat.buildFilter(chat)
     self.channels[chat.id] = chat
-    self.events.emit("channelJoined", ChannelArgs(chat: chat))
+    self.events.emit("channelLoaded", ChannelArgs(chat: chat))
 
   if filters.len == 0: return
 
