@@ -32,7 +32,9 @@ Item {
         color: Style.current.darkGrey
         onLinkActivated: function (linkClicked) {
             switch (linkClicked) {
-                case "shareKey": console.log('Go to share key'); break;
+                case "shareKey":
+                    profilePopup.openPopup(profileModel.profile.username, profileModel.profile.pubKey, profileModel.profile.identicon);
+                    break;
                 case "invite": inviteFriendsPopup.open(); break;
                 default: //no idea what was clicked
             }
@@ -41,6 +43,12 @@ Item {
 
     InviteFriendsPopup {
         id: inviteFriendsPopup
+    }
+
+    ProfilePopup {
+        id: profilePopup
+        height: 330
+        noFooter: true
     }
 }
 /*##^##

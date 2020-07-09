@@ -12,6 +12,7 @@ ModalPopup {
     property var fromAuthor: ""
     property bool showQR: false
     property bool isEnsVerified: false
+    property bool noFooter: false
 
     function openPopup(userNameParam, fromAuthorParam, identiconParam) {
         this.showQR = false
@@ -234,6 +235,8 @@ ModalPopup {
     }
 
     footer: Item {
+        id: footerContainer
+        visible: !noFooter
         width: parent.width
         height: children[0].height
 
