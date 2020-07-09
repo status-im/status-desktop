@@ -16,7 +16,7 @@ Item {
     property bool isCurrentUser: false
     property string timestamp: "1234567"
     property string sticker: "Qme8vJtyrEHxABcSVGPF95PtozDgUyfr1xGjePmFdZgk9v"
-    property int contentType: 1 // constants don't work in default props
+    property int contentType: 2 // constants don't work in default props
     property string chatId: "chatId"
     property string outgoingStatus: ""
     property string responseTo: ""
@@ -27,6 +27,7 @@ Item {
     property bool isEmoji: contentType === Constants.emojiType
     property bool isMessage: contentType === Constants.messageType || contentType === Constants.stickerType 
     property bool isStatusMessage: contentType === Constants.systemMessagePrivateGroupType
+    property bool isSticker: contentType === Constants.stickerType
 
     property int replyMessageIndex: chatsModel.messageList.getMessageIndex(responseTo);
     property string repliedMessageAuthor: replyMessageIndex > -1 ? chatsModel.messageList.getReplyData(replyMessageIndex, "userName") : "";
@@ -235,9 +236,10 @@ Item {
         property int chatHorizontalPadding: 12
 
         id: chatBox
+        color: isSticker ? Style.current.white : (isCurrentUser ? Style.current.blue : Style.current.lightBlue)
+        border.color: isSticker ? Style.current.grey : Style.current.transparent
+        border.width: 1
         height: (3 * chatVerticalPadding) + (contentType == Constants.stickerType ? stickerId.height : (chatText.height + chatReply.height))
-        color: isCurrentUser ? Style.current.blue : Style.current.lightBlue
-        border.color: Style.current.transparent
         width: {
             switch(contentType){
                 case Constants.stickerType:
@@ -400,8 +402,10 @@ Item {
         visible: isCurrentUser
     }
 
-    // Thi`s rectangle's only job is to mask the corner to make it less rounded... yep
+    // This rectangle's only job is to mask the corner to make it less rounded... yep
     Rectangle {
+        // TODO find a way to show the corner for stickers since they have a border
+        visible: !isSticker
         color: chatBox.color
         width: 18
         height: 18
@@ -418,6 +422,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:0;height:80;width:800}
+    D{i:0;formeditorColor:"#ffffff";formeditorZoom:1.75;height:80;width:800}
 }
 ##^##*/
