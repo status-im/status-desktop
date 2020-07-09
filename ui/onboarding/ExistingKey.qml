@@ -1,6 +1,5 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import "../sounds"
 
 Item {
     property var onClosed: function () {}
@@ -9,10 +8,6 @@ Item {
 
     Component.onCompleted: {
         enterSeedPhraseModal.open()
-    }
-
-    ErrorSound {
-        id: errorSound
     }
 
     EnterSeedPhraseModal {

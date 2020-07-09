@@ -2,7 +2,6 @@ import QtQuick 2.13
 import QtQuick.Dialogs 1.3
 import "../../../../imports"
 import "../../../../shared"
-import "../../../../sounds"
 
 ModalPopup {
     id: popup
@@ -39,12 +38,6 @@ ModalPopup {
     onOpened: {
         addressInput.text = "";
         addressInput.forceActiveFocus(Qt.MouseFocusReason)
-    }
-
-    Item {
-        ErrorSound {
-            id: errorSound
-        }
     }
 
     Input {
