@@ -239,7 +239,11 @@ QtObject:
 
   proc isEnsVerified*(self: ChatsView, id: string): bool {.slot.} =
     if id == "": return false
-    self.status.contacts.getContactByID(id).ensVerified
+    let contact = self.status.contacts.getContactByID(id)
+    if contact == nil:
+      return false
+    result = contact.ensVerified
+    
 
   proc formatENSUsername*(self: ChatsView, username: string): string {.slot.} =
     result = status_ens.addDomain(username)

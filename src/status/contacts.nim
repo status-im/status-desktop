@@ -18,7 +18,7 @@ proc getContactByID*(self: ContactModel, id: string): Profile =
   let response = status_contacts.getContactByID(id)
   # TODO: change to options
   let responseResult = parseJSON($response)["result"]
-  if responseResult.kind == JNull:
+  if responseResult == nil or responseResult.kind == JNull:
     result = nil
   else:
     result = toProfileModel(parseJSON($response)["result"])
