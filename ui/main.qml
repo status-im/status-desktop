@@ -3,10 +3,12 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import Qt.labs.platform 1.1
 import QtQml.StateMachine 1.14 as DSM
+import QtMultimedia 5.13
 import Qt.labs.settings 1.0
 import QtQml 2.13
 import "./onboarding"
 import "./app"
+import "./sounds"
 import "./imports"
 
 ApplicationWindow {
@@ -28,6 +30,20 @@ ApplicationWindow {
     visible: true
 
     signal navigateTo(string path)
+
+    Item {
+        ErrorSound {
+            id: errorSound
+        }
+    }
+
+    Item {
+        Audio {
+            id: sendMessageSound
+            audioRole: NotificationRole
+            source: "../../../../sounds/send_message.wav"
+        }
+    }
 
     Settings {
        id: settings

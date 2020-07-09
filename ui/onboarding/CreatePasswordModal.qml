@@ -3,7 +3,6 @@ import QtQuick.Controls 2.13
 import QtQuick.Dialogs 1.3
 import "../imports"
 import "../shared"
-import "../sounds"
 
 ModalPopup {
     property bool loading: false
@@ -42,12 +41,6 @@ ModalPopup {
     onOpened: {
         firstPasswordField.text = "";
         firstPasswordField.forceActiveFocus(Qt.MouseFocusReason)
-    }
-
-    Item {
-        ErrorSound {
-            id: errorSound
-        }
     }
 
     Input {

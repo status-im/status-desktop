@@ -2,7 +2,6 @@ import QtQuick 2.13
 import QtQuick.Dialogs 1.3
 import "../../../../imports"
 import "../../../../shared"
-import "../../../../sounds"
 
 ModalPopup {
     id: popup
@@ -53,12 +52,6 @@ ModalPopup {
 
     //% "Add account with a seed phrase"
     title: qsTrId("add-seed-account")
-
-    Item {
-        ErrorSound {
-            id: errorSound
-        }
-    }
 
     Input {
         id: passwordInput

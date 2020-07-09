@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 import "../../../imports"
 import "../../../shared"
-import "../../../sounds"
 
 ModalPopup {
     property var currentAccount: walletModel.currentAccount
@@ -32,12 +31,6 @@ ModalPopup {
 
     onOpened: {
         accountNameInput.forceActiveFocus(Qt.MouseFocusReason)
-    }
-
-    Item {
-        ErrorSound {
-            id: errorSound
-        }
     }
 
     Input {
