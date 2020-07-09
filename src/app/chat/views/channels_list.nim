@@ -50,7 +50,7 @@ QtObject:
     let chatItem = self.chats[index.row]
 
     var name = chatItem.name
-    if chatItem.chatType == ChatType.OneToOne:
+    if chatItem.chatType.isOneToOne:
       name = self.userNameOrAlias(chatItem.id)
 
     let chatItemRole = role.ChannelsRoles
