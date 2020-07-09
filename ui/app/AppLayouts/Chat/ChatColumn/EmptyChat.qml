@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../shared"
 import "../../../../imports"
+import "../components"
 
 Item {
     id: element
@@ -17,7 +18,10 @@ Item {
     }
 
     StyledText {
-        text: `<a href="shareKey" style="color:${Style.current.blue};text-decoration:none;">Share your chat key</a> or <a href="invite" style="color:${Style.current.blue};text-decoration:none">invite</a> friends to start messaging in Status`
+        text: `<a href="shareKey" style="color:${Style.current.blue};text-decoration:none;">${qsTr("Share your chat key")}</a>` +
+            ` ${qsTr("or")} ` +
+            `<a href="invite" style="color:${Style.current.blue};text-decoration:none">${qsTr("invite")}</a>`+
+            ` ${qsTr("friends to start messaging in Status")}`
         textFormat: Text.RichText
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignHCenter
@@ -29,10 +33,14 @@ Item {
         onLinkActivated: function (linkClicked) {
             switch (linkClicked) {
                 case "shareKey": console.log('Go to share key'); break;
-                case "invite": console.log('Go to invite'); break;
+                case "invite": inviteFriendsPopup.open(); break;
                 default: //no idea what was clicked
             }
         }
+    }
+
+    InviteFriendsPopup {
+        id: inviteFriendsPopup
     }
 }
 /*##^##

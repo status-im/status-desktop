@@ -57,6 +57,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     app/AppLayouts/Chat/ContactsColumn/ClosedEmptyView.qml \
     app/AppLayouts/Chat/components/EmojiPopup.qml \
+    app/AppLayouts/Chat/components/InviteFriendsPopup.qml \
     fonts/InterStatus/InterStatus-Black.otf \
     fonts/InterStatus/InterStatus-BlackItalic.otf \
     fonts/InterStatus/InterStatus-Bold.otf \

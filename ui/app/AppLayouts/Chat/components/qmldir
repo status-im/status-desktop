@@ -7,3 +7,4 @@ ChannelIcon 1.0 ChannelIcon.qml
 RenameGroupPopup 1.0 RenameGroupPopup.qml
 GroupChatPopup 1.0 GroupChatPopup.qml
 StickersPopup 1.0 StickersPopup.qml
+InviteFriendsPopup 1.0 InviteFriendsPopup.qml

@@ -84,6 +84,13 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: Style.current.xlPadding
+                onClicked: {
+                    inviteFriendsPopup.open()
+                }
+            }
+
+            InviteFriendsPopup {
+                id: inviteFriendsPopup
             }
         }
 
