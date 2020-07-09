@@ -77,6 +77,8 @@ Rectangle {
         font.pixelSize: 25
 
         MouseArea {
+            property bool menuOpened: false
+
             id: mouseArea
             // The negative margins are for the mouse area to be a bit more wide around the button and have more space for the click
             anchors.topMargin: -10
@@ -90,9 +92,14 @@ Rectangle {
                     menu = groupContextMenu
                 }
 
-                menu.arrowX = menu.width - 40
-                menu.popup(moreActionsBtn.x, moreActionsBtn.height + 10)
-                
+                if (!menuOpened) {
+                    menu.arrowX = menu.width - 40
+                    menu.popup(moreActionsBtn.x, moreActionsBtn.height + 10)
+                    menuOpened = true
+                } else {
+                    menu.dismiss()
+                    menuOpened = false
+                }
             }
             cursorShape: Qt.PointingHandCursor
             acceptedButtons: Qt.LeftButton | Qt.RightButton
