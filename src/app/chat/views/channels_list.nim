@@ -38,7 +38,7 @@ QtObject:
       return ens.userNameOrAlias(self.status.chat.contacts[pubKey])
     generateAlias(pubKey)
 
-  method rowCount(self: ChannelsList, index: QModelIndex = nil): int = self.chats.len
+  method rowCount*(self: ChannelsList, index: QModelIndex = nil): int = self.chats.len
 
   proc renderBlock(self: ChannelsList, message: Message): string
 

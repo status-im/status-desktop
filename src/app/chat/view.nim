@@ -128,6 +128,9 @@ QtObject:
   proc upsertChannel(self: ChatsView, channel: string) =
     if not self.messageList.hasKey(channel):
       self.messageList[channel] = newChatMessageList(channel, self.status)
+      # If there is only one channel, set is as active
+      if (self.activeChannel.chatItem == nil and self.chats.rowCount() == 1):
+        self.setActiveChannelByIndex(0)
   
   proc messagePushed*(self: ChatsView) {.signal.}
 
