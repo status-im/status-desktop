@@ -32,6 +32,11 @@ QtObject:
     result.status = status
     result.setup()
 
+  proc userNameOrAlias(self: ChannelsList, pubKey: string): string {.slot.} =
+    if self.status.chat.contacts.hasKey(pubKey):
+      return ens.userNameOrAlias(self.status.chat.contacts[pubKey])
+    generateAlias(pubKey)
+
   method rowCount(self: ChannelsList, index: QModelIndex = nil): int = self.chats.len
 
   proc renderBlock(self: ChannelsList, message: Message): string
@@ -43,9 +48,14 @@ QtObject:
       return
 
     let chatItem = self.chats[index.row]
+
+    var name = chatItem.name
+    if chatItem.chatType == ChatType.OneToOne:
+      name = self.userNameOrAlias(chatItem.id)
+
     let chatItemRole = role.ChannelsRoles
     case chatItemRole:
-      of ChannelsRoles.Name: result = newQVariant(chatItem.name)
+      of ChannelsRoles.Name: result = newQVariant(name)
       of ChannelsRoles.Timestamp: result = newQVariant($chatItem.timestamp)
       of ChannelsRoles.LastMessage: result = newQVariant(self.renderBlock(chatItem.lastMessage))
       of ChannelsRoles.UnreadMessages: result = newQVariant(chatItem.unviewedMessagesCount)
@@ -122,14 +132,9 @@ QtObject:
 
     self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int])
 
-  proc mention(self: ChannelsList, pubKey: string): string =
-    if self.status.chat.contacts.hasKey(pubKey):
-      return ens.userNameOrAlias(self.status.chat.contacts[pubKey])
-    generateAlias(pubKey)
-
   proc renderInline(self: ChannelsList, elem: TextItem): string =
     case elem.textType:
-    of "mention": result = self.mention(elem.literal)
+    of "mention": result = self.userNameOrAlias(elem.literal)
     of "link": result = elem.destination
     else: result = elem.literal
 
