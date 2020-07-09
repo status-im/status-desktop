@@ -22,15 +22,18 @@ type
     SectionIdentifier = UserRole + 11
     Id = UserRole + 12
     OutgoingStatus = UserRole + 13
+    ResponseTo = UserRole + 14
 
 QtObject:
   type
     ChatMessageList* = ref object of QAbstractListModel
       messages*: seq[Message]
       status: Status
+      messageIndex: Table[string, int]
 
   proc delete(self: ChatMessageList) =
     self.messages = @[]
+    self.messageIndex = initTable[string, int]()
     self.QAbstractListModel.delete
 
   proc setup(self: ChatMessageList) =
@@ -46,6 +49,7 @@ QtObject:
   proc newChatMessageList*(chatId: string, status: Status): ChatMessageList =
     new(result, delete)
     result.messages = @[result.chatIdentifier(chatId)]
+    result.messageIndex = initTable[string, int]()
     result.status = status
     result.setup
 
@@ -73,6 +77,7 @@ QtObject:
       of ChatMessageRoles.SectionIdentifier: result = newQVariant(sectionIdentifier(message))
       of ChatMessageRoles.Id: result = newQVariant(message.id)
       of ChatMessageRoles.OutgoingStatus: result = newQVariant(message.outgoingStatus)
+      of ChatMessageRoles.ResponseTo: result = newQVariant(message.responseTo)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -88,17 +93,34 @@ QtObject:
       ChatMessageRoles.ChatId.int:"chatId",
       ChatMessageRoles.SectionIdentifier.int: "sectionIdentifier",
       ChatMessageRoles.Id.int: "messageId",
-      ChatMessageRoles.OutgoingStatus.int: "outgoingStatus"
+      ChatMessageRoles.OutgoingStatus.int: "outgoingStatus",
+      ChatMessageRoles.ResponseTo.int: "responseTo"
     }.toTable
 
+  proc getMessageIndex(self: ChatMessageList, messageId: string): int {.slot.} =
+    if not self.messageIndex.hasKey(messageId): return -1
+    result = self.messageIndex[messageId]
+
+  proc getReplyData(self: ChatMessageList, index: int, data: string): string {.slot.} =
+    let message = self.messages[index]
+    case data:
+    of "userName": result = message.alias
+    of "message": result = message.text
+    else: result = ""
+
   proc add*(self: ChatMessageList, message: Message) =
+    if self.messageIndex.hasKey(message.id): return # duplicated msg
+
     self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len)
+    self.messageIndex[message.id] = self.messages.len
     self.messages.add(message)
     self.endInsertRows()
 
   proc add*(self: ChatMessageList, messages: seq[Message]) =
     self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len)
     for message in messages:
+      if self.messageIndex.hasKey(message.id): continue
+      self.messageIndex[message.id] = self.messages.len
       self.messages.add(message)
     self.endInsertRows()
 

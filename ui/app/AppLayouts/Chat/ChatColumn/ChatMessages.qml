@@ -123,6 +123,7 @@ ScrollView {
             sticker: model.sticker
             contentType: model.contentType
             outgoingStatus: model.outgoingStatus
+            responseTo: model.responseTo
             authorCurrentMsg: msgDelegate.ListView.section
             authorPrevMsg: msgDelegate.ListView.previousSection
             profileClick: profilePopup.openPopup.bind(profilePopup)

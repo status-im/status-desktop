@@ -19,6 +19,7 @@ Item {
     property int contentType: 1 // constants don't work in default props
     property string chatId: "chatId"
     property string outgoingStatus: ""
+    property string responseTo: ""
 
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
@@ -26,6 +27,10 @@ Item {
     property bool isEmoji: contentType === Constants.emojiType
     property bool isMessage: contentType === Constants.messageType || contentType === Constants.stickerType 
     property bool isStatusMessage: contentType === Constants.systemMessagePrivateGroupType
+
+    property int replyMessageIndex: chatsModel.messageList.getMessageIndex(responseTo);
+    property string repliedMessageAuthor: replyMessageIndex > -1 ? chatsModel.messageList.getReplyData(replyMessageIndex, "userName") : "";
+    property string repliedMessageContent: replyMessageIndex > -1 ? chatsModel.messageList.getReplyData(replyMessageIndex, "message") : "";
 
     property var profileClick: function () {}
 
@@ -37,7 +42,7 @@ Item {
             case Constants.stickerType:
                 return stickerId.height + 50
             default:
-                return (isCurrentUser || (!isCurrentUser && authorCurrentMsg == authorPrevMsg) ? chatBox.height : 24 + chatBox.height) + 10
+                return (isCurrentUser || (!isCurrentUser && authorCurrentMsg == authorPrevMsg) ? chatBox.height : 24 + chatBox.height) + 20
         }
     }
 
@@ -230,10 +235,18 @@ Item {
         property int chatHorizontalPadding: 12
 
         id: chatBox
-        height: (2 * chatVerticalPadding) + (contentType == Constants.stickerType ? stickerId.height : chatText.height)
+        height: (3 * chatVerticalPadding) + (contentType == Constants.stickerType ? stickerId.height : (chatText.height + chatReply.height))
         color: isCurrentUser ? Style.current.blue : Style.current.lightBlue
         border.color: Style.current.transparent
-        width: contentType === Constants.stickerType ? (stickerId.width + (2 * chatHorizontalPadding)) : (message.length > 52 ? 380 : chatText.width + 2 * chatHorizontalPadding)
+        width: {
+            switch(contentType){
+                case Constants.stickerType:
+                    return stickerId.width + (2 * chatBox.chatHorizontalPadding);
+                default:
+                    return 400;
+            }
+        }
+
         radius: 16
         anchors.left: !isCurrentUser ? chatImage.right : undefined
         anchors.leftMargin: !isCurrentUser ? 8 : 0
@@ -243,19 +256,51 @@ Item {
         anchors.topMargin: 0
         visible: isMessage || isEmoji
 
-        // Thi`s rectangle's only job is to mask the corner to make it less rounded... yep
         Rectangle {
-            color: parent.color
-            width: 18
-            height: 18
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 0
-            anchors.left: !isCurrentUser ? parent.left : undefined
-            anchors.leftMargin: 0
-            anchors.right: !isCurrentUser ? undefined : parent.right
-            anchors.rightMargin: 0
-            radius: 4
-            z: -1
+            id: chatReply
+            color:  isCurrentUser ? Style.current.blue : Style.current.lightBlue
+            visible: responseTo != ""
+            height: chatReply.visible ? childrenRect.height : 0
+            anchors.top: parent.top
+            anchors.topMargin: chatReply.visible ? chatBox.chatVerticalPadding : 0
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: chatBox.chatHorizontalPadding
+
+            StyledTextEdit {
+                id: lblReplyAuthor
+                text: "↳" + repliedMessageAuthor
+                color: Style.current.darkGrey
+                readOnly: true
+                selectByMouse: true
+                wrapMode: Text.Wrap
+                anchors.left: parent.left
+                anchors.right: parent.right
+            }
+
+            StyledTextEdit {
+                id: lblReplyMessage
+                anchors.top: lblReplyAuthor.bottom
+                anchors.topMargin: 5
+                text: Emoji.parse(linkify(repliedMessageContent), "26x26");
+                textFormat: Text.RichText
+                color: Style.current.darkGrey
+                readOnly: true
+                selectByMouse: true
+                wrapMode: Text.Wrap
+                anchors.left: parent.left
+                anchors.right: parent.right
+            }
+
+            Separator {
+                anchors.top: lblReplyMessage.bottom
+                anchors.topMargin: 8
+                anchors.left: lblReplyMessage.left
+                anchors.right: lblReplyMessage.right
+                anchors.rightMargin: chatBox.chatHorizontalPadding
+                color: Style.current.darkGrey
+            }
         }
 
         StyledTextEdit {
@@ -271,11 +316,11 @@ Item {
             }
             anchors.left: parent.left
             anchors.leftMargin: parent.chatHorizontalPadding
-            anchors.right: message.length > 52 ? parent.right : undefined
-            anchors.rightMargin: message.length > 52 ? parent.chatHorizontalPadding : 0
+            anchors.right: parent.right
+            anchors.rightMargin: parent.chatHorizontalPadding
             horizontalAlignment: !isCurrentUser ? Text.AlignLeft : Text.AlignRight
             wrapMode: Text.Wrap
-            anchors.top: parent.top
+            anchors.top: chatReply.bottom
             anchors.topMargin: chatBox.chatVerticalPadding
             font.pixelSize: 15
             readOnly: true
@@ -315,44 +360,59 @@ Item {
             source: contentType === Constants.stickerType ? ("https://ipfs.infura.io/ipfs/" + sticker) : ""
             visible: contentType === Constants.stickerType
         }
+    }
 
-        StyledTextEdit {
-            id: chatTime
-            color: Style.current.darkGrey
-            text: {
-                let messageDate = new Date(Math.floor(timestamp))
-                let minutes = messageDate.getMinutes();
-                let hours = messageDate.getHours();
-                return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
-            }
-            anchors.top: contentType === Constants.stickerType ? stickerId.bottom : chatText.bottom
-            anchors.topMargin: 8
-            anchors.bottomMargin: Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: isCurrentUser ? 5 : Style.current.padding
-            font.pixelSize: 10
-            readOnly: true
-            selectByMouse: true
-            // Probably only want to show this when clicking?
-            visible: true
+    StyledTextEdit {
+        id: chatTime
+        color: Style.current.darkGrey
+        text: {
+            let messageDate = new Date(Math.floor(timestamp))
+            let minutes = messageDate.getMinutes();
+            let hours = messageDate.getHours();
+            return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
         }
+        anchors.top: chatBox.bottom
+        anchors.topMargin: 4
+        anchors.bottomMargin: Style.current.padding
+        anchors.right: chatBox.right
+        anchors.rightMargin: isCurrentUser ? 5 : Style.current.padding
+        font.pixelSize: 10
+        readOnly: true
+        selectByMouse: true
+        visible: true
+    }
 
-        StyledTextEdit {
-            id: sentMessage
-            color: Style.current.darkGrey
-            text: outgoingStatus == "sent" ?
-            //% "Sent"
-            qsTrId("status-sent") :
-            //% "Sending..."
-            qsTrId("sending")
-            anchors.top: chatTime.top
-            anchors.bottomMargin: Style.current.padding
-            anchors.right: chatTime.left
-            anchors.rightMargin: 5
-            font.pixelSize: 10
-            readOnly: true
-            visible: isCurrentUser
-        }
+    
+    StyledTextEdit {
+        id: sentMessage
+        color: Style.current.darkGrey
+        text: outgoingStatus == "sent" ?
+        //% "Sent"
+        qsTrId("status-sent") :
+        //% "Sending..."
+        qsTrId("sending")
+        anchors.top: chatTime.top
+        anchors.bottomMargin: Style.current.padding
+        anchors.right: chatTime.left
+        anchors.rightMargin: 5
+        font.pixelSize: 10
+        readOnly: true
+        visible: isCurrentUser
+    }
+
+    // Thi`s rectangle's only job is to mask the corner to make it less rounded... yep
+    Rectangle {
+        color: chatBox.color
+        width: 18
+        height: 18
+        anchors.bottom: chatBox.bottom
+        anchors.bottomMargin: 0
+        anchors.left: !isCurrentUser ? chatBox.left : undefined
+        anchors.leftMargin: 0
+        anchors.right: !isCurrentUser ? undefined : chatBox.right
+        anchors.rightMargin: 0
+        radius: 4
+        z: -1
     }
 }
 
