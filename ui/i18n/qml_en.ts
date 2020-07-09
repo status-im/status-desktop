@@ -1468,5 +1468,10 @@ where you alone own your data</source>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
+    <message id="no-messages">
+        <location filename="../app/AppLayouts/Chat/ContactsColumn/Channel.qml" line="78"/>
+        <source>No messages...</source>
+        <translation>No messages..</translation>
+    </message>
 </context>
 </TS>
