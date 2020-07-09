@@ -9,6 +9,7 @@ Rectangle {
     property string lastMessage: "My latest message\n with a return"
     property string timestamp: "20/2/2020"
     property string unviewedMessagesCount: "2"
+    property bool hasMentions: false
     property int chatType: Constants.chatTypePublic
     property string searchStr: ""
 
@@ -135,10 +136,10 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         color: Style.current.blue
-        visible: unviewedMessagesCount > 0
+        visible: (unviewedMessagesCount > 0) || wrapper.hasMentions
         StyledText {
             id: contactNumberChats
-            text: wrapper.unviewedMessagesCount < 100 ? wrapper.unviewedMessagesCount : "99"
+            text: wrapper.hasMentions ? '@' : (wrapper.unviewedMessagesCount < 100 ? wrapper.unviewedMessagesCount : "99")
             font.pixelSize: 12
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter

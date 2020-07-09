@@ -13,6 +13,7 @@ type
     Identicon = UserRole + 5
     ChatType = UserRole + 6
     Color = UserRole + 7
+    HasMentions = UserRole + 8
 
 QtObject:
   type
@@ -52,6 +53,7 @@ QtObject:
       of ChannelsRoles.Identicon: result = newQVariant(chatItem.identicon)
       of ChannelsRoles.ChatType: result = newQVariant(chatItem.chatType.int)
       of ChannelsRoles.Color: result = newQVariant(chatItem.color)
+      of ChannelsRoles.HasMentions: result = newQVariant(chatItem.hasMentions)
 
   method roleNames(self: ChannelsList): Table[int, string] =
     {
@@ -61,7 +63,8 @@ QtObject:
       ChannelsRoles.UnreadMessages.int: "unviewedMessagesCount",
       ChannelsRoles.Identicon.int: "identicon",
       ChannelsRoles.ChatType.int: "chatType",
-      ChannelsRoles.Color.int: "color"
+      ChannelsRoles.Color.int: "color",
+      ChannelsRoles.HasMentions.int: "hasMentions"
     }.toTable
 
   proc addChatItemToList*(self: ChannelsList, channel: Chat): int =
@@ -109,7 +112,7 @@ QtObject:
     else:
       self.chats[0] = channel
 
-    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int])
+    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int, ChannelsRoles.HasMentions.int])
 
   proc clearUnreadMessagesCount*(self: ChannelsList, channel: var Chat) =
     let idx = self.chats.findIndexById(channel.id)
@@ -118,9 +121,10 @@ QtObject:
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.chats.len, 0, nil)
     channel.unviewedMessagesCount = 0
+    channel.hasMentions = false
     self.chats[idx] = channel
 
-    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int])
+    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int, ChannelsRoles.HasMentions.int])
 
   proc mention(self: ChannelsList, pubKey: string): string =
     if self.status.chat.contacts.hasKey(pubKey):

@@ -60,6 +60,11 @@ QtObject:
   QtProperty[QVariant] members:
     read = getMembers
 
+  proc hasMentions*(self: ChatItemView): bool {.slot.} = result = ?.self.chatItem.hasMentions
+
+  QtProperty[bool] hasMentions:
+    read = hasMentions
+
   proc isMember*(self: ChatItemView, pubKey: string): bool {.slot.} =
     if self.chatItem.isNil: return false
     return self.chatItem.isMember(pubKey)
