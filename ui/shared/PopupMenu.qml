@@ -7,7 +7,7 @@ import "../shared"
 Menu {
     property alias arrowX: bgPopupMenuTopArrow.x
     property int paddingSize: 8
-    closePolicy: Popup.CloseOnPressOutsideParent
+    closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnReleaseOutside | Popup.CloseOnEscape 
     id: popupMenu
     topPadding: bgPopupMenuTopArrow.height + paddingSize
     bottomPadding: paddingSize

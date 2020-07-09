@@ -23,7 +23,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         onClicked: {
-            chatsModel.sendMessage(txtData.text)
+            chatsModel.sendMessage(txtData.text, chatColumn.isReply)
             txtData.text = ""
         }
         background: Rectangle {

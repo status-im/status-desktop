@@ -156,11 +156,12 @@ proc clearHistory*(self: ChatModel, chatId: string) =
 proc setActiveChannel*(self: ChatModel, chatId: string) =
   self.events.emit("activeChannelChanged", ChatIdArg(chatId: chatId))
 
-proc sendMessage*(self: ChatModel, chatId: string, msg: string) =
-  var response = status_chat.sendChatMessage(chatId, msg)
+proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "") =
+  var response = status_chat.sendChatMessage(chatId, msg, replyTo)
   var (chats, messages) = self.processChatUpdate(parseJson(response))
   self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
-  self.events.emit("sendingMessage", MessageArgs(id: messages[0].id, channel: messages[0].chatId))
+  for msg in messages:
+    self.events.emit("sendingMessage", MessageArgs(id: msg.id, channel: msg.chatId))
 
 proc addStickerToRecent*(self: ChatModel, sticker: Sticker, save: bool = false) =
   self.recentStickers.insert(sticker, 0)
