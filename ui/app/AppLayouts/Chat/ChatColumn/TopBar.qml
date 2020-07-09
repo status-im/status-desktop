@@ -65,36 +65,49 @@ Rectangle {
         anchors.topMargin: 0
     }
 
-    StyledText {
-        id: moreActionsBtn
-        text: "..."
-        font.letterSpacing: 0.5
-        font.bold: true
-        lineHeight: 1.4
+    Rectangle {
+        id: moreActionsBtnContainer
+        width: 40
+        height: 40
+        radius: Style.current.radius
+        color: Style.current.transparent
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: 20
-        font.pixelSize: 25
+        anchors.rightMargin: Style.current.smallPadding
+
+        StyledText {
+            id: moreActionsBtn
+            text: "..."
+            font.letterSpacing: 0.5
+            font.bold: true
+            lineHeight: 1.4
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.pixelSize: 25
+        }
 
         MouseArea {
             property bool menuOpened: false
 
             id: mouseArea
-            // The negative margins are for the mouse area to be a bit more wide around the button and have more space for the click
-            anchors.topMargin: -10
-            anchors.bottomMargin: -10
-            anchors.rightMargin: -15
-            anchors.leftMargin: -15
             anchors.fill: parent
+            hoverEnabled: true
+            onEntered: {
+                parent.color = Style.current.grey
+            }
+            onExited: {
+                parent.color = Style.current.transparent
+            }
+
             onClicked: {
                 var menu = chatContextMenu;
-                if(chatsModel.activeChannel.chatType == Constants.chatTypePrivateGroupChat){
+                if(chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat){
                     menu = groupContextMenu
                 }
 
                 if (!menuOpened) {
                     menu.arrowX = menu.width - 40
-                    menu.popup(moreActionsBtn.x, moreActionsBtn.height + 10)
+                    menu.popup(moreActionsBtn.x, moreActionsBtn.height)
                     menuOpened = true
                 } else {
                     menu.dismiss()
@@ -106,6 +119,9 @@ Rectangle {
 
             PopupMenu {
                 id: chatContextMenu
+                onClosed: {
+                    mouseArea.menuOpened = false
+                }
                 Action {
                     icon.source: "../../../img/close.svg"
                     //% "Clear history"
@@ -122,6 +138,9 @@ Rectangle {
 
             PopupMenu {
                 id: groupContextMenu
+                onClosed: {
+                    mouseArea.menuOpened = false
+                }
                 Action {
                     icon.source: "../../../img/group_chat.svg"
                     //% "Group Information"
@@ -144,6 +163,9 @@ Rectangle {
 
             GroupInfoPopup {
                 id: groupInfoPopup
+                onClosed: {
+                    mouseArea.menuOpened = false
+                }
             }
         }
     }
