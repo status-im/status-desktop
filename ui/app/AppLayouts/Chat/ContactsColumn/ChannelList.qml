@@ -27,6 +27,7 @@ Item {
             timestamp: model.timestamp
             chatType: model.chatType
             unviewedMessagesCount: model.unviewedMessagesCount
+            hasMentions: model.hasMentions
             searchStr: chatGroupsContainer.searchStr
         }
         onCountChanged: {

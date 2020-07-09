@@ -1,5 +1,7 @@
-import json, random
+import json, random, sequtils, sugar
+import json_serialization
 import ../status/libstatus/accounts as status_accounts
+import ../status/libstatus/settings as status_settings
 import ../status/chat/[chat, message]
 import ../status/profile/[profile, devices]
 import types
@@ -13,17 +15,28 @@ proc fromEvent*(event: JsonNode): Signal =
   signal.messages = @[]
   signal.contacts = @[]
 
+  let pk = status_settings.getSetting[string]("public-key", "0x0")
+
   if event["event"]{"contacts"} != nil:
     for jsonContact in event["event"]["contacts"]:
       signal.contacts.add(jsonContact.toProfileModel())
 
+  var chatsWithMentions: seq[string] = @[]
+
   if event["event"]{"messages"} != nil:
     for jsonMsg in event["event"]["messages"]:
-      signal.messages.add(jsonMsg.toMessage)
+      let message = jsonMsg.toMessage
+      let hasMentions = concat(message.parsedText.map(t => t.children.filter(c => c.textType == "mention" and c.literal == pk))).len > 0
+      if hasMentions:
+        chatsWithMentions.add(message.chatId)
+      signal.messages.add(message)
 
   if event["event"]{"chats"} != nil:
     for jsonChat in event["event"]["chats"]:
-      signal.chats.add(jsonChat.toChat)
+      var chat = jsonChat.toChat
+      if chatsWithMentions.contains(chat.id):
+        chat.hasMentions = true
+      signal.chats.add(chat)
 
   if event["event"]{"installations"} != nil:
     for jsonInstallation in event["event"]["installations"]:
@@ -71,7 +84,8 @@ proc newChat*(id: string, chatType: ChatType): Chat =
     timestamp: 0,
     lastClockValue: 0,
     deletedAtClockValue: 0, 
-    unviewedMessagesCount: 0
+    unviewedMessagesCount: 0,
+    hasMentions: false
   )
 
   if chatType == ChatType.OneToOne:
@@ -92,6 +106,7 @@ proc toChat*(jsonChat: JsonNode): Chat =
     lastClockValue: jsonChat{"lastClockValue"}.getBiggestInt,
     deletedAtClockValue: jsonChat{"deletedAtClockValue"}.getBiggestInt, 
     unviewedMessagesCount: jsonChat{"unviewedMessagesCount"}.getInt,
+    hasMentions: false
   )
 
   if jsonChat["lastMessage"].kind != JNull: 
