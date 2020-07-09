@@ -129,9 +129,9 @@ Rectangle {
                     onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
                 }
                 Action {
-                    icon.source: "../../../img/leave_chat.svg"
-                    //% "Leave Chat"
-                    text: qsTrId("leave-chat")
+                    icon.source: "../../../img/delete.svg"
+                    icon.color: Style.current.red
+                    text: qsTr("Delete Chat")
                     onTriggered: chatsModel.leaveActiveChat()
                 }
             }
