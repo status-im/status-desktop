@@ -6,48 +6,48 @@ import "../shared"
 
 Menu {
     property alias arrowX: bgPopupMenuTopArrow.x
+    property int paddingSize: 8
     closePolicy: Popup.CloseOnPressOutsideParent
     id: popupMenu
-    topPadding: Style.current.padding
-    bottomPadding: Style.current.padding
+    topPadding: bgPopupMenuTopArrow.height + paddingSize
+    bottomPadding: paddingSize
+
     delegate: MenuItem {
         id: popupMenuItem
         implicitWidth: 200
-        implicitHeight: 40
-        font.pixelSize: 15
+        implicitHeight: 34
+        font.pixelSize: 13
         icon.color: popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Style.current.blue
         contentItem: Item {
             id: menuItemContent
-            Item {
-                id: menuIcon
-                anchors.left: parent.left
-                anchors.leftMargin: 12
-                height: popupMenuItemIcon.height
-                anchors.verticalCenter: parent.verticalCenter
-                SVGImage {
-                    id: popupMenuItemIcon
-                    source: popupMenuItem.icon.source
-                    visible: false
-                    width: 25
-                    height: 25
-                }
 
-                ColorOverlay {
-                    cached: true
-                    anchors.fill: popupMenuItemIcon
-                    anchors.verticalCenter: parent.verticalCenter
-                    source: popupMenuItemIcon
-                    color: popupMenuItem.highlighted ? Style.current.white : popupMenuItem.action.icon.color
-                }
+            SVGImage {
+                id: menuIcon
+                source: popupMenuItem.icon.source
+                anchors.left: parent.left
+                anchors.leftMargin: Style.current.padding
+                anchors.verticalCenter: parent.verticalCenter
+                visible: false
+                width: 13
+                height: 13
+            }
+
+            ColorOverlay {
+                cached: true
+                anchors.fill: menuIcon
+                source: menuIcon
+                color: popupMenuItem.highlighted ? Style.current.white : popupMenuItem.action.icon.color
             }
             
             StyledText {
                 anchors.left: menuIcon.right
-                anchors.leftMargin: 32
-                topPadding: 4
+                anchors.leftMargin: popupMenu.paddingSize
                 text: popupMenuItem.text
+                anchors.verticalCenter: menuIcon.verticalCenter
                 font: popupMenuItem.font
-                color: popupMenuItem.highlighted ? Style.current.white : Style.current.black
+                color: popupMenuItem.highlighted ?
+                           Style.current.white :
+                           (popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Style.current.black)
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
             }
@@ -55,7 +55,7 @@ Menu {
 
         background: Rectangle {
             implicitWidth: 220
-            implicitHeight: 40
+            implicitHeight: 24
             color: popupMenuItem.highlighted ? popupMenuItem.icon.color : "transparent"
         }
     }
