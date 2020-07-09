@@ -8,6 +8,7 @@ Rectangle {
     width: 32
     radius: 8
     property var onClick: function() {}
+    property string textToCopy: ""
 
     SVGImage {
         width: 20
@@ -22,12 +23,23 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         onExited: {
-            parent.color = Style.current.white
+            parent.color = Style.current.transparent
         }
         onEntered:{
             parent.color = Style.current.grey
         }
-        onClicked: onClick()
+        onPressed: {
+            parent.color = Style.current.darkGrey
+        }
+        onReleased: {
+            parent.color = Style.current.transparent
+        }
+        onClicked: {
+            if (textToCopy) {
+                chatsModel.copyToClipboard(textToCopy)
+            }
+            onClick()
+        }
     }
 }
 

@@ -150,15 +150,13 @@ ModalPopup {
             anchors.topMargin: Style.current.smallPadding
         }
 
-        CopyToClipBoardIcon {
-          visible: isEnsVerified
-          height: isEnsVerified ? 20 : 0
-          anchors.top: labelEnsUsername.bottom
-          anchors.left: valueEnsName.right
-          anchors.leftMargin: Style.current.smallPadding
-          onClick: function (){
-            chatsModel.copyToClipboard(valueEnsName.text)
-          }
+        CopyToClipBoardButton {
+            visible: isEnsVerified
+            height: isEnsVerified ? 20 : 0
+            anchors.top: labelEnsUsername.bottom
+            anchors.left: valueEnsName.right
+            anchors.leftMargin: Style.current.smallPadding
+            textToCopy: valueEnsName.text
         }
 
         StyledText {
@@ -186,13 +184,11 @@ ModalPopup {
             anchors.topMargin: Style.current.smallPadding
         }
 
-        CopyToClipBoardIcon {
-          anchors.top: labelChatKey.bottom
-          anchors.left: valueChatKey.right
-          anchors.leftMargin: Style.current.smallPadding
-          onClick: function (){
-            chatsModel.copyToClipboard(valueChatKey.text)
-          }
+        CopyToClipBoardButton {
+            anchors.top: labelChatKey.bottom
+            anchors.left: valueChatKey.right
+            anchors.leftMargin: Style.current.smallPadding
+            textToCopy: valueChatKey.text
         }
 
         Separator {
@@ -229,13 +225,11 @@ ModalPopup {
             anchors.topMargin: Style.current.smallPadding
         }
 
-        CopyToClipBoardIcon {
-          anchors.top: labelShareURL.bottom
-          anchors.left: valueShareURL.right
-          anchors.leftMargin: Style.current.smallPadding
-          onClick: function (){
-            chatsModel.copyToClipboard("https://join.status.im/u/" + fromAuthor)
-          }
+        CopyToClipBoardButton {
+            anchors.top: labelShareURL.bottom
+            anchors.left: valueShareURL.right
+            anchors.leftMargin: Style.current.smallPadding
+            textToCopy: "https://join.status.im/u/" + fromAuthor
         }
     }
 
