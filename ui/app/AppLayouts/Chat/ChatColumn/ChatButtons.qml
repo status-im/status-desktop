@@ -11,6 +11,8 @@ Item {
 
     id: chatButtonsContainer
 
+    width: chatSendBtn.width + emojiIconContainer.width + 2 * iconPadding
+
     Button {
         id: chatSendBtn
         visible: txtData.length > 0
@@ -30,8 +32,8 @@ Item {
         }
         SVGImage {
             source: "../../../img/arrowUp.svg"
-            width: 12
-            // fillMode: Image.PreserveAspectFit
+            width: 13
+            height: 17
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -155,6 +157,6 @@ Item {
 }
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:480;width:640}
+    D{i:0;formeditorColor:"#ffffff";formeditorZoom:1.75}
 }
 ##^##*/
