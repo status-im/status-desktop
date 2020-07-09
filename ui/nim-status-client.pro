@@ -220,6 +220,7 @@ DISTFILES += \
     shared/ModalPopup.qml \
     shared/PopupMenu.qml \
     shared/Identicon.qml \
+    shared/CopyToClipBoardButton.qml \
     shared/RoundedImage.qml \
     shared/SearchBox.qml \
     shared/Select.qml \
