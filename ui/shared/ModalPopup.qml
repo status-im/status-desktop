@@ -110,12 +110,14 @@ Popup {
 
         Separator {
             id: separator2
+            visible: !!footerContent.children[0]
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 75
         }
 
         Item {
           id: footerContent
+          visible: !!children[0]
           height: children[0] && children[0].height
           width: parent.width
           anchors.top: separator2.bottom
