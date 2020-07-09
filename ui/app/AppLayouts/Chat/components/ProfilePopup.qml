@@ -10,16 +10,23 @@ ModalPopup {
     property var identicon: ""
     property var userName: ""
     property var fromAuthor: ""
+    property var text: ""
+    
     property bool showQR: false
     property bool isEnsVerified: false
     property bool noFooter: false
 
-    function openPopup(userNameParam, fromAuthorParam, identiconParam) {
+    function setPopupData(userNameParam, fromAuthorParam, identiconParam, textParam){
         this.showQR = false
         this.userName = userNameParam
         this.fromAuthor = fromAuthorParam
         this.identicon = identiconParam
+        this.text = textParam
         this.isEnsVerified = chatsModel.isEnsVerified(this.fromAuthor)
+    }
+    
+    function openPopup(userNameParam, fromAuthorParam, identiconParam) {
+        setPopupData(userNameParam, fromAuthorParam, identiconParam, "");
         popup.open()
     }
 

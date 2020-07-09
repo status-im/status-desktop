@@ -21,6 +21,7 @@ Item {
     property string chatId: "chatId"
     property string outgoingStatus: ""
     property string responseTo: ""
+    property string messageId: ""
 
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
@@ -205,7 +206,9 @@ Item {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
             onClicked: {
-              profileClick(userName, fromAuthor, identicon)
+                chatsModel.setReplyTo(messageId)
+                profileClick(userName, fromAuthor, identicon, text);
+                messageContextMenu.popup()
             }
         }
     }
@@ -227,7 +230,9 @@ Item {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
             onClicked: {
-              profileClick(userName, fromAuthor, identicon)
+                chatsModel.setReplyTo(messageId)
+                profileClick(userName, fromAuthor, identicon, text)
+                messageContextMenu.popup()
             }
         }
     }
@@ -262,7 +267,7 @@ Item {
         Rectangle {
             id: chatReply
             color:  isCurrentUser ? Style.current.blue : Style.current.lightBlue
-            visible: responseTo != ""
+            visible: responseTo != "" && replyMessageIndex > -1
             height: chatReply.visible ? childrenRect.height : 0
             anchors.top: parent.top
             anchors.topMargin: chatReply.visible ? chatBox.chatVerticalPadding : 0
@@ -330,25 +335,6 @@ Item {
             selectByMouse: true
             color: !isCurrentUser ? Style.current.black : Style.current.white
             visible: contentType == Constants.messageType || isEmoji
-            onLinkActivated: {
-                if(link.startsWith("#")){
-                    chatsModel.joinChat(link.substring(1), Constants.chatTypePublic);
-                    return;
-                }
-
-                if (link.startsWith('//')) {
-                  let pk = link.replace("//", "");
-                  profileClick(chatsModel.userNameOrAlias(pk), pk, chatsModel.generateIdenticon(pk))
-                  return;
-                }
-
-                Qt.openUrlExternally(link)
-            }
-            MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
-                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-            }
         }
 
         Image {
@@ -362,6 +348,31 @@ Item {
             height: 140
             source: contentType === Constants.stickerType ? ("https://ipfs.infura.io/ipfs/" + sticker) : ""
             visible: contentType === Constants.stickerType
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: chatText.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+            onClicked: {
+                let link = chatText.hoveredLink;
+                if(link.startsWith("#")){
+                    chatsModel.joinChat(link.substring(1), Constants.chatTypePublic);
+                    return;
+                }
+
+                if (link.startsWith('//')) {
+                  let pk = link.replace("//", "");
+                  profileClick(chatsModel.userNameOrAlias(pk), pk, chatsModel.generateIdenticon(pk), text)
+                  return;
+                }
+
+                Qt.openUrlExternally(link)
+            }
+            onPressAndHold: {
+                chatsModel.setReplyTo(messageId)
+                profileClick(userName, fromAuthor, identicon, text);
+                messageContextMenu.popup()
+            }
         }
     }
 

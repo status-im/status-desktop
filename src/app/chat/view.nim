@@ -30,6 +30,7 @@ QtObject:
       stickerPacks*: StickerPackList
       stickers*: Table[int, StickerList]
       emptyStickerList: StickerList
+      replyTo: string
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
 
@@ -75,6 +76,24 @@ QtObject:
   proc getChannelColor*(self: ChatsView, channel: string): string {.slot.} =
     self.chats.getChannelColor(channel)
 
+  proc replyAreaEnabled*(self: ChatsView, enable: bool, userName: string, message: string, identicon: string) {.signal.}
+
+  proc setReplyTo(self: ChatsView, messageId: string) {.slot.} =
+    self.replyTo = messageId
+
+  proc enableReplyArea*(self: ChatsView, enable: bool, userName: string = "", message: string = "", identicon: string = "") {.slot.} =
+    if not enable:
+      self.replyTo = ""
+    self.replyAreaEnabled(enable, username, message, identicon)
+  
+  proc disableReplyArea(self: ChatsView) =
+    self.replyTo = ""
+    self.replyAreaEnabled(false, "", "", "")
+
+  proc sendMessage*(self: ChatsView, message: string, isReply: bool) {.slot.} =
+    self.status.chat.sendMessage(self.activeChannel.id, message, if isReply: self.replyTo else: "")
+    self.disableReplyArea()
+
   proc activeChannelChanged*(self: ChatsView) {.signal.}
 
   proc setActiveChannelByIndex*(self: ChatsView, index: int) {.slot.} =
@@ -86,6 +105,7 @@ QtObject:
     if self.activeChannel.id == selectedChannel.id: return
     self.activeChannel.setChatItem(selectedChannel)
     self.status.chat.setActiveChannel(selectedChannel.id)
+    self.disableReplyArea()
     self.activeChannelChanged()
 
   proc getActiveChannelIdx(self: ChatsView): QVariant {.slot.} =
@@ -115,6 +135,7 @@ QtObject:
   proc setActiveChannel*(self: ChatsView, channel: string) =
     if(channel == ""): return
     self.activeChannel.setChatItem(self.chats.getChannel(self.chats.chats.findIndexById(channel)))
+    self.disableReplyArea()
     self.activeChannelChanged()
 
   proc getActiveChannel*(self: ChatsView): QVariant {.slot.} =
@@ -167,9 +188,6 @@ QtObject:
   proc pushChatItem*(self: ChatsView, chatItem: Chat) =
     discard self.chats.addChatItemToList(chatItem)
     self.messagePushed()
-
-  proc sendMessage*(self: ChatsView, message: string) {.slot.} =
-    self.status.chat.sendMessage(self.activeChannel.id, message)
 
   proc addRecentStickerToList*(self: ChatsView, sticker: Sticker) =
     self.stickers[RECENT_STICKERS].addStickerToList(sticker)

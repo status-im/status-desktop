@@ -8,6 +8,7 @@ import "./ChatColumn"
 
 StackLayout {
     property int chatGroupsListViewCount: 0
+    property bool isReply: false
     Layout.fillHeight: true
     Layout.fillWidth: true
     Layout.minimumWidth: 300
@@ -15,14 +16,14 @@ StackLayout {
     currentIndex:  chatsModel.activeChannelIndex > -1 && chatGroupsListViewCount > 0 ? 0 : 1
 
     ColumnLayout {
-        id: chatColumn
+        spacing: 0
 
         RowLayout {
             id: chatTopBar
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             Layout.fillWidth: true
             z: 60
-
+            spacing: 0
             TopBar {}
         }
 
@@ -31,8 +32,9 @@ StackLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
+            spacing: 0
             ChatMessages {
+                id: chatMessages
                 messageList: chatsModel.messageList
             }
        }
@@ -42,21 +44,52 @@ StackLayout {
             id: profilePopup
         }
 
+        PopupMenu {
+            id: messageContextMenu
+            Action {
+                id: viewProfileAction
+                text: qsTr("View profile")
+                onTriggered: profilePopup.open()
+            }
+            Action {
+                text: qsTr("Reply to")
+                onTriggered: chatsModel.enableReplyArea(true, profilePopup.userName, profilePopup.text, profilePopup.identicon)
+            }
+        }
+ 
         Rectangle {
-            id: chatInputContainer
-            height: 70
+            id: inputArea
+            border.width: 1
+            border.color: Style.current.grey
             Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
             Layout.fillWidth: true
             Layout.preferredWidth: parent.width
+            height: !isReply ? 70 : 140
             Layout.preferredHeight: height
-            transformOrigin: Item.Bottom
-            clip: true
+
+            
+            ReplyArea {
+                id: replyArea
+                visible: isReply
+            }
 
             ChatInput {
-                anchors.fill: parent
-                anchors.leftMargin:  -border.width
-                border.width: 1
-                border.color: Style.current.grey
+                height: 40
+                anchors.top: !isReply ? inputArea.top : replyArea.bottom
+                anchors.topMargin: 4
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+            }
+
+            Connections {
+                target: chatsModel
+                onReplyAreaEnabled: {
+                    isReply = enable;
+                    replyArea.userName = userName;
+                    replyArea.identicon = identicon;
+                    replyArea.message = message;
+                }
             }
         }
     }

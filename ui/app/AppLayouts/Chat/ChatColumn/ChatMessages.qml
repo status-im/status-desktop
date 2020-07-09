@@ -39,6 +39,12 @@ ScrollView {
                 Qt.callLater( chatLogView.positionViewAtEnd )
             }
 
+            onReplyAreaEnabled: {
+                if (enable){
+                    Qt.callLater( chatLogView.positionViewAtEnd )
+                }
+            }
+
             onMessagePushed: {
                 if (!chatLogView.atYEnd) {
                     // User has scrolled up, we don't want to scroll back
@@ -127,7 +133,8 @@ ScrollView {
             responseTo: model.responseTo
             authorCurrentMsg: msgDelegate.ListView.section
             authorPrevMsg: msgDelegate.ListView.previousSection
-            profileClick: profilePopup.openPopup.bind(profilePopup)
+            profileClick: profilePopup.setPopupData.bind(profilePopup)
+            messageId: model.messageId
         }
     }
 
