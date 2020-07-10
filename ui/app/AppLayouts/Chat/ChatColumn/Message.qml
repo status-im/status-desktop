@@ -12,6 +12,7 @@ Item {
     property string fromAuthor: "0x0011223344556677889910"
     property string userName: "Jotaro Kujo"
     property string message: "That's right. We're friends...  Of justice, that is."
+    property string plainText: "That's right. We're friends...  Of justice, that is."
     property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
     property bool isCurrentUser: false
     property string timestamp: "1234567"
@@ -245,7 +246,7 @@ Item {
                 case Constants.stickerType:
                     return stickerId.width + (2 * chatBox.chatHorizontalPadding);
                 default:
-                    return 400;
+                    return plainText.length > 54 ? 400 : chatText.width + 2 * chatHorizontalPadding
             }
         }
 
@@ -318,8 +319,8 @@ Item {
             }
             anchors.left: parent.left
             anchors.leftMargin: parent.chatHorizontalPadding
-            anchors.right: parent.right
-            anchors.rightMargin: parent.chatHorizontalPadding
+            anchors.right: plainText.length > 52 ? parent.right : undefined
+            anchors.rightMargin: plainText.length > 52 ? parent.chatHorizontalPadding : 0
             horizontalAlignment: !isCurrentUser ? Text.AlignLeft : Text.AlignRight
             wrapMode: Text.Wrap
             anchors.top: chatReply.bottom
