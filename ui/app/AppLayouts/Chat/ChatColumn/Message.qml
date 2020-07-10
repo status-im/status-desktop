@@ -316,10 +316,39 @@ Item {
             textFormat: TextEdit.RichText
             text: {
                 if(contentType === Constants.stickerType) return "";
+                let msg = linkify(message);
                 if(isEmoji){
-                    return Emoji.parse(linkify(message), "72x72");
+                    return Emoji.parse(msg, "72x72");
                 } else {
-                    return Emoji.parse(linkify(message), "26x26");
+                    return `<html>
+                        <head>
+                            <style type="text/css">
+                            code {
+                                background-color: #1a356b;
+                                color: #FFFFFF;
+                                white-space: pre;
+                            }
+
+                            p {
+                                white-space: pre;
+                            }
+
+                            a.mention {
+                                color: ${isCurrentUser ? Style.current.black : Style.current.white}
+                                font-weight: bold;
+                            }
+
+                            blockquote {
+                                margin: 0;
+                                padding: 0;
+                            }
+
+                            </style>
+                        </head>
+                        <body>
+                            ${Emoji.parse(msg, "26x26")}
+                        </body>
+                    </html>`;
                 }
 
             }
