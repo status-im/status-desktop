@@ -13,10 +13,27 @@ Rectangle {
 
     visible: chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember(profileModel.profile.pubKey)
 
+    Audio {
+        id: sendMessageSound
+        source: "../../../../sounds/send_message.wav"
+    }
+
+    function interpretMessage(msg) {
+        if (msg === "/shrug") {
+            return "¯\\\\\\_(ツ)\\_/¯"
+        }
+        if (msg === "/tableflip") {
+            return "(╯°□°）╯︵ ┻━┻"
+        }
+
+        return msg
+    }
+
     function onEnter(event){
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
             if(txtData.text.trim().length > 0){
-                chatsModel.sendMessage(txtData.text.trim());
+                let msg = interpretMessage(txtData.text.trim())
+                chatsModel.sendMessage(msg);
                 txtData.text = "";
                 event.accepted = true;
                 sendMessageSound.stop()
