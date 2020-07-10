@@ -28,7 +28,7 @@ Item {
     property string authorPrevMsg: "authorPrevMsg"
 
     property bool isEmoji: contentType === Constants.emojiType
-    property bool isMessage: contentType === Constants.messageType || contentType === Constants.stickerType 
+    property bool isMessage: contentType === Constants.messageType || contentType === Constants.stickerType
     property bool isStatusMessage: contentType === Constants.systemMessagePrivateGroupType
     property bool isSticker: contentType === Constants.stickerType
 
@@ -37,12 +37,15 @@ Item {
     property string repliedMessageContent: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "message") : "";
 
     property var profileClick: function () {}
-
+    property var scrollToBottom: function () {}
+    property var appSettings
     width: parent.width
+    anchors.right: !isCurrentUser ? undefined : parent.right
+    id: messageWrapper
     height: {
         switch(contentType){
             case Constants.chatIdentifier:
-                return parent.parent.height - 100
+                return channelIdentifier.height + channelIdentifier.verticalMargin
             case Constants.stickerType:
                 return stickerId.height + 50 + (dateGroupLbl.visible ? 50 : 0)
             default:
@@ -51,11 +54,11 @@ Item {
     }
 
     function linkify(inputText) {
-        //URLs starting with http://, https://, or ftp://
+        // URLs starting with http://, https://, or ftp://
         var replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
         var replacedText = inputText.replace(replacePattern1, "<a href='$1'>$1</a>");
 
-        //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+        // URLs starting with "www." (without // before it, or it'd re-link the ones done above).
         var replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
         replacedText = replacedText.replace(replacePattern2, "$1<a href='http://$2'>$2</a>");
 
@@ -68,10 +71,13 @@ Item {
     }
 
     Item {
+        property int verticalMargin: 50
         id: channelIdentifier
         visible: authorCurrentMsg == ""
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.top: parent.top
+        anchors.topMargin: this.visible ? verticalMargin : 0
+        height: this.visible ? childrenRect.height + verticalMargin : 0
         
         Rectangle {
             id: circleId
@@ -171,7 +177,6 @@ Item {
                 }
             }            
         }
-
     }
 
     // Private group Messages
@@ -363,7 +368,7 @@ Item {
 
         StyledTextEdit {
             id: chatText
-            textFormat: TextEdit.RichText
+            textFormat: Text.RichText
             text: {
                 if(contentType === Constants.stickerType) return "";
                 let msg = linkify(message);
@@ -468,17 +473,16 @@ Item {
             let hours = messageDate.getHours();
             return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
         }
-        anchors.top: chatBox.bottom
+        anchors.top: messageWrapper.appSettings.displayChatImages && imageUrls != "" ? imageChatBox.bottom : chatBox.bottom
         anchors.topMargin: 4
         anchors.bottomMargin: Style.current.padding
-        anchors.right: chatBox.right
+        anchors.right: messageWrapper.appSettings.displayChatImages && imageUrls != "" ? imageChatBox.right : chatBox.right
         anchors.rightMargin: isCurrentUser ? 5 : Style.current.padding
         font.pixelSize: 10
         readOnly: true
         selectByMouse: true
         visible:  (isEmoji || isMessage || isSticker)
     }
-
     
     StyledTextEdit {
         id: sentMessage
@@ -496,22 +500,74 @@ Item {
         readOnly: true
         visible: isCurrentUser && (isEmoji || isMessage || isSticker)
     }
-   
-    // This rectangle's only job is to mask the corner to make it less rounded... yep
+
     Rectangle {
-        // TODO find a way to show the corner for stickers since they have a border
-        visible: isMessage || isEmoji
-        color: chatBox.color
-        width: 18
-        height: 18
-        anchors.bottom: chatBox.bottom
-        anchors.bottomMargin: 0
-        anchors.left: !isCurrentUser ? chatBox.left : undefined
-        anchors.leftMargin: 0
-        anchors.right: !isCurrentUser ? undefined : chatBox.right
-        anchors.rightMargin: 0
-        radius: 4
-        z: -1
+        property int chatVerticalPadding: 12
+        property int chatHorizontalPadding: 12
+        property int imageWidth: 350
+
+        id: imageChatBox
+        visible: messageWrapper.appSettings.displayChatImages && imageUrls != ""
+        height: {
+            if (!imageChatBox.visible) {
+              return 0
+            } 
+
+            let h = chatVerticalPadding
+            for (let i = 0; i < imageRepeater.count; i++) {
+                h += imageRepeater.itemAt(i).height
+            }
+            return h + chatVerticalPadding * imageRepeater.count
+        }
+        color: isCurrentUser ? Style.current.blue : Style.current.lightBlue
+        border.color: "transparent"
+        width:  imageWidth+ 2 * chatHorizontalPadding
+        radius: 16
+        anchors.left: !isCurrentUser ? chatImage.right : undefined
+        anchors.leftMargin: !isCurrentUser ? 8 : 0
+        anchors.right: !isCurrentUser ? undefined : parent.right
+        anchors.rightMargin: !isCurrentUser ? 0 : Style.current.padding
+        anchors.top: messageWrapper.appSettings.displayChatImages && imageUrls != "" ? chatBox.bottom : chatTime.bottom
+        anchors.topMargin: Style.current.smallPadding
+
+        Repeater {
+            id: imageRepeater
+            model: messageWrapper.appSettings.displayChatImages && imageUrls != "" ? imageUrls.split(" ") : []
+
+            Image {
+                id: imageMessage
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: (index == 0) ? parent.top: parent.children[index-1].bottom
+                anchors.topMargin: imageChatBox.chatVerticalPadding
+                sourceSize.width: imageChatBox.imageWidth
+                source: modelData
+                onStatusChanged: {
+                    if (imageMessage.status == Image.Error) {
+                        imageMessage.height = 0
+                        imageMessage.visible = false
+                        imageChatBox.height = 0
+                        imageChatBox.visible = false
+                    } else if (imageMessage.status == Image.Ready) {
+                        messageWrapper.scrollToBottom(true, messageWrapper)
+                    }
+                }
+            }
+        }
+
+        // This rectangle's only job is to mask the corner to make it less rounded... yep
+        Rectangle {
+            color: parent.color
+            width: 18
+            height: 18
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
+            anchors.left: !isCurrentUser ? parent.left : undefined
+            anchors.leftMargin: 0
+            anchors.right: !isCurrentUser ? undefined : parent.right
+            anchors.rightMargin: 0
+            radius: 4
+            z: -1
+        }
     }
 }
 

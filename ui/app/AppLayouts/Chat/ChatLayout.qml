@@ -24,6 +24,7 @@ SplitView {
     ChatColumn {
         id: chatColumn
         chatGroupsListViewCount: contactsColumn.chatGroupsListViewCount
+        appSettings: chatView.appSettings
     }
 }
 
