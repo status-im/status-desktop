@@ -42,8 +42,6 @@ Rectangle {
         }
     }
 
-
-
     ScrollView {
         id: scrollView
         anchors.bottom: parent.bottom
@@ -86,6 +84,6 @@ Rectangle {
 }
 /*##^##
 Designer {
-    D{i:0;formeditorColor:"#ffffff";formeditorZoom:1.25}
+    D{i:0;formeditorColor:"#ffffff"}
 }
 ##^##*/

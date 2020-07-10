@@ -125,7 +125,7 @@ QtObject:
     read = getStickerList
     notify = activeStickerPackChanged
 
-  proc setActiveChannel*(self: ChatsView, channel: string) =
+  proc setActiveChannel*(self: ChatsView, channel: string) {.slot.} =
     if(channel == ""): return
     self.activeChannel.setChatItem(self.chats.getChannel(self.chats.chats.findIndexById(channel)))
     self.activeChannelChanged()
@@ -148,6 +148,8 @@ QtObject:
   
   proc messagePushed*(self: ChatsView) {.signal.}
 
+  proc messageNotificationPushed*(self: ChatsView, chatId: string, text: string) {.signal.}
+
   proc messagesCleared*(self: ChatsView) {.signal.}
 
   proc clearMessages*(self: ChatsView, id: string) =
@@ -160,6 +162,8 @@ QtObject:
       msg.alias = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
       self.messageList[msg.chatId].add(msg)
       self.messagePushed()
+      if msg.chatId != self.activeChannel.id:
+        self.messageNotificationPushed(msg.chatId, msg.text)
 
   proc updateUsernames*(self:ChatsView, contacts: seq[Profile]) =
     if contacts.len > 0:

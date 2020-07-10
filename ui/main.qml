@@ -5,12 +5,14 @@ import Qt.labs.platform 1.1
 import QtQml.StateMachine 1.14 as DSM
 import QtMultimedia 5.13
 import Qt.labs.settings 1.0
+import QtQuick.Window 2.12
 import QtQml 2.13
 import QtQuick.Window 2.0
 
 import "./onboarding"
 import "./app"
 import "./sounds"
+import "./shared"
 import "./imports"
 
 ApplicationWindow {
@@ -46,6 +48,12 @@ ApplicationWindow {
         id: sendMessageSound
         audioRole: Audio.NotificationRole
         source: "../../../../sounds/send_message.wav"
+    }
+
+    Audio {
+        id: notificationSound
+        audioRole: Audio.NotificationRole
+        source: "../../../../sounds/notification.wav"
     }
 
     Settings {
@@ -234,6 +242,10 @@ ApplicationWindow {
                 applicationWindow.navigateTo("ExistingKey")
             }
         }
+    }
+
+    NotificationWindow {
+        id: notificationWindow
     }
 }
 

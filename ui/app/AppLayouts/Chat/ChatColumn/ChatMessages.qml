@@ -48,6 +48,10 @@ ScrollView {
                 if(chatLogView.atYEnd)
                     Qt.callLater( chatLogView.positionViewAtEnd )
             }
+
+            onMessageNotificationPushed: function(chatId, msg) {
+                notificationWindow.notifyUser(chatId, msg)
+            }
         }
 
         onContentYChanged: {
