@@ -39,12 +39,6 @@ ScrollView {
                 Qt.callLater( chatLogView.positionViewAtEnd )
             }
 
-            onReplyAreaEnabled: {
-                if (enable){
-                    Qt.callLater( chatLogView.positionViewAtEnd )
-                }
-            }
-
             onMessagePushed: {
                 if (!chatLogView.atYEnd) {
                     // User has scrolled up, we don't want to scroll back

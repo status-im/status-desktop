@@ -28,7 +28,7 @@ proc renderBlock(self: ChatMessageList, message: Message): string =
   for pMsg in message.parsedText:
     case pMsg.textType:
       of "paragraph": 
-        result = "<p>"
+        result = result & "<p>"
         for children in pMsg.children:
           result = result & self.renderInline(children)
         result = result & "</p>"
@@ -37,5 +37,5 @@ proc renderBlock(self: ChatMessageList, message: Message): string =
         var color = if message.isCurrentUser: "#FFFFFF" else: "#666666" 
         result = result & fmt("<span style=\"color: {color}\">▍ ") & pMsg.literal & "</span>"
       of "codeblock":
-        result = "<table style=\"background-color: #1a356b;\"><tr><td style=\"padding: 5px;\"><code style=\"color: #ffffff\">" & pMsg.literal & "</code></td></tr></table>"
+        result = result & "<table style=\"background-color: #1a356b;\"><tr><td style=\"padding: 5px;\"><code style=\"color: #ffffff\">" & pMsg.literal & "</code></td></tr></table>"
     result = result.replace("\n", "<br />")

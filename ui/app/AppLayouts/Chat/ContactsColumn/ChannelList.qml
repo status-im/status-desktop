@@ -61,6 +61,8 @@ Item {
         target: chatsModel
         onActiveChannelChanged: {
             chatGroupsListView.currentIndex = chatsModel.activeChannelIndex
+            SelectedMessage.reset();
+            chatColumn.isReply = false;
         }
     }
 }

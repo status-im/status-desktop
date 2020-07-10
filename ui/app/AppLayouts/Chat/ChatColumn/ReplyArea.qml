@@ -7,7 +7,7 @@ import "./"
 
 Rectangle {
     property string userName: "Joseph Joestar"
-    property string message: "Your next line is: is this is a Jojo reference?"
+    property string message: "Your next line is: this is a Jojo reference"
     property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
 
     id: replyArea
@@ -16,6 +16,21 @@ Rectangle {
     anchors.right: parent.right
     anchors.top: parent.top
     color: "#00000000"
+
+    function setup(){
+        let replyMessageIndex = chatsModel.messageList.getMessageIndex(SelectedMessage.messageId);
+        if (replyMessageIndex == -1) return;
+        
+        userName = chatsModel.messageList.getReplyData(replyMessageIndex, "userName")
+        message = chatsModel.messageList.getReplyData(replyMessageIndex, "message")
+        identicon = chatsModel.messageList.getReplyData(replyMessageIndex, "identicon")
+    }
+
+    function reset(){
+        userName = "";
+        message= "";
+        identicon = "";
+    }
 
     Rectangle {
         id: closeButton
@@ -37,7 +52,7 @@ Rectangle {
         }
 
         MouseArea {
-            id: closeModalMouseArea
+            id: closeReplyArea
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
             hoverEnabled: true
@@ -47,7 +62,10 @@ Rectangle {
             onEntered: {
                 closeButton.color = Style.current.grey
             }
-            onClicked: chatsModel.enableReplyArea(false, "","","")
+            onClicked: {
+                reset();
+                chatColumn.isReply = false;
+            }
         }
     }
 

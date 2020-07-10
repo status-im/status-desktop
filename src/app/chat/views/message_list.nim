@@ -80,7 +80,6 @@ QtObject:
       of ChatMessageRoles.Id: result = newQVariant(message.id)
       of ChatMessageRoles.OutgoingStatus: result = newQVariant(message.outgoingStatus)
       of ChatMessageRoles.ResponseTo: result = newQVariant(message.responseTo)
-      of ChatMessageRoles.Text: result = newQVariant(message.text)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -98,8 +97,7 @@ QtObject:
       ChatMessageRoles.SectionIdentifier.int: "sectionIdentifier",
       ChatMessageRoles.Id.int: "messageId",
       ChatMessageRoles.OutgoingStatus.int: "outgoingStatus",
-      ChatMessageRoles.ResponseTo.int: "responseTo",
-      ChatMessageRoles.Text.int: "text"
+      ChatMessageRoles.ResponseTo.int: "responseTo"
     }.toTable
 
   proc getMessageIndex(self: ChatMessageList, messageId: string): int {.slot.} =
@@ -111,6 +109,7 @@ QtObject:
     case data:
     of "userName": result = message.alias
     of "message": result = message.text
+    of "identicon": result = message.identicon
     else: result = ""
 
   proc add*(self: ChatMessageList, message: Message) =

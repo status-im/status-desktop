@@ -76,23 +76,8 @@ QtObject:
   proc getChannelColor*(self: ChatsView, channel: string): string {.slot.} =
     self.chats.getChannelColor(channel)
 
-  proc replyAreaEnabled*(self: ChatsView, enable: bool, userName: string, message: string, identicon: string) {.signal.}
-
-  proc setReplyTo(self: ChatsView, messageId: string) {.slot.} =
-    self.replyTo = messageId
-
-  proc enableReplyArea*(self: ChatsView, enable: bool, userName: string = "", message: string = "", identicon: string = "") {.slot.} =
-    if not enable:
-      self.replyTo = ""
-    self.replyAreaEnabled(enable, username, message, identicon)
-  
-  proc disableReplyArea(self: ChatsView) =
-    self.replyTo = ""
-    self.replyAreaEnabled(false, "", "", "")
-
-  proc sendMessage*(self: ChatsView, message: string, isReply: bool) {.slot.} =
-    self.status.chat.sendMessage(self.activeChannel.id, message, if isReply: self.replyTo else: "")
-    self.disableReplyArea()
+  proc sendMessage*(self: ChatsView, message: string, replyTo: string) {.slot.} =
+    self.status.chat.sendMessage(self.activeChannel.id, message, replyTo)
 
   proc activeChannelChanged*(self: ChatsView) {.signal.}
 
@@ -105,7 +90,6 @@ QtObject:
     if self.activeChannel.id == selectedChannel.id: return
     self.activeChannel.setChatItem(selectedChannel)
     self.status.chat.setActiveChannel(selectedChannel.id)
-    self.disableReplyArea()
     self.activeChannelChanged()
 
   proc getActiveChannelIdx(self: ChatsView): QVariant {.slot.} =
@@ -135,7 +119,6 @@ QtObject:
   proc setActiveChannel*(self: ChatsView, channel: string) =
     if(channel == ""): return
     self.activeChannel.setChatItem(self.chats.getChannel(self.chats.chats.findIndexById(channel)))
-    self.disableReplyArea()
     self.activeChannelChanged()
 
   proc getActiveChannel*(self: ChatsView): QVariant {.slot.} =
@@ -150,8 +133,9 @@ QtObject:
     if not self.messageList.hasKey(channel):
       self.messageList[channel] = newChatMessageList(channel, self.status)
       # If there is only one channel, set is as active
-      if (self.activeChannel.chatItem == nil and self.chats.rowCount() == 1):
-        self.setActiveChannelByIndex(0)
+      # if (self.activeChannel.chatItem == nil and self.chats.rowCount() == 1):
+      #  self.setActiveChannelByIndex(0)
+      # RRAMOS: commented because it was hanging the app on login
   
   proc messagePushed*(self: ChatsView) {.signal.}
 
