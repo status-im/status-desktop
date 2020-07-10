@@ -28,8 +28,8 @@ Menu {
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
                 visible: false
-                width: 13
-                height: 13
+                width: popupMenuItem.action.icon.width ? popupMenuItem.action.icon.width : 25
+                height: popupMenuItem.action.icon.height ? popupMenuItem.action.icon.height : 25
             }
 
             ColorOverlay {
