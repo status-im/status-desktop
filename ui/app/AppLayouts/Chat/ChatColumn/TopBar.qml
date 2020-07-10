@@ -7,6 +7,7 @@ import "../components"
 
 Rectangle {
     property string channelNameStr: "#" + chatsModel.activeChannel.id
+    property int iconSize: 13
 
     id: chatTopBarContent
     color: "white"
@@ -124,12 +125,16 @@ Rectangle {
                 }
                 Action {
                     icon.source: "../../../img/close.svg"
+                    icon.width: chatTopBarContent.iconSize
+                    icon.height: chatTopBarContent.iconSize
                     //% "Clear history"
                     text: qsTrId("clear-history")
                     onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
                 }
                 Action {
                     icon.source: "../../../img/delete.svg"
+                    icon.width: chatTopBarContent.iconSize
+                    icon.height: chatTopBarContent.iconSize
                     icon.color: Style.current.red
                     text: qsTr("Delete Chat")
                     onTriggered: chatsModel.leaveActiveChat()
@@ -143,18 +148,24 @@ Rectangle {
                 }
                 Action {
                     icon.source: "../../../img/group_chat.svg"
+                    icon.width: chatTopBarContent.iconSize
+                    icon.height: chatTopBarContent.iconSize
                     //% "Group Information"
                     text: qsTrId("group-information")
                     onTriggered: groupInfoPopup.open()
                 }
                 Action {
                     icon.source: "../../../img/close.svg"
+                    icon.width: chatTopBarContent.iconSize
+                    icon.height: chatTopBarContent.iconSize
                     //% "Clear history"
                     text: qsTrId("clear-history")
                     onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
                 }
                 Action {
                     icon.source: "../../../img/leave_chat.svg"
+                    icon.width: chatTopBarContent.iconSize
+                    icon.height: chatTopBarContent.iconSize
                     //% "Leave Group"
                     text: qsTrId("leave-group")
                     onTriggered: chatsModel.leaveActiveChat()
