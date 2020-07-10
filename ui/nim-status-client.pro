@@ -219,6 +219,7 @@ DISTFILES += \
     shared/AddButton.qml \
     shared/Input.qml \
     shared/ModalPopup.qml \
+    shared/NotificationWindow.qml \
     shared/PopupMenu.qml \
     shared/Identicon.qml \
     shared/CopyToClipBoardButton.qml \
