@@ -4,7 +4,7 @@ import QtMultimedia 5.13
 Audio {
     id: errorSound
     source: "./error.mp3"
-    audioRole: NotificationRole
+    audioRole: Audio.NotificationRole
 }
 
 /*##^##

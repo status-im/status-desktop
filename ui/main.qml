@@ -31,18 +31,14 @@ ApplicationWindow {
 
     signal navigateTo(string path)
 
-    Item {
-        ErrorSound {
-            id: errorSound
-        }
+    ErrorSound {
+        id: errorSound
     }
 
-    Item {
-        Audio {
-            id: sendMessageSound
-            audioRole: NotificationRole
-            source: "../../../../sounds/send_message.wav"
-        }
+    Audio {
+        id: sendMessageSound
+        audioRole: Audio.NotificationRole
+        source: "../../../../sounds/send_message.wav"
     }
 
     Settings {
