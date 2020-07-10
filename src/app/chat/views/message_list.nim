@@ -25,6 +25,7 @@ type
     ResponseTo = UserRole + 14
     PlainText = UserRole + 15
     Index = UserRole + 16
+    ImageUrls = UserRole + 17
 
 QtObject:
   type
@@ -82,6 +83,7 @@ QtObject:
       of ChatMessageRoles.OutgoingStatus: result = newQVariant(message.outgoingStatus)
       of ChatMessageRoles.ResponseTo: result = newQVariant(message.responseTo)
       of ChatMessageRoles.Index: result = newQVariant(index.row)
+      of ChatMessageRoles.ImageUrls: result = newQVariant(message.imageUrls)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -100,7 +102,8 @@ QtObject:
       ChatMessageRoles.Id.int: "messageId",
       ChatMessageRoles.OutgoingStatus.int: "outgoingStatus",
       ChatMessageRoles.ResponseTo.int: "responseTo",
-      ChatMessageRoles.Index.int: "index"
+      ChatMessageRoles.Index.int: "index",
+      ChatMessageRoles.ImageUrls.int: "imageUrls"
     }.toTable
 
   proc getMessageIndex(self: ChatMessageList, messageId: string): int {.slot.} =

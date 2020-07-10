@@ -42,6 +42,7 @@ type Message* = object
   isCurrentUser*: bool
   stickerHash*: string
   outgoingStatus*: string
+  imageUrls*: string
 
 proc `$`*(self: Message): string =
   result = fmt"Message(id:{self.id}, chatId:{self.chatId}, clock:{self.clock}, from:{self.fromAuthor}, type:{self.contentType})"

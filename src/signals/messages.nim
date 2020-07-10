@@ -1,4 +1,4 @@
-import json, random, sequtils, sugar
+import json, random, re, strutils, sequtils, sugar
 import json_serialization
 import ../status/libstatus/accounts as status_accounts
 import ../status/libstatus/settings as status_settings
@@ -140,7 +140,12 @@ proc toTextItem*(jsonText: JsonNode): TextItem =
 
 
 proc toMessage*(jsonMsg: JsonNode): Message =
-  result = Message(
+  let
+    regex = re(r"(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|].(?:jpg|jpeg|gif|png|svg))", flags = {reStudy, reIgnoreCase})
+    text = jsonMsg{"text"}.getStr
+    imageUrls = findAll(text, regex)
+
+  var message = Message(
       alias: jsonMsg{"alias"}.getStr,
       chatId: jsonMsg{"localChatId"}.getStr,
       clock: jsonMsg{"clock"}.getInt,
@@ -162,8 +167,14 @@ proc toMessage*(jsonMsg: JsonNode): Message =
       outgoingStatus: $jsonMsg{"outgoingStatus"}.getStr,
       isCurrentUser: $jsonMsg{"outgoingStatus"}.getStr == "sending" or $jsonMsg{"outgoingStatus"}.getStr == "sent",
       stickerHash: "",
-      parsedText: @[]
+      parsedText: @[],
+      imageUrls: ""
     )
+  
+  if imageUrls.len > 0:
+    message.imageUrls = imageUrls.join(" ")
+
+  result = message
 
   if jsonMsg["parsedText"].kind != JNull: 
     for text in jsonMsg["parsedText"]:

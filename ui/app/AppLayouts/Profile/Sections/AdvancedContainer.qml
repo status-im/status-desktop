@@ -5,6 +5,7 @@ import "../../../../imports"
 import "../../../../shared"
 
 Item {
+    property var appSettings
     id: advancedContainer
     width: 200
     height: 200
@@ -96,6 +97,7 @@ Item {
     }
 
     RowLayout {
+        id: nodeTabSettings
         anchors.top: browserTabSettings.bottom
         anchors.topMargin: 20
         anchors.left: parent.left
@@ -113,6 +115,25 @@ Item {
         StyledText {
             //% "under development"
             text: qsTrId("under-development")
+        }
+    }
+
+    RowLayout {
+        anchors.top: nodeTabSettings.bottom
+        anchors.topMargin: 20
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+        StyledText {
+            text: qsTr("Display images in chat automatically")
+        }
+        Switch {
+            checked: appSettings.displayChatImages
+            onCheckedChanged: function(value) {
+              advancedContainer.appSettings.displayChatImages = this.checked
+            }
+        }
+        StyledText {
+            text: qsTr("under development")
         }
     }
 }
