@@ -119,7 +119,6 @@ Item {
                 horizontalAlignment: Text.AlignHCenter
                 fontSizeMode: Text.FixedSize
                 renderType: Text.QtRendering
-                onLinkActivated: console.log(link)
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.xlPadding
                 anchors.left: parent.left
