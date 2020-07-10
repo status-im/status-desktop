@@ -23,6 +23,7 @@ type
     Id = UserRole + 12
     OutgoingStatus = UserRole + 13
     ResponseTo = UserRole + 14
+    PlainText = UserRole + 15
 
 QtObject:
   type
@@ -66,6 +67,7 @@ QtObject:
     case chatMessageRole:
       of ChatMessageRoles.UserName: result = newQVariant(message.alias)
       of ChatMessageRoles.Message: result = newQVariant(self.renderBlock(message))
+      of ChatMessageRoles.PlainText: result = newQVariant(message.text)
       of ChatMessageRoles.Timestamp: result = newQVariant(message.timestamp)
       of ChatMessageRoles.Clock: result = newQVariant($message.clock)
       of ChatMessageRoles.Identicon: result = newQVariant(message.identicon)
@@ -83,6 +85,7 @@ QtObject:
     {
       ChatMessageRoles.UserName.int:"userName",
       ChatMessageRoles.Message.int:"message",
+      ChatMessageRoles.PlainText.int:"plainText",
       ChatMessageRoles.Timestamp.int:"timestamp",
       ChatMessageRoles.Clock.int:"clock",
       ChatMessageRoles.Identicon.int:"identicon",

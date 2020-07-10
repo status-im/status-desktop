@@ -117,6 +117,7 @@ ScrollView {
             chatId: model.chatId
             userName: model.userName
             message: model.message
+            plainText: model.plainText
             identicon: model.identicon
             isCurrentUser: model.isCurrentUser
             timestamp: model.timestamp
