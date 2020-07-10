@@ -53,7 +53,10 @@ StackLayout {
             }
             Action {
                 text: qsTr("Reply to")
-                onTriggered: chatsModel.enableReplyArea(true, profilePopup.userName, profilePopup.text, profilePopup.identicon)
+                onTriggered: {
+                    isReply = true;
+                    replyAreaContainer.setup()
+                }
             }
         }
  
@@ -69,27 +72,17 @@ StackLayout {
 
             
             ReplyArea {
-                id: replyArea
+                id: replyAreaContainer
                 visible: isReply
             }
 
             ChatInput {
                 height: 40
-                anchors.top: !isReply ? inputArea.top : replyArea.bottom
+                anchors.top: !isReply ? inputArea.top : replyAreaContainer.bottom
                 anchors.topMargin: 4
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-            }
-
-            Connections {
-                target: chatsModel
-                onReplyAreaEnabled: {
-                    isReply = enable;
-                    replyArea.userName = userName;
-                    replyArea.identicon = identicon;
-                    replyArea.message = message;
-                }
             }
         }
     }

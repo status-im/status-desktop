@@ -206,8 +206,8 @@ Item {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
             onClicked: {
-                chatsModel.setReplyTo(messageId)
-                profileClick(userName, fromAuthor, identicon, text);
+                SelectedMessage.set(messageId, fromAuthor);
+                profileClick(userName, fromAuthor, identicon);
                 messageContextMenu.popup()
             }
         }
@@ -230,8 +230,8 @@ Item {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
             onClicked: {
-                chatsModel.setReplyTo(messageId)
-                profileClick(userName, fromAuthor, identicon, text)
+                SelectedMessage.set(messageId, fromAuthor);
+                profileClick(userName, fromAuthor, identicon)
                 messageContextMenu.popup()
             }
         }
@@ -317,10 +317,11 @@ Item {
             text: {
                 if(contentType === Constants.stickerType) return "";
                 if(isEmoji){
-                    return Emoji.parse(message, "72x72");
+                    return Emoji.parse(linkify(message), "72x72");
                 } else {
                     return Emoji.parse(linkify(message), "26x26");
                 }
+
             }
             anchors.left: parent.left
             anchors.leftMargin: parent.chatHorizontalPadding
@@ -353,7 +354,15 @@ Item {
         MouseArea {
             anchors.fill: parent
             cursorShape: chatText.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
             onClicked: {
+                if(mouse.button & Qt.RightButton) {
+                    SelectedMessage.set(messageId, fromAuthor);
+                    profileClick(userName, fromAuthor, identicon);
+                    messageContextMenu.popup()
+                    return;
+                }
+
                 let link = chatText.hoveredLink;
                 if(link.startsWith("#")){
                     chatsModel.joinChat(link.substring(1), Constants.chatTypePublic);
@@ -362,16 +371,11 @@ Item {
 
                 if (link.startsWith('//')) {
                   let pk = link.replace("//", "");
-                  profileClick(chatsModel.userNameOrAlias(pk), pk, chatsModel.generateIdenticon(pk), text)
+                  profileClick(chatsModel.userNameOrAlias(pk), pk, chatsModel.generateIdenticon(pk))
                   return;
                 }
 
                 Qt.openUrlExternally(link)
-            }
-            onPressAndHold: {
-                chatsModel.setReplyTo(messageId)
-                profileClick(userName, fromAuthor, identicon, text);
-                messageContextMenu.popup()
             }
         }
     }
