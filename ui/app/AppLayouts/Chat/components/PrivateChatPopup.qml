@@ -21,9 +21,9 @@ ModalPopup {
         return validationError === ""
     }
 
-    function resolveENS(ensName){
+    property var resolveENS: Backpressure.debounce(popup, 500, function (ensName){
         chatsModel.resolveENS(ensName)
-    }
+    });
 
     function onKeyReleased(){
         if (!validate()) {
@@ -96,7 +96,7 @@ ModalPopup {
 
     Item {
         anchors.top: ensUsername.bottom
-        anchors.topMargin: 32
+        anchors.topMargin: 90
         anchors.fill: parent
 
         ScrollView {
