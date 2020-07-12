@@ -6,6 +6,8 @@ import QtQml.StateMachine 1.14 as DSM
 import QtMultimedia 5.13
 import Qt.labs.settings 1.0
 import QtQml 2.13
+import QtQuick.Window 2.0
+
 import "./onboarding"
 import "./app"
 import "./sounds"
@@ -28,6 +30,11 @@ ApplicationWindow {
         return Qt.application.name
     }
     visible: true
+
+    Component.onCompleted: {
+        setX(Screen.width / 2 - width / 2);
+        setY(Screen.height / 2 - height / 2);
+    }
 
     signal navigateTo(string path)
 
