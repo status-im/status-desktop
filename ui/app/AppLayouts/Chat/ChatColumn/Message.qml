@@ -22,6 +22,7 @@ Item {
     property string outgoingStatus: ""
     property string responseTo: ""
     property string messageId: ""
+    property int prevMessageIndex: -1
 
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
@@ -32,8 +33,8 @@ Item {
     property bool isSticker: contentType === Constants.stickerType
 
     property int replyMessageIndex: chatsModel.messageList.getMessageIndex(responseTo);
-    property string repliedMessageAuthor: replyMessageIndex > -1 ? chatsModel.messageList.getReplyData(replyMessageIndex, "userName") : "";
-    property string repliedMessageContent: replyMessageIndex > -1 ? chatsModel.messageList.getReplyData(replyMessageIndex, "message") : "";
+    property string repliedMessageAuthor: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "userName") : "";
+    property string repliedMessageContent: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "message") : "";
 
     property var profileClick: function () {}
 
@@ -43,9 +44,9 @@ Item {
             case Constants.chatIdentifier:
                 return parent.parent.height - 100
             case Constants.stickerType:
-                return stickerId.height + 50
+                return stickerId.height + 50 + (dateGroupLbl.visible ? 50 : 0)
             default:
-                return (isCurrentUser || (!isCurrentUser && authorCurrentMsg == authorPrevMsg) ? chatBox.height : 24 + chatBox.height) + 20
+                return childrenRect.height
         }
     }
 
@@ -186,15 +187,64 @@ Item {
         textFormat: Text.RichText
     }
 
+    StyledText {
+        id: dateGroupLbl
+        font.pixelSize: 13
+        color: Style.current.darkGrey
+        horizontalAlignment: Text.AlignHCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: {
+            if (prevMessageIndex == -1) return ""; // identifier
+
+            let now = new Date()
+            let yesterday = new Date()
+            yesterday.setDate(now.getDate()-1)
+
+            let prevMsgTimestamp = chatsModel.messageList.getMessageData(prevMessageIndex, "timestamp")
+            var currentMsgDate = new Date(parseInt(timestamp, 10));
+            var prevMsgDate = prevMsgTimestamp === "" ? new Date(0) : new Date(parseInt(prevMsgTimestamp, 10));
+            if(currentMsgDate.getDay() !== prevMsgDate.getDay()){
+                if (now.toDateString() === currentMsgDate.toDateString()) {
+                    return qsTr("Today")
+                } else if (yesterday.toDateString() === currentMsgDate.toDateString()) {
+                    //% "Yesterday"
+                    return qsTrId("yesterday")
+                } else {
+                    const monthNames = [
+                        qsTr("January"),
+                        qsTr("February"),
+                        qsTr("March"), 
+                        qsTr("April"),
+                        qsTr("May"),
+                        qsTr("June"),
+                        qsTr("July"),
+                        qsTr("August"),
+                        qsTr("September"),
+                        qsTr("October"),
+                        qsTr("November"),
+                        qsTr("December")
+                    ];
+                    return monthNames[currentMsgDate.getMonth()] + ", " + currentMsgDate.getDay()
+                }
+            } else {
+                return "";
+            }
+
+        }
+        anchors.top: parent.top
+        anchors.topMargin: 20
+        visible: text !== ""
+    }
+
     // Messages
     Image {
         id: chatImage
         width: 36
         height: 36
-        anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
-        anchors.top: parent.top
+        anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
+        anchors.topMargin: 20
         fillMode: Image.PreserveAspectFit
         source: identicon
         visible: (isMessage || isEmoji) && authorCurrentMsg != authorPrevMsg && !isCurrentUser
@@ -217,7 +267,7 @@ Item {
         id: chatName
         text: userName
         anchors.leftMargin: 20
-        anchors.top: parent.top
+        anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
         anchors.topMargin: 0
         anchors.left: chatImage.right
         font.bold: true
@@ -260,7 +310,7 @@ Item {
         anchors.leftMargin: !isCurrentUser ? 8 : 0
         anchors.right: !isCurrentUser ? undefined : parent.right
         anchors.rightMargin: !isCurrentUser ? 0 : Style.current.padding
-        anchors.top: authorCurrentMsg != authorPrevMsg && !isCurrentUser ? chatImage.top : parent.top
+        anchors.top: authorCurrentMsg != authorPrevMsg && !isCurrentUser ? chatImage.top : (dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top)
         anchors.topMargin: 0
         visible: isMessage || isEmoji
 
@@ -397,7 +447,7 @@ Item {
         font.pixelSize: 10
         readOnly: true
         selectByMouse: true
-        visible: true
+        visible:  (isEmoji || isMessage || isSticker)
     }
 
     
@@ -415,13 +465,13 @@ Item {
         anchors.rightMargin: 5
         font.pixelSize: 10
         readOnly: true
-        visible: isCurrentUser
+        visible: isCurrentUser && (isEmoji || isMessage || isSticker)
     }
-
+   
     // This rectangle's only job is to mask the corner to make it less rounded... yep
     Rectangle {
         // TODO find a way to show the corner for stickers since they have a border
-        visible: !isSticker
+        visible: isMessage || isEmoji
         color: chatBox.color
         width: 18
         height: 18

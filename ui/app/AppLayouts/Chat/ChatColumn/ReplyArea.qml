@@ -21,9 +21,9 @@ Rectangle {
         let replyMessageIndex = chatsModel.messageList.getMessageIndex(SelectedMessage.messageId);
         if (replyMessageIndex == -1) return;
         
-        userName = chatsModel.messageList.getReplyData(replyMessageIndex, "userName")
-        message = chatsModel.messageList.getReplyData(replyMessageIndex, "message")
-        identicon = chatsModel.messageList.getReplyData(replyMessageIndex, "identicon")
+        userName = chatsModel.messageList.getMessageData(replyMessageIndex, "userName")
+        message = chatsModel.messageList.getMessageData(replyMessageIndex, "message")
+        identicon = chatsModel.messageList.getMessageData(replyMessageIndex, "identicon")
     }
 
     function reset(){
