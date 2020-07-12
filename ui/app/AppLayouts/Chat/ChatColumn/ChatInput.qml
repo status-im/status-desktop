@@ -33,7 +33,7 @@ Rectangle {
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
             if(txtData.text.trim().length > 0){
                 let msg = interpretMessage(txtData.text.trim())
-                chatsModel.sendMessage(msg, SelectedMessage.messageId);
+                chatsModel.sendMessage(msg, chatColumn.isReply ? SelectedMessage.messageId : "");
                 txtData.text = "";
                 event.accepted = true;
                 sendMessageSound.stop()

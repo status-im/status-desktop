@@ -24,6 +24,7 @@ type
     OutgoingStatus = UserRole + 13
     ResponseTo = UserRole + 14
     PlainText = UserRole + 15
+    Index = UserRole + 16
 
 QtObject:
   type
@@ -80,6 +81,7 @@ QtObject:
       of ChatMessageRoles.Id: result = newQVariant(message.id)
       of ChatMessageRoles.OutgoingStatus: result = newQVariant(message.outgoingStatus)
       of ChatMessageRoles.ResponseTo: result = newQVariant(message.responseTo)
+      of ChatMessageRoles.Index: result = newQVariant(index.row)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -97,20 +99,25 @@ QtObject:
       ChatMessageRoles.SectionIdentifier.int: "sectionIdentifier",
       ChatMessageRoles.Id.int: "messageId",
       ChatMessageRoles.OutgoingStatus.int: "outgoingStatus",
-      ChatMessageRoles.ResponseTo.int: "responseTo"
+      ChatMessageRoles.ResponseTo.int: "responseTo",
+      ChatMessageRoles.Index.int: "index"
     }.toTable
 
   proc getMessageIndex(self: ChatMessageList, messageId: string): int {.slot.} =
     if not self.messageIndex.hasKey(messageId): return -1
     result = self.messageIndex[messageId]
 
-  proc getReplyData(self: ChatMessageList, index: int, data: string): string {.slot.} =
+  # TODO: see how to use data() instead of this function
+  proc getMessageData(self: ChatMessageList, index: int, data: string): string {.slot.} =
+    if index < 0 or index >= self.messages.len: return ("")
+
     let message = self.messages[index]
     case data:
-    of "userName": result = message.alias
-    of "message": result = message.text
-    of "identicon": result = message.identicon
-    else: result = ""
+    of "userName": result = (message.alias)
+    of "message": result = (message.text)
+    of "identicon": result = (message.identicon)
+    of "timestamp": result = $(message.timestamp)
+    else: result = ("")
 
   proc add*(self: ChatMessageList, message: Message) =
     if self.messageIndex.hasKey(message.id): return # duplicated msg
@@ -141,7 +148,6 @@ QtObject:
         m.outgoingStatus = "sent"
     self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.OutgoingStatus.int])
 
-  
   proc updateUsernames*(self: ChatMessageList, contacts: seq[Profile]) =
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.messages.len, 0, nil)

@@ -111,7 +111,7 @@ ScrollView {
         }
         model: messageList
 
-        Message {
+        delegate: Message {
             id: msgDelegate
             fromAuthor: model.fromAuthor
             chatId: model.chatId
@@ -129,6 +129,14 @@ ScrollView {
             authorPrevMsg: msgDelegate.ListView.previousSection
             profileClick: profilePopup.setPopupData.bind(profilePopup)
             messageId: model.messageId
+            prevMessageIndex: {
+                // This is used in order to have access to the previous message and determine the timestamp
+                // we can't rely on the index because the sequence of messages is not ordered on the nim side
+                if(msgDelegate.DelegateModel.itemsIndex > 0){
+                    return messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index
+                }
+                return -1;
+            }
         }
     }
 
