@@ -204,7 +204,7 @@ proc renameGroup*(self: ChatModel, chatId: string, newName: string) =
 
 proc getUserName*(self: ChatModel, id: string, defaultUserName: string):string =
   if(self.contacts.hasKey(id)):
-    return userNameOrAlias(self.contacts[id])
+    return self.userNameOrAlias(self.contacts[id])
   else:
     return defaultUserName
 

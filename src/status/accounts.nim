@@ -46,6 +46,11 @@ proc reset*(self: AccountModel) =
   self.nodeAccounts = @[]
   self.generatedAddresses = @[]
 
+proc userNameOrAlias*(self: ChatsView, pubKey: string): string {.slot.} =
+  if self.status.chat.contacts.hasKey(pubKey):
+    return status_ens.userNameOrAlias(self.status.chat.contacts[pubKey])
+  generateAlias(pubKey)
+
 proc generateAlias*(publicKey: string): string =
   result = status_accounts.generateAlias(publicKey)
 

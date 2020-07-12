@@ -52,7 +52,7 @@ QtObject:
 
     var name = chatItem.name
     if chatItem.chatType.isOneToOne:
-      name = self.userNameOrAlias(chatItem.id)
+      name = self.status.userNameOrAlias(chatItem.id)
 
     let chatItemRole = role.ChannelsRoles
     case chatItemRole:
@@ -138,7 +138,7 @@ QtObject:
 
   proc renderInline(self: ChannelsList, elem: TextItem): string =
     case elem.textType:
-    of "mention": result = self.userNameOrAlias(elem.literal)
+    of "mention": result = self.status.userNameOrAlias(elem.literal)
     of "link": result = elem.destination
     else: result = elem.literal
 

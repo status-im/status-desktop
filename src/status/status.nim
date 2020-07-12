@@ -11,6 +11,7 @@ import node as node
 import mailservers as mailservers
 import messages as messages
 import contacts as contacts
+import ens as ens
 import profile
 
 type Status* = ref object
@@ -60,3 +61,8 @@ proc getNodeVersion*(self: Status): string =
 
 proc saveSetting*(self: Status, setting: string, value: string) =
   discard libstatus_settings.saveSettings(setting, value)
+
+proc userNameOrAlias(self: Status, pubKey: string): string {.slot.} =
+  if self.chat.contacts.hasKey(pubKey):
+    return ens.userNameOrAlias(self.chat.contacts[pubKey])
+  self.accounts.generateAlias(pubKey)
