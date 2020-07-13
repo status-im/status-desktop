@@ -48,8 +48,8 @@ QtObject:
     result.recentStickers = newStickerList()
     result.setup()
 
-  proc addStickerPackToList*(self: ChatsView, stickerPack: StickerPack, isInstalled: bool) =
-    self.stickerPacks.addStickerPackToList(stickerPack, newStickerList(stickerPack.stickers), isInstalled)
+  proc addStickerPackToList*(self: ChatsView, stickerPack: StickerPack, isInstalled, isBought: bool) =
+    self.stickerPacks.addStickerPackToList(stickerPack, newStickerList(stickerPack.stickers), isInstalled, isBought)
   
   proc getStickerPackList(self: ChatsView): QVariant {.slot.} =
     newQVariant(self.stickerPacks)

@@ -185,7 +185,7 @@ Popup {
 
                 Repeater {
                     id: stickerPackListView
-                    property int selectedPackId
+                    property int selectedPackId: -1
                     model: stickerPackList
 
                     delegate: StickerPackIconWithIndicator {

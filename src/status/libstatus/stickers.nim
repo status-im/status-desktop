@@ -67,6 +67,8 @@ proc getBalance*(address: EthAddress): int =
   let response = Json.decode(responseStr, RpcResponse)
   if response.error != "":
     raise newException(RpcException, "Error getting stickers balance: " & response.error)
+  if response.result == "0x":
+    return 0
   result = fromHex[int](response.result)
 
 # Gets number of sticker packs
@@ -81,6 +83,8 @@ proc getPackCount*(): int =
   let response = Json.decode(responseStr, RpcResponse)
   if response.error != "":
     raise newException(RpcException, "Error getting stickers balance: " & response.error)
+  if response.result == "0x":
+    return 0
   result = fromHex[int](response.result)
 
 # Gets sticker pack data
@@ -118,23 +122,53 @@ proc getPackData*(id: int): StickerPack =
 # Buys a sticker pack for user
 # See https://notes.status.im/Q-sQmQbpTOOWCQcYiXtf5g#Buy-a-Sticker-Pack for more
 # details
-proc buyPack*(packId: int, address: EthAddress, price: int, password: string): string =
+proc buyPack*(packId: int, address: EthAddress, price: Stuint[256], password: string): string =
   let stickerMktContract = contracts.getContract(Network.Mainnet, "sticker-market")
-  let sntContract = contracts.getContract(Network.Mainnet, "sticker-market")
+  let sntContract = contracts.getContract(Network.Mainnet, "snt")
   let buyTxAbiEncoded = stickerMktContract.methods["buyToken"].encodeAbi(packId, address, price)
-  let approveAndCallAbiEncoded = sntContract.methods["approveAndCall"].encodeAbi($stickerMktContract.address, price, buyTxAbiEncoded)
-  let payload = %* [{
+  let approveAndCallAbiEncoded = sntContract.methods["approveAndCall"].encodeAbi(stickerMktContract.address, price, buyTxAbiEncoded.strip0xPrefix)
+  let payload = %* {
       "from": $address,
       "to": $sntContract.address,
-      "gas": 200000,
+      # "gas": 200000, # leave out for now
       "data": approveAndCallAbiEncoded
-    }, "latest"]
+    }
   
   let responseStr = status.sendTransaction($payload, password)
   let response = Json.decode(responseStr, RpcResponse)
   if response.error != "":
     raise newException(RpcException, "Error getting stickers balance: " & response.error)
   result = response.result # should be a tx receipt
+
+proc tokenOfOwnerByIndex*(address: EthAddress, idx: int): int =
+  let contract = contracts.getContract(Network.Testnet, "sticker-pack")
+  let payload = %* [{
+      "to": $contract.address,
+      "data": contract.methods["tokenOfOwnerByIndex"].encodeAbi(address, idx)
+    }, "latest"]
+  
+  let responseStr = status.callPrivateRPC("eth_call", payload)
+  let response = Json.decode(responseStr, RpcResponse)
+  if response.error != "":
+    raise newException(RpcException, "Error getting owned tokens: " & response.error)
+  if response.result == "0x":
+    return 0
+  result = fromHex[int](response.result)
+
+proc getPackIdFromTokenId*(tokenId: int): int =
+  let contract = contracts.getContract(Network.Testnet, "sticker-pack")
+  let payload = %* [{
+      "to": $contract.address,
+      "data": contract.methods["tokenPackId"].encodeAbi(tokenId)
+    }, "latest"]
+  
+  let responseStr = status.callPrivateRPC("eth_call", payload)
+  let response = Json.decode(responseStr, RpcResponse)
+  if response.error != "":
+    raise newException(RpcException, "Error getting pack id from token id: " & response.error)
+  if response.result == "0x":
+    return 0
+  result = fromHex[int](response.result)
 
 proc saveInstalledStickerPacks*(installedStickerPacks: Table[int, StickerPack]) =
   let json = %* {}
