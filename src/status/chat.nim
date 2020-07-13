@@ -1,4 +1,4 @@
-import eventemitter, json, strutils, sequtils, tables, chronicles
+import eventemitter, json, strutils, sequtils, tables, chronicles, sugar
 import libstatus/chat as status_chat
 import libstatus/stickers as status_stickers
 import libstatus/types
@@ -38,6 +38,7 @@ type
     recentStickers*: seq[Sticker]
     availableStickerPacks*: Table[int, StickerPack]
     installedStickerPacks*: Table[int, StickerPack]
+    purchasedStickerPacks*: seq[int]
     
   MessageArgs* = ref object of Args
     id*: string
@@ -54,6 +55,7 @@ proc newChatModel*(events: EventEmitter): ChatModel =
   result.recentStickers = @[]
   result.availableStickerPacks = initTable[int, StickerPack]()
   result.installedStickerPacks = initTable[int, StickerPack]()
+  result.purchasedStickerPacks = @[]
 
 
 proc delete*(self: ChatModel) =
@@ -93,29 +95,35 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
 
   self.events.emit("channelJoined", ChannelArgs(chat: chat))
 
-proc getInstalledStickerPacks*(self: ChatModel, address: EthAddress): Table[int, StickerPack] =
+proc getPurchasedStickerPacks*(self: ChatModel, address: EthAddress): seq[int] =
+  if self.purchasedStickerPacks != @[]:
+    return self.purchasedStickerPacks
+
+  var balance = status_stickers.getBalance(address)
+  # balance = 2 # hardcode to test support of purchased sticker packs, because buying sticker packs is proving very difficult on testnet
+  var tokenIds = toSeq[0..<balance].map(idx => status_stickers.tokenOfOwnerByIndex(address, idx))
+  # tokenIds = @[1, 2] # hardcode to test support of purchased sticker packs
+  self.purchasedStickerPacks = tokenIds.map(tokenId => status_stickers.getPackIdFromTokenId(tokenId))
+  result = self.purchasedStickerPacks
+
+proc getInstalledStickerPacks*(self: ChatModel): Table[int, StickerPack] =
   if self.installedStickerPacks != initTable[int, StickerPack]():
     return self.installedStickerPacks
-
-  # TODO: needs more fleshing out to determine which sticker packs
-  # we own -- owned sticker packs will simply allowed them to be installed
-  discard status_stickers.getBalance(address)
 
   self.installedStickerPacks = status_stickers.getInstalledStickerPacks()
   result = self.installedStickerPacks
 
-proc getAvailableStickerPacks*(self: ChatModel, address: EthAddress): Table[int, StickerPack] =
+proc getAvailableStickerPacks*(self: ChatModel): Table[int, StickerPack] =
   if self.availableStickerPacks != initTable[int, StickerPack]():
     return self.availableStickerPacks
 
-  # TODO: needs more fleshing out to determine which sticker packs
-  # we own -- owned sticker packs will simply allowed them to be installed
-  discard status_stickers.getBalance(address)
-
   let numPacks = status_stickers.getPackCount()
   for i in 0..<numPacks:
-    let stickerPack = status_stickers.getPackData(i)
-    self.availableStickerPacks[stickerPack.id] = stickerPack
+    try:
+      let stickerPack = status_stickers.getPackData(i)
+      self.availableStickerPacks[stickerPack.id] = stickerPack
+    except:
+      continue
   result = self.availableStickerPacks
 
 proc getRecentStickers*(self: ChatModel): seq[Sticker] =

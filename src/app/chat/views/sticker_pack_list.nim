@@ -12,9 +12,10 @@ type
     Stickers = UserRole + 6
     Thumbnail = UserRole + 7
     Installed = UserRole + 8
+    Bought = UserRole + 9
 
 type
-  StickerPackView* = tuple[pack: StickerPack, stickers: StickerList, installed: bool]
+  StickerPackView* = tuple[pack: StickerPack, stickers: StickerList, installed, bought: bool]
 
 QtObject:
   type
@@ -50,6 +51,7 @@ QtObject:
       of StickerPackRoles.Stickers: result = newQVariant(packInfo.stickers)
       of StickerPackRoles.Thumbnail: result = newQVariant(decodeContentHash(stickerPack.thumbnail))
       of StickerPackRoles.Installed: result = newQVariant(packInfo.installed)
+      of StickerPackRoles.Bought: result = newQVariant(packInfo.bought)
 
   method roleNames(self: StickerPackList): Table[int, string] =
     {
@@ -60,7 +62,8 @@ QtObject:
       StickerPackRoles.Preview.int: "preview",
       StickerPackRoles.Stickers.int: "stickers",
       StickerPackRoles.Thumbnail.int: "thumbnail",
-      StickerPackRoles.Installed.int: "installed"
+      StickerPackRoles.Installed.int: "installed",
+      StickerPackRoles.Bought.int: "bought"
     }.toTable
 
 
@@ -82,9 +85,9 @@ QtObject:
       raise newException(ValueError, "Sticker pack list does not have a pack with id " & $packId)
     result = self.packs.filterIt(it.pack.id == packId)[0].pack
 
-  proc addStickerPackToList*(self: StickerPackList, pack: StickerPack, stickers: StickerList, installed: bool) =
+  proc addStickerPackToList*(self: StickerPackList, pack: StickerPack, stickers: StickerList, installed, bought: bool) =
     self.beginInsertRows(newQModelIndex(), 0, 0)
-    self.packs.insert((pack: pack, stickers: stickers, installed: installed), 0)
+    self.packs.insert((pack: pack, stickers: stickers, installed: installed, bought: bought), 0)
     self.endInsertRows()
 
   proc removeStickerPackFromList*(self: StickerPackList, packId: int) =
