@@ -23,6 +23,7 @@ type
   FixedBytes* [N: static[int]] = distinct array[N, byte]
   DynamicBytes* [N: static[int]] = distinct array[N, byte]
   Address* = distinct EthAddress
+  EncodeResult* = tuple[dynamic: bool, data: string]
   # Bool* = distinct Int256 # TODO: implement Bool as FixedBytes[N]?
 
 type PackData* = object
@@ -40,7 +41,12 @@ let CONTRACTS: seq[Contract] = @[
       ("transfer", Method(signature: "transfer(address,uint256)"))
     ].toTable
   ),
-  Contract(name: "snt", network: Network.Testnet, address: parseAddress("0xc55cf4b03948d7ebc8b9e8bad92643703811d162")),
+  Contract(name: "snt", network: Network.Testnet, address: parseAddress("0xc55cf4b03948d7ebc8b9e8bad92643703811d162"),
+    methods: [
+      ("approveAndCall", Method(signature: "approveAndCall(address,uint256,bytes)")),
+      ("transfer", Method(signature: "transfer(address,uint256)"))
+    ].toTable
+  ),
   Contract(name: "tribute-to-talk", network: Network.Testnet, address: parseAddress("0xC61aa0287247a0398589a66fCD6146EC0F295432")),
   Contract(name: "stickers", network: Network.Mainnet, address: parseAddress("0x0577215622f43a39f4bc9640806dfea9b10d2a36"),
     methods: [
@@ -48,19 +54,35 @@ let CONTRACTS: seq[Contract] = @[
       ("getPackData", Method(signature: "getPackData(uint256)", noPadding: true))
     ].toTable
   ),
-  Contract(name: "stickers", network: Network.Testnet, address: parseAddress("0x8cc272396be7583c65bee82cd7b743c69a87287d")),
+  Contract(name: "stickers", network: Network.Testnet, address: parseAddress("0x8cc272396be7583c65bee82cd7b743c69a87287d"),
+    methods: [
+      ("packCount", Method(signature: "packCount()")),
+      ("getPackData", Method(signature: "getPackData(uint256)", noPadding: true))
+    ].toTable
+  ),
   Contract(name: "sticker-market", network: Network.Mainnet, address: parseAddress("0x12824271339304d3a9f7e096e62a2a7e73b4a7e7"),
     methods: [
       ("buyToken", Method(signature: "buyToken(uint256,address,uint256)"))
     ].toTable
   ),
-  Contract(name: "sticker-market", network: Network.Testnet, address: parseAddress("0x6CC7274aF9cE9572d22DFD8545Fb8c9C9Bcb48AD")),
-  Contract(name: "sticker-pack", network: Network.Mainnet, address: parseAddress("0x110101156e8F0743948B2A61aFcf3994A8Fb172e"),
+  Contract(name: "sticker-market", network: Network.Testnet, address: parseAddress("0x6CC7274aF9cE9572d22DFD8545Fb8c9C9Bcb48AD"),
     methods: [
-      ("balanceOf", Method(signature: "balanceOf(address)"))
+      ("buyToken", Method(signature: "buyToken(uint256,address,uint256)"))
     ].toTable
   ),
-  Contract(name: "sticker-pack", network: Network.Testnet, address: parseAddress("0xf852198d0385c4b871e0b91804ecd47c6ba97351")),
+  Contract(name: "sticker-pack", network: Network.Mainnet, address: parseAddress("0x110101156e8F0743948B2A61aFcf3994A8Fb172e"),
+    methods: [
+      ("balanceOf", Method(signature: "balanceOf(address)")),
+      ("tokenOfOwnerByIndex", Method(signature: "tokenOfOwnerByIndex(address,uint256)")),
+      ("tokenPackId", Method(signature: "tokenPackId(uint256)"))
+    ].toTable
+  ),
+  Contract(name: "sticker-pack", network: Network.Testnet, address: parseAddress("0xf852198d0385c4b871e0b91804ecd47c6ba97351"),
+    methods: [
+      ("balanceOf", Method(signature: "balanceOf(address)")),
+      ("tokenOfOwnerByIndex", Method(signature: "tokenOfOwnerByIndex(address,uint256)")),
+      ("tokenPackId", Method(signature: "tokenPackId(uint256)"))
+    ].toTable),
   # Strikers seems dead. Their website doesn't work anymore
   Contract(name: "strikers", network: Network.Mainnet, address: parseAddress("0xdcaad9fd9a74144d226dbf94ce6162ca9f09ed7e"),
     methods: [
@@ -85,6 +107,11 @@ proc getContract*(network: Network, name: string): Contract =
   let found = CONTRACTS.filter(contract => contract.name == name and contract.network == network)
   result = if found.len > 0: found[0] else: nil
 
+func encode*[bits: static[int]](x: Stuint[bits]): EncodeResult =
+  ## Encodes a `Stuint` to a textual representation for use in the JsonRPC
+  ## `sendTransaction` call.
+  (dynamic: false, data: ('0'.repeat((256 - bits) div 4) & x.dumpHex.map(c => c)).join(""))
+
 proc encodeMethod(self: Method): string =
   let hash = $nimcrypto.keccak256.digest(self.signature)
   result = hash[0 .. ^(hash.high - 6)]
@@ -98,6 +125,8 @@ proc encodeParam[T](value: T): string =
     result = toHex(value, 64)
   elif T is EthAddress:
     result = value.toHex()
+  elif T is Stuint:
+    result = value.encode().data
   else:
     result = align(value, 64, '0')
 
@@ -107,9 +136,6 @@ macro encodeAbi*(self: Method, params: varargs[untyped]): untyped =
   for param in params:
     result = quote do:
       `result` & encodeParam(`param`)
-
-proc `$`*(a: EthAddress): string =
-  "0x" & a.toHex()
 
 proc skip0xPrefix*(s: string): int =
   if s.len > 1 and s[0] == '0' and s[1] in {'x', 'X'}: 2

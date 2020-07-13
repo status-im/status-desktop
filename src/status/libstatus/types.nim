@@ -1,4 +1,5 @@
-import eventemitter, json_serialization, stint, json
+import eventemitter, json
+import eth/common/eth_types, stew/byteutils, json_serialization, stint
 import accounts/constants
 
 type SignalCallback* = proc(eventMessage: cstring): void {.cdecl.}
@@ -117,6 +118,9 @@ type StickerPack* = object
 
 proc `%`*(stuint256: Stuint[256]): JsonNode =
   newJString($stuint256)
+
+proc `$`*(a: EthAddress): string =
+  "0x" & a.toHex()
 
 proc readValue*(reader: var JsonReader, value: var Stuint[256])
                {.raises: [IOError, SerializationError, Defect].} =

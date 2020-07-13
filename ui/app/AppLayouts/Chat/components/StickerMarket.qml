@@ -68,6 +68,7 @@ Item {
                     style: StickerButton.StyleType.LargeNoIcon
                     packPrice: price
                     isInstalled: installed
+                    isBought: bought
                     onInstallClicked: root.installClicked(stickers, packId, index)
                     onUninstallClicked: root.uninstallClicked(packId)
                     onCancelClicked: root.cancelClicked(packId)
@@ -100,6 +101,7 @@ Item {
                     packPrice: price
                     width: 75 // only needed for Qt Creator
                     isInstalled: installed
+                    isBought: bought
                     onInstallClicked: root.installClicked(stickers, packId, index)
                     onUninstallClicked: root.uninstallClicked(packId)
                     onCancelClicked: root.cancelClicked(packId)
