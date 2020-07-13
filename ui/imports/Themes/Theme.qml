@@ -24,6 +24,13 @@ QtObject {
     property color darkBlueBtn
     property color red
 
+    property color background
+    property color border
+    property color textColor
+    property color currentUserTextColor
+    property color secondaryBackground
+    property color modalBackground
+
     property int xlPadding: 32
     property int bigPadding: 24
     property int padding: 16

@@ -242,8 +242,8 @@ Item {
         property int chatHorizontalPadding: 12
 
         id: chatBox
-        color: isSticker ? Style.current.white : (isCurrentUser ? Style.current.blue : Style.current.lightBlue)
-        border.color: isSticker ? Style.current.grey : Style.current.transparent
+        color: isSticker ? Style.current.background : (isCurrentUser ? Style.current.blue : Style.current.secondaryBackground)
+        border.color: isSticker ? Style.current.border : Style.current.transparent
         border.width: 1
         height: (3 * chatVerticalPadding) + (contentType == Constants.stickerType ? stickerId.height : (chatText.height + chatReply.height))
         width: {
@@ -334,7 +334,7 @@ Item {
             font.pixelSize: 15
             readOnly: true
             selectByMouse: true
-            color: !isCurrentUser ? Style.current.black : Style.current.white
+            color: !isCurrentUser ? Style.current.textColor : Style.current.currentUserTextColor
             visible: contentType == Constants.messageType || isEmoji
         }
 

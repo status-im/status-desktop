@@ -86,7 +86,7 @@ ModalPopup {
         }
     }
     
-    Text {
+    StyledText {
         id: ensUsername
         anchors.top: chatKey.bottom
         anchors.topMargin: Style.current.padding

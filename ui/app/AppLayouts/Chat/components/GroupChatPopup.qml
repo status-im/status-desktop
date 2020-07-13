@@ -176,7 +176,7 @@ ModalPopup {
                 }
             ]
             SVGImage {
-                id: "btnSelectMembersImg"
+                id: btnSelectMembersImg
                 width: 50
                 height: 50
             }

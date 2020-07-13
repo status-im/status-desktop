@@ -64,7 +64,7 @@ Item {
                 Rectangle {
                     id: rectangle
                     color: "#00000000"
-                    border.color: Style.current.grey
+                    border.color: Style.current.border
                     anchors.fill: parent
 
                     Button {

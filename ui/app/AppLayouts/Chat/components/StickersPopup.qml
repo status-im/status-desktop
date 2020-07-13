@@ -62,7 +62,7 @@ Popup {
                     anchors.top: imgNoStickers.bottom
                     anchors.topMargin: 8
 
-                    Text {
+                    StyledText {
                         id: lblNoStickersYet
                         visible: stickerPackListView.count <= 0
                         anchors.fill: parent
@@ -73,7 +73,7 @@ Popup {
                         horizontalAlignment: Text.AlignHCenter
                     }
 
-                    Text {
+                    StyledText {
                         id: lblNoRecentStickers
                         visible: stickerPackListView.count > 0 && stickerGrid.count <= 0
                         anchors.fill: parent

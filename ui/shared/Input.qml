@@ -38,7 +38,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 0
         font.pixelSize: 13
-        color: Style.current.black
+        color: Style.current.textColor
     }
 
     Rectangle {

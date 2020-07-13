@@ -14,7 +14,7 @@ Rectangle {
     property string searchStr: ""
 
     id: wrapper
-    color: ListView.isCurrentItem ? Style.current.lightBlue : Style.current.transparent
+    color: ListView.isCurrentItem ? Style.current.secondaryBackground : Style.current.transparent
     anchors.right: parent.right
     anchors.top: applicationWindow.top
     anchors.left: parent.left
@@ -69,7 +69,6 @@ Rectangle {
         anchors.leftMargin: channelIcon.visible ? 2 : Style.current.padding
         anchors.top: parent.top
         anchors.topMargin: Style.current.smallPadding
-        color: "black"
     }
     
     StyledText {

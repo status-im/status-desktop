@@ -9,7 +9,9 @@ Rectangle {
     radius: 8
     width: children[0].width + 10
     height: 32
-    border.color: Style.current.grey
+    border.color: Style.current.border
+    color: Style.current.background
+
     StyledText {
         id: suggestedChannelText
         text: "#" + channel

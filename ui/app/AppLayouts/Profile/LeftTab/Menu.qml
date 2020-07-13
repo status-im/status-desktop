@@ -10,7 +10,7 @@ Rectangle {
     readonly property int w: 340
 
     id: profileTabBar
-    color: "#ffffff"
+    color: Style.current.transparent
     height: parent.height
     Layout.fillHeight: true
     Layout.fillWidth: true
@@ -41,7 +41,6 @@ Rectangle {
 
             StyledText {
                 id: element1
-                color: "#000000"
                 //% "ENS usernames"
                 text: qsTrId("ens-usernames")
                 anchors.left: parent.left
@@ -67,7 +66,6 @@ Rectangle {
 
             StyledText {
                 id: element2
-                color: "#000000"
                 //% "Contacts"
                 text: qsTrId("contacts")
                 anchors.left: parent.left
@@ -93,7 +91,6 @@ Rectangle {
 
             StyledText {
                 id: element3
-                color: "#000000"
                 //% "Privacy and security"
                 text: qsTrId("privacy-and-security")
                 anchors.left: parent.left
@@ -115,11 +112,10 @@ Rectangle {
             anchors.top: privacyTabButton.bottom
             anchors.topMargin: 0
             background: Rectangle {
-                color: Theme.transparent
+                color: Style.current.transparent
             }
 
             StyledText {
-                color: "#000000"
                 //% "Devices"
                 text: qsTrId("devices")
                 anchors.left: parent.left
@@ -146,7 +142,6 @@ Rectangle {
 
             StyledText {
                 id: element4
-                color: "#000000"
                 //% "Sync settings"
                 text: qsTrId("sync-settings")
                 anchors.left: parent.left
@@ -173,7 +168,6 @@ Rectangle {
 
             StyledText {
                 id: element5
-                color: "#000000"
                 //% "Language settings"
                 text: qsTrId("language-settings")
                 anchors.left: parent.left
@@ -200,7 +194,6 @@ Rectangle {
 
             StyledText {
                 id: element6
-                color: "#000000"
                 //% "Notifications settings"
                 text: qsTrId("notifications-settings")
                 anchors.left: parent.left
@@ -226,7 +219,6 @@ Rectangle {
 
             StyledText {
                 id: element7
-                color: "#000000"
                 //% "Advanced settings"
                 text: qsTrId("advanced-settings")
                 anchors.left: parent.left
@@ -253,7 +245,6 @@ Rectangle {
 
             StyledText {
                 id: element8
-                color: "#000000"
                 //% "Need help?"
                 text: qsTrId("need-help")
                 anchors.left: parent.left
@@ -279,7 +270,6 @@ Rectangle {
 
             StyledText {
                 id: element9
-                color: "#000000"
                 //% "About"
                 text: qsTrId("about-app")
                 anchors.left: parent.left
@@ -305,7 +295,6 @@ Rectangle {
 
             StyledText {
                 id: element10
-                color: "#000000"
                 //% "Sign out"
                 text: qsTrId("sign-out")
                 anchors.left: parent.left

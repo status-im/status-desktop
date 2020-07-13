@@ -24,7 +24,7 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 0
         height: walletValueTextContainer.y + walletValueTextContainer.height + Style.current.padding
-        color: Style.current.white
+        color: Style.current.background
         z: 1
         border.width: 0
 
@@ -53,7 +53,7 @@ Item {
 
             StyledTextEdit {
                 id: walletAmountValue
-                color: "black"
+                color: Style.current.textColor
                 text: walletModel.totalFiatBalance
                 selectByMouse: true
                 cursorVisible: true
@@ -125,7 +125,7 @@ Item {
                 anchors.leftMargin: 10
                 font.pixelSize: 15
                 font.weight: Font.Medium
-                color: selected ? Style.current.white : Style.current.black
+                color: selected ? Style.current.white : Style.current.textColor
             }
             StyledText {
                 id: walletAddress
@@ -152,7 +152,7 @@ Item {
                 anchors.rightMargin: Style.current.padding
                 font.pixelSize: 15
                 font.weight: Font.Medium
-                color: selected ? Style.current.white : Style.current.black
+                color: selected ? Style.current.white : Style.current.textColor
             }
             MouseArea {
                 anchors.fill: parent

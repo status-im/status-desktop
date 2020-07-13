@@ -23,7 +23,7 @@ Item {
         font.pixelSize: 20
     }
 
-    Text {
+    StyledText {
       id: labelSecurity
       //% "Security"
       text: qsTrId("security")
@@ -43,7 +43,7 @@ Item {
       anchors.leftMargin: Style.current.bigPadding
       height: children[0].height
       width: children[0].width
-      Text {
+      StyledText {
           //% "Backup Seed Phrase"
           text: qsTrId("backup-seed-phrase")
           font.pixelSize: 14

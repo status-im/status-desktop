@@ -62,8 +62,9 @@ StackLayout {
  
         Rectangle {
             id: inputArea
+            color: Style.current.background
             border.width: 1
-            border.color: Style.current.grey
+            border.color: Style.current.border
             Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
             Layout.fillWidth: true
             Layout.preferredWidth: parent.width

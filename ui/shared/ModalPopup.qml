@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import QtGraphicalEffects 1.13
 import "../imports"
 
 Popup {
@@ -22,7 +23,7 @@ Popup {
     width: 480
     height: 510 // TODO find a way to make this dynamic
     background: Rectangle {
-        color: Style.current.white
+        color: Style.current.background
         radius: 8
     }
     padding: 0
@@ -64,6 +65,7 @@ Popup {
             anchors.rightMargin: Style.current.padding
             anchors.right: parent.right
             radius: 8
+            color: Style.current.transparent
 
             SVGImage {
                 id: closeModalImg
@@ -73,6 +75,11 @@ Popup {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
+            ColorOverlay {
+                anchors.fill: closeModalImg
+                source: closeModalImg
+                color: Style.current.textColor
+            }
 
             MouseArea {
                 id: closeModalMouseArea
@@ -80,10 +87,10 @@ Popup {
                 anchors.fill: parent
                 hoverEnabled: true
                 onExited: {
-                    closeButton.color = Style.current.white
+                    closeButton.color = Style.current.transparent
                 }
                 onEntered: {
-                    closeButton.color = Style.current.grey
+                    closeButton.color = Style.current.border
                 }
                 onClicked: {
                     popup.close()
