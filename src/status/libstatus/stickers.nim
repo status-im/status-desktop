@@ -11,25 +11,35 @@ proc decodeContentHash*(value: string): string =
 
   # eg encoded sticker multihash cid:
   #  e30101701220eab9a8ef4eac6c3e5836a3768d8e04935c10c67d9a700436a0e53199e9b64d29
+  #  e3017012205c531b83da9dd91529a4cf8ecd01cb62c399139e6f767e397d2f038b820c139f (testnet)
+  #  e3011220c04c617170b1f5725070428c01280b4c19ae9083b7e6d71b7a0d2a1b5ae3ce30 (testnet)
   #
   # The first 4 bytes (in hex) represent:
   # e3 = codec identifier "ipfs-ns" for content-hash
-  # 01 = unused
+  # 01 = unused - sometimes this is NOT included (ie ropsten)
   # 01 = CID version (effectively unused, as we will decode with CIDv0 regardless)
   # 70 = codec identifier "dag-pb"
 
   # ipfs-ns
-  if value[0] & value[1] != "e3":
+  if value[0..1] != "e3":
     warn "Could not decode sticker. It may still be valid, but requires a different codec to be used", hash=value
     return ""
 
   try:
     # dag-pb
-    let codecStr = value[6] & value[7]
-    let codec = parseHexInt(codecStr)
+    let defaultCodec = parseHexInt("70") #dag-pb
+    var codec = defaultCodec # no codec specified
+    var codecStartIdx = 2 # idx of where codec would start if it was specified
+    # handle the case when starts with 0xe30170 instead of 0xe3010170
+    if value[2..5] == "0101":
+      codecStartIdx = 6
+      codec = parseHexInt(value[6..7])
+    elif value[2..3] == "01" and value[4..5] != "12":
+      codecStartIdx = 4
+      codec = parseHexInt(value[4..5])
 
     # strip the info we no longer need
-    var multiHashStr = value[8..<value.len]
+    var multiHashStr = value[codecStartIdx + 2..<value.len]
 
     # The rest of the hash identifies the multihash algo, length, and digest
     # More info: https://multiformats.io/multihash/
@@ -41,8 +51,7 @@ proc decodeContentHash*(value: string): string =
     trace "Decoded sticker hash", cid=result
   except Exception as e:
     error "Error decoding sticker", hash=value, exception=e.msg
-    result = ""
-
+    raise
 
 # Retrieves number of sticker packs owned by user
 # See https://notes.status.im/Q-sQmQbpTOOWCQcYiXtf5g#Read-Sticker-Packs-owned-by-a-user
