@@ -29,7 +29,7 @@ Item {
         width: 480
         height: 510
         background: Rectangle {
-            color: Style.current.white
+            color: Style.current.background
             radius: Style.current.radius
         }
         padding: 0

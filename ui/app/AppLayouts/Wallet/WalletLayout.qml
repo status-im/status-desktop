@@ -65,16 +65,19 @@ SplitView {
                     anchors.top: parent.top
                     anchors.topMargin: Style.current.padding
                     height: assetBtn.height
+                    background: Rectangle {
+                        color: Style.current.transparent
+                    }
 
                     StatusTabButton {
                         id: assetBtn
-                        btnText: "Assets"
+                        btnText: qsTr("Assets")
                     }
                     StatusTabButton {
                         id: collectiblesBtn
                         anchors.left: assetBtn.right
                         anchors.leftMargin: 32
-                        btnText: "Collectibles"
+                        btnText: qsTr("Collectibles")
                         onClicked: {
                           walletModel.loadCollectiblesForAccount(walletModel.currentAccount.address)
                         }
@@ -83,7 +86,7 @@ SplitView {
                         id: historyBtn
                         anchors.left: collectiblesBtn.right
                         anchors.leftMargin: 32
-                        btnText: "History"
+                        btnText: qsTr("History")
                         onClicked: {
                           walletModel.loadTransactionsForAccount(walletModel.currentAccount.address)
                         }

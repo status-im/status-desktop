@@ -47,7 +47,7 @@ Menu {
                 font: popupMenuItem.font
                 color: popupMenuItem.highlighted ?
                            Style.current.white :
-                           (popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Style.current.black)
+                           (popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Style.current.textColor)
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
             }
@@ -66,7 +66,7 @@ Menu {
         color: "transparent"
         Rectangle {
             id: bgPopupMenuTopArrow
-            color: Style.current.white2
+            color: Style.current.modalBackground
             height: 14
             width: 14
             rotation: 135
@@ -92,7 +92,7 @@ Menu {
             y: 7
             implicitWidth: bgPopupMenu.width
             implicitHeight: bgPopupMenu.height
-            color: Style.current.white2
+            color: Style.current.modalBackground
             radius: 16
             layer.enabled: true
             layer.effect: DropShadow{

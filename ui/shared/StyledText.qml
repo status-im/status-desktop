@@ -3,4 +3,5 @@ import "../imports"
 
 Text {
     font.family: Style.current.fontRegular.name
+    color: Style.current.textColor
 }

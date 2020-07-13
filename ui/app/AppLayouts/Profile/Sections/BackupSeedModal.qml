@@ -52,7 +52,7 @@ ModalPopup {
               visible: index >= wrapper.len/2
             }
 
-            Text {
+            StyledText {
               id: count
               text: index+1
               color: Style.current.darkGrey
@@ -63,7 +63,7 @@ ModalPopup {
               font.pixelSize: 15
             }
 
-            TextEdit {
+            StyledTextEdit {
               text: modelData
               font.pixelSize: 15
               anchors.bottom: parent.bottom
@@ -79,7 +79,7 @@ ModalPopup {
       }
     }
 
-    Text {
+    StyledText {
       id: confirmationsInfo
       //% "With this 12 words you can always get your key back. Write it down. Keep it safe, offline, and separate from this device."
       text: qsTrId("with-this-12-words-you-can-always-get-your-key-back.-write-it-down.-keep-it-safe,-offline,-and-separate-from-this-device.")

@@ -14,4 +14,11 @@ Theme {
     property color darkBlue: "#3c55c9"
     property color darkBlueBtn: "#5a70dd"
     property color red: "#FF2D55"
+
+    property color background: white
+    property color border: grey
+    property color textColor: black
+    property color currentUserTextColor: white
+    property color secondaryBackground: lightBlue
+    property color modalBackground: white2
 }

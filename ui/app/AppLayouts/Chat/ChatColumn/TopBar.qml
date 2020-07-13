@@ -10,10 +10,10 @@ Rectangle {
     property int iconSize: 13
 
     id: chatTopBarContent
-    color: "white"
+    color: Style.current.background
     height: 56
     Layout.fillWidth: true
-    border.color: Style.current.grey
+    border.color: Style.current.border
     border.width: 1
 
     ChannelIcon {
@@ -94,7 +94,7 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             onEntered: {
-                parent.color = Style.current.grey
+                parent.color = Style.current.border
             }
             onExited: {
                 parent.color = Style.current.transparent

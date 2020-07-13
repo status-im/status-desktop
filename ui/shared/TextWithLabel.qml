@@ -38,7 +38,6 @@ Item {
         anchors.top: inputLabel.bottom
         anchors.topMargin: inputBox.labelMargin
         font.pixelSize: 15
-        color: Style.current.black
     }
 }
 

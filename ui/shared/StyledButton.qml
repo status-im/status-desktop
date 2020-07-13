@@ -5,7 +5,7 @@ import "../imports"
 
 Button {
     property string label: "My button"
-    property color btnColor: Style.current.lightBlue
+    property color btnColor: Style.current.secondaryBackground
     property color btnBorderColor: "transparent"
     property int btnBorderWidth: 0
     property color textColor: Style.current.blue

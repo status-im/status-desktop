@@ -11,6 +11,7 @@ Rectangle {
     id: profileHeaderContent
     height: parent.height
     Layout.fillWidth: true
+    color: Style.current.transparent
 
     Item {
         id: profileImgNameContainer

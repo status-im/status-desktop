@@ -10,6 +10,7 @@ Rectangle {
     id: rectangle
     border.width: 0
     height: 52
+    color: Style.current.transparent
 
     visible: chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember(profileModel.profile.pubKey)
 

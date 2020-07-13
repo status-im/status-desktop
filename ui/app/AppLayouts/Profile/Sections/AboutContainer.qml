@@ -99,7 +99,6 @@ Item {
         font.letterSpacing: 0.1
         width: 700
         wrapMode: Text.Wrap
-        color: Style.current.black
     }
 }
 
