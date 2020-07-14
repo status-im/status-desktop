@@ -18,6 +18,7 @@ Rectangle {
     anchors.left: parent.left
     border.width: 0
     radius: Style.current.radius
+    color: Style.current.transparent
 
     Identicon {
         id: accountImage

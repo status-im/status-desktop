@@ -107,7 +107,7 @@ Item {
                 opacity: 0.7
                 font.weight: Font.Bold
                 font.pixelSize: 51
-                color: "white"
+                color: Style.current.textColor
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -125,7 +125,7 @@ Item {
                 }
             font.weight: Font.Bold
             font.pixelSize: 22
-            color: Style.current.black
+            color: Style.current.textColor
             anchors.top: circleId.bottom
             anchors.topMargin: 16
             anchors.horizontalCenter: parent.horizontalCenter
