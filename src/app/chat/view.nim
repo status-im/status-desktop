@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, chronicles, times, strutils
+import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils
 
 import ../../status/status
 import ../../status/accounts as status_accounts
@@ -11,7 +11,7 @@ import ../../status/profile/profile
 
 import ../../status/threads
 
-import views/channels_list, views/message_list, views/chat_item, views/sticker_pack_list, views/sticker_list
+import views/channels_list, views/message_list, views/chat_item, views/sticker_pack_list, views/sticker_list, views/suggestions_list
 
 logScope:
   topics = "chats-view"
@@ -21,6 +21,7 @@ QtObject:
     ChatsView* = ref object of QAbstractListModel
       status: Status
       chats*: ChannelsList
+      currentSuggestions*: SuggestionsList
       callResult: string
       messageList: Table[string, ChatMessageList]
       activeChannel*: ChatItemView
@@ -35,6 +36,7 @@ QtObject:
   proc delete(self: ChatsView) = 
     self.chats.delete
     self.activeChannel.delete
+    self.currentSuggestions.delete
     for msg in self.messageList.values:
       msg.delete
     self.messageList = initTable[string, ChatMessageList]()
@@ -47,6 +49,7 @@ QtObject:
     result.connected = false
     result.chats = newChannelsList(status)
     result.activeChannel = newChatItemView(status)
+    result.currentSuggestions = newSuggestionsList()
     result.messageList = initTable[string, ChatMessageList]()
     result.stickerPacks = newStickerPackList()
     result.recentStickers = newStickerList()
@@ -70,8 +73,30 @@ QtObject:
   proc getChannelColor*(self: ChatsView, channel: string): string {.slot.} =
     self.chats.getChannelColor(channel)
 
+  proc replaceMentionsWithPubKeys(self: ChatsView, mentions: seq[string], contacts: seq[Profile], message: string, predicate: proc (contact: Profile): string): string =
+    result = message
+    for mention in mentions:
+      let matches = contacts.filter(c => "@" & predicate(c) == mention).map(c => c.address)
+      if matches.len > 0:
+        let pubKey = matches[0]
+        result = message.replace(mention, "@" & pubKey)
+
   proc sendMessage*(self: ChatsView, message: string, replyTo: string) {.slot.} =
-    self.status.chat.sendMessage(self.activeChannel.id, message, replyTo)
+    let aliasPattern = re(r"(@[A-z][a-z]* [A-z][a-z]* [A-z][a-z]*)", flags = {reStudy, reIgnoreCase})
+    let ensPattern = re(r"(@\w*(?=\.stateofus\.eth))", flags = {reStudy, reIgnoreCase})
+    let namePattern = re(r"(@\w*)", flags = {reStudy, reIgnoreCase})
+
+    let contacts = self.status.contacts.getContacts()
+
+    let aliasMentions = findAll(message, aliasPattern)
+    let ensMentions = findAll(message, ensPattern)
+    let nameMentions = findAll(message, namePattern)
+
+    var m = self.replaceMentionsWithPubKeys(aliasMentions, contacts, message, (c => c.alias))
+    m = self.replaceMentionsWithPubKeys(ensMentions, contacts, m, (c => c.ensName))
+    m = self.replaceMentionsWithPubKeys(nameMentions, contacts, m, (c => c.ensName.split(".")[0]))
+
+    self.status.chat.sendMessage(self.activeChannel.id, m, replyTo)
 
   proc activeChannelChanged*(self: ChatsView) {.signal.}
 
@@ -93,6 +118,7 @@ QtObject:
 
     self.activeChannel.setChatItem(selectedChannel)
     self.status.chat.setActiveChannel(selectedChannel.id)
+    self.currentSuggestions.setNewData(self.status.contacts.getContacts())
     self.activeChannelChanged()
 
   proc getActiveChannelIdx(self: ChatsView): QVariant {.slot.} =
@@ -122,6 +148,7 @@ QtObject:
   proc setActiveChannel*(self: ChatsView, channel: string) {.slot.} =
     if(channel == ""): return
     self.activeChannel.setChatItem(self.chats.getChannel(self.chats.chats.findIndexById(channel)))
+    self.currentSuggestions.setNewData(self.status.contacts.getContacts())
     self.activeChannelChanged()
 
   proc getActiveChannel*(self: ChatsView): QVariant {.slot.} =
@@ -131,6 +158,13 @@ QtObject:
     read = getActiveChannel
     write = setActiveChannel
     notify = activeChannelChanged
+
+
+  proc getCurrentSuggestions(self: ChatsView): QVariant {.slot.} =
+    return newQVariant(self.currentSuggestions)
+
+  QtProperty[QVariant] suggestionList:
+    read = getCurrentSuggestions
 
   proc upsertChannel(self: ChatsView, channel: string) =
     if not self.messageList.hasKey(channel):
@@ -222,6 +256,7 @@ QtObject:
       self.chats.updateChat(chat)
       if(self.activeChannel.id == chat.id):
         self.activeChannel.setChatItem(chat)
+        self.currentSuggestions.setNewData(self.status.contacts.getContacts())
         self.activeChannelChanged()
 
   proc renameGroup*(self: ChatsView, newName: string) {.slot.} =
