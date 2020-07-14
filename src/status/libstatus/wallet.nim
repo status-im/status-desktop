@@ -107,7 +107,9 @@ proc hex2Eth*(input: string): string =
   var one_eth = fromHex(Stuint[256], "DE0B6B3A7640000")
 
   var (eth, remainder) = divmod(value, one_eth)
-  fmt"{eth}.{remainder}"
+  let leading_zeros = "0".repeat(($one_eth).len - ($remainder).len - 1)
+
+  fmt"{eth}.{leading_zeros}{remainder}"
 
 proc validateMnemonic*(mnemonic: string): string =
   result = $libstatus.validateMnemonic(mnemonic)
