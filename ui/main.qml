@@ -62,6 +62,7 @@ ApplicationWindow {
        property var walletSplitView
        property var profileSplitView
        property bool displayChatImages: false
+       property bool compactMode
    }
 
     SystemTrayIcon {
