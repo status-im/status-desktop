@@ -6,6 +6,7 @@ import "../../../../shared"
 
 Item {
     property var appSettings
+
     id: advancedContainer
     width: 200
     height: 200
@@ -46,15 +47,33 @@ Item {
         }
         Switch {
             checked: themeSetting.isDarkTheme
-            onCheckedChanged: function(value) {
+            onToggled: function() {
                 profileModel.changeTheme(themeSetting.isDarkTheme ? 0 : 1)
             }
         }
     }
 
     RowLayout {
-        id: walletTabSettings
+        property bool isCompactMode: appSettings.compactMode
+        id: compactModeSetting
         anchors.top: themeSetting.bottom
+        anchors.topMargin: 20
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+        StyledText {
+            text: qsTr("Chat Compact Mode")
+        }
+        Switch {
+            checked: compactModeSetting.isCompactMode
+            onToggled: function() {
+                appSettings.compactMode = !compactModeSetting.isCompactMode
+            }
+        }
+    }
+
+    RowLayout {
+        id: walletTabSettings
+        anchors.top: compactModeSetting.bottom
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 24

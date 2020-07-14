@@ -36,7 +36,7 @@ Item {
     property var scrollToBottom: function () {}
     property var appSettings
 
-    property bool isCompact: true
+    property bool isCompact: appSettings.compactMode
 
     id: messageItem
     width: parent.width

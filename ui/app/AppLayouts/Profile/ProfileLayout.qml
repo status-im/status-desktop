@@ -51,7 +51,7 @@ SplitView {
         NotificationsContainer {}
 
         AdvancedContainer {
-          appSettings: profileView.appSettings
+            appSettings: profileView.appSettings
         }
 
         HelpContainer {}
