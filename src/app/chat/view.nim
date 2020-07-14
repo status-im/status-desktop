@@ -81,6 +81,11 @@ QtObject:
 
   proc activeChannelChanged*(self: ChatsView) {.signal.}
 
+  proc userNameOrAlias*(self: ChatsView, pubKey: string): string {.slot.} =
+    if self.status.chat.contacts.hasKey(pubKey):
+      return status_ens.userNameOrAlias(self.status.chat.contacts[pubKey])
+    generateAlias(pubKey)
+
   proc setActiveChannelByIndex*(self: ChatsView, index: int) {.slot.} =
     if(self.chats.chats.len == 0): return
     var response = self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
@@ -88,6 +93,10 @@ QtObject:
       self.chats.clearUnreadMessagesCount(self.activeChannel.chatItem)
     let selectedChannel = self.chats.getChannel(index)
     if self.activeChannel.id == selectedChannel.id: return
+
+    if selectedChannel.chatType.isOneToOne:
+      selectedChannel.name = self.userNameOrAlias(selectedChannel.id)
+
     self.activeChannel.setChatItem(selectedChannel)
     self.status.chat.setActiveChannel(selectedChannel.id)
     self.activeChannelChanged()
@@ -256,13 +265,7 @@ QtObject:
   proc generateIdenticon*(self: ChatsView, pk: string): string {.slot.} =
     result = status_accounts.generateIdenticon(pk)
 
-  proc userNameOrAlias*(self: ChatsView, pubKey: string): string {.slot.} =
-    if self.status.chat.contacts.hasKey(pubKey):
-      return status_ens.userNameOrAlias(self.status.chat.contacts[pubKey])
-    generateAlias(pubKey)
-    
   # Resolving a ENS name
-
   proc resolveENS*(self: ChatsView, ens: string) {.slot.} =
     spawnAndSend(self, "ensResolved") do: # Call self.ensResolved(string) when ens is resolved
       status_ens.pubkey(ens)
