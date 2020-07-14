@@ -55,3 +55,6 @@
 [submodule "vendor/QR-Code-generator"]
 	path = vendor/QR-Code-generator
 	url = https://github.com/status-im/QR-Code-generator
+[submodule "vendor/edn.nim"]
+	path = vendor/edn.nim
+	url = https://github.com/rosado/edn.nim.git
