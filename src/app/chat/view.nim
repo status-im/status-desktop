@@ -23,7 +23,7 @@ QtObject:
       chats*: ChannelsList
       currentSuggestions*: SuggestionsList
       callResult: string
-      messageList: Table[string, ChatMessageList]
+      messageList*: Table[string, ChatMessageList]
       activeChannel*: ChatItemView
       stickerPacks*: StickerPackList
       recentStickers*: StickerList
@@ -97,6 +97,14 @@ QtObject:
     m = self.replaceMentionsWithPubKeys(nameMentions, contacts, m, (c => c.ensName.split(".")[0]))
 
     self.status.chat.sendMessage(self.activeChannel.id, m, replyTo)
+
+  proc verifyMessageSent*(self: ChatsView, data: string) {.slot.} =
+    let messageData = data.parseJson
+    self.messageList[messageData["chatId"].getStr].checkTimeout(messageData["id"].getStr)
+
+  proc resendMessage*(self: ChatsView, chatId: string, messageId: string) {.slot.} =
+    self.status.chat.resendMessage(messageId)
+    self.messageList[chatId].resetTimeOut(messageId)
 
   proc activeChannelChanged*(self: ChatsView) {.signal.}
 

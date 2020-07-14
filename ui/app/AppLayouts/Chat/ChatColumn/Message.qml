@@ -19,6 +19,7 @@ Item {
     property string responseTo: ""
     property string messageId: ""
     property int prevMessageIndex: -1
+    property bool timeout: false
 
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"

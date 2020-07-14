@@ -155,6 +155,7 @@ ScrollView {
             }
             appSettings: scrollView.appSettings
             scrollToBottom: scrollView.scrollToBottom
+            timeout: model.timeout
         }
     }
 }

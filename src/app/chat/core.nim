@@ -6,7 +6,7 @@ import ../../signals/types
 import ../../status/libstatus/types as status_types
 import ../../status/libstatus/wallet as status_wallet
 import ../../status/[chat, contacts, status]
-import view, views/channels_list
+import view, views/channels_list, views/message_list
 
 from eth/common/utils import parseAddress
 
@@ -63,5 +63,6 @@ method onSignal(self: ChatController, data: Signal) =
   of SignalType.Message: handleMessage(self, MessageSignal(data))
   of SignalType.DiscoverySummary: handleDiscoverySummary(self, DiscoverySummarySignal(data))
   of SignalType.EnvelopeSent: handleEnvelopeSent(self, EnvelopeSentSignal(data))
+  of SignalType.EnvelopeExpired: handleEnvelopeExpired(self, EnvelopeExpiredSignal(data))
   else:
     warn "Unhandled signal received", signalType = data.signalType

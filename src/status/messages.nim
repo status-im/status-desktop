@@ -2,9 +2,9 @@ import tables, sets, eventemitter
 import libstatus/chat
 
 type
-  MessageDetails = object
-    status: string
-    chatId: string
+  MessageDetails* = object
+    status*: string
+    chatId*: string
 
   MessagesModel* = ref object
     events*: EventEmitter
