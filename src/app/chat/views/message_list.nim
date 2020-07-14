@@ -1,4 +1,4 @@
-import NimQml, Tables
+import NimQml, Tables, sets
 import ../../../status/status
 import ../../../status/accounts
 import ../../../status/chat
@@ -26,6 +26,7 @@ type
     PlainText = UserRole + 15
     Index = UserRole + 16
     ImageUrls = UserRole + 17
+    Timeout = UserRole + 18
 
 QtObject:
   type
@@ -33,10 +34,12 @@ QtObject:
       messages*: seq[Message]
       status: Status
       messageIndex: Table[string, int]
+      timedoutMessages: HashSet[string]
 
   proc delete(self: ChatMessageList) =
     self.messages = @[]
     self.messageIndex = initTable[string, int]()
+    self.timedoutMessages = initHashSet[string]()
     self.QAbstractListModel.delete
 
   proc setup(self: ChatMessageList) =
@@ -53,8 +56,29 @@ QtObject:
     new(result, delete)
     result.messages = @[result.chatIdentifier(chatId)]
     result.messageIndex = initTable[string, int]()
+    result.timedoutMessages = initHashSet[string]()
     result.status = status
     result.setup
+
+  proc resetTimeOut*(self: ChatMessageList, messageId: string) =
+    if not self.messageIndex.hasKey(messageId): return
+    let msgIdx = self.messageIndex[messageId]
+    self.timedoutMessages.excl(messageId)
+    let topLeft = self.createIndex(msgIdx, 0, nil)
+    let bottomRight = self.createIndex(msgIdx, 0, nil)
+    self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.Timeout.int])
+
+  proc checkTimeout*(self: ChatMessageList, messageId: string) =
+    if not self.messageIndex.hasKey(messageId): return
+
+    let msgIdx = self.messageIndex[messageId]
+    if self.messages[msgIdx].outgoingStatus != "sending": return
+
+    self.timedoutMessages.incl(messageId)
+
+    let topLeft = self.createIndex(msgIdx, 0, nil)
+    let bottomRight = self.createIndex(msgIdx, 0, nil)
+    self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.Timeout.int])
 
   method rowCount(self: ChatMessageList, index: QModelIndex = nil): int =
     return self.messages.len
@@ -84,6 +108,7 @@ QtObject:
       of ChatMessageRoles.ResponseTo: result = newQVariant(message.responseTo)
       of ChatMessageRoles.Index: result = newQVariant(index.row)
       of ChatMessageRoles.ImageUrls: result = newQVariant(message.imageUrls)
+      of ChatMessageRoles.Timeout: result = newQVariant(self.timedoutMessages.contains(message.id))
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -103,7 +128,8 @@ QtObject:
       ChatMessageRoles.OutgoingStatus.int: "outgoingStatus",
       ChatMessageRoles.ResponseTo.int: "responseTo",
       ChatMessageRoles.Index.int: "index",
-      ChatMessageRoles.ImageUrls.int: "imageUrls"
+      ChatMessageRoles.ImageUrls.int: "imageUrls",
+      ChatMessageRoles.Timeout.int: "timeout"
     }.toTable
 
   proc getMessageIndex(self: ChatMessageList, messageId: string): int {.slot.} =

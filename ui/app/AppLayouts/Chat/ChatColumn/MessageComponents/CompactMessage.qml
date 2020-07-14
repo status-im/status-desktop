@@ -91,9 +91,14 @@ Item {
 
     SentMessage {
         id: sentMessage
-        visible: isCurrentUser && outgoingStatus != "sent"
         anchors.verticalCenter: chatTime.verticalCenter
         anchors.left: chatTime.right
+        anchors.rightMargin: 5
+    }
+
+    Retry {
+        id: retry
+        anchors.right: chatTime.right
         anchors.rightMargin: 5
     }
 

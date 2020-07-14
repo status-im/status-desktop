@@ -1,6 +1,6 @@
 import NimQml, tables, json, chronicles, strutils, json_serialization
 import ../status/libstatus/types as status_types
-import types, messages, discovery, whisperFilter, envelopes
+import types, messages, discovery, whisperFilter, envelopes, expired
 
 logScope:
   topics = "signals"
@@ -59,6 +59,8 @@ QtObject:
         signal = messages.fromEvent(jsonSignal)
       of SignalType.EnvelopeSent:
         signal = envelopes.fromEvent(jsonSignal)
+      of SignalType.EnvelopeExpired:
+        signal = expired.fromEvent(jsonSignal)
       of SignalType.WhisperFilterAdded:
         signal = whisperFilter.fromEvent(jsonSignal)
       of SignalType.Wallet:

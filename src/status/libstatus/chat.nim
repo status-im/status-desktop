@@ -128,3 +128,6 @@ proc makeAdmin*(chatId: string, pubKey: string): string =
 proc updateOutgoingMessageStatus*(messageId: string, status: string): string =
   result = callPrivateRPC("updateMessageOutgoingStatus".prefix, %* [messageId, status])
   # TODO: handle errors
+
+proc reSendChatMessage*(messageId: string): string =
+  result = callPrivateRPC("reSendChatMessage".prefix, %*[messageId])

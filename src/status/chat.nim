@@ -276,3 +276,6 @@ proc kickGroupMember*(self: ChatModel, chatId: string, pubKey: string) =
 proc makeAdmin*(self: ChatModel, chatId: string, pubKey: string) =
   var response = status_chat.makeAdmin(chatId, pubKey)
   self.emitUpdate(response)
+
+proc resendMessage*(self: ChatModel, messageId: string) =
+  discard status_chat.reSendChatMessage(messageId)

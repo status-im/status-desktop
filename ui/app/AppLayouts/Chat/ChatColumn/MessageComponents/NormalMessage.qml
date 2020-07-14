@@ -120,6 +120,15 @@ Item {
         anchors.right: chatTime.left
         anchors.rightMargin: 5
     }
+
+    Retry {
+        id: retry
+        anchors.top: chatTime.top
+        anchors.right: chatTime.left
+        anchors.rightMargin: 5
+        anchors.bottomMargin: Style.current.padding
+    }
+
     Loader {
         id: imageLoader
         active: showImages
