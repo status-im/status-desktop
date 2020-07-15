@@ -23,6 +23,7 @@ if defined(macosx):
   # set the minimum supported macOS version to 10.13
   switch("passC", "-mmacosx-version-min=10.13")
 elif defined(windows):
+  --app:gui
   --tlsEmulation:off
   switch("passL", "-Wl,-as-needed")
 else:
