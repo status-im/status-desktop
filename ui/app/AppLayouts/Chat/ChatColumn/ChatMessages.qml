@@ -122,6 +122,10 @@ ScrollView {
         }
         model: messageList
 
+        ProfilePopup {
+          id: profilePopup
+        }
+
         delegate: Message {
             id: msgDelegate
             fromAuthor: model.fromAuthor
@@ -152,7 +156,6 @@ ScrollView {
             scrollToBottom: scrollView.scrollToBottom
         }
     }
-
 }
 
 /*##^##
