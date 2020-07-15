@@ -55,6 +55,22 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    app/AppLayouts/Chat/ChatColumn/CompactMessage.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/ChannelIdentifier.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatReply \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatReply.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatText.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatTime.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/CompactMessage.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/DateGroup.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/ImageMessage.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/MessageMouseArea.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/NormalMessage.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/SentMessage.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/Sticker.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/UserImage.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/UsernameLabel.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/qmldir \
     app/AppLayouts/Chat/ContactsColumn/ClosedEmptyView.qml \
     app/AppLayouts/Chat/components/EmojiPopup.qml \
     app/AppLayouts/Chat/components/InviteFriendsPopup.qml \

@@ -4,3 +4,5 @@ ChatInput 1.0 ChatInput.qml
 EmptyChat 1.0 EmptyChat.qml
 ChatButtons 1.0 ChatButtons.qml
 ReplyArea 1.0 ReplyArea.qml
+Message 1.0 Message.qml
+CompactMessage 1.0 CompactMessage.qml

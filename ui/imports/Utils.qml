@@ -1,6 +1,7 @@
 pragma Singleton
 
 import QtQuick 2.13
+import "../shared/xss.js" as XSS
 
 QtObject {
     function isHex(value) {
@@ -38,5 +39,18 @@ QtObject {
             return addr;
         }
         return addr.substring(0, 2 + numberOfChars) + "..." + addr.substring(addr.length - numberOfChars);
+    }
+
+    function linkifyAndXSS(inputText) {
+        //URLs starting with http://, https://, or ftp://
+        var replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+        var replacedText = inputText.replace(replacePattern1, "<a href='$1'>$1</a>");
+
+        //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+        var replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+        replacedText = replacedText.replace(replacePattern2, "$1<a href='http://$2'>$2</a>");
+
+        replacedText = XSS.filterXSS(replacedText)
+        return replacedText;
     }
 }
