@@ -11,6 +11,7 @@ StackLayout {
     property int chatGroupsListViewCount: 0
     property bool isReply: false
     property var appSettings
+    property bool isConnected: false
     Layout.fillHeight: true
     Layout.fillWidth: true
     Layout.minimumWidth: 300
@@ -26,7 +27,49 @@ StackLayout {
             Layout.fillWidth: true
             z: 60
             spacing: 0
-            TopBar {}
+            TopBar {
+                id: topBar
+            }
+        }
+
+        RowLayout {
+            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
+            z: 60
+            Rectangle {
+                id: connectedStatusRect
+                Layout.fillWidth: true
+                height: 40;
+                color: isConnected ? Style.current.green : Style.current.darkGrey
+                visible: false
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: Style.current.white
+                    id: connectedStatusLbl
+                    text: isConnected ? 
+                        qsTr("Connected") :
+                        qsTr("Disconnected")
+                }
+            }
+
+            Timer {
+                id: timer
+            }
+
+            Connections {
+                target: chatsModel
+                onOnlineStatusChanged: {
+                    isConnected = connected
+                    if(connected){
+                        timer.setTimeout(function(){ 
+                            connectedStatusRect.visible = false;
+                        }, 5000);
+                    } else {
+                        connectedStatusRect.visible = true;
+                    }
+                }
+            }
         }
 
         RowLayout {

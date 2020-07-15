@@ -13,6 +13,7 @@ import mailservers as mailservers
 import messages as messages
 import contacts as contacts
 import profile
+import network as network
 
 type Status* = ref object
   events*: EventEmitter
@@ -24,6 +25,7 @@ type Status* = ref object
   node*: NodeModel
   profile*: ProfileModel
   contacts*: ContactModel
+  network*: NetworkModel
 
 proc newStatusInstance*(): Status =
   result = Status()
@@ -37,6 +39,7 @@ proc newStatusInstance*(): Status =
   result.messages = messages.newMessagesModel(result.events)
   result.profile = profile.newProfileModel()
   result.contacts = contacts.newContactModel(result.events)
+  result.network = network.newNetworkModel(result.events)
 
 proc initNode*(self: Status) = 
   libstatus_accounts.initNode()

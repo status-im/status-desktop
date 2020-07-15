@@ -11,6 +11,7 @@ Theme {
     property color transparent: "#00000000"
     property color darkGrey: "#939BA1"
     property color lightBlueText: "#8f9fec"
+    property color green: "#41cd52"
 
     property color darkBlue: "#3c55c9"
     property color darkBlueBtn: "#5a70dd"
