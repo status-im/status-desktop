@@ -25,9 +25,19 @@ proc mainProc() =
   initializeOpenGL()
 
   let app = newQApplication("Nim Status Client")
-  QResource.registerResource(app.applicationDirPath & "/../resources.rcc")
+  let resources =
+    if defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
+      "/../resources/resources.rcc"
+    else:
+      "/../resources.rcc"
+  QResource.registerResource(app.applicationDirPath & resources)
 
-  app.icon(app.applicationDirPath & "/../status.svg")
+  let statusSvg =
+    if defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
+        "/../resources/status.svg"
+      else:
+        "/../status.svg"
+  app.icon(app.applicationDirPath & statusSvg)
 
   let engine = newQQmlApplicationEngine()
   let signalController = signals.newController(app)
@@ -54,7 +64,7 @@ proc mainProc() =
     profile.init(args.account)
     wallet.init()
     chat.init()
-    
+
 
   var login = login.newController(status)
   var onboarding = onboarding.newController(status)
@@ -84,7 +94,7 @@ proc mainProc() =
     node.init()
     login.init()
     onboarding.init()
-  
+
   initControllers()
 
   # Handle node.stopped signal when user has logged out
@@ -100,7 +110,7 @@ proc mainProc() =
     # node.reset()
     # wallet.reset()
     # profile.reset()
-    
+
     # 2. Re-init controllers that don't require a running node
     initControllers()
 

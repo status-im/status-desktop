@@ -18,9 +18,13 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	bottles \
 	bottles-dummy \
 	bottles-macos \
+	check-pkg-target-linux \
+	check-pkg-target-macos \
+	check-pkg-target-windows \
 	clean \
 	deps \
 	nim_status_client \
+	nim_windows_launcher \
 	pkg \
 	pkg-linux \
 	pkg-macos \
@@ -70,11 +74,29 @@ ifeq ($(detected_OS),Darwin)
 else ifeq ($(detected_OS),Windows)
  BOTTLES_TARGET := bottles-dummy
  PKG_TARGET := pkg-windows
+ QRCODEGEN_MAKE_PARAMS := CC=gcc
  RUN_TARGET := run-windows
+ VCINSTALLDIR ?= C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\
+ export VCINSTALLDIR
 else
  BOTTLES_TARGET := bottles-dummy
  PKG_TARGET := pkg-linux
  RUN_TARGET := run-linux-or-macos
+endif
+
+check-pkg-target-linux:
+ifneq ($(detected_OS),Linux)
+	$(error The pkg-linux target must be run on Linux)
+endif
+
+check-pkg-target-macos:
+ifneq ($(detected_OS),Darwin)
+	$(error The pkg-macos target must be run on macOS)
+endif
+
+check-pkg-target-windows:
+ifneq ($(detected_OS),Windows)
+	$(error The pkg-windows target must be run on Windows)
 endif
 
 bottles: $(BOTTLES_TARGET)
@@ -142,7 +164,6 @@ else
  DOTHERSIDE_BUILD_CMD := cmake --build . --config Release $(HANDLE_OUTPUT)
  NIM_PARAMS += -L:$(DOTHERSIDE)
  NIM_EXTRA_PARAMS := --passL:"-lsetupapi -lhid"
- QRCODEGEN_MAKE_PARAMS := CC=gcc
 endif
 
 # TODO: control debug/release builds with a Make var
@@ -206,6 +227,7 @@ STATUS_CLIENT_APPIMAGE ?= pkg/NimStatusClient-x86_64.AppImage
 
 $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	rm -rf pkg/*.AppImage
+	rm -rf tmp/linux/dist
 	mkdir -p tmp/linux/dist/usr/bin
 	mkdir -p tmp/linux/dist/usr/lib
 	mkdir -p tmp/linux/dist/usr/qml
@@ -285,18 +307,69 @@ ifdef MACOS_CODESIGN_IDENT
 	scripts/sign-macos-pkg.sh $(STATUS_CLIENT_DMG) $(MACOS_CODESIGN_IDENT)
 endif
 
-STATUS_CLIENT_EXE ?= pkg/Status.exe
+NIM_WINDOWS_PREBUILT_DLLS ?= tmp/windows/tools/pcre.dll
 
-# not implemented yet
-# $(STATUS_CLIENT_EXE): nim_status_client
+$(NIM_WINDOWS_PREBUILT_DLLS):
+	echo -e "\e[92mFetching:\e[39m prebuilt DLLs from nim-lang.org"
+	rm -rf tmp/windows
+	mkdir -p tmp/windows/tools
+	cd tmp/windows/tools && \
+	wget https://nim-lang.org/download/dlls.zip && \
+	unzip dlls.zip
+
+nim_windows_launcher: | deps
+	$(ENV_SCRIPT) nim c -d:debug --outdir:./bin --passL:"-static-libgcc -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive" src/nim_windows_launcher.nim
+
+STATUS_CLIENT_ZIP ?= pkg/Status.zip
+
+$(STATUS_CLIENT_ZIP): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBUILT_DLLS)
+	rm -rf pkg/*.zip
+	rm -rf tmp/windows/dist
+	mkdir -p tmp/windows/dist/Status/bin
+	mkdir -p tmp/windows/dist/Status/resources
+	mkdir -p tmp/windows/dist/Status/vendor
+	cp windows-install.txt tmp/windows/dist/Status/INSTALL.txt
+	unix2dos -k tmp/windows/dist/Status/INSTALL.txt
+	# cp LICENSE tmp/windows/dist/Status/LICENSE.txt
+	# unix2dos -k tmp/windows/dist/Status/LICENSE.txt
+	cp status.ico tmp/windows/dist/Status/resources/
+	cp status.svg tmp/windows/dist/Status/resources/
+	cp resources.rcc tmp/windows/dist/Status/resources/
+	cp bin/nim_status_client.exe tmp/windows/dist/Status/bin/Status.exe
+	mv bin/nim_windows_launcher.exe tmp/windows/dist/Status/Status.exe
+	rcedit \
+		tmp/windows/dist/Status/bin/Status.exe \
+		--set-icon tmp/windows/dist/Status/resources/status.ico
+	rcedit \
+		tmp/windows/dist/Status/Status.exe \
+		--set-icon tmp/windows/dist/Status/resources/status.ico
+	cp $(DOTHERSIDE) tmp/windows/dist/Status/bin/
+	cp tmp/windows/tools/*.dll tmp/windows/dist/Status/bin/
+	cp "$(shell which libgcc_s_seh-1.dll)" tmp/windows/dist/Status/bin/
+	cp "$(shell which libwinpthread-1.dll)" tmp/windows/dist/Status/bin/
+
+	echo -e $(BUILD_MSG) "deployable folder"
+	windeployqt \
+		--compiler-runtime \
+		--qmldir ui \
+		--release \
+		tmp/windows/dist/Status/bin/DOtherSide.dll
+	mv tmp/windows/dist/Status/bin/vc_redist.x64.exe tmp/windows/dist/Status/vendor/
+	# implement code signing of applicable files in deployable folder
+
+	echo -e $(BUILD_MSG) "zip"
+	mkdir -p pkg
+	cd tmp/windows/dist/Status && \
+	7z a ../../../../pkg/Status.zip *
+	# can the final .zip file be code signed as well?
 
 pkg: $(PKG_TARGET)
 
-pkg-linux: $(STATUS_CLIENT_APPIMAGE)
+pkg-linux: check-pkg-target-linux $(STATUS_CLIENT_APPIMAGE)
 
-pkg-macos: $(STATUS_CLIENT_DMG)
+pkg-macos: check-pkg-target-macos $(STATUS_CLIENT_DMG)
 
-pkg-windows: $(STATUS_CLIENT_EXE)
+pkg-windows: check-pkg-target-windows $(STATUS_CLIENT_ZIP)
 
 clean: | clean-common
 	rm -rf bin/* node_modules pkg/* tmp/* $(STATUSGO)
@@ -312,10 +385,10 @@ run-linux-or-macos:
 	LD_LIBRARY_PATH="$(QT5_LIBDIR)" \
 	./bin/nim_status_client
 
-run-windows:
+run-windows: $(NIM_WINDOWS_PREBUILT_DLLS)
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client.exe"
 	NIM_STATUS_CLIENT_DEV="$(NIM_STATUS_CLIENT_DEV)" \
-	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(PATH)" \
+	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
 	./bin/nim_status_client.exe
 
 endif # "variables.mk" was not included

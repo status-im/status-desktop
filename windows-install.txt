@@ -1,0 +1,42 @@
+REQUIREMENTS
+============
+
+This application requires 64-bit Windows 7 or newer.
+
+INSTALLING
+==========
+
+After unzipping Status.zip, the Status folder can be placed wherever you prefer
+(and have permissions) on your computer.
+
+RUNNING
+=======
+
+Double-click Status.exe in the Status folder to launch the application.
+
+If you see an error complaining about a DLL file, you should open
+vc_redist.x64.exe in the Status\vendor folder to install the Microsoft Visual
+C++ Redistributable. This is usually necessary only on versions of Windows
+older than Windows 10. Then retry launching the application.
+
+You may wish to right-click Status.exe and "Send to > Desktop (create shortcut)".
+The application can then be launched by double-clicking the shortcut on your
+desktop.
+
+Status.exe persists settings and encrypted data in your %LOCALAPPDATA%\Status
+folder.
+
+UPGRADING
+=========
+
+To upgrade this application download the latest Status.zip, delete this Status
+folder and the older Status.zip, unzip the newer one, and then place the new
+Status folder in your preferred location.
+
+If you place the new Status folder in a different location than the old one
+then you should recreate any shortcuts you created for Status.exe.
+
+UNINSTALLING
+============
+
+Delete this Status folder and delete your %LOCALAPPDATA%\Status folder.
