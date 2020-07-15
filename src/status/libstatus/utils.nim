@@ -1,5 +1,5 @@
 import json, types, random, strutils, strformat, tables
-import stint
+import stint, nim_status
 from times import getTime, toUnix, nanosecond
 import accounts/signing_phrases
 

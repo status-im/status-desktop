@@ -1,6 +1,6 @@
 import json, os, nimcrypto, uuids, json_serialization, chronicles, strutils
 
-import libstatus, core
+import nim_status, core
 import utils as utils
 import types as types
 import accounts/constants
@@ -38,14 +38,14 @@ proc generateAddresses*(n = 5): seq[GeneratedAccount] =
     "bip39Passphrase": "",
     "paths": [PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
   }
-  let generatedAccounts = $libstatus.multiAccountGenerateAndDeriveAddresses($multiAccountConfig)
+  let generatedAccounts = $nim_status.multiAccountGenerateAndDeriveAddresses($multiAccountConfig)
   result = Json.decode(generatedAccounts, seq[GeneratedAccount])
 
 proc generateAlias*(publicKey: string): string =
-  result = $libstatus.generateAlias(publicKey.toGoString)
+  result = $nim_status.generateAlias(publicKey.toGoString)
 
 proc generateIdenticon*(publicKey: string): string =
-  result = $libstatus.identicon(publicKey.toGoString)
+  result = $nim_status.identicon(publicKey.toGoString)
 
 proc ensureDir(dirname: string) =
   if not existsDir(dirname):
@@ -56,10 +56,10 @@ proc initNode*() =
   ensureDir(DATADIR)
   ensureDir(KEYSTOREDIR)
 
-  discard $libstatus.initKeystore(KEYSTOREDIR)
+  discard $nim_status.initKeystore(KEYSTOREDIR)
 
 proc openAccounts*(): seq[NodeAccount] =
-  let strNodeAccounts = $libstatus.openAccounts(DATADIR)
+  let strNodeAccounts = $nim_status.openAccounts(DATADIR)
   result = Json.decode(strNodeAccounts, seq[NodeAccount])
 
 proc saveAccountAndLogin*(
@@ -88,7 +88,7 @@ proc saveAccountAndLogin*(
     }
   ]
 
-  var savedResult = $libstatus.saveAccountAndLogin(accountData, hashedPassword, settingsJSON, configJSON, $subaccountData)
+  var savedResult = $nim_status.saveAccountAndLogin(accountData, hashedPassword, settingsJSON, configJSON, $subaccountData)
   let parsedSavedResult = savedResult.parseJson
   let error = parsedSavedResult["error"].getStr
 
@@ -106,7 +106,7 @@ proc storeDerivedAccounts*(account: GeneratedAccount, password: string): MultiAc
     "paths": [PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET],
     "password": hashedPassword
   }
-  let response = $libstatus.multiAccountStoreDerivedAccounts($multiAccount);
+  let response = $nim_status.multiAccountStoreDerivedAccounts($multiAccount);
 
   try:
     result = Json.decode($response, MultiAccounts)
@@ -165,12 +165,12 @@ proc setupAccount*(account: GeneratedAccount, password: string): types.Account =
   finally:
     # TODO this is needed for now for the retrieving of past messages. We'll either move or remove it later
     let peer = "enode://44160e22e8b42bd32a06c1532165fa9e096eebedd7fa6d6e5f8bbef0440bc4a4591fe3651be68193a7ec029021cdb496cfe1d7f9f1dc69eb99226e6f39a7a5d4@35.225.221.245:443"
-    discard libstatus.addPeer(peer)
+    discard nim_status.addPeer(peer)
 
 proc login*(nodeAccount: NodeAccount, password: string): NodeAccount =
   let hashedPassword = hashPassword(password)
   let account = nodeAccount.toAccount
-  let loginResult = $libstatus.login($toJson(account), hashedPassword)
+  let loginResult = $nim_status.login($toJson(account), hashedPassword)
   let error = parseJson(loginResult)["error"].getStr
 
   if error == "":
@@ -182,7 +182,7 @@ proc login*(nodeAccount: NodeAccount, password: string): NodeAccount =
 
 proc verifyAccountPassword*(address: string, password: string): bool =
   let hashedPassword = hashPassword(password)
-  let verifyResult = $libstatus.verifyAccountPassword(KEYSTOREDIR, address, hashedPassword)
+  let verifyResult = $nim_status.verifyAccountPassword(KEYSTOREDIR, address, hashedPassword)
   let error = parseJson(verifyResult)["error"].getStr
 
   if error == "":
@@ -195,17 +195,17 @@ proc multiAccountImportMnemonic*(mnemonic: string): GeneratedAccount =
     "mnemonicPhrase": mnemonic,
     "Bip39Passphrase": ""
   }
-  # libstatus.multiAccountImportMnemonic never results in an error given ANY input
-  let importResult = $libstatus.multiAccountImportMnemonic($mnemonicJson)
+  # nim_status.multiAccountImportMnemonic never results in an error given ANY input
+  let importResult = $nim_status.multiAccountImportMnemonic($mnemonicJson)
   result = Json.decode(importResult, GeneratedAccount)
 
 proc MultiAccountImportPrivateKey*(privateKey: string): GeneratedAccount =
   let privateKeyJson = %* {
     "privateKey": privateKey
   }
-  # libstatus.MultiAccountImportPrivateKey never results in an error given ANY input
+  # nim_status.MultiAccountImportPrivateKey never results in an error given ANY input
   try:
-    let importResult = $libstatus.MultiAccountImportPrivateKey($privateKeyJson)
+    let importResult = $nim_status.multiAccountImportPrivateKey($privateKeyJson)
     result = Json.decode(importResult, GeneratedAccount)
   except Exception as e:
     error "Error getting account from private key", msg=e.msg
@@ -272,8 +272,8 @@ proc deriveAccounts*(accountId: string): MultiAccounts =
     "accountID": accountId,
     "paths": [PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
   }
-  let deriveResult = $libstatus.multiAccountDeriveAddresses($deriveJson)
+  let deriveResult = $nim_status.multiAccountDeriveAddresses($deriveJson)
   result = Json.decode(deriveResult, MultiAccounts)
 
 proc logout*(): StatusGoError =
-  result = Json.decode($libstatus.logout(), StatusGoError)
+  result = Json.decode($nim_status.logout(), StatusGoError)

@@ -1,14 +1,14 @@
 import json, nimcrypto, chronicles
-import libstatus, utils
+import nim_status, utils
 
 logScope:
   topics = "rpc"
 
 proc callRPC*(inputJSON: string): string =
-  return $libstatus.callRPC(inputJSON)
+  return $nim_status.callRPC(inputJSON)
 
 proc callPrivateRPCRaw*(inputJSON: string): string =
-  return $libstatus.callPrivateRPC(inputJSON)
+  return $nim_status.callPrivateRPC(inputJSON)
 
 proc callPrivateRPC*(methodName: string, payload = %* []): string =
   try:
@@ -18,7 +18,7 @@ proc callPrivateRPC*(methodName: string, payload = %* []): string =
       "params": %payload
     }
     debug "calling json", request = $inputJSON
-    let response = libstatus.callPrivateRPC($inputJSON)
+    let response = nim_status.callPrivateRPC($inputJSON)
     result = $response
     if parseJSON(result).hasKey("error"):
       error "rpc response error", result = result
@@ -27,7 +27,7 @@ proc callPrivateRPC*(methodName: string, payload = %* []): string =
 
 proc sendTransaction*(inputJSON: string, password: string): string =
   var hashed_password = "0x" & $keccak_256.digest(password)
-  return $libstatus.sendTransaction(inputJSON, hashed_password)
+  return $nim_status.sendTransaction(inputJSON, hashed_password)
 
 proc startMessenger*() =
   discard callPrivateRPC("startMessenger".prefix)

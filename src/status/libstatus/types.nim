@@ -2,8 +2,6 @@ import eventemitter, json
 import eth/common/eth_types, stew/byteutils, json_serialization, stint
 import accounts/constants
 
-type SignalCallback* = proc(eventMessage: cstring): void {.cdecl.}
-
 type SignalType* {.pure.} = enum
   Message = "messages.new"
   Wallet = "wallet"
@@ -22,11 +20,6 @@ type SignalType* {.pure.} = enum
   SubscriptionsError = "subscriptions.error"
   WhisperFilterAdded = "whisper.filter.added"
   Unknown
-
-type
-  GoString* = object
-    str*: cstring
-    length*: cint
 
 type DerivedAccount* = object
   publicKey*: string
