@@ -1072,7 +1072,15 @@ void dos_qcoreapplication_process_events_timed(DosQEventLoopProcessEventFlag fla
 
 ::DosQNetworkConfigurationManager *dos_qncm_create()
 {
-    return new QNetworkConfigurationManager();
+    auto *ncm = new QNetworkConfigurationManager();
+
+    auto netcfgList = ncm->allConfigurations(QNetworkConfiguration::Active);
+    for (auto& x : netcfgList) {
+      qDebug() << "Connection type: " << x.bearerType() << " - name: " << x.name() << " -purpose: " << x.purpose();
+    }
+
+    return ncm;
+
 }
 
 void dos_qncm_delete(::DosQNetworkConfigurationManager *vptr)
