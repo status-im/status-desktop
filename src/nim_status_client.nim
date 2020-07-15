@@ -107,6 +107,7 @@ proc mainProc() =
   signalController.init()
   signalController.addSubscriber(SignalType.Wallet, wallet)
   signalController.addSubscriber(SignalType.Wallet, node)
+  signalController.addSubscriber(SignalType.DiscoverySummary, node)
   signalController.addSubscriber(SignalType.Message, chat)
   signalController.addSubscriber(SignalType.Message, profile)
   signalController.addSubscriber(SignalType.DiscoverySummary, chat)

@@ -28,6 +28,7 @@ QtObject:
       recentStickers*: StickerList
       replyTo: string
       channelOpenTime*: Table[string, int64]
+      connected: bool
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
 
@@ -43,6 +44,7 @@ QtObject:
   proc newChatsView*(status: Status): ChatsView =
     new(result, delete)
     result.status = status
+    result.connected = false
     result.chats = newChannelsList(status)
     result.activeChannel = newChatItemView(status)
     result.messageList = initTable[string, ChatMessageList]()
@@ -270,3 +272,16 @@ QtObject:
 
   proc ensResolved(self: ChatsView, pubKey: string) {.slot.} =
     self.ensWasResolved(pubKey)
+
+  proc isConnected*(self: ChatsView): bool {.slot.} =
+    result = self.connected
+
+  proc onlineStatusChanged(self: ChatsView, connected: bool) {.signal.}
+
+  proc setConnected*(self: ChatsView, connected: bool) =
+    self.connected = connected
+    self.onlineStatusChanged(connected)
+
+  QtProperty[bool] isOnline:
+    read = isConnected
+    notify = onlineStatusChanged
