@@ -107,7 +107,7 @@ Item {
                 opacity: 0.7
                 font.weight: Font.Bold
                 font.pixelSize: 51
-                color: Style.current.textColor
+                color: "white"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
