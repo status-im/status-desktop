@@ -23,7 +23,7 @@ ScrollView {
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
     function scrollToBottom(force, caller) {
-        if (!true && !chatLogView.atYEnd) {
+        if (!chatLogView.atYEnd) {
             // User has scrolled up, we don't want to scroll back
             return
         }
