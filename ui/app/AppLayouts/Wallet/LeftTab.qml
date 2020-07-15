@@ -17,74 +17,57 @@ Item {
     }
     id: walletInfoContainer
 
-    Rectangle {
-        id: walletInfoHeader
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.right: parent.right
-        anchors.rightMargin: 0
-        height: walletValueTextContainer.y + walletValueTextContainer.height + Style.current.padding
-        color: Style.current.background
-        z: 1
-        border.width: 0
 
-        StyledText {
-            id: title
-            x: 143
-            y: 16
-            //% "Wallet"
-            text: qsTrId("wallet")
-            anchors.top: parent.top
-            anchors.topMargin: Style.current.padding
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.weight: Font.Bold
-            font.pixelSize: 17
+
+    StyledText {
+        id: title
+        //% "Wallet"
+        text: qsTrId("wallet")
+        anchors.top: parent.top
+        anchors.topMargin: Style.current.padding
+        anchors.horizontalCenter: parent.horizontalCenter
+        font.weight: Font.Bold
+        font.pixelSize: 17
+    }
+
+    Item {
+        id: walletValueTextContainer
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding
+        anchors.top: title.bottom
+        anchors.topMargin: Style.current.padding
+        height: childrenRect.height
+
+        StyledTextEdit {
+            id: walletAmountValue
+            color: Style.current.textColor
+            text: walletModel.totalFiatBalance
+            selectByMouse: true
+            cursorVisible: true
+            readOnly: true
+            anchors.left: parent.left
+            font.weight: Font.Medium
+            font.pixelSize: 30
         }
 
-        Item {
-            id: walletValueTextContainer
-            x: 16
-            y: 52
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
-            anchors.top: title.bottom
-            anchors.topMargin: Style.current.padding
-            height: walletAmountValue.height + totalValue.height
-
-            StyledTextEdit {
-                id: walletAmountValue
-                color: Style.current.textColor
-                text: walletModel.totalFiatBalance
-                selectByMouse: true
-                cursorVisible: true
-                readOnly: true
-                anchors.left: parent.left
-                anchors.leftMargin: 1
-                font.weight: Font.Medium
-                font.pixelSize: 30
-            }
-
-            StyledText {
-                id: totalValue
-                color: Style.current.darkGrey
-                text: "Total value"
-                anchors.left: walletAmountValue.left
-                anchors.leftMargin: 0
-                anchors.top: walletAmountValue.bottom
-                anchors.topMargin: 0
-                font.weight: Font.Medium
-                font.pixelSize: 13
-            }
+        StyledText {
+            id: totalValue
+            color: Style.current.darkGrey
+            text: "Total value"
+            anchors.left: walletAmountValue.left
+            anchors.top: walletAmountValue.bottom
+            font.weight: Font.Medium
+            font.pixelSize: 13
         }
 
         AddAccount {
-            anchors.topMargin: 3
-            anchors.top: walletValueTextContainer.top
+            anchors.top: parent.top
             anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
-
         }
     }
+
 
     Component {
         id: walletDelegate
@@ -145,7 +128,7 @@ Item {
             }
             StyledText {
                 id: walletBalance
-                text: balance
+                text: balance.toUpperCase()
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.smallPadding
                 anchors.right: parent.right
@@ -166,7 +149,8 @@ Item {
     ListView {
         id: listView
         anchors.bottom: parent.bottom
-        anchors.top: walletInfoHeader.bottom
+        anchors.top: walletValueTextContainer.bottom
+        anchors.topMargin: Style.current.padding
         spacing: 5
         anchors.right: parent.right
         anchors.left: parent.left

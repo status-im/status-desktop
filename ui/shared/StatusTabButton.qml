@@ -24,6 +24,7 @@ TabButton {
     }
 
     Rectangle {
+        visible: parent.checked
         color: Style.current.blue
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0

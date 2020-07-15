@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../imports"
 import "../../../shared"
+import "./components"
 
 Item {
     property var currentAccount: walletModel.currentAccount
@@ -44,7 +45,7 @@ Item {
 
     StyledText {
         id: walletBalance
-        text: currentAccount.balance
+        text: currentAccount.balance.toUpperCase()
         anchors.left: separatorDot.right
         anchors.leftMargin: 8
         anchors.verticalCenter: title.verticalCenter
@@ -89,7 +90,7 @@ Item {
 
     Item {
         property int btnMargin: 8
-        property int btnOuterMargin: 32
+        property int btnOuterMargin: Style.current.bigPadding
         id: walletMenu
         width: sendBtn.width + receiveBtn.width + settingsBtn.width
                + walletMenu.btnOuterMargin * 2
@@ -98,114 +99,65 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 16
 
-        Item {
+        HeaderButton {
             id: sendBtn
-            width: sendImg.width + sendText.width + walletMenu.btnMargin
-            height: sendText.height
-
-            SVGImage {
-                id: sendImg
-                width: 12
-                height: 12
-                fillMode: Image.PreserveAspectFit
-                source: "../../img/diagonalArrow.svg"
-            }
-
-            StyledText {
-                id: sendText
-                text: "Send"
-                anchors.left: sendImg.right
-                anchors.leftMargin: walletMenu.btnMargin
-                font.pixelSize: 13
-                color: Style.current.blue
-            }
-            MouseArea {
-                anchors.rightMargin: -Style.current.smallPadding
-                anchors.leftMargin: -Style.current.smallPadding
-                anchors.bottomMargin: -Style.current.smallPadding
-                anchors.topMargin: -Style.current.smallPadding
-                anchors.fill: parent
-                onClicked: sendModal.open()
-                cursorShape: Qt.PointingHandCursor
+            imageSource: "../../img/send.svg"
+            text: qsTr("Send")
+            onClicked: function () {
+                sendModal.open()
             }
         }
-        Item {
+
+        HeaderButton {
             id: receiveBtn
-            width: receiveImg.width + receiveText.width + walletMenu.btnMargin
+            imageSource: "../../img/send.svg"
+            flipImage: true
+            text: qsTr("Receive")
+            onClicked: function () {
+                // Nothing for now
+            }
             anchors.left: sendBtn.right
             anchors.leftMargin: walletMenu.btnOuterMargin
-
-            SVGImage {
-                id: receiveImg
-                width: 12
-                height: 12
-                fillMode: Image.PreserveAspectFit
-                source: "../../img/diagonalArrow.svg"
-                rotation: 180
-            }
-
-            StyledText {
-                id: receiveText
-                text: "Receive"
-                anchors.left: receiveImg.right
-                anchors.leftMargin: walletMenu.btnMargin
-                font.pixelSize: 13
-                color: Style.current.blue
-            }
         }
-        Item {
+
+        HeaderButton {
             id: settingsBtn
+            imageSource: "../../img/settings.svg"
+            flipImage: true
+            text: ""
+            onClicked: function () {
+                // FIXME the button is too much on the right, so the arrow can never align
+                let x = settingsBtn.x + settingsBtn.width / 2 - newSettingsMenu.width / 2
+                newSettingsMenu.popup(x, settingsBtn.height)
+            }
             anchors.left: receiveBtn.right
             anchors.leftMargin: walletMenu.btnOuterMargin
-            width: settingsImg.width
-            height: settingsImg.height
-            SVGImage {
-                id: settingsImg
-                width: 18
-                height: 18
-                fillMode: Image.PreserveAspectFit
-                source: "../../img/settings.svg"
-            }
 
-            MouseArea {
-                anchors.rightMargin: -Style.current.smallPadding
-                anchors.leftMargin: -Style.current.smallPadding
-                anchors.bottomMargin: -Style.current.smallPadding
-                anchors.topMargin: -Style.current.smallPadding
-                anchors.fill: parent
-                acceptedButtons: Qt.LeftButton | Qt.RightButton
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    let x = settingsImg.x + settingsImg.width / 2 - newSettingsMenu.width / 2
-                    newSettingsMenu.popup(x, settingsImg.height + 10)
+            PopupMenu {
+                id: newSettingsMenu
+                width: 280
+                Action {
+                    //% "Account Settings"
+                    text: qsTrId("account-settings")
+                    icon.source: "../../img/walletIcon.svg"
+                    onTriggered: {
+                        accountSettingsModal.open()
+                    }
                 }
-
-                PopupMenu {
-                    id: newSettingsMenu
-                    width: 280
-                    Action {
-                        //% "Account Settings"
-                        text: qsTrId("account-settings")
-                        icon.source: "../../img/walletIcon.svg"
-                        onTriggered: {
-                            accountSettingsModal.open()
-                        }
+                Action {
+                    //% "Add/Remove Tokens"
+                    text: qsTrId("add/remove-tokens")
+                    icon.source: "../../img/add_remove_token.svg"
+                    onTriggered: {
+                        tokenSettingsModal.open()
                     }
-                    Action {
-                        //% "Add/Remove Tokens"
-                        text: qsTrId("add/remove-tokens")
-                        icon.source: "../../img/add_remove_token.svg"
-                        onTriggered: {
-                            tokenSettingsModal.open()
-                        }
-                    }
-                    Action {
-                        //% "Set Currency"
-                        text: qsTrId("set-currency")
-                        icon.source: "../../img/set_currency.svg"
-                        onTriggered: {
-                            setCurrencyModal.open()
-                        }
+                }
+                Action {
+                    //% "Set Currency"
+                    text: qsTrId("set-currency")
+                    icon.source: "../../img/set_currency.svg"
+                    onTriggered: {
+                        setCurrencyModal.open()
                     }
                 }
             }

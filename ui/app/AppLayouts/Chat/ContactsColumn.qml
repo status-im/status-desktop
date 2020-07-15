@@ -16,13 +16,12 @@ Item {
 
     StyledText {
         id: title
-        x: 772
         //% "Chat"
         text: qsTrId("chat")
         anchors.top: parent.top
-        anchors.topMargin: 17
-        font.bold: true
+        anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
+        font.weight: Font.Bold
         font.pixelSize: 17
     }
 
@@ -40,8 +39,8 @@ Item {
 
     SearchBox {
         id: searchBox
-        anchors.top: parent.top
-        anchors.topMargin: 59
+        anchors.top: title.bottom
+        anchors.topMargin: Style.current.padding
         anchors.right: addChat.left
         anchors.rightMargin: Style.current.padding
         anchors.left: parent.left
@@ -52,8 +51,8 @@ Item {
         id: addChat
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        anchors.top: parent.top
-        anchors.topMargin: 59
+        anchors.top: title.bottom
+        anchors.topMargin: Style.current.padding
     }
 
     StackLayout {
