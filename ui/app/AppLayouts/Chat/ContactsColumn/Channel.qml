@@ -12,6 +12,7 @@ Rectangle {
     property bool hasMentions: false
     property int chatType: Constants.chatTypePublic
     property string searchStr: ""
+    property bool isCompact: appSettings.compactMode
 
     id: wrapper
     color: ListView.isCurrentItem ? Style.current.secondaryBackground : Style.current.transparent
@@ -22,7 +23,7 @@ Rectangle {
     // Hide the box if it is filtered out
     property bool isVisible: searchStr == "" || name.includes(searchStr)
     visible: isVisible ? true : false
-    height: isVisible ? 64 : 0
+    height: isVisible ? !isCompact ? 64 : contactImage.height + Style.current.smallPadding * 2 : 0
 
     MouseArea {
         cursorShape: Qt.PointingHandCursor
@@ -35,13 +36,15 @@ Rectangle {
 
     ChannelIcon {
       id: contactImage
-      height: 40
-      width: 40
-      topMargin: 12
-      bottomMargin: 12
+      height: !isCompact ? 40 : 20
+      width: !isCompact ? 40 : 20
+      fontSize: !isCompact ? this.defaultFontSize : 14
       channelName: wrapper.name
       channelType: wrapper.chatType
       channelIdenticon: identicon
+      anchors.left: parent.left
+      anchors.leftMargin: !isCompact ? Style.current.padding : Style.current.smallPadding
+      anchors.verticalCenter: parent.verticalCenter
     }
 
     SVGImage {
@@ -52,8 +55,9 @@ Rectangle {
         source: "../../../img/channel-icon-" + (wrapper.chatType === Constants.chatTypePublic ? "public-chat.svg" : "group.svg")
         anchors.left: contactImage.right
         anchors.leftMargin: Style.current.padding
-        anchors.top: parent.top
-        anchors.topMargin: Style.current.smallPadding
+        anchors.top: !isCompact ? parent.top : undefined
+        anchors.topMargin: !isCompact ? Style.current.smallPadding : 0
+        anchors.verticalCenter: !isCompact ? undefined : parent.verticalCenter
         visible: wrapper.chatType !== Constants.chatTypeOneToOne
     }
 
@@ -67,12 +71,14 @@ Rectangle {
         font.pixelSize: 15
         anchors.left: channelIcon.visible ? channelIcon.right : contactImage.right
         anchors.leftMargin: channelIcon.visible ? 2 : Style.current.padding
-        anchors.top: parent.top
-        anchors.topMargin: Style.current.smallPadding
+        anchors.top: !isCompact ? parent.top : undefined
+        anchors.topMargin: !isCompact ? Style.current.smallPadding : 0
+        anchors.verticalCenter: !isCompact ? undefined : parent.verticalCenter
     }
     
     StyledText {
         id: lastChatMessage
+        visible: !isCompact
         //% "No messages"
         text: lastMessage ? Emoji.parse(lastMessage, "26x26").replace(/\n|\r/g, ' ') : qsTrId("no-messages")
         clip: true // This is needed because emojis don't ellide correctly
@@ -86,54 +92,63 @@ Rectangle {
         anchors.leftMargin: Style.current.padding
         color: Style.current.darkGrey
     }
+
     StyledText {
         id: contactTime
         text: {
-          let now = new Date()
-          let yesterday = new Date()
-          yesterday.setDate(now.getDate()-1)
-          let messageDate = new Date(Math.floor(wrapper.timestamp))
-          let lastWeek = new Date()
-          lastWeek.setDate(now.getDate()-7)
+            let now = new Date()
+            let yesterday = new Date()
+            yesterday.setDate(now.getDate()-1)
+            let messageDate = new Date(Math.floor(wrapper.timestamp))
+            let lastWeek = new Date()
+            lastWeek.setDate(now.getDate()-7)
 
-          let minutes = messageDate.getMinutes();
-          let hours = messageDate.getHours();
+            let minutes = messageDate.getMinutes();
+            let hours = messageDate.getHours();
 
-          if (now.toDateString() == messageDate.toDateString()) {
-            return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
-          } else if (yesterday.toDateString() == messageDate.toDateString()) {
-            //% "Yesterday"
-            return qsTrId("yesterday")
-          } else if (lastWeek.getTime() < messageDate.getTime()) {
-            //% "Sunday"
-            //% "Monday"
-            //% "Tuesday"
-            //% "Wednesday"
-            //% "Thursday"
-            //% "Friday"
-            //% "Saturday"
-            let days = [qsTrId("sunday"), qsTrId("monday"), qsTrId("tuesday"), qsTrId("wednesday"), qsTrId("thursday"), qsTrId("friday"), qsTrId("saturday")];
-            return days[messageDate.getDay()];
-          } else {
-            return messageDate.getMonth()+1+"/"+messageDate.getDay()+"/"+messageDate.getFullYear()
-          }
-        }
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        anchors.top: parent.top
-        anchors.topMargin: Style.current.smallPadding
-        font.pixelSize: 11
-        color: Style.current.darkGrey
+            if (now.toDateString() === messageDate.toDateString()) {
+                return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
+            } else if (yesterday.toDateString() === messageDate.toDateString()) {
+                //% "Yesterday"
+                return qsTrId("yesterday")
+            } else if (lastWeek.getTime() < messageDate.getTime()) {
+                //% "Sunday"
+                let days = [qsTrId("sunday"),
+                            //% "Monday"
+                            qsTrId("monday"),
+                            //% "Tuesday"
+                            qsTrId("tuesday"),
+                            //% "Wednesday"
+                            qsTrId("wednesday"),
+                            //% "Thursday"
+                            qsTrId("thursday"),
+                            //% "Friday"
+                            qsTrId("friday"),
+                            //% "Saturday"
+                            qsTrId("saturday")];
+                return days[messageDate.getDay()];
+            } else {
+                return messageDate.getMonth()+1+"/"+messageDate.getDay()+"/"+messageDate.getFullYear()
+            }
+            }
+            anchors.right: parent.right
+            anchors.rightMargin: !isCompact ? Style.current.padding : Style.current.smallPadding
+            anchors.top: !isCompact ? parent.top : undefined
+            anchors.topMargin: !isCompact ? Style.current.smallPadding : 0
+            anchors.verticalCenter: !isCompact ? undefined : parent.verticalCenter
+            font.pixelSize: 11
+            color: Style.current.darkGrey
     }
     Rectangle {
         id: contactNumberChatsCircle
         width: 22
         height: 22
         radius: 50
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.smallPadding
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
+        anchors.right: !isCompact ? parent.right : contactTime.left
+        anchors.rightMargin: !isCompact ? Style.current.padding : Style.current.smallPadding
+        anchors.bottom: !isCompact ? parent.bottom : undefined
+        anchors.bottomMargin: !isCompact ? Style.current.smallPadding : 0
+        anchors.verticalCenter: !isCompact ? undefined : parent.verticalCenter
         color: Style.current.blue
         visible: (unviewedMessagesCount > 0) || wrapper.hasMentions
         StyledText {
@@ -142,7 +157,7 @@ Rectangle {
             font.pixelSize: 12
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            color: "white"
+            color: Style.current.white
         }
     }
 }

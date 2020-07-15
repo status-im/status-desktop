@@ -21,6 +21,10 @@ Rectangle {
       channelName: chatsModel.activeChannel.name
       channelType: chatsModel.activeChannel.chatType
       channelIdenticon: chatsModel.activeChannel.identicon
+      anchors.left: parent.left
+      anchors.leftMargin: Style.current.padding
+      anchors.top: parent.top
+      anchors.topMargin: Style.current.smallPadding
     }
 
     StyledTextEdit {
