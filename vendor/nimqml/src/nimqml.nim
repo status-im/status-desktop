@@ -13,6 +13,7 @@ template debugMsg(typeName: string, procName: string) =
 include "nimqml/private/dotherside.nim"
 include "nimqml/private/nimqmltypes.nim"
 include "nimqml/private/qmetaobject.nim"
+include "nimqml/private/qnetworkconfigurationmanager.nim"
 include "nimqml/private/qvariant.nim"
 include "nimqml/private/qobject.nim"
 include "nimqml/private/qqmlapplicationengine.nim"
@@ -29,6 +30,7 @@ include "nimqml/private/qabstracttablemodel.nim"
 include "nimqml/private/qresource.nim"
 include "nimqml/private/qdeclarative.nim"
 include "nimqml/private/nimqmlmacros.nim"
+
 
 proc signal_handler*(receiver: pointer, signal: cstring, slot: cstring) =
   var dosqobj = cast[DosQObject](receiver)

@@ -109,6 +109,8 @@ type
   QUrl* = ref object of RootObj
     vptr: DosQUrl
 
+  QNetworkConfigurationManager* = ref object of QObject
+
   QUrlParsingMode*{.pure, size: sizeof(cint).} = enum
     Tolerant = 0.cint
     Strict = 1.cint

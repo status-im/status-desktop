@@ -30,7 +30,7 @@ type
   DosQAbstractItemModel = distinct pointer
   DosQAbstractTableModel = distinct pointer
   DosQAbstractListModel = distinct pointer
-
+  
   DosParameterDefinition = object
     name: cstring
     metaType: cint
@@ -182,6 +182,7 @@ proc dos_qobject_objectName(qobject: DosQObject): cstring {.cdecl, dynlib: dynLi
 proc dos_qobject_setObjectName(qobject: DosQObject, name: cstring) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qobject_signal_emit(qobject: DosQObject, signalName: cstring, argumentsCount: cint, arguments: ptr DosQVariantArray) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qobject_delete(qobject: DosQObject) {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qobject_signal_connect(sender: DosQObject, signalName: cstring, receiver: DosQObject, slot: cstring, signalType: cint) {.cdecl, dynlib: dynLibName, importc.}
 
 # QAbstractItemModel
 proc dos_qabstractitemmodel_qmetaobject(): DosQMetaObject {.cdecl dynlib: dynLibName, importc.}
@@ -201,6 +202,10 @@ proc dos_signal(vptr: pointer, signal: cstring, slot: cstring) {.cdecl, dynlib: 
 proc dos_qurl_create(url: cstring, parsingMode: cint): DosQUrl {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qurl_delete(vptr: DosQUrl) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qurl_to_string(vptr: DosQUrl): cstring {.cdecl, dynlib: dynLibName, importc.}
+
+# QNetworkConfigurationManager
+proc dos_qncm_create(): DosQObject {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qncm_delete(vptr: DosQObject) {.cdecl, dynlib: dynLibName, importc.}
 
 # QQuickView
 proc dos_qquickview_create(): DosQQuickView {.cdecl, dynlib: dynLibName, importc.}
