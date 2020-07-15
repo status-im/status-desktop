@@ -4,7 +4,7 @@ include(GNUInstallDirs)
 
 # Macro for merging common code between static and shared
 macro(add_target name type)
-    find_package(Qt5 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets)
+    find_package(Qt5 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets Network)
 
     add_library(${name} ${type}
         include/DOtherSide/DOtherSideTypes.h
