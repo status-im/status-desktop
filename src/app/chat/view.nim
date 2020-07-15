@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, chronicles
+import NimQml, Tables, json, sequtils, chronicles, times, strutils
 
 import ../../status/status
 import ../../status/accounts as status_accounts
@@ -27,6 +27,7 @@ QtObject:
       stickerPacks*: StickerPackList
       recentStickers*: StickerList
       replyTo: string
+      channelOpenTime*: Table[string, int64]
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
 
@@ -36,6 +37,7 @@ QtObject:
     for msg in self.messageList.values:
       msg.delete
     self.messageList = initTable[string, ChatMessageList]()
+    self.channelOpenTime = initTable[string, int64]()
     self.QAbstractListModel.delete
 
   proc newChatsView*(status: Status): ChatsView =
@@ -131,11 +133,12 @@ QtObject:
   proc upsertChannel(self: ChatsView, channel: string) =
     if not self.messageList.hasKey(channel):
       self.messageList[channel] = newChatMessageList(channel, self.status)
+      self.channelOpenTime[channel] = now().toTime.toUnix * 1000
       # If there is only one channel, set is as active
       # if (self.activeChannel.chatItem == nil and self.chats.rowCount() == 1):
       #  self.setActiveChannelByIndex(0)
       # RRAMOS: commented because it was hanging the app on login
-  
+
   proc messagePushed*(self: ChatsView) {.signal.}
 
   proc messageNotificationPushed*(self: ChatsView, chatId: string, text: string) {.signal.}
@@ -152,7 +155,7 @@ QtObject:
       msg.alias = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
       self.messageList[msg.chatId].add(msg)
       self.messagePushed()
-      if msg.chatId != self.activeChannel.id:
+      if msg.chatId != self.activeChannel.id and self.channelOpenTime.hasKey(msg.chatId) and self.channelOpenTime[msg.chatId] < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
         self.messageNotificationPushed(msg.chatId, msg.text)
 
   proc updateUsernames*(self:ChatsView, contacts: seq[Profile]) =
@@ -251,7 +254,6 @@ QtObject:
     if contact == nil:
       return false
     result = contact.ensVerified
-    
 
   proc formatENSUsername*(self: ChatsView, username: string): string {.slot.} =
     result = status_ens.addDomain(username)
