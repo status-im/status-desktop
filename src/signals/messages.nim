@@ -140,10 +140,6 @@ proc toTextItem*(jsonText: JsonNode): TextItem =
 
 
 proc toMessage*(jsonMsg: JsonNode): Message =
-  let
-    regex = re(r"(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|].(?:jpg|jpeg|gif|png|svg))", flags = {reStudy, reIgnoreCase})
-    text = jsonMsg{"text"}.getStr
-    imageUrls = findAll(text, regex)
 
   var message = Message(
       alias: jsonMsg{"alias"}.getStr,
@@ -170,17 +166,19 @@ proc toMessage*(jsonMsg: JsonNode): Message =
       parsedText: @[],
       imageUrls: ""
     )
-  
-  if imageUrls.len > 0:
-    message.imageUrls = imageUrls.join(" ")
-
-  result = message
 
   if jsonMsg["parsedText"].kind != JNull: 
     for text in jsonMsg["parsedText"]:
-      result.parsedText.add(text.toTextItem)
+      message.parsedText.add(text.toTextItem)
 
-  if result.contentType == ContentType.Sticker:
-    result.stickerHash = jsonMsg["sticker"]["hash"].getStr
+  message.imageUrls = concat(message.parsedText.map(t => t.children.filter(c => c.textType == "link")))
+    .filter(t => [".png", ".jpg", ".jpeg", ".svg", ".gif"].any(ext => t.destination.endsWith(ext)))
+    .map(t => t.destination)
+    .join(" ")
+
+  if message.contentType == ContentType.Sticker:
+    message.stickerHash = jsonMsg["sticker"]["hash"].getStr
+
+  result = message
 
 
