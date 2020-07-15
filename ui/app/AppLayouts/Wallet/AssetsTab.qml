@@ -49,7 +49,7 @@ Item {
             }
             StyledText {
                 id: assetValue
-                text: value
+                text: value.toUpperCase()
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 font.pixelSize: 15
@@ -58,7 +58,7 @@ Item {
             StyledText {
                 id: assetFiatValue
                 color: Style.current.darkGrey
-                text: fiatValue
+                text: fiatValue.toUpperCase()
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.bottom: parent.bottom

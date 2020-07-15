@@ -17,13 +17,14 @@ Item {
     }
 
     ListView {
+        id: tokenListView
+        spacing: 0
+        clip: true
         anchors.top: searchBox.bottom
+        anchors.topMargin: Style.current.smallPadding
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        spacing: 0
-        id: tokenListView
-        anchors.topMargin: Style.current.smallPadding
         model: Tokens {}
         ScrollBar.vertical: ScrollBar { active: true }
 
