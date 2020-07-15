@@ -36,8 +36,6 @@ Item {
     property var scrollToBottom: function () {}
     property var appSettings
 
-    property bool isCompact: appSettings.compactMode
-
     id: messageItem
     width: parent.width
     anchors.right: !isCurrentUser ? undefined : parent.right
@@ -58,7 +56,6 @@ Item {
     Loader {
         active :true
         width: parent.width
-        // TODO get prop from settings
         sourceComponent: {
             switch(contentType) {
                 case Constants.chatIdentifier:
@@ -66,7 +63,7 @@ Item {
                 case Constants.systemMessagePrivateGroupType:
                     return channelIdentifierComponent
                 default:
-                    return isCompact ? compactMessageComponent : messageComponent
+                    return appSettings.compactMode ? compactMessageComponent : messageComponent
             }
         }
     }
