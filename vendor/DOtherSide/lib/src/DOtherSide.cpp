@@ -77,6 +77,11 @@ void dos_qapplication_enable_hdpi()
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 }
 
+void dos_qapplication_initialize_opengl()
+{
+    QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+}
+
 void dos_qguiapplication_create()
 {
     static int argc = 1;
