@@ -37,6 +37,7 @@ ScrollView {
     ListView {
         id: chatLogView
         anchors.fill: parent
+        anchors.bottomMargin: Style.current.bigPadding
         spacing: 4
         boundsBehavior: Flickable.StopAtBounds
         Layout.fillWidth: true
