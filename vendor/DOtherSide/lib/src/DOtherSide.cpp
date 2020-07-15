@@ -26,6 +26,7 @@
 #include <QtCore/QModelIndex>
 #include <QtCore/QHash>
 #include <QtCore/QResource>
+#include <QtNetwork/QNetworkConfigurationManager>
 #include <QtGui/QGuiApplication>
 #include <QtGui/QIcon>
 #include <QtQml/QQmlContext>
@@ -1067,4 +1068,15 @@ void dos_qcoreapplication_process_events(DosQEventLoopProcessEventFlag flags)
 void dos_qcoreapplication_process_events_timed(DosQEventLoopProcessEventFlag flags, int ms)
 {
     qApp->processEvents(static_cast<QEventLoop::ProcessEventsFlag>(flags), ms);
+}
+
+::DosQNetworkConfigurationManager *dos_qncm_create()
+{
+    return new QNetworkConfigurationManager();
+}
+
+void dos_qncm_delete(::DosQNetworkConfigurationManager *vptr)
+{
+    auto ncm = static_cast<QNetworkConfigurationManager *>(vptr);
+    delete ncm;
 }
