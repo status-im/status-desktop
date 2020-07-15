@@ -47,6 +47,8 @@ Item {
                         onClicked: {
                             timer.stop()
                             notificationWindowSub.close()
+                            notificationWindowSub.destroy()
+                            mainWin.destroy()
                             applicationWindow.raise()
                             chatsModel.setActiveChannel(chatId);
                         }
@@ -59,7 +61,10 @@ Item {
                 interval: 4000;
                 running: false;
                 repeat: false
-                onTriggered: notificationWindowSub.close()
+                onTriggered: {
+                  notificationWindowSub.close()
+                  notificationWindowSub.destroy()
+                }
             }
             onVisibleChanged: {
                 if(visible) {
