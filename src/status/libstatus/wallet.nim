@@ -1,5 +1,5 @@
-import json, httpclient, strformat, stint, strutils, sequtils, chronicles, parseutils, tables
-import libstatus, core, types, utils
+import json, httpclient, json, strformat, stint, strutils, sequtils, chronicles, parseutils, tables
+import nim_status, core, types, utils
 import ../wallet/account
 from ./accounts/constants import ZERO_ADDRESS
 import ./contracts as contractMethods
@@ -107,4 +107,4 @@ proc hex2Eth*(input: string): string =
   result = utils.wei2Eth(value)
 
 proc validateMnemonic*(mnemonic: string): string =
-  result = $libstatus.validateMnemonic(mnemonic)
+  result = $nim_status.validateMnemonic(mnemonic)

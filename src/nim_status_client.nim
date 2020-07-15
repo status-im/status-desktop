@@ -8,7 +8,8 @@ import app/onboarding/core as onboarding
 import app/login/core as login
 import signals/core as signals
 
-import status/libstatus/[types, libstatus]
+import status/libstatus/types
+import nim_status
 import status/status as statuslib
 
 var signalsQObjPointer: pointer
@@ -130,7 +131,7 @@ proc mainProc() =
     signal_handler(signalsQObjPointer, p0, "receiveSignal")
     tearDownForeignThreadGc()
 
-  libstatus.setSignalEventCallback(callback)
+  nim_status.setSignalEventCallback(callback)
 
   # Qt main event loop is entered here
   # The termination of the loop will be performed when exit() or quit() is called
