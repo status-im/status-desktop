@@ -21,6 +21,7 @@ proc mainProc() =
   status.initNode()
 
   enableHDPI()
+  initializeOpenGL()
 
   let app = newQApplication("Nim Status Client")
   QResource.registerResource(app.applicationDirPath & "/../resources.rcc")
