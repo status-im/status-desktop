@@ -97,6 +97,11 @@ Item {
         MessageMouseArea {
             anchors.fill: parent
         }
+
+        RectangleCorner {
+            // TODO find a way to show the corner for stickers since they have a border
+            visible: isMessage || isEmoji
+        }
     }
 
     ChatTime {
@@ -115,24 +120,6 @@ Item {
         anchors.right: chatTime.left
         anchors.rightMargin: 5
     }
-
-    // This rectangle's only job is to mask the corner to make it less rounded... yep
-    Rectangle {
-        // TODO find a way to show the corner for stickers since they have a border
-        visible: isMessage || isEmoji
-        color: chatBox.color
-        width: 18
-        height: 18
-        anchors.bottom: chatBox.bottom
-        anchors.bottomMargin: 0
-        anchors.left: !isCurrentUser ? chatBox.left : undefined
-        anchors.leftMargin: 0
-        anchors.right: !isCurrentUser ? undefined : chatBox.right
-        anchors.rightMargin: 0
-        radius: 4
-        z: -1
-    }
-
     Loader {
         id: imageLoader
         active: showImages
@@ -141,7 +128,7 @@ Item {
         anchors.leftMargin: !isCurrentUser ? 8 : 0
         anchors.right: !isCurrentUser ? undefined : parent.right
         anchors.rightMargin: !isCurrentUser ? 0 : Style.current.padding
-        anchors.top: messageItem.appSettings.displayChatImages && imageUrls != "" ? chatBox.bottom : chatTime.bottom
+        anchors.top: chatBox.bottom
         anchors.topMargin: Style.current.smallPadding
     }
 

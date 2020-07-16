@@ -6,6 +6,7 @@ Item {
     property var clickMessage: function () {}
     property int chatHorizontalPadding: 12
     property int chatVerticalPadding: 7
+    property bool showImages: messageItem.appSettings.displayChatImages && imageUrls != ""
 
     id: chatTextItem
     anchors.top: parent.top
@@ -94,5 +95,22 @@ Item {
         anchors.verticalCenter: chatTime.verticalCenter
         anchors.left: chatTime.right
         anchors.rightMargin: 5
+    }
+
+    Loader {
+        id: imageLoader
+        active: showImages
+        sourceComponent: imageComponent
+        anchors.left: chatImage.right
+        anchors.leftMargin: 8
+        anchors.top: chatText.bottom
+    }
+
+    Component {
+        id: imageComponent
+        ImageMessage {
+            color: Style.current.transparent
+            chatHorizontalPadding: 0
+        }
     }
 }
