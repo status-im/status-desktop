@@ -35,6 +35,7 @@
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickView>
 #include <QtQuick/QQuickImageProvider>
+#include <QTranslator>
 #ifdef QT_QUICKCONTROLS2_LIB
 #include <QtQuickControls2/QQuickStyle>
 #endif
@@ -56,6 +57,9 @@ void register_meta_types()
 }
 
 }
+
+// jrainville: I'm not sure where to put this, but it works like so
+QTranslator *m_translator = new QTranslator();
 
 char *convert_to_cstring(const QByteArray &array)
 {
@@ -165,6 +169,20 @@ void dos_qqmlapplicationengine_load_data(::DosQQmlApplicationEngine *vptr, const
 {
     auto engine = static_cast<QQmlApplicationEngine *>(vptr);
     engine->loadData(data);
+}
+
+void dos_qapplication_load_translation(::DosQQmlApplicationEngine *vptr, const char* translationPackage)
+{
+    if (!m_translator->isEmpty()) {
+        QCoreApplication::removeTranslator(m_translator);
+    }
+    if (m_translator->load(translationPackage)) {
+        bool success = QCoreApplication::installTranslator(m_translator);
+        auto engine = static_cast<QQmlApplicationEngine *>(vptr);
+        engine->retranslate();
+    } else {
+        printf("Failed to load translation file %s\n", translationPackage);
+    }
 }
 
 void dos_qqmlapplicationengine_add_import_path(::DosQQmlApplicationEngine *vptr, const char *path)
@@ -1093,3 +1111,5 @@ void dos_qncm_delete(::DosQNetworkConfigurationManager *vptr)
     auto ncm = static_cast<QNetworkConfigurationManager *>(vptr);
     delete ncm;
 }
+
+#include "DOtherSide.moc"

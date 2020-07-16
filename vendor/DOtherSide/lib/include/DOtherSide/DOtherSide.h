@@ -142,6 +142,11 @@ DOS_API void DOS_CALL dos_qqmlapplicationengine_load_url(DosQQmlApplicationEngin
 /// \param data The UTF-8 string of the QML to load
 DOS_API void DOS_CALL dos_qqmlapplicationengine_load_data(DosQQmlApplicationEngine *vptr, const char *data);
 
+/// \brief Calls the load and install function for translations and calls retranslate on QQmlApplicationEngine
+/// \param vptr The QQmlApplicationEngine
+/// \param data The UTF-8 string of the path to the translation file (.qm)
+DOS_API void DOS_CALL dos_qapplication_load_translation(DosQQmlApplicationEngine *vptr, const char* translationPackage);
+
 /// \brief Calls the QQmlApplicationEngine::addImportPath function
 /// \param vptr The QQmlApplicationEngine
 /// \param path The path to be added to the list of import paths
