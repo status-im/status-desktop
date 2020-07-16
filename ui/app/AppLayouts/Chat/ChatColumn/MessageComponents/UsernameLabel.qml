@@ -6,7 +6,8 @@ StyledTextEdit {
     id: chatName
     visible: (isMessage || isEmoji) && authorCurrentMsg != authorPrevMsg
     height: this.visible ? 18 : 0
-    text: !isCurrentUser ? userName : qsTr("You")
+    //% "You"
+    text: !isCurrentUser ? userName : qsTrId("You")
     font.bold: true
     font.pixelSize: 14
     readOnly: true

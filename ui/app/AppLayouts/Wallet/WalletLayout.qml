@@ -71,13 +71,15 @@ SplitView {
 
                     StatusTabButton {
                         id: assetBtn
-                        btnText: qsTr("Assets")
+                        //% "Assets"
+                        btnText: qsTrId("wallet-assets")
                     }
                     StatusTabButton {
                         id: collectiblesBtn
                         anchors.left: assetBtn.right
                         anchors.leftMargin: 32
-                        btnText: qsTr("Collectibles")
+                        //% "Collectibles"
+                        btnText: qsTrId("wallet-collectibles")
                         onClicked: {
                           walletModel.loadCollectiblesForAccount(walletModel.currentAccount.address)
                         }
@@ -86,7 +88,8 @@ SplitView {
                         id: historyBtn
                         anchors.left: collectiblesBtn.right
                         anchors.leftMargin: 32
-                        btnText: qsTr("History")
+                        //% "History"
+                        btnText: qsTrId("history")
                         onClicked: {
                           walletModel.loadTransactionsForAccount(walletModel.currentAccount.address)
                         }

@@ -151,7 +151,8 @@ Item {
 
         StyledText {
             id: deviceListLbl
-            text: qsTr("Paired devices")
+            //% "Paired devices"
+            text: qsTrId("paired-devices")
             font.pixelSize: 16
             font.weight: Font.Bold
         }
@@ -176,7 +177,9 @@ Item {
                     id: deviceItemLbl
                     text: {
                         let deviceId = model.installationId.split("-")[0].substr(0, 5)
-                        let labelText = `${model.name || qsTr("No info")} (${model.isUserDevice ? qsTr("you") + ", ": ""}${deviceId})`;
+                        //% "No info"
+                        //% "you"
+                        let labelText = `${model.name || qsTrId("pairing-no-info")} (${model.isUserDevice ? qsTrId("you") + ", ": ""}${deviceId})`;
                         return labelText;
                     }
                     elide: Text.ElideRight

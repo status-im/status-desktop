@@ -140,7 +140,8 @@ Rectangle {
                     icon.width: chatTopBarContent.iconSize
                     icon.height: chatTopBarContent.iconSize
                     icon.color: Style.current.red
-                    text: qsTr("Delete Chat")
+                    //% "Delete Chat"
+                    text: qsTrId("delete-chat")
                     onTriggered: chatsModel.leaveActiveChat()
                 }
             }

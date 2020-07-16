@@ -25,7 +25,8 @@ Item {
         rotation: 0,
         runAnimation: false
     })
-    property string text: root.style === StickerButton.StyleType.Default ? packPrice : qsTr("Buy for %1 SNT").arg(packPrice )
+    //% "Buy for %1 SNT"
+    property string text: root.style === StickerButton.StyleType.Default ? packPrice : qsTrId("buy-for--1-snt").arg(packPrice )
     property color textColor: style === StickerButton.StyleType.Default ? Style.current.white : Style.current.blue
     property color bgColor: style === StickerButton.StyleType.Default ? Style.current.blue : Style.current.lightBlue
     signal uninstallClicked()
@@ -41,7 +42,8 @@ Item {
             when: root.isInstalled
             PropertyChanges {
                 target: root;
-                text: root.style === StickerButton.StyleType.Default ? "" : qsTr("Uninstall");
+                //% "Uninstall"
+                text: root.style === StickerButton.StyleType.Default ? "" : qsTrId("uninstall");
                 textColor: root.style === StickerButton.StyleType.Default ? Style.current.white : Style.current.red;
                 bgColor: root.style === StickerButton.StyleType.Default ? Style.current.green : Style.current.lightRed;
                 icon: new Object({
@@ -56,7 +58,8 @@ Item {
             when: root.isBought;
             PropertyChanges {
                 target: root;
-                text: qsTr("Install");
+                //% "Install"
+                text: qsTrId("install");
                 icon: new Object({
                     path: "../../../img/arrowUp.svg",
                     rotation: 180,
@@ -70,7 +73,8 @@ Item {
             extend: "bought"
             PropertyChanges {
                 target: root;
-                text: qsTr("Free");
+                //% "Free"
+                text: qsTrId("free");
             }
         },
         State {
@@ -89,7 +93,8 @@ Item {
             when: root.isPending
             PropertyChanges {
                 target: root;
-                text: qsTr("Pending...");
+                //% "Pending..."
+                text: qsTrId("pending---");
                 textColor: root.style === StickerButton.StyleType.Default ? Style.current.white : Style.current.darkGrey
                 bgColor: root.style === StickerButton.StyleType.Default ? Style.current.darkGrey : Style.current.grey;
                 enabled: false;
@@ -106,7 +111,8 @@ Item {
             extend: "pending"
             PropertyChanges {
                 target: root;
-                text: qsTr("Cancel");
+                //% "Cancel"
+                text: qsTrId("browsing-cancel");
                 textColor: root.style === StickerButton.StyleType.Default ? Style.current.white : Style.current.red;
                 bgColor: root.style === StickerButton.StyleType.Default ? Style.current.darkGrey : Style.current.lightRed;
             }
@@ -117,7 +123,8 @@ Item {
             extend: "bought"
             PropertyChanges {
                 target: root;
-                text: qsTr("Update");
+                //% "Update"
+                text: qsTrId("update");
             }
         }
     ]

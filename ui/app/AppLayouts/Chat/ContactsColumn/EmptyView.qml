@@ -67,7 +67,8 @@ Item {
 
             StyledText {
                 id: chatAndTransactText
-                text: qsTr("Chat and transact privately with your friends")
+                //% "Chat and transact privately with your friends"
+                text: qsTrId("chat-and-transact-privately-with-your-friends")
                 anchors.top: parent.top
                 anchors.topMargin: 56
                 horizontalAlignment: Text.AlignHCenter
@@ -80,7 +81,8 @@ Item {
             }
 
             StyledButton {
-                label: qsTr("Invite friends")
+                //% "Invite friends"
+                label: qsTrId("invite-friends")
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: Style.current.xlPadding

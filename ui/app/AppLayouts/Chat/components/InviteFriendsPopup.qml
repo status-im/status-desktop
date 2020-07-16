@@ -5,9 +5,11 @@ import "../../../../shared"
 
 ModalPopup {
     id: popup
-    readonly property string getStatusText: qsTr("Get Status at https://status.im")
+    //% "Get Status at https://status.im"
+    readonly property string getStatusText: qsTrId("get-status-at-https---status-im")
 
-    title: qsTr("Download Status link")
+    //% "Download Status link"
+    title: qsTrId("download-status-link")
     height: 156
 
     StyledText {
