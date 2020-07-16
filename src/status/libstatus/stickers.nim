@@ -65,8 +65,8 @@ proc getBalance*(address: EthAddress): int =
   
   let responseStr = status.callPrivateRPC("eth_call", payload)
   let response = Json.decode(responseStr, RpcResponse)
-  if response.error != "":
-    raise newException(RpcException, "Error getting stickers balance: " & response.error)
+  if not response.error.isNil:
+    raise newException(RpcException, "Error getting stickers balance: " & response.error.message)
   if response.result == "0x":
     return 0
   result = fromHex[int](response.result)
@@ -81,8 +81,8 @@ proc getPackCount*(): int =
   
   let responseStr = status.callPrivateRPC("eth_call", payload)
   let response = Json.decode(responseStr, RpcResponse)
-  if response.error != "":
-    raise newException(RpcException, "Error getting stickers balance: " & response.error)
+  if not response.error.isNil:
+    raise newException(RpcException, "Error getting stickers balance: " & response.error.message)
   if response.result == "0x":
     return 0
   result = fromHex[int](response.result)
@@ -97,8 +97,8 @@ proc getPackData*(id: int): StickerPack =
     }, "latest"]
   let responseStr = status.callPrivateRPC("eth_call", payload)
   let response = Json.decode(responseStr, RpcResponse)
-  if response.error != "":
-    raise newException(RpcException, "Error getting sticker pack data: " & response.error)
+  if not response.error.isNil:
+    raise newException(RpcException, "Error getting sticker pack data: " & response.error.message)
 
   let packData = contracts.decodeContractResponse[PackData](response.result)
 
@@ -136,8 +136,8 @@ proc buyPack*(packId: int, address: EthAddress, price: Stuint[256], password: st
   
   let responseStr = status.sendTransaction($payload, password)
   let response = Json.decode(responseStr, RpcResponse)
-  if response.error != "":
-    raise newException(RpcException, "Error getting stickers balance: " & response.error)
+  if not response.error.isNil:
+    raise newException(RpcException, "Error getting stickers balance: " & response.error.message)
   result = response.result # should be a tx receipt
 
 proc tokenOfOwnerByIndex*(address: EthAddress, idx: int): int =
@@ -149,8 +149,8 @@ proc tokenOfOwnerByIndex*(address: EthAddress, idx: int): int =
   
   let responseStr = status.callPrivateRPC("eth_call", payload)
   let response = Json.decode(responseStr, RpcResponse)
-  if response.error != "":
-    raise newException(RpcException, "Error getting owned tokens: " & response.error)
+  if not response.error.isNil:
+    raise newException(RpcException, "Error getting owned tokens: " & response.error.message)
   if response.result == "0x":
     return 0
   result = fromHex[int](response.result)
@@ -164,8 +164,8 @@ proc getPackIdFromTokenId*(tokenId: int): int =
   
   let responseStr = status.callPrivateRPC("eth_call", payload)
   let response = Json.decode(responseStr, RpcResponse)
-  if response.error != "":
-    raise newException(RpcException, "Error getting pack id from token id: " & response.error)
+  if not response.error.isNil:
+    raise newException(RpcException, "Error getting pack id from token id: " & response.error.message)
   if response.result == "0x":
     return 0
   result = fromHex[int](response.result)

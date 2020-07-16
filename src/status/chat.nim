@@ -9,6 +9,9 @@ import ../signals/types as signal_types
 import ens
 import eth/common/eth_types
 
+logScope:
+  topics = "chat-model"
+
 type 
   ChatUpdateArgs* = ref object of Args
     chats*: seq[Chat]
@@ -99,12 +102,16 @@ proc getPurchasedStickerPacks*(self: ChatModel, address: EthAddress): seq[int] =
   if self.purchasedStickerPacks != @[]:
     return self.purchasedStickerPacks
 
-  var balance = status_stickers.getBalance(address)
-  # balance = 2 # hardcode to test support of purchased sticker packs, because buying sticker packs is proving very difficult on testnet
-  var tokenIds = toSeq[0..<balance].map(idx => status_stickers.tokenOfOwnerByIndex(address, idx))
-  # tokenIds = @[1, 2] # hardcode to test support of purchased sticker packs
-  self.purchasedStickerPacks = tokenIds.map(tokenId => status_stickers.getPackIdFromTokenId(tokenId))
-  result = self.purchasedStickerPacks
+  try:
+    var balance = status_stickers.getBalance(address)
+    # balance = 2 # hardcode to test support of purchased sticker packs, because buying sticker packs is proving very difficult on testnet
+    var tokenIds = toSeq[0..<balance].map(idx => status_stickers.tokenOfOwnerByIndex(address, idx))
+    # tokenIds = @[1, 2] # hardcode to test support of purchased sticker packs
+    self.purchasedStickerPacks = tokenIds.map(tokenId => status_stickers.getPackIdFromTokenId(tokenId))
+    result = self.purchasedStickerPacks
+  except RpcException:
+    error "Error in getPurchasedStickerPacks", message = getCurrentExceptionMsg()
+    result = @[]
 
 proc getInstalledStickerPacks*(self: ChatModel): Table[int, StickerPack] =
   if self.installedStickerPacks != initTable[int, StickerPack]():
@@ -117,14 +124,18 @@ proc getAvailableStickerPacks*(self: ChatModel): Table[int, StickerPack] =
   if self.availableStickerPacks != initTable[int, StickerPack]():
     return self.availableStickerPacks
 
-  let numPacks = status_stickers.getPackCount()
-  for i in 0..<numPacks:
-    try:
-      let stickerPack = status_stickers.getPackData(i)
-      self.availableStickerPacks[stickerPack.id] = stickerPack
-    except:
-      continue
-  result = self.availableStickerPacks
+  try: 
+    let numPacks = status_stickers.getPackCount()
+    for i in 0..<numPacks:
+      try:
+        let stickerPack = status_stickers.getPackData(i)
+        self.availableStickerPacks[stickerPack.id] = stickerPack
+      except:
+        continue
+    result = self.availableStickerPacks
+  except RpcException:
+    error "Error in getAvailableStickerPacks", message = getCurrentExceptionMsg()
+    result = initTable[int, StickerPack]()
 
 proc getRecentStickers*(self: ChatModel): seq[Sticker] =
   result = status_stickers.getRecentStickers()

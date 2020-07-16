@@ -64,12 +64,16 @@ type
     keyUid*: string
     photoPath*: string
 
+type RpcError* = ref object
+  code*: int
+  message*: string
+
 type
   RpcResponse* = ref object
     jsonrpc*: string
     result*: string
     id*: int
-    error*: string
+    error*: RpcError
 
 proc toAccount*(account: GeneratedAccount): Account =
   result = Account(name: account.name, photoPath: account.photoPath, keyUid: account.address)
