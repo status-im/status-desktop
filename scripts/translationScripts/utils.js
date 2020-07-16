@@ -5,10 +5,10 @@ const getAllFiles = function(dirPath, ext, arrayOfFiles = []) {
     const files = fs.readdirSync(dirPath)
 
     files.forEach(file => {
-        if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-            arrayOfFiles = getAllFiles(dirPath + "/" + file, ext, arrayOfFiles)
+        if (fs.statSync(path.join(dirPath, file)).isDirectory()) {
+            arrayOfFiles = getAllFiles(path.join(dirPath, file), ext, arrayOfFiles)
         } else if (!ext || file.endsWith(ext)) {
-            arrayOfFiles.push(path.join(__dirname, dirPath, "/", file))
+            arrayOfFiles.push(path.join(__dirname, dirPath, file))
         }
     })
 
