@@ -133,3 +133,19 @@ proc readValue*(reader: var JsonReader, value: var Stuint[256])
       value = intVal.stuint(256)
     except:
       raise newException(SerializationError, "Expected string or int representation of Stuint[256]")
+
+type
+  Network* {.pure.} = enum
+    Mainnet,
+    Testnet
+
+  Setting* {.pure.} = enum
+    Appearance = "appearance",
+    Currency = "currency,"
+    InstallationId = "installation-id"
+    Mnemonic = "mnemonic",
+    Networks_CurrentNetwork = "networks/current-network",
+    NodeConfig = "node-config",
+    PublicKey = "public-key",
+    Stickers_PacksInstalled = "stickers/packs-installed",
+    Stickers_Recent = "stickers/recent-stickers"

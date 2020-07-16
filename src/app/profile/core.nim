@@ -2,6 +2,7 @@ import NimQml, json, eventemitter, strutils
 import json_serialization
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../signals/types
+import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/types as status_types
 import ../../status/libstatus/settings as status_settings
 import ../../status/profile/[profile, mailserver]
@@ -34,9 +35,10 @@ proc init*(self: ProfileController, account: Account) =
   # Ideally, this module should call getSettings once, and fill the 
   # profile with all the information comming from the settings.
   let response = status_settings.getSettings()
-  let pubKey = status_settings.getSetting[string]("public-key", "0x0")
-  let mnemonic = status_settings.getSetting[string]("mnemonic", "")
-  let appearance = Json.decode($response["appearance"], int)
+  let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+  let mnemonic = status_settings.getSetting[string](Setting.Mnemonic, "")
+  let network = status_settings.getSetting[string](Setting.Networks_CurrentNetwork, constants.DEFAULT_NETWORK_NAME)
+  let appearance = status_settings.getSetting[int](Setting.Appearance)
   profile.appearance = appearance
   profile.id = pubKey
 
@@ -44,6 +46,7 @@ proc init*(self: ProfileController, account: Account) =
   self.view.setDeviceSetup(devices.isDeviceSetup())
   self.view.setNewProfile(profile)
   self.view.setMnemonic(mnemonic)
+  self.view.setNetwork(network)
 
   var mailservers = status_mailservers.getMailservers()
   for mailserver_config in mailservers:

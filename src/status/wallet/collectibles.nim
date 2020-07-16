@@ -69,7 +69,7 @@ proc getCryptoKitties*(address: EthAddress): seq[Collectible] =
 proc getEthermons*(address: EthAddress): seq[Collectible] =
   result = @[]
   try:
-    let contract = getContract(Network.Mainnet, "ethermon")
+    let contract = getContract("ethermon")
     let tokens = tokensOfOwnerByIndex(contract, address)
 
     if (tokens.len == 0):
@@ -93,7 +93,7 @@ proc getEthermons*(address: EthAddress): seq[Collectible] =
 proc getKudos*(address: EthAddress): seq[Collectible] =
   result = @[]
   try:
-    let contract = getContract(Network.Mainnet, "kudos")
+    let contract = getContract("kudos")
     let tokens = tokensOfOwnerByIndex(contract, address)
 
     if (tokens.len == 0):

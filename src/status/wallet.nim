@@ -5,7 +5,7 @@ import libstatus/tokens as status_tokens
 import libstatus/settings as status_settings
 import libstatus/wallet as status_wallet
 import libstatus/accounts/constants as constants
-from libstatus/types import GeneratedAccount, DerivedAccount, Transaction
+from libstatus/types import GeneratedAccount, DerivedAccount, Transaction, Setting
 import wallet/balance_manager
 import wallet/account
 import wallet/collectibles
@@ -50,10 +50,10 @@ proc sendTransaction*(self: WalletModel, from_value: string, to: string, assetAd
 proc getDefaultCurrency*(self: WalletModel): string =
   # TODO: this should come from a model? It is going to be used too in the
   # profile section and ideally we should not call the settings more than once
-  status_settings.getSetting[string]("currency", "")
+  status_settings.getSetting[string](Setting.Currency, "usd")
 
 proc setDefaultCurrency*(self: WalletModel, currency: string) =
-  discard status_settings.saveSettings("currency", currency)
+  discard status_settings.saveSetting(Setting.Currency, currency)
   self.events.emit("currencyChanged", CurrencyArgs(currency: currency))
 
 proc generateAccountConfiguredAssets*(self: WalletModel, accountAddress: string): seq[Asset] =

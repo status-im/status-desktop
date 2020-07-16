@@ -1,4 +1,4 @@
-import json, os, nimcrypto, uuids, json_serialization, chronicles
+import json, os, nimcrypto, uuids, json_serialization, chronicles, strutils
 
 import libstatus, core
 import utils as utils
@@ -6,6 +6,23 @@ import types as types
 import accounts/constants
 import ../../signals/types as signal_types
 import ../wallet/account
+
+proc getNetworkConfig(currentNetwork: string): JsonNode =
+  result = constants.DEFAULT_NETWORKS.first("id", currentNetwork)
+
+proc getNodeConfig*(installationId: string, currentNetwork: string = constants.DEFAULT_NETWORK_NAME): JsonNode =
+  let networkConfig = getNetworkConfig(currentNetwork)
+  let upstreamUrl = networkConfig["config"]["UpstreamConfig"]["URL"]
+  var newDataDir = networkConfig["config"]["DataDir"].getStr
+  newDataDir.removeSuffix("_rpc")
+  result = constants.NODE_CONFIG
+  result["NetworkId"] = networkConfig["config"]["NetworkId"]
+  result["DataDir"] = newDataDir.newJString()
+  result["UpstreamConfig"]["Enabled"] = networkConfig["config"]["UpstreamConfig"]["Enabled"]
+  result["UpstreamConfig"]["URL"] = upstreamUrl
+  result["ShhextConfig"]["InstallationID"] = newJString(installationId)
+  result["ListenAddr"] = if existsEnv("STATUS_PORT"): newJString("0.0.0.0:" & $getEnv("STATUS_PORT")) else: newJString("0.0.0.0:30305")
+  result = constants.NODE_CONFIG
 
 proc hashPassword(password: string): string =
   result = "0x" & $keccak_256.digest(password)
@@ -128,7 +145,7 @@ proc getAccountSettings*(account: GeneratedAccount, defaultNetworks: JsonNode, i
       "mainnet": ["SNT"]
     },
     "appearance": 0,
-    "networks/current-network": "mainnet_rpc",
+    "networks/current-network": constants.DEFAULT_NETWORK_NAME,
     "installation-id": installationId
   }
 
@@ -138,9 +155,7 @@ proc setupAccount*(account: GeneratedAccount, password: string): types.Account =
     let accountData = getAccountData(account)
     let installationId = $genUUID()
     var settingsJSON = getAccountSettings(account, constants.DEFAULT_NETWORKS, installationId)
-    var nodeConfig = constants.NODE_CONFIG
-    nodeConfig["ShhextConfig"]["InstallationID"] = newJString(installationId)
-    nodeConfig["ListenAddr"] = if existsEnv("STATUS_PORT"): newJString("0.0.0.0:" & $getEnv("STATUS_PORT")) else: newJString("0.0.0.0:30305")
+    var nodeConfig = getNodeConfig(installationId)
 
     result = saveAccountAndLogin(account, $accountData, password, $nodeConfig, $settingsJSON)
 
