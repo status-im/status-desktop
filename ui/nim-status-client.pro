@@ -66,6 +66,7 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ImageMessage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/MessageMouseArea.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/NormalMessage.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/RectangleCorner.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/SentMessage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/Sticker.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/UserImage.qml \
