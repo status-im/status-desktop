@@ -23,6 +23,9 @@ proc setRootContextProperty*(self: QQmlApplicationEngine, name: string, value: Q
   let context = dos_qqmlapplicationengine_context(self.vptr)
   dos_qqmlcontext_setcontextproperty(context, name.cstring, value.vptr)
 
+proc setTranslationPackage*(self: QQmlApplicationEngine, packagePath: string) =
+  dos_qapplication_load_translation(self.vptr, packagePath.cstring)
+
 proc delete*(self: QQmlApplicationEngine) =
   ## Delete the given QQmlApplicationEngine
   debugMsg("QQmlApplicationEngine", "delete")
