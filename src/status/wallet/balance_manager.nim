@@ -1,8 +1,12 @@
-import strformat, strutils, stint, httpclient, json
+import strformat, strutils, stint, httpclient, json, chronicles
 import ../libstatus/wallet as status_wallet
 import ../libstatus/tokens as status_tokens
+import ../libstatus/types as status_types
 import ../utils/cache
 import account
+
+logScope:
+  topics = "balance-manager"
 
 type BalanceManager* = ref object
   pricePairs: CachedValues
@@ -62,10 +66,13 @@ proc updateBalance*(asset: Asset, currency: string) =
   asset.fiatValue = fmt"{fiat_balance:.2f} {currency}"
 
 proc updateBalance*(account: WalletAccount, currency: string) =
-  let eth_balance = getBalance("ETH", account.address, "")
-  let usd_balance = getFiatValue(eth_balance, "ETH", currency)
-  var totalAccountBalance = usd_balance
-  account.realFiatBalance = totalAccountBalance
-  account.balance = fmt"{totalAccountBalance:.2f} {currency}"
-  for asset in account.assetList:
-    updateBalance(asset, currency)
+  try:
+    let eth_balance = getBalance("ETH", account.address, "")
+    let usd_balance = getFiatValue(eth_balance, "ETH", currency)
+    var totalAccountBalance = usd_balance
+    account.realFiatBalance = totalAccountBalance
+    account.balance = fmt"{totalAccountBalance:.2f} {currency}"
+    for asset in account.assetList:
+      updateBalance(asset, currency)
+  except RpcException:
+    error "Error in updateBalance", message = getCurrentExceptionMsg()

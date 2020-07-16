@@ -12,6 +12,9 @@ import wallet/collectibles
 export account, collectibles
 export Transaction
 
+logScope:
+  topics = "wallet-model"
+
 type WalletModel* = ref object
     events*: EventEmitter
     accounts*: seq[WalletAccount]
