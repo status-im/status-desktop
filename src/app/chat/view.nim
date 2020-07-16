@@ -170,10 +170,6 @@ QtObject:
     if not self.messageList.hasKey(channel):
       self.messageList[channel] = newChatMessageList(channel, self.status)
       self.channelOpenTime[channel] = now().toTime.toUnix * 1000
-      # If there is only one channel, set is as active
-      # if (self.activeChannel.chatItem == nil and self.chats.rowCount() == 1):
-      #  self.setActiveChannelByIndex(0)
-      # RRAMOS: commented because it was hanging the app on login
 
   proc messagePushed*(self: ChatsView) {.signal.}
 
