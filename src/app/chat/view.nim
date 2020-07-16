@@ -155,7 +155,7 @@ QtObject:
       msg.alias = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
       self.messageList[msg.chatId].add(msg)
       self.messagePushed()
-      if msg.chatId != self.activeChannel.id and self.channelOpenTime.hasKey(msg.chatId) and self.channelOpenTime[msg.chatId] < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
+      if msg.chatId != self.activeChannel.id and self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
         self.messageNotificationPushed(msg.chatId, msg.text)
 
   proc updateUsernames*(self:ChatsView, contacts: seq[Profile]) =
@@ -270,4 +270,3 @@ QtObject:
 
   proc ensResolved(self: ChatsView, pubKey: string) {.slot.} =
     self.ensWasResolved(pubKey)
-
