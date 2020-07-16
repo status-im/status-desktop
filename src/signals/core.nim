@@ -38,8 +38,14 @@ QtObject:
     self.signalSubscribers[signalType].add(subscriber)
 
   proc processSignal(self: SignalsController) =
-    let jsonSignal = (self.statusSignal).parseJson
-    let signalString = $jsonSignal["type"].getStr
+    var jsonSignal:JsonNode
+    try: 
+      jsonSignal = self.statusSignal.parseJson
+    except:
+      error "Invalid signal received", data = self.statusSignal
+      return
+
+    let signalString = jsonSignal["type"].getStr
 
     trace "Raw signal data", data = $jsonSignal
     
