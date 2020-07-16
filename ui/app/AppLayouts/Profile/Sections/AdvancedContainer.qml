@@ -74,7 +74,7 @@ Item {
     }
 
     RowLayout {
-        property string currentLocale: "en" // TODO get from settings
+        property string currentLocale: appSettings.locale
         id: languageSetting
         anchors.top: compactModeSetting.bottom
         anchors.topMargin: 20
@@ -94,7 +94,7 @@ Item {
                     text: locale,
                     onClicked: function () {
                         profileModel.changeLocale(locale)
-                        languageSetting.currentLocale = locale
+                        appSettings.locale = locale
                     }
                }
             })
