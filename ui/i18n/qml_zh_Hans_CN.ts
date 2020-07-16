@@ -143,6 +143,12 @@
             <source>Enter ENS username or chat key</source>
             <translation>输入联系人代码或用户名</translation>
         </message>
+        <message id="user-not-found">
+            <location filename="../app/AppLayouts/Chat/components/PrivateChatPopup.qml" line="79"/>
+            <location filename="../app/AppLayouts/Wallet/data/Currencies.qml" line="25"/>
+            <source/>
+            <translation type="unfinished"/>
+        </message>
         <message id="ens-username">
             <location filename="../app/AppLayouts/Chat/components/ProfilePopup.qml" line="139"/>
             <source>ENS username</source>
