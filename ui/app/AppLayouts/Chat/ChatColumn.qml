@@ -51,11 +51,13 @@ StackLayout {
             id: messageContextMenu
             Action {
                 id: viewProfileAction
-                text: qsTr("View profile")
+                //% "View profile"
+                text: qsTrId("view-profile")
                 onTriggered: profilePopup.open()
             }
             Action {
-                text: qsTr("Reply to")
+                //% "Reply to"
+                text: qsTrId("reply-to")
                 onTriggered: {
                     isReply = true;
                     replyAreaContainer.setup()

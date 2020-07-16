@@ -61,7 +61,8 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 24
         StyledText {
-            text: qsTr("Chat Compact Mode")
+            //% "Chat Compact Mode"
+            text: qsTrId("chat-compact-mode")
         }
         Switch {
             checked: compactModeSetting.isCompactMode
@@ -144,7 +145,8 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 24
         StyledText {
-            text: qsTr("Display images in chat automatically")
+            //% "Display images in chat automatically"
+            text: qsTrId("display-images-in-chat-automatically")
         }
         Switch {
             checked: appSettings.displayChatImages
@@ -153,7 +155,8 @@ Item {
             }
         }
         StyledText {
-            text: qsTr("under development")
+            //% "under development"
+            text: qsTrId("under-development")
         }
     }
     
@@ -164,7 +167,8 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 24
         StyledText {
-            text: qsTr("Enable testnet (Ropsten)\nCurrent network: %1").arg(profileModel.network)
+            //% "Enable testnet (Ropsten)\nCurrent network: %1"
+            text: qsTrId("enable-testnet--ropsten--ncurrent-network---1").arg(profileModel.network)
         }
         Switch {
             checked: profileModel.network === "testnet_rpc"
@@ -176,7 +180,8 @@ Item {
             }
         }
         StyledText {
-            text: qsTr("Under development\nNOTE: You will be logged out and all installed\nsticker packs will be removed and will\nneed to be reinstalled. Purchased sticker\npacks will not need to be re-purchased.")
+            //% "Under development\nNOTE: You will be logged out and all installed\nsticker packs will be removed and will\nneed to be reinstalled. Purchased sticker\npacks will not need to be re-purchased."
+            text: qsTrId("under-development-nnote--you-will-be-logged-out-and-all-installed-nsticker-packs-will-be-removed-and-will-nneed-to-be-reinstalled--purchased-sticker-npacks-will-not-need-to-be-re-purchased-")
         }
     }
 }

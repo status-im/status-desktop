@@ -20,24 +20,37 @@ StyledText {
         var prevMsgDate = prevMsgTimestamp === "" ? new Date(0) : new Date(parseInt(prevMsgTimestamp, 10));
         if(currentMsgDate.getDay() !== prevMsgDate.getDay()){
             if (now.toDateString() === currentMsgDate.toDateString()) {
-                return qsTr("Today")
+                //% "Today"
+                return qsTrId("today")
             } else if (yesterday.toDateString() === currentMsgDate.toDateString()) {
                 //% "Yesterday"
                 return qsTrId("yesterday")
             } else {
                 const monthNames = [
-                    qsTr("January"),
-                    qsTr("February"),
-                    qsTr("March"),
-                    qsTr("April"),
-                    qsTr("May"),
-                    qsTr("June"),
-                    qsTr("July"),
-                    qsTr("August"),
-                    qsTr("September"),
-                    qsTr("October"),
-                    qsTr("November"),
-                    qsTr("December")
+                    //% "January"
+                    qsTrId("january"),
+                    //% "February"
+                    qsTrId("february"),
+                    //% "March"
+                    qsTrId("march"),
+                    //% "April"
+                    qsTrId("april"),
+                    //% "May"
+                    qsTrId("may"),
+                    //% "June"
+                    qsTrId("june"),
+                    //% "July"
+                    qsTrId("july"),
+                    //% "August"
+                    qsTrId("august"),
+                    //% "September"
+                    qsTrId("september"),
+                    //% "October"
+                    qsTrId("october"),
+                    //% "November"
+                    qsTrId("november"),
+                    //% "December"
+                    qsTrId("december")
                 ];
                 return monthNames[currentMsgDate.getMonth()] + ", " + currentMsgDate.getDay()
             }
