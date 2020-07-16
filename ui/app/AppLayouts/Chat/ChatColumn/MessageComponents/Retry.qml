@@ -8,7 +8,7 @@ StyledText {
     color: Style.current.red
     text: qsTr("Resend")
     font.pixelSize: 12
-    visible: isCurrentUser && timeout
+    visible: isCurrentUser && (timeout || isExpired)
     MouseArea {
         cursorShape: Qt.PointingHandCursor
         anchors.fill: parent
