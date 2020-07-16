@@ -34,6 +34,10 @@ ApplicationWindow {
     visible: true
 
     Component.onCompleted: {
+        if (settings.locale !== "en") {
+            profileModel.changeLocale(settings.locale)
+        }
+
         setX(Qt.application.screens[0].width / 2 - width / 2);
         setY(Qt.application.screens[0].height / 2 - height / 2);
     }
@@ -57,13 +61,14 @@ ApplicationWindow {
     }
 
     Settings {
-       id: settings
-       property var chatSplitView
-       property var walletSplitView
-       property var profileSplitView
-       property bool displayChatImages: false
-       property bool compactMode
-   }
+        id: settings
+        property var chatSplitView
+        property var walletSplitView
+        property var profileSplitView
+        property bool displayChatImages: false
+        property bool compactMode
+        property string locale: "en"
+    }
 
     SystemTrayIcon {
         visible: true
