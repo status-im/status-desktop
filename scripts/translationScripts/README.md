@@ -48,7 +48,7 @@ Some translations will not be done, check the next section to know how to transl
 
 Since not all strings used in the desktop app are also used in Status-React, the remaining will need to be translated manually.
 
-If the strings are not translated, it is not the end f the world, the English strings will be shown instead.
+If the strings are not translated, it is not the end of the world, the English strings will be shown instead.
 
 To do so, you can use QT Linguist to help with the process. Check here to see the Linguist docs: https://doc.qt.io/qt-5/linguist-translators.html
 
