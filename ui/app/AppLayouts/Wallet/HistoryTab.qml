@@ -19,7 +19,8 @@ Item {
         anchors.right: parent.right
         anchors.left: parent.left
         height: 64
-        color: isHovered ? "#f0f0f0" : "white"
+        color: isHovered ? Style.current.secondaryBackground : Style.current.transparent
+        radius: 8
 
         Component.onCompleted: {
           for (let i = 0; i < tokenList.count; i++) {
@@ -62,6 +63,8 @@ Item {
                       assetIcon.source = "../../img/tokens/0-native.png"
                   }
               }
+
+              anchors.leftMargin: Style.current.padding
           }
 
           StyledText {
@@ -146,6 +149,7 @@ Item {
               anchors.right: parent.right
               anchors.top: parent.top
               font.pixelSize: 15
+              anchors.rightMargin: Style.current.smallPadding
           }
         }
       }
