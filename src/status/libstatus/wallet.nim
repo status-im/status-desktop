@@ -100,7 +100,11 @@ proc sendTransaction*(from_address: string, to: string, assetAddress: string, va
 
 proc getBalance*(address: string): string =
   let payload = %* [address, "latest"]
-  parseJson(callPrivateRPC("eth_getBalance", payload))["result"].str
+  let response = parseJson(callPrivateRPC("eth_getBalance", payload))
+  if response.hasKey("error"):
+    raise newException(RpcException, "Error getting balance: " & $response["error"])
+  else:  
+    result = response["result"].str
 
 proc hex2Eth*(input: string): string =
   var value = fromHex(Stuint[256], input)
