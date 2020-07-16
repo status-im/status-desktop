@@ -3,6 +3,7 @@ import NimQml, Tables, json, sequtils, chronicles, times, strutils
 import ../../status/status
 import ../../status/accounts as status_accounts
 import ../../status/chat as status_chat
+import ../../status/messages as status_messages
 import ../../status/contacts as status_contacts
 import ../../status/ens as status_ens
 import ../../status/chat/[chat, message]
@@ -78,6 +79,7 @@ QtObject:
     self.messageList[messageData["chatId"].getStr].checkTimeout(messageData["id"].getStr)
 
   proc resendMessage*(self: ChatsView, chatId: string, messageId: string) {.slot.} =
+    self.status.messages.trackMessage(messageId, chatId)
     self.status.chat.resendMessage(messageId)
     self.messageList[chatId].resetTimeOut(messageId)
 

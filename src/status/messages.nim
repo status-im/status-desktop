@@ -31,6 +31,8 @@ proc delete*(self: MessagesModel) =
 # inside trackMessage to emit the "messageSent" event
 
 proc trackMessage*(self: MessagesModel, id: string, chatId: string) =
+  if self.messages.hasKey(id): return
+
   self.messages[id] = MessageDetails(status: "sending", chatId: chatId)
   if self.confirmations.contains(id):
     self.confirmations.excl(id)

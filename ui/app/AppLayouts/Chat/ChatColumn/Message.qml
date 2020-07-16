@@ -29,6 +29,8 @@ Item {
     property bool isStatusMessage: contentType === Constants.systemMessagePrivateGroupType
     property bool isSticker: contentType === Constants.stickerType
 
+    property bool isExpired: (outgoingStatus == "sending" && (Math.floor(timestamp) + 180000) < Date.now())
+
     property int replyMessageIndex: chatsModel.messageList.getMessageIndex(responseTo);
     property string repliedMessageAuthor: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "userName") : "";
     property string repliedMessageContent: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "message") : "";
