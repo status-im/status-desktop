@@ -44,7 +44,7 @@ QtObject:
     let stickerPackRole = role.StickerPackRoles
     case stickerPackRole:
       of StickerPackRoles.Author: result = newQVariant(stickerPack.author)
-      of StickerPackRoles.Id: result = newQVariant($stickerPack.id)
+      of StickerPackRoles.Id: result = newQVariant(stickerPack.id)
       of StickerPackRoles.Name: result = newQVariant(stickerPack.name)
       of StickerPackRoles.Price: result = newQVariant(stickerPack.price.wei2Eth)
       of StickerPackRoles.Preview: result = newQVariant(decodeContentHash(stickerPack.preview))

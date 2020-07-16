@@ -1,11 +1,7 @@
 import sequtils, strformat, sugar, macros, tables
 import eth/common/eth_types, stew/byteutils, nimcrypto
 from eth/common/utils import parseAddress
-
-type
-  Network* {.pure.} = enum
-    Mainnet,
-    Testnet
+import ./types, ./settings
 
 type Method* = object
   name*: string
@@ -103,9 +99,13 @@ let CONTRACTS: seq[Contract] = @[
   Contract(name: "crypto-kitties", network: Network.Mainnet, address: parseAddress("0x06012c8cf97bead5deae237070f9587f8e7a266d")),
 ]
 
-proc getContract*(network: Network, name: string): Contract =
+proc getContract(network: Network, name: string): Contract =
   let found = CONTRACTS.filter(contract => contract.name == name and contract.network == network)
   result = if found.len > 0: found[0] else: nil
+
+proc getContract*(name: string): Contract =
+  let network = settings.getCurrentNetwork()
+  getContract(network, name)
 
 func encode*[bits: static[int]](x: Stuint[bits]): EncodeResult =
   ## Encodes a `Stuint` to a textual representation for use in the JsonRPC

@@ -1,5 +1,6 @@
-import eventemitter, options
+import eventemitter, options, chronicles, json
 import libstatus/accounts as status_accounts
+import libstatus/settings as status_settings
 import libstatus/types
 import libstatus/utils
 
@@ -51,3 +52,27 @@ proc generateAlias*(publicKey: string): string =
 
 proc generateIdenticon*(publicKey: string): string =
   result = status_accounts.generateIdenticon(publicKey)
+
+proc changeNetwork*(self: AccountModel, network: string) =
+
+  # 1. update current network setting
+  var statusGoResult = status_settings.saveSetting(Setting.Networks_CurrentNetwork, network)
+  if statusGoResult.error != "":
+    error "Error saving current network setting", msg=statusGoResult.error
+
+  # 2. update node config setting
+  let installationId = status_settings.getSetting[string](Setting.InstallationId)
+  let updatedNodeConfig = status_accounts.getNodeConfig(installationId, network)
+  statusGoResult = status_settings.saveSetting(Setting.NodeConfig, updatedNodeConfig)
+  if statusGoResult.error != "":
+    error "Error saving updated node config", msg=statusGoResult.error
+
+  # 3. remove all installed sticker packs (pack ids do not match across networks)
+  statusGoResult = status_settings.saveSetting(Setting.Stickers_PacksInstalled, %* {})
+  if statusGoResult.error != "":
+    error "Error removing all installed sticker packs", msg=statusGoResult.error
+
+  # 4. remove all recent stickers (pack ids do not match across networks)
+  statusGoResult = status_settings.saveSetting(Setting.Stickers_Recent, %* {})
+  if statusGoResult.error != "":
+    error "Error removing all recent stickers", msg=statusGoResult.error

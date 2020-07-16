@@ -57,7 +57,7 @@ proc decodeContentHash*(value: string): string =
 # See https://notes.status.im/Q-sQmQbpTOOWCQcYiXtf5g#Read-Sticker-Packs-owned-by-a-user
 # for more details
 proc getBalance*(address: EthAddress): int =
-  let contract = contracts.getContract(Network.Mainnet, "sticker-pack")
+  let contract = contracts.getContract("sticker-pack")
   let payload = %* [{
       "to": $contract.address,
       "data": contract.methods["balanceOf"].encodeAbi(address)
@@ -73,7 +73,7 @@ proc getBalance*(address: EthAddress): int =
 
 # Gets number of sticker packs
 proc getPackCount*(): int =
-  let contract = contracts.getContract(Network.Mainnet, "stickers")
+  let contract = contracts.getContract("stickers")
   let payload = %* [{
       "to": $contract.address,
       "data": contract.methods["packCount"].encodeAbi()
@@ -89,7 +89,7 @@ proc getPackCount*(): int =
 
 # Gets sticker pack data
 proc getPackData*(id: int): StickerPack =
-  let contract = contracts.getContract(Network.Mainnet, "stickers")
+  let contract = contracts.getContract("stickers")
   let contractMethod = contract.methods["getPackData"]
   let payload = %* [{
       "to": $contract.address,
@@ -123,8 +123,8 @@ proc getPackData*(id: int): StickerPack =
 # See https://notes.status.im/Q-sQmQbpTOOWCQcYiXtf5g#Buy-a-Sticker-Pack for more
 # details
 proc buyPack*(packId: int, address: EthAddress, price: Stuint[256], password: string): string =
-  let stickerMktContract = contracts.getContract(Network.Mainnet, "sticker-market")
-  let sntContract = contracts.getContract(Network.Mainnet, "snt")
+  let stickerMktContract = contracts.getContract("sticker-market")
+  let sntContract = contracts.getContract("snt")
   let buyTxAbiEncoded = stickerMktContract.methods["buyToken"].encodeAbi(packId, address, price)
   let approveAndCallAbiEncoded = sntContract.methods["approveAndCall"].encodeAbi(stickerMktContract.address, price, buyTxAbiEncoded.strip0xPrefix)
   let payload = %* {
@@ -141,7 +141,7 @@ proc buyPack*(packId: int, address: EthAddress, price: Stuint[256], password: st
   result = response.result # should be a tx receipt
 
 proc tokenOfOwnerByIndex*(address: EthAddress, idx: int): int =
-  let contract = contracts.getContract(Network.Testnet, "sticker-pack")
+  let contract = contracts.getContract("sticker-pack")
   let payload = %* [{
       "to": $contract.address,
       "data": contract.methods["tokenOfOwnerByIndex"].encodeAbi(address, idx)
@@ -156,7 +156,7 @@ proc tokenOfOwnerByIndex*(address: EthAddress, idx: int): int =
   result = fromHex[int](response.result)
 
 proc getPackIdFromTokenId*(tokenId: int): int =
-  let contract = contracts.getContract(Network.Testnet, "sticker-pack")
+  let contract = contracts.getContract("sticker-pack")
   let payload = %* [{
       "to": $contract.address,
       "data": contract.methods["tokenPackId"].encodeAbi(tokenId)
@@ -174,13 +174,13 @@ proc saveInstalledStickerPacks*(installedStickerPacks: Table[int, StickerPack]) 
   let json = %* {}
   for packId, pack in installedStickerPacks.pairs:
     json[$packId] = %(pack)
-  discard settings.saveSettings("stickers/packs-installed", $json)
+  discard settings.saveSetting(Setting.Stickers_PacksInstalled, $json)
 
 proc saveRecentStickers*(stickers: seq[Sticker]) =
-  discard settings.saveSettings("stickers/recent-stickers", %(stickers.mapIt($it.hash)))
+  discard settings.saveSetting(Setting.Stickers_Recent, %(stickers.mapIt($it.hash)))
 
 proc getInstalledStickerPacks*(): Table[int, StickerPack] =
-  let setting = settings.getSetting[string]("stickers/packs-installed", "{}").parseJson
+  let setting = settings.getSetting[string](Setting.Stickers_PacksInstalled, "{}").parseJson
   result = initTable[int, StickerPack]()
   for i in setting.keys:
     let packId = parseInt(i)
@@ -196,7 +196,7 @@ proc getPackIdForSticker*(packs: Table[int, StickerPack], hash: string): int =
 
 proc getRecentStickers*(): seq[Sticker] =
   # TODO: this should be a custom `readValue` implementation of nim-json-serialization
-  let settings = settings.getSetting[seq[string]]("stickers/recent-stickers", @[])
+  let settings = settings.getSetting[seq[string]](Setting.Stickers_Recent, @[])
   let installedStickers = getInstalledStickerPacks()
   result = newSeq[Sticker]()
   for hash in settings:

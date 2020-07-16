@@ -2,6 +2,7 @@ import json, random, re, strutils, sequtils, sugar
 import json_serialization
 import ../status/libstatus/accounts as status_accounts
 import ../status/libstatus/settings as status_settings
+import ../status/libstatus/types as status_types
 import ../status/chat/[chat, message]
 import ../status/profile/[profile, devices]
 import types
@@ -15,7 +16,7 @@ proc fromEvent*(event: JsonNode): Signal =
   signal.messages = @[]
   signal.contacts = @[]
 
-  let pk = status_settings.getSetting[string]("public-key", "0x0")
+  let pk = status_settings.getSetting[string](Setting.PublicKey, "0x0")
 
   if event["event"]{"contacts"} != nil:
     for jsonContact in event["event"]["contacts"]:

@@ -179,6 +179,8 @@ var NODE_CONFIG* = %* {
   }
 }
 
+const DEFAULT_NETWORK_NAME* = "mainnet_rpc"
+
 let sep = if defined(windows): "\\" else: "/"
 
 let homeDir = getHomeDir()

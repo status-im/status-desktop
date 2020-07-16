@@ -7,6 +7,7 @@ import ../../status/accounts as status_accounts
 import ../../status/status
 import ../../status/devices as status_devices
 import ../../status/chat/chat
+import ../../status/libstatus/types
 import qrcode/qrcode
 
 QtObject:
@@ -16,6 +17,7 @@ QtObject:
     contactList*: ContactList
     deviceList*: DeviceList
     mnemonic: string
+    network: string
     status*: Status
     isDeviceSetup: bool
 
@@ -37,6 +39,7 @@ QtObject:
     result.contactList = newContactList()
     result.deviceList = newDeviceList()
     result.mnemonic = ""
+    result.network = ""
     result.status = status
     result.isDeviceSetup = false
     result.setup
@@ -82,6 +85,26 @@ QtObject:
     write = setMnemonic
     notify = mnemonicChanged
 
+  proc networkChanged*(self: ProfileView) {.signal.}
+
+  proc getNetwork*(self: ProfileView): QVariant {.slot.} =
+    return newQVariant(self.network)
+
+  proc setNetwork*(self: ProfileView, network: string) =
+    self.network = network
+    self.networkChanged()
+  
+  proc setNetworkAndPersist*(self: ProfileView, network: string) {.slot.} =
+    self.network = network
+    self.networkChanged()
+    self.status.accounts.changeNetwork(network)
+    quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
+
+  QtProperty[QVariant] network:
+    read = getNetwork
+    write = setNetworkAndPersist
+    notify = networkChanged
+
   proc getProfile(self: ProfileView): QVariant {.slot.} =
     return newQVariant(self.profile)
 
@@ -106,7 +129,7 @@ QtObject:
 
   proc changeTheme*(self: ProfileView, theme: int) {.slot.} =
     self.profile.setAppearance(theme)
-    self.status.saveSetting("appearance", $theme)
+    self.status.saveSetting(Setting.Appearance, $theme)
     
   proc isDeviceSetup*(self: ProfileView): bool {.slot} =
     result = self.isDeviceSetup

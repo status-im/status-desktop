@@ -1,11 +1,11 @@
-import core, ./types, ../../signals/types as statusgo_types
+import core, ./types, ../../signals/types as statusgo_types, ./accounts/constants, ./utils
 import json, tables
 import json_serialization
 
 var settings: JsonNode = %*{}
 var dirty: bool = true
 
-proc saveSettings*(key: string, value: string | JsonNode): StatusGoError =
+proc saveSetting*(key: Setting, value: string | JsonNode): StatusGoError =
   let response = callPrivateRPC("settings_saveSetting", %* [
     key, value
   ])
@@ -24,14 +24,16 @@ proc getSettings*(useCached: bool = true): JsonNode =
   dirty = false
   result = settings
 
-proc getSetting*[T](name: string, defaultValue: T, useCached: bool = true): T =
+proc getSetting*[T](name: Setting, defaultValue: T, useCached: bool = true): T =
   let settings: JsonNode = getSettings(useCached)
-  if not settings.contains(name):
+  if not settings.contains($name) or settings{$name}.isEmpty():
     return defaultValue
-  result = Json.decode($settings{name}, T)
+  result = Json.decode($settings{$name}, T)
 
-proc getSetting*[T](name: string, useCached: bool = true): T =
-  let settings: JsonNode = getSettings(useCached)
-  if not settings.contains(name):
-    return default(type(T))
-  result = Json.decode($settings{name}, T)
+proc getSetting*[T](name: Setting, useCached: bool = true): T =
+  result = getSetting(name, default(type(T)), useCached)
+
+proc getCurrentNetwork*(): Network =
+  result = Network.Mainnet
+  if getSetting[string](Setting.Networks_CurrentNetwork, constants.DEFAULT_NETWORK_NAME) == "testnet_rpc":
+    result = Network.Testnet

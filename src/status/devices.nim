@@ -6,10 +6,10 @@ import profile/devices
 import json
 
 proc setDeviceName*(name: string) =
-  discard setInstallationMetadata(getSetting[string]("installation-id", "", true), name, hostOs)
+  discard setInstallationMetadata(getSetting[string](Setting.InstallationId, "", true), name, hostOs)
 
 proc isDeviceSetup*():bool =
-  let installationId = getSetting[string]("installation-id", "", true)
+  let installationId = getSetting[string](Setting.InstallationId, "", true)
   let responseResult = getOurInstallations()
   if responseResult.kind == JNull:
     return false
@@ -26,7 +26,7 @@ proc advertise*() =
 
 proc getAllDevices*():seq[Installation] =
   let responseResult = getOurInstallations()
-  let installationId = getSetting[string]("installation-id", "", true)
+  let installationId = getSetting[string](Setting.InstallationId, "", true)
   result = @[]
   if responseResult.kind != JNull:
     for inst in responseResult:

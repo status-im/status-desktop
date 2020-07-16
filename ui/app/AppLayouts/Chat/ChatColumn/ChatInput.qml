@@ -76,6 +76,7 @@ Rectangle {
 
     ChatButtons {
         id: sendBtns
+        height: parent.height
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         addToChat: function (text) {

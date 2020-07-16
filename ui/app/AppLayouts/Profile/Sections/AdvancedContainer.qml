@@ -138,6 +138,7 @@ Item {
     }
 
     RowLayout {
+    	id: displayImageSettings
         anchors.top: nodeTabSettings.bottom
         anchors.topMargin: 20
         anchors.left: parent.left
@@ -153,6 +154,29 @@ Item {
         }
         StyledText {
             text: qsTr("under development")
+        }
+    }
+    
+    RowLayout {
+        id: networkTabSettings
+        anchors.top: displayImageSettings.bottom
+        anchors.topMargin: 20
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+        StyledText {
+            text: qsTr("Enable testnet (Ropsten)\nCurrent network: %1").arg(profileModel.network)
+        }
+        Switch {
+            checked: profileModel.network === "testnet_rpc"
+            onCheckedChanged: {
+                if (checked && profileModel.network === "testnet_rpc" || !checked && profileModel.network === "mainnet_rpc"){
+                    return;
+                }
+                profileModel.network = checked ? "testnet_rpc" : "mainnet_rpc";
+            }
+        }
+        StyledText {
+            text: qsTr("Under development\nNOTE: You will be logged out and all installed\nsticker packs will be removed and will\nneed to be reinstalled. Purchased sticker\npacks will not need to be re-purchased.")
         }
     }
 }

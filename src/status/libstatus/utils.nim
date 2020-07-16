@@ -1,4 +1,4 @@
-import json, types, random, strutils, strformat
+import json, types, random, strutils, strformat, tables
 import stint
 from times import getTime, toUnix, nanosecond
 import accounts/signing_phrases
@@ -45,4 +45,28 @@ proc wei2Eth*(input: Stuint[256]): string =
 
   fmt"{eth}.{leading_zeros}{remainder}"
 
+proc first*(jArray: JsonNode, fieldName, id: string): JsonNode =
+  if jArray == nil:
+    return nil
+  if jArray.kind != JArray:
+    raise newException(ValueError, "Parameter 'jArray' is a " & $jArray.kind & ", but must be a JArray")
+  for child in jArray.getElems:
+    if child{fieldName}.getStr == id:
+      return child
 
+proc any*(jArray: JsonNode, fieldName, id: string): bool =
+  if jArray == nil:
+    return false
+  result = false
+  for child in jArray.getElems:
+    if child{fieldName}.getStr == id:
+      return true
+
+proc isEmpty*(a: JsonNode): bool =
+  case a.kind:
+  of JObject: return a.fields.len == 0
+  of JArray: return a.elems.len == 0
+  of JString: return a.str == ""
+  of JNull: return true
+  else:
+    return false
