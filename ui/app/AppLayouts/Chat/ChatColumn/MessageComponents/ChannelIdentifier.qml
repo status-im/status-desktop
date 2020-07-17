@@ -65,7 +65,7 @@ Item {
             }
         font.weight: Font.Bold
         font.pixelSize: 22
-        color: Style.current.black
+        color: Style.current.textColor
         anchors.top: circleId.bottom
         anchors.topMargin: 16
         anchors.horizontalCenter: parent.horizontalCenter
