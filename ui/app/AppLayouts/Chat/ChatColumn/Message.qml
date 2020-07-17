@@ -25,6 +25,7 @@ Item {
     property string authorPrevMsg: "authorPrevMsg"
 
     property bool isEmoji: contentType === Constants.emojiType
+    property bool isImage: contentType === Constants.imageType
     property bool isMessage: contentType === Constants.messageType || contentType === Constants.stickerType
     property bool isStatusMessage: contentType === Constants.systemMessagePrivateGroupType
     property bool isSticker: contentType === Constants.stickerType
@@ -34,6 +35,8 @@ Item {
     property int replyMessageIndex: chatsModel.messageList.getMessageIndex(responseTo);
     property string repliedMessageAuthor: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "userName") : "";
     property string repliedMessageContent: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "message") : "";
+    property int repliedMessageType: replyMessageIndex > -1 ? parseInt(chatsModel.messageList.getMessageData(replyMessageIndex, "contentType")) : 0;
+    property string repliedMessageImage: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "image") : "";
 
     property var profileClick: function () {}
     property var scrollToBottom: function () {}

@@ -28,6 +28,7 @@ Item {
             chatType: model.chatType
             unviewedMessagesCount: model.unviewedMessagesCount
             hasMentions: model.hasMentions
+            contentType: model.contentType
             searchStr: chatGroupsContainer.searchStr
         }
         onCountChanged: {

@@ -18,7 +18,7 @@ Item {
 
     UserImage {
         id: chatImage
-        visible: (isMessage || isEmoji) && authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        visible: (isMessage || isEmoji || isImage) && authorCurrentMsg != authorPrevMsg && !isCurrentUser
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.top:  dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
@@ -27,7 +27,7 @@ Item {
 
     UsernameLabel {
         id: chatName
-        visible: (isMessage || isEmoji) && authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        visible: (isMessage || isEmoji || isImage) && authorCurrentMsg != authorPrevMsg && !isCurrentUser
         text: userName
         anchors.leftMargin: 20
         anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
@@ -45,11 +45,25 @@ Item {
         color: isSticker ? Style.current.background  : (isCurrentUser ? Style.current.blue : Style.current.secondaryBackground)
         border.color: isSticker ? Style.current.border : Style.current.transparent
         border.width: 1
-        height: (3 * chatVerticalPadding) + (contentType == Constants.stickerType ? stickerId.height : (chatText.height + chatReply.height))
+        height: {
+           let h = (3 * chatVerticalPadding)
+           switch(contentType){
+                case Constants.stickerType:
+                    h += stickerId.height;
+                    break;
+                default:
+                    h += chatText.visible ? chatText.height : 0;
+                    h += chatImageContent.visible ? chatImageContent.height: 0;
+                    h += chatReply.visible ? chatReply.height : 0;
+           }
+           return h;
+        }
         width: {
             switch(contentType){
                 case Constants.stickerType:
                     return stickerId.width + (2 * chatBox.chatHorizontalPadding);
+                case Constants.imageType:
+                    return chatImageContent.width
                 default:
                     if (longChatText || longReply) {
                         return 400;
@@ -69,7 +83,7 @@ Item {
         anchors.rightMargin: !isCurrentUser ? 0 : Style.current.padding
         anchors.top: authorCurrentMsg != authorPrevMsg && !isCurrentUser ? chatImage.top : (dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top)
         anchors.topMargin: 0
-        visible: isMessage || isEmoji
+        visible: isMessage || isEmoji || isImage
 
         ChatReply {
             id: chatReply
@@ -94,6 +108,12 @@ Item {
             anchors.rightMargin: chatBox.longChatText ? chatBox.chatHorizontalPadding : 0
             horizontalAlignment: !isCurrentUser ? Text.AlignLeft : Text.AlignRight
             color: !isCurrentUser ? Style.current.textColor : Style.current.currentUserTextColor
+        }
+
+        ChatImage {
+            id: chatImageContent
+            imageWidth: 250
+            imageSource: image
         }
 
         Sticker {

@@ -27,6 +27,7 @@ type
     Index = UserRole + 16
     ImageUrls = UserRole + 17
     Timeout = UserRole + 18
+    Image = UserRole + 19
 
 QtObject:
   type
@@ -109,6 +110,7 @@ QtObject:
       of ChatMessageRoles.Index: result = newQVariant(index.row)
       of ChatMessageRoles.ImageUrls: result = newQVariant(message.imageUrls)
       of ChatMessageRoles.Timeout: result = newQVariant(self.timedoutMessages.contains(message.id))
+      of ChatMessageRoles.Image: result = newQVariant(message.image)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -130,6 +132,7 @@ QtObject:
       ChatMessageRoles.Index.int: "index",
       ChatMessageRoles.ImageUrls.int: "imageUrls",
       ChatMessageRoles.Timeout.int: "timeout"
+      ChatMessageRoles.Image.int: "image"
     }.toTable
 
   proc getMessageIndex(self: ChatMessageList, messageId: string): int {.slot.} =
@@ -146,6 +149,8 @@ QtObject:
     of "message": result = (message.text)
     of "identicon": result = (message.identicon)
     of "timestamp": result = $(message.timestamp)
+    of "image": result = $(message.image)
+    of "contentType": result = $(message.contentType.int)
     else: result = ("")
 
   proc add*(self: ChatMessageList, message: Message) =

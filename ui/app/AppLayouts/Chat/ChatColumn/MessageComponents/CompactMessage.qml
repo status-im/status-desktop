@@ -57,6 +57,13 @@ Item {
         anchors.rightMargin: chatTextItem.chatHorizontalPadding
     }
 
+    ChatImage {
+        id: chatImageContent
+        imageWidth: 200
+        imageSource: image
+        anchors.left: chatImage.right
+    }
+
     Rectangle {
         id: stickerContainer
         visible: contentType === Constants.stickerType
