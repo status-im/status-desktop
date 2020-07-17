@@ -13,6 +13,7 @@ Rectangle {
     property int chatType: Constants.chatTypePublic
     property string searchStr: ""
     property bool isCompact: appSettings.compactMode
+    property int contentType: 1
 
     id: wrapper
     color: ListView.isCurrentItem ? Style.current.secondaryBackground : Style.current.transparent
@@ -80,7 +81,12 @@ Rectangle {
         id: lastChatMessage
         visible: !isCompact
         //% "No messages"
-        text: lastMessage ? Emoji.parse(lastMessage, "26x26").replace(/\n|\r/g, ' ') : qsTrId("no-messages")
+        text: {
+            if(contentType == Constants.imageType){
+                return qsTr("Image");
+            }
+            return lastMessage ? Emoji.parse(lastMessage, "26x26").replace(/\n|\r/g, ' ') : qsTrId("no-messages")
+        }
         clip: true // This is needed because emojis don't ellide correctly
         anchors.right: contactNumberChatsCircle.left
         anchors.rightMargin: Style.current.smallPadding

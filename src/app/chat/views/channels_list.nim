@@ -14,6 +14,7 @@ type
     ChatType = UserRole + 6
     Color = UserRole + 7
     HasMentions = UserRole + 8
+    ContentType = UserRole + 9
 
 QtObject:
   type
@@ -59,6 +60,7 @@ QtObject:
       of ChannelsRoles.Name: result = newQVariant(name)
       of ChannelsRoles.Timestamp: result = newQVariant($chatItem.timestamp)
       of ChannelsRoles.LastMessage: result = newQVariant(self.renderBlock(chatItem.lastMessage))
+      of ChannelsRoles.ContentType: result = newQVariant(chatItem.lastMessage.contentType.int)
       of ChannelsRoles.UnreadMessages: result = newQVariant(chatItem.unviewedMessagesCount)
       of ChannelsRoles.Identicon: result = newQVariant(chatItem.identicon)
       of ChannelsRoles.ChatType: result = newQVariant(chatItem.chatType.int)
@@ -74,7 +76,8 @@ QtObject:
       ChannelsRoles.Identicon.int: "identicon",
       ChannelsRoles.ChatType.int: "chatType",
       ChannelsRoles.Color.int: "color",
-      ChannelsRoles.HasMentions.int: "hasMentions"
+      ChannelsRoles.HasMentions.int: "hasMentions",
+      ChannelsRoles.ContentType.int: "contentType"
     }.toTable
 
   proc addChatItemToList*(self: ChannelsList, channel: Chat): int =
@@ -122,7 +125,7 @@ QtObject:
     else:
       self.chats[0] = channel
 
-    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int, ChannelsRoles.HasMentions.int])
+    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.ContentType.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int, ChannelsRoles.HasMentions.int])
 
   proc clearUnreadMessagesCount*(self: ChannelsList, channel: var Chat) =
     let idx = self.chats.findIndexById(channel.id)
@@ -134,7 +137,7 @@ QtObject:
     channel.hasMentions = false
     self.chats[idx] = channel
 
-    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int, ChannelsRoles.HasMentions.int])
+    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.ContentType.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int, ChannelsRoles.HasMentions.int])
 
   proc renderInline(self: ChannelsList, elem: TextItem): string =
     case elem.textType:
