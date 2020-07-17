@@ -8,7 +8,8 @@ type ContentType* {.pure.} = enum
   Status = 3,
   Emoji = 4,
   Transaction = 5,
-  Group = 6
+  Group = 6,
+  Image = 7
 
 type TextItem* = object
   textType*: string
@@ -43,6 +44,8 @@ type Message* = object
   stickerHash*: string
   outgoingStatus*: string
   imageUrls*: string
+  image*: string
+
 
 proc `$`*(self: Message): string =
   result = fmt"Message(id:{self.id}, chatId:{self.chatId}, clock:{self.clock}, from:{self.fromAuthor}, type:{self.contentType})"
