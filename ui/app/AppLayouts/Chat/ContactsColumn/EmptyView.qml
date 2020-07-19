@@ -24,6 +24,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: Style.current.bigPadding
         height: inviteFriendsContainer.height + suggestionContainer.height
+        color: Style.current.transparent
 
         Item {
             id: inviteFriendsContainer
