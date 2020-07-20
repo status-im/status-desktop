@@ -128,36 +128,6 @@ StackLayout {
             }
         }
 
-        SuggestionBox {
-            id: suggestionsBox
-            model: suggestions
-            width: chatContainer.width
-            anchors.bottom: inputArea.top
-            anchors.left: inputArea.left
-            filter: chatInput.textInput.text
-            property: "ensName, alias"
-            onItemSelected: function (item) {
-                let currentText = chatInput.textInput.text
-                let lastAt = currentText.lastIndexOf("@")
-                let aliasName = item[suggestionsBox.property.split(",").map(p => p.trim()).find(p => !!item[p])]
-                let nameLen = aliasName.length + 2 // We're doing a +2 here because of the `@` and the trailing whitespace
-                let position = 0;
-                let text = ""
-
-                if (currentText.length == 1) {
-                    position = nameLen
-                    text = "@" + aliasName + " "
-                } else {
-                    let left = currentText.slice(0, lastAt)
-                    position = left.length + nameLen
-                    text = left + "@" + aliasName + " "
-                }
-
-                chatInput.textInput.text = text
-                chatInput.textInput.cursorPosition = position
-                suggestionsBox.suggestionsModel.clear()
-            }
-        }
 
         Rectangle {
             id: inputArea
@@ -170,6 +140,36 @@ StackLayout {
             height: !isReply ? 70 : 140
             Layout.preferredHeight: height
 
+            SuggestionBox {
+                id: suggestionsBox
+                model: suggestions
+                width: chatContainer.width
+                anchors.bottom: inputArea.top
+                anchors.left: inputArea.left
+                filter: chatInput.textInput.text
+                property: "ensName, alias"
+                onItemSelected: function (item) {
+                    let currentText = chatInput.textInput.text
+                    let lastAt = currentText.lastIndexOf("@")
+                    let aliasName = item[suggestionsBox.property.split(",").map(p => p.trim()).find(p => !!item[p])]
+                    let nameLen = aliasName.length + 2 // We're doing a +2 here because of the `@` and the trailing whitespace
+                    let position = 0;
+                    let text = ""
+
+                    if (currentText.length === 1) {
+                        position = nameLen
+                        text = "@" + aliasName + " "
+                    } else {
+                        let left = currentText.slice(0, lastAt)
+                        position = left.length + nameLen
+                        text = left + "@" + aliasName + " "
+                    }
+
+                    chatInput.textInput.text = text
+                    chatInput.textInput.cursorPosition = position
+                    suggestionsBox.suggestionsModel.clear()
+                }
+            }
             
             ReplyArea {
                 id: replyAreaContainer

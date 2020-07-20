@@ -22,7 +22,13 @@ Rectangle {
 
     Repeater {
         id: imageRepeater
-        model: imageUrls.split(" ")
+        model: {
+            if (!imageUrls) {
+                return []
+            }
+
+            return imageUrls.split(" ")
+        }
 
         Image {
             id: imageMessage
