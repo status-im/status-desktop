@@ -92,6 +92,52 @@ StackLayout {
 
         PopupMenu {
             id: messageContextMenu
+            width: emojiRow.width
+
+            Row {
+                id: emojiRow
+                spacing: Style.current.smallPadding
+                leftPadding: Style.current.smallPadding
+                rightPadding: Style.current.smallPadding
+                bottomPadding: Style.current.padding
+
+                SVGImage {
+                    source: "../../img/emojiReactions/heart.svg"
+                    width: 32
+                    fillMode: Image.PreserveAspectFit
+                }
+                SVGImage {
+                    source: "../../img/emojiReactions/thumbsUp.svg"
+                    width: 32
+                    fillMode: Image.PreserveAspectFit
+                }
+                SVGImage {
+                    source: "../../img/emojiReactions/thumbsDown.svg"
+                    width: 32
+                    fillMode: Image.PreserveAspectFit
+                }
+                SVGImage {
+                    source: "../../img/emojiReactions/laughing.svg"
+                    width: 32
+                    fillMode: Image.PreserveAspectFit
+                }
+                SVGImage {
+                    source: "../../img/emojiReactions/sad.svg"
+                    width: 32
+                    fillMode: Image.PreserveAspectFit
+                }
+                SVGImage {
+                    source: "../../img/emojiReactions/angry.svg"
+                    width: 32
+                    fillMode: Image.PreserveAspectFit
+                }
+            }
+
+            Separator {
+                anchors.topMargin: 0
+                anchors.top: emojiRow.bottom
+            }
+
             Action {
                 id: viewProfileAction
                 //% "View profile"
