@@ -82,10 +82,11 @@ Rectangle {
         visible: !isCompact
         //% "No messages"
         text: {
-            if(contentType == Constants.imageType){
-                return qsTr("Image");
+            switch(contentType){
+                case Constants.imageType: return qsTr("Image");
+                case Constants.stickerType: return qsTr("Sticker");
+                default: return lastMessage ? Emoji.parse(lastMessage, "26x26").replace(/\n|\r/g, ' ') : qsTrId("no-messages")
             }
-            return lastMessage ? Emoji.parse(lastMessage, "26x26").replace(/\n|\r/g, ' ') : qsTrId("no-messages")
         }
         clip: true // This is needed because emojis don't ellide correctly
         anchors.right: contactNumberChatsCircle.left
