@@ -102,6 +102,7 @@ Item {
         Separator {
             anchors.topMargin: 0
             anchors.top: inviteFriendsContainer.bottom
+            color: Style.current.grey
         }
 
         Item {
