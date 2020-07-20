@@ -12,6 +12,21 @@ StyledTextEdit {
     readOnly: true
     selectByMouse: true
     color: Style.current.textColor
+    z: 51
+    onLinkActivated: function (link) {
+        if(link.startsWith("#")){
+            chatsModel.joinChat(link.substring(1), Constants.chatTypePublic);
+            return;
+        }
+
+        if (link.startsWith('//')) {
+          let pk = link.replace("//", "");
+          profileClick(chatsModel.userNameOrAlias(pk), pk, chatsModel.generateIdenticon(pk))
+          return;
+        }
+
+        Qt.openUrlExternally(link)
+    }
     text: {
         if(contentType === Constants.stickerType) return "";
         let msg = Utils.linkifyAndXSS(message);
@@ -44,6 +59,5 @@ StyledTextEdit {
                 `</body>`+
             `</html>`;
         }
-
     }
 }

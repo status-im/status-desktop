@@ -35,6 +35,7 @@ Rectangle {
         wrapMode: Text.Wrap
         anchors.left: parent.left
         anchors.right: chatReply.longReply ? parent.right : undefined
+        z: 51
     }
 
     Separator {
