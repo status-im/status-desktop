@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtMultimedia 5.13
+import QtQuick.Dialogs 1.0
 import "../components"
 import "../../../../shared"
 import "../../../../imports"
@@ -34,6 +35,10 @@ Rectangle {
     function onEnter(event){
 
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
+            if(chatColumn.isImage){
+                chatsModel.sendImage(sendImageArea.image);
+                chatColumn.hideExtendedArea();
+            }
 
             if(txtData.text.trim().length > 0){
                 let msg = interpretMessage(txtData.text.trim())
@@ -43,6 +48,22 @@ Rectangle {
                 sendMessageSound.stop()
                 Qt.callLater(sendMessageSound.play);
             }
+        }
+    }
+
+    FileDialog {
+        id: imageDialog
+        title: qsTr("Please choose an image")
+        folder: shortcuts.pictures
+        nameFilters: [
+            qsTr("Image files (*.jpg *.jpeg *.png)")
+        ]
+        onAccepted: {
+            chatColumn.showImageArea(imageDialog.fileUrls);
+            txtData.forceActiveFocus();
+        }
+        onRejected: {
+            chatColumn.hideExtendedArea();
         }
     }
 
