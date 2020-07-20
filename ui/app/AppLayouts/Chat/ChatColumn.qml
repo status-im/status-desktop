@@ -5,6 +5,7 @@ import "../../../shared"
 import "../../../imports"
 import "./components"
 import "./ChatColumn"
+import "./data"
 
 StackLayout {
     id: chatColumnLayout
@@ -90,6 +91,11 @@ StackLayout {
             id: profilePopup
         }
 
+
+        EmojiReactions {
+            id: reactionModel
+        }
+
         PopupMenu {
             id: messageContextMenu
             width: emojiRow.width
@@ -101,35 +107,12 @@ StackLayout {
                 rightPadding: Style.current.smallPadding
                 bottomPadding: Style.current.padding
 
-                SVGImage {
-                    source: "../../img/emojiReactions/heart.svg"
-                    width: 32
-                    fillMode: Image.PreserveAspectFit
-                }
-                SVGImage {
-                    source: "../../img/emojiReactions/thumbsUp.svg"
-                    width: 32
-                    fillMode: Image.PreserveAspectFit
-                }
-                SVGImage {
-                    source: "../../img/emojiReactions/thumbsDown.svg"
-                    width: 32
-                    fillMode: Image.PreserveAspectFit
-                }
-                SVGImage {
-                    source: "../../img/emojiReactions/laughing.svg"
-                    width: 32
-                    fillMode: Image.PreserveAspectFit
-                }
-                SVGImage {
-                    source: "../../img/emojiReactions/sad.svg"
-                    width: 32
-                    fillMode: Image.PreserveAspectFit
-                }
-                SVGImage {
-                    source: "../../img/emojiReactions/angry.svg"
-                    width: 32
-                    fillMode: Image.PreserveAspectFit
+                Repeater {
+                    model: reactionModel
+                    delegate: EmojiReaction {
+                        source: "../../img/" + filename
+                        emojiId: model.emojiId
+                    }
                 }
             }
 
