@@ -40,7 +40,9 @@ Item {
                 anchors.top: parent.top
                 anchors.topMargin: -6
                 anchors.horizontalCenter: parent.horizontalCenter
-                source: "../../../img/chatEmptyHeader.png"
+                source: "../../../img/chatEmptyHeader.svg"
+                width: 66
+                height: 50
             }
 
             SVGImage {
