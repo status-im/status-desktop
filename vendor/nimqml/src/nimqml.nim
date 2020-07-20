@@ -36,3 +36,6 @@ proc signal_handler*(receiver: pointer, signal: cstring, slot: cstring) =
   var dosqobj = cast[DosQObject](receiver)
   if(dosqobj.isNil == false):
     dos_signal(receiver, signal, slot)
+
+proc image_resizer*(imagePath: string, maxSize: int = 2000): string =
+  result = $dos_image_resizer(imagePath.cstring, maxSize.cint)
