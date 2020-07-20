@@ -4,7 +4,7 @@ import "../../../../../imports"
 
 StyledTextEdit {
     id: chatName
-    visible: (isMessage || isEmoji) && authorCurrentMsg != authorPrevMsg
+    visible: isMessage && authorCurrentMsg != authorPrevMsg
     height: this.visible ? 18 : 0
     text: !isCurrentUser ? userName : qsTr("You")
     font.bold: true

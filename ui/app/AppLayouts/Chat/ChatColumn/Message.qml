@@ -25,9 +25,10 @@ Item {
 
     property bool isEmoji: contentType === Constants.emojiType
     property bool isImage: contentType === Constants.imageType
-    property bool isMessage: contentType === Constants.messageType || contentType === Constants.stickerType
     property bool isStatusMessage: contentType === Constants.systemMessagePrivateGroupType
     property bool isSticker: contentType === Constants.stickerType
+    property bool isText: contentType === Constants.messageType
+    property bool isMessage: isEmoji || isImage || isSticker || isText
 
     property int replyMessageIndex: chatsModel.messageList.getMessageIndex(responseTo);
     property string repliedMessageAuthor: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "userName") : "";

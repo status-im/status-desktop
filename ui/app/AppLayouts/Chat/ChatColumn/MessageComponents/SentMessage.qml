@@ -4,7 +4,7 @@ import "../../../../../imports"
 
 StyledText {
     id: sentMessage
-    visible: isCurrentUser && (isEmoji || isMessage || isSticker || isImage)
+    visible: isCurrentUser && isMessage
     color: Style.current.darkGrey
     text: outgoingStatus == "sent" ?
     //% "Sent"
