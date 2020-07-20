@@ -207,6 +207,13 @@ proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string 
   for msg in messages:
     self.events.emit("sendingMessage", MessageArgs(id: msg.id, channel: msg.chatId))
 
+proc sendImage*(self: ChatModel, chatId: string, image: string) =
+  var response = status_chat.sendImageMessage(chatId, image)
+  var (chats, messages) = self.processChatUpdate(parseJson(response))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
+  for msg in messages:
+    self.events.emit("sendingMessage", MessageArgs(id: msg.id, channel: msg.chatId))
+
 proc addStickerToRecent*(self: ChatModel, sticker: Sticker, save: bool = false) =
   self.recentStickers.insert(sticker, 0)
   self.recentStickers = self.recentStickers.deduplicate()

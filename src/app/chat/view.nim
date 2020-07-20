@@ -73,6 +73,10 @@ QtObject:
   proc sendMessage*(self: ChatsView, message: string, replyTo: string) {.slot.} =
     self.status.chat.sendMessage(self.activeChannel.id, message, replyTo)
 
+  proc sendImage*(self: ChatsView, imagePath: string) {.slot.} =
+    let image = replace(imagePath, "file://", "")
+    self.status.chat.sendImage(self.activeChannel.id, image)
+
   proc activeChannelChanged*(self: ChatsView) {.signal.}
 
   proc userNameOrAlias*(self: ChatsView, pubKey: string): string {.slot.} =

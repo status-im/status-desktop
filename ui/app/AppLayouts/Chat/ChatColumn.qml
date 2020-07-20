@@ -9,7 +9,12 @@ import "./ChatColumn"
 StackLayout {
     id: chatColumnLayout
     property int chatGroupsListViewCount: 0
+    
     property bool isReply: false
+    property bool isImage: false
+
+    property bool isExtendedInput: isReply || isImage
+
     property var appSettings
     property bool isConnected: false
     Layout.fillHeight: true
@@ -18,6 +23,25 @@ StackLayout {
 
     currentIndex:  chatsModel.activeChannelIndex > -1 && chatGroupsListViewCount > 0 ? 0 : 1
 
+    function showReplyArea(){
+        isReply = true;
+        isImage = false;
+        replyAreaContainer.setup()
+    }
+
+    function showImageArea(imagePath){
+        isImage = true;
+        isReply = false;
+        sendImageArea.image = imagePath[0];
+    }
+
+    function hideExtendedArea(){
+        isImage = false;
+        isReply = false;
+        replyAreaContainer.setup();
+        sendImageArea.image = "";
+    }
+    
     ColumnLayout {
         spacing: 0
 
@@ -99,10 +123,7 @@ StackLayout {
             }
             Action {
                 text: qsTr("Reply to")
-                onTriggered: {
-                    isReply = true;
-                    replyAreaContainer.setup()
-                }
+                onTriggered: showReplyArea()
             }
         }
  
@@ -114,7 +135,7 @@ StackLayout {
             Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
             Layout.fillWidth: true
             Layout.preferredWidth: parent.width
-            height: !isReply ? 70 : 140
+            height: !isExtendedInput ? 70 : 140
             Layout.preferredHeight: height
 
             
@@ -123,9 +144,27 @@ StackLayout {
                 visible: isReply
             }
 
+            SendImageArea {
+                id: sendImageArea
+                visible: isImage
+            }
+
             ChatInput {
+                id: chatInput
                 height: 40
-                anchors.top: !isReply ? inputArea.top : replyAreaContainer.bottom
+                anchors.top: {
+                    if(!isExtendedInput){
+                        return inputArea.top;
+                    }
+
+                    if(isReply){
+                        return replyAreaContainer.bottom;
+                    }
+
+                    if(isImage){
+                        return sendImageArea.bottom;
+                    }
+                }
                 anchors.topMargin: 4
                 anchors.left: parent.left
                 anchors.right: parent.right
