@@ -1,4 +1,4 @@
-import NimQml, eventemitter, chronicles, os
+import NimQml, eventemitter, chronicles, os, strformat
 
 import app/chat/core as chat
 import app/wallet/core as wallet
@@ -55,7 +55,11 @@ proc mainProc() =
   var node = node.newController(status)
   engine.setRootContextProperty("nodeModel", node.variant)
 
-  var profile = profile.newController(status)
+  proc changeLanguage(locale: string) =
+    echo "CHanging to " & locale
+    engine.setTranslationPackage(fmt"/home/jonathan/dev/nim-status-client/ui/i18n/qml_{locale}.qm")
+
+  var profile = profile.newController(status, changeLanguage)
   engine.setRootContextProperty("profileModel", profile.variant)
 
   status.events.once("login") do(a: Args):

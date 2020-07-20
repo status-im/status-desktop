@@ -18,10 +18,10 @@ type ProfileController* = ref object of SignalSubscriber
   variant*: QVariant
   status*: Status
 
-proc newController*(status: Status): ProfileController =
+proc newController*(status: Status, changeLanguage: proc(locale: string)): ProfileController =
   result = ProfileController()
   result.status = status
-  result.view = newProfileView(status)
+  result.view = newProfileView(status, changeLanguage)
   result.variant = newQVariant(result.view)
 
 proc delete*(self: ProfileController) =
