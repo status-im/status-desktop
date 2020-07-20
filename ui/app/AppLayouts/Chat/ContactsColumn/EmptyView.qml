@@ -15,7 +15,7 @@ Item {
 
     Rectangle {
         id: emptyViewContent
-        border.color: Style.current.grey
+        border.color: Style.current.border
         radius: 16
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
@@ -102,7 +102,7 @@ Item {
         Separator {
             anchors.topMargin: 0
             anchors.top: inviteFriendsContainer.bottom
-            color: Style.current.grey
+            color: Style.current.border
         }
 
         Item {
