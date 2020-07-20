@@ -18,7 +18,7 @@ Item {
 
     UserImage {
         id: chatImage
-        visible: (isMessage || isEmoji || isImage) && authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        visible: isMessage && authorCurrentMsg != authorPrevMsg && !isCurrentUser
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.top:  dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
@@ -27,7 +27,7 @@ Item {
 
     UsernameLabel {
         id: chatName
-        visible: (isMessage || isEmoji || isImage) && authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        visible: isMessage && authorCurrentMsg != authorPrevMsg && !isCurrentUser
         text: userName
         anchors.leftMargin: 20
         anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
@@ -83,7 +83,7 @@ Item {
         anchors.rightMargin: !isCurrentUser ? 0 : Style.current.padding
         anchors.top: authorCurrentMsg != authorPrevMsg && !isCurrentUser ? chatImage.top : (dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top)
         anchors.topMargin: 0
-        visible: isMessage || isEmoji || isImage
+        visible: isMessage
 
         ChatReply {
             id: chatReply
@@ -110,12 +110,20 @@ Item {
             color: !isCurrentUser ? Style.current.textColor : Style.current.currentUserTextColor
         }
 
-        ChatImage {
+        Loader {
             id: chatImageContent
-            imageWidth: 250
-            imageSource: image
+            active: isImage
+            sourceComponent: chatImageComponent
         }
 
+        Component {
+            id: chatImageComponent
+            ChatImage {
+                imageSource: image
+                imageWidth: 250
+            }
+        }
+        
         Sticker {
             id: stickerId
             anchors.left: parent.left
@@ -130,7 +138,7 @@ Item {
 
         RectangleCorner {
             // TODO find a way to show the corner for stickers since they have a border
-            visible: isMessage || isEmoji
+            visible: isMessage
         }
     }
 

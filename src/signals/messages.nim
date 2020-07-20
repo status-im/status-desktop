@@ -5,7 +5,7 @@ import ../status/libstatus/settings as status_settings
 import ../status/libstatus/types as status_types
 import ../status/chat/[chat, message]
 import ../status/profile/[profile, devices]
-import types 
+import types
 
 proc toMessage*(jsonMsg: JsonNode): Message
 

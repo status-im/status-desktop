@@ -57,11 +57,19 @@ Item {
         anchors.rightMargin: chatTextItem.chatHorizontalPadding
     }
 
-    ChatImage {
+    Loader {
         id: chatImageContent
-        imageWidth: 200
-        imageSource: image
+        active: isImage
+        sourceComponent: chatImageComponent
         anchors.left: chatImage.right
+    }
+
+    Component {
+        id: chatImageComponent
+        ChatImage {
+            imageSource: image
+            imageWidth: 200
+        }
     }
 
     Rectangle {
