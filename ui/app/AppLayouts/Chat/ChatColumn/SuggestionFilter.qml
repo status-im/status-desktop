@@ -6,6 +6,8 @@ Item {
 
     property QtObject sourceModel: undefined
     property string filter: ""
+    property int cursorPosition: 0
+    property int lastAtPosition: 0
     property string property: ""
 
     Connections {
@@ -38,33 +40,41 @@ Item {
         }
     }
 
-
     function isAcceptedItem(item) {
         let properties = this.property.split(",")
             .map(p => p.trim())
             .filter(p => !!item[p])
 
-        if (properties.length == 0) {
+        if (properties.length === 0 || this.filter.length === 0 || this.cursorPosition === 0) {
             return false
         }
 
-        if (this.filter.endsWith("@")) {
-            return true
+        // Prevents suggestions to show up at all
+        if (this.filter.indexOf("@") === -1)  {
+          return false
         }
 
-        let lastAt = this.filter.lastIndexOf("@")
+        let cursorAtEnd = this.cursorPosition === this.filter.length;
+        let hasAtBeforeCursor = this.filter.charAt(this.cursorPosition - 1) === "@" 
+        let hasWhiteSpaceBeforeAt = this.filter.charAt(this.cursorPosition - 2) === " "
+        let hasWhiteSpaceAfterAt = this.filter.charAt(this.cursorPosition) === " "
+        let hasWhiteSpaceBeforeCursor = this.filter.charAt(this.cursorPosition - 1) === " "
 
-        if (lastAt == -1) {
-            return false
+        if (this.filter.charAt(this.cursorPosition - 2) === "@" && hasWhiteSpaceBeforeCursor) {
+          return false
         }
 
-        let filterWithoutAt = this.filter.substring(lastAt+1)
-
-        if (filterWithoutAt == "") {
-            return true
+        if (this.filter === "@" ||
+          (hasAtBeforeCursor && hasWhiteSpaceBeforeAt && hasWhiteSpaceAfterAt) ||
+          (this.cursorPosition === 1 && hasAtBeforeCursor && hasWhiteSpaceAfterAt) ||
+          (cursorAtEnd && this.filter.endsWith("@") && hasWhiteSpaceBeforeAt)) {
+          this.lastAtPosition = this.cursorPosition - 1;
+          return true
         }
 
-        return !properties.every(p => item[p].toLowerCase().match(filterWithoutAt.toLowerCase()) == null)
+        let filterWithoutAt = this.filter.substring(lastAtPosition + 1, this.cursorPosition)
+
+        return !properties.every(p => item[p].toLowerCase().match(filterWithoutAt.toLowerCase()) === null)
     }
 
     function isFilteringPropertyOk() {
@@ -74,6 +84,3 @@ Item {
         return true
     }
 }
-
-
-
