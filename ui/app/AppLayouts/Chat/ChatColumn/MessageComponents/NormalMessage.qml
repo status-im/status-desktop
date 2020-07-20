@@ -38,6 +38,8 @@ Item {
     Rectangle {
         property int chatVerticalPadding: 7
         property int chatHorizontalPadding: 12
+        property bool longReply: chatReply.visible && repliedMessageContent.length > 54
+        property bool longChatText: plainText.length > 54
 
         id: chatBox
         color: isSticker ? Style.current.background  : (isCurrentUser ? Style.current.blue : Style.current.secondaryBackground)
@@ -49,7 +51,14 @@ Item {
                 case Constants.stickerType:
                     return stickerId.width + (2 * chatBox.chatHorizontalPadding);
                 default:
-                    return plainText.length > 54 ? 400 : chatText.width + 2 * chatHorizontalPadding
+                    if (longChatText || longReply) {
+                        return 400;
+                    }
+                    let baseWidth = chatText.width;
+                    if (chatReply.visible && chatText.width < chatReply.textField.width) {
+                        baseWidth = chatReply.textField.width
+                    }
+                    return baseWidth + 2 * chatHorizontalPadding
             }
         }
 
@@ -64,6 +73,7 @@ Item {
 
         ChatReply {
             id: chatReply
+            longReply: chatBox.longReply
             anchors.top: parent.top
             anchors.topMargin: chatReply.visible ? chatBox.chatVerticalPadding : 0
             anchors.left: parent.left
@@ -79,9 +89,9 @@ Item {
             anchors.top: chatReply.bottom
             anchors.topMargin: chatBox.chatVerticalPadding
             anchors.left: parent.left
-            anchors.leftMargin: parent.chatHorizontalPadding
-            anchors.right: plainText.length > 52 ? parent.right : undefined
-            anchors.rightMargin: plainText.length > 52 ? parent.chatHorizontalPadding : 0
+            anchors.leftMargin: chatBox.chatHorizontalPadding
+            anchors.right: chatBox.longChatText ? parent.right : undefined
+            anchors.rightMargin: chatBox.longChatText ? chatBox.chatHorizontalPadding : 0
             horizontalAlignment: !isCurrentUser ? Text.AlignLeft : Text.AlignRight
             color: !isCurrentUser ? Style.current.textColor : Style.current.currentUserTextColor
         }
@@ -89,7 +99,7 @@ Item {
         Sticker {
             id: stickerId
             anchors.left: parent.left
-            anchors.leftMargin: parent.chatHorizontalPadding
+            anchors.leftMargin: chatBox.chatHorizontalPadding
             anchors.top: parent.top
             anchors.topMargin: chatBox.chatVerticalPadding
         }
