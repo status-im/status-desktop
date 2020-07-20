@@ -105,6 +105,8 @@ DOS_API DosQNetworkConfigurationManager *DOS_CALL dos_qncm_create();
 
 DOS_API void DOS_CALL dos_qncm_delete(DosQNetworkConfigurationManager *vptr);
 
+DOS_API char * DOS_CALL dos_image_resizer(char* imagePath, int maxSize);
+
 /// \brief Sets the application icon
 DOS_API void DOS_CALL dos_qapplication_icon(const char *filename);
 
