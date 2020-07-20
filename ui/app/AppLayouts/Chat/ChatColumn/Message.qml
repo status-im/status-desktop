@@ -51,6 +51,8 @@ Item {
         SelectedMessage.set(messageId, fromAuthor);
         profileClick(userName, fromAuthor, identicon);
         messageContextMenu.popup()
+        // Position the center of the menu where the mouse is
+        messageContextMenu.x = messageContextMenu.x - messageContextMenu.width / 2
     }
 
     Loader {
