@@ -10,7 +10,7 @@ Rectangle {
     color:  Style.current.lightBlue
     visible: responseTo != "" && replyMessageIndex > -1
     // childrenRect.height shows a binding loop for soem reason, so we use heights instead
-    height: this.visible ? lblReplyAuthor.height + ((repliedMessageType == Constants.imageType ? imgReplyImage.height : lblReplyMessage.height) + 5 + 8) : 0
+    height: this.visible ? lblReplyAuthor.height + ((repliedMessageType === Constants.imageType ? imgReplyImage.height : lblReplyMessage.height) + 5 + 8) : 0
 
     StyledTextEdit {
         id: lblReplyAuthor
