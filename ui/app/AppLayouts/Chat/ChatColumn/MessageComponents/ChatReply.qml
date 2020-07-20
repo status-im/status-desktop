@@ -3,6 +3,9 @@ import "../../../../../shared"
 import "../../../../../imports"
 
 Rectangle {
+    property alias textField: lblReplyMessage
+    property bool longReply: false
+
     id: chatReply
     color:  Style.current.lightBlue
     visible: responseTo != "" && replyMessageIndex > -1
@@ -31,7 +34,7 @@ Rectangle {
         selectByMouse: true
         wrapMode: Text.Wrap
         anchors.left: parent.left
-        anchors.right: parent.right
+        anchors.right: chatReply.longReply ? parent.right : undefined
     }
 
     Separator {
