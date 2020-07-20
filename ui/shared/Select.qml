@@ -130,7 +130,7 @@ Item {
             Component {
                 id: menuItem
                 MenuItem {
-                    property var onClicked: console.log("Default click function. Override me please")
+                    property var onClicked: function () {}
                     property color bgColor: Style.current.white
                     onTriggered: function () {
                         onClicked()

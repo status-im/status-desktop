@@ -135,6 +135,7 @@ DISTFILES += \
     app/AppLayouts/Chat/components/EmojiPopup.qml \
     app/AppLayouts/Chat/components/InviteFriendsPopup.qml \
     app/AppLayouts/Wallet/components/HeaderButton.qml \
+    app/AppLayouts/Profile/Sections/Data/locales.js \
     fonts/InterStatus/InterStatus-Black.otf \
     fonts/InterStatus/InterStatus-BlackItalic.otf \
     fonts/InterStatus/InterStatus-Bold.otf \
