@@ -83,6 +83,16 @@ proc sendChatMessage*(chatId: string, msg: string, replyTo: string): string =
     }
   ])
 
+proc sendImageMessage*(chatId: string, image: string): string =
+  callPrivateRPC("sendChatMessage".prefix, %* [
+    {
+      "chatId": chatId,
+      "contentType": ContentType.Image.int,
+      "imagePath": image,
+      "text": "Update to latest version to see a nice image here!"
+    }
+  ])
+
 proc sendStickerMessage*(chatId: string, sticker: Sticker): string =
   callPrivateRPC("sendChatMessage".prefix, %* [
     {

@@ -63,8 +63,7 @@ Rectangle {
                 closeButton.color = Style.current.grey
             }
             onClicked: {
-                reset();
-                chatColumn.isReply = false;
+                chatColumn.hideExtendedArea()
             }
         }
     }

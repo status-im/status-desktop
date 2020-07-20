@@ -108,6 +108,10 @@ QtObject:
     self.status.chat.resendMessage(messageId)
     self.messageList[chatId].resetTimeOut(messageId)
 
+  proc sendImage*(self: ChatsView, imagePath: string) {.slot.} =
+    let image = replace(imagePath, "file://", "")
+    self.status.chat.sendImage(self.activeChannel.id, image)
+
   proc activeChannelChanged*(self: ChatsView) {.signal.}
 
   proc userNameOrAlias*(self: ChatsView, pubKey: string): string {.slot.} =
