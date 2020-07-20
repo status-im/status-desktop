@@ -36,7 +36,7 @@ Rectangle {
 
     z: parent.z + 100
     visible: filter.length > 0 && suggestionsModel.count > 0
-    height: visible ? childrenRect.height + (Style.current.padding * 2) : 0
+    height: visible ? popup.height + (Style.current.padding * 2) : 0
     opacity: visible ? 1.0 : 0
     Behavior on opacity {
         NumberAnimation { }
