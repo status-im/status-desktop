@@ -57,10 +57,12 @@ proc decodeContentHash*(value: string): string =
 # See https://notes.status.im/Q-sQmQbpTOOWCQcYiXtf5g#Read-Sticker-Packs-owned-by-a-user
 # for more details
 proc getBalance*(address: EthAddress): int =
-  let contract = contracts.getContract("sticker-pack")
-  let payload = %* [{
+  let 
+    contract = contracts.getContract("sticker-pack")
+    balanceOf = BalanceOf(address: address)
+    payload = %* [{
       "to": $contract.address,
-      "data": contract.methods["balanceOf"].encodeAbi(address)
+      "data": contract.methods["balanceOf"].encodeAbi(balanceOf)
     }, "latest"]
   
   let responseStr = status.callPrivateRPC("eth_call", payload)
@@ -88,15 +90,17 @@ proc getPackCount*(): int =
   result = fromHex[int](response.result)
 
 # Gets sticker pack data
-proc getPackData*(id: int): StickerPack =
-  let contract = contracts.getContract("stickers")
-  let contractMethod = contract.methods["getPackData"]
-  let payload = %* [{
+proc getPackData*(id: Stuint[256]): StickerPack =
+  let
+    contract = contracts.getContract("stickers")
+    contractMethod = contract.methods["getPackData"]
+    getPackData = GetPackData(packId: id)
+    payload = %* [{
       "to": $contract.address,
-      "data": contractMethod.encodeAbi(id)
+      "data": contractMethod.encodeAbi(getPackData)
     }, "latest"]
-  let responseStr = status.callPrivateRPC("eth_call", payload)
-  let response = Json.decode(responseStr, RpcResponse)
+    responseStr = status.callPrivateRPC("eth_call", payload)
+    response = Json.decode(responseStr, RpcResponse)
   if not response.error.isNil:
     raise newException(RpcException, "Error getting sticker pack data: " & response.error.message)
 
@@ -115,18 +119,22 @@ proc getPackData*(id: int): StickerPack =
   result = edn_helpers.decode[StickerPack](ednMeta)
   # EDN doesn't include a packId for each sticker, so add it here
   result.stickers.apply(proc(sticker: var Sticker) =
-    sticker.packId = id)
-  result.id = id
+    sticker.packId = truncate(id, int))
+  result.id = truncate(id, int)
   result.price = packData.price
 
 # Buys a sticker pack for user
 # See https://notes.status.im/Q-sQmQbpTOOWCQcYiXtf5g#Buy-a-Sticker-Pack for more
 # details
-proc buyPack*(packId: int, address: EthAddress, price: Stuint[256], password: string): string =
-  let stickerMktContract = contracts.getContract("sticker-market")
-  let sntContract = contracts.getContract("snt")
-  let buyTxAbiEncoded = stickerMktContract.methods["buyToken"].encodeAbi(packId, address, price)
-  let approveAndCallAbiEncoded = sntContract.methods["approveAndCall"].encodeAbi(stickerMktContract.address, price, buyTxAbiEncoded.strip0xPrefix)
+proc buyPack*(packId: Stuint[256], address: EthAddress, price: Stuint[256], password: string): string =
+  let
+    stickerMktContract = contracts.getContract("sticker-market")
+    sntContract = contracts.getContract("snt")
+    buyToken = BuyToken(packId: packId, address: address, price: price)
+    buyTxAbiEncoded = stickerMktContract.methods["buyToken"].encodeAbi(buyToken)
+  let
+    approveAndCallObj = ApproveAndCall(to: stickerMktContract.address, value: price, data: DynamicBytes[100].fromHex(buyTxAbiEncoded))
+    approveAndCallAbiEncoded = sntContract.methods["approveAndCall"].encodeAbi(approveAndCallObj)
   let payload = %* {
       "from": $address,
       "to": $sntContract.address,
@@ -140,11 +148,13 @@ proc buyPack*(packId: int, address: EthAddress, price: Stuint[256], password: st
     raise newException(RpcException, "Error getting stickers balance: " & response.error.message)
   result = response.result # should be a tx receipt
 
-proc tokenOfOwnerByIndex*(address: EthAddress, idx: int): int =
-  let contract = contracts.getContract("sticker-pack")
-  let payload = %* [{
+proc tokenOfOwnerByIndex*(address: EthAddress, idx: Stuint[256]): int =
+  let
+    contract = contracts.getContract("sticker-pack")
+    tokenOfOwnerByIndex = TokenOfOwnerByIndex(address: address, index: idx)
+    payload = %* [{
       "to": $contract.address,
-      "data": contract.methods["tokenOfOwnerByIndex"].encodeAbi(address, idx)
+      "data": contract.methods["tokenOfOwnerByIndex"].encodeAbi(tokenOfOwnerByIndex)
     }, "latest"]
   
   let responseStr = status.callPrivateRPC("eth_call", payload)
@@ -155,11 +165,13 @@ proc tokenOfOwnerByIndex*(address: EthAddress, idx: int): int =
     return 0
   result = fromHex[int](response.result)
 
-proc getPackIdFromTokenId*(tokenId: int): int =
-  let contract = contracts.getContract("sticker-pack")
-  let payload = %* [{
+proc getPackIdFromTokenId*(tokenId: Stuint[256]): int =
+  let
+    contract = contracts.getContract("sticker-pack")
+    tokenPackId = TokenPackId(tokenId: tokenId)
+    payload = %* [{
       "to": $contract.address,
-      "data": contract.methods["tokenPackId"].encodeAbi(tokenId)
+      "data": contract.methods["tokenPackId"].encodeAbi(tokenPackId)
     }, "latest"]
   
   let responseStr = status.callPrivateRPC("eth_call", payload)
