@@ -43,8 +43,7 @@ Item {
             return sendingError.open()
         }
 
-        //% "Transaction sent to the blockchain. You can watch the progress on Etherscan: https://etherscan.io/tx/%1"
-        sendingSuccess.text = qsTrId("transaction-sent-to-the-blockchain.-you-can-watch-the-progress-on-etherscan:-https://etherscan.io/tx/%1").arg(result)
+        sendingSuccess.text = qsTr("Transaction sent to the blockchain. You can watch the progress on Etherscan: %2/%1").arg(result).arg(walletModel.etherscanLink)
         sendingSuccess.open()
     }
 

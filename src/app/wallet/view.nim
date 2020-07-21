@@ -12,6 +12,7 @@ QtObject:
       currentTransactions: TransactionList
       status: Status
       totalFiatBalance: string
+      etherscanLink: string
 
   proc delete(self: WalletView) =
     self.accounts.delete
@@ -32,7 +33,21 @@ QtObject:
     result.currentTransactions = newTransactionList()
     result.currentCollectiblesList = newCollectiblesList()
     result.totalFiatBalance = ""
+    result.etherscanLink = ""
     result.setup
+
+  proc etherscanLinkChanged*(self: WalletView) {.signal.}
+
+  proc getEtherscanLink*(self: WalletView): QVariant {.slot.} =
+    newQVariant(self.etherscanLink.replace("/address", "/tx"))
+
+  proc setEtherscanLink*(self: WalletView, link: string) =
+    self.etherscanLink = link
+    self.etherscanLinkChanged()
+
+  QtProperty[QVariant] etherscanLink:
+    read = getEtherscanLink
+    notify = etherscanLinkChanged
 
   proc currentAccountChanged*(self: WalletView) {.signal.}
 

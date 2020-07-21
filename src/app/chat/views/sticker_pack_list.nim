@@ -1,4 +1,4 @@
-import NimQml, Tables, sequtils
+import NimQml, Tables, sequtils, sugar
 import ../../../status/chat/stickers, ./sticker_list
 import ../../../status/libstatus/types, ../../../status/libstatus/utils
 
@@ -83,7 +83,7 @@ QtObject:
   proc `[]`*(self: StickerPackList, packId: int): StickerPack =
     if not self.hasKey(packId):
       raise newException(ValueError, "Sticker pack list does not have a pack with id " & $packId)
-    result = self.packs.filterIt(it.pack.id == packId)[0].pack
+    result = find(self.packs, (view: StickerPackView) => view.pack.id == packId).pack
 
   proc addStickerPackToList*(self: StickerPackList, pack: StickerPack, stickers: StickerList, installed, bought: bool) =
     self.beginInsertRows(newQModelIndex(), 0, 0)

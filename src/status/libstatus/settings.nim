@@ -1,5 +1,5 @@
 import core, ./types, ../../signals/types as statusgo_types, ./accounts/constants, ./utils
-import json, tables
+import json, tables, sugar, sequtils
 import json_serialization
 
 var settings: JsonNode = %*{}
@@ -37,3 +37,8 @@ proc getCurrentNetwork*(): Network =
   result = Network.Mainnet
   if getSetting[string](Setting.Networks_CurrentNetwork, constants.DEFAULT_NETWORK_NAME) == "testnet_rpc":
     result = Network.Testnet
+
+proc getCurrentNetworkDetails*(): NetworkDetails =
+  let currNetwork = getSetting[string](Setting.Networks_CurrentNetwork, constants.DEFAULT_NETWORK_NAME)
+  let networks = getSetting[seq[NetworkDetails]](Setting.Networks_Networks)
+  networks.find((network: NetworkDetails) => network.id == currNetwork)
