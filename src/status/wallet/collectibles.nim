@@ -2,17 +2,20 @@ import strformat, httpclient, json, chronicles, sequtils, strutils, tables
 from eth/common/utils import parseAddress
 import ../libstatus/core as status
 import ../libstatus/contracts as contracts
+import ../libstatus/types
 import eth/common/eth_types
 import ../libstatus/types
 import account
 
-proc getTokenUri(contract: Contract, tokenId: int): string =
+proc getTokenUri(contract: Contract, tokenId: Stuint[256]): string =
   try:
-    let payload = %* [{
-      "to": $contract.address,
-      "data": contract.methods["tokenURI"].encodeAbi(tokenId)
-    }, "latest"]
-    let response = callPrivateRPC("eth_call", payload)
+    let
+      tokenUri = TokenUri(tokenId: tokenId)
+      payload = %* [{
+        "to": $contract.address,
+        "data": contract.methods["tokenURI"].encodeAbi(tokenUri)
+      }, "latest"]
+      response = callPrivateRPC("eth_call", payload)
     var postfixedResult: string = parseJson($response)["result"].str
     postfixedResult.removeSuffix('0')
     postfixedResult.removePrefix("0x")
@@ -25,13 +28,15 @@ proc getTokenUri(contract: Contract, tokenId: int): string =
     error "Error getting the token URI", mes = e.msg
     result = ""
 
-proc tokenOfOwnerByIndex(contract: Contract, address: EthAddress, index: int): int =
-  let payload = %* [{
-    "to": $contract.address,
-    "data": contract.methods["tokenOfOwnerByIndex"].encodeAbi(address, index)
-  }, "latest"]
-  let response = callPrivateRPC("eth_call", payload)
-  let res = parseJson($response)["result"].str
+proc tokenOfOwnerByIndex(contract: Contract, address: EthAddress, index: Stuint[256]): int =
+  let
+    tokenOfOwnerByIndex = TokenOfOwnerByIndex(address: address, index: index)
+    payload = %* [{
+      "to": $contract.address,
+      "data": contract.methods["tokenOfOwnerByIndex"].encodeAbi(tokenOfOwnerByIndex)
+    }, "latest"]
+    response = callPrivateRPC("eth_call", payload)
+    res = parseJson($response)["result"].str
   if (res == "0x"):
     return -1
   result = fromHex[int](res)
@@ -41,7 +46,7 @@ proc tokensOfOwnerByIndex(contract: Contract, address: EthAddress): seq[int] =
   var token: int
   result = @[]
   while (true):
-    token = tokenOfOwnerByIndex(contract, address, index)
+    token = tokenOfOwnerByIndex(contract, address, index.u256)
     if (token == -1 or token == 0):
       return result
     result.add(token)
@@ -50,6 +55,7 @@ proc tokensOfOwnerByIndex(contract: Contract, address: EthAddress): seq[int] =
 proc getCryptoKitties*(address: EthAddress): seq[Collectible] =
   result = @[]
   try:
+    # TODO handle testnet -- does this API exist in testnet??
     # TODO handle offset (recursive method?)
     # Crypto kitties has a limit of 20
     let url: string = fmt"https://api.cryptokitties.co/kitties?limit=20&offset=0&owner_wallet_address={$address}&parents=false"
@@ -105,7 +111,7 @@ proc getKudos*(address: EthAddress): seq[Collectible] =
       return result
 
     for token in tokens:
-      let url =  getTokenUri(contract, token)
+      let url =  getTokenUri(contract, token.u256)
 
       if (url == ""):
         return result
