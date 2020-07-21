@@ -12,10 +12,10 @@ ListView {
     property var contacts: ContactsData {}
     property var selectable: true
     property alias selectedContact: contactGroup.checkedButton
+    property string searchString: ""
+    property string lowerCaseSearchString: searchString.toLowerCase()
 
-    anchors.topMargin: 48
-    anchors.top: element2.bottom
-    anchors.fill: parent
+    width: parent.width
 
     model: contacts
     delegate: Contact {
@@ -25,6 +25,9 @@ ListView {
         isContact: model.isContact
         selectable: contactList.selectable
         profileClick: profilePopup.openPopup.bind(profilePopup)
+        visible: searchString === "" ||
+                 model.name.toLowerCase().includes(lowerCaseSearchString) ||
+                 model.address.toLowerCase().includes(lowerCaseSearchString)
     }
 
     ProfilePopup {

@@ -163,8 +163,8 @@ Item {
             anchors.top: deviceListLbl.bottom
             anchors.topMargin: Style.current.padding
             spacing: 5
-            anchors.right: syncContainer.right
-            anchors.left: syncContainer.left
+            anchors.right: parent.right
+            anchors.left: parent.left
             delegate: Item {
                 height: childrenRect.height
                 SVGImage {
