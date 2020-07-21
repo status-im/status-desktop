@@ -14,7 +14,7 @@ Rectangle {
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
-    color: "#00000000"
+    color: "Style.current.transparent"
 
     Rectangle {
         id: closeButton
@@ -24,7 +24,7 @@ Rectangle {
         anchors.topMargin: Style.current.padding
         anchors.rightMargin: Style.current.padding
         anchors.right: parent.right
-        radius: 8
+        radius: Style.current.radius
 
         SVGImage {
             id: closeModalImg
