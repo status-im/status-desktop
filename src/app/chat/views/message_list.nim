@@ -131,7 +131,7 @@ QtObject:
       ChatMessageRoles.ResponseTo.int: "responseTo",
       ChatMessageRoles.Index.int: "index",
       ChatMessageRoles.ImageUrls.int: "imageUrls",
-      ChatMessageRoles.Timeout.int: "timeout"
+      ChatMessageRoles.Timeout.int: "timeout",
       ChatMessageRoles.Image.int: "image"
     }.toTable
 

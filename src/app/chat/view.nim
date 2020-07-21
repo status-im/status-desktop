@@ -1,6 +1,7 @@
 import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os
 
 import ../../status/status
+import ../../status/libstatus/accounts/constants
 import ../../status/accounts as status_accounts
 import ../../status/chat as status_chat
 import ../../status/messages as status_messages
@@ -110,7 +111,7 @@ QtObject:
 
   proc sendImage*(self: ChatsView, imagePath: string) {.slot.} =
     let image = replace(imagePath, "file://", "")
-    let tmpImagePath = image_resizer(image, 2000)
+    let tmpImagePath = image_resizer(image, 2000, TMPDIR)
     self.status.chat.sendImage(self.activeChannel.id, tmpImagePath)
     removeFile(tmpImagePath)
 
