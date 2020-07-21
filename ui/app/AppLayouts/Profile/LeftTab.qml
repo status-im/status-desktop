@@ -1,40 +1,37 @@
 import QtQuick 2.13
-import QtQuick.Layouts 1.13
 import "../../../imports"
 import "../../../shared"
 import "./LeftTab"
 
-ColumnLayout {
+Item {
     property alias currentTab: profileMenu.profileCurrentIndex
 
     id: profileInfoContainer
-    spacing: 0
-    anchors.left: parent.left
-    anchors.leftMargin: 0
-    anchors.top: parent.top
-    anchors.topMargin: 0
-    anchors.bottom: parent.bottom
-    anchors.bottomMargin: 0
 
-    RowLayout {
-        id: profileHeader
-        height: 240
-        Layout.fillWidth: true
-
-        Profile {
-            username: profileModel.profile.username
-            identicon: profileModel.profile.identicon
-            pubkey: profileModel.profile.id
-        }
+    StyledText {
+        id: title
+        text: qsTr("Profile")
+        anchors.top: parent.top
+        anchors.topMargin: Style.current.padding
+        anchors.horizontalCenter: parent.horizontalCenter
+        font.weight: Font.Bold
+        font.pixelSize: 17
     }
 
-    RowLayout {
-        height: profileMenu.btnheight * 10
-        Layout.fillHeight: true
-        Layout.fillWidth: true
-
-        Menu {
-            id: profileMenu
-        }
+    Menu {
+        id: profileMenu
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.smallPadding
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.smallPadding
+        anchors.top: title.bottom
+        anchors.topMargin: Style.current.bigPadding
+        anchors.bottom: parent.bottom
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;formeditorColor:"#ffffff";height:600;width:340}
+}
+##^##*/

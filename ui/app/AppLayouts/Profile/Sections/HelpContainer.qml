@@ -24,15 +24,16 @@ Item {
         font.pixelSize: 20
     }
 
-    StyledText {
-        anchors.centerIn: parent
-        text: Utils.linkifyAndXSS(link)
-        onLinkActivated: Qt.openUrlExternally(link)
+    // FIXME the link doesn't exist
+//    StyledText {
+//        anchors.centerIn: parent
+//        text: Utils.linkifyAndXSS(link)
+//        onLinkActivated: Qt.openUrlExternally(link)
 
-        MouseArea {
-            anchors.fill: parent
-            acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
-            cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-        }
-    }
+//        MouseArea {
+//            anchors.fill: parent
+//            acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
+//            cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+//        }
+//    }
 }
