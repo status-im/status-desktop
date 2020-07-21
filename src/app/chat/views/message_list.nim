@@ -193,6 +193,3 @@ QtObject:
           m.alias = userNameOrAlias(c)
 
     self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.Username.int])
-
-
-
