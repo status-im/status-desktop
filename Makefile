@@ -76,6 +76,7 @@ else ifeq ($(detected_OS),Windows)
  PKG_TARGET := pkg-windows
  QRCODEGEN_MAKE_PARAMS := CC=gcc
  RUN_TARGET := run-windows
+ SIGNTOOL ?= C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.17763.0\\x64\\signtool.exe
  VCINSTALLDIR ?= C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\
  export VCINSTALLDIR
 else
@@ -320,6 +321,10 @@ $(NIM_WINDOWS_PREBUILT_DLLS):
 nim_windows_launcher: | deps
 	$(ENV_SCRIPT) nim c -d:debug --outdir:./bin --passL:"-static-libgcc -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive" src/nim_windows_launcher.nim
 
+ifneq ($(WINDOWS_CODESIGN_TIMESTAMP_URL),)
+ WINDOWS_CODESIGN_TIMESTAMP_PARAM := -t $(WINDOWS_CODESIGN_TIMESTAMP_URL)
+endif
+
 STATUS_CLIENT_ZIP ?= pkg/Status.zip
 
 $(STATUS_CLIENT_ZIP): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBUILT_DLLS)
@@ -336,7 +341,7 @@ $(STATUS_CLIENT_ZIP): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 	cp status.svg tmp/windows/dist/Status/resources/
 	cp resources.rcc tmp/windows/dist/Status/resources/
 	cp bin/nim_status_client.exe tmp/windows/dist/Status/bin/Status.exe
-	mv bin/nim_windows_launcher.exe tmp/windows/dist/Status/Status.exe
+	cp bin/nim_windows_launcher.exe tmp/windows/dist/Status/Status.exe
 	rcedit \
 		tmp/windows/dist/Status/bin/Status.exe \
 		--set-icon tmp/windows/dist/Status/resources/status.ico
@@ -355,13 +360,25 @@ $(STATUS_CLIENT_ZIP): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 		--release \
 		tmp/windows/dist/Status/bin/DOtherSide.dll
 	mv tmp/windows/dist/Status/bin/vc_redist.x64.exe tmp/windows/dist/Status/vendor/
-	# implement code signing of applicable files in deployable folder
+
+	# if WINDOWS_CODESIGN_PFX_PATH is not set then DLLs, EXEs are not signed
+ifdef WINDOWS_CODESIGN_PFX_PATH
+	find ./tmp/windows/dist/Status -type f \
+		| /usr/bin/egrep -i "\.(dll|exe)$$" \
+		| /usr/bin/xargs -I{} /usr/bin/bash -c \
+			"if ! '$(SIGNTOOL)' verify -pa {} &>/dev/null; then echo {}; fi" \
+		| /usr/bin/xargs -I{} "$(SIGNTOOL)" \
+			sign \
+			-v \
+			-f $(WINDOWS_CODESIGN_PFX_PATH) \
+			$(WINDOWS_CODESIGN_TIMESTAMP_PARAM) \
+			{}
+endif
 
 	echo -e $(BUILD_MSG) "zip"
 	mkdir -p pkg
 	cd tmp/windows/dist/Status && \
 	7z a ../../../../pkg/Status.zip *
-	# can the final .zip file be code signed as well?
 
 pkg: $(PKG_TARGET)
 
