@@ -1117,9 +1117,7 @@ void dos_qncm_delete(::DosQNetworkConfigurationManager *vptr)
     delete ncm;
 }
 
-#include "DOtherSide.moc"
-
-char *dos_image_resizer(char* imagePath, int maxSize)
+char *dos_image_resizer(char* imagePath, int maxSize, char* tmpDirPath)
 {
     QImage img(imagePath);
     img.setColorSpace(QColorSpace::SRgb);
@@ -1129,7 +1127,7 @@ char *dos_image_resizer(char* imagePath, int maxSize)
     QPixmap pixmap;
     pixmap = pixmap.fromImage(img.scaled(maxSize < w ? maxSize : w, maxSize < h ? maxSize : h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
-    auto newFilePath = QDir::tempPath() + "/" + QUuid::createUuid().toString() + ".jpg";
+    auto newFilePath = tmpDirPath + QUuid::createUuid().toString(QUuid::WithoutBraces) + ".jpg";
 
     QFile file(newFilePath);
     file.open(QIODevice::WriteOnly);
