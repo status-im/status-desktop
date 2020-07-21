@@ -303,4 +303,4 @@ proc dos_qabstracttablemodel_create(modelPtr: NimQAbstractTableModel,
 proc dos_qabstracttablemodel_parent(modelPtr: DosQAbstractTableModel, index: DosQModelIndex): DosQModelIndex {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qabstracttablemodel_index(modelPtr: DosQAbstractTableModel, row: cint, column: cint, parent: DosQModelIndex): DosQModelIndex {.cdecl, dynlib: dynLibName, importc.}
 
-proc dos_image_resizer(imagePath: cstring, maxSize: cint): cstring {.cdecl, dynlib: dynLibName, importc.}
+proc dos_image_resizer(imagePath: cstring, maxSize: cint, tmpDirPath: cstring): cstring {.cdecl, dynlib: dynLibName, importc.}
