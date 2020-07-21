@@ -138,11 +138,28 @@ type
 
   Setting* {.pure.} = enum
     Appearance = "appearance",
-    Currency = "currency,"
+    Currency = "currency"
+    EtherscanLink = "etherscan-link"
     InstallationId = "installation-id"
-    Mnemonic = "mnemonic",
-    Networks_CurrentNetwork = "networks/current-network",
-    NodeConfig = "node-config",
-    PublicKey = "public-key",
-    Stickers_PacksInstalled = "stickers/packs-installed",
+    Mnemonic = "mnemonic"
+    Networks_Networks = "networks/networks"
+    Networks_CurrentNetwork = "networks/current-network"
+    NodeConfig = "node-config"
+    PublicKey = "public-key"
+    Stickers_PacksInstalled = "stickers/packs-installed"
     Stickers_Recent = "stickers/recent-stickers"
+
+  UpstreamConfig* = ref object
+    enabled* {.serializedFieldName("Enabled").}: bool
+    url* {.serializedFieldName("URL").}: string
+
+  NodeConfig* = ref object
+    networkId* {.serializedFieldName("NetworkId").}: int
+    dataDir* {.serializedFieldName("DataDir").}: string
+    upstreamConfig* {.serializedFieldName("UpstreamConfig").}: UpstreamConfig
+
+  NetworkDetails* = ref object
+    id*: string
+    name*: string
+    etherscanLink* {.serializedFieldName("etherscan-link").}: string
+    config*: NodeConfig

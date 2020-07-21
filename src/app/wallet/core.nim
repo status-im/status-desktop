@@ -3,6 +3,8 @@ import NimQml, eventemitter, strformat, strutils, chronicles
 import view
 import views/[asset_list, account_list, account_item]
 import ../../status/libstatus/wallet as status_wallet
+import ../../status/libstatus/settings as status_settings
+import ../../status/libstatus/types as status_types
 import ../../signals/types
 
 import ../../status/[status, wallet]
@@ -39,6 +41,8 @@ proc init*(self: WalletController) =
 
   self.status.events.on("assetChanged") do(e: Args):
     self.view.updateView()
+
+  self.view.setEtherscanLink(status_settings.getCurrentNetworkDetails().etherscanLink)
 
 method onSignal(self: WalletController, data: Signal) =
   debug "New signal received"

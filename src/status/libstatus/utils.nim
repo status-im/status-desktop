@@ -1,4 +1,4 @@
-import json, types, random, strutils, strformat, tables
+import json, random, strutils, strformat, tables
 import stint, nim_status
 from times import getTime, toUnix, nanosecond
 import accounts/signing_phrases
@@ -70,3 +70,9 @@ proc isEmpty*(a: JsonNode): bool =
   of JNull: return true
   else:
     return false
+
+proc find*[T](s: seq[T], pred: proc(x: T): bool {.closure.}): T {.inline.} =
+  let results = s.filter(pred)
+  if results.len == 0:
+    return default(type(T))
+  result = results[0]
