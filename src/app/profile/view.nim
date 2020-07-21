@@ -20,6 +20,7 @@ QtObject:
     network: string
     status*: Status
     isDeviceSetup: bool
+    changeLanguage*: proc(locale: string)
 
   proc setup(self: ProfileView) =
     self.QObject.setup
@@ -31,7 +32,7 @@ QtObject:
     if not self.profile.isNil: self.profile.delete
     self.QObject.delete
 
-  proc newProfileView*(status: Status): ProfileView =
+  proc newProfileView*(status: Status, changeLanguage: proc(locale: string)): ProfileView =
     new(result, delete)
     result = ProfileView()
     result.profile = newProfileInfoView()
@@ -42,6 +43,7 @@ QtObject:
     result.network = ""
     result.status = status
     result.isDeviceSetup = false
+    result.changeLanguage = changeLanguage
     result.setup
 
   proc addMailServerToList*(self: ProfileView, mailserver: MailServer) =
@@ -117,6 +119,9 @@ QtObject:
   proc logout*(self: ProfileView) {.slot.} =
     self.status.profile.logout()
 
+  proc changeLocale*(self: ProfileView, locale: string) {.slot.} =
+    self.changeLanguage(locale)
+  
   proc nodeVersion*(self: ProfileView): string {.slot.} =
     self.status.getNodeVersion()
 

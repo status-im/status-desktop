@@ -57,6 +57,21 @@ Item {
         anchors.rightMargin: chatTextItem.chatHorizontalPadding
     }
 
+    Loader {
+        id: chatImageContent
+        active: isImage
+        sourceComponent: chatImageComponent
+        anchors.left: chatImage.right
+    }
+
+    Component {
+        id: chatImageComponent
+        ChatImage {
+            imageSource: image
+            imageWidth: 200
+        }
+    }
+
     Rectangle {
         id: stickerContainer
         visible: contentType === Constants.stickerType
@@ -91,9 +106,14 @@ Item {
 
     SentMessage {
         id: sentMessage
-        visible: isCurrentUser && outgoingStatus != "sent"
         anchors.verticalCenter: chatTime.verticalCenter
         anchors.left: chatTime.right
+        anchors.rightMargin: 5
+    }
+
+    Retry {
+        id: retry
+        anchors.right: chatTime.right
         anchors.rightMargin: 5
     }
 

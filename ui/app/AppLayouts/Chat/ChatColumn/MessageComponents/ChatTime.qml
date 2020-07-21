@@ -4,7 +4,7 @@ import "../../../../../imports"
 
 StyledTextEdit {
     id: chatTime
-    visible: (isEmoji || isMessage || isSticker)
+    visible: isMessage
     color: Style.current.darkGrey
     text: {
         let messageDate = new Date(Math.floor(timestamp))

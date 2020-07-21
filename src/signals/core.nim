@@ -1,6 +1,6 @@
 import NimQml, tables, json, chronicles, strutils, json_serialization
 import ../status/libstatus/types as status_types
-import types, messages, discovery, whisperFilter, envelopes
+import types, messages, discovery, whisperFilter, envelopes, expired
 
 logScope:
   topics = "signals"
@@ -38,8 +38,14 @@ QtObject:
     self.signalSubscribers[signalType].add(subscriber)
 
   proc processSignal(self: SignalsController) =
-    let jsonSignal = (self.statusSignal).parseJson
-    let signalString = $jsonSignal["type"].getStr
+    var jsonSignal:JsonNode
+    try: 
+      jsonSignal = self.statusSignal.parseJson
+    except:
+      error "Invalid signal received", data = self.statusSignal
+      return
+
+    let signalString = jsonSignal["type"].getStr
 
     trace "Raw signal data", data = $jsonSignal
     
@@ -59,6 +65,8 @@ QtObject:
         signal = messages.fromEvent(jsonSignal)
       of SignalType.EnvelopeSent:
         signal = envelopes.fromEvent(jsonSignal)
+      of SignalType.EnvelopeExpired:
+        signal = expired.fromEvent(jsonSignal)
       of SignalType.WhisperFilterAdded:
         signal = whisperFilter.fromEvent(jsonSignal)
       of SignalType.Wallet:

@@ -4,7 +4,7 @@ import "../../../../../imports"
 
 Rectangle {
     id: chatImage
-    visible: (isMessage || isEmoji) && authorCurrentMsg != authorPrevMsg
+    visible: isMessage  && authorCurrentMsg != authorPrevMsg
     width: identiconImage.width
     height: identiconImage.height
     border.width: 1

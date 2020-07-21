@@ -3,11 +3,14 @@ import "../../../../../shared"
 import "../../../../../imports"
 
 Rectangle {
+    property alias textField: lblReplyMessage
+    property bool longReply: false
+
     id: chatReply
     color:  Style.current.lightBlue
     visible: responseTo != "" && replyMessageIndex > -1
     // childrenRect.height shows a binding loop for soem reason, so we use heights instead
-    height: this.visible ? lblReplyAuthor.height + lblReplyMessage.height + 5 + 8 : 0
+    height: this.visible ? lblReplyAuthor.height + ((repliedMessageType === Constants.imageType ? imgReplyImage.height : lblReplyMessage.height) + 5 + 8) : 0
 
     StyledTextEdit {
         id: lblReplyAuthor
@@ -20,8 +23,20 @@ Rectangle {
         anchors.right: parent.right
     }
 
+    ChatImage {
+        id: imgReplyImage
+        visible: repliedMessageType == Constants.imageType
+        imageWidth: 50
+        imageSource: repliedMessageImage
+        anchors.top: lblReplyAuthor.bottom
+        anchors.topMargin: 5
+        anchors.left: parent.left
+        chatHorizontalPadding: 0
+    }
+
     StyledTextEdit {
         id: lblReplyMessage
+        visible: repliedMessageType != Constants.imageType
         anchors.top: lblReplyAuthor.bottom
         anchors.topMargin: 5
         text: Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), "26x26");
@@ -31,12 +46,13 @@ Rectangle {
         selectByMouse: true
         wrapMode: Text.Wrap
         anchors.left: parent.left
-        anchors.right: parent.right
+        anchors.right: chatReply.longReply ? parent.right : undefined
+        z: 51
     }
 
     Separator {
-        anchors.top: lblReplyMessage.bottom
-        anchors.topMargin: 8
+        anchors.top: repliedMessageType == Constants.imageType ? imgReplyImage.bottom : lblReplyMessage.bottom
+        anchors.topMargin: repliedMessageType == Constants.imageType ? 15 : 8
         anchors.left: lblReplyMessage.left
         anchors.right: lblReplyMessage.right
         anchors.rightMargin: chatTextItem.chatHorizontalPadding

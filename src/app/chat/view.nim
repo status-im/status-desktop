@@ -1,8 +1,10 @@
-import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils
+import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os
 
 import ../../status/status
+import ../../status/libstatus/accounts/constants
 import ../../status/accounts as status_accounts
 import ../../status/chat as status_chat
+import ../../status/messages as status_messages
 import ../../status/contacts as status_contacts
 import ../../status/ens as status_ens
 import ../../status/chat/[chat, message]
@@ -23,7 +25,7 @@ QtObject:
       chats*: ChannelsList
       currentSuggestions*: SuggestionsList
       callResult: string
-      messageList: Table[string, ChatMessageList]
+      messageList*: Table[string, ChatMessageList]
       activeChannel*: ChatItemView
       stickerPacks*: StickerPackList
       recentStickers*: StickerList
@@ -97,6 +99,21 @@ QtObject:
     m = self.replaceMentionsWithPubKeys(nameMentions, contacts, m, (c => c.ensName.split(".")[0]))
 
     self.status.chat.sendMessage(self.activeChannel.id, m, replyTo)
+
+  proc verifyMessageSent*(self: ChatsView, data: string) {.slot.} =
+    let messageData = data.parseJson
+    self.messageList[messageData["chatId"].getStr].checkTimeout(messageData["id"].getStr)
+
+  proc resendMessage*(self: ChatsView, chatId: string, messageId: string) {.slot.} =
+    self.status.messages.trackMessage(messageId, chatId)
+    self.status.chat.resendMessage(messageId)
+    self.messageList[chatId].resetTimeOut(messageId)
+
+  proc sendImage*(self: ChatsView, imagePath: string) {.slot.} =
+    let image = replace(imagePath, "file://", "")
+    let tmpImagePath = image_resizer(image, 2000, TMPDIR)
+    self.status.chat.sendImage(self.activeChannel.id, tmpImagePath)
+    removeFile(tmpImagePath)
 
   proc activeChannelChanged*(self: ChatsView) {.signal.}
 
@@ -224,6 +241,7 @@ QtObject:
 
   proc joinChat*(self: ChatsView, channel: string, chatTypeInt: int): int {.slot.} =
     self.status.chat.join(channel, ChatType(chatTypeInt))
+    self.setActiveChannel(channel)
 
   proc joinGroup*(self: ChatsView) {.slot.} =
     self.status.chat.confirmJoiningGroup(self.activeChannel.id)

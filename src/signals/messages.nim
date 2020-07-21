@@ -1,4 +1,4 @@
-import json, random, re, strutils, sequtils, sugar
+import json, random, re, strutils, sequtils, sugar, chronicles
 import json_serialization
 import ../status/libstatus/accounts as status_accounts
 import ../status/libstatus/settings as status_settings
@@ -141,12 +141,18 @@ proc toTextItem*(jsonText: JsonNode): TextItem =
 
 
 proc toMessage*(jsonMsg: JsonNode): Message =
+  var contentType: ContentType
+  try:
+    contentType = ContentType(jsonMsg{"contentType"}.getInt)
+  except:
+    warn "Unknown content type received", type = jsonMsg{"contentType"}.getInt
+    contentType = ContentType.Unknown
 
   var message = Message(
       alias: jsonMsg{"alias"}.getStr,
       chatId: jsonMsg{"localChatId"}.getStr,
       clock: jsonMsg{"clock"}.getInt,
-      contentType: ContentType(jsonMsg{"contentType"}.getInt),
+      contentType: contentType,
       ensName: jsonMsg{"ensName"}.getStr,
       fromAuthor: jsonMsg{"from"}.getStr,
       id: jsonMsg{"id"}.getStr,
@@ -165,7 +171,8 @@ proc toMessage*(jsonMsg: JsonNode): Message =
       isCurrentUser: $jsonMsg{"outgoingStatus"}.getStr == "sending" or $jsonMsg{"outgoingStatus"}.getStr == "sent",
       stickerHash: "",
       parsedText: @[],
-      imageUrls: ""
+      imageUrls: "",
+      image: $jsonMsg{"image"}.getStr
     )
 
   if jsonMsg["parsedText"].kind != JNull: 

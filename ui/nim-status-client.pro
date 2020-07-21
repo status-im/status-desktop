@@ -133,8 +133,11 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/qmldir \
     app/AppLayouts/Chat/ContactsColumn/ClosedEmptyView.qml \
     app/AppLayouts/Chat/components/EmojiPopup.qml \
+    app/AppLayouts/Chat/components/EmojiReaction.qml \
     app/AppLayouts/Chat/components/InviteFriendsPopup.qml \
+    app/AppLayouts/Chat/data/EmojiReactions.qml \
     app/AppLayouts/Wallet/components/HeaderButton.qml \
+    app/AppLayouts/Profile/Sections/Data/locales.js \
     fonts/InterStatus/InterStatus-Black.otf \
     fonts/InterStatus/InterStatus-BlackItalic.otf \
     fonts/InterStatus/InterStatus-Bold.otf \

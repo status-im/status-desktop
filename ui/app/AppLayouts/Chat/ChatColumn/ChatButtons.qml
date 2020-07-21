@@ -15,7 +15,7 @@ Item {
 
     Button {
         id: chatSendBtn
-        visible: txtData.length > 0
+        visible: txtData.length > 0 || chatColumn.isImage
         width: 30
         height: 30
         text: ""
@@ -23,8 +23,15 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         onClicked: {
-            chatsModel.sendMessage(txtData.text, chatColumn.isReply ? SelectedMessage.messageId : "")
-            txtData.text = ""
+            if(chatColumn.isImage){
+                chatsModel.sendImage(sendImageArea.image);
+                chatColumn.hideExtendedArea();
+            }
+
+            if(txtData.text.trim() > 0){
+                chatsModel.sendMessage(txtData.text, chatColumn.isReply ? SelectedMessage.messageId : "")
+                txtData.text = "";
+            }
         }
         background: Rectangle {
             color: parent.enabled ? Style.current.blue : Style.current.grey
@@ -45,7 +52,11 @@ Item {
         id: emojiIconContainer
         width: emojiIcon.width + chatButtonsContainer.iconPadding * 2
         height: emojiIcon.height + chatButtonsContainer.iconPadding * 2
-        anchors.right: txtData.length == 0 ? stickerIconContainer.left : chatSendBtn.left
+        anchors.right: {
+            if(stickerIconContainer.visible) return stickerIconContainer.left;
+            if(imageIconContainer.visible) return imageIconContainer.left;
+            return chatSendBtn.left;
+        }
         anchors.rightMargin: Style.current.padding - chatButtonsContainer.iconPadding * 2
         anchors.verticalCenter: parent.verticalCenter
         radius: Style.current.radius
@@ -91,11 +102,11 @@ Item {
         property bool hovered: false
 
         id: stickerIconContainer
-        visible: txtData.length == 0
+        visible: !chatColumn.isExtendedInput && txtData.length == 0
         width: emojiIcon.width + chatButtonsContainer.iconPadding * 2
         height: emojiIcon.height + chatButtonsContainer.iconPadding * 2
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding - chatButtonsContainer.iconPadding
+        anchors.right: imageIconContainer.visible ? imageIconContainer.left : parent.right
+        anchors.rightMargin: Style.current.padding - chatButtonsContainer.iconPadding * (imageIconContainer.visible ? 2 : 1)
         anchors.verticalCenter: parent.verticalCenter
         radius: Style.current.radius
         color: hovered ? Style.current.lightBlue : Style.current.transparent
@@ -132,6 +143,50 @@ Item {
                  } else {
                      stickersPopup.open()
                  }
+            }
+        }
+    }
+
+    Rectangle {
+        property bool hovered: false
+        visible: !chatColumn.isExtendedInput && (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne)
+        id: imageIconContainer
+        width: emojiIcon.width + chatButtonsContainer.iconPadding * 2
+        height: emojiIcon.height + chatButtonsContainer.iconPadding * 2
+        anchors.right: chatSendBtn.visible ? chatSendBtn.left : parent.right
+        anchors.rightMargin: Style.current.padding - chatButtonsContainer.iconPadding
+        anchors.verticalCenter: parent.verticalCenter
+        radius: Style.current.radius
+        color: hovered ? Style.current.lightBlue : Style.current.transparent
+
+        Image {
+            id: imageIcon
+            width: 20
+            height: 20
+            fillMode: Image.PreserveAspectFit
+            source: "../../../img/images_icon.svg"
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+
+        }
+        ColorOverlay {
+            anchors.fill: imageIcon
+            source: imageIcon
+            color: imageIconContainer.hovered ? Style.current.blue : Style.current.transparent
+        }
+
+        MouseArea {
+            cursorShape: Qt.PointingHandCursor
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: {
+              imageIconContainer.hovered = true
+            }
+            onExited: {
+              imageIconContainer.hovered = false
+            }
+            onClicked: {
+                imageDialog.open();
             }
         }
     }
