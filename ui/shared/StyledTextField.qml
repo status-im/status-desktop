@@ -4,4 +4,5 @@ import "../imports"
 
 TextField {
     font.family: Style.current.fontRegular.name
+    color: Style.current.textColor
 }

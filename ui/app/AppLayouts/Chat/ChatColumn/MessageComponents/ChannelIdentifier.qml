@@ -20,7 +20,7 @@ Item {
         height: 120
         radius: 120
         border.width: chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne ? 2 : 0
-        border.color: Style.current.grey
+        border.color: Style.current.border
         color: {
             if (chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne) {
                 return Style.current.transparent

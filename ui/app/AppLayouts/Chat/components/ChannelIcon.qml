@@ -57,9 +57,9 @@ Item {
             width: contactImage.width ? contactImage.width : 40
             height: contactImage.height ? contactImage.height : 40
             radius: 50
-            border.color: "#10000000"
+            border.color: Style.current.border
             border.width: 1
-            color: Style.current.transparent
+            color: Style.current.background
             SVGImage {
                 width: contactImage.width ? contactImage.width : 40
                 height: contactImage.height ? contactImage.height : 40

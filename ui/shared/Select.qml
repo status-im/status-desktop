@@ -7,7 +7,7 @@ import "../imports"
 Item {
     property string label: ""
     readonly property bool hasLabel: label !== ""
-    property color bgColor: Style.current.grey
+    property color bgColor: Style.current.inputBackground
     readonly property int labelMargin: 7
     property var selectOptions
     property int customHeight: 44
@@ -43,7 +43,7 @@ Item {
         id: inputRectangle
         height: customHeight
         color: bgColor
-        radius: 8
+        radius: Style.current.radius
         anchors.top: inputBox.hasLabel ? inputLabel.bottom : parent.top
         anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
         anchors.right: parent.right
@@ -100,7 +100,7 @@ Item {
             background: Rectangle {
                 width: parent.width
                 height: parent.height
-                color: Style.current.grey
+                color: Style.current.inputBackground
                 radius: Style.current.radius
             }
 
@@ -130,8 +130,22 @@ Item {
             Component {
                 id: menuItem
                 MenuItem {
+                    id: itemContainer
                     property var onClicked: function () {}
-                    property color bgColor: Style.current.white
+                    property string label: ""
+                    property color bgColor: Style.current.transparent
+
+                    height: itemText.height + 4
+                    width: parent ? parent.width : selectMenu.width
+
+                    StyledText {
+                        id: itemText
+                        text: itemContainer.label
+                        anchors.left: parent.left
+                        anchors.leftMargin: 5
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
                     onTriggered: function () {
                         onClicked()
                     }

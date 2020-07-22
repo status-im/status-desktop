@@ -93,7 +93,7 @@ Rectangle {
             placeholderText: qsTrId("type-a-message")
             Keys.onPressed: onEnter(event)
             background: Rectangle {
-                color: "#00000000"
+                color: Style.current.transparent
             }
         }
     }
