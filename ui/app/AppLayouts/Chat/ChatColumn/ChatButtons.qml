@@ -60,7 +60,7 @@ Item {
         anchors.rightMargin: Style.current.padding - chatButtonsContainer.iconPadding * 2
         anchors.verticalCenter: parent.verticalCenter
         radius: Style.current.radius
-        color: hovered ? Style.current.lightBlue : Style.current.transparent
+        color: hovered ? Style.current.secondaryBackground : Style.current.transparent
 
         SVGImage {
             id: emojiIcon
@@ -75,7 +75,7 @@ Item {
         ColorOverlay {
             anchors.fill: emojiIcon
             source: emojiIcon
-            color: emojiIconContainer.hovered || emojiPopup.opened ? Style.current.blue : Style.current.transparent
+            color: emojiIconContainer.hovered || emojiPopup.opened ? Style.current.blue : Style.current.darkGrey
         }
 
         MouseArea {
@@ -109,7 +109,7 @@ Item {
         anchors.rightMargin: Style.current.padding - chatButtonsContainer.iconPadding * (imageIconContainer.visible ? 2 : 1)
         anchors.verticalCenter: parent.verticalCenter
         radius: Style.current.radius
-        color: hovered ? Style.current.lightBlue : Style.current.transparent
+        color: hovered ? Style.current.secondaryBackground : Style.current.transparent
 
         Image {
             id: stickersIcon
@@ -124,7 +124,7 @@ Item {
         ColorOverlay {
             anchors.fill: stickersIcon
             source: stickersIcon
-            color: stickerIconContainer.hovered || stickersPopup.opened ? Style.current.blue : Style.current.transparent
+            color: stickerIconContainer.hovered || stickersPopup.opened ? Style.current.blue : Style.current.darkGrey
         }
 
         MouseArea {
@@ -157,7 +157,7 @@ Item {
         anchors.rightMargin: Style.current.padding - chatButtonsContainer.iconPadding
         anchors.verticalCenter: parent.verticalCenter
         radius: Style.current.radius
-        color: hovered ? Style.current.lightBlue : Style.current.transparent
+        color: hovered ? Style.current.secondaryBackground : Style.current.transparent
 
         Image {
             id: imageIcon
@@ -172,7 +172,7 @@ Item {
         ColorOverlay {
             anchors.fill: imageIcon
             source: imageIcon
-            color: imageIconContainer.hovered ? Style.current.blue : Style.current.transparent
+            color: imageIconContainer.hovered ? Style.current.blue : Style.current.darkGrey
         }
 
         MouseArea {

@@ -7,6 +7,7 @@ Rectangle {
     height: 32
     width: 32
     radius: 8
+    color: Style.current.transparent
     property var onClick: function() {}
     property string textToCopy: ""
 

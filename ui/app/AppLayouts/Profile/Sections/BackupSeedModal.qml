@@ -26,7 +26,8 @@ ModalPopup {
         height: 40*(len/2)
         width: 350
         border.width: 1
-        border.color: Style.current.grey
+        color: Style.current.background
+        border.color: Style.current.border
         radius: Style.current.radius
         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -48,7 +49,7 @@ ModalPopup {
               anchors.bottom: parent.bottom
               anchors.right: parent.right
               anchors.rightMargin: 175
-              color: Style.current.grey
+              color: Style.current.inputBackground
               visible: index >= wrapper.len/2
             }
 

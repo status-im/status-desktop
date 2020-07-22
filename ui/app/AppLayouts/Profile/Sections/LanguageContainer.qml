@@ -40,7 +40,7 @@ Item {
             Layout.leftMargin: Style.current.padding
             selectOptions: Locales_JSON.locales.map(locale => {
                 return {
-                    text: locale,
+                    label: locale,
                     onClicked: function () {
                         profileModel.changeLocale(locale)
                         appSettings.locale = locale

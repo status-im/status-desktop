@@ -8,10 +8,8 @@ Item {
     property alias text: inputValue.text
     property string validationError: ""
     property string label: ""
-    //    property string label: "My Label"
     readonly property bool hasLabel: label !== ""
-    property color bgColor: Style.current.grey
-    //    property url icon: "../app/img/hash.svg"
+    property color bgColor: Style.current.inputBackground
     property url icon: ""
     property int iconHeight: 24
     property int iconWidth: 24
@@ -45,7 +43,7 @@ Item {
         id: inputRectangle
         height: customHeight
         color: bgColor
-        radius: 8
+        radius: Style.current.radius
         anchors.top: inputBox.hasLabel ? inputLabel.bottom : parent.top
         anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
         anchors.right: parent.right
@@ -70,7 +68,7 @@ Item {
             selectByMouse: true
             font.pixelSize: fontPixelSize
             background: Rectangle {
-                color: "#00000000"
+                color: Style.current.transparent
             }
         }
 
