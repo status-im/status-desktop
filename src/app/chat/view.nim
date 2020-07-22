@@ -130,9 +130,10 @@ QtObject:
 
   proc setActiveChannelByIndex*(self: ChatsView, index: int) {.slot.} =
     if(self.chats.chats.len == 0): return
-    var response = self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
-    if not response.hasKey("error"):
-      self.chats.clearUnreadMessagesCount(self.activeChannel.chatItem)
+    if(not self.activeChannel.chatItem.isNil and self.activeChannel.chatItem.unviewedMessagesCount > 0):
+      var response = self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
+      if not response.hasKey("error"):
+        self.chats.clearUnreadMessagesCount(self.activeChannel.chatItem)
     let selectedChannel = self.chats.getChannel(index)
     if self.activeChannel.id == selectedChannel.id: return
 
