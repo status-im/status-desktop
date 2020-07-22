@@ -11,7 +11,7 @@ Rectangle {
     height: {
         let h = chatVerticalPadding
         for (let i = 0; i < imageRepeater.count; i++) {
-            h += imageRepeater.itemAt(i).height
+            h += imageRepeater.itemAt(i).height || imageRepeater.itemAt(i).minHeight
         }
         return h + chatVerticalPadding * imageRepeater.count
     }
@@ -31,6 +31,9 @@ Rectangle {
         }
 
         Image {
+            // This minimum height is for the initial load of the chat to work correctly
+            // Without this, the chat doesn't understand that the image wil lhave a height and doesn't scroll to the bottom
+            property int minHeight: 400
             id: imageMessage
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: (index == 0) ? parent.top: parent.children[index-1].bottom
@@ -38,8 +41,10 @@ Rectangle {
             sourceSize.width: imageChatBox.imageWidth
             source: modelData
             onStatusChanged: {
-                if (imageMessage.status == Image.Error) {
+                if (imageMessage.status === Image.Error) {
                     imageMessage.height = 0
+                    imageMessage.minHeight = 0
+                    imageMessage.source = ""
                     imageMessage.visible = false
                     imageChatBox.height = 0
                     imageChatBox.visible = false
