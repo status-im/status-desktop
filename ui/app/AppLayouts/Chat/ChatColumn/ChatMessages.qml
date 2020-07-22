@@ -23,12 +23,7 @@ ScrollView {
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
     function scrollToBottom(force, caller) {
-        if(force){
-            Qt.callLater( chatLogView.positionViewAtEnd )
-            return;
-        }
-
-        if (!chatLogView.atYEnd) {
+        if (!force && !chatLogView.atYEnd) {
             // User has scrolled up, we don't want to scroll back
             return
         }
@@ -36,7 +31,7 @@ ScrollView {
             // If we have a caller, only accept its request if it's the last message
             return
         }
-        Qt.callLater( chatLogView.positionViewAtEnd )
+        Qt.callLater(chatLogView.positionViewAtEnd)
     }
 
     ListView {
@@ -48,7 +43,12 @@ ScrollView {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
+        Timer {
+            id: timer
+        }
+
         Connections {
+
             target: chatsModel
             onMessagesLoaded: {
                 loadingMessages = false;
@@ -64,6 +64,13 @@ ScrollView {
 
             onMessagePushed: {
                 scrollToBottom()
+            }
+
+            onAppReady: {
+                // Add an additionnal delay, since the app can be "ready" just milliseconds before the UI updated to show the chat
+                timer.setTimeout(function() {
+                    scrollToBottom(true)
+                }, 500);
             }
 
             onMessageNotificationPushed: function(chatId, msg) {
