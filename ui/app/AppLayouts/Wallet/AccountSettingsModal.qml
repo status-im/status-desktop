@@ -12,7 +12,7 @@ ModalPopup {
     // TODO add icon when we have that feature
     //% "Status account settings"
     title: qsTrId("status-account-settings")
-    height: 635
+    height: 675
 
     property int marginBetweenInputs: 35
     property string selectedColor: currentAccount.iconColor

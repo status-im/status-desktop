@@ -141,9 +141,9 @@ Item {
                     StyledText {
                         id: itemText
                         text: itemContainer.label
-                        anchors.left: parent.left
+                        anchors.left: parent ? parent.left : undefined
                         anchors.leftMargin: 5
-                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.verticalCenter: parent ? parent.verticalCenter : undefined
                     }
 
                     onTriggered: function () {
