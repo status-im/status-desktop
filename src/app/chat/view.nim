@@ -287,14 +287,15 @@ QtObject:
       self.unreadMessageCnt = unreadTotal
       self.unreadMessagesCntChanged()
 
-  proc updateChats*(self: ChatsView, chats: seq[Chat]) =
+  proc updateChats*(self: ChatsView, chats: seq[Chat], triggerChange:bool = true) =
     for chat in chats:
       self.upsertChannel(chat.id)
-      self.chats.updateChat(chat)
+      self.chats.updateChat(chat, triggerChange)
       if(self.activeChannel.id == chat.id):
         self.activeChannel.setChatItem(chat)
         self.currentSuggestions.setNewData(self.status.contacts.getContacts())
-        self.activeChannelChanged()
+        if triggerChange: 
+          self.activeChannelChanged()
     self.calculateUnreadMessages()
 
   proc renameGroup*(self: ChatsView, newName: string) {.slot.} =
