@@ -41,6 +41,7 @@ proc init*(self: ProfileController, account: Account) =
   let appearance = status_settings.getSetting[int](Setting.Appearance)
   profile.appearance = appearance
   profile.id = pubKey
+  profile.address = account.keyUid
 
   self.view.addDevices(devices.getAllDevices())
   self.view.setDeviceSetup(devices.isDeviceSetup())
