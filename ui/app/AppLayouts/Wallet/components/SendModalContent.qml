@@ -119,7 +119,7 @@ Item {
         id: assetTypeSelect
         iconHeight: 24
         iconWidth: 24
-        icon:  "../../../img/tokens/" + selectedAssetSymbol.toUpperCase() + ".png"
+        icon:  selectedAssetSymbol ? "../../../img/tokens/" + selectedAssetSymbol.toUpperCase() + ".png" : ""
         //% "Select the asset"
         label: qsTrId("select-the-asset")
         anchors.top: txtAmount.bottom

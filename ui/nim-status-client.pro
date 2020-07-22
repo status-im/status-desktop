@@ -326,6 +326,7 @@ DISTFILES += \
     shared/StyledTextArea.qml \
     shared/StyledTextEdit.qml \
     shared/StyledTextField.qml \
+    shared/SVGImage.qml \
     shared/TextWithLabel.qml \
     shared/img/check.svg \
     shared/img/close.svg \
