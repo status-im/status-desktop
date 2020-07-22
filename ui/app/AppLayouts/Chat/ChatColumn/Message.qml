@@ -70,7 +70,7 @@ Item {
                 case Constants.chatIdentifier:
                     return channelIdentifierComponent
                 case Constants.systemMessagePrivateGroupType:
-                    return channelIdentifierComponent
+                    return privateGroupHeaderComponent
                 default:
                     return appSettings.compactMode ? compactMessageComponent : messageComponent
             }
