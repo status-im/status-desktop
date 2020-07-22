@@ -62,7 +62,7 @@ Item {
                 }
                 StyledText {
                     id: assetFullTokenName
-                    text: name
+                    text: name || ""
                     anchors.bottom: assetInfoImage.bottom
                     anchors.bottomMargin: 0
                     anchors.left: assetInfoImage.right

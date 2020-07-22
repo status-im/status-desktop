@@ -41,7 +41,6 @@ Popup {
     }
 
     contentItem: ColumnLayout {
-        parent: popup
         anchors.fill: parent
         spacing: 0
 
