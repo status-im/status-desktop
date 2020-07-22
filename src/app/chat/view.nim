@@ -32,6 +32,7 @@ QtObject:
       replyTo: string
       channelOpenTime*: Table[string, int64]
       connected: bool
+      unreadMessageCnt: int
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
 
@@ -55,6 +56,7 @@ QtObject:
     result.messageList = initTable[string, ChatMessageList]()
     result.stickerPacks = newStickerPackList()
     result.recentStickers = newStickerList()
+    result.unreadMessageCnt = 0
     result.setup()
 
   proc addStickerPackToList*(self: ChatsView, stickerPack: StickerPack, isInstalled, isBought: bool) =
@@ -266,6 +268,23 @@ QtObject:
   proc clearChatHistory*(self: ChatsView, id: string) {.slot.} =
     self.status.chat.clearHistory(id)
 
+  proc unreadMessages*(self: ChatsView): int {.slot.} =
+    result = self.unreadMessageCnt
+
+  proc unreadMessagesCntChanged*(self: ChatsView) {.signal.}
+
+  QtProperty[int] unreadMessagesCount:
+    read = unreadMessages
+    notify = unreadMessagesCntChanged
+
+  proc calculateUnreadMessages*(self: ChatsView) =
+    var unreadTotal = 0
+    for chatItem in self.chats.chats:
+      unreadTotal = unreadTotal + chatItem.unviewedMessagesCount
+    if unreadTotal != self.unreadMessageCnt:
+      self.unreadMessageCnt = unreadTotal
+      self.unreadMessagesCntChanged()
+
   proc updateChats*(self: ChatsView, chats: seq[Chat]) =
     for chat in chats:
       self.upsertChannel(chat.id)
@@ -274,6 +293,7 @@ QtObject:
         self.activeChannel.setChatItem(chat)
         self.currentSuggestions.setNewData(self.status.contacts.getContacts())
         self.activeChannelChanged()
+    self.calculateUnreadMessages()
 
   proc renameGroup*(self: ChatsView, newName: string) {.slot.} =
     self.status.chat.renameGroup(self.activeChannel.id, newName)

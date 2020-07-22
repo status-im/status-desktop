@@ -55,6 +55,25 @@ RowLayout {
                 fillMode: Image.PreserveAspectFit
                 source: parent.checked ? "img/messageActive.svg" : "img/message.svg"
             }
+
+            Rectangle {
+                visible: !parent.checked && chatsModel.unreadMessagesCount > 0
+                anchors.top: image.top
+                anchors.left: image.right
+                anchors.leftMargin: -10
+                anchors.topMargin: -5
+                radius: 9
+                color: Style.current.blue
+                width: childrenRect.width + 10
+                height: childrenRect.height + 5
+                Text {
+                    font.pixelSize: 12
+                    color: Style.current.white
+                    anchors.centerIn: parent
+                    text: chatsModel.unreadMessagesCount
+                }
+            }
+            
         }
 
         TabButton {
