@@ -6,7 +6,7 @@ StyledText {
     id: sentMessage
     visible: isCurrentUser && !timeout && !isExpired && isMessage
     color: Style.current.darkGrey
-    text: outgoingStatus == "sent" ?
+    text: outgoingStatus === "sent" ?
     //% "Sent"
     qsTrId("status-sent") :
     //% "Sending..."
