@@ -117,6 +117,8 @@ QtObject:
 
   proc activeChannelChanged*(self: ChatsView) {.signal.}
 
+  proc sendingMessage*(self: ChatsView) {.signal.}
+
   proc userNameOrAlias*(self: ChatsView, pubKey: string): string {.slot.} =
     if self.status.chat.contacts.hasKey(pubKey):
       return status_ens.userNameOrAlias(self.status.chat.contacts[pubKey])

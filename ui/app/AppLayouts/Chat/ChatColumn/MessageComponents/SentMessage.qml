@@ -4,7 +4,7 @@ import "../../../../../imports"
 
 StyledText {
     id: sentMessage
-    visible: isCurrentUser && !timeout && isMessage
+    visible: isCurrentUser && !timeout && !isExpired && isMessage
     color: Style.current.darkGrey
     text: outgoingStatus == "sent" ?
     //% "Sent"
