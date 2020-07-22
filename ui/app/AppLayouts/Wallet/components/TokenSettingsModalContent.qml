@@ -58,7 +58,6 @@ Item {
                     anchors.leftMargin: Style.current.smallPadding
                     anchors.top: assetInfoImage.top
                     anchors.topMargin: 0
-                    color: Style.current.black
                     font.pixelSize: 15
                 }
                 StyledText {
