@@ -41,6 +41,7 @@ proc handleChatEvents(self: ChatController) =
   self.status.events.on("sendingMessage") do(e:Args):
     var msg = MessageArgs(e)
     self.status.messages.trackMessage(msg.id, msg.channel)
+    self.view.sendingMessage()
 
   self.status.events.on("messageSent") do(e:Args):
     var msg = MessageSentArgs(e)

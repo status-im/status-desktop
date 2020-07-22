@@ -23,6 +23,11 @@ ScrollView {
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
     function scrollToBottom(force, caller) {
+        if(force){
+            Qt.callLater( chatLogView.positionViewAtEnd )
+            return;
+        }
+
         if (!chatLogView.atYEnd) {
             // User has scrolled up, we don't want to scroll back
             return
@@ -53,6 +58,10 @@ ScrollView {
                 scrollToBottom(true)
             }
 
+            onSendingMessage: {
+                scrollToBottom(true)
+            }
+
             onMessagePushed: {
                 scrollToBottom()
             }
@@ -62,10 +71,15 @@ ScrollView {
             }
         }
 
+        property var loadMsgs : Backpressure.oneInTime(chatLogView, 500, function() { 
+            if(loadingMessages) return;
+            loadingMessages = true;
+            chatsModel.loadMoreMessages();
+        });
+
         onContentYChanged: {
-            if(atYBeginning && !loadingMessages){
-                loadingMessages = true;
-                chatsModel.loadMoreMessages();
+            if(scrollY < 500){
+                loadMsgs();
             }
         }
 
