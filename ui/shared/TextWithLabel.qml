@@ -7,37 +7,37 @@ Item {
     property string text: "My Text"
     property string label: "My Label"
     property string fontFamily: Style.current.fontRegular.name
-    readonly property int labelMargin: 7
+    property string textToCopy: ""
 
-    id: inputBox
-    height: textItem.height + inputLabel.height + labelMargin
-    anchors.right: parent.right
-    anchors.left: parent.left
+    id: infoText
+    height: this.childrenRect.height
+    width: parent.width
 
     StyledText {
         id: inputLabel
-        text: inputBox.label
+        text: infoText.label
         font.weight: Font.Medium
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.top: parent.top
-        anchors.topMargin: 0
         font.pixelSize: 13
         color: Style.current.darkGrey
     }
 
     StyledTextEdit {
         id: textItem
-        text: inputBox.text
+        text: infoText.text
         font.family: fontFamily
         selectByMouse: true
         readOnly: true
-        font.weight: Font.Medium
-        anchors.left: parent.left
-        anchors.leftMargin: 0
         anchors.top: inputLabel.bottom
-        anchors.topMargin: inputBox.labelMargin
+        anchors.topMargin: 7
         font.pixelSize: 15
+    }
+
+    CopyToClipBoardButton {
+        visible: !!infoText.textToCopy
+        anchors.verticalCenter: textItem.verticalCenter
+        anchors.left: textItem.right
+        anchors.leftMargin: Style.current.smallPadding
+        textToCopy: infoText.textToCopy
     }
 }
 

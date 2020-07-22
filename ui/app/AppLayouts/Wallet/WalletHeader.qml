@@ -155,7 +155,7 @@ Item {
                 Action {
                     //% "Set Currency"
                     text: qsTrId("set-currency")
-                    icon.source: "../../img/set_currency.svg"
+                    icon.source: "../../img/globe.svg"
                     onTriggered: {
                         setCurrencyModal.open()
                     }

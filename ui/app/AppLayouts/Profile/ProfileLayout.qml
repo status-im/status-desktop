@@ -7,6 +7,7 @@ import "./Sections"
 
 SplitView {
     property var appSettings
+    property int contentMargin: 120
 
     id: profileView
     Layout.fillHeight: true
@@ -36,19 +37,27 @@ SplitView {
         anchors.leftMargin: 0
         currentIndex: leftTab.currentTab
 
-        EnsContainer {}
+        // This list needs to match LeftTab/constants.js
+        // Would be better if we could make them match automatically
+        MyProfileContainer {}
 
         ContactsContainer {}
 
+        EnsContainer {}
+
         PrivacyContainer {}
 
-        DevicesContainer {}
+        AppearanceContainer {}
 
-        SyncContainer {}
+        SoundsContainer {}
 
         LanguageContainer {}
 
         NotificationsContainer {}
+
+        SyncContainer {}
+
+        DevicesContainer {}
 
         AdvancedContainer {
             appSettings: profileView.appSettings
@@ -57,8 +66,6 @@ SplitView {
         HelpContainer {}
 
         AboutContainer {}
-
-        SignoutContainer {}
     }
 }
 

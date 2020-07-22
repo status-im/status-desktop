@@ -9,6 +9,7 @@ Rectangle {
     property int iconWidth: 14
     property int iconHeight: 14
     property alias icon: imgIcon
+    property bool clickable: true
 
     id: btnAddContainer
     width: 36
@@ -69,6 +70,7 @@ Rectangle {
 
     MouseArea {
         id: mouseArea
+        visible: btnAddContainer.clickable
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         cursorShape: Qt.PointingHandCursor

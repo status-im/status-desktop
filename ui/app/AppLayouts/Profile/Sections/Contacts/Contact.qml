@@ -23,7 +23,6 @@ Rectangle {
     Identicon {
         id: accountImage
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
         source: identicon
     }
