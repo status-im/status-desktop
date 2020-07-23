@@ -57,7 +57,7 @@ RowLayout {
             }
 
             Rectangle {
-                visible: !parent.checked && chatsModel.unreadMessagesCount > 0
+                visible: chatsModel.unreadMessagesCount > 0
                 anchors.top: image.top
                 anchors.left: image.right
                 anchors.leftMargin: -10
