@@ -62,6 +62,8 @@ Item {
         active: isImage
         sourceComponent: chatImageComponent
         anchors.left: chatImage.right
+        anchors.leftMargin: 8
+        anchors.top: chatReply.bottom
     }
 
     Component {
