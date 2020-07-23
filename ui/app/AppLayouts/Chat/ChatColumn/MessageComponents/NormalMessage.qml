@@ -9,7 +9,7 @@ Item {
     id: chatTextItem
     anchors.top: parent.top
     anchors.topMargin: authorCurrentMsg != authorPrevMsg ? Style.current.smallPadding : 0
-    height: childrenRect.height + this.anchors.topMargin
+    height: childrenRect.height + this.anchors.topMargin + (dateGroupLbl.visible ? dateGroupLbl.height : 0)
     width: parent.width
 
     DateGroup {
@@ -82,7 +82,7 @@ Item {
         anchors.right: !isCurrentUser ? undefined : parent.right
         anchors.rightMargin: !isCurrentUser ? 0 : Style.current.padding
         anchors.top: authorCurrentMsg != authorPrevMsg && !isCurrentUser ? chatImage.top : (dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top)
-        anchors.topMargin: 0
+        anchors.topMargin: dateGroupLbl.visible ? Style.current.padding : 0
         visible: isMessage
 
         ChatReply {
