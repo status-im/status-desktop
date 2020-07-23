@@ -178,7 +178,6 @@ StackLayout {
             }
         }
 
-
         Rectangle {
             id: inputArea
             color: Style.current.background
@@ -197,8 +196,9 @@ StackLayout {
                 anchors.bottom: inputArea.top
                 anchors.left: inputArea.left
                 filter: chatInput.textInput.text
+                cursorPosition: chatInput.textInput.cursorPosition
                 property: "ensName, alias"
-                onItemSelected: function (item) {
+                onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
                     let currentText = chatInput.textInput.text
                     let lastAt = currentText.lastIndexOf("@")
                     let aliasName = item[suggestionsBox.property.split(",").map(p => p.trim()).find(p => !!item[p])]
@@ -206,13 +206,14 @@ StackLayout {
                     let position = 0;
                     let text = ""
 
-                    if (currentText.length === 1) {
+                    if (currentText === "@") {
                         position = nameLen
                         text = "@" + aliasName + " "
                     } else {
-                        let left = currentText.slice(0, lastAt)
+                        let left = currentText.substring(0, lastAtPosition)
+                        let right = currentText.substring(lastCursorPosition)
+                        text = `${left}@${aliasName} ${right}`
                         position = left.length + nameLen
-                        text = left + "@" + aliasName + " "
                     }
 
                     chatInput.textInput.text = text
