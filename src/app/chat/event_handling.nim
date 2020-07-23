@@ -30,6 +30,7 @@ proc handleChatEvents(self: ChatController) =
   self.status.events.on("chatsLoaded") do(e:Args):
     self.view.calculateUnreadMessages()
     self.view.setActiveChannelByIndex(0)
+    self.view.appReady()
 
   self.status.events.on("channelJoined") do(e: Args):
     var channel = ChannelArgs(e)

@@ -62,6 +62,8 @@ Item {
         active: isImage
         sourceComponent: chatImageComponent
         anchors.left: chatImage.right
+        anchors.leftMargin: 8
+        anchors.top: chatReply.bottom
     }
 
     Component {
@@ -106,9 +108,10 @@ Item {
 
     SentMessage {
         id: sentMessage
+        visible: isCurrentUser && !timeout && isMessage && outgoingStatus !== "sent"
         anchors.verticalCenter: chatTime.verticalCenter
         anchors.left: chatTime.right
-        anchors.rightMargin: 5
+        anchors.leftMargin: 8
     }
 
     Retry {
