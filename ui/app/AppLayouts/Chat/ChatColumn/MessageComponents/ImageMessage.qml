@@ -5,7 +5,6 @@ import "../../../../../imports"
 Rectangle {
     property int chatVerticalPadding: 12
     property int chatHorizontalPadding: 12
-    property int imageWidth: 350
 
     id: imageChatBox
     height: {
@@ -17,7 +16,16 @@ Rectangle {
     }
     color: isCurrentUser ? Style.current.blue : Style.current.lightBlue
     border.color: "transparent"
-    width:  imageWidth + 2 * chatHorizontalPadding
+    width: {
+        let w = 0
+        for (let i = 0; i < imageRepeater.count; i++) {
+            if (imageRepeater.itemAt(i).width > w) {
+                w = imageRepeater.itemAt(i).width
+            }
+        }
+        return w + 2 * chatHorizontalPadding
+    }
+
     radius: 16
 
     Repeater {
@@ -30,23 +38,11 @@ Rectangle {
             return imageUrls.split(" ")
         }
 
-        Image {
-            id: imageMessage
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: (index == 0) ? parent.top: parent.children[index-1].bottom
-            anchors.topMargin: imageChatBox.chatVerticalPadding
-            sourceSize.width: imageChatBox.imageWidth
+        ImageLoader {
+            verticalPadding: imageChatBox.chatVerticalPadding
+            anchors.top: (index === 0) ? parent.top: parent.children[index-1].bottom
+            anchors.topMargin: verticalPadding
             source: modelData
-            onStatusChanged: {
-                if (imageMessage.status == Image.Error) {
-                    imageMessage.height = 0
-                    imageMessage.visible = false
-                    imageChatBox.height = 0
-                    imageChatBox.visible = false
-                } else if (imageMessage.status == Image.Ready) {
-                    messageItem.scrollToBottom(true, messageItem)
-                }
-            }
         }
     }
 

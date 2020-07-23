@@ -9,6 +9,11 @@ Item {
     id: root
     property var chatId: ""
     property var message: "hello"
+    property var processClick : Backpressure.oneInTime(root, 1000, function() {
+        notificationSound.play()
+        var w1 = winInit.createObject(null)
+        w1.destroy()
+    });
 
     Component {
         id: winInit
@@ -47,7 +52,6 @@ Item {
                         onClicked: {
                             timer.stop()
                             notificationWindowSub.close()
-                            notificationWindowSub.destroy()
                             mainWin.destroy()
                             applicationWindow.raise()
                             chatsModel.setActiveChannel(chatId);
@@ -63,7 +67,6 @@ Item {
                 repeat: false
                 onTriggered: {
                   notificationWindowSub.close()
-                  notificationWindowSub.destroy()
                 }
             }
             onVisibleChanged: {
@@ -83,10 +86,9 @@ Item {
     function notifyUser(chatId, msg) {
         this.chatId = chatId
         this.message = msg
-        notificationSound.play()
-        var w1 = winInit.createObject(null)
-        w1.destroy()
-    }
+        processClick()
+   }
+
 }
 
 /*##^##

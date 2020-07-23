@@ -14,6 +14,10 @@ proc handleChatEvents(self: ChatController) =
     self.view.updateChats(evArgs.chats)
     self.view.pushMessages(evArgs.messages)
 
+  self.status.events.on("channelUpdate") do(e: Args):
+    var evArgs = ChatUpdateArgs(e)
+    self.view.updateChats(evArgs.chats, false)
+
   self.status.events.on("chatHistoryCleared") do(e: Args):
     var args = ChannelArgs(e)
     self.view.clearMessages(args.chat.id)
@@ -24,7 +28,9 @@ proc handleChatEvents(self: ChatController) =
     self.status.chat.chatMessages(channel.chat.id)
 
   self.status.events.on("chatsLoaded") do(e:Args):
+    self.view.calculateUnreadMessages()
     self.view.setActiveChannelByIndex(0)
+    self.view.appReady()
 
   self.status.events.on("channelJoined") do(e: Args):
     var channel = ChannelArgs(e)
@@ -41,6 +47,7 @@ proc handleChatEvents(self: ChatController) =
   self.status.events.on("sendingMessage") do(e:Args):
     var msg = MessageArgs(e)
     self.status.messages.trackMessage(msg.id, msg.channel)
+    self.view.sendingMessage()
 
   self.status.events.on("messageSent") do(e:Args):
     var msg = MessageSentArgs(e)

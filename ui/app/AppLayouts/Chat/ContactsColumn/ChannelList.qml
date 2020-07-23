@@ -5,7 +5,7 @@ import "../../../../shared"
 import "../../../../imports"
 import "../components"
 
-Item {
+ScrollView {
     property alias channelListCount: chatGroupsListView.count
     property string searchStr: ""
     id: chatGroupsContainer
@@ -20,6 +20,7 @@ Item {
         anchors.left: parent.left
         anchors.rightMargin: Style.current.padding
         anchors.leftMargin: Style.current.padding
+        clip: true
         model: chatsModel.chats
         delegate: Channel {
             name: model.name

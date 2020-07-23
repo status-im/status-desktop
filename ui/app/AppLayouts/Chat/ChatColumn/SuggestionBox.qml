@@ -31,7 +31,8 @@ Rectangle {
     property alias suggestionsModel: filterItem.model
     property alias filter: filterItem.filter
     property alias property: filterItem.property
-    signal itemSelected(var item)
+    property int cursorPosition
+    signal itemSelected(var item, int lastAtPosition, int lastCursorPosition)
 
 
     z: parent.z + 100
@@ -63,6 +64,7 @@ Rectangle {
     SuggestionFilter {
         id: filterItem
         sourceModel: container.model
+        cursorPosition: container.cursorPosition
     }
 
 
@@ -125,7 +127,9 @@ Rectangle {
                         onExited: {
                             delegateItem.hovered = false
                         }
-                        onClicked: container.itemSelected(delegateItem.suggestion)
+                        onClicked: {
+                          container.itemSelected(delegateItem.suggestion, filterItem.lastAtPosition, filterItem.cursorPosition)
+                        }
                     }
                 }
             }

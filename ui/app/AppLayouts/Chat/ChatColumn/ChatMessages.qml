@@ -6,6 +6,7 @@ import "../../../../shared"
 import "../../../../imports"
 import "../components"
 import "./samples/"
+import "./MessageComponents"
 
 ScrollView {
     id: scrollView
@@ -22,18 +23,6 @@ ScrollView {
     ScrollBar.vertical.policy: chatLogView.contentHeight > chatLogView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-    function scrollToBottom(force, caller) {
-        if (!chatLogView.atYEnd) {
-            // User has scrolled up, we don't want to scroll back
-            return
-        }
-        if (caller && caller !== chatLogView.itemAtIndex(chatLogView.count - 1)) {
-            // If we have a caller, only accept its request if it's the last message
-            return
-        }
-        Qt.callLater( chatLogView.positionViewAtEnd )
-    }
-
     ListView {
         id: chatLogView
         anchors.fill: parent
@@ -43,18 +32,55 @@ ScrollView {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
+        Timer {
+            id: timer
+        }
+
+        function scrollToBottom(force, caller) {
+            if (!force && !chatLogView.atYEnd) {
+                // User has scrolled up, we don't want to scroll back
+                return
+            }
+            if (caller) {
+                if (caller !== chatLogView.itemAtIndex(chatLogView.count - 1)) {
+                    // If we have a caller, only accept its request if it's the last message
+                    return
+                }
+                // Add a small delay because images, even though they say they say they are loaed, they aren't shown yet
+                timer.setTimeout(function() {
+                    Qt.callLater(chatLogView.positionViewAtEnd)
+                }, 100);
+                return
+            }
+
+            Qt.callLater(chatLogView.positionViewAtEnd)
+        }
+
+
         Connections {
+
             target: chatsModel
             onMessagesLoaded: {
                 loadingMessages = false;
             }
 
             onActiveChannelChanged: {
-                scrollToBottom(true)
+                chatLogView.scrollToBottom(true)
+            }
+
+            onSendingMessage: {
+                chatLogView.scrollToBottom(true)
             }
 
             onMessagePushed: {
-                scrollToBottom()
+                chatLogView.scrollToBottom()
+            }
+
+            onAppReady: {
+                // Add an additionnal delay, since the app can be "ready" just milliseconds before the UI updated to show the chat
+                timer.setTimeout(function() {
+                    chatLogView.scrollToBottom(true)
+                }, 500);
             }
 
             onMessageNotificationPushed: function(chatId, msg) {
@@ -62,10 +88,15 @@ ScrollView {
             }
         }
 
+        property var loadMsgs : Backpressure.oneInTime(chatLogView, 500, function() { 
+            if(loadingMessages) return;
+            loadingMessages = true;
+            chatsModel.loadMoreMessages();
+        });
+
         onContentYChanged: {
-            if(atYBeginning && !loadingMessages){
-                loadingMessages = true;
-                chatsModel.loadMoreMessages();
+            if(scrollY < 500){
+                loadMsgs();
             }
         }
 
@@ -154,7 +185,7 @@ ScrollView {
                 return -1;
             }
             appSettings: scrollView.appSettings
-            scrollToBottom: scrollView.scrollToBottom
+            scrollToBottom: chatLogView.scrollToBottom
             timeout: model.timeout
         }
     }
