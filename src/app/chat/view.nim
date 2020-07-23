@@ -32,6 +32,7 @@ QtObject:
       replyTo: string
       channelOpenTime*: Table[string, int64]
       connected: bool
+      unreadMessageCnt: int
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
 
@@ -55,6 +56,7 @@ QtObject:
     result.messageList = initTable[string, ChatMessageList]()
     result.stickerPacks = newStickerPackList()
     result.recentStickers = newStickerList()
+    result.unreadMessageCnt = 0
     result.setup()
 
   proc addStickerPackToList*(self: ChatsView, stickerPack: StickerPack, isInstalled, isBought: bool) =
@@ -119,6 +121,8 @@ QtObject:
 
   proc sendingMessage*(self: ChatsView) {.signal.}
 
+  proc appReady*(self: ChatsView) {.signal.}
+
   proc userNameOrAlias*(self: ChatsView, pubKey: string): string {.slot.} =
     if self.status.chat.contacts.hasKey(pubKey):
       return status_ens.userNameOrAlias(self.status.chat.contacts[pubKey])
@@ -126,9 +130,10 @@ QtObject:
 
   proc setActiveChannelByIndex*(self: ChatsView, index: int) {.slot.} =
     if(self.chats.chats.len == 0): return
-    var response = self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
-    if not response.hasKey("error"):
-      self.chats.clearUnreadMessagesCount(self.activeChannel.chatItem)
+    if(not self.activeChannel.chatItem.isNil and self.activeChannel.chatItem.unviewedMessagesCount > 0):
+      var response = self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
+      if not response.hasKey("error"):
+        self.chats.clearUnreadMessagesCount(self.activeChannel.chatItem)
     let selectedChannel = self.chats.getChannel(index)
     if self.activeChannel.id == selectedChannel.id: return
 
@@ -266,14 +271,33 @@ QtObject:
   proc clearChatHistory*(self: ChatsView, id: string) {.slot.} =
     self.status.chat.clearHistory(id)
 
-  proc updateChats*(self: ChatsView, chats: seq[Chat]) =
+  proc unreadMessages*(self: ChatsView): int {.slot.} =
+    result = self.unreadMessageCnt
+
+  proc unreadMessagesCntChanged*(self: ChatsView) {.signal.}
+
+  QtProperty[int] unreadMessagesCount:
+    read = unreadMessages
+    notify = unreadMessagesCntChanged
+
+  proc calculateUnreadMessages*(self: ChatsView) =
+    var unreadTotal = 0
+    for chatItem in self.chats.chats:
+      unreadTotal = unreadTotal + chatItem.unviewedMessagesCount
+    if unreadTotal != self.unreadMessageCnt:
+      self.unreadMessageCnt = unreadTotal
+      self.unreadMessagesCntChanged()
+
+  proc updateChats*(self: ChatsView, chats: seq[Chat], triggerChange:bool = true) =
     for chat in chats:
       self.upsertChannel(chat.id)
-      self.chats.updateChat(chat)
+      self.chats.updateChat(chat, triggerChange)
       if(self.activeChannel.id == chat.id):
         self.activeChannel.setChatItem(chat)
         self.currentSuggestions.setNewData(self.status.contacts.getContacts())
-        self.activeChannelChanged()
+        if triggerChange: 
+          self.activeChannelChanged()
+    self.calculateUnreadMessages()
 
   proc renameGroup*(self: ChatsView, newName: string) {.slot.} =
     self.status.chat.renameGroup(self.activeChannel.id, newName)

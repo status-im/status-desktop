@@ -1,10 +1,12 @@
 import NimQml
+import chronicles
 import ../../../status/profile/profile
 
 QtObject:
   type ProfileInfoView* = ref object of QObject
     username*: string
     identicon*: string
+    address*: string
     pubKey*: string
     appearance*: int
 
@@ -30,6 +32,7 @@ QtObject:
     self.identicon = profile.identicon
     self.appearance = profile.appearance
     self.pubKey = profile.id
+    self.address = profile.address
     self.profileChanged()
 
   proc username*(self: ProfileInfoView): string {.slot.} = result = self.username
@@ -53,10 +56,12 @@ QtObject:
 
   proc pubKey*(self: ProfileInfoView): string {.slot.} = self.pubKey
 
-  proc setPubKey*(self: ProfileInfoView, pubKey: string) {.slot.} =
-    self.pubKey = pubKey
-    self.profileChanged()
-
   QtProperty[string] pubKey:
     read = pubKey
+    notify = profileChanged
+
+  proc address*(self: ProfileInfoView): string {.slot.} = self.address
+
+  QtProperty[string] address:
+    read = address
     notify = profileChanged

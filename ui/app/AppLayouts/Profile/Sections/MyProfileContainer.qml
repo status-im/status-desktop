@@ -32,6 +32,7 @@ Item {
             border.width: 1
             border.color: Style.current.border
             radius: 50
+            color: Style.current.background
 
             Image {
                 id: identiconImage
@@ -68,6 +69,7 @@ Item {
         }
 
         SVGImage {
+            id: qrCodeImage
             source: "../../../img/qr-code-icon.svg"
             width: 18
             height: 18
@@ -79,6 +81,11 @@ Item {
                     console.log('QR code ples')
                 }
             }
+        }
+        ColorOverlay {
+            anchors.fill: qrCodeImage
+            source: qrCodeImage
+            color: Style.current.textColor
         }
 
         Separator {

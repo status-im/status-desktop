@@ -6,10 +6,10 @@ Rectangle {
     property url source:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAg0lEQVR4nOzXwQmAMBAFURV7sQybsgybsgyr0QYUlE1g+Mw7ioQMe9lMQwhDaAyhMYTGEJqYkPnrj/t5XE/ft2UdW1yken7MRAyhMYTGEBpDaAyhKe9JbzvSX9WdLWYihtAYQuMLkcYQGkPUScxEDKExhMYQGkNoDKExhMYQmjsAAP//ZfIUZgXTZXQAAAAASUVORK5CYII="
     width: 40
     height: 40
-    color: Style.current.white
+    color: Style.current.background
     radius: 50
     border.width: 1
-    border.color: "#10000000"
+    border.color: Style.current.border
 
     Image {
         width: parent.width

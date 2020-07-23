@@ -16,25 +16,24 @@ Item {
         popup.close()
     }
 
-    Popup {
+    ModalPopup {
         id: popup
-        modal: true
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-        Overlay.modal: Rectangle {
-            color: "#60000000"
-        }
-        parent: Overlay.overlay
-        x: Math.round((parent.width - width) / 2)
-        y: Math.round((parent.height - height) / 2)
         width: 480
         height: 510
-        background: Rectangle {
-            color: Style.current.background
-            radius: Style.current.radius
-        }
-        padding: 0
-        contentItem: SetCurrencyModalContent {
+
+        title: qsTr("Settings")
+
+        SetCurrencyModalContent {
             id: setCurrencyModalContent
+        }
+
+        footer: StyledButton {
+            anchors.right: parent.right
+            label: qsTr("Save")
+            onClicked: {
+                console.log("TODO: apply all accounts")
+                popup.close()
+            }
         }
     }
 }

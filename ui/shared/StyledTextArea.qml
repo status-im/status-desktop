@@ -9,10 +9,9 @@ Item {
     property string placeholderText: "My placeholder"
     property alias text: textArea.text
     property string validationError: ""
-    //    property string label: "My Label"
     property string label: ""
     readonly property bool hasLabel: label !== ""
-    property color bgColor: Style.current.grey
+    property color bgColor: Style.current.inputBackground
     readonly property var forceActiveFocus: function () {
         textArea.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -40,7 +39,7 @@ Item {
         id: inputRectangle
         height: customHeight
         color: bgColor
-        radius: 8
+        radius: Style.current.radius
         anchors.top: inputBox.hasLabel ? inputLabel.bottom : parent.top
         anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
         anchors.right: parent.right

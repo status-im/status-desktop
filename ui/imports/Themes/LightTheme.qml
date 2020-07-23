@@ -22,5 +22,7 @@ Theme {
     property color textColor: black
     property color currentUserTextColor: white
     property color secondaryBackground: lightBlue
+    property color inputBackground: grey
+    property color inputColor: black
     property color modalBackground: white2
 }

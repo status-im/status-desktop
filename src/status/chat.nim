@@ -255,6 +255,10 @@ proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true) =
 proc markAllChannelMessagesRead*(self: ChatModel, chatId: string): JsonNode =
   var response = status_chat.markAllRead(chatId)
   result = parseJson(response)
+  if self.channels.hasKey(chatId):
+    self.channels[chatId].unviewedMessagesCount = 0
+    self.events.emit("channelUpdate", ChatUpdateArgs(messages: @[], chats: @[self.channels[chatId]], contacts: @[]))
+
 
 proc confirmJoiningGroup*(self: ChatModel, chatId: string) =
     var response = status_chat.confirmJoiningGroup(chatId)

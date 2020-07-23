@@ -32,6 +32,9 @@ include event_handling
 include signal_handling
 
 proc init*(self: ChatController) =
+  # Initial state is disconnected and will change as soon as there's a peer
+  self.view.setConnected(false)
+
   self.handleMailserverEvents()
   self.handleChatEvents()
   self.status.mailservers.init()
