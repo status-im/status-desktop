@@ -196,6 +196,7 @@ QtObject:
       self.channelOpenTime[channel] = now().toTime.toUnix * 1000
 
   proc messagePushed*(self: ChatsView) {.signal.}
+  proc newMessagePushed*(self: ChatsView) {.signal.}
 
   proc messageNotificationPushed*(self: ChatsView, chatId: string, text: string) {.signal.}
 
@@ -211,8 +212,11 @@ QtObject:
       msg.alias = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
       self.messageList[msg.chatId].add(msg)
       self.messagePushed()
-      if msg.chatId != self.activeChannel.id and self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
-        self.messageNotificationPushed(msg.chatId, msg.text)
+      if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
+        if msg.chatId != self.activeChannel.id:
+          self.messageNotificationPushed(msg.chatId, msg.text)
+        else:
+          self.newMessagePushed()
 
   proc updateUsernames*(self:ChatsView, contacts: seq[Profile]) =
     if contacts.len > 0:

@@ -36,24 +36,79 @@ ScrollView {
             id: timer
         }
 
+        Rectangle {
+            id: newMessagesBox
+            color: Style.current.secondaryBackground
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
+            height: newMessagesText.height + clickHereText.height + 2 * Style.current.smallPadding
+            width: 200
+            radius: Style.current.radius
+
+            StyledText {
+                id: newMessagesText
+                text: qsTr("New message(s) received")
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+                anchors.left: parent.left
+                anchors.leftMargin: Style.current.smallPadding
+                anchors.right: parent.right
+                anchors.rightMargin: Style.current.smallPadding
+                anchors.top: parent.top
+                anchors.topMargin: Style.current.smallPadding
+                font.pixelSize: 15
+            }
+            StyledText {
+                id: clickHereText
+                text: qsTr("Click here to scroll back down")
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+                anchors.left: parent.left
+                anchors.leftMargin: Style.current.smallPadding
+                anchors.right: parent.right
+                anchors.rightMargin: Style.current.smallPadding
+                anchors.top: newMessagesText.bottom
+                anchors.topMargin: 0
+                font.pixelSize: 12
+                color: Style.current.darkGrey
+            }
+
+            MouseArea {
+               cursorShape: Qt.PointingHandCursor
+               anchors.fill: parent
+               onClicked: {
+                   newMessagesBox.visible = false
+                   chatLogView.scrollToBottom(true)
+               }
+            }
+        }
+
+        onAtYEndChanged: {
+            if (chatLogView.atYEnd) {
+                newMessagesBox.visible = false
+            }
+        }
+
         function scrollToBottom(force, caller) {
             if (!force && !chatLogView.atYEnd) {
                 // User has scrolled up, we don't want to scroll back
-                return
+                return false
             }
             if (caller) {
                 if (caller !== chatLogView.itemAtIndex(chatLogView.count - 1)) {
                     // If we have a caller, only accept its request if it's the last message
-                    return
+                    return false
                 }
                 // Add a small delay because images, even though they say they say they are loaed, they aren't shown yet
                 timer.setTimeout(function() {
                     Qt.callLater(chatLogView.positionViewAtEnd)
                 }, 100);
-                return
+                return true
             }
 
             Qt.callLater(chatLogView.positionViewAtEnd)
+            return true
         }
 
 
@@ -72,8 +127,10 @@ ScrollView {
                 chatLogView.scrollToBottom(true)
             }
 
-            onMessagePushed: {
-                chatLogView.scrollToBottom()
+            onNewMessagePushed: {
+                if (!chatLogView.scrollToBottom()) {
+                    newMessagesBox.visible = true
+                }
             }
 
             onAppReady: {
