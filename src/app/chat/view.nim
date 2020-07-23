@@ -295,8 +295,6 @@ QtObject:
       if(self.activeChannel.id == chat.id):
         self.activeChannel.setChatItem(chat)
         self.currentSuggestions.setNewData(self.status.contacts.getContacts())
-        if triggerChange: 
-          self.activeChannelChanged()
     self.calculateUnreadMessages()
 
   proc renameGroup*(self: ChatsView, newName: string) {.slot.} =
