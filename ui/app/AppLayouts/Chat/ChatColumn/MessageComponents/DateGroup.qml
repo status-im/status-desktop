@@ -52,7 +52,7 @@ StyledText {
                     //% "December"
                     qsTrId("december")
                 ];
-                return monthNames[currentMsgDate.getMonth()] + ", " + currentMsgDate.getDay()
+                return monthNames[currentMsgDate.getMonth()] + ", " + currentMsgDate.getDate()
             }
         } else {
             return "";
