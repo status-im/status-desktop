@@ -69,7 +69,7 @@ ScrollView {
             }
 
             onSendingMessage: {
-                scrollToBottom(true)
+                chatLogView.scrollToBottom(true)
             }
 
             onMessagePushed: {

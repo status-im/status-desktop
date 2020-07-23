@@ -11,7 +11,7 @@ Rectangle {
     height: {
         let h = chatVerticalPadding
         for (let i = 0; i < imageRepeater.count; i++) {
-            h += imageRepeater.itemAt(i).height || imageRepeater.itemAt(i).minHeight
+            h += imageRepeater.itemAt(i).height
         }
         return h + chatVerticalPadding * imageRepeater.count
     }
@@ -30,26 +30,45 @@ Rectangle {
             return imageUrls.split(" ")
         }
 
-        Image {
-            // This minimum height is for the initial load of the chat to work correctly
-            // Without this, the chat doesn't understand that the image wil lhave a height and doesn't scroll to the bottom
-            property int minHeight: 400
-            id: imageMessage
-            anchors.horizontalCenter: parent.horizontalCenter
+        Item {
+            id: imageContainer
+            width: loadingImage.visible ? loadingImage.width : imageMessage.width
+            height: loadingImage.visible ? loadingImage.height : imageMessage.paintedHeight
             anchors.top: (index == 0) ? parent.top: parent.children[index-1].bottom
             anchors.topMargin: imageChatBox.chatVerticalPadding
-            sourceSize.width: imageChatBox.imageWidth
-            source: modelData
-            onStatusChanged: {
-                if (imageMessage.status === Image.Error) {
-                    imageMessage.height = 0
-                    imageMessage.minHeight = 0
-                    imageMessage.source = ""
-                    imageMessage.visible = false
-                    imageChatBox.height = 0
-                    imageChatBox.visible = false
-                } else if (imageMessage.status == Image.Ready) {
-                    messageItem.scrollToBottom(false, messageItem)
+
+            Rectangle {
+                id: loadingImage
+                property bool hasError: false
+                width: hasError ? 200 : 400
+                height: hasError ? 75 : 400
+                border.width: 1
+                border.color: Style.current.border
+                radius: Style.current.radius
+
+                StyledText {
+                    text: loadingImage.hasError ? qsTr("Error loading the image") : qsTr("Loading image...")
+                    color: loadingImage.hasError ? Style.current.red : Style.current.textColor
+                    font.pixelSize: 15
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+            }
+
+            Image {
+                id: imageMessage
+                sourceSize.width: imageChatBox.imageWidth
+                source: modelData
+                onStatusChanged: {
+                    if (imageMessage.status === Image.Error) {
+                        loadingImage.hasError = true
+                        imageMessage.height = 0
+                        imageMessage.source = ""
+                        imageMessage.visible = false
+                    } else if (imageMessage.status === Image.Ready) {
+                        loadingImage.visible = false
+                        scrollToBottom(true, messageItem)
+                    }
                 }
             }
         }

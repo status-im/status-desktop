@@ -30,7 +30,7 @@ Rectangle {
                 imageChatBox.height = 0
                 imageChatBox.visible = false
             } else if (imageMessage.status == Image.Ready) {
-                messageItem.scrollToBottom(false, messageItem)
+                messageItem.scrollToBottom(true, messageItem)
             }
         }
     }
