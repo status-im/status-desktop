@@ -39,7 +39,12 @@ SplitView {
 
         // This list needs to match LeftTab/constants.js
         // Would be better if we could make them match automatically
-        MyProfileContainer {}
+        MyProfileContainer {
+           username: profileModel.profile.username
+           identicon: profileModel.profile.identicon
+           pubkey: profileModel.profile.pubKey
+           address: profileModel.profile.address
+        }
 
         ContactsContainer {}
 

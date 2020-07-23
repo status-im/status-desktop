@@ -16,8 +16,9 @@ Popup {
     property int selectedPackId
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     background: Rectangle {
-        radius: 8
-        border.color: Style.current.grey
+        radius: Style.current.radius
+        color: Style.current.background
+        border.color: Style.current.border
         layer.enabled: true
         layer.effect: DropShadow{
             verticalOffset: 3
@@ -40,7 +41,6 @@ Popup {
     }
 
     contentItem: ColumnLayout {
-        parent: popup
         anchors.fill: parent
         spacing: 0
 

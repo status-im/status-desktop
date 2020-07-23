@@ -6,8 +6,6 @@ import "../../../../shared"
 
 Item {
     id: syncContainer
-    width: 200
-    height: 200
     Layout.fillHeight: true
     Layout.fillWidth: true
 

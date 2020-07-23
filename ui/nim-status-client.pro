@@ -116,12 +116,14 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/CompactMessage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChannelIdentifier.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatImage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatReply \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatReply.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatText.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatTime.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/CompactMessage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/DateGroup.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/ImageLoader.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ImageMessage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/MessageMouseArea.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/NormalMessage.qml \
@@ -324,6 +326,7 @@ DISTFILES += \
     shared/StyledTextArea.qml \
     shared/StyledTextEdit.qml \
     shared/StyledTextField.qml \
+    shared/SVGImage.qml \
     shared/TextWithLabel.qml \
     shared/img/check.svg \
     shared/img/close.svg \

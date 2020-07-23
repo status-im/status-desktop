@@ -135,7 +135,7 @@ Rectangle {
                             qsTrId("saturday")];
                 return days[messageDate.getDay()];
             } else {
-                return messageDate.getMonth()+1+"/"+messageDate.getDay()+"/"+messageDate.getFullYear()
+                return messageDate.getMonth()+1+"/"+messageDate.getDate()+"/"+messageDate.getFullYear()
             }
             }
             anchors.right: parent.right

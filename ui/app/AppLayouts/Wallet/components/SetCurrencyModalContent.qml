@@ -5,111 +5,48 @@ import "../../../../shared"
 import "../data/"
 
 Item {
-    id: element
     property string currency: "USD"
-
-    StyledText {
-        id: modalDialogTitle
-        text: "Settings"
-        anchors.top: parent.top
-        anchors.left: parent.left
-        font.bold: true
-        font.pixelSize: 17
-        anchors.leftMargin: 16
-        anchors.topMargin: 16
-    }
-
-    SVGImage {
-        id: closeModalImg
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.rightMargin: 16
-        anchors.topMargin: 16
-        source: "../../../../shared/img/close.svg"
-        width: 25
-        height: 25
-        MouseArea {
-            id: closeModalMouseArea
-            cursorShape: Qt.PointingHandCursor
-            anchors.fill: parent
-            onClicked: {
-                popup.close()
-            }
-        }
-    }
-
-    Separator {
-        id: headerSeparator
-        anchors.top: modalDialogTitle.bottom
-    }
+    id: modalBody
+    anchors.fill: parent
 
     ButtonGroup {
         id: currencyGroup
     }
 
-    Item {
-        id: modalBody
-        anchors.right: parent.right
-        anchors.rightMargin: 32
-        anchors.top: headerSeparator.top
-        anchors.topMargin: Style.current.padding
-        anchors.bottom: footerSeparator.top
-        anchors.bottomMargin: Style.current.padding
+    ListView {
+        anchors.top: parent.top
+        anchors.topMargin: 10
         anchors.left: parent.left
-        anchors.leftMargin: 32
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        clip: true
+        spacing: 10
+        id: tokenListView
+        model: Currencies {}
+        ScrollBar.vertical: ScrollBar { active: true }
 
-        ListView {
-            anchors.top: parent.top
-            anchors.topMargin: 10
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            spacing: 10
-            id: tokenListView
-            model: Currencies {}
-            ScrollBar.vertical: ScrollBar { active: true }
+        delegate: Component {
+            Item {
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                width: parent.width
+                height: 52
 
-            delegate: Component {
-                Item {
-                    id: element
+                StyledText {
+                    text: name + " (" + code + ")"
+                    font.pixelSize: 15
+                }
+
+                RadioButton {
+                    checked: currency === key
                     anchors.right: parent.right
-                    anchors.rightMargin: 0
-                    anchors.left: parent.left
-                    anchors.leftMargin: 10
-                    width: parent.width
-                    height: 52
-
-                    StyledText {
-                        text: name + " (" + code + ")"
-                        font.pixelSize: 15
-                    }
-
-                    RadioButton {
-                        checked: currency === key
-                        anchors.right: parent.right
-                        ButtonGroup.group: currencyGroup
-                        onClicked: { walletModel.setDefaultCurrency(key) }
-                    }
+                    anchors.rightMargin: 4
+                    ButtonGroup.group: currencyGroup
+                    onClicked: { walletModel.setDefaultCurrency(key) }
                 }
             }
-        }
-    }
-
-    Separator {
-        id: footerSeparator
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 76
-    }
-
-    StyledButton {
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        label: "Save"
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.padding
-        onClicked: {
-            console.log("TODO: apply all accounts")
-            popup.close()
         }
     }
 }
