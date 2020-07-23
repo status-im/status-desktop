@@ -18,7 +18,7 @@ Item {
 
     UserImage {
         id: chatImage
-        visible: isMessage && authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        visible: chatsModel.activeChannel.chatType !== Constants.chatTypeOneToOne && isMessage && authorCurrentMsg != authorPrevMsg && !isCurrentUser
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.top:  dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
@@ -27,7 +27,7 @@ Item {
 
     UsernameLabel {
         id: chatName
-        visible: isMessage && authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        visible: chatsModel.activeChannel.chatType !== Constants.chatTypeOneToOne && isMessage && authorCurrentMsg != authorPrevMsg && !isCurrentUser
         text: userName
         anchors.leftMargin: 20
         anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
