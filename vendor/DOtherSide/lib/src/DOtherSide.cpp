@@ -766,7 +766,8 @@ bool dos_qurl_isValid(const ::DosQUrl *vptr)
 void dos_signal(::DosQObject *vptr, const char *signal, const char *slot) //
 {
     auto qobject = static_cast<QObject *>(vptr);
-    QMetaObject::invokeMethod(qobject, slot, Qt::QueuedConnection, Q_ARG(QString, signal));  
+    std::string copy = signal; // signal comes from nim, and might be GC. Creating a copy (QT will handle the freeing)
+    QMetaObject::invokeMethod(qobject, slot, Qt::QueuedConnection, Q_ARG(QString, copy.c_str()));
 }
 
 void dos_qmetaobject_delete(::DosQMetaObject *vptr)
