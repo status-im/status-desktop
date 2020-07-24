@@ -37,12 +37,12 @@ QtObject:
     
     self.signalSubscribers[signalType].add(subscriber)
 
-  proc processSignal(self: SignalsController) =
-    var jsonSignal:JsonNode
+  proc processSignal(self: SignalsController, statusSignal: string) =
+    var jsonSignal: JsonNode
     try: 
-      jsonSignal = self.statusSignal.parseJson
+      jsonSignal = statusSignal.parseJson
     except:
-      error "Invalid signal received", data = self.statusSignal
+      error "Invalid signal received", data = statusSignal
       return
 
     let signalString = jsonSignal["type"].getStr
@@ -94,7 +94,7 @@ QtObject:
 
   proc receiveSignal(self: SignalsController, signal: string) {.slot.} =
     self.statusSignal = signal
-    self.processSignal()
+    self.processSignal(signal)
     self.signalReceived(signal)
 
   QtProperty[string] statusSignal:
