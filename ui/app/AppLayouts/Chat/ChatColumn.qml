@@ -62,6 +62,12 @@ StackLayout {
             Layout.fillWidth: true
             z: 60
             Rectangle {
+                Component.onCompleted: {
+                    if(!isConnected){
+                        connectedStatusRect.visible = true 
+                    }
+                }
+
                 id: connectedStatusRect
                 Layout.fillWidth: true
                 height: 40;
