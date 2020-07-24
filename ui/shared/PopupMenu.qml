@@ -7,6 +7,7 @@ import "../shared"
 Menu {
     property alias arrowX: bgPopupMenuTopArrow.x
     property int paddingSize: 8
+    property bool hasArrow: true
     closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnReleaseOutside | Popup.CloseOnEscape 
     id: popupMenu
     topPadding: bgPopupMenuTopArrow.height + paddingSize
@@ -18,6 +19,8 @@ Menu {
         implicitHeight: 34
         font.pixelSize: 13
         icon.color: popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Style.current.blue
+        visible: popupMenuItem.action.enabled
+        height: popupMenuItem.action.enabled ? popupMenuItem.implicitHeight : 0
         contentItem: Item {
             id: menuItemContent
 
@@ -66,6 +69,7 @@ Menu {
         color: "transparent"
         Rectangle {
             id: bgPopupMenuTopArrow
+            visible: popupMenu.hasArrow
             color: Style.current.modalBackground
             height: 14
             width: 14

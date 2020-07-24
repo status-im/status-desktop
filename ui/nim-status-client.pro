@@ -308,6 +308,7 @@ DISTFILES += \
     onboarding/img/wallet@3x.jpg \
     onboarding/qmldir \
     shared/AddButton.qml \
+    shared/IconButton.qml \
     shared/Input.qml \
     shared/ModalPopup.qml \
     shared/NotificationWindow.qml \

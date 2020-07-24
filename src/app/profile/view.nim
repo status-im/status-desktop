@@ -1,4 +1,4 @@
-import NimQml, sequtils
+import NimQml, sequtils, strutils, sugar
 import views/[mailservers_list, contact_list, profile_info, device_list]
 import ../../status/profile/[mailserver, profile, devices]
 import ../../status/profile as status_profile
@@ -6,6 +6,7 @@ import ../../status/contacts as status_contacts
 import ../../status/accounts as status_accounts
 import ../../status/status
 import ../../status/devices as status_devices
+import ../../status/ens as status_ens
 import ../../status/chat/chat
 import ../../status/libstatus/types
 import qrcode/qrcode
@@ -15,12 +16,15 @@ QtObject:
     profile*: ProfileInfoView
     mailserversList*: MailServersList
     contactList*: ContactList
+    addedContacts*: ContactList
+    blockedContacts*: ContactList
     deviceList*: DeviceList
     mnemonic: string
     network: string
     status*: Status
     isDeviceSetup: bool
     changeLanguage*: proc(locale: string)
+    contactToAdd*: Profile
 
   proc setup(self: ProfileView) =
     self.QObject.setup
@@ -28,6 +32,8 @@ QtObject:
   proc delete*(self: ProfileView) =
     if not self.mailserversList.isNil: self.mailserversList.delete
     if not self.contactList.isNil: self.contactList.delete
+    if not self.addedContacts.isNil: self.addedContacts.delete
+    if not self.blockedContacts.isNil: self.blockedContacts.delete
     if not self.deviceList.isNil: self.deviceList.delete
     if not self.profile.isNil: self.profile.delete
     self.QObject.delete
@@ -38,12 +44,19 @@ QtObject:
     result.profile = newProfileInfoView()
     result.mailserversList = newMailServersList()
     result.contactList = newContactList()
+    result.addedContacts = newContactList()
+    result.blockedContacts = newContactList()
     result.deviceList = newDeviceList()
     result.mnemonic = ""
     result.network = ""
     result.status = status
     result.isDeviceSetup = false
     result.changeLanguage = changeLanguage
+    result.contactToAdd = Profile(
+      username: "",
+      alias: "",
+      ensName: ""
+    )
     result.setup
 
   proc addMailServerToList*(self: ProfileView, mailserver: MailServer) =
@@ -58,6 +71,10 @@ QtObject:
   proc updateContactList*(self: ProfileView, contacts: seq[Profile]) =
     for contact in contacts:
       self.contactList.updateContact(contact)
+      if contact.systemTags.contains(":contact/added"):
+          self.addedContacts.updateContact(contact)
+      if contact.systemTags.contains(":contact/blocked"):
+          self.blockedContacts.updateContact(contact)
 
   proc contactListChanged*(self: ProfileView) {.signal.}
 
@@ -66,11 +83,27 @@ QtObject:
 
   proc setContactList*(self: ProfileView, contactList: seq[Profile]) =
     self.contactList.setNewData(contactList)
+    self.addedContacts.setNewData(contactList.filter(c => c.systemTags.contains(":contact/added")))
+    self.blockedContacts.setNewData(contactList.filter(c => c.systemTags.contains(":contact/blocked")))
     self.contactListChanged()
 
   QtProperty[QVariant] contactList:
     read = getContactList
     write = setContactList
+    notify = contactListChanged
+
+  proc getAddedContacts(self: ProfileView): QVariant {.slot.} =
+    return newQVariant(self.addedContacts)
+
+  QtProperty[QVariant] addedContacts:
+    read = getAddedContacts
+    notify = contactListChanged
+
+  proc getBlockedContacts(self: ProfileView): QVariant {.slot.} =
+    return newQVariant(self.blockedContacts)
+
+  QtProperty[QVariant] blockedContacts:
+    read = getBlockedContacts
     notify = contactListChanged
 
   proc mnemonicChanged*(self: ProfileView) {.signal.}
@@ -115,6 +148,27 @@ QtObject:
 
   QtProperty[QVariant] profile:
     read = getProfile
+
+  proc contactToAddChanged*(self: ProfileView) {.signal.}
+
+  proc getContactToAddUsername(self: ProfileView): QVariant {.slot.} =
+    var username = self.contactToAdd.alias;
+
+    if self.contactToAdd.ensVerified and self.contactToAdd.ensName != "":
+      username = self.contactToAdd.ensName
+
+    return newQVariant(username)
+
+  QtProperty[QVariant] contactToAddUsername:
+    read = getContactToAddUsername
+    notify = contactToAddChanged
+
+  proc getContactToAddPubKey(self: ProfileView): QVariant {.slot.} =
+    return newQVariant(self.contactToAdd.address)
+
+  QtProperty[QVariant] contactToAddPubKey:
+    read = getContactToAddPubKey
+    notify = contactToAddChanged
 
   proc logout*(self: ProfileView) {.slot.} =
     self.status.profile.logout()
@@ -174,3 +228,37 @@ QtObject:
       status_devices.enable(installationId)
     else:
       status_devices.disable(installationId)
+
+  proc lookupContact*(self: ProfileView, value: string) {.slot.} =
+    if value == "":
+      return
+
+    var id = value
+
+    if not id.startsWith("0x"):
+      id = status_ens.pubkey(id)
+
+    let contact = self.status.contacts.getContactByID(id)
+
+    if contact != nil:
+      self.contactToAdd = contact
+    else:
+      self.contactToAdd = Profile(
+        username: "",
+        alias: "",
+        ensName: "",
+        ensVerified: false
+      )
+    self.contactToAddChanged()
+
+  proc addContact*(self: ProfileView, pk: string) {.slot.} =
+    discard self.status.contacts.addContact(pk)
+
+  proc unblockContact*(self: ProfileView, id: string) {.slot.} =
+    discard self.status.contacts.unblockContact(id)
+
+  proc blockContact*(self: ProfileView, id: string) {.slot.} =
+    discard self.status.contacts.blockContact(id)
+
+  proc removeContact*(self: ProfileView, id: string) {.slot.} =
+    self.status.contacts.removeContact(id)

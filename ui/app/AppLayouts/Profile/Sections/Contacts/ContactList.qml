@@ -11,6 +11,7 @@ ListView {
     id: contactList
     property var contacts: ContactsData {}
     property var selectable: true
+    property string searchStr: ""
     property alias selectedContact: contactGroup.checkedButton
     property string searchString: ""
     property string lowerCaseSearchString: searchString.toLowerCase()
@@ -23,6 +24,7 @@ ListView {
         address: model.address
         identicon: model.identicon
         isContact: model.isContact
+        isBlocked: model.isBlocked
         selectable: contactList.selectable
         profileClick: profilePopup.openPopup.bind(profilePopup)
         visible: searchString === "" ||
@@ -37,6 +39,7 @@ ListView {
     ButtonGroup {
         id: contactGroup
     }
+
 }
 /*##^##
 Designer {
