@@ -17,7 +17,7 @@ proc peerSummaryChange*(self: NetworkModel, peers: seq[string]) =
   if peers.len == 0:
     self.events.emit("chat:disconnected", Args())
   
-  if peers.len > 0 and self.peers.len == 0:
+  if peers.len > 0:
     self.events.emit("chat:connected", Args())
 
   self.peers = peers
