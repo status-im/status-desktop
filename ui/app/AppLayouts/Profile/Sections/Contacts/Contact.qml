@@ -11,8 +11,11 @@ Rectangle {
     property bool selectable: false
     property var profileClick: function() {}
     property bool isContact: true
+    property bool isBlocked: false
+    property string searchStr: ""
+    id: container
 
-    visible: isContact
+    visible: isContact && (searchStr == "" || name.includes(searchStr))
     height: visible ? 64 : 0
     anchors.right: parent.right
     anchors.left: parent.left
@@ -26,6 +29,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         source: identicon
     }
+
     StyledText {
         id: usernameText
         text: name
@@ -34,35 +38,111 @@ Rectangle {
         anchors.rightMargin: Style.current.padding
         font.pixelSize: 17
         anchors.top: accountImage.top
+        anchors.topMargin: Style.current.smallPadding
         anchors.left: accountImage.right
         anchors.leftMargin: Style.current.padding
     }
-    StyledText {
-        id: addressText
-        width: 108
-        font.family: Style.current.fontHexRegular.name
-        text: address
-        elide: Text.ElideMiddle
-        anchors.bottom: accountImage.bottom
-        anchors.bottomMargin: 0
-        anchors.left: usernameText.left
-        anchors.leftMargin: 0
-        font.pixelSize: 15
-        color: Style.current.darkGrey
+
+    Rectangle {
+        property int iconSize: 14
+        id: menuButton
+        height: 32
+        width: 32
+        anchors.top: usernameText.top
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+        radius: 8
+
+        SVGImage {
+            source: "../../../../img/dots-icon.svg"
+            width: 18
+            height: 4
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+        }
+
+        MouseArea {
+            id: mouseArea
+            property bool menuOpened: false
+            cursorShape: Qt.PointingHandCursor
+            anchors.fill: parent
+            hoverEnabled: true
+            onExited: {
+                menuButton.color = Style.current.white
+            }
+            onEntered: {
+                menuButton.color = Style.current.grey
+            }
+            onClicked: {
+              menuOpened = true
+              contactContextMenu.popup()
+            }
+
+            PopupMenu {
+                id: contactContextMenu
+                hasArrow: false
+                onClosed: {
+                    mouseArea.menuOpened = false
+                }
+                Action {
+                    icon.source: "../../../../img/profileActive.svg"
+                    icon.width: menuButton.iconSize
+                    icon.height: menuButton.iconSize
+                    text: qsTrId("view-profile")
+                    onTriggered: profileClick(name, address, identicon)
+                    enabled: true
+                }
+                Action {
+                    icon.source: "../../../../img/message.svg"
+                    icon.width: menuButton.iconSize
+                    icon.height: menuButton.iconSize
+                    text: qsTrId("send-message")
+                    onTriggered: {
+                      tabBar.currentIndex = 0
+                      chatsModel.joinChat(address, Constants.chatTypeOneToOne)
+                    }
+                    enabled: !container.isBlocked
+                }
+                Action {
+                    icon.source: "../../../../img/block-icon.svg"
+                    icon.width: menuButton.iconSize
+                    icon.height: menuButton.iconSize
+                    text: qsTrId("block-user")
+                    enabled: !container.isBlocked
+                    onTriggered: {
+                      profileModel.blockContact(address)
+                    }
+                }
+                Action {
+                    icon.source: "../../../../img/remove-contact.svg"
+                    icon.width: menuButton.iconSize
+                    icon.height: menuButton.iconSize
+                    icon.color: Style.current.red
+                    text: qsTrId("remove-contact")
+                    enabled: container.isContact
+                    onTriggered: profileModel.removeContact(address)
+                }
+                Action {
+                    icon.source: "../../../../img/block-icon.svg"
+                    icon.width: menuButton.iconSize
+                    icon.height: menuButton.iconSize
+                    icon.color: Style.current.red
+                    text: qsTrId("unblock-user")
+                    enabled: container.isBlocked
+                    onTriggered: {
+                      profileModel.unblockContact(address)
+                      contactContextMenu.close()
+                    }
+                }
+            }
+        }
     }
+
     RadioButton {
         visible: selectable
         anchors.top: parent.top
         anchors.topMargin: Style.current.smallPadding
         anchors.right: parent.right
         ButtonGroup.group: contactGroup
-    }
-    MouseArea {
-        enabled: !selectable
-        cursorShape: Qt.PointingHandCursor
-        anchors.fill: parent
-        onClicked: {
-            profileClick(name, address, identicon)
-        }
     }
 }

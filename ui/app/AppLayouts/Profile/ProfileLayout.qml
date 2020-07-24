@@ -32,9 +32,9 @@ SplitView {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         anchors.right: parent.right
-        anchors.rightMargin: 0
+        anchors.rightMargin: 113
         anchors.left: leftTab.right
-        anchors.leftMargin: 0
+        anchors.leftMargin: 113
         currentIndex: leftTab.currentTab
 
         // This list needs to match LeftTab/constants.js

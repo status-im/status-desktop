@@ -26,7 +26,14 @@ proc getContactByID*(self: ContactModel, id: string): Profile =
 proc blockContact*(self: ContactModel, id: string): string =
   var contact = self.getContactByID(id)
   contact.systemTags.add(":contact/blocked")
-  status_contacts.blockContact(contact)
+  discard status_contacts.blockContact(contact)
+  self.events.emit("contactBlocked", Args())
+
+proc unblockContact*(self: ContactModel, id: string): string =
+  var contact = self.getContactByID(id)
+  contact.systemTags.delete(contact.systemTags.find(":contact/blocked"))
+  discard status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.systemTags)
+  self.events.emit("contactUnblocked", Args())
 
 proc getContacts*(self: ContactModel): seq[Profile] =
   result = map(status_contacts.getContacts().getElems(), proc(x: JsonNode): Profile = x.toProfileModel())

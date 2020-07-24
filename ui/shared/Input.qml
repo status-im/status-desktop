@@ -21,6 +21,7 @@ Item {
     readonly property int labelMargin: 7
     property int customHeight: 44
     property int fontPixelSize: 15
+    signal editingFinished(string inputValue)
 
     id: inputBox
     height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0) + (!!validationError ? validationErrorText.height : 0)
@@ -70,6 +71,7 @@ Item {
             background: Rectangle {
                 color: Style.current.transparent
             }
+            onEditingFinished: inputBox.editingFinished(inputBox.text)
         }
 
         SVGImage {

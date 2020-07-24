@@ -1,4 +1,4 @@
-import NimQml, json, eventemitter, strutils
+import NimQml, json, eventemitter, strutils, sugar, sequtils
 import json_serialization
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../signals/types
@@ -59,6 +59,14 @@ proc init*(self: ProfileController, account: Account) =
   self.view.setContactList(contacts)
 
   self.status.events.on("contactAdded") do(e: Args):
+    let contacts = self.status.contacts.getContacts()
+    self.view.setContactList(contacts)
+
+  self.status.events.on("contactBlocked") do(e: Args):
+    let contacts = self.status.contacts.getContacts()
+    self.view.setContactList(contacts)
+
+  self.status.events.on("contactUnblocked") do(e: Args):
     let contacts = self.status.contacts.getContacts()
     self.view.setContactList(contacts)
 
