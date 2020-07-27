@@ -40,8 +40,8 @@ Rectangle {
             }
 
             if(txtData.text.trim().length > 0){
-                let msg = interpretMessage(txtData.text.trim())
-                chatsModel.sendMessage(msg, chatColumn.isReply ? SelectedMessage.messageId : "");
+                let msg = interpretMessage(txtData.text.trim()).trim()
+                chatsModel.sendMessage(msg, chatColumn.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(txtData.text) ? Constants.emojiType : Constants.messageType);
                 txtData.text = "";
                 event.accepted = true
                 sendMessageSound.stop()
