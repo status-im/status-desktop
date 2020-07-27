@@ -86,14 +86,14 @@ QtObject:
 
   proc importMnemonic(self: OnboardingView, mnemonic: string): string {.slot.} =
     try:
-      let importResult = self.status.accounts.importMnemonic(mnemonic)
+      let importResult = self.status.accounts.importMnemonic(mnemonic.strip())
       result = importResult.toJson
       self.currentAccount.setAccount(importResult)
     except StatusGoException as e:
       result = StatusGoError(error: e.msg).toJson
 
   proc validateMnemonic*(self: OnboardingView, mnemonic: string): string {.slot.} =
-     result = self.status.wallet.validateMnemonic(mnemonic)
+    result = self.status.wallet.validateMnemonic(mnemonic.strip())
 
   proc storeDerivedAndLogin(self: OnboardingView, password: string): string {.slot.} =
     try:

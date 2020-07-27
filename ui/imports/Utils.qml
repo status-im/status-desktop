@@ -30,8 +30,11 @@ QtObject {
     }
 
     function isMnemonic(value) {
-        // Do we support other length than 12?
-        return value.split(/\s|,/).length === 12
+        if(!value.match(/^([a-z\s]+)$/)){
+            return false;
+        }
+        var len = value.split(/\s|,/).length;
+        return  len >= 12 && len <= 24 && len % 3 == 0;
     }
 
     function compactAddress(addr, numberOfChars) {

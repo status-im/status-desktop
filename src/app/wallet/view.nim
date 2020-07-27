@@ -140,7 +140,7 @@ QtObject:
     result = self.status.wallet.generateNewAccount(password, accountName, color)
 
   proc addAccountsFromSeed*(self: WalletView, seed: string, password: string, accountName: string, color: string): string {.slot.} =
-    result = self.status.wallet.addAccountsFromSeed(seed, password, accountName, color)
+    result = self.status.wallet.addAccountsFromSeed(seed.strip(), password, accountName, color)
 
   proc addAccountsFromPrivateKey*(self: WalletView, privateKey: string, password: string, accountName: string, color: string): string {.slot.} =
     result = self.status.wallet.addAccountsFromPrivateKey(privateKey, password, accountName, color)

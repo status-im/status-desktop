@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import "../imports"
 
 Item {
     property var onClosed: function () {}
@@ -14,7 +15,14 @@ Item {
         property bool wentNext: false
         id: enterSeedPhraseModal
         onConfirmSeedClick: function (mnemonic) {
-            let error = onboardingModel.validateMnemonic(mnemonic)
+            let error = "";
+            
+            if(!Utils.isMnemonic(mnemonic)){
+                error = qsTr("Invalid mnemonic")
+            } else {
+                error = onboardingModel.validateMnemonic(mnemonic)
+            }
+
             if (error != "") {
               errorSound.play()
               invalidSeedPhraseModal.error = error
