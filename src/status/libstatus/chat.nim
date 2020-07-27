@@ -71,7 +71,7 @@ proc generateSymKeyFromPassword*(): string =
     "status-offline-inbox"
   ]))["result"]).strip(chars = {'"'})
 
-proc sendChatMessage*(chatId: string, msg: string, replyTo: string): string =
+proc sendChatMessage*(chatId: string, msg: string, replyTo: string, contentType: int): string =
   callPrivateRPC("sendChatMessage".prefix, %* [
     {
       "chatId": chatId,
@@ -79,7 +79,7 @@ proc sendChatMessage*(chatId: string, msg: string, replyTo: string): string =
       "responseTo": replyTo,
       "ensName": nil,
       "sticker": nil,
-      "contentType": ContentType.Message.int
+      "contentType": contentType
     }
   ])
 

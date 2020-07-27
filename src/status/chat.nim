@@ -211,8 +211,8 @@ proc clearHistory*(self: ChatModel, chatId: string) =
 proc setActiveChannel*(self: ChatModel, chatId: string) =
   self.events.emit("activeChannelChanged", ChatIdArg(chatId: chatId))
 
-proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "") =
-  var response = status_chat.sendChatMessage(chatId, msg, replyTo)
+proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "", contentType: int = ContentType.Message.int) =
+  var response = status_chat.sendChatMessage(chatId, msg, replyTo, contentType)
   var (chats, messages) = self.processChatUpdate(parseJson(response))
   self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
   for msg in messages:

@@ -85,7 +85,7 @@ QtObject:
         let pubKey = matches[0]
         result = message.replace(mention, "@" & pubKey)
 
-  proc sendMessage*(self: ChatsView, message: string, replyTo: string) {.slot.} =
+  proc sendMessage*(self: ChatsView, message: string, replyTo: string, contentType: int = ContentType.Message.int) {.slot.} =
     let aliasPattern = re(r"(@[A-z][a-z]* [A-z][a-z]* [A-z][a-z]*)", flags = {reStudy, reIgnoreCase})
     let ensPattern = re(r"(@\w*(?=\.stateofus\.eth))", flags = {reStudy, reIgnoreCase})
     let namePattern = re(r"(@\w*)", flags = {reStudy, reIgnoreCase})
@@ -100,7 +100,7 @@ QtObject:
     m = self.replaceMentionsWithPubKeys(ensMentions, contacts, m, (c => c.ensName))
     m = self.replaceMentionsWithPubKeys(nameMentions, contacts, m, (c => c.ensName.split(".")[0]))
 
-    self.status.chat.sendMessage(self.activeChannel.id, m, replyTo)
+    self.status.chat.sendMessage(self.activeChannel.id, m, replyTo, contentType)
 
   proc verifyMessageSent*(self: ChatsView, data: string) {.slot.} =
     let messageData = data.parseJson
