@@ -28,7 +28,7 @@ Item {
             }
 
             if(txtData.text.trim() > 0){
-                chatsModel.sendMessage(txtData.text, chatColumn.isReply ? SelectedMessage.messageId : "")
+                chatsModel.sendMessage(txtData.text.trim(), chatColumn.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(txtData.text) ? Constants.emojiType : Constants.messageType)
                 txtData.text = "";
             }
 
