@@ -42,10 +42,10 @@ proc generateAddresses*(n = 5): seq[GeneratedAccount] =
   result = Json.decode(generatedAccounts, seq[GeneratedAccount])
 
 proc generateAlias*(publicKey: string): string =
-  result = $nim_status.generateAlias(publicKey.toGoString)
+  result = $nim_status.generateAlias(publicKey.cstring)
 
 proc generateIdenticon*(publicKey: string): string =
-  result = $nim_status.identicon(publicKey.toGoString)
+  result = $nim_status.identicon(publicKey.cstring)
 
 proc ensureDir(dirname: string) =
   if not existsDir(dirname):
