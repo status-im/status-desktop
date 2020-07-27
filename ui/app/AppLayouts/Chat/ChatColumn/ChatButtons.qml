@@ -25,13 +25,14 @@ Item {
         onClicked: {
             if(chatColumn.isImage){
                 chatsModel.sendImage(sendImageArea.image);
-                chatColumn.hideExtendedArea();
             }
 
             if(txtData.text.trim() > 0){
                 chatsModel.sendMessage(txtData.text, chatColumn.isReply ? SelectedMessage.messageId : "")
                 txtData.text = "";
             }
+
+            chatColumn.hideExtendedArea();
         }
         background: Rectangle {
             color: parent.enabled ? Style.current.blue : Style.current.grey
