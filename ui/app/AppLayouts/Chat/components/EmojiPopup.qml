@@ -36,7 +36,7 @@ Popup {
 
     Component.onCompleted: {
         EmojiJSON.emoji_json.forEach(function (emoji) {
-            emojiModel.append({filename: emoji})
+            emojiModel.append({filename: emoji.unicode + '.png'})
         })
     }
 
