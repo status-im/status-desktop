@@ -37,7 +37,6 @@ Rectangle {
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
             if(chatColumn.isImage){
                 chatsModel.sendImage(sendImageArea.image);
-                chatColumn.hideExtendedArea();
             }
 
             if(txtData.text.trim().length > 0){
@@ -48,6 +47,7 @@ Rectangle {
                 sendMessageSound.stop()
                 Qt.callLater(sendMessageSound.play);
             }
+            chatColumn.hideExtendedArea();
         }
     }
 
