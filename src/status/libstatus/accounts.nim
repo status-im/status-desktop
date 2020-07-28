@@ -99,11 +99,11 @@ proc saveAccountAndLogin*(
 
   raise newException(StatusGoException, "Error saving account and logging in: " & error)
 
-proc storeDerivedAccounts*(account: GeneratedAccount, password: string): MultiAccounts =
+proc storeDerivedAccounts*(account: GeneratedAccount, password: string, paths: seq[string] = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]): MultiAccounts =
   let hashedPassword = hashPassword(password)
   let multiAccount = %* {
     "accountID": account.id,
-    "paths": [PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET],
+    "paths": paths,
     "password": hashedPassword
   }
   let response = $nim_status.multiAccountStoreDerivedAccounts($multiAccount);
@@ -180,6 +180,15 @@ proc login*(nodeAccount: NodeAccount, password: string): NodeAccount =
 
   raise newException(StatusGoException, "Error logging in: " & error)
 
+proc loadAccount*(address: string, password: string): GeneratedAccount =
+  let hashedPassword = hashPassword(password)
+  let inputJson = %* {
+    "address": address,
+    "password": hashedPassword
+  }
+  let loadResult = $nim_status.multiAccountLoadAccount($inputJson)
+  result = Json.decode(loadResult, GeneratedAccount)
+
 proc verifyAccountPassword*(address: string, password: string): bool =
   let hashedPassword = hashPassword(password)
   let verifyResult = $nim_status.verifyAccountPassword(KEYSTOREDIR, address, hashedPassword)
@@ -210,11 +219,26 @@ proc MultiAccountImportPrivateKey*(privateKey: string): GeneratedAccount =
   except Exception as e:
     error "Error getting account from private key", msg=e.msg
 
-proc saveAccount*(account: GeneratedAccount, password: string, color: string, accountType: string, isADerivedAccount = true): DerivedAccount =
+
+proc storeDerivedWallet*(account: GeneratedAccount, password: string, walletIndex: int) =
+  let hashedPassword = hashPassword(password)
+  let multiAccount = %* {
+    "accountID": account.id,
+    "paths": ["m/" & $walletIndex],
+    "password": hashedPassword
+  }
+  let response = parseJson($nim_status.multiAccountStoreDerivedAccounts($multiAccount));
+  let error = response{"error"}.getStr
+  if error == "":
+    debug "Wallet stored succesfully"
+    return
+  raise newException(StatusGoException, "Error storing wallet: " & error)
+
+proc saveAccount*(account: GeneratedAccount, password: string, color: string, accountType: string, isADerivedAccount = true, walletIndex: int = 0 ): DerivedAccount =
   try:
     # Only store derived accounts. Private key accounts are not multiaccounts
     if (isADerivedAccount):
-      discard storeDerivedAccounts(account, password)
+      storeDerivedWallet(account, password, walletIndex)
 
     var address = account.derived.defaultWallet.address
     var publicKey = account.derived.defaultWallet.publicKey
@@ -230,7 +254,7 @@ proc saveAccount*(account: GeneratedAccount, password: string, color: string, ac
         "address": address,
         "public-key": publicKey,
         "type": accountType,
-        "path": "m/44'/60'/0'/0/1"
+        "path": "m/44'/60'/0'/0/" & $walletIndex
       }]
     ])
 
@@ -266,6 +290,17 @@ proc deleteAccount*(address: string): string =
   except Exception as e:
     error "Error removing the account", msg=e.msg
     result = e.msg
+
+proc deriveWallet*(accountId: string, walletIndex: int): DerivedAccount =
+  let path = "m/" & $walletIndex
+  let deriveJson = %* {
+    "accountID": accountId,
+    "paths": [path]
+  }
+  let deriveResult = parseJson($nim_status.multiAccountDeriveAddresses($deriveJson))
+  result = DerivedAccount(
+    address: deriveResult[path]["address"].getStr, 
+    publicKey: deriveResult[path]["publicKey"].getStr)
 
 proc deriveAccounts*(accountId: string): MultiAccounts =
   let deriveJson = %* {

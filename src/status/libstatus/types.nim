@@ -148,6 +148,8 @@ type
     PublicKey = "public-key"
     Stickers_PacksInstalled = "stickers/packs-installed"
     Stickers_Recent = "stickers/recent-stickers"
+    WalletRootAddress = "wallet-root-address"
+    LatestDerivedPath = "latest-derived-path"
 
   UpstreamConfig* = ref object
     enabled* {.serializedFieldName("Enabled").}: bool

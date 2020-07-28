@@ -1,4 +1,5 @@
 import eventemitter, json, strformat, strutils, chronicles, sequtils
+import json_serialization
 from eth/common/utils import parseAddress
 import libstatus/accounts as status_accounts
 import libstatus/tokens as status_tokens
@@ -100,10 +101,10 @@ proc calculateTotalFiatBalance*(self: WalletModel) =
   for account in self.accounts:
     self.totalBalance += account.realFiatBalance
 
-proc addNewGeneratedAccount(self: WalletModel, generatedAccount: GeneratedAccount, password: string, accountName: string, color: string, accountType: string, isADerivedAccount = true): string =
+proc addNewGeneratedAccount(self: WalletModel, generatedAccount: GeneratedAccount, password: string, accountName: string, color: string, accountType: string, isADerivedAccount = true, walletIndex: int = 0): string =
   try:
     generatedAccount.name = accountName
-    var derivedAccount: DerivedAccount = status_accounts.saveAccount(generatedAccount, password, color, accountType, isADerivedAccount)
+    var derivedAccount: DerivedAccount = status_accounts.saveAccount(generatedAccount, password, color, accountType, isADerivedAccount, walletIndex)
     var account = self.newAccount(accountName, derivedAccount.address, color, fmt"0.00 {self.defaultCurrency}", derivedAccount.publicKey)
     self.accounts.add(account)
     self.events.emit("newAccountAdded", AccountArgs(account: account))
@@ -112,19 +113,31 @@ proc addNewGeneratedAccount(self: WalletModel, generatedAccount: GeneratedAccoun
 
   return ""
 
-proc addNewGeneratedAccountWithPassword(self: WalletModel, generatedAccount: GeneratedAccount, password: string, accountName: string, color: string, accountType: string, isADerivedAccount = true): string =
+proc addNewGeneratedAccountWithPassword(self: WalletModel, generatedAccount: GeneratedAccount, password: string, accountName: string, color: string, accountType: string, isADerivedAccount = true, walletIndex: int = 0): string =
   let defaultAccount = status_accounts.getDefaultAccount()
   let isPasswordOk = status_accounts.verifyAccountPassword(defaultAccount, password)
 
   if (not isPasswordOk):
     return "Wrong password"
-
-  result = self.addNewGeneratedAccount(generatedAccount, password, accountName, color, accountType, isADerivedAccount)
+  result = self.addNewGeneratedAccount(generatedAccount, password, accountName, color, accountType, isADerivedAccount, walletIndex)
 
 proc generateNewAccount*(self: WalletModel, password: string, accountName: string, color: string): string =
-  let accounts = status_accounts.generateAddresses(1)
-  let generatedAccount = accounts[0]
-  return self.addNewGeneratedAccountWithPassword(generatedAccount, password, accountName, color, constants.GENERATED)
+  let walletRootAddress = status_settings.getSetting[string](Setting.WalletRootAddress, "")
+  let walletIndex = status_settings.getSetting[int](Setting.LatestDerivedPath) + 1
+  let loadedAccount = status_accounts.loadAccount(walletRootAddress, password)
+  let derivedAccount = status_accounts.deriveWallet(loadedAccount.id, walletIndex)
+
+  let generatedAccount = GeneratedAccount(
+    id: loadedAccount.id,
+    publicKey: derivedAccount.publicKey,
+    address: derivedAccount.address
+  )
+
+  result = self.addNewGeneratedAccountWithPassword(generatedAccount, password, accountName, color, constants.GENERATED, true, walletIndex)
+  
+  let statusGoResult = status_settings.saveSetting(Setting.LatestDerivedPath, $walletIndex)
+  if statusGoResult.error != "":
+    error "Error storing the latest wallet index", msg=statusGoResult.error
 
 proc addAccountsFromSeed*(self: WalletModel, seed: string, password: string, accountName: string, color: string): string =
   let mnemonic = replace(seed, ',', ' ')
