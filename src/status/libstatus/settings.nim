@@ -1,28 +1,37 @@
 import core, ./types, ../../signals/types as statusgo_types, ./accounts/constants, ./utils
 import json, tables, sugar, sequtils
 import json_serialization
+import locks
 
-var settings: JsonNode = %*{}
-var dirty: bool = true
+var settingsLock: Lock
+initLock(settingsLock)
+
+var settings {.guard: settingsLock.} = %*{}
+var dirty {.guard: settingsLock.}  = true
 
 proc saveSetting*(key: Setting, value: string | JsonNode): StatusGoError =
   let response = callPrivateRPC("settings_saveSetting", %* [
     key, value
   ])
-  try:
-    result = Json.decode($response, StatusGoError)
-  except:
-    dirty = true
+
+  withLock settingsLock:
+    try:
+      result = Json.decode($response, StatusGoError)
+    except:
+      dirty = true
 
 proc getWeb3ClientVersion*(): string =
   parseJson(callPrivateRPC("web3_clientVersion"))["result"].getStr
 
 proc getSettings*(useCached: bool = true): JsonNode =
-  if useCached and not dirty:
-    return settings
-  settings = callPrivateRPC("settings_getSettings").parseJSON()["result"]
-  dirty = false
-  result = settings
+  {.gcsafe.}:
+    withLock settingsLock:
+      if useCached and not dirty:
+        result = settings
+      else: 
+        settings = callPrivateRPC("settings_getSettings").parseJSON()["result"]
+        dirty = false
+        result = settings
 
 proc getSetting*[T](name: Setting, defaultValue: T, useCached: bool = true): T =
   let settings: JsonNode = getSettings(useCached)

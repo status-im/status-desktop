@@ -30,7 +30,7 @@ type PackData* = object
   price*: Stuint[256] # uint256
   contentHash*: DynamicBytes[64] # bytes
 
-let CONTRACTS: seq[Contract] = @[
+proc allContracts(): seq[Contract] = @[
   Contract(name: "snt", network: Network.Mainnet, address: parseAddress("0x744d70fdbe2ba4cf95131626614a1763df805b9e"),
     methods: [
       ("approveAndCall", Method(signature: "approveAndCall(address,uint256,bytes)")),
@@ -100,7 +100,7 @@ let CONTRACTS: seq[Contract] = @[
 ]
 
 proc getContract(network: Network, name: string): Contract =
-  let found = CONTRACTS.filter(contract => contract.name == name and contract.network == network)
+  let found = allContracts().filter(contract => contract.name == name and contract.network == network)
   result = if found.len > 0: found[0] else: nil
 
 proc getContract*(name: string): Contract =

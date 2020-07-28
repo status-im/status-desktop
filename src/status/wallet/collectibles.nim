@@ -3,6 +3,7 @@ from eth/common/utils import parseAddress
 import ../libstatus/core as status
 import ../libstatus/contracts as contracts
 import eth/common/eth_types
+import ../libstatus/types
 import account
 
 proc getTokenUri(contract: Contract, tokenId: int): string =

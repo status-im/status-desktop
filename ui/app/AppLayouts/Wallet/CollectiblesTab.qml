@@ -4,9 +4,39 @@ import "../../../shared"
 
 Item {
     StyledText {
-        visible: walletModel.collectibles.rowCount() === 0
         //% "No collectibles in this account"
         text: qsTrId("no-collectibles-in-this-account")
+        visible: walletModel.collectibles.rowCount() === 0
+    }
+
+    SVGImage {
+        id: loadingImg
+        visible: false
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding
+        anchors.top: parent.top
+        anchors.topMargin: Style.currentPadding
+        anchors.verticalCenter: txtPassword.verticalCenter
+        // TODO replace by a real loading image
+        source: "../../img/settings.svg"
+        width: 30
+        height: 30
+        fillMode: Image.Stretch
+        RotationAnimator {
+            target: loadingImg;
+            from: 0;
+            to: 360;
+            duration: 1200
+            running: true
+            loops: Animation.Infinite
+        }
+    }
+
+    Connections {
+        target: walletModel
+        onLoadingCollectibles: {
+            loadingImg.visible = isLoading
+        }
     }
 
     Component {
