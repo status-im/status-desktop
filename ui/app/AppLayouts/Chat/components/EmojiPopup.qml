@@ -10,10 +10,11 @@ import "./emojiList.js" as EmojiJSON
 
 Popup {
     property var addToChat: function () {}
+    property var categories: []
 
     id: popup
     modal: false
-    property int selectedPackId
+    width: 360
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     background: Rectangle {
         radius: Style.current.radius
@@ -30,14 +31,26 @@ Popup {
         }
     }
 
-    ListModel {
-        id: emojiModel
-    }
-
     Component.onCompleted: {
+        var categoryNames = {"recent": 0}
+        var newCategories = [[]]
+
         EmojiJSON.emoji_json.forEach(function (emoji) {
-            emojiModel.append({filename: emoji.unicode + '.png'})
+            if (!categoryNames[emoji.category] && categoryNames[emoji.category] !== 0) {
+                categoryNames[emoji.category] = newCategories.length
+                newCategories.push([])
+            }
+
+            newCategories[categoryNames[emoji.category]].push(emoji)
         })
+        if (newCategories[categoryNames.recent].length === 0) {
+            newCategories[categoryNames.recent].push({
+                category: "recent",
+                empty: true
+            })
+        }
+
+        categories = newCategories
     }
 
     contentItem: ColumnLayout {
@@ -45,60 +58,114 @@ Popup {
         spacing: 0
 
         Item {
+            property int headerMargin: 8
+
+            id: emojiHeader
             Layout.fillWidth: true
-            Layout.leftMargin: 4
-            Layout.rightMargin: 4
-            Layout.topMargin: 4
-            Layout.bottomMargin: 0
+            height: searchBox.height + emojiHeader.headerMargin
+
+            SearchBox {
+               id: searchBox
+               anchors.right: skinToneEmoji.left
+               anchors.rightMargin: emojiHeader.headerMargin
+               anchors.top: parent.top
+               anchors.topMargin: emojiHeader.headerMargin
+               anchors.left: parent.left
+               anchors.leftMargin: emojiHeader.headerMargin
+            }
+
+            SVGImage {
+                id: skinToneEmoji
+                width: 22
+                height: 22
+                anchors.verticalCenter: searchBox.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: emojiHeader.headerMargin
+                source: "../../../../imports/twemoji/26x26/1f590.png"
+
+                MouseArea {
+                    cursorShape: Qt.PointingHandCursor
+                    anchors.fill: parent
+                    onClicked: function () {
+                       console.log('Change skin tone')
+                    }
+                }
+            }
+        }
+
+        ScrollView {
+            property ScrollBar vScrollBar: ScrollBar.vertical
+            property var categrorySectionHeightRatios: []
+            property int activeCategory: 0
+
+            id: scrollView
+            topPadding: Style.current.smallPadding
+            leftPadding: Style.current.smallPadding
+            rightPadding: Style.current.smallPadding / 2
+            Layout.fillWidth: true
+            Layout.rightMargin: Style.current.smallPadding / 2
+            Layout.topMargin: Style.current.smallPadding
             Layout.alignment: Qt.AlignTop | Qt.AlignLeft
-            Layout.preferredHeight: 400 - 4
+            Layout.preferredHeight: 400 - Style.current.smallPadding - emojiHeader.height
+            clip: true
+            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-            GridView {
-                property int imageWidth: 26
-                property int imageMargin: 4
+            ScrollBar.vertical.onPositionChanged: function () {
+                if (vScrollBar.position < categrorySectionHeightRatios[scrollView.activeCategory - 1]) {
+                    scrollView.activeCategory--
+                } else if (vScrollBar.position > categrorySectionHeightRatios[scrollView.activeCategory]) {
+                    scrollView.activeCategory++
+                }
+            }
 
-                id: emojiGrid
-                visible: count > 0
-                anchors.fill: parent
-                cellWidth: imageWidth + emojiGrid.imageMargin * 2
-                cellHeight: imageWidth + emojiGrid.imageMargin * 2
-                model: emojiModel
-                focus: true
-                clip: true
-                delegate: Item {
-                    width: emojiGrid.cellWidth
-                    height: emojiGrid.cellHeight
-                    Column {
-                        anchors.fill: parent
-                        anchors.topMargin: emojiGrid.imageMargin
-                        anchors.leftMargin: emojiGrid.imageMargin
-                        SVGImage {
-                            width: emojiGrid.imageWidth
-                            height: emojiGrid.imageWidth
-                            source: "../../../../imports/twemoji/26x26/" + filename
-                            // fillMode: Image.PreserveAspectFit
-                            MouseArea {
-                                cursorShape: Qt.PointingHandCursor
-                                anchors.fill: parent
-                                onClicked: {
-                                    const extenstionIndex = filename.lastIndexOf('.');
-                                    let iconCodePoint = filename
-                                    if (extenstionIndex > -1) {
-                                        iconCodePoint = iconCodePoint.substring(0, extenstionIndex)
-                                    }
+            function scrollToCategory(category) {
+                if (category === 0) {
+                    return vScrollBar.setPosition(0)
+                }
+                vScrollBar.setPosition(categrorySectionHeightRatios[category - 1])
+            }
 
-                                    // Split the filename to get all the parts and then encode them from hex to utf8
-                                    const splitCodePoint = iconCodePoint.split('-')
-                                    let codePointParts = []
-                                    splitCodePoint.forEach(function (codePoint) {
-                                        codePointParts.push(`0x${codePoint}`)
-                                    })
-                                    const encodedIcon = String.fromCodePoint(...codePointParts);
-                                    popup.addToChat(encodedIcon + ' ') // Adding a space because otherwise, some emojis would fuse since it's just an emoji is just a string
-                                    popup.close()
-                                }
-                            }
-                        }
+            contentHeight: {
+                var totalHeight = 0
+                var categoryHeights = []
+                for (let i = 0; i < emojiSectionsRepeater.count; i++) {
+                    totalHeight += emojiSectionsRepeater.itemAt(i).height + Style.current.padding
+                    categoryHeights.push(totalHeight)
+                }
+                var ratios = []
+                categoryHeights.forEach(function (catHeight) {
+                    ratios.push(catHeight / totalHeight)
+                })
+
+                categrorySectionHeightRatios = ratios
+                return totalHeight + Style.current.padding
+            }
+
+            Repeater {
+                id: emojiSectionsRepeater
+                model: popup.categories
+
+                EmojiSection {}
+            }
+        }
+
+        Row {
+            Layout.fillWidth: true
+            height: 40
+            leftPadding: Style.current.smallPadding / 2
+            rightPadding: Style.current.smallPadding / 2
+            spacing: 0
+
+            Repeater {
+                model: EmojiJSON.emojiCategories
+
+                EmojiCategoryButton {
+                    source: `../../../img/emojiCategories/${modelData}.svg`
+                    active: index === scrollView.activeCategory
+                    changeCategory: function () {
+                        scrollView.activeCategory = index
+                        scrollView.scrollToCategory(index)
                     }
                 }
             }

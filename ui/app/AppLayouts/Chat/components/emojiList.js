@@ -1,24 +1,16 @@
+var emojiCategories = [
+    "recent",
+    "smileys",
+    "nature",
+    "food",
+    "activity",
+    "travel",
+    "objects",
+    "symbols",
+    "flags",
+]
+
 var emoji_json = [
-    {
-        "unicode": "1f4af",
-        "unicode_alternates": "",
-        "name": "hundred points symbol",
-        "shortname": ":100:",
-        "category": "symbols",
-        "emoji_order": "856",
-        "aliases": [],
-        "aliases_ascii": []
-    },
-    {
-        "unicode": "1f522",
-        "unicode_alternates": "",
-        "name": "input symbol for numbers",
-        "shortname": ":1234:",
-        "category": "symbols",
-        "emoji_order": "913",
-        "aliases": [],
-        "aliases_ascii": []
-    },
     {
         "unicode": "1f600",
         "unicode_alternates": "",
@@ -8750,6 +8742,16 @@ var emoji_json = [
         "aliases_ascii": []
     },
     {
+        "unicode": "1f4af",
+        "unicode_alternates": "",
+        "name": "hundred points symbol",
+        "shortname": ":100:",
+        "category": "symbols",
+        "emoji_order": "856",
+        "aliases": [],
+        "aliases_ascii": []
+    },
+    {
         "unicode": "1f505",
         "unicode_alternates": "",
         "name": "low brightness symbol",
@@ -9200,112 +9202,12 @@ var emoji_json = [
         "aliases_ascii": []
     },
     {
-        "unicode": "0030-20e3",
-        "unicode_alternates": "0030-fe0f-20e3",
-        "name": "keycap digit zero",
-        "shortname": ":zero:",
-        "category": "symbols",
-        "emoji_order": "902",
-        "aliases": [],
-        "aliases_ascii": []
-    },
-    {
-        "unicode": "0031-20e3",
-        "unicode_alternates": "0031-fe0f-20e3",
-        "name": "keycap digit one",
-        "shortname": ":one:",
-        "category": "symbols",
-        "emoji_order": "903",
-        "aliases": [],
-        "aliases_ascii": []
-    },
-    {
-        "unicode": "0032-20e3",
-        "unicode_alternates": "0032-fe0f-20e3",
-        "name": "keycap digit two",
-        "shortname": ":two:",
-        "category": "symbols",
-        "emoji_order": "904",
-        "aliases": [],
-        "aliases_ascii": []
-    },
-    {
-        "unicode": "0033-20e3",
-        "unicode_alternates": "0033-fe0f-20e3",
-        "name": "keycap digit three",
-        "shortname": ":three:",
-        "category": "symbols",
-        "emoji_order": "905",
-        "aliases": [],
-        "aliases_ascii": []
-    },
-    {
-        "unicode": "0034-20e3",
-        "unicode_alternates": "0034-fe0f-20e3",
-        "name": "keycap digit four",
-        "shortname": ":four:",
-        "category": "symbols",
-        "emoji_order": "906",
-        "aliases": [],
-        "aliases_ascii": []
-    },
-    {
-        "unicode": "0035-20e3",
-        "unicode_alternates": "0035-fe0f-20e3",
-        "name": "keycap digit five",
-        "shortname": ":five:",
-        "category": "symbols",
-        "emoji_order": "907",
-        "aliases": [],
-        "aliases_ascii": []
-    },
-    {
-        "unicode": "0036-20e3",
-        "unicode_alternates": "0036-fe0f-20e3",
-        "name": "keycap digit six",
-        "shortname": ":six:",
-        "category": "symbols",
-        "emoji_order": "908",
-        "aliases": [],
-        "aliases_ascii": []
-    },
-    {
-        "unicode": "0037-20e3",
-        "unicode_alternates": "0037-fe0f-20e3",
-        "name": "keycap digit seven",
-        "shortname": ":seven:",
-        "category": "symbols",
-        "emoji_order": "909",
-        "aliases": [],
-        "aliases_ascii": []
-    },
-    {
-        "unicode": "0038-20e3",
-        "unicode_alternates": "0038-fe0f-20e3",
-        "name": "keycap digit eight",
-        "shortname": ":eight:",
-        "category": "symbols",
-        "emoji_order": "910",
-        "aliases": [],
-        "aliases_ascii": []
-    },
-    {
-        "unicode": "0039-20e3",
-        "unicode_alternates": "0039-fe0f-20e3",
-        "name": "keycap digit nine",
-        "shortname": ":nine:",
-        "category": "symbols",
-        "emoji_order": "911",
-        "aliases": [],
-        "aliases_ascii": []
-    },
-    {
-        "unicode": "1f51f",
+        "unicode": "1f522",
         "unicode_alternates": "",
-        "name": "keycap ten",
-        "shortname": ":ten:",
+        "name": "input symbol for numbers",
+        "shortname": ":1234:",
         "category": "symbols",
-        "emoji_order": "912",
+        "emoji_order": "913",
         "aliases": [],
         "aliases_ascii": []
     },
@@ -9636,28 +9538,6 @@ var emoji_json = [
         "aliases_ascii": []
     },
     {
-        "unicode": "0023-20e3",
-        "unicode_alternates": "0023-fe0f-20e3",
-        "name": "keycap number sign",
-        "shortname": ":hash:",
-        "category": "symbols",
-        "emoji_order": "946",
-        "aliases": [],
-        "aliases_ascii": []
-    },
-    {
-        "unicode": "002a-20e3",
-        "unicode_alternates": "002a-fe0f-20e3",
-        "name": "keycap asterisk",
-        "shortname": ":asterisk:",
-        "category": "symbols",
-        "emoji_order": "947",
-        "aliases": [
-            ":keycap_asterisk:"
-        ],
-        "aliases_ascii": []
-    },
-    {
         "unicode": "2139",
         "unicode_alternates": "2139-fe0f",
         "name": "information source",
@@ -9824,26 +9704,6 @@ var emoji_json = [
         "shortname": ":currency_exchange:",
         "category": "symbols",
         "emoji_order": "964",
-        "aliases": [],
-        "aliases_ascii": []
-    },
-    {
-        "unicode": "00a9",
-        "unicode_alternates": "00a9-fe0f",
-        "name": "copyright sign",
-        "shortname": ":copyright:",
-        "category": "symbols",
-        "emoji_order": "965",
-        "aliases": [],
-        "aliases_ascii": []
-    },
-    {
-        "unicode": "00ae",
-        "unicode_alternates": "00ae-fe0f",
-        "name": "registered sign",
-        "shortname": ":registered:",
-        "category": "symbols",
-        "emoji_order": "966",
         "aliases": [],
         "aliases_ascii": []
     },
@@ -10546,16 +10406,6 @@ var emoji_json = [
         "shortname": ":clock1230:",
         "category": "symbols",
         "emoji_order": "1036",
-        "aliases": [],
-        "aliases_ascii": []
-    },
-    {
-        "unicode": "1f441-1f5e8",
-        "unicode_alternates": "1f441-200d-1f5e8",
-        "name": "eye in speech bubble",
-        "shortname": ":eye_in_speech_bubble:",
-        "category": "symbols",
-        "emoji_order": "1037",
         "aliases": [],
         "aliases_ascii": []
     },

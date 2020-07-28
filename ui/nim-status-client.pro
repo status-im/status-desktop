@@ -134,8 +134,10 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/UsernameLabel.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/qmldir \
     app/AppLayouts/Chat/ContactsColumn/ClosedEmptyView.qml \
+    app/AppLayouts/Chat/components/EmojiCategoryButton.qml \
     app/AppLayouts/Chat/components/EmojiPopup.qml \
     app/AppLayouts/Chat/components/EmojiReaction.qml \
+    app/AppLayouts/Chat/components/EmojiSection.qml \
     app/AppLayouts/Chat/components/InviteFriendsPopup.qml \
     app/AppLayouts/Profile/LeftTab/Constants.js \
     app/AppLayouts/Profile/LeftTab/components/MenuButton.qml \
