@@ -11,6 +11,7 @@ import "./emojiList.js" as EmojiJSON
 Popup {
     property var addToChat: function () {}
     property var categories: []
+    property string searchString: searchBox.text
 
     id: popup
     modal: false
@@ -40,7 +41,6 @@ Popup {
                 categoryNames[emoji.category] = newCategories.length
                 newCategories.push([])
             }
-
             newCategories[categoryNames[emoji.category]].push(emoji)
         })
         if (newCategories[categoryNames.recent].length === 0) {
@@ -51,6 +51,10 @@ Popup {
         }
 
         categories = newCategories
+    }
+
+    onOpened: {
+        searchBox.forceActiveFocus(Qt.MouseFocusReason)
     }
 
     contentItem: ColumnLayout {
@@ -146,7 +150,9 @@ Popup {
                 id: emojiSectionsRepeater
                 model: popup.categories
 
-                EmojiSection {}
+                EmojiSection {
+                    searchString: popup.searchString
+                }
             }
         }
 
