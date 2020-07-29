@@ -9,6 +9,28 @@ Item {
       id: tokenList
     }
 
+    Loader {
+        id: loadingImg
+        active: false
+        sourceComponent: loadingImageComponent
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding
+        anchors.top: parent.top
+        anchors.topMargin: Style.currentPadding
+    }
+
+    Component {
+        id: loadingImageComponent
+        LoadingImage {}
+    }
+
+    Connections {
+        target: walletModel
+        onLoadingTrxHistory: {
+            loadingImg.active = isLoading
+        }
+    }
+
     Component {
       id: transactionListItemCmp
 

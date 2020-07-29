@@ -1,4 +1,5 @@
 from eventemitter import Args
+import ../libstatus/types
 
 type Collectible* = ref object
     name*, image*, id*: string
@@ -15,6 +16,7 @@ type WalletAccount* = ref object
     assetList*: seq[Asset]
     wallet*, chat*: bool
     collectibles*: seq[Collectible]
+    transactions*: seq[Transaction]
 
 type AccountArgs* = ref object of Args
     account*: WalletAccount

@@ -1,6 +1,7 @@
 import NimQml, Tables, strformat, strutils, chronicles, json
 import ../../status/[status, wallet, threads]
 import ../../status/wallet/collectibles as status_collectibles
+import ../../status/libstatus/wallet as status_wallet
 import views/[asset_list, account_list, account_item, transaction_list, collectibles_list]
 
 QtObject:
@@ -66,7 +67,22 @@ QtObject:
     write = setCurrentCollectiblesList
     notify = currentCollectiblesListChanged
 
+  proc currentTransactionsChanged*(self: WalletView) {.signal.}
+
+  proc getCurrentTransactions*(self: WalletView): QVariant {.slot.} =
+    return newQVariant(self.currentTransactions)
+
+  proc setCurrentTransactions*(self: WalletView, transactionList: seq[Transaction]) =
+    self.currentTransactions.setNewData(transactionList)
+    self.currentTransactionsChanged()
+
+  QtProperty[QVariant] transactions:
+    read = getCurrentTransactions
+    write = setCurrentTransactions
+    notify = currentTransactionsChanged
+
   proc loadCollectiblesForAccount*(self: WalletView, address: string)
+  proc loadTransactionsForAccount*(self: WalletView, address: string)
 
   proc currentAccountChanged*(self: WalletView) {.signal.}
 
@@ -82,7 +98,9 @@ QtObject:
     # Display currently known collectibles, and get latest from API/Contracts
     self.setCurrentCollectiblesList(selectedAccount.collectibles)
     self.loadCollectiblesForAccount(selectedAccount.address)
-    self.currentCollectiblesListChanged()
+    # Display currently known transactions, and get latest transactions from status-go
+    self.setCurrentTransactions(selectedAccount.transactions)
+    self.loadTransactionsForAccount(selectedAccount.address)
 
   proc getCurrentAccount*(self: WalletView): QVariant {.slot.} =
     result = newQVariant(self.currentAccount)
@@ -106,19 +124,6 @@ QtObject:
     write = setCurrentAssetList
     notify = currentAssetListChanged
 
-  proc currentTransactionsChanged*(self: WalletView) {.signal.}
-
-  proc getCurrentTransactions*(self: WalletView): QVariant {.slot.} =
-    return newQVariant(self.currentTransactions)
-
-  proc setCurrentTransactions*(self: WalletView, transactionList: seq[Transaction]) =
-    self.currentTransactions.setNewData(transactionList)
-    self.currentTransactionsChanged()
-
-  QtProperty[QVariant] transactions:
-    read = getCurrentTransactions
-    write = setCurrentTransactions
-    notify = currentTransactionsChanged
 
   proc totalFiatBalanceChanged*(self: WalletView) {.signal.}
 
@@ -216,9 +221,6 @@ QtObject:
   proc addCustomToken*(self: WalletView, address: string, name: string, symbol: string, decimals: string) {.slot.} =
     self.status.wallet.toggleAsset(symbol, true, address, name, parseInt(decimals), "")
 
-  proc loadTransactionsForAccount*(self: WalletView, address: string) {.slot.} =
-    self.setCurrentTransactions(self.status.wallet.getTransfersByAddress(address))
-
   proc loadingCollectibles*(self: WalletView, isLoading: bool) {.signal.}
 
   proc loadCollectiblesForAccount*(self: WalletView, address: string) {.slot.} =
@@ -233,9 +235,30 @@ QtObject:
     let collectibleData = parseJson(collectiblesJSON)
     let collectibles = collectibleData["collectibles"].to(seq[Collectible]);
     let address = collectibleData["address"].getStr
-    self.accounts.getAccount(self.accounts.getAccountindexByAddress(address)).collectibles = collectibles
+    let index = self.accounts.getAccountindexByAddress(address)
+    if index == -1: return
+    self.accounts.getAccount(index).collectibles = collectibles
     if address == self.currentAccount.address:
       self.setCurrentCollectiblesList(collectibles)
-
     self.loadingCollectibles(false)
 
+  proc loadingTrxHistory*(self: WalletView, isLoading: bool) {.signal.}
+
+  proc loadTransactionsForAccount*(self: WalletView, address: string) {.slot.} =
+    self.loadingTrxHistory(true)
+    spawnAndSend(self, "setTrxHistoryResult") do:
+      $(%*{
+        "address": address,
+        "history": getTransfersByAddress(address)
+      })
+
+  proc setTrxHistoryResult(self: WalletView, historyJSON: string) {.slot.} =
+    let historyData = parseJson(historyJSON)
+    let transactions = historyData["history"].to(seq[Transaction]);
+    let address = historyData["address"].getStr
+    let index = self.accounts.getAccountindexByAddress(address)
+    if index == -1: return
+    self.accounts.getAccount(index).transactions = transactions
+    if address == self.currentAccount.address:
+      self.setCurrentTransactions(transactions)
+    self.loadingTrxHistory(false)

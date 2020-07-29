@@ -90,7 +90,6 @@ proc initAccounts*(self: WalletModel) =
     var acc = WalletAccount(account)
     self.populateAccount(acc, "")
     self.accounts.add(acc)
-  self.calculateTotalFiatBalance
 
 proc getTotalFiatBalance*(self: WalletModel): string =
   var newBalance = 0.0

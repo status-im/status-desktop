@@ -17,7 +17,6 @@ Item {
         anchors.rightMargin: Style.current.padding
         anchors.top: parent.top
         anchors.topMargin: Style.currentPadding
-        anchors.verticalCenter: txtPassword.verticalCenter
     }
 
     Component {
