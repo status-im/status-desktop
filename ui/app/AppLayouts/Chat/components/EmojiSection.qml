@@ -10,7 +10,8 @@ Item {
     property int imageWidth: 26
     property int imageMargin: 4
     property var emojis: []
-    property var allEmojis: []
+    property var allEmojis: modelData
+    property var addEmoji: function () {}
 
     id: emojiSection
     visible: emojis.length > 0 || !!(modelData && modelData.length && modelData[0].empty && searchString === "")
@@ -31,7 +32,7 @@ Item {
 
     StyledText {
         id: noRecentText
-        visible: !!(modelData && modelData.length && modelData[0].empty)
+        visible: !!(allEmojis && allEmojis.length && allEmojis[0].empty)
         text: qsTr("No recent emojis")
         color: Style.current.darkGrey
         font.pixelSize: 10
@@ -41,33 +42,21 @@ Item {
 
     onSearchStringLowercaseChanged: {
         if (emojiSection.searchStringLowercase === "") {
-            this.emojis = this.allEmojis
+            this.emojis = modelData
             return
         }
-        this.emojis = this.allEmojis.filter(function (emoji) {
+        this.emojis = modelData.filter(function (emoji) {
             return emoji.name.includes(emojiSection.searchStringLowercase) ||
                     emoji.shortname.includes(emojiSection.searchStringLowercase) ||
                     emoji.aliases.some(a => a.includes(emojiSection.searchStringLowercase))
         })
     }
 
-    Component.onCompleted: {
-        var myEmojis = []
-        modelData.forEach(function (emoji) {
-            if (emoji.empty) {
-                return
-            }
-            myEmojis.push({
-                              filename: emoji.unicode + '.png',
-                              name: emoji.name,
-                              shortname: emoji.shortname,
-                              name: emoji.name,
-                              aliases: emoji.aliases
-                          })
-        })
-        // We use two arrays for filtering purposes
-        this.emojis = myEmojis
-        this.allEmojis = myEmojis
+    onAllEmojisChanged: {
+        if (this.allEmojis[0].empty) {
+            return
+        }
+        this.emojis = this.allEmojis
     }
 
     GridView {
@@ -103,21 +92,7 @@ Item {
                         cursorShape: Qt.PointingHandCursor
                         anchors.fill: parent
                         onClicked: {
-                            const extenstionIndex = modelData.filename.lastIndexOf('.');
-                            let iconCodePoint = modelData.filename
-                            if (extenstionIndex > -1) {
-                                iconCodePoint = iconCodePoint.substring(0, extenstionIndex)
-                            }
-
-                            // Split the filename to get all the parts and then encode them from hex to utf8
-                            const splitCodePoint = iconCodePoint.split('-')
-                            let codePointParts = []
-                            splitCodePoint.forEach(function (codePoint) {
-                                codePointParts.push(`0x${codePoint}`)
-                            })
-                            const encodedIcon = String.fromCodePoint(...codePointParts);
-                            popup.addToChat(encodedIcon + ' ') // Adding a space because otherwise, some emojis would fuse since it's just an emoji is just a string
-                            popup.close()
+                            emojiSection.addEmoji(modelData)
                         }
                     }
                 }

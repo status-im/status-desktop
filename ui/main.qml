@@ -68,6 +68,7 @@ ApplicationWindow {
         property bool displayChatImages: false
         property bool compactMode
         property string locale: "en"
+        property var recentEmojis: []
     }
 
     SystemTrayIcon {

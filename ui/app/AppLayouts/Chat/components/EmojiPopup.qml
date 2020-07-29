@@ -32,6 +32,40 @@ Popup {
         }
     }
 
+    function addEmoji(emoji) {
+        const MAX_EMOJI_NUMBER = 36
+        const extenstionIndex = emoji.filename.lastIndexOf('.');
+        let iconCodePoint = emoji.filename
+        if (extenstionIndex > -1) {
+            iconCodePoint = iconCodePoint.substring(0, extenstionIndex)
+        }
+
+        // Split the filename to get all the parts and then encode them from hex to utf8
+        const splitCodePoint = iconCodePoint.split('-')
+        let codePointParts = []
+        splitCodePoint.forEach(function (codePoint) {
+            codePointParts.push(`0x${codePoint}`)
+        })
+        const encodedIcon = String.fromCodePoint(...codePointParts);
+
+        // Add at the  start of the list
+        appSettings.recentEmojis.unshift(emoji)
+        // Remove duplicates
+        appSettings.recentEmojis = appSettings.recentEmojis.filter(function (e, index) {
+            return !appSettings.recentEmojis.some(function (e2, index2) {
+                return index2 < index && e2.filename === e.filename
+            })
+        })
+        if (appSettings.recentEmojis.length > MAX_EMOJI_NUMBER) {
+            //remove last one
+            appSettings.recentEmojis.splice(MAX_EMOJI_NUMBER - 1)
+        }
+        emojiSectionsRepeater.itemAt(0).allEmojis = appSettings.recentEmojis
+
+        popup.addToChat(encodedIcon + ' ') // Adding a space because otherwise, some emojis would fuse since it's just an emoji is just a string
+        popup.close()
+    }
+
     Component.onCompleted: {
         var categoryNames = {"recent": 0}
         var newCategories = [[]]
@@ -41,8 +75,14 @@ Popup {
                 categoryNames[emoji.category] = newCategories.length
                 newCategories.push([])
             }
-            newCategories[categoryNames[emoji.category]].push(emoji)
+            newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode + '.png'}))
         })
+
+        // Add recent
+        appSettings.recentEmojis.forEach(function (emoji) {
+            newCategories[categoryNames.recent].push(Object.assign({}, emoji, {category: "recent"}))
+        })
+
         if (newCategories[categoryNames.recent].length === 0) {
             newCategories[categoryNames.recent].push({
                 category: "recent",
@@ -152,6 +192,7 @@ Popup {
 
                 EmojiSection {
                     searchString: popup.searchString
+                    addEmoji: popup.addEmoji
                 }
             }
         }
