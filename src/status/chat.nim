@@ -126,19 +126,17 @@ proc getInstalledStickerPacks*(self: ChatModel): Table[int, StickerPack] =
   self.installedStickerPacks = status_stickers.getInstalledStickerPacks()
   result = self.installedStickerPacks
 
-proc getAvailableStickerPacks*(self: ChatModel): Table[int, StickerPack] =
-  if self.availableStickerPacks != initTable[int, StickerPack]():
-    return self.availableStickerPacks
-
+proc getAvailableStickerPacks*(): Table[int, StickerPack] =
+  var availableStickerPacks = initTable[int, StickerPack]()
   try: 
     let numPacks = status_stickers.getPackCount()
     for i in 0..<numPacks:
       try:
         let stickerPack = status_stickers.getPackData(i.u256)
-        self.availableStickerPacks[stickerPack.id] = stickerPack
+        availableStickerPacks[stickerPack.id] = stickerPack
       except:
         continue
-    result = self.availableStickerPacks
+    result = availableStickerPacks
   except RpcException:
     error "Error in getAvailableStickerPacks", message = getCurrentExceptionMsg()
     result = initTable[int, StickerPack]()
