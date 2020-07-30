@@ -71,6 +71,8 @@ proc getEthermons*(address: EthAddress): seq[Collectible] =
   result = @[]
   try:
     let contract = getContract("ethermon")
+    if contract == nil: return
+
     let tokens = tokensOfOwnerByIndex(contract, address)
 
     if (tokens.len == 0):
@@ -95,6 +97,8 @@ proc getKudos*(address: EthAddress): seq[Collectible] =
   result = @[]
   try:
     let contract = getContract("kudos")
+    if contract == nil: return
+    
     let tokens = tokensOfOwnerByIndex(contract, address)
 
     if (tokens.len == 0):
