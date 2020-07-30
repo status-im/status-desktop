@@ -9,33 +9,26 @@ Item {
         visible: walletModel.collectibles.rowCount() === 0
     }
 
-    SVGImage {
+    Loader {
         id: loadingImg
-        visible: false
+        active: false
+        sourceComponent: loadingImageComponent
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         anchors.top: parent.top
         anchors.topMargin: Style.currentPadding
         anchors.verticalCenter: txtPassword.verticalCenter
-        // TODO replace by a real loading image
-        source: "../../img/settings.svg"
-        width: 30
-        height: 30
-        fillMode: Image.Stretch
-        RotationAnimator {
-            target: loadingImg;
-            from: 0;
-            to: 360;
-            duration: 1200
-            running: true
-            loops: Animation.Infinite
-        }
+    }
+
+    Component {
+        id: loadingImageComponent
+        LoadingImage {}
     }
 
     Connections {
         target: walletModel
         onLoadingCollectibles: {
-            loadingImg.visible = isLoading
+            loadingImg.active = isLoading
         }
     }
 
