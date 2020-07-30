@@ -51,6 +51,9 @@ Item {
                 case Constants.stickerType:
                     h += stickerId.height;
                     break;
+                case Constants.audioType:
+                    h += audioPlayerLoader.height;
+                    break;
                 default:
                     h += chatText.visible ? chatText.height : 0;
                     h += chatImageContent.visible ? chatImageContent.height: 0;
@@ -123,7 +126,21 @@ Item {
                 imageWidth: 250
             }
         }
-        
+
+        Loader {
+            id: audioPlayerLoader
+            active: isAudio
+            sourceComponent: audioPlayer
+            anchors.verticalCenter: parent.verticalCenter
+        }
+
+        Component {
+            id: audioPlayer
+            AudioPlayer {
+                audioSource: audio
+            }
+        }
+
         Sticker {
             id: stickerId
             anchors.left: parent.left

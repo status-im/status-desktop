@@ -16,6 +16,7 @@ QtObject {
     readonly property int transactionType: 5
     readonly property int systemMessagePrivateGroupType: 6
     readonly property int imageType: 7
+    readonly property int audioType: 8
 
     readonly property string watchWalletType: "watch"
     readonly property string keyWalletType: "key"

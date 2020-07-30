@@ -146,7 +146,7 @@ proc toMessage*(jsonMsg: JsonNode): Message =
     contentType = ContentType(jsonMsg{"contentType"}.getInt)
   except:
     warn "Unknown content type received", type = jsonMsg{"contentType"}.getInt
-    contentType = ContentType.Unknown
+    contentType = ContentType.Message
 
   var message = Message(
       alias: jsonMsg{"alias"}.getStr,
@@ -172,7 +172,9 @@ proc toMessage*(jsonMsg: JsonNode): Message =
       stickerHash: "",
       parsedText: @[],
       imageUrls: "",
-      image: $jsonMsg{"image"}.getStr
+      image: $jsonMsg{"image"}.getStr,
+      audio: $jsonMsg{"audio"}.getStr,
+      audioDurationMs: jsonMsg{"audioDurationMs"}.getInt,
     )
 
   if jsonMsg["parsedText"].kind != JNull: 

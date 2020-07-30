@@ -9,7 +9,8 @@ type ContentType* {.pure.} = enum
   Emoji = 4,
   Transaction = 5,
   Group = 6,
-  Image = 7
+  Image = 7,
+  Audio = 8
 
 type TextItem* = object
   textType*: string
@@ -33,7 +34,7 @@ type Message* = object
   parsedText*: seq[TextItem] 
   # quotedMessage:       # ???
   replace*: string        # ???
-  responseTo*: string     # ???
+  responseTo*: string
   rtl*: bool              # ???
   seen*: bool             # ???
   sticker*: string
@@ -45,7 +46,9 @@ type Message* = object
   outgoingStatus*: string
   imageUrls*: string
   image*: string
+  audio*: string
+  audioDurationMs*: int
 
 
 proc `$`*(self: Message): string =
-  result = fmt"Message(id:{self.id}, chatId:{self.chatId}, clock:{self.clock}, from:{self.fromAuthor}, type:{self.contentType})"
+  result = fmt"Message(id:{self.id}, chatId:{self.chatId}, clock:{self.clock}, from:{self.fromAuthor}, contentType:{self.contentType})"

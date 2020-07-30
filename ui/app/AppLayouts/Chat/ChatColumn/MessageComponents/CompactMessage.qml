@@ -136,4 +136,19 @@ Item {
             chatHorizontalPadding: 0
         }
     }
+
+    Loader {
+        id: audioPlayerLoader
+        active: isAudio
+        sourceComponent: audioPlayer
+        anchors.top: chatName.visible ? chatName.bottom : parent.top
+        anchors.left: chatImage.right
+    }
+
+    Component {
+        id: audioPlayer
+        AudioPlayer {
+            audioSource: audio
+        }
+    }
 }
