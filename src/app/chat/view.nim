@@ -1,19 +1,20 @@
 import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os
-
 import ../../status/status
 import ../../status/libstatus/accounts/constants
 import ../../status/accounts as status_accounts
 import ../../status/chat as status_chat
 import ../../status/messages as status_messages
+import ../../status/libstatus/wallet as status_wallet
 import ../../status/contacts as status_contacts
 import ../../status/ens as status_ens
 import ../../status/chat/[chat, message]
 import ../../status/libstatus/types
 import ../../status/profile/profile
-
+import eth/common/eth_types
 import ../../status/threads
-
 import views/channels_list, views/message_list, views/chat_item, views/sticker_pack_list, views/sticker_list, views/suggestions_list
+import json_serialization
+from eth/common/utils import parseAddress
 
 logScope:
   topics = "chats-view"
@@ -67,6 +68,27 @@ QtObject:
 
   QtProperty[QVariant] stickerPacks:
     read = getStickerPackList
+
+  proc obtainAvailableStickerPacks*(self: ChatsView) =
+    spawnAndSend(self, "setAvailableStickerPacks") do:
+      let availableStickerPacks = status_chat.getAvailableStickerPacks()
+      var packs: seq[StickerPack] = @[]
+      for packId, stickerPack in availableStickerPacks.pairs:
+        packs.add(stickerPack)
+      $(%*(packs))
+
+  proc setAvailableStickerPacks*(self: ChatsView, availableStickersJSON: string) {.slot.} =
+    let currAcct = status_wallet.getWalletAccounts()[0] # TODO: make generic
+    let currAddr = parseAddress(currAcct.address)
+    let installedStickerPacks = self.status.chat.getInstalledStickerPacks()
+    let purchasedStickerPacks = self.status.chat.getPurchasedStickerPacks(currAddr)
+    let availableStickers = JSON.decode($availableStickersJSON, seq[StickerPack])
+
+    for stickerPack in availableStickers:
+      let isInstalled = installedStickerPacks.hasKey(stickerPack.id)
+      let isBought = purchasedStickerPacks.contains(stickerPack.id)
+      self.status.chat.availableStickerPacks[stickerPack.id] = stickerPack
+      self.addStickerPackToList(stickerPack, isInstalled, isBought)
 
   proc getChatsList(self: ChatsView): QVariant {.slot.} =
     newQVariant(self.chats)

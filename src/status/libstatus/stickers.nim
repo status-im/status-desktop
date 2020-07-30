@@ -91,37 +91,38 @@ proc getPackCount*(): int =
 
 # Gets sticker pack data
 proc getPackData*(id: Stuint[256]): StickerPack =
-  let
-    contract = contracts.getContract("stickers")
-    contractMethod = contract.methods["getPackData"]
-    getPackData = GetPackData(packId: id)
-    payload = %* [{
-      "to": $contract.address,
-      "data": contractMethod.encodeAbi(getPackData)
-    }, "latest"]
-    responseStr = status.callPrivateRPC("eth_call", payload)
-    response = Json.decode(responseStr, RpcResponse)
-  if not response.error.isNil:
-    raise newException(RpcException, "Error getting sticker pack data: " & response.error.message)
+  {.gcsafe.}:
+    let
+      contract = contracts.getContract("stickers")
+      contractMethod = contract.methods["getPackData"]
+      getPackData = GetPackData(packId: id)
+      payload = %* [{
+        "to": $contract.address,
+        "data": contractMethod.encodeAbi(getPackData)
+        }, "latest"]
+    let responseStr = status.callPrivateRPC("eth_call", payload)
+    let response = Json.decode(responseStr, RpcResponse)
+    if not response.error.isNil:
+      raise newException(RpcException, "Error getting sticker pack data: " & response.error.message)
 
-  let packData = contracts.decodeContractResponse[PackData](response.result)
+    let packData = contracts.decodeContractResponse[PackData](response.result)
 
-  # contract response includes a contenthash, which needs to be decoded to reveal
-  # an IPFS identifier. Once decoded, download the content from IPFS. This content
-  # is in EDN format, ie https://ipfs.infura.io/ipfs/QmWVVLwVKCwkVNjYJrRzQWREVvEk917PhbHYAUhA1gECTM
-  # and it also needs to be decoded in to a nim type
-  var client = newHttpClient()
-  let contentHash = contracts.toHex(packData.contentHash)
-  let url = "https://ipfs.infura.io/ipfs/" & decodeContentHash(contentHash)
-  var ednMeta = client.getContent(url)
+    # contract response includes a contenthash, which needs to be decoded to reveal
+    # an IPFS identifier. Once decoded, download the content from IPFS. This content
+    # is in EDN format, ie https://ipfs.infura.io/ipfs/QmWVVLwVKCwkVNjYJrRzQWREVvEk917PhbHYAUhA1gECTM
+    # and it also needs to be decoded in to a nim type
+    var client = newHttpClient()
+    let contentHash = contracts.toHex(packData.contentHash)
+    let url = "https://ipfs.infura.io/ipfs/" & decodeContentHash(contentHash)
+    var ednMeta = client.getContent(url)
 
-  # decode the EDN content in to a StickerPack
-  result = edn_helpers.decode[StickerPack](ednMeta)
-  # EDN doesn't include a packId for each sticker, so add it here
-  result.stickers.apply(proc(sticker: var Sticker) =
-    sticker.packId = truncate(id, int))
-  result.id = truncate(id, int)
-  result.price = packData.price
+    # decode the EDN content in to a StickerPack
+    result = edn_helpers.decode[StickerPack](ednMeta)
+    # EDN doesn't include a packId for each sticker, so add it here
+    result.stickers.apply(proc(sticker: var Sticker) =
+      sticker.packId = truncate(id, int))
+    result.id = truncate(id, int)
+    result.price = packData.price
 
 # Buys a sticker pack for user
 # See https://notes.status.im/Q-sQmQbpTOOWCQcYiXtf5g#Buy-a-Sticker-Pack for more
