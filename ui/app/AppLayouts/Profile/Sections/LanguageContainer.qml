@@ -33,20 +33,33 @@ Item {
             text: qsTr("Language")
         }
         Select {
+            id: select
             selectedText: languageSetting.currentLocale
             anchors.right: undefined
             anchors.left: undefined
             width: 100
             Layout.leftMargin: Style.current.padding
-            selectOptions: Locales_JSON.locales.map(locale => {
-                return {
-                    label: locale,
-                    onClicked: function () {
+            model: Locales_JSON.locales
+            menu.delegate: Component {
+                MenuItem {
+                    height: itemText.height + 4
+                    width: parent.width
+                    padding: 10
+                    onTriggered: function () {
+                        const locale = Locales_JSON.locales[index]
                         profileModel.changeLocale(locale)
                         appSettings.locale = locale
                     }
-               }
-            })
+
+                    StyledText {
+                        id: itemText
+                        text: Locales_JSON.locales[index]
+                        anchors.left: parent.left
+                        anchors.leftMargin: 5
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                }
+            }
         }
     }
 }

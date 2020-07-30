@@ -50,16 +50,43 @@ ModalPopup {
         bgColor: selectedColor
         //% "Account color"
         label: qsTrId("account-color")
-        selectOptions: Constants.accountColors.map(color => {
-            return {
-                text: "",
-                bgColor: color,
-                height: 52,
-                onClicked: function () {
-                    selectedColor = color
+        model: Constants.accountColors
+        menu.delegate: Component {
+            MenuItem {
+                property bool isFirstItem: index === 0
+                property bool isLastItem: index === Constants.accountColors.length - 1
+                height: 52
+                width: parent.width
+                padding: 10
+                onTriggered: function () {
+                    selectedColor = Constants.accountColors[index]
                 }
-           }
-        })
+                background: Rectangle {
+                    color: Constants.accountColors[index]
+                    radius: Style.current.radius
+
+                    // cover bottom left/right corners with square corners
+                    Rectangle {
+                        visible: !isLastItem
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        height: parent.radius
+                        color: parent.color
+                    }
+
+                    // cover top left/right corners with square corners
+                    Rectangle {
+                        visible: !isFirstItem
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        height: parent.radius
+                        color: parent.color
+                    }
+                }
+            }
+        }
     }
 
     TextWithLabel {

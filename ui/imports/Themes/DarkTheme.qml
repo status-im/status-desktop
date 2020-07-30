@@ -5,7 +5,7 @@ Theme {
     property color white: "#FFFFFF"
     property color white2: "#FCFCFC"
     property color black: "#000000"
-    property color grey: "#EEF2F5"
+    property color grey: "#141414"
     property color lightBlue: "#ECEFFC"
     property color blue: "#758EF0"
     property color transparent: "#00000000"

@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import QtQuick.Controls 2.13
 import QtQuick.Dialogs 1.3
 import "../../../../imports"
 import "../../../../shared"
@@ -8,13 +9,7 @@ Item {
     property var closePopup: function(){}
     property alias amountInput: txtAmount
     property alias passwordInput: txtPassword
-    property var accounts: []
     property var assets: []
-
-    property int selectedAccountIndex: 0
-    property string selectedAccountAddress: accounts && accounts.length ? accounts[selectedAccountIndex].address : ""
-    property string selectedAccountName: accounts && accounts.length ? accounts[selectedAccountIndex].name : ""
-    property string selectedAccountIconColor: accounts && accounts.length ? accounts[selectedAccountIndex].iconColor : ""
 
     property int selectedAssetIndex: 0
     property string selectedAssetName: assets && assets.length ? assets[selectedAssetIndex].name : ""
@@ -30,8 +25,7 @@ Item {
         if (!validate()) {
             return;
         }
-
-        let result = walletModel.onSendTransaction(selectedAccountAddress,
+        let result = walletModel.onSendTransaction(selectFromAccount.selectedAccount.address,
                                                    txtTo.text,
                                                    selectedAssetAddress,
                                                    txtAmount.text,
@@ -125,14 +119,27 @@ Item {
         anchors.top: txtAmount.bottom
         anchors.topMargin: Style.current.padding
         selectedText: selectedAssetName
-        selectOptions: sendModalContent.assets.map(function (asset, index) {
-            return {
-                text: asset.name,
-                onClicked: function () {
+        model: sendModalContent.assets
+        menu.delegate: Component {
+            MenuItem {
+
+                height: itemText.height + 4
+                width: parent ? parent.width : selectMenu.width
+                padding: 10
+
+                StyledText {
+                    id: itemText
+                    text: sendModalContent.assets[index].name
+                    anchors.left: parent.left
+                    anchors.leftMargin: 5
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                onTriggered: function () {
                     selectedAssetIndex = index
                 }
             }
-        })
+        }
     }
 
     StyledText {
@@ -147,38 +154,14 @@ Item {
         anchors.rightMargin: 0
     }
 
-    Select {
-        id: txtFrom
-        iconHeight: 12
-        iconWidth: 12
-        icon: "../../../img/walletIcon.svg"
-        iconColor: selectedAccountIconColor
-        //% "From account"
-        label: qsTrId("from-account")
+
+    AccountSelector {
+        id: selectFromAccount
+        accounts: walletModel.accounts
         anchors.top: assetTypeSelect.bottom
         anchors.topMargin: Style.current.padding
-        selectedText: selectedAccountName
-        selectOptions: sendModalContent.accounts.map(function (account, index) {
-            return {
-                text: account.name,
-                onClicked: function () {
-                    selectedAccountIndex = index
-                }
-            }
-        })
-    }
-
-    StyledText {
-        id: textSelectAccountAddress
-        text: selectedAccountAddress
-        font.family: Style.current.fontHexRegular.name
-        anchors.right: parent.right
         anchors.left: parent.left
-        anchors.leftMargin: 2
-        elide: Text.ElideMiddle
-        anchors.top: txtFrom.bottom
-        font.pixelSize: 12
-        color: Style.current.darkGrey
+        anchors.right: parent.right
     }
 
     Input {
@@ -187,7 +170,7 @@ Item {
         label: qsTrId("recipient")
         //% "Send to"
         placeholderText: qsTrId("send-to")
-        anchors.top: textSelectAccountAddress.bottom
+        anchors.top: selectFromAccount.bottom
         anchors.topMargin: Style.current.padding
         validationError: toValidationError
     }
