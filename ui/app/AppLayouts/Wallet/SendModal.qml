@@ -17,17 +17,6 @@ ModalPopup {
         sendModalContent.amountInput.text = ""
         sendModalContent.passwordInput.text = ""
         sendModalContent.amountInput.forceActiveFocus(Qt.MouseFocusReason)
-        const accounts = walletModel.accounts
-        const numAccounts = accounts.rowCount()
-        const accountsData = []
-        for (let i = 0; i < numAccounts; i++) {
-            accountsData.push({
-                name: accounts.rowData(i, 'name'),
-                address: accounts.rowData(i, 'address'),
-                iconColor: accounts.rowData(i, 'iconColor')
-            })
-        }
-        sendModalContent.accounts = accountsData
 
         const assets = walletModel.assets
         const numAssets = assets.rowCount()

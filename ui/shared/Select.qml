@@ -9,34 +9,32 @@ Item {
     readonly property bool hasLabel: label !== ""
     property color bgColor: Style.current.inputBackground
     readonly property int labelMargin: 7
-    property var selectOptions
-    property int customHeight: 44
+    property var model
+    property int customHeight: 56
     property string selectedText: ""
     property url icon: ""
-    property int iconHeight: 24
-    property int iconWidth: 24
+    property int iconHeight: 12
+    property int iconWidth: 12
     property color iconColor: Style.current.transparent
+    property alias menu: selectMenu
 
     readonly property bool hasIcon: icon.toString() !== ""
 
-    id: inputBox
+    id: root
     height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0)
     anchors.right: parent.right
     anchors.left: parent.left
 
-    onSelectOptionsChanged: {
-        selectMenu.setupMenuItems()
-    }
-
     StyledText {
         id: inputLabel
-        text: inputBox.label
+        text: root.label
         font.weight: Font.Medium
         anchors.left: parent.left
         anchors.leftMargin: 0
         anchors.top: parent.top
         anchors.topMargin: 0
         font.pixelSize: 13
+        height: 18
     }
 
     Rectangle {
@@ -44,20 +42,21 @@ Item {
         height: customHeight
         color: bgColor
         radius: Style.current.radius
-        anchors.top: inputBox.hasLabel ? inputLabel.bottom : parent.top
-        anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
+        anchors.top: root.hasLabel ? inputLabel.bottom : parent.top
+        anchors.topMargin: root.hasLabel ? root.labelMargin : 0
         anchors.right: parent.right
         anchors.left: parent.left
 
         SVGImage {
             id: iconImg
+            visible: root.hasIcon
             sourceSize.height: iconHeight
             sourceSize.width: iconWidth
             anchors.left: parent.left
-            anchors.leftMargin: Style.current.smallPadding
+            anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
             fillMode: Image.PreserveAspectFit
-            source: inputBox.icon
+            source: root.icon
         }
         ColorOverlay {
             anchors.fill: iconImg
@@ -67,12 +66,13 @@ Item {
 
         StyledText {
             id: selectedTextField
-            visible: inputBox.selectedText !== ""
-            text: inputBox.selectedText
-            anchors.left: parent.left
-            anchors.leftMargin: inputBox.hasIcon ? iconWidth + 20 : Style.current.padding
+            visible: root.selectedText !== ""
+            text: root.selectedText
+            anchors.left: iconImg.right
+            anchors.leftMargin: hasIcon ? 8 : 0
             anchors.verticalCenter: parent.verticalCenter
             font.pixelSize: 15
+            height: 22
         }
 
         SVGImage {
@@ -88,80 +88,61 @@ Item {
         ColorOverlay {
             anchors.fill: caret
             source: caret
-            color: Style.current.darkGrey
-        }
-
-        Menu {
-            property var items: []
-
-            id: selectMenu
-            width: parent.width
-            padding: 10
-            background: Rectangle {
-                width: parent.width
-                height: parent.height
-                color: Style.current.inputBackground
-                radius: Style.current.radius
-            }
-
-            function setupMenuItems() {
-                if (selectMenu.items.length) {
-                    // Remove old items
-                    selectMenu.items.forEach(function (item) {
-                        selectMenu.removeItem(item)
-                    })
-                    selectMenu.items = []
-                }
-                if (!selectOptions) {
-                    return
-                }
-
-                selectOptions.forEach(function (element) {
-                    var item = menuItem.createObject(undefined, element)
-                    selectMenu.items.push(item)
-                    selectMenu.addItem(item)
-                })
-            }
-
-            Component.onCompleted: {
-                setupMenuItems()
-            }
-
-            Component {
-                id: menuItem
-                MenuItem {
-                    id: itemContainer
-                    property var onClicked: function () {}
-                    property string label: ""
-                    property color bgColor: Style.current.transparent
-
-                    height: itemText.height + 4
-                    width: parent ? parent.width : selectMenu.width
-
-                    StyledText {
-                        id: itemText
-                        text: itemContainer.label
-                        anchors.left: parent ? parent.left : undefined
-                        anchors.leftMargin: 5
-                        anchors.verticalCenter: parent ? parent.verticalCenter : undefined
-                    }
-
-                    onTriggered: function () {
-                        onClicked()
-                    }
-                    background: Rectangle {
-                        color: bgColor
-                    }
-                }
-            }
+            color: Style.current.secondaryText
         }
     }
 
+    // create a drop shadow externally so that it is not clipped by the 
+    // rounded corners of the menu background
+    Rectangle {
+        width: selectMenu.width
+        height: selectMenu.height
+        x: selectMenu.x
+        y: selectMenu.y
+        visible: selectMenu.opened
+        color: Style.current.background
+        radius: Style.current.radius
+        border.color: Style.current.border
+        layer.enabled: true
+        layer.effect: DropShadow {
+            verticalOffset: 3
+            radius: Style.current.radius
+            samples: 15
+            fast: true
+            cached: true
+            color: "#22000000"
+        }
+    }
+
+    Menu {
+        id: selectMenu
+        property var items: []
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+        width: parent.width
+        background: Rectangle {
+            // do not add a drop shadow effect here or it will be clipped
+            radius: Style.current.radius
+            color: Style.current.background
+        }
+        clip: true
+        delegate: menuItem
+
+        Repeater {
+            id: menuItems
+            model: root.model
+            delegate: selectMenu.delegate
+        }
+    }
     MouseArea {
         id: mouseArea
-        anchors.fill: parent
+        anchors.fill: inputRectangle
+        cursorShape: Qt.PointingHandCursor
         onClicked: {
-            selectMenu.open()
+            if (selectMenu.opened) {
+                selectMenu.close()
+            } else {
+                selectMenu.popup(inputRectangle.x, inputRectangle.y + inputRectangle.height + 8)
+            }
         }
     }
 }

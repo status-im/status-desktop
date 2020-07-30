@@ -15,7 +15,6 @@ ModalPopup {
     height: 675
 
     property int marginBetweenInputs: 35
-    property string selectedColor: currentAccount.iconColor
     property string accountNameValidationError: ""
 
     function validate() {
@@ -43,23 +42,14 @@ ModalPopup {
         validationError: popup.accountNameValidationError
     }
 
-    Select {
+    ColorSelector {
         id: accountColorInput
+        selectedColor: currentAccount.iconColor
+        model: Constants.accountColors
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs
-        bgColor: selectedColor
-        //% "Account color"
-        label: qsTrId("account-color")
-        selectOptions: Constants.accountColors.map(color => {
-            return {
-                text: "",
-                bgColor: color,
-                height: 52,
-                onClicked: function () {
-                    selectedColor = color
-                }
-           }
-        })
+        anchors.left: parent.left
+        anchors.right: parent.right
     }
 
     TextWithLabel {
@@ -181,7 +171,7 @@ ModalPopup {
                     return
                 }
 
-                const error = walletModel.changeAccountSettings(currentAccount.address, accountNameInput.text, selectedColor);
+                const error = walletModel.changeAccountSettings(currentAccount.address, accountNameInput.text, accountColorInput.selectedColor);
 
                 if (error) {
                     errorSound.play()

@@ -25,4 +25,8 @@ Theme {
     property color inputBackground: grey
     property color inputColor: black
     property color modalBackground: white2
+    property color backgroundHover: grey
+    property color secondaryText: darkGrey
+    property color secondaryHover: Qt.rgba(0, 0, 0, 0.1)
+    property color danger: red
 }

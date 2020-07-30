@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import QtQuick.Controls 2.13
 import QtQuick.Dialogs 1.3
 import "../../../../imports"
 import "../../../../shared"
@@ -8,7 +9,6 @@ ModalPopup {
     height: 600
 
     property int marginBetweenInputs: 38
-    property string selectedColor: Constants.accountColors[0]
     property string passwordValidationError: ""
     property string seedValidationError: ""
     property string accountNameValidationError: ""
@@ -87,23 +87,14 @@ ModalPopup {
         validationError: popup.accountNameValidationError
     }
 
-    Select {
+    ColorSelector {
         id: accountColorInput
+        selectedColor: Constants.accountColors[0]
+        model: Constants.accountColors
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs
-        bgColor: selectedColor
-        //% "Account color"
-        label: qsTrId("account-color")
-        selectOptions: Constants.accountColors.map(color => {
-            return {
-                text: "",
-                bgColor: color,
-                height: 52,
-                onClicked: function () {
-                    selectedColor = color
-                }
-           }
-        })
+        anchors.left: parent.left
+        anchors.right: parent.right
     }
 
     footer: StyledButton {
@@ -133,7 +124,7 @@ ModalPopup {
                 return loading = false
             }
 
-            const error = walletModel.addAccountsFromSeed(accountSeedInput.text, passwordInput.text, accountNameInput.text, selectedColor)
+            const error = walletModel.addAccountsFromSeed(accountSeedInput.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
             loading = false
             if (error) {
                 errorSound.play()

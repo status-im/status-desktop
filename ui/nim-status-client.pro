@@ -309,6 +309,7 @@ DISTFILES += \
     onboarding/img/wallet@2x.jpg \
     onboarding/img/wallet@3x.jpg \
     onboarding/qmldir \
+    shared/AccountSelector.qml \
     shared/AddButton.qml \
     shared/IconButton.qml \
     shared/Input.qml \
