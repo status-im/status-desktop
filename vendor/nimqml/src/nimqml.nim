@@ -42,3 +42,6 @@ proc signal_handler*(receiver: pointer, signal: cstring, slot: cstring) =
 proc image_resizer*(imagePath: string, maxSize: int = 2000, tmpDir: string): string =
   discard existsOrCreateDir(tmpDir)
   result = $dos_image_resizer(imagePath.cstring, maxSize.cint, tmpDir)
+
+proc plain_text*(htmlString: string): string =
+  result = $(dos_plain_text(htmlString.cstring))

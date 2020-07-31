@@ -304,3 +304,4 @@ proc dos_qabstracttablemodel_parent(modelPtr: DosQAbstractTableModel, index: Dos
 proc dos_qabstracttablemodel_index(modelPtr: DosQAbstractTableModel, row: cint, column: cint, parent: DosQModelIndex): DosQModelIndex {.cdecl, dynlib: dynLibName, importc.}
 
 proc dos_image_resizer(imagePath: cstring, maxSize: cint, tmpDirPath: cstring): cstring {.cdecl, dynlib: dynLibName, importc.}
+proc dos_plain_text(htmlString: cstring): cstring {.cdecl, dynlib: dynLibName, importc.}
