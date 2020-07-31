@@ -36,8 +36,9 @@ Item {
                 chatsModel.sendImage(sendImageArea.image);
             }
 
-            if(txtData.text.trim() > 0){
-                chatsModel.sendMessage(txtData.text.trim(), chatColumn.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(txtData.text) ? Constants.emojiType : Constants.messageType)
+            let msg = chatsModel.plainText(Emoji.deparse(txtData.text)).trim()
+            if(msg.length > 0){
+                chatsModel.sendMessage(msg, chatColumn.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType)
                 txtData.text = "";
             }
 

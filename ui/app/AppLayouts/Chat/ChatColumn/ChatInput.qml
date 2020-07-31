@@ -39,11 +39,12 @@ Rectangle {
                 chatsModel.sendImage(sendImageArea.image);
             }
 
-            if(txtData.text.trim().length > 0){
-                var msg = interpretMessage(txtData.text.trim()).trim()
+            var msg = chatsModel.plainText(Emoji.deparse(txtData.text).trim()).trim()
+            if(msg.length > 0){
+                msg = interpretMessage(msg)
                 msg = Emoji.deparse(msg)
 
-                chatsModel.sendMessage(msg, chatColumn.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(txtData.text) ? Constants.emojiType : Constants.messageType);
+                chatsModel.sendMessage(msg, chatColumn.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType);
                 txtData.text = "";
                 event.accepted = true
                 sendMessageSound.stop()
