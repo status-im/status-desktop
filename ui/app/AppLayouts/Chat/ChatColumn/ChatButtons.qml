@@ -11,7 +11,16 @@ Item {
 
     id: chatButtonsContainer
 
-    width: chatSendBtn.width + emojiIconContainer.width + 2 * iconPadding
+    width: {
+        var w = chatSendBtn.width + emojiIconContainer.width + 2 * iconPadding
+        if(stickerIconContainer.visible) {
+            w += stickerIconContainer.width + 2 * iconPadding;
+        }
+        if(imageIconContainer.visible) {
+            w += imageIconContainer.width + 2 * iconPadding;
+        }
+        return w;
+    }
 
     Button {
         id: chatSendBtn

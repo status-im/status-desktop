@@ -11,6 +11,7 @@ ScrollView {
     id: chatGroupsContainer
     Layout.fillHeight: true
     Layout.fillWidth: true
+    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
     ListView {
         id: chatGroupsListView

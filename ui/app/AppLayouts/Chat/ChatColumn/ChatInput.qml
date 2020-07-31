@@ -74,20 +74,15 @@ Rectangle {
         anchors.top: parent.top
         anchors.right: sendBtns.left
         anchors.rightMargin: 0
-
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        topPadding: Style.current.padding
+        
         StyledTArea {
             textFormat: TextArea.PlainText
-
             id: txtData
             text: ""
             selectByMouse: true
-
-            anchors.top: parent.top
-            // The normal padding doesn't work for some reason
-            topPadding: Style.current.padding + 9
-            leftPadding: 12
-            rightPadding: Style.current.padding
-
+            wrapMode: TextArea.Wrap
             font.pixelSize: 15
             //% "Type a message..."
             placeholderText: qsTrId("type-a-message")
