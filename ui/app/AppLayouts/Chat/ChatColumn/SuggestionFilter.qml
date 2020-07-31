@@ -49,30 +49,31 @@ Item {
             return false
         }
 
+        let filter = chatsModel.plainText(this.filter)
         // Prevents suggestions to show up at all
-        if (this.filter.indexOf("@") === -1)  {
+        if (filter.indexOf("@") === -1)  {
           return false
         }
 
-        let cursorAtEnd = this.cursorPosition === this.filter.length;
-        let hasAtBeforeCursor = this.filter.charAt(this.cursorPosition - 1) === "@" 
-        let hasWhiteSpaceBeforeAt = this.filter.charAt(this.cursorPosition - 2) === " "
-        let hasWhiteSpaceAfterAt = this.filter.charAt(this.cursorPosition) === " "
-        let hasWhiteSpaceBeforeCursor = this.filter.charAt(this.cursorPosition - 1) === " "
+        let cursorAtEnd = this.cursorPosition === filter.length;
+        let hasAtBeforeCursor = filter.charAt(this.cursorPosition - 1) === "@" 
+        let hasWhiteSpaceBeforeAt = filter.charAt(this.cursorPosition - 2) === " "
+        let hasWhiteSpaceAfterAt = filter.charAt(this.cursorPosition) === " "
+        let hasWhiteSpaceBeforeCursor = filter.charAt(this.cursorPosition - 1) === " "
 
-        if (this.filter.charAt(this.cursorPosition - 2) === "@" && hasWhiteSpaceBeforeCursor) {
-          return false
+        if (filter.charAt(this.cursorPosition - 2) === "@" && hasWhiteSpaceBeforeCursor) {
+            return false
         }
 
-        if (this.filter === "@" ||
+        if (filter === "@" ||
           (hasAtBeforeCursor && hasWhiteSpaceBeforeAt && hasWhiteSpaceAfterAt) ||
           (this.cursorPosition === 1 && hasAtBeforeCursor && hasWhiteSpaceAfterAt) ||
-          (cursorAtEnd && this.filter.endsWith("@") && hasWhiteSpaceBeforeAt)) {
+          (cursorAtEnd && filter.endsWith("@") && hasWhiteSpaceBeforeAt)) {
           this.lastAtPosition = this.cursorPosition - 1;
           return true
         }
 
-        let filterWithoutAt = this.filter.substring(lastAtPosition + 1, this.cursorPosition)
+        let filterWithoutAt = filter.substring(lastAtPosition + 1, this.cursorPosition)
 
         return !properties.every(p => item[p].toLowerCase().match(filterWithoutAt.toLowerCase()) === null)
     }

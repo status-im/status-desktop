@@ -207,7 +207,7 @@ StackLayout {
                 cursorPosition: chatInput.textInput.cursorPosition
                 property: "ensName, alias"
                 onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
-                    let currentText = chatInput.textInput.text
+                    let currentText = chatsModel.plainText(Emoji.deparse(chatInput.textInput.text))
                     let lastAt = currentText.lastIndexOf("@")
                     let aliasName = item[suggestionsBox.property.split(",").map(p => p.trim()).find(p => !!item[p])]
                     let nameLen = aliasName.length + 2 // We're doing a +2 here because of the `@` and the trailing whitespace
@@ -219,13 +219,12 @@ StackLayout {
                         text = "@" + aliasName + " "
                     } else {
                         let left = currentText.substring(0, lastAtPosition)
-                        let right = currentText.substring(lastCursorPosition)
-                        text = `${left}@${aliasName} ${right}`
-                        position = left.length + nameLen
+                        let right = currentText.substring(lastAtPosition + 2)
+                        text = `${left} @${aliasName} ${right}`
                     }
 
-                    chatInput.textInput.text = text
-                    chatInput.textInput.cursorPosition = position
+                    chatInput.textInput.text = Emoji.parse(text, "26x26")
+                    chatInput.textInput.cursorPosition = lastCursorPosition + aliasName.length
                     suggestionsBox.suggestionsModel.clear()
                 }
             }

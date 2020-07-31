@@ -40,7 +40,9 @@ Rectangle {
             }
 
             if(txtData.text.trim().length > 0){
-                let msg = interpretMessage(txtData.text.trim()).trim()
+                var msg = interpretMessage(txtData.text.trim()).trim()
+                msg = Emoji.deparse(msg)
+
                 chatsModel.sendMessage(msg, chatColumn.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(txtData.text) ? Constants.emojiType : Constants.messageType);
                 txtData.text = "";
                 event.accepted = true
@@ -78,7 +80,7 @@ Rectangle {
         topPadding: Style.current.padding
         
         StyledTArea {
-            textFormat: TextArea.PlainText
+            textFormat: Text.RichText
             id: txtData
             text: ""
             selectByMouse: true
