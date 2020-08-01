@@ -54,7 +54,7 @@ Item {
 
         StyledText {
             id: totalValue
-            color: Style.current.darkGrey
+            color: Style.current.grey
             text: qsTr("Total value")
             anchors.left: walletAmountValue.left
             anchors.top: walletAmountValue.bottom
@@ -123,7 +123,7 @@ Item {
                 anchors.leftMargin: 0
                 font.pixelSize: 15
                 font.weight: Font.Medium
-                color: selected ? Style.current.white : Style.current.darkGrey
+                color: selected ? Style.current.white : Style.current.grey
                 opacity: selected ? 0.7 : 1
             }
             StyledText {

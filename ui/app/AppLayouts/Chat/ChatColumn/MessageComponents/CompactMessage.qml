@@ -78,7 +78,7 @@ Item {
         id: stickerContainer
         visible: contentType === Constants.stickerType
         color: Style.current.transparent
-        border.color: Style.current.grey
+        border.color: Style.current.lightGrey
         border.width: 1
         radius: 16
         width: stickerId.width

@@ -28,7 +28,7 @@ Item {
         width: parent.width
         height: parent.height
         iconWidth: 6
-        color: Style.current.darkGrey
+        color: Style.current.grey
         source: root.source
         onClicked: {
             root.clicked()

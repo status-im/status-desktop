@@ -27,10 +27,10 @@ Rectangle {
             parent.color = Style.current.transparent
         }
         onEntered:{
-            parent.color = Style.current.grey
+            parent.color = Style.current.lightGrey
         }
         onPressed: {
-            parent.color = Style.current.darkGrey
+            parent.color = Style.current.grey
         }
         onReleased: {
             parent.color = Style.current.transparent

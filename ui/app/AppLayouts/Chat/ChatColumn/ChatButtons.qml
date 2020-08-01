@@ -44,7 +44,7 @@ Item {
             chatColumn.hideExtendedArea();
         }
         background: Rectangle {
-            color: parent.enabled ? Style.current.blue : Style.current.grey
+            color: parent.enabled ? Style.current.blue : Style.current.lightGrey
             radius: 50
         }
         SVGImage {
@@ -85,7 +85,7 @@ Item {
         ColorOverlay {
             anchors.fill: emojiIcon
             source: emojiIcon
-            color: emojiIconContainer.hovered || emojiPopup.opened ? Style.current.blue : Style.current.darkGrey
+            color: emojiIconContainer.hovered || emojiPopup.opened ? Style.current.blue : Style.current.grey
         }
 
         MouseArea {
@@ -134,7 +134,7 @@ Item {
         ColorOverlay {
             anchors.fill: stickersIcon
             source: stickersIcon
-            color: stickerIconContainer.hovered || stickersPopup.opened ? Style.current.blue : Style.current.darkGrey
+            color: stickerIconContainer.hovered || stickersPopup.opened ? Style.current.blue : Style.current.grey
         }
 
         MouseArea {
@@ -182,7 +182,7 @@ Item {
         ColorOverlay {
             anchors.fill: imageIcon
             source: imageIcon
-            color: imageIconContainer.hovered ? Style.current.blue : Style.current.darkGrey
+            color: imageIconContainer.hovered ? Style.current.blue : Style.current.grey
         }
 
         MouseArea {

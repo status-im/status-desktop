@@ -129,7 +129,7 @@ Item {
               anchors.top: addContactSearchInput.bottom
               anchors.topMargin: Style.current.padding
               font.pixelSize: 12
-              color: Style.current.darkGrey
+              color: Style.current.grey
           }
 
           StyledText {
@@ -139,7 +139,7 @@ Item {
               width: 100
               font.pixelSize: 12
               elide: Text.ElideMiddle
-              color: Style.current.darkGrey
+              color: Style.current.grey
           }
 
         }
@@ -179,7 +179,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             font.pixelSize: 15
-            color: Style.current.darkGrey
+            color: Style.current.grey
         }
 
         StyledButton {

@@ -83,7 +83,7 @@ ModalPopup {
         horizontalAlignment: Text.AlignHCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
-        color: Style.current.darkGrey
+        color: Style.current.grey
         font.pixelSize: 12
     }
 

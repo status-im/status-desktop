@@ -90,7 +90,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         font.pixelSize: 15
-        color: Style.current.darkGrey
+        color: Style.current.grey
         anchors.top: accountImage.top
         anchors.topMargin: 10
     }

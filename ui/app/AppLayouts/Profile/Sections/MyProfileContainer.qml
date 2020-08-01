@@ -65,7 +65,7 @@ Item {
             elide: Text.ElideMiddle
             width: 140
             font.pixelSize: 15
-            color: Style.current.darkGrey
+            color: Style.current.grey
         }
 
         SVGImage {

@@ -88,7 +88,7 @@ Item {
         ColorOverlay {
             anchors.fill: caret
             source: caret
-            color: Style.current.darkGrey
+            color: Style.current.grey
         }
     }
 

@@ -77,7 +77,7 @@ Item {
             anchors.leftMargin: 4
             anchors.verticalCenter: usernameText.verticalCenter
 
-            color: isHovered ? Style.current.grey : Style.current.transparent
+            color: isHovered ? Style.current.lightGrey : Style.current.transparent
 
             radius: 4
 
@@ -93,7 +93,7 @@ Item {
             ColorOverlay {
                 anchors.fill: caretImg
                 source: caretImg
-                color: Style.current.darkGrey
+                color: Style.current.grey
             }
             MouseArea {
                 hoverEnabled: true
@@ -118,7 +118,7 @@ Item {
         StyledText {
             id: addressText
             width: 90
-            color: Style.current.darkGrey
+            color: Style.current.grey
             text: loginModel.currentAccount.address
             font.family: Style.current.fontHexRegular.name
             elide: Text.ElideMiddle

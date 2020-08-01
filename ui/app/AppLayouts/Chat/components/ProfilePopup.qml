@@ -73,7 +73,7 @@ ModalPopup {
             anchors.top: profileName.bottom
             anchors.topMargin: 2
             font.pixelSize: 14
-            color: Style.current.darkGrey
+            color: Style.current.grey
         }
 
         Rectangle {
@@ -102,7 +102,7 @@ ModalPopup {
                     qrCodeButton.color = Style.current.white
                 }
                 onEntered: {
-                    qrCodeButton.color = Style.current.grey
+                    qrCodeButton.color = Style.current.lightGrey
                 }
                 onClicked: {
                     showQR = true
@@ -139,7 +139,7 @@ ModalPopup {
             text: qsTrId("ens-username")
             font.pixelSize: 13
             font.weight: Font.Medium
-            color: Style.current.darkGrey
+            color: Style.current.grey
             anchors.left: parent.left
             anchors.leftMargin: Style.current.smallPadding
             anchors.top: parent.top
@@ -173,7 +173,7 @@ ModalPopup {
             text: qsTrId("chat-key")
             font.pixelSize: 13
             font.weight: Font.Medium
-            color: Style.current.darkGrey
+            color: Style.current.grey
             anchors.left: parent.left
             anchors.leftMargin: Style.current.smallPadding
             anchors.top: isEnsVerified ? valueEnsName.bottom : parent.top
@@ -215,7 +215,7 @@ ModalPopup {
             text: qsTrId("share-profile-url")
             font.pixelSize: 13
             font.weight: Font.Medium
-            color: Style.current.darkGrey
+            color: Style.current.grey
             anchors.left: parent.left
             anchors.leftMargin: Style.current.smallPadding
             anchors.top: separator.bottom
@@ -266,7 +266,7 @@ ModalPopup {
             anchors.rightMargin: addToContactsButton.width + 32
             btnColor: "white"
             btnBorderWidth: 1
-            btnBorderColor: Style.current.grey
+            btnBorderColor: Style.current.lightGrey
             textColor: Style.current.red
             //% "Block User"
             label: qsTrId("block-user")

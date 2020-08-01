@@ -44,7 +44,7 @@ Rectangle {
                 closeButton.color = Style.current.white
             }
             onEntered: {
-                closeButton.color = Style.current.grey
+                closeButton.color = Style.current.lightGrey
             }
             onClicked: {
                 chatColumn.hideExtendedArea();

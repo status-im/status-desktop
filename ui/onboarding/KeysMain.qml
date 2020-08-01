@@ -46,7 +46,7 @@ Page {
 
         StyledText {
             id: txtDesc1
-            color: Style.current.darkGrey
+            color: Style.current.grey
             //% "A set of keys controls your account. Your keys live on your device, so only you can use them."
             text: qsTrId("a-set-of-keys-controls-your-account.-your-keys-live-on-your-device,-so-only-you-can-use-them.")
             horizontalAlignment: Text.AlignHCenter

@@ -17,7 +17,7 @@ Button {
     enabled: !disabled
 
     background: Rectangle {
-        color: disabled ? Style.current.grey : btnStyled.btnColor
+        color: disabled ? Style.current.lightGrey : btnStyled.btnColor
         radius: Style.current.radius
         anchors.fill: parent
         border.color: btnBorderColor
@@ -26,7 +26,7 @@ Button {
 
     StyledText {
         id: txtBtnLabel
-        color: btnStyled.disabled ? Style.current.darkGrey : btnStyled.textColor
+        color: btnStyled.disabled ? Style.current.grey : btnStyled.textColor
         font.pixelSize: 15
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter

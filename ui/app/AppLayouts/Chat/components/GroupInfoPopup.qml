@@ -105,7 +105,7 @@ ModalPopup {
           anchors.top: groupName.bottom
           anchors.topMargin: 2
           font.pixelSize: 14
-          color: Style.current.darkGrey
+          color: Style.current.grey
       }
 
       Rectangle {
@@ -135,7 +135,7 @@ ModalPopup {
                     editGroupNameBtn.color = Style.current.white
                 }
                 onEntered: {
-                    editGroupNameBtn.color = Style.current.grey
+                    editGroupNameBtn.color = Style.current.lightGrey
                 }
                 onClicked: renameGroupPopup.open()
             }
@@ -217,7 +217,7 @@ ModalPopup {
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
             font.pixelSize: 15
-            color: Style.current.darkGrey
+            color: Style.current.grey
         }
 
         ListModel {

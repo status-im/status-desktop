@@ -33,7 +33,7 @@ Item {
         anchors.left: walkieTalkieImage.left
         anchors.top: walkieTalkieImage.bottom
         font.pixelSize: 15
-        color: Style.current.darkGrey
+        color: Style.current.grey
         onLinkActivated: function (linkClicked) {
             switch (linkClicked) {
                 case "shareKey":

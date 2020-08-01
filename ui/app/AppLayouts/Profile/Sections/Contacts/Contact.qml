@@ -71,7 +71,7 @@ Rectangle {
                 menuButton.color = Style.current.white
             }
             onEntered: {
-                menuButton.color = Style.current.grey
+                menuButton.color = Style.current.lightGrey
             }
             onClicked: {
               menuOpened = true

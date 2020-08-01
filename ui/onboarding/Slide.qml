@@ -53,7 +53,7 @@ Item {
         visible: !isFirst
         background: Rectangle {
             id: rctPrevious1
-            color: Style.current.grey
+            color: Style.current.lightGrey
             border.width: 0
             radius: 50
 
@@ -71,7 +71,7 @@ Item {
     StyledText {
         id: txtDesc1
         x: 772
-        color: Style.current.darkGrey
+        color: Style.current.grey
         text: description
         font.weight: Font.Normal
         style: Text.Normal
@@ -97,7 +97,7 @@ Item {
         visible: !isLast
         background: Rectangle {
             id: rctNext1
-            color: Style.current.grey
+            color: Style.current.lightGrey
             border.width: 0
             radius: 50
 

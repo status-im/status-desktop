@@ -121,7 +121,7 @@ Item {
           StyledText {
               text: to != walletModel.currentAccount.address ? "To " : "From "
               anchors.right: addressValue.left
-              color: Style.current.darkGrey
+              color: Style.current.grey
               anchors.top: parent.top
               font.pixelSize: 15
               font.strikeout: false
@@ -150,7 +150,7 @@ Item {
               text: "• "
               font.weight: Font.Bold
               anchors.right: timeIndicator.left
-              color: Style.current.darkGrey
+              color: Style.current.grey
               anchors.top: parent.top
               font.pixelSize: 15
           }
@@ -159,7 +159,7 @@ Item {
               id: timeIndicator
               text: "At "
               anchors.right: timeValue.left
-              color: Style.current.darkGrey
+              color: Style.current.grey
               anchors.top: parent.top
               font.pixelSize: 15
               font.strikeout: false

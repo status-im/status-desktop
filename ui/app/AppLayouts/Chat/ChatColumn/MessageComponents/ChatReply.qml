@@ -15,7 +15,7 @@ Rectangle {
     StyledTextEdit {
         id: lblReplyAuthor
         text: "↳" + repliedMessageAuthor
-        color: Style.current.darkGrey
+        color: Style.current.grey
         readOnly: true
         selectByMouse: true
         wrapMode: Text.Wrap
@@ -41,7 +41,7 @@ Rectangle {
         anchors.topMargin: 5
         text: Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), "26x26");
         textFormat: Text.RichText
-        color: Style.current.darkGrey
+        color: Style.current.grey
         readOnly: true
         selectByMouse: true
         wrapMode: Text.Wrap
@@ -56,6 +56,6 @@ Rectangle {
         anchors.left: lblReplyMessage.left
         anchors.right: lblReplyMessage.right
         anchors.rightMargin: chatTextItem.chatHorizontalPadding
-        color: Style.current.darkGrey
+        color: Style.current.grey
     }
 }

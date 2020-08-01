@@ -83,8 +83,8 @@ Item {
             PropertyChanges {
                 target: root;
                 text: root.style === StickerButton.StyleType.Default ? packPrice : packPrice + " SNT";
-                textColor: root.style === StickerButton.StyleType.Default ? Style.current.white : Style.current.darkGrey
-                bgColor: root.style === StickerButton.StyleType.Default ? Style.current.darkGrey : Style.current.grey;
+                textColor: root.style === StickerButton.StyleType.Default ? Style.current.white : Style.current.grey
+                bgColor: root.style === StickerButton.StyleType.Default ? Style.current.grey : Style.current.lightGrey;
                 enabled: false;
             }
         },
@@ -95,8 +95,8 @@ Item {
                 target: root;
                 //% "Pending..."
                 text: qsTrId("pending---");
-                textColor: root.style === StickerButton.StyleType.Default ? Style.current.white : Style.current.darkGrey
-                bgColor: root.style === StickerButton.StyleType.Default ? Style.current.darkGrey : Style.current.grey;
+                textColor: root.style === StickerButton.StyleType.Default ? Style.current.white : Style.current.grey
+                bgColor: root.style === StickerButton.StyleType.Default ? Style.current.grey : Style.current.lightGrey;
                 enabled: false;
                 icon: new Object({
                     path: "../../../img/loading.png",
@@ -114,7 +114,7 @@ Item {
                 //% "Cancel"
                 text: qsTrId("browsing-cancel");
                 textColor: root.style === StickerButton.StyleType.Default ? Style.current.white : Style.current.red;
-                bgColor: root.style === StickerButton.StyleType.Default ? Style.current.darkGrey : Style.current.lightRed;
+                bgColor: root.style === StickerButton.StyleType.Default ? Style.current.grey : Style.current.lightRed;
             }
         },
         State {

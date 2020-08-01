@@ -19,7 +19,7 @@ Rectangle {
     anchors.right: parent.right
     anchors.left: parent.left
     border.width: 0
-    color: selected || isHovered ? Style.current.grey : Style.current.transparent
+    color: selected || isHovered ? Style.current.lightGrey : Style.current.transparent
     radius: Style.current.radius
 
     Identicon {
@@ -52,7 +52,7 @@ Rectangle {
         anchors.left: usernameText.left
         anchors.leftMargin: 0
         font.pixelSize: 15
-        color: Style.current.darkGrey
+        color: Style.current.grey
     }
 
     MouseArea {

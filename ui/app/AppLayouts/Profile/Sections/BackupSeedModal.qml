@@ -56,7 +56,7 @@ ModalPopup {
             StyledText {
               id: count
               text: index+1
-              color: Style.current.darkGrey
+              color: Style.current.grey
               anchors.bottom: parent.bottom
               anchors.bottomMargin: Style.current.smallPadding
               anchors.left: parent.left
@@ -86,7 +86,7 @@ ModalPopup {
       text: qsTrId("with-this-12-words-you-can-always-get-your-key-back.-write-it-down.-keep-it-safe,-offline,-and-separate-from-this-device.")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.grey
       anchors.bottom: parent.bottom
       anchors.bottomMargin: Style.current.padding
       anchors.left: parent.left

@@ -67,7 +67,7 @@ Item {
                     anchors.bottomMargin: 0
                     anchors.left: assetInfoImage.right
                     anchors.leftMargin: Style.current.smallPadding
-                    color: Style.current.darkGrey
+                    color: Style.current.grey
                     font.pixelSize: 15
                 }
                 CheckBox  {

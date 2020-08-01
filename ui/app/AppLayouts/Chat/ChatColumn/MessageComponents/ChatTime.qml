@@ -5,7 +5,7 @@ import "../../../../../imports"
 StyledTextEdit {
     id: chatTime
     visible: isMessage
-    color: Style.current.darkGrey
+    color: Style.current.grey
     text: {
         let messageDate = new Date(Math.floor(timestamp))
         let minutes = messageDate.getMinutes();

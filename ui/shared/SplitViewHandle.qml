@@ -4,6 +4,6 @@ import "../imports"
 
 Rectangle {
     implicitWidth: 1.2
-    color: SplitHandle.pressed ? Style.current.darkGrey
+    color: SplitHandle.pressed ? Style.current.grey
                 : (SplitHandle.hovered ? Qt.darker(Style.current.border, 1.1) : Style.current.border)
 }

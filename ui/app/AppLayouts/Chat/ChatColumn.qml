@@ -72,7 +72,7 @@ StackLayout {
                 id: connectedStatusRect
                 Layout.fillWidth: true
                 height: 40;
-                color: isConnected ? Style.current.green : Style.current.darkGrey
+                color: isConnected ? Style.current.green : Style.current.grey
                 visible: false
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter

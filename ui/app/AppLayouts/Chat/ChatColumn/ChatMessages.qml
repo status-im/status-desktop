@@ -71,7 +71,7 @@ ScrollView {
                 anchors.top: newMessagesText.bottom
                 anchors.topMargin: 0
                 font.pixelSize: 12
-                color: Style.current.darkGrey
+                color: Style.current.grey
             }
 
             MouseArea {

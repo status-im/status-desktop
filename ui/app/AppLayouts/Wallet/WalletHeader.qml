@@ -64,7 +64,7 @@ Item {
         anchors.left: title.left
         anchors.leftMargin: 0
         font.pixelSize: 13
-        color: Style.current.darkGrey
+        color: Style.current.grey
     }
 
     SendModal{

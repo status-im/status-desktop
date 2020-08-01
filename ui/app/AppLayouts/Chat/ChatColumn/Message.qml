@@ -93,7 +93,7 @@ Item {
             text:  message
             visible: isStatusMessage
             font.pixelSize: 16
-            color: Style.current.darkGrey
+            color: Style.current.grey
             width:  parent.width - 120
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter

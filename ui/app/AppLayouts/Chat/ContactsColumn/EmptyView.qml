@@ -58,7 +58,7 @@ Item {
             ColorOverlay {
                 anchors.fill: closeImg
                 source: closeImg
-                color: Style.current.darkGrey
+                color: Style.current.grey
             }
             MouseArea {
                 anchors.fill: closeImg

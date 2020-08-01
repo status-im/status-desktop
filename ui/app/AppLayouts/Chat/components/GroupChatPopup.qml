@@ -73,7 +73,7 @@ ModalPopup {
           anchors.top: lblNewGroup.bottom
           //% "%1 / 10 members"
           text: qsTrId("%1-/-10-members").arg(memberCount)
-          color: Style.current.darkGrey
+          color: Style.current.grey
           font.pixelSize: 15
       }
     }

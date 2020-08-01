@@ -26,7 +26,7 @@ Item {
             anchors.bottomMargin: -18 
             anchors.right: parent.right
             text: "Balance: " + (parseFloat(value) === 0.0 ? "0" : value) + " " + symbol
-            color: parseFloat(value) === 0.0 ? Style.current.red : Style.current.darkGrey
+            color: parseFloat(value) === 0.0 ? Style.current.red : Style.current.grey
             font.pixelSize: 13
             height: 18
         }
@@ -62,19 +62,19 @@ Item {
             elide: Text.ElideMiddle
             height: 16
             width: 80
-            color: Style.current.darkGrey
+            color: Style.current.grey
         }
         StyledText {
             text: " • "
             font.pixelSize: 12
             height: 16
-            color: Style.current.darkGrey
+            color: Style.current.grey
         }
         StyledText {
             text: selectedAccount.fiatBalance + " " + walletModel.defaultCurrency.toUpperCase()
             font.pixelSize: 12
             height: 16
-            color: Style.current.darkGrey
+            color: Style.current.grey
         }
     }
 
@@ -127,7 +127,7 @@ Item {
                     text: address
                     elide: Text.ElideMiddle
                     width: 80
-                    color: Style.current.darkGrey
+                    color: Style.current.grey
                     font.pixelSize: 12
                     height: 16
                 }
@@ -147,7 +147,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 15
                 height: 22
-                color: Style.current.darkGrey
+                color: Style.current.grey
                 text: walletModel.defaultCurrency.toUpperCase()
             }
             background: Rectangle {

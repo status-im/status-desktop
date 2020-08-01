@@ -67,7 +67,7 @@ Item {
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: collectibleName.right
-                color: Style.current.darkGrey
+                color: Style.current.grey
                 font.pixelSize: 15
             }
         }

@@ -25,7 +25,7 @@ Item {
             //% "Security"
             text: qsTrId("security")
             font.pixelSize: 15
-            color: Style.current.darkGrey
+            color: Style.current.grey
         }
 
         Item {
@@ -55,7 +55,7 @@ Item {
             ColorOverlay {
                 anchors.fill: caret
                 source: caret
-                color: Style.current.darkGrey
+                color: Style.current.grey
                 rotation: -90
             }
 
@@ -79,7 +79,7 @@ Item {
             id: labelPrivacy
             text: qsTr("Privacy")
             font.pixelSize: 15
-            color: Style.current.darkGrey
+            color: Style.current.grey
             anchors.top: separator.bottom
             anchors.topMargin: Style.current.smallPadding
         }

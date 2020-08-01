@@ -20,7 +20,7 @@ TabButton {
         text: btnText
         font.weight: Font.Medium
         font.pixelSize: 15
-        color: parent.checked ? Style.current.textColor : Style.current.darkGrey
+        color: parent.checked ? Style.current.textColor : Style.current.grey
     }
 
     Rectangle {

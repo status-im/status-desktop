@@ -31,7 +31,7 @@ ModalPopup {
       text: qsTrId("confirmations-helper-text")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.grey
       anchors.top: confirmationsCount.bottom
       anchors.topMargin: Style.current.smallPadding
     }
@@ -61,7 +61,7 @@ ModalPopup {
       text: qsTrId("block")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.grey
     }
 
     StyledText {
@@ -87,7 +87,7 @@ ModalPopup {
       text: qsTrId("hash")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.grey
     }
 
     StyledText {
@@ -116,7 +116,7 @@ ModalPopup {
       text: qsTrId("from")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.grey
     }
 
     StyledText {
@@ -145,7 +145,7 @@ ModalPopup {
       text: qsTrId("to")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.grey
     }
 
     StyledText {
@@ -173,7 +173,7 @@ ModalPopup {
       text: qsTrId("gas-limit")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.grey
     }
 
     StyledText {
@@ -199,7 +199,7 @@ ModalPopup {
       text: qsTrId("gas-price")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.grey
     }
 
     StyledText {
@@ -225,7 +225,7 @@ ModalPopup {
       text: qsTrId("gas-used")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.grey
     }
 
     StyledText {
@@ -251,7 +251,7 @@ ModalPopup {
       text: qsTrId("nonce")
       font.pixelSize: 14
       font.weight: Font.Medium
-      color: Style.current.darkGrey
+      color: Style.current.grey
     }
 
     StyledText {

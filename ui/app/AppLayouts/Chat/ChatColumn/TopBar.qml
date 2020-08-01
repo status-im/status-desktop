@@ -44,7 +44,7 @@ Rectangle {
 
     StyledText {
         id: channelIdentifier
-        color: Style.current.darkGrey
+        color: Style.current.grey
         text: {
             switch(chatsModel.activeChannel.chatType){
                 //% "Public chat"

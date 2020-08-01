@@ -85,7 +85,7 @@ Item {
                         }
                         enabled: txtData.text !== ""
                         background: Rectangle {
-                            color: parent.enabled ? Style.current.blue : Style.current.grey
+                            color: parent.enabled ? Style.current.blue : Style.current.lightGrey
                             radius: 50
                         }
                     }

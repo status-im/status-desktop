@@ -5,11 +5,11 @@ Theme {
     property color white: "#FFFFFF"
     property color white2: "#FCFCFC"
     property color black: "#000000"
-    property color grey: "#EEF2F5"
+    property color lightGrey: "#EEF2F5"
     property color lightBlue: "#ECEFFC"
     property color blue: "#4360DF"
     property color transparent: "#00000000"
-    property color darkGrey: "#939BA1"
+    property color grey: "#939BA1"
     property color lightBlueText: "#8f9fec"
     property color darkBlue: "#3c55c9"
     property color darkBlueBtn: "#5a70dd"
@@ -18,11 +18,11 @@ Theme {
     property color green: "#4EBC60"
 
     property color background: white
-    property color border: grey
+    property color border: lightGrey
     property color textColor: black
-    property color currentUserTextColor: white
+    property color currentUserTextColor: black
     property color secondaryBackground: lightBlue
-    property color inputBackground: grey
+    property color inputBackground: lightGrey
     property color inputColor: black
     property color modalBackground: white2
 }
