@@ -1,5 +1,5 @@
 import NimQml, sequtils, strutils, sugar
-import views/[mailservers_list, contact_list, profile_info, device_list]
+import views/[mailservers_list, ens_manager, contact_list, profile_info, device_list]
 import ../../status/profile/[mailserver, profile, devices]
 import ../../status/profile as status_profile
 import ../../status/contacts as status_contacts
@@ -25,6 +25,7 @@ QtObject:
     isDeviceSetup: bool
     changeLanguage*: proc(locale: string)
     contactToAdd*: Profile
+    ens*: EnsManager
 
   proc setup(self: ProfileView) =
     self.QObject.setup
@@ -35,6 +36,7 @@ QtObject:
     if not self.addedContacts.isNil: self.addedContacts.delete
     if not self.blockedContacts.isNil: self.blockedContacts.delete
     if not self.deviceList.isNil: self.deviceList.delete
+    if not self.ens.isNil: self.ens.delete
     if not self.profile.isNil: self.profile.delete
     self.QObject.delete
 
@@ -47,6 +49,7 @@ QtObject:
     result.addedContacts = newContactList()
     result.blockedContacts = newContactList()
     result.deviceList = newDeviceList()
+    result.ens = newEnsManager()
     result.mnemonic = ""
     result.network = ""
     result.status = status
@@ -222,6 +225,12 @@ QtObject:
 
   QtProperty[QVariant] deviceList:
     read = getDeviceList
+
+  proc getEnsManager(self: ProfileView): QVariant {.slot.} =
+    return newQVariant(self.ens)
+
+  QtProperty[QVariant] ens:
+    read = getEnsManager
 
   proc enableInstallation*(self: ProfileView, installationId: string, enable: bool) {.slot.} =
     if enable:
