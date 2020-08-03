@@ -128,42 +128,8 @@ StackLayout {
             id: reactionModel
         }
 
-        PopupMenu {
+        MessageContextMenu {
             id: messageContextMenu
-            width: emojiRow.width
-
-            Row {
-                id: emojiRow
-                spacing: Style.current.smallPadding
-                leftPadding: Style.current.smallPadding
-                rightPadding: Style.current.smallPadding
-                bottomPadding: Style.current.padding
-
-                Repeater {
-                    model: reactionModel
-                    delegate: EmojiReaction {
-                        source: "../../img/" + filename
-                        emojiId: model.emojiId
-                    }
-                }
-            }
-
-            Separator {
-                anchors.topMargin: 0
-                anchors.top: emojiRow.bottom
-            }
-
-            Action {
-                id: viewProfileAction
-                //% "View profile"
-                text: qsTrId("view-profile")
-                onTriggered: profilePopup.open()
-            }
-            Action {
-                //% "Reply to"
-                text: qsTrId("reply-to")
-                onTriggered: showReplyArea()
-            }
         }
  
         ListModel {

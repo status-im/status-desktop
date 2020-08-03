@@ -23,9 +23,10 @@ Rectangle {
 
         MouseArea {
             cursorShape: Qt.PointingHandCursor
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
             anchors.fill: parent
             onClicked: {
-                clickMessage()
+                clickMessage(true)
             }
         }
     }
