@@ -34,12 +34,24 @@ Item {
         }
         Select {
             id: select
-            selectedText: languageSetting.currentLocale
             anchors.right: undefined
             anchors.left: undefined
             width: 100
             Layout.leftMargin: Style.current.padding
             model: Locales_JSON.locales
+            selectedItemView: Item {
+                anchors.fill: parent
+                StyledText {
+                    id: selectedTextField
+                    text: languageSetting.currentLocale
+                    anchors.left: parent.left
+                    anchors.leftMargin: Style.current.padding
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 15
+                    verticalAlignment: Text.AlignVCenter
+                    height: 22
+                }
+            }
             menu.delegate: Component {
                 MenuItem {
                     id: menuItem

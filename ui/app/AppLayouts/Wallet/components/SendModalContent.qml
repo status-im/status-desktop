@@ -9,13 +9,6 @@ Item {
     property var closePopup: function(){}
     property alias amountInput: txtAmount
     property alias passwordInput: txtPassword
-    property var assets: []
-
-    property int selectedAssetIndex: 0
-    property string selectedAssetName: assets && assets.length ? assets[selectedAssetIndex].name : ""
-    property string selectedAssetAddress: assets && assets.length ? assets[selectedAssetIndex].address : ""
-    property string selectedAssetSymbol: assets && assets.length ? assets[selectedAssetIndex].symbol : ""
-    property string selectedAccountValue: assets && assets.length ? assets[selectedAssetIndex].value : ""
 
     property string passwordValidationError: ""
     property string toValidationError: ""
@@ -27,7 +20,7 @@ Item {
         }
         let result = walletModel.onSendTransaction(selectFromAccount.selectedAccount.address,
                                                    txtTo.text,
-                                                   selectedAssetAddress,
+                                                   selectAsset.selectedAsset.address,
                                                    txtAmount.text,
                                                    txtPassword.text)
 
@@ -68,7 +61,7 @@ Item {
         } else if (isNaN(txtAmount.text)) {
             //% "This needs to be a number"
             amountValidationError = qsTrId("this-needs-to-be-a-number")
-        } else if (parseFloat(txtAmount.text) > parseFloat(selectedAccountValue)) {
+        } else if (parseFloat(txtAmount.text) > parseFloat(selectAsset.selectedAsset.Value)) {
             //% "Amount needs to be lower than your balance (%1)"
             amountValidationError = qsTrId("amount-needs-to-be-lower-than-your-balance-(%1)").arg(selectedAccountValue)
         } else {
@@ -108,57 +101,20 @@ Item {
         validationError: amountValidationError
     }
 
-
-    Select {
-        id: assetTypeSelect
-        iconHeight: 24
-        iconWidth: 24
-        icon:  selectedAssetSymbol ? "../../../img/tokens/" + selectedAssetSymbol.toUpperCase() + ".png" : ""
-        //% "Select the asset"
-        label: qsTrId("select-the-asset")
+    AssetSelector {
+        id: selectAsset
+        assets: walletModel.assets
         anchors.top: txtAmount.bottom
         anchors.topMargin: Style.current.padding
-        selectedText: selectedAssetName
-        model: sendModalContent.assets
-        menu.delegate: Component {
-            MenuItem {
-
-                height: itemText.height + 4
-                width: parent ? parent.width : selectMenu.width
-                padding: 10
-
-                StyledText {
-                    id: itemText
-                    text: sendModalContent.assets[index].name
-                    anchors.left: parent.left
-                    anchors.leftMargin: 5
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                onTriggered: function () {
-                    selectedAssetIndex = index
-                }
-            }
-        }
+        anchors.right: parent.right
+        width: 86
+        height: 28
     }
-
-    StyledText {
-        id: currentBalanceText
-        //% "Balance: %1"
-        text: qsTrId("balance:-%1").arg(selectedAccountValue)
-        font.pixelSize: 13
-        color: Style.current.darkGrey
-        anchors.top: assetTypeSelect.top
-        anchors.topMargin: 0
-        anchors.right: assetTypeSelect.right
-        anchors.rightMargin: 0
-    }
-
 
     AccountSelector {
         id: selectFromAccount
         accounts: walletModel.accounts
-        anchors.top: assetTypeSelect.bottom
+        anchors.top: selectAsset.bottom
         anchors.topMargin: Style.current.padding
         anchors.left: parent.left
         anchors.right: parent.right
