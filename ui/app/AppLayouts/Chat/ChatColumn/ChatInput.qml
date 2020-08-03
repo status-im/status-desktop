@@ -32,25 +32,25 @@ Rectangle {
         return msg
     }
 
+    function sendMsg(event){
+        if(chatColumn.isImage){
+            chatsModel.sendImage(sendImageArea.image);
+        }
+        var msg = chatsModel.plainText(Emoji.deparse(txtData.text).trim()).trim()
+        if(msg.length > 0){
+            msg = interpretMessage(msg)
+            chatsModel.sendMessage(msg, chatColumn.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType);
+            txtData.text = "";
+            if(event) event.accepted = true
+            sendMessageSound.stop()
+            Qt.callLater(sendMessageSound.play);
+        }
+        chatColumn.hideExtendedArea();
+    }
+
     function onEnter(event){
-
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
-            if(chatColumn.isImage){
-                chatsModel.sendImage(sendImageArea.image);
-            }
-
-            var msg = chatsModel.plainText(Emoji.deparse(txtData.text).trim()).trim()
-            if(msg.length > 0){
-                msg = interpretMessage(msg)
-                msg = Emoji.deparse(msg)
-
-                chatsModel.sendMessage(msg, chatColumn.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType);
-                txtData.text = "";
-                event.accepted = true
-                sendMessageSound.stop()
-                Qt.callLater(sendMessageSound.play);
-            }
-            chatColumn.hideExtendedArea();
+            sendMsg(event);
         }
     }
 
@@ -103,6 +103,9 @@ Rectangle {
         anchors.right: parent.right
         addToChat: function (text) {
             txtData.insert(txtData.length, text)
+        }
+        onSend: function(){
+            sendMsg(false)
         }
     }
 }

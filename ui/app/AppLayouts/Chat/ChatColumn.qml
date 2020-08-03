@@ -218,8 +218,8 @@ StackLayout {
                         position = nameLen
                         text = "@" + aliasName + " "
                     } else {
-                        let left = currentText.substring(0, lastAtPosition)
-                        let right = currentText.substring(lastAtPosition + 2)
+                        let left = currentText.substring(0, lastAt)
+                        let right = currentText.substring(lastAt + 1)
                         text = `${left} @${aliasName} ${right}`
                     }
 

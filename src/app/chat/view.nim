@@ -102,8 +102,6 @@ QtObject:
     var m = self.replaceMentionsWithPubKeys(aliasMentions, contacts, message, (c => c.alias))
     m = self.replaceMentionsWithPubKeys(ensMentions, contacts, m, (c => c.ensName))
     m = self.replaceMentionsWithPubKeys(nameMentions, contacts, m, (c => c.ensName.split(".")[0]))
-    m = self.plainText(m)
-    
     self.status.chat.sendMessage(self.activeChannel.id, m, replyTo, contentType)
 
   proc verifyMessageSent*(self: ChatsView, data: string) {.slot.} =

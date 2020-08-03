@@ -8,6 +8,7 @@ import "../components"
 Item {
     property int iconPadding: 6
     property var addToChat: function () {}
+    property var onSend: function () {}
 
     id: chatButtonsContainer
 
@@ -32,17 +33,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         onClicked: {
-            if(chatColumn.isImage){
-                chatsModel.sendImage(sendImageArea.image);
-            }
-
-            let msg = chatsModel.plainText(Emoji.deparse(txtData.text)).trim()
-            if(msg.length > 0){
-                chatsModel.sendMessage(msg, chatColumn.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType)
-                txtData.text = "";
-            }
-
-            chatColumn.hideExtendedArea();
+            onSend();
         }
         background: Rectangle {
             color: parent.enabled ? Style.current.blue : Style.current.grey
