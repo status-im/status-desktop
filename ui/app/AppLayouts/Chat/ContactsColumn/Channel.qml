@@ -28,8 +28,13 @@ Rectangle {
 
     MouseArea {
         cursorShape: Qt.PointingHandCursor
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         anchors.fill: parent
         onClicked: {
+            if (mouse.button & Qt.RightButton) {
+                channelContextMenu.openMenu(index)
+                return;
+            }
             chatsModel.setActiveChannelByIndex(index)
             chatGroupsListView.currentIndex = index
         }

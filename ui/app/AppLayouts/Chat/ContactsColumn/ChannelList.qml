@@ -49,6 +49,65 @@ ScrollView {
         }
     }
 
+    PopupMenu {
+        property int channelIndex
+
+        id: channelContextMenu
+        width: 175
+
+        function openMenu(channelIndex) {
+            channelContextMenu.channelIndex = channelIndex
+            channelContextMenu.popup()
+        }
+
+        Action {
+            text: qsTr("View Group")
+            icon.source: "../../../img/group.svg"
+            icon.width: 13
+            icon.height: 13
+            onTriggered: console.log('TODO View group')
+        }
+        Action {
+            text: qsTr("Mute Chat")
+            icon.source: "../../../img/bell.svg"
+            icon.width: 13
+            icon.height: 13
+            onTriggered: console.log('TODO Mute')
+        }
+        Action {
+            text: qsTr("Mark as Read")
+            icon.source: "../../../img/check-circle.svg"
+            icon.width: 13
+            icon.height: 13
+            onTriggered: {
+                chatsModel.markAllChannelMessagesReadByIndex(channelContextMenu.channelIndex)
+            }
+        }
+        Action {
+            text: qsTr("Fetch Messages")
+            icon.source: "../../../img/fetch.svg"
+            icon.width: 13
+            icon.height: 13
+            onTriggered: {
+                chatsModel.loadMoreMessagesWithIndex(channelContextMenu.channelIndex)
+            }
+        }
+        Action {
+            text: qsTr("Clear History")
+            icon.source: "../../../img/close.svg"
+            icon.width: 13
+            icon.height: 13
+            onTriggered: chatsModel.clearChatHistoryByIndex(channelContextMenu.channelIndex)
+        }
+        Action {
+            text: qsTr("Leave Group")
+            icon.source: "../../../img/leave_chat.svg"
+            icon.width: 13
+            icon.height: 13
+            onTriggered: chatsModel.leaveChatByIndex(channelContextMenu.channelIndex)
+        }
+    }
+
     Connections {
         target: chatsModel.chats
         onDataChanged: {
