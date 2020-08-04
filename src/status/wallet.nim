@@ -95,6 +95,9 @@ proc getTotalFiatBalance*(self: WalletModel): string =
   var newBalance = 0.0
   fmt"{self.totalBalance:.2f} {self.defaultCurrency}"
 
+proc getFiatValue*(self: WalletModel, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): float =
+  result = getFiatValue(cryptoBalance, cryptoSymbol, fiatSymbol)
+
 proc calculateTotalFiatBalance*(self: WalletModel) =
   self.totalBalance = 0.0
   for account in self.accounts:

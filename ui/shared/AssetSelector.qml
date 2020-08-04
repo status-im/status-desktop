@@ -7,9 +7,7 @@ import "../imports"
 Item {
     id: root
     property var assets
-    property var selectedAsset: {
-        "symbol": "snt", "name": "", "value": "", "fiatBalanceDisplay": "", "address": ""
-    }
+    property var selectedAsset
     width: 86
     height: 24
 
@@ -61,7 +59,7 @@ Item {
 
             Component.onCompleted: {
                 if (isFirstItem) {
-                    root.selectedAsset = { address, name, value, symbol, fiatBalanceDisplay }
+                    root.selectedAsset = { address, name, value, symbol, fiatBalanceDisplay, fiatBalance }
                 }
             }
             width: parent.width
@@ -141,7 +139,7 @@ Item {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: itemContainer
                 onClicked: {
-                    root.selectedAsset = { address, name, value, symbol, fiatBalanceDisplay }
+                    root.selectedAsset = { address, name, value, symbol, fiatBalance, fiatBalanceDisplay }
                     select.menu.close()
                 }
             }
