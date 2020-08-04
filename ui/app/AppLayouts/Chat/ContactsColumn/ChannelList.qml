@@ -54,6 +54,18 @@ ScrollView {
 
         id: channelContextMenu
         width: 175
+        subMenuIcons: [
+            {
+                source:  Qt.resolvedUrl("../../../img/bell.svg"),
+                width: 13,
+                height: 13
+            },
+            {
+                source: Qt.resolvedUrl("../../../img/fetch.svg"),
+                width: 13,
+                height: 13
+            }
+        ]
 
         function openMenu(channelIndex) {
             channelContextMenu.channelIndex = channelIndex
@@ -67,12 +79,19 @@ ScrollView {
             icon.height: 13
             onTriggered: console.log('TODO View group')
         }
-        Action {
-            text: qsTr("Mute Chat")
-            icon.source: "../../../img/bell.svg"
-            icon.width: 13
-            icon.height: 13
-            onTriggered: console.log('TODO Mute')
+
+        Separator {}
+
+        PopupMenu {
+            hasArrow: false
+            title: qsTr("Mute Chat")
+
+            // TODO implement mute chat in Model and call it here
+            Action { text: qsTr("15 minutes"); icon.width: 0; }
+            Action { text: qsTr("1 hour"); icon.width: 0; }
+            Action { text: qsTr("8 hours"); icon.width: 0; }
+            Action { text: qsTr("24 hours"); icon.width: 0; }
+            Action { text: qsTr("Until I turn it back on"); icon.width: 0; }
         }
         Action {
             text: qsTr("Mark as Read")
@@ -83,14 +102,15 @@ ScrollView {
                 chatsModel.markAllChannelMessagesReadByIndex(channelContextMenu.channelIndex)
             }
         }
-        Action {
-            text: qsTr("Fetch Messages")
-            icon.source: "../../../img/fetch.svg"
-            icon.width: 13
-            icon.height: 13
-            onTriggered: {
-                chatsModel.loadMoreMessagesWithIndex(channelContextMenu.channelIndex)
-            }
+        PopupMenu {
+            hasArrow: false
+            title: qsTr("Fetch Messages")
+
+            // TODO call fetch for the wanted duration
+            Action { text: qsTr("Last 24 hours"); icon.width: 0; }
+            Action { text: qsTr("Last 2 days"); icon.width: 0; }
+            Action { text: qsTr("Last 3 days"); icon.width: 0; }
+            Action { text: qsTr("Last 7 days"); icon.width: 0; }
         }
         Action {
             text: qsTr("Clear History")
@@ -99,6 +119,9 @@ ScrollView {
             icon.height: 13
             onTriggered: chatsModel.clearChatHistoryByIndex(channelContextMenu.channelIndex)
         }
+
+        Separator {}
+
         Action {
             text: qsTr("Leave Group")
             icon.source: "../../../img/leave_chat.svg"
