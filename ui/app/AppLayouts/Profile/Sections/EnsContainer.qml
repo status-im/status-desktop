@@ -12,9 +12,21 @@ Item {
     Layout.fillWidth: true
 
     property bool showSearchScreen: false
+    property string addedUsername: ""
 
-    signal next()
-    signal back()
+    signal next(output: string)
+    signal connect(ensUsername: string)
+
+    signal goToWelcome();
+    signal goToList();
+
+    function goToStart(){
+        if(profileModel.ens.rowCount() > 0){
+            goToList();
+        } else {
+            goToWelcome();
+        }
+    }
 
     DSM.StateMachine {
         id: stateMachine
@@ -28,15 +40,84 @@ Item {
                 targetState: searchState
                 signal: next
             }
+            DSM.SignalTransition {
+                targetState: listState
+                signal: goToList
+            }
         }
 
         DSM.State {
             id: searchState
             onEntered: loader.sourceComponent = search
+            DSM.SignalTransition {
+                targetState: tAndCState
+                signal: next
+                guard: output === "available"
+            }
+            DSM.SignalTransition {
+                targetState: addedState
+                signal: connect
+            }
+            DSM.SignalTransition {
+                targetState: listState
+                signal: goToList
+            }
+            DSM.SignalTransition {
+                targetState: welcomeState
+                signal: goToWelcome
+            }
         }
-        
-        DSM.FinalState {
-            id: ensFinalState
+
+        DSM.State {
+            id: addedState
+            onEntered: {
+                loader.sourceComponent = added;
+                loader.item.ensUsername = addedUsername;
+            }
+            DSM.SignalTransition {
+                targetState: listState
+                signal: next
+            }
+            DSM.SignalTransition {
+                targetState: listState
+                signal: goToList
+            }
+            DSM.SignalTransition {
+                targetState: welcomeState
+                signal: goToWelcome
+            }
+        }
+
+        DSM.State {
+            id: listState
+            onEntered: {
+                loader.sourceComponent = list;
+            }
+            DSM.SignalTransition {
+                targetState: searchState
+                signal: next
+            }
+            DSM.SignalTransition {
+                targetState: listState
+                signal: goToList
+            }
+            DSM.SignalTransition {
+                targetState: welcomeState
+                signal: goToWelcome
+            }
+        }
+
+        DSM.State {
+            id: tAndCState
+            onEntered:loader.sourceComponent = termsAndConditions
+            DSM.SignalTransition {
+                targetState: listState
+                signal: goToList
+            }
+            DSM.SignalTransition {
+                targetState: welcomeState
+                signal: goToWelcome
+            }
         }
     }
 
@@ -49,13 +130,55 @@ Item {
         id: welcome
         Welcome {
             onClick: function(){
-                next();
+                next(null);
             }
         }
     }
 
     Component {
         id: search
-        Search {}
+        Search {
+            onClick: function(output, username){
+                if(output === "connected"){
+                    connect(username)
+                } else {
+                    next(output);
+                }
+            }
+        }
+    }
+
+    Component {
+        id: termsAndConditions
+        TermsAndConditions {
+            onClick: function(output){
+                next(output);
+            }
+        }
+    }
+
+    Component {
+        id: added
+        Added {
+            onClick: function(){
+                next(null);
+            }
+        }
+    }
+
+    Component {
+        id: list
+        List {
+            onClick: function(){
+                next(null);
+            }
+        }
+    }
+
+    Connections {
+        target: ensContainer
+        onConnect: {
+            addedUsername = ensUsername;
+        }
     }
 }

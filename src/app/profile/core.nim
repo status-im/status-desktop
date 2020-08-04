@@ -11,6 +11,7 @@ import ../../status/chat as status_chat
 import ../../status/devices
 import ../../status/chat/chat
 import view
+import views/ens_manager
 import chronicles
 
 type ProfileController* = ref object of SignalSubscriber
@@ -31,10 +32,6 @@ proc delete*(self: ProfileController) =
 proc init*(self: ProfileController, account: Account) =
   let profile = account.toProfileModel()
 
-  # (rramos) TODO: I added this because I needed the public key
-  # Ideally, this module should call getSettings once, and fill the 
-  # profile with all the information comming from the settings.
-  let response = status_settings.getSettings()
   let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
   let mnemonic = status_settings.getSetting[string](Setting.Mnemonic, "")
   let network = status_settings.getSetting[string](Setting.Networks_CurrentNetwork, constants.DEFAULT_NETWORK_NAME)
@@ -48,6 +45,7 @@ proc init*(self: ProfileController, account: Account) =
   self.view.setNewProfile(profile)
   self.view.setMnemonic(mnemonic)
   self.view.setNetwork(network)
+  self.view.ens.init()
 
   var mailservers = status_mailservers.getMailservers()
   for mailserver_config in mailservers:

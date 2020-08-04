@@ -150,6 +150,8 @@ type
     Stickers_Recent = "stickers/recent-stickers"
     WalletRootAddress = "wallet-root-address"
     LatestDerivedPath = "latest-derived-path"
+    PreferredUsername = "preferred-name"
+    Usernames = "usernames"
 
   UpstreamConfig* = ref object
     enabled* {.serializedFieldName("Enabled").}: bool

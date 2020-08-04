@@ -6,9 +6,13 @@ import "../../../../../shared"
 
 Item {
     id: searchENS
+
+    property var onClick: function(){}
+
     property string validationMessage: ""
     property bool valid: false
     property bool isStatus: true
+    property string ensStatus: ""
 
     property var validateENS: Backpressure.debounce(searchENS, 500, function (ensName, isStatus){
         profileModel.ens.validate(ensName, isStatus)
@@ -17,6 +21,7 @@ Item {
     function validate() {
         validationMessage = "";
         valid = false;
+        ensStatus = "";
         if (ensUsername.text.length < 4) {
             validationMessage = qsTr("At least 4 characters. Latin letters, numbers, and lowercase only.");
         } else if(isStatus && !ensUsername.text.match(/^[a-z0-9]+$/)){
@@ -80,25 +85,32 @@ Item {
         Connections {
             target: profileModel.ens
             onEnsWasResolved: {
-                valid = false
+                valid = false;
+                ensStatus = ensResult;
                 switch(ensResult){
                     case "available": 
                         valid = true;
                         validationMessage = qsTr("✓ Username available!");
                         break;
                     case "owned":
-                        console.log("TODO: -");
+                        console.log("TODO: - Continuing will connect this username with your chat key.");
                     case "taken":
                         validationMessage = !isStatus ? 
                                             qsTr("Username doesn’t belong to you :(")
                                             :
                                             qsTr("Username already taken :(");
                         break;
+                    case "already-connected":
+                        validationMessage = qsTr("Username is already connected with your chat key and can be used inside Status.");
+                        break;
                     case "connected":
-                        validationMessage = qsTr("This user name is owned by you and connected with your chat key.");
+                        valid = true;
+                        validationMessage = qsTr("This user name is owned by you and connected with your chat key. Continue to set `Show my ENS username in chats`.");
                         break;
                     case "connected-different-key":
-                        validationMessage = qsTr("Username doesn’t belong to you :(");
+                        valid = true;
+                        validationMessage = qsTr("Continuing will require a transaction to connect the username with your current chat key.");
+                        break;
                 }
             }
         }
@@ -125,7 +137,17 @@ Item {
             anchors.fill: parent
             onClicked : {
                 if(!valid) return;
-                console.log("TODO: show ens T&C")
+
+                if(ensStatus === "connected"){
+                    profileModel.ens.connect(ensUsername.text);
+                    onClick(ensStatus, ensUsername.text);
+                    return;
+                }
+
+                if(ensStatus === "available"){
+                    onClick(ensStatus, ensUsername.text);
+                    return;
+                }
             }
         }
     }

@@ -46,9 +46,17 @@ SplitView {
            address: profileModel.profile.address
         }
 
+        onCurrentIndexChanged: {
+            if(visibleChildren[0] === ensContainer){
+                ensContainer.goToStart();
+            }
+        }
+
         ContactsContainer {}
 
-        EnsContainer {}
+        EnsContainer {
+            id: ensContainer
+        }
 
         PrivacyContainer {}
 

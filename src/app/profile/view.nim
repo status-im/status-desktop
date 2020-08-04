@@ -49,7 +49,7 @@ QtObject:
     result.addedContacts = newContactList()
     result.blockedContacts = newContactList()
     result.deviceList = newDeviceList()
-    result.ens = newEnsManager()
+    result.ens = newEnsManager(status)
     result.mnemonic = ""
     result.network = ""
     result.status = status
