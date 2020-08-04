@@ -8,6 +8,7 @@ type
     Value = UserRole + 3,
     FiatBalanceDisplay = UserRole + 4
     Address = UserRole + 5
+    FiatBalance = UserRole + 6
 
 QtObject:
   type AssetList* = ref object of QAbstractListModel
@@ -34,6 +35,7 @@ QtObject:
       of "value": result = asset.value
       of "fiatBalanceDisplay": result = asset.fiatBalanceDisplay
       of "address": result = asset.address
+      of "fiatBalance": result = asset.fiatBalance
 
   method rowCount(self: AssetList, index: QModelIndex = nil): int =
     return self.assets.len
@@ -51,13 +53,15 @@ QtObject:
     of AssetRoles.Value: result = newQVariant(asset.value)
     of AssetRoles.FiatBalanceDisplay: result = newQVariant(asset.fiatBalanceDisplay)
     of AssetRoles.Address: result = newQVariant(asset.address)
+    of AssetRoles.FiatBalance: result = newQVariant(asset.fiatBalance)
 
   method roleNames(self: AssetList): Table[int, string] =
     { AssetRoles.Name.int:"name",
     AssetRoles.Symbol.int:"symbol",
     AssetRoles.Value.int:"value",
     AssetRoles.FiatBalanceDisplay.int:"fiatBalanceDisplay",
-    AssetRoles.Address.int:"address" }.toTable
+    AssetRoles.Address.int:"address",
+    AssetRoles.FiatBalance.int:"fiatBalance"}.toTable
 
   proc addAssetToList*(self: AssetList, asset: Asset) =
     self.beginInsertRows(newQModelIndex(), self.assets.len, self.assets.len)
