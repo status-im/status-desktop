@@ -14,6 +14,7 @@ QtObject {
     readonly property color black: "#000000"
     readonly property color grey: "#EEF2F5"
     readonly property color lightBlue: "#ECEFFC"
+    readonly property color cyan: "#00FFFF"
     readonly property color blue: "#4360DF"
     readonly property color transparent: "#00000000"
     readonly property color darkGrey: "#939BA1"
@@ -23,6 +24,7 @@ QtObject {
     readonly property color red: "#FF2D55"
     readonly property color lightRed: "#FFEAEE"
     readonly property color green: "#4EBC60"
+    readonly property color turquoise: "#007b7d"
 
     readonly property int xlPadding: 32
     readonly property int bigPadding: 24
