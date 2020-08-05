@@ -93,6 +93,7 @@ Rectangle {
                 default: return lastMessage ? Emoji.parse(lastMessage, "26x26").replace(/\n|\r/g, ' ') : qsTrId("no-messages")
             }
         }
+        textFormat: Text.RichText
         clip: true // This is needed because emojis don't ellide correctly
         anchors.right: contactNumberChatsCircle.left
         anchors.rightMargin: Style.current.smallPadding
