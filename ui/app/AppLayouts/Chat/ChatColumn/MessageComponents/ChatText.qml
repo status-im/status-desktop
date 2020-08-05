@@ -48,7 +48,7 @@ StyledTextEdit {
                         `color: ${isCurrentUser ? Style.current.white : Style.current.textColor};`+
                     `}`+
                     `a.mention {`+
-                        `font-weight: bold;`+
+                        `color: ${isCurrentUser ? Style.current.cyan : Style.current.turquoise};`+
                     `}`+
                     `blockquote {`+
                         `margin: 0;`+
