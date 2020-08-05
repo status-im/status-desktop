@@ -63,7 +63,7 @@ proc updateBalance*(asset: Asset, currency: string) =
   var token_balance = getBalance(asset.symbol, asset.accountAddress, asset.address)
   let fiat_balance = getFiatValue(token_balance, asset.symbol, currency)
   asset.value = token_balance
-  asset.fiatValue = fmt"{fiat_balance:.2f} {currency}"
+  asset.fiatBalanceDisplay = fmt"{fiat_balance:.2f} {currency}"
 
 proc updateBalance*(account: WalletAccount, currency: string) =
   try:
