@@ -12,31 +12,33 @@ Item {
     property string validationMessage: ""
     property bool valid: false
     property bool isStatus: true
+    property bool loading: false
     property string ensStatus: ""
 
     property var validateENS: Backpressure.debounce(searchENS, 500, function (ensName, isStatus){
         profileModel.ens.validate(ensName, isStatus)
     });
 
-    function validate() {
+    function validate(ensUsername) {
         validationMessage = "";
         valid = false;
         ensStatus = "";
-        if (ensUsername.text.length < 4) {
+        if (ensUsername.length < 4) {
             validationMessage = qsTr("At least 4 characters. Latin letters, numbers, and lowercase only.");
-        } else if(isStatus && !ensUsername.text.match(/^[a-z0-9]+$/)){
+        } else if(isStatus && !ensUsername.match(/^[a-z0-9]+$/)){
             validationMessage = qsTr("Letters and numbers only.");
-        } else if(!isStatus && !ensUsername.text.endsWith(".eth")){
+        } else if(!isStatus && !ensUsername.endsWith(".eth")){
             validationMessage = qsTr("Type the entire username including the custom domain like username.domain.eth")
         }
         return validationMessage === "";
     }
 
-    function onKeyReleased(){
-        if (!validate()) {
+    function onKeyReleased(ensUsername){
+        if (!validate(ensUsername)) {
             return;
         }
-        Qt.callLater(validateENS, ensUsername.text, isStatus)
+        loading = true;
+        Qt.callLater(validateENS, ensUsername, isStatus)
     }
 
     StyledText {
@@ -60,8 +62,26 @@ Item {
         radius: 120
         color: Style.current.blue
 
+        SVGImage {
+            id: imgIcon
+            visible: ensStatus === "taken"
+            fillMode: Image.PreserveAspectFit
+            source: "../../../../img/block-icon-white.svg"
+            width: 20
+            height: 20
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+        }
+
         StyledText {
-            text: "@"
+            visible: ensStatus !== "taken"
+            text: {
+                if((ensStatus === "available" || ensStatus === "connected" || ensStatus === "connected-different-key")){
+                    return "✓"
+                } else {
+                    return "@"
+                }
+            }
             opacity: 0.7
             font.weight: Font.Bold
             font.pixelSize: 18
@@ -79,13 +99,15 @@ Item {
         anchors.right: btnContinue.left
         anchors.rightMargin: 24
         Keys.onReleased: {
-            onKeyReleased();
+            onKeyReleased(ensUsername.text);
         }
 
         Connections {
             target: profileModel.ens
             onEnsWasResolved: {
+                if(!validate(ensUsername.text)) return;
                 valid = false;
+                loading = false;
                 ensStatus = ensResult;
                 switch(ensResult){
                     case "available": 
@@ -139,7 +161,7 @@ Item {
                 if(!valid) return;
 
                 if(ensStatus === "connected"){
-                    profileModel.ens.connect(ensUsername.text);
+                    profileModel.ens.connect(ensUsername.text, isStatus);
                     onClick(ensStatus, ensUsername.text);
                     return;
                 }
@@ -188,8 +210,9 @@ Item {
                 anchors.fill: parent
                 onClicked : {
                     isStatus = !isStatus;
-                    if(validate())
-                        validateENS(ensUsername.text, isStatus)
+                    let ensUser = ensUsername.text;
+                    if(validate(ensUser))
+                        validateENS(ensUser, isStatus)
                 }
             }
         }

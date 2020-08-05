@@ -53,7 +53,7 @@ QtObject:
           let userWallet = status_settings.getSetting[string](Setting.WalletRootAddress, "0x0")
           let pubkey = status_ens.pubkey(ens)
           if ownerAddr != "":
-            if pubkey == "":
+            if pubkey == "" and ownerAddr == userWallet:
               output = "owned" # "Continuing will connect this username with your chat key."
             elif pubkey == userPubkey:
               output = "connected"
@@ -65,13 +65,24 @@ QtObject:
             output = "taken"
         output
 
-  proc connect(self: EnsManager, username: string) {.slot.} =
-    let ensUsername = username & status_ens.domain 
+  proc add*(self: EnsManager, username: string) =
+    self.beginInsertRows(newQModelIndex(), self.usernames.len, self.usernames.len)
+    self.usernames.add(username)
+    self.endInsertRows()
+
+  proc connect(self: EnsManager, username: string, isStatus: bool) {.slot.} =
+    var ensUsername = username 
+    if isStatus: 
+      ensUsername = ensUsername & status_ens.domain
     var usernames = status_settings.getSetting[seq[string]](Setting.Usernames, @[])
-    let preferredUsername = status_settings.getSetting[string](Setting.PreferredUsername, "")
     usernames.add ensUsername
     discard status_settings.saveSetting(Setting.Usernames, %*usernames)
-    discard status_settings.saveSetting(Setting.PreferredUsername, ensUsername)
+    if usernames.len == 1:
+      discard status_settings.saveSetting(Setting.PreferredUsername, ensUsername)
+    self.add ensUsername
+
+  proc preferredUsername(self: EnsManager): string {.slot.} =
+    result = status_settings.getSetting[string](Setting.PreferredUsername, "")
 
   method rowCount(self: EnsManager, index: QModelIndex = nil): int =
     return self.usernames.len
@@ -88,8 +99,3 @@ QtObject:
     {
       EnsRoles.UserName.int:"username"
     }.toTable
-
-  proc add*(self: EnsManager, username: string) =
-    self.beginInsertRows(newQModelIndex(), self.usernames.len, self.usernames.len)
-    self.usernames.add(username)
-    self.endInsertRows()
