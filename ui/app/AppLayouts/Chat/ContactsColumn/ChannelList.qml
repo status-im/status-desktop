@@ -28,6 +28,7 @@ ScrollView {
             lastMessage: model.lastMessage
             timestamp: model.timestamp
             chatType: model.chatType
+            identicon: model.identicon
             unviewedMessagesCount: model.unviewedMessagesCount
             hasMentions: model.hasMentions
             contentType: model.contentType

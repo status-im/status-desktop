@@ -9,6 +9,7 @@ Rectangle {
     property string lastMessage: "My latest message\n with a return"
     property string timestamp: "20/2/2020"
     property string unviewedMessagesCount: "2"
+    property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQAQMAAAC6caSPAAAABlBMVEXMzMz////TjRV2AAAAAWJLR0QB/wIt3gAAACpJREFUGBntwYEAAAAAw6D7Uw/gCtUAAAAAAAAAAAAAAAAAAAAAAAAAgBNPsAABAjKCqQAAAABJRU5ErkJggg=="
     property bool hasMentions: false
     property int chatType: Constants.chatTypePublic
     property string searchStr: ""
@@ -42,7 +43,7 @@ Rectangle {
       fontSize: !isCompact ? this.defaultFontSize : 14
       channelName: wrapper.name
       channelType: wrapper.chatType
-      channelIdenticon: identicon
+      channelIdenticon: wrapper.identicon
       anchors.left: parent.left
       anchors.leftMargin: !isCompact ? Style.current.padding : Style.current.smallPadding
       anchors.verticalCenter: parent.verticalCenter
