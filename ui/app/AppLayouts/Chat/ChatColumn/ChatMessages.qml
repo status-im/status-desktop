@@ -120,7 +120,7 @@ ScrollView {
             }
 
             onActiveChannelChanged: {
-                chatLogView.scrollToBottom(true)
+                Qt.callLater(chatLogView.scrollToBottom.bind(this, true))
             }
 
             onSendingMessage: {
@@ -140,8 +140,8 @@ ScrollView {
                 }, 500);
             }
 
-            onMessageNotificationPushed: function(chatId, msg) {
-                notificationWindow.notifyUser(chatId, msg)
+            onMessageNotificationPushed: function(chatId, msg, messageType, chatType, timestamp, identicon, username) {
+                notificationWindow.notifyUser(chatId, msg, messageType, chatType, timestamp, identicon, username)
             }
         }
 

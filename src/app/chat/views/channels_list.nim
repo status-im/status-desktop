@@ -96,6 +96,11 @@ QtObject:
 
   proc getChannel*(self: ChannelsList, index: int): Chat = self.chats[index]
 
+  proc getChannelById*(self: ChannelsList, chatId: string): Chat =
+    for chat in self.chats:
+      if chat.id == chatId:
+        return chat
+
   proc upsertChannel(self: ChannelsList, channel: Chat): int =
     let idx = self.chats.findIndexById(channel.id)
     if idx == -1:
@@ -109,9 +114,9 @@ QtObject:
       result = idx
 
   proc getChannelColor*(self: ChannelsList, name: string): string =
-    for chat in self.chats:
-      if chat.name == name:
-        return chat.color
+    let channel = self.getChannelById(name)
+    if (channel == nil): return
+    return channel.color
 
   proc updateChat*(self: ChannelsList, channel: Chat, moveToTop: bool = true) =
     let idx = self.upsertChannel(channel)
