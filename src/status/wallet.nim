@@ -62,11 +62,11 @@ proc setDefaultCurrency*(self: WalletModel, currency: string) =
 
 proc generateAccountConfiguredAssets*(self: WalletModel, accountAddress: string): seq[Asset] =
   var assets: seq[Asset] = @[]
-  var asset = Asset(name:"Ethereum", symbol: "ETH", value: "0.0", fiatValue: "0.0", accountAddress: accountAddress)
+  var asset = Asset(name:"Ethereum", symbol: "ETH", value: "0.0", fiatBalanceDisplay: "0.0", accountAddress: accountAddress)
   assets.add(asset)
   for token in self.tokens:
     var symbol = token["symbol"].getStr
-    var existingToken = Asset(name: token["name"].getStr, symbol: symbol, value: fmt"0.0", fiatValue: "$0.0", accountAddress: accountAddress, address: token["address"].getStr)
+    var existingToken = Asset(name: token["name"].getStr, symbol: symbol, value: fmt"0.0", fiatBalanceDisplay: "$0.0", accountAddress: accountAddress, address: token["address"].getStr)
     assets.add(existingToken)
   assets
 

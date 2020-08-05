@@ -8,7 +8,7 @@ Item {
     id: root
     property var assets
     property var selectedAsset: {
-        "symbol": "snt", "name": "", "value": "", "fiatValue": "", "address": ""
+        "symbol": "snt", "name": "", "value": "", "fiatBalanceDisplay": "", "address": ""
     }
     width: 86
     height: 24
@@ -61,7 +61,7 @@ Item {
 
             Component.onCompleted: {
                 if (root.selectedAsset.name === "") {
-                    root.selectedAsset = { address, name, value, symbol, fiatValue }
+                    root.selectedAsset = { address, name, value, symbol, fiatBalanceDisplay }
                 }
             }
             width: parent.width
@@ -109,7 +109,7 @@ Item {
                     font.pixelSize: 15
                     anchors.right: parent.right
                     height: 22
-                    text: fiatValue.toUpperCase()
+                    text: fiatBalanceDisplay.toUpperCase()
                     color: Style.current.secondaryText
                 }
             }
@@ -141,7 +141,7 @@ Item {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: itemContainer
                 onClicked: {
-                    root.selectedAsset = { address, name, value, symbol, fiatValue }
+                    root.selectedAsset = { address, name, value, symbol, fiatBalanceDisplay }
                     select.menu.close()
                 }
             }

@@ -8,7 +8,7 @@ type CurrencyArgs* = ref object of Args
     currency*: string
 
 type Asset* = ref object
-    name*, symbol*, value*, fiatValue*, accountAddress*, address*: string
+    name*, symbol*, value*, fiatBalanceDisplay*, accountAddress*, address*: string
 
 type WalletAccount* = ref object
     name*, address*, iconColor*, balance*, path*, walletType*, publicKey*: string
