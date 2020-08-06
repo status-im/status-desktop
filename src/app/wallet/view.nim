@@ -150,11 +150,11 @@ QtObject:
     self.accountListChanged()
 
   proc getFiatValue*(self: WalletView, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string {.slot.} =
-    let val = self.status.wallet.getFiatValue(cryptoBalance, cryptoSymbol, fiatSymbol)
+    let val = self.status.wallet.convertValue(cryptoBalance, cryptoSymbol, fiatSymbol)
     result = fmt"{val:.2f}"
 
   proc getCryptoValue*(self: WalletView, fiatBalance: string, fiatSymbol: string, cryptoSymbol: string): string {.slot.} =
-    result = fmt"{self.status.wallet.getFiatValue(fiatBalance, fiatSymbol, cryptoSymbol)}"
+    result = fmt"{self.status.wallet.convertValue(fiatBalance, fiatSymbol, cryptoSymbol)}"
 
   proc generateNewAccount*(self: WalletView, password: string, accountName: string, color: string): string {.slot.} =
     result = self.status.wallet.generateNewAccount(password, accountName, color)
