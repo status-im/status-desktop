@@ -5,8 +5,11 @@ import "../imports"
 Item {
     property alias textField: inputValue
     property string placeholderText: "My placeholder"
+    property string placeholderTextColor: Style.current.secondaryText
     property alias text: inputValue.text
     property string validationError: ""
+    property alias validationErrorAlignment: validationErrorText.horizontalAlignment
+    property int validationErrorTopMargin: 1
     property string label: ""
     readonly property bool hasLabel: label !== ""
     property color bgColor: Style.current.inputBackground
@@ -22,9 +25,10 @@ Item {
     property int customHeight: 44
     property int fontPixelSize: 15
     signal editingFinished(string inputValue)
+    signal textEdited(string inputValue)
 
     id: inputBox
-    height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0) + (!!validationError ? validationErrorText.height : 0)
+    height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0) + (!!validationError ? (validationErrorText.height + validationErrorTopMargin) : 0)
     anchors.right: parent.right
     anchors.left: parent.left
 
@@ -56,6 +60,7 @@ Item {
             id: inputValue
             visible: !inputBox.isTextArea && !inputBox.isSelect
             placeholderText: inputBox.placeholderText
+            placeholderTextColor: inputBox.placeholderTextColor
             text: inputBox.text
             anchors.top: parent.top
             anchors.topMargin: 0
@@ -72,6 +77,7 @@ Item {
                 color: Style.current.transparent
             }
             onEditingFinished: inputBox.editingFinished(inputBox.text)
+            onTextEdited: inputBox.textEdited(inputBox.text)
         }
 
         SVGImage {
@@ -91,12 +97,13 @@ Item {
         id: validationErrorText
         text: validationError
         anchors.top: inputRectangle.bottom
-        anchors.topMargin: 1
+        anchors.topMargin: validationErrorTopMargin
         selectByMouse: true
         readOnly: true
         font.pixelSize: 12
-        color: Style.current.red
-
+        height: 16
+        color: Style.current.danger
+        width: parent.width
     }
 }
 

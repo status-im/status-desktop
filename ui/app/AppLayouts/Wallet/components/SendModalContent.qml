@@ -19,7 +19,7 @@ Item {
             return;
         }
         let result = walletModel.onSendTransaction(selectFromAccount.selectedAccount.address,
-                                                   txtTo.text,
+                                                   selectRecipient.selectedRecipient,
                                                    selectAsset.selectedAsset.address,
                                                    txtAmount.text,
                                                    txtPassword.text)
@@ -35,6 +35,7 @@ Item {
     }
 
     function validate() {
+        selectRecipient.validate()
         if (txtPassword.text === "") {
             //% "You need to enter a password"
             passwordValidationError = qsTrId("you-need-to-enter-a-password")
@@ -43,16 +44,6 @@ Item {
             passwordValidationError = qsTrId("password-needs-to-be-4-characters-or-more")
         } else {
             passwordValidationError = ""
-        }
-
-        if (txtTo.text === "") {
-            //% "You need to enter a destination address"
-            toValidationError = qsTrId("you-need-to-enter-a-destination-address")
-        } else if (!Utils.isAddress(txtTo.text)) {
-            //% "This needs to be a valid address (starting with 0x)"
-            toValidationError = qsTrId("this-needs-to-be-a-valid-address-(starting-with-0x)")
-        } else {
-            toValidationError = ""
         }
 
         if (txtAmount.text === "") {
@@ -114,15 +105,15 @@ Item {
         }
     }
 
-    Input {
-        id: txtTo
-        //% "Recipient"
-        label: qsTrId("recipient")
-        //% "Send to"
-        placeholderText: qsTrId("send-to")
+    RecipientSelector {
+        id: selectRecipient
+        accounts: walletModel.accounts
+        contacts: profileModel.addedContacts
+        label: qsTr("Recipient")
         anchors.top: selectFromAccount.bottom
         anchors.topMargin: Style.current.padding
-        validationError: toValidationError
+        anchors.left: parent.left
+        anchors.right: parent.right
     }
 
     Input {
@@ -131,7 +122,7 @@ Item {
         label: qsTrId("password")
         //% "Enter Password"
         placeholderText: qsTrId("biometric-auth-login-ios-fallback-label")
-        anchors.top: txtTo.bottom
+        anchors.top: selectRecipient.bottom
         anchors.topMargin: Style.current.padding
         textField.echoMode: TextInput.Password
         validationError: passwordValidationError

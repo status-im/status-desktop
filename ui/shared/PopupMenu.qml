@@ -82,8 +82,8 @@ Menu {
                 anchors.fill: parent
                 source: parent
                 color: popupMenuItem.highlighted ?
-                           Style.current.white :
-                           (popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Style.current.blue)
+                           Style.current.primaryMenuItemTextHover :
+                           (popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Style.current.primaryMenuItemHover)
             }
         }
 
@@ -92,7 +92,7 @@ Menu {
             anchors.leftMargin: popupMenu.paddingSize
             text: popupMenuItem.text
             font: popupMenuItem.font
-            color: popupMenuItem.highlighted ? Style.current.white : popupMenuItem.textColor
+            color: popupMenuItem.highlighted ? Style.current.primaryMenuItemTextHover : popupMenuItem.textColor
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             opacity: enabled ? 1.0 : 0.3

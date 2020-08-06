@@ -5,6 +5,10 @@ import QtGraphicalEffects 1.13
 import "../imports"
 
 Item {
+    enum MenuAlignment {
+        Left,
+        Right
+    }
     property string label: ""
     readonly property bool hasLabel: label !== ""
     property color bgColor: Style.current.inputBackground
@@ -15,6 +19,8 @@ Item {
     property alias selectedItemView: selectedItemContainer.children
     property int caretRightMargin: Style.current.padding
     property alias select: inputRectangle
+    property int menuAlignment: Select.MenuAlignment.Right
+    property Item zeroItemsView: Item {}
     anchors.left: parent.left
     anchors.right: parent.right
 
@@ -105,7 +111,24 @@ Item {
         Repeater {
             id: menuItems
             model: root.model
+            property int zeroItemsViewHeight
             delegate: selectMenu.delegate
+            onItemAdded: {
+                root.zeroItemsView.visible = false
+                root.zeroItemsView.height = 0
+            }
+            onItemRemoved: {
+                if (count === 0) {
+                    root.zeroItemsView.visible = true
+                    root.zeroItemsView.height = zeroItemsViewHeight
+                }
+            }
+            Component.onCompleted: {
+                zeroItemsViewHeight = root.zeroItemsView.height
+                root.zeroItemsView.visible = count === 0
+                root.zeroItemsView.height = count !== 0 ? 0 : root.zeroItemsView.height
+                selectMenu.insertItem(0, root.zeroItemsView)
+            }
         }
     }
     MouseArea {
@@ -123,7 +146,8 @@ Item {
             if (selectMenu.opened) {
                 selectMenu.close()
             } else {
-                const offset = inputRectangle.width - selectMenu.width
+                const rightOffset = inputRectangle.width - selectMenu.width
+                const offset = root.menuAlignment === Select.MenuAlignment.Left ? 0 : rightOffset
                 selectMenu.popup(inputRectangle.x + offset, inputRectangle.y + inputRectangle.height + 8)
             }
         }

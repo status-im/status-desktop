@@ -11,6 +11,8 @@ type
     Identicon = UserRole + 4
     IsContact = UserRole + 5
     IsBlocked = UserRole + 6
+    Alias = UserRole + 7
+    EnsVerified = UserRole + 8
 
 QtObject:
   type ContactList* = ref object of QAbstractListModel
@@ -48,6 +50,8 @@ QtObject:
       of "pubKey": result = contact.id
       of "isContact": result = $contact.isContact()
       of "isBlocked": result = $contact.isBlocked()
+      of "alias": result = contact.alias
+      of "ensVerified": result = $contact.ensVerified
 
   method data(self: ContactList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
@@ -62,6 +66,8 @@ QtObject:
       of ContactRoles.PubKey: result = newQVariant(contact.id)
       of ContactRoles.IsContact: result = newQVariant(contact.isContact())
       of ContactRoles.IsBlocked: result = newQVariant(contact.isBlocked())
+      of ContactRoles.Alias: result = newQVariant(contact.alias)
+      of ContactRoles.EnsVerified: result = newQVariant(contact.ensVerified)
 
   method roleNames(self: ContactList): Table[int, string] =
     {
@@ -70,7 +76,9 @@ QtObject:
       ContactRoles.Identicon.int:"identicon",
       ContactRoles.PubKey.int:"pubKey",
       ContactRoles.IsContact.int:"isContact",
-      ContactRoles.IsBlocked.int:"isBlocked"
+      ContactRoles.IsBlocked.int:"isBlocked",
+      ContactRoles.Alias.int:"alias",
+      ContactRoles.EnsVerified.int:"ensVerified"
     }.toTable
 
   proc addContactToList*(self: ContactList, contact: Profile) =

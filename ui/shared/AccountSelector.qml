@@ -17,6 +17,7 @@ Item {
     // NOTE: if this asset is not selected as a wallet token in the UI, then
     // nothing will be displayed
     property string showAssetBalance: ""
+    property int dropdownWidth: width
 
     Repeater {
         visible: showAssetBalance !== ""
@@ -36,7 +37,7 @@ Item {
         id: select
         label: root.label
         model: root.accounts
-
+        menuAlignment: Select.MenuAlignment.Left
         menu.delegate: menuItem
         menu.onOpened: {
             selectedAccountDetails.visible = false
@@ -44,6 +45,7 @@ Item {
         menu.onClosed: {
             selectedAccountDetails.visible = true
         }
+        menu.width: dropdownWidth
         selectedItemView: Item {
             anchors.fill: parent
 
@@ -85,18 +87,11 @@ Item {
 
         StyledText {
             id: textSelectedAddress
-            text: selectedAccount.address
+            text: selectedAccount.address  + " • "
             font.pixelSize: 12
             elide: Text.ElideMiddle
             height: 16
-            width: 85
-            color: Style.current.secondaryText
-        }
-        StyledText {
-            id: separator
-            text: "• "
-            font.pixelSize: 12
-            height: 16
+            width: 90
             color: Style.current.secondaryText
         }
         StyledText {
