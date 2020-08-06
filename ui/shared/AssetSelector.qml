@@ -60,7 +60,7 @@ Item {
             property bool isLastItem: index === assets.rowCount() - 1
 
             Component.onCompleted: {
-                if (root.selectedAsset.name === "") {
+                if (isFirstItem) {
                     root.selectedAsset = { address, name, value, symbol, fiatBalanceDisplay }
                 }
             }
