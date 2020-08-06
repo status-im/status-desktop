@@ -30,7 +30,8 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	pkg-macos \
 	pkg-windows \
 	run \
-	run-linux-or-macos \
+	run-linux \
+	run-macos \
 	run-windows \
 	status-go \
 	update
@@ -67,12 +68,14 @@ ifeq ($(detected_OS),Darwin)
  export CFLAGS
  CGO_CFLAGS := -mmacosx-version-min=10.13
  export CGO_CFLAGS
+ LIBSTATUS_EXT := dylib
  MACOSX_DEPLOYMENT_TARGET := 10.13
  export MACOSX_DEPLOYMENT_TARGET
  PKG_TARGET := pkg-macos
- RUN_TARGET := run-linux-or-macos
+ RUN_TARGET := run-macos
 else ifeq ($(detected_OS),Windows)
  BOTTLES_TARGET := bottles-dummy
+ LIBSTATUS_EXT := dll
  PKG_TARGET := pkg-windows
  QRCODEGEN_MAKE_PARAMS := CC=gcc
  RUN_TARGET := run-windows
@@ -81,8 +84,9 @@ else ifeq ($(detected_OS),Windows)
  export VCINSTALLDIR
 else
  BOTTLES_TARGET := bottles-dummy
+ LIBSTATUS_EXT := so
  PKG_TARGET := pkg-linux
- RUN_TARGET := run-linux-or-macos
+ RUN_TARGET := run-linux
 endif
 
 check-pkg-target-linux:
@@ -187,13 +191,15 @@ $(DOTHERSIDE): | deps
 			.. $(HANDLE_OUTPUT) && \
 		$(DOTHERSIDE_BUILD_CMD)
 
-STATUSGO := vendor/status-go/build/bin/libstatus.a
+STATUSGO := vendor/status-go/build/bin/libstatus.$(LIBSTATUS_EXT)
+STATUSGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSGO)")
+export STATUSGO_LIBDIR
 
 status-go: $(STATUSGO)
 $(STATUSGO): | deps
 	echo -e $(BUILD_MSG) "status-go"
 	+ cd vendor/status-go && \
-	  $(MAKE) statusgo-library $(HANDLE_OUTPUT)
+	  $(MAKE) statusgo-shared-library $(HANDLE_OUTPUT)
 
 QRCODEGEN := vendor/QR-Code-generator/c/libqrcodegen.a
 
@@ -211,7 +217,12 @@ rcc:
 
 nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) rcc deps
 	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"$(STATUSGO)" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim
+		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
+		[[ $(detected_OS) = Darwin ]] && \
+		install_name_tool -change \
+			libstatus.dylib \
+			@rpath/libstatus.dylib \
+			bin/nim_status_client || true
 
 _APPIMAGE_TOOL := appimagetool-x86_64.AppImage
 APPIMAGE_TOOL := tmp/linux/tools/$(_APPIMAGE_TOOL)
@@ -241,6 +252,9 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp -R resources.rcc tmp/linux/dist/usr/.
 	mkdir -p tmp/linux/dist/usr/i18n
 	cp ui/i18n/* tmp/linux/dist/usr/i18n
+
+	# Libraries
+	cp vendor/status-go/build/bin/libstatus.so tmp/linux/dist/usr/lib/
 
 	echo -e $(BUILD_MSG) "AppImage"
 	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QTDIR)/qml -bundle-non-qt-libs
@@ -346,6 +360,7 @@ $(STATUS_CLIENT_ZIP): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 		tmp/windows/dist/Status/Status.exe \
 		--set-icon tmp/windows/dist/Status/resources/status.ico
 	cp $(DOTHERSIDE) tmp/windows/dist/Status/bin/
+	cp $(STATUSGO) tmp/windows/dist/Status/bin/
 	cp tmp/windows/tools/*.dll tmp/windows/dist/Status/bin/
 	mkdir -p tmp/windows/dist/Status/resources/i18n
 	cp ui/i18n/* tmp/windows/dist/Status/resources/i18n
@@ -395,16 +410,21 @@ run: rcc $(RUN_TARGET)
 
 NIM_STATUS_CLIENT_DEV ?= t
 
-run-linux-or-macos:
+run-linux:
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
 	NIM_STATUS_CLIENT_DEV="$(NIM_STATUS_CLIENT_DEV)" \
-	LD_LIBRARY_PATH="$(QT5_LIBDIR)" \
+	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)" \
+	./bin/nim_status_client
+
+run-macos:
+	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
+	NIM_STATUS_CLIENT_DEV="$(NIM_STATUS_CLIENT_DEV)" \
 	./bin/nim_status_client
 
 run-windows: $(NIM_WINDOWS_PREBUILT_DLLS)
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client.exe"
 	NIM_STATUS_CLIENT_DEV="$(NIM_STATUS_CLIENT_DEV)" \
-	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
+	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(STATUSGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
 	./bin/nim_status_client.exe
 
 endif # "variables.mk" was not included
