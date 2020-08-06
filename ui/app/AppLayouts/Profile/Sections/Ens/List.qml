@@ -7,6 +7,7 @@ import "../../../Chat/ChatColumn/MessageComponents"
 
 Item {
     property var onClick: function(){}
+    property var onSelectENS: function(){}
 
     // Defaults to show message
     property bool isMessage: true
@@ -57,6 +58,14 @@ Item {
         id: ensDelegate
         Item {
             height: 45
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: onSelectENS(model.username)
+            }
 
             Rectangle {
                 id: circle
@@ -75,18 +84,15 @@ Item {
                     verticalAlignment: Text.AlignVCenter
                     anchors.verticalCenter: parent.verticalCenter
                 }
-
-                Loader {
-                    sourceComponent: model.username.endsWith(".stateofus.eth") ? statusENS : normalENS
-                    property string username: model.username
-                    active: true
-                    anchors.left: circle.right
-                    anchors.leftMargin: Style.current.smallPadding
-                }
             }
             
-           
-            
+            Loader {
+                sourceComponent: model.username.endsWith(".stateofus.eth") ? statusENS : normalENS
+                property string username: model.username
+                active: true
+                anchors.left: circle.right
+                anchors.leftMargin: Style.current.smallPadding
+            }
         }
     }
 

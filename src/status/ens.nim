@@ -81,7 +81,6 @@ proc pubkey*(username: string): string =
   var userNameHash = namehash(addDomain(username))
   userNameHash.removePrefix("0x")
   let ensResolver = resolver(userNameHash)
-  echo ensResolver
   let payload = %* [{
     "to": ensResolver,
     "from": "0x0000000000000000000000000000000000000000",
@@ -95,3 +94,20 @@ proc pubkey*(username: string): string =
   else:
     pubkey.removePrefix("0x")
     result = "0x04" & pubkey
+
+const address_signature = "0x3b3b57de" # addr(bytes32 node)
+proc address*(username: string): string = 
+  var userNameHash = namehash(addDomain(username))
+  userNameHash.removePrefix("0x")
+  let ensResolver = resolver(userNameHash)
+  let payload = %* [{
+    "to": ensResolver,
+    "from": "0x0000000000000000000000000000000000000000",
+    "data": fmt"{address_signature}{userNameHash}"
+  }, "latest"]
+  let response = callPrivateRPC("eth_call", payload)
+  # TODO: error handling
+  let address = response.parseJson["result"].getStr;
+  if address == "0x0000000000000000000000000000000000000000000000000000000000000000":
+    return ""
+  result = "0x" & address.substr(26)

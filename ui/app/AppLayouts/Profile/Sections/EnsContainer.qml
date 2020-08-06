@@ -13,8 +13,10 @@ Item {
 
     property bool showSearchScreen: false
     property string addedUsername: ""
+    property string selectedUsername: ""
 
     signal next(output: string)
+    signal back()
     signal connect(ensUsername: string)
 
     signal goToWelcome();
@@ -96,6 +98,31 @@ Item {
             DSM.SignalTransition {
                 targetState: searchState
                 signal: next
+                guard: output === "search"
+            }
+            DSM.SignalTransition {
+                targetState: detailsState
+                signal: next
+                guard: output === "details"
+            }
+            DSM.SignalTransition {
+                targetState: listState
+                signal: goToList
+            }
+            DSM.SignalTransition {
+                targetState: welcomeState
+                signal: goToWelcome
+            }
+        }
+
+        DSM.State {
+            id: detailsState
+            onEntered: {
+                loader.sourceComponent = details;
+            }
+            DSM.SignalTransition {
+                targetState: listState
+                signal: back
             }
             DSM.SignalTransition {
                 targetState: listState
@@ -170,7 +197,22 @@ Item {
         id: list
         List {
             onClick: function(){
-                next(null);
+                next("search");
+            }
+            onSelectENS: function(username){
+                profileModel.ens.details(username)
+                selectedUsername = username;
+                next("details")
+            }
+        }
+    }
+
+    Component {
+        id: details
+        ENSDetails {
+            username: selectedUsername
+            onClick: function(){
+                back()
             }
         }
     }
