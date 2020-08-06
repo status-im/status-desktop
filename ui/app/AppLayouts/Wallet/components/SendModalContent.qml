@@ -114,6 +114,7 @@ Item {
     AccountSelector {
         id: selectFromAccount
         accounts: walletModel.accounts
+        currency: walletModel.defaultCurrency
         anchors.top: selectAsset.bottom
         anchors.topMargin: Style.current.padding
         anchors.left: parent.left

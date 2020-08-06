@@ -11,6 +11,7 @@ Item {
     property var selectedAccount: {
         "address": "", "name": "", "iconColor": "", "fiatBalance": ""
     }
+    property string currency: "usd"
     height: select.height + selectedAccountDetails.height
     // set to asset symbol to display asset's balance top right
     // NOTE: if this asset is not selected as a wallet token in the UI, then
@@ -99,7 +100,7 @@ Item {
             color: Style.current.secondaryText
         }
         StyledText {
-            text: selectedAccount.fiatBalance + " " + walletModel.defaultCurrency.toUpperCase()
+            text: selectedAccount.fiatBalance + " " + root.currency.toUpperCase()
             font.pixelSize: 12
             height: 16
             color: Style.current.secondaryText
@@ -175,7 +176,7 @@ Item {
                 font.pixelSize: 15
                 height: 22
                 color: Style.current.secondaryText
-                text: walletModel.defaultCurrency.toUpperCase()
+                text: root.currency.toUpperCase()
             }
             background: Rectangle {
                 color: itemContainer.highlighted ? Style.current.backgroundHover : Style.current.background
