@@ -95,6 +95,26 @@ QtObject:
       self.setPreferredUsername(ensUsername)
     self.add ensUsername
 
+  proc loading(self: EnsManager, isLoading: bool) {.signal.}
+
+  proc details(self: EnsManager, username: string) {.slot.} =
+    self.loading(true)
+    spawnAndSend(self, "setDetails") do:
+      let address = status_ens.address(username)
+      let pubkey = status_ens.pubkey(username)
+      $(%* {
+        "ensName": username,
+        "address": address,
+        "pubkey": pubkey
+      })
+
+  proc detailsObtained(self: EnsManager, ensName: string, address: string, pubkey: string) {.signal.}
+
+  proc setDetails(self: EnsManager, details: string): string {.slot.} =
+    self.loading(false)
+    let detailsJson = details.parseJson
+    self.detailsObtained(detailsJson["ensName"].getStr, detailsJson["address"].getStr, detailsJson["pubkey"].getStr)
+
   method rowCount(self: EnsManager, index: QModelIndex = nil): int =
     return self.usernames.len
 
