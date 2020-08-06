@@ -179,9 +179,21 @@ Rectangle {
 
             GroupInfoPopup {
                 id: groupInfoPopup
+                profileClick: {
+                  profilePopup.openPopup.bind(profilePopup)
+                }
                 onClosed: {
                     mouseArea.menuOpened = false
                 }
+            }
+
+            ProfilePopup {
+              id: profilePopup
+              onClosed: {
+                if (!groupInfoPopup.opened) {
+                  groupInfoPopup.open()
+                }
+              }
             }
         }
     }
