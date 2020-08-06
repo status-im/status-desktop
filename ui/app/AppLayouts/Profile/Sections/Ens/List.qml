@@ -90,6 +90,10 @@ Item {
         }
     }
 
+    ENSPopup {
+        id: ensPopup
+    }
+
     StyledText {
         id: sectionTitle
         //% "ENS usernames"
@@ -187,30 +191,41 @@ Item {
         font.pixelSize: 16
     }
 
-    StyledText {
-        id: usernameLabel
-        visible: chatSettingsLabel.visible
-        text: qsTr("Primary Username")
+    Item {
+        width: childrenRect.width
+        height: childrenRect.height
+
+        id: preferredUsername
         anchors.left: parent.left
         anchors.top: chatSettingsLabel.bottom
         anchors.topMargin: 24
-        font.pixelSize: 14
-        font.weight: Font.Bold
-    }
 
-    StyledText {
-        id: usernameLabel2
-        visible: chatSettingsLabel.visible
-        text: profileModel.ens.preferredUsername()
-        anchors.left: usernameLabel.right
-        anchors.leftMargin: Style.current.padding
-        anchors.top: chatSettingsLabel.bottom
-        anchors.topMargin: 24
-        font.pixelSize: 14
+        StyledText {
+            id: usernameLabel
+            visible: chatSettingsLabel.visible
+            text: qsTr("Primary Username")
+            font.pixelSize: 14
+            font.weight: Font.Bold
+        }
+
+        StyledText {
+            id: usernameLabel2
+            visible: chatSettingsLabel.visible
+            text: profileModel.ens.preferredUsername
+            anchors.left: usernameLabel.right
+            anchors.leftMargin: Style.current.padding
+            font.pixelSize: 14
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            onClicked: ensPopup.open()
+        }
     }
 
     Item {
-        anchors.top: profileModel.ens.rowCount() == 1 ? separator.bottom : usernameLabel.bottom
+        anchors.top: profileModel.ens.rowCount() == 1 ? separator.bottom : preferredUsername.bottom
         anchors.topMargin: Style.current.padding * 2
 
         UserImage {
@@ -223,7 +238,7 @@ Item {
 
         UsernameLabel {
             id: chatName
-            text: profileModel.ens.preferredUsername()
+            text: profileModel.ens.preferredUsername
             anchors.leftMargin: 20
             anchors.top: parent.top
             anchors.topMargin: 0

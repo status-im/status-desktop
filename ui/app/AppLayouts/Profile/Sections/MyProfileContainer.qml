@@ -8,7 +8,7 @@ Item {
     property string username: "Jotaro Kujo"
     property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAhklEQVR4nOzWwQ1AQBgFYUQvelKHMtShJ9VwFyvrsExe5jvKXiYv+WPoQhhCYwiNITSG0MSEjLUPt3097r7P09L/8f4qZhFDaAyhqboIT76+TiUxixhCYwhN9b/WW6Xr1ErMIobQGEJjCI0hNIbQGEJjCI0haiRmEUNoDKExhMYQmjMAAP//B2kXcP2uDV8AAAAASUVORK5CYII="
     property string pubkey: "0x04d8c07dd137bd1b73a6f51df148b4f77ddaa11209d36e43d8344c0a7d6db1cad6085f27cfb75dd3ae21d86ceffebe4cf8a35b9ce8d26baa19dc264efe6d8f221b"
-    property string address: "0x13Ed66d9Ffcd4dC1fB86B9414b8c60677E5Ae1cE"
+    property string ensName: "joestar.eth"
 
     id: profileHeaderContent
     height: parent.height
@@ -48,7 +48,7 @@ Item {
 
         StyledText {
             id: profileName
-            text: username
+            text: ensName !== "" ? ensName : username
             anchors.left: profileImg.right
             anchors.leftMargin: 8
             anchors.top: profileImg.top
@@ -58,12 +58,12 @@ Item {
 
         StyledText {
             id: pubkeyText
-            text: address
+            text: ensName !== "" ? username : pubkey
             anchors.bottom: profileImg.bottom
             anchors.left: profileName.left
             font.family: Style.current.fontHexRegular.name
             elide: Text.ElideMiddle
-            width: 140
+            width: 200
             font.pixelSize: 15
             color: Style.current.darkGrey
         }
