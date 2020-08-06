@@ -70,6 +70,20 @@ QtObject:
     self.usernames.add(username)
     self.endInsertRows()
 
+  proc getPreferredUsername(self: EnsManager): string {.slot.} =
+    result = status_settings.getSetting[string](Setting.PreferredUsername, "")
+
+  proc preferredUsernameChanged(self: EnsManager) {.signal.}
+
+  proc setPreferredUsername(self: EnsManager, newENS: string) {.slot.} =
+    discard status_settings.saveSetting(Setting.PreferredUsername, newENS)
+    self.preferredUsernameChanged()
+
+  QtProperty[string] preferredUsername:
+    read = getPreferredUsername
+    notify = preferredUsernameChanged
+    write = setPreferredUsername
+  
   proc connect(self: EnsManager, username: string, isStatus: bool) {.slot.} =
     var ensUsername = username 
     if isStatus: 
@@ -78,11 +92,8 @@ QtObject:
     usernames.add ensUsername
     discard status_settings.saveSetting(Setting.Usernames, %*usernames)
     if usernames.len == 1:
-      discard status_settings.saveSetting(Setting.PreferredUsername, ensUsername)
+      self.setPreferredUsername(ensUsername)
     self.add ensUsername
-
-  proc preferredUsername(self: EnsManager): string {.slot.} =
-    result = status_settings.getSetting[string](Setting.PreferredUsername, "")
 
   method rowCount(self: EnsManager, index: QModelIndex = nil): int =
     return self.usernames.len

@@ -8,6 +8,7 @@ Item {
     property string label: "My Label"
     property string fontFamily: Style.current.fontRegular.name
     property string textToCopy: ""
+    property alias value: textItem
 
     id: infoText
     height: this.childrenRect.height
@@ -25,7 +26,6 @@ Item {
         id: textItem
         text: infoText.text
         font.family: fontFamily
-        selectByMouse: true
         readOnly: true
         anchors.top: inputLabel.bottom
         anchors.topMargin: 7

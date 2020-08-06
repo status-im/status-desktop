@@ -41,9 +41,9 @@ SplitView {
         // Would be better if we could make them match automatically
         MyProfileContainer {
            username: profileModel.profile.username
+           ensName: profileModel.ens.preferredUsername
            identicon: profileModel.profile.identicon
            pubkey: profileModel.profile.pubKey
-           address: profileModel.profile.address
         }
 
         onCurrentIndexChanged: {
