@@ -12,9 +12,11 @@ if defined(macosx):
   --dynlibOverrideAll # don't use dlopen()
   --tlsEmulation:off
   switch("passL", "-lstdc++")
-  # DYLD_LIBRARY_PATH doesn't seem to work with Qt5
+  # DYLD_LIBRARY_PATH doesn't always work when running/packaging so set rpath
+  # note: macdeployqt rewrites rpath appropriately when building the .app bundle
   switch("passL", "-rpath" & " " & getEnv("QT5_LIBDIR"))
-  # statically linke these libs
+  switch("passL", "-rpath" & " " & getEnv("STATUSGO_LIBDIR"))
+  # statically link these libs
   switch("passL", "bottles/openssl/lib/libcrypto.a")
   switch("passL", "bottles/openssl/lib/libssl.a")
   switch("passL", "bottles/pcre/lib/libpcre.a")
