@@ -17,6 +17,7 @@ Item {
     // NOTE: if this asset is not selected as a wallet token in the UI, then
     // nothing will be displayed
     property string showAssetBalance: ""
+    signal accountSelected(var selectedAccount, int index)
 
     Repeater {
         visible: showAssetBalance !== ""
@@ -207,6 +208,7 @@ Item {
                 anchors.fill: itemContainer
                 onClicked: {
                     root.selectedAccount = { address, name, iconColor, assets, fiatBalance }
+                    root.accountSelected(root.selectedAccount, index)
                     select.menu.close()
                 }
             }
