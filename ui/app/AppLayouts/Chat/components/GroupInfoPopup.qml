@@ -12,6 +12,7 @@ ModalPopup {
     property int memberCount: 1
     readonly property int maxMembers: 10
     property var pubKeys: []
+    property var profileClick: function() {}
 
     function resetSelectedMembers(){
         pubKeys = [];
@@ -276,7 +277,16 @@ ModalPopup {
                         elide: Text.ElideRight
                         Layout.fillWidth: true
                         font.pixelSize: 13
+                        MouseArea {
+                          anchors.fill: parent
+                          cursorShape: Qt.PointingHandCursor
+                          onClicked: {
+                            popup.profileClick(model.userName, model.pubKey, model.identicon)
+                            popup.close()
+                          }
+                        }
                     }
+
                 }
                 Column {
                     StyledText {
