@@ -11,6 +11,7 @@ ModalPopup {
     property var userName: ""
     property var fromAuthor: ""
     property var text: ""
+    property var alias: ""
     
     property bool showQR: false
     property bool isEnsVerified: false
@@ -23,6 +24,7 @@ ModalPopup {
         this.identicon = identiconParam
         this.text = textParam
         this.isEnsVerified = chatsModel.isEnsVerified(this.fromAuthor)
+        this.alias = chatsModel.alias(this.fromAuthor)
     }
     
     function openPopup(userNameParam, fromAuthorParam, identiconParam) {
@@ -65,9 +67,9 @@ ModalPopup {
         }
 
         StyledText {
-            text: fromAuthor
+            text: isEnsVerified ? alias : fromAuthor
             width: 160
-            elide: Text.ElideMiddle
+            elide: !isEnsVerified ? Text.ElideMiddle : Text.ElideNone
             anchors.left: profilePic.right
             anchors.leftMargin: Style.current.smallPadding
             anchors.top: profileName.bottom
