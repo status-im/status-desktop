@@ -38,10 +38,10 @@ QtObject:
     generateAlias(pubKey)
 
   proc name*(self: ChatItemView): string {.slot.} = 
-    if self.chatItem != nil:
+    if self.chatItem != nil and self.chatItem.chatType.isOneToOne:
       result = self.userNameOrAlias(self.chatItem.id)
     else:
-      result = self.chatItem.name
+      result = ?.self.chatItem.name
 
   QtProperty[string] name:
     read = name

@@ -147,6 +147,9 @@ QtObject:
 
   proc appReady*(self: ChatsView) {.signal.}
 
+  proc alias*(self: ChatsView, pubKey: string): string {.slot.} =
+    generateAlias(pubKey)
+
   proc userNameOrAlias*(self: ChatsView, pubKey: string): string {.slot.} =
     if self.status.chat.contacts.hasKey(pubKey):
       return status_ens.userNameOrAlias(self.status.chat.contacts[pubKey])
