@@ -5,10 +5,11 @@ import "../../../../../imports"
 import "../../../../../shared"
 
 Item {
-    property var onClick: function(){}
     property string username: ""
     property string walletAddress: "-"
     property string key: "-"
+
+    signal backBtnClicked();
 
     StyledText {
         id: sectionTitle
@@ -48,7 +49,6 @@ Item {
                 keyLbl.visible = true;
         }
         onLoading: {
-            console.log("ABC")
             loadingImg.active = isLoading
             if(!isLoading) return;
             walletAddressLbl.visible = false;
@@ -85,6 +85,6 @@ Item {
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
         label: qsTr("Back")
-        onClicked: onClick()
+        onClicked: backBtnClicked()
     }
 }
