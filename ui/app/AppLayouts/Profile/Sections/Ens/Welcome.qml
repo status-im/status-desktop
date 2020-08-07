@@ -5,7 +5,7 @@ import "../../../../../imports"
 import "../../../../../shared"
 
 Item {
-    property var onClick: function(){}
+    signal startBtnClicked()
 
     StyledText {
         id: sectionTitle
@@ -270,6 +270,6 @@ Item {
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
         label: qsTr("Start")
-        onClicked: onClick()
+        onClicked: startBtnClicked()
     }
 }

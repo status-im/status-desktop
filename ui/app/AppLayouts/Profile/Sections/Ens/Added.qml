@@ -6,7 +6,7 @@ import "../../../../../shared"
 
 Item {
     property string ensUsername: ""
-    property var onClick: function(){}
+    signal okBtnClicked()
 
     StyledText {
         id: sectionTitle
@@ -73,6 +73,6 @@ Item {
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
         label: qsTr("Ok, got it")
-        onClicked: onClick()
+        onClicked: okBtnClicked()
     }
 }
