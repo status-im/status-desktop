@@ -43,7 +43,7 @@ Item {
 
         StyledText {
             visible: chatsModel.activeChannel.chatType !== Constants.chatTypeOneToOne
-            text: (chatsModel.activeChannel.name.charAt(0) === "#" ? chatsModel.activeChannel.name.charAt(1) : chatsModel.activeChannel.name.charAt(0)).toUpperCase()
+            text: Utils.removeStatusEns((chatsModel.activeChannel.name.charAt(0) === "#" ? chatsModel.activeChannel.name.charAt(1) : chatsModel.activeChannel.name.charAt(0)).toUpperCase())
             opacity: 0.7
             font.weight: Font.Bold
             font.pixelSize: 51
@@ -57,12 +57,12 @@ Item {
         id: channelName
         wrapMode: Text.Wrap
         text: {
-                if (chatsModel.activeChannel.chatType !== Constants.chatTypePublic) {
-                    return chatsModel.activeChannel.name;
-                } else {
-                    return "#" + chatsModel.activeChannel.name;
-                }
+            switch(chatsModel.activeChannel.chatType) {
+                case Constants.chatTypePublic: return "#" + chatsModel.activeChannel.name;
+                case Constants.chatTypeOneToOne: return Utils.removeStatusEns(chatsModel.activeChannel.name)
+                default: return chatsModel.activeChannel.name
             }
+        }
         font.weight: Font.Bold
         font.pixelSize: 22
         color: Style.current.textColor

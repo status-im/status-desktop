@@ -53,7 +53,7 @@ ModalPopup {
 
         StyledTextEdit {
             id: profileName
-            text: userName
+            text:  Utils.removeStatusEns(userName)
             anchors.top: parent.top
             anchors.topMargin: 18
             anchors.left: profilePic.right
@@ -150,7 +150,7 @@ ModalPopup {
             id: valueEnsName
             visible: isEnsVerified
             height: isEnsVerified ? 20 : 0
-            text: userName
+            text: userName.substr(1)
             font.pixelSize: 14
             anchors.left: parent.left
             anchors.leftMargin: Style.current.smallPadding

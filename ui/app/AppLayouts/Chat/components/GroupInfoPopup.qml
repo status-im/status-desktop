@@ -122,6 +122,8 @@ ModalPopup {
             SVGImage {
                 id: editGroupImg
                 source: "../../../img/edit-group.svg"
+                height: 16
+                width: 16
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -183,7 +185,7 @@ ModalPopup {
                     showCheckbox: memberCount < maxMembers
                     pubKey: model.pubKey
                     isUser: model.isUser
-                    name: model.name
+                    name: Utils.removeStatusEns(model.name)
                     address: model.address
                     identicon: model.identicon
                     onItemChecked: function(pubKey, itemChecked){
@@ -271,7 +273,7 @@ ModalPopup {
                 }
                 Column {
                     StyledText {
-                        text: model.userName
+                        text: Utils.removeStatusEns(model.userName)
                         width: 300
                         elide: Text.ElideRight
                         Layout.fillWidth: true

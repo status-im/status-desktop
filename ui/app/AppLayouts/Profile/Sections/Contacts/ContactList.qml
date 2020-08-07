@@ -20,7 +20,7 @@ ListView {
 
     model: contacts
     delegate: Contact {
-        name: model.name
+        name: Utils.removeStatusEns(model.name)
         address: model.address
         identicon: model.identicon
         isContact: model.isContact

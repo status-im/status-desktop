@@ -9,7 +9,7 @@ proc sectionIdentifier(message: Message): string =
 
 proc mention(self: ChatMessageList, pubKey: string): string =
   if self.status.chat.contacts.hasKey(pubKey):
-    return ens.userNameOrAlias(self.status.chat.contacts[pubKey])
+    return ens.userNameOrAlias(self.status.chat.contacts[pubKey], true)
   generateAlias(pubKey)
 
 
