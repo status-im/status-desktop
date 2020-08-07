@@ -156,16 +156,14 @@ Item {
     Component {
         id: welcome
         Welcome {
-            onClick: function(){
-                next(null);
-            }
+            onStartBtnClicked: next(null)
         }
     }
 
     Component {
         id: search
         Search {
-            onClick: function(output, username){
+            onContinueClicked: {
                 if(output === "connected"){
                     connect(username)
                 } else {
@@ -187,19 +185,15 @@ Item {
     Component {
         id: added
         Added {
-            onClick: function(){
-                next(null);
-            }
+            onOkBtnClicked: next(null)
         }
     }
 
     Component {
         id: list
         List {
-            onClick: function(){
-                next("search");
-            }
-            onSelectENS: function(username){
+            onAddBtnClicked: next("search")
+            onSelectEns: {
                 profileModel.ens.details(username)
                 selectedUsername = username;
                 next("details")
@@ -211,9 +205,7 @@ Item {
         id: details
         ENSDetails {
             username: selectedUsername
-            onClick: function(){
-                back()
-            }
+            onBackBtnClicked: back();
         }
     }
 

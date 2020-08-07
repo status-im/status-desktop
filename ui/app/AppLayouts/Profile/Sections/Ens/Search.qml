@@ -7,7 +7,7 @@ import "../../../../../shared"
 Item {
     id: searchENS
 
-    property var onClick: function(){}
+    signal continueClicked(string output, string username)
 
     property string validationMessage: ""
     property bool valid: false
@@ -162,12 +162,12 @@ Item {
 
                 if(ensStatus === "connected"){
                     profileModel.ens.connect(ensUsername.text, isStatus);
-                    onClick(ensStatus, ensUsername.text);
+                    continueClicked(ensStatus, ensUsername.text)
                     return;
                 }
 
                 if(ensStatus === "available"){
-                    onClick(ensStatus, ensUsername.text);
+                    continueClicked(ensStatus, ensUsername.text);
                     return;
                 }
             }

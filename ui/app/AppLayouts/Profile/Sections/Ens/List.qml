@@ -6,8 +6,8 @@ import "../../../../../shared"
 import "../../../Chat/ChatColumn/MessageComponents"
 
 Item {
-    property var onClick: function(){}
-    property var onSelectENS: function(){}
+    signal addBtnClicked()
+    signal selectEns(string username)
 
     // Defaults to show message
     property bool isMessage: true
@@ -64,7 +64,7 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
-                onClicked: onSelectENS(model.username)
+                onClicked: selectEns(model.username)
             }
 
             Rectangle {
@@ -140,7 +140,7 @@ Item {
         MouseArea {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
-            onClicked: onClick()
+            onClicked: addBtnClicked()
         }
     }
 
