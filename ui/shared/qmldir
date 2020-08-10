@@ -17,3 +17,4 @@ RoundedImage 1.0 RoundedImage.qml
 SplitViewHandle 1.0 SplitViewHandle.qml
 CopyToClipBoardButton 1.0 CopyToClipBoardButton.qml
 NotificationWindow 1.0 NotificationWindow.qml
+BlockContactConfirmationDialog 1.0 BlockContactConfirmationDialog.qml

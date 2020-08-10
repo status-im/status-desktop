@@ -13,6 +13,7 @@ Rectangle {
     property bool isContact: true
     property bool isBlocked: false
     property string searchStr: ""
+    signal blockContactActionTriggered(name: string, address: string)
     id: container
 
     visible: isContact && (searchStr == "" || name.includes(searchStr))
@@ -110,7 +111,7 @@ Rectangle {
                     text: qsTrId("block-user")
                     enabled: !container.isBlocked
                     onTriggered: {
-                      profileModel.blockContact(address)
+                      container.blockContactActionTriggered(name, address)
                     }
                 }
                 Action {

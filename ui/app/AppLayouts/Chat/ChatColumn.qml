@@ -121,8 +121,21 @@ StackLayout {
 
         ProfilePopup {
             id: profilePopup
+            onBlockButtonClicked: {
+                blockContactConfirmationDialog.contactName = name
+                blockContactConfirmationDialog.contactAddress = address
+                blockContactConfirmationDialog.open()
+            }
         }
 
+        BlockContactConfirmationDialog {
+            id: blockContactConfirmationDialog
+            onBlockButtonClicked: {
+                chatsModel.blockContact(blockContactConfirmationDialog.contactAddress)
+                blockContactConfirmationDialog.close()
+                profilePopup.close()
+            }
+        }
 
         EmojiReactions {
             id: reactionModel

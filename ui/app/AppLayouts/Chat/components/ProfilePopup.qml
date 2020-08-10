@@ -17,6 +17,8 @@ ModalPopup {
     property bool isEnsVerified: false
     property bool noFooter: false
 
+    signal blockButtonClicked(name: string, address: string)
+
     function setPopupData(userNameParam, fromAuthorParam, identiconParam, textParam){
         this.showQR = false
         this.userName = userNameParam
@@ -266,19 +268,14 @@ ModalPopup {
         StyledButton {
             anchors.right: parent.right
             anchors.rightMargin: addToContactsButton.width + 32
-            btnColor: "white"
+            btnColor: Style.current.lightRed
             btnBorderWidth: 1
             btnBorderColor: Style.current.grey
             textColor: Style.current.red
             //% "Block User"
             label: qsTrId("block-user")
             anchors.bottom: parent.bottom
-            onClicked: {
-                chatsModel.blockContact(fromAuthor)
-                // TODO(pascal): Change block user button state based
-                // on :contact/blocked state
-                profilePopup.close()
-            }
+            onClicked: popup.blockButtonClicked(userName, fromAuthor)
         }
 
         StyledButton {
