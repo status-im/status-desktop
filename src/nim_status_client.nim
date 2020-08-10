@@ -56,7 +56,12 @@ proc mainProc() =
   engine.setRootContextProperty("nodeModel", node.variant)
 
   proc changeLanguage(locale: string) =
-    engine.setTranslationPackage(fmt"ui/i18n/qml_{locale}.qm")
+    var path = ""
+    if (getEnv("NIM_STATUS_CLIENT_DEV").string == ""):
+      path = joinPath(getAppDir(), fmt"i18n/qml_{locale}.qm")
+    else:
+      path = fmt"ui/i18n/qml_{locale}.qm"
+    engine.setTranslationPackage(path)
 
   var profile = profile.newController(status, changeLanguage)
   engine.setRootContextProperty("profileModel", profile.variant)

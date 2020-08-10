@@ -239,6 +239,8 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp status.svg tmp/linux/dist/status.svg
 	cp status.svg tmp/linux/dist/usr/.
 	cp -R resources.rcc tmp/linux/dist/usr/.
+	mkdir -p tmp/linux/dist/usr/bin/i18n
+	cp ui/i18n/* tmp/linux/dist/usr/bin/i18n/
 
 	echo -e $(BUILD_MSG) "AppImage"
 	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-translations -no-copy-copyright-files -qmldir=ui -qmlimport=$(QTDIR)/qml -bundle-non-qt-libs
@@ -271,6 +273,8 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	cp status-icon.icns $(MACOS_OUTER_BUNDLE)/Contents/Resources/
 	cp status.svg $(MACOS_OUTER_BUNDLE)/Contents/
 	cp -R resources.rcc $(MACOS_OUTER_BUNDLE)/Contents/
+	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/i18n
+	cp ui/i18n/* $(MACOS_OUTER_BUNDLE)/Contents/i18n/
 
 	echo -e $(BUILD_MSG) "app"
 	macdeployqt \
@@ -350,6 +354,8 @@ $(STATUS_CLIENT_ZIP): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 		--set-icon tmp/windows/dist/Status/resources/status.ico
 	cp $(DOTHERSIDE) tmp/windows/dist/Status/bin/
 	cp tmp/windows/tools/*.dll tmp/windows/dist/Status/bin/
+	mkdir -p tmp/windows/dist/Status/bin/i18n
+	cp ui/i18n/* tmp/windows/dist/Status/bin/i18n/
 	cp "$(shell which libgcc_s_seh-1.dll)" tmp/windows/dist/Status/bin/
 	cp "$(shell which libwinpthread-1.dll)" tmp/windows/dist/Status/bin/
 
