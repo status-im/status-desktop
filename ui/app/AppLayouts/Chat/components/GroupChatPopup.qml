@@ -46,6 +46,11 @@ ModalPopup {
             identicon: profileModel.profile.identicon,
             isUser: true
         });
+        noContactsRect.visible = !profileModel.contactList.hasAddedContacts();
+        svMembers.visible = !noContactsRect.visible;
+        if(!svMembers.visible){
+            memberCount = 0;
+        }
     }
 
     function doJoin(){
@@ -94,6 +99,38 @@ ModalPopup {
         visible: !selectChatMembers
     }
 
+    Rectangle {
+        id: noContactsRect
+        width: 260
+        anchors.top: groupName.bottom
+        anchors.topMargin: Style.current.xlPadding
+        anchors.horizontalCenter: parent.horizontalCenter
+        StyledText {
+            id: noContacts
+            text: qsTr("You don’t have any contacts yet. Invite your friends to start chatting.")
+            color: Style.current.darkGrey
+            anchors.top: parent.top
+            anchors.topMargin: Style.current.padding
+            anchors.left: parent.left
+            anchors.right: parent.right
+            wrapMode: Text.WordWrap
+            horizontalAlignment: Text.AlignHCenter
+        }
+        StyledButton {
+            //% "Invite friends"
+            label: qsTrId("invite-friends")
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: noContacts.bottom
+            anchors.topMargin: Style.current.xlPadding
+            onClicked: {
+                inviteFriendsPopup.open()
+            }
+        }
+        InviteFriendsPopup {
+            id: inviteFriendsPopup
+        }
+    }
+
     ScrollView {
         anchors.fill: parent
         anchors.topMargin: 50
@@ -101,6 +138,7 @@ ModalPopup {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
+        id: svMembers
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.policy: groupMembers.contentHeight > groupMembers.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
 
