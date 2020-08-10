@@ -273,8 +273,8 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	cp status-icon.icns $(MACOS_OUTER_BUNDLE)/Contents/Resources/
 	cp status.svg $(MACOS_OUTER_BUNDLE)/Contents/
 	cp -R resources.rcc $(MACOS_OUTER_BUNDLE)/Contents/
-	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/i18n
-	cp ui/i18n/* $(MACOS_OUTER_BUNDLE)/Contents/i18n/
+	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/MacOS/i18n
+	cp ui/i18n/* $(MACOS_OUTER_BUNDLE)/Contents/MacOS/i18n/
 
 	echo -e $(BUILD_MSG) "app"
 	macdeployqt \
