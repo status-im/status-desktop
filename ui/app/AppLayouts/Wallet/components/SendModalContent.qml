@@ -109,8 +109,8 @@ Item {
         anchors.topMargin: Style.current.padding
         anchors.left: parent.left
         anchors.right: parent.right
-        onAccountSelected: function (selectedAccount, index) {
-          txtAmount.selectedAccount = selectedAccount
+        onSelectedAccountChanged: {
+          txtAmount.selectedAccount = selectFromAccount.selectedAccount
         }
     }
 
