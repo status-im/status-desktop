@@ -10,23 +10,20 @@ Item {
     property color bgColor: Style.current.inputBackground
     readonly property int labelMargin: 7
     property var model
-    property int customHeight: 56
-    property string selectedText: ""
-    property url icon: ""
-    property int iconHeight: 12
-    property int iconWidth: 12
-    property color iconColor: Style.current.transparent
     property alias menu: selectMenu
-
-    readonly property bool hasIcon: icon.toString() !== ""
+    property color bgColorHover: bgColor
+    property alias selectedItemView: selectedItemContainer.children
+    property int caretRightMargin: Style.current.padding
+    property alias select: inputRectangle
+    anchors.left: parent.left
+    anchors.right: parent.right
 
     id: root
     height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0)
-    anchors.right: parent.right
-    anchors.left: parent.left
 
     StyledText {
         id: inputLabel
+        visible: hasLabel
         text: root.label
         font.weight: Font.Medium
         anchors.left: parent.left
@@ -38,41 +35,19 @@ Item {
     }
 
     Rectangle {
+        property bool hovered: false
         id: inputRectangle
-        height: customHeight
-        color: bgColor
+        height: 56
+        color: hovered ? bgColorHover : bgColor
         radius: Style.current.radius
         anchors.top: root.hasLabel ? inputLabel.bottom : parent.top
         anchors.topMargin: root.hasLabel ? root.labelMargin : 0
         anchors.right: parent.right
         anchors.left: parent.left
 
-        SVGImage {
-            id: iconImg
-            visible: root.hasIcon
-            sourceSize.height: iconHeight
-            sourceSize.width: iconWidth
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
-            anchors.verticalCenter: parent.verticalCenter
-            fillMode: Image.PreserveAspectFit
-            source: root.icon
-        }
-        ColorOverlay {
-            anchors.fill: iconImg
-            source: iconImg
-            color: iconColor
-        }
-
-        StyledText {
-            id: selectedTextField
-            visible: root.selectedText !== ""
-            text: root.selectedText
-            anchors.left: iconImg.right
-            anchors.leftMargin: hasIcon ? 8 : 0
-            anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: 15
-            height: 22
+        Item {
+            id: selectedItemContainer
+            anchors.fill: parent
         }
 
         SVGImage {
@@ -80,7 +55,7 @@ Item {
             width: 11
             height: 6
             anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
+            anchors.rightMargin: caretRightMargin
             anchors.verticalCenter: parent.verticalCenter
             fillMode: Image.PreserveAspectFit
             source: "../app/img/caret.svg"
@@ -137,11 +112,19 @@ Item {
         id: mouseArea
         anchors.fill: inputRectangle
         cursorShape: Qt.PointingHandCursor
+        hoverEnabled: true
+        onEntered: {
+            inputRectangle.hovered = true
+        }
+        onExited: {
+            inputRectangle.hovered = false
+        }
         onClicked: {
             if (selectMenu.opened) {
                 selectMenu.close()
             } else {
-                selectMenu.popup(inputRectangle.x, inputRectangle.y + inputRectangle.height + 8)
+                const offset = inputRectangle.width - selectMenu.width
+                selectMenu.popup(inputRectangle.x + offset, inputRectangle.y + inputRectangle.height + 8)
             }
         }
     }

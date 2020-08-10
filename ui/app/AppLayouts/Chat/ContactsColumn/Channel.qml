@@ -28,8 +28,13 @@ Rectangle {
 
     MouseArea {
         cursorShape: Qt.PointingHandCursor
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         anchors.fill: parent
         onClicked: {
+            if (mouse.button & Qt.RightButton) {
+                channelContextMenu.openMenu(index)
+                return;
+            }
             chatsModel.setActiveChannelByIndex(index)
             chatGroupsListView.currentIndex = index
         }
@@ -88,6 +93,7 @@ Rectangle {
                 default: return lastMessage ? Emoji.parse(lastMessage, "26x26").replace(/\n|\r/g, ' ') : qsTrId("no-messages")
             }
         }
+        textFormat: Text.RichText
         clip: true // This is needed because emojis don't ellide correctly
         anchors.right: contactNumberChatsCircle.left
         anchors.rightMargin: Style.current.smallPadding

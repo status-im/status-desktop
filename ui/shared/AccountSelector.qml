@@ -11,6 +11,7 @@ Item {
     property var selectedAccount: {
         "address": "", "name": "", "iconColor": "", "fiatBalance": ""
     }
+    property string currency: "usd"
     height: select.height + selectedAccountDetails.height
     // set to asset symbol to display asset's balance top right
     // NOTE: if this asset is not selected as a wallet token in the UI, then
@@ -33,10 +34,7 @@ Item {
     }
     Select {
         id: select
-        icon: "../app/img/walletIcon.svg"
-        iconColor: selectedAccount.iconColor || Style.current.blue
         label: root.label
-        selectedText: selectedAccount.name
         model: root.accounts
 
         menu.delegate: menuItem
@@ -45,6 +43,36 @@ Item {
         }
         menu.onClosed: {
             selectedAccountDetails.visible = true
+        }
+        selectedItemView: Item {
+            anchors.fill: parent
+
+            SVGImage {
+                id: selectedIconImg
+                sourceSize.height: 12
+                sourceSize.width: 12
+                anchors.left: parent.left
+                anchors.leftMargin: Style.current.padding
+                anchors.verticalCenter: parent.verticalCenter
+                fillMode: Image.PreserveAspectFit
+                source: "../app/img/walletIcon.svg"
+            }
+            ColorOverlay {
+                anchors.fill: selectedIconImg
+                source: selectedIconImg
+                color: selectedAccount.iconColor
+            }
+
+            StyledText {
+                id: selectedTextField
+                text: selectedAccount.name
+                anchors.left: selectedIconImg.right
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: 15
+                verticalAlignment: Text.AlignVCenter
+                height: 22
+            }
         }
     }
 
@@ -72,7 +100,7 @@ Item {
             color: Style.current.secondaryText
         }
         StyledText {
-            text: selectedAccount.fiatBalance + " " + walletModel.defaultCurrency.toUpperCase()
+            text: selectedAccount.fiatBalance + " " + root.currency.toUpperCase()
             font.pixelSize: 12
             height: 16
             color: Style.current.secondaryText
@@ -98,12 +126,12 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
-                width: select.iconWidth
-                height: select.iconHeight
-                sourceSize.height: select.iconHeight
-                sourceSize.width: select.iconWidth
+                width: 12
+                height: 12
+                sourceSize.height: height
+                sourceSize.width: width
                 fillMode: Image.PreserveAspectFit
-                source: select.icon
+                source: "../app/img/walletIcon.svg"
             }
             ColorOverlay {
                 anchors.fill: iconImg
@@ -148,7 +176,7 @@ Item {
                 font.pixelSize: 15
                 height: 22
                 color: Style.current.secondaryText
-                text: walletModel.defaultCurrency.toUpperCase()
+                text: root.currency.toUpperCase()
             }
             background: Rectangle {
                 color: itemContainer.highlighted ? Style.current.backgroundHover : Style.current.background

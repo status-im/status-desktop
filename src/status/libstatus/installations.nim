@@ -14,9 +14,7 @@ proc getOurInstallations*(useCached: bool = true): JsonNode =
   dirty = false
   result = installations
 
-proc syncDevices*(): string =
-  # These are not being used at the moment
-  let preferredName = ""
+proc syncDevices*(preferredName: string): string =
   let photoPath = ""
   result = callPrivateRPC("syncDevices".prefix, %* [preferredName, photoPath])
 

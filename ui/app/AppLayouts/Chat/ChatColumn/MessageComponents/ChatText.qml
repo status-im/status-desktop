@@ -44,9 +44,11 @@ StyledTextEdit {
                     `p {`+
                         `white-space: pre-wrap;`+
                     `}`+
+                    `a {`+
+                        `color: ${isCurrentUser ? Style.current.white : Style.current.textColor};`+
+                    `}`+
                     `a.mention {`+
-                        `color: ${isCurrentUser ? Style.current.black : Style.current.white};`+
-                        `font-weight: bold;`+
+                        `color: ${isCurrentUser ? Style.current.cyan : Style.current.turquoise};`+
                     `}`+
                     `blockquote {`+
                         `margin: 0;`+
