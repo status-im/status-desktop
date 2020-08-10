@@ -5,21 +5,22 @@ import "../imports"
 import "./"
 
 ModalPopup {
-    id: removeContactConfirmationDialog
+    id: confirmationDialog
     height: 186
     width: 400
-    property string contactAddress: ""
-    signal removeButtonClicked()
-    title: qsTrId("remove-contact")
+    title: qsTr("Confirm your action")
+
+    property string confirmButtonLabel: qsTr("Confirm")
+    property string confirmationText: qsTr("Are you sure you want to this?")
+    signal confirmButtonClicked()
 
     Text {
-        text: qsTr("Are you sure you want to remove this contact?")
+        text: confirmationDialog.confirmationText
         font.pixelSize: 15
         anchors.left: parent.left
         anchors.right: parent.right
         wrapMode: Text.WordWrap
     }
-    
 
     footer: Item {
         id: footerContainer
@@ -33,12 +34,12 @@ ModalPopup {
             btnBorderWidth: 1
             btnBorderColor: Style.current.grey
             textColor: Style.current.red
-            //% "Block User"
-            label: qsTrId("remove-contact")
+            label: confirmationDialog.confirmButtonLabel
             anchors.bottom: parent.bottom
-            onClicked: removeContactConfirmationDialog.removeButtonClicked()
+            onClicked: confirmationDialog.confirmButtonClicked()
         }
     }
 }
+
 
 
