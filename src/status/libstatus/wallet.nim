@@ -80,8 +80,10 @@ proc sendTransaction*(from_address: string, to: string, assetAddress: string, va
       # TODO get decimals from the token
       bigIntValue = bigIntValue * u256(1000000000000000000)
       # Just using mainnet SNT to get the method ABI
-      let contract = getContract("snt")
-      let transferEncoded = contract.methods["transfer"].encodeAbi(parseAddress(to), bigIntValue.toHex())
+      let
+        contract = getContract("snt")
+        transfer = Transfer(to: parseAddress(to), value: bigIntValue)
+        transferEncoded = contract.methods["transfer"].encodeAbi(transfer)
       
       args = %* {
         "from": from_address,

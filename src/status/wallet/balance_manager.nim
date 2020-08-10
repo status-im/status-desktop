@@ -49,26 +49,27 @@ proc getBalance*(symbol: string, accountAddress: string, tokenAddress: string): 
   result = $status_tokens.getTokenBalance(tokenAddress, accountAddress)
   balanceManager.tokenBalances.cacheValue(cacheKey, result)
 
-proc getFiatValue*(crypto_balance: string, crypto_symbol: string, fiat_symbol: string): float =
-  if crypto_balance == "0.0": return 0.0
-  let cacheKey = fmt"{crypto_symbol}-{fiat_symbol}"
+proc convertValue*(balance: string, fromCurrency: string, toCurrency: string): float =
+  if balance == "0.0": return 0.0
+  let cacheKey = fmt"{fromCurrency}-{toCurrency}"
   if balanceManager.pricePairs.isCached(cacheKey):
-    return parseFloat(crypto_balance) * parseFloat(balanceManager.pricePairs.get(cacheKey))
+    return parseFloat(balance) * parseFloat(balanceManager.pricePairs.get(cacheKey))
 
-  var fiat_crypto_price = getPrice(crypto_symbol, fiat_symbol)
+  var fiat_crypto_price = getPrice(fromCurrency, toCurrency)
   balanceManager.pricePairs.cacheValue(cacheKey, fiat_crypto_price)
-  parseFloat(crypto_balance) * parseFloat(fiat_crypto_price)
+  parseFloat(balance) * parseFloat(fiat_crypto_price)
 
 proc updateBalance*(asset: Asset, currency: string) =
   var token_balance = getBalance(asset.symbol, asset.accountAddress, asset.address)
-  let fiat_balance = getFiatValue(token_balance, asset.symbol, currency)
+  let fiat_balance = convertValue(token_balance, asset.symbol, currency)
   asset.value = token_balance
-  asset.fiatValue = fmt"{fiat_balance:.2f} {currency}"
+  asset.fiatBalanceDisplay = fmt"{fiat_balance:.2f} {currency}"
+  asset.fiatBalance = fmt"{fiat_balance:.2f}"
 
 proc updateBalance*(account: WalletAccount, currency: string) =
   try:
     let eth_balance = getBalance("ETH", account.address, "")
-    let usd_balance = getFiatValue(eth_balance, "ETH", currency)
+    let usd_balance = convertValue(eth_balance, "ETH", currency)
     var totalAccountBalance = usd_balance
     account.realFiatBalance = totalAccountBalance
     account.balance = fmt"{totalAccountBalance:.2f} {currency}"

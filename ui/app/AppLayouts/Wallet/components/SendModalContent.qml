@@ -91,34 +91,27 @@ Item {
         }
     }
 
-    Input {
-        id: txtAmount
-        //% "Amount"
-        label: qsTrId("amount")
-        anchors.top: parent.top
-        //% "Enter amount..."
-        placeholderText: qsTrId("enter-amount...")
-        validationError: amountValidationError
-    }
-
-    AssetSelector {
-        id: selectAsset
-        assets: walletModel.assets
-        anchors.top: txtAmount.bottom
-        anchors.topMargin: Style.current.padding
-        anchors.right: parent.right
-        width: 86
-        height: 28
+    AssetAndAmountInput {
+      id: txtAmount
+      selectedAccount: walletModel.currentAccount
+      defaultCurrency: walletModel.defaultCurrency
+      errorMessage: amountValidationError
+      anchors.top: parent.top
+      getFiatValue: walletModel.getFiatValue
+      getCryptoValue: walletModel.getCryptoValue
     }
 
     AccountSelector {
         id: selectFromAccount
         accounts: walletModel.accounts
         currency: walletModel.defaultCurrency
-        anchors.top: selectAsset.bottom
+        anchors.top: txtAmount.bottom
         anchors.topMargin: Style.current.padding
         anchors.left: parent.left
         anchors.right: parent.right
+        onAccountSelected: function (selectedAccount, index) {
+          txtAmount.selectedAccount = selectedAccount
+        }
     }
 
     Input {

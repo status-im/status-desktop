@@ -7,9 +7,7 @@ import "../imports"
 Item {
     id: root
     property var assets
-    property var selectedAsset: {
-        "symbol": "snt", "name": "", "value": "", "fiatValue": "", "address": ""
-    }
+    property var selectedAsset
     width: 86
     height: 24
 
@@ -60,8 +58,8 @@ Item {
             property bool isLastItem: index === assets.rowCount() - 1
 
             Component.onCompleted: {
-                if (root.selectedAsset.name === "") {
-                    root.selectedAsset = { address, name, value, symbol, fiatValue }
+                if (isFirstItem) {
+                    root.selectedAsset = { address, name, value, symbol, fiatBalanceDisplay, fiatBalance }
                 }
             }
             width: parent.width
@@ -109,7 +107,7 @@ Item {
                     font.pixelSize: 15
                     anchors.right: parent.right
                     height: 22
-                    text: fiatValue.toUpperCase()
+                    text: fiatBalanceDisplay.toUpperCase()
                     color: Style.current.secondaryText
                 }
             }
@@ -141,7 +139,7 @@ Item {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: itemContainer
                 onClicked: {
-                    root.selectedAsset = { address, name, value, symbol, fiatValue }
+                    root.selectedAsset = { address, name, value, symbol, fiatBalance, fiatBalanceDisplay }
                     select.menu.close()
                 }
             }

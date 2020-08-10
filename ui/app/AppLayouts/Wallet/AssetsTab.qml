@@ -58,7 +58,7 @@ Item {
             StyledText {
                 id: assetFiatValue
                 color: Style.current.darkGrey
-                text: fiatValue.toUpperCase()
+                text: fiatBalanceDisplay.toUpperCase()
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.bottom: parent.bottom
@@ -75,7 +75,7 @@ Item {
             value: "123 USD"
             symbol: "ETH"
             fullTokenName: "Ethereum"
-            fiatValue: "3423 ETH"
+            fiatBalanceDisplay: "3423 ETH"
             image: "../../img/token-icons/eth.svg"
         }
     }

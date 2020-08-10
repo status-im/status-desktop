@@ -1,11 +1,11 @@
 import eventemitter, json, strutils, sequtils, tables, chronicles, sugar
+import libstatus/settings as status_settings
 import libstatus/chat as status_chat
 import libstatus/stickers as status_stickers
 import libstatus/types
 import profile/profile
 import chat/[chat, message]
 import ../signals/messages
-import ../signals/types as signal_types
 import ens
 import eth/common/eth_types
 
@@ -103,14 +103,20 @@ proc getPurchasedStickerPacks*(self: ChatModel, address: EthAddress): seq[int] =
     return self.purchasedStickerPacks
 
   try:
-    var balance = status_stickers.getBalance(address)
-    # balance = 2 # hardcode to test support of purchased sticker packs, because buying sticker packs is proving very difficult on testnet
-    var tokenIds = toSeq[0..<balance].map(idx => status_stickers.tokenOfOwnerByIndex(address, idx))
-    # tokenIds = @[1, 2] # hardcode to test support of purchased sticker packs
-    self.purchasedStickerPacks = tokenIds.map(tokenId => status_stickers.getPackIdFromTokenId(tokenId))
+    # Buy the "Toozeman" sticker pack on testnet
+    # Ensure there is enough STT and ETHro in the account first before uncommenting.
+    # STT faucet: simpledapp.eth
+    # NOTE: don't forget to update your account password!
+    # if status_settings.getCurrentNetwork() == Network.Testnet:
+    #   debugEcho ">>> [getPurchasedStickerPacks] buy Toozeman sticker pack, response/txid: ", status_stickers.buyPack(1.u256, address, "20000000000000000000".u256, "<your password here>")
+    var
+      balance = status_stickers.getBalance(address)
+      tokenIds = toSeq[0..<balance].map(idx => status_stickers.tokenOfOwnerByIndex(address, idx.u256))
+
+    self.purchasedStickerPacks = tokenIds.map(tokenId => status_stickers.getPackIdFromTokenId(tokenId.u256))
     result = self.purchasedStickerPacks
   except RpcException:
-    error "Error in getPurchasedStickerPacks", message = getCurrentExceptionMsg()
+    error "Error getting purchased sticker packs", message = getCurrentExceptionMsg()
     result = @[]
 
 proc getInstalledStickerPacks*(self: ChatModel): Table[int, StickerPack] =
@@ -128,7 +134,7 @@ proc getAvailableStickerPacks*(self: ChatModel): Table[int, StickerPack] =
     let numPacks = status_stickers.getPackCount()
     for i in 0..<numPacks:
       try:
-        let stickerPack = status_stickers.getPackData(i)
+        let stickerPack = status_stickers.getPackData(i.u256)
         self.availableStickerPacks[stickerPack.id] = stickerPack
       except:
         continue
