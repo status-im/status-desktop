@@ -15,6 +15,7 @@ ListView {
     property alias selectedContact: contactGroup.checkedButton
     property string searchString: ""
     property string lowerCaseSearchString: searchString.toLowerCase()
+    property string contactToRemove: ""
 
     width: parent.width
 
@@ -36,7 +37,7 @@ ListView {
             blockContactConfirmationDialog.open()
         }
         onRemoveContactActionTriggered: {
-            removeContactConfirmationDialog.contactAddress = address
+            contactList.contactToRemove = address
             removeContactConfirmationDialog.open()
         }
     }
@@ -49,7 +50,7 @@ ListView {
           blockContactConfirmationDialog.open()
       }
       onRemoveButtonClicked: {
-          removeContactConfirmationDialog.contactAddress = address
+          contactList.contactToRemove = address
           removeContactConfirmationDialog.open()
       }
     }
@@ -66,11 +67,13 @@ ListView {
         }
     }
 
-    RemoveContactConfirmationDialog {
+    ConfirmationDialog {
         id: removeContactConfirmationDialog
-        onRemoveButtonClicked: {
-            if (profileModel.isAdded(removeContactConfirmationDialog.contactAddress)) {
-              profileModel.removeContact(removeContactConfirmationDialog.contactAddress)
+        title: qsTrId("remove-contact")
+        confirmationText: qsTr("Are you sure you want to remove this contact?")
+        onConfirmButtonClicked: {
+            if (profileModel.isAdded(contactList.contactToRemove)) {
+              profileModel.removeContact(contactList.contactToRemove)
             }
             removeContactConfirmationDialog.close()
         }

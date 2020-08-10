@@ -18,6 +18,8 @@ StackLayout {
 
     property var appSettings
     property bool isConnected: false
+    property string contactToRemove: ""
+
     Layout.fillHeight: true
     Layout.fillWidth: true
     Layout.minimumWidth: 300
@@ -118,16 +120,15 @@ StackLayout {
             }
        }
 
-
         ProfilePopup {
             id: profilePopup
             onBlockButtonClicked: {
                 blockContactConfirmationDialog.contactName = name
-                blockContactConfirmationDialog.contactAddress = address
+                chatColumnLayout.contact = address
                 blockContactConfirmationDialog.open()
             }
             onRemoveButtonClicked: {
-                removeContactConfirmationDialog.contactAddress = address
+                chatColumnLayout.contactToRemove = address
                 removeContactConfirmationDialog.open()
             }
         }
@@ -141,14 +142,17 @@ StackLayout {
             }
         }
 
-        RemoveContactConfirmationDialog {
-            id: removeContactConfirmationDialog
-            onRemoveButtonClicked: {
-                if (profileModel.isAdded(removeContactConfirmationDialog.contactAddress)) {
-                  profileModel.removeContact(removeContactConfirmationDialog.contactAddress)
-                }
-                removeContactConfirmationDialog.close()
-            }
+        ConfirmationDialog {
+          id: removeContactConfirmationDialog
+          // % "Remove contact"
+          title: qsTrId("remove-contact")
+          confirmationText: qsTr("Are you sure you want to remove this contact?")
+          onConfirmButtonClicked: {
+              if (profileModel.isAdded(chatColumnLayout.contactToRemove)) {
+                profileModel.removeContact(chatColumnLayout.contactToRemove)
+              }
+              removeContactConfirmationDialog.close()
+          }
         }
 
         EmojiReactions {

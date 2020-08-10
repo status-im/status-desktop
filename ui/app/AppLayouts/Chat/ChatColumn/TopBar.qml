@@ -148,7 +148,14 @@ Rectangle {
                     icon.color: Style.current.red
                     //% "Delete Chat"
                     text: qsTrId("delete-chat")
-                    onTriggered: chatsModel.leaveActiveChat()
+                    onTriggered: {
+                      //% "Delete Chat"
+                      deleteChatConfirmationDialog.title = qsTrId("delete-chat")
+                      //% "Delete Chat"
+                      deleteChatConfirmationDialog.confirmButtonLabel = qsTrId("delete-chat")
+                      deleteChatConfirmationDialog.confirmationText = qsTr("Are you sure you want to delete this chat?")
+                      deleteChatConfirmationDialog.open()
+                    }
                 }
             }
 
@@ -179,7 +186,14 @@ Rectangle {
                     icon.height: chatTopBarContent.iconSize
                     //% "Leave Group"
                     text: qsTrId("leave-group")
-                    onTriggered: chatsModel.leaveActiveChat()
+                    onTriggered: {
+                      //% "Leave group"
+                      deleteChatConfirmationDialog.title = qsTrId("leave-group")
+                      //% "Leave group"
+                      deleteChatConfirmationDialog.confirmButtonLabel = qsTrId("leave-group")
+                      deleteChatConfirmationDialog.confirmationText = qsTr("Are you sure you want to leave this chat?")
+                      deleteChatConfirmationDialog.open()
+                    }
                 }
             }
 
@@ -201,6 +215,14 @@ Rectangle {
                 }
               }
             }
+        }
+    }
+
+    ConfirmationDialog {
+        id: deleteChatConfirmationDialog
+        onConfirmButtonClicked: {
+            chatsModel.leaveActiveChat()
+            deleteChatConfirmationDialog.close()
         }
     }
 }
