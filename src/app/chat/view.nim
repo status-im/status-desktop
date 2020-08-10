@@ -206,7 +206,7 @@ QtObject:
   proc messagePushed*(self: ChatsView) {.signal.}
   proc newMessagePushed*(self: ChatsView) {.signal.}
 
-  proc messageNotificationPushed*(self: ChatsView, chatId: string, text: string) {.signal.}
+  proc messageNotificationPushed*(self: ChatsView, chatId: string, text: string, messageType: string, chatType: int, timestamp: string, identicon: string, username: string) {.signal.}
 
   proc messagesCleared*(self: ChatsView) {.signal.}
 
@@ -222,7 +222,8 @@ QtObject:
       self.messagePushed()
       if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
         if msg.chatId != self.activeChannel.id:
-          self.messageNotificationPushed(msg.chatId, msg.text)
+          let channel = self.chats.getChannelById(msg.chatId)
+          self.messageNotificationPushed(msg.chatId, msg.text, msg.messageType, channel.chatType.int, msg.timestamp, msg.identicon, msg.alias)
         else:
           self.newMessagePushed()
 

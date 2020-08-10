@@ -62,11 +62,11 @@ proc setDefaultCurrency*(self: WalletModel, currency: string) =
 
 proc generateAccountConfiguredAssets*(self: WalletModel, accountAddress: string): seq[Asset] =
   var assets: seq[Asset] = @[]
-  var asset = Asset(name:"Ethereum", symbol: "ETH", value: "0.0", fiatValue: "0.0", accountAddress: accountAddress)
+  var asset = Asset(name:"Ethereum", symbol: "ETH", value: "0.0", fiatBalanceDisplay: "0.0", accountAddress: accountAddress)
   assets.add(asset)
   for token in self.tokens:
     var symbol = token["symbol"].getStr
-    var existingToken = Asset(name: token["name"].getStr, symbol: symbol, value: fmt"0.0", fiatValue: "$0.0", accountAddress: accountAddress, address: token["address"].getStr)
+    var existingToken = Asset(name: token["name"].getStr, symbol: symbol, value: fmt"0.0", fiatBalanceDisplay: "$0.0", accountAddress: accountAddress, address: token["address"].getStr)
     assets.add(existingToken)
   assets
 
@@ -94,6 +94,9 @@ proc initAccounts*(self: WalletModel) =
 proc getTotalFiatBalance*(self: WalletModel): string =
   var newBalance = 0.0
   fmt"{self.totalBalance:.2f} {self.defaultCurrency}"
+
+proc convertValue*(self: WalletModel, balance: string, fromCurrency: string, toCurrency: string): float =
+  result = convertValue(balance, fromCurrency, toCurrency)
 
 proc calculateTotalFiatBalance*(self: WalletModel) =
   self.totalBalance = 0.0
