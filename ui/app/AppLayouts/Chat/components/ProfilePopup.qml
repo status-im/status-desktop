@@ -18,6 +18,7 @@ ModalPopup {
     property bool noFooter: false
 
     signal blockButtonClicked(name: string, address: string)
+    signal removeButtonClicked(address: string)
 
     function setPopupData(userNameParam, fromAuthorParam, identiconParam, textParam){
         this.showQR = false
@@ -290,7 +291,7 @@ ModalPopup {
             anchors.bottom: parent.bottom
             onClicked: {
                 if (profileModel.isAdded(fromAuthor)) {
-                    chatsModel.removeContact(fromAuthor)
+                    popup.removeButtonClicked(fromAuthor)
                 } else {
                     chatsModel.addContact(fromAuthor)
                 }

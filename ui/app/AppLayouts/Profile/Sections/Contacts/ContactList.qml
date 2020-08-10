@@ -35,6 +35,10 @@ ListView {
             blockContactConfirmationDialog.contactAddress = address
             blockContactConfirmationDialog.open()
         }
+        onRemoveContactActionTriggered: {
+            removeContactConfirmationDialog.contactAddress = address
+            removeContactConfirmationDialog.open()
+        }
     }
 
     ProfilePopup {
@@ -43,6 +47,10 @@ ListView {
           blockContactConfirmationDialog.contactName = name
           blockContactConfirmationDialog.contactAddress = address
           blockContactConfirmationDialog.open()
+      }
+      onRemoveButtonClicked: {
+          removeContactConfirmationDialog.contactAddress = address
+          removeContactConfirmationDialog.open()
       }
     }
 
@@ -55,6 +63,16 @@ ListView {
         onBlockButtonClicked: {
             profileModel.blockContact(blockContactConfirmationDialog.contactAddress)
             blockContactConfirmationDialog.close()
+        }
+    }
+
+    RemoveContactConfirmationDialog {
+        id: removeContactConfirmationDialog
+        onRemoveButtonClicked: {
+            if (profileModel.isAdded(removeContactConfirmationDialog.contactAddress)) {
+              profileModel.removeContact(removeContactConfirmationDialog.contactAddress)
+            }
+            removeContactConfirmationDialog.close()
         }
     }
 }
