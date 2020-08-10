@@ -39,6 +39,17 @@ proc mainProc() =
         "/../status.svg"
   app.icon(app.applicationDirPath & statusSvg)
 
+  var i18nPath = ""
+  if (getEnv("NIM_STATUS_CLIENT_DEV").string != ""):
+    i18nPath = joinPath(getAppDir(), "../ui/i18n")
+  elif (defined(windows)):
+    i18nPath = joinPath(getAppDir(), "../resources/i18n")
+  elif (defined(macosx)):
+    i18nPath = joinPath(getAppDir(), "../i18n")
+  elif (defined(linux)):
+    i18nPath = joinPath(getAppDir(), "../i18n")
+
+
   let engine = newQQmlApplicationEngine()
   let signalController = signals.newController(app)
 
@@ -56,12 +67,7 @@ proc mainProc() =
   engine.setRootContextProperty("nodeModel", node.variant)
 
   proc changeLanguage(locale: string) =
-    var path = ""
-    if (getEnv("NIM_STATUS_CLIENT_DEV").string == ""):
-      path = joinPath(getAppDir(), fmt"i18n/qml_{locale}.qm")
-    else:
-      path = fmt"ui/i18n/qml_{locale}.qm"
-    engine.setTranslationPackage(path)
+    engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"))
 
   var profile = profile.newController(status, changeLanguage)
   engine.setRootContextProperty("profileModel", profile.variant)
