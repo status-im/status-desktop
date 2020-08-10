@@ -1,8 +1,9 @@
-import json, times, strutils, sequtils, chronicles
+import json, times, strutils, sequtils, chronicles, json_serialization
 import core, utils
 import ../chat/[chat, message]
 import ../../signals/messages
 import ./types
+import ./settings
 
 proc buildFilter*(chat: Chat):JsonNode =
   if chat.chatType == ChatType.PrivateGroupChat:
@@ -72,34 +73,38 @@ proc generateSymKeyFromPassword*(): string =
   ]))["result"]).strip(chars = {'"'})
 
 proc sendChatMessage*(chatId: string, msg: string, replyTo: string, contentType: int): string =
+  let preferredUsername = getSetting[string](Setting.PreferredUsername, "")
   callPrivateRPC("sendChatMessage".prefix, %* [
     {
       "chatId": chatId,
       "text": msg,
       "responseTo": replyTo,
-      "ensName": nil,
+      "ensName": preferredUsername,
       "sticker": nil,
       "contentType": contentType
     }
   ])
 
 proc sendImageMessage*(chatId: string, image: string): string =
+  let preferredUsername = getSetting[string](Setting.PreferredUsername, "")
   callPrivateRPC("sendChatMessage".prefix, %* [
     {
       "chatId": chatId,
       "contentType": ContentType.Image.int,
       "imagePath": image,
+      "ensName": preferredUsername,
       "text": "Update to latest version to see a nice image here!"
     }
   ])
 
 proc sendStickerMessage*(chatId: string, sticker: Sticker): string =
+  let preferredUsername = getSetting[string](Setting.PreferredUsername, "")
   callPrivateRPC("sendChatMessage".prefix, %* [
     {
       "chatId": chatId,
       "text": "Update to latest version to see a nice sticker here!",
       "responseTo": nil,
-      "ensName": nil,
+      "ensName": preferredUsername,
       "sticker": {
         "hash": sticker.hash,
         "pack": sticker.packId

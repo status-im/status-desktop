@@ -60,6 +60,21 @@ proc resolver*(usernameHash: string): string =
   resolverAddr.removePrefix("0x000000000000000000000000")
   result = "0x" & resolverAddr
 
+const owner_signature = "0x02571be3" # owner(bytes32 node)
+proc owner*(username: string): string = 
+  var userNameHash = namehash(addDomain(username))
+  userNameHash.removePrefix("0x")
+  let payload = %* [{
+    "to": registry,
+    "from": "0x0000000000000000000000000000000000000000",
+    "data": fmt"{owner_signature}{userNameHash}"
+  }, "latest"]
+  let response = callPrivateRPC("eth_call", payload)
+  # TODO: error handling
+  let ownerAddr = response.parseJson["result"].getStr;
+  if ownerAddr == "0x0000000000000000000000000000000000000000000000000000000000000000":
+    return ""
+  result = "0x" & ownerAddr.substr(26)
 
 const pubkey_signature = "0xc8690233" # pubkey(bytes32 node)
 proc pubkey*(username: string): string = 

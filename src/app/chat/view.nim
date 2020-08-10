@@ -130,6 +130,12 @@ QtObject:
       return status_ens.userNameOrAlias(self.status.chat.contacts[pubKey])
     generateAlias(pubKey)
 
+  proc markAllChannelMessagesReadByIndex*(self: ChatsView, channelIndex: int) {.slot.} =
+    if (self.chats.chats.len == 0): return
+    let selectedChannel = self.chats.getChannel(channelIndex)
+    if (selectedChannel == nil): return
+    discard self.status.chat.markAllChannelMessagesRead(selectedChannel.id)
+
   proc setActiveChannelByIndex*(self: ChatsView, index: int) {.slot.} =
     if(self.chats.chats.len == 0): return
     if(not self.activeChannel.chatItem.isNil and self.activeChannel.chatItem.unviewedMessagesCount > 0):
@@ -267,16 +273,36 @@ QtObject:
     self.status.chat.chatMessages(self.activeChannel.id, false)
     self.messagesLoaded();
 
+  proc loadMoreMessagesWithIndex*(self: ChatsView, channelIndex: int) {.slot.} =
+    if (self.chats.chats.len == 0): return
+    let selectedChannel = self.chats.getChannel(channelIndex)
+    if (selectedChannel == nil): return
+    trace "Loading more messages", chaId = selectedChannel.id
+    self.status.chat.chatMessages(selectedChannel.id, false)
+    self.messagesLoaded();
+
+  proc leaveChatByIndex*(self: ChatsView, channelIndex: int) {.slot.} =
+    if (self.chats.chats.len == 0): return
+    let selectedChannel = self.chats.getChannel(channelIndex)
+    if (selectedChannel == nil): return
+    self.status.chat.leave(selectedChannel.id)
+
   proc leaveActiveChat*(self: ChatsView) {.slot.} =
     self.status.chat.leave(self.activeChannel.id)
 
-  proc removeChat*(self: ChatsView, chatId: string) = 
+  proc removeChat*(self: ChatsView, chatId: string) =
     discard self.chats.removeChatItemFromList(chatId)
     self.messageList[chatId].delete
     self.messageList.del(chatId)
 
   proc clearChatHistory*(self: ChatsView, id: string) {.slot.} =
     self.status.chat.clearHistory(id)
+
+  proc clearChatHistoryByIndex*(self: ChatsView, channelIndex: int) {.slot.} =
+    if (self.chats.chats.len == 0): return
+    let selectedChannel = self.chats.getChannel(channelIndex)
+    if (selectedChannel == nil): return
+    self.status.chat.clearHistory(selectedChannel.id)
 
   proc unreadMessages*(self: ChatsView): int {.slot.} =
     result = self.unreadMessageCnt

@@ -245,7 +245,7 @@ FilterXSS.prototype.process = function(html) {
 
 function getDefaultWhiteList() {
   return {
-    a: ["target", "href", "title"],
+    a: ["target", "href", "title", "class"],
     abbr: ["title"],
     address: [],
     area: ["shape", "coords", "href", "alt"],

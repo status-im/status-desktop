@@ -19,7 +19,8 @@ proc isDeviceSetup*():bool =
   result = false
 
 proc syncAllDevices*() =
-  discard syncDevices()
+  let preferredUsername = getSetting[string](Setting.PreferredUsername, "")
+  discard syncDevices(preferredUsername)
 
 proc advertise*() =
   discard sendPairInstallation()

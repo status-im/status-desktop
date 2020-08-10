@@ -7,6 +7,7 @@ Theme {
     property color black: "#000000"
     property color grey: "#EEF2F5"
     property color lightBlue: "#ECEFFC"
+    property color cyan: "#00FFFF"
     property color blue: "#4360DF"
     property color transparent: "#00000000"
     property color darkGrey: "#939BA1"
@@ -16,6 +17,7 @@ Theme {
     property color red: "#FF2D55"
     property color lightRed: "#FFEAEE"
     property color green: "#4EBC60"
+    property color turquoise: "#007b7d"
 
     property color background: white
     property color border: grey
