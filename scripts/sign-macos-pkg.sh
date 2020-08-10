@@ -24,7 +24,7 @@ function clean_up {
     echo -e "\n### Locking keychain..."
     security lock-keychain "${MACOS_KEYCHAIN_FILE}"
     echo -e "\n### Restoring default keychain search list..."
-    security list-keychains -s ""
+    security list-keychains -s ${ORIG_KEYCHAIN_LIST}
     security list-keychains
 
     exit $STATUS
@@ -50,6 +50,9 @@ if [[ -n "${MACOS_KEYCHAIN_FILE}" ]]; then
         echo "Unable to unlock the keychain without MACOS_KEYCHAIN_PASS!" >&2
         exit 1
     fi
+    echo -e "\n### Storing original keychain search list..."
+    ORIG_KEYCHAIN_LIST=$(security list-keychains | grep -v "^/private" | xargs)
+    
     # The keychain file needs to be locked afterwards
     trap clean_up EXIT ERR
 
