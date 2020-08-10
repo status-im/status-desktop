@@ -126,6 +126,10 @@ StackLayout {
                 blockContactConfirmationDialog.contactAddress = address
                 blockContactConfirmationDialog.open()
             }
+            onRemoveButtonClicked: {
+                removeContactConfirmationDialog.contactAddress = address
+                removeContactConfirmationDialog.open()
+            }
         }
 
         BlockContactConfirmationDialog {
@@ -134,6 +138,16 @@ StackLayout {
                 chatsModel.blockContact(blockContactConfirmationDialog.contactAddress)
                 blockContactConfirmationDialog.close()
                 profilePopup.close()
+            }
+        }
+
+        RemoveContactConfirmationDialog {
+            id: removeContactConfirmationDialog
+            onRemoveButtonClicked: {
+                if (profileModel.isAdded(removeContactConfirmationDialog.contactAddress)) {
+                  profileModel.removeContact(removeContactConfirmationDialog.contactAddress)
+                }
+                removeContactConfirmationDialog.close()
             }
         }
 

@@ -14,6 +14,7 @@ Rectangle {
     property bool isBlocked: false
     property string searchStr: ""
     signal blockContactActionTriggered(name: string, address: string)
+    signal removeContactActionTriggered(address: string)
     id: container
 
     visible: isContact && (searchStr == "" || name.includes(searchStr))
@@ -121,7 +122,9 @@ Rectangle {
                     icon.color: Style.current.red
                     text: qsTrId("remove-contact")
                     enabled: container.isContact
-                    onTriggered: profileModel.removeContact(address)
+                    onTriggered: {
+                      container.removeContactActionTriggered(address)
+                    }
                 }
                 Action {
                     icon.source: "../../../../img/block-icon.svg"
