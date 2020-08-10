@@ -30,16 +30,33 @@ ListView {
         visible: searchString === "" ||
                  model.name.toLowerCase().includes(lowerCaseSearchString) ||
                  model.address.toLowerCase().includes(lowerCaseSearchString)
+        onBlockContactActionTriggered: {
+            blockContactConfirmationDialog.contactName = name
+            blockContactConfirmationDialog.contactAddress = address
+            blockContactConfirmationDialog.open()
+        }
     }
 
     ProfilePopup {
       id: profilePopup
+      onBlockButtonClicked: {
+          blockContactConfirmationDialog.contactName = name
+          blockContactConfirmationDialog.contactAddress = address
+          blockContactConfirmationDialog.open()
+      }
     }
 
     ButtonGroup {
         id: contactGroup
     }
 
+    BlockContactConfirmationDialog {
+        id: blockContactConfirmationDialog
+        onBlockButtonClicked: {
+            profileModel.blockContact(blockContactConfirmationDialog.contactAddress)
+            blockContactConfirmationDialog.close()
+        }
+    }
 }
 /*##^##
 Designer {
