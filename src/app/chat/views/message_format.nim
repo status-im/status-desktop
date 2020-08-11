@@ -29,7 +29,9 @@ proc renderBlock(self: ChatMessageList, message: Message): string =
   for pMsg in message.parsedText:
     case pMsg.textType:
       of "paragraph": 
-        result = result & "<p>&nbsp;"
+        result = result & "<p>"
+        if message.isCurrentUser:
+          result = result & "&nbsp;"
         for children in pMsg.children:
           result = result & self.renderInline(children)
         result = result & "</p>"
