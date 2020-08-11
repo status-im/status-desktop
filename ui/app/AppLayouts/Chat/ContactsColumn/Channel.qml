@@ -70,7 +70,7 @@ Rectangle {
 
     StyledText {
         id: contactInfo
-        text: wrapper.chatType !== Constants.chatTypePublic ? Emoji.parse(wrapper.name, "26x26") : "#" + wrapper.name
+        text: wrapper.chatType !== Constants.chatTypePublic ? Emoji.parse(Utils.removeStatusEns(wrapper.name), "26x26") : "#" + wrapper.name
         anchors.right: contactTime.left
         anchors.rightMargin: Style.current.smallPadding
         elide: Text.ElideRight

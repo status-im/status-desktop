@@ -78,6 +78,11 @@ QtObject:
     self.contacts.add(contact)
     self.endInsertRows()
 
+  proc hasAddedContacts(self: ContactList): bool {.slot.} = 
+    for c in self.contacts:
+      if(c.isContact()): return true
+    return false
+
   proc updateContact*(self: ContactList, contact: Profile) =
     var found = false
     let topLeft = self.createIndex(0, 0, nil)

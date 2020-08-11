@@ -31,7 +31,13 @@ Rectangle {
         id: channelName
         width: 80
         height: 20
-        text: chatsModel.activeChannel.chatType != Constants.chatTypePublic ? chatsModel.activeChannel.name : channelNameStr
+        text: {
+            switch(chatsModel.activeChannel.chatType) {
+                case Constants.chatTypePublic: return channelNameStr;
+                case Constants.chatTypeOneToOne: return Utils.removeStatusEns(chatsModel.activeChannel.name)
+                default: return chatsModel.activeChannel.name
+            }
+        }
         anchors.left: channelIcon.right
         anchors.leftMargin: Style.current.smallPadding
         anchors.top: parent.top

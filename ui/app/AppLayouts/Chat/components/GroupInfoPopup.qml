@@ -18,11 +18,6 @@ ModalPopup {
         pubKeys = [];
         memberCount = chatsModel.activeChannel.members.rowCount();
         currMemberCount = memberCount;
-        for(var i in groupMembers.contentItem.children){
-            if (groupMembers.contentItem.children[i].isChecked !== null) {
-                groupMembers.contentItem.children[i].isChecked = false
-            }
-        }
         data.clear();
         for(let i = 0; i < profileModel.contactList.rowCount(); i++){
             if(chatsModel.activeChannel.contains(profileModel.contactList.rowData(i, "pubKey"))) continue;
@@ -123,6 +118,8 @@ ModalPopup {
             SVGImage {
                 id: editGroupImg
                 source: "../../../img/edit-group.svg"
+                height: 16
+                width: 16
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -160,8 +157,41 @@ ModalPopup {
             fontPixelSize: 15
         }
 
+        Rectangle {
+            id: noContactsRect
+            width: 320
+            visible: data.count == 0
+            anchors.top: searchBox.bottom
+            anchors.topMargin: Style.current.xlPadding
+            anchors.horizontalCenter: parent.horizontalCenter
+            StyledText {
+                id: noContacts
+                text: qsTr("All your contacts are already in the group")
+                color: Style.current.textColor
+                anchors.top: parent.top
+                anchors.topMargin: Style.current.padding
+                anchors.left: parent.left
+                anchors.right: parent.right
+                wrapMode: Text.WordWrap
+                horizontalAlignment: Text.AlignHCenter
+            }
+            StyledButton {
+                //% "Invite friends"
+                label: qsTrId("invite-friends")
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: noContacts.bottom
+                anchors.topMargin: Style.current.padding
+                onClicked: {
+                    inviteFriendsPopup.open()
+                }
+            }
+            InviteFriendsPopup {
+                id: inviteFriendsPopup
+            }
+        }
+
         ScrollView {
-            visible: addMembers
+            visible: addMembers && data.count > 0
             anchors.fill: parent
             anchors.topMargin: 50
             anchors.top: searchBox.bottom
@@ -184,7 +214,7 @@ ModalPopup {
                     showCheckbox: memberCount < maxMembers
                     pubKey: model.pubKey
                     isUser: model.isUser
-                    name: model.name
+                    name: Utils.removeStatusEns(model.name)
                     address: model.address
                     identicon: model.identicon
                     onItemChecked: function(pubKey, itemChecked){
@@ -272,7 +302,7 @@ ModalPopup {
                 }
                 Column {
                     StyledText {
-                        text: model.userName
+                        text: Utils.removeStatusEns(model.userName)
                         width: 300
                         elide: Text.ElideRight
                         Layout.fillWidth: true
