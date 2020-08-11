@@ -1,11 +1,12 @@
-import NimQml, std/wrapnils
-import ../../../status/[chat/chat, status]
+import NimQml, Tables, std/wrapnils
+import ../../../status/[chat/chat, status, ens, accounts]
 import chat_members
 
 QtObject:
   type ChatItemView* = ref object of QObject
     chatItem*: Chat
     chatMembers*: ChatMembersView
+    status*: Status
 
   proc setup(self: ChatItemView) =
     self.QObject.setup
@@ -18,6 +19,7 @@ QtObject:
     new(result, delete)
     result = ChatItemView()
     result.chatItem = nil
+    result.status = status
     result.chatMembers = newChatMembersView(status)
     result.setup
 
@@ -30,8 +32,17 @@ QtObject:
   QtProperty[string] id:
     read = id
 
-  proc name*(self: ChatItemView): string {.slot.} = result = ?.self.chatItem.name
-  
+  proc userNameOrAlias(self: ChatItemView, pubKey: string): string {.slot.} =
+    if self.status.chat.contacts.hasKey(pubKey):
+      return ens.userNameOrAlias(self.status.chat.contacts[pubKey])
+    generateAlias(pubKey)
+
+  proc name*(self: ChatItemView): string {.slot.} = 
+    if self.chatItem != nil and self.chatItem.chatType.isOneToOne:
+      result = self.userNameOrAlias(self.chatItem.id)
+    else:
+      result = ?.self.chatItem.name
+
   QtProperty[string] name:
     read = name
 

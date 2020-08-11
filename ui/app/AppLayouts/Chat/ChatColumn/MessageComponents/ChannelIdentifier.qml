@@ -43,7 +43,7 @@ Item {
 
         StyledText {
             visible: chatsModel.activeChannel.chatType !== Constants.chatTypeOneToOne
-            text: (chatsModel.activeChannel.name.charAt(0) === "#" ? chatsModel.activeChannel.name.charAt(1) : chatsModel.activeChannel.name.charAt(0)).toUpperCase()
+            text: Utils.removeStatusEns((chatsModel.activeChannel.name.charAt(0) === "#" ? chatsModel.activeChannel.name.charAt(1) : chatsModel.activeChannel.name.charAt(0)).toUpperCase())
             opacity: 0.7
             font.weight: Font.Bold
             font.pixelSize: 51
@@ -57,12 +57,12 @@ Item {
         id: channelName
         wrapMode: Text.Wrap
         text: {
-                if (chatsModel.activeChannel.chatType !== Constants.chatTypePublic) {
-                    return chatsModel.activeChannel.name;
-                } else {
-                    return "#" + chatsModel.activeChannel.name;
-                }
+            switch(chatsModel.activeChannel.chatType) {
+                case Constants.chatTypePublic: return "#" + chatsModel.activeChannel.name;
+                case Constants.chatTypeOneToOne: return Utils.removeStatusEns(chatsModel.activeChannel.name)
+                default: return chatsModel.activeChannel.name
             }
+        }
         font.weight: Font.Bold
         font.pixelSize: 22
         color: Style.current.textColor
@@ -71,9 +71,35 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
+    Rectangle {
+        id: channelDescription
+        width: 330
+        height: childrenRect.height
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: channelName.bottom
+        anchors.topMargin: 16
+
+        StyledText {
+            wrapMode: Text.Wrap
+            text: {
+                switch(chatsModel.activeChannel.chatType) {
+                    case Constants.chatTypePrivateGroupChat: return qsTr(`Welcome to the beginning of the <span style="color: ${Style.current.textColor}">%1</span> group!`).arg(chatsModel.activeChannel.name);
+                    case Constants.chatTypeOneToOne: return qsTr(`Any messages you send here are encrypted and can only be read by you and <span style="color: ${Style.current.textColor}">%1</span>`).arg(Utils.removeStatusEns(chatsModel.activeChannel.name))
+                    default: return "";
+                }
+            }
+            font.pixelSize: 14
+            color: Style.current.darkGrey
+            anchors.left: parent.left
+            anchors.right: parent.right
+            horizontalAlignment: Text.AlignHCenter
+            textFormat: Text.RichText
+        }
+    }
+
     Item {
         visible: chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat && !chatsModel.activeChannel.isMember(profileModel.profile.pubKey)
-        anchors.top: channelName.bottom
+        anchors.top: channelDescription.bottom
         anchors.topMargin: 16
         id: joinOrDecline
 

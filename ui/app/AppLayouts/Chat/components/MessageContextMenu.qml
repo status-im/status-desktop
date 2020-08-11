@@ -54,7 +54,7 @@ PopupMenu {
 
         StyledText {
             id: username
-            text: profilePopup.userName
+            text: Utils.removeStatusEns(profilePopup.userName)
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             anchors.top: profileImage.bottom

@@ -56,6 +56,7 @@ ModalPopup {
         pubKey = "";
         ensUsername.text = "";
         chatKey.forceActiveFocus(Qt.MouseFocusReason)
+        noContactsRect.visible = !profileModel.contactList.hasAddedContacts()
     }
 
     Input {
@@ -126,6 +127,36 @@ ModalPopup {
                         chatsModel.joinChat(pubKey, Constants.chatTypeOneToOne);
                         popup.close()
                     }
+                }
+            }
+
+            Rectangle {
+                id: noContactsRect
+                width: 260
+                anchors.centerIn: parent
+                StyledText {
+                    id: noContacts
+                    text: qsTr("You don’t have any contacts yet. Invite your friends to start chatting.")
+                    color: Style.current.darkGrey
+                    anchors.top: parent.top
+                    anchors.topMargin: Style.current.padding
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
+                }
+                StyledButton {
+                    //% "Invite friends"
+                    label: qsTrId("invite-friends")
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: noContacts.bottom
+                    anchors.topMargin: Style.current.xlPadding
+                    onClicked: {
+                        inviteFriendsPopup.open()
+                    }
+                }
+                InviteFriendsPopup {
+                    id: inviteFriendsPopup
                 }
             }
         }

@@ -11,6 +11,7 @@ ModalPopup {
     property var userName: ""
     property var fromAuthor: ""
     property var text: ""
+    property var alias: ""
     
     property bool showQR: false
     property bool isEnsVerified: false
@@ -23,6 +24,7 @@ ModalPopup {
         this.identicon = identiconParam
         this.text = textParam
         this.isEnsVerified = chatsModel.isEnsVerified(this.fromAuthor)
+        this.alias = chatsModel.alias(this.fromAuthor)
     }
     
     function openPopup(userNameParam, fromAuthorParam, identiconParam) {
@@ -53,7 +55,7 @@ ModalPopup {
 
         StyledTextEdit {
             id: profileName
-            text: userName
+            text:  Utils.removeStatusEns(userName)
             anchors.top: parent.top
             anchors.topMargin: 18
             anchors.left: profilePic.right
@@ -65,9 +67,9 @@ ModalPopup {
         }
 
         StyledText {
-            text: fromAuthor
+            text: isEnsVerified ? alias : fromAuthor
             width: 160
-            elide: Text.ElideMiddle
+            elide: !isEnsVerified ? Text.ElideMiddle : Text.ElideNone
             anchors.left: profilePic.right
             anchors.leftMargin: Style.current.smallPadding
             anchors.top: profileName.bottom
@@ -150,7 +152,7 @@ ModalPopup {
             id: valueEnsName
             visible: isEnsVerified
             height: isEnsVerified ? 20 : 0
-            text: userName
+            text: userName.substr(1)
             font.pixelSize: 14
             anchors.left: parent.left
             anchors.leftMargin: Style.current.smallPadding
