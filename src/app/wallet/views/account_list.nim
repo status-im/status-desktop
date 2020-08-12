@@ -1,7 +1,7 @@
 import NimQml, Tables, random, strformat, json_serialization
 import sequtils as sequtils
 import account_item, asset_list
-from ../../../status/wallet import WalletAccount
+from ../../../status/wallet import WalletAccount, Asset
 
 const accountColors* = ["#9B832F", "#D37EF4", "#1D806F", "#FA6565", "#7CDA00", "#887af9", "#8B3131"]
 type
@@ -99,3 +99,18 @@ QtObject:
   proc forceUpdate*(self: AccountList) =
     self.beginResetModel()
     self.endResetModel()
+
+  proc hasAccount*(self: AccountList, address: string): bool =
+    result = self.accounts.anyIt(it.account.address == address)
+
+  proc updateAssetsInList*(self: AccountList, address: string, assets: seq[Asset]) =
+    if not self.hasAccount(address):
+      return
+
+    let topLeft = self.createIndex(0, 0, nil)
+    let bottomRight = self.createIndex(self.accounts.len, 0, nil)
+    self.accounts.apply(proc(it: var AccountView) =
+      if it.account.address == address:
+        it.assets.setNewData(assets))
+
+    self.dataChanged(topLeft, bottomRight, @[AccountRoles.Assets.int])

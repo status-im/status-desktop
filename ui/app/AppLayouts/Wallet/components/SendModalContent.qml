@@ -35,7 +35,8 @@ Item {
     }
 
     function validate() {
-        selectRecipient.validate()
+        const isRecipientValid = selectRecipient.validate()
+        const isAssetAndAmountValid = txtAmount.validate()
         if (txtPassword.text === "") {
             //% "You need to enter a password"
             passwordValidationError = qsTrId("you-need-to-enter-a-password")
@@ -46,20 +47,7 @@ Item {
             passwordValidationError = ""
         }
 
-        if (txtAmount.text === "") {
-            //% "You need to enter an amount"
-            amountValidationError = qsTrId("you-need-to-enter-an-amount")
-        } else if (isNaN(txtAmount.text)) {
-            //% "This needs to be a number"
-            amountValidationError = qsTrId("this-needs-to-be-a-number")
-        } else if (parseFloat(txtAmount.text) > parseFloat(selectAsset.selectedAsset.Value)) {
-            //% "Amount needs to be lower than your balance (%1)"
-            amountValidationError = qsTrId("amount-needs-to-be-lower-than-your-balance-(%1)").arg(selectedAccountValue)
-        } else {
-            amountValidationError = ""
-        }
-
-        return passwordValidationError === "" && toValidationError === "" && amountValidationError === ""
+        return passwordValidationError === "" && toValidationError === "" && amountValidationError === "" && isRecipientValid && isAssetAndAmountValid
     }
 
     anchors.left: parent.left
@@ -83,13 +71,12 @@ Item {
     }
 
     AssetAndAmountInput {
-      id: txtAmount
-      selectedAccount: walletModel.currentAccount
-      defaultCurrency: walletModel.defaultCurrency
-      errorMessage: amountValidationError
-      anchors.top: parent.top
-      getFiatValue: walletModel.getFiatValue
-      getCryptoValue: walletModel.getCryptoValue
+        id: txtAmount
+        selectedAccount: walletModel.currentAccount
+        defaultCurrency: walletModel.defaultCurrency
+        anchors.top: parent.top
+        getFiatValue: walletModel.getFiatValue
+        getCryptoValue: walletModel.getCryptoValue
     }
 
     AccountSelector {
@@ -101,7 +88,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         onSelectedAccountChanged: {
-          txtAmount.selectedAccount = selectFromAccount.selectedAccount
+            txtAmount.selectedAccount = selectFromAccount.selectedAccount
         }
     }
 

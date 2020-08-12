@@ -217,6 +217,8 @@ QtObject:
 
   proc toggleAsset*(self: WalletView, symbol: string, checked: bool, address: string, name: string, decimals: int, color: string) {.slot.} =
     self.status.wallet.toggleAsset(symbol, checked, address, name, decimals, color)
+    for account in self.status.wallet.accounts:
+      self.accounts.updateAssetsInList(account.address, account.assetList)
 
   proc updateView*(self: WalletView) =
     self.totalFiatBalanceChanged()
