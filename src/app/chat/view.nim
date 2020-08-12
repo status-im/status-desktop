@@ -253,6 +253,9 @@ QtObject:
         else:
           self.newMessagePushed()
 
+  proc addEmojiReaction*(self: ChatsView, messageId: string, emojiId: int) {.slot.} =
+    self.status.chat.addEmojiReaction(self.activeChannel.id, messageId, emojiId)
+
   proc pushReactions*(self:ChatsView, reactions: var seq[Reaction]) =
     let t = reactions.len
     for reaction in reactions.mitems:

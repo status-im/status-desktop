@@ -30,6 +30,9 @@ PopupMenu {
                 delegate: EmojiReaction {
                     source: "../../../img/" + filename
                     emojiId: model.emojiId
+                    closeModal: function () {
+                        messageContextMenu.close()
+                    }
                 }
             }
         }
