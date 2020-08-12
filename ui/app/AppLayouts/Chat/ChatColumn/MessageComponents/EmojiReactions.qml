@@ -94,6 +94,15 @@ Item {
                 font.pixelSize: 12
                 color: modelData.currentUserReacted ? Style.current.currentUserTextColor : Style.current.textColor
             }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    chatsModel.toggleEmojiReaction(messageId, modelData.emojiId)
+
+                }
+            }
         }
     }
 }
