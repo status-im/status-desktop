@@ -19,3 +19,4 @@ CopyToClipBoardButton 1.0 CopyToClipBoardButton.qml
 NotificationWindow 1.0 NotificationWindow.qml
 BlockContactConfirmationDialog 1.0 BlockContactConfirmationDialog.qml
 ConfirmationDialog 1.0 ConfirmationDialog.qml
+StatusSlider 1.0 StatusSlider.qml
