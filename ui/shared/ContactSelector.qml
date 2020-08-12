@@ -117,8 +117,8 @@ Item {
                 Text {
                     text: name
                     font.pixelSize: 15
-                    font.family: Style.current.fontBold.name
-                    font.bold: true
+                    font.family: Style.current.fontRegular.name
+                    font.weight: Font.Medium
                     color: Style.current.textColor
                     height: 22
                 }

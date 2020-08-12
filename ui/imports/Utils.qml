@@ -5,7 +5,7 @@ import "../shared/xss.js" as XSS
 
 QtObject {
     function isHex(value) {
-        return /^(-0x|0x)?[0-9a-f]*$/i.test(value)
+        return /^(-0x|0x)?[0-9a-fA-F]*$/i.test(value)
     }
 
     function startsWith0x(value) {
@@ -64,5 +64,9 @@ QtObject {
 
     function removeStatusEns(userName){
         return userName.endsWith(".stateofus.eth") ? userName.substr(0, userName.length - 14) : userName
+    }
+
+    function isValidAddress(inputValue) {
+        return /0x[a-fA-F0-9]{40}/.test(inputValue)
     }
 }

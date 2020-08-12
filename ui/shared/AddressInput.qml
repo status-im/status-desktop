@@ -12,9 +12,6 @@ Item {
 
     height: inpAddress.height
 
-    function isValidAddress(inputValue) {
-        return /0x[a-fA-F0-9]{40}/.test(inputValue)
-    }
     function isValidEns(inputValue) {
         // TODO: Check if the entered value resolves to an address. Long operation.
         // Issue tracked: https://github.com/status-im/nim-status-client/issues/718
@@ -26,7 +23,7 @@ Item {
     function validate(inputValue) {
         if (!inputValue) inputValue = selectedAddress
         let isValid =
-            (inputValue && inputValue.startsWith("0x") && isValidAddress(inputValue)) ||
+            (inputValue && inputValue.startsWith("0x") && Utils.isValidAddress(inputValue)) ||
             isValidEns(inputValue)
         inpAddress.validationError = isValid ? "" : validationError
         return isValid
@@ -48,7 +45,7 @@ Item {
             }
             if (textField.focus) {
                 text = metrics.text
-            } else if (root.isValidAddress(metrics.text)) {
+            } else if (Utils.isValidAddress(metrics.text)) {
                 text = metrics.elidedText
             }
         }
