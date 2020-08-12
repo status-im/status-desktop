@@ -3,6 +3,9 @@ proc handleChatEvents(self: ChatController) =
   # Display already saved messages
   self.status.events.on("messagesLoaded") do(e:Args):
     self.view.pushMessages(MsgsLoadedArgs(e).messages)
+  # Display emoji reactions
+  self.status.events.on("reactionsLoaded") do(e:Args):
+    self.view.pushReactions(ReactionsLoadedArgs(e).reactions)
 
   self.status.events.on("contactUpdate") do(e: Args):
     var evArgs = ContactUpdateArgs(e)
@@ -13,6 +16,7 @@ proc handleChatEvents(self: ChatController) =
     self.view.updateUsernames(evArgs.contacts)
     self.view.updateChats(evArgs.chats)
     self.view.pushMessages(evArgs.messages)
+    self.view.pushReactions(evArgs.emojiReactions)
 
   self.status.events.on("channelUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)
@@ -26,6 +30,7 @@ proc handleChatEvents(self: ChatController) =
     var channel = ChannelArgs(e)
     discard self.view.chats.addChatItemToList(channel.chat)
     self.status.chat.chatMessages(channel.chat.id)
+    self.status.chat.chatReactions(channel.chat.id)
 
   self.status.events.on("chatsLoaded") do(e:Args):
     self.view.calculateUnreadMessages()
@@ -36,6 +41,7 @@ proc handleChatEvents(self: ChatController) =
     var channel = ChannelArgs(e)
     discard self.view.chats.addChatItemToList(channel.chat)
     self.status.chat.chatMessages(channel.chat.id)
+    self.status.chat.chatReactions(channel.chat.id)
     self.view.setActiveChannel(channel.chat.id)
 
   self.status.events.on("channelLeft") do(e: Args):

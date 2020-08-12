@@ -199,4 +199,19 @@ Item {
         id: imageComponent
         ImageMessage {}
     }
+
+    Loader {
+        id: emojiReactionLoader
+        active: emojiReactions !== ""
+        sourceComponent: emojiReactionsComponent
+        anchors.left: !isCurrentUser ? chatBox.left : undefined
+        anchors.right: !isCurrentUser ? undefined : chatBox.right
+        anchors.top: chatBox.bottom
+        anchors.topMargin: 2
+    }
+
+    Component {
+        id: emojiReactionsComponent
+        EmojiReactions {}
+    }
 }

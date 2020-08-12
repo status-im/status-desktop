@@ -65,6 +65,24 @@ proc chatMessages*(chatId: string, cursor: string = ""): (string, seq[Message]) 
 
   return (rpcResult{"cursor"}.getStr, messages)
 
+
+proc getEmojiReactionsByChatId*(chatId: string, cursor: string = ""): (string, seq[Reaction]) =
+  var reactions: seq[Reaction] = @[]
+  var cursorVal: JsonNode
+  
+  if cursor == "":
+    cursorVal = newJNull()
+  else:
+    cursorVal = newJString(cursor)
+
+  let rpcResult = parseJson(callPrivateRPC("emojiReactionsByChatID".prefix, %* [chatId, cursorVal, 20]))["result"]
+
+  if rpcResult != nil and rpcResult.len != 0:
+    for jsonMsg in rpcResult:
+      reactions.add(jsonMsg.toReaction)
+
+  return (rpcResult{"cursor"}.getStr, reactions)
+
 # TODO this probably belongs in another file
 proc generateSymKeyFromPassword*(): string =
   result = ($parseJson(callPrivateRPC("waku_generateSymKeyFromPassword", %* [

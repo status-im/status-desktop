@@ -62,6 +62,7 @@ QtObject:
     
     case signalType:
       of SignalType.Message:
+        echo $jsonSignal
         signal = messages.fromEvent(jsonSignal)
       of SignalType.EnvelopeSent:
         signal = envelopes.fromEvent(jsonSignal)

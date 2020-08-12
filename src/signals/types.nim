@@ -32,6 +32,7 @@ type MessageSignal* = ref object of Signal
   chats*: seq[Chat]
   contacts*: seq[Profile]
   installations*: seq[Installation]
+  emojiReactions*: seq[Reaction]
   
 type Filter* = object
   chatId*: string
