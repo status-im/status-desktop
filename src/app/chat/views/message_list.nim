@@ -30,6 +30,7 @@ type
     Image = UserRole + 19
     Audio = UserRole + 20
     AudioDurationMs = UserRole + 21
+    EmojiReactions = UserRole + 22
 
 QtObject:
   type
@@ -115,6 +116,7 @@ QtObject:
       of ChatMessageRoles.Image: result = newQVariant(message.image)
       of ChatMessageRoles.Audio: result = newQVariant(message.audio)
       of ChatMessageRoles.AudioDurationMs: result = newQVariant(message.audioDurationMs)
+      of ChatMessageRoles.EmojiReactions: result = newQVariant(message.emojiReactions)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -138,7 +140,8 @@ QtObject:
       ChatMessageRoles.Timeout.int: "timeout",
       ChatMessageRoles.Image.int: "image",
       ChatMessageRoles.Audio.int: "audio",
-      ChatMessageRoles.AudioDurationMs.int: "audioDurationMs"
+      ChatMessageRoles.AudioDurationMs.int: "audioDurationMs",
+      ChatMessageRoles.EmojiReactions.int: "emojiReactions"
     }.toTable
 
   proc getMessageIndex(self: ChatMessageList, messageId: string): int {.slot.} =
@@ -175,10 +178,21 @@ QtObject:
       self.messages.add(message)
     self.endInsertRows()
 
+  proc getMessageById*(self: ChatMessageList, messageId: string): Message =
+    if (not self.messageIndex.hasKey(messageId)): return
+    return self.messages[self.messageIndex[messageId]]
+
   proc clear*(self: ChatMessageList) =
     self.beginResetModel()
     self.messages = @[]
     self.endResetModel()
+
+  proc setMessageReactions*(self: ChatMessageList, messageId: string, newReactions: string)=
+    let msgIdx = self.messageIndex[messageId]
+    self.messages[msgIdx].emojiReactions = newReactions
+    let topLeft = self.createIndex(msgIdx, 0, nil)
+    let bottomRight = self.createIndex(msgIdx, 0, nil)
+    self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.EmojiReactions.int])
 
   proc markMessageAsSent*(self: ChatMessageList, messageId: string)=
     let topLeft = self.createIndex(0, 0, nil)
@@ -186,6 +200,7 @@ QtObject:
     for m in self.messages.mitems:
       if m.id == messageId:
         m.outgoingStatus = "sent"
+        break
     self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.OutgoingStatus.int])
 
   proc updateUsernames*(self: ChatMessageList, contacts: seq[Profile]) =

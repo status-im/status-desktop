@@ -42,6 +42,7 @@ Rectangle {
             verticalPadding: imageChatBox.chatVerticalPadding
             anchors.top: (index === 0) ? parent.top: parent.children[index-1].bottom
             anchors.topMargin: verticalPadding
+            anchors.horizontalCenter: parent.horizontalCenter
             source: modelData
         }
     }

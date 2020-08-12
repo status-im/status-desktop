@@ -17,6 +17,7 @@ type
     chats*: seq[Chat]
     messages*: seq[Message]
     contacts*: seq[Profile]
+    emojiReactions*: seq[Reaction]
 
   ChatIdArg* = ref object of Args
     chatId*: string
@@ -33,11 +34,15 @@ type
   MsgsLoadedArgs* = ref object of Args
     messages*: seq[Message]
 
+  ReactionsLoadedArgs* = ref object of Args
+    reactions*: seq[Reaction]
+
   ChatModel* = ref object
     events*: EventEmitter
     contacts*: Table[string, Profile]
     channels*: Table[string, Chat]
     msgCursor*: Table[string, string]
+    emojiCursor*: Table[string, string]
     recentStickers*: seq[Sticker]
     availableStickerPacks*: Table[int, StickerPack]
     installedStickerPacks*: Table[int, StickerPack]
@@ -55,6 +60,7 @@ proc newChatModel*(events: EventEmitter): ChatModel =
   result.contacts = initTable[string, Profile]()
   result.channels = initTable[string, Chat]()
   result.msgCursor = initTable[string, string]()
+  result.emojiCursor = initTable[string, string]()
   result.recentStickers = @[]
   result.availableStickerPacks = initTable[int, StickerPack]()
   result.installedStickerPacks = initTable[int, StickerPack]()
@@ -64,12 +70,12 @@ proc newChatModel*(events: EventEmitter): ChatModel =
 proc delete*(self: ChatModel) =
   discard
 
-proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message]) =
+proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction]) =
   for chat in chats:
     if chat.isActive:
       self.channels[chat.id] = chat
 
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[], emojiReactions: emojiReactions))
 
 proc hasChannel*(self: ChatModel, chatId: string): bool =
   self.channels.hasKey(chatId)
@@ -255,6 +261,22 @@ proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true) =
   let messageTuple = status_chat.chatMessages(chatId, self.msgCursor[chatId])
   self.msgCursor[chatId] = messageTuple[0];
   self.events.emit("messagesLoaded", MsgsLoadedArgs(messages: messageTuple[1]))
+
+proc chatReactions*(self: ChatModel, chatId: string, initialLoad:bool = true) =
+  try:
+    if not self.emojiCursor.hasKey(chatId):
+      self.emojiCursor[chatId] = "";
+
+    # Messages were already loaded, since cursor will 
+    # be nil/empty if there are no more messages
+    if(not initialLoad and self.emojiCursor[chatId] == ""): return
+
+    let reactionTuple = status_chat.getEmojiReactionsByChatId(chatId, self.emojiCursor[chatId])
+    self.emojiCursor[chatId] = reactionTuple[0];
+    self.events.emit("reactionsLoaded", ReactionsLoadedArgs(reactions: reactionTuple[1]))
+  except Exception as e:
+    error "Error reactions", msg = e.msg
+  
 
 proc markAllChannelMessagesRead*(self: ChatModel, chatId: string): JsonNode =
   var response = status_chat.markAllRead(chatId)

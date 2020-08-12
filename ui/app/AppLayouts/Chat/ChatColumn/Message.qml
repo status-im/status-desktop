@@ -18,6 +18,7 @@ Item {
     property string outgoingStatus: ""
     property string responseTo: ""
     property string messageId: ""
+    property string emojiReactions: ""
     property int prevMessageIndex: -1
     property bool timeout: false
 

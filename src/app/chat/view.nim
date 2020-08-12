@@ -252,6 +252,31 @@ QtObject:
         else:
           self.newMessagePushed()
 
+  proc pushReactions*(self:ChatsView, reactions: var seq[Reaction]) =
+    let t = reactions.len
+    for reaction in reactions.mitems:
+      let messageList = self.messageList[reaction.chatId]
+      var message = messageList.getMessageById(reaction.messageId)
+      var oldReactions: JsonNode
+      if (message.emojiReactions == "") :
+        oldReactions = %*{}
+      else: 
+        oldReactions = parseJson(message.emojiReactions)
+
+      if (oldReactions.hasKey(reaction.id)):
+        if (reaction.retracted):
+          # Remove the reaction
+          oldReactions.delete(reaction.id)
+          messageList.setMessageReactions(reaction.messageId, $oldReactions)
+        continue
+
+      oldReactions[reaction.id] = %* {
+        "from": reaction.fromAccount,
+        "emojiId": reaction.emojiId
+      }
+      messageList.setMessageReactions(reaction.messageId, $oldReactions)
+
+
   proc updateUsernames*(self:ChatsView, contacts: seq[Profile]) =
     if contacts.len > 0:
       # Updating usernames for all the messages list
@@ -296,6 +321,7 @@ QtObject:
   proc loadMoreMessages*(self: ChatsView) {.slot.} =
     trace "Loading more messages", chaId = self.activeChannel.id
     self.status.chat.chatMessages(self.activeChannel.id, false)
+    self.status.chat.chatReactions(self.activeChannel.id, false)
     self.messagesLoaded();
 
   proc loadMoreMessagesWithIndex*(self: ChatsView, channelIndex: int) {.slot.} =
@@ -304,6 +330,7 @@ QtObject:
     if (selectedChannel == nil): return
     trace "Loading more messages", chaId = selectedChannel.id
     self.status.chat.chatMessages(selectedChannel.id, false)
+    self.status.chat.chatReactions(selectedChannel.id, false)
     self.messagesLoaded();
 
   proc leaveChatByIndex*(self: ChatsView, channelIndex: int) {.slot.} =

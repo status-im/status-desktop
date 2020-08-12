@@ -1,6 +1,6 @@
 
 proc handleMessage(self: ChatController, data: MessageSignal) =
-  self.status.chat.update(data.chats, data.messages)
+  self.status.chat.update(data.chats, data.messages, data.emojiReactions)
 
 proc handleDiscoverySummary(self: ChatController, data: DiscoverySummarySignal) =
   ## Handle mailserver peers being added and removed

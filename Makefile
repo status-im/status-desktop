@@ -243,7 +243,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp ui/i18n/* tmp/linux/dist/usr/i18n
 
 	echo -e $(BUILD_MSG) "AppImage"
-	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-translations -no-copy-copyright-files -qmldir=ui -qmlimport=$(QTDIR)/qml -bundle-non-qt-libs
+	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QTDIR)/qml -bundle-non-qt-libs
 
 	rm tmp/linux/dist/AppRun
 	cp AppRun tmp/linux/dist/.
