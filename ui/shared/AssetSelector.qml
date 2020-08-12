@@ -11,6 +11,13 @@ Item {
     width: 86
     height: 24
 
+    onSelectedAssetChanged: {
+        if (selectedAsset && selectedAsset.symbol) {
+            iconImg.source = "../app/img/tokens/" + selectedAsset.symbol.toUpperCase() + ".png"
+            selectedTextField.text = selectedAsset.symbol.toUpperCase()
+        }
+    }
+
     Select {
         id: select
         model: root.assets
@@ -32,12 +39,10 @@ Item {
                 sourceSize.width: 24
                 anchors.verticalCenter: parent.verticalCenter
                 fillMode: Image.PreserveAspectFit
-                source: "../app/img/tokens/" + selectedAsset.symbol.toUpperCase() + ".png"
             }
 
             StyledText {
                 id: selectedTextField
-                text: selectedAsset.symbol.toUpperCase()
                 anchors.left: iconImg.right
                 anchors.leftMargin: 4
                 anchors.verticalCenter: parent.verticalCenter
@@ -58,7 +63,7 @@ Item {
             property bool isLastItem: index === assets.rowCount() - 1
 
             Component.onCompleted: {
-                if (isFirstItem) {
+                if (!selectedAsset && isFirstItem) {
                     root.selectedAsset = { address, name, value, symbol, fiatBalanceDisplay, fiatBalance }
                 }
             }
