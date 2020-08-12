@@ -28,7 +28,7 @@ Item {
                         }
                     }
                     byEmoji[reaction.emojiId].count++;
-                    if (!byEmoji[reaction.emojiId].currentUserReacted && reaction.fromAuthor === profileModel.profile.pubKey) {
+                    if (!byEmoji[reaction.emojiId].currentUserReacted && reaction.from === profileModel.profile.pubKey) {
                         byEmoji[reaction.emojiId].currentUserReacted = true
                     }
 

@@ -3,7 +3,9 @@ import "../../../../imports"
 import "../../../../shared"
 
 SVGImage {
+    property var closeModal: function () {}
     property int emojiId
+    id: reactionImage
     width: 32
     fillMode: Image.PreserveAspectFit
 
@@ -11,8 +13,8 @@ SVGImage {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            console.log('Clicked on Emoji', emojiId)
-            console.log('This feature will be implmented at a later date')
+            chatsModel.addEmojiReaction(SelectedMessage.messageId, emojiId)
+            reactionImage.closeModal()
 
         }
     }
