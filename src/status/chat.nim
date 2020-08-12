@@ -281,6 +281,10 @@ proc addEmojiReaction*(self: ChatModel, chatId: string, messageId: string, emoji
   let reactions = status_chat.addEmojiReaction(chatId, messageId, emojiId)
   self.events.emit("reactionsLoaded", ReactionsLoadedArgs(reactions: reactions))
 
+proc removeEmojiReaction*(self: ChatModel, emojiReactionId: string) =
+  let reactions = status_chat.removeEmojiReaction(emojiReactionId)
+  self.events.emit("reactionsLoaded", ReactionsLoadedArgs(reactions: reactions))
+
 proc markAllChannelMessagesRead*(self: ChatModel, chatId: string): JsonNode =
   var response = status_chat.markAllRead(chatId)
   result = parseJson(response)

@@ -31,6 +31,7 @@ QtObject:
       stickerPacks*: StickerPackList
       recentStickers*: StickerList
       replyTo: string
+      pubKey*: string
       channelOpenTime*: Table[string, int64]
       connected: bool
       unreadMessageCnt: int
@@ -58,6 +59,7 @@ QtObject:
     result.stickerPacks = newStickerPackList()
     result.recentStickers = newStickerList()
     result.unreadMessageCnt = 0
+    result.pubKey = ""
     result.setup()
 
   proc addStickerPackToList*(self: ChatsView, stickerPack: StickerPack, isInstalled, isBought: bool) =
@@ -252,8 +254,24 @@ QtObject:
         else:
           self.newMessagePushed()
 
-  proc addEmojiReaction*(self: ChatsView, messageId: string, emojiId: int) {.slot.} =
-    self.status.chat.addEmojiReaction(self.activeChannel.id, messageId, emojiId)
+  proc messageEmojiReactionId(self: ChatsView, chatId: string, messageId: string, emojiId: int): string =
+    let message = self.messageList[chatId].getMessageById(messageId)
+    if (message.emojiReactions == "") :
+      return ""
+
+    let oldReactions = parseJson(message.emojiReactions)
+
+    for pair in oldReactions.pairs:
+      if (pair[1]["emojiId"].getInt == emojiId and pair[1]["from"].getStr == self.pubKey):
+        return pair[0]
+    return ""
+
+  proc toggleEmojiReaction*(self: ChatsView, messageId: string, emojiId: int) {.slot.} =
+    let emojiReactionId = self.messageEmojiReactionId(self.activeChannel.id, messageId, emojiId)
+    if (emojiReactionId == ""):
+      self.status.chat.addEmojiReaction(self.activeChannel.id, messageId, emojiId)
+    else:
+      self.status.chat.removeEmojiReaction(emojiReactionId)
 
   proc pushReactions*(self:ChatsView, reactions: var seq[Reaction]) =
     let t = reactions.len

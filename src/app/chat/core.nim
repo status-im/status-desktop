@@ -5,6 +5,7 @@ import ../../status/messages as messages_model
 import ../../signals/types
 import ../../status/libstatus/types as status_types
 import ../../status/libstatus/wallet as status_wallet
+import ../../status/libstatus/settings as status_settings
 import ../../status/[chat, contacts, status]
 import view, views/channels_list, views/message_list
 
@@ -34,8 +35,9 @@ proc init*(self: ChatController) =
   self.handleChatEvents()
   self.status.mailservers.init()
   self.status.chat.init()
-  
   self.view.obtainAvailableStickerPacks()
+  let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+  self.view.pubKey = pubKey
 
   let recentStickers = self.status.chat.getRecentStickers()
   for sticker in recentStickers:

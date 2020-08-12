@@ -92,6 +92,17 @@ proc addEmojiReaction*(chatId: string, messageId: string, emojiId: int): seq[Rea
       reactions.add(jsonMsg.toReaction)
   
   result = reactions
+
+proc removeEmojiReaction*(emojiReactionId: string): seq[Reaction] =
+  let rpcResult = parseJson(callPrivateRPC("sendEmojiReactionRetraction".prefix, %* [emojiReactionId]))["result"]
+ 
+  var reactions: seq[Reaction] = @[]
+  if rpcResult != nil and rpcResult["emojiReactions"] != nil and rpcResult["emojiReactions"].len != 0:
+    for jsonMsg in rpcResult["emojiReactions"]:
+      reactions.add(jsonMsg.toReaction)
+  
+  result = reactions
+
 # TODO this probably belongs in another file
 proc generateSymKeyFromPassword*(): string =
   result = ($parseJson(callPrivateRPC("waku_generateSymKeyFromPassword", %* [
