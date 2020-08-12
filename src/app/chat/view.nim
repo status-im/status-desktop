@@ -34,6 +34,7 @@ QtObject:
       channelOpenTime*: Table[string, int64]
       connected: bool
       unreadMessageCnt: int
+      audioRecorder: QAudioRecorder
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
 
@@ -45,6 +46,7 @@ QtObject:
       msg.delete
     self.messageList = initTable[string, ChatMessageList]()
     self.channelOpenTime = initTable[string, int64]()
+    self.audioRecorder.delete
     self.QAbstractListModel.delete
 
   proc newChatsView*(status: Status): ChatsView =
@@ -440,3 +442,10 @@ QtObject:
     if (selectedChannel == nil): return false
     result = selectedChannel.muted
     
+
+  proc startRecording*(self: ChatsView) {.slot.}=
+    self.audioRecorder = newQAudioRecorder(TMPDIR)
+    self.audioRecorder.start()
+
+  proc stopRecording*(self: ChatsView) {.slot.} =
+    echo self.audioRecorder.stop()
