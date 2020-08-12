@@ -10,26 +10,50 @@ Item {
     property var contacts
     property int inputWidth: 272
     property int sourceSelectWidth: 136
-    property string label: qsTr("Recipient")
-    property string selectedRecipient: ""
-    height: inpAddress.height + txtLabel.height
+    property alias label: txtLabel.text
+    // If supplied, additional info will be displayed top-right in danger colour (red)
+    property alias additionalInfo: txtAddlInfo.text
+    property var selectedRecipient: { }
+    property bool readOnly: false
+    height: (readOnly ? inpReadOnly.height : inpAddress.height) + txtLabel.height
+    readonly property string addressValidationError: qsTr("Invalid ethereum address")
 
     function validate() {
-        if (selAddressSource.selectedSource === "Address") {
-            inpAddress.validate()
+        let isValid = true
+        if (readOnly) {
+            isValid = Utils.isValidAddress(selectedRecipient.address)
+            if (!isValid) {
+                inpReadOnly.validationError = addressValidationError
+            }
+        } else if (selAddressSource.selectedSource === "Address") {
+            isValid = inpAddress.validate()
         } else if (selAddressSource.selectedSource === "Contact") {
-            selContact.validate()
+            isValid = selContact.validate()
         }
+        return isValid
     }
 
     Text {
         id: txtLabel
         visible: label !== ""
-        text: root.label
+        text: qsTr("Recipient")
         font.pixelSize: 13
-        font.family: Style.current.fontBold.name
+        font.family: Style.current.fontRegular.name
+        font.weight: Font.Medium
         color: Style.current.textColor
         height: 18
+    }
+
+    Text {
+        id: txtAddlInfo
+        visible: text !== ""
+        text: ""
+        font.pixelSize: 13
+        font.family: Style.current.fontRegular.name
+        font.weight: Font.Medium
+        color: Style.current.danger
+        height: 18
+        anchors.right: parent.right
     }
 
     RowLayout {
@@ -39,16 +63,41 @@ Item {
         anchors.right: parent.right
         spacing: 8
 
+        Input {
+            id: inpReadOnly
+            visible: root.readOnly
+            Layout.preferredWidth: selAddressSource.visible ? root.inputWidth : parent.width
+            Layout.alignment: Qt.AlignTop
+            Layout.fillWidth: true
+            anchors.left: undefined
+            anchors.right: undefined
+            text: (root.selectedRecipient && root.selectedRecipient.name) ? root.selectedRecipient.name : qsTr("No recipient selected")
+            textField.leftPadding: 14
+            textField.topPadding: 18
+            textField.bottomPadding: 18
+            textField.verticalAlignment: TextField.AlignVCenter
+            textField.font.pixelSize: 15
+            textField.color: Style.current.secondaryText
+            textField.readOnly: true
+            validationErrorAlignment: TextEdit.AlignRight
+            validationErrorTopMargin: 8
+            customHeight: 56
+        }
+
         AddressInput {
             id: inpAddress
             width: root.inputWidth
             label: ""
-            Layout.preferredWidth: root.inputWidth
+            visible: !root.readOnly
+            Layout.preferredWidth: selAddressSource.visible ? root.inputWidth : parent.width
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
-            validationError: qsTr("Invalid ethereum address")
+            validationError: root.addressValidationError
             onSelectedAddressChanged: {
-                root.selectedRecipient = selectedAddress
+                if (root.readOnly) {
+                    return
+                }
+                root.selectedRecipient = { address: selectedAddress }
             }
         }
 
@@ -58,12 +107,15 @@ Item {
             visible: false
             width: root.inputWidth
             dropdownWidth: parent.width
-            Layout.preferredWidth: root.inputWidth
+            Layout.preferredWidth: selAddressSource.visible ? root.inputWidth : parent.width
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
             onSelectedContactChanged: {
+                if (root.readOnly) {
+                    return
+                }
                 if(selectedContact && selectedContact.address) {
-                    root.selectedRecipient = selectedContact.address
+                    root.selectedRecipient = { name: selectedContact.name, address: selectedContact.address }
                 }
             }
         }
@@ -75,21 +127,28 @@ Item {
             width: root.inputWidth
             dropdownWidth: parent.width
             label: ""
-            Layout.preferredWidth: root.inputWidth
+            Layout.preferredWidth: selAddressSource.visible ? root.inputWidth : parent.width
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
             onSelectedAccountChanged: {
-                root.selectedRecipient = selectedAccount.address
+                if (root.readOnly) {
+                    return
+                }
+                root.selectedRecipient = { address: selectedAccount.address }
             }
         }
         AddressSourceSelector {
             id: selAddressSource
+            visible: !root.readOnly
             sources: ["Address", "Contact", "My account"]
             width: sourceSelectWidth
             Layout.preferredWidth: root.sourceSelectWidth
             Layout.alignment: Qt.AlignTop
 
             onSelectedSourceChanged: {
+                if (root.readOnly) {
+                    return
+                }
                 switch (selectedSource) {
                     case "Address":
                         inpAddress.visible = true
