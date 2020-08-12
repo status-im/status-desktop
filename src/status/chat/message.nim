@@ -48,6 +48,15 @@ type Message* = object
   image*: string
   audio*: string
   audioDurationMs*: int
+  emojiReactions*: string
+
+type Reaction* = object
+  id*: string
+  chatId*: string
+  fromAccount*: string
+  messageId*: string
+  emojiId*: int
+  retracted*: bool
 
 
 proc `$`*(self: Message): string =

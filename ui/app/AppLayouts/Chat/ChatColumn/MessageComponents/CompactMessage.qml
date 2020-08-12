@@ -151,4 +151,18 @@ Item {
             audioSource: audio
         }
     }
+
+    Loader {
+        id: emojiReactionLoader
+        active: emojiReactions !== ""
+        sourceComponent: emojiReactionsComponent
+        anchors.top: chatText.bottom
+        anchors.left: chatText.left
+        anchors.topMargin: 2
+    }
+
+    Component {
+        id: emojiReactionsComponent
+        EmojiReactions {}
+    }
 }

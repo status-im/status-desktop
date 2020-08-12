@@ -11,6 +11,8 @@ proc toMessage*(jsonMsg: JsonNode): Message
 
 proc toChat*(jsonChat: JsonNode): Chat
 
+proc toReaction*(jsonReaction: JsonNode): Reaction
+
 proc fromEvent*(event: JsonNode): Signal = 
   var signal:MessageSignal = MessageSignal()
   signal.messages = @[]
@@ -42,6 +44,10 @@ proc fromEvent*(event: JsonNode): Signal =
   if event["event"]{"installations"} != nil:
     for jsonInstallation in event["event"]["installations"]:
       signal.installations.add(jsonInstallation.toInstallation)
+
+  if event["event"]{"emojiReactions"} != nil:
+    for jsonReaction in event["event"]["emojiReactions"]:
+      signal.emojiReactions.add(jsonReaction.toReaction)
 
   result = signal
 
@@ -195,4 +201,12 @@ proc toMessage*(jsonMsg: JsonNode): Message =
 
   result = message
 
-
+proc toReaction*(jsonReaction: JsonNode): Reaction =
+  result = Reaction(
+      id: jsonReaction{"id"}.getStr,
+      chatId: jsonReaction{"chatId"}.getStr,
+      fromAccount: jsonReaction{"from"}.getStr,
+      messageId: jsonReaction{"messageId"}.getStr,
+      emojiId: jsonReaction{"emojiId"}.getInt,
+      retracted: jsonReaction{"retracted"}.getBool
+    )

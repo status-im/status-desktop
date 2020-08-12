@@ -45,7 +45,7 @@ StyledTextEdit {
                         `white-space: pre-wrap;`+
                     `}`+
                     `a {`+
-                        `color: ${isCurrentUser ? Style.current.white : Style.current.textColor};`+
+                        `color: ${isCurrentUser && !appSettings.compactMode ? Style.current.white : Style.current.textColor};`+
                     `}`+
                     `a.mention {`+
                         `color: ${isCurrentUser ? Style.current.cyan : Style.current.turquoise};`+
