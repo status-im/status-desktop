@@ -18,6 +18,12 @@ Item {
     height: (readOnly ? inpReadOnly.height : inpAddress.height) + txtLabel.height
     readonly property string addressValidationError: qsTr("Invalid ethereum address")
 
+    enum Type {
+        Address,
+        Contact,
+        Account
+    }
+
     function validate() {
         let isValid = true
         if (readOnly) {
@@ -97,7 +103,7 @@ Item {
                 if (root.readOnly) {
                     return
                 }
-                root.selectedRecipient = { address: selectedAddress }
+                root.selectedRecipient = { address: selectedAddress, type: RecipientSelector.Type.Address }
             }
         }
 
@@ -115,7 +121,8 @@ Item {
                     return
                 }
                 if(selectedContact && selectedContact.address) {
-                    root.selectedRecipient = { name: selectedContact.name, address: selectedContact.address }
+                    const { address, name, alias, isContact, identicon, ensVerified } = selectedContact
+                    root.selectedRecipient = { address, name, alias, isContact, identicon, ensVerified, type: RecipientSelector.Type.Contact }
                 }
             }
         }
@@ -134,7 +141,8 @@ Item {
                 if (root.readOnly) {
                     return
                 }
-                root.selectedRecipient = { address: selectedAccount.address }
+                const { address, name, iconColor, assets, fiatBalance } = selectedAccount
+                root.selectedRecipient = { address, name, iconColor, assets, fiatBalance, type: RecipientSelector.Type.Account }
             }
         }
         AddressSourceSelector {
@@ -149,21 +157,31 @@ Item {
                 if (root.readOnly) {
                     return
                 }
+                let address, name
                 switch (selectedSource) {
                     case "Address":
                         inpAddress.visible = true
                         selContact.visible = selAccount.visible = false
                         root.height = Qt.binding(function() { return inpAddress.height + txtLabel.height })
+                        root.selectedRecipient = { address: inpAddress.selectedAddress, type: RecipientSelector.Type.Address }
                         break;
                     case "Contact":
                         selContact.visible = true
                         inpAddress.visible = selAccount.visible = false
                         root.height = Qt.binding(function() { return selContact.height + txtLabel.height })
+                        let { alias, isContact, identicon, ensVerified } = selContact.selectedContact
+                        address = selContact.selectedContact.address
+                        name = selContact.selectedContact.name
+                        root.selectedRecipient = { address, name, alias, isContact, identicon, ensVerified, type: RecipientSelector.Type.Contact }
                         break;
                     case "My account":
                         selAccount.visible = true
                         inpAddress.visible = selContact.visible = false
                         root.height = Qt.binding(function() { return selAccount.height + txtLabel.height })
+                        const { iconColor, assets, fiatBalance } = selAccount.selectedAccount
+                        address = selAccount.selectedAccount.address
+                        name = selAccount.selectedAccount.name
+                        root.selectedRecipient = { address, name, iconColor, assets, fiatBalance, type: RecipientSelector.Type.Account }
                         break;
                 }
             }

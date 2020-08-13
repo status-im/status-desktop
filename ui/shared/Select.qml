@@ -7,7 +7,8 @@ import "../imports"
 Item {
     enum MenuAlignment {
         Left,
-        Right
+        Right,
+        Center
     }
     property string label: ""
     readonly property bool hasLabel: label !== ""
@@ -18,9 +19,11 @@ Item {
     property color bgColorHover: bgColor
     property alias selectedItemView: selectedItemContainer.children
     property int caretRightMargin: Style.current.padding
+    property int caretLeftMargin: 8
     property alias select: inputRectangle
     property int menuAlignment: Select.MenuAlignment.Right
     property Item zeroItemsView: Item {}
+    property int contentWidth: inputRectangle.width - (caret.width + caretRightMargin + caretLeftMargin)
     anchors.left: parent.left
     anchors.right: parent.right
 
@@ -147,7 +150,17 @@ Item {
                 selectMenu.close()
             } else {
                 const rightOffset = inputRectangle.width - selectMenu.width
-                const offset = root.menuAlignment === Select.MenuAlignment.Left ? 0 : rightOffset
+                let offset = rightOffset
+                switch (root.menuAlignment) {
+                    case Select.MenuAlignment.Left:
+                        offset = 0
+                        break
+                    case Select.MenuAlignment.Right:
+                        offset = rightOffset
+                        break
+                    case Select.MenuAlignment.Center:
+                        offset = rightOffset / 2
+                }
                 selectMenu.popup(inputRectangle.x + offset, inputRectangle.y + inputRectangle.height + 8)
             }
         }

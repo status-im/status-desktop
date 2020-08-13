@@ -69,4 +69,15 @@ QtObject {
     function isValidAddress(inputValue) {
         return /0x[a-fA-F0-9]{40}/.test(inputValue)
     }
+
+    /**
+     * Removes trailing zeros from a string-representation of a number. Throws
+     * if parameter is not a string
+     */
+    function stripTrailingZeros(strNumber) {
+        if (!(typeof strNumber === "string")) {
+            throw "must be a string"
+        }
+        return strNumber.replace(/(\.[0-9]*[1-9])0+$|\.0*$/,'$1')
+    }
 }

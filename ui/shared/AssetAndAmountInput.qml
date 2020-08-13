@@ -9,11 +9,10 @@ Item {
     property string greaterThan0ErrorMessage: qsTr("Must be greater than 0")
     //% "This needs to be a number"
     property string invalidInputErrorMessage: qsTrId("this-needs-to-be-a-number")
-    //% "You need to enter an amount"
-    property string noInputErrorMessage: qsTrId("you-need-to-enter-an-amount")
+    property string noInputErrorMessage: qsTr("Please enter an amount")
     property string defaultCurrency: "USD"
-    property string fiatBalance: "0.00"
-    property alias text: inputAmount.text
+    property alias selectedFiatAmount: txtFiatBalance.text
+    property alias selectedAmount: inputAmount.text
     property var selectedAccount
     property alias selectedAsset: selectAsset.selectedAsset
     property var getFiatValue: function () {}
@@ -62,7 +61,7 @@ Item {
         if (!selectAsset.selectedAsset) {
             return
         }
-        txtBalance.text = selectAsset.selectedAsset.value
+        txtBalance.text = Utils.stripTrailingZeros(selectAsset.selectedAsset.value)
     }
 
     Item {
@@ -83,7 +82,7 @@ Item {
         StyledText {
             id: txtBalance
             property bool hovered: false
-            text: selectAsset.selectedAsset ? selectAsset.selectedAsset.value : "0.00"
+            text: selectAsset.selectedAsset ? Utils.stripTrailingZeros(selectAsset.selectedAsset.value) : "0.00"
             anchors.right: parent.right
             font.weight: Font.Medium
             font.pixelSize: 13
@@ -146,7 +145,7 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.smallPadding
         onSelectedAssetChanged: {
-            txtBalance.text = selectAsset.selectedAsset.value
+            txtBalance.text = Utils.stripTrailingZeros(selectAsset.selectedAsset.value)
             if (inputAmount.text === "" || isNan(inputAmount.text)) {
                 return
             }
@@ -168,7 +167,7 @@ Item {
             font.weight: Font.Medium
             font.pixelSize: 12
             inputMethodHints: Qt.ImhFormattedNumbersOnly
-            text: root.fiatBalance
+            text: "0.00"
             selectByMouse: true
             background: Rectangle {
                 color: Style.current.transparent
