@@ -69,6 +69,9 @@ Item {
 
     SendModal{
         id: sendModal
+        onOpened: {
+          walletModel.getGasPricePredictions()
+        }
     }
 
     ReceiveModal{
