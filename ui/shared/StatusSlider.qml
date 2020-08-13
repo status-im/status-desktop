@@ -8,7 +8,6 @@ QQC1.Slider {
     id: slider
     anchors.left: parent.left
     anchors.right: parent.right
-    stepSize: ((slider.maximumValue - slider.minimumValue) / 10).toFixed(1)
     style: SliderStyle {
         groove: Rectangle {
             implicitHeight: 4

@@ -21,6 +21,12 @@ type SignalType* {.pure.} = enum
   WhisperFilterAdded = "whisper.filter.added"
   Unknown
 
+type GasPricePrediction* = object
+  safeLow*: string
+  standard*: string
+  fast*: string
+  fastest*: string
+
 type DerivedAccount* = object
   publicKey*: string
   address*: string
