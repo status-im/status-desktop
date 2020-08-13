@@ -28,6 +28,7 @@ Item {
             select.select.border.width = 0
             validationErrorText.visible = false
         }
+        return isValid
     }
 
     Select {

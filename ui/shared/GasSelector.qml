@@ -23,9 +23,13 @@ Item {
     }
 
     function updateGasEthValue() {
+        // causes error on application load without this null check
+        if (!inputGasPrice || !inputGasLimit) {
+            return
+        }
         let ethValue = root.getGasEthValue(inputGasPrice.text, inputGasLimit.text)
         let fiatValue = root.getFiatValue(ethValue, "ETH", root.defaultCurrency)
-        let summary = ethValue + " ETH ~" + fiatValue + " " + root.defaultCurrency.toUpperCase()
+        let summary = Utils.stripTrailingZeros(ethValue) + " ETH ~" + fiatValue + " " + root.defaultCurrency.toUpperCase()
         labelGasPriceSummary.text = summary
         labelGasPriceSummaryAdvanced.text = summary
     }

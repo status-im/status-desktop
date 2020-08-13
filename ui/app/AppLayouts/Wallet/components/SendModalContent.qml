@@ -11,8 +11,6 @@ Item {
     property alias passwordInput: txtPassword
 
     property string passwordValidationError: ""
-    property string toValidationError: ""
-    property string amountValidationError: ""
 
     function send() {
         if (!validate()) {
@@ -20,7 +18,7 @@ Item {
         }
         let result = walletModel.onSendTransaction(selectFromAccount.selectedAccount.address,
                                                    selectRecipient.selectedRecipient,
-                                                   selectAsset.selectedAsset.address,
+                                                   txtAmount.selectedAsset.address,
                                                    txtAmount.text,
                                                    txtPassword.text)
 
@@ -47,7 +45,17 @@ Item {
             passwordValidationError = ""
         }
 
-        return passwordValidationError === "" && toValidationError === "" && amountValidationError === "" && isRecipientValid && isAssetAndAmountValid
+        return passwordValidationError === "" && isRecipientValid && isAssetAndAmountValid
+    }
+
+    function showPreview() {
+        pvwTransaction.visible = true
+        txtAmount.visible = selectFromAccount.visible = selectRecipient.visible = txtPassword.visible = gasSelector.visible = false
+    }
+
+    function showInputs() {
+        pvwTransaction.visible = false
+        txtAmount.visible = selectFromAccount.visible = selectRecipient.visible = txtPassword.visible = gasSelector.visible = true
     }
 
     anchors.left: parent.left
@@ -58,6 +66,9 @@ Item {
         title: "Error sending the transaction"
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
+        onAccepted: {
+            sendModalContent.showInputs()
+        }
     }
     MessageDialog {
         id: sendingSuccess
@@ -67,6 +78,7 @@ Item {
         standardButtons: StandardButton.Ok
         onAccepted: {
             closePopup()
+            sendModalContent.showInputs()
         }
     }
 
@@ -87,20 +99,21 @@ Item {
         anchors.topMargin: Style.current.padding
         anchors.left: parent.left
         anchors.right: parent.right
+        label: qsTr("From account")
         onSelectedAccountChanged: {
             txtAmount.selectedAccount = selectFromAccount.selectedAccount
         }
     }
 
     GasSelector {
-      id: gasSelector
-      anchors.top: selectFromAccount.bottom
-      anchors.topMargin: Style.current.bigPadding
-      slowestGasPrice: parseFloat(walletModel.safeLowGasPrice)
-      fastestGasPrice: parseFloat(walletModel.fastestGasPrice)
-      getGasEthValue: walletModel.getGasEthValue
-      getFiatValue: walletModel.getFiatValue
-      defaultCurrency: walletModel.defaultCurrency
+        id: gasSelector
+        anchors.top: selectFromAccount.bottom
+        anchors.topMargin: Style.current.bigPadding
+        slowestGasPrice: parseFloat(walletModel.safeLowGasPrice)
+        fastestGasPrice: parseFloat(walletModel.fastestGasPrice)
+        getGasEthValue: walletModel.getGasEthValue
+        getFiatValue: walletModel.getFiatValue
+        defaultCurrency: walletModel.defaultCurrency
     }
 
     RecipientSelector {
@@ -114,6 +127,23 @@ Item {
         anchors.right: parent.right
     }
 
+    TransactionPreview {
+        id: pvwTransaction
+        visible: false
+        anchors.left: parent.left
+        anchors.right: parent.right
+        fromAccount: selectFromAccount.selectedAccount
+        gas: {
+            const value = walletModel.getGasEthValue(gasSelector.selectedGasPrice, gasSelector.selectedGasLimit)
+            const fiatValue = walletModel.getFiatValue(value, "ETH", walletModel.defaultCurrency)
+            return { value, "symbol": "ETH", fiatValue }
+        }
+        toAccount: selectRecipient.selectedRecipient
+        asset: txtAmount.selectedAsset
+        amount: { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount }
+        currency: walletModel.defaultCurrency
+    }
+
     Input {
         id: txtPassword
         //% "Password"
@@ -125,6 +155,7 @@ Item {
         textField.echoMode: TextInput.Password
         validationError: passwordValidationError
     }
+
 }
 
 /*##^##

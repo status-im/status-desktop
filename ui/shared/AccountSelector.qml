@@ -20,6 +20,7 @@ Item {
     // nothing will be displayed
     property string showAssetBalance: ""
     property int dropdownWidth: width
+    property alias dropdownAlignment: select.menuAlignment
 
     Repeater {
         visible: showAssetBalance !== ""
@@ -71,11 +72,10 @@ Item {
                 id: selectedTextField
                 text: selectedAccount.name
                 elide: Text.ElideRight
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.bigPadding
                 anchors.left: selectedIconImg.right
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
+                width: select.contentWidth - (Style.current.padding + selectedIconImg.width + anchors.leftMargin)
                 font.pixelSize: 15
                 verticalAlignment: Text.AlignVCenter
                 height: 22
@@ -143,15 +143,17 @@ Item {
                 id: column
                 anchors.left: iconImg.right
                 anchors.leftMargin: 14
+                anchors.right: txtFiatBalance.left
+                anchors.rightMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
 
                 StyledText {
                     id: accountName
                     text: name
                     elide: Text.ElideRight
-                    anchors.right: parent.right
-                    anchors.left: parent.left
                     font.pixelSize: 15
+                    anchors.left: parent.left
+                    anchors.right: parent.right
                     height: 22
                 }
 
@@ -166,6 +168,7 @@ Item {
                 }
             }
             StyledText {
+                id: txtFiatBalance
                 anchors.right: fiatCurrencySymbol.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: parent.verticalCenter

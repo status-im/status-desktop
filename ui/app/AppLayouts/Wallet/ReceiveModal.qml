@@ -46,6 +46,8 @@ ModalPopup {
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
         width: 240
+        dropdownWidth: parent.width - (Style.current.padding * 2)
+        dropdownAlignment: Select.MenuAlignment.Center
     }
 
     Input {

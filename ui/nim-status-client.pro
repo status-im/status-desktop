@@ -313,6 +313,7 @@ DISTFILES += \
     shared/AddButton.qml \
     shared/IconButton.qml \
     shared/Input.qml \
+    shared/LabelValueRow.qml \
     shared/ModalPopup.qml \
     shared/NotificationWindow.qml \
     shared/PopupMenu.qml \
@@ -332,6 +333,7 @@ DISTFILES += \
     shared/StyledTextField.qml \
     shared/SVGImage.qml \
     shared/TextWithLabel.qml \
+    shared/TransactionPreview.qml \
     shared/img/check.svg \
     shared/img/close.svg \
     shared/img/loading.png \

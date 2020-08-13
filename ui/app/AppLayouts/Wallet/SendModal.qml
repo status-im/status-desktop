@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.Layouts 1.13
 import "../../../imports"
 import "../../../shared"
 import "./components"
@@ -9,10 +10,10 @@ ModalPopup {
 
     //% "Send"
     title: qsTrId("command-button-send")
-    height: 600
+    height: 700
 
     onOpened: {
-        sendModalContent.amountInput.text = ""
+        sendModalContent.amountInput.selectedAmount = ""
         sendModalContent.passwordInput.text = ""
         sendModalContent.amountInput.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -24,15 +25,41 @@ ModalPopup {
         }
     }
 
-    footer: StyledButton {
+    footer: Item {
         anchors.top: parent.top
+        anchors.left: parent.left
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        //% "Send"
-        label: qsTrId("command-button-send")
-
-        onClicked: {
-            sendModalContent.send()
+        StyledButton {
+            id: btnBack
+            anchors.left: parent.left
+            label: qsTr("Back")
+            visible: !btnPreview.visible
+            onClicked: {
+                btnPreview.visible = true
+                sendModalContent.showInputs()
+            }
+        }
+        StyledButton {
+            id: btnPreview
+            anchors.right: parent.right
+            label: qsTr("Preview")
+            onClicked: {
+                if (!sendModalContent.validate()) {
+                    return
+                }
+                visible = false
+                sendModalContent.showPreview()
+            }
+        }
+        StyledButton {
+            id: btnSend
+            anchors.right: parent.right
+            visible: !btnPreview.visible
+            //% "Send"
+            label: qsTrId("command-button-send")
+            onClicked: {
+                sendModalContent.send()
+            }
         }
     }
 }
