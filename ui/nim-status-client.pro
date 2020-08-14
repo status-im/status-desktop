@@ -146,6 +146,7 @@ DISTFILES += \
     app/AppLayouts/Profile/Sections/AppearanceContainer.qml \
     app/AppLayouts/Profile/Sections/MyProfileContainer.qml \
     app/AppLayouts/Profile/Sections/SoundsContainer.qml \
+    app/AppLayouts/Wallet/ReceiveModal.qml \
     app/AppLayouts/Wallet/components/HeaderButton.qml \
     app/AppLayouts/Profile/Sections/Data/locales.js \
     fonts/InterStatus/InterStatus-Black.otf \

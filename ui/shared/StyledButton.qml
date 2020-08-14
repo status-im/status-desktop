@@ -9,6 +9,7 @@ Button {
     property color btnBorderColor: "transparent"
     property int btnBorderWidth: 0
     property color textColor: Style.current.blue
+    property int textSize: 15
     property bool disabled: false
 
     id: btnStyled
@@ -17,7 +18,8 @@ Button {
     enabled: !disabled
 
     background: Rectangle {
-        color: disabled ? Style.current.grey : btnStyled.btnColor
+        color: disabled ? Style.current.grey :
+                          hovered ? Qt.darker(btnStyled.btnColor, 1.1) : btnStyled.btnColor
         radius: Style.current.radius
         anchors.fill: parent
         border.color: btnBorderColor
@@ -27,7 +29,7 @@ Button {
     StyledText {
         id: txtBtnLabel
         color: btnStyled.disabled ? Style.current.darkGrey : btnStyled.textColor
-        font.pixelSize: 15
+        font.pixelSize: btnStyled.textSize
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         text: btnStyled.label

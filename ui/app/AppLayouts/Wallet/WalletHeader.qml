@@ -71,6 +71,11 @@ Item {
         id: sendModal
     }
 
+    ReceiveModal{
+        id: receiveModal
+        address: currentAccount.address
+    }
+
     SetCurrencyModal{
         id: setCurrencyModal
     }
@@ -114,7 +119,7 @@ Item {
             flipImage: true
             text: qsTr("Receive")
             onClicked: function () {
-                // Nothing for now
+                receiveModal.open()
             }
             anchors.left: sendBtn.right
             anchors.leftMargin: walletMenu.btnOuterMargin
