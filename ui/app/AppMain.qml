@@ -73,7 +73,7 @@ RowLayout {
                     text: chatsModel.unreadMessagesCount
                 }
             }
-            
+
         }
 
         TabButton {
@@ -104,40 +104,13 @@ RowLayout {
         }
 
         TabButton {
-            id: browserBtn
-            enabled: isExperimental === "1"
-            visible: this.enabled
-            width: 40
-            height: this.enabled ? 40 : 0
-            text: ""
-            anchors.topMargin: this.enabled ? 50 : 0
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: walletBtn.top
-            background: Rectangle {
-                color: Style.current.secondaryBackground
-                opacity: parent.checked ? 1 : 0
-                radius: 50
-            }
-
-            SVGImage {
-                id: image2
-                height: 24
-                width: 24
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                fillMode: Image.PreserveAspectFit
-                source: parent.checked ? "img/compassActive.svg" : "img/compass.svg"
-            }
-        }
-
-        TabButton {
             id: profileBtn
             width: 40
             height: 40
             text: ""
             anchors.topMargin: 50
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: browserBtn.top
+            anchors.top: walletBtn.top
             background: Rectangle {
                 color: Style.current.secondaryBackground
                 opacity: parent.checked ? 1 : 0
@@ -203,13 +176,6 @@ RowLayout {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
             appSettings: rowLayout.appSettings
-        }
-
-        BrowserLayout {
-            id: browserLayoutContainer
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            Layout.fillHeight: true
         }
 
         ProfileLayout {
