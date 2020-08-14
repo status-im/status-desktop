@@ -67,7 +67,7 @@ Menu {
         }
 
         // FIXME the icons looks very pixelated on Linux for some reason. Using smooth, mipmap, etc doesn't fix it
-        indicator: SVGImage {
+        indicator: Image {
             id: menuIcon
             source: popupMenuItem.icon.source
             anchors.left: parent.left
@@ -76,11 +76,14 @@ Menu {
             visible: !!popupMenuItem.icon.source.toString()
             width: !isNaN(popupMenuItem.icon.width) ? popupMenuItem.icon.width : 25
             height: !isNaN(popupMenuItem.icon.height) ? popupMenuItem.icon.height : 25
+            sourceSize.width: width
+            sourceSize.height: height
+            antialiasing: true
 
             ColorOverlay {
-                cached: true
                 anchors.fill: parent
                 source: parent
+                antialiasing: true
                 color: popupMenuItem.highlighted ?
                            Style.current.primaryMenuItemTextHover :
                            (popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Style.current.primaryMenuItemHover)

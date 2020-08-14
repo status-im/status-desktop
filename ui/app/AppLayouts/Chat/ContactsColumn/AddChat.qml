@@ -19,18 +19,24 @@ AddButton {
             //% "Start new chat"
             text: qsTrId("start-new-chat")
             icon.source: "../../../img/new_chat.svg"
+            icon.width: 20
+            icon.height: 20
             onTriggered: privateChatPopup.open()
         }
         Action {
             //% "Start group chat"
             text: qsTrId("start-group-chat")
             icon.source: "../../../img/group_chat.svg"
+            icon.width: 20
+            icon.height: 20
             onTriggered: groupChatPopup.open()
         }
         Action {
             //% "Join public chat"
             text: qsTrId("new-public-group-chat")
             icon.source: "../../../img/public_chat.svg"
+            icon.width: 20
+            icon.height: 20
             onTriggered: publicChatPopup.open()
         }
         onAboutToHide: {
