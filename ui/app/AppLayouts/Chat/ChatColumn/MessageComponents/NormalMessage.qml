@@ -84,7 +84,7 @@ Item {
         anchors.right: !isCurrentUser ? undefined : parent.right
         anchors.rightMargin: !isCurrentUser ? 0 : Style.current.padding
         anchors.top: authorCurrentMsg != authorPrevMsg && !isCurrentUser ? chatImage.top : (dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top)
-        anchors.topMargin: dateGroupLbl.visible ? Style.current.padding : 0
+        anchors.topMargin: 0
         visible: isMessage
 
         ChatReply {

@@ -58,13 +58,13 @@ ScrollView {
         subMenuIcons: [
             {
                 source:  Qt.resolvedUrl("../../../img/bell.svg"),
-                width: 13,
-                height: 13
+                width: 16,
+                height: 16
             },
             {
                 source: Qt.resolvedUrl("../../../img/fetch.svg"),
-                width: 13,
-                height: 13
+                width: 16,
+                height: 16
             }
         ]
 
@@ -76,8 +76,8 @@ ScrollView {
         Action {
             text: qsTr("View Group")
             icon.source: "../../../img/group.svg"
-            icon.width: 13
-            icon.height: 13
+            icon.width: 16
+            icon.height: 16
             onTriggered: console.log('TODO View group')
         }
 
@@ -97,8 +97,8 @@ ScrollView {
         Action {
             text: qsTr("Mark as Read")
             icon.source: "../../../img/check-circle.svg"
-            icon.width: 13
-            icon.height: 13
+            icon.width: 16
+            icon.height: 16
             onTriggered: {
                 chatsModel.markAllChannelMessagesReadByIndex(channelContextMenu.channelIndex)
             }
@@ -116,8 +116,8 @@ ScrollView {
         Action {
             text: qsTr("Clear History")
             icon.source: "../../../img/close.svg"
-            icon.width: 13
-            icon.height: 13
+            icon.width: 16
+            icon.height: 16
             onTriggered: chatsModel.clearChatHistoryByIndex(channelContextMenu.channelIndex)
         }
 
@@ -126,8 +126,8 @@ ScrollView {
         Action {
             text: qsTr("Leave Group")
             icon.source: "../../../img/leave_chat.svg"
-            icon.width: 13
-            icon.height: 13
+            icon.width: 16
+            icon.height: 16
             onTriggered: chatsModel.leaveChatByIndex(channelContextMenu.channelIndex)
         }
     }

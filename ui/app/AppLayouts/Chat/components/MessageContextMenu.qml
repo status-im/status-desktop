@@ -93,8 +93,8 @@ PopupMenu {
         text: qsTrId("view-profile")
         onTriggered: profilePopup.open()
         icon.source: "../../../img/profileActive.svg"
-        icon.width: 13
-        icon.height: 13
+        icon.width: 16
+        icon.height: 16
     }
     Action {
         text: messageContextMenu.isProfile ?
@@ -103,7 +103,7 @@ PopupMenu {
                   qsTrId("reply-to")
         onTriggered: messageContextMenu.isProfile ? chatsModel.joinChat(profilePopup.fromAuthor, Constants.chatTypeOneToOne) : showReplyArea()
         icon.source: "../../../img/messageActive.svg"
-        icon.width: 13
-        icon.height: 13
+        icon.width: 16
+        icon.height: 16
     }
 }

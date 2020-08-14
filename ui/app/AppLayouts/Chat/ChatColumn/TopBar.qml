@@ -7,7 +7,7 @@ import "../components"
 
 Rectangle {
     property string channelNameStr: "#" + chatsModel.activeChannel.id
-    property int iconSize: 13
+    property int iconSize: 16
 
     id: chatTopBarContent
     color: Style.current.background
