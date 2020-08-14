@@ -7,12 +7,14 @@ import "../imports"
 Item {
     id: root
     property string label: qsTr("Choose account")
+    property bool showAccountDetails: true
     property var accounts
     property var selectedAccount: {
         "address": "", "name": "", "iconColor": "", "fiatBalance": ""
     }
     property string currency: "usd"
-    height: select.height + selectedAccountDetails.height
+    height: select.height +
+            (selectedAccountDetails.visible ? selectedAccountDetails.height : 0)
     // set to asset symbol to display asset's balance top right
     // NOTE: if this asset is not selected as a wallet token in the UI, then
     // nothing will be displayed
@@ -43,7 +45,7 @@ Item {
             selectedAccountDetails.visible = false
         }
         menu.onClosed: {
-            selectedAccountDetails.visible = true
+            selectedAccountDetails.visible = root.showAccountDetails
         }
         menu.width: dropdownWidth
         selectedItemView: Item {
@@ -68,6 +70,9 @@ Item {
             StyledText {
                 id: selectedTextField
                 text: selectedAccount.name
+                elide: Text.ElideRight
+                anchors.right: parent.right
+                anchors.rightMargin: Style.current.bigPadding
                 anchors.left: selectedIconImg.right
                 anchors.leftMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
@@ -80,6 +85,7 @@ Item {
 
     Row {
         id: selectedAccountDetails
+        visible: root.showAccountDetails
         anchors.top: select.bottom
         anchors.topMargin: 8
         anchors.left: parent.left
@@ -134,6 +140,7 @@ Item {
                 color: iconColor
             }
             Column {
+                id: column
                 anchors.left: iconImg.right
                 anchors.leftMargin: 14
                 anchors.verticalCenter: parent.verticalCenter
@@ -141,6 +148,9 @@ Item {
                 StyledText {
                     id: accountName
                     text: name
+                    elide: Text.ElideRight
+                    anchors.right: parent.right
+                    anchors.left: parent.left
                     font.pixelSize: 15
                     height: 22
                 }

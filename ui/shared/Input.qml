@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import "../imports"
+import "."
 
 Item {
     property alias textField: inputValue
@@ -16,6 +17,7 @@ Item {
     property url icon: ""
     property int iconHeight: 24
     property int iconWidth: 24
+    property bool copyToClipboard: false
 
     readonly property bool hasIcon: icon.toString() !== ""
     readonly property var forceActiveFocus: function () {
@@ -90,6 +92,46 @@ Item {
             fillMode: Image.PreserveAspectFit
             source: inputBox.icon
         }
+
+        Loader {
+            active: inputBox.copyToClipboard
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            sourceComponent: copyToClipboardComponent
+        }
+
+        Component {
+            id: copyToClipboardComponent
+
+            Item {
+                width: copyBtn.width
+                height: copyBtn.height
+
+                Timer {
+                    id: timer
+                }
+
+                StyledButton {
+                    id: copyBtn
+                    label: qsTr("Copy")
+                    height: 28
+                    textSize: 12
+                    btnBorderColor: Style.current.blue
+                    btnBorderWidth: 1
+                    onClicked: {
+                        chatsModel.copyToClipboard(inputValue.text)
+                        copyBtn.label = qsTr("Copied")
+                        timer.setTimeout(function(){
+                            copyBtn.label = qsTr("Copy")
+                        }, 2000);
+                    }
+                }
+            }
+
+        }
+
+
     }
 
     TextEdit {

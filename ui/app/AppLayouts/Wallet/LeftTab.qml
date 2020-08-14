@@ -102,10 +102,14 @@ Item {
             StyledText {
                 id: walletName
                 text: name
+                elide: Text.ElideRight
+                anchors.right: walletBalance.left
+                anchors.rightMargin: Style.current.smallPadding
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.smallPadding
                 anchors.left: walletIcon.right
-                anchors.leftMargin: 10
+                anchors.leftMargin: Style.current.smallPadding
+
                 font.pixelSize: 15
                 font.weight: Font.Medium
                 color: selected ? Style.current.white : Style.current.textColor
