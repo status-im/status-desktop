@@ -16,6 +16,7 @@ Rectangle {
     height: buttonIcon.height + chatButtonsContainer.iconPadding * 2
     radius: Style.current.radius
     color: hovered ? Style.current.secondaryBackground : Style.current.transparent
+    anchors.verticalCenter: parent.verticalCenter
 
     SVGImage {
         id: buttonIcon
