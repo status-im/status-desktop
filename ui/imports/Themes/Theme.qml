@@ -23,6 +23,8 @@ QtObject {
     property color darkBlue
     property color darkBlueBtn
     property color red
+    property color purple: "#887AF9"
+    property color orange: "#FE8F59"
 
     property color background
     property color border
@@ -34,6 +36,7 @@ QtObject {
     property int xlPadding: 32
     property int bigPadding: 24
     property int padding: 16
+    property int halfPadding: 8
     property int smallPadding: 10
     property int radius: 8
 

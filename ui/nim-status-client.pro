@@ -113,6 +113,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandButton.qml \
+    app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandsPopup.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatInputButton.qml \
     app/AppLayouts/Chat/ChatColumn/CompactMessage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChannelIdentifier.qml \
