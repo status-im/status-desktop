@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
 import "../components"
+import "./ChatComponents"
 
 Item {
     property int iconPadding: 6
@@ -48,12 +49,9 @@ Item {
         }
     }
 
-    Rectangle {
-        property bool hovered: false
-
+    ChatInputButton {
         id: emojiIconContainer
-        width: emojiIcon.width + chatButtonsContainer.iconPadding * 2
-        height: emojiIcon.height + chatButtonsContainer.iconPadding * 2
+        source: "../../../img/emojiBtn.svg"
         anchors.right: {
             if(stickerIconContainer.visible) return stickerIconContainer.left;
             if(imageIconContainer.visible) return imageIconContainer.left;
@@ -61,135 +59,44 @@ Item {
         }
         anchors.rightMargin: Style.current.padding - chatButtonsContainer.iconPadding * 2
         anchors.verticalCenter: parent.verticalCenter
-        radius: Style.current.radius
-        color: hovered ? Style.current.secondaryBackground : Style.current.transparent
-
-        SVGImage {
-            id: emojiIcon
-            visible: txtData.length == 0
-            width: 20
-            height: 20
-            // fillMode: Image.PreserveAspectFit
-            source: "../../../img/emojiBtn.svg"
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
+        opened: emojiPopup.opened
+        close: function () {
+            emojiPopup.close()
         }
-        ColorOverlay {
-            anchors.fill: emojiIcon
-            source: emojiIcon
-            color: emojiIconContainer.hovered || emojiPopup.opened ? Style.current.blue : Style.current.darkGrey
-        }
-
-        MouseArea {
-            cursorShape: Qt.PointingHandCursor
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: {
-              emojiIconContainer.hovered = true
-            }
-            onExited: {
-              emojiIconContainer.hovered = false
-            }
-            onClicked: {
-                if (emojiPopup.opened) {
-                    emojiPopup.close()
-                } else {
-                    emojiPopup.open()
-                }
-            }
+        open: function () {
+            emojiPopup.open()
         }
     }
 
-    Rectangle {
-        property bool hovered: false
-
+    ChatInputButton {
         id: stickerIconContainer
         visible: !chatColumn.isExtendedInput && txtData.length == 0
-        width: emojiIcon.width + chatButtonsContainer.iconPadding * 2
-        height: emojiIcon.height + chatButtonsContainer.iconPadding * 2
+        source: "../../../img/stickers_icon.svg"
         anchors.right: imageIconContainer.visible ? imageIconContainer.left : parent.right
         anchors.rightMargin: Style.current.padding - chatButtonsContainer.iconPadding * (imageIconContainer.visible ? 2 : 1)
         anchors.verticalCenter: parent.verticalCenter
-        radius: Style.current.radius
-        color: hovered ? Style.current.secondaryBackground : Style.current.transparent
-
-        Image {
-            id: stickersIcon
-            width: 20
-            height: 20
-            fillMode: Image.PreserveAspectFit
-            source: "../../../img/stickers_icon.svg"
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-
+        opened: stickersPopup.opened
+        close: function () {
+            stickersPopup.close()
         }
-        ColorOverlay {
-            anchors.fill: stickersIcon
-            source: stickersIcon
-            color: stickerIconContainer.hovered || stickersPopup.opened ? Style.current.blue : Style.current.darkGrey
-        }
-
-        MouseArea {
-            cursorShape: Qt.PointingHandCursor
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: {
-              stickerIconContainer.hovered = true
-            }
-            onExited: {
-              stickerIconContainer.hovered = false
-            }
-            onClicked: {
-                 if (stickersPopup.opened) {
-                     stickersPopup.close()
-                 } else {
-                     stickersPopup.open()
-                 }
-            }
+        open: function () {
+            stickersPopup.open()
         }
     }
 
-    Rectangle {
-        property bool hovered: false
-        visible: !chatColumn.isExtendedInput && (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne)
+    ChatInputButton {
         id: imageIconContainer
-        width: emojiIcon.width + chatButtonsContainer.iconPadding * 2
-        height: emojiIcon.height + chatButtonsContainer.iconPadding * 2
+        visible: !chatColumn.isExtendedInput && (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne)
+        source: "../../../img/images_icon.svg"
         anchors.right: chatSendBtn.visible ? chatSendBtn.left : parent.right
         anchors.rightMargin: Style.current.padding - chatButtonsContainer.iconPadding
         anchors.verticalCenter: parent.verticalCenter
-        radius: Style.current.radius
-        color: hovered ? Style.current.secondaryBackground : Style.current.transparent
-
-        Image {
-            id: imageIcon
-            width: 20
-            height: 20
-            fillMode: Image.PreserveAspectFit
-            source: "../../../img/images_icon.svg"
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-
+        opened: imageDialog.visible
+        close: function () {
+            imageDialog.close()
         }
-        ColorOverlay {
-            anchors.fill: imageIcon
-            source: imageIcon
-            color: imageIconContainer.hovered ? Style.current.blue : Style.current.darkGrey
-        }
-
-        MouseArea {
-            cursorShape: Qt.PointingHandCursor
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: {
-              imageIconContainer.hovered = true
-            }
-            onExited: {
-              imageIconContainer.hovered = false
-            }
-            onClicked: {
-                imageDialog.open();
-            }
+        open: function () {
+            imageDialog.open()
         }
     }
 
