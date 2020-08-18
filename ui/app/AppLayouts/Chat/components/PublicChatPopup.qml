@@ -65,22 +65,22 @@ ModalPopup {
             Layout.fillWidth: true
             spacing: 20
 
-            SuggestedChannel { channel: "ethereum" }
-            SuggestedChannel { channel: "status" }
-            SuggestedChannel { channel: "general" }
-            SuggestedChannel { channel: "dapps" }
-            SuggestedChannel { channel: "crypto" }
-            SuggestedChannel { channel: "introductions" }
-            SuggestedChannel { channel: "tech" }
-            SuggestedChannel { channel: "ama" }
-            SuggestedChannel { channel: "gaming" }
-            SuggestedChannel { channel: "sexychat" }
-            SuggestedChannel { channel: "nsfw" }
-            SuggestedChannel { channel: "science" }
-            SuggestedChannel { channel: "music" }
-            SuggestedChannel { channel: "movies" }
-            SuggestedChannel { channel: "sports" }
-            SuggestedChannel { channel: "politics" }
+            SuggestedChannel { channel: "ethereum"; onJoin: function() { popup.close() } }
+            SuggestedChannel { channel: "status"; onJoin: function() { popup.close() } }
+            SuggestedChannel { channel: "general"; onJoin: function() { popup.close() } }
+            SuggestedChannel { channel: "dapps"; onJoin: function() { popup.close() } }
+            SuggestedChannel { channel: "crypto"; onJoin: function() { popup.close() } }
+            SuggestedChannel { channel: "introductions"; onJoin: function() { popup.close() } }
+            SuggestedChannel { channel: "tech"; onJoin: function() { popup.close() } }
+            SuggestedChannel { channel: "ama"; onJoin: function() { popup.close() } }
+            SuggestedChannel { channel: "gaming"; onJoin: function() { popup.close() } }
+            SuggestedChannel { channel: "sexychat"; onJoin: function() { popup.close() } }
+            SuggestedChannel { channel: "nsfw"; onJoin: function() { popup.close() } }
+            SuggestedChannel { channel: "science"; onJoin: function() { popup.close() } }
+            SuggestedChannel { channel: "music"; onJoin: function() { popup.close() } }
+            SuggestedChannel { channel: "movies"; onJoin: function() { popup.close() } }
+            SuggestedChannel { channel: "sports"; onJoin: function() { popup.close() } }
+            SuggestedChannel { channel: "politics"; onJoin: function() { popup.close() } }
         }
     }
 
