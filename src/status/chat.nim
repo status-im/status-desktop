@@ -305,3 +305,9 @@ proc makeAdmin*(self: ChatModel, chatId: string, pubKey: string) =
 
 proc resendMessage*(self: ChatModel, messageId: string) =
   discard status_chat.reSendChatMessage(messageId)
+
+proc muteChat*(self: ChatModel, chatId: string) =
+  discard status_chat.muteChat(chatId)
+
+proc unmuteChat*(self: ChatModel, chatId: string) =
+  discard status_chat.unmuteChat(chatId)

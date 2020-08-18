@@ -15,6 +15,7 @@ Rectangle {
     property string searchStr: ""
     property bool isCompact: appSettings.compactMode
     property int contentType: 1
+    property bool muted: false
 
     id: wrapper
     color: ListView.isCurrentItem ? Style.current.secondaryBackground : Style.current.transparent
@@ -33,7 +34,7 @@ Rectangle {
         anchors.fill: parent
         onClicked: {
             if (mouse.button & Qt.RightButton) {
-                channelContextMenu.openMenu(index)
+                channelContextMenu.openMenu(index, muted)
                 return;
             }
             chatsModel.setActiveChannelByIndex(index)

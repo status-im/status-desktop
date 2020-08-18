@@ -66,6 +66,7 @@ type Chat* = ref object
   members*: seq[ChatMember]
   membershipUpdateEvents*: seq[ChatMembershipEvent]
   hasMentions*: bool
+  muted*: bool
 
 proc `$`*(self: Chat): string =
   result = fmt"Chat(id:{self.id}, name:{self.name}, active:{self.isActive}, type:{self.chatType})"

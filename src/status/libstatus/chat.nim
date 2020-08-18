@@ -146,3 +146,9 @@ proc updateOutgoingMessageStatus*(messageId: string, status: string): string =
 
 proc reSendChatMessage*(messageId: string): string =
   result = callPrivateRPC("reSendChatMessage".prefix, %*[messageId])
+
+proc muteChat*(chatId: string): string =
+  result = callPrivateRPC("muteChat".prefix, %*[chatId])
+
+proc unmuteChat*(chatId: string): string =
+  result = callPrivateRPC("unmuteChat".prefix, %*[chatId])

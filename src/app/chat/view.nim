@@ -248,7 +248,8 @@ QtObject:
       if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
         if msg.chatId != self.activeChannel.id:
           let channel = self.chats.getChannelById(msg.chatId)
-          self.messageNotificationPushed(msg.chatId, msg.text, msg.messageType, channel.chatType.int, msg.timestamp, msg.identicon, msg.alias)
+          if not channel.muted:
+            self.messageNotificationPushed(msg.chatId, msg.text, msg.messageType, channel.chatType.int, msg.timestamp, msg.identicon, msg.alias)
         else:
           self.newMessagePushed()
 
@@ -416,3 +417,26 @@ QtObject:
   QtProperty[bool] isOnline:
     read = isConnected
     notify = onlineStatusChanged
+
+  proc muteChannel*(self: ChatsView, channelIndex: int) {.slot.} =
+    if (self.chats.chats.len == 0): return
+    let selectedChannel = self.chats.getChannel(channelIndex)
+    if (selectedChannel == nil): return
+    self.status.chat.muteChat(selectedChannel.id)
+    selectedChannel.muted = true
+    self.chats.updateChat(selectedChannel, false)
+
+  proc unmuteChannel*(self: ChatsView, channelIndex: int) {.slot.} =
+    if (self.chats.chats.len == 0): return
+    let selectedChannel = self.chats.getChannel(channelIndex)
+    if (selectedChannel == nil): return
+    self.status.chat.unmuteChat(selectedChannel.id)
+    selectedChannel.muted = false
+    self.chats.updateChat(selectedChannel, false)
+
+  proc channelIsMuted*(self: ChatsView, channelIndex: int): bool {.slot.} =
+    if (self.chats.chats.len == 0): return false
+    let selectedChannel = self.chats.getChannel(channelIndex)
+    if (selectedChannel == nil): return false
+    result = selectedChannel.muted
+    
