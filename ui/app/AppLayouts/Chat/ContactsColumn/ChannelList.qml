@@ -25,6 +25,7 @@ ScrollView {
         model: chatsModel.chats
         delegate: Channel {
             name: model.name
+            muted: model.muted
             lastMessage: model.lastMessage
             timestamp: model.timestamp
             chatType: model.chatType
@@ -52,15 +53,16 @@ ScrollView {
 
     PopupMenu {
         property int channelIndex
+        property bool channelMuted
 
         id: channelContextMenu
         width: 175
         subMenuIcons: [
-            {
-                source:  Qt.resolvedUrl("../../../img/bell.svg"),
-                width: 16,
-                height: 16
-            },
+            /* { */
+            /*     source:  Qt.resolvedUrl("../../../img/bell.svg"), */
+            /*     width: 16, */
+            /*     height: 16 */
+            /* }, */
             {
                 source: Qt.resolvedUrl("../../../img/fetch.svg"),
                 width: 16,
@@ -68,8 +70,9 @@ ScrollView {
             }
         ]
 
-        function openMenu(channelIndex) {
+        function openMenu(channelIndex, muted) {
             channelContextMenu.channelIndex = channelIndex
+            channelContextMenu.channelMuted = muted
             channelContextMenu.popup()
         }
 
@@ -83,17 +86,68 @@ ScrollView {
 
         Separator {}
 
-        PopupMenu {
-            hasArrow: false
-            title: qsTr("Mute Chat")
-
-            // TODO implement mute chat in Model and call it here
-            Action { text: qsTr("15 minutes"); icon.width: 0; }
-            Action { text: qsTr("1 hour"); icon.width: 0; }
-            Action { text: qsTr("8 hours"); icon.width: 0; }
-            Action { text: qsTr("24 hours"); icon.width: 0; }
-            Action { text: qsTr("Until I turn it back on"); icon.width: 0; }
+        Action {
+            text: channelContextMenu.channelMuted ? 
+              qsTr("Unmute chat") : 
+              qsTr("Mute chat")
+            icon.source: "../../../img/bell.svg"
+            icon.width: 16
+            icon.height: 16
+            onTriggered: {
+              if (chatsModel.channelIsMuted(channelContextMenu.channelIndex)) {
+                chatsModel.unmuteChannel(channelContextMenu.channelIndex)
+                return
+              }
+              chatsModel.muteChannel(channelContextMenu.channelIndex)
+            }
         }
+
+        /* PopupMenu { */
+        /*     hasArrow: false */
+        /*     title: qstr("Mute chat") */
+
+        /*     // TODO implement mute chat in Model and call it here */
+        /*     Action { */ 
+        /*         text: qsTr("15 minutes"); */
+        /*         icon.width: 0; */ 
+        /*         onTriggered: { */
+        /*             chatsModel.muteChannel(channelContextMenu.channelIndex, Constants.muteChat15Minutes) */
+        /*         } */
+        /*     } */
+        /*     Action { */
+        /*         text: qsTr("1 hour"); */
+        /*         icon.width: 0; */
+        /*         onTriggered: { */
+        /*             chatsModel.muteChannel(channelContextMenu.channelIndex, Constants.muteChatOneHour) */
+        /*         } */
+        /*     } */
+        /*     Action { */
+        /*         text: qsTr("8 hours"); */
+        /*         icon.width: 0; */
+        /*         onTriggered: { */
+        /*             chatsModel.muteChannel(channelContextMenu.channelIndex, Constants.muteChatEightHours) */
+        /*         } */
+        /*     } */
+        /*     Action { */ 
+        /*         text: qsTr("24 hours"); */ 
+        /*         icon.width: 0; */
+        /*         onTriggered: { */
+        /*             chatsModel.muteChannel(channelContextMenu.channelIndex, Constants.muteChat24Hours) */
+        /*         } */
+        /*     } */
+        /*     Action { */ 
+        /*         text: qsTr("Until I turn it back on"); */
+        /*         icon.width: 0; */ 
+        /*         onTriggered: { */
+        /*             console.log(appSettings.mutedChannels) */
+        /*             appSettings.mutedChannels.push({ */
+        /*               name: "Foo" */
+        /*             }) */
+        /*             console.log(appSettings.mutedChannels) */
+        /*             //chatsModel.muteChannel(channelContextMenu.channelIndex, Constants.muteChatUntilUnmuted) */
+        /*         } */
+        /*     } */
+        /* } */
         Action {
             text: qsTr("Mark as Read")
             icon.source: "../../../img/check-circle.svg"
