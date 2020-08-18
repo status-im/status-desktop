@@ -3,10 +3,9 @@ import "."
 
 SVGImage {
     id: loadingImg
-    // TODO replace by a real loading image
-    source: "../app/img/settings.svg"
-    width: 30
-    height: 30
+    source: "../app/img/loading.svg"
+    width: 17
+    height: 17
     fillMode: Image.Stretch
     RotationAnimator {
         target: loadingImg;
