@@ -9,6 +9,7 @@ Item {
     anchors.left: parent.left
     anchors.right: parent.right
     height: sliderWrapper.height + Style.current.smallPadding + txtNetworkFee.height + buttonAdvanced.height
+    property string validationError: "Please enter a number"
     property double slowestGasPrice: 0
     property double fastestGasPrice: 100
     property double stepSize: ((root.fastestGasPrice - root.slowestGasPrice) / 10).toFixed(1)
@@ -32,6 +33,10 @@ Item {
         let summary = Utils.stripTrailingZeros(ethValue) + " ETH ~" + fiatValue + " " + root.defaultCurrency.toUpperCase()
         labelGasPriceSummary.text = summary
         labelGasPriceSummaryAdvanced.text = summary
+    }
+
+    function validate(value) {
+        return !isNaN(value)
     }
 
     StyledText {
@@ -143,7 +148,8 @@ Item {
     ModalPopup {
         id: customNetworkFeeDialog
         title: qsTr("Custom Network Fee")
-        height: 386
+        height: 286
+        width: 400
 
         Input {
           id: inputGasLimit
@@ -151,26 +157,35 @@ Item {
           text: "22000"
           customHeight: 56
           anchors.top: parent.top
+          anchors.left: parent.left
+          anchors.right: undefined
+          width: 222
           onTextChanged: {
-              if (inputGasLimit.text.trim() === "") {
-                  inputGasLimit.text = root.selectedGasLimit
+              if (root.validate(inputGasLimit.text.trim())) {
+                  inputGasLimit.validationError = ""
+                  root.updateGasEthValue()
+                  return
               }
-              root.updateGasEthValue()
+              inputGasLimit.validationError = root.validationError
           }
         }
 
         Input {
           id: inputGasPrice
           label: qsTr("Gas price")
-          anchors.top: inputGasLimit.bottom
-          anchors.topMargin: Style.current.smallPadding
+          anchors.top: parent.top
+          anchors.left: undefined
+          anchors.right: parent.right
+          width: 130
           customHeight: 56
           text: root.defaultGasPrice()
           onTextChanged: {
-              if (inputGasPrice.text.trim() === "") {
-                  inputGasPrice.text = root.defaultGasPrice()
+              if (root.validate(inputGasPrice.text.trim())) {
+                  inputGasPrice.validationError = ""
+                  root.updateGasEthValue()
+                  return
               }
-              root.updateGasEthValue()
+              inputGasPrice.validationError = root.validationError
           }
 
           StyledText {
@@ -186,8 +201,8 @@ Item {
 
         StyledText {
             id: labelGasPriceSummaryAdvanced
-            anchors.top: inputGasPrice.bottom
-            anchors.topMargin: Style.current.smallPadding
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: Style.current.smallPadding
             anchors.right: parent.right
             font.weight: Font.Medium
             font.pixelSize: 13
@@ -199,10 +214,11 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
             label: qsTr("Apply")
+            disabled: !root.validate(inputGasLimit.text.trim()) || !root.validate(inputGasPrice.text.trim())
             anchors.bottom: parent.bottom
             onClicked: {
-              root.updateGasEthValue()
-              customNetworkFeeDialog.close()
+                root.updateGasEthValue()
+                customNetworkFeeDialog.close()
             }
         }
     }
