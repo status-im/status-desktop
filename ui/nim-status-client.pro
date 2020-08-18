@@ -30,6 +30,7 @@ SOURCES = *.qml \
           app/AppLayouts/Profile/Sections/Contacts/*.qml \
           app/AppLayouts/Wallet/*.qml \
           app/AppLayouts/Wallet/components/*.qml \
+          app/AppLayouts/Wallet/components/collectiblesComponents/*.qml \
           app/AppLayouts/Wallet/data/*.qml \
 }
 
@@ -151,6 +152,8 @@ DISTFILES += \
     app/AppLayouts/Wallet/ReceiveModal.qml \
     app/AppLayouts/Wallet/components/HeaderButton.qml \
     app/AppLayouts/Profile/Sections/Data/locales.js \
+    app/AppLayouts/Wallet/components/collectiblesComponents/CollectiblesContainer.qml \
+    app/AppLayouts/Wallet/components/collectiblesComponents/CollectiblesHeader.qml \
     fonts/InterStatus/InterStatus-Black.otf \
     fonts/InterStatus/InterStatus-BlackItalic.otf \
     fonts/InterStatus/InterStatus-Bold.otf \
