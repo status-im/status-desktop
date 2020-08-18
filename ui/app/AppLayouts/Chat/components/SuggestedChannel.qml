@@ -4,6 +4,7 @@ import "../../../../shared"
 
 Rectangle {
     property string channel: "status"
+    property var onJoin: function() {}
 
     border.width: 1
     radius: 8
@@ -27,7 +28,10 @@ Rectangle {
 
     MouseArea {
         anchors.fill: parent
-        onClicked: chatsModel.joinChat(channel, Constants.chatTypePublic)
+        onClicked: {
+            chatsModel.joinChat(channel, Constants.chatTypePublic)
+            onJoin()
+        }
         cursorShape: Qt.PointingHandCursor
     }
 }
