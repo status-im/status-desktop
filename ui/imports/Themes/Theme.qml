@@ -38,6 +38,7 @@ QtObject {
     property int padding: 16
     property int halfPadding: 8
     property int smallPadding: 10
+    property int halfPadding: 8
     property int radius: 8
 
     property int leftTabPrefferedSize: 340

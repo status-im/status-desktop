@@ -153,6 +153,7 @@ DISTFILES += \
     app/AppLayouts/Wallet/components/HeaderButton.qml \
     app/AppLayouts/Profile/Sections/Data/locales.js \
     app/AppLayouts/Wallet/components/collectiblesComponents/CollectiblesContainer.qml \
+    app/AppLayouts/Wallet/components/collectiblesComponents/CollectiblesContent.qml \
     app/AppLayouts/Wallet/components/collectiblesComponents/CollectiblesHeader.qml \
     fonts/InterStatus/InterStatus-Black.otf \
     fonts/InterStatus/InterStatus-BlackItalic.otf \

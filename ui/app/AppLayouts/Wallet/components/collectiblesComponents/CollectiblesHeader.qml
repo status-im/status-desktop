@@ -8,6 +8,7 @@ Rectangle {
     property string collectibleName: "CryptoKitties"
     property bool isLoading: true
     property bool hovered: false
+    property var toggleCollectible: function () {}
 
     id: collectibleHeader
     height: 64
@@ -93,7 +94,7 @@ Rectangle {
             collectibleHeader.hovered = false
         }
         onClicked: {
-            console.log('Open collectibles')
+            collectibleHeader.toggleCollectible()
         }
     }
 }
