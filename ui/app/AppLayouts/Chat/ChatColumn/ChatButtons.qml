@@ -15,15 +15,17 @@ Row {
 
     anchors.right: parent.right
     anchors.rightMargin: Style.current.padding
-    spacing: Style.current.padding / 2
+    spacing: 0
 
-    width: childrenRect.width
+    // ChildrenRect doesn't work with the width being able to change
+    width: chatSendBtn.width + emojiIconButton.width +
+           stickerIconButton.width + imageIconButton.width + commandIconButton.width
 
     Button {
         id: chatSendBtn
         visible: txtData.length > 0 || chatColumn.isImage
-        width: 30
-        height: 30
+        width: this.visible ? 30 : 0
+        height: this.width
         text: ""
         anchors.verticalCenter: parent.verticalCenter
         onClicked: {
@@ -43,7 +45,7 @@ Row {
     }
 
     ChatInputButton {
-        id: emojiIconContainer
+        id: emojiIconButton
         source: "../../../img/emojiBtn.svg"
         opened: emojiPopup.opened
         close: function () {
@@ -55,7 +57,7 @@ Row {
     }
 
     ChatInputButton {
-        id: stickerIconContainer
+        id: stickerIconButton
         visible: !chatColumn.isExtendedInput && txtData.length == 0
         source: "../../../img/stickers_icon.svg"
         opened: stickersPopup.opened
@@ -68,7 +70,7 @@ Row {
     }
 
     ChatInputButton {
-        id: imageIconContainer
+        id: imageIconButton
         visible: !chatColumn.isExtendedInput && (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne)
         source: "../../../img/images_icon.svg"
         opened: imageDialog.visible
