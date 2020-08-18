@@ -31,6 +31,10 @@ Item {
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 24
+        Component.onCompleted: {
+            walletBtn.enabled = true
+        }
+
         StyledText {
             //% "Wallet Tab"
             text: qsTrId("wallet-tab")
