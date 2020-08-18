@@ -186,8 +186,7 @@ Item {
             anchors.left: txtPassword.right
             anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: txtPassword.verticalCenter
-            // TODO replace by a real loading image
-            source: "../app/img/settings.svg"
+            source: "../app/img/loading.svg"
             width: 30
             height: 30
             fillMode: Image.Stretch
