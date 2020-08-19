@@ -13,6 +13,8 @@ Item {
     property var getLink: function () {}
 
     id: root
+    width: parent.width
+    height: childrenRect.height
 
     CollectiblesHeader {
         id: collectiblesHeader

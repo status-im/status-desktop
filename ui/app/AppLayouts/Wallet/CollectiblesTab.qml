@@ -36,14 +36,41 @@ Item {
     Component {
         id: collectiblesListComponent
 
-        CollectiblesContainer {
-            collectibleName: "CryptoKitties"
-            collectibleIconSource: "../../img/collectibles/CryptoKitties.png"
-            isLoading: root.isLoading
-            collectiblesModal: collectiblesModalComponent
-            buttonText: qsTr("View in Cryptokitties")
-            getLink: function (id) {
-                return `https://www.cryptokitties.co/kitty/${id}`
+        Column {
+            spacing: Style.current.halfPadding
+            anchors.fill: parent
+
+            CollectiblesContainer {
+                collectibleName: "CryptoKitties"
+                collectibleIconSource: "../../img/collectibles/CryptoKitties.png"
+                isLoading: root.isLoading
+                collectiblesModal: collectiblesModalComponent
+                buttonText: qsTr("View in Cryptokitties")
+                getLink: function (id) {
+                    return `https://www.cryptokitties.co/kitty/${id}`
+                }
+            }
+
+            CollectiblesContainer {
+                collectibleName: "Ethermons"
+                collectibleIconSource: "../../img/collectibles/ethermons.png"
+                isLoading: root.isLoading
+                collectiblesModal: collectiblesModalComponent
+                buttonText: qsTr("View in Ethermon")
+                getLink: function (id) {
+                    return `https://www.etheremon.com/#/mons/${id}`
+                }
+            }
+
+            CollectiblesContainer {
+                collectibleName: "Kudos"
+                collectibleIconSource: "../../img/collectibles/kudos.png"
+                isLoading: root.isLoading
+                collectiblesModal: collectiblesModalComponent
+                buttonText: qsTr("View in Gitcoin")
+                getLink: function (id) {
+                    return ""
+                }
             }
         }
     }
