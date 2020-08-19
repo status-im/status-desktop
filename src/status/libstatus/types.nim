@@ -158,6 +158,7 @@ type
     LatestDerivedPath = "latest-derived-path"
     PreferredUsername = "preferred-name"
     Usernames = "usernames"
+    SigningPhrase = "signing-phrase"
 
   UpstreamConfig* = ref object
     enabled* {.serializedFieldName("Enabled").}: bool
