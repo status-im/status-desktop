@@ -28,6 +28,11 @@ Item {
         }
     }
 
+
+    CollectiblesModal {
+        id: collectiblesModalComponent
+    }
+
     Component {
         id: collectiblesListComponent
 
@@ -35,6 +40,11 @@ Item {
             collectibleName: "CryptoKitties"
             collectibleIconSource: "../../img/collectibles/CryptoKitties.png"
             isLoading: root.isLoading
+            collectiblesModal: collectiblesModalComponent
+            buttonText: qsTr("View in Cryptokitties")
+            getLink: function (id) {
+                return `https://www.cryptokitties.co/kitty/${id}`
+            }
         }
     }
 

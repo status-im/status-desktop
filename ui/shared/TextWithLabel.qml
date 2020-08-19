@@ -9,6 +9,7 @@ Item {
     property string fontFamily: Style.current.fontRegular.name
     property string textToCopy: ""
     property alias value: textItem
+    property bool wrap: false
 
     id: infoText
     height: this.childrenRect.height
@@ -25,20 +26,32 @@ Item {
     StyledTextEdit {
         id: textItem
         text: infoText.text
+        selectByMouse: true
         font.family: fontFamily
         readOnly: true
         anchors.top: inputLabel.bottom
         anchors.topMargin: 7
         font.pixelSize: 15
+        wrapMode: infoText.wrap ? Text.WordWrap : Text.NoWrap
+        anchors.left: parent.left
+        anchors.right: infoText.wrap ? parent.right : undefined
     }
 
-    CopyToClipBoardButton {
-        visible: !!infoText.textToCopy
-        anchors.verticalCenter: textItem.verticalCenter
-        anchors.left: textItem.right
-        anchors.leftMargin: Style.current.smallPadding
-        textToCopy: infoText.textToCopy
+    Loader {
+        active: !!infoText.textToCopy
+        sourceComponent: copyComponent
     }
+
+    Component {
+        id: copyComponent
+        CopyToClipBoardButton {
+            anchors.verticalCenter: textItem.verticalCenter
+            anchors.left: textItem.right
+            anchors.leftMargin: Style.current.smallPadding
+            textToCopy: infoText.textToCopy
+        }
+    }
+
 }
 
 /*##^##
