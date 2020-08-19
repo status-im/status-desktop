@@ -8,6 +8,9 @@ Item {
     property string collectibleName: "CryptoKitties"
     property bool isLoading: true
     property bool collectiblesOpened: false
+    property var collectiblesModal
+    property string buttonText: "View in Cryptokitties"
+    property var getLink: function () {}
 
     id: root
 
@@ -32,7 +35,11 @@ Item {
     Component {
         id: contentComponent
 
-        CollectiblesContent {}
+        CollectiblesContent {
+            collectiblesModal: root.collectiblesModal
+            buttonText: root.buttonText
+            getLink: root.getLink
+        }
     }
 }
 
