@@ -58,6 +58,7 @@ ApplicationWindow {
         id: notificationSound
         audioRole: Audio.NotificationRole
         source: "../../../../sounds/notification.wav"
+        volume: 0.2
     }
 
     Settings {
