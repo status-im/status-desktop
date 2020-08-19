@@ -21,7 +21,7 @@ ModalPopup {
     }
 
     id: popup
-    title: collectibleName
+    title: collectibleName || qsTr("Unnamed")
 
     CollectiblesModalContent {
         collectibleName: popup.collectibleName

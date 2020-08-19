@@ -10,7 +10,7 @@ Item {
 
     Loader {
         active: true
-        sourceComponent: true || root.isLoading || walletModel.collectibles.rowCount() > 0 ? collectiblesListComponent
+        sourceComponent: root.isLoading || walletModel.collectibles.rowCount() > 0 ? collectiblesListComponent
                                                                                    : noCollectiblesComponent
         width: parent.width
     }
@@ -42,6 +42,7 @@ Item {
 
             CollectiblesContainer {
                 collectibleName: "CryptoKitties"
+                collectibleType: Constants.cryptokitty
                 collectibleIconSource: "../../img/collectibles/CryptoKitties.png"
                 isLoading: root.isLoading
                 collectiblesModal: collectiblesModalComponent
@@ -53,6 +54,7 @@ Item {
 
             CollectiblesContainer {
                 collectibleName: "Ethermons"
+                collectibleType: Constants.ethermon
                 collectibleIconSource: "../../img/collectibles/ethermons.png"
                 isLoading: root.isLoading
                 collectiblesModal: collectiblesModalComponent
@@ -64,6 +66,7 @@ Item {
 
             CollectiblesContainer {
                 collectibleName: "Kudos"
+                collectibleType: Constants.kudo
                 collectibleIconSource: "../../img/collectibles/kudos.png"
                 isLoading: root.isLoading
                 collectiblesModal: collectiblesModalComponent
@@ -81,68 +84,6 @@ Item {
             root.isLoading= isLoading
         }
     }
-
-    Component {
-        id: collectiblesViewDelegate
-
-        Item {
-            id: element
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-            height: 132
-
-            SVGImage {
-                id: collectibleImage
-                width: 128
-                height: 128
-                source: image
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            StyledText {
-                id: collectibleName
-                text: name
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: collectibleImage.right
-                anchors.leftMargin: Style.current.padding
-                font.pixelSize: 15
-            }
-
-            StyledText {
-                id: collectibleIdText
-                text: collectibleId
-                anchors.leftMargin: Style.current.padding
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: collectibleName.right
-                color: Style.current.darkGrey
-                font.pixelSize: 15
-            }
-        }
-    }
-
-    ListModel {
-        id: exampleModel
-
-        ListElement {
-            name: "Kitty cat"
-            image: "../../img/token-icons/eth.svg"
-            collectibleId: "1337"
-        }
-    }
-
-//    ListView {
-//        id: assetListView
-//        spacing: Style.current.smallPadding
-//        anchors.topMargin: Style.current.bigPadding
-//        anchors.fill: parent
-////        model: exampleModel
-//        model: walletModel.collectibles
-//        delegate: collectiblesViewDelegate
-//    }
 }
 
 /*##^##

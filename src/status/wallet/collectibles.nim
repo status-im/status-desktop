@@ -7,6 +7,10 @@ import eth/common/eth_types
 import ../libstatus/types
 import account
 
+const CRYPTOKITTY = "cryptokitty"
+const KUDO = "kudo"
+const ETHERMON = "ethermon"
+
 proc getTokenUri(contract: Contract, tokenId: Stuint[256]): string =
   try:
     let
@@ -65,11 +69,18 @@ proc getCryptoKitties*(address: EthAddress): seq[Collectible] =
     let response = client.request(url)
     let kitties = parseJson(response.body)["kitties"]
     for kitty in kitties:
-      var id = kitty["id"]
-      var finalId = ""
-      if (not (id.kind == JNull)):
-        finalId = $id
-      result.add(Collectible(id: finalId, name: kitty["name"].str, image: kitty["image_url"].str))
+      try:
+        var id = kitty["id"]
+        var name = kitty["name"]
+        var finalId = ""
+        var finalName = ""
+        if (not (id.kind == JNull)):
+          finalId = $id
+        if (not (name.kind == JNull)):
+          finalName = $name
+        result.add(Collectible(id: finalId, name: finalName, image: kitty["image_url_png"].str, collectibleType: CRYPTOKITTY))
+      except Exception as e2:
+        error "Error with this individual cat", msg = e2.msg, cat = kitty
   except Exception as e:
     error "Error getting Cryptokitties", msg = e.msg
 
@@ -94,7 +105,7 @@ proc getEthermons*(address: EthAddress): seq[Collectible] =
     var i = 0
     for monsterKey in json.keys(monsters):
       let monster = monsters[monsterKey]
-      result.add(Collectible(id: $tokens[i], name: monster["class_name"].str, image: monster["image"].str))
+      result.add(Collectible(id: $tokens[i], name: monster["class_name"].str, image: monster["image"].str, collectibleType: ETHERMON))
       i = i + 1
   except Exception as e:
     error "Error getting Ethermons", msg = e.msg
@@ -122,7 +133,7 @@ proc getKudos*(address: EthAddress): seq[Collectible] =
       let response = client.request(url)
       let kudo = parseJson(response.body)
 
-      result.add(Collectible(id: $token, name: kudo["name"].str, image: kudo["image"].str))
+      result.add(Collectible(id: $token, name: kudo["name"].str, image: kudo["image"].str, collectibleType: KUDO))
   except Exception as e:
     error "Error getting Kudos", msg = e.msg
 
