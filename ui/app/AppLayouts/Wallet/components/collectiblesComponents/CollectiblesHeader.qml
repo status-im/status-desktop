@@ -9,6 +9,7 @@ Rectangle {
     property bool isLoading: true
     property bool hovered: false
     property var toggleCollectible: function () {}
+    property int collectiblesQty: 6
 
     id: collectibleHeader
     height: 64
@@ -59,8 +60,7 @@ Rectangle {
             StyledText {
                 id: numberCollectibleText
                 color: Style.current.secondaryText
-                // TODO change with number of current collectible
-                text: "6"
+                text: collectibleHeader.collectiblesQty
                 font.pixelSize: 15
                 anchors.verticalCenter: parent.verticalCenter
             }

@@ -6,6 +6,7 @@ import "../../../../../shared"
 Item {
     property url collectibleIconSource: "../../../../img/collectibles/CryptoKitties.png"
     property string collectibleName: "CryptoKitties"
+    property string collectibleType: "cryptokitty"
     property bool isLoading: true
     property bool collectiblesOpened: false
     property var collectiblesModal
@@ -13,35 +14,30 @@ Item {
     property var getLink: function () {}
 
     id: root
+    visible: isLoading || collectiblesContent.collectiblesQty > 0
     width: parent.width
-    height: childrenRect.height
+    height: visible ? collectiblesHeader.height + collectiblesContent.height : 0
 
     CollectiblesHeader {
         id: collectiblesHeader
         collectibleName: root.collectibleName
         collectibleIconSource: root.collectibleIconSource
+        collectiblesQty: collectiblesContent.collectiblesQty
         isLoading: root.isLoading
         toggleCollectible: function () {
             root.collectiblesOpened = !root.collectiblesOpened
         }
     }
 
-    Loader {
-        active: root.collectiblesOpened
-        sourceComponent: contentComponent
+    CollectiblesContent {
+        id: collectiblesContent
+        visible: root.collectiblesOpened
+        collectiblesModal: root.collectiblesModal
+        collectibleType: root.collectibleType
+        buttonText: root.buttonText
+        getLink: root.getLink
         anchors.top: collectiblesHeader.bottom
         anchors.topMargin: Style.current.halfPadding
-        width: parent.width
-    }
-
-    Component {
-        id: contentComponent
-
-        CollectiblesContent {
-            collectiblesModal: root.collectiblesModal
-            buttonText: root.buttonText
-            getLink: root.getLink
-        }
     }
 }
 
