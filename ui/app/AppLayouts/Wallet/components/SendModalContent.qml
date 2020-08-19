@@ -8,19 +8,19 @@ Item {
     id: sendModalContent
     property var closePopup: function(){}
     property alias amountInput: txtAmount
-    property alias passwordInput: txtPassword
+    property alias passwordInput: transactionSigner.passwordInput
 
     property string passwordValidationError: ""
 
     function send() {
-        if (!validate()) {
+        if (!validate() || !validatePassword()) {
             return;
         }
         let result = walletModel.onSendTransaction(selectFromAccount.selectedAccount.address,
                                                    selectRecipient.selectedRecipient,
                                                    txtAmount.selectedAsset.address,
                                                    txtAmount.text,
-                                                   txtPassword.text)
+                                                   transactionSigner.passwordInput.text)
 
         if (!result.startsWith('0x')) {
             // It's an error
@@ -32,30 +32,37 @@ Item {
         sendingSuccess.open()
     }
 
-    function validate() {
-        const isRecipientValid = selectRecipient.validate()
-        const isAssetAndAmountValid = txtAmount.validate()
-        if (txtPassword.text === "") {
+    function validatePassword() {
+        if (transactionSigner.passwordInput.text === "") {
             //% "You need to enter a password"
             passwordValidationError = qsTrId("you-need-to-enter-a-password")
-        } else if (txtPassword.text.length < 4) {
+        } else if (transactionSigner.passwordInput.text.length < 4) {
             //% "Password needs to be 4 characters or more"
             passwordValidationError = qsTrId("password-needs-to-be-4-characters-or-more")
         } else {
             passwordValidationError = ""
         }
+        
+        return passwordValidationError === "" 
+    }
 
-        return passwordValidationError === "" && isRecipientValid && isAssetAndAmountValid
+    function validate() {
+        const isRecipientValid = selectRecipient.validate()
+        const isAssetAndAmountValid = txtAmount.validate()
+
+        return isRecipientValid && isAssetAndAmountValid
     }
 
     function showPreview() {
         pvwTransaction.visible = true
-        txtAmount.visible = selectFromAccount.visible = selectRecipient.visible = txtPassword.visible = gasSelector.visible = false
+        transactionSigner.visible = true
+        txtAmount.visible = selectFromAccount.visible = selectRecipient.visible = gasSelector.visible = false
     }
 
     function showInputs() {
         pvwTransaction.visible = false
-        txtAmount.visible = selectFromAccount.visible = selectRecipient.visible = txtPassword.visible = gasSelector.visible = true
+        transactionSigner.visible = false
+        txtAmount.visible = selectFromAccount.visible = selectRecipient.visible = gasSelector.visible = true
     }
 
     anchors.left: parent.left
@@ -144,18 +151,16 @@ Item {
         currency: walletModel.defaultCurrency
     }
 
-    Input {
-        id: txtPassword
-        //% "Password"
-        label: qsTrId("password")
-        //% "Enter Password"
-        placeholderText: qsTrId("biometric-auth-login-ios-fallback-label")
-        anchors.top: selectRecipient.bottom
-        anchors.topMargin: Style.current.padding
-        textField.echoMode: TextInput.Password
-        validationError: passwordValidationError
+    TransactionSigner {
+        id: transactionSigner
+        visible: false
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: pvwTransaction.bottom
+        anchors.topMargin: Style.current.smallPadding
+        signingPhrase: walletModel.signingPhrase
+        validationError: sendModalContent.passwordValidationError
     }
-
 }
 
 /*##^##

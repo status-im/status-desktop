@@ -43,6 +43,7 @@ proc init*(self: WalletController) =
     self.view.updateView()
 
   self.view.setEtherscanLink(status_settings.getCurrentNetworkDetails().etherscanLink)
+  self.view.setSigningPhrase(status_settings.getSetting[string](Setting.SigningPhrase))
 
 method onSignal(self: WalletController, data: Signal) =
   debug "New signal received"

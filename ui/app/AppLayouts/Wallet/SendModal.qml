@@ -56,8 +56,11 @@ ModalPopup {
             anchors.right: parent.right
             visible: !btnPreview.visible
             //% "Send"
-            label: qsTrId("command-button-send")
+            label: qsTrId("command-button-send") + " " + sendModalContent.amountInput.selectedAmount + " " + sendModalContent.amountInput.selectedAsset.symbol
             onClicked: {
+                if (!sendModalContent.validatePassword()) {
+                  return
+                }
                 sendModalContent.send()
             }
         }

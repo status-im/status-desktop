@@ -21,6 +21,7 @@ QtObject:
       fastGasPrice: string
       fastestGasPrice: string
       defaultGasLimit: string
+      signingPhrase: string
 
   proc delete(self: WalletView) =
     self.accounts.delete
@@ -47,6 +48,7 @@ QtObject:
     result.fastGasPrice = "0"
     result.fastestGasPrice = "0"
     result.defaultGasLimit = "22000"
+    result.signingPhrase = ""
     result.setup
 
   proc etherscanLinkChanged*(self: WalletView) {.signal.}
@@ -58,9 +60,22 @@ QtObject:
     self.etherscanLink = link
     self.etherscanLinkChanged()
 
+  proc signingPhraseChanged*(self: WalletView) {.signal.}
+
+  proc getSigningPhrase*(self: WalletView): QVariant {.slot.} =
+    newQVariant(self.signingPhrase)
+
+  proc setSigningPhrase*(self: WalletView, signingPhrase: string) =
+    self.signingPhrase = signingPhrase
+    self.signingPhraseChanged()
+
   QtProperty[QVariant] etherscanLink:
     read = getEtherscanLink
     notify = etherscanLinkChanged
+
+  QtProperty[QVariant] signingPhrase:
+    read = getSigningPhrase
+    notify = signingPhraseChanged
 
   proc setCurrentAssetList*(self: WalletView, assetList: seq[Asset])
 
