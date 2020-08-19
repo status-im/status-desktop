@@ -5,6 +5,7 @@ Audio {
     id: errorSound
     source: "./error.mp3"
     audioRole: Audio.NotificationRole
+    volume: 0.2
 }
 
 /*##^##
