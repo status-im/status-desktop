@@ -158,8 +158,8 @@ Item {
           customHeight: 56
           anchors.top: parent.top
           anchors.left: parent.left
-          anchors.right: undefined
-          width: 222
+          anchors.right: inputGasPrice.left
+          anchors.rightMargin: Style.current.padding
           onTextChanged: {
               if (root.validate(inputGasLimit.text.trim())) {
                   inputGasLimit.validationError = ""

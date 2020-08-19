@@ -319,6 +319,7 @@ DISTFILES += \
     shared/PopupMenu.qml \
     shared/Identicon.qml \
     shared/CopyToClipBoardButton.qml \
+    shared/GasSelector.qml \
     shared/RoundedImage.qml \
     shared/SearchBox.qml \
     shared/Select.qml \
