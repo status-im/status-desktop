@@ -40,14 +40,14 @@ Item {
     Loader {
         active: !!infoText.textToCopy
         sourceComponent: copyComponent
+        anchors.verticalCenter: textItem.verticalCenter
+        anchors.left: textItem.right
+        anchors.leftMargin: Style.current.smallPadding
     }
 
     Component {
         id: copyComponent
         CopyToClipBoardButton {
-            anchors.verticalCenter: textItem.verticalCenter
-            anchors.left: textItem.right
-            anchors.leftMargin: Style.current.smallPadding
             textToCopy: infoText.textToCopy
         }
     }

@@ -37,7 +37,7 @@ ModalPopup {
         label: popup.buttonText
         anchors.top: parent.top
         onClicked: {
-            console.log('Go to', popup.buttonLink)
+            Qt.openUrlExternally(popup.buttonLink)
         }
     }
 }
