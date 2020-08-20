@@ -3,86 +3,61 @@ import QtGraphicalEffects 1.13
 import "../../../imports"
 import "../../../shared"
 import "./components/collectiblesComponents"
+import "./components/collectiblesComponents/collectiblesData.js" as CollectiblesData
 
 Item {
-    property bool isLoading: true
     id: root
 
-    Loader {
-        active: true
-        sourceComponent: root.isLoading || walletModel.collectibles.rowCount() > 0 ? collectiblesListComponent
-                                                                                   : noCollectiblesComponent
-        width: parent.width
+    StyledText {
+        id: noCollectiblesText
+        color: Style.current.secondaryText
+        text: qsTr("Collectibles will appear here")
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        font.pixelSize: 15
     }
-
-    Component {
-        id: noCollectiblesComponent
-
-        StyledText {
-            color: Style.current.secondaryText
-            text: qsTr("Collectibles will appear here")
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: 15
-            visible: !root.isLoading && walletModel.collectibles.rowCount() === 0
-        }
-    }
-
 
     CollectiblesModal {
         id: collectiblesModalComponent
     }
 
-    Component {
-        id: collectiblesListComponent
-
-        Column {
-            spacing: Style.current.halfPadding
-            anchors.fill: parent
-
-            CollectiblesContainer {
-                collectibleName: "CryptoKitties"
-                collectibleType: Constants.cryptokitty
-                collectibleIconSource: "../../img/collectibles/CryptoKitties.png"
-                isLoading: root.isLoading
-                collectiblesModal: collectiblesModalComponent
-                buttonText: qsTr("View in Cryptokitties")
-                getLink: function (id) {
-                    return `https://www.cryptokitties.co/kitty/${id}`
-                }
-            }
-
-            CollectiblesContainer {
-                collectibleName: "Ethermons"
-                collectibleType: Constants.ethermon
-                collectibleIconSource: "../../img/collectibles/ethermons.png"
-                isLoading: root.isLoading
-                collectiblesModal: collectiblesModalComponent
-                buttonText: qsTr("View in Ethermon")
-                getLink: function (id) {
-                    // TODO find a more direct URL
-                    return "https://ethermon.io/inventory"
-                }
-            }
-
-            CollectiblesContainer {
-                collectibleName: "Kudos"
-                collectibleType: Constants.kudo
-                collectibleIconSource: "../../img/collectibles/kudos.png"
-                isLoading: root.isLoading
-                collectiblesModal: collectiblesModalComponent
-                buttonText: qsTr("View in Gitcoin")
-                getLink: function (id, externalUrl) {
-                    return externalUrl
-                }
+    function checkCollectiblesVisibility() {
+        // Show the collectibles section only if at least one of the sub-items is visible
+        // Sub-items are visible only if they are loading or have more than zero collectible
+        let showCollectibles = false
+        let currentItem
+        for (let i = 0; i < collectiblesRepeater.count; i++) {
+            currentItem = collectiblesRepeater.itemAt(i)
+            if (currentItem && currentItem.active) {
+                showCollectibles = true
+                break
             }
         }
+        noCollectiblesText.visible = !showCollectibles
+        collectiblesSection.visible = showCollectibles
     }
 
-    Connections {
-        target: walletModel
-        onLoadingCollectibles: {
-            root.isLoading= isLoading
+    Column {
+        id: collectiblesSection
+        spacing: Style.current.halfPadding
+        anchors.fill: parent
+
+        Repeater {
+            id: collectiblesRepeater
+            model: walletModel.collectiblesLists
+
+            CollectiblesContainer {
+                property var collectibleData: CollectiblesData.collectiblesData[model.collectibleType]
+
+                collectibleName: collectibleData.collectibleName
+                collectibleIconSource: "../../img/collectibles/" + collectibleData.collectibleIconSource
+                collectiblesModal: collectiblesModalComponent
+                buttonText: collectibleData.buttonText
+                getLink: collectibleData.getLink
+                onVisibleChanged: {
+                    checkCollectiblesVisibility()
+                }
+            }
         }
     }
 }

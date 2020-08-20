@@ -7,9 +7,11 @@ import eth/common/eth_types
 import ../libstatus/types
 import account
 
-const CRYPTOKITTY = "cryptokitty"
-const KUDO = "kudo"
-const ETHERMON = "ethermon"
+const CRYPTOKITTY* = "cryptokitty"
+const KUDO* = "kudo"
+const ETHERMON* = "ethermon"
+
+const COLLECTIBLE_TYPES* = [CRYPTOKITTY, KUDO, ETHERMON]
 
 proc getTokenUri(contract: Contract, tokenId: Stuint[256]): string =
   try:
@@ -89,6 +91,10 @@ proc getCryptoKitties*(address: EthAddress): seq[Collectible] =
   except Exception as e:
     error "Error getting Cryptokitties", msg = e.msg
 
+proc getCryptoKitties*(address: string): seq[Collectible] =
+  let eth_address = parseAddress(address)
+  result = getCryptoKitties(eth_address)
+
 proc getEthermons*(address: EthAddress): seq[Collectible] =
   result = @[]
   try:
@@ -119,6 +125,10 @@ proc getEthermons*(address: EthAddress): seq[Collectible] =
       i = i + 1
   except Exception as e:
     error "Error getting Ethermons", msg = e.msg
+
+proc getEthermons*(address: string): seq[Collectible] =
+  let eth_address = parseAddress(address)
+  result = getEthermons(eth_address)
 
 proc getKudos*(address: EthAddress): seq[Collectible] =
   result = @[]
@@ -152,6 +162,6 @@ proc getKudos*(address: EthAddress): seq[Collectible] =
   except Exception as e:
     error "Error getting Kudos", msg = e.msg
 
-proc getAllCollectibles*(address: string): seq[Collectible] =
+proc getKudos*(address: string): seq[Collectible] =
   let eth_address = parseAddress(address)
-  result = concat(getCryptoKitties(eth_address), getEthermons(eth_address), getKudos(eth_address))
+  result = getKudos(eth_address)

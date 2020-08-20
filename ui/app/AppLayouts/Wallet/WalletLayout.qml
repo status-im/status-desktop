@@ -80,9 +80,6 @@ SplitView {
                         anchors.leftMargin: 32
                         //% "Collectibles"
                         btnText: qsTrId("wallet-collectibles")
-                        onClicked: {
-                          walletModel.loadCollectiblesForAccount(walletModel.currentAccount.address)
-                        }
                     }
                     StatusTabButton {
                         id: historyBtn

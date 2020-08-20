@@ -11,7 +11,7 @@ ScrollView {
     property var collectiblesModal
     property string buttonText: "View in Cryptokitties"
     property var getLink: function () {}
-    property alias collectiblesQty: collectibleModel.count
+    property var collectibles: []
 
     id: root
     height: visible ? contentRow.height : 0
@@ -26,40 +26,9 @@ ScrollView {
         spacing: Style.current.padding
 
         Repeater {
-            model: collectibleModel
-        }
+            model: collectibles
 
-        DelegateModel {
-            id: collectibleModel
-            model: walletModel.collectibles
-            items.includeByDefault: false
-
-            groups: [
-                DelegateModelGroup {
-                    id: uncheckedItems
-                    name: "unchecked"
-                    includeByDefault: true
-                    onChanged: {
-                        while (uncheckedItems.count > 0) {
-                            var currentItem = uncheckedItems.get(0)
-                            if (currentItem.model.collectibleType === root.collectibleType) {
-                               currentItem.groups = "items"
-                            } else {
-                                currentItem.groups = "bad"
-                            }
-                        }
-
-                    }
-                },
-                DelegateModelGroup {
-                    id: badCollectibleGroup
-                    name: "bad"
-                    includeByDefault: true
-                }
-
-            ]
-
-            delegate: Rectangle {
+            Rectangle {
                 radius: 16
                 border.width: 1
                 border.color: Style.current.border
@@ -71,7 +40,7 @@ ScrollView {
                     id: collectibleImage
                     width: root.imageSize
                     height: root.imageSize
-                    source: image
+                    source: modelData.image
                     fillMode: Image.PreserveAspectCrop
                 }
 
@@ -80,12 +49,12 @@ ScrollView {
                     anchors.fill: parent
                     onClicked: {
                         collectiblesModal.openModal({
-                                                   name: name,
-                                                   id: collectibleId,
-                                                   description: description,
+                                                   name: modelData.name,
+                                                   id: modelData.id,
+                                                   description: modelData.description,
                                                    buttonText: root.buttonText,
-                                                   link: root.getLink(collectibleId, externalUrl),
-                                                   image: image
+                                                   link: root.getLink(modelData.id, modelData.externalUrl),
+                                                   image: modelData.image
                                                })
                     }
                 }
