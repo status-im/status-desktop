@@ -37,6 +37,24 @@ proc handleRPCErrors*(response: string) =
   if (parsedReponse.hasKey("error")):
     raise newException(ValueError, parsedReponse["error"]["message"].str)
 
+proc toStUInt*[bits: static[int]](flt: float, T: typedesc[StUint[bits]]): T =
+  var stringValue =  fmt"{flt:<.0f}"
+  stringValue.removeSuffix('.')
+  result = parse($stringValue, StUint[bits])
+
+proc toUInt256*(flt: float): UInt256 =
+  toStUInt(flt, StUInt[256])
+
+proc toUInt64*(flt: float): StUInt[64] =
+  toStUInt(flt, StUInt[64])
+
+proc eth2Wei*(eth: float, decimals: int = 18): UInt256 =
+  let weiValue = eth * parseFloat(alignLeft("1", decimals + 1, '0'))
+  weiValue.toUInt256
+
+proc gwei2Wei*(gwei: float): UInt256 =
+  eth2Wei(gwei, 9)
+
 proc wei2Eth*(input: Stuint[256]): string =
   var one_eth = fromHex(Stuint[256], "DE0B6B3A7640000")
 

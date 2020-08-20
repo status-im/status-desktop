@@ -9,7 +9,6 @@ Item {
     anchors.left: parent.left
     anchors.right: parent.right
     height: sliderWrapper.height + Style.current.smallPadding + txtNetworkFee.height + buttonAdvanced.height
-    property string validationError: "Please enter a number"
     property double slowestGasPrice: 0
     property double fastestGasPrice: 100
     property double stepSize: ((root.fastestGasPrice - root.slowestGasPrice) / 10).toFixed(1)
@@ -18,9 +17,24 @@ Item {
     property string defaultCurrency: "USD"
     property alias selectedGasPrice: inputGasPrice.text
     property alias selectedGasLimit: inputGasLimit.text
+    property string greaterThan0ErrorMessage: qsTr("Must be greater than 0")
+    //% "This needs to be a number"
+    property string invalidInputErrorMessage: qsTrId("this-needs-to-be-a-number")
+    property string noInputErrorMessage: qsTr("Please enter an amount")
+    property bool isValid: true
+    property var reset: function() {}
 
     function defaultGasPrice() {
         return ((50 * (root.fastestGasPrice - root.slowestGasPrice) / 100) + root.slowestGasPrice)
+    }
+
+    function resetInternal() {
+        slowestGasPrice = 0
+        fastestGasPrice = 100
+        inputGasLimit.text = "21000"
+        customNetworkFeeDialog.isValid = true
+        inputGasPrice.text = Qt.binding(defaultGasPrice)
+        gasSlider.value = Qt.binding(defaultGasPrice)
     }
 
     function updateGasEthValue() {
@@ -33,10 +47,6 @@ Item {
         let summary = Utils.stripTrailingZeros(ethValue) + " ETH ~" + fiatValue + " " + root.defaultCurrency.toUpperCase()
         labelGasPriceSummary.text = summary
         labelGasPriceSummaryAdvanced.text = summary
-    }
-
-    function validate(value) {
-        return !isNaN(value)
     }
 
     StyledText {
@@ -157,24 +167,63 @@ Item {
         title: qsTrId("custom-network-fee")
         height: 286
         width: 400
+        property bool isValid: true
+
+        onIsValidChanged: {
+            root.isValid = isValid
+        }
+
+        function validate() {
+            // causes error on application load without a null check
+            if (!inputGasLimit || !inputGasPrice) {
+                return
+            }
+            inputGasLimit.validationError = ""
+            inputGasPrice.validationError = ""
+            const noInputLimit = inputGasLimit.text === ""
+            const noInputPrice = inputGasPrice.text === ""
+            if (noInputLimit) {
+                inputGasLimit.validationError = root.noInputErrorMessage
+            }
+            if (noInputPrice) {
+                inputGasPrice.validationError = root.noInputErrorMessage
+            }
+            if (isNaN(inputGasLimit.text)) {
+                inputGasLimit.validationError = invalidInputErrorMessage
+            }
+            if (isNaN(inputGasPrice.text)) {
+                inputGasPrice.validationError = invalidInputErrorMessage
+            }
+            let inputLimit = parseFloat(inputGasLimit.text || "0.00")
+            let inputPrice = parseFloat(inputGasPrice.text || "0.00")
+            if (inputLimit === 0.00) {
+                inputGasLimit.validationError = root.greaterThan0ErrorMessage
+            }
+            if (inputPrice === 0.00) {
+                inputGasPrice.validationError = root.greaterThan0ErrorMessage
+            }
+            const isValid = inputGasLimit.validationError === "" && inputGasPrice.validationError === ""
+            customNetworkFeeDialog.isValid = isValid
+            return isValid
+        }
 
         Input {
           id: inputGasLimit
           //% "Gas limit"
           label: qsTrId("gas-limit")
-          text: "22000"
+          text: "21000"
           customHeight: 56
           anchors.top: parent.top
           anchors.left: parent.left
           anchors.right: inputGasPrice.left
           anchors.rightMargin: Style.current.padding
+          placeholderText: "21000"
+          validationErrorAlignment: TextEdit.AlignRight
+          validationErrorTopMargin: 8
           onTextChanged: {
-              if (root.validate(inputGasLimit.text.trim())) {
-                  inputGasLimit.validationError = ""
+              if (customNetworkFeeDialog.validate()) {
                   root.updateGasEthValue()
-                  return
               }
-              inputGasLimit.validationError = root.validationError
           }
         }
 
@@ -188,13 +237,14 @@ Item {
           width: 130
           customHeight: 56
           text: root.defaultGasPrice()
+          placeholderText: "21000"
           onTextChanged: {
-              if (root.validate(inputGasPrice.text.trim())) {
-                  inputGasPrice.validationError = ""
-                  root.updateGasEthValue()
-                  return
+              if (inputGasPrice.text.trim() === "") {
+                  inputGasPrice.text = root.defaultGasPrice()
               }
-              inputGasPrice.validationError = root.validationError
+              if (customNetworkFeeDialog.validate()) {
+                  root.updateGasEthValue()
+              }
           }
 
           StyledText {
@@ -223,12 +273,13 @@ Item {
             id: applyButton
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
-            //% "Apply"
-            label: qsTrId("invalid-key-confirm")
-            disabled: !root.validate(inputGasLimit.text.trim()) || !root.validate(inputGasPrice.text.trim())
+            label: qsTr("Apply")
             anchors.bottom: parent.bottom
+            disabled: !customNetworkFeeDialog.isValid
             onClicked: {
-                root.updateGasEthValue()
+                if (customNetworkFeeDialog.validate()) {
+                    root.updateGasEthValue()
+                }
                 customNetworkFeeDialog.close()
             }
         }

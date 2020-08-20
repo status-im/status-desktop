@@ -9,8 +9,16 @@ Item {
     property string validationError: "Error"
     property alias label: inpAddress.label
     property string selectedAddress
+    property var isValid: false
 
     height: inpAddress.height
+
+    function resetInternal() {
+        selectedAddress = ""
+        inpAddress.resetInternal()
+        metrics.text = ""
+        isValid = false
+    }
 
     function isValidEns(inputValue) {
         // TODO: Check if the entered value resolves to an address. Long operation.
@@ -26,6 +34,7 @@ Item {
             (inputValue && inputValue.startsWith("0x") && Utils.isValidAddress(inputValue)) ||
             isValidEns(inputValue)
         inpAddress.validationError = isValid ? "" : validationError
+        root.isValid = isValid
         return isValid
     }
 

@@ -7,9 +7,38 @@ Item {
     id: root
     height: signingPhraseItem.height + signingPhrase.height + txtPassword.height + Style.current.smallPadding + Style.current.bigPadding
 
-    property string signingPhrase: "not a real one"
-    property alias passwordInput: txtPassword
-    property string validationError: ""
+    property alias signingPhrase: signingPhrase.text
+    property string enteredPassword
+    property alias validationError: txtPassword.validationError
+    //% "You need to enter a password"
+    property string noInputErrorMessage: qsTrId("you-need-to-enter-a-password")
+    //% "Password needs to be 4 characters or more"
+    property string invalidInputErrorMessage: qsTrId("password-needs-to-be-4-characters-or-more")
+    property bool isValid: false
+    property var reset: function() {}
+
+    function resetInternal() {
+        signingPhrase.text = ""
+        enteredPassword = ""
+        txtPassword.resetInternal()
+        isValid = false
+    }
+
+    function forceActiveFocus(reason) {
+        txtPassword.forceActiveFocus(reason)
+    }
+
+    function validate() {
+        txtPassword.validationError = ""
+        const noInput = txtPassword.text === ""
+        if (noInput) {
+            txtPassword.validationError = noInputErrorMessage
+        } else if (txtPassword.text.length < 4) {
+            txtPassword.validationError = invalidInputErrorMessage
+        }
+        isValid = txtPassword.validationError === ""
+        return isValid
+    }
   
     Item {
         id: signingPhraseItem
@@ -73,15 +102,23 @@ Item {
     }
 
     Input {
+        id: txtPassword
         anchors.top: signingPhrase.bottom
         anchors.topMargin: Style.current.bigPadding
-        id: txtPassword
+        focus: true
+        customHeight: 56
         //% "Password"
         label: qsTrId("password")
         //% "Enter Password"
         placeholderText: qsTrId("enter-password")
         textField.echoMode: TextInput.Password
-        validationError: root.validationError
+        validationErrorAlignment: TextEdit.AlignRight
+        validationErrorTopMargin: 8
+        onTextChanged: {
+            if(root.validate()) {
+                root.enteredPassword = this.text
+            }
+        }
     }
 }
 

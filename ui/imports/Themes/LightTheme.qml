@@ -31,6 +31,7 @@ Theme {
     property color currentUserTextColor: white
     property color secondaryBackground: lightBlue
     property color inputBackground: grey
+    property color inputBorderFocus: blue
     property color inputColor: black
     property color modalBackground: white2
     property color backgroundHover: grey

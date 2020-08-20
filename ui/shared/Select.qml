@@ -19,16 +19,19 @@ Item {
     property color bgColorHover: bgColor
     property alias selectedItemView: selectedItemContainer.children
     property int caretRightMargin: Style.current.padding
-    property int caretLeftMargin: 8
+    property int caretLeftMargin: Style.current.halfPadding
     property alias select: inputRectangle
     property int menuAlignment: Select.MenuAlignment.Right
     property Item zeroItemsView: Item {}
-    property int contentWidth: inputRectangle.width - (caret.width + caretRightMargin + caretLeftMargin)
+    property int selectedItemRightMargin: caret.width + caretRightMargin + caretLeftMargin
+    property string validationError: ""
+    property alias validationErrorAlignment: validationErrorText.horizontalAlignment
+    property int validationErrorTopMargin: Style.current.halfPadding
     anchors.left: parent.left
     anchors.right: parent.right
 
     id: root
-    height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0)
+    height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0) + (!!validationError ? (validationErrorText.height + validationErrorTopMargin) : 0)
 
     StyledText {
         id: inputLabel
@@ -53,6 +56,8 @@ Item {
         anchors.topMargin: root.hasLabel ? root.labelMargin : 0
         anchors.right: parent.right
         anchors.left: parent.left
+        border.width: !!validationError ? 1 : 0
+        border.color: Style.current.danger
 
         Item {
             id: selectedItemContainer
@@ -133,6 +138,20 @@ Item {
                 selectMenu.insertItem(0, root.zeroItemsView)
             }
         }
+    }
+    TextEdit {
+        id: validationErrorText
+        visible: !!validationError
+        text: validationError
+        anchors.top: inputRectangle.bottom
+        anchors.topMargin: validationErrorTopMargin
+        selectByMouse: true
+        readOnly: true
+        font.pixelSize: 12
+        height: 16
+        color: Style.current.danger
+        width: parent.width
+        horizontalAlignment: TextEdit.AlignRight
     }
     MouseArea {
         id: mouseArea

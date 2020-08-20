@@ -11,6 +11,11 @@ Item {
     width: 86
     height: 24
 
+    function resetInternal() {
+        assets = undefined
+        selectedAsset = undefined
+    }
+
     onSelectedAssetChanged: {
         if (selectedAsset && selectedAsset.symbol) {
             iconImg.source = "../app/img/tokens/" + selectedAsset.symbol.toUpperCase() + ".png"
@@ -18,13 +23,26 @@ Item {
         }
     }
 
+    onAssetsChanged: {
+        if (!assets) {
+            return
+        }
+        selectedAsset = {
+            name: assets.rowData(0, "name"),
+            symbol: assets.rowData(0, "symbol"),
+            value: assets.rowData(0, "value"),
+            fiatBalanceDisplay: assets.rowData(0, "fiatBalanceDisplay"),
+            address: assets.rowData(0, "address"),
+            fiatBalance: assets.rowData(0, "fiatBalance")
+        }
+    }
+
     Select {
         id: select
-        model: root.assets
         width: parent.width
         bgColor: Style.current.transparent
         bgColorHover: Style.current.secondaryHover
-
+        model: root.assets
         caretRightMargin: 7
         select.radius: 6
         select.height: root.height
@@ -62,11 +80,6 @@ Item {
             property bool isFirstItem: index === 0
             property bool isLastItem: index === assets.rowCount() - 1
 
-            Component.onCompleted: {
-                if (isFirstItem) {
-                    root.selectedAsset = { address, name, value, symbol, fiatBalanceDisplay, fiatBalance }
-                }
-            }
             width: parent.width
             height: 72
             SVGImage {
