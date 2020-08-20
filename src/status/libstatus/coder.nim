@@ -40,7 +40,7 @@ type
   ApproveAndCall* = object
     to*: EthAddress
     value*: Stuint[256]
-    data*: DynamicBytes[132]
+    data*: DynamicBytes[100]
 
   Transfer* = object
     to*: EthAddress

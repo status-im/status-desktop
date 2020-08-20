@@ -17,7 +17,6 @@ Item {
         font.pixelSize: 15
         height: parent.height
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
         verticalAlignment: Text.AlignVCenter
         width: 105

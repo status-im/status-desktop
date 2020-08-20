@@ -21,6 +21,18 @@ Item {
     property var getFiatValue: function () {}
     property var getCryptoValue: function () {}
     property bool isDirty: false
+    property bool isValid: false
+    property var reset: function() {}
+
+    function resetInternal() {
+        selectAsset.resetInternal()
+        selectedAccount = undefined
+        txtFiatBalance.text = "0.00"
+        inputAmount.resetInternal()
+        txtBalanceDesc.color = Style.current.secondaryText
+        txtBalance.color = Qt.binding(function() { return txtBalance.hovered ? Style.current.textColor : Style.current.secondaryText })
+        isValid = false
+    }
 
     id: root
 
@@ -57,14 +69,19 @@ Item {
             txtBalanceDesc.color = Style.current.secondaryText
             txtBalance.color = Qt.binding(function() { return txtBalance.hovered ? Style.current.textColor : Style.current.secondaryText })
         }
+        root.isValid = isValid
         return isValid
     }
 
     onSelectedAccountChanged: {
-        if (!selectAsset.selectedAsset) {
-            return
-        }
-        txtBalance.text = Utils.stripTrailingZeros(selectAsset.selectedAsset.value)
+        selectAsset.assets = Qt.binding(function() { 
+            if (selectedAccount) {
+                return selectedAccount.assets
+            }
+        })
+        txtBalance.text = Qt.binding(function() { 
+            return selectAsset.selectedAsset ? Utils.stripTrailingZeros(selectAsset.selectedAsset.value) : ""
+        })
     }
 
     Item {
@@ -91,9 +108,6 @@ Item {
             font.weight: Font.Medium
             font.pixelSize: 13
             color: hovered ? Style.current.textColor : Style.current.secondaryText
-            onTextChanged: {
-                root.validate(true)
-            }
 
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
@@ -106,7 +120,7 @@ Item {
                     txtBalance.hovered = true
                 }
                 onClicked: {
-                    inputAmount.text = selectAsset.selectedAsset.value
+                    inputAmount.text = Utils.stripTrailingZeros(selectAsset.selectedAsset.value)
                     txtFiatBalance.text = root.getFiatValue(inputAmount.text, selectAsset.selectedAsset.symbol, root.defaultCurrency)
                 }
             }
@@ -123,7 +137,6 @@ Item {
         validationErrorAlignment: TextEdit.AlignRight
         validationErrorTopMargin: 8
         Keys.onReleased: {
-            root.isDirty = true
             let amount = inputAmount.text.trim()
 
             if (isNaN(amount)) {
@@ -136,13 +149,13 @@ Item {
             }
         }
         onTextChanged: {
+            root.isDirty = true
             root.validate(true)
         }
     }
 
     AssetSelector {
         id: selectAsset
-        assets: root.selectedAccount.assets
         width: 86
         height: 28
         anchors.top: inputAmount.top
@@ -150,11 +163,15 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.smallPadding
         onSelectedAssetChanged: {
+            if (!selectAsset.selectedAsset) {
+                return
+            }
             txtBalance.text = Utils.stripTrailingZeros(selectAsset.selectedAsset.value)
             if (inputAmount.text === "" || isNaN(inputAmount.text)) {
                 return
             }
             txtFiatBalance.text = root.getFiatValue(inputAmount.text, selectAsset.selectedAsset.symbol, root.defaultCurrency)
+            root.validate(true)
         }
     }
 

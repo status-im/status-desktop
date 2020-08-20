@@ -4,7 +4,7 @@ import "../../../imports"
 import "../../../shared"
 
 ModalPopup {
-    property string address: ""
+    property alias selectedAccount: accountSelector.selectedAccount
     id: popup
 
     //% "Receive"
@@ -27,7 +27,6 @@ ModalPopup {
             id: qrCodeImage
             asynchronous: true
             fillMode: Image.PreserveAspectFit
-            source: profileModel.qrCode(accountSelector.selectedAccount.address)
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             height: parent.height - Style.current.padding
@@ -49,12 +48,18 @@ ModalPopup {
         width: 240
         dropdownWidth: parent.width - (Style.current.padding * 2)
         dropdownAlignment: Select.MenuAlignment.Center
+        onSelectedAccountChanged: {
+            if (selectedAccount.address) {
+                qrCodeImage.source = profileModel.qrCode(selectedAccount.address)
+                txtWalletAddress.text = selectedAccount.address
+            }
+        }
     }
 
     Input {
+	id: txtWalletAddress
         //% "Wallet address"
         label: qsTrId("wallet-address")
-        text: accountSelector.selectedAccount.address
         anchors.top: accountSelector.bottom
         anchors.topMargin: Style.current.padding
         copyToClipboard: true

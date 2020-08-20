@@ -331,6 +331,7 @@ DISTFILES += \
     shared/AccountSelector.qml \
     shared/AddButton.qml \
     shared/Address.qml \
+    shared/FormGroup.qml \
     shared/IconButton.qml \
     shared/Input.qml \
     shared/LabelValueRow.qml \
@@ -344,6 +345,7 @@ DISTFILES += \
     shared/SearchBox.qml \
     shared/Select.qml \
     shared/Separator.qml \
+    shared/SeparatorWithIcon.qml \
     shared/SplitViewHandle.qml \
     shared/StatusTabButton.qml \
     shared/StyledButton.qml \
@@ -355,6 +357,8 @@ DISTFILES += \
     shared/SVGImage.qml \
     shared/TextWithLabel.qml \
     shared/TransactionPreview.qml \
+    shared/TransactionFormGroup.qml \
+    shared/TransactionStackView.qml \
     shared/img/check.svg \
     shared/img/close.svg \
     shared/img/loading.png \

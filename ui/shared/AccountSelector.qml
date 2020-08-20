@@ -10,9 +10,7 @@ Item {
     property string label: qsTrId("choose-account")
     property bool showAccountDetails: true
     property var accounts
-    property var selectedAccount: {
-        "address": "", "name": "", "iconColor": "", "fiatBalance": ""
-    }
+    property var selectedAccount
     property string currency: "usd"
     height: select.height +
             (selectedAccountDetails.visible ? selectedAccountDetails.height : 0)
@@ -22,10 +20,39 @@ Item {
     property string showAssetBalance: ""
     property int dropdownWidth: width
     property alias dropdownAlignment: select.menuAlignment
+    property bool isValid: true
+    property var reset: function() {}
+
+    function resetInternal() {
+        accounts = undefined
+        selectedAccount = undefined
+        isValid = true
+    }
+
+    onSelectedAccountChanged: {
+        if (!selectedAccount) {
+            return
+        }
+        if (selectedAccount.iconColor) {
+            selectedIconImgOverlay.color = selectedAccount.iconColor
+        }
+        if (selectedAccount.name) {
+            selectedTextField.text = selectedAccount.name
+        }
+        if (selectedAccount.address) {
+            textSelectedAddress.text = selectedAccount.address  + " • "
+        }
+        if (selectedAccount.fiatBalance) {
+            textSelectedAddressFiatBalance.text = selectedAccount.fiatBalance + " " + currency.toUpperCase()
+        }
+        if (selectedAccount.assets) {
+            rptAccounts.model = selectedAccount.assets
+        }
+    }
 
     Repeater {
+        id: rptAccounts
         visible: showAssetBalance !== ""
-        model: selectedAccount.assets
         delegate: StyledText {
             visible: symbol === root.showAssetBalance.toUpperCase()
             anchors.bottom: select.top
@@ -64,19 +91,19 @@ Item {
                 source: "../app/img/walletIcon.svg"
             }
             ColorOverlay {
+                id: selectedIconImgOverlay
                 anchors.fill: selectedIconImg
                 source: selectedIconImg
-                color: selectedAccount.iconColor
             }
 
             StyledText {
                 id: selectedTextField
-                text: selectedAccount.name
                 elide: Text.ElideRight
                 anchors.left: selectedIconImg.right
                 anchors.leftMargin: 8
+                anchors.right: parent.right
+                anchors.rightMargin: select.selectedItemRightMargin
                 anchors.verticalCenter: parent.verticalCenter
-                width: select.contentWidth - (Style.current.padding + selectedIconImg.width + anchors.leftMargin)
                 font.pixelSize: 15
                 verticalAlignment: Text.AlignVCenter
                 height: 22
@@ -94,7 +121,6 @@ Item {
 
         StyledText {
             id: textSelectedAddress
-            text: selectedAccount.address  + " • "
             font.pixelSize: 12
             elide: Text.ElideMiddle
             height: 16
@@ -102,7 +128,7 @@ Item {
             color: Style.current.secondaryText
         }
         StyledText {
-            text: selectedAccount.fiatBalance + " " + root.currency.toUpperCase()
+            id: textSelectedAddressFiatBalance
             font.pixelSize: 12
             height: 16
             color: Style.current.secondaryText
@@ -117,7 +143,7 @@ Item {
             property bool isLastItem: index === accounts.rowCount() - 1
 
             Component.onCompleted: {
-                if (root.selectedAccount.address === "") {
+                if (!root.selectedAccount && isFirstItem) {
                     root.selectedAccount = { address, name, iconColor, assets, fiatBalance }
                 }
             }

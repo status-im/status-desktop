@@ -50,7 +50,6 @@ Popup {
                 anchors.left: parent.left
                 font.bold: true
                 font.pixelSize: 17
-                anchors.leftMargin: 16
                 anchors.topMargin: Style.current.padding
                 anchors.bottomMargin: Style.current.padding
                 visible: !!title

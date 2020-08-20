@@ -8,6 +8,13 @@ type SignalSubscriber* = ref object of RootObj
 type Signal* = ref object of RootObj
   signalType* {.serializedFieldName("type").}: SignalType
 
+type StatusGoErrorDetail* = object
+  message*: string
+  code*: int
+
+type StatusGoErrorExtended* = object
+  error*: StatusGoErrorDetail
+
 type StatusGoError* = object
   error*: string
 

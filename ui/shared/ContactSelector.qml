@@ -8,10 +8,20 @@ Item {
     id: root
     property var contacts
     property var selectedContact
-    height: select.height + (validationErrorText.visible ? validationErrorText.height : 0)
+    height: select.height
     property int dropdownWidth: width
-    property string validationError: validationErrorText.text
-    property alias validationErrorAlignment: validationErrorText.horizontalAlignment
+    //% "Please select a contact"
+    property string validationError: qsTrId("please-select-a-contact")
+    property alias validationErrorAlignment: select.validationErrorAlignment
+    property bool isValid: false
+    property var reset: function() {}
+
+    function resetInternal() {
+        contacts = undefined
+        selectedContact = undefined
+        select.validationError = ""
+        isValid = false
+    }
 
     onContactsChanged: {
         //% "Select a contact"
@@ -19,16 +29,9 @@ Item {
     }
 
     function validate() {
-        const isValid = root.selectedContact && root.selectedContact.address
-        if (!isValid) {
-            select.select.border.color = Style.current.danger
-            select.select.border.width = 1
-            validationErrorText.visible = true
-        } else {
-            select.select.border.color = Style.current.transparent
-            select.select.border.width = 0
-            validationErrorText.visible = false
-        }
+        const isValid = !!(selectedContact && selectedContact.address)
+        select.validationError = !isValid ? validationError : ""
+        root.isValid = isValid
         return isValid
     }
 
@@ -46,14 +49,14 @@ Item {
                 anchors.leftMargin: 14
                 anchors.verticalCenter: parent.verticalCenter
                 height: 32
-                width: !!selectedContact.identicon ? 32 : 0
-                visible: !!selectedContact.identicon
-                source: selectedContact.identicon ? selectedContact.identicon : ""
+                width: (!!selectedContact && !!selectedContact.identicon) ? 32 : 0
+                visible: !!selectedContact && !!selectedContact.identicon
+                source: (!!selectedContact && !!selectedContact.identicon) ? selectedContact.identicon : ""
             }
 
             StyledText {
                 id: selectedTextField
-                text: selectedContact.name
+                text: !!selectedContact ? selectedContact.name : ""
                 anchors.left: iconImg.right
                 anchors.leftMargin: 4
                 anchors.verticalCenter: parent.verticalCenter
@@ -78,21 +81,6 @@ Item {
 
         menu.delegate: menuItem
         menu.width: dropdownWidth
-    }
-    TextEdit {
-        id: validationErrorText
-        visible: false
-        //% "Please select a contact"
-        text: qsTrId("please-select-a-contact")
-        anchors.top: select.bottom
-        anchors.topMargin: 8
-        selectByMouse: true
-        readOnly: true
-        font.pixelSize: 12
-        height: 16
-        color: Style.current.danger
-        width: parent.width
-        horizontalAlignment: TextEdit.AlignRight
     }
 
     Component {

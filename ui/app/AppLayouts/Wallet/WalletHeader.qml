@@ -74,7 +74,7 @@ Item {
 
     ReceiveModal{
         id: receiveModal
-        address: currentAccount.address
+        selectedAccount: currentAccount
     }
 
     SetCurrencyModal{

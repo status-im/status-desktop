@@ -3,6 +3,7 @@ import ../../status/[status, wallet, threads]
 import ../../status/wallet/collectibles as status_collectibles
 import ../../status/libstatus/wallet as status_wallet
 import ../../status/libstatus/tokens
+import ../../status/libstatus/types
 import ../../status/libstatus/utils
 import views/[asset_list, account_list, account_item, transaction_list, collectibles_list]
 
@@ -48,7 +49,7 @@ QtObject:
     result.standardGasPrice = "0"
     result.fastGasPrice = "0"
     result.fastestGasPrice = "0"
-    result.defaultGasLimit = "22000"
+    result.defaultGasLimit = "21000"
     result.signingPhrase = ""
     result.setup
 
@@ -231,8 +232,14 @@ QtObject:
     read = getAccountList
     notify = accountListChanged
 
-  proc onSendTransaction*(self: WalletView, from_value: string, to: string, assetAddress: string, value: string, password: string): string {.slot.} =
-    return self.status.wallet.sendTransaction(from_value, to, assetAddress, value, password)
+  proc sendTransaction*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string, gas: string, gasPrice: string, password: string): string {.slot.} =
+    let resultJson = %*{}
+    try:
+      resultJson{"result"} = %self.status.wallet.sendTransaction(from_addr, to, assetAddress, value, gas, gasPrice, password)
+    except StatusGoException as e:
+      resultJson{"error"} = %e.msg
+    finally:
+      result = $resultJson
 
   proc getDefaultAccount*(self: WalletView): string {.slot.} =
     self.currentAccount.address
@@ -257,7 +264,12 @@ QtObject:
   proc toggleAsset*(self: WalletView, symbol: string, checked: bool, address: string, name: string, decimals: int, color: string) {.slot.} =
     self.status.wallet.toggleAsset(symbol, checked, address, name, decimals, color)
     for account in self.status.wallet.accounts:
-      self.accounts.updateAssetsInList(account.address, account.assetList)
+      if account.address == self.currentAccount.address:
+        self.currentAccount.setAccountItem(account)
+      else: 
+        self.accounts.updateAssetsInList(account.address, account.assetList)
+    self.accountListChanged()
+    self.currentAccountChanged()
 
   proc updateView*(self: WalletView) =
     self.totalFiatBalanceChanged()
@@ -362,7 +374,7 @@ QtObject:
             "collectibleType": status_collectibles.ETHERMON,
             "collectiblesOrError": status_collectibles.getEthermons(address)
           })
-      of STICKER:
+      of status_collectibles.STICKER:
         spawnAndSend(self, "setCollectiblesResult") do:
           $(%*{
             "address": address,

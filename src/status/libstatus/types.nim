@@ -1,5 +1,5 @@
-import eventemitter, json
-import eth/common/eth_types, stew/byteutils, json_serialization, stint
+import eventemitter, json, options, typetraits, strutils
+import eth/common/eth_types, stew/byteutils, json_serialization, stint, faststreams/textio
 import accounts/constants
 
 type SignalType* {.pure.} = enum
@@ -174,3 +174,56 @@ type
     name*: string
     etherscanLink* {.serializedFieldName("etherscan-link").}: string
     config*: NodeConfig
+
+  # TODO: Remove this when nim-web3 is added as a dependency
+  Quantity* = distinct uint64
+
+  # TODO: Remove this when nim-web3 is added as a dependency
+  EthSend* = object
+    source*: EthAddress             # the address the transaction is send from.
+    to*: Option[EthAddress]         # (optional when creating new contract) the address the transaction is directed to.
+    gas*: Option[Quantity]            # (optional, default: 90000) integer of the gas provided for the transaction execution. It will return unused gas.
+    gasPrice*: Option[int]       # (optional, default: To-Be-Determined) integer of the gasPrice used for each paid gas.
+    value*: Option[Uint256]          # (optional) integer of the value sent with this transaction.
+    data*: string                # the compiled code of a contract OR the hash of the invoked method signature and encoded parameters. For details see Ethereum Contract ABI.
+    nonce*: Option[int]        # (optional) integer of a nonce. This allows to overwrite your own pending transactions that use the same nonce
+
+# TODO: Remove this when nim-web3 is added as a dependency
+template stripLeadingZeros(value: string): string =
+  var cidx = 0
+  # ignore the last character so we retain '0' on zero value
+  while cidx < value.len - 1 and value[cidx] == '0':
+    cidx.inc
+  value[cidx .. ^1]
+
+# TODO: Remove this when nim-web3 is added as a dependency
+proc encodeQuantity*(value: SomeUnsignedInt): string =
+  var hValue = value.toHex.stripLeadingZeros
+  result = "0x" & hValue
+
+# TODO: Remove this when nim-web3 is added as a dependency
+proc `%`*(v: EthAddress): JsonNode =
+  result = %("0x" & array[20, byte](v).toHex)
+
+# TODO: Remove this when nim-web3 is added as a dependency
+proc `%`*(v: Quantity): JsonNode =
+  result = %encodeQuantity(v.uint64)
+
+# TODO: Remove this when nim-web3 is added as a dependency
+proc `%`*(n: Int256|UInt256): JsonNode = %("0x" & n.toHex)
+
+# TODO: Remove this when nim-web3 is added as a dependency
+proc `%`*(x: EthSend): JsonNode =
+  result = newJobject()
+  result["from"] = %x.source
+  if x.to.isSome:
+    result["to"] = %x.to.unsafeGet
+  if x.gas.isSome:
+    result["gas"] = %x.gas.unsafeGet
+  if x.gasPrice.isSome:
+    result["gasPrice"] = %("0x" & x.gasPrice.unsafeGet.toHex.stripLeadingZeros)
+  if x.value.isSome:
+    result["value"] = %("0x" & x.value.unsafeGet.toHex)
+  result["data"] = %x.data
+  if x.nonce.isSome:
+    result["nonce"] = %x.nonce.unsafeGet

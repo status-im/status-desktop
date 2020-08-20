@@ -34,6 +34,11 @@ Item {
     anchors.right: parent.right
     anchors.left: parent.left
 
+    function resetInternal() {
+        inputValue.text = ""
+        validationError = ""
+    }
+
     StyledText {
         id: inputLabel
         text: inputBox.label
@@ -55,15 +60,22 @@ Item {
         anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
         anchors.right: parent.right
         anchors.left: parent.left
-        border.width: !!validationError ? 1 : 0
-        border.color: Style.current.red
+        border.width: (!!validationError || inputValue.focus) ? 1 : 0
+        border.color: {
+            if (!!validationError) {
+                return Style.current.danger
+            }
+            if (inputValue.focus) {
+                return Style.current.inputBorderFocus
+            }
+            return Style.current.transparent
+        }
 
         StyledTextField {
             id: inputValue
             visible: !inputBox.isTextArea && !inputBox.isSelect
             placeholderText: inputBox.placeholderText
             placeholderTextColor: inputBox.placeholderTextColor
-            text: inputBox.text
             anchors.top: parent.top
             anchors.topMargin: 0
             anchors.bottom: parent.bottom

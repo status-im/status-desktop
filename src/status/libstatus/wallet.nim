@@ -1,9 +1,11 @@
-import json, httpclient, json, strformat, stint, strutils, sequtils, chronicles, parseutils, tables
+import json, options
+import stint, chronicles, json_serialization
 import nim_status, core, types, utils
 import ../wallet/account
-from ./accounts/constants import ZERO_ADDRESS
 import ./contracts as contractMethods
-from eth/common/utils as eth_utils import parseAddress
+import eth/common/eth_types
+import ./types
+import ../../signals/types as signal_types
 
 proc getWalletAccounts*(): seq[WalletAccount] =
   try:
@@ -59,46 +61,18 @@ proc getTransfersByAddress*(address: string): seq[types.Transaction] =
   except:
     let msg = getCurrentExceptionMsg()
     error "Failed getting wallet account transactions", msg
-    
 
-proc sendTransaction*(from_address: string, to: string, assetAddress: string, value: string, password: string): string =
+proc sendTransaction*(tx: EthSend, password: string): string =
+  let response = core.sendTransaction($(%tx), password)
+
   try:
-    var args: JsonNode
-    if (assetAddress == ZERO_ADDRESS or assetAddress == ""):
-      var weiValue = value.parseFloat() * float(1000000000000000000)
-      var stringValue =  fmt"{weiValue:<.0f}"
-      stringValue.removeSuffix('.')
-      var hexValue = parseBiggestInt(stringValue).toHex()
-      hexValue.removePrefix('0')
-      args = %* {
-        "value": fmt"0x{hexValue}",
-        "from": from_address,
-        "to": to
-      }
-    else:
-      var bigIntValue = u256(value)
-      # TODO get decimals from the token
-      bigIntValue = bigIntValue * u256(1000000000000000000)
-      # Just using mainnet SNT to get the method ABI
-      let
-        contract = getContract("snt")
-        transfer = Transfer(to: parseAddress(to), value: bigIntValue)
-        transferEncoded = contract.methods["transfer"].encodeAbi(transfer)
-      
-      args = %* {
-        "from": from_address,
-        "to": assetAddress,
-        "data": transferEncoded
-      }
-
-    let response = sendTransaction($args, password)
     let parsedResponse = parseJson(response)
-    
     result = parsedResponse["result"].getStr
-    trace "Transaction sent succesfully", hash=result
-  except Exception as e:
-    error "Error submitting transaction", msg=e.msg
-    result = e.msg
+  except:
+    let err = Json.decode(response, StatusGoErrorExtended)
+    raise newException(StatusGoException, "Error sending transaction: " & err.error.message)
+
+  trace "Transaction sent succesfully", hash=result
 
 proc getBalance*(address: string): string =
   let payload = %* [address, "latest"]

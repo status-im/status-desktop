@@ -1,12 +1,14 @@
-import eventemitter, json, strformat, strutils, chronicles, sequtils, httpclient
-import json_serialization
+import eventemitter, json, strformat, strutils, chronicles, sequtils, httpclient, tables
+import json_serialization, stint
 from eth/common/utils import parseAddress
 import libstatus/accounts as status_accounts
 import libstatus/tokens as status_tokens
 import libstatus/settings as status_settings
 import libstatus/wallet as status_wallet
 import libstatus/accounts/constants as constants
-from libstatus/types import GeneratedAccount, DerivedAccount, Transaction, Setting, GasPricePrediction
+import libstatus/contracts as contracts
+from libstatus/types import GeneratedAccount, DerivedAccount, Transaction, Setting, GasPricePrediction, EthSend, Quantity, `%`, StatusGoException
+from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, first, toUInt64
 import wallet/balance_manager
 import wallet/account
 import wallet/collectibles
@@ -48,8 +50,36 @@ proc initEvents*(self: WalletModel) =
 proc delete*(self: WalletModel) =
   discard
 
-proc sendTransaction*(self: WalletModel, from_value: string, to: string, assetAddress: string, value: string, password: string): string =
-  status_wallet.sendTransaction(from_value, to, assetAddress, value, password)
+proc sendTransaction*(self: WalletModel, source, to, assetAddress, value, gas, gasPrice, password: string): string =
+  var
+    weiValue = eth2Wei(parseFloat(value), 18) # ETH
+    data = ""
+    toAddr = parseAddress(to)
+  let gasPriceInWei = gwei2Wei(parseFloat(gasPrice))
+
+  # TODO: this code needs to be tested with testnet assets (to be implemented in
+  # a future PR
+  if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
+    let
+      token = self.tokens.first("address", assetAddress)
+      contract = getContract("snt")
+      transfer = Transfer(to: toAddr, value: weiValue)
+    weiValue = eth2Wei(parseFloat(value), token["decimals"].getInt)
+    data = contract.methods["transfer"].encodeAbi(transfer)
+    toAddr = parseAddress(assetAddress)
+
+  let tx = EthSend(
+    source: parseAddress(source),
+    to: toAddr.some,
+    gas: (if gas.isEmptyOrWhitespace: Quantity.none else: Quantity(cast[uint64](parseFloat(gas).toUInt64)).some),
+    gasPrice: (if gasPrice.isEmptyOrWhitespace: int.none else: gwei2Wei(parseFloat(gasPrice)).truncate(int).some),
+    value: weiValue.some,
+    data: data
+  )
+  try:
+    result = status_wallet.sendTransaction(tx, password)
+  except StatusGoException as e:
+    raise
 
 proc getDefaultCurrency*(self: WalletModel): string =
   # TODO: this should come from a model? It is going to be used too in the
