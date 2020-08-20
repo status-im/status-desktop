@@ -23,10 +23,6 @@ QtObject {
     readonly property string seedWalletType: "seed"
     readonly property string generatedWalletType: "generated"
 
-    readonly property string cryptokitty: "cryptokitty"
-    readonly property string kudo: "kudo"
-    readonly property string ethermon: "ethermon"
-
     readonly property var accountColors: [
         "#9B832F",
         "#D37EF4",

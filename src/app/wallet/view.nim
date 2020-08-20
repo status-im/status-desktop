@@ -10,7 +10,7 @@ QtObject:
     WalletView* = ref object of QAbstractListModel
       accounts*: AccountList
       currentAssetList*: AssetList
-      currentCollectiblesList*: CollectiblesList
+      currentCollectiblesLists*: CollectiblesList
       currentAccount: AccountItemView
       currentTransactions: TransactionList
       status: Status
@@ -40,7 +40,7 @@ QtObject:
     result.currentAccount = newAccountItemView()
     result.currentAssetList = newAssetList()
     result.currentTransactions = newTransactionList()
-    result.currentCollectiblesList = newCollectiblesList()
+    result.currentCollectiblesLists = newCollectiblesList()
     result.totalFiatBalance = ""
     result.etherscanLink = ""
     result.safeLowGasPrice = "0"
@@ -79,19 +79,19 @@ QtObject:
 
   proc setCurrentAssetList*(self: WalletView, assetList: seq[Asset])
 
-  proc currentCollectiblesListChanged*(self: WalletView) {.signal.}
+  proc currentCollectiblesListsChanged*(self: WalletView) {.signal.}
 
-  proc getCurrentCollectiblesList(self: WalletView): QVariant {.slot.} =
-    return newQVariant(self.currentCollectiblesList)
+  proc getCurrentCollectiblesLists(self: WalletView): QVariant {.slot.} =
+    return newQVariant(self.currentCollectiblesLists)
 
-  proc setCurrentCollectiblesList*(self: WalletView, collectibles: seq[Collectible]) =
-    self.currentCollectiblesList.setNewData(collectibles)
-    self.currentCollectiblesListChanged()
+  proc setCurrentCollectiblesLists*(self: WalletView, collectiblesLists: seq[CollectibleList]) =
+    self.currentCollectiblesLists.setNewData(collectiblesLists)
+    self.currentCollectiblesListsChanged()
 
-  QtProperty[QVariant] collectibles:
-    read = getCurrentCollectiblesList
-    write = setCurrentCollectiblesList
-    notify = currentCollectiblesListChanged
+  QtProperty[QVariant] collectiblesLists:
+    read = getCurrentCollectiblesLists
+    write = setCurrentCollectiblesLists
+    notify = currentCollectiblesListsChanged
 
   proc currentTransactionsChanged*(self: WalletView) {.signal.}
 
@@ -122,7 +122,8 @@ QtObject:
     self.setCurrentAssetList(selectedAccount.assetList)
 
     # Display currently known collectibles, and get latest from API/Contracts
-    self.setCurrentCollectiblesList(selectedAccount.collectibles)
+    self.setCurrentCollectiblesLists(selectedAccount.collectiblesLists)
+    # TODO only load if the list is empty
     self.loadCollectiblesForAccount(selectedAccount.address)
     # Display currently known transactions, and get latest transactions from status-go
     self.setCurrentTransactions(selectedAccount.transactions)
@@ -267,26 +268,53 @@ QtObject:
   proc addCustomToken*(self: WalletView, address: string, name: string, symbol: string, decimals: string) {.slot.} =
     self.status.wallet.toggleAsset(symbol, true, address, name, parseInt(decimals), "")
 
-  proc loadingCollectibles*(self: WalletView, isLoading: bool) {.signal.}
-
   proc loadCollectiblesForAccount*(self: WalletView, address: string) {.slot.} =
-    self.loadingCollectibles(true)
-    spawnAndSend(self, "setCollectiblesResult ") do:
+    # Add loading state if it is the current account
+    if address == self.currentAccount.address:
+      for collectibleType in status_collectibles.COLLECTIBLE_TYPES:
+        self.currentCollectiblesLists.addCollectibleListToList(CollectibleList(
+          collectibleType: collectibleType,
+          collectiblesJSON: "[]",
+          error: "",
+          loading: 1
+        ))
+
+    # TODO find a way to use a loop to streamline this code
+    # Spawn for each collectible. They can end in whichever order
+    spawnAndSend(self, "setCollectiblesResult") do:
       $(%*{
         "address": address,
-        "collectibles": status_collectibles.getAllCollectibles(address)
+        "collectibleType": status_collectibles.CRYPTOKITTY,
+        "collectibles": status_collectibles.getCryptoKitties(address)
+      })
+    spawnAndSend(self, "setCollectiblesResult") do:
+      $(%*{
+        "address": address,
+        "collectibleType": status_collectibles.KUDO,
+        "collectibles": status_collectibles.getKudos(address)
+      })
+    spawnAndSend(self, "setCollectiblesResult") do:
+      $(%*{
+        "address": address,
+        "collectibleType": status_collectibles.ETHERMON,
+        "collectibles": status_collectibles.getEthermons(address)
       })
 
   proc setCollectiblesResult(self: WalletView, collectiblesJSON: string) {.slot.} =
     let collectibleData = parseJson(collectiblesJSON)
-    let collectibles = collectibleData["collectibles"].to(seq[Collectible]);
     let address = collectibleData["address"].getStr
-    let index = self.accounts.getAccountindexByAddress(address)
-    if index == -1: return
-    self.accounts.getAccount(index).collectibles = collectibles
+    
+    # TODO Add the collectibleData to the Wallet account
+    # let index = self.accounts.getAccountindexByAddress(address)
+    # if index == -1: return
+    # self.accounts.getAccount(index).collectiblesLists = collectiblesList
     if address == self.currentAccount.address:
-      self.setCurrentCollectiblesList(collectibles)
-    self.loadingCollectibles(false)
+      # Add CollectibleListJSON to the right list
+      # TODO check if instead we need to set an error
+      self.currentCollectiblesLists.setCollectiblesJSONByType(
+        collectibleData["collectibleType"].getStr,
+        $collectibleData["collectibles"]
+      )
 
   proc loadingTrxHistory*(self: WalletView, isLoading: bool) {.signal.}
 

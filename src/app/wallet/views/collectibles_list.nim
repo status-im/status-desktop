@@ -1,66 +1,68 @@
 import NimQml, tables
-from ../../../status/wallet import Collectible
+from ../../../status/wallet import CollectibleList
 
 type
   CollectiblesRoles {.pure.} = enum
-    Name = UserRole + 1,
-    Image = UserRole + 2
-    CollectibleId = UserRole + 3
-    CollectibleType = UserRole + 4
-    Description = UserRole + 5
-    ExternalUrl = UserRole + 6
+    CollectibleType = UserRole + 1
+    CollectiblesJSON = UserRole + 2
+    Error = UserRole + 3
+    Loading = UserRole + 4
 
 QtObject:
   type CollectiblesList* = ref object of QAbstractListModel
-    collectibles*: seq[Collectible]
+    collectibleLists*: seq[CollectibleList]
 
   proc setup(self: CollectiblesList) = self.QAbstractListModel.setup
 
+  proc forceUpdate*(self: CollectiblesList) =
+    self.beginResetModel()
+    self.endResetModel()
+
   proc delete(self: CollectiblesList) =
     self.QAbstractListModel.delete
-    self.collectibles = @[]
+    self.collectibleLists = @[]
 
   proc newCollectiblesList*(): CollectiblesList =
     new(result, delete)
-    result.collectibles = @[]
+    result.collectibleLists = @[]
     result.setup
 
+  proc setCollectiblesJSONByType*(self: CollectiblesList, collectibleType: string, collectiblesJSON: string) =
+    for collectibleList in self.collectibleLists:
+      if collectibleList.collectibleType == collectibleType:
+        collectibleList.collectiblesJSON = collectiblesJSON
+        collectibleList.loading = 0
+        self.forceUpdate()
+        break
+
   method rowCount(self: CollectiblesList, index: QModelIndex = nil): int =
-    return self.collectibles.len
+    return self.collectibleLists.len
 
   method data(self: CollectiblesList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
-    if index.row < 0 or index.row >= self.collectibles.len:
+    if index.row < 0 or index.row >= self.collectibleLists.len:
       return
-    let collectible = self.collectibles[index.row]
+    let collectibleList = self.collectibleLists[index.row]
     let collectibleRole = role.CollectiblesRoles
     case collectibleRole:
-    of CollectiblesRoles.Name: result = newQVariant(collectible.name)
-    of CollectiblesRoles.Image: result = newQVariant(collectible.image)
-    of CollectiblesRoles.CollectibleId: result = newQVariant(collectible.id)
-    of CollectiblesRoles.CollectibleType: result = newQVariant(collectible.collectibleType)
-    of CollectiblesRoles.Description: result = newQVariant(collectible.description)
-    of CollectiblesRoles.ExternalUrl: result = newQVariant(collectible.externalUrl)
+    of CollectiblesRoles.CollectibleType: result = newQVariant(collectibleList.collectibleType)
+    of CollectiblesRoles.CollectiblesJSON: result = newQVariant(collectibleList.collectiblesJSON)
+    of CollectiblesRoles.Error: result = newQVariant(collectibleList.error)
+    of CollectiblesRoles.Loading: result = newQVariant(collectibleList.loading)
 
   method roleNames(self: CollectiblesList): Table[int, string] =
-    { CollectiblesRoles.Name.int:"name",
-    CollectiblesRoles.Image.int:"image",
-    CollectiblesRoles.CollectibleId.int:"collectibleId",
-    CollectiblesRoles.CollectibleType.int:"collectibleType",
-    CollectiblesRoles.Description.int:"description",
-    CollectiblesRoles.ExternalUrl.int:"externalUrl" }.toTable
+    { CollectiblesRoles.CollectibleType.int:"collectibleType",
+    CollectiblesRoles.CollectiblesJSON.int:"collectiblesJSON",
+    CollectiblesRoles.Error.int:"error",
+    CollectiblesRoles.Loading.int:"loading" }.toTable
 
-  proc addCollectibleToList*(self: CollectiblesList, colelctible: Collectible) =
-    self.beginInsertRows(newQModelIndex(), self.collectibles.len, self.collectibles.len)
-    self.collectibles.add(colelctible)
+  proc addCollectibleListToList*(self: CollectiblesList, collectibleList: CollectibleList) =
+    self.beginInsertRows(newQModelIndex(), self.collectibleLists.len, self.collectibleLists.len)
+    self.collectibleLists.add(collectibleList)
     self.endInsertRows()
 
-  proc setNewData*(self: CollectiblesList, collectibles: seq[Collectible]) =
+  proc setNewData*(self: CollectiblesList, collectibleLists: seq[CollectibleList]) =
     self.beginResetModel()
-    self.collectibles = collectibles
-    self.endResetModel()
-
-  proc forceUpdate*(self: CollectiblesList) =
-    self.beginResetModel()
+    self.collectibleLists = collectibleLists
     self.endResetModel()

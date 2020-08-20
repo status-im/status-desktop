@@ -157,6 +157,7 @@ DISTFILES += \
     app/AppLayouts/Wallet/components/collectiblesComponents/CollectiblesHeader.qml \
     app/AppLayouts/Wallet/components/collectiblesComponents/CollectiblesModal.qml \
     app/AppLayouts/Wallet/components/collectiblesComponents/CollectiblesModalContent.qml \
+    app/AppLayouts/Wallet/components/collectiblesComponents/collectiblesData.js \
     fonts/InterStatus/InterStatus-Black.otf \
     fonts/InterStatus/InterStatus-BlackItalic.otf \
     fonts/InterStatus/InterStatus-Bold.otf \

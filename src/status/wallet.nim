@@ -186,8 +186,6 @@ proc getTransfersByAddress*(self: WalletModel, address: string): seq[Transaction
 proc validateMnemonic*(self: WalletModel, mnemonic: string): string =
   result = status_wallet.validateMnemonic(mnemonic).parseJSON()["error"].getStr
 
-proc getAllCollectibles*(self: WalletModel, address: string): seq[Collectible] = getAllCollectibles(address)
-
 proc getGasPricePredictions*(self: WalletModel): GasPricePrediction =
   try:
     let url: string = fmt"https://etherchain.org/api/gasPriceOracle"
