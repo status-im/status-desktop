@@ -78,7 +78,12 @@ proc getCryptoKitties*(address: EthAddress): seq[Collectible] =
           finalId = $id
         if (not (name.kind == JNull)):
           finalName = $name
-        result.add(Collectible(id: finalId, name: finalName, image: kitty["image_url_png"].str, collectibleType: CRYPTOKITTY))
+        result.add(Collectible(id: finalId,
+        name: finalName,
+        image: kitty["image_url_png"].str,
+        collectibleType: CRYPTOKITTY,
+        description: "",
+        externalUrl: ""))
       except Exception as e2:
         error "Error with this individual cat", msg = e2.msg, cat = kitty
   except Exception as e:
@@ -105,7 +110,12 @@ proc getEthermons*(address: EthAddress): seq[Collectible] =
     var i = 0
     for monsterKey in json.keys(monsters):
       let monster = monsters[monsterKey]
-      result.add(Collectible(id: $tokens[i], name: monster["class_name"].str, image: monster["image"].str, collectibleType: ETHERMON))
+      result.add(Collectible(id: $tokens[i],
+      name: monster["class_name"].str,
+      image: monster["image"].str,
+      collectibleType: ETHERMON,
+      description: "",
+      externalUrl: ""))
       i = i + 1
   except Exception as e:
     error "Error getting Ethermons", msg = e.msg
@@ -133,7 +143,12 @@ proc getKudos*(address: EthAddress): seq[Collectible] =
       let response = client.request(url)
       let kudo = parseJson(response.body)
 
-      result.add(Collectible(id: $token, name: kudo["name"].str, image: kudo["image"].str, collectibleType: KUDO))
+      result.add(Collectible(id: $token,
+      name: kudo["name"].str,
+      image: kudo["image"].str,
+      collectibleType: KUDO,
+      description: kudo["description"].str,
+      externalUrl: kudo["external_url"].str))
   except Exception as e:
     error "Error getting Kudos", msg = e.msg
 
