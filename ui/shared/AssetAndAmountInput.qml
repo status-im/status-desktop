@@ -146,7 +146,7 @@ Item {
         anchors.rightMargin: Style.current.smallPadding
         onSelectedAssetChanged: {
             txtBalance.text = Utils.stripTrailingZeros(selectAsset.selectedAsset.value)
-            if (inputAmount.text === "" || isNan(inputAmount.text)) {
+            if (inputAmount.text === "" || isNaN(inputAmount.text)) {
                 return
             }
             txtFiatBalance.text = root.getFiatValue(inputAmount.text, selectAsset.selectedAsset.symbol, root.defaultCurrency)
