@@ -2,7 +2,7 @@ from eventemitter import Args
 import ../libstatus/types
 
 type Collectible* = ref object
-    name*, image*, id*, collectibleType*: string
+    name*, image*, id*, collectibleType*, description*, externalUrl*: string
 
 type CurrencyArgs* = ref object of Args
     currency*: string

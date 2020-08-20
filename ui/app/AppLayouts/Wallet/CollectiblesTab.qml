@@ -60,7 +60,8 @@ Item {
                 collectiblesModal: collectiblesModalComponent
                 buttonText: qsTr("View in Ethermon")
                 getLink: function (id) {
-                    return `https://www.etheremon.com/#/mons/${id}`
+                    // TODO find a more direct URL
+                    return "https://ethermon.io/inventory"
                 }
             }
 
@@ -71,8 +72,8 @@ Item {
                 isLoading: root.isLoading
                 collectiblesModal: collectiblesModalComponent
                 buttonText: qsTr("View in Gitcoin")
-                getLink: function (id) {
-                    return ""
+                getLink: function (id, externalUrl) {
+                    return externalUrl
                 }
             }
         }

@@ -7,6 +7,8 @@ type
     Image = UserRole + 2
     CollectibleId = UserRole + 3
     CollectibleType = UserRole + 4
+    Description = UserRole + 5
+    ExternalUrl = UserRole + 6
 
 QtObject:
   type CollectiblesList* = ref object of QAbstractListModel
@@ -38,12 +40,16 @@ QtObject:
     of CollectiblesRoles.Image: result = newQVariant(collectible.image)
     of CollectiblesRoles.CollectibleId: result = newQVariant(collectible.id)
     of CollectiblesRoles.CollectibleType: result = newQVariant(collectible.collectibleType)
+    of CollectiblesRoles.Description: result = newQVariant(collectible.description)
+    of CollectiblesRoles.ExternalUrl: result = newQVariant(collectible.externalUrl)
 
   method roleNames(self: CollectiblesList): Table[int, string] =
     { CollectiblesRoles.Name.int:"name",
     CollectiblesRoles.Image.int:"image",
     CollectiblesRoles.CollectibleId.int:"collectibleId",
-    CollectiblesRoles.CollectibleType.int:"collectibleType" }.toTable
+    CollectiblesRoles.CollectibleType.int:"collectibleType",
+    CollectiblesRoles.Description.int:"description",
+    CollectiblesRoles.ExternalUrl.int:"externalUrl" }.toTable
 
   proc addCollectibleToList*(self: CollectiblesList, colelctible: Collectible) =
     self.beginInsertRows(newQModelIndex(), self.collectibles.len, self.collectibles.len)
