@@ -34,6 +34,11 @@ Item {
             height: 13
             iconName: "info"
             color: Style.current.lightBlue
+            StatusToolTip {
+              visible: infoButton.hovered
+              width: 337
+              text: qsTr("Signing phrase is a 3 word combination that displayed when you entered the wallet on this device for the first time.")
+            }
         }
     }
 
@@ -57,6 +62,11 @@ Item {
         height: 13
         iconName: "info"
         color: Style.current.lightBlue
+        StatusToolTip {
+          visible: passwordInfoButton.hovered
+          width: 224
+          text: qsTr("Enter the password you use to unlock this device")
+        }
     }
 
     Input {
