@@ -22,3 +22,4 @@ ConfirmationDialog 1.0 ConfirmationDialog.qml
 StatusSlider 1.0 StatusSlider.qml
 Timer 1.0 Timer.qml
 TransactionSigner 1.0 TransactionSigner.qml
+StatusToolTip 1.0 StatusToolTip.qml
