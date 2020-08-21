@@ -12,9 +12,10 @@ Item {
     property var amount: ({ value: "", fiatValue: "", currency: "" })
     property string currency: "USD"
     property var gas: ({ value: "", symbol: "", fiatValue: "" })
-    height: itmFrom.height
+    height: content.height
     
     Column {
+        id: content
         anchors.left: parent.left
         anchors.right: parent.right
 
