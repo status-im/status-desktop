@@ -6,7 +6,7 @@ import "../../../../imports"
 AddButton {
     id: btnAdd
     onClicked: {
-        let x = btnAdd.icon.x + btnAdd.icon.width / 2 - newAccountMenu.width / 2
+        let x = btnAdd.iconImg.x + btnAdd.icon.width / 2 - newAccountMenu.width / 2
         newAccountMenu.popup(x, btnAdd.icon.height + 10)
     }
 
