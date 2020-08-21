@@ -4,26 +4,33 @@ import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
 import "../imports"
 
-Rectangle {
-    signal clicked
+RoundButton {
     property int iconWidth: 14
     property int iconHeight: 14
-    property alias icon: imgIcon
+    property alias iconImg: imgIcon
     property bool clickable: true
     property string iconName: "plusSign"
+    property color color: Style.current.blue
+
+    icon.width: iconWidth
+    icon.height: iconHeight
 
     id: btnAddContainer
     width: 36
     height: 36
-    color: Style.current.blue
     radius: width / 2
+
+    background: Rectangle {
+      color: parent.color
+      radius: parent.radius
+    }
 
     Image {
         id: imgIcon
         fillMode: Image.PreserveAspectFit
         source: "../app/img/" + parent.iconName + ".svg"
-        width: iconWidth
-        height: iconHeight
+        width: btnAddContainer.iconWidth
+        height: btnAddContainer.iconHeight
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
@@ -68,16 +75,18 @@ Rectangle {
         ]
     }
 
+    onClicked: {
+        if (btnAddContainer.clickable) {
+            imgIcon.state = "rotated"
+        }
+    }
+
     MouseArea {
         id: mouseArea
         visible: btnAddContainer.clickable
         anchors.fill: parent
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onPressed:  mouse.accepted = false
         cursorShape: Qt.PointingHandCursor
-        onClicked: {
-            imgIcon.state = "rotated"
-            btnAddContainer.clicked()
-        }
     }
 }
 

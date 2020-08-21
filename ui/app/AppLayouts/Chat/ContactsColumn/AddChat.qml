@@ -9,7 +9,7 @@ AddButton {
     height: 36
 
     onClicked: {
-        let x = btnAdd.icon.x + btnAdd.icon.width / 2 - newChatMenu.width / 2
+        let x = btnAdd.iconImg.x + btnAdd.icon.width / 2 - newChatMenu.width / 2
         newChatMenu.popup(x, btnAdd.icon.height + 10)
     }
     
