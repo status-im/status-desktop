@@ -202,6 +202,17 @@ $(QRCODEGEN): | deps
 	+ cd vendor/QR-Code-generator/c && \
 	  $(MAKE) $(QRCODEGEN_MAKE_PARAMS)
 
+FDKAAC := vendor/fdk-aac/build/lib/libfdk-aac.a
+
+$(FDKAAC): | deps
+	echo -e $(BUILD_MSG) "fdk-aac"
+	+ cd vendor/fdk-aac && \
+	  mkdir -p build && \
+		./autogen.sh && \
+		./configure --prefix="`pwd`/build" && \
+	  $(MAKE) && \
+		$(MAKE) install
+
 rcc:
 	echo -e $(BUILD_MSG) "resources.rcc"
 	rm -f ./resources.rcc
@@ -209,9 +220,9 @@ rcc:
 	./ui/generate-rcc.sh
 	rcc --binary ui/resources.qrc -o ./resources.rcc
 
-nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) rcc deps
+nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) $(FDKAAC) rcc deps
 	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"$(STATUSGO)" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim
+		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"$(STATUSGO)" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"$(FDKAAC)" --passL:"-lm" src/nim_status_client.nim
 
 _APPIMAGE_TOOL := appimagetool-x86_64.AppImage
 APPIMAGE_TOOL := tmp/linux/tools/$(_APPIMAGE_TOOL)
