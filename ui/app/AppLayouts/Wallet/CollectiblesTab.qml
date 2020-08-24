@@ -60,6 +60,13 @@ Item {
             }
         }
     }
+
+    Connections {
+        target: walletModel.collectiblesLists
+        onDataChanged: {
+            checkCollectiblesVisibility()
+        }
+    }
 }
 
 /*##^##

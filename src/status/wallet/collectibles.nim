@@ -58,8 +58,9 @@ proc tokensOfOwnerByIndex(contract: Contract, address: EthAddress): seq[int] =
     result.add(token)
     index = index + 1
 
-proc getCryptoKitties*(address: EthAddress): seq[Collectible] =
-  result = @[]
+proc getCryptoKitties*(address: EthAddress): string =
+  var cryptokitties: seq[Collectible]
+  cryptokitties = @[]
   try:
     # TODO handle testnet -- does this API exist in testnet??
     # TODO handle offset (recursive method?)
@@ -80,7 +81,7 @@ proc getCryptoKitties*(address: EthAddress): seq[Collectible] =
           finalId = $id
         if (not (name.kind == JNull)):
           finalName = $name
-        result.add(Collectible(id: finalId,
+        cryptokitties.add(Collectible(id: finalId,
         name: finalName,
         image: kitty["image_url_png"].str,
         collectibleType: CRYPTOKITTY,
@@ -90,21 +91,25 @@ proc getCryptoKitties*(address: EthAddress): seq[Collectible] =
         error "Error with this individual cat", msg = e2.msg, cat = kitty
   except Exception as e:
     error "Error getting Cryptokitties", msg = e.msg
+    return e.msg
+  
+  return $(%*cryptokitties)
 
-proc getCryptoKitties*(address: string): seq[Collectible] =
+proc getCryptoKitties*(address: string): string =
   let eth_address = parseAddress(address)
   result = getCryptoKitties(eth_address)
 
-proc getEthermons*(address: EthAddress): seq[Collectible] =
-  result = @[]
+proc getEthermons*(address: EthAddress): string =
   try:
+    var ethermons: seq[Collectible]
+    ethermons = @[]
     let contract = getContract("ethermon")
     if contract == nil: return
 
     let tokens = tokensOfOwnerByIndex(contract, address)
 
     if (tokens.len == 0):
-      return result
+      return $(%*ethermons)
 
     let tokensJoined = strutils.join(tokens, ",")
     let url = fmt"https://www.ethermon.io/api/monster/get_data?monster_ids={tokensJoined}"
@@ -116,36 +121,40 @@ proc getEthermons*(address: EthAddress): seq[Collectible] =
     var i = 0
     for monsterKey in json.keys(monsters):
       let monster = monsters[monsterKey]
-      result.add(Collectible(id: $tokens[i],
+      ethermons.add(Collectible(id: $tokens[i],
       name: monster["class_name"].str,
       image: monster["image"].str,
       collectibleType: ETHERMON,
       description: "",
       externalUrl: ""))
       i = i + 1
+        
+    return $(%*ethermons)
   except Exception as e:
     error "Error getting Ethermons", msg = e.msg
+    result = e.msg
 
-proc getEthermons*(address: string): seq[Collectible] =
+proc getEthermons*(address: string): string =
   let eth_address = parseAddress(address)
   result = getEthermons(eth_address)
 
-proc getKudos*(address: EthAddress): seq[Collectible] =
-  result = @[]
+proc getKudos*(address: EthAddress): string =
   try:
+    var kudos: seq[Collectible]
+    kudos = @[]
     let contract = getContract("kudos")
     if contract == nil: return
     
     let tokens = tokensOfOwnerByIndex(contract, address)
 
     if (tokens.len == 0):
-      return result
+      return $(%*kudos)
 
     for token in tokens:
       let url =  getTokenUri(contract, token.u256)
 
       if (url == ""):
-        return result
+        return  $(%*kudos)
 
       let client = newHttpClient()
       client.headers = newHttpHeaders({ "Content-Type": "application/json" })
@@ -153,15 +162,18 @@ proc getKudos*(address: EthAddress): seq[Collectible] =
       let response = client.request(url)
       let kudo = parseJson(response.body)
 
-      result.add(Collectible(id: $token,
+      kudos.add(Collectible(id: $token,
       name: kudo["name"].str,
       image: kudo["image"].str,
       collectibleType: KUDO,
       description: kudo["description"].str,
       externalUrl: kudo["external_url"].str))
+
+      return $(%*kudos)
   except Exception as e:
     error "Error getting Kudos", msg = e.msg
+    result = e.msg
 
-proc getKudos*(address: string): seq[Collectible] =
+proc getKudos*(address: string): string =
   let eth_address = parseAddress(address)
   result = getKudos(eth_address)
