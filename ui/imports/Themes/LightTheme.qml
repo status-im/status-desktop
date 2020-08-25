@@ -39,4 +39,11 @@ Theme {
     property color primaryMenuItemHover: blue
     property color primaryMenuItemTextHover: white
     property color backgroundTertiary: tenPercentBlue
+
+    property color buttonForegroundColor: blue
+    property color buttonBackgroundColor: secondaryBackground
+    property color buttonDisabledForegroundColor: darkGrey
+    property color buttonDisabledBackgroundColor: grey
+    property color roundedButtonForegroundColor: white
+    property color roundedButtonBackgroundColor: secondaryBackground
 }
