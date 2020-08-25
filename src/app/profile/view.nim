@@ -4,6 +4,7 @@ import ../../status/profile/[mailserver, profile, devices]
 import ../../status/profile as status_profile
 import ../../status/contacts as status_contacts
 import ../../status/accounts as status_accounts
+import ../../status/libstatus/settings as status_settings
 import ../../status/status
 import ../../status/devices as status_devices
 import ../../status/ens as status_ens
@@ -19,7 +20,6 @@ QtObject:
     addedContacts*: ContactList
     blockedContacts*: ContactList
     deviceList*: DeviceList
-    mnemonic: string
     network: string
     status*: Status
     isDeviceSetup: bool
@@ -50,7 +50,6 @@ QtObject:
     result.blockedContacts = newContactList()
     result.deviceList = newDeviceList()
     result.ens = newEnsManager(status)
-    result.mnemonic = ""
     result.network = ""
     result.status = status
     result.isDeviceSetup = false
@@ -109,19 +108,13 @@ QtObject:
     read = getBlockedContacts
     notify = contactListChanged
 
-  proc mnemonicChanged*(self: ProfileView) {.signal.}
-
   proc getMnemonic*(self: ProfileView): QVariant {.slot.} =
-    return newQVariant(self.mnemonic)
-
-  proc setMnemonic*(self: ProfileView, mnemonic: string) =
-    self.mnemonic = mnemonic
-    self.mnemonicChanged()
+    # Do not keep the mnemonic in memory, so fetch it when necessary
+    let mnemonic = status_settings.getSetting[string](Setting.Mnemonic, "")
+    return newQVariant(mnemonic)
 
   QtProperty[QVariant] mnemonic:
     read = getMnemonic
-    write = setMnemonic
-    notify = mnemonicChanged
 
   proc networkChanged*(self: ProfileView) {.signal.}
 
