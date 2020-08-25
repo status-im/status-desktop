@@ -47,31 +47,57 @@ RoundButton {
         radius: parent.width / 2
     }
 
-    LoadingImage {
-        id: loadingIndicator
-        visible: false
-        height: 18
-        width: loadingIndicator.height
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-    }
+    contentItem: Item {
+        anchors.fill: parent
 
-    ColorOverlay {
-        id: colorOverlay
-        anchors.fill: loadingIndicator
-        visible: control.state === "pending"
-        source: loadingIndicator
-        color: control.type === "secondary" ?
-          Style.current.roundedButtonSecondaryDisabledForegroundColor :
-          Style.current.roundedButtonDisabledForegroundColor
-        antialiasing: true
-        RotationAnimator {
-            target: colorOverlay
-            from: 0
-            to: 360
-            duration: 1200
-            running: true
-            loops: Animation.Infinite
+        Image {
+            id: iconImg
+            visible: false
+            source: control.icon.source
+            height: control.icon.height
+            width: control.icon.width
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            fillMode: Image.PreserveAspectFit
+        }
+
+        LoadingImage {
+            id: loadingIndicator
+            visible: false
+            height: 18
+            width: loadingIndicator.height
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+        }
+
+        ColorOverlay {
+            anchors.fill: iconImg
+            visible: control.state === "default"
+            source: iconImg
+            color: control.type === "secondary" ?
+              Style.current.roundedButtonSecondaryDisabledForegroundColor :
+              Style.current.roundedButtonDisabledForegroundColor
+            antialiasing: true
+        }
+
+        ColorOverlay {
+            id: loadingOverlay
+            visible: control.state === "pending"
+            anchors.fill: loadingIndicator
+            source: loadingIndicator
+            color: control.type === "secondary" ?
+              Style.current.roundedButtonSecondaryDisabledForegroundColor :
+              Style.current.roundedButtonDisabledForegroundColor
+            antialiasing: true
+
+            RotationAnimator {
+                target: loadingOverlay
+                from: 0
+                to: 360
+                duration: 1200
+                running: true
+                loops: Animation.Infinite
+            }
         }
     }
 
