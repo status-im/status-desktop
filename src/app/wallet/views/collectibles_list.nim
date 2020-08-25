@@ -27,41 +27,13 @@ QtObject:
     result.collectibleLists = @[]
     result.setup
 
-  proc setLoadingByType*(self: CollectiblesList, collectibleType: string, loading: int) =
-    var i = 0
-    for collectibleList in self.collectibleLists:
-      if collectibleList.collectibleType == collectibleType:
-        collectibleList.loading = loading
-        let topLeft = self.createIndex(i, 0, nil)
-        let bottomRight = self.createIndex(i, 0, nil)
-        self.dataChanged(topLeft, bottomRight, @[CollectiblesRoles.Loading.int])
-        break
-      i = i + 1
-
   proc setCollectiblesJSONByType*(self: CollectiblesList, collectibleType: string, collectiblesJSON: string) =
-    var i = 0
     for collectibleList in self.collectibleLists:
       if collectibleList.collectibleType == collectibleType:
         collectibleList.collectiblesJSON = collectiblesJSON
         collectibleList.loading = 0
-        collectibleList.error = ""
-        let topLeft = self.createIndex(i, 0, nil)
-        let bottomRight = self.createIndex(i, 0, nil)
-        self.dataChanged(topLeft, bottomRight, @[CollectiblesRoles.Loading.int, CollectiblesRoles.CollectiblesJSON.int, CollectiblesRoles.Error.int])
+        self.forceUpdate()
         break
-      i = i + 1
-
-  proc setErrorByType*(self: CollectiblesList, collectibleType: string, error: string) =
-    var i = 0
-    for collectibleList in self.collectibleLists:
-      if collectibleList.collectibleType == collectibleType:
-        collectibleList.error = error
-        collectibleList.loading = 0
-        let topLeft = self.createIndex(i, 0, nil)
-        let bottomRight = self.createIndex(i, 0, nil)
-        self.dataChanged(topLeft, bottomRight, @[CollectiblesRoles.Loading.int, CollectiblesRoles.Error.int])
-        break
-      i = i + 1
 
   method rowCount(self: CollectiblesList, index: QModelIndex = nil): int =
     return self.collectibleLists.len

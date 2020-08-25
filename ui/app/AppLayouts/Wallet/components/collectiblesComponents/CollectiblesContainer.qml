@@ -6,21 +6,14 @@ import "../../../../../shared"
 Item {
     property url collectibleIconSource: "../../../../img/collectibles/CryptoKitties.png"
     property string collectibleName: "CryptoKitties"
+    property string collectibleType: "cryptokitty"
     property bool collectiblesOpened: false
     property var collectiblesModal
     property string buttonText: "View in Cryptokitties"
     property var getLink: function () {}
     property var collectibles: {
-        if (error) {
-            return []
-        }
-
         try {
-            var result = JSON.parse(collectiblesJSON)
-            if (typeof result === "string") {
-                return JSON.parse(result)
-            }
-            return result
+            return JSON.parse(collectiblesJSON)
         } catch (e) {
             console.error('Error parsing collectibles for:', collectibleName)
             console.error('JSON:', collectiblesJSON)
@@ -29,7 +22,7 @@ Item {
         }
     }
     // Adding active instead of just using visible, because visible counts as false when the parent is not visible
-    property bool active: !!loading || !!error || collectibles.length > 0
+    property bool active: !!loading || collectibles.length > 0
 
     id: root
     visible: active
@@ -51,6 +44,7 @@ Item {
         id: collectiblesContent
         visible: root.collectiblesOpened
         collectiblesModal: root.collectiblesModal
+        collectibleType: root.collectibleType
         buttonText: root.buttonText
         getLink: root.getLink
         anchors.top: collectiblesHeader.bottom

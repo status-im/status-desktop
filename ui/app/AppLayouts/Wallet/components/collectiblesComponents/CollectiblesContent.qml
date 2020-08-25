@@ -7,101 +7,55 @@ import "../../../../../shared"
 
 ScrollView {
     readonly property int imageSize: 164
+    property string collectibleType: "cryptokitty"
     property var collectiblesModal
     property string buttonText: "View in Cryptokitties"
     property var getLink: function () {}
     property var collectibles: []
 
     id: root
-    height: visible ? contentLoader.item.height : 0
+    height: visible ? contentRow.height : 0
     width: parent.width
     ScrollBar.vertical.policy: ScrollBar.AlwaysOff
     ScrollBar.horizontal.policy: ScrollBar.AsNeeded
     clip: true
 
-    Loader {
-        id: contentLoader
-        active: true
-        width: parent.width
-        height: root.imageSize
-        sourceComponent: !!error ? errorComponent : collectiblesContentComponent
-    }
+    Row {
+        id: contentRow
+        bottomPadding: Style.current.padding
+        spacing: Style.current.padding
 
-    Component {
-        id: errorComponent
+        Repeater {
+            model: collectibles
 
-        Item  {
-            width: parent.width
-            height: root.imageSize
+            Rectangle {
+                radius: 16
+                border.width: 1
+                border.color: Style.current.border
+                color: Style.current.background
+                width: collectibleImage.width
+                height: collectibleImage.height
 
-            Item {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                height: childrenRect.height
-                width: somethingWentWrongText.width
-
-                StyledText {
-                    id: somethingWentWrongText
-                    text: qsTr("Something went wrong")
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    color: Style.current.secondaryText
-                    font.pixelSize: 13
+                Image {
+                    id: collectibleImage
+                    width: root.imageSize
+                    height: root.imageSize
+                    source: modelData.image
+                    fillMode: Image.PreserveAspectCrop
                 }
 
-                StyledButton {
-                    label: qsTr("Reload")
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: somethingWentWrongText.bottom
-                    anchors.topMargin: Style.current.halfPadding
+                MouseArea {
+                    cursorShape: Qt.PointingHandCursor
+                    anchors.fill: parent
                     onClicked: {
-                        walletModel.reloadCollectible(collectibleType)
-                    }
-                }
-            }
-        }
-
-    }
-
-    Component {
-        id: collectiblesContentComponent
-
-        Row {
-            id: contentRow
-            bottomPadding: Style.current.padding
-            spacing: Style.current.padding
-
-            Repeater {
-                model: collectibles
-
-                Rectangle {
-                    radius: 16
-                    border.width: 1
-                    border.color: Style.current.border
-                    color: Style.current.background
-                    width: collectibleImage.width
-                    height: collectibleImage.height
-
-                    Image {
-                        id: collectibleImage
-                        width: root.imageSize
-                        height: root.imageSize
-                        source: modelData.image
-                        fillMode: Image.PreserveAspectCrop
-                    }
-
-                    MouseArea {
-                        cursorShape: Qt.PointingHandCursor
-                        anchors.fill: parent
-                        onClicked: {
-                            collectiblesModal.openModal({
-                                                       name: modelData.name,
-                                                       id: modelData.id,
-                                                       description: modelData.description,
-                                                       buttonText: root.buttonText,
-                                                       link: root.getLink(modelData.id, modelData.externalUrl),
-                                                       image: modelData.image
-                                                   })
-                        }
+                        collectiblesModal.openModal({
+                                                   name: modelData.name,
+                                                   id: modelData.id,
+                                                   description: modelData.description,
+                                                   buttonText: root.buttonText,
+                                                   link: root.getLink(modelData.id, modelData.externalUrl),
+                                                   image: modelData.image
+                                               })
                     }
                 }
             }

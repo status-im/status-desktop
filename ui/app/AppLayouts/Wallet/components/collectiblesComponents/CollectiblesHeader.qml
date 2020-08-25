@@ -60,7 +60,7 @@ Rectangle {
             StyledText {
                 id: numberCollectibleText
                 color: Style.current.secondaryText
-                text: !!error ? "-" : collectibleHeader.collectiblesQty
+                text: collectibleHeader.collectiblesQty
                 font.pixelSize: 15
                 anchors.verticalCenter: parent.verticalCenter
             }
