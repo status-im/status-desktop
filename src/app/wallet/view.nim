@@ -285,78 +285,36 @@ QtObject:
       $(%*{
         "address": address,
         "collectibleType": status_collectibles.CRYPTOKITTY,
-        "collectiblesOrError": status_collectibles.getCryptoKitties(address)
+        "collectibles": status_collectibles.getCryptoKitties(address)
       })
     spawnAndSend(self, "setCollectiblesResult") do:
       $(%*{
         "address": address,
         "collectibleType": status_collectibles.KUDO,
-        "collectiblesOrError": status_collectibles.getKudos(address)
+        "collectibles": status_collectibles.getKudos(address)
       })
     spawnAndSend(self, "setCollectiblesResult") do:
       $(%*{
         "address": address,
         "collectibleType": status_collectibles.ETHERMON,
-        "collectiblesOrError": status_collectibles.getEthermons(address)
+        "collectibles": status_collectibles.getEthermons(address)
       })
 
   proc setCollectiblesResult(self: WalletView, collectiblesJSON: string) {.slot.} =
     let collectibleData = parseJson(collectiblesJSON)
     let address = collectibleData["address"].getStr
     
-    var collectibles: JSONNode
-    try:
-      collectibles = parseJson(collectibleData["collectiblesOrError"].getStr)
-    except Exception as e:
-      # We failed parsing, this means the result is an error string
-      self.currentCollectiblesLists.setErrorByType(
-        collectibleData["collectibleType"].getStr,
-        $collectibleData["collectiblesOrError"]
-      )
-      return
-
     # TODO Add the collectibleData to the Wallet account
     # let index = self.accounts.getAccountindexByAddress(address)
     # if index == -1: return
     # self.accounts.getAccount(index).collectiblesLists = collectiblesList
     if address == self.currentAccount.address:
       # Add CollectibleListJSON to the right list
+      # TODO check if instead we need to set an error
       self.currentCollectiblesLists.setCollectiblesJSONByType(
         collectibleData["collectibleType"].getStr,
-        $collectibles
+        $collectibleData["collectibles"]
       )
-
-  proc reloadCollectible*(self: WalletView, collectibleType: string) {.slot.} =
-    let address = self.currentAccount.address
-    # TODO find a cooler way to do this
-    case collectibleType:
-      of CRYPTOKITTY:
-        spawnAndSend(self, "setCollectiblesResult") do:
-          $(%*{
-            "address": address,
-            "collectibleType": status_collectibles.CRYPTOKITTY,
-            "collectiblesOrError": status_collectibles.getCryptoKitties(address)
-          })
-      of KUDO:
-        spawnAndSend(self, "setCollectiblesResult") do:
-          $(%*{
-            "address": address,
-            "collectibleType": status_collectibles.KUDO,
-            "collectiblesOrError": status_collectibles.getKudos(address)
-          })
-      of ETHERMON:
-        spawnAndSend(self, "setCollectiblesResult") do:
-          $(%*{
-            "address": address,
-            "collectibleType": status_collectibles.ETHERMON,
-            "collectiblesOrError": status_collectibles.getEthermons(address)
-          })
-      else:
-        error "Unrecognized collectible"
-        return
-
-    self.currentCollectiblesLists.setLoadingByType(collectibleType, 1)
-
 
   proc loadingTrxHistory*(self: WalletView, isLoading: bool) {.signal.}
 
