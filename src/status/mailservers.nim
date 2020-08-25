@@ -152,7 +152,7 @@ proc autoConnect*(self: MailserverModel) =
   # Picks a random mailserver amongs the ones with the lowest latency
   # The pool size is 1/4 of the mailservers were pinged successfully
   randomize()
-  let mailServer = availableMailservers[rand(poolSize(availableMailservers.len))][0]
+  let mailServer = availableMailservers[rand(poolSize(availableMailservers.len - 1))][0]
   self.connect(mailserver) 
 
 proc changeMailserver*(self: MailserverModel) =
