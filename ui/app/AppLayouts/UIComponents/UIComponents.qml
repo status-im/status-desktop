@@ -22,88 +22,116 @@ Item {
         }
 
         RowLayout {
-            StButton {
+            StatusButton {
                 text: "Primary Large Button"
             }
 
-            StButton {
+            StatusButton {
                 text: "Secondary Large Button"
                 type: "secondary"
             }
 
-            StButton {
+            StatusButton {
                 text: "Primary Small Button"
                 size: "small"
             }
 
-            StButton {
+            StatusButton {
                 text: "Secondary Small Button"
                 type: "secondary"
                 size: "small"
             }
 
-            StRoundButton {
-                text: "\u2713"    
+            StatusRoundButton {
+                icon.name: "arrow-right"
+                icon.height: 15
+                icon.width: 20
+            }
+
+            StatusRoundButton {
+                type: "secondary"
+                size: "medium"
+                icon.name: "arrow-right"
+                icon.height: 15
+                icon.width: 20
             }
         }
 
         RowLayout {
-            StButton {
+            StatusButton {
                 text: "Primary Large Button"
                 enabled: false
             }
 
-            StButton {
+            StatusButton {
                 text: "Secondary Large Button"
                 type: "secondary"
                 enabled: false
             }
 
-            StButton {
+            StatusButton {
                 text: "Primary Small Button"
                 enabled: false
                 size: "small"
             }
 
-            StButton {
+            StatusButton {
                 text: "Secondary Small Button"
                 type: "secondary"
                 enabled: false
                 size: "small"
             }
 
-            StRoundButton {
-                
+            StatusRoundButton {
+                icon.name: "arrow-right"
+                icon.height: 15
+                icon.width: 20
+                enabled: false
+            }
+
+            StatusRoundButton {
+                type: "secondary"
+                size: "medium"
+                icon.name: "arrow-right"
+                icon.height: 15
+                icon.width: 20
+                enabled: false
             }
         }
 
         RowLayout {
-            StButton {
+            StatusButton {
                 text: "Primary Large Button"
                 state: "pending"
             }
 
-            StButton {
+            StatusButton {
                 text: "Secondary Large Button"
                 type: "secondary"
                 state: "pending"
             }
 
-            StButton {
+            StatusButton {
                 text: "Primary Large Button"
                 state: "pending"
                 size: "small"
             }
 
-            StButton {
+            StatusButton {
                 text: "Secondary Large Button"
                 type: "secondary"
                 state: "pending"
                 size: "small"
             }
 
-            StRoundButton {
-                
+            StatusRoundButton {
+                state: "pending"
+            }
+
+            StatusRoundButton {
+                type: "secondary"
+                size: "medium"
+                state: "pending"
             }
         }
     }

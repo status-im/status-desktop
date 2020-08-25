@@ -9,6 +9,7 @@ Theme {
     property color lightBlue: "#ECEFFC"
     property color cyan: "#00FFFF"
     property color blue: "#4360DF"
+    property color darkAccentBlue: "#2946C4"
     property color transparent: "#00000000"
     property color darkGrey: "#939BA1"
     property color lightBlueText: "#8f9fec"
@@ -44,6 +45,14 @@ Theme {
     property color buttonBackgroundColor: secondaryBackground
     property color buttonDisabledForegroundColor: darkGrey
     property color buttonDisabledBackgroundColor: grey
-    property color roundedButtonForegroundColor: white
+
+    property color roundedButtonForegroundColor: buttonForegroundColor
     property color roundedButtonBackgroundColor: secondaryBackground
+    property color roundedButtonSecondaryForegroundColor: white
+    property color roundedButtonSecondaryBackgroundColor: buttonForegroundColor
+    property color roundedButtonSecondaryHoveredBackgroundColor: darkAccentBlue
+    property color roundedButtonDisabledForegroundColor: buttonDisabledForegroundColor
+    property color roundedButtonDisabledBackgroundColor: buttonDisabledBackgroundColor
+    property color roundedButtonSecondaryDisabledForegroundColor: white
+    property color roundedButtonSecondaryDisabledBackgroundColor: buttonDisabledForegroundColor
 }
