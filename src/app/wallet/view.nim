@@ -107,7 +107,7 @@ QtObject:
     write = setCurrentTransactions
     notify = currentTransactionsChanged
 
-  proc loadCollectiblesForAccount*(self: WalletView, address: string)
+  proc loadCollectiblesForAccount*(self: WalletView, address: string, currentCollectiblesList: seq[CollectibleList])
   proc loadTransactionsForAccount*(self: WalletView, address: string)
 
   proc currentAccountChanged*(self: WalletView) {.signal.}
@@ -123,8 +123,8 @@ QtObject:
 
     # Display currently known collectibles, and get latest from API/Contracts
     self.setCurrentCollectiblesLists(selectedAccount.collectiblesLists)
-    # TODO only load if the list is empty
-    self.loadCollectiblesForAccount(selectedAccount.address)
+    self.loadCollectiblesForAccount(selectedAccount.address, selectedAccount.collectiblesLists)
+    
     # Display currently known transactions, and get latest transactions from status-go
     self.setCurrentTransactions(selectedAccount.transactions)
     self.loadTransactionsForAccount(selectedAccount.address)
@@ -268,7 +268,9 @@ QtObject:
   proc addCustomToken*(self: WalletView, address: string, name: string, symbol: string, decimals: string) {.slot.} =
     self.status.wallet.toggleAsset(symbol, true, address, name, parseInt(decimals), "")
 
-  proc loadCollectiblesForAccount*(self: WalletView, address: string) {.slot.} =
+  proc loadCollectiblesForAccount*(self: WalletView, address: string, currentCollectiblesList: seq[CollectibleList]) =
+    if (currentCollectiblesList.len > 0):
+      return
     # Add loading state if it is the current account
     if address == self.currentAccount.address:
       for collectibleType in status_collectibles.COLLECTIBLE_TYPES:
@@ -303,6 +305,7 @@ QtObject:
   proc setCollectiblesResult(self: WalletView, collectiblesJSON: string) {.slot.} =
     let collectibleData = parseJson(collectiblesJSON)
     let address = collectibleData["address"].getStr
+    let collectibleType = collectibleData["collectibleType"].getStr
     
     var collectibles: JSONNode
     try:
@@ -310,19 +313,20 @@ QtObject:
     except Exception as e:
       # We failed parsing, this means the result is an error string
       self.currentCollectiblesLists.setErrorByType(
-        collectibleData["collectibleType"].getStr,
+        collectibleType,
         $collectibleData["collectiblesOrError"]
       )
       return
 
-    # TODO Add the collectibleData to the Wallet account
-    # let index = self.accounts.getAccountindexByAddress(address)
-    # if index == -1: return
-    # self.accounts.getAccount(index).collectiblesLists = collectiblesList
+    # Add the collectibles to the WalletAccount
+    let index = self.accounts.getAccountindexByAddress(address)
+    if index == -1: return
+    self.accounts.addCollectibleListToAccount(index, collectibleType, $collectibles)
+    
     if address == self.currentAccount.address:
       # Add CollectibleListJSON to the right list
       self.currentCollectiblesLists.setCollectiblesJSONByType(
-        collectibleData["collectibleType"].getStr,
+        collectibleType,
         $collectibles
       )
 
