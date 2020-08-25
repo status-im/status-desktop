@@ -33,6 +33,13 @@ QtObject {
     property color secondaryBackground
     property color modalBackground
 
+    property color buttonForegroundColor
+    property color buttonBackgroundColor
+    property color buttonDisabledForegroundColor
+    property color buttonDisabledBackgroundColor
+    property color roundedButtonForegroundColor
+    property color roundedButtonBackgroundColor
+
     property int xlPadding: 32
     property int bigPadding: 24
     property int padding: 16

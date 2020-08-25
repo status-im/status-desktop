@@ -97,6 +97,31 @@ Item {
             text: qsTrId("under-development-nnote--you-will-be-logged-out-and-all-installed-nsticker-packs-will-be-removed-and-will-nneed-to-be-reinstalled--purchased-sticker-npacks-will-not-need-to-be-re-purchased-")
         }
     }
+
+    RowLayout {
+        id: uiCatalong
+        anchors.top: networkTabSettings.bottom
+        anchors.topMargin: 20
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+        Component.onCompleted: {
+            uiComponentBtn.enabled = false
+        }
+
+        StyledText {
+            text: qsTr("UI Components")
+        }
+        Switch {
+            checked: uiComponentBtn.enabled
+            onCheckedChanged: function(value) {
+                uiComponentBtn.enabled = this.checked
+            }
+        }
+        StyledText {
+            text: qsTr("Developer setting")
+        }
+    }
+
 }
 
 /*##^##

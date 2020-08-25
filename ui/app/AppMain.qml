@@ -154,6 +154,33 @@ RowLayout {
                 source: parent.checked ? "img/nodeActive.svg" : "img/node.svg"
             }
         }
+
+        TabButton {
+            id: uiComponentBtn
+            enabled: isExperimental === "1"
+            visible: this.enabled
+            width: 40
+            height: this.enabled ? 40 : 0
+            text: ""
+            anchors.topMargin: this.enabled ? 50 : 0
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: nodeBtn.top
+            background: Rectangle {
+                color: Style.current.secondaryBackground
+                opacity: parent.checked ? 1 : 0
+                radius: 50
+            }
+
+            SVGImage {
+                id: image5
+                height: 24
+                width: 24
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                fillMode: Image.PreserveAspectFit
+                source: parent.checked ? "img/nodeActive.svg" : "img/node.svg"
+            }
+        }
     }
 
     StackLayout {
@@ -188,6 +215,12 @@ RowLayout {
 
         NodeLayout {
             id: nodeLayoutContainer
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.fillHeight: true
+        }
+
+        UIComponents {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
