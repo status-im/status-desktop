@@ -133,6 +133,10 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/RectangleCorner.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/SentMessage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/Sticker.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/TransactionBubble.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/TransactionComponents/AcceptTransaction.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/TransactionComponents/SendTransactionButton.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/TransactionComponents/StateBubble.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/UserImage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/UsernameLabel.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/qmldir \
