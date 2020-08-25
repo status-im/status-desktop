@@ -33,7 +33,6 @@ proc init*(self: ProfileController, account: Account) =
   let profile = account.toProfileModel()
 
   let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
-  let mnemonic = status_settings.getSetting[string](Setting.Mnemonic, "")
   let network = status_settings.getSetting[string](Setting.Networks_CurrentNetwork, constants.DEFAULT_NETWORK_NAME)
   let appearance = status_settings.getSetting[int](Setting.Appearance)
   profile.appearance = appearance
@@ -43,7 +42,6 @@ proc init*(self: ProfileController, account: Account) =
   self.view.addDevices(devices.getAllDevices())
   self.view.setDeviceSetup(devices.isDeviceSetup())
   self.view.setNewProfile(profile)
-  self.view.setMnemonic(mnemonic)
   self.view.setNetwork(network)
   self.view.ens.init()
 

@@ -147,6 +147,7 @@ DISTFILES += \
     app/AppLayouts/Profile/LeftTab/components/MenuButton.qml \
     app/AppLayouts/Chat/data/EmojiReactions.qml \
     app/AppLayouts/Profile/Sections/AppearanceContainer.qml \
+    app/AppLayouts/Profile/Sections/BackupSeedModal.qml \
     app/AppLayouts/Profile/Sections/MyProfileContainer.qml \
     app/AppLayouts/Profile/Sections/SoundsContainer.qml \
     app/AppLayouts/Wallet/ReceiveModal.qml \

@@ -72,16 +72,20 @@ proc mainProc() =
   var profile = profile.newController(status, changeLanguage)
   engine.setRootContextProperty("profileModel", profile.variant)
 
+  var login = login.newController(status)
+  var onboarding = onboarding.newController(status)
+
   status.events.once("login") do(a: Args):
     var args = AccountArgs(a)
+    # Delete login and onboarding from memory to remove any mnemonic that would have been saved in the accounts list
+    login.delete()
+    onboarding.delete()
+
     status.startMessenger()
     profile.init(args.account)
     wallet.init()
     chat.init()
 
-
-  var login = login.newController(status)
-  var onboarding = onboarding.newController(status)
 
   engine.setRootContextProperty("loginModel", login.variant)
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
