@@ -292,6 +292,12 @@ proc markAllChannelMessagesRead*(self: ChatModel, chatId: string): JsonNode =
     self.channels[chatId].unviewedMessagesCount = 0
     self.events.emit("channelUpdate", ChatUpdateArgs(messages: @[], chats: @[self.channels[chatId]], contacts: @[]))
 
+proc markMessagesSeen*(self: ChatModel, chatId: string, messageIds: seq[string]): JsonNode =
+  var response = status_chat.markMessagesSeen(chatId, messageIds)
+  result = parseJson(response)
+  if self.channels.hasKey(chatId):
+    self.channels[chatId].unviewedMessagesCount = 0
+    self.events.emit("channelUpdate", ChatUpdateArgs(messages: @[], chats: @[self.channels[chatId]], contacts: @[]))
 
 proc confirmJoiningGroup*(self: ChatModel, chatId: string) =
     var response = status_chat.confirmJoiningGroup(chatId)

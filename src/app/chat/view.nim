@@ -177,6 +177,7 @@ QtObject:
 
     self.activeChannel.setChatItem(selectedChannel)
     self.status.chat.setActiveChannel(selectedChannel.id)
+    discard self.status.chat.markAllChannelMessagesRead(selectedChannel.id)
     self.currentSuggestions.setNewData(self.status.contacts.getContacts())
     self.activeChannelChanged()
 
@@ -207,6 +208,7 @@ QtObject:
   proc setActiveChannel*(self: ChatsView, channel: string) {.slot.} =
     if(channel == ""): return
     self.activeChannel.setChatItem(self.chats.getChannel(self.chats.chats.findIndexById(channel)))
+    discard self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
     self.currentSuggestions.setNewData(self.status.contacts.getContacts())
     self.activeChannelChanged()
 
@@ -253,6 +255,7 @@ QtObject:
           if not channel.muted:
             self.messageNotificationPushed(msg.chatId, msg.text, msg.messageType, channel.chatType.int, msg.timestamp, msg.identicon, msg.alias)
         else:
+          discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
           self.newMessagePushed()
 
   proc messageEmojiReactionId(self: ChatsView, chatId: string, messageId: string, emojiId: int): string =

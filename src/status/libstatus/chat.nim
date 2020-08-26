@@ -154,6 +154,9 @@ proc sendStickerMessage*(chatId: string, sticker: Sticker): string =
 proc markAllRead*(chatId: string): string =
   callPrivateRPC("markAllRead".prefix, %* [chatId])
 
+proc markMessagesSeen*(chatId: string, messageIds: seq[string]): string =
+  callPrivateRPC("markMessagesSeen".prefix, %* [chatId, messageIds])
+
 proc confirmJoiningGroup*(chatId: string): string =
   callPrivateRPC("confirmJoiningGroup".prefix, %* [chatId])
 
