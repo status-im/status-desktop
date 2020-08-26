@@ -9,7 +9,7 @@ Rectangle {
     property string fiatValue: "10 USD"
     property bool outgoing: true
     property string state: "addressReceived"
-    property string time: "9:41 AM"
+    property int timestamp: 1598454756329
 
     id: root
     width: 170
@@ -111,7 +111,7 @@ Rectangle {
     StyledText {
         id: timeText
         color: Style.current.secondaryText
-        text: root.time
+        text: Utils.formatTime(root.timestamp)
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 9
         anchors.right: parent.right

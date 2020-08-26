@@ -84,4 +84,11 @@ QtObject {
     function setColorAlpha(color, alpha) {
         return Qt.hsla(color.hslHue, color.hslSaturation, color.hslLightness, alpha)
     }
+
+    function formatTime(timestamp) {
+        let messageDate = new Date(Math.floor(timestamp))
+        let minutes = messageDate.getMinutes();
+        let hours = messageDate.getHours();
+        return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
+    }
 }
