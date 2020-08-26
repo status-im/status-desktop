@@ -273,12 +273,20 @@ type
     bufSizes*: ptr int          ## !< Size of each buffer in 8-bit bytes.
     bufElSizes*: ptr int        ## !< Size of each buffer element in bytes.
 
-proc aacEncOpen*(phAacEncoder: pointer; encModules: uint; maxChannels: uint): AACENC_ERROR {.importc: "aacEncOpen".}
+type 
+  AACENCODER* = ref object
+    unused*: seq[int]
 
-proc aacEncoder_SetParam*(hAacEncoder: pointer; param: AACENC_PARAM; value: uint): AACENC_ERROR {.importc: "aacEncoder_SetParam".}
+type
+  HANDLE_AACENCODER* = ptr AACENCODER
 
-proc aacEncEncode*(hAacEncoder: pointer; inBufDesc: ptr AACENC_BufDesc;
-                  outBufDesc: ptr AACENC_BufDesc; inargs: ptr AACENC_InArgs;
+
+proc aacEncOpen*(phAacEncoder: pointer, encModules: cuint, maxChannels: cuint): AACENC_ERROR {.importc: "aacEncOpen".}
+
+proc aacEncoder_SetParam*(hAacEncoder: pointer, param: AACENC_PARAM, value: cuint): AACENC_ERROR {.importc: "aacEncoder_SetParam".}
+
+proc aacEncEncode*(hAacEncoder: HANDLE_AACENCODER, inBufDesc: ptr AACENC_BufDesc;
+                  outBufDesc: ptr AACENC_BufDesc, inargs: ptr AACENC_InArgs,
                   outargs: ptr AACENC_OutArgs): AACENC_ERROR {.importc: "aacEncEncode".}
 
-proc aacEncClose*(phAacEncoder: pointer): AACENC_ERROR {.importc: "aacEncClose".}
+proc aacEncClose*(phAacEncoder: HANDLE_AACENCODER): AACENC_ERROR {.importc: "aacEncClose".}
