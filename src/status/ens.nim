@@ -162,6 +162,7 @@ proc registerUsername*(username:string, address: EthAddress, pubKey: string, pas
   let response = Json.decode(responseStr, RpcResponse)
   if not response.error.isNil:
     raise newException(RpcException, "Error registering ens-username: " & response.error.message)
+  
   result = response.result
 
 proc statusRegistrarAddress*():string =
