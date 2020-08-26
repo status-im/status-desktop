@@ -22,7 +22,7 @@ proc renderInline(self: ChatMessageList, elem: TextItem): string =
   of "strong": result = fmt("<strong>{elem.literal}</strong> ")
   of "link": result = elem.destination
   of "mention": result = fmt("<a href=\"//{elem.literal}\" class=\"mention\">{self.mention(elem.literal)}</a> ")
-  of "status-tag": result = fmt("<a href=\"#{elem.literal}\" class=\"status-tag\">{elem.literal}</a> ")
+  of "status-tag": result = fmt("<a href=\"#{elem.literal}\" class=\"status-tag\">#{elem.literal}</a> ")
 
 # See render-block in status-react/src/status_im/ui/screens/chat/message/message.cljs
 proc renderBlock(self: ChatMessageList, message: Message): string =

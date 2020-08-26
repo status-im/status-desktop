@@ -20,9 +20,9 @@ StyledTextEdit {
         }
 
         if (link.startsWith('//')) {
-          let pk = link.replace("//", "");
-          profileClick(chatsModel.userNameOrAlias(pk), pk, chatsModel.generateIdenticon(pk))
-          return;
+            let pk = link.replace("//", "");
+            profilePopup.openPopup(chatsModel.userNameOrAlias(pk), pk, chatsModel.generateIdenticon(pk))
+            return;
         }
 
         Qt.openUrlExternally(link)
