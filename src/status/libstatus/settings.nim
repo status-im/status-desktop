@@ -23,18 +23,21 @@ proc saveSetting*(key: Setting, value: string | JsonNode): StatusGoError =
 proc getWeb3ClientVersion*(): string =
   parseJson(callPrivateRPC("web3_clientVersion"))["result"].getStr
 
-proc getSettings*(useCached: bool = true): JsonNode =
+proc getSettings*(useCached: bool = true, keepSensitiveData: bool = false): JsonNode =
   {.gcsafe.}:
     withLock settingsLock:
-      if useCached and not dirty:
+      if useCached and not dirty and not keepSensitiveData:
         result = settings
       else: 
-        settings = callPrivateRPC("settings_getSettings").parseJSON()["result"]
+        result = callPrivateRPC("settings_getSettings").parseJSON()["result"]
+        if (keepSensitiveData):
+          return
         dirty = false
-        result = settings
+        delete(result, "mnemonic")
+        settings = result
 
 proc getSetting*[T](name: Setting, defaultValue: T, useCached: bool = true): T =
-  let settings: JsonNode = getSettings(useCached)
+  let settings: JsonNode = getSettings(useCached, $name == "mnemonic")
   if not settings.contains($name) or settings{$name}.isEmpty():
     return defaultValue
   result = Json.decode($settings{$name}, T)
