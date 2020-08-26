@@ -16,7 +16,8 @@ Item {
     property var selectedRecipient: { }
     property bool readOnly: false
     height: (readOnly ? inpReadOnly.height : inpAddress.height) + txtLabel.height
-    readonly property string addressValidationError: qsTr("Invalid ethereum address")
+    //% "Invalid ethereum address"
+    readonly property string addressValidationError: qsTrId("invalid-ethereum-address")
 
     enum Type {
         Address,
@@ -42,7 +43,8 @@ Item {
     Text {
         id: txtLabel
         visible: label !== ""
-        text: qsTr("Recipient")
+        //% "Recipient"
+        text: qsTrId("recipient")
         font.pixelSize: 13
         font.family: Style.current.fontRegular.name
         font.weight: Font.Medium
@@ -77,7 +79,8 @@ Item {
             Layout.fillWidth: true
             anchors.left: undefined
             anchors.right: undefined
-            text: (root.selectedRecipient && root.selectedRecipient.name) ? root.selectedRecipient.name : qsTr("No recipient selected")
+            //% "No recipient selected"
+            text: (root.selectedRecipient && root.selectedRecipient.name) ? root.selectedRecipient.name : qsTrId("no-recipient-selected")
             textField.leftPadding: 14
             textField.topPadding: 18
             textField.bottomPadding: 18

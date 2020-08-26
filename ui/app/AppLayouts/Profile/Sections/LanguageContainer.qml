@@ -30,7 +30,8 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 24
         StyledText {
-            text: qsTr("Language")
+            //% "Language"
+            text: qsTrId("language")
         }
         Select {
             id: select

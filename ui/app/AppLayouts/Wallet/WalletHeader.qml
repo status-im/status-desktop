@@ -110,7 +110,8 @@ Item {
         HeaderButton {
             id: sendBtn
             imageSource: "../../img/send.svg"
-            text: qsTr("Send")
+            //% "Send"
+            text: qsTrId("command-button-send")
             onClicked: function () {
                 sendModal.open()
             }
@@ -120,7 +121,8 @@ Item {
             id: receiveBtn
             imageSource: "../../img/send.svg"
             flipImage: true
-            text: qsTr("Receive")
+            //% "Receive"
+            text: qsTrId("receive")
             onClicked: function () {
                 receiveModal.open()
             }

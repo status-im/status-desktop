@@ -21,7 +21,8 @@ Item {
 
         LabelValueRow {
             id: itmFrom
-            label: qsTr("From")
+            //% "From"
+            label: qsTrId("from")
             value: Item {
                 anchors.fill: parent
                 anchors.verticalCenter: parent.verticalCenter
@@ -58,7 +59,8 @@ Item {
         LabelValueRow {
             id: itmTo
             property var props: { "primaryText": "replace1", "secondaryText": "me1" }
-            label: qsTr("Recipient")
+            //% "Recipient"
+            label: qsTrId("recipient")
             states: [
                 State {
                     name: "Address"
@@ -199,7 +201,8 @@ Item {
         }
         LabelValueRow {
             id: itmAsset
-            label: qsTr("Asset")
+            //% "Asset"
+            label: qsTrId("wallet-asset")
             value: Item {
                 anchors.fill: parent
                 anchors.verticalCenter: parent.verticalCenter
@@ -246,7 +249,8 @@ Item {
         }
         LabelValueRow {
             id: itmAmount
-            label: qsTr("Amount")
+            //% "Amount"
+            label: qsTrId("amount")
             value: Item {
                 id: amountRoot
                 anchors.fill: parent
@@ -303,7 +307,8 @@ Item {
         }
         LabelValueRow {
             id: itmNetworkFee
-            label: qsTr("Network fee")
+            //% "Network fee"
+            label: qsTrId("network-fee")
             value: Item {
                 id: networkFeeRoot
                 anchors.fill: parent

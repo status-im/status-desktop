@@ -14,7 +14,8 @@ Item {
     property bool isEmoji: false
     property bool isCurrentUser: false
     property int contentType: 1
-    property string message: qsTr("Hey")
+    //% "Hey"
+    property string message: qsTrId("ens-test-message")
     property string authorCurrentMsg: "0"
     property string authorPrevMsg: "1"
     property var clickMessage: function(){}
@@ -129,7 +130,8 @@ Item {
 
         StyledText {
             id: usernameText
-            text: qsTr("Add username")
+            //% "Add username"
+            text: qsTrId("ens-add-username")
             color: Style.current.blue
             anchors.left: addButton.right
             anchors.leftMargin: Style.current.padding
@@ -147,7 +149,8 @@ Item {
 
     StyledText {
         id: usernamesLabel
-        text: qsTr("Your usernames")
+        //% "Your usernames"
+        text: qsTrId("ens-your-usernames")
         anchors.left: parent.left
         anchors.top: addUsername.bottom
         anchors.topMargin: 24
@@ -190,7 +193,8 @@ Item {
     StyledText {
         id: chatSettingsLabel
         visible: profileModel.ens.rowCount() > 1
-        text: qsTr("Chat Settings")
+        //% "Chat Settings"
+        text: qsTrId("chat-settings")
         anchors.left: parent.left
         anchors.top: ensList.bottom
         anchors.topMargin: 24
@@ -209,7 +213,8 @@ Item {
         StyledText {
             id: usernameLabel
             visible: chatSettingsLabel.visible
-            text: qsTr("Primary Username")
+            //% "Primary Username"
+            text: qsTrId("primary-username")
             font.pixelSize: 14
             font.weight: Font.Bold
         }

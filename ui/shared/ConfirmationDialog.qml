@@ -8,10 +8,13 @@ ModalPopup {
     id: confirmationDialog
     height: 186
     width: 400
-    title: qsTr("Confirm your action")
+    //% "Confirm your action"
+    title: qsTrId("confirm-your-action")
 
-    property string confirmButtonLabel: qsTr("Confirm")
-    property string confirmationText: qsTr("Are you sure you want to this?")
+    //% "Confirm"
+    property string confirmButtonLabel: qsTrId("close-app-button")
+    //% "Are you sure you want to this?"
+    property string confirmationText: qsTrId("are-you-sure-you-want-to-this-")
     signal confirmButtonClicked()
 
     Text {

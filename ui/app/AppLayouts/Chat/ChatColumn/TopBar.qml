@@ -153,7 +153,8 @@ Rectangle {
                       deleteChatConfirmationDialog.title = qsTrId("delete-chat")
                       //% "Delete Chat"
                       deleteChatConfirmationDialog.confirmButtonLabel = qsTrId("delete-chat")
-                      deleteChatConfirmationDialog.confirmationText = qsTr("Are you sure you want to delete this chat?")
+                      //% "Are you sure you want to delete this chat?"
+                      deleteChatConfirmationDialog.confirmationText = qsTrId("delete-chat-confirmation")
                       deleteChatConfirmationDialog.open()
                     }
                 }
@@ -191,7 +192,8 @@ Rectangle {
                       deleteChatConfirmationDialog.title = qsTrId("leave-group")
                       //% "Leave group"
                       deleteChatConfirmationDialog.confirmButtonLabel = qsTrId("leave-group")
-                      deleteChatConfirmationDialog.confirmationText = qsTr("Are you sure you want to leave this chat?")
+                      //% "Are you sure you want to leave this chat?"
+                      deleteChatConfirmationDialog.confirmationText = qsTrId("are-you-sure-you-want-to-leave-this-chat-")
                       deleteChatConfirmationDialog.open()
                     }
                 }

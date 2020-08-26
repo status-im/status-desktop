@@ -166,7 +166,8 @@ ModalPopup {
             anchors.horizontalCenter: parent.horizontalCenter
             StyledText {
                 id: noContacts
-                text: qsTr("All your contacts are already in the group")
+                //% "All your contacts are already in the group"
+                text: qsTrId("group-chat-all-contacts-invited")
                 color: Style.current.textColor
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.padding

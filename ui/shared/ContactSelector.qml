@@ -14,7 +14,8 @@ Item {
     property alias validationErrorAlignment: validationErrorText.horizontalAlignment
 
     onContactsChanged: {
-        root.selectedContact = { name: qsTr("Select a contact") }
+        //% "Select a contact"
+        root.selectedContact = { name: qsTrId("select-a-contact") }
     }
 
     function validate() {
@@ -65,7 +66,8 @@ Item {
             height: 186
             StyledText {
                 anchors.fill: parent
-                text: qsTr("You don't have any contacts yet")
+                //% "You don't have any contacts yet"
+                text: qsTrId("you-don-t-have-any-contacts-yet")
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: 13
@@ -80,7 +82,8 @@ Item {
     TextEdit {
         id: validationErrorText
         visible: false
-        text: qsTr("Please select a contact")
+        //% "Please select a contact"
+        text: qsTrId("please-select-a-contact")
         anchors.top: select.bottom
         anchors.topMargin: 8
         selectByMouse: true

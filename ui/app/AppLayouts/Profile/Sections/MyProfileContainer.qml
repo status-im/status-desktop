@@ -131,13 +131,15 @@ Item {
         anchors.topMargin: Style.current.smallPadding
 
         TextWithLabel {
-            label: qsTr("Chat key")
+            //% "Chat key"
+            label: qsTrId("chat-key")
             text: pubkey.substring(0, 13) + "..." + pubkey.substring(pubkey.length - 13)
             textToCopy: pubkey
         }
 
         TextWithLabel {
-            label: qsTr("Share Profile URL")
+            //% "Share Profile URL"
+            label: qsTrId("share-profile-url")
             text: `https://join.status.im/u/${pubkey.substring(0, 5)}...${pubkey.substring(pubkey.length - 5)}`
             textToCopy: `https://join.status.im/u/${pubkey}`
         }

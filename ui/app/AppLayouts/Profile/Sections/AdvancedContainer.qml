@@ -109,7 +109,8 @@ Item {
         }
 
         StyledText {
-            text: qsTr("UI Components")
+            //% "UI Components"
+            text: qsTrId("ui-components")
         }
         Switch {
             checked: uiComponentBtn.enabled
@@ -118,7 +119,8 @@ Item {
             }
         }
         StyledText {
-            text: qsTr("Developer setting")
+            //% "Developer setting"
+            text: qsTrId("developer-setting")
         }
     }
 

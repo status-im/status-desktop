@@ -46,7 +46,8 @@ Item {
 
             StyledText {
                 id: title
-                text: qsTr("Get a universal username")
+                //% "Get a universal username"
+                text: qsTrId("ens-get-name")
                 anchors.top: image.bottom
                 anchors.topMargin: 24
                 font.weight: Font.Bold
@@ -59,7 +60,8 @@ Item {
 
             StyledText {
                 id: subtitle
-                text: qsTr("ENS names transform those crazy-long addresses into unique usernames.")
+                //% "ENS names transform those crazy-long addresses into unique usernames."
+                text: qsTrId("ens-welcome-hints")
                 anchors.top: title.bottom
                 anchors.topMargin: 24
                 font.pixelSize: 14
@@ -82,7 +84,8 @@ Item {
 
             StyledText {
                 id: element1Title
-                text: qsTr("Customize your chat name")
+                //% "Customize your chat name"
+                text: qsTrId("ens-welcome-point-customize-title")
                 anchors.left: element1Number.right
                 anchors.leftMargin: 24
                 anchors.top: subtitle.bottom
@@ -95,7 +98,8 @@ Item {
 
             StyledText {
                 id: element1Subtitle
-                text: qsTr("An ENS name can replace your random 3-word name in chat. Be @yourname instead of %1.").arg(profileModel.profile.username)
+                //% "An ENS name can replace your random 3-word name in chat. Be @yourname instead of %1."
+                text: qsTrId("an-ens-name-can-replace-your-random-3-word-name-in-chat--be--yourname-instead-of--1-").arg(profileModel.profile.username)
                 anchors.left: element1Number.right
                 anchors.leftMargin: 24
                 anchors.top: element1Title.bottom
@@ -118,7 +122,8 @@ Item {
 
             StyledText {
                 id: element2Title
-                text: qsTr("Simplify your ETH address")
+                //% "Simplify your ETH address"
+                text: qsTrId("ens-welcome-point-simplify-title")
                 anchors.left: element2Number.right
                 anchors.leftMargin: 24
                 anchors.top: element1Subtitle.bottom
@@ -131,7 +136,8 @@ Item {
 
             StyledText {
                 id: element2Subtitle
-                text: qsTr("You can receive funds to your easy-to-share ENS name rather than your hexadecimal hash (0x...).")
+                //% "You can receive funds to your easy-to-share ENS name rather than your hexadecimal hash (0x...)."
+                text: qsTrId("ens-welcome-point-simplify")
                 anchors.left: element2Number.right
                 anchors.leftMargin: 24
                 anchors.top: element2Title.bottom
@@ -154,7 +160,8 @@ Item {
 
             StyledText {
                 id: element3Title
-                text: qsTr("Receive transactions in chat")
+                //% "Receive transactions in chat"
+                text: qsTrId("ens-welcome-point-receive-title")
                 anchors.left: element3Number.right
                 anchors.leftMargin: 24
                 anchors.top: element2Subtitle.bottom
@@ -167,7 +174,8 @@ Item {
 
             StyledText {
                 id: element3Subtitle
-                text: qsTr("Others can send you funds via chat in one simple step.")
+                //% "Others can send you funds via chat in one simple step."
+                text: qsTrId("ens-welcome-point-receive")
                 anchors.left: element3Number.right
                 anchors.leftMargin: 24
                 anchors.top: element3Title.bottom
@@ -190,7 +198,8 @@ Item {
 
             StyledText {
                 id: element4Title
-                text: qsTr("10 SNT to register")
+                //% "10 SNT to register"
+                text: qsTrId("ens-welcome-point-register-title")
                 anchors.left: element4Number.right
                 anchors.leftMargin: 24
                 anchors.top: element3Subtitle.bottom
@@ -203,7 +212,8 @@ Item {
 
             StyledText {
                 id: element4Subtitle
-                text: qsTr("Register once to keep the name forever. After 1 year you can release the name and get your SNT back.")
+                //% "Register once to keep the name forever. After 1 year you can release the name and get your SNT back."
+                text: qsTrId("ens-welcome-point-register")
                 anchors.left: element4Number.right
                 anchors.leftMargin: 24
                 anchors.top: element4Title.bottom
@@ -227,7 +237,8 @@ Item {
 
             StyledText {
                 id: element5Title
-                text: qsTr("Already own a username?")
+                //% "Already own a username?"
+                text: qsTrId("ens-welcome-point-verify-title")
                 anchors.left: element5Number.right
                 anchors.leftMargin: 24
                 anchors.top: element4Subtitle.bottom
@@ -240,7 +251,8 @@ Item {
 
             StyledText {
                 id: element5Subtitle
-                text: qsTr("You can verify and add any usernames you own in the next steps.")
+                //% "You can verify and add any usernames you own in the next steps."
+                text: qsTrId("ens-welcome-point-verify")
                 anchors.left: element5Number.right
                 anchors.leftMargin: 24
                 anchors.top: element5Title.bottom
@@ -252,7 +264,8 @@ Item {
 
             StyledText {
                 id: poweredBy
-                text: qsTr("Powered by Ethereum Name Services")
+                //% "Powered by Ethereum Name Services"
+                text: qsTrId("ens-powered-by")
                 anchors.left: element5Number.right
                 anchors.leftMargin: 24
                 anchors.top: element5Subtitle.bottom
@@ -269,7 +282,8 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        label: qsTr("Start")
+        //% "Start"
+        label: qsTrId("start")
         onClicked: startBtnClicked()
     }
 }

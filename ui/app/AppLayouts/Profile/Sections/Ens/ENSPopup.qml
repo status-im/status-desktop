@@ -8,7 +8,8 @@ import "../../../../../shared"
 ModalPopup {
     id: popup
 
-    title: qsTr("Primary username")
+    //% "Primary username"
+    title: qsTrId("ens-primary-username")
 
     property string newUsername: ""
 
@@ -20,7 +21,8 @@ ModalPopup {
 
     StyledText {
         id: lbl1
-        text: qsTr("Your messages are displayed to others with this username:")
+        //% "Your messages are displayed to others with this username:"
+        text: qsTrId("your-messages-are-displayed-to-others-with-this-username-")
         font.pixelSize: 15
     }
 

@@ -15,13 +15,15 @@ ModalPopup {
         popup.collectibleId = options.id
         popup.collectibleDescription = options.description
         popup.collectibleImage = options.image
-        popup.buttonText = options.buttonText || qsTr("View")
+        //% "View"
+        popup.buttonText = options.buttonText || qsTrId("view")
         popup.buttonLink = options.link
         popup.open()
     }
 
     id: popup
-    title: collectibleName || qsTr("Unnamed")
+    //% "Unnamed"
+    title: collectibleName || qsTrId("unnamed")
 
     CollectiblesModalContent {
         collectibleName: popup.collectibleName

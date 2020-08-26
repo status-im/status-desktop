@@ -21,7 +21,8 @@ Item {
             id: labelSigningPhrase
             color: Style.current.secondaryText
             font.pixelSize: 15
-            text: qsTr("Signing phrase")
+            //% "Signing phrase"
+            text: qsTrId("signing-phrase")
         }
 
         IconButton {
@@ -37,7 +38,8 @@ Item {
             StatusToolTip {
               visible: infoButton.hovered
               width: 337
-              text: qsTr("Signing phrase is a 3 word combination that displayed when you entered the wallet on this device for the first time.")
+              //% "Signing phrase is a 3 word combination that displayed when you entered the wallet on this device for the first time."
+              text: qsTrId("signing-phrase-is-a-3-word-combination-that-displayed-when-you-entered-the-wallet-on-this-device-for-the-first-time-")
             }
         }
     }
@@ -65,7 +67,8 @@ Item {
         StatusToolTip {
           visible: passwordInfoButton.hovered
           width: 224
-          text: qsTr("Enter the password you use to unlock this device")
+          //% "Enter the password you use to unlock this device"
+          text: qsTrId("enter-the-password-you-use-to-unlock-this-device")
         }
     }
 

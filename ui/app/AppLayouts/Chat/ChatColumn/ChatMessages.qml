@@ -48,7 +48,8 @@ ScrollView {
 
             StyledText {
                 id: newMessagesText
-                text: qsTr("New message(s) received")
+                //% "New message(s) received"
+                text: qsTrId("new-message-s--received")
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
                 anchors.left: parent.left
@@ -61,7 +62,8 @@ ScrollView {
             }
             StyledText {
                 id: clickHereText
-                text: qsTr("Click here to scroll back down")
+                //% "Click here to scroll back down"
+                text: qsTrId("click-here-to-scroll-back-down")
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
                 anchors.left: parent.left

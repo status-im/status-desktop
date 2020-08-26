@@ -31,7 +31,8 @@ Item {
 
     Input {
         id: inpAddress
-        placeholderText: qsTr("eg. 0x1234 or ENS")
+        //% "eg. 0x1234 or ENS"
+        placeholderText: qsTrId("eg--0x1234-or-ens")
         customHeight: 56
         validationErrorAlignment: TextEdit.AlignRight
         validationErrorTopMargin: 8
@@ -67,7 +68,8 @@ Item {
             anchors.rightMargin: 8
             anchors.top: parent.top
             anchors.topMargin: 14
-            label: qsTr("Paste")
+            //% "Paste"
+            label: qsTrId("paste")
             onClicked: {
                 if (inpAddress.textField.canPaste) {
                     inpAddress.textField.paste()

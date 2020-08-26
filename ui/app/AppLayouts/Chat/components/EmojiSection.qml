@@ -33,7 +33,8 @@ Item {
     StyledText {
         id: noRecentText
         visible: !!(allEmojis && allEmojis.length && allEmojis[0].empty)
-        text: qsTr("No recent emojis")
+        //% "No recent emojis"
+        text: qsTrId("no-recent-emojis")
         color: Style.current.darkGrey
         font.pixelSize: 10
         anchors.top: categoryText.bottom

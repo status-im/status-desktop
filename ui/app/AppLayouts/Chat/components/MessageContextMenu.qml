@@ -98,7 +98,8 @@ PopupMenu {
     }
     Action {
         text: messageContextMenu.isProfile ?
-                  qsTr("Send message") :
+                  //% "Send message"
+                  qsTrId("send-message") :
                   //% "Reply to"
                   qsTrId("reply-to")
         onTriggered: messageContextMenu.isProfile ? chatsModel.joinChat(profilePopup.fromAuthor, Constants.chatTypeOneToOne) : showReplyArea()

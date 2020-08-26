@@ -18,7 +18,8 @@ Item {
             let error = "";
             
             if(!Utils.isMnemonic(mnemonic)){
-                error = qsTr("Invalid mnemonic")
+                //% "Invalid mnemonic"
+                error = qsTrId("invalid-mnemonic")
             } else {
                 error = onboardingModel.validateMnemonic(mnemonic)
             }

@@ -10,7 +10,8 @@ Item {
 
     StyledText {
         id: title
-        text: qsTr("Profile")
+        //% "Profile"
+        text: qsTrId("profile")
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter

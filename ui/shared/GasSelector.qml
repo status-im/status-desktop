@@ -43,7 +43,8 @@ Item {
         id: txtNetworkFee
         anchors.top: parent.top
         anchors.left: parent.left
-        text: qsTr("Network fee")
+        //% "Network fee"
+        text: qsTrId("network-fee")
         font.weight: Font.Medium
         font.pixelSize: 13
         color: Style.current.textColor
@@ -86,7 +87,8 @@ Item {
             anchors.top: gasSlider.bottom
             anchors.topMargin: Style.current.padding
             anchors.left: parent.left
-            text: qsTr("Slow")
+            //% "Slow"
+            text: qsTrId("slow")
             font.pixelSize: 15
             color: Style.current.textColor
             visible: parent.visible
@@ -97,7 +99,8 @@ Item {
             anchors.top: gasSlider.bottom
             anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: gasSlider.horizontalCenter
-            text: qsTr("Optimal")
+            //% "Optimal"
+            text: qsTrId("optimal")
             font.pixelSize: 15
             color: Style.current.textColor
             visible: parent.visible
@@ -108,7 +111,8 @@ Item {
             anchors.top: gasSlider.bottom
             anchors.topMargin: Style.current.padding
             anchors.right: parent.right
-            text: qsTr("Fast")
+            //% "Fast"
+            text: qsTrId("fast")
             font.pixelSize: 15
             color: Style.current.textColor
             visible: parent.visible
@@ -121,7 +125,8 @@ Item {
         anchors.topMargin: sliderWrapper.visible ? Style.current.smallPadding : 0
         anchors.right: buttonAdvanced.left
         anchors.rightMargin: -Style.current.padding
-        label: qsTr("Reset")
+        //% "Reset"
+        label: qsTrId("reset")
         btnColor: "transparent"
         textSize: 13
         visible: !sliderWrapper.visible
@@ -137,7 +142,8 @@ Item {
         anchors.topMargin: sliderWrapper.visible ? Style.current.smallPadding : 0
         anchors.right: parent.right
         anchors.rightMargin: -Style.current.padding
-        label: qsTr("Advanced")
+        //% "Advanced"
+        label: qsTrId("advanced")
         btnColor: "transparent"
         textSize: 13
         onClicked: {
@@ -147,13 +153,15 @@ Item {
 
     ModalPopup {
         id: customNetworkFeeDialog
-        title: qsTr("Custom Network Fee")
+        //% "Custom Network Fee"
+        title: qsTrId("custom-network-fee")
         height: 286
         width: 400
 
         Input {
           id: inputGasLimit
-          label: qsTr("Gas limit")
+          //% "Gas limit"
+          label: qsTrId("gas-limit")
           text: "22000"
           customHeight: 56
           anchors.top: parent.top
@@ -172,7 +180,8 @@ Item {
 
         Input {
           id: inputGasPrice
-          label: qsTr("Gas price")
+          //% "Gas price"
+          label: qsTrId("gas-price")
           anchors.top: parent.top
           anchors.left: undefined
           anchors.right: parent.right
@@ -190,7 +199,8 @@ Item {
 
           StyledText {
             color: Style.current.darkGrey
-            text: qsTr("Gwei")
+            //% "Gwei"
+            text: qsTrId("gwei")
             anchors.top: parent.top
             anchors.topMargin: 42
             anchors.right: parent.right
@@ -213,7 +223,8 @@ Item {
             id: applyButton
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
-            label: qsTr("Apply")
+            //% "Apply"
+            label: qsTrId("invalid-key-confirm")
             disabled: !root.validate(inputGasLimit.text.trim()) || !root.validate(inputGasPrice.text.trim())
             anchors.bottom: parent.bottom
             onClicked: {

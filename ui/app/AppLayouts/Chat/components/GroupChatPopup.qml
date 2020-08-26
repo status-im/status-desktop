@@ -107,7 +107,8 @@ ModalPopup {
         anchors.horizontalCenter: parent.horizontalCenter
         StyledText {
             id: noContacts
-            text: qsTr("You don’t have any contacts yet. Invite your friends to start chatting.")
+            //% "You don’t have any contacts yet. Invite your friends to start chatting."
+            text: qsTrId("you-don-t-have-any-contacts-yet--invite-your-friends-to-start-chatting-")
             color: Style.current.darkGrey
             anchors.top: parent.top
             anchors.topMargin: Style.current.padding

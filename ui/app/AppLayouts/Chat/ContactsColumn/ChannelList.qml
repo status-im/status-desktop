@@ -77,7 +77,8 @@ ScrollView {
         }
 
         Action {
-            text: qsTr("View Group")
+            //% "View Group"
+            text: qsTrId("view-group")
             icon.source: "../../../img/group.svg"
             icon.width: 16
             icon.height: 16
@@ -88,8 +89,10 @@ ScrollView {
 
         Action {
             text: channelContextMenu.channelMuted ? 
-              qsTr("Unmute chat") : 
-              qsTr("Mute chat")
+              //% "Unmute chat"
+              qsTrId("unmute-chat") : 
+              //% "Mute chat"
+              qsTrId("mute-chat")
             icon.source: "../../../img/bell.svg"
             icon.width: 16
             icon.height: 16
@@ -108,35 +111,40 @@ ScrollView {
 
         /*     // TODO implement mute chat in Model and call it here */
         /*     Action { */ 
-        /*         text: qsTr("15 minutes"); */
+        //% "15 minutes"
+        /*         text: qsTrId("15-minutes"); */
         /*         icon.width: 0; */ 
         /*         onTriggered: { */
         /*             chatsModel.muteChannel(channelContextMenu.channelIndex, Constants.muteChat15Minutes) */
         /*         } */
         /*     } */
         /*     Action { */
-        /*         text: qsTr("1 hour"); */
+        //% "1 hour"
+        /*         text: qsTrId("1-hour"); */
         /*         icon.width: 0; */
         /*         onTriggered: { */
         /*             chatsModel.muteChannel(channelContextMenu.channelIndex, Constants.muteChatOneHour) */
         /*         } */
         /*     } */
         /*     Action { */
-        /*         text: qsTr("8 hours"); */
+        //% "8 hours"
+        /*         text: qsTrId("8-hours"); */
         /*         icon.width: 0; */
         /*         onTriggered: { */
         /*             chatsModel.muteChannel(channelContextMenu.channelIndex, Constants.muteChatEightHours) */
         /*         } */
         /*     } */
         /*     Action { */ 
-        /*         text: qsTr("24 hours"); */ 
+        //% "24 hours"
+        /*         text: qsTrId("24-hours"); */ 
         /*         icon.width: 0; */
         /*         onTriggered: { */
         /*             chatsModel.muteChannel(channelContextMenu.channelIndex, Constants.muteChat24Hours) */
         /*         } */
         /*     } */
         /*     Action { */ 
-        /*         text: qsTr("Until I turn it back on"); */
+        //% "Until I turn it back on"
+        /*         text: qsTrId("until-i-turn-it-back-on"); */
         /*         icon.width: 0; */ 
         /*         onTriggered: { */
         /*             console.log(appSettings.mutedChannels) */
@@ -149,7 +157,8 @@ ScrollView {
         /*     } */
         /* } */
         Action {
-            text: qsTr("Mark as Read")
+            //% "Mark as Read"
+            text: qsTrId("mark-as-read")
             icon.source: "../../../img/check-circle.svg"
             icon.width: 16
             icon.height: 16
@@ -159,16 +168,22 @@ ScrollView {
         }
         PopupMenu {
             hasArrow: false
-            title: qsTr("Fetch Messages")
+            //% "Fetch Messages"
+            title: qsTrId("fetch-messages")
 
             // TODO call fetch for the wanted duration
-            Action { text: qsTr("Last 24 hours"); icon.width: 0; }
-            Action { text: qsTr("Last 2 days"); icon.width: 0; }
-            Action { text: qsTr("Last 3 days"); icon.width: 0; }
-            Action { text: qsTr("Last 7 days"); icon.width: 0; }
+            //% "Last 24 hours"
+            Action { text: qsTrId("last-24-hours"); icon.width: 0; }
+            //% "Last 2 days"
+            Action { text: qsTrId("last-2-days"); icon.width: 0; }
+            //% "Last 3 days"
+            Action { text: qsTrId("last-3-days"); icon.width: 0; }
+            //% "Last 7 days"
+            Action { text: qsTrId("last-7-days"); icon.width: 0; }
         }
         Action {
-            text: qsTr("Clear History")
+            //% "Clear History"
+            text: qsTrId("clear-history")
             icon.source: "../../../img/close.svg"
             icon.width: 16
             icon.height: 16
@@ -178,7 +193,8 @@ ScrollView {
         Separator {}
 
         Action {
-            text: qsTr("Leave Group")
+            //% "Leave Group"
+            text: qsTrId("leave-group")
             icon.source: "../../../img/leave_chat.svg"
             icon.width: 16
             icon.height: 16

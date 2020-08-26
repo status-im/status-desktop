@@ -38,14 +38,16 @@ Popup {
       ChatCommandButton {
           iconColor: Style.current.purple
           iconSource: "../../../../img/send.svg"
-          text: qsTr("Send transaction")
+          //% "Send transaction"
+          text: qsTrId("send-transaction")
       }
 
       ChatCommandButton {
           iconColor: Style.current.orange
           iconSource: "../../../../img/send.svg"
           rotatedImage: true
-          text: qsTr("Request transaction")
+          //% "Request transaction"
+          text: qsTrId("request-transaction")
       }
   }
 }

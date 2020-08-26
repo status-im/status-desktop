@@ -58,7 +58,8 @@ Item {
 
     TextWithLabel {
         id: walletAddressLbl
-        label: qsTr("Wallet address")
+        //% "Wallet address"
+        label: qsTrId("wallet-address")
         visible: false
         text:  ""
         textToCopy: ""
@@ -71,7 +72,8 @@ Item {
     TextWithLabel {
         id: keyLbl
         visible: false
-        label: qsTr("Key")
+        //% "Key"
+        label: qsTrId("key")
         text: ""
         textToCopy: ""
         anchors.left: parent.left
@@ -84,7 +86,8 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        label: qsTr("Back")
+        //% "Back"
+        label: qsTrId("back")
         onClicked: backBtnClicked()
     }
 }
