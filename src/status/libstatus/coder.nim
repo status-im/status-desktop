@@ -26,10 +26,17 @@ type
     address*: EthAddress
     price*: Stuint[256]
 
+  Register* = object
+    label*: FixedBytes[32]
+    account*: EthAddress
+    x*: FixedBytes[32]
+    y*: FixedBytes[32]
+
+
   ApproveAndCall* = object
     to*: EthAddress
     value*: Stuint[256]
-    data*: DynamicBytes[100]
+    data*: DynamicBytes[136]
 
   Transfer* = object
     to*: EthAddress

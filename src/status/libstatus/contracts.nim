@@ -4,8 +4,8 @@ from eth/common/utils import parseAddress
 import ./types, ./settings, ./coder
 
 export
-  GetPackData, PackData, BuyToken, ApproveAndCall, Transfer, BalanceOf,
-  TokenOfOwnerByIndex, TokenPackId, TokenUri, DynamicBytes, toHex, fromHex
+  GetPackData, PackData, BuyToken, ApproveAndCall, Transfer, BalanceOf, Register,
+  TokenOfOwnerByIndex, TokenPackId, TokenUri, FixedBytes, DynamicBytes, toHex, fromHex
 
 type Method* = object
   name*: string
@@ -90,6 +90,18 @@ proc allContracts(): seq[Contract] = @[
     ].toTable
   ),
   Contract(name: "crypto-kitties", network: Network.Mainnet, address: parseAddress("0x06012c8cf97bead5deae237070f9587f8e7a266d")),
+  Contract(name: "ens-usernames", network: Network.Mainnet, address: parseAddress("0xDB5ac1a559b02E12F29fC0eC0e37Be8E046DEF49"),
+      methods: [
+        ("register", Method(signature: "register(bytes32,address,bytes32,bytes32)")),
+        ("getPrice", Method(signature: "getPrice()"))
+      ].toTable
+  ),
+  Contract(name: "ens-usernames", network: Network.Testnet, address: parseAddress("0x11d9F481effd20D76cEE832559bd9Aca25405841"),
+      methods: [
+        ("register", Method(signature: "register(bytes32,address,bytes32,bytes32)")),
+        ("getPrice", Method(signature: "getPrice()"))
+      ].toTable
+  ),
 ]
 
 proc getContract(network: Network, name: string): Contract =

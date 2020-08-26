@@ -2,12 +2,17 @@ import strutils
 import profile/profile
 import nimcrypto
 import json
+import json_serialization
+import tables
 import strformat
 import libstatus/core
+import libstatus/types
+import libstatus/utils
 import stew/byteutils
 import unicode
 import algorithm
-
+import eth/common/eth_types, stew/byteutils
+import libstatus/contracts
 const domain* = ".stateofus.eth"
 
 proc userName*(ensName: string, removeSuffix: bool = false): string =
@@ -46,7 +51,7 @@ proc namehash*(ensName:string): string =
   
   result = "0x" & node.toHex()
 
-const registry = "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
+const registry* = "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
 const resolver_signature = "0x0178b8bf"
 proc resolver*(usernameHash: string): string =
   let payload = %* [{
@@ -111,3 +116,50 @@ proc address*(username: string): string =
   if address == "0x0000000000000000000000000000000000000000000000000000000000000000":
     return ""
   result = "0x" & address.substr(26)
+
+proc getPrice*(): Stuint[256] =
+  let
+    contract = contracts.getContract("ens-usernames")
+    payload = %* [{
+      "to": $contract.address,
+      "data": contract.methods["getPrice"].encodeAbi()
+    }, "latest"]
+  
+  let responseStr = callPrivateRPC("eth_call", payload)
+  let response = Json.decode(responseStr, RpcResponse)
+  if not response.error.isNil:
+    raise newException(RpcException, "Error getting ens username price: " & response.error.message)
+  if response.result == "0x":
+    raise newException(RpcException, "Error getting ens username price: 0x")
+  result = fromHex(Stuint[256], response.result)
+
+proc registerUsername*(username:string, address: EthAddress, pubKey: string, price: Stuint[256], password: string): string =
+  let label = fromHex(FixedBytes[32], namehash(addDomain(username)))
+  let x = fromHex(FixedBytes[32], "0x" & pubkey[4..67])
+  let y =  fromHex(FixedBytes[32], "0x" & pubkey[68..131])
+  let
+    ensUsernamesContract = contracts.getContract("ens-usernames")
+    sntContract = contracts.getContract("snt")
+    price = getPrice()
+    register = Register(label: label, account: address, x: x, y: y)
+    registerAbiEncoded = ensUsernamesContract.methods["register"].encodeAbi(register)
+  
+  let
+    approveAndCallObj = ApproveAndCall(to: ensUsernamesContract.address, value: price, data: DynamicBytes[136].fromHex(registerAbiEncoded))
+    approveAndCallAbiEncoded = sntContract.methods["approveAndCall"].encodeAbi(approveAndCallObj)
+  
+  let payload = %* {
+      "from": $address,
+      "to": $sntContract.address,
+      # "gas": 200000, # TODO: obtain gas price?
+      "data": approveAndCallAbiEncoded
+    }
+  
+  let responseStr = sendTransaction($payload, password)
+  let response = Json.decode(responseStr, RpcResponse)
+  if not response.error.isNil:
+    raise newException(RpcException, "Error registering ens-username: " & response.error.message)
+  result = response.result # should be a tx receipt
+
+proc statusRegistrarAddress*():string =
+  result = $contracts.getContract("ens-usernames").address

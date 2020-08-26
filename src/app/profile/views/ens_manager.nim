@@ -6,7 +6,10 @@ import sequtils
 from ../../../status/libstatus/types import Setting
 import ../../../status/threads
 import ../../../status/ens as status_ens
+import ../../../status/libstatus/wallet as status_wallet
 import ../../../status/libstatus/settings as status_settings
+import ../../../status/libstatus/utils as utils
+import ../../../status/libstatus/tokens as tokens
 import ../../../status/status
 
 type
@@ -130,3 +133,12 @@ QtObject:
     {
       EnsRoles.UserName.int:"username"
     }.toTable
+
+  proc getPrice(self: EnsManager): string {.slot.} =
+    result = utils.wei2Eth(getPrice())
+
+  proc getUsernameRegistrar(self: EnsManager): string {.slot.} =
+    result = statusRegistrarAddress()
+
+  proc getENSRegistry(self: EnsManager): string {.slot.} =
+    result = registry
