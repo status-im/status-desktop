@@ -114,16 +114,19 @@ Item {
 
                 StyledButton {
                     id: copyBtn
-                    label: qsTr("Copy")
+                    //% "Copy"
+                    label: qsTrId("copy-to-clipboard")
                     height: 28
                     textSize: 12
                     btnBorderColor: Style.current.blue
                     btnBorderWidth: 1
                     onClicked: {
                         chatsModel.copyToClipboard(inputValue.text)
-                        copyBtn.label = qsTr("Copied")
+                        //% "Copied"
+                        copyBtn.label = qsTrId("sharing-copied-to-clipboard")
                         timer.setTimeout(function(){
-                            copyBtn.label = qsTr("Copy")
+                            //% "Copy"
+                            copyBtn.label = qsTrId("copy-to-clipboard")
                         }, 2000);
                     }
                 }

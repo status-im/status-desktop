@@ -13,7 +13,8 @@ Item {
 
     StyledText {
         id: element5
-        text: qsTr("Sounds settings")
+        //% "Sounds settings"
+        text: qsTrId("sounds-settings")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top

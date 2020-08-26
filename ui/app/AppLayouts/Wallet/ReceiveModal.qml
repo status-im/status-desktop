@@ -7,7 +7,8 @@ ModalPopup {
     property string address: ""
     id: popup
 
-    title: qsTr("Receive")
+    //% "Receive"
+    title: qsTrId("receive")
     height: 500
     width: 500
 
@@ -51,7 +52,8 @@ ModalPopup {
     }
 
     Input {
-        label: qsTr("Wallet address")
+        //% "Wallet address"
+        label: qsTrId("wallet-address")
         text: accountSelector.selectedAccount.address
         anchors.top: accountSelector.bottom
         anchors.topMargin: Style.current.padding

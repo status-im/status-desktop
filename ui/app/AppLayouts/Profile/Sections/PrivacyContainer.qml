@@ -77,7 +77,8 @@ Item {
         }
         StyledText {
             id: labelPrivacy
-            text: qsTr("Privacy")
+            //% "Privacy"
+            text: qsTrId("privacy")
             font.pixelSize: 15
             color: Style.current.darkGrey
             anchors.top: separator.bottom

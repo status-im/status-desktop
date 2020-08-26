@@ -24,11 +24,14 @@ Item {
         valid = false;
         ensStatus = "";
         if (ensUsername.length < 4) {
-            validationMessage = qsTr("At least 4 characters. Latin letters, numbers, and lowercase only.");
+            //% "At least 4 characters. Latin letters, numbers, and lowercase only."
+            validationMessage = qsTrId("ens-username-hints");
         } else if(isStatus && !ensUsername.match(/^[a-z0-9]+$/)){
-            validationMessage = qsTr("Letters and numbers only.");
+            //% "Letters and numbers only."
+            validationMessage = qsTrId("ens-username-invalid");
         } else if(!isStatus && !ensUsername.endsWith(".eth")){
-            validationMessage = qsTr("Type the entire username including the custom domain like username.domain.eth")
+            //% "Type the entire username including the custom domain like username.domain.eth"
+            validationMessage = qsTrId("ens-custom-username-hints")
         }
         return validationMessage === "";
     }
@@ -43,7 +46,8 @@ Item {
 
     StyledText {
         id: sectionTitle
-        text: qsTr("Your username")
+        //% "Your username"
+        text: qsTrId("ens-your-username")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top
@@ -112,26 +116,32 @@ Item {
                 switch(ensResult){
                     case "available": 
                         valid = true;
-                        validationMessage = qsTr("✓ Username available!");
+                        //% "✓ Username available!"
+                        validationMessage = qsTrId("ens-username-available");
                         break;
                     case "owned":
                         console.log("TODO: - Continuing will connect this username with your chat key.");
                     case "taken":
                         validationMessage = !isStatus ? 
-                                            qsTr("Username doesn’t belong to you :(")
+                                            //% "Username doesn’t belong to you :("
+                                            qsTrId("ens-custom-username-taken")
                                             :
-                                            qsTr("Username already taken :(");
+                                            //% "Username already taken :("
+                                            qsTrId("ens-username-taken");
                         break;
                     case "already-connected":
-                        validationMessage = qsTr("Username is already connected with your chat key and can be used inside Status.");
+                        //% "Username is already connected with your chat key and can be used inside Status."
+                        validationMessage = qsTrId("ens-username-already-added");
                         break;
                     case "connected":
                         valid = true;
-                        validationMessage = qsTr("This user name is owned by you and connected with your chat key. Continue to set `Show my ENS username in chats`.");
+                        //% "This user name is owned by you and connected with your chat key. Continue to set `Show my ENS username in chats`."
+                        validationMessage = qsTrId("this-user-name-is-owned-by-you-and-connected-with-your-chat-key--continue-to-set--show-my-ens-username-in-chats--");
                         break;
                     case "connected-different-key":
                         valid = true;
-                        validationMessage = qsTr("Continuing will require a transaction to connect the username with your current chat key.");
+                        //% "Continuing will require a transaction to connect the username with your current chat key."
+                        validationMessage = qsTrId("ens-username-connected-with-different-key");
                         break;
                 }
             }
@@ -187,7 +197,8 @@ Item {
 
         StyledText {
             text: !isStatus ? 
-                qsTr("Custom domain")
+                //% "Custom domain"
+                qsTrId("ens-custom-domain")
                 :
                 ".stateofus.eth"
             font.weight: Font.Bold
@@ -197,9 +208,11 @@ Item {
 
         StyledText {
             text: !isStatus ? 
-                qsTr("I want a stateofus.eth domain")
+                //% "I want a stateofus.eth domain"
+                qsTrId("ens-want-domain")
                 :
-                qsTr("I own a name on another domain")
+                //% "I own a name on another domain"
+                qsTrId("ens-want-custom-domain")
             font.pixelSize: 12
             color: Style.current.blue
             anchors.right: parent.right

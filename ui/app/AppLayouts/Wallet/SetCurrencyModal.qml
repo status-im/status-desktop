@@ -21,7 +21,8 @@ Item {
         width: 480
         height: 510
 
-        title: qsTr("Settings")
+        //% "Settings"
+        title: qsTrId("settings")
 
         SetCurrencyModalContent {
             id: setCurrencyModalContent
@@ -29,7 +30,8 @@ Item {
 
         footer: StyledButton {
             anchors.right: parent.right
-            label: qsTr("Save")
+            //% "Save"
+            label: qsTrId("save")
             onClicked: {
                 console.log("TODO: apply all accounts")
                 popup.close()

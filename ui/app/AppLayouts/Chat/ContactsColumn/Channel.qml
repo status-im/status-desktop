@@ -90,8 +90,10 @@ Rectangle {
         //% "No messages"
         text: {
             switch(contentType){
-                case Constants.imageType: return qsTr("Image");
-                case Constants.stickerType: return qsTr("Sticker");
+                //% "Image"
+                case Constants.imageType: return qsTrId("image");
+                //% "Sticker"
+                case Constants.stickerType: return qsTrId("sticker");
                 default: return lastMessage ? Emoji.parse(lastMessage, "26x26").replace(/\n|\r/g, ' ') : qsTrId("no-messages")
             }
         }

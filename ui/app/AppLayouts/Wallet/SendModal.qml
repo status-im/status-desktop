@@ -32,7 +32,8 @@ ModalPopup {
         StyledButton {
             id: btnBack
             anchors.left: parent.left
-            label: qsTr("Back")
+            //% "Back"
+            label: qsTrId("back")
             visible: !btnPreview.visible
             onClicked: {
                 btnPreview.visible = true
@@ -42,7 +43,8 @@ ModalPopup {
         StyledButton {
             id: btnPreview
             anchors.right: parent.right
-            label: qsTr("Preview")
+            //% "Preview"
+            label: qsTrId("preview")
             onClicked: {
                 if (!sendModalContent.validate()) {
                     return

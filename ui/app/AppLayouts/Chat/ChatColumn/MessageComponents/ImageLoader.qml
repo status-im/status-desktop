@@ -21,7 +21,9 @@ Item {
         radius: Style.current.radius
 
         StyledText {
-            text: loadingImage.hasError ? qsTr("Error loading the image") : qsTr("Loading image...")
+            //% "Error loading the image"
+            //% "Loading image..."
+            text: loadingImage.hasError ? qsTrId("error-loading-the-image") : qsTrId("loading-image---")
             color: loadingImage.hasError ? Style.current.red : Style.current.textColor
             font.pixelSize: 15
             anchors.verticalCenter: parent.verticalCenter

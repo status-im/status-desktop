@@ -20,18 +20,19 @@ SOURCES = *.qml \
           app/AppLayouts/*.qml \
           app/AppLayouts/Chat/*.qml \
           app/AppLayouts/Chat/ChatColumn/*.qml \
+          app/AppLayouts/Chat/ChatColumn/ChatComponents/*.qml \
+          app/AppLayouts/Chat/ChatColumn/MessageComponents/*.qml \
           app/AppLayouts/Chat/ContactsColumn/*.qml \
           app/AppLayouts/Chat/components/*.qml \
-          app/AppLayouts/Chat/Contacts/*.qml \
           app/AppLayouts/Node/*.qml \
           app/AppLayouts/Profile/*.qml \
           app/AppLayouts/Profile/LeftTab/*.qml \
+          app/AppLayouts/Profile/LeftTab/components/*.qml \
           app/AppLayouts/Profile/Sections/*.qml \
           app/AppLayouts/Profile/Sections/Contacts/*.qml \
           app/AppLayouts/Wallet/*.qml \
           app/AppLayouts/Wallet/components/*.qml \
           app/AppLayouts/Wallet/components/collectiblesComponents/*.qml \
-          app/AppLayouts/Wallet/data/*.qml \
 }
 
 TRANSLATIONS += \

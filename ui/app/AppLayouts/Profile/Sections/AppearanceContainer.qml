@@ -11,7 +11,8 @@ Item {
 
     StyledText {
         id: title
-        text: qsTr("Appearance setting")
+        //% "Appearance setting"
+        text: qsTrId("appearance-setting")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top

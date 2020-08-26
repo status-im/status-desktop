@@ -82,8 +82,10 @@ StackLayout {
                     color: Style.current.white
                     id: connectedStatusLbl
                     text: isConnected ? 
-                        qsTr("Connected") :
-                        qsTr("Disconnected")
+                        //% "Connected"
+                        qsTrId("connected") :
+                        //% "Disconnected"
+                        qsTrId("disconnected")
                 }
             }
 
@@ -146,7 +148,8 @@ StackLayout {
           id: removeContactConfirmationDialog
           // % "Remove contact"
           title: qsTrId("remove-contact")
-          confirmationText: qsTr("Are you sure you want to remove this contact?")
+          //% "Are you sure you want to remove this contact?"
+          confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
           onConfirmButtonClicked: {
               if (profileModel.isAdded(chatColumnLayout.contactToRemove)) {
                 profileModel.removeContact(chatColumnLayout.contactToRemove)

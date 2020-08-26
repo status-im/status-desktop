@@ -24,7 +24,8 @@ Button {
         height: 16
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        text: qsTr("Paste")
+        //% "Paste"
+        text: qsTrId("paste")
     }
 
     MouseArea {

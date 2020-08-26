@@ -28,7 +28,8 @@ Item {
             return sendingError.open()
         }
 
-        sendingSuccess.text = qsTr("Transaction sent to the blockchain. You can watch the progress on Etherscan: %2/%1").arg(result).arg(walletModel.etherscanLink)
+        //% "Transaction sent to the blockchain. You can watch the progress on Etherscan: %2/%1"
+        sendingSuccess.text = qsTrId("transaction-sent-to-the-blockchain--you-can-watch-the-progress-on-etherscan---2--1").arg(result).arg(walletModel.etherscanLink)
         sendingSuccess.open()
     }
 
@@ -106,7 +107,8 @@ Item {
         anchors.topMargin: Style.current.padding
         anchors.left: parent.left
         anchors.right: parent.right
-        label: qsTr("From account")
+        //% "From account"
+        label: qsTrId("from-account")
         onSelectedAccountChanged: {
             txtAmount.selectedAccount = selectFromAccount.selectedAccount
         }
@@ -127,7 +129,8 @@ Item {
         id: selectRecipient
         accounts: walletModel.accounts
         contacts: profileModel.addedContacts
-        label: qsTr("Recipient")
+        //% "Recipient"
+        label: qsTrId("recipient")
         anchors.top: gasSelector.bottom
         anchors.topMargin: Style.current.padding
         anchors.left: parent.left

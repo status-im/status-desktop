@@ -42,14 +42,16 @@ ScrollView {
 
                 StyledText {
                     id: somethingWentWrongText
-                    text: qsTr("Something went wrong")
+                    //% "Something went wrong"
+                    text: qsTrId("something-went-wrong")
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: Style.current.secondaryText
                     font.pixelSize: 13
                 }
 
                 StyledButton {
-                    label: qsTr("Reload")
+                    //% "Reload"
+                    label: qsTrId("reload")
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: somethingWentWrongText.bottom
                     anchors.topMargin: Style.current.halfPadding

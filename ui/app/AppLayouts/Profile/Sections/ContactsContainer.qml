@@ -35,7 +35,8 @@ Item {
 
         StyledText {
             id: usernameText
-            text: qsTr("Add new contact")
+            //% "Add new contact"
+            text: qsTrId("add-new-contact")
             color: Style.current.blue
             anchors.left: addButton.right
             anchors.leftMargin: Style.current.padding
@@ -71,7 +72,8 @@ Item {
 
         StyledText {
             id: blockButtonLabel
-            text: qsTr("Blocked contacts")
+            //% "Blocked contacts"
+            text: qsTrId("blocked-contacts")
             color: Style.current.blue
             anchors.left: blockButton.right
             anchors.leftMargin: Style.current.padding
@@ -90,7 +92,8 @@ Item {
 
     ModalPopup {
         id: blockedContactsModal
-        title: qsTr("Blocked contacts")
+        //% "Blocked contacts"
+        title: qsTrId("blocked-contacts")
 
         ContactList {
             anchors.top: parent.top
@@ -102,7 +105,8 @@ Item {
 
     ModalPopup {
         id: addContactModal
-        title: qsTr("Add contact")
+        //% "Add contact"
+        title: qsTrId("add-contact")
 
         Input {
             id: addContactSearchInput
@@ -147,7 +151,8 @@ Item {
             anchors.right: parent.right
             anchors.leftMargin: Style.current.padding
             //% "Send Message"
-            label: qsTr("Add contact")
+            //% "Add contact"
+            label: qsTrId("add-contact")
             disabled: !contactToAddInfo.visible
             anchors.bottom: parent.bottom
             onClicked: {
@@ -174,7 +179,8 @@ Item {
 
         StyledText {
             id: noFriendsText
-            text: qsTr("You don’t have any contacts yet")
+            //% "You don’t have any contacts yet"
+            text: qsTrId("you-don-t-have-any-contacts-yet")
             anchors.verticalCenterOffset: -Style.current.bigPadding
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -186,7 +192,8 @@ Item {
             anchors.horizontalCenter: noFriendsText.horizontalCenter
             anchors.top: noFriendsText.bottom
             anchors.topMargin: Style.current.bigPadding
-            label: qsTr("Invite firends")
+            //% "Invite firends"
+            label: qsTrId("invite-firends")
             onClicked: function () {
                 inviteFriendsPopup.open()
             }

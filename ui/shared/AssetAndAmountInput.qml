@@ -5,11 +5,14 @@ import QtGraphicalEffects 1.13
 import "../imports"
 
 Item {
-    property string balanceErrorMessage: qsTr("Insufficient balance")
-    property string greaterThan0ErrorMessage: qsTr("Must be greater than 0")
+    //% "Insufficient balance"
+    property string balanceErrorMessage: qsTrId("insufficient-balance")
+    //% "Must be greater than 0"
+    property string greaterThan0ErrorMessage: qsTrId("must-be-greater-than-0")
     //% "This needs to be a number"
     property string invalidInputErrorMessage: qsTrId("this-needs-to-be-a-number")
-    property string noInputErrorMessage: qsTr("Please enter an amount")
+    //% "Please enter an amount"
+    property string noInputErrorMessage: qsTrId("please-enter-an-amount")
     property string defaultCurrency: "USD"
     property alias selectedFiatAmount: txtFiatBalance.text
     property alias selectedAmount: inputAmount.text
@@ -72,7 +75,8 @@ Item {
 
         StyledText {
             id: txtBalanceDesc
-            text: qsTr("Balance: ")
+            //% "Balance: "
+            text: qsTrId("balance--")
             anchors.right: txtBalance.left
             font.weight: Font.Medium
             font.pixelSize: 13
@@ -111,7 +115,8 @@ Item {
 
     Input {
         id: inputAmount
-        label: qsTr("Asset & Amount")
+        //% "Asset & Amount"
+        label: qsTrId("asset---amount")
         placeholderText: "0.00"
         anchors.top: parent.top
         customHeight: 56

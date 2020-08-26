@@ -11,7 +11,8 @@ Item {
     StyledText {
         id: noCollectiblesText
         color: Style.current.secondaryText
-        text: qsTr("Collectibles will appear here")
+        //% "Collectibles will appear here"
+        text: qsTrId("collectibles-will-appear-here")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: 15

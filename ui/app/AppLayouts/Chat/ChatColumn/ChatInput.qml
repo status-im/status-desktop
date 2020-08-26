@@ -57,10 +57,12 @@ Rectangle {
 
     FileDialog {
         id: imageDialog
-        title: qsTr("Please choose an image")
+        //% "Please choose an image"
+        title: qsTrId("please-choose-an-image")
         folder: shortcuts.pictures
         nameFilters: [
-            qsTr("Image files (*.jpg *.jpeg *.png)")
+            //% "Image files (*.jpg *.jpeg *.png)"
+            qsTrId("image-files----jpg---jpeg---png-")
         ]
         onAccepted: {
             chatColumn.showImageArea(imageDialog.fileUrls);

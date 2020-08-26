@@ -44,7 +44,8 @@ Item {
 
     StyledText {
         id: title
-        text: qsTr("Username added")
+        //% "Username added"
+        text: qsTrId("ens-saved-title")
         anchors.top: circle.bottom
         anchors.topMargin: 24
         font.weight: Font.Bold
@@ -57,7 +58,8 @@ Item {
 
     StyledText {
         id: subtitle
-        text: qsTr("%1 is now connected with your chat key and can be used in Status.").arg(ensUsername)
+        //% "%1 is now connected with your chat key and can be used in Status."
+        text: qsTrId("-1-is-now-connected-with-your-chat-key-and-can-be-used-in-status-").arg(ensUsername)
         anchors.top: title.bottom
         anchors.topMargin: 24
         font.pixelSize: 14
@@ -72,7 +74,8 @@ Item {
         anchors.top: subtitle.bottom
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        label: qsTr("Ok, got it")
+        //% "Ok, got it"
+        label: qsTrId("ens-got-it")
         onClicked: okBtnClicked()
     }
 }

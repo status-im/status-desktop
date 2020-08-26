@@ -6,7 +6,8 @@ import "../imports"
 
 Item {
     id: root
-    property string label: qsTr("Choose account")
+    //% "Choose account"
+    property string label: qsTrId("choose-account")
     property bool showAccountDetails: true
     property var accounts
     property var selectedAccount: {

@@ -6,7 +6,8 @@ import "../../../../../imports"
 StyledText {
     id: retryLbl
     color: Style.current.red
-    text: qsTr("Resend")
+    //% "Resend"
+    text: qsTrId("resend-message")
     font.pixelSize: 12
     visible: isCurrentUser && (timeout || isExpired)
     MouseArea {

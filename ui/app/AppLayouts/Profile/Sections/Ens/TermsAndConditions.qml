@@ -38,7 +38,8 @@ Item {
 
             StyledText {
                 id: title
-                text: qsTr("TODO: show T&C and confirmation screen for acquiring a ens username")
+                //% "TODO: show T&C and confirmation screen for acquiring a ens username"
+                text: qsTrId("todo--show-t-c-and-confirmation-screen-for-acquiring-a-ens-username")
                 anchors.top: parent.top
                 anchors.topMargin: 24
                 font.weight: Font.Bold
@@ -56,7 +57,8 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        label: qsTr("Ok")
+        //% "Ok"
+        label: qsTrId("ok")
         onClicked: onClick()
     }
 }
