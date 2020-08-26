@@ -2,6 +2,7 @@ import NimQml, Tables, strformat, strutils, chronicles, json, std/wrapnils, pars
 import ../../status/[status, wallet, threads]
 import ../../status/wallet/collectibles as status_collectibles
 import ../../status/libstatus/wallet as status_wallet
+import ../../status/libstatus/tokens
 import ../../status/libstatus/utils
 import views/[asset_list, account_list, account_item, transaction_list, collectibles_list]
 
@@ -417,3 +418,9 @@ QtObject:
   QtProperty[string] defaultGasLimit:
     read = defaultGasLimit
 
+  proc getSNTBalance*(self: WalletView): string {.slot.} =
+    let currAcct = status_wallet.getWalletAccounts()[0]
+    result = getSNTBalance($currAcct.address)
+
+  proc getDefaultAddress*(self: WalletView): string {.slot.} =
+    result = $status_wallet.getWalletAccounts()[0].address

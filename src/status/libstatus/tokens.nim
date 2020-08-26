@@ -1,5 +1,8 @@
 import json, chronicles, strformat, stint, strutils
 import core, wallet
+import contracts
+import eth/common/eth_types, eth/common/utils, stew/byteutils
+import json_serialization
 
 logScope:
   topics = "wallet"
@@ -35,6 +38,10 @@ proc getTokenBalance*(tokenAddress: string, account: string): string =
   let response = callPrivateRPC("eth_call", payload)
   let balance = response.parseJson["result"].getStr
   result = $hex2Eth(balance)
+
+proc getSNTBalance*(account: string): string =
+  let snt = contracts.getContract("snt")
+  result = getTokenBalance("0x" & $snt.address, account)
 
 proc addOrRemoveToken*(enable: bool, address: string, name: string, symbol: string, decimals: int, color: string): JsonNode =
   if enable:

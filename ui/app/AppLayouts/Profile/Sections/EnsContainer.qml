@@ -145,6 +145,10 @@ Item {
                 targetState: welcomeState
                 signal: goToWelcome
             }
+            DSM.SignalTransition {
+                targetState: listState
+                signal: back
+            }
         }
     }
 
@@ -167,6 +171,7 @@ Item {
                 if(output === "connected"){
                     connect(username)
                 } else {
+                    selectedUsername = username;
                     next(output);
                 }
             }
@@ -176,9 +181,11 @@ Item {
     Component {
         id: termsAndConditions
         TermsAndConditions {
+            username: selectedUsername
             onClick: function(output){
                 next(output);
             }
+            onBackBtnClicked: back();
         }
     }
 
