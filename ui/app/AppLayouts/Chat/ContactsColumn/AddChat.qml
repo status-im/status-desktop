@@ -40,7 +40,7 @@ AddButton {
             onTriggered: publicChatPopup.open()
         }
         onAboutToHide: {
-            btnAdd.icon.state = "default"
+            btnAdd.iconImg.state = "default"
         }
     }
 }

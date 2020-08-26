@@ -20,9 +20,9 @@ StyledTextEdit {
         }
 
         if (link.startsWith('//')) {
-          let pk = link.replace("//", "");
-          profileClick(chatsModel.userNameOrAlias(pk), pk, chatsModel.generateIdenticon(pk))
-          return;
+            let pk = link.replace("//", "");
+            profilePopup.openPopup(chatsModel.userNameOrAlias(pk), pk, chatsModel.generateIdenticon(pk))
+            return;
         }
 
         Qt.openUrlExternally(link)
@@ -45,7 +45,7 @@ StyledTextEdit {
                         `white-space: pre-wrap;`+
                     `}`+
                     `a {`+
-                        `color: ${isCurrentUser ? Style.current.white : Style.current.textColor};`+
+                        `color: ${isCurrentUser && !appSettings.compactMode ? Style.current.white : Style.current.textColor};`+
                     `}`+
                     `a.mention {`+
                         `color: ${isCurrentUser ? Style.current.cyan : Style.current.turquoise};`+
