@@ -10,10 +10,6 @@ Item {
     signal backBtnClicked();
     signal usernameRegistered(userName: string);
 
-    property string username: ""
-
-    signal backBtnClicked();
-
     StyledText {
         id: sectionTitle
         //% "ENS usernames"
