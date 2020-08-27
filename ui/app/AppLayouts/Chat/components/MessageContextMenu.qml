@@ -8,6 +8,7 @@ import "./"
 
 PopupMenu {
     property bool isProfile: false
+    property bool isSticker: false
 
     id: messageContextMenu
     width: messageContextMenu.isProfile ? profileHeader.width : emojiContainer.width
@@ -109,5 +110,6 @@ PopupMenu {
         icon.source: "../../../img/messageActive.svg"
         icon.width: 16
         icon.height: 16
+        enabled: !isSticker
     }
 }

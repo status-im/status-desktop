@@ -25,6 +25,8 @@ GridView {
             Image {
                 width: 80
                 height: 80
+                sourceSize.width: width
+                sourceSize.height: height
                 fillMode: Image.PreserveAspectFit
                 source: "https://ipfs.infura.io/ipfs/" + url
                 MouseArea {

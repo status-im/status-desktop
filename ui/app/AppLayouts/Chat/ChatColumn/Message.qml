@@ -56,12 +56,13 @@ Item {
         }
     }
 
-    function clickMessage(isProfileClick) {
+    function clickMessage(isProfileClick, isSticker = false) {
         if (!isProfileClick) {
             SelectedMessage.set(messageId, fromAuthor);
         }
         profileClick(userName, fromAuthor, identicon);
         messageContextMenu.isProfile = !!isProfileClick
+        messageContextMenu.isSticker = isSticker
         messageContextMenu.popup()
         // Position the center of the menu where the mouse is
         messageContextMenu.x = messageContextMenu.x - messageContextMenu.width / 2
