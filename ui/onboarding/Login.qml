@@ -115,13 +115,10 @@ Item {
             }
         }
 
-        StyledText {
+        Address {
             id: addressText
             width: 90
-            color: Style.current.darkGrey
             text: loginModel.currentAccount.address
-            font.family: Style.current.fontHexRegular.name
-            elide: Text.ElideMiddle
             font.pixelSize: 15
             anchors.top: usernameText.bottom
             anchors.topMargin: 4

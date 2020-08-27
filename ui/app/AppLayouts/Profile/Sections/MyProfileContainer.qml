@@ -57,16 +57,13 @@ Item {
             font.pixelSize: 15
         }
 
-        StyledText {
+        Address {
             id: pubkeyText
             text: ensName !== "" ? username : pubkey
             anchors.bottom: profileImg.bottom
             anchors.left: profileName.left
-            font.family: Style.current.fontHexRegular.name
-            elide: Text.ElideMiddle
             width: 200
             font.pixelSize: 15
-            color: Style.current.darkGrey
         }
 
         SVGImage {

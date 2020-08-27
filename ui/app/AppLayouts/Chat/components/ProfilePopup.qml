@@ -185,11 +185,12 @@ ModalPopup {
             anchors.topMargin: Style.current.padding
         }
 
-        StyledText {
+        Address {
             id: valueChatKey
             text: fromAuthor
             width: 160
-            elide: Text.ElideMiddle
+            maxWidth: parent.width - (3 * Style.current.smallPadding) - copyBtn.width
+            color: Style.current.textColor
             font.pixelSize: 14
             anchors.left: parent.left
             anchors.leftMargin: Style.current.smallPadding
@@ -198,6 +199,7 @@ ModalPopup {
         }
 
         CopyToClipBoardButton {
+            id: copyBtn
             anchors.top: labelChatKey.bottom
             anchors.left: valueChatKey.right
             anchors.leftMargin: Style.current.smallPadding
