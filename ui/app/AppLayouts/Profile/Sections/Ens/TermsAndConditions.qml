@@ -5,11 +5,10 @@ import "../../../../../imports"
 import "../../../../../shared"
 
 Item {
-    property var onClick: function(){}
-
     property string username: ""
 
     signal backBtnClicked();
+    signal usernameRegistered(userName: string);
 
     StyledText {
         id: sectionTitle
@@ -21,6 +20,35 @@ Item {
         anchors.topMargin: 24
         font.weight: Font.Bold
         font.pixelSize: 20
+    }
+
+    ModalPopup {
+        id: transactionDialog
+        title: qsTr("TODO: replace this for the transaction dialog")
+
+        Input {
+            id: passwd
+            placeholderText: "Password"
+            anchors.top: parent.textToCopy
+            anchors.topMargin: 24
+            anchors.left: parent.left
+            anchors.leftMargin: 24
+        }
+
+        StyledButton {
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: Style.current.padding
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.padding
+            label: qsTr("Ok")
+            onClicked: {
+                profileModel.ens.registerENS(username, passwd.text)
+                passwd.text = "";
+                usernameRegistered(username);
+                transactionDialog.close();
+            }
+        }
+
     }
 
     ModalPopup {
@@ -292,8 +320,8 @@ Item {
         anchors.bottomMargin: Style.current.padding
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        label: parseFloat(walletModel.getSNTBalance()) < 10 ? qsTr("Not enough SNT") : qsTr("Ok")
+        label: parseFloat(walletModel.getSNTBalance()) < 10 ? qsTr("Not enough SNT") : qsTr("Register")
         disabled: parseFloat(walletModel.getSNTBalance()) < 10 || !termsAndConditionsCheckbox.checked
-        onClicked: onClick()
+        onClicked: transactionDialog.open()
     }
 }
