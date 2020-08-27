@@ -52,19 +52,17 @@ Item {
         font.pixelSize: 22
     }
 
-    StyledText {
+    Address {
         id: walletAddress
         text: currentAccount.address
-        font.family: Style.current.fontHexRegular.name
-        elide: Text.ElideMiddle
+        font.pixelSize: 13
         anchors.right: title.right
         anchors.rightMargin: 0
         anchors.top: title.bottom
         anchors.topMargin: 0
         anchors.left: title.left
         anchors.leftMargin: 0
-        font.pixelSize: 13
-        color: Style.current.darkGrey
+        color: Style.current.secondaryText
     }
 
     SendModal{

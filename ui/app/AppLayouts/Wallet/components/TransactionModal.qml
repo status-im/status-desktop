@@ -20,6 +20,7 @@ ModalPopup {
 
     StyledText {
       id: confirmationsCount
+      // TODO get the right value
       //% "9999 Confirmations"
       text: qsTrId("9999-confirmations")
       font.pixelSize: 14
@@ -29,11 +30,13 @@ ModalPopup {
       id: confirmationsInfo
       //% "When the transaction has 12 confirmations you can consider it settled."
       text: qsTrId("confirmations-helper-text")
+      wrapMode: Text.WordWrap
       font.pixelSize: 14
       font.weight: Font.Medium
       color: Style.current.darkGrey
       anchors.top: confirmationsCount.bottom
       anchors.topMargin: Style.current.smallPadding
+      width:parent.width
     }
   }
 
@@ -79,6 +82,8 @@ ModalPopup {
     anchors.topMargin: Style.current.padding
     anchors.left: parent.left
     anchors.leftMargin: Style.current.smallPadding
+    anchors.right: parent.right
+    anchors.rightMargin: Style.current.smallPadding
     height: children[0].height
 
     StyledText {
@@ -90,12 +95,12 @@ ModalPopup {
       color: Style.current.darkGrey
     }
 
-    StyledText {
+    Address {
       id: valueHash
       text: blockHash
-      font.family: Style.current.fontHexRegular.name
       width: 160
-      elide: Text.ElideMiddle
+      maxWidth: parent.width - labelHash.width - Style.current.padding
+      color: Style.current.textColor
       font.pixelSize: 14
       anchors.left: labelHash.right
       anchors.leftMargin: Style.current.padding
@@ -119,12 +124,11 @@ ModalPopup {
       color: Style.current.darkGrey
     }
 
-    StyledText {
+    Address {
       id: valueFrom
       text: fromAddress
-      font.family: Style.current.fontHexRegular.name
+      color: Style.current.textColor
       width: 160
-      elide: Text.ElideMiddle
       font.pixelSize: 14
       anchors.left: labelFrom.right
       anchors.leftMargin: Style.current.padding
@@ -148,11 +152,11 @@ ModalPopup {
       color: Style.current.darkGrey
     }
 
-    StyledText {
+    Address {
       id: valueTo
       text: to
+      color: Style.current.textColor
       width: 160
-      elide: Text.ElideMiddle
       font.pixelSize: 14
       anchors.left: labelTo.right
       anchors.leftMargin: Style.current.padding
