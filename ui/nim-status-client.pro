@@ -157,6 +157,7 @@ DISTFILES += \
     app/AppLayouts/Profile/Sections/BackupSeedModal.qml \
     app/AppLayouts/Profile/Sections/MyProfileContainer.qml \
     app/AppLayouts/Profile/Sections/SoundsContainer.qml \
+    app/AppLayouts/UIComponents/UIComponents.qml \
     app/AppLayouts/Wallet/ReceiveModal.qml \
     app/AppLayouts/Wallet/components/HeaderButton.qml \
     app/AppLayouts/Profile/Sections/Data/locales.js \
@@ -329,6 +330,7 @@ DISTFILES += \
     onboarding/qmldir \
     shared/AccountSelector.qml \
     shared/AddButton.qml \
+    shared/Address.qml \
     shared/IconButton.qml \
     shared/Input.qml \
     shared/LabelValueRow.qml \
