@@ -99,18 +99,19 @@ Item {
     }
 
     RowLayout {
-        id: uiCatalong
+        id: uiCatalog
         anchors.top: networkTabSettings.bottom
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 24
         Component.onCompleted: {
-            uiComponentBtn.enabled = false
+            uiComponentBtn.enabled = true
         }
 
         StyledText {
             text: qsTr("UI Components")
         }
+
         Switch {
             checked: uiComponentBtn.enabled
             onCheckedChanged: function(value) {

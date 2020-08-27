@@ -14,6 +14,7 @@ Item {
     ColumnLayout {
         id: buttons
         spacing: 6
+        width: parent.width
 
         RowLayout {
             Text {
@@ -134,5 +135,42 @@ Item {
                 state: "pending"
             }
         }
+
+        RowLayout {
+            width: parent.width
+            Layout.fillWidth: true
+            Item {
+                width: parent.width
+                height: addressComponent.height
+                Layout.fillWidth: true
+                Address {
+                    id: addressComponent
+                    text: "0x9ce0056c5fc6bb9459a4dcfa35eaad8c1fee5ce9"
+                    width: 100
+                }
+            }
+        }
+        RowLayout {
+            width: parent.width
+            Layout.fillWidth: true
+            Item {
+                width: parent.width
+                height: addressComponent.height
+                Layout.fillWidth: true
+                Address {
+                    id: addressComponentWidthAnchors
+                    text: "0x9ce0056c5fc6bb9459a4dcfa35eaad8c1fee5ce9"
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.rightMargin: parent.width - 100
+                }
+            }
+        }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;formeditorColor:"#ffffff";formeditorZoom:0.75;height:480;width:1000}
+}
+##^##*/
