@@ -8,6 +8,8 @@ Item {
     id: searchENS
 
     signal continueClicked(string output, string username)
+    signal usernameUpdated(username: string);
+
 
     property string validationMessage: ""
     property bool valid: false
@@ -42,6 +44,34 @@ Item {
         }
         loading = true;
         Qt.callLater(validateENS, ensUsername, isStatus)
+    }
+
+    ModalPopup {
+        id: transactionDialog
+        title: qsTr("TODO: replace this for the transaction dialog")
+
+        Input {
+            id: passwd
+            placeholderText: "Password"
+            anchors.top: parent.textToCopy
+            anchors.topMargin: 24
+            anchors.left: parent.left
+            anchors.leftMargin: 24
+        }
+
+        StyledButton {
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: Style.current.padding
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.padding
+            label: qsTr("Ok")
+            onClicked: {
+                profileModel.ens.setPubKey(ensUsername.text, passwd.text)
+                passwd.text = "";
+                usernameUpdated(ensUsername.text);
+                transactionDialog.close();
+            }
+        }
     }
 
     StyledText {
@@ -120,7 +150,9 @@ Item {
                         validationMessage = qsTrId("ens-username-available");
                         break;
                     case "owned":
-                        console.log("TODO: - Continuing will connect this username with your chat key.");
+                        valid = true;
+                        validationMessage = qsTr("Continuing will connect this username with your chat key.");
+                        break;
                     case "taken":
                         validationMessage = !isStatus ? 
                                             //% "Username doesn’t belong to you :("
@@ -164,7 +196,6 @@ Item {
             color: "transparent"
         }
         MouseArea {
-            id: btnMAnewChat
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
             onClicked : {
@@ -178,6 +209,11 @@ Item {
 
                 if(ensStatus === "available"){
                     continueClicked(ensStatus, ensUsername.text);
+                    return;
+                }
+
+                if(ensStatus === "connected-different-key" || ensStatus === "owned"){
+                    transactionDialog.open();
                     return;
                 }
             }

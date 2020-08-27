@@ -165,5 +165,32 @@ proc registerUsername*(username:string, address: EthAddress, pubKey: string, pas
   
   result = response.result
 
+proc setPubKey*(username:string, address: EthAddress, pubKey: string, password: string): string =
+  var hash = namehash(username)
+  hash.removePrefix("0x")
+
+  let
+    label = fromHex(FixedBytes[32], "0x" & hash)
+    x = fromHex(FixedBytes[32], "0x" & pubkey[4..67])
+    y =  fromHex(FixedBytes[32], "0x" & pubkey[68..131])
+    resolverContract = contracts.getContract("ens-resolver")
+
+  let
+    setPubkey = SetPubkey(label: label, x: x, y: y)
+    setPubkeyAbiEncoded = resolverContract.methods["setPubkey"].encodeAbi(setPubkey)
+
+  let payload = %* {
+      "from": $address,
+      "to": resolver(hash),
+      # "gas": 200000, # TODO: obtain gas price?
+      "data": setPubkeyAbiEncoded
+  }
+
+  let responseStr = sendTransaction($payload, password)
+  let response = Json.decode(responseStr, RpcResponse)
+  if not response.error.isNil:
+    raise newException(RpcException, "Error setting the pubkey: " & response.error.message)
+  result = response.result
+
 proc statusRegistrarAddress*():string =
   result = $contracts.getContract("ens-usernames").address

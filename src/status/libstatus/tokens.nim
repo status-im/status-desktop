@@ -39,6 +39,10 @@ proc getTokenBalance*(tokenAddress: string, account: string): string =
   let balance = response.parseJson["result"].getStr
   result = $hex2Eth(balance)
 
+proc getSNTAddress*(): string =
+  let snt = contracts.getContract("snt")
+  result = "0x" & $snt.address
+
 proc getSNTBalance*(account: string): string =
   let snt = contracts.getContract("snt")
   result = getTokenBalance("0x" & $snt.address, account)

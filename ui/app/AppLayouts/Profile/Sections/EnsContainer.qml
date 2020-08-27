@@ -19,6 +19,8 @@ Item {
     signal back()
     signal done(ensUsername: string)
     signal connect(ensUsername: string)
+    signal changePubKey(ensUsername: string)
+
 
     signal goToWelcome();
     signal goToList();
@@ -68,6 +70,10 @@ Item {
             DSM.SignalTransition {
                 targetState: welcomeState
                 signal: goToWelcome
+            }
+            DSM.SignalTransition {
+                targetState: ensConnectedState
+                signal: done
             }
         }
 
@@ -168,6 +174,15 @@ Item {
                 signal: next
             }
         }
+
+        DSM.State {
+            id: ensConnectedState
+            onEntered:loader.sourceComponent = ensConnected
+            DSM.SignalTransition {
+                targetState: listState
+                signal: next
+            }
+        }       
     }
 
     Loader {
@@ -193,6 +208,10 @@ Item {
                     next(output);
                 }
             }
+            onUsernameUpdated: {
+                selectedUsername = username;
+                done(username);
+            }
         }
     }
 
@@ -215,6 +234,14 @@ Item {
     Component {
         id: ensRegistered
         ENSRegistered {
+            ensUsername: selectedUsername
+            onOkBtnClicked: next(null)
+        }
+    }
+
+    Component {
+        id: ensConnected
+        ENSConnected {
             ensUsername: selectedUsername
             onOkBtnClicked: next(null)
         }
