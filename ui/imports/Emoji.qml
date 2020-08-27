@@ -17,4 +17,8 @@ QtObject {
     function deparse(value){
         return value.replace(/<img src=\"qrc:\/imports\/twemoji\/.+?" alt=\"(.+?)\" \/>/g, "$1");
     }
+    function hasEmoji(value) {
+        let match = value.match(/<img src=\"qrc:\/imports\/twemoji\/.+?" alt=\"(.+?)\" \/>/g)
+        return match && match.length > 0
+    }
 }
