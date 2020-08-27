@@ -17,6 +17,7 @@ Item {
 
     signal next(output: string)
     signal back()
+    signal done(ensUsername: string)
     signal connect(ensUsername: string)
 
     signal goToWelcome();
@@ -149,6 +150,23 @@ Item {
                 targetState: listState
                 signal: back
             }
+            DSM.SignalTransition {
+                targetState: listState
+                signal: back
+            }
+            DSM.SignalTransition {
+                targetState: ensRegisteredState
+                signal: done
+            }
+        }
+
+        DSM.State {
+            id: ensRegisteredState
+            onEntered:loader.sourceComponent = ensRegistered
+            DSM.SignalTransition {
+                targetState: listState
+                signal: next
+            }
         }
     }
 
@@ -182,16 +200,22 @@ Item {
         id: termsAndConditions
         TermsAndConditions {
             username: selectedUsername
-            onClick: function(output){
-                next(output);
-            }
             onBackBtnClicked: back();
+            onUsernameRegistered: done(userName);
         }
     }
 
     Component {
         id: added
         Added {
+            onOkBtnClicked: next(null)
+        }
+    }
+
+    Component {
+        id: ensRegistered
+        ENSRegistered {
+            ensUsername: selectedUsername
             onOkBtnClicked: next(null)
         }
     }
