@@ -54,7 +54,7 @@ Item {
                 collectiblesModal: collectiblesModalComponent
                 buttonText: collectibleData.buttonText
                 getLink: collectibleData.getLink
-                onVisibleChanged: {
+                onActiveChanged: {
                     checkCollectiblesVisibility()
                 }
             }

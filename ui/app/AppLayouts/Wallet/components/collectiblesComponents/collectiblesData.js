@@ -2,6 +2,7 @@
 var cryptokitty = "cryptokitty"
 var kudo = "kudo"
 var ethermon = "ethermon"
+var stickers = "stickers"
 
 var collectiblesData = {
     [cryptokitty] :{
@@ -27,6 +28,14 @@ var collectiblesData = {
         buttonText: qsTr("View in Gitcoin"),
         getLink: function (id, externalUrl) {
             return externalUrl
+        }
+    },
+    [stickers] :{
+        collectibleName: qsTr("Purchased Stickers"),
+        collectibleIconSource: "SNT.png",
+        buttonText: "",
+        getLink: function (id, externalUrl) {
+            return ""
         }
     },
 }

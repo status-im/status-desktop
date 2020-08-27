@@ -301,6 +301,12 @@ QtObject:
         "collectibleType": status_collectibles.ETHERMON,
         "collectiblesOrError": status_collectibles.getEthermons(address)
       })
+    spawnAndSend(self, "setCollectiblesResult") do:
+      $(%*{
+        "address": address,
+        "collectibleType": status_collectibles.STICKER,
+        "collectiblesOrError": status_collectibles.getStickers(address)
+      })
 
   proc setCollectiblesResult(self: WalletView, collectiblesJSON: string) {.slot.} =
     let collectibleData = parseJson(collectiblesJSON)
@@ -354,6 +360,13 @@ QtObject:
             "address": address,
             "collectibleType": status_collectibles.ETHERMON,
             "collectiblesOrError": status_collectibles.getEthermons(address)
+          })
+      of STICKER:
+        spawnAndSend(self, "setCollectiblesResult") do:
+          $(%*{
+            "address": address,
+            "collectibleType": status_collectibles.STICKER,
+            "collectiblesOrError": status_collectibles.getStickers(address)
           })
       else:
         error "Unrecognized collectible"
