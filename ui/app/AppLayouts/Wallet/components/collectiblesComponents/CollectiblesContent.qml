@@ -75,20 +75,29 @@ ScrollView {
             Repeater {
                 model: collectibles
 
-                Rectangle {
-                    radius: 16
-                    border.width: 1
-                    border.color: Style.current.border
-                    color: Style.current.background
+                Item {
                     width: collectibleImage.width
                     height: collectibleImage.height
+                    clip: true
 
                     Image {
                         id: collectibleImage
                         width: root.imageSize
                         height: root.imageSize
+                        z: 1
                         source: modelData.image
                         fillMode: Image.PreserveAspectCrop
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+
+                    Rectangle {
+                        radius: 16
+                        z: 2
+                        border.width: 1
+                        border.color: Style.current.border
+                        color: Style.current.transparent
+                        anchors.fill: parent
                     }
 
                     MouseArea {

@@ -1,7 +1,9 @@
-import strformat, httpclient, json, chronicles, sequtils, strutils, tables
+import strformat, httpclient, json, chronicles, sequtils, strutils, tables, sugar
 from eth/common/utils import parseAddress
 import ../libstatus/core as status
 import ../libstatus/contracts as contracts
+import ../libstatus/stickers as status_stickers
+import ../chat as status_chat
 import ../libstatus/types
 import eth/common/eth_types
 import ../libstatus/types
@@ -10,8 +12,9 @@ import account
 const CRYPTOKITTY* = "cryptokitty"
 const KUDO* = "kudo"
 const ETHERMON* = "ethermon"
+const STICKER* = "stickers"
 
-const COLLECTIBLE_TYPES* = [CRYPTOKITTY, KUDO, ETHERMON]
+const COLLECTIBLE_TYPES* = [CRYPTOKITTY, KUDO, ETHERMON, STICKER]
 
 proc getTokenUri(contract: Contract, tokenId: Stuint[256]): string =
   try:
@@ -169,7 +172,7 @@ proc getKudos*(address: EthAddress): string =
       description: kudo["description"].str,
       externalUrl: kudo["external_url"].str))
 
-      return $(%*kudos)
+    return $(%*kudos)
   except Exception as e:
     error "Error getting Kudos", msg = e.msg
     result = e.msg
@@ -177,3 +180,43 @@ proc getKudos*(address: EthAddress): string =
 proc getKudos*(address: string): string =
   let eth_address = parseAddress(address)
   result = getKudos(eth_address)
+
+proc getStickers*(address: EthAddress): string =
+  try:
+    var stickers: seq[Collectible]
+    stickers = @[]
+    let contract = getContract("sticker-pack")
+    if contract == nil: return
+    
+    let tokensIds = tokensOfOwnerByIndex(contract, address)
+
+    if (tokensIds.len == 0):
+      return $(%*stickers)
+
+    let purchasedStickerPacks = tokensIds.map(tokenId => status_stickers.getPackIdFromTokenId(tokenId.u256))
+
+    if (purchasedStickerPacks.len == 0):
+      return $(%*stickers)
+    # TODO find a way to keep those in memory so as not to reload it each time
+    let availableStickerPacks = status_chat.getAvailableStickerPacks()
+
+    var index = 0
+    for stickerId in purchasedStickerPacks:
+      let sticker = availableStickerPacks[stickerId]
+      stickers.add(Collectible(id: $tokensIds[index],
+        name: sticker.name,
+        image: fmt"https://ipfs.infura.io/ipfs/{status_stickers.decodeContentHash(sticker.preview)}",
+        collectibleType: STICKER,
+        description: sticker.author,
+        externalUrl: "")
+      )
+      index = index + 1
+
+    return $(%*stickers)
+  except Exception as e:
+    error "Error getting Stickers", msg = e.msg
+    result = e.msg
+
+proc getStickers*(address: string): string =
+  let eth_address = parseAddress(address)
+  result = getStickers(eth_address)
