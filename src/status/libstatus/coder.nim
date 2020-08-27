@@ -32,6 +32,10 @@ type
     x*: FixedBytes[32]
     y*: FixedBytes[32]
 
+  SetPubkey* = object
+    label*: FixedBytes[32]
+    x*: FixedBytes[32]
+    y*: FixedBytes[32]
 
   ApproveAndCall* = object
     to*: EthAddress

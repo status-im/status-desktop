@@ -418,6 +418,9 @@ QtObject:
   QtProperty[string] defaultGasLimit:
     read = defaultGasLimit
 
+  proc getSNTAddress*(self: WalletView): string {.slot.} =
+    result = getSNTAddress()
+
   proc getSNTBalance*(self: WalletView): string {.slot.} =
     let currAcct = status_wallet.getWalletAccounts()[0]
     result = getSNTBalance($currAcct.address)

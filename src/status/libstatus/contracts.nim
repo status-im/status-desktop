@@ -4,7 +4,7 @@ from eth/common/utils import parseAddress
 import ./types, ./settings, ./coder
 
 export
-  GetPackData, PackData, BuyToken, ApproveAndCall, Transfer, BalanceOf, Register,
+  GetPackData, PackData, BuyToken, ApproveAndCall, Transfer, BalanceOf, Register, SetPubkey,
   TokenOfOwnerByIndex, TokenPackId, TokenUri, FixedBytes, DynamicBytes, toHex, fromHex
 
 type Method* = object
@@ -100,6 +100,16 @@ proc allContracts(): seq[Contract] = @[
       methods: [
         ("register", Method(signature: "register(bytes32,address,bytes32,bytes32)")),
         ("getPrice", Method(signature: "getPrice()"))
+      ].toTable
+  ),
+  Contract(name: "ens-resolver", network: Network.Mainnet, address: parseAddress("0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41"),
+      methods: [
+        ("setPubkey", Method(signature: "setPubkey(bytes32,bytes32,bytes32)"))
+      ].toTable
+  ),
+  Contract(name: "ens-resolver", network: Network.Testnet, address: parseAddress("0x42D63ae25990889E35F215bC95884039Ba354115"),
+      methods: [
+        ("setPubkey", Method(signature: "setPubkey(bytes32,bytes32,bytes32)"))
       ].toTable
   ),
 ]
