@@ -133,19 +133,23 @@ proc getPrice*(): Stuint[256] =
     raise newException(RpcException, "Error getting ens username price: 0x")
   result = fromHex(Stuint[256], response.result)
 
-proc registerUsername*(username:string, address: EthAddress, pubKey: string, price: Stuint[256], password: string): string =
-  let label = fromHex(FixedBytes[32], namehash(addDomain(username)))
-  let x = fromHex(FixedBytes[32], "0x" & pubkey[4..67])
-  let y =  fromHex(FixedBytes[32], "0x" & pubkey[68..131])
+proc extractCoordinates*(pubkey: string):tuple[x: string, y:string] =
+  result = ("0x" & pubkey[4..67], "0x" & pubkey[68..131])
+
+proc registerUsername*(username:string, address: EthAddress, pubKey: string, password: string): string =
   let
+    label = fromHex(FixedBytes[32], namehash(addDomain(username)))
+    coordinates = extractCoordinates(pubkey)
+    x = fromHex(FixedBytes[32], coordinates.x)
+    y =  fromHex(FixedBytes[32], coordinates.y)
     ensUsernamesContract = contracts.getContract("ens-usernames")
     sntContract = contracts.getContract("snt")
     price = getPrice()
-    register = Register(label: label, account: address, x: x, y: y)
-    registerAbiEncoded = ensUsernamesContract.methods["register"].encodeAbi(register)
   
   let
-    approveAndCallObj = ApproveAndCall(to: ensUsernamesContract.address, value: price, data: DynamicBytes[136].fromHex(registerAbiEncoded))
+    register = Register(label: label, account: address, x: x, y: y)
+    registerAbiEncoded = ensUsernamesContract.methods["register"].encodeAbi(register)
+    approveAndCallObj = ApproveAndCall(to: ensUsernamesContract.address, value: price, data: DynamicBytes[132].fromHex(registerAbiEncoded))
     approveAndCallAbiEncoded = sntContract.methods["approveAndCall"].encodeAbi(approveAndCallObj)
   
   let payload = %* {
@@ -154,12 +158,11 @@ proc registerUsername*(username:string, address: EthAddress, pubKey: string, pri
       # "gas": 200000, # TODO: obtain gas price?
       "data": approveAndCallAbiEncoded
     }
-  
   let responseStr = sendTransaction($payload, password)
   let response = Json.decode(responseStr, RpcResponse)
   if not response.error.isNil:
     raise newException(RpcException, "Error registering ens-username: " & response.error.message)
-  result = response.result # should be a tx receipt
+  result = response.result
 
 proc statusRegistrarAddress*():string =
   result = $contracts.getContract("ens-usernames").address

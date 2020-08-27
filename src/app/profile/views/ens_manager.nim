@@ -8,9 +8,10 @@ import ../../../status/threads
 import ../../../status/ens as status_ens
 import ../../../status/libstatus/wallet as status_wallet
 import ../../../status/libstatus/settings as status_settings
-import ../../../status/libstatus/utils as utils
+import ../../../status/libstatus/utils as libstatus_utils
 import ../../../status/libstatus/tokens as tokens
 import ../../../status/status
+from eth/common/utils import parseAddress
 
 type
   EnsRoles {.pure.} = enum
@@ -135,10 +136,17 @@ QtObject:
     }.toTable
 
   proc getPrice(self: EnsManager): string {.slot.} =
-    result = utils.wei2Eth(getPrice())
+    result = libstatus_utils.wei2Eth(getPrice())
 
   proc getUsernameRegistrar(self: EnsManager): string {.slot.} =
     result = statusRegistrarAddress()
 
   proc getENSRegistry(self: EnsManager): string {.slot.} =
     result = registry
+
+  proc registerENS(self: EnsManager, username: string, password: string) {.slot.} =
+    let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    let address = parseAddress(status_wallet.getWalletAccounts()[0].address)
+    discard registerUsername(username & status_ens.domain, address, pubKey, password)
+    self.connect(username, true)
+    
