@@ -3,6 +3,7 @@ import Tables
 import json
 import json_serialization
 import sequtils
+import strutils
 from ../../../status/libstatus/types import Setting
 import ../../../status/threads
 import ../../../status/ens as status_ens
@@ -54,7 +55,7 @@ QtObject:
           output = "available"
         else:
           let userPubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
-          let userWallet = status_settings.getSetting[string](Setting.WalletRootAddress, "0x0")
+          let userWallet = status_wallet.getWalletAccounts()[0].address
           let pubkey = status_ens.pubkey(ens)
           if ownerAddr != "":
             if pubkey == "" and ownerAddr == userWallet:
@@ -149,4 +150,10 @@ QtObject:
     let address = parseAddress(status_wallet.getWalletAccounts()[0].address)
     discard registerUsername(username & status_ens.domain, address, pubKey, password)
     self.connect(username, true)
-    
+
+  proc setPubKey(self: EnsManager, username: string, password: string) {.slot.} =
+    let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    let address = parseAddress(status_wallet.getWalletAccounts()[0].address)
+    discard setPubKey(username, address, pubKey, password)
+    self.connect(username, username.endsWith(domain))
+ 
