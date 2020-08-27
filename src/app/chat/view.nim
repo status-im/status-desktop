@@ -102,7 +102,7 @@ QtObject:
   proc replaceMentionsWithPubKeys(self: ChatsView, mentions: seq[string], contacts: seq[Profile], message: string, predicate: proc (contact: Profile): string): string =
     result = message
     for mention in mentions:
-      let matches = contacts.filter(c => "@" & predicate(c) == mention).map(c => c.address)
+      let matches = contacts.filter(c => "@" & predicate(c).toLowerAscii == mention.toLowerAscii).map(c => c.address)
       if matches.len > 0:
         let pubKey = matches[0]
         result = message.replace(mention, "@" & pubKey)
