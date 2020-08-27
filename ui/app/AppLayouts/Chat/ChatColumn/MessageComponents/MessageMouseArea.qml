@@ -8,7 +8,7 @@ MouseArea {
     z: 50
     onClicked: {
         if(mouse.button & Qt.RightButton) {
-            clickMessage()
+            clickMessage(false, isSticker)
             return;
         }
     }
