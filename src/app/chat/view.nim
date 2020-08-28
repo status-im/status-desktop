@@ -259,11 +259,10 @@ QtObject:
           self.newMessagePushed()
 
   proc messageEmojiReactionId(self: ChatsView, chatId: string, messageId: string, emojiId: int): string =
-    let message = self.messageList[chatId].getMessageById(messageId)
-    if (message.emojiReactions == "") :
+    if (self.messageList[chatId].getReactions(messageId) == "") :
       return ""
 
-    let oldReactions = parseJson(message.emojiReactions)
+    let oldReactions = parseJson(self.messageList[chatId].getReactions(messageId))
 
     for pair in oldReactions.pairs:
       if (pair[1]["emojiId"].getInt == emojiId and pair[1]["from"].getStr == self.pubKey):
@@ -281,12 +280,12 @@ QtObject:
     let t = reactions.len
     for reaction in reactions.mitems:
       let messageList = self.messageList[reaction.chatId]
-      var message = messageList.getMessageById(reaction.messageId)
+      var emojiReactions = messageList.getReactions(reaction.messageId)
       var oldReactions: JsonNode
-      if (message.emojiReactions == "") :
+      if (emojiReactions == "") :
         oldReactions = %*{}
       else: 
-        oldReactions = parseJson(message.emojiReactions)
+        oldReactions = parseJson(emojiReactions)
 
       if (oldReactions.hasKey(reaction.id)):
         if (reaction.retracted):

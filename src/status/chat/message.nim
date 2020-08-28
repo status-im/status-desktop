@@ -48,7 +48,6 @@ type Message* = object
   image*: string
   audio*: string
   audioDurationMs*: int
-  emojiReactions*: string
 
 type Reaction* = object
   id*: string
