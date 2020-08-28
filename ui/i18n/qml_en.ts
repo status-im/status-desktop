@@ -372,14 +372,14 @@
             <source>Status Desktop</source>
             <translation>Status Desktop</translation>
         </message>
-        <message id="version:-alpha.3">
+        <message id="version:-alpha.4">
             <location filename="../app/AppLayouts/Profile/Sections/AboutContainer.qml" line="40"/>
-            <source>Version: alpha.0</source>
-            <translation>Version: alpha.0</translation>
+            <source>Version: alpha.4</source>
+            <translation>Version: alpha.4</translation>
         </message>
-        <message id="version:-alpha.0">
-            <source>Version: alpha.0</source>
-            <translation>Version: alpha.0</translation>
+        <message id="version:-alpha.4">
+            <source>Version: alpha.4</source>
+            <translation>Version: alpha.4</translation>
         </message>
         <message id="node-version:-%1">
             <location filename="../app/AppLayouts/Profile/Sections/AboutContainer.qml" line="51"/>
