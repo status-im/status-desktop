@@ -11,9 +11,11 @@ Rectangle {
     property var onClick: function() {}
     property string textToCopy: ""
 
-    SVGImage {
+    Image {
         width: 20
         height: 20
+        sourceSize.width: width
+        sourceSize.height: height
         source: "./img/copy-to-clipboard-icon.svg"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
