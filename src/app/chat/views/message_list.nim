@@ -38,6 +38,7 @@ QtObject:
       messages*: seq[Message]
       status: Status
       messageIndex: Table[string, int]
+      messageReactions*: Table[string, string]
       timedoutMessages: HashSet[string]
 
   proc delete(self: ChatMessageList) =
@@ -87,6 +88,10 @@ QtObject:
   method rowCount(self: ChatMessageList, index: QModelIndex = nil): int =
     return self.messages.len
 
+  proc getReactions*(self:ChatMessageList, messageId: string):string =
+    if not self.messageReactions.hasKey(messageId): return ""
+    result = self.messageReactions[messageId]
+
   method data(self: ChatMessageList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
@@ -116,7 +121,7 @@ QtObject:
       of ChatMessageRoles.Image: result = newQVariant(message.image)
       of ChatMessageRoles.Audio: result = newQVariant(message.audio)
       of ChatMessageRoles.AudioDurationMs: result = newQVariant(message.audioDurationMs)
-      of ChatMessageRoles.EmojiReactions: result = newQVariant(message.emojiReactions)
+      of ChatMessageRoles.EmojiReactions: result = newQVariant(self.getReactions(message.id))
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -188,8 +193,9 @@ QtObject:
     self.endResetModel()
 
   proc setMessageReactions*(self: ChatMessageList, messageId: string, newReactions: string)=
+    self.messageReactions[messageId] = newReactions    
+    if not self.messageIndex.hasKey(messageId): return
     let msgIdx = self.messageIndex[messageId]
-    self.messages[msgIdx].emojiReactions = newReactions
     let topLeft = self.createIndex(msgIdx, 0, nil)
     let bottomRight = self.createIndex(msgIdx, 0, nil)
     self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.EmojiReactions.int])
