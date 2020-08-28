@@ -32,7 +32,7 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 24
         Component.onCompleted: {
-            walletBtn.enabled = true
+            walletBtn.enabled = false
         }
 
         StyledText {
@@ -105,7 +105,7 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 24
         Component.onCompleted: {
-            uiComponentBtn.enabled = true
+            uiComponentBtn.enabled = false
         }
 
         StyledText {
