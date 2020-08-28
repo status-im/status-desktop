@@ -282,8 +282,9 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
+        disabled:  profileModel.network !== "mainnet_rpc"
         //% "Start"
-        label: qsTrId("start")
+        label: !disabled ? qsTrId("start") : qsTr("Only available on Mainnet")
         onClicked: startBtnClicked()
     }
 }
