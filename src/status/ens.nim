@@ -36,6 +36,11 @@ proc userNameOrAlias*(contact: Profile, removeSuffix: bool = false): string =
   else:
     result = contact.alias
 
+proc label*(username:string): string =
+  let name = username.toLower()
+  var node:array[32, byte] = keccak_256.digest(username).data
+  result = "0x" & node.toHex()
+
 proc namehash*(ensName:string): string =
   let name = ensName.toLower()
   var node:array[32, byte]
@@ -137,8 +142,9 @@ proc extractCoordinates*(pubkey: string):tuple[x: string, y:string] =
   result = ("0x" & pubkey[4..67], "0x" & pubkey[68..131])
 
 proc registerUsername*(username:string, address: EthAddress, pubKey: string, password: string): string =
+  echo username, "................."
   let
-    label = fromHex(FixedBytes[32], namehash(addDomain(username)))
+    label = fromHex(FixedBytes[32], label(username))
     coordinates = extractCoordinates(pubkey)
     x = fromHex(FixedBytes[32], coordinates.x)
     y =  fromHex(FixedBytes[32], coordinates.y)

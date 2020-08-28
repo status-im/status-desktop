@@ -96,7 +96,7 @@ proc allContracts(): seq[Contract] = @[
         ("getPrice", Method(signature: "getPrice()"))
       ].toTable
   ),
-  Contract(name: "ens-usernames", network: Network.Testnet, address: parseAddress("0x11d9F481effd20D76cEE832559bd9Aca25405841"),
+  Contract(name: "ens-usernames", network: Network.Testnet, address: parseAddress("0x76fbf2815ead80006d07a64c1fd5dc9964ab3c93"),
       methods: [
         ("register", Method(signature: "register(bytes32,address,bytes32,bytes32)")),
         ("getPrice", Method(signature: "getPrice()"))
