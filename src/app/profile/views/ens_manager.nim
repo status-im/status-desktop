@@ -148,7 +148,7 @@ QtObject:
   proc registerENS(self: EnsManager, username: string, password: string) {.slot.} =
     let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
     let address = parseAddress(status_wallet.getWalletAccounts()[0].address)
-    discard registerUsername(username & status_ens.domain, address, pubKey, password)
+    discard registerUsername(username, address, pubKey, password)
     self.connect(username, true)
 
   proc setPubKey(self: EnsManager, username: string, password: string) {.slot.} =
