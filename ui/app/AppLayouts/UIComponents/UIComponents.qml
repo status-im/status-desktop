@@ -39,7 +39,6 @@ Item {
 
             StatusButton {
                 text: "Secondary Small Button"
-                type: "secondary"
                 size: "small"
             }
 
@@ -50,11 +49,17 @@ Item {
             }
 
             StatusRoundButton {
-                type: "secondary"
                 size: "medium"
                 icon.name: "arrow-right"
                 icon.height: 15
                 icon.width: 20
+            }
+
+            StatusRoundButton {
+                size: "small"
+                icon.name: "arrow-right"
+                icon.height: 12
+                icon.width: 18
             }
         }
 
@@ -91,11 +96,18 @@ Item {
             }
 
             StatusRoundButton {
-                type: "secondary"
                 size: "medium"
                 icon.name: "arrow-right"
                 icon.height: 15
                 icon.width: 20
+                enabled: false
+            }
+
+            StatusRoundButton {
+                size: "small"
+                icon.name: "arrow-right"
+                icon.height: 12
+                icon.width: 18
                 enabled: false
             }
         }
@@ -130,8 +142,12 @@ Item {
             }
 
             StatusRoundButton {
-                type: "secondary"
                 size: "medium"
+                state: "pending"
+            }
+
+            StatusRoundButton {
+                size: "small"
                 state: "pending"
             }
         }

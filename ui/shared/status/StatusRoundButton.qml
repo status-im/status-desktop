@@ -6,24 +6,54 @@ import "../../imports"
 import "../../shared"
 
 RoundButton {
-    property string type: "primary"
     property string state: "default"
     property string size: "large"
-
     id: control
 
     font.pixelSize: 15
     font.weight: Font.Medium
 
-    implicitWidth: size === "medium" ? 40 : 44
-    implicitHeight: size === "medium" ? 40 : 44
+    implicitWidth: {
+        switch(size) {
+            case "large":
+                return 44
+            case "medium":
+                return 40
+            case "small":
+                return 32
+            default:
+                return 44
+        }
+    }
+    implicitHeight: implicitWidth
 
     enabled: state === "default"
 
-    icon.source: "../../app/img/" + icon.name + ".svg"
-    icon.height: size === "medium" ? 14 : 20
-    icon.width: size === "medium" ? 14 : 20
-    icon.color: type === "secondary" ? 
+    icon.height: {
+        switch(size) {
+            case "large":
+                return 20
+            case "medium":
+                return 14
+            case "small":
+                return 12
+            default:
+                return 20
+        }
+    }
+    icon.width: {
+        switch(size) {
+            case "large":
+                return 20
+            case "medium":
+                return 14
+            case "small":
+                return 12
+            default:
+                return 20
+        }
+    }
+    icon.color: size === "medium" || size === "small" ? 
         !enabled ? 
           Style.current.roundedButtonSecondaryDisabledForegroundColor :
           Style.current.roundedButtonSecondaryForegroundColor
@@ -32,10 +62,14 @@ RoundButton {
           Style.current.roundedButtonDisabledForegroundColor : 
           Style.current.roundedButtonForegroundColor
 
+    onIconChanged: {
+      icon.source = icon.name ? "../../app/img/" + icon.name + ".svg" : ""
+    }
+
     background: Rectangle {
         anchors.fill: parent
         color: {
-            if (type === "secondary") {
+            if (size === "medium" || size == "small") {
                 return !enabled ? Style.current.roundedButtonSecondaryDisabledBackgroundColor :
                   hovered ? Style.current.roundedButtonSecondaryHoveredBackgroundColor : 
                   Style.current.roundedButtonSecondaryBackgroundColor
@@ -64,7 +98,7 @@ RoundButton {
         LoadingImage {
             id: loadingIndicator
             visible: false
-            height: 18
+            height: size === "small" ? 14 : 18
             width: loadingIndicator.height
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -74,7 +108,7 @@ RoundButton {
             anchors.fill: iconImg
             visible: control.state === "default"
             source: iconImg
-            color: control.type === "secondary" ?
+            color: control.size === "medium" || control.size === "small" ?
               Style.current.roundedButtonSecondaryDisabledForegroundColor :
               Style.current.roundedButtonDisabledForegroundColor
             antialiasing: true
@@ -85,7 +119,7 @@ RoundButton {
             visible: control.state === "pending"
             anchors.fill: loadingIndicator
             source: loadingIndicator
-            color: control.type === "secondary" ?
+            color: control.size === "medium" || control.size === "small" ?
               Style.current.roundedButtonSecondaryDisabledForegroundColor :
               Style.current.roundedButtonDisabledForegroundColor
             antialiasing: true
