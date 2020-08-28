@@ -21,7 +21,7 @@ ScrollView {
             model: ProfileConstants.menuButtons
             delegate: MenuButton {
                 text: modelData .text
-                source: "../../../img/" + modelData .filename
+                source: "../../../img/profile/" + modelData.filename
                 active: profileMenu.profileCurrentIndex === modelData.id
                 Layout.fillWidth: true
                 onClicked: function () {

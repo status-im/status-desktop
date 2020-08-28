@@ -17,10 +17,13 @@ Rectangle {
     width: parent.width
     radius: Style.current.radius
 
-    SVGImage {
+    Image {
         id: iconImage
         source: menuButton.source
-        height: 22
+        height: 24
+        width: 24
+        sourceSize.width: width
+        sourceSize.height: height
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter

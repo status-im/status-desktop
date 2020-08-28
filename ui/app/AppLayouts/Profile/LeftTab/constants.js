@@ -19,19 +19,19 @@ var menuButtons = [{
                    }, {
                        "id": CONTACTS,
                        "text": qsTr("Contacts"),
-                       "filename": "profileActive.svg"
+                       "filename": "contacts.svg"
                    }, {
                        "id": ENS,
                        "text": qsTr("ENS usernames"),
-                       "filename": "atSign.svg"
+                       "filename": "ensUsernames.svg"
                    }, {
                        "id": PRIVACY_AND_SECURITY,
                        "text": qsTr("Privacy and security"),
-                       "filename": "lock.svg"
+                       "filename": "security.svg"
                    }, {
                        "id": APPEARANCE,
                        "text": qsTr("Appearance"),
-                       "filename": "sun.svg"
+                       "filename": "appearance.svg"
                    }, {
                        "id": SOUND,
                        "text": qsTr("Sound"),
@@ -43,25 +43,25 @@ var menuButtons = [{
                    }, {
                        "id": NOTIFICATIONS,
                        "text": qsTr("Notifications"),
-                       "filename": "bell.svg"
+                       "filename": "notifications.svg"
                    }, {
                        "id": SYNC_SETTINGS,
                        "text": qsTr("Sync settings"),
-                       "filename": "phone.svg"
+                       "filename": "sync.svg"
                    }, {
                        "id": DEVICES_SETTINGS,
                        "text": qsTr("Devices settings"),
-                       "filename": "phone.svg"
+                       "filename": "sync.svg"
                    }, {
                        "id": ADVANCED,
                        "text": qsTr("Advanced"),
-                       "filename": "slider.svg"
+                       "filename": "advanced.svg"
                    }, {
                        "id": NEED_HELP,
                        "text": qsTr("Need help?"),
-                       "filename": "question.svg"
+                       "filename": "help.svg"
                    }, {
                        "id": ABOUT,
                        "text": qsTr("About"),
-                       "filename": "info.svg"
+                       "filename": "about.svg"
                    }]
