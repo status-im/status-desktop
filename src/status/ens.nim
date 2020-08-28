@@ -142,7 +142,6 @@ proc extractCoordinates*(pubkey: string):tuple[x: string, y:string] =
   result = ("0x" & pubkey[4..67], "0x" & pubkey[68..131])
 
 proc registerUsername*(username:string, address: EthAddress, pubKey: string, password: string): string =
-  echo username, "................."
   let
     label = fromHex(FixedBytes[32], label(username))
     coordinates = extractCoordinates(pubkey)
