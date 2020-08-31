@@ -102,12 +102,21 @@ QtObject:
     self.chats.getChannelColor(channel)
 
   proc replaceMentionsWithPubKeys(self: ChatsView, mentions: seq[string], contacts: seq[Profile], message: string, predicate: proc (contact: Profile): string): string =
-    result = message
+    var updatedMessage = message
     for mention in mentions:
       let matches = contacts.filter(c => "@" & predicate(c).toLowerAscii == mention.toLowerAscii).map(c => c.address)
       if matches.len > 0:
         let pubKey = matches[0]
-        result = message.replace(mention, "@" & pubKey)
+        var startIndex = 0
+        var index = updatedMessage.find(mention)
+
+        while index > -1:
+          if index == 0 or updatedMessage[index-1] == ' ':
+            updatedMessage = updatedMessage.replaceWord(mention, '@' & pubKey)
+          startIndex = index + mention.len
+          index = updatedMessage.find(mention, startIndex)
+
+    result = updatedMessage
 
   proc plainText(self: ChatsView, input: string): string {.slot.} =
     result = plain_text(input)
