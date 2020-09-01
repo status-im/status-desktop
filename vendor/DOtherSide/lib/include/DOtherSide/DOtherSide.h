@@ -105,6 +105,8 @@ DOS_API DosQNetworkConfigurationManager *DOS_CALL dos_qncm_create();
 
 DOS_API char * DOS_CALL dos_plain_text(char* htmlString);
 
+DOS_API char * DOS_CALL dos_escape_html(char* input);
+
 DOS_API void DOS_CALL dos_qncm_delete(DosQNetworkConfigurationManager *vptr);
 
 DOS_API char * DOS_CALL dos_image_resizer(char* imagePath, int maxSize, char* tmpDirPath);
