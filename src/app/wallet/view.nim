@@ -82,6 +82,8 @@ QtObject:
     read = getSigningPhrase
     notify = signingPhraseChanged
 
+  proc getStatusTokenSymbol*(self: WalletView): string {.slot.} = self.status.wallet.getStatusTokenSymbol
+
   proc setCurrentAssetList*(self: WalletView, assetList: seq[Asset])
 
   proc currentCollectiblesListsChanged*(self: WalletView) {.signal.}
@@ -182,6 +184,7 @@ QtObject:
     self.accountListChanged()
 
   proc getFiatValue*(self: WalletView, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string {.slot.} =
+    if (cryptoBalance == "" or cryptoSymbol == "" or fiatSymbol == ""): return "0.00"
     let val = self.status.wallet.convertValue(cryptoBalance, cryptoSymbol, fiatSymbol)
     result = fmt"{val:.2f}"
 
@@ -236,13 +239,10 @@ QtObject:
     notify = accountListChanged
 
   proc sendTransaction*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string, gas: string, gasPrice: string, password: string): string {.slot.} =
-    let resultJson = %*{}
     try:
-      resultJson{"result"} = %self.status.wallet.sendTransaction(from_addr, to, assetAddress, value, gas, gasPrice, password)
-    except StatusGoException as e:
-      resultJson{"error"} = %e.msg
-    finally:
-      result = $resultJson
+      result = $(%self.status.wallet.sendTransaction(from_addr, to, assetAddress, value, gas, gasPrice, password))
+    except RpcException as e:
+      result = fmt"""{{ "error": {{ "message": "{e.msg}" }} }}"""
 
   proc getDefaultAccount*(self: WalletView): string {.slot.} =
     self.currentAccount.address

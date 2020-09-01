@@ -7,7 +7,7 @@ import libstatus/settings as status_settings
 import libstatus/wallet as status_wallet
 import libstatus/accounts/constants as constants
 import libstatus/contracts as contracts
-from libstatus/types import GeneratedAccount, DerivedAccount, Transaction, Setting, GasPricePrediction, EthSend, Quantity, `%`, StatusGoException
+from libstatus/types import GeneratedAccount, DerivedAccount, Transaction, Setting, GasPricePrediction, EthSend, Quantity, `%`, StatusGoException, Network, RpcResponse, RpcException
 from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, first, toUInt64
 import wallet/balance_manager
 import wallet/account
@@ -50,7 +50,7 @@ proc initEvents*(self: WalletModel) =
 proc delete*(self: WalletModel) =
   discard
 
-proc sendTransaction*(self: WalletModel, source, to, assetAddress, value, gas, gasPrice, password: string): string =
+proc sendTransaction*(self: WalletModel, source, to, assetAddress, value, gas, gasPrice, password: string): RpcResponse =
   var
     weiValue = eth2Wei(parseFloat(value), 18) # ETH
     data = ""
@@ -63,8 +63,8 @@ proc sendTransaction*(self: WalletModel, source, to, assetAddress, value, gas, g
     let
       token = self.tokens.first("address", assetAddress)
       contract = getContract("snt")
-      transfer = Transfer(to: toAddr, value: weiValue)
-    weiValue = eth2Wei(parseFloat(value), token["decimals"].getInt)
+      transfer = Transfer(to: toAddr, value: eth2Wei(parseFloat(value), token["decimals"].getInt))
+    weiValue = 0.u256
     data = contract.methods["transfer"].encodeAbi(transfer)
     toAddr = parseAddress(assetAddress)
 
@@ -78,13 +78,20 @@ proc sendTransaction*(self: WalletModel, source, to, assetAddress, value, gas, g
   )
   try:
     result = status_wallet.sendTransaction(tx, password)
-  except StatusGoException as e:
+  except RpcException as e:
     raise
 
 proc getDefaultCurrency*(self: WalletModel): string =
   # TODO: this should come from a model? It is going to be used too in the
   # profile section and ideally we should not call the settings more than once
   status_settings.getSetting[string](Setting.Currency, "usd")
+
+# TODO: This needs to be removed or refactored so that test tokens are shown
+# when on testnet https://github.com/status-im/nim-status-client/issues/613.
+proc getStatusTokenSymbol*(self: WalletModel): string =
+  if status_settings.getCurrentNetwork() == Network.Testnet:
+    return "STT"
+  "SNT"
 
 proc setDefaultCurrency*(self: WalletModel, currency: string) =
   discard status_settings.saveSetting(Setting.Currency, currency)
@@ -221,6 +228,8 @@ proc validateMnemonic*(self: WalletModel, mnemonic: string): string =
   result = status_wallet.validateMnemonic(mnemonic).parseJSON()["error"].getStr
 
 proc getGasPricePredictions*(self: WalletModel): GasPricePrediction =
+  if status_settings.getCurrentNetwork() == Network.Testnet:
+    return GasPricePrediction(safeLow: "1.0", standard: "2.0", fast: "3.0", fastest: "4.0")
   try:
     let url: string = fmt"https://etherchain.org/api/gasPriceOracle"
     let client = newHttpClient()

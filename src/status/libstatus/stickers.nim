@@ -124,10 +124,7 @@ proc getPackData*(id: Stuint[256]): StickerPack =
     result.id = truncate(id, int)
     result.price = packData.price
 
-# Buys a sticker pack for user
-# See https://notes.status.im/Q-sQmQbpTOOWCQcYiXtf5g#Buy-a-Sticker-Pack for more
-# details
-proc buyPack*(packId: Stuint[256], address: EthAddress, price: Stuint[256], password: string): string =
+proc buyPackPayload(packId: Stuint[256], address: EthAddress, price: Stuint[256]): JsonNode =
   let
     stickerMktContract = contracts.getContract("sticker-market")
     sntContract = contracts.getContract("snt")
@@ -136,18 +133,33 @@ proc buyPack*(packId: Stuint[256], address: EthAddress, price: Stuint[256], pass
   let
     approveAndCallObj = ApproveAndCall(to: stickerMktContract.address, value: price, data: DynamicBytes[100].fromHex(buyTxAbiEncoded))
     approveAndCallAbiEncoded = sntContract.methods["approveAndCall"].encodeAbi(approveAndCallObj)
-  let payload = %* {
-      "from": $address,
-      "to": $sntContract.address,
-      # "gas": 200000, # leave out for now
-      "data": approveAndCallAbiEncoded
-    }
-  
-  let responseStr = status.sendTransaction($payload, password)
+  result = %* {
+    "from": $address,
+    "to": $sntContract.address,
+    "data": approveAndCallAbiEncoded
+  }
+
+proc buyPackGasEstimate*(packId: Stuint[256], address: EthAddress, price: Stuint[256]): string =
+  # TODO: pass in an EthSend object instead
+  let payload = buyPackPayload(packId, address, price)  
+  let responseStr = status.callPrivateRPC("eth_estimateGas", %*[payload])
   let response = Json.decode(responseStr, RpcResponse)
   if not response.error.isNil:
-    raise newException(RpcException, "Error getting stickers balance: " & response.error.message)
+    raise newException(RpcException, "Error getting stickers buy pack gas estimate: " & response.error.message)
   result = response.result # should be a tx receipt
+
+# Buys a sticker pack for user
+# See https://notes.status.im/Q-sQmQbpTOOWCQcYiXtf5g#Buy-a-Sticker-Pack for more
+# details
+proc buyPack*(packId: Stuint[256], address: EthAddress, price: Stuint[256], gas: uint64, gasPrice: int, password: string): RpcResponse =
+  # TODO: pass in an EthSend object instead
+  let payload = buyPackPayload(packId, address, price)
+  payload{"gas"} = %gas.encodeQuantity
+  payload{"gasPrice"} = %("0x" & gasPrice.toHex.stripLeadingZeros)
+  let responseStr = status.sendTransaction($payload, password)
+  result = Json.decode(responseStr, RpcResponse)
+  if not result.error.isNil:
+    raise newException(RpcException, "Error buying sticker pack: " & result.error.message)
 
 proc tokenOfOwnerByIndex*(address: EthAddress, idx: Stuint[256]): int =
   let

@@ -17,6 +17,8 @@ Item {
     property string defaultCurrency: "USD"
     property alias selectedGasPrice: inputGasPrice.text
     property alias selectedGasLimit: inputGasLimit.text
+    property double selectedGasEthValue
+    property double selectedGasFiatValue
     property string greaterThan0ErrorMessage: qsTr("Must be greater than 0")
     //% "This needs to be a number"
     property string invalidInputErrorMessage: qsTrId("this-needs-to-be-a-number")
@@ -47,6 +49,8 @@ Item {
         let summary = Utils.stripTrailingZeros(ethValue) + " ETH ~" + fiatValue + " " + root.defaultCurrency.toUpperCase()
         labelGasPriceSummary.text = summary
         labelGasPriceSummaryAdvanced.text = summary
+        selectedGasEthValue = ethValue
+        selectedGasFiatValue = fiatValue
     }
 
     StyledText {
@@ -237,7 +241,7 @@ Item {
           width: 130
           customHeight: 56
           text: root.defaultGasPrice()
-          placeholderText: "21000"
+          placeholderText: "20"
           onTextChanged: {
               if (inputGasPrice.text.trim() === "") {
                   inputGasPrice.text = root.defaultGasPrice()

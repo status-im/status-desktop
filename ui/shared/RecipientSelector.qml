@@ -18,7 +18,7 @@ Item {
     height: (readOnly ? inpReadOnly.height : inpAddress.height) + txtLabel.height
     //% "Invalid ethereum address"
     readonly property string addressValidationError: qsTrId("invalid-ethereum-address")
-    property bool isValid: false
+    property bool isValid: false || readOnly
     property var reset: function() {}
     readonly property var sources: [
         qsTr("Address"),
@@ -34,7 +34,7 @@ Item {
         selContact.reset()
         selAccount.reset()
         selAddressSource.reset()
-        isValid = false
+        isValid = Qt.binding(function() { return false || readOnly })
     }
     
     enum Type {

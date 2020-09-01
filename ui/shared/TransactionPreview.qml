@@ -77,6 +77,7 @@ Item {
                         text: root.toAccount ? root.toAccount.address : ""
                         elide: Text.ElideMiddle
                         anchors.leftMargin: 190
+                        anchors.right: parent.right
                     }
                     PropertyChanges {
                         target: txtToSecondary
@@ -92,7 +93,8 @@ Item {
                     }
                     PropertyChanges {
                         target: txtToSecondary
-                        anchors.rightMargin: Style.current.padding + idtToContact.width + 8
+                        anchors.right: idtToContact.left
+                        anchors.rightMargin: Style.current.halfPadding
                         width: metSecondary.elidedWidth
                         text: metSecondary.elidedText
                     }
@@ -115,7 +117,8 @@ Item {
                     }
                     PropertyChanges {
                         target: txtToSecondary
-                        anchors.rightMargin: Style.current.padding + imgToWallet.width + Style.current.halfPadding
+                        anchors.right: imgToWallet.left
+                        anchors.rightMargin: Style.current.halfPadding
                         text: metSecondary.elidedText
                         width: metSecondary.elidedWidth
                     }
