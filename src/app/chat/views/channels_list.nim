@@ -3,6 +3,7 @@ import ../../../status/chat/[chat, message]
 import ../../../status/status
 import ../../../status/ens
 import ../../../status/accounts
+import strformat, strutils
 
 type
   ChannelsRoles {.pure.} = enum
@@ -158,13 +159,14 @@ QtObject:
     case elem.textType:
     of "mention": result = self.userNameOrAlias(elem.literal)
     of "link": result = elem.destination
-    else: result = elem.literal
+    else: result = escape_html(elem.literal.strip)
 
   proc renderBlock(self: ChannelsList, message: Message): string =
     for pMsg in message.parsedText:
       case pMsg.textType:
-        of "paragraph": 
+        of "paragraph":
           for children in pMsg.children:
             result = result & self.renderInline(children)
         else:
-          result = pMsg.literal
+          result = escape_html(pMsg.literal.strip)
+
