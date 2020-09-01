@@ -45,3 +45,6 @@ proc image_resizer*(imagePath: string, maxSize: int = 2000, tmpDir: string): str
 
 proc plain_text*(htmlString: string): string =
   result = $(dos_plain_text(htmlString.cstring))
+
+proc escape_html*(input: string): string =
+  result = $(dos_escape_html(input.cstring))

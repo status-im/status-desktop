@@ -305,3 +305,4 @@ proc dos_qabstracttablemodel_index(modelPtr: DosQAbstractTableModel, row: cint, 
 
 proc dos_image_resizer(imagePath: cstring, maxSize: cint, tmpDirPath: cstring): cstring {.cdecl, dynlib: dynLibName, importc.}
 proc dos_plain_text(htmlString: cstring): cstring {.cdecl, dynlib: dynLibName, importc.}
+proc dos_escape_html(input: cstring): cstring {.cdecl, dynlib: dynLibName, importc.}
