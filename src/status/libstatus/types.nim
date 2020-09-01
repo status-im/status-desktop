@@ -1,5 +1,5 @@
 import eventemitter, json, options, typetraits, strutils
-import eth/common/eth_types, stew/byteutils, json_serialization, stint, faststreams/textio
+import eth/common/eth_types, stew/byteutils, json_serialization, stint
 import accounts/constants
 
 type SignalType* {.pure.} = enum
@@ -190,7 +190,7 @@ type
     nonce*: Option[int]        # (optional) integer of a nonce. This allows to overwrite your own pending transactions that use the same nonce
 
 # TODO: Remove this when nim-web3 is added as a dependency
-template stripLeadingZeros(value: string): string =
+template stripLeadingZeros*(value: string): string =
   var cidx = 0
   # ignore the last character so we retain '0' on zero value
   while cidx < value.len - 1 and value[cidx] == '0':

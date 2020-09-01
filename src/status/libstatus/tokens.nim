@@ -1,7 +1,7 @@
 import json, chronicles, strformat, stint, strutils
 import core, wallet
 import contracts
-import eth/common/eth_types, eth/common/utils, stew/byteutils
+import eth/common/eth_types, eth/common/utils
 import json_serialization
 import settings
 from types import Setting, Network

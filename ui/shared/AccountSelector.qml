@@ -17,7 +17,9 @@ Item {
     // set to asset symbol to display asset's balance top right
     // NOTE: if this asset is not selected as a wallet token in the UI, then
     // nothing will be displayed
-    property string showAssetBalance: ""
+    property string showBalanceForAssetSymbol: ""
+    property var assetFound
+    property double minRequiredAssetBalance: 0
     property int dropdownWidth: width
     property alias dropdownAlignment: select.menuAlignment
     property bool isValid: true
@@ -26,7 +28,18 @@ Item {
     function resetInternal() {
         accounts = undefined
         selectedAccount = undefined
+        showBalanceForAssetSymbol = ""
+        minRequiredAssetBalance = 0
+        assetFound = undefined
         isValid = true
+    }
+
+    function validate() {
+        if (showBalanceForAssetSymbol == "" || minRequiredAssetBalance == 0 || !assetFound) {
+            return root.isValid
+        }
+        root.isValid = assetFound.value > minRequiredAssetBalance
+        return root.isValid
     }
 
     onSelectedAccountChanged: {
@@ -45,24 +58,32 @@ Item {
         if (selectedAccount.fiatBalance) {
             textSelectedAddressFiatBalance.text = selectedAccount.fiatBalance + " " + currency.toUpperCase()
         }
-        if (selectedAccount.assets) {
-            rptAccounts.model = selectedAccount.assets
+        if (selectedAccount.assets && showBalanceForAssetSymbol) {
+            assetFound = Utils.findAssetBySymbol(selectedAccount.assets, showBalanceForAssetSymbol)
+            if (!assetFound) {
+                console.warn(qsTr("Cannot find asset '%1'. Ensure this asset has been added to the token list.").arg(showBalanceForAssetSymbol))
+            }
         }
+        validate()
     }
 
-    Repeater {
-        id: rptAccounts
-        visible: showAssetBalance !== ""
-        delegate: StyledText {
-            visible: symbol === root.showAssetBalance.toUpperCase()
-            anchors.bottom: select.top
-            anchors.bottomMargin: -18 
-            anchors.right: parent.right
-            text: "Balance: " + (parseFloat(value) === 0.0 ? "0" : value) + " " + symbol
-            color: parseFloat(value) === 0.0 ? Style.current.danger : Style.current.secondaryText
-            font.pixelSize: 13
-            height: 18
+    onAssetFoundChanged: {
+        if (!assetFound) {
+            return
         }
+        txtAssetBalance.text = "Balance: " + (parseFloat(assetFound.value) === 0.0 ? "0" : Utils.stripTrailingZeros(assetFound.value)) + " " + assetFound.symbol
+    }
+
+    StyledText {
+        id: txtAssetBalance
+        visible: root.assetFound !== undefined
+        anchors.bottom: select.top
+        anchors.bottomMargin: -18 
+        anchors.right: parent.right
+        
+        color: !root.isValid ? Style.current.danger : Style.current.secondaryText
+        font.pixelSize: 13
+        height: 18
     }
     Select {
         id: select

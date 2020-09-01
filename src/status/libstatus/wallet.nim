@@ -5,7 +5,6 @@ import ../wallet/account
 import ./contracts as contractMethods
 import eth/common/eth_types
 import ./types
-import ../../signals/types as signal_types
 
 proc getWalletAccounts*(): seq[WalletAccount] =
   try:
@@ -62,15 +61,11 @@ proc getTransfersByAddress*(address: string): seq[types.Transaction] =
     let msg = getCurrentExceptionMsg()
     error "Failed getting wallet account transactions", msg
 
-proc sendTransaction*(tx: EthSend, password: string): string =
-  let response = core.sendTransaction($(%tx), password)
-
-  try:
-    let parsedResponse = parseJson(response)
-    result = parsedResponse["result"].getStr
-  except:
-    let err = Json.decode(response, StatusGoErrorExtended)
-    raise newException(StatusGoException, "Error sending transaction: " & err.error.message)
+proc sendTransaction*(tx: EthSend, password: string): RpcResponse =
+  let responseStr = core.sendTransaction($(%tx), password)
+  result = Json.decode(responseStr, RpcResponse)
+  if not result.error.isNil:
+    raise newException(RpcException, "Error sending transaction: " & result.error.message)
 
   trace "Transaction sent succesfully", hash=result
 

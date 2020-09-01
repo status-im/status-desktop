@@ -1,5 +1,5 @@
 import eventemitter, json, strutils, sequtils, tables, chronicles, sugar
-import libstatus/settings as status_settings
+import libstatus/contracts as status_contracts
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
 import libstatus/stickers as status_stickers
@@ -10,6 +10,8 @@ import chat/[chat, message]
 import ../signals/messages
 import ens
 import eth/common/eth_types
+from eth/common/utils import parseAddress
+from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, toUInt64
 
 logScope:
   topics = "chat-model"
@@ -112,17 +114,32 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
 
   self.events.emit("channelJoined", ChannelArgs(chat: chat))
 
+# TODO: Replace this with a more generalised way of estimating gas so can be used for token transfers
+proc buyPackGasEstimate*(self: ChatModel, packId: int, address: string, price: string): string =
+  let
+    priceTyped = eth2Wei(parseFloat(price), 18) # SNT
+    hexGas = status_stickers.buyPackGasEstimate(packId.u256, parseAddress(address), priceTyped)
+  result = $fromHex[int](hexGas)
+
+proc getStickerMarketAddress*(self: ChatModel): EthAddress =
+  result = status_contracts.getContract("sticker-market").address
+
+proc buyStickerPack*(self: ChatModel, packId: int, address, price, gas, gasPrice, password: string): RpcResponse =
+  try:
+    let
+      addressTyped = parseAddress(address)
+      priceTyped = eth2Wei(parseFloat(price), 18) # SNT
+      gasTyped = cast[uint64](parseFloat(gas).toUInt64)
+      gasPriceTyped = gwei2Wei(parseFloat(gasPrice)).truncate(int)
+    result = status_stickers.buyPack(packId.u256, addressTyped, priceTyped, gasTyped, gasPriceTyped, password)
+  except RpcException as e:
+    raise
+
 proc getPurchasedStickerPacks*(self: ChatModel, address: EthAddress): seq[int] =
   if self.purchasedStickerPacks != @[]:
     return self.purchasedStickerPacks
 
   try:
-    # Buy the "Toozeman" sticker pack on testnet
-    # Ensure there is enough STT and ETHro in the account first before uncommenting.
-    # STT faucet: simpledapp.eth
-    # NOTE: don't forget to update your account password!
-    # if status_settings.getCurrentNetwork() == Network.Testnet:
-    #   debugEcho ">>> [getPurchasedStickerPacks] buy Toozeman sticker pack, response/txid: ", status_stickers.buyPack(1.u256, address, "20000000000000000000".u256, "<your password here>")
     var
       balance = status_stickers.getBalance(address)
       tokenIds = toSeq[0..<balance].map(idx => status_stickers.tokenOfOwnerByIndex(address, idx.u256))

@@ -2,17 +2,16 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
-import "../../../imports"
-import "../../../shared"
-import "../../../shared/status"
-import "./components"
+import "../../../../imports"
+import "../../../../shared"
 
 ModalPopup {
     id: root
-
-    //% "Send"
-    title: qsTrId("command-button-send")
-    height: 504
+    property var asset: { "name": "Status", "symbol": walletModel.getStatusTokenSymbol() }
+    property int stickerPackId: -1
+    property string packPrice
+    property bool showBackBtn: false
+    title: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(packPrice)).arg(asset.symbol)
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
@@ -36,13 +35,12 @@ ModalPopup {
     }
 
     function sendTransaction() {
-        let responseStr = walletModel.sendTransaction(selectFromAccount.selectedAccount.address,
-                                                 selectRecipient.selectedRecipient.address,
-                                                 txtAmount.selectedAsset.address,
-                                                 txtAmount.selectedAmount,
-                                                 gasSelector.selectedGasLimit,
-                                                 gasSelector.selectedGasPrice,
-                                                 transactionSigner.enteredPassword)
+        let responseStr = chatsModel.buyStickerPack(root.stickerPackId,
+                                                    selectFromAccount.selectedAccount.address,
+                                                    root.packPrice,
+                                                    gasSelector.selectedGasLimit,
+                                                    gasSelector.selectedGasPrice,
+                                                    transactionSigner.enteredPassword)
         let response = JSON.parse(responseStr)
 
         if (response.error) {
@@ -60,6 +58,7 @@ ModalPopup {
 
     TransactionStackView {
         id: stack
+        height: parent.height
         anchors.fill: parent
         anchors.leftMargin: Style.current.padding
         anchors.rightMargin: Style.current.padding
@@ -69,8 +68,12 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group1
-            headerText: qsTr("Send")
+            headerText: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(root.packPrice)).arg(root.asset.symbol)
             footerText: qsTr("Continue")
+
+            StackView.onActivated: {
+                btnBack.visible = root.showBackBtn
+            }
 
             AccountSelector {
                 id: selectFromAccount
@@ -78,61 +81,44 @@ ModalPopup {
                 selectedAccount: walletModel.currentAccount
                 currency: walletModel.defaultCurrency
                 width: stack.width
-                label: qsTr("From account")
+                label: qsTr("Choose account")
+                showBalanceForAssetSymbol: root.asset.symbol
+                minRequiredAssetBalance: root.packPrice
                 reset: function() {
                     accounts = Qt.binding(function() { return walletModel.accounts })
                     selectedAccount = Qt.binding(function() { return walletModel.currentAccount })
+                    showBalanceForAssetSymbol = Qt.binding(function() { return root.asset.symbol })
+                    minRequiredAssetBalance = Qt.binding(function() { return root.packPrice })
                 }
-            }
-            SeparatorWithIcon {
-                id: separator
-                anchors.top: selectFromAccount.bottom
-                anchors.topMargin: 19
             }
             RecipientSelector {
                 id: selectRecipient
+                visible: false
                 accounts: walletModel.accounts
                 contacts: profileModel.addedContacts
-                label: qsTr("Recipient")
-                anchors.top: separator.bottom
-                anchors.topMargin: 10
-                width: stack.width
-                reset: function() {
-                    accounts = Qt.binding(function() { return walletModel.accounts })
-                    contacts = Qt.binding(function() { return profileModel.addedContacts })
-                    selectedRecipient = {}
-                }
-            }
-        }
-        TransactionFormGroup {
-            id: group2
-            headerText: qsTr("Send")
-            footerText: qsTr("Preview")
-
-            AssetAndAmountInput {
-                id: txtAmount
-                selectedAccount: selectFromAccount.selectedAccount
-                defaultCurrency: walletModel.defaultCurrency
-                getFiatValue: walletModel.getFiatValue
-                getCryptoValue: walletModel.getCryptoValue
-                width: stack.width
-                reset: function() {
-                    selectedAccount = Qt.binding(function() { return selectFromAccount.selectedAccount })
-                }
+                selectedRecipient: { "address": chatsModel.stickerMarketAddress, "type": RecipientSelector.Type.Address }
+                readOnly: true
             }
             GasSelector {
                 id: gasSelector
-                anchors.top: txtAmount.bottom
-                anchors.topMargin: Style.current.bigPadding * 2
+                visible: false
                 slowestGasPrice: parseFloat(walletModel.safeLowGasPrice)
                 fastestGasPrice: parseFloat(walletModel.fastestGasPrice)
                 getGasEthValue: walletModel.getGasEthValue
                 getFiatValue: walletModel.getFiatValue
                 defaultCurrency: walletModel.defaultCurrency
-                width: stack.width
+                selectedGasLimit: { return getDefaultGasLimit() }
                 reset: function() {
                     slowestGasPrice = Qt.binding(function(){ return parseFloat(walletModel.safeLowGasPrice) })
                     fastestGasPrice = Qt.binding(function(){ return parseFloat(walletModel.fastestGasPrice) })
+                    selectedGasLimit = Qt.binding(getDefaultGasLimit)
+                }
+
+                function getDefaultGasLimit() {
+                    if (root.stickerPackId > -1 && selectFromAccount.selectedAccount && root.packPrice && parseFloat(root.packPrice) > 0) {
+                        return chatsModel.getStickerBuyPackGasEstimate(root.stickerPackId, selectFromAccount.selectedAccount.address, root.packPrice)
+                    }
+                    return 200000
                 }
             }
             GasValidator {
@@ -140,21 +126,25 @@ ModalPopup {
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 8
                 selectedAccount: selectFromAccount.selectedAccount
-                selectedAmount: parseFloat(txtAmount.selectedAmount)
-                selectedAsset: txtAmount.selectedAsset
+                selectedAsset: root.asset
+                selectedAmount: parseFloat(packPrice)
                 selectedGasEthValue: gasSelector.selectedGasEthValue
                 reset: function() {
                     selectedAccount = Qt.binding(function() { return selectFromAccount.selectedAccount })
-                    selectedAmount = Qt.binding(function() { return parseFloat(txtAmount.selectedAmount) })
-                    selectedAsset = Qt.binding(function() { return txtAmount.selectedAsset })
+                    selectedAsset = Qt.binding(function() { return root.asset })
+                    selectedAmount = Qt.binding(function() { return parseFloat(packPrice) })
                     selectedGasEthValue = Qt.binding(function() { return gasSelector.selectedGasEthValue })
                 }
             }
         }
         TransactionFormGroup {
             id: group3
-            headerText: qsTr("Transaction preview")
+            headerText: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(root.packPrice)).arg(root.asset.symbol)
             footerText: qsTr("Sign with password")
+
+            StackView.onActivated: {
+                btnBack.visible = true
+            }
 
             TransactionPreview {
                 id: pvwTransaction
@@ -166,14 +156,17 @@ ModalPopup {
                     "fiatValue": gasSelector.selectedGasFiatValue
                 }
                 toAccount: selectRecipient.selectedRecipient
-                asset: txtAmount.selectedAsset
-                amount: { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount }
+                asset: root.asset
                 currency: walletModel.defaultCurrency
+                amount: {
+                    const fiatValue = walletModel.getFiatValue(root.packPrice || 0, root.asset.symbol, currency)
+                    return { "value": root.packPrice, "fiatValue": fiatValue }
+                }
                 reset: function() {
                     fromAccount = Qt.binding(function() { return selectFromAccount.selectedAccount })
                     toAccount = Qt.binding(function() { return selectRecipient.selectedRecipient })
-                    asset = Qt.binding(function() { return txtAmount.selectedAsset })
-                    amount = Qt.binding(function() { return { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount } })
+                    asset = Qt.binding(function() { return root.asset })
+                    amount = Qt.binding(function() { return { "value": root.packPrice, "fiatValue": walletModel.getFiatValue(root.packPrice, root.asset.symbol, currency) } })
                     gas = Qt.binding(function() {
                         return {
                             "value": gasSelector.selectedGasEthValue,
@@ -186,8 +179,8 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group4
-            headerText: qsTr("Sign with password")
-            footerText: qsTr("Send %1 %2").arg(txtAmount.selectedAmount).arg(!!txtAmount.selectedAsset ? txtAmount.selectedAsset.symbol : "")
+            headerText: qsTr("Send %1 %2").arg(Utils.stripTrailingZeros(root.packPrice)).arg(root.asset.symbol)
+            footerText: qsTr("Sign with password")
 
             TransactionSigner {
                 id: transactionSigner
@@ -207,28 +200,12 @@ ModalPopup {
         StyledButton {
             id: btnBack
             anchors.left: parent.left
-            width: 44
-            height: 44
-            visible: !stack.isFirstGroup
-            label: ""
-            background: Rectangle {
-                anchors.fill: parent
-                border.width: 0
-                radius: width / 2
-                color: btnBack.disabled ? Style.current.grey :
-                        btnBack.hovered ? Qt.darker(btnBack.btnColor, 1.1) : btnBack.btnColor
-
-                SVGImage {
-                    width: 20.42
-                    height: 15.75
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    fillMode: Image.PreserveAspectFit
-                    source: "../../img/arrow-right.svg"
-                    rotation: 180
-                }
-            }
+            //% "Back"
+            label: qsTrId("back")
             onClicked: {
+                if (stack.isFirstGroup) {
+                    return root.close()
+                }
                 stack.back()
             }
         }

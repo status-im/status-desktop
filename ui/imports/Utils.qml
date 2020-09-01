@@ -67,7 +67,7 @@ QtObject {
     }
 
     function isValidAddress(inputValue) {
-        return /0x[a-fA-F0-9]{40}/.test(inputValue)
+        return /^0x[a-fA-F0-9]{40}$/.test(inputValue)
     }
 
     /**
@@ -76,7 +76,11 @@ QtObject {
      */
     function stripTrailingZeros(strNumber) {
         if (!(typeof strNumber === "string")) {
-            throw "must be a string"
+            try {
+                strNumber = strNumber.toString()
+            } catch(e) {
+                throw "[Utils.stripTrailingZeros] input parameter must be a string"
+            }
         }
         return strNumber.replace(/(\.[0-9]*[1-9])0+$|\.0*$/,'$1')
     }
@@ -90,5 +94,21 @@ QtObject {
         let minutes = messageDate.getMinutes();
         let hours = messageDate.getHours();
         return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
+    }
+
+    function findAssetBySymbol(assets, symbolToFind) {
+        for(var i=0; i<assets.rowCount(); i++) {
+            const symbol = assets.rowData(i, "symbol")
+            if (symbol.toLowerCase() === symbolToFind.toLowerCase()) {
+                return {
+                    name: assets.rowData(i, "name"),
+                    symbol,
+                    value: assets.rowData(i, "value"),
+                    fiatBalanceDisplay: assets.rowData(i, "fiatBalanceDisplay"),
+                    address: assets.rowData(i, "address"),
+                    fiatBalance: assets.rowData(i, "fiatBalance")
+                }
+            }
+        }
     }
 }

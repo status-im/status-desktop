@@ -16,6 +16,10 @@ Item {
     signal updateClicked(int packId)
     signal buyClicked(int packId)
 
+    Component.onCompleted: {
+        walletModel.getGasPricePredictions()
+    }
+
     GridView {
         id: availableStickerPacks
         width: parent.width
@@ -73,7 +77,10 @@ Item {
                     onUninstallClicked: root.uninstallClicked(packId)
                     onCancelClicked: root.cancelClicked(packId)
                     onUpdateClicked: root.updateClicked(packId)
-                    onBuyClicked: root.buyClicked(packId)
+                    onBuyClicked: {
+                        stickerPackPurchaseModal.open()
+                        root.buyClicked(packId)
+                    }
                 }
                 contentWrapper.anchors.topMargin: 0
                 contentWrapper.anchors.bottomMargin: 0
@@ -82,6 +89,14 @@ Item {
                     model: stickers
                     height: 350
                 }
+            }
+            StickerPackPurchaseModal {
+                id: stickerPackPurchaseModal
+                stickerPackId: packId
+                packPrice: price
+                width: stickerPackDetailsPopup.width
+                height: stickerPackDetailsPopup.height
+                showBackBtn: stickerPackDetailsPopup.opened
             }
             StickerPackDetails {
                 id: stickerPackDetails
@@ -106,9 +121,11 @@ Item {
                     onUninstallClicked: root.uninstallClicked(packId)
                     onCancelClicked: root.cancelClicked(packId)
                     onUpdateClicked: root.updateClicked(packId)
-                    onBuyClicked: root.buyClicked(packId)
+                    onBuyClicked: {
+                        stickerPackPurchaseModal.open()
+                        root.buyClicked(packId)
+                    }
                 }
-                
             }
         }
     }

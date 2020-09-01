@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os
+import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat
 import ../../status/status
 import ../../status/libstatus/accounts/constants
 import ../../status/accounts as status_accounts
@@ -70,6 +70,24 @@ QtObject:
 
   QtProperty[QVariant] stickerPacks:
     read = getStickerPackList
+
+  proc getStickerMarketAddress(self: ChatsView): QVariant {.slot.} =
+    newQVariant($self.status.chat.getStickerMarketAddress)
+
+  QtProperty[QVariant] stickerMarketAddress:
+    read = getStickerMarketAddress
+
+  proc getStickerBuyPackGasEstimate*(self: ChatsView, packId: int, address: string, price: string): string {.slot.} =
+    try:
+      result = self.status.chat.buyPackGasEstimate(packId, address, price)
+    except:
+      result = "400000"
+
+  proc buyStickerPack*(self: ChatsView, packId: int, address: string, price: string, gas: string, gasPrice: string, password: string): string {.slot.} =
+    try:
+      result = $(%self.status.chat.buyStickerPack(packId, address, price, gas, gasPrice, password))
+    except RpcException as e:
+      result = fmt"""{{ "error": {{ "message": "{e.msg}" }} }}"""
 
   proc obtainAvailableStickerPacks*(self: ChatsView) =
     spawnAndSend(self, "setAvailableStickerPacks") do:
