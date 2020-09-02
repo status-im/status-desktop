@@ -13,7 +13,7 @@ ModalPopup {
     property int marginBetweenInputs: 35
 
     onOpened: {
-        accountNameInput.forceActiveFocus(Qt.MouseFocusReason)
+        addressInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
     Input {

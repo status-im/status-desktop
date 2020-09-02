@@ -25,7 +25,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        model: Tokens {}
+        model: walletModel.defaultTokenList
         ScrollBar.vertical: ScrollBar { active: true }
 
         delegate: Component {
@@ -75,7 +75,7 @@ Item {
                     checked: walletModel.hasAsset("0x123", symbol)
                     anchors.right: parent.right
                     anchors.rightMargin: Style.current.smallPadding
-                    onClicked: walletModel.toggleAsset(symbol, assetCheck.checked, address, name, decimals, "eeeeee")
+                    onClicked: walletModel.toggleAsset(symbol)
                 }
             }
         }

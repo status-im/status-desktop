@@ -3,6 +3,10 @@ import core, wallet
 import contracts
 import eth/common/eth_types, eth/common/utils, stew/byteutils
 import json_serialization
+import settings
+from types import Setting, Network
+import default_tokens
+import strutils
 
 logScope:
   topics = "wallet"
@@ -13,6 +17,45 @@ proc getCustomTokens*(): JsonNode =
   if response["result"].kind == JNull:
     return %* []
   return response["result"]
+
+proc visibleTokensSNTDefault(): JsonNode =
+  let currentNetwork = getSetting[string](Setting.Networks_CurrentNetwork)
+  let SNT = if getCurrentNetwork() == Network.Testnet: "STT" else: "SNT"
+  let response = getSetting[string](Setting.VisibleTokens, "{\"" & currentNetwork & "\": [\"" & SNT & "\"]}")
+  echo response
+  result = response.parseJson
+
+proc toggleAsset*(symbol: string) =
+  let currentNetwork = getSetting[string](Setting.Networks_CurrentNetwork)
+  let visibleTokens = visibleTokensSNTDefault()
+  var visibleTokenList = visibleTokens[currentNetwork].to(seq[string])
+  var symbolIdx = visibleTokenList.find(symbol)
+  if symbolIdx > -1:
+    visibleTokenList.del(symbolIdx)
+  else:
+    visibleTokenList.add symbol
+  visibleTokens[currentNetwork] = newJArray()
+  visibleTokens[currentNetwork] = %* visibleTokenList
+  discard saveSetting(Setting.VisibleTokens, $visibleTokens)
+
+proc getVisibleTokens*(): JsonNode =
+  let currentNetwork = getSetting[string](Setting.Networks_CurrentNetwork)
+  let visibleTokens = visibleTokensSNTDefault()
+  let visibleTokenList = visibleTokens[currentNetwork].to(seq[string])
+  let customTokens = getCustomTokens()
+
+  result = newJArray()
+  for defToken in getDefaultTokens().getElems():
+    for v in visibleTokenList:
+      if defToken["symbol"].getStr == v:
+        result.elems.add(defToken)
+        break
+
+  for custToken in customTokens.getElems():
+    for v in visibleTokenList:
+      if custToken["symbol"].getStr == v:
+        result.elems.add(custToken)
+        break
 
 proc addCustomToken*(address: string, name: string, symbol: string, decimals: int, color: string) =
   let payload = %* [{"address": address, "name": name, "symbol": symbol, "decimals": decimals, "color": color}]

@@ -5,10 +5,6 @@ import "../../../imports"
 import "../../../shared"
 
 Item {
-    Tokens {
-      id: tokenList
-    }
-
     Loader {
         id: loadingImg
         active: false
@@ -45,8 +41,9 @@ Item {
         radius: 8
 
         Component.onCompleted: {
-          for (let i = 0; i < tokenList.count; i++) {
-            let token = tokenList.get(i)
+          // TODO: test if this work. I could not obtain any transaction history
+          for (let i = 0; i < walletModel.defaultTokenList.items.count; i++) {
+            let token = walletModel.defaultTokenList.items.get(i)
             if (token.address == contract) {
               transactionListItem.symbol = token.symbol
               break;
@@ -183,7 +180,6 @@ Item {
       model: walletModel.transactions
       delegate: transactionListItemCmp
     }
-
 }
 
 /*##^##

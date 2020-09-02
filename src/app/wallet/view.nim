@@ -5,7 +5,7 @@ import ../../status/libstatus/wallet as status_wallet
 import ../../status/libstatus/tokens
 import ../../status/libstatus/types
 import ../../status/libstatus/utils
-import views/[asset_list, account_list, account_item, transaction_list, collectibles_list]
+import views/[asset_list, account_list, account_item, token_list, transaction_list, collectibles_list]
 
 QtObject:
   type
@@ -15,6 +15,7 @@ QtObject:
       currentCollectiblesLists*: CollectiblesList
       currentAccount: AccountItemView
       currentTransactions: TransactionList
+      defaultTokenList: TokenList
       status: Status
       totalFiatBalance: string
       etherscanLink: string
@@ -30,6 +31,7 @@ QtObject:
     self.currentAssetList.delete
     self.currentAccount.delete
     self.currentTransactions.delete
+    self.defaultTokenList.delete
     self.QAbstractListModel.delete
 
   proc setup(self: WalletView) =
@@ -43,6 +45,7 @@ QtObject:
     result.currentAssetList = newAssetList()
     result.currentTransactions = newTransactionList()
     result.currentCollectiblesLists = newCollectiblesList()
+    result.defaultTokenList = newTokenList()
     result.totalFiatBalance = ""
     result.etherscanLink = ""
     result.safeLowGasPrice = "0"
@@ -261,8 +264,8 @@ QtObject:
   proc hasAsset*(self: WalletView, account: string, symbol: string): bool {.slot.} =
     self.status.wallet.hasAsset(account, symbol)
 
-  proc toggleAsset*(self: WalletView, symbol: string, checked: bool, address: string, name: string, decimals: int, color: string) {.slot.} =
-    self.status.wallet.toggleAsset(symbol, checked, address, name, decimals, color)
+  proc toggleAsset*(self: WalletView, symbol: string) {.slot.} =
+    self.status.wallet.toggleAsset(symbol)
     for account in self.status.wallet.accounts:
       if account.address == self.currentAccount.address:
         self.currentAccount.setAccountItem(account)
@@ -279,7 +282,7 @@ QtObject:
     self.setCurrentAssetList(self.currentAccount.account.assetList)
 
   proc addCustomToken*(self: WalletView, address: string, name: string, symbol: string, decimals: string) {.slot.} =
-    self.status.wallet.toggleAsset(symbol, true, address, name, parseInt(decimals), "")
+    self.status.wallet.addCustomToken(symbol, true, address, name, parseInt(decimals), "")
 
   proc loadCollectiblesForAccount*(self: WalletView, address: string, currentCollectiblesList: seq[CollectibleList]) =
     if (currentCollectiblesList.len > 0):
@@ -452,3 +455,10 @@ QtObject:
 
   proc getDefaultAddress*(self: WalletView): string {.slot.} =
     result = $status_wallet.getWalletAccounts()[0].address
+
+  proc getDefaultTokenList(self: WalletView): QVariant {.slot.} =
+    self.defaultTokenList.setupTokens()
+    result = newQVariant(self.defaultTokenList)
+
+  QtProperty[QVariant] defaultTokenList:
+    read = getDefaultTokenList
