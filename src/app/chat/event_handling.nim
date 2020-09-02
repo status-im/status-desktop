@@ -1,3 +1,4 @@
+import sugar, sequtils, times
 
 proc handleChatEvents(self: ChatController) =
   # Display already saved messages
@@ -67,9 +68,18 @@ proc handleChatEvents(self: ChatController) =
 
 proc handleMailserverEvents(self: ChatController) =
   self.status.events.on("mailserverTopics") do(e: Args):
-    self.status.mailservers.addTopics(TopicArgs(e).topics)
+    var topics = TopicArgs(e).topics
+    for topic in topics:
+      topic.lastRequest = times.toUnix(times.getTime())
+      self.status.mailservers.addMailserverTopic(topic)
+
     if(self.status.mailservers.isSelectedMailserverAvailable):
-      self.status.mailservers.requestMessages()
+      self.status.mailservers.requestMessages(topics.map(t => t.topic))
 
   self.status.events.on("mailserverAvailable") do(e:Args):
-    self.status.mailservers.requestMessages()
+    let mailserverTopics = self.status.mailservers.getMailserverTopics()
+    var fromValue: int64 = times.toUnix(times.getTime()) - 86400
+
+    if mailserverTopics.len > 0:
+       fromValue = min(mailserverTopics.map(topic => topic.lastRequest))
+    self.status.mailservers.requestMessages(mailserverTopics.map(t => t.topic), fromValue)
