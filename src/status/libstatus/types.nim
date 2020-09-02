@@ -159,6 +159,7 @@ type
     PreferredUsername = "preferred-name"
     Usernames = "usernames"
     SigningPhrase = "signing-phrase"
+    VisibleTokens = "wallet/visible-tokens"
 
   UpstreamConfig* = ref object
     enabled* {.serializedFieldName("Enabled").}: bool

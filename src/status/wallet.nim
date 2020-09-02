@@ -114,7 +114,7 @@ proc newAccount*(self: WalletModel, name: string, address: string, iconColor: st
   account
 
 proc initAccounts*(self: WalletModel) =
-  self.tokens = status_tokens.getCustomTokens()
+  self.tokens = status_tokens.getVisibleTokens()
   let accounts = status_wallet.getWalletAccounts()
   for account in accounts:
     var acc = WalletAccount(account)
@@ -203,12 +203,16 @@ proc changeAccountSettings*(self: WalletModel, address: string, accountName: str
 proc deleteAccount*(self: WalletModel, address: string): string =
   result = status_accounts.deleteAccount(address)
 
-proc toggleAsset*(self: WalletModel, symbol: string, enable: bool, address: string, name: string, decimals: int, color: string) =
-  self.tokens = addOrRemoveToken(enable, address, name, symbol, decimals, color)
+proc toggleAsset*(self: WalletModel, symbol: string) =
+  status_tokens.toggleAsset(symbol)
+  self.tokens = status_tokens.getVisibleTokens()
   for account in self.accounts:
     account.assetList = self.generateAccountConfiguredAssets(account.address)
     updateBalance(account, self.getDefaultCurrency())
   self.events.emit("assetChanged", Args())
+
+proc addCustomToken*(self: WalletModel, symbol: string, enable: bool, address: string, name: string, decimals: int, color: string) =
+  addCustomToken(address, name, symbol, decimals, color)
 
 proc getTransfersByAddress*(self: WalletModel, address: string): seq[Transaction] =
  result = status_wallet.getTransfersByAddress(address)
