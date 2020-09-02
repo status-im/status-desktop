@@ -50,11 +50,7 @@ proc newMailserverModel*(events: EventEmitter): MailserverModel =
   result.events = events
   result.nodes = initTable[string, MailserverStatus]()
   result.selectedMailserver = ""
-  result.topics = initHashSet[string]()
   result.lock.initLock()
-
-proc addTopics*(self: MailserverModel, topics: seq[string]) =
-  for t in topics: self.topics.incl(t)
 
 proc trustPeer*(self: MailserverModel, enode:string) = 
   markTrustedPeer(enode)
@@ -132,10 +128,27 @@ proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
     self.nodes[peer] = MailserverStatus.Connected
     self.events.emit("peerConnected", MailserverArg(peer: peer))
 
-proc requestMessages*(self: MailserverModel) =
+proc requestMessages*(self: MailserverModel, topics: seq[string], fromValue: int64 = 0) =
   debug "Requesting messages from", mailserver=self.selectedMailserver
   let generatedSymKey = status_chat.generateSymKeyFromPassword()
-  status_mailservers.requestMessages(toSeq(self.topics), generatedSymKey, self.selectedMailserver, 1000)
+  status_mailservers.requestMessages(topics, generatedSymKey, self.selectedMailserver, 1000, fromValue)
+
+proc getMailserverTopics*(self: MailserverModel): seq[MailserverTopic] =
+  let response = status_mailservers.getMailserverTopics()
+  let topics = parseJson(response)["result"]
+  result = @[]
+  if topics.kind != JNull:
+    for topic in topics:
+      result.add(MailserverTopic(
+        topic: topic["topic"].getStr,
+        discovery: topic["discovery?"].getBool,
+        negotiated: topic["negotiated?"].getBool,
+        chatIds: topic["chat-ids"].to(seq[string]),
+        lastRequest: topic["last-request"].getInt
+      ))
+
+proc addMailserverTopic*(self: MailserverModel, topic: MailserverTopic) =
+  discard status_mailservers.addMailserverTopic(topic)
 
 proc autoConnect*(self: MailserverModel) =
   let mailserversReply = parseJson(status_mailservers.ping(500))["result"]

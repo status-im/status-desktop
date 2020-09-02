@@ -1,8 +1,10 @@
 import eventemitter, json, strutils, sequtils, tables, chronicles, sugar
 import libstatus/settings as status_settings
 import libstatus/chat as status_chat
+import libstatus/mailservers as status_mailservers
 import libstatus/stickers as status_stickers
 import libstatus/types
+import mailservers
 import profile/profile
 import chat/[chat, message]
 import ../signals/messages
@@ -29,7 +31,7 @@ type
     chats*: seq[Chat]
 
   TopicArgs* = ref object of Args
-    topics*: seq[string]
+    topics*: seq[MailserverTopic]
 
   MsgsLoadedArgs* = ref object of Args
     messages*: seq[Message]
@@ -91,11 +93,17 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
   status_chat.saveChat(chatId, chatType.isOneToOne, true, chat.color)
   let filterResult = status_chat.loadFilters(@[status_chat.buildFilter(chat)])
 
-  var topics:seq[string] = @[]
+  var topics:seq[MailserverTopic] = @[]
   let parsedResult = parseJson(filterResult)["result"]
   for topicObj in parsedResult:
     if ($topicObj["chatId"].getStr == chatId):
-      topics.add($topicObj["topic"].getStr)
+      topics.add(MailserverTopic(
+        topic: $topicObj["topic"].getStr,
+        discovery: topicObj["discovery"].getBool,
+        negotiated: topicObj["negotiated"].getBool,
+        chatIds: @[chatId],
+        lastRequest: 1
+      ))
 
   if (topics.len == 0): 
     warn "No topics found for chats. Cannot load past messages"
@@ -184,18 +192,26 @@ proc init*(self: ChatModel) =
 
   self.events.emit("chatsLoaded", ChatArgs(chats: chatList))
 
-  var topics:seq[string] = @[]
+  var topics:seq[MailserverTopic] = @[]
   let parsedResult = parseJson(filterResult)["result"]
   for topicObj in parsedResult:
     # Only add topics for chats the user has joined
     let topic_chat = topicObj["chatId"].getStr
     if self.channels.hasKey(topic_chat) and self.channels[topic_chat].isActive:
-      topics.add($topicObj["topic"].getStr)
+      
+      topics.add(MailserverTopic(
+        topic: $topicObj["topic"].getStr,
+        discovery: topicObj["discovery"].getBool,
+        negotiated: topicObj["negotiated"].getBool,
+        chatIds: @[self.channels[topic_chat].id],
+        lastRequest: 1
+      ))
 
   if (topics.len == 0): 
     warn "No topics found for chats. Cannot load past messages"
   else:
-    self.events.emit("mailserverTopics", TopicArgs(topics: topics));
+    self.events.once("mailserverAvailable") do(a: Args):
+      self.events.emit("mailserverTopics", TopicArgs(topics: topics));
 
 proc leave*(self: ChatModel, chatId: string) =
   self.removeChatFilters(chatId)

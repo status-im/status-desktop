@@ -1,6 +1,14 @@
 import json, times
 import core, utils
 
+type
+  MailserverTopic* = ref object
+    topic*: string
+    discovery*: bool
+    negotiated*: bool
+    chatIds*: seq[string]
+    lastRequest*: int64
+
 proc getMailservers*(): array[0..8, (string, string)] =
   result = [
     (
@@ -55,7 +63,11 @@ proc update*(peer: string) =
 proc delete*(peer: string) =
   discard callPrivateRPC("mailservers_deleteMailserver", %* [peer])
 
-proc requestMessages*(topics: seq[string], symKeyID: string, peer: string, numberOfMessages: int) =
+proc requestMessages*(topics: seq[string], symKeyID: string, peer: string, numberOfMessages: int, fromTimestamp: int64 = 0) =
+  var fromValue = (times.toUnix(times.getTime()) - 86400)
+  if fromTimestamp != 0:
+    fromValue = fromTimestamp
+
   echo callPrivateRPC("requestMessages".prefix, %* [
     {
         "topics": topics,
@@ -64,6 +76,18 @@ proc requestMessages*(topics: seq[string], symKeyID: string, peer: string, numbe
         "timeout": 30,
         "limit": numberOfMessages,
         "cursor": nil,
-        "from": (times.toUnix(times.getTime()) - 86400) # Unhardcode this. Need to keep the last fetch in a DB
+        "from": fromValue
     }
   ])
+
+proc getMailserverTopics*(): string = 
+  return callPrivateRPC("mailservers_getMailserverTopics", %*[])
+
+proc addMailserverTopic*(topic: MailserverTopic): string =
+  return callPrivateRPC("mailservers_addMailserverTopic", %*[{
+    "topic": topic.topic,
+    "discovery?": topic.discovery,
+    "negotiated?": topic.negotiated,
+    "chat-ids": topic.chatIds,
+    "last-request": topic.lastRequest
+  }])
