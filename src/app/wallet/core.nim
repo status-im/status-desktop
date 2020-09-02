@@ -5,12 +5,11 @@ import views/[asset_list, account_list, account_item]
 import ../../status/libstatus/wallet as status_wallet
 import ../../status/libstatus/settings as status_settings
 import ../../status/libstatus/types as status_types
-import ../../signals/types
-
+import ../../status/signals/types
 import ../../status/[status, wallet]
 import ../../status/wallet/account as WalletTypes
 
-type WalletController* = ref object of SignalSubscriber
+type WalletController* = ref object
   status: Status
   view*: WalletView
   variant*: QVariant
@@ -45,6 +44,6 @@ proc init*(self: WalletController) =
   self.view.setEtherscanLink(status_settings.getCurrentNetworkDetails().etherscanLink)
   self.view.setSigningPhrase(status_settings.getSetting[string](Setting.SigningPhrase))
 
-method onSignal(self: WalletController, data: Signal) =
-  debug "New signal received"
-  discard
+  self.status.events.on(SignalType.Wallet.event) do(e:Args):
+    var data = WalletSignal(e)
+    debug "New signal received"

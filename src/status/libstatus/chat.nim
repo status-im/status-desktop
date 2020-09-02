@@ -1,7 +1,7 @@
 import json, times, strutils, sequtils, chronicles, json_serialization
 import core, utils
 import ../chat/[chat, message]
-import ../../signals/messages
+import ../signals/messages
 import ./types
 import ./settings
 

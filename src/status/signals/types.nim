@@ -1,11 +1,10 @@
 import json, chronicles, json_serialization, tables
-import ../status/libstatus/types
-import ../status/chat/[chat, message]
-import ../status/profile/[profile, devices]
+import ../libstatus/types
+import ../chat/[chat, message]
+import ../profile/[profile, devices]
+import eventemitter
 
-type SignalSubscriber* = ref object of RootObj
-
-type Signal* = ref object of RootObj
+type Signal* = ref object of Args
   signalType* {.serializedFieldName("type").}: SignalType
 
 type StatusGoError* = object
@@ -22,10 +21,6 @@ type EnvelopeSentSignal* = ref object of Signal
 
 type EnvelopeExpiredSignal* = ref object of Signal
   messageIds*: seq[string]
-
-# Override this method
-method onSignal*(self: SignalSubscriber, data: Signal) {.base.} =
-  error "onSignal must be overriden in controller. Signal is unhandled"
 
 type MessageSignal* = ref object of Signal
   messages*: seq[Message]

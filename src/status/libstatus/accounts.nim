@@ -4,7 +4,7 @@ import nim_status, core
 import utils as utils
 import types as types
 import accounts/constants
-import ../../signals/types as signal_types
+import ../signals/types as signal_types
 import ../wallet/account
 
 proc getNetworkConfig(currentNetwork: string): JsonNode =

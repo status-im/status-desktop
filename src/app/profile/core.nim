@@ -1,7 +1,7 @@
 import NimQml, json, eventemitter, strutils, sugar, sequtils
 import json_serialization
 import ../../status/libstatus/mailservers as status_mailservers
-import ../../signals/types
+import ../../status/signals/types
 import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/types as status_types
 import ../../status/libstatus/settings as status_settings
@@ -14,7 +14,7 @@ import view
 import views/ens_manager
 import chronicles
 
-type ProfileController* = ref object of SignalSubscriber
+type ProfileController* = ref object
   view*: ProfileView
   variant*: QVariant
   status*: Status
@@ -70,11 +70,11 @@ proc init*(self: ProfileController, account: Account) =
     let contacts = self.status.contacts.getContacts()
     self.view.setContactList(contacts)
 
-method onSignal(self: ProfileController, data: Signal) =
-  let msgData = MessageSignal(data);
-  if msgData.contacts.len > 0:
-    # TODO: view should react to model changes
-    self.status.chat.updateContacts(msgData.contacts)
-    self.view.updateContactList(msgData.contacts)
-  if msgData.installations.len > 0:
-    self.view.addDevices(msgData.installations)
+  self.status.events.on(SignalType.Message.event) do(e: Args):
+    let msgData = MessageSignal(e);
+    if msgData.contacts.len > 0:
+      # TODO: view should react to model changes
+      self.status.chat.updateContacts(msgData.contacts)
+      self.view.updateContactList(msgData.contacts)
+    if msgData.installations.len > 0:
+      self.view.addDevices(msgData.installations)

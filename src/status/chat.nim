@@ -5,7 +5,7 @@ import libstatus/stickers as status_stickers
 import libstatus/types
 import profile/profile
 import chat/[chat, message]
-import ../signals/messages
+import signals/messages
 import ens
 import eth/common/eth_types
 

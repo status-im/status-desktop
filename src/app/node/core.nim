@@ -1,13 +1,14 @@
 import NimQml, chronicles
-import ../../signals/types
+import ../../status/signals/types
 import ../../status/[status, node, network]
 import ../../status/libstatus/types as status_types
+import eventemitter
 import view
 
 logScope:
   topics = "node"
 
-type NodeController* = ref object of SignalSubscriber
+type NodeController* = ref object
   status*: Status
   view*: NodeView
   variant*: QVariant
@@ -23,18 +24,8 @@ proc delete*(self: NodeController) =
   delete self.view
 
 proc init*(self: NodeController) =
-  discard
+  self.status.events.on(SignalType.Wallet.event) do(e:Args):
+    self.view.setLastMessage(WalletSignal(e).content)
 
-proc handleWalletSignal(self: NodeController, data: WalletSignal) =
-  self.view.setLastMessage(data.content)
-
-proc handleDiscoverySummary(self: NodeController, data: DiscoverySummarySignal) =
-  self.status.network.peerSummaryChange(data.enodes)
-
-method onSignal(self: NodeController, data: Signal) =
-  case data.signalType: 
-  of SignalType.Wallet: handleWalletSignal(self, WalletSignal(data))
-  of SignalType.DiscoverySummary: handleDiscoverySummary(self, DiscoverySummarySignal(data))
-  else:
-    warn "Unhandled signal received", signalType = data.signalType
-  
+  self.status.events.on(SignalType.DiscoverySummary.event) do(e:Args):
+    self.status.network.peerSummaryChange(DiscoverySummarySignal(e).enodes)

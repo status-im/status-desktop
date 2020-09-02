@@ -1,6 +1,6 @@
 import NimQml, Tables, json, nimcrypto, strformat, json_serialization, strutils
 import ../../status/libstatus/types as status_types
-import ../../signals/types
+import ../../status/signals/types
 import ../../status/accounts as AccountModel
 import ../../status/[status, wallet]
 import views/account_info

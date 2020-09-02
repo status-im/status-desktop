@@ -3,10 +3,10 @@ import ../../status/libstatus/types as status_types
 import ../../status/libstatus/accounts as status_accounts
 import ../../status/accounts as AccountModel
 import ../../status/status
-import ../../signals/types
+import ../../status/signals/types
 import view
 
-type OnboardingController* = ref object of SignalSubscriber
+type OnboardingController* = ref object
   view*: OnboardingView
   variant*: QVariant
   status: Status
@@ -21,24 +21,21 @@ proc delete*(self: OnboardingController) =
   delete self.variant
   delete self.view
 
-proc init*(self: OnboardingController) =
-  let accounts = self.status.accounts.generateAddresses()
-  for account in accounts:
-    self.view.addAccountToList(account)
-
 proc reset*(self: OnboardingController) =
   self.view.removeAccounts()
 
-proc handleNodeLogin(self: OnboardingController, data: Signal) =
+proc handleNodeLogin(self: OnboardingController, response: NodeSignal) =
   if not self.view.isCurrentFlow: return
-  let response = NodeSignal(data)
   if self.view.currentAccount.account != nil:
     self.view.setLastLoginResponse(response.event)
     if ?.response.event.error == "":
       self.status.events.emit("login", AccountArgs(account: self.view.currentAccount.account.toAccount))
 
-method onSignal(self: OnboardingController, data: Signal) =
-  case data.signalType: 
-  of SignalType.NodeLogin: handleNodeLogin(self, data)
-  else:
-    discard
+proc init*(self: OnboardingController) =
+  let accounts = self.status.accounts.generateAddresses()
+  for account in accounts:
+    self.view.addAccountToList(account)
+
+  self.status.events.on(SignalType.NodeLogin.event) do(e:Args):
+    self.handleNodeLogin(NodeSignal(e))
+  
