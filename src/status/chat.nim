@@ -7,7 +7,7 @@ import libstatus/types
 import mailservers
 import profile/profile
 import chat/[chat, message]
-import ../signals/messages
+import signals/messages
 import ens
 import eth/common/eth_types
 from eth/common/utils import parseAddress

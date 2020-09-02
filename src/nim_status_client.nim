@@ -6,8 +6,7 @@ import app/node/core as node
 import app/profile/core as profile
 import app/onboarding/core as onboarding
 import app/login/core as login
-import signals/core as signals
-
+import status/signals/core as signals
 import status/libstatus/types
 import nim_status
 import status/status as statuslib
@@ -51,7 +50,7 @@ proc mainProc() =
 
 
   let engine = newQQmlApplicationEngine()
-  let signalController = signals.newController(app)
+  let signalController = signals.newController(status)
 
   # We need this global variable in order to be able to access the application
   # from the non-closure callback passed to `libstatus.setSignalEventCallback`
@@ -85,7 +84,6 @@ proc mainProc() =
     profile.init(args.account)
     wallet.init()
     chat.init()
-
 
   engine.setRootContextProperty("loginModel", login.variant)
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
@@ -131,22 +129,6 @@ proc mainProc() =
 
     # 2. Re-init controllers that don't require a running node
     initControllers()
-
-
-  signalController.init()
-  signalController.addSubscriber(SignalType.Wallet, wallet)
-  signalController.addSubscriber(SignalType.Wallet, node)
-  signalController.addSubscriber(SignalType.DiscoverySummary, node)
-  signalController.addSubscriber(SignalType.Message, chat)
-  signalController.addSubscriber(SignalType.Message, profile)
-  signalController.addSubscriber(SignalType.DiscoverySummary, chat)
-  signalController.addSubscriber(SignalType.EnvelopeSent, chat)
-  signalController.addSubscriber(SignalType.EnvelopeExpired, chat)
-  signalController.addSubscriber(SignalType.NodeLogin, login)
-  signalController.addSubscriber(SignalType.NodeLogin, onboarding)
-  signalController.addSubscriber(SignalType.NodeStopped, login)
-  signalController.addSubscriber(SignalType.NodeStarted, login)
-  signalController.addSubscriber(SignalType.NodeReady, login)
 
   engine.setRootContextProperty("signals", signalController.variant)
 

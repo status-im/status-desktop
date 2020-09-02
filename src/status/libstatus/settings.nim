@@ -1,4 +1,4 @@
-import core, ./types, ../../signals/types as statusgo_types, ./accounts/constants, ./utils
+import core, ./types, ../signals/types as statusgo_types, ./accounts/constants, ./utils
 import json, tables, sugar, sequtils
 import json_serialization
 import locks

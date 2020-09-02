@@ -1,10 +1,10 @@
 import json, random, re, strutils, sequtils, sugar, chronicles
 import json_serialization
-import ../status/libstatus/accounts as status_accounts
-import ../status/libstatus/settings as status_settings
-import ../status/libstatus/types as status_types
-import ../status/chat/[chat, message]
-import ../status/profile/[profile, devices]
+import ../libstatus/accounts as status_accounts
+import ../libstatus/settings as status_settings
+import ../libstatus/types as status_types
+import ../chat/[chat, message]
+import ../profile/[profile, devices]
 import types
 
 proc toMessage*(jsonMsg: JsonNode): Message

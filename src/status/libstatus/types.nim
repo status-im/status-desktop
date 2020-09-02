@@ -21,6 +21,9 @@ type SignalType* {.pure.} = enum
   WhisperFilterAdded = "whisper.filter.added"
   Unknown
 
+proc event*(self:SignalType):string =
+  result = "signal:" & $self
+
 type GasPricePrediction* = object
   safeLow*: string
   standard*: string
