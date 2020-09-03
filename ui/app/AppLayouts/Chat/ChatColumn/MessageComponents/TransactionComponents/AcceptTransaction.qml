@@ -3,6 +3,8 @@ import "../../../../../../shared"
 import "../../../../../../imports"
 
 Item {
+    property int state: Constants.addressRequested
+
     width: parent.width
     height: childrenRect.height
 
@@ -13,14 +15,13 @@ Item {
     StyledText {
         id: acceptText
         color: Style.current.blue
-        text: qsTr("Accept and share address")
+        text: root.state === Constants.addressRequested ? qsTr("Accept and share address") : qsTr("Accept and send")
+        padding: Style.current.halfPadding
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
         font.weight: Font.Medium
         anchors.right: parent.right
         anchors.left: parent.left
-        bottomPadding: Style.current.halfPadding
-        topPadding: Style.current.halfPadding
         anchors.top: separator1.bottom
         font.pixelSize: 15
 
@@ -28,7 +29,12 @@ Item {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                console.log('Accept')
+                if (root.state === Constants.addressRequested) {
+                    // TODO get address from a modal instead
+                    chatsModel.acceptRequestAddressForTransaction(messageId, walletModel.getDefaultAccount())
+                } else if (root.state === Constants.transactionRequested) {
+                    console.log('Accept and send')
+                }
             }
         }
     }
@@ -48,8 +54,7 @@ Item {
         font.weight: Font.Medium
         anchors.right: parent.right
         anchors.left: parent.left
-        bottomPadding: Style.current.padding
-        topPadding: Style.current.padding
+        padding: Style.current.halfPadding
         anchors.top: separator2.bottom
         font.pixelSize: 15
 
@@ -57,7 +62,12 @@ Item {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                console.log('Decline')
+                if (root.state === Constants.addressRequested) {
+                    chatsModel.declineRequestAddressForTransaction(messageId)
+                } else if (root.state === Constants.transactionRequested) {
+                    chatsModel.declineRequestTransaction(messageId)
+                }
+
             }
         }
     }

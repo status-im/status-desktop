@@ -2,6 +2,7 @@ import eventemitter, json, strutils, sequtils, tables, chronicles, sugar
 import libstatus/settings as status_settings
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
+import libstatus/chatCommands as status_chat_commands
 import libstatus/stickers as status_stickers
 import libstatus/types
 import mailservers
@@ -237,19 +238,20 @@ proc clearHistory*(self: ChatModel, chatId: string) =
 proc setActiveChannel*(self: ChatModel, chatId: string) =
   self.events.emit("activeChannelChanged", ChatIdArg(chatId: chatId))
 
-proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "", contentType: int = ContentType.Message.int) =
-  var response = status_chat.sendChatMessage(chatId, msg, replyTo, contentType)
-  var (chats, messages) = self.processChatUpdate(parseJson(response))
+proc processMessageUpdateAfterSend(self: ChatModel, response: string): (seq[Chat], seq[Message])  =
+  result = self.processChatUpdate(parseJson(response))
+  var (chats, messages) = result
   self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
   for msg in messages:
     self.events.emit("sendingMessage", MessageArgs(id: msg.id, channel: msg.chatId))
 
+proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "", contentType: int = ContentType.Message.int) =
+  var response = status_chat.sendChatMessage(chatId, msg, replyTo, contentType)
+  discard self.processMessageUpdateAfterSend(response)
+
 proc sendImage*(self: ChatModel, chatId: string, image: string) =
   var response = status_chat.sendImageMessage(chatId, image)
-  var (chats, messages) = self.processChatUpdate(parseJson(response))
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
-  for msg in messages:
-    self.events.emit("sendingMessage", MessageArgs(id: msg.id, channel: msg.chatId))
+  discard self.processMessageUpdateAfterSend(response)
 
 proc addStickerToRecent*(self: ChatModel, sticker: Sticker, save: bool = false) =
   self.recentStickers.insert(sticker, 0)
@@ -362,3 +364,20 @@ proc muteChat*(self: ChatModel, chatId: string) =
 
 proc unmuteChat*(self: ChatModel, chatId: string) =
   discard status_chat.unmuteChat(chatId)
+
+proc processUpdateForTransaction*(self: ChatModel, messageId: string, response: string) =
+  var (chats, messages) = self.processMessageUpdateAfterSend(response)
+  self.events.emit("messageDeleted", MessageArgs(id: messageId, channel: chats[0].id))
+
+proc acceptRequestAddressForTransaction*(self: ChatModel, messageId: string, address: string) =
+  let response = status_chat_commands.acceptRequestAddressForTransaction(messageId, address)
+  self.processUpdateForTransaction(messageId, response)
+
+proc declineRequestAddressForTransaction*(self: ChatModel, messageId: string) =
+  let response = status_chat_commands.declineRequestAddressForTransaction(messageId)
+  self.processUpdateForTransaction(messageId, response)
+
+
+proc declineRequestTransaction*(self: ChatModel, messageId: string) =
+  let response = status_chat_commands.declineRequestTransaction(messageId)
+  self.processUpdateForTransaction(messageId, response)

@@ -18,11 +18,21 @@ type TextItem* = object
   literal*: string
   destination*: string
 
+type CommandParameters* = object
+  id*: string
+  fromAddress*: string
+  address*: string
+  contract*: string
+  value*: string
+  transactionHash*: string
+  commandState*: int
+  signature*: string
+
 type Message* = object
   alias*: string
   chatId*: string
   clock*: int
-  # commandParameters*:   # ???
+  commandParameters*: CommandParameters
   contentType*: ContentType
   ensName*: string
   fromAuthor*: string
@@ -31,7 +41,7 @@ type Message* = object
   lineCount*: int
   localChatId*: string
   messageType*: string    # ???
-  parsedText*: seq[TextItem] 
+  parsedText*: seq[TextItem]
   # quotedMessage:       # ???
   replace*: string        # ???
   responseTo*: string

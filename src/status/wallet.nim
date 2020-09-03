@@ -122,7 +122,6 @@ proc initAccounts*(self: WalletModel) =
     self.accounts.add(acc)
 
 proc getTotalFiatBalance*(self: WalletModel): string =
-  var newBalance = 0.0
   fmt"{self.totalBalance:.2f} {self.defaultCurrency}"
 
 proc convertValue*(self: WalletModel, balance: string, fromCurrency: string, toCurrency: string): float =

@@ -415,6 +415,9 @@ QtObject:
         self.currentSuggestions.setNewData(self.status.contacts.getContacts())
     self.calculateUnreadMessages()
 
+  proc deleteMessage*(self: ChatsView, channelId: string, messageId: string) =
+    self.messageList[channelId].deleteMessage(messageId)
+
   proc renameGroup*(self: ChatsView, newName: string) {.slot.} =
     self.status.chat.renameGroup(self.activeChannel.id, newName)
 
@@ -497,5 +500,15 @@ QtObject:
     if (self.chats.chats.len == 0): return false
     let selectedChannel = self.chats.getChannel(channelIndex)
     if (selectedChannel == nil): return false
-    result = selectedChannel.muted
+    result = selectedChannel.muted  
+
+  ### Chat commands functions ###
+  proc acceptRequestAddressForTransaction*(self: ChatsView, messageId: string , address: string) {.slot.} =
+    self.status.chat.acceptRequestAddressForTransaction(messageId, address)
+
+  proc declineRequestAddressForTransaction*(self: ChatsView, messageId: string) {.slot.} =
+    self.status.chat.declineRequestAddressForTransaction(messageId)
+
+  proc declineRequestTransaction*(self: ChatsView, messageId: string) {.slot.} =
+    self.status.chat.declineRequestTransaction(messageId)
     

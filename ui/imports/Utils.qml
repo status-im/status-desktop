@@ -2,8 +2,14 @@ pragma Singleton
 
 import QtQuick 2.13
 import "../shared/xss.js" as XSS
+import "./BigNumber/bignumber.js" as BigNumber
 
 QtObject {
+    function newBigNumber(number) {
+        // See here for docs: https://github.com/peterolson/BigInteger.js
+        return BigNumber.bigInt(number)
+    }
+
     function isHex(value) {
         return /^(-0x|0x)?[0-9a-fA-F]*$/i.test(value)
     }

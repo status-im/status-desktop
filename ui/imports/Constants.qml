@@ -24,14 +24,13 @@ QtObject {
     readonly property string generatedWalletType: "generated"
 
     // Transaction states
-    readonly property string pending: "pending"
-    readonly property string confirmed: "confirmed"
-    readonly property string unknown: "unknown"
-    readonly property string addressRequested: "addressRequested"
-    readonly property string addressReceived: "addressReceived"
-    readonly property string declined: "declined"
-    readonly property string shared: "shared"
-    readonly property string failure: "failure"
+    readonly property int addressRequested: 1
+    readonly property int declined: 2
+    readonly property int addressReceived: 3
+    readonly property int transactionRequested: 4
+    readonly property int transactionDeclined: 5
+    readonly property int pending: 6
+    readonly property int confirmed: 7
 
     readonly property var accountColors: [
         "#9B832F",

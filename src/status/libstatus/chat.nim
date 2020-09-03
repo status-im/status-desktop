@@ -58,7 +58,6 @@ proc chatMessages*(chatId: string, cursor: string = ""): (string, seq[Message]) 
     cursorVal = newJString(cursor)
 
   let rpcResult = parseJson(callPrivateRPC("chatMessages".prefix, %* [chatId, cursorVal, 20]))["result"]
-
   if rpcResult["messages"].kind != JNull:
     for jsonMsg in rpcResult["messages"]:
       messages.add(jsonMsg.toMessage)

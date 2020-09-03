@@ -4,11 +4,12 @@ import "../../../../../../shared"
 import "../../../../../../imports"
 
 Rectangle {
-    property string state: Constants.pending
+    property int state: Constants.pending
+    property bool outgoing: true
 
     id: root
-    width: childrenRect.width + 12
-    height: childrenRect.height
+    width: childrenRect.width + 24
+    height: 28
     border.width: 1
     border.color: Style.current.border
     radius: 24
@@ -19,11 +20,10 @@ Rectangle {
             switch (root.state) {
             case Constants.pending:
             case Constants.addressReceived:
-            case Constants.shared:
+            case Constants.transactionRequested:
             case Constants.addressRequested: return "../../../../../img/dotsLoadings.svg"
             case Constants.confirmed: return "../../../../../img/check.svg"
-            case Constants.unknown:
-            case Constants.failure:
+            case Constants.transactionDeclined:
             case Constants.declined: return "../../../../../img/exclamation.svg"
             default: return ""
             }
@@ -38,7 +38,7 @@ Rectangle {
     ColorOverlay {
         anchors.fill: stateImage
         source: stateImage
-        color: state == Constants.confirmed ? Style.current.transparent : Style.current.text
+        color: state === Constants.confirmed ? Style.current.transparent : Style.current.textColor
     }
 
     StyledText {
@@ -48,7 +48,7 @@ Rectangle {
                 return Style.current.danger
             }
             if (root.state === Constants.confirmed || root.state === Constants.declined) {
-                return Style.current.text
+                return Style.current.textColor
             }
 
             return Style.current.secondaryText
@@ -59,9 +59,10 @@ Rectangle {
             case Constants.confirmed: return qsTr("Confirmed")
             case Constants.unknown: return qsTr("Unknown token")
             case Constants.addressRequested: return qsTr("Address requested")
-            case Constants.addressReceived: return qsTr("Address received")
+            case Constants.transactionRequested: return qsTr("Waiting to accept")
+            case Constants.addressReceived: return (!root.outgoing ? qsTr("Address shared") : qsTr("Address received"))
+            case Constants.transactionDeclined:
             case Constants.declined: return qsTr("Transaction declined")
-            case Constants.shared: return qsTr("Shared ‘Other Account’")
             case Constants.failure: return qsTr("Failure")
             default: return qsTr("Unknown state")
             }
@@ -69,8 +70,7 @@ Rectangle {
         font.weight: Font.Medium
         anchors.left: stateImage.right
         anchors.leftMargin: 4
-        bottomPadding: Style.current.halfPadding
-        topPadding: Style.current.halfPadding
+        anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: 13
     }
 }

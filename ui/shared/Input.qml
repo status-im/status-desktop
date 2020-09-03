@@ -18,6 +18,7 @@ Item {
     property int iconHeight: 24
     property int iconWidth: 24
     property bool copyToClipboard: false
+    property bool readOnly: false
 
     readonly property bool hasIcon: icon.toString() !== ""
     readonly property var forceActiveFocus: function () {
@@ -65,7 +66,7 @@ Item {
             if (!!validationError) {
                 return Style.current.danger
             }
-            if (inputValue.focus) {
+            if (!inputBox.readOnly && inputValue.focus) {
                 return Style.current.inputBorderFocus
             }
             return Style.current.transparent
@@ -87,6 +88,7 @@ Item {
             leftPadding: inputBox.hasIcon ? iconWidth + 20 : Style.current.padding
             selectByMouse: true
             font.pixelSize: fontPixelSize
+            readOnly: inputBox.readOnly
             background: Rectangle {
                 color: Style.current.transparent
             }
