@@ -66,35 +66,94 @@ Rectangle {
         emojiEvent = emojiHandler(emojiEvent, {key: null});
     }
 
+    function countEmojis(value) {
+        let match = value.match(/<img class=\"emoji\" draggable=\"false\" alt=\"(.+?)\" src=\"qrc:\/imports\/twemoji\/.+?"\/>/g, "$1");
+        var length = 0;
+
+        if (match && match.length > 0) {
+            for (var i = 0; i < match.length; i++) {
+                var deparse = Emoji.deparse(match[i]);
+                length += deparse.length;
+            }
+            console.log("cursorPosition: ", length - match.length, "[", length,"]", "[",match.length,"]");
+            length = length - match.length;
+        }
+        return length;
+    }
+
+    function extraPolatePosition(text, cursorPosition) {
+        var bracketEvent = false;
+        var length = 0;
+
+        for (var i =0; i < text.length;) {
+
+            if (length >= cursorPosition)
+                break;
+
+            if (!bracketEvent && text.charAt(i) !== '<')  {
+                i++;
+                length++;
+            } else if (!bracketEvent && text.charAt(i) === '<') {
+                bracketEvent = true;
+                i++;
+            } else if (bracketEvent && text.charAt(i) !== '>') {
+                i++;
+            } else if (bracketEvent && text.charAt(i) === '>') {
+                bracketEvent = false;
+                i++;
+                length++;
+            }
+        }
+
+        var substr = text.substr(0, i);
+        substr = substr.replace(/<img class=\"emoji\" draggable=\"false\" alt=\"(.+?)\" src=\"qrc:\/imports\/twemoji\/.+?"\/>/g, "$1");
+        return substr;
+    }
+
+    function deparseFromParse(substr) {
+        return substr.replace(/<img class=\"emoji\" draggable=\"false\" alt=\"(.+?)\" src=\"qrc:\/imports\/twemoji\/.+?"\/>/g, "$1");
+    }
+
     function emojiHandler(emojiEvent, event) {
-        var msg = chatsModel.plainText(Emoji.deparse(txtData.text).trim());
+        var deparse = Emoji.deparse(txtData.text);
+        var plain = chatsModel.plainText(deparse)
+        var TheText = Emoji.parse(plain, '26x26');
+
+        var text = extraPolatePosition(TheText, txtData.cursorPosition);
+        var cursorPosition = countEmojis(text) + txtData.cursorPosition;
+        var msg = chatsModel.plainText(deparseFromParse(text));
+
+        console.log("MESSAGE: [", msg, "]", "[", msg.length, "]", txtData.cursorPosition); 
 
         // check if user has placed cursor near valid emoji colon token
-        var index = msg.lastIndexOf(':', txtData.cursorPosition);
-        if (index > 0) {
-            var substr = msg.substr(index, txtData.cursorPosition - index);
-            console.log("MESSAGE: ", msg, txtData.cursorPosition, index, substr, validSubstr(substr));
-            emojiEvent = validSubstr(substr)
+        var index = msg.lastIndexOf(':', cursorPosition);
+        if (index >= 0) {
+            var substr = msg.substr(index, cursorPosition - index);
+            console.log("MESSAGE: [", msg, "]", "[", msg.length, "]", txtData.cursorPosition, index, substr, validSubstr(substr));
+            emojiEvent = validSubstr(substr);
         } 
 
         console.log("EVENT: ", event.key, Qt.Key_Colon, event.key === Qt.Key_Colon, emojiEvent);
 
         // state machine to handle different forms of the emoji event state
         if (emojiEvent === false && event.key === Qt.Key_Colon) {
-            if (msg.length <= 1 || isSpace(msg.charAt(txtData.cursorPosition - 1)) === true) {
+            if (msg.length <= 1 || isSpace(msg.charAt(cursorPosition - 1)) === true) {
                 return true;
             }
             return false;
         } else if (emojiEvent === true && event.key === Qt.Key_Colon) {
-            var index = msg.lastIndexOf(':', txtData.cursorPosition - 2);
-            if (index >= 0) {
-                var shortname = msg.substr(index, txtData.cursorPosition);
+            var index = msg.lastIndexOf(':', cursorPosition - 1);
+            console.log("BEGIN SENTENCE: ", index, cursorPosition, txtData.cursorPosition);
+            if (index >= 0 && cursorPosition > 0) {
+                var shortname = msg.substr(index, cursorPosition);
                 var codePoint = getEmojiUnicodeFromShortname(shortname);
                 var newText = (codePoint !== undefined) ? Emoji.fromCodePoint(codePoint) : shortname;
 
-                txtData.remove(index, txtData.cursorPosition);
-                txtData.insert(index, newText);
-
+                var newMsg = msg.replace(shortname, newText)
+                console.log("INDEX AND CURSOR: ", index, cursorPosition, "[",shortname,"]", "[",msg,"]", "[",newMsg,"]");
+                txtData.remove(0, cursorPosition);
+                txtData.insert(0, Emoji.parse(newMsg, '26x26'));
+                
                 if (event) event.accepted = true;
                 return false;
             }
@@ -115,6 +174,7 @@ Rectangle {
     function validSubstr(substr) {
         for(var i = 0; i < substr.length; i++) {
             var c = substr.charAt(i);
+            console.log("isSpace: ", isSpace(c), "isPunct: ", isPunct(c))
             if (isSpace(c) === true || isPunct(c) === true)
                 return false;
         }
@@ -126,9 +186,7 @@ Rectangle {
             (key >= Qt.Key_Exclam && key <= Qt.Key_Slash) || 
             (key >= Qt.Key_Semicolon && key <= Qt.Key_Question) ||
             (key >= Qt.Key_BracketLeft && key <= Qt.Key_hyphen))
-        {
             return false;
-        }
         return true;
     }
 
