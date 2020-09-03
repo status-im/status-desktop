@@ -24,6 +24,10 @@ proc handleChatEvents(self: ChatController) =
     var evArgs = ChatUpdateArgs(e)
     self.view.updateChats(evArgs.chats, false)
 
+  self.status.events.on("messageDeleted") do(e: Args):
+    var evArgs = MessageArgs(e)
+    self.view.deleteMessage(evArgs.channel, evArgs.id)
+
   self.status.events.on("chatHistoryCleared") do(e: Args):
     var args = ChannelArgs(e)
     self.view.clearMessages(args.chat.id)
