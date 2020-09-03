@@ -1,10 +1,11 @@
-import json, options, httpclient, json, json_serialization, strformat, stint, strutils, sequtils, chronicles, parseutils, tables
-import core, types, utils
+import json, json, options, json_serialization, stint, chronicles
+import core, types, utils, strutils, strformat
 from nim_status import validateMnemonic, startWallet
 import ../wallet/account
 import ./contracts as contractMethods
 import eth/common/eth_types
 import ./types
+import ../signals/types as signal_types
 
 proc getWalletAccounts*(): seq[WalletAccount] =
   try:

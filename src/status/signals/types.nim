@@ -15,6 +15,11 @@ type NodeSignal* = ref object of Signal
 
 type WalletSignal* = ref object of Signal
   content*: string
+  eventType*: string
+  blockNumber*: int
+  accounts*: seq[string]
+  # newTransactions*: ???
+  erc20*: bool
 
 type EnvelopeSentSignal* = ref object of Signal
   messageIds*: seq[string]

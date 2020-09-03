@@ -36,14 +36,13 @@ proc getEthBalance(address: string): string =
   var balance = status_wallet.getBalance(address)
   result = status_wallet.hex2token(balance, 18)
 
-proc getBalance*(symbol: string, accountAddress: string, tokenAddress: string): string =
+proc getBalance*(symbol: string, accountAddress: string, tokenAddress: string, refreshCache: bool): string =
   let cacheKey = fmt"{symbol}-{accountAddress}-{tokenAddress}"
-  if balanceManager.tokenBalances.isCached(cacheKey):
+  if not refreshCache and balanceManager.tokenBalances.isCached(cacheKey):
     return balanceManager.tokenBalances.get(cacheKey)
 
   if symbol == "ETH":
     let ethBalance = getEthBalance(accountAddress)
-    balanceManager.tokenBalances.cacheValue(cacheKey, ethBalance)
     return ethBalance
 
   result = $status_tokens.getTokenBalance(tokenAddress, accountAddress)
@@ -59,21 +58,21 @@ proc convertValue*(balance: string, fromCurrency: string, toCurrency: string): f
   balanceManager.pricePairs.cacheValue(cacheKey, fiat_crypto_price)
   parseFloat(balance) * parseFloat(fiat_crypto_price)
 
-proc updateBalance*(asset: Asset, currency: string) =
-  var token_balance = getBalance(asset.symbol, asset.accountAddress, asset.address)
+proc updateBalance*(asset: Asset, currency: string, refreshCache: bool) =
+  var token_balance = getBalance(asset.symbol, asset.accountAddress, asset.address, refreshCache)
   let fiat_balance = convertValue(token_balance, asset.symbol, currency)
   asset.value = token_balance
   asset.fiatBalanceDisplay = fmt"{fiat_balance:.2f} {currency}"
   asset.fiatBalance = fmt"{fiat_balance:.2f}"
 
-proc updateBalance*(account: WalletAccount, currency: string) =
+proc updateBalance*(account: WalletAccount, currency: string, refreshCache: bool = false) =
   try:
-    let eth_balance = getBalance("ETH", account.address, "")
+    let eth_balance = getBalance("ETH", account.address, "", refreshCache)
     let usd_balance = convertValue(eth_balance, "ETH", currency)
     var totalAccountBalance = usd_balance
     account.realFiatBalance = totalAccountBalance
     account.balance = fmt"{totalAccountBalance:.2f} {currency}"
     for asset in account.assetList:
-      updateBalance(asset, currency)
+      updateBalance(asset, currency, refreshCache)
   except RpcException:
     error "Error in updateBalance", message = getCurrentExceptionMsg()

@@ -25,7 +25,7 @@ proc delete*(self: NodeController) =
 
 proc init*(self: NodeController) =
   self.status.events.on(SignalType.Wallet.event) do(e:Args):
-    self.view.setLastMessage(WalletSignal(e).content)
+    self.view.setLastMessage($WalletSignal(e).blockNumber)
 
   self.status.events.on(SignalType.DiscoverySummary.event) do(e:Args):
     self.status.network.peerSummaryChange(DiscoverySummarySignal(e).enodes)

@@ -107,12 +107,12 @@ proc generateAccountConfiguredAssets*(self: WalletModel, accountAddress: string)
     assets.add(existingToken)
   assets
 
-proc populateAccount*(self: WalletModel, walletAccount: var WalletAccount, balance: string) =
+proc populateAccount*(self: WalletModel, walletAccount: var WalletAccount, balance: string,  refreshCache: bool = false) =
   var assets: seq[Asset] = self.generateAccountConfiguredAssets(walletAccount.address)
   walletAccount.balance = fmt"{balance} {self.defaultCurrency}"
   walletAccount.assetList = assets
   walletAccount.realFiatBalance = 0.0
-  updateBalance(walletAccount, self.getDefaultCurrency())
+  updateBalance(walletAccount, self.getDefaultCurrency(), refreshCache)
 
 proc newAccount*(self: WalletModel, name: string, address: string, iconColor: string, balance: string, publicKey: string): WalletAccount =
   var assets: seq[Asset] = self.generateAccountConfiguredAssets(address)
@@ -125,8 +125,15 @@ proc initAccounts*(self: WalletModel) =
   let accounts = status_wallet.getWalletAccounts()
   for account in accounts:
     var acc = WalletAccount(account)
+    
     self.populateAccount(acc, "")
     self.accounts.add(acc)
+
+proc updateAccount*(self: WalletModel, address: string) =
+  for acc in self.accounts.mitems:
+    if acc.address == address:
+      self.populateAccount(acc, "", true)
+  self.events.emit("accountsUpdated", Args())
 
 proc getTotalFiatBalance*(self: WalletModel): string =
   var newBalance = 0.0
