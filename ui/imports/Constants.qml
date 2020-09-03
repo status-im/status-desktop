@@ -33,6 +33,8 @@ QtObject {
     readonly property int pending: 6
     readonly property int confirmed: 7
 
+    readonly property string zeroAddress: "0x0000000000000000000000000000000000000000"
+
     readonly property var accountColors: [
         "#9B832F",
         "#D37EF4",

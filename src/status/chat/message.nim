@@ -44,7 +44,7 @@ type Message* = object
   messageType*: string    # ???
   parsedText*: seq[TextItem]
   # quotedMessage:       # ???
-  replace*: string        # ???
+  replace*: string
   responseTo*: string
   rtl*: bool              # ???
   seen*: bool             # ???

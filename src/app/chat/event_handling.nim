@@ -18,6 +18,10 @@ proc handleChatEvents(self: ChatController) =
     self.view.updateUsernames(evArgs.contacts)
     self.view.updateChats(evArgs.chats)
     self.view.pushMessages(evArgs.messages)
+    for message in evArgs.messages:
+      if (message.replace != ""):
+        # Delete the message taht this message replaces
+        self.view.deleteMessage(message.chatId, message.replace)
     self.view.pushReactions(evArgs.emojiReactions)
 
   self.status.events.on("channelUpdate") do(e: Args):

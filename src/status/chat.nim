@@ -4,6 +4,7 @@ import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
 import libstatus/chatCommands as status_chat_commands
 import libstatus/stickers as status_stickers
+import libstatus/accounts/constants as constants
 import libstatus/types
 import mailservers
 import profile/profile
@@ -411,7 +412,16 @@ proc declineRequestAddressForTransaction*(self: ChatModel, messageId: string) =
   let response = status_chat_commands.declineRequestAddressForTransaction(messageId)
   self.processUpdateForTransaction(messageId, response)
 
-
 proc declineRequestTransaction*(self: ChatModel, messageId: string) =
   let response = status_chat_commands.declineRequestTransaction(messageId)
   self.processUpdateForTransaction(messageId, response)
+
+proc requestAddressForTransaction*(self: ChatModel, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
+  let address = if (tokenAddress == constants.ZERO_ADDRESS): "" else: tokenAddress
+  let response = status_chat_commands.requestAddressForTransaction(chatId, fromAddress, amount, address)
+  discard self.processMessageUpdateAfterSend(response)
+
+proc requestTransaction*(self: ChatModel, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
+  let address = if (tokenAddress == constants.ZERO_ADDRESS): "" else: tokenAddress
+  let response = status_chat_commands.requestTransaction(chatId, fromAddress, amount, address)
+  discard self.processMessageUpdateAfterSend(response)

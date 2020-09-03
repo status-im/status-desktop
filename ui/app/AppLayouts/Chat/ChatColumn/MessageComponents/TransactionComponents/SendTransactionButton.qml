@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import "../../../../../../shared"
 import "../../../../../../imports"
+import "../../ChatComponents"
 
 Item {
     width: parent.width
@@ -27,9 +28,40 @@ Item {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                console.log('Sign')
+                signTransactionModal.open()
             }
         }
+    }
+
+    SignTransactionModal {
+        id: signTransactionModal
+        onOpened: {
+          walletModel.getGasPricePredictions()
+        }
+        selectedAccount: {
+            return {
+                name: walletModel.getAccountValueByAddress(commandParametersObject.fromAddress, 'name'),
+                address: commandParametersObject.fromAddress,
+                iconColor: walletModel.getAccountValueByAddress(commandParametersObject.fromAddress, 'iconColor')
+            }
+        }
+        selectedRecipient: {
+            return {
+                address: commandParametersObject.address,
+                identicon: chatsModel.activeChannel.identicon,
+                name: chatsModel.activeChannel.name,
+                type: RecipientSelector.Type.Contact
+            }
+        }
+        selectedAsset: {
+                return {
+                name: token.name,
+                symbol: token.symbol,
+                address: commandParametersObject.contract
+            }
+        }
+        selectedAmount: tokenAmount
+        selectedFiatAmount: fiatValue
     }
 }
 
