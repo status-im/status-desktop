@@ -198,6 +198,19 @@ proc toMessage*(jsonMsg: JsonNode): Message =
 
   if message.contentType == ContentType.Sticker:
     message.stickerHash = jsonMsg["sticker"]["hash"].getStr
+    .join(" ")
+
+  if message.contentType == ContentType.Transaction:
+    message.commandParameters = CommandParameters(
+      id: jsonMsg["commandParameters"]["id"].getStr,
+      fromAddress: jsonMsg["commandParameters"]["from"].getStr,
+      address: jsonMsg["commandParameters"]["address"].getStr,
+      contract: jsonMsg["commandParameters"]["contract"].getStr,
+      value: jsonMsg["commandParameters"]["value"].getStr,
+      transactionHash: jsonMsg["commandParameters"]["transactionHash"].getStr,
+      commandState: jsonMsg["commandParameters"]["commandState"].getInt,
+      signature: jsonMsg["commandParameters"]["signature"].getStr
+    )
 
   result = message
 

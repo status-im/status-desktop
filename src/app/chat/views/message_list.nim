@@ -1,4 +1,4 @@
-import NimQml, Tables, sets
+import NimQml, Tables, sets, json
 import ../../../status/status
 import ../../../status/accounts
 import ../../../status/chat
@@ -31,6 +31,7 @@ type
     Audio = UserRole + 20
     AudioDurationMs = UserRole + 21
     EmojiReactions = UserRole + 22
+    CommandParameters = UserRole + 23
 
 QtObject:
   type
@@ -68,6 +69,14 @@ QtObject:
     result.timedoutMessages = initHashSet[string]()
     result.status = status
     result.setup
+
+  proc deleteMessage*(self: ChatMessageList, messageId: string) =
+    let messageIndex = self.messageIndex[messageId]
+    self.beginRemoveRows(newQModelIndex(), messageIndex, messageIndex)
+    self.messages.delete(messageIndex)
+    self.messageIndex.del(messageId)
+    self.messageReactions.del(messageId)
+    self.endRemoveRows()
 
   proc resetTimeOut*(self: ChatMessageList, messageId: string) =
     if not self.messageIndex.hasKey(messageId): return
@@ -126,6 +135,17 @@ QtObject:
       of ChatMessageRoles.Audio: result = newQVariant(message.audio)
       of ChatMessageRoles.AudioDurationMs: result = newQVariant(message.audioDurationMs)
       of ChatMessageRoles.EmojiReactions: result = newQVariant(self.getReactions(message.id))
+      # Pass the command parameters as a JSON string
+      of ChatMessageRoles.CommandParameters: result = newQVariant($(%*{
+        "id": message.commandParameters.id,
+        "fromAddress": message.commandParameters.fromAddress,
+        "address": message.commandParameters.address,
+        "contract": message.commandParameters.contract,
+        "value": message.commandParameters.value,
+        "transactionHash": message.commandParameters.transactionHash,
+        "commandState": message.commandParameters.commandState,
+        "signature": message.commandParameters.signature
+      }))
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -150,7 +170,8 @@ QtObject:
       ChatMessageRoles.Image.int: "image",
       ChatMessageRoles.Audio.int: "audio",
       ChatMessageRoles.AudioDurationMs.int: "audioDurationMs",
-      ChatMessageRoles.EmojiReactions.int: "emojiReactions"
+      ChatMessageRoles.EmojiReactions.int: "emojiReactions",
+      ChatMessageRoles.CommandParameters.int: "commandParameters"
     }.toTable
 
   proc getMessageIndex(self: ChatMessageList, messageId: string): int {.slot.} =

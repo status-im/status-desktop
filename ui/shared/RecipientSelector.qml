@@ -13,7 +13,7 @@ Item {
     property alias label: txtLabel.text
     // If supplied, additional info will be displayed top-right in danger colour (red)
     property alias additionalInfo: txtAddlInfo.text
-    property var selectedRecipient: { }
+    property var selectedRecipient
     property bool readOnly: false
     height: (readOnly ? inpReadOnly.height : inpAddress.height) + txtLabel.height
     //% "Invalid ethereum address"
@@ -106,7 +106,7 @@ Item {
             textField.verticalAlignment: TextField.AlignVCenter
             textField.font.pixelSize: 15
             textField.color: Style.current.secondaryText
-            textField.readOnly: true
+            readOnly: true
             validationErrorAlignment: TextEdit.AlignRight
             validationErrorTopMargin: 8
             customHeight: 56

@@ -79,6 +79,8 @@ Item {
                     return fetchMoreMessagesButtonComponent
                 case Constants.systemMessagePrivateGroupType:
                     return privateGroupHeaderComponent
+                case Constants.transactionType:
+                    return transactionBubble
                 default:
                     return appSettings.compactMode ? compactMessageComponent : messageComponent
             }
@@ -166,6 +168,12 @@ Item {
         CompactMessage {
             clickMessage: messageItem.clickMessage
         }
+    }
+
+    // Transaction bubble
+    Component {
+        id: transactionBubble
+        TransactionBubble {}
     }
 }
 

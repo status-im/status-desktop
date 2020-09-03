@@ -4,7 +4,7 @@ import "../../../../../../imports"
 
 Item {
     width: parent.width
-    height: childrenRect.height
+    height: childrenRect.height + Style.current.halfPadding
 
     Separator {
         id: separator
@@ -19,9 +19,8 @@ Item {
         font.weight: Font.Medium
         anchors.right: parent.right
         anchors.left: parent.left
-        bottomPadding: Style.current.halfPadding
         topPadding: Style.current.halfPadding
-        anchors.top: separator1.bottom
+        anchors.top: separator.bottom
         font.pixelSize: 15
 
         MouseArea {
