@@ -1,6 +1,7 @@
 import json, os, nimcrypto, uuids, json_serialization, chronicles, strutils
 
-import nim_status, core
+from nim_status import multiAccountGenerateAndDeriveAddresses, generateAlias, identicon, saveAccountAndLogin, login, openAccounts
+import core
 import utils as utils
 import types as types
 import accounts/constants
@@ -42,10 +43,10 @@ proc generateAddresses*(n = 5): seq[GeneratedAccount] =
   result = Json.decode(generatedAccounts, seq[GeneratedAccount])
 
 proc generateAlias*(publicKey: string): string =
-  result = $nim_status.generateAlias(publicKey.cstring)
+  result = $nim_status.generateAlias(publicKey)
 
 proc generateIdenticon*(publicKey: string): string =
-  result = $nim_status.identicon(publicKey.cstring)
+  result = $nim_status.identicon(publicKey)
 
 proc ensureDir(dirname: string) =
   if not existsDir(dirname):
