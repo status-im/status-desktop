@@ -248,6 +248,21 @@ QtObject:
   proc defaultCurrency*(self: WalletView): string {.slot.} =
     self.status.wallet.getDefaultCurrency()
 
+  proc getAccountValueByAddress*(self: WalletView, address: string, arg: string): string {.slot.} =
+    let index = self.accounts.getAccountindexByAddress(address)
+    if index == -1: return
+    let account = self.accounts.getAccount(index)
+    case arg:
+      of "name": result = account.name
+      of "iconColor": result = account.iconColor
+      of "balance": result = account.balance
+      of "path": result = account.path
+      of "walletType": result = account.walletType
+      of "publicKey": result = account.publicKey
+      of "realFiatBalance": result = $account.realFiatBalance
+      of "wallet": result = $account.wallet
+      of "chat": result = $account.wallet
+
   proc defaultCurrencyChanged*(self: WalletView) {.signal.}
 
   proc setDefaultCurrency*(self: WalletView, currency: string) {.slot.} =

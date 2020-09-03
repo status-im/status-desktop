@@ -9,3 +9,9 @@ proc declineRequestAddressForTransaction*(messageId: string): string =
 
 proc declineRequestTransaction*(messageId: string): string =
   result = callPrivateRPC("declineRequestTransaction".prefix, %* [messageId])
+
+proc requestAddressForTransaction*(chatId: string, fromAddress: string, amount: string, tokenAddress: string): string =
+  result = callPrivateRPC("requestAddressForTransaction".prefix, %* [chatId, fromAddress, amount, tokenAddress])
+
+proc requestTransaction*(chatId: string, fromAddress: string, amount: string, tokenAddress: string): string =
+  result = callPrivateRPC("requestTransaction".prefix, %* [chatId, amount, tokenAddress, fromAddress])

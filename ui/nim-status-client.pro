@@ -116,8 +116,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandButton.qml \
+    app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandModal.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandsPopup.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatInputButton.qml \
+    app/AppLayouts/Chat/ChatColumn/ChatComponents/RequestModal.qml \
+    app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml \
     app/AppLayouts/Chat/ChatColumn/CompactMessage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChannelIdentifier.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatImage.qml \

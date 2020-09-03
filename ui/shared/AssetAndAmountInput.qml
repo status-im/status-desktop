@@ -21,7 +21,7 @@ Item {
     property var getFiatValue: function () {}
     property var getCryptoValue: function () {}
     property bool isDirty: false
-    property bool isValid: false
+    property bool isValid: true
     property var reset: function() {}
 
     function resetInternal() {
@@ -31,7 +31,7 @@ Item {
         inputAmount.resetInternal()
         txtBalanceDesc.color = Style.current.secondaryText
         txtBalance.color = Qt.binding(function() { return txtBalance.hovered ? Style.current.textColor : Style.current.secondaryText })
-        isValid = false
+        isValid = true
     }
 
     id: root
@@ -41,6 +41,8 @@ Item {
     anchors.left: parent.left
 
     function validate(checkDirty) {
+        // TODO remove me
+        return true
         let isValid = true
         let error = ""
         const hasTyped = checkDirty ? isDirty : true

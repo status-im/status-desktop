@@ -71,6 +71,7 @@ QtObject:
     result.setup
 
   proc deleteMessage*(self: ChatMessageList, messageId: string) =
+    if not self.messageIndex.hasKey(messageId): return
     let messageIndex = self.messageIndex[messageId]
     self.beginRemoveRows(newQModelIndex(), messageIndex, messageIndex)
     self.messages.delete(messageIndex)

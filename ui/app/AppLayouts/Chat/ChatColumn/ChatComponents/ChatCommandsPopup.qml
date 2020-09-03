@@ -3,7 +3,6 @@ import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 import "../../../../../imports"
 import "../../../../../shared"
-import "../../../Wallet"
 
 Popup {
     id: root
@@ -42,13 +41,24 @@ Popup {
             //% "Send transaction"
             text: qsTrId("send-transaction")
             onClicked: function () {
-                sendModal.selectedRecipient = {
-                    address: "0x9ce0056c5fc6bb9459a4dcfa35eaad8c1fee5ce9",
+                chatCommandModal.commandTitle = qsTr("Send")
+                chatCommandModal.title = chatCommandModal.commandTitle
+                chatCommandModal.finalButtonLabel = qsTr("Request Address")
+                chatCommandModal.selectedRecipient = {
+                    address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
                     identicon: chatsModel.activeChannel.identicon,
                     name: chatsModel.activeChannel.name,
                     type: RecipientSelector.Type.Contact
                 }
-                sendModal.open()
+                chatCommandModal.sendChatCommand = function(address, amount, tokenAddress) {
+                    chatsModel.requestAddressForTransaction(chatsModel.activeChannel.id,
+                                                            address,
+                                                            amount,
+                                                            tokenAddress)
+                    chatCommandModal.close()
+                }
+                chatCommandModal.open()
+                root.close()
             }
         }
 
@@ -58,21 +68,30 @@ Popup {
             rotatedImage: true
             //% "Request transaction"
             text: qsTrId("request-transaction")
+            onClicked: function () {
+                chatCommandModal.commandTitle = qsTr("Request")
+                chatCommandModal.title = chatCommandModal.commandTitle
+                chatCommandModal.finalButtonLabel = qsTr("Request")
+                chatCommandModal.selectedRecipient = {
+                    address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
+                    identicon: chatsModel.activeChannel.identicon,
+                    name: chatsModel.activeChannel.name,
+                    type: RecipientSelector.Type.Contact
+                }
+                chatCommandModal.sendChatCommand = function(address, amount, tokenAddress) {
+                    chatsModel.requestTransaction(chatsModel.activeChannel.id,
+                                                  address,
+                                                  amount,
+                                                  tokenAddress)
+                    chatCommandModal.close()
+                }
+                chatCommandModal.open()
+                root.close()
+            }
         }
 
-        SendModal {
-            id: sendModal
-            onOpened: {
-                walletModel.getGasPricePredictions()
-            }
-            selectedRecipient: {
-                return {
-                   address: "0x9ce0056c5fc6bb9459a4dcfa35eaad8c1fee5ce9",
-                   identicon: chatsModel.activeChannel.identicon,
-                   name: chatsModel.activeChannel.name,
-                   type: RecipientSelector.Type.Contact
-               }
-            }
+        ChatCommandModal {
+            id: chatCommandModal
         }
     }
 }

@@ -7,16 +7,14 @@ import "../../../Wallet/data"
 Item {
     property var commandParametersObject: {
         try {
-            var result = JSON.parse(commandParameters)
-
-            return result
+            return JSON.parse(commandParameters)
         } catch (e) {
             console.error('Error parsing command parameters')
             console.error('JSON:', commandParameters)
             console.error('Error:', e)
             return {
                 id: "",
-                from: "",
+                fromAddress: "",
                 address: "",
                 contract: "",
                 value: "",
@@ -31,7 +29,7 @@ Item {
             return {
                 symbol:   "ETH",
                 name:     "Ethereum",
-                address:  "0x0000000000000000000000000000000000000000",
+                address:  Constants.zeroAddress,
                 decimals: 18,
                 hasIcon: true
             }
