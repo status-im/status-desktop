@@ -61,3 +61,15 @@
 [submodule "vendor/nim-status"]
 	path = vendor/nim-status
 	url = https://github.com/status-im/nim-status
+[submodule "vendor/nim-secp256k1"]
+	path = vendor/nim-secp256k1
+	url = https://github.com/status-im/nim-secp256k1
+[submodule "vendor/chroma"]
+	path = vendor/chroma
+	url = https://github.com/treeform/chroma
+[submodule "vendor/nimPNG"]
+	path = vendor/nimPNG
+	url = https://github.com/jangko/nimPNG/
+[submodule "vendor/nimage"]
+	path = vendor/nimage
+	url = https://github.com/Ethosa/nimage/
