@@ -218,11 +218,12 @@ rcc:
 nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) rcc deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
-		[[ $(detected_OS) = Darwin ]] && \
+		[[ $$? = 0 ]] && \
+		(([[ $(detected_OS) = Darwin ]] && \
 		install_name_tool -change \
 			libstatus.dylib \
 			@rpath/libstatus.dylib \
-			bin/nim_status_client || true
+			bin/nim_status_client) || true)
 
 _APPIMAGE_TOOL := appimagetool-x86_64.AppImage
 APPIMAGE_TOOL := tmp/linux/tools/$(_APPIMAGE_TOOL)
