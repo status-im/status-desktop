@@ -47,4 +47,9 @@ proc init*(self: WalletController) =
 
   self.status.events.on(SignalType.Wallet.event) do(e:Args):
     var data = WalletSignal(e)
-    debug "New signal received"
+    if data.eventType == "newblock":
+      for acc in data.accounts:
+        self.status.wallet.updateAccount(acc)
+        # TODO: show notification
+    # TODO: data.eventType == history, reorg, recent-history-fetching, recent-history-ready:
+    # see status-react/src/status_im/ethereum/subscriptions.cljs
