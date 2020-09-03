@@ -19,9 +19,6 @@ proc keys*(obj: JsonNode): seq[string] =
   for k, _ in obj:
     result.add k
 
-proc toGoString*(str: string): GoString =
-  result = GoString(str: str, length: cint(str.len))
-
 proc generateSigningPhrase*(count: int): string =
   let now = getTime()
   var rng = initRand(now.toUnix * 1000000000 + now.nanosecond)

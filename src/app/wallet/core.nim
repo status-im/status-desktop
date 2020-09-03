@@ -26,6 +26,7 @@ proc delete*(self: WalletController) =
   delete self.view
 
 proc init*(self: WalletController) =
+  status_wallet.startWallet()
   self.status.wallet.initAccounts()
   var accounts = self.status.wallet.accounts
   for account in accounts:

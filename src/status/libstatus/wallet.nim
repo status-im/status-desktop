@@ -1,6 +1,6 @@
-import json, options
-import stint, chronicles, json_serialization
-import nim_status, core, types, utils
+import json, options, httpclient, json, json_serialization, strformat, stint, strutils, sequtils, chronicles, parseutils, tables
+import core, types, utils
+from nim_status import validateMnemonic, startWallet
 import ../wallet/account
 import ./contracts as contractMethods
 import eth/common/eth_types
@@ -88,3 +88,8 @@ proc hex2Eth*(input: string): string =
 
 proc validateMnemonic*(mnemonic: string): string =
   result = $nim_status.validateMnemonic(mnemonic)
+
+proc startWallet*() =
+  discard nim_status.startWallet()
+
+  
