@@ -1286,7 +1286,7 @@
         </message>
         <message id="nim-status-client">
             <location filename="../main.qml" line="23"/>
-            <source>Nim Status Client</source>
+            <source>Status Desktop</source>
             <translation type="unfinished"/>
         </message>
         <message id="quit">

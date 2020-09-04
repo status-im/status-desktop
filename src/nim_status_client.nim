@@ -23,7 +23,7 @@ proc mainProc() =
   enableHDPI()
   initializeOpenGL()
 
-  let app = newQApplication("Nim Status Client")
+  let app = newQApplication("Status Desktop")
   let resources =
     if defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
       "/../resources/resources.rcc"

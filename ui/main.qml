@@ -25,8 +25,8 @@ ApplicationWindow {
     color: Style.current.background
     title: {
         // Set application settings
-        //% "Nim Status Client"
-        Qt.application.name = qsTrId("nim-status-client")
+        //% "Status Desktop"
+        Qt.application.name = qsTrId("status-desktop")
         Qt.application.organization = "Status"
         Qt.application.domain = "status.im"
         return Qt.application.name

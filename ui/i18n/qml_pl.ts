@@ -971,7 +971,7 @@ packs will not need to be re-purchased.</source>
         </message>
         <message id="nim-status-client">
             <location filename="../main.qml" line="29"/>
-            <source>Nim Status Client</source>
+            <source>Status Desktop</source>
             <translation type="unfinished"/>
         </message>
         <message id="quit">
