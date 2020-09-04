@@ -1284,7 +1284,7 @@
             <source/>
             <translation type="unfinished"/>
         </message>
-        <message id="nim-status-client">
+        <message id="status-desktop">
             <location filename="../main.qml" line="23"/>
             <source>Status Desktop</source>
             <translation type="unfinished"/>
