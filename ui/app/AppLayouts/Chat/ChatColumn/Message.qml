@@ -75,10 +75,56 @@ Item {
             switch(contentType) {
                 case Constants.chatIdentifier:
                     return channelIdentifierComponent
+                case Constants.fetchMoreMessagesButton:
+                    return fetchMoreMessagesButtonComponent
                 case Constants.systemMessagePrivateGroupType:
                     return privateGroupHeaderComponent
                 default:
                     return appSettings.compactMode ? compactMessageComponent : messageComponent
+            }
+        }
+    }
+
+    Component {
+        id: fetchMoreMessagesButtonComponent
+        Item {
+            id: wrapper
+            height: wrapper.visible ? fetchMoreButton.height + fetchDate.height + 3 + Style.current.smallPadding*2 : 0
+            anchors.left: parent.left
+            anchors.right: parent.right
+            Separator {
+                id: sep1
+            }
+            StyledText {
+                id: fetchMoreButton
+                font.weight: Font.Medium
+                font.pixelSize: 15
+                color: Style.current.blue
+                text: qsTr("↓ Fetch more messages")
+                horizontalAlignment: Text.AlignHCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: sep1.bottom
+                anchors.topMargin: Style.current.smallPadding
+                MouseArea {
+                  cursorShape: Qt.PointingHandCursor
+                  anchors.fill: parent
+                  onClicked: {
+                    chatsModel.requestMoreMessages()
+                  }
+                }
+            }
+            StyledText {
+                id: fetchDate
+                anchors.top: fetchMoreButton.bottom
+                anchors.topMargin: 3
+                anchors.horizontalCenter: parent.horizontalCenter
+                horizontalAlignment: Text.AlignHCenter
+                color: Style.current.darkGrey
+                text: qsTr("before %1").arg(new Date(chatsModel.oldestMsgTimestamp*1000).toDateString())
+            }
+            Separator {
+                anchors.top: fetchDate.bottom
+                anchors.topMargin: Style.current.smallPadding
             }
         }
     }

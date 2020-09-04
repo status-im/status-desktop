@@ -7,6 +7,7 @@ QtObject {
     readonly property int chatTypePublic: 2
     readonly property int chatTypePrivateGroupChat: 3
 
+    readonly property int fetchMoreMessagesButton: -2
     readonly property int chatIdentifier: -1
     readonly property int unknownContentType: 0
     readonly property int messageType: 1

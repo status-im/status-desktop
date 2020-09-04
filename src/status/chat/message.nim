@@ -1,6 +1,7 @@
 import strformat
 
 type ContentType* {.pure.} = enum
+  FetchMoreMessagesButton = -2
   ChatIdentifier = -1,
   Unknown = 0,
   Message = 1,

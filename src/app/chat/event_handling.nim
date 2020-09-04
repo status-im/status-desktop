@@ -78,7 +78,7 @@ proc handleMailserverEvents(self: ChatController) =
 
   self.status.events.on("mailserverAvailable") do(e:Args):
     let mailserverTopics = self.status.mailservers.getMailserverTopics()
-    var fromValue: int64 = times.toUnix(times.getTime()) - 86400
+    var fromValue = times.toUnix(times.getTime()) - 86400 # today - 24 hours
 
     if mailserverTopics.len > 0:
        fromValue = min(mailserverTopics.map(topic => topic.lastRequest))

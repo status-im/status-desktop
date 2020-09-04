@@ -1,4 +1,4 @@
-import algorithm, json, random, math, os, tables, sets, chronicles, eventemitter, sequtils, locks
+import algorithm, json, random, math, os, tables, sets, chronicles, eventemitter, sequtils, locks, sugar
 import libstatus/core as status_core
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
@@ -128,10 +128,10 @@ proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
     self.nodes[peer] = MailserverStatus.Connected
     self.events.emit("peerConnected", MailserverArg(peer: peer))
 
-proc requestMessages*(self: MailserverModel, topics: seq[string], fromValue: int64 = 0) =
+proc requestMessages*(self: MailserverModel, topics: seq[string], fromValue: int64 = 0, toValue: int64 = 0, force: bool = false) =
   debug "Requesting messages from", mailserver=self.selectedMailserver
   let generatedSymKey = status_chat.generateSymKeyFromPassword()
-  status_mailservers.requestMessages(topics, generatedSymKey, self.selectedMailserver, 1000, fromValue)
+  status_mailservers.requestMessages(topics, generatedSymKey, self.selectedMailserver, 1000, fromValue, toValue, force)
 
 proc getMailserverTopics*(self: MailserverModel): seq[MailserverTopic] =
   let response = status_mailservers.getMailserverTopics()
@@ -146,6 +146,10 @@ proc getMailserverTopics*(self: MailserverModel): seq[MailserverTopic] =
         chatIds: topic["chat-ids"].to(seq[string]),
         lastRequest: topic["last-request"].getInt
       ))
+
+proc getMailserverTopicsByChatId*(self: MailserverModel, chatId: string): seq[MailServerTopic] =
+  result = self.getMailserverTopics()
+      .filter(topic => topic.chatIds.contains(chatId))
 
 proc addMailserverTopic*(self: MailserverModel, topic: MailserverTopic) =
   discard status_mailservers.addMailserverTopic(topic)

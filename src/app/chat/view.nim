@@ -1,6 +1,8 @@
 import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat
 import ../../status/status
+import ../../status/mailservers
 import ../../status/libstatus/accounts/constants
+import ../../status/libstatus/mailservers as status_mailservers
 import ../../status/accounts as status_accounts
 import ../../status/chat as status_chat
 import ../../status/messages as status_messages
@@ -35,6 +37,7 @@ QtObject:
       channelOpenTime*: Table[string, int64]
       connected: bool
       unreadMessageCnt: int
+      oldestMessageTimestamp: int64
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
 
@@ -61,6 +64,27 @@ QtObject:
     result.unreadMessageCnt = 0
     result.pubKey = ""
     result.setup()
+
+  proc oldestMessageTimestampChanged*(self: ChatsView) {.signal.}
+
+  proc getOldestMessageTimestamp*(self: ChatsView): QVariant {.slot.}  =
+    newQVariant($self.oldestMessageTimestamp)
+
+  QtProperty[QVariant] oldestMsgTimestamp:
+    read = getOldestMessageTimestamp
+    notify = oldestMessageTimestampChanged
+
+  proc setLastMessageTimestamp(self: ChatsView, force = false) = 
+    if self.status.chat.lastMessageTimestamps.hasKey(self.activeChannel.id):
+      if force or self.status.chat.lastMessageTimestamps[self.activeChannel.id] <= self.oldestMessageTimestamp:
+        self.oldestMessageTimestamp = self.status.chat.lastMessageTimestamps[self.activeChannel.id]
+    else:
+      let topics = self.status.mailservers.getMailserverTopicsByChatId(self.activeChannel.id)
+      if topics.len > 0:
+        self.oldestMessageTimestamp = topics[0].lastRequest
+      else:
+        self.oldestMessageTimestamp = times.toUnix(times.getTime())
+    self.oldestMessageTimestampChanged()
 
   proc addStickerPackToList*(self: ChatsView, stickerPack: StickerPack, isInstalled, isBought: bool) =
     self.stickerPacks.addStickerPackToList(stickerPack, newStickerList(stickerPack.stickers), isInstalled, isBought)
@@ -206,6 +230,7 @@ QtObject:
     self.status.chat.setActiveChannel(selectedChannel.id)
     discard self.status.chat.markAllChannelMessagesRead(selectedChannel.id)
     self.currentSuggestions.setNewData(self.status.contacts.getContacts())
+    self.setLastMessageTimestamp(true)
     self.activeChannelChanged()
 
   proc getActiveChannelIdx(self: ChatsView): QVariant {.slot.} =
@@ -237,6 +262,7 @@ QtObject:
     self.activeChannel.setChatItem(self.chats.getChannel(self.chats.chats.findIndexById(channel)))
     discard self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
     self.currentSuggestions.setNewData(self.status.contacts.getContacts())
+    self.setLastMessageTimestamp(true)
     self.activeChannelChanged()
 
   proc getActiveChannel*(self: ChatsView): QVariant {.slot.} =
@@ -373,6 +399,8 @@ QtObject:
     trace "Loading more messages", chaId = self.activeChannel.id
     self.status.chat.chatMessages(self.activeChannel.id, false)
     self.status.chat.chatReactions(self.activeChannel.id, false)
+    if self.status.chat.msgCursor[self.activeChannel.id] == "":
+      self.setLastMessageTimestamp()
     self.messagesLoaded();
 
   proc loadMoreMessagesWithIndex*(self: ChatsView, channelIndex: int) {.slot.} =
@@ -382,6 +410,16 @@ QtObject:
     trace "Loading more messages", chaId = selectedChannel.id
     self.status.chat.chatMessages(selectedChannel.id, false)
     self.status.chat.chatReactions(selectedChannel.id, false)
+    self.setLastMessageTimestamp()
+    self.messagesLoaded();
+
+  proc requestMoreMessages*(self: ChatsView) {.slot.} =
+    let topics = self.status.mailservers.getMailserverTopicsByChatId(self.activeChannel.id).map(topic => topic.topic)
+    let currentOldestMessageTimestamp = self.oldestMessageTimestamp
+    self.oldestMessageTimestamp = self.oldestMessageTimestamp - 86400
+
+    self.status.mailservers.requestMessages(topics, self.oldestMessageTimestamp, currentOldestMessageTimestamp, true)
+    self.oldestMessageTimestampChanged()
     self.messagesLoaded();
 
   proc leaveChatByIndex*(self: ChatsView, channelIndex: int) {.slot.} =
