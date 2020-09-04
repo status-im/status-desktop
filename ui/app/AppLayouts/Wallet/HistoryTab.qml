@@ -5,6 +5,14 @@ import "../../../imports"
 import "../../../shared"
 
 Item {
+    function checkIfHistoryIsBeingFetched(){
+      if(walletModel.isFetchingHistory(walletModel.currentAccount.address)){
+        loadingImg.active = true;
+      } else {
+        walletModel.loadTransactionsForAccount(walletModel.currentAccount.address)
+      }
+    }
+
     Loader {
         id: loadingImg
         active: false
@@ -22,6 +30,7 @@ Item {
 
     Connections {
         target: walletModel
+        onHistoryWasFetched: checkIfHistoryIsBeingFetched()
         onLoadingTrxHistory: {
             loadingImg.active = isLoading
         }

@@ -1,4 +1,4 @@
-import NimQml, Tables, strformat, strutils, chronicles, json, std/wrapnils, parseUtils, stint
+import NimQml, Tables, strformat, strutils, chronicles, json, std/wrapnils, parseUtils, stint, tables
 import ../../status/[status, wallet, threads]
 import ../../status/wallet/collectibles as status_collectibles
 import ../../status/libstatus/wallet as status_wallet
@@ -25,6 +25,7 @@ QtObject:
       fastestGasPrice: string
       defaultGasLimit: string
       signingPhrase: string
+      fetchingHistoryState: Table[string, bool]
 
   proc delete(self: WalletView) =
     self.accounts.delete
@@ -54,6 +55,7 @@ QtObject:
     result.fastestGasPrice = "0"
     result.defaultGasLimit = "21000"
     result.signingPhrase = ""
+    result.fetchingHistoryState = initTable[string, bool]()
     result.setup
 
   proc etherscanLinkChanged*(self: WalletView) {.signal.}
@@ -115,8 +117,6 @@ QtObject:
     notify = currentTransactionsChanged
 
   proc loadCollectiblesForAccount*(self: WalletView, address: string, currentCollectiblesList: seq[CollectibleList])
-  proc loadTransactionsForAccount*(self: WalletView, address: string)
-
   proc currentAccountChanged*(self: WalletView) {.signal.}
 
   proc setCurrentAccountByIndex*(self: WalletView, index: int) {.slot.} =
@@ -131,10 +131,8 @@ QtObject:
     # Display currently known collectibles, and get latest from API/Contracts
     self.setCurrentCollectiblesLists(selectedAccount.collectiblesLists)
     self.loadCollectiblesForAccount(selectedAccount.address, selectedAccount.collectiblesLists)
-    
-    # Display currently known transactions, and get latest transactions from status-go
+
     self.setCurrentTransactions(selectedAccount.transactions)
-    self.loadTransactionsForAccount(selectedAccount.address)
 
   proc getCurrentAccount*(self: WalletView): QVariant {.slot.} =
     result = newQVariant(self.currentAccount)
@@ -390,28 +388,6 @@ QtObject:
 
     self.currentCollectiblesLists.setLoadingByType(collectibleType, 1)
 
-
-  proc loadingTrxHistory*(self: WalletView, isLoading: bool) {.signal.}
-
-  proc loadTransactionsForAccount*(self: WalletView, address: string) {.slot.} =
-    self.loadingTrxHistory(true)
-    spawnAndSend(self, "setTrxHistoryResult") do:
-      $(%*{
-        "address": address,
-        "history": getTransfersByAddress(address)
-      })
-
-  proc setTrxHistoryResult(self: WalletView, historyJSON: string) {.slot.} =
-    let historyData = parseJson(historyJSON)
-    let transactions = historyData["history"].to(seq[Transaction]);
-    let address = historyData["address"].getStr
-    let index = self.accounts.getAccountindexByAddress(address)
-    if index == -1: return
-    self.accounts.getAccount(index).transactions = transactions
-    if address == self.currentAccount.address:
-      self.setCurrentTransactions(transactions)
-    self.loadingTrxHistory(false)
-
   proc gasPricePredictionsChanged*(self: WalletView) {.signal.}
 
   proc getGasPricePredictions*(self: WalletView) {.slot.} =
@@ -462,3 +438,35 @@ QtObject:
 
   QtProperty[QVariant] defaultTokenList:
     read = getDefaultTokenList
+  proc historyWasFetched*(self: WalletView) {.signal.}
+
+  proc setHistoryFetchState*(self: WalletView, accounts: seq[string], isFetching: bool) =
+    for acc in accounts:
+      self.fetchingHistoryState[acc] = isFetching
+    if not isFetching: self.historyWasFetched()
+
+  proc isFetchingHistory*(self: WalletView, address: string): bool {.slot.} =
+    if self.fetchingHistoryState.hasKey(address):
+      return self.fetchingHistoryState[address]
+    return true
+
+  proc loadingTrxHistory*(self: WalletView, isLoading: bool) {.signal.}
+
+  proc loadTransactionsForAccount*(self: WalletView, address: string) {.slot.} =
+    self.loadingTrxHistory(true)
+    spawnAndSend(self, "setTrxHistoryResult") do:
+      $(%*{
+        "address": address,
+        "history": getTransfersByAddress(address)
+      })
+
+  proc setTrxHistoryResult(self: WalletView, historyJSON: string) {.slot.} =
+    let historyData = parseJson(historyJSON)
+    let transactions = historyData["history"].to(seq[Transaction]);
+    let address = historyData["address"].getStr
+    let index = self.accounts.getAccountindexByAddress(address)
+    if index == -1: return
+    self.accounts.getAccount(index).transactions = transactions
+    if address == self.currentAccount.address:
+      self.setCurrentTransactions(transactions)
+    self.loadingTrxHistory(false)
