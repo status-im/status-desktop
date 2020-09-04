@@ -1072,8 +1072,8 @@ packs will not need to be re-purchased.</translation>
         </message>
         <message id="nim-status-client">
             <location filename="../main.qml" line="29"/>
-            <source>Nim Status Client</source>
-            <translation>Nim Status Client</translation>
+            <source>Status Desktop</source>
+            <translation>Status Desktop</translation>
         </message>
         <message id="quit">
             <location filename="../main.qml" line="81"/>

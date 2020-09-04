@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Nim Status Client
+Name=Status Desktop
 Exec=nim_status_client
 Icon=status
 Comment=Hello World
