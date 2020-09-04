@@ -87,9 +87,7 @@ SplitView {
                         anchors.leftMargin: 32
                         //% "History"
                         btnText: qsTrId("history")
-                        onClicked: {
-                          walletModel.loadTransactionsForAccount(walletModel.currentAccount.address)
-                        }
+                        onClicked: historyTab.checkIfHistoryIsBeingFetched()
                     }
                 }
 

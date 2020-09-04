@@ -18,6 +18,8 @@ Item {
         height: 248
         anchors.horizontalCenter: parent.horizontalCenter
         source: root.collectibleImage
+        sourceSize.width: width
+        sourceSize.height: height
         fillMode: Image.PreserveAspectCrop
     }
 

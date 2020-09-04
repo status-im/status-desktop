@@ -14,6 +14,7 @@ Item {
         }
         selectedAccount = newIndex
         walletModel.setCurrentAccountByIndex(newIndex)
+        walletTabBar.currentIndex = 0;
     }
     id: walletInfoContainer
 

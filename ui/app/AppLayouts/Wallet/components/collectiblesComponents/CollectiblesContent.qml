@@ -86,6 +86,8 @@ ScrollView {
                         height: root.imageSize
                         z: 1
                         source: modelData.image
+                        sourceSize.width: width
+                        sourceSize.height: height
                         fillMode: Image.PreserveAspectCrop
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.horizontalCenter: parent.horizontalCenter
