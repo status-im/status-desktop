@@ -34,7 +34,7 @@ proc getPrice(crypto: string, fiat: string): string =
 
 proc getEthBalance(address: string): string =
   var balance = status_wallet.getBalance(address)
-  result = status_wallet.hex2Eth(balance)
+  result = status_wallet.hex2token(balance, 18)
 
 proc getBalance*(symbol: string, accountAddress: string, tokenAddress: string): string =
   let cacheKey = fmt"{symbol}-{accountAddress}-{tokenAddress}"
