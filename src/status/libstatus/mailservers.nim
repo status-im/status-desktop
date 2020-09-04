@@ -63,10 +63,13 @@ proc update*(peer: string) =
 proc delete*(peer: string) =
   discard callPrivateRPC("mailservers_deleteMailserver", %* [peer])
 
-proc requestMessages*(topics: seq[string], symKeyID: string, peer: string, numberOfMessages: int, fromTimestamp: int64 = 0) =
-  var fromValue = (times.toUnix(times.getTime()) - 86400)
+proc requestMessages*(topics: seq[string], symKeyID: string, peer: string, numberOfMessages: int, fromTimestamp: int64 = 0, toTimestamp: int64 = 0, force: bool = false) =
+  var toValue = times.toUnix(times.getTime())
+  var fromValue = toValue - 86400
   if fromTimestamp != 0:
     fromValue = fromTimestamp
+  if toTimestamp != 0:
+    toValue = toTimestamp
 
   echo callPrivateRPC("requestMessages".prefix, %* [
     {
@@ -76,7 +79,9 @@ proc requestMessages*(topics: seq[string], symKeyID: string, peer: string, numbe
         "timeout": 30,
         "limit": numberOfMessages,
         "cursor": nil,
-        "from": fromValue
+        "from": fromValue,
+        "to": toValue,
+        "force": force
     }
   ])
 

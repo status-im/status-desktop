@@ -1,4 +1,4 @@
-import eventemitter, json, strutils, sequtils, tables, chronicles, sugar
+import eventemitter, json, strutils, sequtils, tables, chronicles, sugar, times
 import libstatus/contracts as status_contracts
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
@@ -51,6 +51,7 @@ type
     availableStickerPacks*: Table[int, StickerPack]
     installedStickerPacks*: Table[int, StickerPack]
     purchasedStickerPacks*: seq[int]
+    lastMessageTimestamps*: Table[string, int64]
     
   MessageArgs* = ref object of Args
     id*: string
@@ -69,6 +70,7 @@ proc newChatModel*(events: EventEmitter): ChatModel =
   result.availableStickerPacks = initTable[int, StickerPack]()
   result.installedStickerPacks = initTable[int, StickerPack]()
   result.purchasedStickerPacks = @[]
+  result.lastMessageTimestamps = initTable[string, int64]()
 
 
 proc delete*(self: ChatModel) =
@@ -79,6 +81,15 @@ proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiRea
     if chat.isActive:
       self.channels[chat.id] = chat
 
+  for message in messages:
+    let chatId = message.chatId
+    let ts = times.convert(Milliseconds, Seconds, message.whisperTimestamp.parseInt())
+    if not self.lastMessageTimestamps.hasKey(chatId):
+      self.lastMessageTimestamps[chatId] = ts
+    else:
+      if self.lastMessageTimestamps[chatId] > ts:
+        self.lastMessageTimestamps[chatId] = ts
+      
   self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[], emojiReactions: emojiReactions))
 
 proc hasChannel*(self: ChatModel, chatId: string): bool =
@@ -293,6 +304,12 @@ proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true) =
 
   let messageTuple = status_chat.chatMessages(chatId, self.msgCursor[chatId])
   self.msgCursor[chatId] = messageTuple[0];
+
+  if messageTuple[1].len > 0:
+    let lastMsgIndex = messageTuple[1].len - 1
+    let ts = times.convert(Milliseconds, Seconds, messageTuple[1][lastMsgIndex].whisperTimestamp.parseInt())
+    self.lastMessageTimestamps[chatId] = ts
+
   self.events.emit("messagesLoaded", MsgsLoadedArgs(messages: messageTuple[1]))
 
 proc chatReactions*(self: ChatModel, chatId: string, initialLoad:bool = true) =

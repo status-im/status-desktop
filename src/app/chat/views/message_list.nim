@@ -52,6 +52,10 @@ QtObject:
 
   include message_format
 
+  proc fetchMoreMessagesButton(self: ChatMessageList): Message =
+    result = Message()
+    result.contentType = ContentType.FetchMoreMessagesButton;
+
   proc chatIdentifier(self: ChatMessageList, chatId:string): Message =
     result = Message()
     result.contentType = ContentType.ChatIdentifier;
@@ -59,7 +63,7 @@ QtObject:
 
   proc newChatMessageList*(chatId: string, status: Status): ChatMessageList =
     new(result, delete)
-    result.messages = @[result.chatIdentifier(chatId)]
+    result.messages = @[result.chatIdentifier(chatId), result.fetchMoreMessagesButton()]
     result.messageIndex = initTable[string, int]()
     result.timedoutMessages = initHashSet[string]()
     result.status = status
