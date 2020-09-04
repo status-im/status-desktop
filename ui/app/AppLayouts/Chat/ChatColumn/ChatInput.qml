@@ -123,7 +123,7 @@ Rectangle {
             }
             return true;
         } else if (emojiEvent && isKeyValid(event.key) && !isColonPressed) {
-            console.log('popup');
+            // popup
             return true;
         } else if (emojiEvent && !isKeyValid(event.key) && !isColonPressed) {
             return false;
