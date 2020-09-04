@@ -1070,7 +1070,7 @@ packs will not need to be re-purchased.</translation>
             <source/>
             <translation/>
         </message>
-        <message id="nim-status-client">
+        <message id="status-desktop">
             <location filename="../main.qml" line="29"/>
             <source>Status Desktop</source>
             <translation>Status Desktop</translation>

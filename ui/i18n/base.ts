@@ -952,7 +952,7 @@ packs will not need to be re-purchased.</source>
         <source>Monday</source>
         <translation type="unfinished"></translation>
     </message>
-    <message id="nim-status-client">
+    <message id="status-desktop">
         <location filename="../main.qml" line="29"/>
         <source>Status Desktop</source>
         <translation type="unfinished"></translation>
