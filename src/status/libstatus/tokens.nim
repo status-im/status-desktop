@@ -45,11 +45,10 @@ proc getVisibleTokens*(): JsonNode =
   let customTokens = getCustomTokens()
 
   result = newJArray()
-  for defToken in getDefaultTokens().getElems():
-    for v in visibleTokenList:
-      if defToken["symbol"].getStr == v:
-        result.elems.add(defToken)
-        break
+
+  for v in visibleTokenList:
+    let t = getTokenBySymbol(v)
+    if t.kind != JNull: result.elems.add(t)
 
   for custToken in customTokens.getElems():
     for v in visibleTokenList:
@@ -80,7 +79,11 @@ proc getTokenBalance*(tokenAddress: string, account: string): string =
   }, "latest"]
   let response = callPrivateRPC("eth_call", payload)
   let balance = response.parseJson["result"].getStr
-  result = $hex2Eth(balance)
+
+  let t = getTokenByAddress(tokenAddress)
+  var decimals = 18
+  if t.kind != JNull: decimals = t["decimals"].getInt
+  result = $hex2Token(balance, decimals)
 
 proc getSNTAddress*(): string =
   let snt = contracts.getContract("snt")

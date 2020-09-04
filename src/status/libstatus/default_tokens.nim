@@ -1152,3 +1152,15 @@ proc getDefaultTokens*(): JsonNode =
       "hasIcon": true
     })
   
+proc getTokenBySymbol*(symbol: string): JsonNode =
+  for defToken in getDefaultTokens().getElems():
+    if defToken["symbol"].getStr == symbol:
+      return defToken
+  return newJNull()
+
+proc getTokenByAddress*(address: string): JsonNode =
+  for defToken in getDefaultTokens().getElems():
+    if defToken["address"].getStr == address:
+      return defToken
+  
+  return newJNull()

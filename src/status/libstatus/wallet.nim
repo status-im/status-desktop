@@ -87,4 +87,13 @@ proc validateMnemonic*(mnemonic: string): string =
 proc startWallet*() =
   discard nim_status.startWallet()
 
+proc hex2Token*(input: string, decimals: int): string =
+  var value = fromHex(Stuint[256], input)
+  var p = u256(10).pow(decimals)
+  var i = value.div(p)
+  var r = value.mod(p)
+  var leading_zeros = "0".repeat(decimals - ($r).len)
+  var d = fmt"{leading_zeros}{$r}"             
+  result = $i
+  if(r > 0): result = fmt"{result}.{d}"
   
