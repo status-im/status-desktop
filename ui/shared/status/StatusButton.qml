@@ -26,12 +26,21 @@ Button {
             verticalAlignment: Text.AlignVCenter
             anchors.fill: parent
             color: !enabled ? Style.current.buttonDisabledForegroundColor : Style.current.buttonForegroundColor
-            visible: !loadingIndicator.visible
+            visible: !loadingIndicator.active
         }
 
-        LoadingImage {
+
+        Component {
+            id: loadingComponent
+            LoadingImage {
+
+            }
+        }
+
+        Loader {
             id: loadingIndicator
-            visible: control.state === "pending"
+            active: control.state === "pending"
+            sourceComponent: loadingComponent
             height: loadingIndicator.visible ? 
                                     control.size === "large" ?
                                     23 : 17 

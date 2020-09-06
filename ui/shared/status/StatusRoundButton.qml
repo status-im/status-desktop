@@ -95,14 +95,23 @@ RoundButton {
             fillMode: Image.PreserveAspectFit
         }
 
-        LoadingImage {
+        Component {
+            id: loadingComponent
+            LoadingImage {
+
+            }
+        }
+
+        Loader {
             id: loadingIndicator
-            visible: false
+            active: control.state === "pending"
+            sourceComponent: loadingComponent
             height: size === "small" ? 14 : 18
             width: loadingIndicator.height
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
         }
+
 
         ColorOverlay {
             anchors.fill: iconImg
@@ -124,14 +133,7 @@ RoundButton {
               Style.current.roundedButtonDisabledForegroundColor
             antialiasing: true
 
-            RotationAnimator {
-                target: loadingOverlay
-                from: 0
-                to: 360
-                duration: 1200
-                running: true
-                loops: Animation.Infinite
-            }
+          
         }
     }
 

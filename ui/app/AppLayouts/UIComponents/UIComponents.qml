@@ -22,6 +22,8 @@ Item {
             }
         }
 
+        /* Commented due to high cpu usage */
+        /*
         RowLayout {
             StatusButton {
                 text: "Primary Large Button"
@@ -182,6 +184,7 @@ Item {
                 }
             }
         }
+        */
     }
 }
 
