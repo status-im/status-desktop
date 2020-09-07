@@ -37,7 +37,7 @@ Item {
         }
         txtValidationError.text = ""
         let gasTotal = selectedGasEthValue
-        if (selectedAsset && selectedAsset.symbol.toUpperCase() === "ETH") {
+        if (selectedAsset && selectedAsset.symbol && selectedAsset.symbol.toUpperCase() === "ETH") {
             gasTotal += selectedAmount
         }
         const currAcctGasAsset = Utils.findAssetBySymbol(selectedAccount.assets, "ETH")

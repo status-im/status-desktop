@@ -12,7 +12,7 @@ import stew/byteutils
 import unicode
 import algorithm
 import eth/common/eth_types, stew/byteutils
-import libstatus/contracts
+import libstatus/eth/contracts
 const domain* = ".stateofus.eth"
 
 proc userName*(ensName: string, removeSuffix: bool = false): string =

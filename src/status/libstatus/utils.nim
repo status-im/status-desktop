@@ -1,5 +1,5 @@
-import json, random, strutils, strformat, tables, chronicles
-import stint, nim_status
+import json, random, strutils, strformat, tables, chronicles, unicode
+import stint
 from times import getTime, toUnix, nanosecond
 import accounts/signing_phrases
 
@@ -82,7 +82,7 @@ proc first*(jArray: JsonNode, fieldName, id: string): JsonNode =
   if jArray.kind != JArray:
     raise newException(ValueError, "Parameter 'jArray' is a " & $jArray.kind & ", but must be a JArray")
   for child in jArray.getElems:
-    if child{fieldName}.getStr == id:
+    if child{fieldName}.getStr.toLower == id.toLower:
       return child
 
 proc any*(jArray: JsonNode, fieldName, id: string): bool =
@@ -90,7 +90,7 @@ proc any*(jArray: JsonNode, fieldName, id: string): bool =
     return false
   result = false
   for child in jArray.getElems:
-    if child{fieldName}.getStr == id:
+    if child{fieldName}.getStr.toLower == id.toLower:
       return true
 
 proc isEmpty*(a: JsonNode): bool =

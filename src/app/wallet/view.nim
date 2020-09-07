@@ -1,6 +1,7 @@
 import NimQml, Tables, strformat, strutils, chronicles, json, std/wrapnils, parseUtils, stint, tables
 import ../../status/[status, wallet, threads]
 import ../../status/wallet/collectibles as status_collectibles
+import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/wallet as status_wallet
 import ../../status/libstatus/tokens
 import ../../status/libstatus/types
@@ -91,7 +92,7 @@ QtObject:
     read = getSigningPhrase
     notify = signingPhraseChanged
 
-  proc getStatusTokenSymbol*(self: WalletView): string {.slot.} = self.status.wallet.getStatusTokenSymbol
+  proc getStatusToken*(self: WalletView): string {.slot.} = self.status.wallet.getStatusToken
 
   proc setCurrentAssetList*(self: WalletView, assetList: seq[Asset])
 
@@ -262,12 +263,28 @@ QtObject:
   QtProperty[QVariant] accounts:
     read = getAccountList
     notify = accountListChanged
+  
+  proc estimateGas*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string): string {.slot.} =
+    try:
+      var response: int
+      if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
+        response = self.status.wallet.estimateTokenGas(from_addr, to, assetAddress, value)
+      else:
+        response = self.status.wallet.estimateGas(from_addr, to, value)
+      result = $(%* { "result": %response })
+    except RpcException as e:
+      result = $(%* { "error": %* { "message": %e.msg }})
 
   proc sendTransaction*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string, gas: string, gasPrice: string, password: string): string {.slot.} =
     try:
-      result = $(%self.status.wallet.sendTransaction(from_addr, to, assetAddress, value, gas, gasPrice, password))
+      var response = ""
+      if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
+        response = self.status.wallet.sendTokenTransaction(from_addr, to, assetAddress, value, gas, gasPrice, password)
+      else:
+        response = self.status.wallet.sendTransaction(from_addr, to, value, gas, gasPrice, password)
+      result = $(%* { "result": %response })
     except RpcException as e:
-      result = fmt"""{{ "error": {{ "message": "{e.msg}" }} }}"""
+      result = $(%* { "error": %* { "message": %e.msg }})
 
   proc getDefaultAccount*(self: WalletView): string {.slot.} =
     self.currentAccount.address

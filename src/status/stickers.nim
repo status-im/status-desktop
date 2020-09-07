@@ -1,16 +1,14 @@
-import
+import # global deps
   tables, strutils, sequtils, sugar
 
-import
+import # project deps
   chronicles, eth/common/eth_types, eventemitter
-
 from eth/common/utils import parseAddress
 
-import
-  libstatus/types, libstatus/stickers as status_stickers,
-  libstatus/contracts as status_contracts
-
-from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, toUInt64
+import # local deps
+  libstatus/types, libstatus/eth/contracts as status_contracts,
+  libstatus/stickers as status_stickers, transactions
+from libstatus/utils as libstatus_utils import eth2Wei
 
 logScope:
   topics = "stickers-model"
@@ -43,26 +41,52 @@ proc init*(self: StickersModel) =
     var evArgs = StickerArgs(e)
     self.addStickerToRecent(evArgs.sticker, evArgs.save)
 
-# TODO: Replace this with a more generalised way of estimating gas so can be used for token transfers
-proc buyPackGasEstimate*(self: StickersModel, packId: int, address: string, price: string): string =
+proc buildTransaction(self: StickersModel, packId: Uint256, address: EthAddress, price: Uint256, approveAndCall: var ApproveAndCall, sntContract: var Contract, gas = "", gasPrice = ""): EthSend =
+  sntContract = status_contracts.getContract("snt")
   let
-    priceTyped = eth2Wei(parseFloat(price), 18) # SNT
-    hexGas = status_stickers.buyPackGasEstimate(packId.u256, parseAddress(address), priceTyped)
-  result = $fromHex[int](hexGas)
+    stickerMktContract = status_contracts.getContract("sticker-market")
+    buyToken = BuyToken(packId: packId, address: address, price: price)
+    buyTxAbiEncoded = stickerMktContract.methods["buyToken"].encodeAbi(buyToken)
+  approveAndCall = ApproveAndCall(to: stickerMktContract.address, value: price, data: DynamicBytes[100].fromHex(buyTxAbiEncoded))
+  transactions.buildTokenTransaction(address, sntContract.address, gas, gasPrice)
+
+proc estimateGas*(self: StickersModel, packId: int, address: string, price: string): int =
+  var
+    approveAndCall: ApproveAndCall
+    sntContract = status_contracts.getContract("snt")
+    tx = self.buildTransaction(
+      packId.u256,
+      parseAddress(address),
+      eth2Wei(parseFloat(price), 18), # SNT
+      approveAndCall,
+      sntContract
+    )
+  try:
+    let response = sntContract.methods["approveAndCall"].estimateGas(tx, approveAndCall)
+    result = fromHex[int](response)
+  except RpcException as e:
+    raise
+
+proc buyPack*(self: StickersModel, packId: int, address, price, gas, gasPrice, password: string): string =
+  var
+    sntContract: Contract
+    approveAndCall: ApproveAndCall
+    tx = self.buildTransaction(
+      packId.u256,
+      parseAddress(address),
+      eth2Wei(parseFloat(price), 18), # SNT
+      approveAndCall,
+      sntContract,
+      gas,
+      gasPrice
+    )
+  try:
+    result = sntContract.methods["approveAndCall"].send(tx, approveAndCall, password)
+  except RpcException as e:
+    raise
 
 proc getStickerMarketAddress*(self: StickersModel): EthAddress =
   result = status_contracts.getContract("sticker-market").address
-
-proc buyStickerPack*(self: StickersModel, packId: int, address, price, gas, gasPrice, password: string): RpcResponse =
-  try:
-    let
-      addressTyped = parseAddress(address)
-      priceTyped = eth2Wei(parseFloat(price), 18) # SNT
-      gasTyped = cast[uint64](parseFloat(gas).toUInt64)
-      gasPriceTyped = gwei2Wei(parseFloat(gasPrice)).truncate(int)
-    result = status_stickers.buyPack(packId.u256, addressTyped, priceTyped, gasTyped, gasPriceTyped, password)
-  except RpcException as e:
-    raise
 
 proc getPurchasedStickerPacks*(self: StickersModel, address: EthAddress): seq[int] =
   if self.purchasedStickerPacks != @[]:

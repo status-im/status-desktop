@@ -83,6 +83,7 @@ ModalPopup {
                     accounts = Qt.binding(function() { return walletModel.accounts })
                     selectedAccount = Qt.binding(function() { return walletModel.currentAccount })
                 }
+                onSelectedAccountChanged: gasSelector.estimateGas()
             }
             SeparatorWithIcon {
                 id: separator
@@ -102,6 +103,7 @@ ModalPopup {
                     contacts = Qt.binding(function() { return profileModel.addedContacts })
                     selectedRecipient = {}
                 }
+                onSelectedRecipientChanged: gasSelector.estimateGas()
             }
         }
         TransactionFormGroup {
@@ -119,6 +121,8 @@ ModalPopup {
                 reset: function() {
                     selectedAccount = Qt.binding(function() { return selectFromAccount.selectedAccount })
                 }
+                onSelectedAssetChanged: gasSelector.estimateGas()
+                onSelectedAmountChanged: gasSelector.estimateGas()
             }
             GasSelector {
                 id: gasSelector
@@ -134,6 +138,24 @@ ModalPopup {
                     slowestGasPrice = Qt.binding(function(){ return parseFloat(walletModel.safeLowGasPrice) })
                     fastestGasPrice = Qt.binding(function(){ return parseFloat(walletModel.fastestGasPrice) })
                 }
+                property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
+                    if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
+                        selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
+                        txtAmount.selectedAsset && txtAmount.selectedAsset.address &&
+                        txtAmount.selectedAmount)) return
+                    
+                    let gasEstimate = JSON.parse(walletModel.estimateGas(
+                        selectFromAccount.selectedAccount.address,
+                        selectRecipient.selectedRecipient.address,
+                        txtAmount.selectedAsset.address,
+                        txtAmount.selectedAmount))
+
+                    if (gasEstimate.error) {
+                        console.warn(qsTr("Error estimating gas: %1").arg(gasEstimate.error.message))
+                        return
+                    }
+                    selectedGasLimit = gasEstimate.result
+                })
             }
             GasValidator {
                 id: gasValidator

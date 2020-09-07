@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat
+import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os
 import ../../status/status
 import ../../status/mailservers
 import ../../status/stickers
@@ -105,17 +105,18 @@ QtObject:
   QtProperty[QVariant] stickerMarketAddress:
     read = getStickerMarketAddress
 
-  proc getStickerBuyPackGasEstimate*(self: ChatsView, packId: int, address: string, price: string): string {.slot.} =
+  proc buyPackGasEstimate*(self: ChatsView, packId: int, address: string, price: string): int {.slot.} =
     try:
-      result = self.status.stickers.buyPackGasEstimate(packId, address, price)
+      result = self.status.stickers.estimateGas(packId, address, price)
     except:
-      result = "400000"
+      result = 325000
 
   proc buyStickerPack*(self: ChatsView, packId: int, address: string, price: string, gas: string, gasPrice: string, password: string): string {.slot.} =
     try:
-      result = $(%self.status.stickers.buyStickerPack(packId, address, price, gas, gasPrice, password))
+      let response = self.status.stickers.buyPack(packId, address, price, gas, gasPrice, password)
+      result = $(%* { "result": %response })
     except RpcException as e:
-      result = fmt"""{{ "error": {{ "message": "{e.msg}" }} }}"""
+      result = $(%* { "error": %* { "message": %e.msg }})
 
   proc obtainAvailableStickerPacks*(self: ChatsView) =
     spawnAndSend(self, "setAvailableStickerPacks") do:

@@ -1,15 +1,17 @@
-import sequtils, strformat, sugar, macros, tables, strutils
-import eth/common/eth_types, stew/byteutils, nimcrypto
+import
+  sequtils, sugar, macros, tables, strutils
+
+import
+  eth/common/eth_types, stew/byteutils, nimcrypto
 from eth/common/utils import parseAddress
-import ./types, ./settings, ./coder
+
+import
+  ../types, ../settings, ../coder, transactions, methods
 
 export
   GetPackData, PackData, BuyToken, ApproveAndCall, Transfer, BalanceOf, Register, SetPubkey,
-  TokenOfOwnerByIndex, TokenPackId, TokenUri, FixedBytes, DynamicBytes, toHex, fromHex
-
-type Method* = object
-  name*: string
-  signature*: string
+  TokenOfOwnerByIndex, TokenPackId, TokenUri, FixedBytes, DynamicBytes, toHex, fromHex,
+  decodeContractResponse, encodeAbi, estimateGas, send, call
 
 type Contract* = ref object
   name*: string
@@ -121,32 +123,3 @@ proc getContract(network: Network, name: string): Contract =
 proc getContract*(name: string): Contract =
   let network = settings.getCurrentNetwork()
   getContract(network, name)
-
-proc encodeMethod(self: Method): string =
-  ($nimcrypto.keccak256.digest(self.signature))[0..<8].toLower
-
-proc encodeAbi*(self: Method, obj: object = RootObj()): string =
-  result = "0x" & self.encodeMethod()
-
-  # .fields is an iterator, and there's no way to get a count of an iterator
-  # in nim, so we have to loop and increment a counter
-  var fieldCount = 0
-  for i in obj.fields:
-    fieldCount += 1
-  var
-    offset = 32*fieldCount
-    data = ""
-
-  for field in obj.fields:
-    let encoded = encode(field)
-    if encoded.dynamic:
-      result &= offset.toHex(64).toLower
-      data &= encoded.data
-      offset += encoded.data.len
-    else:
-      result &= encoded.data
-  result &= data
-
-func decodeContractResponse*[T](input: string): T =
-  result = T()
-  discard decode(input.strip0xPrefix, 0, result)
