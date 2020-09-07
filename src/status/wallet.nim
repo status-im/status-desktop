@@ -1,17 +1,17 @@
 import eventemitter, json, strformat, strutils, chronicles, sequtils, httpclient, tables
 import json_serialization, stint
 from eth/common/utils import parseAddress
+from eth/common/eth_types import EthAddress
 import libstatus/accounts as status_accounts
 import libstatus/tokens as status_tokens
 import libstatus/settings as status_settings
 import libstatus/wallet as status_wallet
 import libstatus/accounts/constants as constants
-import libstatus/contracts as contracts
-from libstatus/types import GeneratedAccount, DerivedAccount, Transaction, Setting, GasPricePrediction, EthSend, Quantity, `%`, StatusGoException, Network, RpcResponse, RpcException
+import libstatus/eth/[eth, contracts]
+from libstatus/types import GeneratedAccount, DerivedAccount, Transaction, Setting, GasPricePrediction, EthSend, Quantity, `%`, StatusGoException, Network, RpcResponse, RpcException, `$`
 from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, first, toUInt64
-import wallet/balance_manager
-import wallet/account
-import wallet/collectibles
+import wallet/[balance_manager, account, collectibles]
+import transactions
 export account, collectibles
 export Transaction
 
@@ -50,34 +50,70 @@ proc initEvents*(self: WalletModel) =
 proc delete*(self: WalletModel) =
   discard
 
-proc sendTransaction*(self: WalletModel, source, to, assetAddress, value, gas, gasPrice, password: string): RpcResponse =
-  var
-    weiValue = eth2Wei(parseFloat(value), 18) # ETH
-    data = ""
-    toAddr = parseAddress(to)
-  let gasPriceInWei = gwei2Wei(parseFloat(gasPrice))
+proc buildTokenTransaction(self: WalletModel, source, to, assetAddress: EthAddress, value: float, transfer: var Transfer, contract: var Contract, gas = "", gasPrice = ""): EthSend =
+  let token = self.tokens.first("address", $assetAddress)
+  contract = getContract("snt")
+  transfer = Transfer(to: to, value: eth2Wei(value, token["decimals"].getInt))
+  transactions.buildTokenTransaction(source, assetAddress, gas, gasPrice)
 
-  # TODO: this code needs to be tested with testnet assets (to be implemented in
-  # a future PR
-  if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
-    let
-      token = self.tokens.first("address", assetAddress)
-      contract = getContract("snt")
-      transfer = Transfer(to: toAddr, value: eth2Wei(parseFloat(value), token["decimals"].getInt))
-    weiValue = 0.u256
-    data = contract.methods["transfer"].encodeAbi(transfer)
-    toAddr = parseAddress(assetAddress)
-
-  let tx = EthSend(
-    source: parseAddress(source),
-    to: toAddr.some,
-    gas: (if gas.isEmptyOrWhitespace: Quantity.none else: Quantity(cast[uint64](parseFloat(gas).toUInt64)).some),
-    gasPrice: (if gasPrice.isEmptyOrWhitespace: int.none else: gwei2Wei(parseFloat(gasPrice)).truncate(int).some),
-    value: weiValue.some,
-    data: data
+proc estimateGas*(self: WalletModel, source, to, value: string): int =
+  var tx = transactions.buildTransaction(
+    parseAddress(source),
+    eth2Wei(parseFloat(value), 18)
   )
+  tx.to = parseAddress(to).some
   try:
-    result = status_wallet.sendTransaction(tx, password)
+    let response = eth.estimateGas(tx)
+    result = fromHex[int](response)
+  except RpcException as e:
+    raise
+
+proc estimateTokenGas*(self: WalletModel, source, to, assetAddress, value: string): int =
+  var
+    transfer: Transfer
+    contract: Contract
+    tx = self.buildTokenTransaction(
+      parseAddress(source),
+      parseAddress(to),
+      parseAddress(assetAddress),
+      parseFloat(value),
+      transfer,
+      contract
+    )
+  try:
+    let response = contract.methods["transfer"].estimateGas(tx, transfer)
+    result = fromHex[int](response)
+  except RpcException as e:
+    raise
+
+proc sendTransaction*(self: WalletModel, source, to, value, gas, gasPrice, password: string): string =
+  var tx = transactions.buildTransaction(
+    parseAddress(source),
+    eth2Wei(parseFloat(value), 18), gas, gasPrice
+  )
+  tx.to = parseAddress(to).some
+
+  try:
+    result = eth.sendTransaction(tx, password)
+  except RpcException as e:
+    raise
+
+proc sendTokenTransaction*(self: WalletModel, source, to, assetAddress, value, gas, gasPrice, password: string): string =
+  var
+    transfer: Transfer
+    contract: Contract
+    tx = self.buildTokenTransaction(
+      parseAddress(source),
+      parseAddress(to),
+      parseAddress(assetAddress),
+      parseFloat(value),
+      transfer,
+      contract,
+      gas,
+      gasPrice
+    )
+  try:
+    result = contract.methods["transfer"].send(tx, transfer, password)
   except RpcException as e:
     raise
 
@@ -88,10 +124,15 @@ proc getDefaultCurrency*(self: WalletModel): string =
 
 # TODO: This needs to be removed or refactored so that test tokens are shown
 # when on testnet https://github.com/status-im/nim-status-client/issues/613.
-proc getStatusTokenSymbol*(self: WalletModel): string =
+proc getStatusToken*(self: WalletModel): string =
+  var token = Asset(address: $getContract("snt").address)
   if status_settings.getCurrentNetwork() == Network.Testnet:
-    return "STT"
-  "SNT"
+    token.name = "Status Test Token"
+    token.symbol = "STT"
+  else:
+    token.name = "Status Network Token"
+    token.symbol = "SNT"
+  result = $(%token)
 
 proc setDefaultCurrency*(self: WalletModel, currency: string) =
   discard status_settings.saveSetting(Setting.Currency, currency)

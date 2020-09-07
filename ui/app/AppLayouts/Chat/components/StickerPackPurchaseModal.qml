@@ -7,7 +7,7 @@ import "../../../../shared"
 
 ModalPopup {
     id: root
-    property var asset: { "name": "Status", "symbol": walletModel.getStatusTokenSymbol() }
+    readonly property var asset: JSON.parse(walletModel.getStatusToken())
     property int stickerPackId: -1
     property string packPrice
     property bool showBackBtn: false
@@ -90,6 +90,7 @@ ModalPopup {
                     showBalanceForAssetSymbol = Qt.binding(function() { return root.asset.symbol })
                     minRequiredAssetBalance = Qt.binding(function() { return root.packPrice })
                 }
+                onSelectedAccountChanged: gasSelector.estimateGas()
             }
             RecipientSelector {
                 id: selectRecipient
@@ -98,6 +99,7 @@ ModalPopup {
                 contacts: profileModel.addedContacts
                 selectedRecipient: { "address": chatsModel.stickerMarketAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
+                onSelectedRecipientChanged: gasSelector.estimateGas()
             }
             GasSelector {
                 id: gasSelector
@@ -107,19 +109,17 @@ ModalPopup {
                 getGasEthValue: walletModel.getGasEthValue
                 getFiatValue: walletModel.getFiatValue
                 defaultCurrency: walletModel.defaultCurrency
-                selectedGasLimit: { return getDefaultGasLimit() }
                 reset: function() {
                     slowestGasPrice = Qt.binding(function(){ return parseFloat(walletModel.safeLowGasPrice) })
                     fastestGasPrice = Qt.binding(function(){ return parseFloat(walletModel.fastestGasPrice) })
-                    selectedGasLimit = Qt.binding(getDefaultGasLimit)
                 }
-
-                function getDefaultGasLimit() {
-                    if (root.stickerPackId > -1 && selectFromAccount.selectedAccount && root.packPrice && parseFloat(root.packPrice) > 0) {
-                        return chatsModel.getStickerBuyPackGasEstimate(root.stickerPackId, selectFromAccount.selectedAccount.address, root.packPrice)
+                property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
+                    if (!(root.stickerPackId > -1 && selectFromAccount.selectedAccount && root.packPrice && parseFloat(root.packPrice) > 0)) {
+                        selectedGasLimit = 325000
+                        return
                     }
-                    return 200000
-                }
+                    selectedGasLimit = chatsModel.buyPackGasEstimate(root.stickerPackId, selectFromAccount.selectedAccount.address, root.packPrice)
+                })
             }
             GasValidator {
                 id: gasValidator
