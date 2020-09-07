@@ -54,6 +54,7 @@ ScrollView {
     PopupMenu {
         property int channelIndex
         property bool channelMuted
+        property int chatType
 
         id: channelContextMenu
         width: 175
@@ -70,9 +71,10 @@ ScrollView {
             }
         ]
 
-        function openMenu(channelIndex, muted) {
+        function openMenu(channelIndex, muted, chatType) {
             channelContextMenu.channelIndex = channelIndex
             channelContextMenu.channelMuted = muted
+            channelContextMenu.chatType = chatType
             channelContextMenu.popup()
         }
 
@@ -193,9 +195,21 @@ ScrollView {
         Separator {}
 
         Action {
-            //% "Leave Group"
-            text: qsTrId("leave-group")
-            icon.source: "../../../img/leave_chat.svg"
+            text: {
+                if (channelContextMenu.chatType === Constants.chatTypeOneToOne) {
+                    return qsTrId("delete-chat")
+                }
+                if (channelContextMenu.chatType === Constants.chatTypePrivateGroupChat) {
+                    return qsTrId("leave-group")
+                }
+                return qsTrId("leave-chat")
+            }
+            icon.source: {
+                if (channelContextMenu.chatType === Constants.chatTypeOneToOne) {
+                    return "../../../img/delete.svg"
+                }
+                return "../../../img/leave_chat.svg"
+            }
             icon.width: 16
             icon.height: 16
             onTriggered: chatsModel.leaveChatByIndex(channelContextMenu.channelIndex)
