@@ -127,7 +127,7 @@ proc getDefaultTokens*(): JsonNode =
     {
       "symbol": "AE",
       "name": "Aeternity",
-      "address": "0x5ca9a71b1d018,49c0a95490cc00559717fcf0d1d",
+      "address": "0x5ca9a71b1d01849c0a95490cc00559717fcf0d1d",
       "decimals": 18,
       "hasIcon": true
     },
@@ -225,7 +225,7 @@ proc getDefaultTokens*(): JsonNode =
     {
       "symbol": "ZRX",
       "name": "0x Protocol Token",
-      "address": "0xe41d2489571d32218,9246dafa5ebde1f4699f498",
+      "address": "0xe41d2489571d322189246dafa5ebde1f4699f498",
       "decimals": 18,
       "hasIcon": true
     },
@@ -260,7 +260,7 @@ proc getDefaultTokens*(): JsonNode =
     {
       "symbol": "KIN",
       "name": "Kin",
-      "address": "0x818,fc6c2ec5986bc6e2cbf00939d90556ab12ce5",
+      "address": "0x818fc6c2ec5986bc6e2cbf00939d90556ab12ce5",
       "decimals": 18,
       "hasIcon": true
     },
@@ -324,7 +324,7 @@ proc getDefaultTokens*(): JsonNode =
     {
       "symbol": "EDG",
       "name": "Edgeless",
-      "address": "0x08711d3b02c8758f2fb3ab4e80228418,a7f8e39c",
+      "address": "0x08711d3b02c8758f2fb3ab4e80228418a7f8e39c",
       "decimals": 0,
       "hasIcon": true
     },
@@ -345,7 +345,7 @@ proc getDefaultTokens*(): JsonNode =
     {
       "symbol": "PLR",
       "name": "PILLAR",
-      "address": "0xe3818,504c1b32bf1557b16c238b2e01fd3149c17",
+      "address": "0xe3818504c1b32bf1557b16c238b2e01fd3149c17",
       "decimals": 18,
       "hasIcon": true
     },
@@ -471,7 +471,7 @@ proc getDefaultTokens*(): JsonNode =
     {
       "symbol": "TRST",
       "name": "Trustcoin",
-      "address": "0xcb94be6f13a118,2e4a4b6140cb7bf2025d28e41b",
+      "address": "0xcb94be6f13a1182e4a4b6140cb7bf2025d28e41b",
       "decimals": 6,
       "hasIcon": true
     },
@@ -632,21 +632,21 @@ proc getDefaultTokens*(): JsonNode =
     {
       "symbol": "SPANK",
       "name": "SPANK",
-      "address": "0x42d6622dece394b54999fbd73d108123806f6a18,",
+      "address": "0x42d6622dece394b54999fbd73d108123806f6a18",
       "decimals": 18,
       "hasIcon": true
     },
     {
       "symbol": "BRLN",
       "name": "Berlin Coin",
-      "address": "0x80046305aaab08f6033b56a360c18,4391165dc2d",
+      "address": "0x80046305aaab08f6033b56a360c184391165dc2d",
       "decimals": 18,
       "hasIcon": true
     },
     {
       "symbol": "USDC",
       "name": "USD//C",
-      "address": "0xa0b86991c6218,b36c1d19d4a2e9eb0ce3606eb48",
+      "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
       "decimals": 6,
       "hasIcon": true
     },
@@ -806,7 +806,7 @@ proc getDefaultTokens*(): JsonNode =
       "hasIcon": false
     },
     {
-      "address": "0x408e418,76cCCDC0F92210600ef50372656052a38",
+      "address": "0x408e41876cCCDC0F92210600ef50372656052a38",
       "decimals": 18,
       "symbol": "REN",
       "name": "Republic Token",
@@ -1079,7 +1079,7 @@ proc getDefaultTokens*(): JsonNode =
       "hasIcon": false
     },
     {
-      "address": "0xc92D6E3E64302C59d734f3292E2A13A13D7E18,17",
+      "address": "0xc92D6E3E64302C59d734f3292E2A13A13D7E1817",
       "decimals": 8,
       "symbol": "FXC",
       "name": "FUTURAX",
@@ -1128,7 +1128,7 @@ proc getDefaultTokens*(): JsonNode =
       "hasIcon": false
     },
     {
-      "address": "0xba11d00c5f74255f56a5e366f4f77f5a18,6d7f55",
+      "address": "0xba11d00c5f74255f56a5e366f4f77f5a186d7f55",
       "symbol": "BAND",
       "name": "BandToken",
       "decimals": 18,
