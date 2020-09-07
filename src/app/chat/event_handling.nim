@@ -14,6 +14,7 @@ proc handleChatEvents(self: ChatController) =
 
   self.status.events.on("chatUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)
+    self.view.hideLoadingIndicator()
     self.view.updateUsernames(evArgs.contacts)
     self.view.updateChats(evArgs.chats)
     self.view.pushMessages(evArgs.messages)

@@ -243,6 +243,34 @@ StackLayout {
                 visible: isImage
             }
 
+            Loader {
+                active: chatsModel.loadingMessages
+                sourceComponent: loadingIndicator
+                anchors.right: parent.right
+                anchors.bottom: chatInput.top
+                anchors.rightMargin: Style.current.padding
+                anchors.bottomMargin: Style.current.padding
+            }
+
+            Component {
+                id: loadingIndicator
+                SVGImage {
+                    id: loadingImg
+                    source: "../../../app/img/loading.svg"
+                    width: 25
+                    height: 25
+                    fillMode: Image.Stretch
+                    RotationAnimator {
+                        target: loadingImg;
+                        from: 0;
+                        to: 360;
+                        duration: 1200
+                        running: true
+                        loops: Animation.Infinite
+                    }
+                }
+            }
+
             ChatInput {
                 id: chatInput
                 height: 40
