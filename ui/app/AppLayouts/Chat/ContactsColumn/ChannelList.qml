@@ -34,6 +34,7 @@ ScrollView {
             hasMentions: model.hasMentions
             contentType: model.contentType
             searchStr: chatGroupsContainer.searchStr
+            chatId: model.id
         }
         onCountChanged: {
             if (count > 0 && chatsModel.activeChannelIndex > -1) {
@@ -51,10 +52,29 @@ ScrollView {
         }
     }
 
+    ProfilePopup {
+        id: profilePopup
+        height: 330
+        noFooter: true
+    }
+
+    GroupInfoPopup {
+        id: groupInfoPopup
+        profileClick: {
+            profilePopup.openPopup.bind(profilePopup)
+        }
+        onClosed: {
+            mouseArea.menuOpened = false
+        }
+    }
+
     PopupMenu {
         property int channelIndex
         property bool channelMuted
         property int chatType
+        property string chatName
+        property string chatId
+        property string chatIdenticon
 
         id: channelContextMenu
         width: 175
@@ -71,20 +91,41 @@ ScrollView {
             }
         ]
 
-        function openMenu(channelIndex, muted, chatType) {
+        function openMenu(channelIndex, muted, chatType, chatName, chatId, chatIdenticon) {
             channelContextMenu.channelIndex = channelIndex
             channelContextMenu.channelMuted = muted
             channelContextMenu.chatType = chatType
+            channelContextMenu.chatName = chatName
+            channelContextMenu.chatId = chatId
+            channelContextMenu.chatIdenticon = chatIdenticon
             channelContextMenu.popup()
         }
 
         Action {
-            //% "View Group"
-            text: qsTrId("view-group")
+            enabled: channelContextMenu.chatType !== Constants.chatTypePublic
+            text: {
+                if (channelContextMenu.chatType === Constants.chatTypeOneToOne) {
+                    return qsTrId("view-profile")
+                }
+                if (channelContextMenu.chatType === Constants.chatTypePrivateGroupChat) {
+                    return qsTrId("view-group")
+                }
+                return qsTrId("share-chat")
+            }
             icon.source: "../../../img/group.svg"
             icon.width: 16
             icon.height: 16
-            onTriggered: console.log('TODO View group')
+            onTriggered: {
+                chatsModel.setActiveChannelByIndex(channelContextMenu.channelIndex)
+                chatGroupsListView.currentIndex = channelContextMenu.channelIndex
+                if (channelContextMenu.chatType === Constants.chatTypeOneToOne) {
+                    return profilePopup.openPopup(channelContextMenu.chatName, channelContextMenu.chatId, channelContextMenu.chatIdenticon)
+                }
+                if (channelContextMenu.chatType === Constants.chatTypePrivateGroupChat) {
+                    return groupInfoPopup.open()
+                }
+                // return qsTrId("share-chat")
+            }
         }
 
         Separator {}
@@ -107,57 +148,6 @@ ScrollView {
             }
         }
 
-        /* PopupMenu { */
-        /*     hasArrow: false */
-        /*     title: qstr("Mute chat") */
-
-        /*     // TODO implement mute chat in Model and call it here */
-        /*     Action { */ 
-        //% "15 minutes"
-        /*         text: qsTrId("15-minutes"); */
-        /*         icon.width: 0; */ 
-        /*         onTriggered: { */
-        /*             chatsModel.muteChannel(channelContextMenu.channelIndex, Constants.muteChat15Minutes) */
-        /*         } */
-        /*     } */
-        /*     Action { */
-        //% "1 hour"
-        /*         text: qsTrId("1-hour"); */
-        /*         icon.width: 0; */
-        /*         onTriggered: { */
-        /*             chatsModel.muteChannel(channelContextMenu.channelIndex, Constants.muteChatOneHour) */
-        /*         } */
-        /*     } */
-        /*     Action { */
-        //% "8 hours"
-        /*         text: qsTrId("8-hours"); */
-        /*         icon.width: 0; */
-        /*         onTriggered: { */
-        /*             chatsModel.muteChannel(channelContextMenu.channelIndex, Constants.muteChatEightHours) */
-        /*         } */
-        /*     } */
-        /*     Action { */ 
-        //% "24 hours"
-        /*         text: qsTrId("24-hours"); */ 
-        /*         icon.width: 0; */
-        /*         onTriggered: { */
-        /*             chatsModel.muteChannel(channelContextMenu.channelIndex, Constants.muteChat24Hours) */
-        /*         } */
-        /*     } */
-        /*     Action { */ 
-        //% "Until I turn it back on"
-        /*         text: qsTrId("until-i-turn-it-back-on"); */
-        /*         icon.width: 0; */ 
-        /*         onTriggered: { */
-        /*             console.log(appSettings.mutedChannels) */
-        /*             appSettings.mutedChannels.push({ */
-        /*               name: "Foo" */
-        /*             }) */
-        /*             console.log(appSettings.mutedChannels) */
-        /*             //chatsModel.muteChannel(channelContextMenu.channelIndex, Constants.muteChatUntilUnmuted) */
-        /*         } */
-        /*     } */
-        /* } */
         Action {
             //% "Mark as Read"
             text: qsTrId("mark-as-read")
