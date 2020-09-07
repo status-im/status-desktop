@@ -85,6 +85,10 @@ Item {
         }
     }
 
+    Timer {
+        id: timer
+    }
+
     Component {
         id: fetchMoreMessagesButtonComponent
         Item {
@@ -110,6 +114,9 @@ Item {
                   anchors.fill: parent
                   onClicked: {
                     chatsModel.requestMoreMessages()
+                    timer.setTimeout(function(){ 
+                        chatsModel.hideLoadingIndicator()
+                    }, 3000);
                   }
                 }
             }

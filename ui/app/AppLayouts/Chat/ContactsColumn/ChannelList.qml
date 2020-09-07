@@ -216,6 +216,7 @@ ScrollView {
     Connections {
         target: chatsModel
         onActiveChannelChanged: {
+            chatsModel.hideLoadingIndicator()
             chatGroupsListView.currentIndex = chatsModel.activeChannelIndex
             SelectedMessage.reset();
             chatColumn.isReply = false;

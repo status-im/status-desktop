@@ -38,6 +38,7 @@ QtObject:
       connected: bool
       unreadMessageCnt: int
       oldestMessageTimestamp: int64
+      loadingMessages: bool
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
 
@@ -63,6 +64,7 @@ QtObject:
     result.recentStickers = newStickerList()
     result.unreadMessageCnt = 0
     result.pubKey = ""
+    result.loadingMessages = false
     result.setup()
 
   proc oldestMessageTimestampChanged*(self: ChatsView) {.signal.}
@@ -413,7 +415,22 @@ QtObject:
     self.setLastMessageTimestamp()
     self.messagesLoaded();
 
+  proc loadingMessagesChanged*(self: ChatsView) {.signal.}
+
+  proc hideLoadingIndicator*(self: ChatsView) {.slot.} =
+    self.loadingMessages = false
+    self.loadingMessagesChanged()
+
+  proc isLoadingMessages(self: ChatsView): QVariant {.slot.} =
+    return newQVariant(self.loadingMessages)
+
+  QtProperty[QVariant] loadingMessages:
+    read = isLoadingMessages
+    notify = loadingMessagesChanged
+
   proc requestMoreMessages*(self: ChatsView) {.slot.} =
+    self.loadingMessages = true
+    self.loadingMessagesChanged()
     let topics = self.status.mailservers.getMailserverTopicsByChatId(self.activeChannel.id).map(topic => topic.topic)
     let currentOldestMessageTimestamp = self.oldestMessageTimestamp
     self.oldestMessageTimestamp = self.oldestMessageTimestamp - 86400
