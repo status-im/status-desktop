@@ -2,7 +2,7 @@ import json, json, options, json_serialization, stint, chronicles
 import core, types, utils, strutils, strformat
 from nim_status import validateMnemonic, startWallet
 import ../wallet/account
-import ./contracts as contractMethods
+import ./eth/contracts as contractMethods
 import eth/common/eth_types
 import ./types
 import ../signals/types as signal_types
@@ -61,14 +61,6 @@ proc getTransfersByAddress*(address: string): seq[types.Transaction] =
   except:
     let msg = getCurrentExceptionMsg()
     error "Failed getting wallet account transactions", msg
-
-proc sendTransaction*(tx: EthSend, password: string): RpcResponse =
-  let responseStr = core.sendTransaction($(%tx), password)
-  result = Json.decode(responseStr, RpcResponse)
-  if not result.error.isNil:
-    raise newException(RpcException, "Error sending transaction: " & result.error.message)
-
-  trace "Transaction sent succesfully", hash=result
 
 proc getBalance*(address: string): string =
   let payload = %* [address, "latest"]

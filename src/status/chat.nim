@@ -1,9 +1,8 @@
-import eventemitter, json, strutils, sequtils, tables, chronicles, sugar, times
-import libstatus/contracts as status_contracts
+import eventemitter, json, strutils, sequtils, tables, chronicles, times
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
 import libstatus/types
-import mailservers, stickers
+import stickers
 import profile/profile
 import chat/[chat, message]
 import signals/messages
