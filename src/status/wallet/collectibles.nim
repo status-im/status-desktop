@@ -1,7 +1,7 @@
 import strformat, httpclient, json, chronicles, sequtils, strutils, tables, sugar
 from eth/common/utils import parseAddress
 import ../libstatus/core as status
-import ../libstatus/contracts as contracts
+import ../libstatus/eth/contracts as contracts
 import ../libstatus/stickers as status_stickers
 import ../chat as status_chat
 import ../libstatus/types

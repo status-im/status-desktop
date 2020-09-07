@@ -1,6 +1,6 @@
 import json, chronicles, strformat, stint, strutils
 import core, wallet
-import contracts
+import ./eth/contracts
 import eth/common/eth_types, eth/common/utils
 import json_serialization
 import settings
