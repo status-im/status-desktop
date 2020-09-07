@@ -34,7 +34,7 @@ Rectangle {
         anchors.fill: parent
         onClicked: {
             if (mouse.button & Qt.RightButton) {
-                channelContextMenu.openMenu(index, muted)
+                channelContextMenu.openMenu(index, muted, chatType)
                 return;
             }
             chatsModel.setActiveChannelByIndex(index)
