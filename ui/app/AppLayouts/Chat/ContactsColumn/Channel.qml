@@ -5,6 +5,7 @@ import "../../../../imports"
 import "../components"
 
 Rectangle {
+    property string chatId: ""
     property string name: "channelName"
     property string lastMessage: "My latest message\n with a return"
     property string timestamp: "20/2/2020"
@@ -34,7 +35,7 @@ Rectangle {
         anchors.fill: parent
         onClicked: {
             if (mouse.button & Qt.RightButton) {
-                channelContextMenu.openMenu(index, muted, chatType)
+                channelContextMenu.openMenu(index, muted, chatType, name, chatId, identicon)
                 return;
             }
             chatsModel.setActiveChannelByIndex(index)
@@ -178,10 +179,6 @@ Rectangle {
         }
     }
 }
-
-
-
-
 
 /*##^##
 Designer {
