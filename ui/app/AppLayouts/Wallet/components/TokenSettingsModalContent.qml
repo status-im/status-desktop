@@ -123,10 +123,18 @@ Item {
                 }
 
                 Repeater {
+                    id: customTokensRepeater
                     model: walletModel.customTokenList
                     delegate: tokenComponent
                     anchors.top: customLbl.bottom
                     anchors.topMargin: Style.current.smallPadding
+                }
+
+                Connections {
+                    target: walletModel.customTokenList
+                    onTokensLoaded: {
+                        customLbl.visible = cnt > 0
+                    }
                 }
             }
 

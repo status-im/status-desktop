@@ -46,10 +46,22 @@ proc getSetting*[T](name: Setting, useCached: bool = true): T =
   result = getSetting(name, default(type(T)), useCached)
 
 proc getCurrentNetwork*(): Network =
-  result = Network.Mainnet
-  if getSetting[string](Setting.Networks_CurrentNetwork, constants.DEFAULT_NETWORK_NAME) == "testnet_rpc":
+  case getSetting[string](Setting.Networks_CurrentNetwork, constants.DEFAULT_NETWORK_NAME):
+  of "mainnet_rpc":
+    result = Network.Mainnet
+  of "testnet_rpc":
     result = Network.Testnet
-
+  of "rinkeby_rpc":
+    result = Network.Rinkeby
+  of "goerli_rpc":
+    result = Network.Goerli
+  of "xdai_rpc":
+    result = Network.XDai
+  of "poa_rpc":
+    result = Network.Poa
+  else:
+    result = Network.Other
+    
 proc getCurrentNetworkDetails*(): NetworkDetails =
   let currNetwork = getSetting[string](Setting.Networks_CurrentNetwork, constants.DEFAULT_NETWORK_NAME)
   let networks = getSetting[seq[NetworkDetails]](Setting.Networks_Networks)

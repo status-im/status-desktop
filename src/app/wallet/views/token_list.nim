@@ -20,14 +20,17 @@ QtObject:
     self.tokens = @[]
     self.QAbstractListModel.delete
 
+  proc tokensLoaded(self: TokenList, cnt: int) {.signal.} 
+
   proc loadDefaultTokens*(self:TokenList) = 
     if self.tokens.len == 0:
       self.tokens = getDefaultTokens().getElems()
+      self.tokensLoaded(self.tokens.len)
 
   proc loadCustomTokens*(self: TokenList) =
     self.beginResetModel()
     self.tokens = getCustomTokens().getElems()
-    echo $self.tokens
+    self.tokensLoaded(self.tokens.len)
     self.endResetModel()
 
   proc newTokenList*(): TokenList =
