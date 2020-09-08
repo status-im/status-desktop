@@ -105,11 +105,14 @@ ScrollView {
             enabled: channelContextMenu.chatType !== Constants.chatTypePublic
             text: {
                 if (channelContextMenu.chatType === Constants.chatTypeOneToOne) {
+                    //% "View Profile"
                     return qsTrId("view-profile")
                 }
                 if (channelContextMenu.chatType === Constants.chatTypePrivateGroupChat) {
+                    //% "View Group"
                     return qsTrId("view-group")
                 }
+                //% "Share Chat"
                 return qsTrId("share-chat")
             }
             icon.source: "../../../img/group.svg"
@@ -124,7 +127,6 @@ ScrollView {
                 if (channelContextMenu.chatType === Constants.chatTypePrivateGroupChat) {
                     return groupInfoPopup.open()
                 }
-                // return qsTrId("share-chat")
             }
         }
 
@@ -187,11 +189,14 @@ ScrollView {
         Action {
             text: {
                 if (channelContextMenu.chatType === Constants.chatTypeOneToOne) {
+                    //% "Delete chat"
                     return qsTrId("delete-chat")
                 }
                 if (channelContextMenu.chatType === Constants.chatTypePrivateGroupChat) {
+                    //% "Leave group"
                     return qsTrId("leave-group")
                 }
+                //% "Leave chat"
                 return qsTrId("leave-chat")
             }
             icon.source: {
