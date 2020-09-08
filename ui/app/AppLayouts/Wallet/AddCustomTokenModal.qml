@@ -75,6 +75,8 @@ ModalPopup {
                     changeError.open()
                     return
                 }
+
+                walletModel.loadCustomTokens()                
                 popup.close();
             }
         }

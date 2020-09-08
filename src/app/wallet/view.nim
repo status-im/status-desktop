@@ -17,6 +17,7 @@ QtObject:
       focusedAccount: AccountItemView
       currentTransactions: TransactionList
       defaultTokenList: TokenList
+      customTokenList: TokenList
       status: Status
       totalFiatBalance: string
       etherscanLink: string
@@ -35,6 +36,7 @@ QtObject:
     self.focusedAccount.delete
     self.currentTransactions.delete
     self.defaultTokenList.delete
+    self.customTokenList.delete
     self.QAbstractListModel.delete
 
   proc setup(self: WalletView) =
@@ -50,6 +52,7 @@ QtObject:
     result.currentTransactions = newTransactionList()
     result.currentCollectiblesLists = newCollectiblesList()
     result.defaultTokenList = newTokenList()
+    result.customTokenList = newTokenList()
     result.totalFiatBalance = ""
     result.etherscanLink = ""
     result.safeLowGasPrice = "0"
@@ -295,6 +298,20 @@ QtObject:
     self.accountListChanged()
     self.currentAccountChanged()
 
+  proc removeCustomToken*(self: WalletView, tokenAddress: string) {.slot.} =
+    let t = getTokenByAddress(getCustomTokens(), tokenAddress)
+    if t.kind == JNull: return
+    self.status.wallet.hideAsset(t["symbol"].getStr)
+    removeCustomToken(tokenAddress)
+    self.customTokenList.loadCustomTokens()
+    for account in self.status.wallet.accounts:
+      if account.address == self.currentAccount.address:
+        self.currentAccount.setAccountItem(account)
+      else: 
+        self.accounts.updateAssetsInList(account.address, account.assetList)
+    self.accountListChanged()
+    self.currentAccountChanged()
+
   proc updateView*(self: WalletView) =
     self.totalFiatBalanceChanged()
     self.currentAccountChanged()
@@ -456,11 +473,21 @@ QtObject:
     result = $status_wallet.getWalletAccounts()[0].address
 
   proc getDefaultTokenList(self: WalletView): QVariant {.slot.} =
-    self.defaultTokenList.setupTokens()
+    self.defaultTokenList.loadDefaultTokens()
     result = newQVariant(self.defaultTokenList)
 
   QtProperty[QVariant] defaultTokenList:
     read = getDefaultTokenList
+
+  proc loadCustomTokens(self: WalletView) {.slot.} =
+    self.customTokenList.loadCustomTokens()
+
+  proc getCustomTokenList(self: WalletView): QVariant {.slot.} =
+    result = newQVariant(self.customTokenList)
+
+  QtProperty[QVariant] customTokenList:
+    read = getCustomTokenList
+
   proc historyWasFetched*(self: WalletView) {.signal.}
 
   proc setHistoryFetchState*(self: WalletView, accounts: seq[string], isFetching: bool) =

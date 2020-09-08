@@ -198,6 +198,7 @@ proc addWatchOnlyAccount*(self: WalletModel, address: string, accountName: strin
   return self.addNewGeneratedAccount(account, "", accountName, color, constants.WATCH, false)
 
 proc hasAsset*(self: WalletModel, account: string, symbol: string): bool =
+  self.tokens = status_tokens.getVisibleTokens()
   self.tokens.anyIt(it["symbol"].getStr == symbol)
 
 proc changeAccountSettings*(self: WalletModel, address: string, accountName: string, color: string): string =
@@ -218,6 +219,14 @@ proc deleteAccount*(self: WalletModel, address: string): string =
 
 proc toggleAsset*(self: WalletModel, symbol: string) =
   status_tokens.toggleAsset(symbol)
+  self.tokens = status_tokens.getVisibleTokens()
+  for account in self.accounts:
+    account.assetList = self.generateAccountConfiguredAssets(account.address)
+    updateBalance(account, self.getDefaultCurrency())
+  self.events.emit("assetChanged", Args())
+
+proc hideAsset*(self: WalletModel, symbol: string) =
+  status_tokens.hideAsset(symbol)
   self.tokens = status_tokens.getVisibleTokens()
   for account in self.accounts:
     account.assetList = self.generateAccountConfiguredAssets(account.address)

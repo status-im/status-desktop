@@ -158,6 +158,7 @@ Item {
                     icon.source: "../../img/add_remove_token.svg"
                     onTriggered: {
                         tokenSettingsModal.open()
+                        walletModel.loadCustomTokens()
                     }
                 }
                 Action {

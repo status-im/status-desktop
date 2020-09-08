@@ -20,10 +20,7 @@ ModalPopup {
         //% "Add custom token"
         label: qsTrId("add-custom-token")
         anchors.top: parent.top
-        onClicked: {
-            popup.close()
-            addCustomTokenModal.open()
-        }
+        onClicked: addCustomTokenModal.open()
     }
 }
 
