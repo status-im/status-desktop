@@ -45,8 +45,13 @@ proc getTokenByAddress*(tokenList: JsonNode, address: string): JsonNode =
 proc visibleTokensSNTDefault(): JsonNode =
   let currentNetwork = getSetting[string](Setting.Networks_CurrentNetwork)
   let SNT = if getCurrentNetwork() == Network.Testnet: "STT" else: "SNT"
-  let response = getSetting[string](Setting.VisibleTokens, "{\"" & currentNetwork & "\": [\"" & SNT & "\"]}")
-  result = response.parseJson
+  let response = getSetting[string](Setting.VisibleTokens, "{}").parseJSON
+
+  if response.hasKey(currentNetwork): return response
+   
+  # Set STT/SNT visible by default
+  response[currentNetwork] = %* [SNT]
+  return response
 
 proc toggleAsset*(symbol: string) =
   let currentNetwork = getSetting[string](Setting.Networks_CurrentNetwork)
