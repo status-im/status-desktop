@@ -60,13 +60,6 @@ Rectangle {
         anchors.rightMargin: Style.current.padding
         fillMode: Image.PreserveAspectFit
         source: "../../../img/list-next.svg"
-        MouseArea {
-            cursorShape: Qt.PointingHandCursor
-            anchors.fill: parent
-            onClicked: {
-            onItemChecked(pubKey, isChecked)
-            }
-        }
     }
 
     CheckBox  {
@@ -93,5 +86,14 @@ Rectangle {
         color: Style.current.darkGrey
         anchors.top: accountImage.top
         anchors.topMargin: 10
+    }
+
+    MouseArea {
+        cursorShape: Qt.PointingHandCursor
+        anchors.fill: parent
+        visible: !showCheckbox
+        onClicked: {
+            onItemChecked(pubKey, isChecked)
+        }
     }
 }
