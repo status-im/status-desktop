@@ -1,11 +1,13 @@
 import NimQml, tables, json
 import ../../../status/libstatus/default_tokens
+import ../../../status/libstatus/tokens
 
 type
   TokenRoles {.pure.} = enum
     Name = UserRole + 1,
     Symbol = UserRole + 2,
-    HasIcon = UserRole + 3
+    HasIcon = UserRole + 3,
+    Address = UserRole + 4
 
 QtObject:
   type TokenList* = ref object of QAbstractListModel
@@ -18,9 +20,15 @@ QtObject:
     self.tokens = @[]
     self.QAbstractListModel.delete
 
-  proc setupTokens*(self:TokenList) = 
+  proc loadDefaultTokens*(self:TokenList) = 
     if self.tokens.len == 0:
       self.tokens = getDefaultTokens().getElems()
+
+  proc loadCustomTokens*(self: TokenList) =
+    self.beginResetModel()
+    self.tokens = getCustomTokens().getElems()
+    echo $self.tokens
+    self.endResetModel()
 
   proc newTokenList*(): TokenList =
     new(result, delete)
@@ -40,13 +48,12 @@ QtObject:
     case tokenRole:
     of TokenRoles.Name: result = newQVariant(token["name"].getStr)
     of TokenRoles.Symbol: result = newQVariant(token["symbol"].getStr)
-    of TokenRoles.HasIcon: result = newQVariant(token["hasIcon"].getBool)
+    of TokenRoles.HasIcon: result = newQVariant(token{"hasIcon"}.getBool)
+    of TokenRoles.Address: result = newQVariant(token["address"].getStr)
 
   method roleNames(self: TokenList): Table[int, string] =
     {TokenRoles.Name.int:"name",
     TokenRoles.Symbol.int:"symbol",
-    TokenRoles.HasIcon.int:"hasIcon"}.toTable
+    TokenRoles.HasIcon.int:"hasIcon",
+    TokenRoles.Address.int:"address"}.toTable
 
-  proc forceUpdate*(self: TokenList) =
-    self.beginResetModel()
-    self.endResetModel()

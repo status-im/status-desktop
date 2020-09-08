@@ -7,22 +7,45 @@ import settings
 from types import Setting, Network
 import default_tokens
 import strutils
+import locks
 
 logScope:
   topics = "wallet"
 
-proc getCustomTokens*(): JsonNode =
-  let payload = %* []
-  let response = callPrivateRPC("wallet_getCustomTokens", payload).parseJson
-  if response["result"].kind == JNull:
-    return %* []
-  return response["result"]
+var customTokensLock: Lock
+initLock(customTokensLock)
+
+var customTokens {.guard: customTokensLock.} = %*{}
+var dirty {.guard: customTokensLock.}  = true
+
+proc getCustomTokens*(useCached: bool = true): JsonNode =
+  {.gcsafe.}:
+    withLock customTokensLock:
+      if useCached and not dirty:
+        result = customTokens
+      else: 
+        let payload = %* []
+        result = callPrivateRPC("wallet_getCustomTokens", payload).parseJSON()["result"]
+        if result.kind == JNull: result = %* []
+        dirty = false
+        customTokens = result
+
+proc getTokenBySymbol*(tokenList: JsonNode, symbol: string): JsonNode =
+  for defToken in tokenList.getElems():
+    if defToken["symbol"].getStr == symbol:
+      return defToken
+  return newJNull()
+
+proc getTokenByAddress*(tokenList: JsonNode, address: string): JsonNode =
+  for defToken in tokenList.getElems():
+    if defToken["address"].getStr == address:
+      return defToken
+  return newJNull()
 
 proc visibleTokensSNTDefault(): JsonNode =
   let currentNetwork = getSetting[string](Setting.Networks_CurrentNetwork)
   let SNT = if getCurrentNetwork() == Network.Testnet: "STT" else: "SNT"
   let response = getSetting[string](Setting.VisibleTokens, "{\"" & currentNetwork & "\": [\"" & SNT & "\"]}")
-  echo response
   result = response.parseJson
 
 proc toggleAsset*(symbol: string) =
@@ -38,6 +61,17 @@ proc toggleAsset*(symbol: string) =
   visibleTokens[currentNetwork] = %* visibleTokenList
   discard saveSetting(Setting.VisibleTokens, $visibleTokens)
 
+proc hideAsset*(symbol: string) =
+  let currentNetwork = getSetting[string](Setting.Networks_CurrentNetwork)
+  let visibleTokens = visibleTokensSNTDefault()
+  var visibleTokenList = visibleTokens[currentNetwork].to(seq[string])
+  var symbolIdx = visibleTokenList.find(symbol)
+  if symbolIdx > -1:
+    visibleTokenList.del(symbolIdx)
+  visibleTokens[currentNetwork] = newJArray()
+  visibleTokens[currentNetwork] = %* visibleTokenList
+  discard saveSetting(Setting.VisibleTokens, $visibleTokens)
+
 proc getVisibleTokens*(): JsonNode =
   let currentNetwork = getSetting[string](Setting.Networks_CurrentNetwork)
   let visibleTokens = visibleTokensSNTDefault()
@@ -45,24 +79,23 @@ proc getVisibleTokens*(): JsonNode =
   let customTokens = getCustomTokens()
 
   result = newJArray()
-
   for v in visibleTokenList:
-    let t = getTokenBySymbol(v)
+    let t = getTokenBySymbol(getDefaultTokens(), v)
     if t.kind != JNull: result.elems.add(t)
-
-  for custToken in customTokens.getElems():
-    for v in visibleTokenList:
-      if custToken["symbol"].getStr == v:
-        result.elems.add(custToken)
-        break
-
+    let ct = getTokenBySymbol(getCustomTokens(), v)
+    if ct.kind != JNull: result.elems.add(ct)
+  
 proc addCustomToken*(address: string, name: string, symbol: string, decimals: int, color: string) =
   let payload = %* [{"address": address, "name": name, "symbol": symbol, "decimals": decimals, "color": color}]
   discard callPrivateRPC("wallet_addCustomToken", payload)
+  withLock customTokensLock:
+    dirty = true
 
 proc removeCustomToken*(address: string) =
   let payload = %* [address]
-  discard callPrivateRPC("wallet_deleteCustomToken", payload)
+  echo callPrivateRPC("wallet_deleteCustomToken", payload)
+  withLock customTokensLock:
+    dirty = true
 
 proc getTokensBalances*(accounts: openArray[string], tokens: openArray[string]): JsonNode =
   let payload = %* [accounts, tokens]
@@ -80,9 +113,14 @@ proc getTokenBalance*(tokenAddress: string, account: string): string =
   let response = callPrivateRPC("eth_call", payload)
   let balance = response.parseJson["result"].getStr
 
-  let t = getTokenByAddress(tokenAddress)
   var decimals = 18
-  if t.kind != JNull: decimals = t["decimals"].getInt
+  let t = getTokenByAddress(getDefaultTokens(), tokenAddress)
+  let ct = getTokenByAddress(getCustomTokens(), tokenAddress)
+  if t.kind != JNull: 
+    decimals = t["decimals"].getInt
+  elif ct.kind != JNull: 
+    decimals = ct["decimals"].getInt
+
   result = $hex2Token(balance, decimals)
 
 proc getSNTAddress*(): string =
@@ -92,10 +130,3 @@ proc getSNTAddress*(): string =
 proc getSNTBalance*(account: string): string =
   let snt = contracts.getContract("snt")
   result = getTokenBalance("0x" & $snt.address, account)
-
-proc addOrRemoveToken*(enable: bool, address: string, name: string, symbol: string, decimals: int, color: string): JsonNode =
-  if enable:
-    addCustomToken(address, name, symbol, decimals, color)
-  else:
-    removeCustomToken(address)
-  getCustomTokens()
