@@ -2,12 +2,53 @@ pragma Singleton
 
 import QtQuick 2.13
 import "../shared/xss.js" as XSS
-import "./BigNumber/bignumber.js" as BigNumber
 
 QtObject {
-    function newBigNumber(number) {
-        // See here for docs: https://github.com/peterolson/BigInteger.js
-        return BigNumber.bigInt(number)
+    // Use this to multiply an amount by 10^decimals
+    function multiplyByDecimals(amount, decimals) {
+        amount = amount.toString()
+        let dotIndex = -1
+        for (let i = 0; i < decimals; i++) {
+            dotIndex = amount.indexOf('.')
+            if (dotIndex > -1) {
+                if (dotIndex === amount.length - 1) {
+                    // The dot is at the end, we can get rid of it and add a 0
+                    amount = amount.substring(0, dotIndex) + "0"
+                    continue
+                }
+                // Move the dot one space to the right
+                amount = amount.substring(0, dotIndex) + amount.substring(dotIndex + 1, dotIndex + 2) + "." + amount.substring(dotIndex + 2)
+                continue
+            }
+            // Just add a new 0
+            amount += "0"
+        }
+
+        return stripStartingZeros(amount)
+    }
+
+    // Use this to divide an amount by 10^decimals
+    function divideByDecimals(amount, decimals) {
+        amount = amount.toString()
+        let dotIndex = amount.indexOf('.')
+        if (dotIndex === -1) {
+            amount = amount + "."
+        }
+        for (let i = 0; i < decimals; i++) {
+            dotIndex = amount.indexOf('.')
+            if (dotIndex === 0) {
+                // The dot is at the start, we need to add a zero in front before moving it
+                dotIndex++
+                amount = "0" + amount
+            }
+            // Move the dot one position left
+            amount = amount.substring(0, dotIndex - 1) + "." + amount.substring(dotIndex - 1, dotIndex) + amount.substring(dotIndex + 1)
+        }
+        if (amount.startsWith(".")) {
+            amount = "0" + amount
+        }
+
+        return stripTrailingZeros(amount)
     }
 
     function isHex(value) {
@@ -90,6 +131,22 @@ QtObject {
         }
         return strNumber.replace(/(\.[0-9]*[1-9])0+$|\.0*$/,'$1')
     }
+
+    /**
+     * Removes starting zeros from a string-representation of a number. Throws
+     * if parameter is not a string
+     */
+    function stripStartingZeros(strNumber) {
+        if (!(typeof strNumber === "string")) {
+            try {
+                strNumber = strNumber.toString()
+            } catch(e) {
+                throw "[Utils.stripStartingZeros] input parameter must be a string"
+            }
+        }
+        return strNumber.replace(/^(0*)([0-9\.]+)/, "$2")
+    }
+
 
     function setColorAlpha(color, alpha) {
         return Qt.hsla(color.hslHue, color.hslSaturation, color.hslLightness, alpha)
