@@ -343,6 +343,7 @@ DISTFILES += \
     shared/NotificationWindow.qml \
     shared/PopupMenu.qml \
     shared/Identicon.qml \
+    shared/AssetAndAmountInput.qml \
     shared/CopyToClipBoardButton.qml \
     shared/GasSelector.qml \
     shared/RoundedImage.qml \

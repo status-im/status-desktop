@@ -10,6 +10,7 @@ ModalPopup {
     property string commandTitle: "Send"
     property string finalButtonLabel: "Request address"
     property var sendChatCommand: function () {}
+    property bool isRequested: false
 
     id: root
     title: root.commandTitle
@@ -82,6 +83,7 @@ ModalPopup {
                 defaultCurrency: walletModel.defaultCurrency
                 getFiatValue: walletModel.getFiatValue
                 getCryptoValue: walletModel.getCryptoValue
+                isRequested: root.isRequested
                 width: stack.width
                 reset: function() {
                     selectedAccount = Qt.binding(function() { return selectFromAccount.selectedAccount })
@@ -147,8 +149,7 @@ ModalPopup {
                 anchors.fill: parent
                 border.width: 0
                 radius: width / 2
-                color: btnBack.disabled ? Style.current.grey :
-                        btnBack.hovered ? Qt.darker(btnBack.btnColor, 1.1) : btnBack.btnColor
+                color: btnBack.hovered ? Qt.darker(btnBack.btnColor, 1.1) : btnBack.btnColor
 
                 SVGImage {
                     width: 20.42
@@ -176,7 +177,8 @@ ModalPopup {
                     if (stack.isLastGroup) {
                         return root.sendChatCommand(selectFromAccount.selectedAccount.address,
                                                     txtAmount.selectedAmount,
-                                                    txtAmount.selectedAsset.address)
+                                                    txtAmount.selectedAsset.address,
+                                                    txtAmount.selectedAsset.decimals)
                     }
                     stack.next()
                 }

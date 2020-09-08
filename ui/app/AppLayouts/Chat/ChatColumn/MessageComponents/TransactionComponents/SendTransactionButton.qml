@@ -28,6 +28,14 @@ Item {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: {
+                walletModel.setFocusedAccountByAddress(commandParametersObject.fromAddress)
+                var acc = walletModel.focusedAccount
+                signTransactionModal.selectedAccount = {
+                    name: acc.name,
+                    address: commandParametersObject.fromAddress,
+                    iconColor: acc.iconColor,
+                    assets: acc.assets
+                }
                 signTransactionModal.open()
             }
         }
@@ -38,13 +46,7 @@ Item {
         onOpened: {
           walletModel.getGasPricePredictions()
         }
-        selectedAccount: {
-            return {
-                name: walletModel.getAccountValueByAddress(commandParametersObject.fromAddress, 'name'),
-                address: commandParametersObject.fromAddress,
-                iconColor: walletModel.getAccountValueByAddress(commandParametersObject.fromAddress, 'iconColor')
-            }
-        }
+        selectedAccount: {}
         selectedRecipient: {
             return {
                 address: commandParametersObject.address,
@@ -54,7 +56,7 @@ Item {
             }
         }
         selectedAsset: {
-                return {
+            return {
                 name: token.name,
                 symbol: token.symbol,
                 address: commandParametersObject.contract

@@ -28,8 +28,7 @@ proc getPrice(crypto: string, fiat: string): string =
     let response = client.request(url)
     result = $parseJson(response.body)[fiat.toUpper]
   except Exception as e:
-    echo "error getting price"
-    echo e.msg
+    error "Error getting price", message = e.msg
     result = "0.0"
 
 proc getEthBalance(address: string): string =
