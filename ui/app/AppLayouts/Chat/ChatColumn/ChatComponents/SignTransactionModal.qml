@@ -12,8 +12,6 @@ ModalPopup {
     property var selectedAsset
     property var selectedAmount
     property var selectedFiatAmount
-    property var selectedGasLimit
-    property var selectedGasPrice
 
     id: root
 
@@ -53,11 +51,11 @@ ModalPopup {
         let response = JSON.parse(responseStr)
 
         if (response.error) {
-            if (response.error.includes("could not decrypt key with given password")){
+            if (response.error.message.includes("could not decrypt key with given password")){
                 transactionSigner.validationError = qsTr("Wrong password")
                 return
             }
-            sendingError.text = response.error
+            sendingError.text = response.error.message
             return sendingError.open()
         }
 
@@ -93,6 +91,18 @@ ModalPopup {
                     fastestGasPrice = Qt.binding(function(){ return parseFloat(walletModel.fastestGasPrice) })
                 }
             }
+            GasValidator {
+                id: gasValidator
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 8
+                selectedAccount: root.selectedAccount
+                selectedAmount: parseFloat(root.selectedAmount)
+                selectedAsset: root.selectedAsset
+                selectedGasEthValue: gasSelector.selectedGasEthValue
+                reset: function() {
+                    selectedGasEthValue = Qt.binding(function() { return gasSelector.selectedGasEthValue })
+                }
+            }
         }
         TransactionFormGroup {
             id: group2
@@ -104,15 +114,23 @@ ModalPopup {
                 width: stack.width
                 fromAccount: root.selectedAccount
                 gas: {
-                    const value = walletModel.getGasEthValue(gasSelector.selectedGasPrice, gasSelector.selectedGasLimit)
-                    const fiatValue = walletModel.getFiatValue(value, "ETH", walletModel.defaultCurrency)
-                    return { value, "symbol": "ETH", fiatValue }
+                    "value": gasSelector.selectedGasEthValue,
+                    "symbol": "ETH",
+                    "fiatValue": gasSelector.selectedGasFiatValue
                 }
                 toAccount: root.selectedRecipient
                 asset: root.selectedAsset
                 amount: { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount }
                 currency: walletModel.defaultCurrency
-                reset: function() {}
+                reset: function() {
+                    gas = Qt.binding(function() {
+                        return {
+                            "value": gasSelector.selectedGasEthValue,
+                            "symbol": "ETH",
+                            "fiatValue": gasSelector.selectedGasFiatValue
+                        }
+                    })
+                }
             }
         }
         TransactionFormGroup {
@@ -146,8 +164,7 @@ ModalPopup {
                 anchors.fill: parent
                 border.width: 0
                 radius: width / 2
-                color: btnBack.disabled ? Style.current.grey :
-                        btnBack.hovered ? Qt.darker(btnBack.btnColor, 1.1) : btnBack.btnColor
+                color: btnBack.hovered ? Qt.darker(btnBack.btnColor, 1.1) : btnBack.btnColor
 
                 SVGImage {
                     width: 20.42

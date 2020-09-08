@@ -14,6 +14,7 @@ QtObject:
       currentAssetList*: AssetList
       currentCollectiblesLists*: CollectiblesList
       currentAccount: AccountItemView
+      focusedAccount: AccountItemView
       currentTransactions: TransactionList
       defaultTokenList: TokenList
       status: Status
@@ -31,6 +32,7 @@ QtObject:
     self.accounts.delete
     self.currentAssetList.delete
     self.currentAccount.delete
+    self.focusedAccount.delete
     self.currentTransactions.delete
     self.defaultTokenList.delete
     self.QAbstractListModel.delete
@@ -43,6 +45,7 @@ QtObject:
     result.status = status
     result.accounts = newAccountList()
     result.currentAccount = newAccountItemView()
+    result.focusedAccount = newAccountItemView()
     result.currentAssetList = newAssetList()
     result.currentTransactions = newTransactionList()
     result.currentCollectiblesLists = newCollectiblesList()
@@ -141,6 +144,26 @@ QtObject:
     read = getCurrentAccount
     write = setCurrentAccountByIndex
     notify = currentAccountChanged
+
+  proc focusedAccountChanged*(self: WalletView) {.signal.}
+
+  proc setFocusedAccountByAddress*(self: WalletView, address: string) {.slot.} =
+    if(self.accounts.rowCount() == 0): return
+
+    let index = self.accounts.getAccountindexByAddress(address)
+    if index == -1: return
+    let selectedAccount = self.accounts.getAccount(index)
+    if self.focusedAccount.address == selectedAccount.address: return
+    self.focusedAccount.setAccountItem(selectedAccount)
+    self.focusedAccountChanged()
+
+  proc getFocusedAccount*(self: WalletView): QVariant {.slot.} =
+    result = newQVariant(self.focusedAccount)
+
+  QtProperty[QVariant] focusedAccount:
+    read = getFocusedAccount
+    write = setFocusedAccountByAddress
+    notify = focusedAccountChanged
 
   proc currentAssetListChanged*(self: WalletView) {.signal.}
 
@@ -247,21 +270,6 @@ QtObject:
 
   proc defaultCurrency*(self: WalletView): string {.slot.} =
     self.status.wallet.getDefaultCurrency()
-
-  proc getAccountValueByAddress*(self: WalletView, address: string, arg: string): string {.slot.} =
-    let index = self.accounts.getAccountindexByAddress(address)
-    if index == -1: return
-    let account = self.accounts.getAccount(index)
-    case arg:
-      of "name": result = account.name
-      of "iconColor": result = account.iconColor
-      of "balance": result = account.balance
-      of "path": result = account.path
-      of "walletType": result = account.walletType
-      of "publicKey": result = account.publicKey
-      of "realFiatBalance": result = $account.realFiatBalance
-      of "wallet": result = $account.wallet
-      of "chat": result = $account.wallet
 
   proc defaultCurrencyChanged*(self: WalletView) {.signal.}
 

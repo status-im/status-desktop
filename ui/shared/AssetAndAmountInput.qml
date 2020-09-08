@@ -21,7 +21,8 @@ Item {
     property var getFiatValue: function () {}
     property var getCryptoValue: function () {}
     property bool isDirty: false
-    property bool isValid: true
+    property bool isRequested: false
+    property bool isValid: false
     property var reset: function() {}
 
     function resetInternal() {
@@ -31,7 +32,7 @@ Item {
         inputAmount.resetInternal()
         txtBalanceDesc.color = Style.current.secondaryText
         txtBalance.color = Qt.binding(function() { return txtBalance.hovered ? Style.current.textColor : Style.current.secondaryText })
-        isValid = true
+        isValid = false
     }
 
     id: root
@@ -41,8 +42,6 @@ Item {
     anchors.left: parent.left
 
     function validate(checkDirty) {
-        // TODO remove me
-        return true
         let isValid = true
         let error = ""
         const hasTyped = checkDirty ? isDirty : true
@@ -58,7 +57,7 @@ Item {
         } else if (input === 0.00 && hasTyped) {
             error = greaterThan0ErrorMessage
             isValid = false
-        } else if (input > balance && !noInput) {
+        } else if (!isRequested && input > balance && !noInput) {
             error = balanceErrorMessage
             isValid = false
         }
@@ -87,6 +86,7 @@ Item {
     }
 
     Item {
+        visible: !root.isRequested
         anchors.right: parent.right
         anchors.left: parent.left
         anchors.top: parent.top

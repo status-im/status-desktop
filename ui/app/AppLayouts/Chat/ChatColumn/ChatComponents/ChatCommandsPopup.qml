@@ -26,6 +26,23 @@ Popup {
         }
     }
 
+    function requestAddressForTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
+        amount = Utils.multiplyByDecimals(amount, tokenDecimals)
+        chatsModel.requestAddressForTransaction(chatsModel.activeChannel.id,
+                                                address,
+                                                amount,
+                                                tokenAddress)
+        chatCommandModal.close()
+    }
+    function requestTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
+        amount = Utils.multiplyByDecimals(amount, tokenDecimals)
+        chatsModel.requestTransaction(chatsModel.activeChannel.id,
+                                        address,
+                                        amount,
+                                        tokenAddress)
+        chatCommandModal.close()
+    }
+
     Row {
         id: buttonRow
         anchors.left: parent.left
@@ -35,12 +52,15 @@ Popup {
         padding: Style.current.halfPadding
         spacing: Style.current.halfPadding
 
+
         ChatCommandButton {
             iconColor: Style.current.purple
             iconSource: "../../../../img/send.svg"
             //% "Send transaction"
             text: qsTrId("send-transaction")
             onClicked: function () {
+                chatCommandModal.sendChatCommand = root.requestAddressForTransaction
+                chatCommandModal.isRequested = false
                 chatCommandModal.commandTitle = qsTr("Send")
                 chatCommandModal.title = chatCommandModal.commandTitle
                 chatCommandModal.finalButtonLabel = qsTr("Request Address")
@@ -50,17 +70,11 @@ Popup {
                     name: chatsModel.activeChannel.name,
                     type: RecipientSelector.Type.Contact
                 }
-                chatCommandModal.sendChatCommand = function(address, amount, tokenAddress) {
-                    chatsModel.requestAddressForTransaction(chatsModel.activeChannel.id,
-                                                            address,
-                                                            amount,
-                                                            tokenAddress)
-                    chatCommandModal.close()
-                }
                 chatCommandModal.open()
                 root.close()
             }
         }
+
 
         ChatCommandButton {
             iconColor: Style.current.orange
@@ -69,6 +83,8 @@ Popup {
             //% "Request transaction"
             text: qsTrId("request-transaction")
             onClicked: function () {
+                chatCommandModal.sendChatCommand = root.requestTransaction
+                chatCommandModal.isRequested = true
                 chatCommandModal.commandTitle = qsTr("Request")
                 chatCommandModal.title = chatCommandModal.commandTitle
                 chatCommandModal.finalButtonLabel = qsTr("Request")
@@ -77,13 +93,6 @@ Popup {
                     identicon: chatsModel.activeChannel.identicon,
                     name: chatsModel.activeChannel.name,
                     type: RecipientSelector.Type.Contact
-                }
-                chatCommandModal.sendChatCommand = function(address, amount, tokenAddress) {
-                    chatsModel.requestTransaction(chatsModel.activeChannel.id,
-                                                  address,
-                                                  amount,
-                                                  tokenAddress)
-                    chatCommandModal.close()
                 }
                 chatCommandModal.open()
                 root.close()
