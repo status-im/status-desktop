@@ -77,7 +77,7 @@ ModalPopup {
                     ensUsername.text == "";
                     pubKey = "";
                 } else if(resolvedPubKey == ""){
-                    ensUsername.text = qsTrId("user-not-found");
+                    ensUsername.text = qsTr("User not found");
                     pubKey = "";
                 } else {
                     ensUsername.text = chatsModel.formatENSUsername(chatKey.text) + " • " + Utils.compactAddress(resolvedPubKey, 4)
