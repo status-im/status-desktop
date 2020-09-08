@@ -48,21 +48,13 @@ Item {
         if (!commandParametersObject.value) {
             return "0"
         }
-
-        // Divide the Wei value by 10^decimals
-        var divModResult = Utils.newBigNumber(commandParametersObject.value)
-        .divmod(Utils.newBigNumber(10)
-                .pow(token.decimals))
-        // Make a string with the quotient and the remainder
-        var str = divModResult.quotient.toString() + "." + divModResult.remainder.toString()
-        // Remove the useless zeros at the satrt and the end, but keep at least one before the dot
-        return str.replace(/^(0*)([0-9\.]+?)(0*)$/g, function (match, firstZeros, whatWeKeep, secondZeros) {
-            if (whatWeKeep.startsWith('.')) {
-                whatWeKeep = "0" + whatWeKeep
-            }
-
-            return whatWeKeep
-        })
+        try {
+            return Utils.divideByDecimals(commandParametersObject.value, token.decimals)
+        } catch (e) {
+            console.error("Error getting the ETH value of:", commandParametersObject.value)
+            console.error("Error:", e.message)
+            return "0"
+        }
     }
     property string tokenSymbol: token.symbol
     property string fiatValue: {
