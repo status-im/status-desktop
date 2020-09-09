@@ -51,6 +51,7 @@ proc init*(self: WalletController) =
       of "newblock":
         for acc in data.accounts:
           self.status.wallet.updateAccount(acc)
+          self.status.wallet.checkPendingTransactions(acc, data.blockNumber)
           # TODO: show notification
       of "recent-history-fetching":
         self.view.setHistoryFetchState(data.accounts, true)
