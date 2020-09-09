@@ -27,7 +27,7 @@ Popup {
     }
 
     function requestAddressForTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
-        amount = Utils.multiplyByDecimals(amount, tokenDecimals)
+        amount =  walletModel.eth2Wei(amount.toString(), tokenDecimals)
         chatsModel.requestAddressForTransaction(chatsModel.activeChannel.id,
                                                 address,
                                                 amount,
@@ -35,7 +35,7 @@ Popup {
         chatCommandModal.close()
     }
     function requestTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
-        amount = Utils.multiplyByDecimals(amount, tokenDecimals)
+        amount =  walletModel.eth2Wei(amount.toString(), tokenDecimals)
         chatsModel.requestTransaction(chatsModel.activeChannel.id,
                                         address,
                                         amount,

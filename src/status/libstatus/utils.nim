@@ -1,4 +1,4 @@
-import json, random, strutils, strformat, tables
+import json, random, strutils, strformat, tables, chronicles
 import stint, nim_status
 from times import getTime, toUnix, nanosecond
 import accounts/signing_phrases
@@ -59,6 +59,22 @@ proc wei2Eth*(input: Stuint[256]): string =
   let leading_zeros = "0".repeat(($one_eth).len - ($remainder).len - 1)
 
   fmt"{eth}.{leading_zeros}{remainder}"
+
+proc wei2Token*(input: string, decimals: int): string =
+  try:
+    var value = input.parse(Stuint[256])
+    var p = u256(10).pow(decimals)
+    var i = value.div(p)
+    var r = value.mod(p)
+    var leading_zeros = "0".repeat(decimals - ($r).len)
+    var d = fmt"{leading_zeros}{$r}"
+    result = $i
+    if(r > 0): result = fmt"{result}.{d}"
+    result. trimZeros()
+  except Exception as e:
+    error "Error parsing this wei value", input
+    result = "0"
+  
 
 proc first*(jArray: JsonNode, fieldName, id: string): JsonNode =
   if jArray == nil:

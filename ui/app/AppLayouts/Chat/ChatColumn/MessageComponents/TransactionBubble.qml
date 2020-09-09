@@ -49,7 +49,7 @@ Item {
             return "0"
         }
         try {
-            return Utils.divideByDecimals(commandParametersObject.value, token.decimals)
+            return walletModel.wei2Token(commandParametersObject.value.toString(), token.decimals)
         } catch (e) {
             console.error("Error getting the ETH value of:", commandParametersObject.value)
             console.error("Error:", e.message)
