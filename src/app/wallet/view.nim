@@ -5,6 +5,7 @@ import ../../status/libstatus/wallet as status_wallet
 import ../../status/libstatus/tokens
 import ../../status/libstatus/types
 import ../../status/libstatus/utils as status_utils
+import ../../status/ens as status_ens
 import views/[asset_list, account_list, account_item, token_list, transaction_list, collectibles_list]
 
 QtObject:
@@ -527,3 +528,11 @@ QtObject:
   proc wei2Token*(self: WalletView, wei: string, decimals: int): string {.slot.} =
     return status_utils.wei2Token(wei, decimals)
 
+  proc resolveENS*(self: WalletView, ens: string) {.slot.} =
+    spawnAndSend(self, "ensResolved") do:
+      status_ens.owner(ens)
+
+  proc ensWasResolved*(self: WalletView, resolvedPubKey: string) {.signal.}
+
+  proc ensResolved(self: WalletView, pubKey: string) {.slot.} =
+    self.ensWasResolved(pubKey)
