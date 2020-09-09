@@ -155,10 +155,12 @@ Item {
             DSM.SignalTransition {
                 targetState: listState
                 signal: back
+                guard: profileModel.ens.rowCount() > 0
             }
             DSM.SignalTransition {
-                targetState: listState
+                targetState: welcomeState
                 signal: back
+                guard: profileModel.ens.rowCount() == 0
             }
             DSM.SignalTransition {
                 targetState: ensRegisteredState
