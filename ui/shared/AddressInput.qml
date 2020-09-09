@@ -3,13 +3,16 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import "../imports"
+import "../shared"
 
 Item {
     id: root
     property string validationError: "Error"
+    property string ensAsyncValidationError: qsTr("ENS Username not found")
     property alias label: inpAddress.label
     property string selectedAddress
     property var isValid: false
+    property bool isPending: false
 
     height: inpAddress.height
 
@@ -20,22 +23,35 @@ Item {
         isValid = false
     }
 
-    function isValidEns(inputValue) {
-        // TODO: Check if the entered value resolves to an address. Long operation.
-        // Issue tracked: https://github.com/status-im/nim-status-client/issues/718
-        const isEmail = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/.test(inputValue)
-        const isDomain = /(?:(?:(?<thld>[\w\-]*)(?:\.))?(?<sld>[\w\-]*))\.(?<tld>[\w\-]*)/.test(inputValue)
-        return isEmail || isDomain
-    }
-
     function validate(inputValue) {
         if (!inputValue) inputValue = selectedAddress
         let isValid =
-            (inputValue && inputValue.startsWith("0x") && Utils.isValidAddress(inputValue)) ||
-            isValidEns(inputValue)
+            (inputValue && inputValue.startsWith("0x") && Utils.isValidAddress(inputValue) || Utils.isValidEns(inputValue))
         inpAddress.validationError = isValid ? "" : validationError
         root.isValid = isValid
         return isValid
+    }
+
+    property var validateAsync: Backpressure.debounce(inpAddress, 300, function (inputValue) {
+        root.isPending = true
+        var name = inputValue.startsWith("@") ? inputValue.substring(1) : inputValue
+        walletModel.resolveENS(name)
+    });
+
+
+    Connections {
+        target: walletModel
+        onEnsWasResolved: {
+            root.isPending = false
+            if (resolvedPubKey === ""){
+                inpAddress.validationError = root.ensAsyncValidationError
+                root.isValid = false
+            } else {
+                root.isValid = true
+                root.selectedAddress = resolvedPubKey
+                inpAddress.validationError = ""
+            }
+        }
     }
 
     Input {
@@ -64,7 +80,11 @@ Item {
             metrics.text = text
             const isValid = root.validate(inputValue)
             if (isValid) {
+              if (Utils.isValidAddress(inputValue)) {
                 root.selectedAddress = inputValue
+              } else {
+                Qt.callLater(root.validateAsync, inputValue)
+              }
             }
         }
         TextMetrics {
@@ -84,6 +104,22 @@ Item {
                     inpAddress.textField.paste()
                 }
             }
+        }
+    }
+
+    Loader {
+        sourceComponent: loadingIndicator
+        anchors.top: inpAddress.bottom
+        anchors.right: inpAddress.right
+        anchors.topMargin: Style.current.halfPadding
+        active: root.isPending
+    }
+
+    Component {
+        id: loadingIndicator
+        LoadingImage {
+            width: 12
+            height: 12
         }
     }
 }

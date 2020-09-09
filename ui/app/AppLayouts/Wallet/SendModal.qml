@@ -236,11 +236,10 @@ ModalPopup {
             id: btnNext
             anchors.right: parent.right
             label: qsTr("Next")
-            disabled: !stack.currentGroup.isValid
+            disabled: !stack.currentGroup.isValid || stack.currentGroup.isPending
             onClicked: {
-                const isValid = stack.currentGroup.validate()
-
-                if (stack.currentGroup.validate()) {
+                const validity = stack.currentGroup.validate()
+                if (validity.isValid && !validity.isPending) {
                     if (stack.isLastGroup) {
                         return root.sendTransaction()
                     }
