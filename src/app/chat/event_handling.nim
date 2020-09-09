@@ -1,4 +1,4 @@
-import sugar, sequtils, times
+import sugar, sequtils, times, strutils
 
 proc handleChatEvents(self: ChatController) =
   # Display already saved messages
@@ -74,6 +74,10 @@ proc handleChatEvents(self: ChatController) =
 
   self.status.events.on("chat:connected") do(e: Args):
     self.view.setConnected(true)
+
+  self.status.events.on(PendingTransactionType.BuyingStickerPack.event) do(e: Args):
+    var data = TransactionMinedArgs(e).data
+    self.view.installStickerPack(data.parseInt)
 
 proc handleMailserverEvents(self: ChatController) =
   self.status.events.on("mailserverTopics") do(e: Args):

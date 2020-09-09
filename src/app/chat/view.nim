@@ -12,6 +12,7 @@ import ../../status/libstatus/stickers as status_stickers
 import ../../status/contacts as status_contacts
 import ../../status/ens as status_ens
 import ../../status/chat/[chat, message]
+import ../../status/wallet
 import ../../status/libstatus/types
 import ../../status/profile/profile
 import eth/common/eth_types
@@ -115,6 +116,9 @@ QtObject:
     try:
       let response = self.status.stickers.buyPack(packId, address, price, gas, gasPrice, password)
       result = $(%* { "result": %response })
+      # TODO: 
+      # check if response["error"] is not null and handle the error 
+      self.status.wallet.trackPendingTransaction(address, response, PendingTransactionType.BuyingStickerPack, $packId)
     except RpcException as e:
       result = $(%* { "error": %* { "message": %e.msg }})
 
