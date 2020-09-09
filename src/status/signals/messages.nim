@@ -201,6 +201,7 @@ proc toMessage*(jsonMsg: JsonNode): Message =
     .join(" ")
 
   if message.contentType == ContentType.Transaction:
+    # TODO find a way to use json_seralization for this. When I try, I get an error
     message.commandParameters = CommandParameters(
       id: jsonMsg["commandParameters"]["id"].getStr,
       fromAddress: jsonMsg["commandParameters"]["from"].getStr,

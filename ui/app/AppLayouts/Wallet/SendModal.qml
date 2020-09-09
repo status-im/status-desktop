@@ -14,12 +14,6 @@ ModalPopup {
     title: qsTrId("command-button-send")
     height: 504
 
-    property var selectedRecipient
-    onSelectedRecipientChanged: {
-        selectRecipient.selectedRecipient = this.selectedRecipient
-        selectRecipient.readOnly = !!this.selectedRecipient && !!this.selectedRecipient.address
-    }
-
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
         title: qsTr("Error sending the transaction")
@@ -100,8 +94,6 @@ ModalPopup {
                 accounts: walletModel.accounts
                 contacts: profileModel.addedContacts
                 label: qsTr("Recipient")
-                readOnly: !!root.selectedRecipient && !!root.selectedRecipient.address
-                selectedRecipient: root.selectedRecipient
                 anchors.top: separator.bottom
                 anchors.topMargin: 10
                 width: stack.width

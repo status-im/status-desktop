@@ -16,11 +16,7 @@ ModalPopup {
     title: root.commandTitle
     height: 504
 
-    property var selectedRecipient
-    onSelectedRecipientChanged: {
-        selectRecipient.selectedRecipient = this.selectedRecipient
-        selectRecipient.readOnly = !!this.selectedRecipient && !!this.selectedRecipient.address
-    }
+    property alias selectedRecipient: selectRecipient.selectedRecipient
 
     onClosed: {
         stack.reset()
@@ -63,7 +59,6 @@ ModalPopup {
                 contacts: profileModel.addedContacts
                 label: qsTr("Recipient")
                 readOnly: true
-                selectedRecipient: root.selectedRecipient
                 anchors.top: separator.bottom
                 anchors.topMargin: 10
                 width: stack.width

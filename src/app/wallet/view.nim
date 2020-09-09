@@ -4,7 +4,7 @@ import ../../status/wallet/collectibles as status_collectibles
 import ../../status/libstatus/wallet as status_wallet
 import ../../status/libstatus/tokens
 import ../../status/libstatus/types
-import ../../status/libstatus/utils
+import ../../status/libstatus/utils as status_utils
 import views/[asset_list, account_list, account_item, token_list, transaction_list, collectibles_list]
 
 QtObject:
@@ -493,3 +493,10 @@ QtObject:
     if address == self.currentAccount.address:
       self.setCurrentTransactions(transactions)
     self.loadingTrxHistory(false)
+
+  proc eth2Wei*(self: WalletView, eth: string, decimals: int): string {.slot.} =
+    return $status_utils.eth2Wei(parseFloat(eth), decimals)
+
+  proc wei2Token*(self: WalletView, wei: string, decimals: int): string {.slot.} =
+    return status_utils.wei2Token(wei, decimals)
+

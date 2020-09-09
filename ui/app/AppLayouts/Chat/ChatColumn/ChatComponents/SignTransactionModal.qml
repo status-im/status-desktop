@@ -90,6 +90,25 @@ ModalPopup {
                     slowestGasPrice = Qt.binding(function(){ return parseFloat(walletModel.safeLowGasPrice) })
                     fastestGasPrice = Qt.binding(function(){ return parseFloat(walletModel.fastestGasPrice) })
                 }
+
+                function estimateGas() {
+                    if (!(root.selectedAccount && root.selectedAccount.address &&
+                        root.selectedRecipient && root.selectedRecipient.address &&
+                        root.selectedAsset && root.selectedAsset.address &&
+                        root.selectedAmount)) return
+
+                    let gasEstimate = JSON.parse(walletModel.estimateGas(
+                        root.selectedAccount.address,
+                        root.selectedRecipient.address,
+                        root.selectedAsset.address,
+                        root.selectedAmount))
+
+                    if (gasEstimate.error) {
+                        console.warn(qsTr("Error estimating gas: %1").arg(gasEstimate.error.message))
+                        return
+                    }
+                    selectedGasLimit = gasEstimate.result
+                }
             }
             GasValidator {
                 id: gasValidator
