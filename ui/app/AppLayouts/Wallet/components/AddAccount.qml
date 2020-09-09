@@ -59,7 +59,7 @@ AddButton {
             }
         }
         onAboutToHide: {
-            btnAdd.icon.state = "default"
+            btnAdd.iconImg.state = "default"
         }
     }
 }
