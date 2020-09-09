@@ -3,17 +3,13 @@ import libstatus/contracts as status_contracts
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
 import libstatus/chatCommands as status_chat_commands
-import libstatus/stickers as status_stickers
 import libstatus/accounts/constants as constants
 import libstatus/types
-import mailservers
+import mailservers, stickers
 import profile/profile
 import chat/[chat, message]
 import signals/messages
 import ens
-import eth/common/eth_types
-from eth/common/utils import parseAddress
-from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, toUInt64
 
 logScope:
   topics = "chat-model"
@@ -49,10 +45,6 @@ type
     channels*: Table[string, Chat]
     msgCursor*: Table[string, string]
     emojiCursor*: Table[string, string]
-    recentStickers*: seq[Sticker]
-    availableStickerPacks*: Table[int, StickerPack]
-    installedStickerPacks*: Table[int, StickerPack]
-    purchasedStickerPacks*: seq[int]
     lastMessageTimestamps*: Table[string, int64]
     
   MessageArgs* = ref object of Args
@@ -68,12 +60,7 @@ proc newChatModel*(events: EventEmitter): ChatModel =
   result.channels = initTable[string, Chat]()
   result.msgCursor = initTable[string, string]()
   result.emojiCursor = initTable[string, string]()
-  result.recentStickers = @[]
-  result.availableStickerPacks = initTable[int, StickerPack]()
-  result.installedStickerPacks = initTable[int, StickerPack]()
-  result.purchasedStickerPacks = @[]
   result.lastMessageTimestamps = initTable[string, int64]()
-
 
 proc delete*(self: ChatModel) =
   discard
@@ -127,84 +114,6 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
 
   self.events.emit("channelJoined", ChannelArgs(chat: chat))
 
-# TODO: Replace this with a more generalised way of estimating gas so can be used for token transfers
-proc buyPackGasEstimate*(self: ChatModel, packId: int, address: string, price: string): string =
-  let
-    priceTyped = eth2Wei(parseFloat(price), 18) # SNT
-    hexGas = status_stickers.buyPackGasEstimate(packId.u256, parseAddress(address), priceTyped)
-  result = $fromHex[int](hexGas)
-
-proc getStickerMarketAddress*(self: ChatModel): EthAddress =
-  result = status_contracts.getContract("sticker-market").address
-
-proc buyStickerPack*(self: ChatModel, packId: int, address, price, gas, gasPrice, password: string): RpcResponse =
-  try:
-    let
-      addressTyped = parseAddress(address)
-      priceTyped = eth2Wei(parseFloat(price), 18) # SNT
-      gasTyped = cast[uint64](parseFloat(gas).toUInt64)
-      gasPriceTyped = gwei2Wei(parseFloat(gasPrice)).truncate(int)
-    result = status_stickers.buyPack(packId.u256, addressTyped, priceTyped, gasTyped, gasPriceTyped, password)
-  except RpcException as e:
-    raise
-
-proc getPurchasedStickerPacks*(self: ChatModel, address: EthAddress): seq[int] =
-  if self.purchasedStickerPacks != @[]:
-    return self.purchasedStickerPacks
-
-  try:
-    var
-      balance = status_stickers.getBalance(address)
-      tokenIds = toSeq[0..<balance].map(idx => status_stickers.tokenOfOwnerByIndex(address, idx.u256))
-
-    self.purchasedStickerPacks = tokenIds.map(tokenId => status_stickers.getPackIdFromTokenId(tokenId.u256))
-    result = self.purchasedStickerPacks
-  except RpcException:
-    error "Error getting purchased sticker packs", message = getCurrentExceptionMsg()
-    result = @[]
-
-proc getInstalledStickerPacks*(self: ChatModel): Table[int, StickerPack] =
-  if self.installedStickerPacks != initTable[int, StickerPack]():
-    return self.installedStickerPacks
-
-  self.installedStickerPacks = status_stickers.getInstalledStickerPacks()
-  result = self.installedStickerPacks
-
-proc getAvailableStickerPacks*(): Table[int, StickerPack] =
-  var availableStickerPacks = initTable[int, StickerPack]()
-  try: 
-    let numPacks = status_stickers.getPackCount()
-    for i in 0..<numPacks:
-      try:
-        let stickerPack = status_stickers.getPackData(i.u256)
-        availableStickerPacks[stickerPack.id] = stickerPack
-      except:
-        continue
-    result = availableStickerPacks
-  except RpcException:
-    error "Error in getAvailableStickerPacks", message = getCurrentExceptionMsg()
-    result = initTable[int, StickerPack]()
-
-proc getRecentStickers*(self: ChatModel): seq[Sticker] =
-  result = status_stickers.getRecentStickers()
-
-proc installStickerPack*(self: ChatModel, packId: int) =
-  if not self.availableStickerPacks.hasKey(packId):
-    return
-  let pack = self.availableStickerPacks[packId]
-  self.installedStickerPacks[packId] = pack
-  status_stickers.saveInstalledStickerPacks(self.installedStickerPacks)
-
-proc removeRecentStickers*(self: ChatModel, packId: int) =
-  self.recentStickers.keepItIf(it.packId != packId)
-  status_stickers.saveRecentStickers(self.recentStickers)
-
-proc uninstallStickerPack*(self: ChatModel, packId: int) =
-  if not self.installedStickerPacks.hasKey(packId):
-    return
-  let pack = self.availableStickerPacks[packId]
-  self.installedStickerPacks.del(packId)
-  status_stickers.saveInstalledStickerPacks(self.installedStickerPacks)
 
 proc init*(self: ChatModel) =
   let chatList = status_chat.loadChats()
@@ -262,7 +171,6 @@ proc clearHistory*(self: ChatModel, chatId: string) =
   discard status_chat.clearChatHistory(chatId)
   let chat = self.channels[chatId]
   self.events.emit("chatHistoryCleared", ChannelArgs(chat: chat))
-  
 
 proc setActiveChannel*(self: ChatModel, chatId: string) =
   self.events.emit("activeChannelChanged", ChatIdArg(chatId: chatId))
@@ -282,17 +190,9 @@ proc sendImage*(self: ChatModel, chatId: string, image: string) =
   var response = status_chat.sendImageMessage(chatId, image)
   discard self.processMessageUpdateAfterSend(response)
 
-proc addStickerToRecent*(self: ChatModel, sticker: Sticker, save: bool = false) =
-  self.recentStickers.insert(sticker, 0)
-  self.recentStickers = self.recentStickers.deduplicate()
-  if self.recentStickers.len > 24:
-    self.recentStickers = self.recentStickers[0..23] # take top 24 most recent
-  if save:
-    status_stickers.saveRecentStickers(self.recentStickers)
-
 proc sendSticker*(self: ChatModel, chatId: string, sticker: Sticker) =
   var response = status_chat.sendStickerMessage(chatId, sticker)
-  self.addStickerToRecent(sticker, save = true)
+  self.events.emit("stickerSent", StickerArgs(sticker: sticker, save: true))
   var (chats, messages) = self.processChatUpdate(parseJson(response))
   self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
   self.events.emit("sendingMessage", MessageArgs(id: messages[0].id, channel: messages[0].chatId))
