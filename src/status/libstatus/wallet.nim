@@ -31,6 +31,9 @@ proc getWalletAccounts*(): seq[WalletAccount] =
     let msg = getCurrentExceptionMsg()
     error "Failed getting wallet accounts", msg
 
+proc getTransactionReceipt*(transactionHash: string): string =
+  result = callPrivateRPC("eth_getTransactionReceipt", %* [transactionHash])
+
 proc getTransfersByAddress*(address: string): seq[types.Transaction] =
   try:
     let response = getBlockByNumber("latest")

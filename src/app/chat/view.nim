@@ -12,6 +12,7 @@ import ../../status/libstatus/stickers as status_stickers
 import ../../status/contacts as status_contacts
 import ../../status/ens as status_ens
 import ../../status/chat/[chat, message]
+import ../../status/wallet
 import ../../status/libstatus/types
 import ../../status/profile/profile
 import eth/common/eth_types
@@ -113,7 +114,11 @@ QtObject:
 
   proc buyStickerPack*(self: ChatsView, packId: int, address: string, price: string, gas: string, gasPrice: string, password: string): string {.slot.} =
     try:
-      result = $(%self.status.stickers.buyStickerPack(packId, address, price, gas, gasPrice, password))
+      let response = %self.status.stickers.buyStickerPack(packId, address, price, gas, gasPrice, password)
+      result = $response
+      # TODO: 
+      # check if response["error"] is not null and handle the error 
+      self.status.wallet.trackPendingTransaction(address, response["result"].getStr, PendingTransactionType.BuyingStickerPack, $packId)
     except RpcException as e:
       result = fmt"""{{ "error": {{ "message": "{e.msg}" }} }}"""
 
