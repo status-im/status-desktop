@@ -231,3 +231,18 @@ proc getRecentStickers*(): seq[Sticker] =
     # stickers are re-reversed when added to the view due to the nature of
     # inserting recent stickers at the front of the list
     result.insert(Sticker(hash: $hash, packId: packId), 0)
+
+proc getAvailableStickerPacks*(): Table[int, StickerPack] =
+  var availableStickerPacks = initTable[int, StickerPack]()
+  try: 
+    let numPacks = getPackCount()
+    for i in 0..<numPacks:
+      try:
+        let stickerPack = getPackData(i.u256)
+        availableStickerPacks[stickerPack.id] = stickerPack
+      except:
+        continue
+    result = availableStickerPacks
+  except RpcException:
+    error "Error in getAvailableStickerPacks", message = getCurrentExceptionMsg()
+    result = initTable[int, StickerPack]()

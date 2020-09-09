@@ -14,6 +14,9 @@ import messages as messages
 import contacts as contacts
 import profile
 import network as network
+import stickers
+
+export stickers
 
 type Status* = ref object
   events*: EventEmitter
@@ -26,6 +29,7 @@ type Status* = ref object
   profile*: ProfileModel
   contacts*: ContactModel
   network*: NetworkModel
+  stickers*: StickersModel
 
 proc newStatusInstance*(): Status =
   result = Status()
@@ -40,6 +44,7 @@ proc newStatusInstance*(): Status =
   result.profile = profile.newProfileModel()
   result.contacts = contacts.newContactModel(result.events)
   result.network = network.newNetworkModel(result.events)
+  result.stickers = stickers.newStickersModel(result.events)
 
 proc initNode*(self: Status) = 
   libstatus_accounts.initNode()
