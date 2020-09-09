@@ -8,7 +8,7 @@ from eth/common/utils import parseAddress
 import # local deps
   libstatus/types, libstatus/eth/contracts as status_contracts,
   libstatus/stickers as status_stickers, transactions
-from libstatus/utils as libstatus_utils import eth2Wei
+from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, toUInt64
 
 logScope:
   topics = "stickers-model"
