@@ -36,11 +36,12 @@ proc init*(self: ChatController) =
 
   self.status.mailservers.init()
   self.status.chat.init()
+  self.status.stickers.init()
   self.view.obtainAvailableStickerPacks()
   let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
   self.view.pubKey = pubKey
 
-  let recentStickers = self.status.chat.getRecentStickers()
+  let recentStickers = self.status.stickers.getRecentStickers()
   for sticker in recentStickers:
     self.view.addRecentStickerToList(sticker)
-    self.status.chat.addStickerToRecent(sticker)
+    self.status.stickers.addStickerToRecent(sticker)

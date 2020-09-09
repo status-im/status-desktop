@@ -1,12 +1,14 @@
 import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat
 import ../../status/status
 import ../../status/mailservers
+import ../../status/stickers
 import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../status/accounts as status_accounts
 import ../../status/chat as status_chat
 import ../../status/messages as status_messages
 import ../../status/libstatus/wallet as status_wallet
+import ../../status/libstatus/stickers as status_stickers
 import ../../status/contacts as status_contacts
 import ../../status/ens as status_ens
 import ../../status/chat/[chat, message]
@@ -98,26 +100,26 @@ QtObject:
     read = getStickerPackList
 
   proc getStickerMarketAddress(self: ChatsView): QVariant {.slot.} =
-    newQVariant($self.status.chat.getStickerMarketAddress)
+    newQVariant($self.status.stickers.getStickerMarketAddress)
 
   QtProperty[QVariant] stickerMarketAddress:
     read = getStickerMarketAddress
 
   proc getStickerBuyPackGasEstimate*(self: ChatsView, packId: int, address: string, price: string): string {.slot.} =
     try:
-      result = self.status.chat.buyPackGasEstimate(packId, address, price)
+      result = self.status.stickers.buyPackGasEstimate(packId, address, price)
     except:
       result = "400000"
 
   proc buyStickerPack*(self: ChatsView, packId: int, address: string, price: string, gas: string, gasPrice: string, password: string): string {.slot.} =
     try:
-      result = $(%self.status.chat.buyStickerPack(packId, address, price, gas, gasPrice, password))
+      result = $(%self.status.stickers.buyStickerPack(packId, address, price, gas, gasPrice, password))
     except RpcException as e:
       result = fmt"""{{ "error": {{ "message": "{e.msg}" }} }}"""
 
   proc obtainAvailableStickerPacks*(self: ChatsView) =
     spawnAndSend(self, "setAvailableStickerPacks") do:
-      let availableStickerPacks = status_chat.getAvailableStickerPacks()
+      let availableStickerPacks = status_stickers.getAvailableStickerPacks()
       var packs: seq[StickerPack] = @[]
       for packId, stickerPack in availableStickerPacks.pairs:
         packs.add(stickerPack)
@@ -126,14 +128,14 @@ QtObject:
   proc setAvailableStickerPacks*(self: ChatsView, availableStickersJSON: string) {.slot.} =
     let currAcct = status_wallet.getWalletAccounts()[0] # TODO: make generic
     let currAddr = parseAddress(currAcct.address)
-    let installedStickerPacks = self.status.chat.getInstalledStickerPacks()
-    let purchasedStickerPacks = self.status.chat.getPurchasedStickerPacks(currAddr)
+    let installedStickerPacks = self.status.stickers.getInstalledStickerPacks()
+    let purchasedStickerPacks = self.status.stickers.getPurchasedStickerPacks(currAddr)
     let availableStickers = JSON.decode($availableStickersJSON, seq[StickerPack])
 
     for stickerPack in availableStickers:
       let isInstalled = installedStickerPacks.hasKey(stickerPack.id)
       let isBought = purchasedStickerPacks.contains(stickerPack.id)
-      self.status.chat.availableStickerPacks[stickerPack.id] = stickerPack
+      self.status.stickers.availableStickerPacks[stickerPack.id] = stickerPack
       self.addStickerPackToList(stickerPack, isInstalled, isBought)
 
   proc getChatsList(self: ChatsView): QVariant {.slot.} =
@@ -244,12 +246,12 @@ QtObject:
     notify = activeChannelChanged
 
   proc installStickerPack*(self: ChatsView, packId: int) {.slot.} =
-    self.status.chat.installStickerPack(packId)
+    self.status.stickers.installStickerPack(packId)
     self.stickerPacks.updateStickerPackInList(packId, true)
   
   proc uninstallStickerPack*(self: ChatsView, packId: int) {.slot.} =
-    self.status.chat.uninstallStickerPack(packId)
-    self.status.chat.removeRecentStickers(packId)
+    self.status.stickers.uninstallStickerPack(packId)
+    self.status.stickers.removeRecentStickers(packId)
     self.stickerPacks.updateStickerPackInList(packId, false)
     self.recentStickers.removeStickersFromList(packId)
 
