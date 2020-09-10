@@ -362,6 +362,7 @@ DISTFILES += \
     shared/StyledTextField.qml \
     shared/SVGImage.qml \
     shared/TextWithLabel.qml \
+    shared/ToastMessage.qml \
     shared/TransactionPreview.qml \
     shared/TransactionFormGroup.qml \
     shared/TransactionStackView.qml \
