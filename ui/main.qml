@@ -66,6 +66,7 @@ ApplicationWindow {
         property var chatSplitView
         property var walletSplitView
         property var profileSplitView
+        property bool walletEnabled: false
         property bool displayChatImages: false
         property bool compactMode
         property string locale: "en"

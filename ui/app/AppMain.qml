@@ -78,7 +78,7 @@ RowLayout {
 
         TabButton {
             id: walletBtn
-            enabled: isExperimental === "1"
+            enabled: isExperimental === "1" || rowLayout.appSettings.walletEnabled
             visible: this.enabled
             width: 40
             height: this.enabled ? 40 : 0
