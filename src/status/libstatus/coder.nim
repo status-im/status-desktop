@@ -37,10 +37,10 @@ type
     x*: FixedBytes[32]
     y*: FixedBytes[32]
 
-  ApproveAndCall* = object
+  ApproveAndCall*[N: static[int]] = object
     to*: EthAddress
     value*: Stuint[256]
-    data*: DynamicBytes[100]
+    data*: DynamicBytes[N]
 
   Transfer* = object
     to*: EthAddress
