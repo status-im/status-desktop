@@ -31,18 +31,15 @@ Item {
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 24
-        Component.onCompleted: {
-            walletBtn.enabled = false
-        }
 
         StyledText {
             //% "Wallet Tab"
             text: qsTrId("wallet-tab")
         }
         Switch {
-            checked: walletBtn.enabled
+            checked: appSettings.walletEnabled
             onCheckedChanged: function(value) {
-                walletBtn.enabled = this.checked
+                appSettings.walletEnabled = this.checked
             }
         }
         StyledText {
