@@ -89,15 +89,12 @@ proc getStickerMarketAddress*(self: StickersModel): EthAddress =
   result = status_contracts.getContract("sticker-market").address
 
 proc getPurchasedStickerPacks*(self: StickersModel, address: EthAddress): seq[int] =
-  if self.purchasedStickerPacks != @[]:
-    return self.purchasedStickerPacks
-
   try:
-    var
+    let
       balance = status_stickers.getBalance(address)
       tokenIds = toSeq[0..<balance].map(idx => status_stickers.tokenOfOwnerByIndex(address, idx.u256))
-
-    self.purchasedStickerPacks = tokenIds.map(tokenId => status_stickers.getPackIdFromTokenId(tokenId.u256))
+      purchasedPackIds = tokenIds.map(tokenId => status_stickers.getPackIdFromTokenId(tokenId.u256))
+    self.purchasedStickerPacks = self.purchasedStickerPacks.concat(purchasedPackIds)
     result = self.purchasedStickerPacks
   except RpcException:
     error "Error getting purchased sticker packs", message = getCurrentExceptionMsg()

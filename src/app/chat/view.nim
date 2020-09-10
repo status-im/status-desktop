@@ -127,10 +127,14 @@ QtObject:
       $(%*(packs))
 
   proc setAvailableStickerPacks*(self: ChatsView, availableStickersJSON: string) {.slot.} =
-    let currAcct = status_wallet.getWalletAccounts()[0] # TODO: make generic
-    let currAddr = parseAddress(currAcct.address)
-    let installedStickerPacks = self.status.stickers.getInstalledStickerPacks()
-    let purchasedStickerPacks = self.status.stickers.getPurchasedStickerPacks(currAddr)
+    let
+      accounts = status_wallet.getWalletAccounts() # TODO: make generic
+      installedStickerPacks = self.status.stickers.getInstalledStickerPacks()
+    var
+      purchasedStickerPacks: seq[int]
+    for account in accounts:
+      let address = parseAddress(account.address)
+      purchasedStickerPacks = self.status.stickers.getPurchasedStickerPacks(address)
     let availableStickers = JSON.decode($availableStickersJSON, seq[StickerPack])
 
     for stickerPack in availableStickers:

@@ -38,7 +38,7 @@ Item {
         if (showBalanceForAssetSymbol == "" || minRequiredAssetBalance == 0 || !assetFound) {
             return root.isValid
         }
-        root.isValid = assetFound.value > minRequiredAssetBalance
+        root.isValid = assetFound.value >= minRequiredAssetBalance
         return root.isValid
     }
 
