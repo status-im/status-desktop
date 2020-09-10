@@ -8,6 +8,10 @@ import "../../../shared/status"
 import "./components"
 
 ModalPopup {
+    property bool sending: false
+    property string oldButtonText
+    property int oldButtonWidth
+
     id: root
 
     //% "Send"
@@ -36,26 +40,18 @@ ModalPopup {
     }
 
     function sendTransaction() {
-        let responseStr = walletModel.sendTransaction(selectFromAccount.selectedAccount.address,
+        sending = true
+        oldButtonText = btnNext.label
+        oldButtonWidth = btnNext.width
+        btnNext.label = ""
+        btnNext.width = oldButtonWidth
+        walletModel.sendTransaction(selectFromAccount.selectedAccount.address,
                                                  selectRecipient.selectedRecipient.address,
                                                  txtAmount.selectedAsset.address,
                                                  txtAmount.selectedAmount,
                                                  gasSelector.selectedGasLimit,
                                                  gasSelector.selectedGasPrice,
                                                  transactionSigner.enteredPassword)
-        let response = JSON.parse(responseStr)
-
-        if (response.error) {
-            if (response.error.message.includes("could not decrypt key with given password")){
-                transactionSigner.validationError = qsTr("Wrong password")
-                return
-            }
-            sendingError.text = response.error.message
-            return sendingError.open()
-        }
-
-        sendingSuccess.text = qsTr("Transaction sent to the blockchain. You can watch the progress on Etherscan: %2/%1").arg(response.result).arg(walletModel.etherscanLink)
-        sendingSuccess.open()
     }
 
     TransactionStackView {
@@ -258,7 +254,7 @@ ModalPopup {
             id: btnNext
             anchors.right: parent.right
             label: qsTr("Next")
-            disabled: !stack.currentGroup.isValid || stack.currentGroup.isPending
+            disabled: !stack.currentGroup.isValid || stack.currentGroup.isPending || root.sending
             onClicked: {
                 const validity = stack.currentGroup.validate()
                 if (validity.isValid && !validity.isPending) {
@@ -266,6 +262,42 @@ ModalPopup {
                         return root.sendTransaction()
                     }
                     stack.next()
+                }
+            }
+
+            Loader {
+                active: root.sending
+                sourceComponent: loadingImage
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            Component {
+                id: loadingImage
+                LoadingImage {}
+            }
+        }
+        Connections {
+            target: walletModel
+            onTransactionWasSent: {
+                try {
+                    root.sending = false
+                    btnNext.label = root.oldButtonText
+                    let response = JSON.parse(txResult)
+
+                    if (response.error) {
+                        if (response.error.message.includes("could not decrypt key with given password")){
+                            transactionSigner.validationError = qsTr("Wrong password")
+                            return
+                        }
+                        sendingError.text = response.error.message
+                        return sendingError.open()
+                    }
+
+                    sendingSuccess.text = qsTr("Transaction sent to the blockchain. You can watch the progress on Etherscan: %2/%1").arg(response.result).arg(walletModel.etherscanLink)
+                    sendingSuccess.open()
+                } catch (e) {
+                    console.error('WOW', e)
                 }
             }
         }
