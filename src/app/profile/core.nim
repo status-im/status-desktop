@@ -81,7 +81,17 @@ proc init*(self: ProfileController, account: Account) =
       self.view.addDevices(msgData.installations)
 
   self.status.events.on(PendingTransactionType.RegisterENS.confirmed) do(e: Args):
-    self.view.ens.confirm(TransactionMinedArgs(e).data)
+    let tx = TransactionMinedArgs(e)
+    if tx.success:
+      self.view.ens.confirm(TransactionMinedArgs(e).data)
+    else:
+      discard
+      # TODO: show toast message indicating transaction reverted
 
   self.status.events.on(PendingTransactionType.SetPubKey.confirmed) do(e: Args):
-    self.view.ens.confirm(TransactionMinedArgs(e).data)
+    let tx = TransactionMinedArgs(e)
+    if tx.success:
+      self.view.ens.confirm(TransactionMinedArgs(e).data)
+    else:
+      discard
+      # TODO: show toast message indicating transaction reverted

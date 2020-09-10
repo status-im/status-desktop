@@ -30,7 +30,9 @@ proc confirmed*(self:PendingTransactionType):string =
 
 type TransactionMinedArgs* = ref object of Args
   data*: string
-    
+  success*: bool
+  revertReason*: string # TODO: possible to get revert reason in here?
+
 type WalletModel* = ref object
   events*: EventEmitter
   accounts*: seq[WalletAccount]
@@ -75,10 +77,12 @@ proc confirmTransactionStatus(self: WalletModel, pendingTransactions: JsonNode, 
     let transactionReceipt = self.getTransactionReceipt(trx["transactionHash"].getStr)
     if transactionReceipt.kind != JNull:
       status_wallet.deletePendingTransaction(trx["transactionHash"].getStr)
-      if transactionReceipt{"status"}.getStr == "0x1": # mined successfully
-        self.events.emit(parseEnum[PendingTransactionType](trx["type"].getStr).confirmed, TransactionMinedArgs(data: trx["data"].getStr))
-      else:
-        discard # TODO: what should we do if the transaction reverted?
+      let ev = TransactionMinedArgs(
+                data: trx["data"].getStr,
+                success: transactionReceipt{"status"}.getStr == "0x1",
+                revertReason: ""
+               )
+      self.events.emit(parseEnum[PendingTransactionType](trx["type"].getStr).confirmed, ev)
 
 proc checkPendingTransactions*(self: WalletModel) =
   let latestBlock = parseInt($fromHex(Stuint[256], getBlockByNumber("latest").parseJson()["result"]["number"].getStr))

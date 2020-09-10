@@ -68,7 +68,12 @@ proc handleChatEvents(self: ChatController) =
     self.view.setConnected(true)
 
   self.status.events.on(PendingTransactionType.BuyStickerPack.confirmed) do(e: Args):
-    self.view.installStickerPack(TransactionMinedArgs(e).data.parseInt)
+    let tx = TransactionMinedArgs(e)
+    if tx.success:
+      self.view.installStickerPack(tx.data.parseInt)
+    else:
+      discard
+      # TODO: self.view.toastMessage(message = tx.revertReason, error = true) # for when the toast messages in the design are implemented
 
 proc handleMailserverEvents(self: ChatController) =
   self.status.events.on("mailserverTopics") do(e: Args):

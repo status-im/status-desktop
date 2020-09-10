@@ -28,8 +28,6 @@ ModalPopup {
               :
               qsTr("Once you select an username, you won’t be able to disable it afterwards, only choose a different username to display.")
         font.pixelSize: 15
-        anchors.leftMargin: parent.parent.left
-        anchors.rightMargin: parent.parent.right
     }
 
     StyledText {
