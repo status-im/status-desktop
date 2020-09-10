@@ -33,6 +33,7 @@ SOURCES = *.qml \
           app/AppLayouts/Wallet/*.qml \
           app/AppLayouts/Wallet/components/*.qml \
           app/AppLayouts/Wallet/components/collectiblesComponents/*.qml \
+          app/AppLayouts/Wallet/data/Currencies.qml \
 }
 
 TRANSLATIONS += \

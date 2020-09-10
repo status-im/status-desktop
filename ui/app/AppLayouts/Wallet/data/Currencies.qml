@@ -21,616 +21,616 @@ ListModel {
    ListElement {
        key: "aed"
        code: "AED"
-       //% ""
-       name: qsTrId("")
+       //% "United Arab Emirates dirham"
+       name: qsTrId("united-arab-emirates-dirham")
        symbol: "د.إ"
    }
 
    ListElement {
        key: "afn"
        code: "AFN"
-       //% ""
-       name: qsTrId("")
+       //% "Afghan afghani"
+       name: qsTrId("afghan-afghani")
        symbol: "؋"
    }
 
    ListElement {
        key: "ars"
        code: "ARS"
-       //% ""
-       name: qsTrId("")
+       //% "Argentine peso"
+       name: qsTrId("argentine-peso")
        symbol: "$"
    }
 
    ListElement {
        key: "aud"
        code: "AUD"
-       //% ""
-       name: qsTrId("")
+       //% "Australian dollar"
+       name: qsTrId("australian-dollar")
        symbol: "$"
    }
 
    ListElement {
        key: "bbd"
        code: "BBD"
-       //% ""
-       name: qsTrId("")
+       //% "Barbadian dollar"
+       name: qsTrId("barbadian-dollar")
        symbol: "$"
    }
 
    ListElement {
        key: "bdt"
        code: "BDT"
-       //% ""
-       name: qsTrId("")
+       //% "Bangladeshi taka"
+       name: qsTrId("bangladeshi-taka")
        symbol: " Tk"
    }
 
    ListElement {
        key: "bgn"
        code: "BGN"
-       //% ""
-       name: qsTrId("")
+       //% "Bulgarian lev"
+       name: qsTrId("bulgarian-lev")
        symbol: "лв"
    }
 
    ListElement {
        key: "bhd"
        code: "BHD"
-       //% ""
-       name: qsTrId("")
+       //% "Bahraini dinar"
+       name: qsTrId("bahraini-dinar")
        symbol: "BD"
    }
 
    ListElement {
        key: "bnd"
        code: "BND"
-       //% ""
-       name: qsTrId("")
+       //% "Brunei dollar"
+       name: qsTrId("brunei-dollar")
        symbol: "$"
    }
 
    ListElement {
        key: "bob"
        code: "BOB"
-       //% ""
-       name: qsTrId("")
+       //% "Bolivian boliviano"
+       name: qsTrId("bolivian-boliviano")
        symbol: "$b"
    }
 
    ListElement {
        key: "brl"
        code: "BRL"
-       //% ""
-       name: qsTrId("")
+       //% "Brazillian real"
+       name: qsTrId("brazillian-real")
        symbol: "R$"
    }
 
    ListElement {
        key: "btn"
        code: "BTN"
-       //% ""
-       name: qsTrId("")
+       //% "Bhutanese ngultrum"
+       name: qsTrId("bhutanese-ngultrum")
        symbol: "Nu."
    }
 
    ListElement {
        key: "cad"
        code: "CAD"
-       //% ""
-       name: qsTrId("")
+       //% "Canadian dollar"
+       name: qsTrId("canadian-dollar")
        symbol: "$"
    }
 
    ListElement {
        key: "chf"
        code: "CHF"
-       //% ""
-       name: qsTrId("")
+       //% "Swiss franc"
+       name: qsTrId("swiss-franc")
        symbol: "CHF"
    }
 
    ListElement {
        key: "clp"
        code: "CLP"
-       //% ""
-       name: qsTrId("")
+       //% "Chilean peso"
+       name: qsTrId("chilean-peso")
        symbol: "$"
    }
 
    ListElement {
        key: "cny"
        code: "CNY"
-       //% ""
-       name: qsTrId("")
+       //% "Chinese yuan"
+       name: qsTrId("chinese-yuan")
        symbol: "¥"
    }
 
    ListElement {
        key: "cop"
        code: "COP"
-       //% ""
-       name: qsTrId("")
+       //% "Colombian peso"
+       name: qsTrId("colombian-peso")
        symbol: "$"
    }
 
    ListElement {
        key: "crc"
        code: "CRC"
-       //% ""
-       name: qsTrId("")
+       //% "Costa Rican colón"
+       name: qsTrId("costa-rican-colón")
        symbol: "₡"
    }
 
    ListElement {
        key: "czk"
        code: "CZK"
-       //% ""
-       name: qsTrId("")
+       //% "Czech koruna"
+       name: qsTrId("czech-koruna")
        symbol: "Kč"
    }
 
    ListElement {
        key: "dkk"
        code: "DKK"
-       //% ""
-       name: qsTrId("")
+       //% "Danish krone"
+       name: qsTrId("danish-krone")
        symbol: "kr"
    }
 
    ListElement {
        key: "dop"
        code: "DOP"
-       //% ""
-       name: qsTrId("")
+       //% "Dominican peso"
+       name: qsTrId("dominican-peso")
        symbol: "RD$"
    }
 
    ListElement {
        key: "egp"
        code: "EGP"
-       //% ""
-       name: qsTrId("")
+       //% "Egyptian pound"
+       name: qsTrId("egyptian-pound")
        symbol: "£"
    }
 
    ListElement {
        key: "etb"
        code: "ETB"
-       //% ""
-       name: qsTrId("")
+       //% "Ethiopian birr"
+       name: qsTrId("ethiopian-birr")
        symbol: "Br"
    }
 
    ListElement {
        key: "gbp"
        code: "GBP"
-       //% ""
-       name: qsTrId("")
+       //% "British Pound"
+       name: qsTrId("british-pound")
        symbol: "£"
    }
 
    ListElement {
        key: "gel"
        code: "GEL"
-       //% ""
-       name: qsTrId("")
+       //% "Georgian lari"
+       name: qsTrId("georgian-lari")
        symbol: "₾"
    }
 
    ListElement {
        key: "ghs"
        code: "GHS"
-       //% ""
-       name: qsTrId("")
+       //% "Ghanaian cedi"
+       name: qsTrId("ghanaian-cedi")
        symbol: "¢"
    }
 
    ListElement {
        key: "hkd"
        code: "HKD"
-       //% ""
-       name: qsTrId("")
+       //% "Hong Kong dollar"
+       name: qsTrId("hong-kong-dollar")
        symbol: "$"
    }
 
    ListElement {
        key: "hrk"
        code: "HRK"
-       //% ""
-       name: qsTrId("")
+       //% "Croatian kuna"
+       name: qsTrId("croatian-kuna")
        symbol: "kn"
    }
 
    ListElement {
        key: "huf"
        code: "HUF"
-       //% ""
-       name: qsTrId("")
+       //% "Hungarian forint"
+       name: qsTrId("hungarian-forint")
        symbol: "Ft"
    }
 
    ListElement {
        key: "idr"
        code: "IDR"
-       //% ""
-       name: qsTrId("")
+       //% "Indonesian rupiah"
+       name: qsTrId("indonesian-rupiah")
        symbol: "Rp"
    }
 
    ListElement {
        key: "ils"
        code: "ILS"
-       //% ""
-       name: qsTrId("")
+       //% "Israeli new shekel"
+       name: qsTrId("israeli-new-shekel")
        symbol: "₪"
    }
 
    ListElement {
        key: "inr"
        code: "INR"
-       //% ""
-       name: qsTrId("")
+       //% "Indian rupee"
+       name: qsTrId("indian-rupee")
        symbol: "₹"
    }
 
    ListElement {
        key: "isk"
        code: "ISK"
-       //% ""
-       name: qsTrId("")
+       //% "Icelandic króna"
+       name: qsTrId("icelandic-króna")
        symbol: "kr"
    }
 
    ListElement {
        key: "jmd"
        code: "JMD"
-       //% ""
-       name: qsTrId("")
+       //% "Jamaican dollar"
+       name: qsTrId("jamaican-dollar")
        symbol: "J$"
    }
 
    ListElement {
        key: "jpy"
        code: "JPY"
-       //% ""
-       name: qsTrId("")
+       //% "Japanese yen"
+       name: qsTrId("japanese-yen")
        symbol: "¥"
    }
 
    ListElement {
        key: "kes"
        code: "KES"
-       //% ""
-       name: qsTrId("")
+       //% "Kenyan shilling"
+       name: qsTrId("kenyan-shilling")
        symbol: "KSh"
    }
 
    ListElement {
        key: "krw"
        code: "KRW"
-       //% ""
-       name: qsTrId("")
+       //% "South Korean won"
+       name: qsTrId("south-korean-won")
        symbol: "₩"
    }
 
    ListElement {
        key: "kwd"
        code: "KWD"
-       //% ""
-       name: qsTrId("")
+       //% "Kuwaiti dinar"
+       name: qsTrId("kuwaiti-dinar")
        symbol: "د.ك"
    }
 
    ListElement {
        key: "kzt"
        code: "KZT"
-       //% ""
-       name: qsTrId("")
+       //% "Kazakhstani tenge"
+       name: qsTrId("kazakhstani-tenge")
        symbol: "лв"
    }
 
    ListElement {
        key: "lkr"
        code: "LKR"
-       //% ""
-       name: qsTrId("")
+       //% "Sri Lankan rupee"
+       name: qsTrId("sri-lankan-rupee")
        symbol: "₨"
    }
 
    ListElement {
        key: "mad"
        code: "MAD"
-       //% ""
-       name: qsTrId("")
+       //% "Moroccan dirham"
+       name: qsTrId("moroccan-dirham")
        symbol: "MAD"
    }
 
    ListElement {
        key: "mdl"
        code: "MDL"
-       //% ""
-       name: qsTrId("")
+       //% "Moldovan leu"
+       name: qsTrId("moldovan-leu")
        symbol: "MDL"
    }
 
    ListElement {
        key: "mur"
        code: "MUR"
-       //% ""
-       name: qsTrId("")
+       //% "Mauritian rupee"
+       name: qsTrId("mauritian-rupee ")
        symbol: "₨"
    }
 
    ListElement {
        key: "mwk"
        code: "MWK"
-       //% ""
-       name: qsTrId("")
+       //% "Malawian kwacha"
+       name: qsTrId("malawian-kwacha")
        symbol: "MK"
    }
 
    ListElement {
        key: "mxn"
        code: "MXN"
-       //% ""
-       name: qsTrId("")
+       //% "Mexican peso"
+       name: qsTrId("mexican-peso")
        symbol: "$"
    }
 
    ListElement {
        key: "myr"
        code: "MYR"
-       //% ""
-       name: qsTrId("")
+       //% "Malaysian ringgit"
+       name: qsTrId("malaysian-ringgit")
        symbol: "RM"
    }
 
    ListElement {
        key: "mzn"
        code: "MZN"
-       //% ""
-       name: qsTrId("")
+       //% "Mozambican metical"
+       name: qsTrId("mozambican-metical")
        symbol: "MT"
    }
 
    ListElement {
        key: "nad"
        code: "NAD"
-       //% ""
-       name: qsTrId("")
+       //% "Namibian dollar"
+       name: qsTrId("namibian-dollar")
        symbol: "$"
    }
 
    ListElement {
        key: "ngn"
        code: "NGN"
-       //% ""
-       name: qsTrId("")
+       //% "Nigerian naira"
+       name: qsTrId("nigerian-naira")
        symbol: "₦"
    }
 
    ListElement {
        key: "nok"
        code: "NOK"
-       //% ""
-       name: qsTrId("")
+       //% "Norwegian krone"
+       name: qsTrId("norwegian-krone")
        symbol: "kr"
    }
 
    ListElement {
        key: "npr"
        code: "NPR"
-       //% ""
-       name: qsTrId("")
+       //% "Nepalese rupee"
+       name: qsTrId("nepalese-rupee")
        symbol: "₨"
    }
 
    ListElement {
        key: "nzd"
        code: "NZD"
-       //% ""
-       name: qsTrId("")
+       //% "New Zealand dollar"
+       name: qsTrId("new-zealand-dollar")
        symbol: "$"
    }
 
    ListElement {
        key: "omr"
        code: "OMR"
-       //% ""
-       name: qsTrId("")
+       //% "Omani rial"
+       name: qsTrId("omani-rial")
        symbol: "﷼"
    }
 
    ListElement {
        key: "pen"
        code: "PEN"
-       //% ""
-       name: qsTrId("")
+       //% "Peruvian sol"
+       name: qsTrId("peruvian-sol")
        symbol: "S/."
    }
 
    ListElement {
        key: "pgk"
        code: "PGK"
-       //% ""
-       name: qsTrId("")
+       //% "Papua New Guinean kina"
+       name: qsTrId("papua-new-guinean-kina")
        symbol: "K"
    }
 
    ListElement {
        key: "php"
        code: "PHP"
-       //% ""
-       name: qsTrId("")
+       //% "Philippine peso"
+       name: qsTrId("philippine-peso")
        symbol: "₱"
    }
 
    ListElement {
        key: "pkr"
        code: "PKR"
-       //% ""
-       name: qsTrId("")
+       //% "Pakistani rupee"
+       name: qsTrId("pakistani-rupee")
        symbol: "₨"
    }
 
    ListElement {
        key: "pln"
        code: "PLN"
-       //% ""
-       name: qsTrId("")
+       //% "Polish złoty"
+       name: qsTrId("polish-złoty")
        symbol: "zł"
    }
 
    ListElement {
        key: "pyg"
        code: "PYG"
-       //% ""
-       name: qsTrId("")
+       //% "Paraguayan guaraní"
+       name: qsTrId("paraguayan-guaraní")
        symbol: "Gs"
    }
 
    ListElement {
        key: "qar"
        code: "QAR"
-       //% ""
-       name: qsTrId("")
+       //% "Qatari riyal"
+       name: qsTrId("qatari-riyal")
        symbol: "﷼"
    }
 
    ListElement {
        key: "ron"
        code: "RON"
-       //% ""
-       name: qsTrId("")
+       //% "Romanian leu"
+       name: qsTrId("romanian-leu")
        symbol: "lei"
    }
 
    ListElement {
        key: "rsd"
        code: "RSD"
-       //% ""
-       name: qsTrId("")
+       //% "Serbian dinar"
+       name: qsTrId("serbian-dinar")
        symbol: "Дин."
    }
 
    ListElement {
        key: "rub"
        code: "RUB"
-       //% ""
-       name: qsTrId("")
+       //% "Russian ruble"
+       name: qsTrId("russian-ruble")
        symbol: "₽"
    }
 
    ListElement {
        key: "sar"
        code: "SAR"
-       //% ""
-       name: qsTrId("")
+       //% "Saudi riyal"
+       name: qsTrId("saudi-riyal")
        symbol: "﷼"
    }
 
    ListElement {
        key: "sek"
        code: "SEK"
-       //% ""
-       name: qsTrId("")
+       //% "Swedish krona"
+       name: qsTrId("swedish-krona")
        symbol: "kr"
    }
 
    ListElement {
        key: "sgd"
        code: "SGD"
-       //% ""
-       name: qsTrId("")
+       //% "Singapore dollar"
+       name: qsTrId("singapore-dollar")
        symbol: "$"
    }
 
    ListElement {
        key: "thb"
        code: "THB"
-       //% ""
-       name: qsTrId("")
+       //% "Thai baht"
+       name: qsTrId("thai-baht")
        symbol: "฿"
    }
 
    ListElement {
        key: "ttd"
        code: "TTD"
-       //% ""
-       name: qsTrId("")
+       //% "Trinidad and Tobago dollar"
+       name: qsTrId("trinidad-and-tobago-dollar")
        symbol: "TT$"
    }
 
    ListElement {
        key: "twd"
        code: "TWD"
-       //% ""
-       name: qsTrId("")
+       //% "New Taiwan dollar"
+       name: qsTrId("new-taiwan-dollar")
        symbol: "NT$"
    }
 
    ListElement {
        key: "tzs"
        code: "TZS"
-       //% ""
-       name: qsTrId("")
+       //% "Tanzanian shilling"
+       name: qsTrId("tanzanian-shilling")
        symbol: "TSh"
    }
 
    ListElement {
        key: "try"
        code: "TRY"
-       //% ""
-       name: qsTrId("")
+       //% "Turkish lira"
+       name: qsTrId("turkish-lira")
        symbol: "₺"
    }
 
    ListElement {
        key: "uah"
        code: "UAH"
-       //% ""
-       name: qsTrId("")
+       //% "Ukrainian hryvnia"
+       name: qsTrId("ukrainian-hryvnia")
        symbol: "₴"
    }
 
    ListElement {
        key: "ugx"
        code: "UGX"
-       //% ""
-       name: qsTrId("")
+       //% "Ugandan shilling"
+       name: qsTrId("ugandan-shilling")
        symbol: "USh"
    }
 
    ListElement {
        key: "uyu"
        code: "UYU"
-       //% ""
-       name: qsTrId("")
+       //% "Uruguayan peso"
+       name: qsTrId("uruguayan-peso")
        symbol: "$U"
    }
 
    ListElement {
        key: "vef"
        code: "VEF"
-       //% ""
-       name: qsTrId("")
+       //% "Venezuelan bolívar"
+       name: qsTrId("venezuelan-bolívar")
        symbol: "Bs"
    }
 
    ListElement {
        key: "vnd"
        code: "VND"
-       //% ""
-       name: qsTrId("")
+       //% "Vietnamese đồng"
+       name: qsTrId("vietnamese-đồng")
        symbol: "₫"
    }
 
    ListElement {
        key: "zar"
        code: "ZAR"
-       //% ""
-       name: qsTrId("")
+       //% "South African rand"
+       name: qsTrId("south-african-rand")
        symbol: "R"
    }
 
