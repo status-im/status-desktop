@@ -160,6 +160,7 @@ Item {
         id: menuItem
         MenuItem {
             id: itemContainer
+            visible: walletType !== 'watch'
             property bool isFirstItem: index === 0
             property bool isLastItem: index === accounts.rowCount() - 1
 
@@ -169,7 +170,7 @@ Item {
                 }
             }
 
-            height: accountName.height + 14 + accountAddress.height + 14
+            height: walletType === 'watch' ? 0 : (accountName.height + 14 + accountAddress.height + 14)
             SVGImage {
                 id: iconImg
                 anchors.left: parent.left
