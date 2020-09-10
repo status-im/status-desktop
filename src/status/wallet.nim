@@ -21,18 +21,12 @@ logScope:
 
 type PendingTransactionType* {.pure.} = enum
     RegisterENS = "RegisterENS",
+    SetPubKey = "SetPubKey",
     ReleaseENS = "ReleaseENS",
-    BuyingStickerPack = "BuyingStickerPack"
+    BuyStickerPack = "BuyStickerPack"
 
-proc event*(self:PendingTransactionType):string =
+proc confirmed*(self:PendingTransactionType):string =
   result = "transaction:" & $self
-
-type PendingTransaction* = object
-  transactionHash*: string 
-  blockNumber*: int
-  trxType*: PendingTransactionType
-  data*: string
-  mined: bool
 
 type TransactionMinedArgs* = ref object of Args
   data*: string
@@ -43,7 +37,6 @@ type WalletModel* = ref object
   defaultCurrency*: string
   tokens*: JsonNode
   totalBalance*: float
-  pendingTransactions: Table[string, seq[PendingTransaction]]
 
 proc getDefaultCurrency*(self: WalletModel): string
 proc calculateTotalFiatBalance*(self: WalletModel)
@@ -52,7 +45,6 @@ proc newWalletModel*(events: EventEmitter): WalletModel =
   result = WalletModel()
   result.accounts = @[]
   result.tokens = %* []
-  result.pendingTransactions = initTable[string, seq[PendingTransaction]]()
   result.events = events
   result.defaultCurrency = ""
   result.totalBalance = 0.0
@@ -71,35 +63,29 @@ proc initEvents*(self: WalletModel) =
 proc delete*(self: WalletModel) =
   discard
 
-proc trackPendingTransaction*(self: WalletModel, address: string, trxHash: string, trxType: PendingTransactionType, data: string) =
-  let latestBlock = getBlockByNumber("latest").parseJson()["result"].getInt
-
-  if not self.pendingTransactions.hasKey(address):
-    self.pendingTransactions[address] = @[]
-
-  self.pendingTransactions[address].add PendingTransaction(
-    transactionHash: trxHash,
-    trxType: trxType,
-    blockNumber: latestBlock,
-    data: data,
-    mined: false
-  )
+proc trackPendingTransaction*(self: WalletModel, address: string, trxHash: string, trxType: PendingTransactionType, data: string) = 
+  let latestBlock = parseInt($fromHex(Stuint[256], getBlockByNumber("latest").parseJson()["result"]["number"].getStr))
+  status_wallet.storePendingTransaction(trxHash, latestBlock, address, $trxType, data) 
 
 proc getTransactionReceipt*(self: WalletModel, transactionHash: string): JsonNode =
   result = status_wallet.getTransactionReceipt(transactionHash).parseJSON()["result"]
 
-proc checkPendingTransactions*(self: WalletModel, address: string, blockNumber: int) =
-  if not self.pendingTransactions.hasKey(address): return
-  for trx in self.pendingTransactions[address].mitems:
-    if trx.mined: continue
-
-    let transactionReceipt = self.getTransactionReceipt(trx.transactionHash)
+proc confirmTransactionStatus(self: WalletModel, pendingTransactions: JsonNode, blockNumber: int) =
+  for trx in pendingTransactions.getElems():
+    let transactionReceipt = self.getTransactionReceipt(trx["transactionHash"].getStr)
     if transactionReceipt.kind != JNull:
-      trx.mined = true
+      status_wallet.deletePendingTransaction(trx["transactionHash"].getStr)
       if transactionReceipt{"status"}.getStr == "0x1": # mined successfully
-        self.events.emit(trx.trxType.event, TransactionMinedArgs(data: trx.data))
+        self.events.emit(parseEnum[PendingTransactionType](trx["type"].getStr).confirmed, TransactionMinedArgs(data: trx["data"].getStr))
       else:
         discard # TODO: what should we do if the transaction reverted?
+
+proc checkPendingTransactions*(self: WalletModel) =
+  let latestBlock = parseInt($fromHex(Stuint[256], getBlockByNumber("latest").parseJson()["result"]["number"].getStr))
+  self.confirmTransactionStatus(status_wallet.getPendingTransactions().parseJson["result"], latestBlock)
+
+proc checkPendingTransactions*(self: WalletModel, address: string, blockNumber: int) =
+  self.confirmTransactionStatus(status_wallet.getPendingTransactionsByAddress(address).parseJson["result"], blockNumber)
 
 proc sendTransaction*(self: WalletModel, source, to, assetAddress, value, gas, gasPrice, password: string): RpcResponse =
   var
@@ -297,4 +283,3 @@ proc getGasPricePredictions*(self: WalletModel): GasPricePrediction =
   except Exception as e:
     echo "error getting gas price predictions"
     echo e.msg
-

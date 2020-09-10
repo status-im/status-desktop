@@ -131,7 +131,7 @@ proc buyPackPayload(packId: Stuint[256], address: EthAddress, price: Stuint[256]
     buyToken = BuyToken(packId: packId, address: address, price: price)
     buyTxAbiEncoded = stickerMktContract.methods["buyToken"].encodeAbi(buyToken)
   let
-    approveAndCallObj = ApproveAndCall(to: stickerMktContract.address, value: price, data: DynamicBytes[100].fromHex(buyTxAbiEncoded))
+    approveAndCallObj = ApproveAndCall[100](to: stickerMktContract.address, value: price, data: DynamicBytes[100].fromHex(buyTxAbiEncoded))
     approveAndCallAbiEncoded = sntContract.methods["approveAndCall"].encodeAbi(approveAndCallObj)
   result = %* {
     "from": $address,

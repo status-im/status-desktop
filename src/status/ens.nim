@@ -13,6 +13,7 @@ import unicode
 import algorithm
 import eth/common/eth_types, stew/byteutils
 import libstatus/contracts
+
 const domain* = ".stateofus.eth"
 
 proc userName*(ensName: string, removeSuffix: bool = false): string =
@@ -154,7 +155,7 @@ proc registerUsername*(username:string, address: EthAddress, pubKey: string, pas
   let
     register = Register(label: label, account: address, x: x, y: y)
     registerAbiEncoded = ensUsernamesContract.methods["register"].encodeAbi(register)
-    approveAndCallObj = ApproveAndCall(to: ensUsernamesContract.address, value: price, data: DynamicBytes[100].fromHex(registerAbiEncoded))
+    approveAndCallObj = ApproveAndCall[132](to: ensUsernamesContract.address, value: price, data: DynamicBytes[132].fromHex(registerAbiEncoded))
     approveAndCallAbiEncoded = sntContract.methods["approveAndCall"].encodeAbi(approveAndCallObj)
   
   let payload = %* {

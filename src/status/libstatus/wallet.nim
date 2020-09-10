@@ -101,3 +101,18 @@ proc hex2Token*(input: string, decimals: int): string =
   result = $i
   if(r > 0): result = fmt"{result}.{d}"
   
+proc storePendingTransaction*(transactionHash: string, blockNumber: int, address: string, trxType: string, data: string) =
+  let payload = %* [{"transactionHash": transactionHash, "blockNumber": blockNumber, "address": address, "type": trxType, "data": data}]
+  discard callPrivateRPC("wallet_storePendingTransaction", payload)
+
+proc getPendingTransactions*(): string =
+  let payload = %* []
+  result = callPrivateRPC("wallet_getPendingTransactions", payload)
+
+proc getPendingTransactionsByAddress*(address: string): string =
+  let payload = %* [address]
+  result = callPrivateRPC("wallet_getPendingTransactionsByAddress", payload)
+
+proc deletePendingTransaction*(transactionHash: string) =
+  let payload = %* [transactionHash]
+  discard callPrivateRPC("wallet_deletePendingTransaction", payload)

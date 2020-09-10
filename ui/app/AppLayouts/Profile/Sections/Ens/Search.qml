@@ -202,7 +202,7 @@ Item {
                 if(!valid) return;
 
                 if(ensStatus === "connected"){
-                    profileModel.ens.connect(ensUsername.text, isStatus);
+                    profileModel.ens.connectOwnedUsername(ensUsername.text, isStatus);
                     continueClicked(ensStatus, ensUsername.text)
                     return;
                 }

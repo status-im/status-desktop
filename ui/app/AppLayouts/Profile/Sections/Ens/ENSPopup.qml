@@ -21,9 +21,15 @@ ModalPopup {
 
     StyledText {
         id: lbl1
-        //% "Your messages are displayed to others with this username:"
-        text: qsTrId("your-messages-are-displayed-to-others-with-this-username-")
+        
+        text: profileModel.ens.preferredUsername ? 
+              //% "Your messages are displayed to others with this username:"
+              qsTrId("your-messages-are-displayed-to-others-with-this-username-")
+              :
+              qsTr("Once you select an username, you won’t be able to disable it afterwards, only choose a different username to display.")
         font.pixelSize: 15
+        anchors.leftMargin: parent.parent.left
+        anchors.rightMargin: parent.parent.right
     }
 
     StyledText {
@@ -54,6 +60,7 @@ ModalPopup {
             delegate: RadioDelegate {
                 id: radioDelegate
                 text: username
+                visible: !isPending
                 checked: profileModel.ens.preferredUsername === username
                 MouseArea {
                     anchors.fill: parent
