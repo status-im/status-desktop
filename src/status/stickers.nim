@@ -41,18 +41,18 @@ proc init*(self: StickersModel) =
     var evArgs = StickerArgs(e)
     self.addStickerToRecent(evArgs.sticker, evArgs.save)
 
-proc buildTransaction(self: StickersModel, packId: Uint256, address: EthAddress, price: Uint256, approveAndCall: var ApproveAndCall, sntContract: var Contract, gas = "", gasPrice = ""): EthSend =
+proc buildTransaction(self: StickersModel, packId: Uint256, address: EthAddress, price: Uint256, approveAndCall: var ApproveAndCall[100], sntContract: var Contract, gas = "", gasPrice = ""): EthSend =
   sntContract = status_contracts.getContract("snt")
   let
     stickerMktContract = status_contracts.getContract("sticker-market")
     buyToken = BuyToken(packId: packId, address: address, price: price)
     buyTxAbiEncoded = stickerMktContract.methods["buyToken"].encodeAbi(buyToken)
-  approveAndCall = ApproveAndCall(to: stickerMktContract.address, value: price, data: DynamicBytes[100].fromHex(buyTxAbiEncoded))
+  approveAndCall = ApproveAndCall[100](to: stickerMktContract.address, value: price, data: DynamicBytes[100].fromHex(buyTxAbiEncoded))
   transactions.buildTokenTransaction(address, sntContract.address, gas, gasPrice)
 
 proc estimateGas*(self: StickersModel, packId: int, address: string, price: string): int =
   var
-    approveAndCall: ApproveAndCall
+    approveAndCall: ApproveAndCall[100]
     sntContract = status_contracts.getContract("snt")
     tx = self.buildTransaction(
       packId.u256,
@@ -70,7 +70,7 @@ proc estimateGas*(self: StickersModel, packId: int, address: string, price: stri
 proc buyPack*(self: StickersModel, packId: int, address, price, gas, gasPrice, password: string): string =
   var
     sntContract: Contract
-    approveAndCall: ApproveAndCall
+    approveAndCall: ApproveAndCall[100]
     tx = self.buildTransaction(
       packId.u256,
       parseAddress(address),
