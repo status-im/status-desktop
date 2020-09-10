@@ -97,8 +97,8 @@ QtObject:
   proc isPending*(self: EnsManager, ensUsername: string): bool {.slot.} =
     self.pendingUsernames.contains(ensUsername)
 
-  proc pendingLen*(self: EnsManager): bool {.slot.} =
-    self.pendingUsernames.len > 0
+  proc pendingLen*(self: EnsManager): int {.slot.} =
+    self.pendingUsernames.len
 
   proc setPreferredUsername(self: EnsManager, newENS: string) {.slot.} =
     if not self.isPending(newENS):

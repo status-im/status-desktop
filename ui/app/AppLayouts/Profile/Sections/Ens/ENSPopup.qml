@@ -26,7 +26,7 @@ ModalPopup {
               //% "Your messages are displayed to others with this username:"
               qsTrId("your-messages-are-displayed-to-others-with-this-username-")
               :
-              qsTr("Once you select an username, you won’t be able to disable it afterwards, only choose a different username to display.")
+              qsTr("Once you select a username, you won’t be able to disable it afterwards. You will only be able choose a different username to display.")
         font.pixelSize: 15
     }
 
