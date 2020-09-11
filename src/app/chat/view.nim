@@ -118,7 +118,6 @@ QtObject:
       result = $(%* { "result": %response })
       # TODO: 
       # check if response["error"] is not null and handle the error 
-      self.status.wallet.trackPendingTransaction(address, response, PendingTransactionType.BuyingStickerPack, $packId)
     except RpcException as e:
       result = $(%* { "error": %* { "message": %e.msg }})
 

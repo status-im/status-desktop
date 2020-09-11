@@ -10,6 +10,7 @@ import ../../status/[status, contacts]
 import ../../status/chat as status_chat
 import ../../status/devices
 import ../../status/chat/chat
+import ../../status/wallet
 import view
 import views/ens_manager
 import chronicles
@@ -78,3 +79,19 @@ proc init*(self: ProfileController, account: Account) =
       self.view.updateContactList(msgData.contacts)
     if msgData.installations.len > 0:
       self.view.addDevices(msgData.installations)
+
+  self.status.events.on(PendingTransactionType.RegisterENS.confirmed) do(e: Args):
+    let tx = TransactionMinedArgs(e)
+    if tx.success:
+      self.view.ens.confirm(TransactionMinedArgs(e).data)
+    else:
+      discard
+      # TODO: show toast message indicating transaction reverted
+
+  self.status.events.on(PendingTransactionType.SetPubKey.confirmed) do(e: Args):
+    let tx = TransactionMinedArgs(e)
+    if tx.success:
+      self.view.ens.confirm(TransactionMinedArgs(e).data)
+    else:
+      discard
+      # TODO: show toast message indicating transaction reverted 

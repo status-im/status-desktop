@@ -25,8 +25,8 @@ Item {
     signal goToWelcome();
     signal goToList();
 
-    function goToStart(){
-        if(profileModel.ens.rowCount() > 0){
+    function goToStart(){                  /* Comment this to use on testnet      */
+        if(profileModel.ens.rowCount() > 0 && profileModel.network === "mainnet_rpc"){
             goToList();
         } else {
             goToWelcome();

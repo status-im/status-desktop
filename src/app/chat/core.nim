@@ -5,7 +5,7 @@ import ../../status/messages as messages_model
 import ../../status/signals/types
 import ../../status/libstatus/types as status_types
 import ../../status/libstatus/settings as status_settings
-import ../../status/[chat, contacts, status, wallet]
+import ../../status/[chat, contacts, status, wallet, stickers]
 import view, views/channels_list, views/message_list
 
 logScope:

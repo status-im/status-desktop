@@ -7,8 +7,10 @@ from eth/common/utils import parseAddress
 
 import # local deps
   libstatus/types, libstatus/eth/contracts as status_contracts,
-  libstatus/stickers as status_stickers, transactions
+  libstatus/stickers as status_stickers, transactions,
+  libstatus/wallet
 from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, toUInt64
+
 
 logScope:
   topics = "stickers-model"
@@ -82,6 +84,7 @@ proc buyPack*(self: StickersModel, packId: int, address, price, gas, gasPrice, p
     )
   try:
     result = sntContract.methods["approveAndCall"].send(tx, approveAndCall, password)
+    trackPendingTransaction(result, address, $sntContract.address, PendingTransactionType.BuyStickerPack, $packId)
   except RpcException as e:
     raise
 
