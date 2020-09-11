@@ -5,9 +5,13 @@ import
 from strutils import parseHexInt
 from nimcrypto import fromHex
 
-proc decodeContentHash*(value: string): string =
-  if value == "":
+proc decodeContentHash*(hash: string): string =
+  if hash == "":
     return ""
+  
+  # remove instances of spaces that are occurring, due to issue:
+  # https://github.com/status-im/status-go/issues/2038
+  let value = hash.replace(" ", "")
 
   # eg encoded sticker multihash cid:
   #  e30101701220eab9a8ef4eac6c3e5836a3768d8e04935c10c67d9a700436a0e53199e9b64d29
