@@ -225,7 +225,7 @@ proc storeDerivedWallet*(account: GeneratedAccount, password: string, walletInde
   let hashedPassword = hashPassword(password)
   let multiAccount = %* {
     "accountID": account.id,
-    "paths": ["m/" & $walletIndex],
+    "paths": ["m/44'/60'/0'/0/" & $walletIndex],
     "password": hashedPassword
   }
   let response = parseJson($nim_status.multiAccountStoreDerivedAccounts($multiAccount));
