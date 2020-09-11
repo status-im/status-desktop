@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtGraphicalEffects 1.13
 import QtQuick.Controls 2.13
 import "../imports"
+import "."
 
 Popup {
     property url source: "../app/img/check-circle.svg"
@@ -10,12 +11,23 @@ Popup {
     property string link: "https://etherscan.io/"
 
     id: root
+    closePolicy: Popup.NoAutoClose
     height: 68
     padding: 0
     margins: 0
     width: 343
     x: parent.width - width - Style.current.bigPadding
     y: parent.height - height - Style.current.bigPadding
+
+    onOpened: {
+        timer.setTimeout(function() {
+            root.close()
+        }, 4000);
+    }
+
+    Timer {
+        id: timer
+    }
 
     background: Rectangle {
         id: container
