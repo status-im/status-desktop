@@ -1,4 +1,4 @@
-import ./core as status, ./types, ./contracts, ./settings, ./edn_helpers
+import ./core as status, ./types, ./contracts, ./settings, ./edn_helpers, ./wallet
 import
   json, json_serialization, tables, chronicles, strutils, sequtils, httpclient,
   stint, libp2p/[multihash, multicodec, cid], eth/common/eth_types
@@ -160,6 +160,8 @@ proc buyPack*(packId: Stuint[256], address: EthAddress, price: Stuint[256], gas:
   result = Json.decode(responseStr, RpcResponse)
   if not result.error.isNil:
     raise newException(RpcException, "Error buying sticker pack: " & result.error.message)
+
+  trackPendingTransaction(result.result, payload["from"].getStr, payload["to"].getStr, PendingTransactionType.BuyStickerPack, $packId)
 
 proc tokenOfOwnerByIndex*(address: EthAddress, idx: Stuint[256]): int =
   let

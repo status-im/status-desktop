@@ -1,14 +1,14 @@
 import eventemitter, json, strformat, strutils, chronicles, sequtils, httpclient, tables
 import json_serialization, stint
 from eth/common/utils import parseAddress
-from libstatus/core import getBlockByNumber
 import libstatus/accounts as status_accounts
 import libstatus/tokens as status_tokens
 import libstatus/settings as status_settings
 import libstatus/wallet as status_wallet
 import libstatus/accounts/constants as constants
 import libstatus/contracts as contracts
-from libstatus/types import GeneratedAccount, DerivedAccount, Transaction, Setting, GasPricePrediction, EthSend, Quantity, `%`, StatusGoException, Network, RpcResponse, RpcException
+from libstatus/core import getBlockByNumber
+from libstatus/types import PendingTransactionType, GeneratedAccount, DerivedAccount, Transaction, Setting, GasPricePrediction, EthSend, Quantity, `%`, StatusGoException, Network, RpcResponse, RpcException
 from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, first, toUInt64
 import wallet/balance_manager
 import wallet/account
@@ -18,12 +18,6 @@ export Transaction
 
 logScope:
   topics = "wallet-model"
-
-type PendingTransactionType* {.pure.} = enum
-    RegisterENS = "RegisterENS",
-    SetPubKey = "SetPubKey",
-    ReleaseENS = "ReleaseENS",
-    BuyStickerPack = "BuyStickerPack"
 
 proc confirmed*(self:PendingTransactionType):string =
   result = "transaction:" & $self
@@ -65,10 +59,6 @@ proc initEvents*(self: WalletModel) =
 proc delete*(self: WalletModel) =
   discard
 
-proc trackPendingTransaction*(self: WalletModel, address: string, trxHash: string, trxType: PendingTransactionType, data: string) = 
-  let latestBlock = parseInt($fromHex(Stuint[256], getBlockByNumber("latest").parseJson()["result"]["number"].getStr))
-  status_wallet.storePendingTransaction(trxHash, latestBlock, address, $trxType, data) 
-
 proc getTransactionReceipt*(self: WalletModel, transactionHash: string): JsonNode =
   result = status_wallet.getTransactionReceipt(transactionHash).parseJSON()["result"]
 
@@ -89,7 +79,7 @@ proc checkPendingTransactions*(self: WalletModel) =
   self.confirmTransactionStatus(status_wallet.getPendingTransactions().parseJson["result"], latestBlock)
 
 proc checkPendingTransactions*(self: WalletModel, address: string, blockNumber: int) =
-  self.confirmTransactionStatus(status_wallet.getPendingTransactionsByAddress(address).parseJson["result"], blockNumber)
+  self.confirmTransactionStatus(status_wallet.getPendingOutboundTransactionsByAddress(address).parseJson["result"], blockNumber)
 
 proc sendTransaction*(self: WalletModel, source, to, assetAddress, value, gas, gasPrice, password: string): RpcResponse =
   var

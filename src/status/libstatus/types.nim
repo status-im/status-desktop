@@ -231,3 +231,10 @@ proc `%`*(x: EthSend): JsonNode =
   result["data"] = %x.data
   if x.nonce.isSome:
     result["nonce"] = %x.nonce.unsafeGet
+
+type PendingTransactionType* {.pure.} = enum
+  RegisterENS = "RegisterENS",
+  SetPubKey = "SetPubKey",
+  ReleaseENS = "ReleaseENS",
+  BuyStickerPack = "BuyStickerPack"
+  WalletTransfer = "WalletTransfer"

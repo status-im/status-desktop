@@ -4,7 +4,7 @@ import json
 import json_serialization
 import sequtils
 import strutils
-from ../../../status/libstatus/types import Setting
+from ../../../status/libstatus/types import Setting, PendingTransactionType
 import ../../../status/threads
 import ../../../status/ens as status_ens
 import ../../../status/libstatus/wallet as status_wallet
@@ -198,8 +198,6 @@ QtObject:
     self.pendingUsernames.incl(ensUsername)
     self.add ensUsername
 
-    self.status.wallet.trackPendingTransaction($address, trxHash, PendingTransactionType.RegisterENS, ensUsername)
-
   proc setPubKey(self: EnsManager, username: string, password: string) {.slot.} =
     let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
     let address = status_wallet.getWalletAccounts()[0].address
@@ -210,6 +208,4 @@ QtObject:
 
     self.pendingUsernames.incl(username)
     self.add username
-
-    self.status.wallet.trackPendingTransaction($address, trxHash, PendingTransactionType.SetPubKey, username)
  
