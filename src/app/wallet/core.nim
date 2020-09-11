@@ -60,6 +60,13 @@ proc init*(self: WalletController) =
     # TODO: handle these data.eventType: history, reorg
     # see status-react/src/status_im/ethereum/subscriptions.cljs
 
+  self.status.events.on(PendingTransactionType.WalletTransfer.confirmed) do(e: Args):
+    let tx = TransactionMinedArgs(e)
+    if tx.success:
+      debug "SUCCESSS TRANSACTION", transactionHash = tx.transactionHash
+    else:
+      debug "ERROR TRANSACTION", revertReason = tx.revertReason
+
 proc checkPendingTransactions*(self: WalletController) =
   self.status.wallet.checkPendingTransactions() # TODO: consider doing this in a spawnAndSend
 

@@ -25,6 +25,7 @@ proc confirmed*(self:PendingTransactionType):string =
 
 type TransactionMinedArgs* = ref object of Args
   data*: string
+  transactionHash*: string
   success*: bool
   revertReason*: string # TODO: possible to get revert reason in here?
     
@@ -47,14 +48,14 @@ proc newWalletModel*(events: EventEmitter): WalletModel =
   result.totalBalance = 0.0
 
 proc initEvents*(self: WalletModel) =
- self.events.on("currencyChanged") do(e: Args):
+  self.events.on("currencyChanged") do(e: Args):
     self.defaultCurrency = self.getDefaultCurrency()
     for account in self.accounts:
       updateBalance(account, self.getDefaultCurrency())
     self.calculateTotalFiatBalance()
     self.events.emit("accountsUpdated", Args())
 
- self.events.on("newAccountAdded") do(e: Args):
+  self.events.on("newAccountAdded") do(e: Args):
    self.calculateTotalFiatBalance()
 
 proc delete*(self: WalletModel) =
@@ -88,6 +89,7 @@ proc confirmTransactionStatus(self: WalletModel, pendingTransactions: JsonNode, 
       status_wallet.deletePendingTransaction(trx["transactionHash"].getStr)
       let ev = TransactionMinedArgs(
                 data: trx["data"].getStr,
+                transactionHash: trx["transactionHash"].getStr,
                 success: transactionReceipt{"status"}.getStr == "0x1",
                 revertReason: ""
                )
@@ -127,6 +129,7 @@ proc sendTransaction*(self: WalletModel, source, to, value, gas, gasPrice, passw
 
   try:
     result = eth.sendTransaction(tx, password)
+    trackPendingTransaction(result, $source, $to, PendingTransactionType.WalletTransfer, "")
   except RpcException as e:
     raise
 
@@ -146,6 +149,7 @@ proc sendTokenTransaction*(self: WalletModel, source, to, assetAddress, value, g
     )
   try:
     result = contract.methods["transfer"].send(tx, transfer, password)
+    trackPendingTransaction(result, $source, $to, PendingTransactionType.WalletTransfer, "")
   except RpcException as e:
     raise
 
