@@ -9,6 +9,7 @@ import ./eth/contracts as contractMethods
 import eth/common/eth_types
 import ./types
 import ../signals/types as signal_types
+import ../transactions
 
 proc getWalletAccounts*(): seq[WalletAccount] =
   try:
@@ -68,46 +69,6 @@ proc getTransfersByAddress*(address: string): seq[types.Transaction] =
     let msg = getCurrentExceptionMsg()
     error "Failed getting wallet account transactions", msg
 
-proc sendTransaction*(tx: EthSend, password: string): RpcResponse =
-  let responseStr = core.sendTransaction($(%tx), password)
-  result = Json.decode(responseStr, RpcResponse)
-  if not result.error.isNil:
-    raise newException(RpcException, "Error sending transaction: " & result.error.message)
-
-  trace "Transaction sent succesfully", hash=result
-
-proc sendTransaction*(tokens: JsonNode, source, to, assetAddress, value, gas, gasPrice, password: string): RpcResponse =
-  var
-    weiValue = eth2Wei(parseFloat(value), 18) # ETH
-    data = ""
-    toAddr = eth_utils.parseAddress(to)
-  let gasPriceInWei = gwei2Wei(parseFloat(gasPrice))
-
-  # TODO: this code needs to be tested with testnet assets (to be implemented in
-  # a future PR
-  if assetAddress != constants.ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
-    let
-      token = tokens.first("address", assetAddress)
-      contract = contractMethods.getContract("snt")
-      transfer = coder.Transfer(to: toAddr, value: eth2Wei(parseFloat(value), token["decimals"].getInt))
-    weiValue = 0.u256
-    let transferThing = contract.methods["transfer"]
-    data = transferThing.encodeAbi(transfer)
-    toAddr = eth_utils.parseAddress(assetAddress)
-
-  let tx = EthSend(
-    source: eth_utils.parseAddress(source),
-    to: toAddr.some,
-    gas: (if gas.isEmptyOrWhitespace: Quantity.none else: Quantity(cast[uint64](parseFloat(gas).toUInt64)).some),
-    gasPrice: (if gasPrice.isEmptyOrWhitespace: int.none else: gwei2Wei(parseFloat(gasPrice)).truncate(int).some),
-    value: weiValue.some,
-    data: data
-  )
-  try:
-    result = sendTransaction(tx, password)
-  except RpcException as e:
-    raise
-
 proc getBalance*(address: string): string =
   let payload = %* [address, "latest"]
   let response = parseJson(callPrivateRPC("eth_getBalance", payload))
@@ -148,6 +109,7 @@ proc getPendingTransactions*(): string =
 proc getPendingOutboundTransactionsByAddress*(address: string): string =
   let payload = %* [address]
   result = callPrivateRPC("wallet_getPendingOutboundTransactionsByAddress", payload)
+
 
 proc deletePendingTransaction*(transactionHash: string) =
   let payload = %* [transactionHash]
