@@ -8,10 +8,11 @@ import strformat
 import libstatus/core
 import libstatus/types
 import libstatus/utils
+import libstatus/wallet
 import stew/byteutils
 import unicode
 import algorithm
-import eth/common/eth_types, stew/byteutils
+import eth/common/eth_types, stew/byteutils, stint
 import libstatus/eth/contracts
 const domain* = ".stateofus.eth"
 
@@ -168,6 +169,8 @@ proc registerUsername*(username:string, address: EthAddress, pubKey: string, pas
   if not response.error.isNil:
     raise newException(RpcException, "Error registering ens-username: " & response.error.message)
   
+  trackPendingTransaction(response.result, $address, $sntContract.address, PendingTransactionType.RegisterENS, username & domain)
+
   result = response.result
 
 proc setPubKey*(username:string, address: EthAddress, pubKey: string, password: string): string =
@@ -184,9 +187,11 @@ proc setPubKey*(username:string, address: EthAddress, pubKey: string, password: 
     setPubkey = SetPubkey(label: label, x: x, y: y)
     setPubkeyAbiEncoded = resolverContract.methods["setPubkey"].encodeAbi(setPubkey)
 
+  let resolverAddress = resolver(hash)
+
   let payload = %* {
       "from": $address,
-      "to": resolver(hash),
+      "to": resolverAddress,
       # "gas": 200000, # TODO: obtain gas price?
       "data": setPubkeyAbiEncoded
   }
@@ -195,6 +200,9 @@ proc setPubKey*(username:string, address: EthAddress, pubKey: string, password: 
   let response = Json.decode(responseStr, RpcResponse)
   if not response.error.isNil:
     raise newException(RpcException, "Error setting the pubkey: " & response.error.message)
+
+  trackPendingTransaction(response.result, $address, resolverAddress, PendingTransactionType.SetPubKey, username)
+
   result = response.result
 
 proc statusRegistrarAddress*():string =

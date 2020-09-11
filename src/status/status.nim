@@ -4,19 +4,9 @@ import libstatus/accounts as libstatus_accounts
 import libstatus/core as libstatus_core
 import libstatus/settings as libstatus_settings
 import libstatus/types as libstatus_types
+import chat, accounts, wallet, node, network, mailservers, messages, contacts, profile, stickers
 
-import chat as chat
-import accounts as accounts
-import wallet as wallet
-import node as node
-import mailservers as mailservers
-import messages as messages
-import contacts as contacts
-import profile
-import network as network
-import stickers
-
-export stickers
+export chat, accounts, node, mailservers, messages, contacts, profile, network
 
 type Status* = ref object
   events*: EventEmitter

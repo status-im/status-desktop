@@ -85,6 +85,9 @@ proc mainProc() =
     wallet.init()
     chat.init()
 
+    wallet.checkPendingTransactions()
+    wallet.start()
+
   engine.setRootContextProperty("loginModel", login.variant)
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
 

@@ -9,7 +9,8 @@ import libstatus/settings as status_settings
 import libstatus/wallet as status_wallet
 import libstatus/accounts/constants as constants
 import libstatus/eth/[eth, contracts]
-from libstatus/types import GeneratedAccount, DerivedAccount, Transaction, Setting, GasPricePrediction, EthSend, Quantity, `%`, StatusGoException, Network, RpcResponse, RpcException, `$`
+from libstatus/core import getBlockByNumber
+from libstatus/types import PendingTransactionType, GeneratedAccount, DerivedAccount, Transaction, Setting, GasPricePrediction, EthSend, Quantity, `%`, StatusGoException, Network, RpcResponse, RpcException
 from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, first, toUInt64
 import wallet/[balance_manager, account, collectibles]
 import transactions
@@ -19,23 +20,13 @@ export Transaction
 logScope:
   topics = "wallet-model"
 
-type PendingTransactionType* {.pure.} = enum
-    RegisterENS = "RegisterENS",
-    ReleaseENS = "ReleaseENS",
-    BuyingStickerPack = "BuyingStickerPack"
-
-proc event*(self:PendingTransactionType):string =
+proc confirmed*(self:PendingTransactionType):string =
   result = "transaction:" & $self
-
-type PendingTransaction* = object
-  transactionHash*: string 
-  blockNumber*: int
-  trxType*: PendingTransactionType
-  data*: string
-  mined: bool
 
 type TransactionMinedArgs* = ref object of Args
   data*: string
+  success*: bool
+  revertReason*: string # TODO: possible to get revert reason in here?
     
 type WalletModel* = ref object
   events*: EventEmitter
@@ -43,7 +34,6 @@ type WalletModel* = ref object
   defaultCurrency*: string
   tokens*: JsonNode
   totalBalance*: float
-  pendingTransactions: Table[string, seq[PendingTransaction]]
 
 proc getDefaultCurrency*(self: WalletModel): string
 proc calculateTotalFiatBalance*(self: WalletModel)
@@ -52,7 +42,6 @@ proc newWalletModel*(events: EventEmitter): WalletModel =
   result = WalletModel()
   result.accounts = @[]
   result.tokens = %* []
-  result.pendingTransactions = initTable[string, seq[PendingTransaction]]()
   result.events = events
   result.defaultCurrency = ""
   result.totalBalance = 0.0
@@ -89,36 +78,28 @@ proc estimateGas*(self: WalletModel, source, to, value: string): int =
   except RpcException as e:
     raise
 
-proc trackPendingTransaction*(self: WalletModel, address: string, trxHash: string, trxType: PendingTransactionType, data: string) =
-  let latestBlock = getBlockByNumber("latest").parseJson()["result"].getInt
-
-  if not self.pendingTransactions.hasKey(address):
-    self.pendingTransactions[address] = @[]
-
-  self.pendingTransactions[address].add PendingTransaction(
-    transactionHash: trxHash,
-    trxType: trxType,
-    blockNumber: latestBlock,
-    data: data,
-    mined: false
-  )
-
 proc getTransactionReceipt*(self: WalletModel, transactionHash: string): JsonNode =
   result = status_wallet.getTransactionReceipt(transactionHash).parseJSON()["result"]
 
-proc checkPendingTransactions*(self: WalletModel, address: string, blockNumber: int) =
-  if not self.pendingTransactions.hasKey(address): return
-  for trx in self.pendingTransactions[address].mitems:
-    if trx.mined: continue
-
-    let transactionReceipt = self.getTransactionReceipt(trx.transactionHash)
+proc confirmTransactionStatus(self: WalletModel, pendingTransactions: JsonNode, blockNumber: int) =
+  for trx in pendingTransactions.getElems():
+    let transactionReceipt = self.getTransactionReceipt(trx["transactionHash"].getStr)
     if transactionReceipt.kind != JNull:
-      trx.mined = true
-      if transactionReceipt{"status"}.getStr == "0x1": # mined successfully
-        self.events.emit(trx.trxType.event, TransactionMinedArgs(data: trx.data))
-      else:
-        discard # TODO: what should we do if the transaction reverted?
+      status_wallet.deletePendingTransaction(trx["transactionHash"].getStr)
+      let ev = TransactionMinedArgs(
+                data: trx["data"].getStr,
+                success: transactionReceipt{"status"}.getStr == "0x1",
+                revertReason: ""
+               )
+      self.events.emit(parseEnum[PendingTransactionType](trx["type"].getStr).confirmed, ev)
 
+proc checkPendingTransactions*(self: WalletModel) =
+  let latestBlock = parseInt($fromHex(Stuint[256], getBlockByNumber("latest").parseJson()["result"]["number"].getStr))
+  self.confirmTransactionStatus(status_wallet.getPendingTransactions().parseJson["result"], latestBlock)
+
+proc checkPendingTransactions*(self: WalletModel, address: string, blockNumber: int) =
+  self.confirmTransactionStatus(status_wallet.getPendingOutboundTransactionsByAddress(address).parseJson["result"], blockNumber)
+  
 proc estimateTokenGas*(self: WalletModel, source, to, assetAddress, value: string): int =
   var
     transfer: Transfer

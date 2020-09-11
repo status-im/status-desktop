@@ -4,7 +4,7 @@ import json
 import json_serialization
 import sequtils
 import strutils
-from ../../../status/libstatus/types import Setting
+from ../../../status/libstatus/types import Setting, PendingTransactionType
 import ../../../status/threads
 import ../../../status/ens as status_ens
 import ../../../status/libstatus/wallet as status_wallet
@@ -13,14 +13,20 @@ import ../../../status/libstatus/utils as libstatus_utils
 import ../../../status/libstatus/tokens as tokens
 import ../../../status/status
 from eth/common/utils import parseAddress
+import ../../../status/wallet
+import sets
+import stew/byteutils
+import eth/common/eth_types, stew/byteutils
 
 type
   EnsRoles {.pure.} = enum
     UserName = UserRole + 1
+    IsPending = UserRole + 2
 
 QtObject:
   type EnsManager* = ref object of QAbstractListModel
     usernames*: seq[string]
+    pendingUsernames*: HashSet[string]
     status: Status
 
   proc setup(self: EnsManager) = self.QAbstractListModel.setup
@@ -33,10 +39,19 @@ QtObject:
     new(result, delete)
     result.usernames = @[]
     result.status = status
+    result.pendingUsernames = initHashSet[string]()
     result.setup
 
   proc init*(self: EnsManager) =
     self.usernames = status_settings.getSetting[seq[string]](Setting.Usernames, @[])
+    
+    # Get pending ens names
+    let pendingTransactions = status_wallet.getPendingTransactions().parseJson["result"]
+    for trx in pendingTransactions.getElems():
+      if trx["type"].getStr == $PendingTransactionType.RegisterENS:
+        self.usernames.add trx["data"].getStr
+        self.pendingUsernames.incl trx["data"].getStr
+
 
   proc ensWasResolved*(self: EnsManager, ensResult: string) {.signal.}
 
@@ -80,26 +95,27 @@ QtObject:
 
   proc preferredUsernameChanged(self: EnsManager) {.signal.}
 
+  proc isPending*(self: EnsManager, ensUsername: string): bool {.slot.} =
+    self.pendingUsernames.contains(ensUsername)
+
+  proc pendingLen*(self: EnsManager): int {.slot.} =
+    self.pendingUsernames.len
+
   proc setPreferredUsername(self: EnsManager, newENS: string) {.slot.} =
-    discard status_settings.saveSetting(Setting.PreferredUsername, newENS)
-    self.preferredUsernameChanged()
+    if not self.isPending(newENS):
+      discard status_settings.saveSetting(Setting.PreferredUsername, newENS)
+      self.preferredUsernameChanged()
 
   QtProperty[string] preferredUsername:
     read = getPreferredUsername
     notify = preferredUsernameChanged
     write = setPreferredUsername
   
-  proc connect(self: EnsManager, username: string, isStatus: bool) {.slot.} =
-    var ensUsername = username 
-    if isStatus: 
-      ensUsername = ensUsername & status_ens.domain
+  proc connect(self: EnsManager, ensUsername: string) =
     var usernames = status_settings.getSetting[seq[string]](Setting.Usernames, @[])
     usernames.add ensUsername
     discard status_settings.saveSetting(Setting.Usernames, %*usernames)
-    if usernames.len == 1:
-      self.setPreferredUsername(ensUsername)
-    self.add ensUsername
-
+  
   proc loading(self: EnsManager, isLoading: bool) {.signal.}
 
   proc details(self: EnsManager, username: string) {.slot.} =
@@ -128,13 +144,27 @@ QtObject:
       return
     if index.row < 0 or index.row >= self.usernames.len:
       return
-    let username = self.usernames[index.row]
-    result = newQVariant(username)
+    let username = self.usernames[index.row] 
+    case role.EnsRoles:
+    of EnsRoles.UserName: result = newQVariant(username)
+    of EnsRoles.IsPending: result = newQVariant(self.pendingUsernames.contains(username))
 
   method roleNames(self: EnsManager): Table[int, string] =
     {
-      EnsRoles.UserName.int:"username"
+      EnsRoles.UserName.int:"username",
+      EnsRoles.IsPending.int: "isPending"
     }.toTable
+
+  proc usernameConfirmed(self: EnsManager, username: string) {.signal.}
+
+  proc confirm*(self: EnsManager, ensUsername: string) =
+    self.connect(ensUsername)
+    self.pendingUsernames.excl ensUsername
+    let msgIdx = self.usernames.find(ensUsername)
+    let topLeft = self.createIndex(msgIdx, 0, nil)
+    let bottomRight = self.createIndex(msgIdx, 0, nil)
+    self.dataChanged(topLeft, bottomRight, @[EnsRoles.IsPending.int])
+    self.usernameConfirmed(ensUsername)
 
   proc getPrice(self: EnsManager): string {.slot.} =
     result = libstatus_utils.wei2Eth(getPrice())
@@ -145,15 +175,37 @@ QtObject:
   proc getENSRegistry(self: EnsManager): string {.slot.} =
     result = registry
 
+  proc formatUsername(username: string, isStatus: bool): string =
+    result = username 
+    if isStatus: 
+      result = result & status_ens.domain
+
+  proc connectOwnedUsername(self: EnsManager, username: string, isStatus: bool) {.slot.} =
+    var ensUsername = formatUsername(username, isStatus)
+
+    self.usernames.add ensUsername
+    self.add ensUsername
+
+    self.connect(ensUsername)
+
   proc registerENS(self: EnsManager, username: string, password: string) {.slot.} =
     let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
-    let address = parseAddress(status_wallet.getWalletAccounts()[0].address)
-    discard registerUsername(username, address, pubKey, password)
-    self.connect(username, true)
+    let address = status_wallet.getWalletAccounts()[0].address
+    let walletAddress = parseAddress(address)
+    let trxHash = registerUsername(username, walletAddress, pubKey, password)
+    
+     # TODO: handle transaction failure
+    var ensUsername = formatUsername(username, true)
+    self.pendingUsernames.incl(ensUsername)
+    self.add ensUsername
 
   proc setPubKey(self: EnsManager, username: string, password: string) {.slot.} =
     let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
-    let address = parseAddress(status_wallet.getWalletAccounts()[0].address)
-    discard setPubKey(username, address, pubKey, password)
-    self.connect(username, username.endsWith(domain))
+    let address = status_wallet.getWalletAccounts()[0].address
+    let walletAddress = parseAddress(address)
+    let trxHash = setPubKey(username, walletAddress, pubKey, password)
+
+    # TODO: handle transaction failure
+    self.pendingUsernames.incl(username)
+    self.add username
  

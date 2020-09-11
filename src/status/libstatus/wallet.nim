@@ -93,3 +93,19 @@ proc hex2Token*(input: string, decimals: int): string =
   result = $i
   if(r > 0): result = fmt"{result}.{d}"
   
+proc trackPendingTransaction*(transactionHash: string, fromAddress: string, toAddress: string, trxType: PendingTransactionType, data: string) =
+  let blockNumber = parseInt($fromHex(Stuint[256], getBlockByNumber("latest").parseJson()["result"]["number"].getStr))
+  let payload = %* [{"transactionHash": transactionHash, "blockNumber": blockNumber, "from_address": fromAddress, "to_address": toAddress, "type": $trxType, "data": data}]
+  discard callPrivateRPC("wallet_storePendingTransaction", payload)
+
+proc getPendingTransactions*(): string =
+  let payload = %* []
+  result = callPrivateRPC("wallet_getPendingTransactions", payload)
+
+proc getPendingOutboundTransactionsByAddress*(address: string): string =
+  let payload = %* [address]
+  result = callPrivateRPC("wallet_getPendingOutboundTransactionsByAddress", payload)
+
+proc deletePendingTransaction*(transactionHash: string) =
+  let payload = %* [transactionHash]
+  discard callPrivateRPC("wallet_deletePendingTransaction", payload)

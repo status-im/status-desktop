@@ -22,12 +22,16 @@ Item {
     property string identicon: profileModel.profile.identicon
     property int timestamp: 1577872140
 
+    function shouldDisplayExampleMessage(){
+        return profileModel.ens.rowCount() > 0 && profileModel.ens.pendingLen() != profileModel.ens.rowCount() && profileModel.ens.preferredUsername !== ""
+    }
+
     Component {
         id: statusENS
         Item {
             Text {
                 id: usernameTxt
-                text: username.substr(0, username.indexOf("."))
+                text: username.substr(0, username.indexOf(".")) + " " + (isPending ? qsTr("(pending)") : "")
                 color: Style.current.textColor
             }
 
@@ -46,7 +50,7 @@ Item {
         Item {
             Text {
                 id: usernameTxt
-                text: username
+                text: username  + " " + (isPending ? qsTr("(pending)") : "")
                 font.pixelSize: 16
                 color: Style.current.textColor
                 anchors.top: parent.top
@@ -90,6 +94,7 @@ Item {
             Loader {
                 sourceComponent: model.username.endsWith(".stateofus.eth") ? statusENS : normalENS
                 property string username: model.username
+                property bool isPending: model.isPending
                 active: true
                 anchors.left: circle.right
                 anchors.leftMargin: Style.current.smallPadding
@@ -192,7 +197,7 @@ Item {
 
     StyledText {
         id: chatSettingsLabel
-        visible: profileModel.ens.rowCount() > 1
+        visible: profileModel.ens.rowCount() > 0 && profileModel.ens.pendingLen() != profileModel.ens.rowCount()
         //% "Chat Settings"
         text: qsTrId("chat-settings")
         anchors.left: parent.left
@@ -222,7 +227,7 @@ Item {
         StyledText {
             id: usernameLabel2
             visible: chatSettingsLabel.visible
-            text: profileModel.ens.preferredUsername
+            text: profileModel.ens.preferredUsername || qsTr("None selected")
             anchors.left: usernameLabel.right
             anchors.leftMargin: Style.current.padding
             font.pixelSize: 14
@@ -236,7 +241,9 @@ Item {
     }
 
     Item {
-        anchors.top: profileModel.ens.rowCount() == 1 ? separator.bottom : preferredUsername.bottom
+        id: messagesShownAs
+        visible: shouldDisplayExampleMessage()
+        anchors.top: !visible ? separator.bottom : preferredUsername.bottom
         anchors.topMargin: Style.current.padding * 2
 
         UserImage {
@@ -290,7 +297,28 @@ Item {
             anchors.right: chatBox.right
             anchors.rightMargin: Style.current.padding
         }
+
+        StyledText {
+            anchors.top: chatTime.bottom
+            anchors.left: chatImage.left
+            anchors.topMargin: Style.current.padding
+            text: qsTr("You’re displaying your ENS username in chats")
+            font.pixelSize: 14
+            color: Style.current.secondaryText
+        }
+
+        
     }
 
 
+    Connections {
+        target: profileModel.ens
+        onPreferredUsernameChanged: {
+            messagesShownAs.visible = shouldDisplayExampleMessage()
+        }
+        onUsernameConfirmed: {
+            messagesShownAs.visible = shouldDisplayExampleMessage()
+            chatSettingsLabel.visible = true
+        }
+    }
 }

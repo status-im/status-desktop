@@ -17,7 +17,7 @@ proc callPrivateRPC*(methodName: string, payload = %* []): string =
       "method": methodName,
       "params": %payload
     }
-    debug "calling json", request = $inputJSON
+    debug "callPrivateRPC", rpc_method=methodName
     let response = nim_status.callPrivateRPC($inputJSON)
     result = $response
     if parseJSON(result).hasKey("error"):
