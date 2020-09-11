@@ -14,6 +14,12 @@ ModalPopup {
     property string accountNameValidationError: ""
     property bool loading: false
 
+    function reset() {
+        passwordInput.text = ""
+        accountNameInput.text = ""
+        accountSeedInput.text = ""
+    }
+
     function validate() {
         if (passwordInput.text === "") {
             //% "You need to enter a password"
@@ -131,7 +137,7 @@ ModalPopup {
                 accountError.text = error
                 return accountError.open()
             }
-
+            popup.reset()
             popup.close();
         }
     }
