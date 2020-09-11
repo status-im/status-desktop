@@ -280,17 +280,20 @@ QtObject:
   proc transactionSent(self: WalletView, txResult: string) {.slot.} =
     self.transactionWasSent(txResult)
 
-  proc sendTransaction*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string, gas: string, gasPrice: string, password: string) {.slot.} =
-    let tokens = self.status.wallet.tokens
+
+  proc sendTransaction*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string, gas: string, gasPrice: string, password: string): string {.slot.} =
     try:
-      spawnAndSend(self, "transactionSent") do:
-        $(%status_wallet.sendTransaction(tokens, from_addr, to, assetAddress, value, gas, gasPrice, password))
+      let wallet = self.status.wallet
+      if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
+        spawnAndSend(self, "transactionSent") do:
+          let response = wallet.sendTokenTransaction(from_addr, to, assetAddress, value, gas, gasPrice, password)
+          $(%* { "result": %response })
+      else:
+        spawnAndSend(self, "transactionSent") do:
+          let response = wallet.sendTransaction(from_addr, to, value, gas, gasPrice, password)
+          $(%* { "result": %response })
     except RpcException as e:
-      self.transactionSent($(%*{
-        "error": %*{
-          "message": e.msg
-        }
-      }))
+      result = $(%* { "error": %* { "message": %e.msg }})
 
   proc getDefaultAccount*(self: WalletView): string {.slot.} =
     self.currentAccount.address
