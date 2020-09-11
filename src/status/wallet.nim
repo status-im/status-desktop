@@ -259,7 +259,8 @@ proc generateNewAccount*(self: WalletModel, password: string, accountName: strin
 
 proc addAccountsFromSeed*(self: WalletModel, seed: string, password: string, accountName: string, color: string): string =
   let mnemonic = replace(seed, ',', ' ')
-  let generatedAccount = status_accounts.multiAccountImportMnemonic(mnemonic)
+  var generatedAccount = status_accounts.multiAccountImportMnemonic(mnemonic)
+  generatedAccount.derived = status_accounts.deriveAccounts(generatedAccount.id)
   return self.addNewGeneratedAccountWithPassword(generatedAccount, password, accountName, color, constants.SEED)
 
 proc addAccountsFromPrivateKey*(self: WalletModel, privateKey: string, password: string, accountName: string, color: string): string =
