@@ -8,10 +8,6 @@ import "../../../shared/status"
 import "./components"
 
 ModalPopup {
-    property bool sending: false
-    property string oldButtonText
-    property int oldButtonWidth
-
     id: root
 
     //% "Send"
@@ -40,11 +36,7 @@ ModalPopup {
     }
 
     function sendTransaction() {
-        sending = true
-        oldButtonText = btnNext.label
-        oldButtonWidth = btnNext.width
-        btnNext.label = ""
-        btnNext.width = oldButtonWidth
+        stack.currentGroup.isPending = true
         walletModel.sendTransaction(selectFromAccount.selectedAccount.address,
                                                  selectRecipient.selectedRecipient.address,
                                                  txtAmount.selectedAsset.address,
@@ -61,7 +53,7 @@ ModalPopup {
         anchors.rightMargin: Style.current.padding
         onGroupActivated: {
             root.title = group.headerText
-            btnNext.label = group.footerText
+            btnNext.text = group.footerText
         }
         TransactionFormGroup {
             id: group1
@@ -250,11 +242,12 @@ ModalPopup {
                 stack.back()
             }
         }
-        StyledButton {
+        StatusButton {
             id: btnNext
             anchors.right: parent.right
-            label: qsTr("Next")
-            disabled: !stack.currentGroup.isValid || stack.currentGroup.isPending || root.sending
+            text: qsTr("Next")
+            enabled: !(!stack.currentGroup.isValid || stack.currentGroup.isPending)
+            state: stack.currentGroup.isPending ? "pending" : "default"
             onClicked: {
                 const validity = stack.currentGroup.validate()
                 if (validity.isValid && !validity.isPending) {
@@ -264,25 +257,12 @@ ModalPopup {
                     stack.next()
                 }
             }
-
-            Loader {
-                active: root.sending
-                sourceComponent: loadingImage
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
-
-            Component {
-                id: loadingImage
-                LoadingImage {}
-            }
         }
         Connections {
             target: walletModel
             onTransactionWasSent: {
                 try {
-                    root.sending = false
-                    btnNext.label = root.oldButtonText
+                    stack.currentGroup.isPending = false
                     let response = JSON.parse(txResult)
 
                     if (response.error) {
