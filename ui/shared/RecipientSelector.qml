@@ -22,7 +22,7 @@ Item {
     property var reset: function() {}
     readonly property var sources: [
         qsTr("Address"),
-        qsTr("Contact"),
+        // qsTr("Contact"), // disable this tempoarily as we work to enable to sending to contacts
         qsTr("My account")
     ]
 
