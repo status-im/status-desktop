@@ -12,6 +12,10 @@ RowLayout {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
+    ToastMessage {
+        id: toastMessage
+    }
+
     TabBar {
         id: tabBar
         width: 78
