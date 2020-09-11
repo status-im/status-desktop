@@ -7,6 +7,7 @@ Popup {
     property url source: "../app/img/check-circle.svg"
     property string title: "Transaction pending..."
     property string linkText: qsTr("View on Etherscan")
+    property string link: "https://etherscan.io/"
 
     id: root
     height: 68
@@ -17,6 +18,7 @@ Popup {
     y: parent.height - height - Style.current.bigPadding
 
     background: Rectangle {
+        id: container
         radius: Style.current.radius
         color: Style.current.background
 
@@ -61,13 +63,20 @@ Popup {
     }
 
     StyledText {
-        text: root.linkText
+        text: qsTr(`<a href="%1" style="color:${Style.current.textColorTertiary};text-decoration:none;">%2</a>`)
+            .arg(root.link)
+            .arg(root.linkText)
         color: Style.current.textColorTertiary
+        textFormat: Text.RichText
         anchors.left: toastImage.right
         anchors.top: titleText.bottom
         font.pixelSize: 13
         font.weight: Font.Medium
         anchors.leftMargin: 12
+        onLinkActivated: {
+            Qt.openUrlExternally(root.link)
+            root.close()
+        }
     }
 
     SVGImage {
