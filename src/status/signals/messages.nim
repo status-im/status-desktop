@@ -198,7 +198,6 @@ proc toMessage*(jsonMsg: JsonNode): Message =
 
   if message.contentType == ContentType.Sticker:
     message.stickerHash = jsonMsg["sticker"]["hash"].getStr
-    .join(" ")
 
   if message.contentType == ContentType.Transaction:
     # TODO find a way to use json_seralization for this. When I try, I get an error
