@@ -135,6 +135,10 @@ StackLayout {
             }
         }
 
+        ImagePopup {
+            id: imagePopup
+        }
+
         BlockContactConfirmationDialog {
             id: blockContactConfirmationDialog
             onBlockButtonClicked: {
