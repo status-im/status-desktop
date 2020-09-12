@@ -42,6 +42,7 @@ Item {
     property string repliedMessageImage: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "image") : "";
 
     property var profileClick: function () {}
+    property var imageClick: function () {}
     property var scrollToBottom: function () {}
     property var appSettings
 
@@ -56,7 +57,12 @@ Item {
         }
     }
 
-    function clickMessage(isProfileClick, isSticker = false) {
+    function clickMessage(isProfileClick, isSticker = false, isImage = false, image = null) {
+        if (isImage) {
+            imageClick(image);
+            return;
+        }
+
         if (!isProfileClick) {
             SelectedMessage.set(messageId, fromAuthor);
         }

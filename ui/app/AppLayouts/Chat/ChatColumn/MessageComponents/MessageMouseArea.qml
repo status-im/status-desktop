@@ -4,11 +4,16 @@ import "../../../../../imports"
 
 MouseArea {
     cursorShape: chatText.hoveredLink ? Qt.PointingHandCursor : undefined
-    acceptedButtons: Qt.RightButton
+    acceptedButtons: Qt.RightButton | Qt.LeftButton
     z: 50
     onClicked: {
         if(mouse.button & Qt.RightButton) {
-            clickMessage(false, isSticker)
+            clickMessage(false, isSticker, false);
+            return;
+        }
+        if (mouse.button & Qt.LeftButton) {
+            if (isImage && !isSticker)
+                clickMessage(false, false, isImage, image);
             return;
         }
     }
