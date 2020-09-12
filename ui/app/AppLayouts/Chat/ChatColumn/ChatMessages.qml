@@ -168,7 +168,7 @@ ScrollView {
     DelegateModel {
         id: messageListDelegate
         property var lessThan: [
-            function(left, right) { return left.clock < right.clock } // TODO: should be sorted by messageId
+            function(left, right) { return left.clock < right.clock && left.messageId < right.messageId }
         ]
 
         property int sortOrder: 0
