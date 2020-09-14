@@ -22,33 +22,12 @@ Item {
         font.pixelSize: 20
     }
 
-    ModalPopup {
+    RegisterENSModal {
         id: transactionDialog
-        title: qsTr("TODO: replace this for the transaction dialog")
-
-        Input {
-            id: passwd
-            placeholderText: "Password"
-            anchors.top: parent.textToCopy
-            anchors.topMargin: 24
-            anchors.left: parent.left
-            anchors.leftMargin: 24
-        }
-
-        StyledButton {
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: Style.current.padding
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
-            label: qsTr("Ok")
-            onClicked: {
-                profileModel.ens.registerENS(username, passwd.text)
-                passwd.text = "";
-                usernameRegistered(username);
-                transactionDialog.close();
-            }
-        }
-
+        ensUsername: username
+        width: 400
+        height: 400
+        showBackBtn: false
     }
 
     ModalPopup {
