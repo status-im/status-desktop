@@ -7,13 +7,16 @@ import tables
 import strformat
 import libstatus/core
 import libstatus/types
+from eth/common/utils as eth_utils import parseAddress
 import libstatus/utils
 import libstatus/wallet
 import stew/byteutils
 import unicode
+import transactions
 import algorithm
 import eth/common/eth_types, stew/byteutils, stint
 import libstatus/eth/contracts
+
 const domain* = ".stateofus.eth"
 
 proc userName*(ensName: string, removeSuffix: bool = false): string =
@@ -142,7 +145,7 @@ proc getPrice*(): Stuint[256] =
 proc extractCoordinates*(pubkey: string):tuple[x: string, y:string] =
   result = ("0x" & pubkey[4..67], "0x" & pubkey[68..131])
 
-proc registerUsername*(username:string, address: EthAddress, pubKey: string, password: string): string =
+proc registerUsernameEstimateGas*(username: string, address: string, pubKey: string): int =
   let
     label = fromHex(FixedBytes[32], label(username))
     coordinates = extractCoordinates(pubkey)
@@ -153,25 +156,41 @@ proc registerUsername*(username:string, address: EthAddress, pubKey: string, pas
     price = getPrice()
   
   let
-    register = Register(label: label, account: address, x: x, y: y)
+    register = Register(label: label, account: parseAddress(address), x: x, y: y)
     registerAbiEncoded = ensUsernamesContract.methods["register"].encodeAbi(register)
     approveAndCallObj = ApproveAndCall[132](to: ensUsernamesContract.address, value: price, data: DynamicBytes[132].fromHex(registerAbiEncoded))
     approveAndCallAbiEncoded = sntContract.methods["approveAndCall"].encodeAbi(approveAndCallObj)
-  
-  let payload = %* {
-      "from": $address,
-      "to": $sntContract.address,
-      # "gas": 200000, # TODO: obtain gas price?
-      "data": approveAndCallAbiEncoded
-    }
-  let responseStr = sendTransaction($payload, password)
-  let response = Json.decode(responseStr, RpcResponse)
-  if not response.error.isNil:
-    raise newException(RpcException, "Error registering ens-username: " & response.error.message)
-  
-  trackPendingTransaction(response.result, $address, $sntContract.address, PendingTransactionType.RegisterENS, username & domain)
 
-  result = response.result
+  var tx = transactions.buildTokenTransaction(parseAddress(address), sntContract.address, "", "")
+  
+  try:
+    let response = sntContract.methods["approveAndCall"].estimateGas(tx, approveAndCallObj)
+    result = fromHex[int](response)
+  except RpcException as e:
+    raise
+
+proc registerUsername*(username, pubKey, address, gas, gasPrice,  password: string): string =
+  let
+    label = fromHex(FixedBytes[32], label(username))
+    coordinates = extractCoordinates(pubkey)
+    x = fromHex(FixedBytes[32], coordinates.x)
+    y =  fromHex(FixedBytes[32], coordinates.y)
+    ensUsernamesContract = contracts.getContract("ens-usernames")
+    sntContract = contracts.getContract("snt")
+    price = getPrice()
+  
+  let
+    register = Register(label: label, account: parseAddress(address), x: x, y: y)
+    registerAbiEncoded = ensUsernamesContract.methods["register"].encodeAbi(register)
+    approveAndCallObj = ApproveAndCall[132](to: ensUsernamesContract.address, value: price, data: DynamicBytes[132].fromHex(registerAbiEncoded)) 
+
+  var tx = transactions.buildTokenTransaction(parseAddress(address), sntContract.address, gas, gasPrice)
+
+  try:
+    result = sntContract.methods["approveAndCall"].send(tx, approveAndCallObj, password)
+    trackPendingTransaction(result, address, $sntContract.address, PendingTransactionType.RegisterENS, username & domain)
+  except RpcException as e:
+    raise
 
 proc setPubKey*(username:string, address: EthAddress, pubKey: string, password: string): string =
   var hash = namehash(username)
