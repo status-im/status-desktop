@@ -12,11 +12,13 @@ ModalPopup {
     property int stickerPackId: -1
     property string packPrice
     property bool showBackBtn: false
-    title: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(packPrice)).arg(asset.symbol)
+    //% "Authorize %1 %2"
+    title: qsTrId("authorize--1--2").arg(Utils.stripTrailingZeros(packPrice)).arg(asset.symbol)
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
-        title: qsTr("Error sending the transaction")
+        //% "Error sending the transaction"
+        title: qsTrId("error-sending-the-transaction")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }
@@ -36,7 +38,8 @@ ModalPopup {
 
         if (!response.success) {
             if (response.result.includes("could not decrypt key with given password")){
-                transactionSigner.validationError = qsTr("Wrong password")
+                //% "Wrong password"
+                transactionSigner.validationError = qsTrId("wrong-password")
                 return
             }
             sendingError.text = response.result
@@ -57,8 +60,10 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group1
-            headerText: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(root.packPrice)).arg(root.asset.symbol)
-            footerText: qsTr("Continue")
+            //% "Authorize %1 %2"
+            headerText: qsTrId("authorize--1--2").arg(Utils.stripTrailingZeros(root.packPrice)).arg(root.asset.symbol)
+            //% "Continue"
+            footerText: qsTrId("continue")
 
             StackView.onActivated: {
                 btnBack.visible = root.showBackBtn
@@ -70,7 +75,8 @@ ModalPopup {
                 selectedAccount: walletModel.currentAccount
                 currency: walletModel.defaultCurrency
                 width: stack.width
-                label: qsTr("Choose account")
+                //% "Choose account"
+                label: qsTrId("choose-account")
                 showBalanceForAssetSymbol: root.asset.symbol
                 minRequiredAssetBalance: root.packPrice
                 reset: function() {
@@ -128,8 +134,10 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group3
-            headerText: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(root.packPrice)).arg(root.asset.symbol)
-            footerText: qsTr("Sign with password")
+            //% "Authorize %1 %2"
+            headerText: qsTrId("authorize--1--2").arg(Utils.stripTrailingZeros(root.packPrice)).arg(root.asset.symbol)
+            //% "Sign with password"
+            footerText: qsTrId("sign-with-password")
 
             StackView.onActivated: {
                 btnBack.visible = true
@@ -168,8 +176,10 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group4
-            headerText: qsTr("Send %1 %2").arg(Utils.stripTrailingZeros(root.packPrice)).arg(root.asset.symbol)
-            footerText: qsTr("Sign with password")
+            //% "Send %1 %2"
+            headerText: qsTrId("send--1--2").arg(Utils.stripTrailingZeros(root.packPrice)).arg(root.asset.symbol)
+            //% "Sign with password"
+            footerText: qsTrId("sign-with-password")
 
             TransactionSigner {
                 id: transactionSigner
@@ -201,7 +211,8 @@ ModalPopup {
         StatusButton {
             id: btnNext
             anchors.right: parent.right
-            text: qsTr("Next")
+            //% "Next"
+            label: qsTrId("next")
             enabled: stack.currentGroup.isValid && !stack.currentGroup.isPending
             state: stack.currentGroup.isPending ? "pending" : "default"
             onClicked: {

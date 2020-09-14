@@ -21,7 +21,8 @@ ModalPopup {
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
-        title: qsTr("Error sending the transaction")
+        //% "Error sending the transaction"
+        title: qsTrId("error-sending-the-transaction")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }
@@ -40,9 +41,10 @@ ModalPopup {
                                                  transactionSigner.enteredPassword)
         let response = JSON.parse(responseStr)
 
-        if (!response.success) {
+        if (response.error) {
             if (response.result.includes("could not decrypt key with given password")){
-                transactionSigner.validationError = qsTr("Wrong password")
+                //% "Wrong password"
+                transactionSigner.validationError = qsTrId("wrong-password")
                 return
             }
             sendingError.text = response.result
@@ -62,8 +64,10 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group1
-            headerText: qsTr("Send")
-            footerText: qsTr("Preview")
+            //% "Send"
+            headerText: qsTrId("command-button-send")
+            //% "Preview"
+            footerText: qsTrId("preview")
 
             GasSelector {
                 id: gasSelector
@@ -92,7 +96,8 @@ ModalPopup {
                         root.selectedAmount))
 
                     if (!gasEstimate.success) {
-                        console.warn(qsTr("Error estimating gas: %1").arg(gasEstimate.result))
+                        //% "Error estimating gas: %1"
+                        console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
                         return
                     }
                     selectedGasLimit = gasEstimate.result
@@ -113,8 +118,10 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group2
-            headerText: qsTr("Transaction preview")
-            footerText: qsTr("Sign with password")
+            //% "Transaction preview"
+            headerText: qsTrId("transaction-preview")
+            //% "Sign with password"
+            footerText: qsTrId("sign-with-password")
 
             TransactionPreview {
                 id: pvwTransaction
@@ -142,8 +149,10 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group3
-            headerText: qsTr("Sign with password")
-            footerText: qsTr("Send %1 %2").arg(root.selectedAmount).arg(!!root.selectedAsset ? root.selectedAsset.symbol : "")
+            //% "Sign with password"
+            headerText: qsTrId("sign-with-password")
+            //% "Send %1 %2"
+            footerText: qsTrId("send--1--2").arg(root.selectedAmount).arg(!!root.selectedAsset ? root.selectedAsset.symbol : "")
 
             TransactionSigner {
                 id: transactionSigner
@@ -190,7 +199,8 @@ ModalPopup {
         StyledButton {
             id: btnNext
             anchors.right: parent.right
-            label: qsTr("Next")
+            //% "Next"
+            label: qsTrId("next")
             disabled: !stack.currentGroup.isValid
             onClicked: {
                 const isValid = stack.currentGroup.validate()

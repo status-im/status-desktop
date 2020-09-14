@@ -76,7 +76,8 @@ Item {
                     id: contextMenu
                     Action {
                         icon.source: "../../../img/make-admin.svg"
-                        text: qsTr("Token details")
+                        //% "Token details"
+                        text: qsTrId("token-details")
                         onTriggered: {
                             console.log("TODO")
                         }
@@ -84,7 +85,8 @@ Item {
                     Action {
                         icon.source: "../../../img/remove-from-group.svg"
                         icon.color: Style.current.red
-                        text: qsTr("Remove token")
+                        //% "Remove token"
+                        text: qsTrId("remove-token")
                         onTriggered: walletModel.removeCustomToken(address)
                     }
                 }
@@ -116,7 +118,8 @@ Item {
 
                 StyledText {
                     id: customLbl
-                    text: qsTr("Custom")
+                    //% "Custom"
+                    text: qsTrId("custom")
                     font.pixelSize: 13
                     color: Style.current.secondaryText
                     height: 20
@@ -145,7 +148,8 @@ Item {
 
                 StyledText {
                     id: defaultLbl
-                    text: qsTr("Default")
+                    //% "Default"
+                    text: qsTrId("default")
                     font.pixelSize: 13
                     color: Style.current.secondaryText
                     height: 20

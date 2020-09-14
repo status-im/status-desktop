@@ -131,7 +131,8 @@ Rectangle {
                     icon.width: menuButton.iconSize
                     icon.height: menuButton.iconSize
                     icon.color: Style.current.red
-                    text: qsTr("Unblock User")
+                    //% "Unblock User"
+                    text: qsTrId("unblock-user")
                     enabled: container.isBlocked
                     onTriggered: {
                       profileModel.unblockContact(address)

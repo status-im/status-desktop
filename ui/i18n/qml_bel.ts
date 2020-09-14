@@ -1378,7 +1378,7 @@ Seperate words by a single space.</source>
         <message id="chat-over-a-peer-to-peer--encrypted-network-n-where-messages-can-t-be-censored-or-hacked">
             <location filename="../onboarding/Intro.qml" line="34"/>
             <source>Chat over a peer-to-peer, encrypted network
- where messages can't be censored or hacked</source>
+where messages can't be censored or hacked</source>
             <translation type="unfinished"/>
         </message>
         <message id="intro-title2">

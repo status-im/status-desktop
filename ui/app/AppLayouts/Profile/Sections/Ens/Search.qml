@@ -48,7 +48,8 @@ Item {
 
     ModalPopup {
         id: transactionDialog
-        title: qsTr("TODO: replace this for the transaction dialog")
+        //% "TODO: replace this for the transaction dialog"
+        title: qsTrId("todo--replace-this-for-the-transaction-dialog")
 
         Input {
             id: passwd
@@ -64,7 +65,8 @@ Item {
             anchors.bottomMargin: Style.current.padding
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
-            label: qsTr("Ok")
+            //% "Ok"
+            label: qsTrId("ok")
             onClicked: {
                 profileModel.ens.setPubKey(ensUsername.text, passwd.text)
                 passwd.text = "";
@@ -151,7 +153,8 @@ Item {
                         break;
                     case "owned":
                         valid = true;
-                        validationMessage = qsTr("Continuing will connect this username with your chat key.");
+                        //% "Continuing will connect this username with your chat key."
+                        validationMessage = qsTrId("ens-username-owned-continue");
                         break;
                     case "taken":
                         validationMessage = !isStatus ? 

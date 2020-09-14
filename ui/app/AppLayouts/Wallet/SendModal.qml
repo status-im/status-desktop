@@ -16,7 +16,8 @@ ModalPopup {
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
-        title: qsTr("Error sending the transaction")
+        //% "Error sending the transaction"
+        title: qsTrId("error-sending-the-transaction")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }
@@ -47,8 +48,10 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group1
-            headerText: qsTr("Send")
-            footerText: qsTr("Continue")
+            //% "Send"
+            headerText: qsTrId("command-button-send")
+            //% "Continue"
+            footerText: qsTrId("continue")
 
             AccountSelector {
                 id: selectFromAccount
@@ -56,7 +59,8 @@ ModalPopup {
                 selectedAccount: walletModel.currentAccount
                 currency: walletModel.defaultCurrency
                 width: stack.width
-                label: qsTr("From account")
+                //% "From account"
+                label: qsTrId("from-account")
                 reset: function() {
                     accounts = Qt.binding(function() { return walletModel.accounts })
                     selectedAccount = Qt.binding(function() { return walletModel.currentAccount })
@@ -72,7 +76,8 @@ ModalPopup {
                 id: selectRecipient
                 accounts: walletModel.accounts
                 contacts: profileModel.addedContacts
-                label: qsTr("Recipient")
+                //% "Recipient"
+                label: qsTrId("recipient")
                 anchors.top: separator.bottom
                 anchors.topMargin: 10
                 width: stack.width
@@ -86,8 +91,10 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group2
-            headerText: qsTr("Send")
-            footerText: qsTr("Preview")
+            //% "Send"
+            headerText: qsTrId("command-button-send")
+            //% "Preview"
+            footerText: qsTrId("preview")
 
             AssetAndAmountInput {
                 id: txtAmount
@@ -129,7 +136,8 @@ ModalPopup {
                         txtAmount.selectedAmount))
 
                     if (!gasEstimate.success) {
-                        console.warn(qsTr("Error estimating gas: %1").arg(gasEstimate.result))
+                        //% "Error estimating gas: %1"
+                        console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
                         return
                     }
                     selectedGasLimit = gasEstimate.result
@@ -153,8 +161,10 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group3
-            headerText: qsTr("Transaction preview")
-            footerText: qsTr("Sign with password")
+            //% "Transaction preview"
+            headerText: qsTrId("transaction-preview")
+            //% "Sign with password"
+            footerText: qsTrId("sign-with-password")
 
             TransactionPreview {
                 id: pvwTransaction
@@ -186,8 +196,10 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group4
-            headerText: qsTr("Sign with password")
-            footerText: qsTr("Send %1 %2").arg(txtAmount.selectedAmount).arg(!!txtAmount.selectedAsset ? txtAmount.selectedAsset.symbol : "")
+            //% "Sign with password"
+            headerText: qsTrId("sign-with-password")
+            //% "Send %1 %2"
+            footerText: qsTrId("send--1--2").arg(txtAmount.selectedAmount).arg(!!txtAmount.selectedAsset ? txtAmount.selectedAsset.symbol : "")
 
             TransactionSigner {
                 id: transactionSigner
@@ -235,7 +247,8 @@ ModalPopup {
         StatusButton {
             id: btnNext
             anchors.right: parent.right
-            text: qsTr("Next")
+            //% "Next"
+            text: qsTrId("next")
             enabled: !(!stack.currentGroup.isValid || stack.currentGroup.isPending)
             state: stack.currentGroup.isPending ? "pending" : "default"
             onClicked: {
@@ -258,7 +271,8 @@ ModalPopup {
 
                     if (!response.success) {
                         if (response.result.includes("could not decrypt key with given password")){
-                            transactionSigner.validationError = qsTr("Wrong password")
+                            //% "Wrong password"
+                            transactionSigner.validationError = qsTrId("wrong-password")
                             return
                         }
                         sendingError.text = response.result

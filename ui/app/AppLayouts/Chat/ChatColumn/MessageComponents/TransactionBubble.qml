@@ -112,7 +112,11 @@ Item {
         StyledText {
             id: title
             color: Style.current.secondaryText
-            text: outgoing ? qsTr("↑ Outgoing transaction") : qsTr("↓ Incoming transaction")
+            //% "↑ Outgoing transaction"
+            text: outgoing ? 
+              qsTrId("--outgoing-transaction") :
+              //% "↓ Incoming transaction"
+              qsTrId("--incoming-transaction")
             font.weight: Font.Medium
             anchors.top: parent.top
             anchors.topMargin: Style.current.halfPadding
