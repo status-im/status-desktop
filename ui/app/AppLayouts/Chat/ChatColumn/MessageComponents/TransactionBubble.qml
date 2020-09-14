@@ -24,6 +24,19 @@ Item {
             }
         }
     }
+    property var tokens: {
+        const count = walletModel.defaultTokenList.rowCount()
+        const toks = []
+        for (var i = 0; i < count; i++) {
+            toks.push({
+                          "address": walletModel.defaultTokenList.rowData(i, 'address'),
+                          "name": walletModel.defaultTokenList.rowData(i, 'name'),
+                          "decimals": parseInt(walletModel.defaultTokenList.rowData(i, 'decimals'), 10),
+                          "symbol": walletModel.defaultTokenList.rowData(i, 'symbol')
+                      })
+        }
+        return toks
+    }
     property var token: {
         if (commandParametersObject.contract === "") {
             return {
@@ -35,13 +48,14 @@ Item {
             }
         }
 
-        let count = walletModel.defaultTokenList.items.count
-        for (let i = 0; i < count; i++) {
-            let token = walletModel.defaultTokenList.items.get(i)
-            if (commandParametersObject.contract === token.address) {
+        const count = root.tokens.length
+        for (var i = 0; i < count; i++) {
+            let token = root.tokens[i]
+            if (token.address === commandParametersObject.contract) {
                 return token
             }
         }
+
         return {}
     }
     property string tokenAmount: {
