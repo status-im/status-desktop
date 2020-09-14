@@ -287,10 +287,16 @@ Item {
         onTransactionCompleted: {
             switch(trxType){
                 case "RegisterENS":
-                    toastMessage.title = !success ? qsTr("ENS Registration failed"): qsTr("ENS Registration completed");
+                    toastMessage.title = !success ? 
+                                         qsTr("ENS Registration failed")
+                                         :
+                                         qsTr("ENS Registration completed");
                     break;
                 case "SetPubKey":
-                    toastMessage.title = !success ? qsTr("Updating ENS pubkey failed"): qsTr("Updating ENS pubkey completed");
+                    toastMessage.title = !success ? 
+                                         qsTr("Updating ENS pubkey failed")
+                                         :
+                                         qsTr("Updating ENS pubkey completed");
                     break;
             }
 

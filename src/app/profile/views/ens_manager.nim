@@ -157,7 +157,7 @@ QtObject:
 
   proc usernameConfirmed(self: EnsManager, username: string) {.signal.}
   proc transactionWasSent(self: EnsManager, txResult: string) {.signal.}
-  proc transactionCompleted(self: EnsManager, success: bool, txHash: string, username: string, trxType: string) {.signal.}
+  proc transactionCompleted(self: EnsManager, success: bool, txHash: string, username: string, trxType: string, revertReason: string) {.signal.}
 
   proc confirm*(self: EnsManager, trxType: PendingTransactionType, ensUsername: string, transactionHash: string) =
     self.connect(ensUsername)
@@ -167,7 +167,7 @@ QtObject:
     let bottomRight = self.createIndex(msgIdx, 0, nil)
     self.dataChanged(topLeft, bottomRight, @[EnsRoles.IsPending.int])
     self.usernameConfirmed(ensUsername)
-    self.transactionCompleted(true, transactionHash, ensUsername, $trxType)
+    self.transactionCompleted(true, transactionHash, ensUsername, $trxType, "")
 
 
   proc getPrice(self: EnsManager): string {.slot.} =
@@ -192,7 +192,7 @@ QtObject:
 
     self.connect(ensUsername)
 
-  proc revert*(self: EnsManager, trxType: PendingTransactionType, ensUsername: string, transactionHash: string) = 
+  proc revert*(self: EnsManager, trxType: PendingTransactionType, ensUsername: string, transactionHash: string, revertReason: string) = 
     self.pendingUsernames.excl ensUsername
     let msgIdx = self.usernames.find(ensUsername)
 
@@ -201,7 +201,7 @@ QtObject:
     self.beginResetModel()
     self.usernames.del(msgIdx)
     self.endResetModel()
-    self.transactionCompleted(false, transactionHash, ensUsername, $trxType)
+    self.transactionCompleted(false, transactionHash, ensUsername, $trxType, revertReason)
 
   proc registerENS(self: EnsManager, username: string, password: string) {.slot.} =
     let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")

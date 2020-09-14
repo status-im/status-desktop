@@ -113,7 +113,7 @@ QtObject:
       result = 325000
 
   proc transactionWasSent*(self: ChatsView, txResult: string) {.signal.}
-  proc transactionCompleted*(self: ChatsView, success: bool, txHash: string) {.signal.}
+  proc transactionCompleted*(self: ChatsView, success: bool, txHash: string, revertReason: string = "") {.signal.}
 
   proc buyStickerPack*(self: ChatsView, packId: int, address: string, price: string, gas: string, gasPrice: string, password: string): string {.slot.} =
     try:
