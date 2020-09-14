@@ -273,4 +273,37 @@ Item {
             addedUsername = ensUsername;
         }
     }
+
+    Connections {
+        target: profileModel.ens
+        onTransactionWasSent: {
+            toastMessage.title = qsTr("Transaction pending...")
+            toastMessage.source = "../../../img/loading.svg"
+            toastMessage.iconColor = Style.current.primary
+            toastMessage.iconRotates = true
+            toastMessage.link = `${walletModel.etherscanLink}/${txResult}`
+            toastMessage.open()
+        }
+        onTransactionCompleted: {
+            switch(trxType){
+                case "RegisterENS":
+                    toastMessage.title = !success ? qsTr("ENS Registration failed"): qsTr("ENS Registration completed");
+                    break;
+                case "SetPubKey":
+                    toastMessage.title = !success ? qsTr("Updating ENS pubkey failed"): qsTr("Updating ENS pubkey completed");
+                    break;
+            }
+
+            if (success) {
+                toastMessage.source = "../../../img/check-circle.svg"
+                toastMessage.iconColor = Style.current.success
+            } else {
+                toastMessage.source = "../../../img/block-icon.svg"
+                toastMessage.iconColor = Style.current.danger
+            }
+
+            toastMessage.link = `${walletModel.etherscanLink}/${txHash}`
+            toastMessage.open()
+        }
+    }
 }
