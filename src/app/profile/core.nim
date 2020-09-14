@@ -85,11 +85,11 @@ proc init*(self: ProfileController, account: Account) =
     if tx.success:
       self.view.ens.confirm(PendingTransactionType.RegisterENS, tx.data, tx.transactionHash)
     else:
-      self.view.ens.revert(PendingTransactionType.RegisterENS, tx.data, tx.transactionHash)
+      self.view.ens.revert(PendingTransactionType.RegisterENS, tx.data, tx.transactionHash, tx.revertReason)
 
   self.status.events.on(PendingTransactionType.SetPubKey.confirmed) do(e: Args):
     let tx = TransactionMinedArgs(e)
     if tx.success:
       self.view.ens.confirm(PendingTransactionType.SetPubKey, tx.data, tx.transactionHash)
     else:
-      self.view.ens.revert(PendingTransactionType.SetPubKey, tx.data, tx.transactionHash)
+      self.view.ens.revert(PendingTransactionType.SetPubKey, tx.data, tx.transactionHash, tx.revertReason)

@@ -77,7 +77,7 @@ proc handleChatEvents(self: ChatController) =
 
   self.status.events.on(PendingTransactionType.BuyStickerPack.confirmed) do(e: Args):
     var tx = TransactionMinedArgs(e)
-    self.view.transactionCompleted(tx.success, tx.transactionHash)
+    self.view.transactionCompleted(tx.success, tx.transactionHash, tx.revertReason)
     if tx.success:
       self.view.installStickerPack(tx.data.parseInt)
 

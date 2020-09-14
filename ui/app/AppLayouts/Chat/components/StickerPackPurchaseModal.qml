@@ -237,7 +237,10 @@ ModalPopup {
                 toastMessage.open()
             }
             onTransactionCompleted: {
-                toastMessage.title = !success ? qsTr("Could not buy Stickerpack"): qsTr("Stickerpack bought successfully");
+                toastMessage.title = !success ? 
+                                     qsTr("Could not buy Stickerpack")
+                                     :
+                                     qsTr("Stickerpack bought successfully");
                 if (success) {
                     toastMessage.source = "../../../img/check-circle.svg"
                     toastMessage.iconColor = Style.current.success
