@@ -112,10 +112,15 @@ QtObject:
     except:
       result = 325000
 
+  proc transactionWasSent*(self: ChatsView, txResult: string) {.signal.}
+  proc transactionCompleted*(self: ChatsView, success: bool, txHash: string) {.signal.}
+
   proc buyStickerPack*(self: ChatsView, packId: int, address: string, price: string, gas: string, gasPrice: string, password: string): string {.slot.} =
     try:
       let response = self.status.stickers.buyPack(packId, address, price, gas, gasPrice, password)
       result = $(%* { "result": %response })
+      self.transactionWasSent(response)
+
       # TODO: 
       # check if response["error"] is not null and handle the error 
     except RpcException as e:

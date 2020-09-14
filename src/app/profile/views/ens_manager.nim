@@ -156,8 +156,10 @@ QtObject:
     }.toTable
 
   proc usernameConfirmed(self: EnsManager, username: string) {.signal.}
+  proc transactionWasSent(self: EnsManager, txResult: string) {.signal.}
+  proc transactionCompleted(self: EnsManager, success: bool, txHash: string, username: string, trxType: string) {.signal.}
 
-  proc confirm*(self: EnsManager, ensUsername: string) =
+  proc confirm*(self: EnsManager, trxType: PendingTransactionType, ensUsername: string, transactionHash: string) =
     self.connect(ensUsername)
     self.pendingUsernames.excl ensUsername
     let msgIdx = self.usernames.find(ensUsername)
@@ -165,6 +167,8 @@ QtObject:
     let bottomRight = self.createIndex(msgIdx, 0, nil)
     self.dataChanged(topLeft, bottomRight, @[EnsRoles.IsPending.int])
     self.usernameConfirmed(ensUsername)
+    self.transactionCompleted(true, transactionHash, ensUsername, $trxType)
+
 
   proc getPrice(self: EnsManager): string {.slot.} =
     result = libstatus_utils.wei2Eth(getPrice())
@@ -188,12 +192,25 @@ QtObject:
 
     self.connect(ensUsername)
 
+  proc revert*(self: EnsManager, trxType: PendingTransactionType, ensUsername: string, transactionHash: string) = 
+    self.pendingUsernames.excl ensUsername
+    let msgIdx = self.usernames.find(ensUsername)
+
+    if msgIdx == -1: return
+
+    self.beginResetModel()
+    self.usernames.del(msgIdx)
+    self.endResetModel()
+    self.transactionCompleted(false, transactionHash, ensUsername, $trxType)
+
   proc registerENS(self: EnsManager, username: string, password: string) {.slot.} =
     let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
     let address = status_wallet.getWalletAccounts()[0].address
     let walletAddress = parseAddress(address)
     let trxHash = registerUsername(username, walletAddress, pubKey, password)
     
+    self.transactionWasSent(trxHash)
+
      # TODO: handle transaction failure
     var ensUsername = formatUsername(username, true)
     self.pendingUsernames.incl(ensUsername)
@@ -204,6 +221,8 @@ QtObject:
     let address = status_wallet.getWalletAccounts()[0].address
     let walletAddress = parseAddress(address)
     let trxHash = setPubKey(username, walletAddress, pubKey, password)
+
+    self.transactionWasSent(trxHash)
 
     # TODO: handle transaction failure
     self.pendingUsernames.incl(username)

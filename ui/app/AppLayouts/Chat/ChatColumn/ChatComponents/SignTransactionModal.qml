@@ -59,7 +59,7 @@ ModalPopup {
             return sendingError.open()
         }
 
-        sendingSuccess.text = qsTr("Transaction sent to the blockchain. You can watch the progress on Etherscan: %2/%1").arg(response.result).arg(walletModel.etherscanLink)
+        sendingSuccess.text = qsTr("Transaction sent to the blockchain. You can watch the progress on Etherscan: %2%1").arg(response.result).arg(walletModel.etherscanLink)
         sendingSuccess.open()
     }
 

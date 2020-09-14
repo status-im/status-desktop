@@ -83,15 +83,13 @@ proc init*(self: ProfileController, account: Account) =
   self.status.events.on(PendingTransactionType.RegisterENS.confirmed) do(e: Args):
     let tx = TransactionMinedArgs(e)
     if tx.success:
-      self.view.ens.confirm(TransactionMinedArgs(e).data)
+      self.view.ens.confirm(PendingTransactionType.RegisterENS, tx.data, tx.transactionHash)
     else:
-      discard
-      # TODO: show toast message indicating transaction reverted
+      self.view.ens.revert(PendingTransactionType.RegisterENS, tx.data, tx.transactionHash)
 
   self.status.events.on(PendingTransactionType.SetPubKey.confirmed) do(e: Args):
     let tx = TransactionMinedArgs(e)
     if tx.success:
-      self.view.ens.confirm(TransactionMinedArgs(e).data)
+      self.view.ens.confirm(PendingTransactionType.SetPubKey, tx.data, tx.transactionHash)
     else:
-      discard
-      # TODO: show toast message indicating transaction reverted 
+      self.view.ens.revert(PendingTransactionType.SetPubKey, tx.data, tx.transactionHash)

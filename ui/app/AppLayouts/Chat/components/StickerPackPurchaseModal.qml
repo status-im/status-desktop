@@ -52,7 +52,7 @@ ModalPopup {
             return sendingError.open()
         }
 
-        sendingSuccess.text = qsTr("Transaction sent to the blockchain. You can watch the progress on Etherscan: %2/%1").arg(response.result).arg(walletModel.etherscanLink)
+        sendingSuccess.text = qsTr("Transaction sent to the blockchain. You can watch the progress on Etherscan: %2%1").arg(response.result).arg(walletModel.etherscanLink)
         sendingSuccess.open()
     }
 
@@ -223,6 +223,31 @@ ModalPopup {
                     }
                     stack.next()
                 }
+            }
+        }
+
+        Connections {
+            target: chatsModel
+            onTransactionWasSent: {
+                toastMessage.title = qsTr("Transaction pending...")
+                toastMessage.source = "../../../img/loading.svg"
+                toastMessage.iconColor = Style.current.primary
+                toastMessage.iconRotates = true
+                toastMessage.link = `${walletModel.etherscanLink}/${txResult}`
+                toastMessage.open()
+            }
+            onTransactionCompleted: {
+                toastMessage.title = !success ? qsTr("Could not buy Stickerpack"): qsTr("Stickerpack bought successfully");
+                if (success) {
+                    toastMessage.source = "../../../img/check-circle.svg"
+                    toastMessage.iconColor = Style.current.success
+                } else {
+                    toastMessage.source = "../../../img/block-icon.svg"
+                    toastMessage.iconColor = Style.current.danger
+                }
+
+                toastMessage.link = `${walletModel.etherscanLink}/${txHash}`
+                toastMessage.open()
             }
         }
     }
