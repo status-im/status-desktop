@@ -6,8 +6,11 @@ import "."
 
 Popup {
     property url source: "../app/img/check-circle.svg"
+    property color iconColor: Style.current.primary
+    property bool iconRotates: false
     property string title: "Transaction pending..."
-    property string linkText: qsTr("View on Etherscan")
+    readonly property string defaultLinkText: qsTr("View on Etherscan")
+    property string linkText: defaultLinkText
     property string link: "https://etherscan.io/"
 
     id: root
@@ -23,6 +26,12 @@ Popup {
         timer.setTimeout(function() {
             root.close()
         }, 4000);
+    }
+    onClosed: {
+        // Reset props
+        iconColor = Style.current.primary
+        iconRotates = false
+        linkText = defaultLinkText
     }
 
     Timer {
@@ -56,11 +65,13 @@ Popup {
         height: 32
         iconHeight: 20
         iconWidth: 20
-        color: Style.current.secondaryBackground
+        color: Utils.setColorAlpha(root.iconColor, 0.1)
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         source: root.source
         anchors.leftMargin: 12
+        iconColor: root.iconColor
+        rotates: root.iconRotates
     }
 
     StyledText {

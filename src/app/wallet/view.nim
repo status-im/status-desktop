@@ -562,3 +562,5 @@ QtObject:
 
   proc ensResolved(self: WalletView, pubKey: string) {.slot.} =
     self.ensWasResolved(pubKey)
+  
+  proc transactionCompleted*(self: WalletView, success: bool, txHash: string, revertReason: string = "") {.signal.}

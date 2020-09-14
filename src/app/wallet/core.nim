@@ -62,10 +62,7 @@ proc init*(self: WalletController) =
 
   self.status.events.on(PendingTransactionType.WalletTransfer.confirmed) do(e: Args):
     let tx = TransactionMinedArgs(e)
-    if tx.success:
-      debug "SUCCESSS TRANSACTION", transactionHash = tx.transactionHash
-    else:
-      debug "ERROR TRANSACTION", revertReason = tx.revertReason
+    self.view.transactionCompleted(tx.success, tx.transactionHash, tx.revertReason)
 
 proc checkPendingTransactions*(self: WalletController) =
   self.status.wallet.checkPendingTransactions() # TODO: consider doing this in a spawnAndSend
