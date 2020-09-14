@@ -4,7 +4,7 @@ import json
 import json_serialization
 import sequtils
 import strutils
-from ../../../status/libstatus/types import Setting, PendingTransactionType
+from ../../../status/libstatus/types import Setting, PendingTransactionType, RpcException
 import ../../../status/threads
 import ../../../status/ens as status_ens
 import ../../../status/libstatus/wallet as status_wallet
@@ -186,10 +186,7 @@ QtObject:
 
   proc connectOwnedUsername(self: EnsManager, username: string, isStatus: bool) {.slot.} =
     var ensUsername = formatUsername(username, isStatus)
-
-    self.usernames.add ensUsername
     self.add ensUsername
-
     self.connect(ensUsername)
 
   proc revert*(self: EnsManager, trxType: PendingTransactionType, ensUsername: string, transactionHash: string, revertReason: string) = 
@@ -203,18 +200,33 @@ QtObject:
     self.endResetModel()
     self.transactionCompleted(false, transactionHash, ensUsername, $trxType, revertReason)
 
-  proc registerENS(self: EnsManager, username: string, password: string) {.slot.} =
-    let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
-    let address = status_wallet.getWalletAccounts()[0].address
-    let walletAddress = parseAddress(address)
-    let trxHash = registerUsername(username, walletAddress, pubKey, password)
-    
-    self.transactionWasSent(trxHash)
+  proc getEnsRegisterAddress(self: EnsManager): QVariant {.slot.} =
+    newQVariant($statusRegistrarAddress())
 
-     # TODO: handle transaction failure
-    var ensUsername = formatUsername(username, true)
-    self.pendingUsernames.incl(ensUsername)
-    self.add ensUsername
+  QtProperty[QVariant] ensRegisterAddress:
+    read = getEnsRegisterAddress
+
+  proc registerENSGasEstimate(self: EnsManager, ensUsername: string, address: string): int {.slot.} =
+    let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    try:
+      result = registerUsernameEstimateGas(ensUsername, address, pubKey)
+    except:
+      result = 325000
+  
+  proc registerENS*(self: EnsManager, username: string, address: string, gas: string, gasPrice: string, password: string): string {.slot.} =
+    try:
+      let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+      let response = registerUsername(username, pubKey, address, gas, gasPrice, password)
+      result = $(%* { "result": %response })
+      self.transactionWasSent(response)
+
+      # TODO: handle transaction failure
+      var ensUsername = formatUsername(username, true)
+      self.pendingUsernames.incl(ensUsername)
+      self.add ensUsername
+
+    except RpcException as e:
+      result = $(%* { "error": %* { "message": %e.msg }})
 
   proc setPubKey(self: EnsManager, username: string, password: string) {.slot.} =
     let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
