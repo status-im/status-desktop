@@ -13,7 +13,6 @@ tsFiles.forEach(file => {
         return;
     }
     const fileContent = fs.readFileSync(file).toString();
-
     const json = convert.xml2js(fileContent, options);
 
     const doctype = json["_doctype"];
@@ -35,7 +34,12 @@ tsFiles.forEach(file => {
         }
     }
 
-    const messages = json[doctype].context.message;
+    let messages = []
+    if (json[doctype].context.length) {
+      messages = json[doctype].context.flatMap(c => c.message)
+    } else {
+      messages = json[doctype].context.message;
+    }
 
     console.log(`Modying ${language}...`)
     messages.forEach(message => {
