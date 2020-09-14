@@ -31,7 +31,8 @@ Item {
         Item {
             Text {
                 id: usernameTxt
-                text: username.substr(0, username.indexOf(".")) + " " + (isPending ? qsTr("(pending)") : "")
+                //% "(pending)"
+                text: username.substr(0, username.indexOf(".")) + " " + (isPending ? qsTrId("-pending-") : "")
                 color: Style.current.textColor
             }
 
@@ -50,7 +51,8 @@ Item {
         Item {
             Text {
                 id: usernameTxt
-                text: username  + " " + (isPending ? qsTr("(pending)") : "")
+                //% "(pending)"
+                text: username  + " " + (isPending ? qsTrId("-pending-") : "")
                 font.pixelSize: 16
                 color: Style.current.textColor
                 anchors.top: parent.top
@@ -227,7 +229,8 @@ Item {
         StyledText {
             id: usernameLabel2
             visible: chatSettingsLabel.visible
-            text: profileModel.ens.preferredUsername || qsTr("None selected")
+            //% "None selected"
+            text: profileModel.ens.preferredUsername || qsTrId("none-selected")
             anchors.left: usernameLabel.right
             anchors.leftMargin: Style.current.padding
             font.pixelSize: 14
@@ -302,7 +305,8 @@ Item {
             anchors.top: chatTime.bottom
             anchors.left: chatImage.left
             anchors.topMargin: Style.current.padding
-            text: qsTr("You’re displaying your ENS username in chats")
+            //% "You’re displaying your ENS username in chats"
+            text: qsTrId("you-re-displaying-your-ens-username-in-chats")
             font.pixelSize: 14
             color: Style.current.secondaryText
         }

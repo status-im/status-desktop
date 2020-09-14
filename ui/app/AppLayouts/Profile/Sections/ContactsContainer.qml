@@ -110,7 +110,8 @@ Item {
 
         Input {
             id: addContactSearchInput
-            placeholderText: qsTr("Enter ENS username or chat key")
+            //% "Enter ENS username or chat key"
+            placeholderText: qsTrId("enter-contact-code")
             customHeight: 44
             fontPixelSize: 15
             onEditingFinished: {

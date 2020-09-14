@@ -8,7 +8,8 @@ import "../shared"
 Item {
     id: root
     property string validationError: "Error"
-    property string ensAsyncValidationError: qsTr("ENS Username not found")
+    //% "ENS Username not found"
+    property string ensAsyncValidationError: qsTrId("ens-username-not-found")
     property alias label: inpAddress.label
     property string selectedAddress
     property var isValid: false

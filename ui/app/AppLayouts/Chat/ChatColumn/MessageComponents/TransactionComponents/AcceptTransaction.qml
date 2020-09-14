@@ -15,7 +15,11 @@ Item {
     StyledText {
         id: acceptText
         color: Style.current.blue
-        text: root.state === Constants.addressRequested ? qsTr("Accept and share address") : qsTr("Accept and send")
+        //% "Accept and share address"
+        text: root.state === Constants.addressRequested ? 
+          qsTrId("accept-and-share-address") : 
+          //% "Accept and send"
+          qsTrId("accept-and-send")
         padding: Style.current.halfPadding
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
@@ -48,7 +52,8 @@ Item {
     StyledText {
         id: declineText
         color: Style.current.blue
-        text: qsTr("Decline")
+        //% "Decline"
+        text: qsTrId("decline")
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
         font.weight: Font.Medium

@@ -31,7 +31,8 @@ Item {
 
     ModalPopup {
         id: popup
-        title: qsTr("Terms of name registration")
+        //% "Terms of name registration"
+        title: qsTrId("ens-terms-header")
 
         ScrollView {
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
@@ -47,56 +48,64 @@ Item {
                 
 
                 StyledText {
-                    text: qsTr("Funds are deposited for 1 year. Your SNT will be locked, but not spent.")
+                    //% "Funds are deposited for 1 year. Your SNT will be locked, but not spent."
+                    text: qsTrId("ens-terms-point-1")
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
                 }
 
                 StyledText {
-                    text: qsTr("After 1 year, you can release the name and get your deposit back, or take no action to keep the name.")
+                    //% "After 1 year, you can release the name and get your deposit back, or take no action to keep the name."
+                    text: qsTrId("ens-terms-point-2")
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
                 }
 
                 StyledText {
-                    text: qsTr("If terms of the contract change — e.g. Status makes contract upgrades — user has the right to release the username regardless of time held.")
+                    //% "If terms of the contract change — e.g. Status makes contract upgrades — user has the right to release the username regardless of time held."
+                    text: qsTrId("ens-terms-point-3")
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
                 }
 
                 StyledText {
-                    text: qsTr("The contract controller cannot access your deposited funds. They can only be moved back to the address that sent them.")
+                    //% "The contract controller cannot access your deposited funds. They can only be moved back to the address that sent them."
+                    text: qsTrId("ens-terms-point-4")
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
                 }
 
                 StyledText {
-                    text: qsTr("Your address(es) will be publicly associated with your ENS name.")
+                    //% "Your address(es) will be publicly associated with your ENS name."
+                    text: qsTrId("ens-terms-point-5")
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
                 }
 
                 StyledText {
-                    text: qsTr("Usernames are created as subdomain nodes of stateofus.eth and are subject to the ENS smart contract terms.")
+                    //% "Usernames are created as subdomain nodes of stateofus.eth and are subject to the ENS smart contract terms."
+                    text: qsTrId("ens-terms-point-6")
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
                 }
 
                 StyledText {
-                    text: qsTr("You authorize the contract to transfer SNT on your behalf. This can only occur when you approve a transaction to authorize the transfer.")
+                    //% "You authorize the contract to transfer SNT on your behalf. This can only occur when you approve a transaction to authorize the transfer."
+                    text: qsTrId("ens-terms-point-7")
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
                 }
 
                 StyledText {
-                    text: qsTr("These terms are guaranteed by the smart contract logic at addresses:")
+                    //% "These terms are guaranteed by the smart contract logic at addresses:"
+                    text: qsTrId("ens-terms-point-8")
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -104,7 +113,8 @@ Item {
                 }
 
                 StyledText {
-                    text: qsTr("%1 (Status UsernameRegistrar).").arg(profileModel.ens.getUsernameRegistrar())
+                    //% "%1 (Status UsernameRegistrar)."
+                    text: qsTrId("-1--status-usernameregistrar--").arg(profileModel.ens.getUsernameRegistrar())
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -124,7 +134,8 @@ Item {
                 }
 
                 StyledText {
-                    text: qsTr("%1 (ENS Registry).").arg(profileModel.ens.getENSRegistry())
+                    //% "%1 (ENS Registry)."
+                    text: qsTrId("-1--ens-registry--").arg(profileModel.ens.getENSRegistry())
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -199,7 +210,8 @@ Item {
 
             TextWithLabel {
                 id: walletAddressLbl
-                label: qsTr("Wallet address")
+                //% "Wallet address"
+                label: qsTrId("wallet-address")
                 text: walletModel.getDefaultAddress()
                 textToCopy: profileModel.profile.address
                 anchors.left: parent.left
@@ -210,7 +222,8 @@ Item {
 
             TextWithLabel {
                 id: keyLbl
-                label: qsTr("Key")
+                //% "Key"
+                label: qsTrId("key")
                 text: {
                     let pubKey = profileModel.profile.pubKey;
                     return pubKey.substring(0, 20) + "..." + pubKey.substring(pubKey.length - 20);
@@ -231,7 +244,8 @@ Item {
             }
 
             StyledText {
-                text: qsTr("Agree to <a href=\"#\">Terms of name registration.</a> I understand that my wallet address will be publicly connected to my username.")
+                //% "Agree to <a href=\"#\">Terms of name registration.</a> I understand that my wallet address will be publicly connected to my username."
+                text: qsTrId("agree-to--a-href-------terms-of-name-registration---a--i-understand-that-my-wallet-address-will-be-publicly-connected-to-my-username-")
                 anchors.left: termsAndConditionsCheckbox.right
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
@@ -251,7 +265,8 @@ Item {
         anchors.bottomMargin: Style.current.padding
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
-        label: qsTr("Back")
+        //% "Back"
+        label: qsTrId("back")
         onClicked: backBtnClicked()
     }
 
@@ -273,7 +288,8 @@ Item {
         
         StyledText {
             id: ensPriceLbl
-            text: qsTr("10 SNT")
+            //% "10 SNT"
+            text: qsTrId("ens-10-SNT")
             anchors.left: image1.right
             anchors.leftMargin: 5
             anchors.top: image1.top
@@ -282,7 +298,8 @@ Item {
         }
 
         StyledText {
-            text: qsTr("Deposit")
+            //% "Deposit"
+            text: qsTrId("ens-deposit")
             anchors.left: image1.right
             anchors.leftMargin: 5
             anchors.topMargin: 5
@@ -298,7 +315,11 @@ Item {
         anchors.bottomMargin: Style.current.padding
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        label: parseFloat(walletModel.getSNTBalance()) < 10 ? qsTr("Not enough SNT") : qsTr("Register")
+        label: parseFloat(walletModel.getSNTBalance()) < 10 ? 
+          //% "Not enough SNT"
+          qsTrId("not-enough-snt") :
+          //% "Register"
+          qsTrId("ens-register")
         disabled: parseFloat(walletModel.getSNTBalance()) < 10 || !termsAndConditionsCheckbox.checked
         onClicked: transactionDialog.open()
     }

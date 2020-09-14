@@ -111,7 +111,8 @@ Item {
                 font.weight: Font.Medium
                 font.pixelSize: 15
                 color: Style.current.blue
-                text: qsTr("↓ Fetch more messages")
+                //% "↓ Fetch more messages"
+                text: qsTrId("load-more-messages")
                 horizontalAlignment: Text.AlignHCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: sep1.bottom
@@ -134,7 +135,8 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 horizontalAlignment: Text.AlignHCenter
                 color: Style.current.darkGrey
-                text: qsTr("before %1").arg(new Date(chatsModel.oldestMsgTimestamp*1000).toDateString())
+                //% "before %1"
+                text: qsTrId("before--1").arg(new Date(chatsModel.oldestMsgTimestamp*1000).toDateString())
             }
             Separator {
                 anchors.top: fetchDate.bottom

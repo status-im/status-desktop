@@ -34,7 +34,8 @@ ModalPopup {
         TransactionFormGroup {
             id: group1
             headerText: root.commandTitle
-            footerText: qsTr("Continue")
+            //% "Continue"
+            footerText: qsTrId("continue")
 
             AccountSelector {
                 id: selectFromAccount
@@ -42,7 +43,8 @@ ModalPopup {
                 selectedAccount: walletModel.currentAccount
                 currency: walletModel.defaultCurrency
                 width: stack.width
-                label: qsTr("From account")
+                //% "From account"
+                label: qsTrId("from-account")
                 reset: function() {
                     accounts = Qt.binding(function() { return walletModel.accounts })
                     selectedAccount = Qt.binding(function() { return walletModel.currentAccount })
@@ -57,7 +59,8 @@ ModalPopup {
                 id: selectRecipient
                 accounts: walletModel.accounts
                 contacts: profileModel.addedContacts
-                label: qsTr("Recipient")
+                //% "Recipient"
+                label: qsTrId("recipient")
                 readOnly: true
                 anchors.top: separator.bottom
                 anchors.topMargin: 10
@@ -70,7 +73,8 @@ ModalPopup {
         TransactionFormGroup {
             id: group2
             headerText: root.commandTitle
-            footerText: qsTr("Preview")
+            //% "Preview"
+            footerText: qsTrId("preview")
 
             AssetAndAmountInput {
                 id: txtAmount
@@ -87,7 +91,8 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group3
-            headerText: qsTr("Transaction preview")
+            //% "Transaction preview"
+            headerText: qsTrId("transaction-preview")
             footerText: root.finalButtonLabel
 
             TransactionPreview {
@@ -117,7 +122,8 @@ ModalPopup {
 
             StyledText {
                 id: warningText
-                text: qsTr("You need to request the recipient’s address first.\nAssets won’t be sent yet.")
+                //% "You need to request the recipient’s address first.\nAssets won’t be sent yet."
+                text: qsTrId("you-need-to-request-the-recipient-s-address-first--nassets-won-t-be-sent-yet-")
                 color: Style.current.danger
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
@@ -163,7 +169,8 @@ ModalPopup {
         StyledButton {
             id: btnNext
             anchors.right: parent.right
-            label: qsTr("Next")
+            //% "Next"
+            label: qsTrId("next")
             disabled: !stack.currentGroup.isValid
             onClicked: {
                 const isValid = stack.currentGroup.validate()

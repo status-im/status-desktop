@@ -21,9 +21,12 @@ Item {
     property bool isValid: false || readOnly
     property var reset: function() {}
     readonly property var sources: [
-        qsTr("Address"),
-        // qsTr("Contact"), // disable this tempoarily as we work to enable to sending to contacts
-        qsTr("My account")
+        //% "Address"
+        qsTrId("address"),
+        //% "Contact"
+        // qsTrId("chat-is-a-contact"), // disable this tempoarily as we work to enable to sending to contacts
+        //% "My account"
+        qsTrId("my-account")
     ]
 
     function resetInternal() {

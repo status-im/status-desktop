@@ -61,9 +61,11 @@ Popup {
             onClicked: function () {
                 chatCommandModal.sendChatCommand = root.requestAddressForTransaction
                 chatCommandModal.isRequested = false
-                chatCommandModal.commandTitle = qsTr("Send")
+                //% "Send"
+                chatCommandModal.commandTitle = qsTrId("command-button-send")
                 chatCommandModal.title = chatCommandModal.commandTitle
-                chatCommandModal.finalButtonLabel = qsTr("Request Address")
+                //% "Request Address"
+                chatCommandModal.finalButtonLabel = qsTrId("request-address")
                 chatCommandModal.selectedRecipient = {
                     address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
                     identicon: chatsModel.activeChannel.identicon,
@@ -85,9 +87,11 @@ Popup {
             onClicked: function () {
                 chatCommandModal.sendChatCommand = root.requestTransaction
                 chatCommandModal.isRequested = true
-                chatCommandModal.commandTitle = qsTr("Request")
+                //% "Request"
+                chatCommandModal.commandTitle = qsTrId("wallet-request")
                 chatCommandModal.title = chatCommandModal.commandTitle
-                chatCommandModal.finalButtonLabel = qsTr("Request")
+                //% "Request"
+                chatCommandModal.finalButtonLabel = qsTrId("wallet-request")
                 chatCommandModal.selectedRecipient = {
                     address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
                     identicon: chatsModel.activeChannel.identicon,

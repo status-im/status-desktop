@@ -19,10 +19,12 @@ Item {
     property alias selectedGasLimit: inputGasLimit.text
     property double selectedGasEthValue
     property double selectedGasFiatValue
-    property string greaterThan0ErrorMessage: qsTr("Must be greater than 0")
+    //% "Must be greater than 0"
+    property string greaterThan0ErrorMessage: qsTrId("must-be-greater-than-0")
     //% "This needs to be a number"
     property string invalidInputErrorMessage: qsTrId("this-needs-to-be-a-number")
-    property string noInputErrorMessage: qsTr("Please enter an amount")
+    //% "Please enter an amount"
+    property string noInputErrorMessage: qsTrId("please-enter-an-amount")
     property bool isValid: true
     property var reset: function() {}
 
@@ -277,7 +279,8 @@ Item {
             id: applyButton
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
-            label: qsTr("Apply")
+            //% "Apply"
+            label: qsTrId("invalid-key-confirm")
             anchors.bottom: parent.bottom
             disabled: !customNetworkFeeDialog.isValid
             onClicked: {

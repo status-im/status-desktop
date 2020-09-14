@@ -9,7 +9,8 @@ Item {
     anchors.left: parent.left
     anchors.right: parent.right
     height: colValidation.height
-    property string notEnoughEthForGasMessage: qsTr("Not enough ETH for gas")
+    //% "Not enough ETH for gas"
+    property string notEnoughEthForGasMessage: qsTrId("wallet-insufficient-gas")
     property var selectedAccount
     property double selectedAmount
     property var selectedAsset

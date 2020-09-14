@@ -61,7 +61,8 @@ Item {
         if (selectedAccount.assets && showBalanceForAssetSymbol) {
             assetFound = Utils.findAssetBySymbol(selectedAccount.assets, showBalanceForAssetSymbol)
             if (!assetFound) {
-                console.warn(qsTr("Cannot find asset '%1'. Ensure this asset has been added to the token list.").arg(showBalanceForAssetSymbol))
+                //% "Cannot find asset '%1'. Ensure this asset has been added to the token list."
+                console.warn(qsTrId("cannot-find-asset---1---ensure-this-asset-has-been-added-to-the-token-list-").arg(showBalanceForAssetSymbol))
             }
         }
         validate()

@@ -44,7 +44,8 @@ Item {
 
     StyledText {
         id: title
-        text: qsTr("Username added")
+        //% "Username added"
+        text: qsTrId("ens-saved-title")
         anchors.top: circle.bottom
         anchors.topMargin: Style.current.bigPadding
         font.weight: Font.Bold
@@ -57,7 +58,8 @@ Item {
     
     StyledText {
         id: subtitle
-        text: qsTr("Nice! You own %1.stateofus.eth once the transaction is complete.").arg(ensUsername)
+        //% "Nice! You own %1.stateofus.eth once the transaction is complete."
+        text: qsTrId("nice--you-own--1-stateofus-eth-once-the-transaction-is-complete-").arg(ensUsername)
         anchors.top: title.bottom
         anchors.topMargin: 24
         font.pixelSize: 14
@@ -69,7 +71,8 @@ Item {
 
     StyledText {
         id: progress
-        text: qsTr("You can follow the progress in the Transaction History section of your wallet.")
+        //% "You can follow the progress in the Transaction History section of your wallet."
+        text: qsTrId("ens-username-you-can-follow-progress")
         anchors.top: subtitle.bottom
         anchors.topMargin: 24
         font.pixelSize: 12
@@ -86,7 +89,8 @@ Item {
         anchors.top: progress.bottom
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        label: qsTr("Ok, got it")
+        //% "Ok, got it"
+        label: qsTrId("ens-got-it")
         onClicked: okBtnClicked()
     }
 }

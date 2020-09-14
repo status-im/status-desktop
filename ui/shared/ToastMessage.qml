@@ -9,8 +9,8 @@ Popup {
     property color iconColor: Style.current.primary
     property bool iconRotates: false
     property string title: "Transaction pending..."
-    readonly property string defaultLinkText: qsTr("View on Etherscan")
-    property string linkText: defaultLinkText
+    //% "View on Etherscan"
+    readonly property string defaultLinkText: qsTrId("view-on-etherscan")
     property string link: "https://etherscan.io/"
 
     id: root

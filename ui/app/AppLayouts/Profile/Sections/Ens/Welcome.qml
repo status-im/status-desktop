@@ -284,7 +284,10 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         disabled:  profileModel.network !== "mainnet_rpc" // Comment this to use on testnet
         //% "Start"
-        label: !disabled ? qsTrId("start") : qsTr("Only available on Mainnet")
+        label: !disabled ? 
+          qsTrId("start") :
+          //% "Only available on Mainnet"
+          qsTrId("ens-network-restriction")
         onClicked: startBtnClicked()
     }
 }
