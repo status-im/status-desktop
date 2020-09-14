@@ -248,6 +248,7 @@ ModalPopup {
                 }
             }
         }
+
         Connections {
             target: walletModel
             onTransactionWasSent: {
@@ -265,12 +266,28 @@ ModalPopup {
                     }
 
                     toastMessage.title = qsTr("Transaction pending...")
+                    toastMessage.source = "../../img/loading.svg"
+                    toastMessage.iconColor = Style.current.primary
+                    toastMessage.iconRotates = true
                     toastMessage.link = `${walletModel.etherscanLink}/${response.result}`
                     toastMessage.open()
                     root.close()
                 } catch (e) {
                     console.error('Error parsing the response', e)
                 }
+            }
+            onTransactionCompleted: {
+                if (success) {
+                    toastMessage.title = qsTr("Transaction completed")
+                    toastMessage.source = "../../img/check-circle.svg"
+                    toastMessage.iconColor = Style.current.success
+                } else {
+                    toastMessage.title = qsTr("Transaction failed")
+                    toastMessage.source = "../../img/block-icon.svg"
+                    toastMessage.iconColor = Style.current.danger
+                }
+                toastMessage.link = `${walletModel.etherscanLink}/${txHash}`
+                toastMessage.open()
             }
         }
     }

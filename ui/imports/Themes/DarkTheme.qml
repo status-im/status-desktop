@@ -38,7 +38,9 @@ Theme {
     property color backgroundHover: "#252528"
     property color secondaryText: darkGrey
     property color secondaryHover: tenPercentWhite
+    property color primary: blue
     property color danger: red
+    property color success: green
     property color primaryMenuItemHover: blue
     property color primaryMenuItemTextHover: almostBlack
     property color backgroundTertiary: tenPercentBlue
