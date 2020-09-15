@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
 import "./"
@@ -78,7 +79,7 @@ ModalPopup {
             anchors.top: profileName.bottom
             anchors.topMargin: 2
             font.pixelSize: 14
-            color: Style.current.darkGrey
+            color: Style.current.secondaryText
         }
 
         Rectangle {
@@ -134,6 +135,7 @@ ModalPopup {
 
     Item {
         anchors.fill: parent
+        anchors.leftMargin: Style.current.smallPadding
         visible: !showQR
 
         StyledText {
@@ -144,9 +146,7 @@ ModalPopup {
             text: qsTrId("ens-username")
             font.pixelSize: 13
             font.weight: Font.Medium
-            color: Style.current.darkGrey
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.smallPadding
+            color: Style.current.secondaryText
             anchors.top: parent.top
             anchors.topMargin: Style.current.smallPadding
         }
@@ -157,8 +157,6 @@ ModalPopup {
             height: isEnsVerified ? 20 : 0
             text: userName.substr(1)
             font.pixelSize: 14
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.smallPadding
             anchors.top: labelEnsUsername.bottom
             anchors.topMargin: Style.current.smallPadding
         }
@@ -168,7 +166,6 @@ ModalPopup {
             height: isEnsVerified ? 20 : 0
             anchors.top: labelEnsUsername.bottom
             anchors.left: valueEnsName.right
-            anchors.leftMargin: Style.current.smallPadding
             textToCopy: valueEnsName.text
         }
 
@@ -178,9 +175,7 @@ ModalPopup {
             text: qsTrId("chat-key")
             font.pixelSize: 13
             font.weight: Font.Medium
-            color: Style.current.darkGrey
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.smallPadding
+            color: Style.current.secondaryText
             anchors.top: isEnsVerified ? valueEnsName.bottom : parent.top
             anchors.topMargin: Style.current.padding
         }
@@ -192,8 +187,6 @@ ModalPopup {
             maxWidth: parent.width - (3 * Style.current.smallPadding) - copyBtn.width
             color: Style.current.textColor
             font.pixelSize: 14
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.smallPadding
             anchors.top: labelChatKey.bottom
             anchors.topMargin: Style.current.smallPadding
         }
@@ -202,7 +195,6 @@ ModalPopup {
             id: copyBtn
             anchors.top: labelChatKey.bottom
             anchors.left: valueChatKey.right
-            anchors.leftMargin: Style.current.smallPadding
             textToCopy: valueChatKey.text
         }
 
@@ -222,9 +214,7 @@ ModalPopup {
             text: qsTrId("share-profile-url")
             font.pixelSize: 13
             font.weight: Font.Medium
-            color: Style.current.darkGrey
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.smallPadding
+            color: Style.current.secondaryText
             anchors.top: separator.bottom
             anchors.topMargin: Style.current.padding
         }
@@ -234,8 +224,6 @@ ModalPopup {
             text: "https://join.status.im/u/" + fromAuthor.substr(
                       0, 4) + "..." + fromAuthor.substr(fromAuthor.length - 5)
             font.pixelSize: 14
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.smallPadding
             anchors.top: labelShareURL.bottom
             anchors.topMargin: Style.current.smallPadding
         }
@@ -243,8 +231,71 @@ ModalPopup {
         CopyToClipBoardButton {
             anchors.top: labelShareURL.bottom
             anchors.left: valueShareURL.right
-            anchors.leftMargin: Style.current.smallPadding
             textToCopy: "https://join.status.im/u/" + fromAuthor
+        }
+
+        Separator {
+            id: separator2
+            anchors.top: valueShareURL.bottom
+            anchors.topMargin: Style.current.padding
+            anchors.left: parent.left
+            anchors.leftMargin: -Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: -Style.current.padding
+        }
+
+        StyledText {
+            id: chatSettings
+            text: qsTr("Chat settings")
+            font.pixelSize: 13
+            font.weight: Font.Medium
+            color: Style.current.secondaryText
+            anchors.top: separator2.bottom
+            anchors.topMargin: Style.current.padding
+        }
+
+        StyledText {
+            id: nicknameTitle
+            text: qsTr("Nickname")
+            font.pixelSize: 14
+            anchors.top: chatSettings.bottom
+            anchors.topMargin: Style.current.smallPadding
+        }
+
+        SVGImage {
+            id: nicknameCaret
+            source: "../../../img/caret.svg"
+            rotation: -90
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
+            anchors.verticalCenter: nicknameTitle.verticalCenter
+            width: 13
+            fillMode: Image.PreserveAspectFit
+            ColorOverlay {
+                anchors.fill: parent
+                source: parent
+                color: Style.current.secondaryText
+            }
+        }
+
+        StyledText {
+            id: nickname
+            text: qsTr("None")
+            anchors.right: nicknameCaret.left
+            anchors.rightMargin: Style.current.padding
+            anchors.verticalCenter: nicknameTitle.verticalCenter
+            color: Style.current.secondaryText
+        }
+
+        MouseArea {
+            cursorShape: Qt.PointingHandCursor
+            anchors.left: nicknameTitle.left
+            anchors.right: nicknameCaret.right
+            anchors.top: nicknameTitle.top
+            anchors.bottom: nicknameTitle.bottom
+            onClicked: {
+                console.log('Go to nickname modal')
+            }
         }
     }
 
