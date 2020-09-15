@@ -57,12 +57,16 @@ ApplicationWindow {
     }
 
     Settings {
-        id: settings
-        property var userSettings
-        // Those can't be in the user settings as they are bytes that JS can't handle
+        id: appSettings
+        fileName: "data/qt/unknownUser"
         property var chatSplitView
         property var walletSplitView
         property var profileSplitView
+        property bool walletEnabled: false
+        property bool displayChatImages: false
+        property bool compactMode
+        property string locale: "en"
+        property var recentEmojis: []
     }
 
     SystemTrayIcon {
@@ -188,9 +192,7 @@ ApplicationWindow {
 
     Component {
         id: app
-        AppMain {
-            mainSettings: settings
-        }
+        AppMain {}
     }
 
     Component {

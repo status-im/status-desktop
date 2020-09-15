@@ -9,8 +9,14 @@ SplitView {
     id: chatView
     handle: SplitViewHandle {}
 
-    Component.onCompleted: this.restoreState(settings.chatSplitView)
-    Component.onDestruction: settings.chatSplitView = this.saveState()
+    Connections {
+        target: appMain
+        onSettingsLoaded: {
+            // Add recent
+            chatView.restoreState(appSettings.chatSplitView)
+        }
+    }
+    Component.onDestruction: appSettings.chatSplitView = this.saveState()
 
     ContactsColumn {
         id: contactsColumn

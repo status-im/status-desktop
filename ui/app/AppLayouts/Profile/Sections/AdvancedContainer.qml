@@ -37,7 +37,7 @@ Item {
         Switch {
             checked: appSettings.walletEnabled
             onCheckedChanged: function(value) {
-                changeSetting("walletEnabled", this.checked)
+                appSettings.walletEnabled = this.checked
             }
         }
         StyledText {
