@@ -128,8 +128,8 @@ ModalPopup {
                         txtAmount.selectedAsset.address,
                         txtAmount.selectedAmount))
 
-                    if (gasEstimate.error) {
-                        console.warn(qsTr("Error estimating gas: %1").arg(gasEstimate.error.message))
+                    if (!gasEstimate.success) {
+                        console.warn(qsTr("Error estimating gas: %1").arg(gasEstimate.result))
                         return
                     }
                     selectedGasLimit = gasEstimate.result
@@ -256,12 +256,12 @@ ModalPopup {
                     stack.currentGroup.isPending = false
                     let response = JSON.parse(txResult)
 
-                    if (response.error) {
-                        if (response.error.message.includes("could not decrypt key with given password")){
+                    if (!response.success) {
+                        if (response.result.includes("could not decrypt key with given password")){
                             transactionSigner.validationError = qsTr("Wrong password")
                             return
                         }
-                        sendingError.text = response.error.message
+                        sendingError.text = response.result
                         return sendingError.open()
                     }
 

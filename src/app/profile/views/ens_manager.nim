@@ -207,26 +207,24 @@ QtObject:
     read = getEnsRegisterAddress
 
   proc registerENSGasEstimate(self: EnsManager, ensUsername: string, address: string): int {.slot.} =
+    var success: bool
     let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
-    try:
-      result = registerUsernameEstimateGas(ensUsername, address, pubKey)
-    except:
+    result = registerUsernameEstimateGas(ensUsername, address, pubKey, success)
+    if not success:
       result = 325000
   
   proc registerENS*(self: EnsManager, username: string, address: string, gas: string, gasPrice: string, password: string): string {.slot.} =
-    try:
-      let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
-      let response = registerUsername(username, pubKey, address, gas, gasPrice, password)
-      result = $(%* { "result": %response })
+    var success: bool
+    let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    let response = registerUsername(username, pubKey, address, gas, gasPrice, password, success)
+    result = $(%* { "result": %response, "success": %success })
+    if success:
       self.transactionWasSent(response)
 
       # TODO: handle transaction failure
       var ensUsername = formatUsername(username, true)
       self.pendingUsernames.incl(ensUsername)
       self.add ensUsername
-
-    except RpcException as e:
-      result = $(%* { "error": %* { "message": %e.msg }})
 
   proc setPubKey(self: EnsManager, username: string, password: string) {.slot.} =
     let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")

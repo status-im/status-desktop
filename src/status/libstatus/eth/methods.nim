@@ -38,18 +38,27 @@ proc encodeAbi*(self: Method, obj: object = RootObj()): string =
       result &= encoded.data
   result &= data
 
-proc estimateGas*(self: Method, tx: var EthSend, methodDescriptor: object): string =
+proc estimateGas*(self: Method, tx: var EthSend, methodDescriptor: object, success: var bool): string =
+  success = true
   tx.data = self.encodeAbi(methodDescriptor)
-  let response = transactions.estimateGas(tx)
-  result = response.result # gas estimate in hex
+  try:
+    let response = transactions.estimateGas(tx)
+    result = response.result # gas estimate in hex
+  except RpcException as e:
+    success = false
+    result = e.msg
 
-proc send*(self: Method, tx: var EthSend, methodDescriptor: object, password: string): string =
+proc send*(self: Method, tx: var EthSend, methodDescriptor: object, password: string, success: var bool): string =
   tx.data = self.encodeAbi(methodDescriptor)
-  result = eth.sendTransaction(tx, password)
-  # result = coder.decodeContractResponse[string](response.result)
-  # result = response.result
+  result = eth.sendTransaction(tx, password, success)
 
-proc call*[T](self: Method, tx: var EthSend, methodDescriptor: object): T =
+proc call*[T](self: Method, tx: var EthSend, methodDescriptor: object, success: var bool): T =
+  success = true
   tx.data = self.encodeAbi(methodDescriptor)
-  let response = transactions.call(tx)
+  let response: RpcResponse
+  try:
+    response = transactions.call(tx)
+  except RpcException as e:
+    success = false
+    result = e.msg
   result = coder.decodeContractResponse[T](response.result)

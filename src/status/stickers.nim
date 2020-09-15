@@ -52,7 +52,7 @@ proc buildTransaction(self: StickersModel, packId: Uint256, address: EthAddress,
   approveAndCall = ApproveAndCall[100](to: stickerMktContract.address, value: price, data: DynamicBytes[100].fromHex(buyTxAbiEncoded))
   transactions.buildTokenTransaction(address, sntContract.address, gas, gasPrice)
 
-proc estimateGas*(self: StickersModel, packId: int, address: string, price: string): int =
+proc estimateGas*(self: StickersModel, packId: int, address: string, price: string, success: var bool): int =
   var
     approveAndCall: ApproveAndCall[100]
     sntContract = status_contracts.getContract("snt")
@@ -63,13 +63,11 @@ proc estimateGas*(self: StickersModel, packId: int, address: string, price: stri
       approveAndCall,
       sntContract
     )
-  try:
-    let response = sntContract.methods["approveAndCall"].estimateGas(tx, approveAndCall)
+  let response = sntContract.methods["approveAndCall"].estimateGas(tx, approveAndCall, success)
+  if success:
     result = fromHex[int](response)
-  except RpcException as e:
-    raise
 
-proc buyPack*(self: StickersModel, packId: int, address, price, gas, gasPrice, password: string): string =
+proc buyPack*(self: StickersModel, packId: int, address, price, gas, gasPrice, password: string, success: var bool): string =
   var
     sntContract: Contract
     approveAndCall: ApproveAndCall[100]
@@ -82,11 +80,10 @@ proc buyPack*(self: StickersModel, packId: int, address, price, gas, gasPrice, p
       gas,
       gasPrice
     )
-  try:
-    result = sntContract.methods["approveAndCall"].send(tx, approveAndCall, password)
+
+  result = sntContract.methods["approveAndCall"].send(tx, approveAndCall, password, success)
+  if success:
     trackPendingTransaction(result, address, $sntContract.address, PendingTransactionType.BuyStickerPack, $packId)
-  except RpcException as e:
-    raise
 
 proc getStickerMarketAddress*(self: StickersModel): EthAddress =
   result = status_contracts.getContract("sticker-market").address
