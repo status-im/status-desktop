@@ -341,6 +341,7 @@ QtObject:
 
   proc updateView*(self: WalletView) =
     self.totalFiatBalanceChanged()
+    self.currentAccount.assetList.setNewData(self.currentAccount.account.assetList)
     self.currentAccountChanged()
     self.accountListChanged()
     self.accounts.forceUpdate()
