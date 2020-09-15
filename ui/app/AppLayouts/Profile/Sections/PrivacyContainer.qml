@@ -96,7 +96,7 @@ Item {
             Switch {
                 checked: appSettings.displayChatImages
                 onCheckedChanged: function (value) {
-                    appSettings.displayChatImages = this.checked
+                    changeSetting("displayChatImages", this.checked)
                 }
             }
             StyledText {

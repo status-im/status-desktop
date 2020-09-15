@@ -33,6 +33,7 @@ QtObject:
     self.appearance = profile.appearance
     self.pubKey = profile.id
     self.address = profile.address
+    debug "Setting account", username = profile.username, pubKey = profile.id, address = profile.address
     self.profileChanged()
 
   proc username*(self: ProfileInfoView): string {.slot.} = result = self.username

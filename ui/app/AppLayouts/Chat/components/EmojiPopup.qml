@@ -49,18 +49,20 @@ Popup {
         const encodedIcon = String.fromCodePoint(...codePointParts);
 
         // Add at the  start of the list
-        appSettings.recentEmojis.unshift(emoji)
+        let recentEmojis = appSettings.recentEmojis
+        recentEmojis.unshift(emoji)
         // Remove duplicates
-        appSettings.recentEmojis = appSettings.recentEmojis.filter(function (e, index) {
-            return !appSettings.recentEmojis.some(function (e2, index2) {
+        recentEmojis = recentEmojis.filter(function (e, index) {
+            return !recentEmojis.some(function (e2, index2) {
                 return index2 < index && e2.filename === e.filename
             })
         })
-        if (appSettings.recentEmojis.length > MAX_EMOJI_NUMBER) {
+        if (recentEmojis.length > MAX_EMOJI_NUMBER) {
             //remove last one
-            appSettings.recentEmojis.splice(MAX_EMOJI_NUMBER - 1)
+            recentEmojis.splice(MAX_EMOJI_NUMBER - 1)
         }
-        emojiSectionsRepeater.itemAt(0).allEmojis = appSettings.recentEmojis
+        emojiSectionsRepeater.itemAt(0).allEmojis = recentEmojis
+        changeSetting("recentEmojis", recentEmojis)
 
         popup.addToChat(Emoji.parse(encodedIcon, "26x26") + ' ') // Adding a space because otherwise, some emojis would fuse since it's just an emoji is just a string
         popup.close()

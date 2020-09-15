@@ -12,7 +12,6 @@ ScrollView {
     id: scrollView
     
     property var messageList: MessagesData {}
-    property var appSettings
     property bool loadingMessages: false
     property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
 
@@ -241,7 +240,6 @@ ScrollView {
                 }
                 return -1;
             }
-            appSettings: scrollView.appSettings
             scrollToBottom: chatLogView.scrollToBottom
             timeout: model.timeout
         }

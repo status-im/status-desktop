@@ -16,7 +16,6 @@ StackLayout {
 
     property bool isExtendedInput: isReply || isImage
 
-    property var appSettings
     property bool isConnected: false
     property string contactToRemove: ""
 
@@ -118,7 +117,6 @@ StackLayout {
             ChatMessages {
                 id: chatMessages
                 messageList: chatsModel.messageList
-                appSettings: chatColumnLayout.appSettings
             }
        }
 

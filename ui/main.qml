@@ -16,7 +16,6 @@ import "./shared"
 import "./imports"
 
 ApplicationWindow {
-    property alias appSettings: settings
     property bool hasAccounts: !!loginModel.rowCount()
 
     id: applicationWindow
@@ -34,10 +33,6 @@ ApplicationWindow {
     visible: true
 
     Component.onCompleted: {
-        if (settings.locale !== "en") {
-            profileModel.changeLocale(settings.locale)
-        }
-
         setX(Qt.application.screens[0].width / 2 - width / 2);
         setY(Qt.application.screens[0].height / 2 - height / 2);
     }
@@ -63,14 +58,11 @@ ApplicationWindow {
 
     Settings {
         id: settings
+        property var userSettings
+        // Those can't be in the user settings as they are bytes that JS can't handle
         property var chatSplitView
         property var walletSplitView
         property var profileSplitView
-        property bool walletEnabled: false
-        property bool displayChatImages: false
-        property bool compactMode
-        property string locale: "en"
-        property var recentEmojis: []
     }
 
     SystemTrayIcon {
@@ -197,7 +189,7 @@ ApplicationWindow {
     Component {
         id: app
         AppMain {
-            appSettings: applicationWindow.appSettings
+            mainSettings: settings
         }
     }
 

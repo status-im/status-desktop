@@ -62,7 +62,7 @@ Item {
         Switch {
             checked: compactModeSetting.isCompactMode
             onToggled: function() {
-                appSettings.compactMode = !compactModeSetting.isCompactMode
+                changeSetting("compactMode", !compactModeSetting.isCompactMode)
             }
         }
     }
