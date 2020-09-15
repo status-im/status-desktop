@@ -12,8 +12,14 @@ SplitView {
 
     handle: SplitViewHandle {}
 
-    Component.onCompleted: this.restoreState(settings.walletSplitView)
-    Component.onDestruction: settings.walletSplitView = this.saveState()
+    Connections {
+        target: appMain
+        onSettingsLoaded: {
+            // Add recent
+            walletView.restoreState(appSettings.walletSplitView)
+        }
+    }
+    Component.onDestruction: appSettings.walletSplitView = this.saveState()
 
     LeftTab {
         id: leftTab

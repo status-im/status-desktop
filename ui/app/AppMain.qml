@@ -6,55 +6,22 @@ import "../shared"
 import "./AppLayouts"
 
 RowLayout {
-    readonly property var defaultSettings: {
-        return {
-            chatSplitView: undefined,
-            walletSplitView: undefined,
-            profileSplitView: undefined,
-            walletEnabled: false,
-            displayChatImages: false,
-            compactMode: false,
-            locale: "en",
-            recentEmojis: []
-        }
-    }
-    property var mainSettings
-    property var userSettings
-    property var appSettings: defaultSettings
-    property string currentAccount
-
-    id: rowLayout
+    id: appMain
     Layout.fillHeight: true
     Layout.fillWidth: true
+
+    signal settingsLoaded()
 
     Connections {
         target: profileModel
         onProfileChanged: {
-            currentAccount = profileModel.profile.address
-
-            if (!mainSettings.userSettings) {
-                mainSettings.userSettings = {}
-            }
-            userSettings = mainSettings.userSettings
-
-            if (!userSettings[currentAccount]) {
-                userSettings[currentAccount] = defaultSettings
-            }
-            appSettings = userSettings[currentAccount]
-
+            appSettings.fileName = utilsModel.join3Paths(utilsModel.getDataDir(), 'qt', profileModel.profile.address)
+            settingsLoaded()
             if (appSettings.locale !== "en") {
                 profileModel.changeLocale(appSettings.locale)
             }
         }
     }
-
-    function changeSetting(name, value) {
-        appSettings[name] = value
-        appSettingsChanged()
-        userSettings[currentAccount] = appSettings
-        mainSettings.userSettings = userSettings
-    }
-
 
     ToastMessage {
         id: toastMessage
@@ -126,7 +93,7 @@ RowLayout {
 
         TabButton {
             id: walletBtn
-            enabled: isExperimental === "1" || rowLayout.appSettings.walletEnabled
+            enabled: isExperimental === "1" || appSettings.walletEnabled
             visible: this.enabled
             width: 40
             height: this.enabled ? 40 : 0

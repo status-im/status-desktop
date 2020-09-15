@@ -58,11 +58,11 @@ Popup {
             })
         })
         if (recentEmojis.length > MAX_EMOJI_NUMBER) {
-            //remove last one
+            // remove last one
             recentEmojis.splice(MAX_EMOJI_NUMBER - 1)
         }
         emojiSectionsRepeater.itemAt(0).allEmojis = recentEmojis
-        changeSetting("recentEmojis", recentEmojis)
+        appSettings.recentEmojis = recentEmojis
 
         popup.addToChat(Emoji.parse(encodedIcon, "26x26") + ' ') // Adding a space because otherwise, some emojis would fuse since it's just an emoji is just a string
         popup.close()
@@ -81,11 +81,6 @@ Popup {
             newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode + '.png'}))
         })
 
-        // Add recent
-        appSettings.recentEmojis.forEach(function (emoji) {
-            newCategories[categoryNames.recent].push(Object.assign({}, emoji, {category: "recent"}))
-        })
-
         if (newCategories[categoryNames.recent].length === 0) {
             newCategories[categoryNames.recent].push({
                 category: "recent",
@@ -94,6 +89,16 @@ Popup {
         }
 
         categories = newCategories
+    }
+    Connections {
+        target: appMain
+        onSettingsLoaded: {
+            // Add recent
+            if (!appSettings.recentEmojis || !appSettings.recentEmojis.length) {
+                return
+            }
+            emojiSectionsRepeater.itemAt(0).allEmojis = appSettings.recentEmojis
+        }
     }
 
     onOpened: {

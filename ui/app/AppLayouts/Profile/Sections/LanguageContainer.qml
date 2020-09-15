@@ -62,7 +62,7 @@ Item {
                     onTriggered: function () {
                         const locale = Locales_JSON.locales[index]
                         profileModel.changeLocale(locale)
-                        changeSetting("locale", locale)
+                        appSettings.locale = locale
                     }
 
                     StyledText {

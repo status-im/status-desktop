@@ -14,8 +14,14 @@ SplitView {
 
     handle: SplitViewHandle {}
 
-    Component.onCompleted: this.restoreState(settings.profileSplitView)
-    Component.onDestruction: settings.profileSplitView = this.saveState()
+    Connections {
+        target: appMain
+        onSettingsLoaded: {
+            // Add recent
+            profileView.restoreState(appSettings.profileSplitView)
+        }
+    }
+    Component.onDestruction: appSettings.profileSplitView = this.saveState()
 
     LeftTab {
         id: leftTab
