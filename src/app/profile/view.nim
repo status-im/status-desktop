@@ -139,11 +139,15 @@ QtObject:
   proc getProfile(self: ProfileView): QVariant {.slot.} =
     return newQVariant(self.profile)
 
+  proc profileChanged*(self: ProfileView) {.signal.}
+
   proc setNewProfile*(self: ProfileView, profile: Profile) =
     self.profile.setProfile(profile)
+    self.profileChanged()
 
   QtProperty[QVariant] profile:
     read = getProfile
+    notify = profileChanged
 
   proc contactToAddChanged*(self: ProfileView) {.signal.}
 

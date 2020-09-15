@@ -6,11 +6,55 @@ import "../shared"
 import "./AppLayouts"
 
 RowLayout {
-    property var appSettings
+    readonly property var defaultSettings: {
+        return {
+            chatSplitView: undefined,
+            walletSplitView: undefined,
+            profileSplitView: undefined,
+            walletEnabled: false,
+            displayChatImages: false,
+            compactMode: false,
+            locale: "en",
+            recentEmojis: []
+        }
+    }
+    property var mainSettings
+    property var userSettings
+    property var appSettings: defaultSettings
+    property string currentAccount
 
     id: rowLayout
     Layout.fillHeight: true
     Layout.fillWidth: true
+
+    Connections {
+        target: profileModel
+        onProfileChanged: {
+            currentAccount = profileModel.profile.address
+
+            if (!mainSettings.userSettings) {
+                mainSettings.userSettings = {}
+            }
+            userSettings = mainSettings.userSettings
+
+            if (!userSettings[currentAccount]) {
+                userSettings[currentAccount] = defaultSettings
+            }
+            appSettings = userSettings[currentAccount]
+
+            if (appSettings.locale !== "en") {
+                profileModel.changeLocale(appSettings.locale)
+            }
+        }
+    }
+
+    function changeSetting(name, value) {
+        appSettings[name] = value
+        appSettingsChanged()
+        userSettings[currentAccount] = appSettings
+        mainSettings.userSettings = userSettings
+    }
+
 
     ToastMessage {
         id: toastMessage
@@ -198,7 +242,6 @@ RowLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
-            appSettings: rowLayout.appSettings
         }
 
         WalletLayout {
@@ -206,7 +249,6 @@ RowLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
-            appSettings: rowLayout.appSettings
         }
 
         ProfileLayout {
@@ -214,7 +256,6 @@ RowLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
-            appSettings: rowLayout.appSettings
         }
 
         NodeLayout {

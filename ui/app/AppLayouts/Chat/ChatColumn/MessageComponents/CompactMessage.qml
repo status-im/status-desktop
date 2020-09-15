@@ -6,7 +6,7 @@ Item {
     property var clickMessage: function () {}
     property int chatHorizontalPadding: 12
     property int chatVerticalPadding: 7
-    property bool showImages: messageItem.appSettings.displayChatImages && imageUrls != ""
+    property bool showImages: appSettings.displayChatImages && imageUrls != ""
 
     id: chatTextItem
     anchors.top: parent.top

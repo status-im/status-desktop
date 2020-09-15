@@ -6,13 +6,11 @@ import "../../../shared"
 import "."
 
 SplitView {
-    property var appSettings
-
     id: chatView
     handle: SplitViewHandle {}
 
-    Component.onCompleted: this.restoreState(appSettings.chatSplitView)
-    Component.onDestruction: appSettings.chatSplitView = this.saveState()
+    Component.onCompleted: this.restoreState(settings.chatSplitView)
+    Component.onDestruction: settings.chatSplitView = this.saveState()
 
     ContactsColumn {
         id: contactsColumn
@@ -24,7 +22,6 @@ SplitView {
     ChatColumn {
         id: chatColumn
         chatGroupsListViewCount: contactsColumn.chatGroupsListViewCount
-        appSettings: chatView.appSettings
     }
 }
 

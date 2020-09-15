@@ -5,8 +5,6 @@ import "../../../../imports"
 import "../../../../shared"
 
 Item {
-    property var appSettings
-
     id: advancedContainer
     width: 200
     height: 200
@@ -39,7 +37,7 @@ Item {
         Switch {
             checked: appSettings.walletEnabled
             onCheckedChanged: function(value) {
-                appSettings.walletEnabled = this.checked
+                changeSetting("walletEnabled", this.checked)
             }
         }
         StyledText {

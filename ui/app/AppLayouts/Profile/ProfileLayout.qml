@@ -6,7 +6,6 @@ import "../../../shared"
 import "./Sections"
 
 SplitView {
-    property var appSettings
     property int contentMargin: 120
 
     id: profileView
@@ -15,8 +14,8 @@ SplitView {
 
     handle: SplitViewHandle {}
 
-    Component.onCompleted: this.restoreState(appSettings.profileSplitView)
-    Component.onDestruction: appSettings.profileSplitView = this.saveState()
+    Component.onCompleted: this.restoreState(settings.profileSplitView)
+    Component.onDestruction: settings.profileSplitView = this.saveState()
 
     LeftTab {
         id: leftTab
@@ -72,9 +71,7 @@ SplitView {
 
         DevicesContainer {}
 
-        AdvancedContainer {
-            appSettings: profileView.appSettings
-        }
+        AdvancedContainer {}
 
         HelpContainer {}
 

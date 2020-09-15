@@ -44,7 +44,6 @@ Item {
     property var profileClick: function () {}
     property var imageClick: function () {}
     property var scrollToBottom: function () {}
-    property var appSettings
 
     id: messageItem
     width: parent.width
