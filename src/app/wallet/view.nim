@@ -265,35 +265,32 @@ QtObject:
     notify = accountListChanged
   
   proc estimateGas*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string): string {.slot.} =
-    try:
-      var response: int
-      if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
-        response = self.status.wallet.estimateTokenGas(from_addr, to, assetAddress, value)
-      else:
-        response = self.status.wallet.estimateGas(from_addr, to, value)
-      result = $(%* { "result": %response })
-    except RpcException as e:
-      result = $(%* { "error": %* { "message": %e.msg }})
+    var
+      response: int
+      success: bool
+    if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
+      response = self.status.wallet.estimateTokenGas(from_addr, to, assetAddress, value, success)
+    else:
+      response = self.status.wallet.estimateGas(from_addr, to, value, success)
+    result = $(%* { "result": %response, "success": %success })
 
   proc transactionWasSent*(self: WalletView, txResult: string) {.signal.}
 
   proc transactionSent(self: WalletView, txResult: string) {.slot.} =
     self.transactionWasSent(txResult)
 
-
-  proc sendTransaction*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string, gas: string, gasPrice: string, password: string): string {.slot.} =
-    try:
-      let wallet = self.status.wallet
-      if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
-        spawnAndSend(self, "transactionSent") do:
-          let response = wallet.sendTokenTransaction(from_addr, to, assetAddress, value, gas, gasPrice, password)
-          $(%* { "result": %response })
-      else:
-        spawnAndSend(self, "transactionSent") do:
-          let response = wallet.sendTransaction(from_addr, to, value, gas, gasPrice, password)
-          $(%* { "result": %response })
-    except RpcException as e:
-      result = $(%* { "error": %* { "message": %e.msg }})
+  proc sendTransaction*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string, gas: string, gasPrice: string, password: string) {.slot.} =
+    let wallet = self.status.wallet
+    if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
+      spawnAndSend(self, "transactionSent") do:
+        var success: bool
+        let response = wallet.sendTokenTransaction(from_addr, to, assetAddress, value, gas, gasPrice, password, success)
+        $(%* { "result": %response, "success": %success })
+    else:
+      spawnAndSend(self, "transactionSent") do:
+        var success: bool
+        let response = wallet.sendTransaction(from_addr, to, value, gas, gasPrice, password, success)
+        $(%* { "result": %response, "success": %success })
 
   proc getDefaultAccount*(self: WalletView): string {.slot.} =
     self.currentAccount.address

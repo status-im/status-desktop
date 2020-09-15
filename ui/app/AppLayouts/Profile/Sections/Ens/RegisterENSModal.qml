@@ -42,12 +42,12 @@ ModalPopup {
                                                        transactionSigner.enteredPassword)
         let response = JSON.parse(responseStr)
 
-        if (response.error) {
-            if (response.error.message.includes("could not decrypt key with given password")){
+        if (!response.success) {
+            if (response.result.includes("could not decrypt key with given password")){
                 transactionSigner.validationError = qsTr("Wrong password")
                 return
             }
-            sendingError.text = response.error.message
+            sendingError.text = response.result
             return sendingError.open()
         }
 

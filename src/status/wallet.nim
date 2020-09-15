@@ -10,7 +10,7 @@ import libstatus/wallet as status_wallet
 import libstatus/accounts/constants as constants
 import libstatus/eth/[eth, contracts]
 from libstatus/core import getBlockByNumber
-from libstatus/types import PendingTransactionType, GeneratedAccount, DerivedAccount, Transaction, Setting, GasPricePrediction, EthSend, Quantity, `%`, StatusGoException, Network, RpcResponse, RpcException
+from libstatus/types import PendingTransactionType, GeneratedAccount, DerivedAccount, Transaction, Setting, GasPricePrediction, EthSend, Quantity, `%`, StatusGoException, Network, RpcResponse, RpcException, `$`
 from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, first, toUInt64
 import wallet/[balance_manager, account, collectibles]
 import transactions
@@ -67,17 +67,14 @@ proc buildTokenTransaction(self: WalletModel, source, to, assetAddress: EthAddre
   transfer = Transfer(to: to, value: eth2Wei(value, token["decimals"].getInt))
   transactions.buildTokenTransaction(source, assetAddress, gas, gasPrice)
 
-proc estimateGas*(self: WalletModel, source, to, value: string): int =
+proc estimateGas*(self: WalletModel, source, to, value: string, success: var bool): int =
   var tx = transactions.buildTransaction(
     parseAddress(source),
     eth2Wei(parseFloat(value), 18)
   )
   tx.to = parseAddress(to).some
-  try:
-    let response = eth.estimateGas(tx)
-    result = fromHex[int](response)
-  except RpcException as e:
-    raise
+  let response = eth.estimateGas(tx, success)
+  result = fromHex[int](response)
 
 proc getTransactionReceipt*(self: WalletModel, transactionHash: string): JsonNode =
   result = status_wallet.getTransactionReceipt(transactionHash).parseJSON()["result"]
@@ -102,7 +99,7 @@ proc checkPendingTransactions*(self: WalletModel) =
 proc checkPendingTransactions*(self: WalletModel, address: string, blockNumber: int) =
   self.confirmTransactionStatus(status_wallet.getPendingOutboundTransactionsByAddress(address).parseJson["result"], blockNumber)
   
-proc estimateTokenGas*(self: WalletModel, source, to, assetAddress, value: string): int =
+proc estimateTokenGas*(self: WalletModel, source, to, assetAddress, value: string, success: var bool): int =
   var
     transfer: Transfer
     contract: Contract
@@ -114,26 +111,22 @@ proc estimateTokenGas*(self: WalletModel, source, to, assetAddress, value: strin
       transfer,
       contract
     )
-  try:
-    let response = contract.methods["transfer"].estimateGas(tx, transfer)
-    result = fromHex[int](response)
-  except RpcException as e:
-    raise
 
-proc sendTransaction*(self: WalletModel, source, to, value, gas, gasPrice, password: string): string =
+  let response = contract.methods["transfer"].estimateGas(tx, transfer, success)
+  result = fromHex[int](response)
+
+proc sendTransaction*(self: WalletModel, source, to, value, gas, gasPrice, password: string, success: var bool): string =
   var tx = transactions.buildTransaction(
     parseAddress(source),
     eth2Wei(parseFloat(value), 18), gas, gasPrice
   )
   tx.to = parseAddress(to).some
 
-  try:
-    result = eth.sendTransaction(tx, password)
+  result = eth.sendTransaction(tx, password, success)
+  if success:
     trackPendingTransaction(result, $source, $to, PendingTransactionType.WalletTransfer, "")
-  except RpcException as e:
-    raise
 
-proc sendTokenTransaction*(self: WalletModel, source, to, assetAddress, value, gas, gasPrice, password: string): string =
+proc sendTokenTransaction*(self: WalletModel, source, to, assetAddress, value, gas, gasPrice, password: string, success: var bool): string =
   var
     transfer: Transfer
     contract: Contract
@@ -147,11 +140,10 @@ proc sendTokenTransaction*(self: WalletModel, source, to, assetAddress, value, g
       gas,
       gasPrice
     )
-  try:
-    result = contract.methods["transfer"].send(tx, transfer, password)
+
+  result = contract.methods["transfer"].send(tx, transfer, password, success)
+  if success:
     trackPendingTransaction(result, $source, $to, PendingTransactionType.WalletTransfer, "")
-  except RpcException as e:
-    raise
 
 proc getDefaultCurrency*(self: WalletModel): string =
   # TODO: this should come from a model? It is going to be used too in the

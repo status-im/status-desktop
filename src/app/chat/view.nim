@@ -107,25 +107,23 @@ QtObject:
     read = getStickerMarketAddress
 
   proc buyPackGasEstimate*(self: ChatsView, packId: int, address: string, price: string): int {.slot.} =
-    try:
-      result = self.status.stickers.estimateGas(packId, address, price)
-    except:
+    var success: bool
+    result = self.status.stickers.estimateGas(packId, address, price, success)
+    if not success:
       result = 325000
 
   proc transactionWasSent*(self: ChatsView, txResult: string) {.signal.}
   proc transactionCompleted*(self: ChatsView, success: bool, txHash: string, revertReason: string = "") {.signal.}
 
   proc buyStickerPack*(self: ChatsView, packId: int, address: string, price: string, gas: string, gasPrice: string, password: string): string {.slot.} =
-    try:
-      let response = self.status.stickers.buyPack(packId, address, price, gas, gasPrice, password)
+    var success: bool
+    let response = self.status.stickers.buyPack(packId, address, price, gas, gasPrice, password, success)
+    # TODO: 
+    # check if response["error"] is not null and handle the error
+    result = $(%* { "result": %response, "success": %success })
+    if success:
       self.stickerPacks.updateStickerPackInList(packId, false, true)
-      result = $(%* { "result": %response })
       self.transactionWasSent(response)
-
-      # TODO: 
-      # check if response["error"] is not null and handle the error 
-    except RpcException as e:
-      result = $(%* { "error": %* { "message": %e.msg }})
 
   proc obtainAvailableStickerPacks*(self: ChatsView) =
     spawnAndSend(self, "setAvailableStickerPacks") do:

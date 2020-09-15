@@ -145,7 +145,7 @@ proc getPrice*(): Stuint[256] =
 proc extractCoordinates*(pubkey: string):tuple[x: string, y:string] =
   result = ("0x" & pubkey[4..67], "0x" & pubkey[68..131])
 
-proc registerUsernameEstimateGas*(username: string, address: string, pubKey: string): int =
+proc registerUsernameEstimateGas*(username: string, address: string, pubKey: string, success: var bool): int =
   let
     label = fromHex(FixedBytes[32], label(username))
     coordinates = extractCoordinates(pubkey)
@@ -163,13 +163,11 @@ proc registerUsernameEstimateGas*(username: string, address: string, pubKey: str
 
   var tx = transactions.buildTokenTransaction(parseAddress(address), sntContract.address, "", "")
   
-  try:
-    let response = sntContract.methods["approveAndCall"].estimateGas(tx, approveAndCallObj)
+  let response = sntContract.methods["approveAndCall"].estimateGas(tx, approveAndCallObj, success)
+  if success:
     result = fromHex[int](response)
-  except RpcException as e:
-    raise
 
-proc registerUsername*(username, pubKey, address, gas, gasPrice,  password: string): string =
+proc registerUsername*(username, pubKey, address, gas, gasPrice,  password: string, success: var bool): string =
   let
     label = fromHex(FixedBytes[32], label(username))
     coordinates = extractCoordinates(pubkey)
@@ -186,11 +184,9 @@ proc registerUsername*(username, pubKey, address, gas, gasPrice,  password: stri
 
   var tx = transactions.buildTokenTransaction(parseAddress(address), sntContract.address, gas, gasPrice)
 
-  try:
-    result = sntContract.methods["approveAndCall"].send(tx, approveAndCallObj, password)
+  result = sntContract.methods["approveAndCall"].send(tx, approveAndCallObj, password, success)
+  if success:
     trackPendingTransaction(result, address, $sntContract.address, PendingTransactionType.RegisterENS, username & domain)
-  except RpcException as e:
-    raise
 
 proc setPubKey*(username:string, address: EthAddress, pubKey: string, password: string): string =
   var hash = namehash(username)
