@@ -98,7 +98,7 @@ ModalPopup {
                 visible: false
                 accounts: walletModel.accounts
                 contacts: profileModel.addedContacts
-                selectedRecipient: { "address": profileModel.ens.ensRegisterAddress, "type": RecipientSelector.Type.Address } //////////////////////////////
+                selectedRecipient: { "address": profileModel.ens.ensRegisterAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
                 onSelectedRecipientChanged: gasSelector.estimateGas()
             }
@@ -156,9 +156,7 @@ ModalPopup {
                     "symbol": "ETH",
                     "fiatValue": gasSelector.selectedGasFiatValue
                 }
-                toAccount: {
-                    return selectRecipient.selectedRecipient
-                }
+                toAccount: selectRecipient.selectedRecipient
                 asset: root.asset
                 currency: walletModel.defaultCurrency
                 amount: {
@@ -218,7 +216,6 @@ ModalPopup {
             label: qsTr("Next")
             disabled: !stack.currentGroup.isValid
             onClicked: {
-                const isValid = stack.currentGroup.validate()
 
                 if (stack.currentGroup.validate()) {
                     if (stack.isLastGroup) {
@@ -236,4 +233,3 @@ Designer {
     D{i:0;autoSize:true;height:480;width:640}
 }
 ##^##*/
-
