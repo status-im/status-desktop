@@ -80,6 +80,8 @@ proc handleChatEvents(self: ChatController) =
     self.view.transactionCompleted(tx.success, tx.transactionHash, tx.revertReason)
     if tx.success:
       self.view.installStickerPack(tx.data.parseInt)
+    else:
+      self.view.resetStickerPackBuyAttempt(tx.data.parseInt)
 
 proc handleMailserverEvents(self: ChatController) =
   self.status.events.on("mailserverTopics") do(e: Args):
