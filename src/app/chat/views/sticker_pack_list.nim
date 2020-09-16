@@ -1,4 +1,4 @@
-import NimQml, Tables, sequtils, sugar
+import NimQml, Tables, sequtils, sugar, sets
 import ../../../status/chat/stickers, ./sticker_list
 import ../../../status/libstatus/types, ../../../status/libstatus/utils
 
@@ -13,9 +13,10 @@ type
     Thumbnail = UserRole + 7
     Installed = UserRole + 8
     Bought = UserRole + 9
+    Pending = UserRole + 10
 
 type
-  StickerPackView* = tuple[pack: StickerPack, stickers: StickerList, installed, bought: bool]
+  StickerPackView* = tuple[pack: StickerPack, stickers: StickerList, installed, bought, pending: bool]
 
 QtObject:
   type
@@ -52,6 +53,7 @@ QtObject:
       of StickerPackRoles.Thumbnail: result = newQVariant(decodeContentHash(stickerPack.thumbnail))
       of StickerPackRoles.Installed: result = newQVariant(packInfo.installed)
       of StickerPackRoles.Bought: result = newQVariant(packInfo.bought)
+      of StickerPackRoles.Pending: result = newQVariant(packInfo.pending)
 
   method roleNames(self: StickerPackList): Table[int, string] =
     {
@@ -63,7 +65,8 @@ QtObject:
       StickerPackRoles.Stickers.int: "stickers",
       StickerPackRoles.Thumbnail.int: "thumbnail",
       StickerPackRoles.Installed.int: "installed",
-      StickerPackRoles.Bought.int: "bought"
+      StickerPackRoles.Bought.int: "bought",
+      StickerPackRoles.Pending.int: "pending"
     }.toTable
 
 
@@ -85,9 +88,9 @@ QtObject:
       raise newException(ValueError, "Sticker pack list does not have a pack with id " & $packId)
     result = find(self.packs, (view: StickerPackView) => view.pack.id == packId).pack
 
-  proc addStickerPackToList*(self: StickerPackList, pack: StickerPack, stickers: StickerList, installed, bought: bool) =
+  proc addStickerPackToList*(self: StickerPackList, pack: StickerPack, stickers: StickerList, installed, bought, pending: bool) =
     self.beginInsertRows(newQModelIndex(), 0, 0)
-    self.packs.insert((pack: pack, stickers: stickers, installed: installed, bought: bought), 0)
+    self.packs.insert((pack: pack, stickers: stickers, installed: installed, bought: bought, pending: pending), 0)
     self.endInsertRows()
 
   proc removeStickerPackFromList*(self: StickerPackList, packId: int) =
@@ -96,7 +99,7 @@ QtObject:
     self.packs.keepItIf(it.pack.id != packId)
     self.endRemoveRows()
 
-  proc updateStickerPackInList*(self: StickerPackList, packId: int, installed: bool) =
+  proc updateStickerPackInList*(self: StickerPackList, packId: int, installed: bool, pending: bool) =
     if not self.hasKey(packId):
       return
 
@@ -104,7 +107,7 @@ QtObject:
     let bottomRight = self.createIndex(self.packs.len, 0, nil)
     self.packs.apply(proc(it: var StickerPackView) =
       if it.pack.id == packId:
-        it.installed = installed)
+        it.installed = installed
+        it.pending = pending)
 
-    self.dataChanged(topLeft, bottomRight, @[StickerPackRoles.Installed.int])
-
+    self.dataChanged(topLeft, bottomRight, @[StickerPackRoles.Installed.int, StickerPackRoles.Pending.int])
