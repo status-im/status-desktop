@@ -3,7 +3,6 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
-import "../../../../shared/xss.js" as XSS
 
 Item {
     id: helpContainer
