@@ -280,6 +280,9 @@ QtObject:
   proc addContact*(self: ProfileView, pk: string) {.slot.} =
     discard self.status.contacts.addContact(pk)
 
+  proc changeContactNickname*(self: ProfileView, publicKey: string, nickname: string) {.slot.} =
+    discard self.status.contacts.addContact(publicKey, nickname)
+
   proc unblockContact*(self: ProfileView, id: string) {.slot.} =
     discard self.status.contacts.unblockContact(id)
 

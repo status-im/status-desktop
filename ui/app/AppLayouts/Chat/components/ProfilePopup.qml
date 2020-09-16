@@ -8,11 +8,12 @@ import "./"
 
 ModalPopup {
     id: popup
-    property var identicon: ""
-    property var userName: ""
-    property var fromAuthor: ""
-    property var text: ""
-    property var alias: ""
+    property string identicon: ""
+    property string userName: ""
+    property string nickname: ""
+    property string fromAuthor: ""
+    property string text: ""
+    property string alias: ""
     
     property bool showQR: false
     property bool isEnsVerified: false
@@ -22,13 +23,14 @@ ModalPopup {
     signal removeButtonClicked(address: string)
 
     function setPopupData(userNameParam, fromAuthorParam, identiconParam, textParam){
-        this.showQR = false
-        this.userName = userNameParam
-        this.fromAuthor = fromAuthorParam
-        this.identicon = identiconParam
-        this.text = textParam
-        this.isEnsVerified = chatsModel.isEnsVerified(this.fromAuthor)
-        this.alias = chatsModel.alias(this.fromAuthor)
+        showQR = false
+        userName = userNameParam || ""
+        nickname = userName.startsWith("@") ? "" : userName
+        fromAuthor = fromAuthorParam || ""
+        identicon = identiconParam || ""
+        text = textParam || ""
+        isEnsVerified = chatsModel.isEnsVerified(this.fromAuthor)
+        alias = chatsModel.alias(this.fromAuthor) || ""
     }
     
     function openPopup(userNameParam, fromAuthorParam, identiconParam) {
@@ -279,8 +281,8 @@ ModalPopup {
         }
 
         StyledText {
-            id: nickname
-            text: qsTr("None")
+            id: nicknameText
+            text: nickname ? nickname : qsTr("None")
             anchors.right: nicknameCaret.left
             anchors.rightMargin: Style.current.padding
             anchors.verticalCenter: nicknameTitle.verticalCenter

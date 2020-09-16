@@ -52,6 +52,7 @@ ModalPopup {
     Input {
         id: nicknameInput
         placeholderText: qsTr("Nickname")
+        text: nickname
         anchors.top: descriptionText.bottom
         anchors.topMargin: Style.current.padding
         validationError: popup.nicknameTooLong ? qsTr("Your nickname is too long") : ""
@@ -75,7 +76,9 @@ ModalPopup {
         anchors.bottom: parent.bottom
         disabled: popup.nicknameLength === 0 || popup.nicknameTooLong
         onClicked: {
-            console.log('Nickname set')
+            userName = nicknameInput.textField.text
+            profileModel.changeContactNickname(fromAuthor, nicknameInput.textField.text)
+            popup.close()
         }
     }
 }
