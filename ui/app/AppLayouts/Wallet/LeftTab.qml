@@ -44,7 +44,7 @@ Item {
         StyledTextEdit {
             id: walletAmountValue
             color: Style.current.textColor
-            text: walletModel.totalFiatBalance
+            text: Utils.toLocaleString(walletModel.totalFiatBalance, appSettings.locale) + " " + walletModel.defaultCurrency.toUpperCase()
             selectByMouse: true
             cursorVisible: true
             readOnly: true
@@ -134,7 +134,7 @@ Item {
             }
             StyledText {
                 id: walletBalance
-                text: balance.toUpperCase()
+                text: Utils.toLocaleString(fiatBalance, appSettings.locale) + " " + walletModel.defaultCurrency.toUpperCase()
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.smallPadding
                 anchors.right: parent.right

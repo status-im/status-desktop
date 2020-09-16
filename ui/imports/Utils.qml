@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick 2.13
 import "../shared/xss.js" as XSS
+import "../shared/polyfill.number.toLocaleString.js" as NumberPolyFill
 
 QtObject {
     function isHex(value) {
@@ -55,6 +56,10 @@ QtObject {
 
         replacedText = XSS.filterXSS(replacedText)
         return replacedText;
+    }
+
+    function toLocaleString(val, locale, options) {
+      return NumberPolyFill.toLocaleString(val, locale, options)
     }
 
     function isOnlyEmoji(inputText) {
