@@ -242,8 +242,9 @@ Item {
             id: mouseArea
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton | Qt.RightButton
-            cursorShape: Qt.PointingHandCursor
+            cursorShape: root.isPending ? Qt.ArrowCursor : Qt.PointingHandCursor
             onClicked: {
+                if (root.isPending) return;
                 if (root.isInstalled) return root.uninstallClicked();
                 if (root.packPrice === 0 || root.isBought) return root.installClicked()
                 if (root.isTimedOut) return root.cancelClicked()

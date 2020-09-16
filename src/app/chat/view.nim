@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os
+import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, sets
 import ../../status/status
 import ../../status/mailservers
 import ../../status/stickers
@@ -91,8 +91,8 @@ QtObject:
         self.oldestMessageTimestamp = times.toUnix(times.getTime())
     self.oldestMessageTimestampChanged()
 
-  proc addStickerPackToList*(self: ChatsView, stickerPack: StickerPack, isInstalled, isBought: bool) =
-    self.stickerPacks.addStickerPackToList(stickerPack, newStickerList(stickerPack.stickers), isInstalled, isBought)
+  proc addStickerPackToList*(self: ChatsView, stickerPack: StickerPack, isInstalled, isBought, isPending: bool) =
+    self.stickerPacks.addStickerPackToList(stickerPack, newStickerList(stickerPack.stickers), isInstalled, isBought, isPending)
   
   proc getStickerPackList(self: ChatsView): QVariant {.slot.} =
     newQVariant(self.stickerPacks)
@@ -118,6 +118,7 @@ QtObject:
   proc buyStickerPack*(self: ChatsView, packId: int, address: string, price: string, gas: string, gasPrice: string, password: string): string {.slot.} =
     try:
       let response = self.status.stickers.buyPack(packId, address, price, gas, gasPrice, password)
+      self.stickerPacks.updateStickerPackInList(packId, false, true)
       result = $(%* { "result": %response })
       self.transactionWasSent(response)
 
@@ -145,11 +146,18 @@ QtObject:
       purchasedStickerPacks = self.status.stickers.getPurchasedStickerPacks(address)
     let availableStickers = JSON.decode($availableStickersJSON, seq[StickerPack])
 
+    let pendingTransactions = status_wallet.getPendingTransactions().parseJson["result"]
+    var pendingStickerPacks = initHashSet[int]()
+    for trx in pendingTransactions.getElems():
+      if trx["type"].getStr == $PendingTransactionType.BuyStickerPack:
+        pendingStickerPacks.incl(trx["data"].getStr.parseInt)
+
     for stickerPack in availableStickers:
       let isInstalled = installedStickerPacks.hasKey(stickerPack.id)
       let isBought = purchasedStickerPacks.contains(stickerPack.id)
+      let isPending = pendingStickerPacks.contains(stickerPack.id) and not isBought
       self.status.stickers.availableStickerPacks[stickerPack.id] = stickerPack
-      self.addStickerPackToList(stickerPack, isInstalled, isBought)
+      self.addStickerPackToList(stickerPack, isInstalled, isBought, isPending)
 
   proc getChatsList(self: ChatsView): QVariant {.slot.} =
     newQVariant(self.chats)
@@ -260,12 +268,12 @@ QtObject:
 
   proc installStickerPack*(self: ChatsView, packId: int) {.slot.} =
     self.status.stickers.installStickerPack(packId)
-    self.stickerPacks.updateStickerPackInList(packId, true)
+    self.stickerPacks.updateStickerPackInList(packId, true, false)
   
   proc uninstallStickerPack*(self: ChatsView, packId: int) {.slot.} =
     self.status.stickers.uninstallStickerPack(packId)
     self.status.stickers.removeRecentStickers(packId)
-    self.stickerPacks.updateStickerPackInList(packId, false)
+    self.stickerPacks.updateStickerPackInList(packId, false, false)
     self.recentStickers.removeStickersFromList(packId)
 
   proc getRecentStickerList*(self: ChatsView): QVariant {.slot.} =
