@@ -27,7 +27,6 @@ Item {
         ensUsername: username
         width: 400
         height: 400
-        showBackBtn: false
     }
 
     ModalPopup {
