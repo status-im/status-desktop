@@ -10,7 +10,7 @@ SplitView {
     handle: SplitViewHandle {}
 
     Connections {
-        target: appMain
+        target: applicationWindow
         onSettingsLoaded: {
             // Add recent
             chatView.restoreState(appSettings.chatSplitView)

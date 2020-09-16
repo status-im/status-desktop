@@ -10,19 +10,6 @@ RowLayout {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    signal settingsLoaded()
-
-    Connections {
-        target: profileModel
-        onProfileChanged: {
-            appSettings.fileName = utilsModel.join3Paths(utilsModel.getDataDir(), 'qt', profileModel.profile.address)
-            settingsLoaded()
-            if (appSettings.locale !== "en") {
-                profileModel.changeLocale(appSettings.locale)
-            }
-        }
-    }
-
     ToastMessage {
         id: toastMessage
     }

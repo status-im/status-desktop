@@ -56,9 +56,10 @@ ApplicationWindow {
         volume: 0.2
     }
 
+    signal settingsLoaded()
     Settings {
         id: appSettings
-        fileName: "data/qt/unknownUser"
+        fileName: profileModel.profileSettingsFile
         property var chatSplitView
         property var walletSplitView
         property var profileSplitView
@@ -67,6 +68,15 @@ ApplicationWindow {
         property bool compactMode
         property string locale: "en"
         property var recentEmojis: []
+    }
+    Connections {
+        target: profileModel
+        onProfileSettingsFileChanged: {
+            settingsLoaded()
+            if (appSettings.locale !== "en") {
+                profileModel.changeLocale(appSettings.locale)
+            }
+        }
     }
 
     SystemTrayIcon {

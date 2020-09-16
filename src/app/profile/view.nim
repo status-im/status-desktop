@@ -1,4 +1,4 @@
-import NimQml, sequtils, strutils, sugar
+import NimQml, sequtils, strutils, sugar, os
 import views/[mailservers_list, ens_manager, contact_list, profile_info, device_list]
 import ../../status/profile/[mailserver, profile, devices]
 import ../../status/profile as status_profile
@@ -10,6 +10,7 @@ import ../../status/devices as status_devices
 import ../../status/ens as status_ens
 import ../../status/chat/chat
 import ../../status/libstatus/types
+import ../../status/libstatus/accounts/constants as accountConstants
 import qrcode/qrcode
 
 QtObject:
@@ -136,6 +137,21 @@ QtObject:
     write = setNetworkAndPersist
     notify = networkChanged
 
+  proc profileSettingsFileChanged*(self: ProfileView) {.signal.}
+
+  proc getProfileSettingsFile(self: ProfileView): string {.slot.} =
+    let address =
+      if (self.profile.address == ""):
+        "unknownAccount"
+      else:
+        self.profile.address
+
+    return os.joinPath(accountConstants.DATADIR, "qt", address)
+
+  QtProperty[string] profileSettingsFile:
+    read = getProfileSettingsFile
+    notify = profileSettingsFileChanged
+
   proc getProfile(self: ProfileView): QVariant {.slot.} =
     return newQVariant(self.profile)
 
@@ -144,6 +160,7 @@ QtObject:
   proc setNewProfile*(self: ProfileView, profile: Profile) =
     self.profile.setProfile(profile)
     self.profileChanged()
+    self.profileSettingsFileChanged()
 
   QtProperty[QVariant] profile:
     read = getProfile
