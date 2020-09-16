@@ -91,7 +91,7 @@ Popup {
         categories = newCategories
     }
     Connections {
-        target: appMain
+        target: applicationWindow
         onSettingsLoaded: {
             // Add recent
             if (!appSettings.recentEmojis || !appSettings.recentEmojis.length) {
