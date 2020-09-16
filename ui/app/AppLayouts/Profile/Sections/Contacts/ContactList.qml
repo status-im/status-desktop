@@ -23,6 +23,7 @@ ListView {
     delegate: Contact {
         name: Utils.removeStatusEns(model.name)
         address: model.address
+        localNickname: model.localNickname
         identicon: model.identicon
         isContact: model.isContact
         isBlocked: model.isBlocked

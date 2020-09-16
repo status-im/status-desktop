@@ -22,10 +22,10 @@ ModalPopup {
     signal blockButtonClicked(name: string, address: string)
     signal removeButtonClicked(address: string)
 
-    function setPopupData(userNameParam, fromAuthorParam, identiconParam, textParam){
+    function setPopupData(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam) {
         showQR = false
         userName = userNameParam || ""
-        nickname = userName.startsWith("@") ? "" : userName
+        nickname = nicknameParam || ""
         fromAuthor = fromAuthorParam || ""
         identicon = identiconParam || ""
         text = textParam || ""
@@ -33,8 +33,8 @@ ModalPopup {
         alias = chatsModel.alias(this.fromAuthor) || ""
     }
     
-    function openPopup(userNameParam, fromAuthorParam, identiconParam) {
-        setPopupData(userNameParam, fromAuthorParam, identiconParam, "");
+    function openPopup(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam) {
+        setPopupData(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
         popup.open()
     }
 

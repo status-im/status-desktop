@@ -65,7 +65,18 @@ Item {
         if (!isProfileClick) {
             SelectedMessage.set(messageId, fromAuthor);
         }
-        profileClick(userName, fromAuthor, identicon);
+        // Get contact nickname
+        const contactList = profileModel.contactList
+        const contactCount = contactList.rowCount()
+        let nickname = ""
+        for (let i = 0; i < contactCount; i++) {
+            if (contactList.rowData(i, 'pubKey') === fromAuthor) {
+                nickname = contactList.rowData(i, 'localNickname')
+                break;
+            }
+        }
+
+        profileClick(userName, fromAuthor, identicon, "", nickname);
         messageContextMenu.isProfile = !!isProfileClick
         messageContextMenu.isSticker = isSticker
         messageContextMenu.popup()
