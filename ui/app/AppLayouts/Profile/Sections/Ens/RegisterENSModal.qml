@@ -11,7 +11,6 @@ ModalPopup {
     property string ensUsername: ""
     property string ensPrice: "10"
 
-    property bool showBackBtn: false
     title: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(ensPrice)).arg(asset.symbol)
 
     property MessageDialog sendingError: MessageDialog {
@@ -72,10 +71,6 @@ ModalPopup {
             headerText: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(root.ensPrice)).arg(root.asset.symbol)
             footerText: qsTr("Continue")
 
-            StackView.onActivated: {
-                btnBack.visible = root.showBackBtn
-            }
-
             AccountSelector {
                 id: selectFromAccount
                 accounts: walletModel.accounts
@@ -116,7 +111,7 @@ ModalPopup {
                 }
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     if (!(root.ensUsername !== "" && selectFromAccount.selectedAccount)) {
-                        selectedGasLimit = 325000
+                        selectedGasLimit = 380000
                         return
                     }
                     selectedGasLimit = profileModel.ens.registerENSGasEstimate(root.ensUsername, selectFromAccount.selectedAccount.address)
@@ -142,10 +137,6 @@ ModalPopup {
             id: group3
             headerText: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(root.ensPrice)).arg(root.asset.symbol)
             footerText: qsTr("Sign with password")
-
-            StackView.onActivated: {
-                btnBack.visible = true
-            }
 
             TransactionPreview {
                 id: pvwTransaction
@@ -198,26 +189,15 @@ ModalPopup {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        StyledButton {
-            id: btnBack
-            anchors.left: parent.left
-            //% "Back"
-            label: qsTrId("back")
-            onClicked: {
-                if (stack.isFirstGroup) {
-                    return root.close()
-                }
-                stack.back()
-            }
-        }
+        
         StyledButton {
             id: btnNext
             anchors.right: parent.right
             label: qsTr("Next")
             disabled: !stack.currentGroup.isValid
             onClicked: {
-
-                if (stack.currentGroup.validate()) {
+                const validity = stack.currentGroup.validate() 
+                if (validity.isValid && !validity.isPending) { 
                     if (stack.isLastGroup) {
                         return root.sendTransaction()
                     }
