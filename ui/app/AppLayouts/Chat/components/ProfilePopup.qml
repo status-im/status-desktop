@@ -294,7 +294,15 @@ ModalPopup {
             anchors.top: nicknameTitle.top
             anchors.bottom: nicknameTitle.bottom
             onClicked: {
-                console.log('Go to nickname modal')
+                nicknamePopup.open()
+                popup.close()
+            }
+        }
+
+        NicknamePopup {
+            id: nicknamePopup
+            onClosed: {
+                popup.open()
             }
         }
     }
