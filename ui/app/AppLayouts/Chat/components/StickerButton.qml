@@ -242,7 +242,8 @@ Item {
             id: mouseArea
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton | Qt.RightButton
-            cursorShape: root.isPending ? Qt.ArrowCursor : Qt.PointingHandCursor
+            enabled: !root.isPending
+            cursorShape: Qt.PointingHandCursor
             onClicked: {
                 if (root.isPending) return;
                 if (root.isInstalled) return root.uninstallClicked();

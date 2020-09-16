@@ -269,6 +269,9 @@ QtObject:
   proc installStickerPack*(self: ChatsView, packId: int) {.slot.} =
     self.status.stickers.installStickerPack(packId)
     self.stickerPacks.updateStickerPackInList(packId, true, false)
+
+  proc resetStickerPackBuyAttempt*(self: ChatsView, packId: int) {.slot.} =
+    self.stickerPacks.updateStickerPackInList(packId, false, false)
   
   proc uninstallStickerPack*(self: ChatsView, packId: int) {.slot.} =
     self.status.stickers.uninstallStickerPack(packId)
