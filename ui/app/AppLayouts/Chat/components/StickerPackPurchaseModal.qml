@@ -19,16 +19,6 @@ ModalPopup {
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }
-    property MessageDialog sendingSuccess: MessageDialog {
-        id: sendingSuccess
-        //% "Success sending the transaction"
-        title: qsTrId("success-sending-the-transaction")
-        icon: StandardIcon.NoIcon
-        standardButtons: StandardButton.Ok
-        onAccepted: {
-            root.close()
-        }
-    }
 
     onClosed: {
         stack.reset()
@@ -51,9 +41,6 @@ ModalPopup {
             sendingError.text = response.error.message
             return sendingError.open()
         }
-
-        sendingSuccess.text = qsTr("Transaction sent to the blockchain. You can watch the progress on Etherscan: %2%1").arg(response.result).arg(walletModel.etherscanLink)
-        sendingSuccess.open()
     }
 
     TransactionStackView {
