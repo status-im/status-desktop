@@ -2,7 +2,7 @@ import json
 import ../libstatus/types
 
 type Profile* = ref object
-  id*, alias*, username*, identicon*, address*, ensName*: string
+  id*, alias*, username*, identicon*, address*, ensName*, localNickname*: string
   ensVerified*: bool
   ensVerifiedAt*, ensVerificationRetries*, appearance*: int
   systemTags*: seq[string]
@@ -48,3 +48,6 @@ proc toProfileModel*(profile: JsonNode): Profile =
   
   if profile.hasKey("name"):
     result.ensName = profile["name"].str
+  
+  if profile.hasKey("localNickname"):
+    result.localNickname = profile["localNickname"].str

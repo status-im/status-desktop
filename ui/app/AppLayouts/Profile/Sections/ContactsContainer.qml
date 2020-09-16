@@ -202,7 +202,6 @@ Item {
         footer: StyledButton {
             anchors.right: parent.right
             anchors.leftMargin: Style.current.padding
-            //% "Send Message"
             //% "Add contact"
             label: qsTrId("add-contact")
             disabled: !contactToAddInfo.visible
