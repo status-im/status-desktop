@@ -13,6 +13,7 @@ type
     IsBlocked = UserRole + 6
     Alias = UserRole + 7
     EnsVerified = UserRole + 8
+    LocalNickname = UserRole + 9
 
 QtObject:
   type ContactList* = ref object of QAbstractListModel
@@ -52,6 +53,7 @@ QtObject:
       of "isBlocked": result = $contact.isBlocked()
       of "alias": result = contact.alias
       of "ensVerified": result = $contact.ensVerified
+      of "localNickname": result = $contact.localNickname
 
   method data(self: ContactList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
@@ -68,6 +70,7 @@ QtObject:
       of ContactRoles.IsBlocked: result = newQVariant(contact.isBlocked())
       of ContactRoles.Alias: result = newQVariant(contact.alias)
       of ContactRoles.EnsVerified: result = newQVariant(contact.ensVerified)
+      of ContactRoles.LocalNickname: result = newQVariant(contact.localNickname)
 
   method roleNames(self: ContactList): Table[int, string] =
     {
@@ -78,6 +81,7 @@ QtObject:
       ContactRoles.IsContact.int:"isContact",
       ContactRoles.IsBlocked.int:"isBlocked",
       ContactRoles.Alias.int:"alias",
+      ContactRoles.LocalNickname.int:"localNickname",
       ContactRoles.EnsVerified.int:"ensVerified"
     }.toTable
 

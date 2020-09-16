@@ -12,6 +12,7 @@ ModalPopup {
     property bool nicknameTooLong: nicknameLength > maxNicknameLength
 
     id: popup
+    height: 325
 
     header: Item {
         height: childrenRect.height

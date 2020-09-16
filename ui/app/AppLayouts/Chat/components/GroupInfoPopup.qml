@@ -21,7 +21,7 @@ ModalPopup {
         data.clear();
         for(let i = 0; i < profileModel.contactList.rowCount(); i++){
             if(chatsModel.activeChannel.contains(profileModel.contactList.rowData(i, "pubKey"))) continue;
-            if(profileModel.contactList.rowData(i, "isContact") == "false") continue;
+            if(profileModel.contactList.rowData(i, "isContact") === "false") continue;
             data.append({
                 name: profileModel.contactList.rowData(i, "name"),
                 pubKey: profileModel.contactList.rowData(i, "pubKey"),
@@ -309,12 +309,22 @@ ModalPopup {
                         Layout.fillWidth: true
                         font.pixelSize: 13
                         MouseArea {
-                          anchors.fill: parent
-                          cursorShape: Qt.PointingHandCursor
-                          onClicked: {
-                            popup.profileClick(model.userName, model.pubKey, model.identicon)
-                            popup.close()
-                          }
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                // Get contact nickname
+                                const contactList = profileModel.contactList
+                                const contactCount = contactList.rowCount()
+                                let nickname = ""
+                                for (let i = 0; i < contactCount; i++) {
+                                    if (contactList.rowData(i, 'pubKey') === model.pubKey) {
+                                        nickname = contactList.rowData(i, 'localNickname')
+                                        break;
+                                    }
+                                }
+                                popup.profileClick(model.userName, model.pubKey, model.identicon, '', nickname)
+                                popup.close()
+                            }
                         }
                     }
 

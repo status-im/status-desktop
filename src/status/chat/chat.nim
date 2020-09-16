@@ -15,6 +15,7 @@ type ChatMember* = object
   joined*: bool
   identicon*: string
   userName*: string
+  localNickname*: string
 
 proc toJsonNode*(self: ChatMember): JsonNode =
   result = %* {
