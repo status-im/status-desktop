@@ -78,6 +78,7 @@ ModalPopup {
         disabled: popup.nicknameLength === 0 || popup.nicknameTooLong
         onClicked: {
             userName = nicknameInput.textField.text
+            nickname = nicknameInput.textField.text
             profileModel.changeContactNickname(fromAuthor, nicknameInput.textField.text)
             popup.close()
         }

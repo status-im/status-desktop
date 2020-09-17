@@ -83,6 +83,7 @@ PopupMenu {
             }
             onClicked: {
                 profilePopup.open()
+                messageContextMenu.close()
             }
         }
     }
@@ -95,7 +96,10 @@ PopupMenu {
         id: viewProfileAction
         //% "View profile"
         text: qsTrId("view-profile")
-        onTriggered: profilePopup.open()
+        onTriggered: {
+            profilePopup.open()
+            messageContextMenu.close()
+        }
         icon.source: "../../../img/profileActive.svg"
         icon.width: 16
         icon.height: 16
@@ -106,7 +110,10 @@ PopupMenu {
                   qsTrId("send-message") :
                   //% "Reply to"
                   qsTrId("reply-to")
-        onTriggered: messageContextMenu.isProfile ? chatsModel.joinChat(profilePopup.fromAuthor, Constants.chatTypeOneToOne) : showReplyArea()
+        onTriggered: {
+            messageContextMenu.isProfile ? chatsModel.joinChat(profilePopup.fromAuthor, Constants.chatTypeOneToOne) : showReplyArea()
+            messageContextMenu.close()
+        }
         icon.source: "../../../img/messageActive.svg"
         icon.width: 16
         icon.height: 16
