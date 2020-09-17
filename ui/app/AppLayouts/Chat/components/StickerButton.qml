@@ -27,8 +27,8 @@ Item {
     })
     //% "Buy for %1 SNT"
     property string text: root.style === StickerButton.StyleType.Default ? packPrice : qsTrId("buy-for--1-snt").arg(packPrice )
-    property color textColor: style === StickerButton.StyleType.Default ? Style.current.white : Style.current.blue
-    property color bgColor: style === StickerButton.StyleType.Default ? Style.current.blue : Style.current.lightBlue
+    property color textColor: style === StickerButton.StyleType.Default ? Style.current.pillButtonTextColor : Style.current.buttonForegroundColor
+    property color bgColor: style === StickerButton.StyleType.Default ? Style.current.blue : Style.current.secondaryBackground
     signal uninstallClicked()
     signal installClicked()
     signal cancelClicked()
@@ -44,7 +44,7 @@ Item {
                 target: root;
                 //% "Uninstall"
                 text: root.style === StickerButton.StyleType.Default ? "" : qsTrId("uninstall");
-                textColor: root.style === StickerButton.StyleType.Default ? Style.current.white : Style.current.red;
+                textColor: root.style === StickerButton.StyleType.Default ? Style.current.pillButtonTextColor : Style.current.red;
                 bgColor: root.style === StickerButton.StyleType.Default ? Style.current.green : Style.current.lightRed;
                 icon: new Object({
                     path: "../../../img/check.svg",
@@ -83,8 +83,8 @@ Item {
             PropertyChanges {
                 target: root;
                 text: root.style === StickerButton.StyleType.Default ? packPrice : packPrice + " SNT";
-                textColor: root.style === StickerButton.StyleType.Default ? Style.current.white : Style.current.darkGrey
-                bgColor: root.style === StickerButton.StyleType.Default ? Style.current.darkGrey : Style.current.grey;
+                textColor: root.style === StickerButton.StyleType.Default ? Style.current.pillButtonTextColor : Style.current.darkGrey
+                bgColor: root.style === StickerButton.StyleType.Default ? Style.current.darkGrey : Style.current.buttonDisabledBackgroundColor;
                 enabled: false;
             }
         },
@@ -95,7 +95,7 @@ Item {
                 target: root;
                 //% "Pending..."
                 text: qsTrId("pending---");
-                textColor: root.style === StickerButton.StyleType.Default ? Style.current.white : Style.current.darkGrey
+                textColor: root.style === StickerButton.StyleType.Default ? Style.current.pillButtonTextColor : Style.current.darkGrey
                 bgColor: root.style === StickerButton.StyleType.Default ? Style.current.darkGrey : Style.current.grey;
                 enabled: false;
                 icon: new Object({
@@ -113,8 +113,8 @@ Item {
                 target: root;
                 //% "Cancel"
                 text: qsTrId("browsing-cancel");
-                textColor: root.style === StickerButton.StyleType.Default ? Style.current.white : Style.current.red;
-                bgColor: root.style === StickerButton.StyleType.Default ? Style.current.darkGrey : Style.current.lightRed;
+                textColor: root.style === StickerButton.StyleType.Default ? Style.current.pillButtonTextColor : Style.current.red;
+                bgColor: root.style === StickerButton.StyleType.Default ? Style.current.red : Style.current.lightRed;
             }
         },
         State {
@@ -183,6 +183,12 @@ Item {
                 duration: 1200
                 running: root.icon.runAnimation
                 loops: Animation.Infinite
+            }
+            ColorOverlay {
+                anchors.fill: roundedIconImage
+                source: roundedIconImage
+                color: Style.current.pillButtonTextColor
+                antialiasing: true
             }
             states: [
                 State {

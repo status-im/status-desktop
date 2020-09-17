@@ -147,6 +147,7 @@ Item {
             height: 28
             iconWidth: 17.5
             iconHeight: 13.5
+            iconColor: Style.current.pillButtonTextColor
             source: "../../../img/arrowUp.svg"
             rotation: 270
             onClicked: {

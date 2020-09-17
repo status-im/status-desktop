@@ -28,7 +28,7 @@ Item {
         Text {
             id: txtPackName
             text: packName
-            color: Style.current.black
+            color: Style.current.textColor
             font.family: Style.current.fontBold.name
             font.weight: Font.Bold
             font.pixelSize: packNameFontSize

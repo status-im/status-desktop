@@ -43,6 +43,7 @@ Theme {
     property color primaryMenuItemHover: blue
     property color primaryMenuItemTextHover: white
     property color backgroundTertiary: tenPercentBlue
+    property color pillButtonTextColor: white
 
     property color buttonForegroundColor: blue
     property color buttonBackgroundColor: secondaryBackground

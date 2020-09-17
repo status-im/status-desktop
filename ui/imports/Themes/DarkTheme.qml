@@ -13,6 +13,7 @@ Theme {
     property color darkAccentBlue: "#2946C4"
     property color transparent: "#00000000"
     property color darkGrey: "#838C91"
+    property color darkerGrey: "#252528"
     property color lightBlueText: "#8f9fec"
     property color darkBlue: "#3c55c9"
     property color darkBlueBtn: "#5a70dd"
@@ -24,7 +25,7 @@ Theme {
     property color tenPercentBlue: Qt.rgba(67, 96, 223, 0.1)
 
     property color background: almostBlack
-    property color border: "#252528"
+    property color border: darkerGrey
     property color borderSecondary: tenPercentWhite
     property color borderTertiary: blue
     property color textColor: white
@@ -35,7 +36,7 @@ Theme {
     property color inputBorderFocus: blue
     property color inputColor: darkGrey
     property color modalBackground: background
-    property color backgroundHover: "#252528"
+    property color backgroundHover: darkerGrey
     property color secondaryText: darkGrey
     property color secondaryHover: tenPercentWhite
     property color primary: blue
@@ -44,11 +45,12 @@ Theme {
     property color primaryMenuItemHover: blue
     property color primaryMenuItemTextHover: almostBlack
     property color backgroundTertiary: tenPercentBlue
+    property color pillButtonTextColor: almostBlack
 
     property color buttonForegroundColor: blue
     property color buttonBackgroundColor: secondaryBackground
     property color buttonDisabledForegroundColor: darkGrey
-    property color buttonDisabledBackgroundColor: grey
+    property color buttonDisabledBackgroundColor: darkerGrey
 
     property color roundedButtonForegroundColor: white
     property color roundedButtonBackgroundColor: secondaryBackground
