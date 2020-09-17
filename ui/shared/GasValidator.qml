@@ -33,7 +33,7 @@ Item {
 
     function validate() {
         let isValid = true
-        if (!(selectedAccount && selectedAccount.assets && selectedAmount > 0 && selectedAsset && selectedGasEthValue > 0)) {
+        if (!(selectedAccount && selectedAccount.assets && selectedAsset && selectedGasEthValue > 0)) {
             return root.isValid
         }
         txtValidationError.text = ""
