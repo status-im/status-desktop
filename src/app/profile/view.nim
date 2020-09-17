@@ -9,6 +9,7 @@ import ../../status/status
 import ../../status/devices as status_devices
 import ../../status/ens as status_ens
 import ../../status/chat/chat
+import ../../status/threads
 import ../../status/libstatus/types
 import ../../status/libstatus/accounts/constants as accountConstants
 import qrcode/qrcode
@@ -256,11 +257,13 @@ QtObject:
     if value == "":
       return
 
-    var id = value
+    spawnAndSend(self, "ensResolved") do: # Call self.ensResolved(string) when ens is resolved
+      var id = value
+      if not id.startsWith("0x"):
+        id = status_ens.pubkey(id)
+      id
 
-    if not id.startsWith("0x"):
-      id = status_ens.pubkey(id)
-
+  proc ensResolved(self: ProfileView, id: string) {.slot.} =
     let contact = self.status.contacts.getContactByID(id)
 
     if contact != nil:
@@ -273,7 +276,7 @@ QtObject:
         ensVerified: false
       )
     self.contactToAddChanged()
-
+  
   proc addContact*(self: ProfileView, pk: string) {.slot.} =
     discard self.status.contacts.addContact(pk)
 
