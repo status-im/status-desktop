@@ -32,12 +32,17 @@ proc mainProc() =
       "/../resources.rcc"
   QResource.registerResource(app.applicationDirPath & resources)
 
-  let statusSvg =
-    if defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
-        "/../resources/status.svg"
+  let statusAppIcon =
+    if defined(macosx):
+      if getEnv("NIM_STATUS_CLIENT_DEV").string == "":
+        "/../Resources/status-icon.icns"
       else:
-        "/../status.svg"
-  app.icon(app.applicationDirPath & statusSvg)
+        "/../status-icon.icns"
+    elif defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
+      "/../resources/status.svg"
+    else:
+      "/../status.svg"
+  app.icon(app.applicationDirPath & statusAppIcon)
 
   var i18nPath = ""
   if (getEnv("NIM_STATUS_CLIENT_DEV").string != ""):
