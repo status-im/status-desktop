@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 
 Item {
     id: privacyContainer
@@ -93,7 +94,7 @@ Item {
                 //% "Display images in chat automatically"
                 text: qsTrId("display-images-in-chat-automatically")
             }
-            Switch {
+            StatusSwitch {
                 checked: appSettings.displayChatImages
                 onCheckedChanged: function (value) {
                     appSettings.displayChatImages = this.checked

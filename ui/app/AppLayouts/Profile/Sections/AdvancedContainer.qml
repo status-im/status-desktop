@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 
 Item {
     id: advancedContainer
@@ -34,7 +35,7 @@ Item {
             //% "Wallet Tab"
             text: qsTrId("wallet-tab")
         }
-        Switch {
+        StatusSwitch {
             checked: appSettings.walletEnabled
             onCheckedChanged: function(value) {
                 appSettings.walletEnabled = this.checked
@@ -56,7 +57,7 @@ Item {
             //% "Node Management Tab"
             text: qsTrId("node-management-tab")
         }
-        Switch {
+        StatusSwitch {
             checked: nodeBtn.enabled
             onCheckedChanged: function(value) {
                 nodeBtn.enabled = this.checked
@@ -78,7 +79,7 @@ Item {
             //% "Enable testnet (Ropsten)\nCurrent network: %1"
             text: qsTrId("enable-testnet--ropsten--ncurrent-network---1").arg(profileModel.network)
         }
-        Switch {
+        StatusSwitch {
             checked: profileModel.network === "testnet_rpc"
             onCheckedChanged: {
                 if (checked && profileModel.network === "testnet_rpc" || !checked && profileModel.network === "mainnet_rpc"){
@@ -108,7 +109,7 @@ Item {
             text: qsTrId("ui-components")
         }
 
-        Switch {
+        StatusSwitch {
             checked: uiComponentBtn.enabled
             onCheckedChanged: function(value) {
                 uiComponentBtn.enabled = this.checked
