@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 
 Item {
     id: syncContainer
@@ -187,7 +188,7 @@ Item {
                     anchors.left: enabledIcon.right
                     anchors.leftMargin: Style.current.padding
                 }
-                Switch { 
+                StatusSwitch { 
                     id: devicePairedSwitch
                     visible: !model.isUserDevice
                     checked: model.isEnabled 
