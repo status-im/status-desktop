@@ -21,6 +21,5 @@ BlockContactConfirmationDialog 1.0 BlockContactConfirmationDialog.qml
 ConfirmationDialog 1.0 ConfirmationDialog.qml
 Timer 1.0 Timer.qml
 TransactionSigner 1.0 TransactionSigner.qml
-StatusToolTip 1.0 StatusToolTip.qml
 GlossaryEntry 1.0 GlossaryEntry.qml
 GlossaryLetter 1.0 GlossaryLetter.qml
