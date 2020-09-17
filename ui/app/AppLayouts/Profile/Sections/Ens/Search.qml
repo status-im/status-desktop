@@ -46,34 +46,11 @@ Item {
         Qt.callLater(validateENS, ensUsername, isStatus)
     }
 
-    ModalPopup {
+    SetPubKeyModal {
         id: transactionDialog
-        //% "TODO: replace this for the transaction dialog"
-        title: qsTrId("todo--replace-this-for-the-transaction-dialog")
-
-        Input {
-            id: passwd
-            placeholderText: "Password"
-            anchors.top: parent.textToCopy
-            anchors.topMargin: 24
-            anchors.left: parent.left
-            anchors.leftMargin: 24
-        }
-
-        StyledButton {
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: Style.current.padding
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
-            //% "Ok"
-            label: qsTrId("ok")
-            onClicked: {
-                profileModel.ens.setPubKey(ensUsername.text, passwd.text)
-                passwd.text = "";
-                usernameUpdated(ensUsername.text);
-                transactionDialog.close();
-            }
-        }
+        ensUsername: ensUsername.text
+        width: 400
+        height: 400
     }
 
     StyledText {
