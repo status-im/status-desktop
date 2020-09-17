@@ -23,7 +23,7 @@ Rectangle {
     Audio {
         id: sendMessageSound
         source: "../../../../sounds/send_message.wav"
-        volume: 0.2
+        volume: appSettings.volume
     }
 
     function interpretMessage(msg) {
