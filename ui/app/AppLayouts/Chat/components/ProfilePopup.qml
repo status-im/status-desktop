@@ -8,12 +8,12 @@ import "./"
 
 ModalPopup {
     id: popup
-    property string identicon: ""
-    property string userName: ""
-    property string nickname: ""
-    property string fromAuthor: ""
-    property string text: ""
-    property string alias: ""
+    property var identicon: ""
+    property var userName: ""
+    property var nickname: ""
+    property var fromAuthor: ""
+    property var text: ""
+    property var alias: ""
     
     property bool showQR: false
     property bool isEnsVerified: false
@@ -32,9 +32,9 @@ ModalPopup {
         isEnsVerified = chatsModel.isEnsVerified(this.fromAuthor)
         alias = chatsModel.alias(this.fromAuthor) || ""
     }
-    
+
     function openPopup(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam) {
-        setPopupData(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
+        setPopupData(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam)
         popup.open()
     }
 

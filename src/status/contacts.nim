@@ -51,7 +51,7 @@ proc addContact*(self: ContactModel, id: string, localNickname: string): string 
   self.events.emit("contactAdded", Args())
 
 proc addContact*(self: ContactModel, id: string): string =
-  result = self.addContact(id)
+  result = self.addContact(id, "")
 
 proc removeContact*(self: ContactModel, id: string) =
   let contact = self.getContactByID(id)
