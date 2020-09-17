@@ -214,11 +214,9 @@ ModalPopup {
             //% "Next"
             text: qsTrId("next")
             enabled: stack.currentGroup.isValid && !stack.currentGroup.isPending
-            state: stack.currentGroup.isPending ? "pending" : "default"
             onClicked: {
-                const isValid = stack.currentGroup.validate()
-
-                if (stack.currentGroup.validate()) {
+                const validity = stack.currentGroup.validate()
+                if (validity.isValid && !validity.isPending) {
                     if (stack.isLastGroup) {
                         return root.sendTransaction()
                     }
