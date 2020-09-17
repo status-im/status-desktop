@@ -10,6 +10,7 @@ Item {
     id: contactsContainer
     Layout.fillHeight: true
     property alias searchStr: searchBox.text
+    property bool isPending: false
 
     SearchBox {
         id: searchBox
@@ -103,10 +104,29 @@ Item {
         }
     }
 
+    Connections {
+        target: profileModel
+        onContactToAddChanged: {
+            contactsContainer.isPending = false
+        }
+    }
+
+    Component {
+        id: loadingIndicator
+        LoadingImage {
+            width: 12
+            height: 12
+        }
+    }
+
     ModalPopup {
         id: addContactModal
         //% "Add contact"
         title: qsTrId("add-contact")
+
+        property var lookupContact: Backpressure.debounce(addContactSearchInput, 400, function (value) {
+            profileModel.lookupContact(value)
+        })
 
         Input {
             id: addContactSearchInput
@@ -114,8 +134,26 @@ Item {
             customHeight: 44
             fontPixelSize: 15
             onEditingFinished: {
-              profileModel.lookupContact(inputValue)
+                contactsContainer.isPending = true
+                profileModel.lookupContact(inputValue)
+                contactsContainer.isPending = false
             }
+            onTextChanged: {
+                if (addContactSearchInput.text !== "") {
+                  contactsContainer.isPending = true
+                }
+            }
+            Keys.onReleased: {
+                Qt.callLater(addContactModal.lookupContact, addContactSearchInput.text)
+            }
+        }
+
+        Loader {
+            sourceComponent: loadingIndicator
+            anchors.top: addContactSearchInput.bottom
+            anchors.topMargin: Style.current.padding
+            anchors.horizontalCenter: parent.horizontalCenter
+            active: contactsContainer.isPending
         }
 
         Item {
@@ -125,7 +163,18 @@ Item {
           anchors.horizontalCenter: parent.horizontalCenter
           height: contactUsername.height
           width: contactUsername.width + contactPubKey.width
-          visible: profileModel.contactToAddPubKey !== ""
+          visible: !contactsContainer.isPending && !!addContactSearchInput.text
+
+
+          StyledText {
+              anchors.top: addContactSearchInput.bottom
+              anchors.topMargin: Style.current.padding
+              anchors.horizontalCenter: parent.horizontalCenter
+              font.pixelSize: 12
+              color: Style.current.darkGrey
+              text: qsTr("User not found")
+              visible: !contactsContainer.isPending && !!!profileModel.contactToAddUsername
+          }
 
           StyledText {
               id: contactUsername
@@ -134,6 +183,7 @@ Item {
               anchors.topMargin: Style.current.padding
               font.pixelSize: 12
               color: Style.current.darkGrey
+              visible: !!profileModel.contactToAddPubKey
           }
 
           StyledText {
@@ -144,6 +194,7 @@ Item {
               font.pixelSize: 12
               elide: Text.ElideMiddle
               color: Style.current.darkGrey
+              visible: !!profileModel.contactToAddPubKey
           }
 
         }
