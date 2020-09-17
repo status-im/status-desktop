@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 import "../data/"
 
 Item {
@@ -39,7 +40,7 @@ Item {
                     font.pixelSize: 15
                 }
 
-                RadioButton {
+                StatusRadioButton {
                     checked: currency === key
                     anchors.right: parent.right
                     anchors.rightMargin: 4
