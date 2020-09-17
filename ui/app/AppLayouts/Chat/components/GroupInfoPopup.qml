@@ -19,11 +19,13 @@ ModalPopup {
         memberCount = chatsModel.activeChannel.members.rowCount();
         currMemberCount = memberCount;
         data.clear();
-        for(let i = 0; i < profileModel.contactList.rowCount(); i++){
+        const nbContacts = profileModel.contactList.rowCount()
+        for(let i = 0; i < nbContacts; i++){
             if(chatsModel.activeChannel.contains(profileModel.contactList.rowData(i, "pubKey"))) continue;
             if(profileModel.contactList.rowData(i, "isContact") === "false") continue;
             data.append({
                 name: profileModel.contactList.rowData(i, "name"),
+                localNickname: profileModel.contactList.rowData(i, "localNickname"),
                 pubKey: profileModel.contactList.rowData(i, "pubKey"),
                 address: profileModel.contactList.rowData(i, "address"),
                 identicon: profileModel.contactList.rowData(i, "identicon"),
@@ -215,13 +217,14 @@ ModalPopup {
                     showCheckbox: memberCount < maxMembers
                     pubKey: model.pubKey
                     isUser: model.isUser
-                    name: Utils.removeStatusEns(model.name)
+                    name: model.name.endsWith(".eth") && !!model.localNickname ?
+                              Utils.removeStatusEns(model.name) : model.localNickname
                     address: model.address
                     identicon: model.identicon
                     onItemChecked: function(pubKey, itemChecked){
                         var idx = pubKeys.indexOf(pubKey)
                         if(itemChecked){
-                            if(idx == -1){
+                            if(idx === -1){
                                 pubKeys.push(pubKey)
                             }
                         } else {
@@ -252,34 +255,6 @@ ModalPopup {
             color: Style.current.darkGrey
         }
 
-        ListModel {
-            id: exampleModel
-
-            ListElement {
-                isAdmin: false
-                joined: true
-                identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
-                userName: "The UserName"
-                pubKey: "0x12345678"
-            }
-
-            ListElement {
-                isAdmin: false
-                joined: true
-                identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
-                userName: "The UserName"
-                pubKey: "0x12345678"
-            }
-
-            ListElement {
-                isAdmin: false
-                joined: true
-                identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
-                userName: "The UserName"
-                pubKey: "0x12345678"
-            }
-        }
-
         ListView {
             id: memberList
             anchors.fill: parent
@@ -290,9 +265,21 @@ ModalPopup {
             spacing: 4
             Layout.fillWidth: true
             Layout.fillHeight: true
-            //model: exampleModel
             model: chatsModel.activeChannel.members
             delegate: Row {
+                id: contactRow
+                property string nickname: {
+                    // Get contact nickname
+                    const contactList = profileModel.contactList
+                    const contactCount = contactList.rowCount()
+                    let nickname = ""
+                    for (let i = 0; i < contactCount; i++) {
+                        if (contactList.rowData(i, 'pubKey') === model.pubKey) {
+                            return contactList.rowData(i, 'localNickname')
+                        }
+                    }
+                }
+
                 Column {
                     Image {
                         source: model.identicon
@@ -303,7 +290,8 @@ ModalPopup {
                 }
                 Column {
                     StyledText {
-                        text: Utils.removeStatusEns(model.userName)
+                        text: !model.userName.endsWith(".eth") && !!contactRow.nickname ?
+                                  contactRow.nickname : Utils.removeStatusEns(model.userName)
                         width: 300
                         elide: Text.ElideRight
                         Layout.fillWidth: true
@@ -312,17 +300,7 @@ ModalPopup {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                // Get contact nickname
-                                const contactList = profileModel.contactList
-                                const contactCount = contactList.rowCount()
-                                let nickname = ""
-                                for (let i = 0; i < contactCount; i++) {
-                                    if (contactList.rowData(i, 'pubKey') === model.pubKey) {
-                                        nickname = contactList.rowData(i, 'localNickname')
-                                        break;
-                                    }
-                                }
-                                popup.profileClick(model.userName, model.pubKey, model.identicon, '', nickname)
+                                popup.profileClick(model.userName, model.pubKey, model.identicon, '', contactRow.nickname)
                                 popup.close()
                             }
                         }

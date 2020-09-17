@@ -28,9 +28,11 @@ ModalPopup {
         }
 
         data.clear();
-        for(let i = 0; i < profileModel.contactList.rowCount(); i++){
+        const nbContacts = profileModel.contactList.rowCount()
+        for(let i = 0; i < nbContacts; i++){
             data.append({
                 name: profileModel.contactList.rowData(i, "name"),
+                localNickname: profileModel.contactList.rowData(i, "localNickname"),
                 pubKey: profileModel.contactList.rowData(i, "pubKey"),
                 address: profileModel.contactList.rowData(i, "address"),
                 identicon: profileModel.contactList.rowData(i, "identicon"),
@@ -163,13 +165,14 @@ ModalPopup {
                 pubKey: model.pubKey
                 isContact: model.isContact
                 isUser: model.isUser
-                name: model.name
+                name: !model.name.endsWith(".eth") && !!model.localNickname ?
+                          model.localNickname : Utils.removeStatusEns(model.name)
                 address: model.address
                 identicon: model.identicon
                 onItemChecked: function(pubKey, itemChecked){
                     var idx = pubKeys.indexOf(pubKey)
                     if(itemChecked){
-                        if(idx == -1){
+                        if(idx === -1){
                             pubKeys.push(pubKey)
                         }
                     } else {

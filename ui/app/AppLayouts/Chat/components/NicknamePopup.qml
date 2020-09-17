@@ -77,7 +77,10 @@ ModalPopup {
         anchors.bottom: parent.bottom
         disabled: popup.nicknameLength === 0 || popup.nicknameTooLong
         onClicked: {
-            userName = nicknameInput.textField.text
+            if (!userName.startsWith("@")) {
+                // Replace username only if it was not an ENS name
+                userName = nicknameInput.textField.text
+            }
             nickname = nicknameInput.textField.text
             profileModel.changeContactNickname(fromAuthor, nicknameInput.textField.text)
             popup.close()
