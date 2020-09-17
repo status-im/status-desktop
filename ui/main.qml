@@ -47,13 +47,14 @@ ApplicationWindow {
         id: sendMessageSound
         audioRole: Audio.NotificationRole
         source: "../../../../sounds/send_message.wav"
+        volume: appSettings.volume
     }
 
     Audio {
         id: notificationSound
         audioRole: Audio.NotificationRole
         source: "../../../../sounds/notification.wav"
-        volume: 0.2
+        volume: appSettings.volume
     }
 
     signal settingsLoaded()
@@ -68,6 +69,7 @@ ApplicationWindow {
         property bool compactMode
         property string locale: "en"
         property var recentEmojis: []
+        property real volume: 0.2
     }
     Connections {
         target: profileModel
