@@ -48,6 +48,7 @@ ModalPopup {
             sendingError.text = response.error.message
             return sendingError.open()
         }
+        root.close()
     }
 
     TransactionStackView {
