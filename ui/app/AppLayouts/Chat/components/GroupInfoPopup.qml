@@ -278,6 +278,7 @@ ModalPopup {
                             return contactList.rowData(i, 'localNickname')
                         }
                     }
+                    return ""
                 }
 
                 Column {
