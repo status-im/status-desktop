@@ -1,2 +1,3 @@
 StatusButton 1.0 StatusButton.qml
 StatusRoundButton 1.0 StatusRoundButton.qml
+StatusSlider 1.0 StatusSlider.qml

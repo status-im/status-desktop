@@ -2,7 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.13
 import QtQuick.Controls 1.4 as QQC1
-import "../imports"
+import "../../imports"
 
 QQC1.Slider {
     id: slider
