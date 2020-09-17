@@ -37,6 +37,7 @@ Rectangle {
             anchors.fill: roundedIconImage
             source: roundedIconImage
             color: root.iconColor
+            rotation: roundedIconImage.rotation
         }
     }
 
