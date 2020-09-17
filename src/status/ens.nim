@@ -190,7 +190,7 @@ proc registerUsername*(username, pubKey, address, gas, gasPrice,  password: stri
   if success:
     trackPendingTransaction(result, address, $sntContract.address, PendingTransactionType.RegisterENS, username & domain)
 
-proc setPubKeyEstimateGas*(username: string, address: string, pubKey: string): int =
+proc setPubKeyEstimateGas*(username: string, address: string, pubKey: string, success: var bool): int =
   var hash = namehash(username)
   hash.removePrefix("0x")
 
@@ -205,12 +205,13 @@ proc setPubKeyEstimateGas*(username: string, address: string, pubKey: string): i
   var tx = transactions.buildTokenTransaction(parseAddress(address), parseAddress(resolverAddress), "", "")
   
   try:
-    let response = resolverContract.methods["setPubkey"].estimateGas(tx, setPubkey)
-    result = fromHex[int](response)
+    let response = resolverContract.methods["setPubkey"].estimateGas(tx, setPubkey, success)
+    if success:
+      result = fromHex[int](response)
   except RpcException as e:
     raise
 
-proc setPubKey*(username, pubKey, address, gas, gasPrice, password: string): string =
+proc setPubKey*(username, pubKey, address, gas, gasPrice, password: string, success: var bool): string =
   var hash = namehash(username)
   hash.removePrefix("0x")
 
@@ -225,8 +226,9 @@ proc setPubKey*(username, pubKey, address, gas, gasPrice, password: string): str
   var tx = transactions.buildTokenTransaction(parseAddress(address), parseAddress(resolverAddress), gas, gasPrice)
 
   try:
-    result = resolverContract.methods["setPubkey"].send(tx, setPubkey, password)
-    trackPendingTransaction(result, $address, resolverAddress, PendingTransactionType.SetPubKey, username)
+    result = resolverContract.methods["setPubkey"].send(tx, setPubkey, password, success)
+    if success:
+      trackPendingTransaction(result, $address, resolverAddress, PendingTransactionType.SetPubKey, username)
   except RpcException as e:
     raise
 

@@ -12,6 +12,7 @@ Popup {
     //% "View on Etherscan"
     readonly property string defaultLinkText: qsTrId("view-on-etherscan")
     property string link: "https://etherscan.io/"
+    property string linkText: qsTrId("view-on-etherscan")
 
     id: root
     closePolicy: Popup.NoAutoClose
