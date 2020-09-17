@@ -190,7 +190,7 @@ proc registerUsername*(username, pubKey, address, gas, gasPrice,  password: stri
   if success:
     trackPendingTransaction(result, address, $sntContract.address, PendingTransactionType.RegisterENS, username & domain)
 
-proc setPubKey*(username:string, address: EthAddress, pubKey: string, password: string): string =
+proc setPubKeyEstimateGas*(username: string, address: string, pubKey: string): int =
   var hash = namehash(username)
   hash.removePrefix("0x")
 
@@ -199,28 +199,36 @@ proc setPubKey*(username:string, address: EthAddress, pubKey: string, password: 
     x = fromHex(FixedBytes[32], "0x" & pubkey[4..67])
     y =  fromHex(FixedBytes[32], "0x" & pubkey[68..131])
     resolverContract = contracts.getContract("ens-resolver")
+    setPubkey = SetPubkey(label: label, x: x, y: y)
+    resolverAddress = resolver(hash)
+
+  var tx = transactions.buildTokenTransaction(parseAddress(address), parseAddress(resolverAddress), "", "")
+  
+  try:
+    let response = resolverContract.methods["setPubkey"].estimateGas(tx, setPubkey)
+    result = fromHex[int](response)
+  except RpcException as e:
+    raise
+
+proc setPubKey*(username, pubKey, address, gas, gasPrice, password: string): string =
+  var hash = namehash(username)
+  hash.removePrefix("0x")
 
   let
+    label = fromHex(FixedBytes[32], "0x" & hash)
+    x = fromHex(FixedBytes[32], "0x" & pubkey[4..67])
+    y =  fromHex(FixedBytes[32], "0x" & pubkey[68..131])
+    resolverContract = contracts.getContract("ens-resolver")
     setPubkey = SetPubkey(label: label, x: x, y: y)
-    setPubkeyAbiEncoded = resolverContract.methods["setPubkey"].encodeAbi(setPubkey)
+    resolverAddress = resolver(hash)
 
-  let resolverAddress = resolver(hash)
+  var tx = transactions.buildTokenTransaction(parseAddress(address), parseAddress(resolverAddress), gas, gasPrice)
 
-  let payload = %* {
-      "from": $address,
-      "to": resolverAddress,
-      # "gas": 200000, # TODO: obtain gas price?
-      "data": setPubkeyAbiEncoded
-  }
-
-  let responseStr = sendTransaction($payload, password)
-  let response = Json.decode(responseStr, RpcResponse)
-  if not response.error.isNil:
-    raise newException(RpcException, "Error setting the pubkey: " & response.error.message)
-
-  trackPendingTransaction(response.result, $address, resolverAddress, PendingTransactionType.SetPubKey, username)
-
-  result = response.result
+  try:
+    result = resolverContract.methods["setPubkey"].send(tx, setPubkey, password)
+    trackPendingTransaction(result, $address, resolverAddress, PendingTransactionType.SetPubKey, username)
+  except RpcException as e:
+    raise
 
 proc statusRegistrarAddress*():string =
   result = $contracts.getContract("ens-usernames").address

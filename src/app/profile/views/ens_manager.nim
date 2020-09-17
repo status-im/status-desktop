@@ -209,9 +209,10 @@ QtObject:
   proc registerENSGasEstimate(self: EnsManager, ensUsername: string, address: string): int {.slot.} =
     var success: bool
     let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
-    result = registerUsernameEstimateGas(ensUsername, address, pubKey, success)
-    if not success:
-      result = 325000
+    try:
+      result = registerUsernameEstimateGas(ensUsername, address, pubKey)
+    except:
+      result = 380000
   
   proc registerENS*(self: EnsManager, username: string, address: string, gas: string, gasPrice: string, password: string): string {.slot.} =
     var success: bool
@@ -226,15 +227,25 @@ QtObject:
       self.pendingUsernames.incl(ensUsername)
       self.add ensUsername
 
-  proc setPubKey(self: EnsManager, username: string, password: string) {.slot.} =
+    except RpcException as e:
+      result = $(%* { "error": %* { "message": %e.msg }})
+
+  proc setPubKeyGasEstimate(self: EnsManager, ensUsername: string, address: string): int {.slot.} =
     let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
-    let address = status_wallet.getWalletAccounts()[0].address
-    let walletAddress = parseAddress(address)
-    let trxHash = setPubKey(username, walletAddress, pubKey, password)
+    try:
+      result = setPubKeyEstimateGas(ensUsername, address, pubKey)
+    except:
+      result = 80000
 
-    self.transactionWasSent(trxHash)
+  proc setPubKey(self: EnsManager, username: string, address: string, gas: string, gasPrice: string, password: string): string {.slot.} =
+    try:
+      let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+      let response = setPubKey(username, pubKey, address, gas, gasPrice, password)
+      result = $(%* { "result": %response })
+      self.transactionWasSent(response)
 
-    # TODO: handle transaction failure
-    self.pendingUsernames.incl(username)
-    self.add username
- 
+      # TODO: handle transaction failure
+      self.pendingUsernames.incl(username)
+      self.add username
+    except RpcException as e:
+      result = $(%* { "error": %* { "message": %e.msg }})
