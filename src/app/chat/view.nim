@@ -251,10 +251,6 @@ QtObject:
 
     self.activeChannel.setChatItem(selectedChannel)
     self.status.chat.setActiveChannel(selectedChannel.id)
-    discard self.status.chat.markAllChannelMessagesRead(selectedChannel.id)
-    self.currentSuggestions.setNewData(self.status.contacts.getContacts())
-    self.setLastMessageTimestamp(true)
-    self.activeChannelChanged()
 
   proc getActiveChannelIdx(self: ChatsView): QVariant {.slot.} =
     newQVariant(self.chats.chats.findIndexById(self.activeChannel.id))
@@ -287,7 +283,6 @@ QtObject:
     if(channel == ""): return
     self.activeChannel.setChatItem(self.chats.getChannel(self.chats.chats.findIndexById(channel)))
     discard self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
-    self.currentSuggestions.setNewData(self.status.contacts.getContacts())
     self.setLastMessageTimestamp(true)
     self.activeChannelChanged()
 
