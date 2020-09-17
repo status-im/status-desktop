@@ -140,7 +140,7 @@ StackLayout {
         BlockContactConfirmationDialog {
             id: blockContactConfirmationDialog
             onBlockButtonClicked: {
-                chatsModel.blockContact(blockContactConfirmationDialog.contactAddress)
+                profileModel.blockContact(blockContactConfirmationDialog.contactAddress)
                 blockContactConfirmationDialog.close()
                 profilePopup.close()
             }
