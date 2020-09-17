@@ -356,7 +356,7 @@ ModalPopup {
                 if (profileModel.isAdded(fromAuthor)) {
                     popup.removeButtonClicked(fromAuthor)
                 } else {
-                    chatsModel.addContact(fromAuthor)
+                    profileModel.addContact(fromAuthor)
                 }
                 profilePopup.close()
             }

@@ -513,15 +513,6 @@ QtObject:
   proc renameGroup*(self: ChatsView, newName: string) {.slot.} =
     self.status.chat.renameGroup(self.activeChannel.id, newName)
 
-  proc blockContact*(self: ChatsView, id: string): string {.slot.} =
-    return self.status.contacts.blockContact(id)
-
-  proc addContact*(self: ChatsView, id: string): string {.slot.} =
-    return self.status.contacts.addContact(id)
-
-  proc removeContact*(self: ChatsView, id: string) {.slot.} =
-    self.status.contacts.removeContact(id)
-
   proc createGroup*(self: ChatsView, groupName: string, pubKeys: string) {.slot.} =
     let pubKeysSeq = map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
     self.status.chat.createGroup(groupName, pubKeysSeq)
