@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../../imports"
 import "../../../../../shared"
+import "../../../../../shared/status"
 
 Rectangle {
     property string name: "Jotaro Kujo"
@@ -142,7 +143,7 @@ Rectangle {
         }
     }
 
-    RadioButton {
+    StatusRadioButton {
         visible: selectable
         anchors.top: parent.top
         anchors.topMargin: Style.current.smallPadding
