@@ -212,7 +212,7 @@ ModalPopup {
             id: btnNext
             anchors.right: parent.right
             //% "Next"
-            label: qsTrId("next")
+            text: qsTrId("next")
             enabled: stack.currentGroup.isValid && !stack.currentGroup.isPending
             state: stack.currentGroup.isPending ? "pending" : "default"
             onClicked: {
