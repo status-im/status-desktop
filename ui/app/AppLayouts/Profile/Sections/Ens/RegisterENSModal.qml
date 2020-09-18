@@ -11,11 +11,13 @@ ModalPopup {
     property string ensUsername: ""
     property string ensPrice: "10"
 
-    title: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(ensPrice)).arg(asset.symbol)
+    //% "Authorize %1 %2"
+    title: qsTrId("authorize--1--2").arg(Utils.stripTrailingZeros(ensPrice)).arg(asset.symbol)
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
-        title: qsTr("Error sending the transaction")
+        //% "Error sending the transaction"
+        title: qsTrId("error-sending-the-transaction")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }
@@ -44,7 +46,8 @@ ModalPopup {
 
         if (!response.success) {
             if (response.result.includes("could not decrypt key with given password")){
-                transactionSigner.validationError = qsTr("Wrong password")
+                //% "Wrong password"
+                transactionSigner.validationError = qsTrId("wrong-password")
                 return
             }
             sendingError.text = response.result
@@ -52,7 +55,8 @@ ModalPopup {
         }
 
         usernameRegistered(username);
-        sendingSuccess.text = qsTr("Transaction sent to the blockchain. You can watch the progress on Etherscan: %2%1").arg(response.result).arg(walletModel.etherscanLink)
+        //% "Transaction sent to the blockchain. You can watch the progress on Etherscan: %2%1"
+        sendingSuccess.text = qsTrId("transaction-sent-to-the-blockchain--you-can-watch-the-progress-on-etherscan---2-1").arg(response.result).arg(walletModel.etherscanLink)
         sendingSuccess.open()
     }
 
@@ -68,8 +72,10 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group1
-            headerText: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(root.ensPrice)).arg(root.asset.symbol)
-            footerText: qsTr("Continue")
+            //% "Authorize %1 %2"
+            headerText: qsTrId("authorize--1--2").arg(Utils.stripTrailingZeros(root.ensPrice)).arg(root.asset.symbol)
+            //% "Continue"
+            footerText: qsTrId("continue")
 
             AccountSelector {
                 id: selectFromAccount
@@ -77,7 +83,8 @@ ModalPopup {
                 selectedAccount: walletModel.currentAccount
                 currency: walletModel.defaultCurrency
                 width: stack.width
-                label: qsTr("Choose account")
+                //% "Choose account"
+                label: qsTrId("choose-account")
                 showBalanceForAssetSymbol: root.asset.symbol
                 minRequiredAssetBalance: root.ensPrice
                 reset: function() {
@@ -135,8 +142,10 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group3
-            headerText: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(root.ensPrice)).arg(root.asset.symbol)
-            footerText: qsTr("Sign with password")
+            //% "Authorize %1 %2"
+            headerText: qsTrId("authorize--1--2").arg(Utils.stripTrailingZeros(root.ensPrice)).arg(root.asset.symbol)
+            //% "Sign with password"
+            footerText: qsTrId("sign-with-password")
 
             TransactionPreview {
                 id: pvwTransaction
@@ -171,8 +180,10 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group4
-            headerText: qsTr("Send %1 %2").arg(Utils.stripTrailingZeros(root.ensPrice)).arg(root.asset.symbol)
-            footerText: qsTr("Sign with password")
+            //% "Send %1 %2"
+            headerText: qsTrId("send--1--2").arg(Utils.stripTrailingZeros(root.ensPrice)).arg(root.asset.symbol)
+            //% "Sign with password"
+            footerText: qsTrId("sign-with-password")
 
             TransactionSigner {
                 id: transactionSigner
@@ -193,7 +204,8 @@ ModalPopup {
         StyledButton {
             id: btnNext
             anchors.right: parent.right
-            label: qsTr("Next")
+            //% "Next"
+            label: qsTrId("next")
             disabled: !stack.currentGroup.isValid
             onClicked: {
                 const validity = stack.currentGroup.validate() 
