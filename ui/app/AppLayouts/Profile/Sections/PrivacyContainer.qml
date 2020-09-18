@@ -14,19 +14,17 @@ Item {
     Item {
         id: profileImgNameContainer
         anchors.top: parent.top
-        anchors.topMargin: 46
         anchors.right: parent.right
         anchors.rightMargin: contentMargin
         anchors.left: parent.left
         anchors.leftMargin: contentMargin
         anchors.bottom: parent.bottom
 
-        StyledText {
+        StatusSectionHeadline {
             id: labelSecurity
             //% "Security"
             text: qsTrId("security")
-            font.pixelSize: 15
-            color: Style.current.darkGrey
+            anchors.top: parent.top
         }
 
         Item {
@@ -76,14 +74,11 @@ Item {
             anchors.top: backupSeedPhrase.bottom
             anchors.topMargin: Style.current.bigPadding
         }
-        StyledText {
+        StatusSectionHeadline {
             id: labelPrivacy
             //% "Privacy"
             text: qsTrId("privacy")
-            font.pixelSize: 15
-            color: Style.current.darkGrey
             anchors.top: separator.bottom
-            anchors.topMargin: Style.current.smallPadding
         }
 
         RowLayout {
