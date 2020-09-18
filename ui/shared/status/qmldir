@@ -2,5 +2,6 @@ StatusButton 1.0 StatusButton.qml
 StatusRadioButton 1.0 StatusRadioButton.qml
 StatusRoundButton 1.0 StatusRoundButton.qml
 StatusSectionHeadline 1.0 StatusSectionHeadline.qml
+StatusSectionMenuItem 1.0 StatusSectionMenuItem.qml
 StatusSlider 1.0 StatusSlider.qml
 StatusToolTip 1.0 StatusToolTip.qml
