@@ -1,4 +1,5 @@
 import NimQml, eventemitter, chronicles, os, strformat
+import confutils
 
 import app/chat/core as chat
 import app/wallet/core as wallet
@@ -17,12 +18,21 @@ var signalsQObjPointer: pointer
 logScope:
   topics = "main"
 
+type
+  CLIConfig = object
+    uri* {.
+      defaultValue: "",
+      desc: "Protocol URI with params to open a chat or other"
+      name: "uri" }: string
+
 proc mainProc() =
   let status = statuslib.newStatusInstance()
   status.initNode()
 
   enableHDPI()
   initializeOpenGL()
+
+  var cfg = CliConfig.load()
 
   let app = newQApplication("Status Desktop")
   let resources =
@@ -92,7 +102,7 @@ proc mainProc() =
     status.startMessenger()
     profile.init(args.account)
     wallet.init()
-    chat.init()
+    chat.init(cfg.uri)
     utilsController.init()
 
     wallet.checkPendingTransactions()

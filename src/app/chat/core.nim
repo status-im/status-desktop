@@ -1,5 +1,6 @@
 import NimQml, eventemitter, chronicles, tables
 import ../../status/chat as chat_model
+import ../../status/chat/chat as chat_types
 import ../../status/mailservers as mailserver_model
 import ../../status/messages as messages_model
 import ../../status/signals/types
@@ -29,7 +30,15 @@ proc delete*(self: ChatController) =
 include event_handling
 include signal_handling
 
-proc init*(self: ChatController) =
+proc handleProtocolUri(self: ChatController, protocolUri: string) =
+  let uriPart = protocolUri.replace("status-im://", "").split("/")
+  case uriPart[0]:
+    of "chat":
+      case uriPart[1]:
+        of "public":
+          discard self.view.joinChat(uriPart[2], (int)chat_types.ChatType.Public)
+
+proc init*(self: ChatController, protocolUri: string) =
   self.handleMailserverEvents()
   self.handleChatEvents()
   self.handleSignals()
@@ -40,6 +49,8 @@ proc init*(self: ChatController) =
   self.view.obtainAvailableStickerPacks()
   let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
   self.view.pubKey = pubKey
+
+  self.handleProtocolUri(protocolUri)
 
   let recentStickers = self.status.stickers.getRecentStickers()
   for sticker in recentStickers:
