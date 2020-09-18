@@ -20,6 +20,13 @@ Rectangle {
     property bool paste: false;
     property bool isColonPressed: false;
 
+    Connections {
+        target: chatsModel
+        onChatGroupJoined: {
+            rectangle.visible = true;
+        } 
+    }
+
     Audio {
         id: sendMessageSound
         source: "../../../../sounds/send_message.wav"
