@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 
 Item {
     id: helpContainer
@@ -18,21 +19,18 @@ Item {
         Item {
             id: glossary
             anchors.top: parent.top
-            anchors.topMargin: 24
             anchors.right: parent.right
             anchors.rightMargin: contentMargin
             anchors.left: parent.left
             anchors.leftMargin: contentMargin
             height: this.childrenRect.height
 
-            StyledText {
+            StatusSectionHeadline {
                 id: glossaryTitle
                 //% "Glossary"
                 text: qsTrId("glossary")
                 anchors.left: parent.left
                 anchors.top: parent.top
-                font.pixelSize: 15
-                color: Style.current.secondaryText
             }
 
             GlossaryEntry {
