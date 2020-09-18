@@ -6,7 +6,6 @@ import "../../shared"
 
 Switch {
     id: control
-    text: qsTr("Switch")
 
     indicator: Rectangle {
         implicitWidth: 52
@@ -40,7 +39,7 @@ Switch {
         text: control.text
         opacity: enabled ? 1.0 : 0.3
         verticalAlignment: Text.AlignVCenter
-        leftPadding: control.indicator.width + control.spacing
+        leftPadding: !!control.text ? control.indicator.width + control.spacing : control.indicator.width
     }
 }
 
