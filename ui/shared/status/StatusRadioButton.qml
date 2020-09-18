@@ -9,8 +9,8 @@ RadioButton {
     indicator: Rectangle {
         implicitWidth: 20
         implicitHeight: 20
-        x: control.leftPadding
-        y: 4
+        x: 0
+        y: 6
         radius: 10
         color: control.checked ? Style.current.blue : Style.current.grey
 
@@ -27,6 +27,8 @@ RadioButton {
     contentItem: StyledText {
         text: control.text
         color: Style.current.textColor
-        leftPadding: control.indicator.width + control.spacing
+        verticalAlignment: Text.AlignVCenter
+        leftPadding: !!control.text ? control.indicator.width + control.spacing : control.indicator.width
+        font.pixelSize: 15
     }
 }
