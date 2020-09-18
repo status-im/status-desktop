@@ -4,12 +4,15 @@ import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 import "../ChatColumn/samples"
 
 Popup {
-    id: popup
+    id: root
     property var recentStickers: StickerData {}
     property var stickerPackList: StickerPackData {}
+    property int installedPacksCount: chatsModel.numInstalledStickerPacks
+    property bool stickerPacksLoaded: false
     modal: false
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     background: Rectangle {
@@ -31,6 +34,7 @@ Popup {
         footerContent.visible = true
         stickersContainer.visible = true
     }
+
     contentItem: ColumnLayout {
         anchors.fill: parent
         spacing: 0
@@ -57,7 +61,6 @@ Popup {
                 stickersContainer.visible = true
             }
         }
-
         Item {
             id: stickersContainer
             Layout.fillWidth: true
@@ -71,10 +74,11 @@ Popup {
             Item {
                 id: noStickerPacks
                 anchors.fill: parent
-                visible: stickerGrid.count <= 0 || stickerPackListView.count <= 0
+                visible: false
 
                 Image {
                     id: imgNoStickers
+                    visible: lblNoStickersYet.visible || lblNoRecentStickers.visible
                     width: 56
                     height: 56
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -92,7 +96,7 @@ Popup {
 
                     StyledText {
                         id: lblNoStickersYet
-                        visible: stickerPackListView.count <= 0
+                        visible: root.installedPacksCount === 0
                         anchors.fill: parent
                         font.pixelSize: 15
                         //% "You don't have any stickers yet"
@@ -103,7 +107,7 @@ Popup {
 
                     StyledText {
                         id: lblNoRecentStickers
-                        visible: stickerPackListView.count > 0 && stickerGrid.count <= 0
+                        visible: stickerPackListView.selectedPackId === -1 && chatsModel.recentStickers.rowCount() === 0 && !lblNoStickersYet.visible
                         anchors.fill: parent
                         font.pixelSize: 15
                         //% "Recently used stickers will appear here"
@@ -114,7 +118,7 @@ Popup {
                 }
 
                 StyledButton {
-                    visible: stickerPackListView.count <= 0
+                    visible: lblNoStickersYet.visible
                     //% "Get Stickers"
                     label: qsTrId("get-stickers")
                     anchors.top: noStickersContainer.bottom
@@ -132,7 +136,28 @@ Popup {
                 model: recentStickers
                 onStickerClicked: {
                     chatsModel.sendSticker(hash, packId)
-                    popup.close()
+                    root.close()
+                }
+            }
+            StickerList {
+                id: loadingGrid
+                visible: chatsModel.recentStickers.rowCount() === 0
+                interactive: false
+                model: new Array(20)
+                delegate: Item {
+                    width: stickerGrid.cellWidth
+                    height: stickerGrid.cellHeight
+                    Column {
+                        anchors.fill: parent
+                        anchors.topMargin: 4
+                        anchors.leftMargin: 4
+                        Rectangle {
+                            width: 80
+                            height: 80
+                            radius: width / 2
+                            color: Style.current.backgroundHover
+                        }
+                    }
                 }
             }
         }
@@ -147,15 +172,13 @@ Popup {
             Layout.bottomMargin: 8
             Layout.alignment: Qt.AlignTop | Qt.AlignLeft
 
-            RoundedIcon {
+            StatusRoundButton {
                 id: btnAddStickerPack
-                anchors.left: parent.left
-                anchors.top: parent.top
-                width: 24
-                height: 24
-                iconWidth: 13.5
-                iconHeight: 13.5
-                source: "../../../img/plusSign.svg"
+                size: "medium"
+                icon.name: "plusSign"
+                implicitWidth: 24
+                implicitHeight: 24
+                state: root.stickerPacksLoaded ? "default" : "pending"
                 onClicked: {
                     stickersContainer.visible = false
                     stickerMarket.visible = true
@@ -205,8 +228,31 @@ Popup {
                         }
                     }
                 }
+                Repeater {
+                    id: loadingStickerPackListView
+                    model: new Array(7)
+
+                    delegate: Rectangle {
+                        width: 24
+                        height: 24
+                        Layout.preferredHeight: height
+                        Layout.preferredWidth: width
+                        radius: width / 2
+                        color: Style.current.backgroundHover
+                    }
+                }
             }
             
+        }
+    }
+    Connections {
+        target: chatsModel
+        onStickerPacksLoaded: {
+            root.stickerPacksLoaded = true
+            stickerPackListView.visible = true
+            loadingGrid.visible = false
+            loadingStickerPackListView.model = []
+            noStickerPacks.visible = installedPacksCount === 0 || chatsModel.recentStickers.rowCount() === 0
         }
     }
 }

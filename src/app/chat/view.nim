@@ -127,6 +127,12 @@ QtObject:
         packs.add(stickerPack)
       $(%*(packs))
 
+  proc stickerPacksLoaded*(self: ChatsView) {.signal.}
+
+  proc installedStickerPacksUpdated*(self: ChatsView) {.signal.}
+
+  proc recentStickersUpdated*(self: ChatsView) {.signal.}
+
   proc setAvailableStickerPacks*(self: ChatsView, availableStickersJSON: string) {.slot.} =
     let
       accounts = status_wallet.getWalletAccounts() # TODO: make generic
@@ -150,6 +156,8 @@ QtObject:
       let isPending = pendingStickerPacks.contains(stickerPack.id) and not isBought
       self.status.stickers.availableStickerPacks[stickerPack.id] = stickerPack
       self.addStickerPackToList(stickerPack, isInstalled, isBought, isPending)
+    self.stickerPacksLoaded()
+    self.installedStickerPacksUpdated()
 
   proc getChatsList(self: ChatsView): QVariant {.slot.} =
     newQVariant(self.chats)
@@ -254,9 +262,17 @@ QtObject:
     write = setActiveChannelByIndex
     notify = activeChannelChanged
 
+  proc getNumInstalledStickerPacks(self: ChatsView): QVariant {.slot.} =
+    newQVariant(self.status.stickers.installedStickerPacks.len)
+
+  QtProperty[QVariant] numInstalledStickerPacks:
+    read = getNumInstalledStickerPacks
+    notify = installedStickerPacksUpdated
+
   proc installStickerPack*(self: ChatsView, packId: int) {.slot.} =
     self.status.stickers.installStickerPack(packId)
     self.stickerPacks.updateStickerPackInList(packId, true, false)
+    self.installedStickerPacksUpdated()
 
   proc resetStickerPackBuyAttempt*(self: ChatsView, packId: int) {.slot.} =
     self.stickerPacks.updateStickerPackInList(packId, false, false)
@@ -266,12 +282,15 @@ QtObject:
     self.status.stickers.removeRecentStickers(packId)
     self.stickerPacks.updateStickerPackInList(packId, false, false)
     self.recentStickers.removeStickersFromList(packId)
+    self.installedStickerPacksUpdated()
+    self.recentStickersUpdated()
 
   proc getRecentStickerList*(self: ChatsView): QVariant {.slot.} =
     result = newQVariant(self.recentStickers)
 
   QtProperty[QVariant] recentStickers:
     read = getRecentStickerList
+    notify = recentStickersUpdated
 
   proc setActiveChannel*(self: ChatsView, channel: string) {.slot.} =
     if(channel == ""): return
@@ -392,6 +411,7 @@ QtObject:
 
   proc addRecentStickerToList*(self: ChatsView, sticker: Sticker) =
     self.recentStickers.addStickerToList(sticker)
+    self.recentStickersUpdated()
   
   proc copyToClipboard*(self: ChatsView, content: string) {.slot.} =
     setClipBoardText(content)
