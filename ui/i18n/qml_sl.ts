@@ -171,12 +171,13 @@
         </message>
         <message id="enter-contact-code">
             <location filename="../app/AppLayouts/Chat/components/PrivateChatPopup.qml" line="65"/>
-            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="114"/>
+            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="134"/>
             <source>Enter ENS username or chat key</source>
             <translation type="unfinished"/>
         </message>
         <message id="user-not-found">
             <location filename="../app/AppLayouts/Chat/components/PrivateChatPopup.qml" line="81"/>
+            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="177"/>
             <source>User not found</source>
             <translation type="unfinished">Ni sporočil</translation>
         </message>
@@ -199,39 +200,39 @@
         </message>
         <message id="send-message">
             <location filename="../app/AppLayouts/Chat/components/MessageContextMenu.qml" line="106"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Contacts/Contact.qml" line="101"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Contacts/Contact.qml" line="102"/>
             <source>Send message</source>
             <oldsource>Send Message</oldsource>
             <translation type="unfinished"/>
         </message>
         <message id="block-user">
             <location filename="../app/AppLayouts/Chat/components/ProfilePopup.qml" line="279"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Contacts/Contact.qml" line="112"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Contacts/Contact.qml" line="113"/>
             <location filename="../shared/BlockContactConfirmationDialog.qml" line="14"/>
             <location filename="../shared/BlockContactConfirmationDialog.qml" line="39"/>
             <source>Block User</source>
             <translation type="unfinished"/>
         </message>
         <message id="connected">
-            <location filename="../app/AppLayouts/Chat/ChatColumn.qml" line="86"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn.qml" line="85"/>
             <source>Connected</source>
             <translation type="unfinished"/>
         </message>
         <message id="disconnected">
-            <location filename="../app/AppLayouts/Chat/ChatColumn.qml" line="88"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn.qml" line="87"/>
             <source>Disconnected</source>
             <translation type="unfinished"/>
         </message>
         <message id="remove-contact">
-            <location filename="../app/AppLayouts/Chat/ChatColumn.qml" line="150"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn.qml" line="152"/>
             <location filename="../app/AppLayouts/Chat/components/ProfilePopup.qml" line="290"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Contacts/Contact.qml" line="123"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Contacts/Contact.qml" line="124"/>
             <location filename="../app/AppLayouts/Profile/Sections/Contacts/ContactList.qml" line="72"/>
             <source>Remove Contact</source>
             <translation type="unfinished"/>
         </message>
         <message id="are-you-sure-you-want-to-remove-this-contact-">
-            <location filename="../app/AppLayouts/Chat/ChatColumn.qml" line="152"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn.qml" line="154"/>
             <location filename="../app/AppLayouts/Profile/Sections/Contacts/ContactList.qml" line="74"/>
             <source>Are you sure you want to remove this contact?</source>
             <translation type="unfinished"/>
@@ -298,12 +299,12 @@
             <translation>Stiki</translation>
         </message>
         <message id="devices">
-            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="20"/>
+            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="21"/>
             <source>Devices</source>
             <translation type="unfinished"/>
         </message>
         <message id="sync-settings">
-            <location filename="../app/AppLayouts/Profile/Sections/SyncContainer.qml" line="15"/>
+            <location filename="../app/AppLayouts/Profile/Sections/SyncContainer.qml" line="16"/>
             <source>Sync settings</source>
             <translation type="unfinished"/>
         </message>
@@ -323,7 +324,7 @@
             <translation type="unfinished"/>
         </message>
         <message id="advanced-settings">
-            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="19"/>
+            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="18"/>
             <source>Advanced settings</source>
             <translation type="unfinished"/>
         </message>
@@ -334,7 +335,7 @@
         </message>
         <message id="status-desktop">
             <location filename="../app/AppLayouts/Profile/Sections/AboutContainer.qml" line="29"/>
-            <location filename="../main.qml" line="29"/>
+            <location filename="../main.qml" line="28"/>
             <source>Status Desktop</source>
             <translation type="unfinished"/>
         </message>
@@ -370,49 +371,49 @@
             <translation type="unfinished"/>
         </message>
         <message id="wallet-tab">
-            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="37"/>
+            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="36"/>
             <source>Wallet Tab</source>
             <translation type="unfinished"/>
         </message>
         <message id="not-recommended---use-at-your-own-risk">
-            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="47"/>
+            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="46"/>
             <source>NOT RECOMMENDED - Use at your own risk</source>
             <translation type="unfinished"/>
         </message>
         <message id="ui-components">
-            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="110"/>
+            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="109"/>
             <source>UI Components</source>
             <translation type="unfinished"/>
         </message>
         <message id="developer-setting">
-            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="121"/>
+            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="120"/>
             <source>Developer setting</source>
             <translation type="unfinished"/>
         </message>
         <message id="node-management-tab">
-            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="59"/>
+            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="58"/>
             <source>Node Management Tab</source>
             <translation type="unfinished"/>
         </message>
         <message id="under-development">
-            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="69"/>
-            <location filename="../app/AppLayouts/Profile/Sections/PrivacyContainer.qml" line="104"/>
+            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="68"/>
+            <location filename="../app/AppLayouts/Profile/Sections/PrivacyContainer.qml" line="105"/>
             <source>under development</source>
             <translation type="unfinished"/>
         </message>
         <message id="display-images-in-chat-automatically">
-            <location filename="../app/AppLayouts/Profile/Sections/PrivacyContainer.qml" line="94"/>
+            <location filename="../app/AppLayouts/Profile/Sections/PrivacyContainer.qml" line="95"/>
             <source>Display images in chat automatically</source>
             <translation type="unfinished"/>
         </message>
         <message id="enable-testnet--ropsten--ncurrent-network---1">
-            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="81"/>
+            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="80"/>
             <source>Enable testnet (Ropsten)
 Current network: %1</source>
             <translation type="unfinished"/>
         </message>
         <message id="under-development-nnote--you-will-be-logged-out-and-all-installed-nsticker-packs-will-be-removed-and-will-nneed-to-be-reinstalled--purchased-sticker-npacks-will-not-need-to-be-re-purchased-">
-            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="94"/>
+            <location filename="../app/AppLayouts/Profile/Sections/AdvancedContainer.qml" line="93"/>
             <source>Under development
 NOTE: You will be logged out and all installed
 sticker packs will be removed and will
@@ -436,40 +437,41 @@ packs will not need to be re-purchased.</source>
             <translation>Končano</translation>
         </message>
         <message id="pairing-please-set-a-name">
-            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="42"/>
+            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="43"/>
             <source>Please set a name for your device.</source>
             <translation type="unfinished"/>
         </message>
         <message id="specify-name">
-            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="49"/>
+            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="50"/>
             <source>Specify a name</source>
             <translation type="unfinished"/>
         </message>
         <message id="continue">
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandModal.qml" line="38"/>
-            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="78"/>
-            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="59"/>
-            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="64"/>
+            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="66"/>
+            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="60"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="78"/>
+            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="54"/>
             <source>Continue</source>
             <translation type="unfinished"/>
         </message>
         <message id="from-account">
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandModal.qml" line="47"/>
-            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="73"/>
+            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="63"/>
             <source>From account</source>
             <translation type="unfinished"/>
         </message>
         <message id="preview">
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandModal.qml" line="77"/>
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="83"/>
-            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="107"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="70"/>
+            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="97"/>
             <source>Preview</source>
             <translation type="unfinished"/>
         </message>
         <message id="transaction-preview">
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandModal.qml" line="95"/>
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="135"/>
-            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="175"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="122"/>
+            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="165"/>
             <source>Transaction preview</source>
             <translation type="unfinished"/>
         </message>
@@ -481,59 +483,55 @@ Assets won’t be sent yet.</source>
         </message>
         <message id="next">
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandModal.qml" line="173"/>
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="216"/>
-            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="227"/>
-            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="261"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="203"/>
+            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="215"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="208"/>
+            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="251"/>
             <source>Next</source>
             <translation>Naprej</translation>
         </message>
         <message id="pair-this-device">
-            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="96"/>
+            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="97"/>
             <source>Advertise device</source>
             <translation type="unfinished"/>
         </message>
         <message id="pair-this-device-description">
-            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="107"/>
+            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="108"/>
             <source>Pair your devices to sync contacts and chats between them</source>
             <translation type="unfinished"/>
         </message>
         <message id="learn-more">
-            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="126"/>
+            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="127"/>
             <source>Learn more</source>
             <translation type="unfinished"/>
         </message>
         <message id="paired-devices">
-            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="155"/>
+            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="156"/>
             <source>Paired devices</source>
             <translation type="unfinished"/>
         </message>
         <message id="sync-in-progress">
-            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="211"/>
+            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="212"/>
             <source>Syncing...</source>
             <translation>Sinhronizacija...</translation>
         </message>
         <message id="sync-all-devices">
-            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="213"/>
+            <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="214"/>
             <source>Sync all devices</source>
             <translation type="unfinished"/>
         </message>
-        <message id="help-menus:-faq,-glossary,-etc.">
-            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="18"/>
-            <source>Help menus: FAQ, Glossary, etc.</source>
-            <translation type="unfinished"/>
-        </message>
         <message id="security">
-            <location filename="../app/AppLayouts/Profile/Sections/PrivacyContainer.qml" line="26"/>
+            <location filename="../app/AppLayouts/Profile/Sections/PrivacyContainer.qml" line="27"/>
             <source>Security</source>
             <translation type="unfinished"/>
         </message>
         <message id="backup-seed-phrase">
-            <location filename="../app/AppLayouts/Profile/Sections/PrivacyContainer.qml" line="41"/>
+            <location filename="../app/AppLayouts/Profile/Sections/PrivacyContainer.qml" line="42"/>
             <source>Backup Seed Phrase</source>
             <translation type="unfinished"/>
         </message>
         <message id="privacy">
-            <location filename="../app/AppLayouts/Profile/Sections/PrivacyContainer.qml" line="81"/>
+            <location filename="../app/AppLayouts/Profile/Sections/PrivacyContainer.qml" line="82"/>
             <source>Privacy</source>
             <translation type="unfinished"/>
         </message>
@@ -606,7 +604,7 @@ Assets won’t be sent yet.</source>
         </message>
         <message id="wallet-address">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/ENSDetails.qml" line="62"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="238"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="214"/>
             <location filename="../app/AppLayouts/Wallet/AccountSettingsModal.qml" line="79"/>
             <location filename="../app/AppLayouts/Wallet/ReceiveModal.qml" line="62"/>
             <source>Wallet address</source>
@@ -614,7 +612,7 @@ Assets won’t be sent yet.</source>
         </message>
         <message id="key">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/ENSDetails.qml" line="76"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="250"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="226"/>
             <source>Key</source>
             <translation type="unfinished"/>
         </message>
@@ -712,26 +710,46 @@ Assets won’t be sent yet.</source>
         <message id="command-button-send">
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandsPopup.qml" line="65"/>
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="19"/>
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="81"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="68"/>
             <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="14"/>
-            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="62"/>
-            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="105"/>
+            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="52"/>
+            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="95"/>
             <location filename="../app/AppLayouts/Wallet/WalletHeader.qml" line="112"/>
             <source>Send</source>
             <translation type="unfinished"/>
         </message>
         <message id="authorize--1--2">
-            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="15"/>
-            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="76"/>
-            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="150"/>
+            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="16"/>
+            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="64"/>
+            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="138"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="15"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="76"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="146"/>
             <source>Authorize %1 %2</source>
             <translation type="unfinished"/>
         </message>
         <message id="back">
-            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="215"/>
+            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="203"/>
             <location filename="../app/AppLayouts/Profile/Sections/Ens/ENSDetails.qml" line="90"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="293"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="269"/>
             <source>Back</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="ens-transaction-pending">
+            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="234"/>
+            <location filename="../app/AppLayouts/Profile/Sections/EnsContainer.qml" line="281"/>
+            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="283"/>
+            <source>Transaction pending...</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="could-not-buy-stickerpack">
+            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="244"/>
+            <source>Could not buy Stickerpack</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="stickerpack-bought-successfully">
+            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="247"/>
+            <source>Stickerpack bought successfully</source>
             <translation type="unfinished"/>
         </message>
         <message id="add/remove-tokens">
@@ -781,7 +799,7 @@ Assets won’t be sent yet.</source>
             <location filename="../app/AppLayouts/Wallet/components/AddAccountWithSeed.qml" line="26"/>
             <location filename="../app/AppLayouts/Wallet/components/GenerateAccountModal.qml" line="20"/>
             <location filename="../onboarding/CreatePasswordModal.qml" line="15"/>
-            <location filename="../shared/TransactionSigner.qml" line="14"/>
+            <location filename="../shared/TransactionSigner.qml" line="15"/>
             <source>You need to enter a password</source>
             <translation type="unfinished"/>
         </message>
@@ -790,7 +808,7 @@ Assets won’t be sent yet.</source>
             <location filename="../app/AppLayouts/Wallet/components/AddAccountWithSeed.qml" line="29"/>
             <location filename="../app/AppLayouts/Wallet/components/GenerateAccountModal.qml" line="23"/>
             <location filename="../onboarding/CreatePasswordModal.qml" line="18"/>
-            <location filename="../shared/TransactionSigner.qml" line="16"/>
+            <location filename="../shared/TransactionSigner.qml" line="17"/>
             <source>Password needs to be 4 characters or more</source>
             <translation type="unfinished"/>
         </message>
@@ -815,7 +833,7 @@ Assets won’t be sent yet.</source>
             <location filename="../app/AppLayouts/Wallet/components/AddAccountWithPrivateKey.qml" line="60"/>
             <location filename="../app/AppLayouts/Wallet/components/AddAccountWithSeed.qml" line="67"/>
             <location filename="../app/AppLayouts/Wallet/components/GenerateAccountModal.qml" line="48"/>
-            <location filename="../shared/TransactionSigner.qml" line="111"/>
+            <location filename="../shared/TransactionSigner.qml" line="112"/>
             <source>Password</source>
             <translation>Geslo</translation>
         </message>
@@ -902,19 +920,19 @@ Assets won’t be sent yet.</source>
         </message>
         <message id="must-be-greater-than-0">
             <location filename="../shared/AssetAndAmountInput.qml" line="11"/>
-            <location filename="../shared/GasSelector.qml" line="23"/>
+            <location filename="../shared/GasSelector.qml" line="24"/>
             <source>Must be greater than 0</source>
             <translation type="unfinished"/>
         </message>
         <message id="this-needs-to-be-a-number">
             <location filename="../shared/AssetAndAmountInput.qml" line="13"/>
-            <location filename="../shared/GasSelector.qml" line="25"/>
+            <location filename="../shared/GasSelector.qml" line="26"/>
             <source>This needs to be a number</source>
             <translation type="unfinished"/>
         </message>
         <message id="please-enter-an-amount">
             <location filename="../shared/AssetAndAmountInput.qml" line="15"/>
-            <location filename="../shared/GasSelector.qml" line="27"/>
+            <location filename="../shared/GasSelector.qml" line="28"/>
             <source>Please enter an amount</source>
             <translation type="unfinished"/>
         </message>
@@ -930,52 +948,53 @@ Assets won’t be sent yet.</source>
         </message>
         <message id="error-sending-the-transaction">
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="25"/>
-            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="20"/>
+            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="21"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="20"/>
             <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="20"/>
             <source>Error sending the transaction</source>
             <translation type="unfinished"/>
         </message>
         <message id="success-sending-the-transaction">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="32"/>
-            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="27"/>
-            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="27"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="27"/>
             <source>Success sending the transaction</source>
             <translation type="unfinished"/>
         </message>
+        <message id="transaction-sent-to-the-blockchain--you-can-watch-the-progress-on-etherscan---2-1">
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="59"/>
+            <source>Transaction sent to the blockchain. You can watch the progress on Etherscan: %2%1</source>
+            <translation type="unfinished"/>
+        </message>
         <message id="wrong-password">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="57"/>
-            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="51"/>
-            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="284"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="47"/>
+            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="42"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="50"/>
+            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="275"/>
             <source>Wrong password</source>
             <translation>Napačno geslo</translation>
         </message>
-        <message id="transaction-sent-to-the-blockchain--you-can-watch-the-progress-on-etherscan---2--1">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="65"/>
-            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="59"/>
-            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="292"/>
-            <source>Transaction sent to the blockchain. You can watch the progress on Etherscan: %2/%1</source>
-            <translation type="unfinished"/>
-        </message>
         <message id="error-estimating-gas---1">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="113"/>
-            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="150"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="100"/>
+            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="140"/>
             <source>Error estimating gas: %1</source>
             <translation type="unfinished"/>
         </message>
         <message id="sign-with-password">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="137"/>
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="166"/>
-            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="152"/>
-            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="194"/>
-            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="177"/>
-            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="210"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="124"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="153"/>
+            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="140"/>
+            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="182"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="148"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="186"/>
+            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="167"/>
+            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="200"/>
             <source>Sign with password</source>
             <translation type="unfinished"/>
         </message>
         <message id="send--1--2">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="168"/>
-            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="192"/>
-            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="212"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="155"/>
+            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="180"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="184"/>
+            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="202"/>
             <source>Send %1 %2</source>
             <translation type="unfinished"/>
         </message>
@@ -991,8 +1010,8 @@ Assets won’t be sent yet.</source>
         </message>
         <message id="recipient">
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandModal.qml" line="63"/>
-            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="90"/>
-            <location filename="../shared/RecipientSelector.qml" line="69"/>
+            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="80"/>
+            <location filename="../shared/RecipientSelector.qml" line="67"/>
             <location filename="../shared/TransactionPreview.qml" line="70"/>
             <source>Recipient</source>
             <translation>Prejemnik</translation>
@@ -1035,13 +1054,13 @@ Assets won’t be sent yet.</source>
         </message>
         <message id="gas-limit">
             <location filename="../app/AppLayouts/Wallet/components/TransactionModal.qml" line="177"/>
-            <location filename="../shared/GasSelector.qml" line="219"/>
+            <location filename="../shared/GasSelector.qml" line="220"/>
             <source>Gas limit</source>
             <translation type="unfinished"/>
         </message>
         <message id="gas-price">
             <location filename="../app/AppLayouts/Wallet/components/TransactionModal.qml" line="203"/>
-            <location filename="../shared/GasSelector.qml" line="239"/>
+            <location filename="../shared/GasSelector.qml" line="240"/>
             <source>Gas price</source>
             <translation type="unfinished"/>
         </message>
@@ -1056,7 +1075,7 @@ Assets won’t be sent yet.</source>
             <translation type="unfinished"/>
         </message>
         <message id="quit">
-            <location filename="../main.qml" line="82"/>
+            <location filename="../main.qml" line="90"/>
             <source>Quit</source>
             <translation type="unfinished"/>
         </message>
@@ -1256,7 +1275,7 @@ world--no bank account required</source>
         </message>
         <message id="view-profile">
             <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="109"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Contacts/Contact.qml" line="93"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Contacts/Contact.qml" line="94"/>
             <source>View Profile</source>
             <oldsource>View profile</oldsource>
             <translation type="unfinished"/>
@@ -1422,17 +1441,17 @@ world--no bank account required</source>
             <translation type="unfinished"/>
         </message>
         <message id="wallet-assets">
-            <location filename="../app/AppLayouts/Wallet/WalletLayout.qml" line="75"/>
+            <location filename="../app/AppLayouts/Wallet/WalletLayout.qml" line="79"/>
             <source>Assets</source>
             <translation type="unfinished"/>
         </message>
         <message id="wallet-collectibles">
-            <location filename="../app/AppLayouts/Wallet/WalletLayout.qml" line="82"/>
+            <location filename="../app/AppLayouts/Wallet/WalletLayout.qml" line="86"/>
             <source>Collectibles</source>
             <translation type="unfinished"/>
         </message>
         <message id="history">
-            <location filename="../app/AppLayouts/Wallet/WalletLayout.qml" line="89"/>
+            <location filename="../app/AppLayouts/Wallet/WalletLayout.qml" line="93"/>
             <source>History</source>
             <translation type="unfinished"/>
         </message>
@@ -1458,12 +1477,12 @@ world--no bank account required</source>
             <translation type="unfinished"/>
         </message>
         <message id="new-message-s--received">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatMessages.qml" line="52"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatMessages.qml" line="51"/>
             <source>New message(s) received</source>
             <translation type="unfinished"/>
         </message>
         <message id="click-here-to-scroll-back-down">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatMessages.qml" line="66"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatMessages.qml" line="65"/>
             <source>Click here to scroll back down</source>
             <translation type="unfinished"/>
         </message>
@@ -1564,23 +1583,23 @@ world--no bank account required</source>
             <translation>Profil</translation>
         </message>
         <message id="unblock-user">
-            <location filename="../app/AppLayouts/Profile/Sections/Contacts/Contact.qml" line="135"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Contacts/Contact.qml" line="136"/>
             <source>Unblock User</source>
             <translation type="unfinished">Ni sporočil</translation>
         </message>
         <message id="add-new-contact">
-            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="39"/>
+            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="40"/>
             <source>Add new contact</source>
             <translation type="unfinished"/>
         </message>
         <message id="blocked-contacts">
-            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="76"/>
-            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="96"/>
+            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="77"/>
+            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="97"/>
             <source>Blocked contacts</source>
             <translation type="unfinished"/>
         </message>
         <message id="add-contact">
-            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="109"/>
+            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="125"/>
             <source>Add contact</source>
             <translation type="unfinished"/>
         </message>
@@ -1589,19 +1608,24 @@ world--no bank account required</source>
             <translation type="obsolete">Ni sporočil</translation>
         </message>
         <message id="you-don-t-have-any-contacts-yet">
-            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="184"/>
+            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="236"/>
             <source>You don’t have any contacts yet</source>
             <translation type="unfinished"/>
         </message>
         <message id="invite-firends">
-            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="197"/>
+            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="249"/>
             <source>Invite firends</source>
             <translation type="unfinished"/>
         </message>
         <message id="sounds-settings">
-            <location filename="../app/AppLayouts/Profile/Sections/SoundsContainer.qml" line="17"/>
+            <location filename="../app/AppLayouts/Profile/Sections/SoundsContainer.qml" line="18"/>
             <source>Sounds settings</source>
             <translation type="unfinished"/>
+        </message>
+        <message id="Sound volume">
+            <location filename="../app/AppLayouts/Profile/Sections/SoundsContainer.qml" line="31"/>
+            <source/>
+            <translation type="unfinished">Ni sporočil</translation>
         </message>
         <message id="collectibles-will-appear-here">
             <location filename="../app/AppLayouts/Wallet/CollectiblesTab.qml" line="15"/>
@@ -1655,7 +1679,8 @@ world--no bank account required</source>
             <translation type="unfinished"/>
         </message>
         <message id="choose-account">
-            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="91"/>
+            <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="79"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="87"/>
             <location filename="../shared/AccountSelector.qml" line="10"/>
             <source>Choose account</source>
             <translation type="unfinished"/>
@@ -1707,48 +1732,48 @@ world--no bank account required</source>
             <translation type="unfinished"/>
         </message>
         <message id="network-fee">
-            <location filename="../shared/GasSelector.qml" line="63"/>
+            <location filename="../shared/GasSelector.qml" line="64"/>
             <location filename="../shared/TransactionPreview.qml" line="317"/>
             <source>Network fee</source>
             <translation type="unfinished"/>
         </message>
         <message id="slow">
-            <location filename="../shared/GasSelector.qml" line="107"/>
+            <location filename="../shared/GasSelector.qml" line="108"/>
             <source>Slow</source>
             <translation type="unfinished"/>
         </message>
         <message id="optimal">
-            <location filename="../shared/GasSelector.qml" line="119"/>
+            <location filename="../shared/GasSelector.qml" line="120"/>
             <source>Optimal</source>
             <translation type="unfinished"/>
         </message>
         <message id="fast">
-            <location filename="../shared/GasSelector.qml" line="131"/>
+            <location filename="../shared/GasSelector.qml" line="132"/>
             <source>Fast</source>
             <translation type="unfinished"/>
         </message>
         <message id="reset">
-            <location filename="../shared/GasSelector.qml" line="145"/>
+            <location filename="../shared/GasSelector.qml" line="146"/>
             <source>Reset</source>
             <translation type="unfinished"/>
         </message>
         <message id="advanced">
-            <location filename="../shared/GasSelector.qml" line="162"/>
+            <location filename="../shared/GasSelector.qml" line="163"/>
             <source>Advanced</source>
             <translation type="unfinished"/>
         </message>
         <message id="custom-network-fee">
-            <location filename="../shared/GasSelector.qml" line="173"/>
+            <location filename="../shared/GasSelector.qml" line="174"/>
             <source>Custom Network Fee</source>
             <translation type="unfinished"/>
         </message>
         <message id="gwei">
-            <location filename="../shared/GasSelector.qml" line="259"/>
+            <location filename="../shared/GasSelector.qml" line="260"/>
             <source>Gwei</source>
             <translation type="unfinished"/>
         </message>
         <message id="invalid-key-confirm">
-            <location filename="../shared/GasSelector.qml" line="283"/>
+            <location filename="../shared/GasSelector.qml" line="284"/>
             <source>Apply</source>
             <translation type="unfinished"/>
         </message>
@@ -1774,27 +1799,28 @@ world--no bank account required</source>
             <translation>Naslov</translation>
         </message>
         <message id="my-account">
-            <location filename="../shared/RecipientSelector.qml" line="29"/>
-            <source>ContactMy account</source>
+            <location filename="../shared/RecipientSelector.qml" line="27"/>
+            <source>My account</source>
+            <oldsource>ContactMy account</oldsource>
             <translation type="unfinished"/>
         </message>
         <message id="no-recipient-selected">
-            <location filename="../shared/RecipientSelector.qml" line="105"/>
+            <location filename="../shared/RecipientSelector.qml" line="103"/>
             <source>No recipient selected</source>
             <translation type="unfinished"/>
         </message>
         <message id="signing-phrase">
-            <location filename="../shared/TransactionSigner.qml" line="54"/>
+            <location filename="../shared/TransactionSigner.qml" line="55"/>
             <source>Signing phrase</source>
             <translation type="unfinished"/>
         </message>
         <message id="signing-phrase-is-a-3-word-combination-that-displayed-when-you-entered-the-wallet-on-this-device-for-the-first-time-">
-            <location filename="../shared/TransactionSigner.qml" line="71"/>
+            <location filename="../shared/TransactionSigner.qml" line="72"/>
             <source>Signing phrase is a 3 word combination that displayed when you entered the wallet on this device for the first time.</source>
             <translation type="unfinished"/>
         </message>
         <message id="enter-the-password-you-use-to-unlock-this-device">
-            <location filename="../shared/TransactionSigner.qml" line="100"/>
+            <location filename="../shared/TransactionSigner.qml" line="101"/>
             <source>Enter the password you use to unlock this device</source>
             <translation type="unfinished"/>
         </message>
@@ -2194,23 +2220,24 @@ world--no bank account required</source>
             <translation type="unfinished"/>
         </message>
         <message id="load-more-messages">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/Message.qml" line="110"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/Message.qml" line="115"/>
             <source>↓ Fetch more messages</source>
             <translation type="unfinished"/>
         </message>
         <message id="before--1">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/Message.qml" line="134"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/Message.qml" line="139"/>
             <source>before %1</source>
             <translation type="unfinished"/>
         </message>
         <message id="--outgoing-transaction">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/MessageComponents/TransactionBubble.qml" line="103"/>
-            <source>↑ Outgoing transaction↓ Incoming transaction</source>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/MessageComponents/TransactionBubble.qml" line="117"/>
+            <source>↑ Outgoing transaction</source>
+            <oldsource>↑ Outgoing transaction↓ Incoming transaction</oldsource>
             <translation type="unfinished"/>
         </message>
         <message id="--incoming-transaction">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/MessageComponents/TransactionBubble.qml" line="103"/>
-            <source/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/MessageComponents/TransactionBubble.qml" line="119"/>
+            <source>↓ Incoming transaction</source>
             <translation type="unfinished">Ni sporočil</translation>
         </message>
         <message id="token-details">
@@ -2244,7 +2271,7 @@ world--no bank account required</source>
             <translation type="unfinished"/>
         </message>
         <message id="view-on-etherscan">
-            <location filename="../shared/ToastMessage.qml" line="11"/>
+            <location filename="../shared/ToastMessage.qml" line="13"/>
             <source>View on Etherscan</source>
             <translation type="unfinished"/>
         </message>
@@ -2366,13 +2393,11 @@ world--no bank account required</source>
         </message>
         <message id="todo--replace-this-for-the-transaction-dialog">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="52"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="28"/>
             <source>TODO: replace this for the transaction dialog</source>
             <translation type="unfinished"/>
         </message>
         <message id="ok">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="69"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="45"/>
             <source>Ok</source>
             <translation type="unfinished"/>
         </message>
@@ -2432,82 +2457,82 @@ world--no bank account required</source>
             <translation type="unfinished"/>
         </message>
         <message id="ens-terms-header">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="59"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="35"/>
             <source>Terms of name registration</source>
             <translation type="unfinished"/>
         </message>
         <message id="ens-terms-point-1">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="76"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="52"/>
             <source>Funds are deposited for 1 year. Your SNT will be locked, but not spent.</source>
             <translation type="unfinished"/>
         </message>
         <message id="ens-terms-point-2">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="84"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="60"/>
             <source>After 1 year, you can release the name and get your deposit back, or take no action to keep the name.</source>
             <translation type="unfinished"/>
         </message>
         <message id="ens-terms-point-3">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="92"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="68"/>
             <source>If terms of the contract change — e.g. Status makes contract upgrades — user has the right to release the username regardless of time held.</source>
             <translation type="unfinished"/>
         </message>
         <message id="ens-terms-point-4">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="100"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="76"/>
             <source>The contract controller cannot access your deposited funds. They can only be moved back to the address that sent them.</source>
             <translation type="unfinished"/>
         </message>
         <message id="ens-terms-point-5">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="108"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="84"/>
             <source>Your address(es) will be publicly associated with your ENS name.</source>
             <translation type="unfinished"/>
         </message>
         <message id="ens-terms-point-6">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="116"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="92"/>
             <source>Usernames are created as subdomain nodes of stateofus.eth and are subject to the ENS smart contract terms.</source>
             <translation type="unfinished"/>
         </message>
         <message id="ens-terms-point-7">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="124"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="100"/>
             <source>You authorize the contract to transfer SNT on your behalf. This can only occur when you approve a transaction to authorize the transfer.</source>
             <translation type="unfinished"/>
         </message>
         <message id="ens-terms-point-8">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="132"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="108"/>
             <source>These terms are guaranteed by the smart contract logic at addresses:</source>
             <translation type="unfinished"/>
         </message>
         <message id="-1--status-usernameregistrar--">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="141"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="117"/>
             <source>%1 (Status UsernameRegistrar).</source>
             <translation type="unfinished"/>
         </message>
         <message id="-1--ens-registry--">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="162"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="138"/>
             <source>%1 (ENS Registry).</source>
             <translation type="unfinished"/>
         </message>
         <message id="agree-to--a-href-------terms-of-name-registration---a--i-understand-that-my-wallet-address-will-be-publicly-connected-to-my-username-">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="272"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="248"/>
             <source>Agree to &lt;a href="#"&gt;Terms of name registration.&lt;/a&gt; I understand that my wallet address will be publicly connected to my username.</source>
             <translation type="unfinished"/>
         </message>
         <message id="ens-10-SNT">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="316"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="292"/>
             <source>10 SNT</source>
             <translation type="unfinished"/>
         </message>
         <message id="ens-deposit">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="326"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="302"/>
             <source>Deposit</source>
             <translation type="unfinished"/>
         </message>
         <message id="not-enough-snt">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="344"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="320"/>
             <source>Not enough SNT</source>
             <translation type="unfinished"/>
         </message>
         <message id="ens-register">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="346"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="322"/>
             <source>Register</source>
             <translation type="unfinished"/>
         </message>
@@ -2577,13 +2602,168 @@ world--no bank account required</source>
             <translation type="unfinished"/>
         </message>
         <message id="start">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/Welcome.qml" line="289"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/Welcome.qml" line="288"/>
             <source>Start</source>
             <translation type="unfinished"/>
         </message>
         <message id="ens-network-restriction">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/Welcome.qml" line="291"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/Welcome.qml" line="290"/>
             <source>Only available on Mainnet</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="ens-registration-failed">
+            <location filename="../app/AppLayouts/Profile/Sections/EnsContainer.qml" line="293"/>
+            <source>ENS Registration failed</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="ens-registration-completed">
+            <location filename="../app/AppLayouts/Profile/Sections/EnsContainer.qml" line="296"/>
+            <source>ENS Registration completed</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="updating-ens-pubkey-failed">
+            <location filename="../app/AppLayouts/Profile/Sections/EnsContainer.qml" line="301"/>
+            <source>Updating ENS pubkey failed</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="updating-ens-pubkey-completed">
+            <location filename="../app/AppLayouts/Profile/Sections/EnsContainer.qml" line="304"/>
+            <source>Updating ENS pubkey completed</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="glossary">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="31"/>
+            <source>Glossary</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="account-title">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="43"/>
+            <source>Account</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="a">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="45"/>
+            <source>A</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="your-status-account--accessed-by-the-seed-phrase-that-you-create-or-import-during-onboarding--a-status-account-can-hold-more-than-one-ethereum-address--in-addition-to-the-one-created-during-onboarding--we-refer-to-these-as-additional-accounts-within-the-wallet">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="47"/>
+            <source>Your Status account, accessed by the seed phrase that you create or import during onboarding. A Status account can hold more than one Ethereum address, in addition to the one created during onboarding. We refer to these as additional accounts within the wallet</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="chat-key-title">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="55"/>
+            <source>Chat Key</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="c">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="57"/>
+            <source>C</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="chat-key-content">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="59"/>
+            <source>Messages on the Status chat protocol are sent and received using encryption keys. The public chat key is a string of characters you share with others so they can send you messages in Status.</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="chat-name-title">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="67"/>
+            <source>Chat Name</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="chat-name-content">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="69"/>
+            <source>Three random words, derived algorithmically from your chat key and used as your default alias in chat. Chat names are completely unique; no other user can have the same three words.</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="ens-name-title">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="77"/>
+            <source>ENS Name</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="e">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="79"/>
+            <source>E</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="ens-name-content">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="81"/>
+            <source>Custom alias for your chat key that you can register using the Ethereum Name Service. ENS names are decentralized usernames.</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="mailserver-title">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="90"/>
+            <source>Mailserver</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="mailserver-content">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="92"/>
+            <source>A node in the Status network that routes and stores messages, for up to 30 days.</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="peer-title">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="100"/>
+            <source>Peer</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="p">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="102"/>
+            <source>P</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="a-device-connected-to-the-status-chat-network--each-user-can-represent-one-or-more-peers--depending-on-their-number-of-devices">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="104"/>
+            <source>A device connected to the Status chat network. Each user can represent one or more peers, depending on their number of devices</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="seed-phrase-title">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="112"/>
+            <source>Seed Phrase</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="s">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="114"/>
+            <source>S</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="a-64-character-hex-address-based-on-the-ethereum-standard-and-beginning-with-0x--public-facing--your-wallet-key-is-shared-with-others-when-you-want-to-receive-funds--also-referred-to-as-an--ethereum-address--or--wallet-address-">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="116"/>
+            <source>A 64 character hex address based on the Ethereum standard and beginning with 0x. Public-facing, your wallet key is shared with others when you want to receive funds. Also referred to as an “Ethereum address” or “wallet address.</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="-a-href--https---status-im-docs-faqs-html--frequently-asked-questions--a-">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="134"/>
+            <source>&lt;a href='https://status.im/docs/FAQs.html'&gt;Frequently asked questions&lt;/a&gt;</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="-a-href--https---github-com-status-im-nim-status-client-issues-new--submit-a-bug--a-">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="149"/>
+            <source>&lt;a href='https://github.com/status-im/nim-status-client/issues/new'&gt;Submit a bug&lt;/a&gt;</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="-a-href--https---discuss-status-im-c-features-51--request-a-feature--a-">
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="165"/>
+            <source>&lt;a href='https://discuss.status.im/c/features/51'&gt;Request a feature&lt;/a&gt;</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="to-">
+            <location filename="../app/AppLayouts/Wallet/HistoryTab.qml" line="147"/>
+            <source>To </source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="from-">
+            <location filename="../app/AppLayouts/Wallet/HistoryTab.qml" line="149"/>
+            <source>From </source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="transaction-completed">
+            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="297"/>
+            <source>Transaction completed</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="ens-registration-failed-title">
+            <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="302"/>
+            <source>Transaction failed</source>
             <translation type="unfinished"/>
         </message>
     </context>
@@ -2592,6 +2772,14 @@ world--no bank account required</source>
         <message>
             <source>Recipient</source>
             <translation type="obsolete">Prejemnik</translation>
+        </message>
+    </context>
+    <context>
+        <name>HelpContainer</name>
+        <message>
+            <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="86"/>
+            <source>M</source>
+            <translation type="unfinished"/>
         </message>
     </context>
     <context>

@@ -173,7 +173,8 @@ Item {
               anchors.horizontalCenter: parent.horizontalCenter
               font.pixelSize: 12
               color: Style.current.darkGrey
-              text: qsTr("User not found")
+              //% "User not found"
+              text: qsTrId("user-not-found")
               visible: !contactsContainer.isPending && !!!profileModel.contactToAddUsername
           }
 

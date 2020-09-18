@@ -6,7 +6,8 @@ import "../../shared"
 
 Switch {
     id: control
-    text: qsTr("Switch")
+    //% "Switch"
+    text: qsTrId("switch")
 
     indicator: Rectangle {
         implicitWidth: 52

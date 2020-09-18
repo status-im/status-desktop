@@ -230,7 +230,8 @@ ModalPopup {
         Connections {
             target: chatsModel
             onTransactionWasSent: {
-                toastMessage.title = qsTr("Transaction pending...")
+                //% "Transaction pending..."
+                toastMessage.title = qsTrId("ens-transaction-pending")
                 toastMessage.source = "../../../img/loading.svg"
                 toastMessage.iconColor = Style.current.primary
                 toastMessage.iconRotates = true
@@ -239,9 +240,11 @@ ModalPopup {
             }
             onTransactionCompleted: {
                 toastMessage.title = !success ? 
-                                     qsTr("Could not buy Stickerpack")
+                                     //% "Could not buy Stickerpack"
+                                     qsTrId("could-not-buy-stickerpack")
                                      :
-                                     qsTr("Stickerpack bought successfully");
+                                     //% "Stickerpack bought successfully"
+                                     qsTrId("stickerpack-bought-successfully");
                 if (success) {
                     toastMessage.source = "../../../img/check-circle.svg"
                     toastMessage.iconColor = Style.current.success

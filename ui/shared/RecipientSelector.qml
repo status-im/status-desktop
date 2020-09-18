@@ -23,8 +23,6 @@ Item {
     readonly property var sources: [
         //% "Address"
         qsTrId("address"),
-        //% "Contact"
-        // qsTrId("chat-is-a-contact"), // disable this tempoarily as we work to enable to sending to contacts
         //% "My account"
         qsTrId("my-account")
     ]

@@ -279,7 +279,8 @@ ModalPopup {
                         return sendingError.open()
                     }
 
-                    toastMessage.title = qsTr("Transaction pending...")
+                    //% "Transaction pending..."
+                    toastMessage.title = qsTrId("ens-transaction-pending")
                     toastMessage.source = "../../img/loading.svg"
                     toastMessage.iconColor = Style.current.primary
                     toastMessage.iconRotates = true
@@ -292,11 +293,13 @@ ModalPopup {
             }
             onTransactionCompleted: {
                 if (success) {
-                    toastMessage.title = qsTr("Transaction completed")
+                    //% "Transaction completed"
+                    toastMessage.title = qsTrId("transaction-completed")
                     toastMessage.source = "../../img/check-circle.svg"
                     toastMessage.iconColor = Style.current.success
                 } else {
-                    toastMessage.title = qsTr("Transaction failed")
+                    //% "Transaction failed"
+                    toastMessage.title = qsTrId("ens-registration-failed-title")
                     toastMessage.source = "../../img/block-icon.svg"
                     toastMessage.iconColor = Style.current.danger
                 }

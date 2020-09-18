@@ -277,7 +277,8 @@ Item {
     Connections {
         target: profileModel.ens
         onTransactionWasSent: {
-            toastMessage.title = qsTr("Transaction pending...")
+            //% "Transaction pending..."
+            toastMessage.title = qsTrId("ens-transaction-pending")
             toastMessage.source = "../../../img/loading.svg"
             toastMessage.iconColor = Style.current.primary
             toastMessage.iconRotates = true
@@ -288,15 +289,19 @@ Item {
             switch(trxType){
                 case "RegisterENS":
                     toastMessage.title = !success ? 
-                                         qsTr("ENS Registration failed")
+                                         //% "ENS Registration failed"
+                                         qsTrId("ens-registration-failed")
                                          :
-                                         qsTr("ENS Registration completed");
+                                         //% "ENS Registration completed"
+                                         qsTrId("ens-registration-completed");
                     break;
                 case "SetPubKey":
                     toastMessage.title = !success ? 
-                                         qsTr("Updating ENS pubkey failed")
+                                         //% "Updating ENS pubkey failed"
+                                         qsTrId("updating-ens-pubkey-failed")
                                          :
-                                         qsTr("Updating ENS pubkey completed");
+                                         //% "Updating ENS pubkey completed"
+                                         qsTrId("updating-ens-pubkey-completed");
                     break;
             }
 

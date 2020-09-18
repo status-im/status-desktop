@@ -143,8 +143,10 @@ Item {
 
                 StyledText {
                     text: to !== walletModel.currentAccount.address ?
-                              qsTr("To ") :
-                              qsTr("From ")
+                              //% "To "
+                              qsTrId("to-") :
+                              //% "From "
+                              qsTrId("from-")
                     anchors.right: addressValue.left
                     color: Style.current.darkGrey
                     anchors.top: parent.top
