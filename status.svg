@@ -1,26 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Creator: CorelDRAW X7 -->
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="7.5in" height="7.5in" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
-viewBox="0 0 7500 7500"
- xmlns:xlink="http://www.w3.org/1999/xlink">
- <defs>
-  <style type="text/css">
-   <![CDATA[
-    .fil0 {fill:none}
-    .fil1 {fill:#5B6DEE}
-    .fil2 {fill:white}
-   ]]>
-  </style>
- </defs>
- <g id="Layer_x0020_1">
-  <metadata id="CorelCorpID_0Corel-Layer"/>
-  <rect class="fil0" width="7500" height="7500"/>
-  <g id="_2080958732912">
-   <circle class="fil1" cx="3750" cy="3750" r="3100"/>
-   <g>
-    <path class="fil2" d="M3227 3560c-3,0 -7,0 -10,0 -105,0 -210,10 -313,28 88,-810 763,-1423 1567,-1423 492,0 829,241 829,739 0,499 -405,740 -995,740 -436,0 -642,-84 -1078,-84l0 0zm-32 296c-590,0 -995,241 -995,739 0,499 337,740 829,740 804,0 1479,-613 1566,-1423 -102,19 -207,28 -312,28 -3,0 -7,0 -10,0 -436,0 -642,-84 -1078,-84z"/>
-   </g>
-  </g>
- </g>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_d)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M512 60.0073C262.365 60 60 262.362 60 512C60 761.638 262.365 964 512 964C761.635 964 964 761.631 964 512C964 262.369 761.635 60.0073 512 60.0073Z" fill="white"/>
+</g>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M588.242 507.825C534.068 510.947 500.117 498.327 445.935 501.457C432.497 502.211 419.152 504.159 406.057 507.277C414.055 407.079 484.967 319.428 581.397 313.857C640.572 310.443 699.719 346.978 702.926 406.29C706.083 464.585 661.634 503.584 588.25 507.818L588.242 507.825ZM442.764 712.775C386.074 715.978 329.421 681.774 326.345 626.272C323.319 571.713 365.909 535.214 436.21 531.251C488.102 528.327 520.632 540.142 572.524 537.21C585.391 536.505 598.173 534.682 610.726 531.763C603.078 625.534 535.147 707.569 442.764 712.775ZM512 60.0073C262.365 60 60 262.362 60 512C60 761.638 262.365 964 512 964C761.635 964 964 761.631 964 512C964 262.369 761.635 60 512 60" fill="#4360DF"/>
+<defs>
+<filter id="filter0_d" x="35" y="60.0073" width="954" height="962.993" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>
+<feOffset dy="34"/>
+<feGaussianBlur stdDeviation="12.5"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+</filter>
+</defs>
 </svg>
