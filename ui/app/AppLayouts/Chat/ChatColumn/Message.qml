@@ -110,6 +110,11 @@ Item {
     Component {
         id: fetchMoreMessagesButtonComponent
         Item {
+            visible: {
+                if(chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat) return true;
+                return chatsModel.activeChannel.isMember(profileModel.profile.pubKey)
+            }
+
             id: wrapper
             height: wrapper.visible ? fetchMoreButton.height + fetchDate.height + 3 + Style.current.smallPadding*2 : 0
             anchors.left: parent.left

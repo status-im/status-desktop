@@ -101,6 +101,8 @@ Item {
         visible: chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat && !chatsModel.activeChannel.isMember(profileModel.profile.pubKey)
         anchors.top: channelDescription.bottom
         anchors.topMargin: 16
+        anchors.horizontalCenter: parent.horizontalCenter
+        height: visible ? 100 : 10
         id: joinOrDecline
 
         StyledText {
@@ -116,6 +118,7 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     chatsModel.joinGroup()
+                    joinOrDecline.visible = false;
                 }
             }
         }
