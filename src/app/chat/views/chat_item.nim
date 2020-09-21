@@ -1,5 +1,8 @@
 import NimQml, Tables, std/wrapnils
 import ../../../status/[chat/chat, status, ens, accounts]
+from ../../../status/libstatus/types import Setting
+import ../../../status/libstatus/settings as status_settings
+
 import chat_members
 
 QtObject:
@@ -76,9 +79,16 @@ QtObject:
   QtProperty[bool] hasMentions:
     read = hasMentions
 
-  proc isMember*(self: ChatItemView, pubKey: string): bool {.slot.} =
+  proc isMember*(self: ChatItemView): bool {.slot.} =
     if self.chatItem.isNil: return false
+    let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
     return self.chatItem.isMember(pubKey)
+
+  proc membershipChanged*(self: ChatItemView) {.signal.}
+
+  QtProperty[bool] isMember:
+    read = isMember
+    notify = membershipChanged
 
   proc contains*(self: ChatItemView, pubKey: string): bool {.slot.} =
     if self.chatItem.isNil: return false

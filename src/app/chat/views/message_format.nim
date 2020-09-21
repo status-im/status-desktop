@@ -18,12 +18,12 @@ proc renderInline(self: ChatMessageList, elem: TextItem): string =
   let value = escape_html(elem.literal.strip)
   case elem.textType:
   of "": result = value
-  of "code": result = fmt("<code>{value}</code> ")
-  of "emph": result = fmt("<em>{value}</em> ")
-  of "strong": result = fmt("<strong>{value}</strong> ")
+  of "code": result = fmt(" <code>{value}</code>")
+  of "emph": result = fmt(" <em>{value}</em>")
+  of "strong": result = fmt(" <strong>{value}</strong>")
   of "link": result = elem.destination
-  of "mention": result = fmt("<a href=\"//{value}\" class=\"mention\">{self.mention(value)}</a> ")
-  of "status-tag": result = fmt("<a href=\"#{value}\" class=\"status-tag\">#{value}</a> ")
+  of "mention": result = fmt(" <a href=\"//{value}\" class=\"mention\">{self.mention(value)}</a> ")
+  of "status-tag": result = fmt(" <a href=\"#{value}\" class=\"status-tag\">#{value}</a> ")
 
 # See render-block in status-react/src/status_im/ui/screens/chat/message/message.cljs
 proc renderBlock(self: ChatMessageList, message: Message): string =

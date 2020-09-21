@@ -98,7 +98,7 @@ Item {
     }
 
     Item {
-        visible: chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat && !chatsModel.activeChannel.isMember(profileModel.profile.pubKey)
+        visible: chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat && !chatsModel.activeChannel.isMember
         anchors.top: channelDescription.bottom
         anchors.topMargin: 16
         anchors.horizontalCenter: parent.horizontalCenter
