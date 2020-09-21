@@ -411,11 +411,12 @@ QtObject:
     self.status.chat.join(channel, ChatType(chatTypeInt))
     self.setActiveChannel(channel)
 
-  proc chatGroupJoined(self: ChatsView) {.signal.}
+  proc chatGroupJoined(self: ChatsView, channel: string) {.signal.}
 
   proc joinGroup*(self: ChatsView) {.slot.} =
     self.status.chat.confirmJoiningGroup(self.activeChannel.id)
-    self.chatGroupJoined()
+    self.activeChannel.membershipChanged()
+    self.chatGroupJoined(self.activeChannel.id)
 
   proc messagesLoaded*(self: ChatsView) {.signal.}
 

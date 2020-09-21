@@ -8,24 +8,17 @@ import "../../../../shared"
 import "../../../../imports"
 
 Rectangle {
-    id: rectangle
+    id: root
     property alias textInput: txtData
     border.width: 0
     height: 52
     color: Style.current.transparent
 
-    visible: chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember(profileModel.profile.pubKey)
+    visible: chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember
 
     property bool emojiEvent: false;
     property bool paste: false;
     property bool isColonPressed: false;
-
-    Connections {
-        target: chatsModel
-        onChatGroupJoined: {
-            rectangle.visible = true;
-        } 
-    }
 
     Audio {
         id: sendMessageSound
