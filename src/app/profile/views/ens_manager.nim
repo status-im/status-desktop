@@ -209,9 +209,8 @@ QtObject:
   proc registerENSGasEstimate(self: EnsManager, ensUsername: string, address: string): int {.slot.} =
     var success: bool
     let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
-    try:
-      result = registerUsernameEstimateGas(ensUsername, address, pubKey, success)
-    except:
+    result = registerUsernameEstimateGas(ensUsername, address, pubKey, success)
+    if not success:
       result = 380000
   
   proc registerENS*(self: EnsManager, username: string, address: string, gas: string, gasPrice: string, password: string): string {.slot.} =

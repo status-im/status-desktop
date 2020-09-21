@@ -24,23 +24,29 @@ ModalPopup {
     }
 
     function sendTransaction() {
-        let responseStr = profileModel.ens.setPubKey(root.ensUsername,
-                                                       selectFromAccount.selectedAccount.address,
-                                                       gasSelector.selectedGasLimit,
-                                                       gasSelector.selectedGasPrice,
-                                                       transactionSigner.enteredPassword)
-        let response = JSON.parse(responseStr)
+        try {
+            let responseStr = profileModel.ens.setPubKey(root.ensUsername,
+                                                        selectFromAccount.selectedAccount.address,
+                                                        gasSelector.selectedGasLimit,
+                                                        gasSelector.selectedGasPrice,
+                                                        transactionSigner.enteredPassword)
+            let response = JSON.parse(responseStr)
 
-        if (!response.success) {
-            if (response.error.message.includes("could not decrypt key with given password")){
-                transactionSigner.validationError = qsTr("Wrong password")
-                return
+            if (!response.success) {
+                if (response.error.message.includes("could not decrypt key with given password")){
+                    transactionSigner.validationError = qsTr("Wrong password")
+                    return
+                }
+                sendingError.text = response.error.message
+                return sendingError.open()
             }
-            sendingError.text = response.error.message
+
+            usernameUpdated(root.ensUsername);
+        } catch (e) {
+            console.error('Error sending the transaction', e)
+            sendingError.text = "Error sending the transaction: " + e.message;
             return sendingError.open()
         }
-
-        usernameUpdated(root.ensUsername);
     }
 
     TransactionStackView {
