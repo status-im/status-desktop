@@ -7,6 +7,7 @@ import app/utilsView/core as utilsView
 import app/profile/core as profile
 import app/onboarding/core as onboarding
 import app/login/core as login
+import app/provider/core as provider
 import status/signals/core as signals
 import status/libstatus/types
 import nim_status
@@ -81,6 +82,9 @@ proc mainProc() =
   var profile = profile.newController(status, changeLanguage)
   engine.setRootContextProperty("profileModel", profile.variant)
 
+  var provider = provider.newController(status)
+  engine.setRootContextProperty("web3Provider", provider.variant)
+
   var login = login.newController(status)
   var onboarding = onboarding.newController(status)
 
@@ -108,6 +112,7 @@ proc mainProc() =
 
   defer:
     error "TODO: if user is logged in, logout"
+    provider.delete()
     engine.delete()
     app.delete()
     signalController.delete()
