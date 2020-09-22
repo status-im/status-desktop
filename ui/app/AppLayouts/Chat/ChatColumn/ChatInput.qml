@@ -26,6 +26,11 @@ Rectangle {
         volume: appSettings.volume
     }
 
+    function insertInTextInput(start, text) {
+        // Repace new lines with entities because `insert` gets rid of them
+        txtData.insert(start, text.replace(/\n/g, "<br/>"));
+    }
+
     function interpretMessage(msg) {
         if (msg === "/shrug") {
             return "¯\\\\\\_(ツ)\\_/¯"
@@ -58,11 +63,11 @@ Rectangle {
             sendMsg(event);
         }
 
-        if ((event.key == Qt.Key_V) && (event.modifiers & Qt.ControlModifier)) {
+        if ((event.key === Qt.Key_V) && (event.modifiers & Qt.ControlModifier)) {
             paste = true;
         }
 
-        isColonPressed = (event.key == Qt.Key_Colon) && (event.modifiers & Qt.ShiftModifier);
+        isColonPressed = (event.key === Qt.Key_Colon) && (event.modifiers & Qt.ShiftModifier);
     }
 
     function onRelease(event) {
@@ -101,7 +106,7 @@ Rectangle {
         }
 
         txtData.remove(0, txtData.length);
-        txtData.insert(0, Emoji.parse(words.join(' '), '26x26'));
+        insertInTextInput(0, Emoji.parse(words.join('&nbsp;'), '26x26'));
     }
 
     function emojiHandler(event) {
@@ -116,9 +121,13 @@ Rectangle {
             if (index >= 0 && message.cursor > 0) {
                 const shortname = message.data.substr(index, message.cursor);
                 const codePoint = Emoji.getEmojiUnicode(shortname);
-                const newMessage = message.data.replace(shortname, (codePoint !== undefined) ? Emoji.fromCodePoint(codePoint) : shortname);
-                txtData.remove(0, txtData.cursorPosition);
-                txtData.insert(0, Emoji.parse(newMessage, '26x26'));
+                if (codePoint !== undefined) {
+                    const newMessage = message.data
+                        .replace(shortname, Emoji.fromCodePoint(codePoint))
+                        .replace(/ /g, "&nbsp;");
+                    txtData.remove(0, txtData.cursorPosition);
+                    insertInTextInput(0, Emoji.parse(newMessage, '26x26'));
+                }
                 return false;
             }
             return true;
@@ -160,10 +169,9 @@ Rectangle {
         }
 
         let textBeforeCursor = Emoji.deparseFromParse(plainText.substr(0, i));
-
         return {
             cursor: countEmojiLengths(plainText.substr(0, i)) + txtData.cursorPosition,
-            data: chatsModel.plainText(Emoji.deparseFromParse(textBeforeCursor)),
+            data: Emoji.deparseFromParse(textBeforeCursor),
         };
     }
 
@@ -273,8 +281,8 @@ Rectangle {
         height: parent.height
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        addToChat: function (text) {
-            txtData.insert(txtData.length, text)
+        addToChat: function (text, atCursor) {
+            insertInTextInput(atCursor ? txtData.cursorPosition :txtData.length, text)
         }
         onSend: function(){
             sendMsg(false)
