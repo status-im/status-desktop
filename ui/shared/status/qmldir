@@ -1,4 +1,6 @@
 StatusButton 1.0 StatusButton.qml
+StatusImageIdenticon 1.0 StatusImageIdenticon.qml
+StatusLetterIdenticon 1.0 StatusLetterIdenticon.qml
 StatusRadioButton 1.0 StatusRadioButton.qml
 StatusRoundButton 1.0 StatusRoundButton.qml
 StatusSectionHeadline 1.0 StatusSectionHeadline.qml

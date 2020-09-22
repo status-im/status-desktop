@@ -27,7 +27,7 @@ Rectangle {
     radius: Style.current.radius
     color: Style.current.transparent
 
-    Identicon {
+    StatusImageIdenticon {
         id: accountImage
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter

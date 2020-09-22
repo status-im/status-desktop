@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import "../../../../shared"
+import "../../../../shared/status"
 import "../../../../imports"
 import "../components"
 
@@ -43,17 +44,16 @@ Rectangle {
         }
     }
 
-    ChannelIcon {
-      id: contactImage
-      height: !isCompact ? 40 : 20
-      width: !isCompact ? 40 : 20
-      fontSize: !isCompact ? this.defaultFontSize : 14
-      channelName: wrapper.name
-      channelType: wrapper.chatType
-      channelIdenticon: wrapper.identicon
-      anchors.left: parent.left
-      anchors.leftMargin: !isCompact ? Style.current.padding : Style.current.smallPadding
-      anchors.verticalCenter: parent.verticalCenter
+    StatusIdenticon {
+        id: contactImage
+        height: !isCompact ? 40 : 20
+        width: !isCompact ? 40 : 20
+        chatName: wrapper.name
+        chatType: wrapper.chatType
+        identicon: wrapper.identicon
+        anchors.left: parent.left
+        anchors.leftMargin: !isCompact ? Style.current.padding : Style.current.smallPadding
+        anchors.verticalCenter: parent.verticalCenter
     }
 
     SVGImage {

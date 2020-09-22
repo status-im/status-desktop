@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 import "./"
 
 ModalPopup {
@@ -50,24 +51,15 @@ ModalPopup {
       height: children[0].height
       width: parent.width
 
-      Rectangle {
+
+      StatusLetterIdenticon {
           id: letterIdenticon
           width: 36
           height: 36
-          radius: 50
           anchors.top: parent.top
           anchors.topMargin: Style.current.padding
           color: chatsModel.activeChannel.color
-  
-          StyledText {
-            text: chatsModel.activeChannel.name.charAt(0).toUpperCase();
-            opacity: 0.7
-            font.weight: Font.Bold
-            font.pixelSize: 21
-            color: Style.current.white
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-          }
+          chatName: chatsModel.activeChannel.name
       }
     
       StyledTextEdit {

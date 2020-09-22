@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import QtQml.Models 2.3
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 import "./"
 
 PopupMenu {
@@ -48,7 +49,7 @@ PopupMenu {
         height: visible ? profileImage.height + username.height + Style.current.padding : 0
         color: hovered ? Style.current.secondaryBackground : Style.current.transparent
 
-        Identicon {
+        StatusImageIdenticon {
             id: profileImage
             source: profilePopup.identicon
             anchors.top: parent.top

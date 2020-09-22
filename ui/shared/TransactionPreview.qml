@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import "../imports"
+import "../shared/status"
 
 Item {
     id: root
@@ -197,7 +198,7 @@ Item {
                     visible: false
                     source: imgToWallet
                 }
-                Identicon {
+                StatusImageIdenticon {
                     id: idtToContact
                     visible: false
                     anchors.right: parent.right

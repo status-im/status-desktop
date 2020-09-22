@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import "../../imports"
 import "../../shared"
+import "../../shared/status"
 
 Rectangle {
     property string username: "Jotaro Kujo"
@@ -22,7 +23,7 @@ Rectangle {
     color: selected || isHovered ? Style.current.grey : Style.current.transparent
     radius: Style.current.radius
 
-    Identicon {
+    StatusImageIdenticon {
         id: accountImage
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
