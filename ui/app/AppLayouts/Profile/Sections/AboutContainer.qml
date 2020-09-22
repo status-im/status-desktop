@@ -36,8 +36,8 @@ Item {
     }
     StyledText {
         id: element11
-        //% "Version: alpha.5"
-        text: qsTrId("version:-alpha.5")
+        //% "Version: alpha.6"
+        text: qsTrId("version:-alpha.6")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: element10.top
