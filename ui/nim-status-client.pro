@@ -18,6 +18,7 @@ SOURCES = *.qml \
           onboarding/*.qml \
           onboarding/Login/*.qml \
           app/AppLayouts/*.qml \
+          app/AppLayouts/Browser/*.qml \
           app/AppLayouts/Chat/*.qml \
           app/AppLayouts/Chat/ChatColumn/*.qml \
           app/AppLayouts/Chat/ChatColumn/ChatComponents/*.qml \
@@ -194,6 +195,7 @@ DISTFILES += \
     fonts/InterStatus/InterStatus-Thin.otf \
     fonts/InterStatus/InterStatus-ThinItalic.otf \
     Theme.qml \
+    app/AppLayouts/Browser/BrowserLayout.qml \
     app/AppLayouts/Chat/ChatColumn.qml \
     app/AppLayouts/Chat/ChatColumn/samples/MessagesData.qml \
     app/AppLayouts/Chat/ChatColumn/samples/StickerData.qml \

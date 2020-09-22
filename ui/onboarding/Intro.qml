@@ -39,8 +39,15 @@ RowLayout {
                 //% "Secure crypto wallet"
                 title: qsTrId("intro-title2")
                 //% "Send and receive digital assets anywhere in the\nworld--no bank account required"
-              description: qsTrId("send-and-receive-digital-assets-anywhere-in-the-nworld--no-bank-account-required")
-              isLast: true
+                description: qsTrId("send-and-receive-digital-assets-anywhere-in-the-nworld--no-bank-account-required")
+            }
+            Slide {
+                image: "img/browser@2x.jpg"
+                //% "Decentralized apps"
+                title: qsTrId("intro-title3")
+                //% "Explore games, exchanges and social networks\nwhere you alone own your data"
+                description: qsTrId("explore-games--exchanges-and-social-networks-nwhere-you-alone-own-your-data")
+                isLast: true
             }
         }
 
