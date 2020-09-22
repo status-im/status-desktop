@@ -88,13 +88,13 @@ Rectangle {
     StyledText {
         id: lastChatMessage
         visible: !isCompact
-        //% "No messages"
         text: {
             switch(contentType){
                 //% "Image"
                 case Constants.imageType: return qsTrId("image");
                 //% "Sticker"
                 case Constants.stickerType: return qsTrId("sticker");
+                //% "No messages"
                 default: return lastMessage ? Emoji.parse(lastMessage, "26x26").replace(/\n|\r/g, ' ') : qsTrId("no-messages")
             }
         }

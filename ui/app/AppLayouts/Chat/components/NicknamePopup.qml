@@ -20,7 +20,8 @@ ModalPopup {
 
         StyledText {
             id: nicknameTitle
-            text:  qsTr("Nickname")
+            //% "Nickname"
+            text:  qsTrId("nickname")
             anchors.top: parent.top
             anchors.topMargin: 18
             anchors.left: parent.left
@@ -43,7 +44,8 @@ ModalPopup {
 
     StyledText {
         id: descriptionText
-        text: qsTr("Nicknames help you identify others in Status. Only you can see the nicknames you’ve added")
+        //% "Nicknames help you identify others in Status. Only you can see the nicknames you’ve added"
+        text: qsTrId("nicknames-help-you-identify-others-in-status--only-you-can-see-the-nicknames-you-ve-added")
         font.pixelSize: 15
         wrapMode: Text.WordWrap
         color: Style.current.secondaryText
@@ -52,11 +54,13 @@ ModalPopup {
 
     Input {
         id: nicknameInput
-        placeholderText: qsTr("Nickname")
+        //% "Nickname"
+        placeholderText: qsTrId("nickname")
         text: nickname
         anchors.top: descriptionText.bottom
         anchors.topMargin: Style.current.padding
-        validationError: popup.nicknameTooLong ? qsTr("Your nickname is too long") : ""
+        //% "Your nickname is too long"
+        validationError: popup.nicknameTooLong ? qsTrId("your-nickname-is-too-long") : ""
     }
 
     StyledText {
@@ -73,7 +77,8 @@ ModalPopup {
         id: doneBtn
         anchors.right: parent.right
         anchors.rightMargin: Style.current.smallPadding
-        label: qsTr("Done")
+        //% "Done"
+        label: qsTrId("done")
         anchors.bottom: parent.bottom
         disabled: popup.nicknameLength === 0 || popup.nicknameTooLong
         onClicked: {

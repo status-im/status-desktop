@@ -248,7 +248,8 @@ ModalPopup {
 
         StyledText {
             id: chatSettings
-            text: qsTr("Chat settings")
+            //% "Chat settings"
+            text: qsTrId("chat-settings")
             font.pixelSize: 13
             font.weight: Font.Medium
             color: Style.current.secondaryText
@@ -258,7 +259,8 @@ ModalPopup {
 
         StyledText {
             id: nicknameTitle
-            text: qsTr("Nickname")
+            //% "Nickname"
+            text: qsTrId("nickname")
             font.pixelSize: 14
             anchors.top: chatSettings.bottom
             anchors.topMargin: Style.current.smallPadding
@@ -282,7 +284,8 @@ ModalPopup {
 
         StyledText {
             id: nicknameText
-            text: nickname ? nickname : qsTr("None")
+            //% "None"
+            text: nickname ? nickname : qsTrId("none")
             anchors.right: nicknameCaret.left
             anchors.rightMargin: Style.current.padding
             anchors.verticalCenter: nicknameTitle.verticalCenter
