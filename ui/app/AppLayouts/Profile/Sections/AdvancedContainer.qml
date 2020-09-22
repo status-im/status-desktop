@@ -48,8 +48,30 @@ Item {
     }
 
     RowLayout {
-        id: nodeTabSettings
+        id: browserTabSettings
         anchors.top: walletTabSettings.bottom
+        anchors.topMargin: 20
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+        StyledText {
+            //% "Browser Tab"
+            text: qsTrId("browser-tab")
+        }
+        StatusSwitch {
+            checked: appSettings.browserEnabled
+            onCheckedChanged: function(value) {
+                appSettings.browserEnabled = this.checked
+            }
+        }
+        StyledText {
+            //% "experimental (web3 not supported yet)"
+            text: qsTrId("experimental-(web3-not-supported-yet)")
+        }
+    }
+
+    RowLayout {
+        id: nodeTabSettings
+        anchors.top: browserTabSettings.bottom
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 24

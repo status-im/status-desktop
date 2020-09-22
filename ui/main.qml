@@ -71,6 +71,7 @@ ApplicationWindow {
         property var walletSplitView
         property var profileSplitView
         property bool walletEnabled: false
+        property bool browserEnabled: false
         property bool displayChatImages: false
         property bool compactMode
         property string locale: "en"
@@ -191,7 +192,7 @@ ApplicationWindow {
                 id: onboardingDoneState
             }
         }
-        
+
         DSM.State {
             id: appState
             onEntered: loader.sourceComponent = app
