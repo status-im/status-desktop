@@ -47,8 +47,7 @@ Item {
             radius: 10
             anchors.left: (index === 0) ? parent.left: parent.children[index-1].right
             anchors.leftMargin: (index === 0) ? 0 : root.imageMargin
-            color: modelData.currentUserReacted ? Style.current.blue : Style.current.grey
-
+            color: modelData.currentUserReacted ? Style.current.primary : Style.current.inputBackground
 
             // Rounded corner to cover one corner
             Rectangle {
