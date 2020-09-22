@@ -73,13 +73,16 @@ Item {
 
     Rectangle {
         id: channelDescription
-        width: 330
-        height: childrenRect.height
+        visible: descText.visible
+        width: visible ? 330 : 0
+        height: visible ? childrenRect.height : 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: channelName.bottom
         anchors.topMargin: 16
+        color: Style.current.transparent
 
         StyledText {
+            id: descText
             wrapMode: Text.Wrap
             text: {
                 switch(chatsModel.activeChannel.chatType) {
