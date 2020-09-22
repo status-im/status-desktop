@@ -12,6 +12,7 @@ Theme {
     property color darkAccentBlue: "#2946C4"
     property color transparent: "#00000000"
     property color darkGrey: "#939BA1"
+    property color lighterDarkGrey: "#b3bec6"
     property color lightBlueText: "#8f9fec"
     property color darkBlue: "#3c55c9"
     property color darkBlueBtn: "#5a70dd"
@@ -44,6 +45,7 @@ Theme {
     property color primaryMenuItemTextHover: white
     property color backgroundTertiary: tenPercentBlue
     property color pillButtonTextColor: white
+    property color chatReplyCurrentUser: lighterDarkGrey
 
     property color buttonForegroundColor: blue
     property color buttonBackgroundColor: secondaryBackground

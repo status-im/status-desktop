@@ -5,17 +5,18 @@ import "../../../../../imports"
 Rectangle {
     property alias textField: lblReplyMessage
     property bool longReply: false
+    property color elementsColor: isCurrentUser ? Style.current.chatReplyCurrentUser : Style.current.secondaryText
 
     id: chatReply
-    color:  Style.current.lightBlue
     visible: responseTo != "" && replyMessageIndex > -1
     // childrenRect.height shows a binding loop for soem reason, so we use heights instead
     height: this.visible ? lblReplyAuthor.height + ((repliedMessageType === Constants.imageType ? imgReplyImage.height : lblReplyMessage.height) + 5 + 8) : 0
+    color: Style.current.transparent
 
     StyledTextEdit {
         id: lblReplyAuthor
         text: "↳" + repliedMessageAuthor
-        color: Style.current.darkGrey
+        color: chatReply.elementsColor
         readOnly: true
         selectByMouse: true
         wrapMode: Text.Wrap
@@ -41,7 +42,7 @@ Rectangle {
         anchors.topMargin: 5
         text: Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), "26x26");
         textFormat: Text.RichText
-        color: Style.current.darkGrey
+        color: chatReply.elementsColor
         readOnly: true
         selectByMouse: true
         wrapMode: Text.Wrap
@@ -56,6 +57,6 @@ Rectangle {
         anchors.left: lblReplyMessage.left
         anchors.right: lblReplyMessage.right
         anchors.rightMargin: chatTextItem.chatHorizontalPadding
-        color: Style.current.darkGrey
+        color: chatReply.elementsColor
     }
 }

@@ -96,8 +96,6 @@ Item {
             anchors.leftMargin: Style.current.padding
             anchors.right: parent.right
             anchors.rightMargin: chatBox.chatHorizontalPadding
-            color:  isCurrentUser ? Style.current.blue : Style.current.lightBlue
-
         }
 
         ChatText {
