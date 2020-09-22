@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 
 Rectangle {
     property string pubKey: "0x123456"
@@ -29,7 +30,7 @@ Rectangle {
     radius: Style.current.radius
     color: Style.current.transparent
 
-    Identicon {
+    StatusImageIdenticon {
         id: accountImage
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter

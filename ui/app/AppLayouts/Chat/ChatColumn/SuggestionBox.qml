@@ -22,6 +22,7 @@ import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 
 Rectangle {
     id: container
@@ -98,7 +99,7 @@ Rectangle {
                     width: container.width
                     color: hovered ? Style.current.blue : "white"
 
-                    Identicon {
+                    StatusImageIdenticon {
                         id: accountImage
                         anchors.left: parent.left
                         anchors.leftMargin: Style.current.smallPadding

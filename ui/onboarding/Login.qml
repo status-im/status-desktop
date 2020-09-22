@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.13
 import "../shared"
+import "../shared/status"
 import "../imports"
 import "./Login"
 
@@ -31,10 +32,8 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
 
-        Identicon {
+        StatusImageIdenticon {
             id: userImage
-            width: 40
-            height: 40
             anchors.horizontalCenter: parent.horizontalCenter
             source: loginModel.currentAccount.identicon
         }

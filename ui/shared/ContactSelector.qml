@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import "../imports"
+import "../shared/status"
 
 Item {
     id: root
@@ -43,7 +44,7 @@ Item {
         menuAlignment: Select.MenuAlignment.Left
         selectedItemView: Item {
             anchors.fill: parent
-            Identicon {
+            StatusImageIdenticon {
                 id: iconImg
                 anchors.left: parent.left
                 anchors.leftMargin: 14
@@ -92,13 +93,11 @@ Item {
 
             width: parent.width
             height: visible ? 72 : 0
-            Identicon {
+            StatusImageIdenticon {
                 id: iconImg
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
-                width: 40
-                height: 40
                 source: identicon
             }
             Column {
