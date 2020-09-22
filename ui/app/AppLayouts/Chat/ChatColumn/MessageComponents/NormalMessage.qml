@@ -38,7 +38,7 @@ Item {
         property int chatVerticalPadding: 7
         property int chatHorizontalPadding: 12
         property bool longReply: chatReply.visible && repliedMessageContent.length > 54
-        property bool longChatText: plainText.length > 54
+        property bool longChatText: chatsModel.plainText(message).length > 54
 
         id: chatBox
         color: isSticker ? Style.current.background  : (isCurrentUser ? Style.current.blue : Style.current.secondaryBackground)
