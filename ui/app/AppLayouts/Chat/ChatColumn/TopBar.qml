@@ -8,7 +8,7 @@ import "../components"
 
 Rectangle {
     property int iconSize: 16
-
+    property bool reopenGroupDialog: false
     id: chatTopBarContent
     color: Style.current.background
     height: 56
@@ -16,65 +16,48 @@ Rectangle {
     border.color: Style.current.border
     border.width: 1
 
-    ChannelIcon {
-      id: channelIcon
-      channelName: chatsModel.activeChannel.name
-      channelType: chatsModel.activeChannel.chatType
-      channelIdenticon: chatsModel.activeChannel.identicon
+    Loader {
+      property bool isGroupChatOrOneToOne: (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat || 
+        chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne)
       anchors.left: parent.left
-      anchors.leftMargin: Style.current.padding
+      anchors.leftMargin: this.isGroupChatOrOneToOne ? Style.current.padding : Style.current.padding + 4
       anchors.top: parent.top
-      anchors.topMargin: Style.current.smallPadding
+      anchors.topMargin: 4
+      sourceComponent:  this.isGroupChatOrOneToOne ? chatInfoButton : chatInfo
     }
 
-    StyledTextEdit {
-        id: channelName
-        width: 80
-        height: 20
-        text: {
-            switch(chatsModel.activeChannel.chatType) {
-                case Constants.chatTypePublic: return channelNameStr;
-                case Constants.chatTypeOneToOne: return Utils.removeStatusEns(chatsModel.activeChannel.name)
-                default: return chatsModel.activeChannel.name
+    Component {
+        id: chatInfoButton
+        StatusChatInfoButton {
+            chatName: chatsModel.activeChannel.name
+            chatType: chatsModel.activeChannel.chatType
+            identicon: chatsModel.activeChannel.identicon
+            identiconSize: 36
+
+            onClicked: {
+                switch (chatsModel.activeChannel.chatType) {
+                    case Constants.chatTypePrivateGroupChat: 
+                        groupInfoPopup.open()
+                        break;
+                    case Constants.chatTypeOneToOne:
+                        chatTopBarContent.reopenGroupDialog = false
+                        profilePopup.openPopup(chatsModel.activeChannel.name, chatsModel.activeChannel.id, chatsModel.activeChannel.identicon)
+                        break;
+                }
             }
         }
-        anchors.left: channelIcon.right
-        anchors.leftMargin: Style.current.smallPadding
-        anchors.top: parent.top
-        anchors.topMargin: Style.current.smallPadding
-        font.weight: Font.Medium
-        font.pixelSize: 15
-        selectByMouse: true
-        readOnly: true
     }
 
-    StyledText {
-        id: channelIdentifier
-        color: Style.current.darkGrey
-        text: {
-            switch(chatsModel.activeChannel.chatType){
-                //% "Public chat"
-                case Constants.chatTypePublic: return qsTrId("public-chat")
-                case Constants.chatTypeOneToOne: return (profileModel.isAdded(chatsModel.activeChannel.id) ?
-                //% "Contact"
-                qsTrId("chat-is-a-contact") :
-                //% "Not a contact"
-                qsTrId("chat-is-not-a-contact"))
-                case Constants.chatTypePrivateGroupChat: 
-                    let cnt = chatsModel.activeChannel.members.rowCount();
-                    //% "%1 members"
-                    if(cnt > 1) return qsTrId("%1-members").arg(cnt);
-                    //% "1 member"
-                    return qsTrId("1-member");
-                default: return "...";
-            }
+    Component {
+        id: chatInfo
+        StatusChatInfo {
+            identiconSize: 36
+            chatName: chatsModel.activeChannel.name
+            chatType: chatsModel.activeChannel.chatType
+            identicon: chatsModel.activeChannel.identicon
         }
-        font.pixelSize: 12
-        anchors.left: channelIcon.right
-        anchors.leftMargin: Style.current.smallPadding
-        anchors.top: channelName.bottom
-        anchors.topMargin: 0
     }
+
 
     Rectangle {
         id: moreActionsBtnContainer
@@ -202,7 +185,8 @@ Rectangle {
             GroupInfoPopup {
                 id: groupInfoPopup
                 profileClick: {
-                  profilePopup.openPopup.bind(profilePopup)
+                    profilePopup.openPopup.bind(profilePopup)
+                    chatTopBarContent.reopenGroupDialog = true
                 }
                 onClosed: {
                     mouseArea.menuOpened = false
@@ -212,8 +196,9 @@ Rectangle {
             ProfilePopup {
               id: profilePopup
               onClosed: {
-                if (!groupInfoPopup.opened) {
-                  groupInfoPopup.open()
+                if (!groupInfoPopup.opened && chatTopBarContent.reopenGroupDialog) {
+                    groupInfoPopup.open()
+                    chatTopBarContent.reopenGroupDialog = false
                 }
               }
             }
