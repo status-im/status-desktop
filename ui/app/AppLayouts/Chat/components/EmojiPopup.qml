@@ -64,7 +64,7 @@ Popup {
         emojiSectionsRepeater.itemAt(0).allEmojis = recentEmojis
         appSettings.recentEmojis = recentEmojis
 
-        popup.addToChat(Emoji.parse(encodedIcon, "26x26") + ' ') // Adding a space because otherwise, some emojis would fuse since it's just an emoji is just a string
+        popup.addToChat(Emoji.parse(encodedIcon, "26x26") + ' ', true) // Adding a space because otherwise, some emojis would fuse since it's just an emoji is just a string
         popup.close()
         chatInput.textInput.forceActiveFocus()
     }
