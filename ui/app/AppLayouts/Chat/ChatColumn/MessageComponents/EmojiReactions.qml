@@ -55,9 +55,9 @@ Item {
                 width: 8
                 height: 8
                 anchors.top: parent.top
-                anchors.left: !isCurrentUser ? parent.left : undefined
+                anchors.left: !isCurrentUser || appSettings.compactMode ? parent.left : undefined
                 anchors.leftMargin: 0
-                anchors.right: !isCurrentUser ? undefined : parent.right
+                anchors.right: !isCurrentUser || appSettings.compactMode ? undefined : parent.right
                 anchors.rightMargin: 0
                 radius: 2
                 z: -1
