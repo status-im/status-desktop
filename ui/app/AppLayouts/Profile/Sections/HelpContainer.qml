@@ -81,7 +81,8 @@ Item {
 
             GlossaryEntry {
                 id: entryMailserver
-                letter: qsTr("M")
+                //% "M"
+                letter: qsTrId("m")
                 anchors.top: entryENSName.bottom
                 anchors.topMargin: Style.current.padding
                 //% "Mailserver"
