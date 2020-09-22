@@ -405,10 +405,10 @@
             <source>Status Desktop</source>
             <translation>Status Desktop</translation>
         </message>
-        <message id="version:-alpha.5">
+        <message id="version:-alpha.6">
             <location filename="../app/AppLayouts/Profile/Sections/AboutContainer.qml" line="40"/>
-            <source>Version: alpha.5</source>
-            <translation>Version: alpha.5</translation>
+            <source>Version: alpha.6</source>
+            <translation>Version: alpha.6</translation>
         </message>
         <message id="node-version:-%1">
             <location filename="../app/AppLayouts/Profile/Sections/AboutContainer.qml" line="51"/>
