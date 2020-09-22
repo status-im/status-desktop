@@ -272,34 +272,41 @@ $(DMG_TOOL):
 	echo -e "\e[92mInstalling:\e[39m create-dmg"
 	npm i
 
-MACOS_BUNDLE := tmp/macos/dist/Status.app
+MACOS_OUTER_BUNDLE := tmp/macos/dist/Status.app
+MACOS_INNER_BUNDLE := $(MACOS_OUTER_BUNDLE)/Contents/Frameworks/QtWebEngineCore.framework/Versions/Current/Helpers/QtWebEngineProcess.app
 
 STATUS_CLIENT_DMG ?= pkg/Status.dmg
 
 $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	rm -rf tmp/macos pkg/*.dmg
-	mkdir -p $(MACOS_BUNDLE)/Contents/MacOS
-	mkdir -p $(MACOS_BUNDLE)/Contents/Resources
-	cp Info.plist $(MACOS_BUNDLE)/Contents/
-	cp bin/nim_status_client $(MACOS_BUNDLE)/Contents/MacOS/
-	cp nim_status_client.sh $(MACOS_BUNDLE)/Contents/MacOS/
-	chmod +x $(MACOS_BUNDLE)/Contents/MacOS/nim_status_client.sh
-	cp status-icon.icns $(MACOS_BUNDLE)/Contents/Resources/
-	cp status.svg $(MACOS_BUNDLE)/Contents/
-	cp -R resources.rcc $(MACOS_BUNDLE)/Contents/
-	mkdir -p $(MACOS_BUNDLE)/Contents/i18n
-	cp ui/i18n/* $(MACOS_BUNDLE)/Contents/i18n
+	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/MacOS
+	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/Resources
+	cp Info.plist $(MACOS_OUTER_BUNDLE)/Contents/
+	cp bin/nim_status_client $(MACOS_OUTER_BUNDLE)/Contents/MacOS/
+	cp nim_status_client.sh $(MACOS_OUTER_BUNDLE)/Contents/MacOS/
+	chmod +x $(MACOS_OUTER_BUNDLE)/Contents/MacOS/nim_status_client.sh
+	cp status-icon.icns $(MACOS_OUTER_BUNDLE)/Contents/Resources/
+	cp status.svg $(MACOS_OUTER_BUNDLE)/Contents/
+	cp -R resources.rcc $(MACOS_OUTER_BUNDLE)/Contents/
+	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/i18n
+	cp ui/i18n/* $(MACOS_OUTER_BUNDLE)/Contents/i18n
 
 	echo -e $(BUILD_MSG) "app"
 	macdeployqt \
-		$(MACOS_BUNDLE) \
-		-executable=$(MACOS_BUNDLE)/Contents/MacOS/nim_status_client \
+		$(MACOS_OUTER_BUNDLE) \
+		-executable=$(MACOS_OUTER_BUNDLE)/Contents/MacOS/nim_status_client \
 		-qmldir=ui
-	cp Info.runner.plist $(MACOS_BUNDLE)/Contents/Info.plist
+	cp Info.runner.plist $(MACOS_OUTER_BUNDLE)/Contents/Info.plist
+	macdeployqt \
+		$(MACOS_INNER_BUNDLE) \
+		-executable=$(MACOS_INNER_BUNDLE)/Contents/MacOS/QtWebEngineProcess
 
-	# if MACOS_CODESIGN_IDENT is not set then the .app bundle is not signed
+	# if MACOS_CODESIGN_IDENT is not set then the outer and inner .app
+	# bundles are not signed
 ifdef MACOS_CODESIGN_IDENT
-	scripts/sign-macos-pkg.sh $(MACOS_BUNDLE) $(MACOS_CODESIGN_IDENT)
+	scripts/sign-macos-pkg.sh $(MACOS_OUTER_BUNDLE) $(MACOS_CODESIGN_IDENT)
+	scripts/sign-macos-pkg.sh $(MACOS_INNER_BUNDLE) $(MACOS_CODESIGN_IDENT) \
+		--entitlements QtWebEngineProcess.plist
 endif
 	echo -e $(BUILD_MSG) "dmg"
 	mkdir -p pkg
@@ -308,7 +315,7 @@ endif
 	# DMG icon based on app icon, but should otherwise work without it
 	npx create-dmg \
 		--identity="NOBODY" \
-		$(MACOS_BUNDLE) \
+		$(MACOS_OUTER_BUNDLE) \
 		pkg || true
 	# We ignore failure above create-dmg can't skip signing.
 	# To work around that a dummy identity - 'NOBODY' - is specified.
