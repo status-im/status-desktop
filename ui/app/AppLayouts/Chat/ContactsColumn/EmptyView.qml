@@ -178,6 +178,11 @@ import "../../../../imports"
 //                    return totalHeight + Style.current.padding
 //                }
 
+            Item {
+                anchors.top: suggestionsText.bottom
+                anchors.topMargin: Style.current.smallPadding
+                width: parent.width
+
                 Repeater {
                     id: sectionRepeater
                                     anchors.top: suggestionsText.bottom
@@ -185,20 +190,20 @@ import "../../../../imports"
 //                    id: sview
                     model: ChannelJSON.categories
                     Item {
-                        anchors.top: index === 0 ? suggestionsText.bottom : parent.children[index - 1].bottom
+                        anchors.top: index === 0 ? parent.top : parent.children[index - 1].bottom
                         anchors.topMargin: index === 0 ? 0 : Style.current.padding
                         width: parent.width - Style.current.padding
-//                        height: {
-//                            return childrenRect.height
-//                        }
-
                         height: {
-                            var totalHeight = 0
-                            for (let i = 0; i < channelRepeater.count; i++) {
-                                totalHeight += channelRepeater.itemAt(i).height + Style.current.padding
-                            }
-                            return totalHeight
+                            return childrenRect.height
                         }
+
+//                        height: {
+//                            var totalHeight = 0
+//                            for (let i = 0; i < channelRepeater.count; i++) {
+//                                totalHeight += channelRepeater.itemAt(i).height + Style.current.padding
+//                            }
+//                            return totalHeight
+//                        }
 
                         Text {
                             id: sectionTitle
@@ -224,7 +229,7 @@ import "../../../../imports"
 
                 }
 //            }
-
+}
 //            Flow {
 //                id: channelFlow
 //                Layout.fillHeight: false
