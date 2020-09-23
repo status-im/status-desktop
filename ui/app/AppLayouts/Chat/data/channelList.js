@@ -133,7 +133,7 @@ var categories = [
     {
         name: "Languages",
         channels: [
-            "status-spanish",
+            "status-espanol",
             "statusbrasil",
             "status-german",
             "status-french",
