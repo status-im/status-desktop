@@ -13,9 +13,7 @@ Repeater {
         anchors.top: index === 0 ? parent.top : parent.children[index - 1].bottom
         anchors.topMargin: index === 0 ? 0 : Style.current.padding
         width: parent.width - Style.current.padding
-        height: {
-            return childrenRect.height
-        }
+        height: childrenRect.height
 
         Text {
             id: sectionTitle

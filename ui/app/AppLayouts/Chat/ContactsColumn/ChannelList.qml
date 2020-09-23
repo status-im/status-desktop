@@ -18,67 +18,64 @@ ScrollView {
     }
     clip: true
 
-Item {
-    id: itemId
-    Layout.fillHeight: true
+    Item {
+        id: itemId
+        Layout.fillHeight: true
         anchors.top: parent.top
-        // anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.left: parent.left
         anchors.rightMargin: Style.current.padding
         anchors.leftMargin: Style.current.padding
         height: childrenRect.height
 
-    ListView {
-        id: chatGroupsListView
-        anchors.top: parent.top
-        height: childrenRect.height
-        // anchors.bottom: parent.bottom
-        // anchors.bottom: chatGroupsListView2.top
-        anchors.right: parent.right
-        anchors.left: parent.left
-        anchors.rightMargin: Style.current.padding
-        anchors.leftMargin: Style.current.padding
-        interactive: false
-        // clip: true
-        model: chatsModel.chats
-        delegate: Channel {
-            name: model.name
-            muted: model.muted
-            lastMessage: model.lastMessage
-            timestamp: model.timestamp
-            chatType: model.chatType
-            identicon: model.identicon
-            unviewedMessagesCount: model.unviewedMessagesCount
-            hasMentions: model.hasMentions
-            contentType: model.contentType
-            searchStr: chatGroupsContainer.searchStr
-            chatId: model.id
-        }
-        onCountChanged: {
-            if (count > 0 && chatsModel.activeChannelIndex > -1) {
-                // If a chat is added or removed, we set the current index to the first value
-                chatsModel.activeChannelIndex = 0;
-                currentIndex = 0;
-            } else {
-                if(chatsModel.activeChannelIndex > -1){
-                    chatGroupsListView.currentIndex = 0;
+        ListView {
+            id: chatGroupsListView
+            anchors.top: parent.top
+            height: childrenRect.height
+            anchors.right: parent.right
+            anchors.left: parent.left
+            anchors.rightMargin: Style.current.padding
+            anchors.leftMargin: Style.current.padding
+            interactive: false
+            // clip: true
+            model: chatsModel.chats
+            delegate: Channel {
+                name: model.name
+                muted: model.muted
+                lastMessage: model.lastMessage
+                timestamp: model.timestamp
+                chatType: model.chatType
+                identicon: model.identicon
+                unviewedMessagesCount: model.unviewedMessagesCount
+                hasMentions: model.hasMentions
+                contentType: model.contentType
+                searchStr: chatGroupsContainer.searchStr
+                chatId: model.id
+            }
+            onCountChanged: {
+                if (count > 0 && chatsModel.activeChannelIndex > -1) {
+                    // If a chat is added or removed, we set the current index to the first value
+                    chatsModel.activeChannelIndex = 0;
+                    currentIndex = 0;
                 } else {
-                    // Initial state. No chat has been selected yet
-                    chatGroupsListView.currentIndex = -1;
+                    if(chatsModel.activeChannelIndex > -1){
+                        chatGroupsListView.currentIndex = 0;
+                    } else {
+                        // Initial state. No chat has been selected yet
+                        chatGroupsListView.currentIndex = -1;
+                    }
                 }
             }
         }
-    }
 
-    EmptyView {
-        width: parent.width
-        // height: 500
-        anchors.top: chatGroupsListView.bottom
-        anchors.topMargin: 10
-    }
+        EmptyView {
+            width: parent.width
+            // height: 500
+            anchors.top: chatGroupsListView.bottom
+            anchors.topMargin: 10
+        }
 
-}
+    }
 
     ProfilePopup {
         id: profilePopup
@@ -161,20 +158,20 @@ Item {
         Separator {}
 
         Action {
-            text: channelContextMenu.channelMuted ? 
-              //% "Unmute chat"
-              qsTrId("unmute-chat") : 
-              //% "Mute chat"
-              qsTrId("mute-chat")
+            text: channelContextMenu.channelMuted ?
+                      //% "Unmute chat"
+                      qsTrId("unmute-chat") :
+                      //% "Mute chat"
+                      qsTrId("mute-chat")
             icon.source: "../../../img/bell.svg"
             icon.width: 16
             icon.height: 16
             onTriggered: {
-              if (chatsModel.channelIsMuted(channelContextMenu.channelIndex)) {
-                chatsModel.unmuteChannel(channelContextMenu.channelIndex)
-                return
-              }
-              chatsModel.muteChannel(channelContextMenu.channelIndex)
+                if (chatsModel.channelIsMuted(channelContextMenu.channelIndex)) {
+                    chatsModel.unmuteChannel(channelContextMenu.channelIndex)
+                    return
+                }
+                chatsModel.muteChannel(channelContextMenu.channelIndex)
             }
         }
 

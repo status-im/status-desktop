@@ -55,38 +55,18 @@ Item {
         anchors.topMargin: Style.current.padding
     }
 
-    StackLayout {
-        id: contactsStackView
+    ChannelList {
+        id: channelList
+        searchStr: contactsColumn.searchStr
+
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: searchBox.bottom
         anchors.topMargin: Style.current.padding
 
-        function getCurrentIndex() {
-            // return channelList.channelListCount > 0 ? 1 : 0
-            return 0
+        onChannelListCountChanged: {
         }
-
-        currentIndex: getCurrentIndex()
-
-        // ScrollView {
-        //     clip: true
-        // EmptyView {
-        //     onCloseButtonPressed: function () {
-        //         contactsStackView.currentIndex = 2
-        //     }
-        // }
-
-        ChannelList {
-            id: channelList
-            searchStr: contactsColumn.searchStr
-            onChannelListCountChanged: {
-                contactsStackView.currentIndex = contactsStackView.getCurrentIndex()
-            }
-        }
-
-        ClosedEmptyView {}
     }
 }
 
