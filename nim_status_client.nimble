@@ -1,9 +1,9 @@
 # Package
 
 version       = "0.1.0"
-author        = "Richard Ramos"
-description   = "A new awesome nimble package"
-license       = "MIT"
+author        = "Status Research & Development GmbH"
+description   = "Desktop client for the Status Network built with Nim and Qt"
+license       = "MPL2"
 srcDir        = "src"
 bin           = @["nim_status_client"]
 skipExt       = @["nim"]
