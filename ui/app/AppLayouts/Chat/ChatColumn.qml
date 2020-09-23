@@ -25,19 +25,19 @@ StackLayout {
 
     currentIndex:  chatsModel.activeChannelIndex > -1 && chatGroupsListViewCount > 0 ? 0 : 1
 
-    function showReplyArea(){
+    function showReplyArea() {
         isReply = true;
         isImage = false;
         replyAreaContainer.setup()
     }
 
-    function showImageArea(imagePath){
+    function showImageArea(imagePath) {
         isImage = true;
         isReply = false;
         sendImageArea.image = imagePath[0];
     }
 
-    function hideExtendedArea(){
+    function hideExtendedArea() {
         isImage = false;
         isReply = false;
         replyAreaContainer.setup();
