@@ -15,7 +15,7 @@ Repeater {
         width: parent.width - Style.current.padding
         height: childrenRect.height
 
-        Text {
+        StyledText {
             id: sectionTitle
             text: modelData.name
             font.bold: true
