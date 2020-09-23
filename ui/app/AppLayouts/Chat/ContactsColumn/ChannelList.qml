@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import "../../../../shared"
 import "../../../../imports"
 import "../components"
+import "./"
 
 ScrollView {
     property alias channelListCount: chatGroupsListView.count
@@ -12,16 +13,34 @@ ScrollView {
     Layout.fillHeight: true
     Layout.fillWidth: true
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+    contentHeight: {
+        return itemId.height
+    }
+    clip: true
 
-    ListView {
-        id: chatGroupsListView
+Item {
+    id: itemId
+    Layout.fillHeight: true
         anchors.top: parent.top
-        anchors.bottom: parent.bottom
+        // anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.left: parent.left
         anchors.rightMargin: Style.current.padding
         anchors.leftMargin: Style.current.padding
-        clip: true
+        height: childrenRect.height
+
+    ListView {
+        id: chatGroupsListView
+        anchors.top: parent.top
+        height: childrenRect.height
+        // anchors.bottom: parent.bottom
+        // anchors.bottom: chatGroupsListView2.top
+        anchors.right: parent.right
+        anchors.left: parent.left
+        anchors.rightMargin: Style.current.padding
+        anchors.leftMargin: Style.current.padding
+        interactive: false
+        // clip: true
         model: chatsModel.chats
         delegate: Channel {
             name: model.name
@@ -51,6 +70,15 @@ ScrollView {
             }
         }
     }
+
+    EmptyView {
+        width: parent.width
+        // height: 500
+        anchors.top: chatGroupsListView.bottom
+        anchors.topMargin: 10
+    }
+
+}
 
     ProfilePopup {
         id: profilePopup
