@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../data/channelList.js" as ChannelJSON
 import "./"
 
 ModalPopup {
@@ -10,7 +11,6 @@ ModalPopup {
         if(channelName.text === "") return;
         chatsModel.joinChat(channelName.text, Constants.chatTypePublic);
         popup.close();
-        
     }
 
     id: popup
@@ -49,39 +49,62 @@ ModalPopup {
         icon: "../../../img/hash.svg"
     }
 
-    RowLayout {
-        id: row
-        Layout.fillHeight: false
-        Layout.fillWidth: true
-        anchors.right: parent.right
-        anchors.rightMargin: 35
-        anchors.left: parent.left
-        anchors.leftMargin: 35
+    //    RowLayout {
+    //        id: row
+    //        Layout.fillHeight: false
+    //        Layout.fillWidth: true
+    //        anchors.right: parent.right
+    //        anchors.rightMargin: 35
+    //        anchors.left: parent.left
+    //        anchors.leftMargin: 35
+    //        anchors.top: channelName.bottom
+    //        anchors.topMargin: 37
+
+    ScrollView {
+        id: sview
+        // clip: true
+
         anchors.top: channelName.bottom
-        anchors.topMargin: 37
+        anchors.topMargin: Style.current.smallPadding
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
 
-        Flow {
-            Layout.fillHeight: false
-            Layout.fillWidth: true
-            spacing: 20
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        contentHeight: channelSuggestionList.height
 
-            SuggestedChannel { channel: "ethereum"; onJoin: function() { popup.close() } }
-            SuggestedChannel { channel: "status"; onJoin: function() { popup.close() } }
-            SuggestedChannel { channel: "general"; onJoin: function() { popup.close() } }
-            SuggestedChannel { channel: "dapps"; onJoin: function() { popup.close() } }
-            SuggestedChannel { channel: "crypto"; onJoin: function() { popup.close() } }
-            SuggestedChannel { channel: "introductions"; onJoin: function() { popup.close() } }
-            SuggestedChannel { channel: "tech"; onJoin: function() { popup.close() } }
-            SuggestedChannel { channel: "ama"; onJoin: function() { popup.close() } }
-            SuggestedChannel { channel: "gaming"; onJoin: function() { popup.close() } }
-            SuggestedChannel { channel: "sexychat"; onJoin: function() { popup.close() } }
-            SuggestedChannel { channel: "nsfw"; onJoin: function() { popup.close() } }
-            SuggestedChannel { channel: "science"; onJoin: function() { popup.close() } }
-            SuggestedChannel { channel: "music"; onJoin: function() { popup.close() } }
-            SuggestedChannel { channel: "movies"; onJoin: function() { popup.close() } }
-            SuggestedChannel { channel: "sports"; onJoin: function() { popup.close() } }
-            SuggestedChannel { channel: "politics"; onJoin: function() { popup.close() } }
+        Repeater {
+            model: ChannelJSON.categories
+            ColumnLayout {
+                id: channelSuggestionList
+                width: popup.width - Style.current.padding
+                height: children[1].height
+
+                Text {
+                    text: modelData.name
+                    font.pixelSize: 15
+                }
+                Flow {
+                    Layout.fillHeight: false
+                    Layout.fillWidth: true
+                    anchors.top: parent.children[0].bottom
+                    anchors.topMargin: 5
+                    width: parent.width
+                    spacing: 20
+                    Repeater {
+                        model: modelData.channels
+                        SuggestedChannel { channel: modelData }
+                    }
+                }
+
+            }
+
         }
+
+        //        }
     }
 
     footer: Button {
