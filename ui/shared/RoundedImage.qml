@@ -2,7 +2,7 @@ import QtQuick 2.12
 import QtGraphicalEffects 1.0
 
 Rectangle {
-    id: root;
+    id: root
     signal clicked
     property alias source: imgStickerPackThumb.source
 
@@ -22,18 +22,13 @@ Rectangle {
         }
     }
 
-    Image {
+    ImageLoader {
         id: imgStickerPackThumb
         opacity: 1
         smooth: false
+        radius: root.radius
         anchors.fill: parent
         source: "https://ipfs.infura.io/ipfs/" + thumbnail
-        sourceSize.width: width
-        sourceSize.height: height
-        MouseArea {
-            cursorShape: Qt.PointingHandCursor
-            anchors.fill: parent
-            onClicked: root.clicked()
-        }
+        onClicked: root.clicked()
     }
 }

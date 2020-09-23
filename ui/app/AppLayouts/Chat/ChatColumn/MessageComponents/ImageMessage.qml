@@ -1,5 +1,4 @@
 import QtQuick 2.3
-import "../../../../../shared"
 import "../../../../../imports"
 
 Rectangle {
