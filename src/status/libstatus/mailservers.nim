@@ -71,7 +71,7 @@ proc requestMessages*(topics: seq[string], symKeyID: string, peer: string, numbe
   if toTimestamp != 0:
     toValue = toTimestamp
 
-  echo callPrivateRPC("requestMessages".prefix, %* [
+  discard callPrivateRPC("requestMessages".prefix, %* [
     {
         "topics": topics,
         "mailServerPeer": peer,
@@ -85,7 +85,7 @@ proc requestMessages*(topics: seq[string], symKeyID: string, peer: string, numbe
     }
   ])
 
-proc getMailserverTopics*(): string = 
+proc getMailserverTopics*(): string =
   return callPrivateRPC("mailservers_getMailserverTopics", %*[])
 
 proc addMailserverTopic*(topic: MailserverTopic): string =
