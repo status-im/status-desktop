@@ -5,7 +5,7 @@ else:
 
 --threads:on
 --opt:speed # -O3
---debugger:native # passes "-g" to the C compiler
+# --debugger:native # passes "-g" to the C compiler
 --define:ssl # needed by the stdlib to enable SSL procedures
 
 if defined(macosx):
@@ -36,7 +36,7 @@ else:
   # don't link libraries we're not actually using
   switch("passL", "-Wl,-as-needed")
 
---define:chronicles_line_numbers # useful when debugging
+# --define:chronicles_line_numbers # useful when debugging
 
 # The compiler doth protest too much, methinks, about all these cases where it can't
 # do its (N)RVO pass: https://github.com/nim-lang/RFCs/issues/230
@@ -44,4 +44,3 @@ switch("warning", "ObservableStores:off")
 
 # Too many false positives for "Warning: method has lock level <unknown>, but another method has 0 [LockLevel]"
 switch("warning", "LockLevel:off")
-

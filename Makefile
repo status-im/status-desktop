@@ -173,10 +173,11 @@ endif
 
 # TODO: control debug/release builds with a Make var
 # We need `-d:debug` to get Nim's default stack traces.
-NIM_PARAMS += --outdir:./bin -d:debug
+# NIM_PARAMS += --outdir:./bin -d:debug
+NIM_PARAMS += --outdir:./bin -d:release
 # Enable debugging symbols in DOtherSide, in case we need GDB backtraces from it.
-CFLAGS += -g
-CXXFLAGS += -g
+# CFLAGS += -g
+# CXXFLAGS += -g
 
 $(DOTHERSIDE): | deps
 	echo -e $(BUILD_MSG) "DOtherSide"
