@@ -71,38 +71,11 @@ ModalPopup {
             return totalHeight + Style.current.padding
         }
 
-        Repeater {
-            id: sectionRepeater
-            model: ChannelJSON.categories
-            Item {
-                anchors.top: index === 0 ? parent.top : parent.children[index - 1].bottom
-                anchors.topMargin: index === 0 ? 0 : Style.current.padding
-                width: parent.width - Style.current.padding
-                height: {
-                    return childrenRect.height
-                }
-
-                Text {
-                    id: sectionTitle
-                    text: modelData.name
-                    font.bold: true
-                    font.pixelSize: 16
-                }
-                Flow {
-                    anchors.top: sectionTitle.bottom
-                    anchors.topMargin: Style.current.smallPadding
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    width: parent.width
-                    spacing: 10
-                    Repeater {
-                        model: modelData.channels
-                        SuggestedChannel { channel: modelData }
-                    }
-                }
-
+        Item {
+            width: parent.width
+            SuggestedChannels {
+                id: sectionRepeater
             }
-
         }
     }
 
