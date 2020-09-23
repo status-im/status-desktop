@@ -66,9 +66,10 @@ RowLayout {
                 anchors.topMargin: -5
                 radius: 9
                 color: Style.current.blue
-                width: chatsModel.unreadMessagesCount < 10 ? 18 : childrenRect.width + 10
+                width: chatsModel.unreadMessagesCount < 10 ? 18 : messageCount.width + 10
                 height: 18
                 Text {
+                    id: messageCount
                     font.pixelSize: chatsModel.unreadMessagesCount > 99 ? 10 : 12
                     color: Style.current.white
                     anchors.centerIn: parent
