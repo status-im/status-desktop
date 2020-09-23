@@ -8,8 +8,6 @@ import "../../../../shared"
 import "../../../../imports"
 
 Item {
-    property var onCloseButtonPressed: function () {}
-
     id: emptyView
     Layout.fillHeight: true
     Layout.fillWidth: true
