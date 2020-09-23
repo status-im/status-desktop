@@ -5,72 +5,42 @@ import "../../../../imports"
 import "../../../../shared"
 import "./"
 
-Popup {
+ModalPopup {
     function doRename(){
         chatsModel.renameGroup(groupName.text)
         popup.close();
     }
 
     id: popup
-    modal: true
+    height: 210
 
-    Overlay.modal: Rectangle {
-        color: "#60000000"
-    }
+    //% "Group name"
+    title: qsTrId("group-name")
 
     onOpened: {
         groupName.forceActiveFocus(Qt.MouseFocusReason)
         groupName.text = chatsModel.activeChannel.name
     }
 
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-    parent: Overlay.overlay
-    x: Math.round((parent.width - width) / 2)
-    y: Math.round((parent.height - height) / 2)
-    width: 480
-    height: 159
-    background: Rectangle {
-        color: Style.current.white
-        radius: 8
+    Input {
+        id: groupName
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding
+        //% "Group name"
+        placeholderText: qsTrId("group-name")
+        Keys.onEnterPressed: doRename()
+        Keys.onReturnPressed: doRename()
     }
-    padding: 0
 
-    contentItem: Item {
-        StyledText {
-            id: groupTitleLabel
-            //% "Group name"
-            text: qsTrId("group-name")
-            anchors.top: parent.top
-            anchors.left: parent.left
-            font.pixelSize: 13
-            anchors.leftMargin: 16
-            anchors.topMargin: Style.current.padding
-            anchors.bottomMargin: Style.current.padding
-        }
-
-        Input {
-            id: groupName
-            anchors.top: groupTitleLabel.bottom
-            anchors.topMargin: 7
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
-            //% "Group name"
-            placeholderText: qsTrId("group-name")
-            Keys.onEnterPressed: doRename()
-            Keys.onReturnPressed: doRename()
-        }
-
-        StyledButton {
-            id: saveBtn
-            anchors.top: groupName.bottom
-            anchors.topMargin: 22
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
-            //% "Save"
-            label: qsTrId("save")
-            onClicked : doRename()
-        }
-  }
+    footer: StyledButton {
+        id: saveBtn
+        height: 44
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        //% "Save"
+        label: qsTrId("save")
+        onClicked : doRename()
+    }
 }

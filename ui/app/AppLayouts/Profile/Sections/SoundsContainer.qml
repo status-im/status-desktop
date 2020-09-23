@@ -7,10 +7,8 @@ import "../../../../shared/status"
 
 Item {
     id: soundsContainer
-    anchors.right: parent.right
-    anchors.rightMargin: contentMargin
-    anchors.left: parent.left
-    anchors.leftMargin: contentMargin
+    Layout.fillHeight: true
+    Layout.fillWidth: true
 
     StyledText {
         id: element5
@@ -28,7 +26,9 @@ Item {
         id: labelVolume
         anchors.top: element5.bottom
         anchors.topMargin: Style.current.bigPadding
-        text: qsTrId("Sound volume") + " " + volume.value
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+        text: qsTr("Sound volume") + " " + volume.value
         font.pixelSize: 15
     }
 
@@ -36,6 +36,8 @@ Item {
         id: volume
         anchors.top: labelVolume.bottom
         anchors.topMargin: Style.current.padding
+        anchors.left: parent.left
+        anchors.leftMargin: 24
         minimumValue: 0.0
         maximumValue: 1.0
         value: appSettings.volume
@@ -46,3 +48,9 @@ Item {
     }
 
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/

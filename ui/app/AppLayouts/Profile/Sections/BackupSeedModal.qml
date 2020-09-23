@@ -13,7 +13,7 @@ ModalPopup {
     Loader {
         active: popup.opened
         width: parent.width
-        height: item.height
+        height: item ? item.height : 0
 
         sourceComponent:  Component {
             id: seedComponent
