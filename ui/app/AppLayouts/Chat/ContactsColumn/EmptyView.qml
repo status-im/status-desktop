@@ -3,15 +3,39 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import "../components"
+import "../data/channelList.js" as ChannelJSON
 import "../../../../shared"
 import "../../../../imports"
 
-Item {
+//Item {
+            ScrollView {
+//                id: sview
+                clip: true
+
+//                anchors.top: suggestionsText.bottom
+//                anchors.topMargin: Style.current.smallPadding
+//                anchors.left: parent.left
+//                anchors.right: parent.right
+//                anchors.bottom: parent.bottom
+
+                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+//                Layout.fillHeight: true
+//                Layout.fillWidth: true
     property var onCloseButtonPressed: function () {}
 
     id: emptyView
     Layout.fillHeight: true
     Layout.fillWidth: true
+
+    contentHeight: {
+        var totalHeight = 0
+        for (let i = 0; i < sectionRepeater.count; i++) {
+            totalHeight += sectionRepeater.itemAt(i).height + Style.current.padding
+        }
+        return inviteFriendsContainer.height + totalHeight + Style.current.padding
+//        return totalHeight
+    }
 
     Rectangle {
         id: emptyViewContent
@@ -110,7 +134,8 @@ Item {
             anchors.top: inviteFriendsContainer.bottom
             anchors.right: parent.right
             anchors.left: parent.left
-            height: suggestionsText.height + channelFlow.height + 2 * Style.current.xlPadding + Style.current.bigPadding
+//            height: suggestionsText.height + channelFlow.height + 2 * Style.current.xlPadding + Style.current.bigPadding
+//            height: suggestionsText.height + 2 * Style.current.xlPadding + Style.current.bigPadding
 
             StyledText {
                 id: suggestionsText
@@ -131,46 +156,115 @@ Item {
                 anchors.leftMargin: Style.current.xlPadding
             }
 
-            Flow {
-                id: channelFlow
-                Layout.fillHeight: false
-                Layout.fillWidth: true
-                spacing: 6
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.xlPadding
-                anchors.left: parent.left
-                anchors.leftMargin: Style.current.xlPadding
-                anchors.top: suggestionsText.bottom
-                anchors.topMargin: Style.current.bigPadding
+//            ScrollView {
+//                id: sview
+//                clip: true
 
-                SuggestedChannel {
-                    channel: "introductions"
+//                anchors.top: suggestionsText.bottom
+//                anchors.topMargin: Style.current.smallPadding
+//                anchors.left: parent.left
+//                anchors.right: parent.right
+//                anchors.bottom: parent.bottom
+
+//                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+//                ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+//                Layout.fillHeight: true
+//                Layout.fillWidth: true
+//                contentHeight: {
+//                    var totalHeight = 0
+//                    for (let i = 0; i < sectionRepeater.count; i++) {
+//                        totalHeight += sectionRepeater.itemAt(i).height + Style.current.padding
+//                    }
+//                    return totalHeight + Style.current.padding
+//                }
+
+                Repeater {
+                    id: sectionRepeater
+                                    anchors.top: suggestionsText.bottom
+                                    anchors.topMargin: Style.current.smallPadding
+//                    id: sview
+                    model: ChannelJSON.categories
+                    Item {
+                        anchors.top: index === 0 ? suggestionsText.bottom : parent.children[index - 1].bottom
+                        anchors.topMargin: index === 0 ? 0 : Style.current.padding
+                        width: parent.width - Style.current.padding
+//                        height: {
+//                            return childrenRect.height
+//                        }
+
+                        height: {
+                            var totalHeight = 0
+                            for (let i = 0; i < channelRepeater.count; i++) {
+                                totalHeight += channelRepeater.itemAt(i).height + Style.current.padding
+                            }
+                            return totalHeight
+                        }
+
+                        Text {
+                            id: sectionTitle
+                            text: modelData.name
+                            font.bold: true
+                            font.pixelSize: 16
+                        }
+                        Flow {
+                            anchors.top: sectionTitle.bottom
+                            anchors.topMargin: Style.current.smallPadding
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            width: parent.width
+                            spacing: 10
+                            Repeater {
+                                id: channelRepeater
+                                model: modelData.channels
+                                SuggestedChannel { channel: modelData }
+                            }
+                        }
+
+                    }
+
                 }
-                SuggestedChannel {
-                    channel: "chitchat"
-                }
-                SuggestedChannel {
-                    channel: "status"
-                }
-                SuggestedChannel {
-                    channel: "crypto"
-                }
-                SuggestedChannel {
-                    channel: "tech"
-                }
-                SuggestedChannel {
-                    channel: "music"
-                }
-                SuggestedChannel {
-                    channel: "movies"
-                }
-                SuggestedChannel {
-                    channel: "test"
-                }
-                SuggestedChannel {
-                    channel: "test2"
-                }
-            }
+//            }
+
+//            Flow {
+//                id: channelFlow
+//                Layout.fillHeight: false
+//                Layout.fillWidth: true
+//                spacing: 6
+//                anchors.right: parent.right
+//                anchors.rightMargin: Style.current.xlPadding
+//                anchors.left: parent.left
+//                anchors.leftMargin: Style.current.xlPadding
+//                anchors.top: suggestionsText.bottom
+//                anchors.topMargin: Style.current.bigPadding
+
+//                SuggestedChannel {
+//                    channel: "introductions"
+//                }
+//                SuggestedChannel {
+//                    channel: "chitchat"
+//                }
+//                SuggestedChannel {
+//                    channel: "status"
+//                }
+//                SuggestedChannel {
+//                    channel: "crypto"
+//                }
+//                SuggestedChannel {
+//                    channel: "tech"
+//                }
+//                SuggestedChannel {
+//                    channel: "music"
+//                }
+//                SuggestedChannel {
+//                    channel: "movies"
+//                }
+//                SuggestedChannel {
+//                    channel: "test"
+//                }
+//                SuggestedChannel {
+//                    channel: "test2"
+//                }
+//            }
         }
     }
 }
