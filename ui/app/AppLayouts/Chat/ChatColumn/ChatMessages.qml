@@ -37,18 +37,22 @@ ScrollView {
 
         Rectangle {
             id: newMessagesBox
+            visible: state !== "hidden"
             color: Style.current.secondaryBackground
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
-            height: newMessagesText.height + clickHereText.height + 2 * Style.current.smallPadding
+            height: childrenRect.height + 2 * Style.current.smallPadding
             width: 200
             radius: Style.current.radius
+            state: "hidden"
 
             StyledText {
                 id: newMessagesText
-                //% "New message(s) received"
-                text: qsTrId("new-message-s--received")
+                text: newMessagesBox.state === "new-message" ?
+                          //% "New message(s) received"
+                          qsTrId("new-message-s--received") :
+                          qsTr("Go back to bottom")
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
                 anchors.left: parent.left
@@ -61,6 +65,8 @@ ScrollView {
             }
             StyledText {
                 id: clickHereText
+                visible: newMessagesBox.state === "new-message"
+                height: visible ? implicitHeight : 0
                 //% "Click here to scroll back down"
                 text: qsTrId("click-here-to-scroll-back-down")
                 horizontalAlignment: Text.AlignHCenter
@@ -74,20 +80,21 @@ ScrollView {
                 font.pixelSize: 12
                 color: Style.current.darkGrey
             }
-
-            MouseArea {
-               cursorShape: Qt.PointingHandCursor
-               anchors.fill: parent
-               onClicked: {
-                   newMessagesBox.visible = false
-                   chatLogView.scrollToBottom(true)
-               }
-            }
+        }
+        MouseArea {
+           cursorShape: Qt.PointingHandCursor
+           anchors.fill: newMessagesBox
+           onClicked: {
+               newMessagesBox.state = "hidden"
+               chatLogView.scrollToBottom(true)
+           }
         }
 
         onAtYEndChanged: {
             if (chatLogView.atYEnd) {
-                newMessagesBox.visible = false
+                newMessagesBox.state = "hidden"
+            } else {
+                newMessagesBox.state = "scrolled-up"
             }
         }
 
@@ -130,7 +137,7 @@ ScrollView {
 
             onNewMessagePushed: {
                 if (!chatLogView.scrollToBottom()) {
-                    newMessagesBox.visible = true
+                    newMessagesBox.state = "new-message"
                 }
             }
 
