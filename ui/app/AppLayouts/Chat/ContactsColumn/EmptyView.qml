@@ -7,145 +7,138 @@ import "../data/channelList.js" as ChannelJSON
 import "../../../../shared"
 import "../../../../imports"
 
-Item {
+Rectangle {
     id: emptyView
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    height: {
-        if (!visible) return 0
-        var totalHeight = 0
-        for (let i = 0; i < sectionRepeater.count; i++) {
-            totalHeight += sectionRepeater.itemAt(i).height + Style.current.padding
+    height: suggestionContainer.height + inviteFriendsContainer.height + Style.current.padding * 2
+    border.color: Style.current.border
+    radius: 16
+    color: Style.current.transparent
+
+    Item {
+        id: inviteFriendsContainer
+        height: visible ? 190 : 0
+        anchors.top: parent.top
+        anchors.topMargin: 0
+        anchors.right: parent.right
+        anchors.rightMargin: 0
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+
+        SVGImage {
+            anchors.top: parent.top
+            anchors.topMargin: -6
+            anchors.horizontalCenter: parent.horizontalCenter
+            source: "../../../img/chatEmptyHeader.svg"
+            width: 66
+            height: 50
         }
-        return inviteFriendsContainer.height + totalHeight + Style.current.padding
+
+        SVGImage {
+            id: closeImg
+            anchors.top: parent.top
+            anchors.topMargin: 10
+            anchors.right: parent.right
+            anchors.rightMargin: 10
+            source: "../../../img/close.svg"
+            height: 20
+            width: 20
+        }
+        ColorOverlay {
+            anchors.fill: closeImg
+            source: closeImg
+            color: Style.current.darkGrey
+        }
+        MouseArea {
+            anchors.fill: closeImg
+            cursorShape: Qt.PointingHandCursor
+            onClicked: {
+                emptyView.visible = false
+            }
+        }
+
+        StyledText {
+            id: chatAndTransactText
+            //% "Chat and transact privately with your friends"
+            text: qsTrId("chat-and-transact-privately-with-your-friends")
+            anchors.top: parent.top
+            anchors.topMargin: 56
+            horizontalAlignment: Text.AlignHCenter
+            font.pixelSize: 15
+            wrapMode: Text.WordWrap
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.xlPadding
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.xlPadding
+        }
+
+        StyledButton {
+            //% "Invite friends"
+            label: qsTrId("invite-friends")
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: Style.current.xlPadding
+            onClicked: {
+                inviteFriendsPopup.open()
+            }
+        }
+
+        InviteFriendsPopup {
+            id: inviteFriendsPopup
+        }
     }
 
-    Rectangle {
-        id: emptyViewContent
-        border.color: Style.current.border
-        radius: 16
+    Separator {
+        anchors.topMargin: 0
+        anchors.top: inviteFriendsContainer.bottom
+        color: Style.current.border
+    }
+
+    Item {
+        id: suggestionContainer
+        anchors.top: inviteFriendsContainer.bottom
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
-        anchors.top: parent.top
-        anchors.topMargin: Style.current.bigPadding
-        height: inviteFriendsContainer.height + suggestionContainer.height
-        color: Style.current.transparent
+        anchors.rightMargin: Style.current.padding
 
-        Item {
-            id: inviteFriendsContainer
-            height: visible ? 190 : 0
+        height: {
+            if (!visible) return 0
+            var totalHeight = 0
+            for (let i = 0; i < sectionRepeater.count; i++) {
+                totalHeight += sectionRepeater.itemAt(i).height + Style.current.padding
+            }
+            return suggestionsText.height + totalHeight + Style.current.smallPadding
+        }
+
+        StyledText {
+            id: suggestionsText
+            width: parent.width
+            //% "Follow your interests in one of the many Public Chats."
+            text: qsTrId("follow-your-interests-in-one-of-the-many-public-chats.")
             anchors.top: parent.top
-            anchors.topMargin: 0
+            anchors.topMargin: Style.current.xlPadding
+            font.pointSize: 15
+            wrapMode: Text.WordWrap
+            verticalAlignment: Text.AlignTop
+            horizontalAlignment: Text.AlignHCenter
+            fontSizeMode: Text.FixedSize
+            renderType: Text.QtRendering
             anchors.right: parent.right
-            anchors.rightMargin: 0
+            anchors.rightMargin: Style.current.xlPadding
             anchors.left: parent.left
-            anchors.leftMargin: 0
-
-            SVGImage {
-                anchors.top: parent.top
-                anchors.topMargin: -6
-                anchors.horizontalCenter: parent.horizontalCenter
-                source: "../../../img/chatEmptyHeader.svg"
-                width: 66
-                height: 50
-            }
-
-            SVGImage {
-                id: closeImg
-                anchors.top: parent.top
-                anchors.topMargin: 10
-                anchors.right: parent.right
-                anchors.rightMargin: 10
-                source: "../../../img/close.svg"
-                height: 20
-                width: 20
-            }
-            ColorOverlay {
-                anchors.fill: closeImg
-                source: closeImg
-                color: Style.current.darkGrey
-            }
-            MouseArea {
-                anchors.fill: closeImg
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    emptyView.visible = false
-                }
-            }
-
-            StyledText {
-                id: chatAndTransactText
-                //% "Chat and transact privately with your friends"
-                text: qsTrId("chat-and-transact-privately-with-your-friends")
-                anchors.top: parent.top
-                anchors.topMargin: 56
-                horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 15
-                wrapMode: Text.WordWrap
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.xlPadding
-                anchors.left: parent.left
-                anchors.leftMargin: Style.current.xlPadding
-            }
-
-            StyledButton {
-                //% "Invite friends"
-                label: qsTrId("invite-friends")
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: Style.current.xlPadding
-                onClicked: {
-                    inviteFriendsPopup.open()
-                }
-            }
-
-            InviteFriendsPopup {
-                id: inviteFriendsPopup
-            }
-        }
-
-        Separator {
-            anchors.topMargin: 0
-            anchors.top: inviteFriendsContainer.bottom
-            color: Style.current.border
+            anchors.leftMargin: Style.current.xlPadding
         }
 
         Item {
-            id: suggestionContainer
-            anchors.top: inviteFriendsContainer.bottom
-            anchors.right: parent.right
-            anchors.left: parent.left
+            anchors.top: suggestionsText.bottom
+            anchors.topMargin: Style.current.smallPadding
+            width: parent.width
 
-            StyledText {
-                id: suggestionsText
-                width: parent.width
-                //% "Follow your interests in one of the many Public Chats."
-                text: qsTrId("follow-your-interests-in-one-of-the-many-public-chats.")
-                anchors.top: parent.top
-                anchors.topMargin: Style.current.xlPadding
-                font.pointSize: 15
-                wrapMode: Text.WordWrap
-                verticalAlignment: Text.AlignTop
-                horizontalAlignment: Text.AlignHCenter
-                fontSizeMode: Text.FixedSize
-                renderType: Text.QtRendering
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.xlPadding
-                anchors.left: parent.left
-                anchors.leftMargin: Style.current.xlPadding
-            }
-
-            Item {
-                anchors.top: suggestionsText.bottom
-                anchors.topMargin: Style.current.smallPadding
-                width: parent.width
-
-                SuggestedChannels {
-                    id: sectionRepeater
-                }
+            SuggestedChannels {
+                id: sectionRepeater
             }
         }
     }
