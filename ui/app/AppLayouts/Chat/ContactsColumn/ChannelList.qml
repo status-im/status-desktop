@@ -13,7 +13,7 @@ ScrollView {
     Layout.fillHeight: true
     Layout.fillWidth: true
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-    contentHeight: channelListContent.height
+    contentHeight: channelListContent.height + Style.current.padding
     clip: true
 
     Item {
