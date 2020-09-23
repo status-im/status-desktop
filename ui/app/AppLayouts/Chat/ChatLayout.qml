@@ -9,6 +9,10 @@ SplitView {
     id: chatView
     handle: SplitViewHandle {}
 
+    property var onActivated: function () {
+        chatColumn.onActivated()
+    }
+
     Connections {
         target: applicationWindow
         onSettingsLoaded: {
