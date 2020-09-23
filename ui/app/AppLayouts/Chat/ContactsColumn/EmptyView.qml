@@ -8,27 +8,13 @@ import "../../../../shared"
 import "../../../../imports"
 
 Item {
-            // ScrollView {
-                clip: true
-
-//                anchors.top: suggestionsText.bottom
-//                anchors.topMargin: Style.current.smallPadding
-//                anchors.left: parent.left
-//                anchors.right: parent.right
-//                anchors.bottom: parent.bottom
-
-                // ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                // ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-//                Layout.fillHeight: true
-//                Layout.fillWidth: true
-
     property var onCloseButtonPressed: function () {}
 
     id: emptyView
+    clip: true
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    // contentHeight: {
     height: {
         if (!visible) return 0
         var totalHeight = 0
@@ -36,7 +22,6 @@ Item {
             totalHeight += sectionRepeater.itemAt(i).height + Style.current.padding
         }
         return inviteFriendsContainer.height + totalHeight + Style.current.padding
-//        return totalHeight
     }
 
     Rectangle {
@@ -136,8 +121,6 @@ Item {
             anchors.top: inviteFriendsContainer.bottom
             anchors.right: parent.right
             anchors.left: parent.left
-//            height: suggestionsText.height + channelFlow.height + 2 * Style.current.xlPadding + Style.current.bigPadding
-//            height: suggestionsText.height + 2 * Style.current.xlPadding + Style.current.bigPadding
 
             StyledText {
                 id: suggestionsText
@@ -158,28 +141,6 @@ Item {
                 anchors.leftMargin: Style.current.xlPadding
             }
 
-//            ScrollView {
-//                id: sview
-//                clip: true
-
-//                anchors.top: suggestionsText.bottom
-//                anchors.topMargin: Style.current.smallPadding
-//                anchors.left: parent.left
-//                anchors.right: parent.right
-//                anchors.bottom: parent.bottom
-
-//                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-//                ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-//                Layout.fillHeight: true
-//                Layout.fillWidth: true
-//                contentHeight: {
-//                    var totalHeight = 0
-//                    for (let i = 0; i < sectionRepeater.count; i++) {
-//                        totalHeight += sectionRepeater.itemAt(i).height + Style.current.padding
-//                    }
-//                    return totalHeight + Style.current.padding
-//                }
-
             Item {
                 anchors.top: suggestionsText.bottom
                 anchors.topMargin: Style.current.smallPadding
@@ -191,94 +152,7 @@ Item {
                         id: sectionRepeater
                     }
                 }
-
-//                 Repeater {
-//                     id: sectionRepeater
-//                                     // anchors.top: suggestionsText.bottom
-//                                     // anchors.topMargin: Style.current.smallPadding
-// //                    id: sview
-//                     model: ChannelJSON.categories
-//                     Item {
-//                         anchors.top: index === 0 ? parent.top : parent.children[index - 1].bottom
-//                         anchors.topMargin: index === 0 ? 0 : Style.current.padding
-//                         width: parent.width - Style.current.padding
-//                         height: {
-//                             return childrenRect.height
-//                         }
-
-// //                        height: {
-// //                            var totalHeight = 0
-// //                            for (let i = 0; i < channelRepeater.count; i++) {
-// //                                totalHeight += channelRepeater.itemAt(i).height + Style.current.padding
-// //                            }
-// //                            return totalHeight
-// //                        }
-
-//                         Text {
-//                             id: sectionTitle
-//                             text: modelData.name
-//                             font.bold: true
-//                             font.pixelSize: 16
-//                         }
-//                         Flow {
-//                             anchors.top: sectionTitle.bottom
-//                             anchors.topMargin: Style.current.smallPadding
-//                             Layout.fillHeight: true
-//                             Layout.fillWidth: true
-//                             width: parent.width
-//                             spacing: 10
-//                             Repeater {
-//                                 id: channelRepeater
-//                                 model: modelData.channels
-//                                 SuggestedChannel { channel: modelData }
-//                             }
-//                         }
-
-//                     }
-
-//                 }
-//            }
-}
-//            Flow {
-//                id: channelFlow
-//                Layout.fillHeight: false
-//                Layout.fillWidth: true
-//                spacing: 6
-//                anchors.right: parent.right
-//                anchors.rightMargin: Style.current.xlPadding
-//                anchors.left: parent.left
-//                anchors.leftMargin: Style.current.xlPadding
-//                anchors.top: suggestionsText.bottom
-//                anchors.topMargin: Style.current.bigPadding
-
-//                SuggestedChannel {
-//                    channel: "introductions"
-//                }
-//                SuggestedChannel {
-//                    channel: "chitchat"
-//                }
-//                SuggestedChannel {
-//                    channel: "status"
-//                }
-//                SuggestedChannel {
-//                    channel: "crypto"
-//                }
-//                SuggestedChannel {
-//                    channel: "tech"
-//                }
-//                SuggestedChannel {
-//                    channel: "music"
-//                }
-//                SuggestedChannel {
-//                    channel: "movies"
-//                }
-//                SuggestedChannel {
-//                    channel: "test"
-//                }
-//                SuggestedChannel {
-//                    channel: "test2"
-//                }
-//            }
+            }
         }
     }
 }
