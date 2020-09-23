@@ -4,27 +4,27 @@
     <context>
         <name/>
         <message id="please-choose-an-image">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatInput.qml" line="224"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatInput.qml" line="232"/>
             <source>Please choose an image</source>
             <translation type="unfinished"/>
         </message>
         <message id="image-files----jpg---jpeg---png-">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatInput.qml" line="228"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatInput.qml" line="236"/>
             <source>Image files (*.jpg *.jpeg *.png)</source>
             <translation type="unfinished"/>
         </message>
         <message id="type-a-message">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatInput.qml" line="257"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatInput.qml" line="265"/>
             <source>Type a message...</source>
-            <translation>Напишите сообщение...</translation>
+            <translation>Сообщение</translation>
         </message>
         <message id="join-chat">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/MessageComponents/ChannelIdentifier.qml" line="111"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/MessageComponents/ChannelIdentifier.qml" line="114"/>
             <source>Join chat</source>
             <translation type="unfinished"/>
         </message>
         <message id="group-chat-decline-invitation">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/MessageComponents/ChannelIdentifier.qml" line="128"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/MessageComponents/ChannelIdentifier.qml" line="131"/>
             <source>Decline invitation</source>
             <translation>Отказаться от приглашения</translation>
         </message>
@@ -39,68 +39,63 @@
             <translation>Отправка</translation>
         </message>
         <message id="public-chat">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="57"/>
             <source>Public chat</source>
             <translation>Публичный чат</translation>
         </message>
         <message id="chat-is-a-contact">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="60"/>
             <source>Contact</source>
-            <translation>Контакт</translation>
+            <translation>Есть в контактах</translation>
         </message>
         <message id="chat-is-not-a-contact">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="62"/>
             <source>Not a contact</source>
-            <translation>Не контакт</translation>
+            <translation>Отсутствует в контактах</translation>
         </message>
         <message id="%1-members">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="66"/>
-            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="95"/>
+            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="87"/>
             <source>%1 members</source>
             <translation type="unfinished"/>
         </message>
         <message id="1-member">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="68"/>
-            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="97"/>
+            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="89"/>
             <source>1 member</source>
             <translation type="unfinished"/>
         </message>
         <message id="clear-history">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="141"/>
-            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="181"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="124"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="164"/>
             <source>Clear history</source>
             <translation>Очистить историю</translation>
         </message>
         <message id="delete-chat">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="150"/>
-            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="153"/>
-            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="155"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="133"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="136"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="138"/>
             <source>Delete Chat</source>
             <translation>Удалить чат</translation>
         </message>
         <message id="delete-chat-confirmation">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="157"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="140"/>
             <source>Are you sure you want to delete this chat?</source>
             <translation>Вы уверены, что хотите удалить этот чат?</translation>
         </message>
         <message id="are-you-sure-you-want-to-leave-this-chat-">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="196"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="179"/>
             <source>Are you sure you want to leave this chat?</source>
             <translation type="unfinished"/>
         </message>
         <message id="leave-chat">
-            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="200"/>
+            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="221"/>
             <source>Leave chat</source>
             <oldsource>Leave Chat</oldsource>
             <translation>Выйти из чата</translation>
         </message>
         <message id="group-information">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="173"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="156"/>
             <source>Group Information</source>
             <translation type="unfinished"/>
         </message>
         <message id="leave-group">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="189"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/TopBar.qml" line="172"/>
             <source>Leave Group</source>
             <translation>Покинуть группу</translation>
         </message>
@@ -110,8 +105,8 @@
             <translation>Чат</translation>
         </message>
         <message id="group-chat-admin">
-            <location filename="../app/AppLayouts/Chat/components/Contact.qml" line="82"/>
-            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="315"/>
+            <location filename="../app/AppLayouts/Chat/components/Contact.qml" line="83"/>
+            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="307"/>
             <source>Admin</source>
             <translation>Администратор</translation>
         </message>
@@ -127,14 +122,14 @@
         </message>
         <message id="%1-/-10-members">
             <location filename="../app/AppLayouts/Chat/components/GroupChatPopup.qml" line="82"/>
-            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="92"/>
+            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="84"/>
             <source>%1 / 10 members</source>
             <translation type="unfinished"/>
         </message>
         <message id="group-name">
             <location filename="../app/AppLayouts/Chat/components/GroupChatPopup.qml" line="100"/>
-            <location filename="../app/AppLayouts/Chat/components/RenameGroupPopup.qml" line="42"/>
-            <location filename="../app/AppLayouts/Chat/components/RenameGroupPopup.qml" line="60"/>
+            <location filename="../app/AppLayouts/Chat/components/RenameGroupPopup.qml" line="18"/>
+            <location filename="../app/AppLayouts/Chat/components/RenameGroupPopup.qml" line="32"/>
             <source>Group name</source>
             <translation type="unfinished"/>
         </message>
@@ -150,39 +145,39 @@
             <translation>Создать групповой чат</translation>
         </message>
         <message id="add-members">
-            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="76"/>
-            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="361"/>
+            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="68"/>
+            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="353"/>
             <source>Add members</source>
-            <translation>Добавить членов</translation>
+            <translation>Добавить участников</translation>
         </message>
         <message id="group-chat-all-contacts-invited">
-            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="172"/>
+            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="164"/>
             <source>All your contacts are already in the group</source>
             <translation>Все ваши контакты уже в группе</translation>
         </message>
         <message id="members-title">
-            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="251"/>
+            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="243"/>
             <source>Members</source>
             <translation>Участники</translation>
         </message>
         <message id="make-admin">
-            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="335"/>
+            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="327"/>
             <source>Make Admin</source>
             <translation>Сделать администратором</translation>
         </message>
         <message id="remove-from-group">
-            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="342"/>
+            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="334"/>
             <source>Remove From Group</source>
             <translation type="unfinished"/>
         </message>
         <message id="add-selected">
-            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="399"/>
+            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="391"/>
             <source>Add selected</source>
             <translation type="unfinished"/>
         </message>
         <message id="user-not-found">
             <location filename="../app/AppLayouts/Chat/components/PrivateChatPopup.qml" line="81"/>
-            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="177"/>
+            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="175"/>
             <source>User not found</source>
             <translation>Пользователь не найден</translation>
         </message>
@@ -200,13 +195,13 @@
         <message id="ens-username">
             <location filename="../app/AppLayouts/Chat/components/ProfilePopup.qml" line="148"/>
             <source>ENS username</source>
-            <translation>Имя пользователя ENS</translation>
+            <translation>ENS-имя</translation>
         </message>
         <message id="chat-key">
             <location filename="../app/AppLayouts/Chat/components/ProfilePopup.qml" line="177"/>
             <location filename="../app/AppLayouts/Profile/Sections/MyProfileContainer.qml" line="132"/>
             <source>Chat key</source>
-            <translation>Код контакта</translation>
+            <translation>Ключ чата</translation>
         </message>
         <message id="share-profile-url">
             <location filename="../app/AppLayouts/Chat/components/ProfilePopup.qml" line="216"/>
@@ -221,7 +216,7 @@
             <translation>Нет</translation>
         </message>
         <message id="send-message">
-            <location filename="../app/AppLayouts/Chat/components/MessageContextMenu.qml" line="110"/>
+            <location filename="../app/AppLayouts/Chat/components/MessageContextMenu.qml" line="111"/>
             <location filename="../app/AppLayouts/Profile/Sections/Contacts/Contact.qml" line="103"/>
             <source>Send message</source>
             <oldsource>Send Message</oldsource>
@@ -267,12 +262,12 @@
         <message id="start-new-chat">
             <location filename="../app/AppLayouts/Chat/ContactsColumn/AddChat.qml" line="20"/>
             <source>Start new chat</source>
-            <translation>Начать новый чат</translation>
+            <translation>Новый чат</translation>
         </message>
         <message id="start-group-chat">
             <location filename="../app/AppLayouts/Chat/ContactsColumn/AddChat.qml" line="28"/>
             <source>Start group chat</source>
-            <translation>Начать групповой чат</translation>
+            <translation>Групповой чат</translation>
         </message>
         <message id="new-public-group-chat">
             <location filename="../app/AppLayouts/Chat/ContactsColumn/AddChat.qml" line="36"/>
@@ -291,7 +286,7 @@
             <translation>Название чата</translation>
         </message>
         <message id="save">
-            <location filename="../app/AppLayouts/Chat/components/RenameGroupPopup.qml" line="72"/>
+            <location filename="../app/AppLayouts/Chat/components/RenameGroupPopup.qml" line="43"/>
             <location filename="../app/AppLayouts/Wallet/SetCurrencyModal.qml" line="34"/>
             <source>Save</source>
             <translation>Сохранить</translation>
@@ -324,7 +319,7 @@
             <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="16"/>
             <location filename="../app/AppLayouts/Profile/Sections/Ens/Welcome.qml" line="13"/>
             <source>ENS usernames</source>
-            <translation>ENS имена пользователей</translation>
+            <translation>ENS-имена</translation>
         </message>
         <message id="ens-saved-title">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/Added.qml" line="48"/>
@@ -343,7 +338,7 @@
             <location filename="../app/AppLayouts/Profile/Sections/Ens/ENSConnected.qml" line="93"/>
             <location filename="../app/AppLayouts/Profile/Sections/Ens/ENSRegistered.qml" line="93"/>
             <source>Ok, got it</source>
-            <translation>Ок, понятно</translation>
+            <translation>Ознакомился</translation>
         </message>
         <message id="contacts">
             <source>Contacts</source>
@@ -351,7 +346,7 @@
         </message>
         <message id="privacy-and-security">
             <source>Privacy and security</source>
-            <translation>Конфиденциальность и безопасность</translation>
+            <translation>Приватность и безопасность</translation>
         </message>
         <message id="devices">
             <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="21"/>
@@ -411,8 +406,18 @@
             <source>Node Version: %1</source>
             <translation type="unfinished"/>
         </message>
+        <message id="this-software-is-licensed-under-under-the--1-">
+            <location filename="../app/AppLayouts/Profile/Sections/AboutContainer.qml" line="62"/>
+            <source>This software is licensed under under the %1.</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="source-code-is-available-on--1-">
+            <location filename="../app/AppLayouts/Profile/Sections/AboutContainer.qml" line="79"/>
+            <source>Source code is available on %1.</source>
+            <translation type="unfinished"/>
+        </message>
         <message id="thanks-for-trying-status-desktop!-please-note-that-this-is-an-alpha-release-and-we-advise-you-that-using-this-app-should-be-done-for-testing-purposes-only-and-you-assume-the-full-responsibility-for-all-risks-concerning-your-data-and-funds.-status-makes-no-claims-of-security-or-integrity-of-funds-in-these-builds.">
-            <location filename="../app/AppLayouts/Profile/Sections/AboutContainer.qml" line="93"/>
+            <location filename="../app/AppLayouts/Profile/Sections/AboutContainer.qml" line="128"/>
             <location filename="../onboarding/Intro.qml" line="76"/>
             <source>Thanks for trying Status Desktop! Please note that this is an alpha release and we advise you that using this app should be done for testing purposes only and you assume the full responsibility for all risks concerning your data and funds. Status makes no claims of security or integrity of funds in these builds.</source>
             <translation type="unfinished"/>
@@ -498,7 +503,7 @@ packs will not need to be re-purchased.</source>
             <location filename="../app/AppLayouts/Chat/components/NicknamePopup.qml" line="58"/>
             <location filename="../app/AppLayouts/Chat/components/ProfilePopup.qml" line="263"/>
             <source>Nickname</source>
-            <translation type="unfinished"/>
+            <translation>Никнейм</translation>
         </message>
         <message id="nicknames-help-you-identify-others-in-status--only-you-can-see-the-nicknames-you-ve-added">
             <location filename="../app/AppLayouts/Chat/components/NicknamePopup.qml" line="48"/>
@@ -530,7 +535,8 @@ packs will not need to be re-purchased.</source>
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandModal.qml" line="38"/>
             <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="66"/>
             <location filename="../app/AppLayouts/Profile/Sections/DevicesContainer.qml" line="60"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="78"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="65"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/SetPubKeyModal.qml" line="70"/>
             <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="54"/>
             <source>Continue</source>
             <translation>Продолжить</translation>
@@ -565,7 +571,8 @@ Assets won’t be sent yet.</source>
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandModal.qml" line="173"/>
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="203"/>
             <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="215"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="208"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="195"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/SetPubKeyModal.qml" line="200"/>
             <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="251"/>
             <source>Next</source>
             <translation>Дальше</translation>
@@ -803,8 +810,8 @@ Assets won’t be sent yet.</source>
             <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="64"/>
             <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="138"/>
             <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="15"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="76"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="146"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="63"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="133"/>
             <source>Authorize %1 %2</source>
             <translation type="unfinished"/>
         </message>
@@ -846,7 +853,7 @@ Assets won’t be sent yet.</source>
         <message id="set-currency">
             <location filename="../app/AppLayouts/Wallet/WalletHeader.qml" line="166"/>
             <source>Set Currency</source>
-            <translation>Установить валюту</translation>
+            <translation>Установить основную валюту</translation>
         </message>
         <message id="generate-a-new-account">
             <location filename="../app/AppLayouts/Wallet/components/AddAccount.qml" line="31"/>
@@ -862,7 +869,7 @@ Assets won’t be sent yet.</source>
         <message id="enter-a-seed-phrase">
             <location filename="../app/AppLayouts/Wallet/components/AddAccount.qml" line="47"/>
             <source>Enter a seed phrase</source>
-            <translation>Введите фразу восстановления</translation>
+            <translation>Введите сид-фразу</translation>
         </message>
         <message id="enter-a-private-key">
             <location filename="../app/AppLayouts/Wallet/components/AddAccount.qml" line="55"/>
@@ -956,7 +963,7 @@ Assets won’t be sent yet.</source>
         <message id="add-seed-account">
             <location filename="../app/AppLayouts/Wallet/components/AddAccountWithSeed.qml" line="60"/>
             <source>Add account with a seed phrase</source>
-            <translation>Добавить аккаунт с фразой восстановления</translation>
+            <translation>Добавить аккаунт с сид-фразой</translation>
         </message>
         <message id="enter-your-seed-phrase,-separate-words-with-commas-or-spaces...">
             <location filename="../app/AppLayouts/Wallet/components/AddAccountWithSeed.qml" line="78"/>
@@ -966,7 +973,7 @@ Assets won’t be sent yet.</source>
         <message id="recovery-phrase">
             <location filename="../app/AppLayouts/Wallet/components/AddAccountWithSeed.qml" line="80"/>
             <source>Seed phrase</source>
-            <translation>Фраза восстановления</translation>
+            <translation>Сид-фраза</translation>
         </message>
         <message id="add-watch-account">
             <location filename="../app/AppLayouts/Wallet/components/AddWatchOnlyAccount.qml" line="10"/>
@@ -1030,24 +1037,16 @@ Assets won’t be sent yet.</source>
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="25"/>
             <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="21"/>
             <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="20"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/SetPubKeyModal.qml" line="19"/>
             <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="20"/>
             <source>Error sending the transaction</source>
-            <translation type="unfinished"/>
-        </message>
-        <message id="success-sending-the-transaction">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="27"/>
-            <source>Success sending the transaction</source>
-            <translation type="unfinished"/>
-        </message>
-        <message id="transaction-sent-to-the-blockchain--you-can-watch-the-progress-on-etherscan---2-1">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="59"/>
-            <source>Transaction sent to the blockchain. You can watch the progress on Etherscan: %2%1</source>
             <translation type="unfinished"/>
         </message>
         <message id="wrong-password">
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="47"/>
             <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="42"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="50"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="40"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/SetPubKeyModal.qml" line="40"/>
             <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="275"/>
             <source>Wrong password</source>
             <translation>Неверный пароль</translation>
@@ -1063,8 +1062,10 @@ Assets won’t be sent yet.</source>
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="153"/>
             <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="140"/>
             <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="182"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="148"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="186"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="135"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="173"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/SetPubKeyModal.qml" line="140"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/SetPubKeyModal.qml" line="178"/>
             <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="167"/>
             <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="200"/>
             <source>Sign with password</source>
@@ -1073,18 +1074,18 @@ Assets won’t be sent yet.</source>
         <message id="send--1--2">
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml" line="155"/>
             <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="180"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="184"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="171"/>
             <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="202"/>
             <source>Send %1 %2</source>
             <translation type="unfinished"/>
         </message>
         <message id="wallet-asset">
-            <location filename="../shared/TransactionPreview.qml" line="213"/>
+            <location filename="../shared/TransactionPreview.qml" line="214"/>
             <source>Asset</source>
             <translation>Актив</translation>
         </message>
         <message id="amount">
-            <location filename="../shared/TransactionPreview.qml" line="260"/>
+            <location filename="../shared/TransactionPreview.qml" line="261"/>
             <source>Amount</source>
             <translation>Сумма</translation>
         </message>
@@ -1092,7 +1093,7 @@ Assets won’t be sent yet.</source>
             <location filename="../app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandModal.qml" line="63"/>
             <location filename="../app/AppLayouts/Wallet/SendModal.qml" line="80"/>
             <location filename="../shared/RecipientSelector.qml" line="67"/>
-            <location filename="../shared/TransactionPreview.qml" line="70"/>
+            <location filename="../shared/TransactionPreview.qml" line="71"/>
             <source>Recipient</source>
             <translation>Получатель</translation>
         </message>
@@ -1113,7 +1114,7 @@ Assets won’t be sent yet.</source>
         <message id="confirmations-helper-text">
             <location filename="../app/AppLayouts/Wallet/components/TransactionModal.qml" line="32"/>
             <source>When the transaction has 12 confirmations you can consider it settled.</source>
-            <translation>Когда у транзакции есть 12 подтверждений, вы можете считать ее выполненной.</translation>
+            <translation>Когда транзакция получит 12 подтверждений, вы можете считать ее завершенной.</translation>
         </message>
         <message id="block">
             <location filename="../app/AppLayouts/Wallet/components/TransactionModal.qml" line="64"/>
@@ -1127,7 +1128,7 @@ Assets won’t be sent yet.</source>
         </message>
         <message id="from">
             <location filename="../app/AppLayouts/Wallet/components/TransactionModal.qml" line="121"/>
-            <location filename="../shared/TransactionPreview.qml" line="34"/>
+            <location filename="../shared/TransactionPreview.qml" line="35"/>
             <source>From</source>
             <translation>От</translation>
         </message>
@@ -1242,7 +1243,7 @@ Seperate words by a single space.</source>
         <message id="intro-title1">
             <location filename="../onboarding/Intro.qml" line="32"/>
             <source>Truly private communication</source>
-            <translation>Действительно конфиденциальное общение</translation>
+            <translation>Действительно приватное общение</translation>
         </message>
         <message id="chat-over-a-peer-to-peer--encrypted-network-n-where-messages-can-t-be-censored-or-hacked">
             <location filename="../onboarding/Intro.qml" line="34"/>
@@ -1253,7 +1254,7 @@ Seperate words by a single space.</source>
         <message id="intro-title2">
             <location filename="../onboarding/Intro.qml" line="40"/>
             <source>Secure crypto wallet</source>
-            <translation>Безопасный криптокошелек</translation>
+            <translation>Безопасный крипто-кошелек</translation>
         </message>
         <message id="send-and-receive-digital-assets-anywhere-in-the-nworld--no-bank-account-required">
             <location filename="../onboarding/Intro.qml" line="42"/>
@@ -1278,7 +1279,7 @@ world--no bank account required</source>
         <message id="custom-seed-phrase">
             <location filename="../onboarding/InvalidSeedPhraseModal.qml" line="9"/>
             <source>Invalid seed phrase</source>
-            <translation>Недействительная фраза восстановления</translation>
+            <translation>Неверная сид-фраза</translation>
         </message>
         <message id="buy-for--1-snt">
             <location filename="../app/AppLayouts/Chat/components/StickerButton.qml" line="29"/>
@@ -1319,7 +1320,7 @@ world--no bank account required</source>
         <message id="intro-wizard-title1">
             <location filename="../onboarding/KeysMain.qml" line="38"/>
             <source>Get your keys</source>
-            <translation>Получите ключи</translation>
+            <translation>Сгенерируйте свои ключи</translation>
         </message>
         <message id="a-set-of-keys-controls-your-account.-your-keys-live-on-your-device,-so-only-you-can-use-them.">
             <location filename="../onboarding/KeysMain.qml" line="51"/>
@@ -1337,19 +1338,19 @@ world--no bank account required</source>
             <translation type="unfinished"/>
         </message>
         <message id="enter-password">
-            <location filename="../onboarding/Login.qml" line="133"/>
+            <location filename="../onboarding/Login.qml" line="132"/>
             <source>Enter password</source>
             <translation>Введите пароль</translation>
         </message>
         <message id="generate-new-keys">
-            <location filename="../onboarding/Login.qml" line="241"/>
+            <location filename="../onboarding/Login.qml" line="240"/>
             <source>Generate new keys</source>
             <translation type="unfinished"/>
         </message>
         <message id="enter-seed-phrase">
             <location filename="../onboarding/Login/ConfirmAddExistingKeyModal.qml" line="10"/>
             <source>Enter seed phrase</source>
-            <translation>Введите фразу восстановления</translation>
+            <translation>Введите сид-фразу</translation>
         </message>
         <message id="your-accounts">
             <location filename="../onboarding/Login/SelectAnotherAccountModal.qml" line="11"/>
@@ -1362,14 +1363,14 @@ world--no bank account required</source>
             <translation>Поиск</translation>
         </message>
         <message id="view-profile">
-            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="109"/>
+            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="130"/>
             <location filename="../app/AppLayouts/Profile/Sections/Contacts/Contact.qml" line="95"/>
             <source>View Profile</source>
             <oldsource>View profile</oldsource>
             <translation>Просмотреть профиль</translation>
         </message>
         <message id="reply-to">
-            <location filename="../app/AppLayouts/Chat/components/MessageContextMenu.qml" line="112"/>
+            <location filename="../app/AppLayouts/Chat/components/MessageContextMenu.qml" line="113"/>
             <source>Reply to</source>
             <translation type="unfinished"/>
         </message>
@@ -1501,20 +1502,20 @@ world--no bank account required</source>
             <translation type="unfinished"/>
         </message>
         <message id="chat-and-transact-privately-with-your-friends">
-            <location filename="../app/AppLayouts/Chat/ContactsColumn/EmptyView.qml" line="74"/>
+            <location filename="../app/AppLayouts/Chat/ContactsColumn/EmptyView.qml" line="65"/>
             <source>Chat and transact privately with your friends</source>
             <translation type="unfinished"/>
         </message>
         <message id="invite-friends">
-            <location filename="../app/AppLayouts/Chat/ContactsColumn/EmptyView.qml" line="88"/>
+            <location filename="../app/AppLayouts/Chat/ContactsColumn/EmptyView.qml" line="79"/>
             <location filename="../app/AppLayouts/Chat/components/GroupChatPopup.qml" line="124"/>
-            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="183"/>
+            <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="175"/>
             <location filename="../app/AppLayouts/Chat/components/PrivateChatPopup.qml" line="152"/>
             <source>Invite friends</source>
             <translation>Пригласить друзей</translation>
         </message>
         <message id="follow-your-interests-in-one-of-the-many-public-chats.">
-            <location filename="../app/AppLayouts/Chat/ContactsColumn/EmptyView.qml" line="119"/>
+            <location filename="../app/AppLayouts/Chat/ContactsColumn/EmptyView.qml" line="120"/>
             <source>Follow your interests in one of the many Public Chats.</source>
             <translation type="unfinished"/>
         </message>
@@ -1565,12 +1566,17 @@ world--no bank account required</source>
             <translation>Запрос</translation>
         </message>
         <message id="new-message-s--received">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatMessages.qml" line="51"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatMessages.qml" line="54"/>
             <source>New message(s) received</source>
             <translation type="unfinished"/>
         </message>
+        <message id="go-back-to-bottom">
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatMessages.qml" line="56"/>
+            <source>Go back to bottom</source>
+            <translation type="unfinished"/>
+        </message>
         <message id="click-here-to-scroll-back-down">
-            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatMessages.qml" line="65"/>
+            <location filename="../app/AppLayouts/Chat/ChatColumn/ChatMessages.qml" line="72"/>
             <source>Click here to scroll back down</source>
             <translation type="unfinished"/>
         </message>
@@ -1595,53 +1601,53 @@ world--no bank account required</source>
             <translation>Вы</translation>
         </message>
         <message id="view-group">
-            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="113"/>
+            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="134"/>
             <source>View Group</source>
             <translation type="unfinished"/>
         </message>
         <message id="share-chat">
-            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="116"/>
+            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="137"/>
             <source>Share Chat</source>
             <translation>Поделиться чатом</translation>
         </message>
         <message id="unmute-chat">
-            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="138"/>
+            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="159"/>
             <source>Unmute chat</source>
             <translation type="unfinished"/>
         </message>
         <message id="mute-chat">
-            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="140"/>
+            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="161"/>
             <source>Mute chat</source>
             <translation type="unfinished"/>
         </message>
         <message id="mark-as-read">
-            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="155"/>
+            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="176"/>
             <source>Mark as Read</source>
             <oldsource>15 minutes1 hour8 hours24 hoursUntil I turn it back onMark as Read</oldsource>
             <translation type="unfinished"/>
         </message>
         <message id="fetch-messages">
-            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="166"/>
+            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="187"/>
             <source>Fetch Messages</source>
-            <translation>↓ Получить сообщения</translation>
+            <translation>↓ Открыть сообщения</translation>
         </message>
         <message id="last-24-hours">
-            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="170"/>
+            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="191"/>
             <source>Last 24 hours</source>
             <translation type="unfinished"/>
         </message>
         <message id="last-2-days">
-            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="172"/>
+            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="193"/>
             <source>Last 2 days</source>
             <translation type="unfinished"/>
         </message>
         <message id="last-3-days">
-            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="174"/>
+            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="195"/>
             <source>Last 3 days</source>
             <translation type="unfinished"/>
         </message>
         <message id="last-7-days">
-            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="176"/>
+            <location filename="../app/AppLayouts/Chat/ContactsColumn/ChannelList.qml" line="197"/>
             <source>Last 7 days</source>
             <translation type="unfinished"/>
         </message>
@@ -1668,29 +1674,33 @@ world--no bank account required</source>
         </message>
         <message id="add-contact">
             <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="125"/>
-            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="207"/>
+            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="203"/>
             <source>Add contact</source>
             <translation>Добавить контакт</translation>
         </message>
         <message id="you-don-t-have-any-contacts-yet">
-            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="235"/>
+            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="231"/>
             <source>You don’t have any contacts yet</source>
             <translation type="unfinished"/>
         </message>
         <message id="invite-firends">
-            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="248"/>
+            <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="244"/>
             <source>Invite firends</source>
             <translation type="unfinished"/>
         </message>
         <message id="sounds-settings">
-            <location filename="../app/AppLayouts/Profile/Sections/SoundsContainer.qml" line="18"/>
+            <location filename="../app/AppLayouts/Profile/Sections/SoundsContainer.qml" line="16"/>
             <source>Sounds settings</source>
             <translation type="unfinished"/>
         </message>
+        <message id="sound-volume">
+            <location filename="../app/AppLayouts/Profile/Sections/SoundsContainer.qml" line="32"/>
+            <source>Sound volume</source>
+            <translation type="unfinished"/>
+        </message>
         <message id="Sound volume">
-            <location filename="../app/AppLayouts/Profile/Sections/SoundsContainer.qml" line="31"/>
             <source/>
-            <translation type="unfinished">Нет сообщений</translation>
+            <translation type="obsolete">Нет сообщений</translation>
         </message>
         <message id="collectibles-will-appear-here">
             <location filename="../app/AppLayouts/Wallet/CollectiblesTab.qml" line="15"/>
@@ -1745,7 +1755,8 @@ world--no bank account required</source>
         </message>
         <message id="choose-account">
             <location filename="../app/AppLayouts/Chat/components/StickerPackPurchaseModal.qml" line="79"/>
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="87"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/RegisterENSModal.qml" line="74"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/SetPubKeyModal.qml" line="79"/>
             <location filename="../shared/AccountSelector.qml" line="10"/>
             <source>Choose account</source>
             <translation type="unfinished"/>
@@ -1787,18 +1798,18 @@ world--no bank account required</source>
             <translation type="unfinished"/>
         </message>
         <message id="select-a-contact">
-            <location filename="../shared/ContactSelector.qml" line="28"/>
+            <location filename="../shared/ContactSelector.qml" line="29"/>
             <source>Select a contact</source>
             <translation type="unfinished"/>
         </message>
         <message id="please-select-a-contact">
-            <location filename="../shared/ContactSelector.qml" line="14"/>
+            <location filename="../shared/ContactSelector.qml" line="15"/>
             <source>Please select a contact</source>
             <translation type="unfinished"/>
         </message>
         <message id="network-fee">
             <location filename="../shared/GasSelector.qml" line="64"/>
-            <location filename="../shared/TransactionPreview.qml" line="317"/>
+            <location filename="../shared/TransactionPreview.qml" line="318"/>
             <source>Network fee</source>
             <translation>Комиссия сети</translation>
         </message>
@@ -1825,7 +1836,7 @@ world--no bank account required</source>
         <message id="advanced">
             <location filename="../shared/GasSelector.qml" line="163"/>
             <source>Advanced</source>
-            <translation>Дополнительные</translation>
+            <translation>Дополнительно</translation>
         </message>
         <message id="custom-network-fee">
             <location filename="../shared/GasSelector.qml" line="174"/>
@@ -2287,7 +2298,7 @@ world--no bank account required</source>
         <message id="load-more-messages">
             <location filename="../app/AppLayouts/Chat/ChatColumn/Message.qml" line="127"/>
             <source>↓ Fetch more messages</source>
-            <translation>↓ Получить больше сообщений</translation>
+            <translation>↓ Открыть больше сообщений</translation>
         </message>
         <message id="before--1">
             <location filename="../app/AppLayouts/Chat/ChatColumn/Message.qml" line="151"/>
@@ -2338,7 +2349,7 @@ world--no bank account required</source>
         <message id="wallet-insufficient-gas">
             <location filename="../shared/GasValidator.qml" line="13"/>
             <source>Not enough ETH for gas</source>
-            <translation>Недостаточно ETH для газа</translation>
+            <translation>Недостаточно ETH, чтобы заплатить за газ</translation>
         </message>
         <message id="view-on-etherscan">
             <location filename="../shared/ToastMessage.qml" line="13"/>
@@ -2433,68 +2444,62 @@ world--no bank account required</source>
             <source>Type the entire username including the custom domain like username.domain.eth</source>
             <translation>Введите полное имя пользователя, включая пользовательский домен, например username.domain.eth</translation>
         </message>
-        <message id="todo--replace-this-for-the-transaction-dialog">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="52"/>
-            <source>TODO: replace this for the transaction dialog</source>
-            <translation type="unfinished"/>
-        </message>
         <message id="ok">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="69"/>
             <source>Ok</source>
             <translation>Хорошо</translation>
         </message>
         <message id="ens-your-username">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="82"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="59"/>
             <source>Your username</source>
             <translation>Ваше имя пользователя</translation>
         </message>
         <message id="ens-username-available">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="152"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="129"/>
             <source>✓ Username available!</source>
             <translation>✓ Имя пользователя доступно!</translation>
         </message>
         <message id="ens-username-owned-continue">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="157"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="134"/>
             <source>Continuing will connect this username with your chat key.</source>
-            <translation>Если вы продолжите, имя пользователя будет связано с вашим кодом контакта.</translation>
+            <translation>Если вы продолжите, это имя пользователя будет привязано к вашему ключу чата.</translation>
         </message>
         <message id="ens-custom-username-taken">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="162"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="139"/>
             <source>Username doesn’t belong to you :(</source>
             <translation>Имя пользователя вам не принадлежит :(</translation>
         </message>
         <message id="ens-username-taken">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="165"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="142"/>
             <source>Username already taken :(</source>
-            <translation>Имя пользователя уже занято :(</translation>
+            <translation>Это имя пользователя уже занято :(</translation>
         </message>
         <message id="ens-username-already-added">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="169"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="146"/>
             <source>Username is already connected with your chat key and can be used inside Status.</source>
-            <translation>Имя пользователя уже связано с вашим кодом контакта и может быть использовано в Status.</translation>
+            <translation>Имя пользователя уже связано с вашим кодом чата и может быть использовано в Status.</translation>
         </message>
         <message id="this-user-name-is-owned-by-you-and-connected-with-your-chat-key--continue-to-set--show-my-ens-username-in-chats--">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="174"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="151"/>
             <source>This user name is owned by you and connected with your chat key. Continue to set `Show my ENS username in chats`.</source>
             <translation type="unfinished"/>
         </message>
         <message id="ens-username-connected-with-different-key">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="179"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="156"/>
             <source>Continuing will require a transaction to connect the username with your current chat key.</source>
             <translation>Для продолжения потребуется транзакция, чтобы связать имя пользователя с текущим кодом контакта.</translation>
         </message>
         <message id="ens-custom-domain">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="240"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="217"/>
             <source>Custom domain</source>
             <translation>Пользовательский домен</translation>
         </message>
         <message id="ens-want-domain">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="251"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="228"/>
             <source>I want a stateofus.eth domain</source>
             <translation>Я хочу домен stateofus.eth</translation>
         </message>
         <message id="ens-want-custom-domain">
-            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="254"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/Search.qml" line="231"/>
             <source>I own a name on another domain</source>
             <translation>У меня есть имя на другом домене</translation>
         </message>
@@ -2526,12 +2531,12 @@ world--no bank account required</source>
         <message id="ens-terms-point-5">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="84"/>
             <source>Your address(es) will be publicly associated with your ENS name.</source>
-            <translation>Ваш(-и) адрес(-а) будет(-ут) публично связан(-ы) с вашим ENS именем.</translation>
+            <translation>Ваш(и) адрес(а) будет(ут) публично связан(ы) с вашим ENS-именем.</translation>
         </message>
         <message id="ens-terms-point-6">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="92"/>
             <source>Usernames are created as subdomain nodes of stateofus.eth and are subject to the ENS smart contract terms.</source>
-            <translation>Имена пользователей создаются как узлы субдоменов stateofus.eth и подчиняются условиям смарт-контракта ENS.</translation>
+            <translation>Имена пользователей создаются в качестве нод субдоменов stateofus.eth и подчиняются условиям ENS смарт-контракта.</translation>
         </message>
         <message id="ens-terms-point-7">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="100"/>
@@ -2566,7 +2571,7 @@ world--no bank account required</source>
         <message id="ens-deposit">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="302"/>
             <source>Deposit</source>
-            <translation>Внести депозит</translation>
+            <translation>Депозит</translation>
         </message>
         <message id="not-enough-snt">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/TermsAndConditions.qml" line="320"/>
@@ -2586,7 +2591,7 @@ world--no bank account required</source>
         <message id="ens-welcome-hints">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/Welcome.qml" line="64"/>
             <source>ENS names transform those crazy-long addresses into unique usernames.</source>
-            <translation>ENS имена преобразуют эти невероятно длинные адреса в уникальные имена пользователей</translation>
+            <translation>ENS-имена преобразуют эти невероятно длинные адреса в уникальные имена пользователей</translation>
         </message>
         <message id="ens-welcome-point-customize-title">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/Welcome.qml" line="88"/>
@@ -2606,7 +2611,7 @@ world--no bank account required</source>
         <message id="ens-welcome-point-simplify">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/Welcome.qml" line="140"/>
             <source>You can receive funds to your easy-to-share ENS name rather than your hexadecimal hash (0x...).</source>
-            <translation>Получайте средства на удобное ENS имя вместо шестнадцатеричного хэша (0x...)</translation>
+            <translation>Получайте средства используя свое ENS-имя вместо публичного адреса (0x...)</translation>
         </message>
         <message id="ens-welcome-point-receive-title">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/Welcome.qml" line="164"/>
@@ -2626,7 +2631,7 @@ world--no bank account required</source>
         <message id="ens-welcome-point-register">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/Welcome.qml" line="216"/>
             <source>Register once to keep the name forever. After 1 year you can release the name and get your SNT back.</source>
-            <translation>Зарегистрировавшись один раз вы получаете имя навсегда. Через 1 год вы можете освободить имя и вернуть свои SNT.</translation>
+            <translation>Зарегистрировавшись один раз вы получаете имя навсегда. Через год вы можете освободить имя и вернуть свои SNT токены.</translation>
         </message>
         <message id="ens-welcome-point-verify-title">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/Welcome.qml" line="241"/>
@@ -2636,7 +2641,7 @@ world--no bank account required</source>
         <message id="ens-welcome-point-verify">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/Welcome.qml" line="255"/>
             <source>You can verify and add any usernames you own in the next steps.</source>
-            <translation>Вы можете проверять и добавлять любые имена пользователей на следующих шагах.</translation>
+            <translation>В следующих шагах вы можете проверить и зарегистрировать любое имя пользователя.</translation>
         </message>
         <message id="ens-powered-by">
             <location filename="../app/AppLayouts/Profile/Sections/Ens/Welcome.qml" line="268"/>
@@ -2656,7 +2661,7 @@ world--no bank account required</source>
         <message id="ens-registration-failed">
             <location filename="../app/AppLayouts/Profile/Sections/EnsContainer.qml" line="293"/>
             <source>ENS Registration failed</source>
-            <translation>Чтобы зарегистрировать имя пользователя, пожалуйста, попробуйте еще раз.</translation>
+            <translation>Попробуйте еще раз, чтобы зарегистрировать имя пользователя.</translation>
         </message>
         <message id="ens-registration-completed">
             <location filename="../app/AppLayouts/Profile/Sections/EnsContainer.qml" line="296"/>
@@ -2696,7 +2701,7 @@ world--no bank account required</source>
         <message id="chat-key-title">
             <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="53"/>
             <source>Chat Key</source>
-            <translation>Код контакта</translation>
+            <translation>Ключ чата</translation>
         </message>
         <message id="c">
             <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="55"/>
@@ -2706,22 +2711,22 @@ world--no bank account required</source>
         <message id="chat-key-content">
             <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="57"/>
             <source>Messages on the Status chat protocol are sent and received using encryption keys. The public chat key is a string of characters you share with others so they can send you messages in Status.</source>
-            <translation>Сообщения в протоколе чата Status отправляются и получаются с использованием ключей шифрования. Открытый код контакта – это строка знаков, которой вы делитесь с другими, чтобы они могли отправлять вам сообщения в Status.</translation>
+            <translation>Протокол работы чатов приложения Status формирует прием и отправку сообщений с использованием ключей шифрования. Публичный ключ чата – это строка символов, которой вы делитесь с другими пользователями, чтобы они имели возможность отправить вам сообщение в приложении.</translation>
         </message>
         <message id="chat-name-title">
             <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="65"/>
             <source>Chat Name</source>
-            <translation>Имя в чате</translation>
+            <translation>Имя чата</translation>
         </message>
         <message id="chat-name-content">
             <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="67"/>
             <source>Three random words, derived algorithmically from your chat key and used as your default alias in chat. Chat names are completely unique; no other user can have the same three words.</source>
-            <translation>Три случайных слова, полученные алгоритмически из вашего кода контакта и используемые в чате в качестве псевдонима по умолчанию. Имена в чатах абсолютно уникальны; ни один другой пользователь не может иметь те же три слова.</translation>
+            <translation>Набор из трех случайных слов, генерируется алгоритмическим путем на основе вашего кода чата. Данное имя используется по умолчанию в качестве псевдонима. Имена полностью уникальны и не могут состоять из трех одинаковых слов.</translation>
         </message>
         <message id="ens-name-title">
             <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="75"/>
             <source>ENS Name</source>
-            <translation>Имя ENS</translation>
+            <translation>ENS-имя</translation>
         </message>
         <message id="e">
             <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="77"/>
@@ -2731,7 +2736,7 @@ world--no bank account required</source>
         <message id="ens-name-content">
             <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="79"/>
             <source>Custom alias for your chat key that you can register using the Ethereum Name Service. ENS names are decentralized usernames.</source>
-            <translation>Настраиваемый псевдоним для вашего кода контакта, который вы можете зарегистрировать с помощью службы имен Ethereum. Имена ENS являются децентрализованными именами пользователей.</translation>
+            <translation>Псевдоним пользователя использующийся как ключ от чата, который вы можете зарегистрировать с помощью Ethereum Name Service. ENS-имя – это уникальное децентрализованное имя пользователя.</translation>
         </message>
         <message id="m">
             <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="85"/>
@@ -2741,12 +2746,12 @@ world--no bank account required</source>
         <message id="mailserver-title">
             <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="89"/>
             <source>Mailserver</source>
-            <translation>Mailserver</translation>
+            <translation>Почтовый сервер</translation>
         </message>
         <message id="mailserver-content">
             <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="91"/>
             <source>A node in the Status network that routes and stores messages, for up to 30 days.</source>
-            <translation>Узел в сети Status, который маршрутизирует и хранит сообщения сроком до 30 дней.</translation>
+            <translation>Нода в сети Status отвечает за маршрутизацию и хранение сообщений сроком до 30 дней.</translation>
         </message>
         <message id="peer-title">
             <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="99"/>
@@ -2766,7 +2771,7 @@ world--no bank account required</source>
         <message id="seed-phrase-title">
             <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="111"/>
             <source>Seed Phrase</source>
-            <translation>Фраза восстановления</translation>
+            <translation>Сид-фраза</translation>
         </message>
         <message id="s">
             <location filename="../app/AppLayouts/Profile/Sections/HelpContainer.qml" line="113"/>
@@ -2816,7 +2821,7 @@ world--no bank account required</source>
         <message id="notifications-preferences">
             <location filename="../app/AppLayouts/Profile/Sections/NotificationsContainer.qml" line="37"/>
             <source>Notification preferences</source>
-            <translation type="unfinished"/>
+            <translation>Настройки уведомлений</translation>
         </message>
         <message id="all-messages">
             <location filename="../app/AppLayouts/Profile/Sections/NotificationsContainer.qml" line="52"/>
@@ -2921,6 +2926,14 @@ world--no bank account required</source>
         <message id="restore-default-notification-settings-and-unmute-all-chats-and-users">
             <location filename="../app/AppLayouts/Profile/Sections/NotificationsContainer.qml" line="276"/>
             <source>Restore default notification settings and unmute all chats and users</source>
+            <translation type="unfinished"/>
+        </message>
+        <message id="connect-username-with-your-pubkey">
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/SetPubKeyModal.qml" line="14"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/SetPubKeyModal.qml" line="68"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/SetPubKeyModal.qml" line="138"/>
+            <location filename="../app/AppLayouts/Profile/Sections/Ens/SetPubKeyModal.qml" line="176"/>
+            <source>Connect username with your pubkey</source>
             <translation type="unfinished"/>
         </message>
     </context>

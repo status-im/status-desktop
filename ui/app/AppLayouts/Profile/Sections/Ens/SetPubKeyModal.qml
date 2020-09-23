@@ -10,11 +10,13 @@ ModalPopup {
     readonly property var asset: {"name": "Ethereum", "symbol": "ETH"}
     property string ensUsername: ""
 
-    title: qsTr("Connect username with your pubkey")
+    //% "Connect username with your pubkey"
+    title: qsTrId("connect-username-with-your-pubkey")
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
-        title: qsTr("Error sending the transaction")
+        //% "Error sending the transaction"
+        title: qsTrId("error-sending-the-transaction")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }
@@ -34,7 +36,8 @@ ModalPopup {
 
             if (!response.success) {
                 if (response.error.message.includes("could not decrypt key with given password")){
-                    transactionSigner.validationError = qsTr("Wrong password")
+                    //% "Wrong password"
+                    transactionSigner.validationError = qsTrId("wrong-password")
                     return
                 }
                 sendingError.text = response.error.message
@@ -61,8 +64,10 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group1
-            headerText: qsTr("Connect username with your pubkey")
-            footerText: qsTr("Continue")
+            //% "Connect username with your pubkey"
+            headerText: qsTrId("connect-username-with-your-pubkey")
+            //% "Continue"
+            footerText: qsTrId("continue")
 
             AccountSelector {
                 id: selectFromAccount
@@ -70,7 +75,8 @@ ModalPopup {
                 selectedAccount: walletModel.currentAccount
                 currency: walletModel.defaultCurrency
                 width: stack.width
-                label: qsTr("Choose account")
+                //% "Choose account"
+                label: qsTrId("choose-account")
                 showBalanceForAssetSymbol: "ETH"
                 minRequiredAssetBalance: 0
                 reset: function() {
@@ -128,8 +134,10 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group3
-            headerText: qsTr("Connect username with your pubkey")
-            footerText: qsTr("Sign with password")
+            //% "Connect username with your pubkey"
+            headerText: qsTrId("connect-username-with-your-pubkey")
+            //% "Sign with password"
+            footerText: qsTrId("sign-with-password")
 
             TransactionPreview {
                 id: pvwTransaction
@@ -164,8 +172,10 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group4
-            headerText: qsTr("Connect username with your pubkey")
-            footerText: qsTr("Sign with password")
+            //% "Connect username with your pubkey"
+            headerText: qsTrId("connect-username-with-your-pubkey")
+            //% "Sign with password"
+            footerText: qsTrId("sign-with-password")
 
             TransactionSigner {
                 id: transactionSigner
@@ -186,7 +196,8 @@ ModalPopup {
         StyledButton {
             id: btnNext
             anchors.right: parent.right
-            label: qsTr("Next")
+            //% "Next"
+            label: qsTrId("next")
             disabled: !stack.currentGroup.isValid
             onClicked: {
                 const validity = stack.currentGroup.validate() 

@@ -52,7 +52,8 @@ ScrollView {
                 text: newMessagesBox.state === "new-message" ?
                           //% "New message(s) received"
                           qsTrId("new-message-s--received") :
-                          qsTr("Go back to bottom")
+                          //% "Go back to bottom"
+                          qsTrId("go-back-to-bottom")
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
                 anchors.left: parent.left
