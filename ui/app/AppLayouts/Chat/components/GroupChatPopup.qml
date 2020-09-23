@@ -163,7 +163,7 @@ ModalPopup {
                 }
                 showCheckbox: selectChatMembers && memberCount < maxMembers
                 pubKey: model.pubKey
-                isContact: model.isContact
+                isContact: !!model.isContact
                 isUser: model.isUser
                 name: !model.name.endsWith(".eth") && !!model.localNickname ?
                           model.localNickname : Utils.removeStatusEns(model.name)
