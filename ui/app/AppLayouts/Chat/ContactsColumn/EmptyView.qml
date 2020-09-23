@@ -7,9 +7,8 @@ import "../data/channelList.js" as ChannelJSON
 import "../../../../shared"
 import "../../../../imports"
 
-//Item {
-            ScrollView {
-//                id: sview
+Item {
+            // ScrollView {
                 clip: true
 
 //                anchors.top: suggestionsText.bottom
@@ -18,17 +17,20 @@ import "../../../../imports"
 //                anchors.right: parent.right
 //                anchors.bottom: parent.bottom
 
-                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+                // ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                // ScrollBar.vertical.policy: ScrollBar.AlwaysOn
 //                Layout.fillHeight: true
 //                Layout.fillWidth: true
+
     property var onCloseButtonPressed: function () {}
 
     id: emptyView
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    contentHeight: {
+    // contentHeight: {
+    height: {
+        if (!visible) return 0
         var totalHeight = 0
         for (let i = 0; i < sectionRepeater.count; i++) {
             totalHeight += sectionRepeater.itemAt(i).height + Style.current.padding
@@ -52,7 +54,7 @@ import "../../../../imports"
 
         Item {
             id: inviteFriendsContainer
-            height: 190
+            height: visible ? 190 : 0
             anchors.top: parent.top
             anchors.topMargin: 0
             anchors.right: parent.right
@@ -88,7 +90,7 @@ import "../../../../imports"
                 anchors.fill: closeImg
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                    emptyView.onCloseButtonPressed()
+                    emptyView.visible = false
                 }
             }
 

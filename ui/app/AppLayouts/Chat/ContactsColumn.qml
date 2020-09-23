@@ -64,16 +64,19 @@ Item {
         anchors.topMargin: Style.current.padding
 
         function getCurrentIndex() {
-            return channelList.channelListCount > 0 ? 1 : 0
+            // return channelList.channelListCount > 0 ? 1 : 0
+            return 0
         }
 
         currentIndex: getCurrentIndex()
 
-        EmptyView {
-            onCloseButtonPressed: function () {
-                contactsStackView.currentIndex = 2
-            }
-        }
+        // ScrollView {
+        //     clip: true
+        // EmptyView {
+        //     onCloseButtonPressed: function () {
+        //         contactsStackView.currentIndex = 2
+        //     }
+        // }
 
         ChannelList {
             id: channelList
