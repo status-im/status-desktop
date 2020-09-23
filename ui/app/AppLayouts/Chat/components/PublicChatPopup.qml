@@ -49,20 +49,9 @@ ModalPopup {
         icon: "../../../img/hash.svg"
     }
 
-    //    RowLayout {
-    //        id: row
-    //        Layout.fillHeight: false
-    //        Layout.fillWidth: true
-    //        anchors.right: parent.right
-    //        anchors.rightMargin: 35
-    //        anchors.left: parent.left
-    //        anchors.leftMargin: 35
-    //        anchors.top: channelName.bottom
-    //        anchors.topMargin: 37
-
     ScrollView {
         id: sview
-        // clip: true
+        clip: true
 
         anchors.top: channelName.bottom
         anchors.topMargin: Style.current.smallPadding
@@ -74,26 +63,38 @@ ModalPopup {
         ScrollBar.vertical.policy: ScrollBar.AlwaysOn
         Layout.fillHeight: true
         Layout.fillWidth: true
-        contentHeight: channelSuggestionList.height
+        contentHeight: {
+            var totalHeight = 0
+            for (let i = 0; i < sectionRepeater.count; i++) {
+                totalHeight += sectionRepeater.itemAt(i).height + Style.current.padding
+            }
+            return totalHeight + Style.current.padding
+        }
 
         Repeater {
+            id: sectionRepeater
             model: ChannelJSON.categories
-            ColumnLayout {
-                id: channelSuggestionList
-                width: popup.width - Style.current.padding
-                height: children[1].height
+            Item {
+                anchors.top: index === 0 ? parent.top : parent.children[index - 1].bottom
+                anchors.topMargin: index === 0 ? 0 : Style.current.padding
+                width: parent.width - Style.current.padding
+                height: {
+                    return childrenRect.height
+                }
 
                 Text {
+                    id: sectionTitle
                     text: modelData.name
-                    font.pixelSize: 15
+                    font.bold: true
+                    font.pixelSize: 16
                 }
                 Flow {
-                    Layout.fillHeight: false
+                    anchors.top: sectionTitle.bottom
+                    anchors.topMargin: Style.current.smallPadding
+                    Layout.fillHeight: true
                     Layout.fillWidth: true
-                    anchors.top: parent.children[0].bottom
-                    anchors.topMargin: 5
                     width: parent.width
-                    spacing: 20
+                    spacing: 10
                     Repeater {
                         model: modelData.channels
                         SuggestedChannel { channel: modelData }
@@ -103,8 +104,6 @@ ModalPopup {
             }
 
         }
-
-        //        }
     }
 
     footer: Button {
