@@ -11,7 +11,6 @@ Item {
     property var onCloseButtonPressed: function () {}
 
     id: emptyView
-    clip: true
     Layout.fillHeight: true
     Layout.fillWidth: true
 
@@ -146,11 +145,8 @@ Item {
                 anchors.topMargin: Style.current.smallPadding
                 width: parent.width
 
-                Item {
-                    width: parent.width
-                    SuggestedChannels {
-                        id: sectionRepeater
-                    }
+                SuggestedChannels {
+                    id: sectionRepeater
                 }
             }
         }

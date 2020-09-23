@@ -71,11 +71,9 @@ ModalPopup {
             return totalHeight + Style.current.padding
         }
 
-        Item {
+        SuggestedChannels {
+            id: sectionRepeater
             width: parent.width
-            SuggestedChannels {
-                id: sectionRepeater
-            }
         }
     }
 

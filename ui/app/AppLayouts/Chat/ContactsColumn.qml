@@ -64,9 +64,6 @@ Item {
         anchors.right: parent.right
         anchors.top: searchBox.bottom
         anchors.topMargin: Style.current.padding
-
-        onChannelListCountChanged: {
-        }
     }
 }
 

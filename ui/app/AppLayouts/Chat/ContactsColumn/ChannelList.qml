@@ -13,13 +13,11 @@ ScrollView {
     Layout.fillHeight: true
     Layout.fillWidth: true
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-    contentHeight: {
-        return itemId.height
-    }
+    contentHeight: channelListContent.height
     clip: true
 
     Item {
-        id: itemId
+        id: channelListContent
         Layout.fillHeight: true
         anchors.top: parent.top
         anchors.right: parent.right
@@ -37,7 +35,6 @@ ScrollView {
             anchors.rightMargin: Style.current.padding
             anchors.leftMargin: Style.current.padding
             interactive: false
-            // clip: true
             model: chatsModel.chats
             delegate: Channel {
                 name: model.name
@@ -70,9 +67,8 @@ ScrollView {
 
         EmptyView {
             width: parent.width
-            // height: 500
             anchors.top: chatGroupsListView.bottom
-            anchors.topMargin: 10
+            anchors.topMargin: Style.current.smallPadding
         }
 
     }
