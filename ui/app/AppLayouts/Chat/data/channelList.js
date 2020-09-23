@@ -4,6 +4,7 @@ var categories = [
         channels: [
             "status",
             "support",
+            "status-desktop",
             "crypto",
             "chitchat",
             "defi",
@@ -16,7 +17,6 @@ var categories = [
     {
         name: "General",
         channels: [
-            "chitchat",
             "chitchat",
             "hello",
             "worldnews",
