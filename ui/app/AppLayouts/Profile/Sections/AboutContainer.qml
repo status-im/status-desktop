@@ -16,7 +16,7 @@ Item {
         //% "About the app"
         text: qsTrId("about-the-app")
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: Style.current.bigPadding
         anchors.top: parent.top
         anchors.topMargin: 24
         font.weight: Font.Bold
@@ -28,7 +28,7 @@ Item {
         //% "Status Desktop"
         text: qsTrId("status-desktop")
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: Style.current.bigPadding
         anchors.top: element9.top
         anchors.topMargin: 58
         font.weight: Font.Bold
@@ -39,7 +39,7 @@ Item {
         //% "Version: alpha.6"
         text: qsTrId("version:-alpha.6")
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: Style.current.bigPadding
         anchors.top: element10.top
         anchors.topMargin: 58
         font.weight: Font.Bold
@@ -50,18 +50,50 @@ Item {
         //% "Node Version: %1"
         text: qsTrId("node-version:-%1").arg(profileModel.nodeVersion())
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: Style.current.bigPadding
         anchors.top: element11.top
         anchors.topMargin: 58
         font.weight: Font.Bold
         font.pixelSize: 14
     }
     StyledText {
-        id: privacyPolicyLink
-        text: "<a href='https://www.iubenda.com/privacy-policy/45710059'>Privacy Policy</a>"
+        id: element13
+        text: qsTr("This software is licensed under under the %1.").arg("<a href='https://github.com/status-im/nim-status-client/blob/master/LICENSE.md'>Mozilla Public License Version 2.0</a>")
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: Style.current.bigPadding
         anchors.top: element12.top
+        anchors.topMargin: 58
+        font.pixelSize: 14
+        onLinkActivated: Qt.openUrlExternally(link)
+
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
+            cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+        }
+    }
+    StyledText {
+        id: element14
+        text: qsTr("Source code is available on %1.").arg("<a href='https://github.com/status-im/nim-status-client'>GitHub</a>")
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.bigPadding
+        anchors.top: element13.top
+        anchors.topMargin: 58
+        font.pixelSize: 14
+        onLinkActivated: Qt.openUrlExternally(link)
+
+        MouseArea {
+          anchors.fill: parent
+          acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
+          cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+        }
+    }
+    StyledText {
+        id: privacyPolicyLink
+        text: `<a href='https://www.iubenda.com/privacy-policy/45710059'>${qsTr("Privacy Policy")}</a>`
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.bigPadding
+        anchors.top: element14.top
         anchors.topMargin: 58
         onLinkActivated: Qt.openUrlExternally(link)
 
@@ -75,7 +107,7 @@ Item {
         id: faqLink
         text: "<a href='https://status.im/docs/FAQs.html'>Frequently asked questions</a>"
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: Style.current.bigPadding
         anchors.top: privacyPolicyLink.top
         anchors.topMargin: 58
         onLinkActivated: Qt.openUrlExternally(link)

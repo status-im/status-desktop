@@ -1,5 +1,7 @@
 # Nim-status-client
 
+Desktop client for the [Status Network](https://statusnetwork.com/) built with [Nim](https://nim-lang.org/) and [Qt](https://www.qt.io/)
+
 ![https://github.com/status-im/nim-status-client/blob/master/docs/screenshot.png](https://github.com/status-im/nim-status-client/blob/master/docs/screenshot.png)
 
 *note: this documentation is wip*
@@ -22,10 +24,14 @@
 
 ### Continuous Integration
 * [CI Readme](./ci/README.md)
-* [Jenkins Jobs](https://ci.status.im/job/nim-status-client/) 
+* [Jenkins Jobs](https://ci.status.im/job/nim-status-client/)
 
 ### API
 * [QML Nim-Status-Client API reference](https://github.com/status-im/nim-status-client/blob/master/docs/qml_api.md)
 
 ### Translations
 * [How to translate and use automatic scripts](https://github.com/status-im/nim-status-client/blob/master/scripts/translationScripts/README.md)
+
+### License
+
+Licensed under the [Mozilla Public License Version 2.0](https://github.com/status-im/nim-status-client/blob/master/LICENSE.md)
