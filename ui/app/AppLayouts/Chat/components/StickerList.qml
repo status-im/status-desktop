@@ -22,19 +22,12 @@ GridView {
             anchors.fill: parent
             anchors.topMargin: 4
             anchors.leftMargin: 4
-            Image {
+            ImageLoader {
                 width: 80
                 height: 80
-                sourceSize.width: width
-                sourceSize.height: height
-                fillMode: Image.PreserveAspectFit
                 source: "https://ipfs.infura.io/ipfs/" + url
-                MouseArea {
-                    cursorShape: Qt.PointingHandCursor
-                    anchors.fill: parent
-                    onClicked: {
-                        root.stickerClicked(hash, packId)
-                    }
+                onClicked: {
+                    root.stickerClicked(hash, packId)
                 }
             }
         }

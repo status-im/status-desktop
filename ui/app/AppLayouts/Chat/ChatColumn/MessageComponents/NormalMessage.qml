@@ -144,6 +144,7 @@ Item {
             anchors.leftMargin: chatBox.chatHorizontalPadding
             anchors.top: parent.top
             anchors.topMargin: chatBox.chatVerticalPadding
+            color: Style.current.transparent
         }
 
         MessageMouseArea {
