@@ -19,6 +19,15 @@ StackLayout {
     property bool isConnected: false
     property string contactToRemove: ""
 
+    property var onActivated: function () {
+        chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
+    }
+
+    Component.onCompleted: {
+        chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
+    }
+    
+
     Layout.fillHeight: true
     Layout.fillWidth: true
     Layout.minimumWidth: 300
@@ -175,6 +184,7 @@ StackLayout {
         Connections {
             target: chatsModel
             onActiveChannelChanged: {
+                chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
                 suggestions.clear()
                 for (let i = 0; i < chatsModel.suggestionList.rowCount(); i++) {
                   suggestions.append({

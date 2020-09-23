@@ -191,6 +191,11 @@ RowLayout {
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
         Layout.fillHeight: true
         currentIndex: tabBar.currentIndex
+        onCurrentIndexChanged: {
+            if (typeof this.children[currentIndex].onActivated === "function") {
+                this.children[currentIndex].onActivated()
+            }
+        }
 
         ChatLayout {
             id: chatLayoutContainer
