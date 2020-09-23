@@ -42,7 +42,7 @@ Item {
             gasTotal += selectedAmount
         }
         const currAcctGasAsset = Utils.findAssetBySymbol(selectedAccount.assets, "ETH")
-        if (currAcctGasAsset.value < gasTotal) {
+        if (currAcctGasAsset && currAcctGasAsset.value < gasTotal) {
             isValid = false
             txtValidationError.text = notEnoughEthForGasMessage
         }

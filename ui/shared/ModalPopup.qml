@@ -19,8 +19,8 @@ Popup {
     }
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     parent: Overlay.overlay
-    x: Math.round((parent.width - width) / 2)
-    y: Math.round((parent.height - height) / 2)
+    x: Math.round(((parent ? parent.width : 0) - width) / 2)
+    y: Math.round(((parent ? parent.height : 0) - height) / 2)
     width: 480
     height: 510 // TODO find a way to make this dynamic
     background: Rectangle {

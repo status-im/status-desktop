@@ -168,8 +168,6 @@ Item {
 
 
           StyledText {
-              anchors.top: addContactSearchInput.bottom
-              anchors.topMargin: Style.current.padding
               anchors.horizontalCenter: parent.horizontalCenter
               font.pixelSize: 12
               color: Style.current.darkGrey
@@ -181,8 +179,6 @@ Item {
           StyledText {
               id: contactUsername
               text: profileModel.contactToAddUsername + " • "
-              anchors.top: addContactSearchInput.bottom
-              anchors.topMargin: Style.current.padding
               font.pixelSize: 12
               color: Style.current.darkGrey
               visible: !!profileModel.contactToAddPubKey

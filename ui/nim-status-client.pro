@@ -350,6 +350,7 @@ DISTFILES += \
     shared/AssetAndAmountInput.qml \
     shared/CopyToClipBoardButton.qml \
     shared/GasSelector.qml \
+    shared/GasValidator.qml \
     shared/RoundedImage.qml \
     shared/SearchBox.qml \
     shared/Select.qml \
