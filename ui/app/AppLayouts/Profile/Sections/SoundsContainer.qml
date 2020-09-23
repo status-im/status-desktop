@@ -28,7 +28,8 @@ Item {
         anchors.topMargin: Style.current.bigPadding
         anchors.left: parent.left
         anchors.leftMargin: 24
-        text: qsTr("Sound volume") + " " + volume.value
+        //% "Sound volume"
+        text: qsTrId("sound-volume") + " " + volume.value
         font.pixelSize: 15
     }
 

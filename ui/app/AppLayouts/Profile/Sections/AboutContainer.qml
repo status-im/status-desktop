@@ -58,7 +58,8 @@ Item {
     }
     StyledText {
         id: element13
-        text: qsTr("This software is licensed under under the %1.").arg("<a href='https://github.com/status-im/nim-status-client/blob/master/LICENSE.md'>Mozilla Public License Version 2.0</a>")
+        //% "This software is licensed under under the %1."
+        text: qsTrId("this-software-is-licensed-under-under-the--1-").arg("<a href='https://github.com/status-im/nim-status-client/blob/master/LICENSE.md'>Mozilla Public License Version 2.0</a>")
         anchors.left: parent.left
         anchors.leftMargin: Style.current.bigPadding
         anchors.top: element12.top
@@ -74,7 +75,8 @@ Item {
     }
     StyledText {
         id: element14
-        text: qsTr("Source code is available on %1.").arg("<a href='https://github.com/status-im/nim-status-client'>GitHub</a>")
+        //% "Source code is available on %1."
+        text: qsTrId("source-code-is-available-on--1-").arg("<a href='https://github.com/status-im/nim-status-client'>GitHub</a>")
         anchors.left: parent.left
         anchors.leftMargin: Style.current.bigPadding
         anchors.top: element13.top
@@ -90,7 +92,8 @@ Item {
     }
     StyledText {
         id: privacyPolicyLink
-        text: `<a href='https://www.iubenda.com/privacy-policy/45710059'>${qsTr("Privacy Policy")}</a>`
+        //% "Privacy Policy"
+        text: `<a href='https://www.iubenda.com/privacy-policy/45710059'>${qsTrId("privacy-policy")}</a>`
         anchors.left: parent.left
         anchors.leftMargin: Style.current.bigPadding
         anchors.top: element14.top
