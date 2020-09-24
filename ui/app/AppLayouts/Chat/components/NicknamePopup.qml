@@ -12,7 +12,12 @@ ModalPopup {
     property bool nicknameTooLong: nicknameLength > maxNicknameLength
 
     id: popup
-    height: 325
+    width: 400
+    height: 390
+
+    onOpened: {
+        nicknameInput.forceActiveFocus(Qt.MouseFocusReason)
+    }
 
     header: Item {
         height: childrenRect.height
@@ -80,11 +85,16 @@ ModalPopup {
         //% "Done"
         label: qsTrId("done")
         anchors.bottom: parent.bottom
-        disabled: popup.nicknameLength === 0 || popup.nicknameTooLong
+        disabled: popup.nicknameTooLong
         onClicked: {
-            if (!userName.startsWith("@")) {
-                // Replace username only if it was not an ENS name
-                userName = nicknameInput.textField.text
+            if (!isEnsVerified) {
+                // Change username title only if it was not an ENS name
+                 if (nicknameInput.textField.text === "") {
+                     // If we removed the nickname, go back to showing the alias
+                     userName = alias
+                 } else {
+                     userName = nicknameInput.textField.text
+                 }
             }
             nickname = nicknameInput.textField.text
             profileModel.changeContactNickname(fromAuthor, nicknameInput.textField.text)

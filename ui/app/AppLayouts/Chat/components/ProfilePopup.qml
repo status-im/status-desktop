@@ -10,7 +10,7 @@ ModalPopup {
     id: popup
     property var identicon: ""
     property var userName: ""
-    property var nickname: ""
+    property string nickname: ""
     property var fromAuthor: ""
     property var text: ""
     property var alias: ""
@@ -300,15 +300,11 @@ ModalPopup {
             anchors.bottom: nicknameTitle.bottom
             onClicked: {
                 nicknamePopup.open()
-                popup.close()
             }
         }
 
         NicknamePopup {
             id: nicknamePopup
-            onClosed: {
-                popup.open()
-            }
         }
     }
 
