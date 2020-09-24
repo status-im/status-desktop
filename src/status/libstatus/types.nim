@@ -158,6 +158,7 @@ type
     Networks_CurrentNetwork = "networks/current-network"
     NodeConfig = "node-config"
     PublicKey = "public-key"
+    DappsAddress = "dapps-address"
     Stickers_PacksInstalled = "stickers/packs-installed"
     Stickers_Recent = "stickers/recent-stickers"
     WalletRootAddress = "wallet-root-address"
