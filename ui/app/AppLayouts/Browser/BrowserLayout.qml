@@ -18,13 +18,13 @@ Item {
         userScripts: [
             WebEngineScript {
                 injectionPoint: WebEngineScript.DocumentCreation
-                sourceUrl:  Qt.resolvedUrl("provider.js")
+                name: "QWebChannel"
+                sourceUrl: "qrc:///qtwebchannel/qwebchannel.js"
                 worldId: WebEngineScript.MainWorld // TODO: check https://doc.qt.io/qt-5/qml-qtwebengine-webenginescript.html#worldId-prop 
             },
             WebEngineScript {
                 injectionPoint: WebEngineScript.DocumentCreation
-                name: "QWebChannel"
-                sourceUrl: "qrc:///qtwebchannel/qwebchannel.js"
+                sourceUrl:  Qt.resolvedUrl("provider.js")
                 worldId: WebEngineScript.MainWorld // TODO: check https://doc.qt.io/qt-5/qml-qtwebengine-webenginescript.html#worldId-prop 
             }
         ]
@@ -37,10 +37,10 @@ Item {
         signal web3Response(string data);
 
         function postMessage(data){
-            console.log("Calling nim web3provider with: ", data);
-            var result = web3Provider.postMessage(data);
-            web3Response(result);
+            web3Response(web3Provider.postMessage(data));
         }
+
+        property int networkId: web3Provider.networkId
     }
 
     WebChannel {
@@ -52,7 +52,7 @@ Item {
         id: browserContainer
         anchors.fill: parent
         profile: webProfile
-        url: "https://status-im.github.io/dapp/"
+        url: "https://app.uniswap.org/#/"
         webChannel: channel
         onNewViewRequested: function(request) {
             // TODO: rramos: tabs can be handled here. see: https://doc.qt.io/qt-5/qml-qtwebengine-webengineview.html#newViewRequested-signal
