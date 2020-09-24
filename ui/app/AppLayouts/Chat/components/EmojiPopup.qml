@@ -40,13 +40,7 @@ Popup {
             iconCodePoint = iconCodePoint.substring(0, extenstionIndex)
         }
 
-        // Split the filename to get all the parts and then encode them from hex to utf8
-        const splitCodePoint = iconCodePoint.split('-')
-        let codePointParts = []
-        splitCodePoint.forEach(function (codePoint) {
-            codePointParts.push(`0x${codePoint}`)
-        })
-        const encodedIcon = String.fromCodePoint(...codePointParts);
+        const encodedIcon = Utils.getEmojiCodepoint(iconCodePoint)
 
         // Add at the  start of the list
         let recentEmojis = appSettings.recentEmojis
