@@ -63,11 +63,23 @@ Rectangle {
 
     function onEnter(event){
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
+            if (emojiSuggestions.visible) {
+                emojiSuggestions.addEmoji();
+                event.accepted = true;
+                return
+            }
             sendMsg(event);
         }
 
         if ((event.key === Qt.Key_V) && (event.modifiers & Qt.ControlModifier)) {
             paste = true;
+        }
+
+        if (event.key === Qt.Key_Down) {
+            return emojiList.incrementCurrentIndex()
+        }
+        if (event.key === Qt.Key_Up) {
+            return emojiList.decrementCurrentIndex()
         }
 
         isColonPressed = (event.key === Qt.Key_Colon) && (event.modifiers & Qt.ShiftModifier);
@@ -82,6 +94,9 @@ Rectangle {
         }
 
         emojiEvent = emojiHandler(event);
+        if (!emojiEvent) {
+            emojiSuggestions.close()
+        }
     }
 
     function onMouseClicked() {
@@ -96,7 +111,7 @@ Rectangle {
             var transform = true;
             if (words[i].charAt(0) === ':') {
                 for (var j = 0; j < words[i].length; j++) {
-                    if (isSpace(words[i].charAt(j)) === true || isPunct(words[i].charAt(j)) === true) {
+                    if (isSpace(words[i].charAt(j)) === true || Utils.isPunct(words[i].charAt(j)) === true) {
                         transform = false;
                     }
                 }
@@ -112,6 +127,17 @@ Rectangle {
         insertInTextInput(0, Emoji.parse(words.join('&nbsp;'), '26x26'));
     }
 
+    function replaceWithEmoji(message, shortname, codePoint) {
+        const encodedCodePoint = Utils.getEmojiCodepoint(codePoint)
+        const newMessage = message.data
+        .replace(shortname, encodedCodePoint)
+        .replace(/ /g, "&nbsp;");
+        txtData.remove(0, txtData.cursorPosition);
+        insertInTextInput(0, Emoji.parse(newMessage, '26x26'));
+        emojiSuggestions.close()
+        emojiEvent = false
+    }
+
     function emojiHandler(event) {
         let message = extrapolateCursorPosition();
         pollEmojiEvent(message);
@@ -125,11 +151,7 @@ Rectangle {
                 const shortname = message.data.substr(index, message.cursor);
                 const codePoint = Emoji.getEmojiUnicode(shortname);
                 if (codePoint !== undefined) {
-                    const newMessage = message.data
-                        .replace(shortname, Emoji.fromCodePoint(codePoint))
-                        .replace(/ /g, "&nbsp;");
-                    txtData.remove(0, txtData.cursorPosition);
-                    insertInTextInput(0, Emoji.parse(newMessage, '26x26'));
+                    replaceWithEmoji(message, shortname, codePoint);
                 }
                 return false;
             }
@@ -138,15 +160,15 @@ Rectangle {
             // popup
             const index2 = message.data.lastIndexOf(':', message.cursor - 1);
             if (index2 >= 0 && message.cursor > 0) {
-                const emojiPart = message.data.substr(index2 + 1, message.cursor);
-                if (emojiPart.length > 1) {
+                const emojiPart = message.data.substr(index2, message.cursor);
+                if (emojiPart.length > 2) {
                     const emojis = EmojiJSON.emoji_json.filter(function (emoji) {
                         return emoji.name.includes(emojiPart) ||
                                 emoji.shortname.includes(emojiPart) ||
                                 emoji.aliases.some(a => a.includes(emojiPart))
                     })
 
-                    emojiSuggestions.openPopup(emojis)
+                    emojiSuggestions.openPopup(emojis, emojiPart)
                 }
             }
             return true;
@@ -157,7 +179,7 @@ Rectangle {
     }
 
     // since emoji length is not 1 we need to match that position that TextArea returns
-    // to the actual position in the string. 
+    // to the actual position in the string.
     function extrapolateCursorPosition() {
         // we need only the message part to be html
         const text = chatsModel.plainText(Emoji.deparse(txtData.text));
@@ -209,35 +231,31 @@ Rectangle {
         const index = message.data.lastIndexOf(':', message.cursor);
         if (index >= 0) {
             emojiEvent = validSubstr(message.data.substr(index, message.cursor - index));
-        } 
+        }
     }
 
     function validSubstr(substr) {
         for(var i = 0; i < substr.length; i++) {
             var c = substr.charAt(i);
-            if (isSpace(c) === true || isPunct(c) === true)
+            if (c !== '_'  && (isSpace(c) === true || Utils.isPunct(c) === true)) {
                 return false;
+            }
         }
         return true;
     }
 
     function isKeyValid(key) {
-        if (key === Qt.Key_Space || key ===  Qt.Key_Tab ||
-            (key >= Qt.Key_Exclam && key <= Qt.Key_Slash) || 
-            (key >= Qt.Key_Semicolon && key <= Qt.Key_Question) ||
-            (key >= Qt.Key_BracketLeft && key <= Qt.Key_hyphen))
+        if (key !== Qt.Key_Underscore &&
+                (key === Qt.Key_Space || key ===  Qt.Key_Tab ||
+                (key >= Qt.Key_Exclam && key <= Qt.Key_Slash) ||
+                (key >= Qt.Key_Semicolon && key <= Qt.Key_Question) ||
+                (key >= Qt.Key_BracketLeft && key <= Qt.Key_hyphen)))
             return false;
         return true;
     }
 
     function isSpace(c) {
         if (/( |\t|\n|\r)/.test(c))
-            return true;
-        return false;
-    }
-
-    function isPunct(c) {
-        if (/(!|\@|#|\$|%|\^|&|\*|\(|\)|_|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c))
             return true;
         return false;
     }
@@ -262,10 +280,22 @@ Rectangle {
 
     Popup {
         property var emojis
+        property string shortname
 
-        function openPopup(emojisParam) {
+        function openPopup(emojisParam, shortnameParam) {
             emojis = emojisParam
+            shortname = shortnameParam
             emojiSuggestions.open()
+        }
+
+        function addEmoji(index) {
+            if (index === undefined) {
+                index = emojiList.currentIndex
+            }
+
+            const message = extrapolateCursorPosition();
+            const unicode = emojiSuggestions.emojis[index].unicode_alternates || emojiSuggestions.emojis[index].unicode
+            replaceWithEmoji(message, emojiSuggestions.shortname, unicode)
         }
 
         id: emojiSuggestions
@@ -274,6 +304,7 @@ Rectangle {
         x : Style.current.padding / 2
         y: -height - Style.current.smallPadding
         background: Rectangle {
+            visible: emojiSuggestions.emojis.length > 0
             color: Style.current.secondaryBackground
             border.width: 1
             border.color: Style.current.borderSecondary
@@ -285,6 +316,7 @@ Rectangle {
             model: emojiSuggestions.emojis || []
             keyNavigationEnabled: true
             anchors.fill: parent
+            clip: true
 
             delegate: Rectangle {
                 id: rectangle
@@ -300,7 +332,6 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.leftMargin: Style.current.smallPadding
-
                 }
 
                 StyledText {
@@ -310,6 +341,18 @@ Rectangle {
                     anchors.left: emojiImage.right
                     anchors.leftMargin: Style.current.smallPadding
                     font.pixelSize: 15
+                }
+
+                MouseArea {
+                    cursorShape: Qt.PointingHandCursor
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: {
+                        emojiList.currentIndex = index
+                    }
+                    onClicked: {
+                        emojiSuggestions.addEmoji(index)
+                    }
                 }
             }
         }
