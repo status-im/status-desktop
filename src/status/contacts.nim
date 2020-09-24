@@ -2,6 +2,8 @@ import eventemitter, json, sequtils
 import libstatus/contacts as status_contacts
 import profile/profile
 
+const DELETE_CONTACT* = "__deleteThisContact__"
+
 type
   ContactModel* = ref object
     events*: EventEmitter
@@ -45,6 +47,8 @@ proc addContact*(self: ContactModel, id: string, localNickname: string): string 
   let nickname =
     if (localNickname == ""):
       contact.localNickname
+    elif (localNickname == DELETE_CONTACT):
+      ""
     else:
       localNickname
   result = status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.systemTags, nickname)

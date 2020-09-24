@@ -281,7 +281,10 @@ QtObject:
     return self.status.contacts.addContact(pk)
 
   proc changeContactNickname*(self: ProfileView, publicKey: string, nickname: string) {.slot.} =
-    discard self.status.contacts.addContact(publicKey, nickname)
+    var nicknameToSet = nickname
+    if (nicknameToSet == ""):
+      nicknameToSet = DELETE_CONTACT
+    discard self.status.contacts.addContact(publicKey, nicknameToSet)
 
   proc unblockContact*(self: ProfileView, id: string) {.slot.} =
     discard self.status.contacts.unblockContact(id)
