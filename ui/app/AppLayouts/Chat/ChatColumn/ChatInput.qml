@@ -7,6 +7,9 @@ import "../components"
 import "../../../../shared"
 import "../../../../imports"
 
+
+import "../components/emojiList.js" as EmojiJSON
+
 Rectangle {
     id: root
     property alias textInput: txtData
@@ -133,6 +136,19 @@ Rectangle {
             return true;
         } else if (emojiEvent && isKeyValid(event.key) && !isColonPressed) {
             // popup
+            const index2 = message.data.lastIndexOf(':', message.cursor - 1);
+            if (index2 >= 0 && message.cursor > 0) {
+                const emojiPart = message.data.substr(index2 + 1, message.cursor);
+                if (emojiPart.length > 1) {
+                    const emojis = EmojiJSON.emoji_json.filter(function (emoji) {
+                        return emoji.name.includes(emojiPart) ||
+                                emoji.shortname.includes(emojiPart) ||
+                                emoji.aliases.some(a => a.includes(emojiPart))
+                    })
+
+                    emojiSuggestions.openPopup(emojis)
+                }
+            }
             return true;
         } else if (emojiEvent && !isKeyValid(event.key) && !isColonPressed) {
             return false;
@@ -241,6 +257,61 @@ Rectangle {
         }
         onRejected: {
             chatColumn.hideExtendedArea();
+        }
+    }
+
+    Popup {
+        property var emojis
+
+        function openPopup(emojisParam) {
+            emojis = emojisParam
+            emojiSuggestions.open()
+        }
+
+        id: emojiSuggestions
+        width: parent.width - Style.current.padding * 2
+        height: Math.min(400, emojiList.contentHeight + Style.current.smallPadding * 2)
+        x : Style.current.padding / 2
+        y: -height - Style.current.smallPadding
+        background: Rectangle {
+            color: Style.current.secondaryBackground
+            border.width: 1
+            border.color: Style.current.borderSecondary
+            radius: 8
+        }
+
+        ListView {
+            id: emojiList
+            model: emojiSuggestions.emojis || []
+            keyNavigationEnabled: true
+            anchors.fill: parent
+
+            delegate: Rectangle {
+                id: rectangle
+                color: emojiList.currentIndex === index ? Style.current.inputBorderFocus : Style.current.transparent
+                border.width: 0
+                width: parent.width
+                height: 42
+                radius: 8
+
+                SVGImage {
+                    id: emojiImage
+                    source: `../../../../imports/twemoji/26x26/${modelData.unicode}.png`
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: Style.current.smallPadding
+
+                }
+
+                StyledText {
+                    text: modelData.shortname
+                    color: emojiList.currentIndex === index ? Style.current.currentUserTextColor : Style.current.textColor
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: emojiImage.right
+                    anchors.leftMargin: Style.current.smallPadding
+                    font.pixelSize: 15
+                }
+            }
         }
     }
 
