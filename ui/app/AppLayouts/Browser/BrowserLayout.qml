@@ -18,12 +18,6 @@ Item {
         userScripts: [
             WebEngineScript {
                 injectionPoint: WebEngineScript.DocumentCreation
-                name: "QWebChannel"
-                sourceUrl: "qrc:///qtwebchannel/qwebchannel.js"
-                worldId: WebEngineScript.MainWorld // TODO: check https://doc.qt.io/qt-5/qml-qtwebengine-webenginescript.html#worldId-prop 
-            },
-            WebEngineScript {
-                injectionPoint: WebEngineScript.DocumentCreation
                 sourceUrl:  Qt.resolvedUrl("provider.js")
                 worldId: WebEngineScript.MainWorld // TODO: check https://doc.qt.io/qt-5/qml-qtwebengine-webenginescript.html#worldId-prop 
             }
