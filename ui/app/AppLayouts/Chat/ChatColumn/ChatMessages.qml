@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQml.Models 2.13
+import QtGraphicalEffects 1.13
 import "../../../../shared"
 import "../../../../imports"
 import "../components"
@@ -9,11 +10,12 @@ import "./samples/"
 import "./MessageComponents"
 
 ScrollView {
-    id: scrollView
+    id: root
     
     property var messageList: MessagesData {}
     property bool loadingMessages: false
     property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
+    property int newMessages: 0
 
     contentItem: chatLogView
     Layout.fillWidth: true
@@ -35,67 +37,65 @@ ScrollView {
             id: timer
         }
 
-        Rectangle {
+        Button {
             id: newMessagesBox
-            visible: state !== "hidden"
-            color: Style.current.secondaryBackground
+            height: 32
+            width: nbMessages.width + arrowImage.width + 2 * Style.current.halfPadding + (nbMessages.visible ? 5 : 0)
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
-            height: childrenRect.height + 2 * Style.current.smallPadding
-            width: 200
-            radius: Style.current.radius
-            state: "hidden"
+            background: Rectangle {
+                color: Style.current.buttonDisabledForegroundColor
+                border.width: 0
+                radius: 16
+            }
+            onClicked: {
+                root.newMessages = 0
+                newMessagesBox.visible = false
+                chatLogView.scrollToBottom(true)
+            }
 
             StyledText {
-                id: newMessagesText
-                text: newMessagesBox.state === "new-message" ?
-                          //% "New message(s) received"
-                          qsTrId("new-message-s--received") :
-                          //% "Go back to bottom"
-                          qsTrId("go-back-to-bottom")
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
+                id: nbMessages
+                visible: root.newMessages > 0
+                width: visible ? implicitWidth : 0
+                text: root.newMessages
+                anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
-                anchors.leftMargin: Style.current.smallPadding
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.smallPadding
-                anchors.top: parent.top
-                anchors.topMargin: Style.current.smallPadding
+                color: Style.current.pillButtonTextColor
                 font.pixelSize: 15
+                anchors.leftMargin: Style.current.halfPadding
             }
-            StyledText {
-                id: clickHereText
-                visible: newMessagesBox.state === "new-message"
-                height: visible ? implicitHeight : 0
-                //% "Click here to scroll back down"
-                text: qsTrId("click-here-to-scroll-back-down")
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
-                anchors.left: parent.left
-                anchors.leftMargin: Style.current.smallPadding
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.smallPadding
-                anchors.top: newMessagesText.bottom
-                anchors.topMargin: 0
-                font.pixelSize: 12
-                color: Style.current.darkGrey
+
+            SVGImage {
+                id: arrowImage
+                width: 24
+                height: 24
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: nbMessages.right
+                source: "../../../img/leave_chat.svg"
+                anchors.leftMargin: nbMessages.visible ? 5 : 0
+                rotation: -90
+
+                ColorOverlay {
+                    anchors.fill: parent
+                    source: parent
+                    color: Style.current.pillButtonTextColor
+                }
             }
-        }
-        MouseArea {
-           cursorShape: Qt.PointingHandCursor
-           anchors.fill: newMessagesBox
-           onClicked: {
-               newMessagesBox.state = "hidden"
-               chatLogView.scrollToBottom(true)
-           }
+
+            MouseArea {
+               cursorShape: Qt.PointingHandCursor
+               anchors.fill: parent
+               onPressed: mouse.accepted = false
+            }
         }
 
         onAtYEndChanged: {
             if (chatLogView.atYEnd) {
-                newMessagesBox.state = "hidden"
+                newMessagesBox.visible = false
             } else {
-                newMessagesBox.state = "scrolled-up"
+                newMessagesBox.visible = true
             }
         }
 
@@ -138,7 +138,7 @@ ScrollView {
 
             onNewMessagePushed: {
                 if (!chatLogView.scrollToBottom()) {
-                    newMessagesBox.state = "new-message"
+                    root.newMessages++
                 }
             }
 
