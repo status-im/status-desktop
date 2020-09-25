@@ -59,42 +59,52 @@ proc tokensOfOwnerByIndex(contract: Contract, address: Address): seq[int] =
     result.add(token)
     index = index + 1
 
-proc getCryptoKitties*(address: Address): string =
+proc getCryptoKittiesBatch*(address: Address, offset: int = 0): seq[Collectible] =
   var cryptokitties: seq[Collectible]
   cryptokitties = @[]
-  try:
-    # TODO handle testnet -- does this API exist in testnet??
-    # TODO handle offset (recursive method?)
-    # Crypto kitties has a limit of 20
-    let url: string = fmt"https://api.cryptokitties.co/kitties?limit=20&offset=0&owner_wallet_address={$address}&parents=false"
-    let client = newHttpClient()
-    client.headers = newHttpHeaders({ "Content-Type": "application/json" })
+  # TODO handle testnet -- does this API exist in testnet??
+  let url: string = fmt"https://api.cryptokitties.co/kitties?limit=20&offset={$offset}&owner_wallet_address={$address}&parents=false"
+  let client = newHttpClient()
+  client.headers = newHttpHeaders({ "Content-Type": "application/json" })
 
-    let response = client.request(url)
-    let kitties = parseJson(response.body)["kitties"]
-    for kitty in kitties:
-      try:
-        var id = kitty["id"]
-        var name = kitty["name"]
-        var finalId = ""
-        var finalName = ""
-        if (not (id.kind == JNull)):
-          finalId = $id
-        if (not (name.kind == JNull)):
-          finalName = $name
-        cryptokitties.add(Collectible(id: finalId,
-        name: finalName,
-        image: kitty["image_url_png"].str,
-        collectibleType: CRYPTOKITTY,
-        description: "",
-        externalUrl: ""))
-      except Exception as e2:
-        error "Error with this individual cat", msg = e2.msg, cat = kitty
+  let response = client.request(url)
+  let responseBody = parseJson(response.body)
+  let kitties = responseBody["kitties"]
+  for kitty in kitties:
+    try:
+      var id = kitty["id"]
+      var name = kitty["name"]
+      var finalId = ""
+      var finalName = ""
+      if (not (id.kind == JNull)):
+        finalId = $id
+      if (not (name.kind == JNull)):
+        finalName = $name
+      cryptokitties.add(Collectible(id: finalId,
+      name: finalName,
+      image: kitty["image_url_png"].str,
+      collectibleType: CRYPTOKITTY,
+      description: "",
+      externalUrl: ""))
+    except Exception as e2:
+      error "Error with this individual cat", msg = e2.msg, cat = kitty
+
+  let limit = responseBody["limit"].getInt
+  let total = responseBody["total"].getInt
+  if (limit * (offset + 1) < total):
+    # Call the API again with oofset + 1
+    let nextBatch = getCryptoKittiesBatch(address, offset + 1)
+    return concat(cryptokitties, nextBatch)
+  return cryptokitties
+
+proc getCryptoKitties*(address: Address): string =
+  try:
+    let cryptokitties = getCryptoKittiesBatch(address, 0)
+  
+    return $(%*cryptokitties)
   except Exception as e:
     error "Error getting Cryptokitties", msg = e.msg
     return e.msg
-  
-  return $(%*cryptokitties)
 
 proc getCryptoKitties*(address: string): string =
   let eth_address = parseAddress(address)
