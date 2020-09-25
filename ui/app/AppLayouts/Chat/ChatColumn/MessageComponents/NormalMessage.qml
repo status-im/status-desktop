@@ -100,14 +100,15 @@ Item {
 
         ChatText {
             id: chatText
+            longChatText: chatBox.longChatText
             anchors.top: chatReply.bottom
             anchors.topMargin: chatBox.chatVerticalPadding
             anchors.left: parent.left
             anchors.leftMargin: chatBox.chatHorizontalPadding
             anchors.right: chatBox.longChatText ? parent.right : undefined
             anchors.rightMargin: chatBox.longChatText ? chatBox.chatHorizontalPadding : 0
-            horizontalAlignment: !isCurrentUser ? Text.AlignLeft : Text.AlignRight
-            color: !isCurrentUser ? Style.current.textColor : Style.current.currentUserTextColor
+            textField.horizontalAlignment: !isCurrentUser ? Text.AlignLeft : Text.AlignRight
+            textField.color: !isCurrentUser ? Style.current.textColor : Style.current.currentUserTextColor
         }
 
         Loader {

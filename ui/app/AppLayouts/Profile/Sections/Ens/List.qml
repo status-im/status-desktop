@@ -285,8 +285,6 @@ Item {
                 anchors.topMargin: chatBox.chatVerticalPadding
                 anchors.left: parent.left
                 anchors.leftMargin: chatBox.chatHorizontalPadding
-                horizontalAlignment: Text.AlignLeft
-                color: Style.current.textColor
             }
 
             RectangleCorner {}
