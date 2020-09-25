@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 import "../../../../../imports"
 import "../../../../../shared"
+import "../../../../../shared/status"
 
 Popup {
     id: root
@@ -52,12 +53,13 @@ Popup {
         padding: Style.current.halfPadding
         spacing: Style.current.halfPadding
 
-
-        ChatCommandButton {
-            iconColor: Style.current.purple
-            iconSource: "../../../../img/send.svg"
+        StatusChatCommandButton {
             //% "Send transaction"
             text: qsTrId("send-transaction")
+            icon.color: Style.current.purple
+            icon.name: "send"
+            icon.width: 16
+            icon.height: 18
             onClicked: function () {
                 chatCommandModal.sendChatCommand = root.requestAddressForTransaction
                 chatCommandModal.isRequested = false
@@ -78,12 +80,14 @@ Popup {
         }
 
 
-        ChatCommandButton {
-            iconColor: Style.current.orange
-            iconSource: "../../../../img/send.svg"
-            rotatedImage: true
+        StatusChatCommandButton {
             //% "Request transaction"
             text: qsTrId("request-transaction")
+            icon.color: Style.current.orange
+            icon.name: "send"
+            icon.width: 16
+            icon.height: 18
+            iconRotation: 180
             onClicked: function () {
                 chatCommandModal.sendChatCommand = root.requestTransaction
                 chatCommandModal.isRequested = true
