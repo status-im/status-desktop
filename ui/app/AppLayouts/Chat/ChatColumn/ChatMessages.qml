@@ -83,12 +83,13 @@ ScrollView {
             }
         }
         MouseArea {
-           cursorShape: Qt.PointingHandCursor
-           anchors.fill: newMessagesBox
-           onClicked: {
-               newMessagesBox.state = "hidden"
-               chatLogView.scrollToBottom(true)
-           }
+            enabled: newMessagesBox.visible
+            cursorShape: enabled ? Qt.PointingHandCursor : undefined
+            anchors.fill: newMessagesBox
+            onClicked: {
+                newMessagesBox.state = "hidden"
+                chatLogView.scrollToBottom(true)
+            }
         }
 
         onAtYEndChanged: {
