@@ -14,6 +14,8 @@ const STICKER* = "stickers"
 
 const COLLECTIBLE_TYPES* = [CRYPTOKITTY, KUDO, ETHERMON, STICKER]
 
+const MAX_TOKENS = 200
+
 proc getTokenUri(contract: Contract, tokenId: Stuint[256]): string =
   try:
     let
@@ -54,7 +56,7 @@ proc tokensOfOwnerByIndex(contract: Contract, address: Address): seq[int] =
   result = @[]
   while (true):
     token = tokenOfOwnerByIndex(contract, address, index.u256)
-    if (token == -1 or token == 0):
+    if (token == -1 or token == 0 or result.len > MAX_TOKENS):
       return result
     result.add(token)
     index = index + 1
@@ -91,7 +93,8 @@ proc getCryptoKittiesBatch*(address: Address, offset: int = 0): seq[Collectible]
 
   let limit = responseBody["limit"].getInt
   let total = responseBody["total"].getInt
-  if (limit * (offset + 1) < total):
+  let currentCount = limit * (offset + 1)
+  if (currentCount < total and currentCount < MAX_TOKENS):
     # Call the API again with oofset + 1
     let nextBatch = getCryptoKittiesBatch(address, offset + 1)
     return concat(cryptokitties, nextBatch)

@@ -29,10 +29,23 @@ Rectangle {
     }
 
     StyledText {
+        id: collectibleName
         text: collectibleHeader.collectibleName
         anchors.left: collectibleIconImage.right
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
+        font.pixelSize: 17
+    }
+
+    StyledText {
+        visible: collectiblesQty >= Constants.maxTokens
+        text: qsTr("Maximum number of collectibles to display reached")
+        font.pixelSize: 17
+        color: Style.current.secondaryText
+        anchors.left: collectibleName.right
+        anchors.leftMargin: Style.current.padding
+        anchors.verticalCenter: parent.verticalCenter
+
     }
 
     Loader {
