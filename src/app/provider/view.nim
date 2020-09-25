@@ -41,8 +41,10 @@ type
     request: string
 
   APIRequest = ref object
+    isAllowed: bool
     messageId: JsonNode
     permission: Permissions
+    hostname: string
 
 proc requestType(message: string): RequestTypes = 
   let data = message.parseJson
@@ -74,7 +76,9 @@ proc toAPIRequest(message: string): APIRequest =
 
   result = APIRequest(
     messageId: data["messageId"],
-    permission: permission
+    isAllowed: data{"isAllowed"}.getBool(),
+    permission: permission,
+    hostname: data{"hostname"}.getStr()
   )
 
 QtObject:
@@ -133,30 +137,28 @@ QtObject:
       "result": rpcResult.parseJson
     }
 
-
-  proc process*(data: APIRequest): string =
-    # TODO: Do a proper implementation. Must ask for approval from the user.
-    #       Probably this should happen in BrowserLayout.qml
-    
+  proc process*(data: APIRequest): string =   
     var value:JsonNode = case data.permission
     of Permissions.Web3: %* [status_settings.getSetting[string](Setting.DappsAddress, "0x0000000000000000000000000000000000000000")]
     of Permissions.ContactCode: %* status_settings.getSetting[string](Setting.PublicKey, "0x0")
     of Permissions.Unknown: newJNull()
 
+    let isAllowed = data.isAllowed and data.permission != Permissions.Unknown
+
+    info "API request received", host=data.hostname, value=data.permission, isAllowed
+
+    # TODO: if isAllowed, store permission grant
+
     return $ %* {
-      "type": $ResponseTypes.APIResponse,
-      "isAllowed": true, # TODO isAllowed or permission is unknown
+      "type": ResponseTypes.APIResponse,
+      "isAllowed": isAllowed,
       "permission": data.permission,
       "messageId": data.messageId,
       "data": value
     }
 
   proc postMessage*(self: Web3ProviderView, message: string): string {.slot.} =
-    let requestType = message.requestType()
-
-    info "Provider request received", value=requestType
-
-    case requestType:
+    case message.requestType():
     of RequestTypes.Web3SendAsyncReadOnly: message.toWeb3SendAsyncReadOnly().process()
     of RequestTypes.HistoryStateChanged: """{"type":"TODO-IMPLEMENT-THIS"}""" ############# TODO:
     of RequestTypes.APIRequest: message.toAPIRequest().process()
