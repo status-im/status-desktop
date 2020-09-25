@@ -1152,6 +1152,41 @@ proc getDefaultTokens*(): JsonNode =
         "name": "Spiking",
         "decimals": 10,
         "hasIcon": false
+      },
+      {
+        "address": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+        "symbol": "UNI",
+        "name": "Uniswap",
+        "decimals": 18,
+        "hasIcon": false
+      },
+      {
+        "address": "0xc00e94cb662c3520282e6f5717214004a7f26888",
+        "symbol": "COMP",
+        "name": "Compound",
+        "decimals": 18,
+        "hasIcon": false
+      },
+      {
+        "address": "0xba100000625a3754423978a60c9317c58a424e3d",
+        "symbol": "BAL",
+        "name": "Balancer",
+        "decimals": 18,
+        "hasIcon": false
+      },
+      {
+        "address": "0x8ab7404063ec4dbcfd4598215992dc3f8ec853d7",
+        "symbol": "AKRO",
+        "name": "Akropolis",
+        "decimals": 18,
+        "hasIcon": false
+      },
+      {
+        "address": "0x4575f41308EC1483f3d399aa9a2826d74Da13Deb",
+        "symbol": "OXT",
+        "name": "Orchid",
+        "decimals": 18,
+        "hasIcon": false
       }
     ]
 
