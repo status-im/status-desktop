@@ -84,7 +84,7 @@ RoundButton {
     contentItem: Item {
         anchors.fill: parent
 
-        Image {
+        SVGImage {
             id: iconImg
             visible: false
             source: control.icon.source
