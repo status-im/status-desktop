@@ -2,11 +2,10 @@ import
   sequtils, sugar, macros, tables, strutils
 
 import
-  eth/common/eth_types, stew/byteutils, nimcrypto
-from eth/common/utils import parseAddress
+  web3/ethtypes, stew/byteutils, nimcrypto
 
 import
-  ../types, ../settings, ../coder, transactions, methods
+  ../types, ../settings, ../coder, transactions, methods, ../utils
 
 export
   GetPackData, PackData, BuyToken, ApproveAndCall, Transfer, BalanceOf, Register, SetPubkey,
@@ -16,7 +15,7 @@ export
 type Contract* = ref object
   name*: string
   network*: Network
-  address*: EthAddress
+  address*: Address
   methods*: Table[string, Method]
 
 proc allContracts(): seq[Contract] = @[

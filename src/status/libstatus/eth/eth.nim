@@ -1,4 +1,7 @@
 import
+  web3/ethtypes
+
+import
   transactions, ../types
 
 proc sendTransaction*(tx: var EthSend, password: string, success: var bool): string =

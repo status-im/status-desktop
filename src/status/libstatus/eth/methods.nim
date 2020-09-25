@@ -2,10 +2,10 @@ import
   strutils, options
 
 import
-  nimcrypto, eth/common/eth_types
+  nimcrypto, web3/[encoding, ethtypes]
 
 import 
-  ../coder, eth, transactions, ../types
+  ../coder, eth, transactions, ../types # FIXME: 'types' produces a compiler warning, but doesn't compiler without it 🤷‍♂️
 
 export sendTransaction
 

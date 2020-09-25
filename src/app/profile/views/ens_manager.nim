@@ -10,13 +10,10 @@ import ../../../status/ens as status_ens
 import ../../../status/libstatus/wallet as status_wallet
 import ../../../status/libstatus/settings as status_settings
 import ../../../status/libstatus/utils as libstatus_utils
-import ../../../status/libstatus/tokens as tokens
 import ../../../status/status
-from eth/common/utils import parseAddress
 import ../../../status/wallet
 import sets
-import stew/byteutils
-import eth/common/eth_types, stew/byteutils
+import web3/ethtypes
 
 type
   EnsRoles {.pure.} = enum

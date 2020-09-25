@@ -1,15 +1,10 @@
-import json, json, options, json_serialization, stint, chronicles, tables
+import json, json, options, json_serialization, stint, chronicles
 import core, types, utils, strutils, strformat
-import eth/common/utils as eth_utils
-import accounts/constants as constants
-import ./coder as coder
+import utils
 from nim_status import validateMnemonic, startWallet
 import ../wallet/account
-import ./eth/contracts as contractMethods
-import eth/common/eth_types
+import web3/ethtypes
 import ./types
-import ../signals/types as signal_types
-import ../transactions
 
 proc getWalletAccounts*(): seq[WalletAccount] =
   try:

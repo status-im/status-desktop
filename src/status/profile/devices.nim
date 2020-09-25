@@ -1,4 +1,4 @@
-import json, hashes
+import json
 
 type Installation* = ref object
   installationId*: string
