@@ -5,7 +5,6 @@ import libstatus/chatCommands as status_chat_commands
 import libstatus/accounts/constants as constants
 import libstatus/types
 import stickers
-import mailservers
 
 import profile/profile
 import chat/[chat, message]

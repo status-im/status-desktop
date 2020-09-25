@@ -1,7 +1,7 @@
 import eventemitter, json, strformat, strutils, chronicles, sequtils, httpclient, tables
 import json_serialization, stint
-from eth/common/utils import parseAddress
-from eth/common/eth_types import EthAddress
+from web3/ethtypes import Address, EthSend, Quantity
+from web3/conversions import `$`
 from libstatus/core import getBlockByNumber
 import libstatus/accounts as status_accounts
 import libstatus/tokens as status_tokens
@@ -10,8 +10,8 @@ import libstatus/wallet as status_wallet
 import libstatus/accounts/constants as constants
 import libstatus/eth/[eth, contracts]
 from libstatus/core import getBlockByNumber
-from libstatus/types import PendingTransactionType, GeneratedAccount, DerivedAccount, Transaction, Setting, GasPricePrediction, EthSend, Quantity, `%`, StatusGoException, Network, RpcResponse, RpcException, `$`
-from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, first, toUInt64
+from libstatus/types import PendingTransactionType, GeneratedAccount, DerivedAccount, Transaction, Setting, GasPricePrediction, `%`, StatusGoException, Network, RpcResponse, RpcException
+from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, first, toUInt64, parseAddress
 import wallet/[balance_manager, account, collectibles]
 import transactions
 export account, collectibles
@@ -61,7 +61,7 @@ proc initEvents*(self: WalletModel) =
 proc delete*(self: WalletModel) =
   discard
 
-proc buildTokenTransaction(self: WalletModel, source, to, assetAddress: EthAddress, value: float, transfer: var Transfer, contract: var Contract, gas = "", gasPrice = ""): EthSend =
+proc buildTokenTransaction(self: WalletModel, source, to, assetAddress: Address, value: float, transfer: var Transfer, contract: var Contract, gas = "", gasPrice = ""): EthSend =
   let token = self.tokens.first("address", $assetAddress)
   contract = getContract("snt")
   transfer = Transfer(to: to, value: eth2Wei(value, token["decimals"].getInt))

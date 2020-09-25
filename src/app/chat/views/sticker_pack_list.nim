@@ -1,4 +1,4 @@
-import NimQml, Tables, sequtils, sugar, sets
+import NimQml, Tables, sequtils, sugar
 import ../../../status/chat/stickers, ./sticker_list
 import ../../../status/libstatus/types, ../../../status/libstatus/utils
 

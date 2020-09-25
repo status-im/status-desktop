@@ -15,11 +15,11 @@ import ../../status/chat/[chat, message]
 import ../../status/wallet
 import ../../status/libstatus/types
 import ../../status/profile/profile
-import eth/common/eth_types
+import web3/[conversions, ethtypes]
 import ../../status/threads
 import views/channels_list, views/message_list, views/chat_item, views/sticker_pack_list, views/sticker_list, views/suggestions_list
 import json_serialization
-from eth/common/utils import parseAddress
+import ../../status/libstatus/utils
 
 logScope:
   topics = "chats-view"

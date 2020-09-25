@@ -7,14 +7,13 @@ import tables
 import strformat
 import libstatus/core
 import libstatus/types
-from eth/common/utils as eth_utils import parseAddress
 import libstatus/utils
 import libstatus/wallet
 import stew/byteutils
 import unicode
 import transactions
 import algorithm
-import eth/common/eth_types, stew/byteutils, stint
+import web3/[ethtypes, conversions], stew/byteutils, stint
 import libstatus/eth/contracts
 
 const domain* = ".stateofus.eth"

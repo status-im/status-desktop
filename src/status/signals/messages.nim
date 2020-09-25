@@ -1,4 +1,4 @@
-import json, random, re, strutils, sequtils, sugar, chronicles
+import json, random, strutils, sequtils, sugar, chronicles
 import json_serialization
 import ../libstatus/accounts as status_accounts
 import ../libstatus/settings as status_settings

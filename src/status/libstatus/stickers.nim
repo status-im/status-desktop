@@ -1,7 +1,7 @@
 import ./core as status, ./types, ./eth/contracts, ./settings, ./edn_helpers
 import
   json, json_serialization, tables, chronicles, strutils, sequtils, httpclient,
-  stint, libp2p/[multihash, multicodec, cid], eth/common/eth_types
+  stint, libp2p/[multihash, multicodec, cid], web3/[ethtypes, conversions]
 from strutils import parseHexInt
 from nimcrypto import fromHex
 
@@ -56,7 +56,7 @@ proc decodeContentHash*(value: string): string =
 # Retrieves number of sticker packs owned by user
 # See https://notes.status.im/Q-sQmQbpTOOWCQcYiXtf5g#Read-Sticker-Packs-owned-by-a-user
 # for more details
-proc getBalance*(address: EthAddress): int =
+proc getBalance*(address: Address): int =
   let 
     contract = contracts.getContract("sticker-pack")
     balanceOf = BalanceOf(address: address)
@@ -124,7 +124,7 @@ proc getPackData*(id: Stuint[256]): StickerPack =
     result.id = truncate(id, int)
     result.price = packData.price
 
-proc tokenOfOwnerByIndex*(address: EthAddress, idx: Stuint[256]): int =
+proc tokenOfOwnerByIndex*(address: Address, idx: Stuint[256]): int =
   let
     contract = contracts.getContract("sticker-pack")
     tokenOfOwnerByIndex = TokenOfOwnerByIndex(address: address, index: idx)

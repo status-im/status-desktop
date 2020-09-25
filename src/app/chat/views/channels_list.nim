@@ -3,7 +3,7 @@ import ../../../status/chat/[chat, message]
 import ../../../status/status
 import ../../../status/ens
 import ../../../status/accounts
-import strformat, strutils
+import strutils
 
 type
   ChannelsRoles {.pure.} = enum

@@ -1,6 +1,5 @@
 import NimQml
 import Tables
-import ../../../status/devices as status_devices
 import ../../../status/profile/devices
 
 type

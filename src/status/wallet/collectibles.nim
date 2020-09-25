@@ -1,12 +1,10 @@
 import strformat, httpclient, json, chronicles, sequtils, strutils, tables, sugar
-from eth/common/utils import parseAddress
 import ../libstatus/core as status
 import ../libstatus/eth/contracts as contracts
 import ../libstatus/stickers as status_stickers
-import ../chat as status_chat
 import ../libstatus/types
-import eth/common/eth_types
-import ../libstatus/types
+import web3/[conversions, ethtypes], stint
+import ../libstatus/utils
 import account
 
 const CRYPTOKITTY* = "cryptokitty"
@@ -37,7 +35,7 @@ proc getTokenUri(contract: Contract, tokenId: Stuint[256]): string =
     error "Error getting the token URI", mes = e.msg
     result = ""
 
-proc tokenOfOwnerByIndex(contract: Contract, address: EthAddress, index: Stuint[256]): int =
+proc tokenOfOwnerByIndex(contract: Contract, address: Address, index: Stuint[256]): int =
   let
     tokenOfOwnerByIndex = TokenOfOwnerByIndex(address: address, index: index)
     payload = %* [{
@@ -50,7 +48,7 @@ proc tokenOfOwnerByIndex(contract: Contract, address: EthAddress, index: Stuint[
     return -1
   result = fromHex[int](res)
 
-proc tokensOfOwnerByIndex(contract: Contract, address: EthAddress): seq[int] =
+proc tokensOfOwnerByIndex(contract: Contract, address: Address): seq[int] =
   var index = 0
   var token: int
   result = @[]
@@ -61,7 +59,7 @@ proc tokensOfOwnerByIndex(contract: Contract, address: EthAddress): seq[int] =
     result.add(token)
     index = index + 1
 
-proc getCryptoKitties*(address: EthAddress): string =
+proc getCryptoKitties*(address: Address): string =
   var cryptokitties: seq[Collectible]
   cryptokitties = @[]
   try:
@@ -102,7 +100,7 @@ proc getCryptoKitties*(address: string): string =
   let eth_address = parseAddress(address)
   result = getCryptoKitties(eth_address)
 
-proc getEthermons*(address: EthAddress): string =
+proc getEthermons*(address: Address): string =
   try:
     var ethermons: seq[Collectible]
     ethermons = @[]
@@ -141,7 +139,7 @@ proc getEthermons*(address: string): string =
   let eth_address = parseAddress(address)
   result = getEthermons(eth_address)
 
-proc getKudos*(address: EthAddress): string =
+proc getKudos*(address: Address): string =
   try:
     var kudos: seq[Collectible]
     kudos = @[]
@@ -181,7 +179,7 @@ proc getKudos*(address: string): string =
   let eth_address = parseAddress(address)
   result = getKudos(eth_address)
 
-proc getStickers*(address: EthAddress): string =
+proc getStickers*(address: Address): string =
   try:
     var stickers: seq[Collectible]
     stickers = @[]

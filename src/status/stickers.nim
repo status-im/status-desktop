@@ -1,15 +1,14 @@
 import # global deps
-  tables, strutils, sequtils, sugar
+  tables, strutils, sequtils
 
 import # project deps
-  chronicles, eth/common/eth_types, eventemitter
-from eth/common/utils import parseAddress
+  chronicles, web3/[ethtypes, conversions], eventemitter, stint
 
 import # local deps
   libstatus/types, libstatus/eth/contracts as status_contracts,
   libstatus/stickers as status_stickers, transactions,
   libstatus/wallet
-from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, toUInt64
+from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, toUInt64, parseAddress
 
 
 logScope:
@@ -43,7 +42,7 @@ proc init*(self: StickersModel) =
     var evArgs = StickerArgs(e)
     self.addStickerToRecent(evArgs.sticker, evArgs.save)
 
-proc buildTransaction(self: StickersModel, packId: Uint256, address: EthAddress, price: Uint256, approveAndCall: var ApproveAndCall[100], sntContract: var Contract, gas = "", gasPrice = ""): EthSend =
+proc buildTransaction(self: StickersModel, packId: Uint256, address: Address, price: Uint256, approveAndCall: var ApproveAndCall[100], sntContract: var Contract, gas = "", gasPrice = ""): EthSend =
   sntContract = status_contracts.getContract("snt")
   let
     stickerMktContract = status_contracts.getContract("sticker-market")
@@ -85,15 +84,15 @@ proc buyPack*(self: StickersModel, packId: int, address, price, gas, gasPrice, p
   if success:
     trackPendingTransaction(result, address, $sntContract.address, PendingTransactionType.BuyStickerPack, $packId)
 
-proc getStickerMarketAddress*(self: StickersModel): EthAddress =
+proc getStickerMarketAddress*(self: StickersModel): Address =
   result = status_contracts.getContract("sticker-market").address
 
-proc getPurchasedStickerPacks*(self: StickersModel, address: EthAddress): seq[int] =
+proc getPurchasedStickerPacks*(self: StickersModel, address: Address): seq[int] =
   try:
     let
       balance = status_stickers.getBalance(address)
-      tokenIds = toSeq[0..<balance].map(idx => status_stickers.tokenOfOwnerByIndex(address, idx.u256))
-      purchasedPackIds = tokenIds.map(tokenId => status_stickers.getPackIdFromTokenId(tokenId.u256))
+      tokenIds = toSeq[0..<balance].mapIt(status_stickers.tokenOfOwnerByIndex(address, it.u256))
+      purchasedPackIds = tokenIds.mapIt(status_stickers.getPackIdFromTokenId(it.u256))
     self.purchasedStickerPacks = self.purchasedStickerPacks.concat(purchasedPackIds)
     result = self.purchasedStickerPacks
   except RpcException:

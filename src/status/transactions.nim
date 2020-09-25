@@ -2,15 +2,13 @@ import
   options, strutils
 
 import
-  stint
-from eth/common/eth_types import EthAddress
-from eth/common/utils import parseAddress
+  stint, web3/ethtypes
 
 import
   libstatus/types
-from libstatus/utils as status_utils import toUInt64, gwei2Wei
+from libstatus/utils as status_utils import toUInt64, gwei2Wei, parseAddress
 
-proc buildTransaction*(source: EthAddress, value: Uint256, gas = "", gasPrice = ""): EthSend =
+proc buildTransaction*(source: Address, value: Uint256, gas = "", gasPrice = ""): EthSend =
   result = EthSend(
     source: source,
     value: value.some,
@@ -18,6 +16,6 @@ proc buildTransaction*(source: EthAddress, value: Uint256, gas = "", gasPrice = 
     gasPrice: (if gasPrice.isEmptyOrWhitespace: int.none else: gwei2Wei(parseFloat(gasPrice)).truncate(int).some)
   )
 
-proc buildTokenTransaction*(source, contractAddress: EthAddress, gas = "", gasPrice = ""): EthSend =
+proc buildTokenTransaction*(source, contractAddress: Address, gas = "", gasPrice = ""): EthSend =
   result = buildTransaction(source, 0.u256, gas, gasPrice)
   result.to = contractAddress.some
