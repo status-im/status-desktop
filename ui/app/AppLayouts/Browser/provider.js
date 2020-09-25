@@ -795,47 +795,50 @@ You may add additional accurate notices of copyright ownership.
 (function(){
   // Based on
   // https://github.com/status-im/status-react/blob/f9fb4d6974138a276b0cdcc6e4ea1611063e70ca/resources/js/provider.js
-
   if(typeof EthereumProvider === "undefined"){
     let callbackId = 0;
     let callbacks = {};
 
     const onMessage = function(message){
-      const data = JSON.parse(message);
-      const id = data.messageId;
-      const callback = callbacks[id];
+      try {
+        const data = JSON.parse(message);
+        const id = data.messageId;
+        const callback = callbacks[id];
 
-      if (callback) {
-        if (data.type === "api-response") {
-          if (data.permission == "qr-code") {
-            qrCodeResponse(data, callback); // TODO: are we going to support the qr-code permission?
-          } else if (data.isAllowed) {
-            if (data.permission == "web3") {
-              window.statusAppcurrentAccountAddress = data.data[0];
-            }
-            callback.resolve(data.data);
-          } else {
-            callback.reject(new UserRejectedRequest());
-          }
-        } else if (data.type === "web3-send-async-callback") {
-          if (callback.beta) {
-            if (data.error) {
-              if (data.error.code == 4100) {
-                callback.reject(new Unauthorized());
-              } else {
-                callback.reject(data.error);
+        if (callback) {
+          if (data.type === "api-response") {
+            if (data.permission == "qr-code") {
+              qrCodeResponse(data, callback); // TODO: are we going to support the qr-code permission?
+            } else if (data.isAllowed) {
+              if (data.permission == "web3") {
+                window.statusAppcurrentAccountAddress = data.data[0];
               }
+              callback.resolve(data.data);
             } else {
-              callback.resolve(data.result.result);
+              callback.reject(new UserRejectedRequest());
             }
-          } else if (callback.results) {
-            callback.results.push(data.error || data.result);
-            if (callback.results.length == callback.num)
-              callback.callback(undefined, callback.results);
-          } else {
-            callback.callback(data.error, data.result);
+          } else if (data.type === "web3-send-async-callback") {
+            if (callback.beta) {
+              if (data.error) {
+                if (data.error.code == 4100) {
+                  callback.reject(new Unauthorized());
+                } else {
+                  callback.reject(data.error);
+                }
+              } else {
+                callback.resolve(data.result.result);
+              }
+            } else if (callback.results) {
+              callback.results.push(data.error || data.result);
+              if (callback.results.length == callback.num)
+                callback.callback(undefined, callback.results);
+            } else {
+                callback.callback(data.error, data.result);
+            }
           }
         }
+      } catch(e) {
+          console.error(e)
       }
     }
     
@@ -845,7 +848,10 @@ You may add additional accurate notices of copyright ownership.
       backend.web3Response.connect(onMessage);
     });
 
-    const bridgeSend = data => backend.postMessage(JSON.stringify(data));
+    const bridgeSend = data => {
+        data.hostname = new URL(document.location).host
+        backend.postMessage(JSON.stringify(data));
+    }
 
     let history = window.history;
     let pushState = history.pushState;
