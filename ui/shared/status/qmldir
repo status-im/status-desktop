@@ -1,4 +1,5 @@
 StatusButton 1.0 StatusButton.qml
+StatusChatCommandButton 1.0 StatusChatCommandButton.qml
 StatusChatInfo 1.0 StatusChatInfo.qml
 StatusChatInfoButton 1.0 StatusChatInfoButton.qml
 StatusIconButton 1.0 StatusIconButton.qml
