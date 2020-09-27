@@ -240,8 +240,8 @@ Item {
             anchors.horizontalCenter: noFriendsText.horizontalCenter
             anchors.top: noFriendsText.bottom
             anchors.topMargin: Style.current.bigPadding
-            //% "Invite firends"
-            label: qsTrId("invite-firends")
+            //% "Invite friends"
+            label: qsTrId("invite-friends")
             onClicked: function () {
                 inviteFriendsPopup.open()
             }
