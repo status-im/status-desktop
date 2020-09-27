@@ -1400,6 +1400,7 @@ world--no bank account required</source>
         <location filename="../app/AppLayouts/Chat/components/GroupChatPopup.qml" line="124"/>
         <location filename="../app/AppLayouts/Chat/components/GroupInfoPopup.qml" line="175"/>
         <location filename="../app/AppLayouts/Chat/components/PrivateChatPopup.qml" line="152"/>
+        <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="244"/>
         <source>Invite friends</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1612,11 +1613,6 @@ world--no bank account required</source>
     <message id="you-don-t-have-any-contacts-yet">
         <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="231"/>
         <source>You don’t have any contacts yet</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="invite-firends">
-        <location filename="../app/AppLayouts/Profile/Sections/ContactsContainer.qml" line="244"/>
-        <source>Invite firends</source>
         <translation type="unfinished"></translation>
     </message>
     <message id="sounds-settings">
