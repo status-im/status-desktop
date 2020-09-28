@@ -59,3 +59,6 @@ QtObject:
 
   QtProperty[QVariant] ensRegisterAddress:
     read = getEnsRegisterAddress
+
+  proc urlFromUserInput*(self: UtilsView, input: string): string {.slot.} =
+    result = url_fromUserInput(input)
