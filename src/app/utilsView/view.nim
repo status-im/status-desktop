@@ -1,4 +1,5 @@
 import NimQml, os, strformat, strutils, parseUtils
+import stint
 import ../../status/status
 import ../../status/stickers
 import ../../status/libstatus/accounts/constants as accountConstants
@@ -40,7 +41,8 @@ QtObject:
     result = getSNTBalance($currAcct.address)
 
   proc eth2Wei*(self: UtilsView, eth: string, decimals: int): string {.slot.} =
-    return $status_utils.eth2Wei(parseFloat(eth), decimals)
+    let uintValue = status_utils.eth2Wei(parseFloat(eth), decimals)
+    return uintValue.toString()
 
   proc wei2Token*(self: UtilsView, wei: string, decimals: int): string {.slot.} =
     return status_utils.wei2Token(wei, decimals)

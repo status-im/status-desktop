@@ -15,6 +15,7 @@ lupdate_only{
 SOURCES = *.qml \
           app/*.qml \
           shared/*.qml \
+          shared/status/*.qml \
           onboarding/*.qml \
           onboarding/Login/*.qml \
           app/AppLayouts/*.qml \
@@ -22,6 +23,7 @@ SOURCES = *.qml \
           app/AppLayouts/Chat/ChatColumn/*.qml \
           app/AppLayouts/Chat/ChatColumn/ChatComponents/*.qml \
           app/AppLayouts/Chat/ChatColumn/MessageComponents/*.qml \
+          app/AppLayouts/Chat/ChatColumn/MessageComponents/TransactionComponents/*.qml \
           app/AppLayouts/Chat/ContactsColumn/*.qml \
           app/AppLayouts/Chat/components/*.qml \
           app/AppLayouts/Node/*.qml \

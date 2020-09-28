@@ -37,9 +37,9 @@ Popup {
     function requestTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
         amount =  utilsModel.eth2Wei(amount.toString(), tokenDecimals)
         chatsModel.requestTransaction(chatsModel.activeChannel.id,
-                                        address,
-                                        amount,
-                                        tokenAddress)
+                                      address,
+                                      amount,
+                                      tokenAddress)
         chatCommandModal.close()
     }
 
