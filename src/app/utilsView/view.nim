@@ -27,3 +27,5 @@ QtObject:
   proc join3Paths*(self: UtilsView, start: string, middle: string, ending: string): string {.slot.} =
     result = os.joinPath(start, middle, ending)
 
+  proc urlFromUserInput*(self: UtilsView, input: string): string {.slot.} =
+    result = url_fromUserInput(input)
