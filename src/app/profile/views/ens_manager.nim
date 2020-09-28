@@ -200,12 +200,6 @@ QtObject:
     self.endResetModel()
     self.transactionCompleted(false, transactionHash, ensUsername, $trxType, revertReason)
 
-  proc getEnsRegisterAddress(self: EnsManager): QVariant {.slot.} =
-    newQVariant($statusRegistrarAddress())
-
-  QtProperty[QVariant] ensRegisterAddress:
-    read = getEnsRegisterAddress
-
   proc registerENSGasEstimate(self: EnsManager, ensUsername: string, address: string): int {.slot.} =
     var success: bool
     let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")

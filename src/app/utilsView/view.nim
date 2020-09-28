@@ -5,6 +5,7 @@ import ../../status/libstatus/accounts/constants as accountConstants
 import ../../status/libstatus/tokens
 import ../../status/libstatus/wallet as status_wallet
 import ../../status/libstatus/utils as status_utils
+import ../../status/ens as status_ens
 
 QtObject:
   type UtilsView* = ref object of QObject
@@ -49,3 +50,9 @@ QtObject:
 
   QtProperty[QVariant] stickerMarketAddress:
     read = getStickerMarketAddress
+
+  proc getEnsRegisterAddress(self: UtilsView): QVariant {.slot.} =
+    newQVariant($statusRegistrarAddress())
+
+  QtProperty[QVariant] ensRegisterAddress:
+    read = getEnsRegisterAddress
