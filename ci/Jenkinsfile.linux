@@ -27,8 +27,6 @@ pipeline {
     MAKEFLAGS = '-j4'
     /* Disable colors in Nim compiler logs */
     NIMFLAGS = '--colors:off'
-    /* Verbosity of make targets */
-    V = "1"
     /* Makefile assumes the compiler folder is included */
     QTDIR = "/opt/qt/5.14.0/gcc_64"
     /* Control output the filename */
