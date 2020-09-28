@@ -59,3 +59,18 @@ QtObject:
 
   QtProperty[QVariant] ensRegisterAddress:
     read = getEnsRegisterAddress
+
+  proc stripTrailingZeroes(value: string): string =
+    var str = value.strip(leading = false, chars = {'0'})
+    if str[str.len - 1] == '.':
+      add(str, "0")
+    return str
+
+  proc hex2Eth*(self: UtilsView, value: string): string {.slot.} =
+    return stripTrailingZeroes(status_utils.wei2Eth(stint.fromHex(StUint[256], value)))
+
+  proc hex2Dec*(self: UtilsView, value: string): string {.slot.} =
+    # somehow this value crashes the app
+    if value == "0x0":
+      return "0"
+    return stripTrailingZeroes(stint.toString(stint.fromHex(StUint[256], value)))

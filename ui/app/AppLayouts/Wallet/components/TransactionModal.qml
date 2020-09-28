@@ -69,7 +69,7 @@ ModalPopup {
 
     StyledText {
       id: valueBlock
-      text: blockNumber
+      text: utilsModel.hex2Dec(blockNumber)
       font.pixelSize: 14
       anchors.left: labelBlock.right
       anchors.leftMargin: Style.current.padding
@@ -182,7 +182,7 @@ ModalPopup {
 
     StyledText {
       id: valueGasLimit
-      text: gasLimit
+      text: utilsModel.hex2Dec(gasLimit)
       font.pixelSize: 14
       anchors.left: labelGasLimit.right
       anchors.leftMargin: Style.current.padding
@@ -208,7 +208,7 @@ ModalPopup {
 
     StyledText {
       id: valueGasPrice
-      text: gasPrice
+      text: utilsModel.hex2Eth(gasPrice)
       font.pixelSize: 14
       anchors.left: labelGasPrice.right
       anchors.leftMargin: Style.current.padding
@@ -234,7 +234,7 @@ ModalPopup {
 
     StyledText {
       id: valueGasUsed
-      text: gasUsed
+      text: utilsModel.hex2Dec(gasUsed)
       font.pixelSize: 14
       anchors.left: labelGasUsed.right
       anchors.leftMargin: Style.current.padding
@@ -260,7 +260,7 @@ ModalPopup {
 
     StyledText {
       id: valueNonce
-      text: nonce
+      text: utilsModel.hex2Dec(nonce)
       font.pixelSize: 14
       anchors.left: labelNonce.right
       anchors.leftMargin: Style.current.padding
