@@ -64,8 +64,8 @@ Item {
             wrapMode: Text.WordWrap
             text: {
                 switch(request.permission){
-                    case "web3": return qsTr("Allowing authorizes this DApp to retrieve your wallet address and enable Web3");
-                    case "contact-code": return qsTr("Granting access authorizes this DApp to retrieve your chat key");
+                    case Constants.permission_web3: return qsTr("Allowing authorizes this DApp to retrieve your wallet address and enable Web3");
+                    case Constants.permission_contactCode: return qsTr("Granting access authorizes this DApp to retrieve your chat key");
                     default: return qsTr("Unknown permission");
                 }
             }
@@ -105,7 +105,7 @@ Item {
 
         function postMessage(data){
             request = JSON.parse(data)
-            if(request.type === "api-request"){
+            if(request.type === Constants.api_request){
                 // TODO: check if permission has been granted before, 
                 // to not show the dialog
                 accessDialog.open()

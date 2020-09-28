@@ -44,4 +44,11 @@ QtObject {
         "#887af9",
         "#8B3131"
     ]
+
+
+    readonly property string api_request: "api-request"
+
+    readonly property string permission_web3: "web3"
+    readonly property string permission_contactCode: "contact-code"
+
 }
