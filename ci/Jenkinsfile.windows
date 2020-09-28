@@ -70,6 +70,7 @@ pipeline {
         stage('Upload') {
           steps { script {
             env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_ZIP)
+            jenkins.setBuildDesc(Zip: env.PKG_URL)
           } }
         }
         stage('Archive') {
