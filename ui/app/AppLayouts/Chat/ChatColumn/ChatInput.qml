@@ -2,7 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtMultimedia 5.13
-import QtQuick.Dialogs 1.0
+import QtQuick.Dialogs 1.3
 import "../components"
 import "../../../../shared"
 import "../../../../imports"
@@ -23,10 +23,19 @@ Rectangle {
     property bool paste: false;
     property bool isColonPressed: false;
 
+    property int extraHeightFactor: calculateExtraHeightFactor()
+    property int messageLimit: 2000
+    property int messageLimitVisible: 200
+
     Audio {
         id: sendMessageSound
         source: "../../../../sounds/send_message.wav"
         volume: appSettings.volume
+    }
+
+    function calculateExtraHeightFactor() {
+        const factor = (txtData.length / 500) + 1;
+        return (factor > 5) ? 5 : factor;
     }
 
     function insertInTextInput(start, text) {
@@ -68,7 +77,12 @@ Rectangle {
                 event.accepted = true;
                 return
             }
-            sendMsg(event);
+            if (txtData.length < messageLimit) {
+                sendMsg(event);
+                return;
+            }
+            if(event) event.accepted = true
+            messageTooLongDialog.open()
         }
 
         if ((event.key === Qt.Key_V) && (event.modifiers & Qt.ControlModifier)) {
@@ -361,7 +375,7 @@ Rectangle {
         anchors.rightMargin: 0
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         topPadding: Style.current.padding
-        
+
         StyledTArea {
             textFormat: Text.RichText
             id: txtData
@@ -384,17 +398,45 @@ Rectangle {
         }
     }
 
+    StyledText {
+        id: messageLengthLimit
+        property int remainingChars: messageLimit - txtData.length
+        text: remainingChars.toString()
+        visible: remainingChars <= root.messageLimitVisible
+        color: (remainingChars <= 0) ? Style.current.danger : Style.current.textColor
+        anchors.right: parent.right
+        anchors.bottom: sendBtns.top
+        anchors.rightMargin: Style.current.padding
+        leftPadding: Style.current.halfPadding
+        rightPadding: Style.current.halfPadding
+    }
+
     ChatButtons {
         id: sendBtns
-        height: parent.height
-        anchors.verticalCenter: parent.verticalCenter
+        height: 36
         anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding
+        anchors.bottom: parent.bottom
         addToChat: function (text, atCursor) {
             insertInTextInput(atCursor ? txtData.cursorPosition :txtData.length, text)
         }
         onSend: function(){
-            sendMsg(false)
+            if (txtData.length < messageLimit) {
+                sendMsg(false);
+                return;
+            }
+            messageTooLongDialog.open()
         }
+    }
+
+    MessageDialog {
+        id: messageTooLongDialog
+        //% "Your message is too long."
+        title: qsTrId("your-message-is-too-long.")
+        icon: StandardIcon.Critical
+        //% "Please make your message shorter. We have set the limit to 2000 characters to be courteous of others."
+        text: qsTrId("please-make-your-message-shorter.-we-have-set-the-limit-to-2000-characters-to-be-courteous-of-others.")
+        standardButtons: StandardButton.Ok
     }
 }
 /*##^##

@@ -206,7 +206,7 @@ StackLayout {
             Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
             Layout.fillWidth: true
             Layout.preferredWidth: parent.width
-            height: !isExtendedInput ? 70 : 140
+            height: (!isExtendedInput ? 70 : 140) * chatInput.extraHeightFactor
             Layout.preferredHeight: height
 
             SuggestionBox {
