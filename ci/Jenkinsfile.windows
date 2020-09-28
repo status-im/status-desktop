@@ -40,7 +40,7 @@ pipeline {
   }
 
   stages {
-    stage('Modules') {
+    stage('Deps') {
       steps {
         /* avoid re-compiling Nim by using cache */
         cache(maxCacheSize: 250, caches: [[
@@ -48,13 +48,9 @@ pipeline {
           includes: '**/*',
           path: 'vendor/nimbus-build-system/vendor/Nim/bin'
         ]]) {
-          sh 'make update'
+          sh 'make deps'
         }
       }
-    }
-
-    stage('Deps') {
-      steps { sh 'make deps' }
     }
 
     stage('status-go') {
