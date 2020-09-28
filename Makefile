@@ -393,7 +393,7 @@ endif
 	echo -e $(BUILD_MSG) "zip"
 	mkdir -p pkg
 	cd tmp/windows/dist/Status && \
-	7z a ../../../../pkg/Status.zip *
+	7z a ../../../../$(STATUS_CLIENT_ZIP) *
 
 pkg: $(PKG_TARGET)
 
