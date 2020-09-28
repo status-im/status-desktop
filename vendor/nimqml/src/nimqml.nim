@@ -48,3 +48,6 @@ proc plain_text*(htmlString: string): string =
 
 proc escape_html*(input: string): string =
   result = $(dos_escape_html(input.cstring))
+
+proc url_fromUserInput*(input: string): string =
+  result = $(dos_qurl_fromUserInput(input.cstring))
