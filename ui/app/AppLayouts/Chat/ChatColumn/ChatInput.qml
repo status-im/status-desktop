@@ -111,7 +111,7 @@ Rectangle {
             var transform = true;
             if (words[i].charAt(0) === ':') {
                 for (var j = 0; j < words[i].length; j++) {
-                    if (isSpace(words[i].charAt(j)) === true || Utils.isPunct(words[i].charAt(j)) === true) {
+                    if (Utils.isSpace(words[i].charAt(j)) === true || Utils.isPunct(words[i].charAt(j)) === true) {
                         transform = false;
                     }
                 }
@@ -128,10 +128,10 @@ Rectangle {
     }
 
     function replaceWithEmoji(message, shortname, codePoint) {
-        const encodedCodePoint = Utils.getEmojiCodepoint(codePoint)
+        const encodedCodePoint = Emoji.getEmojiCodepoint(codePoint)
         const newMessage = message.data
-        .replace(shortname, encodedCodePoint)
-        .replace(/ /g, "&nbsp;");
+            .replace(shortname, encodedCodePoint)
+            .replace(/ /g, "&nbsp;");
         txtData.remove(0, txtData.cursorPosition);
         insertInTextInput(0, Emoji.parse(newMessage, '26x26'));
         emojiSuggestions.close()
@@ -144,7 +144,7 @@ Rectangle {
 
         // state machine to handle different forms of the emoji event state
         if (!emojiEvent && isColonPressed) {
-            return (message.data.length <= 1 || isSpace(message.data.charAt(message.cursor - 1))) ? true : false;
+            return (message.data.length <= 1 || Utils.isSpace(message.data.charAt(message.cursor - 1))) ? true : false;
         } else if (emojiEvent && isColonPressed) {
             const index = message.data.lastIndexOf(':', message.cursor - 2);
             if (index >= 0 && message.cursor > 0) {
@@ -170,8 +170,8 @@ Rectangle {
 
                     emojiSuggestions.openPopup(emojis, emojiPart)
                 }
+                return true;
             }
-            return true;
         } else if (emojiEvent && !isKeyValid(event.key) && !isColonPressed) {
             return false;
         }
@@ -237,7 +237,7 @@ Rectangle {
     function validSubstr(substr) {
         for(var i = 0; i < substr.length; i++) {
             var c = substr.charAt(i);
-            if (c !== '_'  && (isSpace(c) === true || Utils.isPunct(c) === true)) {
+            if (c !== '_'  && (Utils.isSpace(c) === true || Utils.isPunct(c) === true)) {
                 return false;
             }
         }
@@ -252,12 +252,6 @@ Rectangle {
                 (key >= Qt.Key_BracketLeft && key <= Qt.Key_hyphen)))
             return false;
         return true;
-    }
-
-    function isSpace(c) {
-        if (/( |\t|\n|\r)/.test(c))
-            return true;
-        return false;
     }
 
     FileDialog {
