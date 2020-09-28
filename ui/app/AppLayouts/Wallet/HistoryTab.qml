@@ -131,7 +131,7 @@ Item {
                     anchors.top: parent.top
                     anchors.topMargin: Style.current.bigPadding
                     font.pixelSize: 15
-                    text: value + " " + transactionListItem.symbol
+                    text: utilsModel.hex2Eth(value) + " " + transactionListItem.symbol
                 }
             }
 
