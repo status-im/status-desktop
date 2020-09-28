@@ -205,6 +205,8 @@ proc updateAccount*(self: WalletModel, address: string) =
   self.events.emit("accountsUpdated", Args())
 
 proc getTotalFiatBalance*(self: WalletModel): string =
+  if self.totalBalance == 0.0:
+    self.calculateTotalFiatBalance()
   fmt"{self.totalBalance:.2f}"
 
 proc convertValue*(self: WalletModel, balance: string, fromCurrency: string, toCurrency: string): float =
