@@ -26,6 +26,12 @@ Rectangle {
         onClosing: destroy()
     }
 
+    property Item currentWebView: tabs.currentIndex < tabs.count ? tabs.getTab(tabs.currentIndex).item : null
+    
+    property Component browserDialogComponent: BrowserDialog {
+        onClosing: destroy()
+    }
+
     Layout.fillHeight: true
     Layout.fillWidth: true
 
