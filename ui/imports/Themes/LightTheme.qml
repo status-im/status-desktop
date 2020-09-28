@@ -50,7 +50,8 @@ Theme {
 
     property color buttonForegroundColor: blue
     property color buttonBackgroundColor: secondaryBackground
-    property color buttonDisabledForegroundColor: darkGrey
+    property color buttonSecondaryColor: darkGrey
+    property color buttonDisabledForegroundColor: buttonSecondaryColor
     property color buttonDisabledBackgroundColor: grey
 
     property color roundedButtonForegroundColor: buttonForegroundColor

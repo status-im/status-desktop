@@ -38,14 +38,16 @@ ScrollView {
         }
 
         Button {
+            readonly property int buttonPadding: 5
+
             id: newMessagesBox
             height: 32
-            width: nbMessages.width + arrowImage.width + 2 * Style.current.halfPadding + (nbMessages.visible ? 5 : 0)
+            width: nbMessages.width + arrowImage.width + 2 * Style.current.halfPadding + (nbMessages.visible ? newMessagesBox.buttonPadding : 0)
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
             background: Rectangle {
-                color: Style.current.buttonDisabledForegroundColor
+                color: Style.current.buttonSecondaryColor
                 border.width: 0
                 radius: 16
             }
@@ -74,7 +76,7 @@ ScrollView {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: nbMessages.right
                 source: "../../../img/leave_chat.svg"
-                anchors.leftMargin: nbMessages.visible ? 5 : 0
+                anchors.leftMargin: nbMessages.visible ? newMessagesBox.buttonPadding : 0
                 rotation: -90
 
                 ColorOverlay {

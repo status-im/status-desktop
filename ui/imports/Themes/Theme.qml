@@ -35,6 +35,7 @@ QtObject {
 
     property color buttonForegroundColor
     property color buttonBackgroundColor
+    property color buttonSecondaryColor
     property color buttonDisabledForegroundColor
     property color buttonDisabledBackgroundColor
     property color roundedButtonForegroundColor
