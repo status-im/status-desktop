@@ -28,7 +28,7 @@ Button {
     }
 
     background: Rectangle {
-        color: control.hovered ? Style.current.grey : "transparent"
+        color: control.hovered ? Style.current.topBarChatInfoColor : "transparent"
         radius: Style.current.radius
     }
 
