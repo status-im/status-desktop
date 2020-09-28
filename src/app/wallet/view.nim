@@ -487,13 +487,6 @@ QtObject:
   QtProperty[string] defaultGasLimit:
     read = defaultGasLimit
 
-  proc getSNTAddress*(self: WalletView): string {.slot.} =
-    result = getSNTAddress()
-
-  proc getSNTBalance*(self: WalletView): string {.slot.} =
-    let currAcct = status_wallet.getWalletAccounts()[0]
-    result = getSNTBalance($currAcct.address)
-
   proc getDefaultAddress*(self: WalletView): string {.slot.} =
     result = $status_wallet.getWalletAccounts()[0].address
 
@@ -545,12 +538,6 @@ QtObject:
     if address == self.currentAccount.address:
       self.setCurrentTransactions(transactions)
     self.loadingTrxHistory(false)
-
-  proc eth2Wei*(self: WalletView, eth: string, decimals: int): string {.slot.} =
-    return $status_utils.eth2Wei(parseFloat(eth), decimals)
-
-  proc wei2Token*(self: WalletView, wei: string, decimals: int): string {.slot.} =
-    return status_utils.wei2Token(wei, decimals)
 
   proc resolveENS*(self: WalletView, ens: string) {.slot.} =
     spawnAndSend(self, "ensResolved") do:

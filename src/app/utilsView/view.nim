@@ -1,6 +1,10 @@
-import NimQml, os
+import NimQml, os, strformat, strutils, parseUtils
 import ../../status/status
+import ../../status/stickers
 import ../../status/libstatus/accounts/constants as accountConstants
+import ../../status/libstatus/tokens
+import ../../status/libstatus/wallet as status_wallet
+import ../../status/libstatus/utils as status_utils
 
 QtObject:
   type UtilsView* = ref object of QObject
@@ -27,3 +31,21 @@ QtObject:
   proc join3Paths*(self: UtilsView, start: string, middle: string, ending: string): string {.slot.} =
     result = os.joinPath(start, middle, ending)
 
+  proc getSNTAddress*(self: UtilsView): string {.slot.} =
+    result = getSNTAddress()
+
+  proc getSNTBalance*(self: UtilsView): string {.slot.} =
+    let currAcct = status_wallet.getWalletAccounts()[0]
+    result = getSNTBalance($currAcct.address)
+
+  proc eth2Wei*(self: UtilsView, eth: string, decimals: int): string {.slot.} =
+    return $status_utils.eth2Wei(parseFloat(eth), decimals)
+
+  proc wei2Token*(self: UtilsView, wei: string, decimals: int): string {.slot.} =
+    return status_utils.wei2Token(wei, decimals)
+
+  proc getStickerMarketAddress(self: UtilsView): QVariant {.slot.} =
+    newQVariant($self.status.stickers.getStickerMarketAddress)
+
+  QtProperty[QVariant] stickerMarketAddress:
+    read = getStickerMarketAddress
