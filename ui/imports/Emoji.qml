@@ -39,4 +39,14 @@ QtObject {
             return _emoji.unicode;
         return undefined;
     }
+
+    function getEmojiCodepoint(iconCodePoint) {
+        // Split the codepoint to get all the parts and then encode them from hex to utf8
+        const splitCodePoint = iconCodePoint.split('-')
+        let codePointParts = []
+        splitCodePoint.forEach(function (codePoint) {
+            codePointParts.push(`0x${codePoint}`)
+        })
+        return String.fromCodePoint(...codePointParts);
+    }
 }

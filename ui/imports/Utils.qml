@@ -140,14 +140,8 @@ QtObject {
         }
     }
 
-    function getEmojiCodepoint(iconCodePoint) {
-        // Split the codepoint to get all the parts and then encode them from hex to utf8
-        const splitCodePoint = iconCodePoint.split('-')
-        let codePointParts = []
-        splitCodePoint.forEach(function (codePoint) {
-            codePointParts.push(`0x${codePoint}`)
-        })
-        return String.fromCodePoint(...codePointParts);
+    function isSpace(c) {
+        return (/( |\t|\n|\r)/.test(c))
     }
 
     function isPunct(c) {

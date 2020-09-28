@@ -40,7 +40,7 @@ Popup {
             iconCodePoint = iconCodePoint.substring(0, extenstionIndex)
         }
 
-        const encodedIcon = Utils.getEmojiCodepoint(iconCodePoint)
+        const encodedIcon = Emoji.getEmojiCodepoint(iconCodePoint)
 
         // Add at the  start of the list
         let recentEmojis = appSettings.recentEmojis
