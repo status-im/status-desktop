@@ -10,6 +10,8 @@ ModalPopup {
     property int nicknameLength: nicknameInput.textField.text.length
     readonly property int maxNicknameLength: 32
     property bool nicknameTooLong: nicknameLength > maxNicknameLength
+    property var changeUsername: function () {}
+    property var changeNickname: function () {}
 
     id: popup
     width: 400
@@ -91,12 +93,12 @@ ModalPopup {
                 // Change username title only if it was not an ENS name
                  if (nicknameInput.textField.text === "") {
                      // If we removed the nickname, go back to showing the alias
-                     userName = alias
+                     popup.changeUsername(alias)
                  } else {
-                     userName = nicknameInput.textField.text
+                     popup.changeUsername(nicknameInput.textField.text)
                  }
             }
-            nickname = nicknameInput.textField.text
+            popup.changeNickname(nicknameInput.textField.text)
             profileModel.changeContactNickname(fromAuthor, nicknameInput.textField.text)
             popup.close()
         }
