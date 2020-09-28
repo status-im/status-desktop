@@ -1148,3 +1148,8 @@ char *dos_image_resizer(char* imagePath, int maxSize, char* tmpDirPath)
 
     return convert_to_cstring(newFilePath.toUtf8());
 }
+
+char *dos_qurl_fromUserInput(char* input)
+{
+    return convert_to_cstring(QUrl::fromUserInput(QString(input)).toString());
+}
