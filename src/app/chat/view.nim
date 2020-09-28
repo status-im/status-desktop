@@ -100,12 +100,6 @@ QtObject:
   QtProperty[QVariant] stickerPacks:
     read = getStickerPackList
 
-  proc getStickerMarketAddress(self: ChatsView): QVariant {.slot.} =
-    newQVariant($self.status.stickers.getStickerMarketAddress)
-
-  QtProperty[QVariant] stickerMarketAddress:
-    read = getStickerMarketAddress
-
   proc buyPackGasEstimate*(self: ChatsView, packId: int, address: string, price: string): int {.slot.} =
     var success: bool
     result = self.status.stickers.estimateGas(packId, address, price, success)
