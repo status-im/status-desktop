@@ -207,6 +207,7 @@ Item {
         anchors.topMargin: 24
         border.width: 1
         border.color: Style.current.border
+        color: Style.current.background
         radius: 50
         height: 20
         width: 350
@@ -220,6 +221,7 @@ Item {
             font.weight: Font.Bold
             font.pixelSize: 12
             anchors.leftMargin: Style.current.padding
+            color: Style.current.textColor
         }
 
         StyledText {
