@@ -305,6 +305,12 @@ ModalPopup {
 
         NicknamePopup {
             id: nicknamePopup
+            changeUsername: function (newUsername) {
+                popup.userName = newUsername
+            }
+            changeNickname: function (newNickname) {
+                popup.nickname = newNickname
+            }
         }
     }
 
