@@ -78,16 +78,16 @@ proc getCryptoKittiesBatch*(address: Address, offset: int = 0): seq[Collectible]
       var name = kitty["name"]
       var finalId = ""
       var finalName = ""
-      if (not (id.kind == JNull)):
+      if id.kind != JNull:
         finalId = $id
-      if (not (name.kind == JNull)):
+      if name.kind != JNull:
         finalName = $name
       cryptokitties.add(Collectible(id: finalId,
-      name: finalName,
-      image: kitty["image_url_png"].str,
-      collectibleType: CRYPTOKITTY,
-      description: "",
-      externalUrl: ""))
+        name: finalName,
+        image: kitty["image_url_png"].str,
+        collectibleType: CRYPTOKITTY,
+        description: "",
+        externalUrl: ""))
     except Exception as e2:
       error "Error with this individual cat", msg = e2.msg, cat = kitty
 
