@@ -315,12 +315,12 @@ Item {
         anchors.bottomMargin: Style.current.padding
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        label: parseFloat(walletModel.getSNTBalance()) < 10 ? 
+        label: parseFloat(utilsModel.getSNTBalance()) < 10 ?
           //% "Not enough SNT"
           qsTrId("not-enough-snt") :
           //% "Register"
           qsTrId("ens-register")
-        disabled: parseFloat(walletModel.getSNTBalance()) < 10 || !termsAndConditionsCheckbox.checked
+        disabled: parseFloat(utilsModel.getSNTBalance()) < 10 || !termsAndConditionsCheckbox.checked
         onClicked: transactionDialog.open()
     }
 }
