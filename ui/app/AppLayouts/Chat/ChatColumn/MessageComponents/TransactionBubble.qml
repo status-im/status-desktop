@@ -63,7 +63,7 @@ Item {
             return "0"
         }
         try {
-            return walletModel.wei2Token(commandParametersObject.value.toString(), token.decimals)
+            return utilsModel.wei2Token(commandParametersObject.value.toString(), token.decimals)
         } catch (e) {
             console.error("Error getting the ETH value of:", commandParametersObject.value)
             console.error("Error:", e.message)
