@@ -40,9 +40,10 @@ ScrollView {
         Button {
             readonly property int buttonPadding: 5
 
-            id: newMessagesBox
+            id: scrollDownButton
+            visible: false
             height: 32
-            width: nbMessages.width + arrowImage.width + 2 * Style.current.halfPadding + (nbMessages.visible ? newMessagesBox.buttonPadding : 0)
+            width: nbMessages.width + arrowImage.width + 2 * Style.current.halfPadding + (nbMessages.visible ? scrollDownButton.buttonPadding : 0)
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
@@ -53,7 +54,7 @@ ScrollView {
             }
             onClicked: {
                 root.newMessages = 0
-                newMessagesBox.visible = false
+                scrollDownButton.visible = false
                 chatLogView.scrollToBottom(true)
             }
 
@@ -76,7 +77,7 @@ ScrollView {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: nbMessages.right
                 source: "../../../img/leave_chat.svg"
-                anchors.leftMargin: nbMessages.visible ? newMessagesBox.buttonPadding : 0
+                anchors.leftMargin: nbMessages.visible ? scrollDownButton.buttonPadding : 0
                 rotation: -90
 
                 ColorOverlay {
@@ -90,14 +91,6 @@ ScrollView {
                cursorShape: Qt.PointingHandCursor
                anchors.fill: parent
                onPressed: mouse.accepted = false
-            }
-        }
-
-        onAtYEndChanged: {
-            if (chatLogView.atYEnd) {
-                newMessagesBox.visible = false
-            } else {
-                newMessagesBox.visible = true
             }
         }
 
@@ -163,6 +156,7 @@ ScrollView {
         });
 
         onContentYChanged: {
+            scrollDownButton.visible = (contentHeight - (scrollY + height) > 400)
             if(scrollY < 500){
                 loadMsgs();
             }
