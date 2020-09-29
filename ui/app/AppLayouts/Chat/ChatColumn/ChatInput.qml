@@ -298,7 +298,7 @@ Rectangle {
         x : Style.current.padding / 2
         y: -height - Style.current.smallPadding
         background: Rectangle {
-            visible: emojiSuggestions.emojis.length > 0
+            visible: !!emojiSuggestions.emojis && emojiSuggestions.emojis.length > 0
             color: Style.current.secondaryBackground
             border.width: 1
             border.color: Style.current.borderSecondary

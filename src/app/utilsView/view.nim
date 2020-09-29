@@ -7,6 +7,7 @@ import ../../status/libstatus/tokens
 import ../../status/libstatus/wallet as status_wallet
 import ../../status/libstatus/utils as status_utils
 import ../../status/ens as status_ens
+import web3/[ethtypes, conversions]
 
 QtObject:
   type UtilsView* = ref object of QObject
