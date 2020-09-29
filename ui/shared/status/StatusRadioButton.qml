@@ -30,5 +30,6 @@ RadioButton {
         verticalAlignment: Text.AlignVCenter
         leftPadding: !!control.text ? control.indicator.width + control.spacing : control.indicator.width
         font.pixelSize: 15
+        font.family: Style.current.fontRegular.name
     }
 }

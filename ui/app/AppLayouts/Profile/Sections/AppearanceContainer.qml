@@ -1,13 +1,32 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import QtQuick.Controls.Universal 2.12
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 
 Item {
-    id: appearanceContainer
+    id: root
     Layout.fillHeight: true
     Layout.fillWidth: true
+
+    enum Theme {
+        System, // 0
+        Light,  // 1
+        Dark    // 2
+    }
+
+    function updateTheme(theme) {
+        let themeStr = Universal.theme === Universal.Dark ? "dark" : "light"
+        if (theme === AppearanceContainer.Theme.Light) {
+            themeStr = "light"
+        } else if (theme === AppearanceContainer.Theme.Dark) {
+            themeStr = "dark"
+        }
+        profileModel.changeTheme(theme)
+        Style.changeTheme(themeStr)
+    }
 
     StyledText {
         id: title
@@ -22,15 +41,6 @@ Item {
     }
 
     RowLayout {
-        property bool isDarkTheme: {
-            const isDarkTheme = profileModel.profile.appearance === 1
-            if (isDarkTheme) {
-                Style.changeTheme('dark')
-            } else {
-                Style.changeTheme('light')
-            }
-            return isDarkTheme
-        }
         id: themeSetting
         anchors.top: title.bottom
         anchors.topMargin: 20
@@ -40,10 +50,44 @@ Item {
             //% "Theme (Light - Dark)"
             text: qsTrId("theme-(light---dark)")
         }
-        Switch {
-            checked: themeSetting.isDarkTheme
-            onToggled: function() {
-                profileModel.changeTheme(themeSetting.isDarkTheme ? 0 : 1)
+        ButtonGroup { id: appearance }
+
+        StatusRadioButton {
+            checked: profileModel.profile.appearance === AppearanceContainer.Theme.System
+            Layout.alignment: Qt.AlignRight
+            ButtonGroup.group: appearance
+            rightPadding: 15
+            text: qsTr("System")
+            onClicked: {
+                root.updateTheme(AppearanceContainer.Theme.System)
+            }
+        }
+        StatusRadioButton {
+            checked: profileModel.profile.appearance === AppearanceContainer.Theme.Light
+            Layout.alignment: Qt.AlignRight
+            ButtonGroup.group: appearance
+            rightPadding: 15
+            text: qsTr("Light")
+            onClicked: {
+                root.updateTheme(AppearanceContainer.Theme.Light)
+            }
+        }
+        StatusRadioButton {
+            checked: profileModel.profile.appearance === AppearanceContainer.Theme.Dark
+            Layout.alignment: Qt.AlignRight
+            ButtonGroup.group: appearance
+            rightPadding: 0
+            text: qsTr("Dark")
+            onClicked: {
+                root.updateTheme(AppearanceContainer.Theme.Dark)
+            }
+        }
+        // For the case where the theme was finally loaded by status-go in init(),
+        // update the theme in qml
+        Connections {
+            target: profileModel
+            onProfileChanged: {
+                root.updateTheme(profileModel.profile.appearance)
             }
         }
     }
