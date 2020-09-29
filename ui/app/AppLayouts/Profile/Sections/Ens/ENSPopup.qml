@@ -62,7 +62,7 @@ ModalPopup {
                 text: username
                 checked: profileModel.ens.preferredUsername === username
 
-                contentItem: Text {
+                contentItem: StyledText {
                     color: Style.current.textColor
                     text: radioDelegate.text
                     rightPadding: radioDelegate.indicator.width + radioDelegate.spacing
