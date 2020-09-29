@@ -25,16 +25,20 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    property var request: {"hostname": "", "permission": ""}
 
-
-    function postMessage(isAllowed){
-        request.isAllowed = isAllowed;
-        provider.web3Response(web3Provider.postMessage(JSON.stringify(request)));
-    }
-
-    ModalPopup {
+    property Component accessDialogComponent: ModalPopup {
         id: accessDialog
+
+        property var request: {"hostname": "", "permission": ""}
+
+        function postMessage(isAllowed){
+            request.isAllowed = isAllowed;
+            provider.web3Response(web3Provider.postMessage(JSON.stringify(request)));
+        }
+
+        onClosed: {
+            accessDialog.destroy();	
+        }
 
         // TODO: design required
 
@@ -66,7 +70,7 @@ Item {
                 switch(request.permission){
                     case Constants.permission_web3: return qsTr("Allowing authorizes this DApp to retrieve your wallet address and enable Web3");
                     case Constants.permission_contactCode: return qsTr("Granting access authorizes this DApp to retrieve your chat key");
-                    default: return qsTr("Unknown permission");
+                    default: return qsTr("Unknown permission: " + request.permission);
                 }
             }
         }
@@ -104,11 +108,16 @@ Item {
         signal web3Response(string data);
 
         function postMessage(data){
-            request = JSON.parse(data)
+            var request = JSON.parse(data)
             if(request.type === Constants.api_request){
-                // TODO: check if permission has been granted before, 
-                // to not show the dialog
-                accessDialog.open()
+                if(!web3Provider.hasPermission(request.hostname, request.permission)){
+                    var dialog = accessDialogComponent.createObject(browserWindow);
+                    dialog.request = request;
+                    dialog.open();
+                } else {
+                    request.isAllowed = true;
+                    web3Response(web3Provider.postMessage(JSON.stringify(request)));
+                }
             } else {
                 web3Response(web3Provider.postMessage(data));
             }
