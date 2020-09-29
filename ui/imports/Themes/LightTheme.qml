@@ -6,6 +6,7 @@ Theme {
     property color white2: "#FCFCFC"
     property color black: "#000000"
     property color grey: "#EEF2F5"
+    property color lightGrey: "#ccd0d4"
     property color lightBlue: "#ECEFFC"
     property color cyan: "#00FFFF"
     property color blue: "#4360DF"
