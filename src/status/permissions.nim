@@ -34,7 +34,6 @@ proc newPermissionsModel*(events: EventEmitter): PermissionsModel =
 proc init*(self: PermissionsModel) =
   discard
 
-
 type Dapp* = object
   name*: string
   permissions*: HashSet[Permission]
