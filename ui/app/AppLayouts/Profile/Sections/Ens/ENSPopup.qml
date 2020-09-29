@@ -28,6 +28,8 @@ ModalPopup {
               //% "Once you select a username, you won’t be able to disable it afterwards. You will only be able choose a different username to display."
               qsTrId("once-you-select-a-username--you-won-t-be-able-to-disable-it-afterwards--you-will-only-be-able-choose-a-different-username-to-display-")
         font.pixelSize: 15
+        wrapMode: Text.WordWrap
+        width: parent.width
     }
 
     StyledText {
@@ -59,6 +61,14 @@ ModalPopup {
                 id: radioDelegate
                 text: username
                 checked: profileModel.ens.preferredUsername === username
+
+                contentItem: Text {
+                    color: Style.current.textColor
+                    text: radioDelegate.text
+                    rightPadding: radioDelegate.indicator.width + radioDelegate.spacing
+                    topPadding: Style.current.halfPadding
+                }
+
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
