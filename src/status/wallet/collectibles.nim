@@ -95,7 +95,7 @@ proc getCryptoKittiesBatch*(address: Address, offset: int = 0): seq[Collectible]
   let total = responseBody["total"].getInt
   let currentCount = limit * (offset + 1)
   if (currentCount < total and currentCount < MAX_TOKENS):
-    # Call the API again with oofset + 1
+    # Call the API again with offset + 1
     let nextBatch = getCryptoKittiesBatch(address, offset + 1)
     return concat(cryptokitties, nextBatch)
   return cryptokitties
