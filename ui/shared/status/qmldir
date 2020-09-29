@@ -14,4 +14,10 @@ StatusRoundButton 1.0 StatusRoundButton.qml
 StatusSectionHeadline 1.0 StatusSectionHeadline.qml
 StatusSectionMenuItem 1.0 StatusSectionMenuItem.qml
 StatusSlider 1.0 StatusSlider.qml
+StatusStickerButton 1.0 StatusStickerButton.qml
+StatusStickerList 1.0 StatusStickerList.qml
+StatusStickerMarket 1.0 StatusStickerMarket.qml
+StatusStickerPackDetails 1.0 StatusStickerPackDetails.qml
+StatusStickerPackPurchaseModal 1.0 StatusStickerPackPurchaseModal.qml
+StatusStickersPopup 1.0 StatusStickerPopup.qml
 StatusToolTip 1.0 StatusToolTip.qml
