@@ -27,7 +27,7 @@ RoundButton {
             if (type === "secondary") {
                 return "transparent"
             }
-            return hovered || highlighted ? Style.current.lightBlue : "transparent"
+            return hovered || highlighted ? Style.current.secondaryBackground : "transparent"
         }
         radius: control.radius
     }

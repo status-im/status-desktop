@@ -2,7 +2,7 @@ pragma Singleton
 
 import QtQuick 2.13
 import "./twemoji/twemoji.js" as Twemoji
-import "../app/AppLayouts/Chat/components/emojiList.js" as EmojiJSON
+import "../shared/status/emojiList.js" as EmojiJSON
 
 QtObject {
     property string base: Qt.resolvedUrl("twemoji/")

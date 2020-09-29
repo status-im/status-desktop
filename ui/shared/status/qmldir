@@ -3,6 +3,7 @@ StatusChatCommandButton 1.0 StatusChatCommandButton.qml
 StatusChatCommandPopup 1.0 StatusChatCommandPopup.qml
 StatusChatInfo 1.0 StatusChatInfo.qml
 StatusChatInfoButton 1.0 StatusChatInfoButton.qml
+StatusChatInput 1.0 StatusChatInput.qml
 StatusEmojiCategoryButton 1.0 StatusEmojiCategoryButton.qml
 StatusEmojiPopup 1.0 StatusEmojiPopup.qml
 StatusEmojiSection 1.0 StatusEmojiSection.qml
@@ -19,5 +20,5 @@ StatusStickerList 1.0 StatusStickerList.qml
 StatusStickerMarket 1.0 StatusStickerMarket.qml
 StatusStickerPackDetails 1.0 StatusStickerPackDetails.qml
 StatusStickerPackPurchaseModal 1.0 StatusStickerPackPurchaseModal.qml
-StatusStickersPopup 1.0 StatusStickerPopup.qml
+StatusStickersPopup 1.0 StatusStickersPopup.qml
 StatusToolTip 1.0 StatusToolTip.qml

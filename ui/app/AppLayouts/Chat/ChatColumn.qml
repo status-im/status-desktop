@@ -2,9 +2,11 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../shared"
+import "../../../shared/status"
 import "../../../imports"
 import "./components"
 import "./ChatColumn"
+import "./ChatColumn/ChatComponents"
 import "./data"
 
 StackLayout {
@@ -26,7 +28,6 @@ StackLayout {
     Component.onCompleted: {
         chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
     }
-    
 
     Layout.fillHeight: true
     Layout.fillWidth: true
@@ -37,21 +38,33 @@ StackLayout {
     function showReplyArea() {
         isReply = true;
         isImage = false;
-        replyAreaContainer.setup()
+        let replyMessageIndex = chatsModel.messageList.getMessageIndex(SelectedMessage.messageId);
+        if (replyMessageIndex === -1) return;
+        
+        let userName = chatsModel.messageList.getMessageData(replyMessageIndex, "userName")
+        let message = chatsModel.messageList.getMessageData(replyMessageIndex, "message")
+        let identicon = chatsModel.messageList.getMessageData(replyMessageIndex, "identicon")
+
+        chatInput.showReplyArea(userName, message, identicon)
     }
 
-    function showImageArea(imagePath) {
-        isImage = true;
-        isReply = false;
-        sendImageArea.image = imagePath[0];
+    function requestAddressForTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
+        amount =  walletModel.eth2Wei(amount.toString(), tokenDecimals)
+        chatsModel.requestAddressForTransaction(chatsModel.activeChannel.id,
+                                                address,
+                                                amount,
+                                                tokenAddress)
+        chatCommandModal.close()
+    }
+    function requestTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
+        amount =  walletModel.eth2Wei(amount.toString(), tokenDecimals)
+        chatsModel.requestTransaction(chatsModel.activeChannel.id,
+                                        address,
+                                        amount,
+                                        tokenAddress)
+        chatCommandModal.close()
     }
 
-    function hideExtendedArea() {
-        isImage = false;
-        isReply = false;
-        replyAreaContainer.setup();
-        sendImageArea.image = "";
-    }
     
     ColumnLayout {
         spacing: 0
@@ -164,14 +177,12 @@ StackLayout {
 
         Rectangle {
             id: inputArea
-            color: Style.current.background
-            border.width: 1
-            border.color: Style.current.border
             Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
             Layout.fillWidth: true
             Layout.preferredWidth: parent.width
-            height: (!isExtendedInput ? 70 : 140) * chatInput.extraHeightFactor
+            height: chatInput.height
             Layout.preferredHeight: height
+            color: "transparent"
 
             SuggestionBox {
                 id: suggestionsBox
@@ -209,16 +220,6 @@ StackLayout {
                 }
             }
             
-            ReplyArea {
-                id: replyAreaContainer
-                visible: isReply
-            }
-
-            SendImageArea {
-                id: sendImageArea
-                visible: isImage
-            }
-
             Loader {
                 active: chatsModel.loadingMessages
                 sourceComponent: loadingIndicator
@@ -247,31 +248,56 @@ StackLayout {
                 }
             }
 
-            ChatInput {
+            StatusChatInput {
                 id: chatInput
-                height: 40
-                anchors.top: {
-                    if(!isExtendedInput){
-                        return inputArea.top;
-                    }
-
-                    if(isReply){
-                        return replyAreaContainer.bottom;
-                    }
-
-                    if(isImage){
-                        return sendImageArea.bottom;
-                    }
-                }
-                anchors.topMargin: 4
-                anchors.left: parent.left
-                anchors.right: parent.right
                 anchors.bottom: parent.bottom
+                recentStickers: chatsModel.recentStickers
+                stickerPackList: chatsModel.stickerPacks
+                chatType: chatsModel.activeChannel.chatType
+                onSendTransactionCommandButtonClicked: {
+                    chatCommandModal.sendChatCommand = chatColumnLayout.requestAddressForTransaction
+                    chatCommandModal.isRequested = false
+                    //% "Send"
+                    chatCommandModal.commandTitle = qsTrId("command-button-send")
+                    chatCommandModal.title = chatCommandModal.commandTitle
+                    //% "Request Address"
+                    chatCommandModal.finalButtonLabel = qsTrId("request-address")
+                    chatCommandModal.selectedRecipient = {
+                        address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
+                        identicon: chatsModel.activeChannel.identicon,
+                        name: chatsModel.activeChannel.name,
+                        type: RecipientSelector.Type.Contact
+                    }
+                    chatCommandModal.open()
+                }
+                onReceiveTransactionCommandButtonClicked: {
+                    chatCommandModal.sendChatCommand = root.requestTransaction
+                    chatCommandModal.isRequested = true
+                    //% "Request"
+                    chatCommandModal.commandTitle = qsTrId("wallet-request")
+                    chatCommandModal.title = chatCommandModal.commandTitle
+                    //% "Request"
+                    chatCommandModal.finalButtonLabel = qsTrId("wallet-request")
+                    chatCommandModal.selectedRecipient = {
+                        address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
+                        identicon: chatsModel.activeChannel.identicon,
+                        name: chatsModel.activeChannel.name,
+                        type: RecipientSelector.Type.Contact
+                    }
+                    chatCommandModal.open()
+                }
+                onStickerSelected: {
+                    chatsModel.sendSticker(hashId, packId)
+                }
             }
         }
     }
 
     EmptyChat {}
+
+    ChatCommandModal {
+        id: chatCommandModal
+    }
 }
 
 /*##^##
