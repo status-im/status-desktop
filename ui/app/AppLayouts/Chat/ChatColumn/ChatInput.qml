@@ -47,7 +47,14 @@ Rectangle {
 
     function sendMsg(event){
         if(chatColumn.isImage){
-            chatsModel.sendImage(sendImageArea.image);
+            const error = chatsModel.sendImage(sendImageArea.image);
+            if (error) {
+                toastMessage.title = error
+                toastMessage.source = "../../../img/block-icon.svg"
+                toastMessage.iconColor = Style.current.danger
+                toastMessage.linkText = ""
+                toastMessage.open()
+            }
         }
         var msg = chatsModel.plainText(Emoji.deparse(txtData.text).trim()).trim()
         if(msg.length > 0){

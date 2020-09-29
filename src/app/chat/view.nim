@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, sets
+import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, sets, strformat
 import ../../status/status
 import ../../status/mailservers
 import ../../status/stickers
@@ -213,19 +213,19 @@ QtObject:
     self.status.chat.resendMessage(messageId)
     self.messageList[chatId].resetTimeOut(messageId)
 
-  proc sendImage*(self: ChatsView, imagePath: string) {.slot.} =
-    var image: string = replace(imagePath, "file://", "")
-    if defined(windows):
-      # Windows doesn't work with paths starting with a slash
-      image.removePrefix('/')
-    let tmpImagePath = image_resizer(image, 2000, TMPDIR)
+  proc sendImage*(self: ChatsView, imagePath: string): string {.slot.} =
+    result = ""
     try:
+      var image: string = replace(imagePath, "file://", "")
+      if defined(windows):
+        # Windows doesn't work with paths starting with a slash
+        image.removePrefix('/')
+      let tmpImagePath = image_resizer(image, 2000, TMPDIR)
       self.status.chat.sendImage(self.activeChannel.id, tmpImagePath)
+      removeFile(tmpImagePath)
     except Exception as e:
-      # TODO send error back to UI
       error "Error sending the image", msg = e.msg
-    
-    removeFile(tmpImagePath)
+      result = fmt"Error sending the image: {e.msg}"
 
   proc activeChannelChanged*(self: ChatsView) {.signal.}
 
