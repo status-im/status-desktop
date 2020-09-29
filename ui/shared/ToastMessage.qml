@@ -19,7 +19,7 @@ Popup {
     height: 68
     padding: 0
     margins: 0
-    width: 343
+    width: Math.Max(Math.max(titleText.width, linkText.width) + toastImage.width + 12 * 4, 343)
     x: parent.width - width - Style.current.bigPadding
     y: parent.height - height - Style.current.bigPadding
 
@@ -87,6 +87,7 @@ Popup {
     }
 
     StyledText {
+        id: linkText
         text: qsTr(`<a href="%1" style="color:${Style.current.textColorTertiary};text-decoration:none;">%2</a>`)
             .arg(root.link)
             .arg(root.linkText)
