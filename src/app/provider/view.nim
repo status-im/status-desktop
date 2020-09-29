@@ -6,9 +6,9 @@ import ../../status/libstatus/settings as status_settings
 import json, json_serialization, sets, strutils
 import chronicles
 
-const authMethods = toHashSet(["eth_accounts", "eth_coinbase", "eth_sendTransaction", "eth_sign", "keycard_signTypedData", "eth_signTypedData", "personal_sign", "personal_ecRecover"])
-const signMethods = toHashSet(["eth_sendTransaction", "personal_sign", "eth_signTypedData", "eth_signTypedData_v3"])
-const accMethods = toHashSet(["eth_accounts", "eth_coinbase"])
+const AUTH_METHODS = toHashSet(["eth_accounts", "eth_coinbase", "eth_sendTransaction", "eth_sign", "keycard_signTypedData", "eth_signTypedData", "personal_sign", "personal_ecRecover"])
+const SIGN_METHODS = toHashSet(["eth_sendTransaction", "personal_sign", "eth_signTypedData", "eth_signTypedData_v3"])
+const ACC_METHODS = toHashSet(["eth_accounts", "eth_coinbase"])
 
 logScope:
   topics = "provider-view"
@@ -94,7 +94,7 @@ QtObject:
     result.setup
 
   proc process(data: Web3SendAsyncReadOnly): string =
-    if authMethods.contains(data.payload.rpcMethod): # TODO: && if the dapp does not have the "web3" permission:
+    if AUTH_METHODS.contains(data.payload.rpcMethod): # TODO: && if the dapp does not have the "web3" permission:
       return $ %* {
         "type": ResponseTypes.Web3SendAsyncCallback,
         "messageId": data.messageId,
@@ -103,7 +103,7 @@ QtObject:
         }
       }
     
-    if signMethods.contains(data.payload.rpcMethod):
+    if SIGN_METHODS.contains(data.payload.rpcMethod):
       return $ %* { # TODO: send transaction, return transaction hash, etc etc. Disabled in the meantime
         "type": ResponseTypes.Web3SendAsyncCallback,
         "messageId": data.messageId,
@@ -112,7 +112,7 @@ QtObject:
         }
       }
     
-    if accMethods.contains(data.payload.rpcMethod):
+    if ACC_METHODS.contains(data.payload.rpcMethod):
         let dappAddress = status_settings.getSetting[string](Setting.DappsAddress)
         return $ %* {
           "type": ResponseTypes.Web3SendAsyncCallback,
