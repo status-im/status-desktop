@@ -6,13 +6,26 @@ import "../../shared"
 
 RadioButton {
     id: control
+    property bool isHovered: false
+    width: indicator.implicitWidth
+
+    function getColor() {
+        if (checked) {
+            return Style.current.blue
+        }
+        if (hovered || isHovered) {
+            return Style.current.secondaryHover
+        }
+        return Style.current.grey
+    }
+
     indicator: Rectangle {
         implicitWidth: 20
         implicitHeight: 20
         x: 0
         y: 6
         radius: 10
-        color: control.checked ? Style.current.blue : Style.current.grey
+        color: control.getColor()
 
         Rectangle {
             width: 12

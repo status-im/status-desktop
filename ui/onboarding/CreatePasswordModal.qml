@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Dialogs 1.3
 import "../imports"
 import "../shared"
+import "../shared/status"
 
 ModalPopup {
     property bool loading: false
@@ -83,7 +84,7 @@ ModalPopup {
         horizontalAlignment: Text.AlignHCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
-        color: Style.current.darkGrey
+        color: Style.current.secondaryText
         font.pixelSize: 12
     }
 
@@ -114,19 +115,18 @@ ModalPopup {
             }
         }
 
-        StyledButton {
+        StatusButton {
             id: submitBtn
             anchors.bottom: parent.bottom
             anchors.topMargin: Style.current.padding
             anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
-            label: loading ?
+            text: loading ?
             //% "Logging in..."
             qsTrId("logging-in...") :
             //% "Create password"
             qsTrId("create-password")
 
-            disabled: firstPasswordField.text === "" || repeatPasswordField.text === "" || loading
+            enabled: firstPasswordField.text !== "" && repeatPasswordField.text !== "" && !loading
 
             MessageDialog {
                 id: importError

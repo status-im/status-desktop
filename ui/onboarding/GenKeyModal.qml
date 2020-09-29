@@ -1,7 +1,9 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtGraphicalEffects 1.13
 import "../imports"
 import "../shared"
+import "../shared/status"
 import "./Login"
 
 ModalPopup {
@@ -25,18 +27,16 @@ ModalPopup {
             selectedIndex = index
         }
     }
-
     footer: Button {
         id: submitBtn
         anchors.bottom: parent.bottom
         anchors.topMargin: Style.current.padding
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
         width: 44
         height: 44
         background: Rectangle {
             radius: 50
-            color: Style.current.lightBlue
+            color: Style.current.buttonBackgroundColor
         }
 
         SVGImage {
@@ -44,9 +44,15 @@ ModalPopup {
             sourceSize.width: 20
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            source: "../app/img/leave_chat.svg"
-            rotation: 180
+            source: "../app/img/arrow-right.svg"
             fillMode: Image.PreserveAspectFit
+
+            ColorOverlay {
+                anchors.fill: parent
+                source: parent
+                color: Style.current.buttonForegroundColor
+                antialiasing: true
+            }
         }
 
         onClicked : {
