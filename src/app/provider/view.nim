@@ -25,11 +25,6 @@ type
     APIResponse = "api-response",
     Web3ResponseError = "web3-response-error"
 
-  Permissions {.pure.} = enum
-    Web3 = "web3",
-    ContactCode = "contact-code"
-    Unknown = "unknown"
-
 type
   Payload = ref object
     id: JsonNode
@@ -43,7 +38,7 @@ type
   APIRequest = ref object
     isAllowed: bool
     messageId: JsonNode
-    permission: Permissions
+    permission: Permission
     hostname: string
 
 proc requestType(message: string): RequestTypes = 
@@ -67,17 +62,11 @@ proc toWeb3SendAsyncReadOnly(message: string): Web3SendAsyncReadOnly =
 
 proc toAPIRequest(message: string): APIRequest = 
   let data = message.parseJson
-  var permission = Permissions.Unknown
-
-  try:
-    permission = parseEnum[Permissions](data["permission"].getStr())
-  except:
-    warn "Unknown permission requested", value=data["permission"].getStr()
 
   result = APIRequest(
     messageId: data["messageId"],
     isAllowed: data{"isAllowed"}.getBool(),
-    permission: permission,
+    permission: data["permission"].getStr().toPermission(),
     hostname: data{"hostname"}.getStr()
   )
 
@@ -137,17 +126,17 @@ QtObject:
       "result": rpcResult.parseJson
     }
 
-  proc process*(data: APIRequest): string =   
+  proc process*(data: APIRequest, status: Status): string =   
     var value:JsonNode = case data.permission
-    of Permissions.Web3: %* [status_settings.getSetting[string](Setting.DappsAddress, "0x0000000000000000000000000000000000000000")]
-    of Permissions.ContactCode: %* status_settings.getSetting[string](Setting.PublicKey, "0x0")
-    of Permissions.Unknown: newJNull()
+    of Permission.Web3: %* [status_settings.getSetting[string](Setting.DappsAddress, "0x0000000000000000000000000000000000000000")]
+    of Permission.ContactCode: %* status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    of Permission.Unknown: newJNull()
 
-    let isAllowed = data.isAllowed and data.permission != Permissions.Unknown
+    let isAllowed = data.isAllowed and data.permission != Permission.Unknown
 
     info "API request received", host=data.hostname, value=data.permission, isAllowed
 
-    # TODO: if isAllowed, store permission grant
+    if isAllowed: status.permissions.addPermission(data.hostname, data.permission)
 
     return $ %* {
       "type": ResponseTypes.APIResponse,
@@ -157,11 +146,14 @@ QtObject:
       "data": value
     }
 
+  proc hasPermission*(self: Web3ProviderView, hostname: string, permission: string): bool {.slot.} =
+    result = self.status.permissions.hasPermission(hostname, permission.toPermission())
+
   proc postMessage*(self: Web3ProviderView, message: string): string {.slot.} =
     case message.requestType():
     of RequestTypes.Web3SendAsyncReadOnly: message.toWeb3SendAsyncReadOnly().process()
     of RequestTypes.HistoryStateChanged: """{"type":"TODO-IMPLEMENT-THIS"}""" ############# TODO:
-    of RequestTypes.APIRequest: message.toAPIRequest().process()
+    of RequestTypes.APIRequest: message.toAPIRequest().process(self.status)
     else:  """{"type":"TODO-IMPLEMENT-THIS"}""" ##################### TODO:
 
   proc getNetworkId*(self: Web3ProviderView): int {.slot.} = getCurrentNetworkDetails().config.networkId
