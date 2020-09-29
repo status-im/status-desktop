@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
 import "../../../../../imports"
 import "../../../../../shared"
+import "../../../../../shared/status"
 
 Item {
     property string username: ""
@@ -260,13 +261,13 @@ Item {
         }
     }
 
-    StyledButton {
+    StatusButton {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         //% "Back"
-        label: qsTrId("back")
+        text: qsTrId("back")
         onClicked: backBtnClicked()
     }
 
@@ -309,18 +310,18 @@ Item {
         }
     }
 
-    StyledButton {
+    StatusButton {
         id: startBtn
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        label: parseFloat(utilsModel.getSNTBalance()) < 10 ?
+        text: parseFloat(utilsModel.getSNTBalance()) < 10 ?
           //% "Not enough SNT"
           qsTrId("not-enough-snt") :
           //% "Register"
           qsTrId("ens-register")
-        disabled: parseFloat(utilsModel.getSNTBalance()) < 10 || !termsAndConditionsCheckbox.checked
+        enabled: parseFloat(utilsModel.getSNTBalance()) >= 10 && termsAndConditionsCheckbox.checked
         onClicked: transactionDialog.open()
     }
 }
