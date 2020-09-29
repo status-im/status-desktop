@@ -214,9 +214,17 @@ QtObject:
     self.messageList[chatId].resetTimeOut(messageId)
 
   proc sendImage*(self: ChatsView, imagePath: string) {.slot.} =
-    let image = replace(imagePath, "file://", "")
+    var image: string = replace(imagePath, "file://", "")
+    if defined(windows):
+      # Windows doesn't work with paths starting with a slash
+      image.removePrefix('/')
     let tmpImagePath = image_resizer(image, 2000, TMPDIR)
-    self.status.chat.sendImage(self.activeChannel.id, tmpImagePath)
+    try:
+      self.status.chat.sendImage(self.activeChannel.id, tmpImagePath)
+    except Exception as e:
+      # TODO send error back to UI
+      error "Error sending the image", msg = e.msg
+    
     removeFile(tmpImagePath)
 
   proc activeChannelChanged*(self: ChatsView) {.signal.}
