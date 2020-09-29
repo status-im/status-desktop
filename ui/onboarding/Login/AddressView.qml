@@ -15,13 +15,19 @@ Rectangle {
     }
     property bool isHovered: false
 
-    id: addressViewDelegate
+    id: root
     height: 64
     anchors.right: parent.right
     anchors.left: parent.left
     border.width: 0
-    color: selected || isHovered ? Style.current.grey : Style.current.transparent
+    color: getBgColor()
     radius: Style.current.radius
+
+    function getBgColor() {
+        if (selected) return Style.current.secondaryBackground
+        if (isHovered) return Style.current.backgroundHover
+        return Style.current.transparent
+    }
 
     StatusImageIdenticon {
         id: accountImage
@@ -35,7 +41,7 @@ Rectangle {
         text: username
         elide: Text.ElideRight
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Style.current.padding + radio.width
         font.pixelSize: 17
         anchors.top: accountImage.top
         anchors.left: accountImage.right
@@ -56,6 +62,15 @@ Rectangle {
         color: Style.current.darkGrey
     }
 
+    StatusRadioButton {
+        id: radio
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding
+        anchors.verticalCenter: parent.verticalCenter
+        checked: root.selected
+        isHovered: root.isHovered
+    }
+
     MouseArea {
         hoverEnabled: true
         anchors.fill: parent
@@ -64,10 +79,10 @@ Rectangle {
             onAccountSelect(index)
         }
         onEntered: {
-            addressViewDelegate.isHovered = true
+            root.isHovered = true
         }
         onExited: {
-            addressViewDelegate.isHovered = false
+            root.isHovered = false
         }
     }
 }

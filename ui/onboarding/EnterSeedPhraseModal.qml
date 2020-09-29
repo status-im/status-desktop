@@ -1,13 +1,13 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtGraphicalEffects 1.13
 import "../imports"
 import "../shared"
 
 ModalPopup {
     property var onConfirmSeedClick: function () {}
     id: popup
-    //% "Add key"
-    title: qsTrId("add-key")
+    title: qsTr("Enter seed phrase")
     height: 400
 
     onOpened: {
@@ -21,12 +21,14 @@ ModalPopup {
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: 15
-        placeholderText: "Enter your seed phrase here..."
+        placeholderText: qsTr("Start with the first word")
+        placeholderTextColor: Style.current.secondaryText
         anchors.left: parent.left
         anchors.leftMargin: 76
         anchors.right: parent.right
         anchors.rightMargin: 76
         anchors.verticalCenter: parent.verticalCenter
+        color: Style.current.textColor
 
         Keys.onReturnPressed: {
             submitBtn.clicked()
@@ -39,7 +41,7 @@ ModalPopup {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
-        color: Style.current.darkGrey
+        color: Style.current.secondaryText
         font.pixelSize: 12
     }
 
@@ -48,12 +50,11 @@ ModalPopup {
         anchors.bottom: parent.bottom
         anchors.topMargin: Style.current.padding
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
         width: 44
         height: 44
         background: Rectangle {
             radius: 50
-            color: Style.current.lightBlue
+            color: Style.current.buttonBackgroundColor
         }
 
         SVGImage {
@@ -61,9 +62,15 @@ ModalPopup {
             sourceSize.width: 20
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            source: "../app/img/leave_chat.svg"
-            rotation: 180
+            source: "../app/img/arrow-right.svg"
             fillMode: Image.PreserveAspectFit
+
+            ColorOverlay {
+                anchors.fill: parent
+                source: parent
+                color: Style.current.buttonForegroundColor
+                antialiasing: true
+            }
         }
 
         onClicked : {

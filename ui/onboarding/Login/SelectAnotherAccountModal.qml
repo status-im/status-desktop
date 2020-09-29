@@ -7,8 +7,7 @@ ModalPopup {
     property var onAccountSelect: function () {}
     property var onOpenModalClick: function () {}
     id: popup
-    //% "Your accounts"
-    title: qsTrId("your-accounts")
+    title: qsTr("Your keys")
 
     AccountList {
         id: accountList
@@ -29,8 +28,7 @@ ModalPopup {
         anchors.bottom: parent.bottom
         anchors.topMargin: Style.current.padding
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        label: "Add another existing key"
+        label: qsTr("Add another existing key")
 
         onClicked : {
            onOpenModalClick()

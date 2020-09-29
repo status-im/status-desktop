@@ -76,7 +76,7 @@ Item {
             anchors.leftMargin: 4
             anchors.verticalCenter: usernameText.verticalCenter
 
-            color: isHovered ? Style.current.grey : Style.current.transparent
+            color: isHovered ? Style.current.backgroundHover : Style.current.transparent
 
             radius: 4
 
@@ -92,7 +92,7 @@ Item {
             ColorOverlay {
                 anchors.fill: caretImg
                 source: caretImg
-                color: Style.current.darkGrey
+                color: Style.current.secondaryText
             }
             MouseArea {
                 hoverEnabled: true
@@ -136,15 +136,16 @@ Item {
                 submitBtn.clicked()
             }
         }
-
-        Button {
-            id: submitBtn
-            visible: !loading && txtPassword.text.length > 0
-            width: 40
-            height: 40
+        StatusRoundButton {
+            size: "medium"
+            icon.name: "arrow-right"
+            icon.width: 18
+            icon.height: 14
+            visible: txtPassword.text.length > 0
             anchors.left: txtPassword.right
             anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: txtPassword.verticalCenter
+            state: loading ? "pending" : "default"
             onClicked: {
                 if (loading) {
                     return;
@@ -153,53 +154,12 @@ Item {
                 loading = true
                 loginModel.login(txtPassword.textField.text)
             }
-            SVGImage {
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                source: "../app/img/arrowUp.svg"
-                width: 13.5
-                height: 17.5
-                fillMode: Image.PreserveAspectFit
-                rotation: 90
-            }
-            background: Rectangle {
-                color: Style.current.blue
-                radius: 50
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    submitBtn.onClicked()
-                }
-            }
-        }
-
-        SVGImage {
-            id: loadingImg
-            visible: loading
-            anchors.left: txtPassword.right
-            anchors.leftMargin: Style.current.padding
-            anchors.verticalCenter: txtPassword.verticalCenter
-            source: "../app/img/loading.svg"
-            width: 30
-            height: 30
-            fillMode: Image.Stretch
-            RotationAnimator {
-                target: loadingImg;
-                from: 0;
-                to: 360;
-                duration: 1200
-                running: true
-                loops: Animation.Infinite
-            }
         }
 
         MessageDialog {
             id: loginError
-            title: "Login failed"
-            text: "Login failed. Please re-enter your password and try again."
+            title: qsTr("Login failed")
+            text: qsTr("Login failed. Please re-enter your password and try again.")
             icon: StandardIcon.Critical
             standardButtons: StandardButton.Ok
             onAccepted: {
@@ -235,7 +195,7 @@ Item {
 
             StyledText {
                 id: generateKeysLinkText
-                color: Style.current.blue
+                color: Style.current.buttonForegroundColor
                 //% "Generate new keys"
                 text: qsTrId("generate-new-keys")
                 font.pixelSize: 13
