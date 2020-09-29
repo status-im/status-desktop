@@ -152,7 +152,7 @@ Item {
     }
 
     Settings {
-        id : appSettings
+        id : browserSettings
         property alias autoLoadImages: loadImages.checked
         property alias javaScriptEnabled: javaScriptEnabled.checked
         property alias errorPageEnabled: errorPageEnabled.checked
@@ -274,7 +274,7 @@ Item {
     Action {
         shortcut: "F12"
         onTriggered: {
-            appSettings.devToolsEnabled = !appSettings.devToolsEnabled
+            browserSettings.devToolsEnabled = !browserSettings.devToolsEnabled
         }
     }
 
@@ -456,11 +456,6 @@ Item {
         }
     }
 
-
-
-
-
-
     QQC1.TabView {
         id: tabs
         function createEmptyTab(profile) {
@@ -556,14 +551,14 @@ Item {
                     }
                 }
 
-                settings.autoLoadImages: appSettings.autoLoadImages
-                settings.javascriptEnabled: appSettings.javaScriptEnabled
-                settings.errorPageEnabled: appSettings.errorPageEnabled
-                settings.pluginsEnabled: appSettings.pluginsEnabled
-                settings.autoLoadIconsForPage: appSettings.autoLoadIconsForPage
-                settings.touchIconsEnabled: appSettings.touchIconsEnabled
-                settings.webRTCPublicInterfacesOnly: appSettings.webRTCPublicInterfacesOnly
-                settings.pdfViewerEnabled: appSettings.pdfViewerEnabled
+                settings.autoLoadImages: browserSettings.autoLoadImages
+                settings.javascriptEnabled: browserSettings.javaScriptEnabled
+                settings.errorPageEnabled: browserSettings.errorPageEnabled
+                settings.pluginsEnabled: browserSettings.pluginsEnabled
+                settings.autoLoadIconsForPage: browserSettings.autoLoadIconsForPage
+                settings.touchIconsEnabled: browserSettings.touchIconsEnabled
+                settings.webRTCPublicInterfacesOnly: browserSettings.webRTCPublicInterfacesOnly
+                settings.pdfViewerEnabled: browserSettings.pdfViewerEnabled
 
                 onCertificateError: function(error) {
                     error.defer();

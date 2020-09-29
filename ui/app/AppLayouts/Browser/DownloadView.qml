@@ -151,7 +151,7 @@ Rectangle {
                 right: parent.right
             }
             font.pixelSize: 20
-            text: "No active downloads."
+            text: qsTr("No active downloads.")
         }
 
         Rectangle {
@@ -164,7 +164,7 @@ Rectangle {
             height: 30
             Button {
                 id: okButton
-                text: "OK"
+                text: qsTr("OK")
                 anchors.centerIn: parent
                 onClicked: {
                     downloadView.visible = false;
