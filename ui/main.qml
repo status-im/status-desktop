@@ -8,6 +8,7 @@ import Qt.labs.settings 1.0
 import QtQuick.Window 2.12
 import QtQml 2.13
 import QtQuick.Window 2.0
+import QtQuick.Controls.Universal 2.12
 
 import "./onboarding"
 import "./app"
@@ -17,6 +18,8 @@ import "./imports"
 
 ApplicationWindow {
     property bool hasAccounts: !!loginModel.rowCount()
+
+    Universal.theme: Universal.System
 
     id: applicationWindow
     width: 1232
@@ -33,6 +36,9 @@ ApplicationWindow {
     visible: true
 
     Component.onCompleted: {
+        // Change the theme to the system theme (dark/light) until we get the
+        // user's saved setting from status-go (after login)
+        Style.changeTheme(Universal.theme === Universal.Dark ? "dark" : "light")
         setX(Qt.application.screens[0].width / 2 - width / 2);
         setY(Qt.application.screens[0].height / 2 - height / 2);
     }

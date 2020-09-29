@@ -42,6 +42,8 @@ QtObject:
 
   proc appearance*(self: ProfileInfoView): int {.slot.} = result = self.appearance
   proc setAppearance*(self: ProfileInfoView, appearance: int) {.slot.} =
+    if self.appearance == appearance:
+      return
     self.appearance = appearance
     self.profileChanged()
   QtProperty[int] appearance:
