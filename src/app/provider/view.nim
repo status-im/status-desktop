@@ -5,14 +5,17 @@ import ../../status/libstatus/core
 import ../../status/libstatus/settings as status_settings
 import json, json_serialization, sets, strutils
 import chronicles
+import nbaser
+from base32 import nil
 
 const AUTH_METHODS = toHashSet(["eth_accounts", "eth_coinbase", "eth_sendTransaction", "eth_sign", "keycard_signTypedData", "eth_signTypedData", "personal_sign", "personal_ecRecover"])
 const SIGN_METHODS = toHashSet(["eth_sendTransaction", "personal_sign", "eth_signTypedData", "eth_signTypedData_v3"])
 const ACC_METHODS = toHashSet(["eth_accounts", "eth_coinbase"])
 
 const IPFS_SCHEME = "https"
-const IPFS_GATEWAY =  "ipfs.status.im"
-const IPFS_PATH_PREFIX = "/ipfs/"
+const IPFS_GATEWAY =  ".infura.status.im"
+
+const base58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 
 logScope:
   topics = "provider-view"
@@ -165,15 +168,21 @@ QtObject:
   QtProperty[int] networkId:
     read = getNetworkId
 
+  proc toString(bytes: openarray[byte]): string =
+    result = newString(bytes.len)
+    copyMem(result[0].addr, bytes[0].unsafeAddr, bytes.len)
+
   proc ensResourceURL*(self: Web3ProviderView, ens: string, url: string): string {.slot.} =
     # TODO: add support for swarm: "swarm-gateways.net/bzz:/...." and ipns
 
     let contentHash = contenthash(ens)
-    if contentHash == "0x": # ENS does not have a content hash
+    if contentHash == "": # ENS does not have a content hash
       return url_replaceHostAndAddPath(url, IPFS_SCHEME, url_host(url), "")
 
-    let path = IPFS_PATH_PREFIX & contentHash.decodeContentHash() & "/"
-    result = url_replaceHostAndAddPath(url, IPFS_SCHEME, IPFS_GATEWAY, path)
+    let decodedContentHash = contentHash.decodeContentHash()
+    let base32Hash = base32.encode(base58.decode(decodedContentHash).toString()).toLowerAscii().replace("=", "")
+    result = url_replaceHostAndAddPath(url, IPFS_SCHEME, base32Hash & IPFS_GATEWAY)
+
 
   proc getHost*(self: Web3ProviderView, url: string): string {.slot.} =
     result = url_host(url)
