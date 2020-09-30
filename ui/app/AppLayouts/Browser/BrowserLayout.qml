@@ -25,11 +25,19 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
+    function determineRealURL(text){
+        var url = utilsModel.urlFromUserInput(text);
+        var host = web3Provider.getHost(url);
+        if(host.endsWith(".eth")){
+            url = web3Provider.ensResourceURL(host, url);
+        }
+        return url;
+    }
 
     property Component accessDialogComponent: ModalPopup {
         id: accessDialog
 
-        property var request: {"hostname": "", "permission": ""}
+        property var request: {"hostname": "", "title": "", "permission": ""}
 
         function postMessage(isAllowed){
             request.isAllowed = isAllowed;
@@ -44,8 +52,17 @@ Item {
 
         StyledText {
             id: siteName
-            text: request.hostname
+            text: request.title
             anchors.top: parent.top
+            anchors.topMargin: Style.current.padding
+            width: parent.width
+            wrapMode: Text.WordWrap
+        }
+
+        StyledText {
+            id: hostName
+            text: request.hostname
+            anchors.top: siteName.bottom
             anchors.topMargin: Style.current.padding
             width: parent.width
             wrapMode: Text.WordWrap
@@ -54,7 +71,7 @@ Item {
         StyledText {
             id: permission
             text: qsTr("Permission requested: %1").arg(request.permission)
-            anchors.top: siteName.bottom
+            anchors.top: hostName.bottom
             anchors.topMargin: Style.current.padding
             width: parent.width
             wrapMode: Text.WordWrap
@@ -369,7 +386,7 @@ Item {
                 Keys.onPressed: {
                     // TODO: disable browsing local files?  file://
                     if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return){
-                        currentWebView.url = utilsModel.urlFromUserInput(text);
+                        currentWebView.url = determineRealURL(text);
                     }
                 }
             }
@@ -493,8 +510,8 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         Component.onCompleted: {
-            var tab = createEmptyTab(defaultProfile)
-            tab.item.url = "https://status-im.github.io/dapp"
+            var tab = createEmptyTab(defaultProfile);
+            tab.item.url = determineRealURL("https://simpledapp.eth");
         }
 
         // Add custom tab view style so we can customize the tabs to include a close button

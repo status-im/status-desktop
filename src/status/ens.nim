@@ -127,6 +127,26 @@ proc address*(username: string): string =
     return ""
   result = "0x" & address.substr(26)
 
+const contenthash_signature = "0xbc1c58d1" # contenthash(bytes32)
+proc contenthash*(ensAddr: string): string = 
+  var ensHash = namehash(ensAddr)
+  ensHash.removePrefix("0x")
+  let ensResolver = resolver(ensHash)
+  let payload = %* [{
+    "to": ensResolver,
+    "from": "0x0000000000000000000000000000000000000000",
+    "data": fmt"{contenthash_signature}{ensHash}"
+  }, "latest"]
+
+  let response = callPrivateRPC("eth_call", payload)
+  let bytesResponse = response.parseJson["result"].getStr;
+  if bytesResponse == "0x":
+    return "0x"
+  
+  let size = fromHex(Stuint[256], bytesResponse[66..129]).toInt
+  result = bytesResponse[130..129+size*2]
+
+
 proc getPrice*(): Stuint[256] =
   let
     contract = contracts.getContract("ens-usernames")
