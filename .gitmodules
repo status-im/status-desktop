@@ -85,3 +85,9 @@
 [submodule "vendor/nim-eth"]
 	path = vendor/nim-eth
 	url = https://github.com/status-im/nim-eth
+[submodule "vendor/nbaser"]
+	path = vendor/nbaser
+	url = https://github.com/D-Nice/nbaser/
+[submodule "vendor/nim-base32"]
+	path = vendor/nim-base32
+	url = https://github.com/elktree/nim-base32
