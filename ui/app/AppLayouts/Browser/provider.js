@@ -932,7 +932,7 @@ You may add additional accurate notices of copyright ownership.
         } else if (payload.method == "eth_coinbase" && (typeof window.statusAppcurrentAccountAddress !== "undefined")) {
             return web3Response(payload, window.statusAppcurrentAccountAddress)
         } else if (payload.method == "net_version" || payload.method == "eth_chainId"){
-            return web3Response(payload, backend.networkId)
+            return web3Response(payload, backend.networkId.toString())
         } else if (payload.method == "eth_uninstallFilter"){
             return web3Response(payload, true);
         } else {
