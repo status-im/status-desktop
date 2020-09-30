@@ -74,27 +74,36 @@ Item {
         }
     }
 
-    Rectangle {
-        id: stickerContainer
-        visible: contentType === Constants.stickerType
-        color: Style.current.transparent
-        border.color: Style.current.grey
-        border.width: 1
-        radius: 16
-        width: stickerId.width
-        height: stickerId.height
+    Loader {
+        id: stickerLoader
+        active: contentType === Constants.stickerType
         anchors.left: chatText.left
         anchors.top: chatName.visible ? chatName.bottom : parent.top
         anchors.topMargin: this.visible && chatName.visible ? chatTextItem.chatVerticalPadding : 0
 
-        Sticker {
-            id: stickerId
-            visible: stickerContainer.visible
+        sourceComponent: Component {
+            Rectangle {
+                id: stickerContainer
+                color: Style.current.transparent
+                border.color: Style.current.grey
+                border.width: 1
+                radius: 16
+                width: stickerId.width + 2 * chatTextItem.chatVerticalPadding
+                height: stickerId.height + 2 * chatTextItem.chatVerticalPadding
+
+                Sticker {
+                    id: stickerId
+                    anchors.top: parent.top
+                    anchors.topMargin: chatTextItem.chatVerticalPadding
+                    anchors.left: parent.left
+                    anchors.leftMargin: chatTextItem.chatVerticalPadding
+                }
+            }
         }
     }
 
     MessageMouseArea {
-        anchors.fill: stickerContainer.visible ? stickerContainer : chatText
+        anchors.fill: stickerLoader.active ? stickerLoader : chatText
     }
 
     // TODO show date for not the first messsage (on hover maybe)
