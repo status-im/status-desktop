@@ -4,6 +4,7 @@ import "../../../../../imports"
 Rectangle {
     property int chatVerticalPadding: 12
     property int chatHorizontalPadding: 12
+    signal clicked(string source)
 
     id: imageChatBox
     height: {
@@ -43,6 +44,9 @@ Rectangle {
             anchors.topMargin: verticalPadding
             anchors.horizontalCenter: parent.horizontalCenter
             source: modelData
+            onClicked: {
+                imageChatBox.clicked(source)
+            }
         }
     }
 

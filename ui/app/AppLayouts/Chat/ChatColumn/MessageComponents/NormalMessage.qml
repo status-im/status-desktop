@@ -197,7 +197,11 @@ Item {
 
     Component {
         id: imageComponent
-        ImageMessage {}
+        ImageMessage {
+            onClicked: {
+              chatTextItem.clickMessage(false, false, true, source)
+            }
+        }
     }
 
     Loader {

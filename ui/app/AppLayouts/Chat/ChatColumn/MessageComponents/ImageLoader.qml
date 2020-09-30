@@ -6,6 +6,7 @@ Item {
     property int verticalPadding: 0
     property int imageWidth: 350
     property url source
+    signal clicked(string source)
 
     id: imageContainer
     width: loadingImage.visible ? loadingImage.width : imageMessage.width
@@ -45,6 +46,14 @@ Item {
             } else if (imageMessage.status === Image.Ready) {
                 loadingImage.visible = false
                 scrollToBottom(true, messageItem)
+            }
+        }
+
+        MouseArea {
+            cursorShape: Qt.PointingHandCursor
+            anchors.fill: parent
+            onClicked: {
+                imageContainer.clicked(imageContainer.source)
             }
         }
     }
