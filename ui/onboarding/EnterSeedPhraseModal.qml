@@ -3,9 +3,11 @@ import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 import "../imports"
 import "../shared"
+import "../shared/status"
 
 ModalPopup {
     property var onConfirmSeedClick: function () {}
+    property alias error: errorText.text
     id: popup
     title: qsTr("Enter seed phrase")
     height: 400
@@ -14,28 +16,44 @@ ModalPopup {
         mnemonicTextField.text = "";
         mnemonicTextField.forceActiveFocus(Qt.MouseFocusReason)
     }
-
     TextArea {
         id: mnemonicTextField
-        height: 44
-        wrapMode: Text.WordWrap
-        horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: 15
-        placeholderText: qsTr("Start with the first word")
-        placeholderTextColor: Style.current.secondaryText
+        anchors.top: parent.top
+        anchors.bottom: errorText.top
         anchors.left: parent.left
         anchors.leftMargin: 76
         anchors.right: parent.right
         anchors.rightMargin: 76
-        anchors.verticalCenter: parent.verticalCenter
+        wrapMode: Text.WordWrap
+        horizontalAlignment: TextEdit.AlignHCenter
+        verticalAlignment: TextEdit.AlignVCenter
+        font.pixelSize: 15
+        font.bold: true
+        placeholderText: qsTr("Start with the first word")
+        placeholderTextColor: Style.current.secondaryText
+        
         color: Style.current.textColor
 
         Keys.onReturnPressed: {
             submitBtn.clicked()
         }
+        KeyNavigation.priority: KeyNavigation.BeforeItem
+        KeyNavigation.tab: submitBtn
     }
 
     StyledText {
+        id: errorText
+        visible: !!text && text != ""
+        color: Style.current.danger
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: helpText.top
+        anchors.bottomMargin: Style.current.smallPadding
+        horizontalAlignment: Text.AlignHCenter
+    }
+
+    StyledText {
+        id: helpText
         //% "Enter 12, 15, 18, 21 or 24 words.\nSeperate words by a single space."
         text: qsTrId("enter-12--15--18--21-or-24-words--nseperate-words-by-a-single-space-")
         anchors.horizontalCenter: parent.horizontalCenter
@@ -45,33 +63,15 @@ ModalPopup {
         font.pixelSize: 12
     }
 
-    footer: Button {
+    footer: StatusRoundButton {
         id: submitBtn
         anchors.bottom: parent.bottom
         anchors.topMargin: Style.current.padding
         anchors.right: parent.right
-        width: 44
-        height: 44
-        background: Rectangle {
-            radius: 50
-            color: Style.current.buttonBackgroundColor
-        }
-
-        SVGImage {
-            sourceSize.height: 15
-            sourceSize.width: 20
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            source: "../app/img/arrow-right.svg"
-            fillMode: Image.PreserveAspectFit
-
-            ColorOverlay {
-                anchors.fill: parent
-                source: parent
-                color: Style.current.buttonForegroundColor
-                antialiasing: true
-            }
-        }
+        icon.name: "arrow-right"
+        icon.width: 20
+        icon.height: 16
+        enabled: mnemonicTextField.text.length > 0
 
         onClicked : {
             if (mnemonicTextField.text === "") {

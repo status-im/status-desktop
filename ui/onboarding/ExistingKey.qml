@@ -15,19 +15,16 @@ Item {
         property bool wentNext: false
         id: enterSeedPhraseModal
         onConfirmSeedClick: function (mnemonic) {
-            let error = "";
+            error = "";
             
             if(!Utils.isMnemonic(mnemonic)){
-                //% "Invalid mnemonic"
-                error = qsTrId("invalid-mnemonic")
+                error = qsTr("Invalid seed phrase")
             } else {
                 error = onboardingModel.validateMnemonic(mnemonic)
             }
 
             if (error != "") {
               errorSound.play()
-              invalidSeedPhraseModal.error = error
-              invalidSeedPhraseModal.open()
             } else {
               wentNext = true
               enterSeedPhraseModal.close()
@@ -47,10 +44,6 @@ Item {
         onClosed: function () {
             existingKeyView.onClosed()
         }
-    }
-
-    InvalidSeedPhraseModal {
-      id: invalidSeedPhraseModal
     }
 }
 

@@ -1,8 +1,10 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 import "./"
 
 Rectangle {
@@ -32,39 +34,16 @@ Rectangle {
         identicon = "";
     }
 
-    Rectangle {
+    StatusIconButton {
         id: closeButton
-        height: 32
-        width: 32
+        type: "secondary"
+        icon.name: "close"
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
         anchors.rightMargin: Style.current.padding
         anchors.right: parent.right
-        radius: 8
-
-        SVGImage {
-            id: closeModalImg
-            source: "../../../../shared/img/close.svg"
-            width: 25
-            height: 25
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
-        MouseArea {
-            id: closeReplyArea
-            cursorShape: Qt.PointingHandCursor
-            anchors.fill: parent
-            hoverEnabled: true
-            onExited: {
-                closeButton.color = Style.current.white
-            }
-            onEntered: {
-                closeButton.color = Style.current.grey
-            }
-            onClicked: {
-                chatColumn.hideExtendedArea()
-            }
+        onClicked: {
+            chatColumn.hideExtendedArea()
         }
     }
 
@@ -104,7 +83,7 @@ Rectangle {
         anchors.top: replyToUsername.bottom
         anchors.topMargin: 8
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Style.current.padding * 2 + closeButton.width
         elide: Text.ElideRight
         wrapMode: Text.Wrap
         font.pixelSize: 15

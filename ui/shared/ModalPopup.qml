@@ -32,46 +32,48 @@ Popup {
 
         Item {
             id: headerContent
-            width: parent.width
             height: {
                 var idx = !!title ? 0 : 1
-                return children[idx] && children[idx].height + Style.current.padding
+                return children[idx] && children[idx].height
             }
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
+
+            anchors.topMargin: Style.current.padding
             anchors.bottomMargin: Style.current.padding
             anchors.rightMargin: Style.current.padding
             anchors.leftMargin: Style.current.padding
 
             StyledText {
                 text: title
-                anchors.top: parent.top
+                anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 font.bold: true
                 font.pixelSize: 17
-                anchors.topMargin: Style.current.padding
-                anchors.bottomMargin: Style.current.padding
+                height: 24
                 visible: !!title
+                verticalAlignment: Text.AlignVCenter
             }
         }
 
         Rectangle {
             id: closeButton
+            property bool hovered: false
             height: 32
             width: 32
-            anchors.top: parent.top
-            anchors.topMargin: Style.current.padding
-            anchors.rightMargin: Style.current.padding
-            anchors.right: parent.right
+            anchors.top: headerContent.top
+            anchors.topMargin: -4
+            anchors.right: headerContent.right
+            anchors.rightMargin: -4
             radius: 8
-            color: Style.current.transparent
+            color: hovered ? Style.current.backgroundHover : Style.current.transparent
 
             SVGImage {
                 id: closeModalImg
                 source: "./img/close.svg"
-                width: 25
-                height: 25
+                width: 11
+                height: 11
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -87,10 +89,10 @@ Popup {
                 anchors.fill: parent
                 hoverEnabled: true
                 onExited: {
-                    closeButton.color = Style.current.transparent
+                    closeButton.hovered = false
                 }
                 onEntered: {
-                    closeButton.color = Style.current.border
+                    closeButton.hovered = true
                 }
                 onClicked: {
                     popup.close()

@@ -29,8 +29,8 @@ Rectangle {
         SVGImage {
             id: closeModalImg
             source: "../../../../shared/img/close.svg"
-            width: 25
-            height: 25
+            width: 11
+            height: 11
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
         }
