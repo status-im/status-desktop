@@ -849,7 +849,8 @@ You may add additional accurate notices of copyright ownership.
     });
 
     const bridgeSend = data => {
-        data.hostname = new URL(document.location).host
+        data.hostname = new URL(document.location).host;
+        data.title = document.title;
         backend.postMessage(JSON.stringify(data));
     }
 
