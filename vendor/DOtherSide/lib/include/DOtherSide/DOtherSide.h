@@ -113,6 +113,10 @@ DOS_API char * DOS_CALL dos_image_resizer(char* imagePath, int maxSize, char* tm
 
 DOS_API char * DOS_CALL dos_qurl_fromUserInput(char* input);
 
+DOS_API char * DOS_CALL dos_qurl_host(char* host);
+
+DOS_API char * DOS_CALL dos_qurl_replaceHostAndAddPath(char* url, char* newScheme, char* newHost, char* pathPrefix);
+
 /// \brief Sets the application icon
 DOS_API void DOS_CALL dos_qapplication_icon(const char *filename);
 

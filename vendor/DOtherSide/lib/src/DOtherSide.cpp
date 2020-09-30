@@ -1153,3 +1153,17 @@ char *dos_qurl_fromUserInput(char* input)
 {
     return convert_to_cstring(QUrl::fromUserInput(QString(input)).toString());
 }
+
+char *dos_qurl_host(char* url)
+{
+    return convert_to_cstring(QUrl(QString(url)).host());
+}
+
+char *dos_qurl_replaceHostAndAddPath(char* url, char* newScheme, char* newHost, char* pathPrefix)
+{
+    auto newQurl = QUrl(QString(url));
+    newQurl.setScheme(newScheme);
+    newQurl.setHost(newHost);
+    newQurl.setPath(QString(pathPrefix) + newQurl.path());
+    return convert_to_cstring(newQurl.toString());
+}
