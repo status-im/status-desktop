@@ -12,7 +12,7 @@ Item {
     id: root
     visible: contentType == Constants.messageType || isEmoji
     z: 51
-    height: childrenRect.height
+    height: visible ? (showMoreLoader.active ? childrenRect.height : chatText.height) : 0
     width: longChatText ? undefined : chatText.width
 
     StyledTextEdit {
@@ -79,35 +79,32 @@ Item {
     }
 
     Loader {
+        id: showMoreLoader
         active: root.veryLongChatText
-        sourceComponent: showMoreComponent
         anchors.top: chatText.bottom
         anchors.topMargin: Style.current.smallPadding
         anchors.left: chatText.horizontalAlignment === Text.AlignLeft ? chatText.left : undefined
         anchors.right: chatText.horizontalAlignment === Text.AlignLeft ? undefined : chatText.right
-    }
 
-    Component {
-        id: showMoreComponent
-        StyledText {
-            text: root.readMore ?
-                      qsTr("Read less") :
-                      qsTr("Read more")
-            color: chatText.color
-            font.pixelSize: 12
-            font.underline: true
-            z: 100
+        sourceComponent: Component {
+            StyledText {
+                text: root.readMore ?
+                          qsTr("Read less") :
+                          qsTr("Read more")
+                color: chatText.color
+                font.pixelSize: 12
+                font.underline: true
+                z: 100
 
-            MouseArea {
-                z: 101
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    root.readMore = !root.readMore
+                MouseArea {
+                    z: 101
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        root.readMore = !root.readMore
+                    }
                 }
             }
         }
     }
-
-
 }
