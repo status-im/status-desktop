@@ -61,7 +61,7 @@ Item {
            return h;
         }
         width: {
-            switch(contentType){
+            switch(contentType) {
                 case Constants.stickerType:
                     return stickerId.width + (2 * chatBox.chatHorizontalPadding);
                 case Constants.imageType:
@@ -71,8 +71,8 @@ Item {
                         return 400;
                     }
                     let baseWidth = chatText.width;
-                    if (chatReply.visible && chatText.width < chatReply.textField.width) {
-                        baseWidth = chatReply.textField.width
+                    if (chatReply.visible && chatText.width < chatReply.textFieldWidth) {
+                        baseWidth = chatReply.textFieldWidth
                     }
                     return baseWidth + 2 * chatHorizontalPadding
             }
@@ -113,15 +113,22 @@ Item {
 
         Loader {
             id: chatImageContent
-            active: isImage
-            sourceComponent: chatImageComponent
-        }
+            active: isImage && !!image
+            anchors.top: parent.top
+            anchors.topMargin: Style.current.smallPadding
+            anchors.left: parent.left
+            anchors.leftMargin: chatBox.chatHorizontalPadding
 
-        Component {
-            id: chatImageComponent
-            ChatImage {
-                imageSource: image
-                imageWidth: 250
+            sourceComponent: Component {
+                Item {
+                    width: chatImageComponent.width + 2 * chatBox.chatHorizontalPadding
+                    height: chatImageComponent.height
+                    ChatImage {
+                        id: chatImageComponent
+                        imageSource: image
+                        imageWidth: 250
+                    }
+                }
             }
         }
 
