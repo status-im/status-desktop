@@ -76,7 +76,7 @@ RoundButton {
             }
             return !enabled ?
               Style.current.roundedButtonDisabledBackgroundColor : 
-              Style.current.roundedButtonBackgroundColor
+              hovered ? Qt.darker(Style.current.buttonBackgroundColor, 1.1) : Style.current.roundedButtonBackgroundColor
         }
         radius: parent.width / 2
     }
@@ -117,9 +117,16 @@ RoundButton {
             anchors.fill: iconImg
             visible: control.state === "default"
             source: iconImg
-            color: control.size === "medium" || control.size === "small" ?
-              Style.current.roundedButtonSecondaryDisabledForegroundColor :
-              Style.current.roundedButtonDisabledForegroundColor
+            color: {
+                if (size === "medium" || size == "small") {
+                    return !control.enabled ? 
+                        Style.current.roundedButtonSecondaryDisabledForegroundColor : 
+                        Style.current.roundedButtonSecondaryForegroundColor
+                }
+                return !control.enabled ?
+                    Style.current.roundedButtonDisabledForegroundColor :
+                    Style.current.roundedButtonForegroundColor
+            }
             antialiasing: true
         }
 

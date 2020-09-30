@@ -27,34 +27,14 @@ ModalPopup {
             selectedIndex = index
         }
     }
-    footer: Button {
+    footer: StatusRoundButton {
         id: submitBtn
         anchors.bottom: parent.bottom
         anchors.topMargin: Style.current.padding
         anchors.right: parent.right
-        width: 44
-        height: 44
-        background: Rectangle {
-            radius: 50
-            color: Style.current.buttonBackgroundColor
-        }
-
-        SVGImage {
-            sourceSize.height: 15
-            sourceSize.width: 20
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            source: "../app/img/arrow-right.svg"
-            fillMode: Image.PreserveAspectFit
-
-            ColorOverlay {
-                anchors.fill: parent
-                source: parent
-                color: Style.current.buttonForegroundColor
-                antialiasing: true
-            }
-        }
-
+        icon.name: "arrow-right"
+        icon.width: 20
+        icon.height: 16
         onClicked : {
             onNextClick(selectedIndex);
             popup.close()
