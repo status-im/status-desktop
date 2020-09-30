@@ -14,7 +14,6 @@ Item {
     height: childrenRect.height + this.anchors.topMargin
     width: parent.width
 
-
     // FIXME @jonathanr: Adding this breaks the first line. Need to fix the height somehow
 //    DateGroup {
 //        id: dateGroupLbl
@@ -145,29 +144,25 @@ Item {
     Loader {
         id: audioPlayerLoader
         active: isAudio
-        sourceComponent: audioPlayer
         anchors.top: chatName.visible ? chatName.bottom : parent.top
         anchors.left: chatImage.right
-    }
 
-    Component {
-        id: audioPlayer
-        AudioPlayer {
-            audioSource: audio
+        sourceComponent: Component {
+            AudioPlayer {
+                audioSource: audio
+            }
         }
     }
 
     Loader {
         id: emojiReactionLoader
         active: emojiReactions !== ""
-        sourceComponent: emojiReactionsComponent
         anchors.top: chatText.bottom
         anchors.left: chatText.left
         anchors.topMargin: 2
-    }
 
-    Component {
-        id: emojiReactionsComponent
-        EmojiReactions {}
+        sourceComponent: Component {
+            EmojiReactions {}
+        }
     }
 }

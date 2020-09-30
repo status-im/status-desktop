@@ -8,7 +8,7 @@ Rectangle {
 
     id: imageChatBox
     height: {
-        let h = chatVerticalPadding
+        let h = appSettings.compactMode ? 0 : chatVerticalPadding
         for (let i = 0; i < imageRepeater.count; i++) {
             h += imageRepeater.itemAt(i).height
         }
