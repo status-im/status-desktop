@@ -25,11 +25,15 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
+    property var urlENSDictionary: ({})
+
     function determineRealURL(text){
         var url = utilsModel.urlFromUserInput(text);
         var host = web3Provider.getHost(url);
         if(host.endsWith(".eth")){
-            url = web3Provider.ensResourceURL(host, url);
+            var ensResource = web3Provider.ensResourceURL(host, url);
+            urlENSDictionary[web3Provider.getHost(ensResource)] = host;
+            url = ensResource;
         }
         return url;
     }
@@ -37,7 +41,7 @@ Item {
     property Component accessDialogComponent: ModalPopup {
         id: accessDialog
 
-        property var request: {"hostname": "", "title": "", "permission": ""}
+        property var request: ({"hostname": "", "title": "", "permission": ""})
 
         function postMessage(isAllowed){
             request.isAllowed = isAllowed;
@@ -126,6 +130,12 @@ Item {
 
         function postMessage(data){
             var request = JSON.parse(data)
+
+            var ensAddr = urlENSDictionary[request.hostname];
+            if(ensAddr){
+                request.hostname = ensAddr;
+            }
+            
             if(request.type === Constants.api_request){
                 if(!web3Provider.hasPermission(request.hostname, request.permission)){
                     var dialog = accessDialogComponent.createObject(browserWindow);
@@ -363,6 +373,17 @@ Item {
                 onClicked: currentWebView && currentWebView.loading ? currentWebView.stop() : currentWebView.reload()
             }
 
+            Connections {
+                target: currentWebView
+                onUrlChanged: {
+                    var ensAddr = urlENSDictionary[web3Provider.getHost(currentWebView.url)];
+                    if(ensAddr){ // replace host by ensAddr
+                        addressBar.text = web3Provider.replaceHostByENS(currentWebView.url, ensAddr);
+                    }
+                }
+            }
+
+
             StyledTextField {
                 id: addressBar
                 Layout.fillWidth: true
@@ -382,7 +403,7 @@ Item {
                     source: currentWebView && currentWebView.icon ? currentWebView.icon : ""
                 }
                 focus: true
-                text: currentWebView && currentWebView.url
+                text: ""
                 Keys.onPressed: {
                     // TODO: disable browsing local files?  file://
                     if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return){

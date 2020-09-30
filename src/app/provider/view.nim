@@ -177,12 +177,14 @@ QtObject:
 
     let contentHash = contenthash(ens)
     if contentHash == "": # ENS does not have a content hash
-      return url_replaceHostAndAddPath(url, IPFS_SCHEME, url_host(url), "")
+      return url_replaceHostAndAddPath(url, url_host(url), IPFS_SCHEME)
 
     let decodedContentHash = contentHash.decodeContentHash()
     let base32Hash = base32.encode(base58.decode(decodedContentHash).toString()).toLowerAscii().replace("=", "")
-    result = url_replaceHostAndAddPath(url, IPFS_SCHEME, base32Hash & IPFS_GATEWAY)
+    result = url_replaceHostAndAddPath(url, base32Hash & IPFS_GATEWAY, IPFS_SCHEME)
 
+  proc replaceHostByENS*(self: Web3ProviderView, url: string, ens: string): string {.slot.} =
+    result = url_replaceHostAndAddPath(url, ens)
 
   proc getHost*(self: Web3ProviderView, url: string): string {.slot.} =
     result = url_host(url)
