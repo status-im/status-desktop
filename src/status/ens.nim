@@ -141,7 +141,7 @@ proc contenthash*(ensAddr: string): string =
   let response = callPrivateRPC("eth_call", payload)
   let bytesResponse = response.parseJson["result"].getStr;
   if bytesResponse == "0x":
-    return "0x"
+    return ""
   
   let size = fromHex(Stuint[256], bytesResponse[66..129]).toInt
   result = bytesResponse[130..129+size*2]
