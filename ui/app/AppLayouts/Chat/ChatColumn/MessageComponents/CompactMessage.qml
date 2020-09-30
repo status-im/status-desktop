@@ -159,7 +159,7 @@ Item {
         active: emojiReactions !== ""
         anchors.top: chatText.bottom
         anchors.left: chatText.left
-        anchors.topMargin: 2
+        anchors.topMargin: active ? 2 : 0
 
         sourceComponent: Component {
             EmojiReactions {}

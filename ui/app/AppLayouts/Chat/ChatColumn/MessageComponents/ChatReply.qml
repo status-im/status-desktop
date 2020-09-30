@@ -2,61 +2,71 @@ import QtQuick 2.3
 import "../../../../../shared"
 import "../../../../../imports"
 
-Rectangle {
-    property alias textField: lblReplyMessage
+Loader {
+    property int textFieldWidth: item ? item.textField.width : 0
     property bool longReply: false
     property color elementsColor: isCurrentUser ? Style.current.chatReplyCurrentUser : Style.current.secondaryText
 
-    id: chatReply
-    visible: responseTo != "" && replyMessageIndex > -1
-    // childrenRect.height shows a binding loop for soem reason, so we use heights instead
-    height: this.visible ? lblReplyAuthor.height + ((repliedMessageType === Constants.imageType ? imgReplyImage.height : lblReplyMessage.height) + 5 + 8) : 0
-    color: Style.current.transparent
+    id: root
+    active: responseTo != "" && replyMessageIndex > -1
 
-    StyledTextEdit {
-        id: lblReplyAuthor
-        text: "↳" + repliedMessageAuthor
-        color: chatReply.elementsColor
-        readOnly: true
-        selectByMouse: true
-        wrapMode: Text.Wrap
-        anchors.left: parent.left
-        anchors.right: parent.right
-    }
+    sourceComponent: Component {
+        Rectangle {
+            property alias textField: lblReplyMessage
 
-    ChatImage {
-        id: imgReplyImage
-        visible: repliedMessageType == Constants.imageType
-        imageWidth: 50
-        imageSource: repliedMessageImage
-        anchors.top: lblReplyAuthor.bottom
-        anchors.topMargin: 5
-        anchors.left: parent.left
-        chatHorizontalPadding: 0
-    }
+            id: chatReply
+            visible: responseTo != "" && replyMessageIndex > -1
+            // childrenRect.height shows a binding loop for soem reason, so we use heights instead
+            height: this.visible ? lblReplyAuthor.height + ((repliedMessageType === Constants.imageType ? imgReplyImage.height : lblReplyMessage.height) + 5 + 8) : 0
+            color: Style.current.transparent
 
-    StyledTextEdit {
-        id: lblReplyMessage
-        visible: repliedMessageType != Constants.imageType
-        anchors.top: lblReplyAuthor.bottom
-        anchors.topMargin: 5
-        text: Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), "26x26");
-        textFormat: Text.RichText
-        color: chatReply.elementsColor
-        readOnly: true
-        selectByMouse: true
-        wrapMode: Text.Wrap
-        anchors.left: parent.left
-        anchors.right: chatReply.longReply ? parent.right : undefined
-        z: 51
-    }
+            StyledTextEdit {
+                id: lblReplyAuthor
+                text: "↳" + repliedMessageAuthor
+                color: root.elementsColor
+                readOnly: true
+                selectByMouse: true
+                wrapMode: Text.Wrap
+                anchors.left: parent.left
+                anchors.right: parent.right
+            }
 
-    Separator {
-        anchors.top: repliedMessageType == Constants.imageType ? imgReplyImage.bottom : lblReplyMessage.bottom
-        anchors.topMargin: repliedMessageType == Constants.imageType ? 15 : 8
-        anchors.left: lblReplyMessage.left
-        anchors.right: lblReplyMessage.right
-        anchors.rightMargin: chatTextItem.chatHorizontalPadding
-        color: chatReply.elementsColor
+            ChatImage {
+                id: imgReplyImage
+                visible: repliedMessageType == Constants.imageType
+                imageWidth: 50
+                imageSource: repliedMessageImage
+                anchors.top: lblReplyAuthor.bottom
+                anchors.topMargin: 5
+                anchors.left: parent.left
+                chatHorizontalPadding: 0
+            }
+
+            StyledTextEdit {
+                id: lblReplyMessage
+                visible: repliedMessageType != Constants.imageType
+                anchors.top: lblReplyAuthor.bottom
+                anchors.topMargin: 5
+                text: Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), "26x26");
+                textFormat: Text.RichText
+                color: root.elementsColor
+                readOnly: true
+                selectByMouse: true
+                wrapMode: Text.Wrap
+                anchors.left: parent.left
+                anchors.right: root.longReply ? parent.right : undefined
+                z: 51
+            }
+
+            Separator {
+                anchors.top: repliedMessageType == Constants.imageType ? imgReplyImage.bottom : lblReplyMessage.bottom
+                anchors.topMargin: repliedMessageType == Constants.imageType ? 15 : 8
+                anchors.left: lblReplyMessage.left
+                anchors.right: lblReplyMessage.right
+                anchors.rightMargin: chatTextItem.chatHorizontalPadding
+                color: root.elementsColor
+            }
+        }
     }
 }
+
