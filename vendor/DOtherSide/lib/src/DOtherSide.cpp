@@ -1162,8 +1162,16 @@ char *dos_qurl_host(char* url)
 char *dos_qurl_replaceHostAndAddPath(char* url, char* newScheme, char* newHost, char* pathPrefix)
 {
     auto newQurl = QUrl(QString(url));
-    newQurl.setScheme(newScheme);
+    
     newQurl.setHost(newHost);
-    newQurl.setPath(QString(pathPrefix) + newQurl.path());
+    
+    if(QString(newScheme).compare("") != 0){
+        newQurl.setScheme(newScheme);
+    }
+
+    if (QString(pathPrefix).compare("") != 0){
+        newQurl.setPath(QString(pathPrefix) + newQurl.path());
+    }
+    
     return convert_to_cstring(newQurl.toString());
 }
