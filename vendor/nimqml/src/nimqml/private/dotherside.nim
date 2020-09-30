@@ -307,3 +307,5 @@ proc dos_image_resizer(imagePath: cstring, maxSize: cint, tmpDirPath: cstring): 
 proc dos_plain_text(htmlString: cstring): cstring {.cdecl, dynlib: dynLibName, importc.}
 proc dos_escape_html(input: cstring): cstring {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qurl_fromUserInput(input: cstring): cstring {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qurl_host(host: cstring): cstring {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qurl_replaceHostAndAddPath(url: cstring, newScheme: cstring, newHost: cstring, pathPrefix: cstring): cstring {.cdecl, dynlib: dynLibName, importc.}

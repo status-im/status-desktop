@@ -51,3 +51,9 @@ proc escape_html*(input: string): string =
 
 proc url_fromUserInput*(input: string): string =
   result = $(dos_qurl_fromUserInput(input.cstring))
+
+proc url_host*(host: string): string =
+  result = $(dos_qurl_host(host.cstring))
+
+proc url_replaceHostAndAddPath*(url: string, newScheme: string, newHost: string, pathPrefix: string = "/"): string =
+  result = $(dos_qurl_replaceHostAndAddPath(url.cstring, newScheme.cstring, newHost.cstring, pathPrefix.cstring))
