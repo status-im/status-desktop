@@ -60,17 +60,15 @@ Item {
     Loader {
         id: chatImageContent
         active: isImage
-        sourceComponent: chatImageComponent
-        anchors.left: chatImage.right
+        anchors.left: chatText.left
         anchors.leftMargin: 8
         anchors.top: chatReply.bottom
-    }
 
-    Component {
-        id: chatImageComponent
-        ChatImage {
-            imageSource: image
-            imageWidth: 200
+        sourceComponent: Component {
+            ChatImage {
+                imageSource: image
+                imageWidth: 200
+            }
         }
     }
 
@@ -132,17 +130,15 @@ Item {
     Loader {
         id: imageLoader
         active: showImages
-        sourceComponent: imageComponent
-        anchors.left: chatImage.right
+        anchors.left: chatText.left
         anchors.leftMargin: 8
         anchors.top: chatText.bottom
-    }
 
-    Component {
-        id: imageComponent
-        ImageMessage {
-            color: Style.current.transparent
-            chatHorizontalPadding: 0
+        sourceComponent: Component {
+            ImageMessage {
+                color: Style.current.transparent
+                chatHorizontalPadding: 0
+            }
         }
     }
 
