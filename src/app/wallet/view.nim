@@ -457,10 +457,10 @@ QtObject:
 
   proc getGasPricePredictions*(self: WalletView) {.slot.} =
     let prediction = self.status.wallet.getGasPricePredictions()
-    self.safeLowGasPrice = prediction.safeLow
-    self.standardGasPrice = prediction.standard
-    self.fastGasPrice = prediction.fast
-    self.fastestGasPrice = prediction.fastest
+    self.safeLowGasPrice = $prediction.safeLow
+    self.standardGasPrice = $prediction.standard
+    self.fastGasPrice = $prediction.fast
+    self.fastestGasPrice = $prediction.fastest
     self.gasPricePredictionsChanged()
 
   proc safeLowGasPrice*(self: WalletView): string {.slot.} = result = ?.self.safeLowGasPrice

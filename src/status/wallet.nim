@@ -316,7 +316,7 @@ proc validateMnemonic*(self: WalletModel, mnemonic: string): string =
 
 proc getGasPricePredictions*(self: WalletModel): GasPricePrediction =
   if status_settings.getCurrentNetwork() == Network.Testnet:
-    return GasPricePrediction(safeLow: "1.0", standard: "2.0", fast: "3.0", fastest: "4.0")
+    return GasPricePrediction(safeLow: 1.0, standard: 2.0, fast: 3.0, fastest: 4.0)
   try:
     let url: string = fmt"https://etherchain.org/api/gasPriceOracle"
     let client = newHttpClient()

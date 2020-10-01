@@ -25,10 +25,10 @@ proc event*(self:SignalType):string =
   result = "signal:" & $self
 
 type GasPricePrediction* = object
-  safeLow*: string
-  standard*: string
-  fast*: string
-  fastest*: string
+  safeLow*: float
+  standard*: float
+  fast*: float
+  fastest*: float
 
 type DerivedAccount* = object
   publicKey*: string
