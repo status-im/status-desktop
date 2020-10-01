@@ -16,6 +16,7 @@ type
     FiatBalance = UserRole + 5
     Assets = UserRole + 6
     WalletType = UserRole + 7
+    Wallet = UserRole + 8
 
 QtObject:
   type AccountList* = ref object of QAbstractListModel
@@ -94,6 +95,7 @@ QtObject:
     of AccountRoles.FiatBalance: result = newQVariant(fmt"{account.realFiatBalance:>.2f}")
     of AccountRoles.Assets: result = newQVariant(accountView.assets)
     of AccountRoles.WalletType: result = newQVariant(account.walletType)
+    of AccountRoles.Wallet: result = newQVariant(account.wallet)
 
   method roleNames(self: AccountList): Table[int, string] =
     { AccountRoles.Name.int:"name",
@@ -102,6 +104,7 @@ QtObject:
     AccountRoles.Balance.int:"balance",
     AccountRoles.FiatBalance.int:"fiatBalance",
     AccountRoles.Assets.int:"assets",
+    AccountRoles.Wallet.int:"isWallet",
     AccountRoles.WalletType.int:"walletType" }.toTable
 
   proc addAccountToList*(self: AccountList, account: WalletAccount) =

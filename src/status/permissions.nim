@@ -58,5 +58,10 @@ proc revokePermission*(self: PermissionsModel, dapp: string, permission: Permiss
   discard
 
 proc clearPermissions*(self: PermissionsModel, dapp: string) =
-  # TODO: implement
+  # TODO implement
   discard
+
+proc clearPermissions*(self: PermissionsModel) =
+  let response = callPrivateRPC("permissions_getDappPermissions")
+  for dapps in response.parseJson["result"].getElems():
+    discard callPrivateRPC("permissions_deleteDappPermissions", %*[dapps["dapp"].getStr()])
