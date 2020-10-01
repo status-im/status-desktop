@@ -6,6 +6,7 @@ import ../../status/libstatus/settings as status_settings
 import json, json_serialization, sets, strutils
 import chronicles
 import nbaser
+import stew/byteutils
 from base32 import nil
 
 const AUTH_METHODS = toHashSet(["eth_accounts", "eth_coinbase", "eth_sendTransaction", "eth_sign", "keycard_signTypedData", "eth_signTypedData", "personal_sign", "personal_ecRecover"])
@@ -41,6 +42,7 @@ type
     messageId: JsonNode
     payload: Payload
     request: string
+    hostname: string
 
   APIRequest = ref object
     isAllowed: bool
@@ -61,6 +63,7 @@ proc toWeb3SendAsyncReadOnly(message: string): Web3SendAsyncReadOnly =
   result = Web3SendAsyncReadOnly(
     messageId: data["messageId"],
     request: $data["payload"],
+    hostname: data{"hostname"}.getStr(),
     payload: Payload(
       id: data["payload"]["id"],
       rpcMethod: data["payload"]["method"].getStr()
@@ -80,6 +83,7 @@ proc toAPIRequest(message: string): APIRequest =
 QtObject:
   type Web3ProviderView* = ref object of QObject
     status*: Status
+    dappsAddress*: string
 
   proc setup(self: Web3ProviderView) =
     self.QObject.setup
@@ -91,10 +95,11 @@ QtObject:
     new(result, delete)
     result = Web3ProviderView()
     result.status = status
+    result.dappsAddress = ""
     result.setup
 
-  proc process(data: Web3SendAsyncReadOnly): string =
-    if AUTH_METHODS.contains(data.payload.rpcMethod): # TODO: && if the dapp does not have the "web3" permission:
+  proc process(data: Web3SendAsyncReadOnly, status: Status): string =
+    if AUTH_METHODS.contains(data.payload.rpcMethod) and not status.permissions.hasPermission(data.hostname, Permission.Web3):
       return $ %* {
         "type": ResponseTypes.Web3SendAsyncCallback,
         "messageId": data.messageId,
@@ -158,7 +163,7 @@ QtObject:
 
   proc postMessage*(self: Web3ProviderView, message: string): string {.slot.} =
     case message.requestType():
-    of RequestTypes.Web3SendAsyncReadOnly: message.toWeb3SendAsyncReadOnly().process()
+    of RequestTypes.Web3SendAsyncReadOnly: message.toWeb3SendAsyncReadOnly().process(self.status)
     of RequestTypes.HistoryStateChanged: """{"type":"TODO-IMPLEMENT-THIS"}""" ############# TODO:
     of RequestTypes.APIRequest: message.toAPIRequest().process(self.status)
     else:  """{"type":"TODO-IMPLEMENT-THIS"}""" ##################### TODO:
@@ -168,9 +173,23 @@ QtObject:
   QtProperty[int] networkId:
     read = getNetworkId
 
-  proc toString(bytes: openarray[byte]): string =
-    result = newString(bytes.len)
-    copyMem(result[0].addr, bytes[0].unsafeAddr, bytes.len)
+  proc dappsAddressChanged(self: Web3ProviderView, address: string) {.signal.}
+
+  proc getDappsAddress(self: Web3ProviderView): string {.slot.} =
+    result = self.dappsAddress
+
+  proc setDappsAddress(self: Web3ProviderView, address: string) {.slot.} =
+    self.dappsAddress = address
+    self.status.saveSetting(Setting.DappsAddress, address)
+    self.dappsAddressChanged(address)
+
+  QtProperty[string] dappsAddress:
+    read = getDappsAddress
+    notify = dappsAddressChanged
+    write = setDappsAddress
+
+  proc clearPermissions*(self: Web3ProviderView): string {.slot.} =
+    self.status.permissions.clearPermissions()
 
   proc ensResourceURL*(self: Web3ProviderView, ens: string, url: string): string {.slot.} =
     # TODO: add support for swarm: "swarm-gateways.net/bzz:/...." and ipns
@@ -180,7 +199,7 @@ QtObject:
       return url_replaceHostAndAddPath(url, url_host(url), IPFS_SCHEME)
 
     let decodedContentHash = contentHash.decodeContentHash()
-    let base32Hash = base32.encode(base58.decode(decodedContentHash).toString()).toLowerAscii().replace("=", "")
+    let base32Hash = base32.encode(string.fromBytes(base58.decode(decodedContentHash))).toLowerAscii().replace("=", "")
     result = url_replaceHostAndAddPath(url, base32Hash & IPFS_GATEWAY, IPFS_SCHEME)
 
   proc replaceHostByENS*(self: Web3ProviderView, url: string, ens: string): string {.slot.} =
@@ -188,3 +207,6 @@ QtObject:
 
   proc getHost*(self: Web3ProviderView, url: string): string {.slot.} =
     result = url_host(url)
+
+  proc init*(self: Web3ProviderView) =
+    self.setDappsAddress(status_settings.getSetting[string](Setting.DappsAddress))
