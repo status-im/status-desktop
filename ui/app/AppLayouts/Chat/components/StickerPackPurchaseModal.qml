@@ -92,7 +92,7 @@ ModalPopup {
                 visible: false
                 accounts: walletModel.accounts
                 contacts: profileModel.addedContacts
-                selectedRecipient: { "address": chatsModel.stickerMarketAddress, "type": RecipientSelector.Type.Address }
+                selectedRecipient: { "address": utilsModel.stickerMarketAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
                 onSelectedRecipientChanged: gasSelector.estimateGas()
             }

@@ -48,10 +48,10 @@ QtObject:
   proc wei2Token*(self: UtilsView, wei: string, decimals: int): string {.slot.} =
     return status_utils.wei2Token(wei, decimals)
 
-  proc getStickerMarketAddress(self: UtilsView): QVariant {.slot.} =
-    newQVariant($self.status.stickers.getStickerMarketAddress)
+  proc getStickerMarketAddress(self: UtilsView): string {.slot.} =
+    $self.status.stickers.getStickerMarketAddress
 
-  QtProperty[QVariant] stickerMarketAddress:
+  QtProperty[string] stickerMarketAddress:
     read = getStickerMarketAddress
 
   proc getEnsRegisterAddress(self: UtilsView): QVariant {.slot.} =
