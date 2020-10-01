@@ -413,6 +413,56 @@ Item {
             }
 
             Menu {
+                id: accountsMenu
+                Repeater {
+                    model: walletModel.accounts
+                    MenuItem {
+                        visible: model.isWallet || model.walletType === "generated"
+                        height: visible ? 40 : 0
+                        text: model.name
+                        onTriggered: {
+                            web3Provider.dappsAddress = model.address;
+                            web3Provider.clearPermissions();
+                            for (let i = 0; i < tabs.count; ++i){
+                                tabs.getTab(i).item.reload();
+                            }
+                        }
+                        checked: {
+                            if(web3Provider.dappsAddress == model.address){
+                                txtAccountBtn.text = model.name.substr(0, 1);
+                                rectAccountBtn.color = model.iconColor
+                                return true;
+                            }
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            ToolButton {
+                id: accountBtn
+                Rectangle {
+                    id: rectAccountBtn
+                    anchors.centerIn: parent
+                    width: 20
+                    height: width
+                    radius: width / 2
+                    color: ""
+                    StyledText {
+                        id: txtAccountBtn
+                        text: ""
+                        opacity: 0.7
+                        font.weight: Font.Bold
+                        font.pixelSize: 14
+                        color: "white"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                }
+                onClicked: accountsMenu.popup(accountBtn.x, accountBtn.y + accountBtn.height)
+            }
+
+            Menu {
                 id: settingsMenu
                 y: settingsMenuButton.height
                 x: settingsMenuButton.x

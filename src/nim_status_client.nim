@@ -97,6 +97,7 @@ proc mainProc() =
     status.startMessenger()
     profile.init(args.account)
     wallet.init()
+    provider.init()
     chat.init()
     utilsController.init()
 
