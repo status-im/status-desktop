@@ -22,4 +22,4 @@ proc delete*(self: Web3ProviderController) =
   delete self.view
 
 proc init*(self: Web3ProviderController) =
-  discard
+  self.view.init()

@@ -22,8 +22,8 @@ proc getWalletAccounts*(): seq[WalletAccount] =
           publicKey: if (account.hasKey("public-key")): $account["public-key"].getStr else: "",
           name: $account["name"].getStr,
           iconColor: $account["color"].getStr,
-          wallet: $account["wallet"].getStr == "true",
-          chat: $account["chat"].getStr == "false",
+          wallet: account["wallet"].getBool,
+          chat: account["chat"].getBool,
         ))
     result = walletAccounts
   except:
