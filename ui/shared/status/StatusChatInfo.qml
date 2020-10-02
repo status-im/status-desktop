@@ -7,6 +7,7 @@ import "../../shared/status"
 Item {
     id: root
 
+    property string chatId
     property string chatName
     property int chatType
     property string identicon
@@ -48,6 +49,19 @@ Item {
             font.pixelSize: 15
         }
 
+
+        Connections {
+            target: profileModel
+            onContactChanged: {
+                if(root.chatId === publicKey){
+                    // Hack warning: Triggering reload to avoid changing the current text binding
+                    var tmp = chatId;
+                    chatId = "";
+                    chatId = tmp;
+                }
+            }
+        }
+
         StyledText {
             id: chatInfo
             color: Style.current.darkGrey
@@ -55,7 +69,7 @@ Item {
                 switch(root.chatType){
                     //% "Public chat"
                     case Constants.chatTypePublic: return qsTrId("public-chat")
-                    case Constants.chatTypeOneToOne: return (profileModel.isAdded(root.chatName) ?
+                    case Constants.chatTypeOneToOne: return (profileModel.isAdded(root.chatId) ?
                     //% "Contact"
                     qsTrId("chat-is-a-contact") :
                     //% "Not a contact"

@@ -7,6 +7,7 @@ import "../../shared/status"
 Button {
     id: control
 
+    property string chatId
     property string chatName
     property int chatType
     property string identicon
@@ -20,6 +21,7 @@ Button {
 
     contentItem: StatusChatInfo {
         id: content
+        chatId: control.chatId
         chatName: control.chatName
         chatType: control.chatType
         identicon: control.identicon
