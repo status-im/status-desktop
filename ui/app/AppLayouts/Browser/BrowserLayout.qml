@@ -9,6 +9,7 @@ import QtQuick.Controls.Styles 1.0
 import QtQuick.Dialogs 1.2
 import "../../../shared"
 import "../../../imports"
+import "../Chat/ChatColumn/ChatComponents"
 
 // Code based on https://code.qt.io/cgit/qt/qtwebengine.git/tree/examples/webengine/quicknanobrowser/BrowserWindow.qml?h=5.15 
 // Licensed under BSD
@@ -121,9 +122,16 @@ Item {
         }
     }
 
+    // TODO we'll need a new dialog at one point because this one is not using the same call, but it's good for now
+    property Component sendTransactionModalComponent: SignTransactionModal {}
 
-    property Component sendTransactionModalComponent: SendTransactionModal {}
-
+    property MessageDialog sendingError: MessageDialog {
+        id: sendingError
+        //% "Error sending the transaction"
+        title: qsTrId("error-sending-the-transaction")
+        icon: StandardIcon.Critical
+        standardButtons: StandardButton.Ok
+    }
 
     QtObject {
         id: provider
@@ -157,7 +165,72 @@ Item {
             } else if (request.type === Constants.web3SendAsyncReadOnly &&
                        request.payload.method === "eth_sendTransaction") {
                 const sendDialog = sendTransactionModalComponent.createObject(browserWindow);
-                sendDialog.request = request;
+
+                walletModel.setFocusedAccountByAddress(request.payload.params[0].from)
+                var acc = walletModel.focusedAccount
+                sendDialog.selectedAccount = {
+                    name: acc.name,
+                    address: request.payload.params[0].from,
+                    iconColor: acc.iconColor,
+                    assets: acc.assets
+                }
+                sendDialog.selectedRecipient = {
+                    address: request.payload.params[0].to,
+                    identicon: chatsModel.generateIdenticon(request.payload.params[0].to),
+                    name: chatsModel.activeChannel.name,
+                    type: RecipientSelector.Type.Address
+                };
+                // TODO get this from data
+                sendDialog.selectedAsset = {
+                    name: "ETH",
+                    symbol: "ETH",
+                    address: Constants.zeroAddress
+                };
+                const value = utilsModel.wei2Token(request.payload.params[0].value, 18)
+                sendDialog.selectedAmount = value
+                // TODO calculate that
+                sendDialog.selectedFiatAmount = "42";
+
+                // TODO change sendTransaction function to the postMessage one
+                sendDialog.sendTransaction = function (selectedGasLimit, selectedGasPrice, enteredPassword) {
+                    console.log('OK', selectedGasLimit, selectedGasPrice, enteredPassword)
+                    request.payload.selectedGasLimit = selectedGasLimit
+                    request.payload.selectedGasPrice = selectedGasPrice
+                    request.payload.password = enteredPassword
+                    request.payload.params[0].value = value
+
+                    const response = web3Provider.postMessage(JSON.stringify(request))
+                    provider.web3Response(response)
+
+                    let responseObj
+                    try {
+                        responseObj = JSON.parse(response)
+
+                        if (responseObj.error) {
+                            throw new Error(responseObj.error)
+                        }
+
+                        //% "Transaction pending..."
+                        toastMessage.title = qsTrId("ens-transaction-pending")
+                        toastMessage.source = "../../img/loading.svg"
+                        toastMessage.iconColor = Style.current.primary
+                        toastMessage.iconRotates = true
+                        toastMessage.link = `${walletModel.etherscanLink}/${responseOnj.result}`
+                        toastMessage.open()
+                    } catch (e) {
+                        if (e.message.includes("could not decrypt key with given password")){
+                            //% "Wrong password"
+                            sendDialog.transactionSigner.validationError = qsTrId("wrong-password")
+                            return
+                        }
+                        sendingError.text = e.message
+                        return sendingError.open()
+                    }
+
+                    sendDialog.close()
+                    sendDialog.destroy()
+                }
+
                 sendDialog.open();
                 walletModel.getGasPricePredictions()
             } else {
