@@ -1,8 +1,11 @@
 import QtQuick 2.13
+import QtQuick.Controls 2.1
+import QtQuick.Layouts 1.3
 import "./components"
 import "./data"
 import "../../../imports"
 import "../../../shared"
+import "../../../shared/status"
 
 Item {
     property var tokens: {
@@ -18,6 +21,17 @@ Item {
     }
 
     function checkIfHistoryIsBeingFetched() {
+        loadMoreButton.loadedMore = false;
+
+        // prevent history from being fetched everytime you click on
+        // the history tab
+        if (walletModel.isHistoryFetched(walletModel.currentAccount.account))
+            return;
+
+        fetchHistory();
+    }
+
+    function fetchHistory() {
         if (walletModel.isFetchingHistory(walletModel.currentAccount.address)) {
             loadingImg.active = true
         } else {
@@ -205,10 +219,48 @@ Item {
     }
 
     ListView {
+        id: transactionListRoot
         anchors.topMargin: 20
-        anchors.fill: parent
+        height: parent.height - extraButtons.height
+        width: parent.width
+        clip: true
         model: walletModel.transactions
         delegate: transactionListItemCmp
+        ScrollBar.vertical: ScrollBar {
+            id: scrollBar
+        }
+
+        onCountChanged: {
+            if (loadMoreButton.loadedMore)
+                transactionListRoot.positionViewAtEnd();
+        }
+    }
+
+    RowLayout {
+        id: extraButtons
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        height: loadMoreButton.height
+
+        StatusButton {
+            id: loadMoreButton
+            //% "Load More"
+            text: qsTrId("load-more")
+            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+            property bool loadedMore: false
+
+            Connections {
+                onClicked: {
+                    fetchHistory()
+                    loadMoreButton.loadedMore = true
+                }
+
+                onLoadingTrxHistory: {
+                    loadingImg.active = isLoading
+                }
+            }
+        }
     }
 }
 

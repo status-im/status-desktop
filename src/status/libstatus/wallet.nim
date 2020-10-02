@@ -33,9 +33,9 @@ proc getWalletAccounts*(): seq[WalletAccount] =
 proc getTransactionReceipt*(transactionHash: string): string =
   result = callPrivateRPC("eth_getTransactionReceipt", %* [transactionHash])
 
-proc getTransfersByAddress*(address: string): seq[types.Transaction] =
+proc getTransfersByAddress*(address: string, blockNumber: string = "latest"): seq[types.Transaction] =
   try:
-    let response = getBlockByNumber("latest")
+    let response = getBlockByNumber(blockNumber)
     let latestBlock = parseJson(response)["result"]
     
     let transactionsResponse = getTransfersByAddress(address, latestBlock["number"].getStr, "0x14")
@@ -59,7 +59,11 @@ proc getTransfersByAddress*(address: string): seq[types.Transaction] =
         fromAddress: transaction["from"].getStr,
         to: transaction["to"].getStr
       ))
-    result = accountTransactions
+    # if we feching more trxs, we should skip the first trx as its already saved in the
+    # existing list
+    if blockNumber == "latest":
+      return accountTransactions
+    return accountTransactions[1 .. ^1]
   except:
     let msg = getCurrentExceptionMsg()
     error "Failed getting wallet account transactions", msg
