@@ -8,6 +8,10 @@ import "./"
 
 ModalPopup {
     id: popup
+
+    property Popup parentPopup
+
+
     property var identicon: ""
     property var userName: ""
     property string nickname: ""
@@ -33,8 +37,9 @@ ModalPopup {
         alias = chatsModel.alias(this.fromAuthor) || ""
     }
 
-    function openPopup(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam) {
+    function openPopup(showFooter, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam) {
         setPopupData(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam)
+        noFooter = !showFooter;
         popup.open()
     }
 
@@ -327,10 +332,10 @@ ModalPopup {
             label: qsTrId("send-message")
             anchors.bottom: parent.bottom
             onClicked: {
-                profilePopup.close()
                 if (tabBar.currentIndex !== 0)
                     tabBar.currentIndex = 0
                 chatsModel.joinChat(fromAuthor, Constants.chatTypeOneToOne)
+                popup.close()
             }
         }
 
@@ -362,8 +367,8 @@ ModalPopup {
                     popup.removeButtonClicked(fromAuthor)
                 } else {
                     profileModel.addContact(fromAuthor)
+                    profilePopup.close()
                 }
-                profilePopup.close()
             }
         }
     }

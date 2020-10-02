@@ -41,7 +41,6 @@ Item {
     property int repliedMessageType: replyMessageIndex > -1 ? parseInt(chatsModel.messageList.getMessageData(replyMessageIndex, "contentType")) : 0;
     property string repliedMessageImage: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "image") : "";
 
-    property var profileClick: function () {}
     property var imageClick: function () {}
     property var scrollToBottom: function () {}
 
@@ -75,11 +74,9 @@ Item {
                 break;
             }
         }
-
-        profileClick(userName, fromAuthor, identicon, "", nickname);
         messageContextMenu.isProfile = !!isProfileClick
         messageContextMenu.isSticker = isSticker
-        messageContextMenu.popup()
+        messageContextMenu.show(userName, fromAuthor, identicon, "", nickname)
         // Position the center of the menu where the mouse is
         messageContextMenu.x = messageContextMenu.x - messageContextMenu.width / 2
     }

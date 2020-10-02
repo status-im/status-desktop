@@ -6,6 +6,10 @@ import "./"
 
 ModalPopup {
     id: confirmationDialog
+
+    property Popup parentPopup
+
+
     height: 186
     width: 400
     //% "Confirm your action"
@@ -15,6 +19,7 @@ ModalPopup {
     property string confirmButtonLabel: qsTrId("close-app-button")
     //% "Are you sure you want to this?"
     property string confirmationText: qsTrId("are-you-sure-you-want-to-this-")
+
     signal confirmButtonClicked()
 
     Text {

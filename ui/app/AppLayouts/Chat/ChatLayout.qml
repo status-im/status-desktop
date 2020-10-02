@@ -4,6 +4,7 @@ import Qt.labs.settings 1.0
 import "../../../imports"
 import "../../../shared"
 import "."
+import "components"
 
 SplitView {
     id: chatView
@@ -32,6 +33,61 @@ SplitView {
     ChatColumn {
         id: chatColumn
         chatGroupsListViewCount: contactsColumn.chatGroupsListViewCount
+    }
+
+    function openProfilePopup(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, parentPopup){
+        var popup = profilePopupComponent.createObject(chatView);
+        if(parentPopup){
+            popup.parentPopup = parentPopup;
+        }
+        popup.openPopup(profileModel.profile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
+    }
+
+    property Component profilePopupComponent: ProfilePopup {
+        id: profilePopup
+        height: 450
+        onClosed: {
+            if(profilePopup.parentPopup){
+                profilePopup.parentPopup.close();
+            }
+            destroy()
+        }
+        onBlockButtonClicked: {
+            blockContactConfirmationDialog.contactName = name;
+            blockContactConfirmationDialog.contactAddress = address;
+            blockContactConfirmationDialog.parentPopup = profilePopup;
+            blockContactConfirmationDialog.open();
+        }
+        onRemoveButtonClicked: {
+            chatColumn.contactToRemove = address;
+            removeContactConfirmationDialog.parentPopup = profilePopup;
+            removeContactConfirmationDialog.open();
+        }
+    }
+
+    
+    BlockContactConfirmationDialog {
+        id: blockContactConfirmationDialog
+        onBlockButtonClicked: {
+            profileModel.blockContact(blockContactConfirmationDialog.contactAddress)
+            blockContactConfirmationDialog.parentPopup.close()
+            blockContactConfirmationDialog.close();
+        }
+    }
+
+    ConfirmationDialog {
+        id: removeContactConfirmationDialog
+        // % "Remove contact"
+        title: qsTrId("remove-contact")
+        //% "Are you sure you want to remove this contact?"
+        confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
+        onConfirmButtonClicked: {
+            if (profileModel.isAdded(chatColumn.contactToRemove)) {
+              profileModel.removeContact(chatColumn.contactToRemove)
+            }
+            removeContactConfirmationDialog.parentPopup.close();
+            removeContactConfirmationDialog.close();
+        }
     }
 }
 

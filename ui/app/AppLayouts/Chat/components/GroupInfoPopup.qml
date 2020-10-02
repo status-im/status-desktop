@@ -13,7 +13,6 @@ ModalPopup {
     property int memberCount: 1
     readonly property int maxMembers: 10
     property var pubKeys: []
-    property var profileClick: function() {}
 
     function resetSelectedMembers(){
         pubKeys = [];
@@ -292,10 +291,7 @@ ModalPopup {
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                popup.profileClick(model.userName, model.pubKey, model.identicon, '', contactRow.nickname)
-                                popup.close()
-                            }
+                            onClicked: openProfilePopup(model.userName, model.pubKey, model.identicon, '', contactRow.nickname, popup)
                         }
                     }
 

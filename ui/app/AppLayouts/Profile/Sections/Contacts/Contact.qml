@@ -93,7 +93,7 @@ Rectangle {
                     icon.width: menuButton.iconSize
                     icon.height: menuButton.iconSize
                     text: qsTrId("view-profile")
-                    onTriggered: profileClick(name, address, identicon, "", localNickname)
+                    onTriggered: profileClick(true, name, address, identicon, "", localNickname)
                     enabled: true
                 }
                 Action {

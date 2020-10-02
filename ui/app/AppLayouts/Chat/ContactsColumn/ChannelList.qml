@@ -73,17 +73,8 @@ ScrollView {
 
     }
 
-    ProfilePopup {
-        id: profilePopup
-        height: 330
-        noFooter: true
-    }
-
     GroupInfoPopup {
         id: groupInfoPopup
-        profileClick: {
-            profilePopup.openPopup.bind(profilePopup)
-        }
         onClosed: {
             mouseArea.menuOpened = false
         }
@@ -143,7 +134,7 @@ ScrollView {
                 chatsModel.setActiveChannelByIndex(channelContextMenu.channelIndex)
                 chatGroupsListView.currentIndex = channelContextMenu.channelIndex
                 if (channelContextMenu.chatType === Constants.chatTypeOneToOne) {
-                    return profilePopup.openPopup(channelContextMenu.chatName, channelContextMenu.chatId, channelContextMenu.chatIdenticon)
+                    return openProfilePopup(channelContextMenu.chatName, channelContextMenu.chatId, channelContextMenu.chatIdenticon)
                 }
                 if (channelContextMenu.chatType === Constants.chatTypePrivateGroupChat) {
                     return groupInfoPopup.open()

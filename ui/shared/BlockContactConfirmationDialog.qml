@@ -8,14 +8,18 @@ ModalPopup {
     id: blockContactConfirmationDialog
     height: 237
     width: 400
+
+    property Popup parentPopup
     property string contactAddress: ""
     property string contactName: ""
+    
     signal blockButtonClicked()
+    
     title: qsTrId("block-user")
 
     StyledText {
-        //% "Blocking will remove any messages you received from " + blockContactConfirmationDialog.contactName + " and stop new messages from reaching you."
-        text: qsTrId("blocking-will-remove-any-messages-you-received-from-----blockcontactconfirmationdialog-contactname-----and-stop-new-messages-from-reaching-you-")
+        //% 
+        text: qsTr("Blocking will remove any messages you received from %1 and stop new messages from reaching you.").arg(contactName)
         font.pixelSize: 15
         anchors.left: parent.left
         anchors.right: parent.right

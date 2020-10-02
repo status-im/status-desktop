@@ -129,44 +129,8 @@ StackLayout {
             }
        }
 
-        ProfilePopup {
-            id: profilePopup
-            onBlockButtonClicked: {
-                blockContactConfirmationDialog.contactName = name
-                chatColumnLayout.contact = address
-                blockContactConfirmationDialog.open()
-            }
-            onRemoveButtonClicked: {
-                chatColumnLayout.contactToRemove = address
-                removeContactConfirmationDialog.open()
-            }
-        }
-
         ImagePopup {
             id: imagePopup
-        }
-
-        BlockContactConfirmationDialog {
-            id: blockContactConfirmationDialog
-            onBlockButtonClicked: {
-                profileModel.blockContact(blockContactConfirmationDialog.contactAddress)
-                blockContactConfirmationDialog.close()
-                profilePopup.close()
-            }
-        }
-
-        ConfirmationDialog {
-          id: removeContactConfirmationDialog
-          // % "Remove contact"
-          title: qsTrId("remove-contact")
-          //% "Are you sure you want to remove this contact?"
-          confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
-          onConfirmButtonClicked: {
-              if (profileModel.isAdded(chatColumnLayout.contactToRemove)) {
-                profileModel.removeContact(chatColumnLayout.contactToRemove)
-              }
-              removeContactConfirmationDialog.close()
-          }
         }
 
         EmojiReactions {
