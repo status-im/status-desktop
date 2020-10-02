@@ -1,4 +1,4 @@
-import NimQml, os, strformat, strutils, parseUtils
+import NimQml, os, strformat, strutils, parseUtils, chronicles
 import stint
 import ../../status/status
 import ../../status/stickers
@@ -46,7 +46,10 @@ QtObject:
     return uintValue.toString()
 
   proc wei2Token*(self: UtilsView, wei: string, decimals: int): string {.slot.} =
-    return status_utils.wei2Token(wei, decimals)
+    var weiValue = wei
+    if(weiValue.startsWith("0x")):
+      weiValue = fromHex(Stuint[256], weiValue).toString()
+    return status_utils.wei2Token(weiValue, decimals)
 
   proc getStickerMarketAddress(self: UtilsView): string {.slot.} =
     $self.status.stickers.getStickerMarketAddress

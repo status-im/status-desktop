@@ -122,22 +122,31 @@ Item {
     }
 
 
+    property Component sendTransactionModalComponent: SendTransactionModal {}
+
+
     QtObject {
         id: provider
         WebChannel.id: "backend"
 
         signal web3Response(string data);
 
-        function postMessage(data){
-            var request = JSON.parse(data)
+        function postMessage(data) {
+            var request;
+            try {
+                request = JSON.parse(data)
+            } catch (e) {
+                console.error("Error parsing the message data", e)
+                return;
+            }
 
             var ensAddr = urlENSDictionary[request.hostname];
-            if(ensAddr){
+            if (ensAddr) {
                 request.hostname = ensAddr;
             }
-            
-            if(request.type === Constants.api_request){
-                if(!web3Provider.hasPermission(request.hostname, request.permission)){
+
+            if (request.type === Constants.api_request) {
+                if (!web3Provider.hasPermission(request.hostname, request.permission)) {
                     var dialog = accessDialogComponent.createObject(browserWindow);
                     dialog.request = request;
                     dialog.open();
@@ -145,6 +154,12 @@ Item {
                     request.isAllowed = true;
                     web3Response(web3Provider.postMessage(JSON.stringify(request)));
                 }
+            } else if (request.type === Constants.web3SendAsyncReadOnly &&
+                       request.payload.method === "eth_sendTransaction") {
+                const sendDialog = sendTransactionModalComponent.createObject(browserWindow);
+                sendDialog.request = request;
+                sendDialog.open();
+                walletModel.getGasPricePredictions()
             } else {
                 web3Response(web3Provider.postMessage(data));
             }
