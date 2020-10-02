@@ -6,6 +6,7 @@ import ../../status/libstatus/wallet as status_wallet
 import ../../status/libstatus/tokens
 import ../../status/libstatus/types
 import ../../status/libstatus/utils as status_utils
+import ../../status/libstatus/eth/contracts
 import ../../status/ens as status_ens
 import views/[asset_list, account_list, account_item, token_list, transaction_list, collectibles_list]
 
@@ -323,9 +324,9 @@ QtObject:
     self.currentAccountChanged()
 
   proc removeCustomToken*(self: WalletView, tokenAddress: string) {.slot.} =
-    let t = getTokenByAddress(getCustomTokens(), tokenAddress)
-    if t.kind == JNull: return
-    self.status.wallet.hideAsset(t["symbol"].getStr)
+    let t = getCustomTokens().getErc20ContractByAddress(parseAddress(tokenAddress))
+    if t == nil: return
+    self.status.wallet.hideAsset(t.symbol)
     removeCustomToken(tokenAddress)
     self.customTokenList.loadCustomTokens()
     for account in self.status.wallet.accounts:

@@ -139,13 +139,13 @@ proc readValue*(reader: var JsonReader, value: var Stuint[256])
 
 type
   Network* {.pure.} = enum
-    Mainnet,
-    Testnet,
-    Rinkeby,
-    Goerli,
-    XDai,
-    Poa,
-    Other
+    Mainnet = "mainnet_rpc",
+    Testnet = "testnet_rpc",
+    Rinkeby = "rinkeby_rpc",
+    Goerli = "goerli_rpc",
+    XDai = "xdai_rpc",
+    Poa = "poa_rpc",
+    Other = "other"
 
   Setting* {.pure.} = enum
     Appearance = "appearance",

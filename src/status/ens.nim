@@ -153,7 +153,7 @@ proc registerUsernameEstimateGas*(username: string, address: string, pubKey: str
     x = fromHex(FixedBytes[32], coordinates.x)
     y =  fromHex(FixedBytes[32], coordinates.y)
     ensUsernamesContract = contracts.getContract("ens-usernames")
-    sntContract = contracts.getContract("snt")
+    sntContract = contracts.getSntContract()
     price = getPrice()
   
   let
@@ -175,7 +175,7 @@ proc registerUsername*(username, pubKey, address, gas, gasPrice,  password: stri
     x = fromHex(FixedBytes[32], coordinates.x)
     y =  fromHex(FixedBytes[32], coordinates.y)
     ensUsernamesContract = contracts.getContract("ens-usernames")
-    sntContract = contracts.getContract("snt")
+    sntContract = contracts.getSntContract()
     price = getPrice()
   
   let

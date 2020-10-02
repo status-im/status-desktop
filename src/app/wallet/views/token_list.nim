@@ -1,6 +1,7 @@
-import NimQml, tables, json
-import ../../../status/libstatus/default_tokens
+import NimQml, tables
 import ../../../status/libstatus/tokens
+import ../../../status/libstatus/eth/contracts
+from web3/conversions import `$`
 
 type
   TokenRoles {.pure.} = enum
@@ -12,7 +13,7 @@ type
 
 QtObject:
   type TokenList* = ref object of QAbstractListModel
-    tokens*: seq[JsonNode]
+    tokens*: seq[Erc20Contract]
 
   proc setup(self: TokenList) = 
     self.QAbstractListModel.setup
@@ -25,12 +26,12 @@ QtObject:
 
   proc loadDefaultTokens*(self:TokenList) = 
     if self.tokens.len == 0:
-      self.tokens = getDefaultTokens().getElems()
+      self.tokens = getErc20Contracts()
       self.tokensLoaded(self.tokens.len)
 
   proc loadCustomTokens*(self: TokenList) =
     self.beginResetModel()
-    self.tokens = getCustomTokens().getElems()
+    self.tokens = getCustomTokens()
     self.tokensLoaded(self.tokens.len)
     self.endResetModel()
 
@@ -44,11 +45,11 @@ QtObject:
       return
     let token = self.tokens[index]
     case column:
-      of "name": result = token["name"].getStr
-      of "symbol": result = token["symbol"].getStr
-      of "hasIcon": result = $token["hasIcon"].getBool
-      of "address": result = token["address"].getStr
-      of "decimals": result = $token["decimals"].getInt
+      of "name": result = token.name
+      of "symbol": result = token.symbol
+      of "hasIcon": result = $token.hasIcon
+      of "address": result = $token.address
+      of "decimals": result = $token.decimals
 
   method rowCount(self: TokenList, index: QModelIndex = nil): int =
     return self.tokens.len
@@ -61,11 +62,11 @@ QtObject:
     let token = self.tokens[index.row]
     let tokenRole = role.TokenRoles
     case tokenRole:
-    of TokenRoles.Name: result = newQVariant(token["name"].getStr)
-    of TokenRoles.Symbol: result = newQVariant(token["symbol"].getStr)
-    of TokenRoles.HasIcon: result = newQVariant(token{"hasIcon"}.getBool)
-    of TokenRoles.Address: result = newQVariant(token["address"].getStr)
-    of TokenRoles.Decimals: result = newQVariant(token["decimals"].getInt)
+    of TokenRoles.Name: result = newQVariant(token.name)
+    of TokenRoles.Symbol: result = newQVariant(token.symbol)
+    of TokenRoles.HasIcon: result = newQVariant(token.hasIcon)
+    of TokenRoles.Address: result = newQVariant($token.address)
+    of TokenRoles.Decimals: result = newQVariant(token.decimals)
 
   method roleNames(self: TokenList): Table[int, string] =
     {TokenRoles.Name.int:"name",

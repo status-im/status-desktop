@@ -16,7 +16,7 @@ const COLLECTIBLE_TYPES* = [CRYPTOKITTY, KUDO, ETHERMON, STICKER]
 
 const MAX_TOKENS = 200
 
-proc getTokenUri(contract: Contract, tokenId: Stuint[256]): string =
+proc getTokenUri(contract: Erc721Contract, tokenId: Stuint[256]): string =
   try:
     let
       tokenUri = TokenUri(tokenId: tokenId)
@@ -37,7 +37,7 @@ proc getTokenUri(contract: Contract, tokenId: Stuint[256]): string =
     error "Error getting the token URI", mes = e.msg
     result = ""
 
-proc tokenOfOwnerByIndex(contract: Contract, address: Address, index: Stuint[256]): int =
+proc tokenOfOwnerByIndex(contract: Erc721Contract, address: Address, index: Stuint[256]): int =
   let
     tokenOfOwnerByIndex = TokenOfOwnerByIndex(address: address, index: index)
     payload = %* [{
@@ -50,7 +50,7 @@ proc tokenOfOwnerByIndex(contract: Contract, address: Address, index: Stuint[256
     return -1
   result = fromHex[int](res)
 
-proc tokensOfOwnerByIndex(contract: Contract, address: Address): seq[int] =
+proc tokensOfOwnerByIndex(contract: Erc721Contract, address: Address): seq[int] =
   var index = 0
   var token: int
   result = @[]
@@ -117,7 +117,7 @@ proc getEthermons*(address: Address): string =
   try:
     var ethermons: seq[Collectible]
     ethermons = @[]
-    let contract = getContract("ethermon")
+    let contract = getErc721Contract("ethermon")
     if contract == nil: return $(%*ethermons)
 
     let tokens = tokensOfOwnerByIndex(contract, address)
@@ -156,7 +156,7 @@ proc getKudos*(address: Address): string =
   try:
     var kudos: seq[Collectible]
     kudos = @[]
-    let contract = getContract("kudos")
+    let contract = getErc721Contract("kudos")
     if contract == nil: return  $(%*kudos)
     
     let tokens = tokensOfOwnerByIndex(contract, address)
@@ -196,7 +196,7 @@ proc getStickers*(address: Address): string =
   try:
     var stickers: seq[Collectible]
     stickers = @[]
-    let contract = getContract("sticker-pack")
+    let contract = getErc721Contract("sticker-pack")
     if contract == nil: return
     
     let tokensIds = tokensOfOwnerByIndex(contract, address)

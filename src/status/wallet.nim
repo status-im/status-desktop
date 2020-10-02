@@ -33,7 +33,7 @@ type WalletModel* = ref object
   events*: EventEmitter
   accounts*: seq[WalletAccount]
   defaultCurrency*: string
-  tokens*: JsonNode
+  tokens*: seq[Erc20Contract]
   totalBalance*: float
 
 proc getDefaultCurrency*(self: WalletModel): string
@@ -42,7 +42,7 @@ proc calculateTotalFiatBalance*(self: WalletModel)
 proc newWalletModel*(events: EventEmitter): WalletModel =
   result = WalletModel()
   result.accounts = @[]
-  result.tokens = %* []
+  result.tokens = @[]
   result.events = events
   result.defaultCurrency = ""
   result.totalBalance = 0.0
@@ -61,10 +61,9 @@ proc initEvents*(self: WalletModel) =
 proc delete*(self: WalletModel) =
   discard
 
-proc buildTokenTransaction(self: WalletModel, source, to, assetAddress: Address, value: float, transfer: var Transfer, contract: var Contract, gas = "", gasPrice = ""): EthSend =
-  let token = self.tokens.first("address", $assetAddress)
-  contract = getContract("snt")
-  transfer = Transfer(to: to, value: eth2Wei(value, token["decimals"].getInt))
+proc buildTokenTransaction(self: WalletModel, source, to, assetAddress: Address, value: float, transfer: var Transfer, contract: var Erc20Contract, gas = "", gasPrice = ""): EthSend =
+  contract = getErc20Contract(assetAddress)
+  transfer = Transfer(to: to, value: eth2Wei(value, contract.decimals))
   transactions.buildTokenTransaction(source, assetAddress, gas, gasPrice)
 
 proc estimateGas*(self: WalletModel, source, to, value: string, success: var bool): int =
@@ -102,7 +101,7 @@ proc checkPendingTransactions*(self: WalletModel, address: string, blockNumber: 
 proc estimateTokenGas*(self: WalletModel, source, to, assetAddress, value: string, success: var bool): int =
   var
     transfer: Transfer
-    contract: Contract
+    contract: Erc20Contract
     tx = self.buildTokenTransaction(
       parseAddress(source),
       parseAddress(to),
@@ -129,7 +128,7 @@ proc sendTransaction*(self: WalletModel, source, to, value, gas, gasPrice, passw
 proc sendTokenTransaction*(self: WalletModel, source, to, assetAddress, value, gas, gasPrice, password: string, success: var bool): string =
   var
     transfer: Transfer
-    contract: Contract
+    contract: Erc20Contract
     tx = self.buildTokenTransaction(
       parseAddress(source),
       parseAddress(to),
@@ -153,13 +152,12 @@ proc getDefaultCurrency*(self: WalletModel): string =
 # TODO: This needs to be removed or refactored so that test tokens are shown
 # when on testnet https://github.com/status-im/nim-status-client/issues/613.
 proc getStatusToken*(self: WalletModel): string =
-  var token = Asset(address: $getContract("snt").address)
-  if status_settings.getCurrentNetwork() == Network.Testnet:
-    token.name = "Status Test Token"
-    token.symbol = "STT"
-  else:
-    token.name = "Status Network Token"
-    token.symbol = "SNT"
+  var
+    token = Asset()
+    erc20Contract = getSntContract()
+  token.name = erc20Contract.name
+  token.symbol = erc20Contract.symbol
+  token.address = $erc20Contract.address
   result = $(%token)
 
 proc setDefaultCurrency*(self: WalletModel, currency: string) =
@@ -171,8 +169,8 @@ proc generateAccountConfiguredAssets*(self: WalletModel, accountAddress: string)
   var asset = Asset(name:"Ethereum", symbol: "ETH", value: "0.0", fiatBalanceDisplay: "0.0", accountAddress: accountAddress)
   assets.add(asset)
   for token in self.tokens:
-    var symbol = token["symbol"].getStr
-    var existingToken = Asset(name: token["name"].getStr, symbol: symbol, value: fmt"0.0", fiatBalanceDisplay: "$0.0", accountAddress: accountAddress, address: token["address"].getStr)
+    var symbol = token.symbol
+    var existingToken = Asset(name: token.name, symbol: symbol, value: fmt"0.0", fiatBalanceDisplay: "$0.0", accountAddress: accountAddress, address: $token.address)
     assets.add(existingToken)
   assets
 
@@ -271,7 +269,7 @@ proc addWatchOnlyAccount*(self: WalletModel, address: string, accountName: strin
 
 proc hasAsset*(self: WalletModel, account: string, symbol: string): bool =
   self.tokens = status_tokens.getVisibleTokens()
-  self.tokens.anyIt(it["symbol"].getStr == symbol)
+  self.tokens.anyIt(it.symbol == symbol)
 
 proc changeAccountSettings*(self: WalletModel, address: string, accountName: string, color: string): string =
   var selectedAccount: WalletAccount
