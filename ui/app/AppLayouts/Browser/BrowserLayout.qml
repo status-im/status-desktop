@@ -447,7 +447,7 @@ Item {
                     width: 20
                     height: width
                     radius: width / 2
-                    color: ""
+                    color: "#ff0000"
                     StyledText {
                         id: txtAccountBtn
                         text: ""
