@@ -277,8 +277,11 @@ QtObject:
       )
     self.contactToAddChanged()
 
-  proc addContact*(self: ProfileView, pk: string): string {.slot.} =
-    return self.status.contacts.addContact(pk)
+  proc contactChanged(self: ProfileView, publicKey: string, isAdded: bool) {.signal.}
+
+  proc addContact*(self: ProfileView, publicKey: string): string {.slot.} =
+    result = self.status.contacts.addContact(publicKey)
+    self.contactChanged(publicKey, true)
 
   proc changeContactNickname*(self: ProfileView, publicKey: string, nickname: string) {.slot.} =
     var nicknameToSet = nickname
@@ -286,11 +289,13 @@ QtObject:
       nicknameToSet = DELETE_CONTACT
     discard self.status.contacts.addContact(publicKey, nicknameToSet)
 
-  proc unblockContact*(self: ProfileView, id: string) {.slot.} =
-    discard self.status.contacts.unblockContact(id)
+  proc unblockContact*(self: ProfileView, publicKey: string) {.slot.} =
+    discard self.status.contacts.unblockContact(publicKey)
 
-  proc blockContact*(self: ProfileView, id: string): string {.slot.} =
-    return self.status.contacts.blockContact(id)
+  proc blockContact*(self: ProfileView, publicKey: string): string {.slot.} =
+    return self.status.contacts.blockContact(publicKey)
 
-  proc removeContact*(self: ProfileView, id: string) {.slot.} =
-    self.status.contacts.removeContact(id)
+  proc removeContact*(self: ProfileView, publicKey: string) {.slot.} =
+    self.status.contacts.removeContact(publicKey)
+    self.contactChanged(publicKey, false)
+

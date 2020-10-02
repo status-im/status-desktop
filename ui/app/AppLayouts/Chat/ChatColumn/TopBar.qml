@@ -28,6 +28,7 @@ Rectangle {
     Component {
         id: chatInfoButton
         StatusChatInfoButton {
+            chatId: chatsModel.activeChannel.id
             chatName: chatsModel.activeChannel.name
             chatType: chatsModel.activeChannel.chatType
             identicon: chatsModel.activeChannel.identicon
