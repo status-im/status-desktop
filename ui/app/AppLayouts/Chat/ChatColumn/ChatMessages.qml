@@ -232,7 +232,6 @@ ScrollView {
             responseTo: model.responseTo
             authorCurrentMsg: msgDelegate.ListView.section
             authorPrevMsg: msgDelegate.ListView.previousSection
-            profileClick: profilePopup.setPopupData.bind(profilePopup)
             imageClick: imagePopup.openPopup.bind(imagePopup)
             messageId: model.messageId
             emojiReactions: model.emojiReactions

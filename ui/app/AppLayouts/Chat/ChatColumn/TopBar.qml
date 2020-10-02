@@ -8,7 +8,6 @@ import "../components"
 
 Rectangle {
     property int iconSize: 16
-    property bool reopenGroupDialog: false
     id: chatTopBarContent
     color: Style.current.background
     height: 56
@@ -40,8 +39,7 @@ Rectangle {
                         groupInfoPopup.open()
                         break;
                     case Constants.chatTypeOneToOne:
-                        chatTopBarContent.reopenGroupDialog = false
-                        profilePopup.openPopup(chatsModel.activeChannel.name, chatsModel.activeChannel.id, chatsModel.activeChannel.identicon)
+                        openProfilePopup(chatsModel.activeChannel.name, chatsModel.activeChannel.id, chatsModel.activeChannel.identicon)
                         break;
                 }
             }
@@ -81,8 +79,6 @@ Rectangle {
         }
 
         MouseArea {
-            property bool menuOpened: false
-
             id: mouseArea
             anchors.fill: parent
             hoverEnabled: true
@@ -99,23 +95,15 @@ Rectangle {
                     menu = groupContextMenu
                 }
 
-                if (!menuOpened) {
-                    menu.arrowX = menu.width - 40
-                    menu.popup(moreActionsBtn.x, moreActionsBtn.height)
-                    menuOpened = true
-                } else {
-                    menu.dismiss()
-                    menuOpened = false
-                }
+                menu.arrowX = menu.width - 40
+                menu.popup(moreActionsBtn.x, moreActionsBtn.height)
+               
             }
             cursorShape: Qt.PointingHandCursor
             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
             PopupMenu {
                 id: chatContextMenu
-                onClosed: {
-                    mouseArea.menuOpened = false
-                }
                 Action {
                     icon.source: "../../../img/close.svg"
                     icon.width: chatTopBarContent.iconSize
@@ -145,9 +133,6 @@ Rectangle {
 
             PopupMenu {
                 id: groupContextMenu
-                onClosed: {
-                    mouseArea.menuOpened = false
-                }
                 Action {
                     icon.source: "../../../img/group_chat.svg"
                     icon.width: chatTopBarContent.iconSize
@@ -184,23 +169,6 @@ Rectangle {
 
             GroupInfoPopup {
                 id: groupInfoPopup
-                profileClick: {
-                    profilePopup.openPopup.bind(profilePopup)
-                    chatTopBarContent.reopenGroupDialog = true
-                }
-                onClosed: {
-                    mouseArea.menuOpened = false
-                }
-            }
-
-            ProfilePopup {
-              id: profilePopup
-              onClosed: {
-                if (!groupInfoPopup.opened && chatTopBarContent.reopenGroupDialog) {
-                    groupInfoPopup.open()
-                    chatTopBarContent.reopenGroupDialog = false
-                }
-              }
             }
         }
     }

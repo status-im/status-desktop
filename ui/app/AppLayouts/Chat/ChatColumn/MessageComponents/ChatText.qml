@@ -35,7 +35,7 @@ Item {
 
             if (link.startsWith('//')) {
                 let pk = link.replace("//", "");
-                profilePopup.openPopup(chatsModel.userNameOrAlias(pk), pk, chatsModel.generateIdenticon(pk))
+                openProfilePopup(chatsModel.userNameOrAlias(pk), pk, chatsModel.generateIdenticon(pk))
                 return;
             }
 

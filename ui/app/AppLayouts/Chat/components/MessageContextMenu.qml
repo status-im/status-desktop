@@ -14,6 +14,21 @@ PopupMenu {
     id: messageContextMenu
     width: messageContextMenu.isProfile ? profileHeader.width : emojiContainer.width
 
+    property var identicon: ""
+    property var userName: ""
+    property string nickname: ""
+    property var fromAuthor: ""
+    property var text: ""
+
+    function show(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam){
+        userName = userNameParam || ""
+        nickname = nicknameParam || ""
+        fromAuthor = fromAuthorParam || ""
+        identicon = identiconParam || ""
+        text = textParam || ""
+        popup();
+    }
+
     Item {
         id: emojiContainer
         visible: !messageContextMenu.isProfile
@@ -51,7 +66,7 @@ PopupMenu {
 
         StatusImageIdenticon {
             id: profileImage
-            source: profilePopup.identicon
+            source: identicon
             anchors.top: parent.top
             anchors.topMargin: 4
             anchors.horizontalCenter: parent.horizontalCenter
@@ -59,7 +74,7 @@ PopupMenu {
 
         StyledText {
             id: username
-            text: Utils.removeStatusEns(profilePopup.userName)
+            text: Utils.removeStatusEns(userName)
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             anchors.top: profileImage.bottom
@@ -83,7 +98,7 @@ PopupMenu {
                 profileHeader.hovered = false
             }
             onClicked: {
-                profilePopup.open()
+                openProfilePopup(userName, fromAuthor, identicon);
                 messageContextMenu.close()
             }
         }
@@ -98,7 +113,7 @@ PopupMenu {
         //% "View profile"
         text: qsTrId("view-profile")
         onTriggered: {
-            profilePopup.open()
+            openProfilePopup(userName, fromAuthor, identicon);
             messageContextMenu.close()
         }
         icon.source: "../../../img/profileActive.svg"
@@ -112,7 +127,7 @@ PopupMenu {
                   //% "Reply to"
                   qsTrId("reply-to")
         onTriggered: {
-            messageContextMenu.isProfile ? chatsModel.joinChat(profilePopup.fromAuthor, Constants.chatTypeOneToOne) : showReplyArea()
+            messageContextMenu.isProfile ? chatsModel.joinChat(fromAuthor, Constants.chatTypeOneToOne) : showReplyArea()
             messageContextMenu.close()
         }
         icon.source: "../../../img/messageActive.svg"
