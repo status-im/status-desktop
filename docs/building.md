@@ -2,6 +2,8 @@
 
 ### 0. Prerequesites
 
+On windows you can simply run the [`scripts/windows_build_setup.ps1`](../scripts/windows_build_setup.ps1) script in a PowerShell with Administrator privileges.
+
 * QT
 
 Linux users should install Qt through the system's package manager:
