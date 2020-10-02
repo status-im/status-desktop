@@ -377,9 +377,7 @@ Item {
                 target: currentWebView
                 onUrlChanged: {
                     var ensAddr = urlENSDictionary[web3Provider.getHost(currentWebView.url)];
-                    if(ensAddr){ // replace host by ensAddr
-                        addressBar.text = web3Provider.replaceHostByENS(currentWebView.url, ensAddr);
-                    }
+                    addressBar.text = ensAddr ? web3Provider.replaceHostByENS(currentWebView.url, ensAddr) : currentWebView.url;
                 }
             }
 
