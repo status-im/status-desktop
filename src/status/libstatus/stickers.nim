@@ -1,8 +1,8 @@
 import ./core as status, ./types, ./eth/contracts, ./settings, ./edn_helpers
 import
-  json, json_serialization, tables, chronicles, strutils, sequtils, httpclient,
+  json, json_serialization, tables, chronicles, sequtils, httpclient,
   stint, libp2p/[multihash, multicodec, cid], web3/[ethtypes, conversions]
-from strutils import parseHexInt
+from strutils import parseHexInt, parseInt
 from nimcrypto import fromHex
 
 proc decodeContentHash*(value: string): string =
@@ -71,7 +71,7 @@ proc getBalance*(address: Address): int =
     raise newException(RpcException, "Error getting stickers balance: " & response.error.message)
   if response.result == "0x":
     return 0
-  result = fromHex[int](response.result)
+  result = parseHexInt(response.result)
 
 # Gets number of sticker packs
 proc getPackCount*(): int =
@@ -87,7 +87,7 @@ proc getPackCount*(): int =
     raise newException(RpcException, "Error getting stickers balance: " & response.error.message)
   if response.result == "0x":
     return 0
-  result = fromHex[int](response.result)
+  result = parseHexInt(response.result)
 
 # Gets sticker pack data
 proc getPackData*(id: Stuint[256]): StickerPack =
@@ -139,7 +139,7 @@ proc tokenOfOwnerByIndex*(address: Address, idx: Stuint[256]): int =
     raise newException(RpcException, "Error getting owned tokens: " & response.error.message)
   if response.result == "0x":
     return 0
-  result = fromHex[int](response.result)
+  result = parseHexInt(response.result)
 
 proc getPackIdFromTokenId*(tokenId: Stuint[256]): int =
   let
@@ -156,7 +156,7 @@ proc getPackIdFromTokenId*(tokenId: Stuint[256]): int =
     raise newException(RpcException, "Error getting pack id from token id: " & response.error.message)
   if response.result == "0x":
     return 0
-  result = fromHex[int](response.result)
+  result = parseHexInt(response.result)
 
 proc saveInstalledStickerPacks*(installedStickerPacks: Table[int, StickerPack]) =
   let json = %* {}

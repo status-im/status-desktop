@@ -4,9 +4,8 @@ import ./eth/contracts
 import web3/[ethtypes, conversions]
 import json_serialization
 import settings
-from types import Setting, Network
-import default_tokens
-import strutils
+from types import Setting, Network, RpcResponse, RpcException
+from utils import parseAddress
 import locks
 
 logScope:
@@ -15,80 +14,73 @@ logScope:
 var customTokensLock: Lock
 initLock(customTokensLock)
 
-var customTokens {.guard: customTokensLock.} = %*{}
+var customTokens {.guard: customTokensLock.}: seq[Erc20Contract] = @[]
 var dirty {.guard: customTokensLock.}  = true
 
-proc getCustomTokens*(useCached: bool = true): JsonNode =
+proc getCustomTokens*(useCached: bool = true): seq[Erc20Contract] =
   {.gcsafe.}:
     withLock customTokensLock:
       if useCached and not dirty:
         result = customTokens
       else: 
         let payload = %* []
-        result = callPrivateRPC("wallet_getCustomTokens", payload).parseJSON()["result"]
-        if result.kind == JNull: result = %* []
+        let responseStr = callPrivateRPC("wallet_getCustomTokens", payload)
+        # TODO: this should be handled in the deserialisation of RpcResponse,
+        # question has been posed: https://discordapp.com/channels/613988663034118151/616299964242460682/762828178624217109
+        let response = RpcResponse(result: $(responseStr.parseJSON()["result"]))
+        if not response.error.isNil:
+          raise newException(RpcException, "Error getting custom tokens: " & response.error.message)
+        result = if response.result == "null": @[] else: Json.decode(response.result, seq[Erc20Contract])
         dirty = false
         customTokens = result
 
-proc getTokenBySymbol*(tokenList: JsonNode, symbol: string): JsonNode =
-  for defToken in tokenList.getElems():
-    if defToken["symbol"].getStr == symbol:
-      return defToken
-  return newJNull()
-
-proc getTokenByAddress*(tokenList: JsonNode, address: string): JsonNode =
-  for defToken in tokenList.getElems():
-    if defToken["address"].getStr == address:
-      return defToken
-  return newJNull()
-
 proc visibleTokensSNTDefault(): JsonNode =
-  let currentNetwork = getSetting[string](Setting.Networks_CurrentNetwork)
-  let SNT = if getCurrentNetwork() == Network.Testnet: "STT" else: "SNT"
+  let currentNetwork = getCurrentNetwork()
+  let SNT = if currentNetwork == Network.Testnet: "STT" else: "SNT"
   let response = getSetting[string](Setting.VisibleTokens, "{}").parseJSON
 
-  if response.hasKey(currentNetwork): return response
-   
-  # Set STT/SNT visible by default
-  response[currentNetwork] = %* [SNT]
+  if not response.hasKey($currentNetwork):
+    # Set STT/SNT visible by default
+    response[$currentNetwork] = %* [SNT]
+
   return response
 
 proc toggleAsset*(symbol: string) =
-  let currentNetwork = getSetting[string](Setting.Networks_CurrentNetwork)
+  let currentNetwork = getCurrentNetwork()
   let visibleTokens = visibleTokensSNTDefault()
-  var visibleTokenList = visibleTokens[currentNetwork].to(seq[string])
-  var symbolIdx = visibleTokenList.find(symbol)
+  var visibleTokenList = visibleTokens[$currentNetwork].to(seq[string])
+  let symbolIdx = visibleTokenList.find(symbol)
   if symbolIdx > -1:
     visibleTokenList.del(symbolIdx)
   else:
     visibleTokenList.add symbol
-  visibleTokens[currentNetwork] = newJArray()
-  visibleTokens[currentNetwork] = %* visibleTokenList
+  visibleTokens[$currentNetwork] = newJArray()
+  visibleTokens[$currentNetwork] = %* visibleTokenList
   discard saveSetting(Setting.VisibleTokens, $visibleTokens)
 
 proc hideAsset*(symbol: string) =
-  let currentNetwork = getSetting[string](Setting.Networks_CurrentNetwork)
+  let currentNetwork = getCurrentNetwork()
   let visibleTokens = visibleTokensSNTDefault()
-  var visibleTokenList = visibleTokens[currentNetwork].to(seq[string])
+  var visibleTokenList = visibleTokens[$currentNetwork].to(seq[string])
   var symbolIdx = visibleTokenList.find(symbol)
   if symbolIdx > -1:
     visibleTokenList.del(symbolIdx)
-  visibleTokens[currentNetwork] = newJArray()
-  visibleTokens[currentNetwork] = %* visibleTokenList
+  visibleTokens[$currentNetwork] = newJArray()
+  visibleTokens[$currentNetwork] = %* visibleTokenList
   discard saveSetting(Setting.VisibleTokens, $visibleTokens)
 
-proc getVisibleTokens*(): JsonNode =
-  let currentNetwork = getSetting[string](Setting.Networks_CurrentNetwork)
+proc getVisibleTokens*(): seq[Erc20Contract] =
+  let currentNetwork = getCurrentNetwork()
   let visibleTokens = visibleTokensSNTDefault()
-  let visibleTokenList = visibleTokens[currentNetwork].to(seq[string])
+  var visibleTokenList = visibleTokens[$currentNetwork].to(seq[string])
   let customTokens = getCustomTokens()
 
-  result = newJArray()
+  result = @[]
   for v in visibleTokenList:
-    let t = getTokenBySymbol(getDefaultTokens(), v)
-    if t.kind != JNull: result.elems.add(t)
-    let ct = getTokenBySymbol(getCustomTokens(), v)
-    if ct.kind != JNull: result.elems.add(ct)
+    let t = getErc20Contract(v)
+    if t != nil: result.add t
+    let ct = customTokens.getErc20ContractBySymbol(v)
+    if ct != nil: result.add ct
   
 proc addCustomToken*(address: string, name: string, symbol: string, decimals: int, color: string) =
   let payload = %* [{"address": address, "name": name, "symbol": symbol, "decimals": decimals, "color": color}]
@@ -119,19 +111,20 @@ proc getTokenBalance*(tokenAddress: string, account: string): string =
   let balance = response.parseJson["result"].getStr
 
   var decimals = 18
-  let t = getTokenByAddress(getDefaultTokens(), tokenAddress)
-  let ct = getTokenByAddress(getCustomTokens(), tokenAddress)
-  if t.kind != JNull: 
-    decimals = t["decimals"].getInt
-  elif ct.kind != JNull: 
-    decimals = ct["decimals"].getInt
+  let address = parseAddress(tokenAddress)
+  let t = getErc20Contract(address)
+  let ct = getCustomTokens().getErc20ContractByAddress(address)
+  if t != nil: 
+    decimals = t.decimals
+  elif ct != nil: 
+    decimals = ct.decimals
 
   result = $hex2Token(balance, decimals)
 
 proc getSNTAddress*(): string =
-  let snt = contracts.getContract("snt")
-  result = "0x" & $snt.address
+  let snt = contracts.getSntContract()
+  result = $snt.address
 
 proc getSNTBalance*(account: string): string =
-  let snt = contracts.getContract("snt")
-  result = getTokenBalance("0x" & $snt.address, account)
+  let snt = contracts.getSntContract()
+  result = getTokenBalance($snt.address, account)
