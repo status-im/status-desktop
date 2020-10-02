@@ -518,14 +518,22 @@ QtObject:
       return self.fetchingHistoryState[address]
     return true
 
+  proc isHistoryFetched*(self: WalletView, address: string): bool {.slot.} =
+    return self.currentTransactions.rowCount() > 0
+
   proc loadingTrxHistory*(self: WalletView, isLoading: bool) {.signal.}
 
   proc loadTransactionsForAccount*(self: WalletView, address: string) {.slot.} =
+    var bn = "latest"
+    if self.currentTransactions.rowCount() > 0:
+      bn = self.currentTransactions.getLastTxBlockNumber()
+    # spawn'ed function cannot have a 'var' parameter
+    let blockNumber = bn
     self.loadingTrxHistory(true)
     spawnAndSend(self, "setTrxHistoryResult") do:
       $(%*{
         "address": address,
-        "history": getTransfersByAddress(address)
+        "history": getTransfersByAddress(address, blockNumber)
       })
 
   proc setTrxHistoryResult(self: WalletView, historyJSON: string) {.slot.} =
@@ -534,9 +542,10 @@ QtObject:
     let address = historyData["address"].getStr
     let index = self.accounts.getAccountindexByAddress(address)
     if index == -1: return
-    self.accounts.getAccount(index).transactions = transactions
+    self.accounts.getAccount(index).transactions.add(transactions)
     if address == self.currentAccount.address:
-      self.setCurrentTransactions(transactions)
+      self.setCurrentTransactions(
+            self.accounts.getAccount(index).transactions)
     self.loadingTrxHistory(false)
 
   proc resolveENS*(self: WalletView, ens: string) {.slot.} =

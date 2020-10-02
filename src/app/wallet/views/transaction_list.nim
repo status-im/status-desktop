@@ -33,7 +33,10 @@ QtObject:
     result.transactions = @[]
     result.setup
 
-  method rowCount(self: TransactionList, index: QModelIndex = nil): int =
+  proc getLastTxBlockNumber*(self: TransactionList): string =
+    return self.transactions[^1].blockNumber
+
+  method rowCount*(self: TransactionList, index: QModelIndex = nil): int =
     return self.transactions.len
 
   method data(self: TransactionList, index: QModelIndex, role: int): QVariant =
