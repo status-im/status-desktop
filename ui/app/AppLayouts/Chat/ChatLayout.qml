@@ -52,28 +52,8 @@ SplitView {
             }
             destroy()
         }
-        onBlockButtonClicked: {
-            blockContactConfirmationDialog.contactName = name;
-            blockContactConfirmationDialog.contactAddress = address;
-            blockContactConfirmationDialog.parentPopup = profilePopup;
-            blockContactConfirmationDialog.open();
-        }
-        onRemoveButtonClicked: {
-            chatColumn.contactToRemove = address;
-            removeContactConfirmationDialog.parentPopup = profilePopup;
-            removeContactConfirmationDialog.open();
-        }
     }
 
-    
-    BlockContactConfirmationDialog {
-        id: blockContactConfirmationDialog
-        onBlockButtonClicked: {
-            profileModel.blockContact(blockContactConfirmationDialog.contactAddress)
-            blockContactConfirmationDialog.parentPopup.close()
-            blockContactConfirmationDialog.close();
-        }
-    }
 
     ConfirmationDialog {
         id: removeContactConfirmationDialog

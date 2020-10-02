@@ -20,6 +20,7 @@ ListView {
     width: parent.width
 
     model: contacts
+    
     delegate: Contact {
         name: Utils.removeStatusEns(model.name)
         address: model.address
@@ -38,28 +39,16 @@ ListView {
             blockContactConfirmationDialog.open()
         }
         onRemoveContactActionTriggered: {
-            contactList.contactToRemove = address
+            removeContactConfirmationDialog.value = address
             removeContactConfirmationDialog.open()
         }
     }
 
     ProfilePopup {
       id: profilePopup
-      onBlockButtonClicked: {
-          blockContactConfirmationDialog.contactName = name
-          blockContactConfirmationDialog.contactAddress = address
-          blockContactConfirmationDialog.open()
-      }
-      onRemoveButtonClicked: {
-          contactList.contactToRemove = address
-          removeContactConfirmationDialog.open()
-      }
     }
 
-    ButtonGroup {
-        id: contactGroup
-    }
-
+    // TODO: Make BlockContactConfirmationDialog a dynamic component on a future refactor
     BlockContactConfirmationDialog {
         id: blockContactConfirmationDialog
         onBlockButtonClicked: {
@@ -68,17 +57,24 @@ ListView {
         }
     }
 
+    // TODO: Make ConfirmationDialog a dynamic component on a future refactor
     ConfirmationDialog {
         id: removeContactConfirmationDialog
         title: qsTrId("remove-contact")
         //% "Are you sure you want to remove this contact?"
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {
-            if (profileModel.isAdded(contactList.contactToRemove)) {
-              profileModel.removeContact(contactList.contactToRemove)
+            if (profileModel.isAdded(removeContactConfirmationDialog.value)) {
+              profileModel.removeContact(removeContactConfirmationDialog.value);
             }
             removeContactConfirmationDialog.close()
         }
+    }
+
+
+
+    ButtonGroup {
+        id: contactGroup
     }
 }
 /*##^##
