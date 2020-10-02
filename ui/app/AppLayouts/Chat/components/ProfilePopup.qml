@@ -26,8 +26,11 @@ ModalPopup {
     signal blockButtonClicked(name: string, address: string)
     signal removeButtonClicked(address: string)
 
-    function setPopupData(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam) {
-        showQR = false
+    signal contactBlocked(publicKey: string)
+    signal contactAdded(publicKey: string)
+    signal contactRemoved(publicKey: string)
+
+    function openPopup(showFooter, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam) {
         userName = userNameParam || ""
         nickname = nicknameParam || ""
         fromAuthor = fromAuthorParam || ""
@@ -35,10 +38,8 @@ ModalPopup {
         text = textParam || ""
         isEnsVerified = chatsModel.isEnsVerified(this.fromAuthor)
         alias = chatsModel.alias(this.fromAuthor) || ""
-    }
-
-    function openPopup(showFooter, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam) {
-        setPopupData(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam)
+        
+        showQR = false
         noFooter = !showFooter;
         popup.open()
     }
@@ -120,6 +121,36 @@ ModalPopup {
                 onClicked: {
                     showQR = true
                 }
+            }
+        }
+    }
+
+    Item {
+        BlockContactConfirmationDialog {
+            id: blockContactConfirmationDialog
+            onBlockButtonClicked: {
+                profileModel.blockContact(fromAuthor)
+                blockContactConfirmationDialog.close();
+                popup.close()
+
+                contactBlocked(fromAuthor)
+            }
+        }
+
+        ConfirmationDialog {
+            id: removeContactConfirmationDialog
+            // % "Remove contact"
+            title: qsTrId("remove-contact")
+            //% "Are you sure you want to remove this contact?"
+            confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
+            onConfirmButtonClicked: {
+                if (profileModel.isAdded(fromAuthor)) {
+                    profileModel.removeContact(fromAuthor);
+                }
+                removeContactConfirmationDialog.close();
+                popup.close();
+
+                contactRemoved(fromAuthor);
             }
         }
     }
@@ -349,7 +380,11 @@ ModalPopup {
             //% "Block User"
             label: qsTrId("block-user")
             anchors.bottom: parent.bottom
-            onClicked: popup.blockButtonClicked(userName, fromAuthor)
+            onClicked: {
+                blockContactConfirmationDialog.contactName = userName;
+                blockContactConfirmationDialog.contactAddress = fromAuthor;
+                blockContactConfirmationDialog.open();   
+            }
         }
 
         StyledButton {
@@ -364,10 +399,12 @@ ModalPopup {
             anchors.bottom: parent.bottom
             onClicked: {
                 if (profileModel.isAdded(fromAuthor)) {
-                    popup.removeButtonClicked(fromAuthor)
+                    removeContactConfirmationDialog.parentPopup = profilePopup;
+                    removeContactConfirmationDialog.open();
                 } else {
-                    profileModel.addContact(fromAuthor)
-                    profilePopup.close()
+                    profileModel.addContact(fromAuthor);
+                    contactAdded(fromAuthor);
+                    profilePopup.close();
                 }
             }
         }

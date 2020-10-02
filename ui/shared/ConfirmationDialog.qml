@@ -20,6 +20,8 @@ ModalPopup {
     //% "Are you sure you want to this?"
     property string confirmationText: qsTrId("are-you-sure-you-want-to-this-")
 
+    property var value
+
     signal confirmButtonClicked()
 
     Text {
