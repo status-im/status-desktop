@@ -193,7 +193,6 @@ Item {
 
                 // TODO change sendTransaction function to the postMessage one
                 sendDialog.sendTransaction = function (selectedGasLimit, selectedGasPrice, enteredPassword) {
-                    console.log('OK', selectedGasLimit, selectedGasPrice, enteredPassword)
                     request.payload.selectedGasLimit = selectedGasLimit
                     request.payload.selectedGasPrice = selectedGasPrice
                     request.payload.password = enteredPassword
@@ -215,7 +214,7 @@ Item {
                         toastMessage.source = "../../img/loading.svg"
                         toastMessage.iconColor = Style.current.primary
                         toastMessage.iconRotates = true
-                        toastMessage.link = `${walletModel.etherscanLink}/${responseOnj.result}`
+                        toastMessage.link = `${walletModel.etherscanLink}/${responseObj.result}`
                         toastMessage.open()
                     } catch (e) {
                         if (e.message.includes("could not decrypt key with given password")){
