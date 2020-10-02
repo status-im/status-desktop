@@ -121,7 +121,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    app/AppLayouts/Browser/SendTransactionModal.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandButton.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandModal.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandsPopup.qml \
