@@ -122,7 +122,7 @@ QtObject:
         return $ %* {
           "type": ResponseTypes.Web3SendAsyncCallback,
           "messageId": data.messageId,
-          "payload": {
+          "result": {
             "jsonrpc": "2.0",
             "id": data.payload.id,
             "result": if data.payload.rpcMethod == "eth_coinbase": newJString(dappAddress) else: %*[dappAddress]
