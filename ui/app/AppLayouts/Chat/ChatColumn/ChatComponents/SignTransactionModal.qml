@@ -13,6 +13,31 @@ ModalPopup {
     property var selectedAmount
     property var selectedFiatAmount
 
+    property alias transactionSigner: transactionSigner
+
+    property var sendTransaction: function(selectedGasLimit, selectedGasPrice, enteredPassword) {
+        let responseStr = walletModel.sendTransaction(root.selectedAccount.address,
+                                                 root.selectedRecipient.address,
+                                                 root.selectedAsset.address,
+                                                 root.selectedAmount,
+                                                 selectedGasLimit,
+                                                 selectedGasPrice,
+                                                 enteredPassword)
+
+        let response = JSON.parse(responseStr)
+
+        if (response.error) {
+            if (response.result.includes("could not decrypt key with given password")){
+                //% "Wrong password"
+                transactionSigner.validationError = qsTrId("wrong-password")
+                return
+            }
+            sendingError.text = response.result
+            return sendingError.open()
+        }
+        root.close()
+    }
+
     id: root
 
     //% "Send"
@@ -29,28 +54,6 @@ ModalPopup {
 
     onClosed: {
         stack.reset()
-    }
-
-    function sendTransaction() {
-        let responseStr = walletModel.sendTransaction(root.selectedAccount.address,
-                                                 root.selectedRecipient.address,
-                                                 root.selectedAsset.address,
-                                                 root.selectedAmount,
-                                                 gasSelector.selectedGasLimit,
-                                                 gasSelector.selectedGasPrice,
-                                                 transactionSigner.enteredPassword)
-        let response = JSON.parse(responseStr)
-
-        if (response.error) {
-            if (response.result.includes("could not decrypt key with given password")){
-                //% "Wrong password"
-                transactionSigner.validationError = qsTrId("wrong-password")
-                return
-            }
-            sendingError.text = response.result
-            return sendingError.open()
-        }
-        root.close()
     }
 
     TransactionStackView {
@@ -206,7 +209,9 @@ ModalPopup {
                 const validity = stack.currentGroup.validate()
                 if (validity.isValid && !validity.isPending) {
                     if (stack.isLastGroup) {
-                        return root.sendTransaction()
+                        return root.sendTransaction(gasSelector.selectedGasLimit,
+                                                    gasSelector.selectedGasPrice,
+                                                    transactionSigner.enteredPassword)
                     }
                     stack.next()
                 }

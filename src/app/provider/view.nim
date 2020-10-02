@@ -122,12 +122,19 @@ QtObject:
         # TODO make this async
         let response = status.wallet.sendTransaction(fromAddress, to, value, selectedGasLimit, selectedGasPrice, password, success)
         debug "Response", response, success
+        let errorMessage = if not success:
+          if response == "":
+            "web3-response-error"
+          else:
+            response
+        else:
+          ""
+
         return $ %* {
           "type": ResponseTypes.Web3SendAsyncCallback,
           "messageId": data.messageId,
-          # TODO do we get an error code?
-          "error": (if response == "" or not success: newJString("web3-response-error") else: newJNull()),
-          "result": response
+          "error": errorMessage,
+          "result": if (success): response else: ""
         }
       except Exception as e:
         error "Error sending the transaction", msg = e.msg
@@ -135,7 +142,6 @@ QtObject:
           "type": ResponseTypes.Web3SendAsyncCallback,
           "messageId": data.messageId,
           "error": {
-            # TODO where does the code come from?
             "code": 4100,
             "message": e.msg
           }
