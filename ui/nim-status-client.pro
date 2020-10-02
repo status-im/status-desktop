@@ -121,6 +121,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    app/AppLayouts/Browser/SendTransactionModal.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandButton.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandModal.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandsPopup.qml \
@@ -201,6 +202,9 @@ DISTFILES += \
     fonts/InterStatus/InterStatus-ThinItalic.otf \
     Theme.qml \
     app/AppLayouts/Browser/BrowserLayout.qml \
+    app/AppLayouts/Browser/BrowserDialog.qml \
+    app/AppLayouts/Browser/DownloadView.qml \
+    app/AppLayouts/Browser/FindBar.qml \
     app/AppLayouts/Chat/ChatColumn.qml \
     app/AppLayouts/Chat/ChatColumn/samples/MessagesData.qml \
     app/AppLayouts/Chat/ChatColumn/samples/StickerData.qml \

@@ -1,5 +1,5 @@
 import NimQml
-import ../../status/[status, ens, chat/stickers]
+import ../../status/[status, ens, chat/stickers, wallet]
 import ../../status/libstatus/types
 import ../../status/libstatus/core
 import ../../status/libstatus/settings as status_settings
@@ -109,13 +109,37 @@ QtObject:
       }
     
     if SIGN_METHODS.contains(data.payload.rpcMethod):
-      return $ %* { # TODO: send transaction, return transaction hash, etc etc. Disabled in the meantime
-        "type": ResponseTypes.Web3SendAsyncCallback,
-        "messageId": data.messageId,
-        "error": {
-          "code": 4100
+      try:
+        let request = data.request.parseJson
+        let fromAddress = request["params"][0]["from"].getStr()
+        let to = request["params"][0]["to"].getStr()
+        let value = request["params"][0]["value"].getStr()
+        let password = request["password"].getStr()
+        let selectedGasLimit = request["selectedGasLimit"].getStr()
+        let selectedGasPrice = request["selectedGasPrice"].getStr()
+
+        var success: bool
+        # TODO make this async
+        let response = status.wallet.sendTransaction(fromAddress, to, value, selectedGasLimit, selectedGasPrice, password, success)
+        debug "Response", response, success
+        return $ %* {
+          "type": ResponseTypes.Web3SendAsyncCallback,
+          "messageId": data.messageId,
+          # TODO do we get an error code?
+          "error": (if response == "" or not success: newJString("web3-response-error") else: newJNull()),
+          "result": response
         }
-      }
+      except Exception as e:
+        error "Error sending the transaction", msg = e.msg
+        return $ %* {
+          "type": ResponseTypes.Web3SendAsyncCallback,
+          "messageId": data.messageId,
+          "error": {
+            # TODO where does the code come from?
+            "code": 4100,
+            "message": e.msg
+          }
+        }
     
     if ACC_METHODS.contains(data.payload.rpcMethod):
         let dappAddress = status_settings.getSetting[string](Setting.DappsAddress)
