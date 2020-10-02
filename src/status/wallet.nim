@@ -115,10 +115,10 @@ proc estimateTokenGas*(self: WalletModel, source, to, assetAddress, value: strin
   let response = contract.methods["transfer"].estimateGas(tx, transfer, success)
   result = fromHex[int](response)
 
-proc sendTransaction*(self: WalletModel, source, to, value, gas, gasPrice, password: string, success: var bool): string =
+proc sendTransaction*(self: WalletModel, source, to, value, gas, gasPrice, password: string, success: var bool, data = ""): string =
   var tx = transactions.buildTransaction(
     parseAddress(source),
-    eth2Wei(parseFloat(value), 18), gas, gasPrice
+    eth2Wei(parseFloat(value), 18), gas, gasPrice, data
   )
   tx.to = parseAddress(to).some
 

@@ -113,15 +113,21 @@ QtObject:
         let request = data.request.parseJson
         let fromAddress = request["params"][0]["from"].getStr()
         let to = request["params"][0]["to"].getStr()
-        let value = request["params"][0]["value"].getStr()
+        let value = if (request["params"][0]["value"] != nil):
+          request["params"][0]["value"].getStr()
+        else:
+          "0"
         let password = request["password"].getStr()
         let selectedGasLimit = request["selectedGasLimit"].getStr()
         let selectedGasPrice = request["selectedGasPrice"].getStr()
+        let txData = if (request["params"][0]["data"] != nil):
+          request["params"][0]["data"].getStr()
+        else:
+          ""
 
         var success: bool
         # TODO make this async
-        let response = status.wallet.sendTransaction(fromAddress, to, value, selectedGasLimit, selectedGasPrice, password, success)
-        debug "Response", response, success
+        let response = status.wallet.sendTransaction(fromAddress, to, value, selectedGasLimit, selectedGasPrice, password, success, txData)
         let errorMessage = if not success:
           if response == "":
             "web3-response-error"
@@ -134,7 +140,11 @@ QtObject:
           "type": ResponseTypes.Web3SendAsyncCallback,
           "messageId": data.messageId,
           "error": errorMessage,
-          "result": if (success): response else: ""
+          "result": {
+            "jsonrpc": "2.0",
+            "id": data.payload.id,
+            "result": if (success): response else: ""
+          }
         }
       except Exception as e:
         error "Error sending the transaction", msg = e.msg
