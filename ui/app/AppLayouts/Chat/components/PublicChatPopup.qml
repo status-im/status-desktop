@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 import "../data/channelList.js" as ChannelJSON
 import "./"
 
@@ -77,24 +78,11 @@ ModalPopup {
         }
     }
 
-    footer: Button {
-        width: 44
-        height: 44
+    footer: StatusButton {
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        background: Rectangle {
-            color: "transparent"
-        }
-        SVGImage {
-            source: channelName.text == "" ? "../../../img/arrow-button-inactive.svg" : "../../../img/arrow-btn-active.svg"
-            width: 50
-            height: 50
-        }
-        MouseArea {
-            id: btnMAJoinChat
-            cursorShape: Qt.PointingHandCursor
-            anchors.fill: parent
-            onClicked : doJoin()
-        }
+        onClicked : doJoin()
+        //% "Start chat"
+        text: qsTrId("start-chat")
     }
 }
