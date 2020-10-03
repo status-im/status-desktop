@@ -58,6 +58,8 @@ Item {
             anchors.topMargin: Style.current.smallPadding
             anchors.fill: parent
             font.family: Style.current.fontRegular.name
+            color: Style.current.textColor
+            placeholderTextColor: Style.current.darkGrey
         }
 
         MouseArea {

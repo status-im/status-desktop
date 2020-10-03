@@ -42,6 +42,12 @@ ModalPopup {
     }
 
     StyledText {
+        text: Utils.seedPhraseWordCountText(mnemonicTextField.text)
+        anchors.right: parent.right
+        anchors.top: mnemonicTextField.bottom
+    }
+
+    StyledText {
         id: errorText
         visible: !!text && text != ""
         color: Style.current.danger
