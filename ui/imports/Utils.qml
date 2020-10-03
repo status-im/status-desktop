@@ -147,4 +147,24 @@ QtObject {
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|_|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
     }
+
+    function getTick(wordCount) {
+        return (wordCount === 12 || wordCount === 15 ||
+                wordCount === 18 || wordCount === 21 || wordCount === 24)
+                ? "✓ " : "";
+    }
+
+    function countWords(text) {
+        if (text.trim() === "")
+            return 0;
+        return text.trim().split(" ").length;
+    }
+
+    /**
+     * Returns text in the format "✓ 12 words" for seed phrases input boxes
+     */
+    function seedPhraseWordCountText(text) {
+        let wordCount = countWords(text);
+        return getTick(wordCount) + wordCount.toString() + " words";
+    }
 }

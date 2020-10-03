@@ -82,6 +82,12 @@ ModalPopup {
         validationError: popup.seedValidationError
     }
 
+    StyledText {
+        text: Utils.seedPhraseWordCountText(accountSeedInput.text)
+        anchors.right: parent.right
+        anchors.top: accountSeedInput.bottom
+    }
+
     Input {
         id: accountNameInput
         anchors.top: accountSeedInput.bottom
