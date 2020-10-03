@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../imports"
+import "../shared/status"
 import "./"
 
 ModalPopup {
@@ -26,6 +27,7 @@ ModalPopup {
 
     Text {
         text: confirmationDialog.confirmationText
+        color: Style.current.textColor
         font.pixelSize: 15
         anchors.left: parent.left
         anchors.right: parent.right
@@ -37,14 +39,11 @@ ModalPopup {
         width: parent.width
         height: children[0].height
 
-        StyledButton {
+        StatusButton {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
-            btnColor: Style.current.lightRed
-            btnBorderWidth: 1
-            btnBorderColor: Style.current.grey
-            textColor: Style.current.red
-            label: confirmationDialog.confirmButtonLabel
+            color: Style.current.red
+            text: confirmationDialog.confirmButtonLabel
             anchors.bottom: parent.bottom
             onClicked: confirmationDialog.confirmButtonClicked()
         }

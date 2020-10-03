@@ -8,6 +8,7 @@ Button {
     property string type: "primary"
     property string size: "large"
     property string state: "default"
+    property string color: Style.current.buttonForegroundColor
 
     id: control
     font.pixelSize: size === "small" ? 13 : 15
@@ -25,7 +26,7 @@ Button {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             anchors.fill: parent
-            color: !enabled ? Style.current.buttonDisabledForegroundColor : Style.current.buttonForegroundColor
+            color: !enabled ? Style.current.buttonDisabledForegroundColor : control.color
             visible: !loadingIndicator.active
         }
 
