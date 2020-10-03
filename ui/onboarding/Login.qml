@@ -194,9 +194,8 @@ Item {
                 onGenKeyClicked()
             }
 
-            StyledText {
+            StatusButton {
                 id: generateKeysLinkText
-                color: Style.current.buttonForegroundColor
                 //% "Generate new keys"
                 text: qsTrId("generate-new-keys")
                 font.pixelSize: 13
