@@ -5,11 +5,16 @@ import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
+import "Privileges/"
 
 Item {
     id: privacyContainer
     Layout.fillHeight: true
     Layout.fillWidth: true
+
+    property Component dappListPopup: DappList {
+        onClosed: destroy()
+    }
 
     Item {
         id: profileImgNameContainer
@@ -74,6 +79,51 @@ Item {
             anchors.top: backupSeedPhrase.bottom
             anchors.topMargin: Style.current.bigPadding
         }
+
+        Item {
+            id: dappPermissions
+            anchors.top: backupSeedPhrase.bottom
+            anchors.topMargin: Style.current.padding
+            height: dappPermissionsText.height
+            width: parent.width
+
+            StyledText {
+                id: dappPermissionsText
+                text: qsTr("Set DApp access permissions")
+                font.pixelSize: 15
+            }
+
+            SVGImage {
+                id: caret2
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.verticalCenter: dappPermissionsText.verticalCenter
+                source: "../../../img/caret.svg"
+                width: 13
+                height: 7
+                rotation: -90
+            }
+            
+            ColorOverlay {
+                anchors.fill: caret2
+                source: caret
+                color: Style.current.darkGrey
+                rotation: -90
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: dappListPopup.createObject(privacyContainer).open()
+                cursorShape: Qt.PointingHandCursor
+            }
+        }
+
+        Separator {
+            id: separator2
+            anchors.top: dappPermissions.bottom
+            anchors.topMargin: Style.current.bigPadding
+        }
+
         StatusSectionHeadline {
             id: labelPrivacy
             //% "Privacy"
