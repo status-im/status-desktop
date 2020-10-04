@@ -34,11 +34,18 @@ proc newPermissionsModel*(events: EventEmitter): PermissionsModel =
 proc init*(self: PermissionsModel) =
   discard
 
+proc getDapps*(self: PermissionsModel): seq[string] =
+  let response = callPrivateRPC("permissions_getDappPermissions")
+  result = @[]
+  for dapps in response.parseJson["result"].getElems():
+    result.add(dapps["dapp"].getStr())
+
 proc getPermissions*(self: PermissionsModel, dapp: string): HashSet[Permission] =
   let response = callPrivateRPC("permissions_getDappPermissions")
   result = initHashSet[Permission]()
   for dappPermission in response.parseJson["result"].getElems():
     if dappPermission["dapp"].getStr() == dapp:
+      if not dappPermission.hasKey("permissions"): return
       for permission in dappPermission["permissions"].getElems():
         result.incl(permission.getStr().toPermission())
 
@@ -54,12 +61,19 @@ proc addPermission*(self: PermissionsModel, dapp: string, permission: Permission
   }])
 
 proc revokePermission*(self: PermissionsModel, dapp: string, permission: Permission) =
-  # TODO: implement
-  discard
+  var permissions = self.getPermissions(dapp)
+  permissions.excl(permission)
+
+  if permissions.len == 0:
+    discard callPrivateRPC("permissions_deleteDappPermissions", %*[dapp])
+  else:
+    discard callPrivateRPC("permissions_addDappPermissions", %*[{
+      "dapp": dapp,
+      "permissions": permissions.toSeq()
+    }])
 
 proc clearPermissions*(self: PermissionsModel, dapp: string) =
-  # TODO implement
-  discard
+  discard callPrivateRPC("permissions_deleteDappPermissions", %*[dapp])
 
 proc clearPermissions*(self: PermissionsModel) =
   let response = callPrivateRPC("permissions_getDappPermissions")

@@ -1,5 +1,5 @@
 import NimQml, sequtils, strutils, sugar, os
-import views/[mailservers_list, ens_manager, contact_list, profile_info, device_list]
+import views/[mailservers_list, ens_manager, contact_list, profile_info, device_list, dapp_list, permission_list]
 import ../../status/profile/[mailserver, profile, devices]
 import ../../status/profile as status_profile
 import ../../status/contacts as status_contacts
@@ -22,6 +22,8 @@ QtObject:
     addedContacts*: ContactList
     blockedContacts*: ContactList
     deviceList*: DeviceList
+    dappList*: DappList
+    permissionList*: PermissionList
     network: string
     status*: Status
     isDeviceSetup: bool
@@ -40,6 +42,8 @@ QtObject:
     if not self.deviceList.isNil: self.deviceList.delete
     if not self.ens.isNil: self.ens.delete
     if not self.profile.isNil: self.profile.delete
+    if not self.dappList.isNil: self.dappList.delete
+    if not self.permissionList.isNil: self.permissionList.delete
     self.QObject.delete
 
   proc newProfileView*(status: Status, changeLanguage: proc(locale: string)): ProfileView =
@@ -51,6 +55,8 @@ QtObject:
     result.addedContacts = newContactList()
     result.blockedContacts = newContactList()
     result.deviceList = newDeviceList()
+    result.dappList = newDappList(status)
+    result.permissionList = newPermissionList(status)
     result.ens = newEnsManager(status)
     result.network = ""
     result.status = status
@@ -240,6 +246,18 @@ QtObject:
 
   QtProperty[QVariant] deviceList:
     read = getDeviceList
+
+  proc getDappList(self: ProfileView): QVariant {.slot.} =
+    return newQVariant(self.dappList)
+
+  QtProperty[QVariant] dappList:
+    read = getDappList
+
+  proc getPermissionList(self: ProfileView): QVariant {.slot.} =
+    return newQVariant(self.permissionList)
+
+  QtProperty[QVariant] permissionList:
+    read = getPermissionList
 
   proc getEnsManager(self: ProfileView): QVariant {.slot.} =
     return newQVariant(self.ens)
