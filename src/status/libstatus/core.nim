@@ -49,3 +49,9 @@ proc getBlockByNumber*(blockNumber: string): string =
 
 proc getTransfersByAddress*(address: string, toBlock: string, limit: string): string =
   result = callPrivateRPC("wallet_getTransfersByAddress", %* [address, toBlock, limit])
+
+proc signMessage*(rpcParams: string): string =
+  return $nim_status.signMessage(rpcParams)
+
+proc signTypedData*(data: string, address: string, password: string): string =
+  return $nim_status.signTypedData(data, address, password)

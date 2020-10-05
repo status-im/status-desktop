@@ -1,6 +1,7 @@
 import NimQml
 import ../../status/[status, ens, chat/stickers, wallet]
 import ../../status/libstatus/types
+import ../../status/libstatus/accounts
 import ../../status/libstatus/core
 import ../../status/libstatus/settings as status_settings
 import json, json_serialization, sets, strutils
@@ -9,8 +10,8 @@ import nbaser
 import stew/byteutils
 from base32 import nil
 
-const AUTH_METHODS = toHashSet(["eth_accounts", "eth_coinbase", "eth_sendTransaction", "eth_sign", "keycard_signTypedData", "eth_signTypedData", "personal_sign", "personal_ecRecover"])
-const SIGN_METHODS = toHashSet(["eth_sendTransaction", "personal_sign", "eth_signTypedData", "eth_signTypedData_v3"])
+const AUTH_METHODS = toHashSet(["eth_accounts", "eth_coinbase", "eth_sendTransaction", "eth_sign", "keycard_signTypedData", "eth_signTypedData", "eth_signTypedData_v3", "personal_sign", "personal_ecRecover"])
+const SIGN_METHODS = toHashSet(["eth_sign", "personal_sign", "eth_signTypedData", "eth_signTypedData_v3"])
 const ACC_METHODS = toHashSet(["eth_accounts", "eth_coinbase"])
 
 const IPFS_SCHEME = "https"
@@ -65,7 +66,7 @@ proc toWeb3SendAsyncReadOnly(message: string): Web3SendAsyncReadOnly =
     request: $data["payload"],
     hostname: data{"hostname"}.getStr(),
     payload: Payload(
-      id: data["payload"]["id"],
+      id: data["payload"]{"id"},
       rpcMethod: data["payload"]["method"].getStr()
     )
   )
@@ -108,7 +109,7 @@ QtObject:
         }
       }
     
-    if SIGN_METHODS.contains(data.payload.rpcMethod):
+    if data.payload.rpcMethod == "eth_sendTransaction":
       try:
         let request = data.request.parseJson
         let fromAddress = request["params"][0]["from"].getStr()
@@ -120,7 +121,7 @@ QtObject:
         let password = request["password"].getStr()
         let selectedGasLimit = request["selectedGasLimit"].getStr()
         let selectedGasPrice = request["selectedGasPrice"].getStr()
-        let txData = if (request["params"][0]["data"] != nil):
+        let txData = if (request["params"][0].hasKey("data") and request["params"][0]["data"].kind != JNull):
           request["params"][0]["data"].getStr()
         else:
           ""
@@ -156,6 +157,52 @@ QtObject:
             "message": e.msg
           }
         }
+
+    if SIGN_METHODS.contains(data.payload.rpcMethod):
+      try: 
+        let request = data.request.parseJson
+        var params = request["params"]
+        let password = hashPassword(request["password"].getStr())
+        let dappAddress = status_settings.getSetting[string](Setting.DappsAddress)
+        var rpcResult = "{}"
+
+        case data.payload.rpcMethod:
+          of "eth_signTypedData", "eth_signTypedData_v3":
+            rpcResult = signTypedData(params[1].getStr(), dappAddress, password)
+          else:
+            rpcResult = signMessage($ %* {
+              "data": params[0].getStr(),
+              "password": password,
+              "account": dappAddress
+            })
+        
+        let jsonRpcResult = rpcResult.parseJson
+        let success: bool = not jsonRpcResult.hasKey("error")
+        let errorMessage = if success: "" else: jsonRpcResult["error"]{"message"}.getStr()
+        let response = if success: jsonRpcResult["result"].getStr() else: ""
+
+        return $ %* {
+          "type": ResponseTypes.Web3SendAsyncCallback,
+          "messageId": data.messageId,
+          "error": errorMessage,
+          "result": {
+            "jsonrpc": "2.0",
+            "result": if (success): response else: ""
+          }
+        }
+
+      except Exception as e:
+          error "Error signing message", msg = e.msg
+          return $ %* {
+            "type": ResponseTypes.Web3SendAsyncCallback,
+            "messageId": data.messageId,
+            "error": {
+              "code": 4100,
+              "message": e.msg
+            }
+          }
+
+
     
     if ACC_METHODS.contains(data.payload.rpcMethod):
         let dappAddress = status_settings.getSetting[string](Setting.DappsAddress)
@@ -247,6 +294,10 @@ QtObject:
 
   proc getHost*(self: Web3ProviderView, url: string): string {.slot.} =
     result = url_host(url)
+
+  proc signMessage*(self: Web3ProviderView, payload: string, password: string) {.slot.} =
+    let jsonPayload = payload.parseJson
+
 
   proc init*(self: Web3ProviderView) =
     self.setDappsAddress(status_settings.getSetting[string](Setting.DappsAddress))
