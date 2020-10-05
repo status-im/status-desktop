@@ -47,7 +47,7 @@ Item {
                 anchors.leftMargin: Style.current.smallPadding
                 anchors.top: assetInfoImage.top
                 anchors.topMargin: 0
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
             }
             StyledText {
                 id: assetFullTokenName
@@ -57,7 +57,7 @@ Item {
                 anchors.left: assetInfoImage.right
                 anchors.leftMargin: Style.current.smallPadding
                 color: Style.current.darkGrey
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 width: 330
             }
             CheckBox  {
@@ -120,7 +120,7 @@ Item {
                     id: customLbl
                     //% "Custom"
                     text: qsTrId("custom")
-                    font.pixelSize: 13
+                    font.pixelSize: Style.current.secondaryTextFontSize
                     color: Style.current.secondaryText
                     height: 20
                 }
@@ -150,7 +150,7 @@ Item {
                     id: defaultLbl
                     //% "Default"
                     text: qsTrId("default")
-                    font.pixelSize: 13
+                    font.pixelSize: Style.current.secondaryTextFontSize
                     color: Style.current.secondaryText
                     height: 20
                 }

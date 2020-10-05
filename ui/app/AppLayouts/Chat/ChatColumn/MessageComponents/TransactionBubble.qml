@@ -122,7 +122,7 @@ Item {
             anchors.topMargin: Style.current.halfPadding
             anchors.left: parent.left
             anchors.leftMargin: root.innerMargin
-            font.pixelSize: 13
+            font.pixelSize: Style.current.secondaryTextFontSize
         }
 
         Item {
@@ -157,7 +157,7 @@ Item {
                 text: root.fiatValue
                 anchors.top: tokenText.bottom
                 anchors.left: tokenText.left
-                font.pixelSize: 13
+                font.pixelSize: Style.current.secondaryTextFontSize
             }
         }
 
@@ -215,7 +215,7 @@ Item {
             anchors.rightMargin: bubbleLoader.active ? 0 : root.innerMargin
             anchors.bottom: bubbleLoader.active ? bubbleLoader.bottom : buttonsLoader.top
             anchors.bottomMargin: bubbleLoader.active ? -root.innerMargin : 7
-            font.pixelSize: 10
+            font.pixelSize: Style.current.infoTextFontSize
         }
     }
 }

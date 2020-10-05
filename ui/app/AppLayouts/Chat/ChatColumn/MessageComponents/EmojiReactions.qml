@@ -90,7 +90,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: emojiImage.right
                 anchors.leftMargin: root.imageMargin
-                font.pixelSize: 12
+                font.pixelSize: Style.current.tertiaryTextFontSize
                 color: modelData.currentUserReacted ? Style.current.currentUserTextColor : Style.current.textColor
             }
 

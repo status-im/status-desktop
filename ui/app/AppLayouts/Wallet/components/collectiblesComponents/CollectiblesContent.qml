@@ -46,7 +46,7 @@ ScrollView {
                     text: qsTrId("something-went-wrong")
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: Style.current.secondaryText
-                    font.pixelSize: 13
+                    font.pixelSize: Style.current.secondaryTextFontSize
                 }
 
                 StyledButton {

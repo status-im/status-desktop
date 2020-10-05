@@ -35,7 +35,7 @@ Item {
                 anchors.leftMargin: Style.current.smallPadding
                 anchors.top: assetInfoImage.top
                 anchors.topMargin: 0
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
             }
             StyledText {
                 id: assetFullTokenName
@@ -45,14 +45,14 @@ Item {
                 anchors.left: assetInfoImage.right
                 anchors.leftMargin: Style.current.smallPadding
                 color: Style.current.darkGrey
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
             }
             StyledText {
                 id: assetValue
                 text: value.toUpperCase()
                 anchors.right: parent.right
                 anchors.rightMargin: 0
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 font.strikeout: false
             }
             StyledText {
@@ -63,7 +63,7 @@ Item {
                 anchors.rightMargin: 0
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 0
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
             }
         }
     }

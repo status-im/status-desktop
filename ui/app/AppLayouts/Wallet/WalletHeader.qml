@@ -55,7 +55,7 @@ Item {
     Address {
         id: walletAddress
         text: currentAccount.address
-        font.pixelSize: 13
+        font.pixelSize: Style.current.secondaryTextFontSize
         anchors.right: title.right
         anchors.rightMargin: 0
         anchors.top: title.bottom

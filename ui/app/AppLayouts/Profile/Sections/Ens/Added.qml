@@ -17,7 +17,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: 20
+        font.pixelSize: Style.current.actionTextFontSize
     }
 
 
@@ -35,7 +35,7 @@ Item {
             text: "✓"
             opacity: 0.7
             font.weight: Font.Bold
-            font.pixelSize: 18
+            font.pixelSize: Style.current.altTitleTextFontSize
             color: Style.current.white
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -49,7 +49,7 @@ Item {
         anchors.top: circle.bottom
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: 24
+        font.pixelSize: Style.current.superTitleTextFontSize
         anchors.left: parent.left
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter
@@ -62,7 +62,7 @@ Item {
         text: qsTrId("-1-is-now-connected-with-your-chat-key-and-can-be-used-in-status-").arg(ensUsername)
         anchors.top: title.bottom
         anchors.topMargin: 24
-        font.pixelSize: 14
+        font.pixelSize: Style.current.altPrimaryTextFontSize
         anchors.left: parent.left
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter

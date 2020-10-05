@@ -27,7 +27,7 @@ ModalPopup {
               :
               //% "Once you select a username, you won’t be able to disable it afterwards. You will only be able choose a different username to display."
               qsTrId("once-you-select-a-username--you-won-t-be-able-to-disable-it-afterwards--you-will-only-be-able-choose-a-different-username-to-display-")
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         wrapMode: Text.WordWrap
         width: parent.width
     }
@@ -37,7 +37,7 @@ ModalPopup {
         anchors.top: lbl1.bottom
         anchors.topMargin: Style.current.padding
         text: profileModel.ens.preferredUsername
-        font.pixelSize: 17
+        font.pixelSize: Style.current.altTitleTextFontSize
         font.weight: Font.Bold
     }
     

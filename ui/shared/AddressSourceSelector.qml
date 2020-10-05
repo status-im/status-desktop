@@ -30,7 +30,7 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 verticalAlignment: Text.AlignVCenter
                 height: 24
             }
@@ -53,7 +53,7 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: Style.current.padding
                     anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                     color: menuItem.highlighted ? Style.current.primaryMenuItemTextHover : Style.current.textColor
                 }

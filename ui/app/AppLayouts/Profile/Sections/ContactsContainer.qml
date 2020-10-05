@@ -42,7 +42,7 @@ Item {
             anchors.left: addButton.right
             anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: addButton.verticalCenter
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
         }
 
         MouseArea {
@@ -79,7 +79,7 @@ Item {
             anchors.left: blockButton.right
             anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: blockButton.verticalCenter
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
         }
 
         MouseArea {
@@ -169,7 +169,7 @@ Item {
 
           StyledText {
               anchors.horizontalCenter: parent.horizontalCenter
-              font.pixelSize: 12
+              font.pixelSize: Style.current.tertiaryTextFontSize
               color: Style.current.darkGrey
               //% "User not found"
               text: qsTrId("user-not-found")
@@ -179,7 +179,7 @@ Item {
           StyledText {
               id: contactUsername
               text: profileModel.contactToAddUsername + " • "
-              font.pixelSize: 12
+              font.pixelSize: Style.current.tertiaryTextFontSize
               color: Style.current.darkGrey
               visible: !!profileModel.contactToAddPubKey
           }
@@ -189,7 +189,7 @@ Item {
               text: profileModel.contactToAddPubKey
               anchors.left: contactUsername.right
               width: 100
-              font.pixelSize: 12
+              font.pixelSize: Style.current.tertiaryTextFontSize
               elide: Text.ElideMiddle
               color: Style.current.darkGrey
               visible: !!profileModel.contactToAddPubKey
@@ -232,7 +232,7 @@ Item {
             anchors.verticalCenterOffset: -Style.current.bigPadding
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: 15
+            font.pixelSize: Style.current.tertiaryTextFontSize
             color: Style.current.darkGrey
         }
 

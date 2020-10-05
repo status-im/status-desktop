@@ -93,7 +93,7 @@ ModalPopup {
         anchors.top: chatKey.bottom
         anchors.topMargin: Style.current.padding
         color: Style.current.darkGrey
-        font.pixelSize: 12
+        font.pixelSize: Style.current.tertiaryTextFontSize
     }
 
     Item {

@@ -4,7 +4,7 @@ import "../../../../../imports"
 
 StyledText {
     id: dateGroupLbl
-    font.pixelSize: 13
+    font.pixelSize: Style.current.secondaryTextFontSize
     color: Style.current.darkGrey
     horizontalAlignment: Text.AlignHCenter
     anchors.horizontalCenter: parent.horizontalCenter

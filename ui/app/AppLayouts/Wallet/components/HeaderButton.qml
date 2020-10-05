@@ -35,7 +35,7 @@ Rectangle {
         anchors.left: buttonImage.right
         anchors.leftMargin: walletMenu.btnMargin
         anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: 13
+        font.pixelSize: Style.current.secondaryTextFontSize
         color: Style.current.blue
     }
 

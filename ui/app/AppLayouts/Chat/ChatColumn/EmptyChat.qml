@@ -32,7 +32,7 @@ Item {
         anchors.right: walkieTalkieImage.right
         anchors.left: walkieTalkieImage.left
         anchors.top: walkieTalkieImage.bottom
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.darkGrey
         onLinkActivated: function (linkClicked) {
             switch (linkClicked) {

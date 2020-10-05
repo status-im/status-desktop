@@ -25,7 +25,7 @@ Item {
             //% "Loading image..."
             text: loadingImage.hasError ? qsTrId("error-loading-the-image") : qsTrId("loading-image---")
             color: loadingImage.hasError ? Style.current.red : Style.current.textColor
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
         }

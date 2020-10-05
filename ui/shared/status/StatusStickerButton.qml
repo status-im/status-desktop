@@ -133,7 +133,7 @@ Item {
         id: textMetrics
         font.weight: Font.Medium
         font.family: Style.current.fontBold.name
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         text: root.text
     }
 
@@ -221,7 +221,7 @@ Item {
             text: root.text
             font.weight: Font.Medium
             font.family: Style.current.fontBold.name
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             states: [
                 State {
                     name: "installed"

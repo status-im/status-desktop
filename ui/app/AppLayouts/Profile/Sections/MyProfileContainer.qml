@@ -54,7 +54,7 @@ Item {
             anchors.leftMargin: 8
             anchors.top: profileImg.top
             font.weight: Font.Medium
-            font.pixelSize: 15
+            font.pixelSize: Style.current.tertiaryTextFontSize
         }
 
         Address {
@@ -63,7 +63,7 @@ Item {
             anchors.bottom: profileImg.bottom
             anchors.left: profileName.left
             width: 200
-            font.pixelSize: 15
+            font.pixelSize: Style.current.tertiaryTextFontSize
         }
 
         SVGImage {

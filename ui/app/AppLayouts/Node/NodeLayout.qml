@@ -25,7 +25,7 @@ Item {
                 Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                font.pixelSize: 20
+                font.pixelSize: Style.current.actionTextFontSize
             }
             StyledText {
                 id: test
@@ -35,7 +35,7 @@ Item {
                 Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                font.pixelSize: 20
+                font.pixelSize: Style.current.actionTextFontSize
             }
         }
 
@@ -95,7 +95,7 @@ Item {
                         text: ""
                         leftPadding: 0
                         padding: 0
-                        font.pixelSize: 14
+                        font.pixelSize: Style.current.altPrimaryTextFontSize
                         //% "Type json-rpc message... e.g {\"method\": \"eth_accounts\"}"
                         placeholderText: qsTrId("type-json-rpc-message")
                         anchors.right: rpcSendBtn.left

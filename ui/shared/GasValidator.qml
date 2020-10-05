@@ -71,7 +71,7 @@ Item {
             text: ""
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: 13
+            font.pixelSize: Style.current.secondaryTextFontSize
             height: 18
             color: Style.current.danger
         }

@@ -77,7 +77,7 @@ Rectangle {
         anchors.rightMargin: Style.current.smallPadding
         elide: Text.ElideRight
         font.weight: Font.Medium
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         anchors.left: channelIcon.visible ? channelIcon.right : contactImage.right
         anchors.leftMargin: channelIcon.visible ? 2 : Style.current.padding
         anchors.top: !isCompact ? parent.top : undefined
@@ -105,7 +105,7 @@ Rectangle {
         elide: Text.ElideRight
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.smallPadding
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         anchors.left: contactImage.right
         anchors.leftMargin: Style.current.padding
         color: Style.current.darkGrey
@@ -154,7 +154,7 @@ Rectangle {
             anchors.top: !isCompact ? parent.top : undefined
             anchors.topMargin: !isCompact ? Style.current.smallPadding : 0
             anchors.verticalCenter: !isCompact ? undefined : parent.verticalCenter
-            font.pixelSize: 11
+            font.pixelSize: Style.current.altInfoTextFontSize
             color: Style.current.darkGrey
     }
     Rectangle {
@@ -172,7 +172,7 @@ Rectangle {
         StyledText {
             id: contactNumberChats
             text: wrapper.hasMentions ? '@' : (wrapper.unviewedMessagesCount < 100 ? wrapper.unviewedMessagesCount : "99")
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             color: Style.current.white

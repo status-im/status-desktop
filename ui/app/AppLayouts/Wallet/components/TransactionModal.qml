@@ -23,7 +23,7 @@ ModalPopup {
       // TODO get the right value
       //% "9999 Confirmations"
       text: qsTrId("9999-confirmations")
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
     }
 
     StyledText {
@@ -31,7 +31,7 @@ ModalPopup {
       //% "When the transaction has 12 confirmations you can consider it settled."
       text: qsTrId("confirmations-helper-text")
       wrapMode: Text.WordWrap
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.darkGrey
       anchors.top: confirmationsCount.bottom
@@ -62,7 +62,7 @@ ModalPopup {
       id: labelBlock
       //% "Block"
       text: qsTrId("block")
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.darkGrey
     }
@@ -70,7 +70,7 @@ ModalPopup {
     StyledText {
       id: valueBlock
       text: blockNumber
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       anchors.left: labelBlock.right
       anchors.leftMargin: Style.current.padding
     }
@@ -90,7 +90,7 @@ ModalPopup {
       id: labelHash
       //% "Hash"
       text: qsTrId("hash")
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.darkGrey
     }
@@ -101,7 +101,7 @@ ModalPopup {
       width: 160
       maxWidth: parent.width - labelHash.width - Style.current.padding
       color: Style.current.textColor
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       anchors.left: labelHash.right
       anchors.leftMargin: Style.current.padding
     }
@@ -119,7 +119,7 @@ ModalPopup {
       id: labelFrom
       //% "From"
       text: qsTrId("from")
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.darkGrey
     }
@@ -129,7 +129,7 @@ ModalPopup {
       text: fromAddress
       color: Style.current.textColor
       width: 160
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       anchors.left: labelFrom.right
       anchors.leftMargin: Style.current.padding
     }
@@ -147,7 +147,7 @@ ModalPopup {
       id: labelTo
       //% "To"
       text: qsTrId("to")
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.darkGrey
     }
@@ -157,7 +157,7 @@ ModalPopup {
       text: to
       color: Style.current.textColor
       width: 160
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       anchors.left: labelTo.right
       anchors.leftMargin: Style.current.padding
     }
@@ -175,7 +175,7 @@ ModalPopup {
       id: labelGasLimit
       //% "Gas limit"
       text: qsTrId("gas-limit")
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.darkGrey
     }
@@ -183,7 +183,7 @@ ModalPopup {
     StyledText {
       id: valueGasLimit
       text: gasLimit
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       anchors.left: labelGasLimit.right
       anchors.leftMargin: Style.current.padding
     }
@@ -201,7 +201,7 @@ ModalPopup {
       id: labelGasPrice
       //% "Gas price"
       text: qsTrId("gas-price")
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.darkGrey
     }
@@ -209,7 +209,7 @@ ModalPopup {
     StyledText {
       id: valueGasPrice
       text: gasPrice
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       anchors.left: labelGasPrice.right
       anchors.leftMargin: Style.current.padding
     }
@@ -227,7 +227,7 @@ ModalPopup {
       id: labelGasUsed
       //% "Gas used"
       text: qsTrId("gas-used")
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.darkGrey
     }
@@ -235,7 +235,7 @@ ModalPopup {
     StyledText {
       id: valueGasUsed
       text: gasUsed
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       anchors.left: labelGasUsed.right
       anchors.leftMargin: Style.current.padding
     }
@@ -253,7 +253,7 @@ ModalPopup {
       id: labelNonce
       //% "Nonce"
       text: qsTrId("nonce")
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.darkGrey
     }
@@ -261,7 +261,7 @@ ModalPopup {
     StyledText {
       id: valueNonce
       text: nonce
-      font.pixelSize: 14
+      font.pixelSize: Style.current.altPrimaryTextFontSize
       anchors.left: labelNonce.right
       anchors.leftMargin: Style.current.padding
     }

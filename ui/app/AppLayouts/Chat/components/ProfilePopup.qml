@@ -67,7 +67,7 @@ ModalPopup {
             anchors.left: profilePic.right
             anchors.leftMargin: Style.current.smallPadding
             font.bold: true
-            font.pixelSize: 14
+            font.pixelSize: Style.current.altPrimaryTextFontSize
             readOnly: true
             wrapMode: Text.WordWrap
         }
@@ -80,7 +80,7 @@ ModalPopup {
             anchors.leftMargin: Style.current.smallPadding
             anchors.top: profileName.bottom
             anchors.topMargin: 2
-            font.pixelSize: 14
+            font.pixelSize: Style.current.altPrimaryTextFontSize
             color: Style.current.secondaryText
         }
 
@@ -146,7 +146,7 @@ ModalPopup {
             visible: isEnsVerified
             //% "ENS username"
             text: qsTrId("ens-username")
-            font.pixelSize: 13
+            font.pixelSize: Style.current.secondaryTextFontSize
             font.weight: Font.Medium
             color: Style.current.secondaryText
             anchors.top: parent.top
@@ -158,7 +158,7 @@ ModalPopup {
             visible: isEnsVerified
             height: isEnsVerified ? 20 : 0
             text: userName.substr(1)
-            font.pixelSize: 14
+            font.pixelSize: Style.current.altPrimaryTextFontSize
             anchors.top: labelEnsUsername.bottom
             anchors.topMargin: Style.current.smallPadding
         }
@@ -175,7 +175,7 @@ ModalPopup {
             id: labelChatKey
             //% "Chat key"
             text: qsTrId("chat-key")
-            font.pixelSize: 13
+            font.pixelSize: Style.current.secondaryTextFontSize
             font.weight: Font.Medium
             color: Style.current.secondaryText
             anchors.top: isEnsVerified ? valueEnsName.bottom : parent.top
@@ -188,7 +188,7 @@ ModalPopup {
             width: 160
             maxWidth: parent.width - (3 * Style.current.smallPadding) - copyBtn.width
             color: Style.current.textColor
-            font.pixelSize: 14
+            font.pixelSize: Style.current.altPrimaryTextFontSize
             anchors.top: labelChatKey.bottom
             anchors.topMargin: Style.current.smallPadding
         }
@@ -214,7 +214,7 @@ ModalPopup {
             id: labelShareURL
             //% "Share Profile URL"
             text: qsTrId("share-profile-url")
-            font.pixelSize: 13
+            font.pixelSize: Style.current.secondaryTextFontSize
             font.weight: Font.Medium
             color: Style.current.secondaryText
             anchors.top: separator.bottom
@@ -225,7 +225,7 @@ ModalPopup {
             id: valueShareURL
             text: "https://join.status.im/u/" + fromAuthor.substr(
                       0, 4) + "..." + fromAuthor.substr(fromAuthor.length - 5)
-            font.pixelSize: 14
+            font.pixelSize: Style.current.altPrimaryTextFontSize
             anchors.top: labelShareURL.bottom
             anchors.topMargin: Style.current.smallPadding
         }
@@ -250,7 +250,7 @@ ModalPopup {
             id: chatSettings
             //% "Chat settings"
             text: qsTrId("chat-settings")
-            font.pixelSize: 13
+            font.pixelSize: Style.current.secondaryTextFontSize
             font.weight: Font.Medium
             color: Style.current.secondaryText
             anchors.top: separator2.bottom
@@ -261,7 +261,7 @@ ModalPopup {
             id: nicknameTitle
             //% "Nickname"
             text: qsTrId("nickname")
-            font.pixelSize: 14
+            font.pixelSize: Style.current.altPrimaryTextFontSize
             anchors.top: chatSettings.bottom
             anchors.topMargin: Style.current.smallPadding
         }

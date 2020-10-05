@@ -63,7 +63,7 @@ Item {
         //% "Network fee"
         text: qsTrId("network-fee")
         font.weight: Font.Medium
-        font.pixelSize: 13
+        font.pixelSize: Style.current.secondaryTextFontSize
         color: Style.current.textColor
     }
 
@@ -72,7 +72,7 @@ Item {
         anchors.top: parent.top
         anchors.right: parent.right
         font.weight: Font.Medium
-        font.pixelSize: 13
+        font.pixelSize: Style.current.secondaryTextFontSize
         color: Style.current.secondaryText
     }
 
@@ -106,7 +106,7 @@ Item {
             anchors.left: parent.left
             //% "Slow"
             text: qsTrId("slow")
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Style.current.textColor
             visible: parent.visible
         }
@@ -118,7 +118,7 @@ Item {
             anchors.horizontalCenter: gasSlider.horizontalCenter
             //% "Optimal"
             text: qsTrId("optimal")
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Style.current.textColor
             visible: parent.visible
         }
@@ -130,7 +130,7 @@ Item {
             anchors.right: parent.right
             //% "Fast"
             text: qsTrId("fast")
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Style.current.textColor
             visible: parent.visible
         }
@@ -262,7 +262,7 @@ Item {
             anchors.topMargin: 42
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
           }
         }
 
@@ -272,7 +272,7 @@ Item {
             anchors.bottomMargin: Style.current.smallPadding
             anchors.right: parent.right
             font.weight: Font.Medium
-            font.pixelSize: 13
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Style.current.secondaryText
         }
 

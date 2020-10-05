@@ -14,7 +14,7 @@ Item {
 
     StyledText {
         id: txtLabel
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         height: parent.height
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter

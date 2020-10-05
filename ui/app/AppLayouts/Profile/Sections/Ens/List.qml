@@ -53,7 +53,7 @@ Item {
                 id: usernameTxt
                 //% "(pending)"
                 text: username  + " " + (isPending ? qsTrId("-pending-") : "")
-                font.pixelSize: 16
+                font.pixelSize: Style.current.titleTextFontSize
                 color: Style.current.textColor
                 anchors.top: parent.top
                 anchors.topMargin: 5
@@ -85,7 +85,7 @@ Item {
                     text: "@"
                     opacity: 0.7
                     font.weight: Font.Bold
-                    font.pixelSize: 16
+                    font.pixelSize: Style.current.titleTextFontSize
                     color: Style.current.white
                     anchors.centerIn: parent
                     verticalAlignment: Text.AlignVCenter
@@ -117,7 +117,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: 20
+        font.pixelSize: Style.current.actionTextFontSize
     }
 
     Item {
@@ -143,7 +143,7 @@ Item {
             anchors.left: addButton.right
             anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: addButton.verticalCenter
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
         }
 
         MouseArea {
@@ -161,7 +161,7 @@ Item {
         anchors.left: parent.left
         anchors.top: addUsername.bottom
         anchors.topMargin: 24
-        font.pixelSize: 16
+        font.pixelSize: Style.current.titleTextFontSize
     }
 
     Item {
@@ -205,7 +205,7 @@ Item {
         anchors.left: parent.left
         anchors.top: ensList.bottom
         anchors.topMargin: 24
-        font.pixelSize: 16
+        font.pixelSize: Style.current.titleTextFontSize
     }
 
     Item {
@@ -222,7 +222,7 @@ Item {
             visible: chatSettingsLabel.visible
             //% "Primary Username"
             text: qsTrId("primary-username")
-            font.pixelSize: 14
+            font.pixelSize: Style.current.altPrimaryTextFontSize
             font.weight: Font.Bold
         }
 
@@ -233,7 +233,7 @@ Item {
             text: profileModel.ens.preferredUsername || qsTrId("none-selected")
             anchors.left: usernameLabel.right
             anchors.leftMargin: Style.current.padding
-            font.pixelSize: 14
+            font.pixelSize: Style.current.altPrimaryTextFontSize
         }
 
         MouseArea {
@@ -305,7 +305,7 @@ Item {
             anchors.topMargin: Style.current.padding
             //% "You’re displaying your ENS username in chats"
             text: qsTrId("you-re-displaying-your-ens-username-in-chats")
-            font.pixelSize: 14
+            font.pixelSize: Style.current.altPrimaryTextFontSize
             color: Style.current.secondaryText
         }
 

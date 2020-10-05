@@ -23,7 +23,7 @@ Item {
     StyledText {
         id: glossaryEntryTitle
         text: root.name
-        font.pixelSize: 17
+        font.pixelSize: Style.current.altTitleTextFontSize
         color: Style.current.textColor
         font.weight: Font.Bold
         anchors.left: parent.left
@@ -34,7 +34,7 @@ Item {
         id: glossaryEntryDescription
         text: root.description
         color: Style.current.textColor
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         anchors.top: glossaryEntryTitle.bottom
         anchors.topMargin: Style.current.smallPadding
         anchors.left: parent.left

@@ -121,7 +121,7 @@ Item {
             StyledText {
                 id: fetchMoreButton
                 font.weight: Font.Medium
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Style.current.blue
                 //% "↓ Fetch more messages"
                 text: qsTrId("load-more-messages")
@@ -185,7 +185,7 @@ Item {
             `</html>`;
             }
             visible: isStatusMessage
-            font.pixelSize: 14
+            font.pixelSize: Style.current.altPrimaryTextFontSize
             color: Style.current.secondaryText
             width:  parent.width - 120
             horizontalAlignment: Text.AlignHCenter

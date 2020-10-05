@@ -71,7 +71,7 @@ ModalPopup {
           anchors.left: letterIdenticon.right
           anchors.leftMargin: Style.current.smallPadding
           font.bold: true
-          font.pixelSize: 14
+          font.pixelSize: Style.current.altPrimaryTextFontSize
           readOnly: true
           wrapMode: Text.WordWrap
       }
@@ -94,7 +94,7 @@ ModalPopup {
           anchors.leftMargin: Style.current.smallPadding
           anchors.top: groupName.bottom
           anchors.topMargin: 2
-          font.pixelSize: 14
+          font.pixelSize: Style.current.altPrimaryTextFontSize
           color: Style.current.darkGrey
       }
 
@@ -243,7 +243,7 @@ ModalPopup {
             text: qsTrId("members-title")
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Style.current.darkGrey
         }
 
@@ -288,7 +288,7 @@ ModalPopup {
                         width: 300
                         elide: Text.ElideRight
                         Layout.fillWidth: true
-                        font.pixelSize: 13
+                        font.pixelSize: Style.current.secondaryTextFontSize
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
@@ -306,7 +306,7 @@ ModalPopup {
                         //% "Admin"
                         text: qsTrId("group-chat-admin")
                         width: 100
-                        font.pixelSize: 13
+                        font.pixelSize: Style.current.secondaryTextFontSize
                     }
                     StyledText {
                         id: moreActionsBtn

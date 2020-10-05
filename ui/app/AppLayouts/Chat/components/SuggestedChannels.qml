@@ -19,7 +19,7 @@ Repeater {
             id: sectionTitle
             text: modelData.name
             font.bold: true
-            font.pixelSize: 16
+            font.pixelSize: Style.current.titleTextFontSize
         }
         Flow {
             anchors.top: sectionTitle.bottom

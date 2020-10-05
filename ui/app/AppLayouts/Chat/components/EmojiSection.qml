@@ -27,7 +27,7 @@ Item {
         id: categoryText
         text: modelData && modelData.length ? modelData[0].category.toUpperCase() : ""
         color: Style.current.darkGrey
-        font.pixelSize: 13
+        font.pixelSize: Style.current.secondaryTextFontSize
     }
 
     StyledText {
@@ -36,7 +36,7 @@ Item {
         //% "No recent emojis"
         text: qsTrId("no-recent-emojis")
         color: Style.current.darkGrey
-        font.pixelSize: 10
+        font.pixelSize: Style.current.infoTextFontSize
         anchors.top: categoryText.bottom
         anchors.topMargin: Style.current.smallPadding
     }

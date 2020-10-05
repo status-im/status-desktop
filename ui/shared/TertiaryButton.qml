@@ -20,7 +20,7 @@ Button {
     StyledText {
         id: txtBtnLabel
         color: Style.current.textColorTertiary
-        font.pixelSize: 12
+        font.pixelSize: Style.current.tertiaryTextFontSize
         height: 16
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter

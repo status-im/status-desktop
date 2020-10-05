@@ -50,7 +50,7 @@ Item {
         StyledText {
             id: labelSigningPhrase
             color: Style.current.secondaryText
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             //% "Signing phrase"
             text: qsTrId("signing-phrase")
         }
@@ -79,7 +79,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: signingPhraseItem.bottom
         anchors.topMargin: Style.current.smallPadding
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         text: root.signingPhrase
     }
 

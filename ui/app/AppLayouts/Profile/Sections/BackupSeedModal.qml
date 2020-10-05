@@ -67,12 +67,12 @@ ModalPopup {
                                 anchors.bottomMargin: Style.current.smallPadding
                                 anchors.left: parent.left
                                 anchors.leftMargin: Style.current.bigPadding
-                                font.pixelSize: 15
+                                font.pixelSize: Style.current.primaryTextFontSize
                             }
 
                             StyledTextEdit {
                                 text: modelData
-                                font.pixelSize: 15
+                                font.pixelSize: Style.current.primaryTextFontSize
                                 anchors.bottom: parent.bottom
                                 anchors.bottomMargin: Style.current.smallPadding
                                 anchors.left: count.right
@@ -92,7 +92,7 @@ ModalPopup {
         //% "With this 12 words you can always get your key back. Write it down. Keep it safe, offline, and separate from this device."
         text: qsTrId(
                   "with-this-12-words-you-can-always-get-your-key-back.-write-it-down.-keep-it-safe,-offline,-and-separate-from-this-device.")
-        font.pixelSize: 14
+        font.pixelSize: Style.current.altPrimaryTextFontSize
         font.weight: Font.Medium
         color: Style.current.darkGrey
         anchors.bottom: parent.bottom

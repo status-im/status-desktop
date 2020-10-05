@@ -78,7 +78,7 @@ RowLayout {
             anchors.top: rctPageIndicator.bottom
             anchors.topMargin: 5
             anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 14
+            font.pixelSize: Style.current.altPrimaryTextFontSize
             font.letterSpacing: 0.1
             width: 700
             wrapMode: Text.Wrap
@@ -113,7 +113,7 @@ RowLayout {
             anchors.top: btnGetStarted.bottom
             anchors.topMargin: 8
             anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             font.letterSpacing: 0.1
             color: "#939BA1"
         }

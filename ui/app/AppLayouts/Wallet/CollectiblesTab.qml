@@ -15,7 +15,7 @@ Item {
         text: qsTrId("collectibles-will-appear-here")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
     }
 
     CollectiblesModal {

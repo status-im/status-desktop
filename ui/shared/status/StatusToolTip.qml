@@ -35,7 +35,7 @@ ToolTip {
         text: tooltip.text
         color: Style.current.white
         wrapMode: Text.WordWrap
-        font.pixelSize: 13
+        font.pixelSize: Style.current.secondaryTextFontSize
         horizontalAlignment: Text.AlignHCenter
     }
 }

@@ -17,7 +17,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: Style.current.bigPadding
         font.weight: Font.Bold
-        font.pixelSize: 20
+        font.pixelSize: Style.current.actionTextFontSize
     }
 
 
@@ -35,7 +35,7 @@ Item {
             text: "✓"
             opacity: 0.7
             font.weight: Font.Bold
-            font.pixelSize: 18
+            font.pixelSize: Style.current.altTitleTextFontSize
             color: Style.current.white
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -49,7 +49,7 @@ Item {
         anchors.top: circle.bottom
         anchors.topMargin: Style.current.bigPadding
         font.weight: Font.Bold
-        font.pixelSize: 24
+        font.pixelSize: Style.current.superTitleTextFontSize
         anchors.left: parent.left
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter
@@ -62,7 +62,7 @@ Item {
         text: qsTrId("nice--you-own--1-stateofus-eth-once-the-transaction-is-complete-").arg(ensUsername)
         anchors.top: title.bottom
         anchors.topMargin: 24
-        font.pixelSize: 14
+        font.pixelSize: Style.current.altPrimaryTextFontSize
         anchors.left: parent.left
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter
@@ -75,7 +75,7 @@ Item {
         text: qsTrId("ens-username-you-can-follow-progress")
         anchors.top: subtitle.bottom
         anchors.topMargin: 24
-        font.pixelSize: 12
+        font.pixelSize: Style.current.tertiaryTextFontSize
         anchors.left: parent.left
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter

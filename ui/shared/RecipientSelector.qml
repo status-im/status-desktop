@@ -65,7 +65,7 @@ Item {
         visible: label !== ""
         //% "Recipient"
         text: qsTrId("recipient")
-        font.pixelSize: 13
+        font.pixelSize: Style.current.secondaryTextFontSize
         font.family: Style.current.fontRegular.name
         font.weight: Font.Medium
         color: Style.current.textColor
@@ -76,7 +76,7 @@ Item {
         id: txtAddlInfo
         visible: text !== ""
         text: ""
-        font.pixelSize: 13
+        font.pixelSize: Style.current.secondaryTextFontSize
         font.family: Style.current.fontRegular.name
         font.weight: Font.Medium
         color: Style.current.danger
@@ -105,7 +105,7 @@ Item {
             textField.topPadding: 18
             textField.bottomPadding: 18
             textField.verticalAlignment: TextField.AlignVCenter
-            textField.font.pixelSize: 15
+            textField.font.pixelSize: Style.current.primaryTextFontSize
             textField.color: Style.current.secondaryText
             readOnly: true
             validationErrorAlignment: TextEdit.AlignRight

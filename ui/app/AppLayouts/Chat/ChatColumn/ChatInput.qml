@@ -334,7 +334,7 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: emojiImage.right
                     anchors.leftMargin: Style.current.smallPadding
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                 }
 
                 MouseArea {
@@ -368,7 +368,7 @@ Rectangle {
             text: ""
             selectByMouse: true
             wrapMode: TextArea.Wrap
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             //% "Type a message..."
             placeholderText: qsTrId("type-a-message")
             Keys.onPressed: onEnter(event)

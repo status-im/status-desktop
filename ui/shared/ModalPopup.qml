@@ -49,7 +49,7 @@ Popup {
                 anchors.top: parent.top
                 anchors.left: parent.left
                 font.bold: true
-                font.pixelSize: 17
+                font.pixelSize: Style.current.altTitleTextFontSize
                 anchors.topMargin: Style.current.padding
                 anchors.bottomMargin: Style.current.padding
                 visible: !!title

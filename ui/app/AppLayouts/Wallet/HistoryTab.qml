@@ -130,7 +130,7 @@ Item {
                     anchors.leftMargin: Style.current.smallPadding
                     anchors.top: parent.top
                     anchors.topMargin: Style.current.bigPadding
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     text: value + " " + transactionListItem.symbol
                 }
             }
@@ -150,7 +150,7 @@ Item {
                     anchors.right: addressValue.left
                     color: Style.current.darkGrey
                     anchors.top: parent.top
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     font.strikeout: false
                 }
 
@@ -162,7 +162,7 @@ Item {
                     elide: Text.ElideMiddle
                     anchors.right: parent.right
                     anchors.top: parent.top
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                 }
             }
 
@@ -179,7 +179,7 @@ Item {
                     anchors.right: timeIndicator.left
                     color: Style.current.darkGrey
                     anchors.top: parent.top
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                 }
 
                 StyledText {
@@ -188,7 +188,7 @@ Item {
                     anchors.right: timeValue.left
                     color: Style.current.darkGrey
                     anchors.top: parent.top
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     font.strikeout: false
                 }
 
@@ -197,7 +197,7 @@ Item {
                     text: timestamp
                     anchors.right: parent.right
                     anchors.top: parent.top
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     anchors.rightMargin: Style.current.smallPadding
                 }
             }

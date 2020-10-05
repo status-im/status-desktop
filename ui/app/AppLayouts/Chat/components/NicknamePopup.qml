@@ -34,7 +34,7 @@ ModalPopup {
             anchors.left: parent.left
             anchors.leftMargin: Style.current.smallPadding
             font.bold: true
-            font.pixelSize: 14
+            font.pixelSize: Style.current.altPrimaryTextFontSize
         }
 
         StyledText {
@@ -44,7 +44,7 @@ ModalPopup {
             anchors.left: nicknameTitle.left
             anchors.top: nicknameTitle.bottom
             anchors.topMargin: 2
-            font.pixelSize: 14
+            font.pixelSize: Style.current.altPrimaryTextFontSize
             color: Style.current.secondaryText
         }
     }
@@ -53,7 +53,7 @@ ModalPopup {
         id: descriptionText
         //% "Nicknames help you identify others in Status. Only you can see the nicknames you’ve added"
         text: qsTrId("nicknames-help-you-identify-others-in-status--only-you-can-see-the-nicknames-you-ve-added")
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         wrapMode: Text.WordWrap
         color: Style.current.secondaryText
         width: parent.width
@@ -73,7 +73,7 @@ ModalPopup {
     StyledText {
         id: lengthLimitText
         text: popup.nicknameLength + "/" + popup.maxNicknameLength
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         anchors.top: nicknameInput.bottom
         anchors.topMargin: 12
         anchors.right: parent.right

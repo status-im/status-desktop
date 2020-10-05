@@ -19,7 +19,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: 20
+        font.pixelSize: Style.current.actionTextFontSize
     }
 
     RowLayout {
@@ -48,7 +48,7 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: Style.current.padding
                     anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     verticalAlignment: Text.AlignVCenter
                     height: 22
                 }

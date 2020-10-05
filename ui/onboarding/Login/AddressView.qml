@@ -42,7 +42,7 @@ Rectangle {
         elide: Text.ElideRight
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding + radio.width
-        font.pixelSize: 17
+        font.pixelSize: Style.current.altTitleTextFontSize
         anchors.top: accountImage.top
         anchors.left: accountImage.right
         anchors.leftMargin: Style.current.padding
@@ -58,7 +58,7 @@ Rectangle {
         anchors.bottomMargin: 0
         anchors.left: usernameText.left
         anchors.leftMargin: 0
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.darkGrey
     }
 

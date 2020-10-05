@@ -10,7 +10,7 @@ Button {
     property string state: "default"
 
     id: control
-    font.pixelSize: size === "small" ? 13 : 15
+    font.pixelSize: size === "small" ? Style.current.secondaryTextFontSize : Style.current.primaryTextFontSize
     font.weight: Font.Medium
     implicitHeight: size === "small" ? 38 : 44
     implicitWidth: buttonLabel.implicitWidth + 2 * Style.current.padding

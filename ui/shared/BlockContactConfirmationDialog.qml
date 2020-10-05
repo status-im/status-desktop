@@ -16,7 +16,7 @@ ModalPopup {
     StyledText {
         //% "Blocking will remove any messages you received from " + blockContactConfirmationDialog.contactName + " and stop new messages from reaching you."
         text: qsTrId("blocking-will-remove-any-messages-you-received-from-----blockcontactconfirmationdialog-contactname-----and-stop-new-messages-from-reaching-you-")
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         anchors.left: parent.left
         anchors.right: parent.right
         wrapMode: Text.WordWrap

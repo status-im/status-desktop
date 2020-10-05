@@ -87,7 +87,7 @@ Rectangle {
         id: replyToUsername
         text: userName
         font.bold: true
-        font.pixelSize: 14
+        font.pixelSize: Style.current.secondaryTextFontSize
         anchors.leftMargin: 20
         anchors.top: parent.top
         anchors.topMargin: 0
@@ -107,7 +107,7 @@ Rectangle {
         anchors.rightMargin: Style.current.padding
         elide: Text.ElideRight
         wrapMode: Text.Wrap
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         textFormat: Text.RichText
     }
     

@@ -23,7 +23,7 @@ Rectangle {
         anchors.left: parent.left;
         anchors.leftMargin: 5;
         horizontalAlignment: Text.AlignLeft;
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
     }
 
     MouseArea {

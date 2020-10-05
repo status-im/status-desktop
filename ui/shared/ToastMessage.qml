@@ -80,7 +80,7 @@ Popup {
         text: root.title
         anchors.left: toastImage.right
         anchors.top: parent.top
-        font.pixelSize: 13
+        font.pixelSize: Style.current.secondaryTextFontSize
         font.weight: Font.Medium
         anchors.topMargin: Style.current.padding
         anchors.leftMargin: 12
@@ -94,7 +94,7 @@ Popup {
         textFormat: Text.RichText
         anchors.left: toastImage.right
         anchors.top: titleText.bottom
-        font.pixelSize: 13
+        font.pixelSize: Style.current.secondaryTextFontSize
         font.weight: Font.Medium
         anchors.leftMargin: 12
         onLinkActivated: {

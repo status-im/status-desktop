@@ -28,13 +28,13 @@ Button {
 
           StyledText {
               text: control.label
-              font.pixelSize: 15
+              font.pixelSize: Style.current.primaryTextFontSize
           }
 
           StyledText {
               text: control.description
               color: Style.current.secondaryText
-              font.pixelSize: 15
+              font.pixelSize: Style.current.primaryTextFontSize
           }
       }
 
@@ -45,7 +45,7 @@ Button {
               id: info
               text: control.info
               color: Style.current.secondaryText
-              font.pixelSize: 15
+              font.pixelSize: Style.current.primaryTextFontSize
               anchors.right: icon.left
               anchors.rightMargin: icon.width + Style.current.padding
           }

@@ -24,7 +24,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: 20
+        font.pixelSize: Style.current.actionTextFontSize
     }
 
     Item {
@@ -41,7 +41,7 @@ Item {
             id: deviceNameLbl
             //% "Please set a name for your device."
             text: qsTrId("pairing-please-set-a-name")
-            font.pixelSize: 14
+            font.pixelSize: Style.current.altPrimaryTextFontSize
         }
 
         Input {
@@ -95,7 +95,7 @@ Item {
                 id: advertiseDeviceTitle
                 //% "Advertise device"
                 text: qsTrId("pair-this-device")
-                font.pixelSize: 18
+                font.pixelSize: Style.current.altTitleTextFontSize
                 font.weight: Font.Bold
                 color: Style.current.blue
                 anchors.left: advertiseImg.right
@@ -106,7 +106,7 @@ Item {
                 id: advertiseDeviceDesk
                 //% "Pair your devices to sync contacts and chats between them"
                 text: qsTrId("pair-this-device-description")
-                font.pixelSize: 14
+                font.pixelSize: Style.current.altPrimaryTextFontSize
                 anchors.top: advertiseDeviceTitle.bottom
                 anchors.topMargin: 6
                 anchors.left: advertiseImg.right
@@ -125,7 +125,7 @@ Item {
             anchors.topMargin: Style.current.padding
             //% "Learn more"
             text: qsTrId("learn-more")
-            font.pixelSize: 16
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Style.current.blue
             anchors.left: parent.left
             MouseArea {
@@ -154,7 +154,7 @@ Item {
             id: deviceListLbl
             //% "Paired devices"
             text: qsTrId("paired-devices")
-            font.pixelSize: 16
+            font.pixelSize: Style.current.titleTextFontSize
             font.weight: Font.Bold
         }
 
@@ -184,7 +184,7 @@ Item {
                         return labelText;
                     }
                     elide: Text.ElideRight
-                    font.pixelSize: 14
+                    font.pixelSize: Style.current.altPrimaryTextFontSize
                     anchors.left: enabledIcon.right
                     anchors.leftMargin: Style.current.padding
                 }

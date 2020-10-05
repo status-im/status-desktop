@@ -71,7 +71,7 @@ ModalPopup {
           text: qsTrId("new-group-chat")
           anchors.left: parent.left
           font.bold: true
-          font.pixelSize: 17
+          font.pixelSize: Style.current.altTitleTextFontSize
           anchors.top: parent.top
           anchors.topMargin: Style.current.padding
       }
@@ -81,7 +81,7 @@ ModalPopup {
           //% "%1 / 10 members"
           text: qsTrId("%1-/-10-members").arg(memberCount)
           color: Style.current.darkGrey
-          font.pixelSize: 15
+          font.pixelSize: Style.current.primaryTextFontSize
       }
     }
 

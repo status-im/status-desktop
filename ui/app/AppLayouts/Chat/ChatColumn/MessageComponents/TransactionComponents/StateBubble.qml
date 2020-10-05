@@ -81,7 +81,7 @@ Rectangle {
         anchors.left: stateImage.right
         anchors.leftMargin: 4
         anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: 13
+        font.pixelSize: Style.current.secondaryTextFontSize
     }
 }
 

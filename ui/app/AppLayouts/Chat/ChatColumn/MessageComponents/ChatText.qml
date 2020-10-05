@@ -20,7 +20,7 @@ Item {
         textFormat: Text.RichText
         horizontalAlignment: Text.AlignLeft
         wrapMode: Text.Wrap
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         readOnly: true
         selectByMouse: true
         color: Style.current.textColor
@@ -94,7 +94,7 @@ Item {
                       qsTr("Read less") :
                       qsTr("Read more")
             color: chatText.color
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             font.underline: true
             z: 100
 

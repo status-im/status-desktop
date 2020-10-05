@@ -61,7 +61,7 @@ Item {
                 anchors.left: iconImg.right
                 anchors.leftMargin: 4
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 height: 22
                 verticalAlignment: Text.AlignVCenter
             }
@@ -74,7 +74,7 @@ Item {
                 text: qsTrId("you-don-t-have-any-contacts-yet")
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 13
+                font.pixelSize: Style.current.secondaryTextFontSize
                 height: 18
                 color: Style.current.secondaryText
             }
@@ -107,7 +107,7 @@ Item {
 
                 Text {
                     text: name
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     font.family: Style.current.fontRegular.name
                     font.weight: Font.Medium
                     color: Style.current.textColor
@@ -119,7 +119,7 @@ Item {
                       text: alias + " • "
                       visible: ensVerified
                       color: Style.current.secondaryText
-                      font.pixelSize: 12
+                      font.pixelSize: Style.current.tertiaryTextFontSize
                       height: 16
                     }
                     StyledText {
@@ -127,7 +127,7 @@ Item {
                         width: 85
                         elide: Text.ElideMiddle
                         color: Style.current.secondaryText
-                        font.pixelSize: 12
+                        font.pixelSize: Style.current.tertiaryTextFontSize
                         height: 16
                     }
                 }

@@ -42,7 +42,7 @@ Item {
         anchors.leftMargin: 0
         anchors.top: parent.top
         anchors.topMargin: 0
-        font.pixelSize: 13
+        font.pixelSize: Style.current.secondaryTextFontSize
         height: 18
     }
 
@@ -147,7 +147,7 @@ Item {
         anchors.topMargin: validationErrorTopMargin
         selectByMouse: true
         readOnly: true
-        font.pixelSize: 12
+        font.pixelSize: Style.current.tertiaryTextFontSize
         height: 16
         color: Style.current.danger
         width: parent.width

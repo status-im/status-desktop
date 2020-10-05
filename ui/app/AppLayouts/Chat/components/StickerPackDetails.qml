@@ -37,7 +37,7 @@ Item {
             color: Style.current.darkGrey
             text: packAuthor
             font.family: Style.current.fontRegular.name
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
         }
     }
     Item {

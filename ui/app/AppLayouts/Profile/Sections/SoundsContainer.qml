@@ -19,7 +19,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: 20
+        font.pixelSize: Style.current.actionTextFontSize
     }
 
     StyledText {
@@ -30,7 +30,7 @@ Item {
         anchors.leftMargin: 24
         //% "Sound volume"
         text: qsTrId("sound-volume") + " " + volume.value
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
     }
 
     StatusSlider {

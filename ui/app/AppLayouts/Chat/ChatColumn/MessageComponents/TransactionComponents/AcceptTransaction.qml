@@ -27,7 +27,7 @@ Item {
         anchors.right: parent.right
         anchors.left: parent.left
         anchors.top: separator1.bottom
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
 
         MouseArea {
             anchors.fill: parent
@@ -61,7 +61,7 @@ Item {
         anchors.left: parent.left
         padding: Style.current.halfPadding
         anchors.top: separator2.bottom
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
 
         MouseArea {
             anchors.fill: parent

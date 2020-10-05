@@ -64,7 +64,7 @@ Item {
                 anchors.left: iconImg.right
                 anchors.leftMargin: 4
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 height: 22
                 verticalAlignment: Text.AlignVCenter
             }
@@ -101,14 +101,14 @@ Item {
 
                 StyledText {
                     text: symbol.toUpperCase()
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                 }
 
                 StyledText {
                     text: name
                     color: Style.current.secondaryText
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                 }
             }
@@ -117,12 +117,12 @@ Item {
                 anchors.rightMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
                 StyledText {
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                     text: parseFloat(value).toFixed(4) + " " + symbol
                 }
                 StyledText {
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     anchors.right: parent.right
                     height: 22
                     text: fiatBalanceDisplay.toUpperCase()

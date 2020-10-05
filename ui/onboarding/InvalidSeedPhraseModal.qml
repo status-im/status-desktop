@@ -14,7 +14,7 @@ ModalPopup {
       text: popup.error
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter
-      font.pixelSize: 15
+      font.pixelSize: Style.current.primaryTextFontSize
   }
   
   footer: StyledButton {

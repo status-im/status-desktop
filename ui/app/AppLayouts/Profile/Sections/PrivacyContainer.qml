@@ -38,7 +38,7 @@ Item {
                 id: backupText
                 //% "Backup Seed Phrase"
                 text: qsTrId("backup-seed-phrase")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
             }
 
             SVGImage {

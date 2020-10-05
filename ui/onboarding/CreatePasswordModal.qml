@@ -85,7 +85,7 @@ ModalPopup {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         color: Style.current.secondaryText
-        font.pixelSize: 12
+        font.pixelSize: Style.current.tertiaryTextFontSize
     }
 
     footer: Item {

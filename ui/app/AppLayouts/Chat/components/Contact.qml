@@ -43,7 +43,7 @@ Rectangle {
         elide: Text.ElideRight
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        font.pixelSize: 17
+        font.pixelSize: Style.current.altTitleTextFontSize
         anchors.top: accountImage.top
         anchors.topMargin: 10
         anchors.left: accountImage.right
@@ -83,7 +83,7 @@ Rectangle {
         text: qsTrId("group-chat-admin")
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.darkGrey
         anchors.top: accountImage.top
         anchors.topMargin: 10

@@ -20,7 +20,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: 20
+        font.pixelSize: Style.current.actionTextFontSize
     }
 
     StyledText {
@@ -32,7 +32,7 @@ Item {
         anchors.top: element9.top
         anchors.topMargin: 58
         font.weight: Font.Bold
-        font.pixelSize: 14
+        font.pixelSize: Style.current.altPrimaryTextFontSize
     }
     StyledText {
         id: element11
@@ -43,7 +43,7 @@ Item {
         anchors.top: element10.top
         anchors.topMargin: 58
         font.weight: Font.Bold
-        font.pixelSize: 14
+        font.pixelSize: Style.current.altPrimaryTextFontSize
     }
     StyledText {
         id: element12
@@ -54,7 +54,7 @@ Item {
         anchors.top: element11.top
         anchors.topMargin: 58
         font.weight: Font.Bold
-        font.pixelSize: 14
+        font.pixelSize: Style.current.altPrimaryTextFontSize
     }
     StyledText {
         id: element13
@@ -64,7 +64,7 @@ Item {
         anchors.leftMargin: Style.current.bigPadding
         anchors.top: element12.top
         anchors.topMargin: 58
-        font.pixelSize: 14
+        font.pixelSize: Style.current.altPrimaryTextFontSize
         onLinkActivated: Qt.openUrlExternally(link)
 
         MouseArea {
@@ -81,7 +81,7 @@ Item {
         anchors.leftMargin: Style.current.bigPadding
         anchors.top: element13.top
         anchors.topMargin: 58
-        font.pixelSize: 14
+        font.pixelSize: Style.current.altPrimaryTextFontSize
         onLinkActivated: Qt.openUrlExternally(link)
 
         MouseArea {
@@ -130,7 +130,7 @@ Item {
         anchors.top: faqLink.bottom
         anchors.topMargin: 30
         anchors.horizontalCenter: parent.horizontalCenter
-        font.pixelSize: 14
+        font.pixelSize: Style.current.altPrimaryTextFontSize
         font.letterSpacing: 0.1
         width: 700
         wrapMode: Text.Wrap

@@ -98,7 +98,7 @@ Item {
             text: qsTrId("balance--")
             anchors.right: txtBalance.left
             font.weight: Font.Medium
-            font.pixelSize: 13
+            font.pixelSize: Style.current.secondaryTextFontSize
             color: Style.current.secondaryText
         }
 
@@ -108,7 +108,7 @@ Item {
             text: selectAsset.selectedAsset ? Utils.stripTrailingZeros(selectAsset.selectedAsset.value) : "0.00"
             anchors.right: parent.right
             font.weight: Font.Medium
-            font.pixelSize: 13
+            font.pixelSize: Style.current.secondaryTextFontSize
             color: hovered ? Style.current.textColor : Style.current.secondaryText
 
             MouseArea {
@@ -189,7 +189,7 @@ Item {
             anchors.top: parent.top
             color: txtFiatBalance.activeFocus ? Style.current.textColor : Style.current.secondaryText
             font.weight: Font.Medium
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             inputMethodHints: Qt.ImhFormattedNumbersOnly
             text: "0.00"
             selectByMouse: true
@@ -210,7 +210,7 @@ Item {
             id: txtFiatSymbol
             text: root.defaultCurrency.toUpperCase()
             font.weight: Font.Medium
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             color: Style.current.secondaryText
             anchors.top: parent.top
             anchors.left: txtFiatBalance.right

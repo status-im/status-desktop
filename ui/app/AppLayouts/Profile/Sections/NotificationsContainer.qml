@@ -50,7 +50,7 @@ ScrollView {
                 StyledText {
                     //% "All messages"
                     text: qsTrId("all-messages")
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                 }
 
                 StatusRadioButton {
@@ -66,7 +66,7 @@ ScrollView {
                 StyledText {
                     //% "Just @mentions"
                     text: qsTrId("just--mentions")
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                 }
                 StatusRadioButton {
                     Layout.alignment: Qt.AlignRight
@@ -80,7 +80,7 @@ ScrollView {
                 StyledText {
                     //% "Nothing"
                     text: qsTrId("nothing")
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                 }
                 StatusRadioButton {
                     Layout.alignment: Qt.AlignRight
@@ -115,7 +115,7 @@ ScrollView {
                 StyledText {
                     //% "Play a sound when receiving a notification"
                     text: qsTrId("play-a-sound-when-receiving-a-notification")
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                 }
 
                 StatusSwitch {
@@ -165,7 +165,7 @@ ScrollView {
             StyledText {
                 //% "Message preview"
                 text: qsTrId("message-preview")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
             }
 
             StatusRadioButton {
@@ -190,7 +190,7 @@ ScrollView {
             StyledText {
                 //% "No preview or Advanced? Go to Notification Center"
                 text: qsTrId("no-preview-or-advanced--go-to-notification-center")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
             }
         }
 
@@ -218,7 +218,7 @@ ScrollView {
                 StyledText {
                     //% "Receive notifications from non-contacts"
                     text: qsTrId("receive-notifications-from-non-contacts")
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                 }
 
                 StatusSwitch {
@@ -261,7 +261,7 @@ ScrollView {
                 contentItem: Text {
                     //% "Reset notification settings"
                     text: qsTrId("reset-notification-settings")
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     color: Style.current.red
                 }
                 MouseArea {
@@ -274,7 +274,7 @@ ScrollView {
             StyledText {
                 //% "Restore default notification settings and unmute all chats and users"
                 text: qsTrId("restore-default-notification-settings-and-unmute-all-chats-and-users")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Style.current.secondaryText
             }
         }

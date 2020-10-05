@@ -19,7 +19,7 @@ ModalPopup {
 
     Text {
         text: confirmationDialog.confirmationText
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         anchors.left: parent.left
         anchors.right: parent.right
         wrapMode: Text.WordWrap

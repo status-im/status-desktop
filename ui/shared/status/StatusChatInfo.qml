@@ -45,7 +45,7 @@ Item {
             }
 
             font.weight: Font.Medium
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
         }
 
         StyledText {
@@ -69,7 +69,7 @@ Item {
                     default: return "...";
                 }
             }
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             anchors.top: chatName.bottom
         }
     }

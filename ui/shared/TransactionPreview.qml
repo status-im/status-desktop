@@ -38,7 +38,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
 
                 StyledText {
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                     text: root.fromAccount ? root.fromAccount.name : ""
                     elide: Text.ElideRight
@@ -145,7 +145,7 @@ Item {
 
                 StyledText {
                     id: txtToPrimary
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                     anchors.left: parent.left
                     anchors.right: txtToSeparator.left
@@ -156,7 +156,7 @@ Item {
                 }
                 StyledText {
                     id: txtToSeparator
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                     text: " • "
                     visible: txtToSecondary.visible && txtToSecondary.width > 0
@@ -169,7 +169,7 @@ Item {
                 StyledText {
                     id: txtToSecondary
                     visible: true
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                     color: Style.current.secondaryText
                     anchors.right: parent.right
@@ -217,7 +217,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
 
                 StyledText {
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                     text: (root.asset && root.asset.name) ? root.asset.name : ""
                     anchors.left: parent.left
@@ -229,7 +229,7 @@ Item {
                 }
                 StyledText {
                     id: txtAssetSymbol
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                     text: (root.asset && root.asset.symbol) ? root.asset.symbol : ""
                     color: Style.current.secondaryText
@@ -265,7 +265,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
 
                 StyledText {
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                     text: (root.amount && root.amount.value) ? Utils.stripTrailingZeros(root.amount.value) : ""
                     anchors.left: parent.left
@@ -278,7 +278,7 @@ Item {
                 }
                 StyledText {
                     id: txtAmountSymbol
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                     text: ((root.asset && root.asset.symbol) ? root.asset.symbol : "") + " •"
                     color: Style.current.secondaryText
@@ -290,7 +290,7 @@ Item {
                 }
                 StyledText {
                     id: txtAmountFiat
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                     text: "~" + (root.amount && root.amount.fiatValue ? root.amount.fiatValue : "0.00")
                     anchors.right: txtAmountCurrency.left
@@ -301,7 +301,7 @@ Item {
                 }
                 StyledText {
                     id: txtAmountCurrency
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                     text: root.currency.toUpperCase()
                     color: Style.current.secondaryText
@@ -322,7 +322,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
 
                 StyledText {
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                     text: (root.gas && root.gas.value) ? Utils.stripTrailingZeros(root.gas.value) : ""
                     anchors.left: parent.left
@@ -335,7 +335,7 @@ Item {
                 }
                 StyledText {
                     id: txtFeeSymbol
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                     text: ((root.gas && root.gas.symbol) ? root.gas.symbol : "") + " •"
                     color: Style.current.secondaryText
@@ -347,7 +347,7 @@ Item {
                 }
                 StyledText {
                     id: txtFeeFiat
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                     text: "~" + ((root.gas && root.gas.fiatValue) ? root.gas.fiatValue : "0.00")
                     anchors.right: txtFeeCurrency.left
@@ -358,7 +358,7 @@ Item {
                 }
                 StyledText {
                     id: txtFeeCurrency
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     height: 22
                     text: root.currency.toUpperCase()
                     color: Style.current.secondaryText

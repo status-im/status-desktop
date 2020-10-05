@@ -116,7 +116,7 @@ Rectangle {
                         anchors.left: accountImage.right
                         anchors.leftMargin: Style.current.padding
                         verticalAlignment: Text.AlignVCenter
-                        font.pixelSize: 15
+                        font.pixelSize: Style.current.primaryTextFontSize
                     }
                     MouseArea {
                         cursorShape: Qt.PointingHandCursor

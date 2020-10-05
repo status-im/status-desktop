@@ -31,7 +31,7 @@ Item {
         anchors.leftMargin: 0
         anchors.top: parent.top
         anchors.topMargin: 0
-        font.pixelSize: 13
+        font.pixelSize: Style.current.secondaryTextFontSize
     }
 
     Rectangle {
@@ -49,7 +49,7 @@ Item {
         TextArea {
             id: textArea
             text: ""
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             wrapMode: Text.WordWrap
             placeholderText: inputBox.placeholderText
             anchors.rightMargin: Style.current.padding
@@ -77,7 +77,7 @@ Item {
         anchors.topMargin: 1
         selectByMouse: true
         readOnly: true
-        font.pixelSize: 12
+        font.pixelSize: Style.current.tertiaryTextFontSize
         color: Style.current.red
 
     }

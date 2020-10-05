@@ -107,7 +107,7 @@ Popup {
                         id: lblNoRecentStickers
                         visible: stickerPackListView.count > 0 && stickerGrid.count <= 0
                         anchors.fill: parent
-                        font.pixelSize: 15
+                        font.pixelSize: Style.current.primaryTextFontSize
                         //% "Recently used stickers will appear here"
                         text: qsTrId("recently-used-stickers")
                         lineHeight: 22

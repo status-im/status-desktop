@@ -70,7 +70,7 @@ RowLayout {
                 height: 18
                 Text {
                     id: messageCount
-                    font.pixelSize: chatsModel.unreadMessagesCount > 99 ? 10 : 12
+                    font.pixelSize: chatsModel.unreadMessagesCount > 99 ? Style.current.infoTextFontSize : Style.current.tertiaryTextFontSize
                     color: Style.current.white
                     anchors.centerIn: parent
                     text: chatsModel.unreadMessagesCount

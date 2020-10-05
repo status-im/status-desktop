@@ -37,7 +37,7 @@ Item {
 
                 StyledText {
                     text: name + " (" + code + ")"
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                 }
 
                 StatusRadioButton {

@@ -80,7 +80,7 @@ Item {
         anchors.topMargin: 14
         font.bold: true
         anchors.horizontalCenter: parent.horizontalCenter
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
     }
 
     Button {

@@ -52,4 +52,42 @@ QtObject {
     property int leftTabPrefferedSize: 340
     property int leftTabMinimumWidth: 300
     property int leftTabMaximumWidth: 500
+
+    property int primaryTextFontSize: 15
+    property int altPrimaryTextFontSize: 14
+    property int secondaryTextFontSize: 13
+    property int tertiaryTextFontSize: 12
+    property int actionTextFontSize: 20
+    property int altInfoTextFontSize: 11
+    property int infoTextFontSize: 10
+    property int titleTextFontSize: 16
+    property int altTitleTextFontSize: 17
+    property int superTitleTextFontSize: 24
+
+    function updateFontSize(fontSize) {
+        switch (fontSize) {
+            case 0:
+                primaryTextFontSize = 15
+                altPrimaryTextFontSize = 14
+                secondaryTextFontSize = 13
+                tertiaryTextFontSize = 12
+                actionTextFontSize = 20
+                altInfoTextFontSize = 11
+                infoTextFontSize = 10
+                titleTextFontSize = 16
+                altTitleTextFontSize = 17
+                superTitleTextFontSize = 24
+            case 1:
+                primaryTextFontSize = 18
+                altPrimaryTextFontSize = 17
+                secondaryTextFontSize = 15
+                tertiaryTextFontSize = 13
+                actionTextFontSize = 22
+                altInfoTextFontSize = 13
+                infoTextFontSize = 12
+                titleTextFontSize = 20
+                altTitleTextFontSize = 21
+                superTitleTextFontSize = 28
+        }
+    }
 }

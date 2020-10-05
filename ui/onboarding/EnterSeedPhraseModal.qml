@@ -20,7 +20,7 @@ ModalPopup {
         height: 44
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         placeholderText: qsTr("Start with the first word")
         placeholderTextColor: Style.current.secondaryText
         anchors.left: parent.left
@@ -42,7 +42,7 @@ ModalPopup {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         color: Style.current.secondaryText
-        font.pixelSize: 12
+        font.pixelSize: Style.current.tertiaryTextFontSize
     }
 
     footer: Button {

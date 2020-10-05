@@ -19,7 +19,7 @@ TabButton {
         id: tabBtnText
         text: btnText
         font.weight: Font.Medium
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         color: parent.checked ? Style.current.textColor : Style.current.darkGrey
     }
 

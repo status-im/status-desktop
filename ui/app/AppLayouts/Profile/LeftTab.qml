@@ -16,7 +16,7 @@ Item {
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
         font.weight: Font.Bold
-        font.pixelSize: 17
+        font.pixelSize: Style.current.altTitleTextFontSize
     }
 
     Menu {

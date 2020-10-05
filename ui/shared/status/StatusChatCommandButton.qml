@@ -55,7 +55,7 @@ Button {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: Style.current.smallPadding
             font.weight: Font.Medium
-            font.pixelSize: 13
+            font.pixelSize: Style.current.secondaryTextFontSize
         }
     }
     background: Rectangle {

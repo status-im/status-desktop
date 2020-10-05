@@ -28,7 +28,7 @@ Item {
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
         font.weight: Font.Bold
-        font.pixelSize: 17
+        font.pixelSize: Style.current.altTitleTextFontSize
     }
 
     Item {
@@ -61,7 +61,7 @@ Item {
             anchors.left: walletAmountValue.left
             anchors.top: walletAmountValue.bottom
             font.weight: Font.Medium
-            font.pixelSize: 13
+            font.pixelSize: Style.current.secondaryTextFontSize
         }
 
         AddAccount {
@@ -112,7 +112,7 @@ Item {
                 anchors.left: walletIcon.right
                 anchors.leftMargin: Style.current.smallPadding
 
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 font.weight: Font.Medium
                 color: selected ? Style.current.white : Style.current.textColor
             }
@@ -127,7 +127,7 @@ Item {
                 anchors.bottomMargin: Style.current.smallPadding
                 anchors.left: walletName.left
                 anchors.leftMargin: 0
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 font.weight: Font.Medium
                 color: selected ? Style.current.white : Style.current.darkGrey
                 opacity: selected ? 0.7 : 1
@@ -139,7 +139,7 @@ Item {
                 anchors.topMargin: Style.current.smallPadding
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.padding
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 font.weight: Font.Medium
                 color: selected ? Style.current.white : Style.current.textColor
             }

@@ -55,7 +55,7 @@ Page {
             anchors.left: parent.left
             anchors.top: txtTitle1.bottom
             anchors.topMargin: Style.current.padding
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
         }
 
 

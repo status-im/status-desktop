@@ -10,7 +10,7 @@ RoundButton {
     property string size: "large"
     id: control
 
-    font.pixelSize: 15
+    font.pixelSize: Style.current.primaryTextFontSize
     font.weight: Font.Medium
 
     implicitWidth: {

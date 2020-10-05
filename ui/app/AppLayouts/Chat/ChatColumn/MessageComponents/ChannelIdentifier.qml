@@ -91,7 +91,7 @@ Item {
                     default: return "";
                 }
             }
-            font.pixelSize: 14
+            font.pixelSize: Style.current.secondaryTextFontSize
             color: Style.current.darkGrey
             anchors.left: parent.left
             anchors.right: parent.right
@@ -112,7 +112,7 @@ Item {
             id: joinChat
             //% "Join chat"
             text: qsTrId("join-chat")
-            font.pixelSize: 20
+            font.pixelSize: Style.current.actionTextFontSize
             color: Style.current.blue
             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -129,7 +129,7 @@ Item {
         StyledText {
             //% "Decline invitation"
             text: qsTrId("group-chat-decline-invitation")
-            font.pixelSize: 20
+            font.pixelSize: Style.current.actionTextFontSize
             color: Style.current.blue
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: joinChat.bottom

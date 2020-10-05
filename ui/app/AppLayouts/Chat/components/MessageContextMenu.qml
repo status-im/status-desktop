@@ -69,7 +69,7 @@ PopupMenu {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
             font.weight: Font.Medium
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
         }
 
         MouseArea {

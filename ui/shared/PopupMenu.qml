@@ -41,7 +41,7 @@ Menu {
         id: popupMenuItem
         implicitWidth: 200
         implicitHeight: 34
-        font.pixelSize: 13
+        font.pixelSize: Style.current.secondaryTextFontSize
         icon.color: popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Style.current.blue
         icon.source: this.subMenu ? subMenuIcons[subMenuIndex].source : popupMenuItem.action.icon.source
         icon.width: this.subMenu ? subMenuIcons[subMenuIndex].width : popupMenuItem.action.icon.width

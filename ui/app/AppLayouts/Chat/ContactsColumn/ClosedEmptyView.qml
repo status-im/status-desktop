@@ -22,7 +22,7 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 56
         anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.darkGrey
     }
 }

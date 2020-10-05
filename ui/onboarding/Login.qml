@@ -42,7 +42,7 @@ Item {
             id: usernameText
             text: loginModel.currentAccount.username
             font.weight: Font.Bold
-            font.pixelSize: 17
+            font.pixelSize: Style.current.altTitleTextFontSize
             anchors.top: userImage.bottom
             anchors.topMargin: 4
             anchors.horizontalCenter: parent.horizontalCenter
@@ -118,7 +118,7 @@ Item {
             id: addressText
             width: 90
             text: loginModel.currentAccount.address
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             anchors.top: usernameText.bottom
             anchors.topMargin: 4
             anchors.horizontalCenter: parent.horizontalCenter
@@ -199,7 +199,7 @@ Item {
                 color: Style.current.buttonForegroundColor
                 //% "Generate new keys"
                 text: qsTrId("generate-new-keys")
-                font.pixelSize: 13
+                font.pixelSize: Style.current.secondaryTextFontSize
             }
         }
     }

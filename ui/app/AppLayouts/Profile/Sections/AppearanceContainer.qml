@@ -17,6 +17,11 @@ Item {
         Dark    // 2
     }
 
+    enum FontSize {
+        Normal,
+        Big
+    }
+
     function updateTheme(theme) {
         let themeStr = Universal.theme === Universal.Dark ? "dark" : "light"
         if (theme === AppearanceContainer.Theme.Light) {
@@ -28,6 +33,10 @@ Item {
         Style.changeTheme(themeStr)
     }
 
+    function updateFontSize(fontSize) {
+        Style.changeFontSize(fontSize)
+    }
+
     StyledText {
         id: title
         //% "Appearance setting"
@@ -37,7 +46,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: 20
+        font.pixelSize: Style.current.actionTextFontSize
     }
 
     RowLayout {
@@ -93,9 +102,43 @@ Item {
     }
 
     RowLayout {
+        id: fontSetting
+        anchors.top: themeSetting.bottom
+        anchors.topMargin: 20
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+        StyledText {
+            text: qsTr("Font size")
+        }
+        ButtonGroup { id: fontSize }
+
+        StatusRadioButton {
+            checked: Style.fontSizeSetting === AppearanceContainer.FontSize.Normal
+            Layout.alignment: Qt.AlignRight
+            ButtonGroup.group: fontSize
+            rightPadding: 15
+            text: qsTr("Normal")
+            onClicked: {
+                root.updateFontSize(AppearanceContainer.FontSize.Normal)
+            }
+        }
+
+        StatusRadioButton {
+            checked: Style.fontSizeSetting === AppearanceContainer.FontSize.Big
+            Layout.alignment: Qt.AlignRight
+            ButtonGroup.group: fontSize
+            rightPadding: 15
+            text: qsTr("Big")
+            onClicked: {
+                root.updateFontSize(AppearanceContainer.FontSize.Big)
+            }
+        }
+    }
+
+    RowLayout {
         property bool isCompactMode: appSettings.compactMode
         id: compactModeSetting
-        anchors.top: themeSetting.bottom
+        anchors.top: fontSetting.bottom
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 24

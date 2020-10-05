@@ -66,7 +66,7 @@ ScrollView {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 color: Style.current.pillButtonTextColor
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 anchors.leftMargin: Style.current.halfPadding
             }
 

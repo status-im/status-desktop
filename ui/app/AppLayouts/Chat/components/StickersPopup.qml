@@ -98,7 +98,7 @@ Popup {
                         id: lblNoStickersYet
                         visible: root.installedPacksCount === 0
                         anchors.fill: parent
-                        font.pixelSize: 15
+                        font.pixelSize: Style.current.primaryTextFontSize
                         //% "You don't have any stickers yet"
                         text: qsTrId("you-don't-have-any-stickers-yet")
                         lineHeight: 22
@@ -109,7 +109,7 @@ Popup {
                         id: lblNoRecentStickers
                         visible: stickerPackListView.selectedPackId === -1 && chatsModel.recentStickers.rowCount() === 0 && !lblNoStickersYet.visible
                         anchors.fill: parent
-                        font.pixelSize: 15
+                        font.pixelSize: Style.current.primaryTextFontSize
                         //% "Recently used stickers will appear here"
                         text: qsTrId("recently-used-stickers")
                         lineHeight: 22

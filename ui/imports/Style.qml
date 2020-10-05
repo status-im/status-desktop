@@ -8,6 +8,8 @@ QtObject {
     property Theme lightTheme: LightTheme {}
     property Theme darkTheme: DarkTheme {}
 
+    property int fontSizeSetting: 0
+
     property var changeTheme: function (theme) {
         switch (theme) {
             case "light": current = lightTheme; break;
@@ -15,5 +17,10 @@ QtObject {
             default: current = lightTheme; console.log('Unknown theme. Valid themes are "light" and "dark"')
         }
 
+    }
+
+    property var changeFontSize: function (fontSize) {
+        fontSizeSetting = fontSize
+        current.updateFontSize(fontSize)
     }
 }

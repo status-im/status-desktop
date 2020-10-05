@@ -62,7 +62,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: 20
+        font.pixelSize: Style.current.actionTextFontSize
     }
 
     Rectangle {
@@ -97,7 +97,7 @@ Item {
             }
             opacity: 0.7
             font.weight: Font.Bold
-            font.pixelSize: 18
+            font.pixelSize: Style.current.altTitleTextoFontSize
             color: Style.current.white
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -219,7 +219,7 @@ Item {
                 :
                 ".stateofus.eth"
             font.weight: Font.Bold
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             anchors.leftMargin: Style.current.padding
             color: Style.current.textColor
         }
@@ -231,7 +231,7 @@ Item {
                 :
                 //% "I own a name on another domain"
                 qsTrId("ens-want-custom-domain")
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             color: Style.current.blue
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding

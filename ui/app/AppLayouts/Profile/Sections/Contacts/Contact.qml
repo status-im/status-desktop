@@ -40,7 +40,7 @@ Rectangle {
         elide: Text.ElideRight
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        font.pixelSize: 17
+        font.pixelSize: Style.current.altTitleTextFontSize
         anchors.top: accountImage.top
         anchors.topMargin: Style.current.smallPadding
         anchors.left: accountImage.right

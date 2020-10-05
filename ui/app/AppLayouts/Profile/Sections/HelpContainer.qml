@@ -131,7 +131,7 @@ Item {
                 id: faqLink
                 //% "<a href='https://status.im/docs/FAQs.html'>Frequently asked questions</a>"
                 text: qsTrId("-a-href--https---status-im-docs-faqs-html--frequently-asked-questions--a-")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
@@ -148,7 +148,7 @@ Item {
                 text: qsTrId("-a-href--https---github-com-status-im-nim-status-client-issues-new--submit-a-bug--a-")
                 anchors.topMargin: Style.current.bigPadding
                 anchors.top: faqLink.bottom
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
@@ -164,7 +164,7 @@ Item {
                 text: qsTrId("-a-href--https---discuss-status-im-c-features-51--request-a-feature--a-")
                 anchors.topMargin: Style.current.bigPadding
                 anchors.top: issueLink.bottom
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor

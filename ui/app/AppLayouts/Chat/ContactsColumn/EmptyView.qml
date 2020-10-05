@@ -66,7 +66,7 @@ Rectangle {
             anchors.top: parent.top
             anchors.topMargin: 56
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             wrapMode: Text.WordWrap
             anchors.right: parent.right
             anchors.rightMargin: Style.current.xlPadding
