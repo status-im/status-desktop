@@ -165,6 +165,6 @@ QtObject {
      */
     function seedPhraseWordCountText(text) {
         let wordCount = countWords(text);
-        return getTick(wordCount) + wordCount.toString() + " words";
+        return qsTr("%1%2 words").arg(getTick(wordCount)).arg(wordCount.toString());
     }
 }
