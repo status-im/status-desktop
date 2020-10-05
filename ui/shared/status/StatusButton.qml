@@ -8,7 +8,7 @@ Button {
     property string type: "primary"
     property string size: "large"
     property string state: "default"
-    property string color: Style.current.buttonForegroundColor
+    property color color: Style.current.buttonForegroundColor
 
     id: control
     font.pixelSize: size === "small" ? 13 : 15

@@ -25,9 +25,8 @@ ModalPopup {
 
     signal confirmButtonClicked()
 
-    Text {
+    StyledText {
         text: confirmationDialog.confirmationText
-        color: Style.current.textColor
         font.pixelSize: 15
         anchors.left: parent.left
         anchors.right: parent.right
@@ -42,7 +41,7 @@ ModalPopup {
         StatusButton {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
-            color: Style.current.red
+            color: Style.current.danger
             text: confirmationDialog.confirmButtonLabel
             anchors.bottom: parent.bottom
             onClicked: confirmationDialog.confirmButtonClicked()
