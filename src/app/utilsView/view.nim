@@ -8,6 +8,7 @@ import ../../status/libstatus/wallet as status_wallet
 import ../../status/libstatus/utils as status_utils
 import ../../status/ens as status_ens
 import web3/[ethtypes, conversions]
+import stew/byteutils
 
 QtObject:
   type UtilsView* = ref object of QObject
@@ -69,6 +70,9 @@ QtObject:
       add(str, "0")
     return str
 
+  proc hex2Ascii*(self: UtilsView, value: string): string {.slot.} =
+    result = string.fromBytes(hexToSeqByte(value))
+
   proc hex2Eth*(self: UtilsView, value: string): string {.slot.} =
     return stripTrailingZeroes(status_utils.wei2Eth(stint.fromHex(StUint[256], value)))
 
@@ -77,6 +81,6 @@ QtObject:
     if value == "0x0":
       return "0"
     return stripTrailingZeroes(stint.toString(stint.fromHex(StUint[256], value)))
-  
+
   proc urlFromUserInput*(self: UtilsView, input: string): string {.slot.} =
     result = url_fromUserInput(input)
