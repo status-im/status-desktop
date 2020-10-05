@@ -47,13 +47,18 @@ Rectangle {
         id: accessDialog
 
         property var request: ({"hostname": "", "title": "", "permission": ""})
+        property bool interactedWith: false
 
         function postMessage(isAllowed){
+            interactedWith = true
             request.isAllowed = isAllowed;
             provider.web3Response(_web3Provider.postMessage(JSON.stringify(request)));
         }
 
         onClosed: {
+            if(!interactedWith){
+                postMessage(false);
+            }
             accessDialog.destroy();	
         }
 
@@ -129,10 +134,19 @@ Rectangle {
     // TODO we'll need a new dialog at one point because this one is not using the same call, but it's good for now
     property Component sendTransactionModalComponent: SignTransactionModal {}
 
+    property Component signMessageModalComponent: SignMessageModal {}
+
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
         //% "Error sending the transaction"
         title: qsTrId("error-sending-the-transaction")
+        icon: StandardIcon.Critical
+        standardButtons: StandardButton.Ok
+    }
+
+    property MessageDialog signingError: MessageDialog {
+        id: signingError
+        title: qsTr("Error signing message")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }
@@ -235,7 +249,35 @@ Rectangle {
                 }
 
                 sendDialog.open();
-                _walletModel.getGasPricePredictions()
+                walletModel.getGasPricePredictions()
+            } else if (request.type === Constants.web3SendAsyncReadOnly && ["eth_sign", "personal_sign", "eth_signTypedData", "eth_signTypedData_v3"].indexOf(request.payload.method) > -1) {
+                const signDialog = signMessageModalComponent.createObject(browserWindow, {request});
+                signDialog.web3Response = web3Response
+                signDialog.signMessage = function (enteredPassword) {
+                    signDialog.interactedWith = true;
+                    request.payload.password = enteredPassword;
+                    const response = web3Provider.postMessage(JSON.stringify(request));
+                    provider.web3Response(response);
+                    try {
+                        let responseObj = JSON.parse(response)
+                        if (responseObj.error) {
+                            throw new Error(responseObj.error)
+                        }
+                    } catch (e) {
+                        if (e.message.includes("could not decrypt key with given password")){
+                            //% "Wrong password"
+                            signDialog.transactionSigner.validationError = qsTrId("wrong-password")
+                            return
+                        }
+                        signingError.text = e.message
+                        return signingError.open()
+                    }
+                    signDialog.close()
+                    signDialog.destroy()
+                }
+
+
+                signDialog.open();
             } else {
                 web3Response(_web3Provider.postMessage(data));
             }

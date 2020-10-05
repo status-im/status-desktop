@@ -67,4 +67,8 @@ QtObject {
     readonly property string permission_web3: "web3"
     readonly property string permission_contactCode: "contact-code"
 
+    readonly property string personal_sign: "personal_sign"
+    readonly property string eth_sign: "eth_sign"
+    readonly property string eth_signTypedData: "eth_signTypedData"
+    readonly property string eth_signTypedData_v3: "eth_signTypedData_v3"
 }

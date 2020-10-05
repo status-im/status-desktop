@@ -109,7 +109,6 @@ proc getPendingOutboundTransactionsByAddress*(address: string): string =
   let payload = %* [address]
   result = callPrivateRPC("wallet_getPendingOutboundTransactionsByAddress", payload)
 
-
 proc deletePendingTransaction*(transactionHash: string) =
   let payload = %* [transactionHash]
   discard callPrivateRPC("wallet_deletePendingTransaction", payload)

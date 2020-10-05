@@ -25,7 +25,7 @@ proc getNodeConfig*(installationId: string, currentNetwork: string = constants.D
   result["ListenAddr"] = if existsEnv("STATUS_PORT"): newJString("0.0.0.0:" & $getEnv("STATUS_PORT")) else: newJString("0.0.0.0:30305")
   result = constants.NODE_CONFIG
 
-proc hashPassword(password: string): string =
+proc hashPassword*(password: string): string =
   result = "0x" & $keccak_256.digest(password)
 
 proc getDefaultAccount*(): string =

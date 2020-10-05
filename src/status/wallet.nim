@@ -328,4 +328,3 @@ proc getGasPricePredictions*(self: WalletModel): GasPricePrediction =
   except Exception as e:
     echo "error getting gas price predictions"
     echo e.msg
-
