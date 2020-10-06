@@ -30,6 +30,7 @@ ScrollView {
             id: chatGroupsListView
             anchors.top: parent.top
             height: childrenRect.height
+            visible: height > 0
             anchors.right: parent.right
             anchors.left: parent.left
             anchors.rightMargin: Style.current.padding
@@ -65,9 +66,27 @@ ScrollView {
             }
         }
 
+        Rectangle {
+            id: noSearchResults
+            anchors.top: parent.top
+            height: 300
+            color: "transparent"
+            visible: !chatGroupsListView.visible && chatGroupsContainer.searchStr !== ""
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            StyledText {
+                font.pixelSize: 15
+                color: Style.current.darkGrey
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("No search results")
+            }
+        }
+
         EmptyView {
             width: parent.width
-            anchors.top: chatGroupsListView.bottom
+            anchors.top: noSearchResults.visible ? noSearchResults.bottom : chatGroupsListView.bottom 
             anchors.topMargin: Style.current.smallPadding
         }
 
