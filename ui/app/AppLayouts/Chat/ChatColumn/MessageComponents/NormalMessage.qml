@@ -54,9 +54,13 @@ Item {
                     h += audioPlayerLoader.height;
                     break;
                 default:
+                    if (!chatImageContent.active && !chatReply.active) {
+                        h -= chatVerticalPadding
+                    }
+
                     h += chatText.visible ? chatText.height : 0;
-                    h += chatImageContent.visible ? chatImageContent.height: 0;
-                    h += chatReply.visible ? chatReply.height : 0;
+                    h += chatImageContent.active ? chatImageContent.height: 0;
+                    h += chatReply.active ? chatReply.height : 0;
            }
            return h;
         }
@@ -102,7 +106,7 @@ Item {
             id: chatText
             longChatText: chatBox.longChatText
             anchors.top: chatReply.bottom
-            anchors.topMargin: chatBox.chatVerticalPadding
+            anchors.topMargin: chatReply.active ? chatBox.chatVerticalPadding : 0
             anchors.left: parent.left
             anchors.leftMargin: chatBox.chatHorizontalPadding
             anchors.right: chatBox.longChatText ? parent.right : undefined
