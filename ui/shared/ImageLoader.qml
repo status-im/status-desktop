@@ -4,7 +4,8 @@ import "../imports"
 
 Rectangle {
     id: root
-    property url source
+    property alias source: image.source
+    property alias fillMode: image.fillMode
     signal clicked
     color: Style.current.backgroundHover
     state: "loading"

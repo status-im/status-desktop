@@ -5,6 +5,7 @@ Rectangle {
     id: root
     signal clicked
     property alias source: imgStickerPackThumb.source
+    property alias fillMode: imgStickerPackThumb.fillMode
 
     radius: width / 2
 
