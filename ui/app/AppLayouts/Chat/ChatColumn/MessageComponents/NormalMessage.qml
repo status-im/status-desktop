@@ -176,6 +176,7 @@ Item {
 
     SentMessage {
         id: sentMessage
+        visible: isCurrentUser && !timeout && isMessage && outgoingStatus !== "sent"
         anchors.top: chatTime.top
         anchors.bottomMargin: Style.current.padding
         anchors.right: chatTime.left
