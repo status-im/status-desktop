@@ -72,16 +72,17 @@ Item {
             width: 18
             height: 18
             anchors.right: parent.right
+            property bool hovered: false
 
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
                 hoverEnabled: true
                 onExited: {
-                    qrCodeButton.color = Style.current.white
+                    parent.hovered = false
                 }
                 onEntered: {
-                    qrCodeButton.color = Style.current.grey
+                    parent.hovered = true
                 }
                 onClicked: {
                     showQR = !showQR
@@ -90,9 +91,10 @@ Item {
         }
 
         ColorOverlay {
+            id: qrCodeOverlay
             anchors.fill: qrCodeImage
             source: qrCodeImage
-            color: Style.current.textColor
+            color: qrCodeImage.hovered ? Style.current.buttonForegroundColor : Style.current.textColor
         }
 
         Separator {

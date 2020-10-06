@@ -80,31 +80,17 @@ ScrollView {
                     height: collectibleImage.height
                     clip: true
 
-                    Image {
+                    RoundedImage {
                         id: collectibleImage
                         width: root.imageSize
                         height: root.imageSize
-                        z: 1
+                        border.width: 1
+                        border.color: Style.current.border
+                        radius: 16
                         source: modelData.image
-                        sourceSize.width: width
-                        sourceSize.height: height
                         fillMode: Image.PreserveAspectCrop
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.horizontalCenter: parent.horizontalCenter
-                    }
-
-                    Rectangle {
-                        radius: 16
-                        z: 2
-                        border.width: 1
-                        border.color: Style.current.border
-                        color: Style.current.transparent
-                        anchors.fill: parent
-                    }
-
-                    MouseArea {
-                        cursorShape: Qt.PointingHandCursor
-                        anchors.fill: parent
                         onClicked: {
                             collectiblesModal.openModal({
                                                        name: modelData.name,

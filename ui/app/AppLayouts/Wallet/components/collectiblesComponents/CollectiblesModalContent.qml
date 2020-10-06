@@ -12,14 +12,13 @@ Item {
     id: root
     width: parent.width
 
-    Image {
+    RoundedImage {
         id: collectibleImage
         width: 248
         height: 248
         anchors.horizontalCenter: parent.horizontalCenter
         source: root.collectibleImage
-        sourceSize.width: width
-        sourceSize.height: height
+        radius: 16
         fillMode: Image.PreserveAspectCrop
     }
 
