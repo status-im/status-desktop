@@ -188,6 +188,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
             textFormat: Text.RichText
+            topPadding: messageItem.prevMessageIndex === 1 ? Style.current.bigPadding : 0
         }
     }
 
