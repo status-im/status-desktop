@@ -36,8 +36,8 @@ Item {
     }
     StyledText {
         id: element11
-        //% "Version: beta.1"
-        text: qsTrId("version:-beta.1")
+        //% "Version: beta.2"
+        text: qsTrId("version:-beta.2")
         anchors.left: parent.left
         anchors.leftMargin: Style.current.bigPadding
         anchors.top: element10.top
