@@ -52,7 +52,7 @@ pipeline {
     }
 
     stage('Client') {
-      steps { sh 'make nim_status_client' }
+      steps { sh 'make nim_status_client V=1' }
     }
 
     stage('Package') {
