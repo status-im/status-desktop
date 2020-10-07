@@ -98,27 +98,27 @@ Item {
         }
 
         StyledButton {	
-            anchors.bottom: parent.bottom	
-            anchors.bottomMargin: Style.current.padding	
-            anchors.left: parent.left	
-            anchors.leftMargin: Style.current.padding	
-            label: qsTr("Allow")	
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: Style.current.padding
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.padding
+            label: qsTr("Allow")
             onClicked: {
                 postMessage(true);
-                accessDialog.close();	
+                accessDialog.close();
             }
         }
 
-        StyledButton {	
-            anchors.bottom: parent.bottom	
-            anchors.bottomMargin: Style.current.padding	
-            anchors.right: parent.right	
-            anchors.rightMargin: Style.current.padding	
-            label: qsTr("Deny")	
+        StyledButton {
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
+            label: qsTr("Deny")
             onClicked: {
                 postMessage(false);
-                accessDialog.close();	
-            }	
+                accessDialog.close();
+            }
         }
     }
 
@@ -248,6 +248,13 @@ Item {
     property QtObject defaultProfile: WebEngineProfile {
         storageName: "Profile"
         offTheRecord: false
+        httpUserAgent: {
+            if (addressBar.text.indexOf("google.") > -1) {
+                // Google doesn't let you connect if the user agent is Chrome-ish and doesn't satisfy some sort of hidden requirement
+                return "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:81.0) Gecko/20100101 Firefox/81.0"
+            }
+            return ""
+        }
         useForGlobalCertificateVerification: true
         userScripts: [
             WebEngineScript {
@@ -261,6 +268,7 @@ Item {
     property QtObject otrProfile: WebEngineProfile {
         offTheRecord: true
         persistentCookiesPolicy:  WebEngineProfile.NoPersistentCookies
+        httpUserAgent: defaultProfile.httpUserAgent
         userScripts: [
             WebEngineScript {
                 injectionPoint: WebEngineScript.DocumentCreation
