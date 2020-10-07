@@ -255,6 +255,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp ui/i18n/* tmp/linux/dist/usr/i18n
 
 	# Libraries
+	cp -r /usr/lib/x86_64-linux-gnu/nss tmp/linux/dist/usr/lib/
 	cp vendor/status-go/build/bin/libstatus.so tmp/linux/dist/usr/lib/
 
 	echo -e $(BUILD_MSG) "AppImage"
