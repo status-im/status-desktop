@@ -223,6 +223,11 @@ RowLayout {
             if (typeof this.children[currentIndex].onActivated === "function") {
                 this.children[currentIndex].onActivated()
             }
+
+            if(this.children[currentIndex] === browserLayoutContainer && browserLayoutContainer.active == false){
+                browserLayoutContainer.active = true;
+            }
+        
         }
 
         ChatLayout {
@@ -239,11 +244,24 @@ RowLayout {
             Layout.fillHeight: true
         }
 
-        BrowserLayout {
+        Component {
+            id: browserLayoutComponent
+            BrowserLayout { }
+        }
+
+        Loader {
             id: browserLayoutContainer
+            sourceComponent: browserLayoutComponent
+            active: false
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
+            // Loaders do not have access to the context, so props need to be set
+            // Adding a "_" to avoid a binding loop
+            property var _chatsModel: chatsModel
+            property var _walletModel: walletModel
+            property var _utilsModel: utilsModel
+            property var _web3Provider: web3Provider
         }
 
         ProfileLayout {
