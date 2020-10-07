@@ -15,6 +15,8 @@ Item {
     property var gas
     height: content.height
     property var reset: function() {}
+    signal fromClicked
+    signal gasClicked
 
     function resetInternal() {
         fromAccount = undefined
@@ -53,15 +55,39 @@ Item {
                     id: imgFromWallet
                     sourceSize.height: 18
                     sourceSize.width: 18
-                    anchors.right: parent.right
+                    anchors.right: fromArrow.visible ? fromArrow.left : parent.right
+                    anchors.rightMargin: fromArrow.visible ? Style.current.padding : 0
                     anchors.verticalCenter: parent.verticalCenter
                     fillMode: Image.PreserveAspectFit
                     source: "../app/img/walletIcon.svg"
+                    ColorOverlay {
+                        anchors.fill: parent
+                        source: parent
+                        color: root.fromAccount ? root.fromAccount.iconColor : Style.current.blue
+                    }
                 }
-                ColorOverlay {
-                    anchors.fill: imgFromWallet
-                    source: imgFromWallet
-                    color: root.fromAccount ? root.fromAccount.iconColor : Style.current.blue
+                SVGImage {
+                    id: fromArrow
+                    width: 13
+                    visible: typeof root.fromClicked === "function"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 7
+                    anchors.verticalCenter: parent.verticalCenter
+                    fillMode: Image.PreserveAspectFit
+                    source: "../app/img/caret.svg"
+                    rotation: 270
+                    ColorOverlay {
+                        anchors.fill: parent
+                        visible: parent.visible
+                        source: parent
+                        color: Style.current.secondaryText
+                    }
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    visible: fromArrow.visible
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.fromClicked()
                 }
             }
         }
@@ -316,6 +342,7 @@ Item {
             id: itmNetworkFee
             //% "Network fee"
             label: qsTrId("network-fee")
+            visible: !!root.gas
             value: Item {
                 id: networkFeeRoot
                 anchors.fill: parent
@@ -362,10 +389,34 @@ Item {
                     height: 22
                     text: root.currency.toUpperCase()
                     color: Style.current.secondaryText
-                    anchors.right: parent.right
+                    anchors.right: gasArrow.visible ? gasArrow.left : parent.right
+                    anchors.rightMargin: gasArrow.visible ? Style.current.padding : 0
                     anchors.verticalCenter: parent.verticalCenter
                     horizontalAlignment: Text.AlignRight
                     verticalAlignment: Text.AlignVCenter
+                }
+                SVGImage {
+                    id: gasArrow
+                    width: 13
+                    visible: typeof root.gasClicked === "function"
+                    anchors.right: parent.right
+                    anchors.rightMargin: 7
+                    anchors.verticalCenter: parent.verticalCenter
+                    fillMode: Image.PreserveAspectFit
+                    source: "../app/img/caret.svg"
+                    rotation: 270
+                    ColorOverlay {
+                        anchors.fill: parent
+                        visible: parent.visible
+                        source: parent
+                        color: Style.current.secondaryText
+                    }
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    visible: gasArrow.visible
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.gasClicked()
                 }
             }
         }

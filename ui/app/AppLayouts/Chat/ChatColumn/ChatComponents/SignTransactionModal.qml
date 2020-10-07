@@ -38,19 +38,8 @@ ModalPopup {
                                                  root.selectedAmount,
                                                  gasSelector.selectedGasLimit,
                                                  gasSelector.selectedGasPrice,
-                                                 transactionSigner.enteredPassword)
-        let response = JSON.parse(responseStr)
-
-        if (response.error) {
-            if (response.result.includes("could not decrypt key with given password")){
-                //% "Wrong password"
-                transactionSigner.validationError = qsTrId("wrong-password")
-                return
-            }
-            sendingError.text = response.result
-            return sendingError.open()
-        }
-        root.close()
+                                                 transactionSigner.enteredPassword,
+                                                 stack.uuid)
     }
 
     TransactionStackView {
@@ -58,17 +47,63 @@ ModalPopup {
         anchors.fill: parent
         anchors.leftMargin: Style.current.padding
         anchors.rightMargin: Style.current.padding
+        initialItem: groupPreview
+        isLastGroup: stack.currentGroup === groupSignTx
         onGroupActivated: {
             root.title = group.headerText
             btnNext.text = group.footerText
         }
         TransactionFormGroup {
-            id: group1
-            //% "Send"
-            headerText: qsTrId("command-button-send")
+            id: groupSelectAcct
+            headerText: qsTr("Send")
+            footerText: qsTr("Continue")
+            showNextBtn: false
+            onBackClicked: function() {
+                if(validate()) {
+                    stack.pop()
+                }
+            }
+            AccountSelector {
+                id: selectFromAccount
+                accounts: walletModel.accounts
+                selectedAccount: root.selectedAccount
+                currency: walletModel.defaultCurrency
+                width: stack.width
+                //% "Choose account"
+                label: qsTrId("choose-account")
+                showBalanceForAssetSymbol: root.selectedAsset.symbol
+                minRequiredAssetBalance: parseFloat(root.selectedAmount)
+                reset: function() {
+                    accounts = Qt.binding(function() { return walletModel.accounts })
+                    selectedAccount = Qt.binding(function() { return root.selectedAccount })
+                    showBalanceForAssetSymbol = Qt.binding(function() { return root.selectedAsset.symbol })
+                    minRequiredAssetBalance = Qt.binding(function() { return parseFloat(root.selectedAmount) })
+                }
+                onSelectedAccountChanged: if (isValid) { gasSelector.estimateGas() }
+            }
+            RecipientSelector {
+                id: selectRecipient
+                visible: false
+                accounts: walletModel.accounts
+                contacts: profileModel.addedContacts
+                selectedRecipient: root.selectedRecipient
+                readOnly: true
+                reset: function() {
+                    accounts = Qt.binding(function() { return walletModel.accounts })
+                    contacts = Qt.binding(function() { return profileModel.addedContacts })
+                    selectedRecipient = Qt.binding(function() { return root.selectedRecipient })
+                }
+            }
+        }
+        TransactionFormGroup {
+            id: groupSelectGas
+            headerText: qsTr("Network fee")
             //% "Preview"
             footerText: qsTrId("preview")
-
+            showNextBtn: false
+            onBackClicked: function() {
+                stack.pop()
+            }
             GasSelector {
                 id: gasSelector
                 anchors.topMargin: Style.current.bigPadding
@@ -82,26 +117,29 @@ ModalPopup {
                     slowestGasPrice = Qt.binding(function(){ return parseFloat(walletModel.safeLowGasPrice) })
                     fastestGasPrice = Qt.binding(function(){ return parseFloat(walletModel.fastestGasPrice) })
                 }
-
-                function estimateGas() {
-                    if (!(root.selectedAccount && root.selectedAccount.address &&
-                        root.selectedRecipient && root.selectedRecipient.address &&
+    
+                property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
+                    if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
+                        selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
                         root.selectedAsset && root.selectedAsset.address &&
-                        root.selectedAmount)) return
-
+                        root.selectedAmount)) {
+                        selectedGasLimit = 250000
+                        return
+                    }
+                    
                     let gasEstimate = JSON.parse(walletModel.estimateGas(
-                        root.selectedAccount.address,
-                        root.selectedRecipient.address,
+                        selectFromAccount.selectedAccount.address,
+                        selectRecipient.selectedRecipient.address,
                         root.selectedAsset.address,
                         root.selectedAmount))
-
+    
                     if (!gasEstimate.success) {
                         //% "Error estimating gas: %1"
                         console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
                         return
                     }
                     selectedGasLimit = gasEstimate.result
-                }
+                })
             }
             GasValidator {
                 id: gasValidator
@@ -112,16 +150,24 @@ ModalPopup {
                 selectedAsset: root.selectedAsset
                 selectedGasEthValue: gasSelector.selectedGasEthValue
                 reset: function() {
+                    selectedAccount = Qt.binding(function() { return root.selectedAccount })
+                    selectedAmount = Qt.binding(function() { return parseFloat(root.selectedAmount) })
+                    selectedAsset = Qt.binding(function() { return root.selectedAsset })
                     selectedGasEthValue = Qt.binding(function() { return gasSelector.selectedGasEthValue })
                 }
             }
         }
+        
         TransactionFormGroup {
-            id: group2
+            id: groupPreview
             //% "Transaction preview"
             headerText: qsTrId("transaction-preview")
             //% "Sign with password"
             footerText: qsTrId("sign-with-password")
+            showBackBtn: false
+            onNextClicked: function() {
+                stack.push(groupSignTx, StackView.Immediate)
+            }
 
             TransactionPreview {
                 id: pvwTransaction
@@ -137,6 +183,7 @@ ModalPopup {
                 amount: { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount }
                 currency: walletModel.defaultCurrency
                 reset: function() {
+                    fromAccount =  Qt.binding(function() { return root.selectedAccount })
                     gas = Qt.binding(function() {
                         return {
                             "value": gasSelector.selectedGasEthValue,
@@ -144,15 +191,23 @@ ModalPopup {
                             "fiatValue": gasSelector.selectedGasFiatValue
                         }
                     })
+                    toAccount =  Qt.binding(function() { return root.selectedRecipient })
+                    asset = Qt.binding(function() { return root.selectedAsset })
+                    amount = Qt.binding(function() { return { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount } })
                 }
+                onFromClicked: stack.push(groupSelectAcct, StackView.Immediate)
+                onGasClicked: stack.push(groupSelectGas, StackView.Immediate)
             }
         }
         TransactionFormGroup {
-            id: group3
+            id: groupSignTx
             //% "Sign with password"
             headerText: qsTrId("sign-with-password")
             //% "Send %1 %2"
             footerText: qsTrId("send--1--2").arg(root.selectedAmount).arg(!!root.selectedAsset ? root.selectedAsset.symbol : "")
+            onBackClicked: function() {
+                stack.pop()
+            }
 
             TransactionSigner {
                 id: transactionSigner
@@ -169,30 +224,19 @@ ModalPopup {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        StyledButton {
+        StatusRoundButton {
             id: btnBack
             anchors.left: parent.left
-            width: 44
-            height: 44
-            visible: !stack.isFirstGroup
-            label: ""
-            background: Rectangle {
-                anchors.fill: parent
-                border.width: 0
-                radius: width / 2
-                color: btnBack.hovered ? Qt.darker(btnBack.btnColor, 1.1) : btnBack.btnColor
-
-                SVGImage {
-                    width: 20.42
-                    height: 15.75
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    fillMode: Image.PreserveAspectFit
-                    source: "../../../../img/arrow-right.svg"
-                    rotation: 180
-                }
-            }
+            icon.name: "arrow-right"
+            icon.width: 20
+            icon.height: 16
+            rotation: 180
+            visible: stack.currentGroup.showBackBtn
+            enabled: stack.currentGroup.isValid || stack.isLastGroup
             onClicked: {
+                if (typeof stack.currentGroup.onBackClicked === "function") {
+                    return stack.currentGroup.onBackClicked()
+                }
                 stack.back()
             }
         }
@@ -202,13 +246,51 @@ ModalPopup {
             //% "Next"
             text: qsTrId("next")
             enabled: stack.currentGroup.isValid && !stack.currentGroup.isPending
+            visible: stack.currentGroup.showNextBtn
             onClicked: {
                 const validity = stack.currentGroup.validate()
                 if (validity.isValid && !validity.isPending) {
                     if (stack.isLastGroup) {
                         return root.sendTransaction()
                     }
+                    if (typeof stack.currentGroup.onNextClicked === "function") {
+                        return stack.currentGroup.onNextClicked()
+                    }
                     stack.next()
+                }
+            }
+        }
+
+        Connections {
+            target: walletModel
+            onTransactionWasSent: {
+                try {
+                    let response = JSON.parse(txResult)
+
+                    if (response.uuid !== stack.uuid) return
+                    
+                    stack.currentGroup.isPending = false
+
+                    if (!response.success) {
+                        if (response.result.includes("could not decrypt key with given password")){
+                            //% "Wrong password"
+                            transactionSigner.validationError = qsTrId("wrong-password")
+                            return
+                        }
+                        sendingError.text = response.result
+                        return sendingError.open()
+                    }
+
+                    //% "Transaction pending..."
+                    toastMessage.title = qsTrId("ens-transaction-pending")
+                    toastMessage.source = "../../img/loading.svg"
+                    toastMessage.iconColor = Style.current.primary
+                    toastMessage.iconRotates = true
+                    toastMessage.link = `${walletModel.etherscanLink}/${response.result}`
+                    toastMessage.open()
+                    root.close()
+                } catch (e) {
+                    console.error('Error parsing the response', e)
                 }
             }
         }

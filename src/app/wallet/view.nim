@@ -279,18 +279,18 @@ QtObject:
   proc transactionSent(self: WalletView, txResult: string) {.slot.} =
     self.transactionWasSent(txResult)
 
-  proc sendTransaction*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string, gas: string, gasPrice: string, password: string) {.slot.} =
+  proc sendTransaction*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string, gas: string, gasPrice: string, password: string, uuid: string) {.slot.} =
     let wallet = self.status.wallet
     if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
       spawnAndSend(self, "transactionSent") do:
         var success: bool
         let response = wallet.sendTokenTransaction(from_addr, to, assetAddress, value, gas, gasPrice, password, success)
-        $(%* { "result": %response, "success": %success })
+        $(%* { "result": %response, "success": %success, "uuid": %uuid })
     else:
       spawnAndSend(self, "transactionSent") do:
         var success: bool
         let response = wallet.sendTransaction(from_addr, to, value, gas, gasPrice, password, success)
-        $(%* { "result": %response, "success": %success })
+        $(%* { "result": %response, "success": %success, "uuid": %uuid })
 
   proc getDefaultAccount*(self: WalletView): string {.slot.} =
     self.currentAccount.address

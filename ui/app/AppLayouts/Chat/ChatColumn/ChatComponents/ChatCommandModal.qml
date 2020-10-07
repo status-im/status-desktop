@@ -44,7 +44,7 @@ ModalPopup {
                 currency: walletModel.defaultCurrency
                 width: stack.width
                 //% "From account"
-                label: qsTrId("from-account")
+                label: root.isRequested ? qsTr("Receive on account") : qsTrId("from-account")
                 reset: function() {
                     accounts = Qt.binding(function() { return walletModel.accounts })
                     selectedAccount = Qt.binding(function() { return walletModel.currentAccount })
@@ -54,13 +54,13 @@ ModalPopup {
                 id: separator
                 anchors.top: selectFromAccount.bottom
                 anchors.topMargin: 19
+                icon.rotation: root.isRequested ? -90 : 90
             }
             RecipientSelector {
                 id: selectRecipient
                 accounts: walletModel.accounts
                 contacts: profileModel.addedContacts
-                //% "Recipient"
-                label: qsTrId("recipient")
+                label: qsTr("From")
                 readOnly: true
                 anchors.top: separator.bottom
                 anchors.topMargin: 10
@@ -114,6 +114,7 @@ ModalPopup {
             SVGImage {
                 width: 16
                 height: 16
+                visible: warningText.visible
                 source: "../../../../img/warning.svg"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: warningText.top
@@ -122,6 +123,7 @@ ModalPopup {
 
             StyledText {
                 id: warningText
+                visible: !root.isRequested
                 //% "You need to request the recipient’s address first.\nAssets won’t be sent yet."
                 text: qsTrId("you-need-to-request-the-recipient-s-address-first--nassets-won-t-be-sent-yet-")
                 color: Style.current.danger
@@ -139,29 +141,14 @@ ModalPopup {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        StyledButton {
+        StatusRoundButton {
             id: btnBack
             anchors.left: parent.left
-            width: 44
-            height: 44
             visible: !stack.isFirstGroup
-            label: ""
-            background: Rectangle {
-                anchors.fill: parent
-                border.width: 0
-                radius: width / 2
-                color: btnBack.hovered ? Qt.darker(btnBack.btnColor, 1.1) : btnBack.btnColor
-
-                SVGImage {
-                    width: 20.42
-                    height: 15.75
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    fillMode: Image.PreserveAspectFit
-                    source: "../../../../img/arrow-right.svg"
-                    rotation: 180
-                }
-            }
+            icon.name: "arrow-right"
+            icon.width: 20
+            icon.height: 16
+            rotation: 180
             onClicked: {
                 stack.back()
             }
