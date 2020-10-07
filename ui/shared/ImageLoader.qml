@@ -15,7 +15,7 @@ Rectangle {
             when: image.status === Image.Loading
             PropertyChanges {
                 target: loading
-                visible: true
+                active: true
             }
             PropertyChanges {
                 target: reload
@@ -31,7 +31,7 @@ Rectangle {
             when: image.status === Image.Error
             PropertyChanges {
                 target: loading
-                visible: false
+                active: false
             }
             PropertyChanges {
                 target: reload
@@ -51,7 +51,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: loading
-                visible: false
+                active: false
             }
             PropertyChanges {
                 target: reload
@@ -75,18 +75,26 @@ Rectangle {
         image.sourceSize.width -= 1
     }
 
-    LoadingImage {
+    Component {
+        id: loadingIndicator
+        LoadingImage {
+            width: 23
+            height: 23
+            ColorOverlay {
+                anchors.fill: parent
+                source: parent
+                color: Style.current.secondaryText
+                antialiasing: true
+            }
+        }
+    }
+
+    Loader {
         id: loading
-        width: 23
-        height: 23
+        sourceComponent: loadingIndicator
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        ColorOverlay {
-            anchors.fill: parent
-            source: parent
-            color: Style.current.secondaryText
-            antialiasing: true
-        }
+        active: false
     }
 
     SVGImage {
