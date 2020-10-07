@@ -32,11 +32,11 @@ Rectangle {
     property var urlENSDictionary: ({})
 
     function determineRealURL(text){
-        var url = utilsModel.urlFromUserInput(text);
-        var host = web3Provider.getHost(url);
+        var url = _utilsModel.urlFromUserInput(text);
+        var host = _web3Provider.getHost(url);
         if(host.endsWith(".eth")){
-            var ensResource = web3Provider.ensResourceURL(host, url);
-            urlENSDictionary[web3Provider.getHost(ensResource)] = host;
+            var ensResource = _web3Provider.ensResourceURL(host, url);
+            urlENSDictionary[_web3Provider.getHost(ensResource)] = host;
             url = ensResource;
         }
         return url;
@@ -49,7 +49,7 @@ Rectangle {
 
         function postMessage(isAllowed){
             request.isAllowed = isAllowed;
-            provider.web3Response(web3Provider.postMessage(JSON.stringify(request)));
+            provider.web3Response(_web3Provider.postMessage(JSON.stringify(request)));
         }
 
         onClosed: {
@@ -157,20 +157,20 @@ Rectangle {
             }
 
             if (request.type === Constants.api_request) {
-                if (!web3Provider.hasPermission(request.hostname, request.permission)) {
+                if (!_web3Provider.hasPermission(request.hostname, request.permission)) {
                     var dialog = accessDialogComponent.createObject(browserWindow);
                     dialog.request = request;
                     dialog.open();
                 } else {
                     request.isAllowed = true;
-                    web3Response(web3Provider.postMessage(JSON.stringify(request)));
+                    web3Response(_web3Provider.postMessage(JSON.stringify(request)));
                 }
             } else if (request.type === Constants.web3SendAsyncReadOnly &&
                        request.payload.method === "eth_sendTransaction") {
                 const sendDialog = sendTransactionModalComponent.createObject(browserWindow);
 
-                walletModel.setFocusedAccountByAddress(request.payload.params[0].from)
-                var acc = walletModel.focusedAccount
+                _walletModel.setFocusedAccountByAddress(request.payload.params[0].from)
+                var acc = _walletModel.focusedAccount
                 sendDialog.selectedAccount = {
                     name: acc.name,
                     address: request.payload.params[0].from,
@@ -179,8 +179,8 @@ Rectangle {
                 }
                 sendDialog.selectedRecipient = {
                     address: request.payload.params[0].to,
-                    identicon: chatsModel.generateIdenticon(request.payload.params[0].to),
-                    name: chatsModel.activeChannel.name,
+                    identicon: _chatsModel.generateIdenticon(request.payload.params[0].to),
+                    name: _chatsModel.activeChannel.name,
                     type: RecipientSelector.Type.Address
                 };
                 // TODO get this from data
@@ -189,7 +189,7 @@ Rectangle {
                     symbol: "ETH",
                     address: Constants.zeroAddress
                 };
-                const value = utilsModel.wei2Token(request.payload.params[0].value, 18)
+                const value = _utilsModel.wei2Token(request.payload.params[0].value, 18)
                 sendDialog.selectedAmount = value
                 // TODO calculate that
                 sendDialog.selectedFiatAmount = "42";
@@ -201,7 +201,7 @@ Rectangle {
                     request.payload.password = enteredPassword
                     request.payload.params[0].value = value
 
-                    const response = web3Provider.postMessage(JSON.stringify(request))
+                    const response = _web3Provider.postMessage(JSON.stringify(request))
                     provider.web3Response(response)
 
                     let responseObj
@@ -217,7 +217,7 @@ Rectangle {
                         toastMessage.source = "../../img/loading.svg"
                         toastMessage.iconColor = Style.current.primary
                         toastMessage.iconRotates = true
-                        toastMessage.link = `${walletModel.etherscanLink}/${responseObj.result}`
+                        toastMessage.link = `${_walletModel.etherscanLink}/${responseObj.result}`
                         toastMessage.open()
                     } catch (e) {
                         if (e.message.includes("could not decrypt key with given password")){
@@ -234,13 +234,13 @@ Rectangle {
                 }
 
                 sendDialog.open();
-                walletModel.getGasPricePredictions()
+                _walletModel.getGasPricePredictions()
             } else {
-                web3Response(web3Provider.postMessage(data));
+                web3Response(_web3Provider.postMessage(data));
             }
         }
 
-        property int networkId: web3Provider.networkId
+        property int networkId: _web3Provider.networkId
     }
 
     WebChannel {
@@ -252,7 +252,7 @@ Rectangle {
         storageName: "Profile"
         offTheRecord: false
         httpUserAgent: {
-            if (addressBar.text.indexOf("google.") > -1) {
+            if (browserHeader.addressBar.text.indexOf("google.") > -1) {
                 // Google doesn't let you connect if the user agent is Chrome-ish and doesn't satisfy some sort of hidden requirement
                 return "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:81.0) Gecko/20100101 Firefox/81.0"
             }
@@ -402,7 +402,6 @@ Rectangle {
             browserHeader.browserSettings.devToolsEnabled = !browserHeader.browserSettings.devToolsEnabled
         }
     }
-
 
     BrowserHeader {
         id: browserHeader
