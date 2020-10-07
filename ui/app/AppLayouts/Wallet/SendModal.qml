@@ -34,7 +34,8 @@ ModalPopup {
                                                  txtAmount.selectedAmount,
                                                  gasSelector.selectedGasLimit,
                                                  gasSelector.selectedGasPrice,
-                                                 transactionSigner.enteredPassword)
+                                                 transactionSigner.enteredPassword,
+                                                 stack.uuid)
     }
 
     TransactionStackView {
@@ -65,7 +66,7 @@ ModalPopup {
                     accounts = Qt.binding(function() { return walletModel.accounts })
                     selectedAccount = Qt.binding(function() { return walletModel.currentAccount })
                 }
-                onSelectedAccountChanged: gasSelector.estimateGas()
+                onSelectedAccountChanged: if (isValid) { gasSelector.estimateGas() }
             }
             SeparatorWithIcon {
                 id: separator
@@ -86,7 +87,7 @@ ModalPopup {
                     contacts = Qt.binding(function() { return profileModel.addedContacts })
                     selectedRecipient = {}
                 }
-                onSelectedRecipientChanged: gasSelector.estimateGas()
+                onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
             }
         }
         TransactionFormGroup {
@@ -106,8 +107,8 @@ ModalPopup {
                 reset: function() {
                     selectedAccount = Qt.binding(function() { return selectFromAccount.selectedAccount })
                 }
-                onSelectedAssetChanged: gasSelector.estimateGas()
-                onSelectedAmountChanged: gasSelector.estimateGas()
+                onSelectedAssetChanged: if (isValid) { gasSelector.estimateGas() }
+                onSelectedAmountChanged: if (isValid) { gasSelector.estimateGas() }
             }
             GasSelector {
                 id: gasSelector
@@ -216,30 +217,14 @@ ModalPopup {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        StyledButton {
+        StatusRoundButton {
             id: btnBack
             anchors.left: parent.left
-            width: 44
-            height: 44
             visible: !stack.isFirstGroup
-            label: ""
-            background: Rectangle {
-                anchors.fill: parent
-                border.width: 0
-                radius: width / 2
-                color: btnBack.disabled ? Style.current.grey :
-                        btnBack.hovered ? Qt.darker(btnBack.btnColor, 1.1) : btnBack.btnColor
-
-                SVGImage {
-                    width: 20.42
-                    height: 15.75
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    fillMode: Image.PreserveAspectFit
-                    source: "../../img/arrow-right.svg"
-                    rotation: 180
-                }
-            }
+            icon.name: "arrow-right"
+            icon.width: 20
+            icon.height: 16
+            rotation: 180
             onClicked: {
                 stack.back()
             }
@@ -266,8 +251,11 @@ ModalPopup {
             target: walletModel
             onTransactionWasSent: {
                 try {
-                    stack.currentGroup.isPending = false
                     let response = JSON.parse(txResult)
+
+                    if (response.uuid !== stack.uuid) return
+                    
+                    stack.currentGroup.isPending = false
 
                     if (!response.success) {
                         if (response.result.includes("could not decrypt key with given password")){

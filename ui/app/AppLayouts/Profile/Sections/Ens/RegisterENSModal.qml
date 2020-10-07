@@ -81,7 +81,7 @@ ModalPopup {
                     showBalanceForAssetSymbol = Qt.binding(function() { return root.asset.symbol })
                     minRequiredAssetBalance = Qt.binding(function() { return root.ensPrice })
                 }
-                onSelectedAccountChanged: gasSelector.estimateGas()
+                onSelectedAccountChanged: if (isValid) { gasSelector.estimateGas() }
             }
             RecipientSelector {
                 id: selectRecipient
@@ -90,7 +90,7 @@ ModalPopup {
                 contacts: profileModel.addedContacts
                 selectedRecipient: { "address": utilsModel.ensRegisterAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
-                onSelectedRecipientChanged: gasSelector.estimateGas()
+                onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
             }
             GasSelector {
                 id: gasSelector
