@@ -85,7 +85,7 @@ ModalPopup {
                     showBalanceForAssetSymbol = Qt.binding(function() { return root.asset.symbol })
                     minRequiredAssetBalance = Qt.binding(function() { return root.packPrice })
                 }
-                onSelectedAccountChanged: gasSelector.estimateGas()
+                onSelectedAccountChanged: if (isValid) { gasSelector.estimateGas() }
             }
             RecipientSelector {
                 id: selectRecipient
@@ -94,7 +94,7 @@ ModalPopup {
                 contacts: profileModel.addedContacts
                 selectedRecipient: { "address": utilsModel.stickerMarketAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
-                onSelectedRecipientChanged: gasSelector.estimateGas()
+                onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
             }
             GasSelector {
                 id: gasSelector
@@ -196,11 +196,13 @@ ModalPopup {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        StyledButton {
+        StatusRoundButton {
             id: btnBack
             anchors.left: parent.left
-            //% "Back"
-            label: qsTrId("back")
+            icon.name: "arrow-right"
+            icon.width: 20
+            icon.height: 16
+            rotation: 180
             onClicked: {
                 if (stack.isFirstGroup) {
                     return root.close()

@@ -10,13 +10,14 @@ StackView {
     property bool isFirstGroup: currentIdx === 0
     signal groupActivated(Item group)
     property alias currentGroup: root.currentItem
+    readonly property string uuid: Utils.uuid()
+
     property var next: function() {
         if (groups && groups.length <= currentIdx + 1) {
             return
         }
         const group = groups[++currentIdx]
         this.push(group, StackView.Immediate)
-
     }
     property var back: function() {
         if (currentIdx <= 0) {
