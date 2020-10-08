@@ -4,12 +4,80 @@ import QtQuick.Layouts 1.13
 import "../imports"
 import "../shared"
 import "./AppLayouts"
+import QtWebEngine 1.10
+import QtWebChannel 1.13
 
 RowLayout {
     id: appMain
     spacing: 0
     Layout.fillHeight: true
     Layout.fillWidth: true
+
+
+
+    QtObject {
+        id: ethersChannel
+        WebChannel.id: "backend"
+
+        property int messageId: 0
+
+        property var cbDictionary: ({})
+
+        signal post(string data);
+
+        function postMessage(data, cb) {
+            messageId++;
+            if(cb){
+                cbDictionary[messageId] = cb;
+            }
+            post(JSON.stringify({messageId, data}));
+        }
+
+        function response(requestId, data){
+            var responseData = JSON.parse(data);
+            if(cbDictionary[requestId]){
+                cbDictionary[requestId](responseData);
+            }
+        }
+    }
+
+    WebChannel {
+        id: channel
+        registeredObjects: [ethersChannel]
+    }
+
+    Button {
+        id: sendMsg
+        text: "Get balance of 0x66C0DC5111673DDC578b5B1c36412578E2de68B6"
+        anchors.top: parent.top
+        anchors.left: parent.left
+        onClicked: {
+            const request = {
+                type: "balance",
+                payload: "0x66C0DC5111673DDC578b5B1c36412578E2de68B6"
+            }
+
+            ethersChannel.postMessage(request, (message) => {
+                console.log("The balance is: ", message.hex);
+            });
+        }
+        
+    }
+
+    WebEngineView {
+        id: ethersWebView
+        visible: false
+        webChannel: channel
+        url: "qrc://ui/app/AppLayouts/POA/ethers.html"
+    }
+
+
+
+
+
+
+
+
 
     ToastMessage {
         id: toastMessage
