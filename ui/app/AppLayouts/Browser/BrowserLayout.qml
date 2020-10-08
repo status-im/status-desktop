@@ -433,7 +433,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: Style.current.halfPadding
         anchors.bottom: devToolsView.top
-        anchors.bottomMargin: Style.current.padding
+        anchors.bottomMargin: browserHeader.height
         anchors.left: parent.left
         anchors.right: parent.right
         Component.onCompleted: {
