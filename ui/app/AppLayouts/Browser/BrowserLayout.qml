@@ -433,6 +433,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: Style.current.halfPadding
         anchors.bottom: devToolsView.top
+        anchors.bottomMargin: Style.current.padding
         anchors.left: parent.left
         anchors.right: parent.right
         Component.onCompleted: {
@@ -440,7 +441,6 @@ Rectangle {
             tab.item.url = determineRealURL("https://simpledapp.eth");
         }
 
-        // Add custom tab view style so we can customize the tabs to include a close button
         style: TabViewStyle {
             property color fillColor: Style.current.background
             property color nonSelectedColor: Qt.darker(Style.current.background, 1.2)
@@ -552,6 +552,7 @@ Rectangle {
                         hideStatusText.stop();
                     }
                 }
+                backgroundColor: Style.current.background
 
                 settings.autoLoadImages: browserHeader.browserSettings.autoLoadImages
                 settings.javascriptEnabled: browserHeader.browserSettings.javaScriptEnabled
@@ -568,20 +569,25 @@ Rectangle {
                 }
 
                 onNewViewRequested: function(request) {
-                    if (!request.userInitiated)
+                    if (!request.userInitiated) {
+                        print("PROUT")
                         print("Warning: Blocked a popup window.");
-                    else if (request.destination === WebEngineView.NewViewInTab) {
+                    } else if (request.destination === WebEngineView.NewViewInTab) {
+                        print("NewViewInTab")
                         var tab = tabs.createEmptyTab(currentWebView.profile);
                         tabs.currentIndex = tabs.count - 1;
                         request.openIn(tab.item);
                     } else if (request.destination === WebEngineView.NewViewInBackgroundTab) {
+                        print("NewViewInBackgroundTab")
                         var backgroundTab = tabs.createEmptyTab(currentWebView.profile);
                         request.openIn(backgroundTab.item);
                     } else if (request.destination === WebEngineView.NewViewInDialog) {
+                        print("NewViewInDialog")
                         var dialog = browserDialogComponent.createObject();
                         dialog.currentWebView.profile = currentWebView.profile;
                         request.openIn(dialog.currentWebView);
                     } else {
+                        print("SOMETHIGN")
                         // Instead of opening a new window, we open a new tab
                         // TODO: remove "open in new window" from context menu
                         var tab = tabs.createEmptyTab(currentWebView.profile);
@@ -642,6 +648,64 @@ Rectangle {
                     if (loadRequest.status === WebEngineView.LoadStartedStatus)
                         findBar.reset();
                 }
+
+                Loader {
+                    active: !webEngineView.url.toString()
+                    width: parent.width
+                    height: parent.height
+                    z: 54
+
+                    sourceComponent: Item {
+                        width: parent.width
+                        height: parent.height
+
+                        Image {
+                            id: emptyPageImage
+                            source: "../../img/browser/compass.png"
+                            width: 294
+                            height: 294
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            anchors.topMargin: 60
+                        }
+
+                        Row {
+                            anchors.horizontalCenter: emptyPageImage.horizontalCenter
+                            anchors.top: emptyPageImage.bottom
+                            anchors.topMargin: 30
+                            Item {
+                                width: bookmarkItem.width
+                                height: bookmarkItem.height
+                                Item {
+                                    id: bookmarkItem
+                                    width: childrenRect.width
+                                    height: childrenRect.height
+                                    SVGImage {
+                                        id: bookmarkImage
+                                        source: "../../img/globe.svg"
+                                        width: 48
+                                        height: 48
+                                    }
+
+                                    StyledText {
+                                        text: "site.com"
+                                        anchors.horizontalCenter: bookmarkImage.horizontalCenter
+                                        anchors.top: bookmarkImage.bottom
+                                        anchors.topMargin: Style.current.halfPadding
+                                    }
+
+                                }
+                                MouseArea {
+                                    anchors.fill: bookmarkItem
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: console.log('Go to bookmark')
+                                }
+                            }
+                        }
+                    }
+                }
+
+
 
                 Timer {
                     id: reloadTimer
