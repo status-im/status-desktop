@@ -181,24 +181,17 @@ Item {
             }
         }
 
-        MouseArea {
-            id: generateKeysLink
-            width: generateKeysLinkText.width
-            height: generateKeysLinkText.height
-            cursorShape: Qt.PointingHandCursor
+        StatusButton {
+            id: generateKeysLinkText
+            //% "Generate new keys"
+            text: qsTrId("generate-new-keys")
             anchors.top: txtPassword.bottom
             anchors.topMargin: 26
             anchors.horizontalCenter: parent.horizontalCenter
+            font.pixelSize: 13
             onClicked: {
                 setCurrentFlow(false);
                 onGenKeyClicked()
-            }
-
-            StatusButton {
-                id: generateKeysLinkText
-                //% "Generate new keys"
-                text: qsTrId("generate-new-keys")
-                font.pixelSize: 13
             }
         }
     }
