@@ -443,7 +443,7 @@ Rectangle {
         // Add custom tab view style so we can customize the tabs to include a close button
         style: TabViewStyle {
             property color fillColor: Style.current.background
-            property color nonSelectedColor: Style.current.modalBackground
+            property color nonSelectedColor: Qt.darker(Style.current.background, 1.2)
             frameOverlap: 1
             tabsMovable: true
 
@@ -459,9 +459,18 @@ Rectangle {
                     id: tabRectangle
                     color: styleData.selected ? fillColor : nonSelectedColor
                     border.width: 0
-                    implicitWidth: Math.max(faviconImage.width + text.width + Style.current.halfPadding * 4 + closeTabBtn.width, 240)
+                    implicitWidth: 240
                     implicitHeight: tabs.tabHeight
                     radius: Style.current.radius
+
+                    // This rectangle is to hide the bottom radius
+                    Rectangle {
+                        width: parent.implicitWidth
+                        height: 5
+                        color: parent.color
+                        border.width: 0
+                        anchors.bottom: parent.bottom
+                    }
 
                     Image {
                         id: faviconImage
@@ -483,6 +492,8 @@ Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: faviconImage.right
                         anchors.leftMargin: Style.current.halfPadding
+                        anchors.right: closeTabBtn.left
+                        anchors.rightMargin: Style.current.halfPadding
                         text: styleData.title
                         // TODO the elide probably doesn't work. Set a Max width
                         elide: Text.ElideRight
