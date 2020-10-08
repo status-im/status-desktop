@@ -7,6 +7,7 @@ import "./AppLayouts"
 
 RowLayout {
     id: appMain
+    spacing: 0
     Layout.fillHeight: true
     Layout.fillWidth: true
 

@@ -48,8 +48,8 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.1
-import QtQuick.Window 2.2
+import QtQuick 2.13
+import QtQuick.Window 2.13
 import QtWebEngine 1.9
 
 Window {
