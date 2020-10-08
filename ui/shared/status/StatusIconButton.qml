@@ -8,13 +8,21 @@ RoundButton {
     id: control
 
     property string type: "primary"
+    property color disabledColor: Style.current.secondaryText
+    property int iconRotation: 0
 
     implicitHeight: 32
     implicitWidth: 32
 
     icon.height: 20
     icon.width: 20
-    icon.color: (hovered || highlighted) ? Style.current.blue : Style.current.darkGrey
+    icon.color: {
+        if (!enabled) {
+            return control.disabledColor
+        }
+
+        return (hovered || highlighted) ? Style.current.blue : Style.current.secondaryText
+    }
     radius: Style.current.radius
 
     onIconChanged: {
@@ -44,15 +52,17 @@ RoundButton {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             fillMode: Image.PreserveAspectFit
+            rotation: control.iconRotation
         }
-
         ColorOverlay {
             anchors.fill: iconImg
             source: iconImg
             color: control.icon.color
             antialiasing: true
             smooth: true
+            rotation: control.iconRotation
         }
+
     }
 
     MouseArea {
