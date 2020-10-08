@@ -29,11 +29,24 @@ Item {
               wentNext = true
               enterSeedPhraseModal.close()
               onboardingModel.importMnemonic(mnemonic)
-              createPasswordModal.open()
+              recoverySuccessModal.open()
             }
         }
         onClosed: function () {
             if (!wentNext) {
+                existingKeyView.onClosed()
+            }
+        }
+    }
+
+    MnemonicRecoverySuccessModal {
+        id: recoverySuccessModal
+        onButtonClicked: {
+            recoverySuccessModal.close()
+            createPasswordModal.open()
+        }
+        onClosed: function () {
+            if (!enterSeedPhraseModal.wentNext) {
                 existingKeyView.onClosed()
             }
         }
