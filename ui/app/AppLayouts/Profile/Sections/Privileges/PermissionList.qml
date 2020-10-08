@@ -14,8 +14,8 @@ ModalPopup {
     width: 400
     height: 400
 
-    Component.onCompleted: profileModel.permissionList.init(dapp)
-    Component.onDestruction: profileModel.permissionList.clearData()
+    Component.onCompleted: profileModel.dappList.permissionList.init(dapp)
+    Component.onDestruction: profileModel.dappList.permissionList.clearData()
 
     signal accessRevoked(string dapp)
 
@@ -35,17 +35,16 @@ ModalPopup {
                 spacing: 0
                 clip: true
                 id: permissionListView
-                model: profileModel.permissionList
+                model: profileModel.dappList.permissionList
                 delegate: Permission {
                   name: model.name
                   onRemoveBtnClicked: {
-                      profileModel.permissionList.revokePermission(model.name);
-                      console.log(permissionListView.count)
+                      profileModel.dappList.permissionList.revokePermission(model.name);
                       if(permissionListView.count === 1){
                             accessRevoked(dapp);
                             close();
                       }
-                      profileModel.permissionList.init(dapp)
+                      profileModel.dappList.permissionList.init(dapp)
                   }
                 }
             }
@@ -56,11 +55,11 @@ ModalPopup {
         anchors.horizontalCenter: parent.horizontalCenter
         btnColor: Style.current.lightRed
         btnBorderWidth: 1
-        btnBorderColor: Style.current.grey
+        btnBorderColor: Style.current.border
         textColor: Style.current.red
         label: qsTr("Revoke all access")
         onClicked: {
-            profileModel.permissionList.revokeAccess();
+            profileModel.dappList.permissionList.revokeAccess();
             accessRevoked(dapp);
             close();
         }
