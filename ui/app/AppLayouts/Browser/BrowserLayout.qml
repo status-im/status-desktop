@@ -298,13 +298,17 @@ Rectangle {
                 currentWebView.reload();
         }
     }
+    function addNewTab() {
+        tabs.createEmptyTab(tabs.count != 0 ? currentWebView.profile : defaultProfile);
+        tabs.currentIndex = tabs.count - 1;
+        browserHeader.addressBar.forceActiveFocus();
+        browserHeader.addressBar.selectAll();
+    }
+
     Action {
         shortcut: StandardKey.AddTab
         onTriggered: {
-            tabs.createEmptyTab(tabs.count != 0 ? currentWebView.profile : defaultProfile);
-            tabs.currentIndex = tabs.count - 1;
-            browserHeader.addressBar.forceActiveFocus();
-            browserHeader.addressBar.selectAll();
+            addNewTab()
         }
     }
     Action {
@@ -448,68 +452,84 @@ Rectangle {
                 border.width: 0
             }
 
-            leftCorner: Rectangle {
-                color: "red"
-                width: 5
-                height: 5
-            }
+            tab: Item {
+                implicitWidth: tabRectangle.implicitWidth + 5 + (newTabloader.active ? newTabloader.width + Style.current.halfPadding : 0)
+                implicitHeight: tabRectangle.implicitHeight
+                Rectangle {
+                    id: tabRectangle
+                    color: styleData.selected ? fillColor : nonSelectedColor
+                    border.width: 0
+                    implicitWidth: Math.max(faviconImage.width + text.width + Style.current.halfPadding * 4 + closeTabBtn.width, 240)
+                    implicitHeight: tabs.tabHeight
+                    radius: Style.current.radius
 
-            tab: Rectangle {
-                id: tabRectangle
-                color: styleData.selected ? fillColor : nonSelectedColor
-                border.width: 0
-                implicitWidth: Math.max(faviconImage.width + text.width + Style.current.halfPadding * 4 + closeTabBtn.width, 240)
-                implicitHeight: tabs.tabHeight + 5 // The additional height is to hide the weird rounded corner
-                radius: Style.current.radius
+                    Image {
+                        id: faviconImage
+                        anchors.verticalCenter: parent.verticalCenter;
+                        anchors.left: parent.left
+                        anchors.leftMargin: Style.current.halfPadding
+                        width: 24
+                        height: 24
+                        sourceSize: Qt.size(width, height)
+                        // TODO find a better default favicon
+                        source: {
+                            const thisTab = tabs.getTab(styleData.index) && tabs.getTab(styleData.index).item
+                            return thisTab && !!thisTab.icon.toString() ? thisTab.icon : "../../img/globe.svg"
+                        }
+                    }
 
-                Image {
-                    id: faviconImage
-                    anchors.verticalCenter: parent.verticalCenter;
-                    anchors.left: parent.left
-                    anchors.leftMargin: Style.current.halfPadding
-                    width: 24
-                    height: 24
-                    sourceSize: Qt.size(width, height)
-                    // TODO find a better default favicon
-                    source: {
-                        const thisTab = tabs.getTab(styleData.index) && tabs.getTab(styleData.index).item
-                        return thisTab && !!thisTab.icon.toString() ? thisTab.icon : "../../img/globe.svg"
+                    StyledText {
+                        id: text
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: faviconImage.right
+                        anchors.leftMargin: Style.current.halfPadding
+                        text: styleData.title
+                        // TODO the elide probably doesn't work. Set a Max width
+                        elide: Text.ElideRight
+                        color: Style.current.textColor
+                    }
+
+
+                    StatusIconButton {
+                        id: closeTabBtn
+                        visible: tabs.count > 1
+                        enabled: visible
+                        icon.name: "browser/close"
+                        iconColor: Style.current.textColor
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        anchors.rightMargin: Style.current.halfPadding
+                        onClicked: tabs.removeView(styleData.index)
+                        width: 16
+                        height: 16
                     }
                 }
 
-                StyledText {
-                    id: text
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: faviconImage.right
-                    anchors.leftMargin: Style.current.halfPadding
-                    text: styleData.title
-                    // TODO the elide probably doesn't work. Set a Max width
-                    elide: Text.ElideRight
-                    color: Style.current.textColor
-                }
-
-
-                StatusIconButton {
-                    id: closeTabBtn
-                    visible: tabs.count > 1
-                    enabled: visible
-                    icon.name: "browser/close"
+                Loader {
+                    id: newTabloader
+                    active: styleData.index === tabs.count - 1
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
-                    anchors.rightMargin: Style.current.halfPadding
-                    onClicked: tabs.removeView(styleData.index)
-                    width: 16
-                    height: 16
+
+                    sourceComponent: Component {
+                        StatusIconButton {
+                            icon.name: "browser/close"
+                            iconColor: Style.current.textColor
+                            iconRotation: 45
+                            onClicked: addNewTab()
+                            width: 16
+                            height: 16
+                        }
+                    }
                 }
             }
         }
-
         Component {
             id: tabComponent
             WebEngineView {
                 id: webEngineView
                 anchors.top: parent.top
-                anchors.topMargin: browserHeader.height - 4
+                anchors.topMargin: browserHeader.height
                 focus: true
                 webChannel: channel
                 onLinkHovered: function(hoveredUrl) {

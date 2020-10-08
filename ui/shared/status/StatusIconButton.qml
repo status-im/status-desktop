@@ -8,7 +8,8 @@ RoundButton {
     id: control
 
     property string type: "primary"
-    property color disabledColor: Style.current.secondaryText
+    property color iconColor: Style.current.secondaryText
+    property color disabledColor: iconColor
     property int iconRotation: 0
 
     implicitHeight: 32
@@ -21,7 +22,7 @@ RoundButton {
             return control.disabledColor
         }
 
-        return (hovered || highlighted) ? Style.current.blue : Style.current.secondaryText
+        return (hovered || highlighted) ? Style.current.blue : control.iconColor
     }
     radius: Style.current.radius
 
