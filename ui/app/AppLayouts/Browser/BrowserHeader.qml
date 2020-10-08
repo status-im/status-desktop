@@ -3,15 +3,20 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import Qt.labs.settings 1.0
 import QtQuick.Controls.Styles 1.0
+import QtWebEngine 1.10
 import "../../../shared"
+import "../../../shared/status"
 import "../../../imports"
 
-Item {
+Rectangle {
     property alias browserSettings: browserSettings
+    readonly property int innerMargin: 12
 
     id: root
     width: parent.width
     height: 45
+    color: Style.current.background
+    border.width: 0
 
     Settings {
         id : browserSettings
@@ -28,6 +33,7 @@ Item {
 
     RowLayout {
         anchors.fill: parent
+        spacing: root.innerMargin
 
         Menu {
             id: historyMenu
@@ -49,9 +55,10 @@ Item {
             }
         }
 
-        ToolButton {
+        StatusIconButton {
             id: backButton
-            icon.source: "../../img/browser/back.png"
+            icon.name: "leave_chat"
+            disabledColor: Style.current.lightGrey
             onClicked: currentWebView.goBack()
             onPressAndHold: {
                 if (currentWebView && (currentWebView.canGoBack || currentWebView.canGoForward)){
@@ -59,24 +66,27 @@ Item {
                 }
             }
             enabled: currentWebView && currentWebView.canGoBack
+            width: 24
+            height: 24
+            Layout.leftMargin: root.innerMargin
+            padding: 6
         }
 
-        ToolButton {
+        StatusIconButton {
             id: forwardButton
-            icon.source: "../../img/browser/forward.png"
+            icon.name: "leave_chat"
+            iconRotation: 180
+            disabledColor: Style.current.lightGrey
             onClicked: currentWebView.goForward()
-            enabled: currentWebView && currentWebView.canGoForward
             onPressAndHold: {
                 if (currentWebView && (currentWebView.canGoBack || currentWebView.canGoForward)){
                     historyMenu.popup(forwardButton.x, forwardButton.y + forwardButton.height)
                 }
             }
-        }
-
-        ToolButton {
-            id: reloadButton
-            icon.source: currentWebView && currentWebView.loading ? "../../img/browser/stop.png" : "../../img/browser/refresh.png"
-            onClicked: currentWebView && currentWebView.loading ? currentWebView.stop() : currentWebView.reload()
+            enabled: currentWebView && currentWebView.canGoForward
+            width: 24
+            height: 24
+            Layout.leftMargin: -root.innerMargin/2
         }
 
         Connections {
@@ -90,29 +100,46 @@ Item {
 
         StyledTextField {
             id: addressBar
+            height: 40
             Layout.fillWidth: true
             background: Rectangle {
-                border.color: Style.current.secondaryText
-                border.width: 1
-                radius: 2
+                color: Style.current.inputBackground
+                border.color: Style.current.inputBorderFocus
+                border.width: activeFocus ? 1 : 0
+                radius: 20
             }
-            leftPadding: 25
-            Image {
-                anchors.verticalCenter: addressBar.verticalCenter;
-                x: 5
-                z: 2
-                id: faviconImage
-                width: 16; height: 16
-                sourceSize: Qt.size(width, height)
-                source: currentWebView && currentWebView.icon ? currentWebView.icon : ""
-            }
+            leftPadding: Style.current.padding
+            placeholderText: qsTr("Enter URL")
             focus: true
             text: ""
+            color: Style.current.textColor
             Keys.onPressed: {
                 // TODO: disable browsing local files?  file://
                 if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return){
                     currentWebView.url = determineRealURL(text);
                 }
+            }
+
+            // TODO move this to the tab
+//            Image {
+//                anchors.verticalCenter: addressBar.verticalCenter;
+//                x: 5
+//                z: 2
+//                id: faviconImage
+//                width: 16; height: 16
+//                sourceSize: Qt.size(width, height)
+//                source: currentWebView && currentWebView.icon ? currentWebView.icon : ""
+            //            }
+
+            StatusIconButton {
+                id: chatCommandsBtn
+                icon.name: currentWebView && currentWebView.loading ? "close" : "browser/refresh"
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: Style.current.halfPadding
+                onClicked: currentWebView && currentWebView.loading ? currentWebView.stop() : currentWebView.reload()
+                width: 24
+                height: 24
             }
         }
 
@@ -143,27 +170,13 @@ Item {
             }
         }
 
-        ToolButton {
+        StatusIconButton {
             id: accountBtn
-            Rectangle {
-                id: rectAccountBtn
-                anchors.centerIn: parent
-                width: 20
-                height: width
-                radius: width / 2
-                color: "#ff0000"
-                StyledText {
-                    id: txtAccountBtn
-                    text: ""
-                    opacity: 0.7
-                    font.weight: Font.Bold
-                    font.pixelSize: 14
-                    color: "white"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-            }
+            icon.name: "walletIcon"
             onClicked: accountsMenu.popup(accountBtn.x, accountBtn.y + accountBtn.height)
+            width: 24
+            height: 24
+            padding: 6
         }
 
         Menu {
@@ -249,13 +262,23 @@ Item {
             }
         }
 
-        ToolButton {
+        StatusIconButton {
             id: settingsMenuButton
-            text: qsTr("⋮")
+            icon.name: "dots-icon"
             onClicked: settingsMenu.open()
+            width: 24
+            height: 24
+            Layout.rightMargin: root.innerMargin
+            padding: 6
         }
     }
 }
 
 
 
+
+/*##^##
+Designer {
+    D{i:0;width:700}
+}
+##^##*/
