@@ -8,14 +8,17 @@ import Qt.labs.settings 1.0
 import QtQuick.Controls.Styles 1.0
 import QtQuick.Dialogs 1.2
 import "../../../shared"
+import "../../../shared/status"
 import "../../../imports"
 import "../Chat/ChatColumn/ChatComponents"
 
 // Code based on https://code.qt.io/cgit/qt/qtwebengine.git/tree/examples/webengine/quicknanobrowser/BrowserWindow.qml?h=5.15 
 // Licensed under BSD
 
-Item {
+Rectangle {
     id: browserWindow
+    color: Style.current.inputBackground
+    border.width: 0
 
     property Item currentWebView: tabs.currentIndex < tabs.count ? tabs.getTab(tabs.currentIndex).item : null
     
@@ -284,8 +287,8 @@ Item {
         id: focus
         shortcut: "Ctrl+L"
         onTriggered: {
-            addressBar.forceActiveFocus();
-            addressBar.selectAll();
+            browserHeader.addressBar.forceActiveFocus();
+            browserHeader.addressBar.selectAll();
         }
     }
     Action {
@@ -300,8 +303,8 @@ Item {
         onTriggered: {
             tabs.createEmptyTab(tabs.count != 0 ? currentWebView.profile : defaultProfile);
             tabs.currentIndex = tabs.count - 1;
-            addressBar.forceActiveFocus();
-            addressBar.selectAll();
+            browserHeader.addressBar.forceActiveFocus();
+            browserHeader.addressBar.selectAll();
         }
     }
     Action {
@@ -388,11 +391,18 @@ Item {
         }
     }
 
+
     BrowserHeader {
         id: browserHeader
+        anchors.top: parent.top
+        // TODO Replace with tab height
+        anchors.topMargin: tabs.tabHeight + tabs.anchors.topMargin
+        z: 52
     }
 
     QQC1.TabView {
+        property int tabHeight: 40
+
         id: tabs
         function createEmptyTab(profile) {
             var tab = addTab("", tabComponent);
@@ -405,7 +415,7 @@ Item {
 
         function indexOfView(view) {
             for (let i = 0; i < tabs.count; ++i)
-                if (tabs.getTab(i).item == view)
+                if (tabs.getTab(i).item === view)
                     return i
             return -1
         }
@@ -415,7 +425,9 @@ Item {
                 tabs.removeTab(index)
         }
 
-        anchors.top: browserHeader.bottom
+        z: 50
+        anchors.top: parent.top
+        anchors.topMargin: Style.current.halfPadding
         anchors.bottom: devToolsView.top
         anchors.left: parent.left
         anchors.right: parent.right
@@ -426,47 +438,68 @@ Item {
 
         // Add custom tab view style so we can customize the tabs to include a close button
         style: TabViewStyle {
-            property color frameColor: "#999"
-            property color fillColor: "#eee"
-            property color nonSelectedColor: "#ddd"
+            property color fillColor: Style.current.background
+            property color nonSelectedColor: Style.current.modalBackground
             frameOverlap: 1
+            tabsMovable: true
+
             frame: Rectangle {
-                color: "#eee"
-                border.color: frameColor
+                color: Style.current.transparent
+                border.width: 0
             }
+
+            leftCorner: Rectangle {
+                color: "red"
+                width: 5
+                height: 5
+            }
+
             tab: Rectangle {
                 id: tabRectangle
                 color: styleData.selected ? fillColor : nonSelectedColor
-                border.width: 1
-                border.color: frameColor
-                implicitWidth: Math.max(text.width + 30, 80)
-                implicitHeight: Math.max(text.height + 10, 20)
-                Rectangle { height: 1 ; width: parent.width ; color: frameColor}
-                Rectangle { height: parent.height ; width: 1; color: frameColor}
-                Rectangle { x: parent.width - 2; height: parent.height ; width: 1; color: frameColor}
-                Text {
-                    id: text
-                    anchors.left: parent.left
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.leftMargin: 6
-                    text: styleData.title
-                    elide: Text.ElideRight
-                    color: styleData.selected ? "black" : frameColor
-                }
+                border.width: 0
+                implicitWidth: Math.max(faviconImage.width + text.width + Style.current.halfPadding * 4 + closeTabBtn.width, 240)
+                implicitHeight: tabs.tabHeight + 5 // The additional height is to hide the weird rounded corner
+                radius: Style.current.radius
 
                 Image {
-                    visible: tabs.count > 1
-                    source: "../../img/browser/close.png"
-                    width: 12
-                    height: 16
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.rightMargin: 4
-                    MouseArea {
-                        anchors.fill: parent
-                        enabled: tabs.count > 1
-                        onClicked: tabs.removeView(styleData.index)
+                    id: faviconImage
+                    anchors.verticalCenter: parent.verticalCenter;
+                    anchors.left: parent.left
+                    anchors.leftMargin: Style.current.halfPadding
+                    width: 24
+                    height: 24
+                    sourceSize: Qt.size(width, height)
+                    // TODO find a better default favicon
+                    source: {
+                        const thisTab = tabs.getTab(styleData.index) && tabs.getTab(styleData.index).item
+                        return thisTab && !!thisTab.icon.toString() ? thisTab.icon : "../../img/globe.svg"
                     }
+                }
+
+                StyledText {
+                    id: text
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: faviconImage.right
+                    anchors.leftMargin: Style.current.halfPadding
+                    text: styleData.title
+                    // TODO the elide probably doesn't work. Set a Max width
+                    elide: Text.ElideRight
+                    color: Style.current.textColor
+                }
+
+
+                StatusIconButton {
+                    id: closeTabBtn
+                    visible: tabs.count > 1
+                    enabled: visible
+                    icon.name: "browser/close"
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: Style.current.halfPadding
+                    onClicked: tabs.removeView(styleData.index)
+                    width: 16
+                    height: 16
                 }
             }
         }
@@ -475,6 +508,8 @@ Item {
             id: tabComponent
             WebEngineView {
                 id: webEngineView
+                anchors.top: parent.top
+                anchors.topMargin: browserHeader.height - 4
                 focus: true
                 webChannel: channel
                 onLinkHovered: function(hoveredUrl) {
@@ -573,7 +608,7 @@ Item {
                 }
 
                 onLoadingChanged: function(loadRequest) {
-                    if (loadRequest.status == WebEngineView.LoadStartedStatus)
+                    if (loadRequest.status === WebEngineView.LoadStartedStatus)
                         findBar.reset();
                 }
 

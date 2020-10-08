@@ -10,6 +10,7 @@ import "../../../imports"
 
 Rectangle {
     property alias browserSettings: browserSettings
+    property alias addressBar: addressBar
     readonly property int innerMargin: 12
 
     id: root
@@ -120,17 +121,6 @@ Rectangle {
                 }
             }
 
-            // TODO move this to the tab
-//            Image {
-//                anchors.verticalCenter: addressBar.verticalCenter;
-//                x: 5
-//                z: 2
-//                id: faviconImage
-//                width: 16; height: 16
-//                sourceSize: Qt.size(width, height)
-//                source: currentWebView && currentWebView.icon ? currentWebView.icon : ""
-            //            }
-
             StatusIconButton {
                 id: chatCommandsBtn
                 icon.name: currentWebView && currentWebView.loading ? "close" : "browser/refresh"
@@ -160,8 +150,6 @@ Rectangle {
                     }
                     checked: {
                         if(web3Provider.dappsAddress === model.address){
-                            txtAccountBtn.text = model.name.substr(0, 1);
-                            rectAccountBtn.color = model.iconColor
                             return true;
                         }
                         return false;
