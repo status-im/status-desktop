@@ -22,7 +22,7 @@ Item {
         anchors.rightMargin: Style.current.padding
         font.pixelSize: 17
         anchors.top: parent.top
-        anchors.topMargin: 10
+        anchors.topMargin: Style.current.smallPadding
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
     }
@@ -32,7 +32,7 @@ Item {
         text: qsTr("Revoke access")
         color: Style.current.red
         anchors.top: parent.top
-        anchors.topMargin: 10
+        anchors.topMargin: Style.current.smallPadding
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
 

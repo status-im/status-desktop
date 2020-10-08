@@ -1,6 +1,7 @@
 import NimQml
 import Tables
 import ../../../status/status
+import permission_list
 
 type
   DappsRoles {.pure.} = enum
@@ -9,18 +10,21 @@ type
 QtObject:
   type DappList* = ref object of QAbstractListModel
     status: Status
-    dapps: seq[string]
+    dapps: seq[Dapp]
+    permissionList: PermissionList
 
   proc setup(self: DappList) = self.QAbstractListModel.setup
 
   proc delete(self: DappList) =
     self.dapps = @[]
+    self.permissionList.delete
     self.QAbstractListModel.delete
 
   proc newDappList*(status: Status): DappList =
     new(result, delete)
     result.status = status
-    result.dapps = @[]
+    result.permissionList = newPermissionList(status)
+    result.dapps =  @[]
     result.setup
 
   proc init*(self: DappList) {.slot.} =
@@ -36,7 +40,7 @@ QtObject:
       return
     if index.row < 0 or index.row >= self.dapps.len:
       return
-    result = newQVariant(self.dapps[index.row])
+    result = newQVariant(self.dapps[index.row].name)
 
   method roleNames(self: DappList): Table[int, string] =
     {
@@ -51,3 +55,9 @@ QtObject:
   proc revokeAllPermissions(self: DappList) {.slot.} =
     self.status.permissions.clearPermissions()
     self.clearData()
+
+  proc getPermissionList(self: DappList): QVariant {.slot.} =
+    return newQVariant(self.permissionList)
+
+  QtProperty[QVariant] permissionList:
+    read = getPermissionList

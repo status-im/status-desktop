@@ -34,11 +34,22 @@ proc newPermissionsModel*(events: EventEmitter): PermissionsModel =
 proc init*(self: PermissionsModel) =
   discard
 
-proc getDapps*(self: PermissionsModel): seq[string] =
+
+type Dapp* = object
+  name*: string
+  permissions*: HashSet[Permission]
+
+proc getDapps*(self: PermissionsModel): seq[Dapp] =
   let response = callPrivateRPC("permissions_getDappPermissions")
   result = @[]
   for dapps in response.parseJson["result"].getElems():
-    result.add(dapps["dapp"].getStr())
+    var dapp = Dapp(
+      name: dapps["dapp"].getStr(),
+      permissions: initHashSet[Permission]()
+    )
+    for permission in dapps["permissions"].getElems():
+        dapp.permissions.incl(permission.getStr().toPermission())
+    result.add(dapp)
 
 proc getPermissions*(self: PermissionsModel, dapp: string): HashSet[Permission] =
   let response = callPrivateRPC("permissions_getDappPermissions")
