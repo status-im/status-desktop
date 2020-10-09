@@ -402,6 +402,20 @@ QtObject:
       for k in self.messageList.keys:
         self.messageList[k].updateUsernames(contacts)
 
+  proc updateChannelForContacts*(self: ChatsView, contacts: seq[Profile]) =
+    for contact in contacts:
+      let channel = self.chats.getChannelById(contact.id)
+      if not channel.isNil:
+        if contact.localNickname == "":
+          channel.name = contact.username
+        else:
+          channel.name = contact.localNickname
+        self.chats.updateChat(channel, false)
+        if (self.activeChannel.id == channel.id):
+          self.activeChannel.setChatItem(channel)
+          self.activeChannelChanged()
+
+
   proc markMessageAsSent*(self:ChatsView, chat: string, messageId: string) =
     self.messageList[chat].markMessageAsSent(messageId)
 

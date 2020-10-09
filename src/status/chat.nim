@@ -7,6 +7,7 @@ import libstatus/types
 import stickers
 
 import profile/profile
+import contacts
 import chat/[chat, message]
 import signals/messages
 import ens
@@ -114,6 +115,10 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
 
   self.events.emit("channelJoined", ChannelArgs(chat: chat))
 
+proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
+  for c in contacts:
+    self.contacts[c.id] = c
+  self.events.emit("chatUpdate", ChatUpdateArgs(contacts: contacts))
 
 proc init*(self: ChatModel) =
   let chatList = status_chat.loadChats()
@@ -151,6 +156,10 @@ proc init*(self: ChatModel) =
   else:
     self.events.once("mailserverAvailable") do(a: Args):
       self.events.emit("mailserverTopics", TopicArgs(topics: topics));
+
+  self.events.on("contactUpdate") do(a: Args):
+    var evArgs = ContactUpdateArgs(a)
+    self.updateContacts(evArgs.contacts)
 
 proc leave*(self: ChatModel, chatId: string) =
   self.removeChatFilters(chatId)
@@ -265,11 +274,6 @@ proc getUserName*(self: ChatModel, id: string, defaultUserName: string):string =
     return userNameOrAlias(self.contacts[id])
   else:
     return defaultUserName
-
-proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
-  for c in contacts:
-    self.contacts[c.id] = c
-  self.events.emit("chatUpdate", ChatUpdateArgs(contacts: contacts))
 
 proc createGroup*(self: ChatModel, groupName: string, pubKeys: seq[string]) =
   var response = parseJson(status_chat.createGroup(groupName, pubKeys))
