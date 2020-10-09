@@ -11,6 +11,7 @@ proc handleChatEvents(self: ChatController) =
   self.status.events.on("contactUpdate") do(e: Args):
     var evArgs = ContactUpdateArgs(e)
     self.view.updateUsernames(evArgs.contacts)
+    self.view.updateChannelForContacts(evArgs.contacts)
 
   self.status.events.on("chatUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)

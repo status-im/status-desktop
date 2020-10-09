@@ -43,7 +43,9 @@ proc getContacts*(self: ContactModel): seq[Profile] =
 
 proc addContact*(self: ContactModel, id: string, localNickname: string): string =
   let contact = self.getContactByID(id)
-  contact.systemTags.add(":contact/added")
+  let updating = contact.systemTags.contains(":contact/added")
+  if not updating:
+    contact.systemTags.add(":contact/added")
   let nickname =
     if (localNickname == ""):
       contact.localNickname
@@ -53,6 +55,21 @@ proc addContact*(self: ContactModel, id: string, localNickname: string): string 
       localNickname
   result = status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.systemTags, nickname)
   self.events.emit("contactAdded", Args())
+  if updating:
+    let profile = Profile(
+      id: contact.id,
+      username: contact.alias,
+      identicon: contact.identicon,
+      alias: contact.alias,
+      ensName: contact.ensName,
+      ensVerified: contact.ensVerified,
+      ensVerifiedAt: contact.ensVerifiedAt,
+      appearance: 0,
+      ensVerificationRetries: contact.ensVerificationRetries,
+      systemTags: contact.systemTags,
+      localNickname: nickname
+    )
+    self.events.emit("contactUpdate", ContactUpdateArgs(contacts: @[profile]))
 
 proc addContact*(self: ContactModel, id: string): string =
   result = self.addContact(id, "")
