@@ -283,12 +283,7 @@ Rectangle {
         browserHeader.addressBar.selectAll();
     }
 
-    Action {
-        shortcut: StandardKey.AddTab
-        onTriggered: {
-            addNewTab()
-        }
-    }
+
     Action {
         shortcut: StandardKey.Close
         onTriggered: {
@@ -302,18 +297,7 @@ Rectangle {
                 findBar.visible = false;
         }
     }
-    Action {
-        shortcut: "Ctrl+0"
-        onTriggered: currentWebView.zoomFactor = 1.0
-    }
-    Action {
-        shortcut: StandardKey.ZoomOut
-        onTriggered: currentWebView.zoomFactor -= 0.1
-    }
-    Action {
-        shortcut: StandardKey.ZoomIn
-        onTriggered: currentWebView.zoomFactor += 0.1
-    }
+
 
     Action {
         shortcut: StandardKey.Copy
@@ -352,25 +336,12 @@ Rectangle {
         onTriggered: currentWebView.triggerWebAction(WebEngineView.Forward)
     }
     Action {
-        shortcut: StandardKey.Find
-        onTriggered: {
-            if (!findBar.visible)
-                findBar.visible = true;
-        }
-    }
-    Action {
         shortcut: StandardKey.FindNext
         onTriggered: findBar.findNext()
     }
     Action {
         shortcut: StandardKey.FindPrevious
         onTriggered: findBar.findPrevious()
-    }
-    Action {
-        shortcut: "F12"
-        onTriggered: {
-            browserHeader.browserSettings.devToolsEnabled = !browserHeader.browserSettings.devToolsEnabled
-        }
     }
 
     BrowserHeader {
@@ -379,6 +350,7 @@ Rectangle {
         anchors.topMargin: tabs.tabHeight + tabs.anchors.topMargin
         z: 52
         visible: !downloadView.visible
+        addNewTab: browserWindow.addNewTab
     }
 
     QQC1.TabView {
@@ -527,6 +499,13 @@ Rectangle {
                 }
                 backgroundColor: Style.current.background
 
+                function changeZoomFactor(newFactor) {
+                    // FIXME there seems to be a bug in the WebEngine where the zoomFactor only update 1/2 times
+                    zoomFactor = newFactor
+                    zoomFactor = newFactor
+                    zoomFactor = newFactor
+                }
+
                 settings.autoLoadImages: browserHeader.browserSettings.autoLoadImages
                 settings.javascriptEnabled: browserHeader.browserSettings.javaScriptEnabled
                 settings.errorPageEnabled: browserHeader.browserSettings.errorPageEnabled
@@ -543,24 +522,19 @@ Rectangle {
 
                 onNewViewRequested: function(request) {
                     if (!request.userInitiated) {
-                        print("PROUT")
                         print("Warning: Blocked a popup window.");
                     } else if (request.destination === WebEngineView.NewViewInTab) {
-                        print("NewViewInTab")
                         var tab = tabs.createEmptyTab(currentWebView.profile);
                         tabs.currentIndex = tabs.count - 1;
                         request.openIn(tab.item);
                     } else if (request.destination === WebEngineView.NewViewInBackgroundTab) {
-                        print("NewViewInBackgroundTab")
                         var backgroundTab = tabs.createEmptyTab(currentWebView.profile);
                         request.openIn(backgroundTab.item);
                     } else if (request.destination === WebEngineView.NewViewInDialog) {
-                        print("NewViewInDialog")
                         var dialog = browserDialogComponent.createObject();
                         dialog.currentWebView.profile = currentWebView.profile;
                         request.openIn(dialog.currentWebView);
                     } else {
-                        print("SOMETHIGN")
                         // Instead of opening a new window, we open a new tab
                         // TODO: remove "open in new window" from context menu
                         var tab = tabs.createEmptyTab(currentWebView.profile);
@@ -769,8 +743,8 @@ Rectangle {
         id: findBar
         visible: false
         anchors.right: parent.right
-        anchors.rightMargin: 10
-        anchors.top: parent.top
+        anchors.top: browserHeader.bottom
+        z: 60
 
         onFindNext: {
             if (text)

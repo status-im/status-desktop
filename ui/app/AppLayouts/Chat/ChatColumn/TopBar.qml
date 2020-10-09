@@ -96,7 +96,6 @@ Rectangle {
                     menu = groupContextMenu
                 }
 
-                menu.arrowX = menu.width - 40
                 menu.popup(moreActionsBtn.x, moreActionsBtn.height)
                
             }
