@@ -12,6 +12,7 @@ Rectangle {
     property alias browserSettings: browserSettings
     property alias addressBar: addressBar
     readonly property int innerMargin: 12
+    property var addNewTab: function () {}
 
     id: root
     width: parent.width
@@ -176,8 +177,9 @@ Rectangle {
             }
         }
 
+        // TODO move these to profile settings
         Menu {
-            id: settingsMenu
+            id: settingsMenuOld
             y: settingsMenuButton.height
             x: settingsMenuButton.x
             MenuItem {
@@ -203,17 +205,6 @@ Rectangle {
                 text: "Plugins On"
                 checkable: true
                 checked: true
-            }
-            MenuItem {
-                id: offTheRecordEnabled
-                text: "Off The Record"
-                checkable: true
-                checked: currentWebView && currentWebView.profile === otrProfile
-                onToggled: function(checked) {
-                    if (currentWebView) {
-                        currentWebView.profile = checked ? otrProfile : defaultProfile;
-                    }
-                }
             }
             MenuItem {
                 id: httpDiskCacheEnabled
@@ -259,10 +250,23 @@ Rectangle {
             }
         }
 
+        BrowserSettingsMenu {
+            id: settingsMenu
+            addNewTab: root.addNewTab
+            x: parent.width - width
+            y: parent.height
+        }
+
         StatusIconButton {
             id: settingsMenuButton
             icon.name: "dots-icon"
-            onClicked: settingsMenu.open()
+            onClicked: {
+                if (settingsMenu.opened) {
+                    settingsMenu.close()
+                } else {
+                    settingsMenu.open()
+                }
+            }
             width: 24
             height: 24
             Layout.rightMargin: root.innerMargin

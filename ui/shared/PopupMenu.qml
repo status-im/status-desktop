@@ -7,12 +7,11 @@ import "../shared"
 Menu {
     // This is to add icons to submenu items. QML doesn't have a way to add icons to those sadly so this is a workaround
     property var subMenuIcons: []
-    property alias arrowX: bgPopupMenuTopArrow.x
     property int paddingSize: 8
     property bool hasArrow: true
     closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnReleaseOutside | Popup.CloseOnEscape 
     id: popupMenu
-    topPadding: bgPopupMenuTopArrow.height + paddingSize
+    topPadding: paddingSize
     bottomPadding: paddingSize
 
     delegate: MenuItem {
@@ -42,12 +41,13 @@ Menu {
         implicitWidth: 200
         implicitHeight: 34
         font.pixelSize: 13
+        font.weight: checked ? Font.Medium : Font.Normal
         icon.color: popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Style.current.blue
         icon.source: this.subMenu ? subMenuIcons[subMenuIndex].source : popupMenuItem.action.icon.source
         icon.width: this.subMenu ? subMenuIcons[subMenuIndex].width : popupMenuItem.action.icon.width
         icon.height: this.subMenu ? subMenuIcons[subMenuIndex].height : popupMenuItem.action.icon.height
-        visible: popupMenuItem.action.enabled
-        height: popupMenuItem.action.enabled ? popupMenuItem.implicitHeight : 0
+        visible: popupMenuItem.action.enabled && !!popupMenuItem.text
+        height: visible ? popupMenuItem.implicitHeight : 0
 
         arrow: SVGImage {
             source: "../app/img/caret.svg"
@@ -112,29 +112,6 @@ Menu {
     background: Item {
         id: bgPopupMenu
         implicitWidth: 220
-        Rectangle {
-            id: bgPopupMenuTopArrow
-            visible: popupMenu.hasArrow
-            color: Style.current.modalBackground
-            height: 14
-            width: 14
-            rotation: 135
-            x: bgPopupMenu.width / 2 - width / 2
-            layer.enabled: true
-            layer.effect: DropShadow{
-                width: bgPopupMenuTopArrow.width
-                height: bgPopupMenuTopArrow.height
-                x: bgPopupMenuTopArrow.x
-                y: bgPopupMenuTopArrow.y + 10
-                visible: bgPopupMenuTopArrow.visible
-                source: bgPopupMenuTopArrow
-                horizontalOffset: 0
-                verticalOffset: 5
-                radius: 10
-                samples: 15
-                color: "#22000000"
-            }
-        }
 
         Rectangle {
             id: bgPopupMenuContent

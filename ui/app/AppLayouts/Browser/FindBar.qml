@@ -48,10 +48,13 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.5
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
+import QtQuick 2.13
+import QtQuick.Controls 2.13
+import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.0
+import "../../../shared"
+import "../../../shared/status"
+import "../../../imports"
 
 Rectangle {
     id: root
@@ -69,17 +72,35 @@ Rectangle {
     signal findNext()
     signal findPrevious()
 
-    width: 250
-    height: 35
-    radius: 2
+    width: 300
+    height: 40
+    radius: Style.current.radius
 
-    border.width: 1
-    border.color: "black"
-    color: "white"
+    border.width: 0
+    color: Style.current.background
+
+    layer.enabled: true
+    layer.effect: DropShadow{
+        width: root.width
+        height: root.height
+        x: root.x
+        y: root.y + 10
+        visible: root.visible
+        source: root
+        horizontalOffset: 0
+        verticalOffset: 2
+        radius: 10
+        samples: 15
+        color: "#22000000"
+    }
+
+    function forceActiveFocus() {
+        findTextField.forceActiveFocus();
+    }
 
     onVisibleChanged: {
         if (visible)
-            findTextField.forceActiveFocus();
+            forceActiveFocus()
     }
 
 
@@ -96,14 +117,13 @@ Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            TextField {
+            StyledTextField {
                 id: findTextField
                 anchors.fill: parent
 
-                style: TextFieldStyle {
-                    background: Rectangle {
-                        color: "transparent"
-                    }
+                background: Rectangle {
+                    color: "transparent"
+                    border.width: 0
                 }
 
                 onAccepted: root.findNext()
@@ -114,33 +134,40 @@ Rectangle {
 
         Label {
             text: activeMatch + "/" + numberOfMatches
-            visible: findTextField.text != ""
+            visible: findTextField.text !== ""
         }
 
         Rectangle {
             border.width: 1
-            border.color: "#ddd"
+            border.color: Style.current.border
             width: 2
             height: parent.height
             anchors.topMargin: 5
             anchors.bottomMargin: 5
         }
 
-        ToolButton {
-            text: "<"
+        StatusIconButton {
+            icon.name: "caret"
             enabled: numberOfMatches > 0
+            iconRotation: 90
             onClicked: root.findPrevious()
+            icon.width: 14
         }
 
-        ToolButton {
-            text: ">"
+        StatusIconButton {
+            icon.name: "caret"
             enabled: numberOfMatches > 0
+            iconRotation: -90
             onClicked: root.findNext()
+            icon.width: 14
         }
 
-        ToolButton {
-            text: "x"
-            onClicked: root.visible = false
+        StatusIconButton {
+            icon.name: "close"
+            onClicked:  root.visible = false
+            icon.width: 20
         }
+
+
     }
 }
