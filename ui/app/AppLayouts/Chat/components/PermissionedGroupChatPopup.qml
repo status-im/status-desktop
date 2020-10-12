@@ -23,7 +23,6 @@ ModalPopup {
 
     StyledText {
         id: chatInfo
-        visible: selectChatMembers
         text: qsTr("A Permissioned chat is a channel that everyone can look at, but only the allowed members can write. It's perfect to reduce the risk of spam and create communities")
         color: Style.current.darkGrey
         font.pixelSize: 15
