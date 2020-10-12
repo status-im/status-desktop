@@ -49,7 +49,7 @@ StackLayout {
     }
 
     function requestAddressForTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
-        amount =  walletModel.eth2Wei(amount.toString(), tokenDecimals)
+        amount =  utilsModel.eth2Wei(amount.toString(), tokenDecimals)
         chatsModel.requestAddressForTransaction(chatsModel.activeChannel.id,
                                                 address,
                                                 amount,
@@ -57,7 +57,7 @@ StackLayout {
         chatCommandModal.close()
     }
     function requestTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
-        amount =  walletModel.eth2Wei(amount.toString(), tokenDecimals)
+        amount =  utilsModel.eth2Wei(amount.toString(), tokenDecimals)
         chatsModel.requestTransaction(chatsModel.activeChannel.id,
                                         address,
                                         amount,
@@ -235,7 +235,7 @@ StackLayout {
                     chatCommandModal.open()
                 }
                 onReceiveTransactionCommandButtonClicked: {
-                    chatCommandModal.sendChatCommand = root.requestTransaction
+                    chatCommandModal.sendChatCommand = chatColumnLayout.requestTransaction
                     chatCommandModal.isRequested = true
                     //% "Request"
                     chatCommandModal.commandTitle = qsTrId("wallet-request")

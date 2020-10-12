@@ -83,8 +83,8 @@ Item {
         switch (root.state) {
             case Constants.pending:
             case Constants.confirmed:
-            case Constants.transactionRequested:
             case Constants.addressRequested: return isCurrentUser
+            case Constants.transactionRequested:
             case Constants.declined:
             case Constants.transactionDeclined:
             case Constants.addressReceived: return !isCurrentUser
@@ -119,7 +119,7 @@ Item {
             id: title
             color: Style.current.secondaryText
             //% "↑ Outgoing transaction"
-            text: outgoing ? 
+            text: root.outgoing ? 
               qsTrId("--outgoing-transaction") :
               //% "↓ Incoming transaction"
               qsTrId("--incoming-transaction")
@@ -190,7 +190,7 @@ Item {
             id: buttonsLoader
             active: (root.state === Constants.addressRequested && !root.outgoing) ||
                     (root.state === Constants.addressReceived && root.outgoing) ||
-                    (root.state === Constants.transactionRequested && !root.outgoing)
+                    (root.state === Constants.transactionRequested)
             sourceComponent: root.outgoing ? signAndSendComponent : acceptTransactionComponent
             anchors.top: bubbleLoader.active ? bubbleLoader.bottom : valueContainer.bottom
             anchors.topMargin: bubbleLoader.active ? root.innerMargin : 20
