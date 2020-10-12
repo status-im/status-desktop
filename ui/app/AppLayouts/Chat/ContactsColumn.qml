@@ -33,6 +33,10 @@ Item {
         id: groupChatPopup
     }
 
+    PermissionedGroupChatPopup {
+        id: permissionedGroupChatPopup
+    }
+
     PrivateChatPopup {
         id: privateChatPopup
     }
