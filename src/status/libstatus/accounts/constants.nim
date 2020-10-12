@@ -26,7 +26,7 @@ let DEFAULT_NETWORKS* = %* [
       "DataDir": "/ethereum/testnet_rpc",
       "UpstreamConfig": {
         "Enabled": true,
-        "URL": "https://ropsten.infura.io/v3/d3633f237cbd4649a639067d1807584c"
+        "URL": "https://ropsten.infura.io/v3/f315575765b14720b32382a61a89341a"
       }
     }
   },
@@ -39,7 +39,7 @@ let DEFAULT_NETWORKS* = %* [
       "DataDir": "/ethereum/rinkeby_rpc",
       "UpstreamConfig": {
         "Enabled": true,
-        "URL": "https://rinkeby.infura.io/v3/d3633f237cbd4649a639067d1807584c"
+        "URL": "https://rinkeby.infura.io/v3/f315575765b14720b32382a61a89341a"
       }
     }
   },
@@ -65,7 +65,7 @@ let DEFAULT_NETWORKS* = %* [
       "DataDir": "/ethereum/mainnet_rpc",
       "UpstreamConfig": {
         "Enabled": true,
-        "URL": "https://mainnet.infura.io/v3/d3633f237cbd4649a639067d1807584c"
+        "URL": "https://mainnet.infura.io/v3/f315575765b14720b32382a61a89341a"
       }
     }
   },
@@ -157,16 +157,16 @@ var NODE_CONFIG* = %* {
     "MaxMessageDeliveryAttempts": 6,
     "PFSEnabled": true,
     "VerifyENSContractAddress": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
-    "VerifyENSURL": "https://mainnet.infura.io/v3/d3633f237cbd4649a639067d1807584c",
+    "VerifyENSURL": "https://mainnet.infura.io/v3/f315575765b14720b32382a61a89341a",
     "VerifyTransactionChainID": 1,
-    "VerifyTransactionURL": "https://mainnet.infura.io/v3/d3633f237cbd4649a639067d1807584c"
+    "VerifyTransactionURL": "https://mainnet.infura.io/v3/f315575765b14720b32382a61a89341a"
   },
   "StatusAccountsConfig": {
     "Enabled": true
   },
   "UpstreamConfig": {
     "Enabled": true,
-    "URL": "https://mainnet.infura.io/v3/d3633f237cbd4649a639067d1807584c"
+    "URL": "https://mainnet.infura.io/v3/f315575765b14720b32382a61a89341a"
   },
   "WakuConfig": {
     "BloomFilterMode": nil,

@@ -62,7 +62,7 @@ Item {
 
         ethersChannel.postMessage(request, (message) => {
             console.log("User is allowed: ", message);
-            messageItem.visible = true
+            messageItem.visible = message
         });
         // delay(1000, function() {
         //   if(Math.random() < 0.5) {
