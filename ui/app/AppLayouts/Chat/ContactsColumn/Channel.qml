@@ -61,7 +61,17 @@ Rectangle {
         width: 16
         height: 16
         fillMode: Image.PreserveAspectFit
-        source: "../../../img/channel-icon-" + (wrapper.chatType === Constants.chatTypePublic ? "public-chat.svg" : "group.svg")
+        source: {
+            const testId = Constants.permissionedGroupChat
+            let imageUrl = "../../../img/channel-icon-"
+
+            switch (wrapper.chatType) {
+            case Constants.chatTypePublic: imageUrl += "public-chat.svg"; break;
+            case Constants.permissionedGroupChat: imageUrl += "permissioned.svg"; break;
+            default: imageUrl += "group.svg";
+            }
+            return imageUrl
+        }
         anchors.left: contactImage.right
         anchors.leftMargin: Style.current.padding
         anchors.top: !isCompact ? parent.top : undefined

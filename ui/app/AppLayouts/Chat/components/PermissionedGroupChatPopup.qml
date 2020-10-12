@@ -31,23 +31,23 @@ ModalPopup {
         const nbContacts = profileModel.contactList.rowCount()
         for(let i = 0; i < nbContacts; i++){
             data.append({
-                name: profileModel.contactList.rowData(i, "name"),
-                localNickname: profileModel.contactList.rowData(i, "localNickname"),
-                pubKey: profileModel.contactList.rowData(i, "pubKey"),
-                address: profileModel.contactList.rowData(i, "address"),
-                identicon: profileModel.contactList.rowData(i, "identicon"),
-                isUser: false,
-                isContact: profileModel.contactList.rowData(i, "isContact") !== "false"
-            });
+                            name: profileModel.contactList.rowData(i, "name"),
+                            localNickname: profileModel.contactList.rowData(i, "localNickname"),
+                            pubKey: profileModel.contactList.rowData(i, "pubKey"),
+                            address: profileModel.contactList.rowData(i, "address"),
+                            identicon: profileModel.contactList.rowData(i, "identicon"),
+                            isUser: false,
+                            isContact: profileModel.contactList.rowData(i, "isContact") !== "false"
+                        });
         }
         data.append({
-            //% "(You)"
-            name: profileModel.profile.username + " " + qsTrId("(you)"),
-            pubKey: profileModel.profile.pubKey,
-            address: "",
-            identicon: profileModel.profile.identicon,
-            isUser: true
-        });
+                        //% "(You)"
+                        name: profileModel.profile.username + " " + qsTrId("(you)"),
+                        pubKey: profileModel.profile.pubKey,
+                        address: "",
+                        identicon: profileModel.profile.identicon,
+                        isUser: true
+                    });
         noContactsRect.visible = !profileModel.contactList.hasAddedContacts();
         svMembers.visible = !noContactsRect.visible;
         if(!svMembers.visible){
@@ -62,26 +62,35 @@ ModalPopup {
     }
 
     header: Item {
-      height: 30
-      width: parent.width
-   
-      StyledText {
-          id: lblNewGroup
-          //% "New group chat"
-          text: qsTrId("new-group-chat")
-          anchors.left: parent.left
-          font.bold: true
-          font.pixelSize: 17
-          anchors.top: parent.top
-      }
+        height: 30
+        width: parent.width
 
-      StyledText {
-          anchors.top: lblNewGroup.bottom
-          //% "%1 / 10 members"
-          text: qsTrId("%1-/-10-members").arg(memberCount)
-          color: Style.current.darkGrey
-          font.pixelSize: 15
-      }
+        StyledText {
+            id: lblNewGroup
+            text: qsTr("New permissioned group chat")
+            anchors.left: parent.left
+            font.bold: true
+            font.pixelSize: 17
+            anchors.top: parent.top
+        }
+
+        StyledText {
+            anchors.top: lblNewGroup.bottom
+            //% "%1 / 10 members"
+            text: qsTrId("%1-/-10-members").arg(memberCount)
+            color: Style.current.darkGrey
+            font.pixelSize: 15
+        }
+    }
+
+    StyledText {
+        id: chatInfo
+        visible: selectChatMembers
+        text: qsTr("A Permissioned group chat is a channel that everyone can look at, but only the allowed members can write. It's perfect to reduce the risk of spam and create communities")
+        color: Style.current.darkGrey
+        font.pixelSize: 15
+        width: parent.width
+        wrapMode: Text.WordWrap
     }
 
     SearchBox {
@@ -91,6 +100,8 @@ ModalPopup {
         iconHeight: 17
         customHeight: 44
         fontPixelSize: 15
+        anchors.top: chatInfo.bottom
+        anchors.topMargin: Style.current.smallPadding
     }
 
     Input {
@@ -103,7 +114,7 @@ ModalPopup {
     Rectangle {
         id: noContactsRect
         width: 260
-        anchors.top: groupName.bottom
+        anchors.top: searchBox.bottom
         anchors.topMargin: Style.current.xlPadding
         anchors.horizontalCenter: parent.horizontalCenter
         StyledText {
@@ -134,11 +145,10 @@ ModalPopup {
     }
 
     ScrollView {
-        anchors.fill: parent
-        anchors.topMargin: 50
-        anchors.top: searchBox.bottom
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+        anchors.topMargin: Style.current.smallPadding
+        anchors.top: searchBox.visible ? searchBox.bottom : groupName.bottom
+        anchors.bottom: parent.bottom
+        width: parent.width
 
         id: svMembers
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
@@ -230,8 +240,8 @@ ModalPopup {
                 onClicked : {
                     if(pubKeys.length > 0)
                         selectChatMembers = false
-                        searchBox.text = ""
-                        groupName.forceActiveFocus(Qt.MouseFocusReason)
+                    searchBox.text = ""
+                    groupName.forceActiveFocus(Qt.MouseFocusReason)
                 }
             }
         }
@@ -264,8 +274,7 @@ ModalPopup {
             visible: !selectChatMembers
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            //% "Create Group Chat"
-            label: qsTrId("create-group-chat")
+            label: qsTr("Create Permissioned Group Chat")
             disabled: groupName.text === ""
             onClicked : doJoin()
         }

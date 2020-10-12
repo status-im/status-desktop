@@ -6,6 +6,7 @@ QtObject {
     readonly property int chatTypeOneToOne: 1
     readonly property int chatTypePublic: 2
     readonly property int chatTypePrivateGroupChat: 3
+    readonly property int permissionedGroupChat: 4
 
     readonly property int limitLongChatText: 500
     readonly property int limitLongChatTextCompactMode: 1000
