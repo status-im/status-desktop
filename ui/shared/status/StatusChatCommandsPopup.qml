@@ -60,7 +60,7 @@ Popup {
             icon.height: 18
             iconRotation: 180
             onClicked: function () {
-                root.sendTransactionCommandButtonClicked()
+                root.receiveTransactionCommandButtonClicked()
             }
         }
 
