@@ -240,8 +240,8 @@ Rectangle {
                             sendDialog.transactionSigner.validationError = qsTrId("wrong-password")
                             return
                         }
-                        signingError.text = e.message
-                        return signingError.open()
+                        sendingError.text = e.message
+                        return sendingError.open()
                     }
 
                     sendDialog.close()
@@ -269,8 +269,8 @@ Rectangle {
                             signDialog.transactionSigner.validationError = qsTrId("wrong-password")
                             return
                         }
-                        sendingError.text = e.message
-                        return sendingError.open()
+                        signingError.text = e.message
+                        return signingError.open()
                     }
                     signDialog.close()
                     signDialog.destroy()
