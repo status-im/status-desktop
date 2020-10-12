@@ -8,6 +8,8 @@ QtObject {
     readonly property int chatTypePrivateGroupChat: 3
     readonly property int permissionedGroupChat: 4
 
+    readonly property string fetching: "fetching"
+
     readonly property int limitLongChatText: 500
     readonly property int limitLongChatTextCompactMode: 1000
 
