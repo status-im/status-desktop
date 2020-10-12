@@ -792,22 +792,46 @@ You may add additional accurate notices of copyright ownership.
 
  */
 
-window.onload = function(){
-    const provider = new ethers.providers.JsonRpcProvider("https://sokol.poa.network");
 
+
+const abi = [
+    "function registerChannel(bytes32 channelId)",
+    "function isUserAllowed(bytes32 channelId, address user) view returns (bool)",
+    "function isOperator(bytes32 channelId, address user) view returns (bool)",
+    "function addOperator(bytes32 channelId, address user)",
+    "function removeOperator(bytes32 channelId, address user)",
+    "function allowUser(bytes32 channelId, address user)",
+    "function banUser(bytes32 channelId, address user)"
+];
+
+const contractAddress = "0x025Da72d4389ff2479aBe291F9aB716a70003b7f";
+
+
+window.onload = function(){
+    const provider = new ethers.providers.JsonRpcProvider("https://rpc.xdaichain.com/");
 
     let backend;
 
     const sendResponse = (messageId, data) => {
       backend.response(messageId, JSON.stringify(data));
     }
+
+    let contract = new ethers.Contract(contractAddress, abi, provider);
  
     const onRequest = async function(req){
       let request = JSON.parse(req);
 
-      if(request.data.type === "balance"){
-        const balance = await provider.getBalance(request.data.payload);
-        sendResponse(request.messageId, balance)
+      switch(request.data.type){
+          case "balance":
+            const balance = await provider.getBalance(request.data.payload);
+            sendResponse(request.messageId, balance);
+            break;
+          case "isUserAllowed":
+            const channelId = request.data.payload[0];
+            const user = request.data.payload[1];
+            let isAllowed = await contract.isUserAllowed(channelId, user);
+            sendResponse(request.messageId, isAllowed);
+            break;
       }
     }
     
