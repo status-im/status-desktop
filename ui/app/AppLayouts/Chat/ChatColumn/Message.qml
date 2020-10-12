@@ -57,7 +57,7 @@ Item {
         const request = {
             type: "isUserAllowed", // keccak(ChannelID), at // user address derived from pubkey
             // payload: ["0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658", "0x87f2b2a172e1907ba35ac0f21e652a8c4af40007"]
-            payload: [chatsModel.channelHash(chatId), chatsModel.derivedUserAddress(fromAuthor)]
+            payload: [utilsModel.channelHash(chatId), utilsModel.derivedAnUserAddress(fromAuthor)]
         }
 
         ethersChannel.postMessage(request, (message) => {
