@@ -32,8 +32,8 @@ AddButton {
             onTriggered: groupChatPopup.open()
         }
         Action {
-            text: qsTr("Start a permissioned group chat")
-            icon.source: "../../../img/group_chat.svg"
+            text: qsTr("Start a permissioned chat")
+            icon.source: "../../../img/public_chat.svg"
             icon.width: 20
             icon.height: 20
             onTriggered: permissionedGroupChatPopup.open()
