@@ -48,17 +48,18 @@ RowLayout {
 
     Button {
         id: sendMsg
-        text: "Get balance of 0x66C0DC5111673DDC578b5B1c36412578E2de68B6"
+        text: "IsUserAllowed"
         anchors.top: parent.top
         anchors.left: parent.left
         onClicked: {
             const request = {
-                type: "balance",
-                payload: "0x66C0DC5111673DDC578b5B1c36412578E2de68B6"
+                type: "isUserAllowed",
+                           // keccak(ChannelID),                                                // user address derived from pubkey
+                payload: ["0x1122334455667788990011223344556677889900112233445566778899001122", "0x66C0DC5111673DDC578b5B1c36412578E2de68B6"]
             }
 
             ethersChannel.postMessage(request, (message) => {
-                console.log("The balance is: ", message.hex);
+                console.log("User is allowed: ", message);
             });
         }
         
@@ -66,7 +67,7 @@ RowLayout {
 
     WebEngineView {
         id: ethersWebView
-        visible: false
+        visible: true
         webChannel: channel
         url: "qrc://ui/app/AppLayouts/POA/ethers.html"
     }
