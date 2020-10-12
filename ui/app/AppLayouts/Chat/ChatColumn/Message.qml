@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.13
 import "../../../../shared"
 import "../../../../imports"
 import "./MessageComponents"
@@ -44,37 +44,33 @@ Item {
     property var imageClick: function () {}
     property var scrollToBottom: function () {}
 
+    // TODO only set this to false if the ChannelType is of a permissioned one
     visible: false
 
-    function delay(delayTime, cb) {
-        timer.interval = delayTime;
-        timer.repeat = false;
-        timer.triggered.connect(cb);
-        timer.start();
+    Connections {
+        enabled: contentType !== Constants.chatIdentifier && contentType !== Constants.fetchMoreMessagesButton
+        target: chatView
+        onUserAllowedFetched: {
+            if (pubkey === fromAuthor) {
+                messageItem.visible = allowed;
+            }
+        }
     }
 
     Component.onCompleted: {
-        const request = {
-            type: "isUserAllowed",
-            payload: [utilsModel.channelHash(chatId), utilsModel.derivedAnUserAddress(fromAuthor)]
+        if (contentType === Constants.chatIdentifier || contentType === Constants.fetchMoreMessagesButton) {
+            visible = true;
+            return
         }
 
-        if(userAllowedDictionary[fromAuthor] !== undefined){
-            messageItem.visible = userAllowedDictionary[fromAuthor];
-            return;
+        if (!chatId || !fromAuthor) {
+            return
         }
 
-        ethersChannel.postMessage(request, (message) => {
-            userAllowedDictionary[fromAuthor] = message;
-            messageItem.visible = message;
-        });
-        
-        // delay(1000, function() {
-        //   if(Math.random() < 0.5) {
-            // console.log("making message visible")
-            // messageItem.visible = true
-        //   }
-        // })*/
+        const allowed = fetchUserAllowed(chatId, fromAuthor)
+        if (allowed !== Constants.fetching) {
+            messageItem.visible = allowed
+        }
     }
 
     id: messageItem
@@ -115,7 +111,7 @@ Item {
     }
 
     Loader {
-        active :true
+        active: messageItem.visible
         width: parent.width
         sourceComponent: {
             switch(contentType) {

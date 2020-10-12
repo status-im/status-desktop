@@ -59,10 +59,26 @@ StackLayout {
     function requestTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
         amount =  walletModel.eth2Wei(amount.toString(), tokenDecimals)
         chatsModel.requestTransaction(chatsModel.activeChannel.id,
-                                        address,
-                                        amount,
-                                        tokenAddress)
+                                      address,
+                                      amount,
+                                      tokenAddress)
         chatCommandModal.close()
+    }
+
+    Connections {
+        target: chatView
+        onUserAllowedFetched: {
+            if (pubkey === profileModel.profile.pubKey) {
+                inputArea.visible = allowed
+            }
+        }
+    }
+
+    function checkIfUserIsAllowed() {
+        const allowed = fetchUserAllowed(chatsModel.activeChannel.name, profileModel.profile.pubKey)
+        if (allowed !== Constants.fetching) {
+            inputArea.visible = allowed
+        }
     }
 
     
@@ -88,7 +104,7 @@ StackLayout {
                 Component.onCompleted: {
                     isConnected = chatsModel.isOnline
                     if(!isConnected){
-                        connectedStatusRect.visible = true 
+                        connectedStatusRect.visible = true
                     }
                 }
 
@@ -102,31 +118,16 @@ StackLayout {
                     anchors.verticalCenter: parent.verticalCenter
                     color: Style.current.white
                     id: connectedStatusLbl
-                    text: isConnected ? 
-                        //% "Connected"
-                        qsTrId("connected") :
-                        //% "Disconnected"
-                        qsTrId("disconnected")
+                    text: isConnected ?
+                              //% "Connected"
+                              qsTrId("connected") :
+                              //% "Disconnected"
+                              qsTrId("disconnected")
                 }
             }
 
             Timer {
                 id: timer
-            }
-
-            Connections {
-                target: chatsModel
-                onOnlineStatusChanged: {
-                    if (connected == isConnected) return;
-                    isConnected = connected;
-                    if(isConnected){
-                        timer.setTimeout(function(){ 
-                            connectedStatusRect.visible = false;
-                        }, 5000);
-                    } else {
-                        connectedStatusRect.visible = true;
-                    }
-                }
             }
         }
 
@@ -140,7 +141,7 @@ StackLayout {
                 id: chatMessages
                 messageList: chatsModel.messageList
             }
-       }
+        }
 
         ImagePopup {
             id: imagePopup
@@ -153,7 +154,7 @@ StackLayout {
         MessageContextMenu {
             id: messageContextMenu
         }
- 
+
         ListModel {
             id: suggestions
         }
@@ -161,26 +162,42 @@ StackLayout {
         Connections {
             target: chatsModel
             onActiveChannelChanged: {
+                checkIfUserIsAllowed()
+
                 chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
                 suggestions.clear()
                 for (let i = 0; i < chatsModel.suggestionList.rowCount(); i++) {
-                  suggestions.append({
-                      alias: chatsModel.suggestionList.rowData(i, "alias"),
-                      ensName: chatsModel.suggestionList.rowData(i, "ensName"),
-                      address: chatsModel.suggestionList.rowData(i, "address"),
-                      identicon: chatsModel.suggestionList.rowData(i, "identicon"),
-                      ensVerified: chatsModel.suggestionList.rowData(i, "ensVerified")
-                  });
+                    suggestions.append({
+                                           alias: chatsModel.suggestionList.rowData(i, "alias"),
+                                           ensName: chatsModel.suggestionList.rowData(i, "ensName"),
+                                           address: chatsModel.suggestionList.rowData(i, "address"),
+                                           identicon: chatsModel.suggestionList.rowData(i, "identicon"),
+                                           ensVerified: chatsModel.suggestionList.rowData(i, "ensVerified")
+                                       });
+                }
+            }
+            onOnlineStatusChanged: {
+                if (connected == isConnected) return;
+                isConnected = connected;
+                if(isConnected){
+                    checkIfUserIsAllowed()
+                    timer.setTimeout(function(){
+                        connectedStatusRect.visible = false;
+                    }, 5000);
+                } else {
+                    connectedStatusRect.visible = true;
                 }
             }
         }
 
         Rectangle {
             id: inputArea
+            // TODO only set this to false if the ChannelType is of a permissioned one
+            visible: false
             Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
             Layout.fillWidth: true
             Layout.preferredWidth: parent.width
-            height: chatInput.height
+            height: visible ? chatInput.height : 0
             Layout.preferredHeight: height
             color: "transparent"
 
@@ -196,8 +213,8 @@ StackLayout {
                 onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
                     let hasEmoji = Emoji.hasEmoji(chatInput.textInput.text)
                     let currentText = hasEmoji ?
-                      chatsModel.plainText(Emoji.deparse(chatInput.textInput.text)) :
-                      chatsModel.plainText(chatInput.textInput.text);
+                            chatsModel.plainText(Emoji.deparse(chatInput.textInput.text)) :
+                            chatsModel.plainText(chatInput.textInput.text);
 
                     let aliasName = item[suggestionsBox.property.split(",").map(p => p.trim()).find(p => !!item[p])]
                     aliasName = aliasName.replace(".stateofus.eth", "")

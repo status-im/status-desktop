@@ -11,8 +11,6 @@ import "./MessageComponents"
 
 ScrollView {
     id: root
-
-    property var userAllowedDictionary: ({});
     
     property var messageList: MessagesData {}
     property bool loadingMessages: false
