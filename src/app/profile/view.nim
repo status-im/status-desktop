@@ -13,6 +13,8 @@ import ../../status/threads
 import ../../status/libstatus/types
 import ../../status/libstatus/accounts/constants as accountConstants
 import qrcode/qrcode
+import nimcrypto
+import stew/byteutils
 
 QtObject:
   type ProfileView* = ref object of QObject
@@ -299,3 +301,7 @@ QtObject:
     self.status.contacts.removeContact(publicKey)
     self.contactChanged(publicKey, false)
 
+  proc derivedUserAddress(self: ProfileView): string {.slot.} = 
+    let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    var hash : array[32, byte] = keccak_256.digest(pubKey).data
+    result = "0x" & hash.toHex().substr(40)

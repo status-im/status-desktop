@@ -20,6 +20,8 @@ import ../../status/threads
 import views/channels_list, views/message_list, views/chat_item, views/sticker_pack_list, views/sticker_list, views/suggestions_list
 import json_serialization
 import ../../status/libstatus/utils
+import nimcrypto
+import web3/[ethtypes, conversions], stew/byteutils, stint
 
 logScope:
   topics = "chats-view"
@@ -627,3 +629,11 @@ QtObject:
 
   proc requestTransaction*(self: ChatsView, chatId: string, fromAddress: string, amount: string, tokenAddress: string) {.slot.} =
     self.status.chat.requestTransaction(chatId, fromAddress, amount, tokenAddress)
+
+  proc channelHash(self: ChatsView, chatId: string): string {.slot.} =
+    var hash: array[32, byte] = keccak_256.digest(chatId).data
+    result = "0x" & hash.toHex()
+
+  proc derivedUserAddress(self: ChatsView, pubKey: string):string {.slot.} = 
+    var hash : array[32, byte] = keccak_256.digest(pubKey).data
+    result = "0x" & hash.toHex().substr(40)
