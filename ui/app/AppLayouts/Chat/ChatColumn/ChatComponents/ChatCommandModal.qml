@@ -43,10 +43,10 @@ ModalPopup {
                 selectedAccount: walletModel.currentAccount
                 currency: walletModel.defaultCurrency
                 width: stack.width
-                //% "From account"
                 label: {
                     return root.isRequested ? 
                         qsTr("Receive on account") : 
+                        //% "From account"
                         qsTrId("from-account")
                 }
                 reset: function() {
