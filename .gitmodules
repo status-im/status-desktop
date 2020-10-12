@@ -40,9 +40,6 @@
 [submodule "vendor/isaac"]
 	path = vendor/isaac
 	url = https://github.com/pragmagic/isaac.git
-[submodule "vendor/eventemitter"]
-	path = vendor/eventemitter
-	url = https://github.com/al-bimani/eventemitter.git
 [submodule "vendor/nim-libp2p"]
 	path = vendor/nim-libp2p
 	url = https://github.com/status-im/nim-libp2p

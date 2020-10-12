@@ -2,7 +2,7 @@ import NimQml, chronicles
 import ../../status/signals/types
 import ../../status/[status, node, network]
 import ../../status/libstatus/types as status_types
-import eventemitter
+import ../../eventemitter
 import view
 
 logScope:

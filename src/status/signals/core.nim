@@ -1,7 +1,8 @@
-import NimQml, eventemitter, tables, json, chronicles, strutils, json_serialization
+import NimQml, tables, json, chronicles, strutils, json_serialization
 import ../libstatus/types as status_types
 import types, messages, discovery, whisperFilter, envelopes, expired, wallet
 import ../status
+import ../../eventemitter
 
 logScope:
   topics = "signals"

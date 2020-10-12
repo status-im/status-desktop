@@ -2,7 +2,7 @@ import json, chronicles, json_serialization, tables
 import ../libstatus/types
 import ../chat/[chat, message]
 import ../profile/[profile, devices]
-import eventemitter
+import ../../eventemitter
 
 type Signal* = ref object of Args
   signalType* {.serializedFieldName("type").}: SignalType

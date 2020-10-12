@@ -1,10 +1,11 @@
-import eventemitter, json, strutils, sequtils, tables, chronicles, times
+import json, strutils, sequtils, tables, chronicles, times
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
 import libstatus/chatCommands as status_chat_commands
 import libstatus/accounts/constants as constants
 import libstatus/types
 import stickers
+import ../eventemitter
 
 import profile/profile
 import contacts

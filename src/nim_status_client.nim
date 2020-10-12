@@ -1,4 +1,4 @@
-import NimQml, eventemitter, chronicles, os, strformat
+import NimQml, chronicles, os, strformat
 
 import app/chat/core as chat
 import app/wallet/core as wallet
@@ -11,6 +11,7 @@ import status/signals/core as signals
 import status/libstatus/types
 import nim_status
 import status/status as statuslib
+import ./eventemitter
 
 var signalsQObjPointer: pointer
 

@@ -1,5 +1,6 @@
-import tables, sets, eventemitter
+import tables, sets
 import libstatus/chat
+import ../eventemitter
 
 type
   MessageDetails* = object
