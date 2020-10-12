@@ -90,7 +90,7 @@ QtObject:
   proc derivedUserAddress(self: UtilsView): string {.slot.} = 
     let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
     var hash : array[32, byte] = keccak_256.digest(pubKey).data
-    result = "0x" & hash.toHex().substr(40)
+    result = "0x" & hash.toHex().substr(0, 39)
 
   proc channelHash(self: UtilsView, chatId: string): string {.slot.} =
     var hash: array[32, byte] = keccak_256.digest(chatId).data
@@ -98,4 +98,4 @@ QtObject:
 
   proc derivedAnUserAddress(self: UtilsView, pubKey: string):string {.slot.} = 
     var hash : array[32, byte] = keccak_256.digest(pubKey).data
-    result = "0x" & hash.toHex().substr(40)
+    result = "0x" & hash.toHex().substr(0, 39)
