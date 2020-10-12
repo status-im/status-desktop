@@ -300,8 +300,3 @@ QtObject:
   proc removeContact*(self: ProfileView, publicKey: string) {.slot.} =
     self.status.contacts.removeContact(publicKey)
     self.contactChanged(publicKey, false)
-
-  proc derivedUserAddress(self: ProfileView): string {.slot.} = 
-    let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
-    var hash : array[32, byte] = keccak_256.digest(pubKey).data
-    result = "0x" & hash.toHex().substr(40)
