@@ -16,13 +16,13 @@ Rectangle {
     border.width: 1
 
     Loader {
-      property bool isGroupChatOrOneToOne: (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat || 
-        chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne)
-      anchors.left: parent.left
-      anchors.leftMargin: this.isGroupChatOrOneToOne ? Style.current.padding : Style.current.padding + 4
-      anchors.top: parent.top
-      anchors.topMargin: 4
-      sourceComponent:  this.isGroupChatOrOneToOne ? chatInfoButton : chatInfo
+        property bool isGroupChatOrOneToOne: (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat ||
+                                              chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne)
+        anchors.left: parent.left
+        anchors.leftMargin: this.isGroupChatOrOneToOne ? Style.current.padding : Style.current.padding + 4
+        anchors.top: parent.top
+        anchors.topMargin: 4
+        sourceComponent:  this.isGroupChatOrOneToOne ? chatInfoButton : chatInfo
     }
 
     Component {
@@ -36,12 +36,12 @@ Rectangle {
 
             onClicked: {
                 switch (chatsModel.activeChannel.chatType) {
-                    case Constants.chatTypePrivateGroupChat: 
-                        groupInfoPopup.open()
-                        break;
-                    case Constants.chatTypeOneToOne:
-                        openProfilePopup(chatsModel.activeChannel.name, chatsModel.activeChannel.id, chatsModel.activeChannel.identicon)
-                        break;
+                case Constants.chatTypePrivateGroupChat:
+                    groupInfoPopup.open()
+                    break;
+                case Constants.chatTypeOneToOne:
+                    openProfilePopup(chatsModel.activeChannel.name, chatsModel.activeChannel.id, chatsModel.activeChannel.identicon)
+                    break;
                 }
             }
         }
@@ -98,7 +98,7 @@ Rectangle {
 
                 menu.arrowX = menu.width - 40
                 menu.popup(moreActionsBtn.x, moreActionsBtn.height)
-               
+
             }
             cursorShape: Qt.PointingHandCursor
             acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -113,6 +113,27 @@ Rectangle {
                     text: qsTrId("clear-history")
                     onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
                 }
+                // TODO move this to the permissioned menu or set visible false
+                Action {
+                    // TODO set this only visible to operator
+                    icon.source: "../../../img/group.svg"
+                    icon.width: chatTopBarContent.iconSize
+                    icon.height: chatTopBarContent.iconSize
+                    text: qsTr("Manage Users")
+                    onTriggered: {
+                        manageUsersPopup.open()
+                    }
+                }
+                Action {
+                    // TODO set this only visible to owner
+                    icon.source: "../../../img/group.svg"
+                    icon.width: chatTopBarContent.iconSize
+                    icon.height: chatTopBarContent.iconSize
+                    text: qsTr("Manage Operators")
+                    onTriggered: {
+                        manageOperatorsPopup.open()
+                    }
+                }
                 Action {
                     icon.source: "../../../img/delete.svg"
                     icon.width: chatTopBarContent.iconSize
@@ -121,13 +142,13 @@ Rectangle {
                     //% "Delete Chat"
                     text: qsTrId("delete-chat")
                     onTriggered: {
-                      //% "Delete Chat"
-                      deleteChatConfirmationDialog.title = qsTrId("delete-chat")
-                      //% "Delete Chat"
-                      deleteChatConfirmationDialog.confirmButtonLabel = qsTrId("delete-chat")
-                      //% "Are you sure you want to delete this chat?"
-                      deleteChatConfirmationDialog.confirmationText = qsTrId("delete-chat-confirmation")
-                      deleteChatConfirmationDialog.open()
+                        //% "Delete Chat"
+                        deleteChatConfirmationDialog.title = qsTrId("delete-chat")
+                        //% "Delete Chat"
+                        deleteChatConfirmationDialog.confirmButtonLabel = qsTrId("delete-chat")
+                        //% "Are you sure you want to delete this chat?"
+                        deleteChatConfirmationDialog.confirmationText = qsTrId("delete-chat-confirmation")
+                        deleteChatConfirmationDialog.open()
                     }
                 }
             }
@@ -157,19 +178,27 @@ Rectangle {
                     //% "Leave Group"
                     text: qsTrId("leave-group")
                     onTriggered: {
-                      //% "Leave group"
-                      deleteChatConfirmationDialog.title = qsTrId("leave-group")
-                      //% "Leave group"
-                      deleteChatConfirmationDialog.confirmButtonLabel = qsTrId("leave-group")
-                      //% "Are you sure you want to leave this chat?"
-                      deleteChatConfirmationDialog.confirmationText = qsTrId("are-you-sure-you-want-to-leave-this-chat-")
-                      deleteChatConfirmationDialog.open()
+                        //% "Leave group"
+                        deleteChatConfirmationDialog.title = qsTrId("leave-group")
+                        //% "Leave group"
+                        deleteChatConfirmationDialog.confirmButtonLabel = qsTrId("leave-group")
+                        //% "Are you sure you want to leave this chat?"
+                        deleteChatConfirmationDialog.confirmationText = qsTrId("are-you-sure-you-want-to-leave-this-chat-")
+                        deleteChatConfirmationDialog.open()
                     }
                 }
             }
 
             GroupInfoPopup {
                 id: groupInfoPopup
+            }
+
+            ManageOperatorsPopup {
+                id: manageOperatorsPopup
+            }
+
+            ManageUsersPopup {
+                id: manageUsersPopup
             }
         }
     }
