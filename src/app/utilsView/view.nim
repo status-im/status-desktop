@@ -2,12 +2,18 @@ import NimQml, os, strformat, strutils, parseUtils, chronicles
 import stint
 import ../../status/status
 import ../../status/stickers
+import ../../status/status
+import ../../status/libstatus/settings as status_settings
 import ../../status/libstatus/accounts/constants as accountConstants
 import ../../status/libstatus/tokens
 import ../../status/libstatus/wallet as status_wallet
 import ../../status/libstatus/utils as status_utils
 import ../../status/ens as status_ens
+import ../../status/libstatus/types
 import web3/[ethtypes, conversions]
+import nimcrypto
+import stew/byteutils
+
 
 QtObject:
   type UtilsView* = ref object of QObject
@@ -80,3 +86,16 @@ QtObject:
   
   proc urlFromUserInput*(self: UtilsView, input: string): string {.slot.} =
     result = url_fromUserInput(input)
+
+  proc derivedUserAddress(self: UtilsView): string {.slot.} = 
+    let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    var hash : array[32, byte] = keccak_256.digest(pubKey).data
+    result = "0x" & hash.toHex().substr(40)
+
+  proc channelHash(self: UtilsView, chatId: string): string {.slot.} =
+    var hash: array[32, byte] = keccak_256.digest(chatId).data
+    result = "0x" & hash.toHex()
+
+  proc derivedAnUserAddress(self: UtilsView, pubKey: string):string {.slot.} = 
+    var hash : array[32, byte] = keccak_256.digest(pubKey).data
+    result = "0x" & hash.toHex().substr(40)

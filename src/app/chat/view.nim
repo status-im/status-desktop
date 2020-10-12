@@ -629,11 +629,3 @@ QtObject:
 
   proc requestTransaction*(self: ChatsView, chatId: string, fromAddress: string, amount: string, tokenAddress: string) {.slot.} =
     self.status.chat.requestTransaction(chatId, fromAddress, amount, tokenAddress)
-
-  proc channelHash(self: ChatsView, chatId: string): string {.slot.} =
-    var hash: array[32, byte] = keccak_256.digest(chatId).data
-    result = "0x" & hash.toHex()
-
-  proc derivedUserAddress(self: ChatsView, pubKey: string):string {.slot.} = 
-    var hash : array[32, byte] = keccak_256.digest(pubKey).data
-    result = "0x" & hash.toHex().substr(40)
