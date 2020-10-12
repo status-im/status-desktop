@@ -44,6 +44,33 @@ Item {
     property var imageClick: function () {}
     property var scrollToBottom: function () {}
 
+    visible: false
+
+    function delay(delayTime, cb) {
+        timer.interval = delayTime;
+        timer.repeat = false;
+        timer.triggered.connect(cb);
+        timer.start();
+    }
+
+    Component.onCompleted: {
+        const request = {
+            type: "isUserAllowed", // keccak(ChannelID),                                                // user address derived from pubkey
+            payload: ["0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658", "0x87f2b2a172e1907ba35ac0f21e652a8c4af40007"]
+        }
+
+        ethersChannel.postMessage(request, (message) => {
+            console.log("User is allowed: ", message);
+            messageItem.visible = true
+        });
+        // delay(1000, function() {
+        //   if(Math.random() < 0.5) {
+            // console.log("making message visible")
+            // messageItem.visible = true
+        //   }
+        // })
+    }
+
     id: messageItem
     width: parent.width
     anchors.right: !isCurrentUser ? undefined : parent.right
