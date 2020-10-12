@@ -801,7 +801,9 @@ const abi = [
     "function addOperator(bytes32 channelId, address user)",
     "function removeOperator(bytes32 channelId, address user)",
     "function allowUser(bytes32 channelId, address user)",
-    "function banUser(bytes32 channelId, address user)"
+    "function banUser(bytes32 channelId, address user)",
+    "function getOperators(bytes32 channelId) view returns (address[])",
+    "function getUsers(bytes32 channelId) view returns (address[])"
 ];
 
 const contractAddress = "0x025Da72d4389ff2479aBe291F9aB716a70003b7f";
@@ -827,10 +829,16 @@ window.onload = function(){
             sendResponse(request.messageId, balance);
             break;
           case "isUserAllowed":
+          case "isOperator":
             const channelId = request.data.payload[0];
             const user = request.data.payload[1];
-            let isAllowed = await contract.isUserAllowed(channelId, user);
+            let isAllowed = await contract[request.data.type](channelId, user);
             sendResponse(request.messageId, isAllowed);
+            break;
+          case "getOperators":
+          case "getUsers":
+            let addresses = await contract[request.data.type](request.data.payload);
+            sendResponse(request.messageId, addresses);
             break;
       }
     }

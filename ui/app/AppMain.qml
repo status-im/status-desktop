@@ -58,6 +58,21 @@ RowLayout {
                 payload: ["0x1122334455667788990011223344556677889900112233445566778899001122", "0x66C0DC5111673DDC578b5B1c36412578E2de68B6"]
             }
 
+
+            // isOperator
+            //const request = {
+            //    type: "isUserAllowed",
+            //    payload: ["0x1122334455667788990011223344556677889900112233445566778899001122", "0x66C0DC5111673DDC578b5B1c36412578E2de68B6"]
+            //}
+
+            // getUsers                                 // ChannelId
+            // const request = {type:"getUsers", payload: "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"}
+
+            // getOperators                                 // ChannelId
+            // const request = {type:"getOperators", payload: "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"}
+
+
+
             ethersChannel.postMessage(request, (message) => {
                 console.log("User is allowed: ", message);
             });
