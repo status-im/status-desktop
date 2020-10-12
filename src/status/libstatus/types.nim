@@ -1,6 +1,7 @@
-import eventemitter, json, options, typetraits
+import json, options, typetraits
 import web3/ethtypes, json_serialization, stint
 import accounts/constants
+import ../../eventemitter
 
 type SignalType* {.pure.} = enum
   Message = "messages.new"

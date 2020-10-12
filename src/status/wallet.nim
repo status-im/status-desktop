@@ -1,4 +1,4 @@
-import eventemitter, json, strformat, strutils, chronicles, sequtils, httpclient, tables
+import json, strformat, strutils, chronicles, sequtils, httpclient, tables
 import json_serialization, stint
 from web3/ethtypes import Address, EthSend, Quantity
 from web3/conversions import `$`
@@ -14,6 +14,7 @@ from libstatus/types import PendingTransactionType, GeneratedAccount, DerivedAcc
 from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, first, toUInt64, parseAddress
 import wallet/[balance_manager, account, collectibles]
 import transactions
+import ../eventemitter
 export account, collectibles
 export Transaction
 

@@ -1,9 +1,10 @@
-import NimQml, eventemitter, chronicles, options, std/wrapnils
+import NimQml, chronicles, options, std/wrapnils
 import ../../status/libstatus/types as status_types
 import ../../status/signals/types
 import ../../status/status
 import view
 import ../../status/accounts as status_accounts
+import ../../eventemitter
 
 type LoginController* = ref object
   status*: Status

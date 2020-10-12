@@ -1,4 +1,4 @@
-from eventemitter import Args
+from ../../eventemitter import Args
 import ../libstatus/types
 
 type CollectibleList* = ref object

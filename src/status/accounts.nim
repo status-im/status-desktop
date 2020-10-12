@@ -1,8 +1,9 @@
-import eventemitter, options, chronicles, json
+import options, chronicles, json
 import libstatus/accounts as status_accounts
 import libstatus/settings as status_settings
 import libstatus/types
 import libstatus/utils
+import ../eventemitter
 
 type
   AccountModel* = ref object

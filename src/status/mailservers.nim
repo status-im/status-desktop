@@ -1,7 +1,8 @@
-import algorithm, json, random, math, os, tables, sets, chronicles, eventemitter, sequtils, locks, sugar
+import algorithm, json, random, math, os, tables, sets, chronicles, sequtils, locks, sugar
 import libstatus/core as status_core
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
+import ../eventemitter
 
 
 # How do mailserver should work ?

@@ -1,4 +1,5 @@
-import chronicles, eventemitter
+import chronicles
+import ../eventemitter
 
 logScope:
   topics = "network-model"

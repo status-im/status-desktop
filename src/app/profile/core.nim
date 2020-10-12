@@ -1,4 +1,4 @@
-import NimQml, json, eventemitter, strutils, sugar, sequtils
+import NimQml, json, strutils, sugar, sequtils
 import json_serialization
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../status/signals/types
@@ -11,6 +11,7 @@ import ../../status/chat as status_chat
 import ../../status/devices
 import ../../status/chat/chat
 import ../../status/wallet
+import ../../eventemitter
 import view
 import views/ens_manager
 import chronicles

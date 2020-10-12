@@ -1,5 +1,5 @@
-import eventemitter
 import libstatus/core as status
+import ../eventemitter
 
 type NodeModel* = ref object
   events*: EventEmitter

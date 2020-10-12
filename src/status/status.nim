@@ -1,10 +1,9 @@
-import eventemitter
-
 import libstatus/accounts as libstatus_accounts
 import libstatus/core as libstatus_core
 import libstatus/settings as libstatus_settings
 import libstatus/types as libstatus_types
 import chat, accounts, wallet, node, network, mailservers, messages, contacts, profile, stickers
+import ../eventemitter
 
 export chat, accounts, node, mailservers, messages, contacts, profile, network
 

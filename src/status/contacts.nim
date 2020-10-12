@@ -1,6 +1,7 @@
-import eventemitter, json, sequtils
+import json, sequtils
 import libstatus/contacts as status_contacts
 import profile/profile
+import ../eventemitter
 
 const DELETE_CONTACT* = "__deleteThisContact__"
 
