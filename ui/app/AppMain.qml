@@ -108,11 +108,75 @@ RowLayout {
                         console.log("Success", trxHash)
                     }
                 });
-
-
             });
         }
-        
+    }
+
+
+    Button {
+        id: registerChannelBtn
+        text: "Registering test4 channel"
+        anchors.top: signBroadcastRawTrx.bottom
+        anchors.left: parent.left
+        onClicked: {
+            // Do promises work in qml?
+            const request = { type: "getNonce", payload: walletModel.getDefaultAddress() }
+            ethersChannel.postMessage(request, (nonce) => {
+
+                const request = {type: "registerChannel", payload: utilsModel.channelHash("test4")}
+                ethersChannel.postMessage(request, (data) => {
+                    
+                    // Signing a transaction:
+                    const password = "richard"; // TODO: replace with a more safe password :-P       contract address                                           gwei
+                    const signature = walletModel.signTransaction(walletModel.getDefaultAddress(), "0x025Da72d4389ff2479aBe291F9aB716a70003b7f", "0", "100000", "1", nonce.toString(), data, password, 100);
+
+                    // Broadcast the transaction
+                    const request = { type: "broadcast", payload: JSON.parse(signature).result };
+                    ethersChannel.postMessage(request, (trxHash, error) => {
+                        if(error){
+                            console.log("ERROR!", error);
+                        } else {
+                            console.log("Success registering channel", trxHash)
+                        }
+                    });
+                    
+                });
+            });
+        }
+    }
+
+
+
+    Button {
+        id: allowUser
+        text: "Allow user"
+        anchors.top: registerChannelBtn.bottom
+        anchors.left: parent.left
+        onClicked: {
+            // Do promises work in qml?
+            const request = { type: "getNonce", payload: walletModel.getDefaultAddress() }
+            ethersChannel.postMessage(request, (nonce) => {
+
+                const request = {type: "allowUser", payload: [utilsModel.channelHash("test4"), "0x0011223344556677889900112233445566778899"]}
+                ethersChannel.postMessage(request, (data) => {
+                    
+                    // Signing a transaction:
+                    const password = "richard"; // TODO: replace with a more safe password :-P       contract address                                           gwei
+                    const signature = walletModel.signTransaction(walletModel.getDefaultAddress(), "0x025Da72d4389ff2479aBe291F9aB716a70003b7f", "0", "100000", "1", nonce.toString(), data, password, 100);
+
+                    // Broadcast the transaction
+                    const request = { type: "broadcast", payload: JSON.parse(signature).result };
+                    ethersChannel.postMessage(request, (trxHash, error) => {
+                        if(error){
+                            console.log("ERROR!", error);
+                        } else {
+                            console.log("Success allowing user into channel", trxHash)
+                        }
+                    });
+                    
+                });
+            });
+        }
     }
 
     WebEngineView {
