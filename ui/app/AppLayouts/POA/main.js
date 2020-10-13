@@ -810,13 +810,17 @@ const contractAddress = "0x025Da72d4389ff2479aBe291F9aB716a70003b7f";
 
 
 window.onload = function(){
-    const provider = new ethers.providers.JsonRpcProvider("https://rpc.xdaichain.com/");
+    const provider = new ethers.providers.JsonRpcProvider("https://xdai.poanetwork.dev");
 
     let backend;
 
     const sendResponse = (messageId, data) => {
       backend.response(messageId, JSON.stringify(data));
     }
+
+    const sendError = (messageId, error) => {
+        backend.error(messageId, error.message);
+      }
 
     let contract = new ethers.Contract(contractAddress, abi, provider);
  
@@ -827,6 +831,18 @@ window.onload = function(){
           case "balance":
             const balance = await provider.getBalance(request.data.payload);
             sendResponse(request.messageId, balance);
+            break;
+          case "getNonce":
+            const nonce = await provider.getTransactionCount(request.data.payload)
+            sendResponse(request.messageId, nonce);
+            break;
+          case "broadcast":
+            try {
+                const transaction = await provider.sendTransaction(request.data.payload);
+                sendResponse(request.messageId, transaction.hash);
+            } catch(ex) {
+                sendError(request.messageId, ex);
+            }
             break;
           case "isUserAllowed":
           case "isOperator":
