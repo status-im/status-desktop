@@ -29,6 +29,12 @@ proc sendTransaction*(inputJSON: string, password: string): string =
   var hashed_password = "0x" & $keccak_256.digest(password)
   return $nim_status.sendTransaction(inputJSON, hashed_password)
 
+proc SignTransaction(txArgsJSON: cstring, password: cstring, chainId: cint) : cstring {.importc: "SignTransaction".}
+
+proc signTransaction*(txArgsJSON: string, password: string, chainId: int): string =
+  var hashed_password = "0x" & $keccak_256.digest(password)
+  return $SignTransaction(txArgsJSON.cstring, hashed_password.cstring, chainId.cint)
+
 proc startMessenger*() =
   discard callPrivateRPC("startMessenger".prefix)
 
@@ -49,3 +55,4 @@ proc getBlockByNumber*(blockNumber: string): string =
 
 proc getTransfersByAddress*(address: string, toBlock: string, limit: string): string =
   result = callPrivateRPC("wallet_getTransfersByAddress", %* [address, toBlock, limit])
+
