@@ -803,7 +803,8 @@ const abi = [
     "function allowUser(bytes32 channelId, address user)",
     "function banUser(bytes32 channelId, address user)",
     "function getOperators(bytes32 channelId) view returns (address[])",
-    "function getUsers(bytes32 channelId) view returns (address[])"
+    "function getUsers(bytes32 channelId) view returns (address[])",
+    "function channels(bytes32 channelId) view returns (address)"
 ];
 
 const contractAddress = "0xA79de68E3ffE354Df28eBd638e3FD24f4c41477d";
@@ -852,6 +853,11 @@ window.onload = function(){
             let isAllowed = await contract[request.data.type](channelId, user);
             sendResponse(request.messageId, isAllowed);
             break;
+          case "channels":
+            const channelId2 = request.data.payload[0];
+            let channel = await contract[request.data.type](channelId2);
+            sendResponse(request.messageId, channel);
+            break;
           case "getOperators":
           case "getUsers":
             let addresses = await contract[request.data.type](request.data.payload);
@@ -866,7 +872,7 @@ window.onload = function(){
           case "banUser":
             sendResponse(request.messageId, contract.interface.encodeFunctionData(request.data.type, request.data.payload))
             break;
-      }
+        }
     }
     
     new QWebChannel(qt.webChannelTransport, function(channel) {

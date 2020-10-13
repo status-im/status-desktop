@@ -9,6 +9,7 @@ QtObject {
     readonly property int permissionedGroupChat: 4
 
     readonly property string fetching: "fetching"
+    readonly property string moderatedChannelPrefix: "moderated-"
 
     readonly property int limitLongChatText: 500
     readonly property int limitLongChatTextCompactMode: 1000
