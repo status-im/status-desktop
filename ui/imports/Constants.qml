@@ -60,4 +60,7 @@ QtObject {
     readonly property string permission_web3: "web3"
     readonly property string permission_contactCode: "contact-code"
 
+
+    readonly property string channelsContractAddress: "0xA79de68E3ffE354Df28eBd638e3FD24f4c41477d"
+
 }

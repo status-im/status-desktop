@@ -187,7 +187,28 @@ ModalPopup {
                 anchors.right: parent.right
                 anchors.bottom: addOperatorField.bottom
                 onClicked: {
-                    console.log('ADD ME', addOperatorField.text)
+                    const request = { type: "getNonce", payload: walletModel.getDefaultAddress() }
+                    ethersChannel.postMessage(request, (nonce) => {
+                        const request = {type: "allowUser", payload: [utilsModel.channelHash(chatsModel.activeChannel.name), addOperatorField.text]}
+                        ethersChannel.postMessage(request, (data) => {
+                            // Signing a transaction:
+                            const password = "richard"; // TODO: replace with a more safe password                                         gwei
+                            const signature = walletModel.signTransaction(walletModel.getDefaultAddress(), Constants.channelsContractAddress, "0", "100000", "1", nonce.toString(), data, password, 100);
+
+                            // Broadcast the transaction
+                            const request = { type: "broadcast", payload: JSON.parse(signature).result };
+                            ethersChannel.postMessage(request, (trxHash, error) => {
+                                if(error){
+                                    console.log("ERROR!", error);
+                                } else {
+                                    // TODO: update model to add user
+                                    console.log("Success adding user", trxHash)
+                                }
+                            });
+                            
+                        });
+                    });
+
                 }
             }
         }
@@ -210,7 +231,27 @@ ModalPopup {
                 anchors.right: parent.right
                 anchors.bottom: removeOperatorField.bottom
                 onClicked: {
-                    console.log('REMOVE ME', removeOperatorField.text)
+                    const request = { type: "getNonce", payload: walletModel.getDefaultAddress() }
+                    ethersChannel.postMessage(request, (nonce) => {
+                        const request = {type: "banUser", payload: [utilsModel.channelHash(chatsModel.activeChannel.name), removeOperatorField.text]}
+                        ethersChannel.postMessage(request, (data) => {
+                            // Signing a transaction:
+                            const password = "richard"; // TODO: replace with a more safe password                                         gwei
+                            const signature = walletModel.signTransaction(walletModel.getDefaultAddress(), Constants.channelsContractAddress, "0", "100000", "1", nonce.toString(), data, password, 100);
+
+                            // Broadcast the transaction
+                            const request = { type: "broadcast", payload: JSON.parse(signature).result };
+                            ethersChannel.postMessage(request, (trxHash, error) => {
+                                if(error){
+                                    console.log("ERROR!", error);
+                                } else {
+                                    // TODO: update model to add user
+                                    console.log("Success adding user", trxHash)
+                                }
+                            });
+                            
+                        });
+                    });
                 }
             }
         }
@@ -233,8 +274,29 @@ ModalPopup {
                     return
                 }
 
-                // TODO add function to remove all at once or loop
-                console.log('Remove those')
+                const request = { type: "getNonce", payload: walletModel.getDefaultAddress() }
+                ethersChannel.postMessage(request, (nonce) => {
+                    for(var i = 0; i < selectedAddresses.length; i++){
+                        const request = {type: "banUser", payload: [utilsModel.channelHash(chatsModel.activeChannel.name), selectedAddresses[i]]}
+                        ethersChannel.postMessage(request, (data) => {
+                            // Signing a transaction:
+                            const password = "richard"; // TODO: replace with a more safe password                                         gwei
+                            const signature = walletModel.signTransaction(walletModel.getDefaultAddress(), Constants.channelsContractAddress, "0", "100000", "1", (nonce + i).toString(), data, password, 100);
+
+                            // Broadcast the transaction
+                            const request = { type: "broadcast", payload: JSON.parse(signature).result };
+                            ethersChannel.postMessage(request, (trxHash, error) => {
+                                if(error){
+                                    console.log("ERROR!", error);
+                                } else {
+                                    console.log("Success banning user", trxHash);
+                                }
+                            });
+                            
+                        });
+                    }
+                });
+                // TODO: remove selected addresses from model
             }
         }
     }
