@@ -13,17 +13,36 @@ ModalPopup {
         channelname.text = "";
     }
 
-    function doJoin(){
+    function doCreate(channelName){
         // TODO call contract to create the channel and change channel type to 4
-        chatsModel.joinChat(channelname.text, Constants.chatTypePublic);
+        chatsModel.joinChat(channelName, Constants.chatTypePublic);
         popup.close();
     }
 
-    title: qsTr("New permissioned chat")
+    function doJoin(channelName){
+        chatsModel.joinChat(channelName, Constants.chatTypePublic);
+        popup.close();
+    }
+
+    function checkChannelExistence(channelName) {
+        const request = {
+            type: "channels",
+            payload: [utilsModel.channelHash(channelName)]
+        }
+        ethersChannel.postMessage(request, (channel) => {
+                                      if (channel === Constants.zeroAddress) {
+                                          // New channel, call create
+                                          return doCreate(channelName)
+                                      }
+                                      doJoin(channelName)
+                                  })
+    }
+
+    title: qsTr("New Moderated Chat")
 
     StyledText {
         id: chatInfo
-        text: qsTr("A Permissioned chat is a channel that everyone can look at, but only the allowed members can write. It's perfect to reduce the risk of spam and create communities")
+        text: qsTr("A Moderated chat is a channel that everyone can look at, but only the allowed members can write. It's perfect to reduce the risk of spam and create communities")
         color: Style.current.darkGrey
         font.pixelSize: 15
         width: parent.width
@@ -32,7 +51,16 @@ ModalPopup {
 
     Input {
         id: channelname
+        label: qsTr("Channel name")
         placeholderText: qsTr("Channel name")
+        textField.text: Constants.moderatedChannelPrefix
+        textField.onTextChanged: {
+            if (!textField.text.startsWith(Constants.moderatedChannelPrefix)) {
+                // Make sure moderated- is always at the start
+                // The regex makes it so that we don,t just duplicate moderated- but instead replaces what's there
+                textField.text = textField.text.replace(/m?o?d?e?r?a?t?e?d?-?/, Constants.moderatedChannelPrefix)
+            }
+        }
         anchors.top: chatInfo.bottom
         anchors.topMargin: Style.current.smallPadding
     }
@@ -46,9 +74,9 @@ ModalPopup {
         StyledButton {
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            label: qsTr("Create Permissioned Group Chat")
+            label: qsTr("Check if the channel exists")
             disabled: channelname.text === ""
-            onClicked : doJoin()
+            onClicked : checkChannelExistence(channelname.text)
         }
     }
 }
