@@ -8,43 +8,58 @@ import "./"
 
 ModalPopup {
     id: popup
-    property int currMemberCount: 1
-    property int memberCount: 1
-    property var pubKeys: []
+    property var selectedAddresses: []
+    property bool userListMode: false
 
-    function resetSelectedMembers(){
-        // TODO get operators from the contract once we can have it as an array
-        //        pubKeys = [];
-        //        memberCount = chatsModel.activeChannel.members.rowCount();
-        //        currMemberCount = memberCount;
-        //        data.clear();
-        //        const nbContacts = profileModel.contactList.rowCount()
-        //        for(let i = 0; i < nbContacts; i++){
-        //            if(chatsModel.activeChannel.contains(profileModel.contactList.rowData(i, "pubKey"))) continue;
-        //            if(profileModel.contactList.rowData(i, "isContact") === "false") continue;
-        //            data.append({
-        //                name: profileModel.contactList.rowData(i, "name"),
-        //                localNickname: profileModel.contactList.rowData(i, "localNickname"),
-        //                pubKey: profileModel.contactList.rowData(i, "pubKey"),
-        //                address: profileModel.contactList.rowData(i, "address"),
-        //                identicon: profileModel.contactList.rowData(i, "identicon"),
-        //                isUser: false
-        //            });
-        //        }
+    function resetSelectedMembers() {
+
+        const request = {
+            type: "getUsers",
+            payload: utilsModel.channelHash(chatsModel.activeChannel.name)
+        }
+
+        const members = profileModel.contactList
+        const memberLength = members.rowCount()
+        const pubKeyByAddress = {}
+        let pubKey, address;
+        for(let i = 0; i < memberLength; i++) {
+            pubKey = members.rowData(i, "pubKey")
+            address = utilsModel.derivedAnUserAddress(pubKey)
+            pubKeyByAddress[address.toLowerCase()] = {pubKey: pubKey, index: i, name: members.rowData(i, "name")}
+        }
+
+        const myAddress = utilsModel.derivedAnUserAddress(profileModel.profile.pubKey).toLowerCase()
+        ethersChannel.postMessage(request, (users) => {
+                                      data.clear();
+                                      users.forEach(function (userAddress) {
+                                          userAddress = userAddress.toLowerCase()
+                                          if (userAddress === myAddress) {
+                                              // it's me
+                                              return
+                                          } else if (!pubKeyByAddress[userAddress]) {
+                                              data.append({
+                                                              address: userAddress
+                                                          });
+                                          } else {
+                                              data.append({
+                                                              address: userAddress,
+                                                              name: members.rowData(pubKeyByAddress[userAddress].index, "name"),
+                                                              pubKey: pubKeyByAddress[userAddress].pubKey,
+                                                              identicon: members.rowData(pubKeyByAddress[userAddress].index, "identicon")
+                                                          });
+                                          }
+
+
+                                      })
+                                  });
     }
 
     onOpened: {
         resetSelectedMembers();
     }
 
-    function doChangeUsers() {
-        if(pubKeys.length === 0) return;
-        chatsModel.addGroupMembers(chatsModel.activeChannel.id, JSON.stringify(pubKeys));
-        popup.close();
-    }
-
-    // TODO put this back bigger once we have the list
-    height: 265
+    height: userListMode ? 500 : 350
+    width: 500
 
     header: Item {
         height: children[0].height
@@ -73,8 +88,9 @@ ModalPopup {
         }
     }
 
-    /*Item {
-        id: addMembersItem
+    Item {
+        id: userList
+        visible: userListMode === true
         anchors.fill: parent
 
         SearchBox {
@@ -86,16 +102,15 @@ ModalPopup {
         }
 
         Rectangle {
-            id: noContactsRect
+            id: noUsersRect
             width: 320
             visible: data.count == 0
             anchors.top: searchBox.bottom
             anchors.topMargin: Style.current.xlPadding
             anchors.horizontalCenter: parent.horizontalCenter
             StyledText {
-                id: noContacts
-                //% "All your contacts are already in the group"
-                text: qsTrId("group-chat-all-contacts-invited")
+                id: noUsersText
+                text: qsTr("There are no users currently allowed in this channel")
                 color: Style.current.textColor
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.padding
@@ -104,23 +119,10 @@ ModalPopup {
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter
             }
-            StyledButton {
-                //% "Invite friends"
-                label: qsTrId("invite-friends")
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: noContacts.bottom
-                anchors.topMargin: Style.current.padding
-                onClicked: {
-                    inviteFriendsPopup.open()
-                }
-            }
-            InviteFriendsPopup {
-                id: inviteFriendsPopup
-            }
         }
 
         ScrollView {
-            visible: addMembers && data.count > 0
+            visible: data.count > 0
             anchors.fill: parent
             anchors.topMargin: 50
             anchors.top: searchBox.bottom
@@ -139,34 +141,32 @@ ModalPopup {
                 clip: true
                 id: groupMembers
                 delegate: Contact {
-                    isVisible: searchBox.text == "" || model.name.includes(searchBox.text)
-                    showCheckbox: memberCount < maxMembers
-                    pubKey: model.pubKey
-                    isUser: model.isUser
-                    name: model.name.endsWith(".eth") && !!model.localNickname ?
-                              Utils.removeStatusEns(model.name) : model.localNickname
+                    isVisible: searchBox.text == "" || model.name.includes(searchBox.text) || model.address.includes(searchBox.text)
+                    showCheckbox: true
+                    pubKey: model.address // we put the address instead because we don't care about the pubkey
+                    isUser: false
+                    name: model.name ? model.name : model.address
                     address: model.address
-                    identicon: model.identicon
-                    onItemChecked: function(pubKey, itemChecked){
-                        var idx = pubKeys.indexOf(pubKey)
+                    identicon: model.identicon || ""
+                    onItemChecked: function(address, itemChecked){
+                        var idx = selectedAddresses.indexOf(address)
                         if(itemChecked){
                             if(idx === -1){
-                                pubKeys.push(pubKey)
+                                selectedAddresses.push(address)
                             }
                         } else {
                             if(idx > -1){
-                                pubKeys.splice(idx, 1);
+                                selectedAddresses.splice(idx, 1);
                             }
                         }
-                        memberCount = chatsModel.activeChannel.members.rowCount() + pubKeys.length;
-                        btnSelectMembers.enabled = pubKeys.length > 0
                     }
                 }
             }
         }
-    }*/
+    }
 
     Column {
+        visible: userListMode === false
         spacing: Style.current.padding
         width: parent.width
 
@@ -213,6 +213,29 @@ ModalPopup {
                 onClicked: {
                     console.log('REMOVE ME', removeOperatorField.text)
                 }
+            }
+        }
+    }
+
+    footer: Item {
+        width: parent.width
+
+        StyledButton {
+            label: userListMode ? qsTr("See the form") : qsTr("See the user list")
+            onClicked: userListMode = !userListMode
+        }
+
+        StyledButton {
+            visible: userListMode
+            anchors.right: parent.right
+            label: qsTr("Remove checked users")
+            onClicked: {
+                if (selectedAddresses.length === 0) {
+                    return
+                }
+
+                // TODO add function to remove all at once or loop
+                console.log('Remove those')
             }
         }
     }
