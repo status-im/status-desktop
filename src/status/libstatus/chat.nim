@@ -1,4 +1,4 @@
-import json, times, strutils, sequtils, chronicles, json_serialization
+import json, times, strutils, sequtils, chronicles, json_serialization, algorithm
 import core, utils
 import ../chat/[chat, message]
 import ../signals/messages
@@ -39,6 +39,11 @@ proc deactivateChat*(chat: Chat) =
   chat.isActive = false
   discard callPrivateRPC("saveChat".prefix, %* [chat.toJsonNode])
 
+proc sortChats(x, y: Chat): int = 
+  if x.lastMessage.whisperTimestamp > y.lastMessage.whisperTimestamp: 1
+  elif x.lastMessage.whisperTimestamp == y.lastMessage.whisperTimestamp: 0
+  else: -1
+
 proc loadChats*(): seq[Chat] =
   result = @[]
   let jsonResponse = parseJson($callPrivateRPC("chats".prefix))
@@ -47,6 +52,7 @@ proc loadChats*(): seq[Chat] =
       let chat = jsonChat.toChat
       if chat.isActive and chat.chatType != ChatType.Unknown:
         result.add(jsonChat.toChat)
+  result.sort(sortChats)
 
 proc chatMessages*(chatId: string, cursor: string = ""): (string, seq[Message]) =
   var messages: seq[Message] = @[]
