@@ -129,7 +129,7 @@ Rectangle {
                     icon.source: "../../../img/group.svg"
                     icon.width: chatTopBarContent.iconSize
                     icon.height: chatTopBarContent.iconSize
-                    text: qsTr("Manage Operators")
+                    text: qsTr("Manage Moderators")
                     onTriggered: {
                         manageOperatorsPopup.open()
                     }

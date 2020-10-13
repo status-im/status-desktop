@@ -12,7 +12,6 @@ ModalPopup {
     property bool userListMode: false
 
     function resetSelectedMembers() {
-
         const request = {
             type: "getUsers",
             payload: utilsModel.channelHash(chatsModel.activeChannel.name)
