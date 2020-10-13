@@ -558,3 +558,8 @@ QtObject:
     self.ensWasResolved(pubKey)
   
   proc transactionCompleted*(self: WalletView, success: bool, txHash: string, revertReason: string = "") {.signal.}
+
+  proc signTransaction*(self: WalletView, from_addr: string, to: string, value: string, gas: string, gasPrice: string, nonce: string, data: string, password: string, chainId: int): string {.slot.} = 
+    var success: bool
+    let response = self.status.wallet.signTransaction(from_addr, to, value, gas, gasPrice, nonce, password, chainId, success, data)
+    result = $(%* { "result": %response, "success": %success })

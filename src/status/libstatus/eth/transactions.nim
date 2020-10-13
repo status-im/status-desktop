@@ -28,3 +28,13 @@ proc call*(tx: EthSend): RpcResponse =
   result = Json.decode(responseStr, RpcResponse)
   if not result.error.isNil:
     raise newException(RpcException, "Error calling method: " & result.error.message)
+
+proc signTransaction*(tx: EthSend, nonce: string, password: string, chainId: int): RpcResponse =
+  var trxJson = %*tx
+  trxJson["nonce"] = newJString(nonce)
+  let responseStr = core.signTransaction($trxJson, password, chainId)
+  result = Json.decode(responseStr, RpcResponse)
+  if not result.error.isNil:
+    raise newException(RpcException, "Error signing transaction: " & result.error.message)
+
+  trace "Transaction signed succesfully", hash=result.result

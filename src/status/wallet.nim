@@ -126,6 +126,11 @@ proc sendTransaction*(self: WalletModel, source, to, value, gas, gasPrice, passw
   if success:
     trackPendingTransaction(result, $source, $to, PendingTransactionType.WalletTransfer, "")
 
+proc signTransaction*(self: WalletModel, fromAddress, to, value, gas, gasPrice, nonce, password: string, chainId: int, success: var bool, data = ""): string =
+  var tx = transactions.buildTransaction(parseAddress(fromAddress), parse(value, StUint[256]), gas, gasPrice, data, nonce)
+  tx.to = parseAddress(to).some
+  result = eth.signTransaction(tx, "0x" &  toHex(parseInt(nonce)).strip(leading = true, chars = {'0'}), password, chainId, success)
+
 proc sendTokenTransaction*(self: WalletModel, source, to, assetAddress, value, gas, gasPrice, password: string, success: var bool): string =
   var
     transfer: Transfer

@@ -39,6 +39,12 @@ RowLayout {
                 cbDictionary[requestId](responseData);
             }
         }
+
+        function error(requestId, error){
+            if(cbDictionary[requestId]){
+                cbDictionary[requestId](null, error);
+            }
+        }
     }
 
     WebChannel {
@@ -75,6 +81,35 @@ RowLayout {
 
             ethersChannel.postMessage(request, (message) => {
                 console.log("User is allowed: ", message);
+            });
+        }
+        
+    }
+
+
+    Button {
+        id: signBroadcastRawTrx
+        text: "SignAndBroadcastRawTransaction"
+        anchors.top: sendMsg.bottom
+        anchors.left: parent.left
+        onClicked: {
+            const request = { type: "getNonce", payload: walletModel.getDefaultAddress() }
+            ethersChannel.postMessage(request, (nonce) => {
+                // Signing a transaction:
+                const password = "richard"; // TODO: replace with a more safe password :-P                                                                           gwei
+                const signature = walletModel.signTransaction(walletModel.getDefaultAddress(), "0x5f66406B79CD80e4F9D33E3153b94B174839a449", "2000000000", "21000", "1", nonce.toString(), "", password, 100);
+
+                // Broadcast the transaction
+                const request = { type: "broadcast", payload: JSON.parse(signature).result };
+                ethersChannel.postMessage(request, (trxHash, error) => {
+                    if(error){
+                        console.log("ERROR!", error);
+                    } else {
+                        console.log("Success", trxHash)
+                    }
+                });
+
+
             });
         }
         

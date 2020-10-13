@@ -21,3 +21,12 @@ proc estimateGas*(tx: var EthSend, success: var bool): string =
   except RpcException as e:
     success = false
     result = e.msg
+
+proc signTransaction*(tx: var EthSend, nonce: string, password: string, chainId: int, success: var bool): string =
+  success = true
+  try:
+    let response = transactions.signTransaction(tx, nonce, password, chainId)
+    result = response.result
+  except RpcException as e:
+    success = false
+    result = e.msg
