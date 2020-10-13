@@ -857,6 +857,15 @@ window.onload = function(){
             let addresses = await contract[request.data.type](request.data.payload);
             sendResponse(request.messageId, addresses);
             break;
+          case "registerChannel":
+            sendResponse(request.messageId, contract.interface.encodeFunctionData("registerChannel", [request.data.payload]))
+            break;
+          case "addOperator":
+          case "removeOperator":
+          case "allowUser":
+          case "banUser":
+            sendResponse(request.messageId, contract.interface.encodeFunctionData(request.data.type, request.data.payload))
+            break;
       }
     }
     
