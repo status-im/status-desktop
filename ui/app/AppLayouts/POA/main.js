@@ -806,11 +806,12 @@ const abi = [
     "function getUsers(bytes32 channelId) view returns (address[])"
 ];
 
-const contractAddress = "0x025Da72d4389ff2479aBe291F9aB716a70003b7f";
+const contractAddress = "0xA79de68E3ffE354Df28eBd638e3FD24f4c41477d";
 
 
 window.onload = function(){
-    const provider = new ethers.providers.JsonRpcProvider("https://xdai.poanetwork.dev");
+    // const provider = new ethers.providers.JsonRpcProvider("https://rpc.xdaichain.com/");
+    const provider = new ethers.providers.JsonRpcProvider("https://xdai.poanetwork.dev/");
 
     let backend;
 
