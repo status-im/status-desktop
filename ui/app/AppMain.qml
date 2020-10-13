@@ -1,4 +1,4 @@
-import QtQuick 2.13
+﻿import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../imports"
@@ -52,83 +52,52 @@ RowLayout {
         registeredObjects: [ethersChannel]
     }
 
-    Button {
-        id: sendMsg
-        text: "IsUserAllowed"
-        anchors.top: parent.top
-        anchors.left: parent.left
-        onClicked: {
-            const request = {
-                type: "isUserAllowed",
-                           // keccak(ChannelID),                                                // user address derived from pubkey
-                payload: ["0x1122334455667788990011223344556677889900112233445566778899001122", "0x66C0DC5111673DDC578b5B1c36412578E2de68B6"]
+    Column {
+        width: Math.max(sendMsg.width, signBroadcastRawTrx.width)
+        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+        Button {
+            id: sendMsg
+            text: "IsUserAllowed"
+
+            onClicked: {
+                const request = {
+                    type: "isUserAllowed",
+                               // keccak(ChannelID),                                                // user address derived from pubkey
+                    payload: ["0x1122334455667788990011223344556677889900112233445566778899001122", "0x66C0DC5111673DDC578b5B1c36412578E2de68B6"]
+                }
+
+
+                // isOperator
+                //const request = {
+                //    type: "isUserAllowed",
+                //    payload: ["0x1122334455667788990011223344556677889900112233445566778899001122", "0x66C0DC5111673DDC578b5B1c36412578E2de68B6"]
+                //}
+
+                // getUsers                                 // ChannelId
+                // const request = {type:"getUsers", payload: "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"}
+
+                // getOperators                                 // ChannelId
+                // const request = {type:"getOperators", payload: "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"}
+
+
+
+                ethersChannel.postMessage(request, (message) => {
+                    console.log("User is allowed: ", message);
+                });
             }
 
-
-            // isOperator
-            //const request = {
-            //    type: "isUserAllowed",
-            //    payload: ["0x1122334455667788990011223344556677889900112233445566778899001122", "0x66C0DC5111673DDC578b5B1c36412578E2de68B6"]
-            //}
-
-            // getUsers                                 // ChannelId
-            // const request = {type:"getUsers", payload: "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"}
-
-            // getOperators                                 // ChannelId
-            // const request = {type:"getOperators", payload: "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658"}
-
-
-
-            ethersChannel.postMessage(request, (message) => {
-                console.log("User is allowed: ", message);
-            });
         }
-        
-    }
 
-
-    Button {
-        id: signBroadcastRawTrx
-        text: "SignAndBroadcastRawTransaction"
-        anchors.top: sendMsg.bottom
-        anchors.left: parent.left
-        onClicked: {
-            const request = { type: "getNonce", payload: walletModel.getDefaultAddress() }
-            ethersChannel.postMessage(request, (nonce) => {
-                // Signing a transaction:
-                const password = "richard"; // TODO: replace with a more safe password :-P                                                                           gwei
-                const signature = walletModel.signTransaction(walletModel.getDefaultAddress(), "0x5f66406B79CD80e4F9D33E3153b94B174839a449", "2000000000", "21000", "1", nonce.toString(), "", password, 100);
-
-                // Broadcast the transaction
-                const request = { type: "broadcast", payload: JSON.parse(signature).result };
-                ethersChannel.postMessage(request, (trxHash, error) => {
-                    if(error){
-                        console.log("ERROR!", error);
-                    } else {
-                        console.log("Success", trxHash)
-                    }
-                });
-            });
-        }
-    }
-
-
-    Button {
-        id: registerChannelBtn
-        text: "Registering test4 channel"
-        anchors.top: signBroadcastRawTrx.bottom
-        anchors.left: parent.left
-        onClicked: {
-            // Do promises work in qml?
-            const request = { type: "getNonce", payload: walletModel.getDefaultAddress() }
-            ethersChannel.postMessage(request, (nonce) => {
-
-                const request = {type: "registerChannel", payload: utilsModel.channelHash("test4")}
-                ethersChannel.postMessage(request, (data) => {
-                    
+        Button {
+            id: signBroadcastRawTrx
+            text: "SignAndBroadcastRawTransaction"
+            onClicked: {
+                const request = { type: "getNonce", payload: walletModel.getDefaultAddress() }
+                ethersChannel.postMessage(request, (nonce) => {
                     // Signing a transaction:
-                    const password = "richard"; // TODO: replace with a more safe password :-P       contract address                                           gwei
-                    const signature = walletModel.signTransaction(walletModel.getDefaultAddress(), "0x025Da72d4389ff2479aBe291F9aB716a70003b7f", "0", "100000", "1", nonce.toString(), data, password, 100);
+                    const password = "richard"; // TODO: replace with a more safe password :-P                                                                           gwei
+                    const signature = walletModel.signTransaction(walletModel.getDefaultAddress(), "0x5f66406B79CD80e4F9D33E3153b94B174839a449", "2000000000", "21000", "1", nonce.toString(), "", password, 100);
 
                     // Broadcast the transaction
                     const request = { type: "broadcast", payload: JSON.parse(signature).result };
@@ -136,46 +105,71 @@ RowLayout {
                         if(error){
                             console.log("ERROR!", error);
                         } else {
-                            console.log("Success registering channel", trxHash)
+                            console.log("Success", trxHash)
                         }
                     });
-                    
                 });
-            });
+            }
         }
-    }
 
+        Button {
+            id: registerChannelBtn
+            text: "Registering test4 channel"
+            onClicked: {
+                // Do promises work in qml?
+                const request = { type: "getNonce", payload: walletModel.getDefaultAddress() }
+                ethersChannel.postMessage(request, (nonce) => {
 
+                    const request = {type: "registerChannel", payload: utilsModel.channelHash("test4")}
+                    ethersChannel.postMessage(request, (data) => {
 
-    Button {
-        id: allowUser
-        text: "Allow user"
-        anchors.top: registerChannelBtn.bottom
-        anchors.left: parent.left
-        onClicked: {
-            // Do promises work in qml?
-            const request = { type: "getNonce", payload: walletModel.getDefaultAddress() }
-            ethersChannel.postMessage(request, (nonce) => {
+                        // Signing a transaction:
+                        const password = "richard"; // TODO: replace with a more safe password :-P       contract address                                           gwei
+                        const signature = walletModel.signTransaction(walletModel.getDefaultAddress(), "0x025Da72d4389ff2479aBe291F9aB716a70003b7f", "0", "100000", "1", nonce.toString(), data, password, 100);
 
-                const request = {type: "allowUser", payload: [utilsModel.channelHash("test4"), "0x0011223344556677889900112233445566778899"]}
-                ethersChannel.postMessage(request, (data) => {
-                    
-                    // Signing a transaction:
-                    const password = "richard"; // TODO: replace with a more safe password :-P       contract address                                           gwei
-                    const signature = walletModel.signTransaction(walletModel.getDefaultAddress(), "0x025Da72d4389ff2479aBe291F9aB716a70003b7f", "0", "100000", "1", nonce.toString(), data, password, 100);
+                        // Broadcast the transaction
+                        const request = { type: "broadcast", payload: JSON.parse(signature).result };
+                        ethersChannel.postMessage(request, (trxHash, error) => {
+                            if(error){
+                                console.log("ERROR!", error);
+                            } else {
+                                console.log("Success registering channel", trxHash)
+                            }
+                        });
 
-                    // Broadcast the transaction
-                    const request = { type: "broadcast", payload: JSON.parse(signature).result };
-                    ethersChannel.postMessage(request, (trxHash, error) => {
-                        if(error){
-                            console.log("ERROR!", error);
-                        } else {
-                            console.log("Success allowing user into channel", trxHash)
-                        }
                     });
-                    
                 });
-            });
+            }
+        }
+
+        Button {
+            id: allowUser
+            text: "Allow user"
+            onClicked: {
+                // Do promises work in qml?
+                const request = { type: "getNonce", payload: walletModel.getDefaultAddress() }
+                ethersChannel.postMessage(request, (nonce) => {
+
+                    const request = {type: "allowUser", payload: [utilsModel.channelHash("test4"), "0x0011223344556677889900112233445566778899"]}
+                    ethersChannel.postMessage(request, (data) => {
+
+                        // Signing a transaction:
+                        const password = "richard"; // TODO: replace with a more safe password :-P       contract address                                           gwei
+                        const signature = walletModel.signTransaction(walletModel.getDefaultAddress(), "0x025Da72d4389ff2479aBe291F9aB716a70003b7f", "0", "100000", "1", nonce.toString(), data, password, 100);
+
+                        // Broadcast the transaction
+                        const request = { type: "broadcast", payload: JSON.parse(signature).result };
+                        ethersChannel.postMessage(request, (trxHash, error) => {
+                            if(error){
+                                console.log("ERROR!", error);
+                            } else {
+                                console.log("Success allowing user into channel", trxHash)
+                            }
+                        });
+
+                    });
+                });
+            }
         }
     }
 
@@ -185,13 +179,6 @@ RowLayout {
         webChannel: channel
         url: "qrc://ui/app/AppLayouts/POA/ethers.html"
     }
-
-
-
-
-
-
-
 
 
     ToastMessage {
