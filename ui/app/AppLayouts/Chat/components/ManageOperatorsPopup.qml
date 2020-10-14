@@ -11,6 +11,104 @@ ModalPopup {
     property var selectedAddresses: []
     property bool userListMode: false
 
+    property string txHash: ""
+
+    onOpened: {
+        resetSelectedMembers();
+        txHash = "";
+        addOperatorField.text = "";
+        removeOperatorField.text = "";
+    }
+
+    function showSignPopup(){
+        walletModel.setFocusedAccountByAddress(walletModel.getDefaultAddress())
+        var acc = walletModel.focusedAccount
+        signTransactionModal.selectedAccount = {
+            name: acc.name,
+            address: walletModel.getDefaultAddress(),
+            iconColor: acc.iconColor,
+            assets: acc.assets
+        }
+        signTransactionModal.open()
+    }
+
+    function removeSelectedUsersTx(fromAddress, contractAddress, gasLimit, gasPrice, password) {
+        const request = { type: "getNonce", payload: fromAddress }
+        ethersChannel.postMessage(request, (nonce) => {
+            for(let i = 0; i < selectedAddresses.length; i++){
+                const request = {type: "banUser", payload: [utilsModel.channelHash(chatsModel.activeChannel.name), selectedAddresses[i]]}
+                ethersChannel.postMessage(request, (data) => {
+                    // Signing a transaction:
+                    const signature = walletModel.signTransaction(fromAddress, contractAddress, "0", gasLimit, gasPrice, (parseInt(nonce) + i).toString(), data, password, 100);                            // Broadcast the transaction
+
+                    // Broadcast the transaction
+                    const request = { type: "broadcast", payload: JSON.parse(signature).result };
+                    ethersChannel.postMessage(request, (trxHash, error) => {
+                        if(error){
+                            console.log("ERROR!", error);
+                        } else {
+                            console.log("Success removing operator", trxHash);
+                            popup.txHash = trxHash
+                            signTransactionModal.close()
+                        }
+                    });
+                });
+            }
+        });
+        
+    }
+
+    function removeUserTx(fromAddress, contractAddress, gasLimit, gasPrice, password) {
+        const request = { type: "getNonce", payload: fromAddress }
+        ethersChannel.postMessage(request, (nonce) => {
+            const request = {type: "removeOperator", payload: [utilsModel.channelHash(chatsModel.activeChannel.name), removeOperatorField.text]}
+            ethersChannel.postMessage(request, (data) => {
+                // Signing a transaction:
+                const signature = walletModel.signTransaction(fromAddress, contractAddress, "0", gasLimit, gasPrice, nonce.toString(), data, password, 100);
+
+                // Broadcast the transaction
+                const request = { type: "broadcast", payload: JSON.parse(signature).result };
+                ethersChannel.postMessage(request, (trxHash, error) => {
+                    if(error){
+                        console.log("ERROR!", error);
+                    } else {
+                        // TODO: update model to remove user
+                        console.log("Success removing operator", trxHash)
+                        popup.txHash = trxHash
+                        signTransactionModal.close()
+                    }
+                });
+                
+            });
+        });
+    }
+
+    function allowUserTx(fromAddress, contractAddress, gasLimit, gasPrice, password) {
+        const request = { type: "getNonce", payload: fromAddress }
+        ethersChannel.postMessage(request, (nonce) => {
+            const request = {type: "addOperator", payload: [utilsModel.channelHash(chatsModel.activeChannel.name), addOperatorField.text]}
+            ethersChannel.postMessage(request, (data) => {
+                // Signing a transaction:
+                const signature = walletModel.signTransaction(fromAddress, contractAddress, "0", gasLimit, gasPrice, nonce.toString(), data, password, 100);
+
+                // Broadcast the transaction
+                const request = { type: "broadcast", payload: JSON.parse(signature).result };
+                ethersChannel.postMessage(request, (trxHash, error) => {
+                    if(error){
+                        console.log("ERROR!", error);
+                    } else {
+                        // TODO: update model to remove users
+                        console.log("Success adding operator", trxHash)
+                        popup.txHash = trxHash
+                        signTransactionModal.close()
+                    }
+                });
+                
+            });
+        });
+    }
+
+
     function resetSelectedMembers(){
         const request = {
             type: "getOperators",
@@ -53,9 +151,6 @@ ModalPopup {
                                   });
     }
 
-    onOpened: {
-        resetSelectedMembers();
-    }
 
     height: userListMode ? 500 : 350
     width: 500
@@ -87,11 +182,16 @@ ModalPopup {
         }
     }
 
-
     Item {
         id: userList
-        visible: userListMode === true
+        visible: userListMode === true && popup.txHash === ""
+
         anchors.fill: parent
+
+        SignXdaiTransaction {
+            id: signTransactionModal
+            signTransaction: () => {}
+        }
 
         SearchBox {
             id: searchBox
@@ -167,7 +267,7 @@ ModalPopup {
 
 
     Column {
-        visible: userListMode === false
+        visible: userListMode === false && popup.txHash === ""
         spacing: Style.current.padding
         width: parent.width
 
@@ -189,7 +289,8 @@ ModalPopup {
                 anchors.right: parent.right
                 anchors.bottom: addOperatorField.bottom
                 onClicked: {
-                    console.log('ADD ME', addOperatorField.text)
+                    signTransactionModal.signTransaction = allowUserTx;
+                    showSignPopup();
                 }
             }
         }
@@ -212,14 +313,43 @@ ModalPopup {
                 anchors.right: parent.right
                 anchors.bottom: removeOperatorField.bottom
                 onClicked: {
-                    console.log('REMOVE ME', removeOperatorField.text)
+                    signTransactionModal.signTransaction = removeUserTx;
+                    showSignPopup();
                 }
             }
         }
     }
 
+
+
+    Item {
+        id: txSentItem
+        anchors.fill: parent
+        visible: popup.txHash !== ""
+
+        StyledText {
+            id: text1
+            text: qsTr("Transaction successfully sent. You can watch the progress by clicking the button below")
+            horizontalAlignment: Text.AlignHCenter
+            width: parent.width
+            wrapMode: "WordWrap"
+        }
+
+        StyledButton {
+            id: btn1
+            label: qsTr("Go to block explorer")
+            anchors.top: text1.bottom
+            anchors.topMargin: Style.current.smallPadding
+            anchors.horizontalCenter: parent.horizontalCenter
+            onClicked: Qt.openUrlExternally(`https://blockscout.com/poa/xdai/tx/${popup.txHash}/internal-transactions`)
+        }
+
+    }
+
+
     footer: Item {
         width: parent.width
+        visible: txHash === ""
 
         StyledButton {
             label: userListMode ? qsTr("See the form") : qsTr("See the moderator list")
@@ -235,8 +365,8 @@ ModalPopup {
                     return
                 }
 
-                // TODO add function to remove all at once or loop
-                console.log('Remove those')
+                signTransactionModal.signTransaction = removeSelectedUsersTx;
+                showSignPopup();
             }
         }
     }
