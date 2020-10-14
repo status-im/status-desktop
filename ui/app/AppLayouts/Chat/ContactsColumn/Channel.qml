@@ -18,9 +18,15 @@ Rectangle {
     property bool isCompact: appSettings.compactMode
     property int contentType: 1
     property bool muted: false
+    property bool hovered: false
 
     id: wrapper
-    color: ListView.isCurrentItem ? Style.current.secondaryBackground : Style.current.transparent
+    color: {
+      if (ListView.isCurrentItem || wrapper.hovered) {
+        return Style.current.secondaryBackground
+      }
+      return Style.current.transparent
+    }
     anchors.right: parent.right
     anchors.top: applicationWindow.top
     anchors.left: parent.left
@@ -29,20 +35,6 @@ Rectangle {
     property bool isVisible: searchStr == "" || name.includes(searchStr)
     visible: isVisible ? true : false
     height: isVisible ? !isCompact ? 64 : contactImage.height + Style.current.smallPadding * 2 : 0
-
-    MouseArea {
-        cursorShape: Qt.PointingHandCursor
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        anchors.fill: parent
-        onClicked: {
-            if (mouse.button & Qt.RightButton) {
-                channelContextMenu.openMenu(index, muted, chatType, name, chatId, identicon)
-                return;
-            }
-            chatsModel.setActiveChannelByIndex(index)
-            chatGroupsListView.currentIndex = index
-        }
-    }
 
     StatusIdenticon {
         id: contactImage
@@ -178,6 +170,28 @@ Rectangle {
             color: Style.current.white
         }
     }
+
+    MouseArea {
+        cursorShape: Qt.PointingHandCursor
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        anchors.fill: parent
+        hoverEnabled: true
+        onEntered: {
+          wrapper.hovered = true
+        }
+        onExited: {
+          wrapper.hovered = false
+        }
+        onClicked: {
+            if (mouse.button & Qt.RightButton) {
+                channelContextMenu.openMenu(index, muted, chatType, name, chatId, identicon)
+                return;
+            }
+            chatsModel.setActiveChannelByIndex(index)
+            chatGroupsListView.currentIndex = index
+        }
+    }
+
 }
 
 /*##^##
