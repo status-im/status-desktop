@@ -16,6 +16,11 @@ ScrollView {
     contentHeight: channelListContent.height + Style.current.padding
     clip: true
 
+    Timer {
+        id: timer
+    }
+
+
     Item {
         id: channelListContent
         Layout.fillHeight: true
@@ -198,13 +203,49 @@ ScrollView {
 
             // TODO call fetch for the wanted duration
             //% "Last 24 hours"
-            Action { text: qsTrId("last-24-hours"); icon.width: 0; }
+            Action { 
+                text: qsTrId("last-24-hours");
+                icon.width: 0; 
+                onTriggered: {
+                    chatsModel.requestMoreMessages(Constants.fetchRangeLast24Hours)
+                    timer.setTimeout(function(){ 
+                        chatsModel.hideLoadingIndicator()
+                    }, 3000);
+                }
+            }
             //% "Last 2 days"
-            Action { text: qsTrId("last-2-days"); icon.width: 0; }
+            Action {
+                text: qsTrId("last-2-days");
+                icon.width: 0;
+                onTriggered: {
+                    chatsModel.requestMoreMessages(Constants.fetchRangeLast2Days)
+                    timer.setTimeout(function(){ 
+                        chatsModel.hideLoadingIndicator()
+                    }, 4000);
+                }
+              }
             //% "Last 3 days"
-            Action { text: qsTrId("last-3-days"); icon.width: 0; }
+            Action { 
+                text: qsTrId("last-3-days");
+                icon.width: 0; 
+                onTriggered: {
+                    chatsModel.requestMoreMessages(Constants.fetchRangeLast3Days)
+                    timer.setTimeout(function(){ 
+                        chatsModel.hideLoadingIndicator()
+                    }, 5000);
+                }
+            }
             //% "Last 7 days"
-            Action { text: qsTrId("last-7-days"); icon.width: 0; }
+            Action {
+                text: qsTrId("last-7-days");
+                icon.width: 0;
+                onTriggered: {
+                    chatsModel.requestMoreMessages(Constants.fetchRangeLast7Days)
+                    timer.setTimeout(function(){ 
+                        chatsModel.hideLoadingIndicator()
+                    }, 7000);
+                }
+            }
         }
         Action {
             //% "Clear History"

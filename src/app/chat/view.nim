@@ -487,12 +487,12 @@ QtObject:
     read = isLoadingMessages
     notify = loadingMessagesChanged
 
-  proc requestMoreMessages*(self: ChatsView) {.slot.} =
+  proc requestMoreMessages*(self: ChatsView, fetchRange: int) {.slot.} =
     self.loadingMessages = true
     self.loadingMessagesChanged()
     let topics = self.status.mailservers.getMailserverTopicsByChatId(self.activeChannel.id).map(topic => topic.topic)
     let currentOldestMessageTimestamp = self.oldestMessageTimestamp
-    self.oldestMessageTimestamp = self.oldestMessageTimestamp - 86400
+    self.oldestMessageTimestamp = self.oldestMessageTimestamp - fetchRange
 
     self.status.mailservers.requestMessages(topics, self.oldestMessageTimestamp, currentOldestMessageTimestamp, true)
     self.oldestMessageTimestampChanged()
