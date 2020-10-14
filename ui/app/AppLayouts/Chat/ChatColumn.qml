@@ -12,6 +12,8 @@ import "./data"
 StackLayout {
     id: chatColumnLayout
     property int chatGroupsListViewCount: 0
+
+    property bool isUserAllowed: !chatsModel.activeChannel.name.startsWith(Constants.moderatedChannelPrefix)
     
     property bool isReply: false
     property bool isImage: false
@@ -69,7 +71,7 @@ StackLayout {
         target: chatView
         onUserAllowedFetched: {
             if (pubkey === profileModel.profile.pubKey && chatId === chatsModel.activeChannel.name) {
-                inputArea.visible = allowed
+                chatColumnLayout.isUserAllowed = allowed
             }
         }
     }
@@ -77,7 +79,7 @@ StackLayout {
     function checkIfUserIsAllowed() {
         const allowed = fetchUserAllowed(chatsModel.activeChannel.name, profileModel.profile.pubKey)
         if (allowed !== Constants.fetching) {
-            inputArea.visible = allowed
+            chatColumnLayout.isUserAllowed = allowed
         }
     }
 
@@ -190,10 +192,85 @@ StackLayout {
             }
         }
 
+
+        Rectangle {
+            id: notAllowedArea
+            visible: !chatColumnLayout.isUserAllowed
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
+            Layout.fillWidth: true
+            Layout.preferredWidth: parent.width
+            height: visible ? infotext.height + 2 * Style.current.halfPadding : 0
+            Layout.preferredHeight: height
+            color: "transparent"
+
+            StyledText {
+                id: infotext
+                text: qsTr("You do not have permission to write in this moderated chat.\nTo get access to it, click on the button here to burn SNT and join the channel\nDo note that since this channel is moderated, you can get removed at any time if you spam or say anything discriminatory")
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: Style.current.halfPadding
+                anchors.right: joinButton.left
+                anchors.rightMargin: Style.current.halfPadding
+                wrapMode: Text.WordWrap
+            }
+
+            StyledButton {
+                id: joinButton
+                label: qsTr("Join this chat")
+                anchors.right: parent.right
+                anchors.rightMargin: Style.current.halfPadding
+                anchors.verticalCenter: parent.verticalCenter
+                onClicked: {
+                    walletModel.setFocusedAccountByAddress(walletModel.getDefaultAddress())
+                    var acc = walletModel.focusedAccount
+                    signTransactionModal.selectedAccount = {
+                        name: acc.name,
+                        address: walletModel.getDefaultAddress(),
+                        iconColor: acc.iconColor,
+                        assets: acc.assets
+                    }
+                    signTransactionModal.open()
+                }
+            }
+
+            XDaiTransactionDoneModal {
+                id: xDaiTransactionDoneModal
+            }
+
+            SignXdaiTransaction  {
+                id: signTransactionModal
+                signTransaction: (fromAddress, contractAddress, gasLimit, gasPrice, password) => {
+                                     const request = { type: "getNonce", payload: fromAddress }
+                                     ethersChannel.postMessage(request, (nonce) => {
+                                                                   // TODO change this to a burn when the allowUser is only for moderators
+                                                                   const request = {type: "allowUser", payload: [utilsModel.channelHash(chatsModel.activeChannel.name), utilsModel.derivedAnUserAddress(profileModel.profile.pubKey)]}
+                                                                   ethersChannel.postMessage(request, (data) => {
+                                                                                                 // Signing a transaction:
+                                                                                                 const signature = walletModel.signTransaction(fromAddress, contractAddress, "0", gasLimit, gasPrice, nonce.toString(), data, password, 100);
+
+                                                                                                 // Broadcast the transaction
+                                                                                                 const request = { type: "broadcast", payload: JSON.parse(signature).result };
+                                                                                                 ethersChannel.postMessage(request, (trxHash, error) => {
+                                                                                                                               if(error){
+                                                                                                                                   console.log("ERROR!", error);
+                                                                                                                               } else {
+                                                                                                                                   console.log("Success adding user", trxHash)
+                                                                                                                                   xDaiTransactionDoneModal.txHash = trxHash
+                                                                                                                                   xDaiTransactionDoneModal.channelname = chatsModel.activeChannel.name
+                                                                                                                                   xDaiTransactionDoneModal.open()
+                                                                                                                                   signTransactionModal.close()
+                                                                                                                               }
+                                                                                                                           });
+
+                                                                                             });
+                                                               });
+                                 }
+            }
+        }
+
         Rectangle {
             id: inputArea
-            // TODO only set this to false if the ChannelType is of a permissioned one
-            visible: false
+            visible: chatColumnLayout.isUserAllowed
             Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
             Layout.fillWidth: true
             Layout.preferredWidth: parent.width

@@ -168,6 +168,7 @@ DISTFILES += \
     app/AppLayouts/Chat/components/NicknamePopup.qml \
     app/AppLayouts/Chat/components/SignPermissionedChatCreation.qml \
     app/AppLayouts/Chat/components/SuggestedChannels.qml \
+    app/AppLayouts/Chat/components/XDaiTransactionDoneModal.qml \
     app/AppLayouts/Chat/data/channelList.js \
     app/AppLayouts/Profile/LeftTab/Constants.js \
     app/AppLayouts/Profile/LeftTab/components/MenuButton.qml \
