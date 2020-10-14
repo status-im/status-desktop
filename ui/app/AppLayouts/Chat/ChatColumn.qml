@@ -68,7 +68,7 @@ StackLayout {
     Connections {
         target: chatView
         onUserAllowedFetched: {
-            if (pubkey === profileModel.profile.pubKey) {
+            if (pubkey === profileModel.profile.pubKey && chatId === chatsModel.activeChannel.name) {
                 inputArea.visible = allowed
             }
         }

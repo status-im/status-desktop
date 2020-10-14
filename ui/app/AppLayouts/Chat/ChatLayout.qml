@@ -13,7 +13,7 @@ SplitView {
     property var userAllowedDictionary: ({});
     property bool firstLoad: true
 
-    signal userAllowedFetched(string pubkey, bool allowed)
+    signal userAllowedFetched(string chatId, string pubkey, bool allowed)
 
     Timer {
         id: timer
@@ -24,11 +24,10 @@ SplitView {
             type: "isUserAllowed",
             payload: [utilsModel.channelHash(chatId), utilsModel.derivedAnUserAddress(pubkey)]
         }
-        console.log('Checking this', utilsModel.channelHash(chatId), utilsModel.derivedAnUserAddress(pubkey))
         ethersChannel.postMessage(request, (allowed) => {
                                       try {
                                           userAllowedDictionary[chatId][pubkey] = allowed;
-                                          userAllowedFetched(pubkey, allowed)
+                                          userAllowedFetched(chatId, pubkey, allowed)
                                       } catch (e) {
                                           // userAllowedDictionary is sometimes undefiend for no reason, even though we check above
                                       }
