@@ -15,6 +15,8 @@ ModalPopup {
         if (!Utils.isChatKey(chatKey.text) && !Utils.isValidETHNamePrefix(chatKey.text)) {
             validationError = "This needs to be a valid chat key or ENS username";
             ensUsername.text = "";
+        } else if (profileModel.profile.pubKey === chatKey.text) {
+            validationError = qsTr("Can't chat with yourself");
         } else {
             validationError = ""
         }
