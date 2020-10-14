@@ -22,8 +22,16 @@ RowLayout {
         property int messageId: 0
 
         property var cbDictionary: ({})
+        property var eventDictionnary: ({})
 
         signal post(string data);
+
+        function subscribeToEvent(event, cb) {
+            if (!eventDictionnary[event]) {
+                eventDictionnary[event] = []
+            }
+            eventDictionnary[event].push(cb)
+        }
 
         function postMessage(data, cb) {
             messageId++;
@@ -37,6 +45,19 @@ RowLayout {
             var responseData = JSON.parse(data);
             if(cbDictionary[requestId]){
                 cbDictionary[requestId](responseData);
+            }
+        }
+
+        function sendEvent(event, data) {
+            try {
+                const parsedData = JSON.parse(data)
+                if (eventDictionnary[event]) {
+                    eventDictionnary[event].forEach(cb => {
+                                                        cb(parsedData)
+                                                    })
+                }
+            } catch (e) {
+                console.error("Error parsing event", e, data)
             }
         }
 

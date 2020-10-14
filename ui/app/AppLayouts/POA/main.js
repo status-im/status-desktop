@@ -804,10 +804,12 @@ const abi = [
     "function banUser(bytes32 channelId, address user)",
     "function getOperators(bytes32 channelId) view returns (address[])",
     "function getUsers(bytes32 channelId) view returns (address[])",
-    "function channels(bytes32 channelId) view returns (address)"
+    "function channels(bytes32 channelId) view returns (address)",
+    "event UserAllowed(bytes32 indexed channelId, address indexed user, address operator)",
+    "event UserBanned(bytes32 indexed channelId, address indexed user, address operator)"
 ];
 
-const contractAddress = "0xA79de68E3ffE354Df28eBd638e3FD24f4c41477d";
+const contractAddress = "0xFE0b7364335601c5eD4c024659A58E8Be304CdA8";
 
 
 window.onload = function(){
@@ -820,11 +822,23 @@ window.onload = function(){
       backend.response(messageId, JSON.stringify(data));
     }
 
+    const sendEvent = (event, data) => {
+      backend.sendEvent(event, JSON.stringify(data));
+    }
+
     const sendError = (messageId, error) => {
         backend.error(messageId, error.message);
       }
 
     let contract = new ethers.Contract(contractAddress, abi, provider);
+
+    contract.on("UserAllowed", (channelId, user, operator) => {
+        sendEvent("UserAllowed", {channelId, user, operator})
+    });
+
+    contract.on("UserBanned", (channelId, user, operator) => {
+        sendEvent("UserBanned", {channelId, user, operator})
+    });
  
     const onRequest = async function(req){
       let request = JSON.parse(req);
