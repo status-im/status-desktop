@@ -11,7 +11,6 @@ ModalPopup {
     property string gasLimit: "100000"
     // in gwei
     property string gasPrice: "1"
-    property string contractAddress: "0xA79de68E3ffE354Df28eBd638e3FD24f4c41477d"
 
     property var signTransaction: function () {}
 
@@ -64,7 +63,7 @@ ModalPopup {
                     "fiatValue": ""
                 }
                 toAccount: ({
-                                address: root.contractAddress,
+                                address: Constants.channelsContractAddress,
                                 identicon: "",
                                 name: "Moderated Channels Contract",
                                 type: RecipientSelector.Type.Address
@@ -138,7 +137,7 @@ ModalPopup {
                 if (validity.isValid && !validity.isPending) {
                     if (stack.isLastGroup) {
                         stack.currentGroup.isPending = true
-                        return root.signTransaction(selectedAccount.address, root.contractAddress, root.gasLimit, root.gasPrice, transactionSigner.enteredPassword)
+                        return root.signTransaction(selectedAccount.address, Constants.channelsContractAddress, root.gasLimit, root.gasPrice, transactionSigner.enteredPassword)
                     }
                     stack.next()
                 }
