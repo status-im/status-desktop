@@ -24,9 +24,10 @@ SplitView {
             type: "isUserAllowed",
             payload: [utilsModel.channelHash(chatId), utilsModel.derivedAnUserAddress(pubkey)]
         }
+        console.log('Checking this', utilsModel.channelHash(chatId), utilsModel.derivedAnUserAddress(pubkey))
         ethersChannel.postMessage(request, (allowed) => {
                                       try {
-                                          userAllowedDictionary[pubkey] = allowed;
+                                          userAllowedDictionary[chatId][pubkey] = allowed;
                                           userAllowedFetched(pubkey, allowed)
                                       } catch (e) {
                                           // userAllowedDictionary is sometimes undefiend for no reason, even though we check above
@@ -35,11 +36,19 @@ SplitView {
     }
 
     function fetchUserAllowed(chatId, pubkey) {
-        if (userAllowedDictionary[pubkey] !== undefined) {
-            return userAllowedDictionary[pubkey];
+        if (!chatId.startsWith(Constants.moderatedChannelPrefix)) {
+            // Only check channels that start with moderated-
+            return true
+        }
+        if (userAllowedDictionary[chatId] !== undefined && userAllowedDictionary[chatId][pubkey] !== undefined) {
+            return userAllowedDictionary[chatId][pubkey];
         }
 
-        userAllowedDictionary[pubkey] = Constants.fetching
+        if (!userAllowedDictionary[chatId]) {
+            userAllowedDictionary[chatId] = {}
+        }
+
+        userAllowedDictionary[chatId][pubkey] = Constants.fetching
 
         // FIXME use a signal for when the webview is ready instead
         if (firstLoad) {

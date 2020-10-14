@@ -7,6 +7,7 @@ import "../../../../imports"
 import "../components"
 
 Rectangle {
+    property bool isModeratedChat: chatsModel.activeChannel.name.startsWith(Constants.moderatedChannelPrefix)
     property int iconSize: 16
     id: chatTopBarContent
     color: Style.current.background
@@ -116,6 +117,7 @@ Rectangle {
                 // TODO move this to the permissioned menu or set visible false
                 Action {
                     // TODO set this only visible to operator
+                    enabled: isModeratedChat
                     icon.source: "../../../img/group.svg"
                     icon.width: chatTopBarContent.iconSize
                     icon.height: chatTopBarContent.iconSize
@@ -126,6 +128,7 @@ Rectangle {
                 }
                 Action {
                     // TODO set this only visible to owner
+                    enabled: isModeratedChat
                     icon.source: "../../../img/group.svg"
                     icon.width: chatTopBarContent.iconSize
                     icon.height: chatTopBarContent.iconSize
