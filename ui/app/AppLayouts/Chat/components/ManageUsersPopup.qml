@@ -246,7 +246,7 @@ ModalPopup {
                                     console.log("ERROR!", error);
                                 } else {
                                     // TODO: update model to add user
-                                    console.log("Success adding user", trxHash)
+                                    console.log("Success banning user", trxHash)
                                 }
                             });
                             
@@ -276,12 +276,12 @@ ModalPopup {
 
                 const request = { type: "getNonce", payload: walletModel.getDefaultAddress() }
                 ethersChannel.postMessage(request, (nonce) => {
-                    for(var i = 0; i < selectedAddresses.length; i++){
+                    for(let i = 0; i < selectedAddresses.length; i++){
                         const request = {type: "banUser", payload: [utilsModel.channelHash(chatsModel.activeChannel.name), selectedAddresses[i]]}
                         ethersChannel.postMessage(request, (data) => {
                             // Signing a transaction:
-                            const password = "richard"; // TODO: replace with a more safe password                                         gwei
-                            const signature = walletModel.signTransaction(walletModel.getDefaultAddress(), Constants.channelsContractAddress, "0", "100000", "1", (nonce + i).toString(), data, password, 100);
+                            const password = "richard"; // TODO: replace with a more safe password                      
+                            const signature = walletModel.signTransaction(walletModel.getDefaultAddress(), Constants.channelsContractAddress, "0", "100000", "1", (parseInt(nonce) + i).toString(), data, password, 100);                            // Broadcast the transaction
 
                             // Broadcast the transaction
                             const request = { type: "broadcast", payload: JSON.parse(signature).result };

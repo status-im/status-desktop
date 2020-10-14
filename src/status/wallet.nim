@@ -129,7 +129,11 @@ proc sendTransaction*(self: WalletModel, source, to, value, gas, gasPrice, passw
 proc signTransaction*(self: WalletModel, fromAddress, to, value, gas, gasPrice, nonce, password: string, chainId: int, success: var bool, data = ""): string =
   var tx = transactions.buildTransaction(parseAddress(fromAddress), parse(value, StUint[256]), gas, gasPrice, data, nonce)
   tx.to = parseAddress(to).some
-  var hexNonce = "0x" & toHex(parseInt(nonce)).strip(leading = true, chars = {'0'})
+  
+  var hNonce = toHex(parseInt(nonce))
+  hNonce.removePrefix('0')
+
+  var hexNonce = "0x" & hNonce
   if (hexNonce == "0x"):
     hexNonce = "0x0"
   result = eth.signTransaction(tx, hexNonce, password, chainId, success)
