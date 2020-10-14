@@ -32,6 +32,10 @@ ModalPopup {
         signTransactionModal.open()
     }
 
+    function pubKeyToAddress(pubKeyOrAddress) {
+      return pubKeyOrAddress.length === 42 ? pubKeyOrAddress : utilsModel.derivedAnUserAddress(pubKeyOrAddress);
+    }
+
     function removeSelectedUsersTx(fromAddress, contractAddress, gasLimit, gasPrice, password) {
         const request = { type: "getNonce", payload: fromAddress }
         ethersChannel.postMessage(request, (nonce) => {
@@ -55,13 +59,14 @@ ModalPopup {
                 });
             }
         });
-        
+
     }
 
     function removeUserTx(fromAddress, contractAddress, gasLimit, gasPrice, password) {
         const request = { type: "getNonce", payload: fromAddress }
         ethersChannel.postMessage(request, (nonce) => {
-            const request = {type: "removeOperator", payload: [utilsModel.channelHash(chatsModel.activeChannel.name), removeOperatorField.text]}
+            const address = pubKeyToAddress(removeOperatorField.text);
+            const request = {type: "removeOperator", payload: [utilsModel.channelHash(chatsModel.activeChannel.name), address]}
             ethersChannel.postMessage(request, (data) => {
                 // Signing a transaction:
                 const signature = walletModel.signTransaction(fromAddress, contractAddress, "0", gasLimit, gasPrice, nonce.toString(), data, password, 100);
@@ -78,7 +83,7 @@ ModalPopup {
                         signTransactionModal.close()
                     }
                 });
-                
+
             });
         });
     }
@@ -86,7 +91,8 @@ ModalPopup {
     function allowUserTx(fromAddress, contractAddress, gasLimit, gasPrice, password) {
         const request = { type: "getNonce", payload: fromAddress }
         ethersChannel.postMessage(request, (nonce) => {
-            const request = {type: "addOperator", payload: [utilsModel.channelHash(chatsModel.activeChannel.name), addOperatorField.text]}
+            const address = pubKeyToAddress(addOperatorField.text);
+            const request = {type: "addOperator", payload: [utilsModel.channelHash(chatsModel.activeChannel.name), address]}
             ethersChannel.postMessage(request, (data) => {
                 // Signing a transaction:
                 const signature = walletModel.signTransaction(fromAddress, contractAddress, "0", gasLimit, gasPrice, nonce.toString(), data, password, 100);
@@ -103,7 +109,7 @@ ModalPopup {
                         signTransactionModal.close()
                     }
                 });
-                
+
             });
         });
     }
