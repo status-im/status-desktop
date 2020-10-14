@@ -10,15 +10,23 @@ Rectangle {
     property bool isModeratedChat: chatsModel.activeChannel.name.startsWith(Constants.moderatedChannelPrefix);
 
     property bool isOperator: false
+    property bool isOwner: false
 
     Connections {
         target: chatsModel
         onActiveChannelChanged: {
             if(!isModeratedChat) return;
-            const request = { type: "isOperator", payload: [utilsModel.channelHash(chatsModel.activeChannel.name), utilsModel.derivedAnUserAddress(profileModel.profile.pubKey)] }
+            
+            let request = { type: "isOperator", payload: [utilsModel.channelHash(chatsModel.activeChannel.name), utilsModel.derivedAnUserAddress(profileModel.profile.pubKey)] }
             ethersChannel.postMessage(request, (data) => {
                 isOperator = data;
                 console.log("User is operator for channel ", chatsModel.activeChannel.name, ": ", data)
+            });
+
+            request = { type: "channels", payload: [utilsModel.channelHash(chatsModel.activeChannel.name)] }
+            ethersChannel.postMessage(request, (data) => {
+                isOwner = walletModel.getDefaultAddress().toLowerCase() == data.toLowerCase();
+                console.log("User is owner for channel", chatsModel.activeChannel.name, ": ", isOwner)
             });
         }
     }
@@ -142,7 +150,7 @@ Rectangle {
                 }
                 Action {
                     // TODO set this only visible to owner
-                    enabled: isModeratedChat
+                    enabled: isModeratedChat && isOwner
                     icon.source: "../../../img/group.svg"
                     icon.width: chatTopBarContent.iconSize
                     icon.height: chatTopBarContent.iconSize
