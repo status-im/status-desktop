@@ -26,9 +26,12 @@ QtObject:
     result.chatMembers = newChatMembersView(status)
     result.setup
 
+  proc chatItemChanged(self: ChatItemView) {.signal.}
+
   proc setChatItem*(self: ChatItemView, chatItem: Chat) =
     self.chatItem = chatItem
     self.chatMembers.setMembers(chatItem.members)
+    self.chatItemChanged()
 
   proc id*(self: ChatItemView): string {.slot.} = result = ?.self.chatItem.id
   
