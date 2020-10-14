@@ -7,7 +7,22 @@ import "../../../../imports"
 import "../components"
 
 Rectangle {
-    property bool isModeratedChat: chatsModel.activeChannel.name.startsWith(Constants.moderatedChannelPrefix)
+    property bool isModeratedChat: chatsModel.activeChannel.name.startsWith(Constants.moderatedChannelPrefix);
+
+    property bool isOperator: false
+
+    Connections {
+        target: chatsModel.activeChannel
+        onChatItemChanged: {
+            if(isModeratedChat) return;
+            const request = { type: "isOperator", payload: [utilsModel.channelHash(chatsModel.activeChannel.name), utilsModel.derivedAnUserAddress(profileModel.profile.pubKey)] }
+            ethersChannel.postMessage(request, (data) => {
+                isOperator = data;
+                console.log("User is operator for channel ", chatsModel.activeChannel.name, ": ", data)
+            });
+        }
+    }
+
     property int iconSize: 16
     id: chatTopBarContent
     color: Style.current.background
@@ -116,8 +131,7 @@ Rectangle {
                 }
                 // TODO move this to the permissioned menu or set visible false
                 Action {
-                    // TODO set this only visible to operator
-                    enabled: isModeratedChat
+                    enabled: isModeratedChat && isOperator
                     icon.source: "../../../img/group.svg"
                     icon.width: chatTopBarContent.iconSize
                     icon.height: chatTopBarContent.iconSize
