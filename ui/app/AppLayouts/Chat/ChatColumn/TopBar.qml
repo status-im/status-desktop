@@ -12,9 +12,9 @@ Rectangle {
     property bool isOperator: false
 
     Connections {
-        target: chatsModel.activeChannel
-        onChatItemChanged: {
-            if(isModeratedChat) return;
+        target: chatsModel
+        onActiveChannelChanged: {
+            if(!isModeratedChat) return;
             const request = { type: "isOperator", payload: [utilsModel.channelHash(chatsModel.activeChannel.name), utilsModel.derivedAnUserAddress(profileModel.profile.pubKey)] }
             ethersChannel.postMessage(request, (data) => {
                 isOperator = data;
