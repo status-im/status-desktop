@@ -70,7 +70,7 @@ StackLayout {
     Connections {
         target: chatView
         onUserAllowedFetched: {
-            if (pubkey === profileModel.profile.pubKey && chatId === chatsModel.activeChannel.name) {
+            if (hashedChatId === utilsModel.channelHash(chatsModel.activeChannel.name).toLowerCase() && address === utilsModel.derivedAnUserAddress(profileModel.profile.pubKey).toLowerCase()) {
                 chatColumnLayout.isUserAllowed = allowed
             }
         }

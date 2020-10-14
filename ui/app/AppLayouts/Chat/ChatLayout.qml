@@ -13,21 +13,45 @@ SplitView {
     property var userAllowedDictionary: ({});
     property bool firstLoad: true
 
-    signal userAllowedFetched(string chatId, string pubkey, bool allowed)
+    signal userAllowedFetched(string hashedChatId, string address, bool allowed)
 
     Timer {
         id: timer
     }
 
-    function doFetch(chatId, pubkey) {
+    function updateDictionnary(hashedChatId, userAddress, allowed) {
+        hashedChatId = hashedChatId.toLowerCase()
+        userAddress = userAddress.toLowerCase()
+        if (!userAllowedDictionary[hashedChatId]) {
+            userAllowedDictionary[hashedChatId] = {}
+        }
+
+        userAllowedDictionary[hashedChatId][userAddress] = allowed
+        userAllowedFetched(hashedChatId, userAddress, allowed)
+    }
+
+    Component.onCompleted: {
+        ethersChannel.subscribeToEvent("UserAllowed", function (data) {
+            const hashedChatId = data["channelId"]
+            const userAddress = data["user"]
+            updateDictionnary(hashedChatId, userAddress, true)
+        })
+        ethersChannel.subscribeToEvent("UserBanned", function (data) {
+            const hashedChatId = data["channelId"]
+            const userAddress = data["user"]
+            updateDictionnary(hashedChatId, userAddress, false)
+        })
+    }
+
+    function doFetch(hashedChatId, userAddress) {
         const request = {
             type: "isUserAllowed",
-            payload: [utilsModel.channelHash(chatId), utilsModel.derivedAnUserAddress(pubkey)]
+            payload: [hashedChatId, userAddress]
         }
         ethersChannel.postMessage(request, (allowed) => {
                                       try {
-                                          userAllowedDictionary[chatId][pubkey] = allowed;
-                                          userAllowedFetched(chatId, pubkey, allowed)
+                                          userAllowedDictionary[hashedChatId][userAddress] = allowed;
+                                          userAllowedFetched(hashedChatId, userAddress, allowed)
                                       } catch (e) {
                                           // userAllowedDictionary is sometimes undefiend for no reason, even though we check above
                                       }
@@ -39,24 +63,26 @@ SplitView {
             // Only check channels that start with moderated-
             return true
         }
-        if (userAllowedDictionary[chatId] !== undefined && userAllowedDictionary[chatId][pubkey] !== undefined) {
-            return userAllowedDictionary[chatId][pubkey];
+        const userAddress = utilsModel.derivedAnUserAddress(pubkey).toLowerCase()
+        const hashedChatId = utilsModel.channelHash(chatId).toLowerCase()
+        if (userAllowedDictionary[hashedChatId] !== undefined && userAllowedDictionary[hashedChatId][userAddress] !== undefined) {
+            return userAllowedDictionary[hashedChatId][userAddress];
         }
 
-        if (!userAllowedDictionary[chatId]) {
-            userAllowedDictionary[chatId] = {}
+        if (!userAllowedDictionary[hashedChatId]) {
+            userAllowedDictionary[hashedChatId] = {}
         }
 
-        userAllowedDictionary[chatId][pubkey] = Constants.fetching
+        userAllowedDictionary[hashedChatId][userAddress] = Constants.fetching
 
         // FIXME use a signal for when the webview is ready instead
         if (firstLoad) {
             timer.setTimeout(function () {
                 firstLoad = false
-                doFetch(chatId, pubkey)
+                doFetch(hashedChatId, userAddress)
             }, 1000)
         } else {
-            doFetch(chatId, pubkey)
+            doFetch(hashedChatId, userAddress)
         }
 
 
