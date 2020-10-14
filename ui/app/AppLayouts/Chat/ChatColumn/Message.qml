@@ -51,7 +51,7 @@ Item {
         enabled: contentType !== Constants.chatIdentifier && contentType !== Constants.fetchMoreMessagesButton
         target: chatView
         onUserAllowedFetched: {
-            if (pubkey === fromAuthor) {
+            if (pubkey === fromAuthor && chatId === chatsModel.activeChannel.name) {
                 messageItem.visible = allowed;
             }
         }
