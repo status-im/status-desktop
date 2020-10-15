@@ -11,6 +11,7 @@ import status/signals/core as signals
 import status/libstatus/types
 import nim_status
 import status/status as statuslib
+import task_runner
 
 var signalsQObjPointer: pointer
 
@@ -62,6 +63,9 @@ proc mainProc() =
   # from the non-closure callback passed to `libstatus.setSignalEventCallback`
   signalsQObjPointer = cast[pointer](signalController.vptr)
 
+  var taskRunner = newTaskRunner()
+  engine.setRootContextProperty("taskRunner", newQVariant(taskRunner))
+
   var wallet = wallet.newController(status)
   engine.setRootContextProperty("walletModel", wallet.variant)
 
@@ -71,7 +75,7 @@ proc mainProc() =
   var node = node.newController(status)
   engine.setRootContextProperty("nodeModel", node.variant)
 
-  var utilsController = utilsView.newController(status)
+  var utilsController = utilsView.newController(status, taskRunner)
   engine.setRootContextProperty("utilsModel", utilsController.variant)
 
   proc changeLanguage(locale: string) =
@@ -89,6 +93,7 @@ proc mainProc() =
     login.delete()
     onboarding.delete()
 
+    taskRunner.init()
     status.startMessenger()
     profile.init(args.account)
     wallet.init()
@@ -116,6 +121,8 @@ proc mainProc() =
     chat.delete()
     profile.delete()
     utilsController.delete()
+
+    taskRunner.destroy()
 
 
   # Initialize only controllers whose init functions

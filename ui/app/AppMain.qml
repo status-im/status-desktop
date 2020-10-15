@@ -10,6 +10,20 @@ RowLayout {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
+    Button {
+        text: "Execute some task in task runner"
+        onClicked: {
+            console.log("Dispatching a task....", utilsModel.testTaskRunner())
+        }
+    }
+
+    Connections {
+        target: taskRunner
+        onTaskCompleted: {
+            console.log("Task completed: ", uuid, " - ", result)
+        }
+    }
+
     ToastMessage {
         id: toastMessage
     }

@@ -1,4 +1,4 @@
-import NimQml, os, strformat, strutils, parseUtils
+import NimQml, os, strformat, strutils, parseUtils, json
 import stint
 import ../../status/status
 import ../../status/stickers
@@ -8,10 +8,12 @@ import ../../status/libstatus/wallet as status_wallet
 import ../../status/libstatus/utils as status_utils
 import ../../status/ens as status_ens
 import web3/[ethtypes, conversions]
+import ../../task_runner
 
 QtObject:
   type UtilsView* = ref object of QObject
     status*: Status
+    taskRunner*: TaskRunner
 
   proc setup(self: UtilsView) =
     self.QObject.setup
@@ -19,10 +21,11 @@ QtObject:
   proc delete*(self: UtilsView) =
     self.QObject.delete
 
-  proc newUtilsView*(status: Status): UtilsView =
+  proc newUtilsView*(status: Status, taskRunner: TaskRunner): UtilsView =
     new(result, delete)
     result = UtilsView()
     result.status = status
+    result.taskRunner = taskRunner
     result.setup
 
   proc getDataDir*(self: UtilsView): string {.slot.} =
@@ -74,3 +77,11 @@ QtObject:
     if value == "0x0":
       return "0"
     return stripTrailingZeroes(stint.toString(stint.fromHex(StUint[256], value)))
+
+
+  proc testTaskRunner*(self: UtilsView):string {.slot.} =
+    var input = %* {
+      "method": "myMethod",
+      "params": ["A", "B", "C"]
+    }
+    self.taskRunner.send(input)
