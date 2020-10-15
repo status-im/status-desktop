@@ -133,31 +133,6 @@ Rectangle {
             }
         }
 
-        Menu {
-            id: accountsMenu
-            Repeater {
-                model: walletModel.accounts
-                MenuItem {
-                    visible: model.isWallet || model.walletType === "generated"
-                    height: visible ? 40 : 0
-                    text: model.name
-                    onTriggered: {
-                        web3Provider.dappsAddress = model.address;
-                        web3Provider.clearPermissions();
-                        for (let i = 0; i < tabs.count; ++i){
-                            tabs.getTab(i).item.reload();
-                        }
-                    }
-                    checked: {
-                        if(web3Provider.dappsAddress === model.address){
-                            return true;
-                        }
-                        return false;
-                    }
-                }
-            }
-        }
-
         BrowserWalletMenu {
             id: browserWalletMenu
             y: root.height + root.anchors.topMargin
