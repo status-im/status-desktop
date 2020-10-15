@@ -5,7 +5,8 @@ Audio {
     id: errorSound
     source: "./error.mp3"
     audioRole: Audio.NotificationRole
-    volume: 0.2
+    volume: appSettings.volume
+    muted: !appSettings.notificationSoundsEnabled
 }
 
 /*##^##

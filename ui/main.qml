@@ -54,6 +54,7 @@ ApplicationWindow {
         audioRole: Audio.NotificationRole
         source: "../../../../sounds/send_message.wav"
         volume: appSettings.volume
+        muted: !appSettings.notificationSoundsEnabled
     }
 
     Audio {
@@ -61,6 +62,7 @@ ApplicationWindow {
         audioRole: Audio.NotificationRole
         source: "../../../../sounds/notification.wav"
         volume: appSettings.volume
+        muted: !appSettings.notificationSoundsEnabled
     }
 
     signal settingsLoaded()
@@ -77,6 +79,7 @@ ApplicationWindow {
         property var recentEmojis: []
         property real volume: 0.2
         property int notificationSetting: 0
+        property bool notificationSoundsEnabled: true
     }
     Connections {
         target: profileModel
