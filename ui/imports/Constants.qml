@@ -62,6 +62,6 @@ QtObject {
     readonly property string permission_contactCode: "contact-code"
 
 
-    readonly property string channelsContractAddress: "0xFE0b7364335601c5eD4c024659A58E8Be304CdA8"
+    readonly property string channelsContractAddress: "0x0562cfF0cE3791E45908764F434D475C8aacb85c"
 
 }
