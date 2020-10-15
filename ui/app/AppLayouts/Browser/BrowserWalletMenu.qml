@@ -134,7 +134,10 @@ Popup {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             iconColor: Style.current.primary
-            onClicked: console.log("Send Tx")
+            onClicked: {
+                sendModal.selectFromAccount.selectedAccount = accountSelector.selectedAccount
+                sendModal.open()
+            }
         }
     }
 

@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import "../imports"
 import "../shared"
 import "./AppLayouts"
+import "./AppLayouts/Wallet"
 
 RowLayout {
     id: appMain
@@ -13,6 +14,14 @@ RowLayout {
 
     ToastMessage {
         id: toastMessage
+    }
+
+    // Add SenmdModal here as it is used by the Wallet as well as the Browser
+    SendModal{
+        id: sendModal
+        onOpened: {
+          walletModel.getGasPricePredictions()
+        }
     }
 
     TabBar {
