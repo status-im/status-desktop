@@ -12,7 +12,7 @@ TabButton {
     padding: 0
     background: Rectangle {
         color: Style.current.transparent
-        border.color: Style.current.transparent
+        border.width: 0
     }
 
     StyledText {

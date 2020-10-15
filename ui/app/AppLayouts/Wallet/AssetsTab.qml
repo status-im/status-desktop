@@ -3,15 +3,14 @@ import "../../../imports"
 import "../../../shared"
 
 Item {
+    height: assetListView.height
     Component {
         id: assetViewDelegate
 
         Item {
             id: element
             anchors.right: parent.right
-            anchors.rightMargin: 0
             anchors.left: parent.left
-            anchors.leftMargin: 0
             height: 40
 
             Image {
@@ -82,7 +81,7 @@ Item {
 
     ListView {
         id: assetListView
-        anchors.topMargin: 20
+        spacing: Style.current.halfPadding
         anchors.fill: parent
 //        model: exampleModel
         model: walletModel.assets
