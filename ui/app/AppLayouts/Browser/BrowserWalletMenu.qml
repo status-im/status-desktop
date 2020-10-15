@@ -1,9 +1,11 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import "../../../shared"
 import "../../../shared/status"
 import "../../../imports"
+import "../Wallet"
 
 Popup {
     id: popup
@@ -78,12 +80,12 @@ Popup {
         property string currentAddress: ""
         id: accountSelectorRow
         width: parent.width
-        height: 44
+        height: accountSelector.height
         anchors.top: walletHeader.bottom
         anchors.topMargin: Style.current.bigPadding
 
         AccountSelector {
-            id: accountRow
+            id: accountSelector
             label: ""
             anchors.left: parent.left
             anchors.right: copyBtn.left
@@ -121,7 +123,7 @@ Popup {
             anchors.right: sendBtn.left
             anchors.rightMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
-            textToCopy: accountRow.selectedAccount.address
+            textToCopy: accountSelector.selectedAccount.address
         }
 
         StatusIconButton {
@@ -133,6 +135,57 @@ Popup {
             anchors.verticalCenter: parent.verticalCenter
             iconColor: Style.current.primary
             onClicked: console.log("Send Tx")
+        }
+    }
+
+    Item {
+        id: walletInfoContent
+        width: parent.width
+        anchors.top: accountSelectorRow.bottom
+        anchors.topMargin: Style.current.bigPadding
+        anchors.bottom: parent.bottom
+
+        TabBar {
+            id: walletTabBar
+            width: parent.width
+            anchors.top: parent.top
+            height: assetBtn.height
+            background: Rectangle {
+                color: Style.current.transparent
+                border.width: 0
+            }
+
+            StatusTabButton {
+                id: assetBtn
+                //% "Assets"
+                btnText: qsTrId("wallet-assets")
+                anchors.top: parent.top
+            }
+            StatusTabButton {
+                id: historyBtn
+                anchors.top: parent.top
+                anchors.left: assetBtn.right
+                anchors.leftMargin: 32
+                //% "History"
+                btnText: qsTrId("history")
+                onClicked: historyTab.checkIfHistoryIsBeingFetched()
+            }
+        }
+
+        StackLayout {
+            id: stackLayout
+            width: parent.width
+            anchors.top: walletTabBar.bottom
+            anchors.topMargin: Style.current.bigPadding
+            anchors.bottom: parent.bottom
+            currentIndex: walletTabBar.currentIndex
+
+            AssetsTab {
+                id: assetsTab
+            }
+            HistoryTab {
+                id: historyTab
+            }
         }
     }
 }
