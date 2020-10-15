@@ -20,7 +20,7 @@ ModalPopup {
     function signTx(fromAddress, contractAddress, gasLimit, gasPrice, password) {
         const request = { type: "getNonce", payload: fromAddress }
         ethersChannel.postMessage(request, (nonce) => {
-                                      const request = {type: "registerChannel", payload: utilsModel.channelHash(channelname.text)}
+                                      const request = {type: "registerChannel", payload: [utilsModel.channelHash(channelname.text), utilsModel.derivedAnUserAddress(profileModel.profile.pubKey)]}
                                       ethersChannel.postMessage(request, (data) => {
                                                                     // Signing a transaction
                                                                     const signature = walletModel.signTransaction(fromAddress,

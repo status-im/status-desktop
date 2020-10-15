@@ -795,7 +795,7 @@ You may add additional accurate notices of copyright ownership.
 
 
 const abi = [
-    "function registerChannel(bytes32 channelId)",
+    "function registerChannel(bytes32 channelId, address user)",
     "function isUserAllowed(bytes32 channelId, address user) view returns (bool)",
     "function isOperator(bytes32 channelId, address user) view returns (bool)",
     "function addOperator(bytes32 channelId, address user)",
@@ -809,7 +809,7 @@ const abi = [
     "event UserBanned(bytes32 indexed channelId, address indexed user, address operator)"
 ];
 
-const contractAddress = "0x0562cfF0cE3791E45908764F434D475C8aacb85c";
+const contractAddress = "0xdAC7EF6DFE25A43d2C99945EC1aaBB30d573F899";
 
 
 window.onload = function(){
@@ -878,7 +878,7 @@ window.onload = function(){
             sendResponse(request.messageId, addresses);
             break;
           case "registerChannel":
-            sendResponse(request.messageId, contract.interface.encodeFunctionData("registerChannel", [request.data.payload]))
+            sendResponse(request.messageId, contract.interface.encodeFunctionData("registerChannel", request.data.payload))
             break;
           case "addOperator":
           case "removeOperator":
