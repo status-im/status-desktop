@@ -54,6 +54,7 @@ Rectangle {
         id: sendMessageSound
         source: "../../sounds/send_message.wav"
         volume: appSettings.volume
+        muted: !appSettings.notificationSoundsEnabled
     }
 
     function calculateExtraHeightFactor() {

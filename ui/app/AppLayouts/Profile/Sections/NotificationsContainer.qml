@@ -131,7 +131,10 @@ ScrollView {
 
                 StatusSwitch {
                     Layout.alignment: Qt.AlignRight
-                    checked: true
+                    checked: appSettings.notificationSoundsEnabled
+                    onCheckedChanged: {
+                        appSettings.notificationSoundsEnabled = this.checked
+                    }
                 }
             }
 
