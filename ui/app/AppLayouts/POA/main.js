@@ -809,7 +809,7 @@ const abi = [
     "event UserBanned(bytes32 indexed channelId, address indexed user, address operator)"
 ];
 
-const contractAddress = "0xFE0b7364335601c5eD4c024659A58E8Be304CdA8";
+const contractAddress = "0x0562cfF0cE3791E45908764F434D475C8aacb85c";
 
 
 window.onload = function(){
