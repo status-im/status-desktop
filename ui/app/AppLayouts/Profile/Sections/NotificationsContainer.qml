@@ -138,35 +138,35 @@ ScrollView {
                 }
             }
 
-            GridLayout {
-                columns: 4
-                width: parent.width
+            /* GridLayout { */
+            /*     columns: 4 */
+            /*     width: parent.width */
 
-                StatusRadioButton {
-                    checked: true
-                    //% "Sound 1"
-                    text: qsTrId("sound-1")
-                    ButtonGroup.group: soundSetting
-                }
+            /*     StatusRadioButton { */
+            /*         checked: true */
+            /*         //% "Sound 1" */
+            /*         text: qsTrId("sound-1") */
+            /*         ButtonGroup.group: soundSetting */
+            /*     } */
 
-                StatusRadioButton {
-                    //% "Sound 2"
-                    text: qsTrId("sound-2")
-                    ButtonGroup.group: soundSetting
-                }
+            /*     StatusRadioButton { */
+            /*         //% "Sound 2" */
+            /*         text: qsTrId("sound-2") */
+            /*         ButtonGroup.group: soundSetting */
+            /*     } */
 
-                StatusRadioButton {
-                    //% "Sound 3"
-                    text: qsTrId("sound-3")
-                    ButtonGroup.group: soundSetting
-                }
+            /*     StatusRadioButton { */
+            /*         //% "Sound 3" */
+            /*         text: qsTrId("sound-3") */
+            /*         ButtonGroup.group: soundSetting */
+            /*     } */
 
-                StatusRadioButton {
-                    //% "Sound 4"
-                    text: qsTrId("sound-4")
-                    ButtonGroup.group: soundSetting
-                }
-            }
+            /*     StatusRadioButton { */
+            /*         //% "Sound 4" */
+            /*         text: qsTrId("sound-4") */
+            /*         ButtonGroup.group: soundSetting */
+            /*     } */
+            /* } */
         }
 
         Column {
