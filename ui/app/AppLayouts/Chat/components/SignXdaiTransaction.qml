@@ -8,7 +8,7 @@ import "../../../../shared/status"
 
 ModalPopup {
     property string channelName
-    property string gasLimit: "150000"
+    property string gasLimit: "250000"
     // in gwei
     property string gasPrice: "1"
 
@@ -58,7 +58,7 @@ ModalPopup {
                 width: stack.width
                 fromAccount: root.selectedAccount
                 gas: {
-                    "value": "150000",
+                    "value": "250000",
                     "symbol": "xDAI",
                     "fiatValue": ""
                 }
