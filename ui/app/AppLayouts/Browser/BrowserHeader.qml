@@ -158,10 +158,22 @@ Rectangle {
             }
         }
 
+        BrowserWalletMenu {
+            id: browserWalletMenu
+            y: root.height + root.anchors.topMargin
+            x: parent.width - width - Style.current.halfPadding
+        }
+
         StatusIconButton {
             id: accountBtn
             icon.name: "walletIcon"
-            onClicked: accountsMenu.popup(accountBtn.x, accountBtn.y + accountBtn.height)
+            onClicked: {
+                if (browserWalletMenu.opened) {
+                    browserWalletMenu.close()
+                } else {
+                    browserWalletMenu.open()
+                }
+            }
             width: 24
             height: 24
             padding: 6
