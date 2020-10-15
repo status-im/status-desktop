@@ -8,6 +8,7 @@ import "../../../shared/status"
 import "./components"
 
 ModalPopup {
+    property alias selectFromAccount: selectFromAccount
     id: root
 
     //% "Send"
