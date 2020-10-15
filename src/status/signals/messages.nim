@@ -28,9 +28,9 @@ proc fromEvent*(event: JsonNode): Signal =
 
   if event["event"]{"messages"} != nil:
     for jsonMsg in event["event"]["messages"]:
-      let message = jsonMsg.toMessage
-      let hasMentions = concat(message.parsedText.map(t => t.children.filter(c => c.textType == "mention" and c.literal == pk))).len > 0
-      if hasMentions:
+      var message = jsonMsg.toMessage
+      message.hasMention = concat(message.parsedText.map(t => t.children.filter(c => c.textType == "mention" and c.literal == pk))).len > 0
+      if message.hasMention:
         chatsWithMentions.add(message.chatId)
       signal.messages.add(message)
 
@@ -185,6 +185,7 @@ proc toMessage*(jsonMsg: JsonNode): Message =
       image: $jsonMsg{"image"}.getStr,
       audio: $jsonMsg{"audio"}.getStr,
       audioDurationMs: jsonMsg{"audioDurationMs"}.getInt,
+      hasMention: false
     )
 
   if jsonMsg["parsedText"].kind != JNull: 

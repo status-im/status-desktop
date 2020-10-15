@@ -330,7 +330,7 @@ QtObject:
   proc messagePushed*(self: ChatsView) {.signal.}
   proc newMessagePushed*(self: ChatsView) {.signal.}
 
-  proc messageNotificationPushed*(self: ChatsView, chatId: string, text: string, messageType: string, chatType: int, timestamp: string, identicon: string, username: string) {.signal.}
+  proc messageNotificationPushed*(self: ChatsView, chatId: string, text: string, messageType: string, chatType: int, timestamp: string, identicon: string, username: string, hasMention: bool) {.signal.}
 
   proc messagesCleared*(self: ChatsView) {.signal.}
 
@@ -348,7 +348,7 @@ QtObject:
         if msg.chatId != self.activeChannel.id:
           let channel = self.chats.getChannelById(msg.chatId)
           if not channel.muted:
-            self.messageNotificationPushed(msg.chatId, msg.text, msg.messageType, channel.chatType.int, msg.timestamp, msg.identicon, msg.alias)
+            self.messageNotificationPushed(msg.chatId, msg.text, msg.messageType, channel.chatType.int, msg.timestamp, msg.identicon, msg.alias, msg.hasMention)
         else:
           discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
           self.newMessagePushed()

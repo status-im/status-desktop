@@ -76,6 +76,7 @@ ApplicationWindow {
         property string locale: "en"
         property var recentEmojis: []
         property real volume: 0.2
+        property int notificationSetting: 0
     }
     Connections {
         target: profileModel

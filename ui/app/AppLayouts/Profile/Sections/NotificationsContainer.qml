@@ -54,10 +54,13 @@ ScrollView {
                 }
 
                 StatusRadioButton {
-                    checked: true
                     Layout.alignment: Qt.AlignRight
                     ButtonGroup.group: notificationSetting
                     rightPadding: 0
+                    checked: appSettings.notificationSetting === 0
+                    onCheckedChanged: {
+                        appSettings.notificationSetting = 0
+                    }
                 }
             }
 
@@ -72,6 +75,10 @@ ScrollView {
                     Layout.alignment: Qt.AlignRight
                     ButtonGroup.group: notificationSetting
                     rightPadding: 0
+                    checked: appSettings.notificationSetting === 1
+                    onCheckedChanged: {
+                        appSettings.notificationSetting = 1
+                    }
                 }
             }
 
@@ -86,6 +93,10 @@ ScrollView {
                     Layout.alignment: Qt.AlignRight
                     ButtonGroup.group: notificationSetting
                     rightPadding: 0
+                    checked: appSettings.notificationSetting === 2
+                    onCheckedChanged: {
+                        appSettings.notificationSetting = 2
+                    }
                 }
             }
         }

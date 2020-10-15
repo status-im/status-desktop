@@ -59,6 +59,7 @@ type Message* = object
   image*: string
   audio*: string
   audioDurationMs*: int
+  hasMention*: bool
 
 type Reaction* = object
   id*: string

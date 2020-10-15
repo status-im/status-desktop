@@ -144,8 +144,11 @@ ScrollView {
                 }, 500);
             }
 
-            onMessageNotificationPushed: function(chatId, msg, messageType, chatType, timestamp, identicon, username) {
-                notificationWindow.notifyUser(chatId, msg, messageType, chatType, timestamp, identicon, username)
+            onMessageNotificationPushed: function(chatId, msg, messageType, chatType, timestamp, identicon, username, hasMention) {
+                if (appSettings.notificationSetting == Constants.notifyAllMessages || 
+                    (appSettings.notificationSetting == Constants.notifyJustMentions && hasMention)) {
+                        notificationWindow.notifyUser(chatId, msg, messageType, chatType, timestamp, identicon, username)
+                }
             }
         }
 

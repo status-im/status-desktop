@@ -10,6 +10,9 @@ QtObject {
     readonly property int limitLongChatText: 500
     readonly property int limitLongChatTextCompactMode: 1000
 
+    readonly property int notifyAllMessages: 0
+    readonly property int notifyJustMentions: 1
+    readonly property int notifyNone: 2
     readonly property int fetchMoreMessagesButton: -2
     readonly property int chatIdentifier: -1
     readonly property int unknownContentType: 0
