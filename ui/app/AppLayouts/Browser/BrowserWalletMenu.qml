@@ -73,4 +73,66 @@ Popup {
             }
         }
     }
+
+    Item {
+        property string currentAddress: ""
+        id: accountSelectorRow
+        width: parent.width
+        height: 44
+        anchors.top: walletHeader.bottom
+        anchors.topMargin: Style.current.bigPadding
+
+        AccountSelector {
+            id: accountRow
+            label: ""
+            anchors.left: parent.left
+            anchors.right: copyBtn.left
+            anchors.rightMargin: Style.current.padding
+            accounts: walletModel.accounts
+            selectedAccount: walletModel.currentAccount
+            currency: walletModel.defaultCurrency
+            reset: function() {
+                accounts = Qt.binding(function() { return walletModel.accounts })
+                selectedAccount = Qt.binding(function() { return walletModel.currentAccount })
+            }
+            onSelectedAccountChanged: {
+                if (!accountSelectorRow.currentAddress) {
+                    // We just set the account for the first time. Nothing to do here
+                    accountSelectorRow.currentAddress = selectedAccount.address
+                    return
+                }
+                if (accountSelectorRow.currentAddress === selectedAccount.address) {
+                    return
+                }
+
+                accountSelectorRow.currentAddress = selectedAccount.address
+                web3Provider.dappsAddress = selectedAccount.address;
+                web3Provider.clearPermissions();
+                for (let i = 0; i < tabs.count; ++i){
+                    tabs.getTab(i).item.reload();
+                }
+            }
+        }
+
+        CopyToClipBoardButton {
+            id: copyBtn
+            width: 20
+            height: 20
+            anchors.right: sendBtn.left
+            anchors.rightMargin: Style.current.padding
+            anchors.verticalCenter: parent.verticalCenter
+            textToCopy: accountRow.selectedAccount.address
+        }
+
+        StatusIconButton {
+            id: sendBtn
+            icon.name: "send"
+            width: 20
+            height: 20
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            iconColor: Style.current.primary
+            onClicked: console.log("Send Tx")
+        }
+    }
 }
