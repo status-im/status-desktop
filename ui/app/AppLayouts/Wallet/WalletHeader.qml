@@ -65,13 +65,6 @@ Item {
         color: Style.current.secondaryText
     }
 
-    SendModal{
-        id: sendModal
-        onOpened: {
-          walletModel.getGasPricePredictions()
-        }
-    }
-
     ReceiveModal{
         id: receiveModal
         selectedAccount: currentAccount
