@@ -46,13 +46,25 @@ Popup {
             width: 8
             height: 8
             radius: width / 2
-            color: Style.current.green
+            color: {
+                switch (profileModel.network) {
+                case Constants.networkMainnet: return Style.current.green;
+                case Constants.networkRopsten: return Style.current.turquoise;
+                default: return Style.current.red
+                }
+            }
             anchors.verticalCenter: parent.verticalCenter
         }
 
         StyledText {
             id: networkText
-            text: "Mainnet"
+            text: {
+                switch (profileModel.network) {
+                case Constants.networkMainnet: return qsTr("Mainnet");
+                case Constants.networkRopsten: return qsTr("Ropsten");
+                default: return qsTr("Unknown")
+                }
+            }
             font.pixelSize: 15
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: networkColorCircle.right
@@ -61,7 +73,7 @@ Popup {
 
         StyledText {
             id: disconectBtn
-            text: "Disconnect"
+            text: qsTr("Disconnect")
             font.pixelSize: 15
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
@@ -70,7 +82,7 @@ Popup {
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
-                onClicked: console.log('Disconnect')
+                onClicked: console.log('TODO Disconnect')
 
             }
         }
@@ -122,7 +134,8 @@ Popup {
             height: 20
             anchors.right: sendBtn.left
             anchors.rightMargin: Style.current.padding
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.top: parent.top
+            anchors.topMargin: Style.current.padding
             textToCopy: accountSelector.selectedAccount.address
         }
 
@@ -132,7 +145,8 @@ Popup {
             width: 20
             height: 20
             anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.top: parent.top
+            anchors.topMargin: Style.current.padding
             iconColor: Style.current.primary
             onClicked: {
                 sendModal.selectFromAccount.selectedAccount = accountSelector.selectedAccount

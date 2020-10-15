@@ -102,12 +102,12 @@ Item {
             text: qsTrId("enable-testnet--ropsten--ncurrent-network---1").arg(profileModel.network)
         }
         StatusSwitch {
-            checked: profileModel.network === "testnet_rpc"
+            checked: profileModel.network === Constants.networkRopsten
             onCheckedChanged: {
-                if (checked && profileModel.network === "testnet_rpc" || !checked && profileModel.network === "mainnet_rpc"){
+                if (checked && profileModel.network === Constants.networkRopsten || !checked && profileModel.network === Constants.networkMainnet){
                     return;
                 }
-                profileModel.network = checked ? "testnet_rpc" : "mainnet_rpc";
+                profileModel.network = checked ? Constants.networkRopsten : Constants.networkMainnet;
             }
         }
         StyledText {
