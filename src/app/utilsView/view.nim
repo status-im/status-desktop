@@ -45,9 +45,6 @@ QtObject:
     let uintValue = status_utils.eth2Wei(parseFloat(eth), decimals)
     return uintValue.toString()
 
-  proc wei2Token*(self: UtilsView, wei: string, decimals: int): string {.slot.} =
-    return status_utils.wei2Token(wei, decimals)
-
   proc getStickerMarketAddress(self: UtilsView): string {.slot.} =
     $self.status.stickers.getStickerMarketAddress
 

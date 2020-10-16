@@ -70,7 +70,7 @@ type
     symbol*: string
     hasIcon*: bool
 
-proc newErc20Contract(name: string, network: Network, address: Address, symbol: string, decimals: int, hasIcon: bool): Erc20Contract =
+proc newErc20Contract*(name: string, network: Network, address: Address, symbol: string, decimals: int, hasIcon: bool): Erc20Contract =
   Erc20Contract(name: name, network: network, address: address, methods: ERC20_METHODS.toTable, symbol: symbol, decimals: decimals, hasIcon: hasIcon)
 
 proc newErc721Contract(name: string, network: Network, address: Address, symbol: string, hasIcon: bool, addlMethods: seq[tuple[name: string, meth: Method]] = @[]): Erc721Contract =
