@@ -64,6 +64,8 @@ proc delete*(self: WalletModel) =
 
 proc buildTokenTransaction(self: WalletModel, source, to, assetAddress: Address, value: float, transfer: var Transfer, contract: var Erc20Contract, gas = "", gasPrice = ""): EthSend =
   contract = getErc20Contract(assetAddress)
+  if contract == nil:
+    raise newException(ValueError, fmt"Could not find ERC-20 contract with address '{assetAddress}' for the current network")
   transfer = Transfer(to: to, value: eth2Wei(value, contract.decimals))
   transactions.buildTokenTransaction(source, assetAddress, gas, gasPrice)
 

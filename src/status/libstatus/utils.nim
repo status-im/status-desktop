@@ -53,27 +53,28 @@ proc eth2Wei*(eth: float, decimals: int = 18): UInt256 =
 proc gwei2Wei*(gwei: float): UInt256 =
   eth2Wei(gwei, 9)
 
-proc wei2Eth*(input: Stuint[256]): string =
-  var one_eth = fromHex(Stuint[256], "DE0B6B3A7640000")
+proc wei2Eth*(input: Stuint[256], decimals: int = 18): string =
+  var one_eth = u256(10).pow(decimals) # fromHex(Stuint[256], "DE0B6B3A7640000")
 
   var (eth, remainder) = divmod(input, one_eth)
   let leading_zeros = "0".repeat(($one_eth).len - ($remainder).len - 1)
 
   fmt"{eth}.{leading_zeros}{remainder}"
 
-proc wei2Token*(input: string, decimals: int): string =
+proc wei2Eth*(input: string, decimals: int): string =
   try:
-    var value = input.parse(Stuint[256])
-    var p = u256(10).pow(decimals)
-    var i = value.div(p)
-    var r = value.mod(p)
-    var leading_zeros = "0".repeat(decimals - ($r).len)
-    var d = fmt"{leading_zeros}{$r}"
-    result = $i
-    if(r > 0): result = fmt"{result}.{d}"
-    result. trimZeros()
+    var input256: Stuint[256]
+    if input.contains("e+"): # we have a js string BN, ie 1e+21
+      let
+        inputSplit = input.split("e+")
+        whole = inputSplit[0].u256
+        remainder = u256(10).pow(inputSplit[1].parseInt)
+      input256 = whole * remainder
+    else:
+      input256 = input.u256
+    result = wei2Eth(input256, decimals)
   except Exception as e:
-    error "Error parsing this wei value", input
+    error "Error parsing this wei value", input, msg=e.msg
     result = "0"
   
 

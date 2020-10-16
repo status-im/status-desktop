@@ -12,6 +12,7 @@ ModalPopup {
     property var selectedAsset
     property var selectedAmount
     property var selectedFiatAmount
+    property bool outgoing: true
 
     property alias transactionSigner: transactionSigner
 
@@ -55,6 +56,7 @@ ModalPopup {
 
     onClosed: {
         stack.reset()
+        stack.pop(groupPreview, StackView.Immediate)
     }
 
     TransactionStackView {
@@ -183,6 +185,7 @@ ModalPopup {
             onNextClicked: function() {
                 stack.push(groupSignTx, StackView.Immediate)
             }
+            isValid: groupSelectAcct.isValid && groupSelectGas.isValid && gasValidator.isValid && pvwTransaction.isValid
 
             TransactionPreview {
                 id: pvwTransaction
@@ -197,6 +200,7 @@ ModalPopup {
                 asset: root.selectedAsset
                 amount: { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount }
                 currency: walletModel.defaultCurrency
+                outgoing: root.outgoing
                 reset: function() {
                     fromAccount =  Qt.binding(function() { return root.selectedAccount })
                     gas = Qt.binding(function() {
@@ -210,8 +214,25 @@ ModalPopup {
                     asset = Qt.binding(function() { return root.selectedAsset })
                     amount = Qt.binding(function() { return { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount } })
                 }
-                onFromClicked: stack.push(groupSelectAcct, StackView.Immediate)
-                onGasClicked: stack.push(groupSelectGas, StackView.Immediate)
+                isFromEditable: true
+                isGasEditable: true
+                onFromClicked: { stack.push(groupSelectAcct, StackView.Immediate) }
+                onGasClicked: { stack.push(groupSelectGas, StackView.Immediate) }
+            }
+            GasValidator {
+                id: gasValidator2
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 8
+                selectedAccount: root.selectedAccount
+                selectedAmount: parseFloat(root.selectedAmount)
+                selectedAsset: root.selectedAsset
+                selectedGasEthValue: gasSelector.selectedGasEthValue
+                reset: function() {
+                    selectedAccount = Qt.binding(function() { return root.selectedAccount })
+                    selectedAmount = Qt.binding(function() { return parseFloat(root.selectedAmount) })
+                    selectedAsset = Qt.binding(function() { return root.selectedAsset })
+                    selectedGasEthValue = Qt.binding(function() { return gasSelector.selectedGasEthValue })
+                }
             }
         }
         TransactionFormGroup {

@@ -4,8 +4,10 @@ import "../../../../../../imports"
 import "../../ChatComponents"
 
 Item {
+    id: root
     width: parent.width
     height: childrenRect.height + Style.current.halfPadding
+    property bool outgoing: true
 
     Separator {
         id: separator
@@ -55,15 +57,10 @@ Item {
                 type: RecipientSelector.Type.Contact
             }
         }
-        selectedAsset: {
-            return {
-                name: token.name,
-                symbol: token.symbol,
-                address: commandParametersObject.contract
-            }
-        }
+        selectedAsset: token
         selectedAmount: tokenAmount
         selectedFiatAmount: fiatValue
+        outgoing: root.outgoing
     }
 }
 

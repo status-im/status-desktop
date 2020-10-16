@@ -17,6 +17,14 @@ Item {
     property var reset: function() {}
     signal fromClicked
     signal gasClicked
+    // Creates a mouse area around the "from account". When clicked, triggers 
+    // the "fromClicked" signal
+    property bool isFromEditable: false
+    // Creates a mouse area around the "network fee". When clicked, triggers 
+    // the "gasClicked" signal
+    property bool isGasEditable: false
+    property bool isValid: true
+    property bool outgoing: true
 
     function resetInternal() {
         fromAccount = undefined
@@ -24,7 +32,32 @@ Item {
         asset = undefined
         amount = undefined
         gas = undefined
+        isValid = true
     }
+
+    function validate() {
+        let isValid = true
+        imgInsufficientBalance.visible = false
+        console.log(">>> [TransactionPreview.validate] outgoing:", outgoing)
+        if (outgoing && hasInsufficientBalance()) {
+            isValid = false
+            imgInsufficientBalance.visible = true
+        }
+        root.isValid = isValid
+        return isValid
+    }
+
+    function hasInsufficientBalance() {
+        if (!root.asset || !root.fromAccount || !root.fromAccount.assets || !root.amount) {
+            return true
+        }
+        const currAcctAsset = Utils.findAssetBySymbol(root.fromAccount.assets, root.asset.symbol)
+        if (!currAcctAsset) return true
+        return currAcctAsset.value < root.amount.value
+    }
+
+    onAssetChanged: validate()
+    onFromAccountChanged: validate()
     
     Column {
         id: content
@@ -36,51 +69,64 @@ Item {
             //% "From"
             label: qsTrId("from")
             value: Item {
+                id: itmFromValue
                 anchors.fill: parent
                 anchors.verticalCenter: parent.verticalCenter
-
-                StyledText {
-                    font.pixelSize: 15
-                    height: 22
-                    text: root.fromAccount ? root.fromAccount.name : ""
-                    elide: Text.ElideRight
-                    anchors.left: parent.left
-                    anchors.right: imgFromWallet.left
-                    anchors.rightMargin: Style.current.halfPadding
-                    anchors.verticalCenter: parent.verticalCenter
-                    horizontalAlignment: Text.AlignRight
-                    verticalAlignment: Text.AlignVCenter
+                function needsRightPadding() {
+                    return imgInsufficientBalance.visible || fromArrow.visible
                 }
-                SVGImage {
-                    id: imgFromWallet
-                    sourceSize.height: 18
-                    sourceSize.width: 18
-                    anchors.right: fromArrow.visible ? fromArrow.left : parent.right
-                    anchors.rightMargin: fromArrow.visible ? Style.current.padding : 0
-                    anchors.verticalCenter: parent.verticalCenter
-                    fillMode: Image.PreserveAspectFit
-                    source: "../app/img/walletIcon.svg"
-                    ColorOverlay {
-                        anchors.fill: parent
-                        source: parent
-                        color: root.fromAccount ? root.fromAccount.iconColor : Style.current.blue
-                    }
-                }
-                SVGImage {
-                    id: fromArrow
-                    width: 13
-                    visible: typeof root.fromClicked === "function"
+                Row {
+                    spacing: Style.current.halfPadding
+                    rightPadding: itmFromValue.needsRightPadding() ? Style.current.halfPadding : 0
                     anchors.right: parent.right
-                    anchors.rightMargin: 7
                     anchors.verticalCenter: parent.verticalCenter
-                    fillMode: Image.PreserveAspectFit
-                    source: "../app/img/caret.svg"
-                    rotation: 270
-                    ColorOverlay {
-                        anchors.fill: parent
-                        visible: parent.visible
-                        source: parent
-                        color: Style.current.secondaryText
+
+                    StyledText {
+                        font.pixelSize: 15
+                        height: 22
+                        text: root.fromAccount ? root.fromAccount.name : ""
+                        elide: Text.ElideRight
+                        anchors.verticalCenter: parent.verticalCenter
+                        horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    SVGImage {
+                        id: imgFromWallet
+                        sourceSize.height: 18
+                        sourceSize.width: 18
+                        horizontalAlignment: Image.AlignLeft
+                        width: itmFromValue.needsRightPadding() ? (Style.current.halfPadding + sourceSize.width) : undefined // adding width to add addl spacing to image
+                        anchors.verticalCenter: parent.verticalCenter
+                        fillMode: Image.PreserveAspectFit
+                        source: "../app/img/walletIcon.svg"
+                        ColorOverlay {
+                            anchors.fill: parent
+                            source: parent
+                            color: root.fromAccount ? root.fromAccount.iconColor : Style.current.blue
+                        }
+                    }
+                    SVGImage {
+                        id: imgInsufficientBalance
+                        width: 13
+                        visible: false
+                        anchors.verticalCenter: parent.verticalCenter
+                        fillMode: Image.PreserveAspectFit
+                        source: "../app/img/exclamation_outline.svg"
+                    }
+                    SVGImage {
+                        id: fromArrow
+                        width: 13
+                        visible: root.isFromEditable
+                        anchors.verticalCenter: parent.verticalCenter
+                        fillMode: Image.PreserveAspectFit
+                        source: "../app/img/caret.svg"
+                        rotation: 270
+                        ColorOverlay {
+                            anchors.fill: parent
+                            visible: parent.visible
+                            source: parent
+                            color: Style.current.secondaryText
+                        }
                     }
                 }
                 MouseArea {
@@ -398,7 +444,7 @@ Item {
                 SVGImage {
                     id: gasArrow
                     width: 13
-                    visible: typeof root.gasClicked === "function"
+                    visible: root.isGasEditable
                     anchors.right: parent.right
                     anchors.rightMargin: 7
                     anchors.verticalCenter: parent.verticalCenter
