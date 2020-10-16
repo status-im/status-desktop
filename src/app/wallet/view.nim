@@ -156,8 +156,8 @@ QtObject:
   proc setFocusedAccountByAddress*(self: WalletView, address: string) {.slot.} =
     if(self.accounts.rowCount() == 0): return
 
-    let index = self.accounts.getAccountindexByAddress(address)
-    if index == -1: return
+    var index = self.accounts.getAccountindexByAddress(address)
+    if index == -1: index = 0
     let selectedAccount = self.accounts.getAccount(index)
     if self.focusedAccount.address == selectedAccount.address: return
     self.focusedAccount.setAccountItem(selectedAccount)

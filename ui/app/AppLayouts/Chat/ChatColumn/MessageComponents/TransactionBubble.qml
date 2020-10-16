@@ -24,53 +24,9 @@ Item {
             }
         }
     }
-    property var tokens: {
-        const count = walletModel.defaultTokenList.rowCount()
-        const toks = []
-        for (var i = 0; i < count; i++) {
-            toks.push({
-                          "address": walletModel.defaultTokenList.rowData(i, 'address'),
-                          "name": walletModel.defaultTokenList.rowData(i, 'name'),
-                          "decimals": parseInt(walletModel.defaultTokenList.rowData(i, 'decimals'), 10),
-                          "symbol": walletModel.defaultTokenList.rowData(i, 'symbol')
-                      })
-        }
-        return toks
-    }
-    property var token: {
-        if (commandParametersObject.contract === "") {
-            return {
-                symbol:   "ETH",
-                name:     "Ethereum",
-                address:  Constants.zeroAddress,
-                decimals: 18,
-                hasIcon: true
-            }
-        }
-
-        const count = root.tokens.length
-        for (var i = 0; i < count; i++) {
-            let token = root.tokens[i]
-            if (token.address === commandParametersObject.contract) {
-                return token
-            }
-        }
-
-        return {}
-    }
-    property string tokenAmount: {
-        if (!commandParametersObject.value) {
-            return "0"
-        }
-        try {
-            return utilsModel.wei2Token(commandParametersObject.value.toString(), token.decimals)
-        } catch (e) {
-            console.error("Error getting the ETH value of:", commandParametersObject.value)
-            console.error("Error:", e.message)
-            return "0"
-        }
-    }
-    property string tokenSymbol: token.symbol
+    property var token: JSON.parse(commandParametersObject.contract) // TODO: handle {}
+    property string tokenAmount: commandParametersObject.value
+    property string tokenSymbol: token.symbol || ""
     property string fiatValue: {
         if (!tokenAmount || !token.symbol) {
             return "0"
@@ -83,8 +39,8 @@ Item {
         switch (root.state) {
             case Constants.pending:
             case Constants.confirmed:
-            case Constants.transactionRequested:
             case Constants.addressRequested: return isCurrentUser
+            case Constants.transactionRequested:
             case Constants.declined:
             case Constants.transactionDeclined:
             case Constants.addressReceived: return !isCurrentUser
@@ -92,6 +48,12 @@ Item {
         }
     }
     property int innerMargin: 12
+    property bool isError: commandParametersObject.contract === "{}"
+    onTokenSymbolChanged: {
+        if (!!tokenSymbol) {
+            tokenImage.source = `../../../../img/tokens/${root.tokenSymbol}.png`
+        }
+    }
 
     id: root
     anchors.left: parent.left
@@ -118,11 +80,17 @@ Item {
         StyledText {
             id: title
             color: Style.current.secondaryText
-            //% "↑ Outgoing transaction"
-            text: root.outgoing ? 
-              qsTrId("--outgoing-transaction") :
-              //% "↓ Incoming transaction"
-              qsTrId("--incoming-transaction")
+            text: {
+                if (root.state === Constants.transactionRequested) {
+                    let prefix = root.outgoing ? "↑ " : "↓ "
+                    return prefix + qsTr("Transaction request")
+                }
+                return root.outgoing ? 
+                    //% "↑ Outgoing transaction"
+                    qsTrId("--outgoing-transaction") :
+                    //% "↓ Incoming transaction"
+                    qsTrId("--incoming-transaction")
+            }
             font.weight: Font.Medium
             anchors.top: parent.top
             anchors.topMargin: Style.current.halfPadding
@@ -140,9 +108,16 @@ Item {
             anchors.left: parent.left
             anchors.leftMargin: root.innerMargin
 
+            StyledText {
+                id: txtError
+                color: Style.current.danger
+                visible: root.isError
+                text: qsTr("Something has gone wrong")
+            }
+
             Image {
                 id: tokenImage
-                source: `../../../../img/tokens/${root.tokenSymbol}.png`
+                visible: !root.isError
                 width: 24
                 height: 24
                 anchors.verticalCenter: parent.verticalCenter
@@ -150,6 +125,7 @@ Item {
 
             StyledText {
                 id: tokenText
+                visible: !root.isError
                 color: Style.current.textColor
                 text: `${root.tokenAmount} ${root.tokenSymbol}`
                 anchors.left: tokenImage.right
@@ -159,6 +135,7 @@ Item {
 
             StyledText {
                 id: fiatText
+                visible: !root.isError
                 color: Style.current.secondaryText
                 text: root.fiatValue
                 anchors.top: tokenText.bottom
@@ -169,7 +146,15 @@ Item {
 
         Loader {
             id: bubbleLoader
-            active: isCurrentUser || (!isCurrentUser && !(root.state === Constants.addressRequested || root.state === Constants.transactionRequested))
+            active: {
+                return !root.isError && (
+                    isCurrentUser || 
+                    (!isCurrentUser && 
+                        !(root.state === Constants.addressRequested || 
+                        root.state === Constants.transactionRequested)
+                    )
+                )
+            }
             sourceComponent: stateBubbleComponent
             anchors.top: valueContainer.bottom
             anchors.topMargin: Style.current.halfPadding
@@ -188,9 +173,11 @@ Item {
 
         Loader {
             id: buttonsLoader
-            active: (root.state === Constants.addressRequested && !root.outgoing) ||
+            active: !root.isError && (
+                    (root.state === Constants.addressRequested && !root.outgoing) ||
                     (root.state === Constants.addressReceived && root.outgoing) ||
-                    (root.state === Constants.transactionRequested && !root.outgoing)
+                    (root.state === Constants.transactionRequested && root.outgoing)
+            )
             sourceComponent: root.outgoing ? signAndSendComponent : acceptTransactionComponent
             anchors.top: bubbleLoader.active ? bubbleLoader.bottom : valueContainer.bottom
             anchors.topMargin: bubbleLoader.active ? root.innerMargin : 20
@@ -208,7 +195,9 @@ Item {
         Component {
             id: signAndSendComponent
 
-            SendTransactionButton {}
+            SendTransactionButton {
+                outgoing: root.outgoing
+            }
         }
 
         StyledText {
