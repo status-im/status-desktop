@@ -60,7 +60,7 @@ Item {
         selectedAsset: token
         selectedAmount: tokenAmount
         selectedFiatAmount: fiatValue
-        outgoing: root.outgoing
+        //outgoing: root.outgoing
     }
 }
 

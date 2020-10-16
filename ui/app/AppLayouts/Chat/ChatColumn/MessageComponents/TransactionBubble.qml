@@ -39,8 +39,8 @@ Item {
         switch (root.state) {
             case Constants.pending:
             case Constants.confirmed:
-            case Constants.addressRequested: return isCurrentUser
             case Constants.transactionRequested:
+            case Constants.addressRequested: return isCurrentUser
             case Constants.declined:
             case Constants.transactionDeclined:
             case Constants.addressReceived: return !isCurrentUser
@@ -76,7 +76,7 @@ Item {
             color: Style.current.secondaryText
             text: {
                 if (root.state === Constants.transactionRequested) {
-                    let prefix = root.outgoing ? "↑ " : "↓ "
+                    let prefix = root.outgoing ? "↓ ": "↑ " 
                     return prefix + qsTr("Transaction request")
                 }
                 return root.outgoing ? 
@@ -170,7 +170,7 @@ Item {
             active: !root.isError && (
                     (root.state === Constants.addressRequested && !root.outgoing) ||
                     (root.state === Constants.addressReceived && root.outgoing) ||
-                    (root.state === Constants.transactionRequested && root.outgoing)
+                    (root.state === Constants.transactionRequested && !root.outgoing)
             )
             sourceComponent: root.outgoing ? signAndSendComponent : acceptTransactionComponent
             anchors.top: bubbleLoader.active ? bubbleLoader.bottom : valueContainer.bottom

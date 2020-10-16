@@ -185,7 +185,7 @@ ModalPopup {
                 asset: root.selectedAsset
                 amount: { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount }
                 currency: walletModel.defaultCurrency
-                outgoing: root.outgoing
+                //outgoing: root.outgoing
                 reset: function() {
                     fromAccount =  Qt.binding(function() { return root.selectedAccount })
                     gas = Qt.binding(function() {
