@@ -7,7 +7,6 @@ Item {
     id: root
     width: parent.width
     height: childrenRect.height + Style.current.halfPadding
-    // property bool outgoing: true
 
     Separator {
         id: separator
@@ -48,7 +47,6 @@ Item {
         onOpened: {
           walletModel.getGasPricePredictions()
         }
-        selectedAccount: {}
         selectedRecipient: {
             return {
                 address: commandParametersObject.address,
@@ -60,7 +58,6 @@ Item {
         selectedAsset: token
         selectedAmount: tokenAmount
         selectedFiatAmount: fiatValue
-        outgoing: root.outgoing
     }
 }
 
