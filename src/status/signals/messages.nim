@@ -1,11 +1,16 @@
 import json, random, strutils, sequtils, sugar, chronicles
 import json_serialization
 import ../libstatus/accounts as status_accounts
+import ../libstatus/accounts/constants as constants
 import ../libstatus/settings as status_settings
+import ../libstatus/tokens as status_tokens
 import ../libstatus/types as status_types
+import ../libstatus/eth/contracts as status_contracts
 import ../chat/[chat, message]
 import ../profile/[profile, devices]
 import types
+import web3/conversions
+from ../libstatus/utils import parseAddress, wei2Eth
 
 proc toMessage*(jsonMsg: JsonNode): Message
 
@@ -201,13 +206,22 @@ proc toMessage*(jsonMsg: JsonNode): Message =
     message.stickerHash = jsonMsg["sticker"]["hash"].getStr
 
   if message.contentType == ContentType.Transaction:
+    let
+      allContracts = getErc20Contracts().concat(getCustomTokens())
+      ethereum = newErc20Contract("Ethereum", Network.Mainnet, parseAddress(constants.ZERO_ADDRESS), "ETH", 18, true)
+      tokenAddress = jsonMsg["commandParameters"]["contract"].getStr
+      tokenContract = if tokenAddress == "": ethereum else: allContracts.getErc20ContractByAddress(parseAddress(tokenAddress)) 
+      tokenContractStr = if tokenContract == nil: "{}" else: $(Json.encode(tokenContract))
+    var weiStr = if tokenContract == nil: "0" else: wei2Eth(jsonMsg["commandParameters"]["value"].getStr, tokenContract.decimals)
+    weiStr.trimZeros()
+
     # TODO find a way to use json_seralization for this. When I try, I get an error
     message.commandParameters = CommandParameters(
       id: jsonMsg["commandParameters"]["id"].getStr,
       fromAddress: jsonMsg["commandParameters"]["from"].getStr,
       address: jsonMsg["commandParameters"]["address"].getStr,
-      contract: jsonMsg["commandParameters"]["contract"].getStr,
-      value: jsonMsg["commandParameters"]["value"].getStr,
+      contract: tokenContractStr,
+      value: weiStr,
       transactionHash: jsonMsg["commandParameters"]["transactionHash"].getStr,
       commandState: jsonMsg["commandParameters"]["commandState"].getInt,
       signature: jsonMsg["commandParameters"]["signature"].getStr

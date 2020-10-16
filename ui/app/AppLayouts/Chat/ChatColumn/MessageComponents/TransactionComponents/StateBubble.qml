@@ -13,6 +13,7 @@ Rectangle {
     border.width: 1
     border.color: Style.current.border
     radius: 24
+    color: Style.current.background
 
     SVGImage {
         id: stateImage
