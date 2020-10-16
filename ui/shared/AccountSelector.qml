@@ -66,6 +66,9 @@ Item {
                 console.warn(qsTrId("cannot-find-asset---1---ensure-this-asset-has-been-added-to-the-token-list-").arg(showBalanceForAssetSymbol))
             }
         }
+        if (!selectedAccount.type) {
+            selectedAccount.type = RecipientSelector.Type.Account
+        }
         validate()
     }
 

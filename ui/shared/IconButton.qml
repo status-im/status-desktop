@@ -15,7 +15,7 @@ RoundButton {
     icon.width: iconWidth
     icon.height: iconHeight
 
-    id: btnAddContainer
+    id: root
     width: 36
     height: 36
     radius: width / 2
@@ -29,8 +29,10 @@ RoundButton {
         id: imgIcon
         fillMode: Image.PreserveAspectFit
         source: "../app/img/" + parent.iconName + ".svg"
-        width: btnAddContainer.iconWidth
-        height: btnAddContainer.iconHeight
+        width: root.iconWidth
+        height: root.iconHeight
+        sourceSize.height: height * 2
+        sourceSize.width: width * 2
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
@@ -76,14 +78,14 @@ RoundButton {
     }
 
     onClicked: {
-        if (btnAddContainer.clickable) {
+        if (root.clickable) {
             imgIcon.state = "rotated"
         }
     }
 
     MouseArea {
         id: mouseArea
-        visible: btnAddContainer.clickable
+        visible: root.clickable
         anchors.fill: parent
         onPressed:  mouse.accepted = false
         cursorShape: Qt.PointingHandCursor
