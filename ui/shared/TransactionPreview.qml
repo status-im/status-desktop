@@ -23,8 +23,7 @@ Item {
     // Creates a mouse area around the "network fee". When clicked, triggers 
     // the "gasClicked" signal
     property bool isGasEditable: false
-    property bool isValid: true
-    property bool outgoing: true
+    property alias isValid: balanceValidator.isValid
 
     function resetInternal() {
         fromAccount = undefined
@@ -32,38 +31,14 @@ Item {
         asset = undefined
         amount = undefined
         gas = undefined
-        isValid = true
+        balanceValidator.resetInternal()
+        balanceValidator.reset()
     }
 
-    function validate() {
-        let isValid = true
-        imgInsufficientBalance.visible = false
-        console.log(">>> [TransactionPreview.validate] outgoing:", outgoing)
-        if (outgoing && hasInsufficientBalance()) {
-            isValid = false
-            imgInsufficientBalance.visible = true
-        }
-        root.isValid = isValid
-        return isValid
-    }
-
-    function hasInsufficientBalance() {
-        if (!root.asset || !root.fromAccount || !root.fromAccount.assets || !root.amount) {
-            return true
-        }
-        const currAcctAsset = Utils.findAssetBySymbol(root.fromAccount.assets, root.asset.symbol)
-        if (!currAcctAsset) return true
-        return currAcctAsset.value < root.amount.value
-    }
-
-    onAssetChanged: validate()
-    onFromAccountChanged: validate()
-    
     Column {
         id: content
         anchors.left: parent.left
         anchors.right: parent.right
-
         LabelValueRow {
             id: itmFrom
             //% "From"
@@ -71,9 +46,8 @@ Item {
             value: Item {
                 id: itmFromValue
                 anchors.fill: parent
-                anchors.verticalCenter: parent.verticalCenter
                 function needsRightPadding() {
-                    return imgInsufficientBalance.visible || fromArrow.visible
+                    return !balanceValidator.isValid || fromArrow.visible
                 }
                 Row {
                     spacing: Style.current.halfPadding
@@ -94,24 +68,30 @@ Item {
                         id: imgFromWallet
                         sourceSize.height: 18
                         sourceSize.width: 18
+                        visible: !!root.fromAccount ? root.fromAccount.type === RecipientSelector.Type.Account : true
                         horizontalAlignment: Image.AlignLeft
                         width: itmFromValue.needsRightPadding() ? (Style.current.halfPadding + sourceSize.width) : undefined // adding width to add addl spacing to image
                         anchors.verticalCenter: parent.verticalCenter
                         fillMode: Image.PreserveAspectFit
                         source: "../app/img/walletIcon.svg"
                         ColorOverlay {
+                            visible: parent.visible
                             anchors.fill: parent
                             source: parent
-                            color: root.fromAccount ? root.fromAccount.iconColor : Style.current.blue
+                            color: root.fromAccount && root.fromAccount.iconColor ? root.fromAccount.iconColor : Style.current.blue
                         }
                     }
-                    SVGImage {
-                        id: imgInsufficientBalance
-                        width: 13
-                        visible: false
+                    BalanceValidator {
+                        id: balanceValidator
+                        account: root.fromAccount
+                        amount: !!(root.amount && root.amount.value) ? parseFloat(root.amount.value) : 0.0
+                        asset: root.asset
                         anchors.verticalCenter: parent.verticalCenter
-                        fillMode: Image.PreserveAspectFit
-                        source: "../app/img/exclamation_outline.svg"
+                        reset: function() {
+                            account = Qt.binding(function() { return root.fromAccount })
+                            amount = Qt.binding(function() { return !!(root.amount && root.amount.value) ? parseFloat(root.amount.value) : 0.0 })
+                            asset = Qt.binding(function() { return root.asset })
+                        }
                     }
                     SVGImage {
                         id: fromArrow
@@ -210,74 +190,69 @@ Item {
                     }
                 }
             ]
-            value: Item {
-                id: recipientRoot
-                anchors.fill: parent
-                anchors.verticalCenter: parent.verticalCenter
 
-                StyledText {
-                    id: txtToPrimary
-                    font.pixelSize: 15
-                    height: 22
-                    anchors.left: parent.left
-                    anchors.right: txtToSeparator.left
-                    anchors.verticalCenter: parent.verticalCenter
-                    horizontalAlignment: Text.AlignRight
-                    verticalAlignment: Text.AlignVCenter
-                    elide: Text.ElideRight
-                }
-                StyledText {
-                    id: txtToSeparator
-                    font.pixelSize: 15
-                    height: 22
-                    text: " • "
-                    visible: txtToSecondary.visible && txtToSecondary.width > 0
-                    color: Style.current.secondaryText
-                    anchors.right: txtToSecondary.left
-                    anchors.verticalCenter: parent.verticalCenter
-                    horizontalAlignment: Text.AlignRight
-                    verticalAlignment: Text.AlignVCenter
-                }
-                StyledText {
-                    id: txtToSecondary
-                    visible: true
-                    font.pixelSize: 15
-                    height: 22
-                    color: Style.current.secondaryText
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    horizontalAlignment: Text.AlignRight
-                    verticalAlignment: Text.AlignVCenter
-                }
-                TextMetrics {
-                    id: metSecondary
-                    elideWidth: 102
-                    elide: Text.ElideMiddle
-                }
-                SVGImage {
-                    id: imgToWallet
-                    visible: false
-                    sourceSize.height: 18
-                    sourceSize.width: 18
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    fillMode: Image.PreserveAspectFit
-                    source: "../app/img/walletIcon.svg"
-                }
-                ColorOverlay {
-                    id: ovlToWallet
-                    anchors.fill: imgToWallet
-                    visible: false
-                    source: imgToWallet
-                }
-                StatusImageIdenticon {
-                    id: idtToContact
-                    visible: false
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 32
-                    height: 32
-                }
+            StyledText {
+                id: txtToPrimary
+                font.pixelSize: 15
+                height: 22
+                anchors.left: parent.left
+                anchors.right: txtToSeparator.left
+                anchors.verticalCenter: parent.verticalCenter
+                horizontalAlignment: Text.AlignRight
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
+            StyledText {
+                id: txtToSeparator
+                font.pixelSize: 15
+                height: 22
+                text: " • "
+                visible: txtToSecondary.visible && txtToSecondary.width > 0
+                color: Style.current.secondaryText
+                anchors.right: txtToSecondary.left
+                anchors.verticalCenter: parent.verticalCenter
+                horizontalAlignment: Text.AlignRight
+                verticalAlignment: Text.AlignVCenter
+            }
+            StyledText {
+                id: txtToSecondary
+                visible: true
+                font.pixelSize: 15
+                height: 22
+                color: Style.current.secondaryText
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                horizontalAlignment: Text.AlignRight
+                verticalAlignment: Text.AlignVCenter
+            }
+            TextMetrics {
+                id: metSecondary
+                elideWidth: 102
+                elide: Text.ElideMiddle
+            }
+            SVGImage {
+                id: imgToWallet
+                visible: false
+                sourceSize.height: 18
+                sourceSize.width: 18
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                fillMode: Image.PreserveAspectFit
+                source: "../app/img/walletIcon.svg"
+            }
+            ColorOverlay {
+                id: ovlToWallet
+                anchors.fill: imgToWallet
+                visible: false
+                source: imgToWallet
+            }
+            StatusImageIdenticon {
+                id: idtToContact
+                visible: false
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                width: 32
+                height: 32
             }
         }
         LabelValueRow {

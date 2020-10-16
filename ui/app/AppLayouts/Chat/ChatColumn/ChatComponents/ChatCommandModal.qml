@@ -64,7 +64,9 @@ ModalPopup {
                 id: selectRecipient
                 accounts: walletModel.accounts
                 contacts: profileModel.addedContacts
-                label: qsTr("From")
+                label: root.isRequested ?
+                  qsTr("From") :
+                  qsTr("To")
                 readOnly: true
                 anchors.top: separator.bottom
                 anchors.topMargin: 10
@@ -95,21 +97,31 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group3
-            //% "Transaction preview"
-            headerText: qsTrId("transaction-preview")
+            headerText: root.isRequested ?
+                qsTr("Preview") :
+                //% "Transaction preview"
+                qsTrId("transaction-preview")
             footerText: root.finalButtonLabel
 
             TransactionPreview {
                 id: pvwTransaction
                 width: stack.width
-                fromAccount: selectFromAccount.selectedAccount
-                toAccount: selectRecipient.selectedRecipient
+                fromAccount: root.isRequested ? selectRecipient.selectedRecipient : selectFromAccount.selectedAccount
+                toAccount: root.isRequested ? selectFromAccount.selectedAccount : selectRecipient.selectedRecipient
                 asset: txtAmount.selectedAsset
                 amount: { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount }
                 currency: walletModel.defaultCurrency
                 reset: function() {
-                    fromAccount = Qt.binding(function() { return selectFromAccount.selectedAccount })
-                    toAccount = Qt.binding(function() { return selectRecipient.selectedRecipient })
+                    fromAccount = Qt.binding(function() {
+                      return root.isRequested ?
+                        selectRecipient.selectedRecipient :
+                        selectFromAccount.selectedAccount
+                    })
+                    toAccount = Qt.binding(function() {
+                      return root.isRequested ?
+                        selectFromAccount.selectedAccount :
+                        selectRecipient.selectedRecipient
+                    })
                     asset = Qt.binding(function() { return txtAmount.selectedAsset })
                     amount = Qt.binding(function() { return { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount } })
                 }
