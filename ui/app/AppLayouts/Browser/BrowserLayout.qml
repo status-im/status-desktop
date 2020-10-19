@@ -25,6 +25,7 @@ Rectangle {
     property Component browserDialogComponent: BrowserDialog {
         onClosing: destroy()
     }
+    property bool currentTabConnected: false
 
 
     Layout.fillHeight: true
@@ -91,10 +92,12 @@ Rectangle {
 
             if (request.type === Constants.api_request) {
                 if (!_web3Provider.hasPermission(request.hostname, request.permission)) {
+                    browserWindow.currentTabConnected = false
                     var dialog = accessDialogComponent.createObject(browserWindow);
                     dialog.request = request;
                     dialog.open();
                 } else {
+                    browserWindow.currentTabConnected = true
                     request.isAllowed = true;
                     web3Response(_web3Provider.postMessage(JSON.stringify(request)));
                 }
@@ -367,7 +370,6 @@ Rectangle {
     BrowserHeader {
         id: browserHeader
         anchors.top: parent.top
-        // TODO Replace with tab height
         anchors.topMargin: tabs.tabHeight + tabs.anchors.topMargin
         z: 52
     }
