@@ -12,6 +12,7 @@ Item {
     property var accounts
     property var selectedAccount
     property string currency: "usd"
+    property alias selectField: select
     height: select.height +
             (selectedAccountDetails.visible ? selectedAccountDetails.height : 0)
     // set to asset symbol to display asset's balance top right
