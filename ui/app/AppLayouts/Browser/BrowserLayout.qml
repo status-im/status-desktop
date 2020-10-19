@@ -378,11 +378,12 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: tabs.tabHeight + tabs.anchors.topMargin
         z: 52
+        visible: !downloadView.visible
     }
 
     QQC1.TabView {
         property int tabHeight: 40
-
+        visible: !downloadView.visible
         id: tabs
         function createEmptyTab(profile) {
             var tab = addTab("", tabComponent);
@@ -413,6 +414,8 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         Component.onCompleted: {
+            defaultProfile.downloadRequested.connect(onDownloadRequested);
+            otrProfile.downloadRequested.connect(onDownloadRequested);
             var tab = createEmptyTab(defaultProfile);
             tab.item.url = determineRealURL("https://simpledapp.eth");
         }
@@ -721,6 +724,12 @@ Rectangle {
         }
     }
 
+    function onDownloadRequested(download) {
+        downloadView.visible = true;
+        downloadView.append(download);
+        download.accept();
+    }
+
     MessageDialog {
         id: sslDialog
 
@@ -754,13 +763,6 @@ Rectangle {
         id: downloadView
         visible: false
         anchors.fill: parent
-    }
-
-    function onDownloadRequested(download) {
-        console.log("DOWNLOAD REQUESTED")
-        downloadView.visible = true;
-        downloadView.append(download);
-        download.accept();
     }
 
     FindBar {

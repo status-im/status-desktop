@@ -4,7 +4,7 @@ import sets
 import libstatus/core
 import libstatus/types
 import chronicles
-import eventemitter
+import ../eventemitter
 import sequtils
 
 type
