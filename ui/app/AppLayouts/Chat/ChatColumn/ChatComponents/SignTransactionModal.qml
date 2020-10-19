@@ -13,6 +13,8 @@ ModalPopup {
     property var selectedAmount
     property var selectedFiatAmount
 
+    property string trxData: ""
+
     property alias transactionSigner: transactionSigner
 
     property var sendTransaction: function(selectedGasLimit, selectedGasPrice, enteredPassword) {
@@ -36,6 +38,10 @@ ModalPopup {
             return sendingError.open()
         }
         root.close()
+    }
+
+    function estimateGas(){
+        gasSelector.estimateGas()
     }
 
     id: root
@@ -68,7 +74,14 @@ ModalPopup {
         TransactionFormGroup {
             id: group1
             //% "Send"
-            headerText: qsTrId("command-button-send")
+            headerText: {
+                if(trxData.startsWith("0x095ea7b3")){
+                    const approveData = JSON.parse(walletModel.decodeTokenApproval(selectedRecipient.address, trxData))
+                    if(approveData.symbol)
+                        return qsTr("Authorize %1 %2").arg(approveData.amount).arg(approveData.symbol)    
+                }
+                return qsTrId("command-button-send");
+            }
             //% "Preview"
             footerText: qsTrId("preview")
 
@@ -87,6 +100,7 @@ ModalPopup {
                 }
 
                 function estimateGas() {
+                    console.log("CALLING ESTIMATE GAS")
                     if (!(root.selectedAccount && root.selectedAccount.address &&
                         root.selectedRecipient && root.selectedRecipient.address &&
                         root.selectedAsset && root.selectedAsset.address &&
@@ -96,7 +110,8 @@ ModalPopup {
                         root.selectedAccount.address,
                         root.selectedRecipient.address,
                         root.selectedAsset.address,
-                        root.selectedAmount))
+                        root.selectedAmount,
+                        trxData))
 
                     if (!gasEstimate.success) {
                         //% "Error estimating gas: %1"
