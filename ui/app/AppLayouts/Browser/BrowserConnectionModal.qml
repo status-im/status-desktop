@@ -8,6 +8,7 @@ Popup {
     property var currentTab
     property var request: ({"hostname": "", "title": "", "permission": ""})
     property string currentAddress: ""
+    property bool interactedWith: false
 
     id: root
     modal: true
@@ -24,15 +25,19 @@ Popup {
     padding: 0
 
     function postMessage(isAllowed){
+        interactedWith = true
         request.isAllowed = isAllowed;
+        currentTabConnected = isAllowed
         provider.web3Response(web3Provider.postMessage(JSON.stringify(request)));
     }
 
     onClosed: {
+        if(!interactedWith){
+            currentTabConnected = false
+            postMessage(false);
+        }
         root.destroy();
     }
-
-    // TODO: design required
 
     ColumnLayout {
         anchors.left: parent.left
@@ -84,7 +89,7 @@ Popup {
                 source: "../../img/walletIcon.svg"
                 iconHeight: 18
                 iconWidth: 18
-                iconColor: Style.current.primary // TODO use wallet color
+                iconColor: accountSelector.selectedAccount.iconColor || Style.current.primary
                 color: Style.current.background
                 width: logoHeader.imgSize
                 height: logoHeader.imgSize
@@ -141,9 +146,9 @@ Popup {
             id: infoText
             text: {
                 switch(request.permission){
-                    case Constants.permission_web3: return qsTr("Allowing authorizes this DApp to retrieve your wallet address and enable Web3");
-                    case Constants.permission_contactCode: return qsTr("Granting access authorizes this DApp to retrieve your chat key");
-                    default: return qsTr("Unknown permission: " + request.permission);
+                case Constants.permission_web3: return qsTr("Allowing authorizes this DApp to retrieve your wallet address and enable Web3");
+                case Constants.permission_contactCode: return qsTr("Granting access authorizes this DApp to retrieve your chat key");
+                default: return qsTr("Unknown permission: " + request.permission);
                 }
             }
             Layout.fillWidth: true

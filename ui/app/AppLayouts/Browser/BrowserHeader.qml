@@ -130,19 +130,50 @@ Rectangle {
             x: parent.width - width - Style.current.halfPadding
         }
 
-        StatusIconButton {
-            id: accountBtn
-            icon.name: "walletIcon"
-            onClicked: {
-                if (browserWalletMenu.opened) {
-                    browserWalletMenu.close()
-                } else {
-                    browserWalletMenu.open()
+        Loader {
+            active: true
+            sourceComponent: currentTabConnected ? connectedBtnComponent : notConnectedBtnCompoent
+        }
+
+        Component {
+            id: notConnectedBtnCompoent
+            StatusIconButton {
+                id: accountBtn
+                icon.name: "walletIcon"
+                onClicked: {
+                    if (browserWalletMenu.opened) {
+                        browserWalletMenu.close()
+                    } else {
+                        browserWalletMenu.open()
+                    }
+                }
+                width: 24
+                height: 24
+                padding: 6
+            }
+        }
+
+
+
+        Component {
+            id: connectedBtnComponent
+            StatusButton {
+                id: accountBtnConnected
+                icon.source: "../../img/walletIcon.svg"
+                icon.width: 18
+                icon.height: 18
+                icon.color: walletModel.currentAccount.iconColor
+                text: walletModel.currentAccount.name
+                implicitHeight: 32
+                type: "secondary"
+                onClicked: {
+                    if (browserWalletMenu.opened) {
+                        browserWalletMenu.close()
+                    } else {
+                        browserWalletMenu.open()
+                    }
                 }
             }
-            width: 24
-            height: 24
-            padding: 6
         }
 
         Menu {
