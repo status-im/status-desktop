@@ -196,7 +196,7 @@ Item {
             id: signAndSendComponent
 
             SendTransactionButton {
-                outgoing: root.outgoing
+                // outgoing: root.outgoing
             }
         }
 

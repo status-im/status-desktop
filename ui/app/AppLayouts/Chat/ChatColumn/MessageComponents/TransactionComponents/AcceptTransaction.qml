@@ -1,4 +1,5 @@
 import QtQuick 2.3
+import "../../ChatComponents"
 import "../../../../../../shared"
 import "../../../../../../imports"
 
@@ -37,7 +38,7 @@ Item {
                     // TODO get address from a modal instead
                     chatsModel.acceptRequestAddressForTransaction(messageId, walletModel.getDefaultAccount())
                 } else if (root.state === Constants.transactionRequested) {
-                    console.log('Accept and send')
+                    signTransactionModal.open()
                 }
             }
         }
@@ -75,6 +76,26 @@ Item {
 
             }
         }
+    }
+
+    SignTransactionModal {
+        id: signTransactionModal
+        onOpened: {
+          walletModel.getGasPricePredictions()
+        }
+        selectedAccount: {}
+        selectedRecipient: {
+            return {
+                address: commandParametersObject.address,
+                identicon: chatsModel.activeChannel.identicon,
+                name: chatsModel.activeChannel.name,
+                type: RecipientSelector.Type.Contact
+            }
+        }
+        selectedAsset: token
+        selectedAmount: tokenAmount
+        selectedFiatAmount: fiatValue
+        //outgoing: root.outgoing
     }
 }
 
