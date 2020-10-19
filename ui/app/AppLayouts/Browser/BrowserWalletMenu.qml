@@ -122,6 +122,9 @@ Popup {
                 accountSelectorRow.currentAddress = selectedAccount.address
                 web3Provider.dappsAddress = selectedAccount.address;
                 web3Provider.clearPermissions();
+                if (selectField.menu.currentIndex !== -1) {
+                    walletModel.setCurrentAccountByIndex(selectField.menu.currentIndex-1)
+                }
                 for (let i = 0; i < tabs.count; ++i){
                     tabs.getTab(i).item.reload();
                 }

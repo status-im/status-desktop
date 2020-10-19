@@ -43,92 +43,10 @@ Rectangle {
         return url;
     }
 
-    property Component accessDialogComponent: ModalPopup {
-        id: accessDialog
-
-        property var request: ({"hostname": "", "title": "", "permission": ""})
-        property bool interactedWith: false
-
-        function postMessage(isAllowed){
-            interactedWith = true
-            request.isAllowed = isAllowed;
-            provider.web3Response(_web3Provider.postMessage(JSON.stringify(request)));
-        }
-
-        onClosed: {
-            if(!interactedWith){
-                postMessage(false);
-            }
-            accessDialog.destroy();	
-        }
-
-        // TODO: design required
-
-        StyledText {
-            id: siteName
-            text: request.title
-            anchors.top: parent.top
-            anchors.topMargin: Style.current.padding
-            width: parent.width
-            wrapMode: Text.WordWrap
-        }
-
-        StyledText {
-            id: hostName
-            text: request.hostname
-            anchors.top: siteName.bottom
-            anchors.topMargin: Style.current.padding
-            width: parent.width
-            wrapMode: Text.WordWrap
-        }
-
-        StyledText {
-            id: permission
-            text: qsTr("Permission requested: %1").arg(request.permission)
-            anchors.top: hostName.bottom
-            anchors.topMargin: Style.current.padding
-            width: parent.width
-            wrapMode: Text.WordWrap
-        }
-
-        StyledText {
-            id: description
-            anchors.top: permission.bottom
-            anchors.topMargin: Style.current.padding
-            width: parent.width
-            wrapMode: Text.WordWrap
-            text: {
-                switch(request.permission){
-                    case Constants.permission_web3: return qsTr("Allowing authorizes this DApp to retrieve your wallet address and enable Web3");
-                    case Constants.permission_contactCode: return qsTr("Granting access authorizes this DApp to retrieve your chat key");
-                    default: return qsTr("Unknown permission: " + request.permission);
-                }
-            }
-        }
-
-        StyledButton {	
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: Style.current.padding
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
-            label: qsTr("Allow")
-            onClicked: {
-                postMessage(true);
-                accessDialog.close();
-            }
-        }
-
-        StyledButton {
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
-            label: qsTr("Deny")
-            onClicked: {
-                postMessage(false);
-                accessDialog.close();
-            }
-        }
+    property Component accessDialogComponent: BrowserConnectionModal {
+        currentTab: tabs.getTab(tabs.currentIndex) && tabs.getTab(tabs.currentIndex).item
+        x: browserWindow.width - width - Style.current.halfPadding
+        y: browserHeader.y + browserHeader.height + Style.current.halfPadding
     }
 
     // TODO we'll need a new dialog at one point because this one is not using the same call, but it's good for now
@@ -522,19 +440,12 @@ Rectangle {
                         anchors.bottom: parent.bottom
                     }
 
-                    Image {
+                    FaviconImage {
                         id: faviconImage
+                        currentTab: tabs.getTab(styleData.index) && tabs.getTab(styleData.index).item
                         anchors.verticalCenter: parent.verticalCenter;
                         anchors.left: parent.left
                         anchors.leftMargin: Style.current.halfPadding
-                        width: 24
-                        height: 24
-                        sourceSize: Qt.size(width, height)
-                        // TODO find a better default favicon
-                        source: {
-                            const thisTab = tabs.getTab(styleData.index) && tabs.getTab(styleData.index).item
-                            return thisTab && !!thisTab.icon.toString() ? thisTab.icon : "../../img/globe.svg"
-                        }
                     }
 
                     StyledText {
