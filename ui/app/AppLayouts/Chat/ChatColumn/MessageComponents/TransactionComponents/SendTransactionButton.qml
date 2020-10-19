@@ -7,7 +7,7 @@ Item {
     id: root
     width: parent.width
     height: childrenRect.height + Style.current.halfPadding
-    property bool outgoing: true
+    // property bool outgoing: true
 
     Separator {
         id: separator
