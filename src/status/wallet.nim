@@ -70,10 +70,11 @@ proc buildTokenTransaction(self: WalletModel, source, to, assetAddress: Address,
 proc getKnownTokenContract*(self: WalletModel, address: Address): Erc20Contract =
   getErc20Contracts().concat(getCustomTokens()).getErc20ContractByAddress(address)
 
-proc estimateGas*(self: WalletModel, source, to, value: string, success: var bool): int =
+proc estimateGas*(self: WalletModel, source, to, value, data: string, success: var bool): int =
   var tx = transactions.buildTransaction(
     parseAddress(source),
-    eth2Wei(parseFloat(value), 18)
+    eth2Wei(parseFloat(value), 18),
+    data = data
   )
   tx.to = parseAddress(to).some
   let response = eth.estimateGas(tx, success)

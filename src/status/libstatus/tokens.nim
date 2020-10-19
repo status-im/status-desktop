@@ -1,4 +1,4 @@
-import json, chronicles, strformat, stint, strutils
+import json, chronicles, strformat, stint, strutils, sequtils
 import core, wallet
 import ./eth/contracts
 import web3/[ethtypes, conversions]
@@ -100,6 +100,9 @@ proc getTokensBalances*(accounts: openArray[string], tokens: openArray[string]):
   if response["result"].kind == JNull:
     return %* {}
   response["result"]
+
+proc getToken*(tokenAddress: string): Erc20Contract =
+  getErc20Contracts().concat(getCustomTokens()).getErc20ContractByAddress(tokenAddress.parseAddress)
 
 proc getTokenBalance*(tokenAddress: string, account: string): string = 
   var postfixedAccount: string = account

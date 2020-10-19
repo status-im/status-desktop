@@ -265,14 +265,14 @@ QtObject:
     read = getAccountList
     notify = accountListChanged
   
-  proc estimateGas*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string): string {.slot.} =
+  proc estimateGas*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string, data: string = ""): string {.slot.} =
     var
       response: int
       success: bool
     if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
       response = self.status.wallet.estimateTokenGas(from_addr, to, assetAddress, value, success)
     else:
-      response = self.status.wallet.estimateGas(from_addr, to, value, success)
+      response = self.status.wallet.estimateGas(from_addr, to, value, data, success)
     result = $(%* { "result": %response, "success": %success })
 
   proc transactionWasSent*(self: WalletView, txResult: string) {.signal.}
@@ -521,6 +521,16 @@ QtObject:
   
   proc isKnownTokenContract*(self: WalletView, address: string): bool {.slot.} =
     return self.status.wallet.getKnownTokenContract(parseAddress(address)) != nil
+
+  proc decodeTokenApproval*(self: WalletView, tokenAddress: string, data: string): string {.slot.} =
+    let amount = data[74..len(data)-1]
+    let token = getToken(tokenAddress)
+    
+    if(token != nil):
+      let amountDec = $hex2Token(amount, token.decimals)
+      return $(%* {"symbol": token.symbol, "amount": amountDec})
+    
+    return """{"error":"Unknown token address"}""";
 
   proc isHistoryFetched*(self: WalletView, address: string): bool {.slot.} =
     return self.currentTransactions.rowCount() > 0

@@ -114,32 +114,32 @@ Rectangle {
                 }
             } else if (request.type === Constants.web3SendAsyncReadOnly &&
                        request.payload.method === "eth_sendTransaction") {
-                const sendDialog = sendTransactionModalComponent.createObject(browserWindow);
+                walletModel.setFocusedAccountByAddress(request.payload.params[0].from)
+                var acc = walletModel.focusedAccount
+                const value = utilsModel.wei2Token(request.payload.params[0].value, 18)
 
-                _walletModel.setFocusedAccountByAddress(request.payload.params[0].from)
-                var acc = _walletModel.focusedAccount
-                sendDialog.selectedAccount = {
-                    name: acc.name,
-                    address: request.payload.params[0].from,
-                    iconColor: acc.iconColor,
-                    assets: acc.assets
-                }
-                sendDialog.selectedRecipient = {
-                    address: request.payload.params[0].to,
-                    identicon: _chatsModel.generateIdenticon(request.payload.params[0].to),
-                    name: _chatsModel.activeChannel.name,
-                    type: RecipientSelector.Type.Address
-                };
-                // TODO get this from data
-                sendDialog.selectedAsset = {
-                    name: "ETH",
-                    symbol: "ETH",
-                    address: Constants.zeroAddress
-                };
-                const value = _utilsModel.wei2Token(request.payload.params[0].value, 18)
-                sendDialog.selectedAmount = value
-                // TODO calculate that
-                sendDialog.selectedFiatAmount = "42";
+                const sendDialog = sendTransactionModalComponent.createObject(browserWindow, {
+                    trxData:request.payload.params[0].data,
+                    selectedAccount: {
+                        name: acc.name,
+                        address: request.payload.params[0].from,
+                        iconColor: acc.iconColor,
+                        assets: acc.assets
+                    },
+                    selectedRecipient: {
+                        address: request.payload.params[0].to,
+                        identicon: chatsModel.generateIdenticon(request.payload.params[0].to),
+                        name: chatsModel.activeChannel.name,
+                        type: RecipientSelector.Type.Address
+                    },
+                    selectedAsset: {
+                        name: "ETH",
+                        symbol: "ETH",
+                        address: Constants.zeroAddress
+                    },
+                    selectedFiatAmount: "42", // TODO calculate that
+                    selectedAmount: value
+                });
 
                 // TODO change sendTransaction function to the postMessage one
                 sendDialog.sendTransaction = function (selectedGasLimit, selectedGasPrice, enteredPassword) {
@@ -180,6 +180,7 @@ Rectangle {
                     sendDialog.destroy()
                 }
 
+                sendDialog.estimateGas()
                 sendDialog.open();
                 walletModel.getGasPricePredictions()
             } else if (request.type === Constants.web3SendAsyncReadOnly && ["eth_sign", "personal_sign", "eth_signTypedData", "eth_signTypedData_v3"].indexOf(request.payload.method) > -1) {
