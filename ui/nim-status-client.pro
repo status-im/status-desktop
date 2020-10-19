@@ -359,6 +359,7 @@ DISTFILES += \
     shared/RoundedImage.qml \
     shared/SearchBox.qml \
     shared/Select.qml \
+    shared/SendToContractWarning.qml \
     shared/Separator.qml \
     shared/SeparatorWithIcon.qml \
     shared/SplitViewHandle.qml \

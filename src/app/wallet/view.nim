@@ -518,6 +518,9 @@ QtObject:
     if self.fetchingHistoryState.hasKey(address):
       return self.fetchingHistoryState[address]
     return true
+  
+  proc isKnownTokenContract*(self: WalletView, address: string): bool {.slot.} =
+    return self.status.wallet.getKnownTokenContract(parseAddress(address)) != nil
 
   proc isHistoryFetched*(self: WalletView, address: string): bool {.slot.} =
     return self.currentTransactions.rowCount() > 0

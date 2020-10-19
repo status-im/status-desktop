@@ -193,6 +193,14 @@ ModalPopup {
                     })
                 }
             }
+            SendToContractWarning {
+                id: sendToContractWarning
+                anchors.top: pvwTransaction.bottom
+                selectedRecipient: selectRecipient.selectedRecipient
+                reset: function() {
+                    selectedRecipient = Qt.binding(function() { return selectRecipient.selectedRecipient })
+                }
+            }
         }
         TransactionFormGroup {
             id: group4

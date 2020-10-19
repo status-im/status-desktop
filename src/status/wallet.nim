@@ -67,6 +67,9 @@ proc buildTokenTransaction(self: WalletModel, source, to, assetAddress: Address,
   transfer = Transfer(to: to, value: eth2Wei(value, contract.decimals))
   transactions.buildTokenTransaction(source, assetAddress, gas, gasPrice)
 
+proc getKnownTokenContract*(self: WalletModel, address: Address): Erc20Contract =
+  getErc20Contracts().concat(getCustomTokens()).getErc20ContractByAddress(address)
+
 proc estimateGas*(self: WalletModel, source, to, value: string, success: var bool): int =
   var tx = transactions.buildTransaction(
     parseAddress(source),
