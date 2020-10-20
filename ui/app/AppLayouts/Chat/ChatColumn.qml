@@ -183,42 +183,6 @@ StackLayout {
             height: chatInput.height
             Layout.preferredHeight: height
             color: "transparent"
-
-            SuggestionBox {
-                id: suggestionsBox
-                model: suggestions
-                width: chatContainer.width
-                anchors.bottom: inputArea.top
-                anchors.left: inputArea.left
-                filter: chatInput.textInput.text
-                cursorPosition: chatInput.textInput.cursorPosition
-                property: "ensName, alias"
-                onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
-                    let hasEmoji = Emoji.hasEmoji(chatInput.textInput.text)
-                    let currentText = hasEmoji ?
-                      chatsModel.plainText(Emoji.deparse(chatInput.textInput.text)) :
-                      chatsModel.plainText(chatInput.textInput.text);
-
-                    let aliasName = item[suggestionsBox.property.split(",").map(p => p.trim()).find(p => !!item[p])]
-                    aliasName = aliasName.replace(".stateofus.eth", "")
-                    let nameLen = aliasName.length + 2 // We're doing a +2 here because of the `@` and the trailing whitespace
-                    let position = 0;
-                    let text = ""
-
-                    if (currentText === "@") {
-                        position = nameLen
-                        text = "@" + aliasName + " "
-                    } else {
-                        let left = currentText.substring(0, lastAtPosition)
-                        let right = currentText.substring(hasEmoji ? lastCursorPosition + 2 : lastCursorPosition)
-                        text = `${left} @${aliasName} ${right}`
-                    }
-
-                    chatInput.textInput.text = hasEmoji ? Emoji.parse(text, "26x26") : text
-                    chatInput.textInput.cursorPosition = lastAtPosition + aliasName.length + 2
-                    suggestionsBox.suggestionsModel.clear()
-                }
-            }
             
             Loader {
                 active: chatsModel.loadingMessages

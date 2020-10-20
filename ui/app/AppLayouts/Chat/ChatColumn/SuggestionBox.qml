@@ -34,19 +34,24 @@ Rectangle {
     property alias property: filterItem.property
     property int cursorPosition
     signal itemSelected(var item, int lastAtPosition, int lastCursorPosition)
+    property alias listView: listView
 
+    function selectCurrentItem() {
+        container.itemSelected(listView.model.get(listView.currentIndex), filterItem.lastAtPosition, filterItem.cursorPosition)
+    }
 
     z: parent.z + 100
     visible: filter.length > 0 && suggestionsModel.count > 0
-    height: visible ? popup.height + (Style.current.padding * 2) : 0
+    height: Math.min(400, listView.contentHeight + Style.current.smallPadding)
+
     opacity: visible ? 1.0 : 0
     Behavior on opacity {
         NumberAnimation { }
     }
 
-    // --- defaults
-    color: Style.current.white2
-    radius: 16
+    color:Style.current.background
+    radius: Style.current.radius
+    border.width: 0
     layer.enabled: true
     layer.effect: DropShadow{
         width: container.width
@@ -69,69 +74,55 @@ Rectangle {
     }
 
 
-    ScrollView {
-        id: popup
-        height: items.height >= 400 ? 400 : items.height
-        width: parent.width
-        anchors.centerIn: parent
+    ListView {
+        id: listView
+        model: container.suggestionsModel
+        keyNavigationEnabled: true
+        anchors.fill: parent
+        anchors.topMargin: Style.current.halfPadding
+        anchors.leftMargin: Style.current.halfPadding
+        anchors.rightMargin: Style.current.halfPadding
+        anchors.bottomMargin: Style.current.halfPadding
         clip: true
 
         property int selectedIndex
         property var selectedItem: selectedIndex == -1 ? null : model[selectedIndex]
         signal suggestionClicked(var item)
-        ScrollBar.vertical.policy: items.contentHeight > items.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-        Column {
-            id: items
-            clip: true
-            height: childrenRect.height
+        delegate: Rectangle {
+            id: rectangle
+            color: listView.currentIndex === index ? Style.current.backgroundHover : Style.current.transparent
+            border.width: 0
             width: parent.width
-            Repeater {
-                id: repeater
-                model: container.suggestionsModel
-                delegate: Rectangle {
-                    id: delegateItem
-                    property var suggestion: model
-                    property bool hovered
+            height: 42
+            radius: Style.current.radius
 
-                    height: 50
-                    width: container.width
-                    color: hovered ? Style.current.blue : "white"
+            StatusImageIdenticon {
+                id: accountImage
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: Style.current.smallPadding
+                source: model.identicon
+            }
 
-                    StatusImageIdenticon {
-                        id: accountImage
-                        anchors.left: parent.left
-                        anchors.leftMargin: Style.current.smallPadding
-                        anchors.verticalCenter: parent.verticalCenter
-                        source: suggestion.identicon
-                    }
+            StyledText {
+                text: model[container.property.split(",").map(p => p.trim()).find(p => !!model[p])]
+                color: Style.current.textColor
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: accountImage.right
+                anchors.leftMargin: Style.current.smallPadding
+                font.pixelSize: 15
+            }
 
-                    Text {
-                        id: textComponent
-                        color: delegateItem.hovered ? Style.current.white : Style.current.black
-                        text: suggestion[container.property.split(",").map(p => p.trim()).find(p => !!suggestion[p])]
-                        width: parent.width
-                        height: parent.height
-                        anchors.left: accountImage.right
-                        anchors.leftMargin: Style.current.padding
-                        verticalAlignment: Text.AlignVCenter
-                        font.pixelSize: 15
-                    }
-                    MouseArea {
-                        cursorShape: Qt.PointingHandCursor
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        onEntered: {
-                            delegateItem.hovered = true
-                        }
-                        onExited: {
-                            delegateItem.hovered = false
-                        }
-                        onClicked: {
-                          container.itemSelected(delegateItem.suggestion, filterItem.lastAtPosition, filterItem.cursorPosition)
-                        }
-                    }
+            MouseArea {
+                cursorShape: Qt.PointingHandCursor
+                anchors.fill: parent
+                hoverEnabled: true
+                onEntered: {
+                    listView.currentIndex = index
+                }
+                onClicked: {
+                    container.itemSelected(model, filterItem.lastAtPosition, filterItem.cursorPosition)
                 }
             }
         }
