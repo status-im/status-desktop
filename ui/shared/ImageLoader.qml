@@ -6,6 +6,7 @@ Rectangle {
     id: root
     property alias source: image.source
     property alias fillMode: image.fillMode
+    signal loaded
     signal clicked
     color: Style.current.backgroundHover
     state: "loading"
@@ -131,6 +132,11 @@ Rectangle {
         horizontalAlignment: Image.AlignHCenter
         verticalAlignment: Image.AlignVCenter
         cache: true
+        onStatusChanged: {
+            if (image.status === Image.Ready) {
+                loaded()
+            }
+        }
         MouseArea {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent

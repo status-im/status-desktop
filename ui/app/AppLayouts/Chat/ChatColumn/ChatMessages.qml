@@ -99,19 +99,17 @@ ScrollView {
                 // User has scrolled up, we don't want to scroll back
                 return false
             }
-            if (caller) {
-                if (caller !== chatLogView.itemAtIndex(chatLogView.count - 1)) {
-                    // If we have a caller, only accept its request if it's the last message
-                    return false
-                }
-                // Add a small delay because images, even though they say they say they are loaed, they aren't shown yet
-                timer.setTimeout(function() {
-                    Qt.callLater(chatLogView.positionViewAtEnd)
-                }, 100);
-                return true
+            if (caller && caller !== chatLogView.itemAtIndex(chatLogView.count - 1)) {
+                // If we have a caller, only accept its request if it's the last message
+                return false
             }
-
+            // Call this twice and with a timer since the first scroll to bottom might have happened before some stuff loads
+            // meaning that the scroll will not actually be at the bottom on switch
+            // Add a small delay because images, even though they say they say they are loaed, they aren't shown yet
             Qt.callLater(chatLogView.positionViewAtEnd)
+            timer.setTimeout(function() {
+                 Qt.callLater(chatLogView.positionViewAtEnd)
+            }, 100);
             return true
         }
 
@@ -138,10 +136,7 @@ ScrollView {
             }
 
             onAppReady: {
-                // Add an additionnal delay, since the app can be "ready" just milliseconds before the UI updated to show the chat
-                timer.setTimeout(function() {
-                    chatLogView.scrollToBottom(true)
-                }, 500);
+                chatLogView.scrollToBottom(true)
             }
 
             onMessageNotificationPushed: function(chatId, msg, messageType, chatType, timestamp, identicon, username, hasMention) {
@@ -152,7 +147,7 @@ ScrollView {
             }
         }
 
-        property var loadMsgs : Backpressure.oneInTime(chatLogView, 500, function() { 
+        property var loadMsgs : Backpressure.oneInTime(chatLogView, 500, function() {
             if(loadingMessages) return;
             loadingMessages = true;
             chatsModel.loadMoreMessages();
