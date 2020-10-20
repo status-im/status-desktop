@@ -11,6 +11,10 @@ Loader {
     sourceComponent: Component {
         Shared.ImageLoader {
             color: root.color
+            onLoaded: {
+                scrollToBottom(true, messageItem)
+            }
+
             width: 140
             height: this.visible ? 140 : 0
             source: this.visible ? ("https://ipfs.infura.io/ipfs/" + sticker) : ""
