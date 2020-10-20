@@ -7,6 +7,7 @@ import QtQuick.Dialogs 1.3
 import "../../imports"
 import "../../shared"
 import "../../app/AppLayouts/Chat/ChatColumn/samples"
+import "../../app/AppLayouts/Chat/ChatColumn"
 
 import "./emojiList.js" as EmojiJSON
 
@@ -84,6 +85,11 @@ Rectangle {
                 event.accepted = true;
                 return
             }
+            if (suggestionsBox.visible) {
+                suggestionsBox.selectCurrentItem();
+                event.accepted = true;
+                return
+            }
             if (messageInputField.length < messageLimit) {
                 sendMsg(event);
                 return;
@@ -97,9 +103,11 @@ Rectangle {
         }
 
         if (event.key === Qt.Key_Down) {
+            suggestionsBox.listView.incrementCurrentIndex()
             return emojiSuggestions.listView.incrementCurrentIndex()
         }
         if (event.key === Qt.Key_Up) {
+            suggestionsBox.listView.decrementCurrentIndex()
             return emojiSuggestions.listView.decrementCurrentIndex()
         }
 
@@ -339,6 +347,42 @@ Rectangle {
 
     StatusEmojiSuggestionPopup {
         id: emojiSuggestions
+    }
+
+    SuggestionBox {
+        id: suggestionsBox
+        model: suggestions
+        x : messageInput.x
+        y: -height - Style.current.smallPadding
+        width: messageInput.width
+        filter: messageInputField.text
+        cursorPosition: messageInputField.cursorPosition
+        property: "ensName, alias"
+        onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
+            let hasEmoji = Emoji.hasEmoji(messageInputField.text)
+            let currentText = hasEmoji ?
+              chatsModel.plainText(Emoji.deparse(messageInputField.text)) :
+              chatsModel.plainText(messageInputField.text);
+
+            let aliasName = item[suggestionsBox.property.split(",").map(p => p.trim()).find(p => !!item[p])]
+            aliasName = aliasName.replace(".stateofus.eth", "")
+            let nameLen = aliasName.length + 2 // We're doing a +2 here because of the `@` and the trailing whitespace
+            let position = 0;
+            let text = ""
+
+            if (currentText === "@") {
+                position = nameLen
+                text = "@" + aliasName + " "
+            } else {
+                let left = currentText.substring(0, lastAtPosition)
+                let right = currentText.substring(hasEmoji ? lastCursorPosition + 2 : lastCursorPosition)
+                text = `${left} @${aliasName} ${right}`
+            }
+
+            messageInputField.text = hasEmoji ? Emoji.parse(text, "26x26") : text
+            messageInputField.cursorPosition = lastAtPosition + aliasName.length + 2
+            suggestionsBox.suggestionsModel.clear()
+        }
     }
 
     StatusChatCommandsPopup {
