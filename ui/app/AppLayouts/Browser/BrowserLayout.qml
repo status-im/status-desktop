@@ -215,7 +215,13 @@ Rectangle {
     property QtObject defaultProfile: WebEngineProfile {
         storageName: "Profile"
         offTheRecord: false
-        httpUserAgent: "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:81.0) Gecko/20100101 Firefox/81.0"
+        httpUserAgent: {
+            if (browserHeader.browserSettings.compatibilityMode) {
+                // Google doesn't let you connect if the user agent is Chrome-ish and doesn't satisfy some sort of hidden requirement
+                return "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:81.0) Gecko/20100101 Firefox/81.0"
+            }
+            return ""
+        }
         useForGlobalCertificateVerification: true
         userScripts: [
             WebEngineScript {
