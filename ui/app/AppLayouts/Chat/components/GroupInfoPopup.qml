@@ -56,7 +56,6 @@ ModalPopup {
           width: 36
           height: 36
           anchors.top: parent.top
-          anchors.topMargin: Style.current.padding
           color: chatsModel.activeChannel.color
           chatName: chatsModel.activeChannel.name
       }
@@ -66,7 +65,7 @@ ModalPopup {
           //% "Add members"
           text: addMembers ? qsTrId("add-members") : chatsModel.activeChannel.name
           anchors.top: parent.top
-          anchors.topMargin: 18
+          anchors.topMargin: 2
           anchors.left: letterIdenticon.right
           anchors.leftMargin: Style.current.smallPadding
           font.bold: true
@@ -102,8 +101,7 @@ ModalPopup {
             visible: !addMembers && chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
             height: 24
             width: 24
-            anchors.top: parent.top
-            anchors.topMargin: Style.current.padding
+            anchors.verticalCenter: groupName.verticalCenter
             anchors.leftMargin: 4
             anchors.left: groupName.right
             radius: 8
@@ -204,11 +202,11 @@ ModalPopup {
                 clip: true
                 id: groupMembers
                 delegate: Contact {
-                    isVisible: searchBox.text == "" || model.name.includes(searchBox.text)
+                    isVisible: searchBox.text === "" || model.name.includes(searchBox.text)
                     showCheckbox: memberCount < maxMembers
                     pubKey: model.pubKey
                     isUser: model.isUser
-                    name: model.name.endsWith(".eth") && !!model.localNickname ?
+                    name: model.name.endsWith(".eth") || !model.localNickname ?
                               Utils.removeStatusEns(model.name) : model.localNickname
                     address: model.address
                     identicon: model.identicon
@@ -257,8 +255,11 @@ ModalPopup {
             Layout.fillWidth: true
             Layout.fillHeight: true
             model: chatsModel.activeChannel.members
-            delegate: Row {
+            delegate: Item {
                 id: contactRow
+                width: parent.width
+                height: identicon.height
+
                 property string nickname: {
                     // Get contact nickname
                     const contactList = profileModel.contactList
@@ -272,64 +273,65 @@ ModalPopup {
                     return ""
                 }
 
-                Column {
-                    Image {
-                        source: model.identicon
-                        mipmap: true
-                        smooth: false
-                        antialiasing: true
-                    }
+                StatusImageIdenticon {
+                    id: identicon
+                    anchors.left: parent.left
+                    source: model.identicon
                 }
-                Column {
-                    StyledText {
-                        text: !model.userName.endsWith(".eth") && !!contactRow.nickname ?
-                                  contactRow.nickname : Utils.removeStatusEns(model.userName)
-                        width: 300
-                        elide: Text.ElideRight
-                        Layout.fillWidth: true
-                        font.pixelSize: 13
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: openProfilePopup(model.userName, model.pubKey, model.identicon, '', contactRow.nickname)
-                        }
-                    }
 
-                }
-                Column {
-                    StyledText {
-                        visible: model.isAdmin
-                        //% "Admin"
-                        text: qsTrId("group-chat-admin")
-                        width: 100
-                        font.pixelSize: 13
+                StyledText {
+                    text: !model.userName.endsWith(".eth") && !!contactRow.nickname ?
+                              contactRow.nickname : Utils.removeStatusEns(model.userName)
+                    anchors.left: identicon.right
+                    anchors.leftMargin: Style.current.smallPadding
+                    anchors.right: adminLabel.left
+                    anchors.rightMargin: Style.current.smallPadding
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 13
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: openProfilePopup(model.userName, model.pubKey, model.identicon, '', contactRow.nickname, popup)
                     }
-                    StyledText {
-                        id: moreActionsBtn
-                        visible: !model.isAdmin && chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
-                        text: "..."
-                        width: 100
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                contextMenu.popup(moreActionsBtn.x - moreActionsBtn.width, moreActionsBtn.height + 10)
+                }
+
+                StyledText {
+                    id: adminLabel
+                    visible: model.isAdmin
+                    //% "Admin"
+                    text: qsTrId("group-chat-admin")
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 13
+                }
+
+                StyledText {
+                    id: moreActionsBtn
+                    visible: !model.isAdmin && chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
+                    text: "..."
+                    anchors.right: parent.right
+                    anchors.rightMargin: Style.current.smallPadding
+                    anchors.verticalCenter: parent.verticalCenter
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            contextMenu.popup(-contextMenu.width / 2 + moreActionsBtn.width / 2, moreActionsBtn.height + 10)
+                        }
+                        cursorShape: Qt.PointingHandCursor
+                        PopupMenu {
+                            id: contextMenu
+                            Action {
+                                icon.source: "../../../img/make-admin.svg"
+                                //% "Make Admin"
+                                text: qsTrId("make-admin")
+                                onTriggered: chatsModel.makeAdmin(chatsModel.activeChannel.id,  model.pubKey)
                             }
-                            cursorShape: Qt.PointingHandCursor
-                            PopupMenu {
-                                id: contextMenu
-                                Action {
-                                    icon.source: "../../../img/make-admin.svg"
-                                    //% "Make Admin"
-                                    text: qsTrId("make-admin")
-                                    onTriggered: chatsModel.makeAdmin(chatsModel.activeChannel.id,  model.pubKey)
-                                }
-                                Action {
-                                    icon.source: "../../../img/remove-from-group.svg"
-                                    icon.color: Style.current.red
-                                    //% "Remove From Group"
-                                    text: qsTrId("remove-from-group")
-                                    onTriggered: chatsModel.kickGroupMember(chatsModel.activeChannel.id,  model.pubKey)
-                                }
+                            Action {
+                                icon.source: "../../../img/remove-from-group.svg"
+                                icon.color: Style.current.red
+                                //% "Remove From Group"
+                                text: qsTrId("remove-from-group")
+                                onTriggered: chatsModel.kickGroupMember(chatsModel.activeChannel.id,  model.pubKey)
                             }
                         }
                     }
