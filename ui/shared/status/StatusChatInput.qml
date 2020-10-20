@@ -97,10 +97,10 @@ Rectangle {
         }
 
         if (event.key === Qt.Key_Down) {
-            return emojiList.incrementCurrentIndex()
+            return emojiSuggestions.listView.incrementCurrentIndex()
         }
         if (event.key === Qt.Key_Up) {
-            return emojiList.decrementCurrentIndex()
+            return emojiSuggestions.listView.decrementCurrentIndex()
         }
 
         isColonPressed = (event.key === Qt.Key_Colon) && (event.modifiers & Qt.ShiftModifier);
@@ -337,98 +337,8 @@ Rectangle {
         standardButtons: StandardButton.Ok
     }
 
-    Popup {
-        property var emojis
-        property string shortname
-
-        function openPopup(emojisParam, shortnameParam) {
-            emojis = emojisParam
-            shortname = shortnameParam
-            emojiSuggestions.open()
-        }
-
-        function addEmoji(index) {
-            if (index === undefined) {
-                index = emojiList.currentIndex
-            }
-
-            const message = extrapolateCursorPosition();
-            const unicode = emojiSuggestions.emojis[index].unicode_alternates || emojiSuggestions.emojis[index].unicode
-            replaceWithEmoji(message, emojiSuggestions.shortname, unicode)
-        }
-
+    StatusEmojiSuggestionPopup {
         id: emojiSuggestions
-        width: messageInput.width
-        height: Math.min(400, emojiList.contentHeight + Style.current.smallPadding)
-        x : messageInput.x
-        y: -height
-        background: Rectangle {
-            id: bgRectangle
-            visible: !!emojiSuggestions.emojis && emojiSuggestions.emojis.length > 0
-            color: Style.current.background
-            border.width: 0
-            radius: Style.current.radius
-            layer.enabled: true
-                layer.effect: DropShadow{
-                width: bgRectangle.width
-                height: bgRectangle.height
-                x: bgRectangle.x
-                y: bgRectangle.y + 10
-                visible: bgRectangle.visible
-                source: bgRectangle
-                horizontalOffset: 0
-                verticalOffset: 2
-                radius: 10
-                samples: 15
-                color: "#22000000"
-            }
-        }
-
-        ListView {
-            id: emojiList
-            model: emojiSuggestions.emojis || []
-            keyNavigationEnabled: true
-            anchors.fill: parent
-            clip: true
-
-            delegate: Rectangle {
-                id: rectangle
-                color: emojiList.currentIndex === index ? Style.current.backgroundHover : Style.current.transparent
-                border.width: 0
-                width: parent.width
-                height: 42
-                radius: Style.current.radius
-
-                SVGImage {
-                    id: emojiImage
-                    source: `../../imports/twemoji/26x26/${modelData.unicode}.png`
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    anchors.leftMargin: Style.current.smallPadding
-                }
-
-                StyledText {
-                    text: modelData.shortname
-                    color: Style.current.textColor
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: emojiImage.right
-                    anchors.leftMargin: Style.current.smallPadding
-                    font.pixelSize: 15
-                }
-
-                MouseArea {
-                    cursorShape: Qt.PointingHandCursor
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onEntered: {
-                        emojiList.currentIndex = index
-                    }
-                    onClicked: {
-                        emojiSuggestions.addEmoji(index)
-                    }
-                }
-            }
-        }
     }
 
     StatusChatCommandsPopup {
