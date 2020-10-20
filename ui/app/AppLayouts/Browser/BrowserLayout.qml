@@ -323,9 +323,15 @@ Rectangle {
             }
         ]
     }
+    
+    function obtainAddress(){
+        var ensAddr = urlENSDictionary[web3Provider.getHost(currentWebView.url)];
+        browserHeader.addressBar.text = ensAddr ? web3Provider.replaceHostByENS(currentWebView.url, ensAddr) : currentWebView.url;
+    }
 
     onCurrentWebViewChanged: {
         findBar.reset();
+        obtainAddress();
     }
 
     Action {
@@ -585,6 +591,7 @@ Rectangle {
                 }
             }
         }
+
         Component {
             id: tabComponent
             WebEngineView {
@@ -766,6 +773,11 @@ Rectangle {
                 }
             }
         }
+    }
+
+    Connections {
+        target: currentWebView
+        onUrlChanged: obtainAddress()
     }
 
     ProgressBar {
