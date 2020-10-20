@@ -148,8 +148,9 @@ Item {
                         target: txtToSecondary
                         anchors.right: idtToContact.left
                         anchors.rightMargin: Style.current.halfPadding
-                        width: metSecondary.elidedWidth
+                        width: txtToSecondary.visible ? metSecondary.elidedWidth : 0
                         text: metSecondary.elidedText
+                        visible: root.toAccount.address !== Constants.zeroAddress
                     }
                     PropertyChanges {
                         target: idtToContact
@@ -196,7 +197,8 @@ Item {
                 font.pixelSize: 15
                 height: 22
                 anchors.left: parent.left
-                anchors.right: txtToSeparator.left
+                anchors.right: txtToSeparator.visible ? txtToSeparator.left : idtToContact.left
+                anchors.rightMargin: txtToSeparator.visible ? 0 : Style.current.halfPadding
                 anchors.verticalCenter: parent.verticalCenter
                 horizontalAlignment: Text.AlignRight
                 verticalAlignment: Text.AlignVCenter
