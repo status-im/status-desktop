@@ -13,6 +13,7 @@ ModalPopup {
     property int memberCount: 1
     readonly property int maxMembers: 10
     property var pubKeys: []
+    property bool isAdmin: false
 
     function resetSelectedMembers(){
         pubKeys = [];
@@ -36,6 +37,7 @@ ModalPopup {
 
     onOpened: {
         addMembers = false;
+        popup.isAdmin = chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
         btnSelectMembers.enabled = false;
         resetSelectedMembers();
     }
@@ -98,7 +100,7 @@ ModalPopup {
 
       Rectangle {
             id: editGroupNameBtn
-            visible: !addMembers && chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
+            visible: !addMembers && popup.isAdmin
             height: 24
             width: 24
             anchors.verticalCenter: groupName.verticalCenter
@@ -307,7 +309,7 @@ ModalPopup {
 
                 StyledText {
                     id: moreActionsBtn
-                    visible: !model.isAdmin && chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
+                    visible: !model.isAdmin && popup.isAdmin
                     text: "..."
                     anchors.right: parent.right
                     anchors.rightMargin: Style.current.smallPadding
@@ -341,7 +343,7 @@ ModalPopup {
     }
 
     footer: Item {
-        visible: chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
+        visible: popup.isAdmin
         width: parent.width
         height: children[0].height
         StyledButton {
