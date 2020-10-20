@@ -358,16 +358,30 @@ Rectangle {
         }
 
         id: emojiSuggestions
-        width: parent.width - Style.current.padding * 2
-        height: Math.min(400, emojiList.contentHeight + Style.current.smallPadding * 2)
-        x : Style.current.padding / 2
-        y: -height - Style.current.smallPadding
+        width: messageInput.width
+        height: Math.min(400, emojiList.contentHeight + Style.current.smallPadding)
+        x : messageInput.x
+        y: -height
         background: Rectangle {
+            id: bgRectangle
             visible: !!emojiSuggestions.emojis && emojiSuggestions.emojis.length > 0
-            color: Style.current.secondaryBackground
-            border.width: 1
-            border.color: Style.current.borderSecondary
+            color: Style.current.background
+            border.width: 0
             radius: Style.current.radius
+            layer.enabled: true
+                layer.effect: DropShadow{
+                width: bgRectangle.width
+                height: bgRectangle.height
+                x: bgRectangle.x
+                y: bgRectangle.y + 10
+                visible: bgRectangle.visible
+                source: bgRectangle
+                horizontalOffset: 0
+                verticalOffset: 2
+                radius: 10
+                samples: 15
+                color: "#22000000"
+            }
         }
 
         ListView {
@@ -379,7 +393,7 @@ Rectangle {
 
             delegate: Rectangle {
                 id: rectangle
-                color: emojiList.currentIndex === index ? Style.current.inputBorderFocus : Style.current.transparent
+                color: emojiList.currentIndex === index ? Style.current.backgroundHover : Style.current.transparent
                 border.width: 0
                 width: parent.width
                 height: 42
@@ -395,7 +409,7 @@ Rectangle {
 
                 StyledText {
                     text: modelData.shortname
-                    color: emojiList.currentIndex === index ? Style.current.currentUserTextColor : Style.current.textColor
+                    color: Style.current.textColor
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: emojiImage.right
                     anchors.leftMargin: Style.current.smallPadding
