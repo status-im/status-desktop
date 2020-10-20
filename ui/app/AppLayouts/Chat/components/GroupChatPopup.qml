@@ -73,7 +73,6 @@ ModalPopup {
           font.bold: true
           font.pixelSize: 17
           anchors.top: parent.top
-          anchors.topMargin: Style.current.padding
       }
 
       StyledText {
