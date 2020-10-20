@@ -291,7 +291,7 @@ ModalPopup {
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: openProfilePopup(model.userName, model.pubKey, model.identicon, '', contactRow.nickname, popup)
+                            onClicked: openProfilePopup(model.userName, model.pubKey, model.identicon, '', contactRow.nickname)
                         }
                     }
 
