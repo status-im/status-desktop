@@ -90,15 +90,6 @@ Rectangle {
             Layout.leftMargin: -root.innerMargin/2
         }
 
-        Connections {
-            target: currentWebView
-            onUrlChanged: {
-                var ensAddr = urlENSDictionary[web3Provider.getHost(currentWebView.url)];
-                addressBar.text = ensAddr ? web3Provider.replaceHostByENS(currentWebView.url, ensAddr) : currentWebView.url;
-            }
-        }
-
-
         StyledTextField {
             id: addressBar
             height: 40
