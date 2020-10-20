@@ -393,4 +393,6 @@ DISTFILES += \
     shared/img/loading.svg \
     shared/img/status-logo.png \
     shared/qmldir \
+    shared/status/StatusEmojiSuggestionPopup.qml \
+    shared/status/StatusInputListPopup.qml \
     sounds/ErrorSound.qml
