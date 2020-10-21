@@ -174,6 +174,7 @@ DISTFILES += \
     app/AppLayouts/Chat/data/EmojiReactions.qml \
     app/AppLayouts/Profile/Sections/AppearanceContainer.qml \
     app/AppLayouts/Profile/Sections/BackupSeedModal.qml \
+    app/AppLayouts/Profile/Sections/BrowserContainer.qml \
     app/AppLayouts/Profile/Sections/MyProfileContainer.qml \
     app/AppLayouts/Profile/Sections/SoundsContainer.qml \
     app/AppLayouts/UIComponents/UIComponents.qml \

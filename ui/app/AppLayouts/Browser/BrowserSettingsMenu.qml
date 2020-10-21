@@ -5,6 +5,7 @@ import "../../../shared"
 import "../../../shared/status"
 import "../../../imports"
 import "../Chat/ChatColumn/ChatComponents"
+import "../Profile/LeftTab/constants.js" as ProfileConstants
 
 PopupMenu {
     property var addNewTab: function () {}
@@ -83,7 +84,8 @@ PopupMenu {
         text: qsTr("Settings")
         shortcut: "Ctrl+,"
         onTriggered: {
-            console.log('Open settings in Profile')
+            appMain.changeAppSection(Constants.profile)
+            profileLayoutContainer.changeProfileSection(ProfileConstants.BROWSER_SETTINGS)
         }
     }
 }

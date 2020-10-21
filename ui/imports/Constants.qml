@@ -15,6 +15,13 @@ QtObject {
     readonly property int limitLongChatText: 500
     readonly property int limitLongChatTextCompactMode: 1000
 
+    readonly property string chat: "chat"
+    readonly property string wallet: "wallet"
+    readonly property string browser: "browser"
+    readonly property string profile: "profile"
+    readonly property string node: "node"
+    readonly property string ui: "ui"
+
     readonly property int notifyAllMessages: 0
     readonly property int notifyJustMentions: 1
     readonly property int notifyNone: 2
