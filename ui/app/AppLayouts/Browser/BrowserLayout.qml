@@ -277,7 +277,7 @@ Rectangle {
         }
     }
     function addNewTab() {
-        tabs.createEmptyTab(tabs.count != 0 ? currentWebView.profile : defaultProfile);
+        tabs.createEmptyTab(tabs.count !== 0 ? currentWebView.profile : defaultProfile);
         tabs.currentIndex = tabs.count - 1;
         browserHeader.addressBar.forceActiveFocus();
         browserHeader.addressBar.selectAll();
@@ -357,11 +357,22 @@ Rectangle {
         property int tabHeight: 40
         visible: !downloadView.visible
         id: tabs
-        function createEmptyTab(profile) {
+        function createEmptyTab(profile, createAsStartPage) {
             var tab = addTab("", tabComponent);
             // We must do this first to make sure that tab.active gets set so that tab.item gets instantiated immediately.
             tab.active = true;
-            tab.title = Qt.binding(function() { return tab.item.title ? tab.item.title : qsTr("New Tab") });
+            createAsStartPage = createAsStartPage || tabs.count === 1
+            tab.title = Qt.binding(function() {
+                if (tab.item.title) {
+                    return tab.item.title
+                }
+
+                if (createAsStartPage) {
+                    return qsTr("Start Page")
+                }
+                return qsTr("New Tab")
+            })
+
             tab.item.profile = profile;
             return tab;
         }
@@ -374,8 +385,10 @@ Rectangle {
         }
 
         function removeView(index) {
-            if (tabs.count > 1)
-                tabs.removeTab(index)
+            if (tabs.count === 1) {
+                tabs.createEmptyTab(currentWebView.profile, true)
+            }
+            tabs.removeTab(index)
         }
 
         z: 50
@@ -389,7 +402,8 @@ Rectangle {
             defaultProfile.downloadRequested.connect(onDownloadRequested);
             otrProfile.downloadRequested.connect(onDownloadRequested);
             var tab = createEmptyTab(defaultProfile);
-            tab.item.url = determineRealURL("https://simpledapp.eth");
+            // For Devs: Uncomment the next lien if you want to use the simpeldapp on first load
+            // tab.item.url = determineRealURL("https://simpledapp.eth");
         }
 
         style: BrowserTabStyle {}

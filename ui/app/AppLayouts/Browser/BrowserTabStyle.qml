@@ -59,7 +59,7 @@ TabViewStyle {
 
             StatusIconButton {
                 id: closeTabBtn
-                visible: tabs.count > 1
+                visible: tabs.count > 1 || styleData.title !== qsTr("Start Page")
                 enabled: visible
                 icon.name: "browser/close"
                 iconColor: Style.current.textColor
