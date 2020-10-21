@@ -81,7 +81,19 @@ ApplicationWindow {
         property real volume: 0.2
         property int notificationSetting: 0
         property bool notificationSoundsEnabled: true
+
+        // Browser settings
+        property bool autoLoadImages: true
+        property bool javaScriptEnabled: true
+        property bool errorPageEnabled: true
+        property bool pluginsEnabled: true
+        property bool autoLoadIconsForPage: true
+        property bool touchIconsEnabled: true
+        property bool webRTCPublicInterfacesOnly: false
+        property bool devToolsEnabled: false
+        property bool pdfViewerEnabled: true
     }
+
     Connections {
         target: profileModel
         onProfileSettingsFileChanged: {
