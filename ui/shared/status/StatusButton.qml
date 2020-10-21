@@ -55,7 +55,11 @@ Button {
             font: control.font
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
-            anchors.fill: parent
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.right: iconLoader.active ? undefined : parent.right
+            anchors.left: iconLoader.active ? iconLoader.right : parent.left
+            anchors.leftMargin: iconLoader.active ? Style.current.smallPadding : 0
             color: !enabled ? Style.current.buttonDisabledForegroundColor : control.color
             visible: !loadingIndicator.active
         }
