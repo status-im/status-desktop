@@ -8,9 +8,10 @@ var LANGUAGE = 6
 var NOTIFICATIONS = 7
 var SYNC_SETTINGS = 8
 var DEVICES_SETTINGS = 9
-var ADVANCED = 10
-var NEED_HELP = 11
-var ABOUT = 12
+var BROWSER_SETTINGS = 10
+var ADVANCED = 11
+var NEED_HELP = 12
+var ABOUT = 13
 
 var menuButtons = [{
                        "id": PROFILE,
@@ -52,7 +53,11 @@ var menuButtons = [{
                        "id": DEVICES_SETTINGS,
                        "text": qsTr("Devices settings"),
                        "filename": "sync.svg"
-                   }, {
+                   },  {
+                        "id": BROWSER_SETTINGS,
+                        "text": qsTr("Browser settings"),
+                        "filename": "../compassActive.svg"
+                    }, {
                        "id": ADVANCED,
                        "text": qsTr("Advanced"),
                        "filename": "advanced.svg"

@@ -7,6 +7,7 @@ import "./Sections"
 
 SplitView {
     property int contentMargin: 120
+    property alias changeProfileSection: leftTab.changeProfileSection
 
     id: profileView
     Layout.fillHeight: true
@@ -76,6 +77,8 @@ SplitView {
         SyncContainer {}
 
         DevicesContainer {}
+
+        BrowserContainer {}
 
         AdvancedContainer {}
 

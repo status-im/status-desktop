@@ -10,6 +10,9 @@ ScrollView {
     property int profileCurrentIndex: ProfileConstants.PROFILE
     readonly property int btnheight: 42
     readonly property int w: 340
+    property var changeProfileSection: function (sectionId) {
+        profileCurrentIndex = sectionId
+    }
 
     id: profileMenu
 

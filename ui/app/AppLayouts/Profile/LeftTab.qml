@@ -5,6 +5,7 @@ import "./LeftTab"
 
 Item {
     property alias currentTab: profileMenu.profileCurrentIndex
+    property alias changeProfileSection: profileMenu.changeProfileSection
 
     id: profileInfoContainer
 
