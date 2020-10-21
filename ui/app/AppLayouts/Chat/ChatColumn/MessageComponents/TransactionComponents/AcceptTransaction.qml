@@ -35,8 +35,7 @@ Item {
             cursorShape: Qt.PointingHandCursor
             onClicked: {
                 if (root.state === Constants.addressRequested) {
-                    // TODO get address from a modal instead
-                    chatsModel.acceptRequestAddressForTransaction(messageId, walletModel.getDefaultAccount())
+                    selectAccountModal.open()
                 } else if (root.state === Constants.transactionRequested) {
                     signTransactionModal.open()
                 }
@@ -96,6 +95,14 @@ Item {
         selectedAmount: tokenAmount
         selectedFiatAmount: fiatValue
         //outgoing: root.outgoing
+    }
+
+    SelectAccountModal {
+        id: selectAccountModal
+        onSelectAndShareAddressButtonClicked: {
+            chatsModel.acceptRequestAddressForTransaction(messageId, accountSelector.selectedAccount)
+            selectAccountModal.close()
+        }
     }
 }
 
