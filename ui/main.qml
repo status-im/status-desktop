@@ -92,6 +92,7 @@ ApplicationWindow {
         property bool webRTCPublicInterfacesOnly: false
         property bool devToolsEnabled: false
         property bool pdfViewerEnabled: true
+        property bool compatibilityMode: true
     }
 
     Connections {

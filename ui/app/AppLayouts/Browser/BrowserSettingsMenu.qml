@@ -71,7 +71,25 @@ PopupMenu {
     }
 
     Action {
-        text: qsTr("Developper Tools")
+        text: qsTr("Compatibility mode")
+        checkable: true
+        checked: true
+        onToggled: {
+            for (let i = 0; i < tabs.count; ++i){
+                tabs.getTab(i).item.stop(); // Stop all loading tabs
+            }
+
+            appSettings.compatibilityMode = checked;
+
+            for (let i = 0; i < tabs.count; ++i){
+                tabs.getTab(i).item.reload(); // Reload them with new user agent
+            }
+                            
+        }
+    }
+
+    Action {
+        text: qsTr("Developer Tools")
         shortcut: "F12"
         onTriggered: {
             appSettings.devToolsEnabled = !appSettings.devToolsEnabled
