@@ -335,9 +335,9 @@
         <source>Status Desktop</source>
         <translation type="unfinished"></translation>
     </message>
-    <message id="version:-beta.2">
+    <message id="version:-beta.3">
         <location filename="../app/AppLayouts/Profile/Sections/AboutContainer.qml" line="40"/>
-        <source>Version: beta.2</source>
+        <source>Version: beta.3</source>
         <translation type="unfinished"></translation>
     </message>
     <message id="node-version:-%1">

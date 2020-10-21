@@ -400,10 +400,10 @@
         <source>Status Desktop</source>
         <translation>Status Desktop</translation>
     </message>
-    <message id="version:-beta.2">
+    <message id="version:-beta.3">
         <location filename="../app/AppLayouts/Profile/Sections/AboutContainer.qml" line="40"/>
-        <source>Version: beta.2</source>
-        <translation>Version: beta.2</translation>
+        <source>Version: beta.3</source>
+        <translation>Version: beta.3</translation>
     </message>
     <message id="node-version:-%1">
         <location filename="../app/AppLayouts/Profile/Sections/AboutContainer.qml" line="51"/>
