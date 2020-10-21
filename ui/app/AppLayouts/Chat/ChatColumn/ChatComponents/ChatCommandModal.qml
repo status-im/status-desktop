@@ -97,22 +97,17 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group3
-            //% "Transaction preview"
-            headerText: qsTrId("transaction-preview")
+            headerText: root.isRequested ?
+                qsTr("Preview") :
+                //% "Transaction preview"
+                qsTrId("transaction-preview")
             footerText: root.finalButtonLabel
 
             TransactionPreview {
                 id: pvwTransaction
                 width: stack.width
                 fromAccount: root.isRequested ? selectRecipient.selectedRecipient : selectFromAccount.selectedAccount
-                isTransactionRequest: root.isRequested
-                toAccount: {
-                    if (root.isRequested) {
-                      selectFromAccount.selectedAccount.type = RecipientSelector.Type.Contact
-                      return selectFromAccount.selectedAccount
-                    }
-                    return selectRecipient.selectedRecipient
-                }
+                toAccount: root.isRequested ? selectFromAccount.selectedAccount : selectRecipient.selectedRecipient
                 asset: txtAmount.selectedAsset
                 amount: { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount }
                 currency: walletModel.defaultCurrency

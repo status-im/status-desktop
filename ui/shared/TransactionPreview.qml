@@ -23,8 +23,7 @@ Item {
     // Creates a mouse area around the "network fee". When clicked, triggers 
     // the "gasClicked" signal
     property bool isGasEditable: false
-    property bool isValid: true
-    property bool isTransactionRequest: false
+    property alias isValid: balanceValidator.isValid
 
     function resetInternal() {
         fromAccount = undefined
@@ -32,131 +31,103 @@ Item {
         asset = undefined
         amount = undefined
         gas = undefined
-        isValid = true
+        balanceValidator.resetInternal()
+        balanceValidator.reset()
     }
 
-    function validate() {
-        let isValid = true
-        if (fromValueLoader.status == Loader.Ready && fromValueLoader.item.hasOwnProperty("insufficientBalance")) {
-            fromValueLoader.item.insufficientBalance = false
-        }
-        if (!root.isTransactionRequest && hasInsufficientBalance()) {
-            isValid = false
-            if (fromValueLoader.status == Loader.Ready && fromValueLoader.item.hasOwnProperty("insufficientBalance")) {
-                fromValueLoader.item.insufficientBalance = true
-            }
-        }
-        root.isValid = isValid
-        return isValid
-    }
-
-    function hasInsufficientBalance() {
-        if (!root.asset || !root.fromAccount || !root.fromAccount.assets || !root.amount) {
-            return true
-        }
-        const currAcctAsset = Utils.findAssetBySymbol(root.fromAccount.assets, root.asset.symbol)
-        if (!currAcctAsset) return true
-        return currAcctAsset.value < root.amount.value
-    }
-
-    onAssetChanged: validate()
-    onFromAccountChanged: {
-        if (fromValueLoader.status == Loader.Ready) {
-            fromValueLoader.item.account = root.fromAccount
-        }
-        validate()
-    }
-
-    onToAccountChanged: {
-        if (toValueLoader.status == Loader.Ready) {
-            toValueLoader.item.account = root.toAccount
-        }
-    }
-
-    Component {
-        id: walletCmp
-        Item {
-            id: walletCmpRoot
-            property var account
-            property bool insufficientBalance: false
-            function needsRightPadding() {
-                return imgInsufficientBalance.visible || fromArrow.visible
-            }
-            Row {
-                spacing: Style.current.halfPadding
-                rightPadding: walletCmpRoot.needsRightPadding() ? Style.current.halfPadding : 0
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-
-                StyledText {
-                    font.pixelSize: 15
-                    height: 22
-                    text: walletCmpRoot.account ? walletCmpRoot.account.name : ""
-                    elide: Text.ElideRight
-                    anchors.verticalCenter: parent.verticalCenter
-                    horizontalAlignment: Text.AlignRight
-                    verticalAlignment: Text.AlignVCenter
-                }
-                SVGImage {
-                    id: imgFromWallet
-                    sourceSize.height: 18
-                    sourceSize.width: 18
-                    horizontalAlignment: Image.AlignLeft
-                    width: walletCmpRoot.needsRightPadding() ? (Style.current.halfPadding + sourceSize.width) : undefined // adding width to add addl spacing to image
-                    anchors.verticalCenter: parent.verticalCenter
-                    fillMode: Image.PreserveAspectFit
-                    source: "../app/img/walletIcon.svg"
-                    ColorOverlay {
-                        anchors.fill: parent
-                        source: parent
-                        color: walletCmpRoot.account && walletCmpRoot.account.iconColor ? walletCmpRoot.account.iconColor : Style.current.blue
-                    }
-                }
-                SVGImage {
-                    id: imgInsufficientBalance
-                    width: 13
-                    visible: walletCmpRoot.insufficientBalance
-                    anchors.verticalCenter: parent.verticalCenter
-                    fillMode: Image.PreserveAspectFit
-                    source: "../app/img/exclamation_outline.svg"
-                }
-                SVGImage {
-                    id: fromArrow
-                    width: 13
-                    visible: root.isFromEditable
-                    anchors.verticalCenter: parent.verticalCenter
-                    fillMode: Image.PreserveAspectFit
-                    source: "../app/img/caret.svg"
-                    rotation: 270
-                    ColorOverlay {
-                        anchors.fill: parent
-                        visible: parent.visible
-                        source: parent
-                        color: Style.current.secondaryText
-                    }
-                }
-            }
-            MouseArea {
+    Column {
+        id: content
+        anchors.left: parent.left
+        anchors.right: parent.right
+        LabelValueRow {
+            id: itmFrom
+            //% "From"
+            label: qsTrId("from")
+            value: Item {
+                id: itmFromValue
                 anchors.fill: parent
-                visible: fromArrow.visible
-                cursorShape: Qt.PointingHandCursor
-                onClicked: root.fromClicked()
+                function needsRightPadding() {
+                    return !balanceValidator.isValid || fromArrow.visible
+                }
+                Row {
+                    spacing: Style.current.halfPadding
+                    rightPadding: itmFromValue.needsRightPadding() ? Style.current.halfPadding : 0
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    StyledText {
+                        font.pixelSize: 15
+                        height: 22
+                        text: root.fromAccount ? root.fromAccount.name : ""
+                        elide: Text.ElideRight
+                        anchors.verticalCenter: parent.verticalCenter
+                        horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    SVGImage {
+                        id: imgFromWallet
+                        sourceSize.height: 18
+                        sourceSize.width: 18
+                        visible: !!root.fromAccount ? root.fromAccount.type === RecipientSelector.Type.Account : true
+                        horizontalAlignment: Image.AlignLeft
+                        width: itmFromValue.needsRightPadding() ? (Style.current.halfPadding + sourceSize.width) : undefined // adding width to add addl spacing to image
+                        anchors.verticalCenter: parent.verticalCenter
+                        fillMode: Image.PreserveAspectFit
+                        source: "../app/img/walletIcon.svg"
+                        ColorOverlay {
+                            visible: parent.visible
+                            anchors.fill: parent
+                            source: parent
+                            color: root.fromAccount && root.fromAccount.iconColor ? root.fromAccount.iconColor : Style.current.blue
+                        }
+                    }
+                    BalanceValidator {
+                        id: balanceValidator
+                        account: root.fromAccount
+                        amount: !!(root.amount && root.amount.value) ? parseFloat(root.amount.value) : 0.0
+                        asset: root.asset
+                        anchors.verticalCenter: parent.verticalCenter
+                        reset: function() {
+                            account = Qt.binding(function() { return root.fromAccount })
+                            amount = Qt.binding(function() { return !!(root.amount && root.amount.value) ? parseFloat(root.amount.value) : 0.0 })
+                            asset = Qt.binding(function() { return root.asset })
+                        }
+                    }
+                    SVGImage {
+                        id: fromArrow
+                        width: 13
+                        visible: root.isFromEditable
+                        anchors.verticalCenter: parent.verticalCenter
+                        fillMode: Image.PreserveAspectFit
+                        source: "../app/img/caret.svg"
+                        rotation: 270
+                        ColorOverlay {
+                            anchors.fill: parent
+                            visible: parent.visible
+                            source: parent
+                            color: Style.current.secondaryText
+                        }
+                    }
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    visible: fromArrow.visible
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.fromClicked()
+                }
             }
         }
-    }
-
-    Component {
-        id: contactCmp
-        Item {
-            id: contactCmpRoot
-            property var account
+        LabelValueRow {
+            id: itmTo
+            //% "Recipient"
+            label: qsTrId("recipient")
             states: [
                 State {
                     name: "Address"
-                    when: !!contactCmpRoot.account && contactCmpRoot.account.type === RecipientSelector.Type.Address
+                    when: !!root.toAccount && root.toAccount.type === RecipientSelector.Type.Address
                     PropertyChanges {
                         target: txtToPrimary
-                        text: contactCmpRoot.account ? contactCmpRoot.account.address : ""
+                        text: root.toAccount ? root.toAccount.address : ""
                         elide: Text.ElideMiddle
                         anchors.leftMargin: 190
                         anchors.right: parent.right
@@ -168,10 +139,10 @@ Item {
                 },
                 State {
                     name: "Contact"
-                    when: !!contactCmpRoot.account && contactCmpRoot.account.type === RecipientSelector.Type.Contact && !!contactCmpRoot.account.address
+                    when: !!root.toAccount && root.toAccount.type === RecipientSelector.Type.Contact && !!root.toAccount.address
                     PropertyChanges {
                         target: metSecondary
-                        text: contactCmpRoot.account.ensVerified ? contactCmpRoot.account.alias : contactCmpRoot.account.address
+                        text: root.toAccount.ensVerified ? root.toAccount.alias : root.toAccount.address
                     }
                     PropertyChanges {
                         target: txtToSecondary
@@ -182,20 +153,20 @@ Item {
                     }
                     PropertyChanges {
                         target: idtToContact
-                        source: contactCmpRoot.account.identicon
+                        source: root.toAccount.identicon
                         visible: true
                     }
                     PropertyChanges {
                         target: txtToPrimary
-                        text: Utils.removeStatusEns(contactCmpRoot.account.name)
+                        text: Utils.removeStatusEns(root.toAccount.name)
                     }
                 },
                 State {
                     name: "Account"
-                    when: !!contactCmpRoot.account && contactCmpRoot.account.type === RecipientSelector.Type.Account && !!contactCmpRoot.account.address
+                    when: !!root.toAccount && root.toAccount.type === RecipientSelector.Type.Account && !!root.toAccount.address
                     PropertyChanges {
                         target: metSecondary
-                        text: contactCmpRoot.account.address
+                        text: root.toAccount.address
                     }
                     PropertyChanges {
                         target: txtToSecondary
@@ -211,11 +182,11 @@ Item {
                     PropertyChanges {
                         target: ovlToWallet
                         visible: true
-                        color: contactCmpRoot.account.iconColor
+                        color: root.toAccount.iconColor
                     }
                     PropertyChanges {
                         target: txtToPrimary
-                        text: contactCmpRoot.account.name
+                        text: root.toAccount.name
                     }
                 }
             ]
@@ -282,35 +253,6 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 32
                 height: 32
-            }
-        }
-    }
-
-    Column {
-        id: content
-        anchors.left: parent.left
-        anchors.right: parent.right
-
-        LabelValueRow {
-            id: itmFrom
-            //% "From"
-            label: qsTrId("from")
-            value: Loader {
-                id: fromValueLoader
-                sourceComponent: root.isTransactionRequest ? contactCmp : walletCmp
-                anchors.fill: parent
-                anchors.verticalCenter: parent.verticalCenter
-            }
-        }
-        LabelValueRow {
-            id: itmTo
-            //% "Recipient"
-            label: qsTrId("recipient")
-            value: Loader {
-                id: toValueLoader
-                sourceComponent: root.isTransactionRequest ? walletCmp : contactCmp 
-                anchors.fill: parent
-                anchors.verticalCenter: parent.verticalCenter
             }
         }
         LabelValueRow {

@@ -68,7 +68,6 @@ ModalPopup {
             AccountSelector {
                 id: selectFromAccount
                 accounts: walletModel.accounts
-                selectedAccount: root.selectedAccount
                 currency: walletModel.defaultCurrency
                 width: stack.width
                 //% "Choose account"
@@ -77,7 +76,6 @@ ModalPopup {
                 minRequiredAssetBalance: parseFloat(root.selectedAmount)
                 reset: function() {
                     accounts = Qt.binding(function() { return walletModel.accounts })
-                    selectedAccount = Qt.binding(function() { return root.selectedAccount })
                     showBalanceForAssetSymbol = Qt.binding(function() { return root.selectedAsset.symbol })
                     minRequiredAssetBalance = Qt.binding(function() { return parseFloat(root.selectedAmount) })
                 }
@@ -147,12 +145,12 @@ ModalPopup {
                 id: gasValidator
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 8
-                selectedAccount: root.selectedAccount
+                selectedAccount: selectFromAccount.selectedAccount
                 selectedAmount: parseFloat(root.selectedAmount)
                 selectedAsset: root.selectedAsset
                 selectedGasEthValue: gasSelector.selectedGasEthValue
                 reset: function() {
-                    selectedAccount = Qt.binding(function() { return root.selectedAccount })
+                    selectedAccount = Qt.binding(function() { return selectFromAccount.selectedAccount })
                     selectedAmount = Qt.binding(function() { return parseFloat(root.selectedAmount) })
                     selectedAsset = Qt.binding(function() { return root.selectedAsset })
                     selectedGasEthValue = Qt.binding(function() { return gasSelector.selectedGasEthValue })
@@ -170,24 +168,23 @@ ModalPopup {
             onNextClicked: function() {
                 stack.push(groupSignTx, StackView.Immediate)
             }
-            isValid: groupSelectAcct.isValid && groupSelectGas.isValid && gasValidator.isValid && pvwTransaction.isValid
+            isValid: groupSelectAcct.isValid && groupSelectGas.isValid && pvwTransaction.isValid
 
             TransactionPreview {
                 id: pvwTransaction
                 width: stack.width
-                fromAccount: root.selectedAccount
+                fromAccount: selectFromAccount.selectedAccount
                 gas: {
                     "value": gasSelector.selectedGasEthValue,
                     "symbol": "ETH",
                     "fiatValue": gasSelector.selectedGasFiatValue
                 }
-                toAccount: root.selectedRecipient
+                toAccount: selectRecipient.selectedRecipient
                 asset: root.selectedAsset
                 amount: { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount }
                 currency: walletModel.defaultCurrency
-                //outgoing: root.outgoing
                 reset: function() {
-                    fromAccount =  Qt.binding(function() { return root.selectedAccount })
+                    fromAccount =  Qt.binding(function() { return selectFromAccount.selectedAccount })
                     gas = Qt.binding(function() {
                         return {
                             "value": gasSelector.selectedGasEthValue,
@@ -195,7 +192,7 @@ ModalPopup {
                             "fiatValue": gasSelector.selectedGasFiatValue
                         }
                     })
-                    toAccount =  Qt.binding(function() { return root.selectedRecipient })
+                    toAccount =  Qt.binding(function() { return selectRecipient.selectedRecipient })
                     asset = Qt.binding(function() { return root.selectedAsset })
                     amount = Qt.binding(function() { return { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount } })
                 }
@@ -208,12 +205,12 @@ ModalPopup {
                 id: gasValidator2
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 8
-                selectedAccount: root.selectedAccount
+                selectedAccount: selectFromAccount.selectedAccount
                 selectedAmount: parseFloat(root.selectedAmount)
                 selectedAsset: root.selectedAsset
                 selectedGasEthValue: gasSelector.selectedGasEthValue
                 reset: function() {
-                    selectedAccount = Qt.binding(function() { return root.selectedAccount })
+                    selectedAccount = Qt.binding(function() { return selectFromAccount.selectedAccount })
                     selectedAmount = Qt.binding(function() { return parseFloat(root.selectedAmount) })
                     selectedAsset = Qt.binding(function() { return root.selectedAsset })
                     selectedGasEthValue = Qt.binding(function() { return gasSelector.selectedGasEthValue })
