@@ -9,7 +9,6 @@ import "../../../shared/status"
 import "../../../imports"
 
 Rectangle {
-    property alias browserSettings: browserSettings
     property alias addressBar: addressBar
     readonly property int innerMargin: 12
     property var addNewTab: function () {}
@@ -19,19 +18,6 @@ Rectangle {
     height: 45
     color: Style.current.background
     border.width: 0
-
-    Settings {
-        id : browserSettings
-        property alias autoLoadImages: loadImages.checked
-        property alias javaScriptEnabled: javaScriptEnabled.checked
-        property alias errorPageEnabled: errorPageEnabled.checked
-        property alias pluginsEnabled: pluginsEnabled.checked
-        property alias autoLoadIconsForPage: autoLoadIconsForPage.checked
-        property alias touchIconsEnabled: touchIconsEnabled.checked
-        property alias webRTCPublicInterfacesOnly : webRTCPublicInterfacesOnly.checked
-        property alias devToolsEnabled: devToolsEnabled.checked
-        property alias pdfViewerEnabled: pdfViewerEnabled.checked
-    }
 
     RowLayout {
         anchors.fill: parent
@@ -174,79 +160,6 @@ Rectangle {
                         browserWalletMenu.open()
                     }
                 }
-            }
-        }
-
-        // TODO move these to profile settings
-        Menu {
-            id: settingsMenuOld
-            y: settingsMenuButton.height
-            x: settingsMenuButton.x
-            MenuItem {
-                id: loadImages
-                text: "Autoload images"
-                checkable: true
-                checked: WebEngine.settings.autoLoadImages
-            }
-            MenuItem {
-                id: javaScriptEnabled
-                text: "JavaScript On"
-                checkable: true
-                checked: WebEngine.settings.javascriptEnabled
-            }
-            MenuItem {
-                id: errorPageEnabled
-                text: "ErrorPage On"
-                checkable: true
-                checked: WebEngine.settings.errorPageEnabled
-            }
-            MenuItem {
-                id: pluginsEnabled
-                text: "Plugins On"
-                checkable: true
-                checked: true
-            }
-            MenuItem {
-                id: httpDiskCacheEnabled
-                text: "HTTP Disk Cache"
-                checkable: currentWebView && !currentWebView.profile.offTheRecord
-                checked: currentWebView && (currentWebView.profile.httpCacheType === WebEngineProfile.DiskHttpCache)
-                onToggled: function(checked) {
-                    if (currentWebView) {
-                        currentWebView.profile.httpCacheType = checked ? WebEngineProfile.DiskHttpCache : WebEngineProfile.MemoryHttpCache;
-                    }
-                }
-            }
-            MenuItem {
-                id: autoLoadIconsForPage
-                text: "Icons On"
-                checkable: true
-                checked: WebEngine.settings.autoLoadIconsForPage
-            }
-            MenuItem {
-                id: touchIconsEnabled
-                text: "Touch Icons On"
-                checkable: true
-                checked: WebEngine.settings.touchIconsEnabled
-                enabled: autoLoadIconsForPage.checked
-            }
-            MenuItem {
-                id: webRTCPublicInterfacesOnly
-                text: "WebRTC Public Interfaces Only"
-                checkable: true
-                checked: WebEngine.settings.webRTCPublicInterfacesOnly
-            }
-            MenuItem {
-                id: devToolsEnabled
-                text: "Open DevTools"
-                checkable: true
-                checked: false
-            }
-            MenuItem {
-                id: pdfViewerEnabled
-                text: "PDF viewer enabled"
-                checkable: true
-                checked: WebEngine.settings.pdfViewerEnabled
             }
         }
 

@@ -506,14 +506,14 @@ Rectangle {
                     zoomFactor = newFactor
                 }
 
-                settings.autoLoadImages: browserHeader.browserSettings.autoLoadImages
-                settings.javascriptEnabled: browserHeader.browserSettings.javaScriptEnabled
-                settings.errorPageEnabled: browserHeader.browserSettings.errorPageEnabled
-                settings.pluginsEnabled: browserHeader.browserSettings.pluginsEnabled
-                settings.autoLoadIconsForPage: browserHeader.browserSettings.autoLoadIconsForPage
-                settings.touchIconsEnabled: browserHeader.browserSettings.touchIconsEnabled
-                settings.webRTCPublicInterfacesOnly: browserHeader.browserSettings.webRTCPublicInterfacesOnly
-                settings.pdfViewerEnabled: browserHeader.browserSettings.pdfViewerEnabled
+                settings.autoLoadImages: appSettings.autoLoadImages
+                settings.javascriptEnabled: appSettings.javaScriptEnabled
+                settings.errorPageEnabled: appSettings.errorPageEnabled
+                settings.pluginsEnabled: appSettings.pluginsEnabled
+                settings.autoLoadIconsForPage: appSettings.autoLoadIconsForPage
+                settings.touchIconsEnabled: appSettings.touchIconsEnabled
+                settings.webRTCPublicInterfacesOnly: appSettings.webRTCPublicInterfacesOnly
+                settings.pdfViewerEnabled: appSettings.pdfViewerEnabled
 
                 onCertificateError: function(error) {
                     error.defer();
@@ -685,7 +685,7 @@ Rectangle {
 
     WebEngineView {
         id: devToolsView
-        visible: browserHeader.browserSettings.devToolsEnabled
+        visible: appSettings.devToolsEnabled
         height: visible ? 400 : 0
         inspectedView: visible && tabs.currentIndex < tabs.count ? tabs.getTab(tabs.currentIndex).item : null
         anchors.left: parent.left

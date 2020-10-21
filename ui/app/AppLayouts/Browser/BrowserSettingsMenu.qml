@@ -74,7 +74,7 @@ PopupMenu {
         text: qsTr("Developper Tools")
         shortcut: "F12"
         onTriggered: {
-            browserHeader.browserSettings.devToolsEnabled = !browserHeader.browserSettings.devToolsEnabled
+            appSettings.devToolsEnabled = !appSettings.devToolsEnabled
         }
     }
 
