@@ -40,6 +40,7 @@ Item {
                 //% "Account"
                 name: qsTrId("account-title")
                 //% "A"
+                //: This letter corresponds to the section title above, so here it is "A" because the title above is "Account"
                 letter: qsTrId("a")
                 //% "Your Status account, accessed by the seed phrase that you create or import during onboarding. A Status account can hold more than one Ethereum address, in addition to the one created during onboarding. We refer to these as additional accounts within the wallet"
                 description: qsTrId("your-status-account--accessed-by-the-seed-phrase-that-you-create-or-import-during-onboarding--a-status-account-can-hold-more-than-one-ethereum-address--in-addition-to-the-one-created-during-onboarding--we-refer-to-these-as-additional-accounts-within-the-wallet")
@@ -52,6 +53,7 @@ Item {
                 //% "Chat Key"
                 name: qsTrId("chat-key-title")
                 //% "C"
+                //: This letter corresponds to the section title above, so here it is "C" because the title above is "Chat Key"
                 letter: qsTrId("c")
                 //% "Messages on the Status chat protocol are sent and received using encryption keys. The public chat key is a string of characters you share with others so they can send you messages in Status."
                 description: qsTrId("chat-key-content")
@@ -74,6 +76,7 @@ Item {
                 //% "ENS Name"
                 name: qsTrId("ens-name-title")
                 //% "E"
+                //: This letter corresponds to the section title above, so here it is "E" because the title above is "ENS Name"
                 letter: qsTrId("e")
                 //% "Custom alias for your chat key that you can register using the Ethereum Name Service. ENS names are decentralized usernames."
                 description: qsTrId("ens-name-content")
@@ -81,12 +84,13 @@ Item {
 
             GlossaryEntry {
                 id: entryMailserver
-                //% "M"
-                letter: qsTrId("m")
                 anchors.top: entryENSName.bottom
                 anchors.topMargin: Style.current.padding
                 //% "Mailserver"
                 name: qsTrId("mailserver-title")
+                //% "M"
+                //: This letter corresponds to the section title above, so here it is "M" because the title above is "Mailserver"
+                letter: qsTrId("m")
                 //% "A node in the Status network that routes and stores messages, for up to 30 days."
                 description: qsTrId("mailserver-content")
             }
@@ -98,6 +102,7 @@ Item {
                 //% "Peer"
                 name: qsTrId("peer-title")
                 //% "P"
+                //: This letter corresponds to the section title above, so here it is "P" because the title above is "Peer"
                 letter: qsTrId("p")
                 //% "A device connected to the Status chat network. Each user can represent one or more peers, depending on their number of devices"
                 description: qsTrId("a-device-connected-to-the-status-chat-network--each-user-can-represent-one-or-more-peers--depending-on-their-number-of-devices")
@@ -110,6 +115,7 @@ Item {
                 //% "Seed Phrase"
                 name: qsTrId("seed-phrase-title")
                 //% "S"
+                //: This letter corresponds to the section title above, so here it is "S" because the title above is "Seed Phrase"
                 letter: qsTrId("s")
                 //% "A 64 character hex address based on the Ethereum standard and beginning with 0x. Public-facing, your wallet key is shared with others when you want to receive funds. Also referred to as an “Ethereum address” or “wallet address."
                 description: qsTrId("a-64-character-hex-address-based-on-the-ethereum-standard-and-beginning-with-0x--public-facing--your-wallet-key-is-shared-with-others-when-you-want-to-receive-funds--also-referred-to-as-an--ethereum-address--or--wallet-address-")
