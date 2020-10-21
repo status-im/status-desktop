@@ -124,6 +124,7 @@ DISTFILES += \
     app/AppLayouts/Browser/BrowserConnectionModal.qml \
     app/AppLayouts/Browser/BrowserHeader.qml \
     app/AppLayouts/Browser/BrowserSettingsMenu.qml \
+    app/AppLayouts/Browser/BrowserTabStyle.qml \
     app/AppLayouts/Browser/BrowserTabs.qml \
     app/AppLayouts/Browser/BrowserWalletMenu.qml \
     app/AppLayouts/Browser/FaviconImage.qml \
