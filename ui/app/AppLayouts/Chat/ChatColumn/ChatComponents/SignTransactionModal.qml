@@ -332,7 +332,7 @@ ModalPopup {
 
                     //% "Transaction pending..."
                     toastMessage.title = qsTrId("ens-transaction-pending")
-                    toastMessage.source = "../../img/loading.svg"
+                    toastMessage.source = "../../../img/loading.svg"
                     toastMessage.iconColor = Style.current.primary
                     toastMessage.iconRotates = true
                     toastMessage.link = `${walletModel.etherscanLink}/${response.result}`
