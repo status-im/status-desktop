@@ -30,8 +30,11 @@ Rectangle {
             orientation: ListView.Horizontal
             model: downloadModel
             height: currentItem ? currentItem.height : 0
+            // This makes it show the newest on the right
+            layoutDirection: Qt.RightToLeft
             spacing: Style.current.smallPadding
-            width: parent.width
+            anchors.left: parent.left
+            width: childrenRect.width
             interactive: false
             delegate: Component {
                 DownloadElement {
