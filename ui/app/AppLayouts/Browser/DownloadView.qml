@@ -58,11 +58,6 @@ Rectangle {
     id: downloadView
     color: "lightgray"
 
-    ListModel {
-        id: downloadModel
-        property var downloads: []
-    }
-
     function append(download) {
         downloadModel.append(download);
         downloadModel.downloads.push(download);
@@ -101,7 +96,7 @@ Rectangle {
                 }
                 Label {
                     id: label
-                    text: downloadDirectory + "/" + downloadFileName
+                    text: downloadModel.downloads[index].downloadDirectory + "/" + downloadModel.downloads[index].downloadFileName
                     anchors {
                         verticalCenter: cancelButton.verticalCenter
                         left: parent.left
