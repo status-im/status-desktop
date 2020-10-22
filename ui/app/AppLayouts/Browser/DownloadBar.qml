@@ -4,11 +4,11 @@ import "../../../shared"
 import "../../../shared/status"
 import "../../../imports"
 
-//downloadModel.downloads[index].receivedBytes
-
 Rectangle {
+    property bool isVisible: false
+
     id: root
-    visible: false
+    visible: isVisible && !!listView.count
     color: Style.current.background
     width: parent.width
     height: 56
@@ -61,7 +61,7 @@ Rectangle {
         icon.name: "browser/close"
         iconColor: Style.current.textColor
         onClicked: {
-            root.visible = false
+            root.isVisible = false
         }
     }
 }

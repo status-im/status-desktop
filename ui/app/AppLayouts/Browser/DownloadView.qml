@@ -96,7 +96,7 @@ Rectangle {
                 }
                 Label {
                     id: label
-                    text: downloadModel.downloads[index].downloadDirectory + "/" + downloadModel.downloads[index].downloadFileName
+                    text: downloadDirectory + "/" + downloadFileName
                     anchors {
                         verticalCenter: cancelButton.verticalCenter
                         left: parent.left
@@ -112,10 +112,7 @@ Rectangle {
 
                         download.cancel();
 
-                        downloadModel.downloads = downloadModel.downloads.filter(function (el) {
-                            return el.id !== download.id;
-                        });
-                        downloadModel.remove(index);
+                        removeDownloadFromModel(index)
                     }
                 }
             }

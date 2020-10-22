@@ -32,6 +32,13 @@ Rectangle {
         property var downloads: []
     }
 
+    function removeDownloadFromModel(index) {
+        downloadModel.downloads = downloadModel.downloads.filter(function (el) {
+            return el.id !== downloadModel.downloads[index].id;
+        });
+        downloadModel.remove(index);
+    }
+
     Layout.fillHeight: true
     Layout.fillWidth: true
 
@@ -631,7 +638,7 @@ Rectangle {
     }
 
     function onDownloadRequested(download) {
-        downloadBar.visible = true
+        downloadBar.isVisible = true
         downloadView.append(download);
         download.accept();
     }
