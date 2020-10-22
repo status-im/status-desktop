@@ -23,8 +23,10 @@ Item {
     // Creates a mouse area around the "network fee". When clicked, triggers 
     // the "gasClicked" signal
     property bool isGasEditable: false
-    property bool isValid: fromValid && gasValid
+    property bool isValid: toValid && fromValid && gasValid
     property bool fromValid: true
+    property bool toValid: true
+    property bool toWarn: false
     property bool gasValid: true
 
     function resetInternal() {
@@ -119,6 +121,9 @@ Item {
         }
         LabelValueRow {
             id: itmTo
+            function needsRightPadding() {
+                return !root.toValid || root.toWarn
+            }
             //% "Recipient"
             label: qsTrId("recipient")
             states: [
@@ -251,10 +256,23 @@ Item {
             StatusImageIdenticon {
                 id: idtToContact
                 visible: false
-                anchors.right: parent.right
+                anchors.right: toInvalid.visible ? toInvalid.left : parent.right
+                anchors.rightMargin: toInvalid.visible ? Style.current.halfPadding : 0
                 anchors.verticalCenter: parent.verticalCenter
                 width: 32
                 height: 32
+            }
+            SVGImage {
+                id: toInvalid
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                width: 13.33
+                height: 13.33
+                sourceSize.height: height * 2
+                sourceSize.width: width * 2
+                fillMode: Image.PreserveAspectFit
+                source: "../app/img/exclamation_outline.svg"
+                visible: !root.toValid || root.toWarn
             }
         }
         LabelValueRow {

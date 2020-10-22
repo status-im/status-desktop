@@ -19,8 +19,8 @@ ModalPopup {
     property alias transactionSigner: transactionSigner
 
     property var sendTransaction: function(selectedGasLimit, selectedGasPrice, enteredPassword) {
-        let responseStr = walletModel.sendTransaction(root.selectedAccount.address,
-                                                 root.selectedRecipient.address,
+        let responseStr = walletModel.sendTransaction(selectFromAccount.selectedAccount.address,
+                                                 selectRecipient.selectedRecipient.address,
                                                  root.selectedAsset.address,
                                                  root.selectedAmount,
                                                  selectedGasLimit,
@@ -28,17 +28,6 @@ ModalPopup {
                                                  enteredPassword,
                                                  stack.uuid)
 
-        let response = JSON.parse(responseStr)
-
-        if (response.error) {
-            if (response.result.includes("could not decrypt key with given password")){
-                //% "Wrong password"
-                transactionSigner.validationError = qsTrId("wrong-password")
-                return
-            }
-            sendingError.text = response.result
-            return sendingError.open()
-        }
         root.close()
     }
 
