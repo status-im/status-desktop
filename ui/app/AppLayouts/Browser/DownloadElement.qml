@@ -12,6 +12,8 @@ Rectangle {
     }
     property bool isCanceled: false
     property bool hovered: false
+    // use this to place the newest downloads first
+    property int reversedIndex: listView.count - 1 - index
 
     id: root
     width: 272
@@ -23,6 +25,10 @@ Rectangle {
     function openFile() {
         Qt.openUrlExternally(`file://${downloadDirectory}/${downloadFileName}`)
         removeDownloadFromModel(index)
+    }
+    // TODO check if this works in Windows and Mac
+    function openDirectory() {
+        Qt.openUrlExternally("file://" + downloadDirectory)
     }
 
     MouseArea {
@@ -36,7 +42,10 @@ Rectangle {
             root.hovered = false
         }
         onClicked: {
-            openFile()
+            if (downloadComplete) {
+                return openFile()
+            }
+            openDirectory()
         }
     }
 
@@ -137,8 +146,7 @@ Rectangle {
             icon.width: 13
             icon.height: 9
             text: qsTr("Show in folder")
-            // TODO check if this works in Windows and Mac
-            onTriggered: Qt.openUrlExternally("file://" + downloadDirectory)
+            onTriggered: openDirectory()
         }
         Action {
             enabled: !downloadComplete && !!downloadModel.downloads[index] && !downloadModel.downloads[index].isPaused
