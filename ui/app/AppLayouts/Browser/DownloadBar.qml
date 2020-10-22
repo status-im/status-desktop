@@ -34,11 +34,17 @@ Rectangle {
             layoutDirection: Qt.RightToLeft
             spacing: Style.current.smallPadding
             anchors.left: parent.left
-            width: childrenRect.width
+            width: {
+                // Children rect shows a warning but this works ¯\_(ツ)_/¯
+                let w = 0
+                for (let i = 0; i < count; i++) {
+                    w += this.itemAtIndex(i).width + this.spacing
+                }
+                return w
+            }
             interactive: false
             delegate: Component {
-                DownloadElement {
-                }
+                DownloadElement {}
             }
         }
     }
