@@ -127,6 +127,8 @@ DISTFILES += \
     app/AppLayouts/Browser/BrowserTabStyle.qml \
     app/AppLayouts/Browser/BrowserTabs.qml \
     app/AppLayouts/Browser/BrowserWalletMenu.qml \
+    app/AppLayouts/Browser/DownloadBar.qml \
+    app/AppLayouts/Browser/DownloadElement.qml \
     app/AppLayouts/Browser/FaviconImage.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandButton.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandModal.qml \

@@ -21,12 +21,16 @@ Rectangle {
     border.width: 0
 
     property Item currentWebView: tabs.currentIndex < tabs.count ? tabs.getTab(tabs.currentIndex).item : null
-    
+
     property Component browserDialogComponent: BrowserDialog {
         onClosing: destroy()
     }
     property bool currentTabConnected: false
 
+    ListModel {
+        id: downloadModel
+        property var downloads: []
+    }
 
     Layout.fillHeight: true
     Layout.fillWidth: true
@@ -627,7 +631,7 @@ Rectangle {
     }
 
     function onDownloadRequested(download) {
-        downloadView.visible = true;
+        downloadBar.visible = true
         downloadView.append(download);
         download.accept();
     }
@@ -661,10 +665,17 @@ Rectangle {
         }
     }
 
+    // TODO restyle this and only appears when clicking view all
     DownloadView {
         id: downloadView
         visible: false
         anchors.fill: parent
+    }
+
+    DownloadBar {
+        id: downloadBar
+        anchors.bottom: parent.bottom
+        z: 60
     }
 
     FindBar {
