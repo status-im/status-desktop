@@ -1,14 +1,44 @@
 import QtQuick 2.1
+import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 import "../../../shared"
 import "../../../shared/status"
 import "../../../imports"
 
 
-Item {
-    id: downloadElement
+Rectangle {
+    property bool downloadComplete: {
+        return !!downloadModel.downloads && !!downloadModel.downloads[index] && downloadModel.downloads[index].receivedBytes >= downloadModel.downloads[index].totalBytes
+    }
+    property bool isCanceled: false
+    property bool hovered: false
+
+    id: root
     width: 272
     height: 40
+    border.width: 0
+    color: hovered ? Style.current.backgroundHover : Style.current.transparent
+    radius: Style.current.radius
+
+    function openFile() {
+        Qt.openUrlExternally(`file://${downloadDirectory}/${downloadFileName}`)
+        removeDownloadFromModel(index)
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        hoverEnabled: true
+        onEntered: {
+           root.hovered = true
+        }
+        onExited: {
+            root.hovered = false
+        }
+        onClicked: {
+            openFile()
+        }
+    }
 
     Loader {
         id: iconLoader
@@ -17,10 +47,10 @@ Item {
         anchors.leftMargin: Style.current.smallPadding
         active: root.visible
         sourceComponent: {
-            if (!downloadModel.downloads || !downloadModel.downloads[index] || downloadModel.downloads[index].receivedBytes < downloadModel.downloads[index].totalBytes) {
-                return loadingImageComponent
+            if (downloadComplete || !downloadModel.downloads[index] || downloadModel.downloads[index].isPaused || isCanceled) {
+                return fileImageComponent
             }
-            return fileImageComponent
+            return loadingImageComponent
         }
 
         Component {
@@ -34,10 +64,9 @@ Item {
                 width: 24
                 height: 24
                 ColorOverlay {
-                    enabled: false
                     anchors.fill: parent
                     source: parent
-                    color: Style.current.darkGrey
+                    color: downloadComplete ? Style.current.transparent : Style.current.darkGrey
                 }
             }
         }
@@ -49,7 +78,8 @@ Item {
         elide: Text.ElideRight
         anchors.left: iconLoader.right
         anchors.right: optionsBtn.left
-        anchors.top: parent.top
+        anchors.top:  downloadComplete ? undefined : parent.top
+        anchors.verticalCenter: downloadComplete ? parent.verticalCenter : undefined
         minimumPixelSize: 13
         anchors.leftMargin: Style.current.smallPadding
         anchors.topMargin: 2
@@ -57,8 +87,17 @@ Item {
 
     StyledText {
         id: progressText
+        visible:  !downloadComplete
         color: Style.current.secondaryText
-        text: `${downloadModel.downloads[index] ? downloadModel.downloads[index].receivedBytes / 1000000 : 0}/${downloadModel.downloads[index] ? downloadModel.downloads[index].totalBytes / 1000000 : 0} MB` //"14.4/109 MB, 26 sec left"
+        text: {
+            if (isCanceled) {
+                return qsTr("Cancelled")
+            }
+            if (downloadModel.downloads[index] && downloadModel.downloads[index].isPaused) {
+                return qsTr("Paused")
+            }
+            return `${downloadModel.downloads[index] ? (downloadModel.downloads[index].receivedBytes / 1000000).toFixed(2) : 0}/${downloadModel.downloads[index] ? (downloadModel.downloads[index].totalBytes / 1000000).toFixed(2) : 0} MB` //"14.4/109 MB, 26 sec left"
+        }
         elide: Text.ElideRight
         anchors.left: iconLoader.right
         anchors.right: optionsBtn.left
@@ -74,6 +113,70 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.smallPadding
         icon.name: "dots-icon"
+        onClicked: {
+            downloadMenu.x = optionsBtn.x
+            downloadMenu.open()
+        }
+    }
+
+    // TODO Move this outside?
+    PopupMenu {
+        id: downloadMenu
+        y: -height - Style.current.smallPadding
+
+        Action {
+            enabled: downloadComplete
+            icon.source: "../../img/browser/file.svg"
+            icon.width: 16
+            icon.height: 16
+            text: qsTr("Open")
+            onTriggered: openFile()
+        }
+        Action {
+            icon.source: "../../img/add_watch_only.svg"
+            icon.width: 13
+            icon.height: 9
+            text: qsTr("Show in folder")
+            // TODO check if this works in Windows and Mac
+            onTriggered: Qt.openUrlExternally("file://" + downloadDirectory)
+        }
+        Action {
+            enabled: !downloadComplete && !!downloadModel.downloads[index] && !downloadModel.downloads[index].isPaused
+            icon.source: "../../img/browser/pause.svg"
+            icon.width: 16
+            icon.height: 16
+            text: qsTr("Pause")
+            onTriggered: {
+                downloadModel.downloads[index].pause()
+            }
+        }
+        Action {
+            enabled: !downloadComplete && !!downloadModel.downloads[index] && downloadModel.downloads[index].isPaused
+            icon.source: "../../img/browser/play.svg"
+            icon.width: 16
+            icon.height: 16
+            text: qsTr("Resume")
+            onTriggered: {
+                downloadModel.downloads[index].resume()
+            }
+        }
+
+        Separator {
+            visible: !downloadComplete
+        }
+
+        Action {
+            enabled: !downloadComplete
+            icon.source: "../../img/block-icon.svg"
+            icon.width: 13
+            icon.height: 13
+            text: qsTr("Cancel")
+            onTriggered: {
+                downloadModel.downloads[index].cancel()
+                isCanceled = true
+            }
+            icon.color: Style.current.red
+        }
     }
 }
 

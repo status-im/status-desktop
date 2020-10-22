@@ -4,7 +4,7 @@ import "../imports"
 Rectangle {
       id: separator
       width: parent.width
-      height: 1
+      height: visible ? 1 : 0
       color: Style.current.border
       anchors.topMargin: Style.current.padding
 }
