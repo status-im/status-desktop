@@ -198,6 +198,10 @@ ModalPopup {
                 asset: root.selectedAsset
                 amount: { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount }
                 currency: walletModel.defaultCurrency
+                isFromEditable: true
+                isGasEditable: true
+                fromValid: balanceValidator.isValid
+                gasValid: gasValidator.isValid
                 reset: function() {
                     fromAccount =  Qt.binding(function() { return selectFromAccount.selectedAccount })
                     gas = Qt.binding(function() {
@@ -210,16 +214,30 @@ ModalPopup {
                     toAccount =  Qt.binding(function() { return selectRecipient.selectedRecipient })
                     asset = Qt.binding(function() { return root.selectedAsset })
                     amount = Qt.binding(function() { return { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount } })
+                    fromValid = Qt.binding(function() { return balanceValidator.isValid })
+                    gasValid = Qt.binding(function() { return gasValidator.isValid })
                 }
-                isFromEditable: true
-                isGasEditable: true
                 onFromClicked: { stack.push(groupSelectAcct, StackView.Immediate) }
                 onGasClicked: { stack.push(groupSelectGas, StackView.Immediate) }
             }
+            BalanceValidator {
+                id: balanceValidator
+                anchors.top: pvwTransaction.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                account: selectFromAccount.selectedAccount
+                amount: !!root.selectedAmount ? parseFloat(root.selectedAmount) : 0.0
+                asset: root.selectedAsset
+                reset: function() {
+                    account = Qt.binding(function() { return selectFromAccount.selectedAccount })
+                    amount = Qt.binding(function() { return !!root.selectedAmount ? parseFloat(root.selectedAmount) : 0.0 })
+                    asset = Qt.binding(function() { return root.selectedAsset })
+                }
+            }
             GasValidator {
                 id: gasValidator2
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 8
+                anchors.top: balanceValidator.visible ? balanceValidator.bottom : pvwTransaction.bottom
+                anchors.topMargin: balanceValidator.visible ? 5 : 0
+                anchors.horizontalCenter: parent.horizontalCenter
                 selectedAccount: selectFromAccount.selectedAccount
                 selectedAmount: parseFloat(root.selectedAmount)
                 selectedAsset: root.selectedAsset
