@@ -60,6 +60,17 @@ ModalPopup {
                 anchors.topMargin: 19
                 icon.rotation: root.isRequested ? -90 : 90
             }
+
+            StyledText {
+                id: addressRequiredInfo
+                anchors.right: selectRecipient.right
+                anchors.bottom: selectRecipient.top
+                anchors.bottomMargin: -Style.current.padding
+                text: qsTr("Address request required")
+                color: Style.current.danger
+                visible: addressRequiredValidator.isWarn
+            }
+
             RecipientSelector {
                 id: selectRecipient
                 accounts: walletModel.accounts
@@ -71,6 +82,9 @@ ModalPopup {
                 anchors.top: separator.bottom
                 anchors.topMargin: 10
                 width: stack.width
+                onSelectedRecipientChanged: {
+                    addressRequiredValidator.address = root.isRequested ? selectFromAccount.selectedAccount.address : selectRecipient.selectedRecipient.address
+                }
                 reset: function() {
                     isValid = true
                 }
@@ -110,6 +124,7 @@ ModalPopup {
                 toAccount: root.isRequested ? selectFromAccount.selectedAccount : selectRecipient.selectedRecipient
                 asset: txtAmount.selectedAsset
                 amount: { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount }
+                toWarn: addressRequiredValidator.isWarn
                 currency: walletModel.defaultCurrency
                 reset: function() {
                     fromAccount = Qt.binding(function() {
@@ -127,28 +142,10 @@ ModalPopup {
                 }
             }
 
-            SVGImage {
-                width: 16
-                height: 16
-                visible: warningText.visible
-                source: "../../../../img/warning.svg"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: warningText.top
-                anchors.bottomMargin: 4
-            }
-
-            StyledText {
-                id: warningText
-                visible: !root.isRequested
-                //% "You need to request the recipient’s address first.\nAssets won’t be sent yet."
-                text: qsTrId("you-need-to-request-the-recipient-s-address-first--nassets-won-t-be-sent-yet-")
-                color: Style.current.danger
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
-                anchors.right: parent.right
-                anchors.left: parent.left
+            AddressRequiredValidator {
+                id: addressRequiredValidator
                 anchors.bottom: parent.bottom
-
+                anchors.bottomMargin: Style.current.padding
             }
         }
     }
