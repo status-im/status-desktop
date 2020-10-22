@@ -4,21 +4,18 @@ import QtQuick.Layouts 1.13
 import "../imports"
 import "./status"
 
-IconButton {
+Column {
     id: root
+    anchors.horizontalCenter: parent.horizontalCenter
+    visible: !isValid
+    spacing: 5
+
     property var account
     property double amount
     property var asset
-    property bool isValid: true
+    property bool isValid: false
     property var reset: function() {}
-    clickable: false
-    width: 13.33
-    height: 13.33
-    iconWidth: width
-    iconHeight: height    
-    iconName: "exclamation_outline"
-    color: Style.current.transparent
-    visible: !isValid
+    property alias errorMessage: txtValidationError.text
 
     onAccountChanged: validate()
     onAmountChanged: validate()
@@ -28,7 +25,7 @@ IconButton {
         account = undefined
         amount = 0
         asset = undefined
-        isValid = true
+        isValid = false
     }
 
     function validate() {
@@ -44,11 +41,23 @@ IconButton {
         root.isValid = isValid
         return isValid
     }
-
-    StatusToolTip {
-        id: tooltip
-        visible: parent.hovered
-        width: 100
+    SVGImage {
+        id: imgExclamation
+        width: 13.33
+        height: 13.33
+        sourceSize.height: height * 2
+        sourceSize.width: width * 2
+        anchors.horizontalCenter: parent.horizontalCenter
+        fillMode: Image.PreserveAspectFit
+        source: "../app/img/exclamation_outline.svg"
+    }
+    StyledText {
+        id: txtValidationError
         text: qsTr("Insufficient balance")
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
+        font.pixelSize: 13
+        height: 18
+        color: Style.current.danger
     }
 }
