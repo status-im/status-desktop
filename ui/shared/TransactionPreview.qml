@@ -23,7 +23,9 @@ Item {
     // Creates a mouse area around the "network fee". When clicked, triggers 
     // the "gasClicked" signal
     property bool isGasEditable: false
-    property alias isValid: balanceValidator.isValid
+    property bool isValid: fromValid && gasValid
+    property bool fromValid: true
+    property bool gasValid: true
 
     function resetInternal() {
         fromAccount = undefined
@@ -31,8 +33,6 @@ Item {
         asset = undefined
         amount = undefined
         gas = undefined
-        balanceValidator.resetInternal()
-        balanceValidator.reset()
     }
 
     Column {
@@ -46,8 +46,9 @@ Item {
             value: Item {
                 id: itmFromValue
                 anchors.fill: parent
+                anchors.verticalCenter: parent.verticalCenter
                 function needsRightPadding() {
-                    return !balanceValidator.isValid || fromArrow.visible
+                    return !root.fromValid || root.isFromEditable
                 }
                 Row {
                     spacing: Style.current.halfPadding
@@ -81,17 +82,16 @@ Item {
                             color: root.fromAccount && root.fromAccount.iconColor ? root.fromAccount.iconColor : Style.current.blue
                         }
                     }
-                    BalanceValidator {
-                        id: balanceValidator
-                        account: root.fromAccount
-                        amount: !!(root.amount && root.amount.value) ? parseFloat(root.amount.value) : 0.0
-                        asset: root.asset
+                    SVGImage {
+                        id: fromInvalid
                         anchors.verticalCenter: parent.verticalCenter
-                        reset: function() {
-                            account = Qt.binding(function() { return root.fromAccount })
-                            amount = Qt.binding(function() { return !!(root.amount && root.amount.value) ? parseFloat(root.amount.value) : 0.0 })
-                            asset = Qt.binding(function() { return root.asset })
-                        }
+                        width: 13.33
+                        height: 13.33
+                        sourceSize.height: height * 2
+                        sourceSize.width: width * 2
+                        fillMode: Image.PreserveAspectFit
+                        source: "../app/img/exclamation_outline.svg"
+                        visible: !root.fromValid
                     }
                     SVGImage {
                         id: fromArrow
@@ -370,69 +370,77 @@ Item {
                 id: networkFeeRoot
                 anchors.fill: parent
                 anchors.verticalCenter: parent.verticalCenter
-
-                StyledText {
-                    font.pixelSize: 15
-                    height: 22
-                    text: (root.gas && root.gas.value) ? Utils.stripTrailingZeros(root.gas.value) : ""
-                    anchors.left: parent.left
-                    anchors.right: txtFeeSymbol.left
-                    anchors.rightMargin: 5
-                    anchors.verticalCenter: parent.verticalCenter
-                    horizontalAlignment: Text.AlignRight
-                    verticalAlignment: Text.AlignVCenter
-                    elide: Text.ElideRight
+                function needsRightPadding() {
+                    return !root.gasValid || root.isGasEditable
                 }
-                StyledText {
-                    id: txtFeeSymbol
-                    font.pixelSize: 15
-                    height: 22
-                    text: ((root.gas && root.gas.symbol) ? root.gas.symbol : "") + " •"
-                    color: Style.current.secondaryText
-                    anchors.right: txtFeeFiat.left
-                    anchors.rightMargin: 5
-                    anchors.verticalCenter: parent.verticalCenter
-                    horizontalAlignment: Text.AlignRight
-                    verticalAlignment: Text.AlignVCenter
-                }
-                StyledText {
-                    id: txtFeeFiat
-                    font.pixelSize: 15
-                    height: 22
-                    text: "~" + ((root.gas && root.gas.fiatValue) ? root.gas.fiatValue : "0.00")
-                    anchors.right: txtFeeCurrency.left
-                    anchors.rightMargin: 5
-                    anchors.verticalCenter: parent.verticalCenter
-                    horizontalAlignment: Text.AlignRight
-                    verticalAlignment: Text.AlignVCenter
-                }
-                StyledText {
-                    id: txtFeeCurrency
-                    font.pixelSize: 15
-                    height: 22
-                    text: root.currency.toUpperCase()
-                    color: Style.current.secondaryText
-                    anchors.right: gasArrow.visible ? gasArrow.left : parent.right
-                    anchors.rightMargin: gasArrow.visible ? Style.current.padding : 0
-                    anchors.verticalCenter: parent.verticalCenter
-                    horizontalAlignment: Text.AlignRight
-                    verticalAlignment: Text.AlignVCenter
-                }
-                SVGImage {
-                    id: gasArrow
-                    width: 13
-                    visible: root.isGasEditable
+                Row {
+                    spacing: Style.current.halfPadding
+                    rightPadding: networkFeeRoot.needsRightPadding() ? Style.current.halfPadding : 0
                     anchors.right: parent.right
-                    anchors.rightMargin: 7
                     anchors.verticalCenter: parent.verticalCenter
-                    fillMode: Image.PreserveAspectFit
-                    source: "../app/img/caret.svg"
-                    rotation: 270
-                    ColorOverlay {
-                        anchors.fill: parent
-                        visible: parent.visible
-                        source: parent
+                    StyledText {
+                        font.pixelSize: 15
+                        height: 22
+                        text: (root.gas && root.gas.value) ? Utils.stripTrailingZeros(root.gas.value) : ""
+                        anchors.verticalCenter: parent.verticalCenter
+                        horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                    }
+                    StyledText {
+                        id: txtFeeSymbol
+                        font.pixelSize: 15
+                        height: 22
+                        text: ((root.gas && root.gas.symbol) ? root.gas.symbol : "") + " •"
                         color: Style.current.secondaryText
+                        anchors.verticalCenter: parent.verticalCenter
+                        horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    StyledText {
+                        id: txtFeeFiat
+                        font.pixelSize: 15
+                        height: 22
+                        text: "~" + ((root.gas && root.gas.fiatValue) ? root.gas.fiatValue : "0.00")
+                        anchors.verticalCenter: parent.verticalCenter
+                        horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    StyledText {
+                        id: txtFeeCurrency
+                        font.pixelSize: 15
+                        height: 22
+                        text: root.currency.toUpperCase()
+                        color: Style.current.secondaryText
+                        anchors.verticalCenter: parent.verticalCenter
+                        horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    SVGImage {
+                        id: gasInvalid
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 13.33
+                        height: 13.33
+                        sourceSize.height: height * 2
+                        sourceSize.width: width * 2
+                        fillMode: Image.PreserveAspectFit
+                        source: "../app/img/exclamation_outline.svg"
+                        visible: !root.gasValid
+                    }
+                    SVGImage {
+                        id: gasArrow
+                        width: 13
+                        visible: root.isGasEditable
+                        anchors.verticalCenter: parent.verticalCenter
+                        fillMode: Image.PreserveAspectFit
+                        source: "../app/img/caret.svg"
+                        rotation: 270
+                        ColorOverlay {
+                            anchors.fill: parent
+                            visible: parent.visible
+                            source: parent
+                            color: Style.current.secondaryText
+                        }
                     }
                 }
                 MouseArea {
