@@ -12,13 +12,32 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
+    ListModel {
+        id: previewableSites
+    }
+
+    Component.onCompleted: {
+        const sites = profileModel.getLinkPreviewWhitelist()
+        try {
+            const sitesJSON = JSON.parse(sites)
+            sitesJSON.forEach(function (site) {
+                previewableSites.append(site)
+            })
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
     property Component dappListPopup: DappList {
         onClosed: destroy()
     }
 
-    Item {
-        id: profileImgNameContainer
+
+    Column {
+        id: containerColumn
+        spacing: Style.current.padding
         anchors.top: parent.top
+        anchors.topMargin: Style.current.padding
         anchors.right: parent.right
         anchors.rightMargin: contentMargin
         anchors.left: parent.left
@@ -29,13 +48,10 @@ Item {
             id: labelSecurity
             //% "Security"
             text: qsTrId("security")
-            anchors.top: parent.top
         }
 
         Item {
             id: backupSeedPhrase
-            anchors.top: labelSecurity.bottom
-            anchors.topMargin: Style.current.padding
             height: backupText.height
             width: parent.width
 
@@ -77,11 +93,13 @@ Item {
             id: backupSeedModal
         }
 
+        Separator {
+            id: separator
+            Layout.topMargin: Style.current.bigPadding - containerColumn.spacing
+        }
 
         Item {
             id: dappPermissions
-            anchors.top: backupSeedPhrase.bottom
-            anchors.topMargin: Style.current.padding
             height: dappPermissionsText.height
             width: parent.width
 
@@ -117,22 +135,18 @@ Item {
         }
 
         Separator {
-            id: separator
-            anchors.top: dappPermissions.bottom
-            anchors.topMargin: Style.current.bigPadding
+            id: separator2
+            Layout.topMargin: Style.current.bigPadding - containerColumn.spacing
         }
 
         StatusSectionHeadline {
             id: labelPrivacy
             //% "Privacy"
             text: qsTrId("privacy")
-            anchors.top: separator.bottom
         }
 
         RowLayout {
             id: displayImageSettings
-            anchors.top: labelPrivacy.bottom
-            anchors.topMargin: Style.current.padding
             StyledText {
                 //% "Display images in chat automatically"
                 text: qsTrId("display-images-in-chat-automatically")
@@ -146,6 +160,38 @@ Item {
             StyledText {
                 //% "under development"
                 text: qsTrId("under-development")
+            }
+        }
+
+        StatusSectionHeadline {
+            id: labelURLUnfurling
+            text: qsTr("URL Previews")
+        }
+
+        ListView {
+            id: sitesListView
+            width: parent.width
+            model: previewableSites
+            interactive: false
+            height: childrenRect.height
+
+            delegate: Component {
+                RowLayout {
+                    id: displayYoutubeSettings
+                    StyledText {
+                        text: qsTr("Display %1 previews").arg(title)
+                    }
+                    StatusSwitch {
+                        checked: !!appSettings.whitelistedUnfurlingSites[address]
+                        onCheckedChanged: function () {
+                            appSettings.whitelistedUnfurlingSites[address] = this.checked
+                        }
+                    }
+                    StyledText {
+                        //% "under development"
+                        text: qsTrId("under-development")
+                    }
+                }
             }
         }
     }
