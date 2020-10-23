@@ -81,6 +81,7 @@ ApplicationWindow {
         property real volume: 0.2
         property int notificationSetting: 0
         property bool notificationSoundsEnabled: true
+        property var whitelistedUnfurlingSites: ({})
 
         // Browser settings
         property bool autoLoadImages: true

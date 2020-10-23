@@ -1,4 +1,4 @@
-import NimQml, sequtils, strutils, sugar, os
+import NimQml, sequtils, strutils, sugar, os, json
 import views/[mailservers_list, ens_manager, contact_list, profile_info, device_list, dapp_list]
 import ../../status/profile/[mailserver, profile, devices]
 import ../../status/profile as status_profile
@@ -326,4 +326,7 @@ QtObject:
   proc removeContact*(self: ProfileView, publicKey: string) {.slot.} =
     self.status.contacts.removeContact(publicKey)
     self.contactChanged(publicKey, false)
+
+  proc getLinkPreviewWhitelist*(self: ProfileView): string {.slot.} =
+    result = $(self.status.profile.getLinkPreviewWhitelist())
 
