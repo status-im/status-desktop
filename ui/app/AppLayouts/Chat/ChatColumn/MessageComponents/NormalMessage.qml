@@ -217,6 +217,21 @@ Item {
     }
 
     Loader {
+        id: linksLoader
+        active: !!linkUrls
+        anchors.left: !isCurrentUser ? chatImage.right : undefined
+        anchors.leftMargin: !isCurrentUser ? 8 : 0
+        anchors.right: !isCurrentUser ? undefined : parent.right
+        anchors.rightMargin: !isCurrentUser ? 0 : Style.current.padding
+        anchors.top: chatBox.bottom
+        anchors.topMargin: Style.current.smallPadding
+
+        sourceComponent: Component {
+            LinksMessage {}
+        }
+    }
+
+    Loader {
         id: emojiReactionLoader
         active: emojiReactions !== ""
         sourceComponent: emojiReactionsComponent

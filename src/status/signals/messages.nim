@@ -1,5 +1,7 @@
 import json, random, strutils, sequtils, sugar, chronicles
 import json_serialization
+import ../libstatus/core
+import ../libstatus/utils
 import ../libstatus/accounts as status_accounts
 import ../libstatus/accounts/constants as constants
 import ../libstatus/settings as status_settings
@@ -187,6 +189,7 @@ proc toMessage*(jsonMsg: JsonNode): Message =
       stickerHash: "",
       parsedText: @[],
       imageUrls: "",
+      linkUrls: "",
       image: $jsonMsg{"image"}.getStr,
       audio: $jsonMsg{"audio"}.getStr,
       audioDurationMs: jsonMsg{"audioDurationMs"}.getInt,
@@ -199,6 +202,12 @@ proc toMessage*(jsonMsg: JsonNode): Message =
 
   message.imageUrls = concat(message.parsedText.map(t => t.children.filter(c => c.textType == "link")))
     .filter(t => [".png", ".jpg", ".jpeg", ".svg", ".gif"].any(ext => t.destination.endsWith(ext)))
+    .map(t => t.destination)
+    .join(" ")
+
+  
+  message.linkUrls = concat(message.parsedText.map(t => t.children.filter(c => c.textType == "link")))
+    .filter(t => t.destination.startsWith("http"))
     .map(t => t.destination)
     .join(" ")
 
