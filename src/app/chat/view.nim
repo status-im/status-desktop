@@ -438,6 +438,9 @@ QtObject:
   proc copyToClipboard*(self: ChatsView, content: string) {.slot.} =
     setClipBoardText(content)
 
+  proc getLinkPreviewData*(self: ChatsView, link: string): string {.slot.} =
+    result = $self.status.chat.getLinkPreviewData(link)
+
   proc sendSticker*(self: ChatsView, hash: string, pack: int) {.slot.} =
     let sticker = Sticker(hash: hash, packId: pack)
     self.addRecentStickerToList(sticker)

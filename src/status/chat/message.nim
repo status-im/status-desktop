@@ -56,6 +56,7 @@ type Message* = object
   stickerHash*: string
   outgoingStatus*: string
   imageUrls*: string
+  linkUrls*: string
   image*: string
   audio*: string
   audioDurationMs*: int

@@ -142,6 +142,18 @@ Item {
     }
 
     Loader {
+        id: linksLoader
+        active: !!linkUrls
+        anchors.left: chatText.left
+        anchors.leftMargin: 8
+        anchors.top: chatText.bottom
+
+        sourceComponent: Component {
+            LinksMessage {}
+        }
+    }
+
+    Loader {
         id: audioPlayerLoader
         active: isAudio
         anchors.top: chatName.visible ? chatName.bottom : parent.top

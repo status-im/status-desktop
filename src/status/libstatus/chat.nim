@@ -198,3 +198,6 @@ proc muteChat*(chatId: string): string =
 
 proc unmuteChat*(chatId: string): string =
   result = callPrivateRPC("unmuteChat".prefix, %*[chatId])
+
+proc getLinkPreviewData*(link: string): JsonNode =
+  result = callPrivateRPC("getLinkPreviewData".prefix, %*[link]).parseJSON()["result"]

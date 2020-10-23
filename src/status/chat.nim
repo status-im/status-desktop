@@ -182,6 +182,9 @@ proc clearHistory*(self: ChatModel, chatId: string) =
   let chat = self.channels[chatId]
   self.events.emit("chatHistoryCleared", ChannelArgs(chat: chat))
 
+proc getLinkPreviewData*(self: ChatModel, link: string): JsonNode =
+  result = status_chat.getLinkPreviewData(link)
+
 proc setActiveChannel*(self: ChatModel, chatId: string) =
   self.events.emit("activeChannelChanged", ChatIdArg(chatId: chatId))
 
