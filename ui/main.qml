@@ -82,6 +82,7 @@ ApplicationWindow {
         property int notificationSetting: 0
         property bool notificationSoundsEnabled: true
         property var whitelistedUnfurlingSites: ({})
+        property bool neverAskAboutUnfurlingAgain: false
 
         // Browser settings
         property bool autoLoadImages: true
@@ -94,6 +95,13 @@ ApplicationWindow {
         property bool devToolsEnabled: false
         property bool pdfViewerEnabled: true
         property bool compatibilityMode: true
+    }
+
+    signal whitelistChanged()
+
+    function changeUnfurlingWhitelist(site, enabled) {
+        appSettings.whitelistedUnfurlingSites[site] = enabled
+        applicationWindow.whitelistChanged()
     }
 
     Connections {
