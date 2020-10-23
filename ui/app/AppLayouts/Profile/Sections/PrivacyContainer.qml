@@ -20,11 +20,20 @@ Item {
         const sites = profileModel.getLinkPreviewWhitelist()
         try {
             const sitesJSON = JSON.parse(sites)
+            let settingUpdadted = false
             sitesJSON.forEach(function (site) {
+                if (appSettings.whitelistedUnfurlingSites[site.address] === undefined)  {
+                    appSettings.whitelistedUnfurlingSites[site.address] = false
+                    settingUpdadted = true
+                }
+
                 previewableSites.append(site)
             })
+            if (settingUpdadted) {
+                applicationWindow.whitelistChanged()
+            }
         } catch (e) {
-            console.error(e)
+            console.error('Could not parse the whitelist for sites', e)
         }
     }
 
@@ -184,7 +193,7 @@ Item {
                     StatusSwitch {
                         checked: !!appSettings.whitelistedUnfurlingSites[address]
                         onCheckedChanged: function () {
-                            appSettings.whitelistedUnfurlingSites[address] = this.checked
+                            changeUnfurlingWhitelist(address, this.checked)
                         }
                     }
                     StyledText {

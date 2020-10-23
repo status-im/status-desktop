@@ -1,6 +1,8 @@
 import QtQuick 2.3
 import "../../../../../imports"
 import "../../../../../shared"
+import "../../../../../shared/status"
+import "../../../Profile/LeftTab/constants.js" as ProfileConstants
 
 Item {
     id: linksItem
@@ -31,10 +33,20 @@ Item {
             return linkUrls.split(" ")
         }
 
+
         delegate: Loader {
             property string linkString: modelData
-            active: true
-            sourceComponent: {
+
+            // This connection is needed because since the white list is an array, when something in it changes,
+            // The whole object is still the same (reference), so the normal signal is not sent
+            Connections {
+                target: applicationWindow
+                onWhitelistChanged: {
+                    linkMessageLoader.sourceComponent = linkMessageLoader.getSourceComponent()
+                }
+            }
+
+            function getSourceComponent() {
                 let linkExists = false
                 let linkWhiteListed = false
                 Object.keys(appSettings.whitelistedUnfurlingSites).some(function (site) {
@@ -52,12 +64,16 @@ Item {
                 if (linkWhiteListed) {
                     return unfurledLinkComponent
                 }
-                if (linkExists) {
+                if (linkExists && !appSettings.neverAskAboutUnfurlingAgain) {
                     return enableLinkComponent
                 }
 
                 return
             }
+
+            id: linkMessageLoader
+            active: true
+            sourceComponent: getSourceComponent()
         }
     }
 
@@ -130,17 +146,49 @@ Item {
     Component {
         id: enableLinkComponent
         Rectangle {
-            width: 300
-            height: 200
+            width: 200
+            height: enableColumn.height + 2 * Style.current.halfPadding
             radius: 16
-
             border.width: 1
             border.color: Style.current.border
             color:Style.current.background
 
-            StyledText {
-                text: qsTr("You need to enable this before being able to see it")
+            // TODO add image once Simon gives us the design
+            Column {
+                id: enableColumn
+                spacing: Style.current.halfPadding
+                anchors.top: parent.top
+                anchors.topMargin: Style.current.halfPadding
+                width: parent.width - 2 * Style.current.halfPadding
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                StyledText {
+                    text: qsTr("Enable link previews in chat?")
+                    horizontalAlignment: Text.AlignHCenter
+                }
+                StyledText {
+                    text: qsTr("Once enabled, links posted in the chat may share your metadata with the site")
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.WordWrap
+                    width: parent.width
+                    color: Style.current.secondaryText
+                }
+                StatusButton {
+                    text: qsTr("Enable in Settings")
+                    onClicked: {
+                        appMain.changeAppSection(Constants.profile)
+                        profileLayoutContainer.changeProfileSection(ProfileConstants.PRIVACY_AND_SECURITY)
+                    }
+                }
+                StatusButton {
+                    text: qsTr("Don't ask me again")
+                    onClicked: {
+                        appSettings.neverAskAboutUnfurlingAgain = true
+                    }
+                }
             }
+
+
         }
     }
 }
