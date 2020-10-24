@@ -91,7 +91,7 @@ proc handleMailserverEvents(self: ChatController) =
       topic.lastRequest = times.toUnix(times.getTime())
       self.status.mailservers.addMailserverTopic(topic)
 
-    if(self.status.mailservers.isSelectedMailserverAvailable):
+    if(self.status.mailservers.isActiveMailserverAvailable):
       self.status.mailservers.requestMessages(topics.map(t => t.topic))
 
   self.status.events.on("mailserverAvailable") do(e:Args):
