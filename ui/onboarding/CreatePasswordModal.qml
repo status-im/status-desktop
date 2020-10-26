@@ -94,37 +94,14 @@ ModalPopup {
         anchors.bottom: popup.bottom
         anchors.left: parent.left
 
-        SVGImage {
-            id: loadingImg
-            visible: loading
-            anchors.top: submitBtn.top
-            anchors.topMargin: Style.current.padding
-            anchors.right: submitBtn.left
-            anchors.rightMargin: Style.current.padding
-            source: "../app/img/settings.svg"
-            width: 20
-            height: 20
-            fillMode: Image.Stretch
-            RotationAnimator {
-                target: loadingImg;
-                from: 0;
-                to: 360;
-                duration: 1200
-                running: true
-                loops: Animation.Infinite
-            }
-        }
-
         StatusButton {
             id: submitBtn
             anchors.bottom: parent.bottom
             anchors.topMargin: Style.current.padding
             anchors.right: parent.right
-            text: loading ?
-            //% "Logging in..."
-            qsTrId("logging-in...") :
+            state: loading ? "pending" : "default"
             //% "Create password"
-            qsTrId("create-password")
+            text: qsTrId("create-password")
 
             enabled: firstPasswordField.text !== "" && repeatPasswordField.text !== "" && !loading
 
@@ -171,7 +148,6 @@ ModalPopup {
                     errorSound.play()
                     return
                 }
-                // TODO this doesn't seem to work because the function freezes the view
                 loading = true
                 loginModel.isCurrentFlow = false;
                 onboardingModel.isCurrentFlow = true;
