@@ -182,6 +182,25 @@ RowLayout {
                 fillMode: Image.PreserveAspectFit
                 source: parent.checked ? "img/profileActive.svg" : "img/profile.svg"
             }
+
+            Rectangle {
+                id: profileBadge
+                visible: !profileModel.isMnemonicBackedUp && sLayout.children[sLayout.currentIndex] !== profileLayoutContainer
+                anchors.top: image3.top
+                anchors.left: image3.right
+                anchors.leftMargin: -10
+                anchors.topMargin: -5
+                radius: 9
+                color: Style.current.blue
+                width: 18
+                height: 18
+                Text {
+                    font.pixelSize: 12
+                    color: Style.current.white
+                    anchors.centerIn: parent
+                    text: "1"
+                }
+            }
         }
 
         TabButton {
@@ -240,6 +259,7 @@ RowLayout {
     }
 
     StackLayout {
+        id: sLayout
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
         Layout.fillHeight: true
@@ -252,7 +272,6 @@ RowLayout {
             if(this.children[currentIndex] === browserLayoutContainer && browserLayoutContainer.active == false){
                 browserLayoutContainer.active = true;
             }
-        
         }
 
         ChatLayout {

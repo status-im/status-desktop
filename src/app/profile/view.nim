@@ -113,6 +113,16 @@ QtObject:
     read = getBlockedContacts
     notify = contactListChanged
 
+  proc isMnemonicBackedUp*(self: ProfileView): bool {.slot.} =
+    let mnemonic = status_settings.getSetting[string](Setting.Mnemonic, "")
+    return mnemonic == ""
+  
+  proc seedPhraseRemoved*(self: ProfileView) {.signal.}
+
+  QtProperty[bool] isMnemonicBackedUp:
+    read = isMnemonicBackedUp
+    notify = seedPhraseRemoved
+
   proc getMnemonic*(self: ProfileView): QVariant {.slot.} =
     # Do not keep the mnemonic in memory, so fetch it when necessary
     let mnemonic = status_settings.getSetting[string](Setting.Mnemonic, "")
@@ -120,6 +130,15 @@ QtObject:
 
   QtProperty[QVariant] mnemonic:
     read = getMnemonic
+    notify = seedPhraseRemoved
+
+  proc removeSeedPhrase*(self: ProfileView) {.slot.} =
+    discard status_settings.saveSetting(Setting.Mnemonic, "")
+    self.seedPhraseRemoved()
+
+  proc getMnemonicWord*(self: ProfileView, idx: int): string {.slot.} =
+    let mnemonics = status_settings.getSetting[string](Setting.Mnemonic, "").split(" ")
+    return mnemonics[idx]
 
   proc networkChanged*(self: ProfileView) {.signal.}
 
