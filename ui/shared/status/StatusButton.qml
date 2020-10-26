@@ -25,7 +25,7 @@ Button {
 
         Loader {
             id: iconLoader
-            active: !!control.icon && !!control.icon.source
+            active: !!control.icon && !!control.icon.source.toString()
             anchors.left: parent.left
             anchors.leftMargin: Style.current.halfPadding
             anchors.verticalCenter: parent.verticalCenter
