@@ -18,14 +18,18 @@ Item {
     }
 
     StyledText {
-        //% "Share your chat key"
-        text: `<a href="shareKey" style="color:${Style.current.blue};text-decoration:none;">${qsTrId("share-your-chat-key")}</a>` +
-            //% "or"
-            ` ${qsTrId("or")} ` +
-            //% "invite"
-            `<a href="invite" style="color:${Style.current.blue};text-decoration:none">${qsTrId("invite")}</a>`+
-            //% "friends to start messaging in Status"
-            ` ${qsTrId("friends-to-start-messaging-in-status")}`
+        text: `<a href="shareKey" style="color:${Style.current.blue};text-decoration:none;">` +
+              //% "Share your chat key"
+              qsTrId("share-your-chat-key")
+              + '</a> ' +
+              //% "or"
+              qsTrId("or")
+              + ` <a href="invite" style="color:${Style.current.blue};text-decoration:none;">` +
+              //% "invite"
+              qsTrId("invite")
+              + '</a> ' +
+              //% "friends to start messaging in Status"
+              qsTrId("friends-to-start-messaging-in-status")
         textFormat: Text.RichText
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignHCenter
