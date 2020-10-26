@@ -35,6 +35,8 @@ QtObject:
   QtProperty[string] id:
     read = id
 
+  proc contactsUpdated*(self: ChatItemView) {.signal}
+
   proc userNameOrAlias(self: ChatItemView, pubKey: string): string {.slot.} =
     if self.status.chat.contacts.hasKey(pubKey):
       return ens.userNameOrAlias(self.status.chat.contacts[pubKey])
@@ -48,6 +50,7 @@ QtObject:
 
   QtProperty[string] name:
     read = name
+    notify = contactsUpdated
 
   proc color*(self: ChatItemView): string {.slot.} = result = ?.self.chatItem.color
 

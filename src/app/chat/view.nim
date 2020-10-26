@@ -401,6 +401,7 @@ QtObject:
       # Updating usernames for all the messages list
       for k in self.messageList.keys:
         self.messageList[k].updateUsernames(contacts)
+      self.activeChannel.contactsUpdated()
 
   proc updateChannelForContacts*(self: ChatsView, contacts: seq[Profile]) =
     for contact in contacts:
