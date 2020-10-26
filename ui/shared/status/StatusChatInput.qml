@@ -555,13 +555,13 @@ Rectangle {
             anchors.rightMargin: 0
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             height: {
-                if (messageInputField.height <= messageInput.defaultInputFieldHeight) {
+                if (messageInputField.implicitHeight <= messageInput.defaultInputFieldHeight) {
                     return messageInput.defaultInputFieldHeight
                 }
-                if (messageInputField.height >= messageInput.maxInputFieldHeight) {
+                if (messageInputField.implicitHeight >= messageInput.maxInputFieldHeight) {
                     return messageInput.maxInputFieldHeight
                 }
-                return messageInputField.height
+                return messageInputField.implicitHeight
             }
 
             TextArea {

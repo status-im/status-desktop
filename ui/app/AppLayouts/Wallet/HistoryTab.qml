@@ -60,7 +60,7 @@ Item {
     Connections {
         target: walletModel
         onHistoryWasFetched: checkIfHistoryIsBeingFetched()
-        onLoadingTrxHistory: {
+        onLoadingTrxHistoryChanged: {
             loadingImg.active = isLoading
         }
     }
@@ -254,10 +254,6 @@ Item {
                 onClicked: {
                     fetchHistory()
                     loadMoreButton.loadedMore = true
-                }
-
-                onLoadingTrxHistory: {
-                    loadingImg.active = isLoading
                 }
             }
         }

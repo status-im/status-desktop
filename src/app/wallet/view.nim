@@ -525,7 +525,7 @@ QtObject:
   proc isHistoryFetched*(self: WalletView, address: string): bool {.slot.} =
     return self.currentTransactions.rowCount() > 0
 
-  proc loadingTrxHistory*(self: WalletView, isLoading: bool) {.signal.}
+  proc loadingTrxHistoryChanged*(self: WalletView, isLoading: bool) {.signal.}
 
   proc loadTransactionsForAccount*(self: WalletView, address: string) {.slot.} =
     var bn = "latest"
@@ -533,7 +533,7 @@ QtObject:
       bn = self.currentTransactions.getLastTxBlockNumber()
     # spawn'ed function cannot have a 'var' parameter
     let blockNumber = bn
-    self.loadingTrxHistory(true)
+    self.loadingTrxHistoryChanged(true)
     spawnAndSend(self, "setTrxHistoryResult") do:
       $(%*{
         "address": address,
@@ -550,7 +550,7 @@ QtObject:
     if address == self.currentAccount.address:
       self.setCurrentTransactions(
             self.accounts.getAccount(index).transactions)
-    self.loadingTrxHistory(false)
+    self.loadingTrxHistoryChanged(false)
 
   proc resolveENS*(self: WalletView, ens: string) {.slot.} =
     spawnAndSend(self, "ensResolved") do:
