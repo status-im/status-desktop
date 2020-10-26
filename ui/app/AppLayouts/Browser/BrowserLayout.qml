@@ -204,7 +204,7 @@ Rectangle {
             }
         }
 
-        property int networkId: _web3Provider.networkId
+        property int networkId: (_web3Provider && _web3Provider.networkId) || -1
     }
 
     WebChannel {
