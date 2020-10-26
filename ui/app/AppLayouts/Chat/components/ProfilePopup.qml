@@ -56,7 +56,6 @@ ModalPopup {
             border.width: 1
             color: Style.current.transparent
             anchors.top: parent.top
-            anchors.topMargin: Style.current.padding
             SVGImage {
                 width: parent.width
                 height: parent.height
@@ -69,7 +68,7 @@ ModalPopup {
             id: profileName
             text:  Utils.removeStatusEns(userName)
             anchors.top: parent.top
-            anchors.topMargin: 18
+            anchors.topMargin: 2
             anchors.left: profilePic.right
             anchors.leftMargin: Style.current.smallPadding
             font.bold: true
