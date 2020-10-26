@@ -82,7 +82,7 @@ ModalPopup {
                 defaultCurrency: walletModel.defaultCurrency
                 getFiatValue: walletModel.getFiatValue
                 getCryptoValue: walletModel.getCryptoValue
-                isRequested: root.isRequested
+                validateBalance: !root.isRequested
                 width: stack.width
                 reset: function() {
                     selectedAccount = Qt.binding(function() { return selectFromAccount.selectedAccount })
