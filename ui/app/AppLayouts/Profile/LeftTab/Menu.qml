@@ -23,6 +23,7 @@ ScrollView {
         Repeater {
             model: ProfileConstants.menuButtons
             delegate: MenuButton {
+                menuItemId: modelData.id
                 text: modelData .text
                 source: "../../../img/profile/" + modelData.filename
                 active: profileMenu.profileCurrentIndex === modelData.id

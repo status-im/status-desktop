@@ -1,9 +1,11 @@
 import QtQuick 2.13
 import "../../../../../imports"
 import "../../../../../shared"
+import "../constants.js" as ProfileConstants
 
 
 Rectangle {
+    property int menuItemId: -1
     property bool hovered: false
     property bool active: false
     property url source: "../../../../img/add_watch_only.svg"
@@ -35,6 +37,23 @@ Rectangle {
         anchors.left: iconImage.right
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
+    }
+
+    Rectangle {
+        visible: !profileModel.isMnemonicBackedUp && !active && ProfileConstants.PRIVACY_AND_SECURITY === menuItemId
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: menuButton.right
+        anchors.rightMargin: 10
+        radius: 9
+        color: Style.current.blue
+        width: 18
+        height: 18
+        Text {
+            font.pixelSize: 12
+            color: Style.current.white
+            anchors.centerIn: parent
+            text: "1"
+        }
     }
 
     MouseArea {

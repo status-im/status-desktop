@@ -44,29 +44,32 @@ Item {
                 //% "Backup Seed Phrase"
                 text: qsTrId("backup-seed-phrase")
                 font.pixelSize: 15
+                color: !badge.visible ? Style.current.darkGrey : Style.current.textColor
             }
 
-            SVGImage {
-                id: caret
+            Rectangle {
+                id: badge
+                visible: !profileModel.isMnemonicBackedUp
+                anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: 0
-                anchors.verticalCenter: backupText.verticalCenter
-                source: "../../../img/caret.svg"
-                width: 13
-                height: 7
-                rotation: -90
-            }
-            ColorOverlay {
-                anchors.fill: caret
-                source: caret
-                color: Style.current.darkGrey
-                rotation: -90
+                radius: 9
+                color: Style.current.blue
+                width: 18
+                height: 18
+                Text {
+                    font.pixelSize: 12
+                    color: Style.current.white
+                    anchors.centerIn: parent
+                    text: "1"
+                }
             }
 
             MouseArea {
+                enabled: !profileModel.isMnemonicBackedUp
                 anchors.fill: parent
                 onClicked: backupSeedModal.open()
-                cursorShape: Qt.PointingHandCursor
+                cursorShape: enabled && Qt.PointingHandCursor
             }
         }
 
@@ -74,11 +77,6 @@ Item {
             id: backupSeedModal
         }
 
-        Separator {
-            id: separator
-            anchors.top: backupSeedPhrase.bottom
-            anchors.topMargin: Style.current.bigPadding
-        }
 
         Item {
             id: dappPermissions
@@ -106,7 +104,7 @@ Item {
             
             ColorOverlay {
                 anchors.fill: caret2
-                source: caret
+                source: caret2
                 color: Style.current.darkGrey
                 rotation: -90
             }
@@ -119,7 +117,7 @@ Item {
         }
 
         Separator {
-            id: separator2
+            id: separator
             anchors.top: dappPermissions.bottom
             anchors.topMargin: Style.current.bigPadding
         }
