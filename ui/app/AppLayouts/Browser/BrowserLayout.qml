@@ -76,6 +76,13 @@ Rectangle {
 
         signal web3Response(string data);
 
+        function signValue(input){
+            if(Utils.isHex(input) && Utils.startsWith0x(input)){
+                return input
+            }
+            return utilsModel.ascii2Hex(input)
+        }
+
         function postMessage(data) {
             var request;
             try {
@@ -177,6 +184,12 @@ Rectangle {
                 signDialog.signMessage = function (enteredPassword) {
                     signDialog.interactedWith = true;
                     request.payload.password = enteredPassword;
+                    switch(request.payload.method){
+                        case Constants.personal_sign:
+                            request.payload.params[0] = signValue(request.payload.params[0]);
+                        case Constants.eth_sign:
+                            request.payload.params[1] = signValue(request.payload.params[1]);
+                    }
                     const response = web3Provider.postMessage(JSON.stringify(request));
                     provider.web3Response(response);
                     try {
