@@ -245,6 +245,12 @@ var ALL_CONTRACTS {.guard: contractsLock.}: seq[Contract] = @[
 
   # xDai contracts
   newErc20Contract("buffiDai", Network.XDai, parseAddress("0x3e50bf6703fc132a94e4baff068db2055655f11b"), "BUFF", 18, false),
+
+  newErc20Contract("Uniswap", Network.Mainnet, parseAddress("0x1f9840a85d5af5bf1d1762f925bdaddc4201f984"), "UNI", 18, true),
+  newErc20Contract("Compound", Network.Mainnet, parseAddress("0xc00e94cb662c3520282e6f5717214004a7f26888"), "COMP", 18, true),
+  newErc20Contract("Balancer", Network.Mainnet, parseAddress("0xba100000625a3754423978a60c9317c58a424e3d"), "BAL", 18, true),
+  newErc20Contract("Akropolis", Network.Mainnet, parseAddress("0x8ab7404063ec4dbcfd4598215992dc3f8ec853d7"), "AKRO", 18, true),
+  newErc20Contract("Orchid", Network.Mainnet, parseAddress("0x4575f41308EC1483f3d399aa9a2826d74Da13Deb"), "OXT", 18, false),
 ]
 
 proc getContract(network: Network, name: string): Contract =
