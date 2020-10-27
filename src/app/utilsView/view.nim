@@ -73,6 +73,9 @@ QtObject:
   proc hex2Ascii*(self: UtilsView, value: string): string {.slot.} =
     result = string.fromBytes(hexToSeqByte(value))
 
+  proc ascii2Hex*(self: UtilsView, value: string): string {.slot.} = 
+    result = "0x" & toHex(value)
+
   proc hex2Eth*(self: UtilsView, value: string): string {.slot.} =
     return stripTrailingZeroes(status_utils.wei2Eth(stint.fromHex(StUint[256], value)))
 

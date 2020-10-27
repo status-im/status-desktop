@@ -34,7 +34,16 @@ ModalPopup {
                 }
             }));
         }
-        stack.reset()
+    }
+
+    function displayValue(input){
+        if(Utils.isHex(input) && Utils.startsWith0x(input)){
+            if (input.length === bytes32Length){
+                return input;
+            }
+            return utilsModel.hex2Ascii(input)
+        }
+        return input;  
     }
 
     Item {
@@ -52,9 +61,9 @@ ModalPopup {
                 text: {
                     switch(request.payload.method){
                         case Constants.personal_sign:
-                            return request.payload.params[0].length === bytes32Length ? request.payload.params[0] : utilsModel.hex2Ascii(request.payload.params[0]);
+                            return displayValue(request.payload.params[0]);
                         case Constants.eth_sign:
-                            return request.payload.params[1];
+                            return displayValue(request.payload.params[1]);
                         case Constants.eth_signTypedData:
                         case Constants.eth_signTypedData_v3:
                             return JSON.stringify(request.payload.params[1]); // TODO: requires design
