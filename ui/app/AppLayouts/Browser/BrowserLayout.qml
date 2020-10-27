@@ -11,6 +11,7 @@ import "../../../shared"
 import "../../../shared/status"
 import "../../../imports"
 import "../Chat/ChatColumn/ChatComponents"
+import "./components"
 
 // Code based on https://code.qt.io/cgit/qt/qtwebengine.git/tree/examples/webengine/quicknanobrowser/BrowserWindow.qml?h=5.15 
 // Licensed under BSD
@@ -612,37 +613,35 @@ Rectangle {
                             anchors.topMargin: 60
                         }
 
-                        Row {
+                        Item {
                             anchors.horizontalCenter: emptyPageImage.horizontalCenter
                             anchors.top: emptyPageImage.bottom
                             anchors.topMargin: 30
-                            Item {
-                                width: bookmarkItem.width
-                                height: bookmarkItem.height
-                                Item {
-                                    id: bookmarkItem
-                                    width: childrenRect.width
-                                    height: childrenRect.height
-                                    SVGImage {
-                                        id: bookmarkImage
-                                        source: "../../img/globe.svg"
-                                        width: 48
-                                        height: 48
-                                    }
+                            width: parent.width - Style.current.bigPadding * 2
 
-                                    StyledText {
-                                        text: "site.com"
-                                        anchors.horizontalCenter: bookmarkImage.horizontalCenter
-                                        anchors.top: bookmarkImage.bottom
-                                        anchors.topMargin: Style.current.halfPadding
-                                    }
+                            ListView {
+                                id: bookmarkList
+                                model: browserModel.bookmarks
+                                spacing: Style.current.padding
+                                orientation : ListView.Horizontal
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.horizontalCenterOffset: -(addBookmarkBtn.width + spacing) /2
+                                width: Math.min(childrenRect.width, parent.width - addBookmarkBtn.width - spacing)
+                                delegate: BookmarkButton {
+                                    text: name
+                                    onClicked: Qt.openUrlExternally(url)
+                                }
+                            }
 
+                            BookmarkButton {
+                                id: addBookmarkBtn
+                                text: qsTr("Add favorite")
+                                onClicked: {
+                                    // TODO add a popup
+                                    browserModel.addBookmark("https://dap.ps/", "dap.ps")
                                 }
-                                MouseArea {
-                                    anchors.fill: bookmarkItem
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: console.log('Go to bookmark')
-                                }
+                                anchors.left: bookmarkList.right
+                                anchors.leftMargin: bookmarkList.spacing
                             }
                         }
                     }

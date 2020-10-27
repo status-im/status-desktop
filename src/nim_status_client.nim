@@ -4,6 +4,7 @@ import app/chat/core as chat
 import app/wallet/core as wallet
 import app/node/core as node
 import app/utilsView/core as utilsView
+import app/browser/core as browserView
 import app/profile/core as profile
 import app/onboarding/core as onboarding
 import app/login/core as login
@@ -78,6 +79,9 @@ proc mainProc() =
   var utilsController = utilsView.newController(status)
   engine.setRootContextProperty("utilsModel", utilsController.variant)
 
+  var browserController = browserView.newController(status)
+  engine.setRootContextProperty("browserModel", browserController.variant)
+
   proc changeLanguage(locale: string) =
     engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"))
 
@@ -102,6 +106,7 @@ proc mainProc() =
     provider.init()
     chat.init()
     utilsController.init()
+    browserController.init()
 
     wallet.checkPendingTransactions()
     wallet.start()
@@ -125,6 +130,7 @@ proc mainProc() =
     chat.delete()
     profile.delete()
     utilsController.delete()
+    browserController.delete()
 
 
   # Initialize only controllers whose init functions
