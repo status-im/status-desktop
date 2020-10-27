@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../imports"
 import "../shared"
+import "../shared/status"
 import "./AppLayouts"
 import "./AppLayouts/Wallet"
 
@@ -59,183 +60,81 @@ RowLayout {
             border.color: Style.current.border
         }
 
-        TabButton {
-            id: chatBtn
-            x: 0
-            width: 40
-            height: 40
-            text: ""
-            padding: 0
-            transformOrigin: Item.Center
-            anchors.horizontalCenter: parent.horizontalCenter
-            background: Rectangle {
-                color: Style.current.secondaryBackground
-                opacity: parent.checked ? 1 : 0
-                radius: 50
-            }
+        StatusIconTabButton {
+              id: chatBtn
+              anchors.horizontalCenter: parent.horizontalCenter
+              icon.name: "message"
 
-            SVGImage {
-                id: image
-                height: 24
-                width: 24
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                fillMode: Image.PreserveAspectFit
-                source: parent.checked ? "img/messageActive.svg" : "img/message.svg"
-            }
-
-            Rectangle {
-                visible: chatsModel.unreadMessagesCount > 0
-                anchors.top: image.top
-                anchors.left: image.right
-                anchors.leftMargin: -10
-                anchors.topMargin: -5
-                radius: 9
-                color: Style.current.blue
-                width: chatsModel.unreadMessagesCount < 10 ? 18 : messageCount.width + 10
-                height: 18
-                Text {
-                    id: messageCount
-                    font.pixelSize: chatsModel.unreadMessagesCount > 99 ? 10 : 12
-                    color: Style.current.white
-                    anchors.centerIn: parent
-                    text: chatsModel.unreadMessagesCount
-                }
-            }
-
+              Rectangle {
+                  visible: chatsModel.unreadMessagesCount > 0
+                  anchors.top: parent.top
+                  anchors.left: parent.right
+                  anchors.leftMargin: -10
+                  anchors.topMargin: -5
+                  radius: 9
+                  color: Style.current.blue
+                  width: chatsModel.unreadMessagesCount < 10 ? 18 : messageCount.width + 10
+                  height: 18
+                  Text {
+                      id: messageCount
+                      font.pixelSize: chatsModel.unreadMessagesCount > 99 ? 10 : 12
+                      color: Style.current.white
+                      anchors.centerIn: parent
+                      text: chatsModel.unreadMessagesCount
+                  }
+              }
         }
 
-        TabButton {
-            id: walletBtn
-            enabled: isExperimental === "1" || appSettings.walletEnabled
-            visible: this.enabled
-            width: 40
-            height: this.enabled ? 40 : 0
-            text: ""
-            anchors.topMargin: this.enabled ? 50 : 0
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: chatBtn.top
-            background: Rectangle {
-                color: Style.current.secondaryBackground
-                opacity: parent.checked ? 1 : 0
-                radius: 50
-            }
-
-            SVGImage {
-                id: image1
-                height: 24
-                width: 24
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                fillMode: Image.PreserveAspectFit
-                source: parent.checked ? "img/walletActive.svg" : "img/wallet.svg"
-            }
+        StatusIconTabButton {
+              id: walletBtn
+              anchors.top: chatBtn.top
+              anchors.topMargin: 50
+              anchors.horizontalCenter: parent.horizontalCenter
+              enabled: isExperimental === "1" || appSettings.walletEnabled
+              visible: this.enabled
+              height: this.enabled ? 40 : 0
+              icon.name: "wallet"
         }
 
-        TabButton {
-            id: browserBtn
-            enabled: isExperimental === "1" || appSettings.browserEnabled
-            visible: this.enabled
-            width: 40
-            height: this.enabled ? 40 : 0
-            text: ""
-            anchors.topMargin: this.enabled ? 50 : 0
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: walletBtn.top
-            background: Rectangle {
-                color: Style.current.secondaryBackground
-                opacity: parent.checked ? 1 : 0
-                radius: 50
-            }
-
-            SVGImage {
-                id: image2
-                height: 24
-                width: 24
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                fillMode: Image.PreserveAspectFit
-                source: parent.checked ? "img/compassActive.svg" : "img/compass.svg"
-            }
+        StatusIconTabButton {
+              id: browserBtn
+              anchors.top: walletBtn.top
+              anchors.topMargin: 50
+              anchors.horizontalCenter: parent.horizontalCenter
+              enabled: isExperimental === "1" || appSettings.browserEnabled
+              visible: this.enabled
+              height: this.enabled ? 40 : 0
+              icon.name: "compass"
         }
 
-        TabButton {
-            id: profileBtn
-            width: 40
-            height: 40
-            text: ""
-            anchors.topMargin: 50
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: browserBtn.top
-            background: Rectangle {
-                color: Style.current.secondaryBackground
-                opacity: parent.checked ? 1 : 0
-                radius: 50
-            }
-
-            SVGImage {
-                id: image3
-                height: 24
-                width: 24
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                fillMode: Image.PreserveAspectFit
-                source: parent.checked ? "img/profileActive.svg" : "img/profile.svg"
-            }
+        StatusIconTabButton {
+              id: profileBtn
+              anchors.top: browserBtn.top
+              anchors.topMargin: 50
+              anchors.horizontalCenter: parent.horizontalCenter
+              icon.name: "profile"
         }
 
-        TabButton {
-            id: nodeBtn
-            enabled: isExperimental === "1"
-            visible: this.enabled
-            width: 40
-            height: this.enabled ? 40 : 0
-            text: ""
-            anchors.topMargin: this.enabled ? 50 : 0
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: profileBtn.top
-            background: Rectangle {
-                color: Style.current.secondaryBackground
-                opacity: parent.checked ? 1 : 0
-                radius: 50
-            }
-
-            SVGImage {
-                id: image4
-                height: 24
-                width: 24
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                fillMode: Image.PreserveAspectFit
-                source: parent.checked ? "img/nodeActive.svg" : "img/node.svg"
-            }
+        StatusIconTabButton {
+              id: nodeBtn
+              enabled: isExperimental === "1"
+              visible: this.enabled
+              height: this.enabled ? 40 : 0
+              anchors.top: profileBtn.top
+              anchors.topMargin: 50
+              anchors.horizontalCenter: parent.horizontalCenter
+              icon.name: "node"
         }
 
-        TabButton {
-            id: uiComponentBtn
-            enabled: isExperimental === "1"
-            visible: this.enabled
-            width: 40
-            height: this.enabled ? 40 : 0
-            text: ""
-            anchors.topMargin: this.enabled ? 50 : 0
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: nodeBtn.top
-            background: Rectangle {
-                color: Style.current.secondaryBackground
-                opacity: parent.checked ? 1 : 0
-                radius: 50
-            }
-
-            SVGImage {
-                id: image5
-                height: 24
-                width: 24
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                fillMode: Image.PreserveAspectFit
-                source: parent.checked ? "img/nodeActive.svg" : "img/node.svg"
-            }
+        StatusIconTabButton {
+              id: uiComponentBtn
+              enabled: isExperimental === "1"
+              visible: this.enabled
+              height: this.enabled ? 40 : 0
+              anchors.top: nodeBtn.top
+              anchors.topMargin: 50
+              anchors.horizontalCenter: parent.horizontalCenter
+              icon.name: "node"
         }
     }
 
