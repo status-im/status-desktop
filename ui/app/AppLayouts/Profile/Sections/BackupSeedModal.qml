@@ -120,7 +120,7 @@ ModalPopup {
         anchors.right: parent.right
         StyledText {
             id: lblLoseSeed
-            text: qsTr("If you lose your seed phrase you lose your data and funds")
+            text: qsTr("If you lose your seed phrase, you lose your data and funds")
             wrapMode: Text.WordWrap
             font.pixelSize: 17
             font.bold: true

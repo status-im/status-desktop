@@ -188,9 +188,9 @@ RowLayout {
                 visible: !profileModel.isMnemonicBackedUp && sLayout.children[sLayout.currentIndex] !== profileLayoutContainer
                 anchors.top: image3.top
                 anchors.left: image3.right
-                anchors.leftMargin: -10
+                anchors.leftMargin: -Style.current.smallPadding
                 anchors.topMargin: -5
-                radius: 9
+                radius: width/2
                 color: Style.current.blue
                 width: 18
                 height: 18

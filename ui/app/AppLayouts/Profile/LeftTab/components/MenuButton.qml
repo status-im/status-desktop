@@ -44,7 +44,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: menuButton.right
         anchors.rightMargin: 10
-        radius: 9
+        radius: width/2
         color: Style.current.blue
         width: 18
         height: 18

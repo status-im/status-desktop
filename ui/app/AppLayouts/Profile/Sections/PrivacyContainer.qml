@@ -53,7 +53,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: 0
-                radius: 9
+                radius: width/2
                 color: Style.current.blue
                 width: 18
                 height: 18
