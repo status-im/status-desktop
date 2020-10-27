@@ -32,7 +32,7 @@ Popup {
         // Reset props
         iconColor = Style.current.primary
         iconRotates = false
-        linkText = defaultLinkText
+        root.linkText = defaultLinkText
     }
 
     Timer {
