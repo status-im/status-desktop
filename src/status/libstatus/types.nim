@@ -150,6 +150,7 @@ type
 
   Setting* {.pure.} = enum
     Appearance = "appearance",
+    Bookmarks = "bookmarks",
     Currency = "currency"
     EtherscanLink = "etherscan-link"
     InstallationId = "installation-id"

@@ -1,5 +1,5 @@
 import core, ./types, ../signals/types as statusgo_types, ./accounts/constants, ./utils
-import json, tables, sugar, sequtils, strutils
+import json, tables, sugar, sequtils, chronicles
 import json_serialization
 import locks
 
@@ -28,6 +28,7 @@ proc getSettings*(useCached: bool = true, keepSensitiveData: bool = false): Json
     withLock settingsLock:
       if useCached and not dirty and not keepSensitiveData:
         result = settings
+        # debug "setting", settings
       else: 
         result = callPrivateRPC("settings_getSettings").parseJSON()["result"]
         if (keepSensitiveData):
