@@ -24,6 +24,7 @@ Item {
     property int dropdownWidth: width
     property alias dropdownAlignment: select.menuAlignment
     property bool isValid: true
+    property bool readOnly: false
     property var reset: function() {}
 
     function resetInternal() {
@@ -33,6 +34,7 @@ Item {
         minRequiredAssetBalance = 0
         assetFound = undefined
         isValid = true
+        readOnly = false
     }
 
     function validate() {

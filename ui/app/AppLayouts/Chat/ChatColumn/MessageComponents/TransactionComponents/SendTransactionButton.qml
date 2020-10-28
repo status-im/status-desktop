@@ -45,7 +45,7 @@ Item {
     SignTransactionModal {
         id: signTransactionModal
         onOpened: {
-          walletModel.getGasPricePredictions()
+            walletModel.getGasPricePredictions()
         }
         selectedRecipient: {
             return {

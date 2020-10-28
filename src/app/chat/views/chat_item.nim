@@ -35,6 +35,8 @@ QtObject:
   QtProperty[string] id:
     read = id
 
+  proc contactsUpdated*(self: ChatItemView) {.signal}
+
   proc userNameOrAlias(self: ChatItemView, pubKey: string): string {.slot.} =
     if self.status.chat.contacts.hasKey(pubKey):
       return ens.userNameOrAlias(self.status.chat.contacts[pubKey])
@@ -48,6 +50,18 @@ QtObject:
 
   QtProperty[string] name:
     read = name
+    notify = contactsUpdated
+  
+  proc ensVerified*(self: ChatItemView): bool {.slot.} = 
+    if self.chatItem != nil and
+      self.chatItem.chatType.isOneToOne and
+      self.status.chat.contacts.hasKey(self.chatItem.id):
+        return self.status.chat.contacts[self.chatItem.id].ensVerified
+    result = false
+
+  QtProperty[bool] ensVerified:
+    read = ensVerified
+    notify = contactsUpdated
 
   proc color*(self: ChatItemView): string {.slot.} = result = ?.self.chatItem.color
 

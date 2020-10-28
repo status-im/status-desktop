@@ -9,6 +9,7 @@ QtObject:
     address*: string
     pubKey*: string
     appearance*: int
+    ensVerified*: bool
 
   proc setup(self: ProfileInfoView) =
     self.QObject.setup
@@ -23,6 +24,7 @@ QtObject:
     result.username = ""
     result.identicon = ""
     result.appearance = 0
+    result.ensVerified = false
     result.setup
 
   proc profileChanged*(self: ProfileInfoView) {.signal.}
@@ -33,6 +35,7 @@ QtObject:
     self.appearance = profile.appearance
     self.pubKey = profile.id
     self.address = profile.address
+    self.ensVerified = profile.ensVerified
     self.profileChanged()
 
   proc username*(self: ProfileInfoView): string {.slot.} = result = self.username
@@ -66,4 +69,10 @@ QtObject:
 
   QtProperty[string] address:
     read = address
+    notify = profileChanged
+
+  proc ensVerified*(self: ProfileInfoView): bool {.slot.} = self.ensVerified
+
+  QtProperty[bool] ensVerified:
+    read = ensVerified
     notify = profileChanged

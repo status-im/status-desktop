@@ -11,47 +11,63 @@ Item {
     //% "ENS Username not found"
     property string ensAsyncValidationError: qsTrId("ens-username-not-found")
     property alias label: inpAddress.label
+    property alias text: inpAddress.text
     property string selectedAddress
     property var isValid: false
     property bool isPending: false
+    readonly property string uuid: Utils.uuid()
+    property alias readOnly: inpAddress.readOnly
+    property bool isResolvedAddress: false
 
     height: inpAddress.height
+
+    onSelectedAddressChanged: validate()
+    onTextChanged: resolveEns()
 
     function resetInternal() {
         selectedAddress = ""
         inpAddress.resetInternal()
         metrics.text = ""
         isValid = false
+        isPending = false
+        isResolvedAddress = false
     }
 
-    function validate(inputValue) {
-        if (!inputValue) inputValue = selectedAddress
-        let isValid =
-            (inputValue && inputValue.startsWith("0x") && Utils.isValidAddress(inputValue) || Utils.isValidEns(inputValue))
-        inpAddress.validationError = isValid ? "" : validationError
+    function resolveEns() {
+        if (Utils.isValidEns(text)) {
+            root.validateAsync(text)
+        }
+    }
+
+    function validate() {
+        let isValidEns = Utils.isValidEns(text)
+        let isValidAddress = Utils.isValidAddress(selectedAddress)
+        let isValid = (isValidEns && !isResolvedAddress) || isPending || isValidAddress
+        inpAddress.validationError = ""
+        if (!isValid){ 
+            inpAddress.validationError = isResolvedAddress ? ensAsyncValidationError : validationError
+        }
         root.isValid = isValid
         return isValid
     }
 
-    property var validateAsync: Backpressure.debounce(inpAddress, 300, function (inputValue) {
+    property var validateAsync: Backpressure.debounce(inpAddress, 600, function (inputValue) {
         root.isPending = true
+        root.selectedAddress = ""
         var name = inputValue.startsWith("@") ? inputValue.substring(1) : inputValue
-        walletModel.resolveENS(name)
+        walletModel.resolveENS(name, uuid)
     });
 
 
     Connections {
         target: walletModel
         onEnsWasResolved: {
-            root.isPending = false
-            if (resolvedPubKey === ""){
-                inpAddress.validationError = root.ensAsyncValidationError
-                root.isValid = false
-            } else {
-                root.isValid = true
-                root.selectedAddress = resolvedPubKey
-                inpAddress.validationError = ""
+            if (uuid !== root.uuid) {
+                return
             }
+            root.isPending = false
+            root.isResolvedAddress = true
+            root.selectedAddress = resolvedAddress
         }
     }
 
@@ -64,29 +80,21 @@ Item {
         validationErrorTopMargin: 8
         textField.onFocusChanged: {
             let isValid = true
-            if (text !== "") {
-                isValid = root.validate(metrics.text)
-            }
-            if (!isValid) {
-                return
-            }
-            if (textField.focus) {
-                text = metrics.text
-            } else if (Utils.isValidAddress(metrics.text)) {
-                text = metrics.elidedText
+            if (text !== "" && Utils.isValidAddress(metrics.text)) {
+                if (textField.focus) {
+                    text = metrics.text
+                } else {
+                    text = metrics.elidedText
+                }
             }
         }
         textField.rightPadding: 73
         onTextEdited: {
             metrics.text = text
-            const isValid = root.validate(inputValue)
-            if (isValid) {
-              if (Utils.isValidAddress(inputValue)) {
-                root.selectedAddress = inputValue
-              } else {
-                Qt.callLater(root.validateAsync, inputValue)
-              }
-            }
+
+            resolveEns()
+            root.isResolvedAddress = false
+            root.selectedAddress = text
         }
         TextMetrics {
             id: metrics
@@ -98,6 +106,7 @@ Item {
             anchors.rightMargin: 8
             anchors.top: parent.top
             anchors.topMargin: 14
+            visible: !root.readOnly
             //% "Paste"
             label: qsTrId("paste")
             onClicked: {

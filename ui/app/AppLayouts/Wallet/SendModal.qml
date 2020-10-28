@@ -8,8 +8,11 @@ import "../../../shared/status"
 import "./components"
 
 ModalPopup {
-    property alias selectFromAccount: selectFromAccount
     id: root
+    property alias selectFromAccount: selectFromAccount
+    property alias selectRecipient: selectRecipient
+    property alias stack: stack
+    signal reset
 
     //% "Send"
     title: qsTrId("command-button-send")
@@ -25,6 +28,7 @@ ModalPopup {
 
     onClosed: {
         stack.reset()
+        root.reset()
     }
 
     function sendTransaction() {
@@ -86,7 +90,7 @@ ModalPopup {
                 reset: function() {
                     accounts = Qt.binding(function() { return walletModel.accounts })
                     contacts = Qt.binding(function() { return profileModel.addedContacts })
-                    selectedRecipient = {}
+                    selectedRecipient = undefined
                 }
                 onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
             }

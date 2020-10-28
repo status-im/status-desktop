@@ -16,24 +16,48 @@ Item {
     property alias validationErrorAlignment: select.validationErrorAlignment
     property bool isValid: false
     property var reset: function() {}
+    property bool readOnly: false
 
     function resetInternal() {
         contacts = undefined
         selectedContact = undefined
         select.validationError = ""
         isValid = false
+        readOnly = false
     }
 
     onContactsChanged: {
+        if (root.readOnly) {
+            return
+        }
         //% "Select a contact"
         root.selectedContact = { name: qsTrId("select-a-contact") }
     }
 
+    onSelectedContactChanged: validate()
+
     function validate() {
-        const isValid = !!(selectedContact && selectedContact.address)
+        const isValid = !!selectedContact && Utils.isValidAddress(selectedContact.address)
         select.validationError = !isValid ? validationError : ""
         root.isValid = isValid
         return isValid
+    }
+
+    Input {
+        id: inpReadOnly
+        visible: root.readOnly
+        width: parent.width
+        text: (root.selectedContact && root.selectedContact.name) ? root.selectedContact.name : qsTr("No contact selected")
+        textField.leftPadding: 14
+        textField.topPadding: 18
+        textField.bottomPadding: 18
+        textField.verticalAlignment: TextField.AlignVCenter
+        textField.font.pixelSize: 15
+        textField.color: Style.current.secondaryText
+        readOnly: true
+        validationErrorAlignment: TextEdit.AlignRight
+        validationErrorTopMargin: 8
+        customHeight: 56
     }
 
     Select {
@@ -41,6 +65,7 @@ Item {
         label: ""
         model: root.contacts
         width: parent.width
+        visible: !root.readOnly
         menuAlignment: Select.MenuAlignment.Left
         selectedItemView: Item {
             anchors.fill: parent

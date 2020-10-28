@@ -21,7 +21,7 @@ Item {
     property var getFiatValue: function () {}
     property var getCryptoValue: function () {}
     property bool isDirty: false
-    property bool isRequested: false
+    property bool validateBalance: true
     property bool isValid: false
     property var reset: function() {}
 
@@ -57,7 +57,7 @@ Item {
         } else if (input === 0.00 && hasTyped) {
             error = greaterThan0ErrorMessage
             isValid = false
-        } else if (!isRequested && input > balance && !noInput) {
+        } else if (validateBalance && input > balance && !noInput) {
             error = balanceErrorMessage
             isValid = false
         }
@@ -86,7 +86,7 @@ Item {
     }
 
     Item {
-        visible: !root.isRequested
+        visible: root.validateBalance
         anchors.right: parent.right
         anchors.left: parent.left
         anchors.top: parent.top
