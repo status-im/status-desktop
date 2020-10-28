@@ -8,6 +8,7 @@ import "./components"
 import "./ChatColumn"
 import "./ChatColumn/ChatComponents"
 import "./data"
+import "../Wallet"
 
 StackLayout {
     id: chatColumnLayout
@@ -219,36 +220,18 @@ StackLayout {
                 stickerPackList: chatsModel.stickerPacks
                 chatType: chatsModel.activeChannel.chatType
                 onSendTransactionCommandButtonClicked: {
-                    chatCommandModal.sendChatCommand = chatColumnLayout.requestAddressForTransaction
-                    chatCommandModal.isRequested = false
-                    //% "Send"
-                    chatCommandModal.commandTitle = qsTrId("command-button-send")
-                    chatCommandModal.title = chatCommandModal.commandTitle
-                    //% "Request Address"
-                    chatCommandModal.finalButtonLabel = qsTrId("request-address")
-                    chatCommandModal.selectedRecipient = {
-                        address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
-                        identicon: chatsModel.activeChannel.identicon,
-                        name: chatsModel.activeChannel.name,
-                        type: RecipientSelector.Type.Contact
+                    txModalLoader.sourceComponent = undefined
+                    if (chatsModel.activeChannel.ensVerified) {
+                        txModalLoader.sourceComponent = cmpSendTransactionWithEns
+                    } else {
+                        txModalLoader.sourceComponent = cmpSendTransactionNoEns
                     }
-                    chatCommandModal.open()
+                    txModalLoader.item.open()
                 }
                 onReceiveTransactionCommandButtonClicked: {
-                    chatCommandModal.sendChatCommand = chatColumnLayout.requestTransaction
-                    chatCommandModal.isRequested = true
-                    //% "Request"
-                    chatCommandModal.commandTitle = qsTrId("wallet-request")
-                    chatCommandModal.title = chatCommandModal.commandTitle
-                    //% "Request"
-                    chatCommandModal.finalButtonLabel = qsTrId("wallet-request")
-                    chatCommandModal.selectedRecipient = {
-                        address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
-                        identicon: chatsModel.activeChannel.identicon,
-                        name: chatsModel.activeChannel.name,
-                        type: RecipientSelector.Type.Contact
-                    }
-                    chatCommandModal.open()
+                    txModalLoader.sourceComponent = undefined
+                    txModalLoader.sourceComponent = cmpReceiveTransaction
+                    txModalLoader.item.open()
                 }
                 onStickerSelected: {
                     chatsModel.sendSticker(hashId, packId)
@@ -259,8 +242,111 @@ StackLayout {
 
     EmptyChat {}
 
-    ChatCommandModal {
-        id: chatCommandModal
+    Loader {
+        id: txModalLoader
+    }
+    Component {
+        id: cmpSendTransactionNoEns
+        ChatCommandModal {
+            id: sendTransactionNoEns
+            sendChatCommand: chatColumnLayout.requestAddressForTransaction
+            isRequested: false
+            //% "Send"
+            commandTitle: qsTrId("command-button-send")
+            title: commandTitle
+            //% "Request Address"
+            finalButtonLabel: qsTrId("request-address")
+            selectRecipient.selectedRecipient: {
+                return {
+                    address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
+                    identicon: chatsModel.activeChannel.identicon,
+                    name: chatsModel.activeChannel.name,
+                    type: RecipientSelector.Type.Contact
+                }
+            }
+            selectRecipient.selectedType: RecipientSelector.Type.Contact
+            selectRecipient.readOnly: true
+            onReset: {
+                selectRecipient.selectedRecipient = Qt.binding(function() {
+                    return {
+                        address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
+                        identicon: chatsModel.activeChannel.identicon,
+                        name: chatsModel.activeChannel.name,
+                        type: RecipientSelector.Type.Contact
+                    }
+                })
+                selectRecipient.selectedType = RecipientSelector.Type.Contact
+                selectRecipient.readOnly = true
+            }
+        }
+    }
+    Component {
+        id: cmpReceiveTransaction
+        ChatCommandModal {
+            id: receiveTransaction
+            sendChatCommand: chatColumnLayout.requestTransaction
+            isRequested: true
+            //% "Request"
+            commandTitle: qsTrId("wallet-request")
+            title: commandTitle
+            //% "Request"
+            finalButtonLabel: qsTrId("wallet-request")
+            selectRecipient.selectedRecipient: {
+                return {
+                    address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
+                    identicon: chatsModel.activeChannel.identicon,
+                    name: chatsModel.activeChannel.name,
+                    type: RecipientSelector.Type.Contact
+                }
+            }
+            selectRecipient.selectedType: RecipientSelector.Type.Contact
+            selectRecipient.readOnly: true
+            onReset: {
+                selectRecipient.selectedRecipient = Qt.binding(function() {
+                    return {
+                        address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
+                        identicon: chatsModel.activeChannel.identicon,
+                        name: chatsModel.activeChannel.name,
+                        type: RecipientSelector.Type.Contact
+                    }
+                })
+                selectRecipient.selectedType = RecipientSelector.Type.Contact
+                selectRecipient.readOnly = true
+            }
+        }
+    }
+    Component {
+        id: cmpSendTransactionWithEns
+        SendModal {
+            id: sendTransactionWithEns
+            onOpened: {
+                walletModel.getGasPricePredictions()
+            }
+            selectRecipient.readOnly: true
+            selectRecipient.selectedRecipient: {
+                return {
+                    address: "",
+                    identicon: chatsModel.activeChannel.identicon,
+                    name: chatsModel.activeChannel.name,
+                    type: RecipientSelector.Type.Address,
+                    ensVerified: true
+                }
+            }
+            selectRecipient.selectedType: RecipientSelector.Type.Address
+            onReset: {
+                selectRecipient.readOnly = true
+                selectRecipient.selectedRecipient = Qt.binding(function() {
+                    return {
+                        address: "",
+                        identicon: chatsModel.activeChannel.identicon,
+                        name: chatsModel.activeChannel.name,
+                        type: RecipientSelector.Type.Address,
+                        ensVerified: true
+                    }
+                })
+                selectRecipient.selectedType = RecipientSelector.Type.Address
+            }
+        }
     }
 }
 

@@ -11,15 +11,17 @@ ModalPopup {
     property string finalButtonLabel: "Request address"
     property var sendChatCommand: function () {}
     property bool isRequested: false
+    signal reset
 
     id: root
     title: root.commandTitle
     height: 504
 
-    property alias selectedRecipient: selectRecipient.selectedRecipient
+    property alias selectRecipient: selectRecipient
 
     onClosed: {
         stack.reset()
+        root.reset()
     }
 
     TransactionStackView {
@@ -78,7 +80,6 @@ ModalPopup {
                 label: root.isRequested ?
                   qsTr("From") :
                   qsTr("To")
-                readOnly: true
                 anchors.top: separator.bottom
                 anchors.topMargin: 10
                 width: stack.width
@@ -102,7 +103,7 @@ ModalPopup {
                 defaultCurrency: walletModel.defaultCurrency
                 getFiatValue: walletModel.getFiatValue
                 getCryptoValue: walletModel.getCryptoValue
-                isRequested: root.isRequested
+                validateBalance: !root.isRequested
                 width: stack.width
                 reset: function() {
                     selectedAccount = Qt.binding(function() { return selectFromAccount.selectedAccount })

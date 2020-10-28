@@ -562,13 +562,17 @@ QtObject:
             self.accounts.getAccount(index).transactions)
     self.loadingTrxHistoryChanged(false)
 
-  proc resolveENS*(self: WalletView, ens: string) {.slot.} =
+  proc resolveENS*(self: WalletView, ens: string, uuid: string) {.slot.} =
     spawnAndSend(self, "ensResolved") do:
-      status_ens.owner(ens)
+      $ %* { "address": status_ens.address(ens), "uuid": uuid }
 
-  proc ensWasResolved*(self: WalletView, resolvedPubKey: string) {.signal.}
+  proc ensWasResolved*(self: WalletView, resolvedAddress: string, uuid: string) {.signal.}
 
-  proc ensResolved(self: WalletView, pubKey: string) {.slot.} =
-    self.ensWasResolved(pubKey)
+  proc ensResolved(self: WalletView, addressUuidJson: string) {.slot.} =
+    let
+      parsed = addressUuidJson.parseJson
+      address = parsed["address"].to(string)
+      uuid = parsed["uuid"].to(string)
+    self.ensWasResolved(address, uuid)
   
   proc transactionCompleted*(self: WalletView, success: bool, txHash: string, revertReason: string = "") {.signal.}

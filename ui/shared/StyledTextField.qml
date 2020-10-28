@@ -4,8 +4,8 @@ import "../imports"
 
 TextField {
     font.family: Style.current.fontRegular.name
-    color: Style.current.textColor
-    selectByMouse: true
+    color: readOnly ? Style.current.secondaryText : Style.current.textColor
+    selectByMouse: !readOnly
     selectedTextColor: Style.current.textColor
     selectionColor: Style.current.secondaryHover
 }

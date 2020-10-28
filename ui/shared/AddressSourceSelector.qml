@@ -7,14 +7,14 @@ import "../imports"
 Item {
     id: root
     property var sources: []
-    property string selectedSource: sources[0] || "Address"
+    property var selectedSource: sources.length ? sources[0] : null
     property int dropdownWidth: 220
     property var reset: function() {}
     height: select.height
 
     function resetInternal() {
         sources = []
-        selectedSource = sources[0] || "Address"
+        selectedSource = sources.length ? sources[0] : null
     }
 
     Select {
@@ -26,7 +26,7 @@ Item {
             anchors.fill: parent
             StyledText {
                 id: selectedTextField
-                text: root.selectedSource
+                text: !!root.selectedSource ? root.selectedSource.text : qsTr("Invalid source")
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
@@ -49,7 +49,7 @@ Item {
 
                 StyledText {
                     id: itemText
-                    text: root.sources[index]
+                    text: root.sources[index].text
                     anchors.left: parent.left
                     anchors.leftMargin: Style.current.padding
                     anchors.verticalCenter: parent.verticalCenter
