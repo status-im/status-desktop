@@ -71,7 +71,7 @@ RowLayout {
                   anchors.left: parent.right
                   anchors.leftMargin: -10
                   anchors.topMargin: -5
-                  radius: 9
+                  radius: width / 2
                   color: Style.current.blue
                   width: chatsModel.unreadMessagesCount < 10 ? 18 : messageCount.width + 10
                   height: 18
@@ -117,11 +117,11 @@ RowLayout {
               Rectangle {
                 id: profileBadge
                 visible: !profileModel.isMnemonicBackedUp && sLayout.children[sLayout.currentIndex] !== profileLayoutContainer
-                anchors.top: image3.top
-                anchors.left: image3.right
+                anchors.top: parent.top
+                anchors.left: parent.right
                 anchors.leftMargin: -10
                 anchors.topMargin: -5
-                radius: 9
+                radius: width / 2
                 color: Style.current.blue
                 width: 18
                 height: 18
