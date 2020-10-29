@@ -85,21 +85,7 @@ Rectangle {
         }
 
         StyledTextField {
-            property var currentFavorite: getCurrentFavorite()
-
-            function getCurrentFavorite() {
-                if (!currentWebView || !currentWebView.url) {
-                    return false
-                }
-                const index = browserModel.bookmarks.getBookmarkIndexByUrl(currentWebView.url)
-                if (index === -1) {
-                    return null
-                }
-                return {
-                    url: currentWebView.url,
-                    name: browserModel.bookmarks.rowData(index, 'name')
-                }
-            }
+            property var currentFavorite: currentWebView && getCurrentFavorite(currentWebView.url)
 
             id: addressBar
             height: 40
@@ -135,6 +121,7 @@ Rectangle {
                     }
 
                     addFavoriteModal.modifiyModal = true
+                    addFavoriteModal.toolbarMode = true
                     addFavoriteModal.x = addFavoriteBtn.x + addFavoriteBtn.width / 2 - addFavoriteBtn.width / 2
                     addFavoriteModal.y = root.y + root.height + 4
                     addFavoriteModal.ogUrl = addressBar.currentFavorite ? addressBar.currentFavorite.url : currentWebView.url

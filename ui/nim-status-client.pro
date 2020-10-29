@@ -131,6 +131,7 @@ DISTFILES += \
     app/AppLayouts/Browser/DownloadBar.qml \
     app/AppLayouts/Browser/DownloadElement.qml \
     app/AppLayouts/Browser/FaviconImage.qml \
+    app/AppLayouts/Browser/FavoriteMenu.qml \
     app/AppLayouts/Browser/components/BookmarkButton.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandButton.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandModal.qml \

@@ -91,8 +91,30 @@ Rectangle {
         standardButtons: StandardButton.Ok
     }
 
+    function getCurrentFavorite(url) {
+        if (!url) {
+            return null
+        }
+        const index = browserModel.bookmarks.getBookmarkIndexByUrl(url)
+        if (index === -1) {
+            return null
+        }
+        return {
+            url: url,
+            name: browserModel.bookmarks.rowData(index, 'name')
+        }
+    }
+
     AddFavoriteModal {
         id: addFavoriteModal
+    }
+
+    FavoriteMenu {
+        id: favoriteMenu
+        openInNewTab: function (url) {
+            browserWindow.addNewTab()
+            currentWebView.url = url
+        }
     }
 
     QtObject {
@@ -618,6 +640,7 @@ Rectangle {
                         }
 
                         Item {
+                            id: bookmarkListContainer
                             anchors.horizontalCenter: emptyPageImage.horizontalCenter
                             anchors.top: emptyPageImage.bottom
                             anchors.topMargin: 30
@@ -632,8 +655,15 @@ Rectangle {
                                 anchors.horizontalCenterOffset: -(addBookmarkBtn.width + spacing) /2
                                 width: Math.min(childrenRect.width, parent.width - addBookmarkBtn.width - spacing)
                                 delegate: BookmarkButton {
+                                    id: bookmarkBtn
                                     text: name
                                     onClicked: currentWebView.url = url
+                                    onRightClicked: {
+                                        favoriteMenu.url = url
+                                        favoriteMenu.x = bookmarkList.x + bookmarkBtn.x + mouse.x
+                                        favoriteMenu.y = Qt.binding(function () {return bookmarkListContainer.y + mouse.y + favoriteMenu.height})
+                                        favoriteMenu.open()
+                                    }
                                 }
                             }
 

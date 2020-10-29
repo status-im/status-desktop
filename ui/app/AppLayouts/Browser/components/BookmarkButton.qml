@@ -6,7 +6,8 @@ import "../../../../imports"
 Item {
     property url source: "../../../img/globe.svg"
     property string text
-    signal clicked
+    signal clicked(mouse: var)
+    signal rightClicked(mouse: var)
 
     id: root
     width: 74
@@ -33,6 +34,13 @@ Item {
     MouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
-        onClicked: root.clicked()
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: {
+            if (mouse.button == Qt.RightButton) {
+                root.rightClicked(mouse)
+            } else {
+                root.clicked(mouse)
+            }
+        }
     }
 }

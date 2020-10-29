@@ -23,7 +23,9 @@ PopupMenu {
     Action {
         id: offTheRecordEnabled
         // TODO show an indicator on the browser or tab?
-        text: checked ? qsTr("Exit Incognito mode") : qsTr("Go Incognito")
+        text: checked ?
+                  qsTr("Exit Incognito mode") :
+                  qsTr("Go Incognito")
         checkable: true
         checked: currentWebView && currentWebView.profile === otrProfile
         onToggled: function(checked) {

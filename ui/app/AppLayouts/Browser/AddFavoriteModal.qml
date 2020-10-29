@@ -12,12 +12,13 @@ ModalPopup {
     property string ogUrl
     property string ogName
     property bool modifiyModal: false
+    property bool toolbarMode: false
 
     id: popup
-    width: modifiyModal ? 345 : 480
-    height: modifiyModal ? 345 : 480
+    width: toolbarMode ? 345 : 480
+    height: toolbarMode ? 345 : 480
 
-    modal: !modifiyModal
+    modal: !toolbarMode
 
     background: Rectangle {
         id: bgPopup
@@ -62,6 +63,7 @@ ModalPopup {
 
     function reset() {
         modifiyModal = false
+        toolbarMode = false
         urlError = ""
         nameError = ""
         ogUrl = ""
@@ -71,8 +73,10 @@ ModalPopup {
     }
 
     title: modifiyModal ?
-               qsTr("Favorite added") :
-               qsTr("Add favorite")
+               toolbarMode ?
+                   qsTr("Favorite added") :
+                   qsTr("Edit")
+               : qsTr("Add favorite")
 
     Column {
         width: parent.width
