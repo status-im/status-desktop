@@ -150,6 +150,10 @@ QtObject {
         return (/^[a-z0-9\-]+$/.test(channelName))
     }
 
+    function isURL(text) {
+        return (/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(text))
+    }
+
     function isSpace(c) {
         return (/( |\t|\n|\r)/.test(c))
     }
