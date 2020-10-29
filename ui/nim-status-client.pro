@@ -121,6 +121,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    app/AppLayouts/Browser/AddFavoriteModal.qml \
     app/AppLayouts/Browser/BrowserConnectionModal.qml \
     app/AppLayouts/Browser/BrowserHeader.qml \
     app/AppLayouts/Browser/BrowserSettingsMenu.qml \
