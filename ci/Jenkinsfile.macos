@@ -48,7 +48,14 @@ pipeline {
     }
 
     stage('Client') {
-      steps { sh 'make nim_status_client' }
+      steps { 
+        withCredentials([string(
+          credentialsId: utils.getInfuraTokenCred(),
+          variable: 'INFURA_TOKEN'
+        )]) {
+          sh 'make nim_status_client'
+        }
+      }
     }
 
     stage('Package') { steps {
