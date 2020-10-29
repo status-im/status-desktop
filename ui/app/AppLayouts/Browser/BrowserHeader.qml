@@ -77,7 +77,30 @@ Rectangle {
             Layout.leftMargin: -root.innerMargin/2
         }
 
+        Connections {
+            target: browserModel
+            onBookmarksChanged: {
+                addressBar.currentFavorite = getCurrentFavorite()
+            }
+        }
+
         StyledTextField {
+            property var currentFavorite: getCurrentFavorite()
+
+            function getCurrentFavorite() {
+                if (!currentWebView || !currentWebView.url) {
+                    return false
+                }
+                const index = browserModel.bookmarks.getBookmarkIndexByUrl(currentWebView.url)
+                if (index === -1) {
+                    return null
+                }
+                return {
+                    url: currentWebView.url,
+                    name: browserModel.bookmarks.rowData(index, 'name')
+                }
+            }
+
             id: addressBar
             height: 40
             Layout.fillWidth: true
@@ -100,7 +123,30 @@ Rectangle {
             }
 
             StatusIconButton {
-                id: chatCommandsBtn
+                id: addFavoriteBtn
+                visible: !!currentWebView && !!currentWebView.url
+                icon.name: !!addressBar.currentFavorite ? "browser/favoriteActive" : "browser/favorite"
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: reloadBtn.left
+                anchors.rightMargin: Style.current.halfPadding
+                onClicked: {
+                    if (!addressBar.currentFavorite) {
+                        browserModel.addBookmark(currentWebView.url, currentWebView.title)
+                    }
+
+                    addFavoriteModal.modifiyModal = true
+                    addFavoriteModal.x = addFavoriteBtn.x + addFavoriteBtn.width / 2 - addFavoriteBtn.width / 2
+                    addFavoriteModal.y = root.y + root.height + 4
+                    addFavoriteModal.ogUrl = addressBar.currentFavorite ? addressBar.currentFavorite.url : currentWebView.url
+                    addFavoriteModal.ogName = addressBar.currentFavorite ? addressBar.currentFavorite.name : currentWebView.title
+                    addFavoriteModal.open()
+                }
+                width: 24
+                height: 24
+            }
+
+            StatusIconButton {
+                id: reloadBtn
                 icon.name: currentWebView && currentWebView.loading ? "close" : "browser/refresh"
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right

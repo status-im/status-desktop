@@ -33,12 +33,34 @@ QtObject:
       discard
     self.bookmarks.setNewData(bookmarks)
 
+  proc bookmarksChanged*(self: BrowserView) {.signal.}
+
   proc getBookmarks*(self: BrowserView): QVariant {.slot.} =
     return newQVariant(self.bookmarks)
 
   QtProperty[QVariant] bookmarks:
     read = getBookmarks
+    notify = bookmarksChanged
 
   proc addBookmark*(self: BrowserView, url: string, name: string) {.slot.} =
     self.bookmarks.addBookmarkItemToList(Bookmark(url: url, name: name, image: ""))
     discard status_settings.saveSetting(Setting.Bookmarks, $(%self.bookmarks.bookmarks))
+    self.bookmarksChanged()
+
+  proc removeBookmark*(self: BrowserView, url: string) {.slot.} =
+    let index = self.bookmarks.getBookmarkIndexByUrl(url)
+    if index == -1:
+      return
+    self.bookmarks.removeBookmarkItemFromList(index)
+    discard status_settings.saveSetting(Setting.Bookmarks, $(%self.bookmarks.bookmarks))
+    self.bookmarksChanged()
+
+  proc modifyBookmark*(self: BrowserView, ogUrl: string, newUrl: string, newName: string) {.slot.} =
+    let index = self.bookmarks.getBookmarkIndexByUrl(ogUrl)
+    if index == -1:
+      # Somehow we don't know this URL. Let's just add it as a new one
+      self.addBookmark(newUrl, newName)
+      return
+    self.bookmarks.modifyBookmarkItemFromList(index, newUrl, newName)
+    discard status_settings.saveSetting(Setting.Bookmarks, $(%self.bookmarks.bookmarks))
+    self.bookmarksChanged()

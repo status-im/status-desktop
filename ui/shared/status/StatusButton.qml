@@ -10,6 +10,8 @@ Button {
     property string size: "large"
     property string state: "default"
     property color color: Style.current.buttonForegroundColor
+    property color bgColor: Style.current.buttonBackgroundColor
+    property color bgHoverColor: Qt.darker(control.bgColor, 1.1)
     property int iconRotation: 0
 
     id: control
@@ -89,11 +91,11 @@ Button {
         anchors.fill: parent
         color: {
             if (type === "secondary") {
-                return hovered ? Style.current.buttonBackgroundColor : "transparent"
+                return hovered ? control.bgColor : "transparent"
             }
             return !enabled ? Style.current.buttonDisabledBackgroundColor :
-                      hovered ? Qt.darker(Style.current.buttonBackgroundColor, 1.1) :
-                      Style.current.buttonBackgroundColor 
+                      hovered ? control.bgHoverColor :
+                      control.bgColor
         }
     }
 
