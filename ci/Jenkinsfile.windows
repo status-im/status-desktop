@@ -58,7 +58,14 @@ pipeline {
     }
 
     stage('Package') {
-      steps { sh "make ${env.STATUS_CLIENT_ZIP}" }
+      steps { 
+        withCredentials([string(
+          credentialsId: utils.getInfuraTokenCred(),
+          variable: 'INFURA_TOKEN'
+        )]) {
+          sh "make ${env.STATUS_CLIENT_ZIP}"
+        }
+      }
     }
 
     stage('Parallel Upload') {
