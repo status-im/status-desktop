@@ -19,14 +19,26 @@ Item {
     //% "Invalid ethereum address"
     readonly property string addressValidationError: qsTrId("invalid-ethereum-address")
     property bool isValid: false
-    property bool isPending: false
+    property bool isPending: {
+        if (!selAddressSource.selectedSource) {
+            return false
+        }
+        switch (selAddressSource.selectedSource.value) {
+            case RecipientSelector.Type.Address:
+                return inpAddress.isPending
+            case RecipientSelector.Type.Contact:
+                return selContact.isPending
+            case RecipientSelector.Type.Account:
+                return selAccount.isPending
+        }
+    }
     property var reset: function() {}
     readonly property var sources: [
         //% "Address"
         { text: qsTrId("address"), value: RecipientSelector.Type.Address, visible: true },
         //% "My account"
         { text: qsTrId("my-account"), value: RecipientSelector.Type.Account, visible: true },
-        { text: qsTr("Contact"), value: RecipientSelector.Type.Contact, visible: false }
+        { text: qsTr("Contact"), value: RecipientSelector.Type.Contact, visible: true }
     ]
     property var selectedType: RecipientSelector.Type.Address
 
@@ -36,7 +48,19 @@ Item {
         selAccount.resetInternal()
         selAddressSource.resetInternal()
         isValid = false
-        isPending = false
+        isPending = Qt.binding(function() {
+            if (!selAddressSource.selectedSource) {
+                return false
+            }
+            switch (selAddressSource.selectedSource.value) {
+                case RecipientSelector.Type.Address:
+                    return inpAddress.isPending
+                case RecipientSelector.Type.Contact:
+                    return selContact.isPending
+                case RecipientSelector.Type.Account:
+                    return selAccount.isPending
+            }
+        })
         selectedType = RecipientSelector.Type.Address
         selectedRecipient = undefined
         accounts = undefined
