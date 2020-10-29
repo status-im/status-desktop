@@ -18,6 +18,7 @@ Item {
     property int iconHeight: 24
     property int iconWidth: 24
     property bool copyToClipboard: false
+    property bool pasteFromClipboard: false
     property bool readOnly: false
 
     readonly property bool hasIcon: icon.toString() !== ""
@@ -108,47 +109,57 @@ Item {
         }
 
         Loader {
-            active: inputBox.copyToClipboard
+            active: inputBox.copyToClipboard || inputBox.pasteFromClipboard
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: 8
-            sourceComponent: copyToClipboardComponent
-        }
+            sourceComponent: Component {
+                Item {
+                    width: copyBtn.width
+                    height: copyBtn.height
 
-        Component {
-            id: copyToClipboardComponent
+                    Timer {
+                        id: timer
+                    }
 
-            Item {
-                width: copyBtn.width
-                height: copyBtn.height
+                    StyledButton {
+                        property bool copied: false
+                        id: copyBtn
+                        label: {
+                            if (copied) {
+                                return inputBox.copyToClipboard ?
+                                            //% "Copied"
+                                            qsTrId("sharing-copied-to-clipboard")  :
+                                            qsTr("Pasted")
+                            }
+                            return inputBox.copyToClipboard ?
+                                        //% "Copy"
+                                        qsTrId("copy-to-clipboard") :
+                                        qsTr("Paste")
 
-                Timer {
-                    id: timer
-                }
+                        }
+                        height: 28
+                        textSize: 12
+                        btnBorderColor: Style.current.blue
+                        btnBorderWidth: 1
+                        onClicked: {
+                            if (inputBox.copyToClipboard) {
+                                chatsModel.copyToClipboard(inputValue.text)
+                            } else {
+                                if (inputValue.canPaste) {
+                                    inputValue.paste()
+                                }
+                            }
 
-                StyledButton {
-                    id: copyBtn
-                    //% "Copy"
-                    label: qsTrId("copy-to-clipboard")
-                    height: 28
-                    textSize: 12
-                    btnBorderColor: Style.current.blue
-                    btnBorderWidth: 1
-                    onClicked: {
-                        chatsModel.copyToClipboard(inputValue.text)
-                        //% "Copied"
-                        copyBtn.label = qsTrId("sharing-copied-to-clipboard")
-                        timer.setTimeout(function(){
-                            //% "Copy"
-                            copyBtn.label = qsTrId("copy-to-clipboard")
-                        }, 2000);
+                            copyBtn.copied = true
+                            timer.setTimeout(function() {
+                                copyBtn.copied = false
+                            }, 2000);
+                        }
                     }
                 }
             }
-
         }
-
-
     }
 
     TextEdit {
