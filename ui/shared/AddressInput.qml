@@ -14,15 +14,14 @@ Item {
     property alias text: inpAddress.text
     property string selectedAddress
     property var isValid: false
-    property bool isPending: false
-    readonly property string uuid: Utils.uuid()
+    property alias isPending: ensResolver.isPending
     property alias readOnly: inpAddress.readOnly
     property bool isResolvedAddress: false
 
     height: inpAddress.height
 
     onSelectedAddressChanged: validate()
-    onTextChanged: resolveEns()
+    onTextChanged: ensResolver.resolveEns(text)
 
     function resetInternal() {
         selectedAddress = ""
@@ -31,12 +30,6 @@ Item {
         isValid = false
         isPending = false
         isResolvedAddress = false
-    }
-
-    function resolveEns() {
-        if (Utils.isValidEns(text)) {
-            root.validateAsync(text)
-        }
     }
 
     function validate() {
@@ -49,26 +42,6 @@ Item {
         }
         root.isValid = isValid
         return isValid
-    }
-
-    property var validateAsync: Backpressure.debounce(inpAddress, 600, function (inputValue) {
-        root.isPending = true
-        root.selectedAddress = ""
-        var name = inputValue.startsWith("@") ? inputValue.substring(1) : inputValue
-        walletModel.resolveENS(name, uuid)
-    });
-
-
-    Connections {
-        target: walletModel
-        onEnsWasResolved: {
-            if (uuid !== root.uuid) {
-                return
-            }
-            root.isPending = false
-            root.isResolvedAddress = true
-            root.selectedAddress = resolvedAddress
-        }
     }
 
     Input {
@@ -92,7 +65,7 @@ Item {
         onTextEdited: {
             metrics.text = text
 
-            resolveEns()
+            ensResolver.resolveEns(text)
             root.isResolvedAddress = false
             root.selectedAddress = text
         }
@@ -117,19 +90,19 @@ Item {
         }
     }
 
-    Loader {
-        sourceComponent: loadingIndicator
+    EnsResolver {
+        id: ensResolver
         anchors.top: inpAddress.bottom
         anchors.right: inpAddress.right
         anchors.topMargin: Style.current.halfPadding
-        active: root.isPending
-    }
-
-    Component {
-        id: loadingIndicator
-        LoadingImage {
-            width: 12
-            height: 12
+        onResolved: {
+            root.isResolvedAddress = true
+            root.selectedAddress = resolvedAddress
+        }
+        onIsPendingChanged: {
+            if (isPending) {
+                root.selectedAddress = ""
+            }
         }
     }
 }

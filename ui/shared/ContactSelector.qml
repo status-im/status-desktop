@@ -15,8 +15,13 @@ Item {
     property string validationError: qsTrId("please-select-a-contact")
     property alias validationErrorAlignment: select.validationErrorAlignment
     property bool isValid: false
+    property alias isPending: ensResolver.isPending
     property var reset: function() {}
     property bool readOnly: false
+    property bool isResolvedAddress: false
+    //% "Select a contact"
+    property string selectAContact: qsTrId("select-a-contact")
+    property string noEnsAddressMessage: qsTr("Contact does not have an ENS address. Please send a transaction in chat.")
 
     function resetInternal() {
         contacts = undefined
@@ -24,21 +29,40 @@ Item {
         select.validationError = ""
         isValid = false
         readOnly = false
+        isResolvedAddress = false
     }
 
     onContactsChanged: {
         if (root.readOnly) {
             return
         }
-        //% "Select a contact"
-        root.selectedContact = { name: qsTrId("select-a-contact") }
+        root.selectedContact = { name: selectAContact }
     }
 
-    onSelectedContactChanged: validate()
+    onSelectedContactChanged: {
+        if (selectedContact && selectedContact.ensVerified) {
+            root.isResolvedAddress = false
+            ensResolver.resolveEns(selectedContact.name)
+        }
+        validate()
+    }
 
     function validate() {
-        const isValid = !!selectedContact && Utils.isValidAddress(selectedContact.address)
-        select.validationError = !isValid ? validationError : ""
+        if (!selectedContact) {
+            return root.isValid
+        }
+        let isValidAddress = Utils.isValidAddress(selectedContact.address)
+        let isDefaultValue = selectedContact.name === selectAContact
+        let isValid = (selectedContact.ensVerified && isValidAddress) || isPending || isValidAddress
+        select.validationError = ""
+        if (!isValid && !isDefaultValue && 
+            (
+                !selectedContact.ensVerified ||
+                (selectedContact.ensVerified && isResolvedAddress)
+            )
+        ) {
+            select.validationError = !selectedContact.ensVerified ? noEnsAddressMessage : validationError
+        }
         root.isValid = isValid
         return isValid
     }
@@ -107,6 +131,23 @@ Item {
 
         menu.delegate: menuItem
         menu.width: dropdownWidth
+    }
+
+    EnsResolver {
+        id: ensResolver
+        anchors.top: select.bottom
+        anchors.right: select.right
+        anchors.topMargin: Style.current.halfPadding
+        onResolved: {
+            root.isResolvedAddress = true
+            root.selectedContact.address = resolvedAddress
+            validate()
+        }
+        onIsPendingChanged: {
+            if (isPending) {
+                root.selectedContact.address = ""
+            }
+        }
     }
 
     Component {
@@ -187,7 +228,6 @@ Item {
                 onClicked: {
                     root.selectedContact = { address, name, alias, isContact, identicon, ensVerified }
                     select.menu.close()
-                    validate()
                 }
             }
         }
