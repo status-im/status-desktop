@@ -32,6 +32,13 @@ Item {
         isResolvedAddress = false
     }
 
+    function resolveEns() {
+        if (selectedContact.ensVerified) {
+            root.isResolvedAddress = false
+            ensResolver.resolveEns(selectedContact.name)
+        }
+    }
+
     onContactsChanged: {
         if (root.readOnly) {
             return
@@ -39,13 +46,7 @@ Item {
         root.selectedContact = { name: selectAContact }
     }
 
-    onSelectedContactChanged: {
-        if (selectedContact && selectedContact.ensVerified) {
-            root.isResolvedAddress = false
-            ensResolver.resolveEns(selectedContact.name)
-        }
-        validate()
-    }
+    onSelectedContactChanged: validate()
 
     function validate() {
         if (!selectedContact) {
@@ -138,11 +139,12 @@ Item {
         anchors.top: select.bottom
         anchors.right: select.right
         anchors.topMargin: Style.current.halfPadding
+        debounceDelay: root.readOnly ? 0 : 600
         onResolved: {
             root.isResolvedAddress = true
-            const { name, alias, isContact, identicon, ensVerified } = root.selectedContact
-            root.selectedContact = { address: resolvedAddress, name, alias, isContact, identicon, ensVerified }
-            validate()
+            var selectedContact = root.selectedContact
+            selectedContact.address = resolvedAddress
+            root.selectedContact = selectedContact
         }
         onIsPendingChanged: {
             if (isPending) {
@@ -228,6 +230,7 @@ Item {
                 anchors.fill: itemContainer
                 onClicked: {
                     root.selectedContact = { address, name, alias, isContact, identicon, ensVerified }
+                    resolveEns()
                     select.menu.close()
                 }
             }

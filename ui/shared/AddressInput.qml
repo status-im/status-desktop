@@ -95,6 +95,7 @@ Item {
         anchors.top: inpAddress.bottom
         anchors.right: inpAddress.right
         anchors.topMargin: Style.current.halfPadding
+        debounceDelay: root.readOnly ? 0 : 600
         onResolved: {
             root.isResolvedAddress = true
             root.selectedAddress = resolvedAddress

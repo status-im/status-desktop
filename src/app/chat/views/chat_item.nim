@@ -62,6 +62,17 @@ QtObject:
   QtProperty[bool] ensVerified:
     read = ensVerified
     notify = contactsUpdated
+  
+  proc alias*(self: ChatItemView): string {.slot.} = 
+    if self.chatItem != nil and
+      self.chatItem.chatType.isOneToOne and
+      self.status.chat.contacts.hasKey(self.chatItem.id):
+        return self.status.chat.contacts[self.chatItem.id].alias
+    result = ""
+
+  QtProperty[string] alias:
+    read = alias
+    notify = contactsUpdated
 
   proc color*(self: ChatItemView): string {.slot.} = result = ?.self.chatItem.color
 

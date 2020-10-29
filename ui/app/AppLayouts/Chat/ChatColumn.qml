@@ -259,6 +259,7 @@ StackLayout {
             selectRecipient.selectedRecipient: {
                 return {
                     address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
+                    alias: chatsModel.activeChannel.alias,
                     identicon: chatsModel.activeChannel.identicon,
                     name: chatsModel.activeChannel.name,
                     type: RecipientSelector.Type.Contact
@@ -270,6 +271,7 @@ StackLayout {
                 selectRecipient.selectedRecipient = Qt.binding(function() {
                     return {
                         address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
+                        alias: chatsModel.activeChannel.alias,
                         identicon: chatsModel.activeChannel.identicon,
                         name: chatsModel.activeChannel.name,
                         type: RecipientSelector.Type.Contact
@@ -294,6 +296,7 @@ StackLayout {
             selectRecipient.selectedRecipient: {
                 return {
                     address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
+                    alias: chatsModel.activeChannel.alias,
                     identicon: chatsModel.activeChannel.identicon,
                     name: chatsModel.activeChannel.name,
                     type: RecipientSelector.Type.Contact
@@ -305,6 +308,7 @@ StackLayout {
                 selectRecipient.selectedRecipient = Qt.binding(function() {
                     return {
                         address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
+                        alias: chatsModel.activeChannel.alias,
                         identicon: chatsModel.activeChannel.identicon,
                         name: chatsModel.activeChannel.name,
                         type: RecipientSelector.Type.Contact
@@ -326,25 +330,27 @@ StackLayout {
             selectRecipient.selectedRecipient: {
                 return {
                     address: "",
+                    alias: chatsModel.activeChannel.alias,
                     identicon: chatsModel.activeChannel.identicon,
                     name: chatsModel.activeChannel.name,
-                    type: RecipientSelector.Type.Address,
+                    type: RecipientSelector.Type.Contact,
                     ensVerified: true
                 }
             }
-            selectRecipient.selectedType: RecipientSelector.Type.Address
+            selectRecipient.selectedType: RecipientSelector.Type.Contact
             onReset: {
                 selectRecipient.readOnly = true
                 selectRecipient.selectedRecipient = Qt.binding(function() {
                     return {
                         address: "",
+                        alias: chatsModel.activeChannel.alias,
                         identicon: chatsModel.activeChannel.identicon,
                         name: chatsModel.activeChannel.name,
-                        type: RecipientSelector.Type.Address,
+                        type: RecipientSelector.Type.Contact,
                         ensVerified: true
                     }
                 })
-                selectRecipient.selectedType = RecipientSelector.Type.Address
+                selectRecipient.selectedType = RecipientSelector.Type.Contact
             }
         }
     }
