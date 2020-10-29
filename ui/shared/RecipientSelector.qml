@@ -169,8 +169,10 @@ Item {
                 if (!selAddressSource.selectedSource || (selAddressSource.selectedSource && selAddressSource.selectedSource.value !== RecipientSelector.Type.Address)) {
                     return
                 }
-                root.selectedRecipient.address = selectedAddress
-                root.selectedRecipient.type = RecipientSelector.Type.Address
+                var recipient = root.selectedRecipient;
+                recipient.address = selectedAddress
+                recipient.type = RecipientSelector.Type.Address
+                root.selectedRecipient = recipient
             }
             onIsValidChanged: root.validate()
         }

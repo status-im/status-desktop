@@ -140,7 +140,8 @@ Item {
         anchors.topMargin: Style.current.halfPadding
         onResolved: {
             root.isResolvedAddress = true
-            root.selectedContact.address = resolvedAddress
+            const { name, alias, isContact, identicon, ensVerified } = root.selectedContact
+            root.selectedContact = { address: resolvedAddress, name, alias, isContact, identicon, ensVerified }
             validate()
         }
         onIsPendingChanged: {
