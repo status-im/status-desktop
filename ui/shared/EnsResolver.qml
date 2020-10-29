@@ -8,7 +8,8 @@ Item {
     id: root
     property bool isPending: false
     readonly property string uuid: Utils.uuid()
-    readonly property var validateAsync: Backpressure.debounce(inpAddress, 600, function (inputValue) {
+    property int debounceDelay: 600
+    readonly property var validateAsync: Backpressure.debounce(inpAddress, debounceDelay, function (inputValue) {
         root.isPending = true
         var name = inputValue.startsWith("@") ? inputValue.substring(1) : inputValue
         walletModel.resolveENS(name, uuid)

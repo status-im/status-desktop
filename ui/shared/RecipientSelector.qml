@@ -113,6 +113,11 @@ Item {
                 break
             case RecipientSelector.Type.Contact:
                 selContact.selectedContact = selectedRecipient
+                // TODO: we shouldn't have to call resolveEns from the outside.
+                // It should be handled automatically when selectedContact is
+                // updated, however, handling it on property change causes an
+                // infinite loop
+                selContact.resolveEns()
                 selContact.visible = true
                 inpAddress.visible = selAccount.visible = false
                 break

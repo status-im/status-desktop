@@ -139,7 +139,8 @@ ModalPopup {
                         selectFromAccount.selectedAccount.address,
                         selectRecipient.selectedRecipient.address,
                         txtAmount.selectedAsset.address,
-                        txtAmount.selectedAmount))
+                        txtAmount.selectedAmount,
+                        ""))
 
                     if (!gasEstimate.success) {
                         //% "Error estimating gas: %1"
