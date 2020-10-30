@@ -64,6 +64,7 @@ RowLayout {
               id: chatBtn
               anchors.horizontalCenter: parent.horizontalCenter
               icon.name: "message"
+              anchors.topMargin: 0
 
               Rectangle {
                   visible: chatsModel.unreadMessagesCount > 0
@@ -88,30 +89,20 @@ RowLayout {
         StatusIconTabButton {
               id: walletBtn
               anchors.top: chatBtn.top
-              anchors.topMargin: 50
-              anchors.horizontalCenter: parent.horizontalCenter
               enabled: isExperimental === "1" || appSettings.walletEnabled
-              visible: this.enabled
-              height: this.enabled ? 40 : 0
               icon.name: "wallet"
         }
 
         StatusIconTabButton {
               id: browserBtn
               anchors.top: walletBtn.top
-              anchors.topMargin: 50
-              anchors.horizontalCenter: parent.horizontalCenter
               enabled: isExperimental === "1" || appSettings.browserEnabled
-              visible: this.enabled
-              height: this.enabled ? 40 : 0
               icon.name: "compass"
         }
 
         StatusIconTabButton {
               id: profileBtn
               anchors.top: browserBtn.top
-              anchors.topMargin: 50
-              anchors.horizontalCenter: parent.horizontalCenter
               icon.name: "profile"
 
               Rectangle {
@@ -137,22 +128,14 @@ RowLayout {
         StatusIconTabButton {
               id: nodeBtn
               enabled: isExperimental === "1"
-              visible: this.enabled
-              height: this.enabled ? 40 : 0
               anchors.top: profileBtn.top
-              anchors.topMargin: 50
-              anchors.horizontalCenter: parent.horizontalCenter
               icon.name: "node"
         }
 
         StatusIconTabButton {
               id: uiComponentBtn
               enabled: isExperimental === "1"
-              visible: this.enabled
-              height: this.enabled ? 40 : 0
               anchors.top: nodeBtn.top
-              anchors.topMargin: 50
-              anchors.horizontalCenter: parent.horizontalCenter
               icon.name: "node"
         }
     }
