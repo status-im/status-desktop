@@ -47,35 +47,30 @@ pipeline {
       steps { sh 'make status-go' }
     }
 
-    stage('Client') {
-      steps { 
-        withCredentials([string(
-          credentialsId: utils.getInfuraTokenCred(),
-          variable: 'INFURA_TOKEN'
-        )]) {
-          sh 'make nim_status_client'
+    stage('Package') {
+      steps {
+        withCredentials([
+          string(
+            credentialsId: 'macos-keychain-identity',
+            variable: 'MACOS_CODESIGN_IDENT'
+          ),
+          string(
+            credentialsId: 'macos-keychain-pass',
+            variable: 'MACOS_KEYCHAIN_PASS'
+          ),
+          file(
+            credentialsId: 'macos-keychain-file',
+            variable: 'MACOS_KEYCHAIN_FILE'
+          ),
+          string(
+            credentialsId: utils.getInfuraTokenCred(),
+            variable: 'INFURA_TOKEN'
+          )
+        ]) {
+          sh 'make pkg-macos'
         }
       }
     }
-
-    stage('Package') { steps {
-      withCredentials([
-        string(
-          credentialsId: 'macos-keychain-identity',
-          variable: 'MACOS_CODESIGN_IDENT'
-        ),
-        string(
-          credentialsId: 'macos-keychain-pass',
-          variable: 'MACOS_KEYCHAIN_PASS'
-        ),
-        file(
-          credentialsId: 'macos-keychain-file',
-          variable: 'MACOS_KEYCHAIN_FILE'
-        ),
-      ]) {
-        sh 'make pkg-macos'
-      }
-    } }
 
     stage('Parallel Upload') {
       parallel {

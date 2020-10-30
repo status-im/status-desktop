@@ -215,17 +215,25 @@ $(FLEETFILE): | deps
 		| jq --indent 4 --sort-keys . \
 		> fleets.json
 
-remove-fleet: 
+remove-fleet:
 	rm -f fleets.json
 
 update-fleets: remove-fleet $(FLEETFILE)
-  
+
 rcc:
 	echo -e $(BUILD_MSG) "resources.rcc"
 	rm -f ./resources.rcc
 	rm -f ./ui/resources.qrc
 	./ui/generate-rcc.sh
 	rcc -binary ui/resources.qrc -o ./resources.rcc
+
+# default token is a free-tier token with limited capabilities and usage
+# limits; our docs should include directions for community contributor to setup
+# their own Infura account and token instead of relying on this default token
+# during development
+DEFAULT_TOKEN := 220a1abb4b6943a093c35d0ce4fb0732
+INFURA_TOKEN ?= $(DEFAULT_TOKEN)
+NIM_PARAMS += -d:INFURA_TOKEN:"$(INFURA_TOKEN)"
 
 nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) $(FLEETFILE) rcc deps
 	echo -e $(BUILD_MSG) "$@" && \

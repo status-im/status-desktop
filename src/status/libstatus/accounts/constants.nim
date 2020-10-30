@@ -16,6 +16,18 @@ const PATH_DEFAULT_WALLET* = PATH_WALLET_ROOT & "/0"
 # EIP1581 Chat Key 0, the default whisper key
 const PATH_WHISPER* = PATH_EIP_1581 & "/0'/0"
 
+# set via `nim c` param `-d:INFURA_TOKEN:[token]`; should be set in CI/release builds
+const INFURA_TOKEN {.strdefine.} = ""
+# allow runtime override via environment variable; core contributors can set a
+# release token in this way for local development
+let INFURA_TOKEN_ENV = $getEnv("INFURA_TOKEN")
+
+let INFURA_TOKEN_RESOLVED =
+  if INFURA_TOKEN_ENV != "":
+    INFURA_TOKEN_ENV
+  else:
+    INFURA_TOKEN
+
 let DEFAULT_NETWORKS* = %* [
   {
     "id": "testnet_rpc",
@@ -26,7 +38,7 @@ let DEFAULT_NETWORKS* = %* [
       "DataDir": "/ethereum/testnet_rpc",
       "UpstreamConfig": {
         "Enabled": true,
-        "URL": "https://ropsten.infura.io/v3/7230123556ec4a8aac8d89ccd0dd74d7"
+        "URL": "https://ropsten.infura.io/v3/" & INFURA_TOKEN_RESOLVED
       }
     }
   },
@@ -39,7 +51,7 @@ let DEFAULT_NETWORKS* = %* [
       "DataDir": "/ethereum/rinkeby_rpc",
       "UpstreamConfig": {
         "Enabled": true,
-        "URL": "https://rinkeby.infura.io/v3/7230123556ec4a8aac8d89ccd0dd74d7"
+        "URL": "https://rinkeby.infura.io/v3/" & INFURA_TOKEN_RESOLVED
       }
     }
   },
@@ -65,7 +77,7 @@ let DEFAULT_NETWORKS* = %* [
       "DataDir": "/ethereum/mainnet_rpc",
       "UpstreamConfig": {
         "Enabled": true,
-        "URL": "https://mainnet.infura.io/v3/7230123556ec4a8aac8d89ccd0dd74d7"
+        "URL": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED
       }
     }
   },
@@ -133,16 +145,16 @@ var NODE_CONFIG* = %* {
     "MaxMessageDeliveryAttempts": 6,
     "PFSEnabled": true,
     "VerifyENSContractAddress": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
-    "VerifyENSURL": "https://mainnet.infura.io/v3/7230123556ec4a8aac8d89ccd0dd74d7",
+    "VerifyENSURL": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "VerifyTransactionChainID": 1,
-    "VerifyTransactionURL": "https://mainnet.infura.io/v3/7230123556ec4a8aac8d89ccd0dd74d7"
+    "VerifyTransactionURL": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED
   },
   "StatusAccountsConfig": {
     "Enabled": true
   },
   "UpstreamConfig": {
     "Enabled": true,
-    "URL": "https://mainnet.infura.io/v3/7230123556ec4a8aac8d89ccd0dd74d7"
+    "URL": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED
   },
   "WakuConfig": {
     "BloomFilterMode": nil,
