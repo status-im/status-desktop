@@ -99,9 +99,15 @@ Rectangle {
         if (index === -1) {
             return null
         }
+        const currentFavicon = currentWebView.icon.toString().replace('image://favicon/', '')
+        if (!appSettings.bookmarkFavicons[url] || appSettings.bookmarkFavicons[url] !== currentFavicon) {
+            appSettings.bookmarkFavicons[url] = currentFavicon
+        }
+
         return {
             url: url,
-            name: browserModel.bookmarks.rowData(index, 'name')
+            name: browserModel.bookmarks.rowData(index, 'name'),
+            image: appSettings.bookmarkFavicons[url] || ""
         }
     }
 
@@ -658,6 +664,7 @@ Rectangle {
                                     id: bookmarkBtn
                                     text: name
                                     onClicked: currentWebView.url = url
+                                    source: appSettings.bookmarkFavicons[url] || ""
                                     onRightClicked: {
                                         favoriteMenu.url = url
                                         favoriteMenu.x = bookmarkList.x + bookmarkBtn.x + mouse.x

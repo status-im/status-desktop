@@ -27,7 +27,7 @@ QtObject:
     try:
       let bookmarksJSON = status_settings.getSetting[string](Setting.Bookmarks, "[]").parseJson
       for bookmark in bookmarksJSON:
-        bookmarks.add(Bookmark(url: bookmark["url"].getStr, name: bookmark["name"].getStr, image: ""))
+        bookmarks.add(Bookmark(url: bookmark["url"].getStr, name: bookmark["name"].getStr))
     except:
       # Bad JSON. Just use the empty array
       discard
@@ -43,7 +43,7 @@ QtObject:
     notify = bookmarksChanged
 
   proc addBookmark*(self: BrowserView, url: string, name: string) {.slot.} =
-    self.bookmarks.addBookmarkItemToList(Bookmark(url: url, name: name, image: ""))
+    self.bookmarks.addBookmarkItemToList(Bookmark(url: url, name: name))
     discard status_settings.saveSetting(Setting.Bookmarks, $(%self.bookmarks.bookmarks))
     self.bookmarksChanged()
 
