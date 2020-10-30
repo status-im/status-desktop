@@ -6,18 +6,36 @@ import "../../../shared"
 
 ModalPopup {
     id: popup
-    //% "Add custom token"
-    title: qsTrId("add-custom-token")
-    height: 630
 
+    property bool editable: true
     property int marginBetweenInputs: 35
 
+    title: editable ? 
+        //% "Add custom token"
+        qsTrId("add-custom-token")
+        : nameInput.text
+
+    height: editable ? 450 : 380
+
     onOpened: {
+        addressInput.text = "";
+        nameInput.text = "";
+        symbolInput.text = "";
+        decimalsInput.text = "";
         addressInput.forceActiveFocus(Qt.MouseFocusReason)
+    }
+
+    function setData(address, name, symbol, decimals){
+        addressInput.text = address;
+        nameInput.text = name;
+        symbolInput.text = symbol;
+        decimalsInput.text = decimals;
+        editable = false;
     }
 
     Input {
         id: addressInput
+        readOnly: !editable
         //% "Enter contract address..."
         placeholderText: qsTrId("enter-contract-address...")
         //% "Contract address"
@@ -26,6 +44,7 @@ ModalPopup {
 
     Input {
         id: nameInput
+        readOnly: !editable
         anchors.top: addressInput.bottom
         anchors.topMargin: marginBetweenInputs
         //% "The name of your token..."
@@ -34,31 +53,43 @@ ModalPopup {
         label: qsTrId("name")
     }
 
-    Input {
-        id: symbolInput
+
+    Item {
+        width: 200
         anchors.top: nameInput.bottom
         anchors.topMargin: marginBetweenInputs
-        //% "ABC"
-        placeholderText: qsTrId("abc")
-        //% "Symbol"
-        label: qsTrId("symbol")
+        anchors.left: parent.left
+        Input {
+            id: symbolInput
+            readOnly: !editable
+            //% "ABC"
+            placeholderText: qsTrId("abc")
+            //% "Symbol"
+            label: qsTrId("symbol")
+            
+        }
     }
 
-    Input {
-        id: decimalsInput
-        anchors.top: symbolInput.bottom
+    Item {
+        width: 200
+        anchors.top: nameInput.bottom
         anchors.topMargin: marginBetweenInputs
-        //% "Decimals"
-        label: qsTrId("decimals")
-        text: "18"
+        anchors.right: parent.right
+        Input {
+            id: decimalsInput
+            readOnly: !editable
+            //% "Decimals"
+            label: qsTrId("decimals")
+            text: "18"
+        }
     }
 
     footer: Item {
+        visible: editable
         anchors.fill: parent
         StyledButton {
             id: addBtn
             anchors.top: parent.top
-            anchors.topMargin: Style.current.padding
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
             //% "Add"

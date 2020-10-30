@@ -10,10 +10,12 @@ type
     HasIcon = UserRole + 3,
     Address = UserRole + 4,
     Decimals = UserRole + 5
+    IsCustom = UserRole + 6
 
 QtObject:
   type TokenList* = ref object of QAbstractListModel
     tokens*: seq[Erc20Contract]
+    isCustom*: bool
 
   proc setup(self: TokenList) = 
     self.QAbstractListModel.setup
@@ -27,12 +29,14 @@ QtObject:
   proc loadDefaultTokens*(self:TokenList) = 
     if self.tokens.len == 0:
       self.tokens = getErc20Contracts()
+      self.isCustom = false
       self.tokensLoaded(self.tokens.len)
 
   proc loadCustomTokens*(self: TokenList) =
     self.beginResetModel()
     self.tokens = getCustomTokens()
     self.tokensLoaded(self.tokens.len)
+    self.isCustom = true
     self.endResetModel()
 
   proc newTokenList*(): TokenList =
@@ -67,11 +71,13 @@ QtObject:
     of TokenRoles.HasIcon: result = newQVariant(token.hasIcon)
     of TokenRoles.Address: result = newQVariant($token.address)
     of TokenRoles.Decimals: result = newQVariant(token.decimals)
+    of TokenRoles.IsCustom: result = newQVariant(self.isCustom)
 
   method roleNames(self: TokenList): Table[int, string] =
     {TokenRoles.Name.int:"name",
     TokenRoles.Symbol.int:"symbol",
     TokenRoles.HasIcon.int:"hasIcon",
     TokenRoles.Address.int:"address",
-    TokenRoles.Decimals.int:"decimals"}.toTable
+    TokenRoles.Decimals.int:"decimals",
+    TokenRoles.IsCustom.int:"isCustom"}.toTable
 
