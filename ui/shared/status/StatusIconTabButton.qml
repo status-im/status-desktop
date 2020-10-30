@@ -7,8 +7,11 @@ import "../../shared/status"
 
 TabButton {
     id: control
+    visible: enabled
     width: 40
-    height: 40
+    height: enabled ? 40 : 0
+    anchors.topMargin: enabled ? 50 : 0
+    anchors.horizontalCenter: parent.horizontalCenter
     property color iconColor: Style.current.secondaryText
     property color disabledColor: iconColor
     property int iconRotation: 0
