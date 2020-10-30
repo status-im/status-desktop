@@ -51,19 +51,15 @@ pipeline {
       steps { sh 'make status-go' }
     }
 
-    stage('Client') {
-      steps { 
+    stage('Package') {
+      steps {
         withCredentials([string(
           credentialsId: utils.getInfuraTokenCred(),
           variable: 'INFURA_TOKEN'
         )]) {
-          sh 'make nim_status_client'
+          sh 'make pkg-linux'
         }
       }
-    }
-
-    stage('Package') {
-      steps { sh 'make pkg-linux' }
     }
 
     stage('Parallel Upload') {
