@@ -20,7 +20,10 @@ ModalPopup {
         //% "Add custom token"
         label: qsTrId("add-custom-token")
         anchors.top: parent.top
-        onClicked: addCustomTokenModal.open()
+        onClicked: {
+            addCustomTokenModal.editable = true;
+            addCustomTokenModal.open()
+        }
     }
 }
 

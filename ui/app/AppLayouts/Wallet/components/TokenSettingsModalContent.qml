@@ -79,12 +79,14 @@ Item {
                         //% "Token details"
                         text: qsTrId("token-details")
                         onTriggered: {
-                            console.log("TODO")
+                            addCustomTokenModal.open()
+                            addCustomTokenModal.setData(address, name, symbol, decimals)
                         }
                     }
                     Action {
                         icon.source: "../../../img/remove-from-group.svg"
                         icon.color: Style.current.red
+                        enabled: isCustom
                         //% "Remove token"
                         text: qsTrId("remove-token")
                         onTriggered: walletModel.removeCustomToken(address)

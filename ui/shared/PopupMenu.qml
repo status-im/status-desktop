@@ -115,7 +115,6 @@ Menu {
 
         Rectangle {
             id: bgPopupMenuContent
-            y: 7
             implicitWidth: bgPopupMenu.width
             implicitHeight: bgPopupMenu.height
             color: Style.current.modalBackground
