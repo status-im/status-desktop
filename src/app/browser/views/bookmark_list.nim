@@ -5,13 +5,11 @@ import sequtils as sequtils
 type Bookmark* = ref object
   name*: string
   url*: string
-  image*: string
 
 type
   BookmarkRoles {.pure.} = enum
-    Name = UserRole + 1,
+    Name = UserRole + 1
     Url = UserRole + 2
-    Image = UserRole + 3
 
 QtObject:
   type
@@ -38,7 +36,6 @@ QtObject:
     case column:
       of "name": result = bookmark.name
       of "url": result = bookmark.url
-      of "image": result = bookmark.image
 
   method data(self: BookmarkList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
@@ -52,13 +49,11 @@ QtObject:
     case bookmarkItemRole:
       of BookmarkRoles.Name: result = newQVariant(bookmarkItem.name)
       of BookmarkRoles.Url: result = newQVariant(bookmarkItem.url)
-      of BookmarkRoles.Image: result = newQVariant(bookmarkItem.image)
 
   method roleNames(self: BookmarkList): Table[int, string] =
     {
       BookmarkRoles.Name.int:"name",
-      BookmarkRoles.Url.int:"url",
-      BookmarkRoles.Image.int: "image",
+      BookmarkRoles.Url.int:"url"
     }.toTable
 
   proc addBookmarkItemToList*(self: BookmarkList, bookmark: Bookmark) =
@@ -74,7 +69,7 @@ QtObject:
   proc modifyBookmarkItemFromList*(self: BookmarkList, index: int, url: string, name: string) =
     let topLeft = self.createIndex(index, index, nil)
     let bottomRight = self.createIndex(index, index, nil)
-    self.bookmarks[index] = Bookmark(url: url, name: name, image: "")
+    self.bookmarks[index] = Bookmark(url: url, name: name)
     self.dataChanged(topLeft, bottomRight, @[BookmarkRoles.Name.int, BookmarkRoles.Url.int])
 
   proc setNewData*(self: BookmarkList, bookmarkList: seq[Bookmark]) =

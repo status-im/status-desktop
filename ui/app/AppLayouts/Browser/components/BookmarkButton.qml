@@ -4,7 +4,7 @@ import "../../../../shared/status"
 import "../../../../imports"
 
 Item {
-    property url source: "../../../img/globe.svg"
+    property url source
     property string text
     signal clicked(mouse: var)
     signal rightClicked(mouse: var)
@@ -15,7 +15,7 @@ Item {
 
     SVGImage {
         id: bookmarkImage
-        source: root.source
+        source: !!root.source && !!root.source.toString() ? root.source :"../../../img/compassActive.svg"
         anchors.horizontalCenter: parent.horizontalCenter
         width: 48
         height: 48

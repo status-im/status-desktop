@@ -80,7 +80,7 @@ Rectangle {
         Connections {
             target: browserModel
             onBookmarksChanged: {
-                addressBar.currentFavorite = getCurrentFavorite()
+                addressBar.currentFavorite = getCurrentFavorite(currentWebView.url)
             }
         }
 
