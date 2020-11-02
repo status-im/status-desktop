@@ -1,4 +1,4 @@
-import json, chronicles, strformat, stint, strutils, sequtils
+import json, chronicles, strformat, stint, strutils, sequtils, tables
 import core, wallet
 import ./eth/contracts
 import web3/[ethtypes, conversions]
@@ -131,3 +131,37 @@ proc getSNTAddress*(): string =
 proc getSNTBalance*(account: string): string =
   let snt = contracts.getSntContract()
   result = getTokenBalance($snt.address, account)
+
+proc getTokenString*(contract: Contract, methodName: string): string =
+  let payload = %* [{
+      "to": $contract.address,
+      "data": contract.methods[methodName].encodeAbi()
+    }, "latest"]
+  
+  let responseStr = callPrivateRPC("eth_call", payload)
+  let response = Json.decode(responseStr, RpcResponse)
+  if not response.error.isNil:
+    raise newException(RpcException, "Error getting token string - " & methodName & ": " & response.error.message)
+  if response.result == "0x":
+    return ""
+
+  let size = fromHex(Stuint[256], response.result[66..129]).toInt
+  result = response.result[130..129+size*2].parseHexStr
+
+proc tokenName*(contract: Contract): string = getTokenString(contract, "name")
+
+proc tokenSymbol*(contract: Contract): string = getTokenString(contract, "symbol")
+
+proc tokenDecimals*(contract: Contract): int =
+  let payload = %* [{
+      "to": $contract.address,
+      "data": contract.methods["decimals"].encodeAbi()
+    }, "latest"]
+  
+  let responseStr = callPrivateRPC("eth_call", payload)
+  let response = Json.decode(responseStr, RpcResponse)
+  if not response.error.isNil:
+    raise newException(RpcException, "Error getting token decimals: " & response.error.message)
+  if response.result == "0x":
+    return 0
+  result = parseHexInt(response.result)
