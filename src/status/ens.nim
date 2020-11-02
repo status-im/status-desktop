@@ -15,6 +15,7 @@ import transactions
 import algorithm
 import web3/[ethtypes, conversions], stew/byteutils, stint
 import libstatus/eth/contracts
+import chronicles, sequtils, httpclient, libp2p/[multihash, multicodec, cid]
 
 const domain* = ".stateofus.eth"
 
@@ -253,3 +254,50 @@ proc setPubKey*(username, pubKey, address, gas, gasPrice, password: string, succ
 
 proc statusRegistrarAddress*():string =
   result = $contracts.getContract("ens-usernames").address
+
+
+type
+  ENSType* {.pure.} = enum
+    IPFS,
+    SWARM,
+    IPNS,
+    UNKNOWN
+
+proc decodeENSContentHash*(value: string): tuple[ensType: ENSType, output: string] =
+  if value == "":
+    return (ENSType.UNKNOWN, "")
+
+  if value[0..5] == "e40101":
+    return (ENSType.SWARM, value.split("1b20")[1])
+
+  if value[0..7] == "e3010170":
+    try:
+      let defaultCodec = parseHexInt("70") #dag-pb
+      var codec = defaultCodec # no codec specified
+      var codecStartIdx = 2 # idx of where codec would start if it was specified
+      # handle the case when starts with 0xe30170 instead of 0xe3010170
+      if value[2..5] == "0101":
+        codecStartIdx = 6
+        codec = parseHexInt(value[6..7])
+      elif value[2..3] == "01" and value[4..5] != "12":
+        codecStartIdx = 4
+        codec = parseHexInt(value[4..5])
+
+      # strip the info we no longer need
+      var multiHashStr = value[codecStartIdx + 2..<value.len]
+
+      # The rest of the hash identifies the multihash algo, length, and digest
+      # More info: https://multiformats.io/multihash/
+      # 12 = identifies sha2-256 hash
+      # 20 = multihash length = 32
+      # ...rest = multihash digest
+      let multiHash = MultiHash.init(nimcrypto.fromHex(multiHashStr)).get()
+      return (ENSType.IPFS, $Cid.init(CIDv0, MultiCodec.codec(codec), multiHash))
+    except Exception as e:
+      error "Error decoding ENS contenthash", hash=value, exception=e.msg
+      raise
+
+  if value[0..8] == "e50101700":
+    return (ENSType.IPNS, parseHexStr(value[12..value.len-1]))
+
+  return (ENSType.UNKNOWN, "")

@@ -14,8 +14,9 @@ const AUTH_METHODS = toHashSet(["eth_accounts", "eth_coinbase", "eth_sendTransac
 const SIGN_METHODS = toHashSet(["eth_sign", "personal_sign", "eth_signTypedData", "eth_signTypedData_v3"])
 const ACC_METHODS = toHashSet(["eth_accounts", "eth_coinbase"])
 
-const IPFS_SCHEME = "https"
+const HTTPS_SCHEME = "https"
 const IPFS_GATEWAY =  ".infura.status.im"
+const SWARM_GATEWAY = "swarm-gateways.net"
 
 const base58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 
@@ -279,15 +280,21 @@ QtObject:
     self.status.permissions.clearPermissions()
 
   proc ensResourceURL*(self: Web3ProviderView, ens: string, url: string): string {.slot.} =
-    # TODO: add support for swarm: "swarm-gateways.net/bzz:/...." and ipns
-
     let contentHash = contenthash(ens)
     if contentHash == "": # ENS does not have a content hash
-      return url_replaceHostAndAddPath(url, url_host(url), IPFS_SCHEME)
+      return url_replaceHostAndAddPath(url, url_host(url), HTTPS_SCHEME)
 
-    let decodedContentHash = contentHash.decodeContentHash()
-    let base32Hash = base32.encode(string.fromBytes(base58.decode(decodedContentHash))).toLowerAscii().replace("=", "")
-    result = url_replaceHostAndAddPath(url, base32Hash & IPFS_GATEWAY, IPFS_SCHEME)
+    let decodedHash = contentHash.decodeENSContentHash()
+    case decodedHash[0]:
+    of ENSType.IPFS:
+      let base32Hash = base32.encode(string.fromBytes(base58.decode(decodedHash[1]))).toLowerAscii().replace("=", "")
+      result = url_replaceHostAndAddPath(url, base32Hash & IPFS_GATEWAY, HTTPS_SCHEME)
+    of ENSType.SWARM:
+      result = url_replaceHostAndAddPath(url, SWARM_GATEWAY, HTTPS_SCHEME, "/bzz:/" & decodedHash[1] & "/")
+    of ENSType.IPNS:
+      result = url_replaceHostAndAddPath(url, decodedHash[1], HTTPS_SCHEME)
+    else: 
+      warn "Unknown content for", ens, contentHash
 
   proc replaceHostByENS*(self: Web3ProviderView, url: string, ens: string): string {.slot.} =
     result = url_replaceHostAndAddPath(url, ens)

@@ -49,7 +49,13 @@ Rectangle {
         var host = _web3Provider.getHost(url);
         if(host.endsWith(".eth")){
             var ensResource = _web3Provider.ensResourceURL(host, url);
-            urlENSDictionary[_web3Provider.getHost(ensResource)] = host;
+
+            if(/^https\:\/\/swarm\-gateways\.net\/bzz:\/([0-9a-fA-F]{64}|.+\.eth)(\/?)/.test(ensResource)){
+                // TODO: populate urlENSDictionary for prettier url instead of swarm-gateway big URL
+                return ensResource;
+            } else {
+                urlENSDictionary[_web3Provider.getHost(ensResource)] = host;
+            }
             url = ensResource;
         }
         return url;
