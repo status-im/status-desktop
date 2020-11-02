@@ -73,6 +73,9 @@ type
 proc newErc20Contract*(name: string, network: Network, address: Address, symbol: string, decimals: int, hasIcon: bool): Erc20Contract =
   Erc20Contract(name: name, network: network, address: address, methods: ERC20_METHODS.toTable, symbol: symbol, decimals: decimals, hasIcon: hasIcon)
 
+proc newErc20Contract*(network: Network, address: Address): Erc20Contract =
+  Erc20Contract(name: "", network: network, address: address, methods: ERC20_METHODS.toTable, symbol: "", decimals: 0, hasIcon: false)
+
 proc newErc721Contract(name: string, network: Network, address: Address, symbol: string, hasIcon: bool, addlMethods: seq[tuple[name: string, meth: Method]] = @[]): Erc721Contract =
   Erc721Contract(name: name, network: network, address: address, symbol: symbol, hasIcon: hasIcon, methods: ERC721_ENUMERABLE_METHODS.concat(addlMethods).toTable)
 

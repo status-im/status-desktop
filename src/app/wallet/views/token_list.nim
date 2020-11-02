@@ -81,10 +81,9 @@ QtObject:
     TokenRoles.Decimals.int:"decimals",
     TokenRoles.IsCustom.int:"isCustom"}.toTable
 
-  # Resolving a ENS name
   proc getTokenDetails*(self: TokenList, address: string) {.slot.} =
     spawnAndSend(self, "tokenDetailsResolved") do:
-      let tkn = newErc20Contract("", getCurrentNetwork(), address.parseAddress, "", 18, false)
+      let tkn = newErc20Contract(getCurrentNetwork(), address.parseAddress)
 
       let decimals = tkn.tokenDecimals()
 
