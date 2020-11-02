@@ -18,19 +18,25 @@ ModalPopup {
     height: editable ? 450 : 380
 
     onOpened: {
+        addressInput.forceActiveFocus(Qt.MouseFocusReason)
+    }
+
+    function openEditable(){
         addressInput.text = "";
         nameInput.text = "";
         symbolInput.text = "";
         decimalsInput.text = "";
-        addressInput.forceActiveFocus(Qt.MouseFocusReason)
+        editable = true;
+        open();
     }
 
-    function setData(address, name, symbol, decimals){
+    function openWithData(address, name, symbol, decimals){
         addressInput.text = address;
         nameInput.text = name;
         symbolInput.text = symbol;
         decimalsInput.text = decimals;
         editable = false;
+        open();
     }
 
     Input {
@@ -53,37 +59,34 @@ ModalPopup {
         label: qsTrId("name")
     }
 
-
-    Item {
-        width: 200
+    Input {
+        id: symbolInput
+        readOnly: !editable
+        //% "ABC"
+        placeholderText: qsTrId("abc")
+        //% "Symbol"
+        label: qsTrId("symbol")
         anchors.top: nameInput.bottom
         anchors.topMargin: marginBetweenInputs
         anchors.left: parent.left
-        Input {
-            id: symbolInput
-            readOnly: !editable
-            //% "ABC"
-            placeholderText: qsTrId("abc")
-            //% "Symbol"
-            label: qsTrId("symbol")
-            
-        }
+        anchors.right: undefined
+        width: parent.width / 2 - 20
     }
 
-    Item {
-        width: 200
+    Input {
+        id: decimalsInput
+        readOnly: !editable
+        placeholderText: "18"
+        //% "Decimals"
+        label: qsTrId("decimals")
+        text: "18"
         anchors.top: nameInput.bottom
         anchors.topMargin: marginBetweenInputs
         anchors.right: parent.right
-        Input {
-            id: decimalsInput
-            readOnly: !editable
-            //% "Decimals"
-            label: qsTrId("decimals")
-            text: "18"
-        }
+        anchors.left: undefined
+        width: parent.width / 2 - 20
     }
-
+    
     footer: Item {
         visible: editable
         anchors.fill: parent
