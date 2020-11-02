@@ -1,7 +1,7 @@
 import NimQml, json, chronicles
 import ../../status/status
-import ../../status/libstatus/types as status_types
-import ../../status/libstatus/settings as status_settings
+import ../../status/libstatus/browser as status_browser
+import ../../status/libstatus/types
 import views/bookmark_list
 
 QtObject:
@@ -25,9 +25,10 @@ QtObject:
   proc init*(self: BrowserView) =
     var bookmarks: seq[Bookmark] = @[]
     try:
-      let bookmarksJSON = status_settings.getSetting[string](Setting.Bookmarks, "[]").parseJson
-      for bookmark in bookmarksJSON:
-        bookmarks.add(Bookmark(url: bookmark["url"].getStr, name: bookmark["name"].getStr))
+      let responseResult = status_browser.getBookmarks().parseJson["result"]
+      if responseResult.kind != JNull:
+        for bookmark in responseResult:
+          bookmarks.add(Bookmark(url: bookmark["url"].getStr, name: bookmark["name"].getStr, imageUrl: bookmark["imageUrl"].getStr))
     except:
       # Bad JSON. Just use the empty array
       discard
@@ -43,8 +44,8 @@ QtObject:
     notify = bookmarksChanged
 
   proc addBookmark*(self: BrowserView, url: string, name: string) {.slot.} =
-    self.bookmarks.addBookmarkItemToList(Bookmark(url: url, name: name))
-    discard status_settings.saveSetting(Setting.Bookmarks, $(%self.bookmarks.bookmarks))
+    let bookmark = status_browser.storeBookmark(url, name)
+    self.bookmarks.addBookmarkItemToList(bookmark)
     self.bookmarksChanged()
 
   proc removeBookmark*(self: BrowserView, url: string) {.slot.} =
@@ -52,7 +53,7 @@ QtObject:
     if index == -1:
       return
     self.bookmarks.removeBookmarkItemFromList(index)
-    discard status_settings.saveSetting(Setting.Bookmarks, $(%self.bookmarks.bookmarks))
+    status_browser.deleteBookmark(url)
     self.bookmarksChanged()
 
   proc modifyBookmark*(self: BrowserView, ogUrl: string, newUrl: string, newName: string) {.slot.} =
@@ -62,5 +63,5 @@ QtObject:
       self.addBookmark(newUrl, newName)
       return
     self.bookmarks.modifyBookmarkItemFromList(index, newUrl, newName)
-    discard status_settings.saveSetting(Setting.Bookmarks, $(%self.bookmarks.bookmarks))
+    status_browser.updateBookmark(ogUrl, newUrl, newName)
     self.bookmarksChanged()
