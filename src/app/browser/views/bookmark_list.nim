@@ -1,15 +1,12 @@
 import NimQml, Tables, chronicles
 import sequtils as sequtils
-
-
-type Bookmark* = ref object
-  name*: string
-  url*: string
+import ../../../status/libstatus/types
 
 type
   BookmarkRoles {.pure.} = enum
     Name = UserRole + 1
     Url = UserRole + 2
+    ImageUrl = UserRole + 3
 
 QtObject:
   type
@@ -36,6 +33,7 @@ QtObject:
     case column:
       of "name": result = bookmark.name
       of "url": result = bookmark.url
+      of "imageUrl": result = bookmark.imageUrl
 
   method data(self: BookmarkList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
@@ -49,10 +47,12 @@ QtObject:
     case bookmarkItemRole:
       of BookmarkRoles.Name: result = newQVariant(bookmarkItem.name)
       of BookmarkRoles.Url: result = newQVariant(bookmarkItem.url)
+      of BookmarkRoles.ImageUrl: result = newQVariant(bookmarkItem.imageUrl)
 
   method roleNames(self: BookmarkList): Table[int, string] =
     {
       BookmarkRoles.Name.int:"name",
+      BookmarkRoles.ImageUrl.int:"imageUrl",
       BookmarkRoles.Url.int:"url"
     }.toTable
 

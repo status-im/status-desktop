@@ -192,6 +192,11 @@ type PendingTransactionType* {.pure.} = enum
   BuyStickerPack = "BuyStickerPack"
   WalletTransfer = "WalletTransfer" 
 
+type Bookmark* = ref object
+  name*: string
+  url*: string
+  imageUrl*: string
+
 type
   Fleet* {.pure.} = enum
     Prod = "eth.prod",
