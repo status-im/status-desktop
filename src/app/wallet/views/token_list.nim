@@ -1,7 +1,7 @@
-import NimQml, tables
-import ../../../status/libstatus/tokens
-import ../../../status/libstatus/eth/contracts
+import NimQml, tables, json
+import ../../../status/libstatus/[tokens, settings, utils, eth/contracts]
 from web3/conversions import `$`
+import ../../../status/threads
 
 type
   TokenRoles {.pure.} = enum
@@ -81,3 +81,21 @@ QtObject:
     TokenRoles.Decimals.int:"decimals",
     TokenRoles.IsCustom.int:"isCustom"}.toTable
 
+  # Resolving a ENS name
+  proc getTokenDetails*(self: TokenList, address: string) {.slot.} =
+    spawnAndSend(self, "tokenDetailsResolved") do:
+      let tkn = newErc20Contract("", getCurrentNetwork(), address.parseAddress, "", 18, false)
+
+      let decimals = tkn.tokenDecimals()
+
+      $ (%* {
+        "address": address,
+        "name": tkn.tokenName(),
+        "symbol": tkn.tokenSymbol(),
+        "decimals": (if decimals == 0: "" else: $decimals)
+      })
+
+  proc tokenDetailsWereResolved*(self: TokenList, tokenDetails: string) {.signal.}
+
+  proc tokenDetailsResolved(self: TokenList, tokenDetails: string) {.slot.} =
+    self.tokenDetailsWereResolved(tokenDetails)

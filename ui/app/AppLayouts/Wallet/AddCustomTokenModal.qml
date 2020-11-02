@@ -9,6 +9,7 @@ ModalPopup {
 
     property bool editable: true
     property int marginBetweenInputs: 35
+    property string validationError: ""
 
     title: editable ? 
         //% "Add custom token"
@@ -39,13 +40,57 @@ ModalPopup {
         open();
     }
 
+
+    function validate() {
+        if (addressInput.text !== "" && !Utils.isAddress(addressInput.text)) {
+            validationError = qsTr("This needs to be a valid address");
+        }
+        return validationError === ""
+    }
+
+    property var getTokenDetails: Backpressure.debounce(popup, 500, function (tokenAddress){
+        walletModel.customTokenList.getTokenDetails(tokenAddress)
+    });
+
+    function onKeyReleased(){
+        validationError = "";
+
+        if (!validate() || addressInput.text === "") {
+            return;
+        }
+        Qt.callLater(getTokenDetails, addressInput.text)
+    }
+
+    Item {
+        Connections {
+            target: walletModel.customTokenList
+            onTokenDetailsWereResolved: {
+                const jsonObj = JSON.parse(tokenDetails)
+
+                if(jsonObj.address === ""){
+                    validationError = qsTr("Invalid ERC20 address")
+                    return;
+                }
+
+                if(addressInput.text.toLowerCase() === jsonObj.address.toLowerCase()){
+                    symbolInput.text = jsonObj.symbol;
+                    decimalsInput.text = jsonObj.decimals;
+                    nameInput.text = jsonObj.name;
+                }
+            }
+        }
+    }
+
     Input {
         id: addressInput
         readOnly: !editable
+        textField.maximumLength: 42
         //% "Enter contract address..."
         placeholderText: qsTrId("enter-contract-address...")
         //% "Contract address"
         label: qsTrId("contract-address")
+        validationError: popup.validationError
+        Keys.onReleased: onKeyReleased()
     }
 
     Input {
@@ -98,7 +143,7 @@ ModalPopup {
             //% "Add"
             label: qsTrId("add")
 
-            disabled: addressInput.text === "" || nameInput.text === "" || symbolInput.text === "" || decimalsInput.text === ""
+            disabled: validationError !== "" && addressInput.text === "" || nameInput.text === "" || symbolInput.text === "" || decimalsInput.text === ""
 
             onClicked : {
                 const error = walletModel.addCustomToken(addressInput.text, nameInput.text, symbolInput.text, decimalsInput.text);
