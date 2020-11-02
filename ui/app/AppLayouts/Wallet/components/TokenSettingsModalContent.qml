@@ -78,10 +78,7 @@ Item {
                         icon.source: "../../../img/make-admin.svg"
                         //% "Token details"
                         text: qsTrId("token-details")
-                        onTriggered: {
-                            addCustomTokenModal.open()
-                            addCustomTokenModal.setData(address, name, symbol, decimals)
-                        }
+                        onTriggered: addCustomTokenModal.openWithData(address, name, symbol, decimals)
                     }
                     Action {
                         icon.source: "../../../img/remove-from-group.svg"
