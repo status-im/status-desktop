@@ -22,22 +22,6 @@ Rectangle {
         return { isValid, isPending }
     }
     color: Style.current.background
-    function reset() {
-        for (let i=0; i<children.length; i++) {
-            const component = children[i]
-            try {
-                if (component.hasOwnProperty("resetInternal") && typeof component.resetInternal === "function") {
-                    component.resetInternal()
-                }
-                if (component.hasOwnProperty("reset") && typeof component.reset === "function") {
-                    component.reset()
-                }
-            } catch (e) {
-                console.warn("Error resetting component", i, ":", e.message)
-                continue
-            }
-        }
-    }
     StackView.onActivated: {
         // parent refers to the StackView
         parent.groupActivated(this)

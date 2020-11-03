@@ -21,10 +21,6 @@ ModalPopup {
         standardButtons: StandardButton.Ok
     }
 
-    onClosed: {
-        stack.reset()
-    }
-
     function sendTransaction() {
         try {
             let responseStr = profileModel.ens.setPubKey(root.ensUsername,
@@ -79,12 +75,6 @@ ModalPopup {
                 label: qsTrId("choose-account")
                 showBalanceForAssetSymbol: "ETH"
                 minRequiredAssetBalance: 0
-                reset: function() {
-                    accounts = Qt.binding(function() { return walletModel.accounts })
-                    selectedAccount = Qt.binding(function() { return walletModel.currentAccount })
-                    showBalanceForAssetSymbol = Qt.binding(function() { return "ETH" })
-                    minRequiredAssetBalance = Qt.binding(function() { return 0 })
-                }
                 onSelectedAccountChanged: if (isValid) { gasSelector.estimateGas() }
             }
             RecipientSelector {
@@ -104,10 +94,6 @@ ModalPopup {
                 getGasEthValue: walletModel.getGasEthValue
                 getFiatValue: walletModel.getFiatValue
                 defaultCurrency: walletModel.defaultCurrency
-                reset: function() {
-                    slowestGasPrice = Qt.binding(function(){ return parseFloat(walletModel.safeLowGasPrice) })
-                    fastestGasPrice = Qt.binding(function(){ return parseFloat(walletModel.fastestGasPrice) })
-                }
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     if (!(root.ensUsername !== "" && selectFromAccount.selectedAccount)) {
                         selectedGasLimit = 80000;
@@ -124,12 +110,6 @@ ModalPopup {
                 selectedAsset: root.asset
                 selectedAmount: 0
                 selectedGasEthValue: gasSelector.selectedGasEthValue
-                reset: function() {
-                    selectedAccount = Qt.binding(function() { return selectFromAccount.selectedAccount })
-                    selectedAsset = Qt.binding(function() { return root.asset })
-                    selectedAmount = Qt.binding(function() { return 0 })
-                    selectedGasEthValue = Qt.binding(function() { return gasSelector.selectedGasEthValue })
-                }
             }
         }
         TransactionFormGroup {
@@ -155,19 +135,6 @@ ModalPopup {
                     const fiatValue = walletModel.getFiatValue(0, root.asset.symbol, currency)
                     return { "value": 0, "fiatValue": fiatValue }
                 }
-                reset: function() {
-                    fromAccount = Qt.binding(function() { return selectFromAccount.selectedAccount })
-                    toAccount = Qt.binding(function() { return selectRecipient.selectedRecipient })
-                    asset = Qt.binding(function() { return root.asset })
-                    amount = Qt.binding(function() { return { "value": 0, "fiatValue": walletModel.getFiatValue(0, root.asset.symbol, currency) } })
-                    gas = Qt.binding(function() {
-                        return {
-                            "value": gasSelector.selectedGasEthValue,
-                            "symbol": "ETH",
-                            "fiatValue": gasSelector.selectedGasFiatValue
-                        }
-                    })
-                }
             }
         }
         TransactionFormGroup {
@@ -181,9 +148,6 @@ ModalPopup {
                 id: transactionSigner
                 width: stack.width
                 signingPhrase: walletModel.signingPhrase
-                reset: function() {
-                    signingPhrase = Qt.binding(function() { return walletModel.signingPhrase })
-                }
             }
         }
     }

@@ -55,7 +55,7 @@ StackLayout {
                                                 address,
                                                 amount,
                                                 tokenAddress)
-        chatCommandModal.close()
+        txModalLoader.close()
     }
     function requestTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
         amount =  utilsModel.eth2Wei(amount.toString(), tokenDecimals)
@@ -63,7 +63,7 @@ StackLayout {
                                         address,
                                         amount,
                                         tokenAddress)
-        chatCommandModal.close()
+        txModalLoader.close()
     }
 
     
@@ -226,7 +226,6 @@ StackLayout {
                 stickerPackList: chatsModel.stickerPacks
                 chatType: chatsModel.activeChannel.chatType
                 onSendTransactionCommandButtonClicked: {
-                    txModalLoader.sourceComponent = undefined
                     if (chatsModel.activeChannel.ensVerified) {
                         txModalLoader.sourceComponent = cmpSendTransactionWithEns
                     } else {
@@ -235,7 +234,6 @@ StackLayout {
                     txModalLoader.item.open()
                 }
                 onReceiveTransactionCommandButtonClicked: {
-                    txModalLoader.sourceComponent = undefined
                     txModalLoader.sourceComponent = cmpReceiveTransaction
                     txModalLoader.item.open()
                 }
@@ -250,11 +248,24 @@ StackLayout {
 
     Loader {
         id: txModalLoader
+        function close() {
+            if (!this.item) {
+                return
+            }
+            this.item.close()
+            this.closed()
+        }
+        function closed() {
+            this.sourceComponent = undefined
+        }
     }
     Component {
         id: cmpSendTransactionNoEns
         ChatCommandModal {
             id: sendTransactionNoEns
+            onClosed: {
+                txModalLoader.closed()
+            }
             sendChatCommand: chatColumnLayout.requestAddressForTransaction
             isRequested: false
             //% "Send"
@@ -273,25 +284,15 @@ StackLayout {
             }
             selectRecipient.selectedType: RecipientSelector.Type.Contact
             selectRecipient.readOnly: true
-            onReset: {
-                selectRecipient.selectedRecipient = Qt.binding(function() {
-                    return {
-                        address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
-                        alias: chatsModel.activeChannel.alias,
-                        identicon: chatsModel.activeChannel.identicon,
-                        name: chatsModel.activeChannel.name,
-                        type: RecipientSelector.Type.Contact
-                    }
-                })
-                selectRecipient.selectedType = RecipientSelector.Type.Contact
-                selectRecipient.readOnly = true
-            }
         }
     }
     Component {
         id: cmpReceiveTransaction
         ChatCommandModal {
             id: receiveTransaction
+            onClosed: {
+                txModalLoader.closed()
+            }
             sendChatCommand: chatColumnLayout.requestTransaction
             isRequested: true
             //% "Request"
@@ -310,19 +311,6 @@ StackLayout {
             }
             selectRecipient.selectedType: RecipientSelector.Type.Contact
             selectRecipient.readOnly: true
-            onReset: {
-                selectRecipient.selectedRecipient = Qt.binding(function() {
-                    return {
-                        address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
-                        alias: chatsModel.activeChannel.alias,
-                        identicon: chatsModel.activeChannel.identicon,
-                        name: chatsModel.activeChannel.name,
-                        type: RecipientSelector.Type.Contact
-                    }
-                })
-                selectRecipient.selectedType = RecipientSelector.Type.Contact
-                selectRecipient.readOnly = true
-            }
         }
     }
     Component {
@@ -331,6 +319,9 @@ StackLayout {
             id: sendTransactionWithEns
             onOpened: {
                 walletModel.getGasPricePredictions()
+            }
+            onClosed: {
+                txModalLoader.closed()
             }
             selectRecipient.readOnly: true
             selectRecipient.selectedRecipient: {
@@ -344,20 +335,6 @@ StackLayout {
                 }
             }
             selectRecipient.selectedType: RecipientSelector.Type.Contact
-            onReset: {
-                selectRecipient.readOnly = true
-                selectRecipient.selectedRecipient = Qt.binding(function() {
-                    return {
-                        address: "",
-                        alias: chatsModel.activeChannel.alias,
-                        identicon: chatsModel.activeChannel.identicon,
-                        name: chatsModel.activeChannel.name,
-                        type: RecipientSelector.Type.Contact,
-                        ensVerified: true
-                    }
-                })
-                selectRecipient.selectedType = RecipientSelector.Type.Contact
-            }
         }
     }
 }

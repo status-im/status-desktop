@@ -1,4 +1,4 @@
-import NimQml, Tables, strformat, strutils, chronicles, json, std/wrapnils, parseUtils, stint, tables
+import NimQml, Tables, strformat, strutils, chronicles, json, std/wrapnils, parseUtils, stint, tables, json_serialization
 import ../../status/[status, wallet, threads]
 import ../../status/wallet/collectibles as status_collectibles
 import ../../status/libstatus/accounts/constants
@@ -457,11 +457,16 @@ QtObject:
   proc gasPricePredictionsChanged*(self: WalletView) {.signal.}
 
   proc getGasPricePredictions*(self: WalletView) {.slot.} =
-    let prediction = self.status.wallet.getGasPricePredictions()
-    self.safeLowGasPrice = $prediction.safeLow
-    self.standardGasPrice = $prediction.standard
-    self.fastGasPrice = $prediction.fast
-    self.fastestGasPrice = $prediction.fastest
+    let walletModel = self.status.wallet
+    spawnAndSend(self, "getGasPricePredictionsResult") do:
+      $ %walletModel.getGasPricePredictions()
+
+  proc getGasPricePredictionsResult(self: WalletView, gasPricePredictionsJson: string) {.slot.} =
+    let prediction = Json.decode(gasPricePredictionsJson, GasPricePrediction)
+    self.safeLowGasPrice = fmt"{prediction.safeLow:.3f}"
+    self.standardGasPrice = fmt"{prediction.standard:.3f}"
+    self.fastGasPrice = fmt"{prediction.fast:.3f}"
+    self.fastestGasPrice = fmt"{prediction.fastest:.3f}"
     self.gasPricePredictionsChanged()
 
   proc safeLowGasPrice*(self: WalletView): string {.slot.} = result = ?.self.safeLowGasPrice

@@ -16,21 +16,11 @@ Item {
     property alias validationErrorAlignment: select.validationErrorAlignment
     property bool isValid: false
     property alias isPending: ensResolver.isPending
-    property var reset: function() {}
     property bool readOnly: false
     property bool isResolvedAddress: false
     //% "Select a contact"
     property string selectAContact: qsTrId("select-a-contact")
     property string noEnsAddressMessage: qsTr("Contact does not have an ENS address. Please send a transaction in chat.")
-
-    function resetInternal() {
-        contacts = undefined
-        selectedContact = undefined
-        select.validationError = ""
-        isValid = false
-        readOnly = false
-        isResolvedAddress = false
-    }
 
     function resolveEns() {
         if (selectedContact.ensVerified) {
@@ -139,7 +129,7 @@ Item {
         anchors.top: select.bottom
         anchors.right: select.right
         anchors.topMargin: Style.current.halfPadding
-        debounceDelay: root.readOnly ? 0 : 600
+        debounceDelay: 0
         onResolved: {
             root.isResolvedAddress = true
             var selectedContact = root.selectedContact

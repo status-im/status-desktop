@@ -9,13 +9,7 @@ Item {
     property var sources: []
     property var selectedSource: sources.length ? sources[0] : null
     property int dropdownWidth: 220
-    property var reset: function() {}
     height: select.height
-
-    function resetInternal() {
-        sources = []
-        selectedSource = sources.length ? sources[0] : null
-    }
 
     Select {
         id: select

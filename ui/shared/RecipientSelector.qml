@@ -28,11 +28,10 @@ Item {
                 return inpAddress.isPending
             case RecipientSelector.Type.Contact:
                 return selContact.isPending
-            default:
-                return false
+            case RecipientSelector.Type.Account:
+                return false // AccountSelector is never pending
         }
     }
-    property var reset: function() {}
     readonly property var sources: [
         //% "Address"
         { text: qsTrId("address"), value: RecipientSelector.Type.Address, visible: true },
@@ -41,34 +40,6 @@ Item {
         { text: qsTr("Contact"), value: RecipientSelector.Type.Contact, visible: true }
     ]
     property var selectedType: RecipientSelector.Type.Address
-
-    function resetInternal() {
-        inpAddress.resetInternal()
-        selContact.resetInternal()
-        selAccount.resetInternal()
-        selAddressSource.resetInternal()
-        isValid = false
-        isPending = Qt.binding(function() {
-            if (!selAddressSource.selectedSource) {
-                return false
-            }
-            switch (selAddressSource.selectedSource.value) {
-                case RecipientSelector.Type.Address:
-                    return inpAddress.isPending
-                case RecipientSelector.Type.Contact:
-                    return selContact.isPending
-                case RecipientSelector.Type.Account:
-                    return selAccount.isPending
-            }
-        })
-        selectedType = RecipientSelector.Type.Address
-        selectedRecipient = undefined
-        accounts = undefined
-        contacts = undefined
-        selContact.reset()
-        selAccount.reset()
-        selAddressSource.reset()
-    }
     
     enum Type {
         Address,
@@ -78,7 +49,10 @@ Item {
 
     function validate() {
         let isValid = true
-        switch (root.selectedType) {
+        if (!selAddressSource.selectedSource) {
+            return root.isValid
+        }
+        switch (selAddressSource.selectedSource.value) {
             case RecipientSelector.Type.Address:
                 isValid = inpAddress.isValid
                 break
@@ -190,10 +164,6 @@ Item {
             Layout.preferredWidth: selAddressSource.visible ? root.inputWidth : parent.width
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
-            reset: function() {
-                contacts = Qt.binding(function() { return root.contacts })
-                readOnly = Qt.binding(function() { return root.readOnly })
-            }
             onSelectedContactChanged: {
                 if (!selectedContact || !selAddressSource.selectedSource || !selectedContact.address || (selAddressSource.selectedSource && selAddressSource.selectedSource.value !== RecipientSelector.Type.Contact)) {
                     return
@@ -214,9 +184,6 @@ Item {
             Layout.preferredWidth: selAddressSource.visible ? root.inputWidth : parent.width
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
-            reset: function() {
-                accounts = Qt.binding(function() { return root.accounts })
-            }
             onSelectedAccountChanged: {
                 if (!selectedAccount || !selAddressSource.selectedSource || (selAddressSource.selectedSource && selAddressSource.selectedSource.value !== RecipientSelector.Type.Account)) {
                     return
@@ -233,10 +200,6 @@ Item {
             width: sourceSelectWidth
             Layout.preferredWidth: root.sourceSelectWidth
             Layout.alignment: Qt.AlignTop
-            reset: function() {
-                sources = Qt.binding(function() { return root.sources.filter(source => source.visible) })
-                selectedSource = root.getSourceByType(root.selectedType)
-            }
 
             onSelectedSourceChanged: {
                 if (root.readOnly || !selectedSource) {

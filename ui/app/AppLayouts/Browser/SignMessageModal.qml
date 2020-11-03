@@ -80,9 +80,6 @@ ModalPopup {
             anchors.top: messageToSign.bottom
             anchors.topMargin: Style.current.padding * 3
             signingPhrase: walletModel.signingPhrase
-            reset: function() {
-                signingPhrase = Qt.binding(function() { return walletModel.signingPhrase })
-            }
         }
     }
 

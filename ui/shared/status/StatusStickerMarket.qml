@@ -92,13 +92,25 @@ Item {
                     height: 350
                 }
             }
-            StatusStickerPackPurchaseModal {
+            Loader {
                 id: stickerPackPurchaseModal
-                stickerPackId: packId
-                packPrice: price
-                width: stickerPackDetailsPopup.width
-                height: stickerPackDetailsPopup.height
-                showBackBtn: stickerPackDetailsPopup.opened
+                function open() {
+                    this.active = true
+                    this.item.open()
+                }
+                function closed() {
+                    this.active = false // kill an opened instance
+                }
+                sourceComponent: StatusStickerPackPurchaseModal {
+                    onClosed: {
+                        stickerPackPurchaseModal.closed()
+                    }
+                    stickerPackId: packId
+                    packPrice: price
+                    width: stickerPackDetailsPopup.width
+                    height: stickerPackDetailsPopup.height
+                    showBackBtn: stickerPackDetailsPopup.opened
+                }
             }
             StatusStickerPackDetails {
                 id: stickerPackDetails

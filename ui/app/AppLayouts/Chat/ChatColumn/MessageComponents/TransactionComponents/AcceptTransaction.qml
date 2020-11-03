@@ -77,24 +77,35 @@ Item {
         }
     }
 
-    SignTransactionModal {
+    Loader {
         id: signTransactionModal
-        onOpened: {
-          walletModel.getGasPricePredictions()
+        function open() {
+            this.active = true
+            this.item.open()
         }
-        selectedAccount: {}
-        selectedRecipient: {
-            return {
-                address: commandParametersObject.address,
-                identicon: chatsModel.activeChannel.identicon,
-                name: chatsModel.activeChannel.name,
-                type: RecipientSelector.Type.Contact
+        function closed() {
+            this.active = false // kill an opened instance
+        }
+        sourceComponent: SignTransactionModal {
+            onOpened: {
+                walletModel.getGasPricePredictions()
             }
+            onClosed: {
+                signTransactionModal.closed()
+            }
+            selectedAccount: {}
+            selectedRecipient: {
+                return {
+                    address: commandParametersObject.address,
+                    identicon: chatsModel.activeChannel.identicon,
+                    name: chatsModel.activeChannel.name,
+                    type: RecipientSelector.Type.Contact
+                }
+            }
+            selectedAsset: token
+            selectedAmount: tokenAmount
+            selectedFiatAmount: fiatValue
         }
-        selectedAsset: token
-        selectedAmount: tokenAmount
-        selectedFiatAmount: fiatValue
-        //outgoing: root.outgoing
     }
 
     SelectAccountModal {

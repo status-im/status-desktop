@@ -14,7 +14,6 @@ Item {
     property string currency: "USD"
     property var gas
     height: content.height
-    property var reset: function() {}
     signal fromClicked
     signal gasClicked
     // Creates a mouse area around the "from account". When clicked, triggers 
@@ -28,14 +27,6 @@ Item {
     property bool toValid: true
     property bool toWarn: false
     property bool gasValid: true
-
-    function resetInternal() {
-        fromAccount = undefined
-        toAccount = undefined
-        asset = undefined
-        amount = undefined
-        gas = undefined
-    }
 
     Column {
         id: content

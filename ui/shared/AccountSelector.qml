@@ -25,17 +25,6 @@ Item {
     property alias dropdownAlignment: select.menuAlignment
     property bool isValid: true
     property bool readOnly: false
-    property var reset: function() {}
-
-    function resetInternal() {
-        accounts = undefined
-        selectedAccount = undefined
-        showBalanceForAssetSymbol = ""
-        minRequiredAssetBalance = 0
-        assetFound = undefined
-        isValid = true
-        readOnly = false
-    }
 
     function validate() {
         if (showBalanceForAssetSymbol == "" || minRequiredAssetBalance == 0 || !assetFound) {

@@ -50,7 +50,6 @@ ModalPopup {
     }
 
     onClosed: {
-        stack.reset()
         stack.pop(groupPreview, StackView.Immediate)
     }
 
@@ -91,11 +90,6 @@ ModalPopup {
                 label: qsTrId("choose-account")
                 showBalanceForAssetSymbol: root.selectedAsset.symbol
                 minRequiredAssetBalance: parseFloat(root.selectedAmount)
-                reset: function() {
-                    accounts = Qt.binding(function() { return walletModel.accounts })
-                    showBalanceForAssetSymbol = Qt.binding(function() { return root.selectedAsset.symbol })
-                    minRequiredAssetBalance = Qt.binding(function() { return parseFloat(root.selectedAmount) })
-                }
                 onSelectedAccountChanged: if (isValid) { gasSelector.estimateGas() }
             }
             RecipientSelector {
@@ -105,11 +99,6 @@ ModalPopup {
                 contacts: profileModel.addedContacts
                 selectedRecipient: root.selectedRecipient
                 readOnly: true
-                reset: function() {
-                    accounts = Qt.binding(function() { return walletModel.accounts })
-                    contacts = Qt.binding(function() { return profileModel.addedContacts })
-                    selectedRecipient = Qt.binding(function() { return root.selectedRecipient })
-                }
             }
         }
         TransactionFormGroup {
@@ -130,10 +119,6 @@ ModalPopup {
                 getFiatValue: walletModel.getFiatValue
                 defaultCurrency: walletModel.defaultCurrency
                 width: stack.width
-                reset: function() {
-                    slowestGasPrice = Qt.binding(function(){ return parseFloat(walletModel.safeLowGasPrice) })
-                    fastestGasPrice = Qt.binding(function(){ return parseFloat(walletModel.fastestGasPrice) })
-                }
     
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
@@ -167,12 +152,6 @@ ModalPopup {
                 selectedAmount: parseFloat(root.selectedAmount)
                 selectedAsset: root.selectedAsset
                 selectedGasEthValue: gasSelector.selectedGasEthValue
-                reset: function() {
-                    selectedAccount = Qt.binding(function() { return selectFromAccount.selectedAccount })
-                    selectedAmount = Qt.binding(function() { return parseFloat(root.selectedAmount) })
-                    selectedAsset = Qt.binding(function() { return root.selectedAsset })
-                    selectedGasEthValue = Qt.binding(function() { return gasSelector.selectedGasEthValue })
-                }
             }
         }
         
@@ -205,21 +184,6 @@ ModalPopup {
                 isGasEditable: true
                 fromValid: balanceValidator.isValid
                 gasValid: gasValidator.isValid
-                reset: function() {
-                    fromAccount =  Qt.binding(function() { return selectFromAccount.selectedAccount })
-                    gas = Qt.binding(function() {
-                        return {
-                            "value": gasSelector.selectedGasEthValue,
-                            "symbol": "ETH",
-                            "fiatValue": gasSelector.selectedGasFiatValue
-                        }
-                    })
-                    toAccount =  Qt.binding(function() { return selectRecipient.selectedRecipient })
-                    asset = Qt.binding(function() { return root.selectedAsset })
-                    amount = Qt.binding(function() { return { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount } })
-                    fromValid = Qt.binding(function() { return balanceValidator.isValid })
-                    gasValid = Qt.binding(function() { return gasValidator.isValid })
-                }
                 onFromClicked: { stack.push(groupSelectAcct, StackView.Immediate) }
                 onGasClicked: { stack.push(groupSelectGas, StackView.Immediate) }
             }
@@ -230,11 +194,6 @@ ModalPopup {
                 account: selectFromAccount.selectedAccount
                 amount: !!root.selectedAmount ? parseFloat(root.selectedAmount) : 0.0
                 asset: root.selectedAsset
-                reset: function() {
-                    account = Qt.binding(function() { return selectFromAccount.selectedAccount })
-                    amount = Qt.binding(function() { return !!root.selectedAmount ? parseFloat(root.selectedAmount) : 0.0 })
-                    asset = Qt.binding(function() { return root.selectedAsset })
-                }
             }
             GasValidator {
                 id: gasValidator2
@@ -245,12 +204,6 @@ ModalPopup {
                 selectedAmount: parseFloat(root.selectedAmount)
                 selectedAsset: root.selectedAsset
                 selectedGasEthValue: gasSelector.selectedGasEthValue
-                reset: function() {
-                    selectedAccount = Qt.binding(function() { return selectFromAccount.selectedAccount })
-                    selectedAmount = Qt.binding(function() { return parseFloat(root.selectedAmount) })
-                    selectedAsset = Qt.binding(function() { return root.selectedAsset })
-                    selectedGasEthValue = Qt.binding(function() { return gasSelector.selectedGasEthValue })
-                }
             }
         }
         TransactionFormGroup {
@@ -267,9 +220,6 @@ ModalPopup {
                 id: transactionSigner
                 width: stack.width
                 signingPhrase: walletModel.signingPhrase
-                reset: function() {
-                    signingPhrase = Qt.binding(function() { return walletModel.signingPhrase })
-                }
             }
         }
     }

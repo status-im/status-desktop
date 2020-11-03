@@ -14,19 +14,11 @@ Column {
     property double amount
     property var asset
     property bool isValid: false
-    property var reset: function() {}
     property alias errorMessage: txtValidationError.text
 
     onAccountChanged: validate()
     onAmountChanged: validate()
     onAssetChanged: validate()
-
-    function resetInternal() {
-        account = undefined
-        amount = 0
-        asset = undefined
-        isValid = false
-    }
 
     function validate() {
         let isValid = true
