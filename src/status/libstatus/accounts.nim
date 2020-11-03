@@ -1,4 +1,4 @@
-import json, os, nimcrypto, uuids, json_serialization, chronicles, strutils, sequtils, random, sugar
+import json, os, nimcrypto, uuids, json_serialization, chronicles, strutils
 
 from nim_status import multiAccountGenerateAndDeriveAddresses, generateAlias, identicon, saveAccountAndLogin, login, openAccounts
 import core
@@ -19,6 +19,7 @@ proc getNodeConfig*(fleetConfig: FleetConfig, installationId: string, currentNet
   newDataDir.removeSuffix("_rpc")
 
   result = constants.NODE_CONFIG.copy()
+  result["ClusterConfig"]["Fleet"] = newJString($fleet)
   result["ClusterConfig"]["BootNodes"] = %* fleetConfig.getNodes(fleet, FleetNodes.Bootnodes)
   result["ClusterConfig"]["TrustedMailServers"] = %* fleetConfig.getNodes(fleet, FleetNodes.Mailservers)
   result["ClusterConfig"]["StaticNodes"] = %* fleetConfig.getNodes(fleet, FleetNodes.Whisper)

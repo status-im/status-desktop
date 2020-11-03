@@ -100,8 +100,7 @@ var NODE_CONFIG* = %* {
     "Enabled": true
   },
   "ClusterConfig": {
-    "Enabled": true,
-    "Fleet": "eth.prod"
+    "Enabled": true
   },
   "DataDir": "./ethereum/mainnet",
   "EnableNTPSync": true,

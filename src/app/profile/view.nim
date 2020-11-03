@@ -1,5 +1,5 @@
 import NimQml, sequtils, strutils, sugar, os, json
-import views/[mailservers_list, ens_manager, contact_list, profile_info, device_list, dapp_list]
+import views/[mailservers_list, ens_manager, contact_list, fleets, profile_info, device_list, dapp_list]
 import ../../status/profile/[mailserver, profile, devices]
 import ../../status/profile as status_profile
 import ../../status/contacts as status_contacts
@@ -23,6 +23,7 @@ QtObject:
     blockedContacts*: ContactList
     deviceList*: DeviceList
     dappList*: DappList
+    fleets*: Fleets
     network: string
     status*: Status
     isDeviceSetup: bool
@@ -42,6 +43,7 @@ QtObject:
     if not self.ens.isNil: self.ens.delete
     if not self.profile.isNil: self.profile.delete
     if not self.dappList.isNil: self.dappList.delete
+    if not self.fleets.isNil: self.fleets.delete
     self.QObject.delete
 
   proc newProfileView*(status: Status, changeLanguage: proc(locale: string)): ProfileView =
@@ -55,6 +57,7 @@ QtObject:
     result.deviceList = newDeviceList()
     result.dappList = newDappList(status)
     result.ens = newEnsManager(status)
+    result.fleets = newFleets(status)
     result.network = ""
     result.status = status
     result.isDeviceSetup = false
@@ -268,6 +271,12 @@ QtObject:
 
   QtProperty[QVariant] dappList:
     read = getDappList
+
+  proc getFleets(self: ProfileView): QVariant {.slot.} =
+    return newQVariant(self.fleets)
+
+  QtProperty[QVariant] fleets:
+    read = getFleets
 
   proc getEnsManager(self: ProfileView): QVariant {.slot.} =
     return newQVariant(self.ens)

@@ -1,6 +1,4 @@
-import libstatus/core as status
 import ../eventemitter
-import tables
 import json
 import libstatus/types
 
