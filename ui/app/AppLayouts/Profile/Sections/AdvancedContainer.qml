@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
@@ -114,9 +115,58 @@ Item {
         }
     }
 
+    Item {
+        id: fleetSetting
+        anchors.top: networkTabSettings.bottom
+        anchors.topMargin: Style.current.padding
+        width: parent.width
+        height: fleetText.height
+
+        StyledText {
+            id: fleetText
+            text: qsTr("Fleet")
+            font.pixelSize: 15
+        }
+
+        StyledText {
+            text: profileModel.fleets.fleet
+            font.pixelSize: 15
+            anchors.right: caret2.left
+            anchors.rightMargin: Style.current.padding
+        }
+
+        SVGImage {
+            id: caret2
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.verticalCenter: fleetText.verticalCenter
+            source: "../../../img/caret.svg"
+            width: 13
+            height: 7
+            rotation: -90
+        }
+        
+        ColorOverlay {
+            anchors.fill: caret2
+            source: caret2
+            color: Style.current.darkGrey
+            rotation: -90
+        }
+
+        FleetsModal {
+            id: fleetModal
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: fleetModal.open()
+            cursorShape: Qt.PointingHandCursor
+        }
+    }
+
     RowLayout {
         id: uiCatalog
-        anchors.top: networkTabSettings.bottom
+        anchors.top: fleetSetting.bottom
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 24
@@ -140,7 +190,6 @@ Item {
             text: qsTrId("developer-setting")
         }
     }
-
 }
 
 /*##^##

@@ -166,6 +166,7 @@ type
     PreferredUsername = "preferred-name"
     Usernames = "usernames"
     SigningPhrase = "signing-phrase"
+    Fleet = "fleet"
     VisibleTokens = "wallet/visible-tokens"
 
   UpstreamConfig* = ref object

@@ -1,5 +1,5 @@
 import core, ./types, ../signals/types as statusgo_types, ./accounts/constants, ./utils
-import json, tables, sugar, sequtils
+import json, tables, sugar, sequtils, strutils
 import json_serialization
 import locks
 
@@ -69,3 +69,7 @@ proc getCurrentNetworkDetails*(): NetworkDetails =
     
 proc getLinkPreviewWhitelist*(): JsonNode =
   result = callPrivateRPC("getLinkPreviewWhitelist".prefix, %* []).parseJSON()["result"]
+
+proc getFleet*(): Fleet =
+  let fleet = getSetting[string](Setting.Fleet, $Fleet.PROD)
+  result = parseEnum[Fleet](fleet)
