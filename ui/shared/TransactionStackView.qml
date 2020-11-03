@@ -27,14 +27,6 @@ StackView {
         currentIdx--
     }
 
-    function reset() {
-        for (let i=0; i<groups.length; i++) {
-            groups[i].reset()
-        }
-        this.pop(null)
-        currentIdx = 0
-    }
-
     initialItem: groups[currentIdx]
     anchors.fill: parent
 

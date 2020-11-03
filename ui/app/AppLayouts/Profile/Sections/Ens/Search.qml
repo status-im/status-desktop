@@ -46,11 +46,23 @@ Item {
         Qt.callLater(validateENS, ensUsername, isStatus)
     }
 
-    SetPubKeyModal {
+    Loader {
         id: transactionDialog
-        ensUsername: ensUsername.text
-        width: 400
-        height: 400
+        function open() {
+            this.active = true
+            this.item.open()
+        }
+        function closed() {
+            this.active = false // kill an opened instance
+        }
+        sourceComponent: SetPubKeyModal {
+            onClosed: {
+                transactionDialog.closed()
+            }
+            ensUsername: ensUsername.text
+            width: 400
+            height: 400
+        }
     }
 
     StyledText {

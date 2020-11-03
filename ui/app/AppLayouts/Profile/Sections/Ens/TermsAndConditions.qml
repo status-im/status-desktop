@@ -23,11 +23,23 @@ Item {
         font.pixelSize: 20
     }
 
-    RegisterENSModal {
+    Loader {
         id: transactionDialog
-        ensUsername: username
-        width: 400
-        height: 400
+        function open() {
+            this.active = true
+            this.item.open()
+        }
+        function closed() {
+            this.active = false // kill an opened instance
+        }
+        sourceComponent: RegisterENSModal {
+            onClosed: {
+                transactionDialog.closed()
+            }
+            ensUsername: username
+            width: 400
+            height: 400
+        }
     }
 
     ModalPopup {

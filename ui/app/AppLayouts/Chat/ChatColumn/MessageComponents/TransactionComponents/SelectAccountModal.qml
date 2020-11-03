@@ -24,9 +24,6 @@ ModalPopup {
           width: parent.width
           //% "Choose account"
           label: qsTr("Select account to share and receive assets")
-          reset: function() {
-              accounts = Qt.binding(function() { return walletModel.accounts })
-          }
       }
     }
 

@@ -16,14 +16,6 @@ Item {
     //% "Password needs to be 4 characters or more"
     property string invalidInputErrorMessage: qsTrId("password-needs-to-be-4-characters-or-more")
     property bool isValid: false
-    property var reset: function() {}
-
-    function resetInternal() {
-        signingPhrase.text = ""
-        enteredPassword = ""
-        txtPassword.resetInternal()
-        isValid = false
-    }
 
     function forceActiveFocus(reason) {
         txtPassword.forceActiveFocus(reason)

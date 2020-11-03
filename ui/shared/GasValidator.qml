@@ -16,20 +16,11 @@ Column {
     property var selectedAsset
     property double selectedGasEthValue
     property bool isValid: false
-    property var reset: function() {}
 
     onSelectedAccountChanged: validate()
     onSelectedAmountChanged: validate()
     onSelectedAssetChanged: validate()
     onSelectedGasEthValueChanged: validate()
-
-    function resetInternal() {
-        selectedAccount = undefined
-        selectedAmount = 0
-        selectedAsset = undefined
-        selectedGasEthValue = 0
-        isValid = false
-    }
 
     function validate() {
         let isValid = true

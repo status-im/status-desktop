@@ -23,17 +23,6 @@ Item {
     property bool isDirty: false
     property bool validateBalance: true
     property bool isValid: false
-    property var reset: function() {}
-
-    function resetInternal() {
-        selectAsset.resetInternal()
-        selectedAccount = undefined
-        txtFiatBalance.text = "0.00"
-        inputAmount.resetInternal()
-        txtBalanceDesc.color = Style.current.secondaryText
-        txtBalance.color = Qt.binding(function() { return txtBalance.hovered ? Style.current.textColor : Style.current.secondaryText })
-        isValid = false
-    }
 
     id: root
 

@@ -11,14 +11,8 @@ Item {
     property string sendToContractWarningMessage: qsTr("Tokens will be sent directly to a contract address, which may result in a loss of funds. To transfer ERC-20 tokens, ensure the recipient address is the address of the destination wallet.")
     property var selectedRecipient
     property bool isValid: true
-    property var reset: function() {}
 
     onSelectedRecipientChanged: validate()
-
-    function resetInternal() {
-        selectedRecipient = undefined
-        isValid = true
-    }
 
     function validate() {
         let isValid = true

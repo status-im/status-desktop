@@ -27,19 +27,9 @@ Item {
     //% "Please enter an amount"
     property string noInputErrorMessage: qsTrId("please-enter-an-amount")
     property bool isValid: true
-    property var reset: function() {}
 
     function defaultGasPrice() {
         return ((50 * (root.fastestGasPrice - root.slowestGasPrice) / 100) + root.slowestGasPrice)
-    }
-
-    function resetInternal() {
-        slowestGasPrice = 0
-        fastestGasPrice = 100
-        inputGasLimit.text = "21000"
-        customNetworkFeeDialog.isValid = true
-        inputGasPrice.text = Qt.binding(defaultGasPrice)
-        gasSlider.value = Qt.binding(defaultGasPrice)
     }
 
     function updateGasEthValue() {

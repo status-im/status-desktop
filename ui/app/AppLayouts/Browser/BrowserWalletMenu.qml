@@ -105,10 +105,6 @@ Popup {
             accounts: walletModel.accounts
             selectedAccount: walletModel.currentAccount
             currency: walletModel.defaultCurrency
-            reset: function() {
-                accounts = Qt.binding(function() { return walletModel.accounts })
-                selectedAccount = Qt.binding(function() { return walletModel.currentAccount })
-            }
             onSelectedAccountChanged: {
                 if (!accountSelectorRow.currentAddress) {
                     // We just set the account for the first time. Nothing to do here

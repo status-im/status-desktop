@@ -11,18 +11,12 @@ ModalPopup {
     property string finalButtonLabel: "Request address"
     property var sendChatCommand: function () {}
     property bool isRequested: false
-    signal reset
 
     id: root
     title: root.commandTitle
     height: 504
 
     property alias selectRecipient: selectRecipient
-
-    onClosed: {
-        stack.reset()
-        root.reset()
-    }
 
     TransactionStackView {
         id: stack
@@ -50,10 +44,6 @@ ModalPopup {
                         qsTr("Receive on account") : 
                         //% "From account"
                         qsTrId("from-account")
-                }
-                reset: function() {
-                    accounts = Qt.binding(function() { return walletModel.accounts })
-                    selectedAccount = Qt.binding(function() { return walletModel.currentAccount })
                 }
             }
             SeparatorWithIcon {
@@ -86,9 +76,6 @@ ModalPopup {
                 onSelectedRecipientChanged: {
                     addressRequiredValidator.address = root.isRequested ? selectFromAccount.selectedAccount.address : selectRecipient.selectedRecipient.address
                 }
-                reset: function() {
-                    isValid = true
-                }
             }
         }
         TransactionFormGroup {
@@ -105,9 +92,6 @@ ModalPopup {
                 getCryptoValue: walletModel.getCryptoValue
                 validateBalance: !root.isRequested
                 width: stack.width
-                reset: function() {
-                    selectedAccount = Qt.binding(function() { return selectFromAccount.selectedAccount })
-                }
             }
         }
         TransactionFormGroup {
@@ -127,20 +111,6 @@ ModalPopup {
                 amount: { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount }
                 toWarn: addressRequiredValidator.isWarn
                 currency: walletModel.defaultCurrency
-                reset: function() {
-                    fromAccount = Qt.binding(function() {
-                      return root.isRequested ?
-                        selectRecipient.selectedRecipient :
-                        selectFromAccount.selectedAccount
-                    })
-                    toAccount = Qt.binding(function() {
-                      return root.isRequested ?
-                        selectFromAccount.selectedAccount :
-                        selectRecipient.selectedRecipient
-                    })
-                    asset = Qt.binding(function() { return txtAmount.selectedAsset })
-                    amount = Qt.binding(function() { return { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount } })
-                }
             }
 
             AddressRequiredValidator {

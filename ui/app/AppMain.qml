@@ -18,10 +18,24 @@ RowLayout {
     }
 
     // Add SenmdModal here as it is used by the Wallet as well as the Browser
-    SendModal{
+    Loader {
         id: sendModal
-        onOpened: {
-          walletModel.getGasPricePredictions()
+
+        function open() {
+            this.active = true
+            this.item.open()
+        }
+        function closed() {
+            // this.sourceComponent = undefined // kill an opened instance
+            this.active = false
+        }
+        sourceComponent: SendModal {
+            onOpened: {
+                walletModel.getGasPricePredictions()
+            }
+            onClosed: {
+                sendModal.closed()
+            }
         }
     }
 
