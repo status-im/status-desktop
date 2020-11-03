@@ -67,7 +67,7 @@ QtObject:
 
   proc storeAccountAndLogin(self: OnboardingView, selectedAccountIndex: int, password: string): string {.slot.} =
     try:
-      result = self.status.accounts.storeAccountAndLogin(selectedAccountIndex, password).toJson
+      result = self.status.accounts.storeAccountAndLogin(self.status.fleet.config, selectedAccountIndex, password).toJson
     except:
       let
         e = getCurrentException()
@@ -97,7 +97,7 @@ QtObject:
 
   proc storeDerivedAndLogin(self: OnboardingView, password: string): string {.slot.} =
     try:
-      result = self.status.accounts.storeDerivedAndLogin(self.currentAccount.account, password).toJson
+      result = self.status.accounts.storeDerivedAndLogin(self.status.fleet.config, self.currentAccount.account, password).toJson
     except StatusGoException as e:
       var msg = e.msg
       if e.msg.contains("account already exists"):

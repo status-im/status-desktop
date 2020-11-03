@@ -2,13 +2,14 @@ import libstatus/accounts as libstatus_accounts
 import libstatus/core as libstatus_core
 import libstatus/settings as libstatus_settings
 import libstatus/types as libstatus_types
-import chat, accounts, wallet, node, network, mailservers, messages, contacts, profile, stickers, permissions
+import chat, accounts, wallet, node, network, mailservers, messages, contacts, profile, stickers, permissions, fleet
 import ../eventemitter
 
-export chat, accounts, node, mailservers, messages, contacts, profile, network, permissions
+export chat, accounts, node, mailservers, messages, contacts, profile, network, permissions, fleet
 
 type Status* = ref object
   events*: EventEmitter
+  fleet*: FleetModel
   chat*: ChatModel
   messages*: MessagesModel
   mailservers*: MailserverModel
@@ -21,9 +22,10 @@ type Status* = ref object
   stickers*: StickersModel
   permissions*: PermissionsModel
 
-proc newStatusInstance*(): Status =
+proc newStatusInstance*(fleetConfig: string): Status =
   result = Status()
   result.events = createEventEmitter()
+  result.fleet = fleet.newFleetModel(result.events, fleetConfig)
   result.chat = chat.newChatModel(result.events)
   result.accounts = accounts.newAccountModel(result.events)
   result.wallet = wallet.newWalletModel(result.events)
