@@ -1,4 +1,5 @@
 import QtQuick 2.3
+import QtGraphicalEffects 1.13
 import "../../../../../imports"
 import "../../../../../shared"
 import "../../../../../shared/status"
@@ -93,7 +94,7 @@ Item {
             sourceComponent: Component {
                 Rectangle {
                     id: rectangle
-                    width: 200
+                    width: 300
                     height: childrenRect.height + Style.current.halfPadding
                     radius: 16
                     clip: true
@@ -106,27 +107,45 @@ Item {
                         id: linkImage
                         source: linkData.thumbnailUrl
                         fillMode: Image.PreserveAspectFit
-                        width: 200
+                        width: parent.width
+
+                        layer.enabled: true
+                        layer.effect: OpacityMask {
+                            maskSource: Item {
+                                width: linkImage.width
+                                height: linkImage.height
+                                Rectangle {
+                                    anchors.centerIn: parent
+                                    width: linkImage.width
+                                    height: linkImage.height
+                                    radius: 16
+                                }
+                            }
+                        }
                     }
 
                     StyledText {
                         id: linkTitle
                         text: linkData.title
+                        font.pixelSize: 13
+                        font.weight: Font.Medium
                         elide: Text.ElideRight
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.top: linkImage.bottom
-                        anchors.rightMargin: Style.current.halfPadding
-                        anchors.leftMargin: Style.current.halfPadding
-                        anchors.topMargin: Style.current.halfPadding
+                        anchors.rightMargin: Style.current.smallPadding
+                        anchors.leftMargin: Style.current.smallPadding
+                        anchors.topMargin: Style.current.smallPadding
                     }
 
                     StyledText {
                         id: linkSite
                         text: linkData.site
+                        font.pixelSize: 12
+                        font.weight: Font.Thin
                         color: Style.current.secondaryText
                         anchors.top: linkTitle.bottom
-                        anchors.topMargin: Style.current.halfPadding
+                        anchors.topMargin: 2
                         anchors.left: linkTitle.left
                     }
 
@@ -146,49 +165,90 @@ Item {
     Component {
         id: enableLinkComponent
         Rectangle {
-            width: 200
-            height: enableColumn.height + 2 * Style.current.halfPadding
+            width: 300
+            height: childrenRect.height + Style.current.smallPadding
             radius: 16
             border.width: 1
             border.color: Style.current.border
             color:Style.current.background
 
-            // TODO add image once Simon gives us the design
-            Column {
-                id: enableColumn
-                spacing: Style.current.halfPadding
+            StatusIconButton {
+                icon.name: "close"
+                icon.width: 20
+                icon.height: 20
                 anchors.top: parent.top
-                anchors.topMargin: Style.current.halfPadding
-                width: parent.width - 2 * Style.current.halfPadding
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                StyledText {
-                    text: qsTr("Enable link previews in chat?")
-                    horizontalAlignment: Text.AlignHCenter
-                }
-                StyledText {
-                    text: qsTr("Once enabled, links posted in the chat may share your metadata with the site")
-                    horizontalAlignment: Text.AlignHCenter
-                    wrapMode: Text.WordWrap
-                    width: parent.width
-                    color: Style.current.secondaryText
-                }
-                StatusButton {
-                    text: qsTr("Enable in Settings")
-                    onClicked: {
-                        appMain.changeAppSection(Constants.profile)
-                        profileLayoutContainer.changeProfileSection(ProfileConstants.PRIVACY_AND_SECURITY)
-                    }
-                }
-                StatusButton {
-                    text: qsTr("Don't ask me again")
-                    onClicked: {
-                        appSettings.neverAskAboutUnfurlingAgain = true
-                    }
-                }
+                anchors.topMargin: Style.current.smallPadding
+                anchors.right: parent.right
+                anchors.rightMargin: Style.current.smallPadding
             }
 
+            Image {
+                id: unfurlingImage
+                source: "../../../../img/unfurling-image.png"
+                width: 132
+                height: 94
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: Style.current.smallPadding
+            }
 
+            StyledText {
+                id: enableText
+                text: qsTr("Enable link previews in chat?")
+                horizontalAlignment: Text.AlignHCenter
+                width: parent.width
+                wrapMode: Text.WordWrap
+                anchors.top: unfurlingImage.bottom
+                anchors.topMargin: Style.current.halfPadding
+                font.pixelSize: 15
+            }
+
+            StyledText {
+                id: infoText
+                text: qsTr("Once enabled, links posted in the chat may share your metadata with their owners")
+                horizontalAlignment: Text.AlignHCenter
+                width: parent.width
+                wrapMode: Text.WordWrap
+                anchors.top: enableText.bottom
+                font.pixelSize: 13
+                color: Style.current.secondaryText
+            }
+
+            Separator {
+                id: sep1
+                anchors.top: infoText.bottom
+                anchors.topMargin: Style.current.smallPadding
+            }
+
+            StatusButton {
+                id: enableBtn
+                text: qsTr("Enable in Settings")
+                type: "secondary"
+                onClicked: {
+                    appMain.changeAppSection(Constants.profile)
+                    profileLayoutContainer.changeProfileSection(ProfileConstants.PRIVACY_AND_SECURITY)
+                }
+                width: parent.width
+//                height: 43
+                anchors.top: sep1.bottom
+            }
+
+            Separator {
+                id: sep2
+                anchors.top: enableBtn.bottom
+                anchors.topMargin: 0
+            }
+
+            StatusButton {
+                text: qsTr("Don't ask me again")
+                type: "secondary"
+                onClicked: {
+                    appSettings.neverAskAboutUnfurlingAgain = true
+                }
+                width: parent.width
+//                height: 43
+                anchors.top: sep2.bottom
+            }
         }
     }
 }
