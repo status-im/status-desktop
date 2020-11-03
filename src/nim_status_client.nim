@@ -20,7 +20,7 @@ logScope:
   topics = "main"
 
 proc mainProc() =
-  let status = statuslib.newStatusInstance()
+  let status = statuslib.newStatusInstance(readFile(joinPath(getAppDir(), "../fleets.json")))
   status.initNode()
 
   enableHDPI()

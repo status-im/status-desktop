@@ -1,4 +1,4 @@
-import json, os, nimcrypto, uuids, json_serialization, chronicles, strutils
+import json, os, nimcrypto, uuids, json_serialization, chronicles, strutils, sequtils, random, sugar
 
 from nim_status import multiAccountGenerateAndDeriveAddresses, generateAlias, identicon, saveAccountAndLogin, login, openAccounts
 import core
@@ -11,25 +11,34 @@ import ../wallet/account
 proc getNetworkConfig(currentNetwork: string): JsonNode =
   result = constants.DEFAULT_NETWORKS.first("id", currentNetwork)
 
-proc getNodeConfig*(installationId: string, currentNetwork: string = constants.DEFAULT_NETWORK_NAME): JsonNode =
+
+proc getNodeConfig*(fleetConfig: FleetConfig, installationId: string, currentNetwork: string = constants.DEFAULT_NETWORK_NAME, fleet: Fleet = Fleet.PROD): JsonNode =
   let networkConfig = getNetworkConfig(currentNetwork)
   let upstreamUrl = networkConfig["config"]["UpstreamConfig"]["URL"]
   var newDataDir = networkConfig["config"]["DataDir"].getStr
   newDataDir.removeSuffix("_rpc")
-  result = constants.NODE_CONFIG
+
+  result = constants.NODE_CONFIG.copy()
+  result["ClusterConfig"]["BootNodes"] = %* fleetConfig.getNodes(fleet, FleetNodes.Bootnodes)
+  result["ClusterConfig"]["TrustedMailServers"] = %* fleetConfig.getNodes(fleet, FleetNodes.Mailservers)
+  result["ClusterConfig"]["StaticNodes"] = %* fleetConfig.getNodes(fleet, FleetNodes.Whisper)
+  result["ClusterConfig"]["RendezvousNodes"] = %* fleetConfig.getNodes(fleet, FleetNodes.Rendezvous)
+  result["Rendezvous"] = newJBool(fleetConfig.getNodes(fleet, FleetNodes.Rendezvous).len > 0)
   result["NetworkId"] = networkConfig["config"]["NetworkId"]
   result["DataDir"] = newDataDir.newJString()
   result["UpstreamConfig"]["Enabled"] = networkConfig["config"]["UpstreamConfig"]["Enabled"]
   result["UpstreamConfig"]["URL"] = upstreamUrl
   result["ShhextConfig"]["InstallationID"] = newJString(installationId)
   result["ListenAddr"] = if existsEnv("STATUS_PORT"): newJString("0.0.0.0:" & $getEnv("STATUS_PORT")) else: newJString("0.0.0.0:30305")
-  result = constants.NODE_CONFIG
+  
 
 proc hashPassword*(password: string): string =
   result = "0x" & $keccak_256.digest(password)
 
 proc getDefaultAccount*(): string =
   var response = callPrivateRPC("eth_accounts")
+  echo "========================== 2"
+  echo response
   result = parseJson(response)["result"][0].getStr()
 
 proc generateAddresses*(n = 5): seq[GeneratedAccount] =
@@ -150,13 +159,13 @@ proc getAccountSettings*(account: GeneratedAccount, defaultNetworks: JsonNode, i
     "installation-id": installationId
   }
 
-proc setupAccount*(account: GeneratedAccount, password: string): types.Account =
+proc setupAccount*(fleetConfig: FleetConfig, account: GeneratedAccount, password: string): types.Account =
   try:
     let storeDerivedResult = storeDerivedAccounts(account, password)
     let accountData = getAccountData(account)
     let installationId = $genUUID()
     var settingsJSON = getAccountSettings(account, constants.DEFAULT_NETWORKS, installationId)
-    var nodeConfig = getNodeConfig(installationId)
+    var nodeConfig = getNodeConfig(fleetConfig, installationId)
 
     result = saveAccountAndLogin(account, $accountData, password, $nodeConfig, $settingsJSON)
 

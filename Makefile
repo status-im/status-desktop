@@ -208,6 +208,11 @@ $(QRCODEGEN): | deps
 	+ cd vendor/QR-Code-generator/c && \
 	  $(MAKE) $(QRCODEGEN_MAKE_PARAMS)
 
+update-fleets:
+	curl -s https://fleets.status.im/ \
+		| jq --indent 4 --sort-keys . \
+		> fleets.json
+
 rcc:
 	echo -e $(BUILD_MSG) "resources.rcc"
 	rm -f ./resources.rcc
@@ -215,7 +220,7 @@ rcc:
 	./ui/generate-rcc.sh
 	rcc --binary ui/resources.qrc -o ./resources.rcc
 
-nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) rcc deps
+nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) update-fleets rcc deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \
@@ -251,6 +256,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp status.svg tmp/linux/dist/status.svg
 	cp status.svg tmp/linux/dist/usr/.
 	cp -R resources.rcc tmp/linux/dist/usr/.
+	cp -R fleets.json tmp/linux/dist/usr/.
 	mkdir -p tmp/linux/dist/usr/i18n
 	cp ui/i18n/* tmp/linux/dist/usr/i18n
 
@@ -289,6 +295,7 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	cp status-icon.icns $(MACOS_OUTER_BUNDLE)/Contents/Resources/
 	cp status.svg $(MACOS_OUTER_BUNDLE)/Contents/
 	cp -R resources.rcc $(MACOS_OUTER_BUNDLE)/Contents/
+	cp -R fleets.json $(MACOS_OUTER_BUNDLE)/Contents/
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/i18n
 	cp ui/i18n/* $(MACOS_OUTER_BUNDLE)/Contents/i18n
 
@@ -360,6 +367,7 @@ $(STATUS_CLIENT_ZIP): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 	cp status.ico tmp/windows/dist/Status/resources/
 	cp status.svg tmp/windows/dist/Status/resources/
 	cp resources.rcc tmp/windows/dist/Status/resources/
+	cp fleets.json tmp/windows/dist/Status/resources/
 	cp bin/nim_status_client.exe tmp/windows/dist/Status/bin/Status.exe
 	cp bin/nim_windows_launcher.exe tmp/windows/dist/Status/Status.exe
 	rcedit \

@@ -30,12 +30,12 @@ proc login*(self: AccountModel, selectedAccountIndex: int, password: string): No
   let currentNodeAccount = self.nodeAccounts[selectedAccountIndex]
   result = status_accounts.login(currentNodeAccount, password)
 
-proc storeAccountAndLogin*(self: AccountModel, selectedAccountIndex: int, password: string): Account =
+proc storeAccountAndLogin*(self: AccountModel, fleetConfig: FleetConfig, selectedAccountIndex: int, password: string): Account =
   let generatedAccount: GeneratedAccount = self.generatedAddresses[selectedAccountIndex]
-  result = status_accounts.setupAccount(generatedAccount, password)
+  result = status_accounts.setupAccount(fleetConfig, generatedAccount, password)
 
-proc storeDerivedAndLogin*(self: AccountModel, importedAccount: GeneratedAccount, password: string): Account =
-  result = status_accounts.setupAccount(importedAccount, password)
+proc storeDerivedAndLogin*(self: AccountModel, fleetConfig: FleetConfig, importedAccount: GeneratedAccount, password: string): Account =
+  result = status_accounts.setupAccount(fleetConfig, importedAccount, password)
 
 proc importMnemonic*(self: AccountModel, mnemonic: string): GeneratedAccount =
   let importedAccount = status_accounts.multiAccountImportMnemonic(mnemonic)
@@ -54,7 +54,7 @@ proc generateAlias*(publicKey: string): string =
 proc generateIdenticon*(publicKey: string): string =
   result = status_accounts.generateIdenticon(publicKey)
 
-proc changeNetwork*(self: AccountModel, network: string) =
+proc changeNetwork*(self: AccountModel, fleetConfig: FleetConfig, network: string) =
 
   # 1. update current network setting
   var statusGoResult = status_settings.saveSetting(Setting.Networks_CurrentNetwork, network)
@@ -63,7 +63,7 @@ proc changeNetwork*(self: AccountModel, network: string) =
 
   # 2. update node config setting
   let installationId = status_settings.getSetting[string](Setting.InstallationId)
-  let updatedNodeConfig = status_accounts.getNodeConfig(installationId, network)
+  let updatedNodeConfig = status_accounts.getNodeConfig(fleetConfig, installationId, network)
   statusGoResult = status_settings.saveSetting(Setting.NodeConfig, updatedNodeConfig)
   if statusGoResult.error != "":
     error "Error saving updated node config", msg=statusGoResult.error
