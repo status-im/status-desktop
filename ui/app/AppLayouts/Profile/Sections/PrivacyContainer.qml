@@ -174,7 +174,15 @@ Item {
 
         StatusSectionHeadline {
             id: labelURLUnfurling
-            text: qsTr("URL Previews")
+            text: qsTr("Chat link previews")
+            font.pixelSize: 17
+            font.weight: Font.Bold
+            color: Style.current.textColor
+        }
+
+        StatusSectionHeadline {
+            id: labelWebsites
+            text: qsTr("Websites")
         }
 
         ListView {
@@ -183,25 +191,47 @@ Item {
             model: previewableSites
             interactive: false
             height: childrenRect.height
+            spacing: Style.current.padding
 
             delegate: Component {
-                RowLayout {
-                    id: displayYoutubeSettings
+                Item {
+                    width: parent.width
+                    height: childrenRect.height
+
                     StyledText {
-                        text: qsTr("Display %1 previews").arg(title)
+                        id: siteTitle
+                        text: title
+                        font.pixelSize: 15
+                        font.weight: Font.Medium
                     }
+
+                    StyledText {
+                        text: address
+                        font.pixelSize: 15
+                        font.weight: Font.Thin
+                        color: Style.current.secondaryText
+                        anchors.top: siteTitle.bottom
+                    }
+
                     StatusSwitch {
                         checked: !!appSettings.whitelistedUnfurlingSites[address]
                         onCheckedChanged: function () {
                             changeUnfurlingWhitelist(address, this.checked)
                         }
-                    }
-                    StyledText {
-                        //% "under development"
-                        text: qsTrId("under-development")
+                        anchors.verticalCenter: siteTitle.bottom
+                        anchors.right: parent.right
                     }
                 }
             }
+        }
+
+        StyledText {
+            text: qsTr("Previewing links from these websites may share your metadata with their owners.")
+            width: parent.width
+            wrapMode: Text.WordWrap
+            font.weight: Font.Thin
+            color: Style.current.secondaryText
+            font.pixelSize: 15
         }
     }
 }
