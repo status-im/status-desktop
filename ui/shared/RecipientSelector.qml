@@ -28,8 +28,8 @@ Item {
                 return inpAddress.isPending
             case RecipientSelector.Type.Contact:
                 return selContact.isPending
-            case RecipientSelector.Type.Account:
-                return selAccount.isPending
+            default:
+                return false
         }
     }
     property var reset: function() {}
@@ -174,10 +174,8 @@ Item {
                 if (!selAddressSource.selectedSource || (selAddressSource.selectedSource && selAddressSource.selectedSource.value !== RecipientSelector.Type.Address)) {
                     return
                 }
-                var recipient = root.selectedRecipient;
-                recipient.address = selectedAddress
-                recipient.type = RecipientSelector.Type.Address
-                root.selectedRecipient = recipient
+
+                root.selectedRecipient = { address: selectedAddress, type: RecipientSelector.Type.Address }
             }
             onIsValidChanged: root.validate()
         }
