@@ -569,10 +569,12 @@ QtObject:
   proc ensWasResolved*(self: WalletView, resolvedAddress: string, uuid: string) {.signal.}
 
   proc ensResolved(self: WalletView, addressUuidJson: string) {.slot.} =
-    let
+    var
       parsed = addressUuidJson.parseJson
       address = parsed["address"].to(string)
       uuid = parsed["uuid"].to(string)
+    if address == "0x":
+      address = ""
     self.ensWasResolved(address, uuid)
   
   proc transactionCompleted*(self: WalletView, success: bool, txHash: string, revertReason: string = "") {.signal.}

@@ -44,8 +44,8 @@ Item {
             if (uuid !== root.uuid) {
                 return
             }
-            root.resolved(resolvedAddress)
             root.isPending = false
+            root.resolved(resolvedAddress)
         }
     }
 }

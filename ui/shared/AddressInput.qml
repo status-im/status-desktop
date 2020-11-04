@@ -21,7 +21,17 @@ Item {
     height: inpAddress.height
 
     onSelectedAddressChanged: validate()
-    onTextChanged: ensResolver.resolveEns(text)
+    onTextChanged: {
+        metrics.text = text
+        root.isResolvedAddress = false
+        if (Utils.isValidAddress(text)) {
+            root.selectedAddress = text
+        } else {
+            root.selectedAddress = ""
+            root.validate()
+        }
+        ensResolver.resolveEns(text)
+    }
 
     function resetInternal() {
         selectedAddress = ""
@@ -62,13 +72,6 @@ Item {
             }
         }
         textField.rightPadding: 73
-        onTextEdited: {
-            metrics.text = text
-
-            ensResolver.resolveEns(text)
-            root.isResolvedAddress = false
-            root.selectedAddress = text
-        }
         TextMetrics {
             id: metrics
             elideWidth: 97
@@ -99,6 +102,7 @@ Item {
         onResolved: {
             root.isResolvedAddress = true
             root.selectedAddress = resolvedAddress
+            root.validate()
         }
         onIsPendingChanged: {
             if (isPending) {
