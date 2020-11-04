@@ -37,8 +37,6 @@ proc hashPassword*(password: string): string =
 
 proc getDefaultAccount*(): string =
   var response = callPrivateRPC("eth_accounts")
-  echo "========================== 2"
-  echo response
   result = parseJson(response)["result"][0].getStr()
 
 proc generateAddresses*(n = 5): seq[GeneratedAccount] =
