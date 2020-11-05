@@ -54,8 +54,11 @@ QtObject {
         var replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
         replacedText = replacedText.replace(replacePattern2, "$1<a href='http://$2'>$2</a>");
 
-        replacedText = XSS.filterXSS(replacedText)
-        return replacedText;
+        return XSS.filterXSS(replacedText)
+    }
+
+    function filterXSS(inputText) {
+        return XSS.filterXSS(inputText)
     }
 
     function toLocaleString(val, locale, options) {
