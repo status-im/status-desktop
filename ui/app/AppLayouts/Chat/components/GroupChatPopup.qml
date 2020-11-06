@@ -13,6 +13,7 @@ ModalPopup {
     property bool selectChatMembers: true
     property int memberCount: 1
     readonly property int maxMembers: 10
+    property string channelNameValidationError: ""
 
     onOpened: {
         groupName.text = "";
@@ -55,8 +56,25 @@ ModalPopup {
         }
     }
 
-    function doJoin(){
-        if(pubKeys.length === 0) return;
+    function validate() {
+        if (groupName.text === "") {
+            channelNameValidationError = qsTr("You need to enter a channel name")
+        } else if (!Utils.isValidChannelName(groupName.text)) {
+            channelNameValidationError = qsTr("The channel name can only contain lowercase letters, numbers and dashes")
+        } else {
+            channelNameValidationError = ""
+        }
+
+        return channelNameValidationError === ""
+    }
+
+    function doJoin() {
+        if (!validate()) {
+            return
+        }
+        if(pubKeys.length === 0) {
+            return;
+        }
         chatsModel.createGroup(Utils.filterXSS(groupName.text), JSON.stringify(pubKeys));
         popup.close();
     }
@@ -98,6 +116,7 @@ ModalPopup {
         //% "Group name"
         placeholderText: qsTrId("group-name")
         visible: !selectChatMembers
+        validationError: channelNameValidationError
     }
 
     Rectangle {

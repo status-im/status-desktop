@@ -146,6 +146,10 @@ QtObject {
         }
     }
 
+    function isValidChannelName(channelName) {
+        return (/^[a-z0-9\-]+$/.test(channelName))
+    }
+
     function isSpace(c) {
         return (/( |\t|\n|\r)/.test(c))
     }
