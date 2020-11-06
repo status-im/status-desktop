@@ -208,11 +208,18 @@ $(QRCODEGEN): | deps
 	+ cd vendor/QR-Code-generator/c && \
 	  $(MAKE) $(QRCODEGEN_MAKE_PARAMS)
 
-update-fleets:
+FLEETFILE := fleets.json
+$(FLEETFILE): | deps
+	echo -e $(BUILD_MSG) "Getting latest fleet file"
 	curl -s https://fleets.status.im/ \
 		| jq --indent 4 --sort-keys . \
 		> fleets.json
 
+remove-fleet: 
+	rm -f fleets.json
+
+update-fleets: remove-fleet $(FLEETFILE)
+  
 rcc:
 	echo -e $(BUILD_MSG) "resources.rcc"
 	rm -f ./resources.rcc
@@ -220,7 +227,7 @@ rcc:
 	./ui/generate-rcc.sh
 	rcc --binary ui/resources.qrc -o ./resources.rcc
 
-nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) update-fleets rcc deps
+nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) $(FLEETFILE) rcc deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \
