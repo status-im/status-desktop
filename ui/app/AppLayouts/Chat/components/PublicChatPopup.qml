@@ -8,8 +8,24 @@ import "../data/channelList.js" as ChannelJSON
 import "./"
 
 ModalPopup {
+    property string channelNameValidationError: ""
+
+    function validate() {
+        if (channelName.text === "") {
+            channelNameValidationError = qsTr("You need to enter a channel name")
+        } else if (!Utils.isValidChannelName(channelName.text)) {
+            channelNameValidationError = qsTr("The channel name can only contain lowercase letters, numbers and dashes")
+        } else {
+            channelNameValidationError = ""
+        }
+
+        return channelNameValidationError === ""
+    }
+
     function doJoin() {
-        if(channelName.text === "") return;
+        if (!validate()) {
+            return
+        }
         chatsModel.joinChat(channelName.text, Constants.chatTypePublic);
         popup.close();
     }
@@ -48,6 +64,7 @@ ModalPopup {
         Keys.onEnterPressed: doJoin()
         Keys.onReturnPressed: doJoin()
         icon: "../../../img/hash.svg"
+        validationError: channelNameValidationError
     }
 
     ScrollView {
