@@ -43,7 +43,7 @@ ModalPopup {
                 Layout.alignment: Qt.AlignRight
                 ButtonGroup.group: fleetSettings
                 rightPadding: 0
-                checked: profileModel.fleets.fleet == Constants.eth_prod
+                checked: profileModel.fleets.fleet === Constants.eth_prod
                 onClicked: {
                     if (profileModel.fleets.fleet === Constants.eth_prod) return;
                     newFleet = Constants.eth_prod;
