@@ -23,6 +23,9 @@ QtObject:
 
   proc fleetChanged*(self: Fleets, newFleet: string) {.signal.}
 
+  proc triggerFleetChange*(self: Fleets) {.slot.} =
+    self.fleetChanged($status_settings.getFleet())
+
   proc setFleet*(self: Fleets, newFleet: string) {.slot.} =
     discard status_settings.saveSetting(Setting.Fleet, newFleet)
     let fleet = parseEnum[Fleet](newFleet)
