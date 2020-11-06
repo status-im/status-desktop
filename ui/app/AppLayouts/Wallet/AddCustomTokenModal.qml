@@ -54,7 +54,6 @@ ModalPopup {
 
     function onKeyReleased(){
         validationError = "";
-
         if (!validate() || addressInput.text === "") {
             return;
         }
@@ -66,8 +65,7 @@ ModalPopup {
             target: walletModel.customTokenList
             onTokenDetailsWereResolved: {
                 const jsonObj = JSON.parse(tokenDetails)
-
-                if(jsonObj.address === ""){
+                if(jsonObj.name === "" || jsonObj.symbol === "" || jsonObj.decimals === ""){
                     validationError = qsTr("Invalid ERC20 address")
                     return;
                 }
