@@ -19,7 +19,8 @@ logScope:
   topics = "main"
 
 proc mainProc() =
-  let status = statuslib.newStatusInstance()
+  var taskRunner = newTaskRunner()
+  let status = statuslib.newStatusInstance(taskRunner)
   status.initNode()
 
   enableHDPI()
@@ -63,7 +64,6 @@ proc mainProc() =
   # from the non-closure callback passed to `libstatus.setSignalEventCallback`
   signalsQObjPointer = cast[pointer](signalController.vptr)
 
-  var taskRunner = newTaskRunner()
   engine.setRootContextProperty("taskRunner", newQVariant(taskRunner))
 
   var wallet = wallet.newController(status)

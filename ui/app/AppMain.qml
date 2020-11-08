@@ -10,17 +10,32 @@ RowLayout {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    Button {
-        text: "Execute some task in task runner"
-        onClicked: {
-            console.log("Dispatching a task....", utilsModel.testTaskRunner())
+    Column {
+        Button {
+            id: btnTestTask
+            property string uuid
+            text: "Execute some task in task runner"
+            onClicked: {
+                uuid = Utils.uuid()
+                console.log("Dispatching a task....", utilsModel.testTaskRunner(uuid))
+            }
+        }
+        Button {
+            id: btnStickersTask
+            property string uuid
+            onClicked: {
+                uuid = utilsModel.getAvailableStickerPacks()
+            }
+            text: utilsModel.testData
         }
     }
 
     Connections {
         target: taskRunner
         onTaskCompleted: {
-            console.log("Task completed: ", uuid, " - ", result)
+            if(uuid && uuid === btnTestTask.uuid || uuid === btnStickersTask.uuid) {
+                console.log("Task completed: ", uuid, " - ", result)
+            }
         }
     }
 

@@ -1,12 +1,12 @@
 import eventemitter
-
+import ../task_runner
 import libstatus/accounts as libstatus_accounts
 import libstatus/core as libstatus_core
 import libstatus/settings as libstatus_settings
 import libstatus/types as libstatus_types
-import chat, accounts, wallet, node, network, mailservers, messages, contacts, profile, stickers
+import chat, accounts, wallet, node, network, mailservers, messages, contacts, profile, stickers, test
 
-export chat, accounts, node, mailservers, messages, contacts, profile, network
+export chat, accounts, node, mailservers, messages, contacts, profile, network, test
 
 type Status* = ref object
   events*: EventEmitter
@@ -20,8 +20,9 @@ type Status* = ref object
   contacts*: ContactModel
   network*: NetworkModel
   stickers*: StickersModel
+  test*: TestModel
 
-proc newStatusInstance*(): Status =
+proc newStatusInstance*(taskRunner: TaskRunner): Status =
   result = Status()
   result.events = createEventEmitter()
   result.chat = chat.newChatModel(result.events)
@@ -35,6 +36,7 @@ proc newStatusInstance*(): Status =
   result.contacts = contacts.newContactModel(result.events)
   result.network = network.newNetworkModel(result.events)
   result.stickers = stickers.newStickersModel(result.events)
+  result.test = test.newTestModel(result.events, taskRunner)
 
 proc initNode*(self: Status) = 
   libstatus_accounts.initNode()

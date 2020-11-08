@@ -86,6 +86,7 @@ proc toAccount*(account: NodeAccount): Account =
 type AccountArgs* = ref object of Args
     account*: Account
 
+
 type
   StatusGoException* = object of CatchableError
 
@@ -124,6 +125,9 @@ type StickerPack* = object
 
 proc `%`*(stuint256: Stuint[256]): JsonNode =
   newJString($stuint256)
+
+proc writeValue*(writer: var JsonWriter, value: Stuint[256]) {.inline.} =
+  writer.writeValue($value)
 
 proc readValue*(reader: var JsonReader, value: var Stuint[256])
                {.raises: [IOError, SerializationError, Defect].} =

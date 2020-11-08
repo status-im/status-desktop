@@ -1,48 +1,67 @@
-import json, os, chronicles, threadpool
-import status/status
-import nimqml
-import uuids, asyncdispatch
+import
+  json, os, chronicles, threadpool, macros, tables
+
+import
+  nimqml, eventemitter, uuids, json_serialization,
+  json_serialization/std/tables as json_tables
+
+import
+  status/libstatus/[types, stickers]
 
 logScope:
   topics = "task-runner"
 
+type
+  Task* = object
+    uuid*: string
+    routine*: string
+  
+  TaskCompletedArgs* = ref object of Args
+    uuid*: string
+    result*: string
 
 var taskRunnerVPTR: pointer
-
-var taskChan: Channel[string]
+var taskChan: Channel[Task]
 open(taskChan)
 
-proc notifyUI(uuid: string, result: JsonNode) =
-  signal_handler(taskRunnerVPTR, $(%* {"uuid": uuid, "response": result}), "receiveTaskResult")
+proc notifyUI(uuid: string, result: string) =
+  signal_handler(taskRunnerVPTR, $(%* {"uuid": uuid, "result": result}), "receiveTaskResult")
+
+template run(task: Task, routine: untyped) =
+  echo "Executing task ", task.uuid
+  let uuid = task.uuid
+
+  let bgTask = proc (uuid: string) =
+    let data = routine()
+    echo "BOOM! I'm done with ", uuid
+    notifyUI(uuid, Json.encode(data))
+  spawn bgTask(uuid)
 
 
-proc myMethod(task:JsonNode) =
+proc myMethod(): string =
   # This is just a test method to simulate something that takes a long time to run
-  echo "Executing 'myMethod'. UUID ", task["uuid"].getStr()
-  task["result"] = newJString("DONE")
   sleep(4000)
-  echo "BOOM! I'm done with ", task["uuid"].getStr()
-  notifyUI(task["uuid"].getStr(), %* {"result": "Something"})
-
+  return "some string that took ages to retrieve"
 
 proc process*() {.thread.} =
   while true:
     let recv = taskChan.tryRecv()
     if recv.dataAvailable:
-      let task = recv.msg.parseJSON
-      case task["method"].getStr()
-      of "myMethod": spawn myMethod(task)
+      let task = recv.msg
+
+      case task.routine
+      of "myMethod": task.run(myMethod)
+      of "getAvailableStickerPacks": task.run(getAvailableStickerPacks)
       of "stop": break
       else: error "Unknown task"
                       
   sleep(400)
 
-
 QtObject:
   type
     TaskRunner* = ref object of QObject
       taskRunnerThread*: Thread[void]
-
+      events*: EventEmitter
 
   proc setup(self: TaskRunner) = self.QObject.setup
 
@@ -51,14 +70,16 @@ QtObject:
   proc newTaskRunner*(): TaskRunner =
     new(result, delete)
     result = TaskRunner()
+    result.events = createEventEmitter()
     result.setup()
     taskRunnerVPTR = cast[pointer](result.vptr)
 
   proc taskCompleted*(self: TaskRunner, uuid: string, result: string) {.signal.} 
 
   proc receiveTaskResult*(self: TaskRunner, result: string) {.slot.} =
-    let jsonObj = result.parseJSON
-    self.taskCompleted(jsonObj["uuid"].getStr, $jsonObj["response"])
+    let args = Json.decode(result, TaskCompletedArgs)
+    self.taskCompleted(args.uuid, args.result)
+    self.events.emit("taskCompleted", args)
 
   proc init*(self: TaskRunner) =
     debug "Creating task runner thread..."
@@ -66,13 +87,13 @@ QtObject:
 
   proc destroy*(self: TaskRunner) =
     debug "Closing task runner thread..."
-    taskChan.send($ %*{"method": "stop"})
+    taskChan.send(Task(routine: "stop"))
     joinThreads(self.taskRunnerThread)
+    taskChan.close()
     self.delete()
 
-  proc send*(self: TaskRunner, input: JsonNode):string =
-    result = $genUUID()
-    input["uuid"] = newJString(result)
-    taskChan.send($input)
-
-
+  proc send*(self: TaskRunner, task: var Task): string =
+    if task.uuid == "":
+      task.uuid = $genUUID()
+    taskChan.send(task)
+    task.uuid

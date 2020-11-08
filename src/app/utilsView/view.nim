@@ -1,4 +1,5 @@
-import NimQml, os, strformat, strutils, parseUtils, json
+import NimQml, os, strformat, strutils, parseUtils, json, uuids, eventemitter,
+  json_serialization, tables, threadpool
 import stint
 import ../../status/status
 import ../../status/stickers
@@ -6,6 +7,7 @@ import ../../status/libstatus/accounts/constants as accountConstants
 import ../../status/libstatus/tokens
 import ../../status/libstatus/wallet as status_wallet
 import ../../status/libstatus/utils as status_utils
+import ../../status/libstatus/types
 import ../../status/ens as status_ens
 import web3/[ethtypes, conversions]
 import ../../task_runner
@@ -20,6 +22,9 @@ QtObject:
 
   proc delete*(self: UtilsView) =
     self.QObject.delete
+  
+  # forward declaration
+  proc testDataChanged*(self: UtilsView)
 
   proc newUtilsView*(status: Status, taskRunner: TaskRunner): UtilsView =
     new(result, delete)
@@ -27,6 +32,14 @@ QtObject:
     result.status = status
     result.taskRunner = taskRunner
     result.setup
+  
+  proc init*(self: UtilsView) =
+    # self.status.events.on("sharedMemoryOp1Completed") do (e: Args):
+    #   self.testDataChanged()
+    # self.status.events.on("sharedMemoryOp2Completed") do (e: Args):
+    #   self.testDataChanged()
+    self.status.events.on("getAvailableStickerPacksCompleted") do (e: Args):
+      self.testDataChanged()
 
   proc getDataDir*(self: UtilsView): string {.slot.} =
     result = accountConstants.DATADIR
@@ -78,10 +91,25 @@ QtObject:
       return "0"
     return stripTrailingZeroes(stint.toString(stint.fromHex(StUint[256], value)))
 
+  proc testTaskRunner*(self: UtilsView, uuid: string):string {.slot.} =
+    var task = Task(
+      uuid: uuid,
+      routine: "myMethod"
+    )
+    self.taskRunner.send(task)
 
-  proc testTaskRunner*(self: UtilsView):string {.slot.} =
-    var input = %* {
-      "method": "myMethod",
-      "params": ["A", "B", "C"]
-    }
-    self.taskRunner.send(input)
+  proc getTestData*(self: UtilsView): int {.slot.} =
+    self.status.test.testData.len
+  
+  proc testDataChanged*(self: UtilsView) {.signal.}
+
+  QtProperty[int] testData:
+    read = getTestData
+    notify = testDataChanged
+
+  proc getAvailableStickerPacks*(self: UtilsView):string {.slot.} =
+    result = self.status.test.getAvailableStickerPacks() # returns the uuid of the task
+    sleep(1000)
+    self.status.test.addStickerPack(StickerPack(id: 99, author: "not real"))
+    self.testDataChanged()
+    

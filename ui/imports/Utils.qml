@@ -167,4 +167,8 @@ QtObject {
         let wordCount = countWords(text);
         return qsTr("%1%2 words").arg(getTick(wordCount)).arg(wordCount.toString());
     }
+
+    function uuid() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
+    }
 }
