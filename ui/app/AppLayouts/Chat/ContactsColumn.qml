@@ -25,16 +25,45 @@ Item {
         font.pixelSize: 17
     }
 
-    PublicChatPopup {
-        id: publicChatPopup
+    Component {
+        id: publicChatPopupComponent
+        PublicChatPopup {
+            onClosed: {
+                destroy()
+            }
+        }
     }
 
-    GroupChatPopup {
-        id: groupChatPopup
+    Component {
+        id: groupChatPopupComponent
+        GroupChatPopup {
+            onClosed: {
+                destroy()
+            }
+        }
     }
 
-    PrivateChatPopup {
-        id: privateChatPopup
+    Component {
+        id: privateChatPopupComponent
+        PrivateChatPopup {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+    Component {
+        id: communitiesPopupComponent
+        CommunitiesPopup {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+    function openPopup(popupComponent) {
+        const popup = popupComponent.createObject(contactsColumn);
+        popup.open()
     }
 
     SearchBox {
