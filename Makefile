@@ -225,7 +225,7 @@ rcc:
 	rm -f ./resources.rcc
 	rm -f ./ui/resources.qrc
 	./ui/generate-rcc.sh
-	rcc --binary ui/resources.qrc -o ./resources.rcc
+	rcc -binary ui/resources.qrc -o ./resources.rcc
 
 nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) $(FLEETFILE) rcc deps
 	echo -e $(BUILD_MSG) "$@" && \
