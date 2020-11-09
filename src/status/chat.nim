@@ -333,3 +333,6 @@ proc requestTransaction*(self: ChatModel, chatId: string, fromAddress: string, a
   let address = if (tokenAddress == constants.ZERO_ADDRESS): "" else: tokenAddress
   let response = status_chat_commands.requestTransaction(chatId, fromAddress, amount, address)
   discard self.processMessageUpdateAfterSend(response)
+
+proc getAllComunities*(self: ChatModel) =
+  status_chat.getAllComunities()

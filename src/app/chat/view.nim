@@ -641,7 +641,9 @@ QtObject:
 
   proc requestAddressForTransaction*(self: ChatsView, chatId: string, fromAddress: string, amount: string, tokenAddress: string) {.slot.} =
     self.status.chat.requestAddressForTransaction(chatId, fromAddress, amount, tokenAddress)
-    
 
   proc requestTransaction*(self: ChatsView, chatId: string, fromAddress: string, amount: string, tokenAddress: string) {.slot.} =
     self.status.chat.requestTransaction(chatId, fromAddress, amount, tokenAddress)
+
+  proc getAllComunities*(self: ChatsView) {.slot.} =
+    self.status.chat.getAllComunities()

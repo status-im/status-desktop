@@ -201,3 +201,7 @@ proc unmuteChat*(chatId: string): string =
 
 proc getLinkPreviewData*(link: string): JsonNode =
   result = callPrivateRPC("getLinkPreviewData".prefix, %*[link]).parseJSON()["result"]
+
+proc getAllComunities*() =
+  let res = callPrivateRPC("wakuext_communities")#.parseJSON()["result"]
+  debug "RESULT", res

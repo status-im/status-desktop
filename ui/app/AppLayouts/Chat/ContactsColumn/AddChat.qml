@@ -50,7 +50,10 @@ StatusRoundButton {
             icon.source: "../../../img/communities.svg"
             icon.width: 20
             icon.height: 20
-            onTriggered: openPopup(communitiesPopupComponent)
+            onTriggered: {
+                chatsModel.getAllComunities()
+                openPopup(communitiesPopupComponent)
+            }
         }
         onAboutToHide: {
             btnAdd.state = "default"

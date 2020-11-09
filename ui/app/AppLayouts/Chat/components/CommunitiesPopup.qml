@@ -53,6 +53,10 @@ ModalPopup {
     footer: StatusButton {
         text: qsTr("Create a community")
         anchors.right: parent.right
+        onClicked: {
+            openPopup(createCommunitiesPopupComponent)
+            popup.close()
+        }
     }
 }
 

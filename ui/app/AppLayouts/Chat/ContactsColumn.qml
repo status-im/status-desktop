@@ -61,6 +61,15 @@ Item {
         }
     }
 
+    Component {
+        id: createCommunitiesPopupComponent
+        CreateCommunityPopup {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
     function openPopup(popupComponent) {
         const popup = popupComponent.createObject(contactsColumn);
         popup.open()
