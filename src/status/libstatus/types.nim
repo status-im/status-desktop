@@ -230,3 +230,6 @@ proc toFleetConfig*(jsonString: string): FleetConfig =
 
 proc getNodes*(self: FleetConfig, fleet: Fleet, nodeType: FleetNodes = FleetNodes.Bootnodes): seq[string] =
   result = toSeq(self.fleet[$fleet][$nodeType].values)
+
+proc getMailservers*(self: FleetConfig, fleet: Fleet): Table[string, string] =
+  result = self.fleet[$fleet][$FleetNodes.Mailservers]
