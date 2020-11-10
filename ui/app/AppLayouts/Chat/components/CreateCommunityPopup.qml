@@ -277,7 +277,7 @@ ModalPopup {
                 scrollView.scrollBackUp()
                 return
             }
-            console.log('OK')
+            chatsModel.createCommunity(nameInput.text, descriptionTextArea.text, colorPicker.text, popup.selectedImage)
         }
     }
 }

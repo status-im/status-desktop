@@ -336,3 +336,6 @@ proc requestTransaction*(self: ChatModel, chatId: string, fromAddress: string, a
 
 proc getAllComunities*(self: ChatModel) =
   status_chat.getAllComunities()
+
+proc createCommunity*(self: ChatModel, name: string, description: string, color: string, image: string) =
+  status_chat.createCommunity(name, description, color, image)

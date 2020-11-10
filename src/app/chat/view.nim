@@ -213,14 +213,17 @@ QtObject:
     self.status.chat.resendMessage(messageId)
     self.messageList[chatId].resetTimeOut(messageId)
 
+  proc resizeImage(self: ChatsView, imagePath: string, maxSize: int): string =
+    var image: string = replace(imagePath, "file://", "")
+    if defined(windows):
+      # Windows doesn't work with paths starting with a slash
+      image.removePrefix('/')
+    return image_resizer(image, maxSize, TMPDIR)
+
   proc sendImage*(self: ChatsView, imagePath: string): string {.slot.} =
     result = ""
     try:
-      var image: string = replace(imagePath, "file://", "")
-      if defined(windows):
-        # Windows doesn't work with paths starting with a slash
-        image.removePrefix('/')
-      let tmpImagePath = image_resizer(image, 2000, TMPDIR)
+      let tmpImagePath = self.resizeImage(imagePath, 2000)
       self.status.chat.sendImage(self.activeChannel.id, tmpImagePath)
       removeFile(tmpImagePath)
     except Exception as e:
@@ -647,3 +650,14 @@ QtObject:
 
   proc getAllComunities*(self: ChatsView) {.slot.} =
     self.status.chat.getAllComunities()
+
+  proc createCommunity*(self: ChatsView, name: string, description: string, color: string, imagePath: string): string {.slot.} =
+    result = ""
+    try:
+      let tmpImagePath = self.resizeImage(imagePath, 120)
+      debug "tmpImagePath", tmpImagePath
+      self.status.chat.createCommunity(name, description, color, tmpImagePath)
+      removeFile(tmpImagePath)
+    except Exception as e:
+      error "Error creating the community", msg = e.msg
+      result = fmt"Error creating the community: {e.msg}"
