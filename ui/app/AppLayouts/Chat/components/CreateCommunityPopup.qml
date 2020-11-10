@@ -1,8 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
-import QtQml.Models 2.3
-import QtMultimedia 5.13
+import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
 import "../../../../imports"
 import "../../../../shared"
@@ -11,7 +10,7 @@ import "../../../../shared/status"
 ModalPopup {
     readonly property int maxDescChars: 140
     property string nameValidationError: ""
-    property string colourValidationError: ""
+    property string colorValidationError: ""
     property string selectedImageValidationError: ""
     property string selectedImage: ""
 
@@ -25,7 +24,7 @@ ModalPopup {
 
     function validate() {
         nameValidationError = ""
-        colourValidationError = ""
+        colorValidationError = ""
         selectedImageValidationError = ""
 
         if (nameInput.text === "") {
@@ -41,17 +40,19 @@ ModalPopup {
         }
 
         if (colorPicker.text === "") {
-            colourValidationError = qsTr("You need to enter a colour")
+            colorValidationError = qsTr("You need to enter a color")
         } else if (!Utils.isHexColor(colorPicker.text)) {
-            colourValidationError = qsTr("This field needs to be an hexadecimal color (eg: #4360DF)")
+            colorValidationError = qsTr("This field needs to be an hexadecimal color (eg: #4360DF)")
         }
 
-        return !nameValidationError && !descriptionTextArea.validationError && !colourValidationError
+        return !nameValidationError && !descriptionTextArea.validationError && !colorValidationError
     }
 
     title: qsTr("New community")
 
     ScrollView {
+        property ScrollBar vScrollBar: ScrollBar.vertical
+
         id: scrollView
         anchors.fill: parent
         rightPadding: Style.current.padding
@@ -60,6 +61,10 @@ ModalPopup {
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.policy: ScrollBar.AlwaysOn
         clip: true
+
+        function scrollBackUp() {
+            vScrollBar.setPosition(0)
+        }
 
         Item {
             id: content
@@ -102,9 +107,10 @@ ModalPopup {
                 color: Style.current.secondaryText
             }
 
+
             Rectangle {
                 id: addImageButton
-                color: Style.current.inputBackground
+                color: imagePreview.visible ? "transparent" : Style.current.inputBackground
                 width: 128
                 height: width
                 radius: width / 2
@@ -126,8 +132,28 @@ ModalPopup {
                     }
                 }
 
+                Image {
+                    id: imagePreview
+                    visible: !!popup.selectedImage
+                    source: popup.selectedImage
+                    fillMode: Image.PreserveAspectCrop
+                    width: parent.width
+                    height: parent.height
+
+                    layer.enabled: true
+                    layer.effect: OpacityMask {
+                        maskSource: Rectangle {
+                            anchors.centerIn: parent
+                            width: imagePreview.width
+                            height: imagePreview.height
+                            radius: imagePreview.width / 2
+                        }
+                    }
+                }
+
                 Item {
                     id: addImageCenter
+                    visible: !imagePreview.visible
                     width: uploadText.width
                     height: childrenRect.height
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -178,11 +204,32 @@ ModalPopup {
 
             Input {
                 id: colorPicker
-                label: qsTr("Community colour")
-                placeholderText: qsTr("Pick a colour")
+                label: qsTr("Community color")
+                placeholderText: qsTr("Pick a color")
                 anchors.top: addImageButton.bottom
                 anchors.topMargin: Style.current.smallPadding
-                validationError: popup.colourValidationError
+                validationError: popup.colorValidationError
+
+                StatusIconButton {
+                    icon.name: "caret"
+                    iconRotation: -90
+                    iconColor: Style.current.textColor
+                    icon.width: 13
+                    icon.height: 7
+                    anchors.right: parent.right
+                    anchors.rightMargin: Style.current.smallPadding
+                    anchors.top: parent.top
+                    anchors.topMargin: colorPicker.textField.height / 2 - height / 2 + Style.current.bigPadding
+                    onClicked: colorDialog.open()
+                }
+
+                ColorDialog {
+                    id: colorDialog
+                    title: qsTr("Please choose a color")
+                    onAccepted: {
+                        colorPicker.text = colorDialog.color
+                    }
+                }
             }
 
             Separator {
@@ -227,7 +274,8 @@ ModalPopup {
         anchors.right: parent.right
         onClicked: {
             if (!validate()) {
-                return;
+                scrollView.scrollBackUp()
+                return
             }
             console.log('OK')
         }
