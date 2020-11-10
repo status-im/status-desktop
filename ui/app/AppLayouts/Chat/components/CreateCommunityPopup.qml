@@ -2,12 +2,18 @@ import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import QtQml.Models 2.3
+import QtMultimedia 5.13
+import QtQuick.Dialogs 1.3
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
 
 ModalPopup {
     readonly property int maxDescChars: 140
+    property string nameValidationError: ""
+    property string colourValidationError: ""
+    property string selectedImageValidationError: ""
+    property string selectedImage: ""
 
     id: popup
     height: 600
@@ -17,9 +23,36 @@ ModalPopup {
         nameInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
+    function validate() {
+        nameValidationError = ""
+        colourValidationError = ""
+        selectedImageValidationError = ""
+
+        if (nameInput.text === "") {
+            nameValidationError = qsTr("You need to enter a name")
+        } else if (!(/^[a-z0-9\-\ ]+$/i.test(nameInput.text))) {
+            nameValidationError = qsTr("Please restrict your name to letters, numbers, dashes and spaces")
+        } else if (nameInput.text.length > 100) {
+            nameValidationError = qsTr("Your name needs to be 100 characters or shorter")
+        }
+
+        if (selectedImage === "") {
+            selectedImageValidationError = qsTr("You need to select an image")
+        }
+
+        if (colorPicker.text === "") {
+            colourValidationError = qsTr("You need to enter a colour")
+        } else if (!Utils.isHexColor(colorPicker.text)) {
+            colourValidationError = qsTr("This field needs to be an hexadecimal color (eg: #4360DF)")
+        }
+
+        return !nameValidationError && !descriptionTextArea.validationError && !colourValidationError
+    }
+
     title: qsTr("New community")
 
     ScrollView {
+        id: scrollView
         anchors.fill: parent
         rightPadding: Style.current.padding
         anchors.rightMargin: - Style.current.halfPadding
@@ -37,6 +70,7 @@ ModalPopup {
                 id: nameInput
                 label: qsTr("Name your community")
                 placeholderText: qsTr("A catchy name")
+                validationError: popup.nameValidationError
             }
 
             StyledTextArea {
@@ -77,6 +111,20 @@ ModalPopup {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: thumbnailText.bottom
                 anchors.topMargin: Style.current.padding
+
+                FileDialog {
+                    id: imageDialog
+                    //% "Please choose an image"
+                    title: qsTrId("please-choose-an-image")
+                    folder: shortcuts.pictures
+                    nameFilters: [
+                        //% "Image files (*.jpg *.jpeg *.png)"
+                        qsTrId("image-files----jpg---jpeg---png-")
+                    ]
+                    onAccepted: {
+                        selectedImage = imageDialog.fileUrls[0]
+                    }
+                }
 
                 Item {
                     id: addImageCenter
@@ -124,7 +172,7 @@ ModalPopup {
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: console.log('upload')
+                    onClicked: imageDialog.open()
                 }
             }
 
@@ -134,6 +182,7 @@ ModalPopup {
                 placeholderText: qsTr("Pick a colour")
                 anchors.top: addImageButton.bottom
                 anchors.topMargin: Style.current.smallPadding
+                validationError: popup.colourValidationError
             }
 
             Separator {
@@ -176,6 +225,12 @@ ModalPopup {
     footer: StatusButton {
         text: qsTr("Create")
         anchors.right: parent.right
+        onClicked: {
+            if (!validate()) {
+                return;
+            }
+            console.log('OK')
+        }
     }
 }
 
