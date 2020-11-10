@@ -31,7 +31,7 @@ proc newStatusInstance*(fleetConfig: string): Status =
   result.wallet = wallet.newWalletModel(result.events)
   result.wallet.initEvents()
   result.node = node.newNodeModel()
-  result.mailservers = mailservers.newMailserverModel(result.events)
+  result.mailservers = mailservers.newMailserverModel(result.fleet, result.events)
   result.messages = messages.newMessagesModel(result.events)
   result.profile = profile.newProfileModel()
   result.contacts = contacts.newContactModel(result.events)

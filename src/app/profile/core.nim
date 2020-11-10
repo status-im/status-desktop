@@ -1,4 +1,4 @@
-import NimQml, json, strutils, sugar, sequtils
+import NimQml, json, strutils, sugar, sequtils, tables
 import json_serialization
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../status/signals/types
@@ -47,9 +47,8 @@ proc init*(self: ProfileController, account: Account) =
   self.view.setNetwork(network)
   self.view.ens.init()
 
-  var mailservers = status_mailservers.getMailservers()
-  for mailserver_config in mailservers:
-    let mailserver = MailServer(name: mailserver_config[0], endpoint: mailserver_config[1])
+  for name, endpoint in self.status.fleet.config.getMailservers(status_settings.getFleet()).pairs():
+    let mailserver = MailServer(name: name, endpoint: endpoint)
     self.view.addMailServerToList(mailserver)
 
   let contacts = self.status.contacts.getContacts()

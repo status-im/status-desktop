@@ -1,8 +1,11 @@
 import algorithm, json, random, math, os, tables, sets, chronicles, sequtils, locks, sugar, times
 import libstatus/core as status_core
 import libstatus/chat as status_chat
+import libstatus/settings as status_settings
+import libstatus/types
 import libstatus/mailservers as status_mailservers
 import ../eventemitter
+import fleet
 
 
 # How do mailserver should work ?
@@ -36,6 +39,7 @@ type
     Trusted = 3,
 
   MailserverModel* = ref object
+    fleet*: FleetModel
     events*: EventEmitter
     nodes*: Table[string, MailserverStatus]
     activeMailserver*: string
@@ -57,9 +61,10 @@ var modelLock: Lock
 var connThread: Thread[void]
 
 
-proc newMailserverModel*(events: EventEmitter): MailserverModel =
+proc newMailserverModel*(fleet: FleetModel, events: EventEmitter): MailserverModel =
   result = MailserverModel()
   result.events = events
+  result.fleet = fleet
   result.nodes = initTable[string, MailserverStatus]()
   result.activeMailserver = ""
   
@@ -93,8 +98,8 @@ proc connect(self: MailserverModel, enode: string) =
 
   # TODO: this should come from settings
   var knownMailservers = initHashSet[string]()
-  for m in getMailservers():
-    knownMailservers.incl m[1]
+  for m in self.fleet.config.getMailservers(status_settings.getFleet()).values():
+    knownMailservers.incl m
   if not knownMailservers.contains(enode): 
     warn "Mailserver not known", enode
     return
@@ -191,7 +196,7 @@ proc addMailserverTopic*(self: MailserverModel, topic: MailserverTopic) =
 proc findNewMailserver(self: MailserverModel) =
   warn "Finding a new mailserver..."
   
-  let mailserversReply = parseJson(status_mailservers.ping(500))["result"]
+  let mailserversReply = parseJson(status_mailservers.ping(toSeq(self.fleet.config.getMailservers(status_settings.getFleet()).values), 500))["result"]
   
   var availableMailservers:seq[(string, int)] = @[]
   for reply in mailserversReply: 
