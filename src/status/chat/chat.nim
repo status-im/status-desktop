@@ -69,7 +69,7 @@ type Chat* = ref object
   hasMentions*: bool
   muted*: bool
 
- type Community* = object
+type Community* = object
   id*: string
   name*: string
   description*: string

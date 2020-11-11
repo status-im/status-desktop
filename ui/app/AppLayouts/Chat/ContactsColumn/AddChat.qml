@@ -51,7 +51,6 @@ StatusRoundButton {
             icon.width: 20
             icon.height: 20
             onTriggered: {
-                chatsModel.getAllComunities()
                 openPopup(communitiesPopupComponent)
             }
         }

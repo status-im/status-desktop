@@ -17,7 +17,7 @@ import ../../status/libstatus/types
 import ../../status/profile/profile
 import web3/[conversions, ethtypes]
 import ../../status/threads
-import views/channels_list, views/message_list, views/chat_item, views/sticker_pack_list, views/sticker_list, views/suggestions_list
+import views/channels_list, views/message_list, views/chat_item, views/sticker_pack_list, views/sticker_list, views/suggestions_list, views/community_list
 import json_serialization
 import ../../status/libstatus/utils
 
@@ -35,6 +35,7 @@ QtObject:
       activeChannel*: ChatItemView
       stickerPacks*: StickerPackList
       recentStickers*: StickerList
+      communityList*: CommunityList
       replyTo: string
       pubKey*: string
       channelOpenTime*: Table[string, int64]
@@ -64,6 +65,7 @@ QtObject:
     result.currentSuggestions = newSuggestionsList()
     result.messageList = initTable[string, ChatMessageList]()
     result.stickerPacks = newStickerPackList()
+    result.communityList = newCommunityList(status)
     result.recentStickers = newStickerList()
     result.unreadMessageCnt = 0
     result.pubKey = ""
@@ -648,9 +650,16 @@ QtObject:
   proc requestTransaction*(self: ChatsView, chatId: string, fromAddress: string, amount: string, tokenAddress: string) {.slot.} =
     self.status.chat.requestTransaction(chatId, fromAddress, amount, tokenAddress)
 
-  proc getAllComunities*(self: ChatsView) {.slot.} =
-    # TODO make it smart and only fetch once
-    self.status.chat.getAllComunities()
+  proc getComunities*(self: ChatsView): QVariant {.slot.} =
+    if (not self.communityList.fetched):
+      let communities = self.status.chat.getAllComunities()
+      self.communityList.setNewData(communities)
+      self.communityList.fetched = true
+    return newQVariant(self.communityList)
+
+  QtProperty[QVariant] communities:
+    read = getComunities
+
 
   proc createCommunity*(self: ChatsView, name: string, description: string, color: string, imagePath: string): string {.slot.} =
     result = ""

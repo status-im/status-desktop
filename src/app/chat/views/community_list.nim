@@ -8,7 +8,7 @@ import strutils
 type
   CommunityRoles {.pure.} = enum
     Id = UserRole + 1,
-    Name = UserRole + 2
+    #Name = UserRole + 2
     Description = UserRole + 3
     Color = UserRole + 4
     Access = UserRole + 5
@@ -20,6 +20,7 @@ QtObject:
     CommunityList* = ref object of QAbstractListModel
       communities*: seq[Community]
       status: Status
+      fetched*: bool
 
   proc setup(self: CommunityList) = self.QAbstractListModel.setup
 
@@ -54,7 +55,7 @@ QtObject:
 
   method roleNames(self: CommunityList): Table[int, string] =
     {
-      CommunityRoles.Name.int:"name",
+      #CommunityRoles.Name.int:"name",
       CommunityRoles.Description.int:"description",
       CommunityRoles.Id.int: "id",
       CommunityRoles.Color.int: "color",
@@ -62,6 +63,11 @@ QtObject:
       CommunityRoles.Admin.int: "Admin",
       CommunityRoles.Joined.int: "Joined"
     }.toTable
+
+  proc setNewData*(self: CommunityList, communityList: seq[Community]) =
+    self.beginResetModel()
+    self.communities = communityList
+    self.endResetModel()
 
   # proc addChatItemToList*(self: CommunityList, channel: Chat): int =
   #   self.beginInsertRows(newQModelIndex(), 0, 0)
