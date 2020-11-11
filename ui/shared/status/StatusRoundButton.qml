@@ -6,8 +6,9 @@ import "../../imports"
 import "../../shared"
 
 RoundButton {
-    property string state: "default"
     property string size: "large"
+    property int pressedIconRotation: 0
+    property alias iconX: iconImg.x
     id: control
 
     font.pixelSize: 15
@@ -26,8 +27,69 @@ RoundButton {
         }
     }
     implicitHeight: implicitWidth
+    enabled: state === "default" || state === "pressed"
+    rotation: 0
+    state: "default"
+    states: [
+        State {
+            name: "default"
+            PropertyChanges {
+                target: iconColorOverlay
+                visible: true
+                rotation: 0
+            }
+            PropertyChanges {
+                target: loadingIndicator
+                active: false
+            }
+        },
+        State {
+            name: "pressed"
+            PropertyChanges {
+                target: iconColorOverlay
+                rotation: control.pressedIconRotation
+                visible: true
+            }
+            PropertyChanges {
+                target: loadingIndicator
+                active: false
+            }
+        },
+        State {
+            name: "pending"
+            PropertyChanges {
+                target: loadingIndicator
+                active: true
+            }
+            PropertyChanges {
+                target: iconColorOverlay
+                visible: false
+            }
+        }
+    ]
 
-    enabled: state === "default"
+    transitions: [
+        Transition {
+            from: "default"
+            to: "pressed"
+
+            RotationAnimation {
+                duration: 150
+                direction: RotationAnimation.Clockwise
+                easing.type: Easing.InCubic
+            }
+        },
+
+        Transition {
+            from: "pressed"
+            to: "default"
+            RotationAnimation {
+                duration: 150
+                direction: RotationAnimation.Counterclockwise
+                easing.type: Easing.OutCubic
+            }
+        }
+    ]
 
     icon.height: {
         switch(size) {
@@ -104,7 +166,6 @@ RoundButton {
 
         Loader {
             id: loadingIndicator
-            active: control.state === "pending"
             sourceComponent: loadingComponent
             height: size === "small" ? 14 : 18
             width: loadingIndicator.height
@@ -114,8 +175,8 @@ RoundButton {
 
 
         ColorOverlay {
+            id: iconColorOverlay
             anchors.fill: iconImg
-            visible: control.state === "default"
             source: iconImg
             color: {
                 if (size === "medium" || size == "small") {
@@ -132,15 +193,13 @@ RoundButton {
 
         ColorOverlay {
             id: loadingOverlay
-            visible: control.state === "pending"
+            visible: loadingIndicator.active
             anchors.fill: loadingIndicator
             source: loadingIndicator
             color: control.size === "medium" || control.size === "small" ?
               Style.current.roundedButtonSecondaryDisabledForegroundColor :
               Style.current.roundedButtonDisabledForegroundColor
             antialiasing: true
-
-          
         }
     }
 
