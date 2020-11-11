@@ -39,12 +39,13 @@ type
     Trusted = 3,
 
   MailserverModel* = ref object
-    fleet*: FleetModel
+    mailservers*: seq[string]
     events*: EventEmitter
     nodes*: Table[string, MailserverStatus]
     activeMailserver*: string
     topics*: HashSet[string]
     lastConnectionAttempt*: float
+    fleet*: FleetModel
 
 
 proc cmpMailserverReply(x, y: (string, int)): int =
@@ -98,7 +99,7 @@ proc connect(self: MailserverModel, enode: string) =
 
   # TODO: this should come from settings
   var knownMailservers = initHashSet[string]()
-  for m in self.fleet.config.getMailservers(status_settings.getFleet()).values():
+  for m in self.mailservers:
     knownMailservers.incl m
   if not knownMailservers.contains(enode): 
     warn "Mailserver not known", enode
@@ -196,7 +197,7 @@ proc addMailserverTopic*(self: MailserverModel, topic: MailserverTopic) =
 proc findNewMailserver(self: MailserverModel) =
   warn "Finding a new mailserver..."
   
-  let mailserversReply = parseJson(status_mailservers.ping(toSeq(self.fleet.config.getMailservers(status_settings.getFleet()).values), 500))["result"]
+  let mailserversReply = parseJson(status_mailservers.ping(self.mailservers, 500))["result"]
   
   var availableMailservers:seq[(string, int)] = @[]
   for reply in mailserversReply: 
@@ -244,5 +245,6 @@ proc checkConnection() {.thread.} =
 
 proc init*(self: MailserverModel) =
   debug "MailserverModel::init()"
+  self.mailservers = toSeq(self.fleet.config.getMailservers(status_settings.getFleet()).values)
   connThread.createThread(checkConnection)
   
