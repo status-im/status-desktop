@@ -27,8 +27,6 @@ ScrollView {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.left: parent.left
-        anchors.rightMargin: Style.current.padding
-        anchors.leftMargin: Style.current.padding
         height: childrenRect.height
 
         ListView {

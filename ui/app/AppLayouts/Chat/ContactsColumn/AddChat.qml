@@ -2,15 +2,21 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../shared"
+import "../../../../shared/status"
 import "../components"
-AddButton {
+StatusRoundButton {
     id: btnAdd
+    pressedIconRotation: 45
+    icon.name: "plusSign"
+    size: "medium"
     width: 36
     height: 36
 
+
     onClicked: {
-        let x = btnAdd.iconImg.x + btnAdd.icon.width / 2 - newChatMenu.width / 2
-        newChatMenu.popup(x, btnAdd.icon.height + 10)
+        btnAdd.state = "pressed"
+        let x = btnAdd.iconX + btnAdd.icon.width / 2 - newChatMenu.width / 2
+        newChatMenu.popup(x, btnAdd.icon.height + 14)
     }
     
     PopupMenu {
@@ -40,7 +46,7 @@ AddButton {
             onTriggered: publicChatPopup.open()
         }
         onAboutToHide: {
-            btnAdd.iconImg.state = "default"
+            btnAdd.state = "default"
         }
     }
 }
