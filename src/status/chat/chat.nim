@@ -69,8 +69,20 @@ type Chat* = ref object
   hasMentions*: bool
   muted*: bool
 
+ type Community* = object
+  id*: string
+  name*: string
+  description*: string
+  color*: string
+  access*: int
+  admin*: bool
+  joined*: bool
+
 proc `$`*(self: Chat): string =
   result = fmt"Chat(id:{self.id}, name:{self.name}, active:{self.isActive}, type:{self.chatType})"
+
+proc `$`*(self: Community): string =
+  result = fmt"Community(id:{self.id}, name:{self.name}, description:{self.description}"
 
 proc toJsonNode*(self: Chat): JsonNode =
   result = %* {

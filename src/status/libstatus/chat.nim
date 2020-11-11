@@ -202,9 +202,24 @@ proc unmuteChat*(chatId: string): string =
 proc getLinkPreviewData*(link: string): JsonNode =
   result = callPrivateRPC("getLinkPreviewData".prefix, %*[link]).parseJSON()["result"]
 
-proc getAllComunities*() =
-  let res = callPrivateRPC("communities".prefix)#.parseJSON()["result"]
-  debug "RESULT", res
+proc getAllComunities*(): seq[Community] =
+  var communities: seq[Community] = @[]
+  let rpcResult = callPrivateRPC("communities".prefix).parseJSON()
+  debug "LIST", rpcResult
+  if rpcResult["result"].kind != JNull:
+    for jsonCommunity in rpcResult["result"]:
+
+      var community = Community(
+        id: jsonCommunity{"id"}.getStr,
+        # name: jsonCommunity{"localChatId"}.getStr,
+        description: jsonCommunity{"description"}{"identity"}{"description"}.getStr,
+        color: jsonCommunity{"description"}{"identity"}{"color"}.getStr,
+        access: jsonCommunity{"description"}{"permissions"}{"access"}.getInt,
+        admin: jsonCommunity{"admin"}.getBool,
+        joined: jsonCommunity{"joined"}.getBool
+      )
+      communities.add(community)
+  return communities
 
 # LIST RESULT
 # {

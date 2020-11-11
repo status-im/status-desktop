@@ -649,6 +649,7 @@ QtObject:
     self.status.chat.requestTransaction(chatId, fromAddress, amount, tokenAddress)
 
   proc getAllComunities*(self: ChatsView) {.slot.} =
+    # TODO make it smart and only fetch once
     self.status.chat.getAllComunities()
 
   proc createCommunity*(self: ChatsView, name: string, description: string, color: string, imagePath: string): string {.slot.} =
