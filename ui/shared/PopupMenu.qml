@@ -118,19 +118,19 @@ Menu {
             implicitWidth: bgPopupMenu.width
             implicitHeight: bgPopupMenu.height
             color: Style.current.modalBackground
-            radius: 16
+            radius: 8
             layer.enabled: true
             layer.effect: DropShadow{
                 width: bgPopupMenuContent.width
                 height: bgPopupMenuContent.height
                 x: bgPopupMenuContent.x
-                y: bgPopupMenuContent.y + 10
                 visible: bgPopupMenuContent.visible
                 source: bgPopupMenuContent
                 horizontalOffset: 0
-                verticalOffset: 7
-                radius: 10
-                samples: 15
+                verticalOffset: 4
+                radius: 12
+                samples: 25
+                spread: 0.2
                 color: "#22000000"
             }
         }
