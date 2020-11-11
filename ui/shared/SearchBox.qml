@@ -9,5 +9,5 @@ Input {
     iconWidth: 17
     iconHeight: 17
     customHeight: 36
-    fontPixelSize: 12
+    fontPixelSize: 15
 }
