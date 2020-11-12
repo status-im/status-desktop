@@ -650,6 +650,8 @@ QtObject:
   proc requestTransaction*(self: ChatsView, chatId: string, fromAddress: string, amount: string, tokenAddress: string) {.slot.} =
     self.status.chat.requestTransaction(chatId, fromAddress, amount, tokenAddress)
 
+  proc communitiesChanged*(self: ChatsView) {.signal.}
+
   proc getComunities*(self: ChatsView): QVariant {.slot.} =
     if (not self.communityList.fetched):
       let communities = self.status.chat.getAllComunities()
@@ -659,15 +661,25 @@ QtObject:
 
   QtProperty[QVariant] communities:
     read = getComunities
-
+    notify = communitiesChanged
 
   proc createCommunity*(self: ChatsView, name: string, description: string, color: string, imagePath: string): string {.slot.} =
     result = ""
     try:
+        # TODO Change this to get it from the user choices
+      let access = ord(CommunityAccessLevel.public)
       let tmpImagePath = self.resizeImage(imagePath, 120)
-      debug "tmpImagePath", tmpImagePath
-      self.status.chat.createCommunity(name, description, color, tmpImagePath)
+      self.status.chat.createCommunity(name, description, color, tmpImagePath, access)
       removeFile(tmpImagePath)
+
+      self.communityList.addCommunityItemToList(Community(
+        description: description,
+        color: color,
+        access: access,
+        admin: true,
+        joined: true
+      ))
+      self.communitiesChanged()
     except Exception as e:
       error "Error creating the community", msg = e.msg
       result = fmt"Error creating the community: {e.msg}"

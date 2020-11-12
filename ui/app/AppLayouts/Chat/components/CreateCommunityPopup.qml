@@ -278,6 +278,8 @@ ModalPopup {
                 return
             }
             chatsModel.createCommunity(nameInput.text, descriptionTextArea.text, colorPicker.text, popup.selectedImage)
+            // TODO Open the community once we have designs for it
+            popup.close()
         }
     }
 }

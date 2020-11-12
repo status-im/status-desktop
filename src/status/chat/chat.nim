@@ -69,6 +69,12 @@ type Chat* = ref object
   hasMentions*: bool
   muted*: bool
 
+type CommunityAccessLevel* = enum
+    unknown = 0
+    public = 1
+    invitationOnly = 2
+    onRequest = 3
+
 type Community* = object
   id*: string
   name*: string

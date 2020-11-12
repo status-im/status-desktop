@@ -221,65 +221,16 @@ proc getAllComunities*(): seq[Community] =
       communities.add(community)
   return communities
 
-# LIST RESULT
-# {
-#   "jsonrpc": "2.0",
-#   "id": 0,
-#   "result": [
-#     {
-#       "id": "0x02e0e5320130572227156e1d31d0b8fbd30bf1fb23184b80c99f50b6b75e011fe9",
-#       "description": {
-#         "clock": 1,
-#         "permissions": {
-#           "access": 1
-#         },
-#         "identity": {
-#           "description": "jo desc",
-#           "color": "#4e9a06"
-#         }
-#       },
-#       "admin": true,
-#       "joined": true
-#     }
-#   ]
-# }
-
-# CREATE RESULT
-# {
-#   "jsonrpc": "2.0",
-#   "id": 0,
-#   "result": {
-#     "communities": [
-#       {
-#         "id": "0x02e0e5320130572227156e1d31d0b8fbd30bf1fb23184b80c99f50b6b75e011fe9",
-#         "description": {
-#           "clock": 1,
-#           "permissions": {
-#             "access": 1
-#           },
-#           "identity": {
-#             "description": "jo desc",
-#             "color": "#4e9a06"
-#           }
-#         },
-#         "admin": true,
-#         "joined": true
-#       }
-#     ]
-#   }
-# }
-
-proc createCommunity*(name: string, description: string, color: string, image: string) =
+proc createCommunity*(name: string, description: string, color: string, image: string, access: int) =
   let res = callPrivateRPC("createCommunity".prefix, %*[{
       "permissions": {
-        # TODO Get it from user stuff and get from enum
-        "access": 1 # 1 is a public access
+        "access": access
       },
       "identity": {
         "displayName": name,
         "description": description,
         "color": color#,
-        # FIXME
+        # TODO add images once it is supported by Status-Go
         # "images": [
         #   {
         #     "payload": image,

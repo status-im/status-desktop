@@ -69,11 +69,10 @@ QtObject:
     self.communities = communityList
     self.endResetModel()
 
-  # proc addChatItemToList*(self: CommunityList, channel: Chat): int =
-  #   self.beginInsertRows(newQModelIndex(), 0, 0)
-  #   self.communities.insert(channel, 0)
-  #   self.endInsertRows()
-  #   result = 0
+  proc addCommunityItemToList*(self: CommunityList, community: Community) =
+    self.beginInsertRows(newQModelIndex(), self.communities.len, self.communities.len)
+    self.communities.add(community)
+    self.endInsertRows()
 
   # proc removeChatItemFromList*(self: CommunityList, channel: string): int =
   #   let idx = self.communities.findIndexById(channel)
