@@ -8,6 +8,7 @@ import "../../../../shared"
 import "../../../../shared/status"
 
 ModalPopup {
+    property string communityId
     property string name: "Community name"
     property string description: "Description"
     // TODO get the real image once it's available
@@ -99,12 +100,35 @@ ModalPopup {
     }
 
     
-    footer: StatusButton {
-        // TODO use real name
-        text: qsTr("Join ‘%1’").arg(popup.name)
-        anchors.right: parent.right
-        onClicked: {
-            console.log('JOIN')
+    footer: Item {
+        anchors.fill: parent
+
+        StatusIconButton {
+            id: backButton
+            icon.name: "leave_chat"
+            width: 44
+            height: 44
+            iconColor: Style.current.primary
+            highlighted: true
+            icon.color: Style.current.primary
+            icon.width: 28
+            icon.height: 28
+            radius: width / 2
+            onClicked: {
+                openPopup(communitiesPopupComponent)
+                popup.close()
+            }
+        }
+
+        StatusButton {
+            // TODO use real name
+            text: qsTr("Join ‘%1’").arg(popup.name)
+            anchors.right: parent.right
+            onClicked: {
+                // TODO handle error
+                chatsModel.joinCommunity(popup.communityId)
+                popup.close()
+            }
         }
     }
 }

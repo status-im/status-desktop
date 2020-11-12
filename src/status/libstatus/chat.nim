@@ -290,3 +290,7 @@ proc createCommunity*(name: string, description: string, color: string, image: s
       }
     }])#.parseJSON()["result"]
   debug "RESULT", res
+
+proc joinCommunity*(communityId: string) =
+  let res = callPrivateRPC("joinCommunity".prefix, %*[communityId])#.parseJSON()["result"]
+  debug "RESULT", res

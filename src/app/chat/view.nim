@@ -671,3 +671,11 @@ QtObject:
     except Exception as e:
       error "Error creating the community", msg = e.msg
       result = fmt"Error creating the community: {e.msg}"
+
+  proc joinCommunity*(self: ChatsView, communityId: string): string {.slot.} =
+    result = ""
+    try:
+      self.status.chat.joinCommunity(communityId)
+    except Exception as e:
+      error "Error joining the community", msg = e.msg
+      result = fmt"Error joining the community: {e.msg}"

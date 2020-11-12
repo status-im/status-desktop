@@ -82,6 +82,7 @@ Item {
     function openPopup(popupComponent) {
         const popup = popupComponent.createObject(contactsColumn);
         popup.open()
+        return popup
     }
 
     SearchBox {
