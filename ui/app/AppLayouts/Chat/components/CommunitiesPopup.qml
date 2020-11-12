@@ -37,7 +37,7 @@ ModalPopup {
         ListView {
             anchors.fill: parent
             model: chatsModel.communities
-            spacing: 0
+            spacing: Style.current.smallPadding
             clip: true
             id: communitiesList
             delegate: Item {

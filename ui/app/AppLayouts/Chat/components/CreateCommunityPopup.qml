@@ -1,6 +1,5 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
 import "../../../../imports"
@@ -277,9 +276,25 @@ ModalPopup {
                 scrollView.scrollBackUp()
                 return
             }
-            chatsModel.createCommunity(nameInput.text, descriptionTextArea.text, colorPicker.text, popup.selectedImage)
+            const error = chatsModel.createCommunity(Utils.filterXSS(nameInput.text),
+                                                     Utils.filterXSS(descriptionTextArea.text),
+                                                     colorPicker.text,
+                                                     popup.selectedImage)
+
+            if (error) {
+                creatingError.text = error
+                return creatingError.open()
+            }
+
             // TODO Open the community once we have designs for it
             popup.close()
+        }
+
+        MessageDialog {
+            id: creatingError
+            title: qsTr("Error creating the community")
+            icon: StandardIcon.Critical
+            standardButtons: StandardButton.Ok
         }
     }
 }

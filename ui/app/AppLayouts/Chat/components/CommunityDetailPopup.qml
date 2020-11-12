@@ -1,8 +1,5 @@
 import QtQuick 2.12
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
-import QtQml.Models 2.3
-import QtGraphicalEffects 1.13
+import QtQuick.Dialogs 1.3
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
@@ -125,10 +122,22 @@ ModalPopup {
             text: qsTr("Join ‘%1’").arg(popup.name)
             anchors.right: parent.right
             onClicked: {
-                // TODO handle error
-                chatsModel.joinCommunity(popup.communityId)
+                const error = chatsModel.joinCommunity(popup.communityId)
+
+                if (error) {
+                    joiningError.text = error
+                    return joiningError.open()
+                }
+
                 popup.close()
             }
+        }
+
+        MessageDialog {
+            id: joiningError
+            title: qsTr("Error joining the community")
+            icon: StandardIcon.Critical
+            standardButtons: StandardButton.Ok
         }
     }
 }
