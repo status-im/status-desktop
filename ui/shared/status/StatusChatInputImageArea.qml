@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import QtGraphicalEffects 1.13
 import QtQuick.Controls 2.13
 import "../../imports"
 import "../../shared"
@@ -36,35 +37,59 @@ Rectangle {
             }
         }
 
-        RoundButton {
-            id: closeBtn
-            implicitWidth: 24
-            implicitHeight: 24
-            padding: 0
-            anchors.top: chatImage.top
-            anchors.topMargin: -5
-            anchors.right: chatImage.right
-            anchors.rightMargin: -Style.current.halfPadding
-            visible: chatImage.hovered || hovered
-            contentItem: SVGImage {
-                source: !closeBtn.hovered ? 
-                  "../../app/img/close-filled.svg" : "../../app/img/close-filled-hovered.svg"
-                width: closeBtn.width
-                height: closeBtn.height
-            }
-            background: Rectangle {
-                color: "transparent"
-            }
-            onClicked: {
-                imageArea.imageRemoved()                
-                chatImage.source = ""
-            }
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: parent
-                onPressed: mouse.accepted = false
+        layer.enabled: true
+        layer.effect: OpacityMask {
+            maskSource: Item {
+                width: chatImage.width
+                height: chatImage.height
+
+                Rectangle {
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    width: chatImage.width
+                    height: chatImage.height
+                    radius: 16
+                }
+                Rectangle {
+                    anchors.bottom: parent.bottom
+                    anchors.right: parent.right
+                    width: 32
+                    height: 32
+                    radius: 4
+                }
             }
         }
     }
+
+    RoundButton {
+        id: closeBtn
+        implicitWidth: 24
+        implicitHeight: 24
+        padding: 0
+        anchors.top: chatImage.top
+        anchors.topMargin: -5
+        anchors.right: chatImage.right
+        anchors.rightMargin: -Style.current.halfPadding
+        visible: chatImage.hovered || hovered
+        contentItem: SVGImage {
+            source: !closeBtn.hovered ? 
+              "../../app/img/close-filled.svg" : "../../app/img/close-filled-hovered.svg"
+            width: closeBtn.width
+            height: closeBtn.height
+        }
+        background: Rectangle {
+            color: "transparent"
+        }
+        onClicked: {
+            imageArea.imageRemoved()                
+            chatImage.source = ""
+        }
+        MouseArea {
+            cursorShape: Qt.PointingHandCursor
+            anchors.fill: parent
+            onPressed: mouse.accepted = false
+        }
+    }
+
 
 }
