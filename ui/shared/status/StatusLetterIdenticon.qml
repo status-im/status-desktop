@@ -14,7 +14,7 @@ Rectangle {
     color: {
         const color = chatsModel.getChannelColor(root.chatName)
         if (!color) {
-            return Style.current.transparent
+            return Style.current.orange
         }
         return color
     }

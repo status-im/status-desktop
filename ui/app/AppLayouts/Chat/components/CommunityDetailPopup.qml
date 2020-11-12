@@ -3,6 +3,7 @@ import QtQuick.Dialogs 1.3
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
+import "../ContactsColumn"
 
 ModalPopup {
     property string communityId
@@ -94,6 +95,24 @@ ModalPopup {
         anchors.topMargin: Style.current.smallPadding
         anchors.leftMargin: -Style.current.padding
         anchors.rightMargin: -Style.current.padding
+    }
+
+    StyledText {
+        id: chatsTitle
+        text: qsTr("Chats")
+        anchors.top: sep1.bottom
+        anchors.topMargin: Style.current.bigPadding
+        font.pixelSize: 15
+        font.weight: Font.Thin
+    }
+
+    // TODO put this as a delegate of a list view once we have the list of channels
+    Channel {
+        id: channelItem
+        unviewedMessagesCount: ""
+        anchors.top: chatsTitle.bottom
+        anchors.topMargin: 4
+        width: parent.width
     }
 
     
