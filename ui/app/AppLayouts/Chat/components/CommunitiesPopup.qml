@@ -42,11 +42,13 @@ ModalPopup {
             id: communitiesList
             delegate: Item {
                 height: childrenRect.height
+                width: parent.width
 
                 Image {
                     id: communityImage
                     width: 40
                     height: 40
+                    // TODO get the real image once it's available
                     source: "../../../img/ens-header-dark@2x.png"
 
                     layer.enabled: true
@@ -55,7 +57,7 @@ ModalPopup {
                             anchors.centerIn: parent
                             width: communityImage.width
                             height: communityImage.height
-                            radius: imagePreview.width / 2
+                            radius: communityImage.width / 2
                         }
                     }
                 }
@@ -64,6 +66,16 @@ ModalPopup {
                     text: description
                     anchors.left: communityImage.right
                     anchors.leftMargin: Style.current.padding
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        // TODO if already joined, nothing to do
+                        openPopup(communityDetailPopup)
+                        popup.close()
+                    }
                 }
             }
         }
