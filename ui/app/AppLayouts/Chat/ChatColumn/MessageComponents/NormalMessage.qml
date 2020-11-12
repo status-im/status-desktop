@@ -35,13 +35,21 @@ Item {
     }
 
     Rectangle {
-        property int chatVerticalPadding: 7
-        property int chatHorizontalPadding: 12
+        property int chatVerticalPadding: isImage ? 4 : 7
+        property int chatHorizontalPadding: isImage ? 0 : 12
         property bool longReply: chatReply.visible && repliedMessageContent.length > 54
         property bool longChatText: chatsModel.plainText(message).length > 54
 
         id: chatBox
-        color: isSticker ? Style.current.background  : (isCurrentUser ? Style.current.blue : Style.current.secondaryBackground)
+        color: {
+            if (isSticker) {
+                return Style.current.background 
+            }
+            if (isImage) {
+                return "transparent"
+            }
+            return isCurrentUser ? Style.current.primary : Style.current.secondaryBackground
+        }
         border.color: isSticker ? Style.current.border : Style.current.transparent
         border.width: 1
         height: {
@@ -131,6 +139,7 @@ Item {
                         id: chatImageComponent
                         imageSource: image
                         imageWidth: 250
+                        isCurrentUser: messageItem.isCurrentUser
                     }
                 }
             }
