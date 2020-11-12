@@ -37,11 +37,13 @@ ModalPopup {
         ListView {
             anchors.fill: parent
             model: chatsModel.communities
-            spacing: Style.current.smallPadding
+            spacing: 0
             clip: true
             id: communitiesList
             delegate: Item {
-                height: childrenRect.height
+                // TODO add the serach for the name and category once they exist
+                visible: !searchBox.text || description.includes(searchBox.text)
+                height: visible ? communityImage.height + Style.current.smallPadding : 0
                 width: parent.width
 
                 Image {
