@@ -114,7 +114,7 @@ Item {
 
     SentMessage {
         id: sentMessage
-        visible: isCurrentUser && !timeout && isMessage && outgoingStatus !== "sent"
+        visible: isCurrentUser && !timeout && !isExpired && isMessage && outgoingStatus !== "sent"
         anchors.verticalCenter: chatTime.verticalCenter
         anchors.left: chatTime.right
         anchors.leftMargin: 8
