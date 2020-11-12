@@ -1,10 +1,12 @@
 import QtQuick 2.3
+import QtGraphicalEffects 1.13
 import "../../../../../shared"
 import "../../../../../imports"
 
 Item {
     property int verticalPadding: 0
     property int imageWidth: 350
+    property bool isCurrentUser: false
     property url source
     signal clicked(string source)
 
@@ -46,6 +48,39 @@ Item {
             } else if (imageMessage.status === Image.Ready) {
                 loadingImage.visible = false
                 scrollToBottom(true, messageItem)
+            }
+        }
+
+        layer.enabled: true
+        layer.effect: OpacityMask {
+            maskSource: Item {
+                width: imageMessage.width
+                height: imageMessage.height
+
+                Rectangle {
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    width: imageMessage.width
+                    height: imageMessage.height
+                    radius: 16
+                }
+
+                Rectangle {
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    width: 32
+                    height: 32
+                    radius: 4
+                    visible: !imageContainer.isCurrentUser
+                }
+                Rectangle {
+                    anchors.bottom: parent.bottom
+                    anchors.right: parent.right
+                    width: 32
+                    height: 32
+                    radius: 4
+                    visible: imageContainer.isCurrentUser
+                }
             }
         }
 
