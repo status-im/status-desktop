@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 import "./"
 
 ModalPopup {
@@ -10,6 +11,8 @@ ModalPopup {
 
     property string pubKey : "";
     property string ensUsername : "";
+
+    property bool loading: false;
     
     function validate() {
         if (!Utils.isChatKey(chatKey.text) && !Utils.isValidETHNamePrefix(chatKey.text)) {
@@ -25,6 +28,7 @@ ModalPopup {
 
     property var resolveENS: Backpressure.debounce(popup, 500, function (ensName){
         chatsModel.resolveENS(ensName)
+        loading = true
     });
 
     function onKeyReleased(){
@@ -86,6 +90,7 @@ ModalPopup {
                     ensUsername.text = chatsModel.formatENSUsername(chatKey.text) + " • " + Utils.compactAddress(resolvedPubKey, 4)
                     pubKey = resolvedPubKey;
                 }
+                loading = false;
             }
         }
     }
@@ -166,26 +171,24 @@ ModalPopup {
         }
     }
 
-    footer: Button {
-        width: 44
-        height: 44
+    footer: Item {
         anchors.bottom: parent.bottom
+        anchors.top: parent.top
         anchors.right: parent.right
-        SVGImage {
-            source: pubKey === "" ? "../../../img/arrow-button-inactive.svg" : "../../../img/arrow-btn-active.svg"
-            width: 50
-            height: 50
-        }
-        background: Rectangle {
-            color: "transparent"
-        }
-        MouseArea {
-            id: btnMAnewChat
-            cursorShape: Qt.PointingHandCursor
-            anchors.fill: parent
+        anchors.left: parent.left
+
+        StatusButton {
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.topMargin: Style.current.halfPadding
+            id: submitBtn
+            state: loading ? "pending" : "default" 
+            text: qsTr("Start chat")
+            enabled: pubKey !== ""
             onClicked : doJoin()
+
         }
-    }
+     }
 }
 
 /*##^##
