@@ -219,6 +219,7 @@ Item {
     Component {
         id: imageComponent
         ImageMessage {
+            isCurrentUser: messageItem.isCurrentUser
             onClicked: {
               chatTextItem.clickMessage(false, false, true, source)
             }
