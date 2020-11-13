@@ -4,6 +4,7 @@ import "../../../../../imports"
 Rectangle {
     property int chatVerticalPadding: 12
     property int chatHorizontalPadding: 12
+    property bool isCurrentUser: bool
     signal clicked(string source)
 
     id: imageChatBox
@@ -14,7 +15,7 @@ Rectangle {
         }
         return h + chatVerticalPadding * imageRepeater.count
     }
-    color: isCurrentUser ? Style.current.blue : Style.current.lightBlue
+    color: "transparent"
     border.color: "transparent"
     width: {
         let w = 0
@@ -44,6 +45,7 @@ Rectangle {
             anchors.topMargin: verticalPadding
             anchors.horizontalCenter: parent.horizontalCenter
             source: modelData
+            isCurrentUser: imageChatBox.isCurrentUser
             onClicked: {
                 imageChatBox.clicked(source)
             }
