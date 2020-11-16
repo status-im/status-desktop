@@ -1,5 +1,6 @@
 import json, sequtils
 import libstatus/contacts as status_contacts
+import libstatus/accounts as status_accounts
 import profile/profile
 import ../eventemitter
 
@@ -43,8 +44,24 @@ proc getContacts*(self: ContactModel): seq[Profile] =
   self.events.emit("contactUpdate", ContactUpdateArgs(contacts: result))
 
 proc addContact*(self: ContactModel, id: string, localNickname: string): string =
-  let contact = self.getContactByID(id)
+  var contact = self.getContactByID(id)
+  if contact == nil:
+    let alias = status_accounts.generateAlias(id)
+    contact = Profile(
+      id: id,
+      username: alias,
+      identicon: status_accounts.generateIdenticon(id),
+      alias: alias,
+      ensName: "",
+      ensVerified: false,
+      ensVerifiedAt: 0,
+      appearance: 0,
+      ensVerificationRetries: 0,
+      systemTags: @[]
+    )
+
   let updating = contact.systemTags.contains(":contact/added")
+  echo "C"
   if not updating:
     contact.systemTags.add(":contact/added")
   let nickname =
