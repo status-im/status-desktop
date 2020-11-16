@@ -171,24 +171,14 @@ ModalPopup {
         }
     }
 
-    footer: Item {
-        anchors.bottom: parent.bottom
-        anchors.top: parent.top
+    footer: StatusButton {
         anchors.right: parent.right
-        anchors.left: parent.left
-
-        StatusButton {
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.topMargin: Style.current.halfPadding
-            id: submitBtn
-            state: loading ? "pending" : "default" 
-            text: qsTr("Start chat")
-            enabled: pubKey !== ""
-            onClicked : doJoin()
-
-        }
-     }
+        id: submitBtn
+        state: loading ? "pending" : "default"
+        text: qsTr("Start chat")
+        enabled: pubKey !== ""
+        onClicked : doJoin()
+    }
 }
 
 /*##^##
