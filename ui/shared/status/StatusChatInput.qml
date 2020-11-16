@@ -69,11 +69,11 @@ Rectangle {
     }
 
     function interpretMessage(msg) {
-        if (msg === "/shrug") {
-            return "¯\\\\\\_(ツ)\\_/¯"
+        if (msg.startsWith("/shrug")) {
+            return  msg.replace("/shrug", "") + " ¯\\\\\\_(ツ)\\_/¯"
         }
-        if (msg === "/tableflip") {
-            return "(╯°□°）╯︵ ┻━┻"
+        if (msg.startsWith("/tableflip")) {
+            return msg.replace("/tableflip", "") + " (╯°□°）╯︵ ┻━┻"
         }
 
         return msg
