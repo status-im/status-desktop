@@ -25,6 +25,9 @@ Rectangle {
     property Component browserDialogComponent: BrowserDialog {
         onClosing: destroy()
     }
+
+    property Component jsDialogComponent: JSDialogWindow {}
+
     property bool currentTabConnected: false
 
     ListModel {
@@ -477,6 +480,12 @@ Rectangle {
                 onCertificateError: function(error) {
                     error.defer();
                     sslDialog.enqueue(error);
+                }
+
+                onJavaScriptDialogRequested: function(request) {
+                    request.accepted = true;
+                    var dialog = jsDialogComponent.createObject(browserWindow, {"request": request});
+                    dialog.open();
                 }
 
                 onNewViewRequested: function(request) {
