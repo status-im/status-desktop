@@ -215,6 +215,10 @@ StackLayout {
 
             StatusChatInput {
                 id: chatInput
+                visible: {
+                    if (chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat) return true;
+                    return chatsModel.activeChannel.isMember
+                }
                 anchors.bottom: parent.bottom
                 recentStickers: chatsModel.recentStickers
                 stickerPackList: chatsModel.stickerPacks
