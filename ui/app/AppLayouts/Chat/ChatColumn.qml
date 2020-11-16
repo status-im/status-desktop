@@ -143,7 +143,7 @@ StackLayout {
             }
        }
 
-        ImagePopup {
+        StatusImageModal {
             id: imagePopup
         }
 
