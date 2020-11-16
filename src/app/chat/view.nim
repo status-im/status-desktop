@@ -330,7 +330,7 @@ QtObject:
   proc messagePushed*(self: ChatsView) {.signal.}
   proc newMessagePushed*(self: ChatsView) {.signal.}
 
-  proc messageNotificationPushed*(self: ChatsView, chatId: string, text: string, messageType: string, chatType: int, timestamp: string, identicon: string, username: string, hasMention: bool, isAddedContact: bool) {.signal.}
+  proc messageNotificationPushed*(self: ChatsView, chatId: string, text: string, messageType: string, chatType: int, timestamp: string, identicon: string, username: string, hasMention: bool, isAddedContact: bool, channelName: string) {.signal.}
 
   proc messagesCleared*(self: ChatsView) {.signal.}
 
@@ -358,7 +358,8 @@ QtObject:
               msg.identicon,
               msg.alias,
               msg.hasMention,
-              isAddedContact)
+              isAddedContact,
+              channel.name)
         else:
           discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
           self.newMessagePushed()
