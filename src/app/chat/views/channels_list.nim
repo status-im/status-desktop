@@ -162,7 +162,7 @@ QtObject:
     case elem.textType:
     of "mention": result = self.userNameOrAlias(elem.literal)
     of "link": result = elem.destination
-    else: result = escape_html(elem.literal.strip)
+    else: result = escape_html(elem.literal)
 
   proc renderBlock(self: ChannelsList, message: Message): string =
     for pMsg in message.parsedText:
@@ -171,5 +171,5 @@ QtObject:
           for children in pMsg.children:
             result = result & self.renderInline(children)
         else:
-          result = escape_html(pMsg.literal.strip)
+          result = escape_html(pMsg.literal)
 
