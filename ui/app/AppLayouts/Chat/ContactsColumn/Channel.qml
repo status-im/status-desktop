@@ -89,7 +89,7 @@ Rectangle {
                 //% "Sticker"
                 case Constants.stickerType: return qsTrId("sticker");
                 //% "No messages"
-                default: return lastMessage ? Emoji.parse(lastMessage, "26x26").replace(/\n|\r/g, ' ') : qsTrId("no-messages")
+                default: return lastMessage ? Emoji.parse(Utils.filterXSS(lastMessage), "26x26").replace(/\n|\r/g, ' ') : qsTrId("no-messages")
             }
         }
         textFormat: Text.RichText
