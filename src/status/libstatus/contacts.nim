@@ -1,5 +1,5 @@
 import json
-import core, utils
+import core, utils, types, settings
 from ../profile/profile import Profile
 
 # TODO: remove Profile from here
@@ -39,3 +39,7 @@ proc saveContact*(id: string, ensVerified: bool, ensName: string, ensVerifiedAt:
       "localNickname": localNickname
     }]
   callPrivateRPC("saveContact".prefix, payload)
+
+proc requestContactUpdate*(): string =
+  let publicKey = $getSetting[string](Setting.PublicKey, "")
+  callPrivateRPC("sendContactUpdate".prefix, %* [publicKey, "", ""])
