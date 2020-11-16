@@ -62,14 +62,13 @@ Item {
         width: blockButton.width + blockButtonLabel.width + Style.current.padding
         height: addButton.height
 
-        IconButton {
+        StatusRoundButton {
             id: blockButton
-            clickable: false
             anchors.verticalCenter: parent.verticalCenter
+            icon.name: "block-icon"
+            icon.color: Style.current.lightBlue
             width: 40
             height: 40
-            iconName: "block-icon"
-            color: Style.current.lightBlue
         }
 
         StyledText {
