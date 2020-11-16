@@ -55,16 +55,16 @@ Item {
             text: qsTrId("signing-phrase")
         }
 
-        IconButton {
+        StatusRoundButton {
             id: infoButton
-            clickable: false
             anchors.left: labelSigningPhrase.right
             anchors.leftMargin: 7
             anchors.verticalCenter: parent.verticalCenter
             width: 13
             height: 13
-            iconName: "info"
-            color: Style.current.lightBlue
+            icon.width: width
+            icon.height: height
+            icon.name: "info"
             StatusToolTip {
               visible: infoButton.hovered
               width: 337
@@ -83,17 +83,17 @@ Item {
         text: root.signingPhrase
     }
 
-    IconButton {
+    StatusRoundButton {
         id: passwordInfoButton
-        clickable: false
         anchors.left: parent.left
         anchors.leftMargin: 67
         anchors.top: txtPassword.top
         anchors.topMargin: 2
         width: 13
         height: 13
-        iconName: "info"
-        color: Style.current.lightBlue
+        icon.width: width
+        icon.height: height
+        icon.name: "info"
         StatusToolTip {
           visible: passwordInfoButton.hovered
           width: 224
