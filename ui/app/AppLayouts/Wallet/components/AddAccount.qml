@@ -1,12 +1,20 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import "../../../../shared"
+import "../../../../shared/status"
 import "../../../../imports"
 
-AddButton {
+StatusRoundButton {
     id: btnAdd
+    icon.name: "plusSign"
+    pressedIconRotation: 45
+    size: "medium"
+    width: 36
+    height: 36
+
     onClicked: {
-        let x = btnAdd.iconImg.x + btnAdd.icon.width / 2 - newAccountMenu.width / 2
+        btnAdd.state = "pressed"
+        let x = btnAdd.iconX + btnAdd.icon.width / 2 - newAccountMenu.width / 2
         newAccountMenu.popup(x, btnAdd.icon.height + 10)
     }
 
@@ -59,7 +67,7 @@ AddButton {
             }
         }
         onAboutToHide: {
-            btnAdd.iconImg.state = "default"
+            btnAdd.state = "default"
         }
     }
 }

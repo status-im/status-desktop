@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 import "../../Chat/components"
 import "./Contacts"
 
@@ -26,12 +27,12 @@ Item {
         width: addButton.width + usernameText.width + Style.current.padding
         height: addButton.height
 
-        AddButton {
+
+        StatusRoundButton {
             id: addButton
-            clickable: false
+            icon.name: "plusSign"
+            size: "medium"
             anchors.verticalCenter: parent.verticalCenter
-            width: 40
-            height: 40
         }
 
         StyledText {
