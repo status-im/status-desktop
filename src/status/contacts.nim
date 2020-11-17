@@ -61,7 +61,6 @@ proc addContact*(self: ContactModel, id: string, localNickname: string): string 
     )
 
   let updating = contact.systemTags.contains(":contact/added")
-  echo "C"
   if not updating:
     contact.systemTags.add(":contact/added")
   let nickname =
@@ -73,6 +72,7 @@ proc addContact*(self: ContactModel, id: string, localNickname: string): string 
       localNickname
   result = status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.systemTags, nickname)
   self.events.emit("contactAdded", Args())
+  discard requestContactUpdate(contact.id)
   if updating:
     let profile = Profile(
       id: contact.id,
