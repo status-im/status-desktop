@@ -49,6 +49,7 @@ Theme {
     property color pillButtonTextColor: almostBlack
     property color chatReplyCurrentUser: evenDarkerGrey
     property color topBarChatInfoColor: evenDarkerGrey
+    property color codeBackground: "#2E386B"
 
     property color buttonForegroundColor: blue
     property color buttonBackgroundColor: secondaryBackground

@@ -11,6 +11,8 @@ Popup {
     property var getImageSource: function () {}
     property var getText: function () {}
     property var onClicked: function () {}
+    property int imageWidth: 22
+    property int imageHeight: 22
 
     function openPopup(listParam) {
         modelList = listParam
@@ -62,6 +64,8 @@ Popup {
             SVGImage {
                 id: image
                 source: popup.getImageSource(modelData)
+                width: popup.imageWidth
+                height: popup.imageHeight
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.smallPadding

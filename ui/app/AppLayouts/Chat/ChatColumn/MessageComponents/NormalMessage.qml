@@ -39,7 +39,7 @@ Item {
         readonly property int defaultMaxMessageChars: 54
         readonly property int messageWidth: Math.max(defaultMessageWidth, parent.width / 2)
         readonly property int maxMessageChars: (defaultMaxMessageChars * messageWidth) / defaultMessageWidth
-        property int chatVerticalPadding: isImage ? 4 : 7
+        property int chatVerticalPadding: isImage ? 4 : 6
         property int chatHorizontalPadding: isImage ? 0 : 12
         property bool longReply: chatReply.visible && repliedMessageContent.length > maxMessageChars
         property bool longChatText: chatsModel.plainText(message).split('\n').some(function (messagePart) {
@@ -125,7 +125,6 @@ Item {
             anchors.leftMargin: chatBox.chatHorizontalPadding
             anchors.right: chatBox.longChatText ? parent.right : undefined
             anchors.rightMargin: chatBox.longChatText ? chatBox.chatHorizontalPadding : 0
-            textField.horizontalAlignment: !isCurrentUser ? Text.AlignLeft : Text.AlignRight
             textField.color: !isCurrentUser ? Style.current.textColor : Style.current.currentUserTextColor
         }
 

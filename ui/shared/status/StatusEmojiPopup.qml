@@ -63,7 +63,7 @@ Popup {
         emojiSectionsRepeater.itemAt(0).allEmojis = recentEmojis
         appSettings.recentEmojis = recentEmojis
 
-        popup.emojiSelected(Emoji.parse(encodedIcon, "26x26") + ' ', true) // Adding a space because otherwise, some emojis would fuse since emoji is just a string
+        popup.emojiSelected(Emoji.parse(encodedIcon) + ' ', true) // Adding a space because otherwise, some emojis would fuse since emoji is just a string
         popup.close()
     }
 
@@ -135,7 +135,7 @@ Popup {
                 anchors.verticalCenter: searchBox.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: emojiHeader.headerMargin
-                source: "../../../../imports/twemoji/26x26/1f590.png"
+                source: "../../../../imports/twemoji/72x72/1f590.png"
 
                 MouseArea {
                     cursorShape: Qt.PointingHandCursor

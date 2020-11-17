@@ -37,6 +37,28 @@ ApplicationWindow {
     }
     visible: true
 
+    Action {
+        shortcut: StandardKey.FullScreen
+        onTriggered: {
+            if (visibility === Window.FullScreen) {
+                showNormal()
+            } else {
+                showFullScreen()
+            }
+        }
+    }
+
+    Action {
+        shortcut: "Ctrl+M"
+        onTriggered: {
+            if (visibility === Window.Minimized) {
+                showNormal()
+            } else {
+                showMinimized()
+            }
+        }
+    }
+
     Component.onCompleted: {
         // Change the theme to the system theme (dark/light) until we get the
         // user's saved setting from status-go (after login)

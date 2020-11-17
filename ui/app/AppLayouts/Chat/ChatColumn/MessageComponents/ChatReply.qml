@@ -47,7 +47,7 @@ Loader {
                 visible: repliedMessageType != Constants.imageType
                 anchors.top: lblReplyAuthor.bottom
                 anchors.topMargin: 5
-                text: Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), "26x26");
+                text: Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent));
                 textFormat: Text.RichText
                 color: root.elementsColor
                 readOnly: true
