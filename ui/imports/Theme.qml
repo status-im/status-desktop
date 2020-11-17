@@ -18,6 +18,8 @@ QtObject {
     readonly property color blue: "#4360DF"
     readonly property color transparent: "#00000000"
     readonly property color darkGrey: "#939BA1"
+    readonly property color darkerGrey: "#717171"
+    readonly property color evenDarkerGrey: "#4C4C4C"
     readonly property color lightBlueText: "#8f9fec"
     readonly property color darkBlue: "#3c55c9"
     readonly property color darkBlueBtn: "#5a70dd"

@@ -19,6 +19,8 @@ QtObject {
     property color blue
     property color transparent
     property color darkGrey
+    property color darkerGrey
+    property color evenDarkerGrey
     property color lightBlueText
     property color darkBlue
     property color darkBlueBtn
