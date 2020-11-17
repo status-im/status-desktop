@@ -37,10 +37,16 @@ QtObject:
     result.status = status
     result.setup()
 
-  proc userNameOrAlias(self: ChannelsList, pubKey: string): string {.slot.} =
+  proc userNameOrAlias(self: ChannelsList, pubKey: string): string =
     if self.status.chat.contacts.hasKey(pubKey):
       return ens.userNameOrAlias(self.status.chat.contacts[pubKey])
     generateAlias(pubKey)
+
+  proc chatName(self: ChannelsList, chatItem: Chat): string =
+    if not chatItem.chatType.isOneToOne: return chatItem.name
+    if chatItem.ensName != "":
+      return "@" & userName(chatItem.ensName).userName(true)      
+    return self.userNameOrAlias(chatItem.id)
 
   method rowCount*(self: ChannelsList, index: QModelIndex = nil): int = self.chats.len
 
@@ -54,13 +60,9 @@ QtObject:
 
     let chatItem = self.chats[index.row]
 
-    var name = chatItem.name
-    if chatItem.chatType.isOneToOne:
-      name = self.userNameOrAlias(chatItem.id)
-
     let chatItemRole = role.ChannelsRoles
     case chatItemRole:
-      of ChannelsRoles.Name: result = newQVariant(name)
+      of ChannelsRoles.Name: result = newQVariant(self.chatName(chatItem))
       of ChannelsRoles.Timestamp: result = newQVariant($chatItem.timestamp)
       of ChannelsRoles.LastMessage: result = newQVariant(self.renderBlock(chatItem.lastMessage))
       of ChannelsRoles.ContentType: result = newQVariant(chatItem.lastMessage.contentType.int)

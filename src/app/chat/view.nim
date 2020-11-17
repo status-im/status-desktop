@@ -256,8 +256,8 @@ QtObject:
     let selectedChannel = self.chats.getChannel(index)
     if self.activeChannel.id == selectedChannel.id: return
 
-    if selectedChannel.chatType.isOneToOne:
-      selectedChannel.name = self.userNameOrAlias(selectedChannel.id)
+    if selectedChannel.chatType.isOneToOne and selectedChannel.id == selectedChannel.name:
+        selectedChannel.name = self.userNameOrAlias(selectedChannel.id)
 
     self.activeChannel.setChatItem(selectedChannel)
     self.status.chat.setActiveChannel(selectedChannel.id)
@@ -418,7 +418,11 @@ QtObject:
       let channel = self.chats.getChannelById(contact.id)
       if not channel.isNil:
         if contact.localNickname == "":
-          channel.name = contact.username
+          if channel.name == "" or channel.name == channel.id:
+            if channel.ensName != "":
+              channel.name = channel.ensName
+            else: 
+              channel.name = contact.username
         else:
           channel.name = contact.localNickname
         self.chats.updateChat(channel, false)
@@ -459,6 +463,10 @@ QtObject:
 
   proc joinChat*(self: ChatsView, channel: string, chatTypeInt: int): int {.slot.} =
     self.status.chat.join(channel, ChatType(chatTypeInt))
+    self.setActiveChannel(channel)
+
+  proc joinChatWithENS*(self: ChatsView, channel: string, ensName: string): int {.slot.} =
+    self.status.chat.join(channel, ChatType.OneToOne, ensName=status_ens.addDomain(ensName))
     self.setActiveChannel(channel)
 
   proc chatGroupJoined(self: ChatsView, channel: string) {.signal.}

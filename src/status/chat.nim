@@ -89,12 +89,16 @@ proc hasChannel*(self: ChatModel, chatId: string): bool =
 proc getActiveChannel*(self: ChatModel): string =
   if (self.channels.len == 0): "" else: toSeq(self.channels.values)[self.channels.len - 1].id
 
-proc join*(self: ChatModel, chatId: string, chatType: ChatType) =
+proc join*(self: ChatModel, chatId: string, chatType: ChatType, ensName: string = "") =
   if self.hasChannel(chatId): return
 
   var chat = newChat(chatId, ChatType(chatType))
   self.channels[chat.id] = chat
-  status_chat.saveChat(chatId, chatType.isOneToOne, true, chat.color)
+  status_chat.saveChat(chatId, chatType.isOneToOne, true, chat.color, ensName)
+  if ensName != "":
+    chat.name = ensName
+    chat.ensName = ensName
+    
   let filterResult = status_chat.loadFilters(@[status_chat.buildFilter(chat)])
 
   var topics:seq[MailserverTopic] = @[]
@@ -124,9 +128,15 @@ proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
 proc init*(self: ChatModel) =
   let chatList = status_chat.loadChats()
 
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo $chatList
+
   var filters:seq[JsonNode] = @[]
   for chat in chatList:
-    if self.hasChannel(chat.id): continue
+    echo ",,,,,,,,,", chat.name
+    if self.hasChannel(chat.id): 
+      echo "Has channel"
+      continue
     filters.add status_chat.buildFilter(chat)
     self.channels[chat.id] = chat
     self.events.emit("channelLoaded", ChannelArgs(chat: chat))
