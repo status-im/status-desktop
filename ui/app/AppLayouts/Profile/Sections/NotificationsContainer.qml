@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
@@ -11,12 +12,12 @@ ScrollView {
     contentHeight: notificationsContainer.height
     clip: true
 
-    Item {
+    Rectangle {
         id: notificationsContainer
         anchors.right: parent.right
-        anchors.rightMargin: contentMargin
+        anchors.rightMargin: contentMargin - Style.current.padding
         anchors.left: parent.left
-        anchors.leftMargin: contentMargin
+        anchors.leftMargin: contentMargin - Style.current.padding
         height: this.childrenRect.height + 100
 
         ButtonGroup {
@@ -36,6 +37,10 @@ ScrollView {
             //% "Notification preferences"
             text: qsTrId("notifications-preferences")
             anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
         }
 
         Column {
@@ -43,7 +48,10 @@ ScrollView {
             spacing: Style.current.padding
             anchors.top: sectionHeadlineNotifications.bottom
             anchors.topMargin: Style.current.smallPadding
-            width: parent.width
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
 
             RowLayout {
                 width: parent.width
@@ -112,6 +120,10 @@ ScrollView {
             //% "Sound & Appearance"
             text: qsTrId("sound---appearance")
             anchors.top: separator.bottom
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
         }
 
         Column {
@@ -119,6 +131,10 @@ ScrollView {
             spacing: Style.current.padding
             anchors.top: sectionHeadlineSound.bottom
             anchors.topMargin: Style.current.smallPadding
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
             width: parent.width
 
             RowLayout {
@@ -174,31 +190,152 @@ ScrollView {
             spacing: Style.current.bigPadding
             anchors.top: column2.bottom
             anchors.topMargin: Style.current.padding*2
-            width: parent.width
+            anchors.left: parent.left
+            anchors.right: parent.right
 
             StyledText {
                 //% "Message preview"
                 text: qsTrId("message-preview")
                 font.pixelSize: 15
+                anchors.left: parent.left
+                anchors.leftMargin: Style.current.padding
+                anchors.right: parent.right
+                anchors.rightMargin: Style.current.padding
             }
 
-            StatusRadioButton {
-                //% "Anonymous"
-                text: qsTrId("anonymous")
-                ButtonGroup.group: messageSetting
-            }
+            Column {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                spacing: 10
 
-            StatusRadioButton {
-                //% "Name only"
-                text: qsTrId("name-only")
-                ButtonGroup.group: messageSetting
-            }
+                Rectangle {
+                    width: notificationAnonymous.width + Style.current.padding * 2
+                    height: childrenRect.height + Style.current.padding + Style.current.halfPadding
+                    color: labelAnonymous.checked ? Style.current.secondaryBackground : Style.current.transparent
+                    radius: Style.current.radius
 
-            StatusRadioButton {
-                checked: true
-                //% "Name & Message"
-                text: qsTrId("name---message")
-                ButtonGroup.group: messageSetting
+                    StatusRadioButton {
+                        id: labelAnonymous
+                        //% "Anonymous"
+                        text: qsTrId("anonymous")
+                        ButtonGroup.group: messageSetting
+                        checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous
+                        onCheckedChanged: {
+                            appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewAnonymous
+                        }
+                        anchors.top: parent.top
+                        anchors.topMargin: Style.current.halfPadding
+                        anchors.left: parent.left
+                        anchors.leftMargin: Style.current.padding
+                    }
+
+                    StatusNotification {
+                        id: notificationAnonymous
+                        anchors.top: labelAnonymous.bottom
+                        anchors.topMargin: Style.current.halfPadding
+                        anchors.left: parent.left
+                        anchors.leftMargin: Style.current.padding
+                        width: 416
+                        name: "Status"
+                        chatType: Constants.chatTypePublic
+                        message: qsTr("You have a new message")
+                    }
+                    DropShadow {
+                        anchors.fill: notificationAnonymous
+                        horizontalOffset: 0
+                        verticalOffset: 2
+                        radius: 10
+                        samples: 12
+                        color: "#22000000"
+                        source: notificationAnonymous
+                    }
+                }
+
+                Rectangle {
+                    width: notificationAnonymous.width + Style.current.padding * 2
+                    height: childrenRect.height + Style.current.padding + Style.current.halfPadding
+                    color: labelNameOnly.checked ? Style.current.secondaryBackground : Style.current.transparent
+                    radius: Style.current.radius
+
+                    StatusRadioButton {
+                        id: labelNameOnly
+                        //% "Name only"
+                        text: qsTrId("name-only")
+                        ButtonGroup.group: messageSetting
+                        checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameOnly
+                        onCheckedChanged: {
+                            appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameOnly
+                        }
+                        anchors.top: parent.top
+                        anchors.topMargin: Style.current.halfPadding
+                        anchors.left: parent.left
+                        anchors.leftMargin: Style.current.padding
+                    }
+
+                    StatusNotification {
+                        id: notificationNameOnly
+                        width: 416
+                        name: "Vitalik Buterin"
+                        chatType: 1
+                        message: qsTr("You have a new message")
+                        anchors.top: labelNameOnly.bottom
+                        anchors.topMargin: Style.current.halfPadding
+                        anchors.left: parent.left
+                        anchors.leftMargin: Style.current.padding
+                    }
+                    DropShadow {
+                        anchors.fill: notificationNameOnly
+                        horizontalOffset: 0
+                        verticalOffset: 2
+                        radius: 10
+                        samples: 12
+                        color: "#22000000"
+                        source: notificationNameOnly
+                    }
+                }
+
+                Rectangle {
+                    width: notificationAnonymous.width + Style.current.padding * 2
+                    height: childrenRect.height + Style.current.padding + Style.current.halfPadding
+                    color: labelNameAndMessage.checked ? Style.current.secondaryBackground : Style.current.transparent
+                    radius: Style.current.radius
+
+                    StatusRadioButton {
+                        id: labelNameAndMessage
+                        //% "Name & Message"
+                        text: qsTrId("name---message")
+                        ButtonGroup.group: messageSetting
+                        checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameAndMessage
+                        onCheckedChanged: {
+                            appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameAndMessage
+                        }
+                        anchors.top: parent.top
+                        anchors.topMargin: Style.current.halfPadding
+                        anchors.left: parent.left
+                        anchors.leftMargin: Style.current.padding
+                    }
+
+                    StatusNotification {
+                        id: notificationNameAndMessage
+                        name: "Vitalik Buterin"
+                        width: 416
+                        chatType: 1
+                        message: qsTr("Hi there! Yes, no problem, let me know if I can help.")
+                        anchors.top: labelNameAndMessage.bottom
+                        anchors.topMargin: Style.current.halfPadding
+                        anchors.left: parent.left
+                        anchors.leftMargin: Style.current.padding
+                    }
+                    DropShadow {
+                        anchors.fill: notificationNameAndMessage
+                        horizontalOffset: 0
+                        verticalOffset: 2
+                        radius: 10
+                        samples: 12
+                        color: "#22000000"
+                        source: notificationNameAndMessage
+                    }
+                }
             }
 
             StyledText {
@@ -219,6 +356,10 @@ ScrollView {
             //% "Contacts & Users"
             text: qsTrId("contacts---users")
             anchors.top: separator2.bottom
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
         }
 
         Column {
@@ -226,6 +367,10 @@ ScrollView {
             spacing: Style.current.padding
             anchors.top: sectionHeadlineContacts.bottom
             anchors.topMargin: Style.current.smallPadding
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
             width: parent.width
             RowLayout {
                 width: parent.width
@@ -267,6 +412,10 @@ ScrollView {
             spacing: Style.current.smallPadding
             anchors.top: separator3.bottom
             anchors.topMargin: Style.current.bigPadding
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
             width: parent.width
 
             Button {
