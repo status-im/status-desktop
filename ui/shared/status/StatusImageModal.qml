@@ -22,17 +22,17 @@ Popup {
     padding: 0
 
     function setPopupData(image) {
-        messageImage.source = image;
+        messageImage.source = image.source;
+        const maxHeight = applicationWindow.height - 80
+        const maxWidth = applicationWindow.width - 80
 
-        let maxHeight = applicationWindow.height - 80
-        let maxWidth = applicationWindow.width - 80
 
-        if (messageImage.sourceSize.width >= maxWidth || messageImage.sourceSize.height >= maxHeight) {
+        if (image.sourceSize.width >= maxWidth || image.sourceSize.height >= maxHeight) {
             this.width = maxWidth
             this.height = maxHeight
         } else {
-            this.width = messageImage.sourceSize.width
-            this.height = messageImage.sourceSize.height
+            this.width = image.sourceSize.width
+            this.height = image.sourceSize.height
         }
     }
 

@@ -5,7 +5,7 @@ Rectangle {
     property int chatVerticalPadding: 12
     property int chatHorizontalPadding: 12
     property bool isCurrentUser: bool
-    signal clicked(string source)
+    signal clicked(var image)
 
     id: imageChatBox
     height: {
@@ -47,7 +47,7 @@ Rectangle {
             source: modelData
             isCurrentUser: imageChatBox.isCurrentUser
             onClicked: {
-                imageChatBox.clicked(source)
+                imageChatBox.clicked(image)
             }
         }
     }

@@ -137,6 +137,9 @@ Item {
             ImageMessage {
                 color: Style.current.transparent
                 chatHorizontalPadding: 0
+                onClicked: {
+                    chatTextItem.clickMessage(false, false, true, image)
+                }
             }
         }
     }
