@@ -11,6 +11,7 @@ Rectangle {
     id: categoryButton
     width: 40
     height: 40
+    color: Style.current.transparent
 
     SVGImage {
         width: 20
@@ -23,7 +24,7 @@ Rectangle {
         ColorOverlay {
             anchors.fill: parent
             source: parent
-            color: categoryButton.active ? Style.current.blue : Style.current.transparent
+            color: categoryButton.active ? Style.current.primary : Style.current.transparent
         }
 
         Rectangle {
@@ -31,7 +32,7 @@ Rectangle {
             width: parent.width
             height: 2
             radius: 1
-            color: Style.current.blue
+            color: Style.current.primary
             anchors.bottom: parent.bottom
             anchors.bottomMargin: -Style.current.smallPadding
         }
