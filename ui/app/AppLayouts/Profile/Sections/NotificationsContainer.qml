@@ -1,6 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
+import "./"
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
@@ -11,7 +13,7 @@ ScrollView {
     contentHeight: notificationsContainer.height
     clip: true
 
-    Item {
+    Rectangle {
         id: notificationsContainer
         anchors.right: parent.right
         anchors.rightMargin: contentMargin
@@ -36,6 +38,8 @@ ScrollView {
             //% "Notification preferences"
             text: qsTrId("notifications-preferences")
             anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
         }
 
         Column {
@@ -43,7 +47,8 @@ ScrollView {
             spacing: Style.current.padding
             anchors.top: sectionHeadlineNotifications.bottom
             anchors.topMargin: Style.current.smallPadding
-            width: parent.width
+            anchors.left: parent.left
+            anchors.right: parent.right
 
             RowLayout {
                 width: parent.width
@@ -105,6 +110,10 @@ ScrollView {
             id: separator
             anchors.top: column.bottom
             anchors.topMargin: Style.current.bigPadding
+            anchors.left: parent.left
+            anchors.leftMargin: -Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: -Style.current.padding
         }
 
         StatusSectionHeadline {
@@ -112,6 +121,8 @@ ScrollView {
             //% "Sound & Appearance"
             text: qsTrId("sound---appearance")
             anchors.top: separator.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
         }
 
         Column {
@@ -119,6 +130,8 @@ ScrollView {
             spacing: Style.current.padding
             anchors.top: sectionHeadlineSound.bottom
             anchors.topMargin: Style.current.smallPadding
+            anchors.left: parent.left
+            anchors.right: parent.right
             width: parent.width
 
             RowLayout {
@@ -174,37 +187,127 @@ ScrollView {
             spacing: Style.current.bigPadding
             anchors.top: column2.bottom
             anchors.topMargin: Style.current.padding*2
-            width: parent.width
+            anchors.left: parent.left
+            anchors.right: parent.right
 
             StyledText {
                 //% "Message preview"
                 text: qsTrId("message-preview")
                 font.pixelSize: 15
+                anchors.left: parent.left
+                anchors.right: parent.right
             }
 
-            StatusRadioButton {
-                //% "Anonymous"
-                text: qsTrId("anonymous")
-                ButtonGroup.group: messageSetting
-            }
+            Column {
+                anchors.left: parent.left
+                anchors.leftMargin: -Style.current.padding
+                anchors.right: parent.right
+                anchors.rightMargin: -Style.current.padding
+                spacing: 10
 
-            StatusRadioButton {
-                //% "Name only"
-                text: qsTrId("name-only")
-                ButtonGroup.group: messageSetting
-            }
+                Rectangle {
+                    width: notificationAnonymous.width + Style.current.padding * 2
+                    height: childrenRect.height + Style.current.padding + Style.current.halfPadding
+                    color: labelAnonymous.checked ? Style.current.secondaryBackground : Style.current.transparent
+                    radius: Style.current.radius
 
-            StatusRadioButton {
-                checked: true
-                //% "Name & Message"
-                text: qsTrId("name---message")
-                ButtonGroup.group: messageSetting
+                    StatusRadioButton {
+                        id: labelAnonymous
+                        //% "Anonymous"
+                        text: qsTrId("anonymous")
+                        ButtonGroup.group: messageSetting
+                        checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous
+                        onCheckedChanged: {
+                            appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewAnonymous
+                        }
+                        anchors.top: parent.top
+                        anchors.topMargin: Style.current.halfPadding
+                        anchors.left: parent.left
+                        anchors.leftMargin: Style.current.padding
+                    }
+
+                    StatusNotificationWithDropShadow {
+                        id: notificationAnonymous
+                        anchors.top: labelAnonymous.bottom
+                        anchors.topMargin: Style.current.halfPadding
+                        anchors.left: parent.left
+                        name: "Status"
+                        chatType: Constants.chatTypePublic
+                        message: qsTr("You have a new message")
+                    }
+                }
+
+                Rectangle {
+                    width: notificationAnonymous.width + Style.current.padding * 2
+                    height: childrenRect.height + Style.current.padding + Style.current.halfPadding
+                    color: labelNameOnly.checked ? Style.current.secondaryBackground : Style.current.transparent
+                    radius: Style.current.radius
+
+                    StatusRadioButton {
+                        id: labelNameOnly
+                        //% "Name only"
+                        text: qsTrId("name-only")
+                        ButtonGroup.group: messageSetting
+                        checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameOnly
+                        onCheckedChanged: {
+                            appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameOnly
+                        }
+                        anchors.top: parent.top
+                        anchors.topMargin: Style.current.halfPadding
+                        anchors.left: parent.left
+                        anchors.leftMargin: Style.current.padding
+                    }
+
+                    StatusNotificationWithDropShadow {
+                        id: notificationNameOnly
+                        name: "Vitalik Buterin"
+                        chatType: Constants.chatTypeOneToOne
+                        message: qsTr("You have a new message")
+                        anchors.top: labelNameOnly.bottom
+                        anchors.topMargin: Style.current.halfPadding
+                        anchors.left: parent.left
+                    }
+                }
+
+                Rectangle {
+                    width: notificationAnonymous.width + Style.current.padding * 2
+                    height: childrenRect.height + Style.current.padding + Style.current.halfPadding
+                    color: labelNameAndMessage.checked ? Style.current.secondaryBackground : Style.current.transparent
+                    radius: Style.current.radius
+
+                    StatusRadioButton {
+                        id: labelNameAndMessage
+                        //% "Name & Message"
+                        text: qsTrId("name---message")
+                        ButtonGroup.group: messageSetting
+                        checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameAndMessage
+                        onCheckedChanged: {
+                            appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameAndMessage
+                        }
+                        anchors.top: parent.top
+                        anchors.topMargin: Style.current.halfPadding
+                        anchors.left: parent.left
+                        anchors.leftMargin: Style.current.padding
+                    }
+
+                    StatusNotificationWithDropShadow {
+                        id: notificationNameAndMessage
+                        name: "Vitalik Buterin"
+                        chatType: Constants.chatTypeOneToOne
+                        message: qsTr("Hi there! Yes, no problem, let me know if I can help.")
+                        anchors.top: labelNameAndMessage.bottom
+                        anchors.topMargin: Style.current.halfPadding
+                        anchors.left: parent.left
+                    }
+                }
             }
 
             StyledText {
                 //% "No preview or Advanced? Go to Notification Center"
                 text: qsTrId("no-preview-or-advanced--go-to-notification-center")
                 font.pixelSize: 15
+                anchors.left: parent.left
+                anchors.leftMargin: -Style.current.padding
             }
         }
 
@@ -212,6 +315,10 @@ ScrollView {
             id: separator2
             anchors.top: column3.bottom
             anchors.topMargin: Style.current.bigPadding
+            anchors.left: parent.left
+            anchors.leftMargin: -Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: -Style.current.padding
         }
 
         StatusSectionHeadline {
@@ -219,6 +326,8 @@ ScrollView {
             //% "Contacts & Users"
             text: qsTrId("contacts---users")
             anchors.top: separator2.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
         }
 
         Column {
@@ -226,6 +335,8 @@ ScrollView {
             spacing: Style.current.padding
             anchors.top: sectionHeadlineContacts.bottom
             anchors.topMargin: Style.current.smallPadding
+            anchors.left: parent.left
+            anchors.right: parent.right
             width: parent.width
             RowLayout {
                 width: parent.width
@@ -260,6 +371,10 @@ ScrollView {
             id: separator3
             anchors.top: column4.bottom
             anchors.topMargin: Style.current.bigPadding
+            anchors.left: parent.left
+            anchors.leftMargin: -Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: -Style.current.padding
         }
 
         Column {
@@ -267,6 +382,8 @@ ScrollView {
             spacing: Style.current.smallPadding
             anchors.top: separator3.bottom
             anchors.topMargin: Style.current.bigPadding
+            anchors.left: parent.left
+            anchors.right: parent.right
             width: parent.width
 
             Button {

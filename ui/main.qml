@@ -83,6 +83,7 @@ ApplicationWindow {
         property real volume: 0.2
         property int notificationSetting: 0
         property bool notificationSoundsEnabled: true
+        property int notificationMessagePreviewSetting: Constants.notificationPreviewNameAndMessage
         property var whitelistedUnfurlingSites: ({})
         property bool neverAskAboutUnfurlingAgain: false
 

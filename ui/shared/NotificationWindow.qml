@@ -5,6 +5,7 @@ import QtQml 2.13
 import QtGraphicalEffects 1.13
 
 import "../imports"
+import "./status"
 import "../app/AppLayouts/Chat/ContactsColumn"
 
 Item {
@@ -26,9 +27,8 @@ Item {
     Component {
         id: winInit
         Window {
-            flags: Qt.WindowStaysOnTopHint | Qt.WindowStaysOnTopHint | Qt.Popup
-                   | Qt.WA_ShowWithoutActivating | Qt.WindowStaysOnTopHint
-                   | Qt.BypassWindowManagerHint | Qt.WindowStaysOnTopHint
+            flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Popup
+                   | Qt.WA_ShowWithoutActivating | Qt.BypassWindowManagerHint
             width: 1
             height: 1
             Component.onCompleted: {
@@ -43,50 +43,48 @@ Item {
 
         Window {
             id: notificationWindowSub
-            flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
-                   | Qt.WA_ShowWithoutActivating | Qt.BypassWindowManagerHint
-                   | Qt.WindowStaysOnTopHint | Qt.BypassWindowManagerHint
-            width: 300 + 10
-            height: channelNotif.height + 10
+            flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.WA_ShowWithoutActivating | Qt.BypassWindowManagerHint
+            height: channelNotif.height
+            width: channelNotif.width
             x: Screen.width - (width + 50)
             y: 50
             visible: true
             color: Style.current.transparent
 
-            Channel {
+            StatusNotification {
                 id: channelNotif
-                name: root.chatType === Constants.chatTypeOneToOne ? root.username : root.chatId
-                lastMessage: root.message
-                timestamp: root.timestamp
+                property string channelName: root.chatType === Constants.chatTypeOneToOne ? root.username : root.chatId
+                chatId: root.chatId
+                name: {
+                  if (appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous) {
+                      return "Status"
+                  }
+                  return root.chatType !== Constants.chatTypePublic ?
+                          Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(channelName)), "26x26") :
+                          "#" + Utils.filterXSS(channelName)
+                }
+                message: {
+                    if (appSettings.notificationMessagePreviewSetting > Constants.notificationPreviewNameOnly) {
+                        switch(root.messageType){
+                            case Constants.imageType: return qsTr("Image");
+                            case Constants.stickerType: return qsTr("Sticker");
+                            default: return Emoji.parse(root.message, "26x26").replace(/\n|\r/g, ' ')
+                        }
+                    }
+                    return qsTr("You have a new message")
+                }
                 chatType: root.chatType
-                unviewedMessagesCount: "0"
-                hasMentions: false
-                contentType: root.messageType
                 identicon: root.identicon
-                searchStr: ""
-                isCompact: false
-                color: Style.current.background
-                anchors.rightMargin: 10
-            }
-            DropShadow {
-                anchors.fill: channelNotif
-                horizontalOffset: 2
-                verticalOffset: 5
-                visible: channelNotif.visible
-                source: channelNotif
-                radius: 10
-                samples: 15
-                color: "#ad000000"
-            }
 
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: parent
-                onClicked: {
-                    timer.stop()
-                    notificationWindowSub.close()
-                    applicationWindow.raise()
-                    chatsModel.setActiveChannel(chatId)
+                MouseArea {
+                    cursorShape: Qt.PointingHandCursor
+                    anchors.fill: parent
+                    onClicked: {
+                        timer.stop()
+                        notificationWindowSub.close()
+                        applicationWindow.raise()
+                        chatsModel.setActiveChannel(root.chatId)
+                    }
                 }
             }
 
@@ -105,12 +103,12 @@ Item {
                     if (applicationWindow.active) {
                         this.flags |= Qt.Popup
                     } else {
-                        this.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
-                             | Qt.WA_ShowWithoutActivating | Qt.BypassWindowManagerHint
-                             | Qt.WindowStaysOnTopHint | Qt.BypassWindowManagerHint
+                        this.flags = Qt.FramelessWindowHint | Qt.WA_ShowWithoutActivating
+                                    | Qt.WindowStaysOnTopHint | Qt.BypassWindowManagerHint
                     }
                 }
             }
+
         }
     }
 
