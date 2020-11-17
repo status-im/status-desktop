@@ -44,6 +44,8 @@ QtObject:
 
   proc chatName(self: ChannelsList, chatItem: Chat): string =
     if not chatItem.chatType.isOneToOne: return chatItem.name
+    if self.status.chat.contacts.hasKey(chatItem.id) and self.status.chat.contacts[chatItem.id].hasNickname():
+      return self.status.chat.contacts[chatItem.id].localNickname
     if chatItem.ensName != "":
       return "@" & userName(chatItem.ensName).userName(true)      
     return self.userNameOrAlias(chatItem.id)

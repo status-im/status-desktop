@@ -36,6 +36,8 @@ proc addDomain*(username: string): string =
   else:
     return username & domain
 
+proc hasNickname*(contact: Profile): bool = contact.localNickname != ""
+
 proc userNameOrAlias*(contact: Profile, removeSuffix: bool = false): string =
   if(contact.ensName != "" and contact.ensVerified):
     result = "@" & userName(contact.ensName, removeSuffix)
