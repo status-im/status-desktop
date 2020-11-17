@@ -40,6 +40,5 @@ proc saveContact*(id: string, ensVerified: bool, ensName: string, ensVerifiedAt:
     }]
   callPrivateRPC("saveContact".prefix, payload)
 
-proc requestContactUpdate*(): string =
-  let publicKey = $getSetting[string](Setting.PublicKey, "")
+proc requestContactUpdate*(publicKey: string): string =
   callPrivateRPC("sendContactUpdate".prefix, %* [publicKey, "", ""])
