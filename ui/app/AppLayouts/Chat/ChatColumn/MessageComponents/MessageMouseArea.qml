@@ -11,9 +11,7 @@ MouseArea {
             clickMessage(false, isSticker, false);
             return;
         }
-        if (mouse.button & Qt.LeftButton) {
-            if (isImage && !isSticker)
-                clickMessage(false, false, isImage, image);
+        if (mouse.button & Qt.LeftButton) {                
             return;
         }
     }

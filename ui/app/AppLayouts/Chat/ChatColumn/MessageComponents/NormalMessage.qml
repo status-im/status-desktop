@@ -221,7 +221,7 @@ Item {
         ImageMessage {
             isCurrentUser: messageItem.isCurrentUser
             onClicked: {
-              chatTextItem.clickMessage(false, false, true, source)
+                chatTextItem.clickMessage(false, false, true, image)
             }
         }
     }

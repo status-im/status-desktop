@@ -8,7 +8,9 @@ Item {
     property int imageWidth: 350
     property bool isCurrentUser: false
     property url source
-    signal clicked(string source)
+    property bool playing: true
+    property bool isAnimated: !!source && source.toString().endsWith('.gif')
+    signal clicked(var image)
 
     id: imageContainer
     width: loadingImage.visible ? loadingImage.width : imageMessage.width
@@ -34,11 +36,23 @@ Item {
         }
     }
 
-    Image {
+    Connections {
+        target: applicationWindow
+        onActiveChanged: {
+            if (applicationWindow.active === false) {
+                imageMessage.playing = false
+            } else {
+                imageMessage.playing = Qt.binding(function () {return imageContainer.playing})
+            }
+        }
+    }
+
+    AnimatedImage {
         id: imageMessage
         width: sourceSize.width > imageWidth ? imageWidth : sourceSize.width
         fillMode: Image.PreserveAspectFit
         source: imageContainer.source
+        playing: imageContainer.playing
         onStatusChanged: {
             if (imageMessage.status === Image.Error) {
                 loadingImage.hasError = true
@@ -88,7 +102,13 @@ Item {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
             onClicked: {
-                imageContainer.clicked(imageContainer.source)
+                if (imageContainer.isAnimated) {
+                    // FIXME the ListView completely removes Items that scroll out of view
+                    // so when we scroll backto the image, it gets reloaded and playing is reset
+                    imageContainer.playing = !imageContainer.playing
+                    return
+                }
+                imageContainer.clicked(imageMessage)
             }
         }
     }
