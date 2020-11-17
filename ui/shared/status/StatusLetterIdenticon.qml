@@ -12,7 +12,7 @@ Rectangle {
     radius: width / 2
 
     color: {
-        const color = chatsModel.getChannelColor(root.chatName)
+        const color = chatsModel.getChannelColor(root.chatName.startsWith("#") ? root.chatName.substr(1) : root.chatName)
         if (!color) {
             return Style.current.transparent
         }
