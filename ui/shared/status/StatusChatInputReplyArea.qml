@@ -6,7 +6,7 @@ import "../../shared"
 
 Rectangle {
     id: root
-    height: 50
+    height: 60
     color: Style.current.lightGrey
     radius: 16
     clip: true
@@ -51,7 +51,7 @@ Rectangle {
         font.pixelSize: 13
         font.weight: Font.Normal
         // Eliding only works for PlainText: https://bugreports.qt.io/browse/QTBUG-16567
-        textFormat: Text.PlainText
+        textFormat: Text.RichText
         color: Style.current.black
     }
 
