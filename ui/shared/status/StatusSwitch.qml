@@ -8,6 +8,7 @@ Switch {
     id: control
 
     indicator: Rectangle {
+        id: oval
         implicitWidth: 52
         implicitHeight: 28
         x: control.leftPadding
@@ -16,7 +17,7 @@ Switch {
         color: control.checked ? Style.current.blue : Style.current.grey
 
         Rectangle {
-            x: control.checked ? parent.width - width-4 : 4
+            id: circle
             y: 4
             width: 20
             height: 20
@@ -31,6 +32,24 @@ Switch {
                 fast: true
                 cached: true
                 color: "#22000000"
+            }
+
+            states: [
+                State {
+                    name: "on"
+                    when: control.checked
+                    PropertyChanges { target: circle; x: oval.width - circle.width - 4 }
+                },
+                State {
+                    name: "off"
+                    when: !control.checked
+                    PropertyChanges { target: circle; x: 4 }
+                }
+            ]
+
+            transitions: Transition {
+                reversible: true
+                NumberAnimation { properties: "x"; easing.type: Easing.Linear; duration: 120; }
             }
         }
     }
