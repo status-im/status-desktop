@@ -23,10 +23,12 @@ proc renderInline(self: ChatMessageList, elem: TextItem): string =
   of "code": result = fmt("<code>{value}</code>")
   of "emph": result = fmt("<em>{value}</em>")
   of "strong": result = fmt("<strong>{value}</strong>")
+  of "strong-emph": result = fmt(" <strong><em>{value}</em></strong> ")
   of "link": result = fmt("{elem.destination}")
   of "mention": result = fmt("<a href=\"//{value}\" class=\"mention\">{self.mention(value)}</a>")
   of "status-tag": result = fmt("<a href=\"#{value}\" class=\"status-tag\">#{value}</a>")
   of "del": result = fmt("<del>{value}</del>")
+  else: result = fmt(" {value} ")
 
 # See render-block in status-react/src/status_im/ui/screens/chat/message/message.cljs
 proc renderBlock(self: ChatMessageList, message: Message): string =
