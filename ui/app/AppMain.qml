@@ -39,6 +39,23 @@ RowLayout {
         }
     }
 
+    Action {
+        shortcut: "Ctrl+1"
+        onTriggered: changeAppSection(Constants.chat)
+    }
+    Action {
+        shortcut: "Ctrl+2"
+        onTriggered: changeAppSection(Constants.browser)
+    }
+    Action {
+        shortcut: "Ctrl+3"
+        onTriggered: changeAppSection(Constants.wallet)
+    }
+    Action {
+        shortcut: "Ctrl+4, Ctrl+,"
+        onTriggered: changeAppSection(Constants.profile)
+    }
+
     function changeAppSection(section) {
         let sectionId = -1
         switch (section) {

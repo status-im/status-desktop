@@ -40,7 +40,7 @@ Rectangle {
 
     StyledText {
         id: replyText
-        text: Emoji.parse(message, "26x26")
+        text: Emoji.parse(message)
         anchors.left: replyToUsername.left
         anchors.top: replyToUsername.bottom
         anchors.topMargin: 2

@@ -65,7 +65,7 @@ Rectangle {
     StyledText {
         id: contactInfo
         text: wrapper.chatType !== Constants.chatTypePublic ?
-                  Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(wrapper.name)), "26x26") :
+                  Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(wrapper.name))) :
                   "#" + Utils.filterXSS(wrapper.name)
         anchors.right: contactTime.left
         anchors.rightMargin: Style.current.smallPadding
@@ -89,7 +89,7 @@ Rectangle {
                 //% "Sticker"
                 case Constants.stickerType: return qsTrId("sticker");
                 //% "No messages"
-                default: return lastMessage ? Emoji.parse(Utils.filterXSS(lastMessage), "26x26").replace(/\n|\r/g, ' ') : qsTrId("no-messages")
+                default: return lastMessage ? Emoji.parse(Utils.filterXSS(lastMessage)).replace(/\n|\r/g, ' ') : qsTrId("no-messages")
             }
         }
         textFormat: Text.RichText

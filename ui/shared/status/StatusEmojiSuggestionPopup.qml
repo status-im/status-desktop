@@ -10,7 +10,7 @@ StatusInputListPopup {
 
     id: emojiSuggestions
     getImageSource: function (modelData) {
-        return `../../imports/twemoji/26x26/${modelData.unicode}.png`
+        return `../../imports/twemoji/72x72/${modelData.unicode}.png`
     }
     getText: function (modelData) {
         return modelData.shortname

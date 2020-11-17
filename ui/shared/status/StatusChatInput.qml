@@ -79,6 +79,10 @@ Rectangle {
         return msg
     }
 
+    function isUploadFilePressed(event) {
+        return (event.key === Qt.Key_U) && (event.modifiers & Qt.ControlModifier) && imageBtn.visible && !imageDialog.visible
+    }
+
     function onKeyPress(event){
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
             if (emojiSuggestions.visible) {
@@ -99,8 +103,40 @@ Rectangle {
             messageTooLongDialog.open()
         }
 
+        // handle new line in blockquote
+        if ((event.key === Qt.Key_Enter || event.key === Qt.Key_Return) && (event.modifiers & Qt.ShiftModifier)) {
+            const message = control.extrapolateCursorPosition();
+            if(message.data.startsWith(">") && !message.data.endsWith("\n\n")) {
+                let newMessage = ""
+                if (message.data.endsWith("\n> ")) {
+                    newMessage = message.data.substr(0, message.data.lastIndexOf("> ")) + "\n\n"
+                } else {
+                    newMessage = message.data + "\n> ";
+                }
+                messageInputField.remove(0, messageInputField.cursorPosition);
+                insertInTextInput(0, Emoji.parse(newMessage));
+            }
+            event.accepted = true
+        }
+        // handle backspace when entering an existing blockquote
+        if ((event.key === Qt.Key_Backspace || event.key === Qt.Key_Delete)) {
+            const message = control.extrapolateCursorPosition();
+            if(message.data.startsWith(">") && message.data.endsWith("\n\n")) {
+                const newMessage = message.data.substr(0, message.data.lastIndexOf("\n")) + "> ";
+                messageInputField.remove(0, messageInputField.cursorPosition);
+                insertInTextInput(0, Emoji.parse(newMessage));
+                event.accepted = true
+            }
+        }
+
         if ((event.key === Qt.Key_V) && (event.modifiers & Qt.ControlModifier)) {
             paste = true;
+        }
+
+        // ⌘⇧U
+        if (isUploadFilePressed(event)) {
+            imageBtn.clicked()
+            event.accepted = true
         }
 
         if (event.key === Qt.Key_Down) {
@@ -118,6 +154,12 @@ Rectangle {
         isColonPressed = (event.key === Qt.Key_Colon) && (event.modifiers & Qt.ShiftModifier);
     }
 
+    function wrapSelection(wrapWith) {
+        if (messageInputField.selectionStart - messageInputField.selectionEnd === 0) return
+        insertInTextInput(messageInputField.selectionStart, wrapWith);
+        insertInTextInput(messageInputField.selectionEnd, wrapWith);
+        messageInputField.deselect()
+    }
 
     function onRelease(event) {
         // the text doesn't get registered to the textarea fast enough
@@ -160,7 +202,7 @@ Rectangle {
 
         if (madeChanges) {
             messageInputField.remove(0, messageInputField.length);
-            insertInTextInput(0, Emoji.parse(words.join('&nbsp;'), '26x26'));
+        insertInTextInput(0, Emoji.parse(words.join('&nbsp;')));
         }
     }
 
@@ -169,7 +211,7 @@ Rectangle {
     function extrapolateCursorPosition() {
         // we need only the message part to be html
         const text = chatsModel.plainText(Emoji.deparse(messageInputField.text));
-        const plainText = Emoji.parse(text, '26x26');
+        const plainText = Emoji.parse(text);
 
         var bracketEvent = false;
         var length = 0;
@@ -258,7 +300,7 @@ Rectangle {
             .replace(shortname, encodedCodePoint)
             .replace(/ /g, "&nbsp;");
         messageInputField.remove(0, messageInputField.cursorPosition);
-        insertInTextInput(0, Emoji.parse(newMessage, '26x26'));
+        insertInTextInput(0, Emoji.parse(newMessage));
         emojiSuggestions.close()
         emojiEvent = false
     }
@@ -391,7 +433,7 @@ Rectangle {
                 text = `${left} @${aliasName} ${right}`
             }
 
-            messageInputField.text = hasEmoji ? Emoji.parse(text, "26x26") : text
+            messageInputField.text = hasEmoji ? Emoji.parse(text) : text
             messageInputField.cursorPosition = lastAtPosition + aliasName.length + 2
             suggestionsBox.suggestionsModel.clear()
         }
@@ -592,10 +634,39 @@ Rectangle {
                 bottomPadding: 12
                 Keys.onPressed: onKeyPress(event)
                 Keys.onReleased: onRelease(event) // gives much more up to date cursorPosition
+                Keys.onShortcutOverride: event.accepted = isUploadFilePressed(event)
                 leftPadding: 0
                 background: Rectangle {
                     color: "transparent"
                 }
+            }
+            Action {
+                shortcut: StandardKey.Bold
+                onTriggered: wrapSelection("**")
+            }
+            Action {
+                shortcut: StandardKey.Italic
+                onTriggered: wrapSelection("*")
+            }
+            Action {
+                shortcut: "Ctrl+Shift+Alt+C"
+                onTriggered: wrapSelection("```")
+            }
+            Action {
+                shortcut: "Ctrl+Shift+C"
+                onTriggered: wrapSelection("`")
+            }
+            Action {
+                shortcut: "Ctrl+Alt+-"
+                onTriggered: wrapSelection("~~")
+            }
+            Action {
+                shortcut: "Ctrl+Shift+X"
+                onTriggered: wrapSelection("~~")
+            }
+            Action {
+                shortcut: "Ctrl+Meta+Space"
+                onTriggered: emojiBtn.clicked()
             }
         }
 
