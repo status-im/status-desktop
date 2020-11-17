@@ -68,6 +68,7 @@ type Chat* = ref object
   membershipUpdateEvents*: seq[ChatMembershipEvent]
   hasMentions*: bool
   muted*: bool
+  ensName*: string
 
 proc `$`*(self: Chat): string =
   result = fmt"Chat(id:{self.id}, name:{self.name}, active:{self.isActive}, type:{self.chatType})"
@@ -83,7 +84,7 @@ proc toJsonNode*(self: Chat): JsonNode =
     "lastMessage": nil,
     "members": self.members.toJsonNode,
     "membershipUpdateEvents": self.membershipUpdateEvents.toJsonNode,
-    "name": self.name,
+    "name": (if self.ensName != "": self.ensName else: self.name),
     "timestamp": self.timestamp,
     "unviewedMessagesCount": self.unviewedMessagesCount
   }

@@ -26,6 +26,8 @@ proc userName*(ensName: string, removeSuffix: bool = false): string =
     else:
       result = ensName
   else:
+    if ensName.endsWith(".eth") and removeSuffix: 
+      return ensName.split(".")[0]
     result = ensName
 
 proc addDomain*(username: string): string =

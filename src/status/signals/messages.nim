@@ -121,7 +121,8 @@ proc toChat*(jsonChat: JsonNode): Chat =
     deletedAtClockValue: jsonChat{"deletedAtClockValue"}.getBiggestInt, 
     unviewedMessagesCount: jsonChat{"unviewedMessagesCount"}.getInt,
     hasMentions: false,
-    muted: false
+    muted: false,
+    ensName: ""
   )
 
   if jsonChat.hasKey("muted") and jsonChat["muted"].kind != JNull: 
@@ -132,7 +133,10 @@ proc toChat*(jsonChat: JsonNode): Chat =
   
   if result.chatType == ChatType.OneToOne:
     result.identicon = generateIdenticon(result.id)
-    result.name = generateAlias(result.id)
+    if result.name.endsWith(".eth"):
+      result.ensName = result.name
+    if result.name == "":
+      result.name = generateAlias(result.id)
 
   if jsonChat["members"].kind != JNull:
     result.members = @[]

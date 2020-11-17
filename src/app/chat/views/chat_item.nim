@@ -44,9 +44,16 @@ QtObject:
 
   proc name*(self: ChatItemView): string {.slot.} = 
     if self.chatItem != nil and self.chatItem.chatType.isOneToOne:
-      result = self.userNameOrAlias(self.chatItem.id)
+      if self.chatItem.name == self.chatItem.id:
+        result = self.userNameOrAlias(self.chatItem.id)
+      else:
+        if self.chatItem.ensName != "":
+          result = "@" & userName(self.chatItem.ensName).userName(true)      
+        else:
+          result = self.chatItem.name
     else:
       result = ?.self.chatItem.name
+    
 
   QtProperty[string] name:
     read = name

@@ -48,8 +48,13 @@ ModalPopup {
     }
 
     function doJoin() {
-        if (!validate() || pubKey.trim() === "") return;
-        chatsModel.joinChat(pubKey, Constants.chatTypeOneToOne);
+        if (!validate() || pubKey.trim() === "" || validationError !== "") return;
+        if(Utils.isChatKey(chatKey.text)){
+            chatsModel.joinChat(pubKey, Constants.chatTypeOneToOne);
+        } else {
+            chatsModel.joinChatWithENS(pubKey, chatKey.text);
+        }
+            
         popup.close();
     }
 
@@ -87,8 +92,12 @@ ModalPopup {
                     ensUsername.text = qsTrId("user-not-found");
                     pubKey = "";
                 } else {
-                    ensUsername.text = chatsModel.formatENSUsername(chatKey.text) + " • " + Utils.compactAddress(resolvedPubKey, 4)
-                    pubKey = resolvedPubKey;
+                    if (profileModel.profile.pubKey === resolvedPubKey) {
+                        validationError = qsTr("Can't chat with yourself");
+                    } else {
+                        ensUsername.text = chatsModel.formatENSUsername(chatKey.text) + " • " + Utils.compactAddress(resolvedPubKey, 4)
+                        pubKey = resolvedPubKey;
+                    }
                 }
                 loading = false;
             }
