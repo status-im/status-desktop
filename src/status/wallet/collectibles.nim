@@ -45,7 +45,10 @@ proc tokenOfOwnerByIndex(contract: Erc721Contract, address: Address, index: Stui
       "data": contract.methods["tokenOfOwnerByIndex"].encodeAbi(tokenOfOwnerByIndex)
     }, "latest"]
     response = callPrivateRPC("eth_call", payload)
-    res = parseJson($response)["result"].str
+    jsonResponse = parseJson($response)
+  if (not jsonResponse.hasKey("result")):
+    return -1
+  let res = jsonResponse["result"].getStr
   if (res == "0x"):
     return -1
   result = fromHex[int](res)
