@@ -4,11 +4,11 @@ import "../../../../../imports"
 
 Item {
     property var clickMessage: function () {}
-    property bool showImages: appSettings.displayChatImages && imageUrls != ""
+    property bool showImages: appSettings.displayChatImages && imageUrls !== ""
 
     id: chatTextItem
     anchors.top: parent.top
-    anchors.topMargin: authorCurrentMsg != authorPrevMsg ? Style.current.smallPadding : 0
+    anchors.topMargin: authorCurrentMsg !== authorPrevMsg ? Style.current.smallPadding : 0
     height: childrenRect.height + this.anchors.topMargin + (dateGroupLbl.visible ? dateGroupLbl.height : 0)
     width: parent.width
 
@@ -35,10 +35,16 @@ Item {
     }
 
     Rectangle {
+        readonly property int defaultMessageWidth: 400
+        readonly property int defaultMaxMessageChars: 54
+        readonly property int messageWidth: Math.max(defaultMessageWidth, parent.width / 2)
+        readonly property int maxMessageChars: (defaultMaxMessageChars * messageWidth) / defaultMessageWidth
         property int chatVerticalPadding: isImage ? 4 : 7
         property int chatHorizontalPadding: isImage ? 0 : 12
-        property bool longReply: chatReply.visible && repliedMessageContent.length > 54
-        property bool longChatText: chatsModel.plainText(message).length > 54
+        property bool longReply: chatReply.visible && repliedMessageContent.length > maxMessageChars
+        property bool longChatText: chatsModel.plainText(message).split('\n').some(function (messagePart) {
+            return messagePart.length > maxMessageChars
+        })
 
         id: chatBox
         color: {
@@ -80,7 +86,7 @@ Item {
                     return chatImageContent.width
                 default:
                     if (longChatText || longReply) {
-                        return 400;
+                        return messageWidth;
                     }
                     let baseWidth = chatText.width;
                     if (chatReply.visible && chatText.width < chatReply.textFieldWidth) {
