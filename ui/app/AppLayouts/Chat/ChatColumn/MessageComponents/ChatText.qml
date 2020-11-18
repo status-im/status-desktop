@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.13
 import "../../../../../shared"
 import "../../../../../imports"
 
@@ -13,7 +13,29 @@ Item {
     visible: contentType == Constants.messageType || isEmoji
     z: 51
     height: visible ? (showMoreLoader.active ? childrenRect.height : chatText.height) : 0
-    width: longChatText ? undefined : chatText.width
+
+    // This function is to avoid the binding loop warning
+    function setWidths() {
+        if (longChatText) {
+            root.width = undefined
+            chatText.width = Qt.binding(function () {return root.width})
+        } else {
+            chatText.width = Qt.binding(function () {return chatText.implicitWidth})
+            root.width = Qt.binding(function () {return chatText.width})
+        }
+    }
+
+    Component.onCompleted: {
+        root.setWidths()
+    }
+
+    Connections {
+        enabled: !appSettings.compactMode
+        target: appSettings.compactMode ? null : chatBox
+        onLongChatTextChanged: {
+            root.setWidths()
+        }
+    }
 
     StyledTextEdit {
         id: chatText
@@ -24,7 +46,6 @@ Item {
         readOnly: true
         selectByMouse: true
         color: Style.current.textColor
-        width: longChatText ? parent.width : implicitWidth
         height: root.veryLongChatText && !root.readMore ? 200 : implicitHeight
         clip: true
         onLinkActivated: function (link) {
