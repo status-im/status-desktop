@@ -366,7 +366,7 @@ Rectangle {
               chatsModel.plainText(messageInputField.text);
 
             let aliasName = item[suggestionsBox.property.split(",").map(p => p.trim()).find(p => !!item[p])]
-            aliasName = aliasName.replace(".stateofus.eth", "")
+            aliasName = aliasName.replace(/(\.stateofus)?\.eth/, "")
             let nameLen = aliasName.length + 2 // We're doing a +2 here because of the `@` and the trailing whitespace
             let position = 0;
             let text = ""
