@@ -30,6 +30,7 @@ ScrollView {
         anchors.bottomMargin: Style.current.bigPadding
         spacing: 4
         boundsBehavior: Flickable.StopAtBounds
+        flickDeceleration: 10000
         Layout.fillWidth: true
         Layout.fillHeight: true
 
