@@ -140,9 +140,12 @@ ScrollView {
                 chatLogView.scrollToBottom(true)
             }
 
-            onMessageNotificationPushed: function(chatId, msg, messageType, chatType, timestamp, identicon, username, hasMention) {
+            onMessageNotificationPushed: function(chatId, msg, messageType, chatType, timestamp, identicon, username, hasMention, isAddedContact) {
                 if (appSettings.notificationSetting == Constants.notifyAllMessages || 
                     (appSettings.notificationSetting == Constants.notifyJustMentions && hasMention)) {
+                        if (chatType === Constants.chatTypeOneToOne && !appSettings.allowNotificationsFromNonContacts && !isAddedContact) {
+                            return
+                        }
                         notificationWindow.notifyUser(chatId, msg, messageType, chatType, timestamp, identicon, username)
                 }
             }
