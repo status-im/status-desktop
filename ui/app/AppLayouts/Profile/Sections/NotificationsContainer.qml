@@ -382,6 +382,10 @@ ScrollView {
 
                 StatusSwitch {
                     Layout.alignment: Qt.AlignRight
+                    checked: appSettings.allowNotificationsFromNonContacts
+                    onCheckedChanged: {
+                        appSettings.allowNotificationsFromNonContacts = checked
+                    }
                 }
             }
 
