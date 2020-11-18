@@ -79,7 +79,7 @@ Rectangle {
         return msg
     }
 
-    function onEnter(event){
+    function onKeyPress(event){
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
             if (emojiSuggestions.visible) {
                 emojiSuggestions.addEmoji();
@@ -111,6 +111,9 @@ Rectangle {
             suggestionsBox.listView.decrementCurrentIndex()
             return emojiSuggestions.listView.decrementCurrentIndex()
         }
+        if (event.key === Qt.Key_Escape) {
+            suggestionsBox.hide()
+        }
 
         isColonPressed = (event.key === Qt.Key_Colon) && (event.modifiers & Qt.ShiftModifier);
     }
@@ -124,9 +127,11 @@ Rectangle {
             interrogateMessage();
         }
 
-        emojiEvent = emojiHandler(event);
-        if (!emojiEvent) {
-            emojiSuggestions.close()
+        if (event.key !== Qt.Key_Escape) {
+            emojiEvent = emojiHandler(event);
+            if (!emojiEvent) {
+                emojiSuggestions.close()
+            }
         }
     }
 
@@ -579,7 +584,7 @@ Rectangle {
                 color: Style.current.textColor
                 topPadding: Style.current.smallPadding
                 bottomPadding: 12
-                Keys.onPressed: onEnter(event)
+                Keys.onPressed: onKeyPress(event)
                 Keys.onReleased: onRelease(event) // gives much more up to date cursorPosition
                 leftPadding: 0
                 background: Rectangle {
