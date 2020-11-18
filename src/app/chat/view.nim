@@ -330,7 +330,7 @@ QtObject:
   proc messagePushed*(self: ChatsView) {.signal.}
   proc newMessagePushed*(self: ChatsView) {.signal.}
 
-  proc messageNotificationPushed*(self: ChatsView, chatId: string, text: string, messageType: string, chatType: int, timestamp: string, identicon: string, username: string, hasMention: bool) {.signal.}
+  proc messageNotificationPushed*(self: ChatsView, chatId: string, text: string, messageType: string, chatType: int, timestamp: string, identicon: string, username: string, hasMention: bool, isAddedContact: bool) {.signal.}
 
   proc messagesCleared*(self: ChatsView) {.signal.}
 
@@ -347,8 +347,18 @@ QtObject:
       if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
         if msg.chatId != self.activeChannel.id:
           let channel = self.chats.getChannelById(msg.chatId)
+          let isAddedContact = channel.chatType.isOneToOne and self.status.contacts.isAdded(channel.id)
           if not channel.muted:
-            self.messageNotificationPushed(msg.chatId, escape_html(msg.text), msg.messageType, channel.chatType.int, msg.timestamp, msg.identicon, msg.alias, msg.hasMention)
+            self.messageNotificationPushed(
+              msg.chatId,
+              escape_html(msg.text),
+              msg.messageType,
+              channel.chatType.int,
+              msg.timestamp,
+              msg.identicon,
+              msg.alias,
+              msg.hasMention,
+              isAddedContact)
         else:
           discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
           self.newMessagePushed()
