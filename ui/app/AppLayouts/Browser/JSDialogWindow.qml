@@ -8,6 +8,9 @@ import "../../../imports"
 ModalPopup {
     id: root
     property QtObject request
+    height: 286
+
+    closePolicy: Popup.NoAutoClose
 
     onClosed: {
         request.dialogReject();
@@ -15,51 +18,20 @@ ModalPopup {
     }
 
     Component.onCompleted: {
-        switch (request.type) {
-            case JavaScriptDialogRequest.DialogTypeAlert:
-                cancelButton.visible = false;
-                title.text = qsTr("Alert");
-                message.text = request.message;
-                prompt.text = "";
-                prompt.visible = false;
-                break;
-            case JavaScriptDialogRequest.DialogTypeConfirm:
-                title.text = qsTr("Confirm");
-                message.text = request.message;
-                prompt.text = "";
-                prompt.visible = false;
-                break;
-            case JavaScriptDialogRequest.DialogTypePrompt:
-                title.text = qsTr("Prompt");
-                message.text = request.message;
-                prompt.text = request.defaultText;
-                prompt.visible = true;
-                break;
+        root.title = request.securityOrigin;
+        message.text = request.message;
+        if(request.type == JavaScriptDialogRequest.DialogTypeAlert){
+            cancelButton.visible = false;
+        }
+        if(request.type == JavaScriptDialogRequest.DialogTypePrompt){
+            prompt.text = request.defaultText;
+            prompt.visible = true;
+            svMessage.height = 75;
         }
     }
-
-    Rectangle {
-        id: rectangle
-        height: 30
-        anchors.rightMargin: 0
-        anchors.leftMargin: 0
-        anchors.right: parent.right
-        anchors.left: parent.left
-
-        Text {
-            id: title
-            x: 54
-            y: 5
-            color: "#ffffff"
-            text: qsTr("Title")
-            font.pointSize: 12
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-        }
-    }
-
 
     ScrollView {
+        id: svMessage
         width: parent.width
         height: 100
         TextArea {
@@ -70,34 +42,43 @@ ModalPopup {
         }
     }
 
-    TextField {
+    Input {
         id: prompt
-        width: 300
-        height: 22
+        text: ""
+        visible: false
         Layout.fillWidth: true
-        font.pointSize: 12
+        anchors.top: svMessage.bottom
     }
 
-    Button {
-        id: okButton
-        width: 90
-        height: 30
-        text: qsTr("OK")
-        onClicked: {
-            request.dialogAccept(prompt.text);
-            close();
+    footer: Item {
+        anchors.top: parent.bottom
+        anchors.right: parent.right
+        anchors.bottom: root.bottom
+        anchors.left: parent.left
+
+        StyledButton {
+            id: okButton
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.smallPadding
+            label: qsTr("Ok")
+            anchors.bottom: parent.bottom
+            onClicked: {
+                request.dialogAccept(prompt.text);
+                close();
+            }
         }
-    }
 
-    Button {
-        id: cancelButton
-        width: 90
-        height: 30
-        anchors.top: okButton.bottom
-        text: qsTr("Cancel")
-        onClicked: {
-            request.dialogReject();
-            close();
+        StyledButton {
+            id: cancelButton
+            anchors.right: okButton.left
+            anchors.rightMargin: Style.current.smallPadding
+            label: qsTr("Cancel")
+            btnColor: Style.current.transparent
+            anchors.bottom: parent.bottom
+            onClicked: {
+                request.dialogReject();
+                close();
+            }
         }
     }
 }
