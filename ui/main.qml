@@ -22,8 +22,10 @@ ApplicationWindow {
     Universal.theme: Universal.System
 
     id: applicationWindow
-    minimumWidth: 1232
-    minimumHeight: 770
+    minimumWidth: 800
+    minimumHeight: 600
+    width: 1232
+    height: 770
     color: Style.current.background
     title: {
         // Set application settings
