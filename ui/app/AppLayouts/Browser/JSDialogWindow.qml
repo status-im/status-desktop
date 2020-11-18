@@ -20,10 +20,10 @@ ModalPopup {
     Component.onCompleted: {
         root.title = request.securityOrigin;
         message.text = request.message;
-        if(request.type == JavaScriptDialogRequest.DialogTypeAlert){
+        if(request.type === JavaScriptDialogRequest.DialogTypeAlert){
             cancelButton.visible = false;
         }
-        if(request.type == JavaScriptDialogRequest.DialogTypePrompt){
+        if(request.type === JavaScriptDialogRequest.DialogTypePrompt){
             prompt.text = request.defaultText;
             prompt.visible = true;
             svMessage.height = 75;
@@ -59,7 +59,6 @@ ModalPopup {
         StyledButton {
             id: okButton
             anchors.right: parent.right
-            anchors.rightMargin: Style.current.smallPadding
             label: qsTr("Ok")
             anchors.bottom: parent.bottom
             onClicked: {
