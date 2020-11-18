@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import "../../../../../shared"
 import "../../../../../imports"
+import QtGraphicalEffects 1.0
 
 Item {
     property bool longChatText: true
@@ -12,7 +13,8 @@ Item {
     id: root
     visible: contentType == Constants.messageType || isEmoji
     z: 51
-    height: visible ? (showMoreLoader.active ? childrenRect.height : chatText.height) : 0
+
+    height: visible ? (showMoreLoader.active ? childrenRect.height - 10 : chatText.height) : 0
 
     // This function is to avoid the binding loop warning
     function setWidths() {
@@ -39,6 +41,7 @@ Item {
 
     StyledTextEdit {
         id: chatText
+        visible: !root.veryLongChatText || root.readMore
         textFormat: Text.RichText
         wrapMode: Text.Wrap
         font.pixelSize: Style.current.primaryTextFontSize
@@ -104,24 +107,47 @@ Item {
         }
     }
 
+
+    Loader {
+        id: mask
+        anchors.fill: chatText
+        active: root.veryLongChatText
+        visible: false
+        sourceComponent: LinearGradient {
+            start: Qt.point(0, 0)
+            end: Qt.point(0, chatText.height)
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "white" }
+                GradientStop { position: 0.85; color: "white" }
+                GradientStop { position: 1; color: "transparent" }
+            }
+        }
+    }
+
+    Loader {
+        id: opMask
+        active: root.veryLongChatText && !root.readMore
+        anchors.fill: chatText
+        sourceComponent: OpacityMask {
+            source: chatText
+            maskSource: mask
+        }
+    }
+
     Loader {
         id: showMoreLoader
         active: root.veryLongChatText
         anchors.top: chatText.bottom
-        anchors.topMargin: Style.current.smallPadding
-        anchors.left: chatText.horizontalAlignment === Text.AlignLeft ? chatText.left : undefined
-        anchors.right: chatText.horizontalAlignment === Text.AlignLeft ? undefined : chatText.right
-
+        anchors.topMargin: - Style.current.padding
+        anchors.horizontalCenter: parent.horizontalCenter
         sourceComponent: Component {
-            StyledText {
-                text: root.readMore ?
-                          qsTr("Read less") :
-                          qsTr("Read more")
-                color: chatText.color
-                font.pixelSize: 12
-                font.underline: true
+            SVGImage {
+                id: emojiImage
+                width: 256
+                height: 44
+                fillMode: Image.PreserveAspectFit
+                source: "../../../../img/read-" + (root.readMore ? "less" : "more") + ".svg"
                 z: 100
-
                 MouseArea {
                     z: 101
                     anchors.fill: parent
