@@ -189,9 +189,9 @@ QtObject:
     result = plain_text(input)
 
   proc sendMessage*(self: ChatsView, message: string, replyTo: string, contentType: int = ContentType.Message.int) {.slot.} =
-    let aliasPattern = re(r"(@[A-z][a-z]* [A-z][a-z]* [A-z][a-z]*)", flags = {reStudy, reIgnoreCase})
-    let ensPattern = re(r"(@\w*(?=\.stateofus\.eth))", flags = {reStudy, reIgnoreCase})
-    let namePattern = re(r"(@\w*)", flags = {reStudy, reIgnoreCase})
+    let aliasPattern = re(r"(@[A-z][a-z]+ [A-z][a-z]* [A-z][a-z]*)", flags = {reStudy, reIgnoreCase})
+    let ensPattern = re(r"(@\w+(?=(\.stateofus)?\.eth))", flags = {reStudy, reIgnoreCase})
+    let namePattern = re(r"(@\w+)", flags = {reStudy, reIgnoreCase})
 
     let contacts = self.status.contacts.getContacts()
 
