@@ -35,13 +35,24 @@ Rectangle {
     property int cursorPosition
     signal itemSelected(var item, int lastAtPosition, int lastCursorPosition)
     property alias listView: listView
+    property bool shouldHide: false
+
+    onCursorPositionChanged: {
+        if (shouldHide) {
+            shouldHide = false
+        }
+    }
+
+    function hide() {
+        shouldHide = true
+    }
 
     function selectCurrentItem() {
         container.itemSelected(listView.model.get(listView.currentIndex), filterItem.lastAtPosition, filterItem.cursorPosition)
     }
 
     z: parent.z + 100
-    visible: filter.length > 0 && suggestionsModel.count > 0
+    visible: !shouldHide && filter.length > 0 && suggestionsModel.count > 0
     height: Math.min(400, listView.contentHeight + Style.current.smallPadding)
 
     opacity: visible ? 1.0 : 0
@@ -49,7 +60,7 @@ Rectangle {
         NumberAnimation { }
     }
 
-    color:Style.current.background
+    color: Style.current.background
     radius: Style.current.radius
     border.width: 0
     layer.enabled: true
