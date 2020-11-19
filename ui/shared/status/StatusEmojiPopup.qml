@@ -10,7 +10,7 @@ import "./emojiList.js" as EmojiJSON
 Popup {
     property var emojiSelected: function () {}
     property var categories: []
-    property string searchString: searchBox.text
+    property alias searchString: searchBox.text
 
     id: popup
     modal: false
@@ -89,17 +89,21 @@ Popup {
         categories = newCategories
     }
     Connections {
+        id: connectionSettings
         target: applicationWindow
         onSettingsLoaded: {
+            connectionSettings.enabled = false
             // Add recent
             if (!appSettings.recentEmojis || !appSettings.recentEmojis.length) {
                 return
             }
+            categories[0] = appSettings.recentEmojis
             emojiSectionsRepeater.itemAt(0).allEmojis = appSettings.recentEmojis
         }
     }
 
     onOpened: {
+        searchBox.text = ""
         searchBox.forceActiveFocus(Qt.MouseFocusReason)
     }
 
