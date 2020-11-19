@@ -68,12 +68,9 @@ ApplicationWindow {
     }
 
     signal settingsLoaded()
+
     Settings {
-        id: appSettings
-        fileName: profileModel.profileSettingsFile
-        property var chatSplitView
-        property var walletSplitView
-        property var profileSplitView
+        id: defaultAppSettings
         property bool walletEnabled: false
         property bool browserEnabled: false
         property bool displayChatImages: false
@@ -81,7 +78,7 @@ ApplicationWindow {
         property string locale: "en"
         property var recentEmojis: []
         property real volume: 0.2
-        property int notificationSetting: 0
+        property int notificationSetting: Constants.notifyAllMessages
         property bool notificationSoundsEnabled: true
         property int notificationMessagePreviewSetting: Constants.notificationPreviewNameAndMessage
         property bool allowNotificationsFromNonContacts: false
@@ -99,6 +96,39 @@ ApplicationWindow {
         property bool devToolsEnabled: false
         property bool pdfViewerEnabled: true
         property bool compatibilityMode: true
+    }
+
+    Settings {
+        id: appSettings
+        fileName: profileModel.profileSettingsFile
+        property var chatSplitView
+        property var walletSplitView
+        property var profileSplitView
+        property bool walletEnabled: defaultAppSettings.walletEnabled
+        property bool browserEnabled: defaultAppSettings.browserEnabled
+        property bool displayChatImages: defaultAppSettings.displayChatImages
+        property bool compactMode: defaultAppSettings.compactMode
+        property string locale: defaultAppSettings.locale
+        property var recentEmojis: defaultAppSettings.recentEmojis
+        property real volume: defaultAppSettings.volume
+        property int notificationSetting: defaultAppSettings.notificationSetting
+        property bool notificationSoundsEnabled: defaultAppSettings.notificationSoundsEnabled
+        property int notificationMessagePreviewSetting: defaultAppSettings.notificationMessagePreviewSetting
+        property bool allowNotificationsFromNonContacts: defaultAppSettings.allowNotificationsFromNonContacts
+        property var whitelistedUnfurlingSites: defaultAppSettings.whitelistedUnfurlingSites
+        property bool neverAskAboutUnfurlingAgain: defaultAppSettings.neverAskAboutUnfurlingAgain
+
+        // Browser settings
+        property bool autoLoadImages: defaultAppSettings.autoLoadImages
+        property bool javaScriptEnabled: defaultAppSettings.javaScriptEnabled
+        property bool errorPageEnabled: defaultAppSettings.errorPageEnabled
+        property bool pluginsEnabled: defaultAppSettings.pluginsEnabled
+        property bool autoLoadIconsForPage: defaultAppSettings.autoLoadIconsForPage
+        property bool touchIconsEnabled: defaultAppSettings.touchIconsEnabled
+        property bool webRTCPublicInterfacesOnly: defaultAppSettings.webRTCPublicInterfacesOnly
+        property bool devToolsEnabled: defaultAppSettings.devToolsEnabled
+        property bool pdfViewerEnabled: defaultAppSettings.pdfViewerEnabled
+        property bool compatibilityMode: defaultAppSettings.compatibilityMode
     }
 
     signal whitelistChanged()
