@@ -1,5 +1,6 @@
 import NimQml, sequtils, strutils, sugar, os, json
 import views/[mailservers_list, ens_manager, contact_list, fleets, profile_info, device_list, dapp_list]
+import ../chat/views/channels_list
 import ../../status/profile/[mailserver, profile, devices]
 import ../../status/profile as status_profile
 import ../../status/contacts as status_contacts
@@ -21,6 +22,8 @@ QtObject:
     contactList*: ContactList
     addedContacts*: ContactList
     blockedContacts*: ContactList
+    mutedChats*: ChannelsList
+    mutedContacts*: ChannelsList
     deviceList*: DeviceList
     dappList*: DappList
     fleets*: Fleets
@@ -39,6 +42,8 @@ QtObject:
     if not self.contactList.isNil: self.contactList.delete
     if not self.addedContacts.isNil: self.addedContacts.delete
     if not self.blockedContacts.isNil: self.blockedContacts.delete
+    if not self.mutedChats.isNil: self.mutedChats.delete
+    if not self.mutedContacts.isNil: self.mutedContacts.delete
     if not self.deviceList.isNil: self.deviceList.delete
     if not self.ens.isNil: self.ens.delete
     if not self.profile.isNil: self.profile.delete
@@ -54,6 +59,8 @@ QtObject:
     result.contactList = newContactList()
     result.addedContacts = newContactList()
     result.blockedContacts = newContactList()
+    result.mutedChats = newChannelsList(status)
+    result.mutedContacts = newChannelsList(status)
     result.deviceList = newDeviceList()
     result.dappList = newDappList(status)
     result.ens = newEnsManager(status)
@@ -338,4 +345,53 @@ QtObject:
 
   proc getLinkPreviewWhitelist*(self: ProfileView): string {.slot.} =
     result = $(self.status.profile.getLinkPreviewWhitelist())
+
+  proc getMutedChatsList(self: ProfileView): QVariant {.slot.} =
+    newQVariant(self.mutedChats)
+
+  proc getMutedContactsList(self: ProfileView): QVariant {.slot.} =
+    newQVariant(self.mutedContacts)
+
+  proc mutedChatsListChanged*(self: ProfileView) {.signal.}
+
+  proc mutedContactsListChanged*(self: ProfileView) {.signal.}
+
+  QtProperty[QVariant] mutedChats:
+    read = getMutedChatsList
+    notify = mutedChatsListChanged
+
+  QtProperty[QVariant] mutedContacts:
+    read = getMutedContactsList
+    notify = mutedContactsListChanged
+
+  proc unmuteChannel*(self: ProfileView, chatId: string) {.slot.} =
+    if (self.mutedChats.chats.len == 0 and self.mutedContacts.chats.len == 0): return
+
+    var selectedChannel = self.mutedChats.getChannelById(chatId)
+    if (selectedChannel != nil):
+      discard self.mutedChats.removeChatItemFromList(chatId)
+    else:
+      selectedChannel = self.mutedContacts.getChannelById(chatId)
+      if (selectedChannel == nil): return
+      discard self.mutedContacts.removeChatItemFromList(chatId)
+
+    selectedChannel.muted = false
+    self.status.chat.unmuteChat(selectedChannel)
+    self.mutedChatsListChanged()
+    self.mutedContactsListChanged()
+
+  proc updateChats*(self: ProfileView, chats: seq[Chat]) =
+    for chat in chats:
+      if not chat.muted:
+        if chat.chatType.isOneToOne:
+          discard self.mutedContacts.removeChatItemFromList(chat.id)
+        else:
+          discard self.mutedChats.removeChatItemFromList(chat.id)
+      else:
+        if chat.chatType.isOneToOne:
+          discard self.mutedContacts.addChatItemToList(chat)
+        else:
+          discard self.mutedChats.addChatItemToList(chat)
+    self.mutedChatsListChanged()
+    self.mutedContactsListChanged()
 

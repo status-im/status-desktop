@@ -14,6 +14,7 @@ import ../../status/wallet
 import ../../eventemitter
 import view
 import views/ens_manager
+import ../chat/views/channels_list
 import chronicles
 
 type ProfileController* = ref object
@@ -54,6 +55,30 @@ proc init*(self: ProfileController, account: Account) =
   let contacts = self.status.contacts.getContacts()
   self.status.chat.updateContacts(contacts)
   self.view.setContactList(contacts)
+
+  self.status.events.on("channelLoaded") do(e: Args):
+    var channel = ChannelArgs(e)
+    if channel.chat.muted:
+      if channel.chat.chatType.isOneToOne:
+        discard self.view.mutedContacts.addChatItemToList(channel.chat)
+        return
+      discard self.view.mutedChats.addChatItemToList(channel.chat)
+
+  self.status.events.on("channelJoined") do(e: Args):
+    var channel = ChannelArgs(e)
+    if channel.chat.muted:
+      if channel.chat.chatType.isOneToOne:
+        discard self.view.mutedContacts.addChatItemToList(channel.chat)
+        return
+      discard self.view.mutedChats.addChatItemToList(channel.chat)
+
+  self.status.events.on("chatsLoaded") do(e:Args):
+    self.view.mutedChatsListChanged()
+    self.view.mutedContactsListChanged()
+
+  self.status.events.on("chatUpdate") do(e: Args):
+    var evArgs = ChatUpdateArgs(e)
+    self.view.updateChats(evArgs.chats)
 
   self.status.events.on("contactAdded") do(e: Args):
     let contacts = self.status.contacts.getContacts()
