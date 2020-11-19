@@ -65,9 +65,11 @@ ScrollView {
                     Layout.alignment: Qt.AlignRight
                     ButtonGroup.group: notificationSetting
                     rightPadding: 0
-                    checked: appSettings.notificationSetting === 0
+                    checked: appSettings.notificationSetting === Constants.notifyAllMessages
                     onCheckedChanged: {
-                        appSettings.notificationSetting = 0
+                        if (checked) {
+                            appSettings.notificationSetting = Constants.notifyAllMessages
+                        }
                     }
                 }
             }
@@ -83,9 +85,11 @@ ScrollView {
                     Layout.alignment: Qt.AlignRight
                     ButtonGroup.group: notificationSetting
                     rightPadding: 0
-                    checked: appSettings.notificationSetting === 1
+                    checked: appSettings.notificationSetting === Constants.notifyJustMentions
                     onCheckedChanged: {
-                        appSettings.notificationSetting = 1
+                        if (checked) {
+                            appSettings.notificationSetting = Constants.notifyJustMentions
+                        }
                     }
                 }
             }
@@ -101,9 +105,11 @@ ScrollView {
                     Layout.alignment: Qt.AlignRight
                     ButtonGroup.group: notificationSetting
                     rightPadding: 0
-                    checked: appSettings.notificationSetting === 2
+                    checked: appSettings.notificationSetting === Constants.notifyNone
                     onCheckedChanged: {
-                        appSettings.notificationSetting = 2
+                        if (checked) {
+                            appSettings.notificationSetting = Constants.notifyNone
+                        }
                     }
                 }
             }
@@ -149,7 +155,7 @@ ScrollView {
                     Layout.alignment: Qt.AlignRight
                     checked: appSettings.notificationSoundsEnabled
                     onCheckedChanged: {
-                        appSettings.notificationSoundsEnabled = this.checked
+                        appSettings.notificationSoundsEnabled = checked
                     }
                 }
             }
@@ -221,7 +227,9 @@ ScrollView {
                         ButtonGroup.group: messageSetting
                         checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous
                         onCheckedChanged: {
-                            appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewAnonymous
+                            if (checked) {
+                                appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewAnonymous
+                            }
                         }
                         anchors.top: parent.top
                         anchors.topMargin: Style.current.halfPadding
@@ -253,7 +261,9 @@ ScrollView {
                         ButtonGroup.group: messageSetting
                         checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameOnly
                         onCheckedChanged: {
-                            appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameOnly
+                            if (checked) {
+                                appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameOnly
+                            }
                         }
                         anchors.top: parent.top
                         anchors.topMargin: Style.current.halfPadding
@@ -415,10 +425,11 @@ ScrollView {
                     font.pixelSize: 15
                     color: Style.current.red
                 }
-                MouseArea {
-                    cursorShape: Qt.PointingHandCursor
-                    anchors.fill: parent
-                    onPressed: mouse.accepted = false
+                onClicked: {
+                    appSettings.notificationSetting = defaultAppSettings.notificationSetting
+                    appSettings.notificationSoundsEnabled = defaultAppSettings.notificationSoundsEnabled
+                    appSettings.notificationMessagePreviewSetting = defaultAppSettings.notificationMessagePreviewSetting
+                    appSettings.allowNotificationsFromNonContacts = defaultAppSettings.allowNotificationsFromNonContacts
                 }
             }
 
