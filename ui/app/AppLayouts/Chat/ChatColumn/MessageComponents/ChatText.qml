@@ -146,8 +146,9 @@ Item {
                 width: 256
                 height: 44
                 fillMode: Image.PreserveAspectFit
-                source: "../../../../img/read-" + (root.readMore ? "less" : "more") + ".svg"
+                source: "../../../../img/read-more.svg"
                 z: 100
+                rotation: root.readMore ? 180 : 0
                 MouseArea {
                     z: 101
                     anchors.fill: parent
