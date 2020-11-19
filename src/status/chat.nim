@@ -302,11 +302,13 @@ proc makeAdmin*(self: ChatModel, chatId: string, pubKey: string) =
 proc resendMessage*(self: ChatModel, messageId: string) =
   discard status_chat.reSendChatMessage(messageId)
 
-proc muteChat*(self: ChatModel, chatId: string) =
-  discard status_chat.muteChat(chatId)
+proc muteChat*(self: ChatModel, chat: Chat) =
+  discard status_chat.muteChat(chat.id)
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: @[], chats: @[chat], contacts: @[]))
 
-proc unmuteChat*(self: ChatModel, chatId: string) =
-  discard status_chat.unmuteChat(chatId)
+proc unmuteChat*(self: ChatModel, chat: Chat) =
+  discard status_chat.unmuteChat(chat.id)
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: @[], chats: @[chat], contacts: @[]))
 
 proc processUpdateForTransaction*(self: ChatModel, messageId: string, response: string) =
   var (chats, messages) = self.processMessageUpdateAfterSend(response)

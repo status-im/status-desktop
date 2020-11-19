@@ -13,13 +13,16 @@ ScrollView {
     contentHeight: notificationsContainer.height
     clip: true
 
-    Rectangle {
+    Item {
         id: notificationsContainer
         anchors.right: parent.right
         anchors.rightMargin: contentMargin
         anchors.left: parent.left
         anchors.leftMargin: contentMargin
         height: this.childrenRect.height + 100
+
+        property Component mutedChatsModalComponent: MutedChatsModal {}
+
 
         ButtonGroup {
             id: notificationSetting
@@ -358,7 +361,14 @@ ScrollView {
             StatusSectionMenuItem {
                 //% "Muted users"
                 label: qsTrId("muted-users")
-                info: "2"
+                info: profileModel.mutedContacts.rowCount() > 0 ? profileModel.mutedContacts.rowCount() : qsTr("None")
+                onClicked: {
+                    const mutedChatsModal = notificationsContainer.mutedChatsModalComponent.createObject(notificationsContainer, {
+                        showMutedContacts: true
+                    })
+                    mutedChatsModal.title = qsTr("Muted contacts")
+                    mutedChatsModal.open()
+                }
             }
 
             StatusSectionMenuItem {
@@ -366,8 +376,14 @@ ScrollView {
                 label: qsTrId("muted-chats")
                 //% "You can limit what gets shown in notifications"
                 description: qsTrId("you-can-limit-what-gets-shown-in-notifications")
-                //% "None"
-                info: qsTrId("none")
+                info: profileModel.mutedChats.rowCount() > 0 ? profileModel.mutedChats.rowCount() : qsTr("None")
+                onClicked: {
+                    const mutedChatsModal = notificationsContainer.mutedChatsModalComponent.createObject(notificationsContainer, {
+                        showMutedContacts: false
+                    })
+                    mutedChatsModal.title = qsTr("Muted chats")
+                    mutedChatsModal.open()
+                }
             }
         }
 

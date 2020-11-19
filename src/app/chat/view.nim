@@ -621,16 +621,16 @@ QtObject:
     if (self.chats.chats.len == 0): return
     let selectedChannel = self.chats.getChannel(channelIndex)
     if (selectedChannel == nil): return
-    self.status.chat.muteChat(selectedChannel.id)
     selectedChannel.muted = true
+    self.status.chat.muteChat(selectedChannel)
     self.chats.updateChat(selectedChannel, false)
 
   proc unmuteChannel*(self: ChatsView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
     let selectedChannel = self.chats.getChannel(channelIndex)
     if (selectedChannel == nil): return
-    self.status.chat.unmuteChat(selectedChannel.id)
     selectedChannel.muted = false
+    self.status.chat.unmuteChat(selectedChannel)
     self.chats.updateChat(selectedChannel, false)
 
   proc channelIsMuted*(self: ChatsView, channelIndex: int): bool {.slot.} =

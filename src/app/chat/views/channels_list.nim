@@ -95,6 +95,7 @@ QtObject:
 
   proc removeChatItemFromList*(self: ChannelsList, channel: string): int =
     let idx = self.chats.findIndexById(channel)
+    if idx == -1: return
     self.beginRemoveRows(newQModelIndex(), idx, idx)
     self.chats.delete(idx)
     self.endRemoveRows()
