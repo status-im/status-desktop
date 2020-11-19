@@ -43,10 +43,13 @@ Item {
 
     onSearchStringLowercaseChanged: {
         if (emojiSection.searchStringLowercase === "") {
-            this.emojis = modelData
+            this.emojis = allEmojis
             return
         }
         this.emojis = modelData.filter(function (emoji) {
+            if (emoji.empty) {
+                return false
+            }
             return emoji.name.includes(emojiSection.searchStringLowercase) ||
                     emoji.shortname.includes(emojiSection.searchStringLowercase) ||
                     emoji.aliases.some(a => a.includes(emojiSection.searchStringLowercase))
