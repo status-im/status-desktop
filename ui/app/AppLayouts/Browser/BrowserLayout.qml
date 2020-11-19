@@ -473,6 +473,7 @@ Rectangle {
                 settings.touchIconsEnabled: appSettings.touchIconsEnabled
                 settings.webRTCPublicInterfacesOnly: appSettings.webRTCPublicInterfacesOnly
                 settings.pdfViewerEnabled: appSettings.pdfViewerEnabled
+                settings.focusOnNavigationEnabled: true
 
                 onCertificateError: function(error) {
                     error.defer();
@@ -655,6 +656,7 @@ Rectangle {
             tabs.currentIndex = tabs.count - 1;
             request.openIn(tab.item);
         }
+        z: 100
     }
 
     function onDownloadRequested(download) {
