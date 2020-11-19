@@ -134,8 +134,10 @@ Rectangle {
         const text = chatsModel.plainText(Emoji.deparse(messageInputField.text));
         var words = text.split(' ');
 
+        let madeChanges = false
+        let transform = true;
         for (var i = 0; i < words.length; i++) {
-            var transform = true;
+            transform = true;
             if (words[i].charAt(0) === ':') {
                 for (var j = 0; j < words[i].length; j++) {
                     if (Utils.isSpace(words[i].charAt(j)) === true || Utils.isPunct(words[i].charAt(j)) === true) {
@@ -144,14 +146,17 @@ Rectangle {
                 }
 
                 if (transform) {
+                    madeChanges = true
                     const codePoint = Emoji.getEmojiUnicode(words[i]);
                     words[i] = words[i].replace(words[i], (codePoint !== undefined) ? Emoji.fromCodePoint(codePoint) : words[i]);
                 }
             }
         }
 
-        messageInputField.remove(0, messageInputField.length);
-        insertInTextInput(0, Emoji.parse(words.join('&nbsp;'), '26x26'));
+        if (madeChanges) {
+            messageInputField.remove(0, messageInputField.length);
+            insertInTextInput(0, Emoji.parse(words.join('&nbsp;'), '26x26'));
+        }
     }
 
     // since emoji length is not 1 we need to match that position that TextArea returns
