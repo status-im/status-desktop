@@ -12,6 +12,8 @@ import "../Wallet"
 
 StackLayout {
     id: chatColumnLayout
+    property alias chatMessages: chatMessages
+
     property int chatGroupsListViewCount: 0
     
     property bool isReply: false

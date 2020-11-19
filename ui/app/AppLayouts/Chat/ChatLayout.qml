@@ -10,6 +10,8 @@ SplitView {
     id: chatView
     handle: SplitViewHandle {}
 
+    property alias chatColumn: chatColumn
+
     property var onActivated: function () {
         chatColumn.onActivated()
     }
