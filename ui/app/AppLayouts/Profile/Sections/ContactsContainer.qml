@@ -128,6 +128,10 @@ Item {
             profileModel.lookupContact(value)
         })
 
+        onOpened: {
+            addContactSearchInput.text = ""
+        }
+
         Input {
             id: addContactSearchInput
             //% "Enter ENS username or chat key"
