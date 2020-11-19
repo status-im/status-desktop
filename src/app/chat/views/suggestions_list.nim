@@ -8,6 +8,7 @@ type
     Address = UserRole + 3,
     EnsName = UserRole + 4,
     EnsVerified = UserRole + 5
+    LocalNickname = UserRole + 6
 
 QtObject:
   type SuggestionsList* = ref object of QAbstractListModel
@@ -25,7 +26,7 @@ QtObject:
     result.setup
 
   proc rowData(self: SuggestionsList, index: int, column: string): string {.slot.} =
-    if (index >= self.suggestions.len - 1):
+    if (index >= self.suggestions.len):
       return
     let suggestion = self.suggestions[index]
     case column:
@@ -33,6 +34,7 @@ QtObject:
       of "ensName": result = suggestion.ensName
       of "address": result = suggestion.address
       of "identicon": result = suggestion.identicon
+      of "localNickname": result = suggestion.localNickname
 
   method rowCount(self: SuggestionsList, index: QModelIndex = nil): int =
     return self.suggestions.len
@@ -50,12 +52,14 @@ QtObject:
     of SuggestionRoles.Address: result = newQVariant(suggestion.address)
     of SuggestionRoles.EnsName: result = newQVariant(suggestion.ensName)
     of SuggestionRoles.EnsVerified: result = newQVariant(suggestion.ensVerified)
+    of SuggestionRoles.LocalNickname: result = newQVariant(suggestion.localNickname)
 
   method roleNames(self: SuggestionsList): Table[int, string] =
     { SuggestionRoles.Alias.int:"alias",
     SuggestionRoles.Identicon.int:"identicon",
     SuggestionRoles.Address.int:"address",
     SuggestionRoles.EnsName.int:"ensName",
+    SuggestionRoles.LocalNickname.int:"localNickname",
     SuggestionRoles.EnsVerified.int:"ensVerified" }.toTable
 
   proc addSuggestionToList*(self: SuggestionsList, profile: Profile) =

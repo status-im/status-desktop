@@ -164,14 +164,16 @@ StackLayout {
             onActiveChannelChanged: {
                 chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
                 suggestions.clear()
-                for (let i = 0; i < chatsModel.suggestionList.rowCount(); i++) {
-                  suggestions.append({
-                      alias: chatsModel.suggestionList.rowData(i, "alias"),
-                      ensName: chatsModel.suggestionList.rowData(i, "ensName"),
-                      address: chatsModel.suggestionList.rowData(i, "address"),
-                      identicon: chatsModel.suggestionList.rowData(i, "identicon"),
-                      ensVerified: chatsModel.suggestionList.rowData(i, "ensVerified")
-                  });
+                const len = chatsModel.suggestionList.rowCount()
+                for (let i = 0; i < len; i++) {
+                    suggestions.append({
+                                           alias: chatsModel.suggestionList.rowData(i, "alias"),
+                                           ensName: chatsModel.suggestionList.rowData(i, "ensName"),
+                                           address: chatsModel.suggestionList.rowData(i, "address"),
+                                           identicon: chatsModel.suggestionList.rowData(i, "identicon"),
+                                           ensVerified: chatsModel.suggestionList.rowData(i, "ensVerified"),
+                                           localNickname: chatsModel.suggestionList.rowData(i, "localNickname")
+                                       });
                 }
             }
         }

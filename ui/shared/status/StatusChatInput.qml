@@ -368,7 +368,7 @@ Rectangle {
         width: messageInput.width
         filter: messageInputField.text
         cursorPosition: messageInputField.cursorPosition
-        property: "ensName, alias"
+        property: "ensName, localNickname, alias"
         onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
             let hasEmoji = Emoji.hasEmoji(messageInputField.text)
             let currentText = hasEmoji ?
