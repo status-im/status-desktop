@@ -11,6 +11,8 @@ import "./MessageComponents"
 
 ScrollView {
     id: root
+
+    property alias chatLogView: chatLogView
     
     property var messageList: MessagesData {}
     property bool loadingMessages: false

@@ -185,6 +185,10 @@ RowLayout {
             if(this.children[currentIndex] === browserLayoutContainer && browserLayoutContainer.active == false){
                 browserLayoutContainer.active = true;
             }
+
+            if(this.children[currentIndex] === chatLayoutContainer){
+                chatLayoutContainer.chatColumn.chatMessages.chatLogView.scrollToBottom(true);
+            }
         }
 
         ChatLayout {
