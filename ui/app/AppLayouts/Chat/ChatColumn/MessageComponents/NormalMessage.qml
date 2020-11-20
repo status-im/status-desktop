@@ -37,7 +37,7 @@ Item {
     Rectangle {
         readonly property int defaultMessageWidth: 400
         readonly property int defaultMaxMessageChars: 54
-        readonly property int messageWidth: Math.max(defaultMessageWidth, parent.width / 2)
+        readonly property int messageWidth: Math.max(defaultMessageWidth, parent.width / 1.4)
         readonly property int maxMessageChars: (defaultMaxMessageChars * messageWidth) / defaultMessageWidth
         property int chatVerticalPadding: isImage ? 4 : 6
         property int chatHorizontalPadding: isImage ? 0 : 12
