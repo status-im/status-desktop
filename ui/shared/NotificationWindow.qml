@@ -77,15 +77,15 @@ Item {
                 chatType: root.chatType
                 identicon: root.identicon
 
-                MouseArea {
-                    cursorShape: Qt.PointingHandCursor
-                    anchors.fill: parent
-                    onClicked: {
-                        timer.stop()
-                        notificationWindowSub.close()
-                        applicationWindow.raise()
-                        chatsModel.setActiveChannel(root.chatId)
-                    }
+            MouseArea {
+                cursorShape: Qt.PointingHandCursor
+                anchors.fill: parent
+                onClicked: {
+                    timer.stop()
+                    notificationWindowSub.close()
+                    applicationWindow.raise()
+                    chatsModel.setActiveChannel(chatId)
+                    applicationWindow.requestActivate()
                 }
             }
 
