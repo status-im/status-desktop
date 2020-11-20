@@ -571,7 +571,6 @@ Rectangle {
                     width: parent.width
                     height: parent.height
                     z: 54
-                    // TODO restyle this and only appears when clicking view all
                     sourceComponent: DownloadView {
                         id: downloadView
                     }
