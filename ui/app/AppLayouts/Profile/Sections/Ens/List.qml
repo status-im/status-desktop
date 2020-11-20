@@ -286,6 +286,7 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: chatBox.chatHorizontalPadding
                 width: parent.width
+                anchors.right: parent.right
             }
 
             RectangleCorner {}
