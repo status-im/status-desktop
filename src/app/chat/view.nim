@@ -674,9 +674,10 @@ QtObject:
 
       self.communityList.addCommunityItemToList(Community(
         description: description,
-        color: color,
+        # color: color,
         access: access,
         admin: true,
+        verified: true,
         joined: true
       ))
       self.communitiesChanged()

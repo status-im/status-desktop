@@ -8,12 +8,13 @@ import strutils
 type
   CommunityRoles {.pure.} = enum
     Id = UserRole + 1,
-    #Name = UserRole + 2
+    Name = UserRole + 2
     Description = UserRole + 3
-    Color = UserRole + 4
+    # Color = UserRole + 4
     Access = UserRole + 5
     Admin = UserRole + 6
     Joined = UserRole + 7
+    Verified = UserRole + 8
 
 QtObject:
   type
@@ -45,23 +46,25 @@ QtObject:
     let communityItem = self.communities[index.row]
     let communityItemRole = role.CommunityRoles
     case communityItemRole:
-      # of CommunityRoles.Name: result = newQVariant(communityItem.name)
+      of CommunityRoles.Name: result = newQVariant(communityItem.name)
       of CommunityRoles.Description: result = newQVariant(communityItem.description)
       of CommunityRoles.Id: result = newQVariant(communityItem.id)
-      of CommunityRoles.Color: result = newQVariant(communityItem.color)
+      # of CommunityRoles.Color: result = newQVariant(communityItem.color)
       of CommunityRoles.Access: result = newQVariant(communityItem.access.int)
       of CommunityRoles.Admin: result = newQVariant(communityItem.admin.bool)
       of CommunityRoles.Joined: result = newQVariant(communityItem.joined.bool)
+      of CommunityRoles.Verified: result = newQVariant(communityItem.verified.bool)
 
   method roleNames(self: CommunityList): Table[int, string] =
     {
       #CommunityRoles.Name.int:"name",
       CommunityRoles.Description.int:"description",
       CommunityRoles.Id.int: "id",
-      CommunityRoles.Color.int: "color",
-      CommunityRoles.Access.int: "Access",
-      CommunityRoles.Admin.int: "Admin",
-      CommunityRoles.Joined.int: "Joined"
+      # CommunityRoles.Color.int: "color",
+      CommunityRoles.Access.int: "access",
+      CommunityRoles.Admin.int: "admin",
+      CommunityRoles.Verified.int: "verified",
+      CommunityRoles.Joined.int: "joined"
     }.toTable
 
   proc setNewData*(self: CommunityList, communityList: seq[Community]) =

@@ -69,6 +69,12 @@ type Chat* = ref object
   hasMentions*: bool
   muted*: bool
 
+type CommunityChat* = ref object
+  id*: string
+  name*: string
+  description*: string
+  access*: int
+
 type CommunityAccessLevel* = enum
     unknown = 0
     public = 1
@@ -79,10 +85,13 @@ type Community* = object
   id*: string
   name*: string
   description*: string
-  color*: string
+  chats*: seq[CommunityChat]
+  # members: seq[] # TODO find what goes in there
+  # color*: string
   access*: int
   admin*: bool
   joined*: bool
+  verified*: bool
 
 proc `$`*(self: Chat): string =
   result = fmt"Chat(id:{self.id}, name:{self.name}, active:{self.isActive}, type:{self.chatType})"

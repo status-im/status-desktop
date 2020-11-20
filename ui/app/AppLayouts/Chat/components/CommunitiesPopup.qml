@@ -65,9 +65,21 @@ ModalPopup {
                 }
 
                 StyledText {
-                    text: description
+                    id: communityName
+                    text: name
                     anchors.left: communityImage.right
                     anchors.leftMargin: Style.current.padding
+                    font.pixelSize: 17
+                    font.weight: Font.Bold
+                }
+
+                StyledText {
+                    id: communityDesc
+                    text: description
+                    anchors.left: communityDesc.left
+                    anchors.top: communityDesc.bottom
+                    font.pixelSize: 15
+                    font.weight: Font.Thin
                 }
 
                 MouseArea {
