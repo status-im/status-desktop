@@ -58,7 +58,7 @@ Rectangle {
         anchors.right: closeBtn.left
         anchors.rightMargin: Style.current.padding
         onClicked: {
-            downloadView.visible = true
+            addNewDownloadTab()
         }
     }
 

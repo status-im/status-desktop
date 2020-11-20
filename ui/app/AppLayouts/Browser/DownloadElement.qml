@@ -8,7 +8,8 @@ import "../../../imports"
 
 Rectangle {
     property bool downloadComplete: {
-        return !!downloadModel.downloads && !!downloadModel.downloads[index] && downloadModel.downloads[index].receivedBytes >= downloadModel.downloads[index].totalBytes
+        // listView.count ensures a value is returned even when index is undefined
+        return listView.count > 0 && !!downloadModel.downloads && !!downloadModel.downloads[index] && downloadModel.downloads[index].receivedBytes >= downloadModel.downloads[index].totalBytes
     }
     property bool isCanceled: false
     property bool hovered: false

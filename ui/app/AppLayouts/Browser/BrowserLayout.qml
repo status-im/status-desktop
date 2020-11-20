@@ -289,9 +289,14 @@ Rectangle {
     Action {
         shortcut: "Ctrl+D"
         onTriggered: {
-            downloadView.visible = !downloadView.visible;
+            addNewDownloadTab()
         }
     }
+    function addNewDownloadTab() {
+        tabs.createDownloadTab(tabs.count !== 0 ? currentWebView.profile : defaultProfile);
+        tabs.currentIndex = tabs.count - 1;
+    }
+
     Action {
         id: focus
         shortcut: "Ctrl+L"
@@ -380,13 +385,11 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: tabs.tabHeight + tabs.anchors.topMargin
         z: 52
-        visible: !downloadView.visible
         addNewTab: browserWindow.addNewTab
     }
 
     QQC1.TabView {
         property int tabHeight: 40
-        visible: !downloadView.visible
         id: tabs
         function createEmptyTab(profile, createAsStartPage) {
             var tab = addTab("", tabComponent);
@@ -406,6 +409,14 @@ Rectangle {
 
             tab.item.profile = profile;
             return tab;
+        }
+
+        function createDownloadTab(profile) {
+            var tab = addTab("", tabComponent);
+            tab.active = true;
+            tab.title = qsTr("Downloads Page")
+            tab.item.profile = profile
+            tab.item.url = "status://downloads";
         }
 
         function indexOfView(view) {
@@ -556,6 +567,17 @@ Rectangle {
                 }
 
                 Loader {
+                    active: webEngineView.url.toString() === "status://downloads"
+                    width: parent.width
+                    height: parent.height
+                    z: 54
+                    // TODO restyle this and only appears when clicking view all
+                    sourceComponent: DownloadView {
+                        id: downloadView
+                    }
+                }
+
+                Loader {
                     active: !webEngineView.url.toString()
                     width: parent.width
                     height: parent.height
@@ -659,8 +681,9 @@ Rectangle {
 
     function onDownloadRequested(download) {
         downloadBar.isVisible = true
-        downloadView.append(download);
         download.accept();
+        downloadModel.append(download);
+        downloadModel.downloads.push(download);
     }
 
     MessageDialog {
@@ -692,12 +715,7 @@ Rectangle {
         }
     }
 
-    // TODO restyle this and only appears when clicking view all
-    DownloadView {
-        id: downloadView
-        visible: false
-        anchors.fill: parent
-    }
+
 
     DownloadBar {
         id: downloadBar
