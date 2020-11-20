@@ -221,17 +221,13 @@ proc getAllComunities*(): seq[Community] =
         chats: newSeq[CommunityChat]()
       )
 
-      try:
-        for chatId, chat in jsonCommunity{"chats"}:
-          community.chats.add(CommunityChat(
-            id: chatId,
-            name: chat{"identity"}{"display_name"}.getStr,
-            description: jsonCommunity{"identity"}{"description"}.getStr,
-            access: jsonCommunity{"permissions"}{"access"}.getInt,
-          ))
-      except Exception as e:
-        error "WERRROr", msg = e.msg
-      
+      for chatId, chat in jsonCommunity{"description"}{"chats"}:
+        community.chats.add(CommunityChat(
+          id: chatId,
+          name: chat{"identity"}{"display_name"}.getStr,
+          description: chat{"identity"}{"description"}.getStr,
+          access: chat{"permissions"}{"access"}.getInt,
+        ))
 
       communities.add(community)
   return communities

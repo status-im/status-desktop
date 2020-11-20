@@ -37,7 +37,7 @@ ModalPopup {
         ListView {
             anchors.fill: parent
             model: chatsModel.communities
-            spacing: 0
+            spacing: 4
             clip: true
             id: communitiesList
             delegate: Item {
@@ -76,22 +76,22 @@ ModalPopup {
                 StyledText {
                     id: communityDesc
                     text: description
-                    anchors.left: communityDesc.left
-                    anchors.top: communityDesc.bottom
+                    anchors.left: communityName.left
+                    anchors.right: parent.right
+                    anchors.top: communityName.bottom
                     font.pixelSize: 15
                     font.weight: Font.Thin
+                    elide: Text.ElideRight
                 }
 
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        // TODO if already joined, nothing to do
-                        const detailPopup = openPopup(communityDetailPopup)
-                        detailPopup.communityId = id
-                        detailPopup.description = description
-                        // TODO get the real image once it's available
-                        detailPopup.source = "../../../img/ens-header-dark@2x.png"
+                        // TODO if already joined, just open the Community in the section
+
+                        chatsModel.setActiveCommunity(id)
+                        openPopup(communityDetailPopup)
                         popup.close()
                     }
                 }

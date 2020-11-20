@@ -57,7 +57,7 @@ QtObject:
 
   method roleNames(self: CommunityList): Table[int, string] =
     {
-      #CommunityRoles.Name.int:"name",
+      CommunityRoles.Name.int:"name",
       CommunityRoles.Description.int:"description",
       CommunityRoles.Id.int: "id",
       # CommunityRoles.Color.int: "color",
@@ -87,10 +87,10 @@ QtObject:
 
   # proc getChannel*(self: CommunityList, index: int): Chat = self.communities[index]
 
-  # proc getChannelById*(self: CommunityList, chatId: string): Chat =
-  #   for chat in self.communities:
-  #     if chat.id == chatId:
-  #       return chat
+  proc getCommunityById*(self: CommunityList, communityId: string): Community =
+    for community in self.communities:
+      if community.id == communityId:
+        return community
   
   # proc getChannelByName*(self: CommunityList, name: string): Chat =
   #   for chat in self.communities:

@@ -6,9 +6,10 @@ import "../../../../shared/status"
 import "../ContactsColumn"
 
 ModalPopup {
-    property string communityId
-    property string name: "Community name"
-    property string description: "Description"
+    property QtObject community: chatsModel.activeCommunity
+    property string communityId: community.id
+    property string name: community.name
+    property string description: community.description
     // TODO get the real image once it's available
     property string source: "../../../img/ens-header-dark@2x.png"
     // TODO set real nb of members
@@ -106,15 +107,27 @@ ModalPopup {
         font.weight: Font.Thin
     }
 
-    // TODO put this as a delegate of a list view once we have the list of channels
-    Channel {
-        id: channelItem
-        unviewedMessagesCount: ""
+
+    ListView {
+        id: chatsList
+        width: parent.width
         anchors.top: chatsTitle.bottom
         anchors.topMargin: 4
-        width: parent.width
-    }
+        anchors.bottom: parent.bottom
+        clip: true
+        model: community.chats
 
+        delegate: Channel {
+            id: channelItem
+            unviewedMessagesCount: ""
+            width: parent.width
+            name: model.name
+            lastMessage: model.description
+            contentType: Constants.messageType
+            border.width: 0
+            color: Style.current.transparent
+        }
+    }
     
     footer: Item {
         anchors.fill: parent
@@ -137,7 +150,6 @@ ModalPopup {
         }
 
         StatusButton {
-            // TODO use real name
             text: qsTr("Join ‘%1’").arg(popup.name)
             anchors.right: parent.right
             onClicked: {

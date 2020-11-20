@@ -17,7 +17,7 @@ import ../../status/libstatus/types
 import ../../status/profile/profile
 import web3/[conversions, ethtypes]
 import ../../status/threads
-import views/channels_list, views/message_list, views/chat_item, views/sticker_pack_list, views/sticker_list, views/suggestions_list, views/community_list
+import views/channels_list, views/message_list, views/chat_item, views/sticker_pack_list, views/sticker_list, views/suggestions_list, views/community_list, views/community_item
 import json_serialization
 import ../../status/libstatus/utils
 
@@ -33,6 +33,7 @@ QtObject:
       callResult: string
       messageList*: Table[string, ChatMessageList]
       activeChannel*: ChatItemView
+      activeCommunity*: CommunityItemView
       stickerPacks*: StickerPackList
       recentStickers*: StickerList
       communityList*: CommunityList
@@ -49,6 +50,7 @@ QtObject:
   proc delete(self: ChatsView) = 
     self.chats.delete
     self.activeChannel.delete
+    self.activeCommunity.delete
     self.currentSuggestions.delete
     for msg in self.messageList.values:
       msg.delete
@@ -62,6 +64,7 @@ QtObject:
     result.connected = false
     result.chats = newChannelsList(status)
     result.activeChannel = newChatItemView(status)
+    result.activeCommunity = newCommunityItemView(status)
     result.currentSuggestions = newSuggestionsList()
     result.messageList = initTable[string, ChatMessageList]()
     result.stickerPacks = newStickerPackList()
@@ -320,6 +323,20 @@ QtObject:
     write = setActiveChannel
     notify = activeChannelChanged
 
+  proc activeCommunityChanged*(self: ChatsView) {.signal.}
+
+  proc setActiveCommunity*(self: ChatsView, communityId: string) {.slot.} =
+    if(communityId == ""): return
+    self.activeCommunity.setCommunityItem(self.communityList.getCommunityById(communityId))
+    self.activeCommunityChanged()
+
+  proc getActiveCommunity*(self: ChatsView): QVariant {.slot.} =
+    newQVariant(self.activeCommunity)
+
+  QtProperty[QVariant] activeCommunity:
+    read = getActiveCommunity
+    write = setActiveCommunity
+    notify = activeCommunityChanged
 
   proc getCurrentSuggestions(self: ChatsView): QVariant {.slot.} =
     return newQVariant(self.currentSuggestions)
