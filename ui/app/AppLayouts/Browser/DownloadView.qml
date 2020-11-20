@@ -11,24 +11,6 @@ Rectangle {
     id: downloadView
     color: Style.current.background
 
-    function append(download) {
-        downloadModel.append(download);
-        downloadModel.downloads.push(download);
-    }
-
-    StatusIconButton {
-        id: closeBtn
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        anchors.topMargin: Style.current.padding
-        icon.name: "browser/close"
-        iconColor: Style.current.textColor
-        onClicked: {
-            downloadView.visible = false
-        }
-    }
-
     ListView {
         id: listView
         anchors {
@@ -42,10 +24,8 @@ Rectangle {
         spacing: Style.current.padding
 
         model: downloadModel
-        delegate: Component {
-            DownloadElement {
-                width: parent.width
-            }
+        delegate: DownloadElement {
+            width: parent.width
         }
     }
 
@@ -56,15 +36,5 @@ Rectangle {
         font.pixelSize: 15
         text: qsTr("Downloaded files will appear here.")
         color: Style.current.secondaryText
-    }
-
-    StatusButton {
-        text: qsTr("Close")
-        onClicked: {
-            downloadView.visible = false;
-        }
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.padding
     }
 }
