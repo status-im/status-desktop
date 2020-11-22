@@ -104,6 +104,13 @@ Rectangle {
 
             PopupMenu {
                 id: chatContextMenu
+                subMenuIcons: [
+                    {
+                        source: Qt.resolvedUrl("../../../img/fetch.svg"),
+                        width: 16,
+                        height: 16
+                    }
+                ]
                 Action {
                     icon.source: "../../../img/close.svg"
                     icon.width: chatTopBarContent.iconSize
@@ -112,6 +119,7 @@ Rectangle {
                     text: qsTrId("clear-history")
                     onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
                 }
+                FetchMoreMessages {}
                 Action {
                     icon.source: "../../../img/delete.svg"
                     icon.width: chatTopBarContent.iconSize
