@@ -103,15 +103,24 @@ Item {
         anchors.topMargin: Style.current.padding
     }
 
-    ChannelList {
-        id: channelList
-        searchStr: contactsColumn.searchStr
-
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
+    ScrollView {
+        id: chatGroupsContainer
         anchors.top: searchBox.bottom
         anchors.topMargin: Style.current.padding
+        anchors.bottom: parent.bottom
+        width: parent.width
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        contentHeight: channelList.height + Style.current.padding
+        clip: true
+
+//        CommunityList {
+//            id: communityList
+//        }
+
+        ChannelList {
+            id: channelList
+            searchStr: contactsColumn.searchStr
+        }
     }
 }
 
