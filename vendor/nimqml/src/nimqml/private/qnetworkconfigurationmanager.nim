@@ -13,3 +13,16 @@ proc newQNetworkConfigurationManager*(): QNetworkConfigurationManager =
   new(result, delete)
   result.setup()
 
+
+proc setup*(self: QNetworkAccessManagerFactory, tmpPath: string) =
+  self.vptr = dos_qqmlnetworkaccessmanagerfactory_create(tmpPath.cstring)
+
+proc delete*(self: QNetworkAccessManagerFactory) =
+  if self.vptr.isNil:
+    return
+  self.vptr.resetToNil
+
+proc newQNetworkAccessManagerFactory*(tmpPath: string): QNetworkAccessManagerFactory =
+  new(result, delete)
+  result.setup(tmpPath)
+

@@ -14,6 +14,9 @@ proc load*(self: QQmlApplicationEngine, url: QUrl) =
   ## Load the given Qml file
   dos_qqmlapplicationengine_load_url(self.vptr, url.vptr)
 
+proc setNetworkAccessManagerFactory*(self: QQmlApplicationEngine, factory: QNetworkAccessManagerFactory) =
+  dos_qqmlapplicationengine_setNetworkAccessManagerFactory(self.vptr, factory.vptr)
+
 proc addImportPath*(self: QQmlApplicationEngine, path: string) =
   ## Add an import path
   dos_qqmlapplicationengine_add_import_path(self.vptr, path.cstring)

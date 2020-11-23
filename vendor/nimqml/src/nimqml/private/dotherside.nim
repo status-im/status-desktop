@@ -16,6 +16,7 @@ type
   NimQAbstractTableModel = pointer
   DosQMetaObject = distinct pointer
   DosQObject = distinct pointer
+  DosQQNetworkAccessManagerFactory = distinct pointer
   DosQObjectWrapper = distinct pointer
   DosQVariant = distinct pointer
   DosQQmlContext = distinct pointer
@@ -145,6 +146,7 @@ proc dos_qqmlcontext_setcontextproperty(context: DosQQmlContext, propertyName: c
 
 # QQmlApplicationEngine
 proc dos_qqmlapplicationengine_create(): DosQQmlApplicationEngine {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qqmlapplicationengine_setNetworkAccessManagerFactory(engine: DosQQmlApplicationEngine, factory: DosQQNetworkAccessManagerFactory) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qqmlapplicationengine_load(engine: DosQQmlApplicationEngine, filename: cstring) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qqmlapplicationengine_load_url(engine: DosQQmlApplicationEngine, url: DosQUrl) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qqmlapplicationengine_load_data(engine: DosQQmlApplicationEngine, data: cstring) {.cdecl, dynlib: dynLibName, importc.}
@@ -208,6 +210,8 @@ proc dos_qurl_to_string(vptr: DosQUrl): cstring {.cdecl, dynlib: dynLibName, imp
 # QNetworkConfigurationManager
 proc dos_qncm_create(): DosQObject {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qncm_delete(vptr: DosQObject) {.cdecl, dynlib: dynLibName, importc.}
+
+proc dos_qqmlnetworkaccessmanagerfactory_create(tmpPath: cstring): DosQQNetworkAccessManagerFactory {.cdecl, dynlib: dynLibName, importc.}
 
 # QQuickView
 proc dos_qquickview_create(): DosQQuickView {.cdecl, dynlib: dynLibName, importc.}
