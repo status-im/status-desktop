@@ -6,7 +6,7 @@ import "../../../../shared"
 import "../../../../shared/status"
 
 RowLayout {
-    property string networkName: ""
+    property string network: ""
     property string newNetwork: ""
 
     ConfirmationDialog {
@@ -21,7 +21,7 @@ RowLayout {
 
     width: parent.width
     StyledText {
-        text: qsTrId(networkName)
+        text: Utils.getNetworkName(network)
         font.pixelSize: 15
     }
     StatusRadioButton {
@@ -29,10 +29,10 @@ RowLayout {
         Layout.alignment: Qt.AlignRight
         ButtonGroup.group: networkSettings
         rightPadding: 0
-        checked: profileModel.network  === networkName
+        checked: profileModel.network  === network
         onClicked: {
-            if (profileModel.network === networkName) return;
-            newNetwork = networkName;
+            if (profileModel.network === network) return;
+            newNetwork = network;
             confirmDialog.open();
         }
     }

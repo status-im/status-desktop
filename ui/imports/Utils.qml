@@ -181,4 +181,16 @@ QtObject {
     function uuid() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
     }
+
+    function getNetworkName(network){
+        switch(network){
+            case Constants.networkMainnet: return qsTr("Mainnet with upstream RPC")
+            case Constants.networkPOA: return qsTr("POA Network")
+            case Constants.networkXDai: return qsTr("xDai Chain")
+            case Constants.networkGoerli: return qsTr("Goerli with upstream RPC")
+            case Constants.networkRinkeby: return qsTr("Rinkeby with upstream RPC")
+            case Constants.networkRopsten: return qsTr("Ropsten with upstream RPC")
+            default: return network
+        }
+    }
 }
