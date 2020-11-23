@@ -210,6 +210,11 @@ RowLayout {
             Layout.fillHeight: true
         }
     }
+
+    NotificationWindow {
+        id: notificationWindow
+        activeView: sLayout.currentIndex
+    }
 }
 
 /*##^##

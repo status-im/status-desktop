@@ -143,7 +143,10 @@ ScrollView {
             onMessageNotificationPushed: function(chatId, msg, messageType, chatType, timestamp, identicon, username, hasMention) {
                 if (appSettings.notificationSetting == Constants.notifyAllMessages || 
                     (appSettings.notificationSetting == Constants.notifyJustMentions && hasMention)) {
-                        notificationWindow.notifyUser(chatId, msg, messageType, chatType, timestamp, identicon, username)
+                    if (chatsModel.activeChannel.id == chatId && sLayout.currentIndex == Constants.appViewChat) {
+                        return
+                    }
+                    notificationWindow.notifyUser(chatId, msg, messageType, chatType, timestamp, identicon, username)
                 }
             }
         }

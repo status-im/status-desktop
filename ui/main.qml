@@ -294,10 +294,6 @@ ApplicationWindow {
             }
         }
     }
-
-    NotificationWindow {
-        id: notificationWindow
-    }
 }
 
 /*##^##
