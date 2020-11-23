@@ -6,7 +6,7 @@ import "../../../../imports"
 import "../components"
 import "./"
 
-Item {
+Rectangle {
     property alias channelListCount: chatGroupsListView.count
     property string searchStr: ""
     id: channelListContent
@@ -60,7 +60,7 @@ Item {
     Rectangle {
         id: noSearchResults
         anchors.top: parent.top
-        height: 300
+        height: visible ? 300 : 0
         color: "transparent"
         visible: !chatGroupsListView.visible && channelListContent.searchStr !== ""
         anchors.left: parent.left
@@ -74,13 +74,6 @@ Item {
             text: qsTr("No search results")
         }
     }
-
-    EmptyView {
-        width: parent.width
-        anchors.top: noSearchResults.visible ? noSearchResults.bottom : chatGroupsListView.bottom
-        anchors.topMargin: Style.current.smallPaddingg
-    }
-
 
     GroupInfoPopup {
         id: groupInfoPopup

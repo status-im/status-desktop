@@ -110,7 +110,7 @@ Item {
         anchors.bottom: parent.bottom
         width: parent.width
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        contentHeight: channelList.height + Style.current.padding
+        contentHeight: channelList.height + Style.current.padding + emptyViewAndSuggestions.height
         clip: true
 
 //        CommunityList {
@@ -120,6 +120,13 @@ Item {
         ChannelList {
             id: channelList
             searchStr: contactsColumn.searchStr
+        }
+
+        EmptyView {
+            id: emptyViewAndSuggestions
+            width: parent.width
+            anchors.top: channelList.bottom
+            anchors.topMargin: Style.current.smallPadding
         }
     }
 }
