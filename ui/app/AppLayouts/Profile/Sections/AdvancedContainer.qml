@@ -106,7 +106,7 @@ Item {
         }
         
         StyledText {
-            text: qsTrId(profileModel.network)
+            text: Utils.getNetworkName(profileModel.network)
             font.pixelSize: 15
             anchors.right: caret3.left
             anchors.rightMargin: Style.current.padding
