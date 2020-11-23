@@ -139,10 +139,14 @@ DOS_API void DOS_CALL dos_qapplication_delete(void);
 /// \note The returned QQmlApplicationEngine should be freed by using dos_qqmlapplicationengine_delete(DosQQmlApplicationEngine*)
 DOS_API DosQQmlApplicationEngine *DOS_CALL dos_qqmlapplicationengine_create(void);
 
+DOS_API DosQQmlNetworkAccessManagerFactory *DOS_CALL dos_qqmlnetworkaccessmanagerfactory_create(const char* tmpPath);
+
 /// \brief Calls the QQmlApplicationEngine::load function
 /// \param vptr The QQmlApplicationEngine
 /// \param filename The file to load. The file is relative to the directory that contains the application executable
 DOS_API void DOS_CALL dos_qqmlapplicationengine_load(DosQQmlApplicationEngine *vptr, const char *filename);
+
+DOS_API void DOS_CALL dos_qqmlapplicationengine_setNetworkAccessManagerFactory(DosQQmlApplicationEngine *vptr, DosQQmlNetworkAccessManagerFactory *factory);
 
 /// \brief Calls the QQmlApplicationEngine::load function
 /// \param vptr The QQmlApplicationEngine

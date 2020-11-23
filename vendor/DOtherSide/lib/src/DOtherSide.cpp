@@ -26,10 +26,13 @@
 #include <QtCore/QModelIndex>
 #include <QtCore/QHash>
 #include <QtCore/QResource>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkDiskCache>
 #include <QtNetwork/QNetworkConfigurationManager>
 #include <QtGui/QGuiApplication>
 #include <QtGui/QIcon>
 #include <QtQml/QQmlContext>
+#include <QtQml/QQmlNetworkAccessManagerFactory>
 #include <QtCore>
 #include <QClipboard>
 #include <QtGui/QPixmap>
@@ -66,6 +69,35 @@ void register_meta_types()
 
 // jrainville: I'm not sure where to put this, but it works like so
 QTranslator *m_translator = new QTranslator();
+
+class QMLNetworkAccessFactory : public QQmlNetworkAccessManagerFactory
+{
+    public:
+        static QString tmpPath;
+
+        QMLNetworkAccessFactory()
+        : QQmlNetworkAccessManagerFactory()
+        {
+           
+        }
+
+        QNetworkAccessManager* create(QObject* parent);
+
+        void setTmpPath(const char* path);
+};
+
+QString QMLNetworkAccessFactory::tmpPath = ""; 
+
+QNetworkAccessManager* QMLNetworkAccessFactory::create(QObject* parent)
+{
+    QNetworkAccessManager* manager = new QNetworkAccessManager(parent);
+    QNetworkDiskCache* cache = new QNetworkDiskCache(manager);
+    qDebug() << "Network Cache Dir: " << QMLNetworkAccessFactory::tmpPath ;
+    cache->setCacheDirectory(QMLNetworkAccessFactory::tmpPath);
+    manager->setCache(cache);
+    return manager;
+}
+
 
 char *convert_to_cstring(const QByteArray &array)
 {
@@ -156,6 +188,19 @@ void dos_qapplication_quit()
 ::DosQQmlApplicationEngine *dos_qqmlapplicationengine_create()
 {
     return new QQmlApplicationEngine();
+}
+
+::DosQQmlNetworkAccessManagerFactory *dos_qqmlnetworkaccessmanagerfactory_create(const char* tmpPath)
+{
+    QMLNetworkAccessFactory::tmpPath = tmpPath; 
+    return new QMLNetworkAccessFactory();
+}
+
+void dos_qqmlapplicationengine_setNetworkAccessManagerFactory(::DosQQmlApplicationEngine *vptr, ::DosQQmlNetworkAccessManagerFactory *factory)
+{
+    auto engine = static_cast<QQmlApplicationEngine *>(vptr);
+    auto namFactory = static_cast<QMLNetworkAccessFactory *>(factory);
+    engine->setNetworkAccessManagerFactory(namFactory);
 }
 
 void dos_qqmlapplicationengine_load(::DosQQmlApplicationEngine *vptr, const char *filename)
