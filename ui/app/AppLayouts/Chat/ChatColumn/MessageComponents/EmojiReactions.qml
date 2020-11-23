@@ -9,6 +9,30 @@ Item {
     height: 20
     width: childrenRect.width
 
+    function lastTwoItems(left, right) {
+        return left + " and " + right;
+    }
+
+    function showReactionAuthors(fromAccounts) {
+        if (fromAccounts.length < 3)
+            return fromAccounts.join(" and ");
+
+        var leftNode = [];
+        var rightNode = [];
+
+        if (fromAccounts.length > 3) {
+            leftNode = fromAccounts.slice(0, 3);
+            rightNode = fromAccounts.slice(3, fromAccounts.length);
+            return (rightNode.length == 1) ?
+                                lastTwoItems(leftNode.join(", "), rightNode[0]) :
+                                lastTwoItems(leftNode.join(", "), `${rightNode.length} more reacted.`);
+        }
+
+        leftNode = fromAccounts.slice(0, 2);
+        rightNode = fromAccounts.slice(2, fromAccounts.length);
+        return lastTwoItems(leftNode.join(", "), rightNode[0]);
+    }
+
     Repeater {
         id: reactionepeater
         model: {
@@ -54,7 +78,7 @@ Item {
 
             ToolTip {
                 visible: mouseArea.containsMouse
-                text: modelData.fromAccounts.join(", ")
+                text: showReactionAuthors(modelData.fromAccounts)
             }
 
             // Rounded corner to cover one corner
