@@ -65,8 +65,12 @@ QtObject {
         "#8B3131"
     ]
 
-    readonly property string networkRopsten: "testnet_rpc"
     readonly property string networkMainnet: "mainnet_rpc"
+    readonly property string networkPOA: "poa_rpc"
+    readonly property string networkXDai: "xdai_rpc"
+    readonly property string networkGoerli: "goerli_rpc"
+    readonly property string networkRinkeby: "rinkeby_rpc"
+    readonly property string networkRopsten: "testnet_rpc"
 
     readonly property string api_request: "api-request"
     readonly property string web3SendAsyncReadOnly: "web3-send-async-read-only"

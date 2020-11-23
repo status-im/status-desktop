@@ -36,7 +36,7 @@ proc getCustomTokens*(useCached: bool = true): seq[Erc20Contract] =
 
 proc visibleTokensSNTDefault(): JsonNode =
   let currentNetwork = getCurrentNetwork()
-  let SNT = if currentNetwork == Network.Testnet: "STT" else: "SNT"
+  let SNT = if currentNetwork == Network.Mainnet: "SNT" else: "STT"
   let response = getSetting[string](Setting.VisibleTokens, "{}").parseJSON
 
   if not response.hasKey($currentNetwork):

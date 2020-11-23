@@ -57,8 +57,10 @@ proc decodeContentHash*(value: string): string =
 # See https://notes.status.im/Q-sQmQbpTOOWCQcYiXtf5g#Read-Sticker-Packs-owned-by-a-user
 # for more details
 proc getBalance*(address: Address): int =
-  let 
-    contract = contracts.getContract("sticker-pack")
+  let contract = contracts.getContract("sticker-pack")
+  if contract == nil: return 0
+    
+  let
     balanceOf = BalanceOf(address: address)
     payload = %* [{
       "to": $contract.address,
@@ -76,6 +78,8 @@ proc getBalance*(address: Address): int =
 # Gets number of sticker packs
 proc getPackCount*(): int =
   let contract = contracts.getContract("stickers")
+  if contract == nil: return 0
+
   let payload = %* [{
       "to": $contract.address,
       "data": contract.methods["packCount"].encodeAbi()

@@ -90,36 +90,64 @@ Item {
         }
     }
 
-    RowLayout {
+    Item {
         id: networkTabSettings
         anchors.top: nodeTabSettings.bottom
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 24
+        width: parent.width - 20
+        height: networkText.height
+
         StyledText {
-            //% "Enable testnet (Ropsten)\nCurrent network: %1"
-            text: qsTrId("enable-testnet--ropsten--ncurrent-network---1").arg(profileModel.network)
+            id: networkText
+            text: qsTr("Network")
+            font.pixelSize: 15
         }
-        StatusSwitch {
-            checked: profileModel.network === Constants.networkRopsten
-            onCheckedChanged: {
-                if (checked && profileModel.network === Constants.networkRopsten || !checked && profileModel.network === Constants.networkMainnet){
-                    return;
-                }
-                profileModel.network = checked ? Constants.networkRopsten : Constants.networkMainnet;
-            }
-        }
+        
         StyledText {
-            //% "Under development\nNOTE: You will be logged out and all installed\nsticker packs will be removed and will\nneed to be reinstalled. Purchased sticker\npacks will not need to be re-purchased."
-            text: qsTrId("under-development-nnote--you-will-be-logged-out-and-all-installed-nsticker-packs-will-be-removed-and-will-nneed-to-be-reinstalled--purchased-sticker-npacks-will-not-need-to-be-re-purchased-")
+            text: qsTrId(profileModel.network)
+            font.pixelSize: 15
+            anchors.right: caret3.left
+            anchors.rightMargin: Style.current.padding
+        }
+
+        SVGImage {
+            id: caret3
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.verticalCenter: networkText.verticalCenter
+            source: "../../../img/caret.svg"
+            width: 13
+            height: 7
+            rotation: -90
+        }
+        
+        ColorOverlay {
+            anchors.fill: caret3
+            source: caret2
+            color: Style.current.darkGrey
+            rotation: -90
+        }
+
+        NetworksModal {
+            id: networksModal
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: networksModal.open()
+            cursorShape: Qt.PointingHandCursor
         }
     }
 
     Item {
         id: fleetSetting
         anchors.top: networkTabSettings.bottom
-        anchors.topMargin: Style.current.padding
-        width: parent.width
+        anchors.topMargin: 20
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+        width: parent.width - 20
         height: fleetText.height
 
         StyledText {
