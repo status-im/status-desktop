@@ -152,6 +152,9 @@ QtObject:
 
   proc networkChanged*(self: ProfileView) {.signal.}
 
+  proc triggerNetworkChange*(self: ProfileView) {.slot.} =
+    self.networkChanged()
+
   proc getNetwork*(self: ProfileView): QVariant {.slot.} =
     return newQVariant(self.network)
 

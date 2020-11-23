@@ -320,7 +320,8 @@ proc validateMnemonic*(self: WalletModel, mnemonic: string): string =
   result = status_wallet.validateMnemonic(mnemonic).parseJSON()["error"].getStr
 
 proc getGasPricePredictions*(self: WalletModel): GasPricePrediction =
-  if status_settings.getCurrentNetwork() == Network.Testnet:
+  if status_settings.getCurrentNetwork() != Network.Mainnet:
+    # TODO: what about other chains like xdai?
     return GasPricePrediction(safeLow: 1.0, standard: 2.0, fast: 3.0, fastest: 4.0)
   try:
     let url: string = fmt"https://etherchain.org/api/gasPriceOracle"
