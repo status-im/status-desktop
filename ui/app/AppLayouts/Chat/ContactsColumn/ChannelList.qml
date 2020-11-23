@@ -19,13 +19,12 @@ Rectangle {
 
     ListView {
         id: chatGroupsListView
+        spacing: Style.current.halfPadding
         anchors.top: parent.top
         height: childrenRect.height
         visible: height > 0
         anchors.right: parent.right
         anchors.left: parent.left
-        anchors.rightMargin: Style.current.padding
-        anchors.leftMargin: Style.current.padding
         interactive: false
         model: chatsModel.chats
         delegate: Channel {

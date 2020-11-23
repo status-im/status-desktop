@@ -108,17 +108,30 @@ Item {
         anchors.top: searchBox.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: parent.bottom
-        width: parent.width
+        anchors.left: parent.left
+        anchors.right: parent.right
+        leftPadding: Style.current.halfPadding
+        rightPadding: Style.current.halfPadding
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        contentHeight: channelList.height + Style.current.padding + emptyViewAndSuggestions.height
+        contentHeight: communityList.height + channelList.height + 2 * Style.current.padding + emptyViewAndSuggestions.height
         clip: true
 
-//        CommunityList {
-//            id: communityList
-//        }
+        CommunityList {
+            id: communityList
+            searchStr: contactsColumn.searchStr
+        }
+
+        Separator {
+            id: communitySep
+            visible: communityList.visible
+            anchors.top: communityList.bottom
+            anchors.topMargin: Style.current.halfPadding
+        }
 
         ChannelList {
             id: channelList
+            anchors.top: communitySep.bottom
+            anchors.topMargin: Style.current.halfPadding
             searchStr: contactsColumn.searchStr
         }
 
