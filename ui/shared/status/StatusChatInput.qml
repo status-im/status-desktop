@@ -325,6 +325,7 @@ Rectangle {
         replyArea.userName = userName
         replyArea.message = message
         replyArea.identicon = identicon
+        messageInputField.forceActiveFocus();
     }
 
     FileDialog {
