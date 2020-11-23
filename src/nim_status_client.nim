@@ -10,6 +10,7 @@ import app/login/core as login
 import app/provider/core as provider
 import status/signals/core as signals
 import status/libstatus/types
+import status/libstatus/accounts/constants
 import nim_status
 import status/status as statuslib
 import ./eventemitter
@@ -56,8 +57,9 @@ proc mainProc() =
   elif (defined(linux)):
     i18nPath = joinPath(getAppDir(), "../i18n")
 
-
+  let networkAccessFactory = newQNetworkAccessManagerFactory(TMPDIR & "netcache")
   let engine = newQQmlApplicationEngine()
+  engine.setNetworkAccessManagerFactory(networkAccessFactory)
   let signalController = signals.newController(status)
 
   # We need this global variable in order to be able to access the application
