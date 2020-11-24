@@ -23,8 +23,7 @@ Item {
 //        visible: height > 0
         width:parent.width
         interactive: false
-        // TODO change this to the real model of joinded channels
-        model: chatsModel.communities
+        model: chatsModel.joinedCommunities
         delegate: CommunityButton {
             name: model.name
             // TODO add other properties

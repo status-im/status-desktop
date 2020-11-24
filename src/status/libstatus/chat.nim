@@ -50,8 +50,8 @@ proc loadChats*(): seq[Chat] =
   if jsonResponse["result"].kind != JNull:
     for jsonChat in jsonResponse{"result"}:
       let chat = jsonChat.toChat
-      if chat.isActive and chat.chatType != ChatType.Unknown:
-        result.add(jsonChat.toChat)
+      if chat.isActive and chat.chatType != ChatType.Unknown and chat.chatType != ChatType.CommunityChat:
+        result.add(chat)
   result.sort(sortChats)
 
 proc chatMessages*(chatId: string, cursor: string = ""): (string, seq[Message]) =

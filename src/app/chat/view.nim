@@ -37,6 +37,7 @@ QtObject:
       stickerPacks*: StickerPackList
       recentStickers*: StickerList
       communityList*: CommunityList
+      joinedCommunityList*: CommunityList
       replyTo: string
       pubKey*: string
       channelOpenTime*: Table[string, int64]
@@ -69,6 +70,7 @@ QtObject:
     result.messageList = initTable[string, ChatMessageList]()
     result.stickerPacks = newStickerPackList()
     result.communityList = newCommunityList(status)
+    result.joinedCommunityList = newCommunityList(status)
     result.recentStickers = newStickerList()
     result.unreadMessageCnt = 0
     result.pubKey = ""
@@ -669,16 +671,34 @@ QtObject:
 
   proc communitiesChanged*(self: ChatsView) {.signal.}
 
-  proc getComunities*(self: ChatsView): QVariant {.slot.} =
+  proc getCommunitiesIfNotFetched*(self: ChatsView): CommunityList =
     if (not self.communityList.fetched):
       let communities = self.status.chat.getAllComunities()
       self.communityList.setNewData(communities)
       self.communityList.fetched = true
-    return newQVariant(self.communityList)
+    return self.communityList
+
+  proc getComunities*(self: ChatsView): QVariant {.slot.} =
+    return newQVariant(self.getCommunitiesIfNotFetched())
 
   QtProperty[QVariant] communities:
     read = getComunities
     notify = communitiesChanged
+
+  proc joinedCommunitiesChanged*(self: ChatsView) {.signal.}
+    
+  proc getJoinedComunities*(self: ChatsView): QVariant {.slot.} =
+    # TODO use the `joinedComunities` function from status-go if it ever exists
+    let
+      communityList = self.getCommunitiesIfNotFetched()
+      joinedCommunities = communityList.communities.filterIt(it.joined)
+    self.joinedCommunityList.setNewData(joinedCommunities)
+    self.joinedCommunityList.fetched = true
+    return newQVariant(self.joinedCommunityList)
+
+  QtProperty[QVariant] joinedCommunities:
+    read = getJoinedComunities
+    notify = joinedCommunitiesChanged
 
   proc createCommunity*(self: ChatsView, name: string, description: string, color: string, imagePath: string): string {.slot.} =
     result = ""
