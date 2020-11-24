@@ -161,6 +161,7 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/UserImage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/UsernameLabel.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/qmldir \
+    app/AppLayouts/Chat/CommunityColumn.qml \
     app/AppLayouts/Chat/ContactsColumn/AddChat.qml \
     app/AppLayouts/Chat/ContactsColumn/ClosedEmptyView.qml \
     app/AppLayouts/Chat/ContactsColumn/CommunityButton.qml \

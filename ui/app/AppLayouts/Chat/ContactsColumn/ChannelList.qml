@@ -7,6 +7,7 @@ import "../components"
 import "./"
 
 Rectangle {
+    property var channelModel
     property alias channelListCount: chatGroupsListView.count
     property string searchStr: ""
     id: channelListContent
@@ -26,7 +27,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.left: parent.left
         interactive: false
-        model: chatsModel.chats
+        model: channelListContent.channelModel
         delegate: Channel {
             name: model.name
             muted: model.muted

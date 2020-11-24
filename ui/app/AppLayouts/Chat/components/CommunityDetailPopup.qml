@@ -6,7 +6,7 @@ import "../../../../shared/status"
 import "../ContactsColumn"
 
 ModalPopup {
-    property QtObject community: chatsModel.activeCommunity
+    property QtObject community: chatsModel.observedCommunity
     property string communityId: community.id
     property string name: community.name
     property string description: community.description

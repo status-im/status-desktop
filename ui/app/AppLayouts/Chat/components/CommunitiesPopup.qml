@@ -46,22 +46,12 @@ ModalPopup {
                 height: visible ? communityImage.height + Style.current.smallPadding : 0
                 width: parent.width
 
-                Image {
+                RoundedImage {
                     id: communityImage
                     width: 40
                     height: 40
                     // TODO get the real image once it's available
                     source: "../../../img/ens-header-dark@2x.png"
-
-                    layer.enabled: true
-                    layer.effect: OpacityMask {
-                        maskSource: Rectangle {
-                            anchors.centerIn: parent
-                            width: communityImage.width
-                            height: communityImage.height
-                            radius: communityImage.width / 2
-                        }
-                    }
                 }
 
                 StyledText {

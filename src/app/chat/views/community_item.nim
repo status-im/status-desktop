@@ -7,6 +7,7 @@ QtObject:
     communityItem*: Community
     chats*: CommunityChatsList
     status*: Status
+    active*: bool
 
   proc setup(self: CommunityItemView) =
     self.QObject.setup
@@ -19,12 +20,26 @@ QtObject:
     new(result, delete)
     result = CommunityItemView()
     result.status = status
+    result.active = false
     result.chats = newCommunityChatsView(status)
     result.setup
 
   proc setCommunityItem*(self: CommunityItemView, communityItem: Community) =
     self.communityItem = communityItem
     self.chats.setChats(communityItem.chats)
+
+  proc activeChannelChanged*(self: CommunityItemView) {.signal.}
+
+  proc setActive*(self: CommunityItemView, value: bool) {.slot.} =
+    self.active = value
+    self.activeChannelChanged()
+
+  proc active*(self: CommunityItemView): bool {.slot.} = result = ?.self.active
+  
+  QtProperty[bool] active:
+    read = active
+    write = setActive
+    notify = activeChannelChanged
 
   proc id*(self: CommunityItemView): string {.slot.} = result = ?.self.communityItem.id
   

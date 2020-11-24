@@ -5,7 +5,7 @@ type ChatType* {.pure.}= enum
   Unknown = 0,
   OneToOne = 1, 
   Public = 2,
-  PrivateGroupChat = 3,
+  PrivateGroupChat = 3
   CommunityChat = 6
 
 proc isOneToOne*(self: ChatType): bool = self == ChatType.OneToOne

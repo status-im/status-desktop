@@ -34,6 +34,7 @@ QtObject:
       messageList*: Table[string, ChatMessageList]
       activeChannel*: ChatItemView
       activeCommunity*: CommunityItemView
+      observedCommunity*: CommunityItemView
       stickerPacks*: StickerPackList
       recentStickers*: StickerList
       communityList*: CommunityList
@@ -51,6 +52,7 @@ QtObject:
   proc delete(self: ChatsView) = 
     self.chats.delete
     self.activeChannel.delete
+    self.observedCommunity.delete
     self.activeCommunity.delete
     self.currentSuggestions.delete
     for msg in self.messageList.values:
@@ -324,21 +326,6 @@ QtObject:
     read = getActiveChannel
     write = setActiveChannel
     notify = activeChannelChanged
-
-  proc activeCommunityChanged*(self: ChatsView) {.signal.}
-
-  proc setActiveCommunity*(self: ChatsView, communityId: string) {.slot.} =
-    if(communityId == ""): return
-    self.activeCommunity.setCommunityItem(self.communityList.getCommunityById(communityId))
-    self.activeCommunityChanged()
-
-  proc getActiveCommunity*(self: ChatsView): QVariant {.slot.} =
-    newQVariant(self.activeCommunity)
-
-  QtProperty[QVariant] activeCommunity:
-    read = getActiveCommunity
-    write = setActiveCommunity
-    notify = activeCommunityChanged
 
   proc getCurrentSuggestions(self: ChatsView): QVariant {.slot.} =
     return newQVariant(self.currentSuggestions)
@@ -729,3 +716,34 @@ QtObject:
     except Exception as e:
       error "Error joining the community", msg = e.msg
       result = fmt"Error joining the community: {e.msg}"
+
+  proc activeCommunityChanged*(self: ChatsView) {.signal.}
+
+  proc setActiveCommunity*(self: ChatsView, communityId: string) {.slot.} =
+    if(communityId == ""): return
+    self.activeCommunity.setCommunityItem(self.joinedCommunityList.getCommunityById(communityId))
+    self.activeCommunity.active = true
+    self.activeCommunityChanged()
+
+  proc getActiveCommunity*(self: ChatsView): QVariant {.slot.} =
+    newQVariant(self.activeCommunity)
+
+  QtProperty[QVariant] activeCommunity:
+    read = getActiveCommunity
+    write = setActiveCommunity
+    notify = activeCommunityChanged
+
+  proc observedCommunityChanged*(self: ChatsView) {.signal.}
+
+  proc setObservedCommunity*(self: ChatsView, communityId: string) {.slot.} =
+    if(communityId == ""): return
+    self.observedCommunity.setCommunityItem(self.communityList.getCommunityById(communityId))
+    self.observedCommunityChanged()
+
+  proc getObservedCommunity*(self: ChatsView): QVariant {.slot.} =
+    newQVariant(self.observedCommunity)
+
+  QtProperty[QVariant] observedCommunity:
+    read = getObservedCommunity
+    write = setObservedCommunity
+    notify = observedCommunityChanged

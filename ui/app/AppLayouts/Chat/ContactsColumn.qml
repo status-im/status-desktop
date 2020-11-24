@@ -133,6 +133,7 @@ Item {
             anchors.top: communitySep.bottom
             anchors.topMargin: Style.current.halfPadding
             searchStr: contactsColumn.searchStr
+            channelModel: chatsModel.chats
         }
 
         EmptyView {

@@ -25,6 +25,7 @@ Item {
         interactive: false
         model: chatsModel.joinedCommunities
         delegate: CommunityButton {
+            communityId: model.id
             name: model.name
             // TODO add other properties
             searchStr: root.searchStr

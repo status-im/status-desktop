@@ -87,6 +87,7 @@ Rectangle {
         }
         onClicked: {
             console.log("Open community")
+            chatsModel.setActiveCommunity(communityId)
         }
     }
 
