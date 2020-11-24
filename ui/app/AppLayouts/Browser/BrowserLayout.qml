@@ -200,7 +200,13 @@ Rectangle {
                 sendDialog.open();
                 walletModel.getGasPricePredictions()
             } else if (request.type === Constants.web3SendAsyncReadOnly && ["eth_sign", "personal_sign", "eth_signTypedData", "eth_signTypedData_v3"].indexOf(request.payload.method) > -1) {
-                const signDialog = signMessageModalComponent.createObject(browserWindow, {request});
+                const signDialog = signMessageModalComponent.createObject(browserWindow, {
+                        request,
+                        selectedAccount: {
+                            name: walletModel.currentAccount.name,
+                            iconColor: walletModel.currentAccount.iconColor
+                        }
+                    });
                 signDialog.web3Response = web3Response
                 signDialog.signMessage = function (enteredPassword) {
                     signDialog.interactedWith = true;
