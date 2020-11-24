@@ -81,3 +81,10 @@ QtObject:
 
   proc urlFromUserInput*(self: UtilsView, input: string): string {.slot.} =
     result = url_fromUserInput(input)
+
+  proc wei2Eth*(self: UtilsView, wei: string, decimals: int): string {.slot.} =
+    var weiValue = wei
+    if(weiValue.startsWith("0x")):
+      weiValue = fromHex(Stuint[256], weiValue).toString()
+    return status_utils.wei2Eth(weiValue, decimals)
+

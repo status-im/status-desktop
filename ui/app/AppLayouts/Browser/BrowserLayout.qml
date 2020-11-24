@@ -129,7 +129,7 @@ Rectangle {
                        request.payload.method === "eth_sendTransaction") {
                 walletModel.setFocusedAccountByAddress(request.payload.params[0].from)
                 var acc = walletModel.focusedAccount
-                const value = utilsModel.wei2Token(request.payload.params[0].value, 18)
+                const value = utilsModel.wei2Eth(request.payload.params[0].value, 18);
 
                 const sendDialog = sendTransactionModalComponent.createObject(browserWindow, {
                     trxData:request.payload.params[0].data,
