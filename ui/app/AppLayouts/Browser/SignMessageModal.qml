@@ -2,16 +2,19 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
+import QtGraphicalEffects 1.13
 import "../../../imports"
 import "../../../shared"
 import "../../../shared/status"
 
 ModalPopup {
     property var request
+    property var selectedAccount
 
     readonly property int bytes32Length: 66
 
     property bool interactedWith: false
+    property bool showSigningPhrase: false
 
     property alias transactionSigner: transactionSigner
 
@@ -19,9 +22,10 @@ ModalPopup {
     
     property var web3Response
 
+
     id: root
 
-    title: qsTr("Signing a message")
+    title: qsTr("Signature request")
     height: 504
 
     onClosed: {
@@ -36,6 +40,10 @@ ModalPopup {
         }
     }
 
+    onOpened: {
+        showSigningPhrase = false;
+    }
+
     function displayValue(input){
         if(Utils.isHex(input) && Utils.startsWith0x(input)){
             if (input.length === bytes32Length){
@@ -46,40 +54,142 @@ ModalPopup {
         return input;  
     }
 
-    Item {
-        anchors.fill: parent
-        anchors.leftMargin: Style.current.padding
-        anchors.rightMargin: Style.current.padding
+    function messageToSign(){
+        switch(request.payload.method){
+            case Constants.personal_sign:
+                return displayValue(request.payload.params[0]);
+            case Constants.eth_sign:
+                return displayValue(request.payload.params[1]);
+            case Constants.eth_signTypedData:
+            case Constants.eth_signTypedData_v3:
+                return JSON.stringify(request.payload.params[1]); // TODO: requires design
+            default: 
+                return JSON.stringify(request.payload.params); // support for any unhandled sign method 
+        }
+    }
 
-        ScrollView {
-            id: messageToSign
-            width: parent.width
-            height: 100
-            TextArea {
-                wrapMode: TextEdit.Wrap
-                readOnly: true
-                text: {
-                    switch(request.payload.method){
-                        case Constants.personal_sign:
-                            return displayValue(request.payload.params[0]);
-                        case Constants.eth_sign:
-                            return displayValue(request.payload.params[1]);
-                        case Constants.eth_signTypedData:
-                        case Constants.eth_signTypedData_v3:
-                            return JSON.stringify(request.payload.params[1]); // TODO: requires design
-                        default: 
-                            return JSON.stringify(request.payload.params); // support for any unhandled sign method 
+    TransactionSigner {
+        id: transactionSigner
+        width: parent.width
+        signingPhrase: walletModel.signingPhrase
+        visible: showSigningPhrase
+        reset: function() {
+            signingPhrase = Qt.binding(function() { return walletModel.signingPhrase })
+        }
+    }
+
+    Column {
+        id: content
+        anchors.left: parent.left
+        anchors.right: parent.right
+        visible: !showSigningPhrase
+
+        LabelValueRow {
+            //% "From"
+            label: qsTrId("from")
+            value: Item {
+                id: itmFromValue
+                anchors.fill: parent
+                anchors.verticalCenter: parent.verticalCenter
+                Row {
+                    spacing: Style.current.halfPadding
+                    rightPadding: 0
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    StyledText {
+                        font.pixelSize: 15
+                        height: 22
+                        text: selectedAccount.name
+                        elide: Text.ElideRight
+                        anchors.verticalCenter: parent.verticalCenter
+                        horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    SVGImage {
+                        id: imgFromWallet
+                        sourceSize.height: 18
+                        sourceSize.width: 18
+                        visible: true
+                        horizontalAlignment: Image.AlignLeft
+                        width: undefined
+                        anchors.verticalCenter: parent.verticalCenter
+                        fillMode: Image.PreserveAspectFit
+                        source: "../../img/walletIcon.svg"
+                        ColorOverlay {
+                            visible: parent.visible
+                            anchors.fill: parent
+                            source: parent
+                            color: selectedAccount.iconColor
+                        }
                     }
                 }
             }
         }
 
-        TransactionSigner {
-            id: transactionSigner
-            width: parent.width
-            anchors.top: messageToSign.bottom
-            anchors.topMargin: Style.current.padding * 3
-            signingPhrase: walletModel.signingPhrase
+        LabelValueRow {
+            label: qsTr("Data")
+            value: Item {
+                anchors.fill: parent
+                anchors.verticalCenter: parent.verticalCenter
+
+                ModalPopup {
+                    id: messagePopup
+                    title: qsTr("Message")
+                    height: 286
+                    width: 400
+                    Item {
+                        anchors.fill: parent
+                        anchors.leftMargin: Style.current.padding
+                        anchors.rightMargin: Style.current.padding
+                        ScrollView {
+                            width: parent.width
+                            height: 150
+                            TextArea {
+                                wrapMode: TextEdit.Wrap
+                                readOnly: true
+                                text: messageToSign()
+                            }
+                        }
+                    }
+                }
+
+                Row {
+                    spacing: Style.current.halfPadding
+                    rightPadding: 0
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    StyledText {
+                        width: 250
+                        font.pixelSize: 15
+                        height: 22
+                        text: messageToSign()
+                        anchors.verticalCenter: parent.verticalCenter
+                        horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                        color: Style.current.secondaryText
+                    }
+                    SVGImage {
+                        width: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        fillMode: Image.PreserveAspectFit
+                        source: "../../img/caret.svg"
+                        rotation: 270
+                        ColorOverlay {
+                            anchors.fill: parent
+                            source: parent
+                            color: Style.current.secondaryText
+                        }
+                    }
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    visible: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: messagePopup.open()
+                }
+            }
         }
     }
 
@@ -88,11 +198,29 @@ ModalPopup {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
+
+        StatusButton {
+            id: btnReject
+            anchors.right:btnNext.left
+            anchors.rightMargin: Style.current.padding
+            text: qsTr("Reject")
+            color: Style.current.danger
+            type: "secondary"
+            onClicked: close()
+        }
+
         StatusButton {
             id: btnNext
             anchors.right: parent.right
-            text: qsTr("Sign")
-            onClicked: root.signMessage(transactionSigner.enteredPassword)
+            text: showSigningPhrase ? qsTr("Sign") : qsTr("Sign with password")
+            onClicked: {
+                if(!showSigningPhrase){
+                    showSigningPhrase = true;
+                    transactionSigner.forceActiveFocus(Qt.MouseFocusReason)
+                } else {
+                    root.signMessage(transactionSigner.enteredPassword)
+                }
+            }
         }
     }
 }
