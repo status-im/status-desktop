@@ -6,15 +6,17 @@ import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
 
-Item {
+ScrollView {
+    height: parent.height
+    width: parent.width
     id: root
-    Layout.fillHeight: true
-    Layout.fillWidth: true
+    contentHeight: appearanceContainer.height
+    clip: true
 
     enum Theme {
-        System, // 0
-        Light,  // 1
-        Dark    // 2
+        Light,
+        Dark,
+        System
     }
 
     function updateTheme(theme) {
@@ -28,85 +30,136 @@ Item {
         Style.changeTheme(themeStr)
     }
 
-    StyledText {
-        id: title
-        //% "Appearance setting"
-        text: qsTrId("appearance-setting")
+    Item {
+        id: appearanceContainer
+        anchors.right: parent.right
+        anchors.rightMargin: contentMargin
         anchors.left: parent.left
-        anchors.leftMargin: 24
-        anchors.top: parent.top
-        anchors.topMargin: 24
-        font.weight: Font.Bold
-        font.pixelSize: 20
-    }
+        anchors.leftMargin: contentMargin
+        height: this.childrenRect.height + 100
 
-    RowLayout {
-        id: themeSetting
-        anchors.top: title.bottom
-        anchors.topMargin: 20
-        anchors.left: parent.left
-        anchors.leftMargin: 24
-        StyledText {
-            //% "Theme (Light - Dark)"
-            text: qsTrId("theme-(light---dark)")
+        ButtonGroup {
+            id: chatModeSetting
         }
-        ButtonGroup { id: appearance }
 
-        StatusRadioButton {
-            checked: profileModel.profile.appearance === AppearanceContainer.Theme.System
-            Layout.alignment: Qt.AlignRight
-            ButtonGroup.group: appearance
-            rightPadding: 15
-            text: qsTr("System")
-            onClicked: {
-                root.updateTheme(AppearanceContainer.Theme.System)
-            }
+        ButtonGroup {
+            id: appearanceSetting
         }
-        StatusRadioButton {
-            checked: profileModel.profile.appearance === AppearanceContainer.Theme.Light
-            Layout.alignment: Qt.AlignRight
-            ButtonGroup.group: appearance
-            rightPadding: 15
-            text: qsTr("Light")
-            onClicked: {
-                root.updateTheme(AppearanceContainer.Theme.Light)
-            }
-        }
-        StatusRadioButton {
-            checked: profileModel.profile.appearance === AppearanceContainer.Theme.Dark
-            Layout.alignment: Qt.AlignRight
-            ButtonGroup.group: appearance
-            rightPadding: 0
-            text: qsTr("Dark")
-            onClicked: {
-                root.updateTheme(AppearanceContainer.Theme.Dark)
-            }
-        }
-        // For the case where the theme was finally loaded by status-go in init(),
-        // update the theme in qml
-        Connections {
-            target: profileModel
-            onProfileChanged: {
-                root.updateTheme(profileModel.profile.appearance)
-            }
-        }
-    }
 
-    RowLayout {
-        property bool isCompactMode: appSettings.compactMode
-        id: compactModeSetting
-        anchors.top: themeSetting.bottom
-        anchors.topMargin: 20
-        anchors.left: parent.left
-        anchors.leftMargin: 24
-        StyledText {
-            //% "Chat Compact Mode"
-            text: qsTrId("chat-compact-mode")
+        StatusSectionHeadline {
+            id: sectionHeadlineChatMode
+            text: qsTr("Chat mode")
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
         }
-        Switch {
-            checked: compactModeSetting.isCompactMode
-            onToggled: function() {
-                appSettings.compactMode = !compactModeSetting.isCompactMode
+
+        RowLayout {
+            id: chatModeSection
+            anchors.top: sectionHeadlineChatMode.bottom
+            anchors.topMargin: Style.current.padding
+            anchors.left: parent.left
+            anchors.leftMargin: -Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: -Style.current.padding
+
+            StatusImageRadioButton {
+                padding: Style.current.padding
+                image.source: "../../../img/appearance-normal-light.svg"
+                image.height: 186
+                control.text: qsTr("Normal")
+                control.checked: !appSettings.compactMode
+                control.onCheckedChanged: {
+                    if (control.checked) {
+                        appSettings.compactMode = false
+                    }
+                }
+            }
+
+            StatusImageRadioButton {
+                padding: Style.current.padding
+                image.source: "../../../img/appearance-compact-light.svg"
+                image.height: 186
+                control.text: qsTr("Compact")
+                control.checked: appSettings.compactMode
+                control.onCheckedChanged: {
+                    if (control.checked) {
+                        appSettings.compactMode = true
+                    }
+                }
+            }
+        }
+
+        StatusSectionHeadline {
+            id: sectionHeadlineAppearance
+            text: qsTr("Appearance")
+            anchors.top: chatModeSection.bottom
+            anchors.topMargin: Style.current.padding*3
+            anchors.left: parent.left
+            anchors.right: parent.right
+        }
+
+        RowLayout {
+            id: appearanceSection
+            anchors.top: sectionHeadlineAppearance.bottom
+            anchors.topMargin: Style.current.padding
+            anchors.left: parent.left
+            anchors.leftMargin: -Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: -Style.current.padding
+
+            StatusImageRadioButton {
+                padding: Style.current.smallPadding
+                width: 208
+                height: 184
+                image.source: "../../../img/appearance-normal-light.svg"
+                image.height: 128
+                control.text: qsTr("Light")
+                control.checked: profileModel.profile.appearance === AppearanceContainer.Theme.Light
+                control.onClicked: {
+                    if (control.checked) {
+                        root.updateTheme(AppearanceContainer.Theme.Light)
+                    }
+                }
+            }
+
+            StatusImageRadioButton {
+                padding: Style.current.smallPadding
+                width: 208
+                height: 184
+                image.source: "../../../img/appearance-normal-dark.svg"
+                image.height: 128
+                control.text: qsTr("Dark")
+                control.checked: profileModel.profile.appearance === AppearanceContainer.Theme.Dark
+                control.onClicked: {
+                    if (control.checked) {
+                        root.updateTheme(AppearanceContainer.Theme.Dark)
+                    }
+                }
+            }
+
+            StatusImageRadioButton {
+                padding: Style.current.smallPadding
+                width: 208
+                height: 184
+                image.source: "../../../img/appearance-normal-system.png"
+                image.height: 128
+                control.text: qsTr("System")
+                control.checked: profileModel.profile.appearance === AppearanceContainer.Theme.System
+                control.onClicked: {
+                    if (control.checked) {
+                        root.updateTheme(AppearanceContainer.Theme.System)
+                    }
+                }
+            }
+
+            // For the case where the theme was finally loaded by status-go in init(),
+            // update the theme in qml
+            Connections {
+                target: profileModel
+                onProfileChanged: {
+                    root.updateTheme(profileModel.profile.appearance)
+                }
             }
         }
     }
