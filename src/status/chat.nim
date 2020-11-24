@@ -139,16 +139,18 @@ proc init*(self: ChatModel) =
 
   var topics:seq[MailserverTopic] = @[]
   let parsedResult = parseJson(filterResult)["result"]
-  for topicObj in parsedResult:
+  for filter in parsedResult:
     # Only add topics for chats the user has joined
-    let topic_chat = topicObj["chatId"].getStr
-    if self.channels.hasKey(topic_chat) and self.channels[topic_chat].isActive:
-      
+    let topic_chat = filter["chatId"].getStr
+    let identity = filter["identity"].getStr
+    let chatId = if self.channels.hasKey(topic_chat): topic_chat else: "0x" & identity
+
+    if self.channels.hasKey(chatId) and self.channels[chatId].isActive:
       topics.add(MailserverTopic(
-        topic: $topicObj["topic"].getStr,
-        discovery: topicObj["discovery"].getBool,
-        negotiated: topicObj["negotiated"].getBool,
-        chatIds: @[self.channels[topic_chat].id],
+        topic: $filter["topic"].getStr,
+        discovery: filter["discovery"].getBool,
+        negotiated: filter["negotiated"].getBool,
+        chatIds: @[chatId],
         lastRequest: 1
       ))
 
