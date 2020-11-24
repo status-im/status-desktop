@@ -10,12 +10,12 @@ Item {
     width: childrenRect.width
 
     function lastTwoItems(left, right) {
-        return left + " and " + right;
+        return qsTr("%1 and %2").arg(left, right);
     }
 
     function showReactionAuthors(fromAccounts) {
         if (fromAccounts.length < 3)
-            return fromAccounts.join(" and ");
+            return fromAccounts.join(qsTr(" and "));
 
         var leftNode = [];
         var rightNode = [];
@@ -25,7 +25,7 @@ Item {
             rightNode = fromAccounts.slice(3, fromAccounts.length);
             return (rightNode.length == 1) ?
                                 lastTwoItems(leftNode.join(", "), rightNode[0]) :
-                                lastTwoItems(leftNode.join(", "), `${rightNode.length} more reacted.`);
+                                lastTwoItems(leftNode.join(", "), qsTr("%1 more reacted.").arg(rightNode.length));
         }
 
         leftNode = fromAccounts.slice(0, 2);
