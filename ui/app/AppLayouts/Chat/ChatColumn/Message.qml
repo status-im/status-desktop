@@ -21,6 +21,7 @@ Item {
     property string emojiReactions: ""
     property int prevMessageIndex: -1
     property bool timeout: false
+    property string linkUrls: ""
 
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
