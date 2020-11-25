@@ -16,4 +16,8 @@ QtObject {
         }
 
     }
+
+    property var changeFontSize: function (fontSize) {
+        current.updateFontSize(fontSize)
+    }
 }

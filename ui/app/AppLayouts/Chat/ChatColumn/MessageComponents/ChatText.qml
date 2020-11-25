@@ -42,7 +42,7 @@ Item {
         textFormat: Text.RichText
         horizontalAlignment: Text.AlignLeft
         wrapMode: Text.Wrap
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         readOnly: true
         selectByMouse: true
         color: Style.current.textColor

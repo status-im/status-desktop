@@ -10,7 +10,7 @@ StyledTextEdit {
     text: !isCurrentUser ? Utils.removeStatusEns(userName) : qsTrId("You")
     color: (userName.startsWith("@") || isCurrentUser) ? Style.current.blue : Style.current.textColor
     font.bold: true
-    font.pixelSize: 14
+    font.pixelSize: Style.current.secondaryTextFontSize
     readOnly: true
     wrapMode: Text.WordWrap
     selectByMouse: true

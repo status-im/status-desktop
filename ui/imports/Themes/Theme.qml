@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import "../"
 
 QtObject {
     property QtObject fontMedium: FontLoader { id: _fontMedium; source: "../../fonts/Inter/Inter-Medium.otf"; }
@@ -54,4 +55,55 @@ QtObject {
     property int leftTabPrefferedSize: 340
     property int leftTabMinimumWidth: 300
     property int leftTabMaximumWidth: 500
+
+    property int primaryTextFontSize: 15
+    property int secondaryTextFontSize: 14
+    property int tertiaryTextFontSize: 12
+    property int asideTextFontSize: 10
+
+    function updateFontSize(fontSize) {
+        switch (fontSize) {
+            case Constants.fontSizeXS:
+                primaryTextFontSize = 13
+                secondaryTextFontSize = 12
+                tertiaryTextFontSize = 10
+                asideTextFontSize = 8
+                break;
+
+            case Constants.fontSizeS:
+                primaryTextFontSize = 14
+                secondaryTextFontSize = 13
+                tertiaryTextFontSize = 11
+                asideTextFontSize = 9
+                break;
+
+            case Constants.fontSizeM:
+                primaryTextFontSize = 15
+                secondaryTextFontSize = 14
+                tertiaryTextFontSize = 12
+                asideTextFontSize = 10
+                break;
+
+            case Constants.fontSizeL:
+                primaryTextFontSize = 16
+                secondaryTextFontSize = 15
+                tertiaryTextFontSize = 13
+                asideTextFontSize = 11
+                break;
+
+            case Constants.fontSizeXL:
+                primaryTextFontSize = 17
+                secondaryTextFontSize = 16
+                tertiaryTextFontSize = 14
+                asideTextFontSize = 12
+                break;
+
+            case Constants.fontSizeXXL:
+                primaryTextFontSize = 18
+                secondaryTextFontSize = 17
+                tertiaryTextFontSize = 15
+                asideTextFontSize = 13
+                break;
+        }
+    }
 }

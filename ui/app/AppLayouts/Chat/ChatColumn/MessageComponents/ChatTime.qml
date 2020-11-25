@@ -7,7 +7,7 @@ StyledTextEdit {
     visible: isMessage
     color: Style.current.darkGrey
     text: Utils.formatTime(timestamp)
-    font.pixelSize: 10
+    font.pixelSize: Style.current.asideTextFontSize
     readOnly: true
     selectByMouse: true
 }
