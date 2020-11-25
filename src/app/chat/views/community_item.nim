@@ -1,6 +1,7 @@
 import NimQml, Tables, std/wrapnils
 import ../../../status/[chat/chat, status]
 import channels_list
+import ../../../eventemitter
 
 QtObject:
   type CommunityItemView* = ref object of QObject
@@ -28,18 +29,19 @@ QtObject:
     self.communityItem = communityItem
     self.chats.setChats(communityItem.chats)
 
-  proc activeChannelChanged*(self: CommunityItemView) {.signal.}
+  proc activeChanged*(self: CommunityItemView) {.signal.}
 
   proc setActive*(self: CommunityItemView, value: bool) {.slot.} =
     self.active = value
-    self.activeChannelChanged()
+    self.status.events.emit("communityActiveChanged", Args())
+    self.activeChanged()
 
   proc active*(self: CommunityItemView): bool {.slot.} = result = ?.self.active
   
   QtProperty[bool] active:
     read = active
     write = setActive
-    notify = activeChannelChanged
+    notify = activeChanged
 
   proc id*(self: CommunityItemView): string {.slot.} = result = ?.self.communityItem.id
   

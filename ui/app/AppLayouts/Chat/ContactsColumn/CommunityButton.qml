@@ -17,7 +17,7 @@ Rectangle {
 
     id: wrapper
     color: {
-      if (ListView.isCurrentItem || wrapper.hovered) {
+      if (wrapper.hovered) {
         return Style.current.secondaryBackground
       }
       return Style.current.transparent
@@ -86,7 +86,6 @@ Rectangle {
           wrapper.hovered = false
         }
         onClicked: {
-            console.log("Open community")
             chatsModel.setActiveCommunity(communityId)
         }
     }

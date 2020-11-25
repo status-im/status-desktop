@@ -260,12 +260,19 @@ QtObject:
     discard self.status.chat.markAllChannelMessagesRead(selectedChannel.id)
 
   proc setActiveChannelByIndex*(self: ChatsView, index: int) {.slot.} =
-    if(self.chats.chats.len == 0): return
+    if((self.activeCommunity.active and self.activeCommunity.chats.chats.len == 0) or (not self.activeCommunity.active and self.chats.chats.len == 0)): return
+
+    let selectedChannel =
+      if (self.activeCommunity.active):
+        self.activeCommunity.chats.getChannel(index)
+      else:
+        self.chats.getChannel(index)
+
     if(not self.activeChannel.chatItem.isNil and self.activeChannel.chatItem.unviewedMessagesCount > 0):
       var response = self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
       if not response.hasKey("error"):
         self.chats.clearUnreadMessagesCount(self.activeChannel.chatItem)
-    let selectedChannel = self.chats.getChannel(index)
+
     if self.activeChannel.id == selectedChannel.id: return
 
     if selectedChannel.chatType.isOneToOne:
@@ -274,10 +281,13 @@ QtObject:
     self.activeChannel.setChatItem(selectedChannel)
     self.status.chat.setActiveChannel(selectedChannel.id)
 
-  proc getActiveChannelIdx(self: ChatsView): QVariant {.slot.} =
-    newQVariant(self.chats.chats.findIndexById(self.activeChannel.id))
+  proc getActiveChannelIdx(self: ChatsView): int {.slot.} =
+    if (self.activeCommunity.active):
+      return self.activeCommunity.chats.chats.findIndexById(self.activeChannel.id)
+    else:
+      return self.chats.chats.findIndexById(self.activeChannel.id)
 
-  QtProperty[QVariant] activeChannelIndex:
+  QtProperty[int] activeChannelIndex:
     read = getActiveChannelIdx
     write = setActiveChannelByIndex
     notify = activeChannelChanged
@@ -314,7 +324,15 @@ QtObject:
 
   proc setActiveChannel*(self: ChatsView, channel: string) {.slot.} =
     if(channel == ""): return
-    self.activeChannel.setChatItem(self.chats.getChannel(self.chats.chats.findIndexById(channel)))
+
+    let selectedChannel =
+        if (self.activeCommunity.active):
+          self.activeCommunity.chats.getChannel(self.activeCommunity.chats.chats.findIndexById(channel))
+        else:
+          self.chats.getChannel(self.chats.chats.findIndexById(channel))
+
+    self.activeChannel.setChatItem(selectedChannel)
+    
     discard self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
     self.setLastMessageTimestamp(true)
     self.activeChannelChanged()
@@ -722,7 +740,7 @@ QtObject:
   proc setActiveCommunity*(self: ChatsView, communityId: string) {.slot.} =
     if(communityId == ""): return
     self.activeCommunity.setCommunityItem(self.joinedCommunityList.getCommunityById(communityId))
-    self.activeCommunity.active = true
+    self.activeCommunity.setActive(true)
     self.activeCommunityChanged()
 
   proc getActiveCommunity*(self: ChatsView): QVariant {.slot.} =

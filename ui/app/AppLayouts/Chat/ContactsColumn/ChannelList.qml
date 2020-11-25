@@ -47,7 +47,7 @@ Rectangle {
                 chatsModel.activeChannelIndex = 0;
                 currentIndex = 0;
             } else {
-                if(chatsModel.activeChannelIndex > -1){
+                if (chatsModel.activeChannelIndex > -1) {
                     chatGroupsListView.currentIndex = 0;
                 } else {
                     // Initial state. No chat has been selected yet
