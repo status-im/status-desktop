@@ -86,7 +86,7 @@ Item {
         leftPadding: Style.current.halfPadding
         rightPadding: Style.current.halfPadding
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        contentHeight: channelList.height + Style.current.padding + emptyViewAndSuggestions.height
+        contentHeight: childrenRect.height
         clip: true
 
         ChannelList {
@@ -95,11 +95,12 @@ Item {
             channelModel: chatsModel.activeCommunity.chats
         }
 
-        EmptyView {
+        CommunityWelcomeBanner {
             id: emptyViewAndSuggestions
+            visible: chatsModel.activeCommunity.admin
             width: parent.width
             anchors.top: channelList.bottom
-            anchors.topMargin: Style.current.smallPadding
+            anchors.topMargin: Style.current.padding
         }
     }
 }
