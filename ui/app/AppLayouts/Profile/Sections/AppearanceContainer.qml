@@ -5,6 +5,7 @@ import QtQuick.Controls.Universal 2.12
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
+import "../../Chat/ChatColumn"
 
 ScrollView {
     height: parent.height
@@ -30,6 +31,10 @@ ScrollView {
         Style.changeTheme(themeStr)
     }
 
+    function updateFontSize(fontSize) {
+        Style.changeFontSize(fontSize)
+    }
+
     Item {
         id: appearanceContainer
         anchors.right: parent.right
@@ -47,9 +52,127 @@ ScrollView {
         }
 
         StatusSectionHeadline {
+            id: sectionHeadlinePreview
+            text: qsTr("Preview")
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+        }
+
+        Rectangle {
+            id: preview
+            anchors.top: sectionHeadlinePreview.bottom
+            anchors.topMargin: Style.current.smallPadding
+            anchors.left: parent.left
+            anchors.leftMargin: -Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: -Style.current.padding
+            height: 220
+            radius: Style.current.radius
+            border.color: Style.current.border
+            color: Style.current.transparent
+
+            Message {
+                anchors.top: parent.top
+                anchors.topMargin: Style.current.padding*2
+                anchors.left: parent.left
+                anchors.leftMargin: Style.current.smallPadding
+                userName: "@vitalik"
+                identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAb0lEQVR4Ae3UQQqAIBRF0Wj9ba9Bq6l5JBQqfn/ngDMH3YS3AAB/tO3H+XRG3b9bR/+gVoREI2RapVXpfd5+X5oXERKNkHS+rk3tOpWkeREh0QiZVu91ql2zNC8iJBoh0yqtSqt1slpCghICANDPBc0ESPh0bHkHAAAAAElFTkSuQmCC"
+                message: qsTr("Blockchains will drop search costs, causing a kind of decomposition that allows you to have markets of entities that are horizontally segregated and vertically segregated.")
+                contentType: Constants.messageType
+
+            }
+        }
+
+        StatusSectionHeadline {
+            id: sectionHeadlineFontSize
+            text: qsTr("Size")
+            anchors.top: preview.bottom
+            anchors.topMargin: Style.current.padding
+            anchors.left: parent.left
+            anchors.right: parent.right
+        }
+
+        StyledText {
+            id: labelFontSize
+            anchors.top: sectionHeadlineFontSize.bottom
+            anchors.topMargin: Style.current.padding
+            anchors.left: parent.left
+            font.pixelSize: 15
+            text: qsTr("Change font size")
+        }
+
+        StatusSlider {
+            id: fontSizeSlider
+            anchors.top: labelFontSize.bottom
+            anchors.topMargin: Style.current.padding
+            width: parent.width
+            minimumValue: 0
+            maximumValue: 5
+            stepSize: 1
+            value: appSettings.fontSize
+            onValueChanged: {
+                appSettings.fontSize = value
+                root.updateFontSize(value)
+            }
+        }
+
+        RowLayout {
+            id: fontSizeSliderLegend
+            anchors.top: fontSizeSlider.bottom
+            anchors.topMargin: Style.current.padding
+            anchors.left: parent.left
+            anchors.right: parent.right
+            spacing: Style.current.smallPadding
+
+            StyledText {
+                font.pixelSize: 15
+                text: qsTr("XS")
+                Layout.preferredWidth: fontSizeSlider.width/6
+            }
+
+            StyledText {
+                font.pixelSize: 15
+                text: qsTr("S")
+                Layout.preferredWidth: fontSizeSlider.width/6
+                Layout.leftMargin: 2
+            }
+
+            StyledText {
+                font.pixelSize: 15
+                text: qsTr("M")
+                Layout.preferredWidth: fontSizeSlider.width/6
+                Layout.leftMargin: 2
+            }
+
+            StyledText {
+                font.pixelSize: 15
+                text: qsTr("L")
+                Layout.preferredWidth: fontSizeSlider.width/6
+                Layout.leftMargin: 2
+            }
+
+            StyledText {
+                font.pixelSize: 15
+                text: qsTr("XL")
+                Layout.preferredWidth: fontSizeSlider.width/6
+                Layout.leftMargin: 0
+            }
+
+            StyledText {
+                font.pixelSize: 15
+                text: qsTr("XXL")
+                Layout.alignment: Qt.AlignRight
+                Layout.leftMargin: -Style.current.smallPadding
+            }
+        }
+
+        StatusSectionHeadline {
             id: sectionHeadlineChatMode
             text: qsTr("Chat mode")
-            anchors.top: parent.top
+            anchors.top: fontSizeSliderLegend.bottom
+            anchors.topMargin: Style.current.padding*2
             anchors.left: parent.left
             anchors.right: parent.right
         }

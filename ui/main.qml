@@ -85,6 +85,8 @@ ApplicationWindow {
         property var whitelistedUnfurlingSites: ({})
         property bool neverAskAboutUnfurlingAgain: false
 
+        property int fontSize: Constants.fontSizeM
+
         // Browser settings
         property bool autoLoadImages: true
         property bool javaScriptEnabled: true
@@ -117,6 +119,8 @@ ApplicationWindow {
         property bool allowNotificationsFromNonContacts: defaultAppSettings.allowNotificationsFromNonContacts
         property var whitelistedUnfurlingSites: defaultAppSettings.whitelistedUnfurlingSites
         property bool neverAskAboutUnfurlingAgain: defaultAppSettings.neverAskAboutUnfurlingAgain
+
+        property int fontSize: defaultAppSettings.fontSize
 
         // Browser settings
         property bool autoLoadImages: defaultAppSettings.autoLoadImages

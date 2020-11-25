@@ -8,7 +8,7 @@ StyledText {
     color: Style.current.red
     //% "Resend"
     text: qsTrId("resend-message")
-    font.pixelSize: 12
+    font.pixelSize: Style.current.tertiaryTextFontSize
     visible: isCurrentUser && (timeout || isExpired)
     MouseArea {
         cursorShape: Qt.PointingHandCursor

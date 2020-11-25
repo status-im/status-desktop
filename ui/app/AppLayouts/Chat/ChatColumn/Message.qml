@@ -119,7 +119,7 @@ Item {
             StyledText {
                 id: fetchMoreButton
                 font.weight: Font.Medium
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Style.current.blue
                 //% "↓ Fetch more messages"
                 text: qsTrId("load-more-messages")
