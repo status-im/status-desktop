@@ -1,11 +1,11 @@
 import NimQml, Tables, std/wrapnils
 import ../../../status/[chat/chat, status]
-import community_chats
+import channels_list
 
 QtObject:
   type CommunityItemView* = ref object of QObject
     communityItem*: Community
-    chats*: CommunityChatsList
+    chats*: ChannelsList
     status*: Status
     active*: bool
 
@@ -21,7 +21,7 @@ QtObject:
     result = CommunityItemView()
     result.status = status
     result.active = false
-    result.chats = newCommunityChatsView(status)
+    result.chats = newChannelsList(status)
     result.setup
 
   proc setCommunityItem*(self: CommunityItemView, communityItem: Community) =

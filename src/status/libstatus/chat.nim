@@ -218,15 +218,16 @@ proc getAllComunities*(): seq[Community] =
         admin: jsonCommunity{"admin"}.getBool,
         joined: jsonCommunity{"joined"}.getBool,
         verified: jsonCommunity{"verified"}.getBool,
-        chats: newSeq[CommunityChat]()
+        chats: newSeq[Chat]()
       )
 
       for chatId, chat in jsonCommunity{"description"}{"chats"}:
-        community.chats.add(CommunityChat(
+        community.chats.add(Chat(
           id: chatId,
           name: chat{"identity"}{"display_name"}.getStr,
           description: chat{"identity"}{"description"}.getStr,
-          access: chat{"permissions"}{"access"}.getInt,
+          # TODO get this from access
+          chatType: ChatType.Public#chat{"permissions"}{"access"}.getInt,
         ))
 
       communities.add(community)

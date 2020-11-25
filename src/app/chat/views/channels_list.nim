@@ -18,6 +18,7 @@ type
     ContentType = UserRole + 9
     Muted = UserRole + 10
     Id = UserRole + 11
+    Description = UserRole + 12
 
 QtObject:
   type
@@ -71,6 +72,7 @@ QtObject:
       of ChannelsRoles.HasMentions: result = newQVariant(chatItem.hasMentions)
       of ChannelsRoles.Muted: result = newQVariant(chatItem.muted.bool)
       of ChannelsRoles.Id: result = newQVariant($chatItem.id)
+      of ChannelsRoles.Description: result = newQVariant(chatItem.description)
 
   method roleNames(self: ChannelsList): Table[int, string] =
     {
@@ -84,8 +86,14 @@ QtObject:
       ChannelsRoles.HasMentions.int: "hasMentions",
       ChannelsRoles.ContentType.int: "contentType",
       ChannelsRoles.Muted.int: "muted",
-      ChannelsRoles.Id.int: "id"
+      ChannelsRoles.Id.int: "id",
+      ChannelsRoles.Description.int: "description"
     }.toTable
+
+  proc setChats*(self: ChannelsList, chats: seq[Chat]) =
+    self.beginResetModel()
+    self.chats = chats
+    self.endResetModel()
 
   proc addChatItemToList*(self: ChannelsList, channel: Chat): int =
     self.beginInsertRows(newQModelIndex(), 0, 0)
@@ -144,7 +152,7 @@ QtObject:
       else:
         self.chats[0] = channel
 
-    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.ContentType.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int, ChannelsRoles.HasMentions.int, ChannelsRoles.Muted.int])
+    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.Description.int, ChannelsRoles.ContentType.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int, ChannelsRoles.HasMentions.int, ChannelsRoles.Muted.int])
 
   proc clearUnreadMessagesCount*(self: ChannelsList, channel: var Chat) =
     let idx = self.chats.findIndexById(channel.id)
@@ -156,7 +164,7 @@ QtObject:
     channel.hasMentions = false
     self.chats[idx] = channel
 
-    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.ContentType.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int, ChannelsRoles.HasMentions.int, ChannelsRoles.Muted.int])
+    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.Description.int, ChannelsRoles.ContentType.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int, ChannelsRoles.HasMentions.int, ChannelsRoles.Muted.int])
 
   proc renderInline(self: ChannelsList, elem: TextItem): string =
     case elem.textType:
