@@ -16,7 +16,7 @@ type
   NimQAbstractTableModel = pointer
   DosQMetaObject = distinct pointer
   DosQObject = distinct pointer
-  DosQQNetworkAccessManagerFactory = distinct pointer
+  DosQQNetworkAccessManagerFactory = pointer
   DosQObjectWrapper = distinct pointer
   DosQVariant = distinct pointer
   DosQQmlContext = distinct pointer
