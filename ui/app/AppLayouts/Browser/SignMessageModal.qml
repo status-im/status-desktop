@@ -73,9 +73,6 @@ ModalPopup {
         width: parent.width
         signingPhrase: walletModel.signingPhrase
         visible: showSigningPhrase
-        reset: function() {
-            signingPhrase = Qt.binding(function() { return walletModel.signingPhrase })
-        }
     }
 
     Column {
