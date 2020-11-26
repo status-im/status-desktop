@@ -711,17 +711,14 @@ QtObject:
         # TODO Change this to get it from the user choices
       let access = ord(CommunityAccessLevel.public)
       let tmpImagePath = self.resizeImage(imagePath, 120)
-      self.status.chat.createCommunity(name, description, color, tmpImagePath, access)
+      let community = self.status.chat.createCommunity(name, description, color, tmpImagePath, access)
       removeFile(tmpImagePath)
+     
+      if (community.id == ""):
+        return "Community was not created. Please try again later"
 
-      self.communityList.addCommunityItemToList(Community(
-        description: description,
-        # color: color,
-        access: access,
-        admin: true,
-        verified: true,
-        joined: true
-      ))
+      self.communityList.addCommunityItemToList(community)
+      self.joinedCommunityList.addCommunityItemToList(community)
       self.communitiesChanged()
     except Exception as e:
       error "Error creating the community", msg = e.msg

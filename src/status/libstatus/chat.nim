@@ -208,40 +208,20 @@ proc getAllComunities*(): seq[Community] =
   debug "LIST", rpcResult
   if rpcResult["result"].kind != JNull:
     for jsonCommunity in rpcResult["result"]:
-
-      var community = Community(
-        id: jsonCommunity{"id"}.getStr,
-        name: jsonCommunity{"description"}{"identity"}{"display_name"}.getStr,
-        description: jsonCommunity{"description"}{"identity"}{"description"}.getStr,
-        # color: jsonCommunity{"description"}{"identity"}{"color"}.getStr,
-        access: jsonCommunity{"description"}{"permissions"}{"access"}.getInt,
-        admin: jsonCommunity{"admin"}.getBool,
-        joined: jsonCommunity{"joined"}.getBool,
-        verified: jsonCommunity{"verified"}.getBool,
-        chats: newSeq[Chat]()
-      )
-
-      for chatId, chat in jsonCommunity{"description"}{"chats"}:
-        community.chats.add(Chat(
-          id: chatId,
-          name: chat{"identity"}{"display_name"}.getStr,
-          description: chat{"identity"}{"description"}.getStr,
-          # TODO get this from access
-          chatType: ChatType.Public#chat{"permissions"}{"access"}.getInt,
-        ))
+      var community = jsonCommunity.toCommunity()
 
       communities.add(community)
   return communities
 
-proc createCommunity*(name: string, description: string, color: string, image: string, access: int) =
-  let res = callPrivateRPC("createCommunity".prefix, %*[{
+proc createCommunity*(name: string, description: string, color: string, image: string, access: int): Community =
+  let rpcResult = callPrivateRPC("createCommunity".prefix, %*[{
       "permissions": {
         "access": access
       },
       "identity": {
-        "displayName": name,
-        "description": description,
-        "color": color#,
+        "display_name": name,
+        "description": description#,
+        # "color": color#,
         # TODO add images once it is supported by Status-Go
         # "images": [
         #   {
@@ -251,8 +231,11 @@ proc createCommunity*(name: string, description: string, color: string, image: s
         #   }
         # ]
       }
-    }])#.parseJSON()["result"]
-  debug "RESULT", res
+    }]).parseJSON()
+  debug "RESULT", rpcResult
+
+  if rpcResult["result"].kind != JNull:
+    result = rpcResult["result"]["communities"][0].toCommunity()
 
 proc joinCommunity*(communityId: string) =
   let res = callPrivateRPC("joinCommunity".prefix, %*[communityId])#.parseJSON()["result"]

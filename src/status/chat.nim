@@ -337,8 +337,8 @@ proc requestTransaction*(self: ChatModel, chatId: string, fromAddress: string, a
 proc getAllComunities*(self: ChatModel): seq[Community] =
   result = status_chat.getAllComunities()
 
-proc createCommunity*(self: ChatModel, name: string, description: string, color: string, image: string, access: int) =
-  status_chat.createCommunity(name, description, color, image, access)
+proc createCommunity*(self: ChatModel, name: string, description: string, color: string, image: string, access: int): Community =
+  result = status_chat.createCommunity(name, description, color, image, access)
 
 proc joinCommunity*(self: ChatModel, communityId: string) =
   status_chat.joinCommunity(communityId)
