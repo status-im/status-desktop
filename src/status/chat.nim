@@ -128,14 +128,9 @@ proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
 proc init*(self: ChatModel) =
   let chatList = status_chat.loadChats()
 
-  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  echo $chatList
-
   var filters:seq[JsonNode] = @[]
   for chat in chatList:
-    echo ",,,,,,,,,", chat.name
     if self.hasChannel(chat.id): 
-      echo "Has channel"
       continue
     filters.add status_chat.buildFilter(chat)
     self.channels[chat.id] = chat
