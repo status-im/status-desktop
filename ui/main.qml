@@ -84,6 +84,7 @@ ApplicationWindow {
         property bool allowNotificationsFromNonContacts: false
         property var whitelistedUnfurlingSites: ({})
         property bool neverAskAboutUnfurlingAgain: false
+        property bool dontShowChannelSuggestions: false
 
         property int fontSize: Constants.fontSizeM
 
@@ -119,7 +120,7 @@ ApplicationWindow {
         property bool allowNotificationsFromNonContacts: defaultAppSettings.allowNotificationsFromNonContacts
         property var whitelistedUnfurlingSites: defaultAppSettings.whitelistedUnfurlingSites
         property bool neverAskAboutUnfurlingAgain: defaultAppSettings.neverAskAboutUnfurlingAgain
-
+        property bool dontShowChannelSuggestions: defaultAppSettings.dontShowChannelSuggestions
         property int fontSize: defaultAppSettings.fontSize
 
         // Browser settings
