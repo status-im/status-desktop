@@ -340,5 +340,8 @@ proc getAllComunities*(self: ChatModel): seq[Community] =
 proc createCommunity*(self: ChatModel, name: string, description: string, color: string, image: string, access: int): Community =
   result = status_chat.createCommunity(name, description, color, image, access)
 
+proc createCommunityChannel*(self: ChatModel, communityId: string, name: string, description: string) =
+  status_chat.createCommunityChannel(communityId, name, description)
+
 proc joinCommunity*(self: ChatModel, communityId: string) =
   status_chat.joinCommunity(communityId)

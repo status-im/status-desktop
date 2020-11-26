@@ -5,15 +5,24 @@ import QtQuick.Layouts 1.13
 import "../../../imports"
 import "../../../shared"
 import "../../../shared/status"
-import "./components"
 import "./ContactsColumn"
+import "./ContactsColumn/CommunityComponents"
 
 Item {
     // TODO unhardcode
-    property int chatGroupsListViewCount: 2
+    property int chatGroupsListViewCount: channelList.channelListCount
 
     id: root
     Layout.fillHeight: true
+
+    Component {
+        id: createChannelPopup
+        CreateChannelPopup {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
 
     Item {
         id: communityHeader
@@ -71,9 +80,25 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.bigPadding
             anchors.verticalCenter: parent.verticalCenter
+            onClicked: {
+                optionsMenu.open()
+            }
+        }
+
+        PopupMenu {
+            id: optionsMenu
+            x: optionsBtn.x + optionsBtn.width / 2 - optionsMenu.width / 2
+            y: optionsBtn.height
+
+            Action {
+                text: qsTrId("Create channel")
+                icon.source: "../../img/hash.svg"
+                icon.width: 20
+                icon.height: 20
+                onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.activeCommunity.id})
+            }
         }
     }
-
 
 
     ScrollView {

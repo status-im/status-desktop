@@ -165,6 +165,7 @@ DISTFILES += \
     app/AppLayouts/Chat/ContactsColumn/AddChat.qml \
     app/AppLayouts/Chat/ContactsColumn/ClosedEmptyView.qml \
     app/AppLayouts/Chat/ContactsColumn/CommunityButton.qml \
+    app/AppLayouts/Chat/ContactsColumn/CommunityComponents/CreateChannelPopup.qml \
     app/AppLayouts/Chat/ContactsColumn/CommunityList.qml \
     app/AppLayouts/Chat/ContactsColumn/CommunityWelcomeBanner.qml \
     app/AppLayouts/Chat/components/CommunitiesPopup.qml \

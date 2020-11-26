@@ -724,6 +724,21 @@ QtObject:
       error "Error creating the community", msg = e.msg
       result = fmt"Error creating the community: {e.msg}"
 
+  proc createCommunityChannel*(self: ChatsView, communityId: string, name: string, description: string): string {.slot.} =
+    result = ""
+    try:
+      self.status.chat.createCommunityChannel(communityId, name, description)
+     
+      # if (community.id == ""):
+      #   return "Channel was not created. Please try again later"
+
+      # self.communityList.addCommunityItemToList(community)
+      # self.joinedCommunityList.addCommunityItemToList(community)
+      # self.communitiesChanged()
+    except Exception as e:
+      error "Error creating the channel", msg = e.msg
+      result = fmt"Error creating the channel: {e.msg}"
+
   proc joinCommunity*(self: ChatsView, communityId: string): string {.slot.} =
     result = ""
     try:

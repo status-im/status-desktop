@@ -14,6 +14,12 @@ SplitView {
         chatColumn.onActivated()
     }
 
+    function openPopup(popupComponent, params = {}) {
+        const popup = popupComponent.createObject(chatView, params);
+        popup.open()
+        return popup
+    }
+
     Connections {
         target: applicationWindow
         onSettingsLoaded: {
