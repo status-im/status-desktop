@@ -11,7 +11,7 @@ Rectangle {
     id: emptyView
     Layout.fillHeight: true
     Layout.fillWidth: true
-    visible: !appSettings.dontShowChannelSuggestions
+    visible: !appSettings.hideChannelSuggestions
 
     height: suggestionContainer.height + inviteFriendsContainer.height + Style.current.padding * 2
     border.color: Style.current.border
@@ -56,7 +56,7 @@ Rectangle {
             anchors.fill: closeImg
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                appSettings.dontShowChannelSuggestions = true
+                appSettings.hideChannelSuggestions = true
             }
         }
 
