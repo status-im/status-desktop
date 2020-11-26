@@ -47,9 +47,7 @@ Loader {
                 visible: repliedMessageType != Constants.imageType
                 anchors.top: lblReplyAuthor.bottom
                 anchors.topMargin: 5
-                text: `<html>`+
-                    `<head>`+
-                        `<style type="text/css">`+
+                text: `<style type="text/css">`+
                         `a {`+
                             `color: ${isCurrentUser && !appSettings.compactMode ? Style.current.white : Style.current.textColor};`+
                         `}`+
@@ -59,7 +57,7 @@ Loader {
                         `</style>`+
                     `</head>`+
                     `<body>`+
-                        `${Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent))}`+
+                        `${Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), "26x26")}`+
                     `</body>`+
                 `</html>`
                 textFormat: Text.RichText
