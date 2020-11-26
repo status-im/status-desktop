@@ -212,7 +212,9 @@ ModalPopup {
         StatusButton {
             id: btnNext
             anchors.right: parent.right
-            text: showSigningPhrase ? qsTr("Sign") : qsTr("Sign with password")
+            text: showSigningPhrase ? 
+                    qsTr("Sign") : 
+                    qsTr("Sign with password")
             onClicked: {
                 if(!showSigningPhrase){
                     showSigningPhrase = true;
