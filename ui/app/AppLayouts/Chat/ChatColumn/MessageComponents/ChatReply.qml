@@ -47,7 +47,21 @@ Loader {
                 visible: repliedMessageType != Constants.imageType
                 anchors.top: lblReplyAuthor.bottom
                 anchors.topMargin: 5
-                text: Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent));
+                text: `<html>`+
+                    `<head>`+
+                        `<style type="text/css">`+
+                        `a {`+
+                            `color: ${isCurrentUser && !appSettings.compactMode ? Style.current.white : Style.current.textColor};`+
+                        `}`+
+                        `a.mention {`+
+                            `color: ${isCurrentUser ? Style.current.cyan : Style.current.turquoise};`+
+                        `}`+
+                        `</style>`+
+                    `</head>`+
+                    `<body>`+
+                        `${Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent))}`+
+                    `</body>`+
+                `</html>`
                 textFormat: Text.RichText
                 color: root.elementsColor
                 readOnly: true
