@@ -62,11 +62,14 @@ Item {
         anchors.left: chatText.left
         anchors.leftMargin: 8
         anchors.top: chatReply.bottom
+        z: 51
+
 
         sourceComponent: Component {
             ChatImage {
                 imageSource: image
                 imageWidth: 200
+                onClicked: chatTextItem.clickMessage(false, false, true, image)
             }
         }
     }
