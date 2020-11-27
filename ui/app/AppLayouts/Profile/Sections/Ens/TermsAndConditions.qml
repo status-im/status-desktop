@@ -248,7 +248,7 @@ Item {
                 anchors.topMargin: 24
             }
 
-            CheckBox {
+            StatusCheckBox {
                 id: termsAndConditionsCheckbox
                 anchors.top: keyLbl.bottom
                 anchors.topMargin: Style.current.padding
