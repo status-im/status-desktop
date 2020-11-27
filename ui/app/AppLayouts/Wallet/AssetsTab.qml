@@ -1,4 +1,6 @@
 import QtQuick 2.13
+import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.14
 import "../../../imports"
 import "../../../shared"
 
@@ -48,7 +50,7 @@ Item {
             }
             StyledText {
                 id: assetValue
-                text: value.toUpperCase()
+                text: value.toUpperCase() + " " + symbol
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 font.pixelSize: 15
@@ -79,13 +81,22 @@ Item {
         }
     }
 
-    ListView {
-        id: assetListView
-        spacing: Style.current.halfPadding
+    ScrollView {
         anchors.fill: parent
-//        model: exampleModel
-        model: walletModel.assets
-        delegate: assetViewDelegate
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        ScrollBar.vertical.policy: assetListView.contentHeight > assetListView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+
+        ListView {
+            id: assetListView
+            spacing: Style.current.padding * 2
+            anchors.fill: parent
+    //        model: exampleModel
+            model: walletModel.assets
+            delegate: assetViewDelegate
+            boundsBehavior: Flickable.StopAtBounds
+        }
     }
 }
 /*##^##

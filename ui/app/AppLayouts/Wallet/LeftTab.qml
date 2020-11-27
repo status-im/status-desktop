@@ -152,44 +152,53 @@ Item {
         }
     }
 
-    ListView {
-        id: listView
+    ScrollView {
         anchors.bottom: parent.bottom
         anchors.top: walletValueTextContainer.bottom
         anchors.topMargin: Style.current.padding
-        spacing: 5
         anchors.right: parent.right
         anchors.left: parent.left
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        ScrollBar.vertical.policy: listView.contentHeight > listView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
 
-        delegate: walletDelegate
+        ListView {
+            id: listView
 
-        ListModel {
-            id: exampleWalletModel
-            ListElement {
-                name: "Status account"
-                address: "0xcfc9f08bbcbcb80760e8cb9a3c1232d19662fc6f"
-                balance: "12.00 USD"
-                iconColor: "#7CDA00"
+            spacing: 5
+            anchors.fill: parent
+            boundsBehavior: Flickable.StopAtBounds
+
+            delegate: walletDelegate
+
+            ListModel {
+                id: exampleWalletModel
+                ListElement {
+                    name: "Status account"
+                    address: "0xcfc9f08bbcbcb80760e8cb9a3c1232d19662fc6f"
+                    balance: "12.00 USD"
+                    iconColor: "#7CDA00"
+                }
+
+                ListElement {
+                    name: "Test account 1"
+                    address: "0x2Ef1...E0Ba"
+                    balance: "12.00 USD"
+                    iconColor: "#FA6565"
+                }
+                ListElement {
+                    name: "Status account"
+                    address: "0x2Ef1...E0Ba"
+                    balance: "12.00 USD"
+                    iconColor: "#7CDA00"
+                }
             }
 
-            ListElement {
-                name: "Test account 1"
-                address: "0x2Ef1...E0Ba"
-                balance: "12.00 USD"
-                iconColor: "#FA6565"
-            }
-            ListElement {
-                name: "Status account"
-                address: "0x2Ef1...E0Ba"
-                balance: "12.00 USD"
-                iconColor: "#7CDA00"
-            }
+            model: walletModel.accounts
+            //        model: exampleWalletModel
         }
-
-        model: walletModel.accounts
-        //        model: exampleWalletModel
     }
-
 }
 
 /*##^##
