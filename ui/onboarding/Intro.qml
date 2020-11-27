@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../shared"
+import "../shared/status"
 import "../imports"
 
 RowLayout {
@@ -91,7 +92,7 @@ RowLayout {
             wrapMode: Text.Wrap
         }
 
-        CheckBox {
+        StatusCheckBox {
             id: warningCheckBox
             anchors.top: warningMessage.bottom
             anchors.topMargin: 0

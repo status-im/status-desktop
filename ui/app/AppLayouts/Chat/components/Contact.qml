@@ -63,7 +63,7 @@ Rectangle {
         source: "../../../img/list-next.svg"
     }
 
-    CheckBox  {
+    StatusCheckBox  {
         id: assetCheck
         visible: !showListSelector && showCheckbox && !isUser
         anchors.top: accountImage.top

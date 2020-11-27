@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 import "../../Chat/ContactsColumn"
 import "../data/"
 
@@ -60,7 +61,7 @@ Item {
                 font.pixelSize: 15
                 width: 330
             }
-            CheckBox  {
+            StatusCheckBox  {
                 id: assetCheck
                 checked: walletModel.hasAsset("0x123", symbol)
                 anchors.left: assetFullTokenName.right
