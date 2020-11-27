@@ -21,8 +21,7 @@ Item {
         width: 480
         height: 510
 
-        //% "Settings"
-        title: qsTrId("settings")
+        title: qsTr("Set Currency")
 
         SetCurrencyModalContent {
             id: setCurrencyModalContent

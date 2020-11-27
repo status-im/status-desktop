@@ -16,19 +16,26 @@ Item {
 
     ListView {
         anchors.top: parent.top
-        anchors.topMargin: 10
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
+
         clip: true
         spacing: 10
         id: tokenListView
         model: Currencies {}
-        ScrollBar.vertical: ScrollBar { active: true }
+        ScrollBar.vertical: ScrollBar { 
+            active: true
+            policy: tokenListView.contentHeight > tokenListView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+        }
         boundsBehavior: Flickable.StopAtBounds
         
         delegate: Component {
-            Item {
+            Rectangle {
+                id: wrapper
+                property bool hovered: false
+                radius: Style.current.radius
+                color: currency === key ? Style.current.lightBlue : (hovered ? Style.current.grey: Style.current.transparent)
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.left: parent.left
@@ -39,14 +46,30 @@ Item {
                 StyledText {
                     text: name + " (" + code + ")"
                     font.pixelSize: 15
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: Style.current.padding
                 }
 
                 StatusRadioButton {
                     checked: currency === key
+                    isHovered: wrapper.hovered
                     anchors.right: parent.right
-                    anchors.rightMargin: 4
+                    anchors.rightMargin: Style.current.padding
+                    anchors.verticalCenter: parent.verticalCenter
                     ButtonGroup.group: currencyGroup
                     onClicked: { walletModel.setDefaultCurrency(key) }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: {
+                        wrapper.hovered = true
+                    }
+                    onExited: {
+                        wrapper.hovered = false
+                    }
                 }
             }
         }
