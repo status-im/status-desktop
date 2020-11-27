@@ -28,6 +28,18 @@ SplitView {
         SplitView.maximumWidth: Style.current.leftTabMaximumWidth
     }
 
+    property bool hideSignPhraseModal: false
+
+    SignPhraseModal {
+        id: signPhrasePopup
+    }
+    
+    function showSigningPhrasePopup(){
+        if(!hideSignPhraseModal && !appSettings.hideSignPhraseModal){
+            signPhrasePopup.open();
+        }
+    }
+    
     Item {
         id: walletContainer
         anchors.top: parent.top
