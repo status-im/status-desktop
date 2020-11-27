@@ -79,7 +79,7 @@ Item {
 
             id: rectangle
             height: 64
-            color: selected ? Style.current.blue : Style.current.transparent
+            color: selected ? iconColor : Style.current.transparent
             radius: Style.current.radius
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding

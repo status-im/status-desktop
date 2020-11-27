@@ -35,7 +35,7 @@ Item {
         id: separatorDot
         width: 8
         height: 8
-        color: Style.current.blue
+        color: currentAccount.iconColor
         anchors.top: title.verticalCenter
         anchors.topMargin: -3
         anchors.left: title.right

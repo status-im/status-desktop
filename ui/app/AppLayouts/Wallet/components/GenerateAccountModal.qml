@@ -37,6 +37,8 @@ ModalPopup {
 
     onOpened: {
         passwordInput.text = "";
+        accountNameInput.text = "";
+        accountColorInput.selectedColor = Constants.accountColors[Math.floor(Math.random() * Constants.accountColors.length)]
         passwordInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
@@ -63,7 +65,6 @@ ModalPopup {
 
     ColorSelector {
         id: accountColorInput
-        selectedColor: Constants.accountColors[0]
         model: Constants.accountColors
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs
