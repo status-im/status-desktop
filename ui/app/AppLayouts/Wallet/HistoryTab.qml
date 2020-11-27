@@ -224,6 +224,7 @@ Item {
         height: parent.height - extraButtons.height
         width: parent.width
         clip: true
+        boundsBehavior: Flickable.StopAtBounds
         model: walletModel.transactions
         delegate: transactionListItemCmp
         ScrollBar.vertical: ScrollBar {

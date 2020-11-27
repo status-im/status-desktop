@@ -25,7 +25,8 @@ Item {
         id: tokenListView
         model: Currencies {}
         ScrollBar.vertical: ScrollBar { active: true }
-
+        boundsBehavior: Flickable.StopAtBounds
+        
         delegate: Component {
             Item {
                 anchors.right: parent.right
