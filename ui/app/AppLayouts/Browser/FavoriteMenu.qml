@@ -18,8 +18,8 @@ PopupMenu {
     Action {
         text: qsTr("Open in new Tab")
         icon.source: "../../img/generate_account.svg"
-        icon.width: 12
-        icon.height: 12
+        icon.width: 16
+        icon.height: 16
         onTriggered: {
             openInNewTab(root.url)
         }

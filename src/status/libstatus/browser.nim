@@ -6,12 +6,17 @@ proc storeBookmark*(url: string, name: string): Bookmark =
   try:
     let resp = callPrivateRPC("browsers_storeBookmark", payload).parseJson["result"]
     result.imageUrl = resp["imageUrl"].getStr
-  except:
+  except Exception as e:
+    error "Error updating bookmark", msg = e.msg
     discard
 
 proc updateBookmark*(ogUrl: string, url: string, name: string) =
   let payload = %* [ogUrl, {"url": url, "name": name}]
-  discard callPrivateRPC("browsers_updateBookmark", payload)
+  try:
+    discard callPrivateRPC("browsers_updateBookmark", payload)
+  except Exception as e:
+    error "Error updating bookmark", msg = e.msg
+    discard
 
 proc getBookmarks*(): string =
   let payload = %* []
