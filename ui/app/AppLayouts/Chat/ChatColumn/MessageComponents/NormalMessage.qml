@@ -135,16 +135,19 @@ Item {
             anchors.topMargin: Style.current.smallPadding
             anchors.left: parent.left
             anchors.leftMargin: chatBox.chatHorizontalPadding
+            z: 51
 
             sourceComponent: Component {
                 Item {
                     width: chatImageComponent.width + 2 * chatBox.chatHorizontalPadding
                     height: chatImageComponent.height
+
                     ChatImage {
                         id: chatImageComponent
                         imageSource: image
                         imageWidth: 250
                         isCurrentUser: messageItem.isCurrentUser
+                        onClicked: chatTextItem.clickMessage(false, false, true, image)
                     }
                 }
             }
