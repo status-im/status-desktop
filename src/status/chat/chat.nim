@@ -120,6 +120,15 @@ proc findIndexById*(self: seq[Chat], id: string): int =
       result = idx
       break
 
+proc findIndexById*(self: seq[Community], id: string): int =
+  result = -1
+  var idx = -1
+  for item in self:
+    inc idx
+    if(item.id == id):
+      result = idx
+      break
+
 proc isMember*(self: Chat, pubKey: string): bool =
   for member in self.members:
     if member.id == pubKey and member.joined: return true

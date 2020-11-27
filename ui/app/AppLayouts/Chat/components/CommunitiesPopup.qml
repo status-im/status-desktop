@@ -79,9 +79,12 @@ ModalPopup {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         // TODO if already joined, just open the Community in the section
-
-                        chatsModel.setActiveCommunity(id)
-                        openPopup(communityDetailPopup)
+                        if (joined) {
+                            chatsModel.setActiveCommunity(id)
+                        } else {
+                            chatsModel.setObservedCommunity(id)
+                            openPopup(communityDetailPopup)
+                        }
                         popup.close()
                     }
                 }

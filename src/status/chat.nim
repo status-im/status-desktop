@@ -345,3 +345,6 @@ proc createCommunityChannel*(self: ChatModel, communityId: string, name: string,
 
 proc joinCommunity*(self: ChatModel, communityId: string) =
   status_chat.joinCommunity(communityId)
+
+proc leaveCommunity*(self: ChatModel, communityId: string) =
+  status_chat.leaveCommunity(communityId)

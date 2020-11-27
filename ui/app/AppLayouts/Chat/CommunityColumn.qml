@@ -91,11 +91,21 @@ Item {
             y: optionsBtn.height
 
             Action {
+                enabled: chatsModel.activeCommunity.admin
                 text: qsTrId("Create channel")
                 icon.source: "../../img/hash.svg"
                 icon.width: 20
                 icon.height: 20
                 onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.activeCommunity.id})
+            }
+
+            Action {
+                text: qsTrId("Leave community")
+                icon.source: "../../img/delete.svg"
+                icon.color: Style.current.red
+                icon.width: 20
+                icon.height: 20
+                onTriggered: chatsModel.leaveCurrentCommunity()
             }
         }
     }

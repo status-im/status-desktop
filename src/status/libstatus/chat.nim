@@ -268,3 +268,7 @@ proc createCommunityChannel*(communityId: string, name: string, description: str
 proc joinCommunity*(communityId: string) =
   let res = callPrivateRPC("joinCommunity".prefix, %*[communityId])#.parseJSON()["result"]
   debug "RESULT", res
+
+proc leaveCommunity*(communityId: string) =
+  let res = callPrivateRPC("leaveCommunity".prefix, %*[communityId])#.parseJSON()["result"]
+  debug "RESULT", res

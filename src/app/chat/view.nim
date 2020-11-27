@@ -68,6 +68,7 @@ QtObject:
     result.chats = newChannelsList(status)
     result.activeChannel = newChatItemView(status)
     result.activeCommunity = newCommunityItemView(status)
+    result.observedCommunity = newCommunityItemView(status)
     result.currentSuggestions = newSuggestionsList()
     result.messageList = initTable[string, ChatMessageList]()
     result.stickerPacks = newStickerPackList()
@@ -739,14 +740,6 @@ QtObject:
       error "Error creating the channel", msg = e.msg
       result = fmt"Error creating the channel: {e.msg}"
 
-  proc joinCommunity*(self: ChatsView, communityId: string): string {.slot.} =
-    result = ""
-    try:
-      self.status.chat.joinCommunity(communityId)
-    except Exception as e:
-      error "Error joining the community", msg = e.msg
-      result = fmt"Error joining the community: {e.msg}"
-
   proc activeCommunityChanged*(self: ChatsView) {.signal.}
 
   proc setActiveCommunity*(self: ChatsView, communityId: string) {.slot.} =
@@ -777,3 +770,28 @@ QtObject:
     read = getObservedCommunity
     write = setObservedCommunity
     notify = observedCommunityChanged
+
+
+  proc joinCommunity*(self: ChatsView, communityId: string): string {.slot.} =
+    result = ""
+    try:
+      self.status.chat.joinCommunity(communityId)
+      self.joinedCommunityList.addCommunityItemToList(self.communityList.getCommunityById(communityId))
+      self.setActiveCommunity(communityId)
+    except Exception as e:
+      error "Error joining the community", msg = e.msg
+      result = fmt"Error joining the community: {e.msg}"
+
+  proc leaveCommunity*(self: ChatsView, communityId: string): string {.slot.} =
+    result = ""
+    try:
+      self.status.chat.leaveCommunity(communityId)
+      if (communityId == self.activeCommunity.communityItem.id):
+        self.activeCommunity.setActive(false)
+      self.joinedCommunityList.removeCommunityItemFromList(communityId)
+    except Exception as e:
+      error "Error leaving the community", msg = e.msg
+      result = fmt"Error leaving the community: {e.msg}"
+
+  proc leaveCurrentCommunity*(self: ChatsView): string {.slot.} =
+    result = self.leaveCommunity(self.activeCommunity.communityItem.id)

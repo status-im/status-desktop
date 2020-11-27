@@ -77,13 +77,11 @@ QtObject:
     self.communities.add(community)
     self.endInsertRows()
 
-  # proc removeChatItemFromList*(self: CommunityList, channel: string): int =
-  #   let idx = self.communities.findIndexById(channel)
-  #   self.beginRemoveRows(newQModelIndex(), idx, idx)
-  #   self.communities.delete(idx)
-  #   self.endRemoveRows()
-
-  #   result = self.communities.len
+  proc removeCommunityItemFromList*(self: CommunityList, id: string) =
+    let idx = self.communities.findIndexById(id)
+    self.beginRemoveRows(newQModelIndex(), idx, idx)
+    self.communities.delete(idx)
+    self.endRemoveRows()
 
   # proc getChannel*(self: CommunityList, index: int): Chat = self.communities[index]
 
