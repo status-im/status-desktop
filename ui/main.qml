@@ -107,6 +107,7 @@ ApplicationWindow {
         property var whitelistedUnfurlingSites: ({})
         property bool neverAskAboutUnfurlingAgain: false
         property bool hideChannelSuggestions: false
+        property bool hideSignPhraseModal: false
 
         property int fontSize: Constants.fontSizeM
 
@@ -144,6 +145,7 @@ ApplicationWindow {
         property bool neverAskAboutUnfurlingAgain: defaultAppSettings.neverAskAboutUnfurlingAgain
         property bool hideChannelSuggestions: defaultAppSettings.hideChannelSuggestions
         property int fontSize: defaultAppSettings.fontSize
+        property bool hideSignPhraseModal: defaultAppSettings.hideSignPhraseModal
 
         // Browser settings
         property bool autoLoadImages: defaultAppSettings.autoLoadImages
