@@ -179,35 +179,42 @@ Popup {
                 }
             }
 
-            RowLayout {
-                spacing: Style.current.padding
+
+            ScrollView {
                 anchors.top: parent.top
                 anchors.left: btnHistory.right
                 anchors.leftMargin: Style.current.padding
+                anchors.right: parent.right
+                height: 32
+                clip: true
+                id: installedStickersSV
+                ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+                RowLayout {
+                    id: stickersRowLayout
+                    spacing: Style.current.padding
+                    Repeater {
+                        id: stickerPackListView
+                        property int selectedPackId: -1
+                        model: stickerPackList
 
-                Repeater {
-                    id: stickerPackListView
-                    property int selectedPackId: -1
-                    model: stickerPackList
-
-                    delegate: StatusStickerPackIconWithIndicator {
-                        id: packIconWithIndicator
-                        visible: installed
-                        width: 24
-                        height: 24
-                        selected: stickerPackListView.selectedPackId === packId
-                        source: "https://ipfs.infura.io/ipfs/" + thumbnail
-                        Layout.preferredHeight: height
-                        Layout.preferredWidth: width
-                        onClicked: {
-                            btnHistory.selected = false
-                            stickerPackListView.selectedPackId = packId
-                            stickerGrid.model = stickers
+                        delegate: StatusStickerPackIconWithIndicator {
+                            id: packIconWithIndicator
+                            visible: installed
+                            width: 24
+                            height: 24
+                            selected: stickerPackListView.selectedPackId === packId
+                            source: "https://ipfs.infura.io/ipfs/" + thumbnail
+                            Layout.preferredHeight: height
+                            Layout.preferredWidth: width
+                            onClicked: {
+                                btnHistory.selected = false
+                                stickerPackListView.selectedPackId = packId
+                                stickerGrid.model = stickers
+                            }
                         }
                     }
                 }
             }
-            
         }
     }
 }
