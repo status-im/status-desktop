@@ -75,11 +75,13 @@ SplitView {
 
                     StatusTabButton {
                         id: assetBtn
+                        tabColor: walletModel.currentAccount.iconColor
                         //% "Assets"
                         btnText: qsTrId("wallet-assets")
                     }
                     StatusTabButton {
                         id: collectiblesBtn
+                        tabColor: walletModel.currentAccount.iconColor
                         anchors.left: assetBtn.right
                         anchors.leftMargin: 32
                         //% "Collectibles"
@@ -87,6 +89,7 @@ SplitView {
                     }
                     StatusTabButton {
                         id: historyBtn
+                        tabColor: walletModel.currentAccount.iconColor
                         anchors.left: collectiblesBtn.right
                         anchors.leftMargin: 32
                         //% "History"
