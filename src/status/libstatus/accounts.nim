@@ -229,14 +229,24 @@ proc MultiAccountImportPrivateKey*(privateKey: string): GeneratedAccount =
     error "Error getting account from private key", msg=e.msg
 
 
-proc storeDerivedWallet*(account: GeneratedAccount, password: string, walletIndex: int) =
+proc storeDerivedWallet*(account: GeneratedAccount, password: string, walletIndex: int, accountType: string): string =
   let hashedPassword = hashPassword(password)
+  let derivationPath = (if accountType == constants.GENERATED: "m/" else: "m/44'/60'/0'/0/") & $walletIndex
   let multiAccount = %* {
     "accountID": account.id,
-    "paths": ["m/44'/60'/0'/0/" & $walletIndex],
+    "paths": [derivationPath],
     "password": hashedPassword
   }
   let response = parseJson($nim_status.multiAccountStoreDerivedAccounts($multiAccount));
+  let error = response{"error"}.getStr
+  if error == "":
+    debug "Wallet stored succesfully"
+    return "m/44'/60'/0'/0/" & $walletIndex
+  raise newException(StatusGoException, "Error storing wallet: " & error)
+
+proc storePrivateKeyAccount*(account: GeneratedAccount, password: string) =
+  let hashedPassword = hashPassword(password)
+  let response = parseJson($nim_status.multiAccountStoreAccount($(%*{"accountID": account.id, "password": hashedPassword})));
   let error = response{"error"}.getStr
   if error == "":
     debug "Wallet stored succesfully"
@@ -245,9 +255,12 @@ proc storeDerivedWallet*(account: GeneratedAccount, password: string, walletInde
 
 proc saveAccount*(account: GeneratedAccount, password: string, color: string, accountType: string, isADerivedAccount = true, walletIndex: int = 0 ): DerivedAccount =
   try:
-    # Only store derived accounts. Private key accounts are not multiaccounts
+    var derivationPath = "m/44'/60'/0'/0/0"
     if (isADerivedAccount):
-      storeDerivedWallet(account, password, walletIndex)
+      # Only store derived accounts. Private key accounts are not multiaccounts
+      derivationPath = storeDerivedWallet(account, password, walletIndex, accountType)
+    elif accountType == constants.KEY:
+      storePrivateKeyAccount(account, password)
 
     var address = account.derived.defaultWallet.address
     var publicKey = account.derived.defaultWallet.publicKey
@@ -256,14 +269,15 @@ proc saveAccount*(account: GeneratedAccount, password: string, color: string, ac
       address = account.address
       publicKey = account.publicKey
 
-    discard callPrivateRPC("accounts_saveAccounts", %* [
+    echo "SAVING ACCOUNT"
+    echo callPrivateRPC("accounts_saveAccounts", %* [
       [{
         "color": color,
         "name": account.name,
         "address": address,
         "public-key": publicKey,
         "type": accountType,
-        "path": "m/44'/60'/0'/0/" & $walletIndex
+        "path": derivationPath
       }]
     ])
 
@@ -280,7 +294,7 @@ proc changeAccount*(account: WalletAccount): string =
         "address": account.address,
         "public-key": account.publicKey,
         "type": account.walletType,
-        "path": "m/44'/60'/0'/0/1"
+        "path": "m/44'/60'/0'/0/1" # <--- TODO: fix this. Derivation path is not supposed to change
       }]
     ])
 
