@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.0
 Rectangle {
     id: root
     signal clicked
+    property bool noHover: false
     property alias source: imgStickerPackThumb.source
     property alias fillMode: imgStickerPackThumb.fillMode
 
@@ -25,6 +26,7 @@ Rectangle {
 
     ImageLoader {
         id: imgStickerPackThumb
+        noHover: root.noHover
         opacity: 1
         smooth: false
         radius: root.radius

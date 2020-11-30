@@ -1,4 +1,4 @@
-import NimQml, sequtils, strutils, sugar, os, json
+import NimQml, sequtils, strutils, sugar, os, json, chronicles
 import views/[mailservers_list, ens_manager, contacts, devices, mailservers, mnemonic, network, fleets, profile_info, device_list, dapp_list]
 import ../chat/views/channels_list
 import ../../status/profile/profile
@@ -13,6 +13,7 @@ import ../../status/threads
 import ../../status/libstatus/types
 import ../../status/libstatus/accounts/constants as accountConstants
 import qrcode/qrcode
+import ../utils/image_utils
 
 QtObject:
   type ProfileView* = ref object of QObject
@@ -209,3 +210,24 @@ QtObject:
 
   QtProperty[QVariant] network:
     read = getNetwork
+
+  proc uploadNewProfilePic*(self: ProfileView, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string {.slot.} =
+    var image = image_utils.formatImagePath(imageUrl)
+    # FIXME the function to get the file size is messed up
+    # var size = image_getFileSize(image)
+    # TODO find a way to i18n this (maybe send just a code and then QML sets the right string)
+    # return "Max file size is 20MB"
+
+    try:
+      # TODO add crop tool for the image
+      let identityImage = self.status.profile.storeIdentityImage(self.profile.address, image, aX, aY, bX, bY)
+      self.profile.setIdentityImage(identityImage)
+      result = ""
+    except Exception as e:
+      error "Error storing identity image", msg=e.msg
+      result = "Error storing identity image: " & e.msg
+
+  proc deleteProfilePic*(self: ProfileView): string {.slot.} =
+    result = self.status.profile.deleteIdentityImage(self.profile.address)
+    if (result == ""):
+      self.profile.removeIdentityImage()

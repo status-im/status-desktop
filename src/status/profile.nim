@@ -17,3 +17,12 @@ proc logout*(self: ProfileModel) =
 
 proc getLinkPreviewWhitelist*(self: ProfileModel): JsonNode =
   result = status_settings.getLinkPreviewWhitelist()
+
+proc storeIdentityImage*(self: ProfileModel, keyUID: string, imagePath: string, aX, aY, bX, bY: int): IdentityImage =
+  result = status_accounts.storeIdentityImage(keyUID, imagePath, aX, aY, bX, bY)
+
+proc getIdentityImage*(self: ProfileModel, keyUID: string): IdentityImage =
+  result = status_accounts.getIdentityImage(keyUID)
+
+proc deleteIdentityImage*(self: ProfileModel, keyUID: string): string =
+  result = status_accounts.deleteIdentityImage(keyUID)

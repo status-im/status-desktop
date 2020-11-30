@@ -156,7 +156,8 @@ ScrollView {
                 chatsModel.setActiveChannelByIndex(channelContextMenu.channelIndex)
                 chatGroupsListView.currentIndex = channelContextMenu.channelIndex
                 if (channelContextMenu.chatType === Constants.chatTypeOneToOne) {
-                    return openProfilePopup(channelContextMenu.chatName, channelContextMenu.chatId, channelContextMenu.chatIdenticon)
+                    const userProfileImage = chatView.getProfileImage(channelContextMenu.chatId)
+                    return openProfilePopup(channelContextMenu.chatName, channelContextMenu.chatId, userProfileImage || channelContextMenu.chatIdenticon)
                 }
                 if (channelContextMenu.chatType === Constants.chatTypePrivateGroupChat) {
                     return groupInfoPopup.open()

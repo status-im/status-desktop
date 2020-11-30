@@ -45,12 +45,7 @@ SplitView {
 
         // This list needs to match LeftTab/constants.js
         // Would be better if we could make them match automatically
-        MyProfileContainer {
-           username: profileModel.profile.username
-           ensName: profileModel.ens.preferredUsername
-           identicon: profileModel.profile.identicon
-           pubkey: profileModel.profile.pubKey
-        }
+        MyProfileContainer {}
 
         onCurrentIndexChanged: {
             if(visibleChildren[0] === ensContainer){

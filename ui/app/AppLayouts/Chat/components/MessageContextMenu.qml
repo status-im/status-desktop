@@ -21,7 +21,7 @@ PopupMenu {
     property var fromAuthor: ""
     property var text: ""
 
-    function show(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam){
+    function show(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam) {
         userName = userNameParam || ""
         nickname = nicknameParam || ""
         fromAuthor = fromAuthorParam || ""

@@ -28,10 +28,28 @@ QtObject:
     read = username
     notify = accountChanged
 
-  proc identicon*(self: AccountInfoView): string {.slot.} = result = ?.self.account.photoPath
+  proc identicon*(self: AccountInfoView): string {.slot.} = result = ?.self.account.identicon
   QtProperty[string] identicon:
     read = identicon
     notify = accountChanged
+
+  proc thumbnailImage*(self: AccountInfoView): string {.slot.} =
+    if (not self.account.identityImage.isNil):
+      result = self.account.identityImage.thumbnail
+    else:
+      result = ?.self.account.identicon
+  QtProperty[string] thumbnailImage:
+    read = thumbnailImage
+    notify = identityImageChanged
+
+  proc largeImage*(self: AccountInfoView): string {.slot.} =
+    if (not self.account.identityImage.isNil):
+      result = self.account.identityImage.large
+    else:
+      result = ?.self.account.identicon
+  QtProperty[string] largeImage:
+    read = largeImage
+    notify = identityImageChanged
 
   proc address*(self: AccountInfoView): string {.slot.} = result = ?.self.account.address
   QtProperty[string] address:

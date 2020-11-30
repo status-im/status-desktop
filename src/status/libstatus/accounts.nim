@@ -67,9 +67,34 @@ proc initNode*() =
 
   discard $nim_status.initKeystore(KEYSTOREDIR)
 
+proc parseIdentityImage*(images: JsonNode): IdentityImage =
+  result = IdentityImage()
+  if (images.kind != JNull):
+    for image in images:
+      if (image["type"].getStr == "thumbnail"):
+        # TODO check if this can be url or if it's always uri
+        result.thumbnail = image["uri"].getStr
+      elif (image["type"].getStr == "large"):
+        result.large = image["uri"].getStr
+
 proc openAccounts*(): seq[NodeAccount] =
-  let strNodeAccounts = $nim_status.openAccounts(DATADIR)
-  result = Json.decode(strNodeAccounts, seq[NodeAccount])
+  let strNodeAccounts = nim_status.openAccounts(DATADIR).parseJson
+  # FIXME fix serialization
+  result = @[]
+  if (strNodeAccounts.kind != JNull):
+    for account in strNodeAccounts:
+      let nodeAccount = NodeAccount(
+        name: account["name"].getStr,
+        timestamp: account["timestamp"].getInt,
+        keyUid: account["key-uid"].getStr,
+        identicon: account["identicon"].getStr,
+        keycardPairing: account["keycard-pairing"].getStr
+      )
+      if (account{"images"}.kind != JNull):
+        nodeAccount.identityImage = parseIdentityImage(account["images"])
+          
+      result.add(nodeAccount)
+  
 
 proc saveAccountAndLogin*(
   account: GeneratedAccount,
@@ -91,7 +116,7 @@ proc saveAccountAndLogin*(
       "public-key": account.derived.whisper.publicKey,
       "address": account.derived.whisper.address,
       "name": account.name,
-      "photo-path": account.photoPath,
+      "identicon": account.identicon,
       "path": constants.PATH_WHISPER,
       "chat": true
     }
@@ -127,7 +152,7 @@ proc getAccountData*(account: GeneratedAccount): JsonNode =
   result = %* {
     "name": account.name,
     "address": account.address,
-    "photo-path": account.photoPath,
+    "identicon": account.identicon,
     "key-uid": account.keyUid,
     "keycard-pairing": nil
   }
@@ -148,7 +173,7 @@ proc getAccountSettings*(account: GeneratedAccount, defaultNetworks: JsonNode, i
     "latest-derived-path": 0,
     "networks/networks": defaultNetworks,
     "currency": "usd",
-    "photo-path": account.photoPath,
+    "identicon": account.identicon,
     "waku-enabled": true,
     "wallet/visible-tokens": {
       "mainnet": ["SNT"]
@@ -336,3 +361,22 @@ proc deriveAccounts*(accountId: string): MultiAccounts =
 
 proc logout*(): StatusGoError =
   result = Json.decode($nim_status.logout(), StatusGoError)
+
+proc storeIdentityImage*(keyUID: string, imagePath: string, aX, aY, bX, bY: int): IdentityImage =
+  let response = callPrivateRPC("multiaccounts_storeIdentityImage", %* [keyUID, imagePath, aX, aY, bX, bY]).parseJson
+  result = parseIdentityImage(response{"result"})
+
+proc getIdentityImage*(keyUID: string): IdentityImage =
+  try:
+    let response = callPrivateRPC("multiaccounts_getIdentityImages", %* [keyUID]).parseJson
+    result = parseIdentityImage(response{"result"})
+  except Exception as e:
+    error "Error getting identity image", msg=e.msg
+
+proc deleteIdentityImage*(keyUID: string): string =
+  try:
+    let response = callPrivateRPC("multiaccounts_deleteIdentityImage", %* [keyUID]).parseJson
+    result = ""
+  except Exception as e:
+    error "Error getting identity image", msg=e.msg
+    result = e.msg

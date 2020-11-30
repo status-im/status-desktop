@@ -49,21 +49,14 @@ ModalPopup {
     header: Item {
         height: children[0].height
         width: parent.width
-        Rectangle {
+        RoundedImage {
             id: profilePic
             width: 40
             height: 40
-            radius: 30
-            border.color: "#10000000"
+            border.color: Style.current.border
             border.width: 1
-            color: Style.current.transparent
             anchors.top: parent.top
-            SVGImage {
-                width: parent.width
-                height: parent.height
-                fillMode: Image.PreserveAspectFit
-                source: identicon
-            }
+            source: identicon
         }
 
         StyledTextEdit {

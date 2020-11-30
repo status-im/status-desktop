@@ -182,6 +182,7 @@ DISTFILES += \
     app/AppLayouts/Profile/Sections/AppearanceContainer.qml \
     app/AppLayouts/Profile/Sections/BackupSeedModal.qml \
     app/AppLayouts/Profile/Sections/BrowserContainer.qml \
+    app/AppLayouts/Profile/Sections/ChangeProfilePicModal.qml \
     app/AppLayouts/Profile/Sections/MyProfileContainer.qml \
     app/AppLayouts/Profile/Sections/SoundsContainer.qml \
     app/AppLayouts/UIComponents/UIComponents.qml \
@@ -364,8 +365,10 @@ DISTFILES += \
     shared/AccountSelector.qml \
     shared/AddButton.qml \
     shared/Address.qml \
+    shared/CropCornerRectangle.qml \
     shared/FormGroup.qml \
     shared/IconButton.qml \
+    shared/ImageCropper.qml \
     shared/Input.qml \
     shared/LabelValueRow.qml \
     shared/ModalPopup.qml \

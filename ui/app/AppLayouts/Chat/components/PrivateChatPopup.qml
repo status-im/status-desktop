@@ -138,7 +138,7 @@ ModalPopup {
                     isUser: false
                     name: model.name
                     address: model.address
-                    identicon: model.identicon
+                    identicon: model.thumbnailImage || model.identicon
                     showListSelector: true
                     onItemChecked: function(pubKey, itemChecked){
                         chatsModel.joinChat(pubKey, Constants.chatTypeOneToOne);

@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, chronicles
 import Tables
 import ../../../status/profile/profile
 from ../../../status/ens import nil
@@ -14,6 +14,8 @@ type
     Alias = UserRole + 7
     EnsVerified = UserRole + 8
     LocalNickname = UserRole + 9
+    ThumbnailImage = UserRole + 10
+    LargeImage = UserRole + 11
 
 QtObject:
   type ContactList* = ref object of QAbstractListModel
@@ -42,6 +44,14 @@ QtObject:
       return ens.userNameOrAlias(contact)
     return defaultValue
 
+  proc getContactIndexByPubkey(self: ContactList, pubkey: string): int {.slot.} =
+    var i = 0
+    for contact in self.contacts:
+      if (contact.id == pubkey):
+        return i
+      i = i + 1
+    return -1 
+
   proc rowData(self: ContactList, index: int, column: string): string {.slot.} =
     let contact = self.contacts[index]
     case column:
@@ -54,6 +64,8 @@ QtObject:
       of "alias": result = contact.alias
       of "ensVerified": result = $contact.ensVerified
       of "localNickname": result = $contact.localNickname
+      of "thumbnailImage": result = $contact.identityImage.thumbnail
+      of "largeImage": result = $contact.identityImage.large
 
   method data(self: ContactList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
@@ -71,6 +83,8 @@ QtObject:
       of ContactRoles.Alias: result = newQVariant(contact.alias)
       of ContactRoles.EnsVerified: result = newQVariant(contact.ensVerified)
       of ContactRoles.LocalNickname: result = newQVariant(contact.localNickname)
+      of ContactRoles.ThumbnailImage: result = newQVariant(contact.identityImage.thumbnail)
+      of ContactRoles.LargeImage: result = newQVariant(contact.identityImage.large)
 
   method roleNames(self: ContactList): Table[int, string] =
     {
@@ -82,7 +96,9 @@ QtObject:
       ContactRoles.IsBlocked.int:"isBlocked",
       ContactRoles.Alias.int:"alias",
       ContactRoles.LocalNickname.int:"localNickname",
-      ContactRoles.EnsVerified.int:"ensVerified"
+      ContactRoles.EnsVerified.int:"ensVerified",
+      ContactRoles.ThumbnailImage.int:"thumbnailImage",
+      ContactRoles.LargeImage.int:"largeImage"
     }.toTable
 
   proc addContactToList*(self: ContactList, contact: Profile) =
@@ -95,6 +111,8 @@ QtObject:
       if(c.isContact()): return true
     return false
 
+  proc contactChanged*(self: ContactList, pubkey: string) {.signal.}
+
   proc updateContact*(self: ContactList, contact: Profile) =
     var found = false
     let topLeft = self.createIndex(0, 0, nil)
@@ -104,11 +122,13 @@ QtObject:
       found = true
       c.ensName = contact.ensName
       c.ensVerified = contact.ensVerified
+      c.identityImage = contact.identityImage
 
     if not found:
       self.addContactToList(contact)
     else:
       self.dataChanged(topLeft, bottomRight, @[ContactRoles.Name.int])
+    self.contactChanged(contact.id)
 
   proc setNewData*(self: ContactList, contactList: seq[Profile]) =
     self.beginResetModel()

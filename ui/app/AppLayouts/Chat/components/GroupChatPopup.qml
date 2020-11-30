@@ -37,6 +37,7 @@ ModalPopup {
                 pubKey: profileModel.contacts.list.rowData(i, "pubKey"),
                 address: profileModel.contacts.list.rowData(i, "address"),
                 identicon: profileModel.contacts.list.rowData(i, "identicon"),
+                thumbnailImage: profileModel.contacts.list.rowData(i, "thumbnailImage"),
                 isUser: false,
                 isContact: profileModel.contacts.list.rowData(i, "isContact") !== "false"
             });
@@ -47,6 +48,7 @@ ModalPopup {
             pubKey: profileModel.profile.pubKey,
             address: "",
             identicon: profileModel.profile.identicon,
+            thumbnailImage: profileModel.profile.thumbnailImage,
             isUser: true
         });
         noContactsRect.visible = !profileModel.contacts.list.hasAddedContacts();
@@ -186,7 +188,7 @@ ModalPopup {
                 name: !model.name.endsWith(".eth") && !!model.localNickname ?
                           model.localNickname : Utils.removeStatusEns(model.name)
                 address: model.address
-                identicon: model.identicon
+                identicon: model.thumbnailImage || model.identicon
                 onItemChecked: function(pubKey, itemChecked){
                     var idx = pubKeys.indexOf(pubKey)
                     if(itemChecked){

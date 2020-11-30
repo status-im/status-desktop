@@ -43,6 +43,11 @@ proc init*(self: ProfileController, account: Account) =
   profile.id = pubKey
   profile.address = account.keyUid
 
+  let identityImage = self.status.profile.getIdentityImage(profile.address)
+
+  if (identityImage.thumbnail != ""):
+    profile.identityImage = identityImage
+
   self.view.devices.addDevices(status_devices.getAllDevices())
   self.view.devices.setDeviceSetup(status_devices.isDeviceSetup())
   self.view.setNewProfile(profile)

@@ -17,7 +17,7 @@ ListView {
     delegate: AddressView {
         username: model.username
         address: model.address
-        identicon: model.identicon
+        identicon: model.thumbnailImage
         isSelected: function (index, address) {
             return addressesView.isSelected(index, address)
         }

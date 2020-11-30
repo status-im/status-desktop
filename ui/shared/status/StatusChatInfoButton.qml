@@ -24,7 +24,12 @@ Button {
         chatId: control.chatId
         chatName: control.chatName
         chatType: control.chatType
-        identicon: control.identicon
+        identicon: {
+            if (control.chatType === Constants.chatTypeOneToOne) {
+                return chatView.getProfileImage(control.chatId) || control.identicon
+            }
+            return control.identicon
+        }
         identiconSize: control.identiconSize
         isCompact: control.isCompact
     }

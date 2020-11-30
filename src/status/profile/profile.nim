@@ -4,6 +4,7 @@ import ../libstatus/types
 type Profile* = ref object
   id*, alias*, username*, identicon*, address*, ensName*, localNickname*: string
   ensVerified*: bool
+  identityImage*: IdentityImage
   ensVerifiedAt*, ensVerificationRetries*, appearance*: int
   systemTags*: seq[string]
 
@@ -17,7 +18,7 @@ proc toProfileModel*(account: Account): Profile =
   result = Profile(
     id: "",
     username: account.name,
-    identicon: account.photoPath,
+    identicon: account.identicon,
     alias: account.name,
     ensName: "",
     ensVerified: false,
@@ -36,6 +37,7 @@ proc toProfileModel*(profile: JsonNode): Profile =
     id: profile["id"].str,
     username: profile["alias"].str,
     identicon: profile["identicon"].str,
+    identityImage: IdentityImage(),
     address: profile["id"].str,
     alias: profile["alias"].str,
     ensName: "",
@@ -51,3 +53,8 @@ proc toProfileModel*(profile: JsonNode): Profile =
   
   if profile.hasKey("localNickname"):
     result.localNickname = profile["localNickname"].str
+  if profile.hasKey("images"):
+    if profile["images"].hasKey("thumbnail"):
+      result.identityImage.thumbnail = profile["images"]["thumbnail"]["uri"].str
+    if profile["images"].hasKey("large"):
+      result.identityImage.large = profile["images"]["large"]["uri"].str
