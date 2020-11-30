@@ -30,6 +30,7 @@ ModalPopup {
                 pubKey: profileModel.contacts.list.rowData(i, "pubKey"),
                 address: profileModel.contacts.list.rowData(i, "address"),
                 identicon: profileModel.contacts.list.rowData(i, "identicon"),
+                thumbnailImage: profileModel.contacts.list.rowData(i, "thumbnailImage"),
                 isUser: false
             });
         }
@@ -211,7 +212,7 @@ ModalPopup {
                     name: model.name.endsWith(".eth") || !model.localNickname ?
                               Utils.removeStatusEns(model.name) : model.localNickname
                     address: model.address
-                    identicon: model.identicon
+                    identicon: model.thumbnailImage || model.identicon
                     onItemChecked: function(pubKey, itemChecked){
                         var idx = pubKeys.indexOf(pubKey)
                         if(itemChecked){
@@ -278,7 +279,7 @@ ModalPopup {
                 StatusImageIdenticon {
                     id: identicon
                     anchors.left: parent.left
-                    source: model.identicon
+                    source: chatView.getProfileImage(model.pubKey)|| model.identicon
                 }
 
                 StyledText {
@@ -293,7 +294,10 @@ ModalPopup {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: openProfilePopup(model.userName, model.pubKey, model.identicon, '', contactRow.nickname)
+                        onClicked: {
+                            const userProfileImage = chatView.getProfileImage(model.pubKey)
+                            openProfilePopup(model.userName, model.pubKey, userProfileImage || model.identicon, '', contactRow.nickname)
+                        }
                     }
                 }
 

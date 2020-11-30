@@ -15,6 +15,7 @@ proc getOurInstallations*(useCached: bool = true): JsonNode =
   result = installations
 
 proc syncDevices*(preferredName: string): string =
+  # TODO change this to identicon when status-go is updated
   let photoPath = ""
   result = callPrivateRPC("syncDevices".prefix, %* [preferredName, photoPath])
 

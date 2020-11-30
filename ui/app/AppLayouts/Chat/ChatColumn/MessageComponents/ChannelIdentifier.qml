@@ -6,8 +6,10 @@ Item {
     property string authorCurrentMsg: "authorCurrentMsg"
     property int verticalMargin: 50
 
+    property string profileImage
+
     id: channelIdentifier
-    visible: authorCurrentMsg == ""
+    visible: authorCurrentMsg === ""
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
     anchors.topMargin: this.visible ? verticalMargin : 0
@@ -28,15 +30,13 @@ Item {
             return chatsModel.activeChannel.color
         }
 
-        Image {
+        RoundedImage {
             visible: chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             width: 120
             height: 120
-            fillMode: Image.PreserveAspectFit
-            source: chatsModel.activeChannel.identicon
-            mipmap: true
+            source: channelIdentifier.profileImage || chatsModel.activeChannel.identicon
             smooth: false
             antialiasing: true
         }
@@ -71,7 +71,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    Rectangle {
+    Item {
         id: channelDescription
         visible: descText.visible
         width: visible ? 330 : 0
@@ -79,7 +79,6 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: channelName.bottom
         anchors.topMargin: 16
-        color: Style.current.transparent
 
         StyledText {
             id: descText

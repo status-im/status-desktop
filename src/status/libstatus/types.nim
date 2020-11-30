@@ -42,12 +42,17 @@ type MultiAccounts* = object
   defaultWallet* {.serializedFieldName(PATH_DEFAULT_WALLET).}: DerivedAccount
   eip1581* {.serializedFieldName(PATH_EIP_1581).}: DerivedAccount
 
+type
+  IdentityImage* = ref object
+    thumbnail*: string
+    large*: string
 
 type
   Account* = ref object of RootObj
     name*: string
     keyUid* {.serializedFieldName("key-uid").}: string
-    photoPath* {.serializedFieldName("photo-path").}: string
+    identityImage*: IdentityImage
+    identicon*: string
 
 type
   NodeAccount* = ref object of Account
@@ -66,7 +71,8 @@ type
     # serializedFieldName pragma would need to be different
     name*: string
     keyUid*: string
-    photoPath*: string
+    identicon*: string
+    identityImage*: IdentityImage
 
 type RpcError* = ref object
   code*: int
@@ -88,10 +94,10 @@ type
     error*: RpcError
 
 proc toAccount*(account: GeneratedAccount): Account =
-  result = Account(name: account.name, photoPath: account.photoPath, keyUid: account.address)
+  result = Account(name: account.name, identityImage: account.identityImage, identicon: account.identicon, keyUid: account.address)
 
 proc toAccount*(account: NodeAccount): Account =
-  result = Account(name: account.name, photoPath: account.photoPath, keyUid: account.keyUid)
+  result = Account(name: account.name, identityImage: account.identityImage, identicon: account.identicon, keyUid: account.keyUid)
 
 type AccountArgs* = ref object of Args
     account*: Account

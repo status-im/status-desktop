@@ -1,4 +1,4 @@
-import NimQml, Tables, json, nimcrypto, strformat, json_serialization
+import NimQml, Tables, json, nimcrypto, strformat, json_serialization, chronicles
 import ../../status/signals/types
 import ../../status/libstatus/types as status_types
 import ../../status/libstatus/accounts as status_accounts
@@ -9,9 +9,11 @@ import core
 
 type
   AccountRoles {.pure.} = enum
-    Username = UserRole + 1,
-    Identicon = UserRole + 2,
+    Username = UserRole + 1
+    Identicon = UserRole + 2
     Address = UserRole + 3
+    ThumbnailImage = UserRole + 4
+    LargeImage = UserRole + 5
 
 QtObject:
   type LoginView* = ref object of QAbstractListModel
@@ -41,7 +43,12 @@ QtObject:
 
   proc setCurrentAccount*(self: LoginView, selectedAccountIdx: int) {.slot.} =
     let currNodeAcct = self.accounts[selectedAccountIdx]
-    self.currentAccount.setAccount(GeneratedAccount(name: currNodeAcct.name, photoPath: currNodeAcct.photoPath, address: currNodeAcct.keyUid))
+    self.currentAccount.setAccount(GeneratedAccount(
+      name: currNodeAcct.name,
+      identicon: currNodeAcct.identicon,
+      address: currNodeAcct.keyUid,
+      identityImage: currNodeAcct.identityImage
+    ))
 
   QtProperty[QVariant] currentAccount:
     read = getCurrentAccount
@@ -72,13 +79,25 @@ QtObject:
     let assetRole = role.AccountRoles
     case assetRole:
     of AccountRoles.Username: result = newQVariant(asset.name)
-    of AccountRoles.Identicon: result = newQVariant(asset.photoPath)
+    of AccountRoles.Identicon: result = newQVariant(asset.identicon)
     of AccountRoles.Address: result = newQVariant(asset.keyUid)
+    of AccountRoles.ThumbnailImage:
+      if (not asset.identityImage.isNil):
+        result = newQVariant(asset.identityImage.thumbnail)
+      else:
+        result = newQVariant(asset.identicon)
+    of AccountRoles.LargeImage:
+      if (not asset.identityImage.isNil):
+        result = newQVariant(asset.identityImage.large)
+      else:
+        result = newQVariant(asset.identicon)
 
   method roleNames(self: LoginView): Table[int, string] =
     { AccountRoles.Username.int:"username",
     AccountRoles.Identicon.int:"identicon",
-    AccountRoles.Address.int:"address"  }.toTable
+    AccountRoles.Address.int:"address",
+    AccountRoles.ThumbnailImage.int:"thumbnailImage",
+    AccountRoles.LargeImage.int:"largeImage" }.toTable
 
   proc login(self: LoginView, password: string): string {.slot.} =
     var currentAccountId = 0

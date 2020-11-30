@@ -6,14 +6,18 @@ import "../../../../shared"
 import "../../../../shared/status"
 
 Item {
-    property string username: "Jotaro Kujo"
-    property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAhklEQVR4nOzWwQ1AQBgFYUQvelKHMtShJ9VwFyvrsExe5jvKXiYv+WPoQhhCYwiNITSG0MSEjLUPt3097r7P09L/8f4qZhFDaAyhqboIT76+TiUxixhCYwhN9b/WW6Xr1ErMIobQGEJjCI0hNIbQGEJjCI0haiRmEUNoDKExhMYQmjMAAP//B2kXcP2uDV8AAAAASUVORK5CYII="
-    property string pubkey: "0x04d8c07dd137bd1b73a6f51df148b4f77ddaa11209d36e43d8344c0a7d6db1cad6085f27cfb75dd3ae21d86ceffebe4cf8a35b9ce8d26baa19dc264efe6d8f221b"
-    property string ensName: "joestar.eth"
+    property string ensName: profileModel.profile.preferredUsername || ""
+    property string username: profileModel.profile.username
+    property string pubkey: profileModel.profile.pubKey
 
     id: profileHeaderContent
     height: parent.height
     Layout.fillWidth: true
+
+    Component {
+        id: changeProfileModalComponent
+        ChangeProfilePicModal {}
+    }
 
     Item {
         id: profileImgNameContainer
@@ -26,43 +30,58 @@ Item {
 
         height: this.childrenRect.height
 
-        Rectangle {
-            id: profileImg
-            width: identiconImage.width
-            height: identiconImage.height
-            border.width: 1
-            border.color: Style.current.border
-            radius: 50
-            color: Style.current.background
+        Item {
+            id: profileImgContainer
+            width: profileImg.width
+            height: profileImg.height
 
-            Image {
-                id: identiconImage
-                width: 60
-                height: 60
-                fillMode: Image.PreserveAspectFit
-                source: identicon
-                mipmap: true
+            RoundedImage {
+                id: profileImg
+                width: 64
+                height: 64
+                border.width: 1
+                border.color: Style.current.border
+                source: profileModel.profile.thumbnailImage || ""
                 smooth: false
                 antialiasing: true
+            }
+
+            RoundedIcon {
+                source: "../../../img/pencil.svg"
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: -3
+                anchors.right: parent.right
+                anchors.rightMargin: -3
+                width: 24
+                height: 24
+                border.width: 1
+                border.color: Style.current.background
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    const popup = changeProfileModalComponent.createObject(profileHeaderContent);
+                    popup.open()
+                }
             }
         }
 
         StyledText {
             id: profileName
             text: ensName !== "" ? ensName : username
-            anchors.left: profileImg.right
+            anchors.left: profileImgContainer.right
             anchors.leftMargin: 8
-            anchors.top: profileImg.top
-            anchors.topMargin: 4
-            font.family: "Inter"
-            font.weight: Font.Bold
-            font.pixelSize: 20
+            anchors.top: profileImgContainer.top
+            font.weight: Font.Medium
+            font.pixelSize: 15
         }
 
         Address {
             id: pubkeyText
             text: ensName !== "" ? username : pubkey
-            anchors.bottom: profileImg.bottom
+            anchors.bottom: profileImgContainer.bottom
             anchors.left: profileName.left
             anchors.bottomMargin: 4
             width: 200
@@ -85,7 +104,9 @@ Item {
 
         Separator {
             id: lineSeparator
-            anchors.top: profileImg.bottom
+            anchors.top: profileImgContainer.bottom
+            anchors.topMargin: 36
+
         }
     }
 

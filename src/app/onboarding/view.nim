@@ -57,7 +57,7 @@ QtObject:
     let assetRole = role.AccountRoles
     case assetRole:
     of AccountRoles.Username: result = newQVariant(asset.name)
-    of AccountRoles.Identicon: result = newQVariant(asset.photoPath)
+    of AccountRoles.Identicon: result = newQVariant(asset.identicon)
     of AccountRoles.Address: result = newQVariant(asset.keyUid)
 
   method roleNames(self: OnboardingView): Table[int, string] =

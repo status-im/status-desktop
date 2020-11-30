@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.13
 import "../../../../shared"
 import "../../../../imports"
 import "./MessageComponents"
@@ -25,6 +25,7 @@ Item {
     property bool timeout: false
     property string linkUrls: ""
     property string imageUrls: ""
+    property bool placeholderMessage: false
 
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
@@ -48,6 +49,25 @@ Item {
 
     property var imageClick: function () {}
     property var scrollToBottom: function () {}
+    property string userPubKey: {
+        if (contentType === Constants.chatIdentifier) {
+            return chatId
+        }
+        return fromAuthor
+    }
+    property bool useLargeImage: contentType === Constants.chatIdentifier
+
+    property string profileImageSource: !placeholderMessage && chatView.getProfileImage(userPubKey, isCurrentUser, useLargeImage) || ""
+
+    Connections {
+        enabled: !placeholderMessage
+        target: profileModel.contacts.list
+        onContactChanged: {
+            if (pubkey === fromAuthor) {
+                profileImageSource = chatView.getProfileImage(userPubKey, isCurrentUser, useLargeImage)
+            }
+        }
+    }
 
     id: root
     width: parent.width
@@ -82,13 +102,13 @@ Item {
         messageContextMenu.isProfile = !!isProfileClick
         messageContextMenu.isSticker = isSticker
         messageContextMenu.emojiOnly = emojiOnly
-        messageContextMenu.show(userName, fromAuthor, identicon, "", nickname)
+        messageContextMenu.show(userName, fromAuthor, root.profileImageSource || identicon, "", nickname)
         // Position the center of the menu where the mouse is
         messageContextMenu.x = messageContextMenu.x - messageContextMenu.width / 2
     }
 
     Loader {
-        active :true
+        active: true
         width: parent.width
         sourceComponent: {
             switch(contentType) {
@@ -165,6 +185,7 @@ Item {
         id: channelIdentifierComponent
         ChannelIdentifier {
             authorCurrentMsg: root.authorCurrentMsg
+            profileImage: profileImageSource
         }
     }
 
@@ -173,7 +194,7 @@ Item {
         id: privateGroupHeaderComponent
         StyledText {
             wrapMode: Text.Wrap
-            text:  {
+            text: {
                 return `<html>`+
                 `<head>`+
                     `<style type="text/css">`+

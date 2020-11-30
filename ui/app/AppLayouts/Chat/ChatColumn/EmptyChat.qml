@@ -41,7 +41,7 @@ Item {
         onLinkActivated: function (linkClicked) {
             switch (linkClicked) {
                 case "shareKey":
-                    openProfilePopup(profileModel.profile.username, profileModel.profile.pubKey, profileModel.profile.identicon);
+                    openProfilePopup(profileModel.profile.username, profileModel.profile.pubKey, profileModel.profile.thumbnailImage);
                     break;
                 case "invite": inviteFriendsPopup.open(); break;
                 default: //no idea what was clicked

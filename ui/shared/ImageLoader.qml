@@ -4,6 +4,7 @@ import "../imports"
 
 Rectangle {
     id: root
+    property bool noHover: false
     property alias source: image.source
     property alias fillMode: image.fillMode
     signal loaded
@@ -138,7 +139,7 @@ Rectangle {
             }
         }
         MouseArea {
-            cursorShape: Qt.PointingHandCursor
+            cursorShape: noHover ? Qt.ArrowCursor : Qt.PointingHandCursor
             anchors.fill: parent
             onClicked: {
                 root.clicked()

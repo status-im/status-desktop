@@ -14,14 +14,26 @@ Item {
     property int identiconSize: 40
     property bool isCompact: false
 
+    property string profileImage: chatType === Constants.chatTypeOneToOne ? chatView.getProfileImage(chatId) || ""  : ""
+
     height: 48
     width: nameAndInfo.width + chatIdenticon.width + Style.current.smallPadding
+
+    Connections {
+        enabled: chatType === Constants.chatTypeOneToOne
+        target: profileModel.contacts.list
+        onContactChanged: {
+            if (pubkey === root.chatId) {
+                root.profileImage = chatView.getProfileImage(root.chatId)
+            }
+        }
+    }
 
     StatusIdenticon {
         id: chatIdenticon
         chatType: root.chatType
         chatName: root.chatName
-        identicon: root.identicon
+        identicon: root.profileImage || root.identicon
         width: root.isCompact ? 20 : root.identiconSize
         height: root.isCompact ? 20 : root.identiconSize
         anchors.verticalCenter: parent.verticalCenter

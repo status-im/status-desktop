@@ -40,7 +40,8 @@ Rectangle {
                         groupInfoPopup.open()
                         break;
                     case Constants.chatTypeOneToOne:
-                        openProfilePopup(chatsModel.activeChannel.name, chatsModel.activeChannel.id, chatsModel.activeChannel.identicon)
+                        const profileImage = chatView.getProfileImage(chatsModel.activeChannel.id)
+                        openProfilePopup(chatsModel.activeChannel.name, chatsModel.activeChannel.id, profileImage || chatsModel.activeChannel.identicon)
                         break;
                 }
             }

@@ -15,6 +15,8 @@ import web3/[conversions, ethtypes]
 import ../../status/threads
 import views/[channels_list, message_list, chat_item, suggestions_list, reactions, stickers, groups, transactions]
 import json_serialization
+import ../../status/libstatus/utils
+import ../utils/image_utils
 
 logScope:
   topics = "chats-view"
@@ -149,10 +151,7 @@ QtObject:
   proc sendImage*(self: ChatsView, imagePath: string): string {.slot.} =
     result = ""
     try:
-      var image: string = replace(imagePath, "file://", "")
-      if defined(windows):
-        # Windows doesn't work with paths starting with a slash
-        image.removePrefix('/')
+      var image = image_utils.formatImagePath(imagePath)
       let tmpImagePath = image_resizer(image, 2000, TMPDIR)
       self.status.chat.sendImage(self.activeChannel.id, tmpImagePath)
       removeFile(tmpImagePath)

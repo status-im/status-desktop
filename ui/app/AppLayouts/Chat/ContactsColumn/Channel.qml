@@ -20,6 +20,18 @@ Rectangle {
     property bool muted: false
     property bool hovered: false
 
+    property string profileImage: chatType === Constants.chatTypeOneToOne ? chatView.getProfileImage(chatId) || ""  : ""
+
+    Connections {
+        enabled: chatType === Constants.chatTypeOneToOne
+        target: profileModel.contacts.list
+        onContactChanged: {
+            if (pubkey === wrapper.chatId) {
+                wrapper.profileImage = chatView.getProfileImage(wrapper.chatId)
+            }
+        }
+    }
+
     id: wrapper
     color: {
       if (ListView.isCurrentItem || wrapper.hovered) {
@@ -42,7 +54,7 @@ Rectangle {
         width: !isCompact ? 40 : 20
         chatName: wrapper.name
         chatType: wrapper.chatType
-        identicon: wrapper.identicon
+        identicon: wrapper.profileImage || wrapper.identicon
         anchors.left: parent.left
         anchors.leftMargin: !isCompact ? Style.current.padding : Style.current.smallPadding
         anchors.verticalCenter: parent.verticalCenter

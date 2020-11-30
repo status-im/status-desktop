@@ -25,7 +25,7 @@ ListView {
         name: Utils.removeStatusEns(model.name)
         address: model.address
         localNickname: model.localNickname
-        identicon: model.identicon
+        identicon: model.thumbnailImage || model.identicon
         isContact: model.isContact
         isBlocked: model.isBlocked
         selectable: contactList.selectable

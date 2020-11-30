@@ -19,7 +19,7 @@ proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
   var accounts = status_accounts.generateAddresses()
   for account in accounts.mitems:
     account.name = status_accounts.generateAlias(account.derived.whisper.publicKey)
-    account.photoPath = status_accounts.generateIdenticon(account.derived.whisper.publicKey)
+    account.identicon = status_accounts.generateIdenticon(account.derived.whisper.publicKey)
     self.generatedAddresses.add(account)
   result = self.generatedAddresses
 
@@ -41,7 +41,7 @@ proc importMnemonic*(self: AccountModel, mnemonic: string): GeneratedAccount =
   let importedAccount = status_accounts.multiAccountImportMnemonic(mnemonic)
   importedAccount.derived = status_accounts.deriveAccounts(importedAccount.id)
   importedAccount.name = status_accounts.generateAlias(importedAccount.derived.whisper.publicKey)
-  importedAccount.photoPath = status_accounts.generateIdenticon(importedAccount.derived.whisper.publicKey)
+  importedAccount.identicon = status_accounts.generateIdenticon(importedAccount.derived.whisper.publicKey)
   result = importedAccount
 
 proc reset*(self: AccountModel) =
