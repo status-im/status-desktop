@@ -122,7 +122,7 @@ ModalPopup {
                 return loading = false
             }
 
-            const error = walletModel.addAccountsFromPrivateKey(accountPKeyInput.text, passwordInput.text, accountNameInput.text, selectedColor)
+            const error = walletModel.addAccountsFromPrivateKey(accountPKeyInput.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
             loading = false
             if (error) {
                 errorSound.play()
