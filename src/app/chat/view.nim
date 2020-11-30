@@ -233,6 +233,8 @@ QtObject:
 
   proc appReady*(self: ChatsView) {.signal.}
 
+  proc sendingMessageFailed*(self: ChatsView) {.signal.}
+
   proc alias*(self: ChatsView, pubKey: string): string {.slot.} =
     generateAlias(pubKey)
 

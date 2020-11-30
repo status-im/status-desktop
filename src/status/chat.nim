@@ -198,9 +198,12 @@ proc setActiveChannel*(self: ChatModel, chatId: string) =
 proc processMessageUpdateAfterSend(self: ChatModel, response: string): (seq[Chat], seq[Message])  =
   result = self.processChatUpdate(parseJson(response))
   var (chats, messages) = result
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
-  for msg in messages:
-    self.events.emit("sendingMessage", MessageArgs(id: msg.id, channel: msg.chatId))
+  if chats.len == 0 or messages.len == 0:
+    self.events.emit("sendingMessageFailed", MessageArgs())
+  else:
+    self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
+    for msg in messages:
+      self.events.emit("sendingMessage", MessageArgs(id: msg.id, channel: msg.chatId))
 
 proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "", contentType: int = ContentType.Message.int) =
   var response = status_chat.sendChatMessage(chatId, msg, replyTo, contentType)

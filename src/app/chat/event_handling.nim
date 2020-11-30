@@ -66,6 +66,10 @@ proc handleChatEvents(self: ChatController) =
     self.status.messages.trackMessage(msg.id, msg.channel)
     self.view.sendingMessage()
 
+  self.status.events.on("sendingMessageFailed") do(e:Args):
+    var msg = MessageArgs(e)
+    self.view.sendingMessageFailed()
+
   self.status.events.on("messageSent") do(e:Args):
     var msg = MessageSentArgs(e)
     self.view.markMessageAsSent(msg.chatId, msg.id)
