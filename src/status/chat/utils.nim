@@ -12,10 +12,10 @@ proc formatChatUpdate(response: JsonNode): (seq[Chat], seq[Message]) =
 proc processChatUpdate(self: ChatModel, response: JsonNode): (seq[Chat], seq[Message]) =
   var chats: seq[Chat] = @[]
   var messages: seq[Message] = @[]
-  if response["result"]{"chats"} != nil:
+  if response{"result"}{"chats"} != nil:
     for jsonMsg in response["result"]["messages"]:
       messages.add(jsonMsg.toMessage)
-  if response["result"]{"chats"} != nil:
+  if response{"result"}{"chats"} != nil:
     for jsonChat in response["result"]["chats"]:
       let chat = jsonChat.toChat
       self.channels[chat.id] = chat

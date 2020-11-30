@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQml.Models 2.13
 import QtGraphicalEffects 1.13
+import QtQuick.Dialogs 1.3
 import "../../../../shared"
 import "../../../../imports"
 import "../components"
@@ -132,6 +133,10 @@ ScrollView {
                 chatLogView.scrollToBottom(true)
             }
 
+            onSendingMessageFailed: {
+                sendingMsgFailedPopup.open();
+            }
+
             onNewMessagePushed: {
                 if (!chatLogView.scrollToBottom()) {
                     root.newMessages++
@@ -170,6 +175,13 @@ ScrollView {
         model: messageListDelegate
         section.property: "sectionIdentifier"
         section.criteria: ViewSection.FullString
+    }
+
+    MessageDialog {
+        id: sendingMsgFailedPopup
+        standardButtons: StandardButton.Ok
+        text: qsTr("Failed to send message.")
+        icon: StandardIcon.Critical
     }
 
     DelegateModel {
