@@ -92,6 +92,7 @@ proc handleMailserverEvents(self: ChatController) =
       self.status.mailservers.addMailserverTopic(topic)
 
     if(self.status.mailservers.isActiveMailserverAvailable):
+      self.view.setLoadingMessages(true)
       self.status.mailservers.requestMessages(topics.map(t => t.topic))
 
   self.status.events.on("mailserverAvailable") do(e:Args):
@@ -100,4 +101,6 @@ proc handleMailserverEvents(self: ChatController) =
 
     if mailserverTopics.len > 0:
        fromValue = min(mailserverTopics.map(topic => topic.lastRequest))
+    
+    self.view.setLoadingMessages(true)
     self.status.mailservers.requestMessages(mailserverTopics.map(t => t.topic), fromValue)

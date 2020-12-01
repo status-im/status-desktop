@@ -33,7 +33,17 @@ type MessageSignal* = ref object of Signal
   contacts*: seq[Profile]
   installations*: seq[Installation]
   emojiReactions*: seq[Reaction]
+
+type MailserverRequestCompletedSignal* = ref object of Signal
+  requestID*: string
+  lastEnvelopeHash*: string
+  cursor*: string
+  errorMessage*: string
+  error*: bool
   
+type MailserverRequestExpiredSignal* = ref object of Signal
+  # TODO
+
 type Filter* = object
   chatId*: string
   symKeyId*: string

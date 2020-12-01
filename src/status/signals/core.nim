@@ -1,6 +1,6 @@
 import NimQml, tables, json, chronicles, strutils, json_serialization
 import ../libstatus/types as status_types
-import types, messages, discovery, whisperFilter, envelopes, expired, wallet
+import types, messages, discovery, whisperFilter, envelopes, expired, wallet, mailserver
 import ../status
 import ../../eventemitter
 
@@ -46,24 +46,17 @@ QtObject:
       signalType = SignalType.Unknown
       return
 
-    var signal: Signal
-    case signalType:
-      of SignalType.Message:
-        signal = messages.fromEvent(jsonSignal)
-      of SignalType.EnvelopeSent:
-        signal = envelopes.fromEvent(jsonSignal)
-      of SignalType.EnvelopeExpired:
-        signal = expired.fromEvent(jsonSignal)
-      of SignalType.WhisperFilterAdded:
-        signal = whisperFilter.fromEvent(jsonSignal)
-      of SignalType.Wallet:
-        signal = wallet.fromEvent(jsonSignal)
-      of SignalType.NodeLogin:
-        signal = Json.decode($jsonSignal, NodeSignal)
-      of SignalType.DiscoverySummary:
-        signal = discovery.fromEvent(jsonSignal)
-      else:
-        discard
+    var signal: Signal = case signalType:
+      of SignalType.Message: messages.fromEvent(jsonSignal)
+      of SignalType.EnvelopeSent: envelopes.fromEvent(jsonSignal)
+      of SignalType.EnvelopeExpired: expired.fromEvent(jsonSignal)
+      of SignalType.WhisperFilterAdded: whisperFilter.fromEvent(jsonSignal)
+      of SignalType.Wallet: wallet.fromEvent(jsonSignal)
+      of SignalType.NodeLogin: Json.decode($jsonSignal, NodeSignal)
+      of SignalType.DiscoverySummary: discovery.fromEvent(jsonSignal)
+      of SignalType.MailserverRequestCompleted: mailserver.fromCompletedEvent(jsonSignal)
+      of SignalType.MailserverRequestExpired: mailserver.fromExpiredEvent(jsonSignal)
+      else: Signal()
 
     self.status.events.emit(signalType.event, signal)
 
