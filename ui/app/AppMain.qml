@@ -112,7 +112,7 @@ RowLayout {
                       font.pixelSize: chatsModel.unreadMessagesCount > 99 ? 10 : 12
                       color: Style.current.white
                       anchors.centerIn: parent
-                      text: chatsModel.unreadMessagesCount
+                      text: chatsModel.unreadMessagesCount > 99 ? "+99" : chatsModel.unreadMessagesCount
                   }
               }
         }
