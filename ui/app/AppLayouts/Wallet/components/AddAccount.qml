@@ -33,11 +33,13 @@ StatusRoundButton {
 
     PopupMenu {
         id: newAccountMenu
-        width: 280
+        width: 260
         Action {
             //% "Generate an account"
             text: qsTrId("generate-a-new-account")
             icon.source: "../../../img/generate_account.svg"
+            icon.width: 19
+            icon.height: 19
             onTriggered: {
                 generateAccountModal.open()
             }
@@ -46,6 +48,8 @@ StatusRoundButton {
             //% "Add a watch-only address"
             text: qsTrId("add-a-watch-account")
             icon.source: "../../../img/add_watch_only.svg"
+            icon.width: 19
+            icon.height: 19
             onTriggered: {
                 addWatchOnlyAccountModal.open()
             }
@@ -54,6 +58,8 @@ StatusRoundButton {
             //% "Enter a seed phrase"
             text: qsTrId("enter-a-seed-phrase")
             icon.source: "../../../img/enter_seed_phrase.svg"
+            icon.width: 19
+            icon.height: 19
             onTriggered: {
                 addAccountWithSeedModal.open()
             }
@@ -62,6 +68,8 @@ StatusRoundButton {
             //% "Enter a private key"
             text: qsTrId("enter-a-private-key")
             icon.source: "../../../img/enter_private_key.svg"
+            icon.width: 19
+            icon.height: 19
             onTriggered: {
                 addAccountWithPrivateKeydModal.open()
             }

@@ -136,11 +136,13 @@ Item {
 
             PopupMenu {
                 id: newSettingsMenu
-                width: 280
+                width: 176
                 Action {
                     //% "Account Settings"
                     text: qsTrId("account-settings")
-                    icon.source: "../../img/walletIcon.svg"
+                    icon.source: "../../img/manage-wallet.svg"
+                    icon.width: 16
+                    icon.height: 16
                     onTriggered: {
                         accountSettingsModal.open()
                     }
@@ -149,6 +151,8 @@ Item {
                     //% "Add/Remove Tokens"
                     text: qsTrId("add/remove-tokens")
                     icon.source: "../../img/add_remove_token.svg"
+                    icon.width: 16
+                    icon.height: 16
                     onTriggered: {
                         tokenSettingsModal.open()
                         walletModel.loadCustomTokens()
@@ -157,7 +161,9 @@ Item {
                 Action {
                     //% "Set Currency"
                     text: qsTrId("set-currency")
-                    icon.source: "../../img/globe.svg"
+                    icon.source: "../../img/currency.svg"
+                    icon.width: 16
+                    icon.height: 16
                     onTriggered: {
                         setCurrencyModal.open()
                     }
