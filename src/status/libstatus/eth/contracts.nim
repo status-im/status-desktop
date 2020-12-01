@@ -104,7 +104,6 @@ var ALL_CONTRACTS {.guard: contractsLock.}: seq[Contract] = @[
   newErc20Contract("Tronix", Network.Mainnet, parseAddress("0xf230b790e05390fc8295f4d3f60332c93bed42e2"), "TRX", 6, true),
   newErc20Contract("Ethos", Network.Mainnet, parseAddress("0x5af2be193a6abca9c8817001f45744777db30756"), "ETHOS", 8, true),
   newErc20Contract("Raiden Token", Network.Mainnet, parseAddress("0x255aa6df07540cb5d3d297f0d0d4d84cb52bc8e6"), "RDN", 18, true),
-  newErc20Contract("Status Network Token", Network.Mainnet, parseAddress("0x744d70fdbe2ba4cf95131626614a1763df805b9e"), "SNT", 18, true),
   newErc20Contract("SingularDTV", Network.Mainnet, parseAddress("0xaec2e87e0a235266d9c5adc9deb4b2e29b54d009"), "SNGLS", 0, true),
   newErc20Contract("Gnosis Token", Network.Mainnet, parseAddress("0x6810e776880c02933d47db1b9fc05908e5386b96"), "GNO", 18, true),
   newErc20Contract("StorjToken", Network.Mainnet, parseAddress("0xb64ef51c888972c908cfacf59b47c1afbc0ab8ac"), "STORJ", 8, true),
