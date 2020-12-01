@@ -269,7 +269,6 @@ proc saveAccount*(account: GeneratedAccount, password: string, color: string, ac
       address = account.address
       publicKey = account.publicKey
 
-    echo "SAVING ACCOUNT"
     echo callPrivateRPC("accounts_saveAccounts", %* [
       [{
         "color": color,
