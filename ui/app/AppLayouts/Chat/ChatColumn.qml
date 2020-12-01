@@ -189,7 +189,20 @@ StackLayout {
             Layout.preferredHeight: height
             color: "transparent"
             
+            Connections {
+                target: chatsModel
+                onLoadingMessagesChanged:
+                    if(value){
+                        loadingMessagesIndicator.active = true
+                    } else {
+                         timer.setTimeout(function(){ 
+                            loadingMessagesIndicator.active = false;
+                        }, 5000);
+                    }
+            }
+
             Loader {
+                id: loadingMessagesIndicator
                 active: chatsModel.loadingMessages
                 sourceComponent: loadingIndicator
                 anchors.right: parent.right

@@ -497,22 +497,27 @@ QtObject:
     self.setLastMessageTimestamp()
     self.messagesLoaded();
 
-  proc loadingMessagesChanged*(self: ChatsView) {.signal.}
+  proc loadingMessagesChanged*(self: ChatsView, value: bool) {.signal.}
 
   proc hideLoadingIndicator*(self: ChatsView) {.slot.} =
     self.loadingMessages = false
-    self.loadingMessagesChanged()
+    self.loadingMessagesChanged(false)
+
+  proc setLoadingMessages*(self: ChatsView, value: bool) {.slot.} =
+    self.loadingMessages = value
+    self.loadingMessagesChanged(value)
 
   proc isLoadingMessages(self: ChatsView): QVariant {.slot.} =
     return newQVariant(self.loadingMessages)
 
   QtProperty[QVariant] loadingMessages:
     read = isLoadingMessages
+    write = setLoadingMessages
     notify = loadingMessagesChanged
 
   proc requestMoreMessages*(self: ChatsView, fetchRange: int) {.slot.} =
     self.loadingMessages = true
-    self.loadingMessagesChanged()
+    self.loadingMessagesChanged(true)
     let topics = self.status.mailservers.getMailserverTopicsByChatId(self.activeChannel.id).map(topic => topic.topic)
     let currentOldestMessageTimestamp = self.oldestMessageTimestamp
     self.oldestMessageTimestamp = self.oldestMessageTimestamp - fetchRange
