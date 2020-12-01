@@ -77,39 +77,39 @@ Item {
                 chatType: root.chatType
                 identicon: root.identicon
 
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: parent
-                onClicked: {
-                    timer.stop()
-                    notificationWindowSub.close()
-                    applicationWindow.raise()
-                    chatsModel.setActiveChannel(chatId)
-                    applicationWindow.requestActivate()
+                MouseArea {
+                    cursorShape: Qt.PointingHandCursor
+                    anchors.fill: parent
+                    onClicked: {
+                        timer.stop()
+                        notificationWindowSub.close()
+                        applicationWindow.raise()
+                        chatsModel.setActiveChannel(chatId)
+                        applicationWindow.requestActivate()
+                    }
                 }
-            }
 
-            Timer {
-                id: timer
-                interval: 4000
-                running: false
-                repeat: false
-                onTriggered: {
-                    notificationWindowSub.close()
+                Timer {
+                    id: timer
+                    interval: 4000
+                    running: false
+                    repeat: false
+                    onTriggered: {
+                        notificationWindowSub.close()
+                    }
                 }
-            }
-            onVisibleChanged: {
-                if (visible) {
-                    timer.running = true
-                    if (applicationWindow.active) {
-                        this.flags |= Qt.Popup
-                    } else {
-                        this.flags = Qt.FramelessWindowHint | Qt.WA_ShowWithoutActivating
-                                    | Qt.WindowStaysOnTopHint | Qt.BypassWindowManagerHint
+                onVisibleChanged: {
+                    if (visible) {
+                        timer.running = true
+                        if (applicationWindow.active) {
+                            this.flags |= Qt.Popup
+                        } else {
+                            this.flags = Qt.FramelessWindowHint | Qt.WA_ShowWithoutActivating
+                                        | Qt.WindowStaysOnTopHint | Qt.BypassWindowManagerHint
+                        }
                     }
                 }
             }
-
         }
     }
 
@@ -131,4 +131,3 @@ Designer {
     D{i:0;autoSize:true;height:480;width:640}
 }
 ##^##*/
-
