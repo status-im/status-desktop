@@ -94,7 +94,7 @@ ModalPopup {
             height: 32
             width: 32
             anchors.top: parent.top
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: -4
             anchors.right: parent.right
             anchors.rightMargin: 32 + Style.current.smallPadding
             radius: 8
@@ -118,7 +118,7 @@ ModalPopup {
                     qrCodeButton.color = Style.current.grey
                 }
                 onClicked: {
-                    showQR = true
+                    showQR = !showQR
                 }
             }
         }
