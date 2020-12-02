@@ -46,7 +46,7 @@ Theme {
     property color primaryMenuItemTextHover: white
     property color backgroundTertiary: tenPercentBlue
     property color pillButtonTextColor: white
-    property color chatReplyCurrentUser: lighterDarkGrey
+    property color chatReplyCurrentUser: darkGrey
     property color topBarChatInfoColor: grey
     property color codeBackground: "#2E386B"
 
