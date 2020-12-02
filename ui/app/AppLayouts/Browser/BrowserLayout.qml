@@ -545,10 +545,12 @@ Rectangle {
                     } else if (request.destination === WebEngineView.NewViewInBackgroundTab) {
                         var backgroundTab = tabs.createEmptyTab(currentWebView.profile);
                         request.openIn(backgroundTab.item);
-                    } else if (request.destination === WebEngineView.NewViewInDialog) {
+                    // Disablign popups temporarily since we need to set that webengineview settings / channel and other proeprties
+                    /*} else if (request.destination === WebEngineView.NewViewInDialog) {
                         var dialog = browserDialogComponent.createObject();
                         dialog.currentWebView.profile = currentWebView.profile;
-                        request.openIn(dialog.currentWebView);
+                        dialog.currentWebView.webChannel = channel;
+                        request.openIn(dialog.currentWebView);*/
                     } else {
                         // Instead of opening a new window, we open a new tab
                         // TODO: remove "open in new window" from context menu
@@ -609,6 +611,13 @@ Rectangle {
                 onLoadingChanged: function(loadRequest) {
                     if (loadRequest.status === WebEngineView.LoadStartedStatus)
                         findBar.reset();
+                }
+
+                onNavigationRequested: {
+                    if(request.url.toString().startsWith("file://")){
+                        console.log("Local file browsing is disabled" )
+                        request.action = WebEngineNavigationRequest.IgnoreRequest;
+                    }
                 }
 
                 Loader {
