@@ -197,4 +197,13 @@ QtObject {
             default: return network
         }
     }
+
+    function isContactBlocked(fromAuthor, blockedList) {
+        for (let i = 0; i < blockedList.rowCount(); i++) {
+            if (blockedList.rowData(i, 'pubKey') === fromAuthor) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

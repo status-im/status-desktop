@@ -28,6 +28,8 @@ StackLayout {
         chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
+    property bool isBlocked: Utils.isContactBlocked(chatsModel.activeChannel.id, profileModel.getBlockedContacts())
+
     Component.onCompleted: {
         chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -236,6 +238,8 @@ StackLayout {
                     if (chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat) return true;
                     return chatsModel.activeChannel.isMember
                 }
+                enabled: !isBlocked
+                chatInputPlaceholder: isBlocked ? qsTr("This user has been blocked.") : qsTr("Type a message.")
                 anchors.bottom: parent.bottom
                 recentStickers: chatsModel.recentStickers
                 stickerPackList: chatsModel.stickerPacks
