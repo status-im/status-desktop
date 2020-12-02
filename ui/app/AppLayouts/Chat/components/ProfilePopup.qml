@@ -22,10 +22,13 @@ ModalPopup {
     property bool showQR: false
     property bool isEnsVerified: false
     property bool noFooter: false
+    property bool isBlocked: false
 
     signal blockButtonClicked(name: string, address: string)
+    signal unblockButtonClicked(name: string, address: string)
     signal removeButtonClicked(address: string)
 
+    signal contactUnblocked(publicKey: string)
     signal contactBlocked(publicKey: string)
     signal contactAdded(publicKey: string)
     signal contactRemoved(publicKey: string)
@@ -37,6 +40,7 @@ ModalPopup {
         identicon = identiconParam || ""
         text = textParam || ""
         isEnsVerified = chatsModel.isEnsVerified(this.fromAuthor)
+        isBlocked = Utils.isContactBlocked(this.fromAuthor, profileModel.getBlockedContacts());
         alias = chatsModel.alias(this.fromAuthor) || ""
         
         showQR = false
@@ -133,6 +137,17 @@ ModalPopup {
                 popup.close()
 
                 contactBlocked(fromAuthor)
+            }
+        }
+
+        UnblockContactConfirmationDialog {
+            id: unblockContactConfirmationDialog
+            onUnblockButtonClicked: {
+                profileModel.unblockContact(fromAuthor)
+                unblockContactConfirmationDialog.close();
+                popup.close()
+
+                contactUnblocked(fromAuthor)
             }
         }
 
@@ -361,6 +376,7 @@ ModalPopup {
             //% "Send Message"
             label: qsTrId("send-message")
             anchors.bottom: parent.bottom
+            visible: !isBlocked
             onClicked: {
                 if (tabBar.currentIndex !== 0)
                     tabBar.currentIndex = 0
@@ -371,15 +387,20 @@ ModalPopup {
 
         StyledButton {
             anchors.right: parent.right
-            anchors.rightMargin: addToContactsButton.width + 32
+            anchors.rightMargin: isBlocked ? 0 : addToContactsButton.width + 32
             btnColor: Style.current.lightRed
             btnBorderWidth: 1
             btnBorderColor: Style.current.grey
             textColor: Style.current.red
-            //% "Block User"
-            label: qsTrId("block-user")
+            label: isBlocked ? qsTr("Unblock User") : qsTr("Block User")
             anchors.bottom: parent.bottom
             onClicked: {
+                if (isBlocked) {
+                    unblockContactConfirmationDialog.contactName = userName;
+                    unblockContactConfirmationDialog.contactAddress = fromAuthor;
+                    unblockContactConfirmationDialog.open();
+                    return;
+                }
                 blockContactConfirmationDialog.contactName = userName;
                 blockContactConfirmationDialog.contactAddress = fromAuthor;
                 blockContactConfirmationDialog.open();   
@@ -396,6 +417,7 @@ ModalPopup {
             //% "Add to contacts"
             qsTrId("add-to-contacts")
             anchors.bottom: parent.bottom
+            visible: !isBlocked
             onClicked: {
                 if (profileModel.isAdded(fromAuthor)) {
                     removeContactConfirmationDialog.parentPopup = profilePopup;

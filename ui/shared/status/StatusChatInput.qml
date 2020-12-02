@@ -32,6 +32,8 @@ Rectangle {
 
     property int chatType
 
+    property string chatInputPlaceholder: qsTr("Type a message")
+
     property alias textInput: messageInputField
 
     height: {
@@ -626,7 +628,7 @@ Rectangle {
                 wrapMode: TextArea.Wrap
                 anchors.bottom: parent.bottom
                 anchors.top: parent.top
-                placeholderText: qsTr("Type a message")
+                placeholderText: chatInputPlaceholder
                 placeholderTextColor: Style.current.secondaryText
                 selectByMouse: true
                 color: Style.current.textColor
