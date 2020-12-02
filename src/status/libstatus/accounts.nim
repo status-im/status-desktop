@@ -242,7 +242,7 @@ proc storeDerivedWallet*(account: GeneratedAccount, password: string, walletInde
   if error == "":
     debug "Wallet stored succesfully"
     return "m/44'/60'/0'/0/" & $walletIndex
-  raise newException(StatusGoException, "Error storing wallet: " & error)
+  raise newException(StatusGoException, error)
 
 proc storePrivateKeyAccount*(account: GeneratedAccount, password: string) =
   let hashedPassword = hashPassword(password)
@@ -251,7 +251,8 @@ proc storePrivateKeyAccount*(account: GeneratedAccount, password: string) =
   if error == "":
     debug "Wallet stored succesfully"
     return
-  raise newException(StatusGoException, "Error storing wallet: " & error)
+
+  raise newException(StatusGoException, error)
 
 proc saveAccount*(account: GeneratedAccount, password: string, color: string, accountType: string, isADerivedAccount = true, walletIndex: int = 0 ): DerivedAccount =
   try:
@@ -283,6 +284,7 @@ proc saveAccount*(account: GeneratedAccount, password: string, color: string, ac
     result = DerivedAccount(address: address, publicKey: publicKey)
   except:
     error "Error storing the new account. Bad password?"
+    raise
 
 proc changeAccount*(account: WalletAccount): string =
   try:

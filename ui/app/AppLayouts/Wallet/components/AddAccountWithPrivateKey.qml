@@ -49,6 +49,11 @@ ModalPopup {
 
     onOpened: {
         passwordInput.text = ""
+        accountPKeyInput.text = ""
+        accountNameInput.text = ""
+        passwordValidationError = ""
+        privateKeyValidationError = ""
+        accountNameValidationError = ""
         accountColorInput.selectedColor = Constants.accountColors[Math.floor(Math.random() * Constants.accountColors.length)]
         passwordInput.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -123,6 +128,7 @@ ModalPopup {
             }
 
             const error = walletModel.addAccountsFromPrivateKey(accountPKeyInput.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
+            
             loading = false
             if (error) {
                 errorSound.play()
