@@ -165,7 +165,7 @@ Rectangle {
         visible: (unviewedMessagesCount > 0) || wrapper.hasMentions
         StyledText {
             id: contactNumberChats
-            text: wrapper.hasMentions ? '@' : (wrapper.unviewedMessagesCount < 100 ? wrapper.unviewedMessagesCount : "+99")
+            text: wrapper.hasMentions ? '@' : (wrapper.unviewedMessagesCount < 100 ? wrapper.unviewedMessagesCount : "99+")
             font.pixelSize: 12
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
