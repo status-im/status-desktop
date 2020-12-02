@@ -36,6 +36,8 @@ ModalPopup {
     }
 
     onOpened: {
+        addressError = "";
+        accountNameValidationError = "";
         addressInput.text = "";
         accountNameInput.text = "";
         accountColorInput.selectedColor = Constants.accountColors[Math.floor(Math.random() * Constants.accountColors.length)]

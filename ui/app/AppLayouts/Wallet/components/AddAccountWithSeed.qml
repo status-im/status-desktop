@@ -55,6 +55,9 @@ ModalPopup {
         accountSeedInput.text = "";
         passwordInput.text = "";
         accountNameInput.text = "";
+        passwordValidationError = "";
+        seedValidationError = "";
+        accountNameValidationError = "";
         accountColorInput.selectedColor = Constants.accountColors[Math.floor(Math.random() * Constants.accountColors.length)]
         passwordInput.forceActiveFocus(Qt.MouseFocusReason)
     }
