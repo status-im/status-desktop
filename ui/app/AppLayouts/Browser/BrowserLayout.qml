@@ -545,7 +545,7 @@ Rectangle {
                     } else if (request.destination === WebEngineView.NewViewInBackgroundTab) {
                         var backgroundTab = tabs.createEmptyTab(currentWebView.profile);
                         request.openIn(backgroundTab.item);
-                    // Disablign popups temporarily since we need to set that webengineview settings / channel and other proeprties
+                    // Disabling popups temporarily since we need to set that webengineview settings / channel and other properties
                     /*} else if (request.destination === WebEngineView.NewViewInDialog) {
                         var dialog = browserDialogComponent.createObject();
                         dialog.currentWebView.profile = currentWebView.profile;
