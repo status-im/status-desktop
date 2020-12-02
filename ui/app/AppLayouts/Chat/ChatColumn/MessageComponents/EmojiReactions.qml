@@ -9,13 +9,13 @@ Item {
     height: 20
     width: childrenRect.width
 
-    function lastTwoItems(left, right) {
-        return qsTr("%1 and %2").arg(left, right);
+    function lastTwoItems(nodes) {
+        return nodes.join(qsTr(" and "));
     }
 
     function showReactionAuthors(fromAccounts) {
         if (fromAccounts.length < 3)
-            return fromAccounts.join(qsTr(" and "));
+            return lastTwoItems(fromAccounts);
 
         var leftNode = [];
         var rightNode = [];
@@ -24,13 +24,13 @@ Item {
             leftNode = fromAccounts.slice(0, 3);
             rightNode = fromAccounts.slice(3, fromAccounts.length);
             return (rightNode.length == 1) ?
-                                lastTwoItems(leftNode.join(", "), rightNode[0]) :
-                                lastTwoItems(leftNode.join(", "), qsTr("%1 more reacted.").arg(rightNode.length));
+                                lastTwoItems([leftNode.join(", "), rightNode[0]]) :
+                                lastTwoItems([leftNode.join(", "), qsTr("%1 more reacted.").arg(rightNode.length)]);
         }
 
         leftNode = fromAccounts.slice(0, 2);
         rightNode = fromAccounts.slice(2, fromAccounts.length);
-        return lastTwoItems(leftNode.join(", "), rightNode[0]);
+        return lastTwoItems([leftNode.join(", "), rightNode[0]]);
     }
 
     Repeater {
