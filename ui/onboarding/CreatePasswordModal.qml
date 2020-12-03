@@ -7,32 +7,10 @@ import "../shared/status"
 
 ModalPopup {
     property bool loading: false
+    property bool firstPasswordFieldValid: false
+    property bool repeatPasswordFieldValid: false
     property string passwordValidationError: ""
     property string repeatPasswordValidationError: ""
-
-    function validate() {
-        if (firstPasswordField.text === "") {
-            //% "You need to enter a password"
-            passwordValidationError = qsTrId("you-need-to-enter-a-password")
-        } else if (firstPasswordField.text.length < 4) {
-            //% "Password needs to be 4 characters or more"
-            passwordValidationError = qsTrId("password-needs-to-be-4-characters-or-more")
-        } else {
-            passwordValidationError = ""
-        }
-
-        if (repeatPasswordField.text === "") {
-            //% "You need to repeat your password"
-            repeatPasswordValidationError = qsTrId("you-need-to-repeat-your-password")
-        } else if (repeatPasswordField.text !== firstPasswordField.text) {
-            //% "Both passwords must match"
-            repeatPasswordValidationError = qsTrId("both-passwords-must-match")
-        } else {
-            repeatPasswordValidationError = ""
-        }
-
-        return passwordValidationError === "" && repeatPasswordValidationError === ""
-    }
 
     id: popup
     //% "Create a password"
@@ -54,10 +32,15 @@ ModalPopup {
         placeholderText: qsTrId("new-password...")
         textField.echoMode: TextInput.Password
         validationError: popup.passwordValidationError
+        onTextChanged: {
+            [firstPasswordFieldValid, passwordValidationError] =
+                Utils.validate("first", firstPasswordField, repeatPasswordField);
+        }
     }
 
     Input {
         id: repeatPasswordField
+        enabled: firstPasswordFieldValid
         anchors.rightMargin: 0
         anchors.leftMargin: 0
         anchors.right: firstPasswordField.right
@@ -70,6 +53,10 @@ ModalPopup {
         validationError: popup.repeatPasswordValidationError
         Keys.onReturnPressed: {
             submitBtn.clicked()
+        }
+        onTextChanged: {
+            [repeatPasswordFieldValid, repeatPasswordValidationError] =
+                Utils.validate("repeat", firstPasswordField, repeatPasswordField);
         }
     }
 
@@ -103,7 +90,7 @@ ModalPopup {
             //% "Create password"
             text: qsTrId("create-password")
 
-            enabled: firstPasswordField.text !== "" && repeatPasswordField.text !== "" && !loading
+            enabled: firstPasswordFieldValid && repeatPasswordFieldValid && !loading
 
             MessageDialog {
                 id: importError
@@ -144,10 +131,6 @@ ModalPopup {
             }
 
             onClicked: {
-                if (!validate()) {
-                    errorSound.play()
-                    return
-                }
                 loading = true
                 loginModel.isCurrentFlow = false;
                 onboardingModel.isCurrentFlow = true;
