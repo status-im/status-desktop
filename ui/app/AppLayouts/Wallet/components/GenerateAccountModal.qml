@@ -18,9 +18,8 @@ ModalPopup {
         if (passwordInput.text === "") {
             //% "You need to enter a password"
             passwordValidationError = qsTrId("you-need-to-enter-a-password")
-        } else if (passwordInput.text.length < 4) {
-            //% "Password needs to be 4 characters or more"
-            passwordValidationError = qsTrId("password-needs-to-be-4-characters-or-more")
+        } else if (passwordInput.text.length < 6) {
+            passwordValidationError = qsTr("Password needs to be 6 characters or more")
         } else {
             passwordValidationError = ""
         }

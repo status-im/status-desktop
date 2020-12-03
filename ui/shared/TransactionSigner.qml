@@ -13,8 +13,7 @@ Item {
     property alias validationError: txtPassword.validationError
     //% "You need to enter a password"
     property string noInputErrorMessage: qsTrId("you-need-to-enter-a-password")
-    //% "Password needs to be 4 characters or more"
-    property string invalidInputErrorMessage: qsTrId("password-needs-to-be-4-characters-or-more")
+    property string invalidInputErrorMessage: qsTr("Password needs to be 6 characters or more")
     property bool isValid: false
 
     function forceActiveFocus(reason) {
@@ -26,7 +25,7 @@ Item {
         const noInput = txtPassword.text === ""
         if (noInput) {
             txtPassword.validationError = noInputErrorMessage
-        } else if (txtPassword.text.length < 4) {
+        } else if (txtPassword.text.length < 6) {
             txtPassword.validationError = invalidInputErrorMessage
         }
         isValid = txtPassword.validationError === ""

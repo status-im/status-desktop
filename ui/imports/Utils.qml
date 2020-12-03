@@ -197,4 +197,31 @@ QtObject {
             default: return network
         }
     }
+
+    function validate(item, firstPasswordField, repeatPasswordField) {
+        console.log("validate");
+        switch (item) {
+            case "first":
+                if (firstPasswordField.text === "") {
+                    //% "You need to enter a password"
+                    return [false, qsTrId("you-need-to-enter-a-password")];
+                } else if (firstPasswordField.text.length < 6) {
+                    return [false, qsTrId("Password needs to be 6 characters or more")];
+                }
+                return [true, ""];
+
+            case "repeat":
+                if (repeatPasswordField.text === "") {
+                    //% "You need to repeat your password"
+                    return [false, qsTrId("you-need-to-repeat-your-password")];
+                } else if (repeatPasswordField.text !== firstPasswordField.text) {
+                    //% Both passwords must match
+                    return [true, qsTrId("both-passwords-must-match")];
+                }
+                return [true, ""];
+
+            default:
+                return [false, ""];
+        }
+    }
 }
