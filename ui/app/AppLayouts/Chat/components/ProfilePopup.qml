@@ -40,7 +40,7 @@ ModalPopup {
         identicon = identiconParam || ""
         text = textParam || ""
         isEnsVerified = chatsModel.isEnsVerified(this.fromAuthor)
-        isBlocked = Utils.isContactBlocked(this.fromAuthor, profileModel.getBlockedContacts());
+        isBlocked = profileModel.isContactBlocked(this.fromAuthor);
         alias = chatsModel.alias(this.fromAuthor) || ""
         
         showQR = false
@@ -392,7 +392,9 @@ ModalPopup {
             btnBorderWidth: 1
             btnBorderColor: Style.current.grey
             textColor: Style.current.red
-            label: isBlocked ? qsTr("Unblock User") : qsTr("Block User")
+            label: isBlocked ?
+                    qsTr("Unblock User") :
+                    qsTr("Block User")
             anchors.bottom: parent.bottom
             onClicked: {
                 if (isBlocked) {
