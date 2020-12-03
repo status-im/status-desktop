@@ -32,7 +32,7 @@ Rectangle {
 
     property int chatType
 
-    property string chatInputPlaceholder: qsTr("Type a message")
+    property string chatInputPlaceholder: qsTr("Type a message.")
 
     property alias textInput: messageInputField
 

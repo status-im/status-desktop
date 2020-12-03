@@ -123,6 +123,12 @@ QtObject:
     read = getBlockedContacts
     notify = contactListChanged
 
+  proc isContactBlocked*(self: ProfileView, pubkey: string): bool {.slot.} =
+    for contact in self.blockedContacts.contacts:
+      if contact.id == pubkey:
+        return true
+    return false
+
   proc isMnemonicBackedUp*(self: ProfileView): bool {.slot.} =
     let mnemonic = status_settings.getSetting[string](Setting.Mnemonic, "")
     return mnemonic == ""
@@ -337,9 +343,11 @@ QtObject:
     discard self.status.contacts.addContact(publicKey, nicknameToSet)
 
   proc unblockContact*(self: ProfileView, publicKey: string) {.slot.} =
+    self.contactListChanged()
     discard self.status.contacts.unblockContact(publicKey)
 
   proc blockContact*(self: ProfileView, publicKey: string): string {.slot.} =
+    self.contactListChanged()
     return self.status.contacts.blockContact(publicKey)
 
   proc removeContact*(self: ProfileView, publicKey: string) {.slot.} =
