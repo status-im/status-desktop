@@ -125,13 +125,14 @@ ModalPopup {
             }
         }
 
-        QrPopup {
+        ModalPopup {
             id: qrCodePopup
+            width: 320
+            height: 320
             Image {
                 asynchronous: true
                 fillMode: Image.PreserveAspectFit
                 source: profileModel.qrCode(fromAuthor)
-                anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 height: 212
                 width: 212
