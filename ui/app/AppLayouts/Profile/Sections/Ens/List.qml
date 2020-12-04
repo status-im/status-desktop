@@ -287,6 +287,13 @@ Item {
                 anchors.leftMargin: chatBox.chatHorizontalPadding
                 width: parent.width
                 anchors.right: parent.right
+                Connections {
+                    enabled: !appSettings.compactMode
+                    target: appSettings.compactMode ? null : chatBox
+                    onLongChatTextChanged: {
+                        chatText.setWidths()
+                    }
+                }
             }
 
             RectangleCorner {}

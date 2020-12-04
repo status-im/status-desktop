@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.13
 import "../../../../../shared"
 import "../../../../../imports"
 
@@ -54,6 +54,14 @@ Item {
         anchors.leftMargin: chatTextItem.chatHorizontalPadding
         anchors.right: parent.right
         anchors.rightMargin: chatTextItem.chatHorizontalPadding
+
+        Connections {
+            enabled: !appSettings.compactMode
+            target: appSettings.compactMode ? null : chatBox
+            onLongChatTextChanged: {
+                chatText.setWidths()
+            }
+        }
     }
 
     Loader {
@@ -63,7 +71,6 @@ Item {
         anchors.leftMargin: 8
         anchors.top: chatReply.bottom
         z: 51
-
 
         sourceComponent: Component {
             ChatImage {
