@@ -9,6 +9,9 @@ RoundButton {
 
     property string type: "primary"
     property color iconColor: Style.current.secondaryText
+    property color highlightedIconColor: Style.current.blue
+    property color hoveredIconColor: Style.current.blue
+    property color highlightedBackgroundColor: Style.current.secondaryBackground
     property color disabledColor: iconColor
     property int iconRotation: 0
 
@@ -22,7 +25,14 @@ RoundButton {
             return control.disabledColor
         }
 
-        return (hovered || highlighted) ? Style.current.blue : control.iconColor
+        if (hovered) {
+            return control.hoveredIconColor
+        }
+
+        if (highlighted) {
+            return control.highlightedIconColor
+        }
+        return control.iconColor
     }
     radius: Style.current.radius
 
@@ -36,7 +46,7 @@ RoundButton {
             if (type === "secondary") {
                 return "transparent"
             }
-            return hovered || highlighted ? Style.current.secondaryBackground : "transparent"
+            return hovered || highlighted ? control.highlightedBackgroundColor : "transparent"
         }
         radius: control.radius
     }
@@ -56,6 +66,7 @@ RoundButton {
             rotation: control.iconRotation
         }
         ColorOverlay {
+            visible: control.visible
             anchors.fill: iconImg
             source: iconImg
             color: control.icon.color
@@ -63,7 +74,6 @@ RoundButton {
             smooth: true
             rotation: control.iconRotation
         }
-
     }
 
     MouseArea {
