@@ -23,8 +23,8 @@ Rectangle {
     property bool isReply: false
     property bool isImage: false
 
-    property var recentStickers: StickerData {}
-    property var stickerPackList: StickerPackData {}
+    property var recentStickers
+    property var stickerPackList
 
     property int extraHeightFactor: calculateExtraHeightFactor()
     property int messageLimit: 2000
@@ -478,10 +478,9 @@ Rectangle {
 
     StatusStickersPopup {
         id: stickersPopup
-        width: 360
-        height: 440
         x: parent.width - width - Style.current.halfPadding
         y: -height
+        enabled: !!control.recentStickers && !!control.stickerPackList
         recentStickers: control.recentStickers
         stickerPackList: control.stickerPackList
         onStickerSelected: {
