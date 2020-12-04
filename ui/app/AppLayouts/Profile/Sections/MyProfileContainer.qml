@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 
 Item {
     property string username: "Jotaro Kujo"
@@ -68,46 +69,17 @@ Item {
             font.pixelSize: 15
         }
 
-        Rectangle {
+        StatusIconButton {
             id: qrCodeButton
-            property bool hovered: false
-            color: hovered ? Style.current.backgroundHover : Style.current.transparent
             anchors.right: parent.right
             height: 32
             width: 32
             radius: 8
             anchors.verticalCenter: parent.verticalCenter
-
-            SVGImage {
-                id: qrCodeImage
-                source: "../../../img/qr-code-icon.svg"
-                width: 18
-                height: 18
-                property bool hovered: false
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: parent
-                hoverEnabled: true
-                onExited: {
-                    qrCodeButton.hovered = false
-                }
-                onEntered: {
-                    qrCodeButton.hovered = true
-                }
-                onClicked: {
-                    qrCodePopup.open()
-                }
-            }
-
-            ColorOverlay {
-                id: qrCodeOverlay
-                anchors.fill: qrCodeImage
-                source: qrCodeImage
-                color: qrCodeButton.hovered ? Style.current.buttonForegroundColor : Style.current.textColor
+            icon.name: "qr-code-icon"
+            iconColor: Style.current.textColor
+            onClicked: {
+                qrCodePopup.open()
             }
         }
 
