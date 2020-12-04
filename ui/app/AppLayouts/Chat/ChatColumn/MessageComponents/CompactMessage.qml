@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.13
 import "../../../../../shared"
 import "../../../../../imports"
 
@@ -63,7 +63,6 @@ Item {
         anchors.leftMargin: 8
         anchors.top: chatReply.bottom
         z: 51
-
 
         sourceComponent: Component {
             ChatImage {
