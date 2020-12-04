@@ -49,7 +49,6 @@
 <circle opacity="0.1" cx="16.043" cy="105" r="4.375" fill="#939BA1"/>
 <rect x="118" y="86" width="9" height="9" rx="4.375" fill="#FA6565"/>
 <rect x="130.75" y="87.75" width="20.5" height="1.5" rx="0.75" stroke="#4360DF" stroke-width="1.5"/>
-<rect x="130" y="92" width="42.3457" height="40.8333" fill="url(#pattern0)"/>
 <defs>
 <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
 <use xlink:href="#image0" transform="translate(0 -0.0185185) scale(0.000625)"/>
