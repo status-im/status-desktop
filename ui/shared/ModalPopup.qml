@@ -103,6 +103,7 @@ Popup {
         Separator {
             id: separator
             anchors.top: headerContent.bottom
+            visible: title.length > 0
         }
 
         Item {
