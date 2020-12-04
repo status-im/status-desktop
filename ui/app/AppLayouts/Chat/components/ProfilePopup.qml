@@ -19,7 +19,6 @@ ModalPopup {
     property var text: ""
     property var alias: ""
     
-    property bool showQR: false
     property bool isEnsVerified: false
     property bool noFooter: false
     property bool isBlocked: false
@@ -43,7 +42,6 @@ ModalPopup {
         isBlocked = profileModel.isContactBlocked(this.fromAuthor);
         alias = chatsModel.alias(this.fromAuthor) || ""
         
-        showQR = false
         noFooter = !showFooter;
         popup.open()
     }
@@ -122,8 +120,23 @@ ModalPopup {
                     qrCodeButton.color = Style.current.grey
                 }
                 onClicked: {
-                    showQR = !showQR
+                    qrCodePopup.open()
                 }
+            }
+        }
+
+        QrPopup {
+            id: qrCodePopup
+            Image {
+                asynchronous: true
+                fillMode: Image.PreserveAspectFit
+                source: profileModel.qrCode(fromAuthor)
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                height: 212
+                width: 212
+                mipmap: true
+                smooth: false
             }
         }
     }
@@ -169,26 +182,10 @@ ModalPopup {
         }
     }
 
-    Item {
-        anchors.fill: parent
-        visible: showQR
-        Image {
-            asynchronous: true
-            fillMode: Image.PreserveAspectFit
-            source: profileModel.qrCode(fromAuthor)
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            height: 212
-            width: 212
-            mipmap: true
-            smooth: false
-        }
-    }
 
     Item {
         anchors.fill: parent
         anchors.leftMargin: Style.current.smallPadding
-        visible: !showQR
 
         StyledText {
             id: labelEnsUsername
