@@ -14,8 +14,6 @@ Item {
 
     StatusNotification {
         id: statusNotification
-        anchors.top: labelAnonymous.bottom
-        anchors.topMargin: Style.current.halfPadding
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         width: parent.width
