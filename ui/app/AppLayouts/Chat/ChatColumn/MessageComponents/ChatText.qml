@@ -31,14 +31,6 @@ Item {
         root.setWidths()
     }
 
-    Connections {
-        enabled: !appSettings.compactMode
-        target: appSettings.compactMode ? null : chatBox
-        onLongChatTextChanged: {
-            root.setWidths()
-        }
-    }
-
     StyledTextEdit {
         id: chatText
         visible: !root.veryLongChatText || root.readMore

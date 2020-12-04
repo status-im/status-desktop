@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.13
 import "../../../../../shared"
 import "../../../../../imports"
 
@@ -126,6 +126,13 @@ Item {
             anchors.right: chatBox.longChatText ? parent.right : undefined
             anchors.rightMargin: chatBox.longChatText ? chatBox.chatHorizontalPadding : 0
             textField.color: !isCurrentUser ? Style.current.textColor : Style.current.currentUserTextColor
+            Connections {
+                enabled: !appSettings.compactMode
+                target: appSettings.compactMode ? null : chatBox
+                onLongChatTextChanged: {
+                    chatText.setWidths()
+                }
+            }
         }
 
         Loader {
