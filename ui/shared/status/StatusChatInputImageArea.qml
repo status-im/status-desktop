@@ -6,7 +6,7 @@ import "../../shared"
 
 Rectangle {
     id: imageArea
-    height: 72
+    height: chatImage.height
 
     signal imageRemoved()
     property url imageSource: ""
@@ -17,9 +17,7 @@ Rectangle {
         property bool hovered: false
         height: 64
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.halfPadding
         anchors.top: parent.top
-        anchors.topMargin: Style.current.halfPadding
         fillMode: Image.PreserveAspectFit
         mipmap: true
         smooth: false

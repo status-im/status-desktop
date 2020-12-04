@@ -58,6 +58,10 @@ Rectangle {
         muted: !appSettings.notificationSoundsEnabled
     }
 
+    function isStatusUpdateInput() {
+        return chatType === Constants.chatTypeStatusUpdate
+    }
+
     function calculateExtraHeightFactor() {
         const factor = (messageInputField.length / 500) + 1;
         return (factor > 5) ? 5 : factor;
@@ -522,68 +526,14 @@ Rectangle {
     }
 
     Rectangle {
-        id: extendedArea
-        visible: isImage || isReply
-        height: {
-          if (visible) {
-              if (isImage) {
-                  return imageArea.height
-              }
-
-              if (isReply) {
-                  return replyArea.height + replyArea.anchors.topMargin
-              }
-          }
-          return 0
-        }
-        anchors.left: messageInput.left
-        anchors.right: messageInput.right
-        anchors.bottom: messageInput.top
-        color: Style.current.inputBackground
-        radius: 16
-
-        Rectangle {
-            height: 16
-            color: parent.color
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-        }
-
-        StatusChatInputImageArea {
-            id: imageArea
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            visible: isImage
-            onImageRemoved: {
-                isImage = false
-            }
-        }
-
-        StatusChatInputReplyArea {
-            id: replyArea
-            visible: isReply
-            anchors.left: parent.left
-            anchors.leftMargin: 2
-            anchors.right: parent.right
-            anchors.rightMargin: 2
-            anchors.top: parent.top
-            anchors.topMargin: 2
-            onCloseButtonClicked: {
-                isReply = false
-            }
-        }
-    }
-
-    Rectangle {
         id: messageInput
         property int maxInputFieldHeight: 112
         property int defaultInputFieldHeight: 40
         anchors.left: imageBtn.visible ? imageBtn.right : parent.left
         anchors.leftMargin: imageBtn.visible ? 5 : Style.current.smallPadding
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 12
+        anchors.top: control.isStatusUpdateInput() ? parent.top : undefined
+        anchors.bottom: !control.isStatusUpdateInput() ? parent.bottom : undefined
+        anchors.bottomMargin: control.isStatusUpdateInput() ? 0 : 12
         anchors.right: parent.right
         anchors.rightMargin: Style.current.smallPadding
         height: scrollView.height
@@ -591,21 +541,85 @@ Rectangle {
         radius: height > defaultInputFieldHeight || extendedArea.visible ? 16 : 32
 
         Rectangle {
-            color: parent.color
-            anchors.right: parent.right
+            id: extendedArea
+            visible: isImage || isReply
+            height: {
+              if (visible) {
+                  if (isImage) {
+                      return imageArea.height + Style.current.halfPadding
+                  }
+
+                  if (isReply) {
+                      return replyArea.height + replyArea.anchors.topMargin
+                  }
+              }
+              return 0
+            }
+            anchors.left: messageInput.left
+            anchors.right: messageInput.right
+            anchors.bottom: control.isStatusUpdateInput() ? undefined : messageInput.top
+            anchors.top: control.isStatusUpdateInput() ? messageInput.bottom : undefined
+            anchors.topMargin: control.isStatusUpdateInput() ? -Style.current.halfPadding : 0
+            color: Style.current.inputBackground
+            radius: control.isStatusUpdateInput() ? 36 : 16
+
+            Rectangle {
+                color: parent.color
+                anchors.right: parent.right
+                anchors.left: parent.left
+                height: control.isStatusUpdateInput() ? 64 : 30
+                anchors.top: control.isStatusUpdateInput() ? parent.top : undefined
+                anchors.topMargin: control.isStatusUpdateInput() ? -24 : 0
+                anchors.bottom: control.isStatusUpdateInput() ? undefined : parent.bottom
+                anchors.bottomMargin: control.isStatusUpdateInput() ? 0 : -height/2
+            }
+
+            StatusChatInputImageArea {
+                id: imageArea
+                anchors.left: parent.left
+                anchors.leftMargin: control.isStatusUpdateInput() ? profileImage.width + Style.current.padding : Style.current.halfPadding
+                anchors.right: parent.right
+                anchors.rightMargin: control.isStatusUpdateInput() ? actions.width + 2* Style.current.padding : Style.current.halfPadding
+                anchors.top: parent.top
+                anchors.topMargin: control.isStatusUpdateInput() ? 0 : Style.current.halfPadding
+                visible: isImage
+                onImageRemoved: {
+                    isImage = false
+                }
+            }
+
+            StatusChatInputReplyArea {
+                id: replyArea
+                visible: isReply
+                anchors.left: parent.left
+                anchors.leftMargin: 2
+                anchors.right: parent.right
+                anchors.rightMargin: 2
+                anchors.top: parent.top
+                anchors.topMargin: 2
+                onCloseButtonClicked: {
+                    isReply = false
+                }
+            }
+        }
+
+        StatusImageIdenticon {
+            id: profileImage
+            source: profileModel.profile.identicon
             anchors.left: parent.left
+            anchors.leftMargin: Style.current.smallPadding
             anchors.top: parent.top
-            height: 18
-            visible: extendedArea.visible
+            anchors.topMargin: Style.current.halfPadding
+            visible: control.isStatusUpdateInput()
         }
 
         ScrollView {
             id: scrollView
             anchors.bottom: parent.bottom
-            anchors.left: parent.left
+            anchors.left: profileImage.visible ? profileImage.right : parent.left
             anchors.leftMargin: Style.current.smallPadding
             anchors.right: actions.left
-            anchors.rightMargin: 0
+            anchors.rightMargin: Style.current.halfPadding
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             height: {
                 if (messageInputField.implicitHeight <= messageInput.defaultInputFieldHeight) {
@@ -674,6 +688,7 @@ Rectangle {
             color: parent.color
             anchors.bottom: parent.bottom
             anchors.right: parent.right
+            visible: !control.isStatusUpdateInput()
             height: parent.height / 2
             width: 32
             radius: Style.current.radius
