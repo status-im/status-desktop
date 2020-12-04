@@ -74,7 +74,6 @@ StackLayout {
     Connections {
         target: profileModel
         onContactListChanged: {
-            console.log("Contact list changed");
             isBlocked = profileModel.isContactBlocked(chatsModel.activeChannel.id);
         }
     }
