@@ -14,7 +14,7 @@ Item {
     height: 40
 
     Loader {
-        sourceComponent: root.chatType == Constants.chatTypeOneToOne ? imageIdenticon : letterIdenticon
+        sourceComponent: root.chatType == Constants.chatTypeOneToOne || !!root.identicon ? imageIdenticon : letterIdenticon
         anchors.fill: parent
     }
 
