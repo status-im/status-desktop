@@ -9,7 +9,6 @@ Item {
     property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAhklEQVR4nOzWwQ1AQBgFYUQvelKHMtShJ9VwFyvrsExe5jvKXiYv+WPoQhhCYwiNITSG0MSEjLUPt3097r7P09L/8f4qZhFDaAyhqboIT76+TiUxixhCYwhN9b/WW6Xr1ErMIobQGEJjCI0hNIbQGEJjCI0haiRmEUNoDKExhMYQmjMAAP//B2kXcP2uDV8AAAAASUVORK5CYII="
     property string pubkey: "0x04d8c07dd137bd1b73a6f51df148b4f77ddaa11209d36e43d8344c0a7d6db1cad6085f27cfb75dd3ae21d86ceffebe4cf8a35b9ce8d26baa19dc264efe6d8f221b"
     property string ensName: "joestar.eth"
-    property bool showQR: false
 
     id: profileHeaderContent
     height: parent.height
@@ -37,8 +36,8 @@ Item {
 
             Image {
                 id: identiconImage
-                width: 44
-                height: 44
+                width: 60
+                height: 60
                 fillMode: Image.PreserveAspectFit
                 source: identicon
                 mipmap: true
@@ -53,8 +52,10 @@ Item {
             anchors.left: profileImg.right
             anchors.leftMargin: 8
             anchors.top: profileImg.top
-            font.weight: Font.Medium
-            font.pixelSize: 15
+            anchors.topMargin: 4
+            font.family: "Inter"
+            font.weight: Font.Bold
+            font.pixelSize: 20
         }
 
         Address {
@@ -62,67 +63,78 @@ Item {
             text: ensName !== "" ? username : pubkey
             anchors.bottom: profileImg.bottom
             anchors.left: profileName.left
+            anchors.bottomMargin: 4
             width: 200
             font.pixelSize: 15
         }
 
-        SVGImage {
-            id: qrCodeImage
-            source: "../../../img/qr-code-icon.svg"
-            width: 18
-            height: 18
-            anchors.right: parent.right
+        Rectangle {
+            id: qrCodeButton
             property bool hovered: false
+            color: hovered ? Style.current.backgroundHover : Style.current.transparent
+            anchors.right: parent.right
+            height: 32
+            width: 32
+            radius: 8
+            anchors.verticalCenter: parent.verticalCenter
+
+            SVGImage {
+                id: qrCodeImage
+                source: "../../../img/qr-code-icon.svg"
+                width: 18
+                height: 18
+                property bool hovered: false
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+            }
 
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
                 hoverEnabled: true
                 onExited: {
-                    parent.hovered = false
+                    qrCodeButton.hovered = false
                 }
                 onEntered: {
-                    parent.hovered = true
+                    qrCodeButton.hovered = true
                 }
                 onClicked: {
-                    showQR = !showQR
+                    qrCodePopup.open()
                 }
             }
-        }
 
-        ColorOverlay {
-            id: qrCodeOverlay
-            anchors.fill: qrCodeImage
-            source: qrCodeImage
-            color: qrCodeImage.hovered ? Style.current.buttonForegroundColor : Style.current.textColor
+            ColorOverlay {
+                id: qrCodeOverlay
+                anchors.fill: qrCodeImage
+                source: qrCodeImage
+                color: qrCodeButton.hovered ? Style.current.buttonForegroundColor : Style.current.textColor
+            }
         }
 
         Separator {
             id: lineSeparator
             anchors.top: profileImg.bottom
-            anchors.topMargin: 36
-
         }
     }
 
-    Item {
-        anchors.fill: parent
-        visible: showQR
+    ModalPopup {
+        id: qrCodePopup
+        width: 420
+        height: 420
         Image {
             asynchronous: true
             fillMode: Image.PreserveAspectFit
             source: profileModel.qrCode(pubkey)
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            height: 424
-            width: 424
+            anchors.verticalCenter: parent.verticalCenter + 20
+            height: 312
+            width: 312
             mipmap: true
             smooth: false
         }
     }
 
     Column {
-        visible: !showQR
         anchors.right: profileImgNameContainer.right
         anchors.left: profileImgNameContainer.left
         spacing: Style.current.bigPadding
