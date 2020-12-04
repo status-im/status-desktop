@@ -34,7 +34,7 @@ ModalPopup {
         validationError: popup.passwordValidationError
         onTextChanged: {
             [firstPasswordFieldValid, passwordValidationError] =
-                Utils.validate("first", firstPasswordField, repeatPasswordField);
+                Utils.validatePasswords("first", firstPasswordField, repeatPasswordField);
         }
     }
 
@@ -56,7 +56,7 @@ ModalPopup {
         }
         onTextChanged: {
             [repeatPasswordFieldValid, repeatPasswordValidationError] =
-                Utils.validate("repeat", firstPasswordField, repeatPasswordField);
+                Utils.validatePasswords("repeat", firstPasswordField, repeatPasswordField);
         }
     }
 

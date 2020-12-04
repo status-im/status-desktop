@@ -198,8 +198,7 @@ QtObject {
         }
     }
 
-    function validate(item, firstPasswordField, repeatPasswordField) {
-        console.log("validate");
+    function validatePasswords(item, firstPasswordField, repeatPasswordField) {
         switch (item) {
             case "first":
                 if (firstPasswordField.text === "") {
