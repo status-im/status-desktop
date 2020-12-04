@@ -17,13 +17,15 @@ Button {
     id: control
     font.pixelSize: size === "small" ? 13 : 15
     font.weight: Font.Medium
-    implicitHeight: size === "small" ? 38 : 44
-    implicitWidth: buttonLabel.implicitWidth + 2 * Style.current.padding +
+    implicitHeight: flat ? 32 : (size === "small" ? 38 : 44)
+    implicitWidth: buttonLabel.implicitWidth + (flat ? 3* Style.current.halfPadding : 2 * Style.current.padding) +
                    (iconLoader.active ? iconLoader.width : 0)
     enabled: state === "default"
 
     contentItem: Item {
+        id: content
         anchors.fill: parent
+        anchors.horizontalCenter: parent.horizontalCenter
 
         Loader {
             id: iconLoader
@@ -43,7 +45,7 @@ Button {
                 ColorOverlay {
                     anchors.fill: iconImg
                     source: iconImg
-                    color: control.icon.color
+                    color: buttonLabel.color
                     antialiasing: true
                     smooth: true
                     rotation: control.iconRotation
@@ -62,7 +64,8 @@ Button {
             anchors.right: iconLoader.active ? undefined : parent.right
             anchors.left: iconLoader.active ? iconLoader.right : parent.left
             anchors.leftMargin: iconLoader.active ? Style.current.smallPadding : 0
-            color: !enabled ? Style.current.buttonDisabledForegroundColor : control.color
+            color: !enabled ? Style.current.buttonDisabledForegroundColor : 
+              (hovered || highlighted) ? Style.current.blue : control.color
             visible: !loadingIndicator.active
         }
 
@@ -89,7 +92,12 @@ Button {
     background: Rectangle {
         radius: Style.current.radius
         anchors.fill: parent
+        border.width: flat ? 1 : 0
+        border.color: hovered ? buttonLabel.color : Style.current.transparent
         color: {
+            if (flat) {
+                return "transparent"
+            }
             if (type === "secondary") {
                 return hovered ? control.bgColor : "transparent"
             }
