@@ -18,6 +18,11 @@ Rectangle {
     radius: 16
     color: Style.current.transparent
 
+    anchors.right: parent.right
+    anchors.left: parent.left
+    anchors.leftMargin: Style.current.padding
+    anchors.rightMargin: Style.current.padding
+
     Item {
         id: inviteFriendsContainer
         height: visible ? 190 : 0
