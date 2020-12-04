@@ -12,6 +12,8 @@ Popup {
     property var recentStickers: StickerData {}
     property var stickerPackList: StickerPackData {}
     signal stickerSelected(string hashId, string packId)
+    width: 360
+    height: 440
     modal: false
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     background: Rectangle {
