@@ -31,7 +31,6 @@ ModalPopup {
         //% "New password..."
         placeholderText: qsTrId("new-password...")
         textField.echoMode: TextInput.Password
-        validationError: popup.passwordValidationError
         onTextChanged: {
             [firstPasswordFieldValid, passwordValidationError] =
                 Utils.validatePasswords("first", firstPasswordField, repeatPasswordField);
@@ -50,7 +49,6 @@ ModalPopup {
         //% "Confirm password…"
         placeholderText: qsTrId("confirm-password…")
         textField.echoMode: TextInput.Password
-        validationError: popup.repeatPasswordValidationError
         Keys.onReturnPressed: {
             submitBtn.clicked()
         }
@@ -58,6 +56,24 @@ ModalPopup {
             [repeatPasswordFieldValid, repeatPasswordValidationError] =
                 Utils.validatePasswords("repeat", firstPasswordField, repeatPasswordField);
         }
+    }
+
+    StyledText {
+        id: validationError
+        text: {
+            if (passwordValidationError !== "") return passwordValidationError;
+            if (repeatPasswordValidationError !== "") return repeatPasswordValidationError;
+            return "";
+        }
+        anchors.top: repeatPasswordField.bottom
+        anchors.topMargin: 20
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.xlPadding
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.xlPadding
+        horizontalAlignment: Text.AlignHCenter
+        color: Style.current.danger
+        font.pixelSize: 11
     }
 
     StyledText {
