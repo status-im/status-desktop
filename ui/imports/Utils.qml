@@ -214,8 +214,7 @@ QtObject {
                     //% "You need to repeat your password"
                     return [false, qsTrId("you-need-to-repeat-your-password")];
                 } else if (repeatPasswordField.text !== firstPasswordField.text) {
-                    //% Both passwords must match
-                    return [true, qsTrId("both-passwords-must-match")];
+                    return [false, qsTr("Passwords don't match")];
                 }
                 return [true, ""];
 
