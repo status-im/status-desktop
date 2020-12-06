@@ -433,9 +433,6 @@ QtObject:
   proc formatENSUsername*(self: ChatsView, username: string): string {.slot.} =
     result = status_ens.addDomain(username)
 
-  proc generateIdenticon*(self: ChatsView, pk: string): string {.slot.} =
-    result = status_accounts.generateIdenticon(pk)
-
   # Resolving a ENS name
   proc resolveENS*(self: ChatsView, ens: string) {.slot.} =
     spawnAndSend(self, "ensResolved") do: # Call self.ensResolved(string) when ens is resolved

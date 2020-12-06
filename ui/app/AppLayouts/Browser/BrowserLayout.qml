@@ -173,7 +173,7 @@ Rectangle {
                     },
                     selectedRecipient: {
                         address: request.payload.params[0].to,
-                        identicon: chatsModel.generateIdenticon(request.payload.params[0].to),
+                        identicon: utilsModel.generateIdenticon(request.payload.params[0].to),
                         name: chatsModel.activeChannel.name,
                         type: RecipientSelector.Type.Address
                     },
