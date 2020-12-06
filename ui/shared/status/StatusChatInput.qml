@@ -337,7 +337,7 @@ Rectangle {
         if(control.isImage){
             chatsModel.sendImage(imageArea.imageSource);
         }
-        var msg = chatsModel.plainText(Emoji.deparse(messageInputField.text).trim()).trim()
+        var msg = chatsModel.plainText(Emoji.deparse(messageInputField.text))
         if(msg.length > 0){
             msg = interpretMessage(msg)
             chatsModel.sendMessage(msg, control.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType);
