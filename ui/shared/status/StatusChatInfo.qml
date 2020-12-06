@@ -51,7 +51,7 @@ Item {
 
 
         Connections {
-            target: profileModel
+            target: profileModel.contacts
             onContactChanged: {
                 if(root.chatId === publicKey){
                     // Hack warning: Triggering reload to avoid changing the current text binding
@@ -69,7 +69,7 @@ Item {
                 switch(root.chatType){
                     //% "Public chat"
                     case Constants.chatTypePublic: return qsTrId("public-chat")
-                    case Constants.chatTypeOneToOne: return (profileModel.isAdded(root.chatId) ?
+                    case Constants.chatTypeOneToOne: return (profileModel.contacts.isAdded(root.chatId) ?
                     //% "Contact"
                     qsTrId("chat-is-a-contact") :
                     //% "Not a contact"

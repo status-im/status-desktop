@@ -738,7 +738,7 @@ Rectangle {
                 anchors.leftMargin: 2
                 anchors.bottom: parent.bottom
                 icon.name: "stickers_icon"
-                visible: profileModel.network === Constants.networkMainnet
+                visible: profileModel.network.current === Constants.networkMainnet
                 width: visible ? 32 : 0
                 type: "secondary"
                 onClicked: {

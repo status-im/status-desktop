@@ -40,7 +40,7 @@ Rectangle {
     }
 
     Rectangle {
-        visible: !profileModel.isMnemonicBackedUp && !active && ProfileConstants.PRIVACY_AND_SECURITY === menuItemId
+        visible: !profileModel.mnemonic.isBackedUp && !active && ProfileConstants.PRIVACY_AND_SECURITY === menuItemId
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: menuButton.right
         anchors.rightMargin: 10

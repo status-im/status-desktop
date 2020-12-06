@@ -20,16 +20,16 @@ ModalPopup {
         memberCount = chatsModel.activeChannel.members.rowCount();
         currMemberCount = memberCount;
         data.clear();
-        const nbContacts = profileModel.contactList.rowCount()
+        const nbContacts = profileModel.contacts.list.rowCount()
         for(let i = 0; i < nbContacts; i++){
-            if(chatsModel.activeChannel.contains(profileModel.contactList.rowData(i, "pubKey"))) continue;
-            if(profileModel.contactList.rowData(i, "isContact") === "false") continue;
+            if(chatsModel.activeChannel.contains(profileModel.contacts.list.rowData(i, "pubKey"))) continue;
+            if(profileModel.contacts.list.rowData(i, "isContact") === "false") continue;
             data.append({
-                name: profileModel.contactList.rowData(i, "name"),
-                localNickname: profileModel.contactList.rowData(i, "localNickname"),
-                pubKey: profileModel.contactList.rowData(i, "pubKey"),
-                address: profileModel.contactList.rowData(i, "address"),
-                identicon: profileModel.contactList.rowData(i, "identicon"),
+                name: profileModel.contacts.list.rowData(i, "name"),
+                localNickname: profileModel.contacts.list.rowData(i, "localNickname"),
+                pubKey: profileModel.contacts.list.rowData(i, "pubKey"),
+                address: profileModel.contacts.list.rowData(i, "address"),
+                identicon: profileModel.contacts.list.rowData(i, "identicon"),
                 isUser: false
             });
         }
@@ -264,7 +264,7 @@ ModalPopup {
 
                 property string nickname: {
                     // Get contact nickname
-                    const contactList = profileModel.contactList
+                    const contactList = profileModel.contacts.list
                     const contactCount = contactList.rowCount()
                     let nickname = ""
                     for (let i = 0; i < contactCount; i++) {

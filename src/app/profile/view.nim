@@ -1,13 +1,12 @@
 import NimQml, sequtils, strutils, sugar, os, json
-import views/[mailservers_list, ens_manager, contact_list, fleets, profile_info, device_list, dapp_list]
+import views/[mailservers_list, ens_manager, contacts, devices, mailservers, mnemonic, network, fleets, profile_info, device_list, dapp_list]
 import ../chat/views/channels_list
-import ../../status/profile/[mailserver, profile, devices]
+import ../../status/profile/profile
 import ../../status/profile as status_profile
 import ../../status/contacts as status_contacts
 import ../../status/accounts as status_accounts
 import ../../status/libstatus/settings as status_settings
 import ../../status/status
-import ../../status/devices as status_devices
 import ../../status/ens as status_ens
 import ../../status/chat/chat
 import ../../status/threads
@@ -18,166 +17,53 @@ import qrcode/qrcode
 QtObject:
   type ProfileView* = ref object of QObject
     profile*: ProfileInfoView
-    mailserversList*: MailServersList
-    contactList*: ContactList
-    addedContacts*: ContactList
-    blockedContacts*: ContactList
+    contacts*: ContactsView
+    devices*: DevicesView
+    mailservers*: MailserversView
+    mnemonic*: MnemonicView
     mutedChats*: ChannelsList
     mutedContacts*: ChannelsList
-    deviceList*: DeviceList
     dappList*: DappList
     fleets*: Fleets
-    network: string
+    network*: NetworkView
     status*: Status
-    isDeviceSetup: bool
     changeLanguage*: proc(locale: string)
-    contactToAdd*: Profile
     ens*: EnsManager
 
   proc setup(self: ProfileView) =
     self.QObject.setup
 
   proc delete*(self: ProfileView) =
-    if not self.mailserversList.isNil: self.mailserversList.delete
-    if not self.contactList.isNil: self.contactList.delete
-    if not self.addedContacts.isNil: self.addedContacts.delete
-    if not self.blockedContacts.isNil: self.blockedContacts.delete
+    if not self.contacts.isNil: self.contacts.delete
+    if not self.devices.isNil: self.devices.delete
     if not self.mutedChats.isNil: self.mutedChats.delete
     if not self.mutedContacts.isNil: self.mutedContacts.delete
-    if not self.deviceList.isNil: self.deviceList.delete
     if not self.ens.isNil: self.ens.delete
     if not self.profile.isNil: self.profile.delete
     if not self.dappList.isNil: self.dappList.delete
     if not self.fleets.isNil: self.fleets.delete
+    if not self.network.isNil: self.network.delete
+    if not self.mnemonic.isNil: self.mnemonic.delete
+    if not self.mailservers.isNil: self.mailservers.delete
     self.QObject.delete
 
   proc newProfileView*(status: Status, changeLanguage: proc(locale: string)): ProfileView =
     new(result, delete)
     result = ProfileView()
     result.profile = newProfileInfoView()
-    result.mailserversList = newMailServersList()
-    result.contactList = newContactList()
-    result.addedContacts = newContactList()
-    result.blockedContacts = newContactList()
+    result.contacts = newContactsView(status)
+    result.devices = newDevicesView(status)
+    result.network = newNetworkView(status)
+    result.mnemonic = newMnemonicView(status)
+    result.mailservers = newMailserversView(status)
     result.mutedChats = newChannelsList(status)
     result.mutedContacts = newChannelsList(status)
-    result.deviceList = newDeviceList()
     result.dappList = newDappList(status)
     result.ens = newEnsManager(status)
     result.fleets = newFleets(status)
-    result.network = ""
-    result.status = status
-    result.isDeviceSetup = false
     result.changeLanguage = changeLanguage
-    result.contactToAdd = Profile(
-      username: "",
-      alias: "",
-      ensName: ""
-    )
+    result.status = status
     result.setup
-
-  proc addMailServerToList*(self: ProfileView, mailserver: MailServer) =
-    self.mailserversList.addMailServerToList(mailserver)
-
-  proc getMailserversList(self: ProfileView): QVariant {.slot.} =
-    return newQVariant(self.mailserversList)
-
-  QtProperty[QVariant] mailserversList:
-    read = getMailserversList
-
-  proc updateContactList*(self: ProfileView, contacts: seq[Profile]) =
-    for contact in contacts:
-      self.contactList.updateContact(contact)
-      if contact.systemTags.contains(":contact/added"):
-          self.addedContacts.updateContact(contact)
-      if contact.systemTags.contains(":contact/blocked"):
-          self.blockedContacts.updateContact(contact)
-
-  proc contactListChanged*(self: ProfileView) {.signal.}
-
-  proc getContactList(self: ProfileView): QVariant {.slot.} =
-    return newQVariant(self.contactList)
-
-  proc setContactList*(self: ProfileView, contactList: seq[Profile]) =
-    self.contactList.setNewData(contactList)
-    self.addedContacts.setNewData(contactList.filter(c => c.systemTags.contains(":contact/added")))
-    self.blockedContacts.setNewData(contactList.filter(c => c.systemTags.contains(":contact/blocked")))
-    self.contactListChanged()
-
-  QtProperty[QVariant] contactList:
-    read = getContactList
-    write = setContactList
-    notify = contactListChanged
-
-  proc getAddedContacts(self: ProfileView): QVariant {.slot.} =
-    return newQVariant(self.addedContacts)
-
-  QtProperty[QVariant] addedContacts:
-    read = getAddedContacts
-    notify = contactListChanged
-
-  proc getBlockedContacts(self: ProfileView): QVariant {.slot.} =
-    return newQVariant(self.blockedContacts)
-
-  QtProperty[QVariant] blockedContacts:
-    read = getBlockedContacts
-    notify = contactListChanged
-
-  proc isContactBlocked*(self: ProfileView, pubkey: string): bool {.slot.} =
-    for contact in self.blockedContacts.contacts:
-      if contact.id == pubkey:
-        return true
-    return false
-
-  proc isMnemonicBackedUp*(self: ProfileView): bool {.slot.} =
-    let mnemonic = status_settings.getSetting[string](Setting.Mnemonic, "")
-    return mnemonic == ""
-  
-  proc seedPhraseRemoved*(self: ProfileView) {.signal.}
-
-  QtProperty[bool] isMnemonicBackedUp:
-    read = isMnemonicBackedUp
-    notify = seedPhraseRemoved
-
-  proc getMnemonic*(self: ProfileView): QVariant {.slot.} =
-    # Do not keep the mnemonic in memory, so fetch it when necessary
-    let mnemonic = status_settings.getSetting[string](Setting.Mnemonic, "")
-    return newQVariant(mnemonic)
-
-  QtProperty[QVariant] mnemonic:
-    read = getMnemonic
-    notify = seedPhraseRemoved
-
-  proc removeSeedPhrase*(self: ProfileView) {.slot.} =
-    discard status_settings.saveSetting(Setting.Mnemonic, "")
-    self.seedPhraseRemoved()
-
-  proc getMnemonicWord*(self: ProfileView, idx: int): string {.slot.} =
-    let mnemonics = status_settings.getSetting[string](Setting.Mnemonic, "").split(" ")
-    return mnemonics[idx]
-
-  proc networkChanged*(self: ProfileView) {.signal.}
-
-  proc triggerNetworkChange*(self: ProfileView) {.slot.} =
-    self.networkChanged()
-
-  proc getNetwork*(self: ProfileView): QVariant {.slot.} =
-    return newQVariant(self.network)
-
-  proc setNetwork*(self: ProfileView, network: string) =
-    self.network = network
-    self.networkChanged()
-  
-  proc setNetworkAndPersist*(self: ProfileView, network: string) {.slot.} =
-    self.network = network
-    self.networkChanged()
-    self.status.accounts.changeNetwork(self.status.fleet.config, network)
-    quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
-
-  QtProperty[QVariant] network:
-    read = getNetwork
-    write = setNetworkAndPersist
-    notify = networkChanged
 
   proc profileSettingsFileChanged*(self: ProfileView) {.signal.}
 
@@ -208,27 +94,6 @@ QtObject:
     read = getProfile
     notify = profileChanged
 
-  proc contactToAddChanged*(self: ProfileView) {.signal.}
-
-  proc getContactToAddUsername(self: ProfileView): QVariant {.slot.} =
-    var username = self.contactToAdd.alias;
-
-    if self.contactToAdd.ensVerified and self.contactToAdd.ensName != "":
-      username = self.contactToAdd.ensName
-
-    return newQVariant(username)
-
-  QtProperty[QVariant] contactToAddUsername:
-    read = getContactToAddUsername
-    notify = contactToAddChanged
-
-  proc getContactToAddPubKey(self: ProfileView): QVariant {.slot.} =
-    return newQVariant(self.contactToAdd.address)
-
-  QtProperty[QVariant] contactToAddPubKey:
-    read = getContactToAddPubKey
-    notify = contactToAddChanged
-
   proc logout*(self: ProfileView) {.slot.} =
     self.status.profile.logout()
 
@@ -238,49 +103,12 @@ QtObject:
   proc nodeVersion*(self: ProfileView): string {.slot.} =
     self.status.getNodeVersion()
 
-  proc isAdded*(self: ProfileView, id: string): bool {.slot.} =
-    if id == "": return false
-    self.status.contacts.isAdded(id)
-
   proc qrCode*(self: ProfileView, text:string): string {.slot.} =
     result = "data:image/svg+xml;utf8," & generateQRCodeSVG(text, 2)
 
   proc changeTheme*(self: ProfileView, theme: int) {.slot.} =
     self.profile.setAppearance(theme)
     self.status.saveSetting(Setting.Appearance, $theme)
-    
-  proc isDeviceSetup*(self: ProfileView): bool {.slot} =
-    result = self.isDeviceSetup
-
-  proc deviceSetupChanged*(self: ProfileView) {.signal.}
-
-  proc setDeviceSetup*(self: ProfileView, isSetup: bool) {.slot} =
-    self.isDeviceSetup = isSetup
-    self.deviceSetupChanged()
-
-  QtProperty[bool] deviceSetup:
-    read = isDeviceSetup
-    notify = deviceSetupChanged
-
-  proc setDeviceName*(self: ProfileView, deviceName: string) {.slot.} =
-    status_devices.setDeviceName(deviceName)
-    self.setDeviceSetup(true)
-
-  proc syncAllDevices*(self: ProfileView) {.slot.} =
-    status_devices.syncAllDevices()
-
-  proc advertiseDevice*(self: ProfileView) {.slot.} =
-    status_devices.advertise()
-
-  proc addDevices*(self: ProfileView, devices: seq[Installation]) =
-    for dev in devices:
-      self.deviceList.addDeviceToList(dev)
-
-  proc getDeviceList(self: ProfileView): QVariant {.slot.} =
-    return newQVariant(self.deviceList)
-
-  QtProperty[QVariant] deviceList:
-    read = getDeviceList
 
   proc getDappList(self: ProfileView): QVariant {.slot.} =
     return newQVariant(self.dappList)
@@ -299,60 +127,6 @@ QtObject:
 
   QtProperty[QVariant] ens:
     read = getEnsManager
-
-  proc enableInstallation*(self: ProfileView, installationId: string, enable: bool) {.slot.} =
-    if enable:
-      status_devices.enable(installationId)
-    else:
-      status_devices.disable(installationId)
-
-  proc lookupContact*(self: ProfileView, value: string) {.slot.} =
-    if value == "":
-      return
-
-    spawnAndSend(self, "ensResolved") do: # Call self.ensResolved(string) when ens is resolved
-      var id = value
-      if not id.startsWith("0x"):
-        id = status_ens.pubkey(id)
-      id
-
-  proc ensResolved(self: ProfileView, id: string) {.slot.} =
-    let contact = self.status.contacts.getContactByID(id)
-
-    if contact != nil:
-      self.contactToAdd = contact
-    else:
-      self.contactToAdd = Profile(
-        username: "",
-        alias: "",
-        ensName: "",
-        ensVerified: false
-      )
-    self.contactToAddChanged()
-
-  proc contactChanged(self: ProfileView, publicKey: string, isAdded: bool) {.signal.}
-
-  proc addContact*(self: ProfileView, publicKey: string): string {.slot.} =
-    result = self.status.contacts.addContact(publicKey)
-    self.contactChanged(publicKey, true)
-
-  proc changeContactNickname*(self: ProfileView, publicKey: string, nickname: string) {.slot.} =
-    var nicknameToSet = nickname
-    if (nicknameToSet == ""):
-      nicknameToSet = DELETE_CONTACT
-    discard self.status.contacts.addContact(publicKey, nicknameToSet)
-
-  proc unblockContact*(self: ProfileView, publicKey: string) {.slot.} =
-    self.contactListChanged()
-    discard self.status.contacts.unblockContact(publicKey)
-
-  proc blockContact*(self: ProfileView, publicKey: string): string {.slot.} =
-    self.contactListChanged()
-    return self.status.contacts.blockContact(publicKey)
-
-  proc removeContact*(self: ProfileView, publicKey: string) {.slot.} =
-    self.status.contacts.removeContact(publicKey)
-    self.contactChanged(publicKey, false)
 
   proc getLinkPreviewWhitelist*(self: ProfileView): string {.slot.} =
     result = $(self.status.profile.getLinkPreviewWhitelist())
@@ -406,3 +180,32 @@ QtObject:
     self.mutedChatsListChanged()
     self.mutedContactsListChanged()
 
+  proc getContacts*(self: ProfileView): QVariant {.slot.} =
+    newQVariant(self.contacts)
+
+  QtProperty[QVariant] contacts:
+    read = getContacts
+
+  proc getDevices*(self: ProfileView): QVariant {.slot.} =
+    newQVariant(self.devices)
+
+  QtProperty[QVariant] devices:
+    read = getDevices
+
+  proc getMailservers*(self: ProfileView): QVariant {.slot.} =
+    newQVariant(self.mailservers)
+
+  QtProperty[QVariant] mailservers:
+    read = getMailservers
+
+  proc getMnemonic*(self: ProfileView): QVariant {.slot.} =
+    newQVariant(self.mnemonic)
+
+  QtProperty[QVariant] mnemonic:
+    read = getMnemonic
+
+  proc getNetwork*(self: ProfileView): QVariant {.slot.} =
+    newQVariant(self.network)
+
+  QtProperty[QVariant] network:
+    read = getNetwork

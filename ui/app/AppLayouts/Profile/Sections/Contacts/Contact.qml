@@ -137,7 +137,7 @@ Rectangle {
                     text: qsTrId("unblock-user")
                     enabled: container.isBlocked
                     onTriggered: {
-                      profileModel.unblockContact(address)
+                      profileModel.contacts.unblockContact(address)
                       contactContextMenu.close()
                     }
                 }

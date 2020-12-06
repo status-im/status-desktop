@@ -29,16 +29,16 @@ ModalPopup {
         }
 
         data.clear();
-        const nbContacts = profileModel.contactList.rowCount()
+        const nbContacts = profileModel.contacts.list.rowCount()
         for(let i = 0; i < nbContacts; i++){
             data.append({
-                name: profileModel.contactList.rowData(i, "name"),
-                localNickname: profileModel.contactList.rowData(i, "localNickname"),
-                pubKey: profileModel.contactList.rowData(i, "pubKey"),
-                address: profileModel.contactList.rowData(i, "address"),
-                identicon: profileModel.contactList.rowData(i, "identicon"),
+                name: profileModel.contacts.list.rowData(i, "name"),
+                localNickname: profileModel.contacts.list.rowData(i, "localNickname"),
+                pubKey: profileModel.contacts.list.rowData(i, "pubKey"),
+                address: profileModel.contacts.list.rowData(i, "address"),
+                identicon: profileModel.contacts.list.rowData(i, "identicon"),
                 isUser: false,
-                isContact: profileModel.contactList.rowData(i, "isContact") !== "false"
+                isContact: profileModel.contacts.list.rowData(i, "isContact") !== "false"
             });
         }
         data.append({
@@ -49,7 +49,7 @@ ModalPopup {
             identicon: profileModel.profile.identicon,
             isUser: true
         });
-        noContactsRect.visible = !profileModel.contactList.hasAddedContacts();
+        noContactsRect.visible = !profileModel.contacts.list.hasAddedContacts();
         svMembers.visible = !noContactsRect.visible;
         if(!svMembers.visible){
             memberCount = 0;

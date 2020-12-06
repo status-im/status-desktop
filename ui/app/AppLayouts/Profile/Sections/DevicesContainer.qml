@@ -35,7 +35,7 @@ Item {
         anchors.topMargin: Style.current.padding
         anchors.right: syncContainer.right
         anchors.rightMargin: Style.current.padding
-        visible: !profileModel.deviceSetup
+        visible: !profileModel.devices.isSetup
 
         StyledText {
             id: deviceNameLbl
@@ -59,7 +59,7 @@ Item {
             //% "Continue"
             label: qsTrId("continue")
             disabled: deviceNameTxt.text === ""
-            onClicked : profileModel.setDeviceName(deviceNameTxt.text.trim())
+            onClicked : profileModel.devices.setName(deviceNameTxt.text.trim())
         }
     }
 
@@ -71,7 +71,7 @@ Item {
         anchors.topMargin: Style.current.padding
         anchors.right: syncContainer.right
         anchors.rightMargin: Style.current.padding
-        visible: profileModel.deviceSetup
+        visible: profileModel.devices.isSetup
         height: childrenRect.height
 
         Rectangle {
@@ -116,7 +116,7 @@ Item {
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
-                onClicked: profileModel.advertiseDevice()
+                onClicked: profileModel.devices.advertise()
             }
         }
 
@@ -147,7 +147,7 @@ Item {
         anchors.bottomMargin: Style.current.padding
         anchors.right: syncContainer.right
         anchors.rightMargin: Style.current.padding
-        visible: profileModel.deviceSetup
+        visible: profileModel.devices.isSetup
 
 
         StyledText {
@@ -195,10 +195,10 @@ Item {
                     anchors.left: deviceItemLbl.right
                     anchors.leftMargin: Style.current.padding
                     anchors.top: deviceItemLbl.top
-                    onClicked: profileModel.enableInstallation(model.installationId, devicePairedSwitch)
+                    onClicked: profileModel.devices.enableInstallation(model.installationId, devicePairedSwitch)
                 }
             }
-            model: profileModel.deviceList
+            model: profileModel.devices.list
         }
     }
 
@@ -215,7 +215,7 @@ Item {
         disabled: isSyncing
         onClicked : {
             isSyncing = true;
-            profileModel.syncAllDevices()
+            profileModel.devices.syncAll()
             // Currently we don't know how long it takes, so we just disable for 10s, to avoid spamming
             timer.setTimeout(function(){ 
                 isSyncing = false

@@ -66,7 +66,7 @@ ModalPopup {
             RecipientSelector {
                 id: selectRecipient
                 accounts: walletModel.accounts
-                contacts: profileModel.addedContacts
+                contacts: profileModel.contacts.addedContacts
                 label: root.isRequested ?
                   qsTr("From") :
                   qsTr("To")

@@ -7,7 +7,7 @@ import "../Profile/Sections"
 import "."
 
 Rectangle {
-    visible: !profileModel.isMnemonicBackedUp
+    visible: !profileModel.mnemonic.isBackedUp
     height: visible ? 32 : 0
     Layout.fillWidth: true
     color: Style.current.red

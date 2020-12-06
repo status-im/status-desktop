@@ -52,7 +52,7 @@ ListView {
     BlockContactConfirmationDialog {
         id: blockContactConfirmationDialog
         onBlockButtonClicked: {
-            profileModel.blockContact(blockContactConfirmationDialog.contactAddress)
+            profileModel.contacts.blockContact(blockContactConfirmationDialog.contactAddress)
             blockContactConfirmationDialog.close()
         }
     }
@@ -64,8 +64,8 @@ ListView {
         //% "Are you sure you want to remove this contact?"
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {
-            if (profileModel.isAdded(removeContactConfirmationDialog.value)) {
-              profileModel.removeContact(removeContactConfirmationDialog.value);
+            if (profileModel.contacts.isAdded(removeContactConfirmationDialog.value)) {
+              profileModel.contacts.removeContact(removeContactConfirmationDialog.value);
             }
             removeContactConfirmationDialog.close()
         }

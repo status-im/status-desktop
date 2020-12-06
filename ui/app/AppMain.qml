@@ -138,7 +138,7 @@ RowLayout {
 
               Rectangle {
                 id: profileBadge
-                visible: !profileModel.isMnemonicBackedUp && sLayout.children[sLayout.currentIndex] !== profileLayoutContainer
+                visible: !profileModel.mnemonic.isBackedUp && sLayout.children[sLayout.currentIndex] !== profileLayoutContainer
                 anchors.top: parent.top
                 anchors.left: parent.right
                 anchors.leftMargin: -10

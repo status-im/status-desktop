@@ -41,7 +41,7 @@ QtObject:
       MailServerRoles.Endpoint.int:"endpoint",
     }.toTable
 
-  proc addMailServerToList*(self: MailServersList, mailserver: MailServer) =
+  proc add*(self: MailServersList, mailserver: MailServer) =
     self.beginInsertRows(newQModelIndex(), self.mailservers.len, self.mailservers.len)
     self.mailservers.add(mailserver)
     self.endInsertRows()

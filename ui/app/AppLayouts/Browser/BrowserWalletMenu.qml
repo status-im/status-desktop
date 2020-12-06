@@ -47,7 +47,7 @@ Popup {
             height: 8
             radius: width / 2
             color: {
-                switch (profileModel.network) {
+                switch (profileModel.network.current) {
                 case Constants.networkMainnet: return Style.current.green;
                 case Constants.networkRopsten: return Style.current.turquoise;
                 default: return Style.current.red
@@ -59,7 +59,7 @@ Popup {
         StyledText {
             id: networkText
             text: {
-                switch (profileModel.network) {
+                switch (profileModel.network.current) {
                 case Constants.networkMainnet: return qsTr("Mainnet");
                 case Constants.networkRopsten: return qsTr("Ropsten");
                 default: return qsTr("Unknown")

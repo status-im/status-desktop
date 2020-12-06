@@ -67,7 +67,7 @@ ModalPopup {
         pubKey = "";
         ensUsername.text = "";
         chatKey.forceActiveFocus(Qt.MouseFocusReason)
-        noContactsRect.visible = !profileModel.contactList.hasAddedContacts()
+        noContactsRect.visible = !profileModel.contacts.list.hasAddedContacts()
     }
 
     Input {
@@ -130,7 +130,7 @@ ModalPopup {
                 spacing: 0
                 clip: true
                 id: contactListView
-                model: profileModel.contactList
+                model: profileModel.contacts.list
                 delegate: Contact {
                     showCheckbox: false
                     pubKey: model.pubKey

@@ -74,7 +74,7 @@ Item {
 
             Rectangle {
                 id: badge
-                visible: !profileModel.isMnemonicBackedUp
+                visible: !profileModel.mnemonic.isBackedUp
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: 0
@@ -91,10 +91,10 @@ Item {
             }
 
             MouseArea {
-                enabled: !profileModel.isMnemonicBackedUp
+                enabled: !profileModel.mnemonic.isBackedUp
                 anchors.fill: parent
                 onClicked: backupSeedModal.open()
-                cursorShape: enabled && Qt.PointingHandCursor
+                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
             }
         }
 

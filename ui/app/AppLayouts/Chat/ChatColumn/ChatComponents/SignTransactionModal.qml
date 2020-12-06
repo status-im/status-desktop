@@ -96,7 +96,7 @@ ModalPopup {
                 id: selectRecipient
                 visible: false
                 accounts: walletModel.accounts
-                contacts: profileModel.addedContacts
+                contacts: profileModel.contacts.addedContacts
                 selectedRecipient: root.selectedRecipient
                 readOnly: true
             }
