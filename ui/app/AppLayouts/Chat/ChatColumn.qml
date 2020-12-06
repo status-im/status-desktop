@@ -28,7 +28,7 @@ StackLayout {
         chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    property bool isBlocked: profileModel.isContactBlocked(chatsModel.activeChannel.id)
+    property bool isBlocked: profileModel.contacts.isContactBlocked(chatsModel.activeChannel.id)
 
 
     Component.onCompleted: {
@@ -72,9 +72,9 @@ StackLayout {
     }
 
     Connections {
-        target: profileModel
+        target: profileModel.contacts
         onContactListChanged: {
-            isBlocked = profileModel.isContactBlocked(chatsModel.activeChannel.id);
+            isBlocked = profileModel.contacts.isContactBlocked(chatsModel.activeChannel.id);
         }
     }
     

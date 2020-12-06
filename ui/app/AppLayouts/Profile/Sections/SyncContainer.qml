@@ -36,7 +36,7 @@ Item {
         anchors.topMargin: 48
         anchors.top: element4.bottom
         anchors.fill: parent
-        model: profileModel.mailserversList
+        model: profileModel.mailservers.list
         delegate: mailserversList
     }
 }

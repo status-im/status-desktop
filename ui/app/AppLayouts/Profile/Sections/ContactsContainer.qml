@@ -99,13 +99,13 @@ Item {
         ContactList {
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            contacts: profileModel.blockedContacts
+            contacts: profileModel.contacts.blockedContacts
             selectable: false
         }
     }
 
     Connections {
-        target: profileModel
+        target: profileModel.contacts
         onContactToAddChanged: {
             contactsContainer.isPending = false
         }
@@ -125,7 +125,7 @@ Item {
         title: qsTrId("add-contact")
 
         property var lookupContact: Backpressure.debounce(addContactSearchInput, 400, function (value) {
-            profileModel.lookupContact(value)
+            profileModel.contacts.lookupContact(value)
         })
 
         onOpened: {
@@ -140,7 +140,7 @@ Item {
             fontPixelSize: 15
             onEditingFinished: {
                 contactsContainer.isPending = true
-                profileModel.lookupContact(inputValue)
+                profileModel.contacts.lookupContact(inputValue)
                 contactsContainer.isPending = false
             }
             onTextChanged: {
@@ -177,26 +177,26 @@ Item {
               color: Style.current.darkGrey
               //% "User not found"
               text: qsTrId("user-not-found")
-              visible: !contactsContainer.isPending && !!!profileModel.contactToAddUsername
+              visible: !contactsContainer.isPending && !!!profileModel.contacts.contactToAddUsername
           }
 
           StyledText {
               id: contactUsername
-              text: profileModel.contactToAddUsername + " • "
+              text: profileModel.contacts.contactToAddUsername + " • "
               font.pixelSize: 12
               color: Style.current.darkGrey
-              visible: !!profileModel.contactToAddPubKey
+              visible: !!profileModel.contacts.contactToAddPubKey
           }
 
           StyledText {
               id: contactPubKey
-              text: profileModel.contactToAddPubKey
+              text: profileModel.contacts.contactToAddPubKey
               anchors.left: contactUsername.right
               width: 100
               font.pixelSize: 12
               elide: Text.ElideMiddle
               color: Style.current.darkGrey
-              visible: !!profileModel.contactToAddPubKey
+              visible: !!profileModel.contacts.contactToAddPubKey
           }
 
         }
@@ -208,7 +208,7 @@ Item {
             disabled: !contactToAddInfo.visible
             anchors.bottom: parent.bottom
             onClicked: {
-                profileModel.addContact(profileModel.contactToAddPubKey);
+                profileModel.addContact(profileModel.contacts.contactToAddPubKey);
                 addContactModal.close()
             }
         }
@@ -219,14 +219,14 @@ Item {
         anchors.top: blockedContactsButton.bottom
         anchors.topMargin: Style.current.bigPadding
         anchors.bottom: parent.bottom
-        contacts: profileModel.addedContacts
+        contacts: profileModel.contacts.addedContacts
         selectable: false
         searchString: searchBox.text
     }
 
     Item {
         id: element
-        visible: profileModel.contactList.rowCount() === 0
+        visible: profileModel.contacts.list.rowCount() === 0
         anchors.fill: parent
 
         StyledText {

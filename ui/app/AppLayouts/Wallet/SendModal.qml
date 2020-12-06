@@ -71,7 +71,7 @@ ModalPopup {
             RecipientSelector {
                 id: selectRecipient
                 accounts: walletModel.accounts
-                contacts: profileModel.addedContacts
+                contacts: profileModel.contacts.addedContacts
                 //% "Recipient"
                 label: qsTrId("recipient")
                 anchors.top: separator.bottom

@@ -6,14 +6,15 @@ import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/types as status_types
 import ../../status/libstatus/settings as status_settings
 import ../../status/profile/[profile, mailserver]
-import ../../status/[status, contacts]
+import ../../status/status
+import ../../status/contacts as status_contacts
 import ../../status/chat as status_chat
-import ../../status/devices
+import ../../status/devices as status_devices
 import ../../status/chat/chat
 import ../../status/wallet
 import ../../eventemitter
 import view
-import views/ens_manager
+import views/[ens_manager, devices, network, mailservers, contacts]
 import ../chat/views/channels_list
 import chronicles
 
@@ -42,19 +43,19 @@ proc init*(self: ProfileController, account: Account) =
   profile.id = pubKey
   profile.address = account.keyUid
 
-  self.view.addDevices(devices.getAllDevices())
-  self.view.setDeviceSetup(devices.isDeviceSetup())
+  self.view.devices.addDevices(status_devices.getAllDevices())
+  self.view.devices.setDeviceSetup(status_devices.isDeviceSetup())
   self.view.setNewProfile(profile)
-  self.view.setNetwork(network)
+  self.view.network.setNetwork(network)
   self.view.ens.init()
 
   for name, endpoint in self.status.fleet.config.getMailservers(status_settings.getFleet()).pairs():
     let mailserver = MailServer(name: name, endpoint: endpoint)
-    self.view.addMailServerToList(mailserver)
+    self.view.mailservers.add(mailserver)
 
   let contacts = self.status.contacts.getContacts()
   self.status.chat.updateContacts(contacts)
-  self.view.setContactList(contacts)
+  self.view.contacts.setContactList(contacts)
 
   self.status.events.on("channelLoaded") do(e: Args):
     var channel = ChannelArgs(e)
@@ -82,28 +83,28 @@ proc init*(self: ProfileController, account: Account) =
 
   self.status.events.on("contactAdded") do(e: Args):
     let contacts = self.status.contacts.getContacts()
-    self.view.setContactList(contacts)
+    self.view.contacts.setContactList(contacts)
 
   self.status.events.on("contactBlocked") do(e: Args):
     let contacts = self.status.contacts.getContacts()
-    self.view.setContactList(contacts)
+    self.view.contacts.setContactList(contacts)
 
   self.status.events.on("contactUnblocked") do(e: Args):
     let contacts = self.status.contacts.getContacts()
-    self.view.setContactList(contacts)
+    self.view.contacts.setContactList(contacts)
 
   self.status.events.on("contactRemoved") do(e: Args):
     let contacts = self.status.contacts.getContacts()
-    self.view.setContactList(contacts)
+    self.view.contacts.setContactList(contacts)
 
   self.status.events.on(SignalType.Message.event) do(e: Args):
     let msgData = MessageSignal(e);
     if msgData.contacts.len > 0:
       # TODO: view should react to model changes
       self.status.chat.updateContacts(msgData.contacts)
-      self.view.updateContactList(msgData.contacts)
+      self.view.contacts.updateContactList(msgData.contacts)
     if msgData.installations.len > 0:
-      self.view.addDevices(msgData.installations)
+      self.view.devices.addDevices(msgData.installations)
 
   self.status.events.on(PendingTransactionType.RegisterENS.confirmed) do(e: Args):
     let tx = TransactionMinedArgs(e)

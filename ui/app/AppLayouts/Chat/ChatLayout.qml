@@ -64,8 +64,8 @@ SplitView {
         //% "Are you sure you want to remove this contact?"
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {
-            if (profileModel.isAdded(chatColumn.contactToRemove)) {
-              profileModel.removeContact(chatColumn.contactToRemove)
+            if (profileModel.contacts.isAdded(chatColumn.contactToRemove)) {
+              profileModel.contacts.removeContact(chatColumn.contactToRemove)
             }
             removeContactConfirmationDialog.parentPopup.close();
             removeContactConfirmationDialog.close();

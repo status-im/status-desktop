@@ -39,7 +39,7 @@ ModalPopup {
         identicon = identiconParam || ""
         text = textParam || ""
         isEnsVerified = chatsModel.isEnsVerified(this.fromAuthor)
-        isBlocked = profileModel.isContactBlocked(this.fromAuthor);
+        isBlocked = profileModel.contacts.isContactBlocked(this.fromAuthor);
         alias = chatsModel.alias(this.fromAuthor) || ""
         
         noFooter = !showFooter;
@@ -146,7 +146,7 @@ ModalPopup {
         BlockContactConfirmationDialog {
             id: blockContactConfirmationDialog
             onBlockButtonClicked: {
-                profileModel.blockContact(fromAuthor)
+                profileModel.contacts.blockContact(fromAuthor)
                 blockContactConfirmationDialog.close();
                 popup.close()
 
@@ -161,7 +161,6 @@ ModalPopup {
                 profileModel.unblockContact(fromAuthor)
                 unblockContactConfirmationDialog.close();
                 popup.close()
-
                 contactUnblocked(fromAuthor)
             }
         }
@@ -173,8 +172,8 @@ ModalPopup {
             //% "Are you sure you want to remove this contact?"
             confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
             onConfirmButtonClicked: {
-                if (profileModel.isAdded(fromAuthor)) {
-                    profileModel.removeContact(fromAuthor);
+                if (profileModel.contacts.isAdded(fromAuthor)) {
+                    profileModel.contacts.removeContact(fromAuthor);
                 }
                 removeContactConfirmationDialog.close();
                 popup.close();
@@ -410,7 +409,7 @@ ModalPopup {
             id: addToContactsButton
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
-            label: profileModel.isAdded(fromAuthor) ?
+            label: profileModel.contacts.isAdded(fromAuthor) ?
             //% "Remove Contact"
             qsTrId("remove-contact") :
             //% "Add to contacts"
@@ -418,11 +417,11 @@ ModalPopup {
             anchors.bottom: parent.bottom
             visible: !isBlocked
             onClicked: {
-                if (profileModel.isAdded(fromAuthor)) {
+                if (profileModel.contacts.isAdded(fromAuthor)) {
                     removeContactConfirmationDialog.parentPopup = profilePopup;
                     removeContactConfirmationDialog.open();
                 } else {
-                    profileModel.addContact(fromAuthor);
+                    profileModel.contacts.addContact(fromAuthor);
                     contactAdded(fromAuthor);
                     profilePopup.close();
                 }

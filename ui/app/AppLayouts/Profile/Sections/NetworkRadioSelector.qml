@@ -14,9 +14,9 @@ RowLayout {
         title: qsTr("Warning!")
         confirmationText: qsTr("The account will be logged out. When you unlock it again, the selected network will be used")
         onConfirmButtonClicked: {
-            profileModel.network = newNetwork;
+            profileModel.network.current = newNetwork;
         }
-        onClosed: profileModel.triggerNetworkChange()
+        onClosed: profileModel.network.triggerNetworkChange()
     }
 
     width: parent.width
@@ -29,9 +29,9 @@ RowLayout {
         Layout.alignment: Qt.AlignRight
         ButtonGroup.group: networkSettings
         rightPadding: 0
-        checked: profileModel.network  === network
+        checked: profileModel.network.current  === network
         onClicked: {
-            if (profileModel.network === network) return;
+            if (profileModel.network.current === network) return;
             newNetwork = network;
             confirmDialog.open();
         }

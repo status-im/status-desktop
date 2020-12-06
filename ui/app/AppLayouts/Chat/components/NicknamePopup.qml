@@ -99,7 +99,7 @@ ModalPopup {
                  }
             }
             popup.changeNickname(nicknameInput.textField.text)
-            profileModel.changeContactNickname(fromAuthor, nicknameInput.textField.text)
+            profileModel.contacts.changeContactNickname(fromAuthor, nicknameInput.textField.text)
             popup.close()
         }
     }

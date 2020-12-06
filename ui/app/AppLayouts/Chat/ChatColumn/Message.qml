@@ -66,7 +66,7 @@ Item {
             SelectedMessage.set(messageId, fromAuthor);
         }
         // Get contact nickname
-        const contactList = profileModel.contactList
+        const contactList = profileModel.contacts.list
         const contactCount = contactList.rowCount()
         let nickname = ""
         for (let i = 0; i < contactCount; i++) {
