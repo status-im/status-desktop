@@ -1,6 +1,7 @@
 import NimQml, os, strformat, strutils, parseUtils, chronicles
 import stint
 import ../../status/status
+import ../../status/accounts as status_accounts
 import ../../status/stickers
 import ../../status/libstatus/accounts/constants as accountConstants
 import ../../status/libstatus/tokens
@@ -88,3 +89,5 @@ QtObject:
       weiValue = fromHex(Stuint[256], weiValue).toString()
     return status_utils.wei2Eth(weiValue, decimals)
 
+  proc generateIdenticon*(self: UtilsView, pk: string): string {.slot.} =
+    result = status_accounts.generateIdenticon(pk)
