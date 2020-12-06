@@ -6,7 +6,7 @@ proc handleChatEvents(self: ChatController) =
     self.view.pushMessages(MsgsLoadedArgs(e).messages)
   # Display emoji reactions
   self.status.events.on("reactionsLoaded") do(e:Args):
-    self.view.pushReactions(ReactionsLoadedArgs(e).reactions)
+    self.view.reactions.push(ReactionsLoadedArgs(e).reactions)
 
   self.status.events.on("contactUpdate") do(e: Args):
     var evArgs = ContactUpdateArgs(e)
@@ -23,7 +23,7 @@ proc handleChatEvents(self: ChatController) =
       if (message.replace != ""):
         # Delete the message taht this message replaces
         self.view.deleteMessage(message.chatId, message.replace)
-    self.view.pushReactions(evArgs.emojiReactions)
+    self.view.reactions.push(evArgs.emojiReactions)
 
   self.status.events.on("channelUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)
@@ -82,11 +82,11 @@ proc handleChatEvents(self: ChatController) =
 
   self.status.events.on(PendingTransactionType.BuyStickerPack.confirmed) do(e: Args):
     var tx = TransactionMinedArgs(e)
-    self.view.transactionCompleted(tx.success, tx.transactionHash, tx.revertReason)
+    self.view.stickers.transactionCompleted(tx.success, tx.transactionHash, tx.revertReason)
     if tx.success:
-      self.view.installStickerPack(tx.data.parseInt)
+      self.view.stickers.install(tx.data.parseInt)
     else:
-      self.view.resetStickerPackBuyAttempt(tx.data.parseInt)
+      self.view.stickers.resetBuyAttempt(tx.data.parseInt)
 
 proc handleMailserverEvents(self: ChatController) =
   self.status.events.on("mailserverTopics") do(e: Args):

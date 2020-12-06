@@ -24,12 +24,12 @@ ModalPopup {
     }
 
     function sendTransaction() {
-        let responseStr = chatsModel.buyStickerPack(root.stickerPackId,
-                                                    selectFromAccount.selectedAccount.address,
-                                                    root.packPrice,
-                                                    gasSelector.selectedGasLimit,
-                                                    gasSelector.selectedGasPrice,
-                                                    transactionSigner.enteredPassword)
+        let responseStr = chatsModel.stickers.buy(root.stickerPackId,
+                                                  selectFromAccount.selectedAccount.address,
+                                                  root.packPrice,
+                                                  gasSelector.selectedGasLimit,
+                                                  gasSelector.selectedGasPrice,
+                                                  transactionSigner.enteredPassword)
         let response = JSON.parse(responseStr)
 
         if (!response.success) {
@@ -99,7 +99,7 @@ ModalPopup {
                         selectedGasLimit = 325000
                         return
                     }
-                    selectedGasLimit = chatsModel.buyPackGasEstimate(root.stickerPackId, selectFromAccount.selectedAccount.address, root.packPrice)
+                    selectedGasLimit = chatsModel.stickers.estimate(root.stickerPackId, selectFromAccount.selectedAccount.address, root.packPrice)
                 })
             }
             GasValidator {
@@ -194,7 +194,7 @@ ModalPopup {
         }
 
         Connections {
-            target: chatsModel
+            target: chatsModel.stickers
             onTransactionWasSent: {
                 //% "Transaction pending..."
                 toastMessage.title = qsTrId("ens-transaction-pending")

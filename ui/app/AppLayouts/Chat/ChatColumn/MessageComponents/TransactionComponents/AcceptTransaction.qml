@@ -68,9 +68,9 @@ Item {
             cursorShape: Qt.PointingHandCursor
             onClicked: {
                 if (root.state === Constants.addressRequested) {
-                    chatsModel.declineRequestAddressForTransaction(messageId)
+                    chatsModel.transactions.declineAddressRequest(messageId)
                 } else if (root.state === Constants.transactionRequested) {
-                    chatsModel.declineRequestTransaction(messageId)
+                    chatsModel.transactions.declineRequest(messageId)
                 }
 
             }
@@ -111,7 +111,7 @@ Item {
     SelectAccountModal {
         id: selectAccountModal
         onSelectAndShareAddressButtonClicked: {
-            chatsModel.acceptRequestAddressForTransaction(messageId, accountSelector.selectedAccount)
+            chatsModel.transactions.acceptAddressRequest(messageId, accountSelector.selectedAccount)
             selectAccountModal.close()
         }
     }

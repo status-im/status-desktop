@@ -120,7 +120,7 @@ Item {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
                 onClicked: {
-                    chatsModel.joinGroup()
+                    chatsModel.groups.join()
                     joinOrDecline.visible = false;
                 }
             }

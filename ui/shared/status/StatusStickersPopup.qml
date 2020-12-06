@@ -44,12 +44,12 @@ Popup {
             Layout.fillHeight: true
             stickerPacks: stickerPackList
             onInstallClicked: {
-                chatsModel.installStickerPack(packId)
+                chatsModel.stickers.install(packId)
                 stickerGrid.model = stickers
                 stickerPackListView.itemAt(index).clicked()
             }
             onUninstallClicked: {
-                chatsModel.uninstallStickerPack(packId)
+                chatsModel.stickers.uninstall(packId)
                 stickerGrid.model = recentStickers
                 btnHistory.clicked()
             }

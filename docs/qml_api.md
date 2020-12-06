@@ -122,19 +122,19 @@ message object:
 
 *chatsModel.joinChat(channel: string, chatTypeInt: int)* - join a channel
 
-*chatsModel.joinGroup()* - confirm joining group
+*chatsModel.groups.join()* - confirm joining group
 
 *chatsModel.leaveActiveChat()* - leave currently active channel
 
 *chatsModel.clearChatHistory()* - clear chat history of currently active channel
 
-*chatsModel.renameGroup(newName: string)* - rename current active group
+*chatsModel.groups.rename(newName: string)* - rename current active group
 
 *chatsModel.blockContact(id: string)* - block contact
 
 *chatsModel.addContact(id: string)*
 
-*chatsModel.createGroup(groupName: string, pubKeys: string)*
+*chatsModel.groups.create(groupName: string, pubKeys: string)*
 
 **TODO**: document all exposed APIs to QML
 
