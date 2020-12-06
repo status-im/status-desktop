@@ -56,6 +56,11 @@ Item {
 
             Qt.openUrlExternally(link)
         }
+
+        onLinkHovered: {
+            cursorShape: Qt.PointingHandCursor
+        }
+
         text: {
             if(contentType === Constants.stickerType) return "";
             let msg = Utils.linkifyAndXSS(message);
