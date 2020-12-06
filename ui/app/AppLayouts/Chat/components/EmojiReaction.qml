@@ -13,7 +13,7 @@ SVGImage {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            chatsModel.toggleEmojiReaction(SelectedMessage.messageId, emojiId)
+            chatsModel.reactions.toggle(SelectedMessage.messageId, emojiId)
             reactionImage.closeModal()
 
         }

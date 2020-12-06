@@ -4,9 +4,8 @@ import ../../status/mailservers as mailserver_model
 import ../../status/messages as messages_model
 import ../../status/signals/types
 import ../../status/libstatus/types as status_types
-import ../../status/libstatus/settings as status_settings
 import ../../status/[chat, contacts, status, wallet, stickers]
-import view, views/channels_list, views/message_list
+import view, views/channels_list, views/message_list, views/reactions, views/stickers as stickers_view
 import ../../eventemitter
 
 logScope:
@@ -38,11 +37,10 @@ proc init*(self: ChatController) =
   self.status.mailservers.init()
   self.status.chat.init()
   self.status.stickers.init()
-  let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
-  self.view.pubKey = pubKey
+  self.view.reactions.init()
 
   let recentStickers = self.status.stickers.getRecentStickers()
   for sticker in recentStickers:
-    self.view.addRecentStickerToList(sticker)
+    self.view.stickers.addRecentStickerToList(sticker)
     self.status.stickers.addStickerToRecent(sticker)
-  self.view.obtainAvailableStickerPacks()
+  self.view.stickers.obtainAvailableStickerPacks()

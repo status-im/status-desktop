@@ -7,7 +7,7 @@ import "./"
 
 ModalPopup {
     function doRename(){
-        chatsModel.renameGroup(groupName.text)
+        chatsModel.groups.rename(groupName.text)
         popup.close();
     }
 

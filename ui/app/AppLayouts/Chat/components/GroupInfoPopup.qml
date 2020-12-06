@@ -44,7 +44,7 @@ ModalPopup {
 
     function doAddMembers(){
         if(pubKeys.length === 0) return;
-        chatsModel.addGroupMembers(chatsModel.activeChannel.id, JSON.stringify(pubKeys));
+        chatsModel.groups.addMembers(chatsModel.activeChannel.id, JSON.stringify(pubKeys));
         popup.close();
     }
 
@@ -326,14 +326,14 @@ ModalPopup {
                                 icon.source: "../../../img/make-admin.svg"
                                 //% "Make Admin"
                                 text: qsTrId("make-admin")
-                                onTriggered: chatsModel.makeAdmin(chatsModel.activeChannel.id,  model.pubKey)
+                                onTriggered: chatsModel.groups.makeAdmin(chatsModel.activeChannel.id,  model.pubKey)
                             }
                             Action {
                                 icon.source: "../../../img/remove-from-group.svg"
                                 icon.color: Style.current.red
                                 //% "Remove From Group"
                                 text: qsTrId("remove-from-group")
-                                onTriggered: chatsModel.kickGroupMember(chatsModel.activeChannel.id,  model.pubKey)
+                                onTriggered: chatsModel.groups.kickMember(chatsModel.activeChannel.id,  model.pubKey)
                             }
                         }
                     }

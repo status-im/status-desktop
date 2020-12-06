@@ -1,25 +1,19 @@
-import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, sets, strformat
+import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat
 import ../../status/status
 import ../../status/mailservers
-import ../../status/stickers
 import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../status/accounts as status_accounts
 import ../../status/chat as status_chat
 import ../../status/messages as status_messages
-import ../../status/libstatus/wallet as status_wallet
-import ../../status/libstatus/stickers as status_stickers
 import ../../status/contacts as status_contacts
 import ../../status/ens as status_ens
 import ../../status/chat/[chat, message]
-import ../../status/wallet
-import ../../status/libstatus/types
 import ../../status/profile/profile
 import web3/[conversions, ethtypes]
 import ../../status/threads
-import views/channels_list, views/message_list, views/chat_item, views/sticker_pack_list, views/sticker_list, views/suggestions_list
+import views/[channels_list, message_list, chat_item, suggestions_list, reactions, stickers, groups, transactions]
 import json_serialization
-import ../../status/libstatus/utils
 
 logScope:
   topics = "chats-view"
@@ -32,11 +26,12 @@ QtObject:
       currentSuggestions*: SuggestionsList
       callResult: string
       messageList*: Table[string, ChatMessageList]
+      reactions*: ReactionView
+      stickers*: StickersView
+      groups*: GroupsView
+      transactions*: TransactionsView
       activeChannel*: ChatItemView
-      stickerPacks*: StickerPackList
-      recentStickers*: StickerList
       replyTo: string
-      pubKey*: string
       channelOpenTime*: Table[string, int64]
       connected: bool
       unreadMessageCnt: int
@@ -51,6 +46,10 @@ QtObject:
     self.currentSuggestions.delete
     for msg in self.messageList.values:
       msg.delete
+    self.reactions.delete
+    self.stickers.delete
+    self.groups.delete
+    self.transactions.delete
     self.messageList = initTable[string, ChatMessageList]()
     self.channelOpenTime = initTable[string, int64]()
     self.QAbstractListModel.delete
@@ -63,10 +62,11 @@ QtObject:
     result.activeChannel = newChatItemView(status)
     result.currentSuggestions = newSuggestionsList()
     result.messageList = initTable[string, ChatMessageList]()
-    result.stickerPacks = newStickerPackList()
-    result.recentStickers = newStickerList()
+    result.reactions = newReactionView(status, result.messageList.addr, result.activeChannel)
+    result.stickers = newStickersView(status, result.activeChannel)
+    result.groups = newGroupsView(status,result.activeChannel)
+    result.transactions = newTransactionsView(status)
     result.unreadMessageCnt = 0
-    result.pubKey = ""
     result.loadingMessages = false
     result.setup()
 
@@ -90,74 +90,6 @@ QtObject:
       else:
         self.oldestMessageTimestamp = times.toUnix(times.getTime())
     self.oldestMessageTimestampChanged()
-
-  proc addStickerPackToList*(self: ChatsView, stickerPack: StickerPack, isInstalled, isBought, isPending: bool) =
-    self.stickerPacks.addStickerPackToList(stickerPack, newStickerList(stickerPack.stickers), isInstalled, isBought, isPending)
-  
-  proc getStickerPackList(self: ChatsView): QVariant {.slot.} =
-    newQVariant(self.stickerPacks)
-
-  QtProperty[QVariant] stickerPacks:
-    read = getStickerPackList
-
-  proc buyPackGasEstimate*(self: ChatsView, packId: int, address: string, price: string): int {.slot.} =
-    var success: bool
-    result = self.status.stickers.estimateGas(packId, address, price, success)
-    if not success:
-      result = 325000
-
-  proc transactionWasSent*(self: ChatsView, txResult: string) {.signal.}
-  proc transactionCompleted*(self: ChatsView, success: bool, txHash: string, revertReason: string = "") {.signal.}
-
-  proc buyStickerPack*(self: ChatsView, packId: int, address: string, price: string, gas: string, gasPrice: string, password: string): string {.slot.} =
-    var success: bool
-    let response = self.status.stickers.buyPack(packId, address, price, gas, gasPrice, password, success)
-    # TODO: 
-    # check if response["error"] is not null and handle the error
-    result = $(%* { "result": %response, "success": %success })
-    if success:
-      self.stickerPacks.updateStickerPackInList(packId, false, true)
-      self.transactionWasSent(response)
-
-  proc obtainAvailableStickerPacks*(self: ChatsView) =
-    spawnAndSend(self, "setAvailableStickerPacks") do:
-      let availableStickerPacks = status_stickers.getAvailableStickerPacks()
-      var packs: seq[StickerPack] = @[]
-      for packId, stickerPack in availableStickerPacks.pairs:
-        packs.add(stickerPack)
-      $(%*(packs))
-
-  proc stickerPacksLoaded*(self: ChatsView) {.signal.}
-
-  proc installedStickerPacksUpdated*(self: ChatsView) {.signal.}
-
-  proc recentStickersUpdated*(self: ChatsView) {.signal.}
-
-  proc setAvailableStickerPacks*(self: ChatsView, availableStickersJSON: string) {.slot.} =
-    let
-      accounts = status_wallet.getWalletAccounts() # TODO: make generic
-      installedStickerPacks = self.status.stickers.getInstalledStickerPacks()
-    var
-      purchasedStickerPacks: seq[int]
-    for account in accounts:
-      let address = parseAddress(account.address)
-      purchasedStickerPacks = self.status.stickers.getPurchasedStickerPacks(address)
-    let availableStickers = JSON.decode($availableStickersJSON, seq[StickerPack])
-
-    let pendingTransactions = status_wallet.getPendingTransactions().parseJson["result"]
-    var pendingStickerPacks = initHashSet[int]()
-    for trx in pendingTransactions.getElems():
-      if trx["type"].getStr == $PendingTransactionType.BuyStickerPack:
-        pendingStickerPacks.incl(trx["data"].getStr.parseInt)
-
-    for stickerPack in availableStickers:
-      let isInstalled = installedStickerPacks.hasKey(stickerPack.id)
-      let isBought = purchasedStickerPacks.contains(stickerPack.id)
-      let isPending = pendingStickerPacks.contains(stickerPack.id) and not isBought
-      self.status.stickers.availableStickerPacks[stickerPack.id] = stickerPack
-      self.addStickerPackToList(stickerPack, isInstalled, isBought, isPending)
-    self.stickerPacksLoaded()
-    self.installedStickerPacksUpdated()
 
   proc getChatsList(self: ChatsView): QVariant {.slot.} =
     newQVariant(self.chats)
@@ -272,36 +204,6 @@ QtObject:
     write = setActiveChannelByIndex
     notify = activeChannelChanged
 
-  proc getNumInstalledStickerPacks(self: ChatsView): QVariant {.slot.} =
-    newQVariant(self.status.stickers.installedStickerPacks.len)
-
-  QtProperty[QVariant] numInstalledStickerPacks:
-    read = getNumInstalledStickerPacks
-    notify = installedStickerPacksUpdated
-
-  proc installStickerPack*(self: ChatsView, packId: int) {.slot.} =
-    self.status.stickers.installStickerPack(packId)
-    self.stickerPacks.updateStickerPackInList(packId, true, false)
-    self.installedStickerPacksUpdated()
-
-  proc resetStickerPackBuyAttempt*(self: ChatsView, packId: int) {.slot.} =
-    self.stickerPacks.updateStickerPackInList(packId, false, false)
-  
-  proc uninstallStickerPack*(self: ChatsView, packId: int) {.slot.} =
-    self.status.stickers.uninstallStickerPack(packId)
-    self.status.stickers.removeRecentStickers(packId)
-    self.stickerPacks.updateStickerPackInList(packId, false, false)
-    self.recentStickers.removeStickersFromList(packId)
-    self.installedStickerPacksUpdated()
-    self.recentStickersUpdated()
-
-  proc getRecentStickerList*(self: ChatsView): QVariant {.slot.} =
-    result = newQVariant(self.recentStickers)
-
-  QtProperty[QVariant] recentStickers:
-    read = getRecentStickerList
-    notify = recentStickersUpdated
-
   proc setActiveChannel*(self: ChatsView, channel: string) {.slot.} =
     if(channel == ""): return
     self.activeChannel.setChatItem(self.chats.getChannel(self.chats.chats.findIndexById(channel)))
@@ -316,7 +218,6 @@ QtObject:
     read = getActiveChannel
     write = setActiveChannel
     notify = activeChannelChanged
-
 
   proc getCurrentSuggestions(self: ChatsView): QVariant {.slot.} =
     return newQVariant(self.currentSuggestions)
@@ -366,48 +267,6 @@ QtObject:
           discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
           self.newMessagePushed()
 
-  proc messageEmojiReactionId(self: ChatsView, chatId: string, messageId: string, emojiId: int): string =
-    if (self.messageList[chatId].getReactions(messageId) == "") :
-      return ""
-
-    let oldReactions = parseJson(self.messageList[chatId].getReactions(messageId))
-
-    for pair in oldReactions.pairs:
-      if (pair[1]["emojiId"].getInt == emojiId and pair[1]["from"].getStr == self.pubKey):
-        return pair[0]
-    return ""
-
-  proc toggleEmojiReaction*(self: ChatsView, messageId: string, emojiId: int) {.slot.} =
-    let emojiReactionId = self.messageEmojiReactionId(self.activeChannel.id, messageId, emojiId)
-    if (emojiReactionId == ""):
-      self.status.chat.addEmojiReaction(self.activeChannel.id, messageId, emojiId)
-    else:
-      self.status.chat.removeEmojiReaction(emojiReactionId)
-
-  proc pushReactions*(self:ChatsView, reactions: var seq[Reaction]) =
-    let t = reactions.len
-    for reaction in reactions.mitems:
-      let messageList = self.messageList[reaction.chatId]
-      var emojiReactions = messageList.getReactions(reaction.messageId)
-      var oldReactions: JsonNode
-      if (emojiReactions == "") :
-        oldReactions = %*{}
-      else: 
-        oldReactions = parseJson(emojiReactions)
-
-      if (oldReactions.hasKey(reaction.id)):
-        if (reaction.retracted):
-          # Remove the reaction
-          oldReactions.delete(reaction.id)
-          messageList.setMessageReactions(reaction.messageId, $oldReactions)
-        continue
-
-      oldReactions[reaction.id] = %* {
-        "from": reaction.fromAccount,
-        "emojiId": reaction.emojiId
-      }
-      messageList.setMessageReactions(reaction.messageId, $oldReactions)
-
 
   proc updateUsernames*(self:ChatsView, contacts: seq[Profile]) =
     if contacts.len > 0:
@@ -448,21 +307,12 @@ QtObject:
   proc pushChatItem*(self: ChatsView, chatItem: Chat) =
     discard self.chats.addChatItemToList(chatItem)
     self.messagePushed()
-
-  proc addRecentStickerToList*(self: ChatsView, sticker: Sticker) =
-    self.recentStickers.addStickerToList(sticker)
-    self.recentStickersUpdated()
   
   proc copyToClipboard*(self: ChatsView, content: string) {.slot.} =
     setClipBoardText(content)
 
   proc getLinkPreviewData*(self: ChatsView, link: string): string {.slot.} =
     result = $self.status.chat.getLinkPreviewData(link)
-
-  proc sendSticker*(self: ChatsView, hash: string, pack: int) {.slot.} =
-    let sticker = Sticker(hash: hash, packId: pack)
-    self.addRecentStickerToList(sticker)
-    self.status.chat.sendSticker(self.activeChannel.id, sticker)
 
   proc joinChat*(self: ChatsView, channel: string, chatTypeInt: int): int {.slot.} =
     self.status.chat.join(channel, ChatType(chatTypeInt))
@@ -471,13 +321,6 @@ QtObject:
   proc joinChatWithENS*(self: ChatsView, channel: string, ensName: string): int {.slot.} =
     self.status.chat.join(channel, ChatType.OneToOne, ensName=status_ens.addDomain(ensName))
     self.setActiveChannel(channel)
-
-  proc chatGroupJoined(self: ChatsView, channel: string) {.signal.}
-
-  proc joinGroup*(self: ChatsView) {.slot.} =
-    self.status.chat.confirmJoiningGroup(self.activeChannel.id)
-    self.activeChannel.membershipChanged()
-    self.chatGroupJoined(self.activeChannel.id)
 
   proc messagesLoaded*(self: ChatsView) {.signal.}
 
@@ -580,23 +423,6 @@ QtObject:
   proc deleteMessage*(self: ChatsView, channelId: string, messageId: string) =
     self.messageList[channelId].deleteMessage(messageId)
 
-  proc renameGroup*(self: ChatsView, newName: string) {.slot.} =
-    self.status.chat.renameGroup(self.activeChannel.id, newName)
-
-  proc createGroup*(self: ChatsView, groupName: string, pubKeys: string) {.slot.} =
-    let pubKeysSeq = map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
-    self.status.chat.createGroup(groupName, pubKeysSeq)
-
-  proc addGroupMembers*(self: ChatsView, chatId: string, pubKeys: string) {.slot.} =
-    let pubKeysSeq = map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
-    self.status.chat.addGroupMembers(chatId, pubKeysSeq)
-
-  proc kickGroupMember*(self: ChatsView, chatId: string, pubKey: string) {.slot.} =
-    self.status.chat.kickGroupMember(chatId, pubKey)
-
-  proc makeAdmin*(self: ChatsView, chatId: string, pubKey: string) {.slot.} =
-    self.status.chat.makeAdmin(chatId, pubKey)
-
   proc isEnsVerified*(self: ChatsView, id: string): bool {.slot.} =
     if id == "": return false
     let contact = self.status.contacts.getContactByID(id)
@@ -655,19 +481,26 @@ QtObject:
     if (selectedChannel == nil): return false
     result = selectedChannel.muted  
 
-  ### Chat commands functions ###
-  proc acceptRequestAddressForTransaction*(self: ChatsView, messageId: string , address: string) {.slot.} =
-    self.status.chat.acceptRequestAddressForTransaction(messageId, address)
+  proc getReactions*(self: ChatsView): QVariant {.slot.} =
+    newQVariant(self.reactions)
 
-  proc declineRequestAddressForTransaction*(self: ChatsView, messageId: string) {.slot.} =
-    self.status.chat.declineRequestAddressForTransaction(messageId)
+  QtProperty[QVariant] reactions:
+    read = getReactions
 
-  proc declineRequestTransaction*(self: ChatsView, messageId: string) {.slot.} =
-    self.status.chat.declineRequestTransaction(messageId)
+  proc getStickers*(self: ChatsView): QVariant {.slot.} =
+    newQVariant(self.stickers)
 
-  proc requestAddressForTransaction*(self: ChatsView, chatId: string, fromAddress: string, amount: string, tokenAddress: string) {.slot.} =
-    self.status.chat.requestAddressForTransaction(chatId, fromAddress, amount, tokenAddress)
-    
+  QtProperty[QVariant] stickers:
+    read = getStickers
 
-  proc requestTransaction*(self: ChatsView, chatId: string, fromAddress: string, amount: string, tokenAddress: string) {.slot.} =
-    self.status.chat.requestTransaction(chatId, fromAddress, amount, tokenAddress)
+  proc getGroups*(self: ChatsView): QVariant {.slot.} =
+    newQVariant(self.groups)
+
+  QtProperty[QVariant] groups:
+    read = getGroups
+
+  proc getTransactions*(self: ChatsView): QVariant {.slot.} =
+    newQVariant(self.transactions)
+
+  QtProperty[QVariant] transactions:
+    read = getTransactions

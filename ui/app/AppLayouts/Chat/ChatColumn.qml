@@ -56,15 +56,15 @@ StackLayout {
 
     function requestAddressForTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
         amount =  utilsModel.eth2Wei(amount.toString(), tokenDecimals)
-        chatsModel.requestAddressForTransaction(chatsModel.activeChannel.id,
-                                                address,
-                                                amount,
-                                                tokenAddress)
+        chatsModel.transactions.requestAddress(chatsModel.activeChannel.id,
+                                               address,
+                                               amount,
+                                               tokenAddress)
         txModalLoader.close()
     }
     function requestTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
         amount =  utilsModel.eth2Wei(amount.toString(), tokenDecimals)
-        chatsModel.requestTransaction(chatsModel.activeChannel.id,
+        chatsModel.transactions.request(chatsModel.activeChannel.id,
                                         address,
                                         amount,
                                         tokenAddress)
@@ -250,8 +250,8 @@ StackLayout {
                         qsTr("This user has been blocked.") :
                         qsTr("Type a message.")
                 anchors.bottom: parent.bottom
-                recentStickers: chatsModel.recentStickers
-                stickerPackList: chatsModel.stickerPacks
+                recentStickers: chatsModel.stickers.recent
+                stickerPackList: chatsModel.stickers.stickerPacks
                 chatType: chatsModel.activeChannel.chatType
                 onSendTransactionCommandButtonClicked: {
                     if (chatsModel.activeChannel.ensVerified) {
@@ -266,7 +266,7 @@ StackLayout {
                     txModalLoader.item.open()
                 }
                 onStickerSelected: {
-                    chatsModel.sendSticker(hashId, packId)
+                    chatsModel.stickers.send(hashId, packId)
                 }
             }
         }
