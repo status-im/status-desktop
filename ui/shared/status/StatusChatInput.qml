@@ -16,6 +16,7 @@ Rectangle {
     signal sendTransactionCommandButtonClicked()
     signal receiveTransactionCommandButtonClicked()
     signal stickerSelected(string hashId, string packId)
+    signal sendMessage(var event)
 
     property bool emojiEvent: false;
     property bool paste: false;
@@ -36,6 +37,9 @@ Rectangle {
 
     property alias textInput: messageInputField
     property bool isStatusUpdateInput: chatType === Constants.chatTypeStatusUpdate
+
+    property var fileUrls: null
+    property alias messageSound: sendMessageSound
 
     height: {
         if (extendedArea.visible) {
@@ -71,7 +75,7 @@ Rectangle {
         messageInputField.insert(start, text.replace(/\n/g, "<br/>"));
     }
 
-    function interpretMessage(msg) {
+    property var interpretMessage: function (msg)  {
         if (msg.startsWith("/shrug")) {
             return  msg.replace("/shrug", "") + " ¯\\\\\\_(ツ)\\_/¯"
         }
@@ -98,8 +102,12 @@ Rectangle {
                 event.accepted = true;
                 return
             }
+            if (control.isStatusUpdateInput) {
+                return // Status update require the send button to be clicked
+            }
             if (messageInputField.length < messageLimit) {
-                sendMsg(event);
+                control.sendMessage(event)
+                control.hideExtendedArea();
                 return;
             }
             if(event) event.accepted = true
@@ -334,25 +342,10 @@ Rectangle {
         return true;
     }
 
-    function sendMsg(event){
-        if(control.isImage){
-            chatsModel.sendImage(imageArea.imageSource);
-        }
-        var msg = chatsModel.plainText(Emoji.deparse(messageInputField.text).trim()).trim()
-        if(msg.length > 0){
-            msg = interpretMessage(msg)
-            chatsModel.sendMessage(msg, control.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType);
-            messageInputField.text = "";
-            if(event) event.accepted = true
-            sendMessageSound.stop()
-            Qt.callLater(sendMessageSound.play);
-        }
-        control.hideExtendedArea();
-    }
-
     function hideExtendedArea() {
         isImage = false;
         isReply = false;
+        control.fileUrls = null
         imageArea.imageSource = "";
         replyArea.userName = ""
         replyArea.identicon = ""
@@ -362,7 +355,8 @@ Rectangle {
     function showImageArea(imagePath) {
         isImage = true;
         isReply = false;
-        imageArea.imageSource = imageDialog.fileUrls[0]
+        control.fileUrls = imageDialog.fileUrls
+        imageArea.imageSource = control.fileUrls[0]
     }
 
     function showReplyArea(userName, message, identicon) {
@@ -582,6 +576,7 @@ Rectangle {
                 anchors.topMargin: control.isStatusUpdateInput ? 0 : Style.current.halfPadding
                 visible: isImage
                 onImageRemoved: {
+                    control.fileUrls = null
                     isImage = false
                 }
             }
