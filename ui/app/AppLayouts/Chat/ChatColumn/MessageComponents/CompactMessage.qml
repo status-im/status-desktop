@@ -6,9 +6,12 @@ Item {
     property var clickMessage: function () {}
     property int chatHorizontalPadding: 12
     property int chatVerticalPadding: 7
-    property bool showImages: appSettings.displayChatImages && imageUrls != ""
+    property string imageUrls: ""
+    property bool showImages: appSettings.displayChatImages && root.imageUrls != ""
+    property string linkUrls: ""
+    property int contentType: 2
 
-    id: chatTextItem
+    id: root
     anchors.top: parent.top
     anchors.topMargin: authorCurrentMsg != authorPrevMsg ? Style.current.smallPadding : 0
     height: childrenRect.height + this.anchors.topMargin
@@ -29,7 +32,7 @@ Item {
 
     UsernameLabel {
         id: chatName
-        anchors.leftMargin: chatTextItem.chatHorizontalPadding
+        anchors.leftMargin: root.chatHorizontalPadding
 //        anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
         anchors.top: parent.top
         anchors.left: chatImage.right
@@ -39,21 +42,21 @@ Item {
         id: chatReply
 //        anchors.top: chatName.visible ? chatName.bottom : (dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top)
         anchors.top: chatName.visible ? chatName.bottom : parent.top
-        anchors.topMargin: chatName.visible && this.visible ? chatTextItem.chatVerticalPadding : 0
+        anchors.topMargin: chatName.visible && this.visible ? root.chatVerticalPadding : 0
         anchors.left: chatImage.right
-        anchors.leftMargin: chatTextItem.chatHorizontalPadding
+        anchors.leftMargin: root.chatHorizontalPadding
         anchors.right: parent.right
-        anchors.rightMargin: chatTextItem.chatHorizontalPadding
+        anchors.rightMargin: root.chatHorizontalPadding
     }
 
     ChatText {
         id: chatText
         anchors.top: chatReply.bottom
-        anchors.topMargin: chatName.visible && this.visible ? chatTextItem.chatVerticalPadding : 0
+        anchors.topMargin: chatName.visible && this.visible ? root.chatVerticalPadding : 0
         anchors.left: chatImage.right
-        anchors.leftMargin: chatTextItem.chatHorizontalPadding
+        anchors.leftMargin: root.chatHorizontalPadding
         anchors.right: parent.right
-        anchors.rightMargin: chatTextItem.chatHorizontalPadding
+        anchors.rightMargin: root.chatHorizontalPadding
     }
 
     Loader {
@@ -68,7 +71,7 @@ Item {
             ChatImage {
                 imageSource: image
                 imageWidth: 200
-                onClicked: chatTextItem.clickMessage(false, false, true, image)
+                onClicked: root.clickMessage(false, false, true, image)
             }
         }
     }
@@ -78,7 +81,7 @@ Item {
         active: contentType === Constants.stickerType
         anchors.left: chatText.left
         anchors.top: chatName.visible ? chatName.bottom : parent.top
-        anchors.topMargin: this.visible && chatName.visible ? chatTextItem.chatVerticalPadding : 0
+        anchors.topMargin: this.visible && chatName.visible ? root.chatVerticalPadding : 0
 
         sourceComponent: Component {
             Rectangle {
@@ -87,15 +90,17 @@ Item {
                 border.color: Style.current.grey
                 border.width: 1
                 radius: 16
-                width: stickerId.width + 2 * chatTextItem.chatVerticalPadding
-                height: stickerId.height + 2 * chatTextItem.chatVerticalPadding
+                width: stickerId.width + 2 * root.chatVerticalPadding
+                height: stickerId.height + 2 * root.chatVerticalPadding
 
                 Sticker {
                     id: stickerId
                     anchors.top: parent.top
-                    anchors.topMargin: chatTextItem.chatVerticalPadding
+                    anchors.topMargin: root.chatVerticalPadding
                     anchors.left: parent.left
-                    anchors.leftMargin: chatTextItem.chatVerticalPadding
+                    anchors.leftMargin: root.chatVerticalPadding
+                    contentType: root.contentType
+                    container: root.parent
                 }
             }
         }
@@ -130,7 +135,7 @@ Item {
 
     Loader {
         id: imageLoader
-        active: showImages
+        active: root.showImages
         anchors.left: chatText.left
         anchors.leftMargin: 8
         anchors.top: chatText.bottom
@@ -139,22 +144,26 @@ Item {
             ImageMessage {
                 color: Style.current.transparent
                 chatHorizontalPadding: 0
+                imageUrls: root.imageUrls
                 onClicked: {
-                    chatTextItem.clickMessage(false, false, true, image)
+                    root.clickMessage(false, false, true, image)
                 }
+                container: root.parent
             }
         }
     }
 
     Loader {
         id: linksLoader
-        active: !!linkUrls
+        active: !!root.linkUrls
         anchors.left: chatText.left
         anchors.leftMargin: 8
         anchors.top: chatText.bottom
 
         sourceComponent: Component {
-            LinksMessage {}
+            LinksMessage {
+                linkUrls: root.linkUrls
+            }
         }
     }
 

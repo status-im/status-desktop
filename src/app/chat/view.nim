@@ -457,7 +457,10 @@ QtObject:
     setClipBoardText(content)
 
   proc getLinkPreviewData*(self: ChatsView, link: string): string {.slot.} =
-    result = $self.status.chat.getLinkPreviewData(link)
+    try:
+      $self.status.chat.getLinkPreviewData(link)
+    except RpcException as e:
+      $ %* { "error": e.msg }
 
   proc sendSticker*(self: ChatsView, hash: string, pack: int) {.slot.} =
     let sticker = Sticker(hash: hash, packId: pack)

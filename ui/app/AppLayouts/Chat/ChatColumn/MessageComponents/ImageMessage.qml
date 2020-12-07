@@ -4,8 +4,10 @@ import "../../../../../imports"
 Rectangle {
     property int chatVerticalPadding: 12
     property int chatHorizontalPadding: 12
-    property bool isCurrentUser: bool
+    property bool isCurrentUser: false
     signal clicked(var image)
+    property var container
+    property string imageUrls: ""
 
     id: imageChatBox
     height: {
@@ -32,11 +34,11 @@ Rectangle {
     Repeater {
         id: imageRepeater
         model: {
-            if (!imageUrls) {
+            if (!root.imageUrls) {
                 return []
             }
 
-            return imageUrls.split(" ")
+            return root.imageUrls.split(" ")
         }
 
         ImageLoader {
@@ -49,6 +51,7 @@ Rectangle {
             onClicked: {
                 imageChatBox.clicked(image)
             }
+            container: root.container
         }
     }
 

@@ -77,6 +77,14 @@ type
     result*: string
     id*: int
     error*: RpcError
+  # TODO: replace all RpcResponse and RpcResponseTyped occurances with a generic
+  # form of RpcReponse. IOW, rename RpceResponseTyped*[T] to RpcResponse*[T] and
+  # remove RpcResponse.
+  RpcResponseTyped*[T] = object
+    jsonrpc*: string
+    result*: T
+    id*: int
+    error*: RpcError
 
 proc toAccount*(account: GeneratedAccount): Account =
   result = Account(name: account.name, photoPath: account.photoPath, keyUid: account.address)

@@ -1,4 +1,4 @@
-import json, times, strutils, sequtils, chronicles, json_serialization, algorithm
+import json, times, strutils, sequtils, chronicles, json_serialization, algorithm, strformat
 import core, utils
 import ../chat/[chat, message]
 import ../signals/messages
@@ -200,4 +200,11 @@ proc unmuteChat*(chatId: string): string =
   result = callPrivateRPC("unmuteChat".prefix, %*[chatId])
 
 proc getLinkPreviewData*(link: string): JsonNode =
-  result = callPrivateRPC("getLinkPreviewData".prefix, %*[link]).parseJSON()["result"]
+  let
+    responseStr = callPrivateRPC("getLinkPreviewData".prefix, %*[link])
+    response = Json.decode(responseStr, RpcResponseTyped[JsonNode], allowUnknownFields = false)
+
+  if not response.error.isNil:
+    raise newException(RpcException, fmt"""Error getting link preview data for '{link}': {response.error.message}""")
+
+  response.result

@@ -11,6 +11,7 @@ Item {
     property bool playing: true
     property bool isAnimated: !!source && source.toString().endsWith('.gif')
     signal clicked(var image)
+    property var container
 
     id: imageContainer
     width: loadingImage.visible ? loadingImage.width : imageMessage.width
@@ -61,7 +62,7 @@ Item {
                 imageMessage.visible = false
             } else if (imageMessage.status === Image.Ready) {
                 loadingImage.visible = false
-                scrollToBottom(true, messageItem)
+                scrollToBottom(true, root.container)
             }
         }
 
