@@ -6,7 +6,9 @@ import "../../../../../shared/status"
 import "../../../Profile/LeftTab/constants.js" as ProfileConstants
 
 Item {
-    id: linksItem
+    id: root
+    property string linkUrls: ""
+
     height: {
         let h = 0
         for (let i = 0; i < linksRepeater.count; i++) {
@@ -27,11 +29,11 @@ Item {
     Repeater {
         id: linksRepeater
         model: {
-            if (!linkUrls) {
+            if (!root.linkUrls) {
                 return []
             }
 
-            return linkUrls.split(" ")
+            return root.linkUrls.split(" ")
         }
 
 
@@ -82,15 +84,15 @@ Item {
         id: unfurledLinkComponent
         Loader {
             property var linkData: {
-                try {
-                    const data = chatsModel.getLinkPreviewData(linkString)
-                    return JSON.parse(data)
-                } catch (e) {
-                    console.error("Error parsing link data", e)
-                    return undfined
+                const data = chatsModel.getLinkPreviewData(linkString)
+                const result = JSON.parse(data)
+                if (result.error) {
+                    console.error(result.error)
+                    return undefined
                 }
+                return result
             }
-            enabled: linkData !== undefined && !!linkData.title
+            active: linkData !== undefined && !!linkData.title
             sourceComponent: Component {
                 Rectangle {
                     id: rectangle

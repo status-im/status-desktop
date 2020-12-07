@@ -4,6 +4,8 @@ import "../../../../../imports"
 
 Loader {
     property color color
+    property var container
+    property int contentType: -1
 
     id: root
     active: contentType === Constants.stickerType
@@ -12,7 +14,7 @@ Loader {
         Shared.ImageLoader {
             color: root.color
             onLoaded: {
-                scrollToBottom(true, messageItem)
+                scrollToBottom(true, root.container)
             }
 
             width: 140

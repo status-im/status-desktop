@@ -4,9 +4,13 @@ import "../../../../../imports"
 
 Item {
     property var clickMessage: function () {}
-    property bool showImages: appSettings.displayChatImages && imageUrls !== ""
+    property string imageUrls: ""
+    property bool showImages: appSettings.displayChatImages && root.imageUrls !== ""
+    property string linkUrls: ""
+    property bool isCurrentUser: false
+    property int contentType: 2
 
-    id: chatTextItem
+    id: root
     anchors.top: parent.top
     anchors.topMargin: authorCurrentMsg !== authorPrevMsg ? Style.current.smallPadding : 0
     height: childrenRect.height + this.anchors.topMargin + (dateGroupLbl.visible ? dateGroupLbl.height : 0)
@@ -18,7 +22,7 @@ Item {
 
     UserImage {
         id: chatImage
-        visible: chatsModel.activeChannel.chatType !== Constants.chatTypeOneToOne && isMessage && authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        visible: chatsModel.activeChannel.chatType !== Constants.chatTypeOneToOne && isMessage && authorCurrentMsg != authorPrevMsg && !root.isCurrentUser
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.top:  dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
@@ -27,7 +31,7 @@ Item {
 
     UsernameLabel {
         id: chatName
-        visible: chatsModel.activeChannel.chatType !== Constants.chatTypeOneToOne && isMessage && authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        visible: chatsModel.activeChannel.chatType !== Constants.chatTypeOneToOne && isMessage && authorCurrentMsg != authorPrevMsg && !root.isCurrentUser
         anchors.leftMargin: 20
         anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
         anchors.topMargin: 0
@@ -57,7 +61,7 @@ Item {
             if (isImage) {
                 return "transparent"
             }
-            return isCurrentUser ? Style.current.primary : Style.current.secondaryBackground
+            return root.isCurrentUser ? Style.current.primary : Style.current.secondaryBackground
         }
         border.color: isSticker ? Style.current.border : Style.current.transparent
         border.width: 1
@@ -100,11 +104,11 @@ Item {
         }
 
         radius: 16
-        anchors.left: !isCurrentUser ? chatImage.right : undefined
-        anchors.leftMargin: !isCurrentUser ? 8 : 0
-        anchors.right: !isCurrentUser ? undefined : parent.right
-        anchors.rightMargin: !isCurrentUser ? 0 : Style.current.padding
-        anchors.top: authorCurrentMsg != authorPrevMsg && !isCurrentUser ? chatImage.top : (dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top)
+        anchors.left: !root.isCurrentUser ? chatImage.right : undefined
+        anchors.leftMargin: !root.isCurrentUser ? 8 : 0
+        anchors.right: !root.isCurrentUser ? undefined : parent.right
+        anchors.rightMargin: !root.isCurrentUser ? 0 : Style.current.padding
+        anchors.top: authorCurrentMsg != authorPrevMsg && !root.isCurrentUser ? chatImage.top : (dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top)
         anchors.topMargin: 0
         visible: isMessage
 
@@ -128,7 +132,7 @@ Item {
             anchors.leftMargin: chatBox.chatHorizontalPadding
             anchors.right: chatBox.longChatText ? parent.right : undefined
             anchors.rightMargin: chatBox.longChatText ? chatBox.chatHorizontalPadding : 0
-            textField.color: !isCurrentUser ? Style.current.textColor : Style.current.currentUserTextColor
+            textField.color: !root.isCurrentUser ? Style.current.textColor : Style.current.currentUserTextColor
             Connections {
                 target: appSettings.compactMode ? null : chatBox
                 onLongChatTextChanged: {
@@ -155,8 +159,8 @@ Item {
                         id: chatImageComponent
                         imageSource: image
                         imageWidth: 250
-                        isCurrentUser: messageItem.isCurrentUser
-                        onClicked: chatTextItem.clickMessage(false, false, true, image)
+                        isCurrentUser: root.isCurrentUser
+                        onClicked: root.clickMessage(false, false, true, image)
                     }
                 }
             }
@@ -183,6 +187,8 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: chatBox.chatVerticalPadding
             color: Style.current.transparent
+            container: root.parent
+            contentType: root.contentType
         }
 
         MessageMouseArea {
@@ -197,16 +203,16 @@ Item {
 
     ChatTime {
         id: chatTime
-        anchors.top: showImages ? imageLoader.bottom : chatBox.bottom
+        anchors.top: root.showImages ? imageLoader.bottom : chatBox.bottom
         anchors.topMargin: 4
         anchors.bottomMargin: Style.current.padding
-        anchors.right: showImages ? imageLoader.right : chatBox.right
-        anchors.rightMargin: isCurrentUser ? 5 : Style.current.padding
+        anchors.right: root.showImages ? imageLoader.right : chatBox.right
+        anchors.rightMargin: root.isCurrentUser ? 5 : Style.current.padding
     }
 
     SentMessage {
         id: sentMessage
-        visible: isCurrentUser && !timeout && !isExpired && isMessage && outgoingStatus !== "sent"
+        visible: root.isCurrentUser && !timeout && !isExpired && isMessage && outgoingStatus !== "sent"
         anchors.top: chatTime.top
         anchors.bottomMargin: Style.current.padding
         anchors.right: chatTime.left
@@ -223,12 +229,12 @@ Item {
 
     Loader {
         id: imageLoader
-        active: showImages
+        active: root.showImages
         sourceComponent: imageComponent
-        anchors.left: !isCurrentUser ? chatImage.right : undefined
-        anchors.leftMargin: !isCurrentUser ? 8 : 0
-        anchors.right: !isCurrentUser ? undefined : parent.right
-        anchors.rightMargin: !isCurrentUser ? 0 : Style.current.padding
+        anchors.left: !root.isCurrentUser ? chatImage.right : undefined
+        anchors.leftMargin: !root.isCurrentUser ? 8 : 0
+        anchors.right: !root.isCurrentUser ? undefined : parent.right
+        anchors.rightMargin: !root.isCurrentUser ? 0 : Style.current.padding
         anchors.top: chatBox.bottom
         anchors.topMargin: Style.current.smallPadding
     }
@@ -236,25 +242,29 @@ Item {
     Component {
         id: imageComponent
         ImageMessage {
-            isCurrentUser: messageItem.isCurrentUser
+            isCurrentUser: root.isCurrentUser
+            container: root.parent
+            imageUrls: root.imageUrls
             onClicked: {
-                chatTextItem.clickMessage(false, false, true, image)
+                root.clickMessage(false, false, true, image)
             }
         }
     }
 
     Loader {
         id: linksLoader
-        active: !!linkUrls
-        anchors.left: !isCurrentUser ? chatImage.right : undefined
-        anchors.leftMargin: !isCurrentUser ? 8 : 0
-        anchors.right: !isCurrentUser ? undefined : parent.right
-        anchors.rightMargin: !isCurrentUser ? 0 : Style.current.padding
+        active: !!root.linkUrls
+        anchors.left: !root.isCurrentUser ? chatImage.right : undefined
+        anchors.leftMargin: !root.isCurrentUser ? 8 : 0
+        anchors.right: !root.isCurrentUser ? undefined : parent.right
+        anchors.rightMargin: !root.isCurrentUser ? 0 : Style.current.padding
         anchors.top: chatBox.bottom
         anchors.topMargin: Style.current.smallPadding
 
         sourceComponent: Component {
-            LinksMessage {}
+            LinksMessage {
+                linkUrls: root.linkUrls
+            }
         }
     }
 
@@ -262,8 +272,8 @@ Item {
         id: emojiReactionLoader
         active: emojiReactions !== ""
         sourceComponent: emojiReactionsComponent
-        anchors.left: !isCurrentUser ? chatBox.left : undefined
-        anchors.right: !isCurrentUser ? undefined : chatBox.right
+        anchors.left: !root.isCurrentUser ? chatBox.left : undefined
+        anchors.right: !root.isCurrentUser ? undefined : chatBox.right
         anchors.top: chatBox.bottom
         anchors.topMargin: 2
     }

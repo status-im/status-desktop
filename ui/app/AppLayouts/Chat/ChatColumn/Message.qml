@@ -24,6 +24,7 @@ Item {
     property int prevMessageIndex: -1
     property bool timeout: false
     property string linkUrls: ""
+    property string imageUrls: ""
 
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
@@ -47,7 +48,7 @@ Item {
     property var imageClick: function () {}
     property var scrollToBottom: function () {}
 
-    id: messageItem
+    id: root
     width: parent.width
     anchors.right: !isCurrentUser ? undefined : parent.right
     height: {
@@ -161,7 +162,7 @@ Item {
     Component {
         id: channelIdentifierComponent
         ChannelIdentifier {
-            authorCurrentMsg: messageItem.authorCurrentMsg
+            authorCurrentMsg: root.authorCurrentMsg
         }
     }
 
@@ -192,7 +193,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
             textFormat: Text.RichText
-            topPadding: messageItem.prevMessageIndex === 1 ? Style.current.bigPadding : 0
+            topPadding: root.prevMessageIndex === 1 ? Style.current.bigPadding : 0
         }
     }
 
@@ -200,7 +201,11 @@ Item {
     Component {
         id: messageComponent
         NormalMessage {
-            clickMessage: messageItem.clickMessage
+            clickMessage: root.clickMessage
+            linkUrls: root.linkUrls
+            imageUrls: root.imageUrls
+            isCurrentUser: root.isCurrentUser
+            contentType: root.contentType
         }
     }
 
@@ -208,7 +213,10 @@ Item {
     Component {
         id: compactMessageComponent
         CompactMessage {
-            clickMessage: messageItem.clickMessage
+            clickMessage: root.clickMessage
+            linkUrls: root.linkUrls
+            imageUrls: root.imageUrls
+            contentType: root.contentType
         }
     }
 

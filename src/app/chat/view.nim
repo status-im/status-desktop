@@ -312,7 +312,10 @@ QtObject:
     setClipBoardText(content)
 
   proc getLinkPreviewData*(self: ChatsView, link: string): string {.slot.} =
-    result = $self.status.chat.getLinkPreviewData(link)
+    try:
+      $self.status.chat.getLinkPreviewData(link)
+    except RpcException as e:
+      $ %* { "error": e.msg }
 
   proc joinChat*(self: ChatsView, channel: string, chatTypeInt: int): int {.slot.} =
     self.status.chat.join(channel, ChatType(chatTypeInt))
