@@ -166,18 +166,14 @@ StackLayout {
             id: messageContextMenu
         }
  
-        ListModel {
-            id: suggestions
-        }
-
         Connections {
             target: chatsModel
             onActiveChannelChanged: {
                 chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
-                suggestions.clear()
+                chatInput.suggestionsList.clear()
                 const len = chatsModel.suggestionList.rowCount()
                 for (let i = 0; i < len; i++) {
-                    suggestions.append({
+                    chatInput.suggestionsList.append({
                                            alias: chatsModel.suggestionList.rowData(i, "alias"),
                                            ensName: chatsModel.suggestionList.rowData(i, "ensName"),
                                            address: chatsModel.suggestionList.rowData(i, "address"),
