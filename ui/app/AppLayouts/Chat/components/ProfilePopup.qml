@@ -154,9 +154,10 @@ ModalPopup {
             }
         }
 
-        UnblockContactConfirmationDialog {
+        ConfirmationDialog {
             id: unblockContactConfirmationDialog
-            onUnblockButtonClicked: {
+            title: qsTr("Unblock user")
+            onConfirmButtonClicked: {
                 profileModel.unblockContact(fromAuthor)
                 unblockContactConfirmationDialog.close();
                 popup.close()
@@ -396,8 +397,6 @@ ModalPopup {
             anchors.bottom: parent.bottom
             onClicked: {
                 if (isBlocked) {
-                    unblockContactConfirmationDialog.contactName = userName;
-                    unblockContactConfirmationDialog.contactAddress = fromAuthor;
                     unblockContactConfirmationDialog.open();
                     return;
                 }
