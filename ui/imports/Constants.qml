@@ -15,6 +15,8 @@ QtObject {
     readonly property int limitLongChatText: 500
     readonly property int limitLongChatTextCompactMode: 1000
 
+    readonly property int notificationPopupTTL: 5000
+
     readonly property string chat: "chat"
     readonly property string wallet: "wallet"
     readonly property string browser: "browser"

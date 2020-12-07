@@ -160,6 +160,34 @@ ScrollView {
                 }
             }
 
+            RowLayout {
+                width: parent.width
+                StyledText {
+                    text: qsTr("Use your operating system's notifications")
+                    font.pixelSize: 15
+                    wrapMode: Text.WordWrap
+                    Layout.fillWidth: true
+
+                    StyledText {
+                        id: detailText
+                        text: qsTr("Setting this to false will instead use Status' notification style as seen below")
+                        color: Style.current.secondaryText
+                        width: parent.width
+                        font.pixelSize: 12
+                        wrapMode: Text.WordWrap
+                        anchors.top: parent.bottom
+                    }
+                }
+
+                StatusSwitch {
+                    Layout.alignment: Qt.AlignRight
+                    checked: appSettings.useOSNotifications
+                    onCheckedChanged: {
+                        appSettings.useOSNotifications = checked
+                    }
+                }
+            }
+
             /* GridLayout { */
             /*     columns: 4 */
             /*     width: parent.width */
