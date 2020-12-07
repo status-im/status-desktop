@@ -127,7 +127,6 @@ Item {
             anchors.rightMargin: chatBox.longChatText ? chatBox.chatHorizontalPadding : 0
             textField.color: !isCurrentUser ? Style.current.textColor : Style.current.currentUserTextColor
             Connections {
-                enabled: !appSettings.compactMode
                 target: appSettings.compactMode ? null : chatBox
                 onLongChatTextChanged: {
                     chatText.setWidths()
