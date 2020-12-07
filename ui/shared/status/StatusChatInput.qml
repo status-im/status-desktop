@@ -41,6 +41,8 @@ Rectangle {
     property var fileUrls: []
     property alias messageSound: sendMessageSound
 
+    property alias suggestionsList: suggestions
+
     height: {
         if (extendedArea.visible) {
             return messageInput.height + extendedArea.height + Style.current.bigPadding
@@ -366,6 +368,11 @@ Rectangle {
         replyArea.identicon = identicon
         messageInputField.forceActiveFocus();
     }
+
+    ListModel {
+        id: suggestions
+    }
+
 
     FileDialog {
         id: imageDialog
