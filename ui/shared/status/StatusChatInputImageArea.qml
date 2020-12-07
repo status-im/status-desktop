@@ -80,7 +80,7 @@ Rectangle {
         }
         onClicked: {
             imageArea.imageRemoved()                
-            chatImage.source = ""
+            imageArea.imageSource = ""
         }
         MouseArea {
             cursorShape: Qt.PointingHandCursor
