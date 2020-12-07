@@ -11,13 +11,11 @@ import "../app/AppLayouts/Chat/ContactsColumn"
 Item {
     id: root
     property string chatId: ""
+    property string name: "channel name"
     property string message: "Everything is connected"
-    property int messageType: 1
     property int chatType: 1
-    property string timestamp: "20/2/2020"
+    property var onClick
     property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQAQMAAAC6caSPAAAABlBMVEXMzMz////TjRV2AAAAAWJLR0QB/wIt3gAAACpJREFUGBntwYEAAAAAw6D7Uw/gCtUAAAAAAAAAAAAAAAAAAAAAAAAAgBNPsAABAjKCqQAAAABJRU5ErkJggg=="
-    property string username: "@jonas"
-    property string channelName: "sic-mundus"
 
     property var processClick: Backpressure.oneInTime(root, 1000, function () {
         notificationSound.play()
@@ -55,25 +53,8 @@ Item {
             StatusNotification {
                 id: channelNotif
                 chatId: root.chatId
-                name: {
-                  if (appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous) {
-                      return "Status"
-                  }
-                  if (root.chatType === Constants.chatTypePublic) {
-                      return root.chatId
-                  }
-                  return root.chatType === Constants.chatTypePrivateGroupChat ? Utils.filterXSS(root.channelName) : Utils.removeStatusEns(root.username)
-                }
-                message: {
-                    if (appSettings.notificationMessagePreviewSetting > Constants.notificationPreviewNameOnly) {
-                        switch(root.messageType){
-                            case Constants.imageType: return qsTr("Image");
-                            case Constants.stickerType: return qsTr("Sticker");
-                            default: return Emoji.parse(root.message, "26x26").replace(/\n|\r/g, ' ')
-                        }
-                    }
-                    return qsTr("You have a new message")
-                }
+                name: root.name
+                message: root.message
                 chatType: root.chatType
                 identicon: root.identicon
 
@@ -83,19 +64,19 @@ Item {
                     onClicked: {
                         timer.stop()
                         notificationWindowSub.close()
-                        applicationWindow.raise()
-                        chatsModel.setActiveChannel(chatId)
-                        applicationWindow.requestActivate()
+                        root.onClick(root.chatId)
+                        notificationWindowSub.destroy()
                     }
                 }
 
                 Timer {
                     id: timer
-                    interval: 4000
-                    running: false
+                    interval: Constants.notificationPopupTTL
+                    running: true
                     repeat: false
                     onTriggered: {
                         notificationWindowSub.close()
+                        notificationWindowSub.destroy()
                     }
                 }
                 onVisibleChanged: {
@@ -113,15 +94,13 @@ Item {
         }
     }
 
-    function notifyUser(chatId, msg, messageType, chatType, timestamp, identicon, username, channelName) {
+    function notifyUser(chatId, name, msg, chatType, identicon, onClick) {
         this.chatId = chatId
+        this.name = name
         this.message = msg
-        this.messageType = parseInt(messageType, 10)
         this.chatType = chatType
-        this.timestamp = timestamp
         this.identicon = identicon
-        this.username = username
-        this.channelName = channelName
+        this.onClick = onClick
         processClick()
     }
 }

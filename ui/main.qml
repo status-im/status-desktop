@@ -102,6 +102,7 @@ ApplicationWindow {
         property real volume: 0.2
         property int notificationSetting: Constants.notifyAllMessages
         property bool notificationSoundsEnabled: true
+        property bool useOSNotifications: true
         property int notificationMessagePreviewSetting: Constants.notificationPreviewNameAndMessage
         property bool allowNotificationsFromNonContacts: false
         property var whitelistedUnfurlingSites: ({})
@@ -139,6 +140,7 @@ ApplicationWindow {
         property real volume: defaultAppSettings.volume
         property int notificationSetting: defaultAppSettings.notificationSetting
         property bool notificationSoundsEnabled: defaultAppSettings.notificationSoundsEnabled
+        property bool useOSNotifications: defaultAppSettings.useOSNotifications
         property int notificationMessagePreviewSetting: defaultAppSettings.notificationMessagePreviewSetting
         property bool allowNotificationsFromNonContacts: defaultAppSettings.allowNotificationsFromNonContacts
         property var whitelistedUnfurlingSites: defaultAppSettings.whitelistedUnfurlingSites
@@ -178,6 +180,7 @@ ApplicationWindow {
     }
 
     SystemTrayIcon {
+        id: systemTray
         visible: true
         icon.source: "shared/img/status-logo.png"
         menu: Menu {

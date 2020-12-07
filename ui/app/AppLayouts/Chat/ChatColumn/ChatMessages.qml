@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import Qt.labs.platform 1.1
 import QtQuick.Controls 2.13
 import QtQuick.Window 2.13
 import QtQuick.Layouts 1.13
@@ -29,6 +30,8 @@ ScrollView {
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
     ListView {
+        property string currentNotificationChatId
+
         id: chatLogView
         anchors.fill: parent
         anchors.bottomMargin: Style.current.bigPadding
@@ -118,6 +121,12 @@ ScrollView {
             return true
         }
 
+        function clickOnNotification(chatId) {
+            applicationWindow.raise()
+            chatsModel.setActiveChannel(chatId)
+            appMain.changeAppSection(Constants.chat)
+            applicationWindow.requestActivate()
+        }
 
         Connections {
 
@@ -151,11 +160,47 @@ ScrollView {
             onMessageNotificationPushed: function(chatId, msg, messageType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
                 if (appSettings.notificationSetting == Constants.notifyAllMessages || 
                     (appSettings.notificationSetting == Constants.notifyJustMentions && hasMention)) {
-                        if (chatType === Constants.chatTypeOneToOne && !appSettings.allowNotificationsFromNonContacts && !isAddedContact) {
-                            return
+                    if (chatType === Constants.chatTypeOneToOne && !appSettings.allowNotificationsFromNonContacts && !isAddedContact) {
+                        return
+                    }
+                    chatLogView.currentNotificationChatId = chatId
+
+                    let name;
+                    if (appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous) {
+                        name = "Status"
+                    } else if (chatType === Constants.chatTypePublic) {
+                        name = chatId
+                    } else {
+                        name = chatType === Constants.chatTypePrivateGroupChat ? Utils.filterXSS(channelName) : Utils.removeStatusEns(username)
+                    }
+
+                    let message;
+                    if (appSettings.notificationMessagePreviewSetting > Constants.notificationPreviewNameOnly) {
+                        switch(messageType){
+                        case Constants.imageType: message = qsTr("Image"); break
+                        case Constants.stickerType: message = qsTr("Sticker"); break
+                        default: message = Emoji.parse(msg, "26x26").replace(/\n|\r/g, ' ')
                         }
-                        notificationWindow.notifyUser(chatId, msg, messageType, chatType, timestamp, identicon, username, channelName)
+                    } else {
+                        message = qsTr("You have a new message")
+                    }
+
+                    if (appSettings.useOSNotifications && systemTray.supportsMessages) {
+                        systemTray.showMessage(name,
+                                               message,
+                                               SystemTrayIcon.NoIcon,
+                                               Constants.notificationPopupTTL)
+                    } else {
+                        notificationWindow.notifyUser(chatId, name, message, chatType, identicon, chatLogView.clickOnNotification)
+                    }
                 }
+            }
+        }
+
+        Connections {
+            target: systemTray
+            onMessageClicked: {
+                chatLogView.clickOnNotification(chatLogView.currentNotificationChatId)
             }
         }
 
