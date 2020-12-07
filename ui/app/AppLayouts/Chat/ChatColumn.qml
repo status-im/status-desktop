@@ -268,6 +268,21 @@ StackLayout {
                 onStickerSelected: {
                     chatsModel.stickers.send(hashId, packId)
                 }
+                onSendMessage: {
+                    if (chatInput.fileUrls.length > 0){
+                        chatsModel.sendImage(chatInput.fileUrls[0]);
+                    }
+                    var msg = chatsModel.plainText(Emoji.deparse(chatInput.textInput.text))
+                    if (msg.length > 0){
+                        msg = chatInput.interpretMessage(msg)
+                        chatsModel.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType);
+                        chatInput.textInput.text = "";
+                        if(event) event.accepted = true
+                        chatInput.messageSound.stop()
+                        Qt.callLater(chatInput.messageSound.play);
+                    }
+
+                }
             }
         }
     }
