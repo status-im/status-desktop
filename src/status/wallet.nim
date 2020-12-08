@@ -188,9 +188,9 @@ proc populateAccount*(self: WalletModel, walletAccount: var WalletAccount, balan
   walletAccount.realFiatBalance = 0.0
   updateBalance(walletAccount, self.getDefaultCurrency(), refreshCache)
 
-proc newAccount*(self: WalletModel, name: string, address: string, iconColor: string, balance: string, publicKey: string): WalletAccount =
+proc newAccount*(self: WalletModel, walletType: string, derivationPath: string, name: string, address: string, iconColor: string, balance: string, publicKey: string): WalletAccount =
   var assets: seq[Asset] = self.generateAccountConfiguredAssets(address)
-  var account = WalletAccount(name: name, address: address, iconColor: iconColor, balance: fmt"{balance} {self.defaultCurrency}", assetList: assets, realFiatBalance: 0.0, publicKey: publicKey)
+  var account = WalletAccount(name: name, path: derivationPath, walletType: walletType, address: address, iconColor: iconColor, balance: fmt"{balance} {self.defaultCurrency}", assetList: assets, realFiatBalance: 0.0, publicKey: publicKey)
   updateBalance(account, self.getDefaultCurrency())
   account
 
@@ -226,7 +226,7 @@ proc addNewGeneratedAccount(self: WalletModel, generatedAccount: GeneratedAccoun
   try:
     generatedAccount.name = accountName
     var derivedAccount: DerivedAccount = status_accounts.saveAccount(generatedAccount, password, color, accountType, isADerivedAccount, walletIndex)
-    var account = self.newAccount(accountName, derivedAccount.address, color, fmt"0.00 {self.defaultCurrency}", derivedAccount.publicKey)
+    var account = self.newAccount(accountType, derivedAccount.derivationPath, accountName, derivedAccount.address, color, fmt"0.00 {self.defaultCurrency}", derivedAccount.publicKey)
     self.accounts.add(account)
     self.events.emit("newAccountAdded", AccountArgs(account: account))
   except Exception as e:

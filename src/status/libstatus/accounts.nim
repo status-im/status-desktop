@@ -281,7 +281,7 @@ proc saveAccount*(account: GeneratedAccount, password: string, color: string, ac
       }]
     ])
 
-    result = DerivedAccount(address: address, publicKey: publicKey)
+    result = DerivedAccount(address: address, publicKey: publicKey, derivationPath: derivationPath)
   except:
     error "Error storing the new account. Bad password?"
     raise

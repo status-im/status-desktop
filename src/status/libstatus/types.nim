@@ -34,6 +34,7 @@ type GasPricePrediction* = object
 type DerivedAccount* = object
   publicKey*: string
   address*: string
+  derivationPath*: string
 
 type MultiAccounts* = object
   whisper* {.serializedFieldName(PATH_WHISPER).}: DerivedAccount
