@@ -7,6 +7,8 @@ import "../components"
 Item {
     property string fromAuthor: "0x0011223344556677889910"
     property string userName: "Jotaro Kujo"
+    property string alias: ""
+    property string localName: ""
     property string message: "That's right. We're friends...  Of justice, that is."
     property string plainText: "That's right. We're friends...  Of justice, that is."
     property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQAQMAAAC6caSPAAAABlBMVEXMzMz////TjRV2AAAAAWJLR0QB/wIt3gAAACpJREFUGBntwYEAAAAAw6D7Uw/gCtUAAAAAAAAAAAAAAAAAAAAAAAAAgBNPsAABAjKCqQAAAABJRU5ErkJggg=="

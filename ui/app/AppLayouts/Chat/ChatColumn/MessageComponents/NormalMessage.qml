@@ -32,6 +32,9 @@ Item {
         anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
         anchors.topMargin: 0
         anchors.left: chatImage.right
+        userName: messageItem.userName
+        localName: messageItem.localName
+        alias: messageItem.alias
     }
 
     Rectangle {

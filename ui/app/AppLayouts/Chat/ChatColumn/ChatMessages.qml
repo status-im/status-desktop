@@ -238,6 +238,8 @@ ScrollView {
             fromAuthor: model.fromAuthor
             chatId: model.chatId
             userName: model.userName
+            alias: model.alias
+            localName: model.localName
             message: model.message
             plainText: model.plainText
             identicon: model.identicon
