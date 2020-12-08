@@ -56,7 +56,7 @@ Item {
         }
     }
 
-    function clickMessage(isProfileClick, isSticker = false, isImage = false, image = null) {
+    function clickMessage(isProfileClick, isSticker = false, isImage = false, image = null, emojiOnly = false) {
         if (isImage) {
             imageClick(image);
             return;
@@ -77,6 +77,7 @@ Item {
         }
         messageContextMenu.isProfile = !!isProfileClick
         messageContextMenu.isSticker = isSticker
+        messageContextMenu.emojiOnly = emojiOnly
         messageContextMenu.show(userName, fromAuthor, identicon, "", nickname)
         // Position the center of the menu where the mouse is
         messageContextMenu.x = messageContextMenu.x - messageContextMenu.width / 2
