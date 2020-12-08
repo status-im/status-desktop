@@ -259,8 +259,8 @@ Item {
 
         UsernameLabel {
             id: chatName
-            text: "@" + (profileModel.ens.preferredUsername.replace(".stateofus.eth", ""))
-            color: Style.current.blue
+            label.text: "@" + (profileModel.ens.preferredUsername.replace(".stateofus.eth", ""))
+            label.color: Style.current.blue
             anchors.leftMargin: 20
             anchors.top: parent.top
             anchors.topMargin: 0
