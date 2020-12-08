@@ -48,6 +48,10 @@ proc handleChatEvents(self: ChatController) =
     self.view.setActiveChannelByIndex(0)
     self.view.appReady()
 
+  self.status.events.on("communityActiveChanged") do(e:Args):
+    # TODO set this back to the previous one instead
+    self.view.setActiveChannelByIndex(0)
+
   self.status.events.on("channelJoined") do(e: Args):
     var channel = ChannelArgs(e)
     discard self.view.chats.addChatItemToList(channel.chat)
