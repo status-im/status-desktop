@@ -45,7 +45,7 @@ Button {
                 ColorOverlay {
                     anchors.fill: iconImg
                     source: iconImg
-                    color: buttonLabel.color
+                    color: control.icon.color
                     antialiasing: true
                     smooth: true
                     rotation: control.iconRotation

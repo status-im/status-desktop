@@ -100,7 +100,7 @@ Popup {
 
         StyledText {
             id: titleText
-            text: qsTr('"%1" woudl like to connect to').arg(request.title)
+            text: qsTr('"%1" would like to connect to').arg(request.title)
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             wrapMode: Text.WordWrap
@@ -116,7 +116,7 @@ Popup {
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             showAccountDetails: false
             accounts: walletModel.accounts
-            selectedAccount: walletModel.currentAccount
+            selectedAccount: walletModel.dappBrowserAccount
             currency: walletModel.defaultCurrency
             onSelectedAccountChanged: {
                 if (!root.currentAddress) {
@@ -132,7 +132,8 @@ Popup {
                 web3Provider.dappsAddress = selectedAccount.address;
                 web3Provider.clearPermissions();
                 if (selectField.menu.currentIndex !== -1) {
-                    walletModel.setCurrentAccountByIndex(selectField.menu.currentIndex-1)
+                    web3Provider.dappsAddress = selectedAccount.address;
+                    walletModel.setDappBrowserAddress()
                 }
             }
         }
