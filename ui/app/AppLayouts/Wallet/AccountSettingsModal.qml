@@ -85,6 +85,7 @@ ModalPopup {
 
     TextWithLabel {
         id: pathText
+        visible: currentAccount.walletType !== Constants.watchWalletType && currentAccount.walletType !== Constants.keyWalletType
         //% "Derivation path"
         label: qsTrId("derivation-path")
         text: currentAccount.path
@@ -106,6 +107,7 @@ ModalPopup {
     footer: Item {
         anchors.fill: parent
         StyledButton {
+            visible:  currentAccount.walletType === Constants.watchWalletType
             anchors.top: parent.top
             anchors.right: saveBtn.left
             anchors.rightMargin: Style.current.padding
