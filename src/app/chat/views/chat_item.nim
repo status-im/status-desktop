@@ -26,9 +26,12 @@ QtObject:
     result.chatMembers = newChatMembersView(status)
     result.setup
 
+  proc membershipChanged*(self: ChatItemView) {.signal.}
+
   proc setChatItem*(self: ChatItemView, chatItem: Chat) =
     self.chatItem = chatItem
     self.chatMembers.setMembers(chatItem.members)
+    self.membershipChanged()
 
   proc id*(self: ChatItemView): string {.slot.} = result = ?.self.chatItem.id
   
@@ -117,8 +120,6 @@ QtObject:
     if self.chatItem.isNil: return false
     let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
     return self.chatItem.isMember(pubKey)
-
-  proc membershipChanged*(self: ChatItemView) {.signal.}
 
   QtProperty[bool] isMember:
     read = isMember
