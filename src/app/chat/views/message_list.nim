@@ -33,6 +33,8 @@ type
     EmojiReactions = UserRole + 22
     CommandParameters = UserRole + 23
     LinkUrls = UserRole + 24
+    Alias = UserRole + 25
+    LocalName = UserRole + 26
 
 QtObject:
   type
@@ -115,7 +117,7 @@ QtObject:
     let message = self.messages[index.row]
     let chatMessageRole = role.ChatMessageRoles
     case chatMessageRole:
-      of ChatMessageRoles.UserName: result = newQVariant(message.alias)
+      of ChatMessageRoles.UserName: result = newQVariant(message.userName)
       of ChatMessageRoles.Message: result = newQVariant(self.renderBlock(message))
       of ChatMessageRoles.PlainText: result = newQVariant(message.text)
       of ChatMessageRoles.Timestamp: result = newQVariant(message.timestamp)
@@ -149,6 +151,8 @@ QtObject:
         "commandState": message.commandParameters.commandState,
         "signature": message.commandParameters.signature
       }))
+      of ChatMessageRoles.Alias: result = newQVariant(message.alias)
+      of ChatMessageRoles.LocalName: result = newQVariant(message.localName)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -175,7 +179,9 @@ QtObject:
       ChatMessageRoles.AudioDurationMs.int: "audioDurationMs",
       ChatMessageRoles.EmojiReactions.int: "emojiReactions",
       ChatMessageRoles.LinkUrls.int: "linkUrls",
-      ChatMessageRoles.CommandParameters.int: "commandParameters"
+      ChatMessageRoles.CommandParameters.int: "commandParameters",
+      ChatMessageRoles.Alias.int:"alias",
+      ChatMessageRoles.LocalName.int:"localName"
     }.toTable
 
   proc getMessageIndex(self: ChatMessageList, messageId: string): int {.slot.} =
@@ -188,7 +194,9 @@ QtObject:
 
     let message = self.messages[index]
     case data:
-    of "userName": result = (message.alias)
+    of "userName": result = (message.userName)
+    of "alias": result = (message.alias)
+    of "localName": result = (message.localName)
     of "message": result = (message.text)
     of "identicon": result = (message.identicon)
     of "timestamp": result = $(message.timestamp)
@@ -246,6 +254,8 @@ QtObject:
     for c in contacts:
       for m in self.messages.mitems:
         if m.fromAuthor == c.id:
-          m.alias = userNameOrAlias(c)
+          m.userName = userNameOrAlias(c)
+          m.alias = c.alias
+          m.localName = c.localNickname
 
     self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.Username.int])

@@ -244,7 +244,7 @@ QtObject:
   proc pushMessages*(self:ChatsView, messages: var seq[Message]) =
     for msg in messages.mitems:
       self.upsertChannel(msg.chatId)
-      msg.alias = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
+      msg.userName = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
       self.messageList[msg.chatId].add(msg)
       self.messagePushed()
       if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:

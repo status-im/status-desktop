@@ -171,6 +171,8 @@ proc toMessage*(jsonMsg: JsonNode): Message =
 
   var message = Message(
       alias: jsonMsg{"alias"}.getStr,
+      userName: "",
+      localName: "",
       chatId: jsonMsg{"localChatId"}.getStr,
       clock: jsonMsg{"clock"}.getInt,
       contentType: contentType,

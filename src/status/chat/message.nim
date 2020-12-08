@@ -31,6 +31,8 @@ type CommandParameters* = object
 
 type Message* = object
   alias*: string
+  userName*: string
+  localName*: string
   chatId*: string
   clock*: int
   commandParameters*: CommandParameters
