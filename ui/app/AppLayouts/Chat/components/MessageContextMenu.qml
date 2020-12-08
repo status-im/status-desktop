@@ -10,6 +10,7 @@ import "./"
 PopupMenu {
     property bool isProfile: false
     property bool isSticker: false
+    property bool emojiOnly: false
 
     id: messageContextMenu
     width: messageContextMenu.isProfile ? profileHeader.width : emojiContainer.width
@@ -31,7 +32,7 @@ PopupMenu {
 
     Item {
         id: emojiContainer
-        visible: !messageContextMenu.isProfile
+        visible: messageContextMenu.emojiOnly || !messageContextMenu.isProfile
         width: emojiRow.width
         height: visible ? emojiRow.height : 0
 
@@ -40,7 +41,7 @@ PopupMenu {
             spacing: Style.current.smallPadding
             leftPadding: Style.current.smallPadding
             rightPadding: Style.current.smallPadding
-            bottomPadding: Style.current.padding
+            bottomPadding: messageContextMenu.emojiOnly ? 0 : Style.current.padding
 
             Repeater {
                 model: reactionModel
@@ -106,6 +107,7 @@ PopupMenu {
 
     Separator {
         anchors.bottom: viewProfileAction.top
+        visible: !messageContextMenu.emojiOnly
     }
 
     Action {
@@ -119,6 +121,7 @@ PopupMenu {
         icon.source: "../../../img/profileActive.svg"
         icon.width: 16
         icon.height: 16
+        enabled: !emojiOnly
     }
     Action {
         text: messageContextMenu.isProfile ?
@@ -133,6 +136,6 @@ PopupMenu {
         icon.source: "../../../img/messageActive.svg"
         icon.width: 16
         icon.height: 16
-        enabled: !isSticker
+        enabled: !isSticker && !emojiOnly
     }
 }
