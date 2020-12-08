@@ -32,6 +32,8 @@ proc init*(self: WalletController) =
     self.view.addAccountToList(account)
   self.view.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
 
+  self.view.setDappBrowserAddress()
+
   self.status.events.on("accountsUpdated") do(e: Args):
     self.view.updateView()
 

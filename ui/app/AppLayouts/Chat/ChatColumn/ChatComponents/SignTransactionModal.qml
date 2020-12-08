@@ -86,6 +86,7 @@ ModalPopup {
                 accounts: walletModel.accounts
                 currency: walletModel.defaultCurrency
                 width: stack.width
+                selectedAccount: root.selectedAccount
                 //% "Choose account"
                 label: qsTrId("choose-account")
                 showBalanceForAssetSymbol: root.selectedAsset.symbol
@@ -180,7 +181,7 @@ ModalPopup {
                 asset: root.selectedAsset
                 amount: { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount }
                 currency: walletModel.defaultCurrency
-                isFromEditable: true
+                isFromEditable: false
                 isGasEditable: true
                 fromValid: balanceValidator.isValid
                 gasValid: gasValidator.isValid

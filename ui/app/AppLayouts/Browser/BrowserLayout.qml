@@ -159,10 +159,8 @@ Rectangle {
                 }
             } else if (request.type === Constants.web3SendAsyncReadOnly &&
                        request.payload.method === "eth_sendTransaction") {
-                walletModel.setFocusedAccountByAddress(request.payload.params[0].from)
-                var acc = walletModel.focusedAccount
+                var acc = walletModel.dappBrowserAccount
                 const value = utilsModel.wei2Eth(request.payload.params[0].value, 18);
-
                 const sendDialog = sendTransactionModalComponent.createObject(browserWindow, {
                     trxData:request.payload.params[0].data,
                     selectedAccount: {
@@ -232,8 +230,8 @@ Rectangle {
                 const signDialog = signMessageModalComponent.createObject(browserWindow, {
                         request,
                         selectedAccount: {
-                            name: walletModel.currentAccount.name,
-                            iconColor: walletModel.currentAccount.iconColor
+                            name: walletModel.dappBrowserAccount.name,
+                            iconColor: walletModel.dappBrowserAccount.iconColor
                         }
                     });
                 signDialog.web3Response = web3Response

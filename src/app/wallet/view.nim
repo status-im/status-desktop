@@ -3,6 +3,7 @@ import ../../status/[status, wallet, threads]
 import ../../status/wallet/collectibles as status_collectibles
 import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/wallet as status_wallet
+import ../../status/libstatus/settings as status_settings
 import ../../status/libstatus/tokens
 import ../../status/libstatus/types
 import ../../status/libstatus/utils as status_utils
@@ -18,6 +19,7 @@ QtObject:
       currentCollectiblesLists*: CollectiblesList
       currentAccount: AccountItemView
       focusedAccount: AccountItemView
+      dappBrowserAccount: AccountItemView
       currentTransactions: TransactionList
       defaultTokenList: TokenList
       customTokenList: TokenList
@@ -37,6 +39,7 @@ QtObject:
     self.currentAssetList.delete
     self.currentAccount.delete
     self.focusedAccount.delete
+    self.dappBrowserAccount.delete
     self.currentTransactions.delete
     self.defaultTokenList.delete
     self.customTokenList.delete
@@ -45,12 +48,15 @@ QtObject:
   proc setup(self: WalletView) =
     self.QAbstractListModel.setup
 
+  proc setDappBrowserAddress*(self: WalletView)
+
   proc newWalletView*(status: Status): WalletView =
     new(result, delete)
     result.status = status
     result.accounts = newAccountList()
     result.currentAccount = newAccountItemView()
     result.focusedAccount = newAccountItemView()
+    result.dappBrowserAccount = newAccountItemView()
     result.currentAssetList = newAssetList()
     result.currentTransactions = newTransactionList()
     result.currentCollectiblesLists = newCollectiblesList()
@@ -583,3 +589,23 @@ QtObject:
     self.ensWasResolved(address, uuid)
   
   proc transactionCompleted*(self: WalletView, success: bool, txHash: string, revertReason: string = "") {.signal.}
+
+  proc dappBrowserAccountChanged*(self: WalletView) {.signal.}
+
+  proc setDappBrowserAddress*(self: WalletView) {.slot.} =
+    if(self.accounts.rowCount() == 0): return
+
+    let dappAddress = status_settings.getSetting[string](Setting.DappsAddress)
+    var index = self.accounts.getAccountindexByAddress(dappAddress)
+    if index == -1: index = 0
+    let selectedAccount = self.accounts.getAccount(index)
+    if self.dappBrowserAccount.address == selectedAccount.address: return
+    self.dappBrowserAccount.setAccountItem(selectedAccount)
+    self.dappBrowserAccountChanged()
+
+  proc getDappBrowserAccount*(self: WalletView): QVariant {.slot.} =
+    result = newQVariant(self.dappBrowserAccount)
+
+  QtProperty[QVariant] dappBrowserAccount:
+    read = getDappBrowserAccount
+    notify = dappBrowserAccountChanged
