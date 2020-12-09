@@ -182,6 +182,7 @@ ModalPopup {
                 amount: { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount }
                 currency: walletModel.defaultCurrency
                 isFromEditable: false
+                trxData: root.trxData
                 isGasEditable: true
                 fromValid: balanceValidator.isValid
                 gasValid: gasValidator.isValid
