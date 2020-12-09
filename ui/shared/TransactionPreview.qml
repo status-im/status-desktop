@@ -11,7 +11,7 @@ Item {
     property var toAccount
     property var asset
     property var amount
-    property string trxData: "0x"
+    property string trxData: ""
     property string currency: "USD"
     property var gas
     height: content.height

@@ -162,7 +162,7 @@ Rectangle {
                 var acc = walletModel.dappBrowserAccount
                 const value = utilsModel.wei2Eth(request.payload.params[0].value, 18);
                 const sendDialog = sendTransactionModalComponent.createObject(browserWindow, {
-                    trxData:request.payload.params[0].data,
+                    trxData: request.payload.params[0].data || "",
                     selectedAccount: {
                         name: acc.name,
                         address: request.payload.params[0].from,
