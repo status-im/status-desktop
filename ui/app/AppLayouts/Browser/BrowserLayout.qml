@@ -207,7 +207,7 @@ Rectangle {
                         toastMessage.source = "../../img/loading.svg"
                         toastMessage.iconColor = Style.current.primary
                         toastMessage.iconRotates = true
-                        toastMessage.link = `${_walletModel.etherscanLink}/${responseObj.result}`
+                        toastMessage.link = `${_walletModel.etherscanLink}/${responseObj.result.result}`
                         toastMessage.open()
                     } catch (e) {
                         if (e.message.includes("could not decrypt key with given password")){
