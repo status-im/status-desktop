@@ -16,8 +16,6 @@ proc estimateGas*(tx: EthSend): RpcResponse =
   trace "Gas estimated succesfully", estimate=result.result
 
 proc sendTransaction*(tx: EthSend, password: string): RpcResponse =
-  if not tx.hasKey("to"):
-    tx["to"] = ""
   let responseStr = core.sendTransaction($(%tx), password)
   result = Json.decode(responseStr, RpcResponse)
   if not result.error.isNil:
