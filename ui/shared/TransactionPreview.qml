@@ -11,6 +11,7 @@ Item {
     property var toAccount
     property var asset
     property var amount
+    property string trxData: "0x"
     property string currency: "USD"
     property var gas
     height: content.height
@@ -457,6 +458,74 @@ Item {
                     visible: gasArrow.visible
                     cursorShape: Qt.PointingHandCursor
                     onClicked: root.gasClicked()
+                }
+            }
+        }
+        LabelValueRow {
+            id: itmData
+            label: qsTr("Data")
+            visible: trxData !== "0x" && trxData !== ""
+            value: Item {
+                id: dataRoot
+                anchors.fill: parent
+                anchors.verticalCenter: parent.verticalCenter
+                Row {
+                    spacing: Style.current.halfPadding
+                    rightPadding: 0
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    StyledText {
+                        font.pixelSize: 15
+                        height: 22
+                        width: 200
+                        text: trxData
+                        elide: Text.ElideRight
+                        color: Style.current.secondaryText
+                        anchors.verticalCenter: parent.verticalCenter
+                        horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    SVGImage {
+                        width: 13
+                        visible: true
+                        anchors.verticalCenter: parent.verticalCenter
+                        fillMode: Image.PreserveAspectFit
+                        source: "../app/img/caret.svg"
+                        rotation: 270
+                        ColorOverlay {
+                            anchors.fill: parent
+                            visible: parent.visible
+                            source: parent
+                            color: Style.current.secondaryText
+                        }
+                    }
+                }
+
+                ModalPopup {
+                    id: dataPopup
+                    title: qsTr("Data field")
+                    height: 286
+                    width: 400
+                    Item {
+                        anchors.fill: parent
+                        anchors.leftMargin: 0
+                        anchors.rightMargin: 0
+                        ScrollView {
+                            width: parent.width
+                            height: 150
+                            TextArea {
+                                wrapMode: TextEdit.Wrap
+                                readOnly: true
+                                text: trxData
+                            }
+                        }
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: dataPopup.open()
                 }
             }
         }
