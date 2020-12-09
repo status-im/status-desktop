@@ -8,7 +8,8 @@ import "../components"
 Rectangle {
     property string communityId: ""
     property string name: "channelName"
-    property string unviewedMessagesCount: "2"
+    property string description: "channel description"
+    property string unviewedMessagesCount: "0"
     property string image: "../../../img/ens-header-dark@2x.png"
     property bool hasMentions: false
     property string searchStr: ""
@@ -27,7 +28,9 @@ Rectangle {
     anchors.left: parent.left
     radius: Style.current.radius
     // Hide the box if it is filtered out
-    property bool isVisible: searchStr === "" || name.includes(searchStr)
+    property bool isVisible: searchStr === "" ||
+                             wrapper.name.toLowerCase().includes(searchStr) ||
+                             wrapper.description.toLowerCase().includes(searchStr)
     visible: isVisible ? true : false
     height: isVisible ? !isCompact ? 64 : communityImage.height + Style.current.smallPadding * 2 : 0
 

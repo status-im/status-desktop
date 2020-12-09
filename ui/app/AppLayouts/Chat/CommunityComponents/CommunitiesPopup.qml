@@ -42,7 +42,13 @@ ModalPopup {
             id: communitiesList
             delegate: Item {
                 // TODO add the serach for the name and category once they exist
-                visible: !searchBox.text || description.includes(searchBox.text)
+                visible: {
+                    if (!searchBox.text) {
+                        return true
+                    }
+                    const lowerCaseSearchStr = searchBox.text.toLowerCase()
+                    return name.toLowerCase().includes(lowerCaseSearchStr) || description.toLowerCase().includes(lowerCaseSearchStr)
+                }
                 height: visible ? communityImage.height + Style.current.smallPadding : 0
                 width: parent.width
 

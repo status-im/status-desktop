@@ -113,7 +113,7 @@ Item {
 
         CommunityList {
             id: communityList
-            searchStr: contactsColumn.searchStr
+            searchStr: contactsColumn.searchStr.toLowerCase()
         }
 
         Separator {
@@ -127,7 +127,7 @@ Item {
             id: channelList
             anchors.top: communitySep.bottom
             anchors.topMargin: Style.current.halfPadding
-            searchStr: contactsColumn.searchStr
+            searchStr: contactsColumn.searchStr.toLowerCase()
             channelModel: chatsModel.chats
         }
 

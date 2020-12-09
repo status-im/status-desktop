@@ -26,6 +26,7 @@ Item {
         delegate: CommunityButton {
             communityId: model.id
             name: model.name
+            description: model.description
             // TODO add other properties
             searchStr: root.searchStr
         }
