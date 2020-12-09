@@ -22,7 +22,7 @@ Column {
 
     function validate() {
         let isValid = true
-        if (!(account && account.assets && asset && amount > 0)) {
+        if (!(account && account.assets && asset && amount >= 0)) {
             return root.isValid
         }
         const currAcctAsset = Utils.findAssetBySymbol(account.assets, asset.symbol)

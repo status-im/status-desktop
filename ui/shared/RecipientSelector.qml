@@ -81,9 +81,11 @@ Item {
         switch (root.selectedType) {
             case RecipientSelector.Type.Address:
                 inpAddress.text = selectedRecipient.name || ""
-                inpAddress.selectedAddress = selectedRecipient.address
                 inpAddress.visible = true
                 selContact.visible = selAccount.visible = false
+                if(!!selectedRecipient.address){
+                    inpAddress.selectedAddress = selectedRecipient.address
+                }
                 break
             case RecipientSelector.Type.Contact:
                 selContact.selectedContact = selectedRecipient

@@ -126,7 +126,9 @@ proc sendTransaction*(self: WalletModel, source, to, value, gas, gasPrice, passw
     parseAddress(source),
     eth2Wei(parseFloat(value), 18), gas, gasPrice, data
   )
-  tx.to = parseAddress(to).some
+
+  if to != "":
+    tx.to = parseAddress(to).some
 
   result = eth.sendTransaction(tx, password, success)
   if success:

@@ -123,7 +123,7 @@ Item {
                     when: !!root.toAccount && root.toAccount.type === RecipientSelector.Type.Address
                     PropertyChanges {
                         target: txtToPrimary
-                        text: !!root.toAccount ? root.toAccount.address : ""
+                        text: (!!root.toAccount && root.toAccount.address) ? root.toAccount.address : qsTr("Unknown")
                         elide: Text.ElideMiddle
                         anchors.leftMargin: 190
                         anchors.right: parent.right
