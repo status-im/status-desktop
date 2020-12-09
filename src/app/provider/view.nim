@@ -114,7 +114,7 @@ QtObject:
       try:
         let request = data.request.parseJson
         let fromAddress = request["params"][0]["from"].getStr()
-        let to = request["params"][0]["to"].getStr()
+        let to = request["params"][0]{"to"}.getStr()
         let value = if (request["params"][0]["value"] != nil):
           request["params"][0]["value"].getStr()
         else:
