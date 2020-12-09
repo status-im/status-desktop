@@ -668,7 +668,9 @@ Rectangle {
                                 delegate: BookmarkButton {
                                     id: bookmarkBtn
                                     text: name
-                                    onClicked: currentWebView.url = url
+                                    onClicked: {
+                                        currentWebView.url = determineRealURL(url)
+                                    }
                                     source: imageUrl
                                     onRightClicked: {
                                         favoriteMenu.url = url
