@@ -6,7 +6,6 @@ import "../../../../imports"
 import "../components"
 import "./"
 
-
 Item {
     property string searchStr: ""
     id: root

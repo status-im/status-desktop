@@ -267,7 +267,7 @@ ModalPopup {
             }
         }
     }
-    
+
     footer: StatusButton {
         text: qsTr("Create")
         anchors.right: parent.right

@@ -6,6 +6,7 @@ import "../../../imports"
 import "../../../shared"
 import "./components"
 import "./ContactsColumn"
+import "./CommunityComponents"
 
 Item {
     property alias chatGroupsListViewCount: channelList.channelListCount

@@ -128,7 +128,7 @@ ModalPopup {
             color: Style.current.transparent
         }
     }
-    
+
     footer: Item {
         anchors.fill: parent
 

@@ -2,9 +2,9 @@ import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
-import "../../../../../imports"
-import "../../../../../shared"
-import "../../../../../shared/status"
+import "../../../../imports"
+import "../../../../shared"
+import "../../../../shared/status"
 
 ModalPopup {
     property string communityId
