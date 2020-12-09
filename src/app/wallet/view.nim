@@ -596,7 +596,7 @@ QtObject:
     if(self.accounts.rowCount() == 0): return
 
     let dappAddress = status_settings.getSetting[string](Setting.DappsAddress)
-    var index = self.accounts.getAccountindexByAddress(dappAddress)
+    var index = self.accounts.getAccountIndexByAddress(dappAddress)
     if index == -1: index = 0
     let selectedAccount = self.accounts.getAccount(index)
     if self.dappBrowserAccount.address == selectedAccount.address: return
