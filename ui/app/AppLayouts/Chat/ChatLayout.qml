@@ -22,6 +22,29 @@ SplitView {
         return popup
     }
 
+    function getContactListObject(dataModel) {
+        const nbContacts = profileModel.contactList.rowCount()
+        const contacts = []
+        let contact
+        for (let i = 0; i < nbContacts; i++) {
+            contact = {
+                name: profileModel.contactList.rowData(i, "name"),
+                localNickname: profileModel.contactList.rowData(i, "localNickname"),
+                pubKey: profileModel.contactList.rowData(i, "pubKey"),
+                address: profileModel.contactList.rowData(i, "address"),
+                identicon: profileModel.contactList.rowData(i, "identicon"),
+                isUser: false,
+                isContact: profileModel.contactList.rowData(i, "isContact") !== "false"
+            }
+
+            contacts.push(contact)
+            if (dataModel) {
+                dataModel.append(contact);
+            }
+        }
+        return contacts
+    }
+
     Connections {
         target: applicationWindow
         onSettingsLoaded: {

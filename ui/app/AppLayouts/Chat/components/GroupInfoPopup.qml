@@ -19,20 +19,17 @@ ModalPopup {
         pubKeys = [];
         memberCount = chatsModel.activeChannel.members.rowCount();
         currMemberCount = memberCount;
-        data.clear();
-        const nbContacts = profileModel.contactList.rowCount()
-        for(let i = 0; i < nbContacts; i++){
-            if(chatsModel.activeChannel.contains(profileModel.contactList.rowData(i, "pubKey"))) continue;
-            if(profileModel.contactList.rowData(i, "isContact") === "false") continue;
-            data.append({
-                name: profileModel.contactList.rowData(i, "name"),
-                localNickname: profileModel.contactList.rowData(i, "localNickname"),
-                pubKey: profileModel.contactList.rowData(i, "pubKey"),
-                address: profileModel.contactList.rowData(i, "address"),
-                identicon: profileModel.contactList.rowData(i, "identicon"),
-                isUser: false
-            });
-        }
+        contactList.membersData.clear();
+
+        const contacts = chatView.getContactListObject()
+
+        contacts.forEach(function (contact) {
+            if(chatsModel.activeChannel.contains(contact.pubKey) ||
+                    !contact.isContact) {
+                return;
+            }
+            contactList.membersData.append(contact)
+        })
     }
 
     onOpened: {
@@ -150,86 +147,37 @@ ModalPopup {
             fontPixelSize: 15
         }
 
-        Rectangle {
+        NoFriendsRectangle {
             id: noContactsRect
-            width: 320
-            visible: data.count == 0
+            visible: contactList.membersData.count === 0
             anchors.top: searchBox.bottom
             anchors.topMargin: Style.current.xlPadding
             anchors.horizontalCenter: parent.horizontalCenter
-            StyledText {
-                id: noContacts
-                //% "All your contacts are already in the group"
-                text: qsTrId("group-chat-all-contacts-invited")
-                color: Style.current.textColor
-                anchors.top: parent.top
-                anchors.topMargin: Style.current.padding
-                anchors.left: parent.left
-                anchors.right: parent.right
-                wrapMode: Text.WordWrap
-                horizontalAlignment: Text.AlignHCenter
-            }
-            StyledButton {
-                //% "Invite friends"
-                label: qsTrId("invite-friends")
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: noContacts.bottom
-                anchors.topMargin: Style.current.padding
-                onClicked: {
-                    inviteFriendsPopup.open()
-                }
-            }
-            InviteFriendsPopup {
-                id: inviteFriendsPopup
-            }
         }
 
-        ScrollView {
-            visible: addMembers && data.count > 0
+        ContactList {
+            id: contactList
+            visible: addMembers && contactList.membersData.count > 0
             anchors.fill: parent
             anchors.topMargin: 50
             anchors.top: searchBox.bottom
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            ScrollBar.vertical.policy: groupMembers.contentHeight > groupMembers.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-
-            ListView {
-                anchors.fill: parent
-                model: ListModel {
-                    id: data
-                }
-                spacing: 0
-                clip: true
-                id: groupMembers
-                delegate: Contact {
-                    isVisible: searchBox.text === "" || model.name.includes(searchBox.text)
-                    showCheckbox: memberCount < maxMembers
-                    pubKey: model.pubKey
-                    isUser: model.isUser
-                    name: model.name.endsWith(".eth") || !model.localNickname ?
-                              Utils.removeStatusEns(model.name) : model.localNickname
-                    address: model.address
-                    identicon: model.identicon
-                    onItemChecked: function(pubKey, itemChecked){
-                        var idx = pubKeys.indexOf(pubKey)
-                        if(itemChecked){
-                            if(idx === -1){
-                                pubKeys.push(pubKey)
-                            }
-                        } else {
-                            if(idx > -1){
-                                pubKeys.splice(idx, 1);
-                            }
-                        }
-                        memberCount = chatsModel.activeChannel.members.rowCount() + pubKeys.length;
-                        btnSelectMembers.enabled = pubKeys.length > 0
+            selectMode: memberCount < maxMembers
+            searchString: searchBox.text.toLowerCase()
+            onItemChecked: function(pubKey, itemChecked){
+                var idx = pubKeys.indexOf(pubKey)
+                if(itemChecked){
+                    if(idx === -1){
+                        pubKeys.push(pubKey)
+                    }
+                } else {
+                    if(idx > -1){
+                        pubKeys.splice(idx, 1);
                     }
                 }
+                memberCount = chatsModel.activeChannel.members.rowCount() + pubKeys.length;
+                btnSelectMembers.enabled = pubKeys.length > 0
             }
         }
-
     }
 
     Item {
