@@ -96,6 +96,13 @@ Item {
                     if (chatReply.visible && chatText.width < chatReply.textFieldWidth) {
                         baseWidth = chatReply.textFieldWidth
                     }
+
+                    if (chatReply.visible && chatText.width < chatReply.authorWidth) {
+                        if(chatReply.authorWidth > baseWidth){
+                            baseWidth = chatReply.authorWidth + 20
+                        }
+                    }
+
                     return baseWidth + 2 * chatHorizontalPadding
             }
         }
