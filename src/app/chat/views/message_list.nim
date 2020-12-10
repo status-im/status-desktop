@@ -33,6 +33,7 @@ type
     EmojiReactions = UserRole + 22
     CommandParameters = UserRole + 23
     LinkUrls = UserRole + 24
+    CommunityId = UserRole + 25
 
 QtObject:
   type
@@ -138,6 +139,7 @@ QtObject:
       of ChatMessageRoles.AudioDurationMs: result = newQVariant(message.audioDurationMs)
       of ChatMessageRoles.EmojiReactions: result = newQVariant(self.getReactions(message.id))
       of ChatMessageRoles.LinkUrls: result = newQVariant(message.linkUrls)
+      of ChatMessageRoles.CommunityId: result = newQVariant(message.communityId)
       # Pass the command parameters as a JSON string
       of ChatMessageRoles.CommandParameters: result = newQVariant($(%*{
         "id": message.commandParameters.id,
@@ -175,6 +177,7 @@ QtObject:
       ChatMessageRoles.AudioDurationMs.int: "audioDurationMs",
       ChatMessageRoles.EmojiReactions.int: "emojiReactions",
       ChatMessageRoles.LinkUrls.int: "linkUrls",
+      ChatMessageRoles.CommunityId.int: "communityId",
       ChatMessageRoles.CommandParameters.int: "commandParameters"
     }.toTable
 

@@ -60,6 +60,7 @@ type Message* = object
   linkUrls*: string
   image*: string
   audio*: string
+  communityId*: string
   audioDurationMs*: int
   hasMention*: bool
 

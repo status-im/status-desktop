@@ -22,6 +22,7 @@ Item {
     property int prevMessageIndex: -1
     property bool timeout: false
     property string linkUrls: ""
+    property string communityId: ""
 
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
@@ -95,6 +96,8 @@ Item {
                     return privateGroupHeaderComponent
                 case Constants.transactionType:
                     return transactionBubble
+                case Constants.communityInviteType:
+                    return invitationBubble
                 default:
                     return appSettings.compactMode ? compactMessageComponent : messageComponent
             }
@@ -193,7 +196,6 @@ Item {
         }
     }
 
-    // Normal message
     Component {
         id: messageComponent
         NormalMessage {
@@ -201,7 +203,6 @@ Item {
         }
     }
 
-    // Compact Messages
     Component {
         id: compactMessageComponent
         CompactMessage {
@@ -209,10 +210,14 @@ Item {
         }
     }
 
-    // Transaction bubble
     Component {
         id: transactionBubble
         TransactionBubble {}
+    }
+
+    Component {
+        id: invitationBubble
+        InvitationBubble {}
     }
 }
 

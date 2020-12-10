@@ -231,6 +231,7 @@ proc toMessage*(jsonMsg: JsonNode): Message =
       linkUrls: "",
       image: $jsonMsg{"image"}.getStr,
       audio: $jsonMsg{"audio"}.getStr,
+      communityId: $jsonMsg{"communityId"}.getStr,
       audioDurationMs: jsonMsg{"audioDurationMs"}.getInt,
       hasMention: false
     )

@@ -731,6 +731,9 @@ QtObject:
     read = getJoinedComunities
     notify = joinedCommunitiesChanged
 
+  proc addCommunityToList*(self: ChatsView, community: Community) =
+    self.communityList.addCommunityItemToList(community)
+
   proc createCommunity*(self: ChatsView, name: string, description: string, color: string, imagePath: string): string {.slot.} =
     result = ""
     try:
@@ -784,6 +787,7 @@ QtObject:
 
   proc setObservedCommunity*(self: ChatsView, communityId: string) {.slot.} =
     if(communityId == ""): return
+    discard self.getCommunitiesIfNotFetched()
     self.observedCommunity.setCommunityItem(self.communityList.getCommunityById(communityId))
     self.observedCommunityChanged()
 
