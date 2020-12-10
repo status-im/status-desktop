@@ -28,8 +28,8 @@ Rectangle {
     property var stickerPackList
 
     property int extraHeightFactor: calculateExtraHeightFactor()
-    property int messageLimit: 2000
-    property int messageLimitVisible: 200
+    property int messageLimit: control.isStatusUpdateInput ? 300 : 2000
+    property int messageLimitVisible: control.isStatusUpdateInput ? 50 : 200
 
     property int chatType
 
@@ -45,15 +45,15 @@ Rectangle {
 
     height: {
         if (extendedArea.visible) {
-            return messageInput.height + extendedArea.height + Style.current.bigPadding
+            return messageInput.height + extendedArea.height + (control.isStatusUpdateInput ? 0 : Style.current.bigPadding)
         }
         if (messageInput.height > messageInput.defaultInputFieldHeight) {
             if (messageInput.height >= messageInput.maxInputFieldHeight) {
-                return messageInput.maxInputFieldHeight + Style.current.bigPadding
+                return messageInput.maxInputFieldHeight + (control.isStatusUpdateInput ? 0 : Style.current.bigPadding)
             }
-            return messageInput.height + Style.current.bigPadding
+            return messageInput.height + (control.isStatusUpdateInput ? 0 : Style.current.bigPadding)
         }
-        return 64
+        return control.isStatusUpdateInput ? 56 : 64
     }
     anchors.left: parent.left
     anchors.right: parent.right
@@ -385,11 +385,13 @@ Rectangle {
         ]
         onAccepted: {
             imageBtn.highlighted = false
+            imageBtn2.highlighted = false
             control.showImageArea()
             messageInputField.forceActiveFocus();
         }
         onRejected: {
             imageBtn.highlighted = false
+            imageBtn2.highlighted = false
         }
     }
 
@@ -500,7 +502,7 @@ Rectangle {
         anchors.leftMargin: 4
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 16
-        visible: control.chatType === Constants.chatTypeOneToOne
+        visible: control.chatType === Constants.chatTypeOneToOne && !control.isStatusUpdateInput
         onClicked: {
             highlighted = true
             chatCommandsPopup.open()
@@ -516,7 +518,7 @@ Rectangle {
         anchors.leftMargin: chatCommandsBtn.visible ? 2 : 4
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 16
-        visible: control.chatType !== Constants.chatTypePublic
+        visible: control.chatType !== Constants.chatTypePublic && !control.isStatusUpdateInput
 
         onClicked: {
             highlighted = true
@@ -526,8 +528,8 @@ Rectangle {
 
     Rectangle {
         id: messageInput
-        property int maxInputFieldHeight: 112
-        property int defaultInputFieldHeight: 40
+        property int maxInputFieldHeight: control.isStatusUpdateInput ? 123 : 112
+        property int defaultInputFieldHeight: control.isStatusUpdateInput ? 56 : 40
         anchors.left: imageBtn.visible ? imageBtn.right : parent.left
         anchors.leftMargin: imageBtn.visible ? 5 : Style.current.smallPadding
         anchors.top: control.isStatusUpdateInput ? parent.top : undefined
@@ -537,7 +539,8 @@ Rectangle {
         anchors.rightMargin: Style.current.smallPadding
         height: scrollView.height
         color: Style.current.inputBackground
-        radius: height > defaultInputFieldHeight || extendedArea.visible ? 16 : 32
+        radius: control.isStatusUpdateInput ? 36 :
+          height > defaultInputFieldHeight || extendedArea.visible ? 16 : 32
 
         Rectangle {
             id: extendedArea
@@ -638,9 +641,9 @@ Rectangle {
                 font.pixelSize: 15
                 font.family: Style.current.fontRegular.name
                 wrapMode: TextArea.Wrap
-                anchors.bottom: parent.bottom
-                anchors.top: parent.top
-                placeholderText: chatInputPlaceholder
+                anchors.bottom: messageInput.bottom
+                anchors.top: messageInput.top
+                placeholderText: qsTr("Type a message")
                 placeholderTextColor: Style.current.secondaryText
                 selectByMouse: true
                 color: Style.current.textColor
@@ -702,22 +705,57 @@ Rectangle {
             color: (remainingChars <= 0) ? Style.current.danger : Style.current.textColor
             anchors.right: parent.right
             anchors.bottom: actions.top
-            anchors.rightMargin: Style.current.radius
+            anchors.rightMargin: control.isStatusUpdateInput ? Style.current.padding : Style.current.radius
             leftPadding: Style.current.halfPadding
             rightPadding: Style.current.halfPadding
         }
 
         Item {
             id: actions
-            width: childrenRect.width
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 4
+            width: control.isStatusUpdateInput ?
+              imageBtn2.width + sendBtn.anchors.leftMargin + sendBtn.width :
+              emojiBtn.width + stickersBtn.anchors.leftMargin + stickersBtn.width
+            anchors.bottom: control.isStatusUpdateInput && extendedArea.visible ? extendedArea.bottom : parent.bottom
+            anchors.bottomMargin: control.isStatusUpdateInput ? Style.current.smallPadding+2: 4
             anchors.right: parent.right
             anchors.rightMargin: Style.current.radius
             height: emojiBtn.height
 
             StatusIconButton {
+                id: imageBtn2
+                icon.name: "images_icon"
+                icon.height: 18
+                icon.width: 20
+                anchors.right: sendBtn.left
+                anchors.rightMargin: 2
+                anchors.bottom: parent.bottom
+                visible: control.isStatusUpdateInput
+
+                onClicked: {
+                    highlighted = true
+                    imageDialog.open()
+                }
+            }
+
+            StatusButton {
+                id: sendBtn
+                icon.source: "../../app/img/send.svg"
+                color: Style.current.secondaryText
+                icon.width: 16
+                icon.height: 18
+                text: qsTr("Send")
+                flat: true
+                anchors.right: parent.right
+                anchors.rightMargin: Style.current.halfPadding
+                anchors.bottom: parent.bottom
+                visible: imageBtn2.visible
+                highlighted: chatsModel.plainText(Emoji.deparse(messageInputField.text).trim()).trim().length > 0 || isImage
+                enabled: highlighted
+            }
+
+            StatusIconButton {
                 id: emojiBtn
+                visible: !imageBtn2.visible
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
                 icon.name: "emojiBtn"
@@ -740,7 +778,7 @@ Rectangle {
                 anchors.leftMargin: 2
                 anchors.bottom: parent.bottom
                 icon.name: "stickers_icon"
-                visible: profileModel.network.current === Constants.networkMainnet
+                visible: profileModel.network.current === Constants.networkMainnet && emojiBtn.visible
                 width: visible ? 32 : 0
                 type: "secondary"
                 onClicked: {

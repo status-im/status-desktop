@@ -6,6 +6,7 @@ QtObject {
     readonly property int chatTypeOneToOne: 1
     readonly property int chatTypePublic: 2
     readonly property int chatTypePrivateGroupChat: 3
+    readonly property int chatTypeStatusUpdate: 4
 
     readonly property int fetchRangeLast24Hours: 86400
     readonly property int fetchRangeLast2Days: 172800
