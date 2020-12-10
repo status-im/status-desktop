@@ -5,7 +5,7 @@ import "../../../../../imports"
 Item {
     id: root
     height: childrenRect.height
-    width: chatName.width + ensOrAlias.width + ensOrAlias.anchors.leftMargin
+    width: chatName.width + (ensOrAlias.visible ? ensOrAlias.width + ensOrAlias.anchors.leftMargin : 0)
     property string userName: ""
     property string localName: ""
     property string alias: ""
