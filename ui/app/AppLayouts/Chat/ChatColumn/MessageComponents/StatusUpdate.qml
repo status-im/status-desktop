@@ -9,7 +9,7 @@ Rectangle {
 
     property var clickMessage: function () {}
     anchors.top: parent.top
-    anchors.topMargin: authorCurrentMsg != authorPrevMsg ? Style.current.smallPadding : 0
+    anchors.topMargin: 0
     height: (isImage ? chatImageContent.height : chatText.height) + chatName.height + 2* Style.current.padding + (emojiReactions !== "" ? 20 : 0)
     width: parent.width
     radius: Style.current.radius
@@ -141,5 +141,10 @@ Rectangle {
     Component {
         id: emojiReactionsComponent
         EmojiReactions {}
+    }
+
+    Separator {
+        anchors.bottom: parent.bottom
+        visible: !root.hovered
     }
 }
