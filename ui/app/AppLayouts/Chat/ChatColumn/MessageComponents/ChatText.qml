@@ -12,7 +12,6 @@ Item {
 
     id: root
     visible: contentType == Constants.messageType || isEmoji
-    z: 51
 
     height: visible ? (showMoreLoader.active ? childrenRect.height - 10 : chatText.height) : 0
 
