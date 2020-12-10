@@ -1,7 +1,7 @@
 proc handleSignals(self: ChatController) =
   self.status.events.on(SignalType.Message.event) do(e:Args):
     var data = MessageSignal(e)
-    self.status.chat.update(data.chats, data.messages, data.emojiReactions)
+    self.status.chat.update(data.chats, data.messages, data.emojiReactions, data.communities)
 
   self.status.events.on(SignalType.DiscoverySummary.event) do(e:Args):
     ## Handle mailserver peers being added and removed

@@ -24,6 +24,10 @@ proc handleChatEvents(self: ChatController) =
         # Delete the message taht this message replaces
         self.view.deleteMessage(message.chatId, message.replace)
     self.view.pushReactions(evArgs.emojiReactions)
+    if (evArgs.communities.len > 0):
+      echo "I GOT A COMMUNITYs"
+      for community in evArgs.communities:
+        self.view.communityList.addCommunityItemToList(community)
 
   self.status.events.on("channelUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)
