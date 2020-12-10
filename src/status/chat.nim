@@ -22,6 +22,7 @@ type
     messages*: seq[Message]
     contacts*: seq[Profile]
     emojiReactions*: seq[Reaction]
+    communities*: seq[Community]
 
   ChatIdArg* = ref object of Args
     chatId*: string
@@ -67,7 +68,7 @@ proc newChatModel*(events: EventEmitter): ChatModel =
 proc delete*(self: ChatModel) =
   discard
 
-proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction]) =
+proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community]) =
   for chat in chats:
     if chat.isActive:
       self.channels[chat.id] = chat
@@ -81,7 +82,7 @@ proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiRea
       if self.lastMessageTimestamps[chatId] > ts:
         self.lastMessageTimestamps[chatId] = ts
       
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[], emojiReactions: emojiReactions))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[], emojiReactions: emojiReactions, communities: communities))
 
 proc hasChannel*(self: ChatModel, chatId: string): bool =
   self.channels.hasKey(chatId)

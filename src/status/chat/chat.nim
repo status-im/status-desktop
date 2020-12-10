@@ -83,7 +83,7 @@ type Community* = object
   name*: string
   description*: string
   chats*: seq[Chat]
-  # members: seq[] # TODO find what goes in there
+  members*: seq[string]
   # color*: string
   access*: int
   admin*: bool

@@ -20,6 +20,8 @@ proc toChat*(jsonChat: JsonNode): Chat
 
 proc toReaction*(jsonReaction: JsonNode): Reaction
 
+proc toCommunity*(jsonCommunity: JsonNode): Community
+
 proc fromEvent*(event: JsonNode): Signal = 
   var signal:MessageSignal = MessageSignal()
   signal.messages = @[]
@@ -55,6 +57,10 @@ proc fromEvent*(event: JsonNode): Signal =
   if event["event"]{"emojiReactions"} != nil:
     for jsonReaction in event["event"]["emojiReactions"]:
       signal.emojiReactions.add(jsonReaction.toReaction)
+
+  if event["event"]{"communities"} != nil:
+    for jsonCommunity in event["event"]["communities"]:
+      signal.communities.add(jsonCommunity.toCommunity)
 
   result = signal
 
@@ -158,20 +164,24 @@ proc toCommunity*(jsonCommunity: JsonNode): Community =
     admin: jsonCommunity{"admin"}.getBool,
     joined: jsonCommunity{"joined"}.getBool,
     verified: jsonCommunity{"verified"}.getBool,
-    chats: newSeq[Chat]()
+    chats: newSeq[Chat](),
+    members: newSeq[string]()
   )
 
-  if not jsonCommunity["description"].hasKey("chats") or jsonCommunity["description"]["chats"].kind == JNull:
-    return result
-
-  for chatId, chat in jsonCommunity{"description"}{"chats"}:
-    result.chats.add(Chat(
-      id: chatId,
-      name: chat{"identity"}{"display_name"}.getStr,
-      description: chat{"identity"}{"description"}.getStr,
-      # TODO get this from access
+  if jsonCommunity["description"].hasKey("chats") and jsonCommunity["description"]["chats"].kind != JNull:
+    for chatId, chat in jsonCommunity{"description"}{"chats"}:
+      result.chats.add(Chat(
+        id: chatId,
+        name: chat{"identity"}{"display_name"}.getStr,
+        description: chat{"identity"}{"description"}.getStr,
+        # TODO get this from access
       chatType: ChatType.Public#chat{"permissions"}{"access"}.getInt,
-    ))
+      ))
+
+  if jsonCommunity["description"].hasKey("members") and jsonCommunity["description"]["members"].kind != JNull:
+    # memberInfo is empty for now
+    for memberPubKey, memeberInfo in jsonCommunity{"description"}{"members"}:
+      result.members.add(memberPubKey)
 
 proc toTextItem*(jsonText: JsonNode): TextItem =
   result = TextItem(
