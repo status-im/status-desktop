@@ -78,6 +78,12 @@ ModalPopup {
             text: qsTr("Invite")
             onClicked : {
                 console.log('invite')
+                popup.pubKeys.forEach(function (pubKey) {
+                    const error = chatsModel.inviteUserToCommunity(pubKey)
+                    if (error) {
+                        console.log('do something?')
+                    }
+                })
             }
         }
     }

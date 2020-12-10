@@ -818,3 +818,10 @@ QtObject:
 
   proc leaveCurrentCommunity*(self: ChatsView): string {.slot.} =
     result = self.leaveCommunity(self.activeCommunity.communityItem.id)
+
+  proc inviteUserToCommunity*(self: ChatsView, pubKey: string): string {.slot.} =
+    try:
+      self.status.chat.inviteUserToCommunity(self.activeCommunity.id(), pubKey)
+    except Exception as e:
+      error "Error inviting to the community", msg = e.msg
+      result = fmt"Error inviting to the community: {e.msg}"
