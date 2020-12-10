@@ -130,7 +130,12 @@ PopupMenu {
                   //% "Reply to"
                   qsTrId("reply-to")
         onTriggered: {
-            messageContextMenu.isProfile ? chatsModel.joinChat(fromAuthor, Constants.chatTypeOneToOne) : showReplyArea()
+            if (messageContextMenu.isProfile) {
+                tabBar.currentIndex = 0
+                chatsModel.joinChat(fromAuthor, Constants.chatTypeOneToOne)
+            } else {
+              showReplyArea()
+            }
             messageContextMenu.close()
         }
         icon.source: "../../../img/messageActive.svg"
