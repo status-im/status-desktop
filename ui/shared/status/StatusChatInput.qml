@@ -116,9 +116,10 @@ Rectangle {
             messageTooLongDialog.open()
         }
 
+        const message = control.extrapolateCursorPosition();
+
         // handle new line in blockquote
-        if ((event.key === Qt.Key_Enter || event.key === Qt.Key_Return) && (event.modifiers & Qt.ShiftModifier)) {
-            const message = control.extrapolateCursorPosition();
+        if ((event.key === Qt.Key_Enter || event.key === Qt.Key_Return) && (event.modifiers & Qt.ShiftModifier) && message.data.startsWith(">")) {
             if(message.data.startsWith(">") && !message.data.endsWith("\n\n")) {
                 let newMessage = ""
                 if (message.data.endsWith("\n> ")) {
@@ -133,7 +134,6 @@ Rectangle {
         }
         // handle backspace when entering an existing blockquote
         if ((event.key === Qt.Key_Backspace || event.key === Qt.Key_Delete)) {
-            const message = control.extrapolateCursorPosition();
             if(message.data.startsWith(">") && message.data.endsWith("\n\n")) {
                 const newMessage = message.data.substr(0, message.data.lastIndexOf("\n")) + "> ";
                 messageInputField.remove(0, messageInputField.cursorPosition);
