@@ -38,6 +38,7 @@ Item {
     property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
 
     property bool isExpired: (outgoingStatus == "sending" && (Math.floor(timestamp) + 180000) < Date.now())
+    property bool isStatusUpdate: false
 
     property int replyMessageIndex: chatsModel.messageList.getMessageIndex(responseTo);
     property string repliedMessageAuthor: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "userName") : "";
@@ -100,7 +101,8 @@ Item {
                 case Constants.transactionType:
                     return transactionBubble
                 default:
-                    return appSettings.compactMode ? compactMessageComponent : messageComponent
+                    return appSettings.compactMode  ? compactMessageComponent : 
+                      isStatusUpdate ? statusUpdateComponent : messageComponent
             }
         }
     }
@@ -206,6 +208,13 @@ Item {
             imageUrls: root.imageUrls
             isCurrentUser: root.isCurrentUser
             contentType: root.contentType
+        }
+    }
+
+    Component {
+        id: statusUpdateComponent
+        StatusUpdate {
+            clickMessage: messageItem.clickMessage
         }
     }
 
