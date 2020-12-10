@@ -23,6 +23,8 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	check-pkg-target-windows \
 	clean \
 	deps \
+	fleets-remove \
+	fleets-update \
 	nim_status_client \
 	nim_windows_launcher \
 	pkg \
@@ -208,17 +210,17 @@ $(QRCODEGEN): | deps
 	+ cd vendor/QR-Code-generator/c && \
 	  $(MAKE) $(QRCODEGEN_MAKE_PARAMS)
 
-FLEETFILE := fleets.json
-$(FLEETFILE): | deps
-	echo -e $(BUILD_MSG) "Getting latest fleet file"
+FLEETS := fleets.json
+$(FLEETS):
+	echo -e $(BUILD_MSG) "Getting latest $(FLEETS)"
 	curl -s https://fleets.status.im/ \
 		| jq --indent 4 --sort-keys . \
-		> fleets.json
+		> $(FLEETS)
 
-remove-fleet:
-	rm -f fleets.json
+fleets-remove:
+	rm -f $(FLEETS)
 
-update-fleets: remove-fleet $(FLEETFILE)
+fleets-update: fleets-remove $(FLEETS)
 
 rcc:
 	echo -e $(BUILD_MSG) "resources.rcc"
@@ -235,7 +237,7 @@ DEFAULT_TOKEN := 220a1abb4b6943a093c35d0ce4fb0732
 INFURA_TOKEN ?= $(DEFAULT_TOKEN)
 NIM_PARAMS += -d:INFURA_TOKEN:"$(INFURA_TOKEN)"
 
-nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) $(FLEETFILE) rcc deps
+nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) $(FLEETS) rcc deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \
@@ -271,7 +273,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp status.svg tmp/linux/dist/status.svg
 	cp status.svg tmp/linux/dist/usr/.
 	cp -R resources.rcc tmp/linux/dist/usr/.
-	cp -R fleets.json tmp/linux/dist/usr/.
+	cp -R $(FLEETS) tmp/linux/dist/usr/.
 	mkdir -p tmp/linux/dist/usr/i18n
 	cp ui/i18n/* tmp/linux/dist/usr/i18n
 
@@ -310,7 +312,7 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	cp status-icon.icns $(MACOS_OUTER_BUNDLE)/Contents/Resources/
 	cp status.svg $(MACOS_OUTER_BUNDLE)/Contents/
 	cp -R resources.rcc $(MACOS_OUTER_BUNDLE)/Contents/
-	cp -R fleets.json $(MACOS_OUTER_BUNDLE)/Contents/
+	cp -R $(FLEETS) $(MACOS_OUTER_BUNDLE)/Contents/
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/i18n
 	cp ui/i18n/* $(MACOS_OUTER_BUNDLE)/Contents/i18n
 
@@ -382,7 +384,7 @@ $(STATUS_CLIENT_ZIP): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 	cp status.ico tmp/windows/dist/Status/resources/
 	cp status.svg tmp/windows/dist/Status/resources/
 	cp resources.rcc tmp/windows/dist/Status/resources/
-	cp $(FLEETFILE) tmp/windows/dist/Status/
+	cp $(FLEETS) tmp/windows/dist/Status/resources/
 	cp bin/nim_status_client.exe tmp/windows/dist/Status/bin/Status.exe
 	cp bin/nim_windows_launcher.exe tmp/windows/dist/Status/Status.exe
 	rcedit \

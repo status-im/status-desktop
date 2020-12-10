@@ -22,7 +22,13 @@ logScope:
   topics = "main"
 
 proc mainProc() =
-  let status = statuslib.newStatusInstance(readFile(joinPath(getAppDir(), "../fleets.json")))
+  let fleets =
+    if defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
+      "/../resources/fleets.json"
+    else:
+      "/../fleets.json"
+
+  let status = statuslib.newStatusInstance(readFile(joinPath(getAppDir(), fleets)))
   status.initNode()
 
   enableHDPI()
