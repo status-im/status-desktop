@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.Controls.Universal 2.12
 import "../shared"
 import "../imports"
 
@@ -7,7 +8,11 @@ Page {
     id: page
     property alias btnExistingKey: btnExistingKey
     property alias btnGenKey: btnGenKey
-    
+
+    background: Rectangle {
+        color: Style.current.background
+    }
+
     Item {
         id: container
         width: 425
@@ -29,7 +34,7 @@ Page {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             fillMode: Image.PreserveAspectFit
-            source: "img/keys@2x.jpg"
+            source: Universal.theme === Universal.Dark ? "img/keys-dark@2x.jpg" : "img/keys@2x.jpg"
         }
 
         StyledText {

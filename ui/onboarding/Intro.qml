@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import QtQuick.Controls.Universal 2.12
 import "../shared"
 import "../shared/status"
 import "../imports"
@@ -18,6 +19,7 @@ RowLayout {
         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
         Layout.fillHeight: true
         Layout.fillWidth: true
+        color: Style.current.background
 
         SwipeView {
             id: vwOnboarding
@@ -28,7 +30,7 @@ RowLayout {
             anchors.fill: parent
 
             Slide {
-                image: "img/chat@2x.jpg"
+                image: Universal.theme === Universal.Dark ? "img/chat-dark@2x.jpg" : "img/chat@2x.jpg"
                 //% "Truly private communication"
                 title: qsTrId("intro-title1")
                 //% "Chat over a peer-to-peer, encrypted network\n where messages can't be censored or hacked"
@@ -36,14 +38,14 @@ RowLayout {
                 isFirst: true
             }
             Slide {
-                image: "img/wallet@2x.jpg"
+                image: Universal.theme === Universal.Dark ? "img/wallet-dark@2x.jpg" : "img/wallet@2x.jpg"
                 //% "Secure crypto wallet"
                 title: qsTrId("intro-title2")
                 //% "Send and receive digital assets anywhere in the\nworld--no bank account required"
                 description: qsTrId("send-and-receive-digital-assets-anywhere-in-the-nworld--no-bank-account-required")
             }
             Slide {
-                image: "img/browser@2x.jpg"
+                image: Universal.theme === Universal.Dark ? "img/browser-dark@2x.jpg" : "img/browser@2x.jpg"
                 //% "Decentralized apps"
                 title: qsTrId("intro-title3")
                 //% "Explore games, exchanges and social networks\nwhere you alone own your data"
@@ -61,6 +63,7 @@ RowLayout {
             anchors.topMargin: 567
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width
+            color: Style.current.background
 
             PageIndicator {
                 id: pgOnboarding
@@ -104,7 +107,7 @@ RowLayout {
         StyledButton {
             id: btnGetStarted
             enabled: warningCheckBox.checked
-            btnColor: this.enabled ? Style.current.lightBlue : "lightgrey"
+            btnColor: this.enabled ? Style.current.secondaryBackground : "lightgrey"
             label: "Get Started"
             anchors.top: warningCheckBox.bottom
             anchors.topMargin: 5
