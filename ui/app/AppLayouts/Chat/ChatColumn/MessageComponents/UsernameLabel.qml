@@ -6,9 +6,6 @@ Item {
     id: root
     height: childrenRect.height
     width: chatName.width + (ensOrAlias.visible ? ensOrAlias.width + ensOrAlias.anchors.leftMargin : 0)
-    property string userName: ""
-    property string localName: ""
-    property string alias: ""
     property alias label: chatName
     visible: isMessage && authorCurrentMsg != authorPrevMsg
 
@@ -19,16 +16,16 @@ Item {
                 return qsTr("You")
             }
 
-            if (root.localName !== "") {
-                return root.localName
+            if (localName !== "") {
+                return localName
             }
 
-            if (root.userName !== "") {
-                return Utils.removeStatusEns(root.userName)
+            if (userName !== "") {
+                return Utils.removeStatusEns(userName)
             }
-            return Utils.removeStatusEns(root.alias)
+            return Utils.removeStatusEns(alias)
         }
-        color: text.startsWith("@") || isCurrentUser || root.localName !== "" ? Style.current.blue : Style.current.secondaryText
+        color: text.startsWith("@") || isCurrentUser || localName !== "" ? Style.current.blue : Style.current.secondaryText
         font.weight: Font.Medium
         font.pixelSize: Style.current.secondaryTextFontSize
         readOnly: true
@@ -53,8 +50,8 @@ Item {
 
     StyledText {
         id: ensOrAlias
-        visible: root.localName !== "" && root.userName.startsWith("@")
-        text: root.userName
+        visible: localName !== "" && userName.startsWith("@")
+        text: userName
         color: Style.current.secondaryText
         font.pixelSize: chatName.font.pixelSize
         anchors.left: chatName.right

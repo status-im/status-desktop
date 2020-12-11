@@ -36,9 +36,6 @@ Item {
 //        anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
         anchors.top: parent.top
         anchors.left: chatImage.right
-        userName: messageItem.userName
-        localName: messageItem.localName
-        alias: messageItem.alias
     }
 
     ChatReply {
