@@ -8,6 +8,7 @@ type ChatType* {.pure.}= enum
   PrivateGroupChat = 3,
   Profile = 4,
   Timeline = 5
+  CommunityChat = 6
 
 proc isOneToOne*(self: ChatType): bool = self == ChatType.OneToOne
 proc isTimeline*(self: ChatType): bool = self == ChatType.Timeline
@@ -58,6 +59,7 @@ proc toJsonNode*(self: seq[ChatMembershipEvent]): seq[JsonNode] =
 type Chat* = ref object
   id*: string # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat
   name*: string
+  description*: string
   color*: string
   identicon*: string
   isActive*: bool # indicates whether the chat has been soft deleted
@@ -73,8 +75,29 @@ type Chat* = ref object
   muted*: bool
   ensName*: string
 
+type CommunityAccessLevel* = enum
+    unknown = 0
+    public = 1
+    invitationOnly = 2
+    onRequest = 3
+
+type Community* = object
+  id*: string
+  name*: string
+  description*: string
+  chats*: seq[Chat]
+  # members: seq[] # TODO find what goes in there
+  # color*: string
+  access*: int
+  admin*: bool
+  joined*: bool
+  verified*: bool
+
 proc `$`*(self: Chat): string =
   result = fmt"Chat(id:{self.id}, name:{self.name}, active:{self.isActive}, type:{self.chatType})"
+
+proc `$`*(self: Community): string =
+  result = fmt"Community(id:{self.id}, name:{self.name}, description:{self.description}"
 
 proc toJsonNode*(self: Chat): JsonNode =
   result = %* {
@@ -93,6 +116,15 @@ proc toJsonNode*(self: Chat): JsonNode =
   }
 
 proc findIndexById*(self: seq[Chat], id: string): int =
+  result = -1
+  var idx = -1
+  for item in self:
+    inc idx
+    if(item.id == id):
+      result = idx
+      break
+
+proc findIndexById*(self: seq[Community], id: string): int =
   result = -1
   var idx = -1
   for item in self:

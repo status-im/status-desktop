@@ -14,7 +14,7 @@ import ../../status/chat/[chat, message]
 import ../../status/profile/profile
 import web3/[conversions, ethtypes]
 import ../../status/threads
-import views/[channels_list, message_list, chat_item, suggestions_list, reactions, stickers, groups, transactions]
+import views/[channels_list, message_list, chat_item, suggestions_list, reactions, stickers, groups, transactions, community_list, community_item]
 import json_serialization
 import ../utils/image_utils
 
@@ -35,6 +35,10 @@ QtObject:
       transactions*: TransactionsView
       activeChannel*: ChatItemView
       previousActiveChannelIndex: int
+      activeCommunity*: CommunityItemView
+      observedCommunity*: CommunityItemView
+      communityList*: CommunityList
+      joinedCommunityList*: CommunityList
       replyTo: string
       channelOpenTime*: Table[string, int64]
       connected: bool
@@ -49,6 +53,8 @@ QtObject:
   proc delete(self: ChatsView) = 
     self.chats.delete
     self.activeChannel.delete
+    self.observedCommunity.delete
+    self.activeCommunity.delete
     self.currentSuggestions.delete
     for msg in self.messageList.values:
       msg.delete
@@ -66,11 +72,15 @@ QtObject:
     result.connected = false
     result.chats = newChannelsList(status)
     result.activeChannel = newChatItemView(status)
+    result.activeCommunity = newCommunityItemView(status)
+    result.observedCommunity = newCommunityItemView(status)
     result.currentSuggestions = newSuggestionsList()
     result.messageList = initTable[string, ChatMessageList]()
     result.reactions = newReactionView(status, result.messageList.addr, result.activeChannel)
     result.stickers = newStickersView(status, result.activeChannel)
     result.groups = newGroupsView(status,result.activeChannel)
+    result.communityList = newCommunityList(status)
+    result.joinedCommunityList = newCommunityList(status)
     result.transactions = newTransactionsView(status)
     result.unreadMessageCnt = 0
     result.loadingMessages = false
@@ -200,12 +210,19 @@ QtObject:
     discard self.status.chat.markAllChannelMessagesRead(selectedChannel.id)
 
   proc setActiveChannelByIndex*(self: ChatsView, index: int) {.slot.} =
-    if(self.chats.chats.len == 0): return
+    if((self.activeCommunity.active and self.activeCommunity.chats.chats.len == 0) or (not self.activeCommunity.active and self.chats.chats.len == 0)): return
+
+    let selectedChannel =
+      if (self.activeCommunity.active):
+        self.activeCommunity.chats.getChannel(index)
+      else:
+        self.chats.getChannel(index)
+
     if(not self.activeChannel.chatItem.isNil and self.activeChannel.chatItem.unviewedMessagesCount > 0):
       var response = self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
       if not response.hasKey("error"):
         self.chats.clearUnreadMessagesCount(self.activeChannel.chatItem)
-    let selectedChannel = self.chats.getChannel(index)
+
     if self.activeChannel.id == selectedChannel.id: return
 
     if selectedChannel.chatType.isOneToOne and selectedChannel.id == selectedChannel.name:
@@ -215,17 +232,28 @@ QtObject:
     self.activeChannel.setChatItem(selectedChannel)
     self.status.chat.setActiveChannel(selectedChannel.id)
 
-  proc getActiveChannelIdx(self: ChatsView): QVariant {.slot.} =
-    newQVariant(self.chats.chats.findIndexById(self.activeChannel.id))
+  proc getActiveChannelIdx(self: ChatsView): int {.slot.} =
+    if (self.activeCommunity.active):
+      return self.activeCommunity.chats.chats.findIndexById(self.activeChannel.id)
+    else:
+      return self.chats.chats.findIndexById(self.activeChannel.id)
 
-  QtProperty[QVariant] activeChannelIndex:
+  QtProperty[int] activeChannelIndex:
     read = getActiveChannelIdx
     write = setActiveChannelByIndex
     notify = activeChannelChanged
 
   proc setActiveChannel*(self: ChatsView, channel: string) {.slot.} =
     if(channel == ""): return
-    self.activeChannel.setChatItem(self.chats.getChannel(self.chats.chats.findIndexById(channel)))
+
+    let selectedChannel =
+        if (self.activeCommunity.active):
+          self.activeCommunity.chats.getChannel(self.activeCommunity.chats.chats.findIndexById(channel))
+        else:
+          self.chats.getChannel(self.chats.chats.findIndexById(channel))
+
+    self.activeChannel.setChatItem(selectedChannel)
+    
     discard self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
     self.setLastMessageTimestamp(true)
     self.activeChannelChanged()
@@ -547,3 +575,120 @@ QtObject:
 
   QtProperty[QVariant] transactions:
     read = getTransactions
+  proc communitiesChanged*(self: ChatsView) {.signal.}
+
+  proc getCommunitiesIfNotFetched*(self: ChatsView): CommunityList =
+    if (not self.communityList.fetched):
+      let communities = self.status.chat.getAllComunities()
+      self.communityList.setNewData(communities)
+      self.communityList.fetched = true
+    return self.communityList
+
+  proc getComunities*(self: ChatsView): QVariant {.slot.} =
+    return newQVariant(self.getCommunitiesIfNotFetched())
+
+  QtProperty[QVariant] communities:
+    read = getComunities
+    notify = communitiesChanged
+
+  proc joinedCommunitiesChanged*(self: ChatsView) {.signal.}
+    
+  proc getJoinedComunities*(self: ChatsView): QVariant {.slot.} =
+    if (not self.joinedCommunityList.fetched):
+      let communities = self.status.chat.getJoinedComunities()
+      self.joinedCommunityList.setNewData(communities)
+      self.joinedCommunityList.fetched = true
+
+    return newQVariant(self.joinedCommunityList)
+
+  QtProperty[QVariant] joinedCommunities:
+    read = getJoinedComunities
+    notify = joinedCommunitiesChanged
+
+  proc createCommunity*(self: ChatsView, name: string, description: string, color: string, imagePath: string): string {.slot.} =
+    result = ""
+    try:
+        # TODO Change this to get it from the user choices
+      let access = ord(CommunityAccessLevel.public)
+      let tmpImagePath = self.resizeImage(imagePath, 120)
+      let community = self.status.chat.createCommunity(name, description, color, tmpImagePath, access)
+      removeFile(tmpImagePath)
+     
+      if (community.id == ""):
+        return "Community was not created. Please try again later"
+
+      self.communityList.addCommunityItemToList(community)
+      self.joinedCommunityList.addCommunityItemToList(community)
+      self.communitiesChanged()
+    except Exception as e:
+      error "Error creating the community", msg = e.msg
+      result = fmt"Error creating the community: {e.msg}"
+
+  proc createCommunityChannel*(self: ChatsView, communityId: string, name: string, description: string): string {.slot.} =
+    result = ""
+    try:
+      let chat = self.status.chat.createCommunityChannel(communityId, name, description)
+     
+      if (chat.id == ""):
+        return "Chat was not created. Please try again later"
+
+      self.joinedCommunityList.addChannelToCommunity(communityId, chat)
+      discard self.activeCommunity.chats.addChatItemToList(chat)
+    except Exception as e:
+      error "Error creating the channel", msg = e.msg
+      result = fmt"Error creating the channel: {e.msg}"
+
+  proc activeCommunityChanged*(self: ChatsView) {.signal.}
+
+  proc setActiveCommunity*(self: ChatsView, communityId: string) {.slot.} =
+    if(communityId == ""): return
+    self.activeCommunity.setCommunityItem(self.joinedCommunityList.getCommunityById(communityId))
+    self.activeCommunity.setActive(true)
+    self.activeCommunityChanged()
+
+  proc getActiveCommunity*(self: ChatsView): QVariant {.slot.} =
+    newQVariant(self.activeCommunity)
+
+  QtProperty[QVariant] activeCommunity:
+    read = getActiveCommunity
+    write = setActiveCommunity
+    notify = activeCommunityChanged
+
+  proc observedCommunityChanged*(self: ChatsView) {.signal.}
+
+  proc setObservedCommunity*(self: ChatsView, communityId: string) {.slot.} =
+    if(communityId == ""): return
+    self.observedCommunity.setCommunityItem(self.communityList.getCommunityById(communityId))
+    self.observedCommunityChanged()
+
+  proc getObservedCommunity*(self: ChatsView): QVariant {.slot.} =
+    newQVariant(self.observedCommunity)
+
+  QtProperty[QVariant] observedCommunity:
+    read = getObservedCommunity
+    write = setObservedCommunity
+    notify = observedCommunityChanged
+
+  proc joinCommunity*(self: ChatsView, communityId: string): string {.slot.} =
+    result = ""
+    try:
+      self.status.chat.joinCommunity(communityId)
+      self.joinedCommunityList.addCommunityItemToList(self.communityList.getCommunityById(communityId))
+      self.setActiveCommunity(communityId)
+    except Exception as e:
+      error "Error joining the community", msg = e.msg
+      result = fmt"Error joining the community: {e.msg}"
+
+  proc leaveCommunity*(self: ChatsView, communityId: string): string {.slot.} =
+    result = ""
+    try:
+      self.status.chat.leaveCommunity(communityId)
+      if (communityId == self.activeCommunity.communityItem.id):
+        self.activeCommunity.setActive(false)
+      self.joinedCommunityList.removeCommunityItemFromList(communityId)
+    except Exception as e:
+      error "Error leaving the community", msg = e.msg
+      result = fmt"Error leaving the community: {e.msg}"
+
+  proc leaveCurrentCommunity*(self: ChatsView): string {.slot.} =
+    result = self.leaveCommunity(self.activeCommunity.communityItem.id)
