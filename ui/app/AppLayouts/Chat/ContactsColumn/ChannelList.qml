@@ -6,93 +6,73 @@ import "../../../../imports"
 import "../components"
 import "./"
 
-ScrollView {
+Rectangle {
+    property var channelModel
     property alias channelListCount: chatGroupsListView.count
     property string searchStr: ""
-    id: chatGroupsContainer
-    Layout.fillHeight: true
-    Layout.fillWidth: true
-    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-    contentHeight: channelListContent.height + Style.current.padding
-    clip: true
+    id: channelListContent
+    width: parent.width
+    height: childrenRect.height
 
     Timer {
         id: timer
     }
 
-
-    Item {
-        id: channelListContent
-        Layout.fillHeight: true
+    ListView {
+        id: chatGroupsListView
+        spacing: Style.current.halfPadding
         anchors.top: parent.top
+        height: childrenRect.height
+        visible: height > 0
         anchors.right: parent.right
         anchors.left: parent.left
-        height: childrenRect.height
-
-        ListView {
-            id: chatGroupsListView
-            anchors.top: parent.top
-            height: childrenRect.height
-            visible: height > 0
-            anchors.right: parent.right
-            anchors.left: parent.left
-            anchors.rightMargin: Style.current.padding
-            anchors.leftMargin: Style.current.padding
-            interactive: false
-            model: chatsModel.chats
-            delegate: Channel {
-                name: model.name
-                muted: model.muted
-                lastMessage: model.lastMessage
-                timestamp: model.timestamp
-                chatType: model.chatType
-                identicon: model.identicon
-                unviewedMessagesCount: model.unviewedMessagesCount
-                hasMentions: model.hasMentions
-                contentType: model.contentType
-                searchStr: chatGroupsContainer.searchStr
-                chatId: model.id
-            }
-            onCountChanged: {
-                if (count > 0 && chatsModel.activeChannelIndex > -1) {
-                    // If a chat is added or removed, we set the current index to the first value
-                    chatsModel.activeChannelIndex = 0;
-                    currentIndex = 0;
+        interactive: false
+        model: channelListContent.channelModel
+        delegate: Channel {
+            name: model.name
+            muted: model.muted
+            lastMessage: model.lastMessage
+            timestamp: model.timestamp
+            chatType: model.chatType
+            identicon: model.identicon
+            unviewedMessagesCount: model.unviewedMessagesCount
+            hasMentions: model.hasMentions
+            contentType: model.contentType
+            searchStr: channelListContent.searchStr
+            chatId: model.id
+        }
+        onCountChanged: {
+            if (count > 0 && chatsModel.activeChannelIndex > -1) {
+                // If a chat is added or removed, we set the current index to the first value
+                chatsModel.activeChannelIndex = 0;
+                currentIndex = 0;
+            } else {
+                if (chatsModel.activeChannelIndex > -1) {
+                    chatGroupsListView.currentIndex = 0;
                 } else {
-                    if(chatsModel.activeChannelIndex > -1){
-                        chatGroupsListView.currentIndex = 0;
-                    } else {
-                        // Initial state. No chat has been selected yet
-                        chatGroupsListView.currentIndex = -1;
-                    }
+                    // Initial state. No chat has been selected yet
+                    chatGroupsListView.currentIndex = -1;
                 }
             }
         }
+    }
 
-        Rectangle {
-            id: noSearchResults
-            anchors.top: parent.top
-            height: 300
-            color: "transparent"
-            visible: !chatGroupsListView.visible && chatGroupsContainer.searchStr !== ""
-            anchors.left: parent.left
-            anchors.right: parent.right
+    Rectangle {
+        id: noSearchResults
+        anchors.top: parent.top
+        height: visible ? 300 : 0
+        color: "transparent"
+        visible: !chatGroupsListView.visible && channelListContent.searchStr !== ""
+        anchors.left: parent.left
+        anchors.right: parent.right
 
-            StyledText {
-                font.pixelSize: 15
-                color: Style.current.darkGrey
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: qsTr("No search results")
-            }
+        StyledText {
+            font.pixelSize: 15
+            color: Style.current.darkGrey
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: qsTr("No search results")
         }
-
-        EmptyView {
-            width: parent.width
-            anchors.top: noSearchResults.visible ? noSearchResults.bottom : chatGroupsListView.bottom 
-            anchors.topMargin: Style.current.smallPadding
-        }
-
     }
 
     GroupInfoPopup {
@@ -252,7 +232,10 @@ ScrollView {
             chatColumn.isReply = false;
         }
     }
+
 }
+
+
 /*##^##
 Designer {
     D{i:0;autoSize:true;height:480;width:640}

@@ -12,6 +12,7 @@ type ContentType* {.pure.} = enum
   Group = 6,
   Image = 7,
   Audio = 8
+  Community = 9
 
 type TextItem* = object
   textType*: string

@@ -25,16 +25,58 @@ Item {
         font.pixelSize: 17
     }
 
-    PublicChatPopup {
-        id: publicChatPopup
+    Component {
+        id: publicChatPopupComponent
+        PublicChatPopup {
+            onClosed: {
+                destroy()
+            }
+        }
     }
 
-    GroupChatPopup {
-        id: groupChatPopup
+    Component {
+        id: groupChatPopupComponent
+        GroupChatPopup {
+            onClosed: {
+                destroy()
+            }
+        }
     }
 
-    PrivateChatPopup {
-        id: privateChatPopup
+    Component {
+        id: privateChatPopupComponent
+        PrivateChatPopup {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+    Component {
+        id: communitiesPopupComponent
+        CommunitiesPopup {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+    Component {
+        id: createCommunitiesPopupComponent
+        CreateCommunityPopup {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+    Component {
+        id: communityDetailPopup
+        CommunityDetailPopup {
+            onClosed: {
+                destroy()
+            }
+        }
     }
 
     SearchBox {
@@ -55,15 +97,45 @@ Item {
         anchors.topMargin: Style.current.padding
     }
 
-    ChannelList {
-        id: channelList
-        searchStr: contactsColumn.searchStr
-
+    ScrollView {
+        id: chatGroupsContainer
+        anchors.top: searchBox.bottom
+        anchors.topMargin: Style.current.padding
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: searchBox.bottom
-        anchors.topMargin: Style.current.padding
+        leftPadding: Style.current.halfPadding
+        rightPadding: Style.current.halfPadding
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        contentHeight: communityList.height + channelList.height + 2 * Style.current.padding + emptyViewAndSuggestions.height
+        clip: true
+
+        CommunityList {
+            id: communityList
+            searchStr: contactsColumn.searchStr
+        }
+
+        Separator {
+            id: communitySep
+            visible: communityList.visible
+            anchors.top: communityList.bottom
+            anchors.topMargin: Style.current.halfPadding
+        }
+
+        ChannelList {
+            id: channelList
+            anchors.top: communitySep.bottom
+            anchors.topMargin: Style.current.halfPadding
+            searchStr: contactsColumn.searchStr
+            channelModel: chatsModel.chats
+        }
+
+        EmptyView {
+            id: emptyViewAndSuggestions
+            width: parent.width
+            anchors.top: channelList.bottom
+            anchors.topMargin: Style.current.smallPadding
+        }
     }
 }
 
