@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.13
 import "../../../../shared"
 import "../../../../shared/status"
 import "../../../../imports"
+import "."
 
 Rectangle {
     id: root
@@ -16,6 +17,14 @@ Rectangle {
     radius: 16
     color: Style.current.transparent
 
+    Component {
+        id: inviteFriendsPopup
+        InviteFriendsToCommunityPopup {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
 
     SVGImage {
         anchors.top: parent.top
@@ -44,7 +53,7 @@ Rectangle {
 
     StyledText {
         id: welcomeText
-        text: qsTr("Welcome to your community! ")
+        text: qsTr("Welcome to your community!")
         anchors.top: parent.top
         anchors.topMargin: 60
         horizontalAlignment: Text.AlignHCenter
@@ -63,7 +72,7 @@ Rectangle {
         anchors.bottom: manageBtn.top
         anchors.bottomMargin: Style.current.halfPadding
         onClicked: {
-            console.log('ADD')
+            openPopup(inviteFriendsPopup)
         }
     }
 

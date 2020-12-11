@@ -115,7 +115,7 @@ proc generateSymKeyFromPassword*(): string =
     "status-offline-inbox"
   ]))["result"]).strip(chars = {'"'})
 
-proc sendChatMessage*(chatId: string, msg: string, replyTo: string, contentType: int): string =
+proc sendChatMessage*(chatId: string, msg: string, replyTo: string, contentType: int, communityId: string = ""): string =
   let preferredUsername = getSetting[string](Setting.PreferredUsername, "")
   callPrivateRPC("sendChatMessage".prefix, %* [
     {
@@ -124,7 +124,8 @@ proc sendChatMessage*(chatId: string, msg: string, replyTo: string, contentType:
       "responseTo": replyTo,
       "ensName": preferredUsername,
       "sticker": nil,
-      "contentType": contentType
+      "contentType": contentType,
+      "communityId": communityId
     }
   ])
 
@@ -294,4 +295,8 @@ proc joinCommunity*(communityId: string) =
 
 proc leaveCommunity*(communityId: string) =
   let res = callPrivateRPC("leaveCommunity".prefix, %*[communityId])#.parseJSON()["result"]
+  debug "RESULT", res
+
+proc inviteUserToCommunity*(communityId: string, pubKey: string) =
+  let res = callPrivateRPC("inviteUserToCommunity".prefix, %*[communityId, pubKey])#.parseJSON()["result"]
   debug "RESULT", res

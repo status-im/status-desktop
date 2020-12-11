@@ -22,6 +22,7 @@ SOURCES = *.qml \
           app/AppLayouts/*.qml \
           app/AppLayouts/Browser/*.qml \
           app/AppLayouts/Chat/*.qml \
+          app/AppLayouts/Chat/CommunityComponents/*.qml \
           app/AppLayouts/Chat/ChatColumn/*.qml \
           app/AppLayouts/Chat/ChatColumn/ChatComponents/*.qml \
           app/AppLayouts/Chat/ChatColumn/MessageComponents/*.qml \
@@ -151,6 +152,7 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/EmojiReactions.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ImageLoader.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ImageMessage.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/InvitationBubble.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/LinksMessage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/MessageMouseArea.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/NormalMessage.qml \
@@ -165,18 +167,27 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/UsernameLabel.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/qmldir \
     app/AppLayouts/Chat/CommunityColumn.qml \
+    app/AppLayouts/Chat/CommunityComponents/CommunitiesPopup.qml \
+    app/AppLayouts/Chat/CommunityComponents/CommunityButton.qml \
+    app/AppLayouts/Chat/CommunityComponents/CommunityDetailPopup.qml \
+    app/AppLayouts/Chat/CommunityComponents/CommunityList.qml \
+    app/AppLayouts/Chat/CommunityComponents/CommunityWelcomeBanner.qml \
+    app/AppLayouts/Chat/CommunityComponents/CreateChannelPopup.qml \
+    app/AppLayouts/Chat/CommunityComponents/CreateCommunityPopup.qml \
+    app/AppLayouts/Chat/CommunityComponents/InviteFriendsToCommunityPopup.qml \
     app/AppLayouts/Chat/ContactsColumn/AddChat.qml \
     app/AppLayouts/Chat/ContactsColumn/ClosedEmptyView.qml \
     app/AppLayouts/Chat/ContactsColumn/CommunityButton.qml \
-    app/AppLayouts/Chat/ContactsColumn/CommunityComponents/CreateChannelPopup.qml \
     app/AppLayouts/Chat/ContactsColumn/CommunityList.qml \
     app/AppLayouts/Chat/ContactsColumn/CommunityWelcomeBanner.qml \
     app/AppLayouts/Chat/components/CommunitiesPopup.qml \
     app/AppLayouts/Chat/components/CommunityDetailPopup.qml \
+    app/AppLayouts/Chat/components/ContactList.qml \
     app/AppLayouts/Chat/components/CreateCommunityPopup.qml \
     app/AppLayouts/Chat/components/EmojiCategoryButton.qml \
     app/AppLayouts/Chat/components/EmojiPopup.qml \
     app/AppLayouts/Chat/components/EmojiReaction.qml \
+    app/AppLayouts/Chat/components/NoFriendsRectangle.qml \
     app/AppLayouts/Chat/components/ProfilePopup.qml \
     app/AppLayouts/Chat/components/EmojiSection.qml \
     app/AppLayouts/Chat/components/InviteFriendsPopup.qml \

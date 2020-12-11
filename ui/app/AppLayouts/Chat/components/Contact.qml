@@ -92,9 +92,7 @@ Rectangle {
     MouseArea {
         cursorShape: Qt.PointingHandCursor
         anchors.fill: parent
-        visible: !showCheckbox
-        onClicked: {
-            onItemChecked(pubKey, isChecked)
-        }
+        enabled: showCheckbox
+        onClicked: assetCheck.clicked()
     }
 }
