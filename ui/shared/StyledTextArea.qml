@@ -50,10 +50,10 @@ Item {
             id: textArea
             text: ""
             font.pixelSize: 15
-            wrapMode: Text.WordWrap
+            wrapMode: Text.WrapAnywhere
             placeholderText: inputBox.placeholderText
-            anchors.rightMargin: Style.current.padding
-            anchors.leftMargin: inputBox.hasIcon ? 36 : Style.current.padding
+            anchors.rightMargin: Style.current.smallPadding
+            anchors.leftMargin: inputBox.hasIcon ? 36 : Style.current.smallPadding
             anchors.bottomMargin: Style.current.smallPadding
             anchors.topMargin: Style.current.smallPadding
             anchors.fill: parent
