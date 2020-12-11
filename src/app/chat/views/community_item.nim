@@ -78,6 +78,12 @@ QtObject:
   QtProperty[bool] verified:
     read = verified
 
+# TODO also add the members list view
+  proc nbMembers*(self: CommunityItemView): int {.slot.} = result = ?.self.communityItem.members.len
+  
+  QtProperty[int] nbMembers:
+    read = nbMembers
+
   proc getChats*(self: CommunityItemView): QVariant {.slot.} =
     result = newQVariant(self.chats)
 

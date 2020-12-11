@@ -25,6 +25,7 @@ Item {
     property bool timeout: false
     property string linkUrls: ""
     property bool placeholderMessage: false
+    property string communityId: ""
 
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
@@ -35,7 +36,7 @@ Item {
     property bool isStatusMessage: contentType === Constants.systemMessagePrivateGroupType
     property bool isSticker: contentType === Constants.stickerType
     property bool isText: contentType === Constants.messageType
-    property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
+    property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio || contentType === Constants.communityInviteType
 
     property bool isExpired: (outgoingStatus == "sending" && (Math.floor(timestamp) + 180000) < Date.now())
     property bool isStatusUpdate: false
@@ -119,6 +120,8 @@ Item {
                     return privateGroupHeaderComponent
                 case Constants.transactionType:
                     return transactionBubble
+                case Constants.communityInviteType:
+                    return invitationBubble
                 default:
                     return appSettings.compactMode  ? compactMessageComponent : 
                       isStatusUpdate ? statusUpdateComponent : messageComponent
@@ -219,7 +222,6 @@ Item {
         }
     }
 
-    // Normal message
     Component {
         id: messageComponent
         NormalMessage {
@@ -239,7 +241,6 @@ Item {
         }
     }
 
-    // Compact Messages
     Component {
         id: compactMessageComponent
         CompactMessage {
@@ -251,10 +252,14 @@ Item {
         }
     }
 
-    // Transaction bubble
     Component {
         id: transactionBubble
         TransactionBubble {}
+    }
+
+    Component {
+        id: invitationBubble
+        InvitationBubble {}
     }
 }
 
