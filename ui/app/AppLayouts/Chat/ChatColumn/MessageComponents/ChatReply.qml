@@ -75,7 +75,7 @@ Loader {
                 anchors.topMargin: repliedMessageType == Constants.imageType ? 15 : 8
                 anchors.left: lblReplyMessage.left
                 anchors.right: lblReplyMessage.right
-                anchors.rightMargin: chatTextItem.chatHorizontalPadding
+                anchors.rightMargin: root.chatHorizontalPadding
                 color: root.elementsColor
             }
         }
