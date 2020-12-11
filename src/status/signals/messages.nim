@@ -173,7 +173,7 @@ proc toCommunity*(jsonCommunity: JsonNode): Community =
   if jsonCommunity["description"].hasKey("chats") and jsonCommunity["description"]["chats"].kind != JNull:
     for chatId, chat in jsonCommunity{"description"}{"chats"}:
       result.chats.add(Chat(
-        id: chatId,
+        id: result.id & chatId,
         name: chat{"identity"}{"display_name"}.getStr,
         description: chat{"identity"}{"description"}.getStr,
         # TODO get this from access
