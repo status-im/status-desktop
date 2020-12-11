@@ -732,7 +732,11 @@ QtObject:
     notify = joinedCommunitiesChanged
 
   proc addCommunityToList*(self: ChatsView, community: Community) =
-    self.communityList.addCommunityItemToList(community)
+    let communityCheck = self.joinedCommunityList.getCommunityById(community.id)
+    if (communityCheck.id == ""):
+      self.joinedCommunityList.addCommunityItemToList(community)
+    else:
+      self.joinedCommunityList.replaceCommunity(community)
 
   proc createCommunity*(self: ChatsView, name: string, description: string, color: string, imagePath: string): string {.slot.} =
     result = ""

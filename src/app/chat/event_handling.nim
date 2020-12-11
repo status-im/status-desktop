@@ -25,7 +25,6 @@ proc handleChatEvents(self: ChatController) =
         self.view.deleteMessage(message.chatId, message.replace)
     self.view.pushReactions(evArgs.emojiReactions)
     if (evArgs.communities.len > 0):
-      echo "I GOT A COMMUNITYs"
       for community in evArgs.communities:
         self.view.addCommunityToList(community)
 

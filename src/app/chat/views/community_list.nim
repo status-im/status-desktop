@@ -1,4 +1,4 @@
-import NimQml, Tables
+import NimQml, Tables, chronicles
 import ../../../status/chat/[chat, message]
 import ../../../status/status
 import ../../../status/ens
@@ -88,10 +88,18 @@ QtObject:
       if community.id == communityId:
         return community
 
-proc addChannelToCommunity*(self: CommunityList, communityId: string, chat: Chat) =
+  proc addChannelToCommunity*(self: CommunityList, communityId: string, chat: Chat) =
     var community = self.getCommunityById(communityId)
     community.chats.add(chat)
 
     let index = self.communities.findIndexById(communityId)
     self.communities[index] = community
-   
+
+  proc replaceCommunity*(self: CommunityList, community: Community) =
+    let index = self.communities.findIndexById(community.id)
+    if (index == -1):
+      return
+    let topLeft = self.createIndex(index, index, nil)
+    let bottomRight = self.createIndex(index, index, nil)
+    self.communities[index] = community
+    self.dataChanged(topLeft, bottomRight, @[CommunityRoles.Name.int, CommunityRoles.Description.int])
