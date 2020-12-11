@@ -183,6 +183,10 @@ QtObject {
         return (/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(text))
     }
 
+    function isHexColor(c) {
+        return (/^#([0-9A-F]{6}|[0-9A-F]{3})$/i.test(c))
+    }
+
     function isSpace(c) {
         return (/( |\t|\n|\r)/.test(c))
     }

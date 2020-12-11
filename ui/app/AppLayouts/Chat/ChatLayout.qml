@@ -17,6 +17,12 @@ SplitView {
         chatColumn.onActivated()
     }
 
+    function openPopup(popupComponent, params = {}) {
+        const popup = popupComponent.createObject(chatView, params);
+        popup.open()
+        return popup
+    }
+
     Connections {
         target: applicationWindow
         onSettingsLoaded: {
@@ -26,16 +32,32 @@ SplitView {
     }
     Component.onDestruction: appSettings.chatSplitView = this.saveState()
 
-    ContactsColumn {
-        id: contactsColumn
-        SplitView.preferredWidth: Style.current.leftTabPrefferedSize
-        SplitView.minimumWidth: Style.current.leftTabMinimumWidth
-        SplitView.maximumWidth: Style.current.leftTabMaximumWidth
+    Loader {
+        id: contactColumnLoader
+        sourceComponent: chatsModel.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
+    }
+
+    Component {
+        id: contactsColumnComponent
+        ContactsColumn {
+            SplitView.preferredWidth: Style.current.leftTabPrefferedSize
+            SplitView.minimumWidth: Style.current.leftTabMinimumWidth
+            SplitView.maximumWidth: Style.current.leftTabMaximumWidth
+        }
+    }
+
+    Component {
+        id: communtiyColumnComponent
+        CommunityColumn {
+            SplitView.preferredWidth: Style.current.leftTabPrefferedSize
+            SplitView.minimumWidth: Style.current.leftTabMinimumWidth
+            SplitView.maximumWidth: Style.current.leftTabMaximumWidth
+        }
     }
 
     ChatColumn {
         id: chatColumn
-        chatGroupsListViewCount: contactsColumn.chatGroupsListViewCount
+        chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
     }
 
     function openProfilePopup(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, parentPopup){

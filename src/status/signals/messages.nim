@@ -152,6 +152,31 @@ proc toChat*(jsonChat: JsonNode): Chat =
     for jsonMember in jsonChat["membershipUpdateEvents"]:
       result.membershipUpdateEvents.add(jsonMember.toChatMembershipEvent)
 
+proc toCommunity*(jsonCommunity: JsonNode): Community =
+  result = Community(
+    id: jsonCommunity{"id"}.getStr,
+    name: jsonCommunity{"description"}{"identity"}{"display_name"}.getStr,
+    description: jsonCommunity{"description"}{"identity"}{"description"}.getStr,
+    # color: jsonCommunity{"description"}{"identity"}{"color"}.getStr,
+    access: jsonCommunity{"description"}{"permissions"}{"access"}.getInt,
+    admin: jsonCommunity{"admin"}.getBool,
+    joined: jsonCommunity{"joined"}.getBool,
+    verified: jsonCommunity{"verified"}.getBool,
+    chats: newSeq[Chat]()
+  )
+
+  if not jsonCommunity["description"].hasKey("chats") or jsonCommunity["description"]["chats"].kind == JNull:
+    return result
+
+  for chatId, chat in jsonCommunity{"description"}{"chats"}:
+    result.chats.add(Chat(
+      id: chatId,
+      name: chat{"identity"}{"display_name"}.getStr,
+      description: chat{"identity"}{"description"}.getStr,
+      # TODO get this from access
+      chatType: ChatType.Public#chat{"permissions"}{"access"}.getInt,
+    ))
+
 proc toTextItem*(jsonText: JsonNode): TextItem =
   result = TextItem(
     literal: jsonText{"literal"}.getStr,
