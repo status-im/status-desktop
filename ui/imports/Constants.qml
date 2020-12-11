@@ -7,7 +7,11 @@ QtObject {
     readonly property int chatTypePublic: 2
     readonly property int chatTypePrivateGroupChat: 3
     readonly property int chatTypeStatusUpdate: 4
-    readonly property int communityPublicChat: 6
+    readonly property int chatTypeCommunity: 6
+
+    readonly property int communityChatPublicAccess: 1
+    readonly property int communityChatInvitationOnlyAccess: 2
+    readonly property int communityChatOnRequestAccess: 3
 
     readonly property int fetchRangeLast24Hours: 86400
     readonly property int fetchRangeLast2Days: 172800
@@ -50,6 +54,7 @@ QtObject {
     readonly property int systemMessagePrivateGroupType: 6
     readonly property int imageType: 7
     readonly property int audioType: 8
+    readonly property int communityInviteType: 9
 
     readonly property string watchWalletType: "watch"
     readonly property string keyWalletType: "key"

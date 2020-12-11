@@ -10,10 +10,10 @@ ModalPopup {
     property string communityId: community.id
     property string name: community.name
     property string description: community.description
+    property int access: community.access
     // TODO get the real image once it's available
     property string source: "../../../img/ens-header-dark@2x.png"
-    // TODO set real nb of members
-    property int nbMembers: 12
+    property int nbMembers: community.nbMembers
 
     id: popup
 
@@ -42,7 +42,14 @@ ModalPopup {
 
         StyledText {
             // TODO get this from access property
-            text: qsTr("Public community")
+            text: {
+                switch(access) {
+                case Constants.communityChatPublicAccess: return qsTr("Public community");
+                case Constants.communityChatInvitationOnlyAccess: return qsTr("Invitation only community");
+                case Constants.communityChatOnRequestAccess: return qsTr("On request community");
+                default: return qsTr("Unknown community");
+                }
+            }
             anchors.left: communityName.left
             anchors.top: communityName.bottom
             anchors.topMargin: 2
@@ -128,7 +135,7 @@ ModalPopup {
             color: Style.current.transparent
         }
     }
-    
+
     footer: Item {
         anchors.fill: parent
 

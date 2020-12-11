@@ -300,6 +300,7 @@ ScrollView {
             messageId: model.messageId
             emojiReactions: model.emojiReactions
             linkUrls: model.linkUrls
+            communityId: model.communityId
             imageUrls: model.imageUrls
             prevMessageIndex: {
                 // This is used in order to have access to the previous message and determine the timestamp
