@@ -84,7 +84,6 @@ ModalPopup {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        // TODO if already joined, just open the Community in the section
                         if (joined) {
                             chatsModel.setActiveCommunity(id)
                         } else {

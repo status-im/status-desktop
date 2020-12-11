@@ -823,6 +823,9 @@ QtObject:
       if (communityId == self.activeCommunity.communityItem.id):
         self.activeCommunity.setActive(false)
       self.joinedCommunityList.removeCommunityItemFromList(communityId)
+      var updatedCommunity = self.communityList.getCommunityById(communityId)
+      updatedCommunity.joined = false
+      self.communityList.replaceCommunity(updatedCommunity)
     except Exception as e:
       error "Error leaving the community", msg = e.msg
       result = fmt"Error leaving the community: {e.msg}"
