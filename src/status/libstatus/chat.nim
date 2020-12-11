@@ -18,7 +18,7 @@ proc removeFilters*(chatId: string, filterId: string) =
     [{ "ChatID": chatId, "FilterID": filterId }]
   ])
 
-proc saveChat*(chatId: string, oneToOne: bool = false, active: bool = true, color: string, ensName: string = "") =
+proc saveChat*(chatId: string, chatType: ChatType, active: bool = true, color: string, ensName: string = "") =
   # TODO: ideally status-go/stimbus should handle some of these fields instead of having the client
   # send them: lastMessage, unviewedMEssagesCount, timestamp, lastClockValue, name?
   discard callPrivateRPC("saveChat".prefix, %* [
@@ -30,7 +30,7 @@ proc saveChat*(chatId: string, oneToOne: bool = false, active: bool = true, colo
       "active": active,
       "id": chatId,
       "unviewedMessagesCount": 0, # TODO:
-      "chatType":  if oneToOne: 1 else: 2,  # TODO: use constants
+      "chatType":  chatType.int,
       "timestamp": 1588940692659  # TODO:
     }
   ])
@@ -63,7 +63,11 @@ proc chatMessages*(chatId: string, cursor: string = ""): (string, seq[Message]) 
   else:
     cursorVal = newJString(cursor)
 
-  let rpcResult = parseJson(callPrivateRPC("chatMessages".prefix, %* [chatId, cursorVal, 20]))["result"]
+  let res = callPrivateRPC("chatMessages".prefix, %* [chatId, cursorVal, 20])
+  echo "MESSAGES FOR: ", $chatId
+  if chatId == "@timeline":
+    echo "MESSAGES: ", $res
+  let rpcResult = parseJson(res)["result"]
   if rpcResult["messages"].kind != JNull:
     for jsonMsg in rpcResult["messages"]:
       messages.add(jsonMsg.toMessage)

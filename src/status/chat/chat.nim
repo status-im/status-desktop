@@ -6,8 +6,11 @@ type ChatType* {.pure.}= enum
   OneToOne = 1, 
   Public = 2,
   PrivateGroupChat = 3
+  Profile = 4
+  Timeline = 5
 
 proc isOneToOne*(self: ChatType): bool = self == ChatType.OneToOne
+proc isTimeline*(self: ChatType): bool = self == ChatType.Timeline
 
 type ChatMember* = object
   admin*: bool

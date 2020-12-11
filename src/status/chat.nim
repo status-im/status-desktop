@@ -1,4 +1,4 @@
-import json, strutils, sequtils, tables, chronicles, times
+import json, strutils, sequtils, tables, chronicles, times, sugar
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
 import libstatus/chatCommands as status_chat_commands
@@ -94,7 +94,7 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType, ensName: string 
 
   var chat = newChat(chatId, ChatType(chatType))
   self.channels[chat.id] = chat
-  status_chat.saveChat(chatId, chatType.isOneToOne, true, chat.color, ensName)
+  status_chat.saveChat(chatId, chatType, true, chat.color, ensName)
   if ensName != "":
     chat.name = ensName
     chat.ensName = ensName
@@ -126,7 +126,12 @@ proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
   self.events.emit("chatUpdate", ChatUpdateArgs(contacts: contacts))
 
 proc init*(self: ChatModel) =
-  let chatList = status_chat.loadChats()
+  var chatList = status_chat.loadChats()
+
+  if chatList.filter(c => c.chatType == ChatType.Timeline).len == 0:
+    var timelineChannel = newChat("@timeline", ChatType.Timeline)
+    self.join(timelineChannel.id, timelineChannel.chatType)
+    chatList.add(timelineChannel)
 
   var filters:seq[JsonNode] = @[]
   for chat in chatList:

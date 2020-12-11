@@ -1,4 +1,5 @@
 import sugar, sequtils, times, strutils
+import ../../status/chat/chat as status_chat
 
 proc handleChatEvents(self: ChatController) =
   # Display already saved messages
@@ -39,6 +40,9 @@ proc handleChatEvents(self: ChatController) =
 
   self.status.events.on("channelLoaded") do(e: Args):
     var channel = ChannelArgs(e)
+    #if channel.chat.chatType != ChatType.Timeline:
+      #echo "ADDING CHAT: ", channel.chat.name
+      #discard self.view.chats.addChatItemToList(channel.chat)
     discard self.view.chats.addChatItemToList(channel.chat)
     self.status.chat.chatMessages(channel.chat.id)
     self.status.chat.chatReactions(channel.chat.id)
