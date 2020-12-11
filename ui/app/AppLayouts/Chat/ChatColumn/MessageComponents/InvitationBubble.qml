@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import "../../../../../shared"
+import "../../../../../shared/status"
 import "../../../../../imports"
 import "./TransactionComponents"
 import "../../../Wallet/data"
@@ -10,17 +11,23 @@ Item {
 
     id: root
     anchors.left: parent.left
-    anchors.leftMargin: isCurrentUser ? 0 :
-      appSettings.compactMode ? Style.current.padding : 48;
-    width: rectangleBubbleLoader.width
-    height: rectangleBubbleLoader.height
+//    anchors.leftMargin: isCurrentUser ? 0 :
+//      appSettings.compactMode ? Style.current.padding : 48;
+    width: childrenRect.width
+    height: childrenRect.height
 
     Component.onCompleted: {
-        console.log('SET', communityId)
         chatsModel.setObservedCommunity(communityId)
 
         root.invitedCommunity = chatsModel.observedCommunity
-        console.log('invitedCommunity', invitedCommunity, invitedCommunity.name)
+    }
+
+    UserImage {
+        id: chatImage
+        visible: authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
+        anchors.top: parent.top
     }
 
     Loader {
@@ -30,14 +37,14 @@ Item {
         height: item.height
         anchors.right: isCurrentUser ? parent.right : undefined
         anchors.rightMargin: Style.current.padding
-        anchors.left: !isCurrentUser ? parent.left : undefined
-        anchors.leftMargin: Style.current.padding
+        anchors.left: !isCurrentUser ? chatImage.right : undefined
+        anchors.leftMargin: Style.current.smallPadding
 
         sourceComponent: Component {
             Rectangle {
                 id: rectangleBubble
                 width: 270
-                height: 240
+                height: childrenRect.height + Style.current.halfPadding
                 radius: 16
                 color: Style.current.background
                 border.color: Style.current.border
@@ -108,7 +115,7 @@ Item {
                 StyledText {
                     id: communityNbMembers
                     // TODO add the plural support
-                    text: qsTr("%s members").arg(invitedCommunity.nbMembers)
+                    text: qsTr("%1 members").arg(invitedCommunity.nbMembers)
                     anchors.top: communityDesc.bottom
                     anchors.topMargin: 2
                     anchors.left: parent.left
@@ -116,6 +123,25 @@ Item {
                     font.pixelSize: 13
                     font.weight: Font.Medium
                     color: Style.current.secondaryText
+                }
+
+                Separator {
+                    id: sep2
+                    anchors.top: communityNbMembers.bottom
+                    anchors.topMargin: Style.current.halfPadding
+                }
+
+                StatusButton {
+                    type: "secondary"
+                    anchors.top: sep2.bottom
+                    width: parent.width
+                    height: 44
+                    enabled: !invitedCommunity.joined
+                    text: invitedCommunity.joined ? qsTr("Joined") :
+                        qsTr("Join")
+                    onClicked: {
+                        chatsModel.joinCommunity(communityId)
+                    }
                 }
             }
         }

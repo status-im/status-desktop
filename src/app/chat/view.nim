@@ -787,8 +787,11 @@ QtObject:
 
   proc setObservedCommunity*(self: ChatsView, communityId: string) {.slot.} =
     if(communityId == ""): return
-    discard self.getCommunitiesIfNotFetched()
-    self.observedCommunity.setCommunityItem(self.communityList.getCommunityById(communityId))
+    var community = self.communityList.getCommunityById(communityId) 
+    if (community.id == ""):
+      discard self.getCommunitiesIfNotFetched()
+      community = self.communityList.getCommunityById(communityId) 
+    self.observedCommunity.setCommunityItem(community)
     self.observedCommunityChanged()
 
   proc getObservedCommunity*(self: ChatsView): QVariant {.slot.} =
