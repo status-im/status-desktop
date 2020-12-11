@@ -16,9 +16,9 @@ Rectangle {
     property bool isCompact: appSettings.compactMode
     property bool hovered: false
 
-    id: wrapper
+    id: communityButton
     color: {
-      if (wrapper.hovered) {
+      if (communityButton.hovered) {
         return Style.current.secondaryBackground
       }
       return Style.current.transparent
@@ -29,8 +29,8 @@ Rectangle {
     radius: Style.current.radius
     // Hide the box if it is filtered out
     property bool isVisible: searchStr === "" ||
-                             wrapper.name.toLowerCase().includes(searchStr) ||
-                             wrapper.description.toLowerCase().includes(searchStr)
+                             communityButton.name.toLowerCase().includes(searchStr) ||
+                             communityButton.description.toLowerCase().includes(searchStr)
     visible: isVisible ? true : false
     height: isVisible ? !isCompact ? 64 : communityImage.height + Style.current.smallPadding * 2 : 0
 
@@ -38,7 +38,7 @@ Rectangle {
         id: communityImage
         height: !isCompact ? 40 : 20
         width: !isCompact ? 40 : 20
-        source: wrapper.image
+        source: communityButton.image
         anchors.left: parent.left
         anchors.leftMargin: !isCompact ? Style.current.padding : Style.current.smallPadding
         anchors.verticalCenter: parent.verticalCenter
@@ -46,7 +46,7 @@ Rectangle {
 
     StyledText {
         id: contactInfo
-        text: wrapper.name
+        text: communityButton.name
         anchors.right: contactNumberChatsCircle.left
         anchors.rightMargin: Style.current.smallPadding
         elide: Text.ElideRight
@@ -66,10 +66,10 @@ Rectangle {
         anchors.rightMargin: !isCompact ? Style.current.padding : Style.current.smallPadding
         anchors.verticalCenter: parent.verticalCenter
         color: Style.current.primary
-        visible: (unviewedMessagesCount > 0) || wrapper.hasMentions
+        visible: (unviewedMessagesCount > 0) || communityButton.hasMentions
         StyledText {
             id: contactNumberChats
-            text: wrapper.hasMentions ? '@' : (wrapper.unviewedMessagesCount < 100 ? wrapper.unviewedMessagesCount : "99")
+            text: communityButton.hasMentions ? '@' : (communityButton.unviewedMessagesCount < 100 ? communityButton.unviewedMessagesCount : "99")
             font.pixelSize: 12
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -83,10 +83,10 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         onEntered: {
-          wrapper.hovered = true
+          communityButton.hovered = true
         }
         onExited: {
-          wrapper.hovered = false
+          communityButton.hovered = false
         }
         onClicked: {
             chatsModel.setActiveCommunity(communityId)
