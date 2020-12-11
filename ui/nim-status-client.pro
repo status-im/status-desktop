@@ -165,8 +165,16 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/UserImage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/UsernameLabel.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/qmldir \
+    app/AppLayouts/Chat/CommunityColumn.qml \
     app/AppLayouts/Chat/ContactsColumn/AddChat.qml \
     app/AppLayouts/Chat/ContactsColumn/ClosedEmptyView.qml \
+    app/AppLayouts/Chat/ContactsColumn/CommunityButton.qml \
+    app/AppLayouts/Chat/ContactsColumn/CommunityComponents/CreateChannelPopup.qml \
+    app/AppLayouts/Chat/ContactsColumn/CommunityList.qml \
+    app/AppLayouts/Chat/ContactsColumn/CommunityWelcomeBanner.qml \
+    app/AppLayouts/Chat/components/CommunitiesPopup.qml \
+    app/AppLayouts/Chat/components/CommunityDetailPopup.qml \
+    app/AppLayouts/Chat/components/CreateCommunityPopup.qml \
     app/AppLayouts/Chat/components/EmojiCategoryButton.qml \
     app/AppLayouts/Chat/components/EmojiPopup.qml \
     app/AppLayouts/Chat/components/EmojiReaction.qml \

@@ -27,7 +27,7 @@ StatusRoundButton {
             icon.source: "../../../img/new_chat.svg"
             icon.width: 20
             icon.height: 20
-            onTriggered: privateChatPopup.open()
+            onTriggered: openPopup(groupChatPopupComponent)
         }
         Action {
             //% "Start group chat"
@@ -35,7 +35,7 @@ StatusRoundButton {
             icon.source: "../../../img/group_chat.svg"
             icon.width: 20
             icon.height: 20
-            onTriggered: groupChatPopup.open()
+            onTriggered: openPopup(groupChatPopupComponent)
         }
         Action {
             //% "Join public chat"
@@ -43,7 +43,16 @@ StatusRoundButton {
             icon.source: "../../../img/public_chat.svg"
             icon.width: 20
             icon.height: 20
-            onTriggered: publicChatPopup.open()
+            onTriggered: openPopup(publicChatPopupComponent)
+        }
+        Action {
+            text: qsTr("Communities")
+            icon.source: "../../../img/communities.svg"
+            icon.width: 20
+            icon.height: 20
+            onTriggered: {
+                openPopup(communitiesPopupComponent)
+            }
         }
         onAboutToHide: {
             btnAdd.state = "default"
