@@ -8,6 +8,7 @@ import "../../../Wallet/data"
 Item {
     property var invitedCommunity
     property int innerMargin: 12
+    property bool joined: false
 
     id: root
     anchors.left: parent.left
@@ -67,7 +68,7 @@ Item {
 
                 StyledText {
                     id: invitedYou
-                    text: qsTr("%1 invited you to join a community").arg("Young boy")
+                    text: qsTr("%1 invited you to join a community").arg(userName)
                     anchors.top: title.bottom
                     anchors.topMargin: 4
                     anchors.left: parent.left
@@ -137,10 +138,11 @@ Item {
                     width: parent.width
                     height: 44
                     enabled: !invitedCommunity.joined
-                    text: invitedCommunity.joined ? qsTr("Joined") :
+                    text: root.joined || invitedCommunity.joined ? qsTr("Joined") :
                         qsTr("Join")
                     onClicked: {
                         chatsModel.joinCommunity(communityId)
+                        root.joined = true
                     }
                 }
             }
