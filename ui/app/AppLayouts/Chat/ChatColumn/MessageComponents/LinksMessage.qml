@@ -1,172 +1,186 @@
-import QtQuick 2.3
+import QtQuick 2.13
 import QtGraphicalEffects 1.13
+import QtQuick.Layouts 1.13
 import "../../../../../imports"
 import "../../../../../shared"
 import "../../../../../shared/status"
+import "./" as MessageComponents
 import "../../../Profile/LeftTab/constants.js" as ProfileConstants
 
-Item {
+Column {
     id: root
     property string linkUrls: ""
+    property var container
+    property bool isCurrentUser: false
+    spacing: Style.current.halfPadding
 
-    height: {
-        let h = 0
-        for (let i = 0; i < linksRepeater.count; i++) {
-            h += linksRepeater.itemAt(i).height
-        }
-        return h
-    }
-    width: {
-        let w = 0
-        for (let i = 0; i < linksRepeater.count; i++) {
-            if (linksRepeater.itemAt(i).width > w) {
-                w = linksRepeater.itemAt(i).width
+    ListModel {
+        id: linksModel
+        Component.onCompleted: {
+            if (!root.linkUrls) {
+                return
             }
+            root.linkUrls.split(" ").forEach(link => {
+                linksModel.append({link})
+            })
         }
-        return w
     }
 
     Repeater {
         id: linksRepeater
-        model: {
-            if (!root.linkUrls) {
-                return []
-            }
-
-            return root.linkUrls.split(" ")
-        }
-
+        model: linksModel // doesn't work with a JSON object model!
 
         delegate: Loader {
-            property string linkString: modelData
-
-            // This connection is needed because since the white list is an array, when something in it changes,
-            // The whole object is still the same (reference), so the normal signal is not sent
+            id: linkMessageLoader
+            property var linkData
+            property int linkWidth: linksRepeater.width
+            active: true
+            
             Connections {
-                target: applicationWindow
-                onWhitelistChanged: {
+                target: appSettings
+                onWhitelistedUnfurlingSitesChanged: {
+                    linkMessageLoader.sourceComponent = undefined
+                    linkMessageLoader.sourceComponent = linkMessageLoader.getSourceComponent()
+                }
+                onNeverAskAboutUnfurlingAgainChanged: {
+                    linkMessageLoader.sourceComponent = undefined
+                    linkMessageLoader.sourceComponent = linkMessageLoader.getSourceComponent()
+                }
+                onDisplayChatImagesChanged: {
+                    linkMessageLoader.sourceComponent = undefined
                     linkMessageLoader.sourceComponent = linkMessageLoader.getSourceComponent()
                 }
             }
 
             function getSourceComponent() {
-                let linkExists = false
-                let linkWhiteListed = false
-                Object.keys(appSettings.whitelistedUnfurlingSites).some(function (site) {
-                    // Check if our link contains the string part of the url
-                    // TODO this might become not  a reliable way to check since youtube has mutliple ways of being shown
-                    if (modelData.includes(site)) {
-                        linkExists = true
-                        // check if it was enabled
-                        linkWhiteListed = appSettings.whitelistedUnfurlingSites[site] === true
-                        return true
+                // Reset the height in case we set it to 0 below. See note below
+                // for more information
+                this.height = undefined
+                if (appSettings.displayChatImages && Utils.hasImageExtension(link)) {
+                    linkData = {
+                        thumbnailUrl: link
                     }
-                    return
-                })
-
-                if (linkWhiteListed) {
-                    return unfurledLinkComponent
+                    return unfurledImageComponent
                 }
-                if (linkExists && !appSettings.neverAskAboutUnfurlingAgain) {
+                let linkWhiteListed = false
+                const linkHostname = Utils.getHostname(link)
+                const linkExists = Object.keys(appSettings.whitelistedUnfurlingSites).some(function(whitelistedHostname) {
+                    const exists = linkHostname.endsWith(whitelistedHostname)
+                    if (exists) {
+                        linkWhiteListed = appSettings.whitelistedUnfurlingSites[whitelistedHostname] === true
+                    }
+                    return exists
+                })
+                if (!linkWhiteListed && linkExists && !appSettings.neverAskAboutUnfurlingAgain) {
                     return enableLinkComponent
                 }
-
-                return
+                if (linkWhiteListed) {
+                    const data = chatsModel.getLinkPreviewData(link)
+                    linkData = JSON.parse(data)
+                    if (linkData.error) {
+                        console.error(linkData.error)
+                        return undefined
+                    }
+                    if (linkData.contentType.startsWith("image/")) {
+                        return unfurledImageComponent
+                    }
+                    if (linkData.site && linkData.title) {
+                        linkData.address = link
+                        return unfurledLinkComponent
+                    }
+                }
+                // setting the height to 0 allows the "enable link" dialog to
+                // disappear correctly when appSettings.neverAskAboutUnfurlingAgain
+                // is true. The height is reset at the top of this method.
+                this.height = 0
+                return undefined
             }
+            Component.onCompleted: {
+                // putting this is onCompleted prevents automatic binding, where
+                // QML warns of a binding loop detected
+                this.sourceComponent = getSourceComponent()
+            }
+        }
+    }
 
-            id: linkMessageLoader
-            active: true
-            sourceComponent: getSourceComponent()
+    Component {
+        id: unfurledImageComponent
+
+        MessageBorder {
+            width: linkImage.width
+            height: linkImage.height
+            isCurrentUser: root.isCurrentUser
+            MessageComponents.ImageLoader {
+                id: linkImage
+                anchors.centerIn: parent
+                container: root.container
+                source: linkData.thumbnailUrl
+                imageWidth: 300
+                isCurrentUser: root.isCurrentUser
+            }
         }
     }
 
     Component {
         id: unfurledLinkComponent
-        Loader {
-            property var linkData: {
-                const data = chatsModel.getLinkPreviewData(linkString)
-                const result = JSON.parse(data)
-                if (result.error) {
-                    console.error(result.error)
-                    return undefined
-                }
-                return result
+        MessageBorder {
+            width: linkImage.width + 2
+            height: linkImage.height + (Style.current.smallPadding * 2) + linkTitle.height + 2 + linkSite.height
+            isCurrentUser: root.isCurrentUser
+
+            MessageComponents.ImageLoader {
+                id: linkImage
+                container: root.container
+                source: linkData.thumbnailUrl
+                imageWidth: 300
+                isCurrentUser: root.isCurrentUser
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: 1
             }
-            active: linkData !== undefined && !!linkData.title
-            sourceComponent: Component {
-                Rectangle {
-                    id: rectangle
-                    width: 300
-                    height: childrenRect.height + Style.current.halfPadding
-                    radius: 16
-                    clip: true
-                    border.width: 1
-                    border.color: Style.current.border
-                    color:Style.current.background
+            StyledText {
+                id: linkTitle
+                text: linkData.title
+                font.pixelSize: 13
+                font.weight: Font.Medium
+                elide: Text.ElideRight
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: linkImage.bottom
+                anchors.rightMargin: Style.current.smallPadding
+                anchors.leftMargin: Style.current.smallPadding
+                anchors.topMargin: Style.current.smallPadding
+            }
 
-                    // TODO the clip doesnt seem to work. Find another way to have rounded corners and wait for designs
-                    Image {
-                        id: linkImage
-                        source: linkData.thumbnailUrl
-                        fillMode: Image.PreserveAspectFit
-                        width: parent.width
+            StyledText {
+                id: linkSite
+                text: linkData.site
+                font.pixelSize: 12
+                font.weight: Font.Thin
+                color: Style.current.secondaryText
+                anchors.top: linkTitle.bottom
+                anchors.topMargin: 2
+                anchors.left: linkTitle.left
+                anchors.bottomMargin: Style.current.smallPadding
+            }
 
-                        layer.enabled: true
-                        layer.effect: OpacityMask {
-                            maskSource: Item {
-                                width: linkImage.width
-                                height: linkImage.height
-                                Rectangle {
-                                    anchors.centerIn: parent
-                                    width: linkImage.width
-                                    height: linkImage.height
-                                    radius: 16
-                                }
-                            }
-                        }
-                    }
-
-                    StyledText {
-                        id: linkTitle
-                        text: linkData.title
-                        font.pixelSize: 13
-                        font.weight: Font.Medium
-                        elide: Text.ElideRight
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.top: linkImage.bottom
-                        anchors.rightMargin: Style.current.smallPadding
-                        anchors.leftMargin: Style.current.smallPadding
-                        anchors.topMargin: Style.current.smallPadding
-                    }
-
-                    StyledText {
-                        id: linkSite
-                        text: linkData.site
-                        font.pixelSize: 12
-                        font.weight: Font.Thin
-                        color: Style.current.secondaryText
-                        anchors.top: linkTitle.bottom
-                        anchors.topMargin: 2
-                        anchors.left: linkTitle.left
-                    }
-
-                    MouseArea {
-                        anchors.top: linkImage.top
-                        anchors.left: linkImage.left
-                        anchors.right: linkImage.right
-                        anchors.bottom: linkSite.bottom
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: Qt.openUrlExternally(linkString)
-                    }
-                }
+            MouseArea {
+                anchors.top: linkImage.top
+                anchors.left: linkImage.left
+                anchors.right: linkImage.right
+                anchors.bottom: linkSite.bottom
+                cursorShape: Qt.PointingHandCursor
+                onClicked: Qt.openUrlExternally(linkData.address)
             }
         }
     }
+        
+    
 
     Component {
         id: enableLinkComponent
         Rectangle {
+            id: enableLinkRoot
             width: 300
             height: childrenRect.height + Style.current.smallPadding
             radius: 16
@@ -182,6 +196,10 @@ Item {
                 anchors.topMargin: Style.current.smallPadding
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.smallPadding
+                onClicked: {
+                    enableLinkRoot.height = 0
+                    enableLinkRoot.visible = false
+                }
             }
 
             Image {
@@ -231,7 +249,6 @@ Item {
                     profileLayoutContainer.changeProfileSection(ProfileConstants.PRIVACY_AND_SECURITY)
                 }
                 width: parent.width
-//                height: 43
                 anchors.top: sep1.bottom
             }
 
@@ -248,7 +265,6 @@ Item {
                     appSettings.neverAskAboutUnfurlingAgain = true
                 }
                 width: parent.width
-//                height: 43
                 anchors.top: sep2.bottom
             }
         }

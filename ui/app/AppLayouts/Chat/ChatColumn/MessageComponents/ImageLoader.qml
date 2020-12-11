@@ -9,7 +9,7 @@ Item {
     property bool isCurrentUser: false
     property url source
     property bool playing: true
-    property bool isAnimated: !!source && source.toString().endsWith('.gif')
+    property bool isAnimated: true
     signal clicked(var image)
     property var container
 

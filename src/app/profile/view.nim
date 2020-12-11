@@ -1,5 +1,6 @@
 import NimQml, sequtils, strutils, sugar, os, json, chronicles
 import views/[mailservers_list, ens_manager, contacts, devices, mailservers, mnemonic, network, fleets, profile_info, device_list, dapp_list]
+import chronicles
 import ../chat/views/channels_list
 import ../../status/profile/profile
 import ../../status/profile as status_profile
@@ -14,6 +15,11 @@ import ../../status/libstatus/types
 import ../../status/libstatus/accounts/constants as accountConstants
 import qrcode/qrcode
 import ../utils/image_utils
+
+logScope:
+  topics = "profile-view"
+
+const UNKNOWN_ACCOUNT = "unknownAccount"
 
 QtObject:
   type ProfileView* = ref object of QObject
@@ -71,7 +77,7 @@ QtObject:
   proc getProfileSettingsFile(self: ProfileView): string {.slot.} =
     let address =
       if (self.profile.address == ""):
-        "unknownAccount"
+        UNKNOWN_ACCOUNT
       else:
         self.profile.address
 
@@ -90,6 +96,12 @@ QtObject:
     self.profile.setProfile(profile)
     self.profileChanged()
     self.profileSettingsFileChanged()
+    # Remove old 'unknownAccount' settings file if it was created
+    let unknownSettingsPath = os.joinPath(accountConstants.DATADIR, "qt", UNKNOWN_ACCOUNT)
+    if (not unknownSettingsPath.tryRemoveFile):
+      # Only fails if the file exists and an there was an error removing it
+      # More info: https://nim-lang.org/docs/os.html#tryRemoveFile%2Cstring
+      warn "Failed to remove unused settings file", file=unknownSettingsPath
 
   QtProperty[QVariant] profile:
     read = getProfile

@@ -9,6 +9,7 @@ Loader {
     property bool longReply: false
     property color elementsColor: isCurrentUser ? Style.current.chatReplyCurrentUser : Style.current.secondaryText
     property var container
+    property int chatHorizontalPadding
 
     id: root
     active: responseTo != "" && replyMessageIndex > -1

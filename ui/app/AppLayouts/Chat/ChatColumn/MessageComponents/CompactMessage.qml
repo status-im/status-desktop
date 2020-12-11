@@ -6,11 +6,10 @@ Item {
     property var clickMessage: function () {}
     property int chatHorizontalPadding: 12
     property int chatVerticalPadding: 7
-    property string imageUrls: ""
-    property bool showImages: appSettings.displayChatImages && root.imageUrls != ""
     property string linkUrls: ""
     property int contentType: 2
     property var container
+    property bool isCurrentUser: false
 
     id: root
     anchors.top: parent.top
@@ -49,6 +48,7 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: root.chatHorizontalPadding
         container: root.container
+	chatHorizontalPadding: root.chatHorizontalPadding
     }
 
     ChatText {
@@ -137,26 +137,6 @@ Item {
     }
 
     Loader {
-        id: imageLoader
-        active: root.showImages
-        anchors.left: chatText.left
-        anchors.leftMargin: 8
-        anchors.top: chatText.bottom
-
-        sourceComponent: Component {
-            ImageMessage {
-                color: Style.current.transparent
-                chatHorizontalPadding: 0
-                imageUrls: root.imageUrls
-                onClicked: {
-                    root.clickMessage(false, false, true, image)
-                }
-                container: root.container
-            }
-        }
-    }
-
-    Loader {
         id: linksLoader
         active: !!root.linkUrls
         anchors.left: chatText.left
@@ -166,6 +146,8 @@ Item {
         sourceComponent: Component {
             LinksMessage {
                 linkUrls: root.linkUrls
+                container: root.container
+                isCurrentUser: root.isCurrentUser
             }
         }
     }

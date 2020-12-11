@@ -25,7 +25,6 @@ type
     ResponseTo = UserRole + 14
     PlainText = UserRole + 15
     Index = UserRole + 16
-    ImageUrls = UserRole + 17
     Timeout = UserRole + 18
     Image = UserRole + 19
     Audio = UserRole + 20
@@ -133,7 +132,6 @@ QtObject:
       of ChatMessageRoles.OutgoingStatus: result = newQVariant(message.outgoingStatus)
       of ChatMessageRoles.ResponseTo: result = newQVariant(message.responseTo)
       of ChatMessageRoles.Index: result = newQVariant(index.row)
-      of ChatMessageRoles.ImageUrls: result = newQVariant(message.imageUrls)
       of ChatMessageRoles.Timeout: result = newQVariant(self.timedoutMessages.contains(message.id))
       of ChatMessageRoles.Image: result = newQVariant(message.image)
       of ChatMessageRoles.Audio: result = newQVariant(message.audio)
@@ -172,7 +170,6 @@ QtObject:
       ChatMessageRoles.OutgoingStatus.int: "outgoingStatus",
       ChatMessageRoles.ResponseTo.int: "responseTo",
       ChatMessageRoles.Index.int: "index",
-      ChatMessageRoles.ImageUrls.int: "imageUrls",
       ChatMessageRoles.Timeout.int: "timeout",
       ChatMessageRoles.Image.int: "image",
       ChatMessageRoles.Audio.int: "audio",

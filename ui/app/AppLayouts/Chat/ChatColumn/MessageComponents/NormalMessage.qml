@@ -4,8 +4,6 @@ import "../../../../../imports"
 
 Item {
     property var clickMessage: function () {}
-    property string imageUrls: ""
-    property bool showImages: appSettings.displayChatImages && root.imageUrls !== ""
     property string linkUrls: ""
     property bool isCurrentUser: false
     property int contentType: 2
@@ -127,6 +125,7 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: chatBox.chatHorizontalPadding
             container: root.container
+	    chatHorizontalPadding: chatBox.chatHorizontalPadding
         }
 
         ChatText {
@@ -210,10 +209,10 @@ Item {
 
     ChatTime {
         id: chatTime
-        anchors.top: root.showImages ? imageLoader.bottom : chatBox.bottom
+        anchors.top: linksLoader.active ? linksLoader.bottom : chatBox.bottom
         anchors.topMargin: 4
         anchors.bottomMargin: Style.current.padding
-        anchors.right: root.showImages ? imageLoader.right : chatBox.right
+        anchors.right: linksLoader.active ? linksLoader.right : chatBox.right
         anchors.rightMargin: root.isCurrentUser ? 5 : Style.current.padding
     }
 
@@ -235,30 +234,6 @@ Item {
     }
 
     Loader {
-        id: imageLoader
-        active: root.showImages
-        sourceComponent: imageComponent
-        anchors.left: !root.isCurrentUser ? chatImage.right : undefined
-        anchors.leftMargin: !root.isCurrentUser ? 8 : 0
-        anchors.right: !root.isCurrentUser ? undefined : parent.right
-        anchors.rightMargin: !root.isCurrentUser ? 0 : Style.current.padding
-        anchors.top: chatBox.bottom
-        anchors.topMargin: Style.current.smallPadding
-    }
-
-    Component {
-        id: imageComponent
-        ImageMessage {
-            isCurrentUser: root.isCurrentUser
-            container: root.container
-            imageUrls: root.imageUrls
-            onClicked: {
-                root.clickMessage(false, false, true, image)
-            }
-        }
-    }
-
-    Loader {
         id: linksLoader
         active: !!root.linkUrls
         anchors.left: !root.isCurrentUser ? chatImage.right : undefined
@@ -266,11 +241,14 @@ Item {
         anchors.right: !root.isCurrentUser ? undefined : parent.right
         anchors.rightMargin: !root.isCurrentUser ? 0 : Style.current.padding
         anchors.top: chatBox.bottom
-        anchors.topMargin: Style.current.smallPadding
+        anchors.topMargin: Style.current.halfPadding
+        anchors.bottomMargin: Style.current.halfPadding
 
         sourceComponent: Component {
             LinksMessage {
                 linkUrls: root.linkUrls
+                container: root.container
+                isCurrentUser: root.isCurrentUser
             }
         }
     }

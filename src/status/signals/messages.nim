@@ -198,7 +198,6 @@ proc toMessage*(jsonMsg: JsonNode): Message =
       isCurrentUser: $jsonMsg{"outgoingStatus"}.getStr == "sending" or $jsonMsg{"outgoingStatus"}.getStr == "sent",
       stickerHash: "",
       parsedText: @[],
-      imageUrls: "",
       linkUrls: "",
       image: $jsonMsg{"image"}.getStr,
       audio: $jsonMsg{"audio"}.getStr,
@@ -210,12 +209,6 @@ proc toMessage*(jsonMsg: JsonNode): Message =
     for text in jsonMsg["parsedText"]:
       message.parsedText.add(text.toTextItem)
 
-  message.imageUrls = concat(message.parsedText.map(t => t.children.filter(c => c.textType == "link")))
-    .filter(t => [".png", ".jpg", ".jpeg", ".svg", ".gif"].any(ext => t.destination.endsWith(ext)))
-    .map(t => t.destination)
-    .join(" ")
-
-  
   message.linkUrls = concat(message.parsedText.map(t => t.children.filter(c => c.textType == "link")))
     .filter(t => t.destination.startsWith("http"))
     .map(t => t.destination)

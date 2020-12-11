@@ -150,7 +150,6 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/DateGroup.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/EmojiReactions.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ImageLoader.qml \
-    app/AppLayouts/Chat/ChatColumn/MessageComponents/ImageMessage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/LinksMessage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/MessageMouseArea.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/NormalMessage.qml \
