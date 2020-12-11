@@ -6,7 +6,7 @@ import "../../../imports"
 import "../../../shared"
 import "../../../shared/status"
 import "./ContactsColumn"
-import "./ContactsColumn/CommunityComponents"
+import "./CommunityComponents"
 
 Item {
     // TODO unhardcode

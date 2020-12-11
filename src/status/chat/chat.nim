@@ -58,6 +58,7 @@ proc toJsonNode*(self: seq[ChatMembershipEvent]): seq[JsonNode] =
 
 type Chat* = ref object
   id*: string # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat
+  communityId*: string
   name*: string
   description*: string
   color*: string
@@ -86,7 +87,7 @@ type Community* = object
   name*: string
   description*: string
   chats*: seq[Chat]
-  # members: seq[] # TODO find what goes in there
+  members*: seq[string]
   # color*: string
   access*: int
   admin*: bool

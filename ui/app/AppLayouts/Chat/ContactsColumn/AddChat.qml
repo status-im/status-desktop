@@ -27,7 +27,7 @@ StatusRoundButton {
             icon.source: "../../../img/new_chat.svg"
             icon.width: 20
             icon.height: 20
-            onTriggered: openPopup(groupChatPopupComponent)
+            onTriggered: openPopup(privateChatPopupComponent)
         }
         Action {
             //% "Start group chat"

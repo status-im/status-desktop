@@ -19,6 +19,8 @@ proc toChat*(jsonChat: JsonNode): Chat
 
 proc toReaction*(jsonReaction: JsonNode): Reaction
 
+proc toCommunity*(jsonCommunity: JsonNode): Community
+
 proc fromEvent*(event: JsonNode): Signal = 
   var signal:MessageSignal = MessageSignal()
   signal.messages = @[]
@@ -43,9 +45,10 @@ proc fromEvent*(event: JsonNode): Signal =
   if event["event"]{"chats"} != nil:
     for jsonChat in event["event"]["chats"]:
       var chat = jsonChat.toChat
-      if chatsWithMentions.contains(chat.id):
-        chat.hasMentions = true
-      signal.chats.add(chat)
+      if (chat.communityId == ""):
+        if chatsWithMentions.contains(chat.id):
+          chat.hasMentions = true
+        signal.chats.add(chat)
 
   if event["event"]{"installations"} != nil:
     for jsonInstallation in event["event"]["installations"]:
@@ -54,6 +57,10 @@ proc fromEvent*(event: JsonNode): Signal =
   if event["event"]{"emojiReactions"} != nil:
     for jsonReaction in event["event"]["emojiReactions"]:
       signal.emojiReactions.add(jsonReaction.toReaction)
+
+  if event["event"]{"communities"} != nil:
+    for jsonCommunity in event["event"]["communities"]:
+      signal.communities.add(jsonCommunity.toCommunity)
 
   result = signal
 
@@ -115,6 +122,7 @@ proc toChat*(jsonChat: JsonNode): Chat =
 
   result = Chat(
     id: jsonChat{"id"}.getStr,
+    communityId: jsonChat{"communityId"}.getStr,
     name: jsonChat{"name"}.getStr,
     identicon: "",
     color: jsonChat{"color"}.getStr,
@@ -162,20 +170,24 @@ proc toCommunity*(jsonCommunity: JsonNode): Community =
     admin: jsonCommunity{"admin"}.getBool,
     joined: jsonCommunity{"joined"}.getBool,
     verified: jsonCommunity{"verified"}.getBool,
-    chats: newSeq[Chat]()
+    chats: newSeq[Chat](),
+    members: newSeq[string]()
   )
 
-  if not jsonCommunity["description"].hasKey("chats") or jsonCommunity["description"]["chats"].kind == JNull:
-    return result
-
-  for chatId, chat in jsonCommunity{"description"}{"chats"}:
-    result.chats.add(Chat(
-      id: chatId,
-      name: chat{"identity"}{"display_name"}.getStr,
-      description: chat{"identity"}{"description"}.getStr,
-      # TODO get this from access
+  if jsonCommunity["description"].hasKey("chats") and jsonCommunity["description"]["chats"].kind != JNull:
+    for chatId, chat in jsonCommunity{"description"}{"chats"}:
+      result.chats.add(Chat(
+        id: result.id & chatId,
+        name: chat{"identity"}{"display_name"}.getStr,
+        description: chat{"identity"}{"description"}.getStr,
+        # TODO get this from access
       chatType: ChatType.Public#chat{"permissions"}{"access"}.getInt,
-    ))
+      ))
+
+  if jsonCommunity["description"].hasKey("members") and jsonCommunity["description"]["members"].kind != JNull:
+    # memberInfo is empty for now
+    for memberPubKey, memeberInfo in jsonCommunity{"description"}{"members"}:
+      result.members.add(memberPubKey)
 
 proc toTextItem*(jsonText: JsonNode): TextItem =
   result = TextItem(
@@ -226,6 +238,7 @@ proc toMessage*(jsonMsg: JsonNode): Message =
       linkUrls: "",
       image: $jsonMsg{"image"}.getStr,
       audio: $jsonMsg{"audio"}.getStr,
+      communityId: $jsonMsg{"communityId"}.getStr,
       audioDurationMs: jsonMsg{"audioDurationMs"}.getInt,
       hasMention: false
     )

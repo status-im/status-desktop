@@ -22,29 +22,15 @@ ModalPopup {
         memberCount = 1;
         pubKeys = [];
         btnSelectMembers.state = "inactive";
-        for(var i in groupMembers.contentItem.children){
-            if (groupMembers.contentItem.children[i].isChecked !== null) {
-                groupMembers.contentItem.children[i].isChecked = false
-            }
-        }
 
-        data.clear();
-        const nbContacts = profileModel.contacts.list.rowCount()
-        for(let i = 0; i < nbContacts; i++){
-            data.append({
-                name: profileModel.contacts.list.rowData(i, "name"),
-                localNickname: profileModel.contacts.list.rowData(i, "localNickname"),
-                pubKey: profileModel.contacts.list.rowData(i, "pubKey"),
-                address: profileModel.contacts.list.rowData(i, "address"),
-                identicon: profileModel.contacts.list.rowData(i, "identicon"),
-                thumbnailImage: profileModel.contacts.list.rowData(i, "thumbnailImage"),
-                isUser: false,
-                isContact: profileModel.contacts.list.rowData(i, "isContact") !== "false"
-            });
-        }
-        data.append({
+        contactList.membersData.clear();
+
+        chatView.getContactListObject(contactList.membersData)
+
+        contactList.membersData.append({
             //% "(You)"
             name: profileModel.profile.username + " " + qsTrId("(you)"),
+            localNickname: profileModel.contacts.list.rowData(i, "localNickname"),
             pubKey: profileModel.profile.pubKey,
             address: "",
             identicon: profileModel.profile.identicon,
@@ -52,8 +38,8 @@ ModalPopup {
             isUser: true
         });
         noContactsRect.visible = !profileModel.contacts.list.hasAddedContacts();
-        svMembers.visible = !noContactsRect.visible;
-        if(!svMembers.visible){
+        contactList.visible = !noContactsRect.visible;
+        if (!contactList.visible) {
             memberCount = 0;
         }
     }
@@ -74,7 +60,7 @@ ModalPopup {
         if (!validate()) {
             return
         }
-        if(pubKeys.length === 0) {
+        if (pubKeys.length === 0) {
             return;
         }
         chatsModel.groups.create(Utils.filterXSS(groupName.text), JSON.stringify(pubKeys));
@@ -121,92 +107,35 @@ ModalPopup {
         validationError: channelNameValidationError
     }
 
-    Rectangle {
+    NoFriendsRectangle {
         id: noContactsRect
-        width: 260
         anchors.top: groupName.bottom
         anchors.topMargin: Style.current.xlPadding
         anchors.horizontalCenter: parent.horizontalCenter
-        StyledText {
-            id: noContacts
-            //% "You don’t have any contacts yet. Invite your friends to start chatting."
-            text: qsTrId("you-don-t-have-any-contacts-yet--invite-your-friends-to-start-chatting-")
-            color: Style.current.darkGrey
-            anchors.top: parent.top
-            anchors.topMargin: Style.current.padding
-            anchors.left: parent.left
-            anchors.right: parent.right
-            wrapMode: Text.WordWrap
-            horizontalAlignment: Text.AlignHCenter
-        }
-        StyledButton {
-            //% "Invite friends"
-            label: qsTrId("invite-friends")
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: noContacts.bottom
-            anchors.topMargin: Style.current.xlPadding
-            onClicked: {
-                inviteFriendsPopup.open()
-            }
-        }
-        InviteFriendsPopup {
-            id: inviteFriendsPopup
-        }
     }
 
-    ScrollView {
-        anchors.fill: parent
+    ContactList {
+        id: contactList
+        searchString: searchBox.text.toLowerCase()
+        selectMode: selectChatMembers && memberCount < maxMembers
         anchors.topMargin: 50
         anchors.top: searchBox.bottom
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-
-        id: svMembers
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        ScrollBar.vertical.policy: groupMembers.contentHeight > groupMembers.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-
-        ListView {
-            anchors.fill: parent
-            model: ListModel {
-                id: data
-            }
-            spacing: 0
-            clip: true
-            id: groupMembers
-            delegate: Contact {
-                isVisible: {
-                    if(selectChatMembers){
-                        return searchBox.text == "" || model.name.includes(searchBox.text)
-                    } else {
-                        return isChecked || isUser
-                    }
+        onItemChecked: function(pubKey, itemChecked){
+            var idx = pubKeys.indexOf(pubKey)
+            if(itemChecked){
+                if(idx === -1){
+                    pubKeys.push(pubKey)
                 }
-                showCheckbox: selectChatMembers && memberCount < maxMembers
-                pubKey: model.pubKey
-                isContact: !!model.isContact
-                isUser: model.isUser
-                name: !model.name.endsWith(".eth") && !!model.localNickname ?
-                          model.localNickname : Utils.removeStatusEns(model.name)
-                address: model.address
-                identicon: model.thumbnailImage || model.identicon
-                onItemChecked: function(pubKey, itemChecked){
-                    var idx = pubKeys.indexOf(pubKey)
-                    if(itemChecked){
-                        if(idx === -1){
-                            pubKeys.push(pubKey)
-                        }
-                    } else {
-                        if(idx > -1){
-                            pubKeys.splice(idx, 1);
-                        }
-                    }
-                    memberCount = pubKeys.length + 1;
-                    btnSelectMembers.state = pubKeys.length > 0 ? "active" : "inactive"
+            } else {
+                if(idx > -1){
+                    pubKeys.splice(idx, 1);
                 }
             }
+            memberCount = pubKeys.length + 1;
+            btnSelectMembers.state = pubKeys.length > 0 ? "active" : "inactive"
         }
     }
-    
+
     footer: Item {
         anchors.top: parent.bottom
         anchors.right: parent.right
