@@ -574,6 +574,13 @@ QtObject:
     read = getJoinedComunities
     notify = joinedCommunitiesChanged
 
+  proc addCommunityToList*(self: ChatsView, community: Community) =
+    let communityCheck = self.joinedCommunityList.getCommunityById(community.id)
+    if (communityCheck.id == ""):
+      self.joinedCommunityList.addCommunityItemToList(community)
+    else:
+      self.joinedCommunityList.replaceCommunity(community)
+
   proc createCommunity*(self: ChatsView, name: string, description: string, color: string, imagePath: string): string {.slot.} =
     result = ""
     try:
@@ -627,7 +634,11 @@ QtObject:
 
   proc setObservedCommunity*(self: ChatsView, communityId: string) {.slot.} =
     if(communityId == ""): return
-    self.observedCommunity.setCommunityItem(self.communityList.getCommunityById(communityId))
+    var community = self.communityList.getCommunityById(communityId) 
+    if (community.id == ""):
+      discard self.getCommunitiesIfNotFetched()
+      community = self.communityList.getCommunityById(communityId) 
+    self.observedCommunity.setCommunityItem(community)
     self.observedCommunityChanged()
 
   proc getObservedCommunity*(self: ChatsView): QVariant {.slot.} =
@@ -655,9 +666,19 @@ QtObject:
       if (communityId == self.activeCommunity.communityItem.id):
         self.activeCommunity.setActive(false)
       self.joinedCommunityList.removeCommunityItemFromList(communityId)
+      var updatedCommunity = self.communityList.getCommunityById(communityId)
+      updatedCommunity.joined = false
+      self.communityList.replaceCommunity(updatedCommunity)
     except Exception as e:
       error "Error leaving the community", msg = e.msg
       result = fmt"Error leaving the community: {e.msg}"
 
   proc leaveCurrentCommunity*(self: ChatsView): string {.slot.} =
     result = self.leaveCommunity(self.activeCommunity.communityItem.id)
+
+  proc inviteUserToCommunity*(self: ChatsView, pubKey: string): string {.slot.} =
+    try:
+      self.status.chat.inviteUserToCommunity(self.activeCommunity.id(), pubKey)
+    except Exception as e:
+      error "Error inviting to the community", msg = e.msg
+      result = fmt"Error inviting to the community: {e.msg}"

@@ -6,7 +6,6 @@ import "../../../../imports"
 import "../components"
 import "./"
 
-
 Item {
     property string searchStr: ""
     id: root
@@ -27,6 +26,7 @@ Item {
         delegate: CommunityButton {
             communityId: model.id
             name: model.name
+            description: model.description
             // TODO add other properties
             searchStr: root.searchStr
         }

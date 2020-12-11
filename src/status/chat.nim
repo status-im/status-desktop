@@ -22,6 +22,7 @@ type
     messages*: seq[Message]
     contacts*: seq[Profile]
     emojiReactions*: seq[Reaction]
+    communities*: seq[Community]
 
   ChatIdArg* = ref object of Args
     chatId*: string
@@ -67,7 +68,7 @@ proc newChatModel*(events: EventEmitter): ChatModel =
 proc delete*(self: ChatModel) =
   discard
 
-proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction]) =
+proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community]) =
   for chat in chats:
     if chat.isActive:
       self.channels[chat.id] = chat
@@ -81,7 +82,7 @@ proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiRea
       if self.lastMessageTimestamps[chatId] > ts:
         self.lastMessageTimestamps[chatId] = ts
       
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[], emojiReactions: emojiReactions))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[], emojiReactions: emojiReactions, communities: communities))
 
 proc hasChannel*(self: ChatModel, chatId: string): bool =
   self.channels.hasKey(chatId)
@@ -205,8 +206,8 @@ proc processMessageUpdateAfterSend(self: ChatModel, response: string): (seq[Chat
     for msg in messages:
       self.events.emit("sendingMessage", MessageArgs(id: msg.id, channel: msg.chatId))
 
-proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "", contentType: int = ContentType.Message.int) =
-  var response = status_chat.sendChatMessage(chatId, msg, replyTo, contentType)
+proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "", contentType: int = ContentType.Message.int, communityId: string = "") =
+  var response = status_chat.sendChatMessage(chatId, msg, replyTo, contentType, communityId)
   discard self.processMessageUpdateAfterSend(response)
 
 proc sendImage*(self: ChatModel, chatId: string, image: string) =
@@ -363,3 +364,8 @@ proc joinCommunity*(self: ChatModel, communityId: string) =
 
 proc leaveCommunity*(self: ChatModel, communityId: string) =
   status_chat.leaveCommunity(communityId)
+
+proc inviteUserToCommunity*(self: ChatModel, communityId: string, pubKey: string) =
+  status_chat.inviteUserToCommunity(communityId, pubKey)
+  # After sending the invite, we send a message with the community ID so they can join
+  self.sendMessage(pubKey, "Upgrade here to see an invitation to community", "", ContentType.Community.int, communityId)
