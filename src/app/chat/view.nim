@@ -3,6 +3,7 @@ import ../../status/status
 import ../../status/mailservers
 import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/mailservers as status_mailservers
+import ../../status/libstatus/types
 import ../../status/accounts as status_accounts
 import ../../status/chat as status_chat
 import ../../status/messages as status_messages
