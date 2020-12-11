@@ -16,27 +16,6 @@ Item {
         id: previewableSites
     }
 
-    Component.onCompleted: {
-        const sites = profileModel.getLinkPreviewWhitelist()
-        try {
-            const sitesJSON = JSON.parse(sites)
-            let settingUpdadted = false
-            sitesJSON.forEach(function (site) {
-                if (appSettings.whitelistedUnfurlingSites[site.address] === undefined)  {
-                    appSettings.whitelistedUnfurlingSites[site.address] = false
-                    settingUpdadted = true
-                }
-
-                previewableSites.append(site)
-            })
-            if (settingUpdadted) {
-                applicationWindow.whitelistChanged()
-            }
-        } catch (e) {
-            console.error('Could not parse the whitelist for sites', e)
-        }
-    }
-
     property Component dappListPopup: DappList {
         onClosed: destroy()
     }
@@ -153,22 +132,33 @@ Item {
             //% "Privacy"
             text: qsTrId("privacy")
         }
-
         RowLayout {
-            id: displayImageSettings
-            StyledText {
-                //% "Display images in chat automatically"
-                text: qsTrId("display-images-in-chat-automatically")
+            spacing: Style.current.padding
+            width: parent.width
+            Column {
+                Layout.fillWidth: true
+                StyledText {
+                    //% "Display images in chat automatically"
+                    text: qsTrId("display-images-in-chat-automatically")
+                    font.pixelSize: 15
+                    font.weight: Font.Medium
+                }
+                StyledText {
+                    width: parent.width
+                    text: qsTr("All images (links that contain an image extension) will be downloaded and displayed, regardless of the whitelist settings below")
+                    font.pixelSize: 15
+                    font.weight: Font.Thin
+                    color: Style.current.secondaryText
+                    wrapMode: Text.WordWrap
+                }
             }
             StatusSwitch {
+                id: displayChatImagesSwitch
+                Layout.rightMargin: 0
                 checked: appSettings.displayChatImages
                 onCheckedChanged: function (value) {
                     appSettings.displayChatImages = this.checked
                 }
-            }
-            StyledText {
-                //% "under development"
-                text: qsTrId("under-development")
             }
         }
 
@@ -183,6 +173,17 @@ Item {
         StatusSectionHeadline {
             id: labelWebsites
             text: qsTr("Websites")
+        }
+
+        Connections {
+            target: applicationWindow
+            onSettingsLoaded: {
+                let whitelist = JSON.parse(profileModel.getLinkPreviewWhitelist())
+                whitelist.forEach(entry => {
+                    entry.isWhitelisted = appSettings.whitelistedUnfurlingSites[entry.address] || false
+                    previewableSites.append(entry)
+                })
+            }
         }
 
         ListView {
@@ -214,9 +215,11 @@ Item {
                     }
 
                     StatusSwitch {
-                        checked: !!appSettings.whitelistedUnfurlingSites[address]
+                        checked: !!isWhitelisted
                         onCheckedChanged: function () {
-                            changeUnfurlingWhitelist(address, this.checked)
+                            const settings = appSettings.whitelistedUnfurlingSites
+                            settings[address] = this.checked
+                            appSettings.whitelistedUnfurlingSites = settings
                         }
                         anchors.verticalCenter: siteTitle.bottom
                         anchors.right: parent.right

@@ -162,20 +162,42 @@ ApplicationWindow {
         property bool compatibilityMode: defaultAppSettings.compatibilityMode
     }
 
-    signal whitelistChanged()
-
-    function changeUnfurlingWhitelist(site, enabled) {
-        appSettings.whitelistedUnfurlingSites[site] = enabled
-        applicationWindow.whitelistChanged()
-    }
-
     Connections {
         target: profileModel
         onProfileSettingsFileChanged: {
-            settingsLoaded()
             if (appSettings.locale !== "en") {
                 profileModel.changeLocale(appSettings.locale)
             }
+            const whitelist = profileModel.getLinkPreviewWhitelist()
+            try {
+                const whiteListedSites = JSON.parse(whitelist)
+                let settingsUpdated = false
+                const settings = appSettings.whitelistedUnfurlingSites
+                const whitelistedHostnames = []
+
+                // Add whitelisted sites in to app settings that are not already there
+                whiteListedSites.forEach(site => {
+                    if (!settings.hasOwnProperty(site.address))  {
+                        settings[site.address] = false
+                        settingsUpdated = true
+                    }
+                    whitelistedHostnames.push(site.address)
+                })
+                // Remove any whitelisted sites from app settings that don't exist in the
+                // whitelist from status-go
+                Object.keys(settings).forEach(settingsHostname => {
+                    if (!whitelistedHostnames.includes(settingsHostname)) {
+                        delete settings[settingsHostname]
+                        settingsUpdated = true
+                    }
+                })
+                if (settingsUpdated) {
+                    appSettings.whitelistedUnfurlingSites = settings
+                }
+            } catch (e) {
+                console.error('Could not parse the whitelist for sites', e)
+            }
+            applicationWindow.settingsLoaded()
         }
     }
 

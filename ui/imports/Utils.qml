@@ -222,4 +222,15 @@ QtObject {
                 return [false, ""];
         }
     }
+
+    function getHostname(url) {
+        const rgx = /\:\/\/(?:[a-zA-Z0-9\-]*\.{1,}){1,}[a-zA-Z0-9]*/i
+        const matches = rgx.exec(url)
+        if (!matches || !matches.length) return  ""
+        return matches[0].substring(3)
+    }
+
+    function hasImageExtension(url) {
+        return [".png", ".jpg", ".jpeg", ".svg", ".gif"].some(ext => url.includes(ext))
+    }
 }

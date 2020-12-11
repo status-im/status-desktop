@@ -57,7 +57,6 @@ type Message* = object
   isCurrentUser*: bool
   stickerHash*: string
   outgoingStatus*: string
-  imageUrls*: string
   linkUrls*: string
   image*: string
   audio*: string

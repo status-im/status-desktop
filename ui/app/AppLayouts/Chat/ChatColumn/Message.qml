@@ -24,7 +24,6 @@ Item {
     property int prevMessageIndex: -1
     property bool timeout: false
     property string linkUrls: ""
-    property string imageUrls: ""
     property bool placeholderMessage: false
 
     property string authorCurrentMsg: "authorCurrentMsg"
@@ -226,7 +225,6 @@ Item {
         NormalMessage {
             clickMessage: root.clickMessage
             linkUrls: root.linkUrls
-            imageUrls: root.imageUrls
             isCurrentUser: root.isCurrentUser
             contentType: root.contentType
             container: root
@@ -247,7 +245,7 @@ Item {
         CompactMessage {
             clickMessage: root.clickMessage
             linkUrls: root.linkUrls
-            imageUrls: root.imageUrls
+            isCurrentUser: root.isCurrentUser
             contentType: root.contentType
             container: root
         }
