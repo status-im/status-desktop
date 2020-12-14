@@ -82,8 +82,11 @@ Popup {
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
-                onClicked: console.log('TODO Disconnect')
-
+                onClicked: {
+                    _web3Provider.disconnect();
+                    provider.postMessage(`{"type":"web3-disconnect-account"}`);
+                    popup.close();
+                }
             }
         }
     }

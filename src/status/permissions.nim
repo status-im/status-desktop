@@ -59,6 +59,21 @@ proc getPermissions*(self: PermissionsModel, dapp: string): HashSet[Permission] 
       for permission in dappPermission["permissions"].getElems():
         result.incl(permission.getStr().toPermission())
 
+proc revoke*(self: PermissionsModel, permission: Permission) =
+  let response = callPrivateRPC("permissions_getDappPermissions")
+  var permissions = initHashSet[Permission]()
+
+  for dapps in response.parseJson["result"].getElems():
+    for currPerm in dapps["permissions"].getElems():
+      let p = currPerm.getStr().toPermission()
+      if p != permission:
+        permissions.incl(p)
+
+    discard callPrivateRPC("permissions_addDappPermissions", %*[{
+      "dapp": dapps["dapp"].getStr(),
+      "permissions": permissions.toSeq()
+    }])
+
 proc hasPermission*(self: PermissionsModel, dapp: string, permission: Permission): bool =
   result = self.getPermissions(dapp).contains(permission)
 

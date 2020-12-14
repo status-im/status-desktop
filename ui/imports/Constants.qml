@@ -87,6 +87,7 @@ QtObject {
 
     readonly property string api_request: "api-request"
     readonly property string web3SendAsyncReadOnly: "web3-send-async-read-only"
+    readonly property string web3DisconnectAccount: "web3-disconnect-account"
 
     readonly property string permission_web3: "web3"
     readonly property string permission_contactCode: "contact-code"
