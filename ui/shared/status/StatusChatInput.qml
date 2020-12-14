@@ -486,7 +486,6 @@ Rectangle {
         onStickerSelected: {
             control.stickerSelected(hashId, packId)
             messageInputField.forceActiveFocus();
-            stickersPopup.close()
         }
         onClosed: {
             stickersBtn.highlighted = false
