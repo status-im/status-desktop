@@ -459,7 +459,7 @@ QtObject:
     self.ensWasResolved(pubKey)
 
   proc isConnected*(self: ChatsView): bool {.slot.} =
-    result = self.connected
+    result = self.status.network.isConnected
 
   proc onlineStatusChanged(self: ChatsView, connected: bool) {.signal.}
 

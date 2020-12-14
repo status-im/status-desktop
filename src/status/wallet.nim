@@ -99,8 +99,10 @@ proc confirmTransactionStatus(self: WalletModel, pendingTransactions: JsonNode, 
       self.events.emit(parseEnum[PendingTransactionType](trx["type"].getStr).confirmed, ev)
 
 proc checkPendingTransactions*(self: WalletModel) =
-  let latestBlock = parseInt($fromHex(Stuint[256], getBlockByNumber("latest").parseJson()["result"]["number"].getStr))
-  self.confirmTransactionStatus(status_wallet.getPendingTransactions().parseJson["result"], latestBlock)
+  let response = getBlockByNumber("latest").parseJson()
+  if response.hasKey("result"):
+    let latestBlock = parseInt($fromHex(Stuint[256], response["result"]["number"].getStr))
+    self.confirmTransactionStatus(status_wallet.getPendingTransactions().parseJson["result"], latestBlock)
 
 proc checkPendingTransactions*(self: WalletModel, address: string, blockNumber: int) =
   self.confirmTransactionStatus(status_wallet.getPendingOutboundTransactionsByAddress(address).parseJson["result"], blockNumber)

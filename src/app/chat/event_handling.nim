@@ -74,10 +74,10 @@ proc handleChatEvents(self: ChatController) =
     var msg = MessageSentArgs(e)
     self.view.markMessageAsSent(msg.chatId, msg.id)
 
-  self.status.events.on("chat:disconnected") do(e: Args):
+  self.status.events.on("network:disconnected") do(e: Args):
     self.view.setConnected(false)
 
-  self.status.events.on("chat:connected") do(e: Args):
+  self.status.events.on("network:connected") do(e: Args):
     self.view.setConnected(true)
 
   self.status.events.on(PendingTransactionType.BuyStickerPack.confirmed) do(e: Args):

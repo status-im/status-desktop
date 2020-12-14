@@ -44,11 +44,21 @@ QtObject:
   
   proc transactionCompleted*(self: StickersView, success: bool, txHash: string, revertReason: string = "") {.signal.}
 
-  proc estimate*(self: StickersView, packId: int, address: string, price: string): int {.slot.} =
-    var success: bool
-    result = self.status.stickers.estimateGas(packId, address, price, success)
-    if not success:
-      result = 325000
+  proc estimate*(self: StickersView, packId: int, address: string, price: string, uuid: string) {.slot.} =
+    let status_stickers = self.status.stickers
+    spawnAndSend(self, "setGasEstimate") do:
+      var success: bool
+      var estimate = status_stickers.estimateGas(packId, address, price, success)
+      if not success:
+        estimate = 325000
+      let result: tuple[estimate: int, uuid: string] = (estimate, uuid)
+      Json.encode(result)
+  
+  proc gasEstimateReturned*(self: StickersView, estimate: int, uuid: string) {.signal.}
+
+  proc setGasEstimate*(self: StickersView, estimateJson: string) {.slot.} =
+    let estimateResult = Json.decode(estimateJson, tuple[estimate: int, uuid: string])
+    self.gasEstimateReturned(estimateResult.estimate, estimateResult.uuid)
 
   proc buy*(self: StickersView, packId: int, address: string, price: string, gas: string, gasPrice: string, password: string): string {.slot.} =
     var success: bool
@@ -73,6 +83,14 @@ QtObject:
   proc installedStickerPacksUpdated*(self: StickersView) {.signal.}
 
   proc recentStickersUpdated*(self: StickersView) {.signal.}
+
+  proc clearStickerPacks*(self: StickersView) =
+    self.stickerPacks.clear()
+
+  proc populateOfflineStickerPacks*(self: StickersView) =
+    let installedStickerPacks = self.status.stickers.getInstalledStickerPacks()
+    for stickerPack in installedStickerPacks.values:
+      self.addStickerPackToList(stickerPack, isInstalled = true, isBought = true, isPending = false)
 
   proc setAvailableStickerPacks*(self: StickersView, availableStickersJSON: string) {.slot.} =
     let

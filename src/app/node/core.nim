@@ -12,12 +12,14 @@ type NodeController* = ref object
   status*: Status
   view*: NodeView
   variant*: QVariant
+  networkAccessMananger*: QNetworkAccessManager
 
-proc newController*(status: Status): NodeController =
+proc newController*(status: Status, nam: QNetworkAccessManager): NodeController =
   result = NodeController()
   result.status = status
   result.view = newNodeView(status)
   result.variant = newQVariant(result.view)
+  result.networkAccessMananger = nam
 
 proc delete*(self: NodeController) =
   delete self.variant

@@ -99,7 +99,7 @@ Item {
                 bgColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.darkGrey : Style.current.grey;
                 enabled: false;
                 icon: new Object({
-                    path: "../../../img/loading.png",
+                    path: "../../app/img/loading.png",
                     rotation: 0,
                     runAnimation: true
                 })
