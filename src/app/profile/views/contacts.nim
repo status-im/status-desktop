@@ -1,6 +1,7 @@
-import NimQml, chronicles, sequtils, sugar, strutils
+import NimQml, chronicles, sequtils, sugar, strutils, json
 import ../../../status/status
 import ../../../status/threads
+import ../../../status/libstatus/core
 import contact_list
 import ../../../status/profile/profile
 import ../../../status/ens as status_ens
@@ -135,6 +136,21 @@ QtObject:
 
   proc addContact*(self: ContactsView, publicKey: string): string {.slot.} =
     result = self.status.contacts.addContact(publicKey)
+    let thejson = %* [   # TODO: We must ensure also that existing contacts have this chat type
+    {
+      "lastClockValue": 0,
+      "color": "#000000",
+      "name": publicKey,
+      "lastMessage": nil,
+      "active": true,
+      "id": "@" & publicKey,
+      "profile": publicKey,
+      "unviewedMessagesCount": 0,
+      "chatType":  4, # TODO: replace for constant chattype.Profile
+      "timestamp": 1588940692659
+    }
+    ]
+    discard callPrivateRPC("wakuext_saveChat", thejson)
     self.contactChanged(publicKey, true)
 
   proc changeContactNickname*(self: ContactsView, publicKey: string, nickname: string) {.slot.} =

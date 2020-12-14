@@ -129,7 +129,7 @@ proc init*(self: ChatModel) =
   var chatList = status_chat.loadChats()
 
   if chatList.filter(c => c.chatType == ChatType.Timeline).len == 0:
-    var timelineChannel = newChat("@timeline", ChatType.Timeline)
+    var timelineChannel = newChat("@timeline70bd746ddcc12beb96b2c9d572d0784ab137ffc774f5383e50585a932080b57cca0484b259e61cecbaa33a4c98a300a", ChatType.Timeline)
     self.join(timelineChannel.id, timelineChannel.chatType)
     chatList.add(timelineChannel)
 
