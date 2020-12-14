@@ -32,9 +32,6 @@ Rectangle {
         anchors.top: chatImage.top
         anchors.left: chatImage.right
         label.font.pixelSize: Style.current.primaryTextFontSize
-        userName: messageItem.userName
-        localName: messageItem.localName
-        alias: messageItem.alias
         z: 51
     }
 
