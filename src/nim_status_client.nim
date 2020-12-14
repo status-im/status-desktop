@@ -67,8 +67,23 @@ proc mainProc() =
     i18nPath = joinPath(getAppDir(), "../i18n")
 
   let networkAccessFactory = newQNetworkAccessManagerFactory(TMPDIR & "netcache")
+
   let engine = newQQmlApplicationEngine()
   engine.setNetworkAccessManagerFactory(networkAccessFactory)
+
+  let netAccMgr = newQNetworkAccessManager(engine.getNetworkAccessManager())
+
+  status.events.on("network:connected") do(e: Args):
+    # This is a workaround for Qt bug https://bugreports.qt.io/browse/QTBUG-55180
+    # that was apparently reintroduced in 5.14.1 Unfortunately, the only workaround
+    # that could be found uses obsolete properties and methods
+    # (https://doc.qt.io/qt-5/qnetworkaccessmanager-obsolete.html), so this will
+    # need to be something we keep in mind when upgrading to Qt 6.
+    # The workaround is to manually set the NetworkAccessible property of the
+    # QNetworkAccessManager once peers have dropped (network connection is lost).
+    netAccMgr.clearConnectionCache()
+    netAccMgr.setNetworkAccessible(NetworkAccessibility.Accessible)
+
   let signalController = signals.newController(status)
 
   # We need this global variable in order to be able to access the application
@@ -81,7 +96,7 @@ proc mainProc() =
   var chat = chat.newController(status)
   engine.setRootContextProperty("chatsModel", chat.variant)
 
-  var node = node.newController(status)
+  var node = node.newController(status, netAccMgr)
   engine.setRootContextProperty("nodeModel", node.variant)
 
   var utilsController = utilsView.newController(status)

@@ -3,6 +3,7 @@ import ../../status/signals/types
 import ../../status/[status, node, network]
 import ../../status/libstatus/types as status_types
 import view
+import ../../eventemitter
 
 logScope:
   topics = "utils"

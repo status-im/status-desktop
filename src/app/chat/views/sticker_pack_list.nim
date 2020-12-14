@@ -27,6 +27,11 @@ QtObject:
 
   proc delete(self: StickerPackList) = self.QAbstractListModel.delete
 
+  proc clear*(self: StickerPackList) =
+    self.beginResetModel()
+    self.packs = @[]
+    self.endResetModel()
+
   proc newStickerPackList*(): StickerPackList =
     new(result, delete)
     result.packs = @[]

@@ -47,4 +47,16 @@ proc init*(self: ChatController) =
   for sticker in recentStickers:
     self.view.stickers.addRecentStickerToList(sticker)
     self.status.stickers.addStickerToRecent(sticker)
-  self.view.stickers.obtainAvailableStickerPacks()
+  
+  if self.status.network.isConnected:
+    self.view.stickers.obtainAvailableStickerPacks()
+  else:
+    self.view.stickers.populateOfflineStickerPacks()
+
+  self.status.events.on("network:disconnected") do(e: Args):
+    self.view.stickers.clearStickerPacks()
+    self.view.stickers.populateOfflineStickerPacks()
+
+  self.status.events.on("network:connected") do(e: Args):
+    self.view.stickers.clearStickerPacks()
+    self.view.stickers.obtainAvailableStickerPacks()

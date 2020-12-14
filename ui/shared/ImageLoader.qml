@@ -69,13 +69,29 @@ Rectangle {
         }
     ]
 
+    Connections {
+        target: chatsModel
+        onOnlineStatusChanged: {
+            if (connected && root.state !== "ready" &&
+                root.visible &&
+                root.source &&
+                root.source.startsWith("http")) {
+                root.reload()
+            }
+        }
+    }
+
     function reload() {
         // From the documentation (https://doc.qt.io/qt-5/qml-qtquick-image.html#sourceSize-prop)
         // Note: Changing this property dynamically causes the image source to 
         // be reloaded, potentially even from the network, if it is not in the 
         // disk cache.
+        const oldSource = image.source
+        image.cache = false
         image.sourceSize.width += 1
         image.sourceSize.width -= 1
+        image.cache = true
+
     }
 
     Component {

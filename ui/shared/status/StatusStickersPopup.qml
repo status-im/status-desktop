@@ -37,6 +37,12 @@ Popup {
         footerContent.visible = true
         stickersContainer.visible = true
     }
+    Connections {
+        target: chatsModel
+        onOnlineStatusChanged: {
+            root.close()
+        }
+    }
     contentItem: ColumnLayout {
         anchors.fill: parent
         spacing: 0

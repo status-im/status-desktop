@@ -58,10 +58,11 @@ proc estimateGas*(self: StickersModel, packId: int, address: string, price: stri
     tx = self.buildTransaction(
       packId.u256,
       parseAddress(address),
-      eth2Wei(parseFloat(price), 18), # SNT
+      eth2Wei(parseFloat(price), sntContract.decimals),
       approveAndCall,
       sntContract
     )
+
   let response = sntContract.methods["approveAndCall"].estimateGas(tx, approveAndCall, success)
   if success:
     result = fromHex[int](response)

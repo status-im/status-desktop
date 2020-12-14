@@ -99,8 +99,16 @@ ModalPopup {
                         selectedGasLimit = 325000
                         return
                     }
-                    selectedGasLimit = chatsModel.stickers.estimate(root.stickerPackId, selectFromAccount.selectedAccount.address, root.packPrice)
+                    chatsModel.stickers.estimate(root.stickerPackId, selectFromAccount.selectedAccount.address, root.packPrice, uuid)
                 })
+            }
+            Connections {
+                target: chatsModel.stickers
+                onGasEstimateReturned: {
+                    if (uuid === gasSelector.uuid) {
+                        gasSelector.selectedGasLimit = estimate
+                    }
+                }
             }
             GasValidator {
                 id: gasValidator
