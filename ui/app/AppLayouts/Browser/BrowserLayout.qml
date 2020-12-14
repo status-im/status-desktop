@@ -266,6 +266,8 @@ Rectangle {
 
 
                 signDialog.open();
+            } else if (request.type === Constants.web3DisconnectAccount) {
+                web3Response(data);
             } else {
                 web3Response(_web3Provider.postMessage(data));
             }

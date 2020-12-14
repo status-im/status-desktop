@@ -805,6 +805,12 @@ You may add additional accurate notices of copyright ownership.
         const id = data.messageId;
         const callback = callbacks[id];
 
+        if(data.type === "web3-disconnect-account") {
+            window.statusAppcurrentAccountAddress = "";
+            window.ethereum.emit("accountsChanged", []);
+            return;
+        }
+
         if (callback) {
           if (data.type === "api-response") {
             if (data.permission == "qr-code") {
@@ -846,6 +852,9 @@ You may add additional accurate notices of copyright ownership.
     new QWebChannel(qt.webChannelTransport, function(channel) {
       backend = channel.objects.backend;
       backend.web3Response.connect(onMessage);
+    
+      window.ethereum.on("connected", () => {}); // TODO: Dummy event. Will need to be replaced once connecte/disconnected provider logic is implemented in status-go
+      window.ethereum.emit("connected", {"chainId": backend.networkId.toString()});
     });
 
     const bridgeSend = data => {
@@ -918,6 +927,35 @@ You may add additional accurate notices of copyright ownership.
     }
     UserRejectedRequest.prototype = Object.create(Error.prototype);
 
+    function UnsupportedMethod() {
+        this.name = "Unsupported Method";
+        this.id = 4200;
+        this.code = 4200;
+        this.message = "The Provider does not support the requested method.";
+    }
+    UnsupportedMethod.prototype = Object.create(Error.prototype);
+
+    function Disconnected() {
+        this.name = "Disconnected";
+        this.id = 4900;
+        this.code = 4900;
+        this.message = "The Provider is disconnected from all chains.";
+    }
+    Disconnected.prototype = Object.create(Error.prototype);
+
+    // 
+    function ChainDisconnected() {
+        this.name = "Chain Disconnected";
+        this.id = 4901;
+        this.code = 4901;
+        this.message = "The Provider is not connected to the requested chain.";
+    }
+    ChainDisconnected.prototype = Object.create(ChainDisconnected.prototype);
+
+
+    // NOTE: chainChanged is not implemented because we do not support switching networks without disconnecting from Status
+    // Provider.on('chainChanged', listener: (chainId: string) => void): Provider;
+
     function web3Response (payload, result){
       return {
         id: payload.id,
@@ -951,6 +989,25 @@ You may add additional accurate notices of copyright ownership.
     EthereumProvider.prototype.isStatus = true;
     EthereumProvider.prototype.status = new StatusAPI();
     EthereumProvider.prototype.isConnected = function () { return true; };
+    EthereumProvider.prototype._events = {};
+
+    EthereumProvider.prototype.on = function(name, listener) {
+        if (!this._events[name]) {
+          this._events[name] = [];
+        }
+        this._events[name].push(listener);
+    }
+
+    EthereumProvider.prototype.removeListener = function (name, listenerToRemove) {
+        if (!this._events[name]) throw new Error(`event "${name}" does not exist`);
+        const filterListeners = (listener) => listener !== listenerToRemove;
+        this._events[name] = this._events[name].filter(filterListeners);
+    }
+
+    EthereumProvider.prototype.emit = function (name, data) {
+        if (!this._events[name]) throw new Error(`event "${name}" does not exist`);
+        this._events[name].forEach(cb => cb(data));
+    }
 
     EthereumProvider.prototype.enable = function () {
         return sendAPIrequest('web3');
@@ -1053,4 +1110,7 @@ You may add additional accurate notices of copyright ownership.
   }
 
   window.ethereum = new EthereumProvider();
+
+  // TODO: connected/disconnected must be emitted if we lose connection to infura. Verify if status-go emits events for that
+
 })();

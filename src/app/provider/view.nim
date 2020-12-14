@@ -249,6 +249,9 @@ QtObject:
   proc hasPermission*(self: Web3ProviderView, hostname: string, permission: string): bool {.slot.} =
     result = self.status.permissions.hasPermission(hostname, permission.toPermission())
 
+  proc disconnect*(self: Web3ProviderView) {.slot.} =
+    self.status.permissions.revoke("web3".toPermission())
+
   proc postMessage*(self: Web3ProviderView, message: string): string {.slot.} =
     case message.requestType():
     of RequestTypes.Web3SendAsyncReadOnly: message.toWeb3SendAsyncReadOnly().process(self.status)
