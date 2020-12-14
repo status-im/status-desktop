@@ -100,10 +100,10 @@ QtObject:
     self.stickerPacksLoaded()
     self.installedStickerPacksUpdated()
 
-  proc getNumInstalledStickerPacks(self: StickersView): QVariant {.slot.} =
-    newQVariant(self.status.stickers.installedStickerPacks.len)
+  proc getNumInstalledStickerPacks(self: StickersView): int {.slot.} =
+    self.status.stickers.installedStickerPacks.len
 
-  QtProperty[QVariant] numInstalledStickerPacks:
+  QtProperty[int] numInstalledStickerPacks:
     read = getNumInstalledStickerPacks
     notify = installedStickerPacksUpdated
 
