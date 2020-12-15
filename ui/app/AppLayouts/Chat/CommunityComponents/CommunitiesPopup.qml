@@ -19,6 +19,7 @@ ModalPopup {
 
     SearchBox {
         id: searchBox
+        placeholderText: qsTr("Search for communities or topics")
         iconWidth: 17
         iconHeight: 17
         customHeight: 36
@@ -40,6 +41,21 @@ ModalPopup {
             spacing: 4
             clip: true
             id: communitiesList
+
+            section.property: "name"
+            section.criteria: ViewSection.FirstCharacter
+            section.delegate: Column {
+                width: parent.width
+                height: childrenRect.height + Style.current.halfPadding
+                StyledText {
+                    text: section
+                }
+                Separator {
+                    anchors.left: popup.left
+                    anchors.right: popup.right
+                }
+            }
+
             delegate: Item {
                 // TODO add the serach for the name and category once they exist
                 visible: {
@@ -49,7 +65,7 @@ ModalPopup {
                     const lowerCaseSearchStr = searchBox.text.toLowerCase()
                     return name.toLowerCase().includes(lowerCaseSearchStr) || description.toLowerCase().includes(lowerCaseSearchStr)
                 }
-                height: visible ? communityImage.height + Style.current.smallPadding : 0
+                height: visible ? communityImage.height + Style.current.padding : 0
                 width: parent.width
 
                 RoundedImage {
@@ -78,6 +94,19 @@ ModalPopup {
                     font.pixelSize: 15
                     font.weight: Font.Thin
                     elide: Text.ElideRight
+                }
+
+                StyledText {
+                    id: communityMembers
+                    text: nbMembers === 1 ? 
+                          qsTr("1 member") : 
+                          qsTr("%1 members").arg(nbMembers)
+                    anchors.left: communityDesc.left
+                    anchors.right: parent.right
+                    anchors.top: communityDesc.bottom
+                    font.pixelSize: 13
+                    color: Style.current.secondaryText
+                    font.weight: Font.Thin
                 }
 
                 MouseArea {
