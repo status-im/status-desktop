@@ -15,6 +15,7 @@ type
     Admin = UserRole + 6
     Joined = UserRole + 7
     Verified = UserRole + 8
+    NumMembers = UserRole + 9
 
 QtObject:
   type
@@ -54,6 +55,8 @@ QtObject:
       of CommunityRoles.Admin: result = newQVariant(communityItem.admin.bool)
       of CommunityRoles.Joined: result = newQVariant(communityItem.joined.bool)
       of CommunityRoles.Verified: result = newQVariant(communityItem.verified.bool)
+      of CommunityRoles.NumMembers: result = newQVariant(communityItem.members.len)
+
 
   method roleNames(self: CommunityList): Table[int, string] =
     {
@@ -64,7 +67,8 @@ QtObject:
       CommunityRoles.Access.int: "access",
       CommunityRoles.Admin.int: "admin",
       CommunityRoles.Verified.int: "verified",
-      CommunityRoles.Joined.int: "joined"
+      CommunityRoles.Joined.int: "joined",
+      CommunityRoles.NumMembers.int: "nbMembers"
     }.toTable
 
   proc setNewData*(self: CommunityList, communityList: seq[Community]) =

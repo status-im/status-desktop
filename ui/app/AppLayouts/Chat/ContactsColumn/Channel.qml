@@ -19,6 +19,7 @@ Rectangle {
     property int contentType: 1
     property bool muted: false
     property bool hovered: false
+    property bool enableMouseArea: true
 
     id: wrapper
     color: {
@@ -174,7 +175,8 @@ Rectangle {
     }
 
     MouseArea {
-        cursorShape: Qt.PointingHandCursor
+        enabled: enableMouseArea
+        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         anchors.fill: parent
         hoverEnabled: true

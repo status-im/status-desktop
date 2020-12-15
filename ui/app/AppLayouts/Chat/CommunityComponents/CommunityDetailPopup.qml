@@ -62,7 +62,7 @@ ModalPopup {
     StyledText {
         id: descriptionText
         text: popup.description
-        wrapMode: Text.WrapAnywhere
+        wrapMode: Text.Wrap
         width: parent.width
         font.pixelSize: 15
         font.weight: Font.Thin
@@ -84,7 +84,9 @@ ModalPopup {
 
 
         StyledText {
-            text: qsTr("%1 members").arg(popup.nbMembers)
+            text: nbMembers === 1 ? 
+                  qsTr("1 member") : 
+                  qsTr("%1 members").arg(popup.nbMembers)
             wrapMode: Text.WrapAnywhere
             width: parent.width
             anchors.left: memberImage.right
@@ -123,7 +125,7 @@ ModalPopup {
         anchors.bottom: parent.bottom
         clip: true
         model: community.chats
-
+        boundsBehavior: Flickable.StopAtBounds
         delegate: Channel {
             id: channelItem
             unviewedMessagesCount: ""
@@ -133,6 +135,7 @@ ModalPopup {
             contentType: Constants.messageType
             border.width: 0
             color: Style.current.transparent
+            enableMouseArea: false
         }
     }
 
