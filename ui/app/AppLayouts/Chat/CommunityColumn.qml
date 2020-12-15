@@ -27,7 +27,7 @@ Item {
     Item {
         id: communityHeader
         width: parent.width
-        height: communityImage.height
+        height: communityHeaderButton.height
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
 
@@ -42,35 +42,11 @@ Item {
             onClicked: chatsModel.activeCommunity.active = false
         }
 
-        RoundedImage {
-            id: communityImage
-            width: 40
-            height: 40
-            // TODO get the real image once it's available
-            source: "../../img/ens-header-dark@2x.png"
+        CommunityHeaderButton {
+            id: communityHeaderButton
             anchors.left: backArrow.right
-            anchors.leftMargin: Style.current.smallPadding
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
-        StyledText {
-            id: communityName
-            text: chatsModel.activeCommunity.name
-            anchors.left: communityImage.right
-            anchors.leftMargin: Style.current.halfPadding
-            font.pixelSize: 15
-            font.weight: Font.Medium
-        }
-
-        StyledText {
-            id: communityNbMember
-            // TOD get real numbers
-            text: qsTr("%1 members").arg(12)
-            anchors.left: communityName.left
-            anchors.bottom: parent.bottom
-            font.pixelSize: 12
-            font.weight: Font.Thin
-            color: Style.current.secondaryText
+            anchors.top: parent.top
+            anchors.topMargin: -4
         }
 
         StatusIconButton {
@@ -136,6 +112,10 @@ Item {
             width: parent.width
             anchors.top: channelList.bottom
             anchors.topMargin: Style.current.padding
+        }
+
+        CommunityProfilePopup {
+            id: communityProfilePopup
         }
     }
 }
