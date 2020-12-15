@@ -49,5 +49,10 @@ Popup {
         anchors.verticalCenter: parent.verticalCenter
         mipmap: true
         smooth: false
+
+        MouseArea {
+            onClicked: root.close()
+            anchors.fill: parent
+        }
     }
 }
