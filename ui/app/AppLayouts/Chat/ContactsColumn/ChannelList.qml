@@ -23,7 +23,7 @@ Rectangle {
         spacing: Style.current.halfPadding
         anchors.top: parent.top
         height: childrenRect.height
-        visible: height > 0
+        visible: height > 50
         anchors.right: parent.right
         anchors.left: parent.left
         interactive: false
