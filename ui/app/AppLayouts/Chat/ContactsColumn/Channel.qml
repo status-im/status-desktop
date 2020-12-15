@@ -35,7 +35,7 @@ Rectangle {
     // Hide the box if it is filtered out
     property bool isVisible: searchStr == "" || name.includes(searchStr)
     visible: isVisible ? true : false
-    height: isVisible ? !isCompact ? 64 : contactImage.height + Style.current.smallPadding * 2 : 0
+    height: isVisible ? (!isCompact ? 64 : contactImage.height + Style.current.smallPadding * 2) : 0
 
     StatusIdenticon {
         id: contactImage
