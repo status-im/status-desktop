@@ -1,4 +1,4 @@
-import sequtils, re
+import sequtils, re, strutils
 
 let NEW_LINE = re"\n|\r"
 
@@ -17,7 +17,7 @@ proc mention(self: ChatMessageList, pubKey: string): string =
 
 # See render-inline in status-react/src/status_im/ui/screens/chat/message/message.cljs
 proc renderInline(self: ChatMessageList, elem: TextItem): string =
-  let value = escape_html(elem.literal)
+  let value = escape_html(elem.literal).multiReplace(("\n", "<br/>"))
   case elem.textType:
   of "": result = value
   of "code": result = fmt("<code>{value}</code>")
