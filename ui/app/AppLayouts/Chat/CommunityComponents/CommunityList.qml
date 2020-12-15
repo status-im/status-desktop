@@ -10,16 +10,13 @@ Item {
     property string searchStr: ""
     id: root
     width: parent.width
-    height: childrenRect.height
-    visible: communityListView.visible
-
+    height: Math.max(communityListView.height, noSearchResults.height)
     ListView {
         id: communityListView
         spacing: Style.current.halfPadding
         anchors.top: parent.top
         height: childrenRect.height
-        // FIXME the height doesn't update
-//        visible: height > 0
+        visible: height > 10
         width:parent.width
         interactive: false
         model: chatsModel.joinedCommunities
