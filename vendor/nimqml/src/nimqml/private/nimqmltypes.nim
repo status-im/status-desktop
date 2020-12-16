@@ -114,6 +114,13 @@ type
   QNetworkAccessManagerFactory* = ref object of RootObj ## \
     vptr: DosQQNetworkAccessManagerFactory
 
+  QNetworkAccessManager* = ref object of QObject ## \
+
+  NetworkAccessibility*{.pure, size: sizeof(cint).} = enum ## \
+    UnknownAccessibility = -1.cint,
+    NotAccessible = 0.cint,
+    Accessible = 1.cint
+
   QUrlParsingMode*{.pure, size: sizeof(cint).} = enum
     Tolerant = 0.cint
     Strict = 1.cint

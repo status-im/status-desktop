@@ -26,3 +26,22 @@ proc newQNetworkAccessManagerFactory*(tmpPath: string): QNetworkAccessManagerFac
   new(result, delete)
   result.setup(tmpPath)
 
+proc setup*(self: QNetworkAccessManager, vptr: DosQQNetworkAccessManager) =
+  self.vptr = DosQObject(vptr)
+
+proc delete*(self: QNetworkAccessManager) =
+  if self.vptr.isNil:
+    return
+  self.vptr.resetToNil
+
+proc newQNetworkAccessManager*(vptr: DosQQNetworkAccessManager): QNetworkAccessManager =
+  new(result, delete)
+  result.setup(vptr)
+
+proc clearConnectionCache*(self: QNetworkAccessManager) =
+  dos_qqmlnetworkaccessmanager_clearconnectioncache(DosQQNetworkAccessManager(self.vptr))
+
+proc setNetworkAccessible*(self: QNetworkAccessManager, accessibility: NetworkAccessibility) =
+  debugEcho ">>> [nimqml/private/qnetworkconfigurationmanager.setNetworkAccessible] manually setting network accessibility to: ", $accessibility
+  dos_qqmlnetworkaccessmanager_setnetworkaccessible(DosQQNetworkAccessManager(self.vptr), accessibility.cint)
+
