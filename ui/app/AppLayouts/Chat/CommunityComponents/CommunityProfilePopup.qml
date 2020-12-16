@@ -1,5 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Dialogs 1.3
+import QtQuick.Layouts 1.13
+import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
@@ -14,6 +16,8 @@ ModalPopup {
     // TODO get the real image once it's available
     property string source: "../../../img/ens-header-dark@2x.png"
     property int nbMembers: community.nbMembers
+    property bool isAdmin: false // TODO: 
+    height: isAdmin ? 627 : 509
 
     id: popup
 
@@ -78,14 +82,147 @@ ModalPopup {
         anchors.rightMargin: -Style.current.padding
     }
 
-    StyledText {
-        id: chatsTitle
-        text: qsTr("TODO:")
+    TextWithLabel {
+        id: shareCommunity
         anchors.top: sep1.bottom
         anchors.topMargin: Style.current.bigPadding
-        font.pixelSize: 15
-        font.weight: Font.Thin
+        label: qsTr("Share community")
+        text: "https://join.status.im/u/TODO"
+        textToCopy: text
     }
+
+    Separator {
+        id: sep2
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: shareCommunity.bottom
+        anchors.topMargin: Style.current.smallPadding
+        anchors.leftMargin: -Style.current.padding
+        anchors.rightMargin: -Style.current.padding
+    }
+
+    Column {
+        anchors.top: sep2.bottom
+        anchors.topMargin: Style.current.padding
+        width: parent.width
+        spacing: Style.current.padding
+        
+        
+        Loader {
+            active: isAdmin
+            width: parent.width
+            sourceComponent: CommunityPopupButton {
+                label: qsTr("Members")
+                iconName: "members"
+                txtColor: Style.current.textColor
+                Item {
+                    anchors.top: parent.top
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+                    width: 100
+                    StyledText {
+                        text: nbMembers.toString()
+                        anchors.right: caret.left
+                        anchors.rightMargin: Style.current.smallPadding
+                        anchors.top: parent.top
+                        anchors.topMargin: 10
+                        padding: 0
+                        font.pixelSize: 15
+                        color: Style.current.secondaryText
+                    }
+
+                    SVGImage {
+                        id: caret
+                        anchors.right: parent.right
+                        anchors.topMargin: Style.current.padding
+                        anchors.top: parent.top
+                        source: "../../../img/caret.svg"
+                        width: 13
+                        height: 7
+                        rotation: -90
+                        ColorOverlay {
+                            anchors.fill: parent
+                            source: parent
+                            color: Style.current.secondaryText
+                        }
+                    }
+                }
+            }
+        }
+
+        Loader {
+            active: isAdmin
+            width: parent.width
+            sourceComponent: CommunityPopupButton {
+                label: qsTr("Roles")
+                iconName: "roles"
+                width: parent.width
+                onClicked: console.log("TODO:")
+                txtColor: Style.current.textColor
+                SVGImage {
+                    anchors.top: parent.top
+                    anchors.topMargin: Style.current.padding
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+                    source: "../../../img/caret.svg"
+                    width: 13
+                    height: 7
+                    rotation: -90
+                    ColorOverlay {
+                        anchors.fill: parent
+                        source: parent
+                        color: Style.current.secondaryText
+                    }
+                }
+            }
+        }
+        CommunityPopupButton {
+            id: notificationsBtn
+            label: qsTr("Notifications")
+            iconName: "notifications"
+            width: parent.width
+            txtColor: Style.current.textColor
+            onClicked: function(){
+                notificationSwitch.checked = !notificationSwitch.checked
+            }
+            StatusSwitch {
+                id: notificationSwitch
+                anchors.right: parent.right
+                onCheckedChanged: function(value) {
+                    // TODO: enable/disable notifications
+                    console.log("TODO: toggle")
+                }
+            }
+        }
+        Separator {
+            width: parent.width
+        }
+        Loader {
+            active: isAdmin
+            width: parent.width
+            sourceComponent: CommunityPopupButton {
+                label: qsTr("Edit community")
+                iconName: "edit"
+            }
+        }
+        CommunityPopupButton {
+            label: qsTr("Leave community")
+            iconName: "leave"
+        }
+        Loader {
+            active: isAdmin
+            width: parent.width
+            sourceComponent: CommunityPopupButton {
+                id: deleteBtn
+                label: qsTr("Delete")
+                iconName: "delete"
+                txtColor: Style.current.red
+                //btnColor: Style.current.red // TODO: statusroundbutton should support changing color
+            }
+        }
+    }
+
+    
 
 }
 
