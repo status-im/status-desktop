@@ -443,22 +443,26 @@ clean: | clean-common
 run: rcc $(RUN_TARGET)
 
 NIM_STATUS_CLIENT_DEV ?= t
+STATUS_PORT ?= 30306
 
 run-linux:
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
 	NIM_STATUS_CLIENT_DEV="$(NIM_STATUS_CLIENT_DEV)" \
 	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)" \
+	STATUS_PORT="$(STATUS_PORT)" \
 	./bin/nim_status_client
 
 run-macos:
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
 	NIM_STATUS_CLIENT_DEV="$(NIM_STATUS_CLIENT_DEV)" \
+	STATUS_PORT="$(STATUS_PORT)" \
 	./bin/nim_status_client
 
 run-windows: $(NIM_WINDOWS_PREBUILT_DLLS)
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client.exe"
 	NIM_STATUS_CLIENT_DEV="$(NIM_STATUS_CLIENT_DEV)" \
 	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(STATUSGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
+	STATUS_PORT="$(STATUS_PORT)" \
 	./bin/nim_status_client.exe
 
 endif # "variables.mk" was not included

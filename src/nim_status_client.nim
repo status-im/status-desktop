@@ -47,9 +47,11 @@ proc mainProc() =
       if getEnv("NIM_STATUS_CLIENT_DEV").string == "":
         "/../Resources/status-icon.icns"
       else:
-        "/../status-icon.icns"
+        "/../status-dev-icon.icns"
     elif defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
       "/../resources/status.svg"
+    elif getEnv("NIM_STATUS_CLIENT_DEV").string != "":
+      "/../status-dev.svg"
     else:
       "/../status.svg"
   app.icon(app.applicationDirPath & statusAppIcon)
