@@ -13,9 +13,7 @@ Loader {
     sourceComponent: Component {
         Shared.ImageLoader {
             color: root.color
-            onLoaded: {
-                scrollToBottom(true, root.container)
-            }
+            onLoaded: scrollToBottom(true, root.container)
 
             width: 140
             height: this.visible ? 140 : 0

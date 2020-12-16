@@ -8,6 +8,7 @@ Loader {
 
     property bool longReply: false
     property color elementsColor: isCurrentUser ? Style.current.chatReplyCurrentUser : Style.current.secondaryText
+    property var container
 
     id: root
     active: responseTo != "" && replyMessageIndex > -1
@@ -49,6 +50,7 @@ Loader {
                 anchors.topMargin: 5
                 anchors.left: parent.left
                 chatHorizontalPadding: 0
+                container: root.container
             }
 
             StyledTextEdit {

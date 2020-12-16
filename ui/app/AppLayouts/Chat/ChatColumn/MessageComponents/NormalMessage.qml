@@ -9,6 +9,7 @@ Item {
     property string linkUrls: ""
     property bool isCurrentUser: false
     property int contentType: 2
+    property var container
 
     id: root
     anchors.top: parent.top
@@ -125,6 +126,7 @@ Item {
             anchors.leftMargin: Style.current.padding
             anchors.right: parent.right
             anchors.rightMargin: chatBox.chatHorizontalPadding
+            container: root.container
         }
 
         ChatText {
@@ -165,6 +167,7 @@ Item {
                         imageWidth: 250
                         isCurrentUser: root.isCurrentUser
                         onClicked: root.clickMessage(false, false, true, image)
+                        container: root.container
                     }
                 }
             }
@@ -191,7 +194,7 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: chatBox.chatVerticalPadding
             color: Style.current.transparent
-            container: root.parent
+            container: root.container
             contentType: root.contentType
         }
 
@@ -247,7 +250,7 @@ Item {
         id: imageComponent
         ImageMessage {
             isCurrentUser: root.isCurrentUser
-            container: root.parent
+            container: root.container
             imageUrls: root.imageUrls
             onClicked: {
                 root.clickMessage(false, false, true, image)

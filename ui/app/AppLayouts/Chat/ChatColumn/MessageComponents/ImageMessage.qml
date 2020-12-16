@@ -51,7 +51,7 @@ Rectangle {
             onClicked: {
                 imageChatBox.clicked(image)
             }
-            container: root.container
+            container: imageChatBox.container
         }
     }
 

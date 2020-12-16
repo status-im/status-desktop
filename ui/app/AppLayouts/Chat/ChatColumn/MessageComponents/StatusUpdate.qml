@@ -15,6 +15,7 @@ Rectangle {
     radius: Style.current.radius
     color: hovered ? Style.current.border : Style.current.background
     property bool hovered: false
+    property var container
 
     UserImage {
         id: chatImage
@@ -66,6 +67,7 @@ Rectangle {
                 imageSource: image
                 imageWidth: 200
                 onClicked: root.clickMessage(false, false, true, image)
+                container: root.container
             }
         }
     }

@@ -62,7 +62,7 @@ Item {
                 imageMessage.visible = false
             } else if (imageMessage.status === Image.Ready) {
                 loadingImage.visible = false
-                scrollToBottom(true, root.container)
+                scrollToBottom(true, imageContainer.container)
             }
         }
 
