@@ -10,6 +10,7 @@ Item {
     property bool showImages: appSettings.displayChatImages && root.imageUrls != ""
     property string linkUrls: ""
     property int contentType: 2
+    property var container
 
     id: root
     anchors.top: parent.top
@@ -47,6 +48,7 @@ Item {
         anchors.leftMargin: root.chatHorizontalPadding
         anchors.right: parent.right
         anchors.rightMargin: root.chatHorizontalPadding
+        container: root.container
     }
 
     ChatText {
@@ -72,6 +74,7 @@ Item {
                 imageSource: image
                 imageWidth: 200
                 onClicked: root.clickMessage(false, false, true, image)
+                container: root.container
             }
         }
     }
@@ -100,7 +103,7 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: root.chatVerticalPadding
                     contentType: root.contentType
-                    container: root.parent
+                    container: root.container
                 }
             }
         }
@@ -148,7 +151,7 @@ Item {
                 onClicked: {
                     root.clickMessage(false, false, true, image)
                 }
-                container: root.parent
+                container: root.container
             }
         }
     }

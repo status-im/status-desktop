@@ -229,13 +229,15 @@ Item {
             imageUrls: root.imageUrls
             isCurrentUser: root.isCurrentUser
             contentType: root.contentType
+            container: root
         }
     }
 
     Component {
         id: statusUpdateComponent
         StatusUpdate {
-            clickMessage: messageItem.clickMessage
+            clickMessage: root.clickMessage
+            container: root
         }
     }
 
@@ -247,6 +249,7 @@ Item {
             linkUrls: root.linkUrls
             imageUrls: root.imageUrls
             contentType: root.contentType
+            container: root
         }
     }
 
