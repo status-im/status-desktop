@@ -77,7 +77,11 @@ typedef void DosQUrl;
 /// A pointer to a QNetworkConfigurationManager
 typedef void DosQNetworkConfigurationManager;
 
+/// A pointer to a QQmlNetworkAccessManagerFactory
 typedef void DosQQmlNetworkAccessManagerFactory;
+
+/// A pointer to a QQmlNetworkAccessManager
+typedef void DosQQmlNetworkAccessManager;
 
 /// A pointer to a QMetaObject
 typedef void DosQMetaObject;

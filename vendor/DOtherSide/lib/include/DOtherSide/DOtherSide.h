@@ -140,12 +140,18 @@ DOS_API void DOS_CALL dos_qapplication_delete(void);
 DOS_API DosQQmlApplicationEngine *DOS_CALL dos_qqmlapplicationengine_create(void);
 
 DOS_API DosQQmlNetworkAccessManagerFactory *DOS_CALL dos_qqmlnetworkaccessmanagerfactory_create(const char* tmpPath);
+DOS_API void DOS_CALL dos_qqmlnetworkaccessmanager_clearconnectioncache(DosQQmlNetworkAccessManager *vptr);
+DOS_API void DOS_CALL dos_qqmlnetworkaccessmanager_setnetworkaccessible(DosQQmlNetworkAccessManager *vptr, int accessibility);
 
 /// \brief Calls the QQmlApplicationEngine::load function
 /// \param vptr The QQmlApplicationEngine
 /// \param filename The file to load. The file is relative to the directory that contains the application executable
 DOS_API void DOS_CALL dos_qqmlapplicationengine_load(DosQQmlApplicationEngine *vptr, const char *filename);
 
+/// \brief Calls the QQmlApplicationEngine::networkAccessManager function
+/// \param vptr The QQmlApplicationEngine
+/// \return A pointer to a QQmlNetworkAccessManager.
+DOS_API DosQQmlNetworkAccessManager DOS_CALL dos_qqmlapplicationengine_getNetworkAccessManager(DosQQmlApplicationEngine *vptr);
 DOS_API void DOS_CALL dos_qqmlapplicationengine_setNetworkAccessManagerFactory(DosQQmlApplicationEngine *vptr, DosQQmlNetworkAccessManagerFactory *factory);
 
 /// \brief Calls the QQmlApplicationEngine::load function
