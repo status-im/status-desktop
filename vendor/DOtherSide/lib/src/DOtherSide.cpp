@@ -196,6 +196,24 @@ void dos_qapplication_quit()
     return new QMLNetworkAccessFactory();
 }
 
+void dos_qqmlnetworkaccessmanager_clearconnectioncache(::DosQQmlNetworkAccessManager *vptr)
+{
+    auto netAccMgr = static_cast<QNetworkAccessManager *>(vptr);
+    netAccMgr->clearConnectionCache();
+}
+void dos_qqmlnetworkaccessmanager_setnetworkaccessible(::DosQQmlNetworkAccessManager *vptr, int accessibility)
+{
+    auto netAccMgr = static_cast<QNetworkAccessManager *>(vptr);
+    auto accessible = static_cast<QNetworkAccessManager::NetworkAccessibility>(accessibility);
+    netAccMgr->setNetworkAccessible(accessible);
+}
+
+::DosQQmlNetworkAccessManager dos_qqmlapplicationengine_getNetworkAccessManager(::DosQQmlApplicationEngine *vptr)
+{
+    auto engine = static_cast<QQmlApplicationEngine *>(vptr);
+    engine->networkAccessManager();
+}
+
 void dos_qqmlapplicationengine_setNetworkAccessManagerFactory(::DosQQmlApplicationEngine *vptr, ::DosQQmlNetworkAccessManagerFactory *factory)
 {
     auto engine = static_cast<QQmlApplicationEngine *>(vptr);
