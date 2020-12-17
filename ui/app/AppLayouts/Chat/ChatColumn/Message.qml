@@ -214,7 +214,7 @@ Item {
     Component {
         id: statusUpdateComponent
         StatusUpdate {
-            clickMessage: messageItem.clickMessage
+            clickMessage: root.clickMessage
         }
     }
 
