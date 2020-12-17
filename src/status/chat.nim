@@ -94,7 +94,7 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType, ensName: string 
 
   var chat = newChat(chatId, ChatType(chatType))
   self.channels[chat.id] = chat
-  status_chat.saveChat(chatId, chatType.isOneToOne, true, chat.color, ensName)
+  status_chat.saveChat(chatId, chatType, true, chat.color, ensName)
   if ensName != "":
     chat.name = ensName
     chat.ensName = ensName
