@@ -1,4 +1,5 @@
 import sugar, sequtils, times, strutils
+import ../../status/chat/chat as status_chat
 
 proc handleChatEvents(self: ChatController) =
   # Display already saved messages
@@ -42,7 +43,9 @@ proc handleChatEvents(self: ChatController) =
 
   self.status.events.on("channelLoaded") do(e: Args):
     var channel = ChannelArgs(e)
-    discard self.view.chats.addChatItemToList(channel.chat)
+    # Do not add community chats to the normal chat list
+    if (channel.chat.chatType != status_chat.ChatType.CommunityChat):
+      discard self.view.chats.addChatItemToList(channel.chat)
     self.status.chat.chatMessages(channel.chat.id)
     self.status.chat.chatReactions(channel.chat.id)
 
