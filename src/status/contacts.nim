@@ -1,4 +1,4 @@
-import json, sequtils
+import json, sequtils, sugar
 import libstatus/contacts as status_contacts
 import libstatus/accounts as status_accounts
 import profile/profile
@@ -39,8 +39,14 @@ proc unblockContact*(self: ContactModel, id: string): string =
   discard status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries,contact.alias, contact.identicon, contact.systemTags, contact.localNickname)
   self.events.emit("contactUnblocked", Args())
 
-proc getContacts*(self: ContactModel): seq[Profile] =
+proc getAllContacts*(): seq[Profile] =
   result = map(status_contacts.getContacts().getElems(), proc(x: JsonNode): Profile = x.toProfileModel())
+
+proc getAddedContacts*(): seq[Profile] =
+  result = getAllContacts().filter(c => c.systemTags.contains(":contact/added"))
+
+proc getContacts*(self: ContactModel): seq[Profile] =
+  result = getAllContacts()
   self.events.emit("contactUpdate", ContactUpdateArgs(contacts: result))
 
 proc addContact*(self: ContactModel, id: string, localNickname: string): string =
