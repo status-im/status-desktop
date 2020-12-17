@@ -16,7 +16,7 @@ ModalPopup {
     // TODO get the real image once it's available
     property string source: "../../../img/ens-header-dark@2x.png"
     property int nbMembers: community.nbMembers
-    property bool isAdmin: false // TODO: 
+    property bool isAdmin: true // TODO: 
     height: isAdmin ? 627 : 509
 
     id: popup
@@ -203,6 +203,13 @@ ModalPopup {
             sourceComponent: CommunityPopupButton {
                 label: qsTr("Edit community")
                 iconName: "edit"
+                onClicked: openPopup(editCommunityPopup)
+                Component {
+                    id: editCommunityPopup
+                    CreateCommunityPopup {
+                        isEdit: true
+                    }
+                }
             }
         }
         CommunityPopupButton {
@@ -221,8 +228,5 @@ ModalPopup {
             }
         }
     }
-
-    
-
 }
 
