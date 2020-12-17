@@ -29,6 +29,35 @@ ModalPopup {
     Item {
         anchors.fill: parent
 
+
+        TextWithLabel {
+            id: shareCommunity
+            anchors.top: parent.top
+            label: qsTr("Share community")
+            text: "https://join.status.im/u/TODO"
+            textToCopy: text
+        }
+
+        Separator {
+            id: sep
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: shareCommunity.bottom
+            anchors.topMargin: Style.current.smallPadding
+            anchors.leftMargin: -Style.current.padding
+            anchors.rightMargin: -Style.current.padding
+        }
+
+        StyledText {
+            text: qsTr("Contacts")
+            anchors.left: parent.left
+            anchors.top: sep.bottom
+            anchors.topMargin: Style.current.smallPadding
+            font.pixelSize: 15
+            font.weight: Font.Thin
+            color: Style.current.secondaryText
+        }
+
         NoFriendsRectangle {
             id: noContactsRect
             anchors.horizontalCenter: parent.horizontalCenter
@@ -38,6 +67,8 @@ ModalPopup {
         ContactList {
             id: contactList
             selectMode: true
+            anchors.top: sep.bottom
+            anchors.topMargin: 100
             onItemChecked: function(pubKey, itemChecked) {
                 var idx = pubKeys.indexOf(pubKey)
                 if (itemChecked) {
