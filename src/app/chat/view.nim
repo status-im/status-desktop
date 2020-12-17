@@ -456,6 +456,8 @@ QtObject:
 
   proc updateChats*(self: ChatsView, chats: seq[Chat], triggerChange:bool = true) =
     for chat in chats:
+      if (chat.communityId != ""):
+        return
       self.upsertChannel(chat.id)
       self.chats.updateChat(chat, triggerChange)
       if(self.activeChannel.id == chat.id):
