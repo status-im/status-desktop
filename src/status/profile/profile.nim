@@ -53,7 +53,8 @@ proc toProfileModel*(profile: JsonNode): Profile =
   
   if profile.hasKey("localNickname"):
     result.localNickname = profile["localNickname"].str
-  if profile.hasKey("images"):
+
+  if profile.hasKey("images") and profile["images"].kind != JNull:
     if profile["images"].hasKey("thumbnail"):
       result.identityImage.thumbnail = profile["images"]["thumbnail"]["uri"].str
     if profile["images"].hasKey("large"):
