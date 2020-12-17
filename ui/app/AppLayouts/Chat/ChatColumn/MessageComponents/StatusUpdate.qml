@@ -52,6 +52,20 @@ Rectangle {
         anchors.leftMargin: Style.current.halfPadding
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: {
+                mouse.accepted = false
+            }
+            onEntered: {
+                root.hovered = true
+            }
+            onExited: {
+                root.hovered = false
+            }
+        }
     }
 
     Loader {
@@ -76,14 +90,15 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         propagateComposedEvents: true
-        onClicked: {
-            mouse.accepted = false
-        }
         onEntered: {
-            root.hovered = true
+            if (!root.hovered) {
+                root.hovered = true
+            }
         }
         onExited: {
-            root.hovered = false
+            if (root.hovered) {
+              root.hovered = false
+            }
         }
     }
 
@@ -112,7 +127,7 @@ Rectangle {
             }
             onExited: {
                 if (root.hovered) {
-                  root.hovered = false
+                    root.hovered = false
                 }
             }
         }
