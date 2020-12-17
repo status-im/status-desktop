@@ -96,6 +96,7 @@ ApplicationWindow {
         property bool walletEnabled: false
         property bool browserEnabled: false
         property bool displayChatImages: false
+        property bool timelineEnabled: true
         property bool compactMode
         property string locale: "en"
         property var recentEmojis: []
@@ -136,6 +137,7 @@ ApplicationWindow {
         property bool browserEnabled: defaultAppSettings.browserEnabled
         property bool displayChatImages: defaultAppSettings.displayChatImages
         property bool compactMode: defaultAppSettings.compactMode
+        property bool timelineEnabled: defaultAppSettings.timelineEnabled
         property string locale: defaultAppSettings.locale
         property var recentEmojis: defaultAppSettings.recentEmojis
         property real volume: defaultAppSettings.volume

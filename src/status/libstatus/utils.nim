@@ -4,6 +4,12 @@ from times import getTime, toUnix, nanosecond
 import accounts/signing_phrases
 from web3 import Address, fromHex
 
+proc getTimelineChatId*(pubKey: string = ""): string =
+  if pubKey == "":
+    return "@timeline70bd746ddcc12beb96b2c9d572d0784ab137ffc774f5383e50585a932080b57cca0484b259e61cecbaa33a4c98a300a"
+  else:
+    return "@" & pubKey
+
 proc isWakuEnabled(): bool =
   true # TODO:
 

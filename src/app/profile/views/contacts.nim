@@ -1,6 +1,8 @@
 import NimQml, chronicles, sequtils, sugar, strutils
+import ../../../status/libstatus/utils as status_utils
 import ../../../status/status
 import ../../../status/threads
+import ../../../status/chat/chat
 import contact_list
 import ../../../status/profile/profile
 import ../../../status/ens as status_ens
@@ -135,6 +137,7 @@ QtObject:
 
   proc addContact*(self: ContactsView, publicKey: string): string {.slot.} =
     result = self.status.contacts.addContact(publicKey)
+    self.status.chat.join(status_utils.getTimelineChatId(publicKey), ChatType.Profile, "", publicKey)
     self.contactChanged(publicKey, true)
 
   proc changeContactNickname*(self: ContactsView, publicKey: string, nickname: string) {.slot.} =
@@ -153,4 +156,7 @@ QtObject:
 
   proc removeContact*(self: ContactsView, publicKey: string) {.slot.} =
     self.status.contacts.removeContact(publicKey)
+    let channelId = status_utils.getTimelineChatId(publicKey)
+    if self.status.chat.hasChannel(channelId):
+      self.status.chat.leave(channelId)
     self.contactChanged(publicKey, false)

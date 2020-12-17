@@ -121,7 +121,7 @@ QtObject:
   proc upsertChannel(self: ChannelsList, channel: Chat): int =
     let idx = self.chats.findIndexById(channel.id)
     if idx == -1:
-        if channel.isActive:
+        if channel.isActive and channel.chatType != ChatType.Profile and channel.chatType != ChatType.Timeline:
           # We only want to add a channel to the list if it is active
           # otherwise, we'll end up with zombie channels on the list
           result = self.addChatItemToList(channel)

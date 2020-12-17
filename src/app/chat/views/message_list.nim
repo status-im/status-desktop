@@ -1,4 +1,4 @@
-import NimQml, Tables, sets, json
+import NimQml, Tables, sets, json, sugar
 import ../../../status/status
 import ../../../status/accounts
 import ../../../status/chat
@@ -64,9 +64,12 @@ QtObject:
     result.contentType = ContentType.ChatIdentifier;
     result.chatId = chatId
 
-  proc newChatMessageList*(chatId: string, status: Status): ChatMessageList =
+  proc newChatMessageList*(chatId: string, status: Status, addFakeMessages: bool = true): ChatMessageList =
     new(result, delete)
-    result.messages = @[result.chatIdentifier(chatId), result.fetchMoreMessagesButton()]
+    result.messages = @[]
+    if addFakeMessages:
+      result.messages.add(result.chatIdentifier(chatId))
+      result.messages.add(result.fetchMoreMessagesButton())
     result.messageIndex = initTable[string, int]()
     result.timedoutMessages = initHashSet[string]()
     result.status = status
@@ -80,6 +83,11 @@ QtObject:
     self.messageIndex.del(messageId)
     self.messageReactions.del(messageId)
     self.endRemoveRows()
+
+  proc deleteMessagesByChatId*(self: ChatMessageList, chatId: string) =
+    let messages = self.messages.filter(m => m.chatId == chatId)
+    for message in messages:
+      self.deleteMessage(message.id)
 
   proc resetTimeOut*(self: ChatMessageList, messageId: string) =
     if not self.messageIndex.hasKey(messageId): return

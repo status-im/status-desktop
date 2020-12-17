@@ -5,6 +5,7 @@ import "../imports"
 import "../shared"
 import "../shared/status"
 import "./AppLayouts"
+import "./AppLayouts/Timeline"
 import "./AppLayouts/Wallet"
 
 RowLayout {
@@ -187,8 +188,15 @@ RowLayout {
         }
 
         StatusIconTabButton {
+              id: timelineBtn
+              anchors.top: browserBtn.enabled ? browserBtn.top : walletBtn.top
+              enabled: isExperimental === "1" || appSettings.timelineEnabled
+              icon.name: "timeline"
+        }
+
+        StatusIconTabButton {
               id: profileBtn
-              anchors.top: browserBtn.top
+              anchors.top: timelineBtn.enabled ? timelineBtn.top : browserBtn.top
               icon.name: "profile"
 
               Rectangle {
@@ -282,6 +290,13 @@ RowLayout {
             property var _walletModel: walletModel
             property var _utilsModel: utilsModel
             property var _web3Provider: web3Provider
+        }
+
+        TimelineLayout {
+            id: timelineLayoutContainer
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.fillHeight: true
         }
 
         ProfileLayout {

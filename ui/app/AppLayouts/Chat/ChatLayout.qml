@@ -13,6 +13,7 @@ SplitView {
     property alias chatColumn: chatColumn
 
     property var onActivated: function () {
+        chatsModel.restorePreviousActiveChannel()
         chatColumn.onActivated()
     }
 

@@ -1,6 +1,10 @@
 import json, sequtils, sugar
 import libstatus/contacts as status_contacts
 import libstatus/accounts as status_accounts
+import libstatus/chat as status_chat
+import libstatus/utils as status_utils
+import chat/chat
+#import chat/utils
 import profile/profile
 import ../eventemitter
 
@@ -69,6 +73,7 @@ proc addContact*(self: ContactModel, id: string, localNickname: string): string 
   let updating = contact.systemTags.contains(":contact/added")
   if not updating:
     contact.systemTags.add(":contact/added")
+    status_chat.saveChat(getTimelineChatId(contact.id), ChatType.Profile, ensName=contact.ensName, profile=contact.id)
   let nickname =
     if (localNickname == ""):
       contact.localNickname
