@@ -2,11 +2,13 @@ import NimQml, Tables, std/wrapnils
 import ../../../status/[chat/chat, status]
 import channels_list
 import ../../../eventemitter
+import community_members_list
 
 QtObject:
   type CommunityItemView* = ref object of QObject
     communityItem*: Community
     chats*: ChannelsList
+    members*: CommunityMembersView
     status*: Status
     active*: bool
 
@@ -23,11 +25,13 @@ QtObject:
     result.status = status
     result.active = false
     result.chats = newChannelsList(status)
+    result.members = newCommunityMembersView(status)
     result.setup
 
   proc setCommunityItem*(self: CommunityItemView, communityItem: Community) =
     self.communityItem = communityItem
     self.chats.setChats(communityItem.chats)
+    self.members.setMembers(communityItem.members)
 
   proc activeChanged*(self: CommunityItemView) {.signal.}
 
@@ -78,7 +82,6 @@ QtObject:
   QtProperty[bool] verified:
     read = verified
 
-# TODO also add the members list view
   proc nbMembers*(self: CommunityItemView): int {.slot.} = result = ?.self.communityItem.members.len
   
   QtProperty[int] nbMembers:
@@ -89,3 +92,9 @@ QtObject:
 
   QtProperty[QVariant] chats:
     read = getChats
+
+  proc getMembers*(self: CommunityItemView): QVariant {.slot.} =
+    result = newQVariant(self.members)
+
+  QtProperty[QVariant] members:
+    read = getMembers

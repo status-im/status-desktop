@@ -115,6 +115,11 @@ ModalPopup {
                 label: qsTr("Members")
                 iconName: "members"
                 txtColor: Style.current.textColor
+                onClicked: openPopup(communityMembersPopup)
+                Component {
+                    id: communityMembersPopup
+                    CommunityMembersPopup { }
+                }
                 Item {
                     anchors.top: parent.top
                     anchors.right: parent.right
