@@ -125,8 +125,8 @@ proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
     self.contacts[c.id] = c
   self.events.emit("chatUpdate", ChatUpdateArgs(contacts: contacts))
 
-proc init*(self: ChatModel) =
-  let chatList = status_chat.loadChats()
+proc init*(self: ChatModel, pubKey: string) =
+  var chatList = status_chat.loadChats()
 
   var filters:seq[JsonNode] = @[]
   for chat in chatList:
