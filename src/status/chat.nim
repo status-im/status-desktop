@@ -159,7 +159,7 @@ proc init*(self: ChatModel, pubKey: string) =
 
   var filters:seq[JsonNode] = @[]
   for chat in chatList:
-    if self.hasChannel(chat.id): 
+    if self.hasChannel(chat.id):
       continue
     filters.add status_chat.buildFilter(chat)
     self.channels[chat.id] = chat
