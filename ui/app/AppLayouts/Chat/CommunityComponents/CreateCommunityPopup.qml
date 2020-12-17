@@ -12,12 +12,21 @@ ModalPopup {
     property string colorValidationError: ""
     property string selectedImageValidationError: ""
     property string selectedImage: ""
+    property QtObject community: chatsModel.activeCommunity
+
+    property bool isEdit: true
 
     id: popup
     height: 600
 
     onOpened: {
-        nameInput.text = "";
+        nameInput.text = isEdit ? community.name : "";
+        descriptionTextArea.text = isEdit ? community.description : "";
+        nameValidationError = "";
+        colorValidationError = "";
+        selectedImageValidationError = "";
+        // TODO: add color and profile pic
+        // TODO: can privacy be changed?
         nameInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
@@ -47,7 +56,9 @@ ModalPopup {
         return !nameValidationError && !descriptionTextArea.validationError && !colorValidationError
     }
 
-    title: qsTr("New community")
+    title: isEdit ?
+            qsTr("Edit community") :
+            qsTr("New community")
 
     ScrollView {
         property ScrollBar vScrollBar: ScrollBar.vertical
@@ -85,6 +96,8 @@ ModalPopup {
                 anchors.top: nameInput.bottom
                 anchors.topMargin: Style.current.bigPadding
                 customHeight: 88
+                textField.selectByMouse: true
+                textField.wrapMode: TextEdit.Wrap
             }
 
             StyledText {
@@ -234,15 +247,17 @@ ModalPopup {
             Separator {
                 id: separator1
                 anchors.top: colorPicker.bottom
-                anchors.topMargin: Style.current.bigPadding
+                anchors.topMargin: isEdit ? 0 : Style.current.bigPadding
+                visible: !isEdit
             }
 
             Item {
+                visible: !isEdit
                 id: privateSwitcher
-                height: privateSwitch.height
+                height: visible ? privateSwitch.height : 0
                 width: parent.width
                 anchors.top: separator1.bottom
-                anchors.topMargin: Style.current.smallPadding * 2
+                anchors.topMargin: isEdit ? 0 : Style.current.smallPadding * 2
 
                 StyledText {
                     text: qsTr("Private community")
@@ -256,10 +271,12 @@ ModalPopup {
             }
 
             StyledText {
+                visible: !isEdit
+                height: visible ? 50 : 0
                 id: privateExplanation
                 anchors.top: privateSwitcher.bottom
                 wrapMode: Text.WordWrap
-                anchors.topMargin: Style.current.smallPadding * 2
+                anchors.topMargin: isEdit ? 0 : Style.current.smallPadding * 2
                 width: parent.width
                 text: privateSwitch.checked ?
                           qsTr("Only members with an invite link will be able to join your community. Private communities are not listed inside Status") :
@@ -269,17 +286,25 @@ ModalPopup {
     }
 
     footer: StatusButton {
-        text: qsTr("Create")
+        text: isEdit ?
+              qsTr("Edit") :
+              qsTr("Create")
         anchors.right: parent.right
         onClicked: {
             if (!validate()) {
                 scrollView.scrollBackUp()
                 return
             }
-            const error = chatsModel.createCommunity(Utils.filterXSS(nameInput.text),
-                                                     Utils.filterXSS(descriptionTextArea.text),
-                                                     colorPicker.text,
-                                                     popup.selectedImage)
+
+            let error = false;
+            if(isEdit) {
+                console.log("TODO: implement this (not available in status-go yet)");
+            } else {
+                error = chatsModel.createCommunity(Utils.filterXSS(nameInput.text),
+                                                   Utils.filterXSS(descriptionTextArea.text),
+                                                   colorPicker.text,
+                                                   popup.selectedImage)
+            }
 
             if (error) {
                 creatingError.text = error
