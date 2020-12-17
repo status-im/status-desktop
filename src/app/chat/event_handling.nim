@@ -1,4 +1,5 @@
 import sugar, sequtils, times, strutils
+import ../../status/chat/chat as status_chat
 
 proc handleChatEvents(self: ChatController) =
   # Display already saved messages
@@ -39,7 +40,10 @@ proc handleChatEvents(self: ChatController) =
 
   self.status.events.on("channelLoaded") do(e: Args):
     var channel = ChannelArgs(e)
-    discard self.view.chats.addChatItemToList(channel.chat)
+    if channel.chat.chatType == ChatType.Timeline:
+      self.view.setTimelineChat(channel.chat)
+    elif channel.chat.chatType != ChatType.Profile:
+      discard self.view.chats.addChatItemToList(channel.chat)
     self.status.chat.chatMessages(channel.chat.id)
     self.status.chat.chatReactions(channel.chat.id)
 
@@ -50,13 +54,18 @@ proc handleChatEvents(self: ChatController) =
 
   self.status.events.on("channelJoined") do(e: Args):
     var channel = ChannelArgs(e)
-    discard self.view.chats.addChatItemToList(channel.chat)
+    if channel.chat.chatType == ChatType.Timeline:
+      self.view.setTimelineChat(channel.chat)
+    elif channel.chat.chatType != ChatType.Profile:
+      discard self.view.chats.addChatItemToList(channel.chat)
+      self.view.setActiveChannel(channel.chat.id)
     self.status.chat.chatMessages(channel.chat.id)
     self.status.chat.chatReactions(channel.chat.id)
-    self.view.setActiveChannel(channel.chat.id)
 
   self.status.events.on("channelLeft") do(e: Args):
-    self.view.removeChat(ChatIdArg(e).chatId)
+    let chatId = ChatIdArg(e).chatId
+    self.view.removeChat(chatId)
+    self.view.removeMessagesFromTimeline(chatId)
 
   self.status.events.on("activeChannelChanged") do(e: Args):
     self.view.setActiveChannel(ChatIdArg(e).chatId)

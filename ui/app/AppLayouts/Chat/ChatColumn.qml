@@ -266,7 +266,7 @@ StackLayout {
                 }
                 onSendMessage: {
                     if (chatInput.fileUrls.length > 0){
-                        chatsModel.sendImage(chatInput.fileUrls[0]);
+                        chatsModel.sendImage(chatInput.fileUrls[0], false);
                     }
                     var msg = chatsModel.plainText(Emoji.deparse(chatInput.textInput.text))
                     if (msg.length > 0){

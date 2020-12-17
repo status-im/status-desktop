@@ -4,6 +4,7 @@ import ../../status/mailservers
 import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../status/libstatus/types
+import ../../status/libstatus/utils as status_utils
 import ../../status/accounts as status_accounts
 import ../../status/chat as status_chat
 import ../../status/messages as status_messages
@@ -33,12 +34,14 @@ QtObject:
       groups*: GroupsView
       transactions*: TransactionsView
       activeChannel*: ChatItemView
+      previousActiveChannelIndex: int
       replyTo: string
       channelOpenTime*: Table[string, int64]
       connected: bool
       unreadMessageCnt: int
       oldestMessageTimestamp: int64
       loadingMessages: bool
+      timelineChat: Chat
       pubKey*: string
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
@@ -71,6 +74,9 @@ QtObject:
     result.transactions = newTransactionsView(status)
     result.unreadMessageCnt = 0
     result.loadingMessages = false
+    result.previousActiveChannelIndex = -1
+    result.messageList[status_utils.getTimelineChatId()] = newChatMessageList(status_utils.getTimelineChatId(), result.status, false)
+
     result.setup()
 
   proc oldestMessageTimestampChanged*(self: ChatsView) {.signal.}
@@ -205,6 +211,7 @@ QtObject:
     if selectedChannel.chatType.isOneToOne and selectedChannel.id == selectedChannel.name:
         selectedChannel.name = self.userNameOrAlias(selectedChannel.id)
 
+    self.previousActiveChannelIndex = index
     self.activeChannel.setChatItem(selectedChannel)
     self.status.chat.setActiveChannel(selectedChannel.id)
 
@@ -231,6 +238,16 @@ QtObject:
     write = setActiveChannel
     notify = activeChannelChanged
 
+  proc setActiveChannelToTimeline*(self: ChatsView) {.slot.} =
+    if not self.activeChannel.chatItem.isNil:
+      self.previousActiveChannelIndex = self.chats.chats.findIndexById(self.activeChannel.id)
+    self.activeChannel.setChatItem(self.timelineChat)
+    self.activeChannelChanged()
+
+  proc restorePreviousActiveChannel*(self: ChatsView) {.slot.} =
+    if self.activeChannel.id == self.timelineChat.id and not self.previousActiveChannelIndex == -1:
+      self.setActiveChannelByIndex(self.previousActiveChannelIndex)
+
   proc getCurrentSuggestions(self: ChatsView): QVariant {.slot.} =
     return newQVariant(self.currentSuggestions)
 
@@ -238,8 +255,11 @@ QtObject:
     read = getCurrentSuggestions
 
   proc upsertChannel(self: ChatsView, channel: string) =
+    var chat: Chat = nil
+    if self.status.chat.channels.hasKey(channel):
+      chat = self.status.chat.channels[channel]
     if not self.messageList.hasKey(channel):
-      self.messageList[channel] = newChatMessageList(channel, self.status)
+      self.messageList[channel] = newChatMessageList(channel, self.status, not chat.isNil and chat.chatType != ChatType.Profile)
       self.channelOpenTime[channel] = now().toTime.toUnix * 1000
 
   proc messagePushed*(self: ChatsView) {.signal.}
@@ -257,10 +277,15 @@ QtObject:
     for msg in messages.mitems:
       self.upsertChannel(msg.chatId)
       msg.userName = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
-      self.messageList[msg.chatId].add(msg)
+      if self.status.chat.channels.hasKey(msg.chatId):
+        let chat = self.status.chat.channels[msg.chatId]
+        if (chat.chatType == ChatType.Profile):
+          self.messageList[status_utils.getTimelineChatId()].add(msg)
+        else:
+          self.messageList[msg.chatId].add(msg)
       self.messagePushed()
       if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
-        let channel = self.chats.getChannelById(msg.chatId)
+        let channel = self.status.chat.channels[msg.chatId]
         let isAddedContact = channel.chatType.isOneToOne and self.status.contacts.isAdded(channel.id)
         if not channel.muted:
           self.messageNotificationPushed(
@@ -274,11 +299,9 @@ QtObject:
             msg.hasMention,
             isAddedContact,
             channel.name)
-          
         else:
           discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
           self.newMessagePushed()
-
 
   proc updateUsernames*(self:ChatsView, contacts: seq[Profile]) =
     if contacts.len > 0:
@@ -320,6 +343,9 @@ QtObject:
     discard self.chats.addChatItemToList(chatItem)
     self.messagePushed()
   
+  proc setTimelineChat*(self: ChatsView, chatItem: Chat) =
+    self.timelineChat = chatItem
+
   proc copyToClipboard*(self: ChatsView, content: string) {.slot.} =
     setClipBoardText(content)
 
@@ -399,6 +425,10 @@ QtObject:
     discard self.chats.removeChatItemFromList(chatId)
     self.messageList[chatId].delete
     self.messageList.del(chatId)
+
+  proc removeMessagesFromTimeline*(self: ChatsView, chatId: string) =
+    self.messageList[status_utils.getTimelineChatId()].deleteMessagesByChatId(chatId)
+    self.activeChannelChanged()
 
   proc clearChatHistory*(self: ChatsView, id: string) {.slot.} =
     self.status.chat.clearHistory(id)

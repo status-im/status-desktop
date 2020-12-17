@@ -10,6 +10,7 @@ type ChatType* {.pure.}= enum
   Timeline = 5
 
 proc isOneToOne*(self: ChatType): bool = self == ChatType.OneToOne
+proc isTimeline*(self: ChatType): bool = self == ChatType.Timeline
 
 type ChatMember* = object
   admin*: bool

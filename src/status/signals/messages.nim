@@ -98,7 +98,8 @@ proc newChat*(id: string, chatType: ChatType): Chat =
     lastClockValue: 0,
     deletedAtClockValue: 0, 
     unviewedMessagesCount: 0,
-    hasMentions: false
+    hasMentions: false,
+    members: @[]
   )
 
   if chatType == ChatType.OneToOne:

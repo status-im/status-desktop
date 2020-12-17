@@ -39,7 +39,7 @@ proc removeChatFilters(self: ChatModel, chatId: string) =
     for filter in filters:
       if filter["chatId"].getStr == chatId:
         status_chat.removeFilters(chatId, filter["filterId"].getStr)
-  of ChatType.OneToOne:
+  of ChatType.OneToOne, ChatType.Profile:
     # Check if user does not belong to any active chat group
     var inGroup = false
     for channel in self.channels.values:

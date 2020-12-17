@@ -1,9 +1,11 @@
-import json, strutils, sequtils, tables, chronicles, times
+import json, strutils, sequtils, tables, chronicles, times, sugar
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
 import libstatus/chatCommands as status_chat_commands
 import libstatus/accounts/constants as constants
 import libstatus/types
+import libstatus/utils as status_utils
+import libstatus/contacts as status_contacts
 import stickers
 import ../eventemitter
 
@@ -89,12 +91,12 @@ proc hasChannel*(self: ChatModel, chatId: string): bool =
 proc getActiveChannel*(self: ChatModel): string =
   if (self.channels.len == 0): "" else: toSeq(self.channels.values)[self.channels.len - 1].id
 
-proc join*(self: ChatModel, chatId: string, chatType: ChatType, ensName: string = "") =
+proc join*(self: ChatModel, chatId: string, chatType: ChatType, ensName: string = "", pubKey: string = "") =
   if self.hasChannel(chatId): return
 
   var chat = newChat(chatId, ChatType(chatType))
   self.channels[chat.id] = chat
-  status_chat.saveChat(chatId, chatType, true, chat.color, ensName)
+  status_chat.saveChat(chatId, chatType, color=chat.color, ensName=ensName, profile=pubKey)
   if ensName != "":
     chat.name = ensName
     chat.ensName = ensName
@@ -127,6 +129,32 @@ proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
 
 proc init*(self: ChatModel, pubKey: string) =
   var chatList = status_chat.loadChats()
+  var contacts = getAddedContacts()
+
+  let profileUpdatesChatIds = chatList.filter(c => c.chatType == ChatType.Profile).map(c => c.id)
+
+  if chatList.filter(c => c.chatType == ChatType.Timeline).len == 0:
+    var timelineChannel = newChat(status_utils.getTimelineChatId(), ChatType.Timeline)
+    self.join(timelineChannel.id, timelineChannel.chatType)
+    chatList.add(timelineChannel)
+
+  let timelineChatId = status_utils.getTimelineChatId(pubKey)
+
+  if not profileUpdatesChatIds.contains(timelineChatId):
+    var profileUpdateChannel = newChat(timelineChatId, ChatType.Profile)
+    status_chat.saveChat(profileUpdateChannel.id, profileUpdateChannel.chatType, profile=pubKey)
+    chatList.add(profileUpdateChannel)
+
+  # For profile updates and timeline, we have to make sure that for
+  # each added contact, a chat has been saved for the currently logged-in
+  # user. Users that will use a version of Status with timeline support for the
+  # first time, won't have any of those otherwise.
+  if profileUpdatesChatIds.filter(id => id != timelineChatId).len != contacts.len:
+    for contact in contacts:
+      if not profileUpdatesChatIds.contains(status_utils.getTimelineChatId(contact.address)):
+        let profileUpdatesChannel = newChat(status_utils.getTimelineChatId(contact.address), ChatType.Profile)
+        status_chat.saveChat(profileUpdatesChannel.id, profileUpdatesChannel.chatType, ensName=contact.ensName, profile=contact.address)
+        chatList.add(profileUpdatesChannel)
 
   var filters:seq[JsonNode] = @[]
   for chat in chatList:
