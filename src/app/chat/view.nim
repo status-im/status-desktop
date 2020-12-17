@@ -40,6 +40,7 @@ QtObject:
       unreadMessageCnt: int
       oldestMessageTimestamp: int64
       loadingMessages: bool
+      pubKey*: string
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
 
@@ -123,7 +124,7 @@ QtObject:
   proc plainText(self: ChatsView, input: string): string {.slot.} =
     result = plain_text(input)
 
-  proc sendMessage*(self: ChatsView, message: string, replyTo: string, contentType: int = ContentType.Message.int) {.slot.} =
+  proc sendMessage*(self: ChatsView, message: string, replyTo: string, contentType: int = ContentType.Message.int, isStatusUpdate: bool = false) {.slot.} =
     let aliasPattern = re(r"(@[A-z][a-z]+ [A-z][a-z]* [A-z][a-z]*)", flags = {reStudy, reIgnoreCase})
     let ensPattern = re(r"(@\w+(?=(\.stateofus)?\.eth))", flags = {reStudy, reIgnoreCase})
     let namePattern = re(r"(@\w+)", flags = {reStudy, reIgnoreCase})
@@ -137,7 +138,13 @@ QtObject:
     var m = self.replaceMentionsWithPubKeys(aliasMentions, contacts, message, (c => c.alias))
     m = self.replaceMentionsWithPubKeys(ensMentions, contacts, m, (c => c.ensName))
     m = self.replaceMentionsWithPubKeys(nameMentions, contacts, m, (c => c.ensName.split(".")[0]))
-    self.status.chat.sendMessage(self.activeChannel.id, m, replyTo, contentType)
+
+    var channelId = self.activeChannel.id
+
+    if isStatusUpdate:
+      channelId = "@" & self.pubKey
+
+    self.status.chat.sendMessage(channelId, m, replyTo, contentType)
 
   proc verifyMessageSent*(self: ChatsView, data: string) {.slot.} =
     let messageData = data.parseJson
@@ -148,12 +155,18 @@ QtObject:
     self.status.chat.resendMessage(messageId)
     self.messageList[chatId].resetTimeOut(messageId)
 
-  proc sendImage*(self: ChatsView, imagePath: string): string {.slot.} =
+  proc sendImage*(self: ChatsView, imagePath: string, isStatusUpdate: bool = false): string {.slot.} =
     result = ""
     try:
       var image = image_utils.formatImagePath(imagePath)
       let tmpImagePath = image_resizer(image, 2000, TMPDIR)
-      self.status.chat.sendImage(self.activeChannel.id, tmpImagePath)
+
+      var channelId = self.activeChannel.id
+      
+      if isStatusUpdate:
+        channelId = "@" & self.pubKey
+
+      self.status.chat.sendImage(channelId, tmpImagePath)
       removeFile(tmpImagePath)
     except Exception as e:
       error "Error sending the image", msg = e.msg
