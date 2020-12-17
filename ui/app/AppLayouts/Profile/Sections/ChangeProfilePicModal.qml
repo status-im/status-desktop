@@ -57,7 +57,7 @@ ModalPopup {
             id: cropImageModal
             width: image.width + 50
             height: image.height + 170
-            title: qsTr("Crop your image (optionnal)")
+            title: qsTr("Crop your image (optional)")
 
             Image {
                 id: image
