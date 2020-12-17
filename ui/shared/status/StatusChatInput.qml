@@ -749,8 +749,12 @@ Rectangle {
                 anchors.rightMargin: Style.current.halfPadding
                 anchors.bottom: parent.bottom
                 visible: imageBtn2.visible
-                highlighted: chatsModel.plainText(Emoji.deparse(messageInputField.text).trim()).trim().length > 0 || isImage
-                enabled: highlighted
+                highlighted: chatsModel.plainText(Emoji.deparse(messageInputField.text)).length > 0 || isImage
+                enabled: highlighted && messageInputField.length < messageLimit
+                onClicked: function (event) {
+                    control.sendMessage(event)
+                    control.hideExtendedArea();
+                }
             }
 
             StatusIconButton {
