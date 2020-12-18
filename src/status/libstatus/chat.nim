@@ -301,3 +301,6 @@ proc leaveCommunity*(communityId: string) =
 proc inviteUserToCommunity*(communityId: string, pubKey: string) =
   let res = callPrivateRPC("inviteUserToCommunity".prefix, %*[communityId, pubKey])#.parseJSON()["result"]
   debug "RESULT", res
+
+proc exportCommunity*(communityId: string):string  =
+  result = callPrivateRPC("exportCommunity".prefix, %*[communityId]).parseJson()["result"].getStr
