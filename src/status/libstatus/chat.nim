@@ -303,3 +303,7 @@ proc inviteUserToCommunity*(communityId: string, pubKey: string) =
 
 proc exportCommunity*(communityId: string):string  =
   result = callPrivateRPC("exportCommunity".prefix, %*[communityId]).parseJson()["result"].getStr
+
+proc importCommunity*(communityKey: string) =
+  let res = callPrivateRPC("importCommunity".prefix, %*[communityKey])
+  debug "RESULT", res

@@ -72,6 +72,15 @@ Item {
     }
 
     Component {
+        id: importCommunitiesPopupComponent
+        ImportCommunityPopup {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+    Component {
         id: communityDetailPopup
         CommunityDetailPopup {
             onClosed: {
