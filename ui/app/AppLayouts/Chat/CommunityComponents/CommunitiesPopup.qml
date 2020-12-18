@@ -126,12 +126,27 @@ ModalPopup {
         }
     }
 
-    footer: StatusButton {
-        text: qsTr("Create a community")
-        anchors.right: parent.right
-        onClicked: {
-            openPopup(createCommunitiesPopupComponent)
-            popup.close()
+    footer: Item {
+        anchors.fill: parent
+
+        StatusButton {
+            text: qsTr("Import a community")
+            anchors.right: createBtn.left
+            anchors.rightMargin: Style.current.smallPadding
+            onClicked: {
+                openPopup(importCommunitiesPopupComponent)
+                popup.close()
+            }
+        }
+
+        StatusButton {
+            id: createBtn
+            text: qsTr("Create a community")
+            anchors.right: parent.right
+            onClicked: {
+                openPopup(createCommunitiesPopupComponent)
+                popup.close()
+            }
         }
     }
 }

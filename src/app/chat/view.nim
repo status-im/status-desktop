@@ -722,3 +722,9 @@ QtObject:
     except Exception as e:
       error "Error exporting the community", msg = e.msg
       result = fmt"Error exporting the community: {e.msg}"
+
+  proc importCommunity*(self: ChatsView, communityKey: string) {.slot.} =
+    try:
+      self.status.chat.importCommunity(communityKey)
+    except Exception as e:
+      error "Error importing the community", msg = e.msg
