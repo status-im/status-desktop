@@ -17,7 +17,7 @@ ModalPopup {
     property string source: "../../../img/ens-header-dark@2x.png"
     property int nbMembers: community.nbMembers
     property bool isAdmin: true // TODO: 
-    height: isAdmin ? 627 : 509
+    height: isAdmin ? 640 : 509
 
     id: popup
 
@@ -181,6 +181,7 @@ ModalPopup {
                 }
             }
         }
+
         CommunityPopupButton {
             id: notificationsBtn
             label: qsTr("Notifications")
@@ -199,9 +200,11 @@ ModalPopup {
                 }
             }
         }
+
         Separator {
             width: parent.width
         }
+
         Loader {
             active: isAdmin
             width: parent.width
@@ -217,10 +220,52 @@ ModalPopup {
                 }
             }
         }
+
+        Loader {
+            property string exportResult: ""
+
+            active: isAdmin
+            width: parent.width
+            sourceComponent: !exportResult ? exportBtn : resultComponent
+
+            Component {
+                id: exportBtn
+                CommunityPopupButton {
+                    label: qsTr("Export community")
+                    iconName: "../fetch"
+                    onClicked:  exportResult = chatsModel.exportComumnity()
+                }
+            }
+
+            Component {
+                id: resultComponent
+                StyledText {
+                    property bool isError: !exportResult.startsWith("0x")
+
+                    text: exportResult
+                    color: isError ? Style.current.danger : Style.current.textColor
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.rightMargin: Style.current.smallPadding + copyToClipboardBtn.width
+                    wrapMode: TextEdit.WrapAnywhere
+
+                    CopyToClipBoardButton {
+                        id: copyToClipboardBtn
+                        visible: !isError
+                        textToCopy: exportResult
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.right
+                        anchors.leftMargin: Style.current.smallPadding
+                    }
+                }
+            }
+        }
+
         CommunityPopupButton {
             label: qsTr("Leave community")
             iconName: "leave"
         }
+
         Loader {
             active: isAdmin
             width: parent.width

@@ -397,3 +397,6 @@ proc inviteUserToCommunity*(self: ChatModel, communityId: string, pubKey: string
   status_chat.inviteUserToCommunity(communityId, pubKey)
   # After sending the invite, we send a message with the community ID so they can join
   self.sendMessage(pubKey, "Upgrade here to see an invitation to community", "", ContentType.Community.int, communityId)
+
+proc exportCommunity*(self: ChatModel, communityId: string): string =
+  result = status_chat.exportCommunity(communityId)

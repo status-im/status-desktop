@@ -715,3 +715,10 @@ QtObject:
     except Exception as e:
       error "Error inviting to the community", msg = e.msg
       result = fmt"Error inviting to the community: {e.msg}"
+
+  proc exportComumnity*(self: ChatsView): string {.slot.} =
+    try:
+      result = self.status.chat.exportCommunity(self.activeCommunity.communityItem.id)
+    except Exception as e:
+      error "Error exporting the community", msg = e.msg
+      result = fmt"Error exporting the community: {e.msg}"
