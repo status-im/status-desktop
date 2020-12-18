@@ -30,7 +30,6 @@ ModalPopup {
         contactList.membersData.append({
             //% "(You)"
             name: profileModel.profile.username + " " + qsTrId("(you)"),
-            localNickname: profileModel.contacts.list.rowData(i, "localNickname"),
             pubKey: profileModel.profile.pubKey,
             address: "",
             identicon: profileModel.profile.identicon,
