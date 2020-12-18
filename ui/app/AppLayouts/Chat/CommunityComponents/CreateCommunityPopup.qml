@@ -14,7 +14,7 @@ ModalPopup {
     property string selectedImage: ""
     property QtObject community: chatsModel.activeCommunity
 
-    property bool isEdit: true
+    property bool isEdit: false
 
     id: popup
     height: 600
