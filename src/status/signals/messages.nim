@@ -109,13 +109,17 @@ proc newChat*(id: string, chatType: ChatType): Chat =
     result.name = id
 
 proc toChat*(jsonChat: JsonNode): Chat =
+
+  let chatTypeInt = jsonChat{"chatType"}.getInt
+  let chatType: ChatType = if chatTypeInt >= ord(low(ChatType)) or chatTypeInt <= ord(high(ChatType)): ChatType(chatTypeInt) else: ChatType.Unknown
+
   result = Chat(
     id: jsonChat{"id"}.getStr,
     name: jsonChat{"name"}.getStr,
     identicon: "",
     color: jsonChat{"color"}.getStr,
     isActive: jsonChat{"active"}.getBool,
-    chatType: ChatType(jsonChat{"chatType"}.getInt),
+    chatType: chatType,
     timestamp: jsonChat{"timestamp"}.getBiggestInt,
     lastClockValue: jsonChat{"lastClockValue"}.getBiggestInt,
     deletedAtClockValue: jsonChat{"deletedAtClockValue"}.getBiggestInt, 
