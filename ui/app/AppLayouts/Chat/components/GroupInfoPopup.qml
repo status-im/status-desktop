@@ -279,7 +279,7 @@ ModalPopup {
                 StatusImageIdenticon {
                     id: identicon
                     anchors.left: parent.left
-                    source: chatView.getProfileImage(model.pubKey)|| model.identicon
+                    source: appMain.getProfileImage(model.pubKey)|| model.identicon
                 }
 
                 StyledText {
@@ -295,7 +295,7 @@ ModalPopup {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            const userProfileImage = chatView.getProfileImage(model.pubKey)
+                            const userProfileImage = appMain.getProfileImage(model.pubKey)
                             openProfilePopup(model.userName, model.pubKey, userProfileImage || model.identicon, '', contactRow.nickname)
                         }
                     }

@@ -20,14 +20,14 @@ Rectangle {
     property bool muted: false
     property bool hovered: false
 
-    property string profileImage: chatType === Constants.chatTypeOneToOne ? chatView.getProfileImage(chatId) || ""  : ""
+    property string profileImage: chatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
 
     Connections {
         enabled: chatType === Constants.chatTypeOneToOne
         target: profileModel.contacts.list
         onContactChanged: {
             if (pubkey === wrapper.chatId) {
-                wrapper.profileImage = chatView.getProfileImage(wrapper.chatId)
+                wrapper.profileImage = appMain.getProfileImage(wrapper.chatId)
             }
         }
     }

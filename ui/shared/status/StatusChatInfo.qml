@@ -14,7 +14,7 @@ Item {
     property int identiconSize: 40
     property bool isCompact: false
 
-    property string profileImage: chatType === Constants.chatTypeOneToOne ? chatView.getProfileImage(chatId) || ""  : ""
+    property string profileImage: chatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
 
     height: 48
     width: nameAndInfo.width + chatIdenticon.width + Style.current.smallPadding
@@ -24,7 +24,7 @@ Item {
         target: profileModel.contacts.list
         onContactChanged: {
             if (pubkey === root.chatId) {
-                root.profileImage = chatView.getProfileImage(root.chatId)
+                root.profileImage = appMain.getProfileImage(root.chatId)
             }
         }
     }

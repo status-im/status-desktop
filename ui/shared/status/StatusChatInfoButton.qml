@@ -26,7 +26,7 @@ Button {
         chatType: control.chatType
         identicon: {
             if (control.chatType === Constants.chatTypeOneToOne) {
-                return chatView.getProfileImage(control.chatId) || control.identicon
+                return appMain.getProfileImage(control.chatId) || control.identicon
             }
             return control.identicon
         }

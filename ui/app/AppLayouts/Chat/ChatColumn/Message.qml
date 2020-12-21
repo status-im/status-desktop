@@ -56,14 +56,14 @@ Item {
     }
     property bool useLargeImage: contentType === Constants.chatIdentifier
 
-    property string profileImageSource: !placeholderMessage && chatView.getProfileImage(userPubKey, isCurrentUser, useLargeImage) || ""
+    property string profileImageSource: !placeholderMessage && appMain.getProfileImage(userPubKey, isCurrentUser, useLargeImage) || ""
 
     Connections {
         enabled: !placeholderMessage
         target: profileModel.contacts.list
         onContactChanged: {
             if (pubkey === fromAuthor) {
-                profileImageSource = chatView.getProfileImage(userPubKey, isCurrentUser, useLargeImage)
+                profileImageSource = appMain.getProfileImage(userPubKey, isCurrentUser, useLargeImage)
             }
         }
     }
