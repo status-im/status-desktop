@@ -37,19 +37,6 @@ SplitView {
         chatGroupsListViewCount: contactsColumn.chatGroupsListViewCount
     }
 
-    function getProfileImage(pubkey, isCurrentUser, useLargeImage) {
-        if (isCurrentUser || (isCurrentUser === undefined && pubkey === profileModel.profile.pubKey)) {
-            return profileModel.profile.thumbnailImage
-        }
-
-        const index = profileModel.contacts.list.getContactIndexByPubkey(pubkey)
-        if (index === -1) {
-            return
-        }
-
-        return profileModel.contacts.list.rowData(index, useLargeImage ? "largeImage" : "thumbnailImage")
-    }
-
     function openProfilePopup(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, parentPopup){
         var popup = profilePopupComponent.createObject(chatView);
         if(parentPopup){

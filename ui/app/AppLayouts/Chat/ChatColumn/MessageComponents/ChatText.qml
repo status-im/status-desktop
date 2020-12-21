@@ -50,7 +50,7 @@ Item {
 
             if (link.startsWith('//')) {
                 let pk = link.replace("//", "");
-                const userProfileImage = chatView.getProfileImage(pk)
+                const userProfileImage = appMain.getProfileImage(pk)
                 openProfilePopup(chatsModel.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
                 return;
             }
