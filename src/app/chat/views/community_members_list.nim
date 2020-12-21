@@ -57,12 +57,12 @@ QtObject:
     if index.row < 0 or index.row >= self.members.len:
       return
 
-    let communityMember = self.members[index.row]
+    let communityMemberPubkey = self.members[index.row]
     let communityMemberRole = role.CommunityMembersRoles
     case communityMemberRole:
-      of CommunityMembersRoles.UserName: result = newQVariant(self.userName(communityMember, self.alias(communityMember)))
-      of CommunityMembersRoles.PubKey: result = newQVariant(communityMember)
-      of CommunityMembersRoles.Identicon: result = newQVariant(self.identicon(communityMember))
+      of CommunityMembersRoles.UserName: result = newQVariant(self.userName(communityMemberPubkey, self.alias(communityMemberPubkey)))
+      of CommunityMembersRoles.PubKey: result = newQVariant(communityMemberPubkey)
+      of CommunityMembersRoles.Identicon: result = newQVariant(self.identicon(communityMemberPubkey))
       
   method roleNames(self: CommunityMembersView): Table[int, string] =
     {
