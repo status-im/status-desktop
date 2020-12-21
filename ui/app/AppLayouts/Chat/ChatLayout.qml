@@ -69,25 +69,21 @@ SplitView {
 
     Loader {
         id: contactColumnLoader
+        SplitView.preferredWidth: Style.current.leftTabPrefferedSize
+        SplitView.minimumWidth: Style.current.leftTabMinimumWidth
+        SplitView.maximumWidth: Style.current.leftTabMaximumWidth
         sourceComponent: chatsModel.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
     }
 
     Component {
         id: contactsColumnComponent
         ContactsColumn {
-            SplitView.preferredWidth: Style.current.leftTabPrefferedSize
-            SplitView.minimumWidth: Style.current.leftTabMinimumWidth
-            SplitView.maximumWidth: Style.current.leftTabMaximumWidth
         }
     }
 
     Component {
         id: communtiyColumnComponent
-        CommunityColumn {
-            SplitView.preferredWidth: Style.current.leftTabPrefferedSize
-            SplitView.minimumWidth: Style.current.leftTabMinimumWidth
-            SplitView.maximumWidth: Style.current.leftTabMaximumWidth
-        }
+        CommunityColumn {}
     }
 
     ChatColumn {
