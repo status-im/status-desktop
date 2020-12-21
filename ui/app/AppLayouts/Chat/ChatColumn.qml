@@ -271,7 +271,7 @@ StackLayout {
                     var msg = chatsModel.plainText(Emoji.deparse(chatInput.textInput.text))
                     if (msg.length > 0){
                         msg = chatInput.interpretMessage(msg)
-                        chatsModel.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType);
+                        chatsModel.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, false);
                         chatInput.textInput.text = "";
                         if(event) event.accepted = true
                         chatInput.messageSound.stop()
