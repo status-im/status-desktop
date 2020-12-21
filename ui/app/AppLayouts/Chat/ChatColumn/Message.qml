@@ -91,15 +91,7 @@ Item {
             SelectedMessage.set(messageId, fromAuthor);
         }
         // Get contact nickname
-        const contactList = profileModel.contacts.list
-        const contactCount = contactList.rowCount()
-        let nickname = ""
-        for (let i = 0; i < contactCount; i++) {
-            if (contactList.rowData(i, 'pubKey') === fromAuthor) {
-                nickname = contactList.rowData(i, 'localNickname')
-                break;
-            }
-        }
+        let nickname = chatView.getUserNickname(fromAuthor)
         messageContextMenu.isProfile = !!isProfileClick
         messageContextMenu.isSticker = isSticker
         messageContextMenu.emojiOnly = emojiOnly
