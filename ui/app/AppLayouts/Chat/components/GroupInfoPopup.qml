@@ -210,18 +210,7 @@ ModalPopup {
                 width: parent.width
                 height: identicon.height
 
-                property string nickname: {
-                    // Get contact nickname
-                    const contactList = profileModel.contacts.list
-                    const contactCount = contactList.rowCount()
-                    let nickname = ""
-                    for (let i = 0; i < contactCount; i++) {
-                        if (contactList.rowData(i, 'pubKey') === model.pubKey) {
-                            return contactList.rowData(i, 'localNickname')
-                        }
-                    }
-                    return ""
-                }
+                property string nickname: chatView.getUserNickname(model.pubKey)
 
                 StatusImageIdenticon {
                     id: identicon
