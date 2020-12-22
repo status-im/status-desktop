@@ -57,7 +57,7 @@ ModalPopup {
                 return creatingError.open()
             }
 
-//            popup.close()
+            popup.close()
         }
 
         MessageDialog {
