@@ -130,6 +130,35 @@ QtObject {
         return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
     }
 
+    function formatDateTime(timestamp) {
+        let now = new Date()
+        let yesterday = new Date()
+        yesterday.setDate(now.getDate()-1)
+        let messageDate = new Date(Math.floor(timestamp))
+        let lastWeek = new Date()
+        lastWeek.setDate(now.getDate()-7)
+
+        let minutes = messageDate.getMinutes();
+        let hours = messageDate.getHours();
+
+        if (now.toDateString() === messageDate.toDateString()) {
+            return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
+        } else if (yesterday.toDateString() === messageDate.toDateString()) {
+            return qsTr("Yesterday")
+        } else if (lastWeek.getTime() < messageDate.getTime()) {
+            let days = [qsTr("Sunday"),
+                        qsTr("Monday"),
+                        qsTr("Tuesday"),
+                        qsTr("Wednesday"),
+                        qsTr("Thursday"),
+                        qsTr("Friday"),
+                        qsTr("Saturday")];
+            return days[messageDate.getDay()];
+        } else {
+            return messageDate.getMonth()+1+"/"+messageDate.getDate()+"/"+messageDate.getFullYear()
+        }
+    }
+
     function findAssetBySymbol(assets, symbolToFind) {
         for(var i=0; i<assets.rowCount(); i++) {
             const symbol = assets.rowData(i, "symbol")
