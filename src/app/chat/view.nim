@@ -15,7 +15,6 @@ import web3/[conversions, ethtypes]
 import ../../status/threads
 import views/[channels_list, message_list, chat_item, suggestions_list, reactions, stickers, groups, transactions]
 import json_serialization
-import ../../status/libstatus/utils
 import ../utils/image_utils
 
 logScope:

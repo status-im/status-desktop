@@ -1,6 +1,5 @@
 import json, times
 import core, utils
-import settings, types
 
 type
   MailserverTopic* = ref object
