@@ -119,49 +119,14 @@ Rectangle {
 
     StyledText {
         id: contactTime
-        text: {
-            let now = new Date()
-            let yesterday = new Date()
-            yesterday.setDate(now.getDate()-1)
-            let messageDate = new Date(Math.floor(wrapper.timestamp))
-            let lastWeek = new Date()
-            lastWeek.setDate(now.getDate()-7)
-
-            let minutes = messageDate.getMinutes();
-            let hours = messageDate.getHours();
-
-            if (now.toDateString() === messageDate.toDateString()) {
-                return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
-            } else if (yesterday.toDateString() === messageDate.toDateString()) {
-                //% "Yesterday"
-                return qsTrId("yesterday")
-            } else if (lastWeek.getTime() < messageDate.getTime()) {
-                //% "Sunday"
-                let days = [qsTrId("sunday"),
-                            //% "Monday"
-                            qsTrId("monday"),
-                            //% "Tuesday"
-                            qsTrId("tuesday"),
-                            //% "Wednesday"
-                            qsTrId("wednesday"),
-                            //% "Thursday"
-                            qsTrId("thursday"),
-                            //% "Friday"
-                            qsTrId("friday"),
-                            //% "Saturday"
-                            qsTrId("saturday")];
-                return days[messageDate.getDay()];
-            } else {
-                return messageDate.getMonth()+1+"/"+messageDate.getDate()+"/"+messageDate.getFullYear()
-            }
-            }
-            anchors.right: parent.right
-            anchors.rightMargin: !isCompact ? Style.current.padding : Style.current.smallPadding
-            anchors.top: !isCompact ? parent.top : undefined
-            anchors.topMargin: !isCompact ? Style.current.smallPadding : 0
-            anchors.verticalCenter: !isCompact ? undefined : parent.verticalCenter
-            font.pixelSize: 11
-            color: Style.current.darkGrey
+        text: Utils.formatDateTime(wrapper.timestamp)
+        anchors.right: parent.right
+        anchors.rightMargin: !isCompact ? Style.current.padding : Style.current.smallPadding
+        anchors.top: !isCompact ? parent.top : undefined
+        anchors.topMargin: !isCompact ? Style.current.smallPadding : 0
+        anchors.verticalCenter: !isCompact ? undefined : parent.verticalCenter
+        font.pixelSize: 11
+        color: Style.current.darkGrey
     }
     Rectangle {
         id: contactNumberChatsCircle

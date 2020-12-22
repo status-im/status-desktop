@@ -3,10 +3,11 @@ import "../../../../../shared"
 import "../../../../../imports"
 
 StyledTextEdit {
+    property bool formatDateTime: false
     id: chatTime
     visible: isMessage
     color: Style.current.darkGrey
-    text: Utils.formatTime(timestamp)
+    text: formatDateTime ? Utils.formatDateTime(timestamp) : Utils.formatTime(timestamp)
     font.pixelSize: Style.current.asideTextFontSize
     readOnly: true
     selectByMouse: true
