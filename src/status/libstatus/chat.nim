@@ -215,7 +215,6 @@ proc getLinkPreviewData*(link: string): JsonNode =
 proc getAllComunities*(): seq[Community] =
   var communities: seq[Community] = @[]
   let rpcResult = callPrivateRPC("communities".prefix).parseJSON()
-  debug "LIST", rpcResult
   if rpcResult{"result"}.kind != JNull:
     for jsonCommunity in rpcResult["result"]:
       var community = jsonCommunity.toCommunity()
@@ -226,7 +225,6 @@ proc getAllComunities*(): seq[Community] =
 proc getJoinedComunities*(): seq[Community] =
   var communities: seq[Community] = @[]
   let rpcResult = callPrivateRPC("joinedCommunities".prefix).parseJSON()
-  debug "LIST", rpcResult
   if rpcResult{"result"}.kind != JNull:
     for jsonCommunity in rpcResult["result"]:
       var community = jsonCommunity.toCommunity()
@@ -253,7 +251,6 @@ proc createCommunity*(name: string, description: string, color: string, image: s
         # ]
       }
     }]).parseJSON()
-  debug "RESULT", rpcResult
 
   if rpcResult{"result"}.kind != JNull:
     result = rpcResult["result"]["communities"][0].toCommunity()
@@ -279,7 +276,6 @@ proc createCommunityChannel*(communityId: string, name: string, description: str
         # ]
       }
     }]).parseJSON()
-  debug "RESULT", rpcResult
 
   if rpcResult{"result"}.kind != JNull:
     result = rpcResult["result"]["chats"][0].toChat()
@@ -291,20 +287,16 @@ proc createCommunityChannel*(communityId: string, name: string, description: str
   #   result = rpcResult["result"]["communities"][0].toCommunity()
 
 proc joinCommunity*(communityId: string) =
-  let res = callPrivateRPC("joinCommunity".prefix, %*[communityId])#.parseJSON()["result"]
-  debug "RESULT", res
+  discard callPrivateRPC("joinCommunity".prefix, %*[communityId])
 
 proc leaveCommunity*(communityId: string) =
-  let res = callPrivateRPC("leaveCommunity".prefix, %*[communityId])#.parseJSON()["result"]
-  debug "RESULT", res
+  discard callPrivateRPC("leaveCommunity".prefix, %*[communityId])
 
 proc inviteUserToCommunity*(communityId: string, pubKey: string) =
-  let res = callPrivateRPC("inviteUserToCommunity".prefix, %*[communityId, pubKey])#.parseJSON()["result"]
-  debug "RESULT", res
+  discard callPrivateRPC("inviteUserToCommunity".prefix, %*[communityId, pubKey])
 
 proc exportCommunity*(communityId: string):string  =
   result = callPrivateRPC("exportCommunity".prefix, %*[communityId]).parseJson()["result"].getStr
 
 proc importCommunity*(communityKey: string) =
-  let res = callPrivateRPC("importCommunity".prefix, %*[communityKey])
-  debug "RESULT", res
+  discard callPrivateRPC("importCommunity".prefix, %*[communityKey])
