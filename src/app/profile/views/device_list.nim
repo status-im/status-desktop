@@ -1,7 +1,6 @@
 import NimQml
 import Tables
 import ../../../status/profile/devices
-import ../../../status/devices as status_devices
 
 type
   DeviceRoles {.pure.} = enum

@@ -15,7 +15,7 @@ import transactions
 import algorithm
 import web3/[ethtypes, conversions], stew/byteutils, stint
 import libstatus/eth/contracts
-import chronicles, sequtils, httpclient, libp2p/[multihash, multicodec, cid]
+import chronicles, libp2p/[multihash, multicodec, cid]
 
 const domain* = ".stateofus.eth"
 
@@ -148,7 +148,7 @@ proc contenthash*(ensAddr: string): string =
   if bytesResponse == "0x":
     return ""
   
-  let size = fromHex(Stuint[256], bytesResponse[66..129]).toInt
+  let size = fromHex(Stuint[256], bytesResponse[66..129]).truncate(int)
   result = bytesResponse[130..129+size*2]
 
 

@@ -221,7 +221,7 @@ proc cycleMailservers(self: MailserverModel) =
   warn "Automatically switching mailserver"
   withLock activeMailserverLock:
     if self.activeMailserver != "":
-      warn "Disconnecting Actime Mailserver", peer=self.activeMailserver
+      warn "Disconnecting active mailserver", peer=self.activeMailserver
       withLock nodesLock:
         self.nodes[self.activeMailserver] = MailserverStatus.Disconnected
         removePeer(self.activeMailserver)
@@ -235,7 +235,7 @@ proc checkConnection() {.thread.} =
     # or setup a random mailserver:
     let sleepDuration = 10000
     while true:
-      debug "Verifying mailserver connection state..."
+      trace "Verifying mailserver connection state..."
       withLock modelLock: 
         # TODO: have a timeout for reconnection before changing to a different server
         if not mailserverModel.isActiveMailserverAvailable:

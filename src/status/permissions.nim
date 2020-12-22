@@ -2,7 +2,6 @@ import json
 import strutils
 import sets
 import libstatus/core
-import libstatus/types
 import chronicles
 import ../eventemitter
 import sequtils

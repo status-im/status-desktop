@@ -1,4 +1,4 @@
-import strutils, os
+import strutils
 
 proc formatImagePath*(imagePath: string): string =
   result = replace(imagePath, "file://", "")

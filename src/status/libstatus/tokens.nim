@@ -145,7 +145,7 @@ proc getTokenString*(contract: Contract, methodName: string): string =
   if response.result == "0x":
     return ""
 
-  let size = fromHex(Stuint[256], response.result[66..129]).toInt
+  let size = fromHex(Stuint[256], response.result[66..129]).truncate(int)
   result = response.result[130..129+size*2].parseHexStr
 
 proc tokenName*(contract: Contract): string = getTokenString(contract, "name")

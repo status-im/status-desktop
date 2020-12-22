@@ -1,6 +1,5 @@
 import json, random, strutils, sequtils, sugar, chronicles
 import json_serialization
-import ../libstatus/core
 import ../libstatus/utils
 import ../libstatus/accounts as status_accounts
 import ../libstatus/accounts/constants as constants
