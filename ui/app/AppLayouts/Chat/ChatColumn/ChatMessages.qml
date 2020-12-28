@@ -163,6 +163,11 @@ ScrollView {
                     if (chatType === Constants.chatTypeOneToOne && !appSettings.allowNotificationsFromNonContacts && !isAddedContact) {
                         return
                     }
+                    if (chatId === chatsModel.activeChannel.id && applicationWindow.active === true) {
+                        // Do not show the notif if we are in the channel already and the window is active and focused
+                        return
+                    }
+
                     chatLogView.currentNotificationChatId = chatId
 
                     let name;

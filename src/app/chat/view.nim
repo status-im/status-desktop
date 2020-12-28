@@ -260,21 +260,21 @@ QtObject:
       self.messageList[msg.chatId].add(msg)
       self.messagePushed()
       if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
-        if msg.chatId != self.activeChannel.id:
-          let channel = self.chats.getChannelById(msg.chatId)
-          let isAddedContact = channel.chatType.isOneToOne and self.status.contacts.isAdded(channel.id)
-          if not channel.muted:
-            self.messageNotificationPushed(
-              msg.chatId,
-              escape_html(msg.text),
-              msg.messageType,
-              channel.chatType.int,
-              msg.timestamp,
-              msg.identicon,
-              msg.alias,
-              msg.hasMention,
-              isAddedContact,
-              channel.name)
+        let channel = self.chats.getChannelById(msg.chatId)
+        let isAddedContact = channel.chatType.isOneToOne and self.status.contacts.isAdded(channel.id)
+        if not channel.muted:
+          self.messageNotificationPushed(
+            msg.chatId,
+            escape_html(msg.text),
+            msg.messageType,
+            channel.chatType.int,
+            msg.timestamp,
+            msg.identicon,
+            msg.alias,
+            msg.hasMention,
+            isAddedContact,
+            channel.name)
+          
         else:
           discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
           self.newMessagePushed()
