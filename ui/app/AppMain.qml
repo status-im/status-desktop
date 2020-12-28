@@ -1,6 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import QtWebEngine 1.10
+import QtWebChannel 1.13
 import "../imports"
 import "../shared"
 import "../shared/status"
@@ -25,7 +27,6 @@ RowLayout {
 
         return profileModel.contacts.list.rowData(index, useLargeImage ? "largeImage" : "thumbnailImage")
     }
-
 
     ToastMessage {
         id: toastMessage
