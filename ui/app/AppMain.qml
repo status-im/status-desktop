@@ -69,6 +69,47 @@ RowLayout {
         shortcut: "Ctrl+4, Ctrl+,"
         onTriggered: changeAppSection(Constants.profile)
     }
+    Action {
+        shortcut: "Ctrl+K"
+        onTriggered: {
+            if (channelPicker.opened) {
+                channelPicker.close()
+            } else {
+                channelPicker.open()
+            }
+        }
+    }
+    Component {
+        id: statusIdenticonComponent
+        StatusIdenticon {}
+    }
+
+    StatusInputListPopup {
+        id: channelPicker
+        title: qsTr("Where do you want to go?")
+        showSearchBox: true
+        width: 350
+        x: parent.width / 2 - width / 2
+        y: parent.height / 2 - height / 2
+        modelList: chatsModel.chats
+        getText: function (modelData) {
+            return modelData.name
+        }
+        getImageComponent: function (parent, modelData) {
+            return statusIdenticonComponent.createObject(parent, {
+                                                             width: channelPicker.imageWidth,
+                                                             height: channelPicker.imageHeight,
+                                                             chatName: modelData.name,
+                                                             chatType: modelData.chatType,
+                                                             identicon: modelData.identicon
+                                                         });
+        }
+        onClicked: function (index) {
+            chatsModel.setActiveChannelByIndex(index)
+            appMain.changeAppSection(Constants.chat)
+            channelPicker.close()
+        }
+    }
 
     function changeAppSection(section) {
         let sectionId = -1

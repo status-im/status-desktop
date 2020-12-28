@@ -32,7 +32,8 @@ Item {
     signal textEdited(string inputValue)
 
     id: inputBox
-    height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0) + (!!validationError ? (validationErrorText.height + validationErrorTopMargin) : 0)
+    implicitHeight: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0) + (!!validationError ? (validationErrorText.height + validationErrorTopMargin) : 0)
+    height: implicitHeight
     anchors.right: parent.right
     anchors.left: parent.left
 
