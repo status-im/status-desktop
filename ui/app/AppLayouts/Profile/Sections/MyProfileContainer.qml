@@ -72,10 +72,11 @@ Item {
             id: profileName
             text: ensName !== "" ? ensName : username
             anchors.left: profileImgContainer.right
-            anchors.leftMargin: 8
+            anchors.leftMargin: Style.current.halfPadding
             anchors.top: profileImgContainer.top
-            font.weight: Font.Medium
-            font.pixelSize: 15
+            anchors.topMargin: 4
+            font.weight: Font.Bold
+            font.pixelSize: 20
         }
 
         Address {
@@ -94,7 +95,7 @@ Item {
             height: 32
             width: 32
             radius: 8
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenter: profileImgContainer.verticalCenter
             icon.name: "qr-code-icon"
             iconColor: Style.current.textColor
             onClicked: {
@@ -118,8 +119,9 @@ Item {
             asynchronous: true
             fillMode: Image.PreserveAspectFit
             source: profileModel.qrCode(pubkey)
+            anchors.verticalCenterOffset: 20
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter + 20
+            anchors.verticalCenter: parent.verticalCenter
             height: 312
             width: 312
             mipmap: true
