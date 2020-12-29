@@ -640,8 +640,7 @@ Rectangle {
                 font.pixelSize: 15
                 font.family: Style.current.fontRegular.name
                 wrapMode: TextArea.Wrap
-                anchors.bottom: messageInput.bottom
-                anchors.top: messageInput.top
+                height: parent.height
                 placeholderText: qsTr("Type a message")
                 placeholderTextColor: Style.current.secondaryText
                 selectByMouse: true
