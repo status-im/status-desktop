@@ -423,8 +423,9 @@ QtObject:
 
   proc removeChat*(self: ChatsView, chatId: string) =
     discard self.chats.removeChatItemFromList(chatId)
-    self.messageList[chatId].delete
-    self.messageList.del(chatId)
+    if (self.messageList.hasKey(chatId)):
+      self.messageList[chatId].delete
+      self.messageList.del(chatId)
 
   proc removeMessagesFromTimeline*(self: ChatsView, chatId: string) =
     self.messageList[status_utils.getTimelineChatId()].deleteMessagesByChatId(chatId)
