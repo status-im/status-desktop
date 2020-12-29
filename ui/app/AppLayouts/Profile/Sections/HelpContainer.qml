@@ -135,49 +135,40 @@ Item {
 
             StyledText {
                 id: faqLink
-                //% "<a href='https://status.im/docs/FAQs.html'>Frequently asked questions</a>"
-                text: qsTrId("-a-href--https---status-im-docs-faqs-html--frequently-asked-questions--a-")
+                text: `<a href='https://status.im/docs/FAQs.html'>${qsTr("Frequently asked questions")}</a>`
                 font.pixelSize: 15
+                onLinkActivated: appMain.openLink(link)
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        mouse.accepted = false
-                        Qt.openUrlExternally("https://status.im/faq/")
-                    }
+                    acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
                 }
             }
 
             StyledText {
                 id: issueLink
-                //% "<a href='https://github.com/status-im/nim-status-client/issues/new'>Submit a bug</a>"
-                text: qsTrId("-a-href--https---github-com-status-im-nim-status-client-issues-new--submit-a-bug--a-")
+                text: `<a href='https://github.com/status-im/nim-status-client/issues/new'>${qsTr("Submit a bug")}</a>`
                 anchors.topMargin: Style.current.bigPadding
                 anchors.top: faqLink.bottom
                 font.pixelSize: 15
+                onLinkActivated: appMain.openLink(link)
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        mouse.accepted = false
-                        Qt.openUrlExternally("https://github.com/status-im/nim-status-client/issues/new")
-                    }
+                    acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
                 }
             }
 
             StyledText {
-                //% "<a href='https://discuss.status.im/c/features/51'>Request a feature</a>"
-                text: qsTrId("-a-href--https---discuss-status-im-c-features-51--request-a-feature--a-")
+                text: `<a href='https://discuss.status.im/c/features/51'>${qsTr("Request a feature")}</a>`
                 anchors.topMargin: Style.current.bigPadding
                 anchors.top: issueLink.bottom
                 font.pixelSize: 15
+                onLinkActivated: appMain.openLink(link)
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        mouse.accepted = false
-                        Qt.openUrlExternally("https://discuss.status.im/c/features/51")
-                    }
+                    acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
                 }
             }
         }

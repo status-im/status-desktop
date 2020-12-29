@@ -138,7 +138,7 @@ Item {
                     text: qsTr(`<a href="%1%2">Look up on Etherscan</a>`).arg(walletModel.etherscanLink.replace("/tx", "/address")).arg(profileModel.ens.getUsernameRegistrar())
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    onLinkActivated: Qt.openUrlExternally(link)
+                    onLinkActivated: appMain.openLink(link)
                     MouseArea {
                         anchors.fill: parent
                         acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
@@ -159,7 +159,7 @@ Item {
                     text: qsTr(`<a href="%1%2">Look up on Etherscan</a>`).arg(walletModel.etherscanLink.replace("/tx", "/address")).arg(profileModel.ens.getENSRegistry())
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    onLinkActivated: Qt.openUrlExternally(link)
+                    onLinkActivated: appMain.openLink(link)
                     MouseArea {
                         anchors.fill: parent
                         acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
