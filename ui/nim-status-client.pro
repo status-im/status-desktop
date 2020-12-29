@@ -406,4 +406,5 @@ DISTFILES += \
     shared/qmldir \
     shared/status/StatusEmojiSuggestionPopup.qml \
     shared/status/StatusInputListPopup.qml \
+    shared/status/StatusSettingsLineButton.qml \
     sounds/ErrorSound.qml
