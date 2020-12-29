@@ -28,6 +28,8 @@ CheckBox {
         text: control.text
         opacity: enabled ? 1.0 : 0.3
         verticalAlignment: Text.AlignVCenter
+        wrapMode: Text.WordWrap
+        width: parent.width
         leftPadding: !!control.text ? control.indicator.width + control.spacing : control.indicator.width
     }
 }

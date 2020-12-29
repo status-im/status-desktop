@@ -114,6 +114,8 @@ ApplicationWindow {
         property int fontSize: Constants.fontSizeM
 
         // Browser settings
+        property bool showBrowserSelector: true
+        property bool openLinksInStatus: true
         property bool showFavoritesBar: false
         property bool autoLoadImages: true
         property bool javaScriptEnabled: true
@@ -153,6 +155,8 @@ ApplicationWindow {
         property bool hideSignPhraseModal: defaultAppSettings.hideSignPhraseModal
 
         // Browser settings
+        property bool showBrowserSelector: defaultAppSettings.showBrowserSelector
+        property bool openLinksInStatus: defaultAppSettings.openLinksInStatus
         property bool showFavoritesBar: defaultAppSettings.showFavoritesBar
         property bool autoLoadImages: defaultAppSettings.autoLoadImages
         property bool javaScriptEnabled: defaultAppSettings.javaScriptEnabled

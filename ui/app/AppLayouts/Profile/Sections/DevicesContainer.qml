@@ -131,7 +131,7 @@ Item {
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
-                onClicked: Qt.openUrlExternally("https://status.im/user_guides/pairing_devices.html")
+                onClicked: appMain.openLink("https://status.im/user_guides/pairing_devices.html")
             }
         }
     }

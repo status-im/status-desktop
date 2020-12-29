@@ -63,7 +63,7 @@ Item {
         anchors.top: element12.top
         anchors.topMargin: 58
         font.pixelSize: 14
-        onLinkActivated: Qt.openUrlExternally(link)
+        onLinkActivated: appMain.openLink(link)
 
         MouseArea {
             anchors.fill: parent
@@ -80,7 +80,7 @@ Item {
         anchors.top: element13.top
         anchors.topMargin: 58
         font.pixelSize: 14
-        onLinkActivated: Qt.openUrlExternally(link)
+        onLinkActivated: appMain.openLink(link)
 
         MouseArea {
           anchors.fill: parent
@@ -96,7 +96,7 @@ Item {
         anchors.leftMargin: Style.current.bigPadding
         anchors.top: element14.top
         anchors.topMargin: 58
-        onLinkActivated: Qt.openUrlExternally(link)
+        onLinkActivated: appMain.openLink(link)
 
         MouseArea {
             anchors.fill: parent
@@ -106,12 +106,12 @@ Item {
     }
     StyledText {
         id: faqLink
-        text: "<a href='https://status.im/docs/FAQs.html'>Frequently asked questions</a>"
+        text: `<a href='https://status.im/docs/FAQs.html'>${qsTr("Frequently asked questions")}</a>`
         anchors.left: parent.left
         anchors.leftMargin: Style.current.bigPadding
         anchors.top: privacyPolicyLink.top
         anchors.topMargin: 58
-        onLinkActivated: Qt.openUrlExternally(link)
+        onLinkActivated: appMain.openLink(link)
 
         MouseArea {
             anchors.fill: parent

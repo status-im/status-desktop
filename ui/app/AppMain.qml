@@ -7,6 +7,7 @@ import "../shared/status"
 import "./AppLayouts"
 import "./AppLayouts/Timeline"
 import "./AppLayouts/Wallet"
+import "./AppLayouts/Chat/components"
 
 RowLayout {
     id: appMain
@@ -27,6 +28,33 @@ RowLayout {
         return profileModel.contacts.list.rowData(index, useLargeImage ? "largeImage" : "thumbnailImage")
     }
 
+    function openPopup(popupComponent, params = {}) {
+        const popup = popupComponent.createObject(appMain, params);
+        popup.open()
+        return popup
+    }
+
+    function openLink(link) {
+        if (appSettings.showBrowserSelector) {
+            appMain.openPopup(chooseBrowserPopupComponent, {link: link})
+        } else {
+            if (appSettings.openLinksInStatus) {
+                appMain.changeAppSection(Constants.browser)
+                browserLayoutContainer.item.openUrlInNewTab(link)
+            } else {
+                Qt.openUrlExternally(link)
+            }
+        }
+    }
+
+    Component {
+        id: chooseBrowserPopupComponent
+        ChooseBrowserPopup {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
 
     ToastMessage {
         id: toastMessage

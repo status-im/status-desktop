@@ -99,7 +99,7 @@ Popup {
         font.weight: Font.Medium
         anchors.leftMargin: 12
         onLinkActivated: {
-            Qt.openUrlExternally(root.link)
+            appMain.openLink(root.link)
             root.close()
         }
     }

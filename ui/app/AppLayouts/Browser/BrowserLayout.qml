@@ -65,6 +65,11 @@ Rectangle {
         return url;
     }
 
+    function openUrlInNewTab(url) {
+        browserWindow.addNewTab()
+        currentWebView.url = determineRealURL(url)
+    }
+
     property Component accessDialogComponent: BrowserConnectionModal {
         currentTab: tabs.getTab(tabs.currentIndex) && tabs.getTab(tabs.currentIndex).item
         x: browserWindow.width - width - Style.current.halfPadding
@@ -114,8 +119,7 @@ Rectangle {
     FavoriteMenu {
         id: favoriteMenu
         openInNewTab: function (url) {
-            browserWindow.addNewTab()
-            currentWebView.url = url
+            browserWindow.openUrlInNewTab(url)
         }
     }
 

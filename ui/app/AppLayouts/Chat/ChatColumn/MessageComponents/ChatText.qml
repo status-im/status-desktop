@@ -55,7 +55,7 @@ Item {
                 return;
             }
 
-            Qt.openUrlExternally(link)
+            appMain.openLink(link)
         }
 
         onLinkHovered: {

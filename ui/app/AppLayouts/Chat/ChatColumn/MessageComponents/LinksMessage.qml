@@ -170,7 +170,7 @@ Column {
                 anchors.right: linkImage.right
                 anchors.bottom: linkSite.bottom
                 cursorShape: Qt.PointingHandCursor
-                onClicked: Qt.openUrlExternally(linkData.address)
+                onClicked:  appMain.openLink(linkData.address)
             }
         }
     }
