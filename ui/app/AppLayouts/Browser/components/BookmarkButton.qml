@@ -36,7 +36,7 @@ Item {
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: {
-            if (mouse.button == Qt.RightButton) {
+            if (mouse.button === Qt.RightButton) {
                 root.rightClicked(mouse)
             } else {
                 root.clicked(mouse)

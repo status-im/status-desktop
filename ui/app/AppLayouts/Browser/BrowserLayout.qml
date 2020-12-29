@@ -650,46 +650,12 @@ Rectangle {
                             anchors.topMargin: 60
                         }
 
-                        Item {
+                        FavoritesList {
                             id: bookmarkListContainer
                             anchors.horizontalCenter: emptyPageImage.horizontalCenter
                             anchors.top: emptyPageImage.bottom
                             anchors.topMargin: 30
                             width: parent.width - Style.current.bigPadding * 2
-
-                            ListView {
-                                id: bookmarkList
-                                model: browserModel.bookmarks
-                                spacing: Style.current.padding
-                                orientation : ListView.Horizontal
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.horizontalCenterOffset: -(addBookmarkBtn.width + spacing) /2
-                                width: Math.min(childrenRect.width, parent.width - addBookmarkBtn.width - spacing)
-                                delegate: BookmarkButton {
-                                    id: bookmarkBtn
-                                    text: name
-                                    onClicked: {
-                                        currentWebView.url = determineRealURL(url)
-                                    }
-                                    source: imageUrl
-                                    onRightClicked: {
-                                        favoriteMenu.url = url
-                                        favoriteMenu.x = bookmarkList.x + bookmarkBtn.x + mouse.x
-                                        favoriteMenu.y = Qt.binding(function () {return bookmarkListContainer.y + mouse.y + favoriteMenu.height})
-                                        favoriteMenu.open()
-                                    }
-                                }
-                            }
-
-                            BookmarkButton {
-                                id: addBookmarkBtn
-                                text: qsTr("Add favorite")
-                                onClicked: {
-                                    addFavoriteModal.open()
-                                }
-                                anchors.left: bookmarkList.right
-                                anchors.leftMargin: bookmarkList.spacing
-                            }
                         }
                     }
                 }

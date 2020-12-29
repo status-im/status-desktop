@@ -12,6 +12,7 @@ Button {
     property color color: Style.current.buttonForegroundColor
     property color bgColor: Style.current.buttonBackgroundColor
     property color bgHoverColor: Qt.darker(control.bgColor, 1.1)
+    property bool disableColorOverlay: false
     property int iconRotation: 0
 
     id: control
@@ -43,9 +44,10 @@ Button {
                 rotation: control.iconRotation
 
                 ColorOverlay {
+                    enabled: !control.disableColorOverlay
                     anchors.fill: iconImg
                     source: iconImg
-                    color: buttonLabel.color
+                    color: control.disableColorOverlay ? "transparent" : buttonLabel.color
                     antialiasing: true
                     smooth: true
                     rotation: control.iconRotation

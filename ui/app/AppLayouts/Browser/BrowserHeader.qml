@@ -15,12 +15,14 @@ Rectangle {
 
     id: root
     width: parent.width
-    height: 45
+    height: barRow.height + favoritesBarLoader.height
     color: Style.current.background
     border.width: 0
 
     RowLayout {
-        anchors.fill: parent
+        id: barRow
+        width: parent.width
+        height: 45
         spacing: root.innerMargin
 
         Menu {
@@ -217,6 +219,21 @@ Rectangle {
             height: 24
             Layout.rightMargin: root.innerMargin
             padding: 6
+        }
+    }
+
+    Loader {
+        id: favoritesBarLoader
+        active: appSettings.showFavoritesBar
+        height: active ? item.height : 0
+        anchors.top: barRow.bottom
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.smallPadding
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.smallPadding
+
+        sourceComponent: Component {
+            FavoritesBar {}
         }
     }
 }
