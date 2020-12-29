@@ -113,6 +113,7 @@ ApplicationWindow {
         property int fontSize: Constants.fontSizeM
 
         // Browser settings
+        property bool showFavoritesBar: false
         property bool autoLoadImages: true
         property bool javaScriptEnabled: true
         property bool errorPageEnabled: true
@@ -150,6 +151,7 @@ ApplicationWindow {
         property bool hideSignPhraseModal: defaultAppSettings.hideSignPhraseModal
 
         // Browser settings
+        property bool showFavoritesBar: defaultAppSettings.showFavoritesBar
         property bool autoLoadImages: defaultAppSettings.autoLoadImages
         property bool javaScriptEnabled: defaultAppSettings.javaScriptEnabled
         property bool errorPageEnabled: defaultAppSettings.errorPageEnabled

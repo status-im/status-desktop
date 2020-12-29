@@ -86,40 +86,9 @@ Item {
             Layout.topMargin: Style.current.bigPadding - containerColumn.spacing
         }
 
-        Item {
-            id: dappPermissions
-            height: dappPermissionsText.height
-            width: parent.width
-
-            StyledText {
-                id: dappPermissionsText
-                text: qsTr("Set DApp access permissions")
-                font.pixelSize: 15
-            }
-
-            SVGImage {
-                id: caret2
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.verticalCenter: dappPermissionsText.verticalCenter
-                source: "../../../img/caret.svg"
-                width: 13
-                height: 7
-                rotation: -90
-            }
-            
-            ColorOverlay {
-                anchors.fill: caret2
-                source: caret2
-                color: Style.current.darkGrey
-                rotation: -90
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: dappListPopup.createObject(privacyContainer).open()
-                cursorShape: Qt.PointingHandCursor
-            }
+        StatusSettingsLineButton {
+            text: qsTr("Set DApp access permissions")
+            onClicked: dappListPopup.createObject(privacyContainer).open()
         }
 
         Separator {

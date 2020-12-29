@@ -32,6 +32,7 @@ QtObject {
     property color background
     property color border
     property color textColor
+    property color secondaryText
     property color currentUserTextColor
     property color secondaryBackground
     property color modalBackground

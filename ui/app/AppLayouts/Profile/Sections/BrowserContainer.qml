@@ -1,5 +1,4 @@
 import QtQuick 2.13
-import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
@@ -10,23 +9,30 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    StyledText {
-        id: title
-        text: qsTr("Browser Settings")
-        anchors.left: parent.left
-        anchors.leftMargin: 24
-        anchors.top: parent.top
-        anchors.topMargin: 24
-        font.weight: Font.Bold
-        font.pixelSize: 20
-    }
-
     Column {
+        id: containerColumn
         spacing: Style.current.padding
-        anchors.top: title.bottom
+        anchors.top: parent.top
         anchors.topMargin: Style.current.padding
+        anchors.right: parent.right
+        anchors.rightMargin: contentMargin
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: contentMargin
+        anchors.bottom: parent.bottom
+
+        StatusSectionHeadline {
+            id: labelGeneral
+            text: qsTr("General")
+        }
+
+        StatusSettingsLineButton {
+            text: qsTr("Show favorites bar")
+            isSwitch: true
+            switchChecked: appSettings.showFavoritesBar
+            onClicked: function (checked) {
+                appSettings.showFavoritesBar = checked
+            }
+        }
 
         RowLayout {
             StyledText {
