@@ -186,6 +186,7 @@ DISTFILES += \
     app/AppLayouts/Profile/Sections/BrowserContainer.qml \
     app/AppLayouts/Profile/Sections/ChangeProfilePicModal.qml \
     app/AppLayouts/Profile/Sections/MyProfileContainer.qml \
+    app/AppLayouts/Profile/Sections/OpenLinksWithModal.qml \
     app/AppLayouts/Profile/Sections/SoundsContainer.qml \
     app/AppLayouts/UIComponents/UIComponents.qml \
     app/AppLayouts/Wallet/ReceiveModal.qml \

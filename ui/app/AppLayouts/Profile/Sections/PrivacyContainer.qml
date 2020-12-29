@@ -131,6 +131,17 @@ Item {
             }
         }
 
+        Component {
+            id: openLinksWithModal
+            OpenLinksWithModal {}
+        }
+
+        StatusSettingsLineButton {
+            text: qsTr("Open links with...")
+            currentValue: appSettings.openLinksInStatus ? "Status" : qsTr("My default browser")
+            onClicked: openPopup(openLinksWithModal)
+        }
+
         StatusSectionHeadline {
             id: labelURLUnfurling
             text: qsTr("Chat link previews")
