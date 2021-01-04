@@ -105,7 +105,30 @@ Rectangle {
             color: Style.current.textColor
             Keys.onPressed: {
                 // TODO: disable browsing local files?  file://
-                if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return){
+                if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
+                    if (appSettings.browserEthereumExplorer !== Constants.browserEthereumExplorerNone && text.startsWith("0x")) {
+                        switch (appSettings.browserEthereumExplorer) {
+                        case Constants.browserEthereumExplorerEtherscan:
+                            if (text.length > 42) {
+                                currentWebView.url = "https://etherscan.io/tx/" + text; break;
+                            } else {
+                                currentWebView.url = "https://etherscan.io/address/" + text; break;
+                            }
+                        case Constants.browserEthereumExplorerEthplorer:
+                            if (text.length > 42) {
+                                currentWebView.url = "https://ethplorer.io/tx/" + text; break;
+                            } else {
+                                currentWebView.url = "https://ethplorer.io/address/" + text; break;
+                            }
+                        case Constants.browserEthereumExplorerBlockchair:
+                            if (text.length > 42) {
+                                currentWebView.url = "https://blockchair.com/ethereum/transaction/" + text; break;
+                            } else {
+                                currentWebView.url = "https://blockchair.com/ethereum/address/" + text; break;
+                            }
+                        }
+                        return
+                    }
                     if (appSettings.browserSearchEngine !== Constants.browserSearchEngineNone && !Utils.isURL(text)) {
                         switch (appSettings.browserSearchEngine) {
                         case Constants.browserSearchEngineGoogle: currentWebView.url = "https://www.google.com/search?q=" + text; break;
