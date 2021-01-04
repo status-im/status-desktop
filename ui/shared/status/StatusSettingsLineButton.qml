@@ -24,8 +24,12 @@ Item {
         id: valueText
         visible: !!root.currentValue
         text: root.currentValue
+        elide: Text.ElideRight
         font.pixelSize: 15
+        horizontalAlignment: Text.AlignRight
         color: Style.current.secondaryText
+        anchors.left: textItem.right
+        anchors.leftMargin: Style.current.padding
         anchors.right: root.isSwitch ? switchItem.left : caret.left
         anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: textItem.verticalCenter
