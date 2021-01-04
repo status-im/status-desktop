@@ -22,7 +22,7 @@ Item {
         id: generalColumn
         spacing: Style.current.bigPadding
         anchors.top: parent.top
-        anchors.topMargin: Style.current.bigPadding
+        anchors.topMargin: 46
         anchors.left: parent.left
         anchors.leftMargin: contentMargin
         anchors.right: parent.right
