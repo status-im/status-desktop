@@ -446,6 +446,9 @@ Rectangle {
             })
 
             tab.item.profile = profile;
+            if (appSettings.browserHomepage !== "") {
+                tab.item.url = appSettings.browserHomepage
+            }
             return tab;
         }
 
