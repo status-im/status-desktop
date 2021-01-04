@@ -92,53 +92,44 @@ Item {
             }
         }
 
+        // TODO redd this when we figure out how to set the download path for the browser
+//        Separator {}
+
+//        StatusSectionHeadline {
+//            text: qsTr("Downloads")
+//        }
 
 
-        Separator {}
+//        Item {
+//            height: textItem.height
+//            width: parent.width
 
-        StatusSectionHeadline {
-            text: qsTr("Downloads")
-        }
+//            StyledText {
+//                id: textItem
+//                text: qsTr("Location")
+//                font.pixelSize: 15
+//            }
 
+//            StyledText {
+//                id: valueText
+//                text: "path/to/downloads"
+//                font.pixelSize: 15
+//                color: Style.current.secondaryText
+//                anchors.right: locationBtn.left
+//                anchors.rightMargin: Style.current.halfPadding
+//                anchors.verticalCenter: textItem.verticalCenter
+//            }
 
-        Item {
-            height: textItem.height
-            width: parent.width
-
-            StyledText {
-                id: textItem
-                text: qsTr("Location")
-                font.pixelSize: 15
-            }
-
-            StyledText {
-                id: valueText
-                text: "path/to/downloads"
-                font.pixelSize: 15
-                color: Style.current.secondaryText
-                anchors.right: locationBtn.left
-                anchors.rightMargin: Style.current.halfPadding
-                anchors.verticalCenter: textItem.verticalCenter
-            }
-
-            StatusButton {
-                id: locationBtn
-                text: qsTr("Change")
-                anchors.right: parent.right
-                anchors.verticalCenter: textItem.verticalCenter
-                onClicked: {
-                    console.log('change location')
-                }
-            }
-        }
-
-        StatusSettingsLineButton {
-            text: qsTr("Location")
-            currentValue: "path/to/downloads"
-            onClicked: function () {
-                console.log('Change download')
-            }
-        }
+//            StatusButton {
+//                id: locationBtn
+//                text: qsTr("Change")
+//                anchors.right: parent.right
+//                anchors.verticalCenter: textItem.verticalCenter
+//                onClicked: {
+//                    console.log('change location')
+//                }
+//            }
+//        }
 
         Separator {}
 
