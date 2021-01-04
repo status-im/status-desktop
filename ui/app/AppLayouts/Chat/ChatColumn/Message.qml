@@ -120,6 +120,21 @@ Item {
                 case Constants.transactionType:
                     return transactionBubble
                 default:
+                    console.log("======")
+                    console.log(plainText)
+                    if (plainText === "plugin7") {
+                        console.log("plugin component")
+                        return pluginComponent
+                        // if (appMain.iscached) {
+                            // console.log("=> cached component")
+                            // return myCachedComponent.sourceComponent
+                        // } else {
+                            // console.log("=> normal component")
+                            // myCachedComponent.sourceComponent = pluginComponent
+                            // appMain.iscached = true
+                            // return myCachedComponent.sourceComponent
+                        // }
+                    }
                     return appSettings.compactMode  ? compactMessageComponent : 
                       isStatusUpdate ? statusUpdateComponent : messageComponent
             }
@@ -216,6 +231,18 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             textFormat: Text.RichText
             topPadding: root.prevMessageIndex === 1 ? Style.current.bigPadding : 0
+        }
+    }
+
+    // Normal message
+    Component {
+        id: pluginComponent
+        PluginComponent {
+            clickMessage: root.clickMessage
+            linkUrls: root.linkUrls
+            isCurrentUser: root.isCurrentUser
+            contentType: root.contentType
+            container: root
         }
     }
 

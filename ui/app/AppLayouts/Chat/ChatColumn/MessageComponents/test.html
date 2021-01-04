@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <script>
+            window.pluginOnMessage = function(message) {
+                if (message === "red") {
+                    document.getElementsByClassName("mybutton")[0].style.backgroundColor = "red";
+                }
+                if (message === "blue") {
+                    document.getElementsByClassName("mybutton")[0].style.backgroundColor = "blue";
+                }
+            }
+            window.pluginOnAllMessages = function(messages) {
+                for (let message of messages) {
+                    pluginOnMessage(message)
+                }
+            }
+        </script>
+    </head>
+        <button class="mybutton" onClick="javascript:hello()">hello</button>
+        <button class="mybutton" onClick="javascript:toColor('red')">change to red</button>
+        <button class="mybutton" onClick="javascript:toColor('blue')">change to blue</button>
+    </body>
+</html>

@@ -15,6 +15,15 @@ RowLayout {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
+    property Component cached
+    property bool iscached: false
+
+    Loader {
+        id: myCachedComponent
+        active: false
+        // source: null
+    }
+
     function getProfileImage(pubkey, isCurrentUser, useLargeImage) {
         if (isCurrentUser || (isCurrentUser === undefined && pubkey === profileModel.profile.pubKey)) {
             return profileModel.profile.thumbnailImage

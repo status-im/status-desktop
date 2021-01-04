@@ -27,6 +27,20 @@ WebEngineView {
         ]
     }
 
+    Connections {
+        target: chatsModel
+
+        onMessageNotificationPushed: function(chatId, msg, messageType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
+            console.log("message received")
+            console.log(msg)
+        }
+
+        onFullMessagePushed: function (chatId, message) {
+            console.log(message.length)
+            pluginProvider.pluginResponse(message)
+        }
+    }
+
     QtObject {
         id: pluginProvider
         WebChannel.id: "plugin"
@@ -34,17 +48,15 @@ WebEngineView {
         signal pluginResponse(string data);
 
         function postMessage(data) {
-            alert("hi there")
+            chatsModel.sendMessage(data, "", Constants.messageType, false);
+            // console.log("hi there")
+            // pluginResponse("hi")
         }
     }
 
     WebChannel {
         id: pluginChannel
         registeredObjects: [pluginProvider]
-
-        function postMessage(data) {
-            alert("hi there")
-        }
     }
 
 }

@@ -433,16 +433,22 @@ if (typeof module === 'object') {
 (function(){
     // window.alert("dude")
 
-    const onMessage = function(message){
-        console.log("got response")
-        console.log(message)
-        console.log(message.length)
-        if (message === "red") {
-            document.getElementsByClassName("mybutton")[0].style.backgroundColor = "red";
+    const onMessage = function(messageType, data) {
+        if (messageType === "message" && window.pluginOnMessage) {
+            window.pluginOnMessage(data)
         }
-        if (message === "blue") {
-            document.getElementsByClassName("mybutton")[0].style.backgroundColor = "blue";
+        if (messageType === "messages" && window.pluginOnAllMessages) {
+            window.pluginOnAllMessages(data.split(","))
         }
+        // console.log("got response")
+        // console.log(message)
+        // console.log(message.length)
+        // if (message === "red") {
+        //     document.getElementsByClassName("mybutton")[0].style.backgroundColor = "red";
+        // }
+        // if (message === "blue") {
+        //     document.getElementsByClassName("mybutton")[0].style.backgroundColor = "blue";
+        // }
     }
 
     let plugin;

@@ -242,6 +242,7 @@ QtObject:
       self.messageList[channel] = newChatMessageList(channel, self.status)
       self.channelOpenTime[channel] = now().toTime.toUnix * 1000
 
+  proc fullMessagePushed*(self: ChatsView, chatId: string, text: string) {.signal.}
   proc messagePushed*(self: ChatsView) {.signal.}
   proc newMessagePushed*(self: ChatsView) {.signal.}
 
@@ -259,6 +260,7 @@ QtObject:
       msg.userName = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
       self.messageList[msg.chatId].add(msg)
       self.messagePushed()
+      self.fullMessagePushed(msg.chatId, msg.text)
       if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
         let channel = self.chats.getChannelById(msg.chatId)
         let isAddedContact = channel.chatType.isOneToOne and self.status.contacts.isAdded(channel.id)
