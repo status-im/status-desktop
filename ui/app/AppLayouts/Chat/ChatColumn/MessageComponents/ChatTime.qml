@@ -7,7 +7,7 @@ StyledTextEdit {
     id: chatTime
     visible: isMessage
     color: Style.current.darkGrey
-    text: formatDateTime ? Utils.formatDateTime(timestamp) : Utils.formatTime(timestamp)
+    text: formatDateTime ? Utils.formatDateTime(timestamp, appSettings.locale) : Utils.formatTime(timestamp, appSettings.locale)
     font.pixelSize: Style.current.asideTextFontSize
     readOnly: true
     selectByMouse: true
