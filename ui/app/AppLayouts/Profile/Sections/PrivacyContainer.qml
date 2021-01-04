@@ -5,7 +5,6 @@ import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
-import "Privileges/"
 
 Item {
     id: privacyContainer
@@ -15,11 +14,6 @@ Item {
     ListModel {
         id: previewableSites
     }
-
-    property Component dappListPopup: DappList {
-        onClosed: destroy()
-    }
-
 
     Column {
         id: containerColumn
@@ -84,11 +78,6 @@ Item {
         Separator {
             id: separator
             Layout.topMargin: Style.current.bigPadding - containerColumn.spacing
-        }
-
-        StatusSettingsLineButton {
-            text: qsTr("Set DApp access permissions")
-            onClicked: dappListPopup.createObject(privacyContainer).open()
         }
 
         Separator {
