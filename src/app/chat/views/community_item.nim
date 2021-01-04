@@ -40,6 +40,12 @@ QtObject:
     self.status.events.emit("communityActiveChanged", Args())
     self.activeChanged()
 
+  proc nbMembersChanged*(self: CommunityItemView) {.signal.}
+
+  proc removeMember*(self: CommunityItemView, pubKey: string) =
+    self.members.removeMember(pubKey)
+    self.nbMembersChanged()
+
   proc active*(self: CommunityItemView): bool {.slot.} = result = ?.self.active
   
   QtProperty[bool] active:
@@ -86,6 +92,7 @@ QtObject:
   
   QtProperty[int] nbMembers:
     read = nbMembers
+    notify = nbMembersChanged
 
   proc getChats*(self: CommunityItemView): QVariant {.slot.} =
     result = newQVariant(self.chats)

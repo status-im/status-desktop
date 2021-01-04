@@ -136,7 +136,7 @@ ModalPopup {
                             icon.height: 16
                             icon.color: Style.current.red
                             text: qsTr("Kick")
-                            onTriggered: console.log("TODO")
+                            onTriggered: chatsModel.removeUserFromCommunity(model.pubKey)
                         }
                         Action {
                             icon.source: "../../../img/communities/menu/ban.svg"

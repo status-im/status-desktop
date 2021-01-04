@@ -211,7 +211,6 @@ proc getLinkPreviewData*(link: string): JsonNode =
 
   response.result
 
-
 proc getAllComunities*(): seq[Community] =
   var communities: seq[Community] = @[]
   let rpcResult = callPrivateRPC("communities".prefix).parseJSON()
@@ -280,12 +279,6 @@ proc createCommunityChannel*(communityId: string, name: string, description: str
   if rpcResult{"result"}.kind != JNull:
     result = rpcResult["result"]["chats"][0].toChat()
 
-
-#{\"jsonrpc\":\"2.0\",\"id\":0,\"result\":{\"chats\":[{\"id\":\"0x03537a54bd6f697f282ae848452f25ce656026cd8d0b3d3489178c76d3bf9ddf20cbf03afb-89ab-444e-96e9-e23b6c1266c0\",\"name\":\"general\",\"color\":\"#887af9\",\"active\":true,\"chatType\":6,\"timestamp\":1606424570375,\"lastClockValue\":0,\"deletedAtClockValue\":0,\"unviewedMessagesCount\":0,\"lastMessage\":null,\"members\":null,\"membershipUpdateEvents\":null,\"identicon\":\"\",\"communityId\":\"0x03537a54bd6f697f282ae848452f25ce656026cd8d0b3d3489178c76d3bf9ddf20\"}],\"communities\":[{\"id\":\"0x03537a54bd6f697f282ae848452f25ce656026cd8d0b3d3489178c76d3bf9ddf20\",\"description\":{\"clock\":2,\"permissions\":{\"access\":1},\"identity\":{\"display_name\":\"Jo2\",\"description\":\"Jo again\"},\"chats\":{\"cbf03afb-89ab-444e-96e9-e23b6c1266c0\":{\"permissions\":{\"access\":1},\"identity\":{\"display_name\":\"general\",\"description\":\"general channel\"}}}},\"admin\":true,\"verified\":false,\"joined\":true}],\"communitiesChanges\":[{\"MembersAdded\":{},\"MembersRemoved\":{},\"ChatsRemoved\":{},\"ChatsAdded\":{\"cbf03afb-89ab-444e-96e9-e23b6c1266c0\":{\"permissions\":{\"access\":1},\"identity\":{\"display_name\":\"general\",\"description\":\"general channel\"}}},\"ChatsModified\":{}}],\"filters\":[{\"chatId\":\"0x03537a54bd6f697f282ae848452f25ce656026cd8d0b3d3489178c76d3bf9ddf20cbf03afb-89ab-444e-96e9-e23b6c1266c0\",\"filterId\":\"eb220a77bde14d967462529d0ec7c1fa09a0ece4efebefb388ea6e0ecf9a1950\",\"symKeyId\":\"0f08b999ab6571429f79c4762bd922f2b7db38c80ba99cd4a5ac15ef75357d0e\",\"oneToOne\":false,\"identity\":\"\",\"topic\":\"0x46a1c2be\",\"discovery\":false,\"negotiated\":false,\"listen\":true}]}}
-
-  # if rpcResult{"result"}.kind != JNull:
-  #   result = rpcResult["result"]["communities"][0].toCommunity()
-
 proc joinCommunity*(communityId: string) =
   discard callPrivateRPC("joinCommunity".prefix, %*[communityId])
 
@@ -300,3 +293,6 @@ proc exportCommunity*(communityId: string):string  =
 
 proc importCommunity*(communityKey: string) =
   discard callPrivateRPC("importCommunity".prefix, %*[communityKey])
+
+proc removeUserFromCommunity*(communityId: string, pubKey: string) =
+  discard callPrivateRPC("removeUserFromCommunity".prefix, %*[communityId, pubKey])
