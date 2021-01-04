@@ -224,19 +224,21 @@ proc getLinkPreviewData*(self: ChatModel, link: string): JsonNode =
 proc setActiveChannel*(self: ChatModel, chatId: string) =
   self.events.emit("activeChannelChanged", ChatIdArg(chatId: chatId))
 
-proc processMessageUpdateAfterSend(self: ChatModel, response: string): (seq[Chat], seq[Message])  =
+proc processMessageUpdateAfterSend(self: ChatModel, response: string, forceActiveChat: bool = false): (seq[Chat], seq[Message])  =
   result = self.processChatUpdate(parseJson(response))
   var (chats, messages) = result
   if chats.len == 0 or messages.len == 0:
     self.events.emit("sendingMessageFailed", MessageArgs())
   else:
+    if (forceActiveChat):
+      chats[0].isActive = true
     self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[]))
     for msg in messages:
       self.events.emit("sendingMessage", MessageArgs(id: msg.id, channel: msg.chatId))
 
-proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "", contentType: int = ContentType.Message.int, communityId: string = "") =
+proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "", contentType: int = ContentType.Message.int, communityId: string = "", forceActiveChat: bool = false) =
   var response = status_chat.sendChatMessage(chatId, msg, replyTo, contentType, communityId)
-  discard self.processMessageUpdateAfterSend(response)
+  discard self.processMessageUpdateAfterSend(response, forceActiveChat)
 
 proc sendImage*(self: ChatModel, chatId: string, image: string) =
   var response = status_chat.sendImageMessage(chatId, image)
@@ -396,7 +398,10 @@ proc leaveCommunity*(self: ChatModel, communityId: string) =
 proc inviteUserToCommunity*(self: ChatModel, communityId: string, pubKey: string) =
   status_chat.inviteUserToCommunity(communityId, pubKey)
   # After sending the invite, we send a message with the community ID so they can join
-  self.sendMessage(pubKey, "Upgrade here to see an invitation to community", "", ContentType.Community.int, communityId)
+  self.sendMessage(pubKey, "Upgrade here to see an invitation to community", "", ContentType.Community.int, communityId, true)
+
+proc removeUserFromCommunity*(self: ChatModel, communityId: string, pubKey: string) =
+  status_chat.removeUserFromCommunity(communityId, pubKey)
 
 proc exportCommunity*(self: ChatModel, communityId: string): string =
   result = status_chat.exportCommunity(communityId)
