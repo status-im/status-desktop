@@ -30,6 +30,22 @@ QtObject:
     self.members = members
     self.endResetModel()
 
+  proc getIndexFromPubKey*(self: CommunityMembersView, pubKey: string): int =
+    var i = 0
+    for memberPubKey in self.members:
+      if (memberPubKey == pubKey):
+        return i
+      i = i + 1
+    return -1
+
+  proc removeMember*(self: CommunityMembersView, pubKey: string) =
+    let memberIndex = self.getIndexFromPubKey(pubKey)
+    if (memberIndex == -1):
+      return
+    self.beginRemoveRows(newQModelIndex(), memberIndex, memberIndex)
+    self.members.delete(memberIndex)
+    self.endRemoveRows()
+
   method rowCount(self: CommunityMembersView, index: QModelIndex = nil): int = self.members.len
 
   proc userName(self: CommunityMembersView, pk: string, alias: string): string =

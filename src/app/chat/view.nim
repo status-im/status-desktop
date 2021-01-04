@@ -313,7 +313,9 @@ QtObject:
           self.messageList[msg.chatId].add(msg)
       self.messagePushed()
       if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
-        let channel = self.status.chat.channels[msg.chatId]
+        let channel = self.chats.getChannelById(msg.chatId)
+        if (channel == nil):
+          continue
         let isAddedContact = channel.chatType.isOneToOne and self.status.contacts.isAdded(channel.id)
         if not channel.muted:
           self.messageNotificationPushed(
@@ -608,11 +610,18 @@ QtObject:
     notify = joinedCommunitiesChanged
 
   proc addCommunityToList*(self: ChatsView, community: Community) =
-    let communityCheck = self.joinedCommunityList.getCommunityById(community.id)
+    let communityCheck = self.communityList.getCommunityById(community.id)
     if (communityCheck.id == ""):
-      self.joinedCommunityList.addCommunityItemToList(community)
+      self.communityList.addCommunityItemToList(community)
     else:
-      self.joinedCommunityList.replaceCommunity(community)
+      self.communityList.replaceCommunity(community)
+
+    if (community.joined == true):
+      let joinedCommunityCheck = self.joinedCommunityList.getCommunityById(community.id)
+      if (joinedCommunityCheck.id == ""):
+        self.joinedCommunityList.addCommunityItemToList(community)
+      else:
+        self.joinedCommunityList.replaceCommunity(community)
 
   proc createCommunity*(self: ChatsView, name: string, description: string, color: string, imagePath: string): string {.slot.} =
     result = ""
@@ -729,3 +738,10 @@ QtObject:
       self.status.chat.importCommunity(communityKey)
     except Exception as e:
       error "Error importing the community", msg = e.msg
+
+  proc removeUserFromCommunity*(self: ChatsView, pubKey: string) {.slot.} =
+    try:
+      self.status.chat.removeUserFromCommunity(self.activeCommunity.id(), pubKey)
+      self.activeCommunity.removeMember(pubKey)
+    except Exception as e:
+      error "Error removing user from the community", msg = e.msg
