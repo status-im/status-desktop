@@ -118,6 +118,7 @@ ApplicationWindow {
         property bool openLinksInStatus: true
         property bool showFavoritesBar: false
         property string browserHomepage: ""
+        property int browserSearchEngine: Constants.browserSearchEngineNone
         property bool autoLoadImages: true
         property bool javaScriptEnabled: true
         property bool errorPageEnabled: true
@@ -160,6 +161,7 @@ ApplicationWindow {
         property bool openLinksInStatus: defaultAppSettings.openLinksInStatus
         property bool showFavoritesBar: defaultAppSettings.showFavoritesBar
         property string browserHomepage: defaultAppSettings.browserHomepage
+        property int browserSearchEngine: defaultAppSettings.browserSearchEngine
         property bool autoLoadImages: defaultAppSettings.autoLoadImages
         property bool javaScriptEnabled: defaultAppSettings.javaScriptEnabled
         property bool errorPageEnabled: defaultAppSettings.errorPageEnabled

@@ -14,8 +14,8 @@ Item {
     property Component dappListPopup: DappList {
         onClosed: destroy()
     }
-
     property Component homePagePopup: HomepageModal {}
+    property Component searchEngineModal: SearchEngineModal {}
 
     Column {
         id: generalColumn
@@ -48,10 +48,16 @@ Item {
 
         StatusSettingsLineButton {
             text: qsTr("Search engine used in the address bar")
-            currentValue: qsTr("None")
-            onClicked: function () {
-                console.log('Change search engine')
+            currentValue: {
+                switch (appSettings.browserSearchEngine) {
+                case Constants.browserSearchEngineGoogle: return "Google"
+                case Constants.browserSearchEngineYahoo: return "Yahoo!"
+                case Constants.browserSearchEngineDuckDuckGo: return "DuckDuckGo"
+                case Constants.browserSearchEngineNone:
+                default: return qsTr("None")
+                }
             }
+            onClicked: searchEngineModal.createObject(root).open()
         }
 
         Item {
