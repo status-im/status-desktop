@@ -119,7 +119,7 @@ Rectangle {
 
     StyledText {
         id: contactTime
-        text: Utils.formatDateTime(wrapper.timestamp)
+        text: Utils.formatDateTime(wrapper.timestamp, appSettings.locale)
         anchors.right: parent.right
         anchors.rightMargin: !isCompact ? Style.current.padding : Style.current.smallPadding
         anchors.top: !isCompact ? parent.top : undefined

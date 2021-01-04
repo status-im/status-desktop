@@ -130,7 +130,7 @@ QtObject {
         return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
     }
 
-    function formatDateTime(timestamp) {
+    function formatDateTime(timestamp, locale) {
         let now = new Date()
         let yesterday = new Date()
         yesterday.setDate(now.getDate()-1)
@@ -155,7 +155,7 @@ QtObject {
                         qsTr("Saturday")];
             return days[messageDate.getDay()];
         } else {
-            return messageDate.getMonth()+1+"/"+messageDate.getDate()+"/"+messageDate.getFullYear()
+            return new Date().toLocaleDateString(Qt.locale(locale))
         }
     }
 
