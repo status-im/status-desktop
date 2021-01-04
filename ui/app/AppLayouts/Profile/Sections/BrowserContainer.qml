@@ -16,6 +16,7 @@ Item {
     }
     property Component homePagePopup: HomepageModal {}
     property Component searchEngineModal: SearchEngineModal {}
+    property Component ethereumExplorerModal: EthereumExplorerModal {}
 
     Column {
         id: generalColumn
@@ -67,10 +68,16 @@ Item {
             StatusSettingsLineButton {
                 id: ethereumExplorerBtn
                 text: qsTr("Ethereum explorer used in the address bar")
-                currentValue: qsTr("None")
-                onClicked: function () {
-                    console.log('Change ethereum explorer')
+                currentValue: {
+                    switch (appSettings.browserEthereumExplorer) {
+                    case Constants.browserEthereumExplorerEtherscan: return "etherscan.io"
+                    case Constants.browserEthereumExplorerEthplorer: return "ethplorer.io"
+                    case Constants.browserEthereumExplorerBlockchair: return "blockchair.com"
+                    case Constants.browserSearchEngineNone:
+                    default: return qsTr("None")
+                    }
                 }
+                onClicked: ethereumExplorerModal.createObject(root).open()
             }
             StyledText {
                 text: qsTr("Open an ethereum explorer after a transaction hash or an address is entered")

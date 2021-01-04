@@ -183,6 +183,7 @@ DISTFILES += \
     app/AppLayouts/Profile/Sections/AppearanceContainer.qml \
     app/AppLayouts/Profile/Sections/BackupSeedModal.qml \
     app/AppLayouts/Profile/Sections/BrowserContainer.qml \
+    app/AppLayouts/Profile/Sections/BrowserModals/EthereumExplorerModal.qml \
     app/AppLayouts/Profile/Sections/BrowserModals/HomepageModal.qml \
     app/AppLayouts/Profile/Sections/BrowserModals/SearchEngineModal.qml \
     app/AppLayouts/Profile/Sections/ChangeProfilePicModal.qml \

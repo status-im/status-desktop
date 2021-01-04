@@ -105,4 +105,9 @@ QtObject {
     readonly property int browserSearchEngineGoogle: 1
     readonly property int browserSearchEngineYahoo: 2
     readonly property int browserSearchEngineDuckDuckGo: 3
+
+    readonly property int browserEthereumExplorerNone: 0
+    readonly property int browserEthereumExplorerEtherscan: 1
+    readonly property int browserEthereumExplorerEthplorer: 2
+    readonly property int browserEthereumExplorerBlockchair: 3
 }

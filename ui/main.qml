@@ -116,6 +116,7 @@ ApplicationWindow {
         property bool showFavoritesBar: false
         property string browserHomepage: ""
         property int browserSearchEngine: Constants.browserSearchEngineNone
+        property int browserEthereumExplorer: Constants.browserEthereumExplorerNone
         property bool autoLoadImages: true
         property bool javaScriptEnabled: true
         property bool errorPageEnabled: true
@@ -156,6 +157,7 @@ ApplicationWindow {
         property bool showFavoritesBar: defaultAppSettings.showFavoritesBar
         property string browserHomepage: defaultAppSettings.browserHomepage
         property int browserSearchEngine: defaultAppSettings.browserSearchEngine
+        property int browserEthereumExplorer: defaultAppSettings.browserEthereumExplorer
         property bool autoLoadImages: defaultAppSettings.autoLoadImages
         property bool javaScriptEnabled: defaultAppSettings.javaScriptEnabled
         property bool errorPageEnabled: defaultAppSettings.errorPageEnabled
