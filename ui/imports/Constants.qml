@@ -100,4 +100,9 @@ QtObject {
     readonly property string eth_prod: "eth.prod"
     readonly property string eth_staging: "eth.staging"
     readonly property string eth_test: "eth.test"
+
+    readonly property int browserSearchEngineNone: 0
+    readonly property int browserSearchEngineGoogle: 1
+    readonly property int browserSearchEngineYahoo: 2
+    readonly property int browserSearchEngineDuckDuckGo: 3
 }
