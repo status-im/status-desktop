@@ -4,6 +4,7 @@ import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
 import "Privileges/"
+import "BrowserModals"
 
 Item {
     id: root
@@ -13,6 +14,8 @@ Item {
     property Component dappListPopup: DappList {
         onClosed: destroy()
     }
+
+    property Component homePagePopup: HomepageModal {}
 
     Column {
         id: generalColumn
@@ -30,10 +33,8 @@ Item {
 
         StatusSettingsLineButton {
             text: qsTr("Homepage")
-            currentValue: qsTr("Default")
-            onClicked: function () {
-                console.log('Change Homepage')
-            }
+            currentValue: appSettings.browserHomepage === "" ? qsTr("Default") : appSettings.browserHomepage
+            onClicked: homePagePopup.createObject(root).open()
         }
 
         StatusSettingsLineButton {

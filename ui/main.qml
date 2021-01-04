@@ -114,6 +114,7 @@ ApplicationWindow {
 
         // Browser settings
         property bool showFavoritesBar: false
+        property string browserHomepage: ""
         property bool autoLoadImages: true
         property bool javaScriptEnabled: true
         property bool errorPageEnabled: true
@@ -152,6 +153,7 @@ ApplicationWindow {
 
         // Browser settings
         property bool showFavoritesBar: defaultAppSettings.showFavoritesBar
+        property string browserHomepage: defaultAppSettings.browserHomepage
         property bool autoLoadImages: defaultAppSettings.autoLoadImages
         property bool javaScriptEnabled: defaultAppSettings.javaScriptEnabled
         property bool errorPageEnabled: defaultAppSettings.errorPageEnabled
