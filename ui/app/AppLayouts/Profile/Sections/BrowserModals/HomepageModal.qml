@@ -46,6 +46,7 @@ ModalPopup {
             id: customUrl
             visible: appSettings.browserHomepage !== ""
             placeholderText: qsTr("Paste URL")
+            text: appSettings.browserHomepage
             pasteFromClipboard: true
             textField.onTextChanged: {
                 appSettings.browserHomepage = customUrl.text
