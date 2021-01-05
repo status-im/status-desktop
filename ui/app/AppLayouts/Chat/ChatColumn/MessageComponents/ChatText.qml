@@ -33,14 +33,14 @@ Item {
 
     StyledTextEdit {
         id: chatText
-        visible: !root.veryLongChatText || root.readMore
+        visible: !showMoreLoader.active || root.readMore
         textFormat: Text.RichText
         wrapMode: Text.Wrap
         font.pixelSize: Style.current.primaryTextFontSize
         readOnly: true
         selectByMouse: true
         color: Style.current.textColor
-        height: root.veryLongChatText && !root.readMore ? 200 : implicitHeight
+        height: root.veryLongChatText && !root.readMore ? Math.min(implicitHeight, 200) : implicitHeight
         clip: true
         onLinkActivated: function (link) {
             if(link.startsWith("#")) {
@@ -109,7 +109,7 @@ Item {
     Loader {
         id: mask
         anchors.fill: chatText
-        active: root.veryLongChatText
+        active: showMoreLoader.active
         visible: false
         sourceComponent: LinearGradient {
             start: Qt.point(0, 0)
@@ -124,7 +124,7 @@ Item {
 
     Loader {
         id: opMask
-        active: root.veryLongChatText && !root.readMore
+        active: showMoreLoader.active && !root.readMore
         anchors.fill: chatText
         sourceComponent: OpacityMask {
             source: chatText
