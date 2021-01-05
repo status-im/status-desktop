@@ -143,19 +143,12 @@ QtObject:
     if (channel == nil): return
     return channel.color
 
-  proc updateChat*(self: ChannelsList, channel: Chat, moveToTop: bool = true) =
+  proc updateChat*(self: ChannelsList, channel: Chat) =
     let idx = self.upsertChannel(channel)
     if idx == -1: return
     
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.chats.len, 0, nil)
-
-    if moveToTop:
-      if idx != 0: # Move last updated chat to the top of the list
-        self.chats.delete(idx)
-        self.chats.insert(channel, 0)
-      else:
-        self.chats[0] = channel
 
     self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.Description.int, ChannelsRoles.ContentType.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int, ChannelsRoles.HasMentions.int, ChannelsRoles.Muted.int])
 

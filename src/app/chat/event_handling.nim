@@ -31,7 +31,7 @@ proc handleChatEvents(self: ChatController) =
 
   self.status.events.on("channelUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)
-    self.view.updateChats(evArgs.chats, false)
+    self.view.updateChats(evArgs.chats)
 
   self.status.events.on("messageDeleted") do(e: Args):
     var evArgs = MessageArgs(e)
