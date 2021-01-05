@@ -13,6 +13,7 @@ Rectangle {
     id: channelListContent
     width: parent.width
     height: childrenRect.height
+    color: Style.current.transparent
 
     Timer {
         id: timer

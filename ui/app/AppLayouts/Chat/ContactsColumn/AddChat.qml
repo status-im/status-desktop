@@ -46,6 +46,7 @@ StatusRoundButton {
             onTriggered: openPopup(publicChatPopupComponent)
         }
         Action {
+            enabled: appSettings.communitiesEnabled
             text: qsTr("Communities")
             icon.source: "../../../img/communities.svg"
             icon.width: 20

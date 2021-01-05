@@ -93,6 +93,7 @@ ApplicationWindow {
 
     Settings {
         id: defaultAppSettings
+        property bool communitiesEnabled: false
         property bool walletEnabled: false
         property bool browserEnabled: false
         property bool displayChatImages: false
@@ -138,6 +139,7 @@ ApplicationWindow {
         property var chatSplitView
         property var walletSplitView
         property var profileSplitView
+        property bool communitiesEnabled: defaultAppSettings.communitiesEnabled
         property bool walletEnabled: defaultAppSettings.walletEnabled
         property bool browserEnabled: defaultAppSettings.browserEnabled
         property bool displayChatImages: defaultAppSettings.displayChatImages

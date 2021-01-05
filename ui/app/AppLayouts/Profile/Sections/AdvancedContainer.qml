@@ -24,8 +24,29 @@ Item {
     }
 
     RowLayout {
-        id: walletTabSettings
+        id: communitiesTabSettings
         anchors.top: title.bottom
+        anchors.topMargin: 20
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+
+        StyledText {
+            text: qsTr("Enable Communities")
+        }
+        StatusSwitch {
+            checked: appSettings.communitiesEnabled
+            onCheckedChanged: function(value) {
+                appSettings.communitiesEnabled = this.checked
+            }
+        }
+        StyledText {
+            text: qsTr("Currently WIP")
+        }
+    }
+
+    RowLayout {
+        id: walletTabSettings
+        anchors.top: communitiesTabSettings.bottom
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 24

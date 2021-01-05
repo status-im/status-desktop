@@ -117,18 +117,33 @@ Item {
         leftPadding: Style.current.halfPadding
         rightPadding: Style.current.halfPadding
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        contentHeight: communityList.height + channelList.height + 2 * Style.current.padding + emptyViewAndSuggestions.height
+        contentHeight: communitiesListLoader.height + channelList.height + 2 * Style.current.padding + emptyViewAndSuggestions.height
         clip: true
 
-        CommunityList {
-            id: communityList
-            searchStr: contactsColumn.searchStr.toLowerCase()
+        Loader {
+            id: communitiesListLoader
+            active: appSettings.communitiesEnabled
+            width: parent.width
+            height: {
+                if (item && active) {
+                    return item.height
+                }
+
+                return 0
+            }
+            sourceComponent: Component {
+                CommunityList {
+                    id: communityList
+                    visible: appSettings.communitiesEnabled
+                    searchStr: contactsColumn.searchStr.toLowerCase()
+                }
+            }
         }
 
         Separator {
             id: communitySep
-            visible: communityList.visible
-            anchors.top: communityList.bottom
+            visible: communitiesListLoader.active
+            anchors.top: visible ? communitiesListLoader.bottom : 0
             anchors.topMargin: Style.current.halfPadding
         }
 
