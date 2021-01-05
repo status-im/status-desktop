@@ -352,7 +352,7 @@ QtObject:
               channel.name = contact.username
         else:
           channel.name = contact.localNickname
-        self.chats.updateChat(channel, false)
+        self.chats.updateChat(channel)
         if (self.activeChannel.id == channel.id):
           self.activeChannel.setChatItem(channel)
           self.activeChannelChanged()
@@ -487,12 +487,12 @@ QtObject:
       self.unreadMessageCnt = unreadTotal
       self.unreadMessagesCntChanged()
 
-  proc updateChats*(self: ChatsView, chats: seq[Chat], triggerChange:bool = true) =
+  proc updateChats*(self: ChatsView, chats: seq[Chat]) =
     for chat in chats:
       if (chat.communityId != ""):
         return
       self.upsertChannel(chat.id)
-      self.chats.updateChat(chat, triggerChange)
+      self.chats.updateChat(chat)
       if(self.activeChannel.id == chat.id):
         self.activeChannel.setChatItem(chat)
         self.currentSuggestions.setNewData(self.status.contacts.getContacts())
@@ -540,7 +540,7 @@ QtObject:
     if (selectedChannel == nil): return
     selectedChannel.muted = true
     self.status.chat.muteChat(selectedChannel)
-    self.chats.updateChat(selectedChannel, false)
+    self.chats.updateChat(selectedChannel)
 
   proc unmuteChannel*(self: ChatsView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
@@ -548,7 +548,7 @@ QtObject:
     if (selectedChannel == nil): return
     selectedChannel.muted = false
     self.status.chat.unmuteChat(selectedChannel)
-    self.chats.updateChat(selectedChannel, false)
+    self.chats.updateChat(selectedChannel)
 
   proc channelIsMuted*(self: ChatsView, channelIndex: int): bool {.slot.} =
     if (self.chats.chats.len == 0): return false
