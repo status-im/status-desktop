@@ -21,7 +21,7 @@ Rectangle {
       if (communityButton.hovered) {
         return Style.current.secondaryBackground
       }
-      return Style.current.transparent
+      return Style.current.background
     }
     anchors.right: parent.right
     anchors.top: applicationWindow.top

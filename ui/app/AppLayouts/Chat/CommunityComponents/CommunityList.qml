@@ -24,7 +24,6 @@ Item {
             communityId: model.id
             name: model.name
             description: model.description
-            // TODO add other properties
             searchStr: root.searchStr
         }
     }
@@ -44,27 +43,6 @@ Item {
             text: qsTr("No search results in Communities")
         }
     }
-
-//    Connections {
-//        target: chatsModel.chats
-//        onDataChanged: {
-//            // If the current active channel receives messages and changes its position,
-//            // refresh the currentIndex accordingly
-//            if(chatsModel.activeChannelIndex !== communityListView.currentIndex){
-//                communityListView.currentIndex = chatsModel.activeChannelIndex
-//            }
-//        }
-//    }
-
-//    Connections {
-//        target: chatsModel
-//        onActiveChannelChanged: {
-//            chatsModel.hideLoadingIndicator()
-//            communityListView.currentIndex = chatsModel.activeChannelIndex
-//            SelectedMessage.reset();
-//            chatColumn.isReply = false;
-//        }
-//    }
 }
 
 
