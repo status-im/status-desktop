@@ -26,6 +26,7 @@ Popup {
     onOpened: {
         listView.currentIndex = 0
         if (showSearchBox) {
+            searchBox.text = ""
             searchBox.textField.forceActiveFocus()
         }
     }
