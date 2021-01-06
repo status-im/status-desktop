@@ -56,9 +56,7 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.bigPadding
             anchors.verticalCenter: parent.verticalCenter
-            onClicked: {
-                optionsMenu.open()
-            }
+            onClicked: optionsMenu.open()
         }
 
         PopupMenu {
