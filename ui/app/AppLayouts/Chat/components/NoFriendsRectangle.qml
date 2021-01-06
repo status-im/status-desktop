@@ -23,9 +23,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: noContacts.bottom
         anchors.topMargin: Style.current.xlPadding
-        onClicked: {
-            inviteFriendsPopup.open()
-        }
+        onClicked: inviteFriendsPopup.open()
     }
     InviteFriendsPopup {
         id: inviteFriendsPopup

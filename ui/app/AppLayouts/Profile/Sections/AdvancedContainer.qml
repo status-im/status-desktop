@@ -35,7 +35,7 @@ Item {
         }
         StatusSwitch {
             checked: appSettings.communitiesEnabled
-            onCheckedChanged: function(value) {
+            onCheckedChanged: {
                 appSettings.communitiesEnabled = this.checked
             }
         }
