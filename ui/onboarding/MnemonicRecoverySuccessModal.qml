@@ -8,14 +8,14 @@ import "../shared/status"
 ModalPopup {
     id: popup
     title: qsTr("Your keys have been successfully recovered")
-    height: 500
+    height: 400
 
     signal buttonClicked()
 
     StyledText {
         id: info
         anchors.top: parent.top
-        anchors.topMargin: Style.current.bigPadding*2
+        anchors.topMargin: Style.current.bigPadding
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.leftMargin: Style.current.bigPadding

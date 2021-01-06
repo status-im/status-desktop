@@ -19,7 +19,8 @@ ModalPopup {
     TextArea {
         id: mnemonicTextField
         anchors.top: parent.top
-        anchors.bottom: errorText.top
+        anchors.topMargin: 40
+        height: 100
         anchors.left: parent.left
         anchors.leftMargin: 76
         anchors.right: parent.right
@@ -28,9 +29,13 @@ ModalPopup {
         horizontalAlignment: TextEdit.AlignHCenter
         verticalAlignment: TextEdit.AlignVCenter
         font.pixelSize: 15
-        font.bold: true
+        font.weight: Font.DemiBold
         placeholderText: qsTr("Start with the first word")
         placeholderTextColor: Style.current.secondaryText
+        selectByMouse: true
+        selectByKeyboard: true
+        selectionColor: Style.current.secondaryBackground
+        selectedTextColor: Style.current.secondaryText
         
         color: Style.current.textColor
 
@@ -45,6 +50,8 @@ ModalPopup {
         text: Utils.seedPhraseWordCountText(mnemonicTextField.text)
         anchors.right: parent.right
         anchors.top: mnemonicTextField.bottom
+        anchors.topMargin: Style.current.smallPadding
+        color: Style.current.secondaryText
     }
 
     StyledText {
@@ -53,8 +60,8 @@ ModalPopup {
         color: Style.current.danger
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: helpText.top
-        anchors.bottomMargin: Style.current.smallPadding
+        anchors.top: mnemonicTextField.bottom
+        anchors.topMargin: Style.current.smallPadding
         horizontalAlignment: Text.AlignHCenter
     }
 
@@ -65,6 +72,7 @@ ModalPopup {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
+        horizontalAlignment: TextEdit.AlignHCenter
         color: Style.current.secondaryText
         font.pixelSize: 12
     }
