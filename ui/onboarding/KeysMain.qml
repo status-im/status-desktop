@@ -35,6 +35,8 @@ Page {
             anchors.top: parent.top
             fillMode: Image.PreserveAspectFit
             source: Universal.theme === Universal.Dark ? "img/keys-dark@2x.jpg" : "img/keys@2x.jpg"
+            width: 160
+            height: 160
         }
 
         StyledText {

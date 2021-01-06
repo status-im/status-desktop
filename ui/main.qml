@@ -243,7 +243,7 @@ ApplicationWindow {
 
         DSM.State {
             id: onboardingState
-            initialState: hasAccounts ? stateLogin : stateIntro
+            initialState: hasAccounts ? stateLogin : keysMainState
 
             DSM.State {
                 id: stateIntro
