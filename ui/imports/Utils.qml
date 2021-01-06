@@ -184,7 +184,7 @@ QtObject {
     }
 
     function isHexColor(c) {
-        return (/^#([0-9A-F]{6}|[0-9A-F]{3})$/i.test(c))
+        return (/^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})$/i.test(c))
     }
 
     function isSpace(c) {
