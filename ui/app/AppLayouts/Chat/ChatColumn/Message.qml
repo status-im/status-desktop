@@ -122,8 +122,11 @@ Item {
                 default:
                     console.log("======")
                     console.log(plainText)
-                    if (plainText === "plugin7") {
+                    // if (plainText.slice(0, 7) === "plugin7") {
+                    if (plainText.slice(0, 7) === "plugin|") {
                         console.log("plugin component")
+                        console.log(plainText.slice(7))
+                        // TODO: pass an id??
                         return pluginComponent
                         // if (appMain.iscached) {
                             // console.log("=> cached component")

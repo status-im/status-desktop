@@ -16,12 +16,16 @@ WebEngineView {
 
     Component.onCompleted: function() {
         console.log("rendering done!") 
+        console.log(plainText.split("|")[1]) 
+        let pluginInit = JSON.parse(plainText.split("|")[1])
+        console.log("name:" + pluginInit.name)
+        console.log("id:" + pluginInit.id)
         pluginProvider.pluginResponse('messages', "blue,red")
         // pluginProvider.pluginResponse('messages', "blue,red")
         // setTimeout(() => {
         // }, 500)
     //     testWebEngineView.loadHtml('<html>    <head>    </head>    <body>        <button class="mybutton" onClick="javascript:hello()">hello</button>        <button class="mybutton" onClick="javascript:toColor(\'red\')">change to red</button>        <button class="mybutton" onClick="javascript:toColor(\'blue\')">change to blue</button>    </body></html>')
-    }
+   }
 
     onLoadingChanged: function(loadRequest) {
         if (loadRequest.status === WebEngineView.LoadSucceededStatus) {
@@ -58,14 +62,25 @@ WebEngineView {
     Connections {
         target: chatsModel
 
-        onMessageNotificationPushed: function(chatId, msg, messageType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
-            console.log("message received")
+        onPluginMessagePushed: function(chatId, msg, messageType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
+            console.log("= message received")
             console.log(msg)
+            console.log(fromAuthor)
+            console.log(alias)
+            console.log(localName)
+            console.log(identicon)
+            console.log(timestamp)
+            let pluginInit = JSON.parse(plainText.split("|")[1])
+            let msgPackage = JSON.parse(msg)
+            if (pluginInit.id === msgPackage.id) {
+                console.log("matching message")
+                pluginProvider.pluginResponse('message', msgPackage.msg)
+            }
         }
 
         onFullMessagePushed: function (chatId, message) {
-            console.log(message.length)
-            pluginProvider.pluginResponse('message', message)
+            // console.log(message.length)
+            // pluginProvider.pluginResponse('message', message)
         }
     }
 
@@ -77,8 +92,8 @@ WebEngineView {
 
         function postMessage(data) {
             // pluginFileDialog.open()
-            chatsModel.sendMessage(data, "", Constants.messageType, false);
-            // console.log("hi there")
+            let pluginInit = JSON.parse(plainText.split("|")[1])
+            chatsModel.sendPluginMessage(JSON.stringify({id: pluginInit.id, msg: data})); // console.log("hi there")
             // pluginResponse("hi")
         }
     }

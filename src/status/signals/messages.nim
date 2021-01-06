@@ -20,6 +20,8 @@ proc toChat*(jsonChat: JsonNode): Chat
 proc toReaction*(jsonReaction: JsonNode): Reaction
 
 proc fromEvent*(event: JsonNode): Signal = 
+  echo "got message!!"
+  echo $event
   var signal:MessageSignal = MessageSignal()
   signal.messages = @[]
   signal.contacts = @[]

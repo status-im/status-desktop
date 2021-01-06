@@ -117,6 +117,8 @@ proc generateSymKeyFromPassword*(): string =
   ]))["result"]).strip(chars = {'"'})
 
 proc sendChatMessage*(chatId: string, msg: string, replyTo: string, contentType: int): string =
+  echo "sending message"
+  echo msg
   let preferredUsername = getSetting[string](Setting.PreferredUsername, "")
   callPrivateRPC("sendChatMessage".prefix, %* [
     {

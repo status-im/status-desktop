@@ -1,4 +1,6 @@
 import json, strutils, sequtils, tables, chronicles, times
+import uuids, strformat
+
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
 import libstatus/chatCommands as status_chat_commands
@@ -205,9 +207,23 @@ proc processMessageUpdateAfterSend(self: ChatModel, response: string): (seq[Chat
     for msg in messages:
       self.events.emit("sendingMessage", MessageArgs(id: msg.id, channel: msg.chatId))
 
-proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "", contentType: int = ContentType.Message.int) =
-  var response = status_chat.sendChatMessage(chatId, msg, replyTo, contentType)
+proc sendPluginMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "") =
+  var response = status_chat.sendChatMessage(chatId, msg, replyTo, 0)
   discard self.processMessageUpdateAfterSend(response)
+
+proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "", contentType: int = ContentType.Message.int) =
+  if msg == "plugin":
+    let id = genUUID()
+    # let pluginMsg = fmt"plugin|{\"name\":\"simple\",\"id\":\"{id}\"}"
+    let pluginJson = %* {"name": "simple", "id": $id}
+    let pluginMsg = fmt"plugin|{$pluginJson}"
+    echo "========> message is a plugin!!"
+    echo pluginMsg
+    var response = status_chat.sendChatMessage(chatId, pluginMsg, replyTo, contentType)
+    discard self.processMessageUpdateAfterSend(response)
+  else:
+    var response = status_chat.sendChatMessage(chatId, msg, replyTo, contentType)
+    discard self.processMessageUpdateAfterSend(response)
 
 proc sendImage*(self: ChatModel, chatId: string, image: string) =
   var response = status_chat.sendImageMessage(chatId, image)

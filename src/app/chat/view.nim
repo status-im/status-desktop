@@ -145,6 +145,10 @@ QtObject:
 
     self.status.chat.sendMessage(channelId, m, replyTo, contentType)
 
+  proc sendPluginMessage*(self: ChatsView, message: string) {.slot.} =
+    var channelId = self.activeChannel.id
+    self.status.chat.sendPluginMessage(channelId, message, "")
+
   proc verifyMessageSent*(self: ChatsView, data: string) {.slot.} =
     let messageData = data.parseJson
     self.messageList[messageData["chatId"].getStr].checkTimeout(messageData["id"].getStr)
@@ -246,6 +250,8 @@ QtObject:
   proc messagePushed*(self: ChatsView) {.signal.}
   proc newMessagePushed*(self: ChatsView) {.signal.}
 
+  proc pluginMessagePushed*(self: ChatsView, chatId: string, text: string, messageType: string, chatType: int, timestamp: string, identicon: string, username: string, hasMention: bool, isAddedContact: bool, channelName: string) {.signal.}
+
   proc messageNotificationPushed*(self: ChatsView, chatId: string, text: string, messageType: string, chatType: int, timestamp: string, identicon: string, username: string, hasMention: bool, isAddedContact: bool, channelName: string) {.signal.}
 
   proc messagesCleared*(self: ChatsView) {.signal.}
@@ -256,31 +262,48 @@ QtObject:
 
   proc pushMessages*(self:ChatsView, messages: var seq[Message]) =
     for msg in messages.mitems:
-      self.upsertChannel(msg.chatId)
-      msg.userName = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
-      self.messageList[msg.chatId].add(msg)
-      self.messagePushed()
-      self.fullMessagePushed(msg.chatId, msg.text)
-      if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
+      echo $msg.contentType
+      if $msg.contentType == "Unknown":
+        echo "plugin message received"
         let channel = self.chats.getChannelById(msg.chatId)
         let isAddedContact = channel.chatType.isOneToOne and self.status.contacts.isAdded(channel.id)
-        if not channel.muted:
-          self.messageNotificationPushed(
-            msg.chatId,
-            escape_html(msg.text),
-            msg.messageType,
-            channel.chatType.int,
-            msg.timestamp,
-            msg.identicon,
-            msg.alias,
-            msg.hasMention,
-            isAddedContact,
-            channel.name)
-          
-        else:
-          discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
-          self.newMessagePushed()
+        self.pluginMessagePushed(
+          msg.chatId,
+          # escape_html(msg.text),
+          msg.text,
+          msg.messageType,
+          channel.chatType.int,
+          msg.timestamp,
+          msg.identicon,
+          msg.alias,
+          msg.hasMention,
+          isAddedContact,
+          channel.name)
+      else:
+        self.upsertChannel(msg.chatId)
+        msg.userName = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
+        self.messageList[msg.chatId].add(msg)
+        self.messagePushed()
+        self.fullMessagePushed(msg.chatId, msg.text)
+        if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
+          let channel = self.chats.getChannelById(msg.chatId)
+          let isAddedContact = channel.chatType.isOneToOne and self.status.contacts.isAdded(channel.id)
+          if not channel.muted:
+            self.messageNotificationPushed(
+              msg.chatId,
+              escape_html(msg.text),
+              msg.messageType,
+              channel.chatType.int,
+              msg.timestamp,
+              msg.identicon,
+              msg.alias,
+              msg.hasMention,
+              isAddedContact,
+              channel.name)
 
+          else:
+            discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
+            self.newMessagePushed()
 
   proc updateUsernames*(self:ChatsView, contacts: seq[Profile]) =
     if contacts.len > 0:
