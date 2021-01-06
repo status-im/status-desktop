@@ -13,7 +13,6 @@ ModalPopup {
     height: 300
 
     onOpened: {
-        keyInput.text = isEdit ? community.name : "";
         keyInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
@@ -35,6 +34,7 @@ ModalPopup {
         label: qsTr("Community key")
         placeholderText: qsTr("0x...")
         validationError: popup.keyValidationError
+        pasteFromClipboard: true
     }
 
     footer: StatusButton {
