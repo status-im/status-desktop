@@ -99,7 +99,7 @@ proc isActiveMailserverAvailable*(self:MailserverModel): bool =
 
 proc connect(self: MailserverModel, enode: string) =
   debug "Connecting to mailserver", enode=enode.substr[enode.len-40..enode.len-1]
-
+  var mailserverTrusted = false
   # TODO: this should come from settings
   var knownMailservers = initHashSet[string]()
   for m in self.mailservers:
@@ -120,14 +120,20 @@ proc connect(self: MailserverModel, enode: string) =
   # Connecting and once a peerConnected signal is received, we mark it as 
   # Connected and then as Trusted
 
-  # Attempt to connect to mailserver by adding it as a peer
-  self.nodes[enode] = MailserverStatus.Connecting
-  addPeer(enode)
-  self.lastConnectionAttempt = cpuTime()
+  if self.nodes.hasKey(enode) and self.nodes[enode] == MailserverStatus.Connected:
+    self.trustPeer(enode)
+    status_mailservers.update(enode)
+    mailserverTrusted = true
+  else:
+    # Attempt to connect to mailserver by adding it as a peer
+    self.nodes[enode] = MailserverStatus.Connecting
+    addPeer(enode)
+    self.lastConnectionAttempt = cpuTime()
 
   nodesLock.release()
   activeMailserverLock.release()
-
+  if mailserverTrusted: 
+    self.events.emit("mailserverAvailable", Args())
 
 
 
@@ -234,16 +240,19 @@ proc cycleMailservers(self: MailserverModel) =
 
 proc checkConnection() {.thread.} =
   {.gcsafe.}:
-    #TODO: connect to current mailserver from the settings
-
-    # or setup a random mailserver:
     let sleepDuration = 10000
     while true:
       trace "Verifying mailserver connection state..."
       withLock modelLock: 
-        # TODO: have a timeout for reconnection before changing to a different server
-        if not mailserverModel.isActiveMailserverAvailable:
-          mailserverModel.cycleMailservers()
+        let pinnedMailserver = status_settings.getPinnedMailserver()
+        if pinnedMailserver != "" and mailserverModel.getActiveMailserver() != pinnedMailserver:
+          # connect to current mailserver from the settings
+          mailserverModel.connect(pinnedMailserver) 
+        else:
+          # or setup a random mailserver:
+          if not mailserverModel.isActiveMailserverAvailable:
+            # TODO: have a timeout for reconnection before changing to a different server
+            mailserverModel.cycleMailservers()
       sleep(sleepDuration)
 
 
