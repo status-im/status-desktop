@@ -208,7 +208,8 @@ proc processMessageUpdateAfterSend(self: ChatModel, response: string): (seq[Chat
       self.events.emit("sendingMessage", MessageArgs(id: msg.id, channel: msg.chatId))
 
 proc sendPluginMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "") =
-  var response = status_chat.sendChatMessage(chatId, msg, replyTo, 0)
+  # TODO: currently set as 'plaintext' type
+  var response = status_chat.sendChatMessage(chatId, fmt"pluginMsg|{msg}", replyTo, 1)
   discard self.processMessageUpdateAfterSend(response)
 
 proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "", contentType: int = ContentType.Message.int) =

@@ -1,11 +1,12 @@
 <html>
     <head>
         <script>
-            window.pluginOnMessage = function(message) {
-                if (message === "red") {
+            window.pluginOnMessage = function(_message) {
+                let message = JSON.parse(_message)
+                if (message.data === "red") {
                     document.getElementsByClassName("mybutton")[0].style.backgroundColor = "red";
                 }
-                if (message === "blue") {
+                if (message.data === "blue") {
                     document.getElementsByClassName("mybutton")[0].style.backgroundColor = "blue";
                 }
             }

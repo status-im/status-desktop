@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <script>
+            window.pluginOnMessage = function(_message) {
+                let message = JSON.parse(_message)
+
+                const newDiv = document.createElement("div");
+                const newContent = document.createTextNode(message.username + " has joined the game");
+                document.getElementById("msgs").appendChild(newContent)
+                // if (data === "red") {
+                //     document.getElementsByClassName("mybutton")[0].style.backgroundColor = "red";
+                // }
+                // if (data === "blue") {
+                //     document.getElementsByClassName("mybutton")[0].style.backgroundColor = "blue";
+                // }
+                // console.log("-------")
+                // console.log(message.data)
+            }
+            window.pluginOnAllMessages = function(messages) {
+                // for (let message of messages) {
+                    // pluginOnMessage(message)
+                // }
+            }
+        </script>
+    </head>
+        <div id="state">waiting to someone to join...</div>
+        <div id="msgs">
+        </div>
+        <button class="mybutton" onClick="javascript:hello()">hello</button>
+        <button class="mybutton" onClick="javascript:toColor('red')">change to red</button>
+        <button class="mybutton" onClick="javascript:toColor('blue')">change to blue</button>
+    </body>
+</html>

@@ -36,13 +36,14 @@ WebEngineView {
     anchors.top: parent.top
     anchors.topMargin: Style.current.smallPadding
     // height: childrenRect.height + this.anchors.topMargin + (dateGroupLbl.visible ? dateGroupLbl.height : 0)
-    height: 3 * (childrenRect.height + this.anchors.topMargin)
+    height: 4 * (childrenRect.height + this.anchors.topMargin)
     width: parent.width
 
     id: testWebEngineView
     focus: true
     // url: "https://dap.ps/"
     url: "./test.html"
+    // url: "./test2.html"
 
     webChannel: pluginChannel
     // property QtObject otrProfile: WebEngineProfile {
@@ -65,16 +66,21 @@ WebEngineView {
         onPluginMessagePushed: function(chatId, msg, messageType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
             console.log("= message received")
             console.log(msg)
-            console.log(fromAuthor)
-            console.log(alias)
-            console.log(localName)
-            console.log(identicon)
-            console.log(timestamp)
+            // console.log(fromAuthor)
+            // console.log(alias)
+            // console.log(localName)
+            // console.log(identicon)
+            // console.log(timestamp)
+            if (msg.indexOf("pluginMsg|") !== 0) {
+                return
+            }
             let pluginInit = JSON.parse(plainText.split("|")[1])
-            let msgPackage = JSON.parse(msg)
+            let msgPackage = JSON.parse(msg.split("|")[1])
             if (pluginInit.id === msgPackage.id) {
                 console.log("matching message")
-                pluginProvider.pluginResponse('message', msgPackage.msg)
+                let pkg = JSON.stringify({ data: msgPackage.msg, identicon, username, timestamp })
+                console.log(pkg)
+                pluginProvider.pluginResponse('message', pkg)
             }
         }
 

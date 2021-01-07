@@ -263,7 +263,9 @@ QtObject:
   proc pushMessages*(self:ChatsView, messages: var seq[Message]) =
     for msg in messages.mitems:
       echo $msg.contentType
-      if $msg.contentType == "Unknown":
+      # if $msg.contentType == "Unknown":
+      # if 1 == 2:
+      if msg.text.startsWith("pluginMsg|"):
         echo "plugin message received"
         let channel = self.chats.getChannelById(msg.chatId)
         let isAddedContact = channel.chatType.isOneToOne and self.status.contacts.isAdded(channel.id)
