@@ -280,7 +280,9 @@ QtObject:
       if self.status.chat.channels.hasKey(msg.chatId):
         let chat = self.status.chat.channels[msg.chatId]
         if (chat.chatType == ChatType.Profile):
-          self.messageList[status_utils.getTimelineChatId()].add(msg)
+          let timelineChatId = status_utils.getTimelineChatId()
+          self.messageList[timelineChatId].add(msg)
+          if self.activeChannel.id == timelineChatId: self.activeChannelChanged()
         else:
           self.messageList[msg.chatId].add(msg)
       self.messagePushed()
