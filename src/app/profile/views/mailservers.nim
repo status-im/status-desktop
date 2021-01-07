@@ -1,5 +1,6 @@
 import NimQml, chronicles
 import ../../../status/status
+import ../../../status/mailservers
 import ../../../status/profile/mailserver
 import mailservers_list
 import ../../../status/libstatus/settings as status_settings
@@ -33,3 +34,28 @@ QtObject:
 
   QtProperty[QVariant] list:
     read = getMailserversList
+
+  proc getActiveMailserver(self: MailserversView): string {.slot.} =
+    return self.mailserversList.getMailserverName(self.status.mailservers.getActiveMailserver())
+
+  proc activeMailserverChanged*(self: MailserversView) {.signal.}
+
+  QtProperty[string] activeMailserver:
+    read = getActiveMailserver
+    notify = activeMailserverChanged
+
+  proc getAutomaticSelection(self: MailserversView): bool {.slot.} =
+    status_settings.getPinnedMailserver() == ""
+
+  QtProperty[bool] automaticSelection:
+    read = getAutomaticSelection
+
+  proc setMailserver(self: MailserversView, id: string) {.slot.} =
+    let enode = self.mailserversList.getMailserverEnode(id)
+    status_settings.pinMailserver(enode)
+
+  proc enableAutomaticSelection(self: MailserversView, value: bool) {.slot.} =
+    if value:
+      status_settings.pinMailserver()
+    else:
+      status_settings.pinMailserver(self.status.mailservers.getActiveMailserver())

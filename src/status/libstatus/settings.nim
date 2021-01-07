@@ -3,19 +3,16 @@ import json, tables, sugar, sequtils, strutils
 import json_serialization
 import locks
 
-var settingsLock: Lock
+var settingsLock {.global.}: Lock
 initLock(settingsLock)
 
-var settings {.guard: settingsLock.} = %*{}
-var dirty {.guard: settingsLock.}  = true
+var settings = %*{}
+var dirty = true
 
 proc saveSetting*(key: Setting, value: string | JsonNode): StatusGoError =
-  let response = callPrivateRPC("settings_saveSetting", %* [
-    key, value
-  ])
-
   withLock settingsLock:
     try:
+      let response = callPrivateRPC("settings_saveSetting", %* [key, value])
       result = Json.decode($response, StatusGoError)
     except:
       dirty = true
@@ -24,17 +21,16 @@ proc getWeb3ClientVersion*(): string =
   parseJson(callPrivateRPC("web3_clientVersion"))["result"].getStr
 
 proc getSettings*(useCached: bool = true, keepSensitiveData: bool = false): JsonNode =
-  {.gcsafe.}:
-    withLock settingsLock:
+  withLock settingsLock:
+    {.gcsafe.}:
       if useCached and not dirty and not keepSensitiveData:
         result = settings
       else: 
         result = callPrivateRPC("settings_getSettings").parseJSON()["result"]
-        if (keepSensitiveData):
-          return
-        dirty = false
-        delete(result, "mnemonic")
-        settings = result
+        if not keepSensitiveData:
+          dirty = false
+          delete(result, "mnemonic")
+          settings = result
 
 proc getSetting*[T](name: Setting, defaultValue: T, useCached: bool = true): T =
   let settings: JsonNode = getSettings(useCached, $name == "mnemonic")
@@ -73,3 +69,14 @@ proc getLinkPreviewWhitelist*(): JsonNode =
 proc getFleet*(): Fleet =
   let fleet = getSetting[string](Setting.Fleet, $Fleet.PROD)
   result = parseEnum[Fleet](fleet)
+
+proc getPinnedMailserver*(): string =
+  let pinnedMailservers = getSetting[JsonNode](Setting.PinnedMailservers)
+  let fleet = getSetting[string](Setting.Fleet, $Fleet.PROD)
+  return pinnedMailservers{fleet}.getStr()
+
+proc pinMailserver*(enode: string = "") =
+  let pinnedMailservers = getSetting[JsonNode](Setting.PinnedMailservers)
+  let fleet = getSetting[string](Setting.Fleet, $Fleet.PROD)
+  pinnedMailservers[fleet] = newJString(enode)
+  discard saveSetting(Setting.PinnedMailservers, pinnedMailservers)

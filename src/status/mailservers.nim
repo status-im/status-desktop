@@ -80,6 +80,9 @@ proc trustPeer(self: MailserverModel, enode:string) =
   markTrustedPeer(enode)
   self.nodes[enode] = MailserverStatus.Trusted
 
+proc getActiveMailserver*(self:MailserverModel): string =
+  withLock activeMailserverLock:
+    result = self.activeMailserver
 
 proc isActiveMailserverAvailable*(self:MailserverModel): bool =
   activeMailserverLock.acquire()
@@ -109,6 +112,7 @@ proc connect(self: MailserverModel, enode: string) =
   nodesLock.acquire()
 
   self.activeMailserver = enode
+  self.events.emit("mailserver:changed", Args())
 
   # Adding a peer and marking it as trusted can't be executed sync, because
   # There's a delay between requesting a peer being added, and a signal being 
