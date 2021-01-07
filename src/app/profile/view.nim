@@ -87,6 +87,8 @@ QtObject:
     read = getProfileSettingsFile
     notify = profileSettingsFileChanged
 
+  proc initialized*(self: ProfileView) {.signal.}
+
   proc getProfile(self: ProfileView): QVariant {.slot.} =
     return newQVariant(self.profile)
 
