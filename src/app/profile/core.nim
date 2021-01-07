@@ -102,6 +102,9 @@ proc init*(self: ProfileController, account: Account) =
     let contacts = self.status.contacts.getContacts()
     self.view.contacts.setContactList(contacts)
 
+  self.status.events.on("mailserver:changed") do(e: Args):
+    self.view.mailservers.activeMailserverChanged()
+
   self.status.events.on(SignalType.Message.event) do(e: Args):
     let msgData = MessageSignal(e);
     if msgData.contacts.len > 0:

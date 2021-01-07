@@ -27,8 +27,28 @@ Item {
         
         StatusRadioButton {
             text: name
-            checked: index == 0 ? true: false
+            checked: name == profileModel.mailservers.activeMailserver
+            onClicked: {
+                if (checked) {
+                    profileModel.mailservers.setMailserver(name);
+                }
+            }
         }
+    }
+
+    StatusSwitch {
+        id: automaticSelectionSwitch
+        checked: profileModel.mailservers.automaticSelection
+        onCheckedChanged: profileModel.mailservers.enableAutomaticSelection(checked)
+    }
+
+    StyledText {
+        text: profileModel.mailservers.activeMailserver || qsTr("...")
+        anchors.left: parent.left
+        anchors.leftMargin: 24
+        anchors.top: element4.top
+        anchors.topMargin: 24
+        visible: automaticSelectionSwitch.checked
     }
 
     ListView {
@@ -38,5 +58,6 @@ Item {
         anchors.fill: parent
         model: profileModel.mailservers.list
         delegate: mailserversList
+        visible: !automaticSelectionSwitch.checked
     }
 }
