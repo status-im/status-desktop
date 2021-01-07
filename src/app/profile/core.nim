@@ -53,6 +53,7 @@ proc init*(self: ProfileController, account: Account) =
   self.view.setNewProfile(profile)
   self.view.network.setNetwork(network)
   self.view.ens.init()
+  self.view.initialized()
 
   for name, endpoint in self.status.fleet.config.getMailservers(status_settings.getFleet()).pairs():
     let mailserver = MailServer(name: name, endpoint: endpoint)
