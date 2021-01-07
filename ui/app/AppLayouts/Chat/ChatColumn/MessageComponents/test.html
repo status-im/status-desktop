@@ -2,7 +2,19 @@
     <head>
         <script>
             window.pluginOnMessage = function(_message) {
-                let message = JSON.parse(_message)
+                let message
+                if (typeof _message === "string") {
+                    try {
+                        message = JSON.parse(_message)
+                    } catch (e) {
+                        alert ('Error parsing message ' + e)
+                        return
+                    }
+                } else {
+                    message = _message
+                }
+                
+                
                 if (message.data === "red") {
                     document.getElementsByClassName("mybutton")[0].style.backgroundColor = "red";
                 }
@@ -11,8 +23,13 @@
                 }
             }
             window.pluginOnAllMessages = function(messages) {
-                for (let message of messages) {
-                    pluginOnMessage(message)
+                try {
+                    const messagesJSON = JSON.parse(messages)
+                    // Only send the last one
+                    pluginOnMessage(messagesJSON[messagesJSON.length - 1])
+                } catch (e) {
+                    alert ('Error parsing messages ' + e)
+                    return
                 }
             }
         </script>

@@ -58,6 +58,8 @@ Item {
 
     property string profileImageSource: !placeholderMessage && appMain.getProfileImage(userPubKey, isCurrentUser, useLargeImage) || ""
 
+    property bool isPluginMessage: plainText.startsWith("pluginMsg|")
+
     Connections {
         enabled: !placeholderMessage
         target: profileModel.contacts.list
@@ -69,14 +71,22 @@ Item {
     }
 
     id: root
+    visible: !isPluginMessage
     width: parent.width
     anchors.right: !isCurrentUser ? undefined : parent.right
     height: {
+        if (!visible) {
+            return 0
+        }
+
+        let h = 0
         switch(contentType) {
             case Constants.chatIdentifier:
-                return childrenRect.height + 50
-            default: return childrenRect.height
+                h = childrenRect.height + 50; break;
+            default: h = childrenRect.height
         }
+        // 4 is the spacing between messages
+        return h + 4
     }
 
     function clickMessage(isProfileClick, isSticker = false, isImage = false, image = null, emojiOnly = false) {
@@ -107,7 +117,7 @@ Item {
     }
 
     Loader {
-        active: true
+        active: root.visible
         width: parent.width
         sourceComponent: {
             switch(contentType) {

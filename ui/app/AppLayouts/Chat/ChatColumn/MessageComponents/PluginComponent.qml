@@ -14,23 +14,56 @@ WebEngineView {
     property int contentType: 2
     property var container
 
-    Component.onCompleted: function() {
-        console.log("rendering done!") 
-        console.log(plainText.split("|")[1]) 
-        let pluginInit = JSON.parse(plainText.split("|")[1])
-        console.log("name:" + pluginInit.name)
-        console.log("id:" + pluginInit.id)
-        pluginProvider.pluginResponse('messages', "blue,red")
-        // pluginProvider.pluginResponse('messages', "blue,red")
-        // setTimeout(() => {
-        // }, 500)
-    //     testWebEngineView.loadHtml('<html>    <head>    </head>    <body>        <button class="mybutton" onClick="javascript:hello()">hello</button>        <button class="mybutton" onClick="javascript:toColor(\'red\')">change to red</button>        <button class="mybutton" onClick="javascript:toColor(\'blue\')">change to blue</button>    </body></html>')
-   }
+    Timer {
+        id: myTimer
+    }
 
-    onLoadingChanged: function(loadRequest) {
-        if (loadRequest.status === WebEngineView.LoadSucceededStatus) {
-            pluginProvider.pluginResponse('messages', "blue,red")
+    Component.onCompleted: function() {
+        let pluginInit = JSON.parse(plainText.split("|")[1])
+
+        const messageList = chatsModel.messageList
+        const nb = messageList.rowCount()
+
+        const messagesForPlugin = []
+        let message
+        let messageJSON
+
+        let currentObj
+        for (let i = 0; i < nb; i++) {
+            currentObj = {}
+            message = messageList.getMessageData(i, "message")
+            try {
+                if (!message.split("|").length || !message.split("|")[1]) {
+                    continue
+                }
+
+                messageJSON = JSON.parse(message.split("|")[1])
+                if (!!messageJSON.msg && messageJSON.id === pluginInit.id) {
+                    currentObj.timestamp = messageList.getMessageData(i, "timestamp")
+                    currentObj.name = messageJSON.name
+                    currentObj.data = messageJSON.msg
+                    messagesForPlugin.push(currentObj)
+                }
+            } catch (e) {
+                continue
+            }
         }
+
+        // Sort by timestamp
+        messagesForPlugin.sort(function compare(a, b) {
+            if (a.timestamp < b.timestamp) {
+                return -1;
+            } else {
+                return 1
+            }
+        })
+
+        // Needs a timeout because the plugin needs time to load, the send doesn't get received otherwise
+        // TODO find a way to know when the webpage is ready
+        myTimer.setTimeout(function () {
+            pluginProvider.pluginResponse('messages', JSON.stringify(messagesForPlugin))
+        }, 1000)
+        
     }
 
     anchors.top: parent.top
@@ -55,7 +88,7 @@ WebEngineView {
             WebEngineScript {
                 injectionPoint: WebEngineScript.DocumentCreation
                 sourceUrl:  Qt.resolvedUrl("plugin.js")
-                worldId: WebEngineScript.MainWorld // TODO: check https://doc.qt.io/qt-5/qml-qtwebengine-webenginescript.html#worldId-prop 
+                worldId: WebEngineScript.MainWorld // TODO: check https://doc.qt.io/qt-5/qml-qtwebengine-webenginescript.html#worldId-prop
             }
         ]
     }
@@ -97,10 +130,8 @@ WebEngineView {
         signal pluginResponse(string messageType, string data);
 
         function postMessage(data) {
-            // pluginFileDialog.open()
             let pluginInit = JSON.parse(plainText.split("|")[1])
-            chatsModel.sendPluginMessage(JSON.stringify({id: pluginInit.id, msg: data})); // console.log("hi there")
-            // pluginResponse("hi")
+            chatsModel.sendPluginMessage(JSON.stringify({id: pluginInit.id, msg: data}));
         }
     }
 

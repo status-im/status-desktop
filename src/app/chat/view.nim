@@ -281,31 +281,31 @@ QtObject:
           msg.hasMention,
           isAddedContact,
           channel.name)
-      else:
-        self.upsertChannel(msg.chatId)
-        msg.userName = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
-        self.messageList[msg.chatId].add(msg)
-        self.messagePushed()
-        self.fullMessagePushed(msg.chatId, msg.text)
-        if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
-          let channel = self.chats.getChannelById(msg.chatId)
-          let isAddedContact = channel.chatType.isOneToOne and self.status.contacts.isAdded(channel.id)
-          if not channel.muted:
-            self.messageNotificationPushed(
-              msg.chatId,
-              escape_html(msg.text),
-              msg.messageType,
-              channel.chatType.int,
-              msg.timestamp,
-              msg.identicon,
-              msg.alias,
-              msg.hasMention,
-              isAddedContact,
-              channel.name)
 
-          else:
-            discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
-            self.newMessagePushed()
+      self.upsertChannel(msg.chatId)
+      msg.userName = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
+      self.messageList[msg.chatId].add(msg)
+      self.messagePushed()
+      self.fullMessagePushed(msg.chatId, msg.text)
+      if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
+        let channel = self.chats.getChannelById(msg.chatId)
+        let isAddedContact = channel.chatType.isOneToOne and self.status.contacts.isAdded(channel.id)
+        if not channel.muted:
+          self.messageNotificationPushed(
+            msg.chatId,
+            escape_html(msg.text),
+            msg.messageType,
+            channel.chatType.int,
+            msg.timestamp,
+            msg.identicon,
+            msg.alias,
+            msg.hasMention,
+            isAddedContact,
+            channel.name)
+
+        else:
+          discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
+          self.newMessagePushed()
 
   proc updateUsernames*(self:ChatsView, contacts: seq[Profile]) =
     if contacts.len > 0:
