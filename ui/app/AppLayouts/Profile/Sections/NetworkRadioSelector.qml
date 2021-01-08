@@ -7,6 +7,7 @@ import "../../../../shared/status"
 
 RowLayout {
     property string network: ""
+    property string networkName: ""
     property string newNetwork: ""
 
     ConfirmationDialog {
@@ -21,7 +22,7 @@ RowLayout {
 
     width: parent.width
     StyledText {
-        text: Utils.getNetworkName(network)
+        text: networkName == "" ? Utils.getNetworkName(network) : networkName
         font.pixelSize: 15
     }
     StatusRadioButton {
