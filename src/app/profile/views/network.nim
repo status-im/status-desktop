@@ -1,5 +1,6 @@
 import NimQml, chronicles
 import ../../../status/status
+import ../../../status/network
 
 logScope:
   topics = "network-view"
@@ -43,4 +44,6 @@ QtObject:
     write = setNetworkAndPersist
     notify = networkChanged
 
+  proc add*(self: NetworkView, name: string, endpoint: string, networkId: int, networkType: string) {.slot.} =
+    self.status.network.addNetwork(name, endpoint, networkId, networkType)
 
