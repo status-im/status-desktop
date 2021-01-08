@@ -1,5 +1,10 @@
 import chronicles
 import ../eventemitter
+import libstatus/settings
+import json
+import uuids
+import json_serialization
+import libstatus/types
 
 logScope:
   topics = "network-model"
@@ -30,3 +35,20 @@ proc peerSummaryChange*(self: NetworkModel, peers: seq[string]) =
 proc peerCount*(self: NetworkModel): int = self.peers.len
 
 proc isConnected*(self: NetworkModel): bool = self.connected
+
+proc addNetwork*(self: NetworkModel, name: string, endpoint: string, networkId: int, networkType: string) =
+  var networks = getSetting[JsonNode](Setting.Networks_Networks)
+  let id = genUUID()
+  networks.elems.add(%*{
+    "id": $genUUID(),
+    "name": name,
+    "config": {
+      "NetworkId": networkId,
+      "DataDir": "/ethereum/" & networkType,
+      "UpstreamConfig": {
+        "Enabled": true,
+        "URL": endpoint
+      }
+    }
+  })
+  discard saveSetting(Setting.Networks_Networks, $networks)
