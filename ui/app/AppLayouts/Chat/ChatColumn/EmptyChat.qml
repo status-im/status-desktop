@@ -17,36 +17,77 @@ Item {
         source: "../../../../onboarding/img/chat@2x.jpg"
     }
 
-    StyledText {
-        text: `<a href="shareKey" style="color:${Style.current.blue};text-decoration:none;">` +
-              //% "Share your chat key"
-              qsTrId("share-your-chat-key")
-              + '</a> ' +
-              //% "or"
-              qsTrId("or")
-              + ` <a href="invite" style="color:${Style.current.blue};text-decoration:none;">` +
-              //% "invite"
-              qsTrId("invite")
-              + '</a> ' +
-              //% "friends to start messaging in Status"
-              qsTrId("friends-to-start-messaging-in-status")
-        textFormat: Text.RichText
-        wrapMode: Text.WordWrap
-        horizontalAlignment: Text.AlignHCenter
-        anchors.right: walkieTalkieImage.right
-        anchors.left: walkieTalkieImage.left
+    Item {
+        id: links
         anchors.top: walkieTalkieImage.bottom
-        font.pixelSize: 15
-        color: Style.current.darkGrey
-        onLinkActivated: function (linkClicked) {
-            switch (linkClicked) {
-                case "shareKey":
+        anchors.horizontalCenter: walkieTalkieImage.horizontalCenter
+        height: shareKeyLink.height
+        width: childrenRect.width
+
+        StyledText {
+            id: shareKeyLink
+            text: qsTr("Share your chat key")
+            font.pixelSize: 15
+            color: Style.current.blue
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onEntered: {
+                    parent.font.underline = true
+                }
+                onExited: {
+                    parent.font.underline = false
+                }
+                onClicked: {
                     openProfilePopup(profileModel.profile.username, profileModel.profile.pubKey, profileModel.profile.thumbnailImage);
-                    break;
-                case "invite": inviteFriendsPopup.open(); break;
-                default: //no idea what was clicked
+                }
             }
         }
+
+        StyledText {
+            id: orText
+            text: qsTr("or")
+            font.pixelSize: 15
+            color: Style.current.darkGrey
+            anchors.left: shareKeyLink.right
+            anchors.leftMargin: 2
+            anchors.bottom: shareKeyLink.bottom
+        }
+
+        StyledText {
+            id: inviteLink
+            text: qsTr("invite")
+            font.pixelSize: 15
+            color: Style.current.blue
+            anchors.left: orText.right
+            anchors.leftMargin: 2
+            anchors.bottom: shareKeyLink.bottom
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onEntered: {
+                    parent.font.underline = true
+                }
+                onExited: {
+                    parent.font.underline = false
+                }
+                onClicked: {
+                    inviteFriendsPopup.open();
+                }
+            }
+        }
+    }
+
+    StyledText {
+        text: qsTr("friends to start messaging in Status")
+        font.pixelSize: 15
+        color: Style.current.darkGrey
+        anchors.horizontalCenter: walkieTalkieImage.horizontalCenter
+        anchors.top: links.bottom
     }
 
     InviteFriendsPopup {
