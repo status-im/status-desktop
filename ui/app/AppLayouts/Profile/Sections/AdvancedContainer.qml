@@ -127,7 +127,7 @@ Item {
         }
         
         StyledText {
-            text: Utils.getNetworkName(profileModel.network.current)
+            text: utilsModel.getNetworkName()
             font.pixelSize: 15
             anchors.right: caret3.left
             anchors.rightMargin: Style.current.padding

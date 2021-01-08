@@ -12,8 +12,7 @@ proc getNetworkConfig(currentNetwork: string): JsonNode =
   result = constants.DEFAULT_NETWORKS.first("id", currentNetwork)
 
 
-proc getNodeConfig*(fleetConfig: FleetConfig, installationId: string, currentNetwork: string = constants.DEFAULT_NETWORK_NAME, fleet: Fleet = Fleet.PROD): JsonNode =
-  let networkConfig = getNetworkConfig(currentNetwork)
+proc getNodeConfig*(fleetConfig: FleetConfig, installationId: string, networkConfig: JsonNode, fleet: Fleet = Fleet.PROD): JsonNode =
   let upstreamUrl = networkConfig["config"]["UpstreamConfig"]["URL"]
   var newDataDir = networkConfig["config"]["DataDir"].getStr
   newDataDir.removeSuffix("_rpc")
@@ -32,6 +31,9 @@ proc getNodeConfig*(fleetConfig: FleetConfig, installationId: string, currentNet
   result["ShhextConfig"]["InstallationID"] = newJString(installationId)
   result["ListenAddr"] = if existsEnv("STATUS_PORT"): newJString("0.0.0.0:" & $getEnv("STATUS_PORT")) else: newJString("0.0.0.0:30305")
   
+proc getNodeConfig*(fleetConfig: FleetConfig, installationId: string, currentNetwork: string = constants.DEFAULT_NETWORK_NAME, fleet: Fleet = Fleet.PROD): JsonNode =
+  let networkConfig = getNetworkConfig(currentNetwork)
+  result = getNodeConfig(fleetConfig, installationId, networkConfig, fleet)
 
 proc hashPassword*(password: string): string =
   result = "0x" & $keccak_256.digest(password)

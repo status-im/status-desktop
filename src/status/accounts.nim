@@ -1,4 +1,4 @@
-import options, chronicles, json
+import options, chronicles, json, json_serialization, sequtils, sugar
 import libstatus/accounts as status_accounts
 import libstatus/settings as status_settings
 import libstatus/types
@@ -63,7 +63,11 @@ proc changeNetwork*(self: AccountModel, fleetConfig: FleetConfig, network: strin
 
   # 2. update node config setting
   let installationId = status_settings.getSetting[string](Setting.InstallationId)
-  let updatedNodeConfig = status_accounts.getNodeConfig(fleetConfig, installationId, network)
+
+  let networks = getSetting[JsonNode](Setting.Networks_Networks)
+  let networkData = networks.getElems().find((n:JsonNode) => n["id"].getStr() == network)
+
+  let updatedNodeConfig = status_accounts.getNodeConfig(fleetConfig, installationId, networkData)
   statusGoResult = status_settings.saveSetting(Setting.NodeConfig, updatedNodeConfig)
   if statusGoResult.error != "":
     error "Error saving updated node config", msg=statusGoResult.error

@@ -5,6 +5,8 @@ import ../../status/accounts as status_accounts
 import ../../status/stickers
 import ../../status/libstatus/accounts/constants as accountConstants
 import ../../status/libstatus/tokens
+import ../../status/libstatus/types
+import ../../status/libstatus/settings
 import ../../status/libstatus/wallet as status_wallet
 import ../../status/libstatus/utils as status_utils
 import ../../status/ens as status_ens
@@ -91,3 +93,6 @@ QtObject:
 
   proc generateIdenticon*(self: UtilsView, pk: string): string {.slot.} =
     result = status_accounts.generateIdenticon(pk)
+
+  proc getNetworkName*(self: UtilsView): string {.slot.} =
+    getCurrentNetworkDetails().name

@@ -51,4 +51,4 @@ proc addNetwork*(self: NetworkModel, name: string, endpoint: string, networkId: 
       }
     }
   })
-  discard saveSetting(Setting.Networks_Networks, $networks)
+  discard saveSetting(Setting.Networks_Networks, networks)
