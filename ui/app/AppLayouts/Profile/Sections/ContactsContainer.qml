@@ -9,7 +9,10 @@ import "./Contacts"
 
 Item {
     id: contactsContainer
-    Layout.fillHeight: true
+    anchors.right: parent.right
+    anchors.rightMargin: contentMargin
+    anchors.left: parent.left
+    anchors.leftMargin: contentMargin
     property alias searchStr: searchBox.text
     property bool isPending: false
 
