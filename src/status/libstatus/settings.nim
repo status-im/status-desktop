@@ -71,12 +71,12 @@ proc getFleet*(): Fleet =
   result = parseEnum[Fleet](fleet)
 
 proc getPinnedMailserver*(): string =
-  let pinnedMailservers = getSetting[JsonNode](Setting.PinnedMailservers)
+  let pinnedMailservers = getSetting[JsonNode](Setting.PinnedMailservers, %*{})
   let fleet = getSetting[string](Setting.Fleet, $Fleet.PROD)
   return pinnedMailservers{fleet}.getStr()
 
 proc pinMailserver*(enode: string = "") =
-  let pinnedMailservers = getSetting[JsonNode](Setting.PinnedMailservers)
+  let pinnedMailservers = getSetting[JsonNode](Setting.PinnedMailservers, %*{})
   let fleet = getSetting[string](Setting.Fleet, $Fleet.PROD)
   pinnedMailservers[fleet] = newJString(enode)
   discard saveSetting(Setting.PinnedMailservers, pinnedMailservers)
