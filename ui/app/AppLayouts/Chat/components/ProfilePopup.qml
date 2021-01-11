@@ -4,13 +4,13 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 import "./"
 
 ModalPopup {
     id: popup
 
     property Popup parentPopup
-
 
     property var identicon: ""
     property var userName: ""
@@ -360,32 +360,18 @@ ModalPopup {
         width: parent.width
         height: children[0].height
 
-        StyledButton {
-            anchors.left: parent.left
-            anchors.leftMargin: 20
-            //% "Send Message"
-            label: qsTrId("send-message")
+        StatusButton {
+            id: blockBtn
+            anchors.right: addToContactsButton.left
+            anchors.rightMargin: addToContactsButton ? Style.current.padding : 0
             anchors.bottom: parent.bottom
-            visible: !isBlocked
-            onClicked: {
-                if (tabBar.currentIndex !== 0)
-                    tabBar.currentIndex = 0
-                chatsModel.joinChat(fromAuthor, Constants.chatTypeOneToOne)
-                popup.close()
-            }
-        }
-
-        StyledButton {
-            anchors.right: parent.right
-            anchors.rightMargin: isBlocked ? 0 : addToContactsButton.width + 32
-            btnColor: Style.current.lightRed
-            btnBorderWidth: 1
-            btnBorderColor: Style.current.grey
-            textColor: Style.current.red
-            label: isBlocked ?
-                    qsTr("Unblock User") :
-                    qsTr("Block User")
-            anchors.bottom: parent.bottom
+            type: "secondary"
+            color: Style.current.red
+            showBorder: true
+            borderColor: Style.current.border
+            text: isBlocked ?
+                      qsTr("Unblock User") :
+                      qsTr("Block User")
             onClicked: {
                 if (isBlocked) {
                     unblockContactConfirmationDialog.contactName = userName;
@@ -395,21 +381,28 @@ ModalPopup {
                 }
                 blockContactConfirmationDialog.contactName = userName;
                 blockContactConfirmationDialog.contactAddress = fromAuthor;
-                blockContactConfirmationDialog.open();   
+                blockContactConfirmationDialog.open();
             }
         }
 
-        StyledButton {
+        StatusButton {
+            property bool isAdded:  profileModel.contacts.isAdded(fromAuthor)
+
             id: addToContactsButton
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.smallPadding
-            label: profileModel.contacts.isAdded(fromAuthor) ?
-            //% "Remove Contact"
-            qsTrId("remove-contact") :
-            //% "Add to contacts"
-            qsTrId("add-to-contacts")
+            anchors.right: sendMessageBtn.left
+            anchors.rightMargin: sendMessageBtn.visible ? Style.current.padding : 0
+            text: isAdded ?
+                      //% "Remove Contact"
+                      qsTrId("remove-contact") :
+                      //% "Add to contacts"
+                      qsTrId("add-to-contacts")
             anchors.bottom: parent.bottom
+            type: isAdded ? "secondary" : "primary"
+            color: isAdded ? Style.current.danger : Style.current.primary
+            showBorder: isAdded
+            borderColor: Style.current.border
             visible: !isBlocked
+            width: visible ? implicitWidth : 0
             onClicked: {
                 if (profileModel.contacts.isAdded(fromAuthor)) {
                     removeContactConfirmationDialog.parentPopup = profilePopup;
@@ -419,6 +412,22 @@ ModalPopup {
                     contactAdded(fromAuthor);
                     profilePopup.close();
                 }
+            }
+        }
+
+        StatusButton {
+            id: sendMessageBtn
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            //% "Send Message"
+            text: qsTrId("send-message")
+            visible: !isBlocked && chatsModel.activeChannel.id !== popup.fromAuthor
+            width: visible ? implicitWidth : 0
+            onClicked: {
+                if (tabBar.currentIndex !== 0)
+                    tabBar.currentIndex = 0
+                chatsModel.joinChat(fromAuthor, Constants.chatTypeOneToOne)
+                popup.close()
             }
         }
     }
