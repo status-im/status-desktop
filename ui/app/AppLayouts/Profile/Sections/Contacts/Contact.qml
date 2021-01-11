@@ -56,6 +56,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         radius: 8
+        color: "transparent"
 
         SVGImage {
             source: "../../../../img/dots-icon.svg"
@@ -72,10 +73,10 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             onExited: {
-                menuButton.color = Style.current.white
+                menuButton.color = "transparent"
             }
             onEntered: {
-                menuButton.color = Style.current.grey
+                menuButton.color = Style.current.border
             }
             onClicked: {
               menuOpened = true
