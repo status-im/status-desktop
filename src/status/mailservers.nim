@@ -247,6 +247,7 @@ proc checkConnection() {.thread.} =
         let pinnedMailserver = status_settings.getPinnedMailserver()
         if pinnedMailserver != "" and mailserverModel.getActiveMailserver() != pinnedMailserver:
           # connect to current mailserver from the settings
+          mailserverModel.mailservers.add(pinnedMailserver)
           mailserverModel.connect(pinnedMailserver) 
         else:
           # or setup a random mailserver:
@@ -259,5 +260,7 @@ proc checkConnection() {.thread.} =
 proc init*(self: MailserverModel) =
   debug "MailserverModel::init()"
   self.mailservers = toSeq(self.fleet.config.getMailservers(status_settings.getFleet()).values)
+  for mailserver in status_settings.getMailservers().getElems():
+    self.mailservers.add(mailserver["address"].getStr())
   connThread.createThread(checkConnection)
   

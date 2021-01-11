@@ -59,3 +59,7 @@ QtObject:
       status_settings.pinMailserver()
     else:
       status_settings.pinMailserver(self.status.mailservers.getActiveMailserver())
+
+  proc save(self: MailserversView, name: string, address: string) {.slot.} =
+    status_settings.saveMailserver(name, address)
+    self.mailserversList.add(Mailserver(name: name, endpoint: address))

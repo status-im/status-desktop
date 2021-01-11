@@ -59,6 +59,10 @@ proc init*(self: ProfileController, account: Account) =
     let mailserver = MailServer(name: name, endpoint: endpoint)
     self.view.mailservers.add(mailserver)
 
+  for mailserver in status_settings.getMailservers().getElems():
+    let mailserver = MailServer(name: mailserver["name"].getStr(), endpoint: mailserver["address"].getStr())
+    self.view.mailservers.add(mailserver)
+
   let contacts = self.status.contacts.getContacts()
   self.status.chat.updateContacts(contacts)
   self.view.contacts.setContactList(contacts)
