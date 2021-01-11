@@ -2,6 +2,7 @@ import core, ./types, ../signals/types as statusgo_types, ./accounts/constants, 
 import json, tables, sugar, sequtils, strutils
 import json_serialization
 import locks
+import uuids
 
 var settingsLock {.global.}: Lock
 initLock(settingsLock)
@@ -78,5 +79,22 @@ proc getPinnedMailserver*(): string =
 proc pinMailserver*(enode: string = "") =
   let pinnedMailservers = getSetting[JsonNode](Setting.PinnedMailservers, %*{})
   let fleet = getSetting[string](Setting.Fleet, $Fleet.PROD)
+
   pinnedMailservers[fleet] = newJString(enode)
   discard saveSetting(Setting.PinnedMailservers, pinnedMailservers)
+
+proc saveMailserver*(name, enode: string) =
+  let fleet = getSetting[string](Setting.Fleet, $Fleet.PROD)
+  let result = callPrivateRPC("mailservers_addMailserver", %* [
+    %*{
+      "id": $genUUID(),
+      "name": name,
+      "address": enode,
+      "fleet": $fleet
+    }
+  ]).parseJSON()["result"]
+
+proc getMailservers*():JsonNode =
+  let fleet = getSetting[string](Setting.Fleet, $Fleet.PROD)
+  result = callPrivateRPC("mailservers_getMailservers").parseJSON()["result"]
+
