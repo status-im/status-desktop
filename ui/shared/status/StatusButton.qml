@@ -11,8 +11,10 @@ Button {
     property string state: "default"
     property color color: Style.current.buttonForegroundColor
     property color bgColor: Style.current.buttonBackgroundColor
+    property color borderColor: color
     property color bgHoverColor: Qt.darker(control.bgColor, 1.1)
     property bool disableColorOverlay: false
+    property bool showBorder: false
     property int iconRotation: 0
 
     id: control
@@ -94,8 +96,8 @@ Button {
     background: Rectangle {
         radius: Style.current.radius
         anchors.fill: parent
-        border.width: flat ? 1 : 0
-        border.color: hovered ? buttonLabel.color : Style.current.transparent
+        border.width: flat || showBorder ? 1 : 0
+        border.color: hovered || showBorder ? control.borderColor : Style.current.transparent
         color: {
             if (flat) {
                 return "transparent"
