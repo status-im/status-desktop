@@ -97,6 +97,10 @@ Rectangle {
                     menu = groupContextMenu
                 }
 
+                if (menu.opened) {
+                    return menu.close()
+                }
+
                 menu.popup(moreActionsBtn.x, moreActionsBtn.height)
                
             }
@@ -105,6 +109,7 @@ Rectangle {
 
             PopupMenu {
                 id: chatContextMenu
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                 subMenuIcons: [
                     {
                         source: Qt.resolvedUrl("../../../img/fetch.svg"),
@@ -142,6 +147,7 @@ Rectangle {
 
             PopupMenu {
                 id: groupContextMenu
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                 Action {
                     icon.source: "../../../img/group_chat.svg"
                     icon.width: chatTopBarContent.iconSize
