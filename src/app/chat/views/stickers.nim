@@ -103,11 +103,12 @@ QtObject:
       purchasedStickerPacks = self.status.stickers.getPurchasedStickerPacks(address)
     let availableStickers = JSON.decode($availableStickersJSON, seq[StickerPack])
 
-    let pendingTransactions = status_wallet.getPendingTransactions().parseJson["result"]
+    let pendingTransactions = status_wallet.getPendingTransactions()
     var pendingStickerPacks = initHashSet[int]()
-    for trx in pendingTransactions.getElems():
-      if trx["type"].getStr == $PendingTransactionType.BuyStickerPack:
-        pendingStickerPacks.incl(trx["data"].getStr.parseInt)
+    if (pendingTransactions != ""):
+      for trx in pendingTransactions.parseJson["result"].getElems():
+        if trx["type"].getStr == $PendingTransactionType.BuyStickerPack:
+          pendingStickerPacks.incl(trx["data"].getStr.parseInt)
 
     for stickerPack in availableStickers:
       let isInstalled = installedStickerPacks.hasKey(stickerPack.id)

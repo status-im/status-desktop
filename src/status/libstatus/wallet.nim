@@ -103,7 +103,12 @@ proc trackPendingTransaction*(transactionHash: string, fromAddress: string, toAd
 
 proc getPendingTransactions*(): string =
   let payload = %* []
-  result = callPrivateRPC("wallet_getPendingTransactions", payload)
+  try:
+    result = callPrivateRPC("wallet_getPendingTransactions", payload)
+  except Exception as e:
+    error "Error getting pending transactions (possible dev Infura key)", msg = e.msg
+    result = ""
+ 
 
 proc getPendingOutboundTransactionsByAddress*(address: string): string =
   let payload = %* [address]

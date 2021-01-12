@@ -3,7 +3,7 @@ import types
 
 proc fromEvent*(jsonSignal: JsonNode): Signal = 
   var signal:WalletSignal = WalletSignal()
-  if jsonSignal["event"].kind != JNull:
+  if jsonSignal["event"].kind != JNull and jsonSignal["event"]{"blockNumber"}.kind != JNull:
     signal.eventType = jsonSignal["event"]["type"].getStr
     signal.blockNumber = jsonSignal["event"]["blockNumber"].getInt
     signal.erc20 = jsonSignal["event"]["erc20"].getBool

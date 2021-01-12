@@ -43,8 +43,10 @@ QtObject:
     self.usernames = status_settings.getSetting[seq[string]](Setting.Usernames, @[])
     
     # Get pending ens names
-    let pendingTransactions = status_wallet.getPendingTransactions().parseJson["result"]
-    for trx in pendingTransactions.getElems():
+    let pendingTransactions = status_wallet.getPendingTransactions()
+    if (pendingTransactions == ""):
+      return
+    for trx in pendingTransactions.parseJson["result"].getElems():
       if trx["type"].getStr == $PendingTransactionType.RegisterENS:
         self.usernames.add trx["data"].getStr
         self.pendingUsernames.incl trx["data"].getStr
