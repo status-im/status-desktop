@@ -37,6 +37,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: 13
         font.family: Style.current.fontMedium.name
+        font.weight: Font.Medium
         color: Style.current.blue
     }
 
@@ -44,7 +45,7 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         onEntered: {
-            parent.color = Style.current.border
+            parent.color = Style.current.secondaryBackground
         }
         onExited: {
             parent.color = Style.current.transparent
