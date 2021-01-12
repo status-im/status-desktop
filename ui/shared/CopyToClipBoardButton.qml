@@ -10,6 +10,8 @@ Rectangle {
     color: Style.current.transparent
     property var onClick: function() {}
     property string textToCopy: ""
+    property bool showTooltip: false
+    property string textTooltip: ""
 
     Image {
         width: 20
@@ -32,16 +34,42 @@ Rectangle {
             parent.color = Style.current.grey
         }
         onPressed: {
-            parent.color = Style.current.darkGrey
+            parent.color = Style.current.grey
+            parent.showTooltip = true
         }
         onReleased: {
-            parent.color = Style.current.transparent
+            parent.color = Style.current.grey
         }
         onClicked: {
             if (textToCopy) {
                 chatsModel.copyToClipboard(textToCopy)
             }
             onClick()
+        }
+    }
+
+    ToolTip {
+        id: toolTip
+        text: parent.textTooltip
+        parent: copyToClipboardButton
+    }
+
+    Timer {
+        id:showTimer
+        interval: 500
+        running: parent.showTooltip && !toolTip.visible
+        onTriggered: {
+            toolTip.visible = true;
+        }
+    }
+
+    Timer {
+        id:hideTimer
+        interval: 1500
+        running: toolTip.visible
+        onTriggered: {
+            toolTip.visible = false;
+            parent.showTooltip = false;
         }
     }
 }

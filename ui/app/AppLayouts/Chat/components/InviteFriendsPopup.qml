@@ -21,7 +21,8 @@ ModalPopup {
         anchors.left: linkText.right
         anchors.leftMargin: Style.current.smallPadding
         anchors.verticalCenter: linkText.verticalCenter
-        textToCopy: popup.getStatusText
+        textToCopy: popup.getStatusText.substr(popup.getStatusText.indexOf("https"))
+        textTooltip: "Copied \"" + popup.getStatusText.substr(popup.getStatusText.indexOf("https")) + "\" to clipboard"
     }
 }
 
