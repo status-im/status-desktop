@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Dialogs 1.3
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 
 ModalPopup {
     id: popup
@@ -100,17 +101,15 @@ ModalPopup {
         anchors.right: parent.right
     }
 
-    footer: StyledButton {
+    footer: StatusButton {
         anchors.top: parent.top
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        label: loading ?
+        text: loading ?
         //% "Loading..."
         qsTrId("loading") :
-        //% "Add account >"
-        qsTrId("add-account")
+        qsTr("Add account")
 
-        disabled: loading || passwordInput.text === "" || accountNameInput.text === "" || accountPKeyInput.text === ""
+        enabled: !loading && passwordInput.text !== "" && accountNameInput.text !== "" && accountPKeyInput.text !== ""
 
         MessageDialog {
             id: accountError
