@@ -17,12 +17,14 @@ ModalPopup {
     width: 400
     height: 390
 
+    noTopMargin: true
+
     onOpened: {
         nicknameInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
     header: Item {
-        height: childrenRect.height
+        height: 78
         width: parent.width
 
         StyledText {
@@ -30,11 +32,11 @@ ModalPopup {
             //% "Nickname"
             text:  qsTrId("nickname")
             anchors.top: parent.top
-            anchors.topMargin: 18
+            anchors.topMargin: Style.current.padding
             anchors.left: parent.left
-            anchors.leftMargin: Style.current.smallPadding
+            anchors.leftMargin: Style.current.padding
             font.bold: true
-            font.pixelSize: 14
+            font.pixelSize: 17
         }
 
         StyledText {
@@ -42,10 +44,18 @@ ModalPopup {
             width: 160
             elide: !isEnsVerified ? Text.ElideMiddle : Text.ElideNone
             anchors.left: nicknameTitle.left
-            anchors.top: nicknameTitle.bottom
-            anchors.topMargin: 2
-            font.pixelSize: 14
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: Style.current.padding
+            font.pixelSize: 15
             color: Style.current.secondaryText
+        }
+
+        Separator {
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.leftMargin: -Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: -Style.current.padding
         }
     }
 
