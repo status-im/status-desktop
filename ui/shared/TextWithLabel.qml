@@ -12,7 +12,7 @@ Item {
     property bool wrap: false
 
     id: infoText
-    height: this.childrenRect.height
+    implicitHeight: this.childrenRect.height
     width: parent.width
 
     StyledText {
@@ -30,7 +30,7 @@ Item {
         font.family: fontFamily
         readOnly: true
         anchors.top: inputLabel.bottom
-        anchors.topMargin: 7
+        anchors.topMargin: 4
         font.pixelSize: 15
         wrapMode: infoText.wrap ? Text.WordWrap : Text.NoWrap
         anchors.left: parent.left

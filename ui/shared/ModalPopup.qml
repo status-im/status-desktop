@@ -6,6 +6,7 @@ import "../imports"
 
 Popup {
     property string title
+    property bool noTopMargin: false
     default property alias content: popupContent.children
     property alias contentWrapper: popupContent
     property alias header: headerContent.children
@@ -33,14 +34,18 @@ Popup {
         Item {
             id: headerContent
             height: {
-                var idx = !!title ? 0 : 1
-                return children[idx] && children[idx].height
+                const count = children.length
+                let h = 0
+                for (let i = 0; i < count; i++) {
+                    h += children[i] ? children[i].height : 0
+                }
+                return h
             }
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
 
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: popup.noTopMargin ? 0 : Style.current.padding
             anchors.bottomMargin: Style.current.padding
             anchors.rightMargin: Style.current.padding
             anchors.leftMargin: Style.current.padding
@@ -51,7 +56,7 @@ Popup {
                 anchors.left: parent.left
                 font.bold: true
                 font.pixelSize: 17
-                height: 24
+                height: visible ? 24 : 0
                 visible: !!title
                 verticalAlignment: Text.AlignVCenter
             }
@@ -62,10 +67,10 @@ Popup {
             property bool hovered: false
             height: 32
             width: 32
-            anchors.top: headerContent.top
-            anchors.topMargin: -4
-            anchors.right: headerContent.right
-            anchors.rightMargin: -4
+            anchors.top: parent.top
+            anchors.topMargin: 12
+            anchors.right: parent.right
+            anchors.rightMargin: 12
             radius: 8
             color: hovered ? Style.current.backgroundHover : Style.current.transparent
 
@@ -103,6 +108,7 @@ Popup {
         Separator {
             id: separator
             anchors.top: headerContent.bottom
+            anchors.topMargin: visible ? Style.current.padding : 0
             visible: title.length > 0
         }
 
