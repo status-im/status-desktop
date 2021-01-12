@@ -56,7 +56,7 @@ Rectangle {
 
     Timer {
         id:showTimer
-        interval: 500
+        interval: 300
         running: parent.showTooltip && !toolTip.visible
         onTriggered: {
             toolTip.visible = true;
@@ -65,7 +65,7 @@ Rectangle {
 
     Timer {
         id:hideTimer
-        interval: 1500
+        interval: 2500
         running: toolTip.visible
         onTriggered: {
             toolTip.visible = false;
