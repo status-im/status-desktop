@@ -84,38 +84,17 @@ ModalPopup {
             color: Style.current.secondaryText
         }
 
-        Rectangle {
-            id: qrCodeButton
-            height: 32
-            width: 32
+        StatusIconButton {
+            id: reloadBtn
+            icon.name: "qr-code-icon"
             anchors.top: parent.top
             anchors.topMargin: -4
             anchors.right: parent.right
             anchors.rightMargin: 32 + Style.current.smallPadding
-            radius: 8
-
-            SVGImage {
-                source: "../../../img/qr-code-icon.svg"
-                width: 25
-                height: 25
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: parent
-                hoverEnabled: true
-                onExited: {
-                    qrCodeButton.color = Style.current.white
-                }
-                onEntered: {
-                    qrCodeButton.color = Style.current.grey
-                }
-                onClicked: {
-                    qrCodePopup.open()
-                }
-            }
+            iconColor: Style.current.textColor
+            onClicked: qrCodePopup.open()
+            width: 32
+            height: 32
         }
 
         ModalPopup {
