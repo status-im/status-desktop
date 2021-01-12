@@ -102,7 +102,7 @@ SplitView {
 
     property Component profilePopupComponent: ProfilePopup {
         id: profilePopup
-        height: 450
+        height: 504
         onClosed: {
             if(profilePopup.parentPopup){
                 profilePopup.parentPopup.close();

@@ -12,13 +12,14 @@ ModalPopup {
 
     property Popup parentPopup
 
-
     property var identicon: ""
     property var userName: ""
     property string nickname: ""
     property var fromAuthor: ""
     property var text: ""
     property var alias: ""
+
+    readonly property int innerMargin: 20
     
     property bool isEnsVerified: false
     property bool noFooter: false
@@ -32,6 +33,9 @@ ModalPopup {
     signal contactBlocked(publicKey: string)
     signal contactAdded(publicKey: string)
     signal contactRemoved(publicKey: string)
+
+    clip: true
+    noTopMargin: true
 
     function openPopup(showFooter, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam) {
         userName = userNameParam || ""
@@ -48,15 +52,16 @@ ModalPopup {
     }
 
     header: Item {
-        height: children[0].height
+        height: 78
         width: parent.width
+
         RoundedImage {
             id: profilePic
             width: 40
             height: 40
             border.color: Style.current.border
             border.width: 1
-            anchors.top: parent.top
+            anchors.verticalCenter: parent.verticalCenter
             source: identicon
         }
 
@@ -64,38 +69,47 @@ ModalPopup {
             id: profileName
             text:  Utils.removeStatusEns(userName)
             anchors.top: parent.top
-            anchors.topMargin: 2
+            anchors.topMargin: Style.current.padding
             anchors.left: profilePic.right
-            anchors.leftMargin: Style.current.smallPadding
+            anchors.leftMargin: Style.current.halfPadding
             font.bold: true
-            font.pixelSize: 14
+            font.pixelSize: 17
             readOnly: true
             wrapMode: Text.WordWrap
         }
 
         StyledText {
             text: isEnsVerified ? alias : fromAuthor
-            width: 160
             elide: !isEnsVerified ? Text.ElideMiddle : Text.ElideNone
             anchors.left: profilePic.right
             anchors.leftMargin: Style.current.smallPadding
-            anchors.top: profileName.bottom
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: Style.current.padding
+            anchors.right: qrCodeButton.left
+            anchors.rightMargin: Style.current.padding
             anchors.topMargin: 2
             font.pixelSize: 14
             color: Style.current.secondaryText
         }
 
         StatusIconButton {
-            id: reloadBtn
+            id: qrCodeButton
             icon.name: "qr-code-icon"
-            anchors.top: parent.top
-            anchors.topMargin: -4
+            anchors.verticalCenter: profileName.verticalCenter
             anchors.right: parent.right
-            anchors.rightMargin: 32 + Style.current.smallPadding
+            anchors.rightMargin: 52
             iconColor: Style.current.textColor
             onClicked: qrCodePopup.open()
             width: 32
             height: 32
+        }
+
+        Separator {
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.leftMargin: -Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: -Style.current.padding
         }
 
         ModalPopup {
@@ -116,79 +130,17 @@ ModalPopup {
     }
 
     Item {
-        BlockContactConfirmationDialog {
-            id: blockContactConfirmationDialog
-            onBlockButtonClicked: {
-                profileModel.contacts.blockContact(fromAuthor)
-                blockContactConfirmationDialog.close();
-                popup.close()
-
-                contactBlocked(fromAuthor)
-            }
-        }
-
-        UnblockContactConfirmationDialog {
-            id: unblockContactConfirmationDialog
-            onUnblockButtonClicked: {
-                profileModel.unblockContact(fromAuthor)
-                unblockContactConfirmationDialog.close();
-                popup.close()
-                contactUnblocked(fromAuthor)
-            }
-        }
-
-        ConfirmationDialog {
-            id: removeContactConfirmationDialog
-            // % "Remove contact"
-            title: qsTrId("remove-contact")
-            //% "Are you sure you want to remove this contact?"
-            confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
-            onConfirmButtonClicked: {
-                if (profileModel.contacts.isAdded(fromAuthor)) {
-                    profileModel.contacts.removeContact(fromAuthor);
-                }
-                removeContactConfirmationDialog.close();
-                popup.close();
-
-                contactRemoved(fromAuthor);
-            }
-        }
-    }
-
-
-    Item {
         anchors.fill: parent
-        anchors.leftMargin: Style.current.smallPadding
 
-        StyledText {
-            id: labelEnsUsername
-            height: isEnsVerified ? 20 : 0
-            visible: isEnsVerified
+        TextWithLabel {
+            id: ensText
             //% "ENS username"
-            text: qsTrId("ens-username")
-            font.pixelSize: 13
-            font.weight: Font.Medium
-            color: Style.current.secondaryText
+            label: qsTrId("ens-username")
+            text: userName
             anchors.top: parent.top
-            anchors.topMargin: Style.current.smallPadding
-        }
-
-        StyledText {
-            id: valueEnsName
             visible: isEnsVerified
-            height: isEnsVerified ? 20 : 0
-            text: userName.substr(1)
-            font.pixelSize: 14
-            anchors.top: labelEnsUsername.bottom
-            anchors.topMargin: Style.current.smallPadding
-        }
-
-        CopyToClipBoardButton {
-            visible: isEnsVerified
-            height: isEnsVerified ? 20 : 0
-            anchors.top: labelEnsUsername.bottom
-            anchors.left: valueEnsName.right
-            textToCopy: valueEnsName.text
+            height: visible ? implicitHeight : 0
+            textToCopy: userName
         }
 
         StyledText {
@@ -198,8 +150,8 @@ ModalPopup {
             font.pixelSize: 13
             font.weight: Font.Medium
             color: Style.current.secondaryText
-            anchors.top: isEnsVerified ? valueEnsName.bottom : parent.top
-            anchors.topMargin: Style.current.padding
+            anchors.top: ensText.bottom
+            anchors.topMargin: ensText.visible ? popup.innerMargin : 0
         }
 
         Address {
@@ -208,9 +160,9 @@ ModalPopup {
             width: 160
             maxWidth: parent.width - (3 * Style.current.smallPadding) - copyBtn.width
             color: Style.current.textColor
-            font.pixelSize: 14
+            font.pixelSize: 15
             anchors.top: labelChatKey.bottom
-            anchors.topMargin: Style.current.smallPadding
+            anchors.topMargin: 4
         }
 
         CopyToClipBoardButton {
@@ -223,67 +175,41 @@ ModalPopup {
         Separator {
             id: separator
             anchors.top: valueChatKey.bottom
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: popup.innerMargin
             anchors.left: parent.left
             anchors.leftMargin: -Style.current.padding
             anchors.right: parent.right
             anchors.rightMargin: -Style.current.padding
         }
 
-        StyledText {
-            id: labelShareURL
-            //% "Share Profile URL"
-            text: qsTrId("share-profile-url")
-            font.pixelSize: 13
-            font.weight: Font.Medium
-            color: Style.current.secondaryText
-            anchors.top: separator.bottom
-            anchors.topMargin: Style.current.padding
-        }
-
-        StyledText {
+        TextWithLabel {
             id: valueShareURL
+            label: qsTr("Share Profile URL")
             text: "https://join.status.im/u/" + fromAuthor.substr(
                       0, 4) + "..." + fromAuthor.substr(fromAuthor.length - 5)
-            font.pixelSize: 14
-            anchors.top: labelShareURL.bottom
-            anchors.topMargin: Style.current.smallPadding
-        }
-
-        CopyToClipBoardButton {
-            anchors.top: labelShareURL.bottom
-            anchors.left: valueShareURL.right
+            anchors.top: separator.top
+            anchors.topMargin: popup.innerMargin
             textToCopy: "https://join.status.im/u/" + fromAuthor
         }
 
         Separator {
             id: separator2
             anchors.top: valueShareURL.bottom
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: popup.innerMargin
             anchors.left: parent.left
             anchors.leftMargin: -Style.current.padding
             anchors.right: parent.right
             anchors.rightMargin: -Style.current.padding
         }
 
-        StyledText {
+        TextWithLabel {
             id: chatSettings
             //% "Chat settings"
-            text: qsTrId("chat-settings")
-            font.pixelSize: 13
-            font.weight: Font.Medium
-            color: Style.current.secondaryText
-            anchors.top: separator2.bottom
-            anchors.topMargin: Style.current.padding
-        }
-
-        StyledText {
-            id: nicknameTitle
+            label: qsTrId("chat-settings")
             //% "Nickname"
             text: qsTrId("nickname")
-            font.pixelSize: 14
-            anchors.top: chatSettings.bottom
-            anchors.topMargin: Style.current.smallPadding
+            anchors.top: separator2.top
+            anchors.topMargin: popup.innerMargin
         }
 
         SVGImage {
@@ -292,7 +218,8 @@ ModalPopup {
             rotation: -90
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
-            anchors.verticalCenter: nicknameTitle.verticalCenter
+            anchors.bottom: chatSettings.bottom
+            anchors.bottomMargin: 5
             width: 13
             fillMode: Image.PreserveAspectFit
             ColorOverlay {
@@ -308,16 +235,16 @@ ModalPopup {
             text: nickname ? nickname : qsTrId("none")
             anchors.right: nicknameCaret.left
             anchors.rightMargin: Style.current.padding
-            anchors.verticalCenter: nicknameTitle.verticalCenter
+            anchors.verticalCenter: nicknameCaret.verticalCenter
             color: Style.current.secondaryText
         }
 
         MouseArea {
             cursorShape: Qt.PointingHandCursor
-            anchors.left: nicknameTitle.left
+            anchors.left: chatSettings.left
             anchors.right: nicknameCaret.right
-            anchors.top: nicknameTitle.top
-            anchors.bottom: nicknameTitle.bottom
+            anchors.top: chatSettings.top
+            anchors.bottom: chatSettings.bottom
             onClicked: {
                 nicknamePopup.open()
             }
@@ -399,6 +326,44 @@ ModalPopup {
                     contactAdded(fromAuthor);
                     profilePopup.close();
                 }
+            }
+        }
+
+        BlockContactConfirmationDialog {
+            id: blockContactConfirmationDialog
+            onBlockButtonClicked: {
+                profileModel.contacts.blockContact(fromAuthor)
+                blockContactConfirmationDialog.close();
+                popup.close()
+
+                contactBlocked(fromAuthor)
+            }
+        }
+
+        UnblockContactConfirmationDialog {
+            id: unblockContactConfirmationDialog
+            onUnblockButtonClicked: {
+                profileModel.unblockContact(fromAuthor)
+                unblockContactConfirmationDialog.close();
+                popup.close()
+                contactUnblocked(fromAuthor)
+            }
+        }
+
+        ConfirmationDialog {
+            id: removeContactConfirmationDialog
+            // % "Remove contact"
+            title: qsTrId("remove-contact")
+            //% "Are you sure you want to remove this contact?"
+            confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
+            onConfirmButtonClicked: {
+                if (profileModel.contacts.isAdded(fromAuthor)) {
+                    profileModel.contacts.removeContact(fromAuthor);
+                }
+                removeContactConfirmationDialog.close();
+                popup.close();
+
+                contactRemoved(fromAuthor);
             }
         }
     }

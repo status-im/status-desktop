@@ -10,7 +10,7 @@ StyledText {
     text: "0x9ce0056c5fc6bb9459a4dcfa35eaad8c1fee5ce9"
     font.pixelSize: 13
     font.family: Style.current.fontHexRegular.name
-    elide: expanded ? Text.ElideNone : Text.ElideMiddle
+    elide: Text.ElideMiddle
     color: Style.current.secondaryText
 
     MouseArea {
@@ -23,8 +23,8 @@ StyledText {
                 this.width = addressComponent.width
             } else {
                 addressComponent.oldWidth = addressComponent.width
-                addressComponent.width = addressComponent.maxWidth > 0 && addressComponent.implicitWidth > addressComponent.maxWidth ?
-                            addressComponent.maxWidth :
+                addressComponent.width = addressComponent.maxWidth > 0 ?
+                            Math.min(addressComponent.implicitWidth, addressComponent.maxWidth) :
                             addressComponent.implicitWidth
                 this.width = addressComponent.width
             }
