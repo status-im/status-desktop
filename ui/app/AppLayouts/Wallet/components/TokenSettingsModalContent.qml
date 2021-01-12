@@ -10,7 +10,6 @@ import "../data/"
 
 Item {
     id: modalBody
-    anchors.fill: parent
 
     SearchBox {
         id: searchBox
@@ -21,25 +20,26 @@ Item {
 
     Component {
         id: tokenComponent
-        Item {
+        Rectangle {
             id: tokenContainer
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.smallPadding
-            width: 300
+            property bool hovered: false
+            width: modalBody.width
+            anchors.topMargin: Style.current.smallPadding
+            color: hovered ? Style.current.backgroundHover : "transparent"
             property bool isVisible: symbol && (searchBox.text == "" || name.toLowerCase().includes(searchBox.text.toLowerCase()) || symbol.toLowerCase().includes(searchBox.text.toLowerCase()))
 
             visible: isVisible
             height: isVisible ? 40 + Style.current.smallPadding : 0
+            radius: Style.current.radius
 
             Image {
                 id: assetInfoImage
                 width: 36
                 height: tokenContainer.isVisible !== "" ? 36 : 0
-                anchors.top: parent.top
-                anchors.topMargin: 0
                 source: hasIcon ? "../../../img/tokens/" + symbol + ".png" : "../../../img/tokens/0-native.png"
                 anchors.left: parent.left
-                anchors.leftMargin: 0
+                anchors.leftMargin: Style.current.smallPadding
+                anchors.verticalCenter: parent.verticalCenter
             }
             StyledText {
                 id: assetSymbol
@@ -53,26 +53,40 @@ Item {
             StyledText {
                 id: assetFullTokenName
                 text: name || ""
-                anchors.bottom: assetInfoImage.bottom
-                anchors.bottomMargin: 0
+                anchors.top: assetSymbol.bottom
+                anchors.topMargin: 0
                 anchors.left: assetInfoImage.right
                 anchors.leftMargin: Style.current.smallPadding
                 color: Style.current.darkGrey
                 font.pixelSize: 15
-                width: 330
             }
             StatusCheckBox  {
                 id: assetCheck
                 checked: walletModel.hasAsset("0x123", symbol)
-                anchors.left: assetFullTokenName.right
-                anchors.leftMargin: Style.current.smallPadding
+                anchors.right: parent.right
+                anchors.rightMargin: Style.current.smallPadding
                 onClicked: walletModel.toggleAsset(symbol)
+                anchors.verticalCenter: parent.verticalCenter
             }
 
             MouseArea {
-                acceptedButtons: Qt.RightButton
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
-                onClicked: contextMenu.popup(assetSymbol.x - 100, assetSymbol.y + 25)
+                hoverEnabled: true
+                onClicked: function (event) {
+                    if (event.button === Qt.RightButton) {
+                        return contextMenu.popup(assetSymbol.x - 100, assetSymbol.y + 25)
+                    }
+                    assetCheck.checked = !assetCheck.checked
+                    walletModel.toggleAsset(symbol)
+                }
+                onEntered: {
+                    tokenContainer.hovered = true
+                }
+                onExited: {
+                    tokenContainer.hovered = false
+                }
                 PopupMenu {
                     id: contextMenu
                     Action {
@@ -115,6 +129,7 @@ Item {
 
             Column {
                 id: customTokens
+                spacing: Style.current.halfPadding
 
                 StyledText {
                     id: customLbl
@@ -145,6 +160,7 @@ Item {
                 anchors.top: customTokens.bottom
                 anchors.topMargin: Style.current.smallPadding
                 id: defaultTokens
+                spacing: Style.current.halfPadding
 
                 StyledText {
                     id: defaultLbl
@@ -160,6 +176,8 @@ Item {
                     delegate: tokenComponent
                     anchors.top: defaultLbl.bottom
                     anchors.topMargin: Style.current.smallPadding
+                    anchors.left: parent.left
+                    anchors.right: parent.right
                 }
             }
         }

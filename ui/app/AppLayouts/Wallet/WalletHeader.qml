@@ -148,8 +148,7 @@ Item {
                     }
                 }
                 Action {
-                    //% "Add/Remove Tokens"
-                    text: qsTrId("add/remove-tokens")
+                    text: qsTr("Manage Assets")
                     icon.source: "../../img/add_remove_token.svg"
                     icon.width: 16
                     icon.height: 16
