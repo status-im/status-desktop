@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import "../imports"
+import "../shared/status"
 
 Rectangle {
     id: copyToClipboardButton
@@ -10,8 +11,6 @@ Rectangle {
     color: Style.current.transparent
     property var onClick: function() {}
     property string textToCopy: ""
-    property bool showTooltip: false
-    property string textTooltip: ""
 
     Image {
         width: 20
@@ -35,7 +34,9 @@ Rectangle {
         }
         onPressed: {
             parent.color = Style.current.grey
-            parent.showTooltip = true
+            if (!toolTip.visible) {
+                toolTip.visible = true
+            }
         }
         onReleased: {
             parent.color = Style.current.grey
@@ -48,28 +49,18 @@ Rectangle {
         }
     }
 
-    ToolTip {
+    StatusToolTip {
         id: toolTip
-        text: parent.textTooltip
-        parent: copyToClipboardButton
-    }
-
-    Timer {
-        id:showTimer
-        interval: 300
-        running: parent.showTooltip && !toolTip.visible
-        onTriggered: {
-            toolTip.visible = true;
-        }
+        width: 80
+        text: qsTr("Copied!")
     }
 
     Timer {
         id:hideTimer
-        interval: 2500
+        interval: 2000
         running: toolTip.visible
         onTriggered: {
             toolTip.visible = false;
-            parent.showTooltip = false;
         }
     }
 }
