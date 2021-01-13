@@ -9,6 +9,7 @@ ModalPopup {
     id: confirmationDialog
 
     property Popup parentPopup
+    property string btnType: "primary"
 
 
     height: 186
@@ -39,6 +40,7 @@ ModalPopup {
         height: children[0].height
 
         StatusButton {
+            type: confirmationDialog.btnType
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
             color: Style.current.danger
