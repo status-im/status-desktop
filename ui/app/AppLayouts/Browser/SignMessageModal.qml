@@ -192,9 +192,8 @@ ModalPopup {
 
 
     footer: Item {
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        width: parent.width
+        height: btnReject.height
 
         StatusButton {
             id: btnReject

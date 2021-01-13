@@ -86,7 +86,8 @@ ModalPopup {
     }
 
     footer: Item {
-        anchors.fill: parent
+        width: parent.width
+        height: inviteBtn.height
 
         StatusRoundButton {
             id: btnBack

@@ -105,7 +105,9 @@ ModalPopup {
     }
 
     footer: Item {
-        anchors.fill: parent
+        width: parent.width
+        height: saveBtn.height
+
         StyledButton {
             visible:  currentAccount.walletType === Constants.watchWalletType
             anchors.top: parent.top

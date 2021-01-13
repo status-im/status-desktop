@@ -140,7 +140,8 @@ ModalPopup {
     }
 
     footer: Item {
-        anchors.fill: parent
+        width: parent.width
+        height: backButton.height
 
         StatusIconButton {
             id: backButton
