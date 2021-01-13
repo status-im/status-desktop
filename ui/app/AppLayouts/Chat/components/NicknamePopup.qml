@@ -68,6 +68,11 @@ ModalPopup {
         anchors.topMargin: Style.current.padding
         //% "Your nickname is too long"
         validationError: popup.nicknameTooLong ? qsTrId("your-nickname-is-too-long") : ""
+        Keys.onReleased: {
+            if (event.key === Qt.Key_Return) {
+                doneBtn.onClicked();
+            }
+        }
     }
 
     StyledText {
