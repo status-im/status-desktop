@@ -9,9 +9,10 @@ Item {
     property bool isCurrentUser: false
     property url source
     property bool playing: true
-    property bool isAnimated: true
+    property bool isAnimated: !!source && source.toString().endsWith('.gif')
     signal clicked(var image)
     property var container
+    property alias imageAlias: imageMessage
 
     id: imageContainer
     width: loadingImage.visible ? loadingImage.width : imageMessage.width
