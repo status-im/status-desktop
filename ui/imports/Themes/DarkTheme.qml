@@ -50,6 +50,7 @@ Theme {
     property color chatReplyCurrentUser: lightGrey
     property color topBarChatInfoColor: evenDarkerGrey
     property color codeBackground: "#2E386B"
+    property color primarySelectionColor: "#b4c8ff"
 
     property color buttonForegroundColor: blue
     property color buttonBackgroundColor: secondaryBackground

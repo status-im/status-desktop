@@ -37,6 +37,7 @@ QtObject {
     property color secondaryBackground
     property color modalBackground
     property color codeBackground
+    property color primarySelectioncolor
 
     property color buttonForegroundColor
     property color buttonBackgroundColor

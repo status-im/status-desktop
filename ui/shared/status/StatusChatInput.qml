@@ -654,6 +654,7 @@ Rectangle {
                 background: Rectangle {
                     color: "transparent"
                 }
+                selectionColor: Style.current.primarySelectionColor
             }
             Action {
                 shortcut: StandardKey.Bold
