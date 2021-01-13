@@ -126,24 +126,22 @@ Popup {
 
         Separator {
             id: separator2
-            visible: !!footerContent.children[0]
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 75
+            visible: footerContent.visible
+            anchors.bottom: footerContent.top
+            anchors.bottomMargin: visible ? Style.current.padding : 0
         }
 
         Item {
             id: footerContent
-            visible: !!children[0]
-            height: children[0] && children[0].height
+            visible: children.length > 0
+            height: visible ? children[0] && children[0].height : 0
             width: parent.width
-            anchors.top: separator2.bottom
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.topMargin: Style.current.padding
-            anchors.bottomMargin: Style.current.padding
-            anchors.rightMargin: Style.current.padding
-            anchors.leftMargin: Style.current.padding
+            anchors.bottomMargin: visible ? Style.current.padding : 0
+            anchors.rightMargin: visible ? Style.current.padding : 0
+            anchors.leftMargin: visible ? Style.current.padding : 0
         }
   }
 }

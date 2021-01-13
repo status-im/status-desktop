@@ -56,12 +56,11 @@ ModalPopup {
     }
 
     footer: Item {
-        anchors.top: parent.bottom
-        anchors.right: parent.right
-        anchors.bottom: popup.bottom
-        anchors.left: parent.left
+        width: parent.width
+        height: reencryptBtn.height
 
         StatusButton {
+            id: reencryptBtn
             anchors.bottom: parent.bottom
             anchors.topMargin: Style.current.padding
             anchors.right: parent.right

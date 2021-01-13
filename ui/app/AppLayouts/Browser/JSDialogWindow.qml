@@ -51,10 +51,8 @@ ModalPopup {
     }
 
     footer: Item {
-        anchors.top: parent.bottom
-        anchors.right: parent.right
-        anchors.bottom: root.bottom
-        anchors.left: parent.left
+        width: parent.width
+        height: okButton.height
 
         StyledButton {
             id: okButton

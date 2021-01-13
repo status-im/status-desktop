@@ -102,7 +102,7 @@ ModalPopup {
 
     footer: Item {
         width: parent.width
-        height: parent.height
+        height: removeBtn.height
 
         StatusButton {
             id: removeBtn

@@ -136,10 +136,8 @@ ModalPopup {
     }
 
     footer: Item {
-        anchors.top: parent.bottom
-        anchors.right: parent.right
-        anchors.bottom: popup.bottom
-        anchors.left: parent.left
+        width: parent.width
+        height: btnSelectMembers.height
 
         Button {
             id: btnSelectMembers

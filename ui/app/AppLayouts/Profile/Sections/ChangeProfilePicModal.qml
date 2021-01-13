@@ -101,7 +101,8 @@ ModalPopup {
     }
 
     footer: Item {
-        anchors.fill:parent
+        width: parent.width
+        height: uploadBtn.height
 
         StatusButton {
             visible: profileModel.profile.hasIdentityImage

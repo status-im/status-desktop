@@ -131,8 +131,10 @@ ModalPopup {
     }
     
     footer: Item {
+        width: parent.width
+        height: addBtn.height
         visible: editable
-        anchors.fill: parent
+
         StyledButton {
             id: addBtn
             anchors.top: parent.top

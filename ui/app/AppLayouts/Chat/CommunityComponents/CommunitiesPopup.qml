@@ -127,9 +127,11 @@ ModalPopup {
     }
 
     footer: Item {
-        anchors.fill: parent
+        width: parent.width
+        height: importBtn.height
 
         StatusButton {
+            id: importBtn
             text: qsTr("Import a community")
             anchors.right: createBtn.left
             anchors.rightMargin: Style.current.smallPadding
