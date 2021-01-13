@@ -107,6 +107,7 @@ Button {
             }
             return !enabled ? Style.current.buttonDisabledBackgroundColor :
                       hovered ? control.bgHoverColor :
+                      type === "warn" ? Style.current.buttonWarnBackgroundColor :
                       control.bgColor
         }
     }
