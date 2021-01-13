@@ -66,7 +66,7 @@ Item {
             if(contentType === Constants.stickerType) return "";
             let msg = Utils.linkifyAndXSS(message);
             if(isEmoji) {
-                return Emoji.parse(msg, Emoji.size.big);
+                return Emoji.parse(msg, Emoji.size.small);
             } else {
                 return `<style type="text/css">` +
                             `p, img, a, del, code, blockquote { margin: 0; padding: 0; }` +
