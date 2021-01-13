@@ -319,6 +319,11 @@ QtObject:
         if (channel == nil):
           continue
         let isAddedContact = channel.chatType.isOneToOne and self.status.contacts.isAdded(channel.id)
+
+        if msg.chatId == self.activeChannel.id:
+          discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
+          self.newMessagePushed()
+
         if not channel.muted:
           self.messageNotificationPushed(
             msg.chatId,
@@ -331,9 +336,6 @@ QtObject:
             msg.hasMention,
             isAddedContact,
             channel.name)
-        else:
-          discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
-          self.newMessagePushed()
 
   proc updateUsernames*(self:ChatsView, contacts: seq[Profile]) =
     if contacts.len > 0:
