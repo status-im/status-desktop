@@ -7,5 +7,5 @@ TextField {
     color: readOnly ? Style.current.secondaryText : Style.current.textColor
     selectByMouse: !readOnly
     selectedTextColor: Style.current.textColor
-    selectionColor: Style.current.secondaryHover
+    selectionColor: Style.current.primarySelectionColor
 }
