@@ -115,7 +115,7 @@ PopupMenu {
         //% "View profile"
         text: qsTrId("view-profile")
         onTriggered: {
-            openProfilePopup(userName, fromAuthor, identicon);
+            openProfilePopup(userName, fromAuthor, identicon, "", nickname);
             messageContextMenu.close()
         }
         icon.source: "../../../img/profileActive.svg"
