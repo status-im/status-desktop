@@ -36,8 +36,7 @@ Rectangle {
     property string chatInputPlaceholder: qsTr("Type a message.")
 
     property alias textInput: messageInputField
-    //property bool isStatusUpdateInput: chatType === Constants.chatTypeStatusUpdate
-    property bool isStatusUpdateInput: false
+    property bool isStatusUpdateInput: chatType === Constants.chatTypeStatusUpdate
 
     property var fileUrls: []
     property alias messageSound: sendMessageSound
