@@ -539,7 +539,7 @@ Rectangle {
         height: scrollView.height
         color: Style.current.inputBackground
         radius: control.isStatusUpdateInput ? 36 :
-          height > defaultInputFieldHeight || extendedArea.visible ? 16 : 32
+          height > defaultInputFieldHeight + 1 || extendedArea.visible ? 16 : 32
 
         Rectangle {
             id: extendedArea
