@@ -5,4 +5,5 @@ import "../imports"
 TextArea {
     font.family: Style.current.fontRegular.name
     color: Style.current.textColor
+    selectionColor: Style.current.primarySelectionColor
 }

@@ -60,6 +60,7 @@ Item {
             font.family: Style.current.fontRegular.name
             color: Style.current.textColor
             placeholderTextColor: Style.current.darkGrey
+            selectionColor: Style.current.primarySelectionColor
         }
 
         MouseArea {
@@ -81,7 +82,8 @@ Item {
         readOnly: true
         font.pixelSize: 12
         color: Style.current.red
-
+        selectedTextColor: Style.current.textColor
+        selectionColor: Style.current.primarySelectionColor
     }
 }
 
