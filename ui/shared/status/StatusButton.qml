@@ -68,7 +68,8 @@ Button {
             anchors.right: iconLoader.active ? undefined : parent.right
             anchors.left: iconLoader.active ? iconLoader.right : parent.left
             anchors.leftMargin: iconLoader.active ? Style.current.smallPadding : 0
-            color: !enabled ? Style.current.buttonDisabledForegroundColor : control.color
+            color: !enabled ? Style.current.buttonDisabledForegroundColor : 
+              (type !== "warn" && (hovered || highlighted)) ? Style.current.blue : control.color
             visible: !loadingIndicator.active
         }
 
