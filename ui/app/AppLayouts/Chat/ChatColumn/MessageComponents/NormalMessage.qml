@@ -207,30 +207,42 @@ Item {
         }
     }
 
+    Rectangle {
+        id: dateTimeBackground
+        visible: isImage
+        height: visible ? chatTime.height + Style.current.halfPadding : 0
+        width: chatTime.width + 2 * chatTime.anchors.rightMargin +
+               (retry.visible ? retry.width + retry.anchors.rightMargin : sentMessage.width + sentMessage.anchors.rightMargin)
+        color: Utils.setColorAlpha(Style.current.black, 0.66)
+        radius: Style.current.radius
+        anchors.bottom: chatBox.bottom
+        anchors.bottomMargin: Style.current.halfPadding
+        anchors.right: chatBox.right
+        anchors.rightMargin: 6
+    }
+
     ChatTime {
         id: chatTime
-        anchors.top: linksLoader.active ? linksLoader.bottom : chatBox.bottom
-        anchors.topMargin: 4
-        anchors.bottomMargin: Style.current.padding
-        anchors.right: linksLoader.active ? linksLoader.right : chatBox.right
-        anchors.rightMargin: root.isCurrentUser ? 5 : Style.current.padding
+        anchors.top: isImage ? undefined : (linksLoader.active ? linksLoader.bottom : chatBox.bottom)
+        anchors.topMargin: isImage ? 0 : 4
+        anchors.verticalCenter: isImage ? dateTimeBackground.verticalCenter : undefined
+        anchors.right: isImage ? dateTimeBackground.right : (linksLoader.active ? linksLoader.right : chatBox.right)
+        anchors.rightMargin: isImage ? 6 : (root.isCurrentUser ? 5 : Style.current.padding)
     }
 
     SentMessage {
         id: sentMessage
-        visible: root.isCurrentUser && !timeout && !isExpired && isMessage && outgoingStatus !== "sent"
-        anchors.top: chatTime.top
-        anchors.bottomMargin: Style.current.padding
+        visible: root.isCurrentUser && !timeout && !isExpired && isMessage && outgoingStatus === "sent"
+        anchors.verticalCenter: chatTime.verticalCenter
         anchors.right: chatTime.left
         anchors.rightMargin: 5
     }
 
     Retry {
         id: retry
-        anchors.top: chatTime.top
+        anchors.verticalCenter: chatTime.verticalCenter
         anchors.right: chatTime.left
         anchors.rightMargin: 5
-        anchors.bottomMargin: Style.current.padding
     }
 
     Loader {

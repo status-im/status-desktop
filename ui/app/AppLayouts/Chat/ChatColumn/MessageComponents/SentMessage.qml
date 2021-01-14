@@ -2,10 +2,9 @@ import QtQuick 2.3
 import "../../../../../shared"
 import "../../../../../imports"
 
-StyledText {
+SVGImage {
     id: sentMessage
-    color: Style.current.darkGrey
-    //% "Sending..."
-    text: qsTrId("sending")
-    font.pixelSize: 10
+    width: visible ? 9 : 0
+    height: visible ? 9 : 0
+    source: visible ? "../../../../img/check.svg" : ""
 }
