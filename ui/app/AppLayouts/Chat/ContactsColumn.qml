@@ -142,9 +142,9 @@ Item {
 
         Separator {
             id: communitySep
-            visible: communitiesListLoader.active
-            anchors.top: visible ? communitiesListLoader.bottom : 0
-            anchors.topMargin: Style.current.halfPadding
+            visible: communitiesListLoader.active && communitiesListLoader.height > 0
+            anchors.top: communitiesListLoader.bottom
+            anchors.topMargin: visible ? Style.current.halfPadding : 0
         }
 
         ChannelList {

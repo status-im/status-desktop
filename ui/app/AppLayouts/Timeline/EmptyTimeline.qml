@@ -31,9 +31,10 @@ Rectangle {
         border.width: 1
         radius: Style.current.padding
         width: 255
-        height: childrenRect.height + Style.current.padding
+        height: shareYourMindText.height + Style.current.padding
 
         StyledText {
+            id: shareYourMindText
             horizontalAlignment: Text.AlignHCenter
             anchors.left: parent.left
             anchors.leftMargin: Style.current.halfPadding
