@@ -210,7 +210,7 @@ ModalPopup {
                 width: parent.width
                 height: identicon.height
 
-                property string nickname: chatView.getUserNickname(model.pubKey)
+                property string nickname: appMain.getUserNickname(model.pubKey)
 
                 StatusImageIdenticon {
                     id: identicon

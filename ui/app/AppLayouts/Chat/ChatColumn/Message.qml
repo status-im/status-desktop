@@ -90,7 +90,7 @@ Item {
             SelectedMessage.set(messageId, fromAuthor);
         }
         // Get contact nickname
-        let nickname = chatView.getUserNickname(fromAuthor)
+        let nickname = appMain.getUserNickname(fromAuthor)
         messageContextMenu.isProfile = !!isProfileClick
         messageContextMenu.isSticker = isSticker
         messageContextMenu.emojiOnly = emojiOnly
