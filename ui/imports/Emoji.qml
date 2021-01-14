@@ -7,6 +7,7 @@ import "../shared/status/emojiList.js" as EmojiJSON
 QtObject {
     readonly property var size: {
         "big": "72x72",
+        "middle": "32x32",
         "small": "20x20"
     }
     property string base: Qt.resolvedUrl("twemoji/")
