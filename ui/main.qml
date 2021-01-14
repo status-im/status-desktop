@@ -95,6 +95,7 @@ ApplicationWindow {
         id: defaultAppSettings
         property bool communitiesEnabled: false
         property bool walletEnabled: false
+        property bool nodeManagementEnabled: false
         property bool browserEnabled: false
         property bool displayChatImages: false
         property bool timelineEnabled: true
@@ -141,6 +142,7 @@ ApplicationWindow {
         property var profileSplitView
         property bool communitiesEnabled: defaultAppSettings.communitiesEnabled
         property bool walletEnabled: defaultAppSettings.walletEnabled
+        property bool nodeManagementEnabled: defaultAppSettings.nodeManagementEnabled
         property bool browserEnabled: defaultAppSettings.browserEnabled
         property bool displayChatImages: defaultAppSettings.displayChatImages
         property bool compactMode: defaultAppSettings.compactMode

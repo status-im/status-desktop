@@ -262,7 +262,7 @@ RowLayout {
 
         StatusIconTabButton {
               id: nodeBtn
-              enabled: isExperimental === "1"
+              enabled: isExperimental === "1" && appSettings.nodeManagementEnabled
               anchors.top: profileBtn.top
               icon.name: "node"
         }
