@@ -14,7 +14,7 @@ ScrollView {
     id: root
     Layout.fillWidth: true
     Layout.fillHeight: true
-    contentHeight: timelineContainer.height + 40
+    contentHeight: chatLogView.contentHeight + 40
     clip: true
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
@@ -59,13 +59,12 @@ ScrollView {
         }
     }
 
-    Rectangle {
+    Item {
         id: timelineContainer
         width: 624
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-        height: childrenRect.height
-        color: "transparent"
+        anchors.bottom: parent.bottom
 
         StatusChatInput {
             id: statusUpdateInput
@@ -99,11 +98,11 @@ ScrollView {
         ListView {
             id: chatLogView
             anchors.top: statusUpdateInput.bottom
-            anchors.topMargin: 40
+            anchors.topMargin: Style.current.bigPadding
             anchors.left: parent.left
             anchors.right: parent.right
-            height: childrenRect.height + 40
-            spacing: 10
+            anchors.bottom: parent.bottom
+            spacing: Style.current.halfPadding
             flickDeceleration: 10000
             interactive: false
 
