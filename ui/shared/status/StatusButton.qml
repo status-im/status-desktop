@@ -9,7 +9,7 @@ Button {
     property string type: "primary"
     property string size: "large"
     property string state: "default"
-    property color color: Style.current.buttonForegroundColor
+    property color color: type === "warn" ? Style.current.danger : Style.current.buttonForegroundColor
     property color bgColor: Style.current.buttonBackgroundColor
     property color borderColor: color
     property color bgHoverColor: Qt.darker(control.bgColor, 1.1)
@@ -68,10 +68,7 @@ Button {
             anchors.right: iconLoader.active ? undefined : parent.right
             anchors.left: iconLoader.active ? iconLoader.right : parent.left
             anchors.leftMargin: iconLoader.active ? Style.current.smallPadding : 0
-            color: !enabled ? Style.current.buttonDisabledForegroundColor : 
-              (hovered || highlighted) ?
-                type === "warn" ? Style.current.danger : Style.current.blue :
-                control.color
+            color: !enabled ? Style.current.buttonDisabledForegroundColor : control.color
             visible: !loadingIndicator.active
         }
 
