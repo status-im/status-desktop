@@ -69,7 +69,9 @@ Button {
             anchors.left: iconLoader.active ? iconLoader.right : parent.left
             anchors.leftMargin: iconLoader.active ? Style.current.smallPadding : 0
             color: !enabled ? Style.current.buttonDisabledForegroundColor : 
-              (hovered || highlighted) ? Style.current.blue : control.color
+              (hovered || highlighted) ?
+                type === "warn" ? control.color : Style.current.blue :
+                control.color
             visible: !loadingIndicator.active
         }
 
@@ -106,9 +108,11 @@ Button {
                 return hovered ? control.bgColor : "transparent"
             }
             return !enabled ? Style.current.buttonDisabledBackgroundColor :
-                      hovered ? control.bgHoverColor :
-                      type === "warn" ? Style.current.buttonWarnBackgroundColor :
-                      control.bgColor
+                      hovered ?
+                        type === "warn" ? Qt.darker(Style.current.buttonWarnBackgroundColor, 1.1) :
+                            control.bgHoverColor :
+                                type === "warn" ? Style.current.buttonWarnBackgroundColor :
+                                    control.bgColor
         }
     }
 
