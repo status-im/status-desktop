@@ -35,7 +35,7 @@ Item {
                 id: wrapper
                 property bool hovered: false
                 radius: Style.current.radius
-                color: currency === key ? Style.current.lightBlue : (hovered ? Style.current.grey: Style.current.transparent)
+                color: modalBody.currency === key ? Style.current.lightBlue : (hovered ? Style.current.backgroundHover: Style.current.transparent)
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.left: parent.left
@@ -52,6 +52,7 @@ Item {
                 }
 
                 StatusRadioButton {
+                    id: currencyRadioBtn
                     checked: currency === key
                     isHovered: wrapper.hovered
                     anchors.right: parent.right
@@ -63,12 +64,18 @@ Item {
 
                 MouseArea {
                     anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onEntered: {
                         wrapper.hovered = true
                     }
                     onExited: {
                         wrapper.hovered = false
+                    }
+                    onClicked: {
+                        currencyRadioBtn.checked = !currencyRadioBtn.checked
+                        modalBody.currency = key
+                        walletModel.setDefaultCurrency(key)
                     }
                 }
             }
