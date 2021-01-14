@@ -461,6 +461,13 @@ QtObject:
       self.messageList[chatId].delete
       self.messageList.del(chatId)
 
+  proc toggleReaction*(self: ChatsView, messageId: string, emojiId: int) {.slot.} =
+    if self.activeChannel.id == status_utils.getTimelineChatId():
+      let message = self.messageList[status_utils.getTimelineChatId()].getMessageById(messageId)
+      self.reactions.toggle(messageId, message.chatId, emojiId)
+    else:
+      self.reactions.toggle(messageId, self.activeChannel.id, emojiId)
+
   proc removeMessagesFromTimeline*(self: ChatsView, chatId: string) =
     self.messageList[status_utils.getTimelineChatId()].deleteMessagesByChatId(chatId)
     self.activeChannelChanged()

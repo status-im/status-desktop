@@ -132,7 +132,7 @@ Item {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                    chatsModel.reactions.toggle(messageId, modelData.emojiId)
+                    chatsModel.toggleReaction(messageId, modelData.emojiId)
 
                 }
             }

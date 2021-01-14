@@ -34,6 +34,19 @@ RowLayout {
         return popup
     }
 
+    function getUserNickname(pubKey) {
+        // Get contact nickname
+        const contactList = profileModel.contacts.list
+        const contactCount = contactList.rowCount()
+        for (let i = 0; i < contactCount; i++) {
+            if (contactList.rowData(i, 'pubKey') === pubKey) {
+                return contactList.rowData(i, 'localNickname')
+            }
+        }
+        return ""
+    }
+
+
     function openLink(link) {
         if (appSettings.showBrowserSelector) {
             appMain.openPopup(chooseBrowserPopupComponent, {link: link})
