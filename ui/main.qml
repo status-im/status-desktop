@@ -224,7 +224,7 @@ ApplicationWindow {
     SystemTrayIcon {
         id: systemTray
         visible: true
-        icon.source: chatsModel.unreadMessagesCount > 0 ? "shared/img/status-logo-new.png" : "shared/img/status-logo.png"
+        icon.source: "shared/img/status-logo.png"
         menu: Menu {
             MenuItem {
                 //% "Quit"
