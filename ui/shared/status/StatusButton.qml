@@ -70,7 +70,7 @@ Button {
             anchors.leftMargin: iconLoader.active ? Style.current.smallPadding : 0
             color: !enabled ? Style.current.buttonDisabledForegroundColor : 
               (hovered || highlighted) ?
-                type === "warn" ? control.color : Style.current.blue :
+                type === "warn" ? Style.current.danger : Style.current.blue :
                 control.color
             visible: !loadingIndicator.active
         }
