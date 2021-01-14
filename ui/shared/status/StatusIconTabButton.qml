@@ -54,7 +54,7 @@ TabButton {
 
     }
     background: Rectangle {
-        color: hovered || checked ? Style.current.secondaryBackground : "transparent"
+        color: hovered ? Style.current.secondaryBackground : "transparent"
         radius: control.width / 2
     }
 }
