@@ -135,40 +135,71 @@ Item {
 
             StyledText {
                 id: faqLink
-                text: `<a href='https://status.im/docs/FAQs.html'>${qsTr("Frequently asked questions")}</a>`
+                text: qsTr("Frequently asked questions")
                 font.pixelSize: 15
-                onLinkActivated: appMain.openLink(link)
+                color: Style.current.blue
+                anchors.topMargin: Style.current.bigPadding
+                anchors.top: parent.top
+
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
+                    hoverEnabled: true
+                    onEntered: {
+                        parent.font.underline = true
+                    }
+                    onExited: {
+                        parent.font.underline = false
+                    }
+                    onClicked: {
+                        appMain.openLink("https://status.im/docs/FAQs.html")
+                    }
                 }
             }
-
             StyledText {
                 id: issueLink
-                text: `<a href='https://github.com/status-im/nim-status-client/issues/new'>${qsTr("Submit a bug")}</a>`
+                text: qsTr("Submit a bug")
+                font.pixelSize: 15
+                color: Style.current.blue
                 anchors.topMargin: Style.current.bigPadding
                 anchors.top: faqLink.bottom
-                font.pixelSize: 15
-                onLinkActivated: appMain.openLink(link)
+
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
+                    hoverEnabled: true
+                    onEntered: {
+                        parent.font.underline = true
+                    }
+                    onExited: {
+                        parent.font.underline = false
+                    }
+                    onClicked: {
+                        appMain.openLink("https://github.com/status-im/nim-status-client/issues/new")
+                    }
                 }
             }
 
             StyledText {
-                text: `<a href='https://discuss.status.im/c/features/51'>${qsTr("Request a feature")}</a>`
+                text: qsTr("Request a feature")
+                font.pixelSize: 15
+                color: Style.current.blue
                 anchors.topMargin: Style.current.bigPadding
                 anchors.top: issueLink.bottom
-                font.pixelSize: 15
-                onLinkActivated: appMain.openLink(link)
+
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
+                    hoverEnabled: true
+                    onEntered: {
+                        parent.font.underline = true
+                    }
+                    onExited: {
+                        parent.font.underline = false
+                    }
+                    onClicked: {
+                        appMain.openLink("https://discuss.status.im/c/features/51")
+                    }
                 }
             }
         }
