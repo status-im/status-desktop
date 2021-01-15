@@ -83,6 +83,7 @@ Rectangle {
         anchors.right: contactTime.left
         anchors.rightMargin: Style.current.smallPadding
         elide: Text.ElideRight
+        color: muted ? Style.current.secondaryText : Style.current.textColor
         font.weight: Font.Medium
         font.pixelSize: 15
         anchors.left: channelIcon.visible ? channelIcon.right : contactImage.right

@@ -560,6 +560,18 @@ QtObject:
     selectedChannel.muted = false
     self.status.chat.unmuteChat(selectedChannel)
     self.chats.updateChat(selectedChannel)
+  
+  proc muteCurrentChannel*(self: ChatsView) {.slot.} =
+    self.activeChannel.mute()
+    let channel = self.chats.getChannelById(self.activeChannel.id())
+    channel.muted = true
+    self.chats.updateChat(channel)
+
+  proc unmuteCurrentChannel*(self: ChatsView) {.slot.} =
+    self.activeChannel.unmute()
+    let channel = self.chats.getChannelById(self.activeChannel.id())
+    channel.muted = false
+    self.chats.updateChat(channel)
 
   proc channelIsMuted*(self: ChatsView, channelIndex: int): bool {.slot.} =
     if (self.chats.chats.len == 0): return false

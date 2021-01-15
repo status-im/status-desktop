@@ -32,6 +32,7 @@ Rectangle {
             chatName: chatsModel.activeChannel.name
             chatType: chatsModel.activeChannel.chatType
             identicon: chatsModel.activeChannel.identicon
+            muted: chatsModel.activeChannel.muted
             identiconSize: 36
 
             onClicked: {
@@ -55,6 +56,7 @@ Rectangle {
             chatName: chatsModel.activeChannel.name
             chatType: chatsModel.activeChannel.chatType
             identicon: chatsModel.activeChannel.identicon
+            muted: chatsModel.activeChannel.muted
         }
     }
 

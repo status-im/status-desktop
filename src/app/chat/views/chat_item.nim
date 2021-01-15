@@ -125,6 +125,15 @@ QtObject:
     read = isMember
     notify = membershipChanged
 
+  proc mutedChanged*(self: ChatItemView) {.signal.}
+
+  proc muted*(self: ChatItemView): bool {.slot.} =
+    return ?.self.chatItem.muted
+
+  QtProperty[bool] muted:
+    read = muted
+    notify = mutedChanged
+
   proc contains*(self: ChatItemView, pubKey: string): bool {.slot.} =
     if self.chatItem.isNil: return false
     return self.chatItem.contains(pubKey)
@@ -132,3 +141,13 @@ QtObject:
   proc isAdmin*(self: ChatItemView, pubKey: string): bool {.slot.} =
     if self.chatItem.isNil: return false
     return self.chatItem.isAdmin(pubKey)
+
+  proc mute*(self: ChatItemView) {.slot.} =
+    self.status.chat.muteChat(self.chatItem)
+    self.chatItem.muted = true
+    self.mutedChanged()
+
+  proc unmute*(self: ChatItemView) {.slot.} =
+    self.status.chat.unmuteChat(self.chatItem)
+    self.chatItem.muted = false
+    self.mutedChanged()
