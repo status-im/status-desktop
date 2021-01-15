@@ -247,8 +247,8 @@ RowLayout {
                 id: profileBadge
                 visible: !profileModel.mnemonic.isBackedUp && sLayout.children[sLayout.currentIndex] !== profileLayoutContainer
                 anchors.top: parent.top
-                anchors.left: parent.right
-                anchors.leftMargin: -17
+                anchors.right: parent.right
+                anchors.rightMargin: 4
                 anchors.topMargin: 5
                 radius: height / 2
                 color: Style.current.blue
