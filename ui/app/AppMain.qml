@@ -206,7 +206,7 @@ RowLayout {
                   visible: chatsModel.unreadMessagesCount > 0
                   anchors.top: parent.top
                   anchors.left: parent.right
-                  anchors.leftMargin: -16
+                  anchors.leftMargin: -17
                   anchors.topMargin: 1
                   radius: height / 2
                   color: Style.current.blue
