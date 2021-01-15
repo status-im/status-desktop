@@ -209,24 +209,17 @@ RowLayout {
                   anchors.leftMargin: -16
                   anchors.topMargin: 1
                   radius: height / 2
-                  color: Style.current.white
+                  color: Style.current.blue
+                  border.color: Style.current.background
+                  border.width: 2
                   width: chatsModel.unreadMessagesCount < 10 ? 22 : messageCount.width + 14
                   height: 22
-
-                  Rectangle {
-                    anchors.centerIn: parent
-                    width: parent.width - 4
-                    height: parent.height - 4
-                    radius: height / 2
-                    color: Style.current.blue
-
-                    Text {
-                        id: messageCount
-                        font.pixelSize: chatsModel.unreadMessagesCount > 99 ? 10 : 12
-                        color: Style.current.white
-                        anchors.centerIn: parent
-                        text: chatsModel.unreadMessagesCount > 99 ? "99+" : chatsModel.unreadMessagesCount
-                    }
+                  Text {
+                      id: messageCount
+                      font.pixelSize: chatsModel.unreadMessagesCount > 99 ? 10 : 12
+                      color: Style.current.white
+                      anchors.centerIn: parent
+                      text: chatsModel.unreadMessagesCount > 99 ? "99+" : chatsModel.unreadMessagesCount
                   }
               }
         }
@@ -263,26 +256,13 @@ RowLayout {
                 anchors.top: parent.top
                 anchors.left: parent.right
                 anchors.leftMargin: -17
-                anchors.topMargin: -2
+                anchors.topMargin: 5
                 radius: height / 2
-                color: Style.current.white
-                width: 22
-                height: 22
-
-                Rectangle {
-                    anchors.centerIn: parent
-                    width: parent.width - 4
-                    height: parent.height - 4
-                    radius: height / 2
-                    color: Style.current.blue
-
-                    Text {
-                        font.pixelSize: 12
-                        color: Style.current.white
-                        anchors.centerIn: parent
-                        text: "1"
-                    }
-                }
+                color: Style.current.blue
+                border.color: Style.current.background
+                border.width: 2
+                width: 14
+                height: 14
             }
         }
 
