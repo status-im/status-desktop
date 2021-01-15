@@ -195,21 +195,31 @@ RowLayout {
               anchors.topMargin: 0
 
               Rectangle {
+                  id: chatBadge
                   visible: chatsModel.unreadMessagesCount > 0
                   anchors.top: parent.top
                   anchors.left: parent.right
-                  anchors.leftMargin: -10
-                  anchors.topMargin: -5
-                  radius: width / 2
-                  color: Style.current.blue
-                  width: chatsModel.unreadMessagesCount < 10 ? 18 : messageCount.width + 10
-                  height: 18
-                  Text {
-                      id: messageCount
-                      font.pixelSize: chatsModel.unreadMessagesCount > 99 ? 10 : 12
-                      color: Style.current.white
-                      anchors.centerIn: parent
-                      text: chatsModel.unreadMessagesCount > 99 ? "99+" : chatsModel.unreadMessagesCount
+                  anchors.leftMargin: -16
+                  anchors.topMargin: 1
+                  radius: height / 2
+                  color: Style.current.white
+                  width: chatsModel.unreadMessagesCount < 10 ? 22 : messageCount.width + 14
+                  height: 22
+
+                  Rectangle {
+                    anchors.centerIn: parent
+                    width: parent.width - 4
+                    height: parent.height - 4
+                    radius: height / 2
+                    color: Style.current.blue
+
+                    Text {
+                        id: messageCount
+                        font.pixelSize: chatsModel.unreadMessagesCount > 99 ? 10 : 12
+                        color: Style.current.white
+                        anchors.centerIn: parent
+                        text: chatsModel.unreadMessagesCount > 99 ? "99+" : chatsModel.unreadMessagesCount
+                    }
                   }
               }
         }
@@ -245,17 +255,26 @@ RowLayout {
                 visible: !profileModel.mnemonic.isBackedUp && sLayout.children[sLayout.currentIndex] !== profileLayoutContainer
                 anchors.top: parent.top
                 anchors.left: parent.right
-                anchors.leftMargin: -10
-                anchors.topMargin: -5
-                radius: width / 2
-                color: Style.current.blue
-                width: 18
-                height: 18
-                Text {
-                    font.pixelSize: 12
-                    color: Style.current.white
+                anchors.leftMargin: -17
+                anchors.topMargin: -2
+                radius: height / 2
+                color: Style.current.white
+                width: 22
+                height: 22
+
+                Rectangle {
                     anchors.centerIn: parent
-                    text: "1"
+                    width: parent.width - 4
+                    height: parent.height - 4
+                    radius: height / 2
+                    color: Style.current.blue
+
+                    Text {
+                        font.pixelSize: 12
+                        color: Style.current.white
+                        anchors.centerIn: parent
+                        text: "1"
+                    }
                 }
             }
         }

@@ -32,42 +32,12 @@ Item {
             text: qsTrId("security")
         }
 
-        Item {
-            id: backupSeedPhrase
-            height: backupText.height
-            width: parent.width
-
-            StyledText {
-                id: backupText
-                //% "Backup Seed Phrase"
-                text: qsTrId("backup-seed-phrase")
-                font.pixelSize: 15
-                color: !badge.visible ? Style.current.darkGrey : Style.current.textColor
-            }
-
-            Rectangle {
-                id: badge
-                visible: !profileModel.mnemonic.isBackedUp
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                radius: 9
-                color: Style.current.blue
-                width: 18
-                height: 18
-                Text {
-                    font.pixelSize: 12
-                    color: Style.current.white
-                    anchors.centerIn: parent
-                    text: "1"
-                }
-            }
-
-            MouseArea {
-                enabled: !profileModel.mnemonic.isBackedUp
-                anchors.fill: parent
-                onClicked: backupSeedModal.open()
-                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+        StatusSettingsLineButton {
+            text: qsTrId("backup-seed-phrase")
+            isBadge: !profileModel.mnemonic.isBackedUp
+            isEnabled: !profileModel.mnemonic.isBackedUp
+            onClicked: {
+                backupSeedModal.open()
             }
         }
 
