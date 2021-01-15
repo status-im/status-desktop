@@ -12,6 +12,7 @@ Column {
     property string linkUrls: ""
     property var container
     property bool isCurrentUser: false
+    readonly property string uuid: Utils.uuid()
     spacing: Style.current.halfPadding
 
     ListModel {
@@ -32,6 +33,7 @@ Column {
 
         delegate: Loader {
             id: linkMessageLoader
+            property bool fetched: false
             property var linkData
             property int linkWidth: linksRepeater.width
             active: true
@@ -49,6 +51,37 @@ Column {
                 onDisplayChatImagesChanged: {
                     linkMessageLoader.sourceComponent = undefined
                     linkMessageLoader.sourceComponent = linkMessageLoader.getSourceComponent()
+                }
+            }
+            Connections {
+                target: chatsModel
+                onLinkPreviewDataWasReceived: {
+                    let response
+                    try {
+                        response = JSON.parse(previewData)
+
+                    } catch (e) {
+                        console.error(previewData, e)
+                        return
+                    }
+
+
+                    if (response.uuid !== root.uuid) return
+
+                    if (!response.success) {
+                        console.error(response.result.error)
+                        return undefined
+                    }
+
+                    linkData = response.result
+
+                    if (linkData.contentType.startsWith("image/")) {
+                        return linkMessageLoader.sourceComponent = unfurledImageComponent
+                    }
+                    if (linkData.site && linkData.title) {
+                        linkData.address = link
+                        return linkMessageLoader.sourceComponent = unfurledLinkComponent
+                    }
                 }
             }
 
@@ -75,19 +108,11 @@ Column {
                     return enableLinkComponent
                 }
                 if (linkWhiteListed) {
-                    const data = chatsModel.getLinkPreviewData(link)
-                    linkData = JSON.parse(data)
-                    if (linkData.error) {
-                        console.error(linkData.error)
-                        return undefined
+                    if (fetched) {
+                        return
                     }
-                    if (linkData.contentType.startsWith("image/")) {
-                        return unfurledImageComponent
-                    }
-                    if (linkData.site && linkData.title) {
-                        linkData.address = link
-                        return unfurledLinkComponent
-                    }
+                    fetched = true
+                    return chatsModel.getLinkPreviewData(link, root.uuid)
                 }
                 // setting the height to 0 allows the "enable link" dialog to
                 // disappear correctly when appSettings.neverAskAboutUnfurlingAgain

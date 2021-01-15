@@ -1,6 +1,7 @@
 import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat
 import ../../status/status
 import ../../status/mailservers
+import ../../status/libstatus/chat as libstatus_chat
 import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../status/libstatus/types
@@ -386,11 +387,17 @@ QtObject:
   proc copyToClipboard*(self: ChatsView, content: string) {.slot.} =
     setClipBoardText(content)
 
-  proc getLinkPreviewData*(self: ChatsView, link: string): string {.slot.} =
-    try:
-      $self.status.chat.getLinkPreviewData(link)
-    except RpcException as e:
-      $ %* { "error": e.msg }
+  proc linkPreviewDataWasReceived*(self: ChatsView, previewData: string) {.signal.}
+
+  proc linkPreviewDataReceived(self: ChatsView, previewData: string) {.slot.} =
+    self.linkPreviewDataWasReceived(previewData)
+
+  proc getLinkPreviewData*(self: ChatsView, link: string, uuid: string) {.slot.} =
+    spawnAndSend(self, "linkPreviewDataReceived") do:
+      var success: bool
+      # We need to call directly on libstatus because going through the status model is not thread safe
+      let response = libstatus_chat.getLinkPreviewData(link, success)
+      $(%* { "result": %response, "success": %success, "uuid": %uuid })
 
   proc joinChat*(self: ChatsView, channel: string, chatTypeInt: int): int {.slot.} =
     self.status.chat.join(channel, ChatType(chatTypeInt))

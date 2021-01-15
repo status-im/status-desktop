@@ -201,14 +201,16 @@ proc muteChat*(chatId: string): string =
 proc unmuteChat*(chatId: string): string =
   result = callPrivateRPC("unmuteChat".prefix, %*[chatId])
 
-proc getLinkPreviewData*(link: string): JsonNode =
+proc getLinkPreviewData*(link: string, success: var bool): JsonNode =
   let
     responseStr = callPrivateRPC("getLinkPreviewData".prefix, %*[link])
     response = Json.decode(responseStr, RpcResponseTyped[JsonNode], allowUnknownFields = false)
 
   if not response.error.isNil:
-    raise newException(RpcException, fmt"""Error getting link preview data for '{link}': {response.error.message}""")
+    success = false
+    return %* { "error": fmt"""Error getting link preview data for '{link}': {response.error.message}""" }
 
+  success = true
   response.result
 
 proc getAllComunities*(): seq[Community] =
