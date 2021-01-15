@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtGraphicalEffects 1.13
 import "../../imports"
 import "../../shared"
 import "../../shared/status"
@@ -13,6 +14,7 @@ Item {
     property string identicon
     property int identiconSize: 40
     property bool isCompact: false
+    property bool muted: false
 
     property string profileImage: chatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
 
@@ -61,6 +63,35 @@ Item {
             font.pixelSize: 15
         }
 
+        SVGImage {
+            property bool hovered: false
+
+            id: bellImg
+            visible: root.muted
+            source: "../../app/img/bell-disabled.svg"
+            anchors.verticalCenter: chatName.verticalCenter
+            anchors.left: chatName.right
+            anchors.leftMargin: 4
+            width: 12.5
+            height: 12.5
+
+            ColorOverlay {
+                anchors.fill: parent
+                source: parent
+                color: bellImg.hovered ? Style.current.textColor : Style.current.darkGrey
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onEntered: bellImg.hovered = true
+                onExited: bellImg.hovered = false
+                onClicked: {
+                    chatsModel.unmuteCurrentChannel()
+                }
+            }
+        }
 
         Connections {
             target: profileModel.contacts

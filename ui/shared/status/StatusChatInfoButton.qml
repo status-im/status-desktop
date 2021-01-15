@@ -13,6 +13,7 @@ Button {
     property string identicon
     property int identiconSize: 40
     property bool isCompact: false
+    property bool muted: false
 
     implicitHeight: 48
     implicitWidth: content.width + 8
@@ -24,6 +25,7 @@ Button {
         chatId: control.chatId
         chatName: control.chatName
         chatType: control.chatType
+        muted: control.muted
         identicon: {
             if (control.chatType === Constants.chatTypeOneToOne) {
                 return appMain.getProfileImage(control.chatId) || control.identicon
