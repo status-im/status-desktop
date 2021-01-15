@@ -8,6 +8,9 @@ Item {
     property bool isSwitch: false
     property bool switchChecked: false
     property string currentValue
+    property bool isBadge: false
+    property string badgeText: "1"
+    property bool isEnabled: true
     signal clicked(bool checked)
 
     id: root
@@ -18,6 +21,7 @@ Item {
         id: textItem
         text: root.text
         font.pixelSize: 15
+        color: !root.isEnabled ? Style.current.darkGrey : Style.current.textColor
     }
 
     StyledText {
@@ -37,10 +41,29 @@ Item {
 
     StatusSwitch {
         id: switchItem
+        enabled: root.isEnabled
         visible: root.isSwitch
         checked: root.switchChecked
         anchors.right: parent.right
         anchors.verticalCenter: textItem.verticalCenter
+    }
+
+    Rectangle {
+        id: badge
+        visible: root.isBadge & !root.isSwitch
+        anchors.right: root.isSwitch ? switchItem.left : caret.left
+        anchors.rightMargin: Style.current.padding
+        anchors.verticalCenter: textItem.verticalCenter
+        radius: 9
+        color: Style.current.blue
+        width: 18
+        height: 18
+        Text {
+            font.pixelSize: 12
+            color: Style.current.white
+            anchors.centerIn: parent
+            text: root.badgeText
+        }
     }
 
     SVGImage {
@@ -61,6 +84,7 @@ Item {
 
     MouseArea {
         anchors.fill: parent
+        enabled: root.isEnabled
         onClicked: {
             root.clicked(!root.switchChecked)
         }
