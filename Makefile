@@ -35,6 +35,7 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	run-linux \
 	run-macos \
 	run-windows \
+	set-status-macos-dev-icon \
 	status-go \
 	update
 
@@ -442,8 +443,19 @@ clean: | clean-common
 
 run: rcc $(RUN_TARGET)
 
+STATUS_MACOS_DEV_ICON ?= tmp/macos/status-dev-icon.rsrc
 NIM_STATUS_CLIENT_DEV ?= t
 STATUS_PORT ?= 30306
+
+$(STATUS_MACOS_DEV_ICON):
+	mkdir -p tmp/macos
+	cp status-dev-icon.icns tmp/macos/
+	sips -i tmp/macos/status-dev-icon.icns
+	DeRez -only icns tmp/macos/status-dev-icon.icns > tmp/macos/status-dev-icon.rsrc
+
+set-status-macos-dev-icon:
+	Rez -append tmp/macos/status-dev-icon.rsrc -o bin/nim_status_client
+	SetFile -a C bin/nim_status_client
 
 run-linux:
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
@@ -452,7 +464,7 @@ run-linux:
 	STATUS_PORT="$(STATUS_PORT)" \
 	./bin/nim_status_client
 
-run-macos:
+run-macos: $(STATUS_MACOS_DEV_ICON) set-status-macos-dev-icon
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
 	NIM_STATUS_CLIENT_DEV="$(NIM_STATUS_CLIENT_DEV)" \
 	STATUS_PORT="$(STATUS_PORT)" \
