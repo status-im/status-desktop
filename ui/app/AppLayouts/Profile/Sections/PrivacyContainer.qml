@@ -33,6 +33,7 @@ Item {
         }
 
         StatusSettingsLineButton {
+            //% "Backup Seed Phrase"
             text: qsTrId("backup-seed-phrase")
             isBadge: !profileModel.mnemonic.isBackedUp
             isEnabled: !profileModel.mnemonic.isBackedUp
