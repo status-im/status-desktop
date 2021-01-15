@@ -25,6 +25,13 @@ RowLayout {
             return
         }
 
+        if (appSettings.onlyShowContactsProfilePics) {
+            const isContact = profileModel.contacts.list.rowData(index, "isContact")
+            if (isContact === "false") {
+                return
+            }
+        }
+
         return profileModel.contacts.list.rowData(index, useLargeImage ? "largeImage" : "thumbnailImage")
     }
 

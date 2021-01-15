@@ -112,6 +112,7 @@ ApplicationWindow {
         property bool neverAskAboutUnfurlingAgain: false
         property bool hideChannelSuggestions: false
         property bool hideSignPhraseModal: false
+        property bool onlyShowContactsProfilePics: true
 
         property int fontSize: Constants.fontSizeM
 
@@ -160,6 +161,7 @@ ApplicationWindow {
         property bool hideChannelSuggestions: defaultAppSettings.hideChannelSuggestions
         property int fontSize: defaultAppSettings.fontSize
         property bool hideSignPhraseModal: defaultAppSettings.hideSignPhraseModal
+        property bool onlyShowContactsProfilePics: defaultAppSettings.onlyShowContactsProfilePics
 
         // Browser settings
         property bool showBrowserSelector: defaultAppSettings.showBrowserSelector
