@@ -90,6 +90,28 @@ Item {
             //% "Privacy"
             text: qsTrId("privacy")
         }
+
+        RowLayout {
+            spacing: Style.current.padding
+            width: parent.width
+
+            StyledText {
+                text: qsTr("Display all profile pictures (not only contacts)")
+                font.pixelSize: 15
+                font.weight: Font.Medium
+                Layout.fillWidth: true
+            }
+
+            StatusSwitch {
+                id: showOnlyContactsPicsSwitch
+                Layout.rightMargin: 0
+                checked: !appSettings.onlyShowContactsProfilePics
+                onCheckedChanged: function (value) {
+                    appSettings.onlyShowContactsProfilePics = !this.checked
+                }
+            }
+        }
+
         RowLayout {
             spacing: Style.current.padding
             width: parent.width
