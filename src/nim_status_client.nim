@@ -44,17 +44,15 @@ proc mainProc() =
 
   let statusAppIcon =
     if defined(macosx):
-      if getEnv("NIM_STATUS_CLIENT_DEV").string == "":
-        "/../Resources/status-icon.icns"
-      else:
-        "/../status-dev-icon.icns"
+      "" # not used in macOS
     elif defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
       "/../resources/status.svg"
     elif getEnv("NIM_STATUS_CLIENT_DEV").string != "":
       "/../status-dev.svg"
     else:
       "/../status.svg"
-  app.icon(app.applicationDirPath & statusAppIcon)
+  if not defined(macosx):
+    app.icon(app.applicationDirPath & statusAppIcon)
 
   var i18nPath = ""
   if (getEnv("NIM_STATUS_CLIENT_DEV").string != ""):
