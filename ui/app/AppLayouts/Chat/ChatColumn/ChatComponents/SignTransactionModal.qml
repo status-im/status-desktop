@@ -31,10 +31,6 @@ ModalPopup {
         root.close()
     }
 
-    function estimateGas(){
-        gasSelector.estimateGas()
-    }
-
     id: root
 
     //% "Send"
@@ -139,7 +135,10 @@ ModalPopup {
 
                     if (!gasEstimate.success) {
                         //% "Error estimating gas: %1"
-                        console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
+                        let message = qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message)
+                        console.warn(message)
+                        gasEstimateErrorPopup.confirmationText = message + qsTr(". The transaction will probably fail.")
+                        gasEstimateErrorPopup.open()
                         return
                     }
                     selectedGasLimit = gasEstimate.result

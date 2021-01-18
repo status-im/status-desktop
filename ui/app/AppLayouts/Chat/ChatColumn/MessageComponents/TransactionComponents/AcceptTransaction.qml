@@ -77,6 +77,14 @@ Item {
         }
     }
 
+    ConfirmationDialog {
+        id: gasEstimateErrorPopup
+        height: 220
+        onConfirmButtonClicked: {
+            gasEstimateErrorPopup.close();
+        }
+    }
+
     Loader {
         id: signTransactionModal
         function open() {
