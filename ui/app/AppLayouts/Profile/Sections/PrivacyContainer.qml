@@ -11,15 +11,11 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    ListModel {
-        id: previewableSites
-    }
-
     Column {
         id: containerColumn
-        spacing: Style.current.padding
+        spacing: 30
         anchors.top: parent.top
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: topMargin
         anchors.right: parent.right
         anchors.rightMargin: contentMargin
         anchors.left: parent.left
@@ -49,12 +45,6 @@ Item {
 
         Separator {
             id: separator
-            Layout.topMargin: Style.current.bigPadding - containerColumn.spacing
-        }
-
-        Separator {
-            id: separator2
-            Layout.topMargin: Style.current.bigPadding - containerColumn.spacing
         }
 
         StatusSectionHeadline {
@@ -114,6 +104,16 @@ Item {
             }
         }
 
+        StatusSettingsLineButton {
+            text: qsTr("Chat link previews")
+            onClicked: openPopup(chatLinksPreviewModal)
+        }
+
+        Component {
+            id: chatLinksPreviewModal
+            ChatLinksPreviewModal {}
+        }
+
         Component {
             id: openLinksWithModal
             OpenLinksWithModal {}
@@ -123,81 +123,6 @@ Item {
             text: qsTr("Open links with...")
             currentValue: appSettings.openLinksInStatus ? "Status" : qsTr("My default browser")
             onClicked: openPopup(openLinksWithModal)
-        }
-
-        StatusSectionHeadline {
-            id: labelURLUnfurling
-            text: qsTr("Chat link previews")
-            font.pixelSize: 17
-            font.weight: Font.Bold
-            color: Style.current.textColor
-        }
-
-        StatusSectionHeadline {
-            id: labelWebsites
-            text: qsTr("Websites")
-        }
-
-        Connections {
-            target: applicationWindow
-            onSettingsLoaded: {
-                let whitelist = JSON.parse(profileModel.getLinkPreviewWhitelist())
-                whitelist.forEach(entry => {
-                    entry.isWhitelisted = appSettings.whitelistedUnfurlingSites[entry.address] || false
-                    previewableSites.append(entry)
-                })
-            }
-        }
-
-        ListView {
-            id: sitesListView
-            width: parent.width
-            model: previewableSites
-            interactive: false
-            height: childrenRect.height
-            spacing: Style.current.padding
-
-            delegate: Component {
-                Item {
-                    width: parent.width
-                    height: childrenRect.height
-
-                    StyledText {
-                        id: siteTitle
-                        text: title
-                        font.pixelSize: 15
-                        font.weight: Font.Medium
-                    }
-
-                    StyledText {
-                        text: address
-                        font.pixelSize: 15
-                        font.weight: Font.Thin
-                        color: Style.current.secondaryText
-                        anchors.top: siteTitle.bottom
-                    }
-
-                    StatusSwitch {
-                        checked: !!isWhitelisted
-                        onCheckedChanged: function () {
-                            const settings = appSettings.whitelistedUnfurlingSites
-                            settings[address] = this.checked
-                            appSettings.whitelistedUnfurlingSites = settings
-                        }
-                        anchors.verticalCenter: siteTitle.bottom
-                        anchors.right: parent.right
-                    }
-                }
-            }
-        }
-
-        StyledText {
-            text: qsTr("Previewing links from these websites may share your metadata with their owners.")
-            width: parent.width
-            wrapMode: Text.WordWrap
-            font.weight: Font.Thin
-            color: Style.current.secondaryText
-            font.pixelSize: 15
         }
     }
 }
