@@ -41,6 +41,7 @@ QtObject:
     ChatMessageList* = ref object of QAbstractListModel
       messages*: seq[Message]
       status: Status
+      id: string
       messageIndex: Table[string, int]
       messageReactions*: Table[string, string]
       timedoutMessages: HashSet[string]
@@ -65,12 +66,16 @@ QtObject:
     result.contentType = ContentType.ChatIdentifier;
     result.chatId = chatId
 
+  proc addFakeMessages*(self: ChatMessageList) =
+    self.messages.add(self.chatIdentifier(self.id))
+    self.messages.add(self.fetchMoreMessagesButton())
+
   proc newChatMessageList*(chatId: string, status: Status, addFakeMessages: bool = true): ChatMessageList =
     new(result, delete)
     result.messages = @[]
+    result.id = chatId
     if addFakeMessages:
-      result.messages.add(result.chatIdentifier(chatId))
-      result.messages.add(result.fetchMoreMessagesButton())
+      result.addFakeMessages()
     result.messageIndex = initTable[string, int]()
     result.timedoutMessages = initHashSet[string]()
     result.status = status
@@ -232,9 +237,11 @@ QtObject:
     if (not self.messageIndex.hasKey(messageId)): return
     return self.messages[self.messageIndex[messageId]]
 
-  proc clear*(self: ChatMessageList) =
+  proc clear*(self: ChatMessageList, addFakeMessages: bool = true) =
     self.beginResetModel()
     self.messages = @[]
+    if (addFakeMessages):
+      self.addFakeMessages()
     self.endResetModel()
 
   proc setMessageReactions*(self: ChatMessageList, messageId: string, newReactions: string)=

@@ -298,7 +298,10 @@ QtObject:
   proc messagesCleared*(self: ChatsView) {.signal.}
 
   proc clearMessages*(self: ChatsView, id: string) =
-    self.messageList[id].clear()
+    let channel = self.chats.getChannelById(id)
+    if (channel == nil):
+      return
+    self.messageList[id].clear(not channel.isNil and channel.chatType != ChatType.Profile)
     self.messagesCleared()
 
   proc pushMessages*(self:ChatsView, messages: var seq[Message]) =
