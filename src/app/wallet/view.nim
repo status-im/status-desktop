@@ -273,13 +273,18 @@ QtObject:
   
   proc estimateGas*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string, data: string = ""): string {.slot.} =
     var
-      response: int
+      response: string
       success: bool
     if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
       response = self.status.wallet.estimateTokenGas(from_addr, to, assetAddress, value, success)
     else:
       response = self.status.wallet.estimateGas(from_addr, to, value, data, success)
-    result = $(%* { "result": %response, "success": %success })
+
+    if success == true:
+      let res = fromHex[int](response)
+      result = $(%* { "result": %res, "success": %success })
+    else:
+      result = $(%* { "result": "-1", "success": %success, "error": { "message": %response } })
 
   proc transactionWasSent*(self: WalletView, txResult: string) {.signal.}
 

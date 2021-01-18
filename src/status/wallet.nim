@@ -72,15 +72,14 @@ proc buildTokenTransaction(self: WalletModel, source, to, assetAddress: Address,
 proc getKnownTokenContract*(self: WalletModel, address: Address): Erc20Contract =
   getErc20Contracts().concat(getCustomTokens()).getErc20ContractByAddress(address)
 
-proc estimateGas*(self: WalletModel, source, to, value, data: string, success: var bool): int =
+proc estimateGas*(self: WalletModel, source, to, value, data: string, success: var bool): string =
   var tx = transactions.buildTransaction(
     parseAddress(source),
     eth2Wei(parseFloat(value), 18),
     data = data
   )
   tx.to = parseAddress(to).some
-  let response = eth.estimateGas(tx, success)
-  result = fromHex[int](response)
+  result = eth.estimateGas(tx, success)
 
 proc getTransactionReceipt*(self: WalletModel, transactionHash: string): JsonNode =
   result = status_wallet.getTransactionReceipt(transactionHash).parseJSON()["result"]
@@ -110,7 +109,7 @@ proc checkPendingTransactions*(self: WalletModel) =
 proc checkPendingTransactions*(self: WalletModel, address: string, blockNumber: int) =
   self.confirmTransactionStatus(status_wallet.getPendingOutboundTransactionsByAddress(address).parseJson["result"], blockNumber)
   
-proc estimateTokenGas*(self: WalletModel, source, to, assetAddress, value: string, success: var bool): int =
+proc estimateTokenGas*(self: WalletModel, source, to, assetAddress, value: string, success: var bool): string =
   var
     transfer: Transfer
     contract: Erc20Contract
@@ -123,8 +122,7 @@ proc estimateTokenGas*(self: WalletModel, source, to, assetAddress, value: strin
       contract
     )
 
-  let response = contract.methods["transfer"].estimateGas(tx, transfer, success)
-  result = fromHex[int](response)
+  result = contract.methods["transfer"].estimateGas(tx, transfer, success)
 
 proc sendTransaction*(self: WalletModel, source, to, value, gas, gasPrice, password: string, success: var bool, data = ""): string =
   var tx = transactions.buildTransaction(
