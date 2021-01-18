@@ -184,14 +184,9 @@ ModalPopup {
         id: groupInfoItem
         anchors.fill: parent
 
-        StyledText {
-            id: memberLabel
-            //% "Members"
-            text: qsTrId("members-title")
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
-            font.pixelSize: 15
-            color: Style.current.darkGrey
+        Separator {
+            id: separator
+            visible: !addMembers
         }
 
         ListView {
@@ -199,9 +194,11 @@ ModalPopup {
             anchors.fill: parent
             anchors.top: memberLabel.bottom
             anchors.bottom: popup.bottom
-            anchors.topMargin: 30
+            anchors.topMargin: addMembers ? 30 : 15
             anchors.bottomMargin: Style.current.padding
-            spacing: 4
+            anchors.leftMargin: 15
+            anchors.rightMargin: 15
+            spacing: 15
             Layout.fillWidth: true
             Layout.fillHeight: true
             model: chatsModel.activeChannel.members
@@ -223,10 +220,16 @@ ModalPopup {
                               contactRow.nickname : Utils.removeStatusEns(model.userName)
                     anchors.left: identicon.right
                     anchors.leftMargin: Style.current.smallPadding
-                    anchors.right: adminLabel.left
-                    anchors.rightMargin: Style.current.smallPadding
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: 13
+                    StyledText {
+                        visible: model.userName === (profileModel.profile.preferredUsername || profileModel.profile.username)
+                        anchors.left: parent.right
+                        anchors.leftMargin: 5
+                        text: "(You)"
+                        color: Style.current.darkGrey
+                        font.pixelSize: parent.font.pixelSize
+                    }
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
@@ -245,6 +248,7 @@ ModalPopup {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: 13
+                    color: Style.current.darkGrey
                 }
 
                 StyledText {
@@ -254,6 +258,9 @@ ModalPopup {
                     anchors.right: parent.right
                     anchors.rightMargin: Style.current.smallPadding
                     anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 20
+                    font.bold: true
+                    color: Style.current.darkGrey
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
