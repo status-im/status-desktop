@@ -7,6 +7,7 @@ import "./Sections"
 
 SplitView {
     property int contentMargin: 120
+    property int topMargin: 46
     property alias changeProfileSection: leftTab.changeProfileSection
 
     id: profileView

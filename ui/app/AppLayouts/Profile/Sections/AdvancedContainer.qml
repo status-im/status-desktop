@@ -14,7 +14,7 @@ Item {
     Column {
         id: generalColumn
         anchors.top: parent.top
-        anchors.topMargin: 46
+        anchors.topMargin: topMargin
         anchors.left: parent.left
         anchors.leftMargin: contentMargin
         anchors.right: parent.right
