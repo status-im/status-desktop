@@ -30,10 +30,10 @@ Rectangle {
             parent.color = Style.current.transparent
         }
         onEntered:{
-            parent.color = Style.current.grey
+            parent.color = Style.current.backgroundHover
         }
         onPressed: {
-            parent.color = Style.current.grey
+            parent.color = Style.current.backgroundHover
             if (!toolTip.visible) {
                 toolTip.visible = true
             }
