@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../imports"
 import "../../../shared"
+import "../../../shared/status"
 import "./components"
 
 Item {
@@ -52,17 +53,14 @@ Item {
         font.pixelSize: 22
     }
 
-    Address {
+    StatusExpandableAddress {
         id: walletAddress
-        text: currentAccount.address
-        font.pixelSize: 13
-        anchors.right: title.right
-        anchors.rightMargin: 0
+        address: currentAccount.address
         anchors.top: title.bottom
-        anchors.topMargin: 0
         anchors.left: title.left
+        addressWidth: 180
         anchors.leftMargin: 0
-        color: Style.current.secondaryText
+        anchors.topMargin: 0
     }
 
     ReceiveModal{
