@@ -67,4 +67,6 @@ Theme {
     property color roundedButtonDisabledBackgroundColor: buttonDisabledBackgroundColor
     property color roundedButtonSecondaryDisabledForegroundColor: white
     property color roundedButtonSecondaryDisabledBackgroundColor: buttonDisabledForegroundColor
+    property color tooltipBackgroundColor: black
+    property color tooltipForegroundColor: white
 }

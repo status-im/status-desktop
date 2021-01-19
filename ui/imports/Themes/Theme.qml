@@ -48,6 +48,8 @@ QtObject {
     property color roundedButtonForegroundColor
     property color roundedButtonBackgroundColor
     property color roundedButtonSecondaryBackgroundColor
+    property color tooltipBackgroundColor
+    property color tooltipForegroundColor
 
     property int xlPadding: 32
     property int bigPadding: 24
