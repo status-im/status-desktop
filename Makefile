@@ -310,7 +310,7 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	cp bin/nim_status_client $(MACOS_OUTER_BUNDLE)/Contents/MacOS/
 	cp nim_status_client.sh $(MACOS_OUTER_BUNDLE)/Contents/MacOS/
 	chmod +x $(MACOS_OUTER_BUNDLE)/Contents/MacOS/nim_status_client.sh
-	cp status-icon.icns $(MACOS_OUTER_BUNDLE)/Contents/Resources/
+	cp status.icns $(MACOS_OUTER_BUNDLE)/Contents/Resources/
 	cp status.svg $(MACOS_OUTER_BUNDLE)/Contents/
 	cp -R resources.rcc $(MACOS_OUTER_BUNDLE)/Contents/
 	cp -R $(FLEETS) $(MACOS_OUTER_BUNDLE)/Contents/
@@ -443,19 +443,17 @@ clean: | clean-common
 
 run: rcc $(RUN_TARGET)
 
-STATUS_MACOS_DEV_ICON ?= tmp/macos/status-dev-icon.rsrc
+ICON_TOOL := node_modules/.bin/fileicon
+
+$(ICON_TOOL):
+	echo -e "\e[92mInstalling:\e[39m fileicon"
+	npm i
+
 NIM_STATUS_CLIENT_DEV ?= t
 STATUS_PORT ?= 30306
 
-$(STATUS_MACOS_DEV_ICON):
-	mkdir -p tmp/macos
-	cp status-dev-icon.icns tmp/macos/
-	sips -i tmp/macos/status-dev-icon.icns
-	DeRez -only icns tmp/macos/status-dev-icon.icns > tmp/macos/status-dev-icon.rsrc
-
-set-status-macos-dev-icon:
-	Rez -append tmp/macos/status-dev-icon.rsrc -o bin/nim_status_client
-	SetFile -a C bin/nim_status_client
+set-status-macos-dev-icon: $(ICON_TOOL)
+	npx fileicon set bin/nim_status_client status-dev.icns
 
 run-linux:
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
@@ -464,7 +462,7 @@ run-linux:
 	STATUS_PORT="$(STATUS_PORT)" \
 	./bin/nim_status_client
 
-run-macos: $(STATUS_MACOS_DEV_ICON) set-status-macos-dev-icon
+run-macos: set-status-macos-dev-icon
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
 	NIM_STATUS_CLIENT_DEV="$(NIM_STATUS_CLIENT_DEV)" \
 	STATUS_PORT="$(STATUS_PORT)" \
