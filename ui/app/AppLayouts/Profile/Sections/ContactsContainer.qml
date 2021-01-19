@@ -217,7 +217,7 @@ Item {
                 disabled: !contactToAddInfo.visible
                 anchors.bottom: parent.bottom
                 onClicked: {
-                    profileModel.addContact(profileModel.contacts.contactToAddPubKey);
+                    profileModel.contacts.addContact(profileModel.contacts.contactToAddPubKey);
                     addContactModal.close()
                 }
             }
