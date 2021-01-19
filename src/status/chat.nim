@@ -266,6 +266,38 @@ proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true) =
 
   self.events.emit("messagesLoaded", MsgsLoadedArgs(messages: messageTuple[1]))
 
+
+proc chatMessages*(self: ChatModel, chatId: string, initialLoad:bool = true, cursor: string = "", messages: seq[Message]) =
+  if not self.msgCursor.hasKey(chatId):
+    self.msgCursor[chatId] = "";
+
+  # Messages were already loaded, since cursor will 
+  # be nil/empty if there are no more messages
+  if(not initialLoad and self.msgCursor[chatId] == ""): return
+
+  self.msgCursor[chatId] = cursor
+
+  if messages.len > 0:
+    let lastMsgIndex = messages.len - 1
+    let ts = times.convert(Milliseconds, Seconds, messages[lastMsgIndex].whisperTimestamp.parseInt())
+    self.lastMessageTimestamps[chatId] = ts
+
+  self.events.emit("messagesLoaded", MsgsLoadedArgs(messages: messages))
+
+proc chatReactions*(self: ChatModel, chatId: string, initialLoad:bool = true, cursor: string = "", reactions: seq[Reaction]) =
+  try:
+    if not self.emojiCursor.hasKey(chatId):
+      self.emojiCursor[chatId] = "";
+
+    # Messages were already loaded, since cursor will 
+    # be nil/empty if there are no more messages
+    if(not initialLoad and self.emojiCursor[chatId] == ""): return
+
+    self.emojiCursor[chatId] = cursor;
+    self.events.emit("reactionsLoaded", ReactionsLoadedArgs(reactions: reactions))
+  except Exception as e:
+    error "Error reactions", msg = e.msg
+
 proc chatReactions*(self: ChatModel, chatId: string, initialLoad:bool = true) =
   try:
     if not self.emojiCursor.hasKey(chatId):
