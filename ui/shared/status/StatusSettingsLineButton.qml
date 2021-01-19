@@ -3,7 +3,7 @@ import QtGraphicalEffects 1.12
 import "../../imports"
 import ".."
 
-Item {
+Rectangle {
     property string text
     property bool isSwitch: false
     property bool switchChecked: false
@@ -12,13 +12,23 @@ Item {
     property string badgeText: "1"
     property bool isEnabled: true
     signal clicked(bool checked)
+    property bool isHovered: false
 
     id: root
-    height: textItem.height
-    width: parent.width
+    height: 52
+    color: isHovered ? Style.current.backgroundHover : Style.current.transparent
+    radius: Style.current.radius
+    border.width: 0
+    anchors.left: parent.left
+    anchors.leftMargin: -Style.current.padding
+    anchors.right: parent.right
+    anchors.rightMargin: -Style.current.padding
 
     StyledText {
         id: textItem
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
+        anchors.verticalCenter: parent.verticalCenter
         text: root.text
         font.pixelSize: 15
         color: !root.isEnabled ? Style.current.darkGrey : Style.current.textColor
@@ -37,6 +47,7 @@ Item {
         anchors.right: root.isSwitch ? switchItem.left : caret.left
         anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: textItem.verticalCenter
+
     }
 
     StatusSwitch {
@@ -45,6 +56,7 @@ Item {
         visible: root.isSwitch
         checked: root.switchChecked
         anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: textItem.verticalCenter
     }
 
@@ -70,6 +82,7 @@ Item {
         id: caret
         visible: !root.isSwitch
         anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: textItem.verticalCenter
         source: "../../app/img/caret.svg"
         width: 13
@@ -85,6 +98,9 @@ Item {
     MouseArea {
         anchors.fill: parent
         enabled: root.isEnabled
+        hoverEnabled: true
+        onEntered: root.isHovered = true
+        onExited: root.isHovered = false
         onClicked: {
             root.clicked(!root.switchChecked)
         }

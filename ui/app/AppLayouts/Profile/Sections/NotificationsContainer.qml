@@ -47,69 +47,43 @@ ScrollView {
 
         Column {
             id: column
-            spacing: Style.current.padding
             anchors.top: sectionHeadlineNotifications.bottom
             anchors.topMargin: Style.current.smallPadding
             anchors.left: parent.left
             anchors.right: parent.right
 
-            RowLayout {
-                width: parent.width
-                StyledText {
-                    //% "All messages"
-                    text: qsTrId("all-messages")
-                    font.pixelSize: 15
-                }
-
-                StatusRadioButton {
-                    Layout.alignment: Qt.AlignRight
-                    ButtonGroup.group: notificationSetting
-                    rightPadding: 0
-                    checked: appSettings.notificationSetting === Constants.notifyAllMessages
-                    onCheckedChanged: {
-                        if (checked) {
-                            appSettings.notificationSetting = Constants.notifyAllMessages
-                        }
+            StatusRadioButtonRow {
+                //% "All messages"
+                text: qsTrId("all-messages")
+                buttonGroup: notificationSetting
+                checked: appSettings.notificationSetting === Constants.notifyAllMessages
+                onRadioCheckedChanged: {
+                    if (checked) {
+                        appSettings.notificationSetting = Constants.notifyAllMessages
                     }
                 }
             }
 
-            RowLayout {
-                width: parent.width
-                StyledText {
-                    //% "Just @mentions"
-                    text: qsTrId("just--mentions")
-                    font.pixelSize: 15
-                }
-                StatusRadioButton {
-                    Layout.alignment: Qt.AlignRight
-                    ButtonGroup.group: notificationSetting
-                    rightPadding: 0
-                    checked: appSettings.notificationSetting === Constants.notifyJustMentions
-                    onCheckedChanged: {
-                        if (checked) {
-                            appSettings.notificationSetting = Constants.notifyJustMentions
-                        }
+            StatusRadioButtonRow {
+                //% "Just @mentions"
+                text: qsTrId("just--mentions")
+                buttonGroup: notificationSetting
+                checked:  appSettings.notificationSetting === Constants.notifyJustMentions
+                onRadioCheckedChanged: {
+                    if (checked) {
+                        appSettings.notificationSetting = Constants.notifyJustMentions
                     }
                 }
             }
 
-            RowLayout {
-                width: parent.width
-                StyledText {
-                    //% "Nothing"
-                    text: qsTrId("nothing")
-                    font.pixelSize: 15
-                }
-                StatusRadioButton {
-                    Layout.alignment: Qt.AlignRight
-                    ButtonGroup.group: notificationSetting
-                    rightPadding: 0
-                    checked: appSettings.notificationSetting === Constants.notifyNone
-                    onCheckedChanged: {
-                        if (checked) {
-                            appSettings.notificationSetting = Constants.notifyNone
-                        }
+            StatusRadioButtonRow {
+                //% "Nothing"
+                text: qsTrId("nothing")
+                buttonGroup: notificationSetting
+                checked:  appSettings.notificationSetting === Constants.notifyNone
+                onRadioCheckedChanged: {
+                    if (checked) {
+                        appSettings.notificationSetting = Constants.notifyNone
                     }
                 }
             }
@@ -127,8 +101,7 @@ ScrollView {
 
         StatusSectionHeadline {
             id: sectionHeadlineSound
-            //% "Sound & Appearance"
-            text: qsTrId("sound---appearance")
+            text: qsTr("Appearance")
             anchors.top: separator.bottom
             anchors.left: parent.left
             anchors.right: parent.right
@@ -136,87 +109,43 @@ ScrollView {
 
         Column {
             id: column2
-            spacing: Style.current.padding
             anchors.top: sectionHeadlineSound.bottom
             anchors.topMargin: Style.current.smallPadding
             anchors.left: parent.left
             anchors.right: parent.right
             width: parent.width
 
-            RowLayout {
-                width: parent.width
-                StyledText {
-                    //% "Play a sound when receiving a notification"
-                    text: qsTrId("play-a-sound-when-receiving-a-notification")
-                    font.pixelSize: 15
-                }
-
-                StatusSwitch {
-                    Layout.alignment: Qt.AlignRight
-                    checked: appSettings.notificationSoundsEnabled
-                    onCheckedChanged: {
-                        appSettings.notificationSoundsEnabled = checked
-                    }
+            StatusSettingsLineButton {
+                //% "Play a sound when receiving a notification"
+                text: qsTrId("play-a-sound-when-receiving-a-notification")
+                isSwitch: true
+                switchChecked: appSettings.notificationSoundsEnabled
+                onClicked: {
+                    appSettings.notificationSoundsEnabled = checked
                 }
             }
 
-            RowLayout {
-                width: parent.width
+            StatusSettingsLineButton {
+                text: qsTr("Use your operating system's notifications")
+                isSwitch: true
+                switchChecked: appSettings.useOSNotifications
+                onClicked: {
+                    appSettings.useOSNotifications = checked
+                }
+
                 StyledText {
-                    text: qsTr("Use your operating system's notifications")
-                    font.pixelSize: 15
+                    id: detailText
+                    text: qsTr("Setting this to false will instead use Status' notification style as seen below")
+                    color: Style.current.secondaryText
+                    width: parent.width
+                    font.pixelSize: 12
                     wrapMode: Text.WordWrap
-                    Layout.fillWidth: true
-
-                    StyledText {
-                        id: detailText
-                        text: qsTr("Setting this to false will instead use Status' notification style as seen below")
-                        color: Style.current.secondaryText
-                        width: parent.width
-                        font.pixelSize: 12
-                        wrapMode: Text.WordWrap
-                        anchors.top: parent.bottom
-                    }
-                }
-
-                StatusSwitch {
-                    Layout.alignment: Qt.AlignRight
-                    checked: appSettings.useOSNotifications
-                    onCheckedChanged: {
-                        appSettings.useOSNotifications = checked
-                    }
+                    anchors.left: parent.left
+                    anchors.leftMargin: Style.current.padding
+                    anchors.bottom: parent.bottom
+                    anchors.topMargin: 2
                 }
             }
-
-            /* GridLayout { */
-            /*     columns: 4 */
-            /*     width: parent.width */
-
-            /*     StatusRadioButton { */
-            /*         checked: true */
-            /*         //% "Sound 1" */
-            /*         text: qsTrId("sound-1") */
-            /*         ButtonGroup.group: soundSetting */
-            /*     } */
-
-            /*     StatusRadioButton { */
-            /*         //% "Sound 2" */
-            /*         text: qsTrId("sound-2") */
-            /*         ButtonGroup.group: soundSetting */
-            /*     } */
-
-            /*     StatusRadioButton { */
-            /*         //% "Sound 3" */
-            /*         text: qsTrId("sound-3") */
-            /*         ButtonGroup.group: soundSetting */
-            /*     } */
-
-            /*     StatusRadioButton { */
-            /*         //% "Sound 4" */
-            /*         text: qsTrId("sound-4") */
-            /*         ButtonGroup.group: soundSetting */
-            /*     } */
-            /* } */
         }
 
         Column {
@@ -239,106 +168,47 @@ ScrollView {
                 anchors.left: parent.left
                 anchors.leftMargin: -Style.current.padding
                 anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
                 spacing: 10
 
-                Rectangle {
-                    width: notificationAnonymous.width + Style.current.padding * 2
-                    height: childrenRect.height + Style.current.padding + Style.current.halfPadding
-                    color: labelAnonymous.checked ? Style.current.secondaryBackground : Style.current.transparent
-                    radius: Style.current.radius
-
-                    StatusRadioButton {
-                        id: labelAnonymous
-                        //% "Anonymous"
-                        text: qsTrId("anonymous")
-                        ButtonGroup.group: messageSetting
-                        checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous
-                        onCheckedChanged: {
-                            if (checked) {
-                                appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewAnonymous
-                            }
+                NotificationAppearancePreview {
+                    //% "Anonymous"
+                    name: qsTrId("anonymous")
+                    notificationTitle: "Status"
+                    notificationMessage: qsTr("You have a new message")
+                    buttonGroup: messageSetting
+                    checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous
+                    onRadioCheckedChanged: {
+                        if (checked) {
+                            appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewAnonymous
                         }
-                        anchors.top: parent.top
-                        anchors.topMargin: Style.current.halfPadding
-                        anchors.left: parent.left
-                        anchors.leftMargin: Style.current.padding
-                    }
-
-                    StatusNotificationWithDropShadow {
-                        id: notificationAnonymous
-                        anchors.top: labelAnonymous.bottom
-                        anchors.topMargin: Style.current.halfPadding
-                        anchors.left: parent.left
-                        name: "Status"
-                        chatType: Constants.chatTypePublic
-                        message: qsTr("You have a new message")
                     }
                 }
 
-                Rectangle {
-                    width: notificationAnonymous.width + Style.current.padding * 2
-                    height: childrenRect.height + Style.current.padding + Style.current.halfPadding
-                    color: labelNameOnly.checked ? Style.current.secondaryBackground : Style.current.transparent
-                    radius: Style.current.radius
-
-                    StatusRadioButton {
-                        id: labelNameOnly
-                        //% "Name only"
-                        text: qsTrId("name-only")
-                        ButtonGroup.group: messageSetting
-                        checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameOnly
-                        onCheckedChanged: {
-                            if (checked) {
-                                appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameOnly
-                            }
+                NotificationAppearancePreview {
+                    //% "Name only"
+                    name: qsTrId("name-only")
+                    notificationTitle: "Vitalik Buterin"
+                    notificationMessage: qsTr("You have a new message")
+                    buttonGroup: messageSetting
+                    checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameOnly
+                    onRadioCheckedChanged: {
+                        if (checked) {
+                            appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameOnly
                         }
-                        anchors.top: parent.top
-                        anchors.topMargin: Style.current.halfPadding
-                        anchors.left: parent.left
-                        anchors.leftMargin: Style.current.padding
-                    }
-
-                    StatusNotificationWithDropShadow {
-                        id: notificationNameOnly
-                        name: "Vitalik Buterin"
-                        chatType: Constants.chatTypeOneToOne
-                        message: qsTr("You have a new message")
-                        anchors.top: labelNameOnly.bottom
-                        anchors.topMargin: Style.current.halfPadding
-                        anchors.left: parent.left
                     }
                 }
 
-                Rectangle {
-                    width: notificationAnonymous.width + Style.current.padding * 2
-                    height: childrenRect.height + Style.current.padding + Style.current.halfPadding
-                    color: labelNameAndMessage.checked ? Style.current.secondaryBackground : Style.current.transparent
-                    radius: Style.current.radius
-
-                    StatusRadioButton {
-                        id: labelNameAndMessage
-                        //% "Name & Message"
-                        text: qsTrId("name---message")
-                        ButtonGroup.group: messageSetting
-                        checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameAndMessage
-                        onCheckedChanged: {
+                NotificationAppearancePreview {
+                    //% "Name & Message"
+                    name: qsTrId("name---message")
+                    notificationTitle: "Vitalik Buterin"
+                    notificationMessage: qsTr("Hi there! Yes, no problem, let me know if I can help.")
+                    buttonGroup: messageSetting
+                    checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameAndMessage
+                    onRadioCheckedChanged: {
+                        if (checked) {
                             appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameAndMessage
                         }
-                        anchors.top: parent.top
-                        anchors.topMargin: Style.current.halfPadding
-                        anchors.left: parent.left
-                        anchors.leftMargin: Style.current.padding
-                    }
-
-                    StatusNotificationWithDropShadow {
-                        id: notificationNameAndMessage
-                        name: "Vitalik Buterin"
-                        chatType: Constants.chatTypeOneToOne
-                        message: qsTr("Hi there! Yes, no problem, let me know if I can help.")
-                        anchors.top: labelNameAndMessage.bottom
-                        anchors.topMargin: Style.current.halfPadding
-                        anchors.left: parent.left
                     }
                 }
             }
@@ -348,7 +218,6 @@ ScrollView {
                 text: qsTrId("no-preview-or-advanced--go-to-notification-center")
                 font.pixelSize: 15
                 anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
             }
         }
 
@@ -373,33 +242,27 @@ ScrollView {
 
         Column {
             id: column4
-            spacing: Style.current.padding
             anchors.top: sectionHeadlineContacts.bottom
             anchors.topMargin: Style.current.smallPadding
             anchors.left: parent.left
             anchors.right: parent.right
             width: parent.width
-            RowLayout {
-                width: parent.width
-                StyledText {
-                    //% "Receive notifications from non-contacts"
-                    text: qsTrId("receive-notifications-from-non-contacts")
-                    font.pixelSize: 15
-                }
 
-                StatusSwitch {
-                    Layout.alignment: Qt.AlignRight
-                    checked: appSettings.allowNotificationsFromNonContacts
-                    onCheckedChanged: {
-                        appSettings.allowNotificationsFromNonContacts = checked
-                    }
+            StatusSettingsLineButton {
+                //% "Receive notifications from non-contacts"
+                text: qsTrId("receive-notifications-from-non-contacts")
+                isSwitch: true
+                switchChecked: appSettings.allowNotificationsFromNonContacts
+                onClicked: {
+                    appSettings.allowNotificationsFromNonContacts = checked
                 }
             }
 
-            StatusSectionMenuItem {
+            StatusSettingsLineButton {
                 //% "Muted users"
-                label: qsTrId("muted-users")
-                info: profileModel.mutedContacts.rowCount() > 0 ? profileModel.mutedContacts.rowCount() : qsTr("None")
+                text: qsTrId("muted-users")
+                currentValue: profileModel.mutedContacts.rowCount() > 0 ? profileModel.mutedContacts.rowCount() : qsTr("None")
+                isSwitch: false
                 onClicked: {
                     const mutedChatsModal = notificationsContainer.mutedChatsModalComponent.createObject(notificationsContainer, {
                         showMutedContacts: true
@@ -409,18 +272,30 @@ ScrollView {
                 }
             }
 
-            StatusSectionMenuItem {
+            StatusSettingsLineButton {
                 //% "Muted chats"
-                label: qsTrId("muted-chats")
-                //% "You can limit what gets shown in notifications"
-                description: qsTrId("you-can-limit-what-gets-shown-in-notifications")
-                info: profileModel.mutedChats.rowCount() > 0 ? profileModel.mutedChats.rowCount() : qsTr("None")
+                text: qsTrId("muted-chats")
+                currentValue: profileModel.mutedChats.rowCount() > 0 ? profileModel.mutedChats.rowCount() : qsTr("None")
+                isSwitch: false
                 onClicked: {
                     const mutedChatsModal = notificationsContainer.mutedChatsModalComponent.createObject(notificationsContainer, {
                         showMutedContacts: false
                     })
                     mutedChatsModal.title = qsTr("Muted chats")
                     mutedChatsModal.open()
+                }
+
+                StyledText {
+                    //% "You can limit what gets shown in notifications"
+                    text: qsTrId("you-can-limit-what-gets-shown-in-notifications")
+                    color: Style.current.secondaryText
+                    width: parent.width
+                    font.pixelSize: 12
+                    wrapMode: Text.WordWrap
+                    anchors.left: parent.left
+                    anchors.leftMargin: Style.current.padding
+                    anchors.bottom: parent.bottom
+                    anchors.topMargin: 2
                 }
             }
         }
@@ -444,15 +319,12 @@ ScrollView {
             anchors.right: parent.right
             width: parent.width
 
-            Button {
+            StatusButton {
                 flat: true
                 horizontalPadding: 0
-                contentItem: Text {
-                    //% "Reset notification settings"
-                    text: qsTrId("reset-notification-settings")
-                    font.pixelSize: 15
-                    color: Style.current.red
-                }
+                //% "Reset notification settings"
+                text: qsTrId("reset-notification-settings")
+                type: "warn"
                 onClicked: {
                     appSettings.notificationSetting = defaultAppSettings.notificationSetting
                     appSettings.notificationSoundsEnabled = defaultAppSettings.notificationSoundsEnabled
