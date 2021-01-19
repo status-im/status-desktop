@@ -4,6 +4,8 @@ import ../../status/mailservers
 import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/mailservers as status_mailservers
 import ../../status/libstatus/types
+import ../../status/libstatus/core
+import ../../status/libstatus/chat as core_chat
 import ../../status/libstatus/utils as status_utils
 import ../../status/accounts as status_accounts
 import ../../status/chat as status_chat
@@ -421,6 +423,21 @@ QtObject:
     self.messagesLoaded();
 
   proc loadingMessagesChanged*(self: ChatsView, value: bool) {.signal.}
+
+  proc asyncMessageLoad*(self: ChatsView, chatId: string) {.slot.} =
+    spawnAndSend(self, "asyncMessageLoaded") do: # Call self.ensResolved(string) when ens is resolved
+      $(%*{
+        "chatId": chatId,
+        "messages": callPrivateRPC("chatMessages".prefix, %* [chatId, "", 20]).parseJson()["result"],
+        "reactions": callPrivateRPC("emojiReactionsByChatID".prefix, %* [chatId, "", 20]).parseJson()["result"]
+      })
+
+  proc asyncMessageLoaded*(self: ChatsView, rpcResponse: string) {.slot.} =
+    let rpcResponseObj = rpcResponse.parseJson
+    let chatMessages = parseChatMessagesResponse(rpcResponseObj["chatId"].getStr, rpcResponseObj["messages"])
+    let reactions = parseReactionsResponse(rpcResponseObj["chatId"].getStr, rpcResponseObj["reactions"])
+    self.status.chat.chatMessages(rpcResponseObj["chatId"].getStr, true, chatMessages[0], chatMessages[1])
+    self.status.chat.chatReactions(rpcResponseObj["chatId"].getStr, true, reactions[0], reactions[1])
 
   proc hideLoadingIndicator*(self: ChatsView) {.slot.} =
     self.loadingMessages = false
