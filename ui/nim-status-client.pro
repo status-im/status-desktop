@@ -211,6 +211,7 @@ DISTFILES += \
     app/AppLayouts/Profile/Sections/BrowserModals/SearchEngineModal.qml \
     app/AppLayouts/Profile/Sections/ChangeProfilePicModal.qml \
     app/AppLayouts/Profile/Sections/MyProfileContainer.qml \
+    app/AppLayouts/Profile/Sections/NotificationAppearancePreview.qml \
     app/AppLayouts/Profile/Sections/OpenLinksWithModal.qml \
     app/AppLayouts/Profile/Sections/SoundsContainer.qml \
     app/AppLayouts/UIComponents/UIComponents.qml \
@@ -435,5 +436,6 @@ DISTFILES += \
     shared/qmldir \
     shared/status/StatusEmojiSuggestionPopup.qml \
     shared/status/StatusInputListPopup.qml \
+    shared/status/StatusRadioButtonRow.qml \
     shared/status/StatusSettingsLineButton.qml \
     sounds/ErrorSound.qml

@@ -139,7 +139,6 @@ ModalPopup {
                     name: model.name
                     address: model.address
                     identicon: model.thumbnailImage || model.identicon
-                    showListSelector: true
                     onItemChecked: function(pubKey, itemChecked){
                         chatsModel.joinChat(pubKey, Constants.chatTypeOneToOne);
                         popup.close()

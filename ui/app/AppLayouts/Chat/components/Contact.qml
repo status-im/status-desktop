@@ -17,24 +17,26 @@ Rectangle {
     property bool isVisible: true
 
     property bool showCheckbox: true
+    property bool clickable: true
     property bool isChecked: false
-    property bool showListSelector: false
+    property bool isHovered: false
     property var onItemChecked: (function(pubKey, itemChecked) { console.log(pubKey, itemChecked)  })
 
-
+    id: root
     visible: isVisible && (isContact || isUser)
     height: visible ? 64 : 0
     anchors.right: parent.right
     anchors.left: parent.left
     border.width: 0
     radius: Style.current.radius
-    color: Style.current.transparent
+    color: isHovered ? Style.current.backgroundHover : Style.current.transparent
 
     StatusImageIdenticon {
         id: accountImage
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
         source: identicon
+        anchors.leftMargin: Style.current.padding
     }
     
     StyledText {
@@ -50,22 +52,9 @@ Rectangle {
         anchors.leftMargin: Style.current.padding
     }
 
-    SVGImage {
-        id: image
-        visible: showListSelector && !showCheckbox
-        height: 24
-        width: 24
-        anchors.top: accountImage.top
-        anchors.topMargin: 6
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        fillMode: Image.PreserveAspectFit
-        source: "../../../img/list-next.svg"
-    }
-
     StatusCheckBox  {
         id: assetCheck
-        visible: !showListSelector && showCheckbox && !isUser
+        visible: showCheckbox && !isUser
         anchors.top: accountImage.top
         anchors.topMargin: 6
         anchors.right: parent.right
@@ -92,7 +81,10 @@ Rectangle {
     MouseArea {
         cursorShape: Qt.PointingHandCursor
         anchors.fill: parent
-        enabled: showCheckbox
+        enabled: root.clickable || root.showCheckbox
+        hoverEnabled: root.clickable || root.showCheckbox
+        onEntered: root.isHovered = true
+        onExited: root.isHovered = false
         onClicked: assetCheck.clicked()
     }
 }
