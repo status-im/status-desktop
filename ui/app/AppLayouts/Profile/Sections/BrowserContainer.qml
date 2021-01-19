@@ -18,52 +18,52 @@ Item {
     property Component searchEngineModal: SearchEngineModal {}
     property Component ethereumExplorerModal: EthereumExplorerModal {}
 
-    Column {
-        id: generalColumn
-        spacing: Style.current.bigPadding
+    Item {
         anchors.top: parent.top
         anchors.topMargin: 46
         anchors.left: parent.left
         anchors.leftMargin: contentMargin
         anchors.right: parent.right
         anchors.rightMargin: contentMargin
+        anchors.bottom: parent.bottom
 
-        StatusSectionHeadline {
-            text: qsTr("General")
-        }
+        Column {
+            id: generalColumn
+            width: parent.width
 
-        StatusSettingsLineButton {
-            text: qsTr("Homepage")
-            currentValue: appSettings.browserHomepage === "" ? qsTr("Default") : appSettings.browserHomepage
-            onClicked: homePagePopup.createObject(root).open()
-        }
-
-        StatusSettingsLineButton {
-            text: qsTr("Show favorites bar")
-            isSwitch: true
-            switchChecked: appSettings.showFavoritesBar
-            onClicked: function (checked) {
-                appSettings.showFavoritesBar = checked
+            StatusSectionHeadline {
+                text: qsTr("General")
+                bottomPadding: Style.current.bigPadding
             }
-        }
 
-        StatusSettingsLineButton {
-            text: qsTr("Search engine used in the address bar")
-            currentValue: {
-                switch (appSettings.browserSearchEngine) {
-                case Constants.browserSearchEngineGoogle: return "Google"
-                case Constants.browserSearchEngineYahoo: return "Yahoo!"
-                case Constants.browserSearchEngineDuckDuckGo: return "DuckDuckGo"
-                case Constants.browserSearchEngineNone:
-                default: return qsTr("None")
+            StatusSettingsLineButton {
+                text: qsTr("Homepage")
+                currentValue: appSettings.browserHomepage === "" ? qsTr("Default") : appSettings.browserHomepage
+                onClicked: homePagePopup.createObject(root).open()
+            }
+
+            StatusSettingsLineButton {
+                text: qsTr("Show favorites bar")
+                isSwitch: true
+                switchChecked: appSettings.showFavoritesBar
+                onClicked: function (checked) {
+                    appSettings.showFavoritesBar = checked
                 }
             }
-            onClicked: searchEngineModal.createObject(root).open()
-        }
 
-        Item {
-            width: parent.width
-            height: childrenRect.height
+            StatusSettingsLineButton {
+                text: qsTr("Search engine used in the address bar")
+                currentValue: {
+                    switch (appSettings.browserSearchEngine) {
+                    case Constants.browserSearchEngineGoogle: return "Google"
+                    case Constants.browserSearchEngineYahoo: return "Yahoo!"
+                    case Constants.browserSearchEngineDuckDuckGo: return "DuckDuckGo"
+                    case Constants.browserSearchEngineNone:
+                    default: return qsTr("None")
+                    }
+                }
+                onClicked: searchEngineModal.createObject(root).open()
+            }
 
             StatusSettingsLineButton {
                 id: ethereumExplorerBtn
@@ -83,63 +83,33 @@ Item {
                 text: qsTr("Open an ethereum explorer after a transaction hash or an address is entered")
                 font.pixelSize: 15
                 color: Style.current.secondaryText
-                anchors.top: ethereumExplorerBtn.bottom
-                anchors.topMargin: 2
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.rightMargin: 150
+                width: parent.width - 150
                 wrapMode: Text.WordWrap
+                bottomPadding: Style.current.bigPadding
             }
-        }
 
-        // TODO redd this when we figure out how to set the download path for the browser
-//        Separator {}
+            Separator {
+                id: separator1
+                anchors.topMargin: Style.current.bigPadding
+                anchors.left: parent.left
+                anchors.leftMargin: -Style.current.padding
+                anchors.right: parent.right
+                anchors.rightMargin: -Style.current.padding
+            }
 
-//        StatusSectionHeadline {
-//            text: qsTr("Downloads")
-//        }
+            StatusSectionHeadline {
+                text: qsTr("Privacy")
+                topPadding: Style.current.bigPadding
+                bottomPadding: Style.current.padding
+            }
 
-
-//        Item {
-//            height: textItem.height
-//            width: parent.width
-
-//            StyledText {
-//                id: textItem
-//                text: qsTr("Location")
-//                font.pixelSize: 15
-//            }
-
-//            StyledText {
-//                id: valueText
-//                text: "path/to/downloads"
-//                font.pixelSize: 15
-//                color: Style.current.secondaryText
-//                anchors.right: locationBtn.left
-//                anchors.rightMargin: Style.current.halfPadding
-//                anchors.verticalCenter: textItem.verticalCenter
-//            }
-
-//            StatusButton {
-//                id: locationBtn
-//                text: qsTr("Change")
-//                anchors.right: parent.right
-//                anchors.verticalCenter: textItem.verticalCenter
-//                onClicked: {
-//                    console.log('change location')
-//                }
-//            }
-//        }
-
-        Separator {}
-
-        StatusSectionHeadline {
-            text: qsTr("Privacy")
-        }
-
-        StatusSettingsLineButton {
-            text: qsTr("Set DApp access permissions")
-            onClicked: dappListPopup.createObject(root).open()
+            StatusSettingsLineButton {
+                text: qsTr("Set DApp access permissions")
+                isSwitch: false
+                onClicked: {
+                    dappListPopup.createObject(root).open()
+                }
+            }
         }
     }
 }
