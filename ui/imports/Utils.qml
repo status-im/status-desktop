@@ -130,6 +130,41 @@ QtObject {
         return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
     }
 
+    function formatShortDateStr(longStr) {
+        const dmKeys = {
+            // Days
+            Sunday: qsTr("Sun"),
+            Monday: qsTr("Mon"),
+            Tuesday: qsTr("Tue"),
+            Wednesday: qsTr("Wed"),
+            Thursday: qsTr("Thu"),
+            Friday: qsTr("Fri"),
+            Saturday: qsTr("Sat"),
+            // Months
+            January: qsTr("Jan"),
+            February: qsTr("Feb"),
+            March: qsTr("Mar"),
+            April: qsTr("Apr"),
+            May: qsTr("May"),
+            June: qsTr("Jun"),
+            July: qsTr("Jul"),
+            August: qsTr("Aug"),
+            September: qsTr("Sep"),
+            October: qsTr("Oct"),
+            November: qsTr("Nov"),
+            December: qsTr("Dec")
+        };
+
+        let shortStr = longStr;
+        for (const [key, value] of Object.entries(dmKeys)) {
+            shortStr = shortStr.replace(key, value);
+            shortStr = shortStr.replace(key.toLowerCase(), value);
+            shortStr = shortStr.replace(key.toUpperCase(), value);
+        }
+
+        return shortStr;
+    }
+
     function formatDateTime(timestamp, locale) {
         let now = new Date()
         let yesterday = new Date()
@@ -155,7 +190,7 @@ QtObject {
                         qsTr("Saturday")];
             return days[messageDate.getDay()];
         } else {
-            return new Date().toLocaleDateString(Qt.locale(locale))
+            return formatShortDateStr(new Date().toLocaleDateString(Qt.locale(locale)))
         }
     }
 
