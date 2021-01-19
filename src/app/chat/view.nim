@@ -426,18 +426,36 @@ QtObject:
 
   proc asyncMessageLoad*(self: ChatsView, chatId: string) {.slot.} =
     spawnAndSend(self, "asyncMessageLoaded") do: # Call self.ensResolved(string) when ens is resolved
+
+      var messages: JsonNode
+      var msgCallSuccess: bool
+      let msgCallResult = rpcChatMessages(chatId, newJString(""), 20, msgCallSuccess)
+      if(msgCallSuccess):
+        messages = msgCallResult.parseJson()["result"]
+
+      var reactions: JsonNode
+      var reactionsCallSuccess: bool
+      let reactionsCallResult = rpcReactions(chatId, newJString(""), 20, reactionsCallSuccess)
+      if(reactionsCallSuccess):
+        reactions = reactionsCallResult.parseJson()["result"]
+
+
       $(%*{
         "chatId": chatId,
-        "messages": callPrivateRPC("chatMessages".prefix, %* [chatId, "", 20]).parseJson()["result"],
-        "reactions": callPrivateRPC("emojiReactionsByChatID".prefix, %* [chatId, "", 20]).parseJson()["result"]
+        "messages": messages,
+        "reactions": reactions
       })
 
   proc asyncMessageLoaded*(self: ChatsView, rpcResponse: string) {.slot.} =
     let rpcResponseObj = rpcResponse.parseJson
-    let chatMessages = parseChatMessagesResponse(rpcResponseObj["chatId"].getStr, rpcResponseObj["messages"])
-    let reactions = parseReactionsResponse(rpcResponseObj["chatId"].getStr, rpcResponseObj["reactions"])
-    self.status.chat.chatMessages(rpcResponseObj["chatId"].getStr, true, chatMessages[0], chatMessages[1])
-    self.status.chat.chatReactions(rpcResponseObj["chatId"].getStr, true, reactions[0], reactions[1])
+
+    if(rpcResponseObj["messages"].kind != JNull):
+      let chatMessages = parseChatMessagesResponse(rpcResponseObj["chatId"].getStr, rpcResponseObj["messages"])
+      self.status.chat.chatMessages(rpcResponseObj["chatId"].getStr, true, chatMessages[0], chatMessages[1])
+
+    if(rpcResponseObj["reactions"].kind != JNull):
+      let reactions = parseReactionsResponse(rpcResponseObj["chatId"].getStr, rpcResponseObj["reactions"])
+      self.status.chat.chatReactions(rpcResponseObj["chatId"].getStr, true, reactions[0], reactions[1])
 
   proc hideLoadingIndicator*(self: ChatsView) {.slot.} =
     self.loadingMessages = false

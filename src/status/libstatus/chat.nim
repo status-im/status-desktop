@@ -62,6 +62,14 @@ proc parseChatMessagesResponse*(chatId: string, rpcResult: JsonNode): (string, s
       messages.add(jsonMsg.toMessage)
   return (rpcResult{"cursor"}.getStr, messages)
 
+proc rpcChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
+  success = true
+  try:
+    result = callPrivateRPC("chatMessages".prefix, %* [chatId, cursorVal, limit])
+  except RpcException as e:
+    success = false
+    result = e.msg
+
 proc chatMessages*(chatId: string, cursor: string = ""): (string, seq[Message]) =
   var cursorVal: JsonNode
   
@@ -70,8 +78,10 @@ proc chatMessages*(chatId: string, cursor: string = ""): (string, seq[Message]) 
   else:
     cursorVal = newJString(cursor)
 
-  let callRPCResult = parseJson(callPrivateRPC("chatMessages".prefix, %* [chatId, cursorVal, 20]))["result"]
-  return parseChatMessagesResponse(chatId, callRPCResult)
+  var success: bool
+  let callResult = rpcChatMessages(chatId, cursorVal, 20, success)
+  if success:
+    result = parseChatMessagesResponse(chatId, callResult.parseJson()["result"])
 
 proc parseReactionsResponse*(chatId: string, rpcResult: JsonNode): (string, seq[Reaction]) =
   var reactions: seq[Reaction] = @[]
@@ -79,6 +89,14 @@ proc parseReactionsResponse*(chatId: string, rpcResult: JsonNode): (string, seq[
     for jsonMsg in rpcResult:
       reactions.add(jsonMsg.toReaction)
   return (rpcResult{"cursor"}.getStr, reactions)
+
+proc rpcReactions*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
+  success = true
+  try:
+    result = callPrivateRPC("emojiReactionsByChatID".prefix, %* [chatId, cursorVal, limit])
+  except RpcException as e:
+    success = false
+    result = e.msg
 
 proc getEmojiReactionsByChatId*(chatId: string, cursor: string = ""): (string, seq[Reaction]) =
   var cursorVal: JsonNode
@@ -88,8 +106,10 @@ proc getEmojiReactionsByChatId*(chatId: string, cursor: string = ""): (string, s
   else:
     cursorVal = newJString(cursor)
 
-  let rpcResult = parseJson(callPrivateRPC("emojiReactionsByChatID".prefix, %* [chatId, cursorVal, 20]))["result"]
-  return parseReactionsResponse(chatId, rpcResult)
+  var success: bool
+  let rpcResult = rpcReactions(chatId, cursorVal, 20, success)
+  if success:
+    result = parseReactionsResponse(chatId, rpcResult.parseJson()["result"])
 
 proc addEmojiReaction*(chatId: string, messageId: string, emojiId: int): seq[Reaction] =
   let rpcResult = parseJson(callPrivateRPC("sendEmojiReaction".prefix, %* [chatId, messageId, emojiId]))["result"]
