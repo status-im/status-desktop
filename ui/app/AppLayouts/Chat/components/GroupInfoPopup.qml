@@ -223,11 +223,11 @@ ModalPopup {
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: 13
                     StyledText {
-                        visible: model.userName === (profileModel.profile.preferredUsername || profileModel.profile.username)
+                        visible: model.pubKey === profileModel.profile.pubKey
                         anchors.left: parent.right
                         anchors.leftMargin: 5
-                        text: "(You)"
-                        color: Style.current.darkGrey
+                        text: qsTr("(You)")
+                        color: Style.current.secondaryText
                         font.pixelSize: parent.font.pixelSize
                     }
                     MouseArea {
@@ -248,7 +248,7 @@ ModalPopup {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: 13
-                    color: Style.current.darkGrey
+                    color: Style.current.secondaryText
                 }
 
                 StyledText {
@@ -260,7 +260,7 @@ ModalPopup {
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: 20
                     font.bold: true
-                    color: Style.current.darkGrey
+                    color: Style.current.secondaryText
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
