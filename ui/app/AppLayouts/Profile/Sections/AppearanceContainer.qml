@@ -192,8 +192,8 @@ ScrollView {
                 image.height: 186
                 control.text: qsTr("Normal")
                 control.checked: !appSettings.compactMode
-                control.onCheckedChanged: {
-                    if (control.checked) {
+                onRadioCheckedChanged: {
+                    if (checked) {
                         appSettings.compactMode = false
                     }
                 }
@@ -205,8 +205,8 @@ ScrollView {
                 image.height: 186
                 control.text: qsTr("Compact")
                 control.checked: appSettings.compactMode
-                control.onCheckedChanged: {
-                    if (control.checked) {
+                onRadioCheckedChanged: {
+                    if (checked) {
                         appSettings.compactMode = true
                     }
                 }
@@ -239,8 +239,8 @@ ScrollView {
                 image.height: 128
                 control.text: qsTr("Light")
                 control.checked: profileModel.profile.appearance === AppearanceContainer.Theme.Light
-                control.onClicked: {
-                    if (control.checked) {
+                onRadioCheckedChanged: {
+                    if (checked) {
                         root.updateTheme(AppearanceContainer.Theme.Light)
                     }
                 }
@@ -254,8 +254,8 @@ ScrollView {
                 image.height: 128
                 control.text: qsTr("Dark")
                 control.checked: profileModel.profile.appearance === AppearanceContainer.Theme.Dark
-                control.onClicked: {
-                    if (control.checked) {
+                onRadioCheckedChanged: {
+                    if (checked) {
                         root.updateTheme(AppearanceContainer.Theme.Dark)
                     }
                 }
@@ -269,8 +269,8 @@ ScrollView {
                 image.height: 128
                 control.text: qsTr("System")
                 control.checked: profileModel.profile.appearance === AppearanceContainer.Theme.System
-                control.onClicked: {
-                    if (control.checked) {
+                onRadioCheckedChanged: {
+                    if (checked) {
                         root.updateTheme(AppearanceContainer.Theme.System)
                     }
                 }

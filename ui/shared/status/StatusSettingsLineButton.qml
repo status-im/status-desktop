@@ -104,7 +104,6 @@ Rectangle {
         onClicked: {
             root.clicked(!root.switchChecked)
         }
-
         cursorShape: Qt.PointingHandCursor
     }
 }
