@@ -2,6 +2,7 @@ import NimQml, chronicles, strutils
 import ../../../status/status
 import ../../../status/libstatus/settings as status_settings
 import ../../../status/libstatus/types
+import options
 
 logScope:
   topics = "mnemonic-view"
@@ -9,6 +10,7 @@ logScope:
 QtObject:
   type MnemonicView* = ref object of QObject
     status: Status
+    isMnemonicBackedUp: Option[bool]
 
   proc setup(self: MnemonicView) =
     self.QObject.setup
@@ -22,8 +24,9 @@ QtObject:
     result.setup
 
   proc isBackedUp*(self: MnemonicView): bool {.slot.} =
-    let mnemonic = status_settings.getSetting[string](Setting.Mnemonic, "")
-    return mnemonic == ""
+    if self.isMnemonicBackedUp.isNone:
+      self.isMnemonicBackedUp = some(status_settings.getSetting[string](Setting.Mnemonic, "") == "")
+    self.isMnemonicBackedUp.get()
   
   proc seedPhraseRemoved*(self: MnemonicView) {.signal.}
 
@@ -42,6 +45,7 @@ QtObject:
 
   proc remove*(self: MnemonicView) {.slot.} =
     discard status_settings.saveSetting(Setting.Mnemonic, "")
+    self.isMnemonicBackedUp = some(true)
     self.seedPhraseRemoved()
 
   proc getWord*(self: MnemonicView, idx: int): string {.slot.} =
