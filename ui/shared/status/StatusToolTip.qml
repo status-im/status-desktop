@@ -15,7 +15,7 @@ ToolTip {
         id: tooltipBg
         Rectangle {
             id: tooltipContentBg
-            color: Style.current.blue
+            color: Style.current.tooltipBackgroundColor
             radius: Style.current.radius
             anchors.fill: parent
         }
@@ -33,9 +33,10 @@ ToolTip {
     contentItem: StyledText {
         id: textContent
         text: tooltip.text
-        color: Style.current.white
+        color: Style.current.tooltipForegroundColor
         wrapMode: Text.WordWrap
         font.pixelSize: 13
+        font.weight: Font.DemiBold
         horizontalAlignment: Text.AlignHCenter
     }
 }
