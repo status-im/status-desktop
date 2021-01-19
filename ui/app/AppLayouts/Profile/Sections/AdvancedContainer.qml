@@ -13,7 +13,6 @@ Item {
 
     Column {
         id: generalColumn
-        spacing: Style.current.bigPadding
         anchors.top: parent.top
         anchors.topMargin: 46
         anchors.left: parent.left
@@ -21,22 +20,36 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: contentMargin
 
-        StatusSectionMenuItem {
-            label: qsTr("Network")
-            info: utilsModel.getNetworkName()
+        StatusSettingsLineButton {
+            text: qsTr("Network")
+            currentValue: utilsModel.getNetworkName()
             onClicked: networksModal.open()
         }
 
-        StatusSectionMenuItem {
-            label: qsTr("Fleet")
-            info: profileModel.fleets.fleet
+        StatusSettingsLineButton {
+            text: qsTr("Fleet")
+            currentValue: profileModel.fleets.fleet
             onClicked: fleetModal.open()
         }
 
-        Separator {}
+        Item {
+            id: spacer1
+            height: Style.current.bigPadding
+            width: parent.width
+        }
+
+        Separator {
+            anchors.topMargin: Style.current.bigPadding
+            anchors.left: parent.left
+            anchors.leftMargin: -Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: -Style.current.padding
+        }
 
         StatusSectionHeadline {
             text: qsTr("Experimental features")
+            topPadding: Style.current.bigPadding
+            bottomPadding: Style.current.padding
         }
 
         StatusSettingsLineButton {
