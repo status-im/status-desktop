@@ -7,7 +7,7 @@
         <key>CFBundleExecutable</key>
         <string>nim_status_client.sh</string>
         <key>CFBundleIconFile</key>
-        <string>status-icon.icns</string>
+        <string>status.icns</string>
         <key>CFBundleIdentifier</key>
         <string>im.Status.NimStatusClient</string>
         <key>CFBundleInfoDictionaryVersion</key>

@@ -4,7 +4,8 @@
   "private": true,
   "files": [],
   "devDependencies": {
-    "create-dmg": "status-im/create-dmg"
+    "create-dmg": "status-im/create-dmg",
+    "fileicon": "0.2.4"
   },
   "engines": {
     "node": ">=8"
