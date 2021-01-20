@@ -28,6 +28,7 @@ Item {
     readonly property int labelMargin: 7
     property int customHeight: 44
     property int fontPixelSize: 15
+    property alias validator: inputValue.validator
     signal editingFinished(string inputValue)
     signal textEdited(string inputValue)
 
