@@ -80,7 +80,7 @@ Item {
                     onCancelClicked: root.cancelClicked(packId)
                     onUpdateClicked: root.updateClicked(packId)
                     onBuyClicked: {
-                        stickerPackPurchaseModal.open()
+                        openPopup(stickerPackPurchaseModal)
                         root.buyClicked(packId)
                     }
                 }
@@ -92,16 +92,9 @@ Item {
                     height: 350
                 }
             }
-            Loader {
+            Component {
                 id: stickerPackPurchaseModal
-                function open() {
-                    this.active = true
-                    this.item.open()
-                }
-                function closed() {
-                    this.active = false // kill an opened instance
-                }
-                sourceComponent: StatusStickerPackPurchaseModal {
+                StatusStickerPackPurchaseModal {
                     onClosed: {
                         stickerPackPurchaseModal.closed()
                     }
@@ -112,6 +105,7 @@ Item {
                     showBackBtn: stickerPackDetailsPopup.opened
                 }
             }
+            
             StatusStickerPackDetails {
                 id: stickerPackDetails
                 height: 64 - (Style.current.smallPadding * 2)
@@ -137,7 +131,7 @@ Item {
                     onCancelClicked: root.cancelClicked(packId)
                     onUpdateClicked: root.updateClicked(packId)
                     onBuyClicked: {
-                        stickerPackPurchaseModal.open()
+                        openPopup(stickerPackPurchaseModal)
                         root.buyClicked(packId)
                     }
                 }
