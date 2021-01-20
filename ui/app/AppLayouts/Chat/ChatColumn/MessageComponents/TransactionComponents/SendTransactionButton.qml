@@ -31,32 +31,24 @@ Item {
             onClicked: {
                 walletModel.setFocusedAccountByAddress(commandParametersObject.fromAddress)
                 var acc = walletModel.focusedAccount
-                signTransactionModal.selectedAccount = {
-                    name: acc.name,
-                    address: commandParametersObject.fromAddress,
-                    iconColor: acc.iconColor,
-                    assets: acc.assets
-                }
-                signTransactionModal.open()
+                openPopup(signTxComponent, {selectedAccount: {
+                                  name: acc.name,
+                                  address: commandParametersObject.fromAddress,
+                                  iconColor: acc.iconColor,
+                                  assets: acc.assets
+                              }})
             }
         }
     }
 
-    Loader {
-        id: signTransactionModal
-        function open() {
-            this.active = true
-            this.item.open()
-        }
-        function closed() {
-            this.active = false // kill an opened instance
-        }
-        sourceComponent: SignTransactionModal {
+    Component {
+        id: signTxComponent
+        SignTransactionModal {
             onOpened: {
                 walletModel.getGasPricePredictions()
             }
             onClosed: {
-                signTransactionModal.closed()
+                destroy();
             }
             selectedRecipient: {
                 return {
