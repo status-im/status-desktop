@@ -105,7 +105,7 @@ ModalPopup {
         validationError: popup.accountNameValidationError
     }
 
-    ColorSelector {
+    StatusWalletColorSelect {
         id: accountColorInput
         model: Constants.accountColors
         anchors.top: accountNameInput.bottom

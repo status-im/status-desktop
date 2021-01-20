@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 import "../../../imports"
 import "../../../shared"
+import "../../../shared/status"
 
 ModalPopup {
     property var currentAccount: walletModel.currentAccount
@@ -42,9 +43,9 @@ ModalPopup {
         validationError: popup.accountNameValidationError
     }
 
-    ColorSelector {
+    StatusWalletColorSelect {
         id: accountColorInput
-        selectedColor: currentAccount.iconColor
+        selectedColor: currentAccount.iconColor.toUpperCase()
         model: Constants.accountColors
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs
