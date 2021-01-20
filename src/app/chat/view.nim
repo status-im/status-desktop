@@ -322,13 +322,13 @@ QtObject:
         let channel = self.chats.getChannelById(msg.chatId)
         if (channel == nil):
           continue
-        let isAddedContact = channel.chatType.isOneToOne and self.status.contacts.isAdded(channel.id)
 
         if msg.chatId == self.activeChannel.id:
           discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
           self.newMessagePushed()
 
         if not channel.muted:
+          let isAddedContact = channel.chatType.isOneToOne and self.status.contacts.isAdded(channel.id)
           self.messageNotificationPushed(
             msg.chatId,
             escape_html(msg.text),
