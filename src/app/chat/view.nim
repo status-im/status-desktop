@@ -555,22 +555,6 @@ QtObject:
     read = isConnected
     notify = onlineStatusChanged
 
-  proc muteChannel*(self: ChatsView, channelIndex: int) {.slot.} =
-    if (self.chats.chats.len == 0): return
-    let selectedChannel = self.chats.getChannel(channelIndex)
-    if (selectedChannel == nil): return
-    selectedChannel.muted = true
-    self.status.chat.muteChat(selectedChannel)
-    self.chats.updateChat(selectedChannel)
-
-  proc unmuteChannel*(self: ChatsView, channelIndex: int) {.slot.} =
-    if (self.chats.chats.len == 0): return
-    let selectedChannel = self.chats.getChannel(channelIndex)
-    if (selectedChannel == nil): return
-    selectedChannel.muted = false
-    self.status.chat.unmuteChat(selectedChannel)
-    self.chats.updateChat(selectedChannel)
-  
   proc muteCurrentChannel*(self: ChatsView) {.slot.} =
     self.activeChannel.mute()
     let channel = self.chats.getChannelById(self.activeChannel.id())
@@ -582,6 +566,29 @@ QtObject:
     let channel = self.chats.getChannelById(self.activeChannel.id())
     channel.muted = false
     self.chats.updateChat(channel)
+
+  proc muteChannel*(self: ChatsView, channelIndex: int) {.slot.} =
+    if (self.chats.chats.len == 0): return
+    let selectedChannel = self.chats.getChannel(channelIndex)
+    if (selectedChannel == nil): return
+    if (selectedChannel.id == self.activeChannel.id):
+      self.muteCurrentChannel()
+      return
+    selectedChannel.muted = true
+    self.status.chat.muteChat(selectedChannel)
+    self.chats.updateChat(selectedChannel)
+
+  proc unmuteChannel*(self: ChatsView, channelIndex: int) {.slot.} =
+    if (self.chats.chats.len == 0): return
+    let selectedChannel = self.chats.getChannel(channelIndex)
+    if (selectedChannel == nil): return
+    if (selectedChannel.id == self.activeChannel.id):
+      self.unmuteCurrentChannel()
+      return
+    selectedChannel.muted = false
+    self.status.chat.unmuteChat(selectedChannel)
+    self.chats.updateChat(selectedChannel)
+  
 
   proc channelIsMuted*(self: ChatsView, channelIndex: int): bool {.slot.} =
     if (self.chats.chats.len == 0): return false
