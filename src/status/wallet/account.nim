@@ -1,5 +1,6 @@
 from ../../eventemitter import Args
 import ../libstatus/types
+import options
 
 type CollectibleList* = ref object
     collectibleType*, collectiblesJSON*, error*: string
@@ -15,8 +16,9 @@ type Asset* = ref object
     name*, symbol*, value*, fiatBalanceDisplay*, fiatBalance*,  accountAddress*, address*: string
 
 type WalletAccount* = ref object
-    name*, address*, iconColor*, balance*, path*, walletType*, publicKey*: string
-    realFiatBalance*: float
+    name*, address*, iconColor*, path*, walletType*, publicKey*: string
+    balance*: Option[string]
+    realFiatBalance*: Option[float]
     assetList*: seq[Asset]
     wallet*, chat*: bool
     collectiblesLists*: seq[CollectibleList]

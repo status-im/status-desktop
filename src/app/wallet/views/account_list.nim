@@ -17,6 +17,7 @@ type
     Assets = UserRole + 6
     WalletType = UserRole + 7
     Wallet = UserRole + 8
+    Loading = UserRole + 9
 
 QtObject:
   type AccountList* = ref object of QAbstractListModel
@@ -45,10 +46,10 @@ QtObject:
       of "name": result = account.name
       of "address": result = account.address
       of "iconColor": result = account.iconColor
-      of "balance": result = account.balance
+      of "balance": result = if account.balance.isSome(): account.balance.get() else: "..."
       of "path": result = account.path
       of "walletType": result = account.walletType
-      of "fiatBalance": result = fmt"{account.realFiatBalance:>.2f}"
+      of "fiatBalance": result = if account.realFiatBalance.isSome(): fmt"{account.realFiatBalance.get():>.2f}" else: "..." 
 
   proc getAccountindexByAddress*(self: AccountList, address: string): int =
     var i = 0
@@ -91,11 +92,12 @@ QtObject:
     of AccountRoles.Name: result = newQVariant(account.name)
     of AccountRoles.Address: result = newQVariant(account.address)
     of AccountRoles.Color: result = newQVariant(account.iconColor)
-    of AccountRoles.Balance: result = newQVariant(account.balance)
-    of AccountRoles.FiatBalance: result = newQVariant(fmt"{account.realFiatBalance:>.2f}")
+    of AccountRoles.Balance: result = newQVariant(if account.balance.isSome(): account.balance.get() else: "...")
+    of AccountRoles.FiatBalance: result = newQVariant(if account.realFiatBalance.isSome(): fmt"{account.realFiatBalance.get():>.2f}" else: "...")
     of AccountRoles.Assets: result = newQVariant(accountView.assets)
     of AccountRoles.WalletType: result = newQVariant(account.walletType)
     of AccountRoles.Wallet: result = newQVariant(account.wallet)
+    of AccountRoles.Loading: result = newQVariant(if account.balance.isSome() and account.realFiatBalance.isSome(): false else: true)
 
   method roleNames(self: AccountList): Table[int, string] =
     { AccountRoles.Name.int:"name",
@@ -105,7 +107,8 @@ QtObject:
     AccountRoles.FiatBalance.int:"fiatBalance",
     AccountRoles.Assets.int:"assets",
     AccountRoles.Wallet.int:"isWallet",
-    AccountRoles.WalletType.int:"walletType" }.toTable
+    AccountRoles.WalletType.int:"walletType",
+    AccountRoles.Loading.int:"isLoading" }.toTable
 
   proc addAccountToList*(self: AccountList, account: WalletAccount) =
     if account.iconColor == "":

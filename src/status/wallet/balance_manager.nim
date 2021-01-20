@@ -4,6 +4,7 @@ import ../libstatus/tokens as status_tokens
 import ../libstatus/types as status_types
 import ../utils/cache
 import account
+import options
 
 logScope:
   topics = "balance-manager"
@@ -69,9 +70,17 @@ proc updateBalance*(account: WalletAccount, currency: string, refreshCache: bool
     let eth_balance = getBalance("ETH", account.address, "", refreshCache)
     let usd_balance = convertValue(eth_balance, "ETH", currency)
     var totalAccountBalance = usd_balance
-    account.realFiatBalance = totalAccountBalance
-    account.balance = fmt"{totalAccountBalance:.2f} {currency}"
+    account.realFiatBalance = some(totalAccountBalance)
+    account.balance = some(fmt"{totalAccountBalance:.2f} {currency}")
     for asset in account.assetList:
       updateBalance(asset, currency, refreshCache)
   except RpcException:
     error "Error in updateBalance", message = getCurrentExceptionMsg()
+
+proc storeBalances*(account: WalletAccount,  ethBalance = "0", tokenBalance: JsonNode) =
+  let ethCacheKey = fmt"ETH-{account.address}-"
+  balanceManager.tokenBalances.cacheValue(ethCacheKey, ethBalance)
+  for asset in account.assetList:
+    if tokenBalance.hasKey(asset.address):
+      let cacheKey = fmt"{asset.symbol}-{account.address}-{asset.address}"
+      balanceManager.tokenBalances.cacheValue(cacheKey, tokenBalance{asset.address}.getStr())
