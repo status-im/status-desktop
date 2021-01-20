@@ -66,6 +66,10 @@ ModalPopup {
         popup.close();
     }
 
+    function groupNameFilter(text) {
+        groupName.text = text.toLowerCase().replace(' ', '-');
+    }
+
     header: Item {
       height: 30
       width: parent.width
@@ -104,6 +108,10 @@ ModalPopup {
         placeholderText: qsTrId("group-name")
         visible: !selectChatMembers
         validationError: channelNameValidationError
+        onTextEdited: function (text) {
+            groupNameFilter(text)
+        }
+        validator: RegExpValidator { regExp: /^[a-zA-Z0-9\-\ ]+$/ }
     }
 
     NoFriendsRectangle {
