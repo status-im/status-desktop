@@ -37,7 +37,7 @@ Item {
                 if (root.state === Constants.addressRequested) {
                     selectAccountModal.open()
                 } else if (root.state === Constants.transactionRequested) {
-                    signTransactionModal.open()
+                    openPopup(signTxComponent)
                 }
             }
         }
@@ -85,21 +85,14 @@ Item {
         }
     }
 
-    Loader {
-        id: signTransactionModal
-        function open() {
-            this.active = true
-            this.item.open()
-        }
-        function closed() {
-            this.active = false // kill an opened instance
-        }
-        sourceComponent: SignTransactionModal {
+    Component {
+        id: signTxComponent
+        SignTransactionModal {
             onOpened: {
                 walletModel.getGasPricePredictions()
             }
             onClosed: {
-                signTransactionModal.closed()
+                destroy();
             }
             selectedAccount: {}
             selectedRecipient: {
