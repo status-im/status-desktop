@@ -96,7 +96,7 @@ Item {
                 id: stickerPackPurchaseModal
                 StatusStickerPackPurchaseModal {
                     onClosed: {
-                        stickerPackPurchaseModal.closed()
+                        destroy()
                     }
                     stickerPackId: packId
                     packPrice: price
