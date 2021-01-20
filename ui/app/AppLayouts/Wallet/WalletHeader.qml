@@ -65,25 +65,33 @@ Item {
         color: Style.current.secondaryText
     }
 
-    ReceiveModal{
-        id: receiveModal
-        selectedAccount: currentAccount
+    Component {
+        id: receiveModalComponent
+        ReceiveModal{
+            selectedAccount: currentAccount
+        }
     }
 
-    SetCurrencyModal{
-        id: setCurrencyModal
+    Component {
+        id: setCurrencyModalComponent
+        SetCurrencyModal{
+        }
     }
 
-    TokenSettingsModal{
-        id: tokenSettingsModal
+    Component {
+        id: tokenSettingsModalComponent
+        TokenSettingsModal{
+        }
     }
 
-    AccountSettingsModal {
-        id: accountSettingsModal
-        changeSelectedAccount: walletHeader.changeSelectedAccount
+    Component {
+        id: accountSettingsModalComponent
+        AccountSettingsModal{
+            changeSelectedAccount: walletHeader.changeSelectedAccount
+        }
     }
 
-    AddCustomTokenModal {
+    AddCustomTokenModal{
         id: addCustomTokenModal
     }
 
@@ -103,7 +111,7 @@ Item {
             imageSource: "../../img/send.svg"
             //% "Send"
             text: qsTrId("command-button-send")
-            onClicked: function () {
+            onClicked: function() {
                 sendModal.open()
             }
         }
@@ -115,7 +123,7 @@ Item {
             //% "Receive"
             text: qsTrId("receive")
             onClicked: function () {
-                receiveModal.open()
+                openPopup(receiveModalComponent);
             }
             anchors.left: sendBtn.right
             anchors.leftMargin: walletMenu.btnOuterMargin
@@ -143,9 +151,7 @@ Item {
                     icon.source: "../../img/manage-wallet.svg"
                     icon.width: 16
                     icon.height: 16
-                    onTriggered: {
-                        accountSettingsModal.open()
-                    }
+                    onTriggered: openPopup(accountSettingsModalComponent)
                 }
                 Action {
                     text: qsTr("Manage Assets")
@@ -153,7 +159,7 @@ Item {
                     icon.width: 16
                     icon.height: 16
                     onTriggered: {
-                        tokenSettingsModal.open()
+                        openPopup(tokenSettingsModalComponent)
                         walletModel.loadCustomTokens()
                     }
                 }
@@ -163,9 +169,7 @@ Item {
                     icon.source: "../../img/currency.svg"
                     icon.width: 16
                     icon.height: 16
-                    onTriggered: {
-                        setCurrencyModal.open()
-                    }
+                    onTriggered: openPopup(setCurrencyModalComponent)
                 }
             }
         }

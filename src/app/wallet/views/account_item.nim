@@ -1,4 +1,4 @@
-import NimQml, std/wrapnils, strformat
+import NimQml, std/wrapnils, strformat, options
 from ../../../status/wallet import WalletAccount
 import ./asset_list
 
@@ -36,11 +36,21 @@ QtObject:
   QtProperty[string] iconColor:
     read = iconColor
 
-  proc balance*(self: AccountItemView): string {.slot.} = result = ?.self.account.balance
+  proc balance*(self: AccountItemView): string {.slot.} = 
+    if ?.self.account.balance.isSome:
+      result = ?.self.account.balance.get()
+    else:
+      result = ""
+  
   QtProperty[string] balance:
     read = balance
   
-  proc fiatBalance*(self: AccountItemView): string {.slot.} = result = fmt"{?.self.account.realFiatBalance:>.2f}"
+  proc fiatBalance*(self: AccountItemView): string {.slot.} = 
+    if ?.self.account.realFiatBalance.isSome:
+      result = fmt"{?.self.account.realFiatBalance.get():>.2f}"
+    else:
+      result = ""
+
   QtProperty[string] fiatBalance:
     read = fiatBalance
 

@@ -30,8 +30,8 @@ proc init*(self: WalletController) =
   var accounts = self.status.wallet.accounts
   for account in accounts:
     self.view.addAccountToList(account)
-  self.view.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
 
+  self.view.initBalances()
   self.view.setDappBrowserAddress()
 
   self.status.events.on("accountsUpdated") do(e: Args):
@@ -40,6 +40,7 @@ proc init*(self: WalletController) =
   self.status.events.on("newAccountAdded") do(e: Args):
     var account = WalletTypes.AccountArgs(e)
     self.view.accounts.addAccountToList(account.account)
+    self.view.updateView()
 
   self.status.events.on("assetChanged") do(e: Args):
     self.view.updateView()
@@ -54,6 +55,8 @@ proc init*(self: WalletController) =
         for acc in data.accounts:
           self.status.wallet.updateAccount(acc)
           self.status.wallet.checkPendingTransactions(acc, data.blockNumber)
+          self.view.updateView()
+
           # TODO: show notification
       of "recent-history-fetching":
         self.view.setHistoryFetchState(data.accounts, true)

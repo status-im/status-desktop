@@ -134,7 +134,7 @@ Item {
             }
             StyledText {
                 id: walletBalance
-                text: Utils.toLocaleString(fiatBalance, appSettings.locale) + " " + walletModel.defaultCurrency.toUpperCase()
+                text: isLoading ? "..." : Utils.toLocaleString(fiatBalance, appSettings.locale) + " " + walletModel.defaultCurrency.toUpperCase()
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.smallPadding
                 anchors.right: parent.right

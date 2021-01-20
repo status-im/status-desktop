@@ -1,4 +1,4 @@
-import NimQml, Tables, strformat, strutils, chronicles, json, std/wrapnils, parseUtils, stint, tables, json_serialization
+import NimQml, Tables, strformat, strutils, chronicles, sequtils, json, std/wrapnils, parseUtils, stint, tables, json_serialization
 import ../../status/[status, wallet, threads]
 import ../../status/wallet/collectibles as status_collectibles
 import ../../status/libstatus/accounts/constants
@@ -343,7 +343,11 @@ QtObject:
     self.accountListChanged()
     self.currentAccountChanged()
 
+  proc addCustomToken*(self: WalletView, address: string, name: string, symbol: string, decimals: string) {.slot.} =
+    self.status.wallet.addCustomToken(symbol, true, address, name, parseInt(decimals), "")
+
   proc updateView*(self: WalletView) =
+    self.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
     self.totalFiatBalanceChanged()
     self.currentAccount.assetList.setNewData(self.currentAccount.account.assetList)
     self.currentAccountChanged()
@@ -351,8 +355,27 @@ QtObject:
     self.accounts.forceUpdate()
     self.setCurrentAssetList(self.currentAccount.account.assetList)
 
-  proc addCustomToken*(self: WalletView, address: string, name: string, symbol: string, decimals: string) {.slot.} =
-    self.status.wallet.addCustomToken(symbol, true, address, name, parseInt(decimals), "")
+  proc initBalances*(self: WalletView) =
+    for acc in self.status.wallet.accounts:
+      let accountAddress = acc.address
+      let tokenList = acc.assetList.filter(proc(x:Asset): bool = x.address != "").map(proc(x: Asset): string = x.address)
+      spawnAndSend(self, "getAccountBalanceSuccess") do:
+        var tokenBalances = initTable[string, string]()
+        for token in tokenList:
+          tokenBalances[token] = getTokenBalance(token, accountAddress)
+        $ %* {
+          "address": accountAddress,
+          "eth": getEthBalance(accountAddress),
+          "tokens": tokenBalances
+        }
+
+  proc getAccountBalanceSuccess*(self: WalletView, jsonResponse: string) {.slot.} =
+    let jsonObj = jsonResponse.parseJson()
+    self.status.wallet.update(jsonObj["address"].getStr(), jsonObj["eth"].getStr(), jsonObj["tokens"])
+    self.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
+    self.accounts.forceUpdate()
+    self.currentAccountChanged()
+
 
   proc loadCollectiblesForAccount*(self: WalletView, address: string, currentCollectiblesList: seq[CollectibleList]) =
     if (currentCollectiblesList.len > 0):
@@ -518,17 +541,8 @@ QtObject:
   QtProperty[QVariant] customTokenList:
     read = getCustomTokenList
 
-  proc historyWasFetched*(self: WalletView) {.signal.}
 
-  proc setHistoryFetchState*(self: WalletView, accounts: seq[string], isFetching: bool) =
-    for acc in accounts:
-      self.fetchingHistoryState[acc] = isFetching
-    if not isFetching: self.historyWasFetched()
 
-  proc isFetchingHistory*(self: WalletView, address: string): bool {.slot.} =
-    if self.fetchingHistoryState.hasKey(address):
-      return self.fetchingHistoryState[address]
-    return true
   
   proc isKnownTokenContract*(self: WalletView, address: string): bool {.slot.} =
     return self.status.wallet.getKnownTokenContract(parseAddress(address)) != nil
@@ -542,6 +556,19 @@ QtObject:
       return $(%* {"symbol": token.symbol, "amount": amountDec})
     
     return """{"error":"Unknown token address"}""";
+
+  proc historyWasFetched*(self: WalletView) {.signal.}
+
+  proc setHistoryFetchState*(self: WalletView, accounts: seq[string], isFetching: bool) =
+    for acc in accounts:
+      self.fetchingHistoryState[acc] = isFetching
+    if not isFetching: self.historyWasFetched()
+
+  proc isFetchingHistory*(self: WalletView, address: string): bool {.slot.} =
+    if self.fetchingHistoryState.hasKey(address):
+      return self.fetchingHistoryState[address]
+    return true
+
 
   proc isHistoryFetched*(self: WalletView, address: string): bool {.slot.} =
     return self.currentTransactions.rowCount() > 0
