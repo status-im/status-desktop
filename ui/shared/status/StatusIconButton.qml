@@ -12,6 +12,7 @@ RoundButton {
     property color highlightedIconColor: Style.current.blue
     property color hoveredIconColor: Style.current.blue
     property color highlightedBackgroundColor: Style.current.secondaryBackground
+    property real highlightedBackgroundOpacity: 1.0
     property color disabledColor: iconColor
     property int iconRotation: 0
 
@@ -42,6 +43,7 @@ RoundButton {
 
     background: Rectangle {
         anchors.fill: parent
+        opacity: control.highlightedBackgroundOpacity
         color: {
             if (type === "secondary") {
                 return "transparent"
