@@ -10,9 +10,7 @@ import "."
 ListView {
     id: contactList
     property var contacts: ContactsData {}
-    property var selectable: true
     property string searchStr: ""
-    property alias selectedContact: contactGroup.checkedButton
     property string searchString: ""
     property string lowerCaseSearchString: searchString.toLowerCase()
     property string contactToRemove: ""
@@ -28,7 +26,6 @@ ListView {
         identicon: model.thumbnailImage || model.identicon
         isContact: model.isContact
         isBlocked: model.isBlocked
-        selectable: contactList.selectable
         profileClick: profilePopup.openPopup.bind(profilePopup)
         visible: searchString === "" ||
                  model.name.toLowerCase().includes(lowerCaseSearchString) ||
@@ -70,12 +67,6 @@ ListView {
             }
             removeContactConfirmationDialog.close()
         }
-    }
-
-
-
-    ButtonGroup {
-        id: contactGroup
     }
 }
 /*##^##

@@ -10,26 +10,29 @@ Rectangle {
     property string address: "0x04d8c07dd137bd1b73a6f51df148b4f77ddaa11209d36e43d8344c0a7d6db1cad6085f27cfb75dd3ae21d86ceffebe4cf8a35b9ce8d26baa19dc264efe6d8f221b"
     property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
     property string localNickname: "JoJo"
-    property bool selectable: false
     property var profileClick: function() {}
     property bool isContact: true
     property bool isBlocked: false
     property string searchStr: ""
     signal blockContactActionTriggered(name: string, address: string)
     signal removeContactActionTriggered(address: string)
+    property bool isHovered: false
     id: container
 
     visible: isContact && (searchStr == "" || name.includes(searchStr))
     height: visible ? 64 : 0
     anchors.right: parent.right
     anchors.left: parent.left
+    anchors.leftMargin: -Style.current.padding
+    anchors.rightMargin: -Style.current.padding
     border.width: 0
     radius: Style.current.radius
-    color: Style.current.transparent
+    color: isHovered ? Style.current.backgroundHover : Style.current.transparent
 
     StatusImageIdenticon {
         id: accountImage
         anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
         source: identicon
     }
@@ -47,16 +50,35 @@ Rectangle {
         anchors.leftMargin: Style.current.padding
     }
 
+    MouseArea {
+        cursorShape: Qt.PointingHandCursor
+        anchors.fill: parent
+        hoverEnabled: true
+        onEntered: container.isHovered = true
+        onExited: container.isHovered = false
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: {
+            if (mouse.button === Qt.RightButton) {
+                contactContextMenu.popup()
+                return
+            }
+            chatsModel.joinChat(container.address, Constants.chatTypeOneToOne)
+            changeAppSection(Constants.chat)
+        }
+    }
+
     Rectangle {
         property int iconSize: 14
+        property bool isHovered: false
+        readonly property color hoveredBg: Utils.setColorAlpha(Style.current.black, 0.1)
         id: menuButton
         height: 32
         width: 32
-        anchors.top: usernameText.top
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding
         radius: 8
-        color: "transparent"
+        color: isHovered ? hoveredBg : Style.current.transparent
 
         SVGImage {
             source: "../../../../img/dots-icon.svg"
@@ -68,27 +90,24 @@ Rectangle {
 
         MouseArea {
             id: mouseArea
-            property bool menuOpened: false
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
             hoverEnabled: true
             onExited: {
-                menuButton.color = "transparent"
+                container.isHovered = false
+                menuButton.isHovered = false
             }
             onEntered: {
-                menuButton.color = Style.current.border
+                container.isHovered = true
+                menuButton.isHovered = true
             }
             onClicked: {
-              menuOpened = true
               contactContextMenu.popup()
             }
 
             PopupMenu {
                 id: contactContextMenu
                 hasArrow: false
-                onClosed: {
-                    mouseArea.menuOpened = false
-                }
                 Action {
                     icon.source: "../../../../img/profileActive.svg"
                     icon.width: menuButton.iconSize
@@ -103,7 +122,7 @@ Rectangle {
                     icon.height: menuButton.iconSize
                     text: qsTrId("send-message")
                     onTriggered: {
-                      tabBar.currentIndex = 0
+                      changeAppSection(Constants.chat)
                       chatsModel.joinChat(address, Constants.chatTypeOneToOne)
                     }
                     enabled: !container.isBlocked
@@ -144,13 +163,5 @@ Rectangle {
                 }
             }
         }
-    }
-
-    StatusRadioButton {
-        visible: selectable
-        anchors.top: parent.top
-        anchors.topMargin: Style.current.smallPadding
-        anchors.right: parent.right
-        ButtonGroup.group: contactGroup
     }
 }

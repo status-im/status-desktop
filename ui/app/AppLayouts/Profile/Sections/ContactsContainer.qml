@@ -109,7 +109,6 @@ Item {
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 contacts: profileModel.contacts.blockedContacts
-                selectable: false
             }
         }
 
@@ -229,7 +228,6 @@ Item {
             anchors.topMargin: Style.current.bigPadding
             anchors.bottom: parent.bottom
             contacts: profileModel.contacts.addedContacts
-            selectable: false
             searchString: searchBox.text
         }
 
