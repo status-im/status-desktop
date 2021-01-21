@@ -8,6 +8,7 @@ QQC1.Slider {
     id: slider
     anchors.left: parent.left
     anchors.right: parent.right
+    wheelEnabled: false
     style: SliderStyle {
         groove: Rectangle {
             implicitHeight: 4
