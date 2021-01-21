@@ -51,6 +51,14 @@ Rectangle {
         container.itemSelected(listView.model.get(listView.currentIndex), filterItem.lastAtPosition, filterItem.cursorPosition)
     }
 
+    onVisibleChanged: {
+        if (visible && listView.currentIndex === -1) {
+            // If the previous selection was made using the mouse, the currentIndex was changed to -1
+            // We change it back to 0 so that it can be used to select using the keyboard
+            listView.currentIndex = 0
+        }
+    }
+
     z: parent.z + 100
     visible: !shouldHide && filter.length > 0 && suggestionsModel.count > 0
     height: Math.min(400, listView.contentHeight + Style.current.smallPadding)
