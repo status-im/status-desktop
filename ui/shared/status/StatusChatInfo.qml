@@ -44,7 +44,7 @@ Item {
     Item {
         id: nameAndInfo
         height: chatName.height + chatInfo.height
-        width: (chatName.width > chatInfo.width ? chatName.width : chatInfo.width) 
+        width: childrenRect.width
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: chatIdenticon.right
         anchors.leftMargin: Style.current.smallPadding
