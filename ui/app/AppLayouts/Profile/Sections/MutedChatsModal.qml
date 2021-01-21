@@ -19,12 +19,12 @@ ModalPopup {
         id: mutedChatsList
         anchors.top: parent.top
         visible: true
-        height: childrenRect.height
         anchors.left: parent.left
         anchors.right: parent.right
         model: root.showMutedContacts ? profileModel.mutedContacts : profileModel.mutedChats
         delegate: Rectangle {
             height: contactImage.height + Style.current.smallPadding * 2
+            width: parent.width
             color: Style.current.transparent
 
             StatusIdenticon {
@@ -52,20 +52,14 @@ ModalPopup {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            StyledText {
+            StatusButton {
                 id: unmuteButton
+                type: "secondary"
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 text: qsTr("Unmute")
-                font.pixelSize: 15
-                color: Style.current.primary
-
-                MouseArea {
-                    cursorShape: Qt.PointingHandCursor
-                    anchors.fill: parent
-                    onClicked: {
-                        profileModel.unmuteChannel(model.id)
-                    }
+                onClicked: {
+                    profileModel.unmuteChannel(model.id)
                 }
             }
         }
