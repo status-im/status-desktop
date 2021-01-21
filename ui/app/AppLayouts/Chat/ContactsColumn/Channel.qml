@@ -165,12 +165,12 @@ Rectangle {
           wrapper.hovered = false
         }
         onClicked: {
-            if (mouse.button & Qt.RightButton) {
-                channelContextMenu.openMenu(index, muted, chatType, name, chatId, identicon)
-                return;
-            }
             chatsModel.setActiveChannelByIndex(index)
             chatGroupsListView.currentIndex = index
+            if (mouse.button & Qt.RightButton) {
+                channelContextMenu.openMenu(chatsModel.activeChannel, index)
+                return;
+            }
         }
     }
 
