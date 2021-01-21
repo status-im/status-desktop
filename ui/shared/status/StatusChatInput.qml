@@ -92,18 +92,25 @@ Rectangle {
         return (event.key === Qt.Key_U) && (event.modifiers & Qt.ControlModifier) && imageBtn.visible && !imageDialog.visible
     }
 
+    function checkTextInsert() {
+        if (emojiSuggestions.visible) {
+            emojiSuggestions.addEmoji();
+            return true
+        }
+        if (suggestionsBox.visible) {
+            suggestionsBox.selectCurrentItem();
+            return true
+        }
+        return false
+    }
+
     function onKeyPress(event){
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
-            if (emojiSuggestions.visible) {
-                emojiSuggestions.addEmoji();
+            if (checkTextInsert()) {
                 event.accepted = true;
                 return
             }
-            if (suggestionsBox.visible) {
-                suggestionsBox.selectCurrentItem();
-                event.accepted = true;
-                return
-            }
+
             if (control.isStatusUpdateInput) {
                 return // Status update require the send button to be clicked
             }
@@ -114,6 +121,13 @@ Rectangle {
             }
             if(event) event.accepted = true
             messageTooLongDialog.open()
+        }
+
+        if (event.key === Qt.Key_Tab) {
+            if (checkTextInsert()) {
+                event.accepted = true;
+                return
+            }
         }
 
         const message = control.extrapolateCursorPosition();
