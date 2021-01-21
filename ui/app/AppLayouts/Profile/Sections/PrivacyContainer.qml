@@ -13,7 +13,6 @@ Item {
 
     Column {
         id: containerColumn
-        spacing: 30
         anchors.top: parent.top
         anchors.topMargin: topMargin
         anchors.right: parent.right
@@ -26,6 +25,7 @@ Item {
             id: labelSecurity
             //% "Security"
             text: qsTrId("security")
+            bottomPadding: 4
         }
 
         StatusSettingsLineButton {
@@ -43,6 +43,12 @@ Item {
             id: backupSeedModal
         }
 
+        Item {
+            id: spacer1
+            height: Style.current.bigPadding
+            width: parent.width
+        }
+
         Separator {
             id: separator
         }
@@ -51,57 +57,32 @@ Item {
             id: labelPrivacy
             //% "Privacy"
             text: qsTrId("privacy")
+            topPadding: Style.current.padding
+            bottomPadding: 4
         }
 
-        RowLayout {
-            spacing: Style.current.padding
-            width: parent.width
-
-            StyledText {
-                text: qsTr("Display all profile pictures (not only contacts)")
-                font.pixelSize: 15
-                font.weight: Font.Medium
-                Layout.fillWidth: true
-            }
-
-            StatusSwitch {
-                id: showOnlyContactsPicsSwitch
-                Layout.rightMargin: 0
-                checked: !appSettings.onlyShowContactsProfilePics
-                onCheckedChanged: function (value) {
-                    appSettings.onlyShowContactsProfilePics = !this.checked
-                }
-            }
+        StatusSettingsLineButton {
+            text: qsTr("Display all profile pictures (not only contacts)")
+            isSwitch: true
+            switchChecked: !appSettings.onlyShowContactsProfilePics
+            onClicked: appSettings.onlyShowContactsProfilePics = !checked
         }
 
-        RowLayout {
-            spacing: Style.current.padding
+        StatusSettingsLineButton {
+            //% "Display images in chat automatically"
+            text: qsTrId("display-images-in-chat-automatically")
+            isSwitch: true
+            switchChecked: appSettings.displayChatImages
+            onClicked: appSettings.displayChatImages = checked
+        }
+        StyledText {
             width: parent.width
-            Column {
-                Layout.fillWidth: true
-                StyledText {
-                    //% "Display images in chat automatically"
-                    text: qsTrId("display-images-in-chat-automatically")
-                    font.pixelSize: 15
-                    font.weight: Font.Medium
-                }
-                StyledText {
-                    width: parent.width
-                    text: qsTr("All images (links that contain an image extension) will be downloaded and displayed, regardless of the whitelist settings below")
-                    font.pixelSize: 15
-                    font.weight: Font.Thin
-                    color: Style.current.secondaryText
-                    wrapMode: Text.WordWrap
-                }
-            }
-            StatusSwitch {
-                id: displayChatImagesSwitch
-                Layout.rightMargin: 0
-                checked: appSettings.displayChatImages
-                onCheckedChanged: function (value) {
-                    appSettings.displayChatImages = this.checked
-                }
-            }
+            text: qsTr("All images (links that contain an image extension) will be downloaded and displayed, regardless of the whitelist settings below")
+            font.pixelSize: 15
+            font.weight: Font.Thin
+            color: Style.current.secondaryText
+            wrapMode: Text.WordWrap
+            bottomPadding: Style.current.smallPadding
         }
 
         StatusSettingsLineButton {
