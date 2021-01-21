@@ -143,11 +143,11 @@ QtObject:
     return self.chatItem.isAdmin(pubKey)
 
   proc mute*(self: ChatItemView) {.slot.} =
-    self.status.chat.muteChat(self.chatItem)
     self.chatItem.muted = true
+    self.status.chat.muteChat(self.chatItem)
     self.mutedChanged()
 
   proc unmute*(self: ChatItemView) {.slot.} =
-    self.status.chat.unmuteChat(self.chatItem)
     self.chatItem.muted = false
+    self.status.chat.unmuteChat(self.chatItem)
     self.mutedChanged()
