@@ -143,10 +143,9 @@ ModalPopup {
                         chatsModel.joinChat(pubKey, Constants.chatTypeOneToOne);
                         popup.close()
                     }
-                    visible: (model.isContact && (chatKey.text === "" ||
+                    visible: model.isContact && (chatKey.text === "" ||
                         model.name.toLowerCase().includes(chatKey.text.toLowerCase()) ||
-                        model.address.toLowerCase().includes(chatKey.text.toLowerCase()))) ||
-                        popup.pubKey === model.pubKey
+                        model.address.toLowerCase().includes(chatKey.text.toLowerCase()))
                 }
             }
 
