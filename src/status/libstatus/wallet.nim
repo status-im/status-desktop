@@ -84,7 +84,7 @@ proc validateMnemonic*(mnemonic: string): string =
   result = $nim_status.validateMnemonic(mnemonic)
 
 proc startWallet*() =
-  discard nim_status.startWallet(true)
+  discard nim_status.startWallet() # TODO: true  to watch trx
 
 proc hex2Token*(input: string, decimals: int): string =
   var value = fromHex(Stuint[256], input)
