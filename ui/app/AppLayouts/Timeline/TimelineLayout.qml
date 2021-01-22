@@ -14,10 +14,10 @@ ScrollView {
     id: root
     Layout.fillWidth: true
     Layout.fillHeight: true
-    contentHeight: chatLogView.contentHeight + 40
+    contentHeight: chatLogView.contentHeight + 140
     clip: true
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-
+    
     property var onActivated: function () {
         chatsModel.setActiveChannelToTimeline()
         statusUpdateInput.textInput.forceActiveFocus(Qt.MouseFocusReason)

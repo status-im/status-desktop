@@ -131,7 +131,7 @@ Item {
         Item {
             visible: chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember
             id: wrapper
-            height: wrapper.visible ? fetchMoreButton.height + fetchDate.height + 3 + Style.current.smallPadding*2 : 0
+            height: wrapper.visible ? childrenRect.height + Style.current.smallPadding*2 : 0
             anchors.left: parent.left
             anchors.right: parent.right
             Separator {
@@ -152,7 +152,12 @@ Item {
                   cursorShape: Qt.PointingHandCursor
                   anchors.fill: parent
                   onClicked: {
-                    chatsModel.requestMoreMessages(Constants.fetchRangeLast24Hours)
+                    if(chatsModel.activeChannel.isTimelineChat){
+                        chatsModel.requestMoreTimelineMessages(Constants.fetchRangeLast24Hours);
+                    } else {
+                        chatsModel.requestMoreMessages(Constants.fetchRangeLast24Hours);
+                    }
+                    
                     timer.setTimeout(function(){ 
                         chatsModel.hideLoadingIndicator()
                     }, 3000);
