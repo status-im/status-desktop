@@ -66,6 +66,9 @@ Item {
     Component {
         id: receiveModalComponent
         ReceiveModal{
+            onClosed: {
+                destroy();
+            }
             selectedAccount: currentAccount
         }
     }
@@ -73,18 +76,27 @@ Item {
     Component {
         id: setCurrencyModalComponent
         SetCurrencyModal{
+            onClosed: {
+                destroy();
+            }
         }
     }
 
     Component {
         id: tokenSettingsModalComponent
         TokenSettingsModal{
+            onClosed: {
+                destroy();
+            }
         }
     }
 
     Component {
         id: accountSettingsModalComponent
         AccountSettingsModal{
+            onClosed: {
+                destroy();
+            }
             changeSelectedAccount: walletHeader.changeSelectedAccount
         }
     }
