@@ -2,6 +2,7 @@ import NimQml, Tables, std/wrapnils
 import ../../../status/[chat/chat, status, ens, accounts]
 from ../../../status/libstatus/types import Setting
 import ../../../status/libstatus/settings as status_settings
+import ../../../status/libstatus/utils as status_utils
 
 import chat_members
 
@@ -110,6 +111,12 @@ QtObject:
 
   QtProperty[QVariant] members:
     read = getMembers
+
+  proc isTimelineChat*(self: ChatItemView): bool {.slot.} = result = ?.self.chatItem.id == status_utils.getTimelineChatId()
+
+  QtProperty[bool] isTimelineChat:
+    read = isTimelineChat
+
 
   proc hasMentions*(self: ChatItemView): bool {.slot.} = result = ?.self.chatItem.hasMentions
 

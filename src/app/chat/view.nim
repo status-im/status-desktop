@@ -445,6 +445,22 @@ QtObject:
     write = setLoadingMessages
     notify = loadingMessagesChanged
 
+  proc requestMoreTimelineMessages*(self: ChatsView, fetchRange: int) {.slot.} =
+    self.loadingMessages = true
+    self.loadingMessagesChanged(true)
+
+    var allTopics: seq[string] = @[]
+    for contact in self.status.contacts.getContacts():
+      for t in self.status.mailservers.getMailserverTopicsByChatId(getTimelineChatId(contact.id)).map(topic => topic.topic):
+        allTopics.add(t)
+
+    let currentOldestMessageTimestamp = self.oldestMessageTimestamp
+    self.oldestMessageTimestamp = self.oldestMessageTimestamp - fetchRange
+
+    self.status.mailservers.requestMessages(allTopics, self.oldestMessageTimestamp, currentOldestMessageTimestamp, true)
+    self.oldestMessageTimestampChanged()
+    self.messagesLoaded();    
+
   proc requestMoreMessages*(self: ChatsView, fetchRange: int) {.slot.} =
     self.loadingMessages = true
     self.loadingMessagesChanged(true)
