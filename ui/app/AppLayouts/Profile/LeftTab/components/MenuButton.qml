@@ -20,26 +20,21 @@ Rectangle {
     width: parent.width
     radius: Style.current.radius
 
-    Item {
+    Image {
         id: iconImage
         height: 24
         width: 24
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
-
-        Image {
-            id: iconSrc
-            source: menuButton.source
-            sourceSize: Qt.size(parent.width, parent.height)
-            fillMode: Image.PreserveAspectFit
-            smooth: true
-            visible: false
-        }
+        source: menuButton.source
+        sourceSize: Qt.size(width, height)
+        fillMode: Image.PreserveAspectFit
+        smooth: true
 
         ColorOverlay {
-            anchors.fill: iconSrc
-            source: iconSrc
+            anchors.fill: parent
+            source: parent
             color: Style.current.blue
         }
     }
