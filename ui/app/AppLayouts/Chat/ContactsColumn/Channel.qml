@@ -35,8 +35,11 @@ Rectangle {
 
     id: wrapper
     color: {
-      if (ListView.isCurrentItem || wrapper.hovered) {
+      if (ListView.isCurrentItem) {
         return Style.current.secondaryBackground
+      }
+      if (wrapper.hovered) {
+        return Style.current.backgroundHover
       }
       return Style.current.transparent
     }

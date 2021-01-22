@@ -13,7 +13,15 @@ Rectangle {
     property var onClicked: function () {}
 
     id: menuButton
-    color: hovered || active ? Style.current.secondaryBackground : Style.current.transparent
+    color: {
+         if (active) {
+            return Style.current.secondaryBackground
+         }
+         if (hovered) {
+            return Style.current.backgroundHover
+         }
+         return Style.current.transparent
+    }
     border.width: 0
     height: 48
     width: parent.width
