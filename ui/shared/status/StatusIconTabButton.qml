@@ -57,4 +57,10 @@ TabButton {
         color: hovered ? Style.current.secondaryBackground : "transparent"
         radius: control.width / 2
     }
+
+    MouseArea {
+        cursorShape: Qt.PointingHandCursor
+        anchors.fill: parent
+        onPressed: mouse.accepted = false
+    }
 }
