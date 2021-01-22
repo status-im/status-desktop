@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import QtGraphicalEffects 1.13
 import "../../../../../imports"
 import "../../../../../shared"
 import "../constants.js" as ProfileConstants
@@ -19,17 +20,28 @@ Rectangle {
     width: parent.width
     radius: Style.current.radius
 
-    Image {
+    Item {
         id: iconImage
-        source: menuButton.source
         height: 24
         width: 24
-        sourceSize.width: width
-        sourceSize.height: height
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
-        fillMode: Image.PreserveAspectFit
+
+        Image {
+            id: iconSrc
+            source: menuButton.source
+            sourceSize: Qt.size(parent.width, parent.height)
+            fillMode: Image.PreserveAspectFit
+            smooth: true
+            visible: false
+        }
+
+        ColorOverlay {
+            anchors.fill: iconSrc
+            source: iconSrc
+            color: Style.current.blue
+        }
     }
 
     StyledText {
