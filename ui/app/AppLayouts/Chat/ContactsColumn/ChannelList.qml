@@ -78,9 +78,6 @@ Rectangle {
 
     GroupInfoPopup {
         id: groupInfoPopup
-        onClosed: {
-            mouseArea.menuOpened = false
-        }
     }
 
     ChannelContextMenu {
