@@ -196,20 +196,6 @@ Item {
                 onGenKeyClicked()
             }
         }
-        StatusButton {
-            id: a
-            //% "Generate new keys"
-            text: qsTrId("generate-new-keys")
-            anchors.top: generateKeysLinkText.bottom
-            anchors.topMargin: 26
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 13
-            bgColor: Style.current.transparent
-            onClicked: {
-                setCurrentFlow(false);
-                onGenKeyClicked()
-            }
-        }
     }
 }
 
