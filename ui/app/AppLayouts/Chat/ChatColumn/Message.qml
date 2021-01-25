@@ -115,8 +115,9 @@ Item {
                 case Constants.communityInviteType:
                     return invitationBubble
                 default:
-                    return appSettings.compactMode  ? compactMessageComponent : 
-                      isStatusUpdate ? statusUpdateComponent : messageComponent
+                    return isStatusUpdate ? statusUpdateComponent :
+                                            (appSettings.compactMode ? compactMessageComponent : messageComponent)
+
             }
         }
     }
