@@ -2,18 +2,18 @@ import QtQuick 2.3
 import "../../../../../shared"
 import "../../../../../imports"
 
-Item {
+Column {
     property string authorCurrentMsg: "authorCurrentMsg"
     property int verticalMargin: 50
 
     property string profileImage
 
     id: channelIdentifier
+    spacing: Style.current.padding
     visible: authorCurrentMsg === ""
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
     anchors.topMargin: this.visible ? verticalMargin : 0
-    height: this.visible ? childrenRect.height + verticalMargin : 0
 
     Rectangle {
         id: circleId
@@ -66,8 +66,6 @@ Item {
         font.weight: Font.Bold
         font.pixelSize: 22
         color: Style.current.textColor
-        anchors.top: circleId.bottom
-        anchors.topMargin: 16
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
@@ -77,8 +75,6 @@ Item {
         width: visible ? 330 : 0
         height: visible ? childrenRect.height : 0
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: channelName.bottom
-        anchors.topMargin: 16
 
         StyledText {
             id: descText
@@ -101,9 +97,8 @@ Item {
 
     Item {
         visible: chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat && !chatsModel.activeChannel.isMember
-        anchors.top: channelDescription.bottom
-        anchors.topMargin: 16
         anchors.horizontalCenter: parent.horizontalCenter
+        width: joinChat.width
         height: visible ? 100 : 10
         id: joinOrDecline
 
@@ -141,6 +136,14 @@ Item {
                 }
             }
         }
+    }
+
+    Item {
+        id: spacer
+        visible: chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat && chatsModel.activeChannel.isMember
+        width: parent.width
+        height: Style.current.bigPadding
+
     }
 }
 
