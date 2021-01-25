@@ -7,13 +7,8 @@ import "../../../../imports"
 
 PopupMenu {
     property int channelIndex
-    property bool channelMuted
-    property int chatType
-    property string chatName
-    property string chatId
-    property string chatIdenticon
+    property var contextChannel
     property var groupInfoPopup
-    property var groupsListView
 
     id: channelContextMenu
     width: 175
@@ -31,11 +26,7 @@ PopupMenu {
     ]
 
     function openMenu(channel, index) {
-        channelContextMenu.channelMuted = channel.muted
-        channelContextMenu.chatType = channel.chatType
-        channelContextMenu.chatName = channel.name
-        channelContextMenu.chatId = channel.id
-        channelContextMenu.chatIdenticon = channel.identicon
+        channelContextMenu.contextChannel = channel
         if (index !== undefined) {
             channelContextMenu.channelIndex = index
         }
@@ -43,13 +34,13 @@ PopupMenu {
     }
 
     Action {
-        enabled: channelContextMenu.chatType !== Constants.chatTypePublic
+        enabled: channelContextMenu.contextChannel.chatType !== Constants.chatTypePublic
         text: {
-            if (channelContextMenu.chatType === Constants.chatTypeOneToOne) {
+            if (channelContextMenu.contextChannel.chatType === Constants.chatTypeOneToOne) {
                 //% "View Profile"
                 return qsTrId("view-profile")
             }
-            if (channelContextMenu.chatType === Constants.chatTypePrivateGroupChat) {
+            if (channelContextMenu.contextChannel.chatType === Constants.chatTypePrivateGroupChat) {
                 //% "View Group"
                 return qsTrId("view-group")
             }
@@ -60,16 +51,16 @@ PopupMenu {
         icon.width: 16
         icon.height: 16
         onTriggered: {
-            //chatsModel.setActiveChannelByIndex(channelContextMenu.channelIndex)
-            if (!!groupsListView) {
-                groupsListView.currentIndex = channelContextMenu.channelIndex
+            if (channelContextMenu.contextChannel.chatType === Constants.chatTypeOneToOne) {
+                const userProfileImage = appMain.getProfileImage(channelContextMenu.contextChannel.id)
+                return openProfilePopup(
+                  channelContextMenu.contextChannel.name,
+                  channelContextMenu.contextChannel.id,
+                  userProfileImage || channelContextMenu.contextChannel.identicon
+                )
             }
-            if (channelContextMenu.chatType === Constants.chatTypeOneToOne) {
-                const userProfileImage = appMain.getProfileImage(channelContextMenu.chatId)
-                return openProfilePopup(channelContextMenu.chatName, channelContextMenu.chatId, userProfileImage || channelContextMenu.chatIdenticon)
-            }
-            if (channelContextMenu.chatType === Constants.chatTypePrivateGroupChat) {
-                return groupInfoPopup.open()
+            if (channelContextMenu.contextChannel.chatType === Constants.chatTypePrivateGroupChat) {
+                return groupInfoPopup.openMenu(channelContextMenu.contextChannel)
             }
         }
     }
@@ -77,7 +68,7 @@ PopupMenu {
     Separator {}
 
     Action {
-        text: channelContextMenu.channelMuted ?
+        text: channelContextMenu.contextChannel.muted ?
                   //% "Unmute chat"
                   qsTrId("unmute-chat") :
                   //% "Mute chat"
@@ -118,11 +109,11 @@ PopupMenu {
 
     Action {
         text: {
-            if (channelContextMenu.chatType === Constants.chatTypeOneToOne) {
+            if (channelContextMenu.contextChannel.chatType === Constants.chatTypeOneToOne) {
                 //% "Delete chat"
                 return qsTrId("delete-chat")
             }
-            if (channelContextMenu.chatType === Constants.chatTypePrivateGroupChat) {
+            if (channelContextMenu.contextChannel.chatType === Constants.chatTypePrivateGroupChat) {
                 //% "Leave group"
                 return qsTrId("leave-group")
             }
@@ -130,7 +121,7 @@ PopupMenu {
             return qsTrId("leave-chat")
         }
         icon.source: {
-            if (channelContextMenu.chatType === Constants.chatTypeOneToOne) {
+            if (channelContextMenu.contextChannel.chatType === Constants.chatTypeOneToOne) {
                 return "../../../img/delete.svg"
             }
             return "../../../img/leave_chat.svg"

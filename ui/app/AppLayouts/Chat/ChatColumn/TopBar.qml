@@ -38,7 +38,7 @@ Rectangle {
             onClicked: {
                 switch (chatsModel.activeChannel.chatType) {
                     case Constants.chatTypePrivateGroupChat: 
-                        groupInfoPopup.open()
+                        groupInfoPopup.openMenu(chatsModel.activeChannel, chatsModel.getActiveChannelIdx())
                         break;
                     case Constants.chatTypeOneToOne:
                         const profileImage = appMain.getProfileImage(chatsModel.activeChannel.id)
@@ -128,7 +128,7 @@ Rectangle {
                     icon.height: chatTopBarContent.iconSize
                     //% "Group Information"
                     text: qsTrId("group-information")
-                    onTriggered: groupInfoPopup.open()
+                    onTriggered: groupInfoPopup.openMenu(chatsModel.activeChannel, chatsModel.getActiveChannelIdx())
                 }
                 Action {
                     icon.source: "../../../img/close.svg"

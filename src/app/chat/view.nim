@@ -35,6 +35,7 @@ QtObject:
       groups*: GroupsView
       transactions*: TransactionsView
       activeChannel*: ChatItemView
+      contextChannel*: ChatItemView
       previousActiveChannelIndex: int
       activeCommunity*: CommunityItemView
       observedCommunity*: CommunityItemView
@@ -54,6 +55,7 @@ QtObject:
   proc delete(self: ChatsView) = 
     self.chats.delete
     self.activeChannel.delete
+    self.contextChannel.delete
     self.observedCommunity.delete
     self.activeCommunity.delete
     self.currentSuggestions.delete
@@ -73,6 +75,7 @@ QtObject:
     result.connected = false
     result.chats = newChannelsList(status)
     result.activeChannel = newChatItemView(status)
+    result.contextChannel = newChatItemView(status)
     result.activeCommunity = newCommunityItemView(status)
     result.observedCommunity = newCommunityItemView(status)
     result.currentSuggestions = newSuggestionsList()
@@ -190,6 +193,8 @@ QtObject:
 
   proc activeChannelChanged*(self: ChatsView) {.signal.}
 
+  proc contextChannelChanged*(self: ChatsView) {.signal.}
+
   proc sendingMessage*(self: ChatsView) {.signal.}
 
   proc appReady*(self: ChatsView) {.signal.}
@@ -266,6 +271,19 @@ QtObject:
     read = getActiveChannel
     write = setActiveChannel
     notify = activeChannelChanged
+
+  proc setContextChannel*(self: ChatsView, channel: string) {.slot.} =
+    let contextChannel = self.chats.getChannel(self.chats.chats.findIndexById(channel))
+    self.contextChannel.setChatItem(contextChannel)
+    self.contextChannelChanged()
+
+  proc getContextChannel*(self: ChatsView): QVariant {.slot.} =
+    newQVariant(self.contextChannel)
+  
+  QtProperty[QVariant] contextChannel:
+    read = getContextChannel
+    write = setContextChannel
+    notify = contextChannelChanged
 
   proc setActiveChannelToTimeline*(self: ChatsView) {.slot.} =
     if not self.activeChannel.chatItem.isNil:
