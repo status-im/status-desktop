@@ -145,6 +145,7 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml \
     app/AppLayouts/Chat/ChatColumn/CompactMessage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChannelIdentifier.qml \
+    app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatButtons.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatImage.qml \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatReply \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/ChatReply.qml \

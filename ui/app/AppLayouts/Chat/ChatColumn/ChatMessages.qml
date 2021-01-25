@@ -31,15 +31,17 @@ ScrollView {
 
     ListView {
         property string currentNotificationChatId
+        property bool chatButtonsHovered: false
 
         id: chatLogView
         anchors.fill: parent
         anchors.bottomMargin: Style.current.bigPadding
-        spacing: 4
+        spacing: appSettings.compactMode ? 0 : 4
         boundsBehavior: Flickable.StopAtBounds
         flickDeceleration: 10000
         Layout.fillWidth: true
         Layout.fillHeight: true
+        verticalLayoutDirection: ListView.TopToBottom
 
         Timer {
             id: timer

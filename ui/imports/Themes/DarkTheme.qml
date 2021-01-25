@@ -51,6 +51,8 @@ Theme {
     property color topBarChatInfoColor: evenDarkerGrey
     property color codeBackground: "#2E386B"
     property color primarySelectionColor: "#b4c8ff"
+    property color emojiReactionBackground: "#2d2823"
+    property color emojiReactionBackgroundHovered: "#3a3632"
 
     property color buttonForegroundColor: blue
     property color buttonBackgroundColor: secondaryBackground

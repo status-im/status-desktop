@@ -105,7 +105,6 @@ Item {
         }
     }
 
-
     Loader {
         id: mask
         anchors.fill: chatText
