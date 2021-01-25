@@ -10,9 +10,10 @@ Button {
     property string size: "large"
     property string state: "default"
     property color color: type === "warn" ? Style.current.danger : Style.current.buttonForegroundColor
-    property color bgColor: Style.current.buttonBackgroundColor
+    property color bgColor: type === "warn" ? Style.current.buttonWarnBackgroundColor : Style.current.buttonBackgroundColor
     property color borderColor: color
-    property color bgHoverColor: Qt.darker(control.bgColor, 1.1)
+    property color bgHoverColor: bgColor !== Style.current.transparent ? Qt.darker(control.bgColor, 1.1) :
+                                type === "warn" ? Style.current.buttonWarnBackgroundColor : Style.current.buttonBackgroundColor
     property bool disableColorOverlay: false
     property bool showBorder: false
     property int iconRotation: 0
@@ -106,11 +107,7 @@ Button {
                 return hovered ? control.bgColor : "transparent"
             }
             return !enabled ? Style.current.buttonDisabledBackgroundColor :
-                      hovered ?
-                        type === "warn" ? Qt.darker(Style.current.buttonWarnBackgroundColor, 1.1) :
-                            control.bgHoverColor :
-                                type === "warn" ? Style.current.buttonWarnBackgroundColor :
-                                    control.bgColor
+                      hovered ? control.bgHoverColor : control.bgColor
         }
     }
 
