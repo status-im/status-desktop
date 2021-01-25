@@ -189,6 +189,7 @@ Item {
             anchors.topMargin: 26
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 13
+            type: "secondary"
             onClicked: {
                 setCurrentFlow(false);
                 onGenKeyClicked()
