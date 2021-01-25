@@ -190,7 +190,6 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 13
             bgColor: Style.current.transparent
-            state: "disabled"
             onClicked: {
                 setCurrentFlow(false);
                 onGenKeyClicked()
