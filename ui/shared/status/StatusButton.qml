@@ -106,7 +106,7 @@ Button {
             if (type === "secondary") {
                 return hovered ? control.bgColor : "transparent"
             }
-            return !enabled ? (control.bgColor == Style.current.transparent ? control.bgColor : Style.current.buttonDisabledBackgroundColor) :
+            return !enabled ? (control.bgColor === Style.current.transparent ? control.bgColor : Style.current.buttonDisabledBackgroundColor) :
                       (hovered ? control.bgHoverColor : control.bgColor)
         }
     }
