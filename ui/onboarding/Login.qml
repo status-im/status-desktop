@@ -189,7 +189,7 @@ Item {
             anchors.topMargin: 26
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 13
-            bgColor: Style.current.transparent
+            type: "secondary"
             onClicked: {
                 setCurrentFlow(false);
                 onGenKeyClicked()
