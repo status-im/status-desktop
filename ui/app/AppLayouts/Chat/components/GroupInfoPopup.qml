@@ -13,18 +13,19 @@ ModalPopup {
     property int memberCount: 1
     readonly property int maxMembers: 10
     property var pubKeys: []
+    property var channel
     property bool isAdmin: false
 
     function resetSelectedMembers(){
         pubKeys = [];
-        memberCount = chatsModel.activeChannel.members.rowCount();
+        memberCount = channel.members.rowCount();
         currMemberCount = memberCount;
         contactList.membersData.clear();
 
         const contacts = chatView.getContactListObject()
 
         contacts.forEach(function (contact) {
-            if(chatsModel.activeChannel.contains(contact.pubKey) ||
+            if(popup.channel.contains(contact.pubKey) ||
                     !contact.isContact) {
                 return;
             }
@@ -32,16 +33,21 @@ ModalPopup {
         })
     }
 
+    function openMenu(channel) {
+        popup.channel = channel
+        popup.open()
+    }
+
     onOpened: {
         addMembers = false;
-        popup.isAdmin = chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
+        popup.isAdmin = popup.channel.isAdmin(profileModel.profile.pubKey)
         btnSelectMembers.enabled = false;
         resetSelectedMembers();
     }
 
     function doAddMembers(){
         if(pubKeys.length === 0) return;
-        chatsModel.groups.addMembers(chatsModel.activeChannel.id, JSON.stringify(pubKeys));
+        chatsModel.groups.addMembers(popup.channel.id, JSON.stringify(pubKeys));
         popup.close();
     }
 
@@ -55,14 +61,14 @@ ModalPopup {
           width: 36
           height: 36
           anchors.top: parent.top
-          color: chatsModel.activeChannel.color
-          chatName: chatsModel.activeChannel.name
+          color: popup.channel.color
+          chatName: popup.channel.name
       }
     
       StyledTextEdit {
           id: groupName
           //% "Add members"
-          text: addMembers ? qsTrId("add-members") : chatsModel.activeChannel.name
+          text: addMembers ? qsTrId("add-members") : popup.channel.name
           anchors.top: parent.top
           anchors.topMargin: 2
           anchors.left: letterIdenticon.right
@@ -174,7 +180,7 @@ ModalPopup {
                         pubKeys.splice(idx, 1);
                     }
                 }
-                memberCount = chatsModel.activeChannel.members.rowCount() + pubKeys.length;
+                memberCount = popup.channel.members.rowCount() + pubKeys.length;
                 btnSelectMembers.enabled = pubKeys.length > 0
             }
         }
@@ -201,7 +207,7 @@ ModalPopup {
             spacing: 15
             Layout.fillWidth: true
             Layout.fillHeight: true
-            model: chatsModel.activeChannel.members
+            model: popup.channel.members
             delegate: Item {
                 id: contactRow
                 width: parent.width
@@ -273,14 +279,14 @@ ModalPopup {
                                 icon.source: "../../../img/make-admin.svg"
                                 //% "Make Admin"
                                 text: qsTrId("make-admin")
-                                onTriggered: chatsModel.groups.makeAdmin(chatsModel.activeChannel.id,  model.pubKey)
+                                onTriggered: chatsModel.groups.makeAdmin(popup.channel.id,  model.pubKey)
                             }
                             Action {
                                 icon.source: "../../../img/remove-from-group.svg"
                                 icon.color: Style.current.red
                                 //% "Remove From Group"
                                 text: qsTrId("remove-from-group")
-                                onTriggered: chatsModel.groups.kickMember(chatsModel.activeChannel.id,  model.pubKey)
+                                onTriggered: chatsModel.groups.kickMember(popup.channel.id,  model.pubKey)
                             }
                         }
                     }

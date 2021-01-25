@@ -168,12 +168,13 @@ Rectangle {
           wrapper.hovered = false
         }
         onClicked: {
-            chatsModel.setActiveChannelByIndex(index)
-            chatGroupsListView.currentIndex = index
             if (mouse.button & Qt.RightButton) {
-                channelContextMenu.openMenu(chatsModel.activeChannel, index)
+                chatsModel.setContextChannel(chatId)
+                channelContextMenu.openMenu(chatsModel.contextChannel, index)
                 return;
             }
+            chatsModel.setActiveChannelByIndex(index)
+            chatGroupsListView.currentIndex = index
         }
     }
 
