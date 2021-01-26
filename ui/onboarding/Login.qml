@@ -161,19 +161,6 @@ Item {
             }
         }
 
-        MessageDialog {
-            id: loginError
-            title: qsTr("Login failed")
-            text: qsTr("Login failed. Please re-enter your password and try again.")
-            icon: StandardIcon.Critical
-            standardButtons: StandardButton.Ok
-            onAccepted: {
-                txtPassword.textField.clear()
-                txtPassword.textField.focus = true
-                loading = false
-            }
-        }
-
         Connections {
             target: loginModel
             ignoreUnknownSignals: true
