@@ -83,8 +83,8 @@ proc hex2Eth*(input: string): string =
 proc validateMnemonic*(mnemonic: string): string =
   result = $nim_status.validateMnemonic(mnemonic)
 
-proc startWallet*() =
-  discard nim_status.startWallet()
+proc startWallet*(watchNewBlocks = true) =
+  discard nim_status.startWallet(watchNewBlocks)
 
 proc hex2Token*(input: string, decimals: int): string =
   var value = fromHex(Stuint[256], input)
