@@ -135,6 +135,10 @@ Item {
             Keys.onReturnPressed: {
                 submitBtn.clicked()
             }
+            onTextEdited: {
+                errMsg.visible = false
+                loading = false
+            }
         }
         StatusRoundButton {
             id: submitBtn
@@ -176,7 +180,8 @@ Item {
             onLoginResponseChanged: {
                 if (error) {
                     errorSound.play()
-                    loginError.open()
+                    errMsg.visible = true;
+
                 }
             }
         }
@@ -186,7 +191,7 @@ Item {
             //% "Generate new keys"
             text: qsTrId("generate-new-keys")
             anchors.top: txtPassword.bottom
-            anchors.topMargin: 26
+            anchors.topMargin: 16
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 13
             type: "secondary"
@@ -194,6 +199,17 @@ Item {
                 setCurrentFlow(false);
                 onGenKeyClicked()
             }
+        }
+
+        StyledText {
+            id: errMsg
+            anchors.top: generateKeysLinkText.bottom
+            anchors.topMargin: Style.current.smallPadding
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: false
+            text: qsTr("Login failed. Please re-enter your password and try again.")
+            font.pixelSize: 13
+            color: Style.current.danger
         }
     }
 }
