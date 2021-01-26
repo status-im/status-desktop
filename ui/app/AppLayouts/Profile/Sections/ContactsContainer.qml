@@ -69,6 +69,7 @@ Item {
             anchors.top: addNewContact.bottom
             anchors.topMargin: Style.current.bigPadding
             width: blockButton.width + blockButtonLabel.width + Style.current.padding
+            visible: profileModel.contacts.blockedContacts.rowCount() > 0
             height: addButton.height
 
             StatusRoundButton {
@@ -233,8 +234,10 @@ Item {
 
         Item {
             id: element
-            visible: profileModel.contacts.list.rowCount() === 0
-            anchors.fill: parent
+            visible: profileModel.contacts.addedContacts.rowCount() === 0
+            anchors.top: addNewContact.bottom
+            width: parent.width
+            anchors.bottom: parent.bottom
 
             StyledText {
                 id: noFriendsText
@@ -257,10 +260,9 @@ Item {
                     inviteFriendsPopup.open()
                 }
             }
-
-            InviteFriendsPopup {
-                id: inviteFriendsPopup
-            }
+        }
+        InviteFriendsPopup {
+            id: inviteFriendsPopup
         }
     }
 }
