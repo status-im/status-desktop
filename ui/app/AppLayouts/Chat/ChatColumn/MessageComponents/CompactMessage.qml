@@ -18,7 +18,8 @@ Item {
     id: root
 
     width: parent.width
-    height: messageContainer.height
+    height: messageContainer.height + messageContainer.anchors.topMargin
+            + (dateGroupLbl.visible ? dateGroupLbl.height + dateGroupLbl.anchors.topMargin : 0)
 
     MouseArea {
         anchors.fill: messageContainer
@@ -47,10 +48,16 @@ Item {
         }
     }
 
+    DateGroup {
+        id: dateGroupLbl
+    }
+
     Rectangle {
         property alias chatText: chatText
 
         id: messageContainer
+        anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
+        anchors.topMargin: dateGroupLbl.visible ? Style.current.padding : 0
         height: childrenRect.height + (chatName.visible || emojiReactionLoader.active ? Style.current.smallPadding : 0)
                 + (chatName.visible && emojiReactionLoader.active ? 5 : 0)
                 + (emojiReactionLoader.active ? emojiReactionLoader.height: 0)
@@ -60,16 +67,12 @@ Item {
         color: root.isHovered || isMessageActive ? (hasMention ? Style.current.mentionMessageHoverColor : Style.current.backgroundHover) :
                                                    (hasMention ? Style.current.mentionMessageColor : Style.current.transparent)
 
-        // FIXME @jonathanr: Adding this breaks the first line. Need to fix the height somehow
-        //    DateGroup {
-        //        id: dateGroupLbl
-        //    }
+
 
         UserImage {
             id: chatImage
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
-            //        anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
             anchors.top: parent.top
             anchors.topMargin: Style.current.smallPadding
         }
@@ -77,7 +80,6 @@ Item {
         UsernameLabel {
             id: chatName
             anchors.leftMargin: root.chatHorizontalPadding
-            //        anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
             anchors.top: chatImage.top
             anchors.left: chatImage.right
         }
