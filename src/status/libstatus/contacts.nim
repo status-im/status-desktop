@@ -1,4 +1,4 @@
-import json
+import json, strmisc
 import core, utils, types, settings
 from ../profile/profile import Profile
 
@@ -26,7 +26,7 @@ proc getContacts*(): JsonNode =
     return %* []
   return response["result"]
 
-proc saveContact*(id: string, ensVerified: bool, ensName: string, ensVerifiedAt: int, ensVerificationRetries: int, alias: string, identicon: string, systemTags: seq[string], localNickname: string): string =
+proc saveContact*(id: string, ensVerified: bool, ensName: string, ensVerifiedAt: int, ensVerificationRetries: int, alias: string, identicon: string, thumbnail: string, systemTags: seq[string], localNickname: string): string =
   let payload = %* [{
       "id": id,
       "name": ensName,
@@ -35,6 +35,7 @@ proc saveContact*(id: string, ensVerified: bool, ensName: string, ensVerifiedAt:
       "ensVerificationRetries": ensVerificationRetries,
       "alias": alias,
       "identicon": identicon,
+      "images": {"thumbnail": {"Payload": thumbnail.partition(",")[2]}},
       "systemTags": systemTags,
       "localNickname": localNickname
     }]

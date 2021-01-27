@@ -1,3 +1,4 @@
+import NimQml, chronicles, os, strformat
 import json, sequtils, sugar
 import libstatus/contacts as status_contacts
 import libstatus/accounts as status_accounts
@@ -40,7 +41,7 @@ proc blockContact*(self: ContactModel, id: string): string =
 proc unblockContact*(self: ContactModel, id: string): string =
   var contact = self.getContactByID(id)
   contact.systemTags.delete(contact.systemTags.find(":contact/blocked"))
-  discard status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries,contact.alias, contact.identicon, contact.systemTags, contact.localNickname)
+  discard status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries,contact.alias, contact.identicon, contact.identityImage.thumbnail, contact.systemTags, contact.localNickname)
   self.events.emit("contactUnblocked", Args())
 
 proc getAllContacts*(): seq[Profile] =
@@ -81,7 +82,7 @@ proc addContact*(self: ContactModel, id: string, localNickname: string): string 
       ""
     else:
       localNickname
-  result = status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.systemTags, nickname)
+  result = status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.identityImage.thumbnail, contact.systemTags, nickname)
   self.events.emit("contactAdded", Args())
   discard requestContactUpdate(contact.id)
   if updating:
@@ -106,7 +107,7 @@ proc addContact*(self: ContactModel, id: string): string =
 proc removeContact*(self: ContactModel, id: string) =
   let contact = self.getContactByID(id)
   contact.systemTags.delete(contact.systemTags.find(":contact/added"))
-  discard status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.systemTags, contact.localNickname)
+  discard status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.identityImage.thumbnail, contact.systemTags, contact.localNickname)
   self.events.emit("contactRemoved", Args())
 
 proc isAdded*(self: ContactModel, id: string): bool =
