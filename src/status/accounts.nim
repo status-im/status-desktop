@@ -3,12 +3,13 @@ import libstatus/accounts as status_accounts
 import libstatus/settings as status_settings
 import libstatus/types
 import libstatus/utils
+import nim_status/lib/accounts as nim_status_account
 import ../eventemitter
 
 type
   AccountModel* = ref object
     generatedAddresses*: seq[GeneratedAccount]
-    nodeAccounts*: seq[NodeAccount]
+    nodeAccounts*: seq[nim_status_account.Account]
     events: EventEmitter
 
 proc newAccountModel*(events: EventEmitter): AccountModel =
@@ -26,15 +27,15 @@ proc generateAddresses*(self: AccountModel): seq[GeneratedAccount] =
 proc openAccounts*(self: AccountModel): seq[NodeAccount] =
   result = status_accounts.openAccounts()
 
-proc login*(self: AccountModel, selectedAccountIndex: int, password: string): NodeAccount =
+proc login*(self: AccountModel, selectedAccountIndex: int, password: string): nim_status_account.Account =
   let currentNodeAccount = self.nodeAccounts[selectedAccountIndex]
   result = status_accounts.login(currentNodeAccount, password)
 
-proc storeAccountAndLogin*(self: AccountModel, fleetConfig: FleetConfig, selectedAccountIndex: int, password: string): Account =
+proc storeAccountAndLogin*(self: AccountModel, fleetConfig: FleetConfig, selectedAccountIndex: int, password: string): types.Account =
   let generatedAccount: GeneratedAccount = self.generatedAddresses[selectedAccountIndex]
   result = status_accounts.setupAccount(fleetConfig, generatedAccount, password)
 
-proc storeDerivedAndLogin*(self: AccountModel, fleetConfig: FleetConfig, importedAccount: GeneratedAccount, password: string): Account =
+proc storeDerivedAndLogin*(self: AccountModel, fleetConfig: FleetConfig, importedAccount: GeneratedAccount, password: string): types.Account =
   result = status_accounts.setupAccount(fleetConfig, importedAccount, password)
 
 proc importMnemonic*(self: AccountModel, mnemonic: string): GeneratedAccount =

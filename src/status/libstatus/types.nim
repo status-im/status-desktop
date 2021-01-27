@@ -2,6 +2,7 @@ import json, options, typetraits, tables, sequtils
 import web3/ethtypes, json_serialization, stint
 import accounts/constants
 import ../../eventemitter
+import nim_status/lib/accounts as nim_status_accounts
 
 type SignalType* {.pure.} = enum
   Message = "messages.new"
@@ -96,8 +97,8 @@ type
 proc toAccount*(account: GeneratedAccount): Account =
   result = Account(name: account.name, identityImage: account.identityImage, identicon: account.identicon, keyUid: account.address)
 
-proc toAccount*(account: NodeAccount): Account =
-  result = Account(name: account.name, identityImage: account.identityImage, identicon: account.identicon, keyUid: account.keyUid)
+proc toAccount*(account: nim_status_accounts.Account): Account = #TODO: this might not be
+  result = Account(name: account.name, identicon: account.identicon, keyUid: account.keyUid)
 
 type AccountArgs* = ref object of Args
     account*: Account

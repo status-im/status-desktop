@@ -37,7 +37,8 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	run-windows \
 	set-status-macos-dev-icon \
 	status-go \
-	update
+	update \
+	migrations
 
 ifeq ($(NIM_PARAMS),)
 # "variables.mk" was not included, so we update the submodules.
@@ -230,6 +231,11 @@ rcc:
 	./ui/generate-rcc.sh
 	rcc -binary ui/resources.qrc -o ./resources.rcc
 
+migrations:
+	echo -e "Running migrations"
+	$(MAKE) -C vendor/nim-status/ migrations
+
+
 # default token is a free-tier token with limited capabilities and usage
 # limits; our docs should include directions for community contributor to setup
 # their own Infura account and token instead of relying on this default token
@@ -238,7 +244,7 @@ DEFAULT_TOKEN := 220a1abb4b6943a093c35d0ce4fb0732
 INFURA_TOKEN ?= $(DEFAULT_TOKEN)
 NIM_PARAMS += -d:INFURA_TOKEN:"$(INFURA_TOKEN)"
 
-nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) $(FLEETS) rcc deps
+nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) $(FLEETS) rcc migrations deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \

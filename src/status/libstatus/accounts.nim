@@ -7,6 +7,7 @@ import types as types
 import accounts/constants
 import ../signals/types as signal_types
 import ../wallet/account
+import nim_status/lib/accounts as nim_status_accounts
 
 proc getNetworkConfig(currentNetwork: string): JsonNode =
   result = constants.DEFAULT_NETWORKS.first("id", currentNetwork)
@@ -203,7 +204,7 @@ proc setupAccount*(fleetConfig: FleetConfig, account: GeneratedAccount, password
     let peer = "enode://44160e22e8b42bd32a06c1532165fa9e096eebedd7fa6d6e5f8bbef0440bc4a4591fe3651be68193a7ec029021cdb496cfe1d7f9f1dc69eb99226e6f39a7a5d4@35.225.221.245:443"
     discard nim_status.addPeer(peer)
 
-proc login*(nodeAccount: NodeAccount, password: string): NodeAccount =
+proc login*(nodeAccount: nim_status_accounts.Account, password: string): nim_status_accounts.Account =
   let hashedPassword = hashPassword(password)
   let account = nodeAccount.toAccount
   let loginResult = $nim_status.login($toJson(account), hashedPassword)

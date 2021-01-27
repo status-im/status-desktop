@@ -5,6 +5,7 @@ import ../../status/libstatus/accounts as status_accounts
 import ../../status/accounts as AccountModel
 import ../onboarding/views/account_info
 import ../../status/status
+import nim_status/lib/accounts as nim_status_account
 import core
 
 type
@@ -18,7 +19,7 @@ type
 QtObject:
   type LoginView* = ref object of QAbstractListModel
     status: Status
-    accounts: seq[NodeAccount]
+    accounts: seq[nim_status_account.Account]
     currentAccount*: AccountInfoView
     isCurrentFlow*: bool
 
@@ -46,15 +47,14 @@ QtObject:
     self.currentAccount.setAccount(GeneratedAccount(
       name: currNodeAcct.name,
       identicon: currNodeAcct.identicon,
-      address: currNodeAcct.keyUid,
-      identityImage: currNodeAcct.identityImage
+      address: currNodeAcct.keyUid
     ))
 
   QtProperty[QVariant] currentAccount:
     read = getCurrentAccount
     write = setCurrentAccount
 
-  proc addAccountToList*(self: LoginView, account: NodeAccount) =
+  proc addAccountToList*(self: LoginView, account: nim_status_account.Account) =
     self.beginInsertRows(newQModelIndex(), self.accounts.len, self.accounts.len)
     self.accounts.add(account)
     if (self.accounts.len == 1):
@@ -81,7 +81,10 @@ QtObject:
     of AccountRoles.Username: result = newQVariant(asset.name)
     of AccountRoles.Identicon: result = newQVariant(asset.identicon)
     of AccountRoles.Address: result = newQVariant(asset.keyUid)
-    of AccountRoles.ThumbnailImage:
+    #[
+      THIS CODE WAS COMMENTED BECAUSE CODE FOR ACCOUNTS
+      IN NIM_STATUS IS OUTDATED
+      of AccountRoles.ThumbnailImage:
       if (not asset.identityImage.isNil):
         result = newQVariant(asset.identityImage.thumbnail)
       else:
@@ -91,6 +94,10 @@ QtObject:
         result = newQVariant(asset.identityImage.large)
       else:
         result = newQVariant(asset.identicon)
+
+    ]#
+    of AccountRoles.ThumbnailImage: result = newQVariant(asset.identicon)
+    of AccountRoles.LargeImage: result = newQVariant(asset.identicon)
 
   method roleNames(self: LoginView): Table[int, string] =
     { AccountRoles.Username.int:"username",
