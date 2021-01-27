@@ -130,6 +130,7 @@ RoundButton {
 
     background: Rectangle {
         anchors.fill: parent
+        opacity: hovered && size === "large" ? 0.2 : 1
         color: {
             if (size === "medium" || size == "small") {
                 return !enabled ? Style.current.roundedButtonSecondaryDisabledBackgroundColor :
@@ -138,7 +139,7 @@ RoundButton {
             }
             return !enabled ?
               Style.current.roundedButtonDisabledBackgroundColor : 
-              hovered ? Qt.darker(Style.current.buttonBackgroundColor, 1.1) : Style.current.roundedButtonBackgroundColor
+              hovered ? Style.current.buttonHoveredBackgroundColor : Style.current.roundedButtonBackgroundColor
         }
         radius: parent.width / 2
     }
@@ -204,6 +205,7 @@ RoundButton {
     }
 
     MouseArea {
+        hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         anchors.fill: parent
         onPressed: mouse.accepted = false
