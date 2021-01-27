@@ -4,10 +4,11 @@ import libstatus/settings as libstatus_settings
 import libstatus/types as libstatus_types
 import chat, accounts, wallet, node, network, mailservers, messages, contacts, profile, stickers, permissions, fleet
 import ../eventemitter
-
+import nim_status/lib
 export chat, accounts, node, mailservers, messages, contacts, profile, network, permissions, fleet
 
 type Status* = ref object
+  statusObject*: StatusObject
   events*: EventEmitter
   fleet*: FleetModel
   chat*: ChatModel
@@ -41,6 +42,7 @@ proc newStatusInstance*(fleetConfig: string): Status =
 
 proc initNode*(self: Status) = 
   libstatus_accounts.initNode()
+  echo "ABCD"
 
 proc startMessenger*(self: Status) =
   libstatus_core.startMessenger()
