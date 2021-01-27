@@ -57,6 +57,7 @@ Theme {
     property color buttonDisabledForegroundColor: buttonSecondaryColor
     property color buttonDisabledBackgroundColor: grey
     property color buttonWarnBackgroundColor: "#FFEAEE"
+    property color buttonHoveredBackgroundColor: blue
 
     property color roundedButtonForegroundColor: buttonForegroundColor
     property color roundedButtonBackgroundColor: secondaryBackground
