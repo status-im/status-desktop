@@ -1,4 +1,3 @@
-import NimQml, chronicles, os, strformat
 import json, sequtils, sugar
 import libstatus/contacts as status_contacts
 import libstatus/accounts as status_accounts
