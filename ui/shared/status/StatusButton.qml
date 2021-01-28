@@ -12,14 +12,23 @@ Button {
     property color color: type === "warn" ? Style.current.danger : Style.current.buttonForegroundColor
     property color bgColor: type === "warn" ? Style.current.buttonWarnBackgroundColor : Style.current.buttonBackgroundColor
     property color borderColor: color
-    property color bgHoverColor: bgColor !== Style.current.transparent ? Qt.darker(control.bgColor, 1.1) :
-                                type === "warn" ? Style.current.buttonWarnBackgroundColor : Style.current.buttonBackgroundColor
+    property color hoveredBorderColor
+    property color bgHoverColor: {
+        if (type === "warn") {
+            if (showBorder) {
+                return Style.current.buttonWarnBackgroundColor
+            }
+            return Utils.setColorAlpha(Style.current.buttonHoveredWarnBackgroundColor, 0.2)
+        }
+        return Utils.setColorAlpha(Style.current.buttonHoveredBackgroundColor, 0.2)
+    }
     property bool disableColorOverlay: false
     property bool showBorder: false
     property int iconRotation: 0
 
     id: control
     font.pixelSize: size === "small" ? 13 : 15
+    font.family: Style.current.fontRegular.name
     font.weight: Font.Medium
     implicitHeight: flat ? 32 : (size === "small" ? 38 : 44)
     implicitWidth: buttonLabel.implicitWidth + (flat ? 3* Style.current.halfPadding : 2 * Style.current.padding) +
@@ -69,8 +78,15 @@ Button {
             anchors.right: iconLoader.active ? undefined : parent.right
             anchors.left: iconLoader.active ? iconLoader.right : parent.left
             anchors.leftMargin: iconLoader.active ? Style.current.smallPadding : 0
-            color: !enabled ? Style.current.buttonDisabledForegroundColor : 
-              (type !== "warn" && (hovered || highlighted)) ? Style.current.blue : control.color
+            color: {
+              if (!enabled) {
+                return Style.current.buttonDisabledForegroundColor
+              } else if (type !== "warn" && (hovered || highlighted)) {
+                  return control.color !== Style.current.buttonForegroundColor ?
+                    control.color : Style.current.blue
+              }
+              return control.color
+            }
             visible: !loadingIndicator.active
         }
 
@@ -98,7 +114,15 @@ Button {
         radius: Style.current.radius
         anchors.fill: parent
         border.width: flat || showBorder ? 1 : 0
-        border.color: hovered || showBorder ? control.borderColor : Style.current.transparent
+        border.color: {
+          if (hovered) {
+              return !!control.hoveredBorderColor ? control.hoveredBorderColor : control.borderColor
+          }
+          if (showBorder) {
+              return control.borderColor
+          }
+          return Style.current.transparent
+        }
         color: {
             if (flat) {
                 return "transparent"
