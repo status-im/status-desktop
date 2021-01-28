@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import "../../imports"
 import "../../shared"
+import "../../shared/status"
 
 ModalPopup {
     property var onOpenModalClick: function () {}
@@ -16,12 +17,12 @@ ModalPopup {
         anchors.top: parent.top
     }
 
-    footer: StyledButton {
+    footer: StatusButton {
         anchors.bottom: parent.bottom
         anchors.topMargin: Style.current.padding
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        label: "Add another existing key"
+        text: "Add another existing key"
 
         onClicked : {
             onOpenModalClick()

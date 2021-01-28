@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
 import "../../../../../imports"
 import "../../../../../shared"
+import "../../../../../shared/status"
 
 Item {
     property string ensUsername: ""
@@ -69,13 +70,13 @@ Item {
         wrapMode: Text.WordWrap
     }
 
-    StyledButton {
+    StatusButton {
         id: startBtn
         anchors.top: subtitle.bottom
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
         //% "Ok, got it"
-        label: qsTrId("ens-got-it")
+        text: qsTrId("ens-got-it")
         onClicked: okBtnClicked()
     }
 }

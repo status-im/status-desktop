@@ -299,11 +299,11 @@ ModalPopup {
         visible: popup.isAdmin
         width: parent.width
         height: children[0].height
-        StyledButton {
+        StatusButton {
           visible: !addMembers
           anchors.right: parent.right
           //% "Add members"
-          label: qsTrId("add-members")
+          text: qsTrId("add-members")
           anchors.bottom: parent.bottom
           onClicked: {
             addMembers = true;
@@ -325,13 +325,13 @@ ModalPopup {
             }
         }
 
-        StyledButton {
+        StatusButton {
           id: btnSelectMembers
           visible: addMembers
-          disabled: memberCount <= currMemberCount
+          enabled: memberCount >= currMemberCount
           anchors.right: parent.right
           //% "Add selected"
-          label: qsTrId("add-selected")
+          text: qsTrId("add-selected")
           anchors.bottom: parent.bottom
           onClicked: doAddMembers()
         }

@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Controls.Universal 2.12
 import "../shared"
+import "../shared/status"
 import "../imports"
 
 Page {
@@ -66,25 +67,23 @@ Page {
         }
 
 
-        StyledButton {
+        StatusButton {
             id: btnGenKey
-            height: 44
             anchors.top: txtDesc1.bottom
             anchors.topMargin: 40
             anchors.horizontalCenter: parent.horizontalCenter
             //% "I'm new, generate keys"
-            label: qsTrId("im-new,-generate-keys")
+            text: qsTrId("im-new,-generate-keys")
         }
 
-        StyledButton {
+        StatusButton {
             id: btnExistingKey
             //% "Access existing key"
-            label: qsTrId("access-existing-key")
+            text: qsTrId("access-existing-key")
             anchors.top: btnGenKey.bottom
             anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: parent.horizontalCenter
-            height: 44
-            background: Rectangle {color: "transparent"}
+            type: "secondary"
         }
     }
 }

@@ -165,9 +165,9 @@ ModalPopup {
                     wrapMode: Text.WordWrap
                     horizontalAlignment: Text.AlignHCenter
                 }
-                StyledButton {
+                StatusButton {
                     //% "Invite friends"
-                    label: qsTrId("invite-friends")
+                    text: qsTrId("invite-friends")
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: noContacts.bottom
                     anchors.topMargin: Style.current.xlPadding
