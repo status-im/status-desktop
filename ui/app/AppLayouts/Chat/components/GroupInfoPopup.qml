@@ -304,28 +304,18 @@ ModalPopup {
           }
         }
 
-        Button {
+        StatusRoundButton {
             id: btnBack
             visible: addMembers
-            width: 44
-            height: 44
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            SVGImage {
-                source: "../../../img/arrow-left-btn-active.svg"
-                width: 50
-                height: 50
-            }
-            background: Rectangle {
-                color: "transparent"
-            }
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: parent
-                onClicked : {
-                    addMembers = false;
-                    resetSelectedMembers();
-                }
+            icon.name: "arrow-right"
+            icon.width: 20
+            icon.height: 16
+            rotation: 180
+            onClicked : {
+                addMembers = false;
+                resetSelectedMembers();
             }
         }
 

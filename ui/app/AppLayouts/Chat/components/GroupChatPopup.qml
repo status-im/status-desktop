@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import QtQml.Models 2.3
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 import "./"
 
 ModalPopup {
@@ -21,7 +22,6 @@ ModalPopup {
         selectChatMembers = true;
         memberCount = 1;
         pubKeys = [];
-        btnSelectMembers.state = "inactive";
 
         contactList.membersData.clear();
 
@@ -139,7 +139,7 @@ ModalPopup {
                 }
             }
             memberCount = pubKeys.length + 1;
-            btnSelectMembers.state = pubKeys.length > 0 ? "active" : "inactive"
+            btnSelectMembers.enabled = pubKeys.length > 0
         }
     }
 
@@ -147,71 +147,34 @@ ModalPopup {
         width: parent.width
         height: btnSelectMembers.height
 
-        Button {
+        StatusRoundButton {
             id: btnSelectMembers
             visible: selectChatMembers
-            width: 44
-            height: 44
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            state: "inactive"
-            states: [
-                State {
-                    name: "inactive"
-                    PropertyChanges {
-                        target: btnSelectMembersImg
-                        source: "../../../img/arrow-right-btn-inactive.svg"
-                    }
-                },
-                State {
-                    name: "active"
-                    PropertyChanges {
-                        target: btnSelectMembersImg
-                        source: "../../../img/arrow-right-btn-active.svg"
-                    }
-                }
-            ]
-            SVGImage {
-                id: btnSelectMembersImg
-                width: 50
-                height: 50
-            }
-            background: Rectangle {
-                color: "transparent"
-            }
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: parent
-                onClicked : {
-                    if(pubKeys.length > 0)
-                        selectChatMembers = false
-                        searchBox.text = ""
-                        groupName.forceActiveFocus(Qt.MouseFocusReason)
-                }
+            icon.name: "arrow-right"
+            icon.width: 20
+            icon.height: 16
+            enabled: !!pubKeys.length
+            onClicked : {
+                if(pubKeys.length > 0)
+                    selectChatMembers = false
+                    searchBox.text = ""
+                    groupName.forceActiveFocus(Qt.MouseFocusReason)
             }
         }
 
-        Button {
+        StatusRoundButton {
             id: btnBack
             visible: !selectChatMembers
-            width: 44
-            height: 44
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            SVGImage {
-                source: "../../../img/arrow-left-btn-active.svg"
-                width: 50
-                height: 50
-            }
-            background: Rectangle {
-                color: "transparent"
-            }
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: parent
-                onClicked : {
-                    selectChatMembers = true
-                }
+            icon.name: "arrow-right"
+            icon.width: 20
+            icon.height: 16
+            rotation: 180
+            onClicked : {
+                selectChatMembers = true
             }
         }
 
