@@ -6,6 +6,9 @@ import view
 import ../../status/accounts as status_accounts
 import ../../eventemitter
 import nim_status/lib
+import nim_status
+import ../../status/libstatus/accounts/constants
+
 
 type LoginController* = ref object
   status*: Status
@@ -33,6 +36,9 @@ proc handleNodeLogin(self: LoginController, response: NodeSignal) =
       self.status.events.emit("login", AccountArgs(account: self.view.currentAccount.account.toAccount))
 
 proc init*(self: LoginController) =
+  # NOTE: calling status-go openAccounts here because openAccounts sets the root datadir
+  discard nim_status.openAccounts(DATADIR)
+
   let nodeAccounts = self.status.nimStatus.openAccounts()
   self.status.accounts.nodeAccounts = nodeAccounts
   for nodeAccount in nodeAccounts:
