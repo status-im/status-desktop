@@ -354,7 +354,7 @@ ModalPopup {
         UnblockContactConfirmationDialog {
             id: unblockContactConfirmationDialog
             onUnblockButtonClicked: {
-                profileModel.unblockContact(fromAuthor)
+                profileModel.contacts.unblockContact(fromAuthor)
                 unblockContactConfirmationDialog.close();
                 popup.close()
                 contactUnblocked(fromAuthor)
