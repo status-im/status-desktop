@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtGraphicalEffects 1.13
 import "../../../../../imports"
 import "../../../../../shared"
+import "../../../../../shared/status"
 
 ModalPopup {
     property string collectibleName: "Furbeard"
@@ -32,11 +33,11 @@ ModalPopup {
         collectibleDescription: popup.collectibleDescription
     }
 
-    footer: StyledButton {
+    footer: StatusButton {
         visible: !!popup.buttonLink
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        label: popup.buttonText
+        text: popup.buttonText
         anchors.top: parent.top
         onClicked: {
             appMain.openLink(popup.buttonLink)

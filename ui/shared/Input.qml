@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import "../imports"
+import "../shared/status"
 import "."
 
 Item {
@@ -84,7 +85,7 @@ Item {
             anchors.topMargin: 0
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 0
-            anchors.right: parent.right
+            anchors.right: clipboardButtonLoader.active ? clipboardButtonLoader.left : parent.right
             anchors.rightMargin: parent.rightMargin
             anchors.left: parent.left
             anchors.leftMargin: 0
@@ -111,6 +112,7 @@ Item {
         }
 
         Loader {
+            id: clipboardButtonLoader
             active: inputBox.copyToClipboard || inputBox.pasteFromClipboard
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
@@ -124,10 +126,10 @@ Item {
                         id: timer
                     }
 
-                    StyledButton {
+                    StatusButton {
                         property bool copied: false
                         id: copyBtn
-                        label: {
+                        text: {
                             if (copied) {
                                 return inputBox.copyToClipboard ?
                                             //% "Copied"
@@ -141,9 +143,9 @@ Item {
 
                         }
                         height: 28
-                        textSize: 12
-                        btnBorderColor: Style.current.blue
-                        btnBorderWidth: 1
+                        font.pixelSize: 12
+                        borderColor: Style.current.blue
+                        showBorder: true
                         onClicked: {
                             if (inputBox.copyToClipboard) {
                                 chatsModel.copyToClipboard(inputValue.text)

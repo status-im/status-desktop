@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 import "./"
 
 ModalPopup {
@@ -95,14 +96,14 @@ ModalPopup {
         color: popup.nicknameTooLong ? Style.current.danger : Style.current.secondaryText
     }
 
-    footer: StyledButton {
+    footer: StatusButton {
         id: doneBtn
         anchors.right: parent.right
         anchors.rightMargin: Style.current.smallPadding
         //% "Done"
-        label: qsTrId("done")
+        text: qsTrId("done")
         anchors.bottom: parent.bottom
-        disabled: popup.nicknameTooLong
+        enabled: !popup.nicknameTooLong
         onClicked: {
             if (!isEnsVerified) {
                 // Change username title only if it was not an ENS name

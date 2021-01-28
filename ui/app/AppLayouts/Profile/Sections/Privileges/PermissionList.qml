@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../../imports"
 import "../../../../../shared"
+import "../../../../../shared/status"
 import "./"
 
 ModalPopup {
@@ -51,13 +52,10 @@ ModalPopup {
         }
     }
     
-    footer: StyledButton {
+    footer: StatusButton {
         anchors.horizontalCenter: parent.horizontalCenter
-        btnColor: Style.current.lightRed
-        btnBorderWidth: 1
-        btnBorderColor: Style.current.border
-        textColor: Style.current.red
-        label: qsTr("Revoke all access")
+        type: "warn"
+        text: qsTr("Revoke all access")
         onClicked: {
             profileModel.dappList.permissionList.revokeAccess();
             accessRevoked(dapp);

@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 
 ModalPopup {
     id: popup
@@ -211,8 +212,8 @@ ModalPopup {
 
     
 
-    footer: StyledButton {
-        label: showWarning ? 
+    footer: StatusButton {
+        text: showWarning ? 
                 qsTr("Okay, continue") : 
                 qsTrId("Next")
         anchors.right: parent.right

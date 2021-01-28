@@ -4,6 +4,7 @@ import QtQuick.Controls 2.13
 //import Qt.labs.platform 1.1
 import "../../../imports"
 import "../../../shared"
+import "../../../shared/status"
 import "./components"
 
 Item {
@@ -27,10 +28,10 @@ Item {
             id: setCurrencyModalContent
         }
 
-        footer: StyledButton {
+        footer: StatusButton {
             anchors.right: parent.right
             //% "Save"
-            label: qsTrId("save")
+            text: qsTrId("save")
             onClicked: {
                 console.log("TODO: apply all accounts")
                 popup.close()
