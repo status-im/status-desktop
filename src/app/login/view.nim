@@ -5,6 +5,7 @@ import ../../status/libstatus/accounts as status_accounts
 import ../../status/accounts as AccountModel
 import ../onboarding/views/account_info
 import ../../status/status
+import nim_status/lib
 import nim_status/lib/accounts as nim_status_account
 import core
 
@@ -108,15 +109,19 @@ QtObject:
 
   proc login(self: LoginView, password: string): string {.slot.} =
     var currentAccountId = 0
+    var keyUid = ""
     var i = 0
     for account in self.accounts:
       if (account.keyUid == self.currentAccount.address):
         currentAccountId = i
+        keyUid = account.keyUid
         break
       i = i + 1
 
     try:
-      result = self.status.accounts.login(currentAccountId, password).toJson
+      let hashedPassword = hashPassword(password)
+      self.status.nimStatus.openUserDB(keyUid, hashedPassword)
+      result = self.status.accounts.login(currentAccountId, hashedPassword).toJson
     except:
       let
         e = getCurrentException()
