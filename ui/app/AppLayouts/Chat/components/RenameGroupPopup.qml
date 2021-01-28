@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 import "./"
 
 ModalPopup {
@@ -34,13 +35,12 @@ ModalPopup {
         Keys.onReturnPressed: doRename()
     }
 
-    footer: StyledButton {
+    footer: StatusButton {
         id: saveBtn
-        height: 44
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         //% "Save"
-        label: qsTrId("save")
+        text: qsTrId("save")
         onClicked : doRename()
     }
 }

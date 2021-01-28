@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
 import "../../../../../imports"
 import "../../../../../shared"
+import "../../../../../shared/status"
 
 Item {
     signal startBtnClicked()
@@ -277,14 +278,14 @@ Item {
         }
     }
 
-    StyledButton {
+    StatusButton {
         id: startBtn
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        disabled:  profileModel.network.current !== Constants.networkMainnet // Comment this to use on testnet
+        enabled:  profileModel.network.current === Constants.networkMainnet // Comment this to use on testnet
         //% "Start"
-        label: !disabled ? 
+        text: enabled ? 
           qsTrId("start") :
           //% "Only available on Mainnet"
           qsTrId("ens-network-restriction")

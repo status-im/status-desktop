@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.13
 import QtQml.Models 2.13
 import "../../../../../imports"
 import "../../../../../shared"
+import "../../../../../shared/status"
 
 ScrollView {
     readonly property int imageSize: 164
@@ -49,9 +50,9 @@ ScrollView {
                     font.pixelSize: 13
                 }
 
-                StyledButton {
+                StatusButton {
                     //% "Reload"
-                    label: qsTrId("reload")
+                    text: qsTrId("reload")
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: somethingWentWrongText.bottom
                     anchors.topMargin: Style.current.halfPadding

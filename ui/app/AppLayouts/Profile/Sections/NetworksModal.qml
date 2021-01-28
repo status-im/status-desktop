@@ -110,12 +110,12 @@ ModalPopup {
                         networkValidationError = "";
                     }
 
-                    footer: StyledButton {
+                    footer: StatusButton {
                         anchors.right: parent.right
                         anchors.rightMargin: Style.current.smallPadding
-                        label: qsTr("Save")
+                        text: qsTr("Save")
                         anchors.bottom: parent.bottom
-                        disabled: nameInput.text == "" || rpcInput.text == ""
+                        enabled: nameInput.text !== "" && rpcInput.text !== ""
                         onClicked: {
                             if (!addNetworkPopup.validate()) {
                                 return;

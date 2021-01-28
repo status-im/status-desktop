@@ -272,10 +272,11 @@ ModalPopup {
             anchors.right: addToContactsButton.left
             anchors.rightMargin: addToContactsButton ? Style.current.padding : 0
             anchors.bottom: parent.bottom
-            type: "secondary"
-            color: Style.current.red
+            type: "warn"
             showBorder: true
+            bgColor: "transparent"
             borderColor: Style.current.border
+            hoveredBorderColor: Style.current.transparent
             text: isBlocked ?
                       qsTr("Unblock User") :
                       qsTr("Block User")
@@ -304,10 +305,11 @@ ModalPopup {
                       //% "Add to contacts"
                       qsTrId("add-to-contacts")
             anchors.bottom: parent.bottom
-            type: isAdded ? "secondary" : "primary"
-            color: isAdded ? Style.current.danger : Style.current.primary
+            type: isAdded ? "warn" : "primary"
             showBorder: isAdded
             borderColor: Style.current.border
+            bgColor: isAdded ? "transparent" : Style.current.buttonBackgroundColor
+            hoveredBorderColor: Style.current.transparent
             visible: !isBlocked
             width: visible ? implicitWidth : 0
             onClicked: {
