@@ -10,7 +10,7 @@ Item {
     property string selectedColor
     property string label: qsTr("Account color")
     property var model
-    height: chilrenRect.height
+    height: childrenRect.height
 
     StyledText {
         id: label
