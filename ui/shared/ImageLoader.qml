@@ -7,10 +7,11 @@ Rectangle {
     property bool noHover: false
     property alias source: image.source
     property alias fillMode: image.fillMode
+    property bool showLoadingIndicator: true
     signal loaded
     signal clicked
     color: Style.current.backgroundHover
-    state: "loading"
+    state: showLoadingIndicator ? "loading" : "ready"
     radius: width / 2
     states: [
         State {

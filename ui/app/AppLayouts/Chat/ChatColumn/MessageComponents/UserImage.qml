@@ -22,7 +22,7 @@ Loader {
                     if (profileImageSource) {
                         return profileImageSource
                     }
-
+                    identiconImage.showLoadingIndicator = false
                     return !isCurrentUser ? identicon : profileModel.profile.identicon
                 }
                 smooth: false

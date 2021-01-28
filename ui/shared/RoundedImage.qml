@@ -5,6 +5,7 @@ Rectangle {
     id: root
     signal clicked
     property bool noHover: false
+    property alias showLoadingIndicator: imgStickerPackThumb.showLoadingIndicator
     property alias source: imgStickerPackThumb.source
     property alias fillMode: imgStickerPackThumb.fillMode
 
