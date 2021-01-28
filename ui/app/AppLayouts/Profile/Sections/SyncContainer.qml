@@ -98,12 +98,12 @@ Item {
                 enodeValidationError = "";
             }
 
-            footer: StyledButton {
+            footer: StatusButton {
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.smallPadding
-                label: qsTr("Save")
+                text: qsTr("Save")
                 anchors.bottom: parent.bottom
-                disabled: nameInput.text == "" || enodeInput.text == ""
+                enabled: nameInput.text !== "" && enodeInput.text !== ""
                 onClicked: {
                     if (!addMailserverPopup.validate()) {
                         return;

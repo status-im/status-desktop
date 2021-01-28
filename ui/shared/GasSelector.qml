@@ -127,16 +127,15 @@ Item {
         }
     }
 
-    StyledButton {
+    StatusButton {
         id: buttonReset
         anchors.top: sliderWrapper.bottom
         anchors.topMargin: sliderWrapper.visible ? Style.current.smallPadding : 0
         anchors.right: buttonAdvanced.left
-        anchors.rightMargin: -Style.current.padding
-        //% "Reset"
-        label: qsTrId("reset")
-        btnColor: "transparent"
-        textSize: 13
+        anchors.rightMargin: Style.current.padding
+        text: qsTr("Reset")
+        flat: true
+        font.pixelSize: 13
         visible: !sliderWrapper.visible
         onClicked: {
             gasSlider.value = root.defaultGasPrice()
@@ -144,16 +143,15 @@ Item {
         }
     }
 
-    StyledButton {
+    StatusButton {
         id: buttonAdvanced
         anchors.top: sliderWrapper.bottom
         anchors.topMargin: sliderWrapper.visible ? Style.current.smallPadding : 0
         anchors.right: parent.right
         anchors.rightMargin: -Style.current.padding
-        //% "Advanced"
-        label: qsTrId("advanced")
-        btnColor: "transparent"
-        textSize: 13
+        text: qsTr("Advanced")
+        flat: true
+        font.pixelSize: 13
         onClicked: {
             customNetworkFeeDialog.open()
         }
@@ -267,14 +265,14 @@ Item {
             color: Style.current.secondaryText
         }
 
-        footer: StyledButton {
+        footer: StatusButton {
             id: applyButton
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
             //% "Apply"
-            label: qsTrId("invalid-key-confirm")
+            text: qsTrId("invalid-key-confirm")
             anchors.bottom: parent.bottom
-            disabled: !customNetworkFeeDialog.isValid
+            enabled: customNetworkFeeDialog.isValid
             onClicked: {
                 if (customNetworkFeeDialog.validate()) {
                     root.updateGasEthValue()

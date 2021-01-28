@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.13
 import "../components"
 import "../data/channelList.js" as ChannelJSON
 import "../../../../shared"
+import "../../../../shared/status"
 import "../../../../imports"
 
 Rectangle {
@@ -80,9 +81,9 @@ Rectangle {
             anchors.leftMargin: Style.current.xlPadding
         }
 
-        StyledButton {
+        StatusButton {
             //% "Invite friends"
-            label: qsTrId("invite-friends")
+            text: qsTrId("invite-friends")
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: Style.current.xlPadding

@@ -126,10 +126,10 @@ Popup {
                     }
                 }
 
-                StyledButton {
+                StatusButton {
                     visible: lblNoStickersYet.visible
                     //% "Get Stickers"
-                    label: qsTrId("get-stickers")
+                    text: qsTrId("get-stickers")
                     anchors.top: noStickersContainer.bottom
                     anchors.topMargin: Style.current.padding
                     anchors.horizontalCenter: parent.horizontalCenter

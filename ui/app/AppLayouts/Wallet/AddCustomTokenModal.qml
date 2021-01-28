@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../imports"
 import "../../../shared"
+import "../../../shared/status"
 
 ModalPopup {
     id: popup
@@ -135,15 +136,15 @@ ModalPopup {
         height: addBtn.height
         visible: editable
 
-        StyledButton {
+        StatusButton {
             id: addBtn
             anchors.top: parent.top
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
             //% "Add"
-            label: qsTrId("add")
+            text: qsTrId("add")
 
-            disabled: validationError !== "" && addressInput.text === "" || nameInput.text === "" || symbolInput.text === "" || decimalsInput.text === ""
+            enabled: validationError === "" && addressInput.text !== "" && nameInput.text !== "" && symbolInput.text !== "" && decimalsInput.text !== ""
 
             onClicked : {
                 const error = walletModel.addCustomToken(addressInput.text, nameInput.text, symbolInput.text, decimalsInput.text);

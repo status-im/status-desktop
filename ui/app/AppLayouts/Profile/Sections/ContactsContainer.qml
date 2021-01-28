@@ -209,12 +209,12 @@ Item {
                 }
 
             }
-            footer: StyledButton {
+            footer: StatusButton {
                 anchors.right: parent.right
                 anchors.leftMargin: Style.current.padding
                 //% "Add contact"
-                label: qsTrId("add-contact")
-                disabled: !contactToAddInfo.visible
+                text: qsTrId("add-contact")
+                enabled: contactToAddInfo.visible
                 anchors.bottom: parent.bottom
                 onClicked: {
                     profileModel.contacts.addContact(profileModel.contacts.contactToAddPubKey);
@@ -250,12 +250,12 @@ Item {
                 color: Style.current.darkGrey
             }
 
-            StyledButton {
+            StatusButton {
                 anchors.horizontalCenter: noFriendsText.horizontalCenter
                 anchors.top: noFriendsText.bottom
                 anchors.topMargin: Style.current.bigPadding
                 //% "Invite friends"
-                label: qsTrId("invite-friends")
+                text: qsTrId("invite-friends")
                 onClicked: function () {
                     inviteFriendsPopup.open()
                 }

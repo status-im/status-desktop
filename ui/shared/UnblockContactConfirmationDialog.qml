@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../imports"
+import "../shared/status"
 import "./"
 
 ModalPopup {
@@ -31,14 +32,11 @@ ModalPopup {
         width: parent.width
         height: children[0].height
 
-        StyledButton {
+        StatusButton {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
-            btnColor: Style.current.lightRed
-            btnBorderWidth: 1
-            btnBorderColor: Style.current.grey
-            textColor: Style.current.red
-            label: qsTr("Unblock User")
+            type: "warn"
+            text: qsTr("Unblock User")
             anchors.bottom: parent.bottom
             onClicked: unblockContactConfirmationDialog.unblockButtonClicked()
         }

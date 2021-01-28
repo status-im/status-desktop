@@ -52,13 +52,13 @@ Item {
             anchors.topMargin: Style.current.padding
         }
 
-        StyledButton {
+        StatusButton {
             anchors.top: deviceNameTxt.bottom
             anchors.topMargin: 10
             anchors.right: deviceNameTxt.right
             //% "Continue"
-            label: qsTrId("continue")
-            disabled: deviceNameTxt.text === ""
+            text: qsTrId("continue")
+            enabled: deviceNameTxt.text !== ""
             onClicked : profileModel.devices.setName(deviceNameTxt.text.trim())
         }
     }
@@ -202,17 +202,17 @@ Item {
         }
     }
 
-    StyledButton {
+    StatusButton {
         id: syncAllBtn
         anchors.bottom: syncContainer.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        label: isSyncing ?
+        text: isSyncing ?
         //% "Syncing..."
         qsTrId("sync-in-progress") :
         //% "Sync all devices"
         qsTrId("sync-all-devices")
-        disabled: isSyncing
+        enabled: !isSyncing
         onClicked : {
             isSyncing = true;
             profileModel.devices.syncAll()
