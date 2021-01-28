@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 
 Item {
     id: signoutContainer
@@ -23,14 +24,14 @@ Item {
         font.pixelSize: 20
     }
 
-    StyledButton {
+    StatusButton {
         id: btnLogout
         anchors.top: txtTitle.bottom
         anchors.topMargin: Style.current.padding
         //% "Logout"
-        // label: qsTrId("logout")
+        // text: qsTrId("logout")
         //% "Exit"
-        label: qsTrId("exit")
+        text: qsTrId("exit")
 
         onClicked: {
             // profileModel.logout();

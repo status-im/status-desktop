@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../shared"
+import "../../../shared/status"
 import "../../../imports"
 
 Popup {
@@ -161,11 +162,10 @@ Popup {
             spacing: Style.current.padding
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
-            StyledButton {
-                btnColor: Utils.setColorAlpha(Style.current.danger, 0.1)
-                textColor: Style.current.danger
+            StatusButton {
+                type: "warn"
                 width: 155
-                label: qsTr("Deny")
+                text: qsTr("Deny")
                 onClicked: {
                     postMessage(false);
                     root.close();

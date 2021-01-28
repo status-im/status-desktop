@@ -178,13 +178,13 @@ ModalPopup {
             }
         }
 
-        StyledButton {
+        StatusButton {
             visible: !selectChatMembers
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             //% "Create Group Chat"
-            label: qsTrId("create-group-chat")
-            disabled: groupName.text === ""
+            text: qsTrId("create-group-chat")
+            enabled: groupName.text !== ""
             onClicked : doJoin()
         }
     }

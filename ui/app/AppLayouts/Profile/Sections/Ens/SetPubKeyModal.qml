@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 import "../../../../../imports"
 import "../../../../../shared"
+import "../../../../../shared/status"
 
 ModalPopup {
     id: root
@@ -56,7 +57,7 @@ ModalPopup {
         anchors.rightMargin: Style.current.padding
         onGroupActivated: {
             root.title = group.headerText
-            btnNext.label = group.footerText
+            btnNext.text = group.footerText
         }
         TransactionFormGroup {
             id: group1
@@ -156,12 +157,12 @@ ModalPopup {
         width: parent.width
         height: btnNext.height
         
-        StyledButton {
+        StatusButton {
             id: btnNext
             anchors.right: parent.right
             //% "Next"
-            label: qsTrId("next")
-            disabled: !stack.currentGroup.isValid
+            text: qsTrId("next")
+            enabled: stack.currentGroup.isValid
             onClicked: {
                 const validity = stack.currentGroup.validate() 
                 if (validity.isValid && !validity.isPending) { 

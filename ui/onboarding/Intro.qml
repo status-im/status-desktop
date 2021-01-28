@@ -104,11 +104,10 @@ RowLayout {
             text: qsTrId("i-understand")
         }
 
-        StyledButton {
+        StatusButton {
             id: btnGetStarted
             enabled: warningCheckBox.checked
-            btnColor: this.enabled ? Style.current.secondaryBackground : "lightgrey"
-            label: "Get Started"
+            text: "Get Started"
             anchors.top: warningCheckBox.bottom
             anchors.topMargin: 5
             anchors.horizontalCenter: parent.horizontalCenter

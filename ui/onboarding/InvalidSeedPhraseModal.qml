@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import "../imports"
 import "../shared"
+import "../shared/status"
 
 ModalPopup {
   id: popup
@@ -17,11 +18,11 @@ ModalPopup {
       font.pixelSize: 15
   }
   
-  footer: StyledButton {
+  footer: StatusButton {
       anchors.right: parent.right
       anchors.rightMargin: Style.current.smallPadding
       //% "Cancel"
-      label: qsTrId("browsing-cancel")
+      text: qsTrId("browsing-cancel")
       anchors.bottom: parent.bottom
       onClicked: {
           popup.close()

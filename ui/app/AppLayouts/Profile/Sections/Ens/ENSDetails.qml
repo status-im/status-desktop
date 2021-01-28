@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
 import "../../../../../imports"
 import "../../../../../shared"
+import "../../../../../shared/status"
 
 Item {
     property string username: ""
@@ -82,12 +83,12 @@ Item {
         anchors.topMargin: 24
     }
 
-    StyledButton {
+    StatusButton {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
         //% "Back"
-        label: qsTrId("back")
+        text: qsTrId("back")
         onClicked: backBtnClicked()
     }
 }

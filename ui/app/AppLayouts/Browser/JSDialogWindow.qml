@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtWebEngine 1.10
 import "../../../shared"
+import "../../../shared/status"
 import "../../../imports"
 
 ModalPopup {
@@ -54,10 +55,10 @@ ModalPopup {
         width: parent.width
         height: okButton.height
 
-        StyledButton {
+        StatusButton {
             id: okButton
             anchors.right: parent.right
-            label: qsTr("Ok")
+            text: qsTr("Ok")
             anchors.bottom: parent.bottom
             onClicked: {
                 request.dialogAccept(prompt.text);
@@ -65,12 +66,12 @@ ModalPopup {
             }
         }
 
-        StyledButton {
+        StatusButton {
             id: cancelButton
+            type: "secondary"
             anchors.right: okButton.left
             anchors.rightMargin: Style.current.smallPadding
-            label: qsTr("Cancel")
-            btnColor: Style.current.transparent
+            text: qsTr("Cancel")
             anchors.bottom: parent.bottom
             onClicked: {
                 request.dialogReject();
