@@ -319,17 +319,26 @@ ScrollView {
             anchors.right: parent.right
             width: parent.width
 
-            StatusButton {
-                flat: true
-                horizontalPadding: 0
-                //% "Reset notification settings"
-                text: qsTrId("reset-notification-settings")
-                type: "warn"
-                onClicked: {
-                    appSettings.notificationSetting = defaultAppSettings.notificationSetting
-                    appSettings.notificationSoundsEnabled = defaultAppSettings.notificationSoundsEnabled
-                    appSettings.notificationMessagePreviewSetting = defaultAppSettings.notificationMessagePreviewSetting
-                    appSettings.allowNotificationsFromNonContacts = defaultAppSettings.allowNotificationsFromNonContacts
+            StyledText {
+                text: qsTr("Reset notification settings")
+                font.pixelSize: 15
+                color: Style.current.danger
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onEntered: {
+                        parent.font.underline = true
+                    }
+                    onExited: {
+                        parent.font.underline = false
+                    }
+                    onClicked: {
+                        appSettings.notificationSetting = defaultAppSettings.notificationSetting
+                        appSettings.notificationSoundsEnabled = defaultAppSettings.notificationSoundsEnabled
+                        appSettings.notificationMessagePreviewSetting = defaultAppSettings.notificationMessagePreviewSetting
+                        appSettings.allowNotificationsFromNonContacts = defaultAppSettings.allowNotificationsFromNonContacts
+                    }
                 }
             }
 
