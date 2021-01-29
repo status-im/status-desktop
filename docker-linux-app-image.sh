@@ -6,7 +6,7 @@ sudo apt update
 sudo apt install -y software-properties-common
 sudo add-apt-repository -y ppa:git-core/ppa
 sudo apt update
-sudo apt install -y --fix-missing build-essential cmake git libpcre3-dev jq
+sudo apt install -y --fix-missing build-essential cmake git libpcre3-dev jq libnss3
 
 # Installing GO
 # Probably should be part of a dockerfile

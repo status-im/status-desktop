@@ -57,7 +57,7 @@ pipeline {
           credentialsId: utils.getInfuraTokenCred(),
           variable: 'INFURA_TOKEN'
         )]) {
-          sh 'make pkg-linux'
+          sh 'make V=1 pkg-linux'
         }
       }
     }
