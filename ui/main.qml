@@ -59,6 +59,18 @@ ApplicationWindow {
         }
     }
 
+    Action {
+        shortcut: "Ctrl+W"
+        onTriggered: {
+            Qt.quit()
+        }
+    }
+
+    onClosing: {
+        applicationWindow.visible = false;
+        close.accepted = false;
+    }
+
     Component.onCompleted: {
         // Change the theme to the system theme (dark/light) until we get the
         // user's saved setting from status-go (after login)
@@ -87,6 +99,19 @@ ApplicationWindow {
             "shared/img/status-logo.svg" :
             "shared/img/status-logo-light-theme.svg";
         menu: Menu {
+            MenuItem {
+                visible: !applicationWindow.visible
+                text: qsTr("Open Status")
+                onTriggered: {
+                    applicationWindow.visible = true;
+                    applicationWindow.requestActivate();
+                }
+            }
+            
+            MenuSeparator { 
+                visible: !applicationWindow.visible
+            }
+
             MenuItem {
                 //% "Quit"
                 text: qsTrId("quit")
