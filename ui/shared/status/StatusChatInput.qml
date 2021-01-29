@@ -753,11 +753,14 @@ Rectangle {
             StatusButton {
                 id: sendBtn
                 icon.source: "../../app/img/send.svg"
-                color: Style.current.secondaryText
                 icon.width: 16
                 icon.height: 18
+                borderRadius: 16
                 text: qsTr("Send")
+                type: "secondary"
                 flat: true
+                showBorder: true
+                forceBgColorOnHover: true
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.halfPadding
                 anchors.bottom: parent.bottom

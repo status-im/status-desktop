@@ -12,7 +12,9 @@ Button {
     property color color: type === "warn" ? Style.current.danger : Style.current.buttonForegroundColor
     property color bgColor: type === "warn" ? Style.current.buttonWarnBackgroundColor : Style.current.buttonBackgroundColor
     property color borderColor: color
-    property color hoveredBorderColor
+    property color hoveredBorderColor: color
+    property bool forceBgColorOnHover: false
+    property int borderRadius: Style.current.radius
     property color bgHoverColor: {
         if (type === "warn") {
             if (showBorder) {
@@ -111,21 +113,21 @@ Button {
     }
 
     background: Rectangle {
-        radius: Style.current.radius
+        radius: borderRadius
         anchors.fill: parent
         border.width: flat || showBorder ? 1 : 0
         border.color: {
           if (hovered) {
-              return !!control.hoveredBorderColor ? control.hoveredBorderColor : control.borderColor
+              return control.hoveredBorderColor !== control.borderColor ? control.hoveredBorderColor : control.borderColor
           }
-          if (showBorder) {
+          if (showBorder && enabled) {
               return control.borderColor
           }
           return Style.current.transparent
         }
         color: {
             if (flat) {
-                return "transparent"
+                return hovered && forceBgColorOnHover ? control.bgHoverColor : "transparent"
             }
             if (type === "secondary") {
                 return hovered ? control.bgColor : "transparent"
