@@ -1,5 +1,6 @@
 #!/bin/bash
 APPDIR="$(dirname "$(readlink -f "${0}")")"
 export LD_LIBRARY_PATH="${APPDIR}/usr/lib/:${LD_LIBRARY_PATH}"
+export QT_QPA_PLATFORM="xcb"
 
 exec "${APPDIR}/usr/bin/nim_status_client" "$@"
