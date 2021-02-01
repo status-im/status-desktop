@@ -60,6 +60,10 @@ Rectangle {
             onClicked: {
                 isMessageActive = true
                 clickMessage(false, false, false, null, true)
+                messageContextMenu.x = buttonsContainer.x + buttonsContainer.width - messageContextMenu.width
+
+                // The Math.max is to make sure that the menu is rendered
+                messageContextMenu.y -= Math.max(messageContextMenu.emojiContainer.height, 56) + Style.current.padding
             }
             onHoveredChanged: {
                 buttonsContainer.hoverChanged(this.hovered)
