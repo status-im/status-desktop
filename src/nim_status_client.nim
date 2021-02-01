@@ -235,6 +235,7 @@ proc mainProc() =
     echo "-------------------------------------------------------------------------------------------------"
     echo node.subscribeFilter(filter, handler)
 
+    runForever()
 
 
   engine.setRootContextProperty("loginModel", login.variant)
