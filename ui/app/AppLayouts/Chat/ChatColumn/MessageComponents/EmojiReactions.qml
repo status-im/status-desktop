@@ -43,38 +43,7 @@ Item {
         Repeater {
             id: reactionRepeater
             width: childrenRect.width
-            model: {
-                if (!emojiReactions) {
-                    return []
-                }
-
-                try {
-                    // group by id
-                    var allReactions = Object.values(JSON.parse(emojiReactions))
-                    var byEmoji = {}
-                    allReactions.forEach(function (reaction) {
-                        if (!byEmoji[reaction.emojiId]) {
-                            byEmoji[reaction.emojiId] = {
-                                emojiId: reaction.emojiId,
-                                fromAccounts: [],
-                                count: 0,
-                                currentUserReacted: false
-                            }
-                        }
-                        byEmoji[reaction.emojiId].count++;
-                        byEmoji[reaction.emojiId].fromAccounts.push(chatsModel.userNameOrAlias(reaction.from));
-                        if (!byEmoji[reaction.emojiId].currentUserReacted && reaction.from === profileModel.profile.pubKey) {
-                            byEmoji[reaction.emojiId].currentUserReacted = true
-                        }
-
-                    })
-                    return Object.values(byEmoji)
-                } catch (e) {
-                    console.error('Error parsing emoji reactions', e)
-                    return []
-                }
-
-            }
+            model: emojiReactionsModel
 
             Rectangle {
                 property bool isHovered: false
