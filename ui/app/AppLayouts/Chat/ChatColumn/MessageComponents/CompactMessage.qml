@@ -32,7 +32,7 @@ Item {
         onHoverChanged: root.isHovered = hovered
         anchors.right: parent.right
         anchors.rightMargin: 20
-        anchors.top: parent.top
+        anchors.top: messageContainer.top
         // This is not exactly like the design because the hover becomes messed up with the buttons on top of another Message
         anchors.topMargin: -Style.current.halfPadding
     }
@@ -66,7 +66,6 @@ Item {
 
         color: root.isHovered || isMessageActive ? (hasMention ? Style.current.mentionMessageHoverColor : Style.current.backgroundHover) :
                                                    (hasMention ? Style.current.mentionMessageColor : Style.current.transparent)
-
 
 
         UserImage {
@@ -243,9 +242,6 @@ Item {
             root.isHovered = true
         }
         onExited: {
-            if (chatLogView.chatButtonsHovered) {
-                return
-            }
             root.isHovered = false
         }
     }
