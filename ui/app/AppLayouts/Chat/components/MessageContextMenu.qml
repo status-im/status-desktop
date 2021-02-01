@@ -11,6 +11,7 @@ PopupMenu {
     property bool isProfile: false
     property bool isSticker: false
     property bool emojiOnly: false
+    property alias emojiContainer: emojiContainer
 
     id: messageContextMenu
     width: messageContextMenu.isProfile ? profileHeader.width : emojiContainer.width
