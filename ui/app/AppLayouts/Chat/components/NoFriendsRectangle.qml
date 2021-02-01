@@ -6,16 +6,17 @@ import "../../../../shared/status"
 Rectangle {
     id: noContactsRect
     width: 260
+    property string text: qsTr("You don’t have any contacts yet. Invite your friends to start chatting.")
     StyledText {
         id: noContacts
-        //% "You don’t have any contacts yet. Invite your friends to start chatting."
-        text: qsTrId("you-don-t-have-any-contacts-yet--invite-your-friends-to-start-chatting-")
+        text: noContactsRect.text
         color: Style.current.darkGrey
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
         anchors.left: parent.left
         anchors.right: parent.right
         wrapMode: Text.WordWrap
+        font.pixelSize: 15
         horizontalAlignment: Text.AlignHCenter
     }
     StatusButton {

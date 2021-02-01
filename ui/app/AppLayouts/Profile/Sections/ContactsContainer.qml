@@ -232,37 +232,12 @@ Item {
             searchString: searchBox.text
         }
 
-        Item {
+        NoFriendsRectangle {
             id: element
             visible: profileModel.contacts.addedContacts.rowCount() === 0
-            anchors.top: addNewContact.bottom
+            text: qsTr("You don’t have any contacts yet")
             width: parent.width
-            anchors.bottom: parent.bottom
-
-            StyledText {
-                id: noFriendsText
-                //% "You don’t have any contacts yet"
-                text: qsTrId("you-don-t-have-any-contacts-yet")
-                anchors.verticalCenterOffset: -Style.current.bigPadding
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 15
-                color: Style.current.darkGrey
-            }
-
-            StatusButton {
-                anchors.horizontalCenter: noFriendsText.horizontalCenter
-                anchors.top: noFriendsText.bottom
-                anchors.topMargin: Style.current.bigPadding
-                //% "Invite friends"
-                text: qsTrId("invite-friends")
-                onClicked: function () {
-                    inviteFriendsPopup.open()
-                }
-            }
-        }
-        InviteFriendsPopup {
-            id: inviteFriendsPopup
+            anchors.verticalCenter: parent.verticalCenter
         }
     }
 }
