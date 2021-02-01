@@ -35,6 +35,7 @@ type
     Alias = UserRole + 25
     LocalName = UserRole + 26
     CommunityId = UserRole + 27
+    HasMention = UserRole + 28
 
 QtObject:
   type
@@ -153,6 +154,7 @@ QtObject:
       of ChatMessageRoles.EmojiReactions: result = newQVariant(self.getReactions(message.id))
       of ChatMessageRoles.LinkUrls: result = newQVariant(message.linkUrls)
       of ChatMessageRoles.CommunityId: result = newQVariant(message.communityId)
+      of ChatMessageRoles.HasMention: result = newQVariant(message.hasMention)
       # Pass the command parameters as a JSON string
       of ChatMessageRoles.CommandParameters: result = newQVariant($(%*{
         "id": message.commandParameters.id,
@@ -194,6 +196,7 @@ QtObject:
       ChatMessageRoles.CommandParameters.int: "commandParameters",
       ChatMessageRoles.CommunityId.int: "communityId",
       ChatMessageRoles.Alias.int:"alias",
+      ChatMessageRoles.HasMention.int:"hasMention",
       ChatMessageRoles.LocalName.int:"localName"
     }.toTable
 

@@ -21,7 +21,7 @@ Rectangle {
 
     ListView {
         id: chatGroupsListView
-        spacing: Style.current.halfPadding
+        spacing: appSettings.compactMode ? 4 : Style.current.halfPadding
         anchors.top: parent.top
         height: childrenRect.height
         visible: height > 50

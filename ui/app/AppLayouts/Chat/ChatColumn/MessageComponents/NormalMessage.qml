@@ -113,7 +113,7 @@ Item {
         anchors.rightMargin: !root.isCurrentUser ? 0 : Style.current.padding
         anchors.top: authorCurrentMsg != authorPrevMsg && !root.isCurrentUser ? chatImage.top : (dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top)
         anchors.topMargin: 0
-        visible: isMessage
+        visible: isMessage && contentType !== Constants.transactionType
 
         ChatReply {
             id: chatReply
@@ -207,6 +207,18 @@ Item {
         }
     }
 
+    Loader {
+        id: transactionBubbleLoader
+        active: contentType === Constants.transactionType
+        anchors.left: !isCurrentUser ? chatImage.right : undefined
+        anchors.leftMargin: isCurrentUser ? 0 : Style.current.halfPadding
+        anchors.right: isCurrentUser ? parent.right : undefined
+        anchors.rightMargin: Style.current.padding
+        sourceComponent: Component {
+            TransactionBubble {}
+        }
+    }
+
     Rectangle {
         id: dateTimeBackground
         visible: isImage
@@ -269,8 +281,8 @@ Item {
         id: emojiReactionLoader
         active: emojiReactions !== ""
         sourceComponent: emojiReactionsComponent
-        anchors.left: !root.isCurrentUser ? chatBox.left : undefined
-        anchors.right: !root.isCurrentUser ? undefined : chatBox.right
+        anchors.left: chatBox.left
+        anchors.leftMargin: root.isCurrentUser ? Style.current.halfPadding : 1
         anchors.top: chatBox.bottom
         anchors.topMargin: 2
     }

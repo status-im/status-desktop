@@ -53,6 +53,10 @@ Theme {
     property color primarySelectionColor: "#b4c8ff"
     property color emojiReactionBackground: "#2d2823"
     property color emojiReactionBackgroundHovered: "#3a3632"
+    property color mentionColor: "#47B6D1"
+    property color mentionBgColor: Qt.rgba(71, 182, 209, 0.1)
+    property color mentionMessageColor: "#E5F8FD"
+    property color mentionMessageHoverColor: mentionBgColor
 
     property color buttonForegroundColor: blue
     property color buttonBackgroundColor: secondaryBackground
