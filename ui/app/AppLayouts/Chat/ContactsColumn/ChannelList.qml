@@ -83,7 +83,6 @@ Rectangle {
     ChannelContextMenu {
         id: channelContextMenu
         groupInfoPopup: groupInfoPopup
-        groupsListView: chatGroupsListView
     }
 
     Connections {

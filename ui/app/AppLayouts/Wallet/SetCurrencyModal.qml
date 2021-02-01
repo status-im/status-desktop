@@ -6,7 +6,11 @@ import "../../../imports"
 import "../../../shared"
 import "./components"
 
-Item {
+ModalPopup {
+    id: popup
+    width: 480
+    height: 510
+
     function open() {
         popup.open()
         setCurrencyModalContent.currency = walletModel.defaultCurrency
@@ -16,25 +20,19 @@ Item {
         popup.close()
     }
 
-    ModalPopup {
-        id: popup
-        width: 480
-        height: 510
+    title: qsTr("Set Currency")
 
-        title: qsTr("Set Currency")
+    SetCurrencyModalContent {
+        id: setCurrencyModalContent
+    }
 
-        SetCurrencyModalContent {
-            id: setCurrencyModalContent
-        }
-
-        footer: StyledButton {
-            anchors.right: parent.right
-            //% "Save"
-            label: qsTrId("save")
-            onClicked: {
-                console.log("TODO: apply all accounts")
-                popup.close()
-            }
+    footer: StyledButton {
+        anchors.right: parent.right
+        //% "Save"
+        label: qsTrId("save")
+        onClicked: {
+            console.log("TODO: apply all accounts")
+            popup.close()
         }
     }
 }
