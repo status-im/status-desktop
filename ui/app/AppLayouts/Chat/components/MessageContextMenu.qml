@@ -20,13 +20,22 @@ PopupMenu {
     property string nickname: ""
     property var fromAuthor: ""
     property var text: ""
+    property var emojiReactionsReactedByUser: []
 
-    function show(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam) {
+    function show(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, emojiReactionsModel) {
         userName = userNameParam || ""
         nickname = nicknameParam || ""
         fromAuthor = fromAuthorParam || ""
         identicon = identiconParam || ""
         text = textParam || ""
+        let newEmojiReactions = []
+        if (!!emojiReactionsModel) {
+            emojiReactionsModel.forEach(function (emojiReaction) {
+                newEmojiReactions[emojiReaction.emojiId] = emojiReaction.currentUserReacted
+            })
+        }
+        emojiReactionsReactedByUser = newEmojiReactions
+
         popup();
     }
 
@@ -48,6 +57,7 @@ PopupMenu {
                 delegate: EmojiReaction {
                     source: "../../../img/" + filename
                     emojiId: model.emojiId
+                    reactedByUser: !!messageContextMenu.emojiReactionsReactedByUser[model.emojiId]
                     closeModal: function () {
                         messageContextMenu.close()
                     }

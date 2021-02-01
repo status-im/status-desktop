@@ -248,7 +248,7 @@ Item {
 
     Loader {
         id: emojiReactionLoader
-        active: emojiReactions !== ""
+        active: emojiReactionsModel.length
         anchors.bottom: messageContainer.bottom
         anchors.bottomMargin: Style.current.smallPadding
         anchors.left: messageContainer.left

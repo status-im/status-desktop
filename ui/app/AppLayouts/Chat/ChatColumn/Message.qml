@@ -61,6 +61,38 @@ Item {
 
     property string profileImageSource: !placeholderMessage && appMain.getProfileImage(userPubKey, isCurrentUser, useLargeImage) || ""
 
+    property var emojiReactionsModel: {
+        if (!emojiReactions) {
+            return []
+        }
+
+        try {
+            // group by id
+            var allReactions = Object.values(JSON.parse(emojiReactions))
+            var byEmoji = {}
+            allReactions.forEach(function (reaction) {
+                if (!byEmoji[reaction.emojiId]) {
+                    byEmoji[reaction.emojiId] = {
+                        emojiId: reaction.emojiId,
+                        fromAccounts: [],
+                        count: 0,
+                        currentUserReacted: false
+                    }
+                }
+                byEmoji[reaction.emojiId].count++;
+                byEmoji[reaction.emojiId].fromAccounts.push(chatsModel.userNameOrAlias(reaction.from));
+                if (!byEmoji[reaction.emojiId].currentUserReacted && reaction.from === profileModel.profile.pubKey) {
+                    byEmoji[reaction.emojiId].currentUserReacted = true
+                }
+
+            })
+            return Object.values(byEmoji)
+        } catch (e) {
+            console.error('Error parsing emoji reactions', e)
+            return []
+        }
+    }
+
     Connections {
         enabled: !placeholderMessage
         target: profileModel.contacts.list
@@ -96,7 +128,7 @@ Item {
         messageContextMenu.isProfile = !!isProfileClick
         messageContextMenu.isSticker = isSticker
         messageContextMenu.emojiOnly = emojiOnly
-        messageContextMenu.show(userName, fromAuthor, root.profileImageSource || identicon, "", nickname)
+        messageContextMenu.show(userName, fromAuthor, root.profileImageSource || identicon, "", nickname, emojiReactionsModel)
         // Position the center of the menu where the mouse is
         messageContextMenu.x = messageContextMenu.x - messageContextMenu.width / 2
     }
