@@ -14,7 +14,7 @@ Item {
     visible: contentType == Constants.messageType || isEmoji
     z: 51
 
-    height: visible ? (showMoreLoader.active ? childrenRect.height - 10 : chatText.height) : 0
+    implicitHeight: visible ? (showMoreLoader.active ? childrenRect.height - 10 : chatText.height) : 0
 
     // This function is to avoid the binding loop warning
     function setWidths() {
@@ -82,7 +82,9 @@ Item {
                                 `color: ${isCurrentUser && !appSettings.compactMode ? Style.current.white : Style.current.textColor};` +
                             `}` +
                             `a.mention {` +
-                                `color: ${isCurrentUser ? Style.current.cyan : Style.current.turquoise};` +
+                                `color: ${Style.current.mentionColor};` +
+                                `background-color: ${Style.current.mentionBgColor};` +
+                                `text-decoration: none;` +
                             `}` +
                             `del {` +
                                 `text-decoration: line-through;` +

@@ -308,6 +308,7 @@ ScrollView {
             emojiReactions: model.emojiReactions
             linkUrls: model.linkUrls
             communityId: model.communityId
+            hasMention: model.hasMention
             prevMessageIndex: {
                 // This is used in order to have access to the previous message and determine the timestamp
                 // we can't rely on the index because the sequence of messages is not ordered on the nim side

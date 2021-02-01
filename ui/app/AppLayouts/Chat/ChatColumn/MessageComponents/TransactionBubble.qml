@@ -56,9 +56,6 @@ Item {
     }
 
     id: root
-    anchors.left: parent.left
-    anchors.leftMargin: isCurrentUser ? 0 : 
-      appSettings.compactMode ? Style.current.padding : 48;
     width: rectangleBubble.width
     height: rectangleBubble.height
 
@@ -71,11 +68,6 @@ Item {
         color: Style.current.background
         border.color: Style.current.border
         border.width: 1
-
-        anchors.right: isCurrentUser ? parent.right : undefined 
-        anchors.rightMargin: Style.current.padding
-        anchors.left: !isCurrentUser ? parent.left : undefined 
-        anchors.leftMargin: Style.current.padding
 
         StyledText {
             id: title

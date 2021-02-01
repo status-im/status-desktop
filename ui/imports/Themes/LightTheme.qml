@@ -52,6 +52,10 @@ Theme {
     property color primarySelectionColor: "#b4c8ff"
     property color emojiReactionBackground: "#e2e6e9"
     property color emojiReactionBackgroundHovered: "#d7dadd"
+    property color mentionColor: "#0DA4C9"
+    property color mentionBgColor: "#D4F3FA"
+    property color mentionMessageColor: "#E5F8FD"
+    property color mentionMessageHoverColor: mentionBgColor
 
     property color buttonForegroundColor: blue
     property color buttonBackgroundColor: secondaryBackground

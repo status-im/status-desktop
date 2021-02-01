@@ -23,6 +23,7 @@ Item {
     property string emojiReactions: ""
     property int prevMessageIndex: -1
     property bool timeout: false
+    property bool hasMention: false
     property string linkUrls: ""
     property bool placeholderMessage: false
     property string communityId: ""
@@ -36,7 +37,8 @@ Item {
     property bool isStatusMessage: contentType === Constants.systemMessagePrivateGroupType
     property bool isSticker: contentType === Constants.stickerType
     property bool isText: contentType === Constants.messageType
-    property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio || contentType === Constants.communityInviteType
+    property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
+                             || contentType === Constants.communityInviteType || contentType === Constants.transactionType
 
     property bool isExpired: (outgoingStatus == "sending" && (Math.floor(timestamp) + 180000) < Date.now())
     property bool isStatusUpdate: false
@@ -110,8 +112,6 @@ Item {
                     return fetchMoreMessagesButtonComponent
                 case Constants.systemMessagePrivateGroupType:
                     return privateGroupHeaderComponent
-                case Constants.transactionType:
-                    return transactionBubble
                 case Constants.communityInviteType:
                     return invitationBubble
                 default:
@@ -243,11 +243,6 @@ Item {
             contentType: root.contentType
             container: root
         }
-    }
-
-    Component {
-        id: transactionBubble
-        TransactionBubble {}
     }
 
     Component {

@@ -1,9 +1,9 @@
-import json, times, strutils, sequtils, chronicles, json_serialization, algorithm, strformat
+import json, times, strutils, sequtils, chronicles, json_serialization, algorithm, strformat, sugar
 import core, utils
 import ../chat/[chat, message]
 import ../signals/messages
 import ./types
-import ./settings
+import ./settings as status_settings
 
 proc buildFilter*(chat: Chat):JsonNode =
   if chat.chatType == ChatType.PrivateGroupChat:
@@ -56,10 +56,14 @@ proc loadChats*(): seq[Chat] =
   result.sort(sortChats)
 
 proc parseChatMessagesResponse*(chatId: string, rpcResult: JsonNode): (string, seq[Message]) =
+  let pk = status_settings.getSetting[string](Setting.PublicKey, "0x0")
   var messages: seq[Message] = @[]
+  var msg: Message
   if rpcResult["messages"].kind != JNull:
     for jsonMsg in rpcResult["messages"]:
-      messages.add(jsonMsg.toMessage)
+      msg = jsonMsg.toMessage
+      msg.hasMention = concat(msg.parsedText.map(t => t.children.filter(c => c.textType == "mention" and c.literal == pk))).len > 0
+      messages.add(msg)
   return (rpcResult{"cursor"}.getStr, messages)
 
 proc rpcChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
