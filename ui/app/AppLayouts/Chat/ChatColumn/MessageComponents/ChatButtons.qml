@@ -38,11 +38,9 @@ Rectangle {
         hoverEnabled: true
         onEntered: {
             buttonsContainer.hoverChanged(true)
-            chatLogView.chatButtonsHovered = true
         }
         onExited: {
             buttonsContainer.hoverChanged(false)
-            chatLogView.chatButtonsHovered = false
         }
     }
 
@@ -64,7 +62,6 @@ Rectangle {
                 clickMessage(false, false, false, null, true)
             }
             onHoveredChanged: {
-                chatLogView.chatButtonsHovered = this.hovered
                 buttonsContainer.hoverChanged(this.hovered)
             }
 
@@ -85,7 +82,6 @@ Rectangle {
                 showReplyArea()
             }
             onHoveredChanged: {
-                chatLogView.chatButtonsHovered = this.hovered
                 buttonsContainer.hoverChanged(this.hovered)
             }
 

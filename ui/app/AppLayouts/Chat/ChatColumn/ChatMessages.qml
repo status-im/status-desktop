@@ -31,7 +31,6 @@ ScrollView {
 
     ListView {
         property string currentNotificationChatId
-        property bool chatButtonsHovered: false
 
         id: chatLogView
         anchors.fill: parent
