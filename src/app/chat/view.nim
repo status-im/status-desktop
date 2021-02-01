@@ -445,30 +445,22 @@ QtObject:
     write = setLoadingMessages
     notify = loadingMessagesChanged
 
-  proc requestMoreTimelineMessages*(self: ChatsView, fetchRange: int) {.slot.} =
+  proc requestMoreMessages*(self: ChatsView, fetchRange: int) {.slot.} =
     self.loadingMessages = true
     self.loadingMessagesChanged(true)
 
     var allTopics: seq[string] = @[]
-    for contact in self.status.contacts.getContacts():
-      for t in self.status.mailservers.getMailserverTopicsByChatId(getTimelineChatId(contact.id)).map(topic => topic.topic):
-        allTopics.add(t)
+    if(self.activeChannel.isTimelineChat):
+      for contact in self.status.contacts.getContacts():
+        for t in self.status.mailservers.getMailserverTopicsByChatId(getTimelineChatId(contact.id)).map(topic => topic.topic):
+          allTopics.add(t)
+    else:
+      allTopics = self.status.mailservers.getMailserverTopicsByChatId(self.activeChannel.id).map(topic => topic.topic)
 
     let currentOldestMessageTimestamp = self.oldestMessageTimestamp
     self.oldestMessageTimestamp = self.oldestMessageTimestamp - fetchRange
 
     self.status.mailservers.requestMessages(allTopics, self.oldestMessageTimestamp, currentOldestMessageTimestamp, true)
-    self.oldestMessageTimestampChanged()
-    self.messagesLoaded();    
-
-  proc requestMoreMessages*(self: ChatsView, fetchRange: int) {.slot.} =
-    self.loadingMessages = true
-    self.loadingMessagesChanged(true)
-    let topics = self.status.mailservers.getMailserverTopicsByChatId(self.activeChannel.id).map(topic => topic.topic)
-    let currentOldestMessageTimestamp = self.oldestMessageTimestamp
-    self.oldestMessageTimestamp = self.oldestMessageTimestamp - fetchRange
-
-    self.status.mailservers.requestMessages(topics, self.oldestMessageTimestamp, currentOldestMessageTimestamp, true)
     self.oldestMessageTimestampChanged()
     self.messagesLoaded();
 
