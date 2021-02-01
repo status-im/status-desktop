@@ -152,7 +152,7 @@ Item {
                   cursorShape: Qt.PointingHandCursor
                   anchors.fill: parent
                   onClicked: {
-                    chatsModel.requestMoreMessages(Constants.fetchRangeLast24Hours);                    
+                    chatsModel.requestMoreMessages(Constants.fetchRangeLast24Hours);
                     timer.setTimeout(function(){ 
                         chatsModel.hideLoadingIndicator()
                     }, 3000);
