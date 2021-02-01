@@ -222,51 +222,18 @@ proc mainProc() =
 
     # Code to be executed on receival of a message on filter.
     proc handler(msg: ReceivedMessage) =
+      echo "MSG RECEIVED!"
       if msg.decoded.src.isSome():
         echo "Received message from ", $msg.decoded.src.get(), ": ",
           string.fromBytes(msg.decoded.payload)
 
     
-    # test
-    var symKey: SymKey
-
-    symKey[0] = 0x2c
-    symKey[1] = 0x9b
-    symKey[2] = 0x47 
-    symKey[3] = 0x75
-    symKey[4] = 0xf4
-    symKey[5] = 0x45
-    symKey[6] = 0xea
-    symKey[7] = 0x22
-    symKey[8] = 0x41
-    symKey[9] = 0x11
-    symKey[10] = 0x9e
-    symKey[11] = 0x59 
-    symKey[12] = 0x64 
-    symKey[13] = 0xf7 
-    symKey[14] = 0x95 
-    symKey[15] = 0x27 
-    symKey[16] = 0xa1 
-    symKey[17] = 0x5c 
-    symKey[18] = 0xd8 
-    symKey[19] = 0x78 
-    symKey[20] = 0x41 
-    symKey[21] = 0x34 
-    symKey[22] = 0x56 
-    symKey[23] = 0xfd 
-    symKey[24] = 0x4e 
-    symKey[25]= 0x48 
-    symKey[26] = 0x5c 
-    symKey[27] = 0xea 
-    symKey[28] = 0xca 
-    symKey[29] = 0xed 
-    symKey[30] = 0x18 
-    symKey[31] = 0xd6
-
     let 
-      topic = [byte 0x9c, 0x22, 0xff, 0x5f]
+      symKey: SymKey = hexToByteArray[32]("0xa82a520aff70f7a989098376e48ec128f25f767085e84d7fb995a9815eebff0a")
+      topic = hexToByteArray[4]("0x9c22ff5f") # test
       filter = initFilter(symKey = some(symKey), topics = @[topic])
-    discard node.subscribeFilter(filter, handler)
+    echo "-------------------------------------------------------------------------------------------------"
+    echo node.subscribeFilter(filter, handler)
 
 
 
