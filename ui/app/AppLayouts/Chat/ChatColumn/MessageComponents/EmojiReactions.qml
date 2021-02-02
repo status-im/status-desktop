@@ -70,8 +70,9 @@ Item {
                 width: emojiImage.width + emojiCount.width + (root.imageMargin * 2) +  + 8
                 height: 20
                 radius: 10
-                color: modelData.currentUserReacted ? Style.current.secondaryBackground :
-                                                      (isHovered ? Style.current.emojiReactionBackgroundHovered : Style.current.emojiReactionBackground)
+                color: modelData.currentUserReacted ?
+                           (isHovered ? Style.current.emojiReactionActiveBackgroundHovered : Style.current.secondaryBackground) :
+                           (isHovered ? Style.current.emojiReactionBackgroundHovered : Style.current.emojiReactionBackground)
 
                 StatusToolTip {
                     visible: mouseArea.containsMouse
@@ -82,8 +83,8 @@ Item {
                 // Rounded corner to cover one corner
                 Rectangle {
                     color: parent.color
-                    width: 8
-                    height: 8
+                    width: 10
+                    height: 10
                     anchors.top: parent.top
                     anchors.left: !isCurrentUser || appSettings.compactMode ? parent.left : undefined
                     anchors.leftMargin: 0
@@ -111,8 +112,8 @@ Item {
 
                             Rectangle {
                                 color: parent.color
-                                width: 8
-                                height: 8
+                                width: 10
+                                height: 10
                                 anchors.top: parent.top
                                 anchors.left: !isCurrentUser || appSettings.compactMode ? parent.left : undefined
                                 anchors.leftMargin: 0

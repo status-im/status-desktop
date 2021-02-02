@@ -41,6 +41,7 @@ QtObject {
     property color primarySelectioncolor
     property color emojiReactionBackground
     property color emojiReactionBackgroundHovered
+    property color emojiReactionActiveBackgroundHovered
     property color mentionColor
     property color mentionBgColor
     property color mentionMessageColor
