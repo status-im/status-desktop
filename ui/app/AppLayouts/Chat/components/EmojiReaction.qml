@@ -7,7 +7,7 @@ Rectangle {
     property var closeModal: function () {}
     property int emojiId
     property bool reactedByUser: false
-    property bool isHovered: value
+    property bool isHovered: false
 
     id: root
     width: reactionImage.width + Style.current.halfPadding
