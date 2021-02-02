@@ -61,9 +61,7 @@ proc parseChatMessagesResponse*(chatId: string, rpcResult: JsonNode): (string, s
   var msg: Message
   if rpcResult["messages"].kind != JNull:
     for jsonMsg in rpcResult["messages"]:
-      msg = jsonMsg.toMessage
-      msg.hasMention = concat(msg.parsedText.map(t => t.children.filter(c => c.textType == "mention" and c.literal == pk))).len > 0
-      messages.add(msg)
+      messages.add(jsonMsg.toMessage(pk))
   return (rpcResult{"cursor"}.getStr, messages)
 
 proc rpcChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =

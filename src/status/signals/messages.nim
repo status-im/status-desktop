@@ -13,7 +13,7 @@ import types
 import web3/conversions
 from ../libstatus/utils import parseAddress, wei2Eth
 
-proc toMessage*(jsonMsg: JsonNode): Message
+proc toMessage*(jsonMsg: JsonNode, pk: string): Message
 
 proc toChat*(jsonChat: JsonNode): Chat
 
@@ -36,8 +36,7 @@ proc fromEvent*(event: JsonNode): Signal =
 
   if event["event"]{"messages"} != nil:
     for jsonMsg in event["event"]["messages"]:
-      var message = jsonMsg.toMessage
-      message.hasMention = concat(message.parsedText.map(t => t.children.filter(c => c.textType == "mention" and c.literal == pk))).len > 0
+      var message = jsonMsg.toMessage(pk)
       if message.hasMention:
         chatsWithMentions.add(message.chatId)
       signal.messages.add(message)
@@ -120,6 +119,8 @@ proc toChat*(jsonChat: JsonNode): Chat =
   let chatTypeInt = jsonChat{"chatType"}.getInt
   let chatType: ChatType = if chatTypeInt >= ord(low(ChatType)) or chatTypeInt <= ord(high(ChatType)): ChatType(chatTypeInt) else: ChatType.Unknown
 
+  let pk = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+
   result = Chat(
     id: jsonChat{"id"}.getStr,
     communityId: jsonChat{"communityId"}.getStr,
@@ -141,7 +142,7 @@ proc toChat*(jsonChat: JsonNode): Chat =
     result.muted = jsonChat["muted"].getBool
 
   if jsonChat["lastMessage"].kind != JNull: 
-    result.lastMessage = jsonChat{"lastMessage"}.toMessage
+    result.lastMessage = jsonChat{"lastMessage"}.toMessage(pk)
   
   if result.chatType == ChatType.OneToOne:
     result.identicon = generateIdenticon(result.id)
@@ -202,7 +203,7 @@ proc toTextItem*(jsonText: JsonNode): TextItem =
       result.children.add(child.toTextItem)
 
 
-proc toMessage*(jsonMsg: JsonNode): Message =
+proc toMessage*(jsonMsg: JsonNode, pk: string): Message =
   var contentType: ContentType
   try:
     contentType = ContentType(jsonMsg{"contentType"}.getInt)
@@ -276,6 +277,8 @@ proc toMessage*(jsonMsg: JsonNode): Message =
       commandState: jsonMsg["commandParameters"]["commandState"].getInt,
       signature: jsonMsg["commandParameters"]["signature"].getStr
     )
+
+  message.hasMention = concat(message.parsedText.map(t => t.children.filter(c => c.textType == "mention" and c.literal == pk))).len > 0
 
   result = message
 
