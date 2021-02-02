@@ -6,14 +6,13 @@ import "../../../../imports"
 import "../components"
 import "./"
 
-Rectangle {
+Item {
     property var channelModel
     property alias channelListCount: chatGroupsListView.count
     property string searchStr: ""
     id: channelListContent
     width: parent.width
     height: childrenRect.height
-    color: Style.current.transparent
 
     Timer {
         id: timer
@@ -24,7 +23,7 @@ Rectangle {
         spacing: appSettings.compactMode ? 4 : Style.current.halfPadding
         anchors.top: parent.top
         height: childrenRect.height
-        visible: height > 50
+        visible: height > (appSettings.compactMode ? 30 : 50)
         anchors.right: parent.right
         anchors.left: parent.left
         interactive: false
