@@ -67,12 +67,13 @@ ScrollView {
             anchors.leftMargin: -Style.current.padding
             anchors.right: parent.right
             anchors.rightMargin: -Style.current.padding
-            height: 220
+            height: paceholderMessage.height + Style.current.padding*4
             radius: Style.current.radius
             border.color: Style.current.border
             color: Style.current.transparent
 
             Message {
+                id: paceholderMessage
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.padding*2
                 anchors.left: parent.left

@@ -3,6 +3,7 @@ import "../../../../../shared"
 import "../../../../../imports"
 
 MouseArea {
+    enabled: !placeholderMessage
     cursorShape: chatText.hoveredLink ? Qt.PointingHandCursor : undefined
     acceptedButtons: Qt.RightButton | Qt.LeftButton
     z: 50

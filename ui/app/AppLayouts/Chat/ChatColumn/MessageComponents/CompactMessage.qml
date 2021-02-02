@@ -22,6 +22,7 @@ Item {
             + (dateGroupLbl.visible ? dateGroupLbl.height + dateGroupLbl.anchors.topMargin : 0)
 
     MouseArea {
+        enabled: !placeholderMessage
         anchors.fill: messageContainer
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked:  messageMouseArea.clicked(mouse)
@@ -235,6 +236,7 @@ Item {
 
     // TODO find a way for this to not eat link hovers
     MouseArea {
+        enabled: !placeholderMessage
         anchors.fill: root
         acceptedButtons: Qt.NoButton
         hoverEnabled: true
