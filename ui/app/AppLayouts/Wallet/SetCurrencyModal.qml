@@ -11,14 +11,10 @@ ModalPopup {
     id: popup
     width: 480
     height: 510
+    property string defaultCurrency
 
-    function open() {
-        popup.open()
-        setCurrencyModalContent.currency = walletModel.defaultCurrency
-    }
-
-    function close() {
-        popup.close()
+    onDefaultCurrencyChanged: {
+        setCurrencyModalContent.currency = defaultCurrency
     }
 
     title: qsTr("Set Currency")

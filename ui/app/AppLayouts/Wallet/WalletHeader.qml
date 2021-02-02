@@ -179,7 +179,11 @@ Item {
                     icon.source: "../../img/currency.svg"
                     icon.width: 16
                     icon.height: 16
-                    onTriggered: openPopup(setCurrencyModalComponent)
+                    onTriggered: {
+                        openPopup(setCurrencyModalComponent, { 
+                            defaultCurrency: walletModel.defaultCurrency
+                        })
+                    }
                 }
             }
         }
