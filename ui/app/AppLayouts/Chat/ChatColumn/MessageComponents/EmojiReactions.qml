@@ -17,24 +17,42 @@ Item {
         return nodes.join(qsTr(" and "));
     }
 
-    function showReactionAuthors(fromAccounts) {
-        if (fromAccounts.length < 3)
-            return lastTwoItems(fromAccounts);
+    function showReactionAuthors(fromAccounts, emojiId) {
+        let tooltip
+        if (fromAccounts.length === 1) {
+            tooltip = fromAccounts[0]
+        } else if (fromAccounts.length === 2) {
+            tooltip = lastTwoItems(fromAccounts);
+        } else {
+            var leftNode = [];
+            var rightNode = [];
+            const maxReactions = 12
+            let maximum = Math.min(maxReactions, fromAccounts.length)
 
-        var leftNode = [];
-        var rightNode = [];
+            if (fromAccounts.length > maxReactions) {
+                leftNode = fromAccounts.slice(0, maxReactions);
+                rightNode = fromAccounts.slice(maxReactions, fromAccounts.length);
+                return (rightNode.length === 1) ?
+                            lastTwoItems([leftNode.join(", "), rightNode[0]]) :
+                            lastTwoItems([leftNode.join(", "), qsTr("%1 more").arg(rightNode.length)]);
+            }
 
-        if (fromAccounts.length > 3) {
-            leftNode = fromAccounts.slice(0, 3);
-            rightNode = fromAccounts.slice(3, fromAccounts.length);
-            return (rightNode.length === 1) ?
-                                lastTwoItems([leftNode.join(", "), rightNode[0]]) :
-                                lastTwoItems([leftNode.join(", "), qsTr("%1 more reacted.").arg(rightNode.length)]);
+            leftNode = fromAccounts.slice(0, maximum - 1);
+            rightNode = fromAccounts.slice(maximum - 1, fromAccounts.length);
+            tooltip = lastTwoItems([leftNode.join(", "), rightNode[0]])
         }
 
-        leftNode = fromAccounts.slice(0, 2);
-        rightNode = fromAccounts.slice(2, fromAccounts.length);
-        return lastTwoItems([leftNode.join(", "), rightNode[0]]);
+        tooltip += qsTr(" reacted with ");
+
+        switch (emojiId) {
+        case 1: return tooltip + ":heart:"
+        case 2: return tooltip + ":thumbsup:"
+        case 3: return tooltip + ":thumbsdown:"
+        case 4: return tooltip + ":laughing:"
+        case 5: return tooltip + ":cry:"
+        case 6: return tooltip + ":angry:"
+        default: return tooltip
+        }
     }
 
     Row {
@@ -55,9 +73,10 @@ Item {
                 color: modelData.currentUserReacted ? Style.current.secondaryBackground :
                                                       (isHovered ? Style.current.emojiReactionBackgroundHovered : Style.current.emojiReactionBackground)
 
-                ToolTip {
+                StatusToolTip {
                     visible: mouseArea.containsMouse
-                    text: showReactionAuthors(modelData.fromAccounts)
+                    text: showReactionAuthors(modelData.fromAccounts, modelData.emojiId)
+                    width: 400
                 }
 
                 // Rounded corner to cover one corner
