@@ -42,6 +42,7 @@ Rectangle {
     property alias messageSound: sendMessageSound
 
     property alias suggestionsList: suggestions
+    property alias suggestions: suggestionsBox
 
     height: {
         if (extendedArea.visible) {
