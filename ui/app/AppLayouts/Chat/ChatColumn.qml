@@ -41,12 +41,27 @@ StackLayout {
 
     currentIndex:  chatsModel.activeChannelIndex > -1 && chatGroupsListViewCount > 0 ? 0 : 1
 
+
+    property var idMap: {}
+
+    function addSuggestionFromMessageList(i){
+        const contactAddr = chatsModel.messageList.getMessageData(i, "publicKey");
+        if(idMap[contactAddr]) return;
+        chatInput.suggestionsList.append({
+            alias: chatsModel.messageList.getMessageData(i, "alias"),
+            ensName: chatsModel.messageList.getMessageData(i, "ensName"),
+            address: contactAddr,
+            identicon: chatsModel.messageList.getMessageData(i, "identicon"),
+            localNickname: chatsModel.messageList.getMessageData(i, "localName")
+        });
+        idMap[contactAddr] = true;
+    }
+
     function populateSuggestions(){
-        chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
         chatInput.suggestionsList.clear()
         const len = chatsModel.suggestionList.rowCount()
 
-        var idMap = {}
+        idMap = {}
 
         for (let i = 0; i < len; i++) {
             const contactAddr = chatsModel.suggestionList.rowData(i, "address");
@@ -62,16 +77,7 @@ StackLayout {
         }
         const len2 = chatsModel.messageList.rowCount();
         for (let i = 0; i < len2; i++) {
-            const contactAddr = chatsModel.messageList.getMessageData(i, "publicKey");
-            if(idMap[contactAddr]) continue;
-            chatInput.suggestionsList.append({
-                alias: chatsModel.messageList.getMessageData(i, "alias"),
-                ensName: chatsModel.messageList.getMessageData(i, "ensName"),
-                address: contactAddr,
-                identicon: chatsModel.messageList.getMessageData(i, "identicon"),
-                localNickname: chatsModel.messageList.getMessageData(i, "localName")
-            });
-            idMap[contactAddr] = true;
+            addSuggestionFromMessageList(i);
         }
     }
 
@@ -205,10 +211,11 @@ StackLayout {
             target: chatsModel
             onActiveChannelChanged: {
                 chatInput.suggestions.hide();
+                chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
                 populateSuggestions();
             }
             onMessagePushed: {
-                populateSuggestions();
+                addSuggestionFromMessageList(messageIndex);
             }
         }
 

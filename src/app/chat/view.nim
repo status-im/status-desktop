@@ -311,7 +311,7 @@ QtObject:
       self.messageList[channel] = newChatMessageList(channel, self.status, not chat.isNil and chat.chatType != ChatType.Profile)
       self.channelOpenTime[channel] = now().toTime.toUnix * 1000
 
-  proc messagePushed*(self: ChatsView) {.signal.}
+  proc messagePushed*(self: ChatsView, messageIndex: int) {.signal.}
   proc newMessagePushed*(self: ChatsView) {.signal.}
 
   proc messageNotificationPushed*(self: ChatsView, chatId: string, text: string, messageType: string, chatType: int, timestamp: string, identicon: string, username: string, hasMention: bool, isAddedContact: bool, channelName: string) {.signal.}
@@ -329,15 +329,18 @@ QtObject:
     for msg in messages.mitems:
       self.upsertChannel(msg.chatId)
       msg.userName = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
+      var msgIndex:int;
       if self.status.chat.channels.hasKey(msg.chatId):
         let chat = self.status.chat.channels[msg.chatId]
         if (chat.chatType == ChatType.Profile):
           let timelineChatId = status_utils.getTimelineChatId()
           self.messageList[timelineChatId].add(msg)
           if self.activeChannel.id == timelineChatId: self.activeChannelChanged()
+          msgIndex = self.messageList[timelineChatId].messages.len - 1
         else:
           self.messageList[msg.chatId].add(msg)
-      self.messagePushed()
+          msgIndex = self.messageList[msg.chatId].messages.len - 1
+      self.messagePushed(msgIndex)
       if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
         let channel = self.chats.getChannelById(msg.chatId)
         if (channel == nil):
@@ -399,7 +402,7 @@ QtObject:
 
   proc pushChatItem*(self: ChatsView, chatItem: Chat) =
     discard self.chats.addChatItemToList(chatItem)
-    self.messagePushed()
+    self.messagePushed(self.messageList[chatItem.id].messages.len - 1)
   
   proc setTimelineChat*(self: ChatsView, chatItem: Chat) =
     self.timelineChat = chatItem
