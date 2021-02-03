@@ -209,8 +209,10 @@ QtObject:
     let message = self.messages[index]
     case data:
     of "userName": result = (message.userName)
+    of "publicKey": result = (message.fromAuthor)
     of "alias": result = (message.alias)
     of "localName": result = (message.localName)
+    of "ensName": result = (message.ensName)
     of "message": result = (message.text)
     of "identicon": result = (message.identicon)
     of "timestamp": result = $(message.timestamp)
