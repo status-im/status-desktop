@@ -324,6 +324,9 @@ QtObject:
       return
     self.messageList[id].clear(not channel.isNil and channel.chatType != ChatType.Profile)
     self.messagesCleared()
+  
+  proc isAddedContact*(self: ChatsView, id: string): bool {.slot.} =
+    result = self.status.contacts.isAdded(id)
 
   proc pushMessages*(self:ChatsView, messages: var seq[Message]) =
     for msg in messages.mitems:
@@ -351,7 +354,7 @@ QtObject:
           self.newMessagePushed()
 
         if not channel.muted:
-          let isAddedContact = channel.chatType.isOneToOne and self.status.contacts.isAdded(channel.id)
+          let isAddedContact = channel.chatType.isOneToOne and self.isAddedContact(channel.id)
           self.messageNotificationPushed(
             msg.chatId,
             escape_html(msg.text),
@@ -849,3 +852,4 @@ QtObject:
       self.activeCommunity.removeMember(pubKey)
     except Exception as e:
       error "Error removing user from the community", msg = e.msg
+

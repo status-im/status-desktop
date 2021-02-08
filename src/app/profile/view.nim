@@ -195,11 +195,14 @@ QtObject:
     self.mutedChatsListChanged()
     self.mutedContactsListChanged()
 
+  proc contactsChanged*(self: ProfileView) {.signal.}
+
   proc getContacts*(self: ProfileView): QVariant {.slot.} =
     newQVariant(self.contacts)
 
   QtProperty[QVariant] contacts:
     read = getContacts
+    notify = contactsChanged
 
   proc getDevices*(self: ProfileView): QVariant {.slot.} =
     newQVariant(self.devices)

@@ -91,6 +91,9 @@ QtObject:
       weiValue = fromHex(Stuint[256], weiValue).toString()
     return status_utils.wei2Eth(weiValue, decimals)
 
+  proc generateAlias*(self: UtilsView, pk: string): string {.slot.} =
+    result = status_accounts.generateAlias(pk)
+
   proc generateIdenticon*(self: UtilsView, pk: string): string {.slot.} =
     result = status_accounts.generateIdenticon(pk)
 

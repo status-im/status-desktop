@@ -38,7 +38,7 @@ QtObject:
   method rowCount(self: ContactList, index: QModelIndex = nil): int =
     return self.contacts.len
 
-  proc userName(self: ContactList, pubKey: string, defaultValue: string = ""): string {.slot.} =
+  proc userName*(self: ContactList, pubKey: string, defaultValue: string = ""): string {.slot.} =
     for contact in self.contacts:
       if(contact.id != pubKey): continue
       return ens.userNameOrAlias(contact)

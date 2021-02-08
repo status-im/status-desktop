@@ -94,6 +94,7 @@ proc init*(self: ProfileController, account: Account) =
   self.status.events.on("contactAdded") do(e: Args):
     let contacts = self.status.contacts.getContacts()
     self.view.contacts.setContactList(contacts)
+    self.view.contactsChanged()
 
   self.status.events.on("contactBlocked") do(e: Args):
     let contacts = self.status.contacts.getContacts()

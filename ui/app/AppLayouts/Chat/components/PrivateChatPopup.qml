@@ -12,11 +12,10 @@ ModalPopup {
     property string pubKey : "";
     property string ensUsername : "";
 
-    property bool loading: false;
-    
     function validate() {
         if (!Utils.isChatKey(chatKey.text) && !Utils.isValidETHNamePrefix(chatKey.text)) {
-            validationError = "This needs to be a valid chat key or ENS username";
+            validationError = qsTr("Enter a valid chat key or ENS username");
+            pubKey = ""
             ensUsername.text = "";
         } else if (profileModel.profile.pubKey === chatKey.text) {
             validationError = qsTr("Can't chat with yourself");
@@ -27,32 +26,45 @@ ModalPopup {
     }
 
     property var resolveENS: Backpressure.debounce(popup, 500, function (ensName){
+        noContactsRect.visible = false
+        searchResults.loading = true
+        searchResults.showProfileNotFoundMessage = false
         chatsModel.resolveENS(ensName)
-        loading = true
     });
 
     function onKeyReleased(){
+        searchResults.pubKey = ""
         if (!validate()) {
+            searchResults.showProfileNotFoundMessage = false
+            noContactsRect.visible = false
             return;
         }
 
         chatKey.text = chatKey.text.trim();
         
-        if(Utils.isChatKey(chatKey.text)){
+        if (Utils.isChatKey(chatKey.text)){
             pubKey = chatKey.text;
-            ensUsername.text = "";
+            if (!profileModel.contacts.isAdded(pubKey)) {
+                searchResults.username = utilsModel.generateAlias(pubKey)
+                searchResults.userAlias = Utils.compactAddress(pubKey, 4)
+                searchResults.pubKey = pubKey
+            }
+            noContactsRect.visible = false
             return;
         }
         
         Qt.callLater(resolveENS, chatKey.text)
     }
 
-    function doJoin() {
-        if (!validate() || pubKey.trim() === "" || validationError !== "") return;
-        if(Utils.isChatKey(chatKey.text)){
-            chatsModel.joinChat(pubKey, Constants.chatTypeOneToOne);
+    function validateAndJoin(pk, ensName) {
+        if (!validate() || pk.trim() === "" || validationError !== "") return;
+        doJoin(pk, ensName)
+    }
+    function doJoin(pk, ensName) {
+        if(Utils.isChatKey(pk)){
+            chatsModel.joinChat(pk, Constants.chatTypeOneToOne);
         } else {
-            chatsModel.joinChatWithENS(pubKey, chatKey.text);
+            chatsModel.joinChatWithENS(pk, ensName);
         }
             
         popup.close();
@@ -67,107 +79,111 @@ ModalPopup {
         pubKey = "";
         ensUsername.text = "";
         chatKey.forceActiveFocus(Qt.MouseFocusReason)
-        noContactsRect.visible = !profileModel.contacts.list.hasAddedContacts()
+        existingContacts.visible = profileModel.contacts.list.hasAddedContacts()
+        noContactsRect.visible = !existingContacts.visible
     }
 
     Input {
         id: chatKey
         //% "Enter ENS username or chat key"
         placeholderText: qsTrId("enter-contact-code")
-        Keys.onEnterPressed: doJoin()
-        Keys.onReturnPressed: doJoin()
-        validationError: popup.validationError
+        Keys.onEnterPressed: validateAndJoin(popup.pubKey, chatKey.text)
+        Keys.onReturnPressed: validateAndJoin(popup.pubKey, chatKey.text)
         Keys.onReleased: {
             onKeyReleased();
         }
+        textField.anchors.rightMargin: clearBtn.width + Style.current.padding + 2
 
         Connections {
             target: chatsModel
             onEnsWasResolved: {
                 if(chatKey.text == ""){
-                    ensUsername.text == "";
+                    ensUsername.text = "";
                     pubKey = "";
                 } else if(resolvedPubKey == ""){
-                    //% "User not found"
-                    ensUsername.text = qsTrId("user-not-found");
-                    pubKey = "";
+                    ensUsername.text = "";
+                    searchResults.pubKey = pubKey = "";
+                    searchResults.showProfileNotFoundMessage = true
                 } else {
                     if (profileModel.profile.pubKey === resolvedPubKey) {
-                        validationError = qsTr("Can't chat with yourself");
+                        popup.validationError = qsTr("Can't chat with yourself");
                     } else {
-                        ensUsername.text = chatsModel.formatENSUsername(chatKey.text) + " • " + Utils.compactAddress(resolvedPubKey, 4)
-                        pubKey = resolvedPubKey;
+                        searchResults.username = chatsModel.formatENSUsername(chatKey.text)
+                        let userAlias = utilsModel.generateAlias(resolvedPubKey)
+                        userAlias = userAlias.length > 20 ? userAlias.substring(0, 19) + "..." : userAlias
+                        searchResults.userAlias =  userAlias + " • " + Utils.compactAddress(resolvedPubKey, 4)
+                        searchResults.pubKey = pubKey = resolvedPubKey;
                     }
+                    searchResults.showProfileNotFoundMessage = false
                 }
-                loading = false;
+                searchResults.loading = false;
+                noContactsRect.visible = pubKey === ""  && ensUsername.text === "" && !profileModel.contacts.list.hasAddedContacts() && !profileNotFoundMessage.visible
+            }
+        }
+
+        StatusIconButton {
+            id: clearBtn
+            icon.name: "close-icon"
+            type: "secondary"
+            visible: chatKey.text !== ""
+            icon.width: 14
+            icon.height: 14
+            width: 14
+            height: 14
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
+            anchors.verticalCenter: parent.verticalCenter
+            onClicked: {
+                chatKey.text = ""
+                chatKey.forceActiveFocus(Qt.MouseFocusReason)
+                searchResults.showProfileNotFoundMessage = false
+                searchResults.pubKey = popup.pubKey = ""
+                noContactsRect.visible = false
             }
         }
     }
-    
+
     StyledText {
-        id: ensUsername
+        id: validationErrorMessage
+        text: popup.validationError
+        visible: popup.validationError !== ""
+        font.pixelSize: 13
+        color: Style.current.danger
         anchors.top: chatKey.bottom
-        anchors.topMargin: Style.current.padding
-        color: Style.current.darkGrey
-        font.pixelSize: 12
+        anchors.topMargin: Style.current.smallPadding
+        anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    Item {
-        anchors.top: ensUsername.bottom
-        anchors.topMargin: 90
-        anchors.fill: parent
-
-        ScrollView {
-            anchors.fill: parent
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            ScrollBar.vertical.policy: contactListView.contentHeight > contactListView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-
-            ListView {
-                anchors.fill: parent
-                spacing: 0
-                clip: true
-                id: contactListView
-                model: profileModel.contacts.list
-                delegate: Contact {
-                    showCheckbox: false
-                    pubKey: model.pubKey
-                    isContact: model.isContact
-                    isUser: false
-                    name: model.name
-                    address: model.address
-                    identicon: model.thumbnailImage || model.identicon
-                    onItemChecked: function(pubKey, itemChecked){
-                        chatsModel.joinChat(pubKey, Constants.chatTypeOneToOne);
-                        popup.close()
-                    }
-                    visible: model.isContact && (chatKey.text === "" ||
-                        model.name.toLowerCase().includes(chatKey.text.toLowerCase()) ||
-                        model.address.toLowerCase().includes(chatKey.text.toLowerCase()))
-                }
-            }
-
-
-            NoFriendsRectangle {
-                id: noContactsRect
-                visible: profileModel.contacts.addedContacts.rowCount() === 0
-                text: qsTr("You don’t have any contacts yet. Invite your friends to start chatting.")
-                width: parent.width
-                anchors.verticalCenter: parent.verticalCenter
-            }
+    PrivateChatPopupExistingContacts {
+        id: existingContacts
+        anchors.topMargin: this.height > 0 ? Style.current.xlPadding : 0
+        anchors.top: chatKey.bottom
+        filterText: chatKey.text
+        onContactClicked: function (contact) {
+            doJoin(contact.pubKey, profileModel.contacts.addedContacts.userName(contact.pubKey, contact.name))
         }
+        expanded: !searchResults.loading && popup.pubKey === "" && !searchResults.showProfileNotFoundMessage
     }
 
-    footer: StatusButton {
-        anchors.right: parent.right
-        id: submitBtn
-        state: loading ? "pending" : "default"
-        text: qsTr("Start chat")
-        enabled: pubKey !== ""
-        onClicked : doJoin()
+    PrivateChatPopupSearchResults {
+        id: searchResults
+        anchors.top: existingContacts.visible ? existingContacts.bottom : chatKey.bottom
+        anchors.topMargin: Style.current.padding
+        hasExistingContacts: existingContacts.visible
+        loading: false
+
+        onResultClicked: validateAndJoin(popup.pubKey, chatKey.text)
+        onAddToContactsButtonClicked: profileModel.contacts.addContact(popup.pubKey)
     }
+
+    NoFriendsRectangle {
+        id: noContactsRect
+        anchors.top: chatKey.bottom
+        anchors.topMargin: Style.current.xlPadding * 3
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+    }
+
 }
 
 /*##^##
