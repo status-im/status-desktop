@@ -4,6 +4,7 @@ import "../../../../../imports"
 
 Loader {
     property int textFieldWidth: item ? item.textField.width : 0
+    property int textFieldImplicitWidth: 0
     property int authorWidth: item ? item.authorMetrics.width : 0
 
     property bool longReply: false
@@ -15,15 +16,13 @@ Loader {
     active: responseTo != "" && replyMessageIndex > -1
 
     sourceComponent: Component {
-        Rectangle {
+        Item {
             property alias textField: lblReplyMessage
             property alias authorMetrics: txtAuthorMetrics
 
             id: chatReply
-            visible: responseTo != "" && replyMessageIndex > -1
-            // childrenRect.height shows a binding loop for soem reason, so we use heights instead
-            height: this.visible ? lblReplyAuthor.height + ((repliedMessageType === Constants.imageType ? imgReplyImage.height : lblReplyMessage.height) + 5 + 8) : 0
-            color: Style.current.transparent
+            // childrenRect.height shows a binding loop for some reason, so we use heights instead
+            height: lblReplyAuthor.height + ((repliedMessageType === Constants.imageType ? imgReplyImage.height : lblReplyMessage.height) + 5 + 8)
 
             TextMetrics {
                 id: txtAuthorMetrics
@@ -57,6 +56,7 @@ Loader {
             StyledTextEdit {
                 id: lblReplyMessage
                 visible: repliedMessageType != Constants.imageType
+                Component.onCompleted: textFieldImplicitWidth = implicitWidth
                 anchors.top: lblReplyAuthor.bottom
                 anchors.topMargin: 5
                 text: `<style type="text/css">`+
@@ -79,7 +79,7 @@ Loader {
                 wrapMode: Text.Wrap
                 font.pixelSize: Style.current.secondaryTextFontSize
                 anchors.left: parent.left
-                anchors.right: root.longReply ? parent.right : undefined
+                width: root.longReply ? parent.width : implicitWidth
                 z: 51
             }
 

@@ -98,7 +98,10 @@ Item {
         target: profileModel.contacts.list
         onContactChanged: {
             if (pubkey === fromAuthor) {
-                profileImageSource = appMain.getProfileImage(userPubKey, isCurrentUser, useLargeImage)
+                const img = appMain.getProfileImage(userPubKey, isCurrentUser, useLargeImage)
+                if (img) {
+                    profileImageSource = img
+                }
             }
         }
     }

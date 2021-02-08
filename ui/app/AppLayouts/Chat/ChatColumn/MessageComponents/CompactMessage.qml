@@ -104,8 +104,10 @@ Item {
 
             ChatReply {
                 id: chatReply
+                longReply: active && textFieldImplicitWidth > width
                 container: root.container
                 chatHorizontalPadding: root.chatHorizontalPadding
+                width: parent.width
             }
 
             ChatText {

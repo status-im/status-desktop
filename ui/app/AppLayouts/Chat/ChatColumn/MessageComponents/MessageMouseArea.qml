@@ -10,7 +10,9 @@ MouseArea {
     onClicked: {
         if(mouse.button & Qt.RightButton) {
             clickMessage(false, isSticker, false);
-            isMessageActive = true
+            if (typeof isMessageActive !== "undefined") {
+                isMessageActive = true
+            }
             return;
         }
         if (mouse.button & Qt.LeftButton) {                
