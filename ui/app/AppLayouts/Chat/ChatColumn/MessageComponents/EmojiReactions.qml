@@ -208,7 +208,9 @@ Item {
                 onEntered: addEmojiBtn.isHovered = true
                 onExited: addEmojiBtn.isHovered = false
                 onClicked: {
-                    isMessageActive = true
+                    if (typeof isMessageActive !== "undefined") {
+                        isMessageActive = true
+                    }
                     clickMessage(false, false, false, null, true)
                 }
             }

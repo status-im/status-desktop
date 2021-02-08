@@ -44,7 +44,7 @@ Item {
         readonly property int maxMessageChars: (defaultMaxMessageChars * messageWidth) / defaultMessageWidth
         property int chatVerticalPadding: isImage ? 4 : 6
         property int chatHorizontalPadding: isImage ? 0 : 12
-        property bool longReply: chatReply.visible && repliedMessageContent.length > maxMessageChars
+        property bool longReply: chatReply.active && repliedMessageContent.length > maxMessageChars
         property bool longChatText: chatsModel.plainText(message).split('\n').some(function (messagePart) {
             return messagePart.length > maxMessageChars
         })
@@ -125,7 +125,7 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: chatBox.chatHorizontalPadding
             container: root.container
-	    chatHorizontalPadding: chatBox.chatHorizontalPadding
+            chatHorizontalPadding: chatBox.chatHorizontalPadding
         }
 
         ChatText {
@@ -235,6 +235,7 @@ Item {
 
     ChatTime {
         id: chatTime
+        visible: isMessage && !emojiReactionLoader.active
         anchors.top: isImage ? undefined : (linksLoader.active ? linksLoader.bottom : chatBox.bottom)
         anchors.topMargin: isImage ? 0 : 4
         anchors.verticalCenter: isImage ? dateTimeBackground.verticalCenter : undefined
@@ -281,7 +282,8 @@ Item {
         id: emojiReactionLoader
         active: emojiReactions !== ""
         sourceComponent: emojiReactionsComponent
-        anchors.left: chatBox.left
+        anchors.left: root.isCurrentUser ? undefined : chatBox.left
+        anchors.right: root.isCurrentUser ? chatBox.right : undefined
         anchors.leftMargin: root.isCurrentUser ? Style.current.halfPadding : 1
         anchors.top: chatBox.bottom
         anchors.topMargin: 2
