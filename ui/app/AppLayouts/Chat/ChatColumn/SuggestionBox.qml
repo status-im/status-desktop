@@ -61,7 +61,7 @@ Rectangle {
 
     z: parent.z + 100
     visible: !shouldHide && filter.length > 0 && suggestionsModel.count > 0
-    height: Math.min(400, listView.contentHeight + Style.current.smallPadding)
+    height: Math.min(400, listView.contentHeight + Style.current.padding)
 
     opacity: visible ? 1.0 : 0
     Behavior on opacity {
