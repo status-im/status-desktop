@@ -193,9 +193,9 @@ Rectangle {
         // we can only get it in the `released` event
         if (paste) {
             paste = false;
-
-            // Remove format
-            messageInputField.text = Emoji.parse(chatsModel.plainText(Emoji.deparse(messageInputField.text)).replaceAll("\n","<br />"))
+            const deparsedEmoji = Emoji.deparse(messageInputField.text);
+            const plainText = chatsModel.plainText(deparsedEmoji);
+            messageInputField.text = Emoji.parse(plainText.replace(/\n/g, "<br />"));
             messageInputField.cursorPosition = messageInputField.length;
 
             interrogateMessage();
