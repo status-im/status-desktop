@@ -22,6 +22,8 @@ Rectangle {
     property bool isHovered: false
     property var onItemChecked: (function(pubKey, itemChecked) { console.log(pubKey, itemChecked)  })
 
+    property var onContactClicked
+
     id: root
     visible: isVisible && (isContact || isUser)
     height: visible ? 64 : 0
@@ -85,6 +87,11 @@ Rectangle {
         hoverEnabled: root.clickable || root.showCheckbox
         onEntered: root.isHovered = true
         onExited: root.isHovered = false
-        onClicked: assetCheck.clicked()
+        onClicked: {
+            if (typeof root.onContactClicked !== "function") {
+                return assetCheck.clicked()
+            }
+            root.onContactClicked()
+        }
     }
 }
