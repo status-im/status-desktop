@@ -193,10 +193,11 @@ Rectangle {
         // we can only get it in the `released` event
         if (paste) {
             paste = false;
+            const posBeforeEnd = messageInputField.length - messageInputField.cursorPosition;
             const deparsedEmoji = Emoji.deparse(messageInputField.text);
             const plainText = chatsModel.plainText(deparsedEmoji);
             messageInputField.text = Emoji.parse(plainText.replace(/\n/g, "<br />"));
-            messageInputField.cursorPosition = messageInputField.length;
+            messageInputField.cursorPosition = messageInputField.length - posBeforeEnd;
 
             interrogateMessage();
         }
