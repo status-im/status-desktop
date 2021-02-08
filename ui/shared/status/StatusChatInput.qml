@@ -195,9 +195,8 @@ Rectangle {
             paste = false;
 
             // Remove format
-            const cursor = messageInputField.cursorPosition;
-            messageInputField.text = Emoji.parse(chatsModel.plainText(Emoji.deparse(messageInputField.text)));
-            messageInputField.cursorPosition = cursor;
+            messageInputField.text = Emoji.parse(chatsModel.plainText(Emoji.deparse(messageInputField.text)).replaceAll("\n","<br />"))
+            messageInputField.cursorPosition = messageInputField.length;
 
             interrogateMessage();
         }
