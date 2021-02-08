@@ -446,12 +446,13 @@ Rectangle {
               chatsModel.plainText(Emoji.deparse(messageInputField.text)) :
               chatsModel.plainText(messageInputField.text);
 
-            let aliasName = item[suggestionsBox.property.split(",").map(p => p.trim()).find(p => !!item[p])]
+            var properties = "ensName, alias"; // Ignore localNickname
+
+            let aliasName = item[properties.split(",").map(p => p.trim()).find(p => !!item[p])]
             aliasName = aliasName.replace(/(\.stateofus)?\.eth/, "")
             let nameLen = aliasName.length + 2 // We're doing a +2 here because of the `@` and the trailing whitespace
             let position = 0;
             let text = ""
-
             if (currentText === "@") {
                 position = nameLen
                 text = "@" + aliasName + " "
