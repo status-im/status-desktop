@@ -278,10 +278,16 @@ StackLayout {
                     if (msg.length > 0){
                         msg = chatInput.interpretMessage(msg)
                         chatsModel.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, false);
-                        chatInput.textInput.text = "";
+                        chatInput.textInput.textFormat = TextEdit.PlainText;
                         if(event) event.accepted = true
                         chatInput.messageSound.stop()
                         Qt.callLater(chatInput.messageSound.play);
+
+                        Qt.callLater(function(){
+                            chatInput.textInput.clear();
+                            chatInput.textInput.textFormat = TextEdit.RichText;
+                        });
+
                     }
 
                 }

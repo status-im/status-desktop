@@ -193,6 +193,12 @@ Rectangle {
         // we can only get it in the `released` event
         if (paste) {
             paste = false;
+
+            // Remove format
+            const cursor = messageInputField.cursorPosition;
+            messageInputField.text = Emoji.parse(chatsModel.plainText(Emoji.deparse(messageInputField.text)));
+            messageInputField.cursorPosition = cursor;
+
             interrogateMessage();
         }
 
@@ -206,6 +212,7 @@ Rectangle {
 
     function interrogateMessage() {
         const text = chatsModel.plainText(Emoji.deparse(messageInputField.text));
+        
         var words = text.split(' ');
 
         let madeChanges = false
