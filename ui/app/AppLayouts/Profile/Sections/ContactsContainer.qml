@@ -189,6 +189,17 @@ Item {
                     visible: !contactsContainer.isPending && !!!profileModel.contacts.contactToAddUsername
                 }
 
+                Connections {
+                    target: profileModel.contacts
+                    onEnsWasResolved: {
+                        if(addContactSearchInput.text !== "" && !Utils.isHex(addContactSearchInput.text) && resolvedPubKey !== ""){
+                            contactUsername.text = Qt.binding(function () {
+                                return chatsModel.formatENSUsername(addContactSearchInput.text) + " • "
+                            });
+                        }
+                    }
+                }
+
                 StyledText {
                     id: contactUsername
                     text: profileModel.contacts.contactToAddUsername + " • "

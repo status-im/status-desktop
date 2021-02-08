@@ -119,15 +119,19 @@ QtObject:
         id = status_ens.pubkey(id)
       id
 
-  proc ensResolved(self: ContactsView, id: string) {.slot.} =
-    let contact = self.status.contacts.getContactByID(id)
+  proc ensWasResolved*(self: ContactsView, resolvedPubKey: string) {.signal.}
 
+  proc ensResolved(self: ContactsView, id: string) {.slot.} =
+    self.ensWasResolved(id)
+    let contact = self.status.contacts.getContactByID(id)
+    
     if contact != nil:
       self.contactToAdd = contact
     else:
       self.contactToAdd = Profile(
+        address: id,
         username: "",
-        alias: "",
+        alias: generateAlias(id),
         ensName: "",
         ensVerified: false
       )
