@@ -71,6 +71,7 @@ Item {
 
         UserImage {
             id: chatImage
+            visible: authorCurrentMsg != authorPrevMsg
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
             anchors.top: parent.top

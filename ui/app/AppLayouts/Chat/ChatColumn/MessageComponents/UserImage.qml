@@ -3,7 +3,7 @@ import "../../../../../shared"
 import "../../../../../imports"
 
 Loader {
-    active: isMessage && authorCurrentMsg !== authorPrevMsg
+    active: isMessage
     height: active ? item.height : 0
 
     sourceComponent: Component {

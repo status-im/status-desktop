@@ -8,6 +8,7 @@ Item {
     property bool isCurrentUser: false
     property int contentType: 2
     property var container
+    property bool headerRepeatCondition: (authorCurrentMsg != authorPrevMsg || shouldRepeatHeader || dateGroupLbl.visible)
 
     id: root
     anchors.top: parent.top
@@ -21,7 +22,7 @@ Item {
 
     UserImage {
         id: chatImage
-        visible: chatsModel.activeChannel.chatType !== Constants.chatTypeOneToOne && isMessage && authorCurrentMsg != authorPrevMsg && !root.isCurrentUser
+        visible: chatsModel.activeChannel.chatType !== Constants.chatTypeOneToOne && isMessage && headerRepeatCondition && !root.isCurrentUser
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.top:  dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
@@ -30,7 +31,7 @@ Item {
 
     UsernameLabel {
         id: chatName
-        visible: chatsModel.activeChannel.chatType !== Constants.chatTypeOneToOne && isMessage && authorCurrentMsg != authorPrevMsg && !root.isCurrentUser
+        visible: chatsModel.activeChannel.chatType !== Constants.chatTypeOneToOne && isMessage && headerRepeatCondition && !root.isCurrentUser
         anchors.leftMargin: 20
         anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
         anchors.topMargin: 0
@@ -111,7 +112,7 @@ Item {
         anchors.leftMargin: !root.isCurrentUser ? 8 : 0
         anchors.right: !root.isCurrentUser ? undefined : parent.right
         anchors.rightMargin: !root.isCurrentUser ? 0 : Style.current.padding
-        anchors.top: authorCurrentMsg != authorPrevMsg && !root.isCurrentUser ? chatImage.top : (dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top)
+        anchors.top: headerRepeatCondition && !root.isCurrentUser ? chatImage.top : (dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top)
         anchors.topMargin: 0
         visible: isMessage && contentType !== Constants.transactionType
 

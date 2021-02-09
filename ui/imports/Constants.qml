@@ -116,4 +116,6 @@ QtObject {
     readonly property int browserEthereumExplorerEtherscan: 1
     readonly property int browserEthereumExplorerEthplorer: 2
     readonly property int browserEthereumExplorerBlockchair: 3
+
+    readonly property int repeatHeaderInterval: 2
 }
