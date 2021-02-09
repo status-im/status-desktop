@@ -337,6 +337,18 @@ DOS_API DosQVariant *DOS_CALL dos_qvariant_create(void);
 /// \note The returned QVariant should be freed using dos_qvariant_delete()
 DOS_API DosQVariant *DOS_CALL dos_qvariant_create_int(int value);
 
+/// \brief Create a new QVariant holding a long long value
+/// \return The a new QVariant
+/// \param value The value
+/// \note The returned QVariant should be freed using dos_qvariant_delete()
+DOS_API DosQVariant *DOS_CALL dos_qvariant_create_longlong(long long value);
+
+/// \brief Create a new QVariant holding an usigned long long value
+/// \return The a new QVariant
+/// \param value The value
+/// \note The returned QVariant should be freed using dos_qvariant_delete()
+DOS_API DosQVariant *DOS_CALL dos_qvariant_create_ulonglong(unsigned long long value);
+
 /// \brief Create a new QVariant holding a bool value
 /// \return The a new QVariant
 /// \param value The bool value
@@ -385,6 +397,16 @@ DOS_API DosQVariant *DOS_CALL dos_qvariant_create_array(int size, DosQVariant **
 /// \param vptr The QVariant
 /// \param value The int value
 DOS_API void DOS_CALL dos_qvariant_setInt(DosQVariant *vptr, int value);
+
+/// \brief Calls the QVariant::setValue<long long>() function
+/// \param vptr The QVariant
+/// \param value The long long value
+DOS_API void DOS_CALL dos_qvariant_setLongLong(DosQVariant *vptr, long long value);
+
+/// \brief Calls the QVariant::setValue<unsigned long long>() function
+/// \param vptr The QVariant
+/// \param value The unsigned long long value
+DOS_API void DOS_CALL dos_qvariant_setULongLong(DosQVariant *vptr, unsigned long long value);
 
 /// \brief Calls the QVariant::setValue<bool>() function
 /// \param vptr The QVariant
@@ -437,6 +459,16 @@ DOS_API void DOS_CALL dos_qvariant_assign(DosQVariant *vptr, const DosQVariant *
 /// \param vptr The QVariant
 /// \return The int value
 DOS_API int DOS_CALL dos_qvariant_toInt(const DosQVariant *vptr);
+
+/// \brief Calls the QVariant::value<long long>() function
+/// \param vptr The QVariant
+/// \return The int value
+DOS_API long long DOS_CALL dos_qvariant_toLongLong(const DosQVariant *vptr);
+
+/// \brief Calls the QVariant::value<unsigned long long>() function
+/// \param vptr The QVariant
+/// \return The int value
+DOS_API unsigned long long DOS_CALL dos_qvariant_toULongLong(const DosQVariant *vptr);
 
 /// \brief Calls the QVariant::value<bool>() function
 /// \param vptr The QVariant
