@@ -236,17 +236,9 @@ Item {
         }
     }
 
-    // TODO find a way for this to not eat link hovers
-    MouseArea {
-        enabled: !placeholderMessage
-        anchors.fill: root
-        acceptedButtons: Qt.NoButton
-        hoverEnabled: true
-        onEntered: {
-            root.isHovered = true
-        }
-        onExited: {
-            root.isHovered = false
+    HoverHandler {
+        onHoveredChanged: {
+            root.isHovered = hovered;
         }
     }
 
