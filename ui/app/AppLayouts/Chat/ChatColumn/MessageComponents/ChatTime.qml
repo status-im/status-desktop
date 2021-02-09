@@ -1,5 +1,6 @@
-import QtQuick 2.3
+import QtQuick 2.14
 import "../../../../../shared"
+import "../../../../../shared/status"
 import "../../../../../imports"
 
 StyledTextEdit {
@@ -11,4 +12,14 @@ StyledTextEdit {
     font.pixelSize: Style.current.asideTextFontSize
     readOnly: true
     selectByMouse: true
+
+    StatusToolTip {
+        visible: hhandler.hovered
+        text: new Date(parseInt(timestamp, 10)).toLocaleString(Qt.locale(appSettings.locale))
+        width: 350
+    }
+
+    HoverHandler {
+        id: hhandler
+    }
 }
