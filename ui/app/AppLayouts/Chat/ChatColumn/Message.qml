@@ -31,6 +31,9 @@ Item {
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
 
+    property string prevMsgTimestamp: chatsModel.messageList.getMessageData(prevMessageIndex, "timestamp")
+    property bool shouldRepeatHeader: ((parseInt(timestamp, 10) - parseInt(prevMsgTimestamp, 10)) / 60 / 1000) > Constants.repeatHeaderInterval
+
     property bool isEmoji: contentType === Constants.emojiType
     property bool isImage: contentType === Constants.imageType
     property bool isAudio: contentType === Constants.audioType
