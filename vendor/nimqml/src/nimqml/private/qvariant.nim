@@ -2,9 +2,21 @@ proc setup*(variant: QVariant) =
   ## Setup a new QVariant
   variant.vptr = dos_qvariant_create()
 
-proc setup*(variant: QVariant, value: int) =
+proc setup*(variant: QVariant, value: int | int32 | int64) =
   ## Setup a new QVariant given a cint value
-  variant.vptr = dos_qvariant_create_int(value.cint)
+  variant.vptr =
+    when sizeof(value) == sizeof(cint):
+      dos_qvariant_create_int(value.cint)
+    else:
+      dos_qvariant_create_longlong(value.clonglong)
+
+proc setup*(variant: QVariant, value: uint | uint32 | uint64) =
+  ## Setup a new QVariant given a cint value
+  variant.vptr =
+    when sizeof(value) == sizeof(cuint):
+      dos_qvariant_create_uint(value.cuint)
+    else:
+      dos_qvariant_create_ulonglong(value.culonglong)
 
 proc setup*(variant: QVariant, value: bool) =
   ## Setup a new QVariant given a bool value
@@ -49,7 +61,7 @@ proc newQVariant*(): QVariant =
   new(result, delete)
   result.setup()
 
-proc newQVariant*(value: int): QVariant =
+proc newQVariant*(value: int | int32 | int64 | uint | uint32 | uint64): QVariant =
   ## Return a new QVariant given a cint
   new(result, delete)
   result.setup(value)
@@ -90,12 +102,64 @@ proc isNull*(variant: QVariant): bool =
 
 proc intVal*(variant: QVariant): int =
   ## Return the QVariant value as int
-  dos_qvariant_toInt(variant.vptr).int
+  when sizeof(result) == sizeof(cint):
+    dos_qvariant_toInt(variant.vptr).int
+  else:
+    dos_qvariant_toLongLong(variant.vptr).int
 
 proc `intVal=`*(variant: QVariant, value: int) =
   ## Sets the QVariant value int value
-  var rawValue = value.cint
-  dos_qvariant_setInt(variant.vptr, rawValue)
+  when sizeof(value) == sizeof(cint):
+    dos_qvariant_setInt(variant.vptr, value.cint)
+  else:
+    dos_qvariant_setLongLong(variant.vptr, value.clonglong)
+
+proc int32Val*(variant: QVariant): int32 =
+  ## Return the QVariant value as int
+  dos_qvariant_toInt(variant.vptr).int32
+
+proc `int32Val=`*(variant: QVariant, value: int32) =
+  ## Sets the QVariant value int value
+  dos_qvariant_setInt(variant.vptr, value.cint)
+
+proc int64Val*(variant: QVariant): int64 =
+  ## Return the QVariant value as int
+  dos_qvariant_toLongLong(variant.vptr).int64
+
+proc `int64Val=`*(variant: QVariant, value: int64) =
+  ## Sets the QVariant value int value
+  dos_qvariant_setLongLong(variant.vptr, value.clonglong)
+
+proc uintVal*(variant: QVariant): uint =
+  ## Return the QVariant value as int
+  when sizeof(result) == sizeof(cuint):
+    dos_qvariant_toUInt(variant.vptr).uint
+  else:
+    dos_qvariant_toULongLong(variant.vptr).uint
+
+proc `uintVal=`*(variant: QVariant, value: uint) =
+  ## Sets the QVariant value uint value
+  when sizeof(value) == sizeof(cuint):
+    dos_qvariant_setUInt(variant.vptr, value.cuint)
+  else:
+    dos_qvariant_setULongLong(variant.vptr, value.culonglong)
+
+proc uint32Val*(variant: QVariant): uint32 =
+  ## Return the QVariant value as int
+  dos_qvariant_toUInt(variant.vptr).uint32
+
+proc `uint32Val=`*(variant: QVariant, value: uint32) =
+  ## Sets the QVariant value int value
+  var rawValue = value.culonglong
+  dos_qvariant_setUInt(variant.vptr, value.cuint)
+
+proc uint64Val*(variant: QVariant): uint64 =
+  ## Return the QVariant value as int
+  dos_qvariant_toULongLong(variant.vptr).uint64
+
+proc `uint64Val=`*(variant: QVariant, value: uint64) =
+  ## Sets the QVariant value int value
+  dos_qvariant_setULongLong(variant.vptr, value.culonglong)
 
 proc boolVal*(variant: QVariant): bool =
   ## Return the QVariant value as bool
