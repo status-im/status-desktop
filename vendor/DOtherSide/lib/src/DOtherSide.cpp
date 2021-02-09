@@ -440,6 +440,16 @@ void dos_qqmlcontext_setcontextproperty(::DosQQmlContext *vptr, const char *name
     return new QVariant(value);
 }
 
+::DosQVariant *dos_qvariant_create_longlong(long long value)
+{
+    return new QVariant(value);
+}
+
+::DosQVariant *dos_qvariant_create_ulonglong(unsigned long long value)
+{
+    return new QVariant(value);
+}
+
 ::DosQVariant *dos_qvariant_create_bool(bool value)
 {
     return new QVariant(value);
@@ -510,6 +520,18 @@ int dos_qvariant_toInt(const ::DosQVariant *vptr)
     return variant->toInt();
 }
 
+long long dos_qvariant_toLongLong(const ::DosQVariant *vptr)
+{
+    auto variant = static_cast<const QVariant *>(vptr);
+    return variant->toLongLong();
+}
+
+unsigned long long dos_qvariant_toULongLong(const ::DosQVariant *vptr)
+{
+    auto variant = static_cast<const QVariant *>(vptr);
+    return variant->toULongLong();
+}
+
 bool dos_qvariant_toBool(const ::DosQVariant *vptr)
 {
     auto variant = static_cast<const QVariant *>(vptr);
@@ -553,6 +575,18 @@ DosQVariantArray *dos_qvariant_toArray(const DosQVariant *vptr)
 }
 
 void dos_qvariant_setInt(::DosQVariant *vptr, int value)
+{
+    auto variant = static_cast<QVariant *>(vptr);
+    *variant = value;
+}
+
+void dos_qvariant_setLongLong(::DosQVariant *vptr, long long value)
+{
+    auto variant = static_cast<QVariant *>(vptr);
+    *variant = value;
+}
+
+void dos_qvariant_setULongLong(::DosQVariant *vptr, unsigned long long value)
 {
     auto variant = static_cast<QVariant *>(vptr);
     *variant = value;
