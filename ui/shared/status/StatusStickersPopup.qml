@@ -261,7 +261,7 @@ Popup {
         onStickerPacksLoaded: {
             root.stickerPacksLoaded = true
             stickerPackListView.visible = true
-            loadingGrid.visible = false
+            loadingGrid.active = false
             loadingStickerPackListView.model = []
             noStickerPacks.visible = installedPacksCount === 0 || chatsModel.stickers.recent.rowCount() === 0
         }
