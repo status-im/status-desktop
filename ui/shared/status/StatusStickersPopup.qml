@@ -148,26 +148,21 @@ Popup {
                     root.close()
                 }
             }
-            StatusStickerList {
-                id: loadingGrid
-                visible: chatsModel.stickers.recent.rowCount() === 0
-                interactive: false
-                model: new Array(20)
-                delegate: Item {
-                    width: stickerGrid.cellWidth
-                    height: stickerGrid.cellHeight
-                    Column {
-                        anchors.fill: parent
-                        anchors.topMargin: 4
-                        anchors.leftMargin: 4
-                        Rectangle {
-                            width: 80
-                            height: 80
-                            radius: width / 2
-                            color: Style.current.backgroundHover
-                        }
-                    }
+
+
+            Component {
+                id: loadingImageComponent
+                LoadingImage {
+                    width: 50
+                    height: 50
                 }
+            }
+
+            Loader {
+                id: loadingGrid
+                active: chatsModel.stickers.recent.rowCount() === 0
+                sourceComponent: loadingImageComponent
+                anchors.centerIn: parent
             }
         }
 
