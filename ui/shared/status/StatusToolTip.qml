@@ -5,9 +5,9 @@ import "../../shared"
 
 ToolTip {
     id: tooltip
-    implicitWidth: tooltip.width
-    leftPadding: Style.current.padding
-    rightPadding: Style.current.padding
+    implicitWidth: textContent.implicitWidth + Style.current.bigPadding
+    leftPadding: Style.current.smallPadding
+    rightPadding: Style.current.smallPadding
     topPadding: Style.current.smallPadding
     bottomPadding: Style.current.smallPadding
     delay: 200
@@ -18,6 +18,7 @@ ToolTip {
             color: Style.current.tooltipBackgroundColor
             radius: Style.current.radius
             anchors.fill: parent
+            anchors.bottomMargin: Style.current.smallPadding
         }
         Rectangle {
             color: tooltipContentBg.color
@@ -38,6 +39,7 @@ ToolTip {
         font.pixelSize: 13
         font.weight: Font.Medium
         horizontalAlignment: Text.AlignHCenter
+        bottomPadding: Style.current.smallPadding
     }
 }
 
