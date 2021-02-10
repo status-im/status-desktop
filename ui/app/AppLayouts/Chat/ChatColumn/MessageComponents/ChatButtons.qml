@@ -72,7 +72,6 @@ Rectangle {
             StatusToolTip {
               visible: emojiBtn.hovered
               text: qsTr("Add reaction")
-              width: 115
             }
         }
 
@@ -92,7 +91,6 @@ Rectangle {
             StatusToolTip {
               visible: replyBtn.hovered
               text: qsTr("Reply")
-              width: 75
             }
         }
     }

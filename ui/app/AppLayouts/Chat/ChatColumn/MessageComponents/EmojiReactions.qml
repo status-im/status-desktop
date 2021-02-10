@@ -77,7 +77,6 @@ Item {
                 StatusToolTip {
                     visible: mouseArea.containsMouse
                     text: showReactionAuthors(modelData.fromAccounts, modelData.emojiId)
-                    width: 400
                 }
 
                 // Rounded corner to cover one corner
@@ -218,7 +217,6 @@ Item {
             StatusToolTip {
               visible: addEmojiBtn.isHovered
               text: qsTr("Add reaction")
-              width: 115
             }
         }
     }

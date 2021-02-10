@@ -51,7 +51,6 @@ Rectangle {
 
     StatusToolTip {
         id: toolTip
-        width: 80
         text: qsTr("Copied!")
     }
 
