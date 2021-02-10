@@ -21,6 +21,8 @@ proc toReaction*(jsonReaction: JsonNode): Reaction
 
 proc toCommunity*(jsonCommunity: JsonNode): Community
 
+proc toCommunityMembershipRequest*(jsonCommunityMembershipRequest: JsonNode): CommunityMembershipRequest
+
 proc fromEvent*(event: JsonNode): Signal = 
   var signal:MessageSignal = MessageSignal()
   signal.messages = @[]
@@ -60,6 +62,11 @@ proc fromEvent*(event: JsonNode): Signal =
   if event["event"]{"communities"} != nil:
     for jsonCommunity in event["event"]["communities"]:
       signal.communities.add(jsonCommunity.toCommunity)
+
+  if event["event"]{"requestsToJoinCommunity"} != nil:
+    debug "requests", event = event["event"]["requestsToJoinCommunity"]
+    for jsonCommunity in event["event"]["requestsToJoinCommunity"]:
+      signal.membershipRequests.add(jsonCommunity.toCommunityMembershipRequest)
 
   result = signal
 
@@ -164,31 +171,52 @@ proc toChat*(jsonChat: JsonNode): Chat =
 proc toCommunity*(jsonCommunity: JsonNode): Community =
   result = Community(
     id: jsonCommunity{"id"}.getStr,
-    name: jsonCommunity{"description"}{"identity"}{"display_name"}.getStr,
-    description: jsonCommunity{"description"}{"identity"}{"description"}.getStr,
-    # color: jsonCommunity{"description"}{"identity"}{"color"}.getStr,
-    access: jsonCommunity{"description"}{"permissions"}{"access"}.getInt,
+    name: jsonCommunity{"name"}.getStr,
+    description: jsonCommunity{"description"}.getStr,
+    access: jsonCommunity{"permissions"}{"access"}.getInt,
     admin: jsonCommunity{"admin"}.getBool,
     joined: jsonCommunity{"joined"}.getBool,
     verified: jsonCommunity{"verified"}.getBool,
+    ensOnly: jsonCommunity{"permissions"}{"ens_only"}.getBool,
+    canRequestAccess: jsonCommunity{"canRequestAccess"}.getBool,
+    canManageUsers: jsonCommunity{"canManageUsers"}.getBool,
+    canJoin: jsonCommunity{"canJoin"}.getBool,
+    isMember: jsonCommunity{"isMember"}.getBool,
     chats: newSeq[Chat](),
-    members: newSeq[string]()
+    members: newSeq[string](),
+    communityImage: IdentityImage()
   )
 
-  if jsonCommunity["description"].hasKey("chats") and jsonCommunity["description"]["chats"].kind != JNull:
-    for chatId, chat in jsonCommunity{"description"}{"chats"}:
+  if jsonCommunity.hasKey("images") and jsonCommunity["images"].kind != JNull:
+    if jsonCommunity["images"].hasKey("thumbnail"):
+      result.communityImage.thumbnail = jsonCommunity["images"]["thumbnail"]["uri"].str
+    if jsonCommunity["images"].hasKey("large"):
+      result.communityImage.large = jsonCommunity["images"]["large"]["uri"].str
+
+  if jsonCommunity.hasKey("chats") and jsonCommunity["chats"].kind != JNull:
+    for chatId, chat in jsonCommunity{"chats"}:
       result.chats.add(Chat(
         id: result.id & chatId,
-        name: chat{"identity"}{"display_name"}.getStr,
-        description: chat{"identity"}{"description"}.getStr,
+        name: chat{"name"}.getStr,
+        canPost: chat{"canPost"}.getBool,
         # TODO get this from access
-      chatType: ChatType.Public#chat{"permissions"}{"access"}.getInt,
+        chatType: ChatType.Public#chat{"permissions"}{"access"}.getInt,
       ))
 
-  if jsonCommunity["description"].hasKey("members") and jsonCommunity["description"]["members"].kind != JNull:
+  if jsonCommunity.hasKey("members") and jsonCommunity["members"].kind != JNull:
     # memberInfo is empty for now
-    for memberPubKey, memeberInfo in jsonCommunity{"description"}{"members"}:
+    for memberPubKey, memeberInfo in jsonCommunity{"members"}:
       result.members.add(memberPubKey)
+
+proc toCommunityMembershipRequest*(jsonCommunityMembershipRequest: JsonNode): CommunityMembershipRequest =
+  result = CommunityMembershipRequest(
+    id: jsonCommunityMembershipRequest{"id"}.getStr,
+    publicKey: jsonCommunityMembershipRequest{"publicKey"}.getStr,
+    chatId: jsonCommunityMembershipRequest{"chatId"}.getStr,
+    state: jsonCommunityMembershipRequest{"state"}.getInt,
+    communityId: jsonCommunityMembershipRequest{"communityId"}.getStr,
+    our: jsonCommunityMembershipRequest{"our"}.getStr,
+  )
 
 proc toTextItem*(jsonText: JsonNode): TextItem =
   result = TextItem(

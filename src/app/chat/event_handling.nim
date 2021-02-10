@@ -28,6 +28,8 @@ proc handleChatEvents(self: ChatController) =
     if (evArgs.communities.len > 0):
       for community in evArgs.communities:
         self.view.addCommunityToList(community)
+    if (evArgs.communityMembershipRequests.len > 0):
+      self.view.addMembershipRequests(evArgs.communityMembershipRequests)
 
   self.status.events.on("channelUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)

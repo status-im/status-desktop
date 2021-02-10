@@ -111,52 +111,12 @@ ScrollView {
             section.criteria: ViewSection.FullString
         }
 
-        DelegateModel {
+        DelegateModelGeneralized {
             id: messageListDelegate
-            property var moreThan: [
+            lessThan: [
                 function(left, right) { return left.clock > right.clock }
             ]
 
-            property int sortOrder: 0
-            onSortOrderChanged: items.setGroups(0, items.count, "unsorted")
-
-            function insertPosition(moreThan, item) {
-                var lower = 0
-                var upper = items.count
-                while (lower < upper) {
-                    var middle = Math.floor(lower + (upper - lower) / 2)
-                    var result = moreThan(item.model, items.get(middle).model);
-                    if (result) {
-                        upper = middle
-                    } else {
-                        lower = middle + 1
-                    }
-                }
-                return lower
-            }
-
-            function sort(moreThan) {
-                while (unsortedItems.count > 0) {
-                    var item = unsortedItems.get(0)
-                    var index = insertPosition(moreThan, item)
-                    item.groups = "items"
-                    items.move(item.itemsIndex, index)
-                }
-            }
-
-            items.includeByDefault: false
-            groups: DelegateModelGroup {
-                id: unsortedItems
-                name: "unsorted"
-                includeByDefault: true
-                onChanged: {
-                    if (messageListDelegate.sortOrder == messageListDelegate.moreThan.length)
-                        setGroups(0, count, "items")
-                    else {
-                        messageListDelegate.sort(messageListDelegate.moreThan[messageListDelegate.sortOrder])
-                    }
-                }
-            }
             model: chatsModel.messageList
 
             delegate: Message {
