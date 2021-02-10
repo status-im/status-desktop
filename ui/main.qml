@@ -233,7 +233,9 @@ ApplicationWindow {
     SystemTrayIcon {
         id: systemTray
         visible: true
-        icon.source: "shared/img/status-logo.png"
+        icon.source: applicationWindow.Universal.theme === Universal.Dark ?
+            "shared/img/status-logo.svg" :
+            "shared/img/status-logo-light-theme.svg";
         menu: Menu {
             MenuItem {
                 //% "Quit"
