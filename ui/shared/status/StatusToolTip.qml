@@ -5,7 +5,7 @@ import "../../shared"
 
 ToolTip {
     id: tooltip
-    property int maxWidth: 400
+    property int maxWidth: 800
     implicitWidth: Math.min(maxWidth, textContent.implicitWidth + Style.current.bigPadding)
     leftPadding: Style.current.smallPadding
     rightPadding: Style.current.smallPadding
