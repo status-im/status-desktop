@@ -76,6 +76,7 @@ Item {
 
                 StatusToolTip {
                     visible: mouseArea.containsMouse
+                    maxWidth: 400
                     text: showReactionAuthors(modelData.fromAccounts, modelData.emojiId)
                 }
 
