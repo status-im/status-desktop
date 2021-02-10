@@ -10,7 +10,7 @@ Rectangle {
     property string name: "channelName"
     property string description: "channel description"
     property string unviewedMessagesCount: "0"
-    property string image: "../../../img/ens-header-dark@2x.png"
+    property string image
     property bool hasMentions: false
     property string searchStr: ""
     property bool isCompact: appSettings.compactMode

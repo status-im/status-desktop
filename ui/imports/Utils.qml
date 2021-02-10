@@ -30,6 +30,24 @@ QtObject {
                                 (!startsWith0x(value) && value.length === 64))
     }
 
+    function getDisplayName(publicKey, contactIndex) {
+        if (contactIndex === undefined) {
+            contactIndex = profileModel.contacts.list.getContactIndexByPubkey(publicKey)
+        }
+
+        if (contactIndex === -1) {
+            return utilsModel.generateAlias(publicKey)
+        }
+        const ensVerified = profileModel.contacts.list.rowData(contactIndex, 'ensVerified')
+        if (!ensVerified) {
+            const nickname = profileModel.contacts.list.rowData(contactIndex, 'localNickname')
+            if (nickname) {
+                return nickname
+            }
+        }
+        return profileModel.contacts.list.rowData(contactIndex, 'name')
+    }
+
     function isMnemonic(value) {
         if(!value.match(/^([a-z\s]+)$/)){
             return false;

@@ -12,6 +12,13 @@ ModalPopup {
     property string colorValidationError: ""
     property string selectedImageValidationError: ""
     property string selectedImage: ""
+    property var imageDimensions: ({
+        aX: 0,
+        aY: 0,
+        bY: 1,
+        bY: 1
+    })
+
     property QtObject community: chatsModel.activeCommunity
 
     property bool isEdit: false
@@ -47,11 +54,11 @@ ModalPopup {
             selectedImageValidationError = qsTr("You need to select an image")
         }
 
-        if (colorPicker.text === "") {
-            colorValidationError = qsTr("You need to enter a color")
-        } else if (!Utils.isHexColor(colorPicker.text)) {
-            colorValidationError = qsTr("This field needs to be an hexadecimal color (eg: #4360DF)")
-        }
+//        if (colorPicker.text === "") {
+//            colorValidationError = qsTr("You need to enter a color")
+//        } else if (!Utils.isHexColor(colorPicker.text)) {
+//            colorValidationError = qsTr("This field needs to be an hexadecimal color (eg: #4360DF)")
+//        }
 
         return !nameValidationError && !descriptionTextArea.validationError && !colorValidationError
     }
@@ -65,8 +72,10 @@ ModalPopup {
 
         id: scrollView
         anchors.fill: parent
-        rightPadding: Style.current.padding
-        anchors.rightMargin: - Style.current.halfPadding
+        rightPadding: Style.current.bigPadding
+        anchors.rightMargin: - Style.current.bigPadding
+        leftPadding: Style.current.bigPadding
+        anchors.leftMargin: - Style.current.bigPadding
         contentHeight: content.height
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.policy: ScrollBar.AlwaysOn
@@ -140,7 +149,8 @@ ModalPopup {
                         qsTrId("image-files----jpg---jpeg---png-")
                     ]
                     onAccepted: {
-                        selectedImage = imageDialog.fileUrls[0]
+                        popup.selectedImage = imageDialog.fileUrls[0]
+                        imageCropperModal.open()
                     }
                 }
 
@@ -212,76 +222,108 @@ ModalPopup {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: imageDialog.open()
                 }
-            }
 
-            Input {
-                id: colorPicker
-                label: qsTr("Community color")
-                placeholderText: qsTr("Pick a color")
-                anchors.top: addImageButton.bottom
-                anchors.topMargin: Style.current.smallPadding
-                validationError: popup.colorValidationError
-
-                StatusIconButton {
-                    icon.name: "caret"
-                    iconRotation: -90
-                    iconColor: Style.current.textColor
-                    icon.width: 13
-                    icon.height: 7
-                    anchors.right: parent.right
-                    anchors.rightMargin: Style.current.smallPadding
-                    anchors.top: parent.top
-                    anchors.topMargin: colorPicker.textField.height / 2 - height / 2 + Style.current.bigPadding
-                    onClicked: colorDialog.open()
-                }
-
-                ColorDialog {
-                    id: colorDialog
-                    title: qsTr("Please choose a color")
-                    onAccepted: {
-                        colorPicker.text = colorDialog.color
+                ImageCropperModal {
+                    id: imageCropperModal
+                    selectedImage: popup.selectedImage
+                    onCropFinished: {
+                        imageDimensions.aX = aX
+                        imageDimensions.aY = aY
+                        imageDimensions.bX = bX
+                        imageDimensions.bY = bY
                     }
                 }
             }
 
+            // TODO re-add color picker when status-go supports it
+//            Input {
+//                id: colorPicker
+//                label: qsTr("Community color")
+//                placeholderText: qsTr("Pick a color")
+//                anchors.top: addImageButton.bottom
+//                anchors.topMargin: Style.current.smallPadding
+//                validationError: popup.colorValidationError
+
+//                StatusIconButton {
+//                    icon.name: "caret"
+//                    iconRotation: -90
+//                    iconColor: Style.current.textColor
+//                    icon.width: 13
+//                    icon.height: 7
+//                    anchors.right: parent.right
+//                    anchors.rightMargin: Style.current.smallPadding
+//                    anchors.top: parent.top
+//                    anchors.topMargin: colorPicker.textField.height / 2 - height / 2 + Style.current.bigPadding
+//                    onClicked: colorDialog.open()
+//                }
+
+//                ColorDialog {
+//                    id: colorDialog
+//                    title: qsTr("Please choose a color")
+//                    onAccepted: {
+//                        colorPicker.text = colorDialog.color
+//                    }
+//                }
+//            }
+
             Separator {
                 id: separator1
-                anchors.top: colorPicker.bottom
+                anchors.top: addImageButton.bottom
                 anchors.topMargin: isEdit ? 0 : Style.current.bigPadding
                 visible: !isEdit
             }
 
-            Item {
-                visible: !isEdit
-                id: privateSwitcher
-                height: visible ? privateSwitch.height : 0
-                width: parent.width
+            StatusSettingsLineButton {
+                id: membershipRequirementSetting
                 anchors.top: separator1.bottom
-                anchors.topMargin: isEdit ? 0 : Style.current.smallPadding * 2
-
-                StyledText {
-                    text: qsTr("Private community")
-                    anchors.verticalCenter: parent.verticalCenter
+                anchors.topMargin: Style.current.halfPadding
+                text: qsTr("Membership requirement")
+                currentValue: {
+                    switch (membershipRequirementSettingPopup.checkedMembership) {
+                    case Constants.communityChatInvitationOnlyAccess: return qsTr("Require invite from another member")
+                    case Constants.communityChatOnRequestAccess: return qsTr("Require approval")
+                    default: return qsTr("No requirement")
+                    }
                 }
-
-                StatusSwitch {
-                    id: privateSwitch
-                    anchors.right: parent.right
+                onClicked: {
+                    membershipRequirementSettingPopup.open()
                 }
             }
 
             StyledText {
                 visible: !isEdit
-                height: visible ? 50 : 0
+                height: visible ? implicitHeight : 0
                 id: privateExplanation
-                anchors.top: privateSwitcher.bottom
+                anchors.top: membershipRequirementSetting.bottom
                 wrapMode: Text.WordWrap
-                anchors.topMargin: isEdit ? 0 : Style.current.smallPadding * 2
+                anchors.topMargin: isEdit ? 0 : Style.current.halfPadding
                 width: parent.width
-                text: privateSwitch.checked ?
-                          qsTr("Only members with an invite link will be able to join your community. Private communities are not listed inside Status") :
-                          qsTr("Your community will be public for anyone to join. Public communities are listed inside Status for easy discovery")
+                text: qsTr("You can require new members to meet certain criteria before they can join. This can be changed at any time")
             }
+
+            StatusSettingsLineButton {
+                id: ensOnlySwitch
+                anchors.top: privateExplanation.bottom
+                anchors.topMargin: Style.current.padding
+                text: qsTr("Require ENS username")
+                isSwitch: true
+                onClicked: switchChecked = checked
+            }
+
+            StyledText {
+                visible: !isEdit
+                height: visible ? implicitHeight : 0
+                id: ensExplanation
+                anchors.top: ensOnlySwitch.bottom
+                wrapMode: Text.WordWrap
+                anchors.topMargin: isEdit ? 0 : Style.current.halfPadding
+                width: parent.width
+                text: qsTr("Your community requires an ENS username to be able to join")
+            }
+        }
+
+        MembershipRequirementPopup {
+            id: membershipRequirementSettingPopup
         }
     }
 
@@ -302,8 +344,13 @@ ModalPopup {
             } else {
                 error = chatsModel.createCommunity(Utils.filterXSS(nameInput.text),
                                                    Utils.filterXSS(descriptionTextArea.text),
-                                                   colorPicker.text,
-                                                   popup.selectedImage)
+                                                   membershipRequirementSettingPopup.checkedMembership,
+                                                   ensOnlySwitch.switchChecked,
+                                                   popup.selectedImage,
+                                                   imageDimensions.aX,
+                                                   imageDimensions.aY,
+                                                   imageDimensions.bX,
+                                                   imageDimensions.bY)
             }
 
             if (error) {

@@ -5,7 +5,7 @@ type Profile* = ref object
   id*, alias*, username*, identicon*, address*, ensName*, localNickname*: string
   ensVerified*: bool
   identityImage*: IdentityImage
-  ensVerifiedAt*, ensVerificationRetries*, appearance*: int
+  appearance*: int
   systemTags*: seq[string]
 
 proc isContact*(self: Profile): bool =
@@ -22,9 +22,7 @@ proc toProfileModel*(account: Account): Profile =
     alias: account.name,
     ensName: "",
     ensVerified: false,
-    ensVerifiedAt: 0,
     appearance: 0,
-    ensVerificationRetries: 0,
     systemTags: @[]
   )
 
@@ -43,8 +41,6 @@ proc toProfileModel*(profile: JsonNode): Profile =
     ensName: "",
     ensVerified: profile["ensVerified"].getBool,
     appearance: 0,
-    ensVerifiedAt: profile["ensVerifiedAt"].getInt,
-    ensVerificationRetries: profile["ensVerificationRetries"].getInt,
     systemTags: systemTags
   )
   

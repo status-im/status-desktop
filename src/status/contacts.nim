@@ -40,7 +40,7 @@ proc blockContact*(self: ContactModel, id: string): string =
 proc unblockContact*(self: ContactModel, id: string): string =
   var contact = self.getContactByID(id)
   contact.systemTags.delete(contact.systemTags.find(":contact/blocked"))
-  discard status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries,contact.alias, contact.identicon, contact.systemTags, contact.localNickname)
+  discard status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.alias, contact.identicon, contact.systemTags, contact.localNickname)
   self.events.emit("contactUnblocked", Args())
 
 proc getAllContacts*(): seq[Profile] =
@@ -64,9 +64,7 @@ proc addContact*(self: ContactModel, id: string, localNickname: string): string 
       alias: alias,
       ensName: "",
       ensVerified: false,
-      ensVerifiedAt: 0,
       appearance: 0,
-      ensVerificationRetries: 0,
       systemTags: @[]
     )
 
@@ -81,7 +79,7 @@ proc addContact*(self: ContactModel, id: string, localNickname: string): string 
       ""
     else:
       localNickname
-  result = status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.systemTags, nickname)
+  result = status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.alias, contact.identicon, contact.systemTags, nickname)
   self.events.emit("contactAdded", Args())
   discard requestContactUpdate(contact.id)
   if updating:
@@ -92,9 +90,7 @@ proc addContact*(self: ContactModel, id: string, localNickname: string): string 
       alias: contact.alias,
       ensName: contact.ensName,
       ensVerified: contact.ensVerified,
-      ensVerifiedAt: contact.ensVerifiedAt,
       appearance: 0,
-      ensVerificationRetries: contact.ensVerificationRetries,
       systemTags: contact.systemTags,
       localNickname: nickname
     )
@@ -106,7 +102,7 @@ proc addContact*(self: ContactModel, id: string): string =
 proc removeContact*(self: ContactModel, id: string) =
   let contact = self.getContactByID(id)
   contact.systemTags.delete(contact.systemTags.find(":contact/added"))
-  discard status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.systemTags, contact.localNickname)
+  discard status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.alias, contact.identicon, contact.systemTags, contact.localNickname)
   self.events.emit("contactRemoved", Args())
 
 proc isAdded*(self: ContactModel, id: string): bool =

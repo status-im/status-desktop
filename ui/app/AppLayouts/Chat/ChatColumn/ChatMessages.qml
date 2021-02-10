@@ -201,6 +201,21 @@ ScrollView {
                     }
                 }
             }
+
+            onMembershipRequestChanged: function (communityName, accepted) {
+                systemTray.showMessage("Status",
+                                       accepted ? qsTr("You have been accepted into the ‘%1’ community").arg(communityName) :
+                                                  qsTr("Your request to join the ‘%1’ community was declined").arg(communityName),
+                                       SystemTrayIcon.NoIcon,
+                                       Constants.notificationPopupTTL)
+            }
+
+            onMembershipRequestPushed: function (communityName, pubKey) {
+                systemTray.showMessage(qsTr("New membership request"),
+                                       qsTr("%1 asks to join ‘%2’").arg(Utils.getDisplayName(pubKey)).arg(communityName),
+                                       SystemTrayIcon.NoIcon,
+                                       Constants.notificationPopupTTL)
+            }
         }
 
         Connections {
@@ -236,52 +251,12 @@ ScrollView {
         icon: StandardIcon.Critical
     }
 
-    DelegateModel {
+    DelegateModelGeneralized {
         id: messageListDelegate
-        property var lessThan: [
+        lessThan: [
             function(left, right) { return left.clock < right.clock }
         ]
 
-        property int sortOrder: 0
-        onSortOrderChanged: items.setGroups(0, items.count, "unsorted")
-
-        function insertPosition(lessThan, item) {
-            var lower = 0
-            var upper = items.count
-            while (lower < upper) {
-                var middle = Math.floor(lower + (upper - lower) / 2)
-                var result = lessThan(item.model, items.get(middle).model);
-                if (result) {
-                    upper = middle
-                } else {
-                    lower = middle + 1
-                }
-            }
-            return lower
-        }
-
-        function sort(lessThan) {
-            while (unsortedItems.count > 0) {
-                var item = unsortedItems.get(0)
-                var index = insertPosition(lessThan, item)
-                item.groups = "items"
-                items.move(item.itemsIndex, index)
-            }
-        }
-
-        items.includeByDefault: false
-        groups: DelegateModelGroup {
-            id: unsortedItems
-            name: "unsorted"
-            includeByDefault: true
-            onChanged: {
-                if (messageListDelegate.sortOrder == messageListDelegate.lessThan.length)
-                    setGroups(0, count, "items")
-                else {
-                    messageListDelegate.sort(messageListDelegate.lessThan[messageListDelegate.sortOrder])
-                }
-            }
-        }
         model: messageList
 
         delegate: Message {
