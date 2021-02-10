@@ -6,7 +6,7 @@ import QtGraphicalEffects 1.0
 Item {
     property bool longChatText: true
     property bool veryLongChatText: chatsModel.plainText(message).length >
-                                    (appSettings.compactMode ? Constants.limitLongChatTextCompactMode : Constants.limitLongChatText)
+                                    (appSettings.useCompactMode ? Constants.limitLongChatTextCompactMode : Constants.limitLongChatText)
     property bool readMore: false
     property alias textField: chatText
 
@@ -79,7 +79,7 @@ Item {
                                 `line-height: 22px;` +
                             `}` +
                             `a {` +
-                                `color: ${isCurrentUser && !appSettings.compactMode ? Style.current.white : Style.current.textColor};` +
+                                `color: ${isCurrentUser && !appSettings.useCompactMode ? Style.current.white : Style.current.textColor};` +
                             `}` +
                             `a.mention {` +
                                 `color: ${Style.current.mentionColor};` +

@@ -61,7 +61,7 @@ Loader {
                 anchors.topMargin: 5
                 text: `<style type="text/css">`+
                         `a {`+
-                            `color: ${isCurrentUser && !appSettings.compactMode ? Style.current.white : Style.current.textColor};`+
+                            `color: ${isCurrentUser && !appSettings.useCompactMode ? Style.current.white : Style.current.textColor};`+
                         `}`+
                         `a.mention {`+
                             `color: ${isCurrentUser ? Style.current.cyan : Style.current.turquoise};`+

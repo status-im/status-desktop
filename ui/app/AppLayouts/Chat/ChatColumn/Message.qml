@@ -154,7 +154,7 @@ Item {
                     return invitationBubble
                 default:
                     return isStatusUpdate ? statusUpdateComponent :
-                                            (appSettings.compactMode ? compactMessageComponent : messageComponent)
+                                            (appSettings.useCompactMode ? compactMessageComponent : messageComponent)
 
             }
         }

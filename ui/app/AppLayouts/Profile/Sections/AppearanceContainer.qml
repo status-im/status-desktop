@@ -192,10 +192,10 @@ ScrollView {
                 image.source: "../../../img/appearance-normal-light.svg"
                 image.height: 186
                 control.text: qsTr("Normal")
-                control.checked: !appSettings.compactMode
+                control.checked: !appSettings.useCompactMode
                 onRadioCheckedChanged: {
                     if (checked) {
-                        appSettings.compactMode = false
+                        appSettings.useCompactMode = false
                     }
                 }
             }
@@ -205,10 +205,10 @@ ScrollView {
                 image.source: "../../../img/appearance-compact-light.svg"
                 image.height: 186
                 control.text: qsTr("Compact")
-                control.checked: appSettings.compactMode
+                control.checked: appSettings.useCompactMode
                 onRadioCheckedChanged: {
                     if (checked) {
-                        appSettings.compactMode = true
+                        appSettings.useCompactMode = true
                     }
                 }
             }
