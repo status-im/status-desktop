@@ -25,6 +25,7 @@ Item {
             name: model.name
             description: model.description
             searchStr: root.searchStr
+            image: model.thumbnailImage
         }
     }
 

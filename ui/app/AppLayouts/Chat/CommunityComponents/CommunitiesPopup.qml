@@ -39,7 +39,7 @@ ModalPopup {
 
         ListView {
             anchors.fill: parent
-            model: chatsModel.communities
+            model: communitiesDelegateModel
             spacing: 4
             clip: true
             id: communitiesList
@@ -50,7 +50,7 @@ ModalPopup {
                 width: parent.width
                 height: childrenRect.height + Style.current.halfPadding
                 StyledText {
-                    text: section
+                    text: section.toUpperCase()
                 }
                 Separator {
                     anchors.left: popup.left
@@ -58,8 +58,19 @@ ModalPopup {
                 }
             }
 
+        }
+
+        DelegateModelGeneralized {
+            id: communitiesDelegateModel
+            lessThan: [
+                function(left, right) {
+                    return left.name.toLowerCase() < right.name.toLowerCase()
+                }
+            ]
+
+            model: chatsModel.communities
             delegate: Item {
-                // TODO add the serach for the name and category once they exist
+                // TODO add the search for the name and category once they exist
                 visible: {
                     if (!searchBox.text) {
                         return true
@@ -74,8 +85,7 @@ ModalPopup {
                     id: communityImage
                     width: 40
                     height: 40
-                    // TODO get the real image once it's available
-                    source: "../../../img/ens-header-dark@2x.png"
+                    source: thumbnailImage
                 }
 
                 StyledText {
@@ -100,11 +110,9 @@ ModalPopup {
 
                 StyledText {
                     id: communityMembers
-                    text: nbMembers === 1 ? 
-                          //% "1 member"
-                          qsTrId("1-member") : 
-                          //% "%1 members"
-                          qsTrId("-1-members").arg(nbMembers)
+                    text: nbMembers === 1 ?
+                              qsTr("1 member") :
+                              qsTr("%1 members").arg(nbMembers)
                     anchors.left: communityDesc.left
                     anchors.right: parent.right
                     anchors.top: communityDesc.bottom
@@ -117,7 +125,7 @@ ModalPopup {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        if (joined) {
+                        if (joined && isMember) {
                             chatsModel.setActiveCommunity(id)
                         } else {
                             chatsModel.setObservedCommunity(id)

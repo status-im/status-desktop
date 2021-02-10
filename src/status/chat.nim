@@ -25,6 +25,7 @@ type
     contacts*: seq[Profile]
     emojiReactions*: seq[Reaction]
     communities*: seq[Community]
+    communityMembershipRequests*: seq[CommunityMembershipRequest]
 
   ChatIdArg* = ref object of Args
     chatId*: string
@@ -70,7 +71,7 @@ proc newChatModel*(events: EventEmitter): ChatModel =
 proc delete*(self: ChatModel) =
   discard
 
-proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community]) =
+proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest]) =
   for chat in chats:
     if chat.isActive:
       self.channels[chat.id] = chat
@@ -84,7 +85,7 @@ proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiRea
       if self.lastMessageTimestamps[chatId] > ts:
         self.lastMessageTimestamps[chatId] = ts
       
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[], emojiReactions: emojiReactions, communities: communities))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests))
 
 proc hasChannel*(self: ChatModel, chatId: string): bool =
   self.channels.hasKey(chatId)
@@ -412,8 +413,8 @@ proc getAllComunities*(self: ChatModel): seq[Community] =
 proc getJoinedComunities*(self: ChatModel): seq[Community] =
   result = status_chat.getJoinedComunities()
 
-proc createCommunity*(self: ChatModel, name: string, description: string, color: string, image: string, access: int): Community =
-  result = status_chat.createCommunity(name, description, color, image, access)
+proc createCommunity*(self: ChatModel, name: string, description: string, access: int, ensOnly: bool, imageUrl: string, aX: int, aY: int, bX: int, bY: int): Community =
+  result = status_chat.createCommunity(name, description, access, ensOnly, imageUrl, aX, aY, bX, bY)
 
 proc createCommunityChannel*(self: ChatModel, communityId: string, name: string, description: string): Chat =
   result = status_chat.createCommunityChannel(communityId, name, description)
@@ -437,3 +438,18 @@ proc exportCommunity*(self: ChatModel, communityId: string): string =
 
 proc importCommunity*(self: ChatModel, communityKey: string) =
   status_chat.importCommunity(communityKey)
+
+proc requestToJoinCommunity*(self: ChatModel, communityKey: string, ensName: string): seq[CommunityMembershipRequest] =
+  status_chat.requestToJoinCommunity(communityKey, ensName)
+
+proc acceptRequestToJoinCommunity*(self: ChatModel, requestId: string) =
+  status_chat.acceptRequestToJoinCommunity(requestId)
+
+proc declineRequestToJoinCommunity*(self: ChatModel, requestId: string) =
+  status_chat.declineRequestToJoinCommunity(requestId)
+
+proc pendingRequestsToJoinForCommunity*(self: ChatModel, communityKey: string): seq[CommunityMembershipRequest] =
+  result = status_chat.pendingRequestsToJoinForCommunity(communityKey)
+
+proc myPendingRequestsToJoin*(self: ChatModel): seq[CommunityMembershipRequest] =
+  result = status_chat.myPendingRequestsToJoin()

@@ -257,24 +257,18 @@ proc getJoinedComunities*(): seq[Community] =
       communities.add(community)
   return communities
 
-proc createCommunity*(name: string, description: string, color: string, image: string, access: int): Community =
+proc createCommunity*(name: string, description: string, access: int, ensOnly: bool, imageUrl: string, aX: int, aY: int, bX: int, bY: int): Community =
   let rpcResult = callPrivateRPC("createCommunity".prefix, %*[{
-      "permissions": {
-        "access": access
-      },
-      "identity": {
-        "display_name": name,
-        "description": description#,
-        # "color": color#,
-        # TODO add images once it is supported by Status-Go
-        # "images": [
-        #   {
-        #     "payload": image,
-        #     # TODO get that from an enum
-        #     "image_type": 1 # 1 is a raw payload
-        #   }
-        # ]
-      }
+      # TODO this will need to be renamed membership (small m)
+      "Membership": access,
+      "name": name,
+      "description": description,
+      "ensOnly": ensOnly,
+      "image": imageUrl,
+      "imageAx": aX,
+      "imageAy": aY,
+      "imageBx": bX,
+      "imageBy": bY
     }]).parseJSON()
 
   if rpcResult{"result"}.kind != JNull:
@@ -322,3 +316,49 @@ proc importCommunity*(communityKey: string) =
 
 proc removeUserFromCommunity*(communityId: string, pubKey: string) =
   discard callPrivateRPC("removeUserFromCommunity".prefix, %*[communityId, pubKey])
+
+proc requestToJoinCommunity*(communityId: string, ensName: string): seq[CommunityMembershipRequest] =
+  let rpcResult = callPrivateRPC("requestToJoinCommunity".prefix, %*[{
+    "communityId": communityId,
+    "ensName": ensName
+  }]).parseJSON()
+
+  var communityRequests: seq[CommunityMembershipRequest] = @[]
+
+  if rpcResult{"result"}{"requestsToJoinCommunity"}.kind != JNull:
+    for jsonCommunityReqest in rpcResult["result"]["requestsToJoinCommunity"]:
+      communityRequests.add(jsonCommunityReqest.toCommunityMembershipRequest())
+
+  return communityRequests
+
+proc acceptRequestToJoinCommunity*(requestId: string) =
+  discard callPrivateRPC("acceptRequestToJoinCommunity".prefix, %*[{
+    "id": requestId
+  }])
+
+proc declineRequestToJoinCommunity*(requestId: string) =
+  discard callPrivateRPC("declineRequestToJoinCommunity".prefix, %*[{
+    "id": requestId
+  }])
+
+proc pendingRequestsToJoinForCommunity*(communityId: string): seq[CommunityMembershipRequest] =
+  let rpcResult = callPrivateRPC("pendingRequestsToJoinForCommunity".prefix, %*[communityId]).parseJSON()
+
+  var communityRequests: seq[CommunityMembershipRequest] = @[]
+
+  if rpcResult{"result"}.kind != JNull:
+    for jsonCommunityReqest in rpcResult["result"]:
+      communityRequests.add(jsonCommunityReqest.toCommunityMembershipRequest())
+
+  return communityRequests
+
+proc myPendingRequestsToJoin*(): seq[CommunityMembershipRequest] =
+  let rpcResult = callPrivateRPC("myPendingRequestsToJoin".prefix).parseJSON()
+
+  var communityRequests: seq[CommunityMembershipRequest] = @[]
+
+  if rpcResult{"result"}.kind != JNull:
+    for jsonCommunityReqest in rpcResult["result"]:
+      communityRequests.add(jsonCommunityReqest.toCommunityMembershipRequest())
+
+  return communityRequests

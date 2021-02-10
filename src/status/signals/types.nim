@@ -34,6 +34,7 @@ type MessageSignal* = ref object of Signal
   installations*: seq[Installation]
   emojiReactions*: seq[Reaction]
   communities*: seq[Community]
+  membershipRequests*: seq[CommunityMembershipRequest]
 
 type MailserverRequestCompletedSignal* = ref object of Signal
   requestID*: string

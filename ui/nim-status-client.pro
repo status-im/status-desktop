@@ -136,6 +136,9 @@ DISTFILES += \
     app/AppLayouts/Chat/CommunityComponents/CreateCommunityPopup.qml \
     app/AppLayouts/Chat/CommunityComponents/ImportCommunityPopup.qml \
     app/AppLayouts/Chat/CommunityComponents/InviteFriendsToCommunityPopup.qml \
+    app/AppLayouts/Chat/CommunityComponents/MembershipRadioButton.qml \
+    app/AppLayouts/Chat/CommunityComponents/MembershipRequestsPopup.qml \
+    app/AppLayouts/Chat/CommunityComponents/MembershipRequirementPopup.qml \
     app/AppLayouts/Chat/ContactsColumn/AddChat.qml \
     app/AppLayouts/Chat/ContactsColumn/ClosedEmptyView.qml \
     app/AppLayouts/Chat/components/ChooseBrowserPopup.qml \
@@ -354,9 +357,11 @@ DISTFILES += \
     shared/AddButton.qml \
     shared/Address.qml \
     shared/CropCornerRectangle.qml \
+    shared/DelegateModelGeneralized.qml \
     shared/FormGroup.qml \
     shared/IconButton.qml \
     shared/ImageCropper.qml \
+    shared/ImageCropperModal.qml \
     shared/Input.qml \
     shared/LabelValueRow.qml \
     shared/ModalPopup.qml \
