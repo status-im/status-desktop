@@ -9,7 +9,7 @@ ModalPopup {
     id: confirmationDialog
 
     property Popup parentPopup
-    property string btnType: "primary"
+    property string btnType: "warn"
 
 
     height: 186
@@ -43,7 +43,6 @@ ModalPopup {
             type: confirmationDialog.btnType
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
-            color: Style.current.danger
             text: confirmationDialog.confirmButtonLabel
             anchors.bottom: parent.bottom
             onClicked: confirmationDialog.confirmButtonClicked()
