@@ -13,7 +13,7 @@ Rectangle {
     property string image: "../../../img/ens-header-dark@2x.png"
     property bool hasMentions: false
     property string searchStr: ""
-    property bool isCompact: appSettings.compactMode
+    property bool isCompact: appSettings.useCompactMode
     property bool hovered: false
 
     id: communityButton

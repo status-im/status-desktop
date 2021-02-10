@@ -35,7 +35,7 @@ ScrollView {
         id: chatLogView
         anchors.fill: parent
         anchors.bottomMargin: Style.current.bigPadding
-        spacing: appSettings.compactMode ? 0 : 4
+        spacing: appSettings.useCompactMode ? 0 : 4
         boundsBehavior: Flickable.StopAtBounds
         flickDeceleration: 10000
         Layout.fillWidth: true

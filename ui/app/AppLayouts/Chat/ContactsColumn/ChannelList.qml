@@ -20,10 +20,10 @@ Item {
 
     ListView {
         id: chatGroupsListView
-        spacing: appSettings.compactMode ? 4 : Style.current.halfPadding
+        spacing: appSettings.useCompactMode ? 4 : Style.current.halfPadding
         anchors.top: parent.top
         height: childrenRect.height
-        visible: height > (appSettings.compactMode ? 30 : 50)
+        visible: height > (appSettings.useCompactMode ? 30 : 50)
         anchors.right: parent.right
         anchors.left: parent.left
         interactive: false

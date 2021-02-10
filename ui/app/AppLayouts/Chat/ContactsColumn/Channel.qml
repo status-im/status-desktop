@@ -15,7 +15,7 @@ Rectangle {
     property bool hasMentions: false
     property int chatType: Constants.chatTypePublic
     property string searchStr: ""
-    property bool isCompact: appSettings.compactMode
+    property bool isCompact: appSettings.useCompactMode
     property int contentType: 1
     property bool muted: false
     property bool hovered: false

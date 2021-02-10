@@ -99,7 +99,7 @@ ApplicationWindow {
         property bool browserEnabled: false
         property bool displayChatImages: false
         property bool timelineEnabled: true
-        property bool compactMode
+        property bool useCompactMode
         property string locale: "en"
         property var recentEmojis: []
         property real volume: 0.2
@@ -147,7 +147,7 @@ ApplicationWindow {
         property bool nodeManagementEnabled: defaultAppSettings.nodeManagementEnabled
         property bool browserEnabled: defaultAppSettings.browserEnabled
         property bool displayChatImages: defaultAppSettings.displayChatImages
-        property bool compactMode: defaultAppSettings.compactMode
+        property bool useCompactMode: defaultAppSettings.useCompactMode
         property bool timelineEnabled: defaultAppSettings.timelineEnabled
         property string locale: defaultAppSettings.locale
         property var recentEmojis: defaultAppSettings.recentEmojis
