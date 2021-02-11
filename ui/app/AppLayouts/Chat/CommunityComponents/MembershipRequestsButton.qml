@@ -8,7 +8,7 @@ import "../components"
 import "./"
 
 Rectangle {
-    property int nbRequests: chatsModel.activeCommunity.communityMembershipRequests.nbRequests
+    property int nbRequests: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests
 
     id: membershipRequestsBtn
     visible: nbRequests > 0

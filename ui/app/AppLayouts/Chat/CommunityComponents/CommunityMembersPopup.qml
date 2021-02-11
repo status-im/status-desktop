@@ -9,7 +9,7 @@ import "../components"
 
 ModalPopup {
     id: popup
-    property QtObject community: chatsModel.activeCommunity 
+    property QtObject community: chatsModel.communities.activeCommunity 
 
     header: Item {
         height: childrenRect.height

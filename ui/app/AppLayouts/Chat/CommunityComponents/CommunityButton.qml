@@ -89,7 +89,7 @@ Rectangle {
           communityButton.hovered = false
         }
         onClicked: {
-            chatsModel.setActiveCommunity(communityId)
+            chatsModel.communities.setActiveCommunity(communityId)
         }
     }
 

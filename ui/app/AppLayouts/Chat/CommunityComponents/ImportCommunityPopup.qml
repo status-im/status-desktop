@@ -55,7 +55,7 @@ ModalPopup {
                 communityKey = "0x" + communityKey
             }
 
-            const error = chatsModel.importCommunity(communityKey)
+            const error = chatsModel.communities.importCommunity(communityKey)
 
             if (error) {
                 creatingError.text = error
