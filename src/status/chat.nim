@@ -35,6 +35,9 @@ type
 
   ChatArgs* = ref object of Args
     chats*: seq[Chat]
+  
+  CommunityActiveChangedArgs* = ref object of Args
+    active*: bool
 
   TopicArgs* = ref object of Args
     topics*: seq[MailserverTopic]

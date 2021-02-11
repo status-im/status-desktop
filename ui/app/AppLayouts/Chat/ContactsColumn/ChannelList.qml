@@ -43,9 +43,7 @@ Item {
         }
         onCountChanged: {
             if (count > 0 && chatsModel.activeChannelIndex > -1) {
-                // If a chat is added or removed, we set the current index to the first value
-                chatsModel.activeChannelIndex = 0;
-                currentIndex = 0;
+                currentIndex = chatsModel.activeChannelIndex;
             } else {
                 if (chatsModel.activeChannelIndex > -1) {
                     chatGroupsListView.currentIndex = 0;
