@@ -42,7 +42,7 @@ Rectangle {
                         break;
                     case Constants.chatTypeOneToOne:
                         const profileImage = appMain.getProfileImage(chatsModel.activeChannel.id)
-                        openProfilePopup(chatsModel.activeChannel.name, chatsModel.activeChannel.id, profileImage || chatsModel.activeChannel.identicon)
+                        openProfilePopup(chatsModel.activeChannel.name, chatsModel.activeChannel.id, profileImage || chatsModel.activeChannel.identicon, "", chatsModel.activeChannel.nickname)
                         break;
                 }
             }

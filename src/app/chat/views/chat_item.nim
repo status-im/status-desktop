@@ -64,6 +64,17 @@ QtObject:
   QtProperty[string] name:
     read = name
     notify = contactsUpdated
+
+  proc nickname*(self: ChatItemView): string {.slot.} = 
+    if self.chatItem != nil and self.chatItem.chatType.isOneToOne:
+      if self.status.chat.contacts.hasKey(self.chatItem.id) and self.status.chat.contacts[self.chatItem.id].hasNickname():
+        return self.status.chat.contacts[self.chatItem.id].localNickname
+    else:
+      result = ""
+
+  QtProperty[string] nickname:
+    read = nickname
+    notify = contactsUpdated
   
   proc ensVerified*(self: ChatItemView): bool {.slot.} = 
     if self.chatItem != nil and
