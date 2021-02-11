@@ -174,6 +174,7 @@ DISTFILES += \
     app/AppLayouts/Chat/CommunityComponents/CommunityButton.qml \
     app/AppLayouts/Chat/CommunityComponents/CommunityDetailPopup.qml \
     app/AppLayouts/Chat/CommunityComponents/CommunityMembersPopup.qml \
+    app/AppLayouts/Chat/CommunityComponents/CommunityProfilePopup.qml \
     app/AppLayouts/Chat/CommunityComponents/CommunityList.qml \
     app/AppLayouts/Chat/CommunityComponents/CommunityWelcomeBanner.qml \
     app/AppLayouts/Chat/CommunityComponents/CreateChannelPopup.qml \
@@ -181,6 +182,7 @@ DISTFILES += \
     app/AppLayouts/Chat/CommunityComponents/ImportCommunityPopup.qml \
     app/AppLayouts/Chat/CommunityComponents/InviteFriendsToCommunityPopup.qml \
     app/AppLayouts/Chat/CommunityComponents/MembershipRadioButton.qml \
+    app/AppLayouts/Chat/CommunityComponents/MembershipRequestsButton.qml \
     app/AppLayouts/Chat/CommunityComponents/MembershipRequestsPopup.qml \
     app/AppLayouts/Chat/CommunityComponents/MembershipRequirementPopup.qml \
     app/AppLayouts/Chat/ContactsColumn/AddChat.qml \

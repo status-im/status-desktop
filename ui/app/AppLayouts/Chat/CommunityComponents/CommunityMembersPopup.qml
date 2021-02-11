@@ -27,6 +27,7 @@ ModalPopup {
         }
 
         StyledText {
+            id: nbMembersText
             text: community.nbMembers.toString()
             width: 160
             anchors.left: parent.left
@@ -34,6 +35,11 @@ ModalPopup {
             anchors.topMargin: 2
             font.pixelSize: 14
             color: Style.current.darkGrey
+        }
+
+        Separator {
+            anchors.top: nbMembersText.bottom
+            anchors.topMargin: Style.current.padding
         }
     }
 
@@ -59,13 +65,35 @@ ModalPopup {
         anchors.right: parent.right
         anchors.top: inviteBtn.bottom
         anchors.topMargin: Style.current.smallPadding
-        anchors.leftMargin: -Style.current.padding
-        anchors.rightMargin: -Style.current.padding
+        anchors.leftMargin: -Style.current.xlPadding
+        anchors.rightMargin: -Style.current.xlPadding
     }
+
+    MembershipRequestsButton {
+        id: membershipRequestsBtn
+        anchors.top: sep.bottom
+        anchors.topMargin: visible ? Style.current.smallPadding : 0
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: -Style.current.xlPadding
+        anchors.rightMargin: -Style.current.xlPadding
+    }
+
+    Separator {
+        id: sep2
+        visible: membershipRequestsBtn.visible
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: membershipRequestsBtn.bottom
+        anchors.topMargin: Style.current.smallPadding
+        anchors.leftMargin: -Style.current.xlPadding
+        anchors.rightMargin: -Style.current.xlPadding
+    }
+
 
     ListView {
         id: memberList
-        anchors.top: sep.bottom
+        anchors.top: sep2.visible ? sep2.bottom : sep.bottom
         anchors.topMargin: Style.current.smallPadding
         anchors.bottom: popup.bottom
         anchors.left: parent.left
