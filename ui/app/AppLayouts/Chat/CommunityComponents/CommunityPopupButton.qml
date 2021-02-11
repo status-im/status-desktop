@@ -10,7 +10,6 @@ Item {
     id: root
     width: contentItem.width
     height: contentItem.height
-    
 
     default property alias actionContent: placeholder.data
     signal clicked()
