@@ -69,8 +69,7 @@ QtObject:
     if self.chatItem != nil and self.chatItem.chatType.isOneToOne:
       if self.status.chat.contacts.hasKey(self.chatItem.id) and self.status.chat.contacts[self.chatItem.id].hasNickname():
         return self.status.chat.contacts[self.chatItem.id].localNickname
-    else:
-      result = ""
+    result = ""
 
   QtProperty[string] nickname:
     read = nickname
