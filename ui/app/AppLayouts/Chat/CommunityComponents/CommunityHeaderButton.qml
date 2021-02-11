@@ -28,7 +28,7 @@ Button {
 
         StyledText {
             id: communityName
-            text: chatsModel.activeCommunity.name
+            text: chatsModel.communities.activeCommunity.name
             anchors.left: communityImage.right
             anchors.leftMargin: Style.current.halfPadding
             anchors.top: parent.top
@@ -38,9 +38,9 @@ Button {
 
         StyledText {
             id: communityNbMember
-            text: chatsModel.activeCommunity.nbMembers === 1 ? 
+            text: chatsModel.communities.activeCommunity.nbMembers === 1 ? 
                 qsTr("1 member") : 
-                qsTr("%1 members").arg(chatsModel.activeCommunity.nbMembers)
+                qsTr("%1 members").arg(chatsModel.communities.activeCommunity.nbMembers)
             anchors.left: communityName.left
             anchors.top: communityName.bottom
             font.pixelSize: 12

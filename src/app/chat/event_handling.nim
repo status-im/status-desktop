@@ -1,5 +1,6 @@
 import sugar, sequtils, times, strutils
 import ../../status/chat/chat as status_chat
+import ./views/communities
 
 proc handleChatEvents(self: ChatController) =
   # Display already saved messages
@@ -27,9 +28,9 @@ proc handleChatEvents(self: ChatController) =
     self.view.reactions.push(evArgs.emojiReactions)
     if (evArgs.communities.len > 0):
       for community in evArgs.communities:
-        self.view.addCommunityToList(community)
+        self.view.communities.addCommunityToList(community)
     if (evArgs.communityMembershipRequests.len > 0):
-      self.view.addMembershipRequests(evArgs.communityMembershipRequests)
+      self.view.communities.addMembershipRequests(evArgs.communityMembershipRequests)
 
   self.status.events.on("channelUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)
@@ -62,10 +63,10 @@ proc handleChatEvents(self: ChatController) =
     if (evArgs.active == false):
       self.view.restorePreviousActiveChannel()
     else:
-      if (self.view.activeCommunity.communityItem.lastChannelSeen == ""):
+      if (self.view.communities.activeCommunity.communityItem.lastChannelSeen == ""):
         self.view.setActiveChannelByIndex(0)
       else:
-        self.view.setActiveChannel(self.view.activeCommunity.communityItem.lastChannelSeen)
+        self.view.setActiveChannel(self.view.communities.activeCommunity.communityItem.lastChannelSeen)
 
   self.status.events.on("channelJoined") do(e: Args):
     var channel = ChannelArgs(e)

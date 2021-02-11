@@ -19,7 +19,7 @@ ModalPopup {
         bY: 1
     })
 
-    property QtObject community: chatsModel.activeCommunity
+    property QtObject community: chatsModel.communities.activeCommunity
 
     property bool isEdit: false
 
@@ -342,7 +342,7 @@ ModalPopup {
             if(isEdit) {
                 console.log("TODO: implement this (not available in status-go yet)");
             } else {
-                error = chatsModel.createCommunity(Utils.filterXSS(nameInput.text),
+                error = chatsModel.communities.createCommunity(Utils.filterXSS(nameInput.text),
                                                    Utils.filterXSS(descriptionTextArea.text),
                                                    membershipRequirementSettingPopup.checkedMembership,
                                                    ensOnlySwitch.switchChecked,
