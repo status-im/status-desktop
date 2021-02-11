@@ -240,11 +240,14 @@ QtObject:
 
     self.clearUnreadIfNeeded(self.activeChannel.chatItem)
     self.clearUnreadIfNeeded(selectedChannel)
+    if (self.activeCommunity.active and self.activeCommunity.communityItem.lastChannelSeen != selectedChannel.id):
+      self.activeCommunity.communityItem.lastChannelSeen = selectedChannel.id
+      self.joinedCommunityList.replaceCommunity(self.activeCommunity.communityItem)
 
     if self.activeChannel.id == selectedChannel.id: return
 
     if selectedChannel.chatType.isOneToOne and selectedChannel.id == selectedChannel.name:
-        selectedChannel.name = self.userNameOrAlias(selectedChannel.id)
+      selectedChannel.name = self.userNameOrAlias(selectedChannel.id)
 
     self.previousActiveChannelIndex = index
     self.activeChannel.setChatItem(selectedChannel)
@@ -265,10 +268,10 @@ QtObject:
     if(channel == ""): return
 
     let selectedChannel =
-        if (self.activeCommunity.active):
-          self.activeCommunity.chats.getChannel(self.activeCommunity.chats.chats.findIndexById(channel))
-        else:
-          self.chats.getChannel(self.chats.chats.findIndexById(channel))
+      if (self.activeCommunity.active):
+        self.activeCommunity.chats.getChannel(self.activeCommunity.chats.chats.findIndexById(channel))
+      else:
+        self.chats.getChannel(self.chats.chats.findIndexById(channel))
 
     self.activeChannel.setChatItem(selectedChannel)
     
@@ -304,7 +307,7 @@ QtObject:
     self.activeChannelChanged()
 
   proc restorePreviousActiveChannel*(self: ChatsView) {.slot.} =
-    if self.activeChannel.id == self.timelineChat.id and not self.previousActiveChannelIndex == -1:
+    if self.previousActiveChannelIndex != -1:
       self.setActiveChannelByIndex(self.previousActiveChannelIndex)
 
   proc getCurrentSuggestions(self: ChatsView): QVariant {.slot.} =
