@@ -116,45 +116,70 @@ ModalPopup {
         Loader {
             active: isAdmin
             width: parent.width
-            sourceComponent: CommunityPopupButton {
-                //% "Members"
-                label: qsTrId("members-title")
-                iconName: "members"
-                txtColor: Style.current.textColor
-                onClicked: openPopup(communityMembersPopup)
-                Component {
-                    id: communityMembersPopup
-                    CommunityMembersPopup { }
-                }
-                Item {
-                    anchors.top: parent.top
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
-                    width: 100
-                    StyledText {
-                        text: nbMembers.toString()
-                        anchors.right: caret.left
-                        anchors.rightMargin: Style.current.smallPadding
-                        anchors.top: parent.top
-                        anchors.topMargin: 10
-                        padding: 0
-                        font.pixelSize: 15
-                        color: Style.current.secondaryText
+            sourceComponent: Component {
+                CommunityPopupButton {
+                    id: memberBtn
+                    label: qsTr("Members")
+                    iconName: "members"
+                    txtColor: Style.current.textColor
+                    onClicked: openPopup(communityMembersPopup)
+
+                    Component {
+                        id: communityMembersPopup
+                        CommunityMembersPopup {}
                     }
 
-                    SVGImage {
-                        id: caret
-                        anchors.right: parent.right
-                        anchors.topMargin: Style.current.padding
+                    Item {
+                        property int nbRequests: chatsModel.activeCommunity.communityMembershipRequests.nbRequests
+
+                        id: memberBlock
                         anchors.top: parent.top
-                        source: "../../../img/caret.svg"
-                        width: 13
-                        height: 7
-                        rotation: -90
-                        ColorOverlay {
-                            anchors.fill: parent
-                            source: parent
+                        anchors.right: parent.right
+                        anchors.rightMargin: 0
+                        width: childrenRect.width
+                        height: memberBtn.height
+
+                        StyledText {
+                            id: nbMemberText
+                            text: nbMembers.toString()
+                            anchors.verticalCenter: parent.verticalCenter
+                            padding: 0
+                            font.pixelSize: 15
                             color: Style.current.secondaryText
+                        }
+
+                        Rectangle {
+                            id: badge
+                            visible: memberBlock.nbRequests > 0
+                            anchors.left: nbMemberText.right
+                            anchors.leftMargin: visible ? Style.current.halfPadding : 0
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: Style.current.blue
+                            width: visible ? 22 : 0
+                            height: 22
+                            radius: width / 2
+                            Text {
+                                font.pixelSize: 12
+                                color: Style.current.white
+                                anchors.centerIn: parent
+                                text: memberBlock.nbRequests
+                            }
+                        }
+
+                        SVGImage {
+                            id: caret
+                            anchors.left: badge.right
+                            anchors.leftMargin: Style.current.padding
+                            anchors.verticalCenter: parent.verticalCenter
+                            source: "../../../img/caret.svg"
+                            width: 13
+                            height: 7
+                            rotation: -90
+                            ColorOverlay {
+                                anchors.fill: parent
+                                source: parent
+                                color: Style.current.secondaryText
+                            }
                         }
                     }
                 }

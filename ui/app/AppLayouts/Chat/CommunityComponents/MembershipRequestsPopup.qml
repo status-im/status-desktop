@@ -96,6 +96,7 @@ ModalPopup {
 
                 StyledText {
                     text: requestLine.displayName
+                    elide: Text.ElideRight
                     anchors.left: accountImage.right
                     anchors.leftMargin: Style.current.padding
                     anchors.right: thumbsUp.left

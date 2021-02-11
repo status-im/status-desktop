@@ -87,64 +87,15 @@ Item {
         }
     }
 
-    Rectangle {
-        property int nbRequests: chatsModel.activeCommunity.communityMembershipRequests.nbRequests
-
-        id: membershipRequestsBtn
-        visible: nbRequests > 0
+    Loader {
+        id: membershipRequestsLoader
         width: parent.width
-        height: visible ? 52 : 0
-        color: Style.current.secondaryBackground
+        active: chatsModel.activeCommunity.admin
         anchors.top: communityHeader.bottom
-        anchors.topMargin: visible ? Style.current.halfPadding : 0
+        anchors.topMargin: item && item.visible ? Style.current.halfPadding : 0
 
-        StyledText {
-            text: qsTr("Membership requests")
-            font.pixelSize: 15
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Rectangle {
-            id: badge
-            anchors.right: caret.left
-            anchors.rightMargin: Style.current.padding
-            anchors.verticalCenter: parent.verticalCenter
-            color: Style.current.blue
-            width: 22
-            height: 22
-            radius: width / 2
-            Text {
-                font.pixelSize: 12
-                color: Style.current.white
-                anchors.centerIn: parent
-                text: membershipRequestsBtn.nbRequests.toString()
-            }
-        }
-
-        SVGImage {
-            id: caret
-            source: "../../img/caret.svg"
-            fillMode: Image.PreserveAspectFit
-            rotation: -90
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
-            anchors.verticalCenter: parent.verticalCenter
-            width: 13
-
-
-            ColorOverlay {
-                anchors.fill: parent
-                source: parent
-                color: Style.current.darkGrey
-            }
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            onClicked: membershipRequestPopup.open()
+        sourceComponent: Component {
+            MembershipRequestsButton {}
         }
     }
 
@@ -154,7 +105,7 @@ Item {
 
     ScrollView {
         id: chatGroupsContainer
-        anchors.top: membershipRequestsBtn.bottom
+        anchors.top: membershipRequestsLoader.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: parent.bottom
         anchors.left: parent.left
