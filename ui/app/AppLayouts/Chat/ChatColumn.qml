@@ -258,7 +258,7 @@ StackLayout {
             StatusChatInput {
                 id: chatInput
                 visible: {
-                    const community = chatsModel.activeCommunity
+                    const community = chatsModel.communities.activeCommunity
                     if (chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat &&
                             (!community.active ||
                             community.access === Constants.communityChatPublicAccess ||

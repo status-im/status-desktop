@@ -9,7 +9,7 @@ import "../components"
 
 ModalPopup {
     id: popup
-    property QtObject community: chatsModel.activeCommunity 
+    property QtObject community: chatsModel.communities.activeCommunity 
 
     header: Item {
         height: childrenRect.height
@@ -164,7 +164,7 @@ ModalPopup {
                             icon.height: 16
                             icon.color: Style.current.red
                             text: qsTr("Kick")
-                            onTriggered: chatsModel.removeUserFromCommunity(model.pubKey)
+                            onTriggered: chatsModel.communities.removeUserFromCommunity(model.pubKey)
                         }
                         Action {
                             icon.source: "../../../img/communities/menu/ban.svg"

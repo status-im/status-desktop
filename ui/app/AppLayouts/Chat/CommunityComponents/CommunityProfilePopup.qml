@@ -8,7 +8,7 @@ import "../../../../shared/status"
 import "../ContactsColumn"
 
 ModalPopup {
-    property QtObject community: chatsModel.activeCommunity
+    property QtObject community: chatsModel.communities.activeCommunity
     property string communityId: community.id
     property string name: community.name
     property string description: community.description
@@ -125,7 +125,7 @@ ModalPopup {
                     }
 
                     Item {
-                        property int nbRequests: chatsModel.activeCommunity.communityMembershipRequests.nbRequests
+                        property int nbRequests: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests
 
                         id: memberBlock
                         anchors.top: parent.top
@@ -259,7 +259,7 @@ ModalPopup {
                 CommunityPopupButton {
                     label: qsTr("Export community")
                     iconName: "../fetch"
-                    onClicked:  exportResult = chatsModel.exportComumnity()
+                    onClicked:  exportResult = chatsModel.communities.exportComumnity()
                 }
             }
 

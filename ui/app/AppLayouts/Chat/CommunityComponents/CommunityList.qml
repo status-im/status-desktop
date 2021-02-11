@@ -19,7 +19,7 @@ Item {
         visible: height > 10
         width:parent.width
         interactive: false
-        model: chatsModel.joinedCommunities
+        model: chatsModel.communities.joinedCommunities
         delegate: CommunityButton {
             communityId: model.id
             name: model.name
