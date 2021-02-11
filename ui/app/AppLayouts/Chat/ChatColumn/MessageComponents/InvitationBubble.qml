@@ -15,9 +15,9 @@ Item {
     height: childrenRect.height
 
     Component.onCompleted: {
-        chatsModel.setObservedCommunity(communityId)
+        chatsModel.communities.setObservedCommunity(communityId)
 
-        root.invitedCommunity = chatsModel.observedCommunity
+        root.invitedCommunity = chatsModel.communities.observedCommunity
     }
 
     UserImage {
@@ -138,7 +138,7 @@ Item {
                     text: root.joined || invitedCommunity.joined ? qsTr("Joined") :
                         qsTr("Join")
                     onClicked: {
-                        chatsModel.joinCommunity(communityId)
+                        chatsModel.communities.joinCommunity(communityId)
                         root.joined = true
                     }
                 }

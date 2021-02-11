@@ -6,7 +6,7 @@ import "../../../../shared/status"
 import "../ContactsColumn"
 
 ModalPopup {
-    property QtObject community: chatsModel.observedCommunity
+    property QtObject community: chatsModel.communities.observedCommunity
     property string communityId: community.id
     property string name: community.name
     property string description: community.description
@@ -178,7 +178,7 @@ ModalPopup {
                 if (access !== Constants.communityChatOnRequestAccess) {
                     return false
                 }
-                return chatsModel.isCommunityRequestPending(communityId)
+                return chatsModel.communities.isCommunityRequestPending(communityId)
             }
             text: {
                 if (ensOnly && !profileModel.profile.ensVerified) {
@@ -214,14 +214,14 @@ ModalPopup {
             onClicked: {
                 let error
                 if (access === Constants.communityChatOnRequestAccess) {
-                    error = chatsModel.requestToJoinCommunity(popup.communityId,
+                    error = chatsModel.communities.requestToJoinCommunity(popup.communityId,
                                                               profileModel.profile.ensVerified ? profileModel.profile.username : "")
                     if (!error) {
                         enabled = false
                         text = qsTr("Pending")
                     }
                 } else {
-                    error = chatsModel.joinCommunity(popup.communityId)
+                    error = chatsModel.communities.joinCommunity(popup.communityId)
                 }
 
                 if (error) {

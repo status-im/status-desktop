@@ -64,7 +64,7 @@ ModalPopup {
 
         ListView {
             id: membershipRequestList
-            model: chatsModel.activeCommunity.communityMembershipRequests
+            model: chatsModel.communities.activeCommunity.communityMembershipRequests
             anchors.top: errorText.bottom
             anchors.topMargin: Style.current.smallPadding
             anchors.left: parent.left
@@ -120,7 +120,7 @@ ModalPopup {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             errorText.text = ""
-                            const error = chatsModel.acceptRequestToJoinCommunity(id)
+                            const error = chatsModel.communities.acceptRequestToJoinCommunity(id)
                             if (error) {
                                 errorText.text = error
                             }
@@ -142,7 +142,7 @@ ModalPopup {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             errorText.text = ""
-                            const error = chatsModel.declineRequestToJoinCommunity(id)
+                            const error = chatsModel.communities.declineRequestToJoinCommunity(id)
                             if (error) {
                                 errorText.text = error
                             }
