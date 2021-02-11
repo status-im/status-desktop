@@ -58,8 +58,14 @@ proc handleChatEvents(self: ChatController) =
     self.view.appReady()
 
   self.status.events.on("communityActiveChanged") do(e:Args):
-    # TODO set this back to the previous one instead
-    self.view.setActiveChannelByIndex(0)
+    var evArgs = CommunityActiveChangedArgs(e)
+    if (evArgs.active == false):
+      self.view.restorePreviousActiveChannel()
+    else:
+      if (self.view.activeCommunity.communityItem.lastChannelSeen == ""):
+        self.view.setActiveChannelByIndex(0)
+      else:
+        self.view.setActiveChannel(self.view.activeCommunity.communityItem.lastChannelSeen)
 
   self.status.events.on("channelJoined") do(e: Args):
     var channel = ChannelArgs(e)

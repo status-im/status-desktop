@@ -95,6 +95,7 @@ type CommunityMembershipRequest* = object
 type Community* = object
   id*: string
   name*: string
+  lastChannelSeen*: string
   description*: string
   chats*: seq[Chat]
   members*: seq[string]
