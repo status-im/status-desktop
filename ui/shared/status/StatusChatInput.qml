@@ -1,6 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtGraphicalEffects 1.12
+import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
 import QtMultimedia 5.13
 import QtQuick.Dialogs 1.3
@@ -678,6 +678,45 @@ Rectangle {
                     color: "transparent"
                 }
                 selectionColor: Style.current.primarySelectionColor
+                persistentSelection: true
+                onReleased: function (event) {
+                    if (messageInputField.selectedText.trim() !== "") {
+                        let x = event.x - (textFormatMenu.width / 2)
+                        textFormatMenu.popup(x, -messageInputField.height-2)
+                    }
+                }
+
+                StatusTextFormatMenu {
+                    id: textFormatMenu
+                    Action {
+                        icon.name: "format-text-bold"
+                        icon.width: 12
+                        icon.height: 16
+                        onTriggered: wrapSelection("**")
+                        text: qsTr("Bold")
+                    }
+                    Action {
+                        icon.name: "format-text-italic"
+                        icon.width: 12
+                        icon.height: 16
+                        onTriggered: wrapSelection("*")
+                        text: qsTr("Italic")
+                    }
+                    Action {
+                        icon.name: "format-text-strike-through"
+                        icon.width: 20
+                        icon.height: 18
+                        onTriggered: wrapSelection("~~")
+                        text: qsTr("Strikethrough")
+                    }
+                    Action {
+                        icon.name: "format-text-code"
+                        icon.width: 20
+                        icon.height: 18
+                        onTriggered: wrapSelection("`")
+                        text: qsTr("Code")
+                    }
+                }
             }
             Action {
                 shortcut: StandardKey.Bold
