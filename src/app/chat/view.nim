@@ -4,8 +4,6 @@ import ../../status/mailservers
 import ../../status/libstatus/chat as libstatus_chat
 import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/mailservers as status_mailservers
-import ../../status/libstatus/types
-import ../../status/libstatus/core
 import ../../status/libstatus/chat as core_chat
 import ../../status/libstatus/utils as status_utils
 import ../../status/accounts as status_accounts
@@ -17,7 +15,7 @@ import ../../status/chat/[chat, message]
 import ../../status/profile/profile
 import web3/[conversions, ethtypes]
 import ../../status/threads
-import views/[channels_list, message_list, chat_item, suggestions_list, reactions, stickers, groups, transactions, community_list, community_item, community_membership_request_list]
+import views/[channels_list, message_list, chat_item, suggestions_list, reactions, stickers, groups, transactions, communities, community_list, community_item]
 import json_serialization
 import ../utils/image_utils
 
@@ -43,12 +41,8 @@ QtObject:
       transactions*: TransactionsView
       activeChannel*: ChatItemView
       contextChannel*: ChatItemView
+      communities*: CommunitiesView
       previousActiveChannelIndex: int
-      activeCommunity*: CommunityItemView
-      observedCommunity*: CommunityItemView
-      communityList*: CommunityList
-      joinedCommunityList*: CommunityList
-      myCommunityRequests*: seq[CommunityMembershipRequest]
       replyTo: string
       channelOpenTime*: Table[string, int64]
       connected: bool
@@ -64,8 +58,6 @@ QtObject:
     self.chats.delete
     self.activeChannel.delete
     self.contextChannel.delete
-    self.observedCommunity.delete
-    self.activeCommunity.delete
     self.currentSuggestions.delete
     for msg in self.messageList.values:
       msg.delete
@@ -74,6 +66,8 @@ QtObject:
     self.groups.delete
     self.transactions.delete
     self.messageList = initOrderedTable[string, ChatMessageList]()
+    self.communities.delete
+    self.messageList = initTable[string, ChatMessageList]()
     self.channelOpenTime = initTable[string, int64]()
     self.QAbstractListModel.delete
 
@@ -84,16 +78,13 @@ QtObject:
     result.chats = newChannelsList(status)
     result.activeChannel = newChatItemView(status)
     result.contextChannel = newChatItemView(status)
-    result.activeCommunity = newCommunityItemView(status)
-    result.observedCommunity = newCommunityItemView(status)
     result.currentSuggestions = newSuggestionsList()
     result.messageList = initOrderedTable[string, ChatMessageList]()
     result.reactions = newReactionView(status, result.messageList.addr, result.activeChannel)
     result.stickers = newStickersView(status, result.activeChannel)
     result.groups = newGroupsView(status,result.activeChannel)
-    result.communityList = newCommunityList(status)
-    result.joinedCommunityList = newCommunityList(status)
     result.transactions = newTransactionsView(status)
+    result.communities = newCommunitiesView(status)
     result.unreadMessageCnt = 0
     result.loadingMessages = false
     result.previousActiveChannelIndex = -1
@@ -127,6 +118,12 @@ QtObject:
 
   QtProperty[QVariant] chats:
     read = getChatsList
+
+  proc getCommunities*(self: ChatsView): QVariant {.slot.} =
+    newQVariant(self.communities)
+
+  QtProperty[QVariant] communities:
+    read = getCommunities
 
   proc getChannelColor*(self: ChatsView, channel: string): string {.slot.} =
     self.chats.getChannelColor(channel)
@@ -230,19 +227,20 @@ QtObject:
         self.chats.clearUnreadMessagesCount(channel)
 
   proc setActiveChannelByIndex*(self: ChatsView, index: int) {.slot.} =
-    if((self.activeCommunity.active and self.activeCommunity.chats.chats.len == 0) or (not self.activeCommunity.active and self.chats.chats.len == 0)): return
+    if((self.communities.activeCommunity.active and self.communities.activeCommunity.chats.chats.len == 0) or(not self.communities.activeCommunity.active and self.chats.chats.len == 0)): return
 
-    var selectedChannel =
-      if (self.activeCommunity.active):
-        self.activeCommunity.chats.getChannel(index)
+    let selectedChannel =
+      if (self.communities.activeCommunity.active):
+        self.communities.activeCommunity.chats.getChannel(index)
       else:
         self.chats.getChannel(index)
 
     self.clearUnreadIfNeeded(self.activeChannel.chatItem)
     self.clearUnreadIfNeeded(selectedChannel)
-    if (self.activeCommunity.active and self.activeCommunity.communityItem.lastChannelSeen != selectedChannel.id):
-      self.activeCommunity.communityItem.lastChannelSeen = selectedChannel.id
-      self.joinedCommunityList.replaceCommunity(self.activeCommunity.communityItem)
+
+    if (self.communities.activeCommunity.active and self.communities.activeCommunity.communityItem.lastChannelSeen != selectedChannel.id):
+      self.communities.activeCommunity.communityItem.lastChannelSeen = selectedChannel.id
+      self.communities.joinedCommunityList.replaceCommunity(self.communities.activeCommunity.communityItem)
 
     if self.activeChannel.id == selectedChannel.id: return
 
@@ -254,8 +252,8 @@ QtObject:
     self.status.chat.setActiveChannel(selectedChannel.id)
 
   proc getActiveChannelIdx(self: ChatsView): int {.slot.} =
-    if (self.activeCommunity.active):
-      return self.activeCommunity.chats.chats.findIndexById(self.activeChannel.id)
+    if (self.communities.activeCommunity.active):
+      return self.communities.activeCommunity.chats.chats.findIndexById(self.activeChannel.id)
     else:
       return self.chats.chats.findIndexById(self.activeChannel.id)
 
@@ -268,8 +266,8 @@ QtObject:
     if(channel == ""): return
 
     let selectedChannel =
-      if (self.activeCommunity.active):
-        self.activeCommunity.chats.getChannel(self.activeCommunity.chats.chats.findIndexById(channel))
+      if (self.communities.activeCommunity.active):
+        self.communities.activeCommunity.chats.getChannel(self.communities.activeCommunity.chats.chats.findIndexById(channel))
       else:
         self.chats.getChannel(self.chats.chats.findIndexById(channel))
 
@@ -704,243 +702,6 @@ QtObject:
   QtProperty[QVariant] transactions:
     read = getTransactions
 
-  proc pendingRequestsToJoinForCommunity*(self: ChatsView, communityId: string): seq[CommunityMembershipRequest] =
-    result = self.status.chat.pendingRequestsToJoinForCommunity(communityId)
-
-  proc membershipRequestPushed*(self: ChatsView, communityName: string, pubKey: string) {.signal.}
-
-  proc addMembershipRequests*(self: ChatsView, membershipRequests: seq[CommunityMembershipRequest]) =
-    var communityId: string
-    var community: Community
-    for request in membershipRequests:
-      communityId = request.communityId
-      community = self.joinedCommunityList.getCommunityById(communityId)
-      if (community.id == ""):
-        continue
-      let alreadyPresentRequestIdx = community.membershipRequests.findIndexById(request.id)
-      if (alreadyPresentRequestIdx == -1): 
-        community.membershipRequests.add(request)
-        self.membershipRequestPushed(community.name, request.publicKey)
-      else:
-        community.membershipRequests[alreadyPresentRequestIdx] = request
-      self.joinedCommunityList.replaceCommunity(community)
-
-      # Add to active community list
-      if (communityId == self.activeCommunity.communityItem.id):
-        self.activeCommunity.communityMembershipRequestList.addCommunityMembershipRequestItemToList(request)
-
-  proc communitiesChanged*(self: ChatsView) {.signal.}
-
-  proc getCommunitiesIfNotFetched*(self: ChatsView): CommunityList =
-    if (not self.communityList.fetched):
-      let communities = self.status.chat.getAllComunities()
-      self.communityList.setNewData(communities)
-      self.communityList.fetched = true
-    return self.communityList
-
-  proc getComunities*(self: ChatsView): QVariant {.slot.} =
-    return newQVariant(self.getCommunitiesIfNotFetched())
-
-  QtProperty[QVariant] communities:
-    read = getComunities
-    notify = communitiesChanged
-
-  proc joinedCommunitiesChanged*(self: ChatsView) {.signal.}
-    
-  proc getJoinedComunities*(self: ChatsView): QVariant {.slot.} =
-    if (not self.joinedCommunityList.fetched):
-      let communities = self.status.chat.getJoinedComunities()
-      self.joinedCommunityList.setNewData(communities)
-      self.joinedCommunityList.fetched = true
-
-      # Also fetch requests
-      self.myCommunityRequests = self.status.chat.myPendingRequestsToJoin()
-
-    return newQVariant(self.joinedCommunityList)
-
-  QtProperty[QVariant] joinedCommunities:
-    read = getJoinedComunities
-    notify = joinedCommunitiesChanged
-
-  proc activeCommunityChanged*(self: ChatsView) {.signal.}
-
-  proc setActiveCommunity*(self: ChatsView, communityId: string) {.slot.} =
-    if(communityId == ""): return
-    self.addMembershipRequests(self.pendingRequestsToJoinForCommunity(communityId))
-    self.activeCommunity.setCommunityItem(self.joinedCommunityList.getCommunityById(communityId))
-    self.activeCommunity.setActive(true)
-    self.activeCommunityChanged()
-
-  proc getActiveCommunity*(self: ChatsView): QVariant {.slot.} =
-    newQVariant(self.activeCommunity)
-
-  QtProperty[QVariant] activeCommunity:
-    read = getActiveCommunity
-    write = setActiveCommunity
-    notify = activeCommunityChanged
-
-  proc joinCommunity*(self: ChatsView, communityId: string, setActive: bool = true): string {.slot.} =
-    result = ""
-    try:
-      self.status.chat.joinCommunity(communityId)
-      self.joinedCommunityList.addCommunityItemToList(self.communityList.getCommunityById(communityId))
-      if (setActive):
-        self.setActiveCommunity(communityId)
-    except Exception as e:
-      error "Error joining the community", msg = e.msg
-      result = fmt"Error joining the community: {e.msg}"
-
-  proc membershipRequestChanged*(self: ChatsView, communityName: string, accepted: bool) {.signal.}
-
-  proc addCommunityToList*(self: ChatsView, community: Community) =
-    let communityCheck = self.communityList.getCommunityById(community.id)
-    if (communityCheck.id == ""):
-      self.communityList.addCommunityItemToList(community)
-    else:
-      self.communityList.replaceCommunity(community)
-
-    if (community.joined == true):
-      let joinedCommunityCheck = self.joinedCommunityList.getCommunityById(community.id)
-      if (joinedCommunityCheck.id == ""):
-        self.joinedCommunityList.addCommunityItemToList(community)
-      else:
-        self.joinedCommunityList.replaceCommunity(community)
-    elif (community.isMember == true):
-      discard self.joinCommunity(community.id, false)
-      var i = 0
-      for communityRequest in self.myCommunityRequests:
-        if (communityRequest.communityId == community.id):
-          self.membershipRequestChanged(community.name, true)
-          self.myCommunityRequests.delete(i, i)
-          break
-        i = i + 1
-
-  proc isCommunityRequestPending*(self: ChatsView, communityId: string): bool {.slot.} =
-    for communityRequest in self.myCommunityRequests:
-      if (communityRequest.communityId == communityId):
-        return true
-    return false
-
-  proc createCommunity*(self: ChatsView, name: string, description: string, access: int, ensOnly: bool, imagePath: string, aX: int, aY: int, bX: int, bY: int): string {.slot.} =
-    result = ""
-    try:
-      var image = image_utils.formatImagePath(imagePath)
-      let community = self.status.chat.createCommunity(name, description, access, ensOnly, image, aX, aY, bX, bY)
-     
-      if (community.id == ""):
-        return "Community was not created. Please try again later"
-
-      self.communityList.addCommunityItemToList(community)
-      self.joinedCommunityList.addCommunityItemToList(community)
-      self.communitiesChanged()
-    except Exception as e:
-      error "Error creating the community", msg = e.msg
-      result = fmt"Error creating the community: {e.msg}"
-
-  proc createCommunityChannel*(self: ChatsView, communityId: string, name: string, description: string): string {.slot.} =
-    result = ""
-    try:
-      let chat = self.status.chat.createCommunityChannel(communityId, name, description)
-     
-      if (chat.id == ""):
-        return "Chat was not created. Please try again later"
-
-      self.joinedCommunityList.addChannelToCommunity(communityId, chat)
-      discard self.activeCommunity.chats.addChatItemToList(chat)
-    except Exception as e:
-      error "Error creating the channel", msg = e.msg
-      result = fmt"Error creating the channel: {e.msg}"
-
-  proc observedCommunityChanged*(self: ChatsView) {.signal.}
-
-  proc setObservedCommunity*(self: ChatsView, communityId: string) {.slot.} =
-    if(communityId == ""): return
-    var community = self.communityList.getCommunityById(communityId) 
-    if (community.id == ""):
-      discard self.getCommunitiesIfNotFetched()
-      community = self.communityList.getCommunityById(communityId) 
-    self.observedCommunity.setCommunityItem(community)
-    self.observedCommunityChanged()
-
-  proc getObservedCommunity*(self: ChatsView): QVariant {.slot.} =
-    newQVariant(self.observedCommunity)
-
-  QtProperty[QVariant] observedCommunity:
-    read = getObservedCommunity
-    write = setObservedCommunity
-    notify = observedCommunityChanged
-
-  proc leaveCommunity*(self: ChatsView, communityId: string): string {.slot.} =
-    result = ""
-    try:
-      self.status.chat.leaveCommunity(communityId)
-      if (communityId == self.activeCommunity.communityItem.id):
-        self.activeCommunity.setActive(false)
-      self.joinedCommunityList.removeCommunityItemFromList(communityId)
-      var updatedCommunity = self.communityList.getCommunityById(communityId)
-      updatedCommunity.joined = false
-      self.communityList.replaceCommunity(updatedCommunity)
-    except Exception as e:
-      error "Error leaving the community", msg = e.msg
-      result = fmt"Error leaving the community: {e.msg}"
-
-  proc leaveCurrentCommunity*(self: ChatsView): string {.slot.} =
-    result = self.leaveCommunity(self.activeCommunity.communityItem.id)
-
-  proc inviteUserToCommunity*(self: ChatsView, pubKey: string): string {.slot.} =
-    try:
-      self.status.chat.inviteUserToCommunity(self.activeCommunity.id(), pubKey)
-    except Exception as e:
-      error "Error inviting to the community", msg = e.msg
-      result = fmt"Error inviting to the community: {e.msg}"
-
-  proc exportComumnity*(self: ChatsView): string {.slot.} =
-    try:
-      result = self.status.chat.exportCommunity(self.activeCommunity.communityItem.id)
-    except Exception as e:
-      error "Error exporting the community", msg = e.msg
-      result = fmt"Error exporting the community: {e.msg}"
-
-  proc importCommunity*(self: ChatsView, communityKey: string) {.slot.} =
-    try:
-      self.status.chat.importCommunity(communityKey)
-    except Exception as e:
-      error "Error importing the community", msg = e.msg
-
-  proc removeUserFromCommunity*(self: ChatsView, pubKey: string) {.slot.} =
-    try:
-      self.status.chat.removeUserFromCommunity(self.activeCommunity.id(), pubKey)
-      self.activeCommunity.removeMember(pubKey)
-    except Exception as e:
-      error "Error removing user from the community", msg = e.msg
-
-
-  proc requestToJoinCommunity*(self: ChatsView, communityId: string, ensName: string) {.slot.} =
-    try:
-      let requests = self.status.chat.requestToJoinCommunity(communityId, ensName)
-      for request in requests:
-        self.myCommunityRequests.add(request)
-    except Exception as e:
-      error "Error requesting to join the community", msg = e.msg
-
-  proc acceptRequestToJoinCommunity*(self: ChatsView, requestId: string): string {.slot.} =
-    try:
-      self.status.chat.acceptRequestToJoinCommunity(requestId)
-      self.activeCommunity.communityMembershipRequestList.removeCommunityMembershipRequestItemFromList(requestId)
-    except Exception as e:
-      error "Error accepting request to join the community", msg = e.msg
-      return "Error accepting request to join the community"
-    return ""
-
-  proc declineRequestToJoinCommunity*(self: ChatsView, requestId: string): string {.slot.} =
-    try:
-      self.status.chat.declineRequestToJoinCommunity(requestId)
-      self.activeCommunity.communityMembershipRequestList.removeCommunityMembershipRequestItemFromList(requestId)
-    except Exception as e:
-      error "Error declining request to join the community", msg = e.msg
-      return "Error declining request to join the community"
-    return ""
-
   method rowCount*(self: ChatsView, index: QModelIndex = nil): int = 
     result = self.messageList.len
 
@@ -959,6 +720,6 @@ QtObject:
   proc getMessageListIndex(self: ChatsView):int {.slot.} =
     var idx = -1
     for msg in toSeq(self.messageList.values):
-      idx = idx + 1
       if(self.activeChannel.id == msg.id): return idx
+      idx = idx + 1
     return idx

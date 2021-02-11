@@ -137,7 +137,7 @@ ModalPopup {
                 scrollView.scrollBackUp()
                 return
             }
-            const error = chatsModel.createCommunityChannel(communityId,
+            const error = chatsModel.communities.createCommunityChannel(communityId,
                                                             Utils.filterXSS(nameInput.text),
                                                             Utils.filterXSS(descriptionTextArea.text))
 

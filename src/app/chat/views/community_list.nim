@@ -1,7 +1,6 @@
 import NimQml, Tables, chronicles
-import ../../../status/chat/[chat, message]
+import ../../../status/chat/chat
 import ../../../status/status
-import ../../../status/ens
 import ../../../status/accounts
 import strutils
 

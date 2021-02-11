@@ -61,7 +61,7 @@ SplitView {
         SplitView.preferredWidth: Style.current.leftTabPrefferedSize
         SplitView.minimumWidth: Style.current.leftTabMinimumWidth
         SplitView.maximumWidth: Style.current.leftTabMaximumWidth
-        sourceComponent: appSettings.communitiesEnabled && chatsModel.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
+        sourceComponent: appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
     }
 
     Component {

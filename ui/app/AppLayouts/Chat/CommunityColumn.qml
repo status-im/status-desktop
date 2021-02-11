@@ -40,7 +40,7 @@ Item {
             anchors.left: parent.left
             anchors.leftMargin: Style.current.bigPadding
             anchors.verticalCenter: communityHeaderButton.verticalCenter
-            onClicked: chatsModel.activeCommunity.active = false
+            onClicked: chatsModel.communities.activeCommunity.active = false
         }
 
         CommunityHeaderButton {
@@ -72,7 +72,7 @@ Item {
                 icon.source: "../../img/hash.svg"
                 icon.width: 20
                 icon.height: 20
-                onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.activeCommunity.id})
+                onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
             }
 
             Action {
@@ -82,7 +82,7 @@ Item {
                 icon.color: Style.current.red
                 icon.width: 20
                 icon.height: 20
-                onTriggered: chatsModel.leaveCurrentCommunity()
+                onTriggered: chatsModel.communities.leaveCurrentCommunity()
             }
         }
     }
@@ -90,7 +90,7 @@ Item {
     Loader {
         id: membershipRequestsLoader
         width: parent.width
-        active: chatsModel.activeCommunity.admin
+        active: chatsModel.communities.activeCommunity.admin
         anchors.top: communityHeader.bottom
         anchors.topMargin: item && item.visible ? Style.current.halfPadding : 0
 
@@ -119,12 +119,12 @@ Item {
         ChannelList {
             id: channelList
             searchStr: ""
-            channelModel: chatsModel.activeCommunity.chats
+            channelModel: chatsModel.communities.activeCommunity.chats
         }
 
         CommunityWelcomeBanner {
             id: emptyViewAndSuggestions
-            visible: chatsModel.activeCommunity.admin
+            visible: chatsModel.communities.activeCommunity.admin
             width: parent.width
             anchors.top: channelList.bottom
             anchors.topMargin: Style.current.padding

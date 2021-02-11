@@ -201,8 +201,12 @@ ScrollView {
                     }
                 }
             }
+        }
 
-            onMembershipRequestChanged: function (communityName, accepted) {
+        Connections {
+            target: chatsModel.communities
+
+             onMembershipRequestChanged: function (communityName, accepted) {
                 systemTray.showMessage("Status",
                                        accepted ? qsTr("You have been accepted into the ‘%1’ community").arg(communityName) :
                                                   qsTr("Your request to join the ‘%1’ community was declined").arg(communityName),

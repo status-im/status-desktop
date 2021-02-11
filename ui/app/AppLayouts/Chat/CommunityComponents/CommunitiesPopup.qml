@@ -68,7 +68,7 @@ ModalPopup {
                 }
             ]
 
-            model: chatsModel.communities
+            model: chatsModel.communities.list
             delegate: Item {
                 // TODO add the search for the name and category once they exist
                 visible: {
@@ -126,9 +126,9 @@ ModalPopup {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         if (joined && isMember) {
-                            chatsModel.setActiveCommunity(id)
+                            chatsModel.communities.setActiveCommunity(id)
                         } else {
-                            chatsModel.setObservedCommunity(id)
+                            chatsModel.communities.setObservedCommunity(id)
                             openPopup(communityDetailPopup)
                         }
                         popup.close()
