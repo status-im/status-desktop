@@ -39,7 +39,7 @@ Item {
             iconColor: Style.current.inputColor
             anchors.left: parent.left
             anchors.leftMargin: Style.current.bigPadding
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenter: communityHeaderButton.verticalCenter
             onClicked: chatsModel.activeCommunity.active = false
         }
 
