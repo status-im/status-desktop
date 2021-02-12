@@ -79,7 +79,7 @@ ModalPopup {
         }
 
         StyledText {
-            text: isEnsVerified ? alias : fromAuthor
+            text: isEnsVerified ? Utils.truncateName(alias) : fromAuthor
             elide: !isEnsVerified ? Text.ElideMiddle : Text.ElideNone
             anchors.left: profilePic.right
             anchors.leftMargin: Style.current.smallPadding
