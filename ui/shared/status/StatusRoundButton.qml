@@ -6,6 +6,7 @@ import "../../imports"
 import "../../shared"
 
 RoundButton {
+    property string type: "primary"
     property string size: "large"
     property int pressedIconRotation: 0
     property alias iconX: iconImg.x
@@ -115,13 +116,13 @@ RoundButton {
                 return 20
         }
     }
-    icon.color: size === "medium" || size === "small" ? 
-        !enabled ? 
+    icon.color: size === "medium" || size === "small" ?
+        !enabled ?
           Style.current.roundedButtonSecondaryDisabledForegroundColor :
           Style.current.roundedButtonSecondaryForegroundColor
         :
         !enabled ?
-          Style.current.roundedButtonDisabledForegroundColor : 
+          Style.current.roundedButtonDisabledForegroundColor :
           Style.current.roundedButtonForegroundColor
 
     onIconChanged: {
@@ -134,12 +135,13 @@ RoundButton {
         color: {
             if (size === "medium" || size == "small") {
                 return !enabled ? Style.current.roundedButtonSecondaryDisabledBackgroundColor :
-                  hovered ? Style.current.roundedButtonSecondaryHoveredBackgroundColor : 
-                  Style.current.roundedButtonSecondaryBackgroundColor
+                  hovered ? (control.type === "warn" ? Style.current.red : Style.current.roundedButtonSecondaryHoveredBackgroundColor) :
+                  (control.type === "warn" ? Style.current.lightRed : Style.current.roundedButtonSecondaryBackgroundColor)
             }
             return !enabled ?
               Style.current.roundedButtonDisabledBackgroundColor : 
-              hovered ? Style.current.buttonHoveredBackgroundColor : Style.current.roundedButtonBackgroundColor
+              hovered ? (control.type === "warn" ? Style.current.red : Style.current.buttonHoveredBackgroundColor) :
+                        (control.type === "warn" ? Style.current.lightRed : Style.current.roundedButtonBackgroundColor)
         }
         radius: parent.width / 2
     }
@@ -183,11 +185,11 @@ RoundButton {
                 if (size === "medium" || size == "small") {
                     return !control.enabled ? 
                         Style.current.roundedButtonSecondaryDisabledForegroundColor : 
-                        Style.current.roundedButtonSecondaryForegroundColor
+                        (control.type === "warn" ? Style.current.danger : Style.current.roundedButtonSecondaryForegroundColor)
                 }
                 return !control.enabled ?
                     Style.current.roundedButtonDisabledForegroundColor :
-                    Style.current.roundedButtonForegroundColor
+                   (control.type === "warn" ? Style.current.danger :  Style.current.roundedButtonForegroundColor)
             }
             antialiasing: true
         }
