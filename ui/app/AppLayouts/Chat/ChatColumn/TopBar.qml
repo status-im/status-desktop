@@ -29,7 +29,7 @@ Rectangle {
         id: chatInfoButton
         StatusChatInfoButton {
             chatId: chatsModel.activeChannel.id
-            chatName: chatsModel.activeChannel.name
+            chatName: chatsModel.userNameOrAlias(chatsModel.activeChannel.id)
             chatType: chatsModel.activeChannel.chatType
             identicon: chatsModel.activeChannel.identicon
             muted: chatsModel.activeChannel.muted
