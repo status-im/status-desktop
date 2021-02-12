@@ -25,15 +25,16 @@ PopupMenu {
         }
     ]
 
-    function openMenu(channel, index) {
+    function openMenu(channel, index, x, y) {
         channelContextMenu.contextChannel = channel
         if (index !== undefined) {
             channelContextMenu.channelIndex = index
         }
-        channelContextMenu.popup()
+        channelContextMenu.popup(x, y)
     }
 
     Action {
+        id: viewProfileButton
         enabled: channelContextMenu.contextChannel.chatType !== Constants.chatTypePublic
         text: {
             if (channelContextMenu.contextChannel.chatType === Constants.chatTypeOneToOne) {
@@ -65,7 +66,9 @@ PopupMenu {
         }
     }
 
-    Separator {}
+    Separator {
+        visible: viewProfileButton.enabled
+    }
 
     Action {
         text: channelContextMenu.contextChannel.muted ?
