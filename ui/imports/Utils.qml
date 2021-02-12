@@ -74,6 +74,14 @@ QtObject {
         return userName.endsWith(".stateofus.eth") ? userName.substr(0, userName.length - 14) : userName
     }
 
+    function truncateName(name, num = 32) {
+        if (name.length <= num) {
+            return name;
+        }
+
+        return name.slice(0, num) + "...";
+    }
+
     function isValidAddress(inputValue) {
         return inputValue !== "0x" && /^0x[a-fA-F0-9]{40}$/.test(inputValue)
     }
