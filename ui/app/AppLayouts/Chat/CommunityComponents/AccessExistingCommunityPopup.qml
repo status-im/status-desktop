@@ -7,37 +7,40 @@ import "../../../../shared"
 import "../../../../shared/status"
 
 ModalPopup {
-    property string keyValidationError: ""
-
     id: popup
-    height: 300
+    width: 400
+    height: 400
 
-    onOpened: {
-        keyInput.forceActiveFocus(Qt.MouseFocusReason)
+    title: qsTr("Access existing community")
+
+    onClosed: {
+        popup.destroy();
     }
 
-    function validate() {
-        keyValidationError = ""
+    Item {
+        anchors.fill: parent
 
-        if (keyInput.text === "") {
-            keyValidationError = qsTr("You need to enter a key")
+        StyledTextArea {
+            id: pKeyTextArea
+            label: qsTr("Community private key")
+            placeholderText: "0x0..."
+            customHeight: 110
         }
 
-        return !keyValidationError
-    }
-
-    title: qsTr("Import a community")
-
-
-    Input {
-        id: keyInput
-        label: qsTr("Community key")
-        placeholderText: qsTr("0x...")
-        validationError: popup.keyValidationError
-        pasteFromClipboard: true
+        StyledText {
+            id: infoText1
+            text: qsTr("Entering a community key will grant you the ownership of that community. Please be responsible with it and don’t share the key with people you don’t trust.")
+            anchors.top: pKeyTextArea.bottom
+            wrapMode: Text.WordWrap
+            anchors.topMargin: Style.current.bigPadding
+            width: parent.width
+            font.pixelSize: 13
+            color: Style.current.secondaryText
+        }
     }
 
     footer: StatusButton {
+        id: btnBack
         text: qsTr("Import")
         anchors.right: parent.right
         onClicked: {

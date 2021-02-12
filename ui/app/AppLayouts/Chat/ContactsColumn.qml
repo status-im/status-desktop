@@ -73,7 +73,7 @@ Item {
 
     Component {
         id: importCommunitiesPopupComponent
-        ImportCommunityPopup {
+        AccessExistingCommunityPopup {
             onClosed: {
                 destroy()
             }
