@@ -65,8 +65,8 @@ ModalPopup {
         anchors.right: parent.right
         anchors.top: inviteBtn.bottom
         anchors.topMargin: Style.current.smallPadding
-        anchors.leftMargin: -Style.current.xlPadding
-        anchors.rightMargin: -Style.current.xlPadding
+        anchors.leftMargin: -Style.current.padding
+        anchors.rightMargin: -Style.current.padding
     }
 
     MembershipRequestsButton {
@@ -75,8 +75,8 @@ ModalPopup {
         anchors.topMargin: visible ? Style.current.smallPadding : 0
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.leftMargin: -Style.current.xlPadding
-        anchors.rightMargin: -Style.current.xlPadding
+        anchors.leftMargin: -Style.current.padding
+        anchors.rightMargin: -Style.current.padding
     }
 
     Separator {
@@ -86,8 +86,8 @@ ModalPopup {
         anchors.right: parent.right
         anchors.top: membershipRequestsBtn.bottom
         anchors.topMargin: Style.current.smallPadding
-        anchors.leftMargin: -Style.current.xlPadding
-        anchors.rightMargin: -Style.current.xlPadding
+        anchors.leftMargin: -Style.current.padding
+        anchors.rightMargin: -Style.current.padding
     }
 
 

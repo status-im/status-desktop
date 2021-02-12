@@ -119,9 +119,9 @@ Popup {
             anchors.bottom: separator2.top
             anchors.bottomMargin: Style.current.padding
             anchors.left: parent.left
-            anchors.leftMargin: Style.current.xlPadding
+            anchors.leftMargin: Style.current.padding
             anchors.right: parent.right
-            anchors.rightMargin: Style.current.xlPadding
+            anchors.rightMargin: Style.current.padding
         }
 
         Separator {
