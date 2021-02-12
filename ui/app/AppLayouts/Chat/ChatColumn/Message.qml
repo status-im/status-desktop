@@ -167,8 +167,14 @@ Item {
     Component {
         id: fetchMoreMessagesButtonComponent
         Item {
-            visible: chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember
-            id: wrapper
+            property int gapNowAndOldestTimestamp: Date.now() / 1000 - chatsModel.oldestMsgTimestamp
+
+            visible: {
+
+                return gapNowAndOldestTimestamp < Constants.maxNbDaysToFetch * Constants.fetchRangeLast24Hours &&
+                     (chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember)
+            }
+                id: wrapper
             height: wrapper.visible ? childrenRect.height + Style.current.smallPadding*2 : 0
             anchors.left: parent.left
             anchors.right: parent.right
