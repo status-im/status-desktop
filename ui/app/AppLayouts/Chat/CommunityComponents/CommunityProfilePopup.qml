@@ -17,7 +17,7 @@ ModalPopup {
     property string source: "../../../img/ens-header-dark@2x.png"
     property int nbMembers: community.nbMembers
     property bool isAdmin: true // TODO: 
-    height: isAdmin ? 640 : 509
+    height: (isAdmin ? 600 : 590) + descriptionText.height
 
     id: popup
 
@@ -60,6 +60,15 @@ ModalPopup {
             font.weight: Font.Thin
             color: Style.current.secondaryText
         }
+
+        Separator {
+            anchors.top: communityImg.bottom
+            anchors.topMargin: Style.current.padding
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.rightMargin: -Style.current.padding
+            anchors.leftMargin: -Style.current.padding
+        }
     }
 
     StyledText {
@@ -68,9 +77,7 @@ ModalPopup {
         wrapMode: Text.Wrap
         width: parent.width
         font.pixelSize: 15
-        font.weight: Font.Thin
     }
-
 
     Separator {
         id: sep1
@@ -103,10 +110,8 @@ ModalPopup {
 
     Column {
         anchors.top: sep2.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Style.current.halfPadding
         width: parent.width
-        spacing: Style.current.padding
-        
         
         Loader {
             active: isAdmin
@@ -128,9 +133,9 @@ ModalPopup {
                         property int nbRequests: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests
 
                         id: memberBlock
-                        anchors.top: parent.top
                         anchors.right: parent.right
-                        anchors.rightMargin: 0
+                        anchors.rightMargin: Style.current.padding
+                        anchors.verticalCenter: parent.verticalCenter
                         width: childrenRect.width
                         height: memberBtn.height
 
@@ -181,32 +186,32 @@ ModalPopup {
             }
         }
 
-        Loader {
-            active: isAdmin
-            width: parent.width
-            sourceComponent: CommunityPopupButton {
-                label: qsTr("Roles")
-                iconName: "roles"
-                width: parent.width
-                onClicked: console.log("TODO:")
-                txtColor: Style.current.textColor
-                SVGImage {
-                    anchors.top: parent.top
-                    anchors.topMargin: Style.current.padding
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
-                    source: "../../../img/caret.svg"
-                    width: 13
-                    height: 7
-                    rotation: -90
-                    ColorOverlay {
-                        anchors.fill: parent
-                        source: parent
-                        color: Style.current.secondaryText
-                    }
-                }
-            }
-        }
+        // TODO add this back when roles exist
+//        Loader {
+//            active: isAdmin
+//            width: parent.width
+//            sourceComponent: CommunityPopupButton {
+//                label: qsTr("Roles")
+//                iconName: "roles"
+//                width: parent.width
+//                onClicked: console.log("TODO:")
+//                txtColor: Style.current.textColor
+//                SVGImage {
+//                    anchors.verticalCenter: parent.verticalCenter
+//                    anchors.right: parent.right
+//                    anchors.rightMargin: Style.current.padding
+//                    source: "../../../img/caret.svg"
+//                    width: 13
+//                    height: 7
+//                    rotation: -90
+//                    ColorOverlay {
+//                        anchors.fill: parent
+//                        source: parent
+//                        color: Style.current.secondaryText
+//                    }
+//                }
+//            }
+//        }
 
         CommunityPopupButton {
             id: notificationsBtn
@@ -220,6 +225,8 @@ ModalPopup {
             StatusSwitch {
                 id: notificationSwitch
                 anchors.right: parent.right
+                anchors.rightMargin: Style.current.padding
+                anchors.verticalCenter: parent.verticalCenter
                 onCheckedChanged: function(value) {
                     // TODO: enable/disable notifications
                     console.log("TODO: toggle")
@@ -227,8 +234,23 @@ ModalPopup {
             }
         }
 
-        Separator {
+        Item {
+            id: spacer1
             width: parent.width
+            height: Style.current.halfPadding
+        }
+
+        Separator {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.rightMargin: -Style.current.padding
+            anchors.leftMargin: -Style.current.padding
+        }
+
+        Item {
+            id: spacer2
+            width: parent.width
+            height: Style.current.halfPadding
         }
 
         Loader {
@@ -278,8 +300,8 @@ ModalPopup {
                 id: deleteBtn
                 label: qsTr("Delete")
                 iconName: "delete"
-                txtColor: Style.current.red
-                //btnColor: Style.current.red // TODO: statusroundbutton should support changing color
+                txtColor: Style.current.danger
+                type: "warn"
             }
         }
     }
