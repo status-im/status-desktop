@@ -67,7 +67,7 @@ ModalPopup {
 
         StyledTextEdit {
             id: profileName
-            text:  Utils.removeStatusEns(userName)
+            text:  Utils.truncateName(Utils.removeStatusEns(userName))
             anchors.top: parent.top
             anchors.topMargin: Style.current.padding
             anchors.left: profilePic.right
