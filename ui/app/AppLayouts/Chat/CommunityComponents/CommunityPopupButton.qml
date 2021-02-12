@@ -6,10 +6,13 @@ import "../../../../shared/status"
 import "../ContactsColumn"
 import QtGraphicalEffects 1.13
 
-Item {
+Rectangle {
+    property bool isHovered: false
+    property string type: "primary"
+
     id: root
-    width: contentItem.width
-    height: contentItem.height
+    width: parent.width
+    height: 64
 
     default property alias actionContent: placeholder.data
     signal clicked()
@@ -18,8 +21,13 @@ Item {
     property string label
     property string txtColor: Style.current.blue
 
+    color: isHovered ? Style.current.secondaryBackground : Style.current.transparent
+    radius: Style.current.radius
+
     Item {
         id: contentItem
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
         width: btn.width + btnLabel.width + Style.current.padding
         height: btn.height
@@ -27,8 +35,8 @@ Item {
         StatusRoundButton {
             id: btn
             anchors.verticalCenter: parent.verticalCenter
+            type: root.type
             icon.name: "communities/" + iconName
-            icon.color: Style.current.lightBlue
             width: 40
             height: 40
         }
@@ -41,17 +49,21 @@ Item {
             anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: btn.verticalCenter
             font.pixelSize: 15
-        }        
+        }
     }
 
     Item {
         id: placeholder
         anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
     }
 
     MouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
+        hoverEnabled: true
+        onEntered: root.isHovered = true
+        onExited: root.isHovered = false
         onClicked: root.clicked()
     }
 }
