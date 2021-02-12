@@ -69,8 +69,8 @@ ModalPopup {
             anchors.topMargin: Style.current.smallPadding
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.rightMargin: -Style.current.xlPadding
-            anchors.leftMargin: -Style.current.xlPadding
+            anchors.rightMargin: -Style.current.padding
+            anchors.leftMargin: -Style.current.padding
             height: parent.height
 
             delegate: Item {
