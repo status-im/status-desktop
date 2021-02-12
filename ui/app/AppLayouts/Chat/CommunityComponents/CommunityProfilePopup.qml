@@ -246,6 +246,7 @@ ModalPopup {
                 label: qsTrId("edit-community")
                 iconName: "edit"
                 onClicked: openPopup(editCommunityPopup)
+
                 Component {
                     id: editCommunityPopup
                     CreateCommunityPopup {
@@ -256,42 +257,19 @@ ModalPopup {
         }
 
         Loader {
-            property string exportResult: ""
-
             active: isAdmin
             width: parent.width
-            sourceComponent: !exportResult ? exportBtn : resultComponent
-
-            Component {
-                id: exportBtn
-                CommunityPopupButton {
-                    //% "Export community"
-                    label: qsTrId("export-community")
-                    iconName: "../fetch"
-                    onClicked:  exportResult = chatsModel.communities.exportComumnity()
+            sourceComponent: CommunityPopupButton {
+                label: qsTr("Transfer ownership")
+                iconName: "../transfer"
+                onClicked: {
+                    const exportResult = chatsModel.communities.exportComumnity()
+                    openPopup(transferOwnershipPopup, {privateKey: exportResult})
                 }
-            }
 
-            Component {
-                id: resultComponent
-                StyledText {
-                    property bool isError: !exportResult.startsWith("0x")
-
-                    text: exportResult
-                    color: isError ? Style.current.danger : Style.current.textColor
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.rightMargin: Style.current.smallPadding + copyToClipboardBtn.width
-                    wrapMode: TextEdit.WrapAnywhere
-
-                    CopyToClipBoardButton {
-                        id: copyToClipboardBtn
-                        visible: !isError
-                        textToCopy: exportResult
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.left: parent.right
-                        anchors.leftMargin: Style.current.smallPadding
-                    }
+                Component {
+                    id: transferOwnershipPopup
+                    TransferOwnershipPopup {}
                 }
             }
         }
