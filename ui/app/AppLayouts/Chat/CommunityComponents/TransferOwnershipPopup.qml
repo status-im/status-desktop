@@ -14,6 +14,10 @@ ModalPopup {
 
     title: qsTr("Transfer ownership")
 
+    onClosed: {
+        popup.destroy();
+    }
+
     Item {
         anchors.fill: parent
 
