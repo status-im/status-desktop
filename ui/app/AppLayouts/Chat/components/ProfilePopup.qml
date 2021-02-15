@@ -65,22 +65,23 @@ ModalPopup {
             source: identicon
         }
 
-        StyledTextEdit {
+        StyledText {
             id: profileName
-            text:  Utils.truncateName(Utils.removeStatusEns(userName))
+            text:  Utils.removeStatusEns(userName)
+            elide: Text.ElideRight
             anchors.top: parent.top
             anchors.topMargin: Style.current.padding
             anchors.left: profilePic.right
             anchors.leftMargin: Style.current.halfPadding
+            anchors.right: qrCodeButton.left
+            anchors.rightMargin: Style.current.padding
             font.bold: true
             font.pixelSize: 17
-            readOnly: true
-            wrapMode: Text.WordWrap
         }
 
         StyledText {
-            text: isEnsVerified ? Utils.truncateName(alias) : fromAuthor
-            elide: !isEnsVerified ? Text.ElideMiddle : Text.ElideNone
+            text: isEnsVerified ? alias : fromAuthor
+            elide: !isEnsVerified ? Text.ElideMiddle : Text.ElideRight
             anchors.left: profilePic.right
             anchors.leftMargin: Style.current.smallPadding
             anchors.bottom: parent.bottom
