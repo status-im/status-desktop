@@ -683,6 +683,7 @@ Rectangle {
                     if (messageInputField.selectedText.trim() !== "") {
                         let x = event.x - (textFormatMenu.width / 2)
                         textFormatMenu.popup(x, -messageInputField.height-2)
+                        messageInputField.forceActiveFocus();
                     }
                 }
 
@@ -718,34 +719,43 @@ Rectangle {
                     }
                 }
             }
-            Action {
-                shortcut: StandardKey.Bold
-                onTriggered: wrapSelection("**")
+
+            Shortcut {
+                enabled: messageInputField.activeFocus
+                sequence: StandardKey.Bold
+                onActivated: wrapSelection("**")
             }
-            Action {
-                shortcut: StandardKey.Italic
-                onTriggered: wrapSelection("*")
+            Shortcut {
+                enabled: messageInputField.activeFocus
+                sequence: StandardKey.Italic
+                onActivated: wrapSelection("*")
             }
-            Action {
-                shortcut: "Ctrl+Shift+Alt+C"
-                onTriggered: wrapSelection("```")
+            Shortcut {
+                enabled: messageInputField.activeFocus
+                sequence: "Ctrl+Shift+Alt+C"
+                onActivated: wrapSelection("```")
             }
-            Action {
-                shortcut: "Ctrl+Shift+C"
-                onTriggered: wrapSelection("`")
+            Shortcut {
+                enabled: messageInputField.activeFocus
+                sequence: "Ctrl+Shift+C"
+                onActivated: wrapSelection("`")
             }
-            Action {
-                shortcut: "Ctrl+Alt+-"
-                onTriggered: wrapSelection("~~")
+            Shortcut {
+                enabled: messageInputField.activeFocus
+                sequence: "Ctrl+Alt+-"
+                onActivated: wrapSelection("~~")
             }
-            Action {
-                shortcut: "Ctrl+Shift+X"
-                onTriggered: wrapSelection("~~")
+            Shortcut {
+                enabled: messageInputField.activeFocus
+                sequence: "Ctrl+Shift+X"
+                onActivated: wrapSelection("~~")
             }
-            Action {
-                shortcut: "Ctrl+Meta+Space"
-                onTriggered: emojiBtn.clicked()
+            Shortcut {
+                enabled: messageInputField.activeFocus
+                sequence: "Ctrl+Meta+Space"
+                onActivated: emojiBtn.clicked()
             }
+
         }
 
         Rectangle {
