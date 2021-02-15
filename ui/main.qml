@@ -230,6 +230,17 @@ ApplicationWindow {
         }
     }
 
+    property bool currentlyHasANotification: false
+
+    onActiveChanged: {
+        if (active && currentlyHasANotification) {
+            currentlyHasANotification = false
+            // QML doesn't have a function to hide notifications, but this does the trick
+            systemTray.hide()
+            systemTray.show()
+        }
+    }
+
     SystemTrayIcon {
         id: systemTray
         visible: true

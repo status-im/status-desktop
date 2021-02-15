@@ -191,6 +191,7 @@ ScrollView {
                         message = qsTr("You have a new message")
                     }
 
+                    currentlyHasANotification = true
                     if (appSettings.useOSNotifications && systemTray.supportsMessages) {
                         systemTray.showMessage(name,
                                                message,
