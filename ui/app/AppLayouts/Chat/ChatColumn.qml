@@ -42,7 +42,7 @@ StackLayout {
     currentIndex:  chatsModel.activeChannelIndex > -1 && chatGroupsListViewCount > 0 ? 0 : 1
 
 
-    property var idMap: {}
+    property var idMap: ({})
 
     function addSuggestionFromMessageList(i){
         const contactAddr = chatsModel.messageList.getMessageData(i, "publicKey");
@@ -76,8 +76,8 @@ StackLayout {
             idMap[contactAddr] = true;
         }
         const len2 = chatsModel.messageList.rowCount();
-        for (let i = 0; i < len2; i++) {
-            addSuggestionFromMessageList(i);
+        for (let f = 0; f < len2; f++) {
+            addSuggestionFromMessageList(f);
         }
     }
 
