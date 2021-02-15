@@ -296,6 +296,8 @@ RowLayout {
                 browserLayoutContainer.active = true;
             }
 
+            timelineLayoutContainer.active = this.children[currentIndex] == timelineLayoutContainer
+
             if(this.children[currentIndex] === chatLayoutContainer){
                 chatLayoutContainer.chatColumn.chatMessages.chatLogView.scrollToBottom(true);
             }
@@ -339,8 +341,11 @@ RowLayout {
             property var _web3Provider: web3Provider
         }
 
-        TimelineLayout {
+        Loader {
             id: timelineLayoutContainer
+            sourceComponent: TimelineLayout {}
+            onLoaded: timelineLayoutContainer.item.onActivated()
+            active: false
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
