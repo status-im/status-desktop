@@ -123,10 +123,11 @@ ScrollView {
         }
 
         function clickOnNotification(chatId) {
+            applicationWindow.show()
             applicationWindow.raise()
+            applicationWindow.requestActivate()
             chatsModel.setActiveChannel(chatId)
             appMain.changeAppSection(Constants.chat)
-            applicationWindow.requestActivate()
         }
 
         Connections {
