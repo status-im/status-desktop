@@ -29,23 +29,14 @@ Item {
         id: communityHeader
         width: parent.width
         height: communityHeaderButton.height
+        anchors.left: parent.left
+        anchors.leftMargin: 12
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
 
-        StatusIconButton {
-            id: backArrow
-            icon.name: "arrow-right"
-            iconRotation: 180
-            iconColor: Style.current.inputColor
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.bigPadding
-            anchors.verticalCenter: communityHeaderButton.verticalCenter
-            onClicked: chatsModel.communities.activeCommunity.active = false
-        }
-
         CommunityHeaderButton {
             id: communityHeaderButton
-            anchors.left: backArrow.right
+            anchors.left: parent.left
             anchors.top: parent.top
             anchors.topMargin: -4
         }

@@ -120,37 +120,8 @@ Item {
         contentHeight: communitiesListLoader.height + channelList.height + 2 * Style.current.padding + emptyViewAndSuggestions.height
         clip: true
 
-        Loader {
-            id: communitiesListLoader
-            active: appSettings.communitiesEnabled
-            width: parent.width
-            height: {
-                if (item && active) {
-                    return item.height
-                }
-
-                return 0
-            }
-            sourceComponent: Component {
-                CommunityList {
-                    id: communityList
-                    visible: appSettings.communitiesEnabled
-                    searchStr: contactsColumn.searchStr.toLowerCase()
-                }
-            }
-        }
-
-        Separator {
-            id: communitySep
-            visible: communitiesListLoader.active && communitiesListLoader.height > 0
-            anchors.top: communitiesListLoader.bottom
-            anchors.topMargin: visible ? Style.current.halfPadding : 0
-        }
-
         ChannelList {
             id: channelList
-            anchors.top: communitySep.bottom
-            anchors.topMargin: Style.current.halfPadding
             searchStr: contactsColumn.searchStr.toLowerCase()
             channelModel: chatsModel.chats
         }
