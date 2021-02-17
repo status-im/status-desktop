@@ -106,6 +106,15 @@ Rectangle {
         return false
     }
 
+    function parseMarkdown(markdownText) {
+        const htmlText = markdownText
+          .replace(/\~\~([^*]+)\~\~/gim, '<span style="text-decoration: line-through">~~$1~~</span>')
+          .replace(/\*\*([^*]+)\*\*/gim, '<b>:asterisk::asterisk:$1:asterisk::asterisk:</b>')
+          .replace(/\`([^*]+)\`/gim, '<code>`$1`</code>')
+          .replace(/\*([^*]+)\*/gim, '<i>:asterisk:$1:asterisk:</i>')
+        return htmlText.replace(/\:asterisk\:/gim, "*")
+    }
+
     function onKeyPress(event){
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
             if (checkTextInsert()) {
@@ -188,6 +197,16 @@ Rectangle {
         insertInTextInput(messageInputField.selectionStart, wrapWith);
         insertInTextInput(messageInputField.selectionEnd, wrapWith);
         messageInputField.deselect()
+        formatInputMessage()
+    }
+
+    function formatInputMessage() {
+        const posBeforeEnd = messageInputField.length - messageInputField.cursorPosition;
+        const deparsedEmoji = Emoji.deparse(messageInputField.text);
+        const plainText = chatsModel.plainText(deparsedEmoji);
+        const formatted = parseMarkdown(Emoji.parse(plainText.replace(/\n/g, "<br />")))
+        messageInputField.text = formatted
+        messageInputField.cursorPosition = messageInputField.length - posBeforeEnd;
     }
 
     function onRelease(event) {
@@ -195,13 +214,15 @@ Rectangle {
         // we can only get it in the `released` event
         if (paste) {
             paste = false;
-            const posBeforeEnd = messageInputField.length - messageInputField.cursorPosition;
-            const deparsedEmoji = Emoji.deparse(messageInputField.text);
-            const plainText = chatsModel.plainText(deparsedEmoji);
-            messageInputField.text = Emoji.parse(plainText.replace(/\n/g, "<br />"));
-            messageInputField.cursorPosition = messageInputField.length - posBeforeEnd;
-
+            formatInputMessage()
             interrogateMessage();
+        } else {
+            if (event.key === Qt.Key_Asterisk ||
+                event.key === Qt.Key_QuoteLeft ||
+                event.key === Qt.Key_Space ||
+                event.key === Qt.Key_AsciiTilde) {
+                formatInputMessage()
+            }
         }
 
         if (event.key !== Qt.Key_Escape) {
