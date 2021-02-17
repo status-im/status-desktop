@@ -75,6 +75,11 @@ SplitView {
         CommunityColumn {}
     }
 
+    Component {
+        id: groupInfoPopupComponent
+        GroupInfoPopup {}
+    }
+
     ChatColumn {
         id: chatColumn
         chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
