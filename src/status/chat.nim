@@ -429,9 +429,10 @@ proc leaveCommunity*(self: ChatModel, communityId: string) =
   status_chat.leaveCommunity(communityId)
 
 proc inviteUserToCommunity*(self: ChatModel, communityId: string, pubKey: string) =
-  status_chat.inviteUserToCommunity(communityId, pubKey)
-  # After sending the invite, we send a message with the community ID so they can join
-  self.sendMessage(pubKey, "Upgrade here to see an invitation to community", "", ContentType.Community.int, communityId, true)
+  status_chat.inviteUsersToCommunity(communityId, @[pubKey])
+
+proc inviteUsersToCommunity*(self: ChatModel, communityId: string, pubKeys: seq[string]) =
+  status_chat.inviteUsersToCommunity(communityId, pubKeys)
 
 proc removeUserFromCommunity*(self: ChatModel, communityId: string, pubKey: string) =
   status_chat.removeUserFromCommunity(communityId, pubKey)

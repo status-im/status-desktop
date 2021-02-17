@@ -305,8 +305,11 @@ proc joinCommunity*(communityId: string) =
 proc leaveCommunity*(communityId: string) =
   discard callPrivateRPC("leaveCommunity".prefix, %*[communityId])
 
-proc inviteUserToCommunity*(communityId: string, pubKey: string) =
-  discard callPrivateRPC("inviteUserToCommunity".prefix, %*[communityId, pubKey])
+proc inviteUsersToCommunity*(communityId: string, pubKeys: seq[string]) =
+  discard callPrivateRPC("inviteUsersToCommunity".prefix, %*[{
+    "communityId": communityId,
+    "users": pubKeys
+  }])
 
 proc exportCommunity*(communityId: string):string  =
   result = callPrivateRPC("exportCommunity".prefix, %*[communityId]).parseJson()["result"].getStr

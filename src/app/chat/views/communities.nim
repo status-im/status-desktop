@@ -1,4 +1,4 @@
-import NimQml, json, sequtils, chronicles, strutils, strformat
+import NimQml, json, sequtils, chronicles, strutils, strformat, json
 import ../../../status/status
 import ../../../status/chat/chat
 import ./community_list
@@ -225,6 +225,18 @@ QtObject:
   proc inviteUserToCommunity*(self: CommunitiesView, pubKey: string): string {.slot.} =
     try:
       self.status.chat.inviteUserToCommunity(self.activeCommunity.id(), pubKey)
+    except Exception as e:
+      error "Error inviting to the community", msg = e.msg
+      result = fmt"Error inviting to the community: {e.msg}"
+
+  proc inviteUsersToCommunity*(self: CommunitiesView, pubKeysJSON: string): string {.slot.} =
+    try:
+      let pubKeysParsed = pubKeysJSON.parseJson
+      var pubKeys: seq[string] = @[]
+      for pubKey in pubKeysParsed:
+        pubKeys.add(pubKey.getStr)
+
+      self.status.chat.inviteUsersToCommunity(self.activeCommunity.id(), pubKeys)
     except Exception as e:
       error "Error inviting to the community", msg = e.msg
       result = fmt"Error inviting to the community: {e.msg}"
