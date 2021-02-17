@@ -140,7 +140,16 @@ Item {
     }
 
     Loader {
-        active: true
+        active: {
+            if (contentType === Constants.fetchMoreMessagesButton) {
+                const gapNowAndOldestTimestamp = Date.now() / 1000 - chatsModel.oldestMsgTimestamp
+                return gapNowAndOldestTimestamp < Constants.maxNbDaysToFetch * Constants.fetchRangeLast24Hours &&
+                        (chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember)
+            }
+
+            return true
+        }
+
         width: parent.width
         sourceComponent: {
             switch(contentType) {
@@ -167,15 +176,8 @@ Item {
     Component {
         id: fetchMoreMessagesButtonComponent
         Item {
-            property int gapNowAndOldestTimestamp: Date.now() / 1000 - chatsModel.oldestMsgTimestamp
-
-            visible: {
-
-                return gapNowAndOldestTimestamp < Constants.maxNbDaysToFetch * Constants.fetchRangeLast24Hours &&
-                     (chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember)
-            }
-                id: wrapper
-            height: wrapper.visible ? childrenRect.height + Style.current.smallPadding*2 : 0
+            id: wrapper
+            height: childrenRect.height + Style.current.smallPadding * 2
             anchors.left: parent.left
             anchors.right: parent.right
             Separator {
@@ -193,14 +195,14 @@ Item {
                 anchors.top: sep1.bottom
                 anchors.topMargin: Style.current.smallPadding
                 MouseArea {
-                  cursorShape: Qt.PointingHandCursor
-                  anchors.fill: parent
-                  onClicked: {
-                    chatsModel.requestMoreMessages(Constants.fetchRangeLast24Hours);
-                    timer.setTimeout(function(){ 
-                        chatsModel.hideLoadingIndicator()
-                    }, 3000);
-                  }
+                    cursorShape: Qt.PointingHandCursor
+                    anchors.fill: parent
+                    onClicked: {
+                        chatsModel.requestMoreMessages(Constants.fetchRangeLast24Hours);
+                        timer.setTimeout(function(){
+                            chatsModel.hideLoadingIndicator()
+                        }, 3000);
+                    }
                 }
             }
             StyledText {
