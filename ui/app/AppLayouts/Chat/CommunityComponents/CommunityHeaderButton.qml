@@ -21,8 +21,7 @@ Button {
             id: communityImage
             width: 40
             height: 40
-            // TODO get the real image once it's available
-            source: "../../../img/ens-header-dark@2x.png"
+            source: chatsModel.communities.activeCommunity.thumbnailImage
             anchors.verticalCenter: parent.verticalCenter
         }
 
