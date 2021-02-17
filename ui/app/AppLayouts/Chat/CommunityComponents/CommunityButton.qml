@@ -5,98 +5,48 @@ import "../../../../shared/status"
 import "../../../../imports"
 import "../components"
 
-Rectangle {
+StatusIconTabButton {
     property string communityId: ""
     property string name: "channelName"
-    property string description: "channel description"
     property string unviewedMessagesCount: "0"
     property string image
     property bool hasMentions: false
-    property string searchStr: ""
-    property bool isCompact: appSettings.compactMode
-    property bool hovered: false
 
     id: communityButton
-    color: {
-      if (communityButton.hovered) {
-        return Style.current.secondaryBackground
-      }
-      return Style.current.background
-    }
-    anchors.right: parent.right
-    anchors.top: applicationWindow.top
-    anchors.left: parent.left
-    radius: Style.current.radius
-    // Hide the box if it is filtered out
-    property bool isVisible: searchStr === "" ||
-                             communityButton.name.toLowerCase().includes(searchStr) ||
-                             communityButton.description.toLowerCase().includes(searchStr)
-    visible: isVisible ? true : false
-    height: isVisible ? !isCompact ? 64 : communityImage.height + Style.current.smallPadding * 2 : 0
+    anchors.horizontalCenter: parent.horizontalCenter
+    iconSource: communityButton.image
+    anchors.topMargin: 0
 
-    RoundedImage {
-        id: communityImage
-        height: !isCompact ? 40 : 20
-        width: !isCompact ? 40 : 20
-        source: communityButton.image
-        anchors.left: parent.left
-        anchors.leftMargin: !isCompact ? Style.current.padding : Style.current.smallPadding
-        anchors.verticalCenter: parent.verticalCenter
-    }
+    section: Constants.community
 
-    StyledText {
-        id: contactInfo
-        text: communityButton.name
-        anchors.right: contactNumberChatsCircle.left
-        anchors.rightMargin: Style.current.smallPadding
-        elide: Text.ElideRight
-        font.weight: Font.Medium
-        font.pixelSize: 15
-        anchors.left: communityImage.right
-        anchors.leftMargin: Style.current.padding
-        anchors.verticalCenter: parent.verticalCenter
+    checked: chatsModel.communities.activeCommunity.active && chatsModel.communities.activeCommunity.id === communityId
+
+    borderOnChecked: true
+    doNotHandleClick: true
+    onClicked: {
+        appMain.changeAppSection(Constants.chat)
+        chatsModel.communities.setActiveCommunity(communityId)
     }
 
     Rectangle {
-        id: contactNumberChatsCircle
-        width: 22
+        id: chatBadge
+        visible: unviewedMessagesCount > 0
+        anchors.top: parent.top
+        anchors.left: parent.right
+        anchors.leftMargin: -17
+        anchors.topMargin: 1
+        radius: height / 2
+        color: Style.current.blue
+        border.color: Style.current.background
+        border.width: 2
+        width: unviewedMessagesCount < 10 ? 22 : messageCount.width + 14
         height: 22
-        radius: 50
-        anchors.right: parent.right
-        anchors.rightMargin: !isCompact ? Style.current.padding : Style.current.smallPadding
-        anchors.verticalCenter: parent.verticalCenter
-        color: Style.current.primary
-        visible: (unviewedMessagesCount > 0) || communityButton.hasMentions
-        StyledText {
-            id: contactNumberChats
-            text: communityButton.hasMentions ? '@' : (communityButton.unviewedMessagesCount < 100 ? communityButton.unviewedMessagesCount : "99")
-            font.pixelSize: 12
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+        Text {
+            id: messageCount
+            font.pixelSize: chatsModel.unreadMessagesCount > 99 ? 10 : 12
             color: Style.current.white
+            anchors.centerIn: parent
+            text: unviewedMessagesCount > 99 ? "99+" : unviewedMessagesCount
         }
     }
-
-    MouseArea {
-        cursorShape: Qt.PointingHandCursor
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        anchors.fill: parent
-        hoverEnabled: true
-        onEntered: {
-          communityButton.hovered = true
-        }
-        onExited: {
-          communityButton.hovered = false
-        }
-        onClicked: {
-            chatsModel.communities.setActiveCommunity(communityId)
-        }
-    }
-
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";height:64;width:640}
-}
-##^##*/
