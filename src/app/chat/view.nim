@@ -226,9 +226,8 @@ QtObject:
       if not response.hasKey("error"):
         self.chats.clearUnreadMessagesCount(channel)
 
-  proc setActiveChannelByIndex*(self: ChatsView, index: int) {.slot.} =
-    if((self.communities.activeCommunity.active and self.communities.activeCommunity.chats.chats.len == 0) or(not self.communities.activeCommunity.active and self.chats.chats.len == 0)): return
-
+  proc setActiveChannelByIndex*(self: ChatsView, index: int, forceUpdate: bool = false) {.slot.} =
+    if((self.communities.activeCommunity.active and self.communities.activeCommunity.chats.chats.len == 0) or (not self.communities.activeCommunity.active and self.chats.chats.len == 0)): return
     let selectedChannel =
       if (self.communities.activeCommunity.active):
         self.communities.activeCommunity.chats.getChannel(index)
@@ -242,7 +241,7 @@ QtObject:
       self.communities.activeCommunity.communityItem.lastChannelSeen = selectedChannel.id
       self.communities.joinedCommunityList.replaceCommunity(self.communities.activeCommunity.communityItem)
 
-    if self.activeChannel.id == selectedChannel.id: return
+    if not forceUpdate and self.activeChannel.id == selectedChannel.id: return
 
     if selectedChannel.chatType.isOneToOne and selectedChannel.id == selectedChannel.name:
       selectedChannel.name = self.userNameOrAlias(selectedChannel.id)
@@ -306,7 +305,7 @@ QtObject:
 
   proc restorePreviousActiveChannel*(self: ChatsView) {.slot.} =
     if self.previousActiveChannelIndex != -1:
-      self.setActiveChannelByIndex(self.previousActiveChannelIndex)
+      self.setActiveChannelByIndex(self.previousActiveChannelIndex, true)
 
   proc getCurrentSuggestions(self: ChatsView): QVariant {.slot.} =
     return newQVariant(self.currentSuggestions)
