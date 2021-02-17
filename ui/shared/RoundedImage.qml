@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.0
 Rectangle {
     id: root
     signal clicked
+    property bool noMouseArea: false
     property bool noHover: false
     property alias showLoadingIndicator: imgStickerPackThumb.showLoadingIndicator
     property alias source: imgStickerPackThumb.source
@@ -27,6 +28,7 @@ Rectangle {
 
     ImageLoader {
         id: imgStickerPackThumb
+        noMouseArea: root.noMouseArea
         noHover: root.noHover
         opacity: 1
         smooth: false
