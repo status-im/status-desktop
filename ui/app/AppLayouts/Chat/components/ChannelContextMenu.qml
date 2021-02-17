@@ -7,7 +7,7 @@ import "../../../../imports"
 
 PopupMenu {
     property int channelIndex
-    property var contextChannel
+    property var contextChannel: ({})
 
     id: channelContextMenu
     width: 175
