@@ -75,13 +75,8 @@ Item {
         }
     }
 
-    GroupInfoPopup {
-        id: groupInfoPopup
-    }
-
     ChannelContextMenu {
         id: channelContextMenu
-        groupInfoPopup: groupInfoPopup
     }
 
     Connections {

@@ -33,9 +33,8 @@ ModalPopup {
         })
     }
 
-    function openMenu(channel) {
-        popup.channel = channel
-        popup.open()
+    onClosed: {
+        popup.destroy();
     }
 
     onOpened: {
@@ -193,12 +192,16 @@ ModalPopup {
         Separator {
             id: separator
             visible: !addMembers
+            anchors.left: parent.left
+            anchors.leftMargin: -Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: -Style.current.padding
         }
 
         ListView {
             id: memberList
             anchors.fill: parent
-            anchors.top: memberLabel.bottom
+            anchors.top: separator.bottom
             anchors.bottom: popup.bottom
             anchors.topMargin: addMembers ? 30 : 15
             anchors.bottomMargin: Style.current.padding

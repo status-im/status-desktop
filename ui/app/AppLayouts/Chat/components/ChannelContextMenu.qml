@@ -8,7 +8,6 @@ import "../../../../imports"
 PopupMenu {
     property int channelIndex
     property var contextChannel
-    property var groupInfoPopup
 
     id: channelContextMenu
     width: 175
@@ -61,7 +60,7 @@ PopupMenu {
                 )
             }
             if (channelContextMenu.contextChannel.chatType === Constants.chatTypePrivateGroupChat) {
-                return groupInfoPopup.openMenu(channelContextMenu.contextChannel)
+                return openPopup(groupInfoPopupComponent, {channel: channelContextMenu.contextChannel})
             }
         }
     }

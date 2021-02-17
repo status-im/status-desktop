@@ -37,8 +37,8 @@ Rectangle {
 
             onClicked: {
                 switch (chatsModel.activeChannel.chatType) {
-                    case Constants.chatTypePrivateGroupChat: 
-                        groupInfoPopup.openMenu(chatsModel.activeChannel, chatsModel.getActiveChannelIdx())
+                    case Constants.chatTypePrivateGroupChat:
+                        openPopup(groupInfoPopupComponent, {channel: chatsModel.activeChannel})
                         break;
                     case Constants.chatTypeOneToOne:
                         const profileImage = appMain.getProfileImage(chatsModel.activeChannel.id)
@@ -120,7 +120,6 @@ Rectangle {
 
             ChannelContextMenu {
                 id: chatContextMenu
-                groupInfoPopup: groupInfoPopup
             }
 
             PopupMenu {
@@ -132,7 +131,7 @@ Rectangle {
                     icon.height: chatTopBarContent.iconSize
                     //% "Group Information"
                     text: qsTrId("group-information")
-                    onTriggered: groupInfoPopup.openMenu(chatsModel.activeChannel, chatsModel.getActiveChannelIdx())
+                    onTriggered: openPopup(groupInfoPopupComponent, {channel: chatsModel.activeChannel})
                 }
                 Action {
                     icon.source: "../../../img/close.svg"
@@ -158,10 +157,6 @@ Rectangle {
                       deleteChatConfirmationDialog.open()
                     }
                 }
-            }
-
-            GroupInfoPopup {
-                id: groupInfoPopup
             }
         }
     }
