@@ -113,13 +113,13 @@ ModalPopup {
             //% "Invite"
             text: qsTrId("invite-button")
             onClicked : {
-                console.log('invite')
-                popup.pubKeys.forEach(function (pubKey) {
-                    const error = chatsModel.inviteUserToCommunity(pubKey)
-                    if (error) {
-                        console.log('do something?')
-                    }
-                })
+                const error = chatsModel.communities.inviteUsersToCommunity(JSON.stringify(popup.pubKeys))
+                // TODO show error to user also should we show success?
+                if (error) {
+                    console.error('Error inviting', error)
+                    return
+                }
+                popup.close()
             }
         }
     }
