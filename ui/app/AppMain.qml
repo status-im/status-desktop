@@ -344,7 +344,9 @@ RowLayout {
 
         Loader {
             id: timelineLayoutContainer
-            sourceComponent: TimelineLayout {}
+            sourceComponent: Component {
+                TimelineLayout {}
+            }
             onLoaded: timelineLayoutContainer.item.onActivated()
             active: false
             Layout.fillWidth: true
