@@ -28,6 +28,12 @@ StatusIconTabButton {
         chatsModel.communities.setActiveCommunity(communityId)
     }
 
+    StatusToolTip {
+        visible: communityButton.hovered
+        text: communityButton.name
+        delay: 50
+    }
+
     Rectangle {
         id: chatBadge
         visible: unviewedMessagesCount > 0
