@@ -10,6 +10,7 @@ import "./AppLayouts"
 import "./AppLayouts/Timeline"
 import "./AppLayouts/Wallet"
 import "./AppLayouts/Chat/components"
+import "./AppLayouts/Chat/CommunityComponents"
 import Qt.labs.settings 1.0
 
 RowLayout {
@@ -282,124 +283,112 @@ RowLayout {
     }
 
     function changeAppSection(section) {
-        let sectionId = -1
-        switch (section) {
-        case Constants.chat: sectionId = 0; break;
-        case Constants.wallet: sectionId = 1; break;
-        case Constants.browser: sectionId = 2; break;
-        case Constants.profile: sectionId = 4; break;
-        case Constants.node: sectionId = 5; break;
-        case Constants.ui: sectionId = 6; break;
-        }
-        if (sectionId === -1) {
-            throw new Exception ("Unknown section name. Check the Constants to know the available ones")
-        }
-        tabBar.setCurrentIndex(sectionId)
+        sLayout.currentIndex = Utils.getAppSectionIndex(section)
     }
 
-    TabBar {
-        id: tabBar
-        width: 78
-        Layout.maximumWidth: 80
-        Layout.preferredWidth: 80
-        Layout.minimumWidth: 80
-        currentIndex: 0
-        topPadding: 57
-        rightPadding: 19
-        leftPadding: 19
-        transformOrigin: Item.Top
-        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+    Item {
+        id: leftTab
+        Layout.topMargin: 50
+        Layout.maximumWidth: 78
+        Layout.minimumWidth: 78
+        Layout.preferredWidth: 78
         Layout.fillHeight: true
-        spacing: 5
-        background: Rectangle {
-            color: "#00000000"
-            border.color: Style.current.border
-        }
+        height: parent.height
 
-        StatusIconTabButton {
-              id: chatBtn
-              anchors.horizontalCenter: parent.horizontalCenter
-              icon.name: "message"
-              anchors.topMargin: 0
+        ScrollView {
+            id: scrollView
+            width: leftTab.width
+            anchors.top: parent.top
+            anchors.bottom: leftTabButtons.visible ? leftTabButtons.top : parent.bottom
+            anchors.bottomMargin: tabBar.spacing
+            clip: true
 
-              Rectangle {
-                  id: chatBadge
-                  visible: chatsModel.unreadMessagesCount > 0
-                  anchors.top: parent.top
-                  anchors.left: parent.right
-                  anchors.leftMargin: -17
-                  anchors.topMargin: 1
-                  radius: height / 2
-                  color: Style.current.blue
-                  border.color: chatBtn.hovered ? Style.current.secondaryBackground : Style.current.background
-                  border.width: 2
-                  width: chatsModel.unreadMessagesCount < 10 ? 22 : messageCount.width + 14
-                  height: 22
-                  Text {
-                      id: messageCount
-                      font.pixelSize: chatsModel.unreadMessagesCount > 99 ? 10 : 12
-                      color: Style.current.white
-                      anchors.centerIn: parent
-                      text: chatsModel.unreadMessagesCount > 99 ? "99+" : chatsModel.unreadMessagesCount
-                  }
-              }
-        }
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-        StatusIconTabButton {
-              id: walletBtn
-              anchors.top: chatBtn.top
-              enabled: isExperimental === "1" || appSettings.walletEnabled
-              icon.name: "wallet"
-        }
+            Column {
+                id: tabBar
+                spacing: 12
+                width: scrollView.width
 
-        StatusIconTabButton {
-              id: browserBtn
-              anchors.top: walletBtn.top
-              enabled: isExperimental === "1" || appSettings.browserEnabled
-              icon.name: "compass"
-        }
+                StatusIconTabButton {
+                    id: chatBtn
+                    icon.name: "message"
+                    section: Constants.chat
+                    doNotHandleClick: true
+                    onClicked: {
+                        chatsModel.communities.activeCommunity.active = false
+                        appMain.changeAppSection(Constants.chat)
+                    }
 
-        StatusIconTabButton {
-              id: timelineBtn
-              anchors.top: browserBtn.enabled ? browserBtn.top : walletBtn.top
-              enabled: isExperimental === "1" || appSettings.timelineEnabled
-              icon.name: "timeline"
-        }
+                    checked: !chatsModel.communities.activeCommunity.active  && sLayout.currentIndex === Utils.getAppSectionIndex(Constants.chat)
 
-        StatusIconTabButton {
-              id: profileBtn
-              anchors.top: timelineBtn.enabled ? timelineBtn.top : browserBtn.top
-              icon.name: "profile"
+                    Rectangle {
+                        id: chatBadge
+                        visible: chatsModel.unreadMessagesCount > 0
+                        anchors.top: parent.top
+                        anchors.left: parent.right
+                        anchors.leftMargin: -17
+                        anchors.topMargin: 1
+                        radius: height / 2
+                        color: Style.current.blue
+                        border.color: chatBtn.hovered ? Style.current.secondaryBackground : Style.current.background
+                        border.width: 2
+                        width: chatsModel.unreadMessagesCount < 10 ? 22 : messageCount.width + 14
+                        height: 22
+                        Text {
+                            id: messageCount
+                            font.pixelSize: chatsModel.unreadMessagesCount > 99 ? 10 : 12
+                            color: Style.current.white
+                            anchors.centerIn: parent
+                            text: chatsModel.unreadMessagesCount > 99 ? "99+" : chatsModel.unreadMessagesCount
+                        }
+                    }
+                }
 
-              Rectangle {
-                id: profileBadge
-                visible: !profileModel.mnemonic.isBackedUp && sLayout.children[sLayout.currentIndex] !== profileLayoutContainer
-                anchors.top: parent.top
-                anchors.right: parent.right
-                anchors.rightMargin: 4
-                anchors.topMargin: 5
-                radius: height / 2
-                color: Style.current.blue
-                border.color: profileBtn.hovered ? Style.current.secondaryBackground : Style.current.background
-                border.width: 2
-                width: 14
-                height: 14
+                Loader {
+                    id: communitiesListLoader
+                    active: appSettings.communitiesEnabled
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width
+                    height: {
+                        if (item && active) {
+                            return item.height
+                        }
+
+                        return 0
+                    }
+                    sourceComponent: Component {
+                        CommunityList {}
+                    }
+                }
+
+                Loader {
+                    active: !leftTabButtons.visible
+                    width: parent.width
+                    height: {
+                        if (item && active) {
+                            return item.height
+                        }
+                        return 0
+                    }
+                    sourceComponent: LeftTabBottomButtons {}
+                }
             }
         }
 
-        StatusIconTabButton {
-              id: nodeBtn
-              enabled: isExperimental === "1" && appSettings.nodeManagementEnabled
-              anchors.top: profileBtn.top
-              icon.name: "node"
+        LeftTabBottomButtons {
+            id: leftTabButtons
+            visible: scrollView.contentHeight > leftTab.height
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: Style.current.padding
         }
+    }
 
-        StatusIconTabButton {
-              id: uiComponentBtn
-              enabled: isExperimental === "1"
-              anchors.top: nodeBtn.top
-              icon.name: "node"
-        }
+    Rectangle {
+        height: parent.height
+        width: 1
+        color: Style.current.border
     }
 
     StackLayout {
@@ -407,7 +396,7 @@ RowLayout {
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
         Layout.fillHeight: true
-        currentIndex: tabBar.currentIndex
+        currentIndex: 0
         onCurrentIndexChanged: {
             if (typeof this.children[currentIndex].onActivated === "function") {
                 this.children[currentIndex].onActivated()
@@ -494,6 +483,6 @@ RowLayout {
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.33000001311302185;height:770;width:1232}
+    D{i:0;formeditorZoom:1.75;height:770;width:1232}
 }
 ##^##*/

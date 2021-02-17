@@ -26,10 +26,12 @@ QtObject {
 
     readonly property string chat: "chat"
     readonly property string wallet: "wallet"
+    readonly property string timeline: "timeline"
     readonly property string browser: "browser"
     readonly property string profile: "profile"
     readonly property string node: "node"
     readonly property string ui: "ui"
+    readonly property string community: "community"
 
     readonly property int fontSizeXS: 0
     readonly property int fontSizeS: 1

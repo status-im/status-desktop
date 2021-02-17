@@ -30,6 +30,24 @@ QtObject {
                                 (!startsWith0x(value) && value.length === 64))
     }
 
+    function getAppSectionIndex(section) {
+        let sectionId = -1
+        switch (section) {
+        case Constants.chat: sectionId = 0; break;
+        case Constants.wallet: sectionId = 1; break;
+        case Constants.browser: sectionId = 2; break;
+        case Constants.timeline: sectionId = 3; break;
+        case Constants.profile: sectionId = 4; break;
+        case Constants.node: sectionId = 5; break;
+        case Constants.ui: sectionId = 6; break;
+        case Constants.community: sectionId = 99; break;
+        }
+        if (sectionId === -1) {
+            throw new Exception ("Unknown section name. Check the Constants to know the available ones")
+        }
+        return sectionId
+    }
+
     function getDisplayName(publicKey, contactIndex) {
         if (contactIndex === undefined) {
             contactIndex = profileModel.contacts.list.getContactIndexByPubkey(publicKey)
