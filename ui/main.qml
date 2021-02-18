@@ -3,7 +3,6 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import Qt.labs.platform 1.1
 import QtQml.StateMachine 1.14 as DSM
-import QtMultimedia 5.13
 import Qt.labs.settings 1.0
 import QtQuick.Window 2.12
 import QtQml 2.13
@@ -18,6 +17,7 @@ import "./imports"
 
 ApplicationWindow {
     property bool hasAccounts: !!loginModel.rowCount()
+    property bool removeMnemonicAfterLogin: false
 
     Universal.theme: Universal.System
 
@@ -68,167 +68,15 @@ ApplicationWindow {
     }
 
     signal navigateTo(string path)
-
-    ErrorSound {
-        id: errorSound
-    }
-
-    Audio {
-        id: sendMessageSound
-        audioRole: Audio.NotificationRole
-        source: "../../../../sounds/send_message.wav"
-        volume: appSettings.volume
-        muted: !appSettings.notificationSoundsEnabled
-    }
-
-    Audio {
-        id: notificationSound
-        audioRole: Audio.NotificationRole
-        source: "../../../../sounds/notification.wav"
-        volume: appSettings.volume
-        muted: !appSettings.notificationSoundsEnabled
-    }
-
-    signal settingsLoaded()
-
+    
     Settings {
         id: defaultAppSettings
-        property bool communitiesEnabled: false
-        property bool walletEnabled: false
-        property bool nodeManagementEnabled: false
-        property bool browserEnabled: false
-        property bool displayChatImages: false
-        property bool timelineEnabled: true
-        property bool useCompactMode
-        property string locale: "en"
-        property var recentEmojis: []
-        property real volume: 0.2
         property int notificationSetting: Constants.notifyAllMessages
         property bool notificationSoundsEnabled: true
-        property bool useOSNotifications: true
         property int notificationMessagePreviewSetting: Constants.notificationPreviewNameAndMessage
         property bool allowNotificationsFromNonContacts: false
-        property var whitelistedUnfurlingSites: ({})
-        property bool neverAskAboutUnfurlingAgain: false
-        property bool hideChannelSuggestions: false
-        property bool hideSignPhraseModal: false
-        property bool onlyShowContactsProfilePics: true
-
-        property int fontSize: Constants.fontSizeM
-
-        // Browser settings
-        property bool showBrowserSelector: true
-        property bool openLinksInStatus: true
-        property bool showFavoritesBar: false
-        property string browserHomepage: ""
-        property int browserSearchEngine: Constants.browserSearchEngineNone
-        property int browserEthereumExplorer: Constants.browserEthereumExplorerNone
-        property bool autoLoadImages: true
-        property bool javaScriptEnabled: true
-        property bool errorPageEnabled: true
-        property bool pluginsEnabled: true
-        property bool autoLoadIconsForPage: true
-        property bool touchIconsEnabled: true
-        property bool webRTCPublicInterfacesOnly: false
-        property bool devToolsEnabled: false
-        property bool pdfViewerEnabled: true
-        property bool compatibilityMode: true
     }
 
-    Settings {
-        id: appSettings
-        fileName: profileModel.profileSettingsFile
-        property var chatSplitView
-        property var walletSplitView
-        property var profileSplitView
-        property bool communitiesEnabled: defaultAppSettings.communitiesEnabled
-        property bool removeMnemonicAfterLogin: false
-        property bool walletEnabled: defaultAppSettings.walletEnabled
-        property bool nodeManagementEnabled: defaultAppSettings.nodeManagementEnabled
-        property bool browserEnabled: defaultAppSettings.browserEnabled
-        property bool displayChatImages: defaultAppSettings.displayChatImages
-        property bool useCompactMode: defaultAppSettings.useCompactMode
-        property bool timelineEnabled: defaultAppSettings.timelineEnabled
-        property string locale: defaultAppSettings.locale
-        property var recentEmojis: defaultAppSettings.recentEmojis
-        property real volume: defaultAppSettings.volume
-        property int notificationSetting: defaultAppSettings.notificationSetting
-        property bool notificationSoundsEnabled: defaultAppSettings.notificationSoundsEnabled
-        property bool useOSNotifications: defaultAppSettings.useOSNotifications
-        property int notificationMessagePreviewSetting: defaultAppSettings.notificationMessagePreviewSetting
-        property bool allowNotificationsFromNonContacts: defaultAppSettings.allowNotificationsFromNonContacts
-        property var whitelistedUnfurlingSites: defaultAppSettings.whitelistedUnfurlingSites
-        property bool neverAskAboutUnfurlingAgain: defaultAppSettings.neverAskAboutUnfurlingAgain
-        property bool hideChannelSuggestions: defaultAppSettings.hideChannelSuggestions
-        property int fontSize: defaultAppSettings.fontSize
-        property bool hideSignPhraseModal: defaultAppSettings.hideSignPhraseModal
-        property bool onlyShowContactsProfilePics: defaultAppSettings.onlyShowContactsProfilePics
-
-        // Browser settings
-        property bool showBrowserSelector: defaultAppSettings.showBrowserSelector
-        property bool openLinksInStatus: defaultAppSettings.openLinksInStatus
-        property bool showFavoritesBar: defaultAppSettings.showFavoritesBar
-        property string browserHomepage: defaultAppSettings.browserHomepage
-        property int browserSearchEngine: defaultAppSettings.browserSearchEngine
-        property int browserEthereumExplorer: defaultAppSettings.browserEthereumExplorer
-        property bool autoLoadImages: defaultAppSettings.autoLoadImages
-        property bool javaScriptEnabled: defaultAppSettings.javaScriptEnabled
-        property bool errorPageEnabled: defaultAppSettings.errorPageEnabled
-        property bool pluginsEnabled: defaultAppSettings.pluginsEnabled
-        property bool autoLoadIconsForPage: defaultAppSettings.autoLoadIconsForPage
-        property bool touchIconsEnabled: defaultAppSettings.touchIconsEnabled
-        property bool webRTCPublicInterfacesOnly: defaultAppSettings.webRTCPublicInterfacesOnly
-        property bool devToolsEnabled: defaultAppSettings.devToolsEnabled
-        property bool pdfViewerEnabled: defaultAppSettings.pdfViewerEnabled
-        property bool compatibilityMode: defaultAppSettings.compatibilityMode
-    }
-
-    Connections {
-        target: profileModel
-        onProfileSettingsFileChanged: {
-            if (appSettings.locale !== "en") {
-                profileModel.changeLocale(appSettings.locale)
-            }
-            const whitelist = profileModel.getLinkPreviewWhitelist()
-            try {
-                const whiteListedSites = JSON.parse(whitelist)
-                let settingsUpdated = false
-                const settings = appSettings.whitelistedUnfurlingSites
-                const whitelistedHostnames = []
-
-                // Add whitelisted sites in to app settings that are not already there
-                whiteListedSites.forEach(site => {
-                    if (!settings.hasOwnProperty(site.address))  {
-                        settings[site.address] = false
-                        settingsUpdated = true
-                    }
-                    whitelistedHostnames.push(site.address)
-                })
-                // Remove any whitelisted sites from app settings that don't exist in the
-                // whitelist from status-go
-                Object.keys(settings).forEach(settingsHostname => {
-                    if (!whitelistedHostnames.includes(settingsHostname)) {
-                        delete settings[settingsHostname]
-                        settingsUpdated = true
-                    }
-                })
-                if (settingsUpdated) {
-                    appSettings.whitelistedUnfurlingSites = settings
-                }
-            } catch (e) {
-                console.error('Could not parse the whitelist for sites', e)
-            }
-            applicationWindow.settingsLoaded()
-        }
-    }
-    Connections {
-        target: profileModel
-        ignoreUnknownSignals: true
-        enabled: appSettings.removeMnemonicAfterLogin
-        onInitialized: {
-            profileModel.mnemonic.remove()
-        }
-    }
 
     property bool currentlyHasANotification: false
 
@@ -389,7 +237,7 @@ ApplicationWindow {
         id: existingKey
         ExistingKey {
             onClosed: function () {
-                appSettings.removeMnemonicAfterLogin = false
+                removeMnemonicAfterLogin = false
                 if (hasAccounts) {
                     applicationWindow.navigateTo("InitialState")
                 } else {

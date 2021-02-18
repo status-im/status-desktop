@@ -29,7 +29,7 @@ Item {
               wentNext = true
               enterSeedPhraseModal.close()
               onboardingModel.importMnemonic(mnemonic)
-              appSettings.removeMnemonicAfterLogin = true
+              removeMnemonicAfterLogin = true
               recoverySuccessModal.open()
             }
         }
