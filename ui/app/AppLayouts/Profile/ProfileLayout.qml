@@ -17,7 +17,7 @@ SplitView {
     handle: SplitViewHandle {}
 
     Connections {
-        target: applicationWindow
+        target: appMain
         onSettingsLoaded: {
             // Add recent
             profileView.restoreState(appSettings.profileSplitView)

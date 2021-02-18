@@ -48,7 +48,7 @@ SplitView {
     }
 
     Connections {
-        target: applicationWindow
+        target: appMain
         onSettingsLoaded: {
             // Add recent
             chatView.restoreState(appSettings.chatSplitView)

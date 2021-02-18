@@ -28,7 +28,7 @@ ColumnLayout {
         handle: SplitViewHandle {}
 
         Connections {
-            target: applicationWindow
+            target: appMain
             onSettingsLoaded: {
                 // Add recent
                 walletView.restoreState(appSettings.walletSplitView)
