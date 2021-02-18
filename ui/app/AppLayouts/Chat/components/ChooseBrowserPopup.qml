@@ -9,7 +9,8 @@ ModalPopup {
 
     id: popup
 
-    title: qsTr("Choose browser")
+    //% "Choose browser"
+    title: qsTrId("choose-browser")
     width: 440
     height: 425
 
@@ -25,7 +26,8 @@ ModalPopup {
         }
 
         StatusButton {
-            text: qsTr("Open in Status")
+            //% "Open in Status"
+            text: qsTrId("browsing-open-in-status")
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
                 appSettings.showBrowserSelector = !rememberChoiceCheckBox.checked
@@ -36,7 +38,8 @@ ModalPopup {
         }
 
         StatusButton {
-            text: qsTr("Open in my default browser")
+            //% "Open in my default browser"
+            text: qsTrId("open-in-my-default-browser")
             type: "secondary"
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
@@ -48,7 +51,8 @@ ModalPopup {
 
         StatusCheckBox {
             id: rememberChoiceCheckBox
-            text: qsTr("Remember my choice. To override it, go to settings.")
+            //% "Remember my choice. To override it, go to settings."
+            text: qsTrId("remember-my-choice--to-override-it--go-to-settings-")
             width: parent.width
         }
     }

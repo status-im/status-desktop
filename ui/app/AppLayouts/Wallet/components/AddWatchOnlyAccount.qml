@@ -81,7 +81,8 @@ ModalPopup {
         text: loading ?
         //% "Loading..."
         qsTrId("loading") :
-        qsTr("Add account")
+        //% "Add account"
+        qsTrId("add-account")
 
         enabled: !loading && addressInput.text !== "" && accountNameInput.text !== ""
 

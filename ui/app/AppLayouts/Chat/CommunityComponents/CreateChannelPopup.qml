@@ -23,17 +23,21 @@ ModalPopup {
         nameValidationError = ""
 
         if (nameInput.text === "") {
-            nameValidationError = qsTr("You need to enter a name")
+            //% "You need to enter a name"
+            nameValidationError = qsTrId("you-need-to-enter-a-name")
         } else if (!(/^[a-z0-9\-\ ]+$/i.test(nameInput.text))) {
-            nameValidationError = qsTr("Please restrict your name to letters, numbers, dashes and spaces")
+            //% "Please restrict your name to letters, numbers, dashes and spaces"
+            nameValidationError = qsTrId("please-restrict-your-name-to-letters--numbers--dashes-and-spaces")
         } else if (nameInput.text.length > 100) {
-            nameValidationError = qsTr("Your name needs to be 100 characters or shorter")
+            //% "Your name needs to be 100 characters or shorter"
+            nameValidationError = qsTrId("your-name-needs-to-be-100-characters-or-shorter")
         }
 
         return !nameValidationError && !descriptionTextArea.validationError
     }
 
-    title: qsTr("New channel")
+    //% "New channel"
+    title: qsTrId("new-channel")
 
     ScrollView {
         property ScrollBar vScrollBar: ScrollBar.vertical
@@ -57,16 +61,21 @@ ModalPopup {
 
             Input {
                 id: nameInput
-                label: qsTr("Channel name")
-                placeholderText: qsTr("A cool name")
+                //% "Channel name"
+                label: qsTrId("channel-name")
+                //% "A cool name"
+                placeholderText: qsTrId("a-cool-name")
                 validationError: popup.nameValidationError
             }
 
             StyledTextArea {
                 id: descriptionTextArea
-                label: qsTr("Channel description")
-                placeholderText: qsTr("What your channel is about")
-                validationError: descriptionTextArea.text.length > maxDescChars ? qsTr("The description cannot exceed %1 characters").arg(maxDescChars) : ""
+                //% "Channel description"
+                label: qsTrId("channel-description")
+                //% "What your channel is about"
+                placeholderText: qsTrId("what-your-channel-is-about")
+                //% "The description cannot exceed %1 characters"
+                validationError: descriptionTextArea.text.length > maxDescChars ? qsTrId("the-description-cannot-exceed--1-characters").arg(maxDescChars) : ""
                 anchors.top: nameInput.bottom
                 anchors.topMargin: Style.current.bigPadding
                 customHeight: 88
@@ -96,7 +105,8 @@ ModalPopup {
                 anchors.topMargin: Style.current.smallPadding * 2
 
                 StyledText {
-                    text: qsTr("Private channel")
+                    //% "Private channel"
+                    text: qsTrId("private-channel")
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
@@ -112,13 +122,15 @@ ModalPopup {
                 wrapMode: Text.WordWrap
                 anchors.topMargin: Style.current.smallPadding * 2
                 width: parent.width
-                text: qsTr("By making a channel private, only members with selected permission will be able to access it")
+                //% "By making a channel private, only members with selected permission will be able to access it"
+                text: qsTrId("by-making-a-channel-private--only-members-with-selected-permission-will-be-able-to-access-it")
             }
         }
     }
 
     footer: StatusButton {
-        text: qsTr("Create")
+        //% "Create"
+        text: qsTrId("create")
         anchors.right: parent.right
         onClicked: {
             if (!validate()) {
@@ -140,7 +152,8 @@ ModalPopup {
 
         MessageDialog {
             id: creatingError
-            title: qsTr("Error creating the community")
+            //% "Error creating the community"
+            title: qsTrId("error-creating-the-community")
             icon: StandardIcon.Critical
             standardButtons: StandardButton.Ok
         }

@@ -200,7 +200,7 @@ Item {
     StyledText {
         id: chatSettingsLabel
         visible: profileModel.ens.rowCount() > 0 && profileModel.ens.pendingLen() != profileModel.ens.rowCount()
-        //% "Chat Settings"
+        //% "Chat settings"
         text: qsTrId("chat-settings")
         anchors.left: parent.left
         anchors.top: ensList.bottom

@@ -135,7 +135,8 @@ Item {
                 }
 
                 StyledText {
-                    text: qsTr(`<a href="%1%2">Look up on Etherscan</a>`).arg(walletModel.etherscanLink.replace("/tx", "/address")).arg(profileModel.ens.getUsernameRegistrar())
+                    //% "<a href='%1%2'>Look up on Etherscan</a>"
+                    text: qsTrId("-a-href---1-2--look-up-on-etherscan--a-").arg(walletModel.etherscanLink.replace("/tx", "/address")).arg(profileModel.ens.getUsernameRegistrar())
                     anchors.left: parent.left
                     anchors.right: parent.right
                     onLinkActivated: appMain.openLink(link)
@@ -156,7 +157,8 @@ Item {
                 }
 
                 StyledText {
-                    text: qsTr(`<a href="%1%2">Look up on Etherscan</a>`).arg(walletModel.etherscanLink.replace("/tx", "/address")).arg(profileModel.ens.getENSRegistry())
+                    //% "<a href='%1%2'>Look up on Etherscan</a>"
+                    text: qsTrId("-a-href---1-2--look-up-on-etherscan--a-").arg(walletModel.etherscanLink.replace("/tx", "/address")).arg(profileModel.ens.getENSRegistry())
                     anchors.left: parent.left
                     anchors.right: parent.right
                     onLinkActivated: appMain.openLink(link)

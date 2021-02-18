@@ -53,7 +53,8 @@ Rectangle {
     StatusButton {
         id: showAllBtn
         size: "small"
-        text: qsTr("Show All")
+        //% "Show All"
+        text: qsTrId("show-all")
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: closeBtn.left
         anchors.rightMargin: Style.current.padding

@@ -17,7 +17,8 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
 
         StyledText {
-            text: qsTr("Back up your seed phrase")
+            //% "Back up your seed phrase"
+            text: qsTrId("back-up-your-seed-phrase")
             font.pixelSize: 13
             anchors.verticalCenter: parent.verticalCenter
             color: Style.current.white

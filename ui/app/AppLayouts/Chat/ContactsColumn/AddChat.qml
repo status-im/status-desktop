@@ -47,7 +47,8 @@ StatusRoundButton {
         }
         Action {
             enabled: appSettings.communitiesEnabled
-            text: qsTr("Communities")
+            //% "Communities"
+            text: qsTrId("communities")
             icon.source: "../../../img/communities.svg"
             icon.width: 20
             icon.height: 20

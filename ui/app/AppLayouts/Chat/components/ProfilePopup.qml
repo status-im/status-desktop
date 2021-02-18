@@ -185,7 +185,8 @@ ModalPopup {
 
         TextWithLabel {
             id: valueShareURL
-            label: qsTr("Share Profile URL")
+            //% "Share Profile URL"
+            label: qsTrId("share-profile-url")
             text: "https://join.status.im/u/" + fromAuthor.substr(
                       0, 4) + "..." + fromAuthor.substr(fromAuthor.length - 5)
             anchors.top: separator.top
@@ -279,8 +280,10 @@ ModalPopup {
             borderColor: Style.current.border
             hoveredBorderColor: Style.current.transparent
             text: isBlocked ?
-                      qsTr("Unblock User") :
-                      qsTr("Block User")
+                      //% "Unblock User"
+                      qsTrId("unblock-user") :
+                      //% "Block User"
+                      qsTrId("block-user")
             onClicked: {
                 if (isBlocked) {
                     unblockContactConfirmationDialog.contactName = userName;
@@ -329,7 +332,7 @@ ModalPopup {
             id: sendMessageBtn
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            //% "Send Message"
+            //% "Send message"
             text: qsTrId("send-message")
             visible: !isBlocked && chatsModel.activeChannel.id !== popup.fromAuthor
             width: visible ? implicitWidth : 0

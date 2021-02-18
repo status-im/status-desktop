@@ -20,25 +20,30 @@ ModalPopup {
         keyValidationError = ""
 
         if (keyInput.text === "") {
-            keyValidationError = qsTr("You need to enter a key")
+            //% "You need to enter a key"
+            keyValidationError = qsTrId("you-need-to-enter-a-key")
         }
 
         return !keyValidationError
     }
 
-    title: qsTr("Import a community")
+    //% "Import a community"
+    title: qsTrId("import-community")
 
 
     Input {
         id: keyInput
-        label: qsTr("Community key")
-        placeholderText: qsTr("0x...")
+        //% "Community key"
+        label: qsTrId("community-key")
+        //% "0x..."
+        placeholderText: qsTrId("0x---")
         validationError: popup.keyValidationError
         pasteFromClipboard: true
     }
 
     footer: StatusButton {
-        text: qsTr("Import")
+        //% "Import"
+        text: qsTrId("import")
         anchors.right: parent.right
         onClicked: {
             if (!validate()) {
@@ -62,7 +67,8 @@ ModalPopup {
 
         MessageDialog {
             id: creatingError
-            title: qsTr("Error importing the community")
+            //% "Error importing the community"
+            title: qsTrId("error-importing-the-community")
             icon: StandardIcon.Critical
             standardButtons: StandardButton.Ok
         }

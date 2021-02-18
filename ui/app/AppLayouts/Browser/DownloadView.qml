@@ -34,7 +34,8 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: 15
-        text: qsTr("Downloaded files will appear here.")
+        //% "Downloaded files will appear here."
+        text: qsTrId("downloaded-files-will-appear-here-")
         color: Style.current.secondaryText
     }
 }

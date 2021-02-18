@@ -112,6 +112,7 @@ Rectangle {
                     icon.source: "../../../../img/profileActive.svg"
                     icon.width: menuButton.iconSize
                     icon.height: menuButton.iconSize
+                    //% "View Profile"
                     text: qsTrId("view-profile")
                     onTriggered: profileClick(true, name, address, identicon, "", localNickname)
                     enabled: true
@@ -120,6 +121,7 @@ Rectangle {
                     icon.source: "../../../../img/message.svg"
                     icon.width: menuButton.iconSize
                     icon.height: menuButton.iconSize
+                    //% "Send message"
                     text: qsTrId("send-message")
                     onTriggered: {
                       changeAppSection(Constants.chat)
@@ -131,6 +133,7 @@ Rectangle {
                     icon.source: "../../../../img/block-icon.svg"
                     icon.width: menuButton.iconSize
                     icon.height: menuButton.iconSize
+                    //% "Block User"
                     text: qsTrId("block-user")
                     enabled: !container.isBlocked
                     onTriggered: {

@@ -232,7 +232,8 @@ ModalPopup {
                         visible: model.pubKey === profileModel.profile.pubKey
                         anchors.left: parent.right
                         anchors.leftMargin: 5
-                        text: qsTr("(You)")
+                        //% "(You)"
+                        text: qsTrId("-you-")
                         color: Style.current.secondaryText
                         font.pixelSize: parent.font.pixelSize
                     }

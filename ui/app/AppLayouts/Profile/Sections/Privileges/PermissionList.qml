@@ -55,7 +55,8 @@ ModalPopup {
     footer: StatusButton {
         anchors.horizontalCenter: parent.horizontalCenter
         type: "warn"
-        text: qsTr("Revoke all access")
+        //% "Revoke all access"
+        text: qsTrId("revoke-all-access")
         onClicked: {
             profileModel.dappList.permissionList.revokeAccess();
             accessRevoked(dapp);

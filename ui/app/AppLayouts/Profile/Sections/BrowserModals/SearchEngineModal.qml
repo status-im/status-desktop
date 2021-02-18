@@ -7,7 +7,8 @@ import "../../../../../shared/status"
 ModalPopup {
     id: popup
 
-    title: qsTr("Search engine")
+    //% "Search engine"
+    title: qsTrId("search-engine")
 
     onClosed: {
         destroy()
@@ -22,7 +23,8 @@ ModalPopup {
         }
 
         StatusRadioButton {
-            text: qsTr("None")
+            //% "None"
+            text: qsTrId("none")
             ButtonGroup.group: searchEnginGroup
             checked: appSettings.browserSearchEngine === Constants.browserSearchEngineNone
             onCheckedChanged: {

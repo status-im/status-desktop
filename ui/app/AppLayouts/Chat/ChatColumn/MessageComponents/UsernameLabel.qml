@@ -14,7 +14,8 @@ Item {
         id: chatName
         text: {
             if (isCurrentUser) {
-                return qsTr("You")
+                //% "You"
+                return qsTrId("You")
             }
 
             if (localName !== "") {

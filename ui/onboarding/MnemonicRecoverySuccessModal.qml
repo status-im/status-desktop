@@ -7,7 +7,8 @@ import "../shared/status"
 
 ModalPopup {
     id: popup
-    title: qsTr("Your keys have been successfully recovered")
+    //% "Your keys have been successfully recovered"
+    title: qsTrId("your-keys-have-been-successfully-recovered")
     height: 400
 
     signal buttonClicked()
@@ -20,7 +21,8 @@ ModalPopup {
         anchors.right: parent.right
         anchors.leftMargin: Style.current.bigPadding
         anchors.rightMargin: Style.current.bigPadding
-        text: qsTr("You will have to create a new code or password to re-encrypt your keys")
+        //% "You will have to create a new code or password to re-encrypt your keys"
+        text: qsTrId("recovery-success-text")
         font.pixelSize: 15
         color: Style.current.secondaryText
         wrapMode: Text.WordWrap
@@ -64,7 +66,8 @@ ModalPopup {
             anchors.bottom: parent.bottom
             anchors.topMargin: Style.current.padding
             anchors.right: parent.right
-            text: qsTr("Re-encrypt your keys")
+            //% "Re-encrypt your keys"
+            text: qsTrId("re-encrypt-key")
 
             onClicked: {
                 popup.buttonClicked()

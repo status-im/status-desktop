@@ -12,8 +12,10 @@ RowLayout {
 
     ConfirmationDialog {
         id: confirmDialog
-        title: qsTr("Warning!")
-        confirmationText: qsTr("The account will be logged out. When you unlock it again, the selected network will be used")
+        //% "Warning!"
+        title: qsTrId("close-app-title")
+        //% "The account will be logged out. When you unlock it again, the selected network will be used"
+        confirmationText: qsTrId("logout-app-content")
         onConfirmButtonClicked: {
             profileModel.network.current = newNetwork;
         }

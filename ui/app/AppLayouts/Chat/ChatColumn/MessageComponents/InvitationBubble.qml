@@ -53,8 +53,10 @@ Item {
                     id: title
                     color: invitedCommunity.verifed ? Style.current.primary : Style.current.secondaryText
                     text: invitedCommunity.verifed ?
-                              qsTr("Verified community invitation") :
-                              qsTr("Community invitation")
+                              //% "Verified community invitation"
+                              qsTrId("verified-community-invitation") :
+                              //% "Community invitation"
+                              qsTrId("community-invitation")
                     font.weight: Font.Medium
                     anchors.top: parent.top
                     anchors.topMargin: Style.current.halfPadding
@@ -65,7 +67,8 @@ Item {
 
                 StyledText {
                     id: invitedYou
-                    text: qsTr("%1 invited you to join a community").arg(userName)
+                    //% "%1 invited you to join a community"
+                    text: qsTrId("-1-invited-you-to-join-a-community").arg(userName)
                     anchors.top: title.bottom
                     anchors.topMargin: 4
                     anchors.left: parent.left
@@ -113,7 +116,8 @@ Item {
                 StyledText {
                     id: communityNbMembers
                     // TODO add the plural support
-                    text: qsTr("%1 members").arg(invitedCommunity.nbMembers)
+                    //% "%1 members"
+                    text: qsTrId("-1-members").arg(invitedCommunity.nbMembers)
                     anchors.top: communityDesc.bottom
                     anchors.topMargin: 2
                     anchors.left: parent.left
@@ -135,8 +139,10 @@ Item {
                     width: parent.width
                     height: 44
                     enabled: !invitedCommunity.joined
-                    text: root.joined || invitedCommunity.joined ? qsTr("Joined") :
-                        qsTr("Join")
+                    //% "Joined"
+                    text: root.joined || invitedCommunity.joined ? qsTrId("joined") :
+                        //% "Join"
+                        qsTrId("join")
                     onClicked: {
                         chatsModel.joinCommunity(communityId)
                         root.joined = true

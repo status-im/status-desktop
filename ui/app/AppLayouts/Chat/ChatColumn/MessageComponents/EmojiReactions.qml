@@ -14,7 +14,8 @@ Item {
     width: childrenRect.width
 
     function lastTwoItems(nodes) {
-        return nodes.join(qsTr(" and "));
+        //% " and "
+        return nodes.join(qsTrId("-and-"));
     }
 
     function showReactionAuthors(fromAccounts, emojiId) {
@@ -34,7 +35,8 @@ Item {
                 rightNode = fromAccounts.slice(maxReactions, fromAccounts.length);
                 return (rightNode.length === 1) ?
                             lastTwoItems([leftNode.join(", "), rightNode[0]]) :
-                            lastTwoItems([leftNode.join(", "), qsTr("%1 more").arg(rightNode.length)]);
+                            //% "%1 more"
+                            lastTwoItems([leftNode.join(", "), qsTrId("-1-more").arg(rightNode.length)]);
             }
 
             leftNode = fromAccounts.slice(0, maximum - 1);
@@ -42,7 +44,8 @@ Item {
             tooltip = lastTwoItems([leftNode.join(", "), rightNode[0]])
         }
 
-        tooltip += qsTr(" reacted with ");
+        //% " reacted with "
+        tooltip += qsTrId("-reacted-with-");
 
         switch (emojiId) {
         case 1: return tooltip + ":heart:"
@@ -217,7 +220,8 @@ Item {
 
             StatusToolTip {
               visible: addEmojiBtn.isHovered
-              text: qsTr("Add reaction")
+              //% "Add reaction"
+              text: qsTrId("add-reaction")
             }
         }
     }

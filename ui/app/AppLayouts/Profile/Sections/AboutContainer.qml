@@ -21,17 +21,21 @@ Item {
         anchors.rightMargin: contentMargin
 
         StatusSectionDescItem {
-            name: qsTr("App version")
-            description: qsTr("Version: %1").arg("beta.5")
+            //% "App version"
+            name: qsTrId("version")
+            //% "Version: %1"
+            description: qsTrId("version---1").arg("beta.5")
         }
 
         StatusSectionDescItem {
-            name: qsTr("Node version ")
+            //% "Node version "
+            name: qsTrId("node-version-")
             description: profileModel.nodeVersion()
         }
 
         StyledText {
-            text: qsTr("Check for updates")
+            //% "Check for updates"
+            text: qsTrId("check-for-updates")
             font.pixelSize: 15
             color: Style.current.blue
 
@@ -52,7 +56,8 @@ Item {
         }
 
         StyledText {
-            text: qsTr("Privacy Policy")
+            //% "Privacy Policy"
+            text: qsTrId("privacy-policy")
             font.pixelSize: 15
             color: Style.current.blue
 

@@ -8,7 +8,8 @@ import "../../shared/status"
 Item {
     id: control
     property string selectedColor
-    property string label: qsTr("Account color")
+    //% "Account color"
+    property string label: qsTrId("account-color")
     property var model
     height: childrenRect.height
 

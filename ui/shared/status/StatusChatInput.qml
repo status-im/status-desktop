@@ -33,7 +33,8 @@ Rectangle {
 
     property int chatType
 
-    property string chatInputPlaceholder: qsTr("Type a message.")
+    //% "Type a message."
+    property string chatInputPlaceholder: qsTrId("type-a-message-")
 
     property alias textInput: messageInputField
     property bool isStatusUpdateInput: chatType === Constants.chatTypeStatusUpdate
@@ -664,7 +665,8 @@ Rectangle {
                 font.family: Style.current.fontRegular.name
                 wrapMode: TextArea.Wrap
                 height: parent.height
-                placeholderText: qsTr("Type a message")
+                //% "Type a message"
+                placeholderText: qsTrId("type-a-message")
                 placeholderTextColor: Style.current.secondaryText
                 selectByMouse: true
                 color: Style.current.textColor
@@ -694,28 +696,32 @@ Rectangle {
                         icon.width: 12
                         icon.height: 16
                         onTriggered: wrapSelection("**")
-                        text: qsTr("Bold")
+                        //% "Bold"
+                        text: qsTrId("bold")
                     }
                     Action {
                         icon.name: "format-text-italic"
                         icon.width: 12
                         icon.height: 16
                         onTriggered: wrapSelection("*")
-                        text: qsTr("Italic")
+                        //% "Italic"
+                        text: qsTrId("italic")
                     }
                     Action {
                         icon.name: "format-text-strike-through"
                         icon.width: 20
                         icon.height: 18
                         onTriggered: wrapSelection("~~")
-                        text: qsTr("Strikethrough")
+                        //% "Strikethrough"
+                        text: qsTrId("strikethrough")
                     }
                     Action {
                         icon.name: "format-text-code"
                         icon.width: 20
                         icon.height: 18
                         onTriggered: wrapSelection("`")
-                        text: qsTr("Code")
+                        //% "Code"
+                        text: qsTrId("code")
                     }
                 }
             }
@@ -814,7 +820,8 @@ Rectangle {
                 icon.width: 16
                 icon.height: 18
                 borderRadius: 16
-                text: qsTr("Send")
+                //% "Send"
+                text: qsTrId("command-button-send")
                 type: "secondary"
                 flat: true
                 showBorder: true

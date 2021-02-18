@@ -56,18 +56,28 @@ Rectangle {
         }
         text: {
             switch (root.state) {
-            case Constants.pending: return qsTr("Pending")
-            case Constants.confirmed: return qsTr("Confirmed")
-            case Constants.unknown: return qsTr("Unknown token")
-            case Constants.addressRequested: return qsTr("Address requested")
-            case Constants.transactionRequested: return qsTr("Waiting to accept")
+            //% "Pending"
+            case Constants.pending: return qsTrId("invite-chat-pending")
+            //% "Confirmed"
+            case Constants.confirmed: return qsTrId("status-confirmed")
+            //% "Unknown token"
+            case Constants.unknown: return qsTrId("unknown-token")
+            //% "Address requested"
+            case Constants.addressRequested: return qsTrId("address-requested")
+            //% "Waiting to accept"
+            case Constants.transactionRequested: return qsTrId("waiting-to-accept")
             case Constants.addressReceived: return (!root.outgoing ? 
-                qsTr("Address shared") : 
-                qsTr("Address received"))
+                //% "Address shared"
+                qsTrId("address-shared") : 
+                //% "Address received"
+                qsTrId("address-received"))
             case Constants.transactionDeclined:
-            case Constants.declined: return qsTr("Transaction declined")
-            case Constants.failure: return qsTr("failure")
-            default: return qsTr("Unknown state")
+            //% "Transaction declined"
+            case Constants.declined: return qsTrId("transaction-declined")
+            //% "failure"
+            case Constants.failure: return qsTrId("failure")
+            //% "Unknown state"
+            default: return qsTrId("unknown-state")
             }
         }
         font.weight: Font.Medium

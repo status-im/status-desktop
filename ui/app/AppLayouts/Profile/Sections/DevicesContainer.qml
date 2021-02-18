@@ -179,8 +179,9 @@ Item {
                     text: {
                         let deviceId = model.installationId.split("-")[0].substr(0, 5)
                         //% "No info"
-                        //% "you"
-                        let labelText = `${model.name || qsTrId("pairing-no-info")} (${model.isUserDevice ? qsTrId("you") + ", ": ""}${deviceId})`;
+                        let labelText = `${model.name || qsTrId("pairing-no-info")} ` +
+                            //% "you"
+                            `(${model.isUserDevice ? qsTrId("you") + ", ": ""}${deviceId})`;
                         return labelText;
                     }
                     elide: Text.ElideRight

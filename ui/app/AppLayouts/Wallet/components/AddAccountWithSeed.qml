@@ -26,7 +26,8 @@ ModalPopup {
             //% "You need to enter a password"
             passwordValidationError = qsTrId("you-need-to-enter-a-password")
         } else if (passwordInput.text.length < 6) {
-            passwordValidationError = qsTr("Password needs to be 6 characters or more")
+            //% "Password needs to be 6 characters or more"
+            passwordValidationError = qsTrId("password-needs-to-be-6-characters-or-more")
         } else {
             passwordValidationError = ""
         }
@@ -120,7 +121,8 @@ ModalPopup {
         text: loading ?
         //% "Loading..."
         qsTrId("loading") :
-        qsTr("Add account")
+        //% "Add account"
+        qsTrId("add-account")
 
         enabled: !loading && passwordInput.text !== "" && accountNameInput.text !== "" && accountSeedInput.text !== ""
 

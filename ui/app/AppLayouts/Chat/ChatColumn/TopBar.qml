@@ -138,7 +138,7 @@ Rectangle {
                     icon.source: "../../../img/close.svg"
                     icon.width: chatTopBarContent.iconSize
                     icon.height: chatTopBarContent.iconSize
-                    //% "Clear history"
+                    //% "Clear History"
                     text: qsTrId("clear-history")
                     onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
                 }
@@ -146,7 +146,7 @@ Rectangle {
                     icon.source: "../../../img/leave_chat.svg"
                     icon.width: chatTopBarContent.iconSize
                     icon.height: chatTopBarContent.iconSize
-                    //% "Leave Group"
+                    //% "Leave group"
                     text: qsTrId("leave-group")
                     onTriggered: {
                       //% "Leave group"

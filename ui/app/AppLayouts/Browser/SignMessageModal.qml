@@ -25,7 +25,8 @@ ModalPopup {
 
     id: root
 
-    title: qsTr("Signature request")
+    //% "Signature request"
+    title: qsTrId("signature-request")
     height: 504
 
     onClosed: {
@@ -125,14 +126,16 @@ ModalPopup {
         }
 
         LabelValueRow {
-            label: qsTr("Data")
+            //% "Data"
+            label: qsTrId("data")
             value: Item {
                 anchors.fill: parent
                 anchors.verticalCenter: parent.verticalCenter
 
                 ModalPopup {
                     id: messagePopup
-                    title: qsTr("Message")
+                    //% "Message"
+                    title: qsTrId("message")
                     height: 286
                     width: 400
                     Item {
@@ -199,7 +202,8 @@ ModalPopup {
             id: btnReject
             anchors.right:btnNext.left
             anchors.rightMargin: Style.current.padding
-            text: qsTr("Reject")
+            //% "Reject"
+            text: qsTrId("reject")
             color: Style.current.danger
             type: "secondary"
             onClicked: close()
@@ -209,8 +213,10 @@ ModalPopup {
             id: btnNext
             anchors.right: parent.right
             text: showSigningPhrase ? 
-                    qsTr("Sign") : 
-                    qsTr("Sign with password")
+                    //% "Sign"
+                    qsTrId("transactions-sign") : 
+                    //% "Sign with password"
+                    qsTrId("sign-with-password")
             onClicked: {
                 if(!showSigningPhrase){
                     showSigningPhrase = true;

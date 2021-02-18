@@ -29,7 +29,8 @@ Item {
 
     
     StyledText {
-        text: qsTr("Revoke access")
+        //% "Revoke access"
+        text: qsTrId("revoke-access")
         color: Style.current.red
         anchors.top: parent.top
         anchors.topMargin: Style.current.smallPadding

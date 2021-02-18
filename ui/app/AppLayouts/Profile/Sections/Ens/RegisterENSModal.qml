@@ -155,7 +155,8 @@ ModalPopup {
         StatusButton {
             id: btnNext
             anchors.right: parent.right
-            text: qsTr("Next")
+            //% "Next"
+            text: qsTrId("next")
             enabled: stack.currentGroup.isValid && !stack.currentGroup.isPending
             onClicked: {
                 const validity = stack.currentGroup.validate() 

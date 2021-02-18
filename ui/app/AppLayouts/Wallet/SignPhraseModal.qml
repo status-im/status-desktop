@@ -8,7 +8,8 @@ import "."
 
 ModalPopup {
     id: signPhrasePopup
-    title: qsTr("Signing phrase")
+    //% "Signing phrase"
+    title: qsTrId("signing-phrase")
     height: 390
     closePolicy: Popup.NoAutoClose
 
@@ -17,7 +18,8 @@ ModalPopup {
 
         StyledText {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("This is your signing phrase")
+            //% "This is your signing phrase"
+            text: qsTrId("this-is-you-signing")
             font.pixelSize: 17
             font.weight: Font.Bold
             horizontalAlignment: Text.AlignHCenter
@@ -26,7 +28,8 @@ ModalPopup {
 
         StyledText {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("You should see these 3 words before signing each transaction")
+            //% "You should see these 3 words before signing each transaction"
+            text: qsTrId("three-words-description")
             font.pixelSize: 15
             width: 330
             wrapMode: Text.WordWrap
@@ -64,7 +67,8 @@ ModalPopup {
         }
 
         StyledText {
-            text: qsTr("If you see a different combination, cancel the transaction and sign out")
+            //% "If you see a different combination, cancel the transaction and sign out"
+            text: qsTrId("three-words-description-2")
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: 13
@@ -81,7 +85,8 @@ ModalPopup {
         StatusButton {
             anchors.right: btnRemindLater.left
             anchors.rightMargin: Style.current.padding
-            text: qsTr("Ok, got it")
+            //% "Ok, got it"
+            text: qsTrId("ens-got-it")
             type: "secondary"
             onClicked: {
                 appSettings.hideSignPhraseModal = true;
@@ -93,7 +98,8 @@ ModalPopup {
         StatusButton {
             id: btnRemindLater
             anchors.right: parent.right
-            text: qsTr("Remind me later")
+            //% "Remind me later"
+            text: qsTrId("remind-me-later")
             onClicked: {
                 hideSignPhraseModal = true;
                 close();

@@ -41,7 +41,8 @@ Rectangle {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.halfPadding
             anchors.verticalCenter: parent.verticalCenter
-            text: qsTr("Share what's on your mind and stay updated with your contacts")
+            //% "Share what's on your mind and stay updated with your contacts"
+            text: qsTrId("share-what-s-on-your-mind-and-stay-updated-with-your-contacts")
             font.pixelSize: 15
             color: Style.current.secondaryText
             wrapMode: Text.WordWrap

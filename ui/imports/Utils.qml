@@ -133,26 +133,45 @@ QtObject {
     function formatShortDateStr(longStr) {
         const dmKeys = {
             // Days
-            Sunday: qsTr("Sun"),
-            Monday: qsTr("Mon"),
-            Tuesday: qsTr("Tue"),
-            Wednesday: qsTr("Wed"),
-            Thursday: qsTr("Thu"),
-            Friday: qsTr("Fri"),
-            Saturday: qsTr("Sat"),
+            //% "Sun"
+            Sunday: qsTrId("sun"),
+            //% "Mon"
+            Monday: qsTrId("mon"),
+            //% "Tue"
+            Tuesday: qsTrId("tue"),
+            //% "Wed"
+            Wednesday: qsTrId("wed"),
+            //% "Thu"
+            Thursday: qsTrId("thu"),
+            //% "Fri"
+            Friday: qsTrId("fri"),
+            //% "Sat"
+            Saturday: qsTrId("sat"),
             // Months
-            January: qsTr("Jan"),
-            February: qsTr("Feb"),
-            March: qsTr("Mar"),
-            April: qsTr("Apr"),
-            May: qsTr("May"),
-            June: qsTr("Jun"),
-            July: qsTr("Jul"),
-            August: qsTr("Aug"),
-            September: qsTr("Sep"),
-            October: qsTr("Oct"),
-            November: qsTr("Nov"),
-            December: qsTr("Dec")
+            //% "Jan"
+            January: qsTrId("jan"),
+            //% "Feb"
+            February: qsTrId("feb"),
+            //% "Mar"
+            March: qsTrId("mar"),
+            //% "Apr"
+            April: qsTrId("apr"),
+            //% "May"
+            May: qsTrId("may"),
+            //% "Jun"
+            June: qsTrId("jun"),
+            //% "Jul"
+            July: qsTrId("jul"),
+            //% "Aug"
+            August: qsTrId("aug"),
+            //% "Sep"
+            September: qsTrId("sep"),
+            //% "Oct"
+            October: qsTrId("oct"),
+            //% "Nov"
+            November: qsTrId("nov"),
+            //% "Dec"
+            December: qsTrId("dec")
         };
 
         let shortStr = longStr;
@@ -179,15 +198,23 @@ QtObject {
         if (now.toDateString() === messageDate.toDateString()) {
             return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
         } else if (yesterday.toDateString() === messageDate.toDateString()) {
-            return qsTr("Yesterday")
+            //% "Yesterday"
+            return qsTrId("yesterday")
         } else if (lastWeek.getTime() < messageDate.getTime()) {
-            let days = [qsTr("Sunday"),
-                        qsTr("Monday"),
-                        qsTr("Tuesday"),
-                        qsTr("Wednesday"),
-                        qsTr("Thursday"),
-                        qsTr("Friday"),
-                        qsTr("Saturday")];
+            //% "Sunday"
+            let days = [qsTrId("sunday"),
+                        //% "Monday"
+                        qsTrId("monday"),
+                        //% "Tuesday"
+                        qsTrId("tuesday"),
+                        //% "Wednesday"
+                        qsTrId("wednesday"),
+                        //% "Thursday"
+                        qsTrId("thursday"),
+                        //% "Friday"
+                        qsTrId("friday"),
+                        //% "Saturday"
+                        qsTrId("saturday")];
             return days[messageDate.getDay()];
         } else {
             return formatShortDateStr(new Date().toLocaleDateString(Qt.locale(locale)))
@@ -247,7 +274,8 @@ QtObject {
      */
     function seedPhraseWordCountText(text) {
         let wordCount = countWords(text);
-        return qsTr("%1%2 words").arg(getTick(wordCount)).arg(wordCount.toString());
+        //% "words"
+        return getTick(wordCount) + wordCount.toString() + " " + qsTrId("words")
     }
 
     function uuid() {
@@ -256,12 +284,18 @@ QtObject {
 
     function getNetworkName(network){
         switch(network){
-            case Constants.networkMainnet: return qsTr("Mainnet with upstream RPC")
-            case Constants.networkPOA: return qsTr("POA Network")
-            case Constants.networkXDai: return qsTr("xDai Chain")
-            case Constants.networkGoerli: return qsTr("Goerli with upstream RPC")
-            case Constants.networkRinkeby: return qsTr("Rinkeby with upstream RPC")
-            case Constants.networkRopsten: return qsTr("Ropsten with upstream RPC")
+            //% "Mainnet with upstream RPC"
+            case Constants.networkMainnet: return qsTrId("mainnet-with-upstream-rpc")
+            //% "POA Network"
+            case Constants.networkPOA: return qsTrId("poa-network")
+            //% "xDai Chain"
+            case Constants.networkXDai: return qsTrId("xdai-chain")
+            //% "Goerli with upstream RPC"
+            case Constants.networkGoerli: return qsTrId("goerli-with-upstream-rpc")
+            //% "Rinkeby with upstream RPC"
+            case Constants.networkRinkeby: return qsTrId("rinkeby-with-upstream-rpc")
+            //% "Ropsten with upstream RPC"
+            case Constants.networkRopsten: return qsTrId("ropsten-with-upstream-rpc")
             default: return network
         }
     }
@@ -282,7 +316,8 @@ QtObject {
                     //% "You need to repeat your password"
                     return [false, qsTrId("you-need-to-repeat-your-password")];
                 } else if (repeatPasswordField.text !== firstPasswordField.text) {
-                    return [false, qsTr("Passwords don't match")];
+                    //% "Passwords don't match"
+                    return [false, qsTrId("passwords-don-t-match")];
                 }
                 return [true, ""];
 

@@ -58,7 +58,8 @@ ModalPopup {
         StatusButton {
             id: okButton
             anchors.right: parent.right
-            text: qsTr("Ok")
+            //% "Ok"
+            text: qsTrId("ok")
             anchors.bottom: parent.bottom
             onClicked: {
                 request.dialogAccept(prompt.text);
@@ -71,7 +72,8 @@ ModalPopup {
             type: "secondary"
             anchors.right: okButton.left
             anchors.rightMargin: Style.current.smallPadding
-            text: qsTr("Cancel")
+            //% "Cancel"
+            text: qsTrId("browsing-cancel")
             anchors.bottom: parent.bottom
             onClicked: {
                 request.dialogReject();

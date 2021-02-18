@@ -7,7 +7,8 @@ import "./components"
 
 ModalPopup {
     id: popup
-    title: qsTr("Manage Assets")
+    //% "Manage Assets"
+    title: qsTrId("manage-assets")
     
     
     TokenSettingsModalContent {

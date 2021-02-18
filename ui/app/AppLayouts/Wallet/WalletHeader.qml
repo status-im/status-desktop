@@ -164,7 +164,8 @@ Item {
                     onTriggered: openPopup(accountSettingsModalComponent)
                 }
                 Action {
-                    text: qsTr("Manage Assets")
+                    //% "Manage Assets"
+                    text: qsTrId("manage-assets")
                     icon.source: "../../img/add_remove_token.svg"
                     icon.width: 16
                     icon.height: 16

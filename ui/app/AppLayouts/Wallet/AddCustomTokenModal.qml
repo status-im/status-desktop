@@ -44,7 +44,8 @@ ModalPopup {
 
     function validate() {
         if (addressInput.text !== "" && !Utils.isAddress(addressInput.text)) {
-            validationError = qsTr("This needs to be a valid address");
+            //% "This needs to be a valid address"
+            validationError = qsTrId("this-needs-to-be-a-valid-address");
         }
         return validationError === ""
     }
@@ -67,7 +68,8 @@ ModalPopup {
             onTokenDetailsWereResolved: {
                 const jsonObj = JSON.parse(tokenDetails)
                 if(jsonObj.name === "" || jsonObj.symbol === "" || jsonObj.decimals === ""){
-                    validationError = qsTr("Invalid ERC20 address")
+                    //% "Invalid ERC20 address"
+                    validationError = qsTrId("invalid-erc20-address")
                     return;
                 }
 

@@ -41,7 +41,8 @@ ModalPopup {
                 width: stack.width
                 label: {
                     return root.isRequested ? 
-                        qsTr("Receive on account") : 
+                        //% "Receive on account"
+                        qsTrId("receive-on-account") : 
                         //% "From account"
                         qsTrId("from-account")
                 }
@@ -58,7 +59,8 @@ ModalPopup {
                 anchors.right: selectRecipient.right
                 anchors.bottom: selectRecipient.top
                 anchors.bottomMargin: -Style.current.padding
-                text: qsTr("Address request required")
+                //% "Address request required"
+                text: qsTrId("address-request-required")
                 color: Style.current.danger
                 visible: addressRequiredValidator.isWarn
             }
@@ -68,8 +70,10 @@ ModalPopup {
                 accounts: walletModel.accounts
                 contacts: profileModel.contacts.addedContacts
                 label: root.isRequested ?
-                  qsTr("From") :
-                  qsTr("To")
+                  //% "From"
+                  qsTrId("from") :
+                  //% "To"
+                  qsTrId("to")
                 anchors.top: separator.bottom
                 anchors.topMargin: 10
                 width: stack.width
@@ -97,7 +101,8 @@ ModalPopup {
         TransactionFormGroup {
             id: group3
             headerText: root.isRequested ?
-                qsTr("Preview") :
+                //% "Preview"
+                qsTrId("preview") :
                 //% "Transaction preview"
                 qsTrId("transaction-preview")
             footerText: root.finalButtonLabel

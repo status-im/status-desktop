@@ -20,7 +20,8 @@ Item {
     property bool isResolvedAddress: false
     //% "Select a contact"
     property string selectAContact: qsTrId("select-a-contact")
-    property string noEnsAddressMessage: qsTr("Contact does not have an ENS address. Please send a transaction in chat.")
+    //% "Contact does not have an ENS address. Please send a transaction in chat."
+    property string noEnsAddressMessage: qsTrId("contact-does-not-have-an-ens-address--please-send-a-transaction-in-chat-")
 
     function resolveEns() {
         if (selectedContact.ensVerified) {
@@ -62,7 +63,8 @@ Item {
         id: inpReadOnly
         visible: root.readOnly
         width: parent.width
-        text: (root.selectedContact && root.selectedContact.name) ? root.selectedContact.name : qsTr("No contact selected")
+        //% "No contact selected"
+        text: (root.selectedContact && root.selectedContact.name) ? root.selectedContact.name : qsTrId("no-contact-selected")
         textField.leftPadding: 14
         textField.topPadding: 18
         textField.bottomPadding: 18
@@ -110,7 +112,7 @@ Item {
             height: 186
             StyledText {
                 anchors.fill: parent
-                //% "You don't have any contacts yet"
+                //% "You don’t have any contacts yet"
                 text: qsTrId("you-don-t-have-any-contacts-yet")
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter

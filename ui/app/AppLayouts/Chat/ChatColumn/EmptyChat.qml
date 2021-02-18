@@ -26,7 +26,8 @@ Item {
 
         StyledText {
             id: shareKeyLink
-            text: qsTr("Share your chat key")
+            //% "Share your chat key"
+            text: qsTrId("share-your-chat-key")
             font.pixelSize: 15
             color: Style.current.blue
 
@@ -48,7 +49,8 @@ Item {
 
         StyledText {
             id: orText
-            text: qsTr("or")
+            //% "or"
+            text: qsTrId("or")
             font.pixelSize: 15
             color: Style.current.darkGrey
             anchors.left: shareKeyLink.right
@@ -58,7 +60,8 @@ Item {
 
         StyledText {
             id: inviteLink
-            text: qsTr("invite")
+            //% "invite"
+            text: qsTrId("invite")
             font.pixelSize: 15
             color: Style.current.blue
             anchors.left: orText.right
@@ -83,7 +86,8 @@ Item {
     }
 
     StyledText {
-        text: qsTr("friends to start messaging in Status")
+        //% "friends to start messaging in Status"
+        text: qsTrId("friends-to-start-messaging-in-status")
         font.pixelSize: 15
         color: Style.current.darkGrey
         anchors.horizontalCenter: walkieTalkieImage.horizontalCenter
