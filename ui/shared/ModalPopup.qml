@@ -16,7 +16,7 @@ Popup {
     property alias footer: footerContent.children
 
     Overlay.modal: Rectangle {
-        color: "#60000000"
+        color: Qt.rgba(0, 0, 0, 0.4)
     }
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     parent: Overlay.overlay

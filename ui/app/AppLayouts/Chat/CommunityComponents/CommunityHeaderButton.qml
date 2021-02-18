@@ -61,7 +61,7 @@ Button {
             btnBackground.color = "transparent"
         }
         onEntered: {
-            btnBackground.color = Style.current.topBarChatInfoColor
+            btnBackground.color = Style.current.backgroundHover
         }
     }
 }

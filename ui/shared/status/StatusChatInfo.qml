@@ -107,7 +107,7 @@ Item {
 
         StyledText {
             id: chatInfo
-            color: Style.current.darkGrey
+            color: Style.current.secondaryText
             text: {
                 switch(root.chatType){
                     //% "Public chat"

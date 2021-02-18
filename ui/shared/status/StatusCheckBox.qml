@@ -13,7 +13,7 @@ CheckBox {
         x: control.leftPadding
         y: parent.height / 2 - height / 2
         radius: 3
-        color: (control.down || control.checked) ? Style.current.blue : Style.current.grey
+        color: (control.down || control.checked) ? Style.current.primary : Style.current.inputBackground
 
         Image {
             source: "../img/checkmark.svg"

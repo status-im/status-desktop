@@ -14,7 +14,7 @@ Switch {
         x: control.leftPadding
         y: parent.height / 2 - height / 2
         radius: 14
-        color: control.checked ? Style.current.blue : Style.current.grey
+        color: control.checked ? Style.current.primary : Style.current.inputBackground
 
         Rectangle {
             id: circle

@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtGraphicalEffects 1.13
 import "../imports"
 import "../shared/status"
 
@@ -20,6 +21,13 @@ Rectangle {
         source: "./img/copy-to-clipboard-icon.svg"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+
+        ColorOverlay {
+            anchors.fill: parent
+            antialiasing: true
+            source: parent
+            color: Style.current.primary
+        }
     }
 
     MouseArea {

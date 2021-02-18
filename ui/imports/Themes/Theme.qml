@@ -31,6 +31,7 @@ QtObject {
 
     property color background
     property color backgroundHover
+    property color backgroundHoverLight
     property color border
     property color textColor
     property color secondaryText

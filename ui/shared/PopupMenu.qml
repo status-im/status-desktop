@@ -15,7 +15,7 @@ Menu {
     bottomPadding: paddingSize
 
     delegate: MenuItem {
-        property color textColor: (this.action.icon.color != "#00000000" ? this.action.icon.color : Style.current.textColor)
+        property color textColor: this.action.icon.color.toString() !== "#00000000" ? this.action.icon.color : Style.current.textColor
         property int subMenuIndex: {
             if (!this.subMenu) {
                 return -1
@@ -62,7 +62,7 @@ Menu {
             ColorOverlay {
                 anchors.fill: parent
                 source: parent
-                color: popupMenuItem.highlighted ? Style.current.white : popupMenuItem.textColor
+                color: popupMenuItem.textColor
             }
         }
 
@@ -89,9 +89,7 @@ Menu {
                 anchors.fill: menuIcon
                 source: menuIcon
                 smooth: true
-                color: popupMenuItem.highlighted ?
-                           Style.current.primaryMenuItemTextHover :
-                           (popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Style.current.primaryMenuItemHover)
+                color: (popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Style.current.primaryMenuItemHover)
             }
         }
 
@@ -100,7 +98,7 @@ Menu {
             anchors.leftMargin: popupMenu.paddingSize
             text: popupMenuItem.text
             font: popupMenuItem.font
-            color: popupMenuItem.highlighted ? Style.current.primaryMenuItemTextHover : popupMenuItem.textColor
+            color: popupMenuItem.textColor
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             opacity: enabled ? 1.0 : 0.3
@@ -110,7 +108,7 @@ Menu {
         background: Rectangle {
             implicitWidth: 220
             implicitHeight: 24
-            color: popupMenuItem.highlighted ? popupMenuItem.icon.color : "transparent"
+            color: popupMenuItem.highlighted ? Style.current.backgroundHover : "transparent"
         }
     }
 
