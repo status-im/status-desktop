@@ -1,6 +1,6 @@
 import ./core as status, ./types, ./eth/contracts, ./settings, ./edn_helpers
 import
-  json, json_serialization, tables, chronicles, sequtils, httpclient,
+  json, json_serialization, tables, chronicles, sequtils, httpclient, net,
   stint, libp2p/[multihash, multicodec, cid], web3/[ethtypes, conversions]
 from strutils import parseHexInt, parseInt
 from nimcrypto import fromHex
@@ -115,7 +115,8 @@ proc getPackData*(id: Stuint[256]): StickerPack =
     # an IPFS identifier. Once decoded, download the content from IPFS. This content
     # is in EDN format, ie https://ipfs.infura.io/ipfs/QmWVVLwVKCwkVNjYJrRzQWREVvEk917PhbHYAUhA1gECTM
     # and it also needs to be decoded in to a nim type
-    var client = newHttpClient()
+    let secureSSLContext = newContext()
+    let client = newHttpClient(sslContext = secureSSLContext)
     let contentHash = contracts.toHex(packData.contentHash)
     let url = "https://ipfs.infura.io/ipfs/" & decodeContentHash(contentHash)
     var ednMeta = client.getContent(url)
