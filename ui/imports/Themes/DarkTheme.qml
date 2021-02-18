@@ -55,9 +55,9 @@ Theme {
     property color emojiReactionBackgroundHovered: "#3a3632"
     property color emojiReactionActiveBackgroundHovered: "#cbd5f1"
     property color mentionColor: "#7BE5FF"
-    property color mentionBgColor: Qt.rgba(71, 182, 209, 0.1)
-    property color mentionMessageColor: "#E5F8FD"
-    property color mentionMessageHoverColor: mentionBgColor
+    property color mentionBgColor: "#1a0da4c9"
+    property color mentionMessageColor: "#1a0da4c9"
+    property color mentionMessageHoverColor: "#330da4c9"
 
     property color buttonForegroundColor: blue
     property color buttonBackgroundColor: secondaryBackground
