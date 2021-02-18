@@ -1,4 +1,4 @@
-import strformat, strutils, stint, httpclient, json, chronicles
+import strformat, strutils, stint, httpclient, json, chronicles, net
 import ../libstatus/wallet as status_wallet
 import ../libstatus/tokens as status_tokens
 import ../libstatus/types as status_types
@@ -23,7 +23,8 @@ var balanceManager = newBalanceManager()
 proc getPrice(crypto: string, fiat: string): string =
   try:
     let url: string = fmt"https://min-api.cryptocompare.com/data/price?fsym={crypto}&tsyms={fiat}"
-    let client = newHttpClient()
+    let secureSSLContext = newContext()
+    let client = newHttpClient(sslContext = secureSSLContext)
     client.headers = newHttpHeaders({ "Content-Type": "application/json" })
 
     let response = client.request(url)

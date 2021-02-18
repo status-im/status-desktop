@@ -1,4 +1,4 @@
-import strformat, httpclient, json, chronicles, sequtils, strutils, tables, sugar
+import strformat, httpclient, json, chronicles, sequtils, strutils, tables, sugar, net
 import ../libstatus/core as status
 import ../libstatus/eth/contracts as contracts
 import ../libstatus/stickers as status_stickers
@@ -69,7 +69,8 @@ proc getCryptoKittiesBatch*(address: Address, offset: int = 0): seq[Collectible]
   cryptokitties = @[]
   # TODO handle testnet -- does this API exist in testnet??
   let url: string = fmt"https://api.cryptokitties.co/kitties?limit=20&offset={$offset}&owner_wallet_address={$address}&parents=false"
-  let client = newHttpClient()
+  let secureSSLContext = newContext()
+  let client = newHttpClient(sslContext = secureSSLContext)
   client.headers = newHttpHeaders({ "Content-Type": "application/json" })
 
   let response = client.request(url)
@@ -130,7 +131,8 @@ proc getEthermons*(address: Address): string =
 
     let tokensJoined = strutils.join(tokens, ",")
     let url = fmt"https://www.ethermon.io/api/monster/get_data?monster_ids={tokensJoined}"
-    let client = newHttpClient()
+    let secureSSLContext = newContext()
+    let client = newHttpClient(sslContext = secureSSLContext)
     client.headers = newHttpHeaders({ "Content-Type": "application/json" })
 
     let response = client.request(url)
@@ -173,7 +175,8 @@ proc getKudos*(address: Address): string =
       if (url == ""):
         return  $(%*kudos)
 
-      let client = newHttpClient()
+      let secureSSLContext = newContext()
+      let client = newHttpClient(sslContext = secureSSLContext)
       client.headers = newHttpHeaders({ "Content-Type": "application/json" })
 
       let response = client.request(url)
