@@ -16,6 +16,7 @@ lupdate_only{
 SOURCES = *.qml \
           app/*.qml \
           shared/*.qml \
+          import/*.qml \
           shared/status/*.qml \
           onboarding/*.qml \
           onboarding/Login/*.qml \
@@ -45,66 +46,21 @@ SOURCES = *.qml \
 
 TRANSLATIONS += \
     i18n/base.ts \
-    i18n/qml_af.ts \
-    i18n/qml_ar.ts \
-    i18n/qml_bel.ts \
-    i18n/qml_cs.ts \
-    i18n/qml_da.ts \
-    i18n/qml_de.ts \
-    i18n/qml_de_ch.ts \
-    i18n/qml_el.ts \
     i18n/qml_en.ts \
-    i18n/qml_es.ts \
-    i18n/qml_es_419.ts \
-    i18n/qml_es_ar.ts \
-    i18n/qml_es_mx.ts \
-    i18n/qml_fa.ts \
-    i18n/qml_fi.ts \
-    i18n/qml_fil.ts \
     i18n/qml_fr.ts \
-    i18n/qml_fr_ch.ts \
-    i18n/qml_fy.ts \
-    i18n/qml_he.ts \
-    i18n/qml_hi.ts \
-    i18n/qml_hu.ts \
-    i18n/qml_id.ts \
     i18n/qml_it.ts \
-    i18n/qml_it_ch.ts \
-    i18n/qml_ja.ts \
     i18n/qml_ko.ts \
-    i18n/qml_la.ts \
-    i18n/qml_lt.ts \
-    i18n/qml_lv.ts \
-    i18n/qml_ms.ts \
-    i18n/qml_nb.ts \
-    i18n/qml_ne.ts \
-    i18n/qml_nl.ts \
-    i18n/qml_pl.ts \
-    i18n/qml_pt.ts \
-    i18n/qml_pt_BR.ts \
-    i18n/qml_pt_pt.ts \
-    i18n/qml_ro.ts \
     i18n/qml_ru.ts \
-    i18n/qml_sl.ts \
-    i18n/qml_sr_rs_cyrl.ts \
-    i18n/qml_sr_rs_latn.ts \
-    i18n/qml_sv.ts \
-    i18n/qml_sw.ts \
-    i18n/qml_th.ts \
     i18n/qml_tr.ts \
-    i18n/qml_uk.ts \
-    i18n/qml_ur.ts \
-    i18n/qml_vi.ts \
+    i18n/qml_es.ts \
+    i18n/qml_id.ts \
+    i18n/qml_de.ts \
+    i18n/qml_pt_BR.ts \
+    i18n/qml_fil.ts \
     i18n/qml_zh.ts \
-    i18n/qml_zh_Hans_CN.ts \
     i18n/qml_zh_TW.ts \
-    i18n/qml_zh_hans.ts \
-    i18n/qml_zh_hant.ts \
-    i18n/qml_zh_hant_hk.ts \
-    i18n/qml_zh_hant_sg.ts \
-    i18n/qml_zh_hant_tw.ts \
-    i18n/qml_zh_wuu.ts \
-    i18n/qml_zh_yue.ts
+    i18n/qml_ar.ts \
+    i18n/qml_ur.ts
 
 RESOURCES += \
     imports/Constants.qml \

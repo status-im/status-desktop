@@ -54,8 +54,8 @@ qmlFiles.forEach(file => {
 
     fs.writeFileSync(file, fileContent);
     numberOfFilesDone++;
-    if (numberOfFilesDone % 10 === 0) {
+    if (numberOfFilesDone % 10 === 0 || numberOfFilesDone === qmlFiles.length) {
         console.log(`\t${numberOfFilesDone}/${qmlFiles.length} completed...`)
     }
 });
-console.log('Allo done!')
+console.log('All done!')
