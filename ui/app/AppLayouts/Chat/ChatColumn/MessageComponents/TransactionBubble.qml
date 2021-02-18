@@ -75,7 +75,8 @@ Item {
             text: {
                 if (root.state === Constants.transactionRequested) {
                     let prefix = root.outgoing ? "↓ ": "↑ " 
-                    return prefix + qsTr("Transaction request")
+                    //% "Transaction request"
+                    return prefix + qsTrId("transaction-request")
                 }
                 return root.outgoing ? 
                     //% "↑ Outgoing transaction"
@@ -104,7 +105,8 @@ Item {
                 id: txtError
                 color: Style.current.danger
                 visible: root.isError
-                text: qsTr("Something has gone wrong")
+                //% "Something has gone wrong"
+                text: qsTrId("something-has-gone-wrong")
             }
 
             Image {

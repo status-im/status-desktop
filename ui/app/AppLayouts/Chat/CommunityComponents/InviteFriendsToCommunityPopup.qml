@@ -24,7 +24,8 @@ ModalPopup {
         contactList.visible = !noContactsRect.visible;
     }
 
-    title: qsTr("Invite friends")
+    //% "Invite friends"
+    title: qsTrId("invite-friends")
 
     Item {
         anchors.fill: parent
@@ -33,7 +34,8 @@ ModalPopup {
         TextWithLabel {
             id: shareCommunity
             anchors.top: parent.top
-            label: qsTr("Share community")
+            //% "Share community"
+            label: qsTrId("share-community")
             text: "https://join.status.im/u/TODO"
             textToCopy: text
         }
@@ -49,7 +51,8 @@ ModalPopup {
         }
 
         StyledText {
-            text: qsTr("Contacts")
+            //% "Contacts"
+            text: qsTrId("contacts")
             anchors.left: parent.left
             anchors.top: sep.bottom
             anchors.topMargin: Style.current.smallPadding
@@ -107,7 +110,8 @@ ModalPopup {
             id: inviteBtn
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            text: qsTr("Invite")
+            //% "Invite"
+            text: qsTrId("invite-button")
             onClicked : {
                 console.log('invite')
                 popup.pubKeys.forEach(function (pubKey) {

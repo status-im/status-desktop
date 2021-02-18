@@ -45,9 +45,11 @@ ModalPopup {
 
     function validate() {
         if (groupName.text === "") {
-            channelNameValidationError = qsTr("You need to enter a channel name")
+            //% "You need to enter a channel name"
+            channelNameValidationError = qsTrId("you-need-to-enter-a-channel-name")
         } else if (!Utils.isValidChannelName(groupName.text)) {
-            channelNameValidationError = qsTr("The channel name can only contain lowercase letters, numbers and dashes")
+            //% "The channel name can only contain lowercase letters, numbers and dashes"
+            channelNameValidationError = qsTrId("the-channel-name-can-only-contain-lowercase-letters--numbers-and-dashes")
         } else {
             channelNameValidationError = ""
         }

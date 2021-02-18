@@ -32,18 +32,22 @@ Item {
             width: parent.width
 
             StatusSectionHeadline {
-                text: qsTr("General")
+                //% "General"
+                text: qsTrId("general")
                 bottomPadding: Style.current.bigPadding
             }
 
             StatusSettingsLineButton {
-                text: qsTr("Homepage")
-                currentValue: appSettings.browserHomepage === "" ? qsTr("Default") : appSettings.browserHomepage
+                //% "Homepage"
+                text: qsTrId("homepage")
+                //% "Default"
+                currentValue: appSettings.browserHomepage === "" ? qsTrId("default") : appSettings.browserHomepage
                 onClicked: homePagePopup.createObject(root).open()
             }
 
             StatusSettingsLineButton {
-                text: qsTr("Show favorites bar")
+                //% "Show favorites bar"
+                text: qsTrId("show-favorites-bar")
                 isSwitch: true
                 switchChecked: appSettings.showFavoritesBar
                 onClicked: function (checked) {
@@ -52,14 +56,16 @@ Item {
             }
 
             StatusSettingsLineButton {
-                text: qsTr("Search engine used in the address bar")
+                //% "Search engine used in the address bar"
+                text: qsTrId("search-engine-used-in-the-address-bar")
                 currentValue: {
                     switch (appSettings.browserSearchEngine) {
                     case Constants.browserSearchEngineGoogle: return "Google"
                     case Constants.browserSearchEngineYahoo: return "Yahoo!"
                     case Constants.browserSearchEngineDuckDuckGo: return "DuckDuckGo"
                     case Constants.browserSearchEngineNone:
-                    default: return qsTr("None")
+                    //% "None"
+                    default: return qsTrId("none")
                     }
                 }
                 onClicked: searchEngineModal.createObject(root).open()
@@ -67,20 +73,23 @@ Item {
 
             StatusSettingsLineButton {
                 id: ethereumExplorerBtn
-                text: qsTr("Ethereum explorer used in the address bar")
+                //% "Ethereum explorer used in the address bar"
+                text: qsTrId("ethereum-explorer-used-in-the-address-bar")
                 currentValue: {
                     switch (appSettings.browserEthereumExplorer) {
                     case Constants.browserEthereumExplorerEtherscan: return "etherscan.io"
                     case Constants.browserEthereumExplorerEthplorer: return "ethplorer.io"
                     case Constants.browserEthereumExplorerBlockchair: return "blockchair.com"
                     case Constants.browserSearchEngineNone:
-                    default: return qsTr("None")
+                    //% "None"
+                    default: return qsTrId("none")
                     }
                 }
                 onClicked: ethereumExplorerModal.createObject(root).open()
             }
             StyledText {
-                text: qsTr("Open an ethereum explorer after a transaction hash or an address is entered")
+                //% "Open an ethereum explorer after a transaction hash or an address is entered"
+                text: qsTrId("open-an-ethereum-explorer-after-a-transaction-hash-or-an-address-is-entered")
                 font.pixelSize: 15
                 color: Style.current.secondaryText
                 width: parent.width - 150
@@ -98,13 +107,15 @@ Item {
             }
 
             StatusSectionHeadline {
-                text: qsTr("Privacy")
+                //% "Privacy"
+                text: qsTrId("privacy")
                 topPadding: Style.current.bigPadding
                 bottomPadding: Style.current.padding
             }
 
             StatusSettingsLineButton {
-                text: qsTr("Set DApp access permissions")
+                //% "Set DApp access permissions"
+                text: qsTrId("set-dapp-access-permissions")
                 isSwitch: false
                 onClicked: {
                     dappListPopup.createObject(root).open()

@@ -98,7 +98,8 @@ Rectangle {
             font.pixelSize: 14
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("Open")
+            //% "Open"
+            text: qsTrId("open")
             color: Style.current.darkerGrey
         }
     }

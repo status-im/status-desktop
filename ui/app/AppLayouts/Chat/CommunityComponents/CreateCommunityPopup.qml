@@ -36,29 +36,37 @@ ModalPopup {
         selectedImageValidationError = ""
 
         if (nameInput.text === "") {
-            nameValidationError = qsTr("You need to enter a name")
+            //% "You need to enter a name"
+            nameValidationError = qsTrId("you-need-to-enter-a-name")
         } else if (!(/^[a-z0-9\-\ ]+$/i.test(nameInput.text))) {
-            nameValidationError = qsTr("Please restrict your name to letters, numbers, dashes and spaces")
+            //% "Please restrict your name to letters, numbers, dashes and spaces"
+            nameValidationError = qsTrId("please-restrict-your-name-to-letters--numbers--dashes-and-spaces")
         } else if (nameInput.text.length > 100) {
-            nameValidationError = qsTr("Your name needs to be 100 characters or shorter")
+            //% "Your name needs to be 100 characters or shorter"
+            nameValidationError = qsTrId("your-name-needs-to-be-100-characters-or-shorter")
         }
 
         if (selectedImage === "") {
-            selectedImageValidationError = qsTr("You need to select an image")
+            //% "You need to select an image"
+            selectedImageValidationError = qsTrId("you-need-to-select-an-image")
         }
 
         if (colorPicker.text === "") {
-            colorValidationError = qsTr("You need to enter a color")
+            //% "You need to enter a color"
+            colorValidationError = qsTrId("you-need-to-enter-a-color")
         } else if (!Utils.isHexColor(colorPicker.text)) {
-            colorValidationError = qsTr("This field needs to be an hexadecimal color (eg: #4360DF)")
+            //% "This field needs to be an hexadecimal color (eg: #4360DF)"
+            colorValidationError = qsTrId("this-field-needs-to-be-an-hexadecimal-color--eg---4360df-")
         }
 
         return !nameValidationError && !descriptionTextArea.validationError && !colorValidationError
     }
 
     title: isEdit ?
-            qsTr("Edit community") :
-            qsTr("New community")
+            //% "Edit community"
+            qsTrId("edit-community") :
+            //% "New community"
+            qsTrId("new-community")
 
     ScrollView {
         property ScrollBar vScrollBar: ScrollBar.vertical
@@ -83,16 +91,21 @@ ModalPopup {
 
             Input {
                 id: nameInput
-                label: qsTr("Name your community")
-                placeholderText: qsTr("A catchy name")
+                //% "Name your community"
+                label: qsTrId("name-your-community")
+                //% "A catchy name"
+                placeholderText: qsTrId("name-your-community-placeholder")
                 validationError: popup.nameValidationError
             }
 
             StyledTextArea {
                 id: descriptionTextArea
-                label: qsTr("Give it a short description")
-                placeholderText: qsTr("What your community is about")
-                validationError: descriptionTextArea.text.length > maxDescChars ? qsTr("The description cannot exceed 140 characters") : ""
+                //% "Give it a short description"
+                label: qsTrId("give-a-short-description-community")
+                //% "What your community is about"
+                placeholderText: qsTrId("what-your-community-is-about")
+                //% "The description cannot exceed 140 characters"
+                validationError: descriptionTextArea.text.length > maxDescChars ? qsTrId("the-description-cannot-exceed-140-characters") : ""
                 anchors.top: nameInput.bottom
                 anchors.topMargin: Style.current.bigPadding
                 customHeight: 88
@@ -112,7 +125,8 @@ ModalPopup {
 
             StyledText {
                 id: thumbnailText
-                text: qsTr("Thumbnail image")
+                //% "Thumbnail image"
+                text: qsTrId("thumbnail-image")
                 anchors.top: descriptionTextArea.bottom
                 anchors.topMargin: Style.current.smallPadding
                 font.pixelSize: 15
@@ -181,7 +195,8 @@ ModalPopup {
 
                     StyledText {
                         id: uploadText
-                        text: qsTr("Upload")
+                        //% "Upload"
+                        text: qsTrId("upload")
                         anchors.top: imageImg.bottom
                         anchors.topMargin: 5
                         font.pixelSize: 15
@@ -216,8 +231,10 @@ ModalPopup {
 
             Input {
                 id: colorPicker
-                label: qsTr("Community color")
-                placeholderText: qsTr("Pick a color")
+                //% "Community color"
+                label: qsTrId("community-color")
+                //% "Pick a color"
+                placeholderText: qsTrId("pick-a-color")
                 anchors.top: addImageButton.bottom
                 anchors.topMargin: Style.current.smallPadding
                 validationError: popup.colorValidationError
@@ -237,7 +254,8 @@ ModalPopup {
 
                 ColorDialog {
                     id: colorDialog
-                    title: qsTr("Please choose a color")
+                    //% "Please choose a color"
+                    title: qsTrId("please-choose-a-color")
                     onAccepted: {
                         colorPicker.text = colorDialog.color
                     }
@@ -260,7 +278,8 @@ ModalPopup {
                 anchors.topMargin: isEdit ? 0 : Style.current.smallPadding * 2
 
                 StyledText {
-                    text: qsTr("Private community")
+                    //% "Private community"
+                    text: qsTrId("private-community")
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
@@ -279,16 +298,20 @@ ModalPopup {
                 anchors.topMargin: isEdit ? 0 : Style.current.smallPadding * 2
                 width: parent.width
                 text: privateSwitch.checked ?
-                          qsTr("Only members with an invite link will be able to join your community. Private communities are not listed inside Status") :
-                          qsTr("Your community will be public for anyone to join. Public communities are listed inside Status for easy discovery")
+                          //% "Only members with an invite link will be able to join your community. Private communities are not listed inside Status"
+                          qsTrId("only-members-with-an-invite-link-will-be-able-to-join-your-community--private-communities-are-not-listed-inside-status") :
+                          //% "Your community will be public for anyone to join. Public communities are listed inside Status for easy discovery"
+                          qsTrId("your-community-will-be-public-for-anyone-to-join--public-communities-are-listed-inside-status-for-easy-discovery")
             }
         }
     }
 
     footer: StatusButton {
         text: isEdit ?
-              qsTr("Edit") :
-              qsTr("Create")
+              //% "Edit"
+              qsTrId("edit") :
+              //% "Create"
+              qsTrId("create")
         anchors.right: parent.right
         onClicked: {
             if (!validate()) {
@@ -317,7 +340,8 @@ ModalPopup {
 
         MessageDialog {
             id: creatingError
-            title: qsTr("Error creating the community")
+            //% "Error creating the community"
+            title: qsTrId("error-creating-the-community")
             icon: StandardIcon.Critical
             standardButtons: StandardButton.Ok
         }

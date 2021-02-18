@@ -29,8 +29,9 @@ Item {
 
         StyledText {
             //% "Error loading the image"
-            //% "Loading image..."
-            text: loadingImage.hasError ? qsTrId("error-loading-the-image") : qsTrId("loading-image---")
+            text: loadingImage.hasError ? qsTrId("error-loading-the-image") :
+                //% "Loading image..."
+                qsTrId("loading-image---")
             color: loadingImage.hasError ? Style.current.red : Style.current.textColor
             font.pixelSize: 15
             anchors.verticalCenter: parent.verticalCenter

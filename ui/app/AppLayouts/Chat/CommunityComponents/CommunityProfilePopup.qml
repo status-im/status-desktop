@@ -47,10 +47,14 @@ ModalPopup {
         StyledText {
             text: {
                 switch(access) {
-                case Constants.communityChatPublicAccess: return qsTr("Public community");
-                case Constants.communityChatInvitationOnlyAccess: return qsTr("Invitation only community");
-                case Constants.communityChatOnRequestAccess: return qsTr("On request community");
-                default: return qsTr("Unknown community");
+                //% "Public community"
+                case Constants.communityChatPublicAccess: return qsTrId("public-community");
+                //% "Invitation only community"
+                case Constants.communityChatInvitationOnlyAccess: return qsTrId("invitation-only-community");
+                //% "On request community"
+                case Constants.communityChatOnRequestAccess: return qsTrId("on-request-community");
+                //% "Unknown community"
+                default: return qsTrId("unknown-community");
                 }
             }
             anchors.left: communityName.left
@@ -86,7 +90,8 @@ ModalPopup {
         id: shareCommunity
         anchors.top: sep1.bottom
         anchors.topMargin: Style.current.bigPadding
-        label: qsTr("Share community")
+        //% "Share community"
+        label: qsTrId("share-community")
         text: "https://join.status.im/u/TODO"
         textToCopy: text
     }
@@ -112,7 +117,8 @@ ModalPopup {
             active: isAdmin
             width: parent.width
             sourceComponent: CommunityPopupButton {
-                label: qsTr("Members")
+                //% "Members"
+                label: qsTrId("members-title")
                 iconName: "members"
                 txtColor: Style.current.textColor
                 onClicked: openPopup(communityMembersPopup)
@@ -159,7 +165,8 @@ ModalPopup {
             active: isAdmin
             width: parent.width
             sourceComponent: CommunityPopupButton {
-                label: qsTr("Roles")
+                //% "Roles"
+                label: qsTrId("roles")
                 iconName: "roles"
                 width: parent.width
                 onClicked: console.log("TODO:")
@@ -184,7 +191,8 @@ ModalPopup {
 
         CommunityPopupButton {
             id: notificationsBtn
-            label: qsTr("Notifications")
+            //% "Notifications"
+            label: qsTrId("notifications")
             iconName: "notifications"
             width: parent.width
             txtColor: Style.current.textColor
@@ -209,7 +217,8 @@ ModalPopup {
             active: isAdmin
             width: parent.width
             sourceComponent: CommunityPopupButton {
-                label: qsTr("Edit community")
+                //% "Edit community"
+                label: qsTrId("edit-community")
                 iconName: "edit"
                 onClicked: openPopup(editCommunityPopup)
                 Component {
@@ -231,7 +240,8 @@ ModalPopup {
             Component {
                 id: exportBtn
                 CommunityPopupButton {
-                    label: qsTr("Export community")
+                    //% "Export community"
+                    label: qsTrId("export-community")
                     iconName: "../fetch"
                     onClicked:  exportResult = chatsModel.exportComumnity()
                 }
@@ -262,7 +272,8 @@ ModalPopup {
         }
 
         CommunityPopupButton {
-            label: qsTr("Leave community")
+            //% "Leave community"
+            label: qsTrId("leave-community")
             iconName: "leave"
         }
 
@@ -271,7 +282,8 @@ ModalPopup {
             width: parent.width
             sourceComponent: CommunityPopupButton {
                 id: deleteBtn
-                label: qsTr("Delete")
+                //% "Delete"
+                label: qsTrId("delete")
                 iconName: "delete"
                 txtColor: Style.current.red
                 //btnColor: Style.current.red // TODO: statusroundbutton should support changing color

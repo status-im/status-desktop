@@ -133,7 +133,8 @@ Item {
         anchors.topMargin: sliderWrapper.visible ? Style.current.smallPadding : 0
         anchors.right: buttonAdvanced.left
         anchors.rightMargin: Style.current.padding
-        text: qsTr("Reset")
+        //% "Reset"
+        text: qsTrId("reset")
         flat: true
         font.pixelSize: 13
         visible: !sliderWrapper.visible
@@ -149,7 +150,8 @@ Item {
         anchors.topMargin: sliderWrapper.visible ? Style.current.smallPadding : 0
         anchors.right: parent.right
         anchors.rightMargin: -Style.current.padding
-        text: qsTr("Advanced")
+        //% "Advanced"
+        text: qsTrId("advanced")
         flat: true
         font.pixelSize: 13
         onClicked: {

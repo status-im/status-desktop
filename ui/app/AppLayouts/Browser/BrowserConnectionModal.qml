@@ -101,7 +101,8 @@ Popup {
 
         StyledText {
             id: titleText
-            text: qsTr('"%1" would like to connect to').arg(request.title)
+            //% "'%1' would like to connect to"
+            text: qsTrId("--1--would-like-to-connect-to").arg(request.title)
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             wrapMode: Text.WordWrap
@@ -144,8 +145,10 @@ Popup {
             id: infoText
             text: {
                 switch(request.permission){
-                case Constants.permission_web3: return qsTr("Allowing authorizes this DApp to retrieve your wallet address and enable Web3");
-                case Constants.permission_contactCode: return qsTr("Granting access authorizes this DApp to retrieve your chat key");
+                //% "Allowing authorizes this DApp to retrieve your wallet address and enable Web3"
+                case Constants.permission_web3: return qsTrId("allowing-authorizes-this-dapp");
+                //% "Granting access authorizes this DApp to retrieve your chat key"
+                case Constants.permission_contactCode: return qsTrId("your-contact-code");
                 default: return qsTr("Unknown permission: " + request.permission);
                 }
             }
@@ -165,7 +168,8 @@ Popup {
             StatusButton {
                 type: "warn"
                 width: 155
-                text: qsTr("Deny")
+                //% "Deny"
+                text: qsTrId("deny")
                 onClicked: {
                     postMessage(false);
                     root.close();
@@ -176,7 +180,8 @@ Popup {
                 btnColor: Utils.setColorAlpha(Style.current.success, 0.1)
                 textColor: Style.current.success
                 width: 155
-                label: qsTr("Allow")
+                //% "Allow"
+                label: qsTrId("allow")
                 onClicked: {
                     postMessage(true);
                     root.close();

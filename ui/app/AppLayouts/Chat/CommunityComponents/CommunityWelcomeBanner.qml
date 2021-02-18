@@ -53,7 +53,8 @@ Rectangle {
 
     StyledText {
         id: welcomeText
-        text: qsTr("Welcome to your community!")
+        //% "Welcome to your community!"
+        text: qsTrId("welcome-to-your-community-")
         anchors.top: parent.top
         anchors.topMargin: 60
         horizontalAlignment: Text.AlignHCenter
@@ -67,7 +68,8 @@ Rectangle {
 
     StatusButton {
         id: addMembersBtn
-        text: qsTr("Add members")
+        //% "Add members"
+        text: qsTrId("add-members")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: manageBtn.top
         anchors.bottomMargin: Style.current.halfPadding
@@ -78,7 +80,8 @@ Rectangle {
 
     StatusButton {
         id: manageBtn
-        text: qsTr("Manage community")
+        //% "Manage community"
+        text: qsTrId("manage-community")
         type: "secondary"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom

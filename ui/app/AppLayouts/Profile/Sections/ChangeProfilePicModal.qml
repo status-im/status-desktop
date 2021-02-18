@@ -10,7 +10,8 @@ ModalPopup {
 
     id: popup
 
-    title: qsTr("Profile picture")
+    //% "Profile picture"
+    title: qsTrId("profile-picture")
 
     onClosed: {
         destroy()
@@ -57,7 +58,8 @@ ModalPopup {
             id: cropImageModal
             width: image.width + 50
             height: image.height + 170
-            title: qsTr("Crop your image (optional)")
+            //% "Crop your image (optional)"
+            title: qsTrId("crop-your-image--optional-")
 
             Image {
                 id: image
@@ -77,7 +79,8 @@ ModalPopup {
 
             footer: StatusButton {
                 id: doUploadBtn
-                text: qsTr("Finish")
+                //% "Finish"
+                text: qsTrId("finish")
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
                 onClicked: {
@@ -109,7 +112,8 @@ ModalPopup {
             type: "secondary"
             flat: true
             color: Style.current.danger
-            text: qsTr("Remove")
+            //% "Remove"
+            text: qsTrId("remove")
             anchors.right: uploadBtn.left
             anchors.rightMargin: Style.current.padding
             anchors.bottom: parent.bottom
@@ -120,7 +124,8 @@ ModalPopup {
 
         StatusButton {
             id: uploadBtn
-            text: qsTr("Upload")
+            //% "Upload"
+            text: qsTrId("upload")
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             onClicked: {

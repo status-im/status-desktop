@@ -135,7 +135,8 @@ RowLayout {
 
     StatusInputListPopup {
         id: channelPicker
-        title: qsTr("Where do you want to go?")
+        //% "Where do you want to go?"
+        title: qsTrId("where-do-you-want-to-go-")
         showSearchBox: true
         width: 350
         x: parent.width / 2 - width / 2

@@ -15,7 +15,8 @@ Item {
     StyledText {
         id: signText
         color: Style.current.blue
-        text: qsTr("Sign and send")
+        //% "Sign and send"
+        text: qsTrId("sign-and-send")
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
         font.weight: Font.Medium

@@ -135,7 +135,8 @@ Item {
 
             StyledText {
                 id: faqLink
-                text: qsTr("Frequently asked questions")
+                //% "Frequently asked questions"
+                text: qsTrId("faq")
                 font.pixelSize: 15
                 color: Style.current.blue
                 anchors.topMargin: Style.current.bigPadding
@@ -158,7 +159,8 @@ Item {
             }
             StyledText {
                 id: issueLink
-                text: qsTr("Submit a bug")
+                //% "Submit a bug"
+                text: qsTrId("submit-bug")
                 font.pixelSize: 15
                 color: Style.current.blue
                 anchors.topMargin: Style.current.bigPadding
@@ -181,7 +183,8 @@ Item {
             }
 
             StyledText {
-                text: qsTr("Request a feature")
+                //% "Request a feature"
+                text: qsTrId("request-feature")
                 font.pixelSize: 15
                 color: Style.current.blue
                 anchors.topMargin: Style.current.bigPadding

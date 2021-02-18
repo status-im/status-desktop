@@ -53,7 +53,8 @@ ScrollView {
 
         StatusSectionHeadline {
             id: sectionHeadlinePreview
-            text: qsTr("Preview")
+            //% "Preview"
+            text: qsTrId("preview")
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
@@ -80,7 +81,8 @@ ScrollView {
                 anchors.leftMargin: Style.current.smallPadding
                 userName: "@vitalik"
                 identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAb0lEQVR4Ae3UQQqAIBRF0Wj9ba9Bq6l5JBQqfn/ngDMH3YS3AAB/tO3H+XRG3b9bR/+gVoREI2RapVXpfd5+X5oXERKNkHS+rk3tOpWkeREh0QiZVu91ql2zNC8iJBoh0yqtSqt1slpCghICANDPBc0ESPh0bHkHAAAAAElFTkSuQmCC"
-                message: qsTr("Blockchains will drop search costs, causing a kind of decomposition that allows you to have markets of entities that are horizontally segregated and vertically segregated.")
+                //% "Blockchains will drop search costs, causing a kind of decomposition that allows you to have markets of entities that are horizontally segregated and vertically segregated."
+                message: qsTrId("blockchains-will-drop-search-costs--causing-a-kind-of-decomposition-that-allows-you-to-have-markets-of-entities-that-are-horizontally-segregated-and-vertically-segregated-")
                 contentType: Constants.messageType
                 placeholderMessage: true
             }
@@ -88,7 +90,8 @@ ScrollView {
 
         StatusSectionHeadline {
             id: sectionHeadlineFontSize
-            text: qsTr("Size")
+            //% "Size"
+            text: qsTrId("size")
             anchors.top: preview.bottom
             anchors.topMargin: Style.current.padding
             anchors.left: parent.left
@@ -101,7 +104,8 @@ ScrollView {
             anchors.topMargin: Style.current.padding
             anchors.left: parent.left
             font.pixelSize: 15
-            text: qsTr("Change font size")
+            //% "Change font size"
+            text: qsTrId("change-font-size")
         }
 
         StatusSlider {
@@ -129,41 +133,47 @@ ScrollView {
 
             StyledText {
                 font.pixelSize: 15
-                text: qsTr("XS")
+                //% "XS"
+                text: qsTrId("xs")
                 Layout.preferredWidth: fontSizeSlider.width/6
             }
 
             StyledText {
                 font.pixelSize: 15
-                text: qsTr("S")
-                Layout.preferredWidth: fontSizeSlider.width/6
-                Layout.leftMargin: 2
-            }
-
-            StyledText {
-                font.pixelSize: 15
-                text: qsTr("M")
+                //% "S"
+                text: qsTrId("s")
                 Layout.preferredWidth: fontSizeSlider.width/6
                 Layout.leftMargin: 2
             }
 
             StyledText {
                 font.pixelSize: 15
-                text: qsTr("L")
+                //% "M"
+                text: qsTrId("m")
                 Layout.preferredWidth: fontSizeSlider.width/6
                 Layout.leftMargin: 2
             }
 
             StyledText {
                 font.pixelSize: 15
-                text: qsTr("XL")
+                //% "L"
+                text: qsTrId("l")
+                Layout.preferredWidth: fontSizeSlider.width/6
+                Layout.leftMargin: 2
+            }
+
+            StyledText {
+                font.pixelSize: 15
+                //% "XL"
+                text: qsTrId("xl")
                 Layout.preferredWidth: fontSizeSlider.width/6
                 Layout.leftMargin: 0
             }
 
             StyledText {
                 font.pixelSize: 15
-                text: qsTr("XXL")
+                //% "XXL"
+                text: qsTrId("xxl")
                 Layout.alignment: Qt.AlignRight
                 Layout.leftMargin: -Style.current.smallPadding
             }
@@ -171,7 +181,8 @@ ScrollView {
 
         StatusSectionHeadline {
             id: sectionHeadlineChatMode
-            text: qsTr("Chat mode")
+            //% "Chat mode"
+            text: qsTrId("chat-mode")
             anchors.top: fontSizeSliderLegend.bottom
             anchors.topMargin: Style.current.padding*2
             anchors.left: parent.left
@@ -191,7 +202,8 @@ ScrollView {
                 padding: Style.current.padding
                 image.source: "../../../img/appearance-normal-light.svg"
                 image.height: 186
-                control.text: qsTr("Normal")
+                //% "Normal"
+                control.text: qsTrId("normal")
                 control.checked: !appSettings.useCompactMode
                 onRadioCheckedChanged: {
                     if (checked) {
@@ -204,7 +216,8 @@ ScrollView {
                 padding: Style.current.padding
                 image.source: "../../../img/appearance-compact-light.svg"
                 image.height: 186
-                control.text: qsTr("Compact")
+                //% "Compact"
+                control.text: qsTrId("compact")
                 control.checked: appSettings.useCompactMode
                 onRadioCheckedChanged: {
                     if (checked) {
@@ -216,7 +229,8 @@ ScrollView {
 
         StatusSectionHeadline {
             id: sectionHeadlineAppearance
-            text: qsTr("Appearance")
+            //% "Appearance"
+            text: qsTrId("appearance")
             anchors.top: chatModeSection.bottom
             anchors.topMargin: Style.current.padding*3
             anchors.left: parent.left
@@ -238,7 +252,8 @@ ScrollView {
                 height: 184
                 image.source: "../../../img/appearance-normal-light.svg"
                 image.height: 128
-                control.text: qsTr("Light")
+                //% "Light"
+                control.text: qsTrId("light")
                 control.checked: profileModel.profile.appearance === AppearanceContainer.Theme.Light
                 onRadioCheckedChanged: {
                     if (checked) {
@@ -253,7 +268,8 @@ ScrollView {
                 height: 184
                 image.source: "../../../img/appearance-normal-dark.svg"
                 image.height: 128
-                control.text: qsTr("Dark")
+                //% "Dark"
+                control.text: qsTrId("dark")
                 control.checked: profileModel.profile.appearance === AppearanceContainer.Theme.Dark
                 onRadioCheckedChanged: {
                     if (checked) {
@@ -268,7 +284,8 @@ ScrollView {
                 height: 184
                 image.source: "../../../img/appearance-normal-system.png"
                 image.height: 128
-                control.text: qsTr("System")
+                //% "System"
+                control.text: qsTrId("system")
                 control.checked: profileModel.profile.appearance === AppearanceContainer.Theme.System
                 onRadioCheckedChanged: {
                     if (checked) {

@@ -7,7 +7,8 @@ import "../../../../shared/status"
 ModalPopup {
     id: popup
 
-    title: qsTr("Open links with...")
+    //% "Open links with..."
+    title: qsTrId("open-links-with---")
 
     onClosed: {
         destroy()
@@ -32,7 +33,8 @@ ModalPopup {
             }
         }
         StatusRadioButton {
-            text: qsTr("My default browser")
+            //% "My default browser"
+            text: qsTrId("my-default-browser")
             ButtonGroup.group: openLinksWithGroup
             checked: !appSettings.openLinksInStatus
             onCheckedChanged: {

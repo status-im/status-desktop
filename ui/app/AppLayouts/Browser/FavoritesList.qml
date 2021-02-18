@@ -33,7 +33,8 @@ Item {
 
     BookmarkButton {
         id: addBookmarkBtn
-        text: qsTr("Add favorite")
+        //% "Add favorite"
+        text: qsTrId("add-favorite")
         onClicked: {
             addFavoriteModal.open()
         }

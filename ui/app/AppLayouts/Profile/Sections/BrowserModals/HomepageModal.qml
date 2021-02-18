@@ -7,7 +7,8 @@ import "../../../../../shared/status"
 ModalPopup {
     id: popup
 
-    title: qsTr("Homepage")
+    //% "Homepage"
+    title: qsTrId("homepage")
 
     onClosed: {
         destroy()
@@ -22,7 +23,8 @@ ModalPopup {
         }
 
         StatusRadioButton {
-            text: qsTr("Default")
+            //% "Default"
+            text: qsTrId("default")
             ButtonGroup.group: homepageGroup
             checked: appSettings.browserHomepage === ""
             onCheckedChanged: {
@@ -34,7 +36,8 @@ ModalPopup {
         }
 
         StatusRadioButton {
-            text: qsTr("Custom...")
+            //% "Custom..."
+            text: qsTrId("custom---")
             ButtonGroup.group: homepageGroup
             checked: appSettings.browserHomepage !== "" || customUrl.visible
             onClicked: {
@@ -45,7 +48,8 @@ ModalPopup {
         Input {
             id: customUrl
             visible: appSettings.browserHomepage !== ""
-            placeholderText: qsTr("Paste URL")
+            //% "Paste URL"
+            placeholderText: qsTrId("paste-url")
             text: appSettings.browserHomepage
             pasteFromClipboard: true
             textField.onTextChanged: {

@@ -13,7 +13,8 @@ Item {
     property alias validationError: txtPassword.validationError
     //% "You need to enter a password"
     property string noInputErrorMessage: qsTrId("you-need-to-enter-a-password")
-    property string invalidInputErrorMessage: qsTr("Password needs to be 6 characters or more")
+    //% "Password needs to be 6 characters or more"
+    property string invalidInputErrorMessage: qsTrId("password-needs-to-be-6-characters-or-more")
     property bool isValid: false
 
     function forceActiveFocus(reason) {
@@ -99,7 +100,7 @@ Item {
         customHeight: 56
         //% "Password"
         label: qsTrId("password")
-        //% "Enter Password"
+        //% "Enter password"
         placeholderText: qsTrId("enter-password")
         textField.echoMode: TextInput.Password
         validationErrorAlignment: TextEdit.AlignRight

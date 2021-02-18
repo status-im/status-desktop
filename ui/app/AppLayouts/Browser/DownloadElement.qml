@@ -101,10 +101,12 @@ Rectangle {
         color: Style.current.secondaryText
         text: {
             if (isCanceled) {
-                return qsTr("Cancelled")
+                //% "Cancelled"
+                return qsTrId("cancelled")
             }
             if (downloadModel.downloads[index] && downloadModel.downloads[index].isPaused) {
-                return qsTr("Paused")
+                //% "Paused"
+                return qsTrId("paused")
             }
             return `${downloadModel.downloads[index] ? (downloadModel.downloads[index].receivedBytes / 1000000).toFixed(2) : 0}/${downloadModel.downloads[index] ? (downloadModel.downloads[index].totalBytes / 1000000).toFixed(2) : 0} MB` //"14.4/109 MB, 26 sec left"
         }
@@ -139,14 +141,16 @@ Rectangle {
             icon.source: "../../img/browser/file.svg"
             icon.width: 16
             icon.height: 16
-            text: qsTr("Open")
+            //% "Open"
+            text: qsTrId("open")
             onTriggered: openFile()
         }
         Action {
             icon.source: "../../img/add_watch_only.svg"
             icon.width: 13
             icon.height: 9
-            text: qsTr("Show in folder")
+            //% "Show in folder"
+            text: qsTrId("show-in-folder")
             onTriggered: openDirectory()
         }
         Action {
@@ -154,7 +158,8 @@ Rectangle {
             icon.source: "../../img/browser/pause.svg"
             icon.width: 16
             icon.height: 16
-            text: qsTr("Pause")
+            //% "Pause"
+            text: qsTrId("pause")
             onTriggered: {
                 downloadModel.downloads[index].pause()
             }
@@ -164,7 +169,8 @@ Rectangle {
             icon.source: "../../img/browser/play.svg"
             icon.width: 16
             icon.height: 16
-            text: qsTr("Resume")
+            //% "Resume"
+            text: qsTrId("resume")
             onTriggered: {
                 downloadModel.downloads[index].resume()
             }
@@ -179,7 +185,8 @@ Rectangle {
             icon.source: "../../img/block-icon.svg"
             icon.width: 13
             icon.height: 13
-            text: qsTr("Cancel")
+            //% "Cancel"
+            text: qsTrId("browsing-cancel")
             onTriggered: {
                 downloadModel.downloads[index].cancel()
                 isCanceled = true

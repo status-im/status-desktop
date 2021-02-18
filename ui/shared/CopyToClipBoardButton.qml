@@ -51,7 +51,8 @@ Rectangle {
 
     StatusToolTip {
         id: toolTip
-        text: qsTr("Copied!")
+        //% "Copied!"
+        text: qsTrId("copied-")
     }
 
     Timer {

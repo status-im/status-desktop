@@ -51,12 +51,15 @@ ModalPopup {
     function validate() {
         urlError = ""
         if (!urlInput.text) {
-            urlError = qsTr("Please enter a URL")
+            //% "Please enter a URL"
+            urlError = qsTrId("please-enter-a-url")
         } else if (!Utils.isURL(urlInput.text)) {
-            urlError = qsTr("This fields needs to be a valid URL")
+            //% "This fields needs to be a valid URL"
+            urlError = qsTrId("this-fields-needs-to-be-a-valid-url")
         }
 
-        nameError = !nameInput.text ? qsTr("Please enter a Name") : ""
+        //% "Please enter a Name"
+        nameError = !nameInput.text ? qsTrId("please-enter-a-name") : ""
 
         return !urlError && !nameError
     }
@@ -74,9 +77,12 @@ ModalPopup {
 
     title: modifiyModal ?
                toolbarMode ?
-                   qsTr("Favorite added") :
-                   qsTr("Edit")
-               : qsTr("Add favorite")
+                   //% "Favorite added"
+                   qsTrId("favorite-added") :
+                   //% "Edit"
+                   qsTrId("edit")
+               //% "Add favorite"
+               : qsTrId("add-favorite")
 
     Column {
         width: parent.width
@@ -84,8 +90,10 @@ ModalPopup {
 
         Input {
             id: urlInput
-            label: qsTr("URL")
-            placeholderText: qsTr("Paste URL")
+            //% "URL"
+            label: qsTrId("url")
+            //% "Paste URL"
+            placeholderText: qsTrId("paste-url")
             pasteFromClipboard: true
             validationError: popup.urlError
             text: popup.ogUrl
@@ -93,8 +101,10 @@ ModalPopup {
 
         Input {
             id: nameInput
-            label: qsTr("Name")
-            placeholderText: qsTr("Name the website")
+            //% "Name"
+            label: qsTrId("name")
+            //% "Name the website"
+            placeholderText: qsTrId("name-the-website")
             validationError: popup.nameError
             text: popup.ogName
         }
@@ -109,7 +119,8 @@ ModalPopup {
             anchors.right: addBtn.left
             anchors.rightMargin: Style.current.padding
             visible: popup.modifiyModal
-            text: qsTr("Remove")
+            //% "Remove"
+            text: qsTrId("remove")
             anchors.bottom: parent.bottom
             color: Style.current.danger
             bgColor: Utils.setColorAlpha(Style.current.danger, 0.1)
@@ -125,8 +136,10 @@ ModalPopup {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
             text: popup.modifiyModal ?
-                      qsTr("Done") :
-                      qsTr("Add")
+                      //% "Done"
+                      qsTrId("done") :
+                      //% "Add"
+                      qsTrId("add")
             anchors.bottom: parent.bottom
             onClicked: {
                 if (!validate()) {

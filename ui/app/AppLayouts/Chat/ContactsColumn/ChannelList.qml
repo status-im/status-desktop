@@ -71,7 +71,8 @@ Item {
             color: Style.current.darkGrey
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("No search results")
+            //% "No search results"
+            text: qsTrId("no-search-results")
         }
     }
 

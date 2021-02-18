@@ -7,7 +7,8 @@ import "./"
 
 ModalPopup {
     id: popup
-    title: qsTr("Dapp permissions")
+    //% "Dapp permissions"
+    title: qsTrId("dapp-permissions")
 
     Component.onCompleted: profileModel.dappList.init()
     Component.onDestruction: profileModel.dappList.clearData()

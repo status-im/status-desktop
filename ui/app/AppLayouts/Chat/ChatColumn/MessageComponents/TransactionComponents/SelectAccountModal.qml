@@ -8,7 +8,8 @@ import "../../../../../../shared/status"
 
 ModalPopup {
     id: root
-    title: qsTr("Select account")
+    //% "Select account"
+    title: qsTrId("select-account")
     height: 284
     property alias accountSelector: selectFromAccount
     signal selectAndShareAddressButtonClicked()
@@ -23,7 +24,8 @@ ModalPopup {
           currency: walletModel.defaultCurrency
           width: parent.width
           //% "Choose account"
-          label: qsTr("Select account to share and receive assets")
+          //% "Select account to share and receive assets"
+          label: qsTrId("select-account-to-share-and-receive-assets")
       }
     }
 
@@ -35,7 +37,8 @@ ModalPopup {
         StatusButton {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
-            text: qsTr("Confirm and share address")
+            //% "Confirm and share address"
+            text: qsTrId("confirm-and-share-address")
             anchors.bottom: parent.bottom
             onClicked: root.selectAndShareAddressButtonClicked()
         }

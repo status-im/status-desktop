@@ -7,7 +7,8 @@ import "../../../../shared/status"
 
 ModalPopup {
     id: popup
-    title: qsTr("Fleet")
+    //% "Fleet"
+    title: qsTrId("fleet")
 
     property string newFleet: "";
     

@@ -17,7 +17,8 @@ ModalPopup {
     
         StyledText {
             id: groupName
-            text: qsTr("Members")
+            //% "Members"
+            text: qsTrId("members-title")
             anchors.top: parent.top
             anchors.topMargin: 2
             anchors.left: parent.left
@@ -39,7 +40,8 @@ ModalPopup {
 
     CommunityPopupButton {
         id: inviteBtn
-        label: qsTr("Invite People")
+        //% "Invite People"
+        label: qsTrId("invite-people")
         width: popup.width
         iconName: "invite"
         onClicked: openPopup(inviteFriendsPopup)
@@ -119,14 +121,16 @@ ModalPopup {
                             icon.source: "../../../img/communities/menu/view-profile.svg"
                             icon.width: 16
                             icon.height: 16
-                            text: qsTr("View Profile")
+                            //% "View Profile"
+                            text: qsTrId("view-profile")
                             onTriggered: openProfilePopup(model.userName, model.pubKey, model.identicon, '', contactRow.nickname)
                         }
                         Action {
                             icon.source: "../../../img/communities/menu/roles.svg"
                             icon.width: 16
                             icon.height: 16
-                            text: qsTr("Roles")
+                            //% "Roles"
+                            text: qsTrId("roles")
                             onTriggered: console.log("TODO")
                         }
                         Separator {}
@@ -135,7 +139,8 @@ ModalPopup {
                             icon.width: 16
                             icon.height: 16
                             icon.color: Style.current.red
-                            text: qsTr("Kick")
+                            //% "Kick"
+                            text: qsTrId("kick")
                             onTriggered: chatsModel.removeUserFromCommunity(model.pubKey)
                         }
                         Action {
@@ -143,7 +148,8 @@ ModalPopup {
                             icon.width: 16
                             icon.height: 16
                             icon.color: Style.current.red
-                            text: qsTr("Ban")
+                            //% "Ban"
+                            text: qsTrId("ban")
                             onTriggered: console.log("TODO")
                         }
                         Separator {}
@@ -152,7 +158,8 @@ ModalPopup {
                             icon.width: 16
                             icon.height: 16
                             icon.color: Style.current.red
-                            text: qsTr("Transfer ownership")
+                            //% "Transfer ownership"
+                            text: qsTrId("transfer-ownership")
                             onTriggered: console.log("TODO")
                         }
                     }

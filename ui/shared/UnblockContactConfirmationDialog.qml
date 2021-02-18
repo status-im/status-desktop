@@ -16,10 +16,12 @@ ModalPopup {
     
     signal unblockButtonClicked()
     
-    title: qsTr("Unblock User")
+    //% "Unblock User"
+    title: qsTrId("unblock-user")
 
     StyledText {
-        text: qsTr("Unblocking will allow new messages you received from %1 to reach you.").arg(contactName)
+        //% "Unblocking will allow new messages you received from %1 to reach you."
+        text: qsTrId("unblocking-will-allow-new-messages-you-received-from--1-to-reach-you-").arg(contactName)
         font.pixelSize: 15
         anchors.left: parent.left
         anchors.right: parent.right
@@ -36,7 +38,8 @@ ModalPopup {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
             type: "warn"
-            text: qsTr("Unblock User")
+            //% "Unblock User"
+            text: qsTrId("unblock-user")
             anchors.bottom: parent.bottom
             onClicked: unblockContactConfirmationDialog.unblockButtonClicked()
         }

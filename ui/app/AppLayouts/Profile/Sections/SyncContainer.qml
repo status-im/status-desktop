@@ -55,7 +55,8 @@ Item {
                 
         StyledText {
             id: usernameText
-            text: qsTr("Add mailserver")
+            //% "Add mailserver"
+            text: qsTrId("add-mailserver")
             color: Style.current.blue
             anchors.left: addButton.right
             anchors.leftMargin: Style.current.padding
@@ -71,7 +72,8 @@ Item {
 
         ModalPopup {
             id: addMailserverPopup
-            title: qsTr("Add mailserver")
+            //% "Add mailserver"
+            title: qsTrId("add-mailserver")
 
             property string nameValidationError: ""
             property string enodeValidationError: ""
@@ -81,11 +83,13 @@ Item {
                 enodeValidationError = ""
                 
                 if (nameInput.text === "") {
-                    nameValidationError = qsTr("You need to enter a name")
+                    //% "You need to enter a name"
+                    nameValidationError = qsTrId("you-need-to-enter-a-name")
                 }
 
                 if (enodeInput.text === "") {
-                    enodeValidationError = qsTr("You need to enter the enode address")
+                    //% "You need to enter the enode address"
+                    enodeValidationError = qsTrId("you-need-to-enter-the-enode-address")
                 }
                 return !nameValidationError && !enodeValidationError
             }
@@ -101,7 +105,8 @@ Item {
             footer: StatusButton {
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.smallPadding
-                text: qsTr("Save")
+                //% "Save"
+                text: qsTrId("save")
                 anchors.bottom: parent.bottom
                 enabled: nameInput.text !== "" && enodeInput.text !== ""
                 onClicked: {
@@ -115,15 +120,19 @@ Item {
 
             Input {
                 id: nameInput
-                label: qsTr("Name")
-                placeholderText: qsTr("Specify a name")
+                //% "Name"
+                label: qsTrId("name")
+                //% "Specify a name"
+                placeholderText: qsTrId("specify-name")
                 validationError: addMailserverPopup.nameValidationError
             }
 
             Input {
                 id: enodeInput
-                label: qsTr("History node address")
-                placeholderText: qsTr("enode://{enode-id}:{password}@{ip-address}:{port-number}")
+                //% "History node address"
+                label: qsTrId("history-node-address")
+                //% "enode://{enode-id}:{password}@{ip-address}:{port-number}"
+                placeholderText: qsTrId("enode----enode-id---password---ip-address---port-number-")
                 validationError: addMailserverPopup.enodeValidationError
                 anchors.top: nameInput.bottom
                 anchors.topMargin: Style.current.bigPadding
@@ -134,7 +143,8 @@ Item {
 
     StyledText {
         id: switchLbl
-        text: qsTr("Automatic mailserver selection")
+        //% "Automatic mailserver selection"
+        text: qsTrId("automatic-mailserver-selection")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: addMailserver.bottom
@@ -153,7 +163,8 @@ Item {
     }
 
     StyledText {
-        text: profileModel.mailservers.activeMailserver || qsTr("...")
+        //% "..."
+        text: profileModel.mailservers.activeMailserver || qsTrId("---")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: switchLbl.bottom

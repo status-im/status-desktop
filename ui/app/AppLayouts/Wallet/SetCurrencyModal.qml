@@ -17,7 +17,8 @@ ModalPopup {
         setCurrencyModalContent.currency = defaultCurrency
     }
 
-    title: qsTr("Set Currency")
+    //% "Set Currency"
+    title: qsTrId("set-currency")
 
     SetCurrencyModalContent {
         id: setCurrencyModalContent

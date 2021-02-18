@@ -9,7 +9,8 @@ ModalPopup {
     property var onConfirmSeedClick: function () {}
     property alias error: errorText.text
     id: popup
-    title: qsTr("Enter seed phrase")
+    //% "Enter seed phrase"
+    title: qsTrId("enter-seed-phrase")
     height: 400
 
     onOpened: {
@@ -30,7 +31,8 @@ ModalPopup {
         verticalAlignment: TextEdit.AlignVCenter
         font.pixelSize: 15
         font.weight: Font.DemiBold
-        placeholderText: qsTr("Start with the first word")
+        //% "Start with the first word"
+        placeholderText: qsTrId("start-with-the-first-word")
         placeholderTextColor: Style.current.secondaryText
         selectByMouse: true
         selectByKeyboard: true

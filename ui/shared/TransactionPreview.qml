@@ -124,7 +124,8 @@ Item {
                     when: !!root.toAccount && root.toAccount.type === RecipientSelector.Type.Address
                     PropertyChanges {
                         target: txtToPrimary
-                        text: (!!root.toAccount && root.toAccount.address) ? root.toAccount.address : qsTr("Unknown")
+                        //% "Unknown"
+                        text: (!!root.toAccount && root.toAccount.address) ? root.toAccount.address : qsTrId("active-unknown")
                         elide: Text.ElideMiddle
                         anchors.leftMargin: 190
                         anchors.right: parent.right
@@ -463,7 +464,8 @@ Item {
         }
         LabelValueRow {
             id: itmData
-            label: qsTr("Data")
+            //% "Data"
+            label: qsTrId("data")
             visible: trxData !== "0x" && trxData !== ""
             value: Item {
                 id: dataRoot
@@ -503,7 +505,8 @@ Item {
 
                 ModalPopup {
                     id: dataPopup
-                    title: qsTr("Data field")
+                    //% "Data field"
+                    title: qsTrId("data-field")
                     height: 286
                     width: 400
                     Item {

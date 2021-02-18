@@ -37,7 +37,8 @@ Item {
         { text: qsTrId("address"), value: RecipientSelector.Type.Address, visible: true },
         //% "My account"
         { text: qsTrId("my-account"), value: RecipientSelector.Type.Account, visible: true },
-        { text: qsTr("Contact"), value: RecipientSelector.Type.Contact, visible: true }
+        //% "Contact"
+        { text: qsTrId("chat-is-a-contact"), value: RecipientSelector.Type.Contact, visible: true }
     ]
     property var selectedType: RecipientSelector.Type.Address
     

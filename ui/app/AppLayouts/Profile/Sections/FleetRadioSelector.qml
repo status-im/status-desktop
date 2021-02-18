@@ -11,8 +11,10 @@ RowLayout {
 
     ConfirmationDialog {
         id: confirmDialog
-        title: qsTr("Warning!")
-        confirmationText: qsTr("Change fleet to %1").arg(newFleet)
+        //% "Warning!"
+        title: qsTrId("close-app-title")
+        //% "Change fleet to %1"
+        confirmationText: qsTrId("change-fleet-to--1").arg(newFleet)
         onConfirmButtonClicked: profileModel.fleets.setFleet(newFleet)
         onClosed: profileModel.fleets.triggerFleetChange()
     }

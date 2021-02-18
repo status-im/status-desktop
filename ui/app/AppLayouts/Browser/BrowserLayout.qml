@@ -91,7 +91,8 @@ Rectangle {
 
     property MessageDialog signingError: MessageDialog {
         id: signingError
-        title: qsTr("Error signing message")
+        //% "Error signing message"
+        title: qsTrId("error-signing-message")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }
@@ -444,9 +445,11 @@ Rectangle {
                 }
 
                 if (createAsStartPage) {
-                    return qsTr("Start Page")
+                    //% "Start Page"
+                    return qsTrId("start-page")
                 }
-                return qsTr("New Tab")
+                //% "New Tab"
+                return qsTrId("new-tab")
             })
 
             tab.item.profile = profile;
@@ -459,7 +462,8 @@ Rectangle {
         function createDownloadTab(profile) {
             var tab = addTab("", tabComponent);
             tab.active = true;
-            tab.title = qsTr("Downloads Page")
+            //% "Downloads Page"
+            tab.title = qsTrId("downloads-page")
             tab.item.profile = profile
             tab.item.url = "status://downloads";
         }
@@ -727,9 +731,12 @@ Rectangle {
         property var certErrors: []
         icon: StandardIcon.Warning
         standardButtons: StandardButton.No | StandardButton.Yes
-        title: qsTr("Server's certificate not trusted")
-        text: qsTr("Do you wish to continue?")
-        detailedText: qsTr("If you wish so, you may continue with an unverified certificate. Accepting an unverified certificate means you may not be connected with the host you tried to connect to.\nDo you wish to override the security check and continue?")
+        //% "Server's certificate not trusted"
+        title: qsTrId("server-s-certificate-not-trusted")
+        //% "Do you wish to continue?"
+        text: qsTrId("do-you-wish-to-continue-")
+        //% "If you wish so, you may continue with an unverified certificate. Accepting an unverified certificate means you may not be connected with the host you tried to connect to.\nDo you wish to override the security check and continue?"
+        detailedText: qsTrId("if-you-wish-so--you-may-continue-with-an-unverified-certificate--accepting-an-unverified-certificate-means-you-may-not-be-connected-with-the-host-you-tried-to-connect-to--ndo-you-wish-to-override-the-security-check-and-continue-")
         onYes: {
             certErrors.shift().ignoreCertificateError();
             presentError();

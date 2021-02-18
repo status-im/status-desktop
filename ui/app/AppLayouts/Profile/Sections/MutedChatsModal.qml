@@ -8,7 +8,8 @@ import "../../../../shared/status"
 
 ModalPopup {
     id: root
-    title: qsTr("Muted chats")
+    //% "Muted chats"
+    title: qsTrId("muted-chats")
     property bool showMutedContacts: false
 
     onClosed: {
@@ -57,7 +58,8 @@ ModalPopup {
                 type: "secondary"
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                text: qsTr("Unmute")
+                //% "Unmute"
+                text: qsTrId("unmute")
                 onClicked: {
                     profileModel.unmuteChannel(model.id)
                 }

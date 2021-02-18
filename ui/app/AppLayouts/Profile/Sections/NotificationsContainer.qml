@@ -101,7 +101,8 @@ ScrollView {
 
         StatusSectionHeadline {
             id: sectionHeadlineSound
-            text: qsTr("Appearance")
+            //% "Appearance"
+            text: qsTrId("appearance")
             anchors.top: separator.bottom
             anchors.left: parent.left
             anchors.right: parent.right
@@ -126,7 +127,8 @@ ScrollView {
             }
 
             StatusSettingsLineButton {
-                text: qsTr("Use your operating system's notifications")
+                //% "Use your operating system's notifications"
+                text: qsTrId("use-your-operating-system-s-notifications")
                 isSwitch: true
                 switchChecked: appSettings.useOSNotifications
                 onClicked: {
@@ -135,7 +137,8 @@ ScrollView {
 
                 StyledText {
                     id: detailText
-                    text: qsTr("Setting this to false will instead use Status' notification style as seen below")
+                    //% "Setting this to false will instead use Status' notification style as seen below"
+                    text: qsTrId("setting-this-to-false-will-instead-use-status--notification-style-as-seen-below")
                     color: Style.current.secondaryText
                     width: parent.width
                     font.pixelSize: 12
@@ -174,7 +177,8 @@ ScrollView {
                     //% "Anonymous"
                     name: qsTrId("anonymous")
                     notificationTitle: "Status"
-                    notificationMessage: qsTr("You have a new message")
+                    //% "You have a new message"
+                    notificationMessage: qsTrId("you-have-a-new-message")
                     buttonGroup: messageSetting
                     checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous
                     onRadioCheckedChanged: {
@@ -188,7 +192,8 @@ ScrollView {
                     //% "Name only"
                     name: qsTrId("name-only")
                     notificationTitle: "Vitalik Buterin"
-                    notificationMessage: qsTr("You have a new message")
+                    //% "You have a new message"
+                    notificationMessage: qsTrId("you-have-a-new-message")
                     buttonGroup: messageSetting
                     checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameOnly
                     onRadioCheckedChanged: {
@@ -202,7 +207,8 @@ ScrollView {
                     //% "Name & Message"
                     name: qsTrId("name---message")
                     notificationTitle: "Vitalik Buterin"
-                    notificationMessage: qsTr("Hi there! Yes, no problem, let me know if I can help.")
+                    //% "Hi there! Yes, no problem, let me know if I can help."
+                    notificationMessage: qsTrId("hi-there--yes--no-problem--let-me-know-if-i-can-help-")
                     buttonGroup: messageSetting
                     checked: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameAndMessage
                     onRadioCheckedChanged: {
@@ -261,13 +267,15 @@ ScrollView {
             StatusSettingsLineButton {
                 //% "Muted users"
                 text: qsTrId("muted-users")
-                currentValue: profileModel.mutedContacts.rowCount() > 0 ? profileModel.mutedContacts.rowCount() : qsTr("None")
+                //% "None"
+                currentValue: profileModel.mutedContacts.rowCount() > 0 ? profileModel.mutedContacts.rowCount() : qsTrId("none")
                 isSwitch: false
                 onClicked: {
                     const mutedChatsModal = notificationsContainer.mutedChatsModalComponent.createObject(notificationsContainer, {
                         showMutedContacts: true
                     })
-                    mutedChatsModal.title = qsTr("Muted contacts")
+                    //% "Muted contacts"
+                    mutedChatsModal.title = qsTrId("muted-contacts")
                     mutedChatsModal.open()
                 }
             }
@@ -275,13 +283,15 @@ ScrollView {
             StatusSettingsLineButton {
                 //% "Muted chats"
                 text: qsTrId("muted-chats")
-                currentValue: profileModel.mutedChats.rowCount() > 0 ? profileModel.mutedChats.rowCount() : qsTr("None")
+                //% "None"
+                currentValue: profileModel.mutedChats.rowCount() > 0 ? profileModel.mutedChats.rowCount() : qsTrId("none")
                 isSwitch: false
                 onClicked: {
                     const mutedChatsModal = notificationsContainer.mutedChatsModalComponent.createObject(notificationsContainer, {
                         showMutedContacts: false
                     })
-                    mutedChatsModal.title = qsTr("Muted chats")
+                    //% "Muted chats"
+                    mutedChatsModal.title = qsTrId("muted-chats")
                     mutedChatsModal.open()
                 }
 
@@ -320,7 +330,8 @@ ScrollView {
             width: parent.width
 
             StyledText {
-                text: qsTr("Reset notification settings")
+                //% "Reset notification settings"
+                text: qsTrId("reset-notification-settings")
                 font.pixelSize: 15
                 color: Style.current.danger
                 MouseArea {

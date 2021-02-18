@@ -269,8 +269,10 @@ StackLayout {
                 }
                 enabled: !isBlocked
                 chatInputPlaceholder: isBlocked ?
-                        qsTr("This user has been blocked.") :
-                        qsTr("Type a message.")
+                        //% "This user has been blocked."
+                        qsTrId("this-user-has-been-blocked-") :
+                        //% "Type a message."
+                        qsTrId("type-a-message-")
                 anchors.bottom: parent.bottom
                 recentStickers: chatsModel.stickers.recent
                 stickerPackList: chatsModel.stickers.stickerPacks

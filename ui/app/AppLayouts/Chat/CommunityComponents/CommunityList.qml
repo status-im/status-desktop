@@ -40,7 +40,8 @@ Item {
             color: Style.current.darkGrey
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("No search results in Communities")
+            //% "No search results in Communities"
+            text: qsTrId("no-search-results-in-communities")
         }
     }
 }

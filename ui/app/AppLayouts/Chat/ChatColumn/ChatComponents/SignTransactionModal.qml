@@ -66,11 +66,13 @@ ModalPopup {
                 if(trxData.startsWith("0x095ea7b3")){
                     const approveData = JSON.parse(walletModel.decodeTokenApproval(selectedRecipient.address, trxData))
                     if(approveData.symbol)
-                        return qsTr("Authorize %1 %2").arg(approveData.amount).arg(approveData.symbol)    
+                        //% "Authorize %1 %2"
+                        return qsTrId("authorize--1--2").arg(approveData.amount).arg(approveData.symbol)    
                 }
                 return qsTrId("command-button-send");
             }
-            footerText: qsTr("Continue")
+            //% "Continue"
+            footerText: qsTrId("continue")
             showNextBtn: false
             onBackClicked: function() {
                 if(validate()) {
@@ -100,7 +102,8 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: groupSelectGas
-            headerText: qsTr("Network fee")
+            //% "Network fee"
+            headerText: qsTrId("network-fee")
             //% "Preview"
             footerText: qsTrId("preview")
             showNextBtn: false
@@ -137,7 +140,8 @@ ModalPopup {
                         //% "Error estimating gas: %1"
                         let message = qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message)
                         console.warn(message)
-                        gasEstimateErrorPopup.confirmationText = message + qsTr(". The transaction will probably fail.")
+                        //% ". The transaction will probably fail."
+                        gasEstimateErrorPopup.confirmationText = message + qsTrId("--the-transaction-will-probably-fail-")
                         gasEstimateErrorPopup.open()
                         return
                     }

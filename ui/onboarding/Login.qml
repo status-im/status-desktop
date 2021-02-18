@@ -194,7 +194,8 @@ Item {
             anchors.topMargin: Style.current.smallPadding
             anchors.horizontalCenter: parent.horizontalCenter
             visible: false
-            text: qsTr("Login failed. Please re-enter your password and try again.")
+            //% "Login failed. Please re-enter your password and try again."
+            text: qsTrId("login-failed--please-re-enter-your-password-and-try-again-")
             font.pixelSize: 13
             color: Style.current.danger
         }

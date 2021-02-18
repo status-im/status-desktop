@@ -62,7 +62,8 @@ Item {
         }
 
         StatusSettingsLineButton {
-            text: qsTr("Display all profile pictures (not only contacts)")
+            //% "Display all profile pictures (not only contacts)"
+            text: qsTrId("display-all-profile-pictures--not-only-contacts-")
             isSwitch: true
             switchChecked: !appSettings.onlyShowContactsProfilePics
             onClicked: appSettings.onlyShowContactsProfilePics = !checked
@@ -77,7 +78,8 @@ Item {
         }
         StyledText {
             width: parent.width
-            text: qsTr("All images (links that contain an image extension) will be downloaded and displayed, regardless of the whitelist settings below")
+            //% "All images (links that contain an image extension) will be downloaded and displayed, regardless of the whitelist settings below"
+            text: qsTrId("all-images--links-that-contain-an-image-extension--will-be-downloaded-and-displayed--regardless-of-the-whitelist-settings-below")
             font.pixelSize: 15
             font.weight: Font.Thin
             color: Style.current.secondaryText
@@ -86,7 +88,8 @@ Item {
         }
 
         StatusSettingsLineButton {
-            text: qsTr("Chat link previews")
+            //% "Chat link previews"
+            text: qsTrId("chat-link-previews")
             onClicked: openPopup(chatLinksPreviewModal)
         }
 
@@ -101,8 +104,10 @@ Item {
         }
 
         StatusSettingsLineButton {
-            text: qsTr("Open links with...")
-            currentValue: appSettings.openLinksInStatus ? "Status" : qsTr("My default browser")
+            //% "Open links with..."
+            text: qsTrId("open-links-with---")
+            //% "My default browser"
+            currentValue: appSettings.openLinksInStatus ? "Status" : qsTrId("my-default-browser")
             onClicked: openPopup(openLinksWithModal)
         }
     }

@@ -81,8 +81,10 @@ Column {
             wrapMode: Text.Wrap
             text: {
                 switch(chatsModel.activeChannel.chatType) {
-                    case Constants.chatTypePrivateGroupChat: return qsTr(`Welcome to the beginning of the <span style="color: ${Style.current.textColor}">%1</span> group!`).arg(chatsModel.activeChannel.name);
-                    case Constants.chatTypeOneToOne: return qsTr(`Any messages you send here are encrypted and can only be read by you and <span style="color: ${Style.current.textColor}">%1</span>`).arg(Utils.removeStatusEns(chatsModel.activeChannel.name))
+                    //% "Welcome to the beginning of the <span style='color: %1'>%2</span> group!"
+                    case Constants.chatTypePrivateGroupChat: return qsTrId("welcome-to-the-beginning-of-the--span-style--color---1---2--span--group-").arg(Style.current.textColor).arg(chatsModel.activeChannel.name);
+                    //% "Any messages you send here are encrypted and can only be read by you and <span style='color: %1'>%2</span>"
+                    case Constants.chatTypeOneToOne: return qsTrId("any-messages-you-send-here-are-encrypted-and-can-only-be-read-by-you-and--span-style--color---1---2--span-").arg(Style.current.textColor).arg(Utils.removeStatusEns(chatsModel.activeChannel.name))
                     default: return "";
                 }
             }

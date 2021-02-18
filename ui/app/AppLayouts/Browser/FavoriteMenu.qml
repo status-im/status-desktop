@@ -16,7 +16,8 @@ PopupMenu {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
     Action {
-        text: qsTr("Open in new Tab")
+        //% "Open in new Tab"
+        text: qsTrId("open-in-new-tab")
         icon.source: "../../img/generate_account.svg"
         icon.width: 16
         icon.height: 16
@@ -28,7 +29,8 @@ PopupMenu {
     Separator {}
 
     Action {
-        text: qsTr("Edit")
+        //% "Edit"
+        text: qsTrId("edit")
         icon.source: "../../img/edit.svg"
         icon.width: 16
         icon.height: 16
@@ -41,7 +43,8 @@ PopupMenu {
     }
 
     Action {
-        text: qsTr("Remove")
+        //% "Remove"
+        text: qsTrId("remove")
         icon.source: "../../img/remove.svg"
         icon.color: Style.current.danger
         icon.width: 16

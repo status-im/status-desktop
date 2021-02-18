@@ -20,7 +20,8 @@ Item {
             anchors.fill: parent
             StyledText {
                 id: selectedTextField
-                text: !!root.selectedSource ? root.selectedSource.text : qsTr("Invalid source")
+                //% "Invalid source"
+                text: !!root.selectedSource ? root.selectedSource.text : qsTrId("invalid-source")
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter

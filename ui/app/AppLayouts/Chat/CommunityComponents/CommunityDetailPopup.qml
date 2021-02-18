@@ -44,10 +44,14 @@ ModalPopup {
             // TODO get this from access property
             text: {
                 switch(access) {
-                case Constants.communityChatPublicAccess: return qsTr("Public community");
-                case Constants.communityChatInvitationOnlyAccess: return qsTr("Invitation only community");
-                case Constants.communityChatOnRequestAccess: return qsTr("On request community");
-                default: return qsTr("Unknown community");
+                //% "Public community"
+                case Constants.communityChatPublicAccess: return qsTrId("public-community");
+                //% "Invitation only community"
+                case Constants.communityChatInvitationOnlyAccess: return qsTrId("invitation-only-community");
+                //% "On request community"
+                case Constants.communityChatOnRequestAccess: return qsTrId("on-request-community");
+                //% "Unknown community"
+                default: return qsTrId("unknown-community");
                 }
             }
             anchors.left: communityName.left
@@ -85,8 +89,10 @@ ModalPopup {
 
         StyledText {
             text: nbMembers === 1 ? 
-                  qsTr("1 member") : 
-                  qsTr("%1 members").arg(popup.nbMembers)
+                  //% "1 member"
+                  qsTrId("1-member") : 
+                  //% "%1 members"
+                  qsTrId("-1-members").arg(popup.nbMembers)
             wrapMode: Text.WrapAnywhere
             width: parent.width
             anchors.left: memberImage.right
@@ -109,7 +115,8 @@ ModalPopup {
 
     StyledText {
         id: chatsTitle
-        text: qsTr("Chats")
+        //% "Chats"
+        text: qsTrId("chats")
         anchors.top: sep1.bottom
         anchors.topMargin: Style.current.bigPadding
         font.pixelSize: 15
@@ -161,7 +168,8 @@ ModalPopup {
         }
 
         StatusButton {
-            text: qsTr("Join ‘%1’").arg(popup.name)
+            //% "Join ‘%1’"
+            text: qsTrId("join---1-").arg(popup.name)
             anchors.right: parent.right
             onClicked: {
                 const error = chatsModel.joinCommunity(popup.communityId)
@@ -177,7 +185,8 @@ ModalPopup {
 
         MessageDialog {
             id: joiningError
-            title: qsTr("Error joining the community")
+            //% "Error joining the community"
+            title: qsTrId("error-joining-the-community")
             icon: StandardIcon.Critical
             standardButtons: StandardButton.Ok
         }

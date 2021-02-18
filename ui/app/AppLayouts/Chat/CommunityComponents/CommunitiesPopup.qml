@@ -15,11 +15,13 @@ ModalPopup {
         searchBox.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    title: qsTr("Communities")
+    //% "Communities"
+    title: qsTrId("communities")
 
     SearchBox {
         id: searchBox
-        placeholderText: qsTr("Search for communities or topics")
+        //% "Search for communities or topics"
+        placeholderText: qsTrId("search-for-communities-or-topics")
         iconWidth: 17
         iconHeight: 17
         customHeight: 36
@@ -99,8 +101,10 @@ ModalPopup {
                 StyledText {
                     id: communityMembers
                     text: nbMembers === 1 ? 
-                          qsTr("1 member") : 
-                          qsTr("%1 members").arg(nbMembers)
+                          //% "1 member"
+                          qsTrId("1-member") : 
+                          //% "%1 members"
+                          qsTrId("-1-members").arg(nbMembers)
                     anchors.left: communityDesc.left
                     anchors.right: parent.right
                     anchors.top: communityDesc.bottom
@@ -132,7 +136,8 @@ ModalPopup {
 
         StatusButton {
             id: importBtn
-            text: qsTr("Import a community")
+            //% "Import a community"
+            text: qsTrId("import-community")
             anchors.right: createBtn.left
             anchors.rightMargin: Style.current.smallPadding
             onClicked: {
@@ -143,7 +148,8 @@ ModalPopup {
 
         StatusButton {
             id: createBtn
-            text: qsTr("Create a community")
+            //% "Create a community"
+            text: qsTrId("create-community")
             anchors.right: parent.right
             onClicked: {
                 openPopup(createCommunitiesPopupComponent)

@@ -60,9 +60,12 @@ Popup {
             id: networkText
             text: {
                 switch (profileModel.network.current) {
-                case Constants.networkMainnet: return qsTr("Mainnet");
-                case Constants.networkRopsten: return qsTr("Ropsten");
-                default: return qsTr("Unknown")
+                //% "Mainnet"
+                case Constants.networkMainnet: return qsTrId("mainnet");
+                //% "Ropsten"
+                case Constants.networkRopsten: return qsTrId("ropsten");
+                //% "Unknown"
+                default: return qsTrId("active-unknown")
                 }
             }
             font.pixelSize: 15
@@ -73,7 +76,8 @@ Popup {
 
         StyledText {
             id: disconectBtn
-            text: qsTr("Disconnect")
+            //% "Disconnect"
+            text: qsTrId("disconnect")
             font.pixelSize: 15
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right

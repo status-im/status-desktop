@@ -21,13 +21,15 @@ Item {
         anchors.rightMargin: contentMargin
 
         StatusSettingsLineButton {
-            text: qsTr("Network")
+            //% "Network"
+            text: qsTrId("network")
             currentValue: utilsModel.getNetworkName()
             onClicked: networksModal.open()
         }
 
         StatusSettingsLineButton {
-            text: qsTr("Fleet")
+            //% "Fleet"
+            text: qsTrId("fleet")
             currentValue: profileModel.fleets.fleet
             onClicked: fleetModal.open()
         }
@@ -47,13 +49,15 @@ Item {
         }
 
         StatusSectionHeadline {
-            text: qsTr("Experimental features")
+            //% "Experimental features"
+            text: qsTrId("experimental-features")
             topPadding: Style.current.bigPadding
             bottomPadding: Style.current.padding
         }
 
         StatusSettingsLineButton {
-            text: qsTr("Wallet")
+            //% "Wallet"
+            text: qsTrId("wallet")
             isSwitch: true
             switchChecked: appSettings.walletEnabled
             onClicked: function (checked) {
@@ -62,7 +66,8 @@ Item {
         }
 
         StatusSettingsLineButton {
-            text: qsTr("Dapp Browser")
+            //% "Dapp Browser"
+            text: qsTrId("dapp-browser")
             isSwitch: true
             switchChecked: appSettings.browserEnabled
             onClicked: function (checked) {
@@ -71,7 +76,8 @@ Item {
         }
 
         StatusSettingsLineButton {
-            text: qsTr("Communities")
+            //% "Communities"
+            text: qsTrId("communities")
             isSwitch: true
             switchChecked: appSettings.communitiesEnabled
             onClicked: function (checked) {
@@ -80,7 +86,8 @@ Item {
         }
 
         StatusSettingsLineButton {
-            text: qsTr("Node Management")
+            //% "Node Management"
+            text: qsTrId("node-management")
             isSwitch: true
             switchChecked: appSettings.nodeManagementEnabled
             onClicked: function (checked) {

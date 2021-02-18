@@ -88,7 +88,9 @@ Popup {
 
     StyledText {
         id: linkText
-        text: qsTr(`<a href="%1" style="color:${Style.current.textColorTertiary};text-decoration:none;">%2</a>`)
+        //% "<a href='%1' style='color:%2;text-decoration:none;'>%3</a>"
+        text: qsTrId("-a-href---1--style--color--2-text-decoration-none----3--a-")
+            .arg(Style.current.textColorTertiary)
             .arg(root.link)
             .arg(root.linkText)
         color: Style.current.textColorTertiary

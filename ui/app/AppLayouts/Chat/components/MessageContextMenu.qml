@@ -125,7 +125,7 @@ PopupMenu {
 
     Action {
         id: viewProfileAction
-        //% "View profile"
+        //% "View Profile"
         text: qsTrId("view-profile")
         onTriggered: {
             openProfilePopup(userName, fromAuthor, identicon, "", nickname);

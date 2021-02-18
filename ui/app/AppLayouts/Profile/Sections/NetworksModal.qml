@@ -7,7 +7,8 @@ import "../../../../shared/status"
 
 ModalPopup {
     id: popup
-    title: qsTr("Network")
+    //% "Network"
+    title: qsTrId("network")
 
     property string newNetwork: "";
  
@@ -45,7 +46,8 @@ ModalPopup {
 
                 StyledText {
                     id: usernameText
-                    text: qsTr("Add network")
+                    //% "Add network"
+                    text: qsTrId("add-network")
                     color: Style.current.blue
                     anchors.left: addButton.right
                     anchors.leftMargin: Style.current.padding
@@ -61,7 +63,8 @@ ModalPopup {
 
                 ModalPopup {
                     id: addNetworkPopup
-                    title: qsTr("Add network")
+                    //% "Add network"
+                    title: qsTrId("add-network")
                     height: 650
 
                     property string nameValidationError: ""
@@ -76,22 +79,28 @@ ModalPopup {
                         networkValidationError = "";
 
                         if (nameInput.text === "") {
-                            nameValidationError = qsTr("You need to enter a name")
+                            //% "You need to enter a name"
+                            nameValidationError = qsTrId("you-need-to-enter-a-name")
                         }
 
                         if (rpcInput.text === "") {
-                            rpcValidationError = qsTr("You need to enter the RPC endpoint URL")
+                            //% "You need to enter the RPC endpoint URL"
+                            rpcValidationError = qsTrId("you-need-to-enter-the-rpc-endpoint-url")
                         } else if(!Utils.isURL(rpcInput.text)) {
-                            rpcValidationError = qsTr("Invalid URL")
+                            //% "Invalid URL"
+                            rpcValidationError = qsTrId("invalid-url")
                         }
 
                         if (customRadioBtn.checked) {
                             if (networkInput.text === "") {
-                                networkValidationError = qsTr("You need to enter the network id")
+                                //% "You need to enter the network id"
+                                networkValidationError = qsTrId("you-need-to-enter-the-network-id")
                             } else if (isNaN(networkInput.text)){
-                                networkValidationError = qsTr("Should be a number");
+                                //% "Should be a number"
+                                networkValidationError = qsTrId("should-be-a-number");
                             } else if (parseInt(networkInput.text, 10) <= 4){
-                                networkValidationError = qsTr("Invalid network id");
+                                //% "Invalid network id"
+                                networkValidationError = qsTrId("invalid-network-id");
                             }
                         }
                         return !nameValidationError && !rpcValidationError && !networkValidationError
@@ -113,7 +122,8 @@ ModalPopup {
                     footer: StatusButton {
                         anchors.right: parent.right
                         anchors.rightMargin: Style.current.smallPadding
-                        text: qsTr("Save")
+                        //% "Save"
+                        text: qsTrId("save")
                         anchors.bottom: parent.bottom
                         enabled: nameInput.text !== "" && rpcInput.text !== ""
                         onClicked: {
@@ -133,15 +143,19 @@ ModalPopup {
 
                     Input {
                         id: nameInput
-                        label: qsTr("Name")
-                        placeholderText: qsTr("Specify a name")
+                        //% "Name"
+                        label: qsTrId("name")
+                        //% "Specify a name"
+                        placeholderText: qsTrId("specify-name")
                         validationError: addNetworkPopup.nameValidationError
                     }
 
                     Input {
                         id: rpcInput
-                        label: qsTr("RPC URL")
-                        placeholderText: qsTr("Specify a RPC URL")
+                        //% "RPC URL"
+                        label: qsTrId("rpc-url")
+                        //% "Specify a RPC URL"
+                        placeholderText: qsTrId("specify-rpc-url")
                         validationError: addNetworkPopup.rpcValidationError
                         anchors.top: nameInput.bottom
                         anchors.topMargin: Style.current.bigPadding
@@ -149,7 +163,8 @@ ModalPopup {
 
                     StatusSectionHeadline {
                         id: networkChainHeadline
-                        text: qsTr("Network chain")
+                        //% "Network chain"
+                        text: qsTrId("network-chain")
                         anchors.top: rpcInput.bottom
                         anchors.topMargin: Style.current.bigPadding
                     }
@@ -164,7 +179,8 @@ ModalPopup {
                         RowLayout {
                             width: parent.width
                             StyledText {
-                                text: qsTr("Main network")
+                                //% "Main network"
+                                text: qsTrId("mainnet-network")
                                 font.pixelSize: 15
                             }
 
@@ -184,7 +200,8 @@ ModalPopup {
                         RowLayout {
                             width: parent.width
                             StyledText {
-                                text: qsTr("Ropsten test network")
+                                //% "Ropsten test network"
+                                text: qsTrId("ropsten-network")
                                 font.pixelSize: 15
                             }
                             StatusRadioButton {
@@ -202,7 +219,8 @@ ModalPopup {
                         RowLayout {
                             width: parent.width
                             StyledText {
-                                text: qsTr("Rinkeby test network")
+                                //% "Rinkeby test network"
+                                text: qsTrId("rinkeby-network")
                                 font.pixelSize: 15
                             }
                             StatusRadioButton {
@@ -220,7 +238,8 @@ ModalPopup {
                         RowLayout {
                             width: parent.width
                             StyledText {
-                                text: qsTr("Custom")
+                                //% "Custom"
+                                text: qsTrId("custom")
                                 font.pixelSize: 15
                             }
                             StatusRadioButton {
@@ -237,8 +256,10 @@ ModalPopup {
                         Input {
                             id: networkInput
                             visible: customRadioBtn.checked
-                            label: qsTr("Network Id")
-                            placeholderText: qsTr("Specify the network id")
+                            //% "Network Id"
+                            label: qsTrId("network-id")
+                            //% "Specify the network id"
+                            placeholderText: qsTrId("specify-the-network-id")
                             validationError: addNetworkPopup.networkValidationError
                         }
                     }
@@ -246,7 +267,8 @@ ModalPopup {
             }
 
             StatusSectionHeadline {
-                text: qsTr("Main networks")
+                //% "Main networks"
+                text: qsTrId("main-networks")
             }
 
             NetworkRadioSelector {
@@ -262,7 +284,8 @@ ModalPopup {
             }
 
             StatusSectionHeadline {
-                text: qsTr("Test networks")
+                //% "Test networks"
+                text: qsTrId("test-networks")
             }
 
             NetworkRadioSelector {
@@ -278,7 +301,8 @@ ModalPopup {
             }
 
             StatusSectionHeadline {
-                text: qsTr("Custom Networks")
+                //% "Custom Networks"
+                text: qsTrId("custom-networks")
             }
 
             Repeater {
