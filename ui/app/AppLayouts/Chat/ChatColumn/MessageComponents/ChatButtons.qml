@@ -14,7 +14,7 @@ Rectangle {
     width: buttonRow.width + buttonsContainer.containerMargin * 2
     height: 36
     radius: Style.current.radius
-    color: Style.current.background
+    color: Style.current.modalBackground
     z: 52
 
     layer.enabled: true

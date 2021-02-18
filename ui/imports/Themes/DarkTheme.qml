@@ -7,38 +7,39 @@ Theme {
     property color black: "#000000"
     property color almostBlack: "#141414"
     property color grey: "#EEF2F5"
-    property color lightGrey: "#ccd0d4"
+    property color lightGrey: "#7A7A7A"
+    property color darkGrey: "#373737"
+    property color evenDarkerGrey: "#4b4b4b"
     property color lightBlue: "#ECEFFC"
     property color cyan: "#00FFFF"
-    property color blue: "#758EF0"
+    property color blue: "#88B0FF"
     property color darkAccentBlue: "#2946C4"
     property color transparent: "#00000000"
-    property color darkGrey: "#838C91"
-    property color evenDarkerGrey: "#252528"
     property color lightBlueText: "#8f9fec"
     property color darkBlue: "#3c55c9"
     property color darkBlueBtn: "#5a70dd"
-    property color red: "#FC5F5F"
+    property color red: "#FF5C7B"
     property color lightRed: "#FFEAEE"
     property color green: "#4EBC60"
     property color turquoise: "#007b7d"
     property color tenPercentWhite: Qt.rgba(255, 255, 255, 0.1)
     property color tenPercentBlue: Qt.rgba(67, 96, 223, 0.1)
 
-    property color background: almostBlack
-    property color border: evenDarkerGrey
+    property color background: "#212121"
+    property color border: darkGrey
     property color borderSecondary: tenPercentWhite
     property color borderTertiary: blue
     property color textColor: white
     property color textColorTertiary: blue
     property color currentUserTextColor: white
-    property color secondaryBackground: "#23252F"
-    property color inputBackground: secondaryBackground
+    property color secondaryBackground: "#353a4d"
+    property color inputBackground: darkGrey
     property color inputBorderFocus: blue
-    property color inputColor: darkGrey
-    property color modalBackground: background
+    property color inputColor: textColor
+    property color modalBackground: darkGrey
     property color backgroundHover: evenDarkerGrey
-    property color secondaryText: darkGrey
+    property color backgroundHoverLight: darkGrey
+    property color secondaryText: lightGrey
     property color secondaryHover: tenPercentWhite
     property color primary: blue
     property color danger: red
@@ -48,13 +49,12 @@ Theme {
     property color backgroundTertiary: tenPercentBlue
     property color pillButtonTextColor: almostBlack
     property color chatReplyCurrentUser: lightGrey
-    property color topBarChatInfoColor: evenDarkerGrey
     property color codeBackground: "#2E386B"
     property color primarySelectionColor: "#b4c8ff"
     property color emojiReactionBackground: "#2d2823"
     property color emojiReactionBackgroundHovered: "#3a3632"
     property color emojiReactionActiveBackgroundHovered: "#cbd5f1"
-    property color mentionColor: "#47B6D1"
+    property color mentionColor: "#7BE5FF"
     property color mentionBgColor: Qt.rgba(71, 182, 209, 0.1)
     property color mentionMessageColor: "#E5F8FD"
     property color mentionMessageHoverColor: mentionBgColor
@@ -62,8 +62,8 @@ Theme {
     property color buttonForegroundColor: blue
     property color buttonBackgroundColor: secondaryBackground
     property color buttonSecondaryColor: darkGrey
-    property color buttonDisabledForegroundColor: buttonSecondaryColor
-    property color buttonDisabledBackgroundColor: evenDarkerGrey
+    property color buttonDisabledForegroundColor: lightGrey
+    property color buttonDisabledBackgroundColor: darkGrey
     property color buttonWarnBackgroundColor: "#FFEAEE"
     property color buttonHoveredWarnBackgroundColor: red
     property color buttonHoveredBackgroundColor: blue

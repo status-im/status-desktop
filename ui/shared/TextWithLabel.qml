@@ -20,7 +20,7 @@ Item {
         text: infoText.label
         font.weight: Font.Medium
         font.pixelSize: 13
-        color: Style.current.darkGrey
+        color: Style.current.secondaryText
     }
 
     StyledTextEdit {

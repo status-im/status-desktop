@@ -65,7 +65,7 @@ Item {
                 + (retry.visible && !chatTime.visible ? Style.current.smallPadding : 0)
         width: parent.width
 
-        color: root.isHovered || isMessageActive ? (hasMention ? Style.current.mentionMessageHoverColor : Style.current.backgroundHover) :
+        color: root.isHovered || isMessageActive ? (hasMention ? Style.current.mentionMessageHoverColor : Style.current.backgroundHoverLight) :
                                                    (hasMention ? Style.current.mentionMessageColor : Style.current.transparent)
 
 
