@@ -38,9 +38,10 @@ QtObject:
       result = self.account.identityImage.thumbnail
     else:
       result = ?.self.account.identicon
+
   QtProperty[string] thumbnailImage:
     read = thumbnailImage
-    notify = identityImageChanged
+    notify = accountChanged
 
   proc largeImage*(self: AccountInfoView): string {.slot.} =
     if (not self.account.identityImage.isNil):
