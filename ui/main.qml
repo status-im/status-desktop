@@ -69,15 +69,6 @@ ApplicationWindow {
 
     signal navigateTo(string path)
     
-    Settings {
-        id: defaultAppSettings
-        property int notificationSetting: Constants.notifyAllMessages
-        property bool notificationSoundsEnabled: true
-        property int notificationMessagePreviewSetting: Constants.notificationPreviewNameAndMessage
-        property bool allowNotificationsFromNonContacts: false
-    }
-
-
     property bool currentlyHasANotification: false
 
     onActiveChanged: {

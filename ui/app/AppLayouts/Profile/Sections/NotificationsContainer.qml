@@ -334,10 +334,10 @@ ScrollView {
                         parent.font.underline = false
                     }
                     onClicked: {
-                        appSettings.notificationSetting = defaultAppSettings.notificationSetting
-                        appSettings.notificationSoundsEnabled = defaultAppSettings.notificationSoundsEnabled
-                        appSettings.notificationMessagePreviewSetting = defaultAppSettings.notificationMessagePreviewSetting
-                        appSettings.allowNotificationsFromNonContacts = defaultAppSettings.allowNotificationsFromNonContacts
+                        appSettings.notificationSetting = Constants.notifyAllMessages
+                        appSettings.notificationSoundsEnabled = true
+                        appSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameAndMessage
+                        appSettings.allowNotificationsFromNonContacts = false
                     }
                 }
             }
