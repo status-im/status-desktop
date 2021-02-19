@@ -58,10 +58,19 @@ QtObject:
   proc push*(self: ReactionView, reactions: var seq[Reaction]) =
     let t = reactions.len
     for reaction in reactions.mitems:
-      let chat = self.status.chat.channels[reaction.chatId]
-      var messageList = self.messageList[][reaction.chatId]
+
+      var chatId: string;
+      if reaction.chatId == self.pubKey:
+        chatId = reaction.fromAccount
+      else:
+        chatId = reaction.chatId
+
+      let chat = self.status.chat.channels[chatId]
+      var messageList = self.messageList[][chatId]
+
       if chat.chatType == ChatType.Profile:
         messageList = self.messageList[][status_utils.getTimelineChatId()]
+
       var emojiReactions = messageList.getReactions(reaction.messageId)
       var oldReactions: JsonNode
       if (emojiReactions == "") :
