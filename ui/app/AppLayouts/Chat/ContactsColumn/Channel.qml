@@ -120,7 +120,7 @@ Rectangle {
         font.pixelSize: 15
         anchors.left: contactImage.right
         anchors.leftMargin: Style.current.padding
-        color: Style.current.darkGrey
+        color: Style.current.secondaryText
     }
 
     StyledText {
@@ -132,7 +132,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: Style.current.smallPadding
         font.pixelSize: 11
-        color: Style.current.darkGrey
+        color: Style.current.secondaryText
     }
     Rectangle {
         id: contactNumberChatsCircle
