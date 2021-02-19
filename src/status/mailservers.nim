@@ -184,16 +184,20 @@ proc requestMessages*(self: MailserverModel, topics: seq[string], fromValue: int
 proc getMailserverTopics*(self: MailserverModel): seq[MailserverTopic] =
   let response = status_mailservers.getMailserverTopics()
   let topics = parseJson(response)["result"]
+  var newTopic: MailserverTopic
   result = @[]
   if topics.kind != JNull:
     for topic in topics:
-      result.add(MailserverTopic(
+      newTopic = MailserverTopic(
         topic: topic["topic"].getStr,
         discovery: topic["discovery?"].getBool,
         negotiated: topic["negotiated?"].getBool,
-        chatIds: topic["chat-ids"].to(seq[string]),
         lastRequest: topic["last-request"].getInt
-      ))
+      )
+      if (topic["chat-ids"].kind != JNull):
+        newTopic.chatIds = topic["chat-ids"].to(seq[string])
+
+      result.add(newTopic)
 
 
 proc getMailserverTopicsByChatId*(self: MailserverModel, chatId: string): seq[MailServerTopic] =
