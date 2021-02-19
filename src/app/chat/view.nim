@@ -217,19 +217,23 @@ QtObject:
     if (selectedChannel == nil): return
     discard self.status.chat.markAllChannelMessagesRead(selectedChannel.id)
 
+  proc clearUnreadIfNeeded*(self: ChatsView, channel: var Chat) =
+    if (not channel.isNil and (channel.unviewedMessagesCount > 0 or channel.hasMentions)):
+      var response = self.status.chat.markAllChannelMessagesRead(channel.id)
+      if not response.hasKey("error"):
+        self.chats.clearUnreadMessagesCount(channel)
+
   proc setActiveChannelByIndex*(self: ChatsView, index: int) {.slot.} =
     if((self.activeCommunity.active and self.activeCommunity.chats.chats.len == 0) or (not self.activeCommunity.active and self.chats.chats.len == 0)): return
 
-    let selectedChannel =
+    var selectedChannel =
       if (self.activeCommunity.active):
         self.activeCommunity.chats.getChannel(index)
       else:
         self.chats.getChannel(index)
 
-    if(not self.activeChannel.chatItem.isNil and self.activeChannel.chatItem.unviewedMessagesCount > 0):
-      var response = self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
-      if not response.hasKey("error"):
-        self.chats.clearUnreadMessagesCount(self.activeChannel.chatItem)
+    self.clearUnreadIfNeeded(self.activeChannel.chatItem)
+    self.clearUnreadIfNeeded(selectedChannel)
 
     if self.activeChannel.id == selectedChannel.id: return
 
