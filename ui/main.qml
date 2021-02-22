@@ -74,8 +74,14 @@ ApplicationWindow {
     }
 
     onClosing: {
-        applicationWindow.visible = false;
-        close.accepted = false;
+        if(loader.sourceComponent == app){
+            if(loader.item.appSettings.quitOnClose){
+                Qt.quit();
+            } else {
+                applicationWindow.visible = false;
+                close.accepted = false;
+            }
+        }
     }
 
     Component.onCompleted: {
@@ -234,6 +240,7 @@ ApplicationWindow {
     Loader {
         id: loader
         anchors.fill: parent
+        property var appSettings
     }
 
     Component {
