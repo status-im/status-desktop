@@ -59,7 +59,8 @@ Item {
         id: messageContainer
         anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
         anchors.topMargin: dateGroupLbl.visible ? Style.current.padding : 0
-        height: childrenRect.height + (chatName.visible || emojiReactionLoader.active ? Style.current.smallPadding : 0)
+        height: childrenRect.height
+                + (chatName.visible || emojiReactionLoader.active ? Style.current.smallPadding : 0)
                 + (chatName.visible && emojiReactionLoader.active ? 5 : 0)
                 + (emojiReactionLoader.active ? emojiReactionLoader.height: 0)
                 + (retry.visible && !chatTime.visible ? Style.current.smallPadding : 0)
@@ -68,10 +69,9 @@ Item {
         color: root.isHovered || isMessageActive ? (hasMention ? Style.current.mentionMessageHoverColor : Style.current.backgroundHoverLight) :
                                                    (hasMention ? Style.current.mentionMessageColor : Style.current.transparent)
 
-
         UserImage {
             id: chatImage
-            visible: authorCurrentMsg != authorPrevMsg
+            active: isMessage && authorCurrentMsg != authorPrevMsg
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
             anchors.top: parent.top
