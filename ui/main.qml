@@ -58,9 +58,16 @@ ApplicationWindow {
             }
         }
     }
-
+    
     Action {
         shortcut: "Ctrl+W"
+        onTriggered: {
+            applicationWindow.visible = false;
+        }
+    }
+
+    Action {
+        shortcut: "Ctrl+Q"
         onTriggered: {
             Qt.quit()
         }
