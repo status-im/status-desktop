@@ -19,5 +19,6 @@ ListView {
         communityId: model.id
         name: model.name
         image: model.thumbnailImage
+        unviewedMessagesCount: model.unviewedMessagesCount
     }
 }

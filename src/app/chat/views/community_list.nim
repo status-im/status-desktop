@@ -21,6 +21,7 @@ type
     CanManageUsers = UserRole + 13
     CanJoin = UserRole + 14
     IsMember = UserRole + 15
+    UnviewedMessagesCount = UserRole + 16
 
 QtObject:
   type
@@ -65,6 +66,7 @@ QtObject:
       of CommunityRoles.CanJoin: result = newQVariant(communityItem.canJoin.bool)
       of CommunityRoles.IsMember: result = newQVariant(communityItem.isMember.bool)
       of CommunityRoles.NumMembers: result = newQVariant(communityItem.members.len)
+      of CommunityRoles.UnviewedMessagesCount: result = newQVariant(communityItem.unviewedMessagesCount)
       of CommunityRoles.ThumbnailImage:
         if (not communityItem.communityImage.isNil):
           result = newQVariant(communityItem.communityImage.thumbnail)
@@ -91,6 +93,7 @@ QtObject:
       CommunityRoles.CanJoin.int: "canJoin",
       CommunityRoles.IsMember.int: "isMember",
       CommunityRoles.NumMembers.int: "nbMembers",
+      CommunityRoles.UnviewedMessagesCount.int: "unviewedMessagesCount",
       CommunityRoles.ThumbnailImage.int:"thumbnailImage",
       CommunityRoles.LargeImage.int:"largeImage"
     }.toTable
@@ -130,4 +133,4 @@ QtObject:
     let topLeft = self.createIndex(index, index, nil)
     let bottomRight = self.createIndex(index, index, nil)
     self.communities[index] = community
-    self.dataChanged(topLeft, bottomRight, @[CommunityRoles.Name.int, CommunityRoles.Description.int])
+    self.dataChanged(topLeft, bottomRight, @[CommunityRoles.Name.int, CommunityRoles.Description.int, CommunityRoles.UnviewedMessagesCount.int])
