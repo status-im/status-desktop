@@ -39,6 +39,13 @@ QtObject:
     result.joinedCommunityList = newCommunityList(status)
     result.setup
 
+  proc calculateUnreadMessages*(self: CommunitiesView, community: var Community) =
+    var unreadTotal = 0
+    for chatItem in community.chats:
+      unreadTotal = unreadTotal + chatItem.unviewedMessagesCount
+    if unreadTotal != community.unviewedMessagesCount:
+      community.unviewedMessagesCount = unreadTotal
+
   proc updateCommunityChat*(self: CommunitiesView, newChat: Chat) =
     var community = self.joinedCommunityList.getCommunityById(newChat.communityId)
     if (community.id == ""):
@@ -53,6 +60,7 @@ QtObject:
     if (not found):
       community.chats.add(newChat)
     
+    self.calculateUnreadMessages(community)
     self.joinedCommunityList.replaceCommunity(community)
     if (self.activeCommunity.active and self.activeCommunity.communityItem.id == community.id):
       self.activeCommunity.changeChats(community.chats)
