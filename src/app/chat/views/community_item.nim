@@ -123,11 +123,19 @@ QtObject:
     read = nbMembers
     notify = nbMembersChanged
 
+  proc chatsChanged*(self: CommunityItemView) {.signal.}
+
   proc getChats*(self: CommunityItemView): QVariant {.slot.} =
     result = newQVariant(self.chats)
 
+  proc changeChats*(self: CommunityItemView, chats: seq[Chat]) =
+    self.communityItem.chats = chats
+    self.chats.setChats(chats)
+    self.chatsChanged()
+
   QtProperty[QVariant] chats:
     read = getChats
+    notify = chatsChanged
 
   proc getMembers*(self: CommunityItemView): QVariant {.slot.} =
     result = newQVariant(self.members)
