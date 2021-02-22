@@ -10,7 +10,7 @@ logScope:
 
 QtObject:
   type ReactionView* = ref object of QObject
-    messageList: ptr Table[string, ChatMessageList]
+    messageList: ptr OrderedTable[string, ChatMessageList]
     activeChannel: ChatItemView
     status: Status
     pubKey*: string
@@ -21,7 +21,7 @@ QtObject:
   proc delete*(self: ReactionView) =
     self.QObject.delete
 
-  proc newReactionView*(status: Status, messageList: ptr Table[string, ChatMessageList], activeChannel: ChatItemView): ReactionView =
+  proc newReactionView*(status: Status, messageList: ptr OrderedTable[string, ChatMessageList], activeChannel: ChatItemView): ReactionView =
     new(result, delete)
     result = ReactionView()
     result.messageList = messageList

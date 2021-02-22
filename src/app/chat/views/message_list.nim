@@ -42,7 +42,7 @@ QtObject:
     ChatMessageList* = ref object of QAbstractListModel
       messages*: seq[Message]
       status: Status
-      id: string
+      id*: string
       messageIndex: Table[string, int]
       messageReactions*: Table[string, string]
       timedoutMessages: HashSet[string]
@@ -281,3 +281,7 @@ QtObject:
           m.localName = c.localNickname
 
     self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.Username.int])
+
+
+  proc getID*(self: ChatMessageList):string  {.slot.} =
+    self.id

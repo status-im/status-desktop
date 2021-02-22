@@ -137,10 +137,6 @@ ScrollView {
                 loadingMessages = false;
             }
 
-            onActiveChannelChanged: {
-                Qt.callLater(chatLogView.scrollToBottom.bind(this, true))
-            }
-
             onSendingMessage: {
                 chatLogView.scrollToBottom(true)
             }
