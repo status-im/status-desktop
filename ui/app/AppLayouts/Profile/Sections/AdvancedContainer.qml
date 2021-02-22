@@ -34,6 +34,15 @@ Item {
             onClicked: fleetModal.open()
         }
 
+        StatusSettingsLineButton {
+            text: qsTr("Minimize on close")
+            isSwitch: true
+            switchChecked: !appSettings.quitOnClose
+            onClicked: function (checked) {
+                appSettings.quitOnClose = !checked
+            }
+        }
+
         Item {
             id: spacer1
             height: Style.current.bigPadding
