@@ -17,10 +17,6 @@ Item {
     signal updateClicked(int packId)
     signal buyClicked(int packId)
 
-    Component.onCompleted: {
-        walletModel.getGasPricePredictions()
-    }
-
     GridView {
         id: availableStickerPacks
         width: parent.width
