@@ -13,6 +13,7 @@ Button {
     background: Rectangle {
         id: btnBackground
         radius: Style.current.radius
+        color: Style.current.transparent
     }
     
     contentItem: Item {
@@ -55,7 +56,7 @@ Button {
         onPressed: communityProfilePopup.open();
         hoverEnabled: true
         onExited: {
-            btnBackground.color = "transparent"
+            btnBackground.color = Style.current.transparent
         }
         onEntered: {
             btnBackground.color = Style.current.topBarChatInfoColor
