@@ -46,10 +46,9 @@ proc fromEvent*(event: JsonNode): Signal =
   if event["event"]{"chats"} != nil:
     for jsonChat in event["event"]["chats"]:
       var chat = jsonChat.toChat
-      if (chat.communityId == ""):
-        if chatsWithMentions.contains(chat.id):
-          chat.hasMentions = true
-        signal.chats.add(chat)
+      if chatsWithMentions.contains(chat.id):
+        chat.hasMentions = true
+      signal.chats.add(chat)
 
   if event["event"]{"installations"} != nil:
     for jsonInstallation in event["event"]["installations"]:

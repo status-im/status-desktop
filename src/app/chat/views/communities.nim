@@ -39,6 +39,25 @@ QtObject:
     result.joinedCommunityList = newCommunityList(status)
     result.setup
 
+  proc updateCommunityChat*(self: CommunitiesView, newChat: Chat) =
+    var community = self.joinedCommunityList.getCommunityById(newChat.communityId)
+    if (community.id == ""):
+      return
+    var i = 0
+    var found = false
+    for chat in community.chats:
+      if (chat.id == newChat.id):
+        community.chats[i] = newChat
+        found = true
+      i = i + 1
+    if (not found):
+      community.chats.add(newChat)
+    
+    self.joinedCommunityList.replaceCommunity(community)
+    if (self.activeCommunity.active and self.activeCommunity.communityItem.id == community.id):
+      self.activeCommunity.changeChats(community.chats)
+      
+
   proc pendingRequestsToJoinForCommunity*(self: CommunitiesView, communityId: string): seq[CommunityMembershipRequest] =
     result = self.status.chat.pendingRequestsToJoinForCommunity(communityId)
 
