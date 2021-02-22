@@ -8,7 +8,7 @@ import "../components"
 StatusIconTabButton {
     property string communityId: ""
     property string name: "channelName"
-    property string unviewedMessagesCount: "0"
+    property int unviewedMessagesCount: 0
     property string image
     property bool hasMentions: false
 
