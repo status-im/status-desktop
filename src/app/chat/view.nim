@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat
+import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat, algorithm
 import ../../status/status
 import ../../status/mailservers
 import ../../status/libstatus/chat as libstatus_chat
@@ -24,6 +24,11 @@ import ../utils/image_utils
 logScope:
   topics = "chats-view"
 
+
+type
+  ChatViewRoles {.pure.} = enum
+    MessageList = UserRole + 1
+
 QtObject:
   type
     ChatsView* = ref object of QAbstractListModel
@@ -31,7 +36,7 @@ QtObject:
       chats*: ChannelsList
       currentSuggestions*: SuggestionsList
       callResult: string
-      messageList*: Table[string, ChatMessageList]
+      messageList*: OrderedTable[string, ChatMessageList]
       reactions*: ReactionView
       stickers*: StickersView
       groups*: GroupsView
@@ -67,7 +72,7 @@ QtObject:
     self.stickers.delete
     self.groups.delete
     self.transactions.delete
-    self.messageList = initTable[string, ChatMessageList]()
+    self.messageList = initOrderedTable[string, ChatMessageList]()
     self.channelOpenTime = initTable[string, int64]()
     self.QAbstractListModel.delete
 
@@ -81,7 +86,7 @@ QtObject:
     result.activeCommunity = newCommunityItemView(status)
     result.observedCommunity = newCommunityItemView(status)
     result.currentSuggestions = newSuggestionsList()
-    result.messageList = initTable[string, ChatMessageList]()
+    result.messageList = initOrderedTable[string, ChatMessageList]()
     result.reactions = newReactionView(status, result.messageList.addr, result.activeChannel)
     result.stickers = newStickersView(status, result.activeChannel)
     result.groups = newGroupsView(status,result.activeChannel)
@@ -312,8 +317,10 @@ QtObject:
     if self.status.chat.channels.hasKey(channel):
       chat = self.status.chat.channels[channel]
     if not self.messageList.hasKey(channel):
+      self.beginInsertRows(newQModelIndex(), self.messageList.len, self.messageList.len)
       self.messageList[channel] = newChatMessageList(channel, self.status, not chat.isNil and chat.chatType != ChatType.Profile)
       self.channelOpenTime[channel] = now().toTime.toUnix * 1000
+      self.endInsertRows();
 
   proc messagePushed*(self: ChatsView, messageIndex: int) {.signal.}
   proc newMessagePushed*(self: ChatsView) {.signal.}
@@ -857,3 +864,25 @@ QtObject:
     except Exception as e:
       error "Error removing user from the community", msg = e.msg
 
+
+  method rowCount*(self: ChatsView, index: QModelIndex = nil): int = 
+    result = self.messageList.len
+
+  method data(self: ChatsView, index: QModelIndex, role: int): QVariant =
+    if not index.isValid:
+      return
+    if index.row < 0 or index.row >= self.messageList.len:
+      return
+    return newQVariant(toSeq(self.messageList.values)[index.row])
+
+  method roleNames(self: ChatsView): Table[int, string] =
+    {
+      ChatViewRoles.MessageList.int:"messages"
+    }.toTable
+
+  proc getMessageListIndex(self: ChatsView):int {.slot.} =
+    var idx = -1
+    for msg in toSeq(self.messageList.values):
+      idx = idx + 1
+      if(self.activeChannel.id == msg.id): return idx
+    return idx

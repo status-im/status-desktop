@@ -423,10 +423,6 @@ RowLayout {
 
             timelineLayoutContainer.active = this.children[currentIndex] == timelineLayoutContainer
 
-            if(this.children[currentIndex] === chatLayoutContainer){
-                chatLayoutContainer.chatColumn.chatMessages.chatLogView.scrollToBottom(true);
-            }
-
             if(this.children[currentIndex] === walletLayoutContainer){
                 walletLayoutContainer.showSigningPhrasePopup();
             }

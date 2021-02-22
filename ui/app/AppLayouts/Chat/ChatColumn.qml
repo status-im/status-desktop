@@ -12,7 +12,6 @@ import "../Wallet"
 
 StackLayout {
     id: chatColumnLayout
-    property alias chatMessages: chatMessages
 
     property int chatGroupsListViewCount: 0
     
@@ -189,10 +188,26 @@ StackLayout {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             spacing: 0
-            ChatMessages {
-                id: chatMessages
-                messageList: chatsModel.messageList
+
+            Connections {
+                target: chatsModel
+                onActiveChannelChanged: {
+                    stackLayoutChatMessages.currentIndex = chatsModel.getMessageListIndex(chatsModel.activeChannelIndex)
+                }
             }
+
+            StackLayout {
+                id: stackLayoutChatMessages
+                Repeater {
+                    model: chatsModel
+                    ChatMessages {
+                        id: chatMessages
+                        messageList: model.messages
+                    }
+                }
+            }
+
+            
        }
 
         StatusImageModal {
