@@ -100,6 +100,7 @@ type Community* = object
   chats*: seq[Chat]
   members*: seq[string]
   access*: int
+  unviewedMessagesCount*: int
   admin*: bool
   joined*: bool
   verified*: bool
