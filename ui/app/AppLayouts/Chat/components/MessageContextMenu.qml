@@ -11,6 +11,7 @@ PopupMenu {
     property bool isProfile: false
     property bool isSticker: false
     property bool emojiOnly: false
+    property string linkUrls: ""
     property alias emojiContainer: emojiContainer
 
     id: messageContextMenu
@@ -22,6 +23,13 @@ PopupMenu {
     property var fromAuthor: ""
     property var text: ""
     property var emojiReactionsReactedByUser: []
+    subMenuIcons: [
+        {
+            source: Qt.resolvedUrl("../../../../shared/img/copy-to-clipboard-icon"),
+            width: 16,
+            height: 16
+        }
+    ]
 
     function show(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, emojiReactionsModel) {
         userName = userNameParam || ""
@@ -37,6 +45,9 @@ PopupMenu {
         }
         emojiReactionsReactedByUser = newEmojiReactions
 
+        const numLinkUrls = messageContextMenu.linkUrls.split(" ").length
+        copyLinkMenu.enabled = numLinkUrls > 1
+        copyLinkAction.enabled = !!messageContextMenu.linkUrls && numLinkUrls === 1
         popup();
     }
 
@@ -121,6 +132,35 @@ PopupMenu {
     Separator {
         anchors.bottom: viewProfileAction.top
         visible: !messageContextMenu.emojiOnly
+    }
+
+    Action {
+        id: copyLinkAction
+        text: qsTr("Copy link")
+        onTriggered: {
+            chatsModel.copyToClipboard(linkUrls.split(" ")[0])
+            messageContextMenu.close()
+        }
+        icon.source: "../../../../shared/img/copy-to-clipboard-icon"
+        icon.width: 16
+        icon.height: 16
+        enabled: false
+    }
+
+    PopupMenu {
+        id: copyLinkMenu
+        title: qsTr("Copy link")
+        Repeater {
+            id: linksRepeater
+            model: messageContextMenu.linkUrls.split(" ")
+            delegate: MenuItem {
+                text: modelData
+                onTriggered: {
+                    chatsModel.copyToClipboard(modelData)
+                    messageContextMenu.close()
+                }
+            }
+        }
     }
 
     Action {
