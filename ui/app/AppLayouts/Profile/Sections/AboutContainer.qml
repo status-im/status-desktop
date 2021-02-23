@@ -24,7 +24,7 @@ Item {
             //% "App version"
             name: qsTrId("version")
             //% "Version: %1"
-            description: qsTrId("version---1").arg("beta.5")
+            description: qsTrId("version---1").arg("beta.6")
         }
 
         StatusSectionDescItem {
