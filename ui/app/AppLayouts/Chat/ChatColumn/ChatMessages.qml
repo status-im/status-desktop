@@ -40,7 +40,7 @@ ScrollView {
         flickDeceleration: 10000
         Layout.fillWidth: true
         Layout.fillHeight: true
-        verticalLayoutDirection: ListView.TopToBottom
+        verticalLayoutDirection: ListView.BottomToTop
 
         Timer {
             id: timer
@@ -115,9 +115,9 @@ ScrollView {
             // Call this twice and with a timer since the first scroll to bottom might have happened before some stuff loads
             // meaning that the scroll will not actually be at the bottom on switch
             // Add a small delay because images, even though they say they say they are loaed, they aren't shown yet
-            Qt.callLater(chatLogView.positionViewAtEnd)
+            Qt.callLater(chatLogView.positionViewAtBeginning)
             timer.setTimeout(function() {
-                 Qt.callLater(chatLogView.positionViewAtEnd)
+                 Qt.callLater(chatLogView.positionViewAtBeginning)
             }, 100);
             return true
         }
@@ -131,7 +131,6 @@ ScrollView {
         }
 
         Connections {
-
             target: chatsModel
             onMessagesLoaded: {
                 loadingMessages = false;
@@ -241,7 +240,7 @@ ScrollView {
     DelegateModel {
         id: messageListDelegate
         property var lessThan: [
-            function(left, right) { return left.clock < right.clock }
+            function(left, right) { return left.clock > right.clock }
         ]
 
         property int sortOrder: 0
