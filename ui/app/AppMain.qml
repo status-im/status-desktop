@@ -122,11 +122,6 @@ RowLayout {
         property bool pdfViewerEnabled: true
         property bool compatibilityMode: true
     }
-    
-
-    ErrorSound {
-        id: errorSound
-    }
 
     Audio {
         id: sendMessageSound
