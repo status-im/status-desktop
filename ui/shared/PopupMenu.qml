@@ -36,6 +36,12 @@ Menu {
             return index
         }
 
+        enabled: {
+            if (this.subMenu) {
+                return this.subMenu.enabled
+            }
+            return this.action.enabled
+        }
         action: Action{} // Meant to be overwritten
         id: popupMenuItem
         implicitWidth: 200
@@ -46,7 +52,7 @@ Menu {
         icon.source: this.subMenu ? subMenuIcons[subMenuIndex].source : popupMenuItem.action.icon.source
         icon.width: this.subMenu ? subMenuIcons[subMenuIndex].width : popupMenuItem.action.icon.width
         icon.height: this.subMenu ? subMenuIcons[subMenuIndex].height : popupMenuItem.action.icon.height
-        visible: popupMenuItem.action.enabled && !!popupMenuItem.text
+        visible: enabled
         height: visible ? popupMenuItem.implicitHeight : 0
 
         arrow: SVGImage {
@@ -57,7 +63,7 @@ Menu {
             anchors.rightMargin: 12
             width: 9
             fillMode: Image.PreserveAspectFit
-            visible: popupMenuItem.subMenu
+            visible: popupMenuItem.subMenu && popupMenuItem.subMenu.enabled
             
             ColorOverlay {
                 anchors.fill: parent
@@ -107,7 +113,7 @@ Menu {
 
         background: Rectangle {
             implicitWidth: 220
-            implicitHeight: 24
+            implicitHeight: enabled ? 24 : 0
             color: popupMenuItem.highlighted ? Style.current.backgroundHover : "transparent"
         }
     }
