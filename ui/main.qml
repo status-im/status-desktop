@@ -37,6 +37,10 @@ ApplicationWindow {
     }
     visible: true
 
+    ErrorSound {
+        id: errorSound
+    }
+
     Action {
         shortcut: StandardKey.FullScreen
         onTriggered: {
