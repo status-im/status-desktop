@@ -102,7 +102,7 @@ RowLayout {
         property int fontSize: Constants.fontSizeM
         property bool hideSignPhraseModal: false
         property bool onlyShowContactsProfilePics: true
-        property bool quitOnClose: true
+        property bool quitOnClose: false
 
         // Browser settings
         property bool showBrowserSelector: true
