@@ -59,7 +59,7 @@ Column {
         text: {
             switch(chatsModel.activeChannel.chatType) {
                 case Constants.chatTypePublic: return "#" + chatsModel.activeChannel.name;
-                case Constants.chatTypeOneToOne: return Utils.removeStatusEns(chatsModel.activeChannel.name)
+                case Constants.chatTypeOneToOne: return Utils.removeStatusEns(chatsModel.userNameOrAlias(chatsModel.activeChannel.id))
                 default: return chatsModel.activeChannel.name
             }
         }
@@ -84,7 +84,7 @@ Column {
                     //% "Welcome to the beginning of the <span style='color: %1'>%2</span> group!"
                     case Constants.chatTypePrivateGroupChat: return qsTrId("welcome-to-the-beginning-of-the--span-style--color---1---2--span--group-").arg(Style.current.textColor).arg(chatsModel.activeChannel.name);
                     //% "Any messages you send here are encrypted and can only be read by you and <span style='color: %1'>%2</span>"
-                    case Constants.chatTypeOneToOne: return qsTrId("any-messages-you-send-here-are-encrypted-and-can-only-be-read-by-you-and--span-style--color---1---2--span-").arg(Style.current.textColor).arg(Utils.removeStatusEns(chatsModel.activeChannel.name))
+                    case Constants.chatTypeOneToOne: return qsTrId("any-messages-you-send-here-are-encrypted-and-can-only-be-read-by-you-and--span-style--color---1---2--span-").arg(Style.current.textColor).arg(channelName.text)
                     default: return "";
                 }
             }
