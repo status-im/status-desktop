@@ -302,7 +302,8 @@ ScrollView {
             outgoingStatus: model.outgoingStatus
             responseTo: model.responseTo
             authorCurrentMsg: msgDelegate.ListView.section
-            authorPrevMsg: msgDelegate.ListView.previousSection
+            // The previous message is actually the nextSection since we reversed the list order
+            authorPrevMsg: msgDelegate.ListView.nextSection
             imageClick: imagePopup.openPopup.bind(imagePopup)
             messageId: model.messageId
             emojiReactions: model.emojiReactions
