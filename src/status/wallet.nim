@@ -215,6 +215,7 @@ proc initAccounts*(self: WalletModel) =
   for account in accounts:
     var acc = WalletAccount(account)
     self.populateAccount(acc, "") 
+    updateBalance(acc, self.getDefaultCurrency(), true)
     self.accounts.add(acc)
 
 proc updateAccount*(self: WalletModel, address: string) =
