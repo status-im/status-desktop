@@ -74,10 +74,11 @@ QtObject:
     new(result, delete)
     result.messages = @[]
     result.id = chatId
+    result.messages.add(result.fetchMoreMessagesButton())
+
     if addFakeMessages:
       result.addFakeMessages()
 
-    result.messages.add(result.fetchMoreMessagesButton())
     result.messageIndex = initTable[string, int]()
     result.timedoutMessages = initHashSet[string]()
     result.status = status
