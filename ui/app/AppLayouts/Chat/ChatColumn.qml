@@ -311,20 +311,18 @@ StackLayout {
                     if (chatInput.fileUrls.length > 0){
                         chatsModel.sendImage(chatInput.fileUrls[0], false);
                     }
-                    var msg = chatsModel.plainText(Emoji.deparse(chatInput.textInput.text))
+                    let msg = chatsModel.plainText(Emoji.deparse(chatInput.textInput.text))
                     if (msg.length > 0){
                         msg = chatInput.interpretMessage(msg)
                         chatsModel.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, false);
-                        chatInput.textInput.textFormat = TextEdit.PlainText;
-                        if(event) event.accepted = true
+
+                        if (event) event.accepted = true
                         chatInput.messageSound.stop()
                         Qt.callLater(chatInput.messageSound.play);
 
-                        Qt.callLater(function(){
-                            chatInput.textInput.clear();
-                            chatInput.textInput.textFormat = TextEdit.RichText;
-                        });
-
+                        chatInput.textInput.clear();
+                        chatInput.textInput.textFormat = TextEdit.PlainText;
+                        chatInput.textInput.textFormat = TextEdit.RichText;
                     }
 
                 }
