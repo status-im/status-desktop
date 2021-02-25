@@ -56,3 +56,6 @@ proc addMailserverTopic*(topic: MailserverTopic): string =
     "chat-ids": topic.chatIds,
     "last-request": topic.lastRequest
   }])
+
+proc deleteMailserverTopic*(topic: string): string =
+  return callPrivateRPC("mailservers_deleteMailserverTopic", %*[topic])

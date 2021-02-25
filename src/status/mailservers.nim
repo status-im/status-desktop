@@ -207,6 +207,12 @@ proc getMailserverTopicsByChatId*(self: MailserverModel, chatId: string): seq[Ma
 proc addMailserverTopic*(self: MailserverModel, topic: MailserverTopic) =
   discard status_mailservers.addMailserverTopic(topic)
 
+proc deleteMailserverTopic*(self: MailserverModel, chatId: string) =
+  var topic:MailserverTopic = self.getMailserverTopicsByChatId(chatId)[0]
+  if(topic.chatIds.len > 1):
+    discard status_mailservers.addMailserverTopic(topic)
+  else:
+    discard status_mailservers.deleteMailserverTopic(topic.topic)
 
 proc findNewMailserver(self: MailserverModel) =
   warn "Finding a new mailserver..."
