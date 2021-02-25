@@ -289,6 +289,35 @@ QtObject {
         return (/( |\t|\n|\r)/.test(c))
     }
 
+    function getLinkDataForStatusLinks(link) {
+        if (!link.includes(Constants.deepLinkPrefix) && !link.includes(Constants.joinStatusLink)) {
+            return
+        }
+
+        let title = "Status"
+        let callback = function () {}
+
+        // Link to send a direct message
+        let index = link.indexOf("/u/")
+        if (index > -1) {
+            const pk = link.substring(index + 3)
+            title = qsTr("Start a 1 on 1 chat with %1").arg(utilsModel.generateAlias(pk))
+            callback = function () {
+                chatsModel.joinChat(pk, Constants.chatTypeOneToOne);
+            }
+        }
+
+        return {
+            site: qsTr("Status app link"),
+            title: title,
+            thumbnailUrl: "../../../../img/status.png",
+            contentType: "",
+            height: 0,
+            width: 0,
+            callback: callback
+        }
+    }
+
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|_|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
     }
