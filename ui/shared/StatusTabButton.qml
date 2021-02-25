@@ -21,7 +21,7 @@ TabButton {
         text: btnText
         font.weight: Font.Medium
         font.pixelSize: 15
-        color: parent.checked || parent.hovered ? Style.current.textColor : Style.current.darkGrey
+        color: parent.checked || parent.hovered ? Style.current.textColor : Style.current.secondaryText
     }
 
     Rectangle {

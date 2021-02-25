@@ -45,7 +45,7 @@ Item {
                 anchors.bottomMargin: 0
                 anchors.left: assetInfoImage.right
                 anchors.leftMargin: Style.current.smallPadding
-                color: Style.current.darkGrey
+                color: Style.current.secondaryText
                 font.pixelSize: 15
             }
             StyledText {
@@ -58,7 +58,7 @@ Item {
             }
             StyledText {
                 id: assetFiatValue
-                color: Style.current.darkGrey
+                color: Style.current.secondaryText
                 text: Utils.toLocaleString(fiatBalance, appSettings.locale) + " " + walletModel.defaultCurrency.toUpperCase()
                 anchors.right: parent.right
                 anchors.rightMargin: 0
