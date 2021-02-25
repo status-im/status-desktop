@@ -112,6 +112,35 @@ Column {
                         return
                     }
                     fetched = true
+
+                    if (link.includes(Constants.deepLinkPrefix) || link.includes(Constants.joinStatusLink)) {
+                        // Parse link to know what to show
+                        // TODO put it in another function?
+                        let title = "Status"
+                        let callback = function () {}
+
+                        // Link to send a direct message
+                        let index = link.indexOf("/u/")
+                        if (index > -1) {
+                            const pk = link.substring(index + 3)
+                            title = qsTr("Start a 1 on 1 chat with %1").arg(utilsModel.generateAlias(pk))
+                            callback = function () {
+                                chatsModel.joinChat(pk, Constants.chatTypeOneToOne);
+                            }
+                        }
+
+                        linkData = {
+                            site: qsTr("Status app link"),
+                            title: title,
+                            thumbnailUrl: "../../../../img/status.png",
+                            contentType: "",
+                            height: 0,
+                            width: 0,
+                            callback: callback
+                        }
+                        return unfurledLinkComponent
+                    }
+
                     return chatsModel.getLinkPreviewData(link, root.uuid)
                 }
                 // setting the height to 0 allows the "enable link" dialog to
@@ -120,6 +149,7 @@ Column {
                 this.height = 0
                 return undefined
             }
+
             Component.onCompleted: {
                 // putting this is onCompleted prevents automatic binding, where
                 // QML warns of a binding loop detected
@@ -198,7 +228,13 @@ Column {
                 anchors.right: linkImage.right
                 anchors.bottom: linkSite.bottom
                 cursorShape: Qt.PointingHandCursor
-                onClicked:  appMain.openLink(linkData.address)
+                onClicked:  {
+                    if (!!linkData.callback) {
+                        return linkData.callback()
+                    }
+
+                    appMain.openLink(linkData.address)
+                }
             }
         }
     }

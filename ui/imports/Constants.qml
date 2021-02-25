@@ -121,4 +121,7 @@ QtObject {
     readonly property int browserEthereumExplorerBlockchair: 3
 
     readonly property int repeatHeaderInterval: 2
+
+    readonly property string deepLinkPrefix: 'statusim://'
+    readonly property string joinStatusLink: 'join.status.im'
 }
