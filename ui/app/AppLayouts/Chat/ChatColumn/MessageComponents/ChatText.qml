@@ -55,6 +55,12 @@ Item {
                 return;
             }
 
+            const data = Utils.getLinkDataForStatusLinks(link)
+            if (data && data.callback) {
+                return data.callback()
+            }
+
+
             appMain.openLink(link)
         }
 
