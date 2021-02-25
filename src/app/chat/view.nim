@@ -109,7 +109,7 @@ QtObject:
     read = getOldestMessageTimestamp
     notify = oldestMessageTimestampChanged
 
-  proc setLastMessageTimestamp(self: ChatsView, force = false) = 
+  proc setLastMessageTimestamp*(self: ChatsView, force = false) = 
     if self.status.chat.lastMessageTimestamps.hasKey(self.activeChannel.id):
       if force or self.status.chat.lastMessageTimestamps[self.activeChannel.id] <= self.oldestMessageTimestamp:
         self.oldestMessageTimestamp = self.status.chat.lastMessageTimestamps[self.activeChannel.id]
@@ -539,9 +539,11 @@ QtObject:
     let selectedChannel = self.chats.getChannel(channelIndex)
     if (selectedChannel == nil): return
     self.status.chat.leave(selectedChannel.id)
+    self.status.mailservers.deleteMailserverTopic(selectedChannel.id)
 
   proc leaveActiveChat*(self: ChatsView) {.slot.} =
     self.status.chat.leave(self.activeChannel.id)
+    self.status.mailservers.deleteMailserverTopic(self.activeChannel.id)
 
   proc removeChat*(self: ChatsView, chatId: string) =
     discard self.chats.removeChatItemFromList(chatId)
