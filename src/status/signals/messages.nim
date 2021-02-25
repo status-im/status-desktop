@@ -224,6 +224,10 @@ proc toTextItem*(jsonText: JsonNode): TextItem =
     destination: jsonText{"destination"}.getStr,
     children: @[]
   )
+  if (result.literal.startsWith("statusim://")):
+    result.textType = "link"
+    # TODO isolate the link only
+    result.destination = result.literal
 
   if jsonText.hasKey("children") and jsonText["children"].kind != JNull:
     for child in jsonText["children"]:
@@ -276,7 +280,7 @@ proc toMessage*(jsonMsg: JsonNode, pk: string): Message =
       message.parsedText.add(text.toTextItem)
 
   message.linkUrls = concat(message.parsedText.map(t => t.children.filter(c => c.textType == "link")))
-    .filter(t => t.destination.startsWith("http"))
+    .filter(t => t.destination.startsWith("http") or t.destination.startsWith("statusim://"))
     .map(t => t.destination)
     .join(" ")
 

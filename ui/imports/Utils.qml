@@ -83,7 +83,7 @@ QtObject {
 
     function linkifyAndXSS(inputText) {
         //URLs starting with http://, https://, or ftp://
-        var replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+        var replacePattern1 = /(\b(https?|ftp|statusim):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
         var replacedText = inputText.replace(replacePattern1, "<a href='$1'>$1</a>");
 
         //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
@@ -330,7 +330,12 @@ QtObject {
     function getHostname(url) {
         const rgx = /\:\/\/(?:[a-zA-Z0-9\-]*\.{1,}){1,}[a-zA-Z0-9]*/i
         const matches = rgx.exec(url)
-        if (!matches || !matches.length) return  ""
+        if (!matches || !matches.length) {
+            if (url.includes(Constants.deepLinkPrefix)) {
+                return Constants.deepLinkPrefix
+            }
+            return  ""
+        }
         return matches[0].substring(3)
     }
 
