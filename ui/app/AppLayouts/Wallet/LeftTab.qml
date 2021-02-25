@@ -55,7 +55,7 @@ Item {
 
         StyledText {
             id: totalValue
-            color: Style.current.darkGrey
+            color: Style.current.secondaryText
             //% "Total value"
             text: qsTrId("wallet-total-value")
             anchors.left: walletAmountValue.left

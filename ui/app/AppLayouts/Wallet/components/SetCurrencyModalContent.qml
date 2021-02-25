@@ -35,7 +35,7 @@ Item {
                 id: wrapper
                 property bool hovered: false
                 radius: Style.current.radius
-                color: modalBody.currency === key ? Style.current.lightBlue : (hovered ? Style.current.backgroundHover: Style.current.transparent)
+                color: modalBody.currency === key ? Style.current.secondaryBackground : (hovered ? Style.current.backgroundHover: Style.current.transparent)
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.left: parent.left
