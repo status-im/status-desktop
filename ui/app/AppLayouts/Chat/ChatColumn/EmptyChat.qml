@@ -52,7 +52,7 @@ Item {
             //% "or"
             text: qsTrId("or")
             font.pixelSize: 15
-            color: Style.current.darkGrey
+            color: Style.current.secondaryText
             anchors.left: shareKeyLink.right
             anchors.leftMargin: 2
             anchors.bottom: shareKeyLink.bottom
@@ -89,7 +89,7 @@ Item {
         //% "friends to start messaging in Status"
         text: qsTrId("friends-to-start-messaging-in-status")
         font.pixelSize: 15
-        color: Style.current.darkGrey
+        color: Style.current.secondaryText
         anchors.horizontalCenter: walkieTalkieImage.horizontalCenter
         anchors.top: links.bottom
     }
