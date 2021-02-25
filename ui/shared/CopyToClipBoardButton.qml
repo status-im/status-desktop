@@ -47,7 +47,7 @@ Rectangle {
             }
         }
         onReleased: {
-            parent.color = Style.current.grey
+            parent.color = Style.current.backgroundHover
         }
         onClicked: {
             if (textToCopy) {
