@@ -67,6 +67,7 @@ type Chat* = ref object
   isActive*: bool # indicates whether the chat has been soft deleted
   chatType*: ChatType
   timestamp*: int64 # indicates the last time this chat has received/sent a message
+  joined*: int64 # indicates when the user joined the chat last time
   lastClockValue*: int64 # indicates the last clock value to be used when sending messages
   deletedAtClockValue*: int64 # indicates the clock value at time of deletion, messages with lower clock value of this should be discarded
   unviewedMessagesCount*: int
@@ -132,7 +133,8 @@ proc toJsonNode*(self: Chat): JsonNode =
     "membershipUpdateEvents": self.membershipUpdateEvents.toJsonNode,
     "name": (if self.ensName != "": self.ensName else: self.name),
     "timestamp": self.timestamp,
-    "unviewedMessagesCount": self.unviewedMessagesCount
+    "unviewedMessagesCount": self.unviewedMessagesCount,
+    "joined": self.joined
   }
 
 proc findIndexById*(self: seq[Chat], id: string): int =
