@@ -141,7 +141,8 @@ proc toChat*(jsonChat: JsonNode): Chat =
     unviewedMessagesCount: jsonChat{"unviewedMessagesCount"}.getInt,
     hasMentions: false,
     muted: false,
-    ensName: ""
+    ensName: "",
+    joined: 0
   )
 
   if jsonChat.hasKey("muted") and jsonChat["muted"].kind != JNull: 
@@ -149,6 +150,9 @@ proc toChat*(jsonChat: JsonNode): Chat =
 
   if jsonChat["lastMessage"].kind != JNull: 
     result.lastMessage = jsonChat{"lastMessage"}.toMessage(pk)
+
+  if jsonChat.hasKey("joined") and jsonChat["joined"].kind != JNull:
+    result.joined = jsonChat{"joined"}.getInt
   
   if result.chatType == ChatType.OneToOne:
     result.identicon = generateIdenticon(result.id)
