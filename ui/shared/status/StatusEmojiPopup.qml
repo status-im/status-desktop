@@ -67,7 +67,7 @@ Popup {
         popup.close()
     }
 
-    Component.onCompleted: {
+    function populateCategories() {
         var categoryNames = {"recent": 0}
         var newCategories = [[]]
 
@@ -105,6 +105,7 @@ Popup {
     onOpened: {
         searchBox.text = ""
         searchBox.forceActiveFocus(Qt.MouseFocusReason)
+        Qt.callLater(populateCategories);
     }
 
     contentItem: ColumnLayout {

@@ -193,16 +193,23 @@ StackLayout {
                 target: chatsModel
                 onActiveChannelChanged: {
                     stackLayoutChatMessages.currentIndex = chatsModel.getMessageListIndex(chatsModel.activeChannelIndex)
+                    if(stackLayoutChatMessages.currentIndex > -1 && !stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].active){
+                        stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].active = true;
+                    }
                 }
             }
+
 
             StackLayout {
                 id: stackLayoutChatMessages
                 Repeater {
                     model: chatsModel
-                    ChatMessages {
-                        id: chatMessages
-                        messageList: model.messages
+                    Loader {
+                        active: false
+                        sourceComponent: ChatMessages {
+                            id: chatMessages
+                            messageList: model.messages
+                        }
                     }
                 }
             }
@@ -315,10 +322,9 @@ StackLayout {
                     if (msg.length > 0){
                         msg = chatInput.interpretMessage(msg)
                         chatsModel.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, false);
-
-                        if (event) event.accepted = true
-                        chatInput.messageSound.stop()
-                        Qt.callLater(chatInput.messageSound.play);
+                        if(event) event.accepted = true
+                        sendMessageSound.stop();
+                        Qt.callLater(sendMessageSound.play);
 
                         chatInput.textInput.clear();
                         chatInput.textInput.textFormat = TextEdit.PlainText;

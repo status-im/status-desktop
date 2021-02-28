@@ -40,7 +40,6 @@ Rectangle {
     property bool isStatusUpdateInput: chatType === Constants.chatTypeStatusUpdate
 
     property var fileUrls: []
-    property alias messageSound: sendMessageSound
 
     property alias suggestionsList: suggestions
     property alias suggestions: suggestionsBox
@@ -61,13 +60,6 @@ Rectangle {
     anchors.right: parent.right
 
     color: Style.current.background
-
-    Audio {
-        id: sendMessageSound
-        source: "../../sounds/send_message.wav"
-        volume: appSettings.volume
-        muted: !appSettings.notificationSoundsEnabled
-    }
 
     function calculateExtraHeightFactor() {
         const factor = (messageInputField.length / 500) + 1;
