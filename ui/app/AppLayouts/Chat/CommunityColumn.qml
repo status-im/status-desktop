@@ -57,7 +57,7 @@ Item {
             y: optionsBtn.height
 
             Action {
-                enabled: chatsModel.activeCommunity.admin
+                enabled: chatsModel.communities.activeCommunity.admin
                 //% "Create channel"
                 text: qsTrId("create-channel")
                 icon.source: "../../img/hash.svg"

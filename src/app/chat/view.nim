@@ -67,7 +67,6 @@ QtObject:
     self.transactions.delete
     self.messageList = initOrderedTable[string, ChatMessageList]()
     self.communities.delete
-    self.messageList = initTable[string, ChatMessageList]()
     self.channelOpenTime = initTable[string, int64]()
     self.QAbstractListModel.delete
 
@@ -228,7 +227,8 @@ QtObject:
 
   proc setActiveChannelByIndexWithForce*(self: ChatsView, index: int, forceUpdate: bool) {.slot.} =
     if((self.communities.activeCommunity.active and self.communities.activeCommunity.chats.chats.len == 0) or (not self.communities.activeCommunity.active and self.chats.chats.len == 0)): return
-    let selectedChannel =
+
+    var selectedChannel =
       if (self.communities.activeCommunity.active):
         self.communities.activeCommunity.chats.getChannel(index)
       else:
@@ -723,6 +723,6 @@ QtObject:
   proc getMessageListIndex(self: ChatsView):int {.slot.} =
     var idx = -1
     for msg in toSeq(self.messageList.values):
-      if(self.activeChannel.id == msg.id): return idx
       idx = idx + 1
+      if(self.activeChannel.id == msg.id): return idx
     return idx
