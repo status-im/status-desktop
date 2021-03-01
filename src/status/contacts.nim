@@ -81,9 +81,15 @@ proc addContact*(self: ContactModel, id: string, localNickname: string): string 
       ""
     else:
       localNickname
-  result = status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.identityImage.thumbnail, contact.systemTags, nickname)
+
+  var thumbnail = ""
+  if contact.identityImage != nil:
+    thumbnail = contact.identityImage.thumbnail
+
+  result = status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, thumbnail, contact.systemTags, nickname)
   self.events.emit("contactAdded", Args())
   discard requestContactUpdate(contact.id)
+
   if updating:
     let profile = Profile(
       id: contact.id,
@@ -106,7 +112,12 @@ proc addContact*(self: ContactModel, id: string): string =
 proc removeContact*(self: ContactModel, id: string) =
   let contact = self.getContactByID(id)
   contact.systemTags.delete(contact.systemTags.find(":contact/added"))
-  discard status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, contact.identityImage.thumbnail, contact.systemTags, contact.localNickname)
+
+  var thumbnail = ""
+  if contact.identityImage != nil:
+    thumbnail = contact.identityImage.thumbnail
+
+  discard status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.ensVerifiedAt, contact.ensVerificationRetries, contact.alias, contact.identicon, thumbnail, contact.systemTags, contact.localNickname)
   self.events.emit("contactRemoved", Args())
 
 proc isAdded*(self: ContactModel, id: string): bool =
