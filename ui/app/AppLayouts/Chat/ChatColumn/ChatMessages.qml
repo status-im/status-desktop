@@ -258,7 +258,7 @@ ScrollView {
 
     DelegateModelGeneralized {
         id: messageListDelegate
-        property var lessThan: [
+        lessThan: [
             function(left, right) { return left.clock > right.clock }
         ]
 
