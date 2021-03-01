@@ -29,28 +29,6 @@ ScrollView {
     ScrollBar.vertical.policy: chatLogView.contentHeight > chatLogView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-    /**
-     * This ListView is prevents a crash of the application during
-     * login *DO NOT REMOVE IT*.
-     *
-     * For an unknown reason, when the `chatLogView` ListView uses
-     * a `verticalLayoutDirection: BottomToTop`, it prevents the application
-     * from successfully rendering during login and crashes.
-     *
-     * From debugging this, we know that this only happens when the above
-     * condition applies *and* when a `DelegateModel` is used.
-     * The delegate doesn't even need proper data, it application would still
-     * crash.
-     *
-     * We found out that the crash can be avoided when another `ListView` exists
-     * in this component (however it's unclear why).
-     *
-     * TODO(pascal): remove this once we know what's exactly going on here.
-     */
-    ListView {
-        id: dummy
-    }
-
     ListView {
         property string currentNotificationChatId
 
