@@ -32,8 +32,6 @@ ModalPopup {
         nameValidationError = "";
         colorValidationError = "";
         selectedImageValidationError = "";
-        // TODO: add color and profile pic
-        // TODO: can privacy be changed?
         nameInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
@@ -58,11 +56,11 @@ ModalPopup {
             selectedImageValidationError = qsTrId("you-need-to-select-an-image")
         }
 
-//        if (colorPicker.text === "") {
-//            colorValidationError = qsTr("You need to enter a color")
-//        } else if (!Utils.isHexColor(colorPicker.text)) {
-//            colorValidationError = qsTr("This field needs to be an hexadecimal color (eg: #4360DF)")
-//        }
+        if (colorPicker.text === "") {
+            colorValidationError = qsTr("You need to enter a color")
+        } else if (!Utils.isHexColor(colorPicker.text)) {
+            colorValidationError = qsTr("This field needs to be an hexadecimal color (eg: #4360DF)")
+        }
 
         return !nameValidationError && !descriptionTextArea.validationError && !colorValidationError
     }
@@ -248,40 +246,44 @@ ModalPopup {
                 }
             }
 
-            // TODO re-add color picker when status-go supports it
-//            Input {
-//                id: colorPicker
-//                label: qsTr("Community color")
-//                placeholderText: qsTr("Pick a color")
-//                anchors.top: addImageButton.bottom
-//                anchors.topMargin: Style.current.smallPadding
-//                validationError: popup.colorValidationError
+            Input {
+                property string defaultColor: "#4360DF"
 
-//                StatusIconButton {
-//                    icon.name: "caret"
-//                    iconRotation: -90
-//                    iconColor: Style.current.textColor
-//                    icon.width: 13
-//                    icon.height: 7
-//                    anchors.right: parent.right
-//                    anchors.rightMargin: Style.current.smallPadding
-//                    anchors.top: parent.top
-//                    anchors.topMargin: colorPicker.textField.height / 2 - height / 2 + Style.current.bigPadding
-//                    onClicked: colorDialog.open()
-//                }
+                id: colorPicker
+                label: qsTr("Community color")
+                placeholderText: qsTr("Pick a color")
+                anchors.top: addImageButton.bottom
+                anchors.topMargin: Style.current.smallPadding
+                validationError: popup.colorValidationError
+                textField.text: defaultColor
+                textField.onReleased: colorDialog.open()
 
-//                ColorDialog {
-//                    id: colorDialog
-//                    title: qsTr("Please choose a color")
-//                    onAccepted: {
-//                        colorPicker.text = colorDialog.color
-//                    }
-//                }
-//            }
+                StatusIconButton {
+                    icon.name: "caret"
+                    iconRotation: -90
+                    iconColor: Style.current.textColor
+                    icon.width: 13
+                    icon.height: 7
+                    anchors.right: parent.right
+                    anchors.rightMargin: Style.current.smallPadding
+                    anchors.top: parent.top
+                    anchors.topMargin: colorPicker.textField.height / 2 - height / 2 + Style.current.bigPadding
+                    onClicked: colorDialog.open()
+                }
+
+                ColorDialog {
+                    id: colorDialog
+                    title: qsTr("Please choose a color")
+                    color: colorPicker.defaultColor
+                    onAccepted: {
+                        colorPicker.text = colorDialog.color
+                    }
+                }
+            }
 
             Separator {
                 id: separator1
-                anchors.top: addImageButton.bottom
+                anchors.top: colorPicker.bottom
                 anchors.topMargin: isEdit ? 0 : Style.current.bigPadding
                 visible: !isEdit
             }
@@ -361,6 +363,7 @@ ModalPopup {
                                                    Utils.filterXSS(descriptionTextArea.text),
                                                    membershipRequirementSettingPopup.checkedMembership,
                                                    ensOnlySwitch.switchChecked,
+                                                   colorPicker.text,
                                                    popup.selectedImage,
                                                    imageDimensions.aX,
                                                    imageDimensions.aY,

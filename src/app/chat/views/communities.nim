@@ -183,11 +183,11 @@ QtObject:
         return true
     return false
 
-  proc createCommunity*(self: CommunitiesView, name: string, description: string, access: int, ensOnly: bool, imagePath: string, aX: int, aY: int, bX: int, bY: int): string {.slot.} =
+  proc createCommunity*(self: CommunitiesView, name: string, description: string, access: int, ensOnly: bool, color: string, imagePath: string, aX: int, aY: int, bX: int, bY: int): string {.slot.} =
     result = ""
     try:
       var image = image_utils.formatImagePath(imagePath)
-      let community = self.status.chat.createCommunity(name, description, access, ensOnly, image, aX, aY, bX, bY)
+      let community = self.status.chat.createCommunity(name, description, access, ensOnly, color, image, aX, aY, bX, bY)
      
       if (community.id == ""):
         return "Community was not created. Please try again later"
