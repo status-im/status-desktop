@@ -257,13 +257,14 @@ proc getJoinedComunities*(): seq[Community] =
       communities.add(community)
   return communities
 
-proc createCommunity*(name: string, description: string, access: int, ensOnly: bool, imageUrl: string, aX: int, aY: int, bX: int, bY: int): Community =
+proc createCommunity*(name: string, description: string, access: int, ensOnly: bool, color: string, imageUrl: string, aX: int, aY: int, bX: int, bY: int): Community =
   let rpcResult = callPrivateRPC("createCommunity".prefix, %*[{
       # TODO this will need to be renamed membership (small m)
       "Membership": access,
       "name": name,
       "description": description,
       "ensOnly": ensOnly,
+      "color": color,
       "image": imageUrl,
       "imageAx": aX,
       "imageAy": aY,
