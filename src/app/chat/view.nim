@@ -169,6 +169,18 @@ QtObject:
 
     self.status.chat.sendMessage(channelId, m, replyTo, contentType)
 
+  proc getChannel*(self: ChatsView, index: int): Chat =
+    if (self.communities.activeCommunity.active):
+      return self.communities.activeCommunity.chats.getChannel(index)
+    else:
+      return self.chats.getChannel(index)
+
+  proc getChannelById*(self: ChatsView, channel: string): Chat =
+    if (self.communities.activeCommunity.active):
+      return self.communities.activeCommunity.chats.getChannel(self.communities.activeCommunity.chats.chats.findIndexById(channel))
+    else:
+      return self.chats.getChannel(self.chats.chats.findIndexById(channel))
+ 
   proc verifyMessageSent*(self: ChatsView, data: string) {.slot.} =
     let messageData = data.parseJson
     self.messageList[messageData["chatId"].getStr].checkTimeout(messageData["id"].getStr)
@@ -215,7 +227,7 @@ QtObject:
 
   proc markAllChannelMessagesReadByIndex*(self: ChatsView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
-    let selectedChannel = self.chats.getChannel(channelIndex)
+    let selectedChannel = self.getChannel(channelIndex)
     if (selectedChannel == nil): return
     discard self.status.chat.markAllChannelMessagesRead(selectedChannel.id)
 
@@ -228,11 +240,7 @@ QtObject:
   proc setActiveChannelByIndexWithForce*(self: ChatsView, index: int, forceUpdate: bool) {.slot.} =
     if((self.communities.activeCommunity.active and self.communities.activeCommunity.chats.chats.len == 0) or (not self.communities.activeCommunity.active and self.chats.chats.len == 0)): return
 
-    var selectedChannel =
-      if (self.communities.activeCommunity.active):
-        self.communities.activeCommunity.chats.getChannel(index)
-      else:
-        self.chats.getChannel(index)
+    var selectedChannel = self.getChannel(index)
 
     self.clearUnreadIfNeeded(self.activeChannel.chatItem)
     self.clearUnreadIfNeeded(selectedChannel)
@@ -266,12 +274,7 @@ QtObject:
 
   proc setActiveChannel*(self: ChatsView, channel: string) {.slot.} =
     if(channel == ""): return
-
-    let selectedChannel =
-      if (self.communities.activeCommunity.active):
-        self.communities.activeCommunity.chats.getChannel(self.communities.activeCommunity.chats.chats.findIndexById(channel))
-      else:
-        self.chats.getChannel(self.chats.chats.findIndexById(channel))
+    let selectedChannel = self.getChannelById(channel)
 
     self.activeChannel.setChatItem(selectedChannel)
     
@@ -288,7 +291,7 @@ QtObject:
     notify = activeChannelChanged
 
   proc setContextChannel*(self: ChatsView, channel: string) {.slot.} =
-    let contextChannel = self.chats.getChannel(self.chats.chats.findIndexById(channel))
+    let contextChannel = self.getChannelById(channel)
     self.contextChannel.setChatItem(contextChannel)
     self.contextChannelChanged()
 
@@ -460,7 +463,7 @@ QtObject:
 
   proc loadMoreMessagesWithIndex*(self: ChatsView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
-    let selectedChannel = self.chats.getChannel(channelIndex)
+    let selectedChannel = self.getChannel(channelIndex)
     if (selectedChannel == nil): return
     trace "Loading more messages", chaId = selectedChannel.id
     self.status.chat.chatMessages(selectedChannel.id, false)
@@ -540,7 +543,7 @@ QtObject:
 
   proc leaveChatByIndex*(self: ChatsView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
-    let selectedChannel = self.chats.getChannel(channelIndex)
+    let selectedChannel = self.getChannel(channelIndex)
     if (selectedChannel == nil): return
     self.status.chat.leave(selectedChannel.id)
     self.status.mailservers.deleteMailserverTopic(selectedChannel.id)
@@ -571,7 +574,7 @@ QtObject:
 
   proc clearChatHistoryByIndex*(self: ChatsView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
-    let selectedChannel = self.chats.getChannel(channelIndex)
+    let selectedChannel = self.getChannel(channelIndex)
     if (selectedChannel == nil): return
     self.status.chat.clearHistory(selectedChannel.id)
 
@@ -654,7 +657,7 @@ QtObject:
 
   proc muteChannel*(self: ChatsView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
-    let selectedChannel = self.chats.getChannel(channelIndex)
+    let selectedChannel = self.getChannel(channelIndex)
     if (selectedChannel == nil): return
     if (selectedChannel.id == self.activeChannel.id):
       self.muteCurrentChannel()
@@ -665,7 +668,7 @@ QtObject:
 
   proc unmuteChannel*(self: ChatsView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
-    let selectedChannel = self.chats.getChannel(channelIndex)
+    let selectedChannel = self.getChannel(channelIndex)
     if (selectedChannel == nil): return
     if (selectedChannel.id == self.activeChannel.id):
       self.unmuteCurrentChannel()
@@ -677,7 +680,7 @@ QtObject:
 
   proc channelIsMuted*(self: ChatsView, channelIndex: int): bool {.slot.} =
     if (self.chats.chats.len == 0): return false
-    let selectedChannel = self.chats.getChannel(channelIndex)
+    let selectedChannel = self.getChannel(channelIndex)
     if (selectedChannel == nil): return false
     result = selectedChannel.muted  
 
