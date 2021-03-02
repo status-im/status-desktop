@@ -61,6 +61,7 @@ ModalPopup {
           height: 36
           anchors.top: parent.top
           color: popup.channel.color
+          chatId: popup.channel.id
           chatName: popup.channel.name
       }
     

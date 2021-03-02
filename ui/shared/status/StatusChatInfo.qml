@@ -34,6 +34,7 @@ Item {
     StatusIdenticon {
         id: chatIdenticon
         chatType: root.chatType
+        chatId: root.chatId
         chatName: root.chatName
         identicon: root.profileImage || root.identicon
         width: root.isCompact ? 20 : root.identiconSize

@@ -5,6 +5,7 @@ import "../../shared"
 Rectangle {
     id: root
 
+    property string chatId
     property string chatName
 
     width: 40
@@ -12,7 +13,7 @@ Rectangle {
     radius: width / 2
 
     color: {
-        const color = chatsModel.getChannelColor(root.chatName.startsWith("#") ? root.chatName.substr(1) : root.chatName)
+        const color = chatsModel.getChannelColor(chatId)
         if (!color) {
             return Style.current.orange
         }

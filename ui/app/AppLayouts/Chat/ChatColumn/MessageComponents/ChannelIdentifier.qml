@@ -27,7 +27,14 @@ Column {
             if (chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne) {
                 return Style.current.transparent
             }
-            return chatsModel.activeChannel.color
+            if (chatsModel.activeChannel.color) {
+                return chatsModel.activeChannel.color
+            }
+            const color = chatsModel.getChannelColor(chatId)
+            if (!color) {
+                return Style.current.orange
+            }
+            return color
         }
 
         RoundedImage {
