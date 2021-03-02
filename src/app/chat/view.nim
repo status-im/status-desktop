@@ -91,6 +91,25 @@ QtObject:
 
     result.setup()
 
+
+  proc getChannel*(self: ChatsView, index: int): Chat =
+    if (self.communities.activeCommunity.active):
+      return self.communities.activeCommunity.chats.getChannel(index)
+    else:
+      return self.chats.getChannel(index)
+
+  proc getChannelById*(self: ChatsView, channel: string): Chat =
+    if (self.communities.activeCommunity.active):
+      return self.communities.activeCommunity.chats.getChannel(self.communities.activeCommunity.chats.chats.findIndexById(channel))
+    else:
+      return self.chats.getChannel(self.chats.chats.findIndexById(channel))
+
+  proc updateChannelInRightList*(self: ChatsView, channel: Chat) =
+    if (self.communities.activeCommunity.active):
+      self.communities.activeCommunity.chats.updateChat(channel)
+    else:
+      self.chats.updateChat(channel)
+
   proc oldestMessageTimestampChanged*(self: ChatsView) {.signal.}
 
   proc getOldestMessageTimestamp*(self: ChatsView): QVariant {.slot.}  =
@@ -125,7 +144,10 @@ QtObject:
     read = getCommunities
 
   proc getChannelColor*(self: ChatsView, channel: string): string {.slot.} =
-    self.chats.getChannelColor(channel)
+    if (channel == ""): return
+    let selectedChannel = self.getChannelById(channel)
+    if (selectedChannel.id == "") : return
+    return selectedChannel.color
 
   proc replaceMentionsWithPubKeys(self: ChatsView, mentions: seq[string], contacts: seq[Profile], message: string, predicate: proc (contact: Profile): string): string =
     var updatedMessage = message
@@ -168,18 +190,6 @@ QtObject:
       channelId = "@" & self.pubKey
 
     self.status.chat.sendMessage(channelId, m, replyTo, contentType)
-
-  proc getChannel*(self: ChatsView, index: int): Chat =
-    if (self.communities.activeCommunity.active):
-      return self.communities.activeCommunity.chats.getChannel(index)
-    else:
-      return self.chats.getChannel(index)
-
-  proc getChannelById*(self: ChatsView, channel: string): Chat =
-    if (self.communities.activeCommunity.active):
-      return self.communities.activeCommunity.chats.getChannel(self.communities.activeCommunity.chats.chats.findIndexById(channel))
-    else:
-      return self.chats.getChannel(self.chats.chats.findIndexById(channel))
  
   proc verifyMessageSent*(self: ChatsView, data: string) {.slot.} =
     let messageData = data.parseJson

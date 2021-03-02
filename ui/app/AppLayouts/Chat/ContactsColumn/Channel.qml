@@ -56,6 +56,7 @@ Rectangle {
         id: contactImage
         height: !isCompact ? 40 : 28
         width: !isCompact ? 40 : 28
+        chatId: wrapper.chatId
         chatName: wrapper.name
         chatType: wrapper.chatType
         identicon: wrapper.profileImage || wrapper.identicon

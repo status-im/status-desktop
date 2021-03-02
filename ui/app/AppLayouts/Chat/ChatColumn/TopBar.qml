@@ -60,6 +60,7 @@ Rectangle {
         id: chatInfo
         StatusChatInfo {
             identiconSize: 36
+            chatId: chatsModel.activeChannel.id
             chatName: chatsModel.activeChannel.name
             chatType: chatsModel.activeChannel.chatType
             identicon: chatsModel.activeChannel.identicon

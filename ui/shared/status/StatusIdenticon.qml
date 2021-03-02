@@ -6,6 +6,7 @@ import "../../shared/status"
 Item {
     id: root
 
+    property string chatId
     property string chatName
     property int chatType
     property string identicon
@@ -22,6 +23,7 @@ Item {
         id: letterIdenticon
 
         StatusLetterIdenticon {
+            chatId: root.chatId
             chatName: root.chatName
             width: parent.width
             height: parent.height
