@@ -58,6 +58,13 @@ QtObject:
       of SignalType.MailserverRequestExpired: mailserver.fromExpiredEvent(jsonSignal)
       else: Signal()
 
+    if(signalType == SignalType.NodeLogin):
+      if(NodeSignal(signal).event.error != ""):
+        error "node.login", error=NodeSignal(signal).event.error
+
+    if(signalType == SignalType.NodeCrashed):
+        error "node.crashed", error=statusSignal
+
     self.status.events.emit(signalType.event, signal)
 
   proc signalReceived*(self: SignalsController, signal: string) {.signal.}
