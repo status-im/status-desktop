@@ -6,6 +6,8 @@ On windows you can simply run the [`scripts/windows_build_setup.ps1`](../scripts
 
 * QT
 
+**IMPORTANT:** Due to [a bug](https://github.com/status-im/status-desktop/commit/7b07a31fa6d06c730cf563475d319f0217a211ca) in version `5.15.0`, this project is locked to version `5.14.2`. Make sure to select version `5.14.2` when installing Qt via the installer.
+
 Linux users should install Qt through the system's package manager:
 
 ```
