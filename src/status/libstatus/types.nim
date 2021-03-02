@@ -7,6 +7,7 @@ type SignalType* {.pure.} = enum
   Message = "messages.new"
   Wallet = "wallet"
   NodeReady = "node.ready"
+  NodeCrashed = "node.crashed"
   NodeStarted = "node.started"
   NodeStopped = "node.stopped"
   NodeLogin = "node.login"
