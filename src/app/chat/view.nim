@@ -347,7 +347,7 @@ QtObject:
   proc messagesCleared*(self: ChatsView) {.signal.}
 
   proc clearMessages*(self: ChatsView, id: string) =
-    let channel = self.chats.getChannelById(id)
+    let channel = self.getChannelById(id)
     if (channel == nil):
       return
     self.messageList[id].clear(not channel.isNil and channel.chatType != ChatType.Profile)
@@ -655,15 +655,15 @@ QtObject:
 
   proc muteCurrentChannel*(self: ChatsView) {.slot.} =
     self.activeChannel.mute()
-    let channel = self.chats.getChannelById(self.activeChannel.id())
+    let channel = self.getChannelById(self.activeChannel.id())
     channel.muted = true
-    self.chats.updateChat(channel)
+    self.updateChannelInRightList(channel)
 
   proc unmuteCurrentChannel*(self: ChatsView) {.slot.} =
     self.activeChannel.unmute()
-    let channel = self.chats.getChannelById(self.activeChannel.id())
+    let channel = self.getChannelById(self.activeChannel.id())
     channel.muted = false
-    self.chats.updateChat(channel)
+    self.updateChannelInRightList(channel)
 
   proc muteChannel*(self: ChatsView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
@@ -674,7 +674,7 @@ QtObject:
       return
     selectedChannel.muted = true
     self.status.chat.muteChat(selectedChannel)
-    self.chats.updateChat(selectedChannel)
+    self.updateChannelInRightList(selectedChannel)
 
   proc unmuteChannel*(self: ChatsView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
@@ -685,8 +685,7 @@ QtObject:
       return
     selectedChannel.muted = false
     self.status.chat.unmuteChat(selectedChannel)
-    self.chats.updateChat(selectedChannel)
-  
+    self.updateChannelInRightList(selectedChannel)
 
   proc channelIsMuted*(self: ChatsView, channelIndex: int): bool {.slot.} =
     if (self.chats.chats.len == 0): return false
