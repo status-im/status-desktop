@@ -186,8 +186,16 @@ Rectangle {
 
     function wrapSelection(wrapWith) {
         if (messageInputField.selectionStart - messageInputField.selectionEnd === 0) return
-        insertInTextInput(messageInputField.selectionStart, wrapWith);
-        insertInTextInput(messageInputField.selectionEnd, wrapWith);
+
+        let selection = messageInputField.selectedText
+
+        if (selection.startsWith(wrapWith) && selection.endsWith(wrapWith)) {
+            messageInputField.remove(messageInputField.selectionEnd, messageInputField.selectionEnd - wrapWith.length);
+            messageInputField.remove(messageInputField.selectionStart, messageInputField.selectionStart + wrapWith.length);
+        } else {
+            insertInTextInput(messageInputField.selectionStart, wrapWith);
+            insertInTextInput(messageInputField.selectionEnd, wrapWith);
+        }
         messageInputField.deselect()
         formatInputMessage()
     }
