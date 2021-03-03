@@ -14,6 +14,14 @@ Rectangle {
     property string identicon
     property bool hasMentions: false
     property int chatType: Constants.chatTypePublic
+    property int realChatType: {
+        if (chatType === Constants.chatTypeCommunity) {
+            // TODO add a check for private community chats once it is created
+            return Constants.chatTypePublic
+        }
+        return chatType
+    }
+
     property string searchStr: ""
     property bool isCompact: appSettings.useCompactMode
     property int contentType: 1
@@ -21,10 +29,10 @@ Rectangle {
     property bool hovered: false
     property bool enableMouseArea: true
 
-    property string profileImage: chatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
+    property string profileImage: realChatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
 
     Connections {
-        enabled: chatType === Constants.chatTypeOneToOne
+        enabled: realChatType === Constants.chatTypeOneToOne
         target: profileModel.contacts.list
         onContactChanged: {
             if (pubkey === wrapper.chatId) {
@@ -58,7 +66,7 @@ Rectangle {
         width: !isCompact ? 40 : 28
         chatId: wrapper.chatId
         chatName: wrapper.name
-        chatType: wrapper.chatType
+        chatType: wrapper.realChatType
         identicon: wrapper.profileImage || wrapper.identicon
         anchors.left: parent.left
         anchors.leftMargin: !isCompact ? Style.current.padding : Style.current.smallPadding
@@ -70,18 +78,18 @@ Rectangle {
         width: 16
         height: 16
         fillMode: Image.PreserveAspectFit
-        source: "../../../img/channel-icon-" + (wrapper.chatType === Constants.chatTypePublic ? "public-chat.svg" : "group.svg")
+        source: "../../../img/channel-icon-" + (wrapper.realChatType === Constants.chatTypePublic ? "public-chat.svg" : "group.svg")
         anchors.left: contactImage.right
         anchors.leftMargin: !isCompact ? Style.current.padding : Style.current.smallPadding
         anchors.top: !isCompact ? parent.top : undefined
         anchors.topMargin: !isCompact ? Style.current.smallPadding : 0
         anchors.verticalCenter: !isCompact ? undefined : parent.verticalCenter
-        visible: wrapper.chatType !== Constants.chatTypeOneToOne
+        visible: wrapper.realChatType !== Constants.chatTypeOneToOne
     }
 
     StyledText {
         id: contactInfo
-        text: wrapper.chatType !== Constants.chatTypePublic ?
+        text: wrapper.realChatType !== Constants.chatTypePublic ?
                   Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(wrapper.name))) :
                   "#" + Utils.filterXSS(wrapper.name)
         anchors.right: contactTime.left

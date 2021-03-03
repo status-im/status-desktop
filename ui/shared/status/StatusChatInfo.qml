@@ -11,18 +11,25 @@ Item {
     property string chatId
     property string chatName
     property int chatType
+    property int realChatType: {
+        if (chatType === Constants.chatTypeCommunity) {
+            // TODO add a check for private community chats once it is created
+            return Constants.chatTypePublic
+        }
+        return chatType
+    }
     property string identicon
     property int identiconSize: 40
     property bool isCompact: false
     property bool muted: false
 
-    property string profileImage: chatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
+    property string profileImage: realChatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
 
     height: 48
     width: nameAndInfo.width + chatIdenticon.width + Style.current.smallPadding
 
     Connections {
-        enabled: chatType === Constants.chatTypeOneToOne
+        enabled: realChatType === Constants.chatTypeOneToOne
         target: profileModel.contacts.list
         onContactChanged: {
             if (pubkey === root.chatId) {
@@ -33,7 +40,7 @@ Item {
 
     StatusIdenticon {
         id: chatIdenticon
-        chatType: root.chatType
+        chatType: root.realChatType
         chatId: root.chatId
         chatName: root.chatName
         identicon: root.profileImage || root.identicon
@@ -53,7 +60,7 @@ Item {
         StyledText {
             id: chatName
             text: {
-                switch(root.chatType) {
+                switch(root.realChatType) {
                     case Constants.chatTypePublic: return "#" + root.chatName;
                     case Constants.chatTypeOneToOne: return Utils.removeStatusEns(root.chatName)
                     default: return root.chatName
@@ -110,7 +117,7 @@ Item {
             id: chatInfo
             color: Style.current.secondaryText
             text: {
-                switch(root.chatType){
+                switch(root.realChatType){
                     //% "Public chat"
                     case Constants.chatTypePublic: return qsTrId("public-chat")
                     case Constants.chatTypeOneToOne: return (profileModel.contacts.isAdded(root.chatId) ?

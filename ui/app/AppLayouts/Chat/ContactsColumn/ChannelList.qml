@@ -98,7 +98,6 @@ Item {
             chatColumn.isReply = false;
         }
     }
-
 }
 
 
