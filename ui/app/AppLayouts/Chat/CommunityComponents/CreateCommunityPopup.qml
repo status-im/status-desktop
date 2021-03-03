@@ -9,6 +9,7 @@ import "../../../../shared/status"
 ModalPopup {
     readonly property int maxDescChars: 140
     property string nameValidationError: ""
+    property string descriptionValidationError: ""
     property string colorValidationError: ""
     property string selectedImageValidationError: ""
     property string selectedImage: ""
@@ -39,6 +40,7 @@ ModalPopup {
         nameValidationError = ""
         colorValidationError = ""
         selectedImageValidationError = ""
+        descriptionValidationError = ""
 
         if (nameInput.text === "") {
             //% "You need to enter a name"
@@ -49,6 +51,10 @@ ModalPopup {
         } else if (nameInput.text.length > 100) {
             //% "Your name needs to be 100 characters or shorter"
             nameValidationError = qsTrId("your-name-needs-to-be-100-characters-or-shorter")
+        }
+
+        if (descriptionTextArea.text === "") {
+            descriptionValidationError = qsTr("You need to enter a description")
         }
 
         if (selectedImage === "") {
@@ -62,7 +68,7 @@ ModalPopup {
             colorValidationError = qsTr("This field needs to be an hexadecimal color (eg: #4360DF)")
         }
 
-        return !nameValidationError && !descriptionTextArea.validationError && !colorValidationError
+        return !nameValidationError && !descriptionTextArea.validationError && !colorValidationError && !descriptionValidationError
     }
 
     title: isEdit ?
@@ -110,7 +116,8 @@ ModalPopup {
                 //% "What your community is about"
                 placeholderText: qsTrId("what-your-community-is-about")
                 //% "The description cannot exceed 140 characters"
-                validationError: descriptionTextArea.text.length > maxDescChars ? qsTrId("the-description-cannot-exceed-140-characters") : ""
+                validationError: descriptionTextArea.text.length > maxDescChars ? qsTrId("the-description-cannot-exceed-140-characters") :
+                                                                                  popup.descriptionValidationError || ""
                 anchors.top: nameInput.bottom
                 anchors.topMargin: Style.current.bigPadding
                 customHeight: 88
