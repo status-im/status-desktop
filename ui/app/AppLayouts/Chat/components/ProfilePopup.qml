@@ -223,6 +223,7 @@ ModalPopup {
             anchors.bottom: chatSettings.bottom
             anchors.bottomMargin: 5
             width: 13
+            height: 7
             fillMode: Image.PreserveAspectFit
             ColorOverlay {
                 anchors.fill: parent

@@ -90,6 +90,7 @@ Item {
                     SVGImage {
                         id: fromArrow
                         width: 13
+                        height: 7
                         visible: root.isFromEditable
                         anchors.verticalCenter: parent.verticalCenter
                         fillMode: Image.PreserveAspectFit
@@ -441,6 +442,7 @@ Item {
                     SVGImage {
                         id: gasArrow
                         width: 13
+                        height: 7
                         visible: root.isGasEditable
                         anchors.verticalCenter: parent.verticalCenter
                         fillMode: Image.PreserveAspectFit
@@ -489,6 +491,7 @@ Item {
                     }
                     SVGImage {
                         width: 13
+                        height: 7
                         visible: true
                         anchors.verticalCenter: parent.verticalCenter
                         fillMode: Image.PreserveAspectFit
