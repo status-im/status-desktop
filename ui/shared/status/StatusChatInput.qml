@@ -202,6 +202,10 @@ Rectangle {
     }
 
     function onRelease(event) {
+        if (event.key === Qt.Key_Backspace && textFormatMenu.opened) {
+            textFormatMenu.close()
+        }
+
         // the text doesn't get registered to the textarea fast enough
         // we can only get it in the `released` event
         if (paste) {
