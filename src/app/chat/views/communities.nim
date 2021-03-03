@@ -208,7 +208,7 @@ QtObject:
         return "Chat was not created. Please try again later"
 
       self.joinedCommunityList.addChannelToCommunity(communityId, chat)
-      discard self.activeCommunity.chats.addChatItemToList(chat)
+      self.activeCommunity.addChatItemToList(chat)
     except Exception as e:
       error "Error creating the channel", msg = e.msg
       result = fmt"Error creating the channel: {e.msg}"

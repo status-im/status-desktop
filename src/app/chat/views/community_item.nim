@@ -133,6 +133,11 @@ QtObject:
     self.chats.setChats(chats)
     self.chatsChanged()
 
+  proc addChatItemToList*(self: CommunityItemView, chat: Chat) =
+    self.communityItem.chats.add(chat)
+    discard self.chats.addChatItemToList(chat)
+    self.chatsChanged()
+
   QtProperty[QVariant] chats:
     read = getChats
     notify = chatsChanged
