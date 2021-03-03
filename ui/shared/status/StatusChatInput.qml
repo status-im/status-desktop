@@ -194,8 +194,29 @@ Rectangle {
 
     function wrapSelection(wrapWith) {
         if (messageInputField.selectionStart - messageInputField.selectionEnd === 0) return
-        insertInTextInput(messageInputField.selectionStart, wrapWith);
-        insertInTextInput(messageInputField.selectionEnd, wrapWith);
+
+        let selection = messageInputField.selectedText
+        let availableAnnotations = ["**", "*", "~~", "`"]
+        let performWrap = true
+
+        // First we remove all existing annotations of the selections, so that users can easily
+        // switch from, for example, italic to bold
+        for (let i = 0; i < availableAnnotations.length; i++) {
+            let annotation = availableAnnotations[i]
+
+            if (selection.startsWith(annotation) && selection.endsWith(annotation)) {
+                messageInputField.remove(messageInputField.selectionEnd,  messageInputField.selectionEnd - annotation.length);
+                messageInputField.remove(messageInputField.selectionStart, messageInputField.selectionStart + annotation.length);
+                performWrap = annotation !== wrapWith;
+                break;
+            }
+        }
+
+        if (performWrap) {
+            insertInTextInput(messageInputField.selectionStart, wrapWith);
+            insertInTextInput(messageInputField.selectionEnd, wrapWith);
+        }
+
         messageInputField.deselect()
         formatInputMessage()
     }
