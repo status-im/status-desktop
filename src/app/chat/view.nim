@@ -100,7 +100,10 @@ QtObject:
 
   proc getChannelById*(self: ChatsView, channel: string): Chat =
     if (self.communities.activeCommunity.active):
-      return self.communities.activeCommunity.chats.getChannel(self.communities.activeCommunity.chats.chats.findIndexById(channel))
+      let index = self.communities.activeCommunity.chats.chats.findIndexById(channel)
+      if (index == -1):
+        return
+      return self.communities.activeCommunity.chats.getChannel(index)
     else:
       return self.chats.getChannel(self.chats.chats.findIndexById(channel))
 
@@ -146,7 +149,7 @@ QtObject:
   proc getChannelColor*(self: ChatsView, channel: string): string {.slot.} =
     if (channel == ""): return
     let selectedChannel = self.getChannelById(channel)
-    if (selectedChannel.id == "") : return
+    if (selectedChannel.isNil or selectedChannel.id == "") : return
     return selectedChannel.color
 
   proc replaceMentionsWithPubKeys(self: ChatsView, mentions: seq[string], contacts: seq[Profile], message: string, predicate: proc (contact: Profile): string): string =
