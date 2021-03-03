@@ -76,7 +76,7 @@ Popup {
                 categoryNames[emoji.category] = newCategories.length
                 newCategories.push([])
             }
-            newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode + '.png'}))
+            newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode + '.svg'}))
         })
 
         if (newCategories[categoryNames.recent].length === 0) {
