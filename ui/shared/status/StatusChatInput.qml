@@ -704,6 +704,10 @@ Rectangle {
 
                 StatusTextFormatMenu {
                     id: textFormatMenu
+                    function surroundedBy(chars) {
+                        return messageInputField.selectedText.trim().startsWith(chars) &&
+                          messageInputField.selectedText.trim().endsWith(chars)
+                    }
                     Action {
                         icon.name: "format-text-bold"
                         icon.width: 12
@@ -711,6 +715,7 @@ Rectangle {
                         onTriggered: wrapSelection("**")
                         //% "Bold"
                         text: qsTrId("bold")
+                        checked: textFormatMenu.surroundedBy("**")
                     }
                     Action {
                         icon.name: "format-text-italic"
@@ -719,6 +724,7 @@ Rectangle {
                         onTriggered: wrapSelection("*")
                         //% "Italic"
                         text: qsTrId("italic")
+                        checked: textFormatMenu.surroundedBy("*") && !textFormatMenu.surroundedBy("**")
                     }
                     Action {
                         icon.name: "format-text-strike-through"
@@ -727,6 +733,7 @@ Rectangle {
                         onTriggered: wrapSelection("~~")
                         //% "Strikethrough"
                         text: qsTrId("strikethrough")
+                        checked: textFormatMenu.surroundedBy("~~")
                     }
                     Action {
                         icon.name: "format-text-code"
@@ -735,6 +742,7 @@ Rectangle {
                         onTriggered: wrapSelection("`")
                         //% "Code"
                         text: qsTrId("code")
+                        checked: textFormatMenu.surroundedBy("`")
                     }
                 }
             }
