@@ -31,10 +31,13 @@ QtObject:
     result.members = newCommunityMembersView(status)
     result.setup
 
+  proc nbMembersChanged*(self: CommunityItemView) {.signal.}
+
   proc setCommunityItem*(self: CommunityItemView, communityItem: Community) =
     self.communityItem = communityItem
     self.chats.setChats(communityItem.chats)
     self.members.setMembers(communityItem.members)
+    self.nbMembersChanged()
     self.communityMembershipRequestList.setNewData(communityItem.membershipRequests)
 
   proc activeChanged*(self: CommunityItemView) {.signal.}
@@ -44,7 +47,6 @@ QtObject:
     self.status.events.emit("communityActiveChanged", CommunityActiveChangedArgs(active: value))
     self.activeChanged()
 
-  proc nbMembersChanged*(self: CommunityItemView) {.signal.}
 
   proc removeMember*(self: CommunityItemView, pubKey: string) =
     self.members.removeMember(pubKey)

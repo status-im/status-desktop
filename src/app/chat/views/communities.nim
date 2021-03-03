@@ -161,6 +161,9 @@ QtObject:
     else:
       self.communityList.replaceCommunity(community)
 
+    if (self.activeCommunity.active and self.activeCommunity.communityItem.id == community.id):
+      self.activeCommunity.setCommunityItem(community)
+
     if (community.joined == true):
       let joinedCommunityCheck = self.joinedCommunityList.getCommunityById(community.id)
       if (joinedCommunityCheck.id == ""):
