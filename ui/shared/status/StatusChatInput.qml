@@ -100,10 +100,10 @@ Rectangle {
 
     function parseMarkdown(markdownText) {
         const htmlText = markdownText
-          .replace(/\~\~([^*]+)\~\~/gim, '<span style="text-decoration: line-through">~~$1~~</span>')
-          .replace(/\*\*([^*]+)\*\*/gim, '<b>:asterisk::asterisk:$1:asterisk::asterisk:</b>')
-          .replace(/\`([^*]+)\`/gim, '<code>`$1`</code>')
-          .replace(/\*([^*]+)\*/gim, '<i>:asterisk:$1:asterisk:</i>')
+          .replace(/\~\~([^*]+)\~\~/gim, '~~<span style="text-decoration: line-through">$1</span>~~')
+          .replace(/\*\*([^*]+)\*\*/gim, ':asterisk::asterisk:<b>$1</b>:asterisk::asterisk:')
+          .replace(/\`([^*]+)\`/gim, '`<code>$1</code>`')
+          .replace(/\*([^*]+)\*/gim, ':asterisk:<i>$1</i>:asterisk:')
         return htmlText.replace(/\:asterisk\:/gim, "*")
     }
 
