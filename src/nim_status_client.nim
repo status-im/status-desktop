@@ -10,16 +10,39 @@ import app/onboarding/core as onboarding
 import app/login/core as login
 import app/provider/core as provider
 import status/signals/core as signals
+import status/signals/tasks as tasks
 import status/libstatus/types
 import status/libstatus/accounts/constants
 import nim_status
 import status/status as statuslib
 import ./eventemitter
+import chronos, task_runner
 
 var signalsQObjPointer: pointer
 
 logScope:
   topics = "main"
+
+
+# proc worker(arg: ThreadArg) {.async.} =
+#   let chanRecv = arg.chanRecv
+#   let chanSend = arg.chanSend
+#   var count = 0
+#   chanRecv.open()
+#   chanSend.open()
+
+#   while true:
+#     let received = $(await chanRecv.recv())
+#     debugEcho ">>> [nim_status_client.worker] received message: ", received
+#     # await chanSend.send("hello".safe)
+#     if (received == "do task"):
+#       signal_handler(arg.tasksControllerPtr, "task result " & $count, "receiveSignal")
+
+#     count = count + 1
+#     # await sleepAsync 1000.milliseconds
+
+# proc workerThread(arg: ThreadArg) {.thread.} =
+#   waitFor worker(arg)
 
 proc mainProc() =
   let fleets =
@@ -28,7 +51,16 @@ proc mainProc() =
     else:
       "/../fleets.json"
 
-  let status = statuslib.newStatusInstance(readFile(joinPath(getAppDir(), fleets)))
+  let chanSend = newAsyncChannel[ThreadSafeString](-1)
+  var thr = Thread[ThreadArg]()
+  let taskManager = tasks.newTaskManager(chanSend, thr)
+  let arg = ThreadArg(
+    chanRecv: chanSend
+  )
+
+  createThread(thr, workerThread, arg)
+
+  let status = statuslib.newStatusInstance(taskManager, readFile(joinPath(getAppDir(), fleets)))
   status.initNode()
 
   enableHDPI()
@@ -152,6 +184,7 @@ proc mainProc() =
     profile.delete()
     utilsController.delete()
     browserController.delete()
+    taskManager.delete()
 
 
   # Initialize only controllers whose init functions
@@ -181,6 +214,7 @@ proc mainProc() =
     initControllers()
 
   engine.setRootContextProperty("signals", signalController.variant)
+  # engine.setRootContextProperty("tasks", tasksSignalController.variant)
 
   engine.load(newQUrl("qrc:///main.qml"))
 
