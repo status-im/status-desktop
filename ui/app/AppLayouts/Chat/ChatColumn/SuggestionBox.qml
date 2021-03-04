@@ -118,6 +118,8 @@ Rectangle {
 
             StatusImageIdenticon {
                 id: accountImage
+                width: 32
+                height: 32
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.smallPadding

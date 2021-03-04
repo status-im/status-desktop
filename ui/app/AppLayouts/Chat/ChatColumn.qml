@@ -65,11 +65,12 @@ StackLayout {
         for (let i = 0; i < len; i++) {
             const contactAddr = chatsModel.suggestionList.rowData(i, "address");
             if(idMap[contactAddr]) continue;
+            const contactIndex = profileModel.contacts.list.getContactIndexByPubkey(chatsModel.suggestionList.rowData(i, "address"));
             chatInput.suggestionsList.append({
                 alias: chatsModel.suggestionList.rowData(i, "alias"),
                 ensName: chatsModel.suggestionList.rowData(i, "ensName"),
                 address: contactAddr,
-                identicon: chatsModel.suggestionList.rowData(i, "identicon"),
+                identicon: profileModel.contacts.list.rowData(contactIndex, "thumbnailImage"),
                 localNickname: chatsModel.suggestionList.rowData(i, "localNickname")
             });
             idMap[contactAddr] = true;
