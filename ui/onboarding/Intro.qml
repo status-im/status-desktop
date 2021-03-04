@@ -30,7 +30,7 @@ RowLayout {
             anchors.fill: parent
 
             Slide {
-                image: Universal.theme === Universal.Dark ? "img/chat-dark@2x.jpg" : "img/chat@2x.jpg"
+                image: "img/chat@2x.png"
                 //% "Truly private communication"
                 title: qsTrId("intro-title1")
                 //% "Chat over a peer-to-peer, encrypted network\n where messages can't be censored or hacked"
@@ -45,7 +45,7 @@ RowLayout {
                 description: qsTrId("send-and-receive-digital-assets-anywhere-in-the-nworld--no-bank-account-required")
             }
             Slide {
-                image: Universal.theme === Universal.Dark ? "img/browser-dark@2x.jpg" : "img/browser@2x.jpg"
+                image: "img/browser@2x.png"
                 //% "Decentralized apps"
                 title: qsTrId("intro-title3")
                 //% "Explore games, exchanges and social networks\nwhere you alone own your data"
