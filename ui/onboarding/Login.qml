@@ -168,6 +168,7 @@ Item {
                 if (error) {
                     errorSound.play()
                     errMsg.visible = true;
+                    loading = false;
 
                 }
             }
