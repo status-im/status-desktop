@@ -5,7 +5,7 @@ import "../shared"
 
 Item {
     id: slide
-    property string image: "img/chat@2x.jpg"
+    property string image: "img/chat@2x.png"
     property string title: "Truly private communication"
     property string description: "Chat over a peer-to-peer, encrypted network\n where messages can't be censored or hacked"
     property bool isFirst: false

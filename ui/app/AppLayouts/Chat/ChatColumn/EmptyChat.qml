@@ -14,7 +14,7 @@ Item {
         id: walkieTalkieImage
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        source: "../../../../onboarding/img/chat@2x.jpg"
+        source: "../../../../onboarding/img/chat@2x.png"
     }
 
     Item {
