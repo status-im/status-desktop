@@ -387,6 +387,7 @@ RowLayout {
 
     Rectangle {
         height: parent.height
+        Layout.fillHeight: true
         width: 1
         color: Style.current.border
     }
