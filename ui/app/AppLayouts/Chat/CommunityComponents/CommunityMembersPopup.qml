@@ -35,12 +35,16 @@ ModalPopup {
             anchors.top: groupName.bottom
             anchors.topMargin: 2
             font.pixelSize: 14
-            color: Style.current.darkGrey
+            color: Style.current.secondaryText
         }
 
         Separator {
             anchors.top: nbMembersText.bottom
             anchors.topMargin: Style.current.padding
+            anchors.left: parent.left
+            anchors.leftMargin: -Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: -Style.current.padding
         }
     }
 
@@ -48,7 +52,7 @@ ModalPopup {
         id: inviteBtn
         //% "Invite People"
         label: qsTrId("invite-people")
-        width: popup.width
+        width: parent.width
         iconName: "invite"
         onClicked: openPopup(inviteFriendsPopup)
         Component {
@@ -92,12 +96,11 @@ ModalPopup {
         anchors.rightMargin: -Style.current.padding
     }
 
-
     ListView {
         id: memberList
         anchors.top: sep2.visible ? sep2.bottom : sep.bottom
         anchors.topMargin: Style.current.smallPadding
-        anchors.bottom: popup.bottom
+        anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottomMargin: Style.current.halfPadding
