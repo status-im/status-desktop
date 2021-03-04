@@ -41,39 +41,52 @@ Item {
             anchors.topMargin: -4
         }
 
-        StatusIconButton {
+        StatusRoundButton {
             id: optionsBtn
-            icon.name: "dots-icon"
-            iconColor: Style.current.inputColor
+            pressedIconRotation: 45
+            icon.name: "plusSign"
+            size: "medium"
+            width: 36
+            height: 36
             anchors.right: parent.right
             anchors.rightMargin: Style.current.bigPadding
-            anchors.verticalCenter: parent.verticalCenter
-            onClicked: optionsMenu.open()
-        }
+            anchors.top: parent.top
+            anchors.topMargin: 8
 
-        PopupMenu {
-            id: optionsMenu
-            x: optionsBtn.x + optionsBtn.width / 2 - optionsMenu.width / 2
-            y: optionsBtn.height
-
-            Action {
-                enabled: chatsModel.communities.activeCommunity.admin
-                //% "Create channel"
-                text: qsTrId("create-channel")
-                icon.source: "../../img/hash.svg"
-                icon.width: 20
-                icon.height: 20
-                onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
+            onClicked: {
+                optionsBtn.state = "pressed"
+                let x = optionsBtn.iconX + optionsBtn.icon.width / 2 - optionsMenu.width / 2
+                optionsMenu.popup(x, optionsBtn.icon.height + 14)
             }
 
-            Action {
-                //% "Leave community"
-                text: qsTrId("leave-community")
-                icon.source: "../../img/delete.svg"
-                icon.color: Style.current.red
-                icon.width: 20
-                icon.height: 20
-                onTriggered: chatsModel.communities.leaveCurrentCommunity()
+            PopupMenu {
+                id: optionsMenu
+                x: optionsBtn.x + optionsBtn.width / 2 - optionsMenu.width / 2
+                y: optionsBtn.height
+
+                Action {
+                    enabled: chatsModel.communities.activeCommunity.admin
+                    //% "Create channel"
+                    text: qsTrId("create-channel")
+                    icon.source: "../../img/hash.svg"
+                    icon.width: 20
+                    icon.height: 20
+                    onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.activeCommunity.id})
+                }
+
+                Action {
+                    //% "Leave community"
+                    text: qsTrId("leave-community")
+                    icon.source: "../../img/delete.svg"
+                    icon.color: Style.current.red
+                    icon.width: 20
+                    icon.height: 20
+                    onTriggered: chatsModel.leaveCurrentCommunity()
+                }
+
+                onAboutToHide: {
+                    optionsBtn.state = "default"
+                }
             }
         }
     }
