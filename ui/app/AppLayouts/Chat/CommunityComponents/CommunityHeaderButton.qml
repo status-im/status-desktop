@@ -24,6 +24,7 @@ Button {
             height: 40
             source: chatsModel.communities.activeCommunity.thumbnailImage
             anchors.verticalCenter: parent.verticalCenter
+            noHover: true
         }
 
         StyledText {
@@ -51,6 +52,8 @@ Button {
 
     MouseArea {
         id: mouseAreaBtn
+        enabled: chatsModel.communities.activeCommunity.admin
+        visible: enabled
         cursorShape: Qt.PointingHandCursor
         anchors.fill: parent
         onPressed: communityProfilePopup.open();
