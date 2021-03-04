@@ -119,7 +119,7 @@ QtObject:
   QtProperty[bool] isMember:
     read = isMember
 
-  proc nbMembers*(self: CommunityItemView): int {.slot.} = result = ?.self.communityItem.members.len
+  proc nbMembers*(self: CommunityItemView): int {.slot.} = result = ?.self.members.members.len
   
   QtProperty[int] nbMembers:
     read = nbMembers
