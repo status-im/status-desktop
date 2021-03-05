@@ -123,6 +123,20 @@ QtObject:
   QtProperty[QVariant] joinedCommunities:
     read = getJoinedComunities
     notify = joinedCommunitiesChanged
+  
+  proc getCommunityNameById*(self: CommunitiesView, communityId: string): string {.slot.} =
+    let communities = self.getCommunitiesIfNotFetched()
+    for community in communities.communities:
+      if community.id == communityId:
+        return community.name
+    return ""
+  
+  proc isUserMemberOfCommunity*(self: CommunitiesView, communityId: string): bool {.slot.} =
+    let communities = self.getCommunitiesIfNotFetched()
+    for community in communities.communities:
+      if community.id == communityId:
+        return community.joined and community.isMember
+    return false
 
   proc activeCommunityChanged*(self: CommunitiesView) {.signal.}
 

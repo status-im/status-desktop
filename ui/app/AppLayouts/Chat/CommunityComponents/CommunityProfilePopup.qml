@@ -99,8 +99,8 @@ ModalPopup {
         anchors.topMargin: Style.current.bigPadding
         //% "Share community"
         label: qsTrId("share-community")
-        text: "https://join.status.im/u/TODO"
-        textToCopy: text
+        text: `https://join.status.im/cc/${communityId.substring(0, 4)}...${communityId.substring(communityId.length -2)}`
+        textToCopy: `https://join.status.im/cc/${communityId}`
     }
 
     Separator {
