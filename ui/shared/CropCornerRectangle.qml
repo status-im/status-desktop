@@ -2,6 +2,9 @@ import QtQuick 2.13
 import "../imports"
 
 Rectangle {
+    signal released()
+    signal pressed()
+
     id: root
     width: 25
     height: 25
@@ -19,5 +22,7 @@ Rectangle {
         anchors.fill: parent
         drag.target: parent
         cursorShape: Qt.PointingHandCursor
+        onReleased: root.released()
+        onPressed: root.pressed()
     }
 }
