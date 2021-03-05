@@ -144,7 +144,7 @@ Item {
                         //% "Join"
                         qsTrId("join")
                     onClicked: {
-                        chatsModel.communities.joinCommunity(communityId)
+                        chatsModel.communities.joinCommunity(communityId, true)
                         root.joined = true
                     }
                 }
