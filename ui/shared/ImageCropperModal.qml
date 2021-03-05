@@ -6,6 +6,7 @@ import "./status"
 
 ModalPopup {
     property string selectedImage
+    property string ratio
     signal cropFinished(aX: int, aY: int, bX: int, bY: int)
 
     id: cropImageModal
@@ -27,6 +28,7 @@ ModalPopup {
         x: image.x
         y: image.y
         image: image
+        ratio: cropImageModal.ratio
     }
 
     footer: StatusButton {

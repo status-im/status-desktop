@@ -58,6 +58,7 @@ ModalPopup {
             id: cropImageModal
 
             selectedImage: popup.selectedImage
+            ratio: "1:1"
             onCropFinished: {
                 uploadError = profileModel.uploadNewProfilePic(selectedImage, aX, aY, bX, bY)
             }

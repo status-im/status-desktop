@@ -244,6 +244,7 @@ ModalPopup {
                 ImageCropperModal {
                     id: imageCropperModal
                     selectedImage: popup.selectedImage
+                    ratio: "1:1"
                     onCropFinished: {
                         imageDimensions.aX = aX
                         imageDimensions.aY = aY
