@@ -71,7 +71,7 @@ Item {
                     icon.source: "../../img/hash.svg"
                     icon.width: 20
                     icon.height: 20
-                    onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.activeCommunity.id})
+                    onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
                 }
 
                 Action {
