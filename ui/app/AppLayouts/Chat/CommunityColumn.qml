@@ -81,7 +81,7 @@ Item {
                     icon.color: Style.current.red
                     icon.width: 20
                     icon.height: 20
-                    onTriggered: chatsModel.leaveCurrentCommunity()
+                    onTriggered: chatsModel.communities.leaveCurrentCommunity()
                 }
 
                 onAboutToHide: {
