@@ -228,7 +228,7 @@ ModalPopup {
                         text = qsTr("Pending")
                     }
                 } else {
-                    error = chatsModel.communities.joinCommunity(popup.communityId)
+                    error = chatsModel.communities.joinCommunity(popup.communityId, true)
                 }
 
                 if (error) {
