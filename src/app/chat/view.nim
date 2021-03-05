@@ -105,7 +105,10 @@ QtObject:
         return
       return self.communities.activeCommunity.chats.getChannel(index)
     else:
-      return self.chats.getChannel(self.chats.chats.findIndexById(channel))
+      let index = self.chats.chats.findIndexById(channel)
+      if (index == -1):
+        return
+      return self.chats.getChannel(index)
 
   proc updateChannelInRightList*(self: ChatsView, channel: Chat) =
     if (self.communities.activeCommunity.active):
