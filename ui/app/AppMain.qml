@@ -169,17 +169,30 @@ RowLayout {
             try {
                 const whiteListedSites = JSON.parse(whitelist)
                 let settingsUpdated = false
+
+                // Add Status links to whitelist
+                whiteListedSites.push({title: "Status", address: Constants.deepLinkPrefix, imageSite: false})
+                whiteListedSites.push({title: "Status", address: Constants.joinStatusLink, imageSite: false})
+
                 const settings = appSettings.whitelistedUnfurlingSites
+
+                // Set Status links as true. We intercept thoseURLs so it is privacy-safe
+                if (!settings[Constants.deepLinkPrefix] || !settings[Constants.joinStatusLink]) {
+                    settings[Constants.deepLinkPrefix] = true
+                    settings[Constants.joinStatusLink] = true
+                    settingsUpdated = true
+                }
+
                 const whitelistedHostnames = []
 
                 // Add whitelisted sites in to app settings that are not already there
                 whiteListedSites.forEach(site => {
-                    if (!settings.hasOwnProperty(site.address))  {
-                        settings[site.address] = false
-                        settingsUpdated = true
-                    }
-                    whitelistedHostnames.push(site.address)
-                })
+                                             if (!settings.hasOwnProperty(site.address))  {
+                                                 settings[site.address] = false
+                                                 settingsUpdated = true
+                                             }
+                                             whitelistedHostnames.push(site.address)
+                                         })
                 // Remove any whitelisted sites from app settings that don't exist in the
                 // whitelist from status-go
                 Object.keys(settings).forEach(settingsHostname => {
@@ -425,7 +438,7 @@ RowLayout {
                 browserLayoutContainer.active = true;
             }
 
-            timelineLayoutContainer.active = this.children[currentIndex] == timelineLayoutContainer
+            timelineLayoutContainer.active = this.children[currentIndex] === timelineLayoutContainer
 
             if(this.children[currentIndex] === walletLayoutContainer){
                 walletLayoutContainer.showSigningPhrasePopup();

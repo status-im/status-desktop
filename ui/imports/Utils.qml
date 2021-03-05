@@ -308,32 +308,57 @@ QtObject {
         return (/( |\t|\n|\r)/.test(c))
     }
 
+    function getLinkTitleAndCb(link) {
+        const result = {
+            title: "Status",
+            callback: null
+        }
+
+        // Link to send a direct message
+        let index = link.indexOf("/u/")
+        if (index === -1) {
+            // Try /p/ as well
+            index = link.indexOf("/p/")
+        }
+        if (index > -1) {
+            const pk = link.substring(index + 3)
+            result.title = qsTr("Start a 1 on 1 chat with %1").arg(utilsModel.generateAlias(pk))
+            result.callback = function () {
+                chatsModel.joinChat(pk, Constants.chatTypeOneToOne);
+            }
+            return result
+        }
+
+        // Public chat
+        // This needs to be the last check because it is as VERY loose check
+        index = link.lastIndexOf("/")
+        if (index > -1) {
+            const chatId = link.substring(index + 1)
+            result.title = qsTr("Join the %1 public channel").arg(chatId)
+            result.callback = function () {
+                chatsModel.joinChat(chatId, Constants.chatTypePublic);
+            }
+            return result
+        }
+
+        return result
+    }
+
     function getLinkDataForStatusLinks(link) {
         if (!link.includes(Constants.deepLinkPrefix) && !link.includes(Constants.joinStatusLink)) {
             return
         }
 
-        let title = "Status"
-        let callback = function () {}
-
-        // Link to send a direct message
-        let index = link.indexOf("/u/")
-        if (index > -1) {
-            const pk = link.substring(index + 3)
-            title = qsTr("Start a 1 on 1 chat with %1").arg(utilsModel.generateAlias(pk))
-            callback = function () {
-                chatsModel.joinChat(pk, Constants.chatTypeOneToOne);
-            }
-        }
+        const result = getLinkTitleAndCb(link)
 
         return {
             site: qsTr("Status app link"),
-            title: title,
+            title: result.title,
             thumbnailUrl: "../../../../img/status.png",
             contentType: "",
             height: 0,
             width: 0,
-            callback: callback
+            callback: result.callback
         }
     }
 
