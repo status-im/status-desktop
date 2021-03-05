@@ -28,7 +28,7 @@ Rectangle {
     width: parent.width
     radius: Style.current.radius
 
-    Image {
+    SVGImage {
         id: iconImage
         height: 24
         width: 24
@@ -36,15 +36,6 @@ Rectangle {
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
         source: menuButton.source
-        sourceSize: Qt.size(width, height)
-        fillMode: Image.PreserveAspectFit
-        smooth: true
-
-        ColorOverlay {
-            anchors.fill: parent
-            source: parent
-            color: Style.current.blue
-        }
     }
 
     StyledText {
