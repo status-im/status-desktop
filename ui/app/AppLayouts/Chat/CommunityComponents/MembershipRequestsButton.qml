@@ -50,7 +50,7 @@ Rectangle {
         anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
         width: 13
-
+        height: 7
 
         ColorOverlay {
             anchors.fill: parent

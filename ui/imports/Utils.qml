@@ -329,6 +329,32 @@ QtObject {
             return result
         }
 
+        // Community
+        // TODO this will probably change
+        index = link.lastIndexOf("/cc/")
+        if (index > -1) {
+            const communityId = link.substring(index + 4)
+
+            const communityName = chatsModel.communities.getCommunityNameById(communityId)
+
+            if (!communityName) {
+                // Unknown community
+                // TODO use a function to fetch that community?
+                return result
+            }
+
+            result.title = qsTr("Join the %1 community").arg(communityName)
+            result.callback = function () {
+                const isUserMemberOfCommunity = chatsModel.communities.isUserMemberOfCommunity(communityId)
+                if (isUserMemberOfCommunity) {
+                    chatsModel.communities.setActiveCommunity(communityId)
+                    return
+                }
+                chatsModel.communities.joinCommunity(communityId, true)
+            }
+            return result
+        }
+
         // Public chat
         // This needs to be the last check because it is as VERY loose check
         index = link.lastIndexOf("/")
