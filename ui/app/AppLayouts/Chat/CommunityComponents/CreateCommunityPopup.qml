@@ -328,9 +328,27 @@ ModalPopup {
                 id: ensOnlySwitch
                 anchors.top: privateExplanation.bottom
                 anchors.topMargin: Style.current.padding
+                isEnabled: profileModel.profile.ensVerified
                 text: qsTr("Require ENS username")
                 isSwitch: true
                 onClicked: switchChecked = checked
+
+                StatusToolTip {
+                    visible: !ensOnlySwitch.isEnabled && ensMouseArea.isHovered
+                    text: qsTr("You can only enable this setting if you have an ENS name")
+                }
+
+                MouseArea {
+                    property bool isHovered: false
+
+                    id: ensMouseArea
+                    enabled: !ensOnlySwitch.isEnabled
+                    visible: enabled
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: isHovered = true
+                    onExited: isHovered = false
+                }
             }
 
             StyledText {
