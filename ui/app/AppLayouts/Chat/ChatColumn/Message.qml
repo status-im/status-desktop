@@ -296,7 +296,11 @@ Item {
 
     Component {
         id: invitationBubble
-        InvitationBubble {}
+        InvitationBubble {
+            communityId: communityId
+            anchors.right: !appSettings.useCompactMode && isCurrentUser ? parent.right : undefined
+            anchors.rightMargin: Style.current.padding
+        }
     }
 }
 
