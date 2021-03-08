@@ -36,6 +36,7 @@ Column {
             property bool fetched: false
             property var linkData
             property int linkWidth: linksRepeater.width
+
             active: true
             
             Connections {
@@ -116,6 +117,10 @@ Column {
                     const data = Utils.getLinkDataForStatusLinks(link)
                     if (data) {
                         linkData = data
+                        if (data.communityId) {
+                            return invitationBubble
+                        }
+
                         return unfurledLinkComponent
                     }
 
@@ -154,6 +159,15 @@ Column {
                     clickMessage(false, false, true, linkImage.imageAlias)
                 }
             }
+        }
+    }
+
+    Component {
+        id: invitationBubble
+        InvitationBubble {
+            communityId: linkData.communityId
+            isLink: true
+            anchors.left: parent.left
         }
     }
 
@@ -216,8 +230,6 @@ Column {
             }
         }
     }
-        
-    
 
     Component {
         id: enableLinkComponent

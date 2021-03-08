@@ -6,25 +6,29 @@ import "./TransactionComponents"
 import "../../../Wallet/data"
 
 Item {
+    property string communityId
     property var invitedCommunity
     property int innerMargin: 12
     property bool joined: false
+    property bool isLink: false
 
     id: root
     anchors.left: parent.left
     height: childrenRect.height
+    width: rectangleBubbleLoader.width + chatImage.width
 
     Component.onCompleted: {
-        chatsModel.communities.setObservedCommunity(communityId)
+        chatsModel.communities.setObservedCommunity(root.communityId)
 
         root.invitedCommunity = chatsModel.communities.observedCommunity
     }
 
     UserImage {
         id: chatImage
-        visible: authorCurrentMsg != authorPrevMsg && !isCurrentUser
+        visible: (!isLink && authorCurrentMsg !== authorPrevMsg && !isCurrentUser) ||
+                 (appSettings.useCompactMode && isCurrentUser && authorCurrentMsg !== authorPrevMsg)
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: visible ? Style.current.padding : 0
         anchors.top: parent.top
     }
 
@@ -33,10 +37,9 @@ Item {
         active: !!invitedCommunity
         width: item.width
         height: item.height
-        anchors.right: isCurrentUser ? parent.right : undefined
-        anchors.rightMargin: Style.current.padding
-        anchors.left: !isCurrentUser ? chatImage.right : undefined
-        anchors.leftMargin: Style.current.smallPadding
+        anchors.left: !isLink && (!isCurrentUser || (isCurrentUser === appSettings.useCompactMode)) ? chatImage.right : undefined
+        anchors.leftMargin: isLink ? 0 : Style.current.smallPadding
+        anchors.right: !appSettings.useCompactMode && isCurrentUser ? parent.right : undefined
 
         sourceComponent: Component {
             Rectangle {

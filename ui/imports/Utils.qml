@@ -325,6 +325,7 @@ QtObject {
             }
 
             result.title = qsTr("Join the %1 community").arg(communityName)
+            result.communityId = communityId
             result.callback = function () {
                 const isUserMemberOfCommunity = chatsModel.communities.isUserMemberOfCommunity(communityId)
                 if (isUserMemberOfCommunity) {
@@ -361,6 +362,7 @@ QtObject {
         return {
             site: qsTr("Status app link"),
             title: result.title,
+            communityId: result.communityId,
             thumbnailUrl: "../../../../img/status.png",
             contentType: "",
             height: 0,
