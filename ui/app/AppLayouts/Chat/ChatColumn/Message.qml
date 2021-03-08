@@ -27,6 +27,7 @@ Item {
     property string linkUrls: ""
     property bool placeholderMessage: false
     property string communityId: ""
+    property int stickerPackId: -1
 
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
@@ -129,6 +130,7 @@ Item {
         if (!isProfileClick) {
             SelectedMessage.set(messageId, fromAuthor);
         }
+
         // Get contact nickname
         let nickname = appMain.getUserNickname(fromAuthor)
         messageContextMenu.linkUrls = root.linkUrls

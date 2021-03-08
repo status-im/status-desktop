@@ -267,6 +267,7 @@ proc toMessage*(jsonMsg: JsonNode, pk: string): Message =
       outgoingStatus: $jsonMsg{"outgoingStatus"}.getStr,
       isCurrentUser: $jsonMsg{"outgoingStatus"}.getStr == "sending" or $jsonMsg{"outgoingStatus"}.getStr == "sent",
       stickerHash: "",
+      stickerPackId: -1,
       parsedText: @[],
       linkUrls: "",
       image: $jsonMsg{"image"}.getStr,
@@ -287,6 +288,7 @@ proc toMessage*(jsonMsg: JsonNode, pk: string): Message =
 
   if message.contentType == ContentType.Sticker:
     message.stickerHash = jsonMsg["sticker"]["hash"].getStr
+    message.stickerPackId = jsonMsg["sticker"]["pack"].getInt
 
   if message.contentType == ContentType.Transaction:
     let

@@ -36,6 +36,7 @@ type
     LocalName = UserRole + 26
     CommunityId = UserRole + 27
     HasMention = UserRole + 28
+    StickerPackId = UserRole + 29
 
 QtObject:
   type
@@ -142,6 +143,7 @@ QtObject:
       of ChatMessageRoles.IsCurrentUser: result = newQVariant(message.isCurrentUser)
       of ChatMessageRoles.ContentType: result = newQVariant(message.contentType.int)
       of ChatMessageRoles.Sticker: result = newQVariant(message.stickerHash.decodeContentHash())
+      of ChatMessageRoles.StickerPackId: result = newQVariant(message.stickerPackId)
       of ChatMessageRoles.FromAuthor: result = newQVariant(message.fromAuthor)
       of ChatMessageRoles.ChatId: result = newQVariant(message.chatId)
       of ChatMessageRoles.SectionIdentifier: result = newQVariant(sectionIdentifier(message))
@@ -199,7 +201,8 @@ QtObject:
       ChatMessageRoles.CommunityId.int: "communityId",
       ChatMessageRoles.Alias.int:"alias",
       ChatMessageRoles.HasMention.int:"hasMention",
-      ChatMessageRoles.LocalName.int:"localName"
+      ChatMessageRoles.LocalName.int:"localName",
+      ChatMessageRoles.StickerPackId.int:"stickerPackId"
     }.toTable
 
   proc getMessageIndex(self: ChatMessageList, messageId: string): int {.slot.} =

@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import Qt.labs.settings 1.0
 import "../../../imports"
 import "../../../shared"
+import "../../../shared/status"
 import "."
 import "components"
 
@@ -11,6 +12,14 @@ SplitView {
     handle: SplitViewHandle {}
 
     property alias chatColumn: chatColumn
+    property bool stickersLoaded: false
+
+    Connections {
+        target: chatsModel.stickers
+        onStickerPacksLoaded: {
+            stickersLoaded = true;
+        }
+    }
 
     property var onActivated: function () {
         chatsModel.restorePreviousActiveChannel()
@@ -83,6 +92,15 @@ SplitView {
     ChatColumn {
         id: chatColumn
         chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
+    }
+
+    Component {
+        id: statusStickerPackClickPopup
+        StatusStickerPackClickPopup{
+            onClosed: {
+                destroy();
+            }
+        }
     }
 
     function openProfilePopup(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, parentPopup){
