@@ -52,6 +52,7 @@ type Message* = object
   rtl*: bool              # ???
   seen*: bool             # ???
   sticker*: string
+  stickerPackId*: int
   text*: string
   timestamp*: string
   whisperTimestamp*: string
