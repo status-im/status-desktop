@@ -285,7 +285,7 @@ StackLayout {
                     if (chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat &&
                             (!community.active ||
                             community.access === Constants.communityChatPublicAccess ||
-                            community.admin)) {
+                            community.admin || chatsModel.activeChannel.canPost)) {
                         return true
                     }
                     return chatsModel.activeChannel.isMember
