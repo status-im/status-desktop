@@ -22,6 +22,7 @@ QtObject:
   type
     StickerPackList* = ref object of QAbstractListModel
       packs*: seq[StickerPackView]
+      packIdToRetrieve*: int
 
   proc setup(self: StickerPackList) = self.QAbstractListModel.setup
 
@@ -75,7 +76,7 @@ QtObject:
     }.toTable
 
 
-  proc findIndexById*(self: StickerPackList, packId: int, mustBeInstalled: bool = false): int =
+  proc findIndexById*(self: StickerPackList, packId: int, mustBeInstalled: bool = false): int {.slot.} =
     result = -1
     var idx = -1
     for item in self.packs:
@@ -116,3 +117,30 @@ QtObject:
         it.pending = pending)
 
     self.dataChanged(topLeft, bottomRight, @[StickerPackRoles.Installed.int, StickerPackRoles.Pending.int])
+
+
+
+  proc getStickers*(self: StickerPackList): QVariant {.slot.} =
+    let packInfo = self.packs[self.packIdToRetrieve]
+    result = newQVariant(packInfo.stickers)
+  
+  proc rowData*(self: StickerPackList, row: int, data: string): string {.slot.} =
+    if row < 0 or (row > self.packs.len - 1):
+      return
+    self.packIdToRetrieve = row
+    let packInfo = self.packs[row]
+    let stickerPack = packInfo.pack
+    case data:
+      of "author": result = stickerPack.author
+      of "name": result = stickerPack.name
+      of "price": result = $stickerPack.price.wei2Eth
+      of "preview": result = decodeContentHash(stickerPack.preview)
+      of "thumbnail": result = decodeContentHash(stickerPack.thumbnail)
+      of "installed": result = $packInfo.installed
+      of "bought": result = $packInfo.bought
+      of "pending": result = $packInfo.pending
+      else: result = ""
+
+
+    
+
