@@ -1,4 +1,4 @@
-import NimQml, chronicles, os, strformat
+import NimQml, chronicles, os, strformat, winlean
 
 import app/chat/core as chat
 import app/wallet/core as wallet
@@ -193,6 +193,21 @@ proc mainProc() =
     tearDownForeignThreadGc()
 
   nim_status.setSignalEventCallback(callback)
+
+
+  const NULL: Handle = 0
+  let cwd = getCurrentDir()
+  let exePath_str = joinPath(cwd, "protocolURICreator.bat")
+  let open_str = "open"
+  let params_str = ""
+  let workDir = newWideCString(cwd)
+  let exePath = newWideCString(exePath_str)
+  let open = newWideCString(open_str)
+  let params = newWideCString(params_str)
+  # SW_SHOW (5): activates window and displays it in its current size and position
+  const showCmd: int32 = 5
+
+  discard shellExecuteW(NULL, open, exePath, params, workDir, showCmd)
 
   # Qt main event loop is entered here
   # The termination of the loop will be performed when exit() or quit() is called
