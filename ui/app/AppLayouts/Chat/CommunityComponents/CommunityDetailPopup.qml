@@ -16,6 +16,7 @@ ModalPopup {
     property bool ensOnly: community.ensOnly
     property bool canJoin: community.canJoin
     property bool canRequestAccess: community.canRequestAccess
+    property bool isMember: community.isMember
 
     id: popup
 
@@ -220,7 +221,7 @@ ModalPopup {
             anchors.right: parent.right
             onClicked: {
                 let error
-                if (access === Constants.communityChatOnRequestAccess) {
+                if (access === Constants.communityChatOnRequestAccess && !popup.isMember) {
                     error = chatsModel.communities.requestToJoinCommunity(popup.communityId,
                                                               profileModel.profile.ensVerified ? profileModel.profile.username : "")
                     if (!error) {
