@@ -146,8 +146,8 @@ Item {
         TextWithLabel {
             //% "Share Profile URL"
             label: qsTrId("share-profile-url")
-            text: `https://join.status.im/u/${pubkey.substring(0, 5)}...${pubkey.substring(pubkey.length - 5)}`
-            textToCopy: `https://join.status.im/u/${pubkey}`
+            text: `${Constants.userLinkPrefix}${pubkey.substring(0, 5)}...${pubkey.substring(pubkey.length - 5)}`
+            textToCopy: Constants.userLinkPrefix + pubkey
         }
     }
 }

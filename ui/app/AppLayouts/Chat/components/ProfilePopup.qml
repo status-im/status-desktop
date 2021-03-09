@@ -187,11 +187,10 @@ ModalPopup {
             id: valueShareURL
             //% "Share Profile URL"
             label: qsTrId("share-profile-url")
-            text: "https://join.status.im/u/" + fromAuthor.substr(
-                      0, 4) + "..." + fromAuthor.substr(fromAuthor.length - 5)
+            text: Constants.userLinkPrefix + fromAuthor.substr(0, 4) + "..." + fromAuthor.substr(fromAuthor.length - 5)
             anchors.top: separator.top
             anchors.topMargin: popup.innerMargin
-            textToCopy: "https://join.status.im/u/" + fromAuthor
+            textToCopy: Constants.userLinkPrefix + fromAuthor
         }
 
         Separator {
