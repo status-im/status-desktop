@@ -56,7 +56,14 @@ Button {
         visible: enabled
         cursorShape: Qt.PointingHandCursor
         anchors.fill: parent
-        onPressed: communityProfilePopup.open();
+        onPressed: {
+          communityProfilePopup.communityId = chatsModel.communities.activeCommunity.id;
+          communityProfilePopup.name = chatsModel.communities.activeCommunity.name;
+          communityProfilePopup.description = chatsModel.communities.activeCommunity.description;
+          communityProfilePopup.access = chatsModel.communities.activeCommunity.access;
+          communityProfilePopup.nbMembers = chatsModel.communities.activeCommunity.nbMembers;
+          communityProfilePopup.open();
+        }
         hoverEnabled: true
         onExited: {
             btnBackground.color = Style.current.transparent
