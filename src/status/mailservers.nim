@@ -36,7 +36,6 @@ type
     Disconnected = 0,
     Connecting = 1
     Connected = 2, 
-    Trusted = 3,
 
   MailserverModel* = ref object
     mailservers*: seq[string]
@@ -76,10 +75,6 @@ proc newMailserverModel*(fleet: FleetModel, events: EventEmitter): MailserverMod
   activeMailserverLock.initLock()
 
 
-proc trustPeer(self: MailserverModel, enode:string) = 
-  markTrustedPeer(enode)
-  self.nodes[enode] = MailserverStatus.Trusted
-
 proc getActiveMailserver*(self:MailserverModel): string =
   withLock activeMailserverLock:
     result = self.activeMailserver
@@ -91,7 +86,7 @@ proc isActiveMailserverAvailable*(self:MailserverModel): bool =
   if not self.nodes.hasKey(self.activeMailserver): 
     result = false
   else:
-    result = self.nodes[self.activeMailserver] == MailserverStatus.Trusted
+    result = self.nodes[self.activeMailserver] == MailserverStatus.Connected
 
   nodesLock.release()
   activeMailserverLock.release()
@@ -99,7 +94,7 @@ proc isActiveMailserverAvailable*(self:MailserverModel): bool =
 
 proc connect(self: MailserverModel, enode: string) =
   debug "Connecting to mailserver", enode=enode.substr[enode.len-40..enode.len-1]
-  var mailserverTrusted = false
+  var connected = false
   # TODO: this should come from settings
   var knownMailservers = initHashSet[string]()
   for m in self.mailservers:
@@ -114,16 +109,15 @@ proc connect(self: MailserverModel, enode: string) =
   self.activeMailserver = enode
   self.events.emit("mailserver:changed", Args())
 
-  # Adding a peer and marking it as trusted can't be executed sync, because
+  # Adding a peer and marking it as connected can't be executed sync, because
   # There's a delay between requesting a peer being added, and a signal being 
   # received after the peer was added. So we first set the peer status as 
   # Connecting and once a peerConnected signal is received, we mark it as 
-  # Connected and then as Trusted
+  # Connected
 
   if self.nodes.hasKey(enode) and self.nodes[enode] == MailserverStatus.Connected:
-    self.trustPeer(enode)
     status_mailservers.update(enode)
-    mailserverTrusted = true
+    connected = true
   else:
     # Attempt to connect to mailserver by adding it as a peer
     self.nodes[enode] = MailserverStatus.Connecting
@@ -132,7 +126,7 @@ proc connect(self: MailserverModel, enode: string) =
 
   nodesLock.release()
   activeMailserverLock.release()
-  if mailserverTrusted: 
+  if connected: 
     self.events.emit("mailserverAvailable", Args())
 
 
@@ -156,7 +150,7 @@ proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
             self.activeMailserver = ""
     
     for peer in peers:
-      if self.nodes.hasKey(peer) and (self.nodes[peer] == MailserverStatus.Connected or self.nodes[peer] == MailserverStatus.Trusted): continue
+      if self.nodes.hasKey(peer) and (self.nodes[peer] == MailserverStatus.Connected): continue
       debug "Peer connected", peer
       self.nodes[peer] = MailserverStatus.Connected
       self.events.emit("peerConnected", MailserverArg(peer: peer))
@@ -164,7 +158,6 @@ proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
       withLock activeMailserverLock:
         if peer == self.activeMailserver:
           if self.nodes.hasKey(self.activeMailserver):
-            self.trustPeer(peer)
             if self.activeMailserver == peer:
               mailserverAvailable = true
           
