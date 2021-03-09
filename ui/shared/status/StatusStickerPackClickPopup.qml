@@ -23,7 +23,7 @@ ModalPopup {
 
     Component.onCompleted: {
         const idx = chatsModel.stickers.stickerPacks.findIndexById(packId, false);
-        if(idx == -1) close();
+        if(idx === -1) close();
         name = chatsModel.stickers.stickerPacks.rowData(idx, "name")
         author = chatsModel.stickers.stickerPacks.rowData(idx, "author")
         thumbnail = chatsModel.stickers.stickerPacks.rowData(idx, "thumbnail")
