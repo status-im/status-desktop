@@ -183,6 +183,7 @@ proc toCommunity*(jsonCommunity: JsonNode): Community =
     isMember: jsonCommunity{"isMember"}.getBool,
     chats: newSeq[Chat](),
     members: newSeq[string](),
+    communityColor: jsonCommunity{"color"}.getStr,
     communityImage: IdentityImage()
   )
 

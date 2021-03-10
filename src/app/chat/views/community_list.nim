@@ -22,6 +22,7 @@ type
     CanJoin = UserRole + 14
     IsMember = UserRole + 15
     UnviewedMessagesCount = UserRole + 16
+    CommunityColor = UserRole + 17
 
 QtObject:
   type
@@ -77,6 +78,7 @@ QtObject:
           result = newQVariant(communityItem.communityImage.large)
         else:
           result = newQVariant("")
+      of CommunityRoles.CommunityColor: result = newQVariant(communityItem.communityColor)
 
   method roleNames(self: CommunityList): Table[int, string] =
     {
@@ -95,7 +97,8 @@ QtObject:
       CommunityRoles.NumMembers.int: "nbMembers",
       CommunityRoles.UnviewedMessagesCount.int: "unviewedMessagesCount",
       CommunityRoles.ThumbnailImage.int:"thumbnailImage",
-      CommunityRoles.LargeImage.int:"largeImage"
+      CommunityRoles.LargeImage.int:"largeImage",
+      CommunityRoles.CommunityColor.int:"communityColor"
     }.toTable
 
   proc setNewData*(self: CommunityList, communityList: seq[Community]) =

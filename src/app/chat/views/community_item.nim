@@ -125,6 +125,11 @@ QtObject:
     read = nbMembers
     notify = nbMembersChanged
 
+  proc communityColor*(self: CommunityItemView): string {.slot.} = result = ?.self.communityItem.communityColor
+
+  QtProperty[string] communityColor:
+    read = communityColor
+
   proc chatsChanged*(self: CommunityItemView) {.signal.}
 
   proc getChats*(self: CommunityItemView): QVariant {.slot.} =

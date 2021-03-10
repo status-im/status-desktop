@@ -111,6 +111,7 @@ type Community* = object
   isMember*: bool
   communityImage*: IdentityImage
   membershipRequests*: seq[CommunityMembershipRequest]
+  communityColor*: string
 
 proc `$`*(self: Chat): string =
   result = fmt"Chat(id:{self.id}, name:{self.name}, active:{self.isActive}, type:{self.chatType})"

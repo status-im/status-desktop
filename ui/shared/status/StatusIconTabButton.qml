@@ -19,6 +19,8 @@ TabButton {
     property int sectionIndex: Utils.getAppSectionIndex(section)
     property bool doNotHandleClick: false
     property bool borderOnChecked: false
+    property bool useLetterIdenticon: false
+    property string name: ""
 
     onClicked: {
         if (doNotHandleClick) {
@@ -55,7 +57,8 @@ TabButton {
             active: true
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            sourceComponent: !!iconSource ? imageIcon : defaultIcon
+            sourceComponent: useLetterIdenticon ? letterIdenticon :
+              !!iconSource ? imageIcon : defaultIcon
         }
 
         Component {
@@ -82,6 +85,17 @@ TabButton {
             RoundedImage {
                 source: iconSource
                 noMouseArea: true
+            }
+        }
+
+        Component {
+            id: letterIdenticon
+            StatusLetterIdenticon {
+                width: 26
+                height: 26
+                letterSize: 15
+                chatName: control.name
+                color: control.iconColor
             }
         }
     }
