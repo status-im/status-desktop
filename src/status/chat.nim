@@ -245,6 +245,10 @@ proc sendImage*(self: ChatModel, chatId: string, image: string) =
   var response = status_chat.sendImageMessage(chatId, image)
   discard self.processMessageUpdateAfterSend(response)
 
+proc sendImages*(self: ChatModel, chatId: string, images: var seq[string]) =
+  var response = status_chat.sendImageMessages(chatId, images)
+  discard self.processMessageUpdateAfterSend(response)
+
 proc sendSticker*(self: ChatModel, chatId: string, sticker: Sticker) =
   var response = status_chat.sendStickerMessage(chatId, sticker)
   self.events.emit("stickerSent", StickerArgs(sticker: sticker, save: true))

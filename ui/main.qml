@@ -18,6 +18,7 @@ import "./imports"
 ApplicationWindow {
     property bool hasAccounts: !!loginModel.rowCount()
     property bool removeMnemonicAfterLogin: false
+    property alias dragAndDrop: dragTarget
 
     Universal.theme: Universal.System
 
@@ -245,6 +246,85 @@ ApplicationWindow {
         id: loader
         anchors.fill: parent
         property var appSettings
+    }
+
+    DropArea {
+        id: dragTarget
+
+        signal droppedOnValidScreen(var drop)
+        property alias droppedUrls: rptDraggedPreviews.model
+        readonly property int chatView: Utils.getAppSectionIndex(Constants.chat)
+        readonly property int timelineView: Utils.getAppSectionIndex(Constants.timeline)
+        property bool enabled: containsDrag && loader.item &&
+            (
+                // in chat view
+                (loader.item.currentView === chatView &&
+                    (
+                        // in a one-to-one chat
+                        chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne ||
+                        // in a private group chat
+                        chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat
+                    )
+                ) ||
+                // in timeline view
+                loader.item.currentView === timelineView
+            )
+
+        width: applicationWindow.width
+        height: applicationWindow.height
+
+        function cleanup() {
+            rptDraggedPreviews.model = []
+        }
+
+        onDropped: (drop) => {
+            if (enabled) {
+                droppedOnValidScreen(drop)
+            }
+            cleanup()
+        }
+        onEntered: {
+            // needed because drag.urls is not a normal js array
+            rptDraggedPreviews.model = drag.urls.filter(img => Utils.hasDragNDropImageExtension(img))
+        }
+        onPositionChanged: {
+            rptDraggedPreviews.x = drag.x
+            rptDraggedPreviews.y = drag.y
+        }
+        onExited: cleanup()
+        Rectangle {
+            id: dropRectangle
+
+            width: parent.width
+            height: parent.height
+            color: Style.current.transparent
+            opacity: 0.8
+
+            states: [
+                State {
+                    when: dragTarget.enabled
+                    PropertyChanges {
+                        target: dropRectangle
+                        color: Style.current.background
+                    }
+                }
+            ]
+        }
+        Repeater {
+            id: rptDraggedPreviews
+
+            Image {
+                source: modelData
+                width: 80
+                height: 80
+                sourceSize.width: 160
+                sourceSize.height: 160
+                fillMode: Image.PreserveAspectFit
+                x: index * 10 + rptDraggedPreviews.x
+                y: index * 10 + rptDraggedPreviews.y
+                z: 1
+            }
+        }
     }
 
     Component {

@@ -44,6 +44,13 @@ Rectangle {
     property alias suggestionsList: suggestions
     property alias suggestions: suggestionsBox
 
+    property var imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top
+
+    enum ImageErrorMessageLocation {
+        Top,
+        Bottom
+    }
+
     height: {
         if (extendedArea.visible) {
             return messageInput.height + extendedArea.height + (control.isStatusUpdateInput ? 0 : Style.current.bigPadding)
@@ -120,6 +127,7 @@ Rectangle {
             if (messageInputField.length < messageLimit) {
                 control.sendMessage(event)
                 control.hideExtendedArea();
+                event.accepted = true
                 return;
             }
             if(event) event.accepted = true
@@ -255,7 +263,7 @@ Rectangle {
 
         if (madeChanges) {
             messageInputField.remove(0, messageInputField.length);
-        insertInTextInput(0, Emoji.parse(words.join('&nbsp;')));
+            insertInTextInput(0, Emoji.parse(words.join('&nbsp;')));
         }
     }
 
@@ -388,17 +396,33 @@ Rectangle {
         isImage = false;
         isReply = false;
         control.fileUrls = []
-        imageArea.imageSource = "";
+        imageArea.imageSource = [];
         replyArea.userName = ""
         replyArea.identicon = ""
         replyArea.message = ""
+        for (let i=0; i<validators.children.length; i++) {
+            const validator = validators.children[i]
+            validator.images = []
+        }
     }
 
-    function showImageArea(imagePath) {
+    function validateImages(imagePaths) {
+        // needed because imageArea.imageSource is not a normal js array
+        const existing = (imageArea.imageSource || []).map(x => x.toString())
+        let validImages = Utils.deduplicate(existing.concat(imagePaths))
+        for (let i=0; i<validators.children.length; i++) {
+            const validator = validators.children[i]
+            validator.images = validImages
+            validImages = validImages.filter(validImage => validator.validImages.includes(validImage))
+        }
+        return validImages
+    }
+
+    function showImageArea(imagePaths) {
         isImage = true;
         isReply = false;
-        control.fileUrls = imageDialog.fileUrls
-        imageArea.imageSource = control.fileUrls[0]
+        imageArea.imageSource = imagePaths
+        control.fileUrls = imageArea.imageSource
     }
 
     function showReplyArea(userName, message, identicon) {
@@ -409,24 +433,37 @@ Rectangle {
         messageInputField.forceActiveFocus();
     }
 
+    Connections {
+        target: applicationWindow.dragAndDrop
+        onDroppedOnValidScreen: (drop) => {
+            let validImages = validateImages(drop.urls)
+            if (validImages.length > 0) {
+                showImageArea(validImages)
+                drop.acceptProposedAction()
+            }
+        }
+    }
+
     ListModel {
         id: suggestions
     }
-
 
     FileDialog {
         id: imageDialog
         //% "Please choose an image"
         title: qsTrId("please-choose-an-image")
         folder: shortcuts.pictures
+        selectMultiple: true
         nameFilters: [
-            //% "Image files (*.jpg *.jpeg *.png)"
-            qsTrId("image-files----jpg---jpeg---png-")
+            qsTr("Image files (%1)").arg(Constants.acceptedDragNDropImageExtensions.map(img => "*" + img).join(" "))
         ]
         onAccepted: {
             imageBtn.highlighted = false
             imageBtn2.highlighted = false
-            control.showImageArea()
+            let validImages = validateImages(imageDialog.fileUrls)
+            if (validImages.length > 0) {
+                control.showImageArea(validImages)
+            }
             messageInputField.forceActiveFocus();
         }
         onRejected: {
@@ -582,6 +619,26 @@ Rectangle {
         radius: control.isStatusUpdateInput ? 36 :
           height > defaultInputFieldHeight + 1 || extendedArea.visible ? 16 : 32
 
+    ColumnLayout {
+        id: validators
+        anchors.bottom: control.imageErrorMessageLocation === StatusChatInput.ImageErrorMessageLocation.Top ? extendedArea.top : undefined
+        anchors.bottomMargin: control.imageErrorMessageLocation === StatusChatInput.ImageErrorMessageLocation.Top ? -4 : undefined
+        anchors.top: control.imageErrorMessageLocation === StatusChatInput.ImageErrorMessageLocation.Bottom ? extendedArea.bottom : undefined
+        anchors.topMargin: control.imageErrorMessageLocation === StatusChatInput.ImageErrorMessageLocation.Bottom ? (isImage ? -4 : 4) : undefined
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: parent.width
+        z: 1
+        StatusChatImageExtensionValidator {
+            Layout.alignment: Qt.AlignHCenter
+        }
+        StatusChatImageSizeValidator {
+            Layout.alignment: Qt.AlignHCenter
+        }
+        StatusChatImageQtyValidator {
+            Layout.alignment: Qt.AlignHCenter
+        }
+    }
+
         Rectangle {
             id: extendedArea
             visible: isImage || isReply
@@ -625,9 +682,13 @@ Rectangle {
                 anchors.top: parent.top
                 anchors.topMargin: control.isStatusUpdateInput ? 0 : Style.current.halfPadding
                 visible: isImage
+                width: messageInputField.width - actions.width
                 onImageRemoved: {
-                    control.fileUrls = []
-                    isImage = false
+                    if (control.fileUrls.length > index && control.fileUrls[index]) {
+                        control.fileUrls.splice(index, 1)
+                    }
+                    isImage = control.fileUrls.length > 0
+                    validateImages(control.fileUrls)
                 }
             }
 

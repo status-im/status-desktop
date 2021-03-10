@@ -317,7 +317,7 @@ StackLayout {
                 }
                 onSendMessage: {
                     if (chatInput.fileUrls.length > 0){
-                        chatsModel.sendImage(chatInput.fileUrls[0], false);
+                        chatsModel.sendImages(JSON.stringify(fileUrls));
                     }
                     let msg = chatsModel.plainText(Emoji.deparse(chatInput.textInput.text))
                     if (msg.length > 0){

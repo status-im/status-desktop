@@ -223,6 +223,24 @@ QtObject:
       error "Error sending the image", msg = e.msg
       result = fmt"Error sending the image: {e.msg}"
 
+  proc sendImages*(self: ChatsView, imagePathsArray: string): string {.slot.} =
+    result = ""
+    try:
+      var images = Json.decode(imagePathsArray, seq[string])
+      let channelId = self.activeChannel.id
+
+      for imagePath in images.mitems:
+        var image = image_utils.formatImagePath(imagePath)
+        imagePath = image_resizer(image, 2000, TMPDIR)
+
+      self.status.chat.sendImages(channelId, images)
+
+      for imagePath in images.items:
+        removeFile(imagePath)
+    except Exception as e:
+      error "Error sending images", msg = e.msg
+      result = fmt"Error sending images: {e.msg}"
+
   proc activeChannelChanged*(self: ChatsView) {.signal.}
 
   proc contextChannelChanged*(self: ChatsView) {.signal.}

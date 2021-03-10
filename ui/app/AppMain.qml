@@ -15,6 +15,7 @@ import Qt.labs.settings 1.0
 
 RowLayout {
     id: appMain
+    property int currentView: sLayout.currentIndex
     spacing: 0
     Layout.fillHeight: true
     Layout.fillWidth: true
