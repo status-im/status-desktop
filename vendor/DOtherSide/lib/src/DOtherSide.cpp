@@ -78,7 +78,7 @@ class QMLNetworkAccessFactory : public QQmlNetworkAccessManagerFactory
         QMLNetworkAccessFactory()
         : QQmlNetworkAccessManagerFactory()
         {
-           
+
         }
 
         QNetworkAccessManager* create(QObject* parent);
@@ -86,7 +86,7 @@ class QMLNetworkAccessFactory : public QQmlNetworkAccessManagerFactory
         void setTmpPath(const char* path);
 };
 
-QString QMLNetworkAccessFactory::tmpPath = ""; 
+QString QMLNetworkAccessFactory::tmpPath = "";
 
 QNetworkAccessManager* QMLNetworkAccessFactory::create(QObject* parent)
 {
@@ -192,7 +192,7 @@ void dos_qapplication_quit()
 
 ::DosQQmlNetworkAccessManagerFactory *dos_qqmlnetworkaccessmanagerfactory_create(const char* tmpPath)
 {
-    QMLNetworkAccessFactory::tmpPath = tmpPath; 
+    QMLNetworkAccessFactory::tmpPath = tmpPath;
     return new QMLNetworkAccessFactory();
 }
 
@@ -864,8 +864,9 @@ bool dos_qurl_isValid(const ::DosQUrl *vptr)
 void dos_signal(::DosQObject *vptr, const char *signal, const char *slot) //
 {
     auto qobject = static_cast<QObject *>(vptr);
-    std::string copy = signal; // signal comes from nim, and might be GC. Creating a copy (QT will handle the freeing)
-    QMetaObject::invokeMethod(qobject, slot, Qt::QueuedConnection, Q_ARG(QString, copy.c_str()));
+    std::string signal_copy = signal;
+    std::string slot_copy = slot;
+    QMetaObject::invokeMethod(qobject, slot_copy.c_str(), Qt::QueuedConnection, Q_ARG(QString, signal_copy.c_str()));
 }
 
 void dos_qmetaobject_delete(::DosQMetaObject *vptr)
@@ -1259,9 +1260,9 @@ char *dos_qurl_host(char* url)
 char *dos_qurl_replaceHostAndAddPath(char* url, char* newScheme, char* newHost, char* pathPrefix)
 {
     auto newQurl = QUrl(QString(url));
-    
+
     newQurl.setHost(newHost);
-    
+
     if(QString(newScheme).compare("") != 0){
         newQurl.setScheme(newScheme);
     }
@@ -1269,6 +1270,6 @@ char *dos_qurl_replaceHostAndAddPath(char* url, char* newScheme, char* newHost, 
     if (QString(pathPrefix).compare("") != 0){
         newQurl.setPath(QString(pathPrefix) + newQurl.path());
     }
-    
+
     return convert_to_cstring(newQurl.toString());
 }
