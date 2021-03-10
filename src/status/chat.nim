@@ -440,8 +440,8 @@ proc removeUserFromCommunity*(self: ChatModel, communityId: string, pubKey: stri
 proc exportCommunity*(self: ChatModel, communityId: string): string =
   result = status_chat.exportCommunity(communityId)
 
-proc importCommunity*(self: ChatModel, communityKey: string) =
-  status_chat.importCommunity(communityKey)
+proc importCommunity*(self: ChatModel, communityKey: string): string =
+  result = status_chat.importCommunity(communityKey)
 
 proc requestToJoinCommunity*(self: ChatModel, communityKey: string, ensName: string): seq[CommunityMembershipRequest] =
   status_chat.requestToJoinCommunity(communityKey, ensName)
