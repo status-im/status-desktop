@@ -10,6 +10,7 @@ import ../../status/libstatus/settings
 import ../../status/libstatus/wallet as status_wallet
 import ../../status/libstatus/utils as status_utils
 import ../../status/ens as status_ens
+import ../utils/image_utils
 import web3/[ethtypes, conversions]
 import stew/byteutils
 
@@ -99,3 +100,13 @@ QtObject:
 
   proc getNetworkName*(self: UtilsView): string {.slot.} =
     getCurrentNetworkDetails().name
+
+  proc getFileSize*(self: UtilsView, filename: string): string {.slot.} =
+    var f: File = nil
+    if f.open(filename.formatImagePath):
+      try:
+        result = $(f.getFileSize())
+      finally:
+        close(f)
+    else:
+      raise newException(IOError, "cannot open: " & filename)

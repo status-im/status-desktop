@@ -166,6 +166,22 @@ proc sendImageMessage*(chatId: string, image: string): string =
     }
   ])
 
+proc sendImageMessages*(chatId: string, images: var seq[string]): string =
+  let
+    preferredUsername = getSetting[string](Setting.PreferredUsername, "")
+  debugEcho ">>> [status/libstatus/chat.sendImageMessages] about to send images"
+  let imagesJson = %* images.map(image => %*
+      {
+        "chatId": chatId,
+        "contentType": ContentType.Image.int,
+        "imagePath": image,
+        "ensName": preferredUsername,
+        "text": "Update to latest version to see a nice image here!"
+      }
+    )
+  debugEcho ">>> [status/libstatus/chat.sendImageMessages] imagesJson:", $imagesJson
+  callPrivateRPC("sendChatMessages".prefix, %* [imagesJson])
+
 proc sendStickerMessage*(chatId: string, sticker: Sticker): string =
   let preferredUsername = getSetting[string](Setting.PreferredUsername, "")
   callPrivateRPC("sendChatMessage".prefix, %* [
@@ -358,10 +374,9 @@ proc pendingRequestsToJoinForCommunity*(communityId: string): seq[CommunityMembe
 
 proc myPendingRequestsToJoin*(): seq[CommunityMembershipRequest] =
   let rpcResult = callPrivateRPC("myPendingRequestsToJoin".prefix).parseJSON()
-
   var communityRequests: seq[CommunityMembershipRequest] = @[]
 
-  if rpcResult{"result"}.kind != JNull:
+  if rpcResult{"error"}.kind == JNull and rpcResult{"result"}.kind != JNull:
     for jsonCommunityReqest in rpcResult["result"]:
       communityRequests.add(jsonCommunityReqest.toCommunityMembershipRequest())
 

@@ -404,6 +404,14 @@ QtObject {
     }
 
     function hasImageExtension(url) {
-        return [".png", ".jpg", ".jpeg", ".svg", ".gif"].some(ext => url.includes(ext))
+        return Constants.acceptedImageExtensions.some(ext => url.includes(ext))
+    }
+
+    function hasDragNDropImageExtension(url) {
+        return Constants.acceptedDragNDropImageExtensions.some(ext => url.includes(ext))
+    }
+
+    function deduplicate(array) {
+        return Array.from(new Set(array))
     }
 }

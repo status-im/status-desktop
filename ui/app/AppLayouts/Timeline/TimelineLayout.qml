@@ -71,9 +71,13 @@ ScrollView {
             anchors.top: parent.top
             anchors.topMargin: 40
             chatType: Constants.chatTypeStatusUpdate
+            imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Bottom
+            z: 1
             onSendMessage: {
                 if (statusUpdateInput.fileUrls.length > 0){
-                    chatsModel.sendImage(statusUpdateInput.fileUrls[0], true);
+                    statusUpdateInput.fileUrls.forEach(url => {
+                        chatsModel.sendImage(url, true);
+                    })
                 }
                 var msg = chatsModel.plainText(Emoji.deparse(statusUpdateInput.textInput.text))
                 if (msg.length > 0){

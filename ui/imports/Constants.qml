@@ -124,4 +124,10 @@ QtObject {
 
     readonly property string deepLinkPrefix: 'statusim://'
     readonly property string joinStatusLink: 'join.status.im'
+
+    readonly property int maxUploadFiles: 5
+    readonly property double maxUploadFilesizeMB: 0.5
+
+    readonly property var acceptedImageExtensions: [".png", ".jpg", ".jpeg", ".svg", ".gif"]
+    readonly property var acceptedDragNDropImageExtensions: [".png", ".jpg", ".jpeg", ".heif", "tif", ".tiff"]
 }
