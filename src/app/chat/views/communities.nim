@@ -278,11 +278,12 @@ QtObject:
       error "Error exporting the community", msg = e.msg
       result = fmt"Error exporting the community: {e.msg}"
 
-  proc importCommunity*(self: CommunitiesView, communityKey: string) {.slot.} =
+  proc importCommunity*(self: CommunitiesView, communityKey: string): string {.slot.} =
     try:
-      self.status.chat.importCommunity(communityKey)
+      discard self.status.chat.importCommunity(communityKey)
     except Exception as e:
       error "Error importing the community", msg = e.msg
+      result = fmt"Error importing the community: {e.msg}"
 
   proc removeUserFromCommunity*(self: CommunitiesView, pubKey: string) {.slot.} =
     try:
