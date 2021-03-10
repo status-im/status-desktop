@@ -222,9 +222,7 @@ proc mainProc() =
   # it will be passed as a regular C function to libstatus. This means that
   # we cannot capture any local variables here (we must rely on globals)
   var callback: SignalCallback = proc(p0: cstring) {.cdecl.} =
-    setupForeignThreadGc()
     signal_handler(signalsQObjPointer, p0, "receiveSignal")
-    tearDownForeignThreadGc()
 
   nim_status.setSignalEventCallback(callback)
 
