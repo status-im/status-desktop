@@ -11,6 +11,18 @@ ModalPopup {
     width: 400
     height: 400
 
+    property string keyValidationError: ""
+    
+    function validate() {
+        keyValidationError = ""
+
+        if (keyInput.text.trim() === "") {
+            keyValidationError = qsTr("You need to enter a key")
+        }
+
+        return !keyValidationError
+    }
+
     title: qsTr("Access existing community")
 
     onClosed: {
@@ -21,7 +33,7 @@ ModalPopup {
         anchors.fill: parent
 
         StyledTextArea {
-            id: pKeyTextArea
+            id: keyInput
             label: qsTr("Community private key")
             placeholderText: "0x0..."
             customHeight: 110
@@ -30,7 +42,7 @@ ModalPopup {
         StyledText {
             id: infoText1
             text: qsTr("Entering a community key will grant you the ownership of that community. Please be responsible with it and don’t share the key with people you don’t trust.")
-            anchors.top: pKeyTextArea.bottom
+            anchors.top: keyInput.bottom
             wrapMode: Text.WordWrap
             anchors.topMargin: Style.current.bigPadding
             width: parent.width
@@ -48,7 +60,7 @@ ModalPopup {
                 return
             }
 
-            let communityKey = keyInput.text
+            let communityKey = keyInput.text.trim()
             if (!communityKey.startsWith("0x")) {
                 communityKey = "0x" + communityKey
             }
