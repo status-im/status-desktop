@@ -10,7 +10,7 @@ import app/onboarding/core as onboarding
 import app/login/core as login
 import app/provider/core as provider
 import status/signals/core as signals
-import status/signals/tasks as tasks
+import status/tasks/task_manager
 import status/libstatus/types
 import status/libstatus/accounts/constants
 import nim_status
@@ -30,9 +30,9 @@ proc mainProc() =
     else:
       "/../fleets.json"
 
-  let
-    taskManager = tasks.newTaskManager()
-    status = statuslib.newStatusInstance(taskManager, readFile(joinPath(getAppDir(), fleets)))
+  let taskManager = newTaskManager()
+  taskManager.init()
+  let status = statuslib.newStatusInstance(taskManager, readFile(joinPath(getAppDir(), fleets)))
   status.initNode()
 
   enableHDPI()
@@ -136,7 +136,6 @@ proc mainProc() =
     wallet.checkPendingTransactions()
     wallet.start()
 
-    taskManager.init()
 
   engine.setRootContextProperty("loginModel", login.variant)
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
@@ -188,7 +187,6 @@ proc mainProc() =
     initControllers()
 
   engine.setRootContextProperty("signals", signalController.variant)
-  # engine.setRootContextProperty("tasks", tasksSignalController.variant)
 
   engine.load(newQUrl("qrc:///main.qml"))
 

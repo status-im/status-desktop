@@ -4,7 +4,7 @@ import libstatus/settings as libstatus_settings
 import libstatus/types as libstatus_types
 import chat, accounts, wallet, node, network, mailservers, messages, contacts, profile, stickers, permissions, fleet
 import ../eventemitter
-import signals/tasks
+import tasks/task_manager
 
 export chat, accounts, node, mailservers, messages, contacts, profile, network, permissions, fleet
 

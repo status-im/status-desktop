@@ -5,7 +5,7 @@ import ../../../status/libstatus/stickers as status_stickers
 import ../../../status/libstatus/wallet as status_wallet
 import sticker_pack_list, sticker_list, chat_item
 import json_serialization
-import ../../../status/signals/tasks
+import ../../../status/tasks/task_manager
 
 logScope:
   topics = "stickers-view"
@@ -46,7 +46,7 @@ QtObject:
   proc transactionCompleted*(self: StickersView, success: bool, txHash: string, revertReason: string = "") {.signal.}
 
   proc estimate*(self: StickersView, packId: int, address: string, price: string, uuid: string) {.slot.} =
-    self.status.taskManager.stickerPackPurchaseGasEstimate(cast[pointer](self.vptr), "setGasEstimate", packId, address, price, uuid)
+    self.status.taskManager.threadPool.stickerPackPurchaseGasEstimate(cast[pointer](self.vptr), "setGasEstimate", packId, address, price, uuid)
   
   proc estimateOld*(self: StickersView, packId: int, address: string, price: string, uuid: string) {.slot.} =
     let status_stickers = self.status.stickers
