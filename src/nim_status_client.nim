@@ -1,4 +1,5 @@
 import NimQml, chronicles, os, strformat, winlean
+import asynctools, asyncdispatch
 
 import app/chat/core as chat
 import app/wallet/core as wallet
@@ -22,6 +23,52 @@ logScope:
   topics = "main"
 
 proc mainProc() =
+
+  var ipc: AsyncIpc
+  var ipcDefined = false
+  try:
+    let readHandle = open("test2", sideReader)
+    debug "WE HAVE A CONNECTION"
+  except Exception as e:
+    debug "NO IPC", msg = e.msg
+    ipc = createIpc("test2")
+    ipcDefined = true
+
+  # Start IPC client to see if there is not already another instance running
+  var inBuffer = newString(64)
+  var outBuffer = "TEST STRING BUFFER"
+
+  # create new IPC object
+  # let ipc = createIpc("test2")
+  # open `read` side channel to IPC object
+  
+
+  # open `write` side channel to IPC object
+  # let writeHandle = open("test", sideWriter)
+
+  # writing string to IPC object
+  # waitFor write(writeHandle, cast[pointer](addr outBuffer[0]), len(outBuffer))
+
+  # reading data from IPC object
+  echo "WAITING"
+  # var c = waitFor readInto(readHandle, cast[pointer](addr inBuffer[0]), 64)
+  echo "GOT STUFF??"
+  # inBuffer.setLen(c)
+  echo "IN BUFFER"
+  # echo inBuffer
+  echo "OUT BUFFER"
+  # echo outBuffer
+  # doAssert(inBuffer == outBuffer)
+
+  # Close `read` side channel
+  # close(readHandle)
+  # Close `write` side channel
+  # close(writeHandle)
+  # Close IPC object
+  # close(ipc)
+
+
+
   let fleets =
     if defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
       "/../resources/fleets.json"
@@ -152,6 +199,13 @@ proc mainProc() =
     profile.delete()
     utilsController.delete()
     browserController.delete()
+    # Close `read` side channel
+    # close(readHandle)
+    # Close `write` side channel
+    # close(writeHandle)
+    # Close IPC object
+    if (ipcDefined):
+      close(ipc)
 
 
   # Initialize only controllers whose init functions
@@ -195,19 +249,20 @@ proc mainProc() =
   nim_status.setSignalEventCallback(callback)
 
 
-  const NULL: Handle = 0
-  let cwd = getCurrentDir()
-  let exePath_str = joinPath(cwd, "protocolURICreator.bat")
-  let open_str = "open"
-  let params_str = ""
-  let workDir = newWideCString(cwd)
-  let exePath = newWideCString(exePath_str)
-  let open = newWideCString(open_str)
-  let params = newWideCString(params_str)
-  # SW_SHOW (5): activates window and displays it in its current size and position
-  const showCmd: int32 = 5
+  if defined(windows):
+    const NULL: Handle = 0
+    let cwd = getCurrentDir()
+    let exePath_str = joinPath(cwd, "protocolURICreator.bat")
+    let open_str = "open"
+    let params_str = ""
+    let workDir = newWideCString(cwd)
+    let exePath = newWideCString(exePath_str)
+    let open = newWideCString(open_str)
+    let params = newWideCString(params_str)
+    # SW_SHOW (5): activates window and displays it in its current size and position
+    const showCmd: int32 = 5
 
-  discard shellExecuteW(NULL, open, exePath, params, workDir, showCmd)
+    discard shellExecuteW(NULL, open, exePath, params, workDir, showCmd)
 
   # Qt main event loop is entered here
   # The termination of the loop will be performed when exit() or quit() is called
