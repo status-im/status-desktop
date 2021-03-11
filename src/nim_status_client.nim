@@ -30,16 +30,9 @@ proc mainProc() =
     else:
       "/../fleets.json"
 
-  let chanSend = newAsyncChannel[ThreadSafeString](-1)
-  var thr = Thread[ThreadArg]()
-  let taskManager = tasks.newTaskManager(chanSend, thr)
-  let arg = ThreadArg(
-    chanRecv: chanSend
-  )
-
-  createThread(thr, workerThread, arg)
-
-  let status = statuslib.newStatusInstance(taskManager, readFile(joinPath(getAppDir(), fleets)))
+  let
+    taskManager = tasks.newTaskManager()
+    status = statuslib.newStatusInstance(taskManager, readFile(joinPath(getAppDir(), fleets)))
   status.initNode()
 
   enableHDPI()
@@ -143,6 +136,8 @@ proc mainProc() =
     wallet.checkPendingTransactions()
     wallet.start()
 
+    taskManager.init()
+
   engine.setRootContextProperty("loginModel", login.variant)
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
 
@@ -163,7 +158,7 @@ proc mainProc() =
     profile.delete()
     utilsController.delete()
     browserController.delete()
-    taskManager.delete()
+    taskManager.teardown()
 
 
   # Initialize only controllers whose init functions

@@ -8,6 +8,7 @@ type
   TaskManager* = ref object
     chanSend: AsyncChannel[ThreadSafeString]
     thread: Thread[ThreadArg]
+    # threadPool: 
   ThreadArg* = object
     chanRecv*: AsyncChannel[ThreadSafeString]
   Task = object of RootObj
@@ -19,15 +20,24 @@ type
     price: string
     uuid: string
 
-proc newTaskManager*(chanSend: AsyncChannel[ThreadSafeString], thread: var Thread[ThreadArg]): TaskManager =
+# forward declarations
+proc workerThread*(arg: ThreadArg) {.thread.}
+
+proc newTaskManager*(): TaskManager =
   new(result)
-  result.chanSend = chanSend
-  result.thread = thread
+  result.chanSend = newAsyncChannel[ThreadSafeString](-1)
+  result.thread = Thread[ThreadArg]()
+  # result.threadPool = newThreadPool()
 
-proc setup(self: TaskManager) =
+proc init*(self: TaskManager) =
   self.chanSend.open()
+  let arg = ThreadArg(
+    chanRecv: self.chanSend
+  )
+  createThread(self.thread, workerThread, arg)
+  # self.threadPool.init()
 
-proc delete*(self: TaskManager) =
+proc teardown*(self: TaskManager) =
   self.chanSend.close()
   joinThread(self.thread)
 
@@ -83,3 +93,4 @@ proc stickerPackPurchaseGasEstimate*(self: TaskManager, vptr: pointer, slot: str
   let payload = task.toJson(typeAnnotations = true)
   debugEcho ">>> [signals/tasks.stickerPackPurchaseGasEstimate] encoded payload: ", payload
   self.chanSend.sendSync(payload.safe)
+
