@@ -22,51 +22,87 @@ var signalsQObjPointer: pointer
 logScope:
   topics = "main"
 
+
+var providerController: Web3ProviderController
+var engine: QQmlApplicationEngine
+var app: QApplication
+var signalController: SignalsController
+var loginController: LoginController
+var onboardingController: OnboardingController
+var walletController: WalletController
+var chatController: ChatController
+var profileController: ProfileController
+var utilsController: UtilsController
+var browserController: BrowserController
+var nodeController: NodeController
+
+var ipcThread: Thread[void]
+
+const ipcName = "status-ipc-1"
+
+var ipcDefined = false
+var ipc: AsyncIpc
+var readHandle: AsyncIpcHandle
+
+
+proc killEverything() {.noconv.} =
+  error "TODO: if user is logged in, logout"
+  providerController.delete()
+  engine.delete()
+  app.delete()
+  signalController.delete()
+  loginController.delete()
+  onboardingController.delete()
+  walletController.delete()
+  chatController.delete()
+  profileController.delete()
+  utilsController.delete()
+  browserController.delete()
+  nodeController.delete()
+
+  if (ipcDefined):
+    close(readHandle)
+    close(ipc)
+
+
+proc ipcListener() {.thread.} =
+  {.gcsafe.}:
+    debug "Creating connection"
+    ipc = createIpc(ipcName)
+    ipcDefined = true
+    var inBuffer = newString(145)
+
+    # open `read` side channel to IPC object
+    readHandle = open(ipcName, sideReader)
+
+    while true:
+      # reading data from IPC object
+      var c = waitFor readInto(readHandle, cast[pointer](addr inBuffer[0]), 64)
+
+      inBuffer.setLen(c)
+
+      debug "WE GOT A URL", inBuffer
+
+
+
 proc mainProc() =
 
-  var ipc: AsyncIpc
-  var ipcDefined = false
+  # var ipc: AsyncIpc
+  # var ipcDefined = false
   try:
-    let readHandle = open("test2", sideReader)
+    let writeHandle = open(ipcName, sideWriter)
     debug "WE HAVE A CONNECTION"
+    # Send URL to the main app
+    var outBuffer = "status-im:/cc/0xr9y29rh923h98r9832u"
+    waitFor write(writeHandle, cast[pointer](addr outBuffer[0]), len(outBuffer))
+
+    close(writeHandle)
+
+    # Kill app
+    quit(0)
   except Exception as e:
     debug "NO IPC", msg = e.msg
-    ipc = createIpc("test2")
-    ipcDefined = true
-
-  # Start IPC client to see if there is not already another instance running
-  var inBuffer = newString(64)
-  var outBuffer = "TEST STRING BUFFER"
-
-  # create new IPC object
-  # let ipc = createIpc("test2")
-  # open `read` side channel to IPC object
-  
-
-  # open `write` side channel to IPC object
-  # let writeHandle = open("test", sideWriter)
-
-  # writing string to IPC object
-  # waitFor write(writeHandle, cast[pointer](addr outBuffer[0]), len(outBuffer))
-
-  # reading data from IPC object
-  echo "WAITING"
-  # var c = waitFor readInto(readHandle, cast[pointer](addr inBuffer[0]), 64)
-  echo "GOT STUFF??"
-  # inBuffer.setLen(c)
-  echo "IN BUFFER"
-  # echo inBuffer
-  echo "OUT BUFFER"
-  # echo outBuffer
-  # doAssert(inBuffer == outBuffer)
-
-  # Close `read` side channel
-  # close(readHandle)
-  # Close `write` side channel
-  # close(writeHandle)
-  # Close IPC object
-  # close(ipc)
-
+    ipcThread.createThread(ipcListener)
 
 
   let fleets =
@@ -81,7 +117,7 @@ proc mainProc() =
   enableHDPI()
   initializeOpenGL()
 
-  let app = newQApplication("Status Desktop")
+  app = newQApplication("Status Desktop")
   let resources =
     if defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
       "/../resources/resources.rcc"
@@ -113,7 +149,7 @@ proc mainProc() =
 
   let networkAccessFactory = newQNetworkAccessManagerFactory(TMPDIR & "netcache")
 
-  let engine = newQQmlApplicationEngine()
+  engine = newQQmlApplicationEngine()
   engine.setNetworkAccessManagerFactory(networkAccessFactory)
 
   let netAccMgr = newQNetworkAccessManager(engine.getNetworkAccessManager())
@@ -129,91 +165,75 @@ proc mainProc() =
     netAccMgr.clearConnectionCache()
     netAccMgr.setNetworkAccessible(NetworkAccessibility.Accessible)
 
-  let signalController = signals.newController(status)
+  signalController = signals.newController(status)
 
   # We need this global variable in order to be able to access the application
   # from the non-closure callback passed to `libstatus.setSignalEventCallback`
   signalsQObjPointer = cast[pointer](signalController.vptr)
 
-  var wallet = wallet.newController(status)
-  engine.setRootContextProperty("walletModel", wallet.variant)
+  walletController = wallet.newController(status)
+  engine.setRootContextProperty("walletModel", walletController.variant)
 
-  var chat = chat.newController(status)
-  engine.setRootContextProperty("chatsModel", chat.variant)
+  chatController = chat.newController(status)
+  engine.setRootContextProperty("chatsModel", chatController.variant)
 
-  var node = node.newController(status, netAccMgr)
-  engine.setRootContextProperty("nodeModel", node.variant)
+  nodeController = node.newController(status, netAccMgr)
+  engine.setRootContextProperty("nodeModel", nodeController.variant)
 
-  var utilsController = utilsView.newController(status)
+  utilsController = utilsView.newController(status)
   engine.setRootContextProperty("utilsModel", utilsController.variant)
 
-  var browserController = browserView.newController(status)
+  browserController = browserView.newController(status)
   engine.setRootContextProperty("browserModel", browserController.variant)
 
   proc changeLanguage(locale: string) =
     engine.setTranslationPackage(joinPath(i18nPath, fmt"qml_{locale}.qm"))
 
-  var profile = profile.newController(status, changeLanguage)
-  engine.setRootContextProperty("profileModel", profile.variant)
+  profileController = profile.newController(status, changeLanguage)
+  engine.setRootContextProperty("profileModel", profileController.variant)
 
-  var provider = provider.newController(status)
-  engine.setRootContextProperty("web3Provider", provider.variant)
+  providerController = provider.newController(status)
+  engine.setRootContextProperty("web3Provider", providerController.variant)
 
-  var login = login.newController(status)
-  var onboarding = onboarding.newController(status)
+  loginController = login.newController(status)
+  onboardingController = onboarding.newController(status)
 
   status.events.once("login") do(a: Args):
     var args = AccountArgs(a)
     # Delete login and onboarding from memory to remove any mnemonic that would have been saved in the accounts list
-    login.delete()
-    onboarding.delete()
+    loginController.delete()
+    onboardingController.delete()
 
     status.startMessenger()
-    profile.init(args.account)
-    wallet.init()
-    provider.init()
-    chat.init()
+    profileController.init(args.account)
+    walletController.init()
+    providerController.init()
+    chatController.init()
     utilsController.init()
     browserController.init()
 
-    wallet.checkPendingTransactions()
-    wallet.start()
+    walletController.checkPendingTransactions()
+    walletController.start()
 
-  engine.setRootContextProperty("loginModel", login.variant)
-  engine.setRootContextProperty("onboardingModel", onboarding.variant)
+  engine.setRootContextProperty("loginModel", loginController.variant)
+  engine.setRootContextProperty("onboardingModel", onboardingController.variant)
 
   let isExperimental = if getEnv("EXPERIMENTAL") == "1": "1" else: "0" # value explicity passed to avoid trusting input
   let experimentalFlag = newQVariant(isExperimental)
   engine.setRootContextProperty("isExperimental", experimentalFlag)
 
-  defer:
-    error "TODO: if user is logged in, logout"
-    provider.delete()
-    engine.delete()
-    app.delete()
-    signalController.delete()
-    login.delete()
-    onboarding.delete()
-    wallet.delete()
-    chat.delete()
-    profile.delete()
-    utilsController.delete()
-    browserController.delete()
-    # Close `read` side channel
-    # close(readHandle)
-    # Close `write` side channel
-    # close(writeHandle)
-    # Close IPC object
-    if (ipcDefined):
-      close(ipc)
 
+  defer:
+    killEverything()
+
+  setControlCHook(killEverything)
 
   # Initialize only controllers whose init functions
   # do not need a running node
   proc initControllers() =
-    node.init()
-    login.init()
-    onboarding.init()
+    nodeController.init()
+    loginController.init()
+    onboardingController.init()
 
   initControllers()
 
@@ -223,13 +243,13 @@ proc mainProc() =
     status.reset()
 
     # 1. Reset controller data
-    login.reset()
-    onboarding.reset()
+    loginController.reset()
+    onboardingController.reset()
     # TODO: implement all controller resets
-    # chat.reset()
-    # node.reset()
-    # wallet.reset()
-    # profile.reset()
+    # chatController.reset()
+    # nodeController.reset()
+    # walletController.reset()
+    # profileController.reset()
 
     # 2. Re-init controllers that don't require a running node
     initControllers()
