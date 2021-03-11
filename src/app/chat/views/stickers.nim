@@ -46,7 +46,6 @@ QtObject:
   proc transactionCompleted*(self: StickersView, success: bool, txHash: string, revertReason: string = "") {.signal.}
 
   proc estimate*(self: StickersView, packId: int, address: string, price: string, uuid: string) {.slot.} =
-    debugEcho ">>> [app/chat/views/stickers.estimate] cast[pointer](self.vptr): ", repr cast[pointer](self.vptr)
     self.status.taskManager.stickerPackPurchaseGasEstimate(cast[pointer](self.vptr), "setGasEstimate", packId, address, price, uuid)
   
   proc estimateOld*(self: StickersView, packId: int, address: string, price: string, uuid: string) {.slot.} =
@@ -62,7 +61,6 @@ QtObject:
   proc gasEstimateReturned*(self: StickersView, estimate: int, uuid: string) {.signal.}
 
   proc setGasEstimate*(self: StickersView, estimateJson: string) {.slot.} =
-    debugEcho ">>> [app/chat/views/stickers.setGasEstimate] estimateJson: ", estimateJson
     let estimateResult = Json.decode(estimateJson, tuple[estimate: int, uuid: string])
     self.gasEstimateReturned(estimateResult.estimate, estimateResult.uuid)
 

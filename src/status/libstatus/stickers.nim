@@ -47,7 +47,8 @@ proc decodeContentHash*(value: string): string =
     # 20 = multihash length = 32
     # ...rest = multihash digest
     let multiHash = MultiHash.init(nimcrypto.fromHex(multiHashStr)).get()
-    result = $Cid.init(CIDv0, MultiCodec.codec(codec), multiHash)
+    let resultTyped = Cid.init(CIDv0, MultiCodec.codec(codec), multiHash).get()
+    result = $resultTyped
     trace "Decoded sticker hash", cid=result
   except Exception as e:
     error "Error decoding sticker", hash=value, exception=e.msg

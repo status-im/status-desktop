@@ -295,8 +295,10 @@ proc decodeENSContentHash*(value: string): tuple[ensType: ENSType, output: strin
       # 12 = identifies sha2-256 hash
       # 20 = multihash length = 32
       # ...rest = multihash digest
-      let multiHash = MultiHash.init(nimcrypto.fromHex(multiHashStr)).get()
-      return (ENSType.IPFS, $Cid.init(CIDv0, MultiCodec.codec(codec), multiHash))
+      let
+        multiHash = MultiHash.init(nimcrypto.fromHex(multiHashStr)).get()
+        decoded = Cid.init(CIDv0, MultiCodec.codec(codec), multiHash).get()
+      return (ENSType.IPFS, $decoded)
     except Exception as e:
       error "Error decoding ENS contenthash", hash=value, exception=e.msg
       raise

@@ -23,27 +23,6 @@ var signalsQObjPointer: pointer
 logScope:
   topics = "main"
 
-
-# proc worker(arg: ThreadArg) {.async.} =
-#   let chanRecv = arg.chanRecv
-#   let chanSend = arg.chanSend
-#   var count = 0
-#   chanRecv.open()
-#   chanSend.open()
-
-#   while true:
-#     let received = $(await chanRecv.recv())
-#     debugEcho ">>> [nim_status_client.worker] received message: ", received
-#     # await chanSend.send("hello".safe)
-#     if (received == "do task"):
-#       signal_handler(arg.tasksControllerPtr, "task result " & $count, "receiveSignal")
-
-#     count = count + 1
-#     # await sleepAsync 1000.milliseconds
-
-# proc workerThread(arg: ThreadArg) {.thread.} =
-#   waitFor worker(arg)
-
 proc mainProc() =
   let fleets =
     if defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":

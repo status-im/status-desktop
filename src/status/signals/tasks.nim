@@ -46,10 +46,8 @@ proc worker(arg: ThreadArg) {.async.} =
     )
     if not success:
       estimate = 325000
-    debugEcho ">>> [TaskManager.runTask] estimate: ", $estimate
     let result: tuple[estimate: int, uuid: string] = (estimate, stickerPackPurchaseGasEstimate.uuid)
     let resultPayload = Json.encode(result)
-    debugEcho ">>> [TaskManager.runTask] result payload: ", resultPayload
     debugEcho ">>> [TaskManager.runTask] stickerPackPurchaseGasEstimate.vptr: ", repr cast[pointer](stickerPackPurchaseGasEstimate.vptr)
 
     signal_handler(cast[pointer](stickerPackPurchaseGasEstimate.vptr), resultPayload, stickerPackPurchaseGasEstimate.slot)
