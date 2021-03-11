@@ -128,7 +128,7 @@ Item {
 
         CommunityWelcomeBanner {
             id: emptyViewAndSuggestions
-            visible: chatsModel.communities.activeCommunity.admin
+            visible: !appSettings.hiddenCommunityWelcomeBanners.includes(chatsModel.communities.activeCommunity.id) && chatsModel.communities.activeCommunity.admin
             width: parent.width
             anchors.top: channelList.bottom
             anchors.topMargin: Style.current.padding
