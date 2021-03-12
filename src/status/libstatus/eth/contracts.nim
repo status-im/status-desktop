@@ -1,5 +1,5 @@
 import
-  sequtils, sugar, macros, tables, strutils, locks
+  sequtils, sugar, macros, tables, strutils
 
 import
   web3/ethtypes, stew/byteutils, nimcrypto, json_serialization, chronicles
@@ -15,9 +15,6 @@ export
 
 logScope:
   topics = "contracts"
-
-var contractsLock: Lock
-initLock(contractsLock)
 
 const ERC20_METHODS = @[
   ("name", Method(signature: "name()")),
@@ -80,7 +77,8 @@ proc newErc721Contract(name: string, network: Network, address: Address, symbol:
   Erc721Contract(name: name, network: network, address: address, symbol: symbol, hasIcon: hasIcon, methods: ERC721_ENUMERABLE_METHODS.concat(addlMethods).toTable)
 
 
-var ALL_CONTRACTS {.guard: contractsLock.}: seq[Contract] = @[
+var ALL_CONTRACTS {.threadvar.}: seq[Contract]
+ALL_CONTRACTS = @[
   # Mainnet contracts
   newErc20Contract("Status Network Token", Network.Mainnet, parseAddress("0x744d70fdbe2ba4cf95131626614a1763df805b9e"), "SNT", 18, true),
   newErc20Contract("Dai Stablecoin", Network.Mainnet, parseAddress("0x6b175474e89094c44da98b954eedeac495271d0f"), "DAI", 18, true),
@@ -256,10 +254,8 @@ var ALL_CONTRACTS {.guard: contractsLock.}: seq[Contract] = @[
 ]
 
 proc getContract(network: Network, name: string): Contract =
-  {.gcsafe.}:
-    withLock contractsLock:
-      let found = ALL_CONTRACTS.filter(contract => contract.name == name and contract.network == network)
-      result = if found.len > 0: found[0] else: nil
+  let found = ALL_CONTRACTS.filter(contract => contract.name == name and contract.network == network)
+  result = if found.len > 0: found[0] else: nil
 
 proc getContract*(name: string): Contract =
   let network = settings.getCurrentNetwork()
@@ -275,27 +271,19 @@ proc getErc20ContractByAddress*(contracts: seq[Erc20Contract], address: Address)
 
 proc getErc20Contract*(symbol: string): Erc20Contract =
   let network = settings.getCurrentNetwork()
-  {.gcsafe.}:
-    withLock contractsLock:
-      result = ALL_CONTRACTS.filter(contract => contract.network == network and contract of Erc20Contract).map(contract => Erc20Contract(contract)).getErc20ContractBySymbol(symbol)
+  result = ALL_CONTRACTS.filter(contract => contract.network == network and contract of Erc20Contract).map(contract => Erc20Contract(contract)).getErc20ContractBySymbol(symbol)
 
 proc getErc20Contract*(address: Address): Erc20Contract =
   let network = settings.getCurrentNetwork()
-  {.gcsafe.}:
-    withLock contractsLock:
-      result = ALL_CONTRACTS.filter(contract => contract.network == network and contract of Erc20Contract).map(contract => Erc20Contract(contract)).getErc20ContractByAddress(address)
+  result = ALL_CONTRACTS.filter(contract => contract.network == network and contract of Erc20Contract).map(contract => Erc20Contract(contract)).getErc20ContractByAddress(address)
 
 proc getErc20Contracts*(): seq[Erc20Contract] =
   let network = settings.getCurrentNetwork()
-  {.gcsafe.}:
-    withLock contractsLock:
-      result = ALL_CONTRACTS.filter(contract => contract of Erc20Contract and contract.network == network).map(contract => Erc20Contract(contract))
+  result = ALL_CONTRACTS.filter(contract => contract of Erc20Contract and contract.network == network).map(contract => Erc20Contract(contract))
 
 proc getErc721Contract(network: Network, name: string): Erc721Contract =
-  {.gcsafe.}:
-    withLock contractsLock:
-      let found = ALL_CONTRACTS.filter(contract => contract of Erc721Contract and Erc721Contract(contract).name.toLower == name.toLower and contract.network == network)
-      result = if found.len > 0: Erc721Contract(found[0]) else: nil
+  let found = ALL_CONTRACTS.filter(contract => contract of Erc721Contract and Erc721Contract(contract).name.toLower == name.toLower and contract.network == network)
+  result = if found.len > 0: Erc721Contract(found[0]) else: nil
 
 proc getErc721Contract*(name: string): Erc721Contract =
   let network = settings.getCurrentNetwork()
@@ -303,9 +291,7 @@ proc getErc721Contract*(name: string): Erc721Contract =
 
 proc getErc721Contracts*(): seq[Erc721Contract] =
   let network = settings.getCurrentNetwork()
-  {.gcsafe.}:
-    withLock contractsLock:
-      result = ALL_CONTRACTS.filter(contract => contract of Erc721Contract and contract.network == network).map(contract => Erc721Contract(contract))
+  result = ALL_CONTRACTS.filter(contract => contract of Erc721Contract and contract.network == network).map(contract => Erc721Contract(contract))
 
 proc getSntContract*(): Erc20Contract =
   if settings.getCurrentNetwork() == Network.Mainnet:
