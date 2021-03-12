@@ -39,7 +39,7 @@ var nodeController: NodeController
 var chatsQObjPointer: pointer
 var ipcThread = Thread[void]()
 
-const ipcName = "status-ipc-1"
+const ipcName = "status-ipc-4"
 
 var stopIPCThread: Atomic[bool]
 
@@ -59,14 +59,23 @@ proc killEverything() {.noconv.} =
   nodeController.delete()
 
   stopIPCThread.store(true)
-  let writeHandle = open(ipcName, sideWriter)
-  var outBuffer = "bye"
-  waitFor write(writeHandle, cast[pointer](addr outBuffer[0]), len(outBuffer))
-  close(writeHandle)
-
+  try:
+    let writeHandle = open(ipcName, sideWriter)
+    var outBuffer = "bye"
+    waitFor write(writeHandle, cast[pointer](addr outBuffer[0]), len(outBuffer))
+    close(writeHandle)
+  except Exception as e:
+    # Nothing to do, it probably wasn't opened
+    discard
 
 proc ipcListener() {.thread.} =
-  var ipc = createIpc(ipcName)
+  var ipc: AsyncIpc 
+  try:
+    ipc = createIpc(ipcName)
+  except Exception as e:
+    error "Error creating the IPC connection", msg = e.msg
+    return
+
   var inBuffer = newString(145)
 
   # open `read` side channel to IPC object
@@ -87,11 +96,12 @@ proc ipcListener() {.thread.} =
   close(ipc)
 
 proc mainProc() =
+  var shouldSetupIPC = false
   try:
     # Try opening the write handle to send the URL
     let writeHandle = open(ipcName, sideWriter)
     # Send URL to the main app
-    var outBuffer = "status-im:/cc/0xr9y29rh923h98r9832u"
+    var outBuffer = "status-im://test3"
     waitFor write(writeHandle, cast[pointer](addr outBuffer[0]), len(outBuffer))
 
     close(writeHandle)
@@ -99,8 +109,8 @@ proc mainProc() =
     # Kill app
     quit(0)
   except Exception as e:
-    # No other app started, we create the thread to listen to IPC
-    ipcThread.createThread(ipcListener)
+    # No other app started, we will create the IPC connection once we login
+    discard
 
   let fleets =
     if defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
@@ -212,6 +222,9 @@ proc mainProc() =
 
     walletController.checkPendingTransactions()
     walletController.start()
+
+    # Start IPC
+    ipcThread.createThread(ipcListener)
 
   engine.setRootContextProperty("loginModel", loginController.variant)
   engine.setRootContextProperty("onboardingModel", onboardingController.variant)

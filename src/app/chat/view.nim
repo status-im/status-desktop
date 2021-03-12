@@ -746,13 +746,15 @@ QtObject:
     return idx
 
   proc handleProtocolUrl(self: ChatsView, url: string) =
-    debug "GOT URL", url
-    # let urlPart = protocolUri.replace("status-im://", "").split("/")
-    # case urlPart[0]:
-    #   of "chat":
-    #     case urlPart[1]:
-    #       of "public":
-    #         discard self.view.joinChat(urlPart[2], (int)chat_types.ChatType.Public)
+    let urlPart = url.replace("status-im://", "").split("/")
+    case urlPart[0]:
+      of "cc":
+        debug "community"
+        # discard self.view.joinChat(urlPart[2], (int)chat_types.ChatType.Public)
+      else:
+        # Public chat
+        discard self.joinChat(urlPart[0], (int)ChatType.Public)
+
 
 
   proc urlSignalReceived(self: ChatsView, url: string) {.signal.}
