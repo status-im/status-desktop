@@ -3,7 +3,9 @@ import
   task_runner
 
 import
-  ../stickers
+  ./stickers
+export
+  stickers
 
 logScope:
   topics = "task-threadpool"
@@ -14,6 +16,7 @@ type
     chanSendToPool*: AsyncChannel[ThreadSafeString]
     thread: Thread[PoolThreadArg]
     size: int
+    stickers*: StickersTasks
   PoolThreadArg* = object
     chanSendToMain*: AsyncChannel[ThreadSafeString]
     chanRecvFromMain*: AsyncChannel[ThreadSafeString]
@@ -25,14 +28,7 @@ type
   ThreadNotification = object
     id: int
     notice: string
-  Task = object of RootObj
-    vptr: ByteAddress
-    slot: string
-  StickerPackPurchaseGasEstimate = object of Task
-    packId: int
-    address: string
-    price: string
-    uuid: string
+  
 
 # forward declarations
 proc poolThread(arg: PoolThreadArg) {.thread.}
@@ -45,6 +41,7 @@ proc newThreadPool*(size: int = MaxThreadPoolSize): ThreadPool =
   result.chanSendToPool = newAsyncChannel[ThreadSafeString](-1)
   result.thread = Thread[PoolThreadArg]()
   result.size = size
+  result.stickers = newStickersTasks(result.chanSendToPool)
 
 proc init*(self: ThreadPool) =
   self.chanRecvFromPool.open()
@@ -58,36 +55,11 @@ proc init*(self: ThreadPool) =
 
   # block until we receive "ready"
   let received = $(self.chanRecvFromPool.recvSync())
-  debugEcho ">>> [tasks/threadpool.init] pool thread is ready, received: ", received
 
 proc teardown*(self: ThreadPool) =
   self.chanRecvFromPool.close()
   self.chanSendToPool.close()
   joinThread(self.thread)
-
-proc runTask(stickerPackPurchaseGasEstimate: StickerPackPurchaseGasEstimate) =
-  var success: bool
-  var estimate = estimateGas2(
-    stickerPackPurchaseGasEstimate.packId,
-    stickerPackPurchaseGasEstimate.address,
-    stickerPackPurchaseGasEstimate.price,
-    success
-  )
-  if not success:
-    estimate = 325000
-  let result: tuple[estimate: int, uuid: string] = (estimate, stickerPackPurchaseGasEstimate.uuid)
-  let resultPayload = Json.encode(result)
-  debugEcho ">>> [ThreadPool.runTask] stickerPackPurchaseGasEstimate.vptr: ", repr cast[pointer](stickerPackPurchaseGasEstimate.vptr)
-
-  signal_handler(cast[pointer](stickerPackPurchaseGasEstimate.vptr), resultPayload, stickerPackPurchaseGasEstimate.slot)
-
-proc stickerPackPurchaseGasEstimate*(self: ThreadPool, vptr: pointer, slot: string, packId: int, address: string, price: string, uuid: string) =
-  debugEcho ">>> [signals/tasks.stickerPackPurchaseGasEstimate] unsafeAddr(vptr): ", repr unsafeAddr(vptr)
-  debugEcho ">>> [signals/tasks.stickerPackPurchaseGasEstimate] cast[ByteAddress](vptr): ", repr cast[ByteAddress](vptr)
-  let task = StickerPackPurchaseGasEstimate(vptr: cast[ByteAddress](vptr), slot: slot, packId: packId, address: address, price: price, uuid: uuid)
-  let payload = task.toJson(typeAnnotations = true)
-  debugEcho ">>> [signals/tasks.stickerPackPurchaseGasEstimate] encoded payload: ", payload
-  self.chanSendToPool.sendSync(payload.safe)
 
 proc task(arg: TaskThreadArg) {.async.} =
   arg.chanRecvFromPool.open()
@@ -117,7 +89,6 @@ proc task(arg: TaskThreadArg) {.async.} =
     try:
       case messageType
         of "StickerPackPurchaseGasEstimate":
-          debugEcho ">>> [ThreadPool.task] we have a StickerPackPurchaseGasEstimate"
           let decoded = Json.decode(received, StickerPackPurchaseGasEstimate, allowUnknownFields = true)
           decoded.runTask()
         else:
@@ -180,11 +151,10 @@ proc pool(arg: PoolThreadArg) {.async.} =
   while true:
     info "[threadpool] waiting for message"
     var task = $(await chanRecvFromMainOrTask.recv())
-    debugEcho ">>> [ThreadPool.pool] received message: ", task
+    info "[threadpool] received message", msg=task
 
     if task == "shutdown":
-      info "[threadpool] received 'shutdown'"
-      info "[threadpool work] sending 'shutdown' to all task threads"
+      info "[threadpool] sending 'shutdown' to all task threads"
       for tpl in threadsIdle:
         await tpl.chanSendToTask.send("shutdown".safe)
       for tpl in threadsBusy.values:
@@ -195,7 +165,7 @@ proc pool(arg: PoolThreadArg) {.async.} =
     let
       jsonNode = parseJson(task)
       messageType = jsonNode{"$type"}.getStr
-    debugEcho ">>> [ThreadPool.pool] message type: ", messageType
+    info "[threadpool] determined message type", messageType=messageType
 
     case messageType
       of "ThreadNotification":
