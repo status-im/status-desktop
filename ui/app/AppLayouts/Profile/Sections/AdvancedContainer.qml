@@ -43,6 +43,13 @@ Item {
             }
         }
 
+        StatusSettingsLineButton {
+            text: qsTr("Setup Deep links")
+            onClicked: function () {
+                profileModel.setupDeepLinking()
+            }
+        }
+
         Item {
             id: spacer1
             height: Style.current.bigPadding

@@ -1,4 +1,5 @@
 import NimQml, sequtils, strutils, sugar, os, json, chronicles
+import winlean
 import views/[mailservers_list, ens_manager, contacts, devices, mailservers, mnemonic, network, fleets, profile_info, device_list, dapp_list]
 import chronicles
 import ../chat/views/channels_list
@@ -248,3 +249,21 @@ QtObject:
     result = self.status.profile.deleteIdentityImage(self.profile.address)
     if (result == ""):
       self.profile.removeIdentityImage()
+
+  proc setupDeepLinking*(self: ProfileView) {.slot.} =
+    if defined(windows):
+      const NULL: Handle = 0
+      let cwd = getCurrentDir()
+      let exePath_str = joinPath(cwd, "protocolURICreator.bat")
+      let open_str = "open"
+      let params_str = ""
+      let workDir = newWideCString(cwd)
+      let exePath = newWideCString(exePath_str)
+      let open = newWideCString(open_str)
+      let params = newWideCString(params_str)
+      # SW_SHOW (5): activates window and displays it in its current size and position
+      const showCmd: int32 = 5
+
+      discard shellExecuteW(NULL, open, exePath, params, workDir, showCmd)
+    else:
+      error "Only available for Windows for the moment"
