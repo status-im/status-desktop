@@ -1,5 +1,5 @@
 import NimQml, chronicles, os, strformat, winlean
-import asynctools, asyncdispatch, atomics
+import asynctools, asyncdispatch, atomics, confutils
 
 import app/chat/core as chat
 import app/wallet/core as wallet
@@ -22,6 +22,12 @@ var signalsQObjPointer: pointer
 logScope:
   topics = "main"
 
+type
+  CLIConfig = object
+    uri* {.
+      defaultValue: "",
+      desc: "Protocol URL with params to open a chat or other"
+      name: "url" }: string
 
 var providerController: Web3ProviderController
 var engine: QQmlApplicationEngine
@@ -117,6 +123,8 @@ proc mainProc() =
       "/../resources/fleets.json"
     else:
       "/../fleets.json"
+
+  var cfg = CliConfig.load()
 
   let status = statuslib.newStatusInstance(readFile(joinPath(getAppDir(), fleets)))
   status.initNode()
@@ -216,7 +224,7 @@ proc mainProc() =
     profileController.init(args.account)
     walletController.init()
     providerController.init()
-    chatController.init()
+    chatController.init(cfg.uri)
     utilsController.init()
     browserController.init()
 

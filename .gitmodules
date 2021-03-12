@@ -94,3 +94,6 @@
 [submodule "vendor/asynctools"]
 	path = vendor/asynctools
 	url = https://github.com/cheatfate/asynctools.git
+[submodule "vendor/nim-confutils"]
+	path = vendor/nim-confutils
+	url = https://github.com/status-im/nim-confutils.git

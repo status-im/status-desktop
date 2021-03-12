@@ -28,6 +28,6 @@ REG ADD HKEY_CLASSES_ROOT\status-im\DefaultIcon /ve /t REG_SZ /d "Status.exe,1"
 REG ADD HKEY_CLASSES_ROOT\status-im\shell
 
 :: TODO Get path to user bin
-REG ADD HKEY_CLASSES_ROOT\status-im\shell\open\command /ve /t REG_SZ /d "C:\dev\nim-status-client\pkg\Status\bin\Status.exe --uri=\"%1\""
+REG ADD HKEY_CLASSES_ROOT\status-im\shell\open\command /ve /t REG_SZ /d "C:\dev\nim-status-client\pkg\Status\bin\Status.exe --url=\"%1\""
 
 cmd /k
