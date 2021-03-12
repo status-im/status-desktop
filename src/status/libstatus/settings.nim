@@ -10,12 +10,11 @@ import
 
 var
   settings {.threadvar.}: JsonNode
-  settingsNotInited {.threadvar.}: JsonNode
+  settingsInited {.threadvar.}: bool
   dirty: Atomic[bool]
 
 dirty.store(true)
-settingsNotInited = %*{ "inited": false }
-settings = settingsNotInited
+settings = %* {}
 
 proc saveSetting*(key: Setting, value: string | JsonNode): StatusGoError =
   try:
@@ -32,8 +31,8 @@ proc getWeb3ClientVersion*(): string =
   parseJson(callPrivateRPC("web3_clientVersion"))["result"].getStr
 
 proc getSettings*(useCached: bool = true, keepSensitiveData: bool = false): JsonNode =
-  let cacheIsDirty = dirty.load or settings == settingsNotInited
-  if useCached and not cacheIsDirty and not keepSensitiveData:
+  let cacheIsDirty = (not settingsInited) or dirty.load
+  if useCached and (not cacheIsDirty) and (not keepSensitiveData):
     result = settings
   else: 
     result = callPrivateRPC("settings_getSettings").parseJSON()["result"]
@@ -41,6 +40,7 @@ proc getSettings*(useCached: bool = true, keepSensitiveData: bool = false): Json
       dirty.store(false)
       delete(result, "mnemonic")
       settings = result
+      settingsInited = true
 
 proc getSetting*[T](name: Setting, defaultValue: T, useCached: bool = true): T =
   let settings: JsonNode = getSettings(useCached, $name == "mnemonic")
