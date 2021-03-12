@@ -1,5 +1,5 @@
 import NimQml, chronicles, os, strformat, winlean
-import asynctools, asyncdispatch
+import asynctools, asyncdispatch, atomics
 
 import app/chat/core as chat
 import app/wallet/core as wallet
@@ -36,14 +36,12 @@ var utilsController: UtilsController
 var browserController: BrowserController
 var nodeController: NodeController
 
-var ipcThread: Thread[void]
+var chatsQObjPointer: pointer
+var ipcThread = Thread[void]()
 
 const ipcName = "status-ipc-1"
 
-var ipcDefined = false
-var ipc: AsyncIpc
-var readHandle: AsyncIpcHandle
-
+var stopIPCThread: Atomic[bool]
 
 proc killEverything() {.noconv.} =
   error "TODO: if user is logged in, logout"
@@ -60,38 +58,38 @@ proc killEverything() {.noconv.} =
   browserController.delete()
   nodeController.delete()
 
-  if (ipcDefined):
-    close(readHandle)
-    close(ipc)
+  stopIPCThread.store(true)
+  let writeHandle = open(ipcName, sideWriter)
+  var outBuffer = "bye"
+  waitFor write(writeHandle, cast[pointer](addr outBuffer[0]), len(outBuffer))
+  close(writeHandle)
 
 
 proc ipcListener() {.thread.} =
-  {.gcsafe.}:
-    debug "Creating connection"
-    ipc = createIpc(ipcName)
-    ipcDefined = true
-    var inBuffer = newString(145)
+  var ipc = createIpc(ipcName)
+  var inBuffer = newString(145)
 
-    # open `read` side channel to IPC object
-    readHandle = open(ipcName, sideReader)
+  # open `read` side channel to IPC object
+  var readHandle = open(ipcName, sideReader)
 
-    while true:
-      # reading data from IPC object
-      var c = waitFor readInto(readHandle, cast[pointer](addr inBuffer[0]), 64)
+  while true:
+    # reading data from IPC object
+    var c = waitFor readInto(readHandle, cast[pointer](addr inBuffer[0]), 145)
 
-      inBuffer.setLen(c)
+    if (stopIPCThread.load()):
+      break
 
-      debug "WE GOT A URL", inBuffer
+    inBuffer.setLen(c)
 
+    signal_handler(chatsQObjPointer, inBuffer, "receiveUrlSignal")
 
+  close(readHandle)
+  close(ipc)
 
 proc mainProc() =
-
-  # var ipc: AsyncIpc
-  # var ipcDefined = false
   try:
+    # Try opening the write handle to send the URL
     let writeHandle = open(ipcName, sideWriter)
-    debug "WE HAVE A CONNECTION"
     # Send URL to the main app
     var outBuffer = "status-im:/cc/0xr9y29rh923h98r9832u"
     waitFor write(writeHandle, cast[pointer](addr outBuffer[0]), len(outBuffer))
@@ -101,9 +99,8 @@ proc mainProc() =
     # Kill app
     quit(0)
   except Exception as e:
-    debug "NO IPC", msg = e.msg
+    # No other app started, we create the thread to listen to IPC
     ipcThread.createThread(ipcListener)
-
 
   let fleets =
     if defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
@@ -176,6 +173,7 @@ proc mainProc() =
 
   chatController = chat.newController(status)
   engine.setRootContextProperty("chatsModel", chatController.variant)
+  chatsQObjPointer = cast[pointer](chatController.view.vptr)
 
   nodeController = node.newController(status, netAccMgr)
   engine.setRootContextProperty("nodeModel", nodeController.variant)
