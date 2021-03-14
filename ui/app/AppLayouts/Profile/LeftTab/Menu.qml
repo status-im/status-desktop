@@ -21,7 +21,48 @@ ScrollView {
         spacing: 8
 
         Repeater {
-            model: ProfileConstants.menuButtons
+            model: ProfileConstants.mainMenuButtons
+            delegate: MenuButton {
+                menuItemId: modelData.id
+                text: modelData .text
+                source: "../../../img/profile/" + modelData.filename
+                active: profileMenu.profileCurrentIndex === modelData.id
+                Layout.fillWidth: true
+                width: profileMenu.width
+                onClicked: function () {
+                    profileMenu.profileCurrentIndex = modelData.id
+                }
+            }
+        }
+
+        StyledText {
+            topPadding: 10
+            leftPadding: 20
+            text: "Settings"
+            color: Style.current.secondaryText
+        }
+
+        Repeater {
+            model: ProfileConstants.settingsMenuButtons
+            delegate: MenuButton {
+                menuItemId: modelData.id
+                text: modelData .text
+                source: "../../../img/profile/" + modelData.filename
+                active: profileMenu.profileCurrentIndex === modelData.id
+                Layout.fillWidth: true
+                width: profileMenu.width
+                onClicked: function () {
+                    profileMenu.profileCurrentIndex = modelData.id
+                }
+            }
+        }
+
+        StyledText {
+            text: " "
+        }
+
+        Repeater {
+            model: ProfileConstants.extraMenuButtons
             delegate: MenuButton {
                 menuItemId: modelData.id
                 text: modelData .text
