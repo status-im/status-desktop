@@ -13,7 +13,7 @@ var ADVANCED = 11
 var NEED_HELP = 12
 var ABOUT = 13
 
-var menuButtons = [{
+var mainMenuButtons = [{
                        "id": PROFILE,
                        "text": qsTr("My Profile"),
                        "filename": "myProfile.svg"
@@ -25,7 +25,9 @@ var menuButtons = [{
                        "id": ENS,
                        "text": qsTr("ENS usernames"),
                        "filename": "ensUsernames.svg"
-                   }, {
+                   }]
+
+var settingsMenuButtons = [{
                        "id": PRIVACY_AND_SECURITY,
                        "text": qsTr("Privacy and security"),
                        "filename": "security.svg"
@@ -61,7 +63,9 @@ var menuButtons = [{
                        "id": ADVANCED,
                        "text": qsTr("Advanced"),
                        "filename": "advanced.svg"
-                   }, {
+                   }]
+
+var extraMenuButtons = [{
                        "id": NEED_HELP,
                        "text": qsTr("Need help?"),
                        "filename": "help.svg"
