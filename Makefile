@@ -385,6 +385,7 @@ $(STATUS_CLIENT_ZIP): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 	cp status.ico tmp/windows/dist/Status/resources/
 	cp status.svg tmp/windows/dist/Status/resources/
 	cp resources.rcc tmp/windows/dist/Status/resources/
+	cp protocolURICreator.bat tmp/windows/dist/Status/bin/
 	cp $(FLEETS) tmp/windows/dist/Status/resources/
 	cp bin/nim_status_client.exe tmp/windows/dist/Status/bin/Status.exe
 	cp bin/nim_windows_launcher.exe tmp/windows/dist/Status/Status.exe

@@ -30,7 +30,7 @@ proc delete*(self: ChatController) =
 include event_handling
 include signal_handling
 
-proc init*(self: ChatController) =
+proc init*(self: ChatController, protocolUrl: string) =
   self.handleMailserverEvents()
   self.handleChatEvents()
   self.handleSignals()
@@ -42,6 +42,8 @@ proc init*(self: ChatController) =
   self.status.chat.init(pubKey)
   self.status.stickers.init()
   self.view.reactions.init()
+
+  self.view.handleProtocolUrl(protocolUrl)
 
   let recentStickers = self.status.stickers.getRecentStickers()
   for sticker in recentStickers:

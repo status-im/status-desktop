@@ -761,3 +761,24 @@ QtObject:
       idx = idx + 1
       if(id == msg.id): return idx
     return idx
+
+  proc handleProtocolUrl*(self: ChatsView, url: string) =
+    if (url == ""):
+      return
+
+    let urlPart = url.replace("status-im://", "").split("/")
+    if (urlPart.len == 0):
+      return
+    case urlPart[0]:
+      of "cc":
+        debug "community"
+        # discard self.view.joinChat(urlPart[2], (int)chat_types.ChatType.Public)
+      else:
+        # Public chat
+        discard self.joinChat(urlPart[0], (int)ChatType.Public)
+
+  proc urlSignalReceived(self: ChatsView, url: string) {.signal.}
+
+  proc receiveUrlSignal(self: ChatsView, url: string) {.slot.} =
+    self.handleProtocolUrl(url)
+    self.urlSignalReceived(url)
