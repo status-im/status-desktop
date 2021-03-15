@@ -12,7 +12,7 @@ import app/provider/core as provider
 import status/signals/core as signals
 import status/libstatus/types
 import status/libstatus/accounts/constants
-import nim_status
+import status_go
 import status/status as statuslib
 import ./eventemitter
 
@@ -192,7 +192,7 @@ proc mainProc() =
     signal_handler(signalsQObjPointer, p0, "receiveSignal")
     tearDownForeignThreadGc()
 
-  nim_status.setSignalEventCallback(callback)
+  status_go.setSignalEventCallback(callback)
 
   # Qt main event loop is entered here
   # The termination of the loop will be performed when exit() or quit() is called

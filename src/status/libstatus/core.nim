@@ -1,14 +1,14 @@
 import json, nimcrypto, chronicles
-import nim_status, utils
+import status_go, utils
 
 logScope:
   topics = "rpc"
 
 proc callRPC*(inputJSON: string): string =
-  return $nim_status.callRPC(inputJSON)
+  return $status_go.callRPC(inputJSON)
 
 proc callPrivateRPCRaw*(inputJSON: string): string =
-  return $nim_status.callPrivateRPC(inputJSON)
+  return $status_go.callPrivateRPC(inputJSON)
 
 proc callPrivateRPC*(methodName: string, payload = %* []): string =
   try:
@@ -18,7 +18,7 @@ proc callPrivateRPC*(methodName: string, payload = %* []): string =
       "params": %payload
     }
     debug "callPrivateRPC", rpc_method=methodName
-    let response = nim_status.callPrivateRPC($inputJSON)
+    let response = status_go.callPrivateRPC($inputJSON)
     result = $response
     if parseJSON(result).hasKey("error"):
       error "rpc response error", result = result
@@ -27,7 +27,7 @@ proc callPrivateRPC*(methodName: string, payload = %* []): string =
 
 proc sendTransaction*(inputJSON: string, password: string): string =
   var hashed_password = "0x" & $keccak_256.digest(password)
-  return $nim_status.sendTransaction(inputJSON, hashed_password)
+  return $status_go.sendTransaction(inputJSON, hashed_password)
 
 proc startMessenger*() =
   discard callPrivateRPC("startMessenger".prefix)
@@ -51,7 +51,7 @@ proc getTransfersByAddress*(address: string, toBlock: string, limit: string): st
   result = callPrivateRPC("wallet_getTransfersByAddress", %* [address, toBlock, limit])
 
 proc signMessage*(rpcParams: string): string =
-  return $nim_status.signMessage(rpcParams)
+  return $status_go.signMessage(rpcParams)
 
 proc signTypedData*(data: string, address: string, password: string): string =
-  return $nim_status.signTypedData(data, address, password)
+  return $status_go.signTypedData(data, address, password)
