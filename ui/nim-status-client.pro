@@ -35,8 +35,11 @@ SOURCES = *.qml \
           app/AppLayouts/Profile/LeftTab/*.qml \
           app/AppLayouts/Profile/LeftTab/components/*.qml \
           app/AppLayouts/Profile/Sections/*.qml \
+          app/AppLayouts/Profile/Sections/BrowserModals/*.qml \
           app/AppLayouts/Profile/Sections/Contacts/*.qml \
+          app/AppLayouts/Profile/Sections/Data/*.qml \
           app/AppLayouts/Profile/Sections/Ens/*.qml \
+          app/AppLayouts/Profile/Sections/Privileges/*.qml \
           app/AppLayouts/Timeline/*.qml\
           app/AppLayouts/Wallet/*.qml \
           app/AppLayouts/Wallet/components/*.qml \
