@@ -52,9 +52,6 @@
 [submodule "vendor/edn.nim"]
 	path = vendor/edn.nim
 	url = https://github.com/rosado/edn.nim.git
-[submodule "vendor/nim-status"]
-	path = vendor/nim-status
-	url = https://github.com/status-im/nim-status
 [submodule "vendor/nim-secp256k1"]
 	path = vendor/nim-secp256k1
 	url = https://github.com/status-im/nim-secp256k1
