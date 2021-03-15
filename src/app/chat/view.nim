@@ -91,6 +91,7 @@ QtObject:
 
     result.setup()
 
+  proc getMessageListIndexById(self: ChatsView, id: string): int
 
   proc getChannel*(self: ChatsView, index: int): Chat =
     if (self.communities.activeCommunity.active):
@@ -289,7 +290,11 @@ QtObject:
     notify = activeChannelChanged
 
   proc setActiveChannel*(self: ChatsView, channel: string) {.slot.} =
-    if(channel == ""): return
+    if (self.activeChannel.id == "" and channel == backToFirstChat):
+      self.setActiveChannelByIndex(0)
+      return
+
+    if(channel == "" or channel == backToFirstChat): return
     let selectedChannel = self.getChannelById(channel)
 
     self.activeChannel.setChatItem(selectedChannel)
@@ -561,6 +566,8 @@ QtObject:
     if (self.chats.chats.len == 0): return
     let selectedChannel = self.getChannel(channelIndex)
     if (selectedChannel == nil): return
+    if (self.activeChannel.id == selectedChannel.id):
+      self.activeChannel.chatItem = nil
     self.status.chat.leave(selectedChannel.id)
     self.status.mailservers.deleteMailserverTopic(selectedChannel.id)
 
@@ -571,8 +578,11 @@ QtObject:
   proc removeChat*(self: ChatsView, chatId: string) =
     discard self.chats.removeChatItemFromList(chatId)
     if (self.messageList.hasKey(chatId)):
+      let index = self.getMessageListIndexById(chatId)
+      self.beginRemoveRows(newQModelIndex(), index, index)
       self.messageList[chatId].delete
       self.messageList.del(chatId)
+      self.endRemoveRows()
 
   proc toggleReaction*(self: ChatsView, messageId: string, emojiId: int) {.slot.} =
     if self.activeChannel.id == status_utils.getTimelineChatId():
@@ -738,9 +748,16 @@ QtObject:
       ChatViewRoles.MessageList.int:"messages"
     }.toTable
 
-  proc getMessageListIndex(self: ChatsView):int {.slot.} =
+  proc getMessageListIndex(self: ChatsView): int {.slot.} =
     var idx = -1
     for msg in toSeq(self.messageList.values):
       idx = idx + 1
       if(self.activeChannel.id == msg.id): return idx
+    return idx
+
+  proc getMessageListIndexById(self: ChatsView, id: string): int {.slot.} =
+    var idx = -1
+    for msg in toSeq(self.messageList.values):
+      idx = idx + 1
+      if(id == msg.id): return idx
     return idx
