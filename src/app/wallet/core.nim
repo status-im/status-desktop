@@ -74,4 +74,4 @@ proc checkPendingTransactions*(self: WalletController) =
   self.status.wallet.checkPendingTransactions() # TODO: consider doing this in a spawnAndSend
 
 proc start*(self: WalletController) =
-  status_wallet.startWallet()
+  status_wallet.startWallet(false)

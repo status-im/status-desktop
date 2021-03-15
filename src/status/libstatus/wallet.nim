@@ -1,7 +1,7 @@
 import json, json, options, json_serialization, stint, chronicles
 import core, types, utils, strutils, strformat
 import utils
-from nim_status import validateMnemonic, startWallet
+from status_go import validateMnemonic, startWallet
 import ../wallet/account
 import web3/ethtypes
 import ./types
@@ -37,7 +37,7 @@ proc getTransfersByAddress*(address: string, blockNumber: string = "latest"): se
   try:
     let response = getBlockByNumber(blockNumber)
     let latestBlock = parseJson(response)["result"]
-    
+
     let transactionsResponse = getTransfersByAddress(address, latestBlock["number"].getStr, "0x14")
     let transactions = parseJson(transactionsResponse)["result"]
     var accountTransactions: seq[types.Transaction] = @[]
@@ -73,7 +73,7 @@ proc getBalance*(address: string): string =
   let response = parseJson(callPrivateRPC("eth_getBalance", payload))
   if response.hasKey("error"):
     raise newException(RpcException, "Error getting balance: " & $response["error"])
-  else:  
+  else:
     result = response["result"].str
 
 proc hex2Eth*(input: string): string =
@@ -81,10 +81,10 @@ proc hex2Eth*(input: string): string =
   result = utils.wei2Eth(value)
 
 proc validateMnemonic*(mnemonic: string): string =
-  result = $nim_status.validateMnemonic(mnemonic)
+  result = $status_go.validateMnemonic(mnemonic)
 
-proc startWallet*() =
-  discard nim_status.startWallet() # TODO: true  to watch trx
+proc startWallet*(watchNewBlocks: bool) =
+  discard status_go.startWallet(watchNewBlocks) # TODO: true  to watch trx
 
 proc hex2Token*(input: string, decimals: int): string =
   var value = fromHex(Stuint[256], input)
@@ -92,10 +92,10 @@ proc hex2Token*(input: string, decimals: int): string =
   var i = value.div(p)
   var r = value.mod(p)
   var leading_zeros = "0".repeat(decimals - ($r).len)
-  var d = fmt"{leading_zeros}{$r}"             
+  var d = fmt"{leading_zeros}{$r}"
   result = $i
   if(r > 0): result = fmt"{result}.{d}"
-  
+
 proc trackPendingTransaction*(transactionHash: string, fromAddress: string, toAddress: string, trxType: PendingTransactionType, data: string) =
   let blockNumber = parseInt($fromHex(Stuint[256], getBlockByNumber("latest").parseJson()["result"]["number"].getStr))
   let payload = %* [{"transactionHash": transactionHash, "blockNumber": blockNumber, "from_address": fromAddress, "to_address": toAddress, "type": $trxType, "data": data}]
@@ -108,7 +108,7 @@ proc getPendingTransactions*(): string =
   except Exception as e:
     error "Error getting pending transactions (possible dev Infura key)", msg = e.msg
     result = ""
- 
+
 
 proc getPendingOutboundTransactionsByAddress*(address: string): string =
   let payload = %* [address]

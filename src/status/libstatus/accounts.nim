@@ -1,6 +1,6 @@
 import json, os, nimcrypto, uuids, json_serialization, chronicles, strutils
 
-from nim_status import multiAccountGenerateAndDeriveAddresses, generateAlias, identicon, saveAccountAndLogin, login, openAccounts
+from status_go import multiAccountGenerateAndDeriveAddresses, generateAlias, identicon, saveAccountAndLogin, login, openAccounts
 import core
 import utils as utils
 import types as types
@@ -31,7 +31,7 @@ proc getNodeConfig*(fleetConfig: FleetConfig, installationId: string, networkCon
   result["ShhextConfig"]["InstallationID"] = newJString(installationId)
   # TODO: commented since it's not necessary (we do the connections thru C bindings). Enable it thru an option once status-nodes are able to be configured in desktop
   # result["ListenAddr"] = if existsEnv("STATUS_PORT"): newJString("0.0.0.0:" & $getEnv("STATUS_PORT")) else: newJString("0.0.0.0:30305")
-  
+
 proc getNodeConfig*(fleetConfig: FleetConfig, installationId: string, currentNetwork: string = constants.DEFAULT_NETWORK_NAME, fleet: Fleet = Fleet.PROD): JsonNode =
   let networkConfig = getNetworkConfig(currentNetwork)
   result = getNodeConfig(fleetConfig, installationId, networkConfig, fleet)
@@ -50,14 +50,14 @@ proc generateAddresses*(n = 5): seq[GeneratedAccount] =
     "bip39Passphrase": "",
     "paths": [PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
   }
-  let generatedAccounts = $nim_status.multiAccountGenerateAndDeriveAddresses($multiAccountConfig)
+  let generatedAccounts = $status_go.multiAccountGenerateAndDeriveAddresses($multiAccountConfig)
   result = Json.decode(generatedAccounts, seq[GeneratedAccount])
 
 proc generateAlias*(publicKey: string): string =
-  result = $nim_status.generateAlias(publicKey)
+  result = $status_go.generateAlias(publicKey)
 
 proc generateIdenticon*(publicKey: string): string =
-  result = $nim_status.identicon(publicKey)
+  result = $status_go.identicon(publicKey)
 
 proc ensureDir(dirname: string) =
   if not existsDir(dirname):
@@ -68,7 +68,7 @@ proc initNode*() =
   ensureDir(DATADIR)
   ensureDir(KEYSTOREDIR)
 
-  discard $nim_status.initKeystore(KEYSTOREDIR)
+  discard $status_go.initKeystore(KEYSTOREDIR)
 
 proc parseIdentityImage*(images: JsonNode): IdentityImage =
   result = IdentityImage()
@@ -81,7 +81,7 @@ proc parseIdentityImage*(images: JsonNode): IdentityImage =
         result.large = image["uri"].getStr
 
 proc openAccounts*(): seq[NodeAccount] =
-  let strNodeAccounts = nim_status.openAccounts(DATADIR).parseJson
+  let strNodeAccounts = status_go.openAccounts(DATADIR).parseJson
   # FIXME fix serialization
   result = @[]
   if (strNodeAccounts.kind != JNull):
@@ -95,9 +95,9 @@ proc openAccounts*(): seq[NodeAccount] =
       )
       if (account{"images"}.kind != JNull):
         nodeAccount.identityImage = parseIdentityImage(account["images"])
-          
+
       result.add(nodeAccount)
-  
+
 
 proc saveAccountAndLogin*(
   account: GeneratedAccount,
@@ -125,7 +125,7 @@ proc saveAccountAndLogin*(
     }
   ]
 
-  var savedResult = $nim_status.saveAccountAndLogin(accountData, hashedPassword, settingsJSON, configJSON, $subaccountData)
+  var savedResult = $status_go.saveAccountAndLogin(accountData, hashedPassword, settingsJSON, configJSON, $subaccountData)
   let parsedSavedResult = savedResult.parseJson
   let error = parsedSavedResult["error"].getStr
 
@@ -143,7 +143,7 @@ proc storeDerivedAccounts*(account: GeneratedAccount, password: string, paths: s
     "paths": paths,
     "password": hashedPassword
   }
-  let response = $nim_status.multiAccountStoreDerivedAccounts($multiAccount);
+  let response = $status_go.multiAccountStoreDerivedAccounts($multiAccount);
 
   try:
     result = Json.decode($response, MultiAccounts)
@@ -202,12 +202,12 @@ proc setupAccount*(fleetConfig: FleetConfig, account: GeneratedAccount, password
   finally:
     # TODO this is needed for now for the retrieving of past messages. We'll either move or remove it later
     let peer = "enode://44160e22e8b42bd32a06c1532165fa9e096eebedd7fa6d6e5f8bbef0440bc4a4591fe3651be68193a7ec029021cdb496cfe1d7f9f1dc69eb99226e6f39a7a5d4@35.225.221.245:443"
-    discard nim_status.addPeer(peer)
+    discard status_go.addPeer(peer)
 
 proc login*(nodeAccount: NodeAccount, password: string): NodeAccount =
   let hashedPassword = hashPassword(password)
   let account = nodeAccount.toAccount
-  let loginResult = $nim_status.login($toJson(account), hashedPassword)
+  let loginResult = $status_go.login($toJson(account), hashedPassword)
   let error = parseJson(loginResult)["error"].getStr
 
   if error == "":
@@ -223,12 +223,12 @@ proc loadAccount*(address: string, password: string): GeneratedAccount =
     "address": address,
     "password": hashedPassword
   }
-  let loadResult = $nim_status.multiAccountLoadAccount($inputJson)
+  let loadResult = $status_go.multiAccountLoadAccount($inputJson)
   result = Json.decode(loadResult, GeneratedAccount)
 
 proc verifyAccountPassword*(address: string, password: string): bool =
   let hashedPassword = hashPassword(password)
-  let verifyResult = $nim_status.verifyAccountPassword(KEYSTOREDIR, address, hashedPassword)
+  let verifyResult = $status_go.verifyAccountPassword(KEYSTOREDIR, address, hashedPassword)
   let error = parseJson(verifyResult)["error"].getStr
 
   if error == "":
@@ -241,17 +241,17 @@ proc multiAccountImportMnemonic*(mnemonic: string): GeneratedAccount =
     "mnemonicPhrase": mnemonic,
     "Bip39Passphrase": ""
   }
-  # nim_status.multiAccountImportMnemonic never results in an error given ANY input
-  let importResult = $nim_status.multiAccountImportMnemonic($mnemonicJson)
+  # status_go.multiAccountImportMnemonic never results in an error given ANY input
+  let importResult = $status_go.multiAccountImportMnemonic($mnemonicJson)
   result = Json.decode(importResult, GeneratedAccount)
 
 proc MultiAccountImportPrivateKey*(privateKey: string): GeneratedAccount =
   let privateKeyJson = %* {
     "privateKey": privateKey
   }
-  # nim_status.MultiAccountImportPrivateKey never results in an error given ANY input
+  # status_go.MultiAccountImportPrivateKey never results in an error given ANY input
   try:
-    let importResult = $nim_status.multiAccountImportPrivateKey($privateKeyJson)
+    let importResult = $status_go.multiAccountImportPrivateKey($privateKeyJson)
     result = Json.decode(importResult, GeneratedAccount)
   except Exception as e:
     error "Error getting account from private key", msg=e.msg
@@ -265,7 +265,7 @@ proc storeDerivedWallet*(account: GeneratedAccount, password: string, walletInde
     "paths": [derivationPath],
     "password": hashedPassword
   }
-  let response = parseJson($nim_status.multiAccountStoreDerivedAccounts($multiAccount));
+  let response = parseJson($status_go.multiAccountStoreDerivedAccounts($multiAccount));
   let error = response{"error"}.getStr
   if error == "":
     debug "Wallet stored succesfully"
@@ -274,7 +274,7 @@ proc storeDerivedWallet*(account: GeneratedAccount, password: string, walletInde
 
 proc storePrivateKeyAccount*(account: GeneratedAccount, password: string) =
   let hashedPassword = hashPassword(password)
-  let response = parseJson($nim_status.multiAccountStoreAccount($(%*{"accountID": account.id, "password": hashedPassword})));
+  let response = parseJson($status_go.multiAccountStoreAccount($(%*{"accountID": account.id, "password": hashedPassword})));
   let error = response{"error"}.getStr
   if error == "":
     debug "Wallet stored succesfully"
@@ -349,9 +349,9 @@ proc deriveWallet*(accountId: string, walletIndex: int): DerivedAccount =
     "accountID": accountId,
     "paths": [path]
   }
-  let deriveResult = parseJson($nim_status.multiAccountDeriveAddresses($deriveJson))
+  let deriveResult = parseJson($status_go.multiAccountDeriveAddresses($deriveJson))
   result = DerivedAccount(
-    address: deriveResult[path]["address"].getStr, 
+    address: deriveResult[path]["address"].getStr,
     publicKey: deriveResult[path]["publicKey"].getStr)
 
 proc deriveAccounts*(accountId: string): MultiAccounts =
@@ -359,11 +359,11 @@ proc deriveAccounts*(accountId: string): MultiAccounts =
     "accountID": accountId,
     "paths": [PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
   }
-  let deriveResult = $nim_status.multiAccountDeriveAddresses($deriveJson)
+  let deriveResult = $status_go.multiAccountDeriveAddresses($deriveJson)
   result = Json.decode(deriveResult, MultiAccounts)
 
 proc logout*(): StatusGoError =
-  result = Json.decode($nim_status.logout(), StatusGoError)
+  result = Json.decode($status_go.logout(), StatusGoError)
 
 proc storeIdentityImage*(keyUID: string, imagePath: string, aX, aY, bX, bY: int): IdentityImage =
   let response = callPrivateRPC("multiaccounts_storeIdentityImage", %* [keyUID, imagePath, aX, aY, bX, bY]).parseJson
