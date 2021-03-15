@@ -18,6 +18,8 @@ import ens
 logScope:
   topics = "chat-model"
 
+const backToFirstChat* = "__goBackToFirstChat"
+
 type 
   ChatUpdateArgs* = ref object of Args
     chats*: seq[Chat]
@@ -215,7 +217,7 @@ proc leave*(self: ChatModel, chatId: string) =
   self.channels.del(chatId)
   discard status_chat.clearChatHistory(chatId)
   self.events.emit("channelLeft", ChatIdArg(chatId: chatId))
-  self.events.emit("activeChannelChanged", ChatIdArg(chatId: ""))
+  self.events.emit("activeChannelChanged", ChatIdArg(chatId: backToFirstChat))
 
 proc clearHistory*(self: ChatModel, chatId: string) =
   discard status_chat.clearChatHistory(chatId)
