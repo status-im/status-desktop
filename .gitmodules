@@ -88,3 +88,6 @@
 [submodule "vendor/nim-base32"]
 	path = vendor/nim-base32
 	url = https://github.com/elktree/nim-base32
+[submodule "vendor/nim-status-go"]
+	path = vendor/nim-status-go
+	url = https://github.com/status-im/nim-status-go.git
