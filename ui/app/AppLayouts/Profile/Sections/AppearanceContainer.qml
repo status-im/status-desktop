@@ -179,59 +179,60 @@ ScrollView {
             }
         }
 
-        StatusSectionHeadline {
-            id: sectionHeadlineChatMode
-            //% "Chat mode"
-            text: qsTrId("chat-mode")
-            anchors.top: fontSizeSliderLegend.bottom
-            anchors.topMargin: Style.current.padding*2
-            anchors.left: parent.left
-            anchors.right: parent.right
-        }
+        // StatusSectionHeadline {
+        //     id: sectionHeadlineChatMode
+        //     //% "Chat mode"
+        //     text: qsTrId("chat-mode")
+        //     anchors.top: fontSizeSliderLegend.bottom
+        //     anchors.topMargin: Style.current.padding*2
+        //     anchors.left: parent.left
+        //     anchors.right: parent.right
+        // }
 
-        RowLayout {
-            id: chatModeSection
-            anchors.top: sectionHeadlineChatMode.bottom
-            anchors.topMargin: Style.current.padding
-            anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
+        // RowLayout {
+        //     id: chatModeSection
+        //     anchors.top: sectionHeadlineChatMode.bottom
+        //     anchors.topMargin: Style.current.padding
+        //     anchors.left: parent.left
+        //     anchors.leftMargin: -Style.current.padding
+        //     anchors.right: parent.right
+        //     anchors.rightMargin: -Style.current.padding
 
-            StatusImageRadioButton {
-                padding: Style.current.padding
-                image.source: "../../../img/appearance-normal-light.svg"
-                image.height: 186
-                //% "Normal"
-                control.text: qsTrId("normal")
-                control.checked: !appSettings.useCompactMode
-                onRadioCheckedChanged: {
-                    if (checked) {
-                        appSettings.useCompactMode = false
-                    }
-                }
-            }
+        //     StatusImageRadioButton {
+        //         padding: Style.current.padding
+        //         image.source: "../../../img/appearance-normal-light.svg"
+        //         image.height: 186
+        //         //% "Normal"
+        //         control.text: qsTrId("normal")
+        //         control.checked: !appSettings.useCompactMode
+        //         onRadioCheckedChanged: {
+        //             if (checked) {
+        //                 appSettings.useCompactMode = false
+        //             }
+        //         }
+        //     }
 
-            StatusImageRadioButton {
-                padding: Style.current.padding
-                image.source: "../../../img/appearance-compact-light.svg"
-                image.height: 186
-                //% "Compact"
-                control.text: qsTrId("compact")
-                control.checked: appSettings.useCompactMode
-                onRadioCheckedChanged: {
-                    if (checked) {
-                        appSettings.useCompactMode = true
-                    }
-                }
-            }
-        }
+        //     StatusImageRadioButton {
+        //         padding: Style.current.padding
+        //         image.source: "../../../img/appearance-compact-light.svg"
+        //         image.height: 186
+        //         //% "Compact"
+        //         control.text: qsTrId("compact")
+        //         control.checked: appSettings.useCompactMode
+        //         onRadioCheckedChanged: {
+        //             if (checked) {
+        //                 appSettings.useCompactMode = true
+        //             }
+        //         }
+        //     }
+        // }
 
         StatusSectionHeadline {
             id: sectionHeadlineAppearance
             //% "Appearance"
             text: qsTrId("appearance")
-            anchors.top: chatModeSection.bottom
+            // anchors.top: chatModeSection.bottom
+            anchors.top: fontSizeSliderLegend.bottom
             anchors.topMargin: Style.current.padding*3
             anchors.left: parent.left
             anchors.right: parent.right
