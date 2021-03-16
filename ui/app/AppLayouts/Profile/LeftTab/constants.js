@@ -77,6 +77,6 @@ var extraMenuButtons = [{
                    }, {
                        "id": SIGNOUT,
                        "function": "exit",
-                       "text": qsTr("Sign out"),
+                       "text": qsTr("Sign out & Quit"),
                        "filename": "signout.svg"
                    }]
