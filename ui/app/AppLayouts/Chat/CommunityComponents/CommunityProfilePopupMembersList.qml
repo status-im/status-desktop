@@ -11,7 +11,6 @@ Item {
     property string headerTitle: ""
     property string headerDescription: ""
     property string headerImageSource: ""
-    width: parent.width
     height: childrenRect.height
 
     CommunityPopupButton {
