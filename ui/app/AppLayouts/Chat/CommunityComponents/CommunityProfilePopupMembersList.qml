@@ -29,6 +29,7 @@ Item {
             }
         }
     }
+
     Separator {
         id: sep
         anchors.left: parent.left
@@ -39,14 +40,21 @@ Item {
         anchors.rightMargin: -Style.current.padding
     }
 
-    MembershipRequestsButton {
+
+    StatusSettingsLineButton {
         id: membershipRequestsBtn
+        text: qsTr("Membership requests")
+        badgeText: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests.toString()
+        visible: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests > 0
+        badgeSize: 22
+        badgeRadius: badgeSize / 2
+        isBadge: true
+        height: 64
         anchors.top: sep.bottom
         anchors.topMargin: visible ? Style.current.smallPadding : 0
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.leftMargin: -Style.current.padding
-        anchors.rightMargin: -Style.current.padding
+        anchors.leftMargin: 0
+        anchors.rightMargin: 0
+        onClicked: membershipRequestPopup.open()
     }
 
     Separator {
