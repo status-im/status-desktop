@@ -12,6 +12,7 @@ var BROWSER_SETTINGS = 10
 var ADVANCED = 11
 var NEED_HELP = 12
 var ABOUT = 13
+var SIGNOUT = 14
 
 var mainMenuButtons = [{
                        "id": PROFILE,
@@ -73,4 +74,9 @@ var extraMenuButtons = [{
                        "id": ABOUT,
                        "text": qsTr("About"),
                        "filename": "about.svg"
+                   }, {
+                       "id": SIGNOUT,
+                       "function": "exit",
+                       "text": qsTr("Sign out"),
+                       "filename": "signout.svg"
                    }]
