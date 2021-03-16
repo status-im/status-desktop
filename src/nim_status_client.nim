@@ -45,7 +45,7 @@ var nodeController: NodeController
 var chatsQObjPointer: pointer
 var ipcThread = Thread[void]()
 
-const ipcName = "status-ipc-4"
+const ipcName = "status-ipc"
 
 var stopIPCThread: Atomic[bool]
 
@@ -109,20 +109,22 @@ proc mainProc() =
   
   var cfg = CliConfig.load()
 
-  try:
-    # Try opening the write handle to send the URL
-    let writeHandle = open(ipcName, sideWriter)
-    # Send URL to the main app
-    var outBuffer = cfg.uri
-    waitFor write(writeHandle, cast[pointer](addr outBuffer[0]), len(outBuffer))
+  # TODO remove the windows condition once we support Mac and Linux for deep links
+  if defined(windows) and cfg.uri != "":
+    try:
+      # Try opening the write handle to send the URL
+      let writeHandle = open(ipcName, sideWriter)
+      # Send URL to the main app
+      var outBuffer = cfg.uri
+      waitFor write(writeHandle, cast[pointer](addr outBuffer[0]), len(outBuffer))
 
-    close(writeHandle)
+      close(writeHandle)
 
-    # Kill app
-    quit(0)
-  except Exception as e:
-    # No other app started, we will create the IPC connection once we login
-    discard
+      # Kill app
+      quit(0)
+    except Exception as e:
+      # No other app started, we will create the IPC connection once we login
+      discard
 
   let fleets =
     if defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
@@ -235,8 +237,10 @@ proc mainProc() =
     walletController.checkPendingTransactions()
     walletController.start()
 
-    # Start IPC
-    ipcThread.createThread(ipcListener)
+    # TODO remove this condition once we support Mac and Linux for deep links
+    if defined(windows):
+      # Start IPC
+      ipcThread.createThread(ipcListener)
 
   engine.setRootContextProperty("loginModel", loginController.variant)
   engine.setRootContextProperty("onboardingModel", onboardingController.variant)
