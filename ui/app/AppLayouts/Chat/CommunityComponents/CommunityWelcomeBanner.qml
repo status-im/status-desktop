@@ -93,6 +93,8 @@ Rectangle {
           communityProfilePopup.access = chatsModel.communities.activeCommunity.access;
           communityProfilePopup.nbMembers = chatsModel.communities.activeCommunity.nbMembers;
           communityProfilePopup.isAdmin = chatsModel.communities.activeCommunity.admin;
+          communityProfilePopup.source = chatsModel.communities.activeCommunity.thumbnailImage
+          communityProfilePopup.communityColor = chatsModel.communities.activeCommunity.communityColor
           communityProfilePopup.open()
         }
     }
