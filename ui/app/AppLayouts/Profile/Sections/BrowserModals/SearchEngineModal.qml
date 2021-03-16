@@ -26,10 +26,10 @@ ModalPopup {
             //% "None"
             text: qsTrId("none")
             ButtonGroup.group: searchEnginGroup
-            checked: appSettings.browserSearchEngine === Constants.browserSearchEngineNone
+            checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineNone
             onCheckedChanged: {
                 if (checked) {
-                    appSettings.browserSearchEngine = Constants.browserSearchEngineNone
+                    appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineNone
                 }
             }
         }
@@ -37,10 +37,10 @@ ModalPopup {
         StatusRadioButton {
             text: "Google"
             ButtonGroup.group: searchEnginGroup
-            checked: appSettings.browserSearchEngine === Constants.browserSearchEngineGoogle
+            checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineGoogle
             onCheckedChanged: {
                 if (checked) {
-                    appSettings.browserSearchEngine = Constants.browserSearchEngineGoogle
+                    appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineGoogle
                 }
             }
         }
@@ -48,10 +48,10 @@ ModalPopup {
         StatusRadioButton {
             text: "Yahoo!"
             ButtonGroup.group: searchEnginGroup
-            checked: appSettings.browserSearchEngine === Constants.browserSearchEngineYahoo
+            checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineYahoo
             onCheckedChanged: {
                 if (checked) {
-                    appSettings.browserSearchEngine = Constants.browserSearchEngineYahoo
+                    appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineYahoo
                 }
             }
         }
@@ -59,10 +59,10 @@ ModalPopup {
         StatusRadioButton {
             text: "DuckDuckGo"
             ButtonGroup.group: searchEnginGroup
-            checked: appSettings.browserSearchEngine === Constants.browserSearchEngineDuckDuckGo
+            checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineDuckDuckGo
             onCheckedChanged: {
                 if (checked) {
-                    appSettings.browserSearchEngine = Constants.browserSearchEngineDuckDuckGo
+                    appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineDuckDuckGo
                 }
             }
         }

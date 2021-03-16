@@ -26,10 +26,10 @@ ModalPopup {
             //% "None"
             text: qsTrId("none")
             ButtonGroup.group: searchEnginGroup
-            checked: appSettings.browserEthereumExplorer === Constants.browserEthereumExplorerNone
+            checked: appSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerNone
             onCheckedChanged: {
                 if (checked) {
-                    appSettings.browserEthereumExplorer = Constants.browserEthereumExplorerNone
+                    appSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerNone
                 }
             }
         }
@@ -37,10 +37,10 @@ ModalPopup {
         StatusRadioButton {
             text: "etherscan.io"
             ButtonGroup.group: searchEnginGroup
-            checked: appSettings.browserEthereumExplorer === Constants.browserEthereumExplorerEtherscan
+            checked: appSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerEtherscan
             onCheckedChanged: {
                 if (checked) {
-                    appSettings.browserEthereumExplorer = Constants.browserEthereumExplorerEtherscan
+                    appSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerEtherscan
                 }
             }
         }
@@ -48,10 +48,10 @@ ModalPopup {
         StatusRadioButton {
             text: "ethplorer.io"
             ButtonGroup.group: searchEnginGroup
-            checked: appSettings.browserEthereumExplorer === Constants.browserEthereumExplorerEthplorer
+            checked: appSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerEthplorer
             onCheckedChanged: {
                 if (checked) {
-                    appSettings.browserEthereumExplorer = Constants.browserEthereumExplorerEthplorer
+                    appSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerEthplorer
                 }
             }
         }
@@ -59,10 +59,10 @@ ModalPopup {
         StatusRadioButton {
             text: "blockchair.com"
             ButtonGroup.group: searchEnginGroup
-            checked: appSettings.browserEthereumExplorer === Constants.browserEthereumExplorerBlockchair
+            checked: appSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerBlockchair
             onCheckedChanged: {
                 if (checked) {
-                    appSettings.browserEthereumExplorer = Constants.browserEthereumExplorerBlockchair
+                    appSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerBlockchair
                 }
             }
         }
