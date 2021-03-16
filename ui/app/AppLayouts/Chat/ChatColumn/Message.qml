@@ -214,7 +214,7 @@ Item {
                 anchors.topMargin: 3
                 anchors.horizontalCenter: parent.horizontalCenter
                 horizontalAlignment: Text.AlignHCenter
-                color: Style.current.darkGrey
+                color: Style.current.secondaryText
                 //% "before %1"
                 text: qsTrId("before--1").arg(new Date(chatsModel.oldestMsgTimestamp*1000).toDateString())
             }

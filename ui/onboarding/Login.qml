@@ -143,6 +143,7 @@ Item {
         StatusRoundButton {
             id: submitBtn
             size: "medium"
+            type: "secondary"
             icon.name: "arrow-right"
             icon.width: 18
             icon.height: 14

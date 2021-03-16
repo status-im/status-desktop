@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
 
@@ -26,6 +27,12 @@ Rectangle {
         fillMode: Image.PreserveAspectFit
         source: imageSource
         rotation: flipImage ? 180 : 0
+
+        ColorOverlay {
+            anchors.fill: parent
+            source: parent
+            color: Style.current.primary
+        }
     }
 
     StyledText {

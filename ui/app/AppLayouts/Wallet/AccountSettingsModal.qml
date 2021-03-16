@@ -46,7 +46,6 @@ ModalPopup {
     StatusWalletColorSelect {
         id: accountColorInput
         selectedColor: currentAccount.iconColor.toUpperCase()
-        model: Constants.accountColors
         anchors.top: accountNameInput.bottom
         anchors.topMargin: marginBetweenInputs
         anchors.left: parent.left

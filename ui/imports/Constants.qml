@@ -24,6 +24,9 @@ QtObject {
 
     readonly property int notificationPopupTTL: 5000
 
+    readonly property string lightThemeName: "light"
+    readonly property string darkThemeName: "dark"
+
     readonly property string chat: "chat"
     readonly property string wallet: "wallet"
     readonly property string timeline: "timeline"
@@ -76,16 +79,6 @@ QtObject {
     readonly property int maxTokens: 200
 
     readonly property string zeroAddress: "0x0000000000000000000000000000000000000000"
-
-    readonly property var accountColors: [
-        "#9B832F",
-        "#D37EF4",
-        "#1D806F",
-        "#FA6565",
-        "#7CDA00",
-        "#887af9",
-        "#8B3131"
-    ]
 
     readonly property string networkMainnet: "mainnet_rpc"
     readonly property string networkPOA: "poa_rpc"

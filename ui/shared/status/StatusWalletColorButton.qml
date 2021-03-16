@@ -24,7 +24,7 @@ StatusIconButton {
         anchors.rightMargin: 2
         visible: control.selected
         radius: width / 2
-        color: "#4EBC60" 
+        color: Style.current.green
         SVGImage {
             id: checkmark
             source: "../img/checkmark.svg"

@@ -3,7 +3,7 @@ import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
 
-Rectangle {
+Item {
     id: noContactsRect
     width: 260
     //% "You don’t have any contacts yet. Invite your friends to start chatting."

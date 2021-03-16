@@ -15,7 +15,7 @@ CheckBox {
         radius: 3
         color: (control.down || control.checked) ? Style.current.primary : Style.current.inputBackground
 
-        Image {
+        SVGImage {
             source: "../img/checkmark.svg"
             width: 16
             height: 16

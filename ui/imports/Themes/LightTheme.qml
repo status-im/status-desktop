@@ -2,6 +2,8 @@ import QtQuick 2.13
 import "."
 
 Theme {
+    property string name: "light"
+
     property color white: "#FFFFFF"
     property color white2: "#FCFCFC"
     property color black: "#000000"
@@ -57,6 +59,7 @@ Theme {
     property color mentionBgColor: "#1a07bce9"
     property color mentionMessageColor: "#1a07bce9"
     property color mentionMessageHoverColor: "#3307bce9"
+    property color replyBackground: "#d7dadd"
 
     property color buttonForegroundColor: blue
     property color buttonBackgroundColor: secondaryBackground
@@ -64,6 +67,7 @@ Theme {
     property color buttonDisabledForegroundColor: buttonSecondaryColor
     property color buttonDisabledBackgroundColor: grey
     property color buttonWarnBackgroundColor: "#FFEAEE"
+    property color buttonOutlineHoveredWarnBackgroundColor: "#1affeaee"
     property color buttonHoveredWarnBackgroundColor: red
     property color buttonHoveredBackgroundColor: blue
 
@@ -78,4 +82,15 @@ Theme {
     property color roundedButtonSecondaryDisabledBackgroundColor: buttonDisabledForegroundColor
     property color tooltipBackgroundColor: black
     property color tooltipForegroundColor: white
+
+    property var accountColors: [
+        "#4360DF",
+        "#9B832F",
+        "#D37EF4",
+        "#1D806F",
+        "#FA6565",
+        "#7CDA00",
+        "#887Af9",
+        "#8B3131"
+    ]
 }

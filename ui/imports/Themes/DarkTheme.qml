@@ -2,6 +2,8 @@ import QtQuick 2.13
 import "."
 
 Theme {
+    property string name: "dark"
+
     property color white: "#FFFFFF"
     property color white2: "#FCFCFC"
     property color black: "#000000"
@@ -47,7 +49,7 @@ Theme {
     property color primaryMenuItemHover: blue
     property color primaryMenuItemTextHover: almostBlack
     property color backgroundTertiary: tenPercentBlue
-    property color pillButtonTextColor: almostBlack
+    property color pillButtonTextColor: secondaryText
     property color chatReplyCurrentUser: lightGrey
     property color codeBackground: "#2E386B"
     property color primarySelectionColor: "#b4c8ff"
@@ -58,25 +60,38 @@ Theme {
     property color mentionBgColor: "#1a0da4c9"
     property color mentionMessageColor: "#1a0da4c9"
     property color mentionMessageHoverColor: "#330da4c9"
-
+    property color replyBackground: "#484848"
+    
     property color buttonForegroundColor: blue
     property color buttonBackgroundColor: secondaryBackground
     property color buttonSecondaryColor: darkGrey
     property color buttonDisabledForegroundColor: lightGrey
     property color buttonDisabledBackgroundColor: darkGrey
     property color buttonWarnBackgroundColor: "#FFEAEE"
+    property color buttonOutlineHoveredWarnBackgroundColor: "#4dff5c7b"
     property color buttonHoveredWarnBackgroundColor: red
     property color buttonHoveredBackgroundColor: blue
 
     property color roundedButtonForegroundColor: white
     property color roundedButtonBackgroundColor: secondaryBackground
-    property color roundedButtonSecondaryForegroundColor: white
+    property color roundedButtonSecondaryForegroundColor: black
     property color roundedButtonSecondaryBackgroundColor: buttonForegroundColor
-    property color roundedButtonSecondaryHoveredBackgroundColor: darkAccentBlue
+    property color roundedButtonSecondaryHoveredBackgroundColor: "#AAC6FF"
     property color roundedButtonDisabledForegroundColor: buttonDisabledForegroundColor
     property color roundedButtonDisabledBackgroundColor: buttonDisabledBackgroundColor
-    property color roundedButtonSecondaryDisabledForegroundColor: roundedButtonForegroundColor
-    property color roundedButtonSecondaryDisabledBackgroundColor: buttonDisabledForegroundColor
+    property color roundedButtonSecondaryDisabledForegroundColor: black
+    property color roundedButtonSecondaryDisabledBackgroundColor: lightGrey
     property color tooltipBackgroundColor: white
     property color tooltipForegroundColor: black
+
+    property var accountColors: [
+        "#AAC6FF",
+        "#EAD27B",
+        "#E6ABFC",
+        "#10A88E",
+        "#FB8383",
+        "#93DB33",
+        "#ADA3FF",
+        "#AD4343"
+    ]
 }

@@ -7,7 +7,7 @@ import "../../shared"
 Rectangle {
     id: root
     height: 50
-    color: Style.current.lightGrey
+    color: Style.current.replyBackground
     radius: 16
     clip: true
 
@@ -29,7 +29,7 @@ Rectangle {
     StyledText {
         id: replyToUsername
         text: "↪ " + userName
-        color: Style.current.black
+        color: Style.current.textColor
         anchors.top: parent.top
         anchors.topMargin: Style.current.halfPadding
         anchors.left: parent.left
@@ -52,7 +52,7 @@ Rectangle {
         font.weight: Font.Normal
         // Eliding only works for PlainText: https://bugreports.qt.io/browse/QTBUG-16567
         textFormat: Text.PlainText
-        color: Style.current.black
+        color: Style.current.textColor
     }
 
     RoundButton {
@@ -74,7 +74,7 @@ Rectangle {
             ColorOverlay {
                 anchors.fill: iconImg
                 source: iconImg
-                color: Style.current.black
+                color: Style.current.textColor
                 antialiasing: true
             }
         }
