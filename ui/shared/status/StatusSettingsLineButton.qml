@@ -10,9 +10,11 @@ Rectangle {
     property string currentValue
     property bool isBadge: false
     property string badgeText: "1"
+    property int badgeRadius: 9
     property bool isEnabled: true
     signal clicked(bool checked)
     property bool isHovered: false
+    property int badgeSize: 18
 
     id: root
     height: 52
@@ -66,10 +68,10 @@ Rectangle {
         anchors.right: root.isSwitch ? switchItem.left : caret.left
         anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: textItem.verticalCenter
-        radius: 9
+        radius: root.badgeRadius
         color: Style.current.blue
-        width: 18
-        height: 18
+        width: root.badgeSize
+        height: root.badgeSize
         Text {
             font.pixelSize: 12
             color: Style.current.white
