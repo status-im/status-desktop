@@ -62,6 +62,7 @@ Button {
           communityProfilePopup.description = chatsModel.communities.activeCommunity.description;
           communityProfilePopup.access = chatsModel.communities.activeCommunity.access;
           communityProfilePopup.nbMembers = chatsModel.communities.activeCommunity.nbMembers;
+          communityProfilePopup.isAdmin = chatsModel.communities.activeCommunity.admin
           communityProfilePopup.open();
         }
         hoverEnabled: true

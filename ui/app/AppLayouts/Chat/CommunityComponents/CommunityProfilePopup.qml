@@ -16,7 +16,7 @@ ModalPopup {
     // TODO get the real image once it's available
     property string source: "../../../img/ens-header-dark@2x.png"
     property int nbMembers: community.nbMembers
-    property bool isAdmin: true // TODO: 
+    property bool isAdmin: false
     height: (isAdmin ? 600 : 590) + descriptionText.height
 
     id: popup
