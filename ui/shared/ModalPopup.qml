@@ -126,7 +126,7 @@ Popup {
 
         Separator {
             id: separator2
-            visible: footerContent.visible
+            visible: footerContent.visible && footerContent.height > 0
             anchors.bottom: footerContent.top
             anchors.bottomMargin: visible ? Style.current.padding : 0
         }
