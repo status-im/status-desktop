@@ -46,6 +46,7 @@ Item {
             pressedIconRotation: 45
             icon.name: "plusSign"
             size: "medium"
+            type: "secondary"
             width: 36
             height: 36
             anchors.right: parent.right

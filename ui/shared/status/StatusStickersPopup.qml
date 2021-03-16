@@ -179,6 +179,7 @@ Popup {
             StatusRoundButton {
                 id: btnAddStickerPack
                 size: "medium"
+                type: "secondary"
                 icon.name: "plusSign"
                 implicitWidth: 24
                 implicitHeight: 24

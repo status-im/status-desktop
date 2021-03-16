@@ -18,7 +18,7 @@ Button {
     property color bgHoverColor: {
         if (type === "warn") {
             if (showBorder) {
-                return Style.current.buttonWarnBackgroundColor
+                return Style.current.buttonOutlineHoveredWarnBackgroundColor
             }
             return Utils.setColorAlpha(Style.current.buttonHoveredWarnBackgroundColor, 0.2)
         }

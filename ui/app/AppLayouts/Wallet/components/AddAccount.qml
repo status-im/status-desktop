@@ -9,6 +9,7 @@ StatusRoundButton {
     icon.name: "plusSign"
     pressedIconRotation: 45
     size: "medium"
+    type: "secondary"
     width: 36
     height: 36
 

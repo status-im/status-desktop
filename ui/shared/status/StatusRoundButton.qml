@@ -116,7 +116,7 @@ RoundButton {
                 return 20
         }
     }
-    icon.color: size === "medium" || size === "small" ?
+    icon.color: type === "secondary" ?
         !enabled ?
           Style.current.roundedButtonSecondaryDisabledForegroundColor :
           Style.current.roundedButtonSecondaryForegroundColor
@@ -131,9 +131,9 @@ RoundButton {
 
     background: Rectangle {
         anchors.fill: parent
-        opacity: hovered && size === "large" ? 0.2 : 1
+        opacity: hovered && size === "large" && type !== "secondary" ? 0.2 : 1
         color: {
-            if (size === "medium" || size == "small") {
+            if (size === "medium" || size === "small" || type === "secondary") {
                 return !enabled ? Style.current.roundedButtonSecondaryDisabledBackgroundColor :
                   hovered ? (control.type === "warn" ? Style.current.red : Style.current.roundedButtonSecondaryHoveredBackgroundColor) :
                   (control.type === "warn" ? Style.current.lightRed : Style.current.roundedButtonSecondaryBackgroundColor)
@@ -182,7 +182,7 @@ RoundButton {
             anchors.fill: iconImg
             source: iconImg
             color: {
-                if (size === "medium" || size == "small") {
+                if (type === "secondary") {
                     return !control.enabled ? 
                         Style.current.roundedButtonSecondaryDisabledForegroundColor : 
                         (control.type === "warn" ? Style.current.danger : Style.current.roundedButtonSecondaryForegroundColor)

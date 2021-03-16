@@ -75,11 +75,11 @@ Item {
         id: walletDelegate
 
         Rectangle {
-            property bool selected: index == selectedAccount
+            property bool selected: index === selectedAccount
 
             id: rectangle
             height: 64
-            color: selected ? iconColor : Style.current.transparent
+            color: selected ? Style.current.buttonForegroundColor : Style.current.transparent
             radius: Style.current.radius
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
@@ -99,7 +99,8 @@ Item {
             ColorOverlay {
                 anchors.fill: walletIcon
                 source: walletIcon
-                color: selected || !iconColor ? Style.current.white : iconColor  // change image color
+                color: selected || !iconColor ? Style.current.white :
+                                                Utils.getCurrentThemeAccountColor(iconColor) || Style.current.accountColors[0]
             }
             StyledText {
                 id: walletName
@@ -129,7 +130,7 @@ Item {
                 anchors.leftMargin: 0
                 font.pixelSize: 15
                 font.weight: Font.Medium
-                color: selected ? Style.current.white : Style.current.darkGrey
+                color: selected ? Style.current.white : Style.current.secondaryText
                 opacity: selected ? 0.7 : 1
             }
             StyledText {

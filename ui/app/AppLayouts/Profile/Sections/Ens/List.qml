@@ -132,6 +132,7 @@ Item {
             id: addButton
             icon.name: "plusSign"
             size: "medium"
+            type: "secondary"
             anchors.verticalCenter: parent.verticalCenter
         }
 

@@ -4,7 +4,6 @@ import "../imports"
 
 TabButton {
     property string btnText: "Default Button"
-    property string tabColor: Style.current.blue
 
     id: tabButton
     width: tabBtnText.width
@@ -26,7 +25,7 @@ TabButton {
 
     Rectangle {
         visible: parent.checked || parent.hovered
-        color: parent.checked ? tabColor : Style.current.secondaryBackground 
+        color: parent.checked ? Style.current.primary : Style.current.secondaryBackground
         anchors.bottom: parent.bottom
         width: 40
         anchors.horizontalCenter: parent.horizontalCenter

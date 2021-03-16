@@ -12,6 +12,8 @@ QtObject {
     property QtObject fontHexLight: FontLoader { id: _fontHexLight; source: "../../fonts/InterStatus/InterStatus-Light.otf"; }
     property QtObject fontHexRegular: FontLoader { id: _fontHexRegular; source: "../../fonts/InterStatus/InterStatus-Regular.otf"; }
 
+    property string name
+
     property color white
     property color white2
     property color black
@@ -75,6 +77,8 @@ QtObject {
     property int secondaryTextFontSize: 14
     property int tertiaryTextFontSize: 12
     property int asideTextFontSize: 10
+
+    property var accountColors
 
     function updateFontSize(fontSize) {
         switch (fontSize) {

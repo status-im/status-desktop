@@ -30,6 +30,25 @@ QtObject {
                                 (!startsWith0x(value) && value.length === 64))
     }
 
+    function getCurrentThemeAccountColor(color) {
+        const upperCaseColor = color.toUpperCase()
+        if (Style.current.accountColors.indexOf(upperCaseColor) > -1) {
+            return upperCaseColor
+        }
+
+        let colorIndex
+        if (Style.current.name === Constants.lightThemeName) {
+            colorIndex = Style.darkTheme.accountColors.indexOf(upperCaseColor)
+        } else {
+             colorIndex = Style.lightTheme.accountColors.indexOf(upperCaseColor)
+        }
+        if (colorIndex === -1) {
+            // Unknown color
+            return false
+        }
+        return Style.current.accountColors[colorIndex]
+    }
+
     function getAppSectionIndex(section) {
         let sectionId = -1
         switch (section) {

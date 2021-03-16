@@ -66,7 +66,7 @@ Item {
 
         StyledText {
             font.pixelSize: 15
-            color: Style.current.darkGrey
+            color: Style.current.secondaryText
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             //% "No search results"

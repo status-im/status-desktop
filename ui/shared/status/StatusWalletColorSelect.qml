@@ -10,7 +10,7 @@ Item {
     property string selectedColor
     //% "Account color"
     property string label: qsTrId("account-color")
-    property var model
+    property var model: Style.current.accountColors
     height: childrenRect.height
 
     StyledText {
@@ -32,16 +32,25 @@ Item {
         anchors.right: parent.right
         Repeater {
             model: control.model
-            Item {
-                height: colorBtn.height
-                width: colorBtn.width
-                StatusWalletColorButton {
-                    id: colorBtn
-                    icon.color: modelData
-                    selected: control.selectedColor.toUpperCase() == modelData.toUpperCase()
-                    onClicked: {
-                        control.selectedColor = modelData.toUpperCase()
+            StatusWalletColorButton {
+                id: colorBtn
+                icon.color: modelData
+                selected: {
+                    const upperCaseColor = control.selectedColor.toUpperCase()
+                    const upperCaseModelDataColor = modelData.toUpperCase()
+                    if (upperCaseColor === upperCaseModelDataColor) {
+                        return true
                     }
+                    // Check the colors in the other theme
+                    const currentColor = Utils.getCurrentThemeAccountColor(upperCaseColor)
+                    if (!currentColor) {
+                        return false
+                    }
+
+                    return currentColor === upperCaseModelDataColor
+                }
+                onClicked: {
+                    control.selectedColor = modelData.toUpperCase()
                 }
             }
         }
