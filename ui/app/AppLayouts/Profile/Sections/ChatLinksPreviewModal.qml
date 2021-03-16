@@ -26,9 +26,8 @@ ModalPopup {
         populatePreviewableSites()
     }
 
-    Column {
+    Item {
         anchors.fill: parent
-        spacing: Style.current.bigPadding
 
         StatusSectionHeadline {
             id: labelWebsites
@@ -63,50 +62,83 @@ ModalPopup {
             }
         }
 
-        ListView {
-            id: sitesListView
+        ScrollView {
             width: parent.width
-            model: previewableSites
-            interactive: false
-            height: childrenRect.height
-            spacing: Style.current.padding
+            anchors.top: labelWebsites.bottom
+            anchors.topMargin: Style.current.bigPadding
+            anchors.bottom: infoText.top
+            anchors.bottomMargin: Style.current.bigPadding
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+            clip: true
 
-            delegate: Component {
-                Item {
-                    width: parent.width
-                    height: linkLine.height
-                    function toggleSetting(newState) {
-                        if (newState !== undefined) {
-                            settingSwitch.checked = newState
-                            return
-                        }
-                        settingSwitch.checked = !settingSwitch.checked
-                    }
+            ListView {
+                id: sitesListView
+                anchors.fill: parent
+                anchors.rightMargin: Style.current.padding
+                model: previewableSites
+                spacing: 0
 
-                    Item {
-                        id: linkLine
+                delegate: Component {
+                    Rectangle {
+                        property bool isHovered: false
+                        id: linkRectangle
                         width: parent.width
-                        height: childrenRect.height
+                        height: 64
+                        color: isHovered ? Style.current.backgroundHover : Style.current.transparent
+                        radius: Style.current.radius
+                        border.width: 0
+
+                        function toggleSetting(newState) {
+                            if (newState !== undefined) {
+                                settingSwitch.checked = newState
+                                return
+                            }
+                            settingSwitch.checked = !settingSwitch.checked
+                        }
 
                         SVGImage {
                             id: thumbnail
                             width: 40
                             height: 40
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            anchors.leftMargin: Style.current.padding
+
                             source: {
                                 let filename;
                                 switch (title.toLowerCase()) {
                                 case "youtube":
                                 case "youtube shortener":
-                                    filename = "youtube.png"; break;
+                                    filename = "youtube.svg"; break;
                                 case "github":
-                                    filename = "github.png"; break;
-                                // TODO get a good default icon
+                                    filename = "github.svg"; break;
+                                case "medium":
+                                    filename = "medium.svg"; break;
+                                case "tenor gifs":
+                                    filename = "tenor.svg"; break;
+                                case "giphy gifs":
+                                case "giphy gifs shortener":
+                                case "giphy gifs subdomain":
+                                    filename = "giphy.svg"; break;
+                                case "github":
+                                    filename = "github.svg"; break;
+                                case "status":
+                                    filename = "status.svg"; break;
+                                    // TODO get a good default icon
                                 default: filename = "../globe.svg"
                                 }
                                 return `../../../img/linkPreviewThumbnails/${filename}`
                             }
-                            anchors.top: parent.top
-                            anchors.left: parent.left
+
+                            Rectangle {
+                                width: parent.width
+                                height: parent.height
+                                radius: width / 2
+                                color: Style.current.transparent
+                                border.color: Style.current.border
+                                border.width: 1
+                            }
                         }
 
                         StyledText {
@@ -131,6 +163,9 @@ ModalPopup {
                         StatusSwitch {
                             id: settingSwitch
                             checked: !!isWhitelisted
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.right: parent.right
+                            anchors.rightMargin: Style.current.padding
                             onCheckedChanged: function () {
                                 if (appSettings.whitelistedUnfurlingSites[address] === this.checked) {
                                     return
@@ -140,21 +175,23 @@ ModalPopup {
                                 settings[address] = this.checked
                                 appSettings.whitelistedUnfurlingSites = settings
                             }
-                            anchors.verticalCenter: siteTitle.bottom
-                            anchors.right: parent.right
                         }
-                    }
 
-                    MouseArea {
-                        anchors.fill: linkLine
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: toggleSetting()
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            hoverEnabled: true
+                            onEntered: linkRectangle.isHovered = true
+                            onExited: linkRectangle.isHovered = false
+                            onClicked: toggleSetting()
+                        }
                     }
                 }
             }
         }
 
         StyledText {
+            id: infoText
             //% "Previewing links from these websites may share your metadata with their owners."
             text: qsTrId("previewing-links-from-these-websites-may-share-your-metadata-with-their-owners-")
             width: parent.width
@@ -162,6 +199,7 @@ ModalPopup {
             font.weight: Font.Thin
             color: Style.current.secondaryText
             font.pixelSize: 15
+            anchors.bottom: parent.bottom
         }
     }
 }
