@@ -107,8 +107,8 @@ Rectangle {
             Keys.onPressed: {
                 // TODO: disable browsing local files?  file://
                 if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
-                    if (appSettings.browserEthereumExplorer !== Constants.browserEthereumExplorerNone && text.startsWith("0x")) {
-                        switch (appSettings.browserEthereumExplorer) {
+                    if (appSettings.useBrowserEthereumExplorer !== Constants.browserEthereumExplorerNone && text.startsWith("0x")) {
+                        switch (appSettings.useBrowserEthereumExplorer) {
                         case Constants.browserEthereumExplorerEtherscan:
                             if (text.length > 42) {
                                 currentWebView.url = "https://etherscan.io/tx/" + text; break;
@@ -130,8 +130,8 @@ Rectangle {
                         }
                         return
                     }
-                    if (appSettings.browserSearchEngine !== Constants.browserSearchEngineNone && !Utils.isURL(text)) {
-                        switch (appSettings.browserSearchEngine) {
+                    if (appSettings.shouldShowBrowserSearchEngine !== Constants.browserSearchEngineNone && !Utils.isURL(text)) {
+                        switch (appSettings.shouldShowBrowserSearchEngine) {
                         case Constants.browserSearchEngineGoogle: currentWebView.url = "https://www.google.com/search?q=" + text; break;
                         case Constants.browserSearchEngineYahoo: currentWebView.url = "https://search.yahoo.com/search?p=" + text; break;
                         case Constants.browserSearchEngineDuckDuckGo: currentWebView.url = "https://duckduckgo.com/?q=" + text; break;

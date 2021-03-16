@@ -111,8 +111,8 @@ RowLayout {
         property bool openLinksInStatus: true
         property bool shouldShowFavoritesBar: true
         property string browserHomepage: ""
-        property int browserSearchEngine: Constants.browserSearchEngineNone
-        property int browserEthereumExplorer: Constants.browserEthereumExplorerNone
+        property int shouldShowBrowserSearchEngine: Constants.browserSearchEngineDuckDuckGo
+        property int useBrowserEthereumExplorer: Constants.browserEthereumExplorerEtherscan
         property bool autoLoadImages: true
         property bool javaScriptEnabled: true
         property bool errorPageEnabled: true
