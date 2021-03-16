@@ -37,7 +37,7 @@ ModalPopup {
     height: 472
     header: StatusStickerPackDetails {
         id: stickerGrid
-        height: 46
+        height: 76
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.topMargin: Style.current.padding
