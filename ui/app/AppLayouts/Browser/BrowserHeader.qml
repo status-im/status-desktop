@@ -258,7 +258,7 @@ Rectangle {
 
     Loader {
         id: favoritesBarLoader
-        active: appSettings.showFavoritesBar
+        active: appSettings.shouldShowFavoritesBar
         height: active ? item.height : 0
         anchors.top: barRow.bottom
         anchors.left: parent.left

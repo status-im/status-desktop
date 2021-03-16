@@ -49,9 +49,9 @@ Item {
                 //% "Show favorites bar"
                 text: qsTrId("show-favorites-bar")
                 isSwitch: true
-                switchChecked: appSettings.showFavoritesBar
+                switchChecked: appSettings.shouldShowFavoritesBar
                 onClicked: function (checked) {
-                    appSettings.showFavoritesBar = checked
+                    appSettings.shouldShowFavoritesBar = checked
                 }
             }
 

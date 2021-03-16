@@ -110,7 +110,7 @@ RowLayout {
         // Browser settings
         property bool showBrowserSelector: true
         property bool openLinksInStatus: true
-        property bool showFavoritesBar: false
+        property bool shouldShowFavoritesBar: true
         property string browserHomepage: ""
         property int browserSearchEngine: Constants.browserSearchEngineNone
         property int browserEthereumExplorer: Constants.browserEthereumExplorerNone
