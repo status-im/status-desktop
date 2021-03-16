@@ -24,12 +24,15 @@ ScrollView {
             model: ProfileConstants.menuButtons
             delegate: MenuButton {
                 menuItemId: modelData.id
-                text: modelData .text
+                text: modelData.text
                 source: "../../../img/profile/" + modelData.filename
                 active: profileMenu.profileCurrentIndex === modelData.id
                 Layout.fillWidth: true
                 width: profileMenu.width
                 onClicked: function () {
+                    if (modelData.function === "exit") {
+                        return Qt.quit()
+                    }
                     profileMenu.profileCurrentIndex = modelData.id
                 }
             }
