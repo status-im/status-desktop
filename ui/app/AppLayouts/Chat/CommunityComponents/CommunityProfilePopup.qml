@@ -13,8 +13,8 @@ ModalPopup {
     property string name: community.name
     property string description: community.description
     property int access: community.access
-    // TODO get the real image once it's available
-    property string source: "../../../img/ens-header-dark@2x.png"
+    property string source: ""
+    property string communityColor: ""
     property int nbMembers: community.nbMembers
     property bool isAdmin: false
     height: (isAdmin ? 600 : 590) + descriptionText.height
@@ -25,12 +25,30 @@ ModalPopup {
         height: childrenRect.height
         width: parent.width
 
-        RoundedImage {
+        Loader {
             id: communityImg
-            source: popup.source
-            width: 40
-            height: 40
+            sourceComponent: !!popup.source ? commmunityImgCmp : letterIdenticonCmp
         }
+
+        Component {
+            id: commmunityImgCmp
+            RoundedImage {
+                source: popup.source
+                width: 40
+                height: 40
+            }
+        }
+
+        Component {
+            id: letterIdenticonCmp
+            StatusLetterIdenticon {
+                width: 40
+                height: 40
+                chatName: popup.name
+                color: popup.communityColor
+            }
+         }
+
 
         StyledTextEdit {
             id: communityName
