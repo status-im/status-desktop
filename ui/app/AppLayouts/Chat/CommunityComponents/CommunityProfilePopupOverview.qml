@@ -43,8 +43,8 @@ Item {
         anchors.topMargin: Style.current.bigPadding
         //% "Share community"
         label: qsTrId("share-community")
-        text: "https://join.status.im/u/TODO"
-        textToCopy: text
+        text: `${Constants.communityLinkPrefix}${communityId.substring(0, 4)}...${communityId.substring(communityId.length -2)}`
+        textToCopy: Constants.communityLinkPrefix + communityId
     }
 
     Separator {
