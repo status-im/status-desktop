@@ -8,6 +8,7 @@ Theme {
     property color white2: "#FCFCFC"
     property color black: "#000000"
     property color grey: "#EEF2F5"
+    property color midGrey: "#7f8990"
     property color lightGrey: "#ccd0d4"
     property color lightBlue: "#ECEFFC"
     property color cyan: "#00FFFF"
@@ -70,6 +71,9 @@ Theme {
     property color buttonOutlineHoveredWarnBackgroundColor: "#1affeaee"
     property color buttonHoveredWarnBackgroundColor: red
     property color buttonHoveredBackgroundColor: blue
+
+    property color contextMenuButtonForegroundColor: black
+    property color contextMenuButtonBackgroundHoverColor: Qt.hsla(black.hslHue, black.hslSaturation, black.hslLightness, 0.1)
 
     property color roundedButtonForegroundColor: buttonForegroundColor
     property color roundedButtonBackgroundColor: secondaryBackground
