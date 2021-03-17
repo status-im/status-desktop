@@ -24,9 +24,7 @@ Item {
                 error = onboardingModel.validateMnemonic(mnemonic)
             }
 
-            if (error != "") {
-              errorSound.play()
-            } else {
+            if (error === "") {
               wentNext = true
               enterSeedPhraseModal.close()
               onboardingModel.importMnemonic(mnemonic)

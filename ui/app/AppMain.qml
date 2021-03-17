@@ -126,6 +126,10 @@ RowLayout {
         property bool compatibilityMode: true
     }
 
+    ErrorSound {
+        id: errorSound
+    }
+
     Audio {
         id: sendMessageSound
         audioRole: Audio.NotificationRole
