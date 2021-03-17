@@ -161,8 +161,8 @@ RowLayout {
             // Prior to this change, most likely many users are still using the
             // normal mode configuration, so we have to enforce compact mode for
             // those.
-            if (!appSettings.compactMode) {
-                appSettings.compactMode = true
+            if (!appSettings.useCompactMode) {
+                appSettings.useCompactMode = true
             }
 
             const whitelist = profileModel.getLinkPreviewWhitelist()
