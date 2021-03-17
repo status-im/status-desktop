@@ -47,7 +47,7 @@ PopupMenu {
 
         const numLinkUrls = messageContextMenu.linkUrls.split(" ").length
         copyLinkMenu.enabled = numLinkUrls > 1
-        copyLinkAction.enabled = !!messageContextMenu.linkUrls && numLinkUrls === 1
+        copyLinkAction.enabled = !!messageContextMenu.linkUrls && numLinkUrls === 1 && !emojiOnly && !messageContextMenu.isProfile
         popup();
     }
 
@@ -174,7 +174,7 @@ PopupMenu {
         icon.source: "../../../img/profileActive.svg"
         icon.width: 16
         icon.height: 16
-        enabled: !emojiOnly
+        enabled: !emojiOnly && !copyLinkAction.enabled
     }
     Action {
         text: messageContextMenu.isProfile ?
