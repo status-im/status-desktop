@@ -69,99 +69,69 @@ Rectangle {
     }
 
 
-    Rectangle {
-        id: moreActionsBtnContainer
-        width: 40
-        height: 40
-        radius: Style.current.radius
-        color: Style.current.transparent
+    StatusContextMenuButton {
+        id: moreActionsBtn
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: Style.current.smallPadding
 
-        StyledText {
-            id: moreActionsBtn
-            text: "..."
-            font.letterSpacing: 0.5
-            font.bold: true
-            lineHeight: 1.4
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 25
+        onClicked: {
+            var menu = chatContextMenu;
+            var isPrivateGroupChat = chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat
+            if(isPrivateGroupChat){
+                menu = groupContextMenu
+            }
+
+            if (menu.opened) {
+                return menu.close()
+            }
+
+            if (isPrivateGroupChat) {
+                menu.popup(moreActionsBtn.x, moreActionsBtn.height)
+            } else {
+                menu.openMenu(chatsModel.activeChannel, chatsModel.getActiveChannelIdx(),
+                              moreActionsBtn.x - chatContextMenu.width + moreActionsBtn.width + 4,
+                              moreActionsBtn.height - 4)
+            }
         }
 
-        MouseArea {
-            id: mouseArea
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: {
-                parent.color = Style.current.border
+        ChannelContextMenu {
+            id: chatContextMenu
+        }
+
+        PopupMenu {
+            id: groupContextMenu
+            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+            Action {
+                icon.source: "../../../img/group_chat.svg"
+                icon.width: chatTopBarContent.iconSize
+                icon.height: chatTopBarContent.iconSize
+                //% "Group Information"
+                text: qsTrId("group-information")
+                onTriggered: openPopup(groupInfoPopupComponent, {channel: chatsModel.activeChannel})
             }
-            onExited: {
-                parent.color = Style.current.transparent
+            Action {
+                icon.source: "../../../img/close.svg"
+                icon.width: chatTopBarContent.iconSize
+                icon.height: chatTopBarContent.iconSize
+                //% "Clear History"
+                text: qsTrId("clear-history")
+                onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
             }
-
-            onClicked: {
-                var menu = chatContextMenu;
-                var isPrivateGroupChat = chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat
-                if(isPrivateGroupChat){
-                    menu = groupContextMenu
-                }
-
-                if (menu.opened) {
-                    return menu.close()
-                }
-
-                if (isPrivateGroupChat) {
-                    menu.popup(moreActionsBtn.x, moreActionsBtn.height)
-                } else {
-                    menu.openMenu(chatsModel.activeChannel, chatsModel.getActiveChannelIdx(),
-                                  moreActionsBtn.x - chatContextMenu.width + moreActionsBtn.width + 4,
-                                  moreActionsBtn.height - 4)
-                }
-            }
-            cursorShape: Qt.PointingHandCursor
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-
-            ChannelContextMenu {
-                id: chatContextMenu
-            }
-
-            PopupMenu {
-                id: groupContextMenu
-                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-                Action {
-                    icon.source: "../../../img/group_chat.svg"
-                    icon.width: chatTopBarContent.iconSize
-                    icon.height: chatTopBarContent.iconSize
-                    //% "Group Information"
-                    text: qsTrId("group-information")
-                    onTriggered: openPopup(groupInfoPopupComponent, {channel: chatsModel.activeChannel})
-                }
-                Action {
-                    icon.source: "../../../img/close.svg"
-                    icon.width: chatTopBarContent.iconSize
-                    icon.height: chatTopBarContent.iconSize
-                    //% "Clear History"
-                    text: qsTrId("clear-history")
-                    onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
-                }
-                Action {
-                    icon.source: "../../../img/leave_chat.svg"
-                    icon.width: chatTopBarContent.iconSize
-                    icon.height: chatTopBarContent.iconSize
-                    //% "Leave group"
-                    text: qsTrId("leave-group")
-                    onTriggered: {
-                      //% "Leave group"
-                      deleteChatConfirmationDialog.title = qsTrId("leave-group")
-                      //% "Leave group"
-                      deleteChatConfirmationDialog.confirmButtonLabel = qsTrId("leave-group")
-                      //% "Are you sure you want to leave this chat?"
-                      deleteChatConfirmationDialog.confirmationText = qsTrId("are-you-sure-you-want-to-leave-this-chat-")
-                      deleteChatConfirmationDialog.open()
-                    }
+            Action {
+                icon.source: "../../../img/leave_chat.svg"
+                icon.width: chatTopBarContent.iconSize
+                icon.height: chatTopBarContent.iconSize
+                //% "Leave group"
+                text: qsTrId("leave-group")
+                onTriggered: {
+                  //% "Leave group"
+                  deleteChatConfirmationDialog.title = qsTrId("leave-group")
+                  //% "Leave group"
+                  deleteChatConfirmationDialog.confirmButtonLabel = qsTrId("leave-group")
+                  //% "Are you sure you want to leave this chat?"
+                  deleteChatConfirmationDialog.confirmationText = qsTrId("are-you-sure-you-want-to-leave-this-chat-")
+                  deleteChatConfirmationDialog.open()
                 }
             }
         }
