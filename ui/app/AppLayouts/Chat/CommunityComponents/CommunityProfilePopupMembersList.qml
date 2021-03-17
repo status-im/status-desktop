@@ -78,16 +78,21 @@ Item {
         anchors.bottomMargin: Style.current.halfPadding
         spacing: 4
         model: community.members
-        delegate: Item {
+        delegate: Rectangle {
             id: contactRow
             width: parent.width
-            height: identicon.height
+            height: 64
+            radius: Style.current.radius
+            color: isHovered ? Style.current.backgroundHover : Style.current.transparent
 
+            property bool isHovered: false
             property string nickname: appMain.getUserNickname(model.pubKey)
 
             StatusImageIdenticon {
                 id: identicon
                 anchors.left: parent.left
+                anchors.leftMargin: Style.current.padding
+                anchors.verticalCenter: parent.verticalCenter
                 source: model.identicon
             }
 
@@ -99,23 +104,36 @@ Item {
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.smallPadding
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 13
+                font.pixelSize: 15
             }
 
-            StyledText {
+            MouseArea {
+                cursorShape: Qt.PointingHandCursor
+                anchors.fill: parent
+                hoverEnabled: true
+                onEntered: contactRow.isHovered = true
+                onExited: contactRow.isHovered = false
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+            }
+
+            StatusContextMenuButton {
                 id: moreActionsBtn
-                text: "..."
-                font.letterSpacing: 0.5
-                font.bold: true
-                lineHeight: 1.4
-                font.pixelSize: 25
                 anchors.right: parent.right
-                anchors.rightMargin: Style.current.smallPadding
+                anchors.rightMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: contextMenu.popup(-contextMenu.width / 2 + moreActionsBtn.width / 2, moreActionsBtn.height)
+                    onClicked: contextMenu.popup(-contextMenu.width + moreActionsBtn.width, moreActionsBtn.height + 4)
+                    hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
+                    onExited: {
+                        contactRow.isHovered = false
+                        moreActionsBtn.highlighted = false
+                    }
+                    onEntered: {
+                        contactRow.isHovered = true
+                        moreActionsBtn.highlighted = true
+                    }
                     PopupMenu {
                         id: contextMenu
                         Action {
@@ -126,16 +144,19 @@ Item {
                             text: qsTrId("view-profile")
                             onTriggered: openProfilePopup(model.userName, model.pubKey, model.identicon, '', contactRow.nickname)
                         }
-                        Action {
-                            icon.source: "../../../img/communities/menu/roles.svg"
-                            icon.width: 16
-                            icon.height: 16
-                            //% "Roles"
-                            text: qsTrId("roles")
-                            onTriggered: console.log("TODO")
+                        /* Action { */
+                        /*     icon.source: "../../../img/communities/menu/roles.svg" */
+                        /*     icon.width: 16 */
+                        /*     icon.height: 16 */
+                        /*     //% "Roles" */
+                        /*     text: qsTrId("roles") */
+                        /*     onTriggered: console.log("TODO") */
+                        /* } */
+                        Separator {
+                            height: 10
                         }
-                        Separator {}
                         Action {
+                            property string type: "danger"
                             icon.source: "../../../img/communities/menu/kick.svg"
                             icon.width: 16
                             icon.height: 16
@@ -144,25 +165,25 @@ Item {
                             text: qsTrId("kick")
                             onTriggered: chatsModel.removeUserFromCommunity(model.pubKey)
                         }
-                        Action {
-                            icon.source: "../../../img/communities/menu/ban.svg"
-                            icon.width: 16
-                            icon.height: 16
-                            icon.color: Style.current.red
-                            //% "Ban"
-                            text: qsTrId("ban")
-                            onTriggered: console.log("TODO")
-                        }
-                        Separator {}
-                        Action {
-                            icon.source: "../../../img/communities/menu/transfer-ownership.svg"
-                            icon.width: 16
-                            icon.height: 16
-                            icon.color: Style.current.red
-                            //% "Transfer ownership"
-                            text: qsTrId("transfer-ownership")
-                            onTriggered: console.log("TODO")
-                        }
+                        /* Action { */
+                        /*     icon.source: "../../../img/communities/menu/ban.svg" */
+                        /*     icon.width: 16 */
+                        /*     icon.height: 16 */
+                        /*     icon.color: Style.current.red */
+                        /*     //% "Ban" */
+                        /*     text: qsTrId("ban") */
+                        /*     onTriggered: console.log("TODO") */
+                        /* } */
+                        /* Separator {} */
+                        /* Action { */
+                        /*     icon.source: "../../../img/communities/menu/transfer-ownership.svg" */
+                        /*     icon.width: 16 */
+                        /*     icon.height: 16 */
+                        /*     icon.color: Style.current.red */
+                        /*     //% "Transfer ownership" */
+                        /*     text: qsTrId("transfer-ownership") */
+                        /*     onTriggered: console.log("TODO") */
+                        /* } */
                     }
                 }
             }
