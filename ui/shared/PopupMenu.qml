@@ -16,6 +16,7 @@ Menu {
 
     delegate: MenuItem {
         property color textColor: this.action.icon.color.toString() !== "#00000000" ? this.action.icon.color : Style.current.textColor
+        property color hoverColor: this.action.type === "danger" ? Style.current.buttonWarnBackgroundColor : Style.current.backgroundHover
         property int subMenuIndex: {
             if (!this.subMenu) {
                 return -1
@@ -114,7 +115,12 @@ Menu {
         background: Rectangle {
             implicitWidth: 220
             implicitHeight: enabled ? 24 : 0
-            color: popupMenuItem.highlighted ? Style.current.backgroundHover : "transparent"
+            color: popupMenuItem.highlighted ? popupMenuItem.hoverColor : "transparent"
+        }
+        MouseArea {
+            cursorShape: Qt.PointingHandCursor
+            anchors.fill: parent
+            onPressed: mouse.accepted = false
         }
     }
 
