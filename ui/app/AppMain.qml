@@ -88,7 +88,7 @@ RowLayout {
         property bool nodeManagementEnabled: false
         property bool browserEnabled: false
         property bool displayChatImages: false
-        property bool useCompactMode: false
+        property bool useCompactMode: true
         property bool timelineEnabled: true
         property string locale: "en"
         property var recentEmojis: []
@@ -149,6 +149,18 @@ RowLayout {
             if (appSettings.locale !== "en") {
                 profileModel.changeLocale(appSettings.locale)
             }
+
+            // Since https://github.com/status-im/status-desktop/commit/93668ff75
+            // we're hiding the setting to change appearance for compact normal mode
+            // of the UI. For now, compact mode is the new default.
+            //
+            // Prior to this change, most likely many users are still using the
+            // normal mode configuration, so we have to enforce compact mode for
+            // those.
+            if (!appSettings.compactMode) {
+                appSettings.compactMode = true
+            }
+
             const whitelist = profileModel.getLinkPreviewWhitelist()
             try {
                 const whiteListedSites = JSON.parse(whitelist)
