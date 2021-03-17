@@ -376,7 +376,7 @@ proc myPendingRequestsToJoin*(): seq[CommunityMembershipRequest] =
   let rpcResult = callPrivateRPC("myPendingRequestsToJoin".prefix).parseJSON()
   var communityRequests: seq[CommunityMembershipRequest] = @[]
 
-  if rpcResult{"error"}.kind == JNull and rpcResult{"result"}.kind != JNull:
+  if rpcResult.hasKey("result") and rpcResult{"result"}.kind != JNull:
     for jsonCommunityReqest in rpcResult["result"]:
       communityRequests.add(jsonCommunityReqest.toCommunityMembershipRequest())
 
