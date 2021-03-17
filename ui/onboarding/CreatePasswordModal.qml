@@ -137,7 +137,6 @@ ModalPopup {
                 ignoreUnknownSignals: true
                 onLoginResponseChanged: {
                     if (error) {
-                        errorSound.play()
                         loading = false
                         importLoginError.open()
                     }
@@ -151,7 +150,6 @@ ModalPopup {
                 const result = onboardingModel.storeDerivedAndLogin(repeatPasswordField.text);
                 const error = JSON.parse(result).error
                 if (error) {
-                    errorSound.play()
                     importError.text += error
                     return importError.open()
                 }
