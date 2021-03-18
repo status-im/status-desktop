@@ -18,7 +18,7 @@ ModalPopup {
     property string communityColor: ""
     property int nbMembers: community.nbMembers
     property bool isAdmin: false
-    height: stack.currentItem.height + modalHeader.height + modalFooter.height + Style.current.padding*3
+    height: stack.currentItem.height + modalHeader.height + modalFooter.height + Style.current.padding * 3
     id: popup
 
     onClosed: {
@@ -99,7 +99,8 @@ ModalPopup {
     StackView {
         id: stack
         initialItem: profileOverview
-        anchors.fill: parent
+        width: parent.width
+
 
         pushEnter: Transition { enabled: false }
         pushExit: Transition { enabled: false }
