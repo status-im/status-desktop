@@ -11,8 +11,7 @@ Item {
     property string pubkey: profileModel.profile.pubKey
 
     id: profileHeaderContent
-    height: parent.height
-    Layout.fillWidth: true
+    anchors.fill: parent
 
     Component {
         id: changeProfileModalComponent
@@ -23,10 +22,8 @@ Item {
         id: profileImgNameContainer
         anchors.top: parent.top
         anchors.topMargin: 64
-        anchors.right: parent.right
-        anchors.rightMargin: contentMargin
-        anchors.left: parent.left
-        anchors.leftMargin: contentMargin
+        width: contentMaxWidth
+        anchors.horizontalCenter: parent.horizontalCenter
 
         height: this.childrenRect.height
 

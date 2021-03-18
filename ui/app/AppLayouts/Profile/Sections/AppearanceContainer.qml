@@ -37,10 +37,8 @@ ScrollView {
 
     Item {
         id: appearanceContainer
-        anchors.right: parent.right
-        anchors.rightMargin: contentMargin
-        anchors.left: parent.left
-        anchors.leftMargin: contentMargin
+        width: contentMaxWidth
+        anchors.horizontalCenter: parent.horizontalCenter
         height: this.childrenRect.height + 100
 
         ButtonGroup {

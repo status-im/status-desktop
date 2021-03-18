@@ -15,11 +15,8 @@ Item {
         id: containerColumn
         anchors.top: parent.top
         anchors.topMargin: topMargin
-        anchors.right: parent.right
-        anchors.rightMargin: contentMargin
-        anchors.left: parent.left
-        anchors.leftMargin: contentMargin
-        anchors.bottom: parent.bottom
+        width: contentMaxWidth
+        anchors.horizontalCenter: parent.horizontalCenter
 
         StatusSectionHeadline {
             id: labelSecurity

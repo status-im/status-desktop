@@ -18,10 +18,8 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 32
         anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        anchors.rightMargin: contentMargin
-        anchors.left: parent.left
-        anchors.leftMargin: contentMargin
+        width: contentMaxWidth
+        anchors.horizontalCenter: parent.horizontalCenter
 
         SearchBox {
             id: searchBox

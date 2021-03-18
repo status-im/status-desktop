@@ -15,10 +15,8 @@ Item {
         id: generalColumn
         anchors.top: parent.top
         anchors.topMargin: topMargin
-        anchors.left: parent.left
-        anchors.leftMargin: contentMargin
-        anchors.right: parent.right
-        anchors.rightMargin: contentMargin
+        width: contentMaxWidth
+        anchors.horizontalCenter: parent.horizontalCenter
 
         StatusSettingsLineButton {
             //% "Network"
