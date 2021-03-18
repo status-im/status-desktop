@@ -205,7 +205,8 @@ Item {
         }
 
         Loader {
-            active: isAdmin
+            // TODO once Edit is vailable in the app, put back isAdmin
+            active: false//isAdmin
             width: parent.width
             sourceComponent: CommunityPopupButton {
                 //% "Edit community"
