@@ -15,10 +15,8 @@ ScrollView {
 
     Item {
         id: notificationsContainer
-        anchors.right: parent.right
-        anchors.rightMargin: contentMargin
-        anchors.left: parent.left
-        anchors.leftMargin: contentMargin
+        width: contentMaxWidth
+        anchors.horizontalCenter: parent.horizontalCenter
         height: this.childrenRect.height + 100
 
         property Component mutedChatsModalComponent: MutedChatsModal {}

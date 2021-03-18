@@ -19,11 +19,9 @@ Item {
         Item {
             id: glossary
             anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.rightMargin: contentMargin
-            anchors.left: parent.left
-            anchors.leftMargin: contentMargin
             height: this.childrenRect.height
+            width: contentMaxWidth
+            anchors.horizontalCenter: parent.horizontalCenter
 
             StatusSectionHeadline {
                 id: glossaryTitle
@@ -127,11 +125,9 @@ Item {
             id: linksSection
             anchors.top: glossary.bottom
             anchors.topMargin: Style.current.bigPadding * 2
-            anchors.left: parent.left
-            anchors.leftMargin: contentMargin
-            anchors.right: parent.left
-            anchors.rightMargin: contentMargin
             height: this.childrenRect.height
+            width: contentMaxWidth
+            anchors.horizontalCenter: parent.horizontalCenter
 
             StyledText {
                 id: faqLink

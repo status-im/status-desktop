@@ -7,6 +7,7 @@ import "./Sections"
 
 SplitView {
     property int contentMargin: 120
+    property int contentMaxWidth: 624
     property int topMargin: 46
     property alias changeProfileSection: leftTab.changeProfileSection
 
@@ -38,10 +39,6 @@ SplitView {
         anchors.topMargin: 0
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        anchors.left: leftTab.right
-        anchors.leftMargin: Style.current.padding
         currentIndex: leftTab.currentTab
 
         // This list needs to match LeftTab/constants.js
