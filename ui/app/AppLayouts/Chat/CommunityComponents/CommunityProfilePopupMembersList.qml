@@ -114,6 +114,7 @@ Item {
                 onEntered: contactRow.isHovered = true
                 onExited: contactRow.isHovered = false
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onClicked: openProfilePopup(model.userName, model.pubKey, model.identicon, '', contactRow.nickname)
             }
 
             StatusContextMenuButton {
