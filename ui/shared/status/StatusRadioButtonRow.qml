@@ -31,6 +31,17 @@ Rectangle {
         anchors.leftMargin: Style.current.padding
     }
 
+    MouseArea {
+        cursorShape: Qt.PointingHandCursor
+        anchors.fill: parent
+        hoverEnabled: true
+        onEntered: root.isHovered = true
+        onExited: root.isHovered = false
+        onClicked: {
+            radioButton.checked = true
+        }
+    }
+
     StatusRadioButton {
         id: radioButton
         anchors.verticalCenter: parent.verticalCenter
@@ -40,18 +51,13 @@ Rectangle {
         rightPadding: 0
         checked: root.checked
         onCheckedChanged: root.radioCheckedChanged(checked)
-    }
-
-    MouseArea {
-        cursorShape: Qt.PointingHandCursor
-        anchors.fill: parent
-        hoverEnabled: true
-        onEntered: root.isHovered = true
-        onExited: root.isHovered = false
-        onClicked: {
-            if (!radioButton.checked) {
-                root.radioCheckedChanged(true)
-            }
+        MouseArea {
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            anchors.fill: parent
+            onPressed: mouse.accepted = false
+            onEntered: root.isHovered = true
         }
     }
+
 }
