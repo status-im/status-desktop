@@ -14,8 +14,14 @@ ModalPopup {
     
     Column {
         id: column
-        spacing: Style.current.padding
-        width: parent.width
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding
+        anchors.leftMargin: Style.current.padding
+
+        spacing: 0
 
         ButtonGroup { id: fleetSettings }
 

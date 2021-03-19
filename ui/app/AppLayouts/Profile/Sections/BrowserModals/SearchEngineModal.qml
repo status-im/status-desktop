@@ -15,52 +15,56 @@ ModalPopup {
     }
 
     Column {
-        spacing: Style.current.bigPadding
-        width: parent.width
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding
+        anchors.leftMargin: Style.current.padding
+
+        spacing: 0
 
         ButtonGroup {
             id: searchEnginGroup
         }
 
-        StatusRadioButton {
+        StatusRadioButtonRow {
             //% "None"
             text: qsTrId("none")
-            ButtonGroup.group: searchEnginGroup
+            buttonGroup: searchEnginGroup
             checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineNone
-            onCheckedChanged: {
+            onRadioCheckedChanged: {
                 if (checked) {
                     appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineNone
                 }
             }
         }
 
-        StatusRadioButton {
+        StatusRadioButtonRow {
             text: "Google"
-            ButtonGroup.group: searchEnginGroup
+            buttonGroup: searchEnginGroup
             checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineGoogle
-            onCheckedChanged: {
+            onRadioCheckedChanged: {
                 if (checked) {
                     appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineGoogle
                 }
             }
         }
 
-        StatusRadioButton {
+        StatusRadioButtonRow {
             text: "Yahoo!"
-            ButtonGroup.group: searchEnginGroup
+            buttonGroup: searchEnginGroup
             checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineYahoo
-            onCheckedChanged: {
+            onRadioCheckedChanged: {
                 if (checked) {
                     appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineYahoo
                 }
             }
         }
 
-        StatusRadioButton {
+        StatusRadioButtonRow {
             text: "DuckDuckGo"
-            ButtonGroup.group: searchEnginGroup
+            buttonGroup: searchEnginGroup
             checked: appSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineDuckDuckGo
-            onCheckedChanged: {
+            onRadioCheckedChanged: {
                 if (checked) {
                     appSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineDuckDuckGo
                 }

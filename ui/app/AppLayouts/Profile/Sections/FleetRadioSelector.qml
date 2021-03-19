@@ -5,10 +5,19 @@ import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
 
-RowLayout {
+StatusRadioButtonRow {
     property string fleetName: ""
     property string newFleet: ""
-
+    text: fleetName
+    buttonGroup: fleetSettings
+    checked: profileModel.fleets.fleet === text
+    onRadioCheckedChanged: {
+        if (checked) {
+            if (profileModel.fleets.fleet === fleetName) return;
+            newFleet = fleetName;
+            confirmDialog.open();
+        }
+    }
     ConfirmationDialog {
         id: confirmDialog
         //% "Warning!"
@@ -18,23 +27,5 @@ RowLayout {
         onConfirmButtonClicked: profileModel.fleets.setFleet(newFleet)
         onClosed: profileModel.fleets.triggerFleetChange()
     }
-
-
-    width: parent.width
-    StyledText {
-        text: fleetName
-        font.pixelSize: 15
-    }
-    StatusRadioButton {
-        id: radioProd
-        Layout.alignment: Qt.AlignRight
-        ButtonGroup.group: fleetSettings
-        rightPadding: 0
-        checked: profileModel.fleets.fleet === fleetName
-        onClicked: {
-            if (profileModel.fleets.fleet === fleetName) return;
-            newFleet = fleetName;
-            confirmDialog.open();
-        }
-    }
 }
+
