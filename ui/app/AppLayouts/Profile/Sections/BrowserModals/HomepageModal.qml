@@ -15,19 +15,25 @@ ModalPopup {
     }
 
     Column {
-        spacing: Style.current.bigPadding
-        width: parent.width
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding
+        anchors.leftMargin: Style.current.padding
+
+        spacing: Style.current.padding
 
         ButtonGroup {
             id: homepageGroup
         }
 
-        StatusRadioButton {
+        StatusRadioButtonRow {
             //% "Default"
             text: qsTrId("default")
-            ButtonGroup.group: homepageGroup
+            buttonGroup: homepageGroup
             checked: appSettings.browserHomepage === ""
-            onCheckedChanged: {
+            onRadioCheckedChanged: {
                 if (checked) {
                     appSettings.browserHomepage = ""
                     customUrl.visible = false
@@ -35,13 +41,15 @@ ModalPopup {
             }
         }
 
-        StatusRadioButton {
+        StatusRadioButtonRow {
             //% "Custom..."
             text: qsTrId("custom---")
-            ButtonGroup.group: homepageGroup
+            buttonGroup: homepageGroup
             checked: appSettings.browserHomepage !== "" || customUrl.visible
-            onClicked: {
-                customUrl.visible = true
+            onRadioCheckedChanged: {
+                if (checked) {
+                    customUrl.visible = true
+                }
             }
         }
 
@@ -55,6 +63,8 @@ ModalPopup {
             textField.onTextChanged: {
                 appSettings.browserHomepage = customUrl.text
             }
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
         }
     }
 }
