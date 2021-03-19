@@ -1,11 +1,9 @@
 import NimQml
 import Tables
 import json
-import json_serialization
 import sequtils
 import strutils
 from ../../../status/libstatus/types import Setting, PendingTransactionType, RpcException
-import ../../../status/threads
 import ../../../status/ens as status_ens
 import ../../../status/libstatus/wallet as status_wallet
 import ../../../status/libstatus/settings as status_settings
@@ -14,11 +12,78 @@ import ../../../status/status
 import ../../../status/wallet
 import sets
 import web3/ethtypes
+import ../../../status/tasks/[qt, task_runner_impl]
 
 type
   EnsRoles {.pure.} = enum
     UserName = UserRole + 1
     IsPending = UserRole + 2
+  ValidateTaskArg = ref object of QObjectTaskArg
+    ens: string
+    isStatus: bool
+    usernames: seq[string]
+  DetailsTaskArg = ref object of QObjectTaskArg
+    username: string
+
+const validateTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let
+    arg = decode[ValidateTaskArg](argEncoded)
+    username = arg.ens & (if(arg.isStatus): status_ens.domain else: "")
+  var output = ""
+  if arg.usernames.filter(proc(x: string):bool = x == username).len > 0:
+    output = "already-connected"
+  else:
+    let ownerAddr = status_ens.owner(username)
+    if ownerAddr == "" and arg.isStatus:
+      output = "available"
+    else:
+      let userPubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+      let userWallet = status_wallet.getWalletAccounts()[0].address
+      let pubkey = status_ens.pubkey(arg.ens)
+      if ownerAddr != "":
+        if pubkey == "" and ownerAddr == userWallet:
+          output = "owned" # "Continuing will connect this username with your chat key."
+        elif pubkey == userPubkey:
+          output = "connected"
+        elif ownerAddr == userWallet:
+          output = "connected-different-key" #  "Continuing will require a transaction to connect the username with your current chat key.",
+        else:
+          output = "taken"
+      else:
+        output = "taken"
+  arg.finish(output)
+
+proc validate[T](self: T, slot: string, ens: string, isStatus: bool, usernames: seq[string]) =
+  let arg = ValidateTaskArg(
+    tptr: cast[ByteAddress](validateTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot,
+    ens: ens,
+    isStatus: isStatus,
+    usernames: usernames
+  )
+  self.status.tasks.threadpool.start(arg)
+
+const detailsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let
+    arg = decode[DetailsTaskArg](argEncoded)
+    address = status_ens.address(arg.username)
+    pubkey = status_ens.pubkey(arg.username)
+    json = %* {
+      "ensName": arg.username,
+      "address": address,
+      "pubkey": pubkey
+    }
+  arg.finish(json)
+
+proc details[T](self: T, slot: string, username: string) =
+  let arg = DetailsTaskArg(
+    tptr: cast[ByteAddress](detailsTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot,
+    username: username
+  )
+  self.status.tasks.threadpool.start(arg)
 
 QtObject:
   type EnsManager* = ref object of QAbstractListModel
@@ -58,31 +123,7 @@ QtObject:
     self.ensWasResolved(ensResult)
 
   proc validate*(self: EnsManager, ens: string, isStatus: bool) {.slot.} =
-    let username = ens & (if(isStatus): status_ens.domain else: "")
-    if self.usernames.filter(proc(x: string):bool = x == username).len > 0:
-      self.ensResolved("already-connected")
-    else:
-      spawnAndSend(self, "ensResolved") do:
-        let ownerAddr = status_ens.owner(username)
-        var output = ""
-        if ownerAddr == "" and isStatus:
-          output = "available"
-        else:
-          let userPubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
-          let userWallet = status_wallet.getWalletAccounts()[0].address
-          let pubkey = status_ens.pubkey(ens)
-          if ownerAddr != "":
-            if pubkey == "" and ownerAddr == userWallet:
-              output = "owned" # "Continuing will connect this username with your chat key."
-            elif pubkey == userPubkey:
-              output = "connected"
-            elif ownerAddr == userWallet:
-              output = "connected-different-key" #  "Continuing will require a transaction to connect the username with your current chat key.",
-            else:
-              output = "taken"
-          else:
-            output = "taken"
-        output
+    self.validate("ensResolved", ens, isStatus, self.usernames)
 
   proc add*(self: EnsManager, username: string) =
     self.beginInsertRows(newQModelIndex(), self.usernames.len, self.usernames.len)
@@ -119,14 +160,7 @@ QtObject:
 
   proc details(self: EnsManager, username: string) {.slot.} =
     self.loading(true)
-    spawnAndSend(self, "setDetails") do:
-      let address = status_ens.address(username)
-      let pubkey = status_ens.pubkey(username)
-      $(%* {
-        "ensName": username,
-        "address": address,
-        "pubkey": pubkey
-      })
+    self.details("setDetails", username)
 
   proc detailsObtained(self: EnsManager, ensName: string, address: string, pubkey: string) {.signal.}
 

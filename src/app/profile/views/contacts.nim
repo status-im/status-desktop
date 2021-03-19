@@ -1,14 +1,34 @@
 import NimQml, chronicles, sequtils, sugar, strutils
 import ../../../status/libstatus/utils as status_utils
 import ../../../status/status
-import ../../../status/threads
 import ../../../status/chat/chat
 import contact_list
 import ../../../status/profile/profile
 import ../../../status/ens as status_ens
+import ../../../status/tasks/[qt, task_runner_impl]
 
 logScope:
   topics = "contacts-view"
+
+type
+  LookupContactTaskArg = ref object of QObjectTaskArg
+    value: string
+
+const lookupContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[LookupContactTaskArg](argEncoded)
+  var id = arg.value
+  if not id.startsWith("0x"):
+    id = status_ens.pubkey(id)
+  arg.finish(id)
+
+proc lookupContact[T](self: T, slot: string, value: string) =
+  let arg = LookupContactTaskArg(
+    tptr: cast[ByteAddress](lookupContactTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot,
+    value: value
+  )
+  self.status.tasks.threadpool.start(arg)
 
 QtObject:
   type ContactsView* = ref object of QObject
@@ -113,11 +133,7 @@ QtObject:
     if value == "":
       return
 
-    spawnAndSend(self, "ensResolved") do: # Call self.ensResolved(string) when ens is resolved
-      var id = value
-      if not id.startsWith("0x"):
-        id = status_ens.pubkey(id)
-      id
+    self.lookupContact("ensResolved", value)
 
   proc ensWasResolved*(self: ContactsView, resolvedPubKey: string) {.signal.}
 

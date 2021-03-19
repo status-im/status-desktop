@@ -10,13 +10,11 @@ import app/onboarding/core as onboarding
 import app/login/core as login
 import app/provider/core as provider
 import status/signals/core as signals
-import status/tasks/task_manager
 import status/libstatus/types
 import status/libstatus/accounts/constants
 import status_go
 import status/status as statuslib
 import ./eventemitter
-import chronos, task_runner
 
 var signalsQObjPointer: pointer
 
@@ -30,9 +28,7 @@ proc mainProc() =
     else:
       "/../fleets.json"
 
-  let taskManager = newTaskManager()
-  taskManager.init()
-  let status = statuslib.newStatusInstance(taskManager, readFile(joinPath(getAppDir(), fleets)))
+  let status = statuslib.newStatusInstance(readFile(joinPath(getAppDir(), fleets)))
   status.initNode()
 
   enableHDPI()
@@ -157,7 +153,7 @@ proc mainProc() =
     profile.delete()
     utilsController.delete()
     browserController.delete()
-    taskManager.teardown()
+    status.tasks.teardown()
 
 
   # Initialize only controllers whose init functions
@@ -205,4 +201,3 @@ proc mainProc() =
 
 when isMainModule:
   mainProc()
-  GC_fullcollect()

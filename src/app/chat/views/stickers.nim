@@ -1,14 +1,66 @@
 import NimQml, tables, json, chronicles, sets, strutils
-import ../../../status/[status, stickers, threads]
+import ../../../status/[status, stickers]
 import ../../../status/libstatus/[types, utils]
 import ../../../status/libstatus/stickers as status_stickers
 import ../../../status/libstatus/wallet as status_wallet
 import sticker_pack_list, sticker_list, chat_item
-import json_serialization
-import ../../../status/tasks/task_manager
+import ../../../status/tasks/[qt, task_runner_impl]
 
 logScope:
   topics = "stickers-view"
+
+type
+  EstimateTaskArg = ref object of QObjectTaskArg
+    packId: int
+    address: string
+    price: string
+    uuid: string
+  ObtainAvailableStickerPacksTaskArg = ref object of QObjectTaskArg
+
+# The pragmas `{.gcsafe, nimcall.}` in this context do not force the compiler
+# to accept unsafe code, rather they work in conjunction with the proc
+# signature for `type Task` in tasks/common.nim to ensure that the proc really
+# is gcsafe and that a helpful error message is displayed
+const estimateTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[EstimateTaskArg](argEncoded)
+  var success: bool
+  var estimate = estimateGas(arg.packId, arg.address, arg.price,
+    success)
+  if not success:
+    estimate = 325000
+  let tpl: tuple[estimate: int, uuid: string] = (estimate, arg.uuid)
+  arg.finish(tpl)
+
+# the [T] here is annoying but the QtObject template only allows for one type
+# definition so we'll need to setup the type, task, and helper outside of body
+# passed to `QtObject:`
+proc estimate[T](self: T, slot: string, packId: int, address: string, price: string,
+                   uuid: string) =
+  let arg = EstimateTaskArg(
+    tptr: cast[ByteAddress](estimateTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot,
+    packId: packId,
+    address: address,
+    price: price,
+    uuid: uuid
+  )
+  self.status.tasks.threadpool.start(arg)
+
+const obtainAvailableStickerPacksTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[ObtainAvailableStickerPacksTaskArg](argEncoded)
+  let availableStickerPacks = status_stickers.getAvailableStickerPacks()
+  var packs: seq[StickerPack] = @[]
+  for packId, stickerPack in availableStickerPacks.pairs:
+    packs.add(stickerPack)
+  arg.finish(%*(packs))
+
+proc obtainAvailableStickerPacks[T](self: T, slot: string) =
+  let arg = ObtainAvailableStickerPacksTaskArg(
+    tptr: cast[ByteAddress](obtainAvailableStickerPacksTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot)
+  self.status.tasks.threadpool.start(arg)
 
 QtObject:
   type StickersView* = ref object of QObject
@@ -46,7 +98,7 @@ QtObject:
   proc transactionCompleted*(self: StickersView, success: bool, txHash: string, revertReason: string = "") {.signal.}
 
   proc estimate*(self: StickersView, packId: int, address: string, price: string, uuid: string) {.slot.} =
-    self.status.taskManager.threadPool.stickers.stickerPackPurchaseGasEstimate(cast[pointer](self.vptr), "setGasEstimate", packId, address, price, uuid)
+    self.estimate("setGasEstimate", packId, address, price, uuid)
 
   proc gasEstimateReturned*(self: StickersView, estimate: int, uuid: string) {.signal.}
 
@@ -65,7 +117,7 @@ QtObject:
       self.transactionWasSent(response)
 
   proc obtainAvailableStickerPacks*(self: StickersView) =
-    self.status.taskManager.threadPool.stickers.obtainAvailableStickerPacks(cast[pointer](self.vptr), "setAvailableStickerPacks")
+    self.obtainAvailableStickerPacks("setAvailableStickerPacks")
 
   proc stickerPacksLoaded*(self: StickersView) {.signal.}
 

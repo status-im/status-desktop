@@ -63,7 +63,7 @@ proc initEvents*(self: WalletModel) =
 proc delete*(self: WalletModel) =
   discard
 
-proc buildTokenTransaction(self: WalletModel, source, to, assetAddress: Address, value: float, transfer: var Transfer, contract: var Erc20Contract, gas = "", gasPrice = ""): EthSend =
+proc buildTokenTransaction(source, to, assetAddress: Address, value: float, transfer: var Transfer, contract: var Erc20Contract, gas = "", gasPrice = ""): EthSend =
   contract = getErc20Contract(assetAddress)
   if contract == nil:
     raise newException(ValueError, fmt"Could not find ERC-20 contract with address '{assetAddress}' for the current network")
@@ -114,7 +114,7 @@ proc estimateTokenGas*(self: WalletModel, source, to, assetAddress, value: strin
   var
     transfer: Transfer
     contract: Erc20Contract
-    tx = self.buildTokenTransaction(
+    tx = buildTokenTransaction(
       parseAddress(source),
       parseAddress(to),
       parseAddress(assetAddress),
@@ -125,7 +125,7 @@ proc estimateTokenGas*(self: WalletModel, source, to, assetAddress, value: strin
 
   result = contract.methods["transfer"].estimateGas(tx, transfer, success)
 
-proc sendTransaction*(self: WalletModel, source, to, value, gas, gasPrice, password: string, success: var bool, data = ""): string =
+proc sendTransaction*(source, to, value, gas, gasPrice, password: string, success: var bool, data = ""): string =
   var tx = transactions.buildTransaction(
     parseAddress(source),
     eth2Wei(parseFloat(value), 18), gas, gasPrice, data
@@ -138,11 +138,11 @@ proc sendTransaction*(self: WalletModel, source, to, value, gas, gasPrice, passw
   if success:
     trackPendingTransaction(result, $source, $to, PendingTransactionType.WalletTransfer, "")
 
-proc sendTokenTransaction*(self: WalletModel, source, to, assetAddress, value, gas, gasPrice, password: string, success: var bool): string =
+proc sendTokenTransaction*(source, to, assetAddress, value, gas, gasPrice, password: string, success: var bool): string =
   var
     transfer: Transfer
     contract: Erc20Contract
-    tx = self.buildTokenTransaction(
+    tx = buildTokenTransaction(
       parseAddress(source),
       parseAddress(to),
       parseAddress(assetAddress),
@@ -333,22 +333,7 @@ proc getTransfersByAddress*(self: WalletModel, address: string): seq[Transaction
 proc validateMnemonic*(self: WalletModel, mnemonic: string): string =
   result = status_wallet.validateMnemonic(mnemonic).parseJSON()["error"].getStr
 
-proc getGasPricePredictions*(self: WalletModel): GasPricePrediction =
-  if status_settings.getCurrentNetwork() != Network.Mainnet:
-    # TODO: what about other chains like xdai?
-    return GasPricePrediction(safeLow: 1.0, standard: 2.0, fast: 3.0, fastest: 4.0)
-  try:
-    let url: string = fmt"https://etherchain.org/api/gasPriceOracle"
-    let secureSSLContext = newContext()
-    let client = newHttpClient(sslContext = secureSSLContext)
-    client.headers = newHttpHeaders({ "Content-Type": "application/json" })
-    let response = client.request(url)
-    result = Json.decode(response.body, GasPricePrediction)
-  except Exception as e:
-    echo "error getting gas price predictions"
-    echo e.msg
-
-proc getGasPricePredictions2*(): GasPricePrediction =
+proc getGasPricePredictions*(): GasPricePrediction =
   if status_settings.getCurrentNetwork() != Network.Mainnet:
     # TODO: what about other chains like xdai?
     return GasPricePrediction(safeLow: 1.0, standard: 2.0, fast: 3.0, fastest: 4.0)
