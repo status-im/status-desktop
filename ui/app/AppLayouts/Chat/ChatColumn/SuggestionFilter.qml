@@ -74,6 +74,7 @@ Item {
         }
 
         let filterWithoutAt = filter.substring(lastAtPosition + 1, this.cursorPosition)
+        filterWithoutAt = filterWithoutAt.replace(/\*/g, "")
 
         return !properties.every(p => item[p].toLowerCase().match(filterWithoutAt.toLowerCase()) === null)
     }

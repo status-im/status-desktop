@@ -27,7 +27,7 @@ QtObject {
     function fromCodePoint(value) {
         return Twemoji.twemoji.convert.fromCodePoint(value)
     }
-    function deparse(value){
+    function deparse(value) {
         return value.replace(/<img src=\"qrc:\/imports\/twemoji\/.+?" alt=\"(.+?)\" width=\"[0-9]*\" height=\"[0-9]*\" \/>/g, "$1");
     }
     function deparseFromParse(value) {
