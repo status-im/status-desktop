@@ -14,18 +14,87 @@ import ../../status/ens as status_ens
 import ../../status/chat/[chat, message]
 import ../../status/profile/profile
 import web3/[conversions, ethtypes]
-import ../../status/threads
 import views/[channels_list, message_list, chat_item, suggestions_list, reactions, stickers, groups, transactions, communities, community_list, community_item]
-import json_serialization
 import ../utils/image_utils
+import ../../status/tasks/[qt, task_runner_impl]
 
 logScope:
   topics = "chats-view"
 
-
 type
   ChatViewRoles {.pure.} = enum
     MessageList = UserRole + 1
+  GetLinkPreviewDataTaskArg = ref object of QObjectTaskArg
+    link: string
+    uuid: string
+  AsyncMessageLoadTaskArg = ref object of QObjectTaskArg
+    chatId: string
+  ResolveEnsTaskArg = ref object of QObjectTaskArg
+    ens: string
+
+const getLinkPreviewDataTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[GetLinkPreviewDataTaskArg](argEncoded)
+  var success: bool
+  # We need to call directly on libstatus because going through the status model is not thread safe
+  let
+    response = libstatus_chat.getLinkPreviewData(arg.link, success)
+    responseJson = %* { "result": %response, "success": %success, "uuid": %arg.uuid }
+  arg.finish(responseJson)
+
+proc getLinkPreviewData[T](self: T, slot: string, link: string, uuid: string) =
+  let arg = GetLinkPreviewDataTaskArg(
+    tptr: cast[ByteAddress](getLinkPreviewDataTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot,
+    link: link,
+    uuid: uuid
+  )
+  self.status.tasks.threadpool.start(arg)
+
+const asyncMessageLoadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncMessageLoadTaskArg](argEncoded)
+  var messages: JsonNode
+  var msgCallSuccess: bool
+  let msgCallResult = rpcChatMessages(arg.chatId, newJString(""), 20, msgCallSuccess)
+  if(msgCallSuccess):
+    messages = msgCallResult.parseJson()["result"]
+
+  var reactions: JsonNode
+  var reactionsCallSuccess: bool
+  let reactionsCallResult = rpcReactions(arg.chatId, newJString(""), 20, reactionsCallSuccess)
+  if(reactionsCallSuccess):
+    reactions = reactionsCallResult.parseJson()["result"]
+
+  let responseJson = %*{
+    "chatId": arg.chatId,
+    "messages": messages,
+    "reactions": reactions
+  }
+  arg.finish(responseJson)
+
+proc asyncMessageLoad[T](self: T, slot: string, chatId: string) =
+  let arg = AsyncMessageLoadTaskArg(
+    tptr: cast[ByteAddress](asyncMessageLoadTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot,
+    chatId: chatId
+  )
+  self.status.tasks.threadpool.start(arg)
+
+const resolveEnsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let
+    arg = decode[ResolveEnsTaskArg](argEncoded)
+    result = status_ens.pubkey(arg.ens)
+  arg.finish(result)
+
+proc resolveEns[T](self: T, slot: string, ens: string) =
+  let arg = ResolveEnsTaskArg(
+    tptr: cast[ByteAddress](asyncMessageLoadTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot,
+    ens: ens
+  )
+  self.status.tasks.threadpool.start(arg)
 
 QtObject:
   type
@@ -476,11 +545,7 @@ QtObject:
     self.linkPreviewDataWasReceived(previewData)
 
   proc getLinkPreviewData*(self: ChatsView, link: string, uuid: string) {.slot.} =
-    spawnAndSend(self, "linkPreviewDataReceived") do:
-      var success: bool
-      # We need to call directly on libstatus because going through the status model is not thread safe
-      let response = libstatus_chat.getLinkPreviewData(link, success)
-      $(%* { "result": %response, "success": %success, "uuid": %uuid })
+    self.getLinkPreviewData("linkPreviewDataReceived", link, uuid)
 
   proc joinChat*(self: ChatsView, channel: string, chatTypeInt: int): int {.slot.} =
     self.status.chat.join(channel, ChatType(chatTypeInt))
@@ -513,26 +578,7 @@ QtObject:
   proc loadingMessagesChanged*(self: ChatsView, value: bool) {.signal.}
 
   proc asyncMessageLoad*(self: ChatsView, chatId: string) {.slot.} =
-    spawnAndSend(self, "asyncMessageLoaded") do: # Call self.ensResolved(string) when ens is resolved
-
-      var messages: JsonNode
-      var msgCallSuccess: bool
-      let msgCallResult = rpcChatMessages(chatId, newJString(""), 20, msgCallSuccess)
-      if(msgCallSuccess):
-        messages = msgCallResult.parseJson()["result"]
-
-      var reactions: JsonNode
-      var reactionsCallSuccess: bool
-      let reactionsCallResult = rpcReactions(chatId, newJString(""), 20, reactionsCallSuccess)
-      if(reactionsCallSuccess):
-        reactions = reactionsCallResult.parseJson()["result"]
-
-
-      $(%*{
-        "chatId": chatId,
-        "messages": messages,
-        "reactions": reactions
-      })
+    self.asyncMessageLoad("asyncMessageLoaded", chatId)
 
   proc asyncMessageLoaded*(self: ChatsView, rpcResponse: string) {.slot.} =
     let rpcResponseObj = rpcResponse.parseJson
@@ -666,8 +712,7 @@ QtObject:
 
   # Resolving a ENS name
   proc resolveENS*(self: ChatsView, ens: string) {.slot.} =
-    spawnAndSend(self, "ensResolved") do: # Call self.ensResolved(string) when ens is resolved
-      status_ens.pubkey(ens)
+    self.resolveEns("ensResolved", ens) # Call self.ensResolved(string) when ens is resolved
 
   proc ensWasResolved*(self: ChatsView, resolvedPubKey: string) {.signal.}
 

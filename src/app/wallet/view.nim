@@ -1,5 +1,5 @@
-import NimQml, Tables, strformat, strutils, chronicles, sequtils, json, std/wrapnils, parseUtils, stint, tables, json_serialization
-import ../../status/[status, wallet, threads]
+import NimQml, Tables, strformat, strutils, chronicles, sequtils, json, std/wrapnils, parseUtils, stint, tables
+import ../../status/[status, wallet]
 import ../../status/wallet/collectibles as status_collectibles
 import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/wallet as status_wallet
@@ -10,6 +10,160 @@ import ../../status/libstatus/utils as status_utils
 import ../../status/libstatus/eth/contracts
 import ../../status/ens as status_ens
 import views/[asset_list, account_list, account_item, token_list, transaction_list, collectibles_list]
+import ../../status/tasks/[qt, task_runner_impl]
+
+type
+  SendTransactionTaskArg = ref object of QObjectTaskArg
+    from_addr: string
+    to: string
+    assetAddress: string
+    value: string
+    gas: string
+    gasPrice: string
+    password: string
+    uuid: string
+  InitBalancesTaskArg = ref object of QObjectTaskArg
+    address: string
+    tokenList: seq[string]
+  LoadCollectiblesTaskArg = ref object of QObjectTaskArg
+    address: string
+    collectiblesType: string
+  GasPredictionsTaskArg = ref object of QObjectTaskArg
+  LoadTransactionsTaskArg = ref object of QObjectTaskArg
+    address: string
+    blockNumber: string
+  ResolveEnsTaskArg = ref object of QObjectTaskArg
+    ens: string
+    uuid: string
+
+const sendTransactionTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[SendTransactionTaskArg](argEncoded)
+  var
+    success: bool
+    response: string
+  if arg.assetAddress != ZERO_ADDRESS and not arg.assetAddress.isEmptyOrWhitespace:
+    response = wallet.sendTokenTransaction(arg.from_addr, arg.to, arg.assetAddress, arg.value, arg.gas, arg.gasPrice, arg.password, success)
+  else:
+    response = wallet.sendTransaction(arg.from_addr, arg.to, arg.value, arg.gas, arg.gasPrice, arg.password, success)
+  let output = %* { "result": %response, "success": %success, "uuid": %arg.uuid }
+  arg.finish(output)
+
+proc sendTransaction[T](self: T, slot: string, from_addr: string, to: string, assetAddress: string, value: string, gas: string, gasPrice: string, password: string, uuid: string) =
+  let arg = SendTransactionTaskArg(
+    tptr: cast[ByteAddress](sendTransactionTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot,
+    from_addr: from_addr,
+    to: to,
+    assetAddress: assetAddress,
+    value: value,
+    gas: gas,
+    gasPrice: gasPrice,
+    password: password,
+    uuid: uuid
+  )
+  self.status.tasks.threadpool.start(arg)
+
+const initBalancesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[InitBalancesTaskArg](argEncoded)
+  var tokenBalances = initTable[string, string]()
+  for token in arg.tokenList:
+    tokenBalances[token] = getTokenBalance(token, arg.address)
+  let output = %* {
+    "address": arg.address,
+    "eth": getEthBalance(arg.address),
+    "tokens": tokenBalances
+  }
+  arg.finish(output)
+
+proc initBalances[T](self: T, slot: string, address: string, tokenList: seq[string]) =
+  let arg = InitBalancesTaskArg(
+    tptr: cast[ByteAddress](initBalancesTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot,
+    address: address,
+    tokenList: tokenList
+  )
+  self.status.tasks.threadpool.start(arg)
+
+const loadCollectiblesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[LoadCollectiblesTaskArg](argEncoded)
+  var collectiblesOrError = ""
+  case arg.collectiblesType:
+    of status_collectibles.CRYPTOKITTY:
+      collectiblesOrError = status_collectibles.getCryptoKitties(arg.address)
+    of status_collectibles.KUDO:
+      collectiblesOrError = status_collectibles.getKudos(arg.address)
+    of status_collectibles.ETHERMON:
+      collectiblesOrError = status_collectibles.getEthermons(arg.address)
+    of status_collectibles.STICKER:
+      collectiblesOrError = status_collectibles.getStickers(arg.address)
+
+  let output = %*{
+    "address": arg.address,
+    "collectibleType": arg.collectiblesType,
+    "collectiblesOrError": collectiblesOrError
+  }
+  arg.finish(output)
+
+proc loadCollectibles[T](self: T, slot: string, address: string, collectiblesType: string) =
+  let arg = LoadCollectiblesTaskArg(
+    tptr: cast[ByteAddress](loadCollectiblesTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot,
+    address: address,
+    collectiblesType: collectiblesType,
+  )
+  self.status.tasks.threadpool.start(arg)
+
+const getGasPredictionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let
+    arg = decode[GasPredictionsTaskArg](argEncoded)
+    output = %getGasPricePredictions()
+  arg.finish(output)
+
+proc getGasPredictions[T](self: T, slot: string) =
+  let arg = GasPredictionsTaskArg(
+    tptr: cast[ByteAddress](getGasPredictionsTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot
+  )
+  self.status.tasks.threadpool.start(arg)
+
+const loadTransactionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let
+    arg = decode[LoadTransactionsTaskArg](argEncoded)
+    output = %*{
+      "address": arg.address,
+      "history": getTransfersByAddress(arg.address, arg.blockNumber)
+    }
+  arg.finish(output)
+
+proc loadTransactions[T](self: T, slot: string, address: string, blockNumber: string) =
+  let arg = LoadTransactionsTaskArg(
+    tptr: cast[ByteAddress](loadTransactionsTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot,
+    address: address,
+    blockNumber: blockNumber
+  )
+  self.status.tasks.threadpool.start(arg)
+
+const resolveEnsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let
+    arg = decode[ResolveEnsTaskArg](argEncoded)
+    output = %* { "address": status_ens.address(arg.ens), "uuid": arg.uuid }
+  arg.finish(output)
+
+proc resolveEns[T](self: T, slot: string, ens: string, uuid: string) =
+  let arg = ResolveEnsTaskArg(
+    tptr: cast[ByteAddress](resolveEnsTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot,
+    ens: ens,
+    uuid: uuid
+  )
+  self.status.tasks.threadpool.start(arg)
 
 QtObject:
   type
@@ -60,8 +214,8 @@ QtObject:
     result.currentAssetList = newAssetList()
     result.currentTransactions = newTransactionList()
     result.currentCollectiblesLists = newCollectiblesList()
-    result.defaultTokenList = newTokenList()
-    result.customTokenList = newTokenList()
+    result.defaultTokenList = newTokenList(status)
+    result.customTokenList = newTokenList(status)
     result.totalFiatBalance = ""
     result.etherscanLink = ""
     result.safeLowGasPrice = "0"
@@ -292,17 +446,7 @@ QtObject:
     self.transactionWasSent(txResult)
 
   proc sendTransaction*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string, gas: string, gasPrice: string, password: string, uuid: string) {.slot.} =
-    let wallet = self.status.wallet
-    if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
-      spawnAndSend(self, "transactionSent") do:
-        var success: bool
-        let response = wallet.sendTokenTransaction(from_addr, to, assetAddress, value, gas, gasPrice, password, success)
-        $(%* { "result": %response, "success": %success, "uuid": %uuid })
-    else:
-      spawnAndSend(self, "transactionSent") do:
-        var success: bool
-        let response = wallet.sendTransaction(from_addr, to, value, gas, gasPrice, password, success)
-        $(%* { "result": %response, "success": %success, "uuid": %uuid })
+    self.sendTransaction("transactionSent", from_addr, to, assetAddress, value, gas, gasPrice, password, uuid)
 
   proc getDefaultAccount*(self: WalletView): string {.slot.} =
     self.currentAccount.address
@@ -364,15 +508,7 @@ QtObject:
     for acc in self.status.wallet.accounts:
       let accountAddress = acc.address
       let tokenList = acc.assetList.filter(proc(x:Asset): bool = x.address != "").map(proc(x: Asset): string = x.address)
-      spawnAndSend(self, "getAccountBalanceSuccess") do:
-        var tokenBalances = initTable[string, string]()
-        for token in tokenList:
-          tokenBalances[token] = getTokenBalance(token, accountAddress)
-        $ %* {
-          "address": accountAddress,
-          "eth": getEthBalance(accountAddress),
-          "tokens": tokenBalances
-        }
+      self.initBalances("getAccountBalanceSuccess", accountAddress, tokenList)
 
   proc getAccountBalanceSuccess*(self: WalletView, jsonResponse: string) {.slot.} =
     let jsonObj = jsonResponse.parseJson()
@@ -396,31 +532,11 @@ QtObject:
         ))
 
     # TODO find a way to use a loop to streamline this code
-    # Spawn for each collectible. They can end in whichever order
-    spawnAndSend(self, "setCollectiblesResult") do:
-      $(%*{
-        "address": address,
-        "collectibleType": status_collectibles.CRYPTOKITTY,
-        "collectiblesOrError": status_collectibles.getCryptoKitties(address)
-      })
-    spawnAndSend(self, "setCollectiblesResult") do:
-      $(%*{
-        "address": address,
-        "collectibleType": status_collectibles.KUDO,
-        "collectiblesOrError": status_collectibles.getKudos(address)
-      })
-    spawnAndSend(self, "setCollectiblesResult") do:
-      $(%*{
-        "address": address,
-        "collectibleType": status_collectibles.ETHERMON,
-        "collectiblesOrError": status_collectibles.getEthermons(address)
-      })
-    spawnAndSend(self, "setCollectiblesResult") do:
-      $(%*{
-        "address": address,
-        "collectibleType": status_collectibles.STICKER,
-        "collectiblesOrError": status_collectibles.getStickers(address)
-      })
+    # Create a thread in the threadpool for each collectible. They can end in whichever order
+    self.loadCollectibles("setCollectiblesResult", address, status_collectibles.CRYPTOKITTY)
+    self.loadCollectibles("setCollectiblesResult", address, status_collectibles.KUDO)
+    self.loadCollectibles("setCollectiblesResult", address, status_collectibles.ETHERMON)
+    self.loadCollectibles("setCollectiblesResult", address, status_collectibles.STICKER)
 
   proc setCollectiblesResult(self: WalletView, collectiblesJSON: string) {.slot.} =
     let collectibleData = parseJson(collectiblesJSON)
@@ -452,47 +568,13 @@ QtObject:
 
   proc reloadCollectible*(self: WalletView, collectibleType: string) {.slot.} =
     let address = self.currentAccount.address
-    # TODO find a cooler way to do this
-    case collectibleType:
-      of CRYPTOKITTY:
-        spawnAndSend(self, "setCollectiblesResult") do:
-          $(%*{
-            "address": address,
-            "collectibleType": status_collectibles.CRYPTOKITTY,
-            "collectiblesOrError": status_collectibles.getCryptoKitties(address)
-          })
-      of KUDO:
-        spawnAndSend(self, "setCollectiblesResult") do:
-          $(%*{
-            "address": address,
-            "collectibleType": status_collectibles.KUDO,
-            "collectiblesOrError": status_collectibles.getKudos(address)
-          })
-      of ETHERMON:
-        spawnAndSend(self, "setCollectiblesResult") do:
-          $(%*{
-            "address": address,
-            "collectibleType": status_collectibles.ETHERMON,
-            "collectiblesOrError": status_collectibles.getEthermons(address)
-          })
-      of status_collectibles.STICKER:
-        spawnAndSend(self, "setCollectiblesResult") do:
-          $(%*{
-            "address": address,
-            "collectibleType": status_collectibles.STICKER,
-            "collectiblesOrError": status_collectibles.getStickers(address)
-          })
-      else:
-        error "Unrecognized collectible"
-        return
-
+    self.loadCollectibles("setCollectiblesResult", address, collectibleType)
     self.currentCollectiblesLists.setLoadingByType(collectibleType, 1)
 
   proc gasPricePredictionsChanged*(self: WalletView) {.signal.}
 
   proc getGasPricePredictions*(self: WalletView) {.slot.} =
-    spawnAndSend(self, "getGasPricePredictionsResult") do:
-      $ %getGasPricePredictions2()
+    self.getGasPredictions("getGasPricePredictionsResult")
 
   proc getGasPricePredictionsResult(self: WalletView, gasPricePredictionsJson: string) {.slot.} =
     let prediction = Json.decode(gasPricePredictionsJson, GasPricePrediction)
@@ -586,11 +668,7 @@ QtObject:
     # spawn'ed function cannot have a 'var' parameter
     let blockNumber = bn
     self.loadingTrxHistoryChanged(true)
-    spawnAndSend(self, "setTrxHistoryResult") do:
-      $(%*{
-        "address": address,
-        "history": getTransfersByAddress(address, blockNumber)
-      })
+    self.loadTransactions("setTrxHistoryResult", address, bn)
 
   proc setTrxHistoryResult(self: WalletView, historyJSON: string) {.slot.} =
     let historyData = parseJson(historyJSON)
@@ -605,8 +683,7 @@ QtObject:
     self.loadingTrxHistoryChanged(false)
 
   proc resolveENS*(self: WalletView, ens: string, uuid: string) {.slot.} =
-    spawnAndSend(self, "ensResolved") do:
-      $ %* { "address": status_ens.address(ens), "uuid": uuid }
+    self.resolveEns("ensResolved", ens, uuid)
 
   proc ensWasResolved*(self: WalletView, resolvedAddress: string, uuid: string) {.signal.}
 

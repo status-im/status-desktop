@@ -129,7 +129,7 @@ QtObject:
 
         var success: bool
         # TODO make this async
-        let response = status.wallet.sendTransaction(fromAddress, to, value, selectedGasLimit, selectedGasPrice, password, success, txData)
+        let response = wallet.sendTransaction(fromAddress, to, value, selectedGasLimit, selectedGasPrice, password, success, txData)
         let errorMessage = if not success:
           if response == "":
             "web3-response-error"

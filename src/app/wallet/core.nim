@@ -71,7 +71,7 @@ proc init*(self: WalletController) =
     self.view.transactionCompleted(tx.success, tx.transactionHash, tx.revertReason)
 
 proc checkPendingTransactions*(self: WalletController) =
-  self.status.wallet.checkPendingTransactions() # TODO: consider doing this in a spawnAndSend
+  self.status.wallet.checkPendingTransactions() # TODO: consider doing this in a threadpool task
 
 proc start*(self: WalletController) =
   status_wallet.startWallet(false)

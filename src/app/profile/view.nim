@@ -10,7 +10,6 @@ import ../../status/libstatus/settings as status_settings
 import ../../status/status
 import ../../status/ens as status_ens
 import ../../status/chat/chat
-import ../../status/threads
 import ../../status/libstatus/types
 import ../../status/libstatus/accounts/constants as accountConstants
 import qrcode/qrcode

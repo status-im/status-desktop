@@ -1,7 +1,13 @@
-import NimQml, tables, json
-import ../../../status/libstatus/[tokens, settings, utils, eth/contracts]
+import # nim libs
+  tables, json
+
+import # vendor libs
+  NimQml
+
+import # status-desktop libs
+  ../../../status/libstatus/[tokens, settings, utils, eth/contracts],
+  ../../../status/tasks/[qt, task_runner_impl], ../../../status/status
 from web3/conversions import `$`
-import ../../../status/threads
 
 type
   TokenRoles {.pure.} = enum
@@ -11,9 +17,34 @@ type
     Address = UserRole + 4,
     Decimals = UserRole + 5
     IsCustom = UserRole + 6
+  GetTokenDetailsTaskArg = ref object of QObjectTaskArg
+    address: string
+
+const getTokenDetailsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let 
+    arg = decode[GetTokenDetailsTaskArg](argEncoded)
+    tkn = newErc20Contract(getCurrentNetwork(), arg.address.parseAddress)
+    decimals = tkn.tokenDecimals()
+
+  let output = %* {
+    "address": arg.address,
+    "name": tkn.tokenName(),
+    "symbol": tkn.tokenSymbol(),
+    "decimals": (if decimals == 0: "" else: $decimals)
+  }
+  arg.finish(output)
+
+proc getTokenDetails[T](self: T, slot: string, address: string) =
+  let arg = GetTokenDetailsTaskArg(
+    tptr: cast[ByteAddress](getTokenDetailsTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot,
+    address: address)
+  self.status.tasks.threadpool.start(arg)
 
 QtObject:
   type TokenList* = ref object of QAbstractListModel
+    status*: Status
     tokens*: seq[Erc20Contract]
     isCustom*: bool
 
@@ -39,9 +70,10 @@ QtObject:
     self.isCustom = true
     self.endResetModel()
 
-  proc newTokenList*(): TokenList =
+  proc newTokenList*(status: Status): TokenList =
     new(result, delete)
     result.tokens = @[]
+    result.status = status
     result.setup
 
   proc rowData(self: TokenList, index: int, column: string): string {.slot.} =
@@ -82,17 +114,7 @@ QtObject:
     TokenRoles.IsCustom.int:"isCustom"}.toTable
 
   proc getTokenDetails*(self: TokenList, address: string) {.slot.} =
-    spawnAndSend(self, "tokenDetailsResolved") do:
-      let tkn = newErc20Contract(getCurrentNetwork(), address.parseAddress)
-
-      let decimals = tkn.tokenDecimals()
-
-      $ (%* {
-        "address": address,
-        "name": tkn.tokenName(),
-        "symbol": tkn.tokenSymbol(),
-        "decimals": (if decimals == 0: "" else: $decimals)
-      })
+    self.getTokenDetails("tokenDetailsResolved", address)
 
   proc tokenDetailsWereResolved*(self: TokenList, tokenDetails: string) {.signal.}
 

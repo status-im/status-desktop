@@ -1,26 +1,28 @@
-import
-  chronicles, chronos, json, json_serialization, NimQml, sequtils, tables,
-  task_runner
+import # std libs
+  json, sequtils, tables
 
-import
-  ./common, ./stickers
+import # vendor libs
+  chronicles, chronos, json_serialization, NimQml, task_runner
+
+import # status-desktop libs
+  ./common
+
 export
-  stickers
+  chronos, common, json_serialization
 
 logScope:
   topics = "task-threadpool"
 
 type
   ThreadPool* = ref object
-    chanRecvFromPool*: AsyncChannel[ThreadSafeString]
-    chanSendToPool*: AsyncChannel[ThreadSafeString]
+    chanRecvFromPool: AsyncChannel[ThreadSafeString]
+    chanSendToPool: AsyncChannel[ThreadSafeString]
     thread: Thread[PoolThreadArg]
     size: int
-    stickers*: StickersTasks
-  PoolThreadArg* = object
-    chanSendToMain*: AsyncChannel[ThreadSafeString]
-    chanRecvFromMain*: AsyncChannel[ThreadSafeString]
-    size*: int
+  PoolThreadArg = object
+    chanSendToMain: AsyncChannel[ThreadSafeString]
+    chanRecvFromMain: AsyncChannel[ThreadSafeString]
+    size: int
   TaskThreadArg = object
     id: int
     chanRecvFromPool: AsyncChannel[ThreadSafeString]
@@ -28,7 +30,6 @@ type
   ThreadNotification = object
     id: int
     notice: string
-  
 
 # forward declarations
 proc poolThread(arg: PoolThreadArg) {.thread.}
@@ -41,7 +42,6 @@ proc newThreadPool*(size: int = MaxThreadPoolSize): ThreadPool =
   result.chanSendToPool = newAsyncChannel[ThreadSafeString](-1)
   result.thread = Thread[PoolThreadArg]()
   result.size = size
-  result.stickers = newStickersTasks(result.chanSendToPool)
 
 proc init*(self: ThreadPool) =
   self.chanRecvFromPool.open()
@@ -52,64 +52,60 @@ proc init*(self: ThreadPool) =
     size: self.size
   )
   createThread(self.thread, poolThread, arg)
-
   # block until we receive "ready"
-  let received = $(self.chanRecvFromPool.recvSync())
+  discard $(self.chanRecvFromPool.recvSync())
 
 proc teardown*(self: ThreadPool) =
   self.chanSendToPool.sendSync("shutdown".safe)
   self.chanRecvFromPool.close()
   self.chanSendToPool.close()
+  debug "[threadpool] waiting for the control thread to stop"
   joinThread(self.thread)
 
-proc task(arg: TaskThreadArg) {.async.} =
+proc start*[T: TaskArg](self: Threadpool, arg: T) =
+  self.chanSendToPool.sendSync(arg.encode.safe)
+
+proc runner(arg: TaskThreadArg) {.async.} =
   arg.chanRecvFromPool.open()
   arg.chanSendToPool.open()
 
   let noticeToPool = ThreadNotification(id: arg.id, notice: "ready")
-  info "[threadpool task thread] sending 'ready'", threadid=arg.id
-  await arg.chanSendToPool.send(noticeToPool.toJson(typeAnnotations = true).safe)
+  debug "[threadpool task thread] sending 'ready'", threadid=arg.id
+  await arg.chanSendToPool.send(noticeToPool.encode.safe)
 
   while true:
-    info "[threadpool task thread] waiting for message"
+    debug "[threadpool task thread] waiting for message"
     let received = $(await arg.chanRecvFromPool.recv())
 
     if received == "shutdown":
-      info "[threadpool task thread] received 'shutdown'"
-      info "[threadpool task thread] breaking while loop"
+      debug "[threadpool task thread] received 'shutdown'"
       break
 
     let
-      jsonNode = parseJson(received)
-      messageType = jsonNode{"$type"}.getStr
-
-    info "[threadpool task thread] received task", messageType=messageType
-    info "[threadpool task thread] initiating task", messageType=messageType,
+      parsed = parseJson(received)
+      messageType = parsed{"$type"}.getStr
+    debug "[threadpool task thread] initiating task", messageType=messageType,
       threadid=arg.id
 
     try:
-      case messageType
-        of "StickerPackPurchaseGasEstimate:ObjectType":
-          let decoded = Json.decode(received, StickerPackPurchaseGasEstimate, allowUnknownFields = true)
-          decoded.run()
-        of "ObtainAvailableStickerPacks:ObjectType":
-          let decoded = Json.decode(received, ObtainAvailableStickerPacks, allowUnknownFields = true)
-          decoded.run()
-        else:
-          error "[threadpool task thread] unknown message", message=received
+      let task = cast[Task](parsed{"tptr"}.getInt)
+      try:
+        task(received)
+      except Exception as e:
+        error "[threadpool task thread] exception", error=e.msg
     except Exception as e:
-      error "[threadpool task thread] exception", error=e.msg
+      error "[threadpool task thread] unknown message", message=received
 
     let noticeToPool = ThreadNotification(id: arg.id, notice: "done")
-    info "[threadpool task thread] sending 'done' notice to pool",
+    debug "[threadpool task thread] sending 'done' notice to pool",
       threadid=arg.id
-    await arg.chanSendToPool.send(noticeToPool.toJson(typeAnnotations = true).safe)
+    await arg.chanSendToPool.send(noticeToPool.encode.safe)
 
   arg.chanRecvFromPool.close()
   arg.chanSendToPool.close()
 
 proc taskThread(arg: TaskThreadArg) {.thread.} =
-  waitFor task(arg)
+  waitFor runner(arg)
 
 proc pool(arg: PoolThreadArg) {.async.} =
   let
@@ -124,14 +120,14 @@ proc pool(arg: PoolThreadArg) {.async.} =
   chanSendToMain.open()
   chanRecvFromMainOrTask.open()
 
-  info "[threadpool] sending 'ready' to main thread"
+  debug "[threadpool] sending 'ready' to main thread"
   await chanSendToMain.send("ready".safe)
 
   for i in 0..<arg.size:
     let id = i + 1
     let chanSendToTask = newAsyncChannel[ThreadSafeString](-1)
     chanSendToTask.open()
-    info "[threadpool] adding to threadsIdle", threadid=id
+    debug "[threadpool] adding to threadsIdle", threadid=id
     threadsIdle[i].id = id
     createThread(
       threadsIdle[i].thr,
@@ -153,55 +149,53 @@ proc pool(arg: PoolThreadArg) {.async.} =
   # push thread into threadsIdle
 
   while true:
-    info "[threadpool] waiting for message"
+    debug "[threadpool] waiting for message"
     var task = $(await chanRecvFromMainOrTask.recv())
-    info "[threadpool] received message", msg=task
 
     if task == "shutdown":
-      info "[threadpool] sending 'shutdown' to all task threads"
+      debug "[threadpool] sending 'shutdown' to all task threads"
       for tpl in threadsIdle:
         await tpl.chanSendToTask.send("shutdown".safe)
       for tpl in threadsBusy.values:
         await tpl.chanSendToTask.send("shutdown".safe)
-      info "[threadpool] breaking while loop"
       break
 
     let
       jsonNode = parseJson(task)
       messageType = jsonNode{"$type"}.getStr
-    info "[threadpool] determined message type", messageType=messageType
+    debug "[threadpool] determined message type", messageType=messageType
 
     case messageType
       of "ThreadNotification":
         try:
-          let notification = Json.decode(task, ThreadNotification, allowUnknownFields = true)
-          info "[threadpool] received notification",
+          let notification = decode[ThreadNotification](task)
+          debug "[threadpool] received notification",
             notice=notification.notice, threadid=notification.id
 
           if notification.notice == "ready":
-            info "[threadpool] received 'ready' from a task thread"
+            debug "[threadpool] received 'ready' from a task thread"
             allReady = allReady + 1
 
           elif notification.notice == "done":
             let tpl = threadsBusy[notification.id]
-            info "[threadpool] adding to threadsIdle",
+            debug "[threadpool] adding to threadsIdle",
                 newlength=(threadsIdle.len + 1)
             threadsIdle.add (notification.id, tpl.thr, tpl.chanSendToTask)
-            info "[threadpool] removing from threadsBusy",
+            debug "[threadpool] removing from threadsBusy",
               newlength=(threadsBusy.len - 1), threadid=notification.id
             threadsBusy.del notification.id
 
             if taskQueue.len > 0:
-              info "[threadpool] removing from taskQueue",
+              debug "[threadpool] removing from taskQueue",
                 newlength=(taskQueue.len - 1)
               task = taskQueue[0]
               taskQueue.delete 0, 0
 
-              info "[threadpool] removing from threadsIdle",
+              debug "[threadpool] removing from threadsIdle",
                 newlength=(threadsIdle.len - 1)
               let tpl = threadsIdle[0]
               threadsIdle.delete 0, 0
-              info "[threadpool] adding to threadsBusy",
+              debug "[threadpool] adding to threadsBusy",
                 newlength=(threadsBusy.len + 1), threadid=tpl.id
               threadsBusy.add tpl.id, (tpl.thr, tpl.chanSendToTask)
               await tpl.chanSendToTask.send(task.safe)
@@ -214,7 +208,7 @@ proc pool(arg: PoolThreadArg) {.async.} =
       else: # must be a request to do task work
         if allReady < arg.size or threadsBusy.len == arg.size:
           # add to queue
-          info "[threadpool] adding to taskQueue",
+          debug "[threadpool] adding to taskQueue",
             newlength=(taskQueue.len + 1)
           taskQueue.add task
 
@@ -223,23 +217,22 @@ proc pool(arg: PoolThreadArg) {.async.} =
           # check if we have tasks waiting on queue
           if taskQueue.len > 0:
             # remove first element from the task queue
-            info "[threadpool] adding to taskQueue",
+            debug "[threadpool] adding to taskQueue",
               newlength=(taskQueue.len + 1)
             taskQueue.add task
-            info "[threadpool] removing from taskQueue",
+            debug "[threadpool] removing from taskQueue",
               newlength=(taskQueue.len - 1)
             task = taskQueue[0]
             taskQueue.delete 0, 0
 
-          info "[threadpool] removing from threadsIdle",
+          debug "[threadpool] removing from threadsIdle",
             newlength=(threadsIdle.len - 1)
           let tpl = threadsIdle[0]
           threadsIdle.delete 0, 0
-          info "[threadpool] adding to threadsBusy",
+          debug "[threadpool] adding to threadsBusy",
             newlength=(threadsBusy.len + 1), threadid=tpl.id
           threadsBusy.add tpl.id, (tpl.thr, tpl.chanSendToTask)
           await tpl.chanSendToTask.send(task.safe)
-
 
   var allTaskThreads: seq[Thread[TaskThreadArg]] = @[]
 
@@ -253,6 +246,7 @@ proc pool(arg: PoolThreadArg) {.async.} =
   chanSendToMain.close()
   chanRecvFromMainOrTask.close()
 
+  debug "[threadpool] waiting for all task threads to stop"
   joinThreads(allTaskThreads)
 
 proc poolThread(arg: PoolThreadArg) {.thread.} =
