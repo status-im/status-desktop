@@ -5,10 +5,21 @@ import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
 
-RowLayout {
+StatusRadioButtonRow {
     property string network: ""
     property string networkName: ""
     property string newNetwork: ""
+    id: radioProd
+    text: networkName == "" ? Utils.getNetworkName(network) : networkName
+    buttonGroup: networkSettings
+    checked: profileModel.network.current  === network
+    onRadioCheckedChanged: {
+        if (checked) {
+            if (profileModel.network.current === network) return;
+            newNetwork = network;
+            confirmDialog.open();
+        }
+    }
 
     ConfirmationDialog {
         id: confirmDialog
@@ -20,23 +31,5 @@ RowLayout {
             profileModel.network.current = newNetwork;
         }
         onClosed: profileModel.network.triggerNetworkChange()
-    }
-
-    width: parent.width
-    StyledText {
-        text: networkName == "" ? Utils.getNetworkName(network) : networkName
-        font.pixelSize: 15
-    }
-    StatusRadioButton {
-        id: radioProd
-        Layout.alignment: Qt.AlignRight
-        ButtonGroup.group: networkSettings
-        rightPadding: 0
-        checked: profileModel.network.current  === network
-        onClicked: {
-            if (profileModel.network.current === network) return;
-            newNetwork = network;
-            confirmDialog.open();
-        }
     }
 }

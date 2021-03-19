@@ -15,29 +15,35 @@ ModalPopup {
     }
 
     Column {
-        anchors.fill: parent
-        spacing: Style.current.bigPadding
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding
+        anchors.leftMargin: Style.current.padding
+
+        spacing: 0
 
         ButtonGroup {
             id: openLinksWithGroup
         }
 
-        StatusRadioButton {
+        StatusRadioButtonRow {
             text: "Status"
-            ButtonGroup.group: openLinksWithGroup
+            buttonGroup: openLinksWithGroup
             checked: appSettings.openLinksInStatus
-            onCheckedChanged: {
+            onRadioCheckedChanged: {
                 if (checked) {
                     appSettings.openLinksInStatus = true
                 }
             }
         }
-        StatusRadioButton {
+        StatusRadioButtonRow {
             //% "My default browser"
             text: qsTrId("my-default-browser")
-            ButtonGroup.group: openLinksWithGroup
+            buttonGroup: openLinksWithGroup
             checked: !appSettings.openLinksInStatus
-            onCheckedChanged: {
+            onRadioCheckedChanged: {
                 if (checked) {
                     appSettings.openLinksInStatus = false
                 }

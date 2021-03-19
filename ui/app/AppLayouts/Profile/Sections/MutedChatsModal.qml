@@ -24,9 +24,12 @@ ModalPopup {
         anchors.right: parent.right
         model: root.showMutedContacts ? profileModel.mutedContacts : profileModel.mutedChats
         delegate: Rectangle {
+            id: channelItem
+            property bool isHovered: false
             height: contactImage.height + Style.current.smallPadding * 2
             width: parent.width
-            color: Style.current.transparent
+            radius: Style.current.radius
+            color: isHovered ? Style.current.backgroundHover : Style.current.transparent
 
             StatusIdenticon {
                 id: contactImage
@@ -36,6 +39,7 @@ ModalPopup {
                 chatType: model.chatType
                 identicon: model.identicon
                 anchors.left: parent.left
+                anchors.leftMargin: Style.current.smallPadding
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -47,21 +51,38 @@ ModalPopup {
                 anchors.right: unmuteButton.left
                 anchors.rightMargin: Style.current.smallPadding
                 elide: Text.ElideRight
-                font.pixelSize: 17
+                font.pixelSize: 15
                 anchors.left: contactImage.right
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onEntered: channelItem.isHovered = true
+                onExited: channelItem.isHovered = false
             }
 
             StatusButton {
                 id: unmuteButton
                 type: "secondary"
                 anchors.right: parent.right
+                anchors.rightMargin: Style.current.smallPadding
                 anchors.verticalCenter: parent.verticalCenter
                 //% "Unmute"
                 text: qsTrId("unmute")
                 onClicked: {
                     profileModel.unmuteChannel(model.id)
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onEntered: {
+                        channelItem.isHovered = true
+                    }
                 }
             }
         }
