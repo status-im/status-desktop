@@ -123,6 +123,10 @@ QtObject:
 
   proc ensResolved(self: ContactsView, id: string) {.slot.} =
     self.ensWasResolved(id)
+    if id == "":
+      self.contactToAddChanged()
+      return
+
     let contact = self.status.contacts.getContactByID(id)
     
     if contact != nil:
