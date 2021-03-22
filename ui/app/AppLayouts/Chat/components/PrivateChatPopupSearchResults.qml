@@ -16,9 +16,19 @@ Item {
     property string username: ""
     property string userAlias: ""
     property string pubKey: ""
+    property bool resultClickable: true
 
     signal resultClicked(string pubKey)
     signal addToContactsButtonClicked(string pubKey)
+
+    function reset() {
+        hasExistingContacts = false
+        showProfileNotFoundMessage = false
+        username = ""
+        userAlias = ""
+        pubKey = ""
+    }
+
     width: parent.width
 
     StyledText {
@@ -82,12 +92,16 @@ Item {
         }
 
         MouseArea {
-            cursorShape: Qt.PointingHandCursor
+            cursorShape: root.resultClickable ? Qt.PointingHandCursor : Qt.ArrowCursor
             anchors.fill: parent
             hoverEnabled: true
             onEntered: foundContact.hovered = true
             onExited: foundContact.hovered = false
-            onClicked: root.resultClicked(root.pubKey)
+            onClicked: {
+                if (root.resultClickable) {
+                    root.resultClicked(root.pubKey)
+                }
+            }
         }
 
         StatusIconButton {
