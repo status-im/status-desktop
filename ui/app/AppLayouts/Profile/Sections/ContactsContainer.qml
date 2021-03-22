@@ -112,13 +112,6 @@ Item {
             }
         }
 
-        Connections {
-            target: profileModel.contacts
-            onContactToAddChanged: {
-                contactsContainer.isPending = false
-            }
-        }
-
         Component {
             id: loadingIndicator
             LoadingImage {
@@ -131,13 +124,29 @@ Item {
             id: addContactModal
             //% "Add contact"
             title: qsTrId("add-contact")
+            property string validationError: ""
+
+            function validate(value) {
+                if (!Utils.isChatKey(value) && !Utils.isValidETHNamePrefix(value)) {
+                    //% "Enter a valid chat key or ENS username"
+                    addContactModal.validationError = qsTr("Enter a valid chat key or ENS username");
+                } else if (profileModel.profile.pubKey === value) {
+                    addContactModal.validationError = qsTr("You can't add yourself");
+                } else {
+                    addContactModal.validationError = ""
+                }
+                return addContactModal.validationError === ""
+            }
 
             property var lookupContact: Backpressure.debounce(addContactSearchInput, 400, function (value) {
+                contactsContainer.isPending = true
+                searchResults.showProfileNotFoundMessage = false
                 profileModel.contacts.lookupContact(value)
             })
 
             onOpened: {
                 addContactSearchInput.text = ""
+                searchResults.reset()
             }
 
             Input {
@@ -146,90 +155,53 @@ Item {
                 placeholderText: qsTrId("enter-contact-code")
                 customHeight: 44
                 fontPixelSize: 15
-                onEditingFinished: {
-                    contactsContainer.isPending = true
-                    profileModel.contacts.lookupContact(inputValue)
-                    contactsContainer.isPending = false
-                }
-                onTextChanged: {
-                    if (addContactSearchInput.text !== "") {
-                        contactsContainer.isPending = true
-                    }
-                }
                 Keys.onReleased: {
+                    if (!addContactModal.validate(addContactSearchInput.text)) {
+                        searchResults.reset()
+                        contactsContainer.isPending = false
+                        return;
+                    }
+
                     Qt.callLater(addContactModal.lookupContact, addContactSearchInput.text)
                 }
-            }
 
-            Loader {
-                sourceComponent: loadingIndicator
-                anchors.top: addContactSearchInput.bottom
-                anchors.topMargin: Style.current.padding
-                anchors.horizontalCenter: parent.horizontalCenter
-                active: contactsContainer.isPending
-            }
-
-            Item {
-                id: contactToAddInfo
-                anchors.top: addContactSearchInput.bottom
-                anchors.topMargin: Style.current.padding
-                anchors.horizontalCenter: parent.horizontalCenter
-                height: contactUsername.height
-                width: contactUsername.width + contactPubKey.width
-                visible: !contactsContainer.isPending && !!addContactSearchInput.text
-
-
-                StyledText {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    font.pixelSize: 12
-                    color: Style.current.darkGrey
-                    //% "User not found"
-                    text: qsTrId("user-not-found")
-                    visible: !contactsContainer.isPending && !!!profileModel.contacts.contactToAddUsername
-                }
 
                 Connections {
                     target: profileModel.contacts
                     onEnsWasResolved: {
-                        if(addContactSearchInput.text !== "" && !Utils.isHex(addContactSearchInput.text) && resolvedPubKey !== ""){
-                            contactUsername.text = Qt.binding(function () {
-                                return chatsModel.formatENSUsername(addContactSearchInput.text) + " • "
-                            });
+                        if (resolvedPubKey === "") {
+                            searchResults.pubKey = ""
+                            searchResults.showProfileNotFoundMessage = true
+                            contactsContainer.isPending = false
+                            return
                         }
+                        searchResults.username = utilsModel.generateAlias(resolvedPubKey)
+                        searchResults.userAlias = Utils.compactAddress(resolvedPubKey, 4)
+                        searchResults.pubKey = resolvedPubKey
+                        searchResults.showProfileNotFoundMessage = false
+                        contactsContainer.isPending = false
                     }
                 }
-
-                StyledText {
-                    id: contactUsername
-                    text: profileModel.contacts.contactToAddUsername + " • "
-                    font.pixelSize: 12
-                    color: Style.current.darkGrey
-                    visible: !!profileModel.contacts.contactToAddPubKey
-                }
-
-                StyledText {
-                    id: contactPubKey
-                    text: profileModel.contacts.contactToAddPubKey
-                    anchors.left: contactUsername.right
-                    width: 100
-                    font.pixelSize: 12
-                    elide: Text.ElideMiddle
-                    color: Style.current.darkGrey
-                    visible: !!profileModel.contacts.contactToAddPubKey
-                }
-
             }
-            footer: StatusButton {
-                anchors.right: parent.right
-                anchors.leftMargin: Style.current.padding
-                //% "Add contact"
-                text: qsTrId("add-contact")
-                enabled: contactToAddInfo.visible
-                anchors.bottom: parent.bottom
-                onClicked: {
-                    profileModel.contacts.addContact(profileModel.contacts.contactToAddPubKey);
-                    addContactModal.close()
-                }
+
+            StyledText {
+                id: validationErrorMessage
+                text: addContactModal.validationError
+                visible: addContactModal.validationError !== ""
+                font.pixelSize: 13
+                color: Style.current.danger
+                anchors.top: addContactSearchInput.bottom
+                anchors.topMargin: Style.current.smallPadding
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            PrivateChatPopupSearchResults {
+                id: searchResults
+                anchors.top: addContactSearchInput.bottom
+                anchors.topMargin: Style.current.xlPadding
+                loading: contactsContainer.isPending
+                resultClickable: false
+                onAddToContactsButtonClicked: profileModel.contacts.addContact(pubKey)
             }
         }
 
