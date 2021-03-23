@@ -148,11 +148,28 @@ ModalPopup {
                 height: visible ? communityImage.height + Style.current.padding : 0
                 width: parent.width
 
-                RoundedImage {
+                Loader {
                     id: communityImage
-                    width: 40
-                    height: 40
-                    source: thumbnailImage
+                    sourceComponent: !!thumbnailImage ? commmunityImgCmp : letterIdenticonCmp
+                }
+
+                Component {
+                    id: commmunityImgCmp
+                    RoundedImage {
+                        source: thumbnailImage
+                        width: 40
+                        height: 40
+                    }
+                }
+
+                Component {
+                    id: letterIdenticonCmp
+                    StatusLetterIdenticon {
+                        width: 40
+                        height: 40
+                        chatName: name
+                        color: communityColor || Style.current.blue
+                    }
                 }
 
                 StyledText {

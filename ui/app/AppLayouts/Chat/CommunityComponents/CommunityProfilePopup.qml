@@ -59,7 +59,7 @@ ModalPopup {
                 width: 40
                 height: 40
                 chatName: popup.name
-                color: popup.communityColor
+                color: popup.communityColor || Style.current.blue
             }
         }
 
