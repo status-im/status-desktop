@@ -321,15 +321,15 @@ QtObject:
     write = setDefaultCurrency
     notify = defaultCurrencyChanged
 
-  proc hasAsset*(self: WalletView, account: string, symbol: string): bool {.slot.} =
-    self.status.wallet.hasAsset(account, symbol)
+  proc hasAsset*(self: WalletView, symbol: string): bool {.slot.} =
+    self.status.wallet.hasAsset(symbol)
 
   proc toggleAsset*(self: WalletView, symbol: string) {.slot.} =
     self.status.wallet.toggleAsset(symbol)
     for account in self.status.wallet.accounts:
       if account.address == self.currentAccount.address:
         self.currentAccount.setAccountItem(account)
-      else: 
+      else:
         self.accounts.updateAssetsInList(account.address, account.assetList)
     self.accountListChanged()
     self.currentAccountChanged()

@@ -290,8 +290,7 @@ proc addWatchOnlyAccount*(self: WalletModel, address: string, accountName: strin
   let account = GeneratedAccount(address: address)
   return self.addNewGeneratedAccount(account, "", accountName, color, constants.WATCH, false)
 
-proc hasAsset*(self: WalletModel, account: string, symbol: string): bool =
-  self.tokens = status_tokens.getVisibleTokens()
+proc hasAsset*(self: WalletModel, symbol: string): bool =
   self.tokens.anyIt(it.symbol == symbol)
 
 proc changeAccountSettings*(self: WalletModel, address: string, accountName: string, color: string): string =
@@ -311,8 +310,7 @@ proc deleteAccount*(self: WalletModel, address: string): string =
   result = status_accounts.deleteAccount(address)
 
 proc toggleAsset*(self: WalletModel, symbol: string) =
-  status_tokens.toggleAsset(symbol)
-  self.tokens = status_tokens.getVisibleTokens()
+  self.tokens = status_tokens.toggleAsset(symbol)
   for account in self.accounts:
     account.assetList = self.generateAccountConfiguredAssets(account.address)
     updateBalance(account, self.getDefaultCurrency())
