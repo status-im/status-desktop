@@ -78,7 +78,7 @@ Rectangle {
         messageInputField.insert(start, text.replace(/\n/g, "<br/>"));
     }
 
-    property var interpretMessage: function (msg)  {
+    property var interpretMessage: function (msg) {
         if (msg.startsWith("/shrug")) {
             return  msg.replace("/shrug", "") + " ¯\\\\\\_(ツ)\\_/¯"
         }
