@@ -176,12 +176,23 @@ QtObject:
   proc plainText(self: ChatsView, input: string): string {.slot.} =
     result = plain_text(input)
 
-  proc sendMessage*(self: ChatsView, message: string, replyTo: string, contentType: int = ContentType.Message.int, isStatusUpdate: bool = false) {.slot.} =
+  proc sendMessage*(self: ChatsView, message: string, replyTo: string, contentType: int = ContentType.Message.int, isStatusUpdate: bool = false, contactsString: string = "") {.slot.} =
     let aliasPattern = re(r"(@[A-z][a-z]+ [A-z][a-z]* [A-z][a-z]*)", flags = {reStudy, reIgnoreCase})
     let ensPattern = re(r"(@\w+(?=(\.stateofus)?\.eth))", flags = {reStudy, reIgnoreCase})
     let namePattern = re(r"(@\w+)", flags = {reStudy, reIgnoreCase})
 
-    let contacts = self.status.contacts.getContacts()
+    var contacts: seq[Profile]
+    if (contactsString == ""):
+      contacts = self.status.contacts.getContacts()
+    else:
+      let contactsJSON = parseJson(contactsString)
+      contacts = @[]
+      for contact in contactsJSON:
+        contacts.add(Profile(
+          address: contact["address"].str,
+          alias: contact["alias"].str,
+          ensName: contact["ensName"].str
+        ))
 
     let aliasMentions = findAll(message, aliasPattern)
     let ensMentions = findAll(message, ensPattern)

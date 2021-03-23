@@ -42,21 +42,23 @@ StackLayout {
 
 
     property var idMap: ({})
+    property var suggestionsObj: ([])
 
     function addSuggestionFromMessageList(i){
         const contactAddr = chatsModel.messageList.getMessageData(i, "publicKey");
         if(idMap[contactAddr]) return;
-        chatInput.suggestionsList.append({
-            alias: chatsModel.messageList.getMessageData(i, "alias"),
-            ensName: chatsModel.messageList.getMessageData(i, "ensName"),
-            address: contactAddr,
-            identicon: chatsModel.messageList.getMessageData(i, "identicon"),
-            localNickname: chatsModel.messageList.getMessageData(i, "localName")
-        });
+        suggestionsObj.push({
+                                alias: chatsModel.messageList.getMessageData(i, "alias"),
+                                ensName: chatsModel.messageList.getMessageData(i, "ensName"),
+                                address: contactAddr,
+                                identicon: chatsModel.messageList.getMessageData(i, "identicon"),
+                                localNickname: chatsModel.messageList.getMessageData(i, "localName")
+                            })
+        chatInput.suggestionsList.append(suggestionsObj[suggestionsObj.length - 1]);
         idMap[contactAddr] = true;
     }
 
-    function populateSuggestions(){
+    function populateSuggestions() {
         chatInput.suggestionsList.clear()
         const len = chatsModel.suggestionList.rowCount()
 
@@ -66,13 +68,16 @@ StackLayout {
             const contactAddr = chatsModel.suggestionList.rowData(i, "address");
             if(idMap[contactAddr]) continue;
             const contactIndex = profileModel.contacts.list.getContactIndexByPubkey(chatsModel.suggestionList.rowData(i, "address"));
-            chatInput.suggestionsList.append({
-                alias: chatsModel.suggestionList.rowData(i, "alias"),
-                ensName: chatsModel.suggestionList.rowData(i, "ensName"),
-                address: contactAddr,
-                identicon: profileModel.contacts.list.rowData(contactIndex, "thumbnailImage"),
-                localNickname: chatsModel.suggestionList.rowData(i, "localNickname")
-            });
+
+            suggestionsObj.push({
+                                    alias: chatsModel.suggestionList.rowData(i, "alias"),
+                                    ensName: chatsModel.suggestionList.rowData(i, "ensName"),
+                                    address: contactAddr,
+                                    identicon: profileModel.contacts.list.rowData(contactIndex, "thumbnailImage"),
+                                    localNickname: chatsModel.suggestionList.rowData(i, "localNickname")
+                                })
+
+            chatInput.suggestionsList.append(suggestionsObj[suggestionsObj.length - 1]);
             idMap[contactAddr] = true;
         }
         const len2 = chatsModel.messageList.rowCount();
@@ -322,7 +327,7 @@ StackLayout {
                     let msg = chatsModel.plainText(Emoji.deparse(chatInput.textInput.text))
                     if (msg.length > 0){
                         msg = chatInput.interpretMessage(msg)
-                        chatsModel.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, false);
+                        chatsModel.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, false, JSON.stringify(suggestionsObj));
                         if(event) event.accepted = true
                         sendMessageSound.stop();
                         Qt.callLater(sendMessageSound.play);
