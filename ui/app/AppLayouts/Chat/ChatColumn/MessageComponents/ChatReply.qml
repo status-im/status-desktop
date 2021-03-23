@@ -85,7 +85,7 @@ Loader {
 
             Separator {
                 anchors.top: repliedMessageType == Constants.imageType ? imgReplyImage.bottom : lblReplyMessage.bottom
-                anchors.topMargin: repliedMessageType == Constants.imageType ? 15 : 8
+                anchors.topMargin: Style.current.halfPadding
                 anchors.left: lblReplyMessage.left
                 anchors.right: lblReplyMessage.right
                 anchors.rightMargin: root.chatHorizontalPadding
