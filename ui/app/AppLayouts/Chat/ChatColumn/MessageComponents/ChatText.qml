@@ -74,41 +74,7 @@ Item {
             if(isEmoji) {
                 return Emoji.parse(msg, Emoji.size.middle);
             } else {
-                return `<style type="text/css">` +
-                            `p, img, a, del, code, blockquote { margin: 0; padding: 0; }` +
-                            `code {` +
-                                `background-color: ${Style.current.codeBackground};` +
-                                `color: ${Style.current.white};` +
-                                `white-space: pre;` +
-                            `}` +
-                            `p {` +
-                                `line-height: 22px;` +
-                            `}` +
-                            `a {` +
-                                `color: ${isCurrentUser && !appSettings.useCompactMode ? Style.current.white : Style.current.textColor};` +
-                            `}` +
-                            `a.mention {` +
-                                `color: ${Style.current.mentionColor};` +
-                                `background-color: ${Style.current.mentionBgColor};` +
-                                `text-decoration: none;` +
-                            `}` +
-                            `del {` +
-                                `text-decoration: line-through;` +
-                            `}` +
-                            `table.blockquote td {` +
-                                `padding-left: 10px;` +
-                                `color: ${isCurrentUser ? Style.current.chatReplyCurrentUser : Style.current.secondaryText};` +
-                            `}` +
-                            `table.blockquote td.quoteline {` +
-                                `background-color: ${isCurrentUser ? Style.current.chatReplyCurrentUser : Style.current.secondaryText};` +
-                                `height: 100%;` +
-                                `padding-left: 0;` +
-                            `}` +
-                            `.emoji {` +
-                                `vertical-align: bottom;` +
-                            `}` +
-                        `</style>` +
-                        `${Emoji.parse(msg)}`
+                return Utils.getMessageWithStyle(Emoji.parse(msg), appSettings.useCompactMode, isCurrentUser)
             }
         }
     }

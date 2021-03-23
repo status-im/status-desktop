@@ -86,7 +86,6 @@ StackLayout {
         }
     }
 
-
     function showReplyArea() {
         isReply = true;
         isImage = false;

@@ -38,21 +38,26 @@ Rectangle {
         font.weight: Font.Medium
     }
 
-    StyledText {
-        id: replyText
-        text: Emoji.parse(message)
+    Rectangle {
         anchors.left: replyToUsername.left
         anchors.top: replyToUsername.bottom
-        anchors.topMargin: 2
+        anchors.topMargin: -3
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         anchors.bottom: parent.bottom
-        elide: Text.ElideRight
-        font.pixelSize: 13
-        font.weight: Font.Normal
-        // Eliding only works for PlainText: https://bugreports.qt.io/browse/QTBUG-16567
-        textFormat: Text.PlainText
-        color: Style.current.textColor
+        clip: true
+        color: Style.current.transparent
+
+        StyledText {
+            id: replyText
+            text: Utils.getMessageWithStyle(Utils.linkifyAndXSS(Emoji.parse(message)), appSettings.useCompactMode, false)
+            anchors.fill: parent
+            elide: Text.ElideRight
+            font.pixelSize: 13
+            font.weight: Font.Normal
+            textFormat: Text.RichText
+            color: Style.current.textColor
+        }
     }
 
     RoundButton {

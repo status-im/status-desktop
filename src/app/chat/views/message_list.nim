@@ -220,7 +220,7 @@ QtObject:
     of "alias": result = (message.alias)
     of "localName": result = (message.localName)
     of "ensName": result = (message.ensName)
-    of "message": result = (message.text)
+    of "message": result = (self.renderBlock(message))
     of "identicon": result = (message.identicon)
     of "timestamp": result = $(message.timestamp)
     of "image": result = $(message.image)
