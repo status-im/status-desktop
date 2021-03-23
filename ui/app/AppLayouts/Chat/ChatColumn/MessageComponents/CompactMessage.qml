@@ -238,6 +238,7 @@ Item {
     }
 
     HoverHandler {
+        enabled: !messageContextMenu.opened && !profilePopupOpened
         onHoveredChanged: {
             root.isHovered = hovered;
         }
