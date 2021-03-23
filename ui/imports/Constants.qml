@@ -126,6 +126,30 @@ QtObject {
     readonly property var acceptedImageExtensions: [".png", ".jpg", ".jpeg", ".svg", ".gif"]
     readonly property var acceptedDragNDropImageExtensions: [".png", ".jpg", ".jpeg", ".heif", "tif", ".tiff"]
 
-
     readonly property string mentionSpanTag: `<span style="color:${Style.current.mentionColor}; background-color: ${Style.current.mentionBgColor};">`
+
+    readonly property string ens_taken: "taken"
+    readonly property string ens_taken_custom: "taken-custom"
+    readonly property string ens_owned: "owned"
+    readonly property string ens_availabe: "available"
+    readonly property string ens_already_connected: "already-connected"
+    readonly property string ens_connected: "connected"
+    readonly property string ens_connected_dkey: "connected-different-key"
+
+    readonly property var ensState: {
+        //% "Username already taken :("
+        "taken": qsTrId("ens-username-taken"),
+        //% "Username doesn’t belong to you :("
+        "taken-custom": qsTrId("ens-custom-username-taken"),
+        //% "Continuing will connect this username with your chat key."
+        "owned": qsTrId("ens-username-owned-continue"),
+        //% "✓ Username available!"
+        "availabe": qsTrId("ens-username-available"),
+        //% "Username is already connected with your chat key and can be used inside Status."
+        "already-connected": qsTrId("ens-username-already-added"),
+        //% "This user name is owned by you and connected with your chat key. Continue to set `Show my ENS username in chats`."
+        "connected": qsTrId("this-user-name-is-owned-by-you-and-connected-with-your-chat-key--continue-to-set--show-my-ens-username-in-chats--"),
+        //% "Continuing will require a transaction to connect the username with your current chat key."
+        "connected-different-key": qsTrId("ens-username-connected-with-different-key"),
+    }
 }

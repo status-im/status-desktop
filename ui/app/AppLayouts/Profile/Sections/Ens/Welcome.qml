@@ -10,8 +10,7 @@ Item {
 
     StyledText {
         id: sectionTitle
-        //% "ENS usernames"
-        text: qsTrId("ens-usernames")
+        text: ""
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top
@@ -34,15 +33,15 @@ Item {
 
         Item {
             id: contentItem
-            anchors.right: parent.right;
-            anchors.left: parent.left;
+            width: 624
+            anchors.horizontalCenter: parent.horizontalCenter
 
             Image {
                 id: image
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                source: "../../../../img/ens-header@2x.png"
+                source: `../../../../img/ens-header-${Style.current.name}@2x.png`
             }
 
             StyledText {
