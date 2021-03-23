@@ -13,6 +13,7 @@ SplitView {
 
     property alias chatColumn: chatColumn
     property bool stickersLoaded: false
+    property bool profilePopupOpened: false
 
     Connections {
         target: chatsModel.stickers
@@ -109,6 +110,7 @@ SplitView {
             popup.parentPopup = parentPopup;
         }
         popup.openPopup(profileModel.profile.pubKey !== fromAuthorParam, userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam);
+        profilePopupOpened = true
     }
 
     property Component profilePopupComponent: ProfilePopup {
@@ -118,6 +120,7 @@ SplitView {
             if(profilePopup.parentPopup){
                 profilePopup.parentPopup.close();
             }
+            profilePopupOpened = false
             destroy()
         }
     }
