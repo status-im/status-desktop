@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../shared"
+import "../../../../shared/status"
 import "../../../../imports"
 import "../components"
 import "./"
@@ -18,14 +19,34 @@ Button {
     
     contentItem: Item {
         id: content
-        RoundedImage {
+        Loader {
             id: communityImage
-            width: 40
-            height: 40
-            source: chatsModel.communities.activeCommunity.thumbnailImage
             anchors.verticalCenter: parent.verticalCenter
-            noHover: true
+            active: true
+            sourceComponent: !chatsModel.communities.activeCommunity.thumbnailImage ? letterIdenticon : imageIcon
         }
+
+        Component {
+            id: imageIcon
+            RoundedImage {
+                width: 40
+                height: 40
+                source: chatsModel.communities.activeCommunity.thumbnailImage
+                noMouseArea: true
+            }
+        }
+
+        Component {
+            id: letterIdenticon
+            StatusLetterIdenticon {
+                width: 40
+                height: 40
+                chatName: chatsModel.communities.activeCommunity.name
+                color: chatsModel.communities.activeCommunity.communityColor || Style.current.blue
+            }
+        }
+
+
 
         StyledText {
             id: communityName

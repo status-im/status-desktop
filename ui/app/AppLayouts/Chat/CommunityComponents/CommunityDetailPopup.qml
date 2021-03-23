@@ -17,6 +17,7 @@ ModalPopup {
     property bool canJoin: community.canJoin
     property bool canRequestAccess: community.canRequestAccess
     property bool isMember: community.isMember
+    property string communityColor: community.communityColor || Style.current.blue
 
     id: popup
 
@@ -24,11 +25,29 @@ ModalPopup {
         height: childrenRect.height
         width: parent.width
 
-        RoundedImage {
+
+        Loader {
             id: communityImg
-            source: popup.source
-            width: 40
-            height: 40
+            sourceComponent: !!popup.source ? commmunityImgCmp : letterIdenticonCmp
+        }
+
+        Component {
+            id: commmunityImgCmp
+            RoundedImage {
+                source: popup.source
+                width: 40
+                height: 40
+            }
+        }
+
+        Component {
+            id: letterIdenticonCmp
+            StatusLetterIdenticon {
+                width: 40
+                height: 40
+                chatName: popup.name
+                color: popup.communityColor
+            }
         }
 
         StyledTextEdit {
