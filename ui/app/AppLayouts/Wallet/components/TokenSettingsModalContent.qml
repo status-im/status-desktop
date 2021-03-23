@@ -62,7 +62,7 @@ Item {
             }
             StatusCheckBox  {
                 id: assetCheck
-                checked: walletModel.hasAsset("0x123", symbol)
+                checked: walletModel.hasAsset(symbol)
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.smallPadding
                 onClicked: walletModel.toggleAsset(symbol)

@@ -23,9 +23,9 @@ proc saveSetting*(key: Setting, value: string | JsonNode): StatusGoError =
     if responseResult == "null":
       result.error = ""
     else: result = Json.decode(response, StatusGoError)
+    dirty.store(true)
   except Exception as e:
     error "Error saving setting", key=key, value=value, msg=e.msg
-    dirty.store(true)
 
 proc getWeb3ClientVersion*(): string =
   parseJson(callPrivateRPC("web3_clientVersion"))["result"].getStr
@@ -34,7 +34,7 @@ proc getSettings*(useCached: bool = true, keepSensitiveData: bool = false): Json
   let cacheIsDirty = (not settingsInited) or dirty.load
   if useCached and (not cacheIsDirty) and (not keepSensitiveData):
     result = settings
-  else: 
+  else:
     result = callPrivateRPC("settings_getSettings").parseJSON()["result"]
     if not keepSensitiveData:
       dirty.store(false)

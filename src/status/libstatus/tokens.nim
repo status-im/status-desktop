@@ -47,7 +47,15 @@ proc visibleTokensSNTDefault(): JsonNode =
 
   return response
 
-proc toggleAsset*(symbol: string) =
+proc convertStringSeqToERC20ContractSeq*(stringSeq: seq[string]): seq[Erc20Contract] =
+  result = @[]
+  for v in stringSeq:
+    let t = getErc20Contract(v)
+    if t != nil: result.add t
+    let ct = customTokens.getErc20ContractBySymbol(v)
+    if ct != nil: result.add ct
+
+proc toggleAsset*(symbol: string): seq[Erc20Contract] =
   let currentNetwork = getCurrentNetwork()
   let visibleTokens = visibleTokensSNTDefault()
   var visibleTokenList = visibleTokens[$currentNetwork].to(seq[string])
@@ -58,7 +66,9 @@ proc toggleAsset*(symbol: string) =
     visibleTokenList.add symbol
   visibleTokens[$currentNetwork] = newJArray()
   visibleTokens[$currentNetwork] = %* visibleTokenList
-  discard saveSetting(Setting.VisibleTokens, $visibleTokens)
+  let saved =  saveSetting(Setting.VisibleTokens, $visibleTokens)
+
+  convertStringSeqToERC20ContractSeq(visibleTokenList) 
 
 proc hideAsset*(symbol: string) =
   let currentNetwork = getCurrentNetwork()
@@ -77,12 +87,7 @@ proc getVisibleTokens*(): seq[Erc20Contract] =
   var visibleTokenList = visibleTokens[$currentNetwork].to(seq[string])
   let customTokens = getCustomTokens()
 
-  result = @[]
-  for v in visibleTokenList:
-    let t = getErc20Contract(v)
-    if t != nil: result.add t
-    let ct = customTokens.getErc20ContractBySymbol(v)
-    if ct != nil: result.add ct
+  result = convertStringSeqToERC20ContractSeq(visibleTokenList)
   
 proc addCustomToken*(address: string, name: string, symbol: string, decimals: int, color: string) =
   let payload = %* [{"address": address, "name": name, "symbol": symbol, "decimals": decimals, "color": color}]
