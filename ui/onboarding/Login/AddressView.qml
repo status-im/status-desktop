@@ -59,7 +59,7 @@ Rectangle {
         anchors.left: usernameText.left
         anchors.leftMargin: 0
         font.pixelSize: 15
-        color: Style.current.darkGrey
+        color: Style.current.secondaryText
     }
 
     StatusRadioButton {
