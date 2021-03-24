@@ -17,7 +17,7 @@ Item {
         StyledText {
             id: labelVolume
             anchors.top: parent.top
-            anchors.topMargin: Style.current.bigPadding
+            anchors.topMargin: 24
             anchors.left: parent.left
             anchors.leftMargin: 24
             //% "Sound volume"
