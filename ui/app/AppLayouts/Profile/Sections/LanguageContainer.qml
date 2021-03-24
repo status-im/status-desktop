@@ -13,23 +13,12 @@ Item {
     Item {
         width: contentMaxWidth
         anchors.horizontalCenter: parent.horizontalCenter
-        StyledText {
-            id: title
-            //% "Language settings"
-            text: qsTrId("language-settings")
-            anchors.left: parent.left
-            anchors.leftMargin: 24
-            anchors.top: parent.top
-            anchors.topMargin: 24
-            font.weight: Font.Bold
-            font.pixelSize: 20
-        }
 
         RowLayout {
             property string currentLocale: appSettings.locale
             id: languageSetting
-            anchors.top: title.bottom
-            anchors.topMargin: 20
+            anchors.top: parent.top
+            anchors.topMargin: 24
             anchors.left: parent.left
             anchors.leftMargin: 24
             StyledText {

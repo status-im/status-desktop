@@ -13,17 +13,6 @@ Item {
     Item {
         width: contentMaxWidth
         anchors.horizontalCenter: parent.horizontalCenter
-        StyledText {
-            id: element4
-            //% "Sync settings"
-            text: qsTrId("sync-settings")
-            anchors.left: parent.left
-            anchors.leftMargin: 24
-            anchors.top: parent.top
-            anchors.topMargin: 24
-            font.weight: Font.Bold
-            font.pixelSize: 20
-        }
 
         Component {
             id: mailserversList
@@ -43,8 +32,8 @@ Item {
             id: addMailserver
             width: parent.width
             height: addButton.height
-            anchors.top: element4.bottom
-            anchors.topMargin: Style.current.padding
+            anchors.top: parent.top
+            anchors.topMargin: 24
             anchors.left: parent.left
             anchors.leftMargin: 24
 

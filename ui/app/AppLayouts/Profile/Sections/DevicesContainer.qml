@@ -15,24 +15,12 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    StyledText {
-        id: sectionTitle
-        //% "Devices"
-        text: qsTrId("devices")
-        anchors.left: parent.left
-        anchors.leftMargin: 24
-        anchors.top: parent.top
-        anchors.topMargin: 24
-        font.weight: Font.Bold
-        font.pixelSize: 20
-    }
-
     Item {
         id: firstTimeSetup
         anchors.left: syncContainer.left
         anchors.leftMargin: Style.current.padding
-        anchors.top: sectionTitle.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.top: parent.top
+        anchors.topMargin: 24
         anchors.right: syncContainer.right
         anchors.rightMargin: Style.current.padding
         visible: !profileModel.devices.isSetup
@@ -67,7 +55,7 @@ Item {
         id: advertiseDeviceItem
         anchors.left: syncContainer.left
         anchors.leftMargin: Style.current.padding
-        anchors.top: sectionTitle.bottom
+        anchors.top: parent.bottom
         anchors.topMargin: Style.current.padding
         anchors.right: syncContainer.right
         anchors.rightMargin: Style.current.padding
