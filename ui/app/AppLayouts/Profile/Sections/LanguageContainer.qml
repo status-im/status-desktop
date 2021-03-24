@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status"
 import "./Data/locales.js" as Locales_JSON
 
 Item {
@@ -10,65 +11,25 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
+    property Component languagePopup: LanguageModal {}
+
     Item {
+        anchors.top: parent.top
+        anchors.topMargin: topMargin
+        anchors.bottom: parent.bottom
         width: contentMaxWidth
         anchors.horizontalCenter: parent.horizontalCenter
 
-        RowLayout {
-            property string currentLocale: appSettings.locale
-            id: languageSetting
-            anchors.top: parent.top
-            anchors.topMargin: 24
-            anchors.left: parent.left
-            anchors.leftMargin: 24
-            StyledText {
+        Column {
+            id: generalColumn
+            width: parent.width
+
+            StatusSettingsLineButton {
                 //% "Language"
                 text: qsTrId("language")
-            }
-            Select {
-                id: select
-                anchors.right: undefined
-                anchors.left: undefined
-                width: 100
-                Layout.leftMargin: Style.current.padding
-                model: Locales_JSON.locales
-                selectedItemView: Item {
-                    anchors.fill: parent
-                    StyledText {
-                        id: selectedTextField
-                        text: languageSetting.currentLocale
-                        anchors.left: parent.left
-                        anchors.leftMargin: Style.current.padding
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.pixelSize: 15
-                        verticalAlignment: Text.AlignVCenter
-                        height: 22
-                    }
-                }
-                menu.delegate: Component {
-                    MenuItem {
-                        id: menuItem
-                        height: itemText.height + 4
-                        width: parent.width
-                        padding: 10
-                        onTriggered: function () {
-                            const locale = Locales_JSON.locales[index]
-                            profileModel.changeLocale(locale)
-                            appSettings.locale = locale
-                        }
-
-                        StyledText {
-                            id: itemText
-                            text: Locales_JSON.locales[index]
-                            anchors.left: parent.left
-                            anchors.leftMargin: 5
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                        background: Rectangle {
-                            color: menuItem.highlighted ? Style.current.backgroundHover : Style.current.transparent
-                        }
-                    }
-                }
+                //% "Default"
+                currentValue: appSettings.locale === "" ? qsTrId("default") : appSettings.locale
+                onClicked: languagePopup.createObject(languageContainer).open()
             }
         }
     }

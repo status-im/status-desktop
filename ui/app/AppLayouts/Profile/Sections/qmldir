@@ -10,3 +10,4 @@ HelpContainer 1.0 HelpContainer.qml
 AboutContainer 1.0 AboutContainer.qml
 SignoutContainer 1.0 SignoutContainer.qml
 BackupSeedModal 1.0 BackupSeedModal.qml
+LanguageModal 1.0 LanguageModal.qml
