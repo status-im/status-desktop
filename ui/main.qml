@@ -23,7 +23,7 @@ ApplicationWindow {
     Universal.theme: Universal.System
 
     id: applicationWindow
-    minimumWidth: 1280
+    minimumWidth: 800
     minimumHeight: 600
     width: 1232
     height: 770
