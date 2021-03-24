@@ -69,13 +69,13 @@ QtObject:
     result.chatId = chatId
 
   proc addFakeMessages*(self: ChatMessageList) =
+    self.messages.add(self.fetchMoreMessagesButton())
     self.messages.add(self.chatIdentifier(self.id))
 
   proc newChatMessageList*(chatId: string, status: Status, addFakeMessages: bool = true): ChatMessageList =
     new(result, delete)
     result.messages = @[]
     result.id = chatId
-    result.messages.add(result.fetchMoreMessagesButton())
 
     if addFakeMessages:
       result.addFakeMessages()
@@ -252,7 +252,6 @@ QtObject:
     self.messages = @[]
     if (addFakeMessages):
       self.addFakeMessages()
-    self.messages.add(self.fetchMoreMessagesButton())
     self.endResetModel()
 
   proc setMessageReactions*(self: ChatMessageList, messageId: string, newReactions: string)=
