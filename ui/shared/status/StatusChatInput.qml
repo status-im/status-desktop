@@ -649,7 +649,7 @@ Rectangle {
 
     Rectangle {
         id: messageInput
-        property int maxInputFieldHeight: control.isStatusUpdateInput ? 123 : 112
+        property int maxInputFieldHeight: control.isStatusUpdateInput ? 124 : 112
         property int defaultInputFieldHeight: control.isStatusUpdateInput ? 56 : 40
         anchors.left: imageBtn.visible ? imageBtn.right : parent.left
         anchors.leftMargin: imageBtn.visible ? 5 : Style.current.smallPadding
@@ -658,7 +658,16 @@ Rectangle {
         anchors.bottomMargin: control.isStatusUpdateInput ? 0 : 12
         anchors.right: parent.right
         anchors.rightMargin: Style.current.smallPadding
-        height: scrollView.height
+        height: {
+            if (messageInputField.implicitHeight <= messageInput.defaultInputFieldHeight) {
+                return messageInput.defaultInputFieldHeight
+            }
+            if (messageInputField.implicitHeight >= messageInput.maxInputFieldHeight) {
+                return messageInput.maxInputFieldHeight
+            }
+            return messageInputField.implicitHeight
+        }
+
         color: Style.current.inputBackground
         radius: control.isStatusUpdateInput ? 36 :
           height > defaultInputFieldHeight + 1 || extendedArea.visible ? 16 : 32
@@ -689,7 +698,7 @@ Rectangle {
             height: {
               if (visible) {
                   if (isImage) {
-                      return imageArea.height + Style.current.halfPadding
+                      return imageArea.height
                   }
 
                   if (isReply) {
@@ -763,37 +772,27 @@ Rectangle {
 
         ScrollView {
             id: scrollView
+            anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.left: profileImage.visible ? profileImage.right : parent.left
             anchors.leftMargin: Style.current.smallPadding
             anchors.right: actions.left
             anchors.rightMargin: Style.current.halfPadding
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            height: {
-                if (messageInputField.implicitHeight <= messageInput.defaultInputFieldHeight) {
-                    return messageInput.defaultInputFieldHeight
-                }
-                if (messageInputField.implicitHeight >= messageInput.maxInputFieldHeight) {
-                    return messageInput.maxInputFieldHeight
-                }
-                return messageInputField.implicitHeight
-            }
 
             TextArea {
                 id: messageInputField
                 textFormat: Text.RichText
-                verticalAlignment: TextEdit.AlignVCenter
                 font.pixelSize: 15
                 font.family: Style.current.fontRegular.name
                 wrapMode: TextArea.Wrap
-                height: parent.height
                 //% "Type a message"
                 placeholderText: qsTrId("type-a-message")
                 placeholderTextColor: Style.current.secondaryText
                 selectByMouse: true
                 color: Style.current.textColor
-                topPadding: Style.current.smallPadding
-                bottomPadding: 12
+                topPadding: control.isStatusUpdateInput ? 18 : Style.current.smallPadding
+                bottomPadding: control.isStatusUpdateInput ? 14 : 12
                 Keys.onPressed: onKeyPress(event)
                 Keys.onReleased: onRelease(event) // gives much more up to date cursorPosition
                 Keys.onShortcutOverride: event.accepted = isUploadFilePressed(event)
