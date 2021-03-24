@@ -8,24 +8,13 @@ import "../../../../../shared/status"
 Item {
     signal startBtnClicked()
 
-    StyledText {
-        id: sectionTitle
-        text: ""
-        anchors.left: parent.left
-        anchors.leftMargin: 24
-        anchors.top: parent.top
-        anchors.topMargin: 24
-        font.weight: Font.Bold
-        font.pixelSize: 20
-    }
-
     ScrollView {
         id: sview
         clip: true
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         contentHeight: contentItem.childrenRect.height
-        anchors.top: sectionTitle.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.top: parent.top
+        anchors.topMargin: 24
         anchors.bottom: startBtn.top
         anchors.bottomMargin: Style.current.padding
         anchors.left: parent.left
