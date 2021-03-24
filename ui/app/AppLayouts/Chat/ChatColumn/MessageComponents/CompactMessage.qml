@@ -29,6 +29,7 @@ Item {
     }
 
     ChatButtons {
+        contentType: root.contentType
         parentIsHovered: root.isHovered
         onHoverChanged: root.isHovered = hovered
         anchors.right: parent.right
