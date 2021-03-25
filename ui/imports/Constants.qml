@@ -144,7 +144,7 @@ QtObject {
         //% "Continuing will connect this username with your chat key."
         "owned": qsTrId("ens-username-owned-continue"),
         //% "✓ Username available!"
-        "availabe": qsTrId("ens-username-available"),
+        "available": qsTrId("ens-username-available"),
         //% "Username is already connected with your chat key and can be used inside Status."
         "already-connected": qsTrId("ens-username-already-added"),
         //% "This user name is owned by you and connected with your chat key. Continue to set `Show my ENS username in chats`."
