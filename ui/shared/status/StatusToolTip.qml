@@ -6,6 +6,8 @@ import "../../shared"
 ToolTip {
     id: tooltip
     property int maxWidth: 800
+    property string orientation: "top"
+
     implicitWidth: Math.min(maxWidth, textContent.implicitWidth + Style.current.bigPadding)
     leftPadding: Style.current.smallPadding
     rightPadding: Style.current.smallPadding
@@ -23,13 +25,32 @@ ToolTip {
         }
         Rectangle {
             color: tooltipContentBg.color
-            height: 24
-            width: 24
-            rotation: 135
+            height: orientation === "top" || orientation === "bottom" ? 24 : 24
+            width: orientation === "top" || orientation === "bottom" ? 24 : 24
+            rotation: 45
             radius: 1
-            x: tooltipBg.width / 2 - width / 2
-            anchors.top: tooltipContentBg.bottom
-            anchors.topMargin: -20
+            x: {
+                if (orientation === "top" || orientation === "bottom") {
+                    return tooltipBg.width / 2 - width / 2
+                }
+                if (orientation === "left") {
+                    return tooltipContentBg.width - (width / 2) - 4
+                }
+                if (orientation === "right") {
+                    return -width/2 + 4
+                }
+            }
+            y: {
+                if (orientation === "bottom") {
+                    return -height / 2
+                }
+                if (orientation === "top") {
+                    return tooltipBg.height - height
+                }
+                if (orientation === "left" || orientation === "right") {
+                    return tooltipContentBg.height / 2 - (height / 2)
+                }
+            }
         }
     }
     contentItem: StyledText {
