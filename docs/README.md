@@ -1,4 +1,4 @@
-# Nim-status-client
+# Status-desktop
 
 Desktop client for the [Status Network](https://statusnetwork.com/) built with [Nim](https://nim-lang.org/) and [Qt](https://www.qt.io/)
 
