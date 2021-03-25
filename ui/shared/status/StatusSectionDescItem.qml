@@ -8,6 +8,7 @@ import "../../shared"
 Item {
     property string name
     property string description
+    property alias tooltipUnder: copyToClipboardBtn.tooltipUnder
 
     id: root
     width: parent.width

@@ -23,6 +23,7 @@ Item {
             name: qsTrId("version")
             //% "Version: %1"
             description: qsTrId("version---1").arg("beta.7.rc2")
+            tooltipUnder: true
         }
 
         StatusSectionDescItem {
