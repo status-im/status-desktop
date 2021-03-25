@@ -72,21 +72,10 @@ Item {
         width: 624
         anchors.horizontalCenter: parent.horizontalCenter
 
-        StyledText {
-            id: sectionTitle
-            text: ""
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.bigPadding
-            anchors.top: parent.top
-            anchors.topMargin: Style.current.bigPadding
-            font.weight: Font.Bold
-            font.pixelSize: 20
-        }
-
         Rectangle {
             id: circleAt
-            anchors.top: sectionTitle.bottom
-            anchors.topMargin: Style.current.bigPadding
+            anchors.top: parent.top
+            anchors.topMargin: Style.current.bigPadding*2
             anchors.horizontalCenter: parent.horizontalCenter
             width: 60
             height: 60
@@ -143,17 +132,17 @@ Item {
                     loading = false;
                     ensStatus = ensResult;
                     switch(ensResult){
-                        case Constants.ens_available: 
-                        case Constants.ens_owned:
-                        case Constants.ens_connected:
-                        case Constants.ens_connected_dkey:
+                        case "available":
+                        case "owned":
+                        case "connected":
+                        case "connected-different-key":
                             valid = true;
                             validationMessage = Constants.ensState[ensResult]
                             break;
-                        case Constants.ens_taken:
-                            validationMessage = !isStatus ? Constants.ensState['taken_custom'] : Constants.ensState['taken'];
+                        case "taken":
+                            validationMessage = Constants.ensState[!isStatus ? 'taken-custom' : 'taken']
                             break;
-                        case Constants.already_connected: 
+                        case "already-connected":
                             validationMessage = Constants.ensState[ensResult]
                             break;
                     }
