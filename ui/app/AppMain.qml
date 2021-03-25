@@ -150,9 +150,7 @@ RowLayout {
     Connections {
         target: profileModel
         onProfileSettingsFileChanged: {
-            if (appSettings.locale !== "en") {
-                profileModel.changeLocale(appSettings.locale)
-            }
+            profileModel.changeLocale(appSettings.locale)
 
             // Since https://github.com/status-im/status-desktop/commit/93668ff75
             // we're hiding the setting to change appearance for compact normal mode
