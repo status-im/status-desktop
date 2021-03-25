@@ -12,6 +12,7 @@ Rectangle {
     color: Style.current.transparent
     property var onClick: function() {}
     property string textToCopy: ""
+    property bool tooltipUnder: false
 
     Image {
         width: 20
@@ -61,6 +62,7 @@ Rectangle {
         id: toolTip
         //% "Copied!"
         text: qsTrId("copied-")
+        orientation: tooltipUnder ? "bottom" : "top"
     }
 
     Timer {
