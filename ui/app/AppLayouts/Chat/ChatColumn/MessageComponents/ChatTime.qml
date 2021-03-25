@@ -14,7 +14,7 @@ StyledText {
     StatusToolTip {
         visible: hhandler.hovered
         text: new Date(parseInt(timestamp, 10)).toLocaleString(Qt.locale(appSettings.locale))
-        width: 350
+        maxWidth: 350
     }
 
     HoverHandler {
