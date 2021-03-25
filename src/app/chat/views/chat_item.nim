@@ -133,6 +133,11 @@ QtObject:
   QtProperty[bool] hasMentions:
     read = hasMentions
 
+  proc canPost*(self: ChatItemView): bool {.slot.} = result = ?.self.chatItem.canPost
+
+  QtProperty[bool] canPost:
+    read = canPost
+
   proc isMember*(self: ChatItemView): bool {.slot.} =
     if self.chatItem.isNil: return false
     let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
