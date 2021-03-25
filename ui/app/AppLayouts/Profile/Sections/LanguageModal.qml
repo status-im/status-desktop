@@ -15,37 +15,49 @@ ModalPopup {
         destroy()
     }
 
-    Column {
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        anchors.leftMargin: Style.current.padding
-        height: 50
+    Item {
+        anchors.fill: parent
 
-        spacing: Style.current.padding
+        ScrollView {
+            width: parent.width
+            anchors.top: parent.top
+            anchors.topMargin: Style.current.padding
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: Style.current.bigPadding
+            anchors.left: parent.left
+            anchors.leftMargin: 16
+            anchors.right: parent.right
+            anchors.rightMargin: 16
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+            clip: true
 
-        ButtonGroup {
-            id: languageGroup
-        }
+            ButtonGroup {
+                id: languageGroup
+            }
 
-        Repeater {
-            model: Locales_JSON.locales
-            height: 50
+            ListView {
+                id: languagesListView
+                anchors.fill: parent
+                anchors.rightMargin: Style.current.padding
+                model: Locales_JSON.locales
+                spacing: 0
 
-            StatusRadioButtonRow {
-                text: modelData.name
-                buttonGroup: languageGroup
-                checked: appSettings.locale === modelData.locale
-                onRadioCheckedChanged: {
-                    if (checked) {
-                        profileModel.changeLocale(modelData.locale)
-                        appSettings.locale = modelData.locale
+                delegate: Component {
+                    StatusRadioButtonRow {
+                        height: 64
+                        text: modelData.name
+                        buttonGroup: languageGroup
+                        checked: appSettings.locale === modelData.locale
+                        onRadioCheckedChanged: {
+                            if (checked) {
+                                profileModel.changeLocale(modelData.locale)
+                                appSettings.locale = modelData.locale
+                            }
+                        }
                     }
                 }
             }
         }
     }
 }
-
