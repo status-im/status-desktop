@@ -29,6 +29,7 @@ Item {
         anchors.top: title.bottom
         anchors.topMargin: Style.current.bigPadding
         anchors.bottom: parent.bottom
+        anchors.bottomMargin: Style.current.padding
     }
 }
 
