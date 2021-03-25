@@ -15,6 +15,7 @@ ScrollView {
     }
 
     id: profileMenu
+    clip: true
 
     Column {
         anchors.fill: parent
