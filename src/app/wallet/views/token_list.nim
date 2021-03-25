@@ -1,5 +1,5 @@
 import # nim libs
-  tables, json
+  strformat, tables, json
 
 import # vendor libs
   NimQml
@@ -21,18 +21,24 @@ type
     address: string
 
 const getTokenDetailsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let 
-    arg = decode[GetTokenDetailsTaskArg](argEncoded)
-    tkn = newErc20Contract(getCurrentNetwork(), arg.address.parseAddress)
-    decimals = tkn.tokenDecimals()
-
-  let output = %* {
-    "address": arg.address,
-    "name": tkn.tokenName(),
-    "symbol": tkn.tokenSymbol(),
-    "decimals": (if decimals == 0: "" else: $decimals)
-  }
-  arg.finish(output)
+  let arg = decode[GetTokenDetailsTaskArg](argEncoded)
+  try:
+    let 
+      tkn = newErc20Contract(getCurrentNetwork(), arg.address.parseAddress)
+      decimals = tkn.tokenDecimals()
+      output = %* {
+        "address": arg.address,
+        "name": tkn.tokenName(),
+        "symbol": tkn.tokenSymbol(),
+        "decimals": (if decimals == 0: "" else: $decimals)
+      }
+    arg.finish(output)
+  except Exception as e:
+    let output = %* {
+      "address": arg.address,
+      "error": fmt"{e.msg}. Is this an ERC-20 or ERC-721 contract?",
+    }
+    arg.finish(output)
 
 proc getTokenDetails[T](self: T, slot: string, address: string) =
   let arg = GetTokenDetailsTaskArg(

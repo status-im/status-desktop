@@ -179,7 +179,8 @@ Item {
         font.pixelSize: 12
         height: 16
         color: Style.current.danger
-        width: parent.width
+        width: inputRectangle.width
+        wrapMode: TextEdit.Wrap
     }
 }
 

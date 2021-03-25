@@ -67,13 +67,17 @@ ModalPopup {
             target: walletModel.customTokenList
             onTokenDetailsWereResolved: {
                 const jsonObj = JSON.parse(tokenDetails)
-                if(jsonObj.name === "" || jsonObj.symbol === "" || jsonObj.decimals === ""){
+                if (jsonObj.error) {
+                    validationError = jsonObj.error
+                    return
+                }
+                if (jsonObj.name === "" && jsonObj.symbol === "" && jsonObj.decimals === "") {
                     //% "Invalid ERC20 address"
                     validationError = qsTrId("invalid-erc20-address")
                     return;
                 }
 
-                if(addressInput.text.toLowerCase() === jsonObj.address.toLowerCase()){
+                if (addressInput.text.toLowerCase() === jsonObj.address.toLowerCase()) {
                     symbolInput.text = jsonObj.symbol;
                     decimalsInput.text = jsonObj.decimals;
                     nameInput.text = jsonObj.name;
