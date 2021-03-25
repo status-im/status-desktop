@@ -32,6 +32,9 @@ StatusIconTabButton {
         visible: communityButton.hovered
         text: communityButton.name
         delay: 50
+        orientation: "right"
+        x: communityButton.width + Style.current.padding
+        y: communityButton.height / 2 - height / 2 + 4
     }
 
     Rectangle {
