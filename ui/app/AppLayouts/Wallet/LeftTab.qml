@@ -98,8 +98,7 @@ Rectangle {
             ColorOverlay {
                 anchors.fill: walletIcon
                 source: walletIcon
-                color: selected || !iconColor ? Style.current.white :
-                                                Utils.getCurrentThemeAccountColor(iconColor) || Style.current.accountColors[0]
+                color: Utils.getCurrentThemeAccountColor(iconColor) || Style.current.accountColors[0]
             }
             StyledText {
                 id: walletName
@@ -114,7 +113,7 @@ Rectangle {
 
                 font.pixelSize: 15
                 font.weight: Font.Medium
-                color: selected ? Style.current.white : Style.current.textColor
+                color: Style.current.textColor
             }
             StyledText {
                 id: walletAddress
@@ -125,11 +124,10 @@ Rectangle {
                 elide: Text.ElideMiddle
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: Style.current.smallPadding
-                anchors.left: walletName.left
-                anchors.leftMargin: 0
+                anchors.left: walletIcon.left
                 font.pixelSize: 15
                 font.weight: Font.Medium
-                color: selected ? Style.current.white : Style.current.secondaryText
+                color: Style.current.secondaryText
                 opacity: selected ? 0.7 : 1
             }
             StyledText {
@@ -141,7 +139,7 @@ Rectangle {
                 anchors.rightMargin: Style.current.padding
                 font.pixelSize: 15
                 font.weight: Font.Medium
-                color: selected ? Style.current.white : Style.current.textColor
+                color: Style.current.textColor
             }
             MouseArea {
                 anchors.fill: parent
