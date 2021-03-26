@@ -100,8 +100,9 @@ TabButton {
             }
         }
     }
+
     background: Rectangle {
-        color: hovered || (borderOnChecked && checked) ? Style.current.secondaryBackground : "transparent"
+        color: hovered || (borderOnChecked && checked) ? Style.current.tabButtonBg : "transparent"
         border.color: Style.current.primary
         border.width: borderOnChecked && checked ? 1 : 0
         radius: control.width / 2

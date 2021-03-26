@@ -6,7 +6,7 @@ import "../../../imports"
 import "../../../shared"
 import "./components"
 
-Item {
+Rectangle {
     property int selectedAccount: 0
     property var changeSelectedAccount: function(newIndex) {
         if (newIndex > walletModel.accounts) {
@@ -17,8 +17,7 @@ Item {
         walletTabBar.currentIndex = 0;
     }
     id: walletInfoContainer
-
-
+    color: Style.current.secondaryMenuBackground
 
     StyledText {
         id: title
@@ -79,7 +78,7 @@ Item {
 
             id: rectangle
             height: 64
-            color: selected ? Style.current.buttonForegroundColor : Style.current.transparent
+            color: selected ? Style.current.menuBackgroundActive : Style.current.transparent
             radius: Style.current.radius
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding

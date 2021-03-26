@@ -9,11 +9,14 @@ Theme {
     property color black: "#000000"
     property color almostBlack: "#141414"
     property color grey: "#EEF2F5"
+    property color grey3: "#E9EDF1"
+    property color graphite2: "#252525"
     property color lightGrey: "#7A7A7A"
     property color midGrey: "#7f8990"
     property color darkGrey: "#373737"
     property color evenDarkerGrey: "#4b4b4b"
     property color lightBlue: "#ECEFFC"
+    property color translucentBlue: "#33869eff"
     property color cyan: "#00FFFF"
     property color blue: "#88B0FF"
     property color darkAccentBlue: "#2946C4"
@@ -28,7 +31,7 @@ Theme {
     property color tenPercentWhite: Qt.rgba(255, 255, 255, 0.1)
     property color tenPercentBlue: Qt.rgba(67, 96, 223, 0.1)
 
-    property color background: "#212121"
+    property color background: "#2C2C2C"
     property color border: darkGrey
     property color borderSecondary: tenPercentWhite
     property color borderTertiary: blue
@@ -38,9 +41,12 @@ Theme {
     property color secondaryBackground: "#353a4d"
     property color inputBackground: darkGrey
     property color inputBorderFocus: blue
+    property color secondaryMenuBorder: darkGrey
     property color inputColor: textColor
     property color modalBackground: darkGrey
     property color backgroundHover: evenDarkerGrey
+    property color menuBackgroundActive: "#1affffff"
+    property color menuBackgroundHover: "#0dffffff"
     property color backgroundHoverLight: darkGrey
     property color secondaryText: lightGrey
     property color secondaryHover: tenPercentWhite
@@ -62,31 +68,35 @@ Theme {
     property color mentionMessageColor: "#1a0da4c9"
     property color mentionMessageHoverColor: "#330da4c9"
     property color replyBackground: "#484848"
+    property color mainMenuBackground: "#212121"
+    property color secondaryMenuBackground: graphite2
+    property color tabButtonBg: translucentBlue
     
     property color buttonForegroundColor: blue
-    property color buttonBackgroundColor: secondaryBackground
+    property color buttonBackgroundColor: translucentBlue
+    property color buttonBackgroundColorHover: "#4d869eff"
     property color buttonSecondaryColor: darkGrey
     property color buttonDisabledForegroundColor: lightGrey
     property color buttonDisabledBackgroundColor: darkGrey
-    property color buttonWarnBackgroundColor: "#FFEAEE"
+    property color buttonWarnBackgroundColor: "#33ff5c7b"
     property color buttonOutlineHoveredWarnBackgroundColor: "#4dff5c7b"
-    property color buttonHoveredWarnBackgroundColor: red
+    property color buttonHoveredWarnBackgroundColor: "#4dff5c7b"
     property color buttonHoveredBackgroundColor: blue
 
     property color contextMenuButtonForegroundColor: midGrey
     property color contextMenuButtonBackgroundHoverColor: Qt.hsla(black.hslHue, black.hslSaturation, black.hslLightness, 0.1)
 
     property color roundedButtonForegroundColor: white
-    property color roundedButtonBackgroundColor: secondaryBackground
+    property color roundedButtonBackgroundColor: buttonBackgroundColor
     property color roundedButtonSecondaryForegroundColor: black
-    property color roundedButtonSecondaryBackgroundColor: buttonForegroundColor
+    property color roundedButtonSecondaryBackgroundColor: blue
     property color roundedButtonSecondaryHoveredBackgroundColor: "#AAC6FF"
     property color roundedButtonDisabledForegroundColor: buttonDisabledForegroundColor
     property color roundedButtonDisabledBackgroundColor: buttonDisabledBackgroundColor
     property color roundedButtonSecondaryDisabledForegroundColor: black
     property color roundedButtonSecondaryDisabledBackgroundColor: lightGrey
-    property color tooltipBackgroundColor: white
-    property color tooltipForegroundColor: black
+    property color tooltipBackgroundColor: black
+    property color tooltipForegroundColor: white
 
     property var accountColors: [
         "#AAC6FF",

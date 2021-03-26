@@ -9,12 +9,13 @@ import "../../../shared/status"
 import "./ContactsColumn"
 import "./CommunityComponents"
 
-Item {
+Rectangle {
     // TODO unhardcode
     property int chatGroupsListViewCount: channelList.channelListCount
 
     id: root
     Layout.fillHeight: true
+    color: Style.current.secondaryMenuBackground
 
     Component {
         id: createChannelPopup

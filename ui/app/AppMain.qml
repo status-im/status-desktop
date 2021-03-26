@@ -316,19 +316,20 @@ RowLayout {
     }
 
 
-    Item {
+    Rectangle {
         id: leftTab
-        Layout.topMargin: 50
         Layout.maximumWidth: 78
         Layout.minimumWidth: 78
         Layout.preferredWidth: 78
         Layout.fillHeight: true
         height: parent.height
+        color: Style.current.mainMenuBackground
 
         ScrollView {
             id: scrollView
             width: leftTab.width
             anchors.top: parent.top
+            anchors.topMargin: 50
             anchors.bottom: leftTabButtons.visible ? leftTabButtons.top : parent.bottom
             anchors.bottomMargin: tabBar.spacing
             clip: true
@@ -412,13 +413,6 @@ RowLayout {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: Style.current.padding
         }
-    }
-
-    Rectangle {
-        height: parent.height
-        Layout.fillHeight: true
-        width: 1
-        color: Style.current.border
     }
 
     StackLayout {

@@ -17,9 +17,10 @@ QtObject {
     property color white
     property color white2
     property color black
-    property color grey
+    property color grey1
     property color lightBlue
     property color blue
+    property color translucentBlue
     property color transparent
     property color darkGrey
     property color darkerGrey
@@ -39,6 +40,9 @@ QtObject {
     property color secondaryText
     property color currentUserTextColor
     property color secondaryBackground
+    property color secondaryMenuBorder
+    property color menuBackgroundActive
+    property color menuBackgroundHover
     property color modalBackground
     property color codeBackground
     property color primarySelectioncolor
@@ -49,9 +53,13 @@ QtObject {
     property color mentionBgColor
     property color mentionMessageColor
     property color mentionMessageHoverColor
+    property color mainMenuBackground
+    property color secondaryMenuBackground
+    property color tabButtonBg
 
     property color buttonForegroundColor
     property color buttonBackgroundColor
+    property color buttonBackgroundColorHover
     property color buttonSecondaryColor
     property color buttonDisabledForegroundColor
     property color buttonDisabledBackgroundColor
