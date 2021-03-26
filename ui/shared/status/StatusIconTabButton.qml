@@ -27,6 +27,7 @@ TabButton {
             return
         }
 
+        chatsModel.communities.activeCommunity.active = false
         appMain.changeAppSection(section)
     }
 
