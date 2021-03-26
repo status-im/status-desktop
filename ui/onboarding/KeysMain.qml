@@ -35,9 +35,10 @@ Page {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             fillMode: Image.PreserveAspectFit
-            source: Universal.theme === Universal.Dark ? "img/keys-dark@2x.jpg" : "img/keys@2x.jpg"
+            source: "img/keys.png"
             width: 160
             height: 160
+            mipmap: true
         }
 
         StyledText {
