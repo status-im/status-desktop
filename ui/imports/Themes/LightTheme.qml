@@ -8,9 +8,13 @@ Theme {
     property color white2: "#FCFCFC"
     property color black: "#000000"
     property color grey: "#EEF2F5"
+    property color grey1: "#F0F2F5"
+    property color grey2: "#F6F8FA"
+    property color grey3: "#E9EDF1"
     property color midGrey: "#7f8990"
     property color lightGrey: "#ccd0d4"
     property color lightBlue: "#ECEFFC"
+    property color translucentBlue: "#1a4360df"
     property color cyan: "#00FFFF"
     property color blue: "#4360DF"
     property color darkAccentBlue: "#2946C4"
@@ -37,9 +41,12 @@ Theme {
     property color secondaryBackground: lightBlue
     property color inputBackground: grey
     property color inputBorderFocus: blue
+    property color secondaryMenuBorder: grey3
     property color inputColor: black
     property color modalBackground: white2
     property color backgroundHover: grey
+    property color menuBackgroundActive: grey3
+    property color menuBackgroundHover: grey1
     property color backgroundHoverLight: grey
     property color secondaryText: darkGrey
     property color secondaryHover: tenPercentBlack
@@ -61,15 +68,19 @@ Theme {
     property color mentionMessageColor: "#1a07bce9"
     property color mentionMessageHoverColor: "#3307bce9"
     property color replyBackground: "#d7dadd"
+    property color mainMenuBackground: grey1
+    property color secondaryMenuBackground: grey2
+    property color tabButtonBg: translucentBlue
 
     property color buttonForegroundColor: blue
-    property color buttonBackgroundColor: secondaryBackground
+    property color buttonBackgroundColor: translucentBlue
+    property color buttonBackgroundColorHover: "#334360df"
     property color buttonSecondaryColor: darkGrey
     property color buttonDisabledForegroundColor: buttonSecondaryColor
     property color buttonDisabledBackgroundColor: grey
-    property color buttonWarnBackgroundColor: "#FFEAEE"
+    property color buttonWarnBackgroundColor: "#1aff2d55"
     property color buttonOutlineHoveredWarnBackgroundColor: "#1affeaee"
-    property color buttonHoveredWarnBackgroundColor: red
+    property color buttonHoveredWarnBackgroundColor: "#33ff2d55"
     property color buttonHoveredBackgroundColor: blue
 
     property color contextMenuButtonForegroundColor: black
@@ -77,18 +88,18 @@ Theme {
 
     property color roundedButtonForegroundColor: buttonForegroundColor
     property color roundedButtonBackgroundColor: secondaryBackground
-    property color roundedButtonSecondaryForegroundColor: white
+    property color roundedButtonSecondaryForegroundColor: grey2
     property color roundedButtonSecondaryBackgroundColor: buttonForegroundColor
     property color roundedButtonSecondaryHoveredBackgroundColor: darkAccentBlue
     property color roundedButtonDisabledForegroundColor: buttonDisabledForegroundColor
     property color roundedButtonDisabledBackgroundColor: buttonDisabledBackgroundColor
-    property color roundedButtonSecondaryDisabledForegroundColor: white
+    property color roundedButtonSecondaryDisabledForegroundColor: grey2
     property color roundedButtonSecondaryDisabledBackgroundColor: buttonDisabledForegroundColor
     property color tooltipBackgroundColor: black
     property color tooltipForegroundColor: white
 
     property var accountColors: [
-        "#4360DF",
+        blue,
         "#9B832F",
         "#D37EF4",
         "#1D806F",

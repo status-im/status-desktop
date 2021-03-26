@@ -37,7 +37,7 @@ Item {
                 icon.color: modelData
                 selected: {
                     const upperCaseColor = control.selectedColor.toUpperCase()
-                    const upperCaseModelDataColor = modelData.toUpperCase()
+                    const upperCaseModelDataColor = modelData.toString().toUpperCase()
                     if (upperCaseColor === upperCaseModelDataColor) {
                         return true
                     }

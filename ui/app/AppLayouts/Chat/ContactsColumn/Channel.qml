@@ -44,10 +44,10 @@ Rectangle {
     id: wrapper
     color: {
       if (ListView.isCurrentItem) {
-        return Style.current.secondaryBackground
+        return Style.current.menuBackgroundActive
       }
       if (wrapper.hovered) {
-        return Style.current.backgroundHover
+        return Style.current.menuBackgroundHover
       }
       return Style.current.transparent
     }

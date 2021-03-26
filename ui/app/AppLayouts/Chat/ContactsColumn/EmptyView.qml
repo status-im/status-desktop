@@ -15,7 +15,7 @@ Rectangle {
     visible: !appSettings.hideChannelSuggestions
 
     height: suggestionContainer.height + inviteFriendsContainer.height + Style.current.padding * 2
-    border.color: Style.current.border
+    border.color: Style.current.secondaryMenuBorder
     radius: 16
     color: Style.current.transparent
 

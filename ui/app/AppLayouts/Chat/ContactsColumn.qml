@@ -8,12 +8,13 @@ import "./components"
 import "./ContactsColumn"
 import "./CommunityComponents"
 
-Item {
+Rectangle {
     property alias chatGroupsListViewCount: channelList.channelListCount
     property alias searchStr: searchBox.text
 
     id: contactsColumn
     Layout.fillHeight: true
+    color: Style.current.secondaryMenuBackground
 
     StyledText {
         id: title

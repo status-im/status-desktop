@@ -12,8 +12,6 @@ Rectangle {
     color: Style.current.background
     height: 56
     Layout.fillWidth: true
-    border.color: Style.current.border
-    border.width: 1
 
     Loader {
       property bool isGroupChatOrOneToOne: (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat || 

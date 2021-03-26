@@ -55,11 +55,10 @@ Item {
         }
     }
 
-    Rectangle {
+    Item {
         id: noSearchResults
         anchors.top: parent.top
         height: visible ? 300 : 0
-        color: "transparent"
         visible: !chatGroupsListView.visible && channelListContent.searchStr !== ""
         anchors.left: parent.left
         anchors.right: parent.right
