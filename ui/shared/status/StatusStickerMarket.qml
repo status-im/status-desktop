@@ -48,23 +48,29 @@ Item {
                     stickerPackDetailsPopup.open()
                 }
             }
+
             ModalPopup {
                 id: stickerPackDetailsPopup
                 height: 472
                 header: StatusStickerPackDetails {
-                    height: 46
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    anchors.topMargin: Style.current.padding
-                    width: parent.width - (Style.current.padding * 2)
                     packThumb: thumbnail
                     packName: name
                     packAuthor: author
                     packNameFontSize: 17
                     spacing: Style.current.padding / 2
                 }
+
+                contentWrapper.anchors.topMargin: 0
+                contentWrapper.anchors.bottomMargin: 0
+                StatusStickerList {
+                    id: stickerGridInPopup
+                    anchors.fill: parent
+                    anchors.topMargin: Style.current.padding
+                    model: stickers
+                }
+
                 footer: StatusStickerButton {
-                    height: 76
+                    height: 44
                     anchors.right: parent.right
                     style: StatusStickerButton.StyleType.LargeNoIcon
                     packPrice: price
@@ -79,13 +85,6 @@ Item {
                         openPopup(stickerPackPurchaseModal)
                         root.buyClicked(packId)
                     }
-                }
-                contentWrapper.anchors.topMargin: 0
-                contentWrapper.anchors.bottomMargin: 0
-                StatusStickerList {
-                    id: stickerGridInPopup
-                    model: stickers
-                    height: 350
                 }
             }
             Component {
@@ -150,7 +149,7 @@ Item {
             height: 28
             iconWidth: 17.5
             iconHeight: 13.5
-            iconColor: Style.current.pillButtonTextColor
+            iconColor: Style.current.roundedButtonSecondaryForegroundColor
             source: "../../app/img/arrowUp.svg"
             rotation: 270
             onClicked: {

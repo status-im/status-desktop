@@ -37,19 +37,37 @@ ModalPopup {
     height: 472
     header: StatusStickerPackDetails {
         id: stickerGrid
-        height: 76
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.topMargin: Style.current.padding
-        width: parent.width - (Style.current.padding * 2)
         packThumb: thumbnail
         packName: name
         packAuthor: author
         packNameFontSize: 17
         spacing: Style.current.padding / 2
     }
+
+    contentWrapper.anchors.topMargin: 0
+    contentWrapper.anchors.bottomMargin: 0
+    StatusStickerList {
+        id: stickerGridInPopup
+        model: stickers
+        anchors.fill: parent
+        anchors.topMargin: Style.current.padding
+        Component {
+            id: stickerPackPurchaseModal
+            StatusStickerPackPurchaseModal {
+                onClosed: {
+                    destroy()
+                }
+                stickerPackId: packId
+                packPrice: price
+                width: stickerPackDetailsPopup.width
+                height: stickerPackDetailsPopup.height
+                showBackBtn: stickerPackDetailsPopup.opened
+            }
+        }
+    }
+
     footer: StatusStickerButton {
-        height: 76
+        height: 44
         anchors.right: parent.right
         style: StatusStickerButton.StyleType.LargeNoIcon
         packPrice: price
@@ -70,25 +88,5 @@ ModalPopup {
             openPopup(stickerPackPurchaseModal)
             root.buyClicked(packId)
         }
-    }
-    contentWrapper.anchors.topMargin: 0
-    contentWrapper.anchors.bottomMargin: 0
-    StatusStickerList {
-        id: stickerGridInPopup
-        model: stickers
-        height: 350
-        Component {
-        id: stickerPackPurchaseModal
-        StatusStickerPackPurchaseModal {
-            onClosed: {
-                destroy()
-            }
-            stickerPackId: packId
-            packPrice: price
-            width: stickerPackDetailsPopup.width
-            height: stickerPackDetailsPopup.height
-            showBackBtn: stickerPackDetailsPopup.opened
-        }
-    }
     }
 }
