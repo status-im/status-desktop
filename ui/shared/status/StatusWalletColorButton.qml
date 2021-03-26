@@ -12,8 +12,8 @@ StatusIconButton {
     icon.height: 24
     highlightedBackgroundColor: control.icon.color
     highlightedBackgroundOpacity: 0.1
-    width: 44
-    height: 44
+    implicitWidth: 44
+    implicitHeight: 44
 
     Rectangle {
         width: 16
