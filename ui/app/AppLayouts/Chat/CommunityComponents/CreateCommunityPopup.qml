@@ -142,7 +142,6 @@ ModalPopup {
                 anchors.top: descriptionTextArea.bottom
                 anchors.topMargin: Style.current.smallPadding
                 font.pixelSize: 15
-                color: Style.current.secondaryText
             }
 
 
