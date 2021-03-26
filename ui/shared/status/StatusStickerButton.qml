@@ -27,7 +27,7 @@ Item {
     })
     //% "Buy for %1 SNT"
     property string text: root.style === StatusStickerButton.StyleType.Default ? packPrice : qsTrId("buy-for--1-snt").arg(packPrice )
-    property color textColor: style === StatusStickerButton.StyleType.Default ? Style.current.pillButtonTextColor : Style.current.buttonForegroundColor
+    property color textColor: style === StatusStickerButton.StyleType.Default ? Style.current.roundedButtonSecondaryForegroundColor : Style.current.buttonForegroundColor
     property color bgColor: style === StatusStickerButton.StyleType.Default ? Style.current.blue : Style.current.secondaryBackground
     signal uninstallClicked()
     signal installClicked()
@@ -44,7 +44,7 @@ Item {
                 target: root;
                 //% "Uninstall"
                 text: root.style === StatusStickerButton.StyleType.Default ? "" : qsTrId("uninstall");
-                textColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.pillButtonTextColor : Style.current.red;
+                textColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.roundedButtonSecondaryForegroundColor : Style.current.red;
                 bgColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.green : Style.current.lightRed;
                 icon: new Object({
                     path: "../../app/img/check.svg",
@@ -83,7 +83,7 @@ Item {
             PropertyChanges {
                 target: root;
                 text: root.style === StatusStickerButton.StyleType.Default ? packPrice : packPrice + " SNT";
-                textColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.pillButtonTextColor : Style.current.darkGrey
+                textColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.roundedButtonSecondaryForegroundColor : Style.current.darkGrey
                 bgColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.darkGrey : Style.current.buttonDisabledBackgroundColor;
                 enabled: false;
             }
@@ -95,7 +95,7 @@ Item {
                 target: root;
                 //% "Pending..."
                 text: qsTrId("pending---");
-                textColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.pillButtonTextColor : Style.current.darkGrey
+                textColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.roundedButtonSecondaryForegroundColor : Style.current.darkGrey
                 bgColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.darkGrey : Style.current.grey;
                 enabled: false;
                 icon: new Object({
@@ -113,7 +113,7 @@ Item {
                 target: root;
                 //% "Cancel"
                 text: qsTrId("browsing-cancel");
-                textColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.pillButtonTextColor : Style.current.red;
+                textColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.pillButtonTexroundedButtonSecondaryForegroundColortColor : Style.current.red;
                 bgColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.red : Style.current.lightRed;
             }
         },
@@ -141,7 +141,7 @@ Item {
         id: pill
         anchors.right: parent.right
         width: textMetrics.width + roundedIconImage.width + (Style.current.smallPadding * 2) + 6.7
-        height: 26
+        height: 44
         color: root.bgColor
         radius: root.style === StatusStickerButton.StyleType.Default ? (width / 2) : 8
 
@@ -187,7 +187,7 @@ Item {
             ColorOverlay {
                 anchors.fill: roundedIconImage
                 source: roundedIconImage
-                color: Style.current.pillButtonTextColor
+                color: Style.current.roundedButtonSecondaryForegroundColor
                 antialiasing: true
             }
             states: [
