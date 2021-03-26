@@ -77,9 +77,9 @@ QtObject {
     property int smallPadding: 10
     property int radius: 8
 
-    property int leftTabPrefferedSize: 340
+    property int leftTabPrefferedSize: 304
     property int leftTabMinimumWidth: 300
-    property int leftTabMaximumWidth: 500
+    property int leftTabMaximumWidth: 425
 
     property int primaryTextFontSize: 15
     property int secondaryTextFontSize: 14
