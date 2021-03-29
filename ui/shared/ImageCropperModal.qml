@@ -6,7 +6,11 @@ import "./status"
 
 ModalPopup {
     property string selectedImage
-    property string ratio
+    property string ratio: "1:1"
+    property int aX: 0
+    property int aY: 0
+    property int bX: 0
+    property int bY: 0
     signal cropFinished(aX: int, aY: int, bX: int, bY: int)
 
     id: cropImageModal
@@ -29,6 +33,28 @@ ModalPopup {
         y: image.y
         image: image
         ratio: cropImageModal.ratio
+        onReadyChanged: {
+            if (ready) {
+                // cropImageModal.calculateCrop()
+                cropImageModal.aX = Qt.binding(function() {
+                    const aXPercent = imageCropper.selectorRectangle.x / image.width
+                    return Math.round(aXPercent * image.sourceSize.width)
+                })
+                cropImageModal.aY = Qt.binding(function() {
+                    const aYPercent = imageCropper.selectorRectangle.y / image.height
+                    return Math.round(aYPercent * image.sourceSize.height)
+                })
+                cropImageModal.bX = Qt.binding(function() {
+                    const bXPercent = (imageCropper.selectorRectangle.x + imageCropper.selectorRectangle.width) / image.width
+                    return Math.round(bXPercent * image.sourceSize.width)
+                })
+                cropImageModal.bY = Qt.binding(function() {
+                    const bYPercent = (imageCropper.selectorRectangle.y + imageCropper.selectorRectangle.height) / image.height
+                    return Math.round(bYPercent * image.sourceSize.height)
+                })
+            }
+        }
+
     }
 
     footer: StatusButton {

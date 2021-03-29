@@ -3,7 +3,8 @@ import "."
 import "../imports"
 
 Item {
-    property var image
+    id: root
+    property Image image
     property alias selectorRectangle: selectorRectangle
     property string ratio: ""
     property var splitRatio: !!ratio ? ratio.split(":") : null
@@ -11,6 +12,7 @@ Item {
     property int heightRatio: !!ratio ? parseInt(splitRatio[1]) : -1
     property bool settingCorners: false
     property int draggedCorner: 0
+    property bool ready: false
 
     readonly property int topLeft: 0
     readonly property int topRight: 1
@@ -96,6 +98,7 @@ Item {
                 if (image.status === Image.Ready) {
                     selectorRectangle.initialSetup()
                     selectorRectangle.visible = true
+                    root.ready = true
                 }
             }
         }
