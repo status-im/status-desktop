@@ -11,7 +11,7 @@ Item {
     property string headerTitle: ""
     property string headerDescription: ""
     property string headerImageSource: ""
-    height: childrenRect.height
+    height: 300
 
     CommunityPopupButton {
         id: inviteBtn
@@ -19,15 +19,7 @@ Item {
         label: qsTrId("invite-people")
         width: parent.width
         iconName: "invite"
-        onClicked: openPopup(inviteFriendsPopup)
-        Component {
-            id: inviteFriendsPopup
-            InviteFriendsToCommunityPopup {
-                onClosed: {
-                    destroy()
-                }
-            }
-        }
+        onClicked: openPopup(inviteFriendsToCommunityPopup)
     }
 
     Separator {
@@ -39,7 +31,6 @@ Item {
         anchors.leftMargin: -Style.current.padding
         anchors.rightMargin: -Style.current.padding
     }
-
 
     StatusSettingsLineButton {
         id: membershipRequestsBtn

@@ -58,4 +58,18 @@ StatusIconTabButton {
             text: unviewedMessagesCount > 99 ? "99+" : unviewedMessagesCount
         }
     }
+
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: function (mouse) {
+            if (mouse.button === Qt.RightButton) {
+                commnunityMenu.communityId = communityButton.communityId
+                commnunityMenu.popup()
+                return
+            }
+            communityButton.clicked()
+        }
+    }
 }

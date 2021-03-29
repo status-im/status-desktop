@@ -273,17 +273,20 @@ QtObject:
       error "Error inviting to the community", msg = e.msg
       result = fmt"Error inviting to the community: {e.msg}"
 
-  proc inviteUsersToCommunity*(self: CommunitiesView, pubKeysJSON: string): string {.slot.} =
+  proc inviteUsersToCommunityById*(self: CommunitiesView, communityId: string, pubKeysJSON: string): string {.slot.} =
     try:
       let pubKeysParsed = pubKeysJSON.parseJson
       var pubKeys: seq[string] = @[]
       for pubKey in pubKeysParsed:
         pubKeys.add(pubKey.getStr)
 
-      self.status.chat.inviteUsersToCommunity(self.activeCommunity.id(), pubKeys)
+      self.status.chat.inviteUsersToCommunity(communityId, pubKeys)
     except Exception as e:
       error "Error inviting to the community", msg = e.msg
       result = fmt"Error inviting to the community: {e.msg}"
+
+  proc inviteUsersToCommunity*(self: CommunitiesView, pubKeysJSON: string): string {.slot.} =
+    self.inviteUsersToCommunityById(self.activeCommunity.id(), pubKeysJSON)
 
   proc exportComumnity*(self: CommunitiesView): string {.slot.} =
     try:

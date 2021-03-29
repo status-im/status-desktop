@@ -9,7 +9,7 @@ import "../components"
 
 ModalPopup {
     id: popup
-    property QtObject community: chatsModel.communities.activeCommunity 
+    property QtObject community: chatsModel.communities.activeCommunity
 
     header: Item {
         height: childrenRect.height
@@ -54,15 +54,7 @@ ModalPopup {
         label: qsTrId("invite-people")
         width: parent.width
         iconName: "invite"
-        onClicked: openPopup(inviteFriendsPopup)
-        Component {
-            id: inviteFriendsPopup
-            InviteFriendsToCommunityPopup {
-                onClosed: {
-                    destroy()
-                }
-            }
-        }
+        onClicked: openPopup(inviteFriendsToCommunityPopup)
     }
 
     Separator {
