@@ -20,7 +20,7 @@ ModalPopup {
         inviteBtn.enabled = false
         contactList.membersData.clear();
         // TODO remove friends that are already members
-        chatView.getContactListObject(contactList.membersData)
+        getContactListObject(contactList.membersData)
         noContactsRect.visible = !profileModel.contacts.list.hasAddedContacts();
         contactList.visible = !noContactsRect.visible;
     }
@@ -114,7 +114,7 @@ ModalPopup {
             //% "Invite"
             text: qsTrId("invite-button")
             onClicked : {
-                const error = chatsModel.communities.inviteUsersToCommunity(JSON.stringify(popup.pubKeys))
+                const error = chatsModel.communities.inviteUsersToCommunityById(popup.communityId, JSON.stringify(popup.pubKeys))
                 // TODO show error to user also should we show success?
                 if (error) {
                     console.error('Error inviting', error)

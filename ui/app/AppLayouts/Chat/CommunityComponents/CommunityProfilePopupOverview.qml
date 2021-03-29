@@ -71,13 +71,7 @@ Item {
                     label: qsTr("Members")
                     iconName: "members"
                     txtColor: Style.current.textColor
-                    //onClicked: openPopup(communityMembersPopup)
                     onClicked: stack.push(membersList)
-
-                    Component {
-                        id: communityMembersPopup
-                        CommunityMembersPopup {}
-                    }
 
                     Item {
                         property int nbRequests: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests
@@ -213,13 +207,6 @@ Item {
                 label: qsTrId("edit-community")
                 iconName: "edit"
                 onClicked: openPopup(editCommunityPopup)
-
-                Component {
-                    id: editCommunityPopup
-                    CreateCommunityPopup {
-                        isEdit: true
-                    }
-                }
             }
         }
 

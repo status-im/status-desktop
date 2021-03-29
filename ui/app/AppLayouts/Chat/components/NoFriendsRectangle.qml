@@ -11,7 +11,7 @@ Item {
     StyledText {
         id: noContacts
         text: noContactsRect.text
-        color: Style.current.darkGrey
+        color: Style.current.secondaryText
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
         anchors.left: parent.left

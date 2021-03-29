@@ -23,4 +23,50 @@ ListView {
         iconColor: model.communityColor
         useLetterIdenticon: model.thumbnailImage === ""
     }
+
+    PopupMenu {
+        property string communityId
+
+        onAboutToShow: {
+            chatsModel.communities.setObservedCommunity(commnunityMenu.communityId)
+        }
+
+        id: commnunityMenu
+        Action {
+            text: qsTr("Invite People")
+            enabled: chatsModel.communities.observedCommunity.canManageUsers
+            icon.source: "../../../img/export.svg"
+            icon.width: 20
+            icon.height: 20
+            onTriggered: openPopup(inviteFriendsToCommunityPopup, {communityId: commnunityMenu.communityId})
+        }
+        Action {
+            text: qsTr("View Community")
+            icon.source: "../../../img/group.svg"
+            icon.width: 20
+            icon.height: 20
+            onTriggered: openPopup(communityMembersPopup, {community: chatsModel.communities.observedCommunity})
+        }
+        Separator  {
+            height: 10
+        }
+        Action {
+            text: qsTr("Edit Community")
+            // TODO reenable this option once the edit feature is done
+            enabled: false//chatsModel.communities.observedCommunity.admin
+            icon.source: "../../../img/edit.svg"
+            icon.width: 20
+            icon.height: 20
+            onTriggered: openPopup(editCommunityPopup, {community: chatsModel.communities.observedCommunity})
+        }
+        Action {
+            text: qsTr("Leave Community")
+            icon.source: "../../../img/edit.svg"
+            icon.width: 20
+            icon.height: 20
+            onTriggered: {
+                chatsModel.communities.leaveCommunity(commnunityMenu.communityId)
+            }
+        }
+    }
 }

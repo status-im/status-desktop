@@ -17,15 +17,6 @@ Rectangle {
     radius: 16
     color: Style.current.transparent
 
-    Component {
-        id: inviteFriendsPopup
-        InviteFriendsToCommunityPopup {
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
     SVGImage {
         anchors.top: parent.top
         anchors.topMargin: -6
@@ -75,9 +66,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: manageBtn.top
         anchors.bottomMargin: Style.current.halfPadding
-        onClicked: {
-            openPopup(inviteFriendsPopup)
-        }
+        onClicked: openPopup(inviteFriendsToCommunityPopup)
     }
 
     StatusButton {

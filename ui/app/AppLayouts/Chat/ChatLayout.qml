@@ -27,36 +27,6 @@ SplitView {
         chatColumn.onActivated()
     }
 
-    function openPopup(popupComponent, params = {}) {
-        const popup = popupComponent.createObject(chatView, params);
-        popup.open()
-        return popup
-    }
-
-    function getContactListObject(dataModel) {
-        const nbContacts = profileModel.contacts.list.rowCount()
-        const contacts = []
-        let contact
-        for (let i = 0; i < nbContacts; i++) {
-            contact = {
-                name: profileModel.contacts.list.rowData(i, "name"),
-                localNickname: profileModel.contacts.list.rowData(i, "localNickname"),
-                pubKey: profileModel.contacts.list.rowData(i, "pubKey"),
-                address: profileModel.contacts.list.rowData(i, "address"),
-                identicon: profileModel.contacts.list.rowData(i, "identicon"),
-                thumbnailImage: profileModel.contacts.list.rowData(i, "thumbnailImage"),
-                isUser: false,
-                isContact: profileModel.contacts.list.rowData(i, "isContact") !== "false"
-            }
-
-            contacts.push(contact)
-            if (dataModel) {
-                dataModel.append(contact);
-            }
-        }
-        return contacts
-    }
-
     Connections {
         target: appMain
         onSettingsLoaded: {

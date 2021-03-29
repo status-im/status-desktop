@@ -25,7 +25,7 @@ ModalPopup {
 
         contactList.membersData.clear();
 
-        chatView.getContactListObject(contactList.membersData)
+        getContactListObject(contactList.membersData)
 
         contactList.membersData.append({
             //% "(You)"

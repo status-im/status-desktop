@@ -22,7 +22,7 @@ ModalPopup {
         currMemberCount = memberCount;
         contactList.membersData.clear();
 
-        const contacts = chatView.getContactListObject()
+        const contacts = getContactListObject()
 
         contacts.forEach(function (contact) {
             if(popup.channel.contains(contact.pubKey) ||
