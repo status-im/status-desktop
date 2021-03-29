@@ -8,67 +8,34 @@ import "../../../../shared/status"
 
 ModalPopup {
     readonly property int maxDescChars: 140
-    property string nameValidationError: ""
-    property string descriptionValidationError: ""
-    property string colorValidationError: ""
-    property string selectedImageValidationError: ""
-    property string selectedImage: ""
-    property var imageDimensions: ({
-        aX: 0,
-        aY: 0,
-        bY: 1,
-        bY: 1
-    })
 
     property QtObject community: chatsModel.communities.activeCommunity
 
     property bool isEdit: false
+    property bool isValid:
+        nameInput.isValid &&
+        addImageButton.isValid &&
+        descriptionTextArea.isValid &&
+        colorPicker.isValid
 
     id: popup
     height: 600
 
     onOpened: {
-        nameInput.text = isEdit ? community.name : "";
-        descriptionTextArea.text = isEdit ? community.description : "";
-        nameValidationError = "";
-        colorValidationError = "";
-        selectedImageValidationError = "";
+        if (isEdit) {
+            nameInput.text = community.name;
+            descriptionTextArea.text = community.description;
+        }
         nameInput.forceActiveFocus(Qt.MouseFocusReason)
     }
+    onClosed: destroy()
 
     function validate() {
-        nameValidationError = ""
-        colorValidationError = ""
-        selectedImageValidationError = ""
-        descriptionValidationError = ""
-
-        if (nameInput.text === "") {
-            //% "You need to enter a name"
-            nameValidationError = qsTrId("you-need-to-enter-a-name")
-        } else if (!(/^[a-z0-9\-\ ]+$/i.test(nameInput.text))) {
-            //% "Please restrict your name to letters, numbers, dashes and spaces"
-            nameValidationError = qsTrId("please-restrict-your-name-to-letters--numbers--dashes-and-spaces")
-        } else if (nameInput.text.length > 100) {
-            //% "Your name needs to be 100 characters or shorter"
-            nameValidationError = qsTrId("your-name-needs-to-be-100-characters-or-shorter")
-        }
-
-        if (descriptionTextArea.text === "") {
-            descriptionValidationError = qsTr("You need to enter a description")
-        }
-
-        if (selectedImage === "") {
-            //% "You need to select an image"
-            selectedImageValidationError = qsTrId("you-need-to-select-an-image")
-        }
-
-        if (colorPicker.text === "") {
-            colorValidationError = qsTr("You need to enter a color")
-        } else if (!Utils.isHexColor(colorPicker.text)) {
-            colorValidationError = qsTr("This field needs to be an hexadecimal color (eg: #4360DF)")
-        }
-
-        return !nameValidationError && !descriptionTextArea.validationError && !colorValidationError && !descriptionValidationError
+        nameInput.validate()
+        addImageButton.validate()
+        descriptionTextArea.validate()
+        colorPicker.validate()
+        return isValid
     }
 
     title: isEdit ?
@@ -106,7 +73,29 @@ ModalPopup {
                 label: qsTrId("name-your-community")
                 //% "A catchy name"
                 placeholderText: qsTrId("name-your-community-placeholder")
-                validationError: popup.nameValidationError
+                property bool isValid: false
+
+                onTextEdited: {
+                    if (text.includes(" ")) {
+                        text = text.replace(" ", "-")
+                    }
+                    validate()
+                }
+
+                function validate() {
+                    validationError = ""
+                    if (nameInput.text === "") {
+                        //% "You need to enter a name"
+                        validationError = qsTrId("you-need-to-enter-a-name")
+                    } else if (!(/^[a-z0-9\-]+$/.test(nameInput.text))) {
+                        validationError = qsTr("Use only lowercase letters (a to z), numbers & dashes (-). Do not use chat keys.")
+                    } else if (nameInput.text.length > 100) {
+                        //% "Your name needs to be 100 characters or shorter"
+                        validationError = qsTrId("your-name-needs-to-be-100-characters-or-shorter")
+                    }
+                    isValid = validationError === ""
+                    return validationError
+                }
             }
 
             StyledTextArea {
@@ -116,18 +105,37 @@ ModalPopup {
                 //% "What your community is about"
                 placeholderText: qsTrId("what-your-community-is-about")
                 //% "The description cannot exceed 140 characters"
-                validationError: descriptionTextArea.text.length > maxDescChars ? qsTrId("the-description-cannot-exceed-140-characters") :
+                validationError: descriptionTextArea.text.length > popup.maxDescChars ? qsTrId("the-description-cannot-exceed-140-characters") :
                                                                                   popup.descriptionValidationError || ""
                 anchors.top: nameInput.bottom
                 anchors.topMargin: Style.current.bigPadding
                 customHeight: 88
                 textField.selectByMouse: true
                 textField.wrapMode: TextEdit.Wrap
+
+                property bool isValid: false
+                onTextChanged: validate()
+
+                function resetValidation() {
+                    isValid = false
+                    validationError = ""
+                }
+
+                function validate() {
+                    validationError = ""
+                    if (text.length > popup.maxDescChars) {
+                        validationError = qsTrId("the-description-cannot-exceed-140-characters")
+                    }
+                    if (text === "") {
+                        validationError = qsTr("You need to enter a description")
+                    }
+                    isValid = validationError === ""
+                }
             }
 
             StyledText {
                 id: charLimit
-                text: `${descriptionTextArea.text.length}/${maxDescChars}`
+                text: `${descriptionTextArea.text.length}/${popup.maxDescChars}`
                 anchors.top: descriptionTextArea.bottom
                 anchors.topMargin: !descriptionTextArea.validationError ? 5 : - Style.current.smallPadding
                 anchors.right: descriptionTextArea.right
@@ -139,9 +147,11 @@ ModalPopup {
                 id: thumbnailText
                 //% "Thumbnail image"
                 text: qsTrId("thumbnail-image")
-                anchors.top: descriptionTextArea.bottom
+                anchors.top: charLimit.bottom
                 anchors.topMargin: Style.current.smallPadding
-                font.pixelSize: 15
+                font.pixelSize: 13
+                color: Style.current.textColor
+                font.weight: Font.Medium
             }
 
 
@@ -154,6 +164,23 @@ ModalPopup {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: thumbnailText.bottom
                 anchors.topMargin: Style.current.padding
+                property bool isValid: false
+                property string selectedImage: ""
+
+                onSelectedImageChanged: validate()
+
+                function resetValidation() {
+                    isValid = false
+                    imageValidation.text = ""
+                }
+
+                function validate() {
+                    imageValidation.text = ""
+                    if (selectedImage === "") {
+                        imageValidation.text = qsTr("Please select an image")
+                    }
+                    isValid = imageValidation.text === ""
+                }
 
                 FileDialog {
                     id: imageDialog
@@ -164,27 +191,38 @@ ModalPopup {
                         //% "Image files (*.jpg *.jpeg *.png)"
                         qsTrId("image-files----jpg---jpeg---png-")
                     ]
+                    onRejected: {
+                        addImageButton.validate()
+                    }
                     onAccepted: {
-                        popup.selectedImage = imageDialog.fileUrls[0]
+                        addImageButton.selectedImage = imageDialog.fileUrls[0]
                         imageCropperModal.open()
                     }
                 }
 
-                Image {
-                    id: imagePreview
-                    visible: !!popup.selectedImage
-                    source: popup.selectedImage
-                    fillMode: Image.PreserveAspectCrop
+                Rectangle {
+                    id: imagePreviewCropper
+                    clip: true
                     width: parent.width
                     height: parent.height
+                    radius: parent.width / 2
+                    visible: !!addImageButton.selectedImage
 
+                    Image {
+                        id: imagePreview
+                        visible: !!addImageButton.selectedImage
+                        source: addImageButton.selectedImage
+                        fillMode: Image.PreserveAspectFit
+                        width: parent.width
+                        height: parent.height
+                    }
                     layer.enabled: true
                     layer.effect: OpacityMask {
                         maskSource: Rectangle {
                             anchors.centerIn: parent
-                            width: imagePreview.width
-                            height: imagePreview.height
-                            radius: imagePreview.width / 2
+                            width: imageCropperModal.width
+                            height: imageCropperModal.height
+                            radius: width / 2
                         }
                     }
                 }
@@ -242,28 +280,51 @@ ModalPopup {
 
                 ImageCropperModal {
                     id: imageCropperModal
-                    selectedImage: popup.selectedImage
+                    selectedImage: addImageButton.selectedImage
                     ratio: "1:1"
-                    onCropFinished: {
-                        imageDimensions.aX = aX
-                        imageDimensions.aY = aY
-                        imageDimensions.bX = bX
-                        imageDimensions.bY = bY
-                    }
                 }
+
+            }
+            StyledText {
+                id: imageValidation
+                visible: text && text !== ""
+                anchors.top: addImageButton.bottom
+                anchors.topMargin: Style.current.smallPadding
+                anchors.left: parent.left
+                anchors.right: parent.right
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+                color: Style.current.danger
             }
 
             Input {
                 property string defaultColor: "#4360DF"
+                property bool isValid: true
 
                 id: colorPicker
                 label: qsTr("Community color")
                 placeholderText: qsTr("Pick a color")
-                anchors.top: addImageButton.bottom
+                anchors.top: imageValidation.bottom
                 anchors.topMargin: Style.current.smallPadding
-                validationError: popup.colorValidationError
                 textField.text: defaultColor
                 textField.onReleased: colorDialog.open()
+
+                onTextChanged: validate()
+
+                function resetValidation() {
+                    isValid = true
+                    validationError = ""
+                }
+
+                function validate() {
+                    validationError = ""
+                    if (text === "") {
+                        validationError = qsTr("Please enter a color")
+                    } else if (!Utils.isHexColor(colorPicker.text)) {
+                        validationError = qsTr("Must be an hexadecimal color (eg: #4360DF)")
+                    }
+                    isValid = validationError === ""
+                }
 
                 StatusIconButton {
                     icon.name: "caret"
@@ -368,6 +429,7 @@ ModalPopup {
     }
 
     footer: StatusButton {
+        enabled: popup.isValid
         text: isEdit ?
               //% "Edit"
               qsTrId("edit") :
@@ -389,11 +451,11 @@ ModalPopup {
                                                    membershipRequirementSettingPopup.checkedMembership,
                                                    ensOnlySwitch.switchChecked,
                                                    colorPicker.text,
-                                                   popup.selectedImage,
-                                                   imageDimensions.aX,
-                                                   imageDimensions.aY,
-                                                   imageDimensions.bX,
-                                                   imageDimensions.bY)
+                                                   addImageButton.selectedImage,
+                                                   imageCropperModal.aX,
+                                                   imageCropperModal.aY,
+                                                   imageCropperModal.bX,
+                                                   imageCropperModal.bY)
             }
 
             if (error) {

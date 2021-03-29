@@ -10,6 +10,9 @@ ModalPopup {
     property string communityId
     readonly property int maxDescChars: 140
     property string nameValidationError: ""
+    property bool isValid:
+        nameInput.isValid &&
+        descriptionTextArea.isValid
 
     id: popup
     height: 600
@@ -18,22 +21,12 @@ ModalPopup {
         nameInput.text = "";
         nameInput.forceActiveFocus(Qt.MouseFocusReason)
     }
+    onClosed: destroy()
 
     function validate() {
-        nameValidationError = ""
-
-        if (nameInput.text === "") {
-            //% "You need to enter a name"
-            nameValidationError = qsTrId("you-need-to-enter-a-name")
-        } else if (!(/^[a-z0-9\-\ ]+$/i.test(nameInput.text))) {
-            //% "Please restrict your name to letters, numbers, dashes and spaces"
-            nameValidationError = qsTrId("please-restrict-your-name-to-letters--numbers--dashes-and-spaces")
-        } else if (nameInput.text.length > 100) {
-            //% "Your name needs to be 100 characters or shorter"
-            nameValidationError = qsTrId("your-name-needs-to-be-100-characters-or-shorter")
-        }
-
-        return !nameValidationError && !descriptionTextArea.validationError
+        nameInput.validate()
+        descriptionTextArea.validate()
+        return isValid
     }
 
     //% "New channel"
@@ -66,6 +59,30 @@ ModalPopup {
                 //% "A cool name"
                 placeholderText: qsTrId("a-cool-name")
                 validationError: popup.nameValidationError
+
+                property bool isValid: false
+
+                onTextEdited: {
+                    if (text.includes(" ")) {
+                        text = text.replace(" ", "-")
+                    }
+                    validate()
+                }
+
+                function validate() {
+                    validationError = ""
+                    if (nameInput.text === "") {
+                        //% "You need to enter a name"
+                        validationError = qsTrId("you-need-to-enter-a-name")
+                    } else if (!(/^[a-z0-9\-]+$/.test(nameInput.text))) {
+                        validationError = qsTr("Use only lowercase letters (a to z), numbers & dashes (-). Do not use chat keys.")
+                    } else if (nameInput.text.length > 100) {
+                        //% "Your name needs to be 100 characters or shorter"
+                        validationError = qsTrId("your-name-needs-to-be-100-characters-or-shorter")
+                    }
+                    isValid = validationError === ""
+                    return validationError
+                }
             }
 
             StyledTextArea {
@@ -75,10 +92,30 @@ ModalPopup {
                 //% "What your channel is about"
                 placeholderText: qsTrId("what-your-channel-is-about")
                 //% "The description cannot exceed %1 characters"
-                validationError: descriptionTextArea.text.length > maxDescChars ? qsTrId("the-description-cannot-exceed--1-characters").arg(maxDescChars) : ""
+                validationError: descriptionTextArea.text.length > popup.maxDescChars ? qsTrId("the-description-cannot-exceed-140-characters") :
+                                                                                  popup.descriptionValidationError || ""
                 anchors.top: nameInput.bottom
                 anchors.topMargin: Style.current.bigPadding
                 customHeight: 88
+
+                property bool isValid: false
+                onTextChanged: validate()
+
+                function resetValidation() {
+                    isValid = false
+                    validationError = ""
+                }
+
+                function validate() {
+                    validationError = ""
+                    if (text.length > popup.maxDescChars) {
+                        validationError = qsTrId("the-description-cannot-exceed-140-characters")
+                    }
+                    if (text === "") {
+                        validationError = qsTr("You need to enter a description")
+                    }
+                    isValid = validationError === ""
+                }
             }
 
             StyledText {
@@ -129,6 +166,7 @@ ModalPopup {
     }
 
     footer: StatusButton {
+        enabled: popup.isValid
         //% "Create"
         text: qsTrId("create")
         anchors.right: parent.right
