@@ -117,6 +117,9 @@ Popup {
             if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
                 return popup.onClicked(listView.currentIndex)
             }
+            if (!listView.currentItem.visible) {
+                goToNextAvailableIndex(false)
+            }
         }
     }
 
