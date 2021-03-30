@@ -85,8 +85,8 @@ ScrollView {
                     chatsModel.sendMessage(msg, "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, true, "");
                     statusUpdateInput.textInput.text = "";
                     if(event) event.accepted = true
-                    statusUpdateInput.messageSound.stop()
-                    Qt.callLater(statusUpdateInput.messageSound.play);
+                    sendMessageSound.stop()
+                    Qt.callLater(sendMessageSound.play);
                 }
             }
         }
