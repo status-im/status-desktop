@@ -33,6 +33,15 @@ QtObject:
   proc getDataDir*(self: UtilsView): string {.slot.} =
     result = accountConstants.DATADIR
 
+  proc getOs*(self: UtilsView): string {.slot.} =
+    if defined(windows):
+      return "windows"
+    elif (defined(macosx)):
+      return "mac"
+    elif (defined(linux)):
+      return "linux"
+    return "unknown"
+
   proc joinPath*(self: UtilsView, start: string, ending: string): string {.slot.} =
     result = os.joinPath(start, ending)
 
