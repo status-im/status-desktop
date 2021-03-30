@@ -24,8 +24,8 @@ Item {
     MouseArea {
         enabled: !placeholderMessage
         anchors.fill: messageContainer
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked:  messageMouseArea.clicked(mouse)
+        acceptedButtons: Qt.RightButton
+        onClicked: messageMouseArea.clicked(mouse)
     }
 
     ChatButtons {

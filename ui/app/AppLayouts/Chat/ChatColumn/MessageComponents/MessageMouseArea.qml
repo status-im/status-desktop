@@ -15,7 +15,11 @@ MouseArea {
             }
             return;
         }
-        if (mouse.button & Qt.LeftButton && isSticker && stickersLoaded) {
+        if (mouse.button === Qt.LeftButton && isSticker && stickersLoaded) {
+            if (isHovered) {
+                isHovered = false
+            }
+            
             openPopup(statusStickerPackClickPopup, {packId: stickerPackId} )
             return;
         }
