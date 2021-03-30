@@ -55,7 +55,7 @@ Item {
         id: advertiseDeviceItem
         anchors.left: syncContainer.left
         anchors.leftMargin: Style.current.padding
-        anchors.top: parent.bottom
+        anchors.top: parent.top
         anchors.topMargin: Style.current.padding
         anchors.right: syncContainer.right
         anchors.rightMargin: Style.current.padding
