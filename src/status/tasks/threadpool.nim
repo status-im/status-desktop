@@ -2,7 +2,7 @@ import # std libs
   json, sequtils, tables
 
 import # vendor libs
-  chronicles, chronos, json_serialization, NimQml, task_runner
+  chronicles, chronos, json_serialization, task_runner
 
 import # status-desktop libs
   ./common

@@ -9,7 +9,13 @@ Item {
     id: syncContainer
     Layout.fillHeight: true
     Layout.fillWidth: true
-    clip: true
+
+    Connections {
+        target: profileModel.mailservers
+        onActiveMailserverChanged: (activeMailserver) => {
+            syncContainer.activeMailserver = activeMailserver
+        }
+    }
 
     Item {
         width: profileContainer.profileContentWidth
@@ -20,8 +26,9 @@ Item {
             id: mailserversList
             
             StatusRadioButton {
+                id: rbSetMailsever
                 text: name
-                checked: name === profileModel.mailservers.activeMailserver
+                checked: name === activeMailserver.activeMailserver
                 onClicked: {
                     if (checked) {
                         profileModel.mailservers.setMailserver(name);
@@ -175,6 +182,10 @@ Item {
             model: profileModel.mailservers.list
             delegate: mailserversList
             visible: !automaticSelectionSwitch.checked
+
+            Component.onCompleted: {
+                profileModel.mailservers.getActiveMailserver()
+            }
         }
     }
 }

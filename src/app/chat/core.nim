@@ -1,6 +1,5 @@
 import NimQml, chronicles, tables
 import ../../status/chat as chat_model
-import ../../status/mailservers as mailserver_model
 import ../../status/messages as messages_model
 import ../../status/signals/types
 import ../../status/libstatus/types as status_types
@@ -38,7 +37,6 @@ proc init*(self: ChatController) =
   let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
 
   self.view.pubKey = pubKey
-  self.status.mailservers.init()
   self.status.chat.init(pubKey)
   self.status.stickers.init()
   self.view.reactions.init()

@@ -1,6 +1,5 @@
 import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat, algorithm
 import ../../status/status
-import ../../status/mailservers
 import ../../status/libstatus/chat as libstatus_chat
 import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/mailservers as status_mailservers
@@ -17,6 +16,7 @@ import web3/[conversions, ethtypes]
 import views/[channels_list, message_list, chat_item, suggestions_list, reactions, stickers, groups, transactions, communities, community_list, community_item]
 import ../utils/image_utils
 import ../../status/tasks/[qt, task_runner_impl]
+import ../../status/tasks/marathon/mailserver/worker
 
 logScope:
   topics = "chats-view"
@@ -199,12 +199,24 @@ QtObject:
     if self.status.chat.lastMessageTimestamps.hasKey(self.activeChannel.id):
       if force or self.status.chat.lastMessageTimestamps[self.activeChannel.id] <= self.oldestMessageTimestamp:
         self.oldestMessageTimestamp = self.status.chat.lastMessageTimestamps[self.activeChannel.id]
+        self.oldestMessageTimestampChanged()
     else:
-      let topics = self.status.mailservers.getMailserverTopicsByChatId(self.activeChannel.id)
-      if topics.len > 0:
-        self.oldestMessageTimestamp = topics[0].lastRequest
-      else:
-        self.oldestMessageTimestamp = times.toUnix(times.getTime())
+      let
+        mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+        task = GetMailserverTopicsByChatIdTaskArg(
+          `method`: "getMailserverTopicsByChatId",
+          vptr: cast[ByteAddress](self.vptr),
+          slot: "getMailserverTopicsByChatIdResult",
+          chatId: self.activeChannel.id
+        )
+      mailserverWorker.start(task)
+
+  proc getMailserverTopicsByChatIdResult(self: ChatsView, topicsEncoded: string) {.slot.} =
+    let topicsTuple = decode[tuple[topics: seq[MailserverTopic], fetchRange: int]](topicsEncoded)
+    if topicsTuple.topics.len > 0:
+      self.oldestMessageTimestamp = topicsTuple.topics[0].lastRequest
+    else:
+      self.oldestMessageTimestamp = times.toUnix(times.getTime())
     self.oldestMessageTimestampChanged()
 
   proc getChatsList(self: ChatsView): QVariant {.slot.} =
@@ -618,22 +630,54 @@ QtObject:
     write = setLoadingMessages
     notify = loadingMessagesChanged
 
+  proc getMailserverTopicsByChatIdResult2(self: ChatsView, topicsEncoded: string) {.slot.} =
+    let
+      topicsTuple = decode[tuple[topics: seq[MailserverTopic], fetchRange: int]](topicsEncoded)
+      currentOldestMessageTimestamp = self.oldestMessageTimestamp
+    self.oldestMessageTimestamp = self.oldestMessageTimestamp - topicsTuple.fetchRange
+
+    let
+      mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+      task = RequestMessagesTaskArg(
+        `method`: "requestMessages",
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "requestMessagesResult",
+        topics: topicsTuple.topics.map(topic => topic.topic),
+        fromValue: self.oldestMessageTimestamp,
+        toValue: currentOldestMessageTimestamp,
+        force: true
+      )
+    mailserverWorker.start(task)
+
   proc requestMoreMessages*(self: ChatsView, fetchRange: int) {.slot.} =
     self.loadingMessages = true
     self.loadingMessagesChanged(true)
+    let mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
 
-    var allTopics: seq[string] = @[]
     if(self.activeChannel.isTimelineChat):
+      var chatIds: seq[string] = @[]
       for contact in self.status.contacts.getContacts():
-        for t in self.status.mailservers.getMailserverTopicsByChatId(getTimelineChatId(contact.id)).map(topic => topic.topic):
-          allTopics.add(t)
+        chatIds.add(getTimelineChatId(contact.id))
+
+      let task = GetMailserverTopicsByChatIdsTaskArg(
+        `method`: "getMailserverTopicsByChatIds",
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "getMailserverTopicsByChatIdResult2",
+        chatIds: chatIds,
+        fetchRange: fetchRange
+      )
+      mailserverWorker.start(task)
     else:
-      allTopics = self.status.mailservers.getMailserverTopicsByChatId(self.activeChannel.id).map(topic => topic.topic)
+      let task = GetMailserverTopicsByChatIdTaskArg(
+        `method`: "getMailserverTopicsByChatId",
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "getMailserverTopicsByChatIdResult2",
+        chatId: self.activeChannel.id,
+        fetchRange: fetchRange
+      )
+      mailserverWorker.start(task)
 
-    let currentOldestMessageTimestamp = self.oldestMessageTimestamp
-    self.oldestMessageTimestamp = self.oldestMessageTimestamp - fetchRange
-
-    self.status.mailservers.requestMessages(allTopics, self.oldestMessageTimestamp, currentOldestMessageTimestamp, true)
+  proc requestMessagesResult(self: ChatsView, resultEncoded: string) {.slot.} =
     self.oldestMessageTimestampChanged()
     self.messagesLoaded();
 
@@ -644,11 +688,23 @@ QtObject:
     if (self.activeChannel.id == selectedChannel.id):
       self.activeChannel.chatItem = nil
     self.status.chat.leave(selectedChannel.id)
-    self.status.mailservers.deleteMailserverTopic(selectedChannel.id)
+    let
+      mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+      task = DeleteMailserverTopicTaskArg(
+        `method`: "deleteMailserverTopic",
+        chatId: selectedChannel.id
+      )
+    mailserverWorker.start(task)
 
   proc leaveActiveChat*(self: ChatsView) {.slot.} =
     self.status.chat.leave(self.activeChannel.id)
-    self.status.mailservers.deleteMailserverTopic(self.activeChannel.id)
+    let
+      mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+      task = DeleteMailserverTopicTaskArg(
+        `method`: "deleteMailserverTopic",
+        chatId: self.activeChannel.id
+      )
+    mailserverWorker.start(task)
 
   proc removeChat*(self: ChatsView, chatId: string) =
     discard self.chats.removeChatItemFromList(chatId)
@@ -835,3 +891,33 @@ QtObject:
       idx = idx + 1
       if(id == msg.id): return idx
     return idx
+
+  proc isActiveMailserverResult(self: ChatsView, resultEncoded: string) {.slot.} =
+    let arg = decode[tuple[isActiveMailserverAvailable: bool, topics: seq[MailserverTopic]]](resultEncoded)
+
+    if arg.isActiveMailserverAvailable:
+      self.setLoadingMessages(true)
+      let
+        mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+        task = RequestMessagesTaskArg(
+          `method`: "requestMessages",
+          topics: arg.topics.map(t => t.topic)
+        )
+      mailserverWorker.start(task)
+
+  proc getMailserverTopicsResult(self: ChatsView, resultEncoded: string) {.slot.} =
+    let mailserverTopics = decode[seq[MailserverTopic]](resultEncoded)
+    var fromValue = times.toUnix(times.getTime()) - 86400 # today - 24 hours
+
+    if mailserverTopics.len > 0:
+      fromValue = min(mailserverTopics.map(topic => topic.lastRequest))
+    
+    self.setLoadingMessages(true)
+    let
+      mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+      task = RequestMessagesTaskArg(
+        `method`: "requestMessages",
+        topics: mailserverTopics.map(t => t.topic),
+        fromValue: fromValue
+      )
+    mailserverWorker.start(task)

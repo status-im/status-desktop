@@ -15,8 +15,11 @@ import status/libstatus/accounts/constants
 import status_go
 import status/status as statuslib
 import ./eventemitter
+import ./status/tasks/marathon/mailserver/controller as mailserver_controller
+import ./status/tasks/marathon/mailserver/worker as mailserver_worker
 
 var signalsQObjPointer: pointer
+var mailserverQObjPointer: pointer
 
 logScope:
   topics = "main"
@@ -28,7 +31,14 @@ proc mainProc() =
     else:
       "/../fleets.json"
 
-  let status = statuslib.newStatusInstance(readFile(joinPath(getAppDir(), fleets)))
+  let
+    fleetConfig = readFile(joinPath(getAppDir(), fleets))
+    status = statuslib.newStatusInstance(fleetConfig)
+    mailserverController = mailserver_controller.newController(status)
+    mailserverWorker = mailserver_worker.newMailserverWorker(cast[ByteAddress](mailserverController.vptr))
+
+  # TODO: create and register an ipcWorker
+  status.tasks.marathon.registerWorker(mailserverWorker)
   status.initNode()
 
   enableHDPI()
@@ -117,6 +127,9 @@ proc mainProc() =
 
   status.events.once("login") do(a: Args):
     var args = AccountArgs(a)
+
+    status.tasks.marathon.onLoggedIn()
+
     # Delete login and onboarding from memory to remove any mnemonic that would have been saved in the accounts list
     login.delete()
     onboarding.delete()
@@ -131,7 +144,6 @@ proc mainProc() =
 
     wallet.checkPendingTransactions()
     wallet.start()
-
 
   engine.setRootContextProperty("loginModel", login.variant)
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
@@ -183,6 +195,7 @@ proc mainProc() =
     initControllers()
 
   engine.setRootContextProperty("signals", signalController.variant)
+  engine.setRootContextProperty("mailserver", mailserverController.variant)
 
   engine.load(newQUrl("qrc:///main.qml"))
 

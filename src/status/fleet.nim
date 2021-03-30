@@ -1,15 +1,12 @@
-import ../eventemitter
 import json
 import libstatus/types
 
 type
   FleetModel* = ref object
-    events*: EventEmitter
     config*: FleetConfig
 
-proc newFleetModel*(events: EventEmitter, fleetConfigJson: string): FleetModel =
+proc newFleetModel*(fleetConfigJson: string): FleetModel =
   result = FleetModel()
-  result.events = events
   result.config = fleetConfigJson.toFleetConfig()
 
 proc delete*(self: FleetModel) =

@@ -1,5 +1,7 @@
 import # vendor libs
-  json_serialization, NimQml, task_runner
+  json_serialization
+
+export json_serialization
 
 type
   Task* = proc(arg: string): void {.gcsafe, nimcall.}

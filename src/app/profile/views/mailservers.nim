@@ -1,9 +1,9 @@
 import NimQml, chronicles
 import ../../../status/status
-import ../../../status/mailservers
 import ../../../status/profile/mailserver
 import mailservers_list
 import ../../../status/libstatus/settings as status_settings
+import ../../../status/tasks/marathon/mailserver/worker
 
 logScope:
   topics = "mailservers-view"
@@ -35,14 +35,20 @@ QtObject:
   QtProperty[QVariant] list:
     read = getMailserversList
 
+  proc activeMailserverChanged*(self: MailserversView, activeMailserverName: string) {.signal.}
+
   proc getActiveMailserver(self: MailserversView): string {.slot.} =
-    return self.mailserversList.getMailserverName(self.status.mailservers.getActiveMailserver())
+    let
+      mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+      task = GetActiveMailserverTaskArg(
+        `method`: "getActiveMailserver",
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "getActiveMailserverResult"
+      )
+    mailserverWorker.start(task)
 
-  proc activeMailserverChanged*(self: MailserversView) {.signal.}
-
-  QtProperty[string] activeMailserver:
-    read = getActiveMailserver
-    notify = activeMailserverChanged
+  proc getActiveMailserverResult*(self: MailserversView, activeMailserver: string) {.slot.} =
+    self.activeMailserverChanged(activeMailserver)
 
   proc getAutomaticSelection(self: MailserversView): bool {.slot.} =
     status_settings.getPinnedMailserver() == ""
@@ -58,7 +64,17 @@ QtObject:
     if value:
       status_settings.pinMailserver()
     else:
-      status_settings.pinMailserver(self.status.mailservers.getActiveMailserver())
+      let
+        mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+        task = GetActiveMailserverTaskArg(
+          `method`: "getActiveMailserver",
+          vptr: cast[ByteAddress](self.vptr),
+          slot: "getActiveMailserverResult2"
+        )
+      mailserverWorker.start(task)
+
+  proc getActiveMailserverResult2(self: MailserversView, activeMailserver: string) {.slot.} =
+    status_settings.pinMailserver(activeMailserver)
 
   proc save(self: MailserversView, name: string, address: string) {.slot.} =
     status_settings.saveMailserver(name, address)
