@@ -17,6 +17,7 @@ import view
 import views/[ens_manager, devices, network, mailservers, contacts]
 import ../chat/views/channels_list
 import chronicles
+import ../../status/tasks/marathon/mailserver/events
 
 type ProfileController* = ref object
   view*: ProfileView
@@ -109,7 +110,8 @@ proc init*(self: ProfileController, account: Account) =
     self.view.contacts.setContactList(contacts)
 
   self.status.events.on("mailserver:changed") do(e: Args):
-    self.view.mailservers.activeMailserverChanged()
+    let mailserverArg = MailserverArgs(e)
+    self.view.mailservers.activeMailserverChanged(mailserverArg.peer)
 
   self.status.events.on(SignalType.Message.event) do(e: Args):
     let msgData = MessageSignal(e);

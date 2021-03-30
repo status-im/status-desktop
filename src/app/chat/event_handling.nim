@@ -1,6 +1,14 @@
-import sugar, sequtils, times, strutils
-import ../../status/chat/chat as status_chat
-import ./views/communities
+import # std libs
+  sugar, sequtils, times, strutils
+
+import
+  stew/faux_closures
+
+import # status-desktop libs
+  ../../status/chat/chat as status_chat, ./views/communities,
+  ../../status/tasks/marathon,
+  ../../status/tasks/marathon/mailserver/worker,
+  ../../status/libstatus/mailservers # TODO: needed for MailserverTopic type, remove?
 
 proc handleChatEvents(self: ChatController) =
   # Display already saved messages
@@ -113,23 +121,33 @@ proc handleChatEvents(self: ChatController) =
     else:
       self.view.stickers.resetBuyAttempt(tx.data.parseInt)
 
+
 proc handleMailserverEvents(self: ChatController) =
+  let mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+
   self.status.events.on("mailserverTopics") do(e: Args):
     var topics = TopicArgs(e).topics
     for topic in topics:
       topic.lastRequest = times.toUnix(times.getTime())
-      self.status.mailservers.addMailserverTopic(topic)
+      let task = AddMailserverTopicTaskArg(
+        `method`: "addMailserverTopic",
+        topic: topic
+      )
+      mailserverWorker.start(task)
 
-    if(self.status.mailservers.isActiveMailserverAvailable):
-      self.view.setLoadingMessages(true)
-      self.status.mailservers.requestMessages(topics.map(t => t.topic))
+    let task = IsActiveMailserverAvailableTaskArg(
+      `method`: "isActiveMailserverAvailable",
+      vptr: cast[ByteAddress](self.view.vptr),
+      slot: "isActiveMailserverResult",
+      topics: topics
+    )
+    mailserverWorker.start(task)
 
   self.status.events.on("mailserverAvailable") do(e:Args):
-    let mailserverTopics = self.status.mailservers.getMailserverTopics()
-    var fromValue = times.toUnix(times.getTime()) - 86400 # today - 24 hours
-
-    if mailserverTopics.len > 0:
-       fromValue = min(mailserverTopics.map(topic => topic.lastRequest))
+    let task = GetMailserverTopicsTaskArg(
+      `method`: "getMailserverTopics",
+      vptr: cast[ByteAddress](self.view.vptr),
+      slot: "getMailserverTopicsResult"
+    )
+    mailserverWorker.start(task)
     
-    self.view.setLoadingMessages(true)
-    self.status.mailservers.requestMessages(mailserverTopics.map(t => t.topic), fromValue)

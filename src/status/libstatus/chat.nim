@@ -169,7 +169,6 @@ proc sendImageMessage*(chatId: string, image: string): string =
 proc sendImageMessages*(chatId: string, images: var seq[string]): string =
   let
     preferredUsername = getSetting[string](Setting.PreferredUsername, "")
-  debugEcho ">>> [status/libstatus/chat.sendImageMessages] about to send images"
   let imagesJson = %* images.map(image => %*
       {
         "chatId": chatId,
@@ -179,7 +178,6 @@ proc sendImageMessages*(chatId: string, images: var seq[string]): string =
         "text": "Update to latest version to see a nice image here!"
       }
     )
-  debugEcho ">>> [status/libstatus/chat.sendImageMessages] imagesJson:", $imagesJson
   callPrivateRPC("sendChatMessages".prefix, %* [imagesJson])
 
 proc sendStickerMessage*(chatId: string, sticker: Sticker): string =

@@ -2,18 +2,17 @@ import libstatus/accounts as libstatus_accounts
 import libstatus/core as libstatus_core
 import libstatus/settings as libstatus_settings
 import libstatus/types as libstatus_types
-import chat, accounts, wallet, node, network, mailservers, messages, contacts, profile, stickers, permissions, fleet
+import chat, accounts, wallet, node, network, messages, contacts, profile, stickers, permissions, fleet
 import ../eventemitter
 import ./tasks/task_runner_impl
 
-export chat, accounts, node, mailservers, messages, contacts, profile, network, permissions, fleet, task_runner_impl
+export chat, accounts, node, messages, contacts, profile, network, permissions, fleet, task_runner_impl, eventemitter
 
 type Status* = ref object
   events*: EventEmitter
   fleet*: FleetModel
   chat*: ChatModel
   messages*: MessagesModel
-  mailservers*: MailserverModel
   accounts*: AccountModel
   wallet*: WalletModel
   node*: NodeModel
@@ -28,13 +27,12 @@ proc newStatusInstance*(fleetConfig: string): Status =
   result = Status()
   result.tasks = newTaskRunner()
   result.events = createEventEmitter()
-  result.fleet = fleet.newFleetModel(result.events, fleetConfig)
+  result.fleet = fleet.newFleetModel(fleetConfig)
   result.chat = chat.newChatModel(result.events)
   result.accounts = accounts.newAccountModel(result.events)
   result.wallet = wallet.newWalletModel(result.events)
   result.wallet.initEvents()
   result.node = node.newNodeModel()
-  result.mailservers = mailservers.newMailserverModel(result.fleet, result.events)
   result.messages = messages.newMessagesModel(result.events)
   result.profile = profile.newProfileModel()
   result.contacts = contacts.newContactModel(result.events)
