@@ -37,7 +37,12 @@ ScrollView {
         anchors.bottomMargin: Style.current.bigPadding
         spacing: appSettings.useCompactMode ? 0 : 4
         boundsBehavior: Flickable.StopAtBounds
-        flickDeceleration: 10000
+        flickDeceleration: {
+            if (utilsModel.getOs() === Constants.windows) {
+                return 5000
+            }
+            return 10000
+        }
         Layout.fillWidth: true
         Layout.fillHeight: true
         verticalLayoutDirection: ListView.BottomToTop

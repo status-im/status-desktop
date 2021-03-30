@@ -67,6 +67,10 @@ QtObject {
     readonly property string seedWalletType: "seed"
     readonly property string generatedWalletType: "generated"
 
+    readonly property string windows: "windows"
+    readonly property string linux: "linux"
+    readonly property string mac: "mac"
+
     // Transaction states
     readonly property int addressRequested: 1
     readonly property int declined: 2
