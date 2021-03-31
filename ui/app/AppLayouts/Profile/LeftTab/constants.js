@@ -59,7 +59,8 @@ var settingsMenuButtons = [{
                    },  {
                         "id": BROWSER_SETTINGS,
                         "text": qsTr("Browser settings"),
-                        "filename": "../compassActive.svg"
+                        "filename": "../compassActive.svg",
+                        "ifEnabled": "browser"
                     }, {
                        "id": ADVANCED,
                        "text": qsTr("Advanced"),
