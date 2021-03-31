@@ -286,13 +286,13 @@ StackLayout {
                 id: chatInput
                 visible: {
                     const community = chatsModel.communities.activeCommunity
-                    if (chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat &&
-                            (!community.active ||
-                            community.access === Constants.communityChatPublicAccess ||
-                            community.admin || chatsModel.activeChannel.canPost)) {
-                        return true
+                    if (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat) {
+                        return chatsModel.activeChannel.isMember
                     }
-                    return chatsModel.activeChannel.isMember
+                    return !community.active ||
+                            community.access === Constants.communityChatPublicAccess ||
+                            community.admin ||
+                            chatsModel.activeChannel.canPost
                 }
                 enabled: !isBlocked
                 chatInputPlaceholder: isBlocked ?
