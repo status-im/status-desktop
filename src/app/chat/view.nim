@@ -84,12 +84,12 @@ proc asyncMessageLoad[T](self: T, slot: string, chatId: string) =
 const resolveEnsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let
     arg = decode[ResolveEnsTaskArg](argEncoded)
-    result = status_ens.pubkey(arg.ens)
-  arg.finish(result)
+    output = status_ens.pubkey(arg.ens)
+  arg.finish(output)
 
 proc resolveEns[T](self: T, slot: string, ens: string) =
   let arg = ResolveEnsTaskArg(
-    tptr: cast[ByteAddress](asyncMessageLoadTask),
+    tptr: cast[ByteAddress](resolveEnsTask),
     vptr: cast[ByteAddress](self.vptr),
     slot: slot,
     ens: ens
