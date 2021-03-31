@@ -12,25 +12,35 @@ ModalPopup {
     id: popup
 
     property string communityId: chatsModel.communities.activeCommunity.id
-    property var pubKeys: []
     property var goBack
 
     onOpened: {
-        pubKeys = [];
-        inviteBtn.enabled = false
-        contactList.membersData.clear();
-        // TODO remove friends that are already members
-        getContactListObject(contactList.membersData)
-        noContactsRect.visible = !profileModel.contacts.list.hasAddedContacts();
-        contactList.visible = !noContactsRect.visible;
+        contactFieldAndList.chatKey.text = ""
+        contactFieldAndList.pubKey = ""
+        contactFieldAndList.pubKeys = []
+        contactFieldAndList.ensUsername = ""
+        contactFieldAndList.chatKey.forceActiveFocus(Qt.MouseFocusReason)
+        contactFieldAndList.existingContacts.visible = profileModel.contacts.list.hasAddedContacts()
+        contactFieldAndList.noContactsRect.visible = !contactFieldAndList.existingContacts.visible
     }
 
     //% "Invite friends"
     title: qsTrId("invite-friends")
 
+    height: 630
+
+    function sendInvites(pubKeys) {
+        const error = chatsModel.communities.inviteUsersToCommunityById(popup.communityId, JSON.stringify(pubKeys))
+        if (error) {
+            console.error('Error inviting', error)
+            contactFieldAndList.validationError = error
+            return
+        }
+        contactFieldAndList.successMessage = qsTr("Invite successfully sent")
+    }
+
     Item {
         anchors.fill: parent
-
 
         TextWithLabel {
             id: shareCommunity
@@ -51,40 +61,18 @@ ModalPopup {
             anchors.rightMargin: -Style.current.padding
         }
 
-        StyledText {
-            //% "Contacts"
-            text: qsTrId("contacts")
-            anchors.left: parent.left
+        ContactsListAndSearch {
+            id: contactFieldAndList
             anchors.top: sep.bottom
             anchors.topMargin: Style.current.smallPadding
-            font.pixelSize: 15
-            font.weight: Font.Thin
-            color: Style.current.secondaryText
-        }
-
-        NoFriendsRectangle {
-            id: noContactsRect
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
-        ContactList {
-            id: contactList
-            selectMode: true
-            anchors.top: sep.bottom
-            anchors.topMargin: 100
-            onItemChecked: function(pubKey, itemChecked) {
-                var idx = pubKeys.indexOf(pubKey)
-                if (itemChecked) {
-                    if (idx === -1) {
-                        pubKeys.push(pubKey)
-                    }
-                } else {
-                    if (idx > -1) {
-                        pubKeys.splice(idx, 1);
-                    }
+            anchors.bottom: parent.bottom
+            showCheckbox: true
+            onUserClicked: function (isContact, pubKey, ensName) {
+                if (isContact) {
+                    // those are just added to the list to by added by the bunch
+                    return
                 }
-                inviteBtn.enabled = pubKeys.length > 0
+                sendInvites([pubKey])
             }
         }
     }
@@ -111,16 +99,11 @@ ModalPopup {
             id: inviteBtn
             anchors.bottom: parent.bottom
             anchors.right: parent.right
+            enabled: contactFieldAndList.pubKeys.length > 0
             //% "Invite"
             text: qsTrId("invite-button")
             onClicked : {
-                const error = chatsModel.communities.inviteUsersToCommunityById(popup.communityId, JSON.stringify(popup.pubKeys))
-                // TODO show error to user also should we show success?
-                if (error) {
-                    console.error('Error inviting', error)
-                    return
-                }
-                popup.close()
+                sendInvites(contactFieldAndList.pubKeys)
             }
         }
     }

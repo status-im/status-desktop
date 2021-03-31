@@ -1,9 +1,10 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import "../../../../imports"
-import "../../../../shared"
-import "../../../../shared/status"
+import "../imports"
+import "./status"
+// TODO move Contact into shared to get rid of that import
+import "../app/AppLayouts/Chat/components"
 import "./"
 
 
