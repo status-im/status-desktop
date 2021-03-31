@@ -1,10 +1,11 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import "../../../../imports"
-import "../../../../shared"
-import "../../../../shared/status"
-import "./"
+import "../imports"
+import "./status"
+// TODO move Contact into shared to get rid of that import
+import "../app/AppLayouts/Chat/components"
+import "."
 
 Item {
     id: root
@@ -12,6 +13,8 @@ Item {
     anchors.right: parent.right
     property string filterText: ""
     property bool expanded: true
+    property bool showCheckbox: false
+    property var pubKeys: ([])
     signal contactClicked(var contact)
 
     function matchesAlias(name, filter) {
@@ -33,7 +36,8 @@ Item {
             id: contactListView
             model: profileModel.contacts.list
             delegate: Contact {
-                showCheckbox: false
+                showCheckbox: root.showCheckbox
+                isChecked: root.pubKeys.indexOf(model.pubKey) > -1
                 pubKey: model.pubKey
                 isContact: model.isContact
                 isUser: false
@@ -50,7 +54,6 @@ Item {
             }
         }
     }
-
 }
 
 

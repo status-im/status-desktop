@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
-import "../../Chat/components"
 import "./Contacts"
 
 Item {
@@ -195,7 +194,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
-            PrivateChatPopupSearchResults {
+            SearchResults {
                 id: searchResults
                 anchors.top: addContactSearchInput.bottom
                 anchors.topMargin: Style.current.xlPadding

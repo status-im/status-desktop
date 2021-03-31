@@ -364,6 +364,7 @@ DISTFILES += \
     shared/AccountSelector.qml \
     shared/AddButton.qml \
     shared/Address.qml \
+    shared/ContactsListAndSearch.qml \
     shared/CropCornerRectangle.qml \
     shared/DelegateModelGeneralized.qml \
     shared/FormGroup.qml \

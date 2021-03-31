@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.3
-import "../../../../imports"
-import "../../../../shared"
+import "../imports"
+import "."
 
 ModalPopup {
     id: popup

@@ -1,23 +1,37 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import "../../../../imports"
-import "../../../../shared"
-import "../../../../shared/status"
-import "./"
+import QtGraphicalEffects 1.13
+import "../imports"
+import "../shared/status"
 
-ModalPopup {
+Item {
     property string validationError: ""
+    property string successMessage: ""
+    property alias chatKey: chatKey
+    property alias existingContacts: existingContacts
+    property alias noContactsRect: noContactsRect
+    property string pubKey : ""
+    property string ensUsername : ""
+    property bool showCheckbox: false
+    signal userClicked(bool isContact, string pubKey, string ensName)
+    property var pubKeys: ([])
 
-    property string pubKey : "";
-    property string ensUsername : "";
+    id: root
+    width: parent.width
+
+    property var resolveENS: Backpressure.debounce(root, 500, function (ensName) {
+        noContactsRect.visible = false
+        searchResults.loading = true
+        searchResults.showProfileNotFoundMessage = false
+        chatsModel.resolveENS(ensName)
+    });
 
     function validate() {
         if (!Utils.isChatKey(chatKey.text) && !Utils.isValidETHNamePrefix(chatKey.text)) {
             //% "Enter a valid chat key or ENS username"
             validationError = qsTrId("enter-a-valid-chat-key-or-ens-username");
             pubKey = ""
-            ensUsername.text = "";
+            ensUsername = "";
         } else if (profileModel.profile.pubKey === chatKey.text) {
             //% "Can't chat with yourself"
             validationError = qsTrId("can-t-chat-with-yourself");
@@ -27,72 +41,32 @@ ModalPopup {
         return validationError === ""
     }
 
-    property var resolveENS: Backpressure.debounce(popup, 500, function (ensName){
-        noContactsRect.visible = false
-        searchResults.loading = true
-        searchResults.showProfileNotFoundMessage = false
-        chatsModel.resolveENS(ensName)
-    });
-
-    function onKeyReleased(){
-        searchResults.pubKey = ""
-        if (!validate()) {
-            searchResults.showProfileNotFoundMessage = false
-            noContactsRect.visible = false
-            return;
-        }
-
-        chatKey.text = chatKey.text.trim();
-        
-        if (Utils.isChatKey(chatKey.text)){
-            pubKey = chatKey.text;
-            if (!profileModel.contacts.isAdded(pubKey)) {
-                searchResults.username = utilsModel.generateAlias(pubKey)
-                searchResults.userAlias = Utils.compactAddress(pubKey, 4)
-                searchResults.pubKey = pubKey
-            }
-            noContactsRect.visible = false
-            return;
-        }
-        
-        Qt.callLater(resolveENS, chatKey.text)
-    }
-
-    function validateAndJoin(pk, ensName) {
-        if (!validate() || pk.trim() === "" || validationError !== "") return;
-        doJoin(pk, ensName)
-    }
-    function doJoin(pk, ensName) {
-        if(Utils.isChatKey(pk)){
-            chatsModel.joinChat(pk, Constants.chatTypeOneToOne);
-        } else {
-            chatsModel.joinChatWithENS(pk, ensName);
-        }
-            
-        popup.close();
-    }
-
-    id: popup
-    //% "New chat"
-    title: qsTrId("new-chat")
-
-    onOpened: {
-        chatKey.text = "";
-        pubKey = "";
-        ensUsername.text = "";
-        chatKey.forceActiveFocus(Qt.MouseFocusReason)
-        existingContacts.visible = profileModel.contacts.list.hasAddedContacts()
-        noContactsRect.visible = !existingContacts.visible
-    }
-
     Input {
         id: chatKey
         //% "Enter ENS username or chat key"
         placeholderText: qsTrId("enter-contact-code")
-        Keys.onEnterPressed: validateAndJoin(popup.pubKey, chatKey.text)
-        Keys.onReturnPressed: validateAndJoin(popup.pubKey, chatKey.text)
         Keys.onReleased: {
-            onKeyReleased();
+            searchResults.pubKey = ""
+            if (!validate()) {
+                searchResults.showProfileNotFoundMessage = false
+                noContactsRect.visible = false
+                return;
+            }
+
+            chatKey.text = chatKey.text.trim();
+
+            if (Utils.isChatKey(chatKey.text)){
+                pubKey = chatKey.text;
+                if (!profileModel.contacts.isAdded(pubKey)) {
+                    searchResults.username = utilsModel.generateAlias(pubKey)
+                    searchResults.userAlias = Utils.compactAddress(pubKey, 4)
+                    searchResults.pubKey = pubKey
+                }
+                noContactsRect.visible = false
+                return;
+            }
+
+            Qt.callLater(resolveENS, chatKey.text)
         }
         textField.anchors.rightMargin: clearBtn.width + Style.current.padding + 2
 
@@ -109,7 +83,7 @@ ModalPopup {
                 } else {
                     if (profileModel.profile.pubKey === resolvedPubKey) {
                         //% "Can't chat with yourself"
-                        popup.validationError = qsTrId("can-t-chat-with-yourself");
+                        validationError = qsTrId("can-t-chat-with-yourself");
                     } else {
                         searchResults.username = chatsModel.formatENSUsername(chatKey.text)
                         let userAlias = utilsModel.generateAlias(resolvedPubKey)
@@ -140,18 +114,19 @@ ModalPopup {
                 chatKey.text = ""
                 chatKey.forceActiveFocus(Qt.MouseFocusReason)
                 searchResults.showProfileNotFoundMessage = false
-                searchResults.pubKey = popup.pubKey = ""
+                searchResults.pubKey = pubKey = ""
                 noContactsRect.visible = false
+                searchResults.loading = false
             }
         }
     }
 
     StyledText {
-        id: validationErrorMessage
-        text: popup.validationError
-        visible: popup.validationError !== ""
+        id: message
+        text: validationError || successMessage
+        visible: validationError !== "" || successMessage !== ""
         font.pixelSize: 13
-        color: Style.current.danger
+        color: !!validationError ? Style.current.danger : Style.current.success
         anchors.top: chatKey.bottom
         anchors.topMargin: Style.current.smallPadding
         anchors.horizontalCenter: parent.horizontalCenter
@@ -161,11 +136,25 @@ ModalPopup {
         id: existingContacts
         anchors.topMargin: this.height > 0 ? Style.current.xlPadding : 0
         anchors.top: chatKey.bottom
+        showCheckbox: root.showCheckbox
         filterText: chatKey.text
+        pubKeys: root.pubKeys
         onContactClicked: function (contact) {
-            doJoin(contact.pubKey, profileModel.contacts.addedContacts.userName(contact.pubKey, contact.name))
+            if (!contact || typeof contact === "string") {
+                return
+            }
+            const index = root.pubKeys.indexOf(contact.pubKey)
+            const pubKeysCopy = Object.assign([], root.pubKeys)
+            if (index === -1) {
+                pubKeysCopy.push(contact.pubKey)
+            } else {
+                pubKeysCopy.splice(index, 1)
+            }
+            root.pubKeys = pubKeysCopy
+
+            userClicked(true, contact.pubKey, profileModel.contacts.addedContacts.userName(contact.pubKey, contact.name))
         }
-        expanded: !searchResults.loading && popup.pubKey === "" && !searchResults.showProfileNotFoundMessage
+        expanded: !searchResults.loading && pubKey === "" && !searchResults.showProfileNotFoundMessage
     }
 
     SearchResults {
@@ -175,8 +164,13 @@ ModalPopup {
         hasExistingContacts: existingContacts.visible
         loading: false
 
-        onResultClicked: validateAndJoin(popup.pubKey, chatKey.text)
-        onAddToContactsButtonClicked: profileModel.contacts.addContact(popup.pubKey)
+        onResultClicked: {
+            if (!validate()) {
+                return
+            }
+            userClicked(false, pubKey, chatKey.text)
+        }
+        onAddToContactsButtonClicked: profileModel.contacts.addContact(pubKey)
     }
 
     NoFriendsRectangle {
@@ -186,11 +180,4 @@ ModalPopup {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
     }
-
 }
-
-/*##^##
-Designer {
-    D{i:0;height:300;width:300}
-}
-##^##*/
