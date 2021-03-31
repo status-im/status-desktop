@@ -54,6 +54,8 @@ QtObject:
     var found = false
     for chat in community.chats:
       if (chat.id == newChat.id):
+        # canPost is not available in the newChat so we need to check what we had before
+        newChat.canPost = community.chats[i].canPost
         community.chats[i] = newChat
         found = true
       i = i + 1
