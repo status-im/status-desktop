@@ -69,7 +69,7 @@ ModalPopup {
                     icon.source: "../../../img/import.svg"
                     icon.width: 16
                     icon.height: 16
-                    text: qsTr("Access exisitng community")
+                    text: qsTr("Access existing community")
                     onTriggered: openPopup(importCommunitiesPopupComponent)
                 }
             }
