@@ -335,7 +335,6 @@ StackLayout {
                         chatInput.textInput.textFormat = TextEdit.PlainText;
                         chatInput.textInput.textFormat = TextEdit.RichText;
                     }
-
                 }
             }
         }

@@ -146,14 +146,14 @@ Rectangle {
         // handle new line in blockquote
         if ((event.key === Qt.Key_Enter || event.key === Qt.Key_Return) && (event.modifiers & Qt.ShiftModifier) && message.data.startsWith(">")) {
             if(message.data.startsWith(">") && !message.data.endsWith("\n\n")) {
-                let newMessage = ""
+                let newMessage1 = ""
                 if (message.data.endsWith("\n> ")) {
-                    newMessage = message.data.substr(0, message.data.lastIndexOf("> ")) + "\n\n"
+                    newMessage1 = message.data.substr(0, message.data.lastIndexOf("> ")) + "\n\n"
                 } else {
-                    newMessage = message.data + "\n> ";
+                    newMessage1 = message.data + "\n> ";
                 }
                 messageInputField.remove(0, messageInputField.cursorPosition);
-                insertInTextInput(0, Emoji.parse(newMessage));
+                insertInTextInput(0, Emoji.parse(newMessage1));
             }
             event.accepted = true
         }
@@ -223,7 +223,7 @@ Rectangle {
         const posBeforeEnd = messageInputField.length - messageInputField.cursorPosition;
         const plainText = getPlainText()
         const formatted = parseBackText(plainText)
-        messageInputField.text = formatted
+        messageInputField.text = formatted.replace(/  /g, '&nbsp;&nbsp;')
         messageInputField.cursorPosition = messageInputField.length - posBeforeEnd;
     }
 

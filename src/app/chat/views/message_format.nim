@@ -17,7 +17,7 @@ proc mention(self: ChatMessageList, pubKey: string): string =
 
 # See render-inline in status-react/src/status_im/ui/screens/chat/message/message.cljs
 proc renderInline(self: ChatMessageList, elem: TextItem): string =
-  let value = escape_html(elem.literal).multiReplace(("\r\n", "<br/>")).multiReplace(("\n", "<br/>"))
+  let value = escape_html(elem.literal).multiReplace(("\r\n", "<br/>")).multiReplace(("\n", "<br/>")).multiReplace(("  ", "&nbsp;&nbsp;"))
   case elem.textType:
   of "": result = value
   of "code": result = fmt("<code>{value}</code>")
