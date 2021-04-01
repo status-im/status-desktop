@@ -77,6 +77,15 @@ Rectangle {
                 }
 
                 Action {
+                    text: qsTr("Invite People")
+                    enabled: chatsModel.communities.activeCommunity.canManageUsers
+                    icon.source: "../../img/export.svg"
+                    icon.width: 20
+                    icon.height: 20
+                    onTriggered: openPopup(inviteFriendsToCommunityPopup, {communityId: chatsModel.communities.activeCommunity.id})
+                }
+
+                Action {
                     //% "Leave community"
                     text: qsTrId("leave-community")
                     icon.source: "../../img/delete.svg"
