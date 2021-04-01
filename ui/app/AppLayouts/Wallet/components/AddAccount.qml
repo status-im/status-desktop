@@ -14,9 +14,12 @@ StatusRoundButton {
     height: 36
 
     onClicked: {
-        btnAdd.state = "pressed"
-        let x = btnAdd.iconX + btnAdd.icon.width / 2 - newAccountMenu.width / 2
-        newAccountMenu.popup(x, btnAdd.icon.height + 10)
+        if (newAccountMenu.opened) {
+            newAccountMenu.close()
+        } else {
+            let x = btnAdd.iconX + btnAdd.icon.width / 2 - newAccountMenu.width / 2
+            newAccountMenu.popup(x, btnAdd.height + 4)
+        }
     }
 
     GenerateAccountModal {
@@ -35,6 +38,7 @@ StatusRoundButton {
     PopupMenu {
         id: newAccountMenu
         width: 260
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         Action {
             //% "Generate an account"
             text: qsTrId("generate-a-new-account")
@@ -75,6 +79,10 @@ StatusRoundButton {
                 addAccountWithPrivateKeydModal.open()
             }
         }
+        onAboutToShow: {
+            btnAdd.state = "pressed"
+        }
+
         onAboutToHide: {
             btnAdd.state = "default"
         }
