@@ -145,15 +145,19 @@ Item {
             flipImage: true
             text: ""
             onClicked: function () {
-                // FIXME the button is too much on the right, so the arrow can never align
-                let x = settingsBtn.x + settingsBtn.width / 2 - newSettingsMenu.width / 2
-                newSettingsMenu.popup(x, settingsBtn.height)
+                if (newSettingsMenu.opened) {
+                    newSettingsMenu.close()
+                } else {
+                    let x = settingsBtn.x + settingsBtn.width / 2 - newSettingsMenu.width / 2
+                    newSettingsMenu.popup(x, settingsBtn.height)
+                }
             }
             anchors.left: receiveBtn.right
             anchors.leftMargin: walletMenu.btnOuterMargin
 
             PopupMenu {
                 id: newSettingsMenu
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                 width: 176
                 Action {
                     //% "Account Settings"

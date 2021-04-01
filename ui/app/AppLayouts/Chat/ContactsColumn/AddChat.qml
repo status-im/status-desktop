@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
 import "../components"
@@ -13,15 +14,19 @@ StatusRoundButton {
     width: 36
     height: 36
 
-
     onClicked: {
-        btnAdd.state = "pressed"
-        let x = btnAdd.iconX + btnAdd.icon.width / 2 - newChatMenu.width / 2
-        newChatMenu.popup(x, btnAdd.icon.height + 14)
+        if (newChatMenu.opened) {
+            newChatMenu.close()
+        } else {
+            let x = btnAdd.iconX + btnAdd.icon.width / 2 - newChatMenu.width / 2
+            newChatMenu.popup(x, btnAdd.height + 4)
+        }
     }
     
     PopupMenu {
         id: newChatMenu
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
         Action {
             //% "Start new chat"
             text: qsTrId("start-new-chat")
@@ -57,6 +62,10 @@ StatusRoundButton {
                 openPopup(communitiesPopupComponent)
             }
         }
+        onAboutToShow: {
+            btnAdd.state = "pressed"
+        }
+
         onAboutToHide: {
             btnAdd.state = "default"
         }

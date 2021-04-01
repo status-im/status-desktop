@@ -95,6 +95,7 @@ Rectangle {
 
         ChannelContextMenu {
             id: chatContextMenu
+            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         }
 
         PopupMenu {
