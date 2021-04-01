@@ -57,7 +57,7 @@ Item {
 
         let cursorAtEnd = this.cursorPosition === filter.length;
         let hasAtBeforeCursor = filter.charAt(this.cursorPosition - 1) === "@" 
-        let hasWhiteSpaceBeforeAt = filter.charAt(this.cursorPosition - 2) === " "
+        let hasWhiteSpaceBeforeAt = filter.charAt(this.cursorPosition - 2) === " " || filter.charAt(this.cursorPosition - 2) === "\n"
         let hasWhiteSpaceAfterAt = filter.charAt(this.cursorPosition) === " "
         let hasWhiteSpaceBeforeCursor = filter.charAt(this.cursorPosition - 1) === " "
 
@@ -66,11 +66,11 @@ Item {
         }
 
         if (filter === "@" ||
-          (hasAtBeforeCursor && hasWhiteSpaceBeforeAt && hasWhiteSpaceAfterAt) ||
-          (this.cursorPosition === 1 && hasAtBeforeCursor && hasWhiteSpaceAfterAt) ||
-          (cursorAtEnd && filter.endsWith("@") && hasWhiteSpaceBeforeAt)) {
-          this.lastAtPosition = this.cursorPosition - 1;
-          return true
+                (hasAtBeforeCursor && hasWhiteSpaceBeforeAt && hasWhiteSpaceAfterAt) ||
+                (this.cursorPosition === 1 && hasAtBeforeCursor && hasWhiteSpaceAfterAt) ||
+                (cursorAtEnd && filter.endsWith("@") && hasWhiteSpaceBeforeAt)) {
+            this.lastAtPosition = this.cursorPosition - 1;
+            return true
         }
 
         let filterWithoutAt = filter.substring(lastAtPosition + 1, this.cursorPosition)
