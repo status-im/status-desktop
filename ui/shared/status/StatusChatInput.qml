@@ -781,6 +781,8 @@ Rectangle {
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
             TextArea {
+                property var lastClick: 0
+
                 id: messageInputField
                 textFormat: Text.RichText
                 font.pixelSize: 15
@@ -803,11 +805,18 @@ Rectangle {
                 selectionColor: Style.current.primarySelectionColor
                 persistentSelection: true
                 onReleased: function (event) {
+                    const now = Date.now()
                     if (messageInputField.selectedText.trim() !== "") {
-                        let x = event.x - (textFormatMenu.width / 2)
+                        // If it's a double click, just check the mouse position
+                        // If it's a mouse select, use the start and end position average)
+                        let x = now < messageInputField.lastClick + 500 ? x = event.x :
+                                                        (messageInputField.cursorRectangle.x + event.x) / 2
+                        x -= textFormatMenu.width / 2
+
                         textFormatMenu.popup(x, -messageInputField.height-2)
                         messageInputField.forceActiveFocus();
                     }
+                    lastClick = now
                 }
 
                 StatusTextFormatMenu {
