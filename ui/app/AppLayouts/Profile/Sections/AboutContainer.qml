@@ -22,7 +22,7 @@ Item {
             //% "App version"
             name: qsTrId("version")
             //% "Version: %1"
-            description: qsTrId("version---1").arg("beta.8.rc1")
+            description: qsTrId("version---1").arg("beta.8.rc2")
             tooltipUnder: true
         }
 
