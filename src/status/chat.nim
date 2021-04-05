@@ -153,11 +153,31 @@ proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
     self.contacts[c.id] = c
   self.events.emit("chatUpdate", ChatUpdateArgs(contacts: contacts))
 
+
+proc deleteSpamGroupChats(self: ChatModel, chats: seq[Chat], contacts: seq[Profile]) =
+  for chat in chats:
+    if chat.chatType == ChatType.PrivateGroupChat:
+      var isContact = false
+      var joined = false
+      for member in chat.members:
+        if member.id == self.publicKey and member.joined:
+          joined = true
+        if member.admin and member.joined:
+          for contact in contacts:
+            if contact.address == member.id:
+              isContact = true
+      if not isContact and not joined:
+        discard status_chat.leaveGroupChat(chat.id)
+        status_chat.deactivateChat(chat)
+
+
 proc init*(self: ChatModel, pubKey: string) =
   self.publicKey = pubKey
 
   var chatList = status_chat.loadChats()
   var contacts = getAddedContacts()
+
+  self.deleteSpamGroupChats(chatList, contacts)
 
   let profileUpdatesChatIds = chatList.filter(c => c.chatType == ChatType.Profile).map(c => c.id)
 
