@@ -51,6 +51,7 @@ type
     reactions*: seq[Reaction]
 
   ChatModel* = ref object
+    publicKey*: string
     events*: EventEmitter
     contacts*: Table[string, Profile]
     channels*: Table[string, Chat]
@@ -77,7 +78,25 @@ proc delete*(self: ChatModel) =
   discard
 
 proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest]) =
+  var contacts = getAddedContacts()
+
+  # Automatically decline chat group invitations if admin is not a contact
   for chat in chats:
+    if chat.chatType == ChatType.PrivateGroupChat:
+      var isContact = false
+      var joined = false
+      for member in chat.members:
+        if member.id == self.publicKey and member.joined:
+          joined = true
+        if member.admin and member.joined:
+          for contact in contacts:
+            if contact.address == member.id:
+              isContact = true
+      if not isContact and not joined:
+        discard status_chat.leaveGroupChat(chat.id)
+        status_chat.deactivateChat(chat)
+        continue
+
     if chat.isActive:
       self.channels[chat.id] = chat
 
@@ -135,6 +154,8 @@ proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
   self.events.emit("chatUpdate", ChatUpdateArgs(contacts: contacts))
 
 proc init*(self: ChatModel, pubKey: string) =
+  self.publicKey = pubKey
+
   var chatList = status_chat.loadChats()
   var contacts = getAddedContacts()
 
