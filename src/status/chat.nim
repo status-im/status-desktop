@@ -93,7 +93,6 @@ proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiRea
             if contact.address == member.id:
               isContact = true
       if not isContact and not joined:
-        discard status_chat.leaveGroupChat(chat.id)
         status_chat.deactivateChat(chat)
         continue
 
@@ -154,7 +153,8 @@ proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
   self.events.emit("chatUpdate", ChatUpdateArgs(contacts: contacts))
 
 
-proc deleteSpamGroupChats(self: ChatModel, chats: seq[Chat], contacts: seq[Profile]) =
+proc deleteSpamGroupChats(self: ChatModel, contacts: seq[Profile]) =
+  var chats = status_chat.loadChats()
   for chat in chats:
     if chat.chatType == ChatType.PrivateGroupChat:
       var isContact = false
@@ -167,17 +167,17 @@ proc deleteSpamGroupChats(self: ChatModel, chats: seq[Chat], contacts: seq[Profi
             if contact.address == member.id:
               isContact = true
       if not isContact and not joined:
-        discard status_chat.leaveGroupChat(chat.id)
         status_chat.deactivateChat(chat)
 
 
 proc init*(self: ChatModel, pubKey: string) =
   self.publicKey = pubKey
 
-  var chatList = status_chat.loadChats()
   var contacts = getAddedContacts()
 
-  self.deleteSpamGroupChats(chatList, contacts)
+  self.deleteSpamGroupChats(contacts)
+
+  var chatList = status_chat.loadChats()
 
   let profileUpdatesChatIds = chatList.filter(c => c.chatType == ChatType.Profile).map(c => c.id)
 
