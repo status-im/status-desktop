@@ -201,7 +201,11 @@ proc addMailserverTopic*(self: MailserverModel, topic: MailserverTopic) =
   discard status_mailservers.addMailserverTopic(topic)
 
 proc deleteMailserverTopic*(self: MailserverModel, chatId: string) =
-  var topic:MailserverTopic = self.getMailserverTopicsByChatId(chatId)[0]
+  var topics = self.getMailserverTopicsByChatId(chatId)
+  if topics.len == 0:
+    return
+
+  var topic:MailserverTopic = topics[0]
   if(topic.chatIds.len > 1):
     discard status_mailservers.addMailserverTopic(topic)
   else:
