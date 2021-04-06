@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtGraphicalEffects 1.0
+import "../imports"
 
 Rectangle {
     id: root
@@ -14,6 +15,7 @@ Rectangle {
 
     width: 24
     height: 24
+    color: Style.current.background
 
     // apply rounded corners mask
     layer.enabled: true
