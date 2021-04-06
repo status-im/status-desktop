@@ -22,7 +22,7 @@ Item {
 
     UserImage {
         id: chatImage
-        visible: chatsModel.activeChannel.chatType !== Constants.chatTypeOneToOne && isMessage && headerRepeatCondition && !root.isCurrentUser
+        active: chatsModel.activeChannel.chatType !== Constants.chatTypeOneToOne && isMessage && headerRepeatCondition && !root.isCurrentUser
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.top:  dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
