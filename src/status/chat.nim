@@ -77,11 +77,9 @@ proc newChatModel*(events: EventEmitter): ChatModel =
 proc delete*(self: ChatModel) =
   discard
 
-proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest]) =
-  var contacts = getAddedContacts()
-
-  # Automatically decline chat group invitations if admin is not a contact
+proc cleanSpamChatGroups(self: ChatModel, chats: seq[Chat], contacts: seq[Profile]): seq[Chat] =
   for chat in chats:
+    if not chat.isActive: continue
     if chat.chatType == ChatType.PrivateGroupChat:
       var isContact = false
       var joined = false
@@ -94,8 +92,18 @@ proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiRea
               isContact = true
       if not isContact and not joined:
         status_chat.deactivateChat(chat)
-        continue
+      else:
+        result.add(chat)
+    else:
+      result.add(chat)
 
+proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest]) =
+  var contacts = getAddedContacts()
+
+  # Automatically decline chat group invitations if admin is not a contact
+  var chatList = self.cleanSpamChatGroups(chats, contacts)
+
+  for chat in chatList:
     if chat.isActive:
       self.channels[chat.id] = chat
 
@@ -108,7 +116,7 @@ proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiRea
       if self.lastMessageTimestamps[chatId] > ts:
         self.lastMessageTimestamps[chatId] = ts
       
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chatList, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests))
 
 proc hasChannel*(self: ChatModel, chatId: string): bool =
   self.channels.hasKey(chatId)
@@ -153,31 +161,12 @@ proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
   self.events.emit("chatUpdate", ChatUpdateArgs(contacts: contacts))
 
 
-proc deleteSpamGroupChats(self: ChatModel, contacts: seq[Profile]) =
-  var chats = status_chat.loadChats()
-  for chat in chats:
-    if chat.chatType == ChatType.PrivateGroupChat:
-      var isContact = false
-      var joined = false
-      for member in chat.members:
-        if member.id == self.publicKey and member.joined:
-          joined = true
-        if member.admin and member.joined:
-          for contact in contacts:
-            if contact.address == member.id:
-              isContact = true
-      if not isContact and not joined:
-        status_chat.deactivateChat(chat)
-
-
 proc init*(self: ChatModel, pubKey: string) =
   self.publicKey = pubKey
 
   var contacts = getAddedContacts()
 
-  self.deleteSpamGroupChats(contacts)
-
-  var chatList = status_chat.loadChats()
+  var chatList = self.cleanSpamChatGroups(status_chat.loadChats(), contacts)
 
   let profileUpdatesChatIds = chatList.filter(c => c.chatType == ChatType.Profile).map(c => c.id)
 
