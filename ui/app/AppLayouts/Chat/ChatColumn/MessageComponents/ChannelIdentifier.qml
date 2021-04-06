@@ -96,7 +96,7 @@ Column {
                 }
             }
             font.pixelSize: 14
-            color: Style.current.darkGrey
+            color: Style.current.secondaryText
             anchors.left: parent.left
             anchors.right: parent.right
             horizontalAlignment: Text.AlignHCenter
