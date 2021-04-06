@@ -298,8 +298,8 @@ ScrollView {
             prevMessageIndex: {
                 // This is used in order to have access to the previous message and determine the timestamp
                 // we can't rely on the index because the sequence of messages is not ordered on the nim side
-                if(msgDelegate.DelegateModel.itemsIndex > 0){
-                    return messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index
+                if (msgDelegate.DelegateModel.itemsIndex < messageListDelegate.items.count - 1) {
+                    return messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex + 1).model.index
                 }
                 return -1;
             }

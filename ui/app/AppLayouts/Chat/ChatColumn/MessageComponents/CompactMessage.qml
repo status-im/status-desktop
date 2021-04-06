@@ -14,6 +14,7 @@ Item {
     property bool isCurrentUser: false
     property bool isHovered: false
     property bool isMessageActive: false
+    property bool headerRepeatCondition: (authorCurrentMsg !== authorPrevMsg || shouldRepeatHeader || dateGroupLbl.visible)
 
     id: root
 
@@ -72,7 +73,7 @@ Item {
 
         UserImage {
             id: chatImage
-            active: isMessage && authorCurrentMsg != authorPrevMsg
+            active: isMessage && headerRepeatCondition
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
             anchors.top: parent.top
@@ -81,6 +82,7 @@ Item {
 
         UsernameLabel {
             id: chatName
+            visible: isMessage && headerRepeatCondition
             anchors.leftMargin: root.chatHorizontalPadding
             anchors.top: chatImage.top
             anchors.left: chatImage.right
@@ -88,7 +90,7 @@ Item {
 
         ChatTime {
             id: chatTime
-            visible: authorCurrentMsg != authorPrevMsg
+            visible: headerRepeatCondition
             anchors.verticalCenter: chatName.verticalCenter
             anchors.left: chatName.right
             anchors.leftMargin: 4
