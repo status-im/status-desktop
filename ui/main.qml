@@ -134,6 +134,9 @@ ApplicationWindow {
         }
 
         onActivated: {
+            if (reason === SystemTrayIcon.Context) {
+                return
+            }
             applicationWindow.show()
             applicationWindow.raise()
             applicationWindow.requestActivate()
