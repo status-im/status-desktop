@@ -150,14 +150,29 @@ PopupMenu {
     PopupMenu {
         id: copyLinkMenu
         title: qsTr("Copy link")
+
         Repeater {
             id: linksRepeater
             model: messageContextMenu.linkUrls.split(" ")
             delegate: MenuItem {
+                id: popupMenuItem
                 text: modelData
                 onTriggered: {
                     chatsModel.copyToClipboard(modelData)
                     messageContextMenu.close()
+                }
+                contentItem: StyledText {
+                    text: popupMenuItem.text
+                    font: popupMenuItem.font
+                    color: Style.current.textColor
+                    horizontalAlignment: Text.AlignLeft
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                }
+                background: Rectangle {
+                    implicitWidth: 220
+                    implicitHeight: 34
+                    color: popupMenuItem.highlighted ? Style.current.backgroundHover: "transparent"
                 }
             }
         }
