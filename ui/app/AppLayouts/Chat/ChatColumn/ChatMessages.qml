@@ -26,6 +26,7 @@ ScrollView {
     Layout.fillWidth: true
     Layout.fillHeight: true
 
+    height: parent.height
     ScrollBar.vertical.policy: chatLogView.contentHeight > chatLogView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 

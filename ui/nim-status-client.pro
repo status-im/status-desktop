@@ -291,7 +291,9 @@ DISTFILES += \
     app/AppLayouts/Profile/qmldir \
     app/AppLayouts/Wallet/LeftTab.qml \
     app/AppLayouts/Wallet/SendModal.qml \
+    app/AppLayouts/Wallet/SignPhraseModal.qml \
     app/AppLayouts/Wallet/SetCurrencyModal.qml \
+    app/AppLayouts/Wallet/SeedPhraeBackupWarning.qml \
     app/AppLayouts/Wallet/TokenSettingsModal.qml \
     app/AppLayouts/Wallet/WalletHeader.qml \
     app/AppLayouts/Wallet/WalletLayout.qml \

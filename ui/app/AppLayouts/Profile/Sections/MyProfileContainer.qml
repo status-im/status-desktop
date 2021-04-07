@@ -11,8 +11,9 @@ Item {
     property string pubkey: profileModel.profile.pubKey
 
     id: profileHeaderContent
-    anchors.fill: parent
     clip: true
+    height: parent.height
+    Layout.fillWidth: true
 
     Component {
         id: changeProfileModalComponent

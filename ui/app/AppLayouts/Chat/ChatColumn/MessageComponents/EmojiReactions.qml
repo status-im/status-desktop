@@ -132,6 +132,7 @@ Item {
                 SVGImage {
                     id: emojiImage
                     width: 15
+                    height: 15
                     fillMode: Image.PreserveAspectFit
                     source: {
                         const basePath = "../../../../img/emojiReactions/"
