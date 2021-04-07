@@ -173,7 +173,6 @@ ModalPopup {
             name: model.name
             lastMessage: model.description
             contentType: Constants.messageType
-            border.width: 0
             color: Style.current.transparent
             enableMouseArea: false
         }
