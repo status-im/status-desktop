@@ -14,7 +14,6 @@ ModalPopup {
     closePolicy: Popup.NoAutoClose
 
     Column {
-        anchors.horizontalCenter: parent.horizontalCenter
         anchors.left: parent.left
         anchors.right: parent.right
 

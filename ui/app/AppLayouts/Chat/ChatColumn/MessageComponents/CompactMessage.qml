@@ -241,7 +241,7 @@ Item {
     }
 
     HoverHandler {
-        enabled: !messageContextMenu.opened && !profilePopupOpened && !popupOpened
+        enabled: typeof messageContextMenu !== "undefined" && typeof profilePopupOpened !== "undefined" && !messageContextMenu.opened && !profilePopupOpened && !popupOpened
         onHoveredChanged: {
             root.isHovered = hovered;
         }
