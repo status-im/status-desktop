@@ -28,6 +28,12 @@ Popup {
         color: Style.current.background
         radius: 8
     }
+    onOpened: {
+        popupOpened = true
+    }
+    onClosed: {
+        popupOpened = false
+    }
     padding: 0
     contentItem: Item {
 

@@ -19,6 +19,7 @@ ApplicationWindow {
     property bool hasAccounts: !!loginModel.rowCount()
     property bool removeMnemonicAfterLogin: false
     property alias dragAndDrop: dragTarget
+    property bool popupOpened: false
 
     Universal.theme: Universal.System
 
