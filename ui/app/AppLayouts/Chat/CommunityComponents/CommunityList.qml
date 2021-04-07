@@ -13,6 +13,7 @@ ListView {
     visible: height > 10
     width:parent.width
     interactive: false
+    verticalLayoutDirection: ListView.BottomToTop
 
     model: chatsModel.communities.joinedCommunities
     delegate: CommunityButton {
