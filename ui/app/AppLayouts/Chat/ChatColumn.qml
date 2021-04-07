@@ -122,53 +122,46 @@ StackLayout {
             isBlocked = profileModel.contacts.isContactBlocked(chatsModel.activeChannel.id);
         }
     }
+
+    Timer {
+        id: timer
+    }
     
     ColumnLayout {
         spacing: 0
 
-        RowLayout {
-            id: chatTopBar
+        TopBar {
+            id: topBar
+            z: 60
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             Layout.fillWidth: true
-            z: 60
-            spacing: 0
-            TopBar {
-                id: topBar
-            }
         }
 
-        RowLayout {
+        Rectangle {
+            Component.onCompleted: {
+                isConnected = chatsModel.isOnline
+                if(!isConnected){
+                    connectedStatusRect.visible = true
+                }
+            }
+
+            id: connectedStatusRect
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
             z: 60
-            Rectangle {
-                Component.onCompleted: {
-                    isConnected = chatsModel.isOnline
-                    if(!isConnected){
-                        connectedStatusRect.visible = true 
-                    }
-                }
-
-                id: connectedStatusRect
-                Layout.fillWidth: true
-                height: 40;
-                color: isConnected ? Style.current.green : Style.current.darkGrey
-                visible: false
-                Text {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: Style.current.white
-                    id: connectedStatusLbl
-                    text: isConnected ? 
-                        //% "Connected"
-                        qsTrId("connected") :
-                        //% "Disconnected"
-                        qsTrId("disconnected")
-                }
-            }
-
-            Timer {
-                id: timer
+            height: 40
+            color: isConnected ? Style.current.green : Style.current.darkGrey
+            visible: false
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                color: Style.current.white
+                id: connectedStatusLbl
+                text: isConnected ?
+                          //% "Connected"
+                          qsTrId("connected") :
+                          //% "Disconnected"
+                          qsTrId("disconnected")
             }
 
             Connections {
@@ -177,7 +170,7 @@ StackLayout {
                     if (connected == isConnected) return;
                     isConnected = connected;
                     if(isConnected){
-                        timer.setTimeout(function(){ 
+                        timer.setTimeout(function(){
                             connectedStatusRect.visible = false;
                         }, 5000);
                     } else {
@@ -187,12 +180,21 @@ StackLayout {
             }
         }
 
-        RowLayout {
-            id: chatContainer
+        StackLayout {
+            id: stackLayoutChatMessages
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            spacing: 0
+            clip: true
+            Repeater {
+                model: chatsModel
+                Loader {
+                    active: false
+                    sourceComponent: ChatMessages {
+                        id: chatMessages
+                        messageList: model.messages
+                    }
+                }
+            }
 
             Connections {
                 target: chatsModel
@@ -203,24 +205,7 @@ StackLayout {
                     }
                 }
             }
-
-
-            StackLayout {
-                id: stackLayoutChatMessages
-                Repeater {
-                    model: chatsModel
-                    Loader {
-                        active: false
-                        sourceComponent: ChatMessages {
-                            id: chatMessages
-                            messageList: model.messages
-                        }
-                    }
-                }
-            }
-
-            
-       }
+        }
 
         StatusImageModal {
             id: imagePopup
