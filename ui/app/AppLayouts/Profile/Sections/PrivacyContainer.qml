@@ -10,12 +10,14 @@ Item {
     id: privacyContainer
     Layout.fillHeight: true
     Layout.fillWidth: true
+    clip: true
 
     Column {
         id: containerColumn
         anchors.top: parent.top
         anchors.topMargin: topMargin
-        width: contentMaxWidth
+        width: profileContainer.profileContentWidth
+
         anchors.horizontalCenter: parent.horizontalCenter
 
         StatusSectionHeadline {

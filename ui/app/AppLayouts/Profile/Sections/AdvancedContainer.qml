@@ -10,12 +10,14 @@ Item {
     id: advancedContainer
     Layout.fillHeight: true
     Layout.fillWidth: true
+    clip: true
 
     Column {
         id: generalColumn
         anchors.top: parent.top
         anchors.topMargin: topMargin
-        width: contentMaxWidth
+        width: profileContainer.profileContentWidth
+
         anchors.horizontalCenter: parent.horizontalCenter
 
         StatusSettingsLineButton {

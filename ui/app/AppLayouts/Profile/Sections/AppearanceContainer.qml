@@ -37,7 +37,8 @@ ScrollView {
 
     Item {
         id: appearanceContainer
-        width: contentMaxWidth
+        width: profileContainer.profileContentWidth
+
         anchors.horizontalCenter: parent.horizontalCenter
         height: this.childrenRect.height + 100
 

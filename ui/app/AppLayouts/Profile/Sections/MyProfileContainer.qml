@@ -12,6 +12,7 @@ Item {
 
     id: profileHeaderContent
     anchors.fill: parent
+    clip: true
 
     Component {
         id: changeProfileModalComponent
@@ -22,7 +23,8 @@ Item {
         id: profileImgNameContainer
         anchors.top: parent.top
         anchors.topMargin: 64
-        width: contentMaxWidth
+        width: profileContainer.profileContentWidth
+
         anchors.horizontalCenter: parent.horizontalCenter
 
         height: this.childrenRect.height

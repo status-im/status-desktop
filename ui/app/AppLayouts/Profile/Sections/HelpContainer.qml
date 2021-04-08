@@ -9,7 +9,7 @@ Item {
     id: helpContainer
     height: parent.height
     Layout.fillWidth: true
-
+    clip: true
 
     ScrollView {
         height: parent.height
@@ -20,7 +20,8 @@ Item {
             id: glossary
             anchors.top: parent.top
             height: this.childrenRect.height
-            width: contentMaxWidth
+            width: profileContainer.profileContentWidth
+
             anchors.horizontalCenter: parent.horizontalCenter
 
             StatusSectionHeadline {
@@ -126,7 +127,8 @@ Item {
             anchors.top: glossary.bottom
             anchors.topMargin: Style.current.bigPadding * 2
             height: this.childrenRect.height
-            width: contentMaxWidth
+            width: profileContainer.profileContentWidth
+
             anchors.horizontalCenter: parent.horizontalCenter
 
             StyledText {

@@ -22,7 +22,7 @@ Item {
 
         Item {
             id: contentItem
-            width: 624
+            width: profileContainer.profileContentWidth
             anchors.horizontalCenter: parent.horizontalCenter
 
             Image {

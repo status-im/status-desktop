@@ -6,8 +6,8 @@ import "../../../shared"
 import "./Sections"
 
 SplitView {
-    property int contentMargin: 120
     property int contentMaxWidth: 624
+    property int contentMinWidth: 450
     property int topMargin: 46
     property alias changeProfileSection: leftTab.changeProfileSection
 
@@ -34,6 +34,8 @@ SplitView {
     }
 
     StackLayout {
+        property int profileContentWidth: Math.max(contentMinWidth, Math.min(profileContainer.width * 0.8, contentMaxWidth))
+
         id: profileContainer
         anchors.top: parent.top
         anchors.topMargin: 0

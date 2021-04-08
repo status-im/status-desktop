@@ -10,6 +10,7 @@ Item {
     id: ensContainer
     Layout.fillHeight: true
     Layout.fillWidth: true
+    clip: true
 
     property bool showSearchScreen: false
     property string addedUsername: ""
