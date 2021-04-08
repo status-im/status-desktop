@@ -173,6 +173,7 @@ DISTFILES += \
     app/AppLayouts/Profile/LeftTab/components/MenuButton.qml \
     app/AppLayouts/Chat/data/EmojiReactions.qml \
     app/AppLayouts/Profile/Sections/AppearanceContainer.qml \
+    app/AppLayouts/Profile/Sections/NetworksModal.qml \
     app/AppLayouts/Profile/Sections/BackupSeedModal.qml \
     app/AppLayouts/Profile/Sections/BrowserContainer.qml \
     app/AppLayouts/Profile/Sections/BrowserModals/EthereumExplorerModal.qml \
@@ -181,6 +182,7 @@ DISTFILES += \
     app/AppLayouts/Profile/Sections/ChangeProfilePicModal.qml \
     app/AppLayouts/Profile/Sections/ChatLinksPreviewModal.qml \
     app/AppLayouts/Profile/Sections/MyProfileContainer.qml \
+    app/AppLayouts/Profile/Sections/NewCustomNetworkModal.qml \
     app/AppLayouts/Profile/Sections/NotificationAppearancePreview.qml \
     app/AppLayouts/Profile/Sections/OpenLinksWithModal.qml \
     app/AppLayouts/Profile/Sections/SoundsContainer.qml \
