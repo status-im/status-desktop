@@ -10,6 +10,7 @@ Item {
     id: root
     Layout.fillHeight: true
     Layout.fillWidth: true
+    clip: true
 
     property Component dappListPopup: DappList {
         onClosed: destroy()
@@ -22,7 +23,8 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: topMargin
         anchors.bottom: parent.bottom
-        width: contentMaxWidth
+        width: profileContainer.profileContentWidth
+
         anchors.horizontalCenter: parent.horizontalCenter
 
         Column {

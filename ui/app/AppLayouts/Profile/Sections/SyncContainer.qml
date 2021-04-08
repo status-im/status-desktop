@@ -9,9 +9,11 @@ Item {
     id: syncContainer
     Layout.fillHeight: true
     Layout.fillWidth: true
+    clip: true
 
     Item {
-        width: contentMaxWidth
+        width: profileContainer.profileContentWidth
+
         anchors.horizontalCenter: parent.horizontalCenter
 
         Component {
@@ -19,7 +21,7 @@ Item {
             
             StatusRadioButton {
                 text: name
-                checked: name == profileModel.mailservers.activeMailserver
+                checked: name === profileModel.mailservers.activeMailserver
                 onClicked: {
                     if (checked) {
                         profileModel.mailservers.setMailserver(name);

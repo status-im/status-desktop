@@ -60,7 +60,7 @@ Item {
             onClosed: {
                 transactionDialog.closed()
             }
-            ensUsername: ensUsername.text
+            ensUsername: ensUsername.text || ""
             width: 400
             height: 400
         }
@@ -69,7 +69,7 @@ Item {
     Item {
         id: ensContainer
         anchors.top: parent.top
-        width: 624
+        width: profileContainer.profileContentWidth
         anchors.horizontalCenter: parent.horizontalCenter
 
         Rectangle {
@@ -245,7 +245,9 @@ Item {
             id: validationResult
             text: validationMessage
             anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width
             anchors.top: ensTypeRect.bottom
+            wrapMode: Text.WordWrap
             anchors.topMargin: Style.current.bigPadding
         }
     }

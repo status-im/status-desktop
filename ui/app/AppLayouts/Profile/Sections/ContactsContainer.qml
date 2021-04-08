@@ -12,12 +12,14 @@ Item {
     property bool isPending: false
     height: parent.height
     Layout.fillWidth: true
+    clip: true
 
     Item {
         anchors.top: parent.top
         anchors.topMargin: 32
         anchors.bottom: parent.bottom
-        width: contentMaxWidth
+        width: profileContainer.profileContentWidth
+
         anchors.horizontalCenter: parent.horizontalCenter
 
         SearchBox {

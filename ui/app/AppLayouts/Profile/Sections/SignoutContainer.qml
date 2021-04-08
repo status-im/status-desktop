@@ -11,6 +11,7 @@ Item {
     height: 200
     Layout.fillHeight: true
     Layout.fillWidth: true
+    clip: true
 
     StyledText {
         id: txtTitle

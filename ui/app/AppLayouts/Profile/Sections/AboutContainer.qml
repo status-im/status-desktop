@@ -9,13 +9,14 @@ Item {
     id: aboutContainer
     Layout.fillHeight: true
     Layout.fillWidth: true
+    clip: true
 
     Column {
         id: generalColumn
         spacing: Style.current.bigPadding
         anchors.top: parent.top
         anchors.topMargin: 46
-        width: contentMaxWidth
+        width: profileContainer.profileContentWidth
         anchors.horizontalCenter: parent.horizontalCenter
 
         StatusSectionDescItem {

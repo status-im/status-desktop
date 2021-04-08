@@ -9,9 +9,11 @@ Item {
     id: soundsContainer
     Layout.fillHeight: true
     Layout.fillWidth: true
+    clip: true
 
     Item {
-        width: contentMaxWidth
+        width: profileContainer.profileContentWidth
+
         anchors.horizontalCenter: parent.horizontalCenter
 
         StyledText {

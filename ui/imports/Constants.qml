@@ -135,7 +135,7 @@ QtObject {
     readonly property string ens_taken: "taken"
     readonly property string ens_taken_custom: "taken-custom"
     readonly property string ens_owned: "owned"
-    readonly property string ens_availabe: "available"
+    readonly property string ens_available: "available"
     readonly property string ens_already_connected: "already-connected"
     readonly property string ens_connected: "connected"
     readonly property string ens_connected_dkey: "connected-different-key"

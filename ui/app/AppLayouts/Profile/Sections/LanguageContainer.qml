@@ -10,6 +10,7 @@ Item {
     id: languageContainer
     Layout.fillHeight: true
     Layout.fillWidth: true
+    clip: true
 
     property Component languagePopup: LanguageModal {}
 
@@ -17,7 +18,8 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: topMargin
         anchors.bottom: parent.bottom
-        width: contentMaxWidth
+        width: profileContainer.profileContentWidth
+
         anchors.horizontalCenter: parent.horizontalCenter
 
         Column {
