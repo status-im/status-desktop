@@ -52,6 +52,7 @@ type
 
   ChatModel* = ref object
     publicKey*: string
+    acceptChatsContactsOnly*: bool
     events*: EventEmitter
     contacts*: Table[string, Profile]
     channels*: Table[string, Chat]
@@ -67,6 +68,7 @@ include chat/utils
 
 proc newChatModel*(events: EventEmitter): ChatModel =
   result = ChatModel()
+  result.acceptChatsContactsOnly = false
   result.events = events
   result.contacts = initTable[string, Profile]()
   result.channels = initTable[string, Chat]()
@@ -100,8 +102,10 @@ proc cleanSpamChatGroups(self: ChatModel, chats: seq[Chat], contacts: seq[Profil
 proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest]) =
   var contacts = getAddedContacts()
 
-  # Automatically decline chat group invitations if admin is not a contact
-  var chatList = self.cleanSpamChatGroups(chats, contacts)
+  var chatList = chats
+  if (self.acceptChatsContactsOnly):
+    # Automatically decline chat group invitations if admin is not a contact
+    chatList = self.cleanSpamChatGroups(chats, contacts)
 
   for chat in chatList:
     if chat.isActive:
@@ -161,12 +165,15 @@ proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
   self.events.emit("chatUpdate", ChatUpdateArgs(contacts: contacts))
 
 
-proc init*(self: ChatModel, pubKey: string) =
+proc init*(self: ChatModel, pubKey: string, acceptChatsContactsOnly: bool) =
   self.publicKey = pubKey
+  self.acceptChatsContactsOnly = acceptChatsContactsOnly
 
   var contacts = getAddedContacts()
+  var chatList = status_chat.loadChats()
 
-  var chatList = self.cleanSpamChatGroups(status_chat.loadChats(), contacts)
+  if (acceptChatsContactsOnly):
+    chatList = self.cleanSpamChatGroups(chatList, contacts)
 
   let profileUpdatesChatIds = chatList.filter(c => c.chatType == ChatType.Profile).map(c => c.id)
 

@@ -100,12 +100,24 @@ Item {
             OpenLinksWithModal {}
         }
 
+        Component {
+            id: acceptsNewChatsModal
+            AcceptNewChatsModal {}
+        }
+
         StatusSettingsLineButton {
             //% "Open links with..."
             text: qsTrId("open-links-with---")
             //% "My default browser"
             currentValue: appSettings.openLinksInStatus ? "Status" : qsTrId("my-default-browser")
             onClicked: openPopup(openLinksWithModal)
+        }
+
+        StatusSettingsLineButton {
+            text: qsTr("Accept new group chats from")
+            currentValue: profileModel.profile.acceptChatsContactsOnly ? qsTr("Contacts") :
+                                                          qsTr("Anyone")
+            onClicked: openPopup(acceptsNewChatsModal)
         }
     }
 }

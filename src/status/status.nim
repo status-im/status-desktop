@@ -64,5 +64,5 @@ proc reset*(self: Status) =
 proc getNodeVersion*(self: Status): string =
   libstatus_settings.getWeb3ClientVersion()
 
-proc saveSetting*(self: Status, setting: Setting, value: string) =
+proc saveSetting*(self: Status, setting: Setting, value: string | bool) =
   discard libstatus_settings.saveSetting(setting, value)

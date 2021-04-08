@@ -124,6 +124,13 @@ QtObject:
     self.profile.setAppearance(theme)
     self.status.saveSetting(Setting.Appearance, $theme)
 
+  proc setAcceptChatsContactsOnly*(self: ProfileView, acceptOnlyContacts: bool) {.slot.} =
+    if (acceptOnlyContacts == self.profile.acceptChatsContactsOnly):
+      return
+    self.profile.setAcceptChatsContactsOnly(acceptOnlyContacts)
+    self.status.saveSetting(Setting.AcceptChatsContactsOnly, acceptOnlyContacts)
+    # TODO cleanup chats after activating this
+
   proc getDappList(self: ProfileView): QVariant {.slot.} =
     return newQVariant(self.dappList)
 

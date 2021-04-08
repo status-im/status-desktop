@@ -16,7 +16,7 @@ var
 dirty.store(true)
 settings = %* {}
 
-proc saveSetting*(key: Setting, value: string | JsonNode): StatusGoError =
+proc saveSetting*(key: Setting, value: string | JsonNode | bool): StatusGoError =
   try:
     let response = callPrivateRPC("settings_saveSetting", %* [key, value])
     let responseResult = $(response.parseJSON(){"result"})

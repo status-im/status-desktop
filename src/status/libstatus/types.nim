@@ -165,6 +165,7 @@ type
     Other = "other"
 
   Setting* {.pure.} = enum
+    AcceptChatsContactsOnly = "accept-chats-contacts-only?",
     Appearance = "appearance",
     Bookmarks = "bookmarks",
     Currency = "currency"

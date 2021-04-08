@@ -172,6 +172,7 @@ DISTFILES += \
     app/AppLayouts/Profile/LeftTab/Constants.js \
     app/AppLayouts/Profile/LeftTab/components/MenuButton.qml \
     app/AppLayouts/Chat/data/EmojiReactions.qml \
+    app/AppLayouts/Profile/Sections/AcceptNewChatsModal.qml \
     app/AppLayouts/Profile/Sections/AppearanceContainer.qml \
     app/AppLayouts/Profile/Sections/BackupSeedModal.qml \
     app/AppLayouts/Profile/Sections/BrowserContainer.qml \
