@@ -213,6 +213,7 @@ QtObject:
 
       self.communityList.addCommunityItemToList(community)
       self.joinedCommunityList.addCommunityItemToList(community)
+      self.setActiveCommunity(community.id)
       self.communitiesChanged()
     except Exception as e:
       error "Error creating the community", msg = e.msg

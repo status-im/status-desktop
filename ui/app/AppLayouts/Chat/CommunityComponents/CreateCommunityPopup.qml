@@ -401,7 +401,6 @@ ModalPopup {
                 return creatingError.open()
             }
 
-            // TODO Open the community once we have designs for it
             popup.close()
         }
 
