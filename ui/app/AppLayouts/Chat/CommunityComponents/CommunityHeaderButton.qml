@@ -47,27 +47,30 @@ Button {
         }
 
 
-
-        StyledText {
-            id: communityName
-            text: chatsModel.communities.activeCommunity.name
+        Item { 
+            height: childrenRect.height
+            width: childrenRect.width
             anchors.left: communityImage.right
             anchors.leftMargin: Style.current.halfPadding
-            anchors.top: parent.top
-            font.pixelSize: 15
-            font.weight: Font.Medium
-        }
+            anchors.verticalCenter: parent.verticalCenter
 
-        StyledText {
-            id: communityNbMember
-            text: chatsModel.communities.activeCommunity.nbMembers === 1 ? 
-                qsTr("1 member") : 
-                qsTr("%1 members").arg(chatsModel.communities.activeCommunity.nbMembers)
-            anchors.left: communityName.left
-            anchors.top: communityName.bottom
-            font.pixelSize: 12
-            font.weight: Font.Thin
-            color: Style.current.secondaryText
+            StyledText {
+                id: communityName
+                text: chatsModel.communities.activeCommunity.name
+                font.pixelSize: 15
+                font.weight: Font.Bold
+            }
+
+            StyledText {
+                id: communityNbMember
+                text: chatsModel.communities.activeCommunity.nbMembers === 1 ? 
+                    qsTr("1 member") : 
+                    qsTr("%1 members").arg(chatsModel.communities.activeCommunity.nbMembers)
+                anchors.left: communityName.left
+                anchors.top: communityName.bottom
+                font.pixelSize: 14
+                color: Style.current.secondaryText
+            }
         }
     }
 
