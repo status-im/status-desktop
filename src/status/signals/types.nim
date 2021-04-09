@@ -36,6 +36,9 @@ type MessageSignal* = ref object of Signal
   communities*: seq[Community]
   membershipRequests*: seq[CommunityMembershipRequest]
 
+type CommunitySignal* = ref object of Signal
+  community*: Community
+
 type MailserverRequestCompletedSignal* = ref object of Signal
   requestID*: string
   lastEnvelopeHash*: string

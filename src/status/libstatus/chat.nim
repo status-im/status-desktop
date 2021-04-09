@@ -314,6 +314,9 @@ proc createCommunityChannel*(communityId: string, name: string, description: str
   if rpcResult{"result"}.kind != JNull:
     result = rpcResult["result"]["chats"][0].toChat()
 
+proc requestCommunityInfo*(communityId: string) =
+  discard callPrivateRPC("requestCommunityInfoFromMailserver".prefix, %*[communityId])
+
 proc joinCommunity*(communityId: string) =
   discard callPrivateRPC("joinCommunity".prefix, %*[communityId])
 
