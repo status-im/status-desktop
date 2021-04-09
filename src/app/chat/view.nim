@@ -442,6 +442,8 @@ QtObject:
     var chat: Chat = nil
     if self.status.chat.channels.hasKey(channel):
       chat = self.status.chat.channels[channel]
+    else:
+      chat = self.communities.getChannel(channel)
     if not self.messageList.hasKey(channel):
       self.beginInsertRows(newQModelIndex(), self.messageList.len, self.messageList.len)
       self.messageList[channel] = newChatMessageList(channel, self.status, not chat.isNil and chat.chatType != ChatType.Profile)
