@@ -172,7 +172,7 @@ PopupMenu {
                 background: Rectangle {
                     implicitWidth: 220
                     implicitHeight: 34
-                    color: popupMenuItem.highlighted ? Style.current.backgroundHover: "transparent"
+                    color: popupMenuItem.highlighted ? Style.current.backgroundHover: Style.current.transparent
                 }
             }
         }
