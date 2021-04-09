@@ -341,3 +341,11 @@ QtObject:
       error "Error declining request to join the community", msg = e.msg
       return "Error declining request to join the community"
     return ""
+
+  proc getChannel*(self: CommunitiesView, channelId: string): Chat =
+    for community in self.joinedCommunityList.communities:
+      for chat in community.chats:
+        if (chat.id == channelId):
+          return chat
+      
+    
