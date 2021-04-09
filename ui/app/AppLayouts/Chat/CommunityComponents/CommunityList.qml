@@ -20,7 +20,7 @@ ListView {
         name: model.name
         image: model.thumbnailImage
         unviewedMessagesCount: model.unviewedMessagesCount
-        iconColor: model.communityColor
+        iconColor: model.communityColor || Style.current.blue
         useLetterIdenticon: model.thumbnailImage === ""
     }
 
