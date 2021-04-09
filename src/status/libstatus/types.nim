@@ -21,6 +21,7 @@ type SignalType* {.pure.} = enum
   SubscriptionsData = "subscriptions.data"
   SubscriptionsError = "subscriptions.error"
   WhisperFilterAdded = "whisper.filter.added"
+  CommunityFound = "community.found"
   Unknown
 
 proc event*(self:SignalType):string =

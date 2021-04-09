@@ -28,6 +28,10 @@ proc handleSignals(self: ChatController) =
         let chatId = self.status.messages.messages[messageId].chatId
         self.view.messageList[chatId].checkTimeout(messageId)
 
+  self.status.events.on(SignalType.CommunityFound.event) do(e: Args):
+    var data = CommunitySignal(e)
+    self.view.communities.addCommunityToList(data.community)
+
   self.status.events.on(SignalType.MailserverRequestCompleted.event) do(e:Args):
     # TODO: if the signal contains a cursor, request additional messages
     # else: 
