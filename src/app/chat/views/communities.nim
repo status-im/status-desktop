@@ -180,6 +180,9 @@ QtObject:
     if (self.activeCommunity.active and self.activeCommunity.communityItem.id == community.id):
       self.activeCommunity.setCommunityItem(community)
 
+    if (self.observedCommunity.communityItem.id == community.id):
+      self.observedCommunity.setCommunityItem(community)
+
     if (community.joined == true):
       let joinedCommunityCheck = self.joinedCommunityList.getCommunityById(community.id)
       if (joinedCommunityCheck.id == ""):
