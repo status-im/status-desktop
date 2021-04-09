@@ -141,9 +141,9 @@ Item {
                     anchors.top: sep2.bottom
                     width: parent.width
                     height: 44
-                    enabled: !invitedCommunity.joined
+                    enabled: !invitedCommunity.joined && !root.joined
                     //% "Joined"
-                    text: root.joined || invitedCommunity.joined ? qsTrId("joined") :
+                    text: root.joined || invitedCommunity.joined || invitedCommunity.isMember ? qsTrId("joined") :
                         //% "Join"
                         qsTrId("join")
                     onClicked: {
