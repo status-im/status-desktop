@@ -482,9 +482,11 @@ QtObject:
           msgIndex = self.messageList[msg.chatId].messages.len - 1
       self.messagePushed(msgIndex)
       if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
-        let channel = self.chats.getChannelById(msg.chatId)
+        var channel = self.chats.getChannelById(msg.chatId)
         if (channel == nil):
-          continue
+          channel = self.communities.getChannel(msg.chatId)
+          if (channel == nil):
+            continue
 
         if msg.chatId == self.activeChannel.id:
           discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
