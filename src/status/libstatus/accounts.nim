@@ -19,16 +19,26 @@ proc getNodeConfig*(fleetConfig: FleetConfig, installationId: string, networkCon
 
   result = constants.NODE_CONFIG.copy()
   result["ClusterConfig"]["Fleet"] = newJString($fleet)
-  result["ClusterConfig"]["BootNodes"] = %* fleetConfig.getNodes(fleet, FleetNodes.Bootnodes)
-  result["ClusterConfig"]["TrustedMailServers"] = %* fleetConfig.getNodes(fleet, FleetNodes.Mailservers)
-  result["ClusterConfig"]["StaticNodes"] = %* fleetConfig.getNodes(fleet, FleetNodes.Whisper)
-  result["ClusterConfig"]["RendezvousNodes"] = %* fleetConfig.getNodes(fleet, FleetNodes.Rendezvous)
-  result["Rendezvous"] = newJBool(fleetConfig.getNodes(fleet, FleetNodes.Rendezvous).len > 0)
+  result["ClusterConfig"]["BootNodes"] = %* (@[])
+  result["ClusterConfig"]["TrustedMailServers"] = %* (@[])
+  result["ClusterConfig"]["StaticNodes"] = %* (@[])
+  result["ClusterConfig"]["RendezvousNodes"] = %* (@[])
+  result["ClusterConfig"]["WakuNodes"] = %*(@[
+      "/ip4/134.209.113.86/tcp/9000/p2p/16Uiu2HAmVVi6Q4j7MAKVibquW8aA27UNrA4Q8Wkz9EetGViu8ZF1",
+  ])
+  result["ClusterConfig"]["WakuStoreNodes"] = %*(@[
+      "/ip4/134.209.113.86/tcp/9000/p2p/16Uiu2HAmVVi6Q4j7MAKVibquW8aA27UNrA4Q8Wkz9EetGViu8ZF1"
+  ])
+
+  result["Rendezvous"] = newJBool(false)
   result["NetworkId"] = networkConfig["config"]["NetworkId"]
   result["DataDir"] = newDataDir.newJString()
   result["UpstreamConfig"]["Enabled"] = networkConfig["config"]["UpstreamConfig"]["Enabled"]
   result["UpstreamConfig"]["URL"] = upstreamUrl
   result["ShhextConfig"]["InstallationID"] = newJString(installationId)
+
+
+  echo $result
   # TODO: commented since it's not necessary (we do the connections thru C bindings). Enable it thru an option once status-nodes are able to be configured in desktop
   # result["ListenAddr"] = if existsEnv("STATUS_PORT"): newJString("0.0.0.0:" & $getEnv("STATUS_PORT")) else: newJString("0.0.0.0:30305")
   result["WakuConfig"]["BloomFilterMode"] = newJBool(bloomFilterMode)
@@ -167,7 +177,7 @@ proc getAccountSettings*(account: GeneratedAccount, defaultNetworks: JsonNode, i
     "wallet-root-address": account.derived.walletRoot.address,
     "preview-privacy?": true,
     "signing-phrase": generateSigningPhrase(3),
-    "log-level": "INFO",
+    "log-level": "DEBUG",
     "latest-derived-path": 0,
     "networks/networks": defaultNetworks,
     "currency": "usd",
