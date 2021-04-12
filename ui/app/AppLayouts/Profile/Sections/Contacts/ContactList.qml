@@ -15,6 +15,11 @@ ListView {
     property string lowerCaseSearchString: searchString.toLowerCase()
     property string contactToRemove: ""
 
+    property Component profilePopupComponent: ProfilePopup {
+        id: profilePopup
+        onClosed: destroy()
+    }
+
     width: parent.width
 
     model: contacts
@@ -26,7 +31,10 @@ ListView {
         identicon: model.thumbnailImage || model.identicon
         isContact: model.isContact
         isBlocked: model.isBlocked
-        profileClick: profilePopup.openPopup.bind(profilePopup)
+        profileClick: function (showFooter, userName, fromAuthor, identicon, textParam, nickName) {
+            var popup = profilePopupComponent.createObject(contactList);
+            popup.openPopup(showFooter, userName, fromAuthor, identicon, textParam, nickName);
+        }
         visible: searchString === "" ||
                  model.name.toLowerCase().includes(lowerCaseSearchString) ||
                  model.address.toLowerCase().includes(lowerCaseSearchString)
@@ -39,10 +47,6 @@ ListView {
             removeContactConfirmationDialog.value = address
             removeContactConfirmationDialog.open()
         }
-    }
-
-    ProfilePopup {
-      id: profilePopup
     }
 
     // TODO: Make BlockContactConfirmationDialog a dynamic component on a future refactor
