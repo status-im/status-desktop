@@ -125,10 +125,10 @@ QtObject {
 
     function isMnemonic(value) {
         if(!value.match(/^([a-z\s]+)$/)){
+            console.log('allo')
             return false;
         }
-        var len = value.split(/\s|,/).length;
-        return  len >= 12 && len <= 24 && len % 3 == 0;
+        return  Utils.seedPhraseValidWordCount(value);
     }
 
     function compactAddress(addr, numberOfChars) {
@@ -428,20 +428,24 @@ QtObject {
         }
     }
 
-    function isPunct(c) {
-        return /(!|\@|#|\$|%|\^|&|\*|\(|\)|_|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
-    }
-
     function getTick(wordCount) {
         return (wordCount === 12 || wordCount === 15 ||
                 wordCount === 18 || wordCount === 21 || wordCount === 24)
                 ? "✓ " : "";
     }
 
+    function isValidNumberOfWords(wordCount) {
+        return !!getTick(wordCount);
+    }
+
     function countWords(text) {
         if (text.trim() === "")
             return 0;
-        return text.trim().split(" ").length;
+        return text.trim().replace(/  +/g, " ").split(" ").length;
+    }
+
+    function seedPhraseValidWordCount(text) {
+        return isValidNumberOfWords(countWords(text))
     }
 
     /**
@@ -523,5 +527,10 @@ QtObject {
 
     function deduplicate(array) {
         return Array.from(new Set(array))
+    }
+
+    // Leave this function at the bottom of the file as QT Creator messes up the code color after this
+    function isPunct(c) {
+        return /(!|\@|#|\$|%|\^|&|\*|\(|\)|_|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
     }
 }
