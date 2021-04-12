@@ -182,6 +182,7 @@ proc allContracts(): seq[Contract] =
       newErc20Contract("Simple Token", Network.Mainnet, parseAddress("0x2c4e8f2d746113d0696ce89b35f0d8bf88e0aeca"), "ST", 18, true),
       newErc20Contract("Wrapped BTC", Network.Mainnet, parseAddress("0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"), "WBTC", 8, true),
       newErc20Contract("Bloom Token", Network.Mainnet, parseAddress("0x107c4504cd79c5d2696ea0030a8dd4e92601b82e"), "BLT", 18, true),
+      newErc20Contract("Unisocks", Network.Mainnet, parseAddress("0x23b608675a2b2fb1890d3abbd85c5775c51691d5"), "SOCKS", 18, true),
       Contract(name: "stickers", network: Network.Mainnet, address: parseAddress("0x0577215622f43a39f4bc9640806dfea9b10d2a36"),
         methods: [
           ("packCount", Method(signature: "packCount()")),
