@@ -310,7 +310,7 @@ Item {
                     source: "../app/img/tokens/" + ((root.asset && root.asset.symbol) ? root.asset.symbol : "ETH") + ".png"
                     onStatusChanged: {
                         if (status == Image.Error) {
-                            source = "../app/img/tokens/0-native.png"
+                            source = "../app/img/tokens/DEFAULT-TOKEN@3x.png"
                         }
                     }
                 }
