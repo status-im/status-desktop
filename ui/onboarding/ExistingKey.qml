@@ -17,11 +17,16 @@ Item {
         onConfirmSeedClick: function (mnemonic) {
             error = "";
             
-            if(!Utils.isMnemonic(mnemonic)){
+            if (!Utils.isMnemonic(mnemonic)) {
                 //% "Invalid seed phrase"
                 error = qsTrId("custom-seed-phrase")
             } else {
                 error = onboardingModel.validateMnemonic(mnemonic)
+                const regex = new RegExp('word [a-z]+ not found in the dictionary', 'i');
+                if (regex.test(error)) {
+                    error = qsTr('Invalid seed phrase') + '. ' +
+                            qsTr("This seed phrase doesn't match our supported dictionary. Check for misspelled words.")
+                }
             }
 
             if (error === "") {

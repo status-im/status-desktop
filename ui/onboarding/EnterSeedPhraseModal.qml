@@ -8,6 +8,7 @@ import "../shared/status"
 ModalPopup {
     property var onConfirmSeedClick: function () {}
     property alias error: errorText.text
+    property bool correctWordCount: Utils.seedPhraseValidWordCount(mnemonicTextField.text)
     id: popup
     //% "Enter seed phrase"
     title: qsTrId("enter-seed-phrase")
@@ -38,7 +39,9 @@ ModalPopup {
         selectByKeyboard: true
         selectionColor: Style.current.secondaryBackground
         selectedTextColor: Style.current.secondaryText
-        
+
+        Keys.onReleased: errorText.text = ""
+
         color: Style.current.textColor
 
         Keys.onReturnPressed: {
@@ -49,16 +52,18 @@ ModalPopup {
     }
 
     StyledText {
+        visible: errorText.text === ""
         text: Utils.seedPhraseWordCountText(mnemonicTextField.text)
         anchors.right: parent.right
         anchors.top: mnemonicTextField.bottom
         anchors.topMargin: Style.current.smallPadding
-        color: Style.current.secondaryText
+        color: correctWordCount ? Style.current.textColor : Style.current.secondaryText
     }
 
     StyledText {
         id: errorText
         visible: !!text && text != ""
+        wrapMode: Text.WordWrap
         color: Style.current.danger
         anchors.left: parent.left
         anchors.right: parent.right
@@ -87,7 +92,7 @@ ModalPopup {
         icon.name: "arrow-right"
         icon.width: 20
         icon.height: 16
-        enabled: mnemonicTextField.text.length > 0
+        enabled: correctWordCount
 
         onClicked : {
             if (mnemonicTextField.text === "") {
