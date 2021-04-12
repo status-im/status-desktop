@@ -36,7 +36,7 @@ Item {
                 id: assetInfoImage
                 width: 36
                 height: tokenContainer.isVisible !== "" ? 36 : 0
-                source: hasIcon ? "../../../img/tokens/" + symbol + ".png" : "../../../img/tokens/0-native.png"
+                source: hasIcon ? "../../../img/tokens/" + symbol + ".png" : "../../../img/tokens/DEFAULT-TOKEN@3x.png"
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.smallPadding
                 anchors.verticalCenter: parent.verticalCenter

@@ -119,7 +119,7 @@ Item {
                     anchors.topMargin: 12
                     onStatusChanged: {
                         if (assetIcon.status == Image.Error) {
-                            assetIcon.source = "../../img/tokens/0-native.png"
+                            assetIcon.source = "../../img/tokens/DEFAULT-TOKEN@3x.png"
                         }
                     }
 

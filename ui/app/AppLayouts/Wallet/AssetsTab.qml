@@ -25,7 +25,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 onStatusChanged: {
                     if (assetInfoImage.status == Image.Error) {
-                        assetInfoImage.source = "../../img/tokens/0-native.png"
+                        assetInfoImage.source = "../../img/tokens/DEFAULT-TOKEN@3x.png"
                     }
                 }
             }
