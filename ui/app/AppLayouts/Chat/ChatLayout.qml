@@ -27,18 +27,9 @@ SplitView {
         chatColumn.onActivated()
     }
 
-    Connections {
-        target: appMain
-        onSettingsLoaded: {
-            // Add recent
-            chatView.restoreState(appSettings.chatSplitView)
-        }
-    }
-    Component.onDestruction: appSettings.chatSplitView = this.saveState()
-
     Loader {
         id: contactColumnLoader
-        SplitView.preferredWidth: Style.current.leftTabPrefferedSize
+        SplitView.preferredWidth: Style.current.leftTabPreferredSize
         SplitView.minimumWidth: Style.current.leftTabMinimumWidth
         SplitView.maximumWidth: Style.current.leftTabMaximumWidth
         sourceComponent: appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
