@@ -36,6 +36,12 @@ Rectangle {
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
         source: menuButton.source
+
+        ColorOverlay {
+            anchors.fill: parent
+            source: parent
+            color: Style.current.blue
+        }
     }
 
     StyledText {
