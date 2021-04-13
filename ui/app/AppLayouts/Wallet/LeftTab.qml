@@ -75,10 +75,19 @@ Rectangle {
 
         Rectangle {
             property bool selected: index === selectedAccount
+            property bool hovered
 
             id: rectangle
             height: 64
-            color: selected ? Style.current.menuBackgroundActive : Style.current.transparent
+            color: {
+              if (selected) {
+                  return Style.current.menuBackgroundActive
+              }
+              if (hovered) {
+                  return Style.current.backgroundHoverLight
+              }
+              return Style.current.transparent
+            }
             radius: Style.current.radius
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
@@ -143,7 +152,14 @@ Rectangle {
             }
             MouseArea {
                 anchors.fill: parent
+                hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
+                onEntered: {
+                    rectangle.hovered = true                    
+                }
+                onExited: {
+                    rectangle.hovered = false
+                }
                 onClicked: {
                     changeSelectedAccount(index)
                 }
