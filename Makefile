@@ -67,12 +67,12 @@ endif
 
 ifeq ($(detected_OS),Darwin)
  BOTTLES_TARGET := bottles-macos
- CFLAGS := -mmacosx-version-min=10.13
+ CFLAGS := -mmacosx-version-min=10.14
  export CFLAGS
- CGO_CFLAGS := -mmacosx-version-min=10.13
+ CGO_CFLAGS := -mmacosx-version-min=10.14
  export CGO_CFLAGS
  LIBSTATUS_EXT := dylib
- MACOSX_DEPLOYMENT_TARGET := 10.13
+ MACOSX_DEPLOYMENT_TARGET := 10.14
  export MACOSX_DEPLOYMENT_TARGET
  PKG_TARGET := pkg-macos
  RUN_TARGET := run-macos
@@ -118,9 +118,9 @@ $(BOTTLE_OPENSSL):
 	rm -rf bottles/Downloads/openssl* bottles/openssl*
 	mkdir -p bottles/Downloads
 	cd bottles/Downloads && \
-	wget -O openssl.tar.gz "https://bintray.com/homebrew/bottles/download_file?file_path=openssl%401.1-1.1.1g.high_sierra.bottle.tar.gz" && \
-	tar xzf openssl* && \
-	mv openssl@1.1/1.1.1g ../openssl
+	curl -L -o openssl.tar.gz -u _:_ $$(brew info --json=v1 openssl | jq -r '.[0].bottle.stable.files.mojave.url') && \
+	tar xzf openssl.tar.gz && \
+	mv openssl*/* ../openssl
 
 BOTTLE_PCRE := bottles/pcre/INSTALL_RECEIPT.json
 
@@ -128,9 +128,9 @@ $(BOTTLE_PCRE):
 	rm -rf bottles/Downloads/pcre* bottles/pcre*
 	mkdir -p bottles/Downloads
 	cd bottles/Downloads && \
-	wget -O pcre.tar.gz "https://bintray.com/homebrew/bottles/download_file?file_path=pcre-8.44.high_sierra.bottle.tar.gz" && \
-	tar xzf pcre* && \
-	mv pcre/8.44 ../pcre
+	curl -L -o pcre.tar.gz -u _:_ $$(brew info --json=v1 pcre | jq -r '.[0].bottle.stable.files.mojave.url') && \
+	tar xzf pcre.tar.gz && \
+	mv pcre*/* ../pcre
 
 bottles-macos: | $(BOTTLE_OPENSSL) $(BOTTLE_PCRE)
 	rm -rf bottles/Downloads
