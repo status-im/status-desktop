@@ -83,6 +83,8 @@ Theme {
     property color buttonHoveredWarnBackgroundColor: "#4dff5c7b"
     property color buttonHoveredBackgroundColor: blue
 
+    property color messageDateGroupForegroundColor: "#909090"
+
     property color contextMenuButtonForegroundColor: midGrey
     property color contextMenuButtonBackgroundHoverColor: Qt.hsla(black.hslHue, black.hslSaturation, black.hslLightness, 0.1)
 

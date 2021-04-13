@@ -5,7 +5,7 @@ import "../../../../../imports"
 StyledText {
     id: dateGroupLbl
     font.pixelSize: 13
-    color: Style.current.darkGrey
+    color: Style.current.messageDateGroupForegroundColor
     horizontalAlignment: Text.AlignHCenter
     anchors.horizontalCenter: parent.horizontalCenter
     text: {
