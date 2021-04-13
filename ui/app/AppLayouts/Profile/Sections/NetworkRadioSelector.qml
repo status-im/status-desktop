@@ -17,19 +17,25 @@ StatusRadioButtonRow {
         if (checked) {
             if (profileModel.network.current === network) return;
             newNetwork = network;
-            confirmDialog.open();
+            openPopup(confirmDialogComponent)
         }
     }
 
-    ConfirmationDialog {
-        id: confirmDialog
-        //% "Warning!"
-        title: qsTrId("close-app-title")
-        //% "The account will be logged out. When you unlock it again, the selected network will be used"
-        confirmationText: qsTrId("logout-app-content")
-        onConfirmButtonClicked: {
-            profileModel.network.current = newNetwork;
+    Component {
+        id: confirmDialogComponent
+        ConfirmationDialog {
+            id: confirmDialog
+            //% "Warning!"
+            title: qsTrId("close-app-title")
+            //% "The account will be logged out. When you unlock it again, the selected network will be used"
+            confirmationText: qsTrId("logout-app-content")
+            onConfirmButtonClicked: {
+                profileModel.network.current = newNetwork;
+            }
+            onClosed: {
+                profileModel.network.triggerNetworkChange()
+                destroy()
+            }
         }
-        onClosed: profileModel.network.triggerNetworkChange()
     }
 }
