@@ -429,7 +429,7 @@ RowLayout {
                         anchors.topMargin: 1
                         radius: height / 2
                         color: Style.current.blue
-                        border.color: chatBtn.hovered ? Style.current.secondaryBackground : Style.current.background
+                        border.color: chatBtn.hovered ? Style.current.secondaryBackground : Style.current.mainMenuBackground
                         border.width: 2
                         width: chatsModel.unreadMessagesCount < 10 ? 22 : messageCount.width + 14
                         height: 22
