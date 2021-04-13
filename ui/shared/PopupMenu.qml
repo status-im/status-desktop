@@ -115,7 +115,7 @@ Menu {
         background: Rectangle {
             implicitWidth: 220
             implicitHeight: enabled ? 24 : 0
-            color: popupMenuItem.highlighted ? popupMenuItem.hoverColor : "transparent"
+            color: popupMenuItem.hovered ? popupMenuItem.hoverColor : "transparent"
         }
         MouseArea {
             cursorShape: Qt.PointingHandCursor
