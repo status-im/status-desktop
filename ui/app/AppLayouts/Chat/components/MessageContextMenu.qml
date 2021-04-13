@@ -85,7 +85,7 @@ PopupMenu {
         visible: messageContextMenu.isProfile
         width: 200
         height: visible ? profileImage.height + username.height + Style.current.padding : 0
-        color: hovered ? Style.current.secondaryBackground : Style.current.transparent
+        color: hovered ? Style.current.backgroundHover : Style.current.transparent
 
         StatusImageIdenticon {
             id: profileImage
