@@ -81,7 +81,7 @@ Item {
         }
         switch (root.selectedType) {
             case RecipientSelector.Type.Address:
-                inpAddress.text = selectedRecipient.name || ""
+                inpAddress.input.text = selectedRecipient.name || ""
                 inpAddress.visible = true
                 selContact.visible = selAccount.visible = false
                 if(!!selectedRecipient.address){
@@ -140,13 +140,14 @@ Item {
         AddressInput {
             id: inpAddress
             width: root.inputWidth
-            label: ""
-            readOnly: root.readOnly
+            input.label: ""
+            input.readOnly: root.readOnly
             visible: true
             Layout.preferredWidth: selAddressSource.visible ? root.inputWidth : parent.width
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
             validationError: root.addressValidationError
+            parentWidth: parent.width
             onSelectedAddressChanged: {
                 if (!selAddressSource.selectedSource || (selAddressSource.selectedSource && selAddressSource.selectedSource.value !== RecipientSelector.Type.Address)) {
                     return
