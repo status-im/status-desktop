@@ -14,7 +14,7 @@ Column {
     Rectangle {
         width: 40
         height: 1
-        color: Style.current.border
+        color: Style.current.appBarDividerColor
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
