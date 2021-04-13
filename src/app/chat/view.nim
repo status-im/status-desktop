@@ -84,7 +84,7 @@ proc asyncMessageLoad[T](self: T, slot: string, chatId: string) =
 const resolveEnsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let
     arg = decode[ResolveEnsTaskArg](argEncoded)
-    output = status_ens.pubkey(arg.ens)
+    output = %* { "address": status_ens.address(arg.ens), "pubkey": status_ens.pubkey(arg.ens) }
   arg.finish(output)
 
 proc resolveEns[T](self: T, slot: string, ens: string) =
@@ -729,10 +729,14 @@ QtObject:
   proc resolveENS*(self: ChatsView, ens: string) {.slot.} =
     self.resolveEns("ensResolved", ens) # Call self.ensResolved(string) when ens is resolved
 
-  proc ensWasResolved*(self: ChatsView, resolvedPubKey: string) {.signal.}
+  proc ensWasResolved*(self: ChatsView, resolvedPubKey: string, resolvedAddress: string) {.signal.}
 
-  proc ensResolved(self: ChatsView, pubKey: string) {.slot.} =
-    self.ensWasResolved(pubKey)
+  proc ensResolved(self: ChatsView, addressPubkeyJson: string) {.slot.} =
+    var
+      parsed = addressPubkeyJson.parseJson
+      address = parsed["address"].to(string)
+      pubkey = parsed["pubkey"].to(string)
+    self.ensWasResolved(pubKey, address)
 
   proc isConnected*(self: ChatsView): bool {.slot.} =
     result = self.status.network.isConnected

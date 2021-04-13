@@ -280,7 +280,7 @@ RowLayout {
         id: toastMessage
     }
 
-    // Add SenmdModal here as it is used by the Wallet as well as the Browser
+    // Add SendModal here as it is used by the Wallet as well as the Browser
     Loader {
         id: sendModal
 

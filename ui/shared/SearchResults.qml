@@ -17,6 +17,7 @@ Item {
     property string username: ""
     property string userAlias: ""
     property string pubKey: ""
+    property string address: ""
     property bool resultClickable: true
 
     signal resultClicked(string pubKey)

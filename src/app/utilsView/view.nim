@@ -119,3 +119,4 @@ QtObject:
         close(f)
     else:
       raise newException(IOError, "cannot open: " & filename)
+  

@@ -11,9 +11,12 @@ Item {
     property alias existingContacts: existingContacts
     property alias noContactsRect: noContactsRect
     property string pubKey : ""
+    property int searchResultsWidth : 0
+    property alias loading : searchResults.loading
     property string ensUsername : ""
     property bool showCheckbox: false
-    signal userClicked(bool isContact, string pubKey, string ensName)
+    property bool showContactList: true
+    signal userClicked(bool isContact, string pubKey, string ensName, string address)
     property var pubKeys: ([])
 
     id: root
@@ -79,6 +82,7 @@ Item {
                 } else if(resolvedPubKey == ""){
                     ensUsername.text = "";
                     searchResults.pubKey = pubKey = "";
+                    searchResults.address = "";
                     searchResults.showProfileNotFoundMessage = true
                 } else {
                     if (profileModel.profile.pubKey === resolvedPubKey) {
@@ -90,6 +94,7 @@ Item {
                         userAlias = userAlias.length > 20 ? userAlias.substring(0, 19) + "..." : userAlias
                         searchResults.userAlias =  userAlias + " • " + Utils.compactAddress(resolvedPubKey, 4)
                         searchResults.pubKey = pubKey = resolvedPubKey;
+                        searchResults.address = resolvedAddress;
                     }
                     searchResults.showProfileNotFoundMessage = false
                 }
@@ -117,6 +122,7 @@ Item {
                 searchResults.pubKey = pubKey = ""
                 noContactsRect.visible = false
                 searchResults.loading = false
+                validationError = ""
             }
         }
     }
@@ -134,6 +140,7 @@ Item {
 
     ExistingContacts {
         id: existingContacts
+        visible: showContactList
         anchors.topMargin: this.height > 0 ? Style.current.xlPadding : 0
         anchors.top: chatKey.bottom
         showCheckbox: root.showCheckbox
@@ -152,7 +159,7 @@ Item {
             }
             root.pubKeys = pubKeysCopy
 
-            userClicked(true, contact.pubKey, profileModel.contacts.addedContacts.userName(contact.pubKey, contact.name))
+            userClicked(true, contact.pubKey, profileModel.contacts.addedContacts.userName(contact.pubKey, contact.name), contact.address)
         }
         expanded: !searchResults.loading && pubKey === "" && !searchResults.showProfileNotFoundMessage
     }
@@ -163,18 +170,20 @@ Item {
         anchors.topMargin: Style.current.padding
         hasExistingContacts: existingContacts.visible
         loading: false
+        width: searchResultsWidth > 0 ? searchResultsWidth : parent.width
 
         onResultClicked: {
             if (!validate()) {
                 return
             }
-            userClicked(false, pubKey, chatKey.text)
+            userClicked(false, pubKey, chatKey.text, searchResults.address)
         }
         onAddToContactsButtonClicked: profileModel.contacts.addContact(pubKey)
     }
 
     NoFriendsRectangle {
         id: noContactsRect
+        visible: showContactList
         anchors.top: chatKey.bottom
         anchors.topMargin: Style.current.xlPadding * 3
         anchors.horizontalCenter: parent.horizontalCenter
