@@ -87,7 +87,7 @@ Theme {
     property color messageDateGroupForegroundColor: "#909090"
 
     property color contextMenuButtonForegroundColor: midGrey
-    property color contextMenuButtonBackgroundHoverColor: Qt.hsla(black.hslHue, black.hslSaturation, black.hslLightness, 0.1)
+    property color contextMenuButtonBackgroundHoverColor: Qt.hsla(white.hslHue, white.hslSaturation, white.hslLightness, 0.05)
 
     property color roundedButtonForegroundColor: white
     property color roundedButtonBackgroundColor: buttonBackgroundColor
