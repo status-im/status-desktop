@@ -37,7 +37,7 @@ Button {
     }
 
     background: Rectangle {
-        color: control.hovered ? Style.current.backgroundHover : "transparent"
+        color: control.hovered ? Style.current.chatInfoButtonBackgroundHoverColor : "transparent"
         radius: Style.current.radius
     }
 

@@ -98,6 +98,7 @@ Theme {
     property color roundedButtonSecondaryDisabledBackgroundColor: lightGrey
     property color tooltipBackgroundColor: black
     property color tooltipForegroundColor: white
+    property color chatInfoButtonBackgroundHoverColor: Qt.hsla(white.hslHue, white.hslSaturation, white.hslLightness, 0.05)
 
     property var accountColors: [
         "#AAC6FF",

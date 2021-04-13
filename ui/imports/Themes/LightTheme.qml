@@ -98,6 +98,7 @@ Theme {
     property color roundedButtonSecondaryDisabledBackgroundColor: buttonDisabledForegroundColor
     property color tooltipBackgroundColor: black
     property color tooltipForegroundColor: white
+    property color chatInfoButtonBackgroundHoverColor: grey1
 
     property var accountColors: [
         blue,
