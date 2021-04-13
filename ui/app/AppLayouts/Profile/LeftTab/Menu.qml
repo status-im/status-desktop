@@ -13,12 +13,13 @@ ScrollView {
     property var changeProfileSection: function (sectionId) {
         profileCurrentIndex = sectionId
     }
+    contentHeight: menuItems.height + 24
 
     id: profileMenu
     clip: true
 
     Column {
-        anchors.fill: parent
+        id: menuItems
         spacing: 8
 
         Repeater {

@@ -28,9 +28,8 @@ Rectangle {
         anchors.left: parent.left
         anchors.leftMargin: Style.current.smallPadding
         anchors.top: title.bottom
-        anchors.topMargin: Style.current.bigPadding
+        anchors.topMargin: Style.current.padding
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.padding
     }
 }
 
