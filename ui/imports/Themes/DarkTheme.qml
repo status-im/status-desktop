@@ -32,6 +32,7 @@ Theme {
     property color tenPercentBlue: Qt.rgba(67, 96, 223, 0.1)
 
     property color background: "#2C2C2C"
+    property color appBarDividerColor: darkGrey
     property color border: darkGrey
     property color borderSecondary: tenPercentWhite
     property color borderTertiary: blue
