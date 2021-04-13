@@ -39,7 +39,7 @@ Item {
             return
         }
         if (selectedAccount.iconColor) {
-            selectedIconImgOverlay.color = selectedAccount.iconColor
+            selectedIconImgOverlay.color = Utils.getCurrentThemeAccountColor(selectedAccount.iconColor) || Style.current.accountColors[0]
         }
         if (selectedAccount.name) {
             selectedTextField.text = selectedAccount.name
@@ -182,7 +182,7 @@ Item {
             ColorOverlay {
                 anchors.fill: iconImg
                 source: iconImg
-                color: iconColor
+                color: Utils.getCurrentThemeAccountColor(iconColor) || Style.current.accountColors[0]
             }
             Column {
                 id: column
