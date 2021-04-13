@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import QtGraphicalEffects 1.13
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
@@ -77,6 +78,11 @@ Item {
                 anchors.left: parent.left
                 fillMode: Image.PreserveAspectFit
                 source: "/app/img/messageActive.svg"
+                ColorOverlay {
+                    anchors.fill: parent
+                    source: parent
+                    color: Style.current.blue
+                }
             }
 
             StyledText {
@@ -161,6 +167,11 @@ Item {
                     source: "/app/img/" + (devicePairedSwitch.checked ? "messageActive.svg" : "message.svg")
                     height: 24
                     width: 24
+                    ColorOverlay {
+                        anchors.fill: parent
+                        source: parent
+                        color: Style.current.blue
+                    }
                 }
                 StyledText {
                     id: deviceItemLbl
