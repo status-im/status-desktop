@@ -53,7 +53,7 @@ Column {
             anchors.topMargin: 5
             radius: height / 2
             color: Style.current.blue
-            border.color: profileBtn.hovered ? Style.current.secondaryBackground : Style.current.background
+            border.color: profileBtn.hovered ? Style.current.secondaryBackground : Style.current.mainMenuBackground
             border.width: 2
             width: 14
             height: 14
