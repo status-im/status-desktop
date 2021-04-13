@@ -57,7 +57,7 @@ ModalPopup {
     }
 
     Input {
-	id: txtWalletAddress
+	      id: txtWalletAddress
         //% "Wallet address"
         label: qsTrId("wallet-address")
         anchors.top: accountSelector.bottom
