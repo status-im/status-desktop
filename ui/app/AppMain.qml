@@ -391,6 +391,23 @@ RowLayout {
                 spacing: 12
                 width: scrollView.width
 
+                Loader {
+                    id: communitiesListLoader
+                    active: appSettings.communitiesEnabled
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width
+                    height: {
+                        if (item && active) {
+                            return item.height
+                        }
+
+                        return 0
+                    }
+                    sourceComponent: Component {
+                        CommunityList {}
+                    }
+                }
+
                 StatusIconTabButton {
                     id: chatBtn
                     icon.name: "message"
@@ -423,23 +440,6 @@ RowLayout {
                             anchors.centerIn: parent
                             text: chatsModel.unreadMessagesCount > 99 ? "99+" : chatsModel.unreadMessagesCount
                         }
-                    }
-                }
-
-                Loader {
-                    id: communitiesListLoader
-                    active: appSettings.communitiesEnabled
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width: parent.width
-                    height: {
-                        if (item && active) {
-                            return item.height
-                        }
-
-                        return 0
-                    }
-                    sourceComponent: Component {
-                        CommunityList {}
                     }
                 }
 
