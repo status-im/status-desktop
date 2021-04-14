@@ -151,7 +151,7 @@ Item {
                     Rectangle {
                         id: stickerContainer
                         color: Style.current.transparent
-                        border.color: root.isHovered ? Qt.darker(Style.current.darkGrey, 1.1) : Style.current.grey
+                        border.color: root.isHovered ? Qt.darker(Style.current.border, 1.1) : Style.current.border
                         border.width: 1
                         radius: 16
                         width: stickerId.width + 2 * root.chatVerticalPadding
