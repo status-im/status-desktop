@@ -33,6 +33,8 @@ pipeline {
   stages {
     stage('Deps') {
       steps { 
+        /* trigger fetching of git submodules */
+        sh 'make check-pkg-target-macos'
         /* avoid re-compiling Nim by using cache */
         cache(maxCacheSize: 250, caches: [[
           $class: 'ArbitraryFileCache',

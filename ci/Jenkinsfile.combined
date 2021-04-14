@@ -1,0 +1,63 @@
+library 'status-react-jenkins@v1.2.11'
+
+pipeline {
+  agent { label 'linux' }
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+    /* Prevent Jenkins jobs from running forever */
+    timeout(time: 35, unit: 'MINUTES')
+    /* Limit builds retained */
+    buildDiscarder(logRotator(
+      numToKeepStr: '10',
+      daysToKeepStr: '30',
+      artifactNumToKeepStr: '10',
+    ))
+  }
+
+  stages {
+    stage('Build') {
+      parallel {
+        stage('Linux') { steps { script {
+          linux = jenkins.Build('status-desktop/platforms/linux')
+        } } }
+        stage('Windows') { steps { script {
+          windows = jenkins.Build('status-desktop/platforms/windows')
+        } } }
+        stage('MacOS') { steps { script {
+          macos = jenkins.Build('status-desktop/platforms/macos')
+        } } }
+      }
+    }
+    stage('Archive') {
+      steps { script {
+        sh('rm -f pkg/*')
+        jenkins.copyArts(linux)
+        jenkins.copyArts(windows)
+        jenkins.copyArts(macos)
+        sha = "pkg/${utils.pkgFilename('sha256')}"
+        dir('pkg') {
+          /* generate sha256 checksums for upload */
+          sh "sha256sum * | tee ../${sha}"
+          archiveArtifacts('*')
+        }
+      } }
+    }
+    stage('Upload') {
+      steps { script {
+        /* object for easier URLs handling */
+        urls = [
+          /* mobile */
+          Linux: utils.pkgUrl(linux),
+          Windows: utils.pkgUrl(windows),
+          MacOS: utils.pkgUrl(macos),
+          /* upload the sha256 checksums file too */
+          SHA: s3.uploadArtifact(sha),
+        ]
+        /* add URLs to the build description */
+        jenkins.setBuildDesc(urls)
+      } }
+    }
+  }
+}
