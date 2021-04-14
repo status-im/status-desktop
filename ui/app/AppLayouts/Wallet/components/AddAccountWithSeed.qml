@@ -7,7 +7,7 @@ import "../../../../shared/status"
 
 ModalPopup {
     id: popup
-    height: 600
+    height: 615
 
     property int marginBetweenInputs: 38
     property string passwordValidationError: ""
@@ -18,7 +18,7 @@ ModalPopup {
     function reset() {
         passwordInput.text = ""
         accountNameInput.text = ""
-        accountSeedInput.text = ""
+        seedPhraseTextArea.textArea.text = ""
     }
 
     function validate() {
@@ -39,10 +39,10 @@ ModalPopup {
             accountNameValidationError = ""
         }
 
-        if (accountSeedInput.text === "") {
+        if (seedPhraseTextArea.textArea.text === "") {
             //% "You need to enter a seed phrase"
             seedValidationError = qsTrId("you-need-to-enter-a-seed-phrase")
-        } else if (!Utils.isMnemonic(accountSeedInput.text)) {
+        } else if (!Utils.isMnemonic(seedPhraseTextArea.textArea.text)) {
             //% "Enter a valid mnemonic"
             seedValidationError = qsTrId("enter-a-valid-mnemonic")
         } else {
@@ -53,7 +53,7 @@ ModalPopup {
     }
 
     onOpened: {
-        accountSeedInput.text = "";
+        seedPhraseTextArea.textArea.text = "";
         passwordInput.text = "";
         accountNameInput.text = "";
         passwordValidationError = "";
@@ -76,28 +76,16 @@ ModalPopup {
         validationError: popup.passwordValidationError
     }
 
-
-    StyledTextArea {
-        id: accountSeedInput
+    SeedPhraseTextArea {
+        id: seedPhraseTextArea
         anchors.top: passwordInput.bottom
         anchors.topMargin: marginBetweenInputs
-        //% "Enter your seed phrase, separate words with commas or spaces..."
-        placeholderText: qsTrId("enter-your-seed-phrase,-separate-words-with-commas-or-spaces...")
-        //% "Seed phrase"
-        label: qsTrId("recovery-phrase")
-        customHeight: 88
-        validationError: popup.seedValidationError
-    }
-
-    StyledText {
-        text: Utils.seedPhraseWordCountText(accountSeedInput.text)
-        anchors.right: parent.right
-        anchors.top: accountSeedInput.bottom
+        width: parent.width
     }
 
     Input {
         id: accountNameInput
-        anchors.top: accountSeedInput.bottom
+        anchors.top: seedPhraseTextArea.bottom
         anchors.topMargin: marginBetweenInputs
         //% "Enter an account name..."
         placeholderText: qsTrId("enter-an-account-name...")
@@ -123,7 +111,7 @@ ModalPopup {
         //% "Add account"
         qsTrId("add-account")
 
-        enabled: !loading && passwordInput.text !== "" && accountNameInput.text !== "" && accountSeedInput.text !== ""
+        enabled: !loading && passwordInput.text !== "" && accountNameInput.text !== "" && seedPhraseTextArea.correctWordCount
 
         MessageDialog {
             id: accountError
@@ -133,14 +121,14 @@ ModalPopup {
         }
 
         onClicked : {
-            // TODO the loaidng doesn't work because the function freezes th eview. Might need to use threads
+            // TODO the loading doesn't work because the function freezes the view. Might need to use threads
             loading = true
-            if (!validate()) {
+            if (!validate() || !seedPhraseTextArea.validateSeed()) {
                 errorSound.play()
                 return loading = false
             }
 
-            const error = walletModel.addAccountsFromSeed(accountSeedInput.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
+            const error = walletModel.addAccountsFromSeed(seedPhraseTextArea.textArea.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
             loading = false
             if (error) {
                 errorSound.play()
