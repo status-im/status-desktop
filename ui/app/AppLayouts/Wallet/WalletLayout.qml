@@ -38,9 +38,7 @@ ColumnLayout {
 
         LeftTab {
             id: leftTab
-            SplitView.preferredWidth: Style.current.leftTabPrefferedSize
-            SplitView.minimumWidth: Style.current.leftTabMinimumWidth
-            SplitView.maximumWidth: Style.current.leftTabMaximumWidth
+            SplitView.preferredWidth: Style.current.leftTabPreferredSize
         }
         
         Item {

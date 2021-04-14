@@ -30,8 +30,6 @@ SplitView {
     Loader {
         id: contactColumnLoader
         SplitView.preferredWidth: Style.current.leftTabPreferredSize
-        SplitView.minimumWidth: Style.current.leftTabMinimumWidth
-        SplitView.maximumWidth: Style.current.leftTabMaximumWidth
         sourceComponent: appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
     }
 
