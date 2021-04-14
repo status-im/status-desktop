@@ -125,7 +125,6 @@ QtObject {
 
     function isMnemonic(value) {
         if(!value.match(/^([a-z\s]+)$/)){
-            console.log('allo')
             return false;
         }
         return  Utils.seedPhraseValidWordCount(value);

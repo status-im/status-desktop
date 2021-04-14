@@ -7,69 +7,27 @@ import "../shared/status"
 
 ModalPopup {
     property var onConfirmSeedClick: function () {}
-    property alias error: errorText.text
-    property bool correctWordCount: Utils.seedPhraseValidWordCount(mnemonicTextField.text)
     id: popup
     //% "Enter seed phrase"
     title: qsTrId("enter-seed-phrase")
     height: 400
 
     onOpened: {
-        mnemonicTextField.text = "";
-        mnemonicTextField.forceActiveFocus(Qt.MouseFocusReason)
+        seedPhraseTextArea.textArea.text = "";
+        seedPhraseTextArea.textArea.forceActiveFocus(Qt.MouseFocusReason)
     }
-    TextArea {
-        id: mnemonicTextField
+
+    SeedPhraseTextArea {
+        id: seedPhraseTextArea
         anchors.top: parent.top
         anchors.topMargin: 40
-        height: 100
-        anchors.left: parent.left
-        anchors.leftMargin: 76
-        anchors.right: parent.right
-        anchors.rightMargin: 76
-        wrapMode: Text.WordWrap
-        horizontalAlignment: TextEdit.AlignHCenter
-        verticalAlignment: TextEdit.AlignVCenter
-        font.pixelSize: 15
-        font.weight: Font.DemiBold
-        //% "Start with the first word"
-        placeholderText: qsTrId("start-with-the-first-word")
-        placeholderTextColor: Style.current.secondaryText
-        selectByMouse: true
-        selectByKeyboard: true
-        selectionColor: Style.current.secondaryBackground
-        selectedTextColor: Style.current.secondaryText
+        width: parent.width
+        hideRectangle: true
 
-        Keys.onReleased: errorText.text = ""
+        textArea.anchors.leftMargin: 76
+        textArea.anchors.rightMargin: 76
 
-        color: Style.current.textColor
-
-        Keys.onReturnPressed: {
-            submitBtn.clicked()
-        }
-        KeyNavigation.priority: KeyNavigation.BeforeItem
-        KeyNavigation.tab: submitBtn
-    }
-
-    StyledText {
-        visible: errorText.text === ""
-        text: Utils.seedPhraseWordCountText(mnemonicTextField.text)
-        anchors.right: parent.right
-        anchors.top: mnemonicTextField.bottom
-        anchors.topMargin: Style.current.smallPadding
-        color: correctWordCount ? Style.current.textColor : Style.current.secondaryText
-    }
-
-    StyledText {
-        id: errorText
-        visible: !!text && text != ""
-        wrapMode: Text.WordWrap
-        color: Style.current.danger
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: mnemonicTextField.bottom
-        anchors.topMargin: Style.current.smallPadding
-        horizontalAlignment: Text.AlignHCenter
+        onEnterPressed: submitBtn.clicked()
     }
 
     StyledText {
@@ -92,13 +50,15 @@ ModalPopup {
         icon.name: "arrow-right"
         icon.width: 20
         icon.height: 16
-        enabled: correctWordCount
+        enabled: seedPhraseTextArea.correctWordCount
 
         onClicked : {
-            if (mnemonicTextField.text === "") {
+            if (seedPhraseTextArea.textArea.text === "") {
                 return
             }
-            onConfirmSeedClick(mnemonicTextField.text)
+            if (seedPhraseTextArea.validateSeed()) {
+                onConfirmSeedClick(seedPhraseTextArea.textArea.text)
+            }
         }
     }
 }

@@ -17,6 +17,8 @@ Item {
     }
     readonly property int labelMargin: 7
     property int customHeight: 44
+    property bool hideRectangle: false
+    signal keyPressed(var event)
 
     id: inputBox
     height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0) + (!!validationError ? validationErrorText.height : 0)
@@ -37,13 +39,13 @@ Item {
     Rectangle {
         id: inputRectangle
         height: customHeight
-        color: bgColor
+        color: hideRectangle ? Style.current.transparent : bgColor
         radius: Style.current.radius
         anchors.top: inputBox.hasLabel ? inputLabel.bottom : parent.top
         anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
         anchors.right: parent.right
         anchors.left: parent.left
-        border.width: !!validationError ? 1 : 0
+        border.width: !!validationError && !hideRectangle ? 1 : 0
         border.color: Style.current.red
 
         TextArea {
@@ -61,6 +63,8 @@ Item {
             color: Style.current.textColor
             placeholderTextColor: Style.current.darkGrey
             selectionColor: Style.current.primarySelectionColor
+
+            Keys.onPressed: inputBox.keyPressed(event)
         }
 
         MouseArea {

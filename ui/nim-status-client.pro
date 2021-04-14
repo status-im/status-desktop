@@ -387,6 +387,7 @@ DISTFILES += \
     shared/GasValidator.qml \
     shared/RoundedImage.qml \
     shared/SearchBox.qml \
+    shared/SeedPhraseTextArea.qml \
     shared/Select.qml \
     shared/SendToContractWarning.qml \
     shared/Separator.qml \
