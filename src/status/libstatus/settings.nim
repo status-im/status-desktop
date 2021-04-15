@@ -35,12 +35,18 @@ proc getSettings*(useCached: bool = true, keepSensitiveData: bool = false): Json
   if useCached and (not cacheIsDirty) and (not keepSensitiveData):
     result = settings
   else:
-    result = callPrivateRPC("settings_getSettings").parseJSON()["result"]
+    var
+      allSettings = callPrivateRPC("settings_getSettings").parseJSON()["result"]
+    var
+      noSensitiveData = allSettings.deepCopy
+    noSensitiveData.delete("mnemonic")
     if not keepSensitiveData:
-      dirty.store(false)
-      delete(result, "mnemonic")
-      settings = result
-      settingsInited = true
+      result = noSensitiveData
+    else:
+      result = allSettings
+    dirty.store(false)
+    settings = noSensitiveData # never include sensitive data in cache
+    settingsInited = true
 
 proc getSetting*[T](name: Setting, defaultValue: T, useCached: bool = true): T =
   let settings: JsonNode = getSettings(useCached, $name == "mnemonic")
