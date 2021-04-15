@@ -9,6 +9,7 @@ Item {
     id: syncContainer
     Layout.fillHeight: true
     Layout.fillWidth: true
+    property string activeMailserver: ""
 
     Connections {
         target: profileModel.mailservers
@@ -19,7 +20,6 @@ Item {
 
     Item {
         width: profileContainer.profileContentWidth
-
         anchors.horizontalCenter: parent.horizontalCenter
 
         Component {
