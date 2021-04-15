@@ -59,7 +59,7 @@ Item {
             StyledText {
                 id: assetFiatValue
                 color: Style.current.secondaryText
-                text: Utils.toLocaleString(fiatBalance, appSettings.locale) + " " + walletModel.defaultCurrency.toUpperCase()
+                text: Utils.toLocaleString(fiatBalance, globalSettings.locale) + " " + walletModel.defaultCurrency.toUpperCase()
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.bottom: parent.bottom

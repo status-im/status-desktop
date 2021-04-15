@@ -46,11 +46,11 @@ ModalPopup {
                         anchors.rightMargin: 0
                         text: modelData.name
                         buttonGroup: languageGroup
-                        checked: appSettings.locale === modelData.locale
+                        checked: globalSettings.locale === modelData.locale
                         onRadioCheckedChanged: {
-                            if (checked && appSettings.locale !== modelData.locale) {
+                            if (checked && globalSettings.locale !== modelData.locale) {
                                 profileModel.changeLocale(modelData.locale)
-                                appSettings.locale = modelData.locale
+                                globalSettings.locale = modelData.locale
                             }
                         }
                     }

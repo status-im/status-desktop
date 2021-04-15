@@ -8,12 +8,12 @@ StyledText {
     id: chatTime
     visible: isMessage
     color: isImage ? Style.current.white : Style.current.secondaryText
-    text: formatDateTime ? Utils.formatDateTime(timestamp, appSettings.locale) : Utils.formatTime(timestamp, appSettings.locale)
+    text: formatDateTime ? Utils.formatDateTime(timestamp, globalSettings.locale) : Utils.formatTime(timestamp, globalSettings.locale)
     font.pixelSize: Style.current.asideTextFontSize
     
     StatusToolTip {
         visible: hhandler.hovered
-        text: new Date(parseInt(timestamp, 10)).toLocaleString(Qt.locale(appSettings.locale))
+        text: new Date(parseInt(timestamp, 10)).toLocaleString(Qt.locale(globalSettings.locale))
         maxWidth: 350
     }
 

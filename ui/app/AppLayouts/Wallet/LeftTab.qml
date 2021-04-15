@@ -43,7 +43,7 @@ Rectangle {
         StyledTextEdit {
             id: walletAmountValue
             color: Style.current.textColor
-            text: Utils.toLocaleString(walletModel.totalFiatBalance, appSettings.locale) + " " + walletModel.defaultCurrency.toUpperCase()
+            text: Utils.toLocaleString(walletModel.totalFiatBalance, globalSettings.locale) + " " + walletModel.defaultCurrency.toUpperCase()
             selectByMouse: true
             cursorVisible: true
             readOnly: true
@@ -141,7 +141,7 @@ Rectangle {
             }
             StyledText {
                 id: walletBalance
-                text: isLoading ? "..." : Utils.toLocaleString(fiatBalance, appSettings.locale) + " " + walletModel.defaultCurrency.toUpperCase()
+                text: isLoading ? "..." : Utils.toLocaleString(fiatBalance, globalSettings.locale) + " " + walletModel.defaultCurrency.toUpperCase()
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.smallPadding
                 anchors.right: parent.right
