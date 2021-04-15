@@ -1,6 +1,11 @@
-import json, strmisc
+import json, strmisc, atomics
 import core, utils, types, settings
 from ../profile/profile import Profile
+
+var
+  contacts {.threadvar.}: JsonNode
+  contactsInited {.threadvar.}: bool
+  dirty: Atomic[bool]
 
 # TODO: remove Profile from here
 proc blockContact*(contact: Profile): string =
@@ -16,13 +21,22 @@ proc blockContact*(contact: Profile): string =
 
 proc getContactByID*(id: string): string =
   result = callPrivateRPC("getContactByID".prefix, %* [id])
+  dirty.store(true)
 
 proc getContacts*(): JsonNode =
-  let payload = %* []
-  let response = callPrivateRPC("contacts".prefix, payload).parseJson
-  if response["result"].kind == JNull:
-    return %* []
-  return response["result"]
+  let cacheIsDirty = (not contactsInited) or dirty.load
+  if not cacheIsDirty:
+    result = contacts
+  else:
+    let payload = %* []
+    let response = callPrivateRPC("contacts".prefix, payload).parseJson
+    if response["result"].kind == JNull:
+      result = %* []
+    else:
+      result = response["result"]
+    dirty.store(false)
+    contacts = result
+    contactsInited = true
 
 proc saveContact*(id: string, ensVerified: bool, ensName: string, alias: string, identicon: string, thumbnail: string, systemTags: seq[string], localNickname: string): string =
   let payload = %* [{
@@ -35,7 +49,10 @@ proc saveContact*(id: string, ensVerified: bool, ensName: string, alias: string,
       "systemTags": systemTags,
       "localNickname": localNickname
     }]
-  callPrivateRPC("saveContact".prefix, payload)
+  # TODO: StatusGoError handling
+  result = callPrivateRPC("saveContact".prefix, payload)
+  dirty.store(true)
 
 proc requestContactUpdate*(publicKey: string): string =
-  callPrivateRPC("sendContactUpdate".prefix, %* [publicKey, "", ""])
+  result = callPrivateRPC("sendContactUpdate".prefix, %* [publicKey, "", ""])
+  dirty.store(true)
