@@ -16,8 +16,6 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 .PHONY: \
 	all \
 	bottles \
-	bottles-dummy \
-	bottles-macos \
 	check-pkg-target-linux \
 	check-pkg-target-macos \
 	check-pkg-target-windows \
@@ -66,7 +64,6 @@ else
 endif
 
 ifeq ($(detected_OS),Darwin)
- BOTTLES_TARGET := bottles-macos
  CFLAGS := -mmacosx-version-min=10.14
  export CFLAGS
  CGO_CFLAGS := -mmacosx-version-min=10.14
@@ -77,7 +74,6 @@ ifeq ($(detected_OS),Darwin)
  PKG_TARGET := pkg-macos
  RUN_TARGET := run-macos
 else ifeq ($(detected_OS),Windows)
- BOTTLES_TARGET := bottles-dummy
  LIBSTATUS_EXT := dll
  PKG_TARGET := pkg-windows
  QRCODEGEN_MAKE_PARAMS := CC=gcc
@@ -86,7 +82,6 @@ else ifeq ($(detected_OS),Windows)
  VCINSTALLDIR ?= C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\
  export VCINSTALLDIR
 else
- BOTTLES_TARGET := bottles-dummy
  LIBSTATUS_EXT := so
  PKG_TARGET := pkg-linux
  RUN_TARGET := run-linux
@@ -107,33 +102,15 @@ ifneq ($(detected_OS),Windows)
 	$(error The pkg-windows target must be run on Windows)
 endif
 
-bottles: $(BOTTLES_TARGET)
+ifeq ($(detected_OS),Darwin)
+bottles/openssl:
+	./scripts/fetch-brew-bottle.sh openssl
 
-bottles-dummy: ;
+bottles/pcre:
+	./scripts/fetch-brew-bottle.sh pcre
 
-BOTTLE_OPENSSL := bottles/openssl/INSTALL_RECEIPT.json
-
-$(BOTTLE_OPENSSL):
-	echo -e "\e[92mFetching:\e[39m bottles for macOS"
-	rm -rf bottles/Downloads/openssl* bottles/openssl*
-	mkdir -p bottles/Downloads
-	cd bottles/Downloads && \
-	curl -L -o openssl.tar.gz -u _:_ $$(brew info --json=v1 openssl | jq -r '.[0].bottle.stable.files.mojave.url') && \
-	tar xzf openssl.tar.gz && \
-	mv openssl*/* ../openssl
-
-BOTTLE_PCRE := bottles/pcre/INSTALL_RECEIPT.json
-
-$(BOTTLE_PCRE):
-	rm -rf bottles/Downloads/pcre* bottles/pcre*
-	mkdir -p bottles/Downloads
-	cd bottles/Downloads && \
-	curl -L -o pcre.tar.gz -u _:_ $$(brew info --json=v1 pcre | jq -r '.[0].bottle.stable.files.mojave.url') && \
-	tar xzf pcre.tar.gz && \
-	mv pcre*/* ../pcre
-
-bottles-macos: | $(BOTTLE_OPENSSL) $(BOTTLE_PCRE)
-	rm -rf bottles/Downloads
+bottles: bottles/openssl bottles/pcre
+endif
 
 deps: | deps-common bottles
 
@@ -438,7 +415,7 @@ pkg-macos: check-pkg-target-macos $(STATUS_CLIENT_DMG)
 pkg-windows: check-pkg-target-windows $(STATUS_CLIENT_ZIP)
 
 clean: | clean-common
-	rm -rf bin/* node_modules pkg/* tmp/* $(STATUSGO)
+	rm -rf bin/* node_modules bottles/* pkg/* tmp/* $(STATUSGO)
 	+ $(MAKE) -C vendor/DOtherSide/build --no-print-directory clean
 
 run: rcc $(RUN_TARGET)
