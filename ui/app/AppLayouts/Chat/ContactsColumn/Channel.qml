@@ -142,7 +142,7 @@ Item {
         StyledText {
             id: contactTime
             visible: !isCompact
-            text: Utils.formatDateTime(wrapper.timestamp, appSettings.locale)
+            text: Utils.formatDateTime(wrapper.timestamp, globalSettings.locale)
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
             anchors.top: parent.top

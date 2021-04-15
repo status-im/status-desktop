@@ -86,6 +86,16 @@ QtObject:
     read = getProfileSettingsFile
     notify = profileSettingsFileChanged
 
+  proc getGlobalSettingsFile(self: ProfileView): string {.slot.} =
+    return os.joinPath(accountConstants.DATADIR, "qt", "global")
+
+  proc globalSettingsFileChanged*(self: ProfileView) {.signal.}
+
+  QtProperty[string] globalSettingsFile:
+    read = getGlobalSettingsFile
+    notify = globalSettingsFileChanged
+    
+
   proc initialized*(self: ProfileView) {.signal.}
 
   proc getProfile(self: ProfileView): QVariant {.slot.} =

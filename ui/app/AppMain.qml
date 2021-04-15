@@ -115,7 +115,6 @@ RowLayout {
         property bool displayChatImages: false
         property bool useCompactMode: true
         property bool timelineEnabled: true
-        property string locale: "en"
         property var recentEmojis: []
         property var hiddenCommunityWelcomeBanners: []
         property real volume: 0.2
@@ -151,6 +150,13 @@ RowLayout {
         property bool compatibilityMode: true
     }
 
+    Settings {
+        id: globalSettings
+        category: "global"
+        fileName: profileModel.globalSettingsFile
+        property string locale: "en"
+    }
+
     ErrorSound {
         id: errorSound
     }
@@ -175,7 +181,8 @@ RowLayout {
     Connections {
         target: profileModel
         onProfileSettingsFileChanged: {
-            profileModel.changeLocale(appSettings.locale)
+            profileModel.changeLocale(globalSettings.locale)
+
 
             // Since https://github.com/status-im/status-desktop/commit/93668ff75
             // we're hiding the setting to change appearance for compact normal mode

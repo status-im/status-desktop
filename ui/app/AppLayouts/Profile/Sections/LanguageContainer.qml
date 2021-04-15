@@ -30,7 +30,7 @@ Item {
                 //% "Language"
                 text: qsTrId("language")
                 //% "Default"
-                currentValue: appSettings.locale === "" ? qsTrId("default") : appSettings.locale
+                currentValue: globalSettings.locale === "" ? qsTrId("default") : globalSettings.locale
                 onClicked: languagePopup.createObject(languageContainer).open()
             }
         }
