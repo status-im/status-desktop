@@ -23,6 +23,14 @@ ApplicationWindow {
 
     Universal.theme: Universal.System
 
+    Settings {
+        id: globalSettings
+        category: "global"
+        fileName: profileModel.globalSettingsFile
+        property string locale: "en"
+        property int theme: 2
+    }
+
     id: applicationWindow
     minimumWidth: 900
     minimumHeight: 600
@@ -87,9 +95,7 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-        // Change the theme to the system theme (dark/light) until we get the
-        // user's saved setting from status-go (after login)
-        Style.changeTheme(Universal.theme === Universal.Dark ? "dark" : "light")
+        Style.changeTheme(globalSettings.theme)
         setX(Qt.application.screens[0].width / 2 - width / 2);
         setY(Qt.application.screens[0].height / 2 - height / 2);
     }
