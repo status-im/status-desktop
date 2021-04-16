@@ -106,7 +106,7 @@ ifeq ($(detected_OS),Darwin)
 bottles/openssl:
 	./scripts/fetch-brew-bottle.sh openssl
 
-bottles/pcre:
+bottles/pcre: bottles/openssl
 	./scripts/fetch-brew-bottle.sh pcre
 
 bottles: bottles/openssl bottles/pcre

@@ -21,7 +21,7 @@ function fetch_bottle() {
 }
 
 if [[ $(uname) != "Darwin" ]]; then
-    echo "This script is intended for use on MacOS!" >&2
+    echo "This script is intended for use on macOS!" >&2
     exit 1
 fi
 
@@ -37,7 +37,7 @@ GITHUB_USER="${GITHUB_USER:-_}"
 GITHUB_TOKEN="${GITHUB_TOKEN:-_}"
 if [[ "${GITHUB_USER}" == "_" ]] || [[ "${GITHUB_TOKEN}" == "_" ]]; then
     echo "No GITHUB_USER or GITHUB_TOKEN variable set!" >&2
-    echo "GitHub Packages which can throttle unauthorized requests." >&2
+    echo "GitHub Packages can throttle unauthorized requests." >&2
 else
     echo "${BOTTLE_NAME} - Fetching GH Pkgs Token"
     BEARER_TOKEN=$(get_gh_pkgs_token)
@@ -47,7 +47,7 @@ fi
 if [[ $(stat -f %u /usr/local/var/homebrew) -ne "${UID}" ]]; then
     echo "Missing permissions to update Homebrew formulae!" >&2
 else
-    echo "${BOTTLE_NAME} - Updateing HomeBrew repository"
+    echo "${BOTTLE_NAME} - Updating HomeBrew repository"
     brew update >/dev/null
 fi
 
@@ -56,7 +56,7 @@ BOTTLE_JSON=$(get_bottle_json "${BOTTLE_NAME}")
 BOTTLE_URL=$(echo "${BOTTLE_JSON}" | jq -r .url)
 BOTTLE_SHA=$(echo "${BOTTLE_JSON}" | jq -r .sha256)
 
-echo "${BOTTLE_NAME} - Fetching bottles for macOS"
+echo "${BOTTLE_NAME} - Fetching bottle for macOS"
 fetch_bottle "${BOTTLE_PATH}" "${BOTTLE_URL}"
 trap "rm -fr ${BOTTLE_PATH}" EXIT ERR INT QUIT
 
