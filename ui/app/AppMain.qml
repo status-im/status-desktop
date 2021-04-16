@@ -150,13 +150,6 @@ RowLayout {
         property bool compatibilityMode: true
     }
 
-    Settings {
-        id: globalSettings
-        category: "global"
-        fileName: profileModel.globalSettingsFile
-        property string locale: "en"
-    }
-
     ErrorSound {
         id: errorSound
     }
