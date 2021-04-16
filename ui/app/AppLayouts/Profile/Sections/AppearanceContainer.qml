@@ -21,14 +21,8 @@ ScrollView {
     }
 
     function updateTheme(theme) {
-        let themeStr = Universal.theme === Universal.Dark ? "dark" : "light"
-        if (theme === AppearanceContainer.Theme.Light) {
-            themeStr = "light"
-        } else if (theme === AppearanceContainer.Theme.Dark) {
-            themeStr = "dark"
-        }
-        profileModel.changeTheme(theme)
-        Style.changeTheme(themeStr)
+        globalSettings.theme = theme
+        Style.changeTheme(theme)
     }
 
     function updateFontSize(fontSize) {
@@ -254,10 +248,10 @@ ScrollView {
                 image.height: 128
                 //% "Light"
                 control.text: qsTrId("light")
-                control.checked: profileModel.profile.appearance === AppearanceContainer.Theme.Light
+                control.checked: globalSettings.theme === Universal.Light
                 onRadioCheckedChanged: {
                     if (checked) {
-                        root.updateTheme(AppearanceContainer.Theme.Light)
+                        root.updateTheme(Universal.Light)
                     }
                 }
             }
@@ -270,10 +264,10 @@ ScrollView {
                 image.height: 128
                 //% "Dark"
                 control.text: qsTrId("dark")
-                control.checked: profileModel.profile.appearance === AppearanceContainer.Theme.Dark
+                control.checked: globalSettings.theme === Universal.Dark
                 onRadioCheckedChanged: {
                     if (checked) {
-                        root.updateTheme(AppearanceContainer.Theme.Dark)
+                        root.updateTheme(Universal.Dark)
                     }
                 }
             }
@@ -286,20 +280,11 @@ ScrollView {
                 image.height: 128
                 //% "System"
                 control.text: qsTrId("system")
-                control.checked: profileModel.profile.appearance === AppearanceContainer.Theme.System
+                control.checked: globalSettings.theme === Universal.System
                 onRadioCheckedChanged: {
                     if (checked) {
-                        root.updateTheme(AppearanceContainer.Theme.System)
+                        root.updateTheme(Universal.System)
                     }
-                }
-            }
-
-            // For the case where the theme was finally loaded by status-go in init(),
-            // update the theme in qml
-            Connections {
-                target: profileModel
-                onProfileChanged: {
-                    root.updateTheme(profileModel.profile.appearance)
                 }
             }
         }
