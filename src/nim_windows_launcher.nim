@@ -1,9 +1,9 @@
-from os import getCurrentDir, joinPath
+from os import getAppDir, joinPath
 from winlean import Handle, shellExecuteW
 
 const NULL: Handle = 0
-let cwd = getCurrentDir()
-let workDir_str = joinPath(cwd, "bin")
+let launcherDir = getAppDir()
+let workDir_str = joinPath(launcherDir, "bin")
 let exePath_str = joinPath(workDir_str, "Status.exe")
 let open_str = "open"
 let params_str = ""

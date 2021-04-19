@@ -97,3 +97,6 @@
 [submodule "vendor/edn.nim"]
 	path = vendor/edn.nim
 	url = https://github.com/status-im/edn.nim.git
+[submodule "vendor/nim-confutils"]
+	path = vendor/nim-confutils
+	url = https://github.com/status-im/nim-confutils.git
