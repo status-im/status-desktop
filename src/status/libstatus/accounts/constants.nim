@@ -1,3 +1,4 @@
+import confutils
 import json
 import os
 
@@ -170,36 +171,45 @@ var NODE_CONFIG* = %* {
 
 const DEFAULT_NETWORK_NAME* = "mainnet_rpc"
 
-let sep = if defined(windows): "\\" else: "/"
+const sep = when defined(windows): "\\" else: "/"
 
-let homeDir = getHomeDir()
-
-let parentDir =
-  if getEnv("NIM_STATUS_CLIENT_DEV").string != "":
-    "."
-  elif homeDir == "":
-    "."
-  elif defined(macosx):
-    joinPath(homeDir, "Library", "Application Support")
-  elif defined(windows):
-    let targetDir = getEnv("LOCALAPPDATA").string
-    if targetDir == "":
-      joinPath(homeDir, "AppData", "Local")
+proc defaultDataDir(): string =
+  let homeDir = getHomeDir()
+  let parentDir =
+    if defined(development):
+      parentDir(getAppDir())
+    elif homeDir == "":
+      getCurrentDir()
+    elif defined(macosx):
+      joinPath(homeDir, "Library", "Application Support")
+    elif defined(windows):
+      let targetDir = getEnv("LOCALAPPDATA").string
+      if targetDir == "":
+        joinPath(homeDir, "AppData", "Local")
+      else:
+        targetDir
     else:
-      targetDir
-  else:
-    let targetDir = getEnv("XDG_CONFIG_HOME").string
-    if targetDir == "":
-      joinPath(homeDir, ".config")
-    else:
-      targetDir
+      let targetDir = getEnv("XDG_CONFIG_HOME").string
+      if targetDir == "":
+        joinPath(homeDir, ".config")
+      else:
+        targetDir
+  absolutePath(joinPath(parentDir, "Status"))
 
-let clientDir =
-  if parentDir != ".":
-    joinPath(parentDir, "Status")
-  else:
-    parentDir
+type StatusDesktopConfig = object
+    dataDir* {.
+      defaultValue: defaultDataDir()
+      desc: "Status Desktop data directory"
+      abbr: "d" .}: string
 
-let DATADIR* = joinPath(clientDir, "data") & sep
-let KEYSTOREDIR* = joinPath(clientDir, "data", "keystore") & sep
-let TMPDIR* = joinPath(clientDir, "tmp") & sep
+let desktopConfig = StatusDesktopConfig.load()
+
+let
+  baseDir = absolutePath(expandTilde(desktopConfig.dataDir))
+  DATADIR* = baseDir & sep
+  STATUSGODIR* = joinPath(baseDir, "data") & sep
+  KEYSTOREDIR* = joinPath(baseDir, "data", "keystore") & sep
+  TMPDIR* = joinPath(baseDir, "tmp") & sep
+
+createDir(DATADIR)
+createDir(TMPDIR)

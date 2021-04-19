@@ -59,15 +59,9 @@ proc generateAlias*(publicKey: string): string =
 proc generateIdenticon*(publicKey: string): string =
   result = $status_go.identicon(publicKey)
 
-proc ensureDir(dirname: string) =
-  if not existsDir(dirname):
-    # removeDir(dirname)
-    createDir(dirname)
-
 proc initNode*() =
-  ensureDir(DATADIR)
-  ensureDir(KEYSTOREDIR)
-
+  createDir(STATUSGODIR)
+  createDir(KEYSTOREDIR)
   discard $status_go.initKeystore(KEYSTOREDIR)
 
 proc parseIdentityImage*(images: JsonNode): IdentityImage =
@@ -81,7 +75,7 @@ proc parseIdentityImage*(images: JsonNode): IdentityImage =
         result.large = image["uri"].getStr
 
 proc openAccounts*(): seq[NodeAccount] =
-  let strNodeAccounts = status_go.openAccounts(DATADIR).parseJson
+  let strNodeAccounts = status_go.openAccounts(STATUSGODIR).parseJson
   # FIXME fix serialization
   result = @[]
   if (strNodeAccounts.kind != JNull):

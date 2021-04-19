@@ -151,12 +151,20 @@ else
  NIM_EXTRA_PARAMS := --passL:"-lsetupapi -lhid"
 endif
 
-# TODO: control debug/release builds with a Make var
-# We need `-d:debug` to get Nim's default stack traces.
-NIM_PARAMS += --outdir:./bin -d:debug
-# Enable debugging symbols in DOtherSide, in case we need GDB backtraces from it.
-CFLAGS += -g
-CXXFLAGS += -g
+RELEASE ?= false
+ifeq ($(RELEASE),false)
+ # We need `-d:debug` to get Nim's default stack traces
+ NIM_PARAMS += -d:debug
+ # Enable debugging symbols in DOtherSide, in case we need GDB backtraces
+ CFLAGS += -g
+ CXXFLAGS += -g
+else
+ # Additional optimization flags for release builds are not included at present;
+ # adding them will involve refactoring config.nims in the root of this repo
+ NIM_PARAMS += -d:release
+endif
+
+NIM_PARAMS += --outdir:./bin
 
 $(DOTHERSIDE): | deps
 	echo -e $(BUILD_MSG) "DOtherSide"
@@ -215,6 +223,9 @@ DEFAULT_TOKEN := 220a1abb4b6943a093c35d0ce4fb0732
 INFURA_TOKEN ?= $(DEFAULT_TOKEN)
 NIM_PARAMS += -d:INFURA_TOKEN:"$(INFURA_TOKEN)"
 
+RESOURCES_LAYOUT := -d:development
+
+nim_status_client: NIM_PARAMS += $(RESOURCES_LAYOUT)
 nim_status_client: | $(DOTHERSIDE) $(STATUSGO) $(QRCODEGEN) $(FLEETS) rcc deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
@@ -238,6 +249,7 @@ $(APPIMAGE_TOOL):
 
 STATUS_CLIENT_APPIMAGE ?= pkg/NimStatusClient-x86_64.AppImage
 
+$(STATUS_CLIENT_APPIMAGE): override RESOURCES_LAYOUT := -d:production
 $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	rm -rf pkg/*.AppImage
 	rm -rf tmp/linux/dist
@@ -279,6 +291,7 @@ MACOS_INNER_BUNDLE := $(MACOS_OUTER_BUNDLE)/Contents/Frameworks/QtWebEngineCore.
 
 STATUS_CLIENT_DMG ?= pkg/Status.dmg
 
+$(STATUS_CLIENT_DMG): override RESOURCES_LAYOUT := -d:production
 $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	rm -rf tmp/macos pkg/*.dmg
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/MacOS
@@ -349,6 +362,7 @@ endif
 
 STATUS_CLIENT_ZIP ?= pkg/Status.zip
 
+$(STATUS_CLIENT_ZIP): override RESOURCES_LAYOUT := -d:production
 $(STATUS_CLIENT_ZIP): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBUILT_DLLS)
 	rm -rf pkg/*.zip
 	rm -rf tmp/windows/dist
@@ -426,30 +440,24 @@ $(ICON_TOOL):
 	echo -e "\e[92mInstalling:\e[39m fileicon"
 	npm i
 
-NIM_STATUS_CLIENT_DEV ?= t
-STATUS_PORT ?= 30306
+# Currently not in use: https://github.com/status-im/status-desktop/pull/1858
+# STATUS_PORT ?= 30306
 
 set-status-macos-dev-icon: $(ICON_TOOL)
 	npx fileicon set bin/nim_status_client status-dev.icns
 
 run-linux:
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
-	NIM_STATUS_CLIENT_DEV="$(NIM_STATUS_CLIENT_DEV)" \
 	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)" \
-	STATUS_PORT="$(STATUS_PORT)" \
 	./bin/nim_status_client
 
 run-macos: set-status-macos-dev-icon
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
-	NIM_STATUS_CLIENT_DEV="$(NIM_STATUS_CLIENT_DEV)" \
-	STATUS_PORT="$(STATUS_PORT)" \
 	./bin/nim_status_client
 
 run-windows: $(NIM_WINDOWS_PREBUILT_DLLS)
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client.exe"
-	NIM_STATUS_CLIENT_DEV="$(NIM_STATUS_CLIENT_DEV)" \
 	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(STATUSGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
-	STATUS_PORT="$(STATUS_PORT)" \
 	./bin/nim_status_client.exe
 
 endif # "variables.mk" was not included

@@ -62,7 +62,7 @@ proc newMailserverModel*(vptr: ByteAddress): MailserverModel =
 proc init*(self: MailserverModel) =
   trace "MailserverModel::init()"
   let fleets =
-    if defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
+    if defined(windows) and defined(production):
       "/../resources/fleets.json"
     else:
       "/../fleets.json"

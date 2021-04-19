@@ -26,7 +26,7 @@ logScope:
 
 proc mainProc() =
   let fleets =
-    if defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
+    if defined(windows) and defined(production):
       "/../resources/fleets.json"
     else:
       "/../fleets.json"
@@ -46,7 +46,7 @@ proc mainProc() =
 
   let app = newQApplication("Status Desktop")
   let resources =
-    if defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
+    if defined(windows) and defined(production):
       "/../resources/resources.rcc"
     else:
       "/../resources.rcc"
@@ -55,9 +55,9 @@ proc mainProc() =
   let statusAppIcon =
     if defined(macosx):
       "" # not used in macOS
-    elif defined(windows) and getEnv("NIM_STATUS_CLIENT_DEV").string == "":
+    elif defined(windows) and defined(production):
       "/../resources/status.svg"
-    elif getEnv("NIM_STATUS_CLIENT_DEV").string != "":
+    elif defined(development):
       "/../status-dev.svg"
     else:
       "/../status.svg"
@@ -65,7 +65,7 @@ proc mainProc() =
     app.icon(app.applicationDirPath & statusAppIcon)
 
   var i18nPath = ""
-  if (getEnv("NIM_STATUS_CLIENT_DEV").string != ""):
+  if defined(development):
     i18nPath = joinPath(getAppDir(), "../ui/i18n")
   elif (defined(windows)):
     i18nPath = joinPath(getAppDir(), "../resources/i18n")

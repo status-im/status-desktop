@@ -30,9 +30,6 @@ QtObject:
     result.status = status
     result.setup
 
-  proc getDataDir*(self: UtilsView): string {.slot.} =
-    result = accountConstants.DATADIR
-
   proc getOs*(self: UtilsView): string {.slot.} =
     if defined(windows):
       return "windows"
