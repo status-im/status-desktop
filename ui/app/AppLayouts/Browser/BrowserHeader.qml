@@ -130,7 +130,7 @@ Rectangle {
                         }
                         return
                     }
-                    if (appSettings.shouldShowBrowserSearchEngine !== Constants.browserSearchEngineNone && !Utils.isURL(text)) {
+                    if (appSettings.shouldShowBrowserSearchEngine !== Constants.browserSearchEngineNone && !Utils.isURL(text) && !Utils.isURLWithOptionalProtocol(text)) {
                         switch (appSettings.shouldShowBrowserSearchEngine) {
                         case Constants.browserSearchEngineGoogle: currentWebView.url = "https://www.google.com/search?q=" + text; break;
                         case Constants.browserSearchEngineYahoo: currentWebView.url = "https://search.yahoo.com/search?p=" + text; break;
@@ -138,6 +138,8 @@ Rectangle {
                         }
 
                         return
+                    } else if (Utils.isURLWithOptionalProtocol(text)) {
+                        text = "https://" + text
                     }
 
                     currentWebView.url = determineRealURL(text);
