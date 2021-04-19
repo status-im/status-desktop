@@ -42,6 +42,7 @@ function Install-VC-BuildTools {
         "--add", "Microsoft.VisualStudio.Workload.VCTools",
         "--add", "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
         "--add", "Microsoft.VisualStudio.Component.VC.Redist.14.Latest",
+        "--add", "Microsoft.VisualStudio.Component.Windows10SDK.10240",
         "--add", "Microsoft.VisualStudio.Component.Windows10SDK.14393",
         "--add", "Microsoft.VisualStudio.Component.Windows81SDK",
         "--add", "Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Win81"

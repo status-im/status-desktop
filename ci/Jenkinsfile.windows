@@ -1,7 +1,15 @@
-library 'status-jenkins-lib@v1.2.13'
+library 'status-jenkins-lib@v1.2.15'
 
 pipeline {
   agent { label 'windows' }
+
+  parameters {
+    string(
+      name: 'BUILD_TYPE',
+      description: 'Specify build type. Values: pr / nightly / release',
+      defaultValue: 'pr',
+    )
+  }
 
   options {
     timestamps()
@@ -21,23 +29,10 @@ pipeline {
     MAKEFLAGS = '-j4'
     /* Disable colors in Nim compiler logs */
     NIMFLAGS = '--colors:off'
-    /* Makefile assumes the compiler folder is included */
-    QTDIR = '/c/Qt/5.14.2/msvc2017_64'
-    Qt5_DIR = '/c/Qt/5.14.2/msvc2017_64'
-    VCINSTALLDIR = '/c/BuildTools/VC'
     /* Control output the filename */
     STATUS_CLIENT_ZIP = "pkg/${utils.pkgFilename('zip')}"
-    /* Adjust path for correct access to build toos */
-    PATH = [
-      "${QTDIR}/bin",
-      '/c/ProgramData/scoop/apps/gcc/current/bin',
-      '/c/ProgramData/scoop/apps/git/current/bin',
-      '/c/ProgramData/scoop/apps/git/current/usr/bin',
-      '/c/BuildTools/MSBuild/Current/Bin',
-      '/c/BuildTools/VC/Tools/MSVC/14.27.29110/bin',
-      '/c/ProgramData/scoop/shims',
-      '/c/ProgramData/scoop/apps/pypy3/current/Scripts',
-    ].join(':')
+    /* RFC 3161 timestamping URL for DigiCert */
+    WINDOWS_CODESIGN_TIMESTAMP_URL = 'http://timestamp.digicert.com'
   }
 
   stages {
@@ -61,14 +56,9 @@ pipeline {
     }
 
     stage('Package') {
-      steps { 
-        withCredentials([string(
-          credentialsId: utils.getInfuraTokenCred(),
-          variable: 'INFURA_TOKEN'
-        )]) {
-          sh "make ${env.STATUS_CLIENT_ZIP}"
-        }
-      }
+      steps { script {
+        windows.bundle()
+      } }
     }
 
     stage('Parallel Upload') {

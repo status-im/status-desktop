@@ -78,7 +78,6 @@ else ifeq ($(detected_OS),Windows)
  PKG_TARGET := pkg-windows
  QRCODEGEN_MAKE_PARAMS := CC=gcc
  RUN_TARGET := run-windows
- SIGNTOOL ?= C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.17763.0\\x64\\signtool.exe
  VCINSTALLDIR ?= C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\
  export VCINSTALLDIR
 else
@@ -353,74 +352,40 @@ $(NIM_WINDOWS_PREBUILT_DLLS):
 	rm -rf tmp/windows
 	mkdir -p tmp/windows/tools
 	cd tmp/windows/tools && \
-	wget https://nim-lang.org/download/dlls.zip && \
+	wget -nv https://nim-lang.org/download/dlls.zip && \
 	unzip dlls.zip
 
 nim_windows_launcher: | deps
 	$(ENV_SCRIPT) nim c -d:debug --outdir:./bin --passL:"-static-libgcc -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive" src/nim_windows_launcher.nim
 
-ifneq ($(WINDOWS_CODESIGN_TIMESTAMP_URL),)
- WINDOWS_CODESIGN_TIMESTAMP_PARAM := -t $(WINDOWS_CODESIGN_TIMESTAMP_URL)
-endif
-
 STATUS_CLIENT_ZIP ?= pkg/Status.zip
 
 $(STATUS_CLIENT_ZIP): override RESOURCES_LAYOUT := -d:production
+$(STATUS_CLIENT_ZIP): OUTPUT := tmp/windows/dist/Status
 $(STATUS_CLIENT_ZIP): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBUILT_DLLS)
-	rm -rf pkg/*.zip
-	rm -rf tmp/windows/dist
-	mkdir -p tmp/windows/dist/Status/bin
-	mkdir -p tmp/windows/dist/Status/resources
-	mkdir -p tmp/windows/dist/Status/vendor
-	cp windows-install.txt tmp/windows/dist/Status/INSTALL.txt
-	unix2dos -k tmp/windows/dist/Status/INSTALL.txt
-	# cp LICENSE tmp/windows/dist/Status/LICENSE.txt
-	# unix2dos -k tmp/windows/dist/Status/LICENSE.txt
-	cp status.ico tmp/windows/dist/Status/resources/
-	cp status.svg tmp/windows/dist/Status/resources/
-	cp resources.rcc tmp/windows/dist/Status/resources/
-	cp $(FLEETS) tmp/windows/dist/Status/resources/
-	cp bin/nim_status_client.exe tmp/windows/dist/Status/bin/Status.exe
-	cp bin/nim_windows_launcher.exe tmp/windows/dist/Status/Status.exe
-	rcedit \
-		tmp/windows/dist/Status/bin/Status.exe \
-		--set-icon tmp/windows/dist/Status/resources/status.ico
-	rcedit \
-		tmp/windows/dist/Status/Status.exe \
-		--set-icon tmp/windows/dist/Status/resources/status.ico
-	cp $(DOTHERSIDE) tmp/windows/dist/Status/bin/
-	cp $(STATUSGO) tmp/windows/dist/Status/bin/
-	cp tmp/windows/tools/*.dll tmp/windows/dist/Status/bin/
-	mkdir -p tmp/windows/dist/Status/resources/i18n
-	cp ui/i18n/* tmp/windows/dist/Status/resources/i18n
-	cp "$(shell which libgcc_s_seh-1.dll)" tmp/windows/dist/Status/bin/
-	cp "$(shell which libwinpthread-1.dll)" tmp/windows/dist/Status/bin/
-
+	rm -rf pkg/*.zip tmp/windows/dist
+	mkdir -p $(OUTPUT)/bin $(OUTPUT)/resources $(OUTPUT)/vendor $(OUTPUT)/resources/i18n
+	cat windows-install.txt | unix2dos > $(OUTPUT)/INSTALL.txt
+	cp status.ico status.svg resources.rcc $(FLEETS) $(OUTPUT)/resources/
+	cp ui/i18n/* $(OUTPUT)/resources/i18n
+	cp bin/nim_status_client.exe $(OUTPUT)/bin/Status.exe
+	cp bin/nim_windows_launcher.exe $(OUTPUT)/Status.exe
+	rcedit $(OUTPUT)/bin/Status.exe --set-icon $(OUTPUT)/resources/status.ico
+	rcedit $(OUTPUT)/Status.exe --set-icon $(OUTPUT)/resources/status.ico
+	cp $(DOTHERSIDE) $(STATUSGO) tmp/windows/tools/*.dll $(OUTPUT)/bin/
+	cp "$(shell which libgcc_s_seh-1.dll)" $(OUTPUT)/bin/
+	cp "$(shell which libwinpthread-1.dll)" $(OUTPUT)/bin/
 	echo -e $(BUILD_MSG) "deployable folder"
-	windeployqt \
-		--compiler-runtime \
-		--qmldir ui \
-		--release \
+	windeployqt --compiler-runtime --qmldir ui --release \
 		tmp/windows/dist/Status/bin/DOtherSide.dll
 	mv tmp/windows/dist/Status/bin/vc_redist.x64.exe tmp/windows/dist/Status/vendor/
-
-	# if WINDOWS_CODESIGN_PFX_PATH is not set then DLLs, EXEs are not signed
+# if WINDOWS_CODESIGN_PFX_PATH is not set then DLLs, EXEs are not signed
 ifdef WINDOWS_CODESIGN_PFX_PATH
-	find ./tmp/windows/dist/Status -type f \
-		| /usr/bin/egrep -i "\.(dll|exe)$$" \
-		| /usr/bin/xargs -I{} /usr/bin/bash -c \
-			"if ! '$(SIGNTOOL)' verify -pa {} &>/dev/null; then echo {}; fi" \
-		| /usr/bin/xargs -I{} "$(SIGNTOOL)" \
-			sign \
-			-v \
-			-f $(WINDOWS_CODESIGN_PFX_PATH) \
-			$(WINDOWS_CODESIGN_TIMESTAMP_PARAM) \
-			{}
+	scripts/sign-windows-bin.sh ./tmp/windows/dist/Status
 endif
-
 	echo -e $(BUILD_MSG) "zip"
 	mkdir -p pkg
-	cd tmp/windows/dist/Status && \
+	cd $(OUTPUT) && \
 	7z a ../../../../$(STATUS_CLIENT_ZIP) *
 
 pkg: $(PKG_TARGET)
