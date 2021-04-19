@@ -104,6 +104,12 @@ Rectangle {
             focus: true
             text: ""
             color: Style.current.textColor
+            onActiveFocusChanged: {
+                if (activeFocus) {
+                    addressBar.selectAll()
+                }
+            }
+
             Keys.onPressed: {
                 // TODO: disable browsing local files?  file://
                 if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
