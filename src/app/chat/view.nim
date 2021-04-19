@@ -546,7 +546,11 @@ QtObject:
 
 
   proc markMessageAsSent*(self:ChatsView, chat: string, messageId: string) =
-    self.messageList[chat].markMessageAsSent(messageId)
+    if self.messageList.contains(chat):
+      self.messageList[chat].markMessageAsSent(messageId)
+    else:
+      error "Message could not be marked as sent", chat, messageId
+      
 
   proc getMessageList(self: ChatsView): QVariant {.slot.} =
     self.upsertChannel(self.activeChannel.id)
