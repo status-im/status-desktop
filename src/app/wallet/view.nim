@@ -135,17 +135,16 @@ const loadTransactionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
     arg = decode[LoadTransactionsTaskArg](argEncoded)
     output = %*{
       "address": arg.address,
-      "history": getTransfersByAddress(arg.address, arg.blockNumber)
+      "history": getTransfersByAddress(arg.address)
     }
   arg.finish(output)
 
-proc loadTransactions[T](self: T, slot: string, address: string, blockNumber: string) =
+proc loadTransactions[T](self: T, slot: string, address: string) =
   let arg = LoadTransactionsTaskArg(
     tptr: cast[ByteAddress](loadTransactionsTask),
     vptr: cast[ByteAddress](self.vptr),
     slot: slot,
-    address: address,
-    blockNumber: blockNumber
+    address: address
   )
   self.status.tasks.threadpool.start(arg)
 
@@ -504,11 +503,11 @@ QtObject:
     self.accounts.forceUpdate()
     self.setCurrentAssetList(self.currentAccount.account.assetList)
 
-  proc initBalances*(self: WalletView) =
+  proc checkRecentHistory*(self:WalletView) {.slot.} =
+    var addresses:seq[string] = @[]
     for acc in self.status.wallet.accounts:
-      let accountAddress = acc.address
-      let tokenList = acc.assetList.filter(proc(x:Asset): bool = x.address != "").map(proc(x: Asset): string = x.address)
-      self.initBalances("getAccountBalanceSuccess", accountAddress, tokenList)
+      addresses.add(acc.address)
+    discard status_wallet.checkRecentHistory(addresses)
 
   proc getAccountBalanceSuccess*(self: WalletView, jsonResponse: string) {.slot.} =
     let jsonObj = jsonResponse.parseJson()
@@ -516,6 +515,7 @@ QtObject:
     self.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
     self.accounts.forceUpdate()
     self.currentAccountChanged()
+    self.updateView()
 
 
   proc loadCollectiblesForAccount*(self: WalletView, address: string, currentCollectiblesList: seq[CollectibleList]) =
@@ -626,9 +626,6 @@ QtObject:
 
   QtProperty[QVariant] customTokenList:
     read = getCustomTokenList
-
-
-
   
   proc isKnownTokenContract*(self: WalletView, address: string): bool {.slot.} =
     return self.status.wallet.getKnownTokenContract(parseAddress(address)) != nil
@@ -655,20 +652,26 @@ QtObject:
       return self.fetchingHistoryState[address]
     return true
 
-
   proc isHistoryFetched*(self: WalletView, address: string): bool {.slot.} =
     return self.currentTransactions.rowCount() > 0
 
   proc loadingTrxHistoryChanged*(self: WalletView, isLoading: bool) {.signal.}
 
   proc loadTransactionsForAccount*(self: WalletView, address: string) {.slot.} =
-    var bn = "latest"
-    if self.currentTransactions.rowCount() > 0:
-      bn = self.currentTransactions.getLastTxBlockNumber()
-    # spawn'ed function cannot have a 'var' parameter
-    let blockNumber = bn
     self.loadingTrxHistoryChanged(true)
-    self.loadTransactions("setTrxHistoryResult", address, bn)
+    self.loadTransactions("setTrxHistoryResult", address)
+
+  proc getLatestTransactionHistory*(self: WalletView, accounts: seq[string]) =
+    for acc in accounts:
+      self.loadTransactionsForAccount(acc)
+
+  proc initBalances*(self: WalletView, loadTransactions: bool = true) =
+    for acc in self.status.wallet.accounts:
+      let accountAddress = acc.address
+      let tokenList = acc.assetList.filter(proc(x:Asset): bool = x.address != "").map(proc(x: Asset): string = x.address)
+      self.initBalances("getAccountBalanceSuccess", accountAddress, tokenList)
+      if loadTransactions: 
+        self.loadTransactionsForAccount(accountAddress)
 
   proc setTrxHistoryResult(self: WalletView, historyJSON: string) {.slot.} =
     let historyData = parseJson(historyJSON)
@@ -676,7 +679,7 @@ QtObject:
     let address = historyData["address"].getStr
     let index = self.accounts.getAccountindexByAddress(address)
     if index == -1: return
-    self.accounts.getAccount(index).transactions.add(transactions)
+    self.accounts.getAccount(index).transactions = transactions
     if address == self.currentAccount.address:
       self.setCurrentTransactions(
             self.accounts.getAccount(index).transactions)
@@ -717,3 +720,6 @@ QtObject:
   QtProperty[QVariant] dappBrowserAccount:
     read = getDappBrowserAccount
     notify = dappBrowserAccountChanged
+
+  proc setInitialRange*(self: WalletView) {.slot.} = 
+    discard status_wallet.setInitialBlocksRange()

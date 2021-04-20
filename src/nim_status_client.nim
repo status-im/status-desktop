@@ -143,7 +143,6 @@ proc mainProc() =
     browserController.init()
 
     wallet.checkPendingTransactions()
-    wallet.start()
 
   engine.setRootContextProperty("loginModel", login.variant)
   engine.setRootContextProperty("onboardingModel", onboarding.variant)
