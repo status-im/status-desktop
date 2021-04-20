@@ -17,6 +17,22 @@ ColumnLayout {
             signPhrasePopup.open();
         }
     }
+
+    Component.onCompleted: {
+        if(onboardingModel.firstTimeLogin){
+            onboardingModel.firstTimeLogin = false
+            walletModel.setInitialRange()
+        }
+        walletModel.checkRecentHistory()
+    }
+
+    Timer {
+        id: recentHistoryTimer
+        interval: Constants.walletFetchRecentHistoryInterval
+        running: true
+        repeat: true
+        onTriggered: walletModel.checkRecentHistory()
+    }
     
     SeedPhraseBackupWarning { }
     

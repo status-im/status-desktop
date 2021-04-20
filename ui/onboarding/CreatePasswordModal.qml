@@ -153,6 +153,7 @@ ModalPopup {
                     importError.text += error
                     return importError.open()
                 }
+                onboardingModel.firstTimeLogin = true
             }
         }
     }

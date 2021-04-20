@@ -17,6 +17,7 @@ QtObject:
     currentAccount*: AccountInfoView
     status*: Status
     isCurrentFlow*: bool
+    isFirstTimeLogin*: bool
 
   proc setup(self: OnboardingView) =
     self.QAbstractListModel.setup
@@ -125,3 +126,17 @@ QtObject:
     read = isCurrentFlow
     write = setCurrentFlow
     notify = currentFlowChanged
+
+  proc firstTimeLoginChanged*(self: OnboardingView, v: bool) {.signal.}
+
+  proc setFirstTimeLogin*(self: OnboardingView, v: bool) {.slot.} =
+    if self.isFirstTimeLogin == v: return
+    self.isFirstTimeLogin = v
+    self.firstTimeLoginChanged(v)
+
+  proc `isFirstTimeLogin=`*(self: OnboardingView, v: bool) = self.setFirstTimeLogin(v)
+
+  QtProperty[bool] isFirstTimeLogin:
+    read = isFirstTimeLogin
+    write = setFirstTimeLogin
+    notify = firstTimeLoginChanged

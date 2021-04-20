@@ -10,6 +10,9 @@ import ../../status/[status, wallet]
 import ../../status/wallet/account as WalletTypes
 import ../../eventemitter
 
+logScope:
+  topics = "wallet-core"
+
 type WalletController* = ref object
   status: Status
   view*: WalletView
@@ -58,10 +61,18 @@ proc init*(self: WalletController) =
           self.view.updateView()
 
           # TODO: show notification
+
+      of "new-transfers":
+        for acc in data.accounts:
+          self.view.loadTransactionsForAccount(acc)
+          self.view.initBalances(false)
       of "recent-history-fetching":
         self.view.setHistoryFetchState(data.accounts, true)
       of "recent-history-ready":
         self.view.setHistoryFetchState(data.accounts, false)
+        self.view.initBalances(false)
+      else:
+        error "Unhandled wallet signal", eventType=data.eventType
 
     # TODO: handle these data.eventType: history, reorg
     # see status-react/src/status_im/ethereum/subscriptions.cljs
@@ -72,6 +83,3 @@ proc init*(self: WalletController) =
 
 proc checkPendingTransactions*(self: WalletController) =
   self.status.wallet.checkPendingTransactions() # TODO: consider doing this in a threadpool task
-
-proc start*(self: WalletController) =
-  status_wallet.startWallet(false)
