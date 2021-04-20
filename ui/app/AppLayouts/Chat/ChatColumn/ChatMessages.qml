@@ -189,7 +189,7 @@ ScrollView {
                         case Constants.imageType: message = qsTrId("image"); break
                         //% "Sticker"
                         case Constants.stickerType: message = qsTrId("sticker"); break
-                        default: message = Emoji.parse(msg, "26x26").replace(/\n|\r/g, ' ')
+                        default: message = msg // don't parse emojis here as it emits HTML
                         }
                     } else {
                         //% "You have a new message"
