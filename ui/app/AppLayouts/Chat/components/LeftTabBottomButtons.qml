@@ -22,6 +22,8 @@ Column {
         id: walletBtn
         enabled: isExperimental === "1" || appSettings.walletEnabled
         icon.name: "wallet"
+        icon.width: 20
+        icon.height: 20
         section: Constants.wallet
     }
 
@@ -29,6 +31,8 @@ Column {
         id: browserBtn
         enabled: isExperimental === "1" || appSettings.browserEnabled
         icon.name: "compass"
+        icon.width: 22
+        icon.height: 22
         section: Constants.browser
     }
 
@@ -36,12 +40,16 @@ Column {
         id: timelineBtn
         enabled: isExperimental === "1" || appSettings.timelineEnabled
         icon.name: "timeline"
+        icon.width: 22
+        icon.height: 22
         section: Constants.timeline
     }
 
     StatusIconTabButton {
         id: profileBtn
         icon.name: "profile"
+        icon.width: 22
+        icon.height: 22
         section: Constants.profile
 
         Rectangle {
