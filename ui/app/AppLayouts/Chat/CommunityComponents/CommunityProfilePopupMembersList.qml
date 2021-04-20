@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import QtQuick.Controls.Universal 2.12
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
@@ -18,6 +19,7 @@ Item {
         //% "Invite People"
         label: qsTrId("invite-people")
         width: parent.width
+        type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
         iconName: "invite"
         onClicked: openPopup(inviteFriendsToCommunityPopup)
     }
