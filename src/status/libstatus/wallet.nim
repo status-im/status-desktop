@@ -33,12 +33,9 @@ proc getWalletAccounts*(): seq[WalletAccount] =
 proc getTransactionReceipt*(transactionHash: string): string =
   result = callPrivateRPC("eth_getTransactionReceipt", %* [transactionHash])
 
-proc getTransfersByAddress*(address: string, blockNumber: string = "latest"): seq[types.Transaction] =
+proc getTransfersByAddress*(address: string): seq[types.Transaction] =
   try:
-    let response = getBlockByNumber(blockNumber)
-    let latestBlock = parseJson(response)["result"]
-
-    let transactionsResponse = getTransfersByAddress(address, latestBlock["number"].getStr, "0x14")
+    let transactionsResponse = getTransfersByAddress(address, "0x14")
     let transactions = parseJson(transactionsResponse)["result"]
     var accountTransactions: seq[types.Transaction] = @[]
 
@@ -59,11 +56,7 @@ proc getTransfersByAddress*(address: string, blockNumber: string = "latest"): se
         fromAddress: transaction["from"].getStr,
         to: transaction["to"].getStr
       ))
-    # if we feching more trxs, we should skip the first trx as its already saved in the
-    # existing list
-    if blockNumber == "latest":
-      return accountTransactions
-    return accountTransactions[1 .. ^1]
+    return accountTransactions
   except:
     let msg = getCurrentExceptionMsg()
     error "Failed getting wallet account transactions", msg
@@ -122,3 +115,15 @@ proc getPendingOutboundTransactionsByAddress*(address: string): string =
 proc deletePendingTransaction*(transactionHash: string) =
   let payload = %* [transactionHash]
   discard callPrivateRPC("wallet_deletePendingTransaction", payload)
+
+proc setInitialBlocksRange*(): string =
+  let payload = %* []
+  result = callPrivateRPC("wallet_setInitialBlocksRange", payload)
+
+proc watchTransaction*(transactionHash: string): string =
+  let payload = %* [transactionHash]
+  result = callPrivateRPC("wallet_watchTransaction", payload)
+
+proc checkRecentHistory*(addresses: seq[string]): string =
+  let payload = %* [addresses]
+  result = callPrivateRPC("wallet_checkRecentHistory", payload)
