@@ -71,7 +71,8 @@ ApplicationWindow {
     
     Action {
         shortcut: "Ctrl+W"
-        enabled: loader.item.currentView !== Utils.getAppSectionIndex(Constants.browser)
+        enabled: loader.item ? loader.item.currentView !== Utils.getAppSectionIndex(Constants.browser)
+                             : true
         onTriggered: {
             applicationWindow.visible = false;
         }
