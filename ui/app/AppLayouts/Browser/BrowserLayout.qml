@@ -362,6 +362,13 @@ Rectangle {
         browserHeader.addressBar.selectAll();
     }
 
+    Action {
+        shortcut: "Ctrl+W"
+        onTriggered: {
+            tabs.removeView(tabs.currentIndex)
+        }
+    }
+
 
     Action {
         shortcut: StandardKey.Close
