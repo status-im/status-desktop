@@ -409,7 +409,6 @@ ModalPopup {
     }
 
     footer: StatusButton {
-        enabled: popup.isValid
         text: isEdit ?
               //% "Edit"
               qsTrId("edit") :
