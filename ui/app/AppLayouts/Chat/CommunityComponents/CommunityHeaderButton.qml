@@ -76,8 +76,6 @@ Button {
 
     MouseArea {
         id: mouseAreaBtn
-        enabled: chatsModel.communities.activeCommunity.admin
-        visible: enabled
         cursorShape: Qt.PointingHandCursor
         anchors.fill: parent
         onPressed: {
