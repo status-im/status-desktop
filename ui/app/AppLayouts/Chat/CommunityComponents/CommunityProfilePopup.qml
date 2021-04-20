@@ -89,7 +89,7 @@ ModalPopup {
 
         Separator {
             anchors.top: headerDescription.bottom
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: modalHeader.description === "" ? 0 : Style.current.padding
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.rightMargin: -Style.current.padding
@@ -107,6 +107,19 @@ ModalPopup {
         pushExit: Transition { enabled: false }
         popEnter: Transition { enabled: false }
         popExit: Transition { enabled: false }
+
+        Component {
+            id: inviteFriendsView
+            CommunityProfilePopupInviteFriendsView {
+                headerTitle: qsTr("Invite friends")
+                contactListSearch.chatKey.text: ""
+                contactListSearch.pubKey: ""
+                contactListSearch.pubKeys: []
+                contactListSearch.ensUsername: ""
+                contactListSearch.existingContacts.visible: profileModel.contacts.list.hasAddedContacts()
+                contactListSearch.noContactsRect.visible: !contactListSearch.existingContacts.visible
+            }
+        }
 
         Component {
             id: membersList
@@ -153,6 +166,16 @@ ModalPopup {
             rotation: 180
             type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
             onClicked: {
+                stack.pop()
+            }
+        }
+
+        StatusButton {
+            text: qsTr("Invite")
+            anchors.right: parent.right
+            enabled: stack.currentItem.contactListSearch !== undefined && stack.currentItem.contactListSearch.pubKeys.length > 0
+            onClicked: {
+                stack.currentItem.sendInvites(stack.currentItem.contactListSearch.pubKeys)
                 stack.pop()
             }
         }

@@ -21,7 +21,7 @@ Item {
         width: parent.width
         type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
         iconName: "invite"
-        onClicked: openPopup(inviteFriendsToCommunityPopup)
+        onClicked: stack.push(inviteFriendsView)
     }
 
     Separator {
