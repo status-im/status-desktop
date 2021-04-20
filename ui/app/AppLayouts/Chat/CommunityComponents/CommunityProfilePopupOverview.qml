@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Dialogs 1.3
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
+import QtQuick.Controls.Universal 2.12
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
@@ -63,7 +64,6 @@ Item {
         width: parent.width
         
         Loader {
-            active: isAdmin
             width: parent.width
             sourceComponent: Component {
                 CommunityPopupButton {
@@ -72,6 +72,7 @@ Item {
                     iconName: "members"
                     txtColor: Style.current.textColor
                     onClicked: stack.push(membersList)
+                    type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
 
                     Item {
                         property int nbRequests: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests
@@ -164,6 +165,7 @@ Item {
             iconName: "notifications"
             width: parent.width
             txtColor: Style.current.textColor
+            type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
             onClicked: function(){
                 notificationSwitch.checked = !notificationSwitch.checked
             }
@@ -216,6 +218,7 @@ Item {
             sourceComponent: CommunityPopupButton {
                 label: qsTr("Transfer ownership")
                 iconName: "../transfer"
+                type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
                 onClicked: {
                     const exportResult = chatsModel.communities.exportComumnity()
                     openPopup(transferOwnershipPopup, {privateKey: exportResult})
@@ -232,10 +235,13 @@ Item {
             //% "Leave community"
             label: qsTrId("leave-community")
             iconName: "leave"
+            type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
         }
 
         Loader {
-            active: isAdmin
+            // TODO(pascal): reactivate with `isAdmin` once delete functionality
+            // is actually implemented
+            active: false
             width: parent.width
             sourceComponent: CommunityPopupButton {
                 id: deleteBtn

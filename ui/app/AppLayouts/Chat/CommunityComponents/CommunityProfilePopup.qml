@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Dialogs 1.3
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
+import QtQuick.Controls.Universal 2.12
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
@@ -150,6 +151,7 @@ ModalPopup {
             icon.width: 20
             icon.height: 16
             rotation: 180
+            type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
             onClicked: {
                 stack.pop()
             }
