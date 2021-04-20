@@ -15,13 +15,13 @@ ModalPopup {
     property var goBack
 
     onOpened: {
-        contactFieldAndList.chatKey.text = ""
-        contactFieldAndList.pubKey = ""
-        contactFieldAndList.pubKeys = []
-        contactFieldAndList.ensUsername = ""
-        contactFieldAndList.chatKey.forceActiveFocus(Qt.MouseFocusReason)
-        contactFieldAndList.existingContacts.visible = profileModel.contacts.list.hasAddedContacts()
-        contactFieldAndList.noContactsRect.visible = !contactFieldAndList.existingContacts.visible
+        contactFieldAndList.contactListSearch.chatKey.text = ""
+        contactFieldAndList.contactListSearch.pubKey = ""
+        contactFieldAndList.contactListSearch.pubKeys = []
+        contactFieldAndList.contactListSearch.ensUsername = ""
+        contactFieldAndList.contactListSearch.chatKey.forceActiveFocus(Qt.MouseFocusReason)
+        contactFieldAndList.contactListSearch.existingContacts.visible = profileModel.contacts.list.hasAddedContacts()
+        contactFieldAndList.contactListSearch.noContactsRect.visible = !contactFieldAndList.contactListSearch.existingContacts.visible
     }
 
     //% "Invite friends"
@@ -29,51 +29,15 @@ ModalPopup {
 
     height: 630
 
-    function sendInvites(pubKeys) {
-        const error = chatsModel.communities.inviteUsersToCommunityById(popup.communityId, JSON.stringify(pubKeys))
-        if (error) {
-            console.error('Error inviting', error)
-            contactFieldAndList.validationError = error
-            return
-        }
-        contactFieldAndList.successMessage = qsTr("Invite successfully sent")
-    }
-
-    Item {
+    CommunityProfilePopupInviteFriendsView {
+        id: contactFieldAndList
         anchors.fill: parent
-
-        TextWithLabel {
-            id: shareCommunity
-            anchors.top: parent.top
-            //% "Share community"
-            label: qsTrId("share-community")
-            text: `${Constants.communityLinkPrefix}${communityId.substring(0, 4)}...${communityId.substring(communityId.length -2)}`
-            textToCopy: Constants.communityLinkPrefix + communityId
-        }
-
-        Separator {
-            id: sep
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: shareCommunity.bottom
-            anchors.topMargin: Style.current.smallPadding
-            anchors.leftMargin: -Style.current.padding
-            anchors.rightMargin: -Style.current.padding
-        }
-
-        ContactsListAndSearch {
-            id: contactFieldAndList
-            anchors.top: sep.bottom
-            anchors.topMargin: Style.current.smallPadding
-            anchors.bottom: parent.bottom
-            showCheckbox: true
-            onUserClicked: function (isContact, pubKey, ensName) {
-                if (isContact) {
-                    // those are just added to the list to by added by the bunch
-                    return
-                }
-                sendInvites([pubKey])
+        contactListSearch.onUserClicked: {
+            if (isContact) {
+                // those are just added to the list to by added by the bunch
+                return
             }
+            contactFieldAndList.sendInvites([pubKey])
         }
     }
 
@@ -99,11 +63,11 @@ ModalPopup {
             id: inviteBtn
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            enabled: contactFieldAndList.pubKeys.length > 0
+            enabled: contactFieldAndList.contactListSearch.pubKeys.length > 0
             //% "Invite"
             text: qsTrId("invite-button")
             onClicked : {
-                sendInvites(contactFieldAndList.pubKeys)
+                contactFieldAndList.sendInvites(contactFieldAndList.contactListSearch.pubKeys)
             }
         }
     }
