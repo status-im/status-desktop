@@ -14,7 +14,6 @@ ModalPopup {
     property bool isEdit: false
     property bool isValid:
         nameInput.isValid &&
-        addImageButton.isValid &&
         descriptionTextArea.isValid &&
         colorPicker.isValid
 
@@ -32,7 +31,6 @@ ModalPopup {
 
     function validate() {
         nameInput.validate()
-        addImageButton.validate()
         descriptionTextArea.validate()
         colorPicker.validate()
         return isValid
@@ -164,23 +162,8 @@ ModalPopup {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: thumbnailText.bottom
                 anchors.topMargin: Style.current.padding
-                property bool isValid: false
                 property string selectedImage: ""
 
-                onSelectedImageChanged: validate()
-
-                function resetValidation() {
-                    isValid = false
-                    imageValidation.text = ""
-                }
-
-                function validate() {
-                    imageValidation.text = ""
-                    if (selectedImage === "") {
-                        imageValidation.text = qsTr("Please select an image")
-                    }
-                    isValid = imageValidation.text === ""
-                }
 
                 FileDialog {
                     id: imageDialog
@@ -191,9 +174,6 @@ ModalPopup {
                         //% "Image files (*.jpg *.jpeg *.png)"
                         qsTrId("image-files----jpg---jpeg---png-")
                     ]
-                    onRejected: {
-                        addImageButton.validate()
-                    }
                     onAccepted: {
                         addImageButton.selectedImage = imageDialog.fileUrls[0]
                         imageCropperModal.open()
