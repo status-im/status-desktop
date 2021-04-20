@@ -3,6 +3,8 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import "../imports"
+import "../shared"
+import "../shared/status"
 
 Item {
     id: root
@@ -67,7 +69,8 @@ Item {
         if (!assetFound) {
             return
         }
-        txtAssetBalance.text = "Balance: " + (parseFloat(assetFound.value) === 0.0 ? "0" : Utils.stripTrailingZeros(assetFound.value)) + " " + assetFound.symbol
+        txtAssetBalance.text = qsTr("Balance: ") + (parseFloat(assetFound.value) === 0.0 ? "0" : Utils.stripTrailingZeros(assetFound.value))
+        txtAssetSymbol.text = " " + assetFound.symbol
     }
 
     StyledText {
@@ -75,11 +78,39 @@ Item {
         visible: root.assetFound !== undefined
         anchors.bottom: select.top
         anchors.bottomMargin: -18 
-        anchors.right: parent.right
+        anchors.right: txtAssetSymbol.left
+        anchors.left: select.left
+        anchors.leftMargin: select.width / 2.5
         
         color: !root.isValid ? Style.current.danger : Style.current.secondaryText
+        elide: Text.ElideRight
         font.pixelSize: 13
+        horizontalAlignment: Text.AlignRight
         height: 18
+
+        StatusToolTip {
+            enabled: txtAssetBalance.truncated
+            id: assetTooltip
+            text: txtAssetBalance.text
+        }
+
+        MouseArea {
+            enabled: txtAssetBalance.truncated
+            anchors.fill: parent
+            hoverEnabled: enabled
+            onEntered: assetTooltip.visible = true
+            onExited: assetTooltip.visible = false
+        }
+    }
+    StyledText {
+        id: txtAssetSymbol
+        visible: txtAssetBalance.visible
+        anchors.top: txtAssetBalance.top
+        anchors.right: parent.right
+
+        color: txtAssetBalance.color
+        font.pixelSize: 13
+        height: txtAssetBalance.height
     }
     Select {
         id: select
