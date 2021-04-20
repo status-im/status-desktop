@@ -54,8 +54,6 @@ ModalPopup {
 
             Input {
                 id: nameInput
-                //% "Channel name"
-                label: qsTrId("channel-name")
                 //% "A cool name"
                 placeholderText: qsTrId("a-cool-name")
                 validationError: popup.nameValidationError
@@ -156,6 +154,7 @@ ModalPopup {
             StyledText {
                 id: privateExplanation
                 anchors.top: privateSwitcher.bottom
+                color: Style.current.secondaryText
                 wrapMode: Text.WordWrap
                 anchors.topMargin: Style.current.smallPadding * 2
                 width: parent.width
