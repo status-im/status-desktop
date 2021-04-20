@@ -155,7 +155,7 @@ Item {
                             icon.color: Style.current.red
                             //% "Kick"
                             text: qsTrId("kick")
-                            onTriggered: chatsModel.removeUserFromCommunity(model.pubKey)
+                            onTriggered: chatsModel.communities.removeUserFromCommunity(model.pubKey)
                         }
                         /* Action { */
                         /*     icon.source: "../../../img/communities/menu/ban.svg" */
