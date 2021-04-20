@@ -99,7 +99,7 @@ Item {
 
         Item {
             id: messageContent
-            height: childrenRect.height + Style.current.halfPadding
+            height: childrenRect.height + (isEmoji ? 2 : 0)
             anchors.top: chatName.visible ? chatName.bottom : parent.top
             anchors.left: chatImage.right
             anchors.leftMargin: root.chatHorizontalPadding
@@ -118,6 +118,7 @@ Item {
                 readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + root.chatHorizontalPadding
                 id: chatText
                 anchors.top: chatReply.active ? chatReply.bottom : parent.top
+                anchors.topMargin: isEmoji ? 2 : 0
                 anchors.left: parent.left
                 anchors.right: parent.right
                 // using a padding instead of a margin let's us select text more easily
