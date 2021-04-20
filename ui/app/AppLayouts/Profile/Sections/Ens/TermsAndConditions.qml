@@ -37,8 +37,8 @@ Item {
                 transactionDialog.closed()
             }
             ensUsername: username
-            width: 400
-            height: 400
+            width: 425
+            height: 425
         }
     }
 

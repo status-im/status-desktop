@@ -391,13 +391,29 @@ Item {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     StyledText {
+                        id: networkFeeText
                         font.pixelSize: 15
+                        width: 75
                         height: 22
                         text: (root.gas && root.gas.value) ? Utils.stripTrailingZeros(root.gas.value) : ""
                         anchors.verticalCenter: parent.verticalCenter
                         horizontalAlignment: Text.AlignRight
                         verticalAlignment: Text.AlignVCenter
                         elide: Text.ElideRight
+
+                        StatusToolTip {
+                            enabled: networkFeeText.truncated
+                            id: networkFeeTooltip
+                            text: networkFeeText.text
+                        }
+
+                        MouseArea {
+                            enabled: networkFeeText.truncated
+                            anchors.fill: parent
+                            hoverEnabled: enabled
+                            onEntered: networkFeeTooltip.visible = true
+                            onExited: networkFeeTooltip.visible = false
+                        }
                     }
                     StyledText {
                         id: txtFeeSymbol
