@@ -54,6 +54,7 @@ Rectangle {
             anchors.rightMargin: Style.current.bigPadding
             anchors.top: parent.top
             anchors.topMargin: 8
+            visible: chatsModel.communities.activeCommunity.admin
 
             onClicked: {
                 optionsBtn.state = "pressed"
@@ -83,16 +84,6 @@ Rectangle {
                     icon.width: 20
                     icon.height: 20
                     onTriggered: openPopup(inviteFriendsToCommunityPopup, {communityId: chatsModel.communities.activeCommunity.id})
-                }
-
-                Action {
-                    //% "Leave community"
-                    text: qsTrId("leave-community")
-                    icon.source: "../../img/delete.svg"
-                    icon.color: Style.current.red
-                    icon.width: 20
-                    icon.height: 20
-                    onTriggered: chatsModel.communities.leaveCurrentCommunity()
                 }
 
                 onAboutToHide: {
