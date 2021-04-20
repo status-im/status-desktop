@@ -411,6 +411,8 @@ RowLayout {
                 StatusIconTabButton {
                     id: chatBtn
                     icon.name: "message"
+                    icon.width: 20
+                    icon.height: 20
                     section: Constants.chat
                     doNotHandleClick: true
                     onClicked: {
