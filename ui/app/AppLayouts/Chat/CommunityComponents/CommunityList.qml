@@ -62,9 +62,9 @@ ListView {
         }
         Action {
             text: qsTr("Leave Community")
-            icon.source: "../../../img/edit.svg"
-            icon.width: 20
-            icon.height: 20
+            icon.source: "../../../img/arrow-left.svg"
+            icon.width: 12
+            icon.height: 9
             onTriggered: {
                 chatsModel.communities.leaveCommunity(commnunityMenu.communityId)
             }
