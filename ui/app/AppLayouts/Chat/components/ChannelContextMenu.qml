@@ -107,9 +107,12 @@ PopupMenu {
         onTriggered: chatsModel.clearChatHistoryByIndex(channelContextMenu.channelIndex)
     }
 
-    Separator {}
+    Separator {
+        visible: deleteAction.enabled
+    }
 
     Action {
+        id: deleteAction
         text: {
             if (channelContextMenu.contextChannel.chatType === Constants.chatTypeOneToOne) {
                 //% "Delete chat"
@@ -131,6 +134,7 @@ PopupMenu {
         icon.width: 16
         icon.height: 16
         onTriggered: chatsModel.leaveChatByIndex(channelContextMenu.channelIndex)
+        enabled: !chatsModel.communities.activeCommunity.active
     }
 }
 
