@@ -16,12 +16,14 @@ Item {
 
     CommunityPopupButton {
         id: inviteBtn
+        visible: isAdmin
         //% "Invite People"
         label: qsTrId("invite-people")
         width: parent.width
         type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
         iconName: "invite"
         onClicked: stack.push(inviteFriendsView)
+        height: visible ? 64 : 0
     }
 
     Separator {
@@ -32,6 +34,7 @@ Item {
         anchors.topMargin: Style.current.smallPadding
         anchors.leftMargin: -Style.current.padding
         anchors.rightMargin: -Style.current.padding
+        visible: inviteBtn.visible
     }
 
     StatusSettingsLineButton {
