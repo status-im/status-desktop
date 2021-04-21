@@ -5,6 +5,8 @@ Action {
     property string wrapper
     icon.width: 12
     icon.height: 16
-    onTriggered: textFormatMenu.surroundedBy(wrapper) ? unwrapSelection(wrapper) : wrapSelection(wrapper)
+    onTriggered: textFormatMenu.surroundedBy(wrapper) ?
+                     unwrapSelection(wrapper, textFormatMenu.selectedTextWithFormationChars) :
+                     wrapSelection(wrapper)
     checked: textFormatMenu.surroundedBy(wrapper)
 }
