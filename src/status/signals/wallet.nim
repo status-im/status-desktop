@@ -9,7 +9,8 @@ proc fromEvent*(jsonSignal: JsonNode): Signal =
     signal.blockNumber = jsonSignal["event"]{"blockNumber"}.getInt
     signal.erc20 = jsonSignal["event"]{"erc20"}.getBool
     signal.accounts = @[]
-    for account in jsonSignal["event"]["accounts"]:
-      signal.accounts.add(account.getStr)
+    if jsonSignal["event"]["accounts"].kind != JNull:
+      for account in jsonSignal["event"]["accounts"]:
+        signal.accounts.add(account.getStr)
   result = signal
   
