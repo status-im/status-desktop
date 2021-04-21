@@ -113,8 +113,8 @@ QtObject:
       return
     for trx in pendingTransactions.parseJson["result"].getElems():
       if trx["type"].getStr == $PendingTransactionType.RegisterENS:
-        self.usernames.add trx["data"].getStr
-        self.pendingUsernames.incl trx["data"].getStr
+        self.usernames.add trx["additionalData"].getStr
+        self.pendingUsernames.incl trx["additionalData"].getStr
 
 
   proc ensWasResolved*(self: EnsManager, ensResult: string) {.signal.}

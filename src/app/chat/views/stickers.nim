@@ -149,7 +149,7 @@ QtObject:
     if (pendingTransactions != ""):
       for trx in pendingTransactions.parseJson["result"].getElems():
         if trx["type"].getStr == $PendingTransactionType.BuyStickerPack:
-          pendingStickerPacks.incl(trx["data"].getStr.parseInt)
+          pendingStickerPacks.incl(trx["additionalData"].getStr.parseInt)
 
     for stickerPack in availableStickers:
       let isInstalled = installedStickerPacks.hasKey(stickerPack.id)
