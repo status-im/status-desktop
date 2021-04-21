@@ -12,8 +12,8 @@ Item {
     property int contentType: 2
     property var container
     property bool isCurrentUser: false
-    property bool isHovered: false
-    property bool isMessageActive: false
+    property bool isHovered: typeof hoveredMessage !== "undefined" && hoveredMessage === messageId
+    property bool isMessageActive: typeof activeMessage !== "undefined" && activeMessage === messageId
     property bool headerRepeatCondition: (authorCurrentMsg !== authorPrevMsg || shouldRepeatHeader || dateGroupLbl.visible)
 
     id: root
@@ -32,7 +32,7 @@ Item {
     ChatButtons {
         contentType: root.contentType
         parentIsHovered: root.isHovered
-        onHoverChanged: root.isHovered = hovered
+        onHoverChanged: hovered && setHovered(messageId, hovered)
         anchors.right: parent.right
         anchors.rightMargin: 20
         anchors.top: messageContainer.top
@@ -46,7 +46,7 @@ Item {
             Connections {
                 enabled: root.isMessageActive
                 target: messageContextMenu
-                onClosed: root.isMessageActive = false
+                onClosed: setMessageActive(messageId, false)
             }
         }
     }
@@ -243,9 +243,7 @@ Item {
 
     HoverHandler {
         enabled: typeof messageContextMenu !== "undefined" && typeof profilePopupOpened !== "undefined" && !messageContextMenu.opened && !profilePopupOpened && !popupOpened
-        onHoveredChanged: {
-            root.isHovered = hovered;
-        }
+        onHoveredChanged: setHovered(messageId, hovered)
     }
 
     Loader {
@@ -258,7 +256,7 @@ Item {
 
         sourceComponent: Component {
             EmojiReactions {
-                onHoverChanged: root.isHovered = hovered
+                onHoverChanged: setHovered(messageId, hovered)
             }
         }
     }

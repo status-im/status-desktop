@@ -213,7 +213,7 @@ Item {
                 onExited: addEmojiBtn.isHovered = false
                 onClicked: {
                     if (typeof isMessageActive !== "undefined") {
-                        isMessageActive = true
+                        setMessageActive(messageId, true)
                     }
                     clickMessage(false, false, false, null, true)
                 }

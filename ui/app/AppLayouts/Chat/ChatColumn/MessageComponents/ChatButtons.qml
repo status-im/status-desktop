@@ -59,7 +59,7 @@ Rectangle {
             width: 32
             height: 32
             onClicked: {
-                isMessageActive = true
+                setMessageActive(messageId, true)
                 clickMessage(false, false, false, null, true)
                 messageContextMenu.x = buttonsContainer.x + buttonsContainer.width - messageContextMenu.width
 
