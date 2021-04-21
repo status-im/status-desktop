@@ -220,12 +220,17 @@ Rectangle {
         messageInputField.deselect()
         formatInputMessage()
     }
-    function unwrapSelection(unwrapWith) {
+    function unwrapSelection(unwrapWith, selectedTextWithFormationChars) {
         if (messageInputField.selectionStart - messageInputField.selectionEnd === 0) return
 
-        const text = messageInputField.getText(messageInputField.selectionStart, messageInputField.selectionEnd)
-        const changedString = text.replace(unwrapWith, '').replace(unwrapWith, '')
-        messageInputField.remove(messageInputField.selectionStart, messageInputField.selectionEnd)
+        selectedTextWithFormationChars = selectedTextWithFormationChars.trim()
+        // Check if the selectedTextWithFormationChars has formation chars and if so, calculate how many so we can adapt the start and end pos
+        const selectTextDiff = (selectedTextWithFormationChars.length - messageInputField.selectedText.length) / 2
+
+        const changedString = selectedTextWithFormationChars.replace(unwrapWith, '').replace(unwrapWith, '')
+
+        messageInputField.remove(messageInputField.selectionStart - selectTextDiff, messageInputField.selectionEnd + selectTextDiff)
+
         insertInTextInput(messageInputField.selectionStart, changedString)
 
         messageInputField.deselect()
@@ -852,14 +857,38 @@ Rectangle {
                 }
 
                 StatusTextFormatMenu {
+                    readonly property var formationChars: (["*", "`", "~"])
+                    property string selectedTextWithFormationChars: {
+                        let i = 1
+                        let text = ""
+                        while(true) {
+                            if (messageInputField.selectionStart - i < 0 && messageInputField.selectionEnd + i > messageInputField.length) {
+                                break
+                            }
+
+                            text = messageInputField.getText(messageInputField.selectionStart - i, messageInputField.selectionEnd + i)
+
+                            if (!formationChars.includes(text.charAt(0)) ||
+                                    !formationChars.includes(text.charAt(text.length - 1))) {
+                                break
+                            }
+                            i++
+                        }
+                        return text
+                    }
+
                     id: textFormatMenu
                     function surroundedBy(chars) {
-                        const firstIndex = messageInputField.selectedText.trim().indexOf(chars)
+                        if (selectedTextWithFormationChars === "") {
+                            return false
+                        }
+
+                        const firstIndex = selectedTextWithFormationChars.indexOf(chars)
                         if (firstIndex === -1) {
                             return false
                         }
 
-                        return messageInputField.selectedText.trim().lastIndexOf(chars) > firstIndex
+                        return selectedTextWithFormationChars.lastIndexOf(chars) > firstIndex
                     }
                     StatusChatInputTextFormationAction {
                         wrapper: "**"
