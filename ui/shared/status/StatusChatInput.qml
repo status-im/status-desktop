@@ -220,6 +220,17 @@ Rectangle {
         messageInputField.deselect()
         formatInputMessage()
     }
+    function unwrapSelection(unwrapWith) {
+        if (messageInputField.selectionStart - messageInputField.selectionEnd === 0) return
+
+        const text = messageInputField.getText(messageInputField.selectionStart, messageInputField.selectionEnd)
+        const changedString = text.replace(unwrapWith, '').replace(unwrapWith, '')
+        messageInputField.remove(messageInputField.selectionStart, messageInputField.selectionEnd)
+        insertInTextInput(messageInputField.selectionStart, changedString)
+
+        messageInputField.deselect()
+        formatInputMessage()
+    }
 
     function getPlainText() {
         const textWithoutMention = messageInputField.text.replace(/<span style="[ :#0-9a-z;\-\.,\(\)]+">(@([a-z\.]+(\ ?[a-z]+\ ?[a-z]+)?))<\/span>/ig, "\[\[mention\]\]$1\[\[mention\]\]")
@@ -843,44 +854,39 @@ Rectangle {
                 StatusTextFormatMenu {
                     id: textFormatMenu
                     function surroundedBy(chars) {
-                        return messageInputField.selectedText.trim().startsWith(chars) &&
-                          messageInputField.selectedText.trim().endsWith(chars)
+                        const firstIndex = messageInputField.selectedText.trim().indexOf(chars)
+                        if (firstIndex === -1) {
+                            return false
+                        }
+
+                        return messageInputField.selectedText.trim().lastIndexOf(chars) > firstIndex
                     }
-                    Action {
+                    StatusChatInputTextFormationAction {
+                        wrapper: "**"
                         icon.name: "format-text-bold"
-                        icon.width: 12
-                        icon.height: 16
-                        onTriggered: wrapSelection("**")
                         //% "Bold"
                         text: qsTrId("bold")
-                        checked: textFormatMenu.surroundedBy("**")
                     }
-                    Action {
+                    StatusChatInputTextFormationAction {
+                        wrapper: "*"
                         icon.name: "format-text-italic"
-                        icon.width: 12
-                        icon.height: 16
-                        onTriggered: wrapSelection("*")
                         //% "Italic"
                         text: qsTrId("italic")
                         checked: textFormatMenu.surroundedBy("*") && !textFormatMenu.surroundedBy("**")
                     }
-                    Action {
+                    StatusChatInputTextFormationAction {
+                        wrapper: "~~"
                         icon.name: "format-text-strike-through"
-                        icon.width: 20
                         icon.height: 18
-                        onTriggered: wrapSelection("~~")
                         //% "Strikethrough"
                         text: qsTrId("strikethrough")
-                        checked: textFormatMenu.surroundedBy("~~")
                     }
-                    Action {
+                    StatusChatInputTextFormationAction {
+                        wrapper: "`"
                         icon.name: "format-text-code"
-                        icon.width: 20
                         icon.height: 18
-                        onTriggered: wrapSelection("`")
                         //% "Code"
                         text: qsTrId("code")
-                        checked: textFormatMenu.surroundedBy("`")
                     }
                 }
             }

@@ -412,6 +412,7 @@ DISTFILES += \
     shared/img/loading.svg \
     shared/img/status-logo.png \
     shared/qmldir \
+    shared/status/StatusChatInputTextFormationAction.qml \
     shared/status/StatusEmojiSuggestionPopup.qml \
     shared/status/StatusInputListPopup.qml \
     shared/status/StatusRadioButtonRow.qml \
