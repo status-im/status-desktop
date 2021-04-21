@@ -1,27 +1,12 @@
 #!/bin/bash
 
-# Installing prerequisites
-# Probably should be part of a dockerfile
-sudo apt update
-sudo apt install -y software-properties-common
-sudo add-apt-repository -y ppa:git-core/ppa
-sudo apt update
-sudo apt install -y --fix-missing build-essential cmake git libpcre3-dev jq
+# Workaround for permissions problems with `jenkins` user inside the container
+cp -R . ~/status-desktop
+cd ~/status-desktop
 
-# Installing GO
-# Probably should be part of a dockerfile
-wget https://dl.google.com/go/go1.14.4.linux-amd64.tar.gz
-sudo tar -C /usr/local -xzf go1.14.4.linux-amd64.tar.gz
-rm ./go1.14.4.linux-amd64.tar.gz
-export PATH="/usr/local/go/bin:${PATH}"
+git clean -dfx && rm -rf vendor/* && make -j4 V=1 update
+make V=1 pkg
 
-# $QT_PATH and $QT_PLATFORM are provided by the docker image
-# $QT_PATH/$QT_VERSION/$QT_PLATFORM/bin is already prepended to $PATH
-# However $QT_VERSION is not exposed to environment so set it here
-export QT_VERSION=$(basename $(echo "${QT_PATH}/*"))
-export QTDIR="${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}"
-# $OPENSSL_PREFIX is provided by the docker image
-export LIBRARY_PATH="${OPENSSL_PREFIX}/lib:${LIBRARY_PATH}"
-export LD_LIBRARY_PATH="${QTDIR}/lib:${LD_LIBRARY_PATH}"
-make clean; git clean -dfx && rm -rf vendor/*
-make pkg V=1
+# Make AppImage build accessible to the docker host
+cd - && cp -R ~/status-desktop/pkg .
+chmod -R 775 ./pkg
