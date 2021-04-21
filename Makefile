@@ -247,7 +247,7 @@ $(APPIMAGE_TOOL):
 	mv $(_APPIMAGE_TOOL) tmp/linux/tools/
 	chmod +x $(APPIMAGE_TOOL)
 
-STATUS_CLIENT_APPIMAGE ?= pkg/NimStatusClient-x86_64.AppImage
+STATUS_CLIENT_APPIMAGE ?= pkg/Status.AppImage
 
 $(STATUS_CLIENT_APPIMAGE): override RESOURCES_LAYOUT := -d:production
 $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
@@ -269,6 +269,9 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 
 	# Libraries
 	cp -r /usr/lib/x86_64-linux-gnu/nss tmp/linux/dist/usr/lib/
+	cp -P /usr/lib/x86_64-linux-gnu/libgst* tmp/linux/dist/usr/lib/
+	cp -r /usr/lib/x86_64-linux-gnu/gstreamer-1.0 tmp/linux/dist/usr/lib/
+	cp -r /usr/lib/x86_64-linux-gnu/gstreamer1.0 tmp/linux/dist/usr/lib/
 	cp vendor/status-go/build/bin/libstatus.so tmp/linux/dist/usr/lib/
 
 	echo -e $(BUILD_MSG) "AppImage"

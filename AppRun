@@ -1,5 +1,10 @@
 #!/bin/bash
 APPDIR="$(dirname "$(readlink -f "${0}")")"
+export GST_PLUGIN_SCANNER="${APPDIR}/usr/lib/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner"
+export GST_PLUGIN_PATH="${APPDIR}/usr/lib/gstreamer-1.0"
+export GST_PLUGIN_PATH_1_0="${APPDIR}/usr/lib/gstreamer-1.0"
+export GST_PLUGIN_SYSTEM_PATH="${APPDIR}/usr/lib/gstreamer-1.0"
+export GST_PLUGIN_SYSTEM_PATH_1_0="${APPDIR}/usr/lib/gstreamer-1.0"
 export LD_LIBRARY_PATH="${APPDIR}/usr/lib/:${LD_LIBRARY_PATH}"
 export QT_QPA_PLATFORM="xcb"
 

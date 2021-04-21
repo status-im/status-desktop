@@ -4,8 +4,8 @@ FROM a12e/docker-qt:5.14-gcc_64
 # $QT_PATH/$QT_VERSION/$QT_PLATFORM/bin is already prepended to $PATH
 # However $QT_VERSION is not exposed to environment so set it here
 ENV QT_VERSION="5.14.0"
-ENV QTDIR="${QT_PATH}/${QT_VERSION}"
-ENV LD_LIBRARY_PATH="${QTDIR}/${QT_PLATFORM}/lib:${LD_LIBRARY_PATH}"
+ENV QTDIR="${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}"
+ENV LD_LIBRARY_PATH="${QTDIR}/lib:${LD_LIBRARY_PATH}"
 # $OPENSSL_PREFIX is provided by the docker image
 ENV LIBRARY_PATH="${OPENSSL_PREFIX}/lib:${LIBRARY_PATH}"
 
@@ -15,7 +15,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
  && sudo add-apt-repository -y ppa:git-core/ppa \
  && sudo apt update -yq \
  && sudo apt install -yq --fix-missing \
-      build-essential cmake git s3cmd libpcre3-dev libnss3 libxcomposite1 libxtst6 jq
+      build-essential cmake git s3cmd libpcre3-dev libnss3 libxcomposite1 libxtst6 jq gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-alsa gstreamer1.0-pulseaudio
 
 # Installing Golang
 RUN GOLANG_SHA256="aed845e4185a0b2a3c3d5e1d0a35491702c55889192bb9c30e67a3de6849c067" \
