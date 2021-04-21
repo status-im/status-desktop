@@ -35,6 +35,8 @@ type
   ResolveEnsTaskArg = ref object of QObjectTaskArg
     ens: string
     uuid: string
+  WatchTransactionTaskArg = ref object of QObjectTaskArg
+    transactionHash: string
 
 const sendTransactionTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[SendTransactionTaskArg](argEncoded)
@@ -161,6 +163,22 @@ proc resolveEns[T](self: T, slot: string, ens: string, uuid: string) =
     slot: slot,
     ens: ens,
     uuid: uuid
+  )
+  self.status.tasks.threadpool.start(arg)
+
+const watchTransactionTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let
+    arg = decode[WatchTransactionTaskArg](argEncoded)
+    response = status_wallet.watchTransaction(arg.transactionHash)
+    output = %* { "result": response }
+  arg.finish(output)
+
+proc watchTransaction[T](self: T, slot: string, transactionHash: string) =
+  let arg = WatchTransactionTaskArg(
+    tptr: cast[ByteAddress](watchTransactionTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot,
+    transactionHash: transactionHash
   )
   self.status.tasks.threadpool.start(arg)
 
@@ -443,6 +461,10 @@ QtObject:
 
   proc transactionSent(self: WalletView, txResult: string) {.slot.} =
     self.transactionWasSent(txResult)
+    let jTxRes = txResult.parseJSON()
+    let txHash = jTxRes{"result"}.getStr()
+    if txHash != "":
+      self.watchTransaction("transactionWatchResultReceived", txHash)
 
   proc sendTransaction*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string, gas: string, gasPrice: string, password: string, uuid: string) {.slot.} =
     self.sendTransaction("transactionSent", from_addr, to, assetAddress, value, gas, gasPrice, password, uuid)
@@ -508,6 +530,13 @@ QtObject:
     for acc in self.status.wallet.accounts:
       addresses.add(acc.address)
     discard status_wallet.checkRecentHistory(addresses)
+
+  proc transactionWatchResultReceived(self: WalletView, watchResult: string) {.slot.} =
+    let wTxRes = watchResult.parseJSON()["result"].getStr().parseJson(){"result"}
+    if wTxRes.kind == JNull:
+      self.checkRecentHistory()
+    else:
+      discard #TODO: Ask Simon if should we show an error popup indicating the trx wasn't mined in 10m or something
 
   proc getAccountBalanceSuccess*(self: WalletView, jsonResponse: string) {.slot.} =
     let jsonObj = jsonResponse.parseJson()
