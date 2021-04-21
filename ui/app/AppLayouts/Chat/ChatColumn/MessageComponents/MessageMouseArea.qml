@@ -11,7 +11,7 @@ MouseArea {
         if(mouse.button & Qt.RightButton) {
             clickMessage(false, isSticker, false);
             if (typeof isMessageActive !== "undefined") {
-                isMessageActive = true
+                setMessageActive(messageId, true)
             }
             return;
         }
