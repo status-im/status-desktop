@@ -431,7 +431,7 @@ ModalPopup {
                 error = chatsModel.communities.createCommunity(Utils.filterXSS(nameInput.text),
                                                    Utils.filterXSS(descriptionTextArea.text),
                                                    membershipRequirementSettingPopup.checkedMembership,
-                                                   ensOnlySwitch.switchChecked,
+                                                   false, // ensOnlySwitch.switchChecked, // TODO:
                                                    colorPicker.text,
                                                    addImageButton.selectedImage,
                                                    imageCropperModal.aX,
