@@ -384,6 +384,8 @@ ModalPopup {
                 text: qsTr("You can require new members to meet certain criteria before they can join. This can be changed at any time")
             }
 
+            // Feature commented temporarily
+            /*
             StatusSettingsLineButton {
                 id: ensOnlySwitch
                 anchors.top: privateExplanation.bottom
@@ -421,6 +423,7 @@ ModalPopup {
                 width: parent.width
                 text: qsTr("Your community requires an ENS username to be able to join")
             }
+            */
         }
 
         MembershipRequirementPopup {
