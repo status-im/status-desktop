@@ -64,7 +64,13 @@ ModalPopup {
             AccountSelector {
                 id: selectFromAccount
                 accounts: walletModel.accounts
-                selectedAccount: walletModel.currentAccount
+                selectedAccount: {
+                    const currAcc = walletModel.currentAccount
+                    if (currAcc.walletType !== Constants.watchWalletType) {
+                        return currAcc
+                    }
+                    return null
+                }
                 currency: walletModel.defaultCurrency
                 width: stack.width
                 //% "Choose account"

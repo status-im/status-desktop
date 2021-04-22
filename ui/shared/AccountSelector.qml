@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
+import QtQml.Models 2.14
 import "../imports"
 import "../shared"
 import "../shared/status"
@@ -187,7 +188,7 @@ Item {
         id: menuItem
         MenuItem {
             id: itemContainer
-            visible: walletType !== 'watch'
+            visible: walletType !== Constants.watchWalletType
             property bool isFirstItem: index === 0
             property bool isLastItem: index === accounts.rowCount() - 1
 
@@ -197,7 +198,7 @@ Item {
                 }
             }
 
-            height: walletType === 'watch' ? 0 : (accountName.height + 14 + accountAddress.height + 14)
+            height: walletType === Constants.watchWalletType ? 0 : (accountName.height + 14 + accountAddress.height + 14)
             SVGImage {
                 id: iconImg
                 anchors.left: parent.left
