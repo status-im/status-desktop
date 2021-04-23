@@ -109,9 +109,9 @@ RowLayout {
         property var walletSplitView
         property var profileSplitView
         property bool communitiesEnabled: false
-        property bool walletEnabled: false
+        property bool isWalletEnabled: false
         property bool nodeManagementEnabled: false
-        property bool browserEnabled: false
+        property bool isBrowserEnabled: false
         property bool displayChatImages: false
         property bool useCompactMode: true
         property bool timelineEnabled: true
