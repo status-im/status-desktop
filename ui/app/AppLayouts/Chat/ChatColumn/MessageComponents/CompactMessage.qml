@@ -14,7 +14,7 @@ Item {
     property bool isCurrentUser: false
     property bool isHovered: typeof hoveredMessage !== "undefined" && hoveredMessage === messageId
     property bool isMessageActive: typeof activeMessage !== "undefined" && activeMessage === messageId
-    property bool headerRepeatCondition: (authorCurrentMsg !== authorPrevMsg || shouldRepeatHeader || dateGroupLbl.visible)
+    property bool headerRepeatCondition: (authorCurrentMsg !== authorPrevMsg || shouldRepeatHeader || dateGroupLbl.visible || chatReply.active)
 
     id: root
 
@@ -71,12 +71,22 @@ Item {
         color: root.isHovered || isMessageActive ? (hasMention ? Style.current.mentionMessageHoverColor : Style.current.backgroundHoverLight) :
                                                    (hasMention ? Style.current.mentionMessageColor : Style.current.transparent)
 
+        ChatReply {
+            id: chatReply
+            anchors.left: chatImage.left
+            longReply: active && textFieldImplicitWidth > width
+            container: root.container
+            chatHorizontalPadding: root.chatHorizontalPadding
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
+        }
+
         UserImage {
             id: chatImage
             active: isMessage && headerRepeatCondition
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
-            anchors.top: parent.top
+            anchors.top: chatReply.active ? chatReply.bottom : parent.top
             anchors.topMargin: Style.current.smallPadding
         }
 
@@ -100,24 +110,17 @@ Item {
         Item {
             id: messageContent
             height: childrenRect.height + (isEmoji ? 2 : 0)
-            anchors.top: chatName.visible ? chatName.bottom : parent.top
+            anchors.top: chatName.visible ? chatName.bottom :
+                                            chatReply.active ? chatReply.bottom : parent.top
             anchors.left: chatImage.right
             anchors.leftMargin: root.chatHorizontalPadding
             anchors.right: parent.right
             anchors.rightMargin: root.chatHorizontalPadding
 
-            ChatReply {
-                id: chatReply
-                longReply: active && textFieldImplicitWidth > width
-                container: root.container
-                chatHorizontalPadding: root.chatHorizontalPadding
-                width: parent.width
-            }
-
             ChatText {
                 readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + root.chatHorizontalPadding
                 id: chatText
-                anchors.top: chatReply.active ? chatReply.bottom : parent.top
+                anchors.top: parent.top
                 anchors.topMargin: isEmoji ? 2 : 0
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -130,7 +133,7 @@ Item {
             Loader {
                 id: chatImageContent
                 active: isImage
-                anchors.top: chatReply.bottom
+                anchors.top: parent.top
                 z: 51
 
                 sourceComponent: Component {

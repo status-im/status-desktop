@@ -6,6 +6,9 @@ Loader {
     property color color
     property var container
     property int contentType: -1
+    property string stickerData: sticker
+    property int imageHeight: 140
+    property int imageWidth: 140
 
     id: root
     active: contentType === Constants.stickerType
@@ -15,9 +18,9 @@ Loader {
             color: root.color
             onLoaded: scrollToBottom(true, root.container)
 
-            width: 140
-            height: this.visible ? 140 : 0
-            source: this.visible ? ("https://ipfs.infura.io/ipfs/" + sticker) : ""
+            width: imageWidth
+            height: this.visible ? imageHeight : 0
+            source: this.visible ? ("https://ipfs.infura.io/ipfs/" + stickerData) : ""
         }
     }
 }

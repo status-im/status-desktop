@@ -225,6 +225,7 @@ QtObject:
     of "timestamp": result = $(message.timestamp)
     of "image": result = $(message.image)
     of "contentType": result = $(message.contentType.int)
+    of "sticker": result = $(message.stickerHash.decodeContentHash())
     else: result = ("")
 
   proc add*(self: ChatMessageList, message: Message) =

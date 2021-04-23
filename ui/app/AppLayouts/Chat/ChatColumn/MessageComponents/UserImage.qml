@@ -3,6 +3,13 @@ import "../../../../../shared"
 import "../../../../../imports"
 
 Loader {
+    property int imageHeight: 36
+    property int imageWidth: 36
+    property string identiconImageSource: identicon
+    property string profileImage: profileImageSource
+    property bool isReplyImage: false
+
+    id: root
     active: isMessage
     height: active ? item.height : 0
 
@@ -14,16 +21,16 @@ Loader {
 
             RoundedImage {
                 id: identiconImage
-                width: 36
-                height: 36
+                width: root.imageWidth
+                height: root.imageHeight
                 border.width: 1
                 border.color: Style.current.border
                 source: {
-                    if (profileImageSource) {
-                        return profileImageSource
+                    if (root.profileImage) {
+                        return root.profileImage
                     }
                     identiconImage.showLoadingIndicator = false
-                    return !isCurrentUser ? identicon : profileModel.profile.identicon
+                    return !isCurrentUser || isReplyImage ? root.identiconImageSource : profileModel.profile.identicon
                 }
                 smooth: false
                 antialiasing: true

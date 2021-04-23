@@ -13,6 +13,7 @@ Item {
     signal clicked(var image)
     property var container
     property alias imageAlias: imageMessage
+    property bool allCornersRounded: false
 
     id: imageContainer
     width: loadingImage.visible ? loadingImage.width : imageMessage.width
@@ -88,7 +89,7 @@ Item {
                     width: 32
                     height: 32
                     radius: 4
-                    visible: !imageContainer.isCurrentUser
+                    visible: !imageContainer.isCurrentUser && !allCornersRounded
                 }
                 Rectangle {
                     anchors.bottom: parent.bottom
@@ -96,7 +97,7 @@ Item {
                     width: 32
                     height: 32
                     radius: 4
-                    visible: imageContainer.isCurrentUser
+                    visible: imageContainer.isCurrentUser && !allCornersRounded
                 }
             }
         }
