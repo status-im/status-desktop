@@ -68,13 +68,13 @@ Item {
             //% "Wallet"
             text: qsTrId("wallet")
             isSwitch: true
-            switchChecked: appSettings.walletEnabled
+            switchChecked: appSettings.isWalletEnabled
             onClicked: {
-                if (!appSettings.walletEnabled) {
-                    confirmationPopup.settingsProp = "walletEnabled"
+                if (!appSettings.isWalletEnabled) {
+                    confirmationPopup.settingsProp = "isWalletEnabled"
                     confirmationPopup.open()
                 } else {
-                    appSettings.walletEnabled = false
+                    appSettings.isWalletEnabled = false
                 }
             }
         }
@@ -83,13 +83,13 @@ Item {
             //% "Dapp Browser"
             text: qsTrId("dapp-browser")
             isSwitch: true
-            switchChecked: appSettings.browserEnabled
+            switchChecked: appSettings.isBrowserEnabled
             onClicked: {
-                if (!appSettings.browserEnabled) {
-                    confirmationPopup.settingsProp = "browserEnabled"
+                if (!appSettings.isBrowserEnabled) {
+                    confirmationPopup.settingsProp = "isBrowserEnabled"
                     confirmationPopup.open()
                 } else {
-                    appSettings.browserEnabled = false
+                    appSettings.isBrowserEnabled = false
                 }
             }
         }

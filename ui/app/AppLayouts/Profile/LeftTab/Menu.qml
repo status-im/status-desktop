@@ -51,7 +51,7 @@ ScrollView {
                 text: modelData .text
                 source: "../../../img/profile/" + modelData.filename
                 active: profileMenu.profileCurrentIndex === modelData.id
-                visible: modelData.ifEnabled !== "browser" || appSettings.browserEnabled
+                visible: modelData.ifEnabled !== "browser" || appSettings.isBrowserEnabled
                 Layout.fillWidth: true
                 width: profileMenu.width
                 onClicked: function () {

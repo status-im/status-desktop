@@ -20,7 +20,7 @@ Column {
 
     StatusIconTabButton {
         id: walletBtn
-        enabled: isExperimental === "1" || appSettings.walletEnabled
+        enabled: isExperimental === "1" || appSettings.isWalletEnabled
         icon.name: "wallet"
         icon.width: 20
         icon.height: 20
@@ -29,7 +29,7 @@ Column {
 
     StatusIconTabButton {
         id: browserBtn
-        enabled: isExperimental === "1" || appSettings.browserEnabled
+        enabled: isExperimental === "1" || appSettings.isBrowserEnabled
         icon.name: "compass"
         icon.width: 22
         icon.height: 22
