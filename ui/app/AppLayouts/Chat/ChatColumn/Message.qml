@@ -44,14 +44,18 @@ Item {
     property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
                              || contentType === Constants.communityInviteType || contentType === Constants.transactionType
 
-    property bool isExpired: (outgoingStatus == "sending" && (Math.floor(timestamp) + 180000) < Date.now())
+    property bool isExpired: (outgoingStatus === "sending" && (Math.floor(timestamp) + 180000) < Date.now())
     property bool isStatusUpdate: false
 
     property int replyMessageIndex: chatsModel.messageList.getMessageIndex(responseTo);
     property string repliedMessageAuthor: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "userName") : "";
+    property string repliedMessageAuthorPubkey: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "publicKey") : "";
+    property bool repliedMessageAuthorIsCurrentUser: replyMessageIndex > -1 ? repliedMessageAuthorPubkey === profileModel.profile.pubKey : "";
     property string repliedMessageContent: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "message") : "";
     property int repliedMessageType: replyMessageIndex > -1 ? parseInt(chatsModel.messageList.getMessageData(replyMessageIndex, "contentType")) : 0;
     property string repliedMessageImage: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "image") : "";
+    property string repliedMessageUserIdenticon: replyMessageIndex > -1 ? chatsModel.messageList.getMessageData(replyMessageIndex, "identicon") : "";
+    property string repliedMessageUserImage: replyMessageIndex > -1 ? appMain.getProfileImage(repliedMessageAuthorPubkey, repliedMessageAuthorIsCurrentUser , false) || "" : "";
 
     property var imageClick: function () {}
     property var scrollToBottom: function () {}
@@ -105,6 +109,11 @@ Item {
                 const img = appMain.getProfileImage(userPubKey, isCurrentUser, useLargeImage)
                 if (img) {
                     profileImageSource = img
+                }
+            } else if (replyMessageIndex > -1 && pubkey === repliedMessageAuthorPubkey) {
+                const imgReply = appMain.getProfileImage(repliedMessageAuthorPubkey, repliedMessageAuthorIsCurrentUser, false)
+                if (imgReply) {
+                    repliedMessageUserImage = imgReply
                 }
             }
         }
