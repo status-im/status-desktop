@@ -337,8 +337,7 @@ ModalPopup {
             visible: !isBlocked && chatsModel.activeChannel.id !== popup.fromAuthor
             width: visible ? implicitWidth : 0
             onClicked: {
-                if (tabBar.currentIndex !== 0)
-                    tabBar.currentIndex = 0
+                appMain.changeAppSection(Constants.chat)
                 chatsModel.joinChat(fromAuthor, Constants.chatTypeOneToOne)
                 popup.close()
             }
