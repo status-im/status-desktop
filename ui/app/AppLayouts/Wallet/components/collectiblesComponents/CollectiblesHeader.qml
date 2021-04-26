@@ -2,6 +2,8 @@ import QtQuick 2.13
 import QtGraphicalEffects 1.13
 import "../../../../../imports"
 import "../../../../../shared"
+import "../../../../../shared/status/core"
+import "../../../../../shared/status"
 
 Rectangle {
     property url collectibleIconSource: "../../../../img/collectibles/CryptoKitties.png"
@@ -60,7 +62,7 @@ Rectangle {
     Component {
         id: loadingComponent
 
-        LoadingImage {}
+        StatusLoadingIndicator {}
     }
 
     Component {

@@ -5,6 +5,7 @@ import "./components"
 import "./data"
 import "../../../imports"
 import "../../../shared"
+import "../../../shared/status/core"
 import "../../../shared/status"
 
 Item {
@@ -54,7 +55,7 @@ Item {
 
     Component {
         id: loadingImageComponent
-        LoadingImage {}
+        StatusLoadingIndicator {}
     }
 
     Connections {

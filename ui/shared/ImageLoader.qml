@@ -1,6 +1,8 @@
 import QtQuick 2.3
 import QtGraphicalEffects 1.13
 import "../imports"
+import "./status/core"
+import "./status"
 
 Rectangle {
     id: root
@@ -98,15 +100,10 @@ Rectangle {
 
     Component {
         id: loadingIndicator
-        LoadingImage {
+        StatusLoadingIndicator {
             width: 23
             height: 23
-            ColorOverlay {
-                anchors.fill: parent
-                source: parent
-                color: Style.current.secondaryText
-                antialiasing: true
-            }
+            color: Style.current.secondaryText
         }
     }
 

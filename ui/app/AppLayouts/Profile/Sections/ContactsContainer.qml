@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status/core"
 import "../../../../shared/status"
 import "./Contacts"
 
@@ -115,7 +116,7 @@ Item {
 
         Component {
             id: loadingIndicator
-            LoadingImage {
+            StatusLoadingIndicator {
                 width: 12
                 height: 12
             }
