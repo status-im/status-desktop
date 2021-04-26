@@ -4,6 +4,7 @@ import QtQml 2.14
 import QtGraphicalEffects 1.13
 import "../../imports"
 import "../../shared"
+import "./core"
 
 Button {
     property string type: "primary"
@@ -95,7 +96,7 @@ Button {
 
         Component {
             id: loadingComponent
-            LoadingImage {}
+            StatusLoadingIndicator {}
         }
 
         Loader {

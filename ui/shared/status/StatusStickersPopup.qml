@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import "../../imports"
 import "../../shared"
+import "../../shared/status/core"
 import "../../shared/status"
 import "../../app/AppLayouts/Chat/ChatColumn/samples"
 
@@ -152,7 +153,7 @@ Popup {
 
             Component {
                 id: loadingImageComponent
-                LoadingImage {
+                StatusLoadingIndicator {
                     width: 50
                     height: 50
                 }
