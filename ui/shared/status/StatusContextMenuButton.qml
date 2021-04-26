@@ -7,8 +7,8 @@ import "../../shared"
 
 RoundButton {
     id: control
-    implicitWidth: 32
-    implicitHeight: 32
+    implicitWidth: 32 * scaleAction.factor
+    implicitHeight: 32 * scaleAction.factor
     contentItem: Item {
         anchors.fill: parent
 

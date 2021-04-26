@@ -84,7 +84,7 @@ ModalPopup {
                         property bool isHovered: false
                         id: linkRectangle
                         width: parent.width
-                        height: 64
+                        height: 64 * scaleAction.factor
                         color: isHovered ? Style.current.backgroundHover : Style.current.transparent
                         radius: Style.current.radius
                         border.width: 0
@@ -99,8 +99,8 @@ ModalPopup {
 
                         SVGImage {
                             id: thumbnail
-                            width: 40
-                            height: 40
+                            width: 40 * scaleAction.factor
+                            height: 40 * scaleAction.factor
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             anchors.leftMargin: Style.current.padding
@@ -144,7 +144,7 @@ ModalPopup {
                         StyledText {
                             id: siteTitle
                             text: title
-                            font.pixelSize: 15
+                            font.pixelSize: 15 * scaleAction.factor
                             font.weight: Font.Medium
                             anchors.top: thumbnail.top
                             anchors.left: thumbnail.right
@@ -153,7 +153,7 @@ ModalPopup {
 
                         StyledText {
                             text: address
-                            font.pixelSize: 15
+                            font.pixelSize: 15 * scaleAction.factor
                             font.weight: Font.Thin
                             color: Style.current.secondaryText
                             anchors.top: siteTitle.bottom
@@ -198,7 +198,7 @@ ModalPopup {
             wrapMode: Text.WordWrap
             font.weight: Font.Thin
             color: Style.current.secondaryText
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             anchors.bottom: parent.bottom
         }
     }

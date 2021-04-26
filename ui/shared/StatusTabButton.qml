@@ -19,7 +19,7 @@ TabButton {
         id: tabBtnText
         text: btnText
         font.weight: Font.Medium
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         color: parent.checked || parent.hovered ? Style.current.textColor : Style.current.secondaryText
     }
 
@@ -27,9 +27,9 @@ TabButton {
         visible: parent.checked || parent.hovered
         color: parent.checked ? Style.current.primary : Style.current.secondaryBackground
         anchors.bottom: parent.bottom
-        width: 40
+        width: 40 * scaleAction.factor
         anchors.horizontalCenter: parent.horizontalCenter
-        height: 3
+        height: 3 * scaleAction.factor
         radius: 4
     }
 

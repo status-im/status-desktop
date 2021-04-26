@@ -8,14 +8,14 @@ import "../../../shared/status"
 Rectangle {
     id: root
     height: visible ? childrenRect.height : 0
-    width: 375
+    width: 375 * scaleAction.factor
     color: "transparent"
 
     SVGImage {
         id: sticker
         anchors.top: parent.top
-        width: 140
-        height: 140
+        width: 140 * scaleAction.factor
+        height: 140 * scaleAction.factor
         source: "../../img/think-sticker.png"
         anchors.horizontalCenter: parent.horizontalCenter
     }
@@ -30,7 +30,7 @@ Rectangle {
         border.color: Style.current.border
         border.width: 1
         radius: Style.current.padding
-        width: 255
+        width: 255 * scaleAction.factor
         height: shareYourMindText.height + Style.current.padding
 
         StyledText {
@@ -43,7 +43,7 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             //% "Share what's on your mind and stay updated with your contacts"
             text: qsTrId("share-what-s-on-your-mind-and-stay-updated-with-your-contacts")
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             color: Style.current.secondaryText
             wrapMode: Text.WordWrap
         }

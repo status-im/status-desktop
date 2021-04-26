@@ -18,8 +18,8 @@ Column {
     Rectangle {
         id: circleId
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 120
-        height: 120
+        width: 120 * scaleAction.factor
+        height: 120 * scaleAction.factor
         radius: 120
         border.width: chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne ? 2 : 0
         border.color: Style.current.border
@@ -41,8 +41,8 @@ Column {
             visible: chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            width: 120
-            height: 120
+            width: 120 * scaleAction.factor
+            height: 120 * scaleAction.factor
             source: channelIdentifier.profileImage || chatsModel.activeChannel.identicon
             smooth: false
             antialiasing: true
@@ -71,7 +71,7 @@ Column {
             }
         }
         font.weight: Font.Bold
-        font.pixelSize: 22
+        font.pixelSize: 22 * scaleAction.factor
         color: Style.current.textColor
         anchors.horizontalCenter: parent.horizontalCenter
     }
@@ -79,7 +79,7 @@ Column {
     Item {
         id: channelDescription
         visible: descText.visible
-        width: visible ? 330 : 0
+        width: visible ? 330 * scaleAction.factor : 0
         height: visible ? childrenRect.height : 0
         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -95,7 +95,7 @@ Column {
                     default: return "";
                 }
             }
-            font.pixelSize: 14
+            font.pixelSize: 14 * scaleAction.factor
             color: Style.current.secondaryText
             anchors.left: parent.left
             anchors.right: parent.right
@@ -108,14 +108,14 @@ Column {
         visible: chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat && !chatsModel.activeChannel.isMember
         anchors.horizontalCenter: parent.horizontalCenter
         width: joinChat.width
-        height: visible ? 100 : 10
+        height: visible ? 100 * scaleAction.factor : 10 * scaleAction.factor
         id: joinOrDecline
 
         StyledText {
             id: joinChat
             //% "Join chat"
             text: qsTrId("join-chat")
-            font.pixelSize: 20
+            font.pixelSize: 20 * scaleAction.factor
             color: Style.current.blue
             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -132,7 +132,7 @@ Column {
         StyledText {
             //% "Decline invitation"
             text: qsTrId("group-chat-decline-invitation")
-            font.pixelSize: 20
+            font.pixelSize: 20 * scaleAction.factor
             color: Style.current.blue
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: joinChat.bottom

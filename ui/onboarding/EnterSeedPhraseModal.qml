@@ -10,7 +10,7 @@ ModalPopup {
     id: popup
     //% "Enter seed phrase"
     title: qsTrId("enter-seed-phrase")
-    height: 400
+    height: 400 * scaleAction.factor
 
     onOpened: {
         seedPhraseTextArea.textArea.text = "";
@@ -39,7 +39,7 @@ ModalPopup {
         anchors.bottomMargin: 0
         horizontalAlignment: TextEdit.AlignHCenter
         color: Style.current.secondaryText
-        font.pixelSize: 12
+        font.pixelSize: 12 * scaleAction.factor
     }
 
     footer: StatusRoundButton {
@@ -48,8 +48,8 @@ ModalPopup {
         anchors.topMargin: Style.current.padding
         anchors.right: parent.right
         icon.name: "arrow-right"
-        icon.width: 20
-        icon.height: 16
+        icon.width: 20 * scaleAction.factor
+        icon.height: 16 * scaleAction.factor
         enabled: seedPhraseTextArea.correctWordCount
 
         onClicked : {

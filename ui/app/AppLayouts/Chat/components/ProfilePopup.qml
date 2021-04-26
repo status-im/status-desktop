@@ -52,13 +52,13 @@ ModalPopup {
     }
 
     header: Item {
-        height: 78
+        height: 78 * scaleAction.factor
         width: parent.width
 
         RoundedImage {
             id: profilePic
-            width: 40
-            height: 40
+            width: 40 * scaleAction.factor
+            height: 40 * scaleAction.factor
             border.color: Style.current.border
             border.width: 1
             anchors.verticalCenter: parent.verticalCenter
@@ -76,7 +76,7 @@ ModalPopup {
             anchors.right: qrCodeButton.left
             anchors.rightMargin: Style.current.padding
             font.bold: true
-            font.pixelSize: 17
+            font.pixelSize: 17 * scaleAction.factor
         }
 
         StyledText {
@@ -89,7 +89,7 @@ ModalPopup {
             anchors.right: qrCodeButton.left
             anchors.rightMargin: Style.current.padding
             anchors.topMargin: 2
-            font.pixelSize: 14
+            font.pixelSize: 14 * scaleAction.factor
             color: Style.current.secondaryText
         }
 
@@ -101,8 +101,8 @@ ModalPopup {
             anchors.rightMargin: 52
             iconColor: Style.current.textColor
             onClicked: qrCodePopup.open()
-            width: 32
-            height: 32
+            width: 32 * scaleAction.factor
+            height: 32 * scaleAction.factor
         }
 
         Separator {
@@ -115,15 +115,15 @@ ModalPopup {
 
         ModalPopup {
             id: qrCodePopup
-            width: 320
-            height: 320
+            width: 320 * scaleAction.factor
+            height: 320 * scaleAction.factor
             Image {
                 asynchronous: true
                 fillMode: Image.PreserveAspectFit
                 source: profileModel.qrCode(fromAuthor)
                 anchors.horizontalCenter: parent.horizontalCenter
-                height: 212
-                width: 212
+                height: 212 * scaleAction.factor
+                width: 212 * scaleAction.factor
                 mipmap: true
                 smooth: false
             }
@@ -148,7 +148,7 @@ ModalPopup {
             id: labelChatKey
             //% "Chat key"
             text: qsTrId("chat-key")
-            font.pixelSize: 13
+            font.pixelSize: 13 * scaleAction.factor
             font.weight: Font.Medium
             color: Style.current.secondaryText
             anchors.top: ensText.bottom
@@ -158,10 +158,10 @@ ModalPopup {
         Address {
             id: valueChatKey
             text: fromAuthor
-            width: 160
+            width: 160 * scaleAction.factor
             maxWidth: parent.width - (3 * Style.current.smallPadding) - copyBtn.width
             color: Style.current.textColor
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             anchors.top: labelChatKey.bottom
             anchors.topMargin: 4
         }
@@ -221,8 +221,8 @@ ModalPopup {
             anchors.rightMargin: Style.current.padding
             anchors.bottom: chatSettings.bottom
             anchors.bottomMargin: 5
-            width: 13
-            height: 7
+            width: 13 * scaleAction.factor
+            height: 7 * scaleAction.factor
             fillMode: Image.PreserveAspectFit
             ColorOverlay {
                 anchors.fill: parent
@@ -239,6 +239,7 @@ ModalPopup {
             anchors.rightMargin: Style.current.padding
             anchors.verticalCenter: nicknameCaret.verticalCenter
             color: Style.current.secondaryText
+            scale: scaleAction.factor
         }
 
         MouseArea {

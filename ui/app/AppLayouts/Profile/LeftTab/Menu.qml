@@ -8,8 +8,8 @@ import "./constants.js" as ProfileConstants
 
 ScrollView {
     property int profileCurrentIndex: ProfileConstants.PROFILE
-    readonly property int btnheight: 42
-    readonly property int w: 340
+    readonly property int btnheight: 42 * scaleAction.factor
+    readonly property int w: 340 * scaleAction.factor
     property var changeProfileSection: function (sectionId) {
         profileCurrentIndex = sectionId
     }
@@ -42,6 +42,7 @@ ScrollView {
             leftPadding: 20
             text: "Settings"
             color: Style.current.secondaryText
+            scale: scaleAction.factor
         }
 
         Repeater {
@@ -62,6 +63,7 @@ ScrollView {
 
         StyledText {
             text: " "
+            scale: scaleAction.factor
         }
 
         Repeater {

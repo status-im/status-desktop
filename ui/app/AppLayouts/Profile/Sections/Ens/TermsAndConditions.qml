@@ -20,7 +20,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: 20
+        font.pixelSize: 20 * scaleAction.factor
     }
 
     Loader {
@@ -37,8 +37,8 @@ Item {
                 transactionDialog.closed()
             }
             ensUsername: username
-            width: 425
-            height: 425
+            width: 425 * scaleAction.factor
+            height: 425 * scaleAction.factor
         }
     }
 
@@ -66,6 +66,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    scale: scaleAction.factor
                 }
 
                 StyledText {
@@ -74,6 +75,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    scale: scaleAction.factor
                 }
 
                 StyledText {
@@ -82,6 +84,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    scale: scaleAction.factor
                 }
 
                 StyledText {
@@ -90,6 +93,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    scale: scaleAction.factor
                 }
 
                 StyledText {
@@ -98,6 +102,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    scale: scaleAction.factor
                 }
 
                 StyledText {
@@ -106,6 +111,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    scale: scaleAction.factor
                 }
 
                 StyledText {
@@ -114,6 +120,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
+                    scale: scaleAction.factor
                 }
 
                 StyledText {
@@ -123,6 +130,7 @@ Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     font.weight: Font.Bold
+                    scale: scaleAction.factor
                 }
 
                 StyledText {
@@ -132,6 +140,7 @@ Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     font.family: Style.current.fontHexRegular.name
+                    scale: scaleAction.factor
                 }
 
                 StyledText {
@@ -140,6 +149,8 @@ Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     onLinkActivated: appMain.openLink(link)
+                    scale: scaleAction.factor
+
                     MouseArea {
                         anchors.fill: parent
                         acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
@@ -154,6 +165,7 @@ Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     font.family: Style.current.fontHexRegular.name
+                    scale: scaleAction.factor
                 }
 
                 StyledText {
@@ -162,6 +174,8 @@ Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     onLinkActivated: appMain.openLink(link)
+                    scale: scaleAction.factor
+
                     MouseArea {
                         anchors.fill: parent
                         acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
@@ -195,8 +209,8 @@ Item {
                 anchors.top: parent.top
                 anchors.topMargin: 24
                 anchors.horizontalCenter: parent.horizontalCenter
-                width: 60
-                height: 60
+                width: 60 * scaleAction.factor
+                height: 60 * scaleAction.factor
                 radius: 120
                 color: Style.current.blue
 
@@ -204,7 +218,7 @@ Item {
                     text: "@"
                     opacity: 0.7
                     font.weight: Font.Bold
-                    font.pixelSize: 18
+                    font.pixelSize: 18 * scaleAction.factor
                     color: Style.current.white
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
@@ -215,7 +229,7 @@ Item {
                 id: ensUsername
                 text: username + ".stateofus.eth"
                 font.weight: Font.Bold
-                font.pixelSize: 18
+                font.pixelSize: 18 * scaleAction.factor
                 anchors.top: circleAt.bottom
                 anchors.topMargin: 24
                 anchors.left: parent.left
@@ -293,8 +307,8 @@ Item {
 
         Image {
             id: image1
-            height: 50
-            width: 50
+            height: 50 * scaleAction.factor
+            width: 50 * scaleAction.factor
             sourceSize.width: width
             sourceSize.height: height
             fillMode: Image.PreserveAspectFit
@@ -309,7 +323,7 @@ Item {
             anchors.leftMargin: 5
             anchors.top: image1.top
             color: Style.current.textColor
-            font.pixelSize: 14
+            font.pixelSize: 14 * scaleAction.factor
         }
 
         StyledText {
@@ -320,7 +334,7 @@ Item {
             anchors.topMargin: 5
             anchors.top: ensPriceLbl.bottom
             color: Style.current.secondaryText
-            font.pixelSize: 14
+            font.pixelSize: 14 * scaleAction.factor
         }
     }
 

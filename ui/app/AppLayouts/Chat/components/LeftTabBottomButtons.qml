@@ -7,13 +7,13 @@ import "../../../../shared"
 import "../../../../shared/status"
 
 Column {
-    spacing: 12
+    spacing: 12 * scaleAction.factor
     width: parent.width
     height: childrenRect.height
 
     Rectangle {
-        width: 40
-        height: 1
+        width: 20 * scaleAction.factor + 20//40 * scaleAction.factor
+        height: 1 * scaleAction.factor
         color: Style.current.appBarDividerColor
         anchors.horizontalCenter: parent.horizontalCenter
     }
@@ -22,8 +22,8 @@ Column {
         id: walletBtn
         enabled: isExperimental === "1" || appSettings.walletEnabled
         icon.name: "wallet"
-        icon.width: 20
-        icon.height: 20
+        icon.width: 20 * scaleAction.factor
+        icon.height: 20 * scaleAction.factor
         section: Constants.wallet
     }
 
@@ -31,8 +31,8 @@ Column {
         id: browserBtn
         enabled: isExperimental === "1" || appSettings.browserEnabled
         icon.name: "compass"
-        icon.width: 22
-        icon.height: 22
+        icon.width: 22 * scaleAction.factor
+        icon.height: 22 * scaleAction.factor
         section: Constants.browser
     }
 
@@ -40,16 +40,16 @@ Column {
         id: timelineBtn
         enabled: isExperimental === "1" || appSettings.timelineEnabled
         icon.name: "timeline"
-        icon.width: 22
-        icon.height: 22
+        icon.width: 22 * scaleAction.factor
+        icon.height: 22 * scaleAction.factor
         section: Constants.timeline
     }
 
     StatusIconTabButton {
         id: profileBtn
         icon.name: "profile"
-        icon.width: 22
-        icon.height: 22
+        icon.width: 22 * scaleAction.factor
+        icon.height: 22 * scaleAction.factor
         section: Constants.profile
 
         Rectangle {
@@ -63,8 +63,8 @@ Column {
             color: Style.current.blue
             border.color: profileBtn.hovered ? Style.current.secondaryBackground : Style.current.mainMenuBackground
             border.width: 2
-            width: 14
-            height: 14
+            width: 14 * scaleAction.factor
+            height: 14 * scaleAction.factor
         }
     }
 

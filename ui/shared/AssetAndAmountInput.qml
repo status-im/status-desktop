@@ -87,7 +87,7 @@ Item {
             text: qsTrId("balance--")
             anchors.right: txtBalance.left
             font.weight: Font.Medium
-            font.pixelSize: 13
+            font.pixelSize: 13 * scaleAction.factor
             color: Style.current.secondaryText
         }
 
@@ -97,7 +97,7 @@ Item {
             text: selectAsset.selectedAsset ? Utils.stripTrailingZeros(selectAsset.selectedAsset.value) : "0.00"
             anchors.right: parent.right
             font.weight: Font.Medium
-            font.pixelSize: 13
+            font.pixelSize: 13 * scaleAction.factor
             color: hovered ? Style.current.textColor : Style.current.secondaryText
 
             MouseArea {
@@ -124,7 +124,7 @@ Item {
         label: qsTrId("asset---amount")
         placeholderText: "0.00"
         anchors.top: parent.top
-        customHeight: 56
+        customHeight: 56 * scaleAction.factor
         validationErrorAlignment: TextEdit.AlignRight
         validationErrorTopMargin: 8
         Keys.onReleased: {
@@ -147,8 +147,8 @@ Item {
 
     AssetSelector {
         id: selectAsset
-        width: 86
-        height: 28
+        width: 86 * scaleAction.factor
+        height: 28 * scaleAction.factor
         anchors.top: inputAmount.top
         anchors.topMargin: Style.current.bigPadding + 14
         anchors.right: parent.right
@@ -178,7 +178,7 @@ Item {
             anchors.top: parent.top
             color: txtFiatBalance.activeFocus ? Style.current.textColor : Style.current.secondaryText
             font.weight: Font.Medium
-            font.pixelSize: 12
+            font.pixelSize: 12 * scaleAction.factor
             inputMethodHints: Qt.ImhFormattedNumbersOnly
             text: "0.00"
             selectByMouse: true
@@ -199,7 +199,7 @@ Item {
             id: txtFiatSymbol
             text: root.defaultCurrency.toUpperCase()
             font.weight: Font.Medium
-            font.pixelSize: 12
+            font.pixelSize: 12 * scaleAction.factor
             color: Style.current.secondaryText
             anchors.top: parent.top
             anchors.left: txtFiatBalance.right

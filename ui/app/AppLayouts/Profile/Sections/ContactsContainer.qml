@@ -25,7 +25,7 @@ Item {
         SearchBox {
             id: searchBox
             anchors.top: parent.top
-            fontPixelSize: 15
+            fontPixelSize: 15 * scaleAction.factor
         }
 
         Item {
@@ -52,7 +52,7 @@ Item {
                 anchors.left: addButton.right
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: addButton.verticalCenter
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
             }
 
             MouseArea {
@@ -77,8 +77,8 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 icon.name: "block-icon"
                 icon.color: Style.current.lightBlue
-                width: 40
-                height: 40
+                width: 40 * scaleAction.factor
+                height: 40 * scaleAction.factor
             }
 
             StyledText {
@@ -89,7 +89,7 @@ Item {
                 anchors.left: blockButton.right
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: blockButton.verticalCenter
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
             }
 
             MouseArea {
@@ -116,8 +116,8 @@ Item {
         Component {
             id: loadingIndicator
             LoadingImage {
-                width: 12
-                height: 12
+                width: 12 * scaleAction.factor
+                height: 12 * scaleAction.factor
             }
         }
 
@@ -154,8 +154,8 @@ Item {
                 id: addContactSearchInput
                 //% "Enter ENS username or chat key"
                 placeholderText: qsTrId("enter-contact-code")
-                customHeight: 44
-                fontPixelSize: 15
+                customHeight: 44 * scaleAction.factor
+                fontPixelSize: 15 * scaleAction.factor
                 Keys.onReleased: {
                     if (!addContactModal.validate(addContactSearchInput.text)) {
                         searchResults.reset()
@@ -189,7 +189,7 @@ Item {
                 id: validationErrorMessage
                 text: addContactModal.validationError
                 visible: addContactModal.validationError !== ""
-                font.pixelSize: 13
+                font.pixelSize: 13 * scaleAction.factor
                 color: Style.current.danger
                 anchors.top: addContactSearchInput.bottom
                 anchors.topMargin: Style.current.smallPadding

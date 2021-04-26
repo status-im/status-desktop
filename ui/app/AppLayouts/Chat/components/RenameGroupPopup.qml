@@ -13,7 +13,7 @@ ModalPopup {
     }
 
     id: popup
-    height: 210
+    height: 210 * scaleAction.factor
 
     //% "Group name"
     title: qsTrId("group-name")

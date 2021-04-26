@@ -5,7 +5,7 @@ import "../../shared"
 
 ToolTip {
     id: tooltip
-    property int maxWidth: 800
+    property int maxWidth: 800 * scaleAction.factor
     property string orientation: "top"
 
     implicitWidth: Math.min(maxWidth, textContent.implicitWidth + Style.current.bigPadding)
@@ -58,7 +58,7 @@ ToolTip {
         text: tooltip.text
         color: Style.current.tooltipForegroundColor
         wrapMode: Text.WordWrap
-        font.pixelSize: 13
+        font.pixelSize: 13 * scaleAction.factor
         font.weight: Font.Medium
         horizontalAlignment: Text.AlignHCenter
         bottomPadding: Style.current.smallPadding

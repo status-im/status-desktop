@@ -16,7 +16,7 @@ Rectangle {
     property bool isHovered: false
 
     id: root
-    height: 64
+    height: 64 * scaleAction.factor
     anchors.right: parent.right
     anchors.left: parent.left
     border.width: 0
@@ -42,7 +42,7 @@ Rectangle {
         elide: Text.ElideRight
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding + radio.width
-        font.pixelSize: 17
+        font.pixelSize: 17 * scaleAction.factor
         anchors.top: accountImage.top
         anchors.left: accountImage.right
         anchors.leftMargin: Style.current.padding
@@ -50,7 +50,7 @@ Rectangle {
 
     StyledText {
         id: addressText
-        width: 108
+        width: 108 * scaleAction.factor
         text: address
         font.family: Style.current.fontHexRegular.name
         elide: Text.ElideMiddle
@@ -58,7 +58,7 @@ Rectangle {
         anchors.bottomMargin: 0
         anchors.left: usernameText.left
         anchors.leftMargin: 0
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         color: Style.current.secondaryText
     }
 

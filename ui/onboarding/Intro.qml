@@ -74,7 +74,7 @@ RowLayout {
                 bottomPadding: 0
                 rightPadding: 0
                 leftPadding: 0
-                font.pixelSize: 6
+                font.pixelSize: 6 * scaleAction.factor
                 count: vwOnboarding.count
                 currentIndex: vwOnboarding.currentIndex
             }
@@ -89,9 +89,9 @@ RowLayout {
             anchors.top: rctPageIndicator.bottom
             anchors.topMargin: 5
             anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 14
+            font.pixelSize: 14 * scaleAction.factor
             font.letterSpacing: 0.1
-            width: 700
+            width: 700 * scaleAction.factor
             wrapMode: Text.Wrap
         }
 
@@ -111,8 +111,8 @@ RowLayout {
             anchors.top: warningCheckBox.bottom
             anchors.topMargin: 5
             anchors.horizontalCenter: parent.horizontalCenter
-            width: 146
-            height: 44
+            width: 146 * scaleAction.factor
+            height: 44 * scaleAction.factor
         }
 
         StyledText {
@@ -123,7 +123,7 @@ RowLayout {
             anchors.top: btnGetStarted.bottom
             anchors.topMargin: 8
             anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 12
+            font.pixelSize: 12 * scaleAction.factor
             font.letterSpacing: 0.1
             color: "#939BA1"
         }

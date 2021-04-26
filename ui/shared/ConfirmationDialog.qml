@@ -12,8 +12,8 @@ ModalPopup {
     property string btnType: "warn"
 
 
-    height: 186
-    width: 400
+    height: 186 * scaleAction.factor
+    width: 400 * scaleAction.factor
     //% "Confirm your action"
     title: qsTrId("confirm-your-action")
 
@@ -28,7 +28,7 @@ ModalPopup {
 
     StyledText {
         text: confirmationDialog.confirmationText
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         anchors.left: parent.left
         anchors.right: parent.right
         wrapMode: Text.WordWrap

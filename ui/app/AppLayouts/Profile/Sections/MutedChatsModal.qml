@@ -33,8 +33,8 @@ ModalPopup {
 
             StatusIdenticon {
                 id: contactImage
-                height: 40
-                width: 40
+                height: 40 * scaleAction.factor
+                width: 40 * scaleAction.factor
                 chatName: model.name
                 chatType: model.chatType
                 identicon: model.identicon
@@ -51,7 +51,7 @@ ModalPopup {
                 anchors.right: unmuteButton.left
                 anchors.rightMargin: Style.current.smallPadding
                 elide: Text.ElideRight
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 anchors.left: contactImage.right
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter

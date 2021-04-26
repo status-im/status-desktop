@@ -11,8 +11,8 @@ Item {
 
     property bool isSyncing: false
 
-    width: 200
-    height: 200
+    width: 200 * scaleAction.factor
+    height: 200 * scaleAction.factor
     Layout.fillHeight: true
     Layout.fillWidth: true
     clip: true
@@ -31,7 +31,7 @@ Item {
             id: deviceNameLbl
             //% "Please set a name for your device."
             text: qsTrId("pairing-please-set-a-name")
-            font.pixelSize: 14
+            font.pixelSize: 14 * scaleAction.factor
         }
 
         Input {
@@ -67,15 +67,15 @@ Item {
         Rectangle {
             id: advertiseDevice
             height: childrenRect.height
-            width: 500
+            width: 500 * scaleAction.factor
             anchors.left: parent.left
             anchors.right: parent.right
             color: Style.current.transparent
 
             SVGImage {
                 id: advertiseImg
-                height: 32
-                width: 32
+                height: 32 * scaleAction.factor
+                width: 32 * scaleAction.factor
                 anchors.left: parent.left
                 fillMode: Image.PreserveAspectFit
                 source: "/app/img/messageActive.svg"
@@ -90,7 +90,7 @@ Item {
                 id: advertiseDeviceTitle
                 //% "Advertise device"
                 text: qsTrId("pair-this-device")
-                font.pixelSize: 18
+                font.pixelSize: 18 * scaleAction.factor
                 font.weight: Font.Bold
                 color: Style.current.blue
                 anchors.left: advertiseImg.right
@@ -101,7 +101,7 @@ Item {
                 id: advertiseDeviceDesk
                 //% "Pair your devices to sync contacts and chats between them"
                 text: qsTrId("pair-this-device-description")
-                font.pixelSize: 14
+                font.pixelSize: 14 * scaleAction.factor
                 anchors.top: advertiseDeviceTitle.bottom
                 anchors.topMargin: 6
                 anchors.left: advertiseImg.right
@@ -120,7 +120,7 @@ Item {
             anchors.topMargin: Style.current.padding
             //% "Learn more"
             text: qsTrId("learn-more")
-            font.pixelSize: 16
+            font.pixelSize: 16 * scaleAction.factor
             color: Style.current.blue
             anchors.left: parent.left
             MouseArea {
@@ -149,7 +149,7 @@ Item {
             id: deviceListLbl
             //% "Paired devices"
             text: qsTrId("paired-devices")
-            font.pixelSize: 16
+            font.pixelSize: 16 * scaleAction.factor
             font.weight: Font.Bold
         }
 
@@ -166,8 +166,8 @@ Item {
                 SVGImage {
                     id: enabledIcon
                     source: "/app/img/" + (devicePairedSwitch.checked ? "messageActive.svg" : "message.svg")
-                    height: 24
-                    width: 24
+                    height: 24 * scaleAction.factor
+                    width: 24 * scaleAction.factor
                     ColorOverlay {
                         anchors.fill: parent
                         source: parent
@@ -185,7 +185,7 @@ Item {
                         return labelText;
                     }
                     elide: Text.ElideRight
-                    font.pixelSize: 14
+                    font.pixelSize: 14 * scaleAction.factor
                     anchors.left: enabledIcon.right
                     anchors.leftMargin: Style.current.padding
                 }

@@ -8,8 +8,8 @@ CheckBox {
     id: control
 
     indicator: Rectangle {
-        implicitWidth: 18
-        implicitHeight: 18
+        implicitWidth: 18 * scaleAction.factor
+        implicitHeight: 18 * scaleAction.factor
         x: control.leftPadding
         y: parent.height / 2 - height / 2
         radius: 3
@@ -17,8 +17,8 @@ CheckBox {
 
         SVGImage {
             source: "../img/checkmark.svg"
-            width: 16
-            height: 16
+            width: 16 * scaleAction.factor
+            height: 16 * scaleAction.factor
             anchors.centerIn: parent
             visible: control.down || control.checked
         }

@@ -136,7 +136,7 @@ Item {
                 sourceComponent: Component {
                     ChatImage {
                         imageSource: image
-                        imageWidth: 200
+                        imageWidth: 200 * scaleAction.factor
                         onClicked: root.clickMessage(false, false, true, image)
                         container: root.container
                     }
@@ -235,7 +235,7 @@ Item {
             Rectangle {
                 id: mentionBorder
                 color: Style.current.mentionColor
-                width: 2
+                width: 2 * scaleAction.factor
                 height: parent.height
             }
         }

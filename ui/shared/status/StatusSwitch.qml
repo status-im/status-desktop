@@ -9,8 +9,8 @@ Switch {
 
     indicator: Rectangle {
         id: oval
-        implicitWidth: 52
-        implicitHeight: 28
+        implicitWidth: 52 * scaleAction.factor
+        implicitHeight: 28 * scaleAction.factor
         x: control.leftPadding
         y: parent.height / 2 - height / 2
         radius: 14
@@ -19,8 +19,8 @@ Switch {
         Rectangle {
             id: circle
             y: 4
-            width: 20
-            height: 20
+            width: 20 * scaleAction.factor
+            height: 20 * scaleAction.factor
             radius: 10
             color: Style.current.white
             layer.enabled: true

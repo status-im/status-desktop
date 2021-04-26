@@ -16,7 +16,7 @@ Item {
 
     property alias contactListSearch: contactFieldAndList
 
-    height: 400
+    height: 400 * scaleAction.factor
 
     function sendInvites(pubKeys) {
         const error = chatsModel.communities.inviteUsersToCommunityById(popup.communityId, JSON.stringify(pubKeys))

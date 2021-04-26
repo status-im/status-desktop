@@ -6,8 +6,8 @@ Image {
     property var currentTab
 
     id: faviconImage
-    width: 24
-    height: 24
+    width: 24 * scaleAction.factor
+    height: 24 * scaleAction.factor
     sourceSize: Qt.size(width, height)
     // TODO find a better default favicon
     source: faviconImage.currentTab && !!faviconImage.currentTab.icon.toString() ? faviconImage.currentTab.icon : "../../img/compassActive.svg"

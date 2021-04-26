@@ -368,10 +368,11 @@ RowLayout {
 
     Rectangle {
         id: leftTab
-        Layout.maximumWidth: 78
-        Layout.minimumWidth: 78
-        Layout.preferredWidth: 78
+
+        property real tabButtonWidth: 20 * scaleAction.factor
+
         Layout.fillHeight: true
+        implicitWidth: tabButtonWidth + 36//78 * scaleAction.factor
         height: parent.height
         color: Style.current.mainMenuBackground
 
@@ -388,7 +389,7 @@ RowLayout {
 
             Column {
                 id: tabBar
-                spacing: 12
+                spacing: 12 * scaleAction.factor
                 width: scrollView.width
 
                 Loader {
@@ -411,8 +412,8 @@ RowLayout {
                 StatusIconTabButton {
                     id: chatBtn
                     icon.name: "message"
-                    icon.width: 20
-                    icon.height: 20
+                    icon.width: 20 * scaleAction.factor
+                    icon.height: 20 * scaleAction.factor
                     section: Constants.chat
                     doNotHandleClick: true
                     onClicked: {

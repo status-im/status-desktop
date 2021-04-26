@@ -604,8 +604,8 @@ Rectangle {
 
     StatusEmojiPopup {
         id: emojiPopup
-        width: 360
-        height: 440
+        width: 360 * scaleAction.factor
+        height: 440 * scaleAction.factor
         x: parent.width - width - Style.current.halfPadding
         y: -height
         emojiSelected: function (text, atCursor) {
@@ -651,8 +651,8 @@ Rectangle {
     StatusIconButton {
         id: imageBtn
         icon.name: "images_icon"
-        icon.height: 18
-        icon.width: 20
+        icon.height: 18 * scaleAction.factor
+        icon.width: 20 * scaleAction.factor
         anchors.left: chatCommandsBtn.visible ? chatCommandsBtn.right : parent.left
         anchors.leftMargin: chatCommandsBtn.visible ? 2 : 4
         anchors.bottom: parent.bottom
@@ -667,8 +667,8 @@ Rectangle {
 
     Rectangle {
         id: messageInput
-        property int maxInputFieldHeight: control.isStatusUpdateInput ? 124 : 112
-        property int defaultInputFieldHeight: control.isStatusUpdateInput ? 56 : 40
+        property int maxInputFieldHeight: control.isStatusUpdateInput ? 124 * scaleAction.factor : 112 * scaleAction.factor
+        property int defaultInputFieldHeight: control.isStatusUpdateInput ? 56 * scaleAction.factor : 40 * scaleAction.factor
         anchors.left: imageBtn.visible ? imageBtn.right : parent.left
         anchors.leftMargin: imageBtn.visible ? 5 : Style.current.smallPadding
         anchors.top: control.isStatusUpdateInput ? parent.top : undefined
@@ -737,7 +737,7 @@ Rectangle {
                 color: parent.color
                 anchors.right: parent.right
                 anchors.left: parent.left
-                height: control.isStatusUpdateInput ? 64 : 30
+                height: control.isStatusUpdateInput ? 64 * scaleAction.factor : 30 * scaleAction.factor
                 anchors.top: control.isStatusUpdateInput ? parent.top : undefined
                 anchors.topMargin: control.isStatusUpdateInput ? -24 : 0
                 anchors.bottom: control.isStatusUpdateInput ? undefined : parent.bottom
@@ -803,7 +803,7 @@ Rectangle {
 
                 id: messageInputField
                 textFormat: Text.RichText
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 font.family: Style.current.fontRegular.name
                 wrapMode: TextArea.Wrap
                 //% "Type a message"
@@ -874,12 +874,20 @@ Rectangle {
                     StatusChatInputTextFormationAction {
                         wrapper: "**"
                         icon.name: "format-text-bold"
+
+                        icon.width: 12 * scaleAction.factor
+                        icon.height: 16 * scaleAction.factor
+                        onTriggered: wrapSelection("**")
                         //% "Bold"
                         text: qsTrId("bold")
                     }
                     StatusChatInputTextFormationAction {
                         wrapper: "*"
                         icon.name: "format-text-italic"
+
+                        icon.width: 12 * scaleAction.factor
+                        icon.height: 16 * scaleAction.factor
+                        onTriggered: wrapSelection("*")
                         //% "Italic"
                         text: qsTrId("italic")
                         checked: textFormatMenu.surroundedBy("*") && !textFormatMenu.surroundedBy("**")
@@ -887,14 +895,20 @@ Rectangle {
                     StatusChatInputTextFormationAction {
                         wrapper: "~~"
                         icon.name: "format-text-strike-through"
-                        icon.height: 18
+
+                        icon.width: 20 * scaleAction.factor
+                        icon.height: 18 * scaleAction.factor
+                        onTriggered: wrapSelection("~~")
                         //% "Strikethrough"
                         text: qsTrId("strikethrough")
                     }
                     StatusChatInputTextFormationAction {
                         wrapper: "`"
                         icon.name: "format-text-code"
-                        icon.height: 18
+
+                        icon.width: 20 * scaleAction.factor
+                        icon.height: 18 * scaleAction.factor
+                        onTriggered: wrapSelection("`")
                         //% "Code"
                         text: qsTrId("code")
                     }
@@ -945,7 +959,7 @@ Rectangle {
             anchors.right: parent.right
             visible: !control.isStatusUpdateInput
             height: parent.height / 2
-            width: 32
+            width: 32 * scaleAction.factor
             radius: Style.current.radius
         }
 
@@ -976,8 +990,8 @@ Rectangle {
             StatusIconButton {
                 id: imageBtn2
                 icon.name: "images_icon"
-                icon.height: 18
-                icon.width: 20
+                icon.height: 18 * scaleAction.factor
+                icon.width: 20 * scaleAction.factor
                 anchors.right: sendBtn.left
                 anchors.rightMargin: 2
                 anchors.bottom: parent.bottom
@@ -992,8 +1006,8 @@ Rectangle {
             StatusButton {
                 id: sendBtn
                 icon.source: "../../app/img/send.svg"
-                icon.width: 16
-                icon.height: 18
+                icon.width: 16 * scaleAction.factor
+                icon.height: 18 * scaleAction.factor
                 borderRadius: 16
                 //% "Send"
                 text: qsTrId("command-button-send")
@@ -1039,7 +1053,7 @@ Rectangle {
                 anchors.bottom: parent.bottom
                 icon.name: "stickers_icon"
                 visible: profileModel.network.current === Constants.networkMainnet && emojiBtn.visible
-                width: visible ? 32 : 0
+                width: visible ? 32 * scaleAction.factor : 0
                 type: "secondary"
                 onClicked: {
                     emojiPopup.close()

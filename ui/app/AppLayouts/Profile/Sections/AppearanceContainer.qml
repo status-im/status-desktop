@@ -61,7 +61,7 @@ ScrollView {
             anchors.leftMargin: -Style.current.padding
             anchors.right: parent.right
             anchors.rightMargin: -Style.current.padding
-            height: paceholderMessage.height + Style.current.padding*4
+            height: paceholderMessage.height + Style.current.padding * 4
             radius: Style.current.radius
             border.color: Style.current.border
             color: Style.current.transparent
@@ -96,7 +96,7 @@ ScrollView {
             anchors.top: sectionHeadlineFontSize.bottom
             anchors.topMargin: Style.current.padding
             anchors.left: parent.left
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             //% "Change font size"
             text: qsTrId("change-font-size")
         }
@@ -125,14 +125,14 @@ ScrollView {
             spacing: Style.current.smallPadding
 
             StyledText {
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 //% "XS"
                 text: qsTrId("xs")
                 Layout.preferredWidth: fontSizeSlider.width/6
             }
 
             StyledText {
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 //% "S"
                 text: qsTrId("s")
                 Layout.preferredWidth: fontSizeSlider.width/6
@@ -140,7 +140,7 @@ ScrollView {
             }
 
             StyledText {
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 //% "M"
                 text: qsTrId("m")
                 Layout.preferredWidth: fontSizeSlider.width/6
@@ -148,7 +148,7 @@ ScrollView {
             }
 
             StyledText {
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 //% "L"
                 text: qsTrId("l")
                 Layout.preferredWidth: fontSizeSlider.width/6
@@ -156,7 +156,7 @@ ScrollView {
             }
 
             StyledText {
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 //% "XL"
                 text: qsTrId("xl")
                 Layout.preferredWidth: fontSizeSlider.width/6
@@ -164,7 +164,7 @@ ScrollView {
             }
 
             StyledText {
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 //% "XXL"
                 text: qsTrId("xxl")
                 Layout.alignment: Qt.AlignRight
@@ -242,10 +242,10 @@ ScrollView {
 
             StatusImageRadioButton {
                 padding: Style.current.smallPadding
-                width: 208
-                height: 184
+                width: 208 * scaleAction.factor
+                height: 184 * scaleAction.factor
                 image.source: "../../../img/appearance-normal-light.svg"
-                image.height: 128
+                image.height: 128 * scaleAction.factor
                 //% "Light"
                 control.text: qsTrId("light")
                 control.checked: globalSettings.theme === Universal.Light
@@ -258,10 +258,10 @@ ScrollView {
 
             StatusImageRadioButton {
                 padding: Style.current.smallPadding
-                width: 208
-                height: 184
+                width: 208 * scaleAction.factor
+                height: 184 * scaleAction.factor
                 image.source: "../../../img/appearance-normal-dark.svg"
-                image.height: 128
+                image.height: 128 * scaleAction.factor
                 //% "Dark"
                 control.text: qsTrId("dark")
                 control.checked: globalSettings.theme === Universal.Dark
@@ -274,10 +274,10 @@ ScrollView {
 
             StatusImageRadioButton {
                 padding: Style.current.smallPadding
-                width: 208
-                height: 184
+                width: 208 * scaleAction.factor
+                height: 184 * scaleAction.factor
                 image.source: "../../../img/appearance-normal-system.png"
-                image.height: 128
+                image.height: 128 * scaleAction.factor
                 //% "System"
                 control.text: qsTrId("system")
                 control.checked: globalSettings.theme === Universal.System

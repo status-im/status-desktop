@@ -29,10 +29,10 @@ Button {
     property int iconRotation: 0
 
     id: control
-    font.pixelSize: size === "small" ? 13 : 15
+    font.pixelSize: size === "small" ? 13 * scaleAction.factor : 15 * scaleAction.factor
     font.family: Style.current.fontRegular.name
     font.weight: Font.Medium
-    implicitHeight: flat ? 32 : (size === "small" ? 38 : 44)
+    implicitHeight: flat ? 32 * scaleAction.factor : (size === "small" ? 38 * scaleAction.factor : 44 * scaleAction.factor)
     implicitWidth: buttonLabel.implicitWidth + (flat ? 3* Style.current.halfPadding : 2 * Style.current.padding) +
                    (iconLoader.active ? iconLoader.width : 0)
     enabled: state === "default"
@@ -104,7 +104,7 @@ Button {
             sourceComponent: loadingComponent
             height: loadingIndicator.visible ? 
                                     control.size === "large" ?
-                                    23 : 17 
+                                    23 * scaleAction.factor : 17 * scaleAction.factor
                                     : 0
             width: loadingIndicator.height
             anchors.horizontalCenter: parent.horizontalCenter

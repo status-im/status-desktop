@@ -23,7 +23,8 @@ Item {
         spacing: 0
         anchors.top: parent.top
         height: childrenRect.height
-        visible: height > (appSettings.useCompactMode ? 30 : 50)
+        visible: height > (appSettings.useCompactMode ? 30 * scaleAction.factor
+                                                      : 50 * scaleAction.factor)
         anchors.right: parent.right
         anchors.left: parent.left
         interactive: false
@@ -58,13 +59,13 @@ Item {
     Item {
         id: noSearchResults
         anchors.top: parent.top
-        height: visible ? 300 : 0
+        height: visible ? 300 * scaleAction.factor : 0
         visible: !chatGroupsListView.visible && channelListContent.searchStr !== ""
         anchors.left: parent.left
         anchors.right: parent.right
 
         StyledText {
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             color: Style.current.secondaryText
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter

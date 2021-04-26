@@ -17,8 +17,8 @@ Popup {
         color: "#60000000"
     }
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-    width: 360
-    height: 480
+    width: 360 * scaleAction.factor
+    height: 480 * scaleAction.factor
     background: Rectangle {
         color: Style.current.background
         radius: 8
@@ -50,11 +50,11 @@ Popup {
         anchors.topMargin: 90
 
         RowLayout {
-            property int imgSize: 40
+            property int imgSize: 40 * scaleAction.factor
 
             id: logoHeader
             spacing: Style.current.halfPadding
-            width: 176
+            width: 176 * scaleAction.factor
             height: imgSize
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
@@ -67,29 +67,29 @@ Popup {
             SVGImage {
                 id: dots1
                 source: "../../img/dots-icon.svg"
-                width: 20
-                height: 4
+                width: 20 * scaleAction.factor
+                height: 4 * scaleAction.factor
             }
 
             RoundedIcon {
                 source: "../../img/check.svg"
                 iconColor: Style.current.primary
                 color: Style.current.secondaryBackground
-                width: 24
-                height: 24
+                width: 24 * scaleAction.factor
+                height: 24 * scaleAction.factor
             }
 
             SVGImage {
                 id: dots2
                 source: "../../img/dots-icon.svg"
-                width: 20
-                height: 4
+                width: 20 * scaleAction.factor
+                height: 4 * scaleAction.factor
             }
 
             RoundedIcon {
                 source: "../../img/walletIcon.svg"
-                iconHeight: 18
-                iconWidth: 18
+                iconHeight: 18 * scaleAction.factor
+                iconWidth: 18 * scaleAction.factor
                 iconColor: accountSelector.selectedAccount.iconColor || Style.current.primary
                 color: Style.current.background
                 width: logoHeader.imgSize
@@ -107,14 +107,14 @@ Popup {
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             wrapMode: Text.WordWrap
             font.weight: Font.Bold
-            font.pixelSize: 17
+            font.pixelSize: 17 * scaleAction.factor
             horizontalAlignment: Text.AlignHCenter
         }
 
         AccountSelector {
             id: accountSelector
             label: ""
-            width: 190
+            width: 190 * scaleAction.factor
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             showAccountDetails: false
             accounts: walletModel.accounts
@@ -155,7 +155,7 @@ Popup {
             Layout.fillWidth: true
             wrapMode: Text.WordWrap
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             horizontalAlignment: Text.AlignHCenter
             color: Style.current.secondaryText
         }
@@ -167,7 +167,7 @@ Popup {
 
             StatusButton {
                 type: "warn"
-                width: 155
+                width: 155 * scaleAction.factor
                 //% "Deny"
                 text: qsTrId("deny")
                 onClicked: {
@@ -179,7 +179,7 @@ Popup {
             StyledButton {
                 btnColor: Utils.setColorAlpha(Style.current.success, 0.1)
                 textColor: Style.current.success
-                width: 155
+                width: 155 * scaleAction.factor
                 //% "Allow"
                 label: qsTrId("allow")
                 onClicked: {

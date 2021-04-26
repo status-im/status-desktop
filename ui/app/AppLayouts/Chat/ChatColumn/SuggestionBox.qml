@@ -61,7 +61,7 @@ Rectangle {
 
     z: parent.z + 100
     visible: !shouldHide && filter.length > 0 && suggestionsModel.count > 0
-    height: Math.min(400, listView.contentHeight + Style.current.padding)
+    height: Math.min(400 * scaleAction.factor, listView.contentHeight + Style.current.padding)
 
     opacity: visible ? 1.0 : 0
     Behavior on opacity {
@@ -113,13 +113,13 @@ Rectangle {
             color: listView.currentIndex === index ? Style.current.backgroundHover : Style.current.transparent
             border.width: 0
             width: parent.width
-            height: 42
+            height: 42 * scaleAction.factor
             radius: Style.current.radius
 
             StatusImageIdenticon {
                 id: accountImage
-                width: 32
-                height: 32
+                width: 32 * scaleAction.factor
+                height: 32 * scaleAction.factor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.smallPadding
@@ -132,7 +132,7 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: accountImage.right
                 anchors.leftMargin: Style.current.smallPadding
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
             }
 
             MouseArea {

@@ -8,8 +8,8 @@ Item {
     id: root
     property var accounts
     property var contacts
-    property int inputWidth: 272
-    property int sourceSelectWidth: 136
+    property int inputWidth: 272 * scaleAction.factor
+    property int sourceSelectWidth: 136 * scaleAction.factor
     property alias label: txtLabel.text
     // If supplied, additional info will be displayed top-right in danger colour (red)
     property alias additionalInfo: txtAddlInfo.text
@@ -111,22 +111,22 @@ Item {
         visible: label !== ""
         //% "Recipient"
         text: qsTrId("recipient")
-        font.pixelSize: 13
+        font.pixelSize: 13 * scaleAction.factor
         font.family: Style.current.fontRegular.name
         font.weight: Font.Medium
         color: Style.current.textColor
-        height: 18
+        height: 18 * scaleAction.factor
     }
 
     Text {
         id: txtAddlInfo
         visible: text !== ""
         text: ""
-        font.pixelSize: 13
+        font.pixelSize: 13 * scaleAction.factor
         font.family: Style.current.fontRegular.name
         font.weight: Font.Medium
         color: Style.current.danger
-        height: 18
+        height: 18 * scaleAction.factor
         anchors.right: parent.right
     }
 

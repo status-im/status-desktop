@@ -6,8 +6,8 @@ Input {
     //% "Search"
     placeholderText: qsTrId("search")
     icon: "../app/img/search.svg"
-    iconWidth: 17
-    iconHeight: 17
-    customHeight: 36
-    fontPixelSize: 15
+    iconWidth: 17 * scaleAction.factor
+    iconHeight: 17 * scaleAction.factor
+    customHeight: 36 * scaleAction.factor
+    fontPixelSize: 15 * scaleAction.factor
 }

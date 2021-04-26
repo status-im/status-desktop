@@ -9,8 +9,8 @@ Item {
     property bool useIconInsteadOfImage: false
     property url source: "../../app/img/history_icon.svg"
     signal clicked
-    height: 24
-    width: 24
+    height: 24 * scaleAction.factor
+    width: 24 * scaleAction.factor
 
     RoundedImage {
         visible: !useIconInsteadOfImage
@@ -27,7 +27,7 @@ Item {
         visible: useIconInsteadOfImage
         width: parent.width
         height: parent.height
-        iconWidth: 6
+        iconWidth: 6 * scaleAction.factor
         color: Style.current.darkGrey
         source: root.source
         onClicked: {
@@ -39,8 +39,8 @@ Item {
         visible: root.selected
         border.color: Style.current.blue
         border.width: 1
-        height: 2
-        width: 16
+        height: 2 * scaleAction.factor
+        width: 16 * scaleAction.factor
         x: 4
         y: root.y + root.height + 6
     }

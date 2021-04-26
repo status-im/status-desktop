@@ -36,7 +36,7 @@ StackLayout {
 
     Layout.fillHeight: true
     Layout.fillWidth: true
-    Layout.minimumWidth: 300
+    Layout.minimumWidth: 300 * scaleAction.factor
 
     currentIndex:  chatsModel.activeChannelIndex > -1 && chatGroupsListViewCount > 0 ? 0 : 1
 
@@ -149,7 +149,7 @@ StackLayout {
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
             z: 60
-            height: 40
+            height: 40 * scaleAction.factor
             color: isConnected ? Style.current.green : Style.current.darkGrey
             visible: false
             Text {
@@ -162,6 +162,7 @@ StackLayout {
                           qsTrId("connected") :
                           //% "Disconnected"
                           qsTrId("disconnected")
+                scale: scaleAction.factor
             }
 
             Connections {

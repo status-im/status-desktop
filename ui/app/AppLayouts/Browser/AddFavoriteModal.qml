@@ -15,8 +15,8 @@ ModalPopup {
     property bool toolbarMode: false
 
     id: popup
-    width: toolbarMode ? 345 : 480
-    height: toolbarMode ? 345 : 480
+    width: toolbarMode ? 345 * scaleAction.factor : 480 * scaleAction.factor
+    height: toolbarMode ? 345 * scaleAction.factor : 480 * scaleAction.factor
 
     modal: !toolbarMode
 

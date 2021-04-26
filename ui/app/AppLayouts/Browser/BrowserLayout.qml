@@ -439,7 +439,7 @@ Rectangle {
     }
 
     QQC1.TabView {
-        property int tabHeight: 40
+        property int tabHeight: 40 * scaleAction.factor
         id: tabs
         function createEmptyTab(profile, createAsStartPage) {
             var tab = addTab("", tabComponent);
@@ -661,8 +661,8 @@ Rectangle {
                         Image {
                             id: emptyPageImage
                             source: "../../img/browser/compass.png"
-                            width: 294
-                            height: 294
+                            width: 294 * scaleAction.factor
+                            height: 294 * scaleAction.factor
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.top: parent.top
                             anchors.topMargin: 60
@@ -698,7 +698,7 @@ Rectangle {
 
     ProgressBar {
         id: progressBar
-        height: 3
+        height: 3 * scaleAction.factor
         from: 0
         to: 100
         visible: value != 0 && value != 100
@@ -712,7 +712,7 @@ Rectangle {
     WebEngineView {
         id: devToolsView
         visible: appSettings.devToolsEnabled
-        height: visible ? 400 : 0
+        height: visible ? 400 * scaleAction.factor : 0
         inspectedView: visible && tabs.currentIndex < tabs.count ? tabs.getTab(tabs.currentIndex).item : null
         anchors.left: parent.left
         anchors.right: parent.right
@@ -817,6 +817,8 @@ Rectangle {
                     statusBubble.visible = false;
                 }
             }
+
+            scale: scaleAction.factor
         }
     }
 }

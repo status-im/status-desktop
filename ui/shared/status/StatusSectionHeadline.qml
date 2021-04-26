@@ -4,7 +4,7 @@ import "../../imports"
 import "../../shared"
 
 StyledText {
-    font.pixelSize: 15
+    font.pixelSize: 15 * scaleAction.factor
     color: Style.current.secondaryText
     anchors.topMargin: 38
 }

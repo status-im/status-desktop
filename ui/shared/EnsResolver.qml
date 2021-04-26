@@ -21,8 +21,8 @@ Item {
             root.validateAsync(name)
         }
     }
-    width: 12
-    height: 12
+    width: 12 * scaleAction.factor
+    height: 12 * scaleAction.factor
 
     Loader {
         anchors.fill: parent

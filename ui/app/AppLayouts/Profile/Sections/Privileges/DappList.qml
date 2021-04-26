@@ -23,8 +23,6 @@ ModalPopup {
 
         ScrollView {
             anchors.fill: parent
-            Layout.fillWidth: true
-            Layout.fillHeight: true
 
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             ScrollBar.vertical.policy: dappListView.contentHeight > dappListView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff

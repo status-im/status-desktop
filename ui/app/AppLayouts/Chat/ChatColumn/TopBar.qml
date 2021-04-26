@@ -10,7 +10,7 @@ Rectangle {
     property int iconSize: 16
     id: chatTopBarContent
     color: Style.current.background
-    height: 56
+    implicitHeight: 56 * scaleAction.factor
     Layout.fillWidth: true
 
     Loader {
@@ -36,7 +36,7 @@ Rectangle {
             chatType: chatsModel.activeChannel.chatType
             identicon: chatsModel.activeChannel.identicon
             muted: chatsModel.activeChannel.muted
-            identiconSize: 36
+            identiconSize: 36 * scaleAction.factor
 
             onClicked: {
                 switch (chatsModel.activeChannel.chatType) {
@@ -57,7 +57,7 @@ Rectangle {
     Component {
         id: chatInfo
         StatusChatInfo {
-            identiconSize: 36
+            identiconSize: 36 * scaleAction.factor
             chatId: chatsModel.activeChannel.id
             chatName: chatsModel.activeChannel.name
             chatType: chatsModel.activeChannel.chatType

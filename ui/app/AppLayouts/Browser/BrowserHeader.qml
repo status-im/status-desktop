@@ -22,7 +22,7 @@ Rectangle {
     RowLayout {
         id: barRow
         width: parent.width
-        height: 45
+        height: 45 * scaleAction.factor
         spacing: root.innerMargin
 
         Menu {
@@ -56,8 +56,8 @@ Rectangle {
                 }
             }
             enabled: currentWebView && currentWebView.canGoBack
-            width: 24
-            height: 24
+            width: 24 * scaleAction.factor
+            height: 24 * scaleAction.factor
             Layout.leftMargin: root.innerMargin
             padding: 6
         }
@@ -74,8 +74,8 @@ Rectangle {
                 }
             }
             enabled: currentWebView && currentWebView.canGoForward
-            width: 24
-            height: 24
+            width: 24 * scaleAction.factor
+            height: 24 * scaleAction.factor
             Layout.leftMargin: -root.innerMargin/2
         }
 
@@ -90,7 +90,7 @@ Rectangle {
             property var currentFavorite: currentWebView && getCurrentFavorite(currentWebView.url)
 
             id: addressBar
-            height: 40
+            height: 40 * scaleAction.factor
             Layout.fillWidth: true
             background: Rectangle {
                 color: Style.current.inputBackground
@@ -172,8 +172,8 @@ Rectangle {
                     addFavoriteModal.ogName = addressBar.currentFavorite ? addressBar.currentFavorite.name : currentWebView.title
                     addFavoriteModal.open()
                 }
-                width: 24
-                height: 24
+                width: 24 * scaleAction.factor
+                height: 24 * scaleAction.factor
             }
 
             StatusIconButton {
@@ -183,8 +183,8 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.halfPadding
                 onClicked: currentWebView && currentWebView.loading ? currentWebView.stop() : currentWebView.reload()
-                width: 24
-                height: 24
+                width: 24 * scaleAction.factor
+                height: 24 * scaleAction.factor
             }
         }
 
@@ -211,8 +211,8 @@ Rectangle {
                         browserWalletMenu.open()
                     }
                 }
-                width: 24
-                height: 24
+                width: 24 * scaleAction.factor
+                height: 24 * scaleAction.factor
                 padding: 6
             }
         }
@@ -224,11 +224,11 @@ Rectangle {
             StatusButton {
                 id: accountBtnConnected
                 icon.source: "../../img/walletIcon.svg"
-                icon.width: 18
-                icon.height: 18
+                icon.width: 18 * scaleAction.factor
+                icon.height: 18 * scaleAction.factor
                 icon.color: walletModel.dappBrowserAccount.iconColor
                 text: walletModel.dappBrowserAccount.name
-                implicitHeight: 32
+                implicitHeight: 32 * scaleAction.factor
                 type: "secondary"
                 onClicked: {
                     if (browserWalletMenu.opened) {
@@ -257,8 +257,8 @@ Rectangle {
                     settingsMenu.open()
                 }
             }
-            width: 24
-            height: 24
+            width: 24 * scaleAction.factor
+            height: 24 * scaleAction.factor
             Layout.rightMargin: root.innerMargin
             padding: 6
         }

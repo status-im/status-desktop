@@ -7,7 +7,7 @@ import "../../../imports"
 RowLayout {
     id: favoritesBar
     spacing: 0
-    height: 38
+    height: 38 * scaleAction.factor
 
     ListView {
         id: bookmarkList
@@ -21,13 +21,13 @@ RowLayout {
         boundsBehavior: Flickable.StopAtBounds
         delegate: StatusButton {
             id: favoriteBtn
-            height: 32
+            height: 32 * scaleAction.factor
             icon.source: imageUrl
             disableColorOverlay: true
-            icon.width: 24
-            icon.height: 24
+            icon.width: 24 * scaleAction.factor
+            icon.height: 24 * scaleAction.factor
             text: name
-            implicitHeight: 32
+            implicitHeight: 32 * scaleAction.factor
             type: "secondary"
 
             MouseArea {

@@ -9,7 +9,7 @@ ModalPopup {
     id: popup
     //% "Your keys have been successfully recovered"
     title: qsTrId("your-keys-have-been-successfully-recovered")
-    height: 400
+    height: 400 * scaleAction.factor
 
     signal buttonClicked()
 
@@ -23,7 +23,7 @@ ModalPopup {
         anchors.rightMargin: Style.current.bigPadding
         //% "You will have to create a new code or password to re-encrypt your keys"
         text: qsTrId("recovery-success-text")
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         color: Style.current.secondaryText
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignHCenter
@@ -35,8 +35,8 @@ ModalPopup {
         anchors.top: info.bottom
         anchors.topMargin: Style.current.bigPadding
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 60
-        height: 60
+        width: 60 * scaleAction.factor
+        height: 60 * scaleAction.factor
     }
 
     StyledText {
@@ -46,7 +46,7 @@ ModalPopup {
         anchors.horizontalCenter: identicon.horizontalCenter
         text: onboardingModel.currentAccount.username
         font.weight: Font.Bold
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
     }
 
     Address {
@@ -54,7 +54,7 @@ ModalPopup {
         anchors.topMargin: Style.current.halfPadding
         anchors.horizontalCenter: username.horizontalCenter
         text: onboardingModel.currentAccount.address
-        width: 120
+        width: 120 * scaleAction.factor
     }
 
     footer: Item {

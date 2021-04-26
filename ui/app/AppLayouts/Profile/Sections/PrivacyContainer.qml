@@ -44,7 +44,7 @@ Item {
 
         Item {
             id: spacer1
-            height: Style.current.bigPadding
+            height: Style.current.bigPadding * scaleAction.factor
             width: parent.width
         }
 
@@ -79,7 +79,7 @@ Item {
             width: parent.width
             //% "All images (links that contain an image extension) will be downloaded and displayed, regardless of the whitelist settings below"
             text: qsTrId("all-images--links-that-contain-an-image-extension--will-be-downloaded-and-displayed--regardless-of-the-whitelist-settings-below")
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             font.weight: Font.Thin
             color: Style.current.secondaryText
             wrapMode: Text.WordWrap

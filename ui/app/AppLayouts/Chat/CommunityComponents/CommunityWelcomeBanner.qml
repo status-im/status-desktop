@@ -8,7 +8,7 @@ import "."
 
 Rectangle {
     id: root
-    height: visible ? 220 : 0
+    height: visible ? 220 * scaleAction.factor : 0
     anchors.left: parent.left
     anchors.leftMargin: Style.current.padding
     anchors.right: parent.right
@@ -22,8 +22,8 @@ Rectangle {
         anchors.topMargin: -6
         anchors.horizontalCenter: parent.horizontalCenter
         source: "../../../img/chatEmptyHeader.svg"
-        width: 66
-        height: 50
+        width: 66 * scaleAction.factor
+        height: 50 * scaleAction.factor
     }
 
     StatusIconButton {
@@ -33,8 +33,8 @@ Rectangle {
         anchors.topMargin: 10
         anchors.right: parent.right
         anchors.rightMargin: 10
-        icon.height: 20
-        icon.width: 20
+        icon.height: 20 * scaleAction.factor
+        icon.width: 20 * scaleAction.factor
         iconColor: Style.current.darkGrey
         onClicked: {
             let hiddenBannerIds = appSettings.hiddenCommunityWelcomeBanners
@@ -51,7 +51,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 60
         horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         wrapMode: Text.WordWrap
         anchors.right: parent.right
         anchors.rightMargin: Style.current.xlPadding

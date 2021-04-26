@@ -42,14 +42,14 @@ Item {
         anchors.leftMargin: 0
         anchors.top: parent.top
         anchors.topMargin: 0
-        font.pixelSize: 13
-        height: 18
+        font.pixelSize: 13 * scaleAction.factor
+        height: 18 * scaleAction.factor
     }
 
     Rectangle {
         property bool hovered: false
         id: inputRectangle
-        height: 56
+        height: 56 * scaleAction.factor
         color: hovered ? bgColorHover : bgColor
         radius: Style.current.radius
         anchors.top: root.hasLabel ? inputLabel.bottom : parent.top
@@ -66,8 +66,8 @@ Item {
 
         SVGImage {
             id: caret
-            width: 11
-            height: 6
+            width: 11 * scaleAction.factor
+            height: 6 * scaleAction.factor
             anchors.right: parent.right
             anchors.rightMargin: caretRightMargin
             anchors.verticalCenter: parent.verticalCenter
@@ -147,8 +147,8 @@ Item {
         anchors.topMargin: validationErrorTopMargin
         selectByMouse: true
         readOnly: true
-        font.pixelSize: 12
-        height: 16
+        font.pixelSize: 12 * scaleAction.factor
+        height: 16 * scaleAction.factor
         color: Style.current.danger
         width: parent.width
         horizontalAlignment: TextEdit.AlignRight

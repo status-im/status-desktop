@@ -29,7 +29,7 @@ Item {
         }
         color: text.startsWith("@") || isCurrentUser || localName !== "" ? Style.current.blue : Style.current.secondaryText
         font.weight: Font.Medium
-        font.pixelSize: Style.current.secondaryTextFontSize
+        font.pixelSize: Style.current.secondaryTextFontSize * scaleAction.factor
         font.underline: root.isHovered
         readOnly: true
         wrapMode: Text.WordWrap

@@ -12,8 +12,8 @@ ModalPopup {
     id: popup
     title: dapp
 
-    width: 400
-    height: 400
+    width: 400 * scaleAction.factor
+    height: 400 * scaleAction.factor
 
     Component.onCompleted: profileModel.dappList.permissionList.init(dapp)
     Component.onDestruction: profileModel.dappList.permissionList.clearData()
@@ -25,8 +25,6 @@ ModalPopup {
 
         ScrollView {
             anchors.fill: parent
-            Layout.fillWidth: true
-            Layout.fillHeight: true
 
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             ScrollBar.vertical.policy: permissionListView.contentHeight > permissionListView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff

@@ -26,8 +26,8 @@ PopupMenu {
     subMenuIcons: [
         {
             source: Qt.resolvedUrl("../../../../shared/img/copy-to-clipboard-icon"),
-            width: 16,
-            height: 16
+            width: 16 * scaleAction.factor,
+            height: 16 * scaleAction.factor
         }
     ]
 
@@ -83,7 +83,7 @@ PopupMenu {
 
         id: profileHeader
         visible: messageContextMenu.isProfile
-        width: 200
+        width: 200 * scaleAction.factor
         height: visible ? profileImage.height + username.height + Style.current.padding : 0
         color: hovered ? Style.current.backgroundHover : Style.current.transparent
 
@@ -109,7 +109,7 @@ PopupMenu {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
             font.weight: Font.Medium
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
         }
 
         MouseArea {
@@ -142,8 +142,8 @@ PopupMenu {
             messageContextMenu.close()
         }
         icon.source: "../../../../shared/img/copy-to-clipboard-icon"
-        icon.width: 16
-        icon.height: 16
+        icon.width: 16 * scaleAction.factor
+        icon.height: 16 * scaleAction.factor
         enabled: false
     }
 
@@ -170,8 +170,8 @@ PopupMenu {
                     elide: Text.ElideRight
                 }
                 background: Rectangle {
-                    implicitWidth: 220
-                    implicitHeight: 34
+                    implicitWidth: 220 * scaleAction.factor
+                    implicitHeight: 34 * scaleAction.factor
                     color: popupMenuItem.highlighted ? Style.current.backgroundHover: Style.current.transparent
                 }
             }
@@ -187,8 +187,8 @@ PopupMenu {
             messageContextMenu.close()
         }
         icon.source: "../../../img/profileActive.svg"
-        icon.width: 16
-        icon.height: 16
+        icon.width: 16 * scaleAction.factor
+        icon.height: 16 * scaleAction.factor
         enabled: !emojiOnly && !copyLinkAction.enabled
     }
     Action {
@@ -207,8 +207,8 @@ PopupMenu {
             messageContextMenu.close()
         }
         icon.source: "../../../img/messageActive.svg"
-        icon.width: 16
-        icon.height: 16
+        icon.width: 16 * scaleAction.factor
+        icon.height: 16 * scaleAction.factor
         enabled: !isSticker && !emojiOnly
     }
 }

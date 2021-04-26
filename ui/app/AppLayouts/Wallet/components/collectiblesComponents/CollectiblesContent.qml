@@ -7,7 +7,7 @@ import "../../../../../shared"
 import "../../../../../shared/status"
 
 ScrollView {
-    readonly property int imageSize: 164
+    readonly property int imageSize: 164 * scaleAction.factor
     property var collectiblesModal
     property string buttonText: "View in Cryptokitties"
     property var getLink: function () {}
@@ -47,7 +47,7 @@ ScrollView {
                     text: qsTrId("something-went-wrong")
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: Style.current.secondaryText
-                    font.pixelSize: 13
+                    font.pixelSize: 13 * scaleAction.factor
                 }
 
                 StatusButton {

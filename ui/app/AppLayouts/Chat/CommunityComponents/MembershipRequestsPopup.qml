@@ -13,7 +13,7 @@ ModalPopup {
     }
 
     header: Item {
-        height: 60
+        height: 60 * scaleAction.factor
         width: parent.width
 
         StyledText {
@@ -23,18 +23,18 @@ ModalPopup {
             anchors.topMargin: 2
             anchors.left: parent.left
             font.bold: true
-            font.pixelSize: 17
+            font.pixelSize: 17 * scaleAction.factor
             wrapMode: Text.WordWrap
         }
 
         StyledText {
             id: nbRequestsText
             text: membershipRequestList.count
-            width: 160
+            width: 160 * scaleAction.factor
             anchors.left: titleText.left
             anchors.top: titleText.bottom
             anchors.topMargin: 2
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             color: Style.current.darkGrey
         }
 
@@ -60,6 +60,7 @@ ModalPopup {
             wrapMode: Text.Wrap
             anchors.topMargin: visible ? Style.current.smallPadding : 0
             width: parent.width
+            scale: scaleAction.factor
         }
 
         ListView {
@@ -81,13 +82,13 @@ ModalPopup {
                 property string displayName: Utils.getDisplayName(publicKey, contactIndex)
 
                 id: requestLine
-                height: 52
+                height: 52 * scaleAction.factor
                 width: parent.width
 
                 StatusImageIdenticon {
                     id: accountImage
-                    width: 36
-                    height: 36
+                    width: 36 * scaleAction.factor
+                    height: 36 * scaleAction.factor
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     source: requestLine.profileImage
@@ -102,7 +103,7 @@ ModalPopup {
                     anchors.right: thumbsUp.left
                     anchors.rightMargin: Style.current.padding
                     anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 15
+                    font.pixelSize: 15 * scaleAction.factor
                     color: Style.current.darkGrey
                 }
 
@@ -113,7 +114,7 @@ ModalPopup {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: thumbsDown.left
                     anchors.rightMargin: Style.current.padding
-                    width: 28
+                    width: 28 * scaleAction.factor
 
                     MouseArea {
                         anchors.fill: parent
@@ -135,7 +136,7 @@ ModalPopup {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
                     anchors.rightMargin: Style.current.padding
-                    width: 28
+                    width: 28 * scaleAction.factor
 
                     MouseArea {
                         anchors.fill: parent
@@ -158,8 +159,8 @@ ModalPopup {
         id: btnBack
         anchors.left: parent.left
         icon.name: "arrow-right"
-        icon.width: 20
-        icon.height: 16
+        icon.width: 20 * scaleAction.factor
+        icon.height: 16 * scaleAction.factor
         rotation: 180
         onClicked: popup.close()
     }

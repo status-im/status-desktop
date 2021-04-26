@@ -16,11 +16,11 @@ RoundButton {
     property color disabledColor: iconColor
     property int iconRotation: 0
 
-    implicitHeight: 32
-    implicitWidth: 32
+    implicitHeight: 32 * scaleAction.factor
+    implicitWidth: 32 * scaleAction.factor
 
-    icon.height: 20
-    icon.width: 20
+    icon.height: 20 * scaleAction.factor
+    icon.width: 20 * scaleAction.factor
     icon.color: {
         if (!enabled) {
             return control.disabledColor

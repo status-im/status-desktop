@@ -12,19 +12,19 @@ RoundButton {
     property alias iconX: iconImg.x
     id: control
 
-    font.pixelSize: 15
+    font.pixelSize: 15 * scaleAction.factor
     font.weight: Font.Medium
 
     implicitWidth: {
         switch(size) {
             case "large":
-                return 44
+                return 44 * scaleAction.factor
             case "medium":
-                return 40
+                return 40 * scaleAction.factor
             case "small":
-                return 32
+                return 32 * scaleAction.factor
             default:
-                return 44
+                return 44 * scaleAction.factor
         }
     }
     implicitHeight: implicitWidth
@@ -95,25 +95,25 @@ RoundButton {
     icon.height: {
         switch(size) {
             case "large":
-                return 20
+                return 20 * scaleAction.factor
             case "medium":
-                return 14
+                return 14 * scaleAction.factor
             case "small":
-                return 12
+                return 12 * scaleAction.factor
             default:
-                return 20
+                return 20 * scaleAction.factor
         }
     }
     icon.width: {
         switch(size) {
             case "large":
-                return 20
+                return 20 * scaleAction.factor
             case "medium":
-                return 14
+                return 14 * scaleAction.factor
             case "small":
-                return 12
+                return 12 * scaleAction.factor
             default:
-                return 20
+                return 20 * scaleAction.factor
         }
     }
     icon.color: type === "secondary" ?

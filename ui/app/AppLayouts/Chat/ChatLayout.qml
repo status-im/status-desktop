@@ -29,7 +29,7 @@ SplitView {
 
     Loader {
         id: contactColumnLoader
-        SplitView.preferredWidth: Style.current.leftTabPreferredSize
+        SplitView.preferredWidth: Style.current.leftTabPreferredSize * scaleAction.factor
         sourceComponent: appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
     }
 
@@ -74,7 +74,7 @@ SplitView {
 
     property Component profilePopupComponent: ProfilePopup {
         id: profilePopup
-        height: 504
+        height: 504 * scaleAction.factor
         onClosed: {
             if(profilePopup.parentPopup){
                 profilePopup.parentPopup.close();

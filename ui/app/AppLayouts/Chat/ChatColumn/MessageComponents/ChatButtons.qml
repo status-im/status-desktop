@@ -13,7 +13,7 @@ Rectangle {
     id: buttonsContainer
     visible: (buttonsContainer.parentIsHovered || isMessageActive) && contentType != Constants.transactionType
     width: buttonRow.width + buttonsContainer.containerMargin * 2
-    height: 36
+    height: 36 * scaleAction.factor
     radius: Style.current.radius
     color: Style.current.modalBackground
     z: 52
@@ -56,8 +56,8 @@ Rectangle {
         StatusIconButton {
             id: emojiBtn
             icon.name: "emoji"
-            width: 32
-            height: 32
+            width: 32 * scaleAction.factor
+            height: 32 * scaleAction.factor
             onClicked: {
                 setMessageActive(messageId, true)
                 clickMessage(false, false, false, null, true)
@@ -80,8 +80,8 @@ Rectangle {
         StatusIconButton {
             id: replyBtn
             icon.name: "reply"
-            width: 32
-            height: 32
+            width: 32 * scaleAction.factor
+            height: 32 * scaleAction.factor
             onClicked: {
                 SelectedMessage.set(messageId, fromAuthor);
                 showReplyArea()

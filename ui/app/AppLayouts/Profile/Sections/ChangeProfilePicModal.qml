@@ -31,8 +31,8 @@ ModalPopup {
         RoundedImage {
             id: profilePic
             source: profileModel.profile.largeImage
-            width: 160
-            height: 160
+            width: 160 * scaleAction.factor
+            height: 160 * scaleAction.factor
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             border.width: 1
@@ -47,7 +47,7 @@ ModalPopup {
             anchors.right: parent.right
             anchors.top: profilePic.bottom
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: 13
+            font.pixelSize: 13 * scaleAction.factor
             wrapMode: Text.WordWrap
             anchors.topMargin: 13
             font.weight: Font.Thin

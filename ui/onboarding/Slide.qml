@@ -17,6 +17,7 @@ Item {
         anchors.topMargin: 17
         fillMode: Image.PreserveAspectFit
         source: image
+        scale: scaleAction.factor
     }
 
     StyledText {
@@ -35,14 +36,14 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         transformOrigin: Item.Center
         font.bold: true
-        font.pixelSize: 22
+        font.pixelSize: 22 * scaleAction.factor
         font.kerning: true
     }
 
     Button {
         id: btnPrevious1
-        width: 40
-        height: 40
+        width: 40 * scaleAction.factor
+        height: 40 * scaleAction.factor
         anchors.top: txtDesc1.top
         anchors.bottomMargin: -2
         anchors.bottom: txtDesc1.bottom
@@ -61,8 +62,8 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 source: "img/next.svg"
-                width: 10
-                height: 10
+                width: 10 * scaleAction.factor
+                height: 10 * scaleAction.factor
                 mirror: true
             }
         }
@@ -80,13 +81,13 @@ Item {
         anchors.topMargin: 14
         font.bold: true
         anchors.horizontalCenter: parent.horizontalCenter
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
     }
 
     Button {
         id: btnNext1
-        width: 40
-        height: 40
+        width: 40 * scaleAction.factor
+        height: 40 * scaleAction.factor
         anchors.top: txtDesc1.top
         anchors.bottomMargin: -2
         anchors.bottom: txtDesc1.bottom
@@ -105,8 +106,8 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 source: "img/next.svg"
-                width: 10
-                height: 10
+                width: 10 * scaleAction.factor
+                height: 10 * scaleAction.factor
             }
         }
     }

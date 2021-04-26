@@ -20,7 +20,8 @@ Rectangle {
 
     SVGImage {
         id: reactionImage
-        width: 32
+        width: 32 * scaleAction.factor
+        height: width
         fillMode: Image.PreserveAspectFit
         anchors.centerIn: parent
     }

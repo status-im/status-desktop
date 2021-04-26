@@ -8,7 +8,7 @@ Item {
     id: root
     property var sources: []
     property var selectedSource: sources.length ? sources[0] : null
-    property int dropdownWidth: 220
+    property int dropdownWidth: 220 * scaleAction.factor
     height: select.height
 
     Select {
@@ -25,9 +25,9 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 verticalAlignment: Text.AlignVCenter
-                height: 24
+                height: 24 * scaleAction.factor
             }
         }
         menu.width: dropdownWidth
@@ -36,7 +36,7 @@ Item {
         menu.delegate: Component {
             MenuItem {
                 id: menuItem
-                height: 40
+                height: 40 * scaleAction.factor
                 width: parent.width
                 onTriggered: function () {
                     root.selectedSource = root.sources[index]
@@ -48,8 +48,8 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: Style.current.padding
                     anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 15
-                    height: 22
+                    font.pixelSize: 15 * scaleAction.factor
+                    height: 22 * scaleAction.factor
                     color: menuItem.highlighted ? Style.current.primaryMenuItemTextHover : Style.current.textColor
                 }
                 background: Rectangle {

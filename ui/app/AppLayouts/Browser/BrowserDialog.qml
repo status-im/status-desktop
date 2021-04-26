@@ -64,6 +64,8 @@ Window {
         id: webView
         anchors.fill: parent
 
+        scale: scaleAction.factor
+
         onGeometryChangeRequested: function(geometry) {
             window.x = geometry.x
             window.y = geometry.y

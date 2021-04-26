@@ -26,7 +26,7 @@ Rectangle {
 
     id: root
     visible: isVisible && (isContact || isUser)
-    height: visible ? 64 : 0
+    height: visible ? 64 * scaleAction.factor : 0
     anchors.right: parent.right
     anchors.left: parent.left
     border.width: 0
@@ -47,7 +47,7 @@ Rectangle {
         elide: Text.ElideRight
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        font.pixelSize: 17
+        font.pixelSize: 17 * scaleAction.factor
         anchors.top: accountImage.top
         anchors.topMargin: 10
         anchors.left: accountImage.right
@@ -74,7 +74,7 @@ Rectangle {
         text: qsTrId("group-chat-admin")
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         color: Style.current.darkGrey
         anchors.top: accountImage.top
         anchors.topMargin: 10

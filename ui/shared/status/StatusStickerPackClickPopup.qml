@@ -34,7 +34,7 @@ ModalPopup {
         pending = chatsModel.stickers.stickerPacks.rowData(idx, "pending") === "true"
     }
 
-    height: 472
+    height: 472 * scaleAction.factor
     header: StatusStickerPackDetails {
         id: stickerGrid
         packThumb: thumbnail
@@ -67,7 +67,7 @@ ModalPopup {
     }
 
     footer: StatusStickerButton {
-        height: 44
+        height: 44 * scaleAction.factor
         anchors.right: parent.right
         style: StatusStickerButton.StyleType.LargeNoIcon
         packPrice: price

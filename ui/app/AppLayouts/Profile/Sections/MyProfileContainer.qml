@@ -37,8 +37,8 @@ Item {
 
             RoundedImage {
                 id: profileImg
-                width: 64
-                height: 64
+                width: 64 * scaleAction.factor
+                height: 64 * scaleAction.factor
                 border.width: 1
                 border.color: Style.current.border
                 source: profileModel.profile.thumbnailImage || ""
@@ -52,8 +52,8 @@ Item {
                 anchors.bottomMargin: -3
                 anchors.right: parent.right
                 anchors.rightMargin: -3
-                width: 24
-                height: 24
+                width: 24 * scaleAction.factor
+                height: 24 * scaleAction.factor
                 border.width: 1
                 border.color: Style.current.background
             }
@@ -76,7 +76,7 @@ Item {
             anchors.top: profileImgContainer.top
             anchors.topMargin: 4
             font.weight: Font.Bold
-            font.pixelSize: 20
+            font.pixelSize: 20 * scaleAction.factor
         }
 
         Address {
@@ -85,15 +85,15 @@ Item {
             anchors.bottom: profileImgContainer.bottom
             anchors.left: profileName.left
             anchors.bottomMargin: 4
-            width: 200
-            font.pixelSize: 15
+            width: 200 * scaleAction.factor
+            font.pixelSize: 15 * scaleAction.factor
         }
 
         StatusIconButton {
             id: qrCodeButton
             anchors.right: parent.right
-            height: 32
-            width: 32
+            height: 32 * scaleAction.factor
+            width: 32 * scaleAction.factor
             radius: 8
             anchors.verticalCenter: profileImgContainer.verticalCenter
             icon.name: "qr-code-icon"
@@ -113,8 +113,8 @@ Item {
 
     ModalPopup {
         id: qrCodePopup
-        width: 420
-        height: 420
+        width: 420 * scaleAction.factor
+        height: 420 * scaleAction.factor
         Image {
             asynchronous: true
             fillMode: Image.PreserveAspectFit
@@ -122,8 +122,8 @@ Item {
             anchors.verticalCenterOffset: 20
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            height: 312
-            width: 312
+            height: 312 * scaleAction.factor
+            width: 312 * scaleAction.factor
             mipmap: true
             smooth: false
         }

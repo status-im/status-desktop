@@ -13,12 +13,12 @@ Rectangle {
     id: membershipRequestsBtn
     visible: nbRequests > 0
     width: parent.width
-    height: visible ? 52 : 0
+    height: visible ? 52 * scaleAction.factor : 0
     color: Style.current.secondaryBackground
 
     StyledText {
         text: qsTr("Membership requests")
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
@@ -30,11 +30,11 @@ Rectangle {
         anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
         color: Style.current.blue
-        width: 22
-        height: 22
+        width: 22 * scaleAction.factor
+        height: 22 * scaleAction.factor
         radius: width / 2
         Text {
-            font.pixelSize: 12
+            font.pixelSize: 12 * scaleAction.factor
             color: Style.current.white
             anchors.centerIn: parent
             text: membershipRequestsBtn.nbRequests.toString()
@@ -49,8 +49,8 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
-        width: 13
-        height: 7
+        width: 13 * scaleAction.factor
+        height: 7 * scaleAction.factor
 
         ColorOverlay {
             anchors.fill: parent

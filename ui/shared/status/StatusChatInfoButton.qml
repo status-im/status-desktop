@@ -15,7 +15,7 @@ Button {
     property bool isCompact: false
     property bool muted: false
 
-    implicitHeight: 48
+    implicitHeight: 48 * scaleAction.factor
     implicitWidth: content.width + 8
     leftPadding: 4
     rightPadding: 4

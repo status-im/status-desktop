@@ -7,10 +7,10 @@ import "../../shared"
 Button {
     id: control
     property int iconRotation: 0
-    implicitWidth: 168
-    implicitHeight: 95
-    icon.width: 12
-    icon.height: 12
+    implicitWidth: 168 * scaleAction.factor
+    implicitHeight: 95 * scaleAction.factor
+    icon.width: 12 * scaleAction.factor
+    icon.height: 12 * scaleAction.factor
 
     onIconChanged: {
         icon.source = icon.name ? "../../app/img/" + icon.name + ".svg" : ""
@@ -20,8 +20,8 @@ Button {
         anchors.fill: parent
         Rectangle {
             radius: 50
-            width: 40
-            height: 40
+            width: 40 * scaleAction.factor
+            height: 40 * scaleAction.factor
             color: control.icon.color
             anchors.top: parent.top
             anchors.topMargin: Style.current.smallPadding
@@ -55,7 +55,7 @@ Button {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: Style.current.smallPadding
             font.weight: Font.Medium
-            font.pixelSize: 13
+            font.pixelSize: 13 * scaleAction.factor
         }
     }
     background: Rectangle {

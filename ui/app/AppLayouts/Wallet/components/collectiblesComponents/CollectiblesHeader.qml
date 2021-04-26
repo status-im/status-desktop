@@ -12,7 +12,7 @@ Rectangle {
     property int collectiblesQty: 6
 
     id: collectibleHeader
-    height: 64
+    height: 64 * scaleAction.factor
     width: parent.width
     color: hovered ? Style.current.backgroundHover : Style.current.transparent
     border.width: 0
@@ -21,8 +21,8 @@ Rectangle {
     Image {
         id: collectibleIconImage
         source: collectibleHeader.collectibleIconSource
-        width: 40
-        height: 40
+        width: 40 * scaleAction.factor
+        height: 40 * scaleAction.factor
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
@@ -34,14 +34,14 @@ Rectangle {
         anchors.left: collectibleIconImage.right
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: 17
+        font.pixelSize: 17 * scaleAction.factor
     }
 
     StyledText {
         visible: collectiblesQty >= Constants.maxTokens
         //% "Maximum number of collectibles to display reached"
         text: qsTrId("maximum-number-of-collectibles-to-display-reached")
-        font.pixelSize: 17
+        font.pixelSize: 17 * scaleAction.factor
         color: Style.current.secondaryText
         anchors.left: collectibleName.right
         anchors.leftMargin: Style.current.padding
@@ -75,7 +75,7 @@ Rectangle {
                 id: numberCollectibleText
                 color: Style.current.secondaryText
                 text: !!error ? "-" : collectibleHeader.collectiblesQty
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -83,7 +83,8 @@ Rectangle {
                 id: caretImg
                 anchors.verticalCenter: parent.verticalCenter
                 source: "../../../../img/caret.svg"
-                width: 11
+                width: 11 * scaleAction.factor
+                height: width
                 anchors.left: numberCollectibleText.right
                 anchors.leftMargin: Style.current.padding
                 fillMode: Image.PreserveAspectFit

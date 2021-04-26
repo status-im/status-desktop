@@ -10,7 +10,7 @@ ModalPopup {
 
     //% "Download Status link"
     title: qsTrId("download-status-link")
-    height: 156
+    height: 156 * scaleAction.factor
 
     StyledText {
         id: linkText

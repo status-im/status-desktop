@@ -12,7 +12,7 @@ Item {
     property string headerTitle: ""
     property string headerDescription: ""
     property string headerImageSource: ""
-    height: 300
+    height: 300 * scaleAction.factor
 
     CommunityPopupButton {
         id: inviteBtn
@@ -23,7 +23,7 @@ Item {
         type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
         iconName: "invite"
         onClicked: stack.push(inviteFriendsView)
-        height: visible ? 64 : 0
+        height: visible ? 64 * scaleAction.factor : 0
     }
 
     Separator {
@@ -42,10 +42,10 @@ Item {
         text: qsTr("Membership requests")
         badgeText: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests.toString()
         visible: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests > 0
-        badgeSize: 22
+        badgeSize: 22 * scaleAction.factor
         badgeRadius: badgeSize / 2
         isBadge: true
-        height: 64
+        height: 64 * scaleAction.factor
         anchors.top: sep.bottom
         anchors.topMargin: visible ? Style.current.smallPadding : 0
         anchors.leftMargin: 0
@@ -77,7 +77,7 @@ Item {
         delegate: Rectangle {
             id: contactRow
             width: parent.width
-            height: 64
+            height: 64 * scaleAction.factor
             radius: Style.current.radius
             color: isHovered ? Style.current.backgroundHover : Style.current.transparent
 
@@ -100,7 +100,7 @@ Item {
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.smallPadding
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
             }
 
             MouseArea {
@@ -135,8 +135,8 @@ Item {
                         id: contextMenu
                         Action {
                             icon.source: "../../../img/communities/menu/view-profile.svg"
-                            icon.width: 16
-                            icon.height: 16
+                            icon.width: 16 * scaleAction.factor
+                            icon.height: 16 * scaleAction.factor
                             //% "View Profile"
                             text: qsTrId("view-profile")
                             onTriggered: openProfilePopup(model.userName, model.pubKey, model.identicon, '', contactRow.nickname)
@@ -150,13 +150,13 @@ Item {
                         /*     onTriggered: console.log("TODO") */
                         /* } */
                         Separator {
-                            height: 10
+                            height: 10 * scaleAction.factor
                         }
                         Action {
                             property string type: "danger"
                             icon.source: "../../../img/communities/menu/kick.svg"
-                            icon.width: 16
-                            icon.height: 16
+                            icon.width: 16 * scaleAction.factor
+                            icon.height: 16 * scaleAction.factor
                             icon.color: Style.current.red
                             //% "Kick"
                             text: qsTrId("kick")

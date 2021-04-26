@@ -9,12 +9,13 @@ ModalPopup {
     id: popup
     //% "Enter seed phrase"
     title: qsTrId("enter-seed-phrase")
-    height: 200
+    height: 200 * scaleAction.factor
 
     StyledText {
         text: "Do you want to add another existing key?"
         anchors.left: parent.left
         anchors.top: parent.top
+        scale: scaleAction.factor
     }
 
     footer: StatusButton {

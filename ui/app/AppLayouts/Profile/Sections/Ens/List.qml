@@ -41,6 +41,7 @@ Item {
                     //% "(pending)"
                     text: username.substr(0, username.indexOf(".")) + " " + (isPending ? qsTrId("-pending-") : "")
                     color: Style.current.textColor
+                    scale: scaleAction.factor
                 }
 
                 Text {
@@ -49,6 +50,7 @@ Item {
                     anchors.topMargin: 2
                     text: username.substr(username.indexOf("."))
                     color: Style.current.darkGrey
+                    scale: scaleAction.factor
                 }
             }
         }
@@ -60,7 +62,7 @@ Item {
                     id: usernameTxt
                     //% "(pending)"
                     text: username  + " " + (isPending ? qsTrId("-pending-") : "")
-                    font.pixelSize: 16
+                    font.pixelSize: 16 * scaleAction.factor
                     color: Style.current.textColor
                     anchors.top: parent.top
                     anchors.topMargin: 5
@@ -71,7 +73,7 @@ Item {
         Component {
             id: ensDelegate
             Item {
-                height: 45
+                height: 45 * scaleAction.factor
                 anchors.left: parent.left
                 anchors.right: parent.right
 
@@ -83,8 +85,8 @@ Item {
 
                 Rectangle {
                     id: circle
-                    width: 35
-                    height: 35
+                    width: 35 * scaleAction.factor
+                    height: 35 * scaleAction.factor
                     radius: 35
                     color: Style.current.blue
 
@@ -92,7 +94,7 @@ Item {
                         text: "@"
                         opacity: 0.7
                         font.weight: Font.Bold
-                        font.pixelSize: 16
+                        font.pixelSize: 16 * scaleAction.factor
                         color: Style.current.white
                         anchors.centerIn: parent
                         verticalAlignment: Text.AlignVCenter
@@ -124,7 +126,7 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: 24
             font.weight: Font.Bold
-            font.pixelSize: 20
+            font.pixelSize: 20 * scaleAction.factor
         }
 
         Item {
@@ -150,7 +152,7 @@ Item {
                 anchors.left: addButton.right
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: addButton.verticalCenter
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
             }
 
             MouseArea {
@@ -168,7 +170,7 @@ Item {
             anchors.left: parent.left
             anchors.top: addUsername.bottom
             anchors.topMargin: 24
-            font.pixelSize: 16
+            font.pixelSize: 16 * scaleAction.factor
         }
 
         Item {
@@ -212,7 +214,7 @@ Item {
             anchors.left: parent.left
             anchors.top: ensList.bottom
             anchors.topMargin: 24
-            font.pixelSize: 16
+            font.pixelSize: 16 * scaleAction.factor
         }
 
         Item {
@@ -229,7 +231,7 @@ Item {
                 visible: chatSettingsLabel.visible
                 //% "Primary Username"
                 text: qsTrId("primary-username")
-                font.pixelSize: 14
+                font.pixelSize: 14 * scaleAction.factor
                 font.weight: Font.Bold
             }
 
@@ -240,7 +242,7 @@ Item {
                 text: profileModel.ens.preferredUsername || qsTrId("none-selected")
                 anchors.left: usernameLabel.right
                 anchors.leftMargin: Style.current.padding
-                font.pixelSize: 14
+                font.pixelSize: 14 * scaleAction.factor
             }
 
             MouseArea {
@@ -279,8 +281,8 @@ Item {
                 property int chatHorizontalPadding: 12
                 id: chatBox
                 color: Style.current.secondaryBackground
-                height: 35
-                width:  80
+                height: 35 * scaleAction.factor
+                width:  80 * scaleAction.factor
                 radius: 16
                 anchors.left: chatImage.right
                 anchors.leftMargin: 8
@@ -314,7 +316,7 @@ Item {
                 anchors.topMargin: Style.current.padding
                 //% "You’re displaying your ENS username in chats"
                 text: qsTrId("you-re-displaying-your-ens-username-in-chats")
-                font.pixelSize: 14
+                font.pixelSize: 14 * scaleAction.factor
                 color: Style.current.secondaryText
             }
 

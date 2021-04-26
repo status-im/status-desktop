@@ -69,12 +69,12 @@ Item {
         textField.topPadding: 18
         textField.bottomPadding: 18
         textField.verticalAlignment: TextField.AlignVCenter
-        textField.font.pixelSize: 15
+        textField.font.pixelSize: 15 * scaleAction.factor
         textField.color: Style.current.secondaryText
         readOnly: true
         validationErrorAlignment: TextEdit.AlignRight
         validationErrorTopMargin: 8
-        customHeight: 56
+        customHeight: 56 * scaleAction.factor
     }
 
     Select {
@@ -91,8 +91,8 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.verticalCenter: parent.verticalCenter
-                height: 32
-                width: (!!selectedContact && !!selectedContact.identicon) ? 32 : 0
+                height: 32 * scaleAction.factor
+                width: (!!selectedContact && !!selectedContact.identicon) ? 32 * scaleAction.factor : 0
                 visible: !!selectedContact && !!selectedContact.identicon
                 source: (!!selectedContact && !!selectedContact.identicon) ? selectedContact.identicon : ""
             }
@@ -103,21 +103,21 @@ Item {
                 anchors.left: iconImg.right
                 anchors.leftMargin: 4
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 15
-                height: 22
+                font.pixelSize: 15 * scaleAction.factor
+                height: 22 * scaleAction.factor
                 verticalAlignment: Text.AlignVCenter
             }
         }
         zeroItemsView: Item {
-            height: 186
+            height: 186 * scaleAction.factor
             StyledText {
                 anchors.fill: parent
                 //% "You don’t have any contacts yet"
                 text: qsTrId("you-don-t-have-any-contacts-yet")
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 13
-                height: 18
+                font.pixelSize: 13 * scaleAction.factor
+                height: 18 * scaleAction.factor
                 color: Style.current.secondaryText
             }
         }
@@ -153,7 +153,7 @@ Item {
             property bool isLastItem: index === contacts.rowCount() - 1
 
             width: parent.width
-            height: visible ? 72 : 0
+            height: visible ? 72 * scaleAction.factor : 0
             StatusImageIdenticon {
                 id: iconImg
                 anchors.left: parent.left
@@ -168,11 +168,11 @@ Item {
 
                 Text {
                     text: name
-                    font.pixelSize: 15
+                    font.pixelSize: 15 * scaleAction.factor
                     font.family: Style.current.fontRegular.name
                     font.weight: Font.Medium
                     color: Style.current.textColor
-                    height: 22
+                    height: 22 * scaleAction.factor
                 }
 
                 Row {
@@ -180,16 +180,16 @@ Item {
                       text: alias + " • "
                       visible: ensVerified
                       color: Style.current.secondaryText
-                      font.pixelSize: 12
-                      height: 16
+                      font.pixelSize: 12 * scaleAction.factor
+                      height: 16 * scaleAction.factor
                     }
                     StyledText {
                         text: address
-                        width: 85
+                        width: 85 * scaleAction.factor
                         elide: Text.ElideMiddle
                         color: Style.current.secondaryText
-                        font.pixelSize: 12
-                        height: 16
+                        font.pixelSize: 12 * scaleAction.factor
+                        height: 16 * scaleAction.factor
                     }
                 }
             }

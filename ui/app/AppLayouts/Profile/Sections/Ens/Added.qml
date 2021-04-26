@@ -18,7 +18,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: 20
+        font.pixelSize: 20 * scaleAction.factor
     }
 
 
@@ -27,8 +27,8 @@ Item {
         anchors.top: sectionTitle.bottom
         anchors.topMargin: 24
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 60
-        height: 60
+        width: 60 * scaleAction.factor
+        height: 60 * scaleAction.factor
         radius: 120
         color: Style.current.blue
 
@@ -36,7 +36,7 @@ Item {
             text: "✓"
             opacity: 0.7
             font.weight: Font.Bold
-            font.pixelSize: 18
+            font.pixelSize: 18 * scaleAction.factor
             color: Style.current.white
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -50,7 +50,7 @@ Item {
         anchors.top: circle.bottom
         anchors.topMargin: 24
         font.weight: Font.Bold
-        font.pixelSize: 24
+        font.pixelSize: 24 * scaleAction.factor
         anchors.left: parent.left
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter
@@ -63,7 +63,7 @@ Item {
         text: qsTrId("-1-is-now-connected-with-your-chat-key-and-can-be-used-in-status-").arg(ensUsername)
         anchors.top: title.bottom
         anchors.topMargin: 24
-        font.pixelSize: 14
+        font.pixelSize: 14 * scaleAction.factor
         anchors.left: parent.left
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter

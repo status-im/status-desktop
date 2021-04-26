@@ -139,7 +139,7 @@ ScrollView {
                     text: qsTrId("setting-this-to-false-will-instead-use-status--notification-style-as-seen-below")
                     color: Style.current.secondaryText
                     width: parent.width
-                    font.pixelSize: 12
+                    font.pixelSize: 12 * scaleAction.factor
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.leftMargin: Style.current.padding
@@ -160,7 +160,7 @@ ScrollView {
             StyledText {
                 //% "Message preview"
                 text: qsTrId("message-preview")
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 anchors.left: parent.left
                 anchors.right: parent.right
             }
@@ -220,7 +220,7 @@ ScrollView {
             StyledText {
                 //% "No preview or Advanced? Go to Notification Center"
                 text: qsTrId("no-preview-or-advanced--go-to-notification-center")
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 anchors.left: parent.left
             }
         }
@@ -233,6 +233,7 @@ ScrollView {
             anchors.leftMargin: -Style.current.padding
             anchors.right: parent.right
             anchors.rightMargin: -Style.current.padding
+            scale: scaleAction.factor
         }
 
         StatusSectionHeadline {
@@ -298,7 +299,7 @@ ScrollView {
                     text: qsTrId("you-can-limit-what-gets-shown-in-notifications")
                     color: Style.current.secondaryText
                     width: parent.width
-                    font.pixelSize: 12
+                    font.pixelSize: 12 * scaleAction.factor
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.leftMargin: Style.current.padding
@@ -316,6 +317,7 @@ ScrollView {
             anchors.leftMargin: -Style.current.padding
             anchors.right: parent.right
             anchors.rightMargin: -Style.current.padding
+            scale: scaleAction.factor
         }
 
         Column {
@@ -330,7 +332,7 @@ ScrollView {
             StyledText {
                 //% "Reset notification settings"
                 text: qsTrId("reset-notification-settings")
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 color: Style.current.danger
                 MouseArea {
                     anchors.fill: parent
@@ -354,7 +356,7 @@ ScrollView {
             StyledText {
                 //% "Restore default notification settings and unmute all chats and users"
                 text: qsTrId("restore-default-notification-settings-and-unmute-all-chats-and-users")
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 color: Style.current.secondaryText
             }
         }

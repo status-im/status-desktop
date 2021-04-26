@@ -13,8 +13,8 @@ Popup {
     property var getImageComponent
     property var getText: function () {}
     property var onClicked: function () {}
-    property int imageWidth: 22
-    property int imageHeight: 22
+    property int imageWidth: 22 * scaleAction.factor
+    property int imageHeight: 22 * scaleAction.factor
     property string title
     property bool showSearchBox: false
 
@@ -74,7 +74,7 @@ Popup {
         visible: !!popup.title
         height: visible ? implicitHeight : 0
         text: popup.title
-        font.pixelSize: 17
+        font.pixelSize: 17 * scaleAction.factor
         anchors.top: parent.top
     }
 
@@ -146,7 +146,7 @@ Popup {
             color: listView.currentIndex === index ? Style.current.backgroundHover : Style.current.transparent
             border.width: 0
             width: parent.width
-            height: visible ? 42 : 0
+            height: visible ? 42 * scaleAction.factor : 0
             radius: Style.current.radius
 
             Loader {
@@ -200,7 +200,7 @@ Popup {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: imageLoader.right
                 anchors.leftMargin: Style.current.smallPadding
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
             }
 
             MouseArea {

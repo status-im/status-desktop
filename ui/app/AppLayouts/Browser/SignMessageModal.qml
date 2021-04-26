@@ -96,8 +96,8 @@ ModalPopup {
                     anchors.verticalCenter: parent.verticalCenter
 
                     StyledText {
-                        font.pixelSize: 15
-                        height: 22
+                        font.pixelSize: 15 * scaleAction.factor
+                        height: 22 * scaleAction.factor
                         text: selectedAccount.name
                         elide: Text.ElideRight
                         anchors.verticalCenter: parent.verticalCenter
@@ -106,8 +106,8 @@ ModalPopup {
                     }
                     SVGImage {
                         id: imgFromWallet
-                        sourceSize.height: 18
-                        sourceSize.width: 18
+                        sourceSize.height: 18 * scaleAction.factor
+                        sourceSize.width: 18 * scaleAction.factor
                         visible: true
                         horizontalAlignment: Image.AlignLeft
                         width: undefined
@@ -136,19 +136,20 @@ ModalPopup {
                     id: messagePopup
                     //% "Message"
                     title: qsTrId("message")
-                    height: 286
-                    width: 400
+                    height: 286 * scaleAction.factor
+                    width: 400 * scaleAction.factor
                     Item {
                         anchors.fill: parent
                         anchors.leftMargin: Style.current.padding
                         anchors.rightMargin: Style.current.padding
                         ScrollView {
                             width: parent.width
-                            height: 150
+                            height: 150 * scaleAction.factor
                             TextArea {
                                 wrapMode: TextEdit.Wrap
                                 readOnly: true
                                 text: messageToSign()
+                                scale: scaleAction.factor
                             }
                         }
                     }
@@ -160,9 +161,9 @@ ModalPopup {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     StyledText {
-                        width: 250
-                        font.pixelSize: 15
-                        height: 22
+                        width: 250 * scaleAction.factor
+                        font.pixelSize: 15 * scaleAction.factor
+                        height: 22 * scaleAction.factor
                         text: messageToSign()
                         anchors.verticalCenter: parent.verticalCenter
                         horizontalAlignment: Text.AlignRight
@@ -171,7 +172,7 @@ ModalPopup {
                         color: Style.current.secondaryText
                     }
                     SVGImage {
-                        width: 13
+                        width: 13 * scaleAction.factor
                         anchors.verticalCenter: parent.verticalCenter
                         fillMode: Image.PreserveAspectFit
                         source: "../../img/caret.svg"

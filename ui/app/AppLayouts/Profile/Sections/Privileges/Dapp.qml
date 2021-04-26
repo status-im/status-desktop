@@ -8,7 +8,7 @@ import "../../../../../shared"
 Item {
     property string name: "Status.im"
 
-    height: 50
+    height: 50 * scaleAction.factor
     anchors.right: parent.right
     anchors.left: parent.left
 
@@ -16,8 +16,8 @@ Item {
 
     SVGImage {
         id: image
-        height: 40
-        width: 40
+        height: 40 * scaleAction.factor
+        width: 40 * scaleAction.factor
         anchors.top: parent.top
         anchors.topMargin: 4
         anchors.left: parent.left
@@ -31,7 +31,7 @@ Item {
         elide: Text.ElideRight
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        font.pixelSize: 17
+        font.pixelSize: 17 * scaleAction.factor
         anchors.top: parent.top
         anchors.topMargin: 10
         anchors.left: image.right
@@ -40,8 +40,8 @@ Item {
 
     SVGImage {
         id: arrow
-        height: 24
-        width: 24
+        height: 24 * scaleAction.factor
+        width: 24 * scaleAction.factor
         anchors.top: parent.top
         anchors.topMargin: 10
         anchors.right: parent.right

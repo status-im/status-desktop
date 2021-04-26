@@ -45,9 +45,9 @@ Menu {
         }
         action: Action{} // Meant to be overwritten
         id: popupMenuItem
-        implicitWidth: 200
-        implicitHeight: 34
-        font.pixelSize: 13
+        implicitWidth: 200 * scaleAction.factor
+        implicitHeight: 34 * scaleAction.factor
+        font.pixelSize: 13 * scaleAction.factor
         font.weight: checked ? Font.Medium : Font.Normal
         icon.color: popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Style.current.blue
         icon.source: this.subMenu ? subMenuIcons[subMenuIndex].source : popupMenuItem.action.icon.source
@@ -62,7 +62,8 @@ Menu {
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: 12
-            width: 9
+            width: 9 * scaleAction.factor
+            height: width
             fillMode: Image.PreserveAspectFit
             visible: popupMenuItem.subMenu && popupMenuItem.subMenu.enabled
             
@@ -76,8 +77,8 @@ Menu {
         // FIXME the icons looks very pixelated on Linux for some reason. Using smooth, mipmap, etc doesn't fix it
         indicator: Item {
             visible: !!popupMenuItem.icon.source.toString()
-            width: !isNaN(popupMenuItem.icon.width) ? popupMenuItem.icon.width : 25
-            height: !isNaN(popupMenuItem.icon.height) ? popupMenuItem.icon.height : 25
+            width: !isNaN(popupMenuItem.icon.width) ? popupMenuItem.icon.width : 25 * scaleAction.factor
+            height: !isNaN(popupMenuItem.icon.height) ? popupMenuItem.icon.height : 25 * scaleAction.factor
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
@@ -113,8 +114,8 @@ Menu {
         }
 
         background: Rectangle {
-            implicitWidth: 220
-            implicitHeight: enabled ? 24 : 0
+            implicitWidth: 220 * scaleAction.factor
+            implicitHeight: enabled ? 24 * scaleAction.factor : 0
             color: popupMenuItem.hovered ? popupMenuItem.hoverColor : "transparent"
         }
         MouseArea {
@@ -126,7 +127,7 @@ Menu {
 
     background: Item {
         id: bgPopupMenu
-        implicitWidth: 220
+        implicitWidth: 220 * scaleAction.factor
 
         Rectangle {
             id: bgPopupMenuContent

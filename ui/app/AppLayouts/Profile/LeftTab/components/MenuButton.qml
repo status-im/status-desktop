@@ -24,14 +24,14 @@ Rectangle {
          return Style.current.transparent
     }
     border.width: 0
-    height: 48
+    height: 48 * scaleAction.factor
     width: parent.width
     radius: Style.current.radius
 
     SVGImage {
         id: iconImage
-        height: 24
-        width: 24
+        height: 24 * scaleAction.factor
+        width: 24 * scaleAction.factor
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
@@ -49,6 +49,7 @@ Rectangle {
         anchors.left: iconImage.right
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
+        scale: scaleAction.factor
     }
 
     Rectangle {
@@ -58,10 +59,10 @@ Rectangle {
         anchors.rightMargin: 10
         radius: 9
         color: Style.current.blue
-        width: 18
-        height: 18
+        width: 18 * scaleAction.factor
+        height: 18 * scaleAction.factor
         Text {
-            font.pixelSize: 12
+            font.pixelSize: 12 * scaleAction.factor
             color: Style.current.white
             anchors.centerIn: parent
             text: "1"

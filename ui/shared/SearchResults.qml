@@ -10,7 +10,7 @@ import "./"
 
 Item {
     id: root
-    height: 64
+    height: 64 * scaleAction.factor
     property bool hasExistingContacts: false
     property bool showProfileNotFoundMessage: false
     property bool loading: false
@@ -39,7 +39,7 @@ Item {
         text: qsTrId("non-contacts")
         anchors.top: parent.top
         color: Style.current.secondaryText
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         visible: root.hasExistingContacts && (root.loading || root.pubKey !== "" || root.showProfileNotFoundMessage)
     }
 
@@ -49,8 +49,8 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         sourceComponent: Component {
             LoadingAnimation {
-                width: 18
-                height: 18
+                width: 18 * scaleAction.factor
+                height: 18 * scaleAction.factor
             }
         }
     }
@@ -62,7 +62,7 @@ Item {
         color: hovered ? Style.current.backgroundHover : Style.current.background
         radius: Style.current.radius
         width: parent.width
-        height: 64
+        height: 64 * scaleAction.factor
         visible: root.pubKey !== "" && !root.loading
 
         StatusImageIdenticon {
@@ -75,7 +75,7 @@ Item {
 
         StyledText {
             id: ensUsername
-            font.pixelSize: 17
+            font.pixelSize: 17 * scaleAction.factor
             color: Style.current.textColor
             anchors.top: contactIdenticon.top
             anchors.left: contactIdenticon.right
@@ -85,7 +85,7 @@ Item {
 
         StyledText {
             id: contactAlias
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             color: Style.current.secondaryText
             anchors.top: ensUsername.bottom
             anchors.topMargin: 2
@@ -111,10 +111,10 @@ Item {
             icon.name: "add-contact"
             highlightedBackgroundColor: Utils.setColorAlpha(Style.current.buttonHoveredBackgroundColor, 0.2)
             iconColor: Style.current.primary
-            icon.width: 24
-            icon.height: 24
-            width: 32
-            height: 32
+            icon.width: 24 * scaleAction.factor
+            icon.height: 24 * scaleAction.factor
+            width: 32 * scaleAction.factor
+            height: 32 * scaleAction.factor
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
@@ -139,8 +139,8 @@ Item {
         SVGImage {
             id: checkIcon
             source: "../../../../app/img/check-2.svg"
-            width: 19
-            height: 19
+            width: 19 * scaleAction.factor
+            height: 19 * scaleAction.factor
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding * 2
             anchors.verticalCenter: parent.verticalCenter
@@ -152,7 +152,7 @@ Item {
         id: profileNotFoundMessage
         color: Style.current.darkGrey
         visible: root.showProfileNotFoundMessage
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         //% "No profile found"

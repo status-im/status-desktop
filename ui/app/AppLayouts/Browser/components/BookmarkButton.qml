@@ -10,15 +10,15 @@ Item {
     signal rightClicked(mouse: var)
 
     id: root
-    width: 74
+    width: 74 * scaleAction.factor
     height: bookmarkImage.height + bookmarkName.height + Style.current.halfPadding
 
     SVGImage {
         id: bookmarkImage
         source: !!root.source && !!root.source.toString() ? root.source :"../../../img/compassActive.svg"
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 48
-        height: 48
+        width: 48 * scaleAction.factor
+        height: 48 * scaleAction.factor
     }
 
     StyledText {

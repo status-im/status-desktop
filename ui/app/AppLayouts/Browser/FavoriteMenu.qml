@@ -19,8 +19,8 @@ PopupMenu {
         //% "Open in new Tab"
         text: qsTrId("open-in-new-tab")
         icon.source: "../../img/generate_account.svg"
-        icon.width: 16
-        icon.height: 16
+        icon.width: 16 * scaleAction.factor
+        icon.height: 16 * scaleAction.factor
         onTriggered: {
             openInNewTab(root.url)
         }
@@ -32,8 +32,8 @@ PopupMenu {
         //% "Edit"
         text: qsTrId("edit")
         icon.source: "../../img/edit.svg"
-        icon.width: 16
-        icon.height: 16
+        icon.width: 16 * scaleAction.factor
+        icon.height: 16 * scaleAction.factor
         onTriggered: {
             addFavoriteModal.modifiyModal = true
             addFavoriteModal.ogUrl = root.currentFavorite ? root.currentFavorite.url : currentWebView.url
@@ -47,8 +47,8 @@ PopupMenu {
         text: qsTrId("remove")
         icon.source: "../../img/remove.svg"
         icon.color: Style.current.danger
-        icon.width: 16
-        icon.height: 16
+        icon.width: 16 * scaleAction.factor
+        icon.height: 16 * scaleAction.factor
         onTriggered: {
             browserModel.removeBookmark(root.url)
         }

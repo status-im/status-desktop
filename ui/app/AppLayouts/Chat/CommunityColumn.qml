@@ -48,8 +48,8 @@ Rectangle {
             icon.name: "plusSign"
             size: "medium"
             type: "secondary"
-            width: 36
-            height: 36
+            width: 36 * scaleAction.factor
+            height: 36 * scaleAction.factor
             anchors.right: parent.right
             anchors.rightMargin: Style.current.bigPadding
             anchors.top: parent.top
@@ -72,8 +72,8 @@ Rectangle {
                     //% "Create channel"
                     text: qsTrId("create-channel")
                     icon.source: "../../img/hash.svg"
-                    icon.width: 20
-                    icon.height: 20
+                    icon.width: 20 * scaleAction.factor
+                    icon.height: 20 * scaleAction.factor
                     onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
                 }
 
@@ -81,8 +81,8 @@ Rectangle {
                     text: qsTr("Invite People")
                     enabled: chatsModel.communities.activeCommunity.canManageUsers
                     icon.source: "../../img/export.svg"
-                    icon.width: 20
-                    icon.height: 20
+                    icon.width: 20 * scaleAction.factor
+                    icon.height: 20 * scaleAction.factor
                     onTriggered: openPopup(inviteFriendsToCommunityPopup, {communityId: chatsModel.communities.activeCommunity.id})
                 }
 

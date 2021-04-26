@@ -12,7 +12,7 @@ Rectangle {
 
     id: root
     width: parent.width
-    height: 64
+    height: 64 * scaleAction.factor
 
     default property alias actionContent: placeholder.data
     signal clicked()
@@ -37,8 +37,8 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             type: root.type
             icon.name: "communities/" + iconName
-            width: 40
-            height: 40
+            width: 40 * scaleAction.factor
+            height: 40 * scaleAction.factor
         }
 
         StyledText {
@@ -48,7 +48,7 @@ Rectangle {
             anchors.left: btn.right
             anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: btn.verticalCenter
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
         }
     }
 

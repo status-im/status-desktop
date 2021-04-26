@@ -14,9 +14,9 @@ Loader {
 
             RoundedImage {
                 id: identiconImage
-                width: 36
-                height: 36
-                border.width: 1
+                width: 36 * scaleAction.factor
+                height: 36 * scaleAction.factor
+                border.width: 1 * scaleAction.factor
                 border.color: Style.current.border
                 source: {
                     if (profileImageSource) {

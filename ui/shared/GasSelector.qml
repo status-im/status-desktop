@@ -54,7 +54,7 @@ Item {
         //% "Network fee"
         text: qsTrId("network-fee")
         font.weight: Font.Medium
-        font.pixelSize: 13
+        font.pixelSize: 13 * scaleAction.factor
         color: Style.current.textColor
     }
 
@@ -63,7 +63,7 @@ Item {
         anchors.top: parent.top
         anchors.right: parent.right
         font.weight: Font.Medium
-        font.pixelSize: 13
+        font.pixelSize: 13 * scaleAction.factor
         color: Style.current.secondaryText
     }
 
@@ -97,7 +97,7 @@ Item {
             anchors.left: parent.left
             //% "Slow"
             text: qsTrId("slow")
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             color: Style.current.textColor
             visible: parent.visible
         }
@@ -109,7 +109,7 @@ Item {
             anchors.horizontalCenter: gasSlider.horizontalCenter
             //% "Optimal"
             text: qsTrId("optimal")
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             color: Style.current.textColor
             visible: parent.visible
         }
@@ -121,7 +121,7 @@ Item {
             anchors.right: parent.right
             //% "Fast"
             text: qsTrId("fast")
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             color: Style.current.textColor
             visible: parent.visible
         }
@@ -136,7 +136,7 @@ Item {
         //% "Reset"
         text: qsTrId("reset")
         flat: true
-        font.pixelSize: 13
+        font.pixelSize: 13 * scaleAction.factor
         visible: !sliderWrapper.visible
         onClicked: {
             gasSlider.value = root.defaultGasPrice()
@@ -153,7 +153,7 @@ Item {
         //% "Advanced"
         text: qsTrId("advanced")
         flat: true
-        font.pixelSize: 13
+        font.pixelSize: 13 * scaleAction.factor
         onClicked: {
             customNetworkFeeDialog.open()
         }
@@ -163,8 +163,8 @@ Item {
         id: customNetworkFeeDialog
         //% "Custom Network Fee"
         title: qsTrId("custom-network-fee")
-        height: 286
-        width: 400
+        height: 286 * scaleAction.factor
+        width: 400 * scaleAction.factor
         property bool isValid: true
 
         onIsValidChanged: {
@@ -210,7 +210,7 @@ Item {
           //% "Gas limit"
           label: qsTrId("gas-limit")
           text: "21000"
-          customHeight: 56
+          customHeight: 56 * scaleAction.factor
           anchors.top: parent.top
           anchors.left: parent.left
           anchors.right: inputGasPrice.left
@@ -232,8 +232,8 @@ Item {
           anchors.top: parent.top
           anchors.left: undefined
           anchors.right: parent.right
-          width: 130
-          customHeight: 56
+          width: 130 * scaleAction.factor
+          customHeight: 56 * scaleAction.factor
           text: root.defaultGasPrice()
           placeholderText: "20"
           onTextChanged: {
@@ -253,7 +253,7 @@ Item {
             anchors.topMargin: 42
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
           }
         }
 
@@ -263,7 +263,7 @@ Item {
             anchors.bottomMargin: Style.current.smallPadding
             anchors.right: parent.right
             font.weight: Font.Medium
-            font.pixelSize: 13
+            font.pixelSize: 13 * scaleAction.factor
             color: Style.current.secondaryText
         }
 

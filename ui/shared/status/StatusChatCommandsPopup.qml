@@ -43,8 +43,8 @@ Popup {
             text: qsTrId("send-transaction")
             icon.color: Style.current.purple
             icon.name: "send"
-            icon.width: 16
-            icon.height: 18
+            icon.width: 16 * scaleAction.factor
+            icon.height: 18 * scaleAction.factor
             onClicked: function () {
                 root.sendTransactionCommandButtonClicked()
             }
@@ -56,8 +56,8 @@ Popup {
             text: qsTrId("request-transaction")
             icon.color: Style.current.orange
             icon.name: "send"
-            icon.width: 16
-            icon.height: 18
+            icon.width: 16 * scaleAction.factor
+            icon.height: 18 * scaleAction.factor
             iconRotation: 180
             onClicked: function () {
                 root.receiveTransactionCommandButtonClicked()

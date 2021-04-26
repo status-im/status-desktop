@@ -48,8 +48,8 @@ ModalPopup {
             id: commmunityImgCmp
             RoundedImage {
                 source: modalHeader.imageSource
-                width: 40
-                height: 40
+                width: 40 * scaleAction.factor
+                height: 40 * scaleAction.factor
                 visible: !!modalHeader.imageSource
             }
         }
@@ -57,8 +57,8 @@ ModalPopup {
         Component {
             id: letterIdenticonCmp
             StatusLetterIdenticon {
-                width: 40
-                height: 40
+                width: 40 * scaleAction.factor
+                height: 40 * scaleAction.factor
                 chatName: popup.name
                 color: popup.communityColor || Style.current.blue
             }
@@ -72,7 +72,7 @@ ModalPopup {
             anchors.left: communityImg.active ? communityImg.right : parent.left
             anchors.leftMargin: communityImg.active ? Style.current.smallPadding : 0
             font.bold: true
-            font.pixelSize: 17
+            font.pixelSize: 17 * scaleAction.factor
             readOnly: true
         }
 
@@ -82,7 +82,7 @@ ModalPopup {
             anchors.left: communityName.left
             anchors.top: communityName.bottom
             anchors.topMargin: 2
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             font.weight: Font.Thin
             color: Style.current.secondaryText
         }
@@ -161,8 +161,8 @@ ModalPopup {
             id: btnBack
             anchors.left: parent.left
             icon.name: "arrow-right"
-            icon.width: 20
-            icon.height: 16
+            icon.width: 20 * scaleAction.factor
+            icon.height: 16 * scaleAction.factor
             rotation: 180
             type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
             onClicked: {

@@ -74,7 +74,7 @@ Item {
             property string symbol: ""
             anchors.right: parent.right
             anchors.left: parent.left
-            height: 64
+            height: 64 * scaleAction.factor
             color: isHovered ? Style.current.secondaryBackground : Style.current.transparent
             radius: 8
 
@@ -109,8 +109,8 @@ Item {
             Item {
                 Image {
                     id: assetIcon
-                    width: 40
-                    height: 40
+                    width: 40 * scaleAction.factor
+                    height: 40 * scaleAction.factor
                     source: "../../img/tokens/"
                             + (transactionListItem.symbol
                                != "" ? transactionListItem.symbol : "ETH") + ".png"
@@ -132,8 +132,8 @@ Item {
                     anchors.top: parent.top
                     anchors.left: assetIcon.right
                     anchors.leftMargin: 22
-                    height: 15
-                    width: 15
+                    height: 15 * scaleAction.factor
+                    width: 15 * scaleAction.factor
                     color: to !== walletModel.currentAccount.address ? "#4360DF" : "green"
                     text: to !== walletModel.currentAccount.address ? "↑" : "↓"
                 }
@@ -144,7 +144,7 @@ Item {
                     anchors.leftMargin: Style.current.smallPadding
                     anchors.top: parent.top
                     anchors.topMargin: Style.current.bigPadding
-                    font.pixelSize: 15
+                    font.pixelSize: 15 * scaleAction.factor
                     text: utilsModel.hex2Eth(value) + " " + transactionListItem.symbol
                 }
             }
@@ -164,7 +164,7 @@ Item {
                     anchors.right: addressValue.left
                     color: Style.current.secondaryText
                     anchors.top: parent.top
-                    font.pixelSize: 15
+                    font.pixelSize: 15 * scaleAction.factor
                     font.strikeout: false
                 }
 
@@ -172,11 +172,11 @@ Item {
                     id: addressValue
                     font.family: Style.current.fontHexRegular.name
                     text: to
-                    width: 100
+                    width: 100 * scaleAction.factor
                     elide: Text.ElideMiddle
                     anchors.right: parent.right
                     anchors.top: parent.top
-                    font.pixelSize: 15
+                    font.pixelSize: 15 * scaleAction.factor
                 }
             }
 
@@ -193,7 +193,7 @@ Item {
                     anchors.right: timeIndicator.left
                     color: Style.current.secondaryText
                     anchors.top: parent.top
-                    font.pixelSize: 15
+                    font.pixelSize: 15 * scaleAction.factor
                 }
 
                 StyledText {
@@ -202,7 +202,7 @@ Item {
                     anchors.right: timeValue.left
                     color: Style.current.secondaryText
                     anchors.top: parent.top
-                    font.pixelSize: 15
+                    font.pixelSize: 15 * scaleAction.factor
                     font.strikeout: false
                 }
 
@@ -211,7 +211,7 @@ Item {
                     text: timestamp
                     anchors.right: parent.right
                     anchors.top: parent.top
-                    font.pixelSize: 15
+                    font.pixelSize: 15 * scaleAction.factor
                     anchors.rightMargin: Style.current.smallPadding
                 }
             }

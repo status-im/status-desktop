@@ -57,8 +57,8 @@ ModalPopup {
 
       StatusLetterIdenticon {
           id: letterIdenticon
-          width: 36
-          height: 36
+          width: 36 * scaleAction.factor
+          height: 36 * scaleAction.factor
           anchors.top: parent.top
           color: popup.channel.color
           chatId: popup.channel.id
@@ -74,7 +74,7 @@ ModalPopup {
           anchors.left: letterIdenticon.right
           anchors.leftMargin: Style.current.smallPadding
           font.bold: true
-          font.pixelSize: 14
+          font.pixelSize: 14 * scaleAction.factor
           readOnly: true
           wrapMode: Text.WordWrap
       }
@@ -92,20 +92,20 @@ ModalPopup {
                 return qsTrId("1-member");
             }
           }
-          width: 160
+          width: 160 * scaleAction.factor
           anchors.left: letterIdenticon.right
           anchors.leftMargin: Style.current.smallPadding
           anchors.top: groupName.bottom
           anchors.topMargin: 2
-          font.pixelSize: 14
+          font.pixelSize: 14 * scaleAction.factor
           color: Style.current.darkGrey
       }
 
       Rectangle {
             id: editGroupNameBtn
             visible: !addMembers && popup.isAdmin
-            height: 24
-            width: 24
+            height: 24 * scaleAction.factor
+            width: 24 * scaleAction.factor
             anchors.verticalCenter: groupName.verticalCenter
             anchors.leftMargin: 4
             anchors.left: groupName.right
@@ -114,8 +114,8 @@ ModalPopup {
             SVGImage {
                 id: editGroupImg
                 source: "../../../img/edit-group.svg"
-                height: 16
-                width: 16
+                height: 16 * scaleAction.factor
+                width: 16 * scaleAction.factor
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -147,10 +147,10 @@ ModalPopup {
         SearchBox {
             id: searchBox
             visible: addMembers
-            iconWidth: 17
-            iconHeight: 17
-            customHeight: 44
-            fontPixelSize: 15
+            iconWidth: 17 * scaleAction.factor
+            iconHeight: 17 * scaleAction.factor
+            customHeight: 44 * scaleAction.factor
+            fontPixelSize: 15 * scaleAction.factor
         }
 
         NoFriendsRectangle {
@@ -231,7 +231,7 @@ ModalPopup {
                     anchors.left: identicon.right
                     anchors.leftMargin: Style.current.smallPadding
                     anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 13
+                    font.pixelSize: 13 * scaleAction.factor
                     StyledText {
                         visible: model.pubKey === profileModel.profile.pubKey
                         anchors.left: parent.right
@@ -258,7 +258,7 @@ ModalPopup {
                     text: qsTrId("group-chat-admin")
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 13
+                    font.pixelSize: 13 * scaleAction.factor
                     color: Style.current.secondaryText
                 }
 
@@ -269,7 +269,7 @@ ModalPopup {
                     anchors.right: parent.right
                     anchors.rightMargin: Style.current.smallPadding
                     anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 20
+                    font.pixelSize: 20 * scaleAction.factor
                     font.bold: true
                     color: Style.current.secondaryText
                     MouseArea {
@@ -321,8 +321,8 @@ ModalPopup {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             icon.name: "arrow-right"
-            icon.width: 20
-            icon.height: 16
+            icon.width: 20 * scaleAction.factor
+            icon.height: 16 * scaleAction.factor
             rotation: 180
             onClicked : {
                 addMembers = false;

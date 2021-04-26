@@ -13,12 +13,12 @@ Item {
             id: element
             anchors.right: parent.right
             anchors.left: parent.left
-            height: 40
+            height: 40 * scaleAction.factor
 
             Image {
                 id: assetInfoImage
-                width: 36
-                height: 36
+                width: 36 * scaleAction.factor
+                height: 36 * scaleAction.factor
                 source: symbol ? "../../img/tokens/" + symbol + ".png" : ""
                 anchors.left: parent.left
                 anchors.leftMargin: 0
@@ -36,7 +36,7 @@ Item {
                 anchors.leftMargin: Style.current.smallPadding
                 anchors.top: assetInfoImage.top
                 anchors.topMargin: 0
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
             }
             StyledText {
                 id: assetFullTokenName
@@ -46,14 +46,14 @@ Item {
                 anchors.left: assetInfoImage.right
                 anchors.leftMargin: Style.current.smallPadding
                 color: Style.current.secondaryText
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
             }
             StyledText {
                 id: assetValue
                 text: value.toUpperCase() + " " + symbol
                 anchors.right: parent.right
                 anchors.rightMargin: 0
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 font.strikeout: false
             }
             StyledText {
@@ -64,7 +64,7 @@ Item {
                 anchors.rightMargin: 0
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 0
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
             }
         }
     }

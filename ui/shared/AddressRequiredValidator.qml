@@ -18,8 +18,8 @@ Column {
 
     SVGImage {
         id: imgExclamation
-        width: 13.33
-        height: 13.33
+        width: 13.33 * scaleAction.factor
+        height: 13.33 * scaleAction.factor
         sourceSize.height: height * 2
         sourceSize.width: width * 2
         anchors.horizontalCenter: parent.horizontalCenter
@@ -33,8 +33,8 @@ Column {
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
-        font.pixelSize: 13
-        height: 18
+        font.pixelSize: 13 * scaleAction.factor
+        height: 18 * scaleAction.factor
         color: Style.current.danger
     }
 }

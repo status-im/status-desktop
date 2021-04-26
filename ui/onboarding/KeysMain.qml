@@ -16,7 +16,7 @@ Page {
 
     Item {
         id: container
-        width: 425
+        width: 425 * scaleAction.factor
         height: {
             let h = 0
             const children = this.children
@@ -36,8 +36,8 @@ Page {
             anchors.top: parent.top
             fillMode: Image.PreserveAspectFit
             source: "img/keys.png"
-            width: 160
-            height: 160
+            width: 160 * scaleAction.factor
+            height: 160 * scaleAction.factor
             mipmap: true
         }
 
@@ -50,7 +50,7 @@ Page {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: keysImg.bottom
             font.letterSpacing: -0.2
-            font.pixelSize: 22
+            font.pixelSize: 22 * scaleAction.factor
         }
 
         StyledText {
@@ -64,7 +64,7 @@ Page {
             anchors.left: parent.left
             anchors.top: txtTitle1.bottom
             anchors.topMargin: Style.current.padding
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
         }
 
 

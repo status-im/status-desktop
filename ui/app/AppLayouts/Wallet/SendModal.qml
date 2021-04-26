@@ -15,7 +15,7 @@ ModalPopup {
 
     //% "Send"
     title: qsTrId("command-button-send")
-    height: 504
+    height: 504 * scaleAction.factor
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
@@ -189,8 +189,8 @@ ModalPopup {
             anchors.left: parent.left
             visible: !stack.isFirstGroup
             icon.name: "arrow-right"
-            icon.width: 20
-            icon.height: 16
+            icon.width: 20 * scaleAction.factor
+            icon.height: 16 * scaleAction.factor
             rotation: 180
             onClicked: {
                 stack.back()

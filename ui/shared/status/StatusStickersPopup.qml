@@ -14,8 +14,8 @@ Popup {
     signal stickerSelected(string hashId, string packId)
     property int installedPacksCount: chatsModel.stickers.numInstalledStickerPacks
     property bool stickerPacksLoaded: false
-    width: 360
-    height: 440
+    width: 360 * scaleAction.factor
+    height: 440 * scaleAction.factor
     modal: false
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     background: Rectangle {
@@ -78,7 +78,8 @@ Popup {
             Layout.topMargin: 4
             Layout.bottomMargin: 0
             Layout.alignment: Qt.AlignTop | Qt.AlignLeft
-            Layout.preferredHeight: 400 - 4
+            //Layout.preferredHeight: 400 - 4
+            implicitHeight: 400 * scaleAction.factor - 4
 
             Item {
                 id: noStickerPacks
@@ -88,8 +89,8 @@ Popup {
                 Image {
                     id: imgNoStickers
                     visible: lblNoStickersYet.visible || lblNoRecentStickers.visible
-                    width: 56
-                    height: 56
+                    width: 56 * scaleAction.factor
+                    height: 56 * scaleAction.factor
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.top
                     anchors.topMargin: 134
@@ -99,7 +100,7 @@ Popup {
                 Item {
                     id: noStickersContainer
                     width: parent.width
-                    height: 22
+                    height: 22 * scaleAction.factor
                     anchors.top: imgNoStickers.bottom
                     anchors.topMargin: 8
 
@@ -107,10 +108,10 @@ Popup {
                         id: lblNoStickersYet
                         visible: root.installedPacksCount === 0
                         anchors.fill: parent
-                        font.pixelSize: 15
+                        font.pixelSize: 15 * scaleAction.factor
                         //% "You don't have any stickers yet"
                         text: qsTrId("you-don't-have-any-stickers-yet")
-                        lineHeight: 22
+                        lineHeight: 22 * scaleAction.factor
                         horizontalAlignment: Text.AlignHCenter
                     }
 
@@ -118,10 +119,10 @@ Popup {
                         id: lblNoRecentStickers
                         visible: stickerPackListView.selectedPackId === -1 && chatsModel.stickers.recent.rowCount() === 0 && !lblNoStickersYet.visible
                         anchors.fill: parent
-                        font.pixelSize: 15
+                        font.pixelSize: 15 * scaleAction.factor
                         //% "Recently used stickers will appear here"
                         text: qsTrId("recently-used-stickers")
-                        lineHeight: 22
+                        lineHeight: 22 * scaleAction.factor
                         horizontalAlignment: Text.AlignHCenter
                     }
                 }
@@ -153,8 +154,8 @@ Popup {
             Component {
                 id: loadingImageComponent
                 LoadingImage {
-                    width: 50
-                    height: 50
+                    width: 50 * scaleAction.factor
+                    height: 50 * scaleAction.factor
                 }
             }
 
@@ -170,7 +171,8 @@ Popup {
             id: footerContent
             Layout.leftMargin: 8
             Layout.fillWidth: true
-            Layout.preferredHeight: 40 - 8 * 2
+            //Layout.preferredHeight: 40 - 8 * 2
+            implicitHeight: 40 * scaleAction.factor - 8 * 2
             Layout.topMargin: 8
             Layout.rightMargin: 8
             Layout.bottomMargin: 8
@@ -181,8 +183,8 @@ Popup {
                 size: "medium"
                 type: "secondary"
                 icon.name: "plusSign"
-                implicitWidth: 24
-                implicitHeight: 24
+                implicitWidth: 24 * scaleAction.factor
+                implicitHeight: 24 * scaleAction.factor
                 state: root.stickerPacksLoaded ? "default" : "pending"
                 onClicked: {
                     stickersContainer.visible = false
@@ -192,8 +194,8 @@ Popup {
             }
             StatusStickerPackIconWithIndicator {
                 id: btnHistory
-                width: 24
-                height: 24
+                width: 24 * scaleAction.factor
+                height: 24 * scaleAction.factor
                 selected: true
                 useIconInsteadOfImage: true
                 source: "../../app/img/history_icon.svg"
@@ -212,7 +214,7 @@ Popup {
                 anchors.left: btnHistory.right
                 anchors.leftMargin: Style.current.padding
                 anchors.right: parent.right
-                height: 32
+                height: 32 * scaleAction.factor
                 clip: true
                 id: installedStickersSV
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOff
@@ -227,8 +229,8 @@ Popup {
                         delegate: StatusStickerPackIconWithIndicator {
                             id: packIconWithIndicator
                             visible: installed
-                            width: 24
-                            height: 24
+                            width: 24 * scaleAction.factor
+                            height: 24 * scaleAction.factor
                             selected: stickerPackListView.selectedPackId === packId
                             source: "https://ipfs.infura.io/ipfs/" + thumbnail
                             Layout.preferredHeight: height
@@ -245,8 +247,8 @@ Popup {
                         model: new Array(7)
 
                         delegate: Rectangle {
-                            width: 24
-                            height: 24
+                            width: 24 * scaleAction.factor
+                            height: 24 * scaleAction.factor
                             Layout.preferredHeight: height
                             Layout.preferredWidth: width
                             radius: width / 2

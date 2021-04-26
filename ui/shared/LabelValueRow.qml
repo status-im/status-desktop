@@ -10,16 +10,16 @@ Item {
     Layout.alignment: Qt.AlignTop | Qt.AlignLeft
     Layout.preferredWidth: parent.width
     width: parent.width
-    height: 52
+    height: 52 * scaleAction.factor
 
     StyledText {
         id: txtLabel
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         height: parent.height
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
         verticalAlignment: Text.AlignVCenter
-        width: 105
+        width: 105 * scaleAction.factor
     }
     Item {
         id: itmValue

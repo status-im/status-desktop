@@ -25,7 +25,7 @@ Item {
                 Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                font.pixelSize: 20
+                font.pixelSize: 20 * scaleAction.factor
             }
             StyledText {
                 id: test
@@ -35,7 +35,7 @@ Item {
                 Layout.leftMargin: Style.current.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
-                font.pixelSize: 20
+                font.pixelSize: 20 * scaleAction.factor
             }
         }
 
@@ -44,12 +44,18 @@ Item {
             Layout.fillHeight: true
             Layout.rightMargin: Style.current.padding
             Layout.leftMargin: Style.current.padding
-            TextArea { id: callResult; Layout.fillWidth: true; text: nodeModel.callResult; readOnly: true }
+            TextArea {
+                id: callResult;
+                Layout.fillWidth: true;
+                text: nodeModel.callResult;
+                readOnly: true
+                scale: scaleAction.factor
+            }
         }
 
         RowLayout {
             id: rpcInputContainer
-            height: 70
+            height: 70 * scaleAction.factor
             Layout.fillWidth: true
             Layout.bottomMargin: 0
             Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
@@ -57,8 +63,8 @@ Item {
 
             Item {
                 id: element2
-                width: 200
-                height: 70
+                width: 200 * scaleAction.factor
+                height: 70 * scaleAction.factor
                 Layout.fillWidth: true
 
                 Rectangle {
@@ -70,11 +76,11 @@ Item {
                     Button {
                         id: rpcSendBtn
                         x: 100
-                        width: 30
-                        height: 30
+                        width: 30 * scaleAction.factor
+                        height: 30 * scaleAction.factor
                         text: "\u2191"
                         font.bold: true
-                        font.pointSize: 12
+                        font.pointSize: 12 * scaleAction.factor
                         anchors.top: parent.top
                         anchors.topMargin: 20
                         anchors.right: parent.right
@@ -95,7 +101,7 @@ Item {
                         text: ""
                         leftPadding: 0
                         padding: 0
-                        font.pixelSize: 14
+                        font.pixelSize: 14 * scaleAction.factor
                         //% "Type json-rpc message... e.g {\"method\": \"eth_accounts\"}"
                         placeholderText: qsTrId("type-json-rpc-message")
                         anchors.right: rpcSendBtn.left

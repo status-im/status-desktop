@@ -141,7 +141,7 @@ Item {
         id: pill
         anchors.right: parent.right
         width: textMetrics.width + roundedIconImage.width + (Style.current.smallPadding * 2) + 6.7
-        height: 44
+        height: 44 * scaleAction.factor
         color: root.bgColor
         radius: root.style === StatusStickerButton.StyleType.Default ? (width / 2) : 8
 
@@ -151,8 +151,8 @@ Item {
                 when: root.isInstalled && root.style === StatusStickerButton.StyleType.Default
                 PropertyChanges {
                     target: pill;
-                    width: 28;
-                    height: 28
+                    width: 28 * scaleAction.factor;
+                    height: 28 * scaleAction.factor
                 }
             },
             State {
@@ -161,15 +161,15 @@ Item {
                 PropertyChanges {
                     target: pill;
                     width: textMetrics.width + (Style.current.padding * 4);
-                    height: 44
+                    height: 44 * scaleAction.factor
                 }
             }
         ]
 
         SVGImage {
             id: roundedIconImage
-            width: 12
-            height: 12
+            width: 12 * scaleAction.factor
+            height: 12 * scaleAction.factor
             anchors.left: parent.left
             anchors.leftMargin: Style.current.smallPadding
             anchors.verticalCenter: parent.verticalCenter
@@ -197,8 +197,8 @@ Item {
                     PropertyChanges {
                         target: roundedIconImage;
                         anchors.leftMargin: 9
-                        width: 11;
-                        height: 8
+                        width: 11 * scaleAction.factor;
+                        height: 8 * scaleAction.factor
                     }
                 },
                 State {
@@ -221,7 +221,7 @@ Item {
             text: root.text
             font.weight: Font.Medium
             font.family: Style.current.fontBold.name
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             states: [
                 State {
                     name: "installed"

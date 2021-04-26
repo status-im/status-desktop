@@ -17,8 +17,8 @@ Rectangle {
     property int reversedIndex: listView.count - 1 - index
 
     id: root
-    width: 272
-    height: 40
+    width: 272 * scaleAction.factor
+    height: 40 * scaleAction.factor
     border.width: 0
     color: hovered ? Style.current.backgroundHover : Style.current.transparent
     radius: Style.current.radius
@@ -71,8 +71,8 @@ Rectangle {
             id: fileImageComponent
             SVGImage {
                 source: "../../img/browser/file.svg"
-                width: 24
-                height: 24
+                width: 24 * scaleAction.factor
+                height: 24 * scaleAction.factor
                 ColorOverlay {
                     anchors.fill: parent
                     source: parent
@@ -90,7 +90,7 @@ Rectangle {
         anchors.right: optionsBtn.left
         anchors.top:  downloadComplete ? undefined : parent.top
         anchors.verticalCenter: downloadComplete ? parent.verticalCenter : undefined
-        minimumPixelSize: 13
+        minimumPixelSize: 13 * scaleAction.factor
         anchors.leftMargin: Style.current.smallPadding
         anchors.topMargin: 2
     }
@@ -114,7 +114,7 @@ Rectangle {
         anchors.left: iconLoader.right
         anchors.right: optionsBtn.left
         anchors.bottom: parent.bottom
-        minimumPixelSize: 13
+        minimumPixelSize: 13 * scaleAction.factor
         anchors.leftMargin: Style.current.smallPadding
         anchors.bottomMargin: 2
     }
@@ -139,16 +139,16 @@ Rectangle {
         Action {
             enabled: downloadComplete
             icon.source: "../../img/browser/file.svg"
-            icon.width: 16
-            icon.height: 16
+            icon.width: 16 * scaleAction.factor
+            icon.height: 16 * scaleAction.factor
             //% "Open"
             text: qsTrId("open")
             onTriggered: openFile()
         }
         Action {
             icon.source: "../../img/add_watch_only.svg"
-            icon.width: 13
-            icon.height: 9
+            icon.width: 13 * scaleAction.factor
+            icon.height: 9 * scaleAction.factor
             //% "Show in folder"
             text: qsTrId("show-in-folder")
             onTriggered: openDirectory()
@@ -156,8 +156,8 @@ Rectangle {
         Action {
             enabled: !downloadComplete && !!downloadModel.downloads[index] && !downloadModel.downloads[index].isPaused
             icon.source: "../../img/browser/pause.svg"
-            icon.width: 16
-            icon.height: 16
+            icon.width: 16 * scaleAction.factor
+            icon.height: 16 * scaleAction.factor
             //% "Pause"
             text: qsTrId("pause")
             onTriggered: {
@@ -167,8 +167,8 @@ Rectangle {
         Action {
             enabled: !downloadComplete && !!downloadModel.downloads[index] && downloadModel.downloads[index].isPaused
             icon.source: "../../img/browser/play.svg"
-            icon.width: 16
-            icon.height: 16
+            icon.width: 16 * scaleAction.factor
+            icon.height: 16 * scaleAction.factor
             //% "Resume"
             text: qsTrId("resume")
             onTriggered: {
@@ -183,8 +183,8 @@ Rectangle {
         Action {
             enabled: !downloadComplete
             icon.source: "../../img/block-icon.svg"
-            icon.width: 13
-            icon.height: 13
+            icon.width: 13 * scaleAction.factor
+            icon.height: 13 * scaleAction.factor
             //% "Cancel"
             text: qsTrId("browsing-cancel")
             onTriggered: {

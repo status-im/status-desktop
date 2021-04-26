@@ -6,8 +6,8 @@ import "../shared/status"
 
 Rectangle {
     id: copyToClipboardButton
-    height: 32
-    width: 32
+    height: 32 * scaleAction.factor
+    width: 32 * scaleAction.factor
     radius: 8
     color: Style.current.transparent
     property var onClick: function() {}
@@ -15,8 +15,8 @@ Rectangle {
     property bool tooltipUnder: false
 
     Image {
-        width: 20
-        height: 20
+        width: 20 * scaleAction.factor
+        height: 20 * scaleAction.factor
         sourceSize.width: width
         sourceSize.height: height
         source: "./img/copy-to-clipboard-icon.svg"

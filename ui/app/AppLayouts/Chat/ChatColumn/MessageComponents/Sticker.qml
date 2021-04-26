@@ -15,8 +15,8 @@ Loader {
             color: root.color
             onLoaded: scrollToBottom(true, root.container)
 
-            width: 140
-            height: this.visible ? 140 : 0
+            width: 140 * scaleAction.factor
+            height: this.visible ? 140 * scaleAction.factor : 0
             source: this.visible ? ("https://ipfs.infura.io/ipfs/" + sticker) : ""
         }
     }

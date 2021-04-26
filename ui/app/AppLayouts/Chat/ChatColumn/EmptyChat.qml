@@ -15,6 +15,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         source: "../../../../onboarding/img/chat@2x.png"
+        scale: scaleAction.factor
     }
 
     Item {
@@ -28,7 +29,7 @@ Item {
             id: shareKeyLink
             //% "Share your chat key"
             text: qsTrId("share-your-chat-key")
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             color: Style.current.blue
 
             MouseArea {
@@ -51,7 +52,7 @@ Item {
             id: orText
             //% "or"
             text: qsTrId("or")
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             color: Style.current.secondaryText
             anchors.left: shareKeyLink.right
             anchors.leftMargin: 2
@@ -62,7 +63,7 @@ Item {
             id: inviteLink
             //% "invite"
             text: qsTrId("invite")
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             color: Style.current.blue
             anchors.left: orText.right
             anchors.leftMargin: 2
@@ -88,7 +89,7 @@ Item {
     StyledText {
         //% "friends to start messaging in Status"
         text: qsTrId("friends-to-start-messaging-in-status")
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         color: Style.current.secondaryText
         anchors.horizontalCenter: walkieTalkieImage.horizontalCenter
         anchors.top: links.bottom

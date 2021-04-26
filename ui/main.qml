@@ -85,6 +85,11 @@ ApplicationWindow {
         }
     }
 
+    ScaleAction {
+        id: scaleAction
+        anchors.fill: parent
+    }
+
     onClosing: {
         if(loader.sourceComponent == app){
             if(loader.item.appSettings.quitOnClose){

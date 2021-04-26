@@ -35,8 +35,8 @@ QQC1.Slider {
         handle: Rectangle {
             anchors.centerIn: parent
             color: control.pressed ? Style.current.grey : Style.current.white
-            implicitWidth: 28
-            implicitHeight: 28
+            implicitWidth: 28 * scaleAction.factor
+            implicitHeight: 28 * scaleAction.factor
             radius: 14
             layer.enabled: true
             layer.effect: DropShadow {

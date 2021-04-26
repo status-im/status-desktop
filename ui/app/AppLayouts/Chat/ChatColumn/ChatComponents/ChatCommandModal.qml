@@ -14,7 +14,7 @@ ModalPopup {
 
     id: root
     title: root.commandTitle
-    height: 504
+    height: 504 * scaleAction.factor
 
     property alias selectRecipient: selectRecipient
 
@@ -63,6 +63,7 @@ ModalPopup {
                 text: qsTrId("address-request-required")
                 color: Style.current.danger
                 visible: addressRequiredValidator.isWarn
+                scale: scaleAction.factor
             }
 
             RecipientSelector {
@@ -135,8 +136,8 @@ ModalPopup {
             anchors.left: parent.left
             visible: !stack.isFirstGroup
             icon.name: "arrow-right"
-            icon.width: 20
-            icon.height: 16
+            icon.width: 20 * scaleAction.factor
+            icon.height: 16 * scaleAction.factor
             rotation: 180
             onClicked: {
                 stack.back()

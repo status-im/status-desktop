@@ -10,7 +10,7 @@ ModalPopup {
     property string privateKey
 
     id: popup
-    height: 504
+    height: 504 * scaleAction.factor
 
     title: qsTr("Transfer ownership")
 
@@ -35,7 +35,7 @@ ModalPopup {
             wrapMode: Text.WordWrap
             anchors.topMargin: Style.current.padding
             width: parent.width
-            font.pixelSize: 13
+            font.pixelSize: 13 * scaleAction.factor
             color: Style.current.secondaryText
         }
 
@@ -46,7 +46,7 @@ ModalPopup {
             wrapMode: Text.WordWrap
             anchors.topMargin: Style.current.bigPadding
             width: parent.width
-            font.pixelSize: 13
+            font.pixelSize: 13 * scaleAction.factor
             color: Style.current.secondaryText
         }
     }
@@ -55,8 +55,8 @@ ModalPopup {
         id: btnBack
         anchors.left: parent.left
         icon.name: "arrow-right"
-        icon.width: 20
-        icon.height: 16
+        icon.width: 20 * scaleAction.factor
+        icon.height: 16 * scaleAction.factor
         rotation: 180
         onClicked: {
             popup.close()

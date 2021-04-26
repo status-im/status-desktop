@@ -15,8 +15,8 @@ ModalPopup {
     property var changeNickname: function () {}
 
     id: popup
-    width: 400
-    height: 390
+    width: 400 * scaleAction.factor
+    height: 390 * scaleAction.factor
 
     noTopMargin: true
 
@@ -25,7 +25,7 @@ ModalPopup {
     }
 
     header: Item {
-        height: 78
+        height: 78 * scaleAction.factor
         width: parent.width
 
         StyledText {
@@ -37,17 +37,17 @@ ModalPopup {
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
             font.bold: true
-            font.pixelSize: 17
+            font.pixelSize: 17 * scaleAction.factor
         }
 
         StyledText {
             text: isEnsVerified ? alias : fromAuthor
-            width: 160
+            width: 160 * scaleAction.factor
             elide: !isEnsVerified ? Text.ElideMiddle : Text.ElideNone
             anchors.left: nicknameTitle.left
             anchors.bottom: parent.bottom
             anchors.bottomMargin: Style.current.padding
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             color: Style.current.secondaryText
         }
 
@@ -64,7 +64,7 @@ ModalPopup {
         id: descriptionText
         //% "Nicknames help you identify others in Status. Only you can see the nicknames you’ve added"
         text: qsTrId("nicknames-help-you-identify-others-in-status--only-you-can-see-the-nicknames-you-ve-added")
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         wrapMode: Text.WordWrap
         color: Style.current.secondaryText
         width: parent.width
@@ -89,7 +89,7 @@ ModalPopup {
     StyledText {
         id: lengthLimitText
         text: popup.nicknameLength + "/" + popup.maxNicknameLength
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         anchors.top: nicknameInput.bottom
         anchors.topMargin: 12
         anchors.right: parent.right

@@ -7,8 +7,8 @@ import "./"
 
 ModalPopup {
     id: unblockContactConfirmationDialog
-    height: 237
-    width: 400
+    height: 237 * scaleAction.factor
+    width: 400 * scaleAction.factor
 
     property Popup parentPopup
     property string contactAddress: ""
@@ -22,7 +22,7 @@ ModalPopup {
     StyledText {
         //% "Unblocking will allow new messages you received from %1 to reach you."
         text: qsTrId("unblocking-will-allow-new-messages-you-received-from--1-to-reach-you-").arg(contactName)
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         anchors.left: parent.left
         anchors.right: parent.right
         wrapMode: Text.WordWrap

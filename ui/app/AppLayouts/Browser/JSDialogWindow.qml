@@ -9,7 +9,7 @@ import "../../../imports"
 ModalPopup {
     id: root
     property QtObject request
-    height: 286
+    height: 286 * scaleAction.factor
 
     closePolicy: Popup.NoAutoClose
 
@@ -27,19 +27,20 @@ ModalPopup {
         if(request.type === JavaScriptDialogRequest.DialogTypePrompt){
             prompt.text = request.defaultText;
             prompt.visible = true;
-            svMessage.height = 75;
+            svMessage.height = 75 * scaleAction.factor;
         }
     }
 
     ScrollView {
         id: svMessage
         width: parent.width
-        height: 100
+        height: 100 * scaleAction.factor
         TextArea {
             id: message
             wrapMode: TextEdit.Wrap
             readOnly: true
             text: ""
+            scale: scaleAction.factor
         }
     }
 

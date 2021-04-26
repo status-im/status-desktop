@@ -22,14 +22,14 @@ TabViewStyle {
             id: tabRectangle
             color: styleData.selected ? fillColor : nonSelectedColor
             border.width: 0
-            implicitWidth: 240
+            implicitWidth: 240 * scaleAction.factor
             implicitHeight: tabs.tabHeight
             radius: Style.current.radius
 
             // This rectangle is to hide the bottom radius
             Rectangle {
                 width: parent.implicitWidth
-                height: 5
+                height: 5 * scaleAction.factor
                 color: parent.color
                 border.width: 0
                 anchors.bottom: parent.bottom
@@ -68,8 +68,8 @@ TabViewStyle {
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.halfPadding
                 onClicked: tabs.removeView(styleData.index)
-                width: 16
-                height: 16
+                width: 16 * scaleAction.factor
+                height: 16 * scaleAction.factor
             }
         }
 
@@ -85,8 +85,8 @@ TabViewStyle {
                     iconColor: Style.current.textColor
                     iconRotation: 45
                     onClicked: addNewTab()
-                    width: 16
-                    height: 16
+                    width: 16 * scaleAction.factor
+                    height: 16 * scaleAction.factor
                 }
             }
         }

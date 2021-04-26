@@ -11,7 +11,7 @@ Rectangle {
     visible: isVisible && !!listView.count
     color: Style.current.background
     width: parent.width
-    height: 56
+    height: 56 * scaleAction.factor
     border.width: 1
     border.color: Style.current.border
 

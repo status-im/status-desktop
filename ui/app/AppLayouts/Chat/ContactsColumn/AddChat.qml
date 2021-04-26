@@ -11,8 +11,8 @@ StatusRoundButton {
     icon.name: "plusSign"
     size: "medium"
     type: "secondary"
-    width: 36
-    height: 36
+    width: 36 * scaleAction.factor
+    height: 36 * scaleAction.factor
 
     onClicked: {
         if (newChatMenu.opened) {
@@ -31,7 +31,7 @@ StatusRoundButton {
             //% "Start new chat"
             text: qsTrId("start-new-chat")
             icon.source: "../../../img/new_chat.svg"
-            icon.width: 20
+            icon.width: 20 * scaleAction.factor
             icon.height: 20
             onTriggered: openPopup(privateChatPopupComponent)
         }
@@ -39,16 +39,16 @@ StatusRoundButton {
             //% "Start group chat"
             text: qsTrId("start-group-chat")
             icon.source: "../../../img/group_chat.svg"
-            icon.width: 20
-            icon.height: 20
+            icon.width: 20 * scaleAction.factor
+            icon.height: 20 * scaleAction.factor
             onTriggered: openPopup(groupChatPopupComponent)
         }
         Action {
             //% "Join public chat"
             text: qsTrId("new-public-group-chat")
             icon.source: "../../../img/public_chat.svg"
-            icon.width: 20
-            icon.height: 20
+            icon.width: 20 * scaleAction.factor
+            icon.height: 20 * scaleAction.factor
             onTriggered: openPopup(publicChatPopupComponent)
         }
         Action {
@@ -56,8 +56,8 @@ StatusRoundButton {
             //% "Communities"
             text: qsTrId("communities")
             icon.source: "../../../img/communities.svg"
-            icon.width: 20
-            icon.height: 20
+            icon.width: 20 * scaleAction.factor
+            icon.height: 20 * scaleAction.factor
             onTriggered: {
                 openPopup(communitiesPopupComponent)
             }

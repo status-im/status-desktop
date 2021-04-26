@@ -20,7 +20,7 @@ ModalPopup {
 
     Image {
         id: image
-        width: 400
+        width: 400 * scaleAction.factor
         source: cropImageModal.selectedImage
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter

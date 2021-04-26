@@ -12,7 +12,7 @@ Rectangle {
     signal radioCheckedChanged(checked: bool)
 
     id: root
-    height: 52
+    height: 52 * scaleAction.factor
     color: isHovered ? Style.current.backgroundHover : Style.current.transparent
     radius: Style.current.radius
     border.width: 0
@@ -25,7 +25,7 @@ Rectangle {
     StyledText {
         id: textElement
         text: ""
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding

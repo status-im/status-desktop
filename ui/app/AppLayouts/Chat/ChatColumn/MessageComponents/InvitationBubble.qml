@@ -44,7 +44,7 @@ Item {
         sourceComponent: Component {
             Rectangle {
                 id: rectangleBubble
-                width: 270
+                width: 270 * scaleAction.factor
                 height: childrenRect.height + Style.current.halfPadding
                 radius: 16
                 color: Style.current.background
@@ -65,7 +65,7 @@ Item {
                     anchors.topMargin: Style.current.halfPadding
                     anchors.left: parent.left
                     anchors.leftMargin: root.innerMargin
-                    font.pixelSize: 13
+                    font.pixelSize: 13 * scaleAction.factor
                 }
 
                 StyledText {
@@ -79,7 +79,7 @@ Item {
                     anchors.right: parent.right
                     anchors.rightMargin: root.innerMargin
                     wrapMode: Text.WordWrap
-                    font.pixelSize: 15
+                    font.pixelSize: 15 * scaleAction.factor
                 }
 
                 Separator {
@@ -100,7 +100,7 @@ Item {
                     anchors.rightMargin: root.innerMargin
                     font.weight: Font.Bold
                     wrapMode: Text.WordWrap
-                    font.pixelSize: 17
+                    font.pixelSize: 17 * scaleAction.factor
                 }
 
                 StyledText {
@@ -113,7 +113,7 @@ Item {
                     anchors.right: parent.right
                     anchors.rightMargin: root.innerMargin
                     wrapMode: Text.WordWrap
-                    font.pixelSize: 15
+                    font.pixelSize: 15 * scaleAction.factor
                 }
 
                 StyledText {
@@ -125,7 +125,7 @@ Item {
                     anchors.topMargin: 2
                     anchors.left: parent.left
                     anchors.leftMargin: root.innerMargin
-                    font.pixelSize: 13
+                    font.pixelSize: 13 * scaleAction.factor
                     font.weight: Font.Medium
                     color: Style.current.secondaryText
                 }
@@ -140,7 +140,7 @@ Item {
                     type: "secondary"
                     anchors.top: sep2.bottom
                     width: parent.width
-                    height: 44
+                    height: 44 * scaleAction.factor
                     enabled: !invitedCommunity.joined && !root.joined
                     //% "Joined"
                     text: root.joined || invitedCommunity.joined || invitedCommunity.isMember ? qsTrId("joined") :

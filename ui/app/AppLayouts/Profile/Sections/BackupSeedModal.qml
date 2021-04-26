@@ -21,12 +21,12 @@ ModalPopup {
     }
 
     header: Item {
-        height: 50
+        height: 50 * scaleAction.factor
         StyledText {
             id: lblTitle
             //% "Back up seed phrase"
             text: qsTrId("back-up-seed-phrase")
-            font.pixelSize: 17
+            font.pixelSize: 17 * scaleAction.factor
             font.bold: true
             anchors.left: parent.left
         }
@@ -35,7 +35,7 @@ ModalPopup {
             anchors.topMargin: Style.current.smallPadding
             //% "Step %1 of 3"
             text: qsTrId("step--1-of-3").arg(seedWord2Idx > -1 ? 3 : (seedWord1Idx > -1 ? 2 : 1))
-            font.pixelSize: 14
+            font.pixelSize: 14 * scaleAction.factor
             anchors.left: parent.left
         }
     }
@@ -57,8 +57,8 @@ ModalPopup {
                     property int len: mnemonicRepeater.count
                     anchors.top: parent.top
                     anchors.topMargin: Style.current.padding
-                    height: 40 * (len / 2)
-                    width: 350
+                    height: 40 * (len / 2) * scaleAction.factor
+                    width: 350 * scaleAction.factor
                     border.width: 1
                     color: Style.current.background
                     border.color: Style.current.border
@@ -70,8 +70,8 @@ ModalPopup {
                         model: profileModel.mnemonic.get.split(" ")
                         Rectangle {
                             id: word
-                            height: 40
-                            width: 175
+                            height: 40 * scaleAction.factor
+                            width: 175 * scaleAction.factor
                             color: "transparent"
                             anchors.top: (index == 0
                                           || index == (wrapper.len / 2)) ? parent.top : parent.children[index - 1].bottom
@@ -97,12 +97,12 @@ ModalPopup {
                                 anchors.bottomMargin: Style.current.smallPadding
                                 anchors.left: parent.left
                                 anchors.leftMargin: Style.current.bigPadding
-                                font.pixelSize: 15
+                                font.pixelSize: 15 * scaleAction.factor
                             }
 
                             StyledTextEdit {
                                 text: modelData
-                                font.pixelSize: 15
+                                font.pixelSize: 15 * scaleAction.factor
                                 anchors.bottom: parent.bottom
                                 anchors.bottomMargin: Style.current.smallPadding
                                 anchors.left: count.right
@@ -126,7 +126,7 @@ ModalPopup {
             //% "If you lose your seed phrase you lose your data and funds"
             text: qsTrId("your-data-belongs-to-you")
             wrapMode: Text.WordWrap
-            font.pixelSize: 17
+            font.pixelSize: 17 * scaleAction.factor
             font.bold: true
             anchors.left: parent.left
             anchors.right: parent.right
@@ -139,6 +139,7 @@ ModalPopup {
             text: qsTrId("your-data-belongs-to-you-description")
             anchors.left: parent.left
             anchors.right: parent.right
+            scale: scaleAction.factor
         }
     }
 
@@ -150,6 +151,7 @@ ModalPopup {
             id: txtChk
             //% "Check your seed phrase"
             text: qsTrId("check-your-recovery-phrase")
+            scale: scaleAction.factor
         }
         StyledText {
             //% "Word #%1"
@@ -157,6 +159,7 @@ ModalPopup {
             anchors.left: txtChk.right
             anchors.leftMargin: 5
             color: Style.current.secondaryText
+            scale: scaleAction.factor
         }
 
         Input {
@@ -180,6 +183,7 @@ ModalPopup {
             //% "In order to check if you have backed up your seed phrase correctly, enter the word #%1 above"
             text: qsTrId("in-order-to-check-if-you-have-backed-up-your-seed-phrase-correctly--enter-the-word---1-above").arg((seedWord2Idx > -1 ? seedWord2Idx : seedWord1Idx) + 1)
             color: Style.current.secondaryText
+            scale: scaleAction.factor
         }
 
         ConfirmationDialog {
@@ -208,7 +212,7 @@ ModalPopup {
         //% "With this 12 words you can always get your key back. Write it down. Keep it safe, offline, and separate from this device."
         text: qsTrId(
                   "with-this-12-words-you-can-always-get-your-key-back.-write-it-down.-keep-it-safe,-offline,-and-separate-from-this-device.")
-        font.pixelSize: 14
+        font.pixelSize: 14 * scaleAction.factor
         font.weight: Font.Medium
         color: Style.current.darkGrey
         anchors.bottom: parent.bottom

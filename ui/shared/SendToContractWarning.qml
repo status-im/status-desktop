@@ -38,8 +38,8 @@ Item {
 
         SVGImage {
             id: imgExclamation
-            width: 13.33
-            height: 13.33
+            width: 13.33 * scaleAction.factor
+            height: 13.33 * scaleAction.factor
             sourceSize.height: height * 2
             sourceSize.width: width * 2
             anchors.horizontalCenter: parent.horizontalCenter
@@ -52,9 +52,9 @@ Item {
             width: root.width
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: 13
+            font.pixelSize: 13 * scaleAction.factor
             color: Style.current.danger
-            lineHeight: 18
+            lineHeight: 18 * scaleAction.factor
             lineHeightMode: Text.FixedHeight
             wrapMode: Text.WordWrap
         }

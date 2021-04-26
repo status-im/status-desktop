@@ -7,10 +7,10 @@ Rectangle {
 
     property string chatId
     property string chatName
-    property int letterSize: root.isCompact ? 15 : 21
+    property int letterSize: root.isCompact ? 15  : 21
 
-    width: 40
-    height: 40
+    width: 40 * scaleAction.factor
+    height: 40 * scaleAction.factor
     radius: width / 2
 
     color: {
@@ -25,7 +25,7 @@ Rectangle {
         text: (root.chatName.charAt(0) == "#" ? root.chatName.charAt(1) : root.chatName.charAt(0)).toUpperCase()
         opacity: 0.7
         font.weight: Font.Bold
-        font.pixelSize: root.letterSize
+        font.pixelSize: root.letterSize * scaleAction.factor
         color: "white"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter

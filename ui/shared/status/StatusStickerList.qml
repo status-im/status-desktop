@@ -9,8 +9,8 @@ GridView {
     id: root
     visible: count > 0
     anchors.fill: parent
-    cellWidth: 88
-    cellHeight: 88
+    cellWidth: 88 * scaleAction.factor
+    cellHeight: 88 * scaleAction.factor
     model: stickerList
     focus: true
     clip: true
@@ -23,8 +23,8 @@ GridView {
             anchors.topMargin: 4
             anchors.leftMargin: 4
             ImageLoader {
-                width: 80
-                height: 80
+                width: 80 * scaleAction.factor
+                height: 80 * scaleAction.factor
                 source: "https://ipfs.infura.io/ipfs/" + url
                 onClicked: {
                     root.stickerClicked(hash, packId)

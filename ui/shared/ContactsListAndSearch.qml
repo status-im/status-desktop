@@ -108,10 +108,10 @@ Item {
             icon.name: "close-icon"
             type: "secondary"
             visible: chatKey.text !== ""
-            icon.width: 14
-            icon.height: 14
-            width: 14
-            height: 14
+            icon.width: 14 * scaleAction.factor
+            icon.height: 14 * scaleAction.factor
+            width: 14 * scaleAction.factor
+            height: 14 * scaleAction.factor
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
@@ -131,7 +131,7 @@ Item {
         id: message
         text: validationError || successMessage
         visible: validationError !== "" || successMessage !== ""
-        font.pixelSize: 13
+        font.pixelSize: 13 * scaleAction.factor
         color: !!validationError ? Style.current.danger : Style.current.success
         anchors.top: chatKey.bottom
         anchors.topMargin: Style.current.smallPadding

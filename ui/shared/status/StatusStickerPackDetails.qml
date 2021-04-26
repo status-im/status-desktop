@@ -9,7 +9,7 @@ Item {
     property string packThumb: "QmfZrHmLR5VvkXSDbArDR3TX6j4FgpDcrvNz2fHSJk1VvG"
     property string packName: "Status Cat"
     property string packAuthor: "cryptoworld1373"
-    property int packNameFontSize: 15
+    property int packNameFontSize: 15 * scaleAction.factor
     property int spacing: Style.current.padding
 
     height: childrenRect.height
@@ -18,8 +18,8 @@ Item {
     RoundedImage {
         id: imgThumb
         anchors.left: parent.left
-        width: 40
-        height: 40
+        width: 40 * scaleAction.factor
+        height: 40 * scaleAction.factor
         source: "https://ipfs.infura.io/ipfs/" + packThumb
     }
     
@@ -37,7 +37,7 @@ Item {
             color: Style.current.secondaryText
             text: packAuthor
             font.family: Style.current.fontRegular.name
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
         }
     }
 

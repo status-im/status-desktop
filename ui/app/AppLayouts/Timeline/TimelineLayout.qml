@@ -50,7 +50,7 @@ ScrollView {
 
     property Component profilePopupComponent: ProfilePopup {
         id: profilePopup
-        height: 450
+        height: 450 * scaleAction.factor
         onClosed: {
             if(profilePopup.parentPopup){
                 profilePopup.parentPopup.close();
@@ -61,7 +61,7 @@ ScrollView {
 
     Item {
         id: timelineContainer
-        width: 624
+        width: 624 * scaleAction.factor
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom

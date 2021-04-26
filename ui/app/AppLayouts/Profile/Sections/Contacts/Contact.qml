@@ -20,7 +20,7 @@ Rectangle {
     id: container
 
     visible: isContact && (searchStr == "" || name.includes(searchStr))
-    height: visible ? 64 : 0
+    height: visible ? 64 * scaleAction.factor : 0
     anchors.right: parent.right
     anchors.left: parent.left
     anchors.leftMargin: -Style.current.padding
@@ -43,7 +43,7 @@ Rectangle {
         elide: Text.ElideRight
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        font.pixelSize: 17
+        font.pixelSize: 17 * scaleAction.factor
         anchors.top: accountImage.top
         anchors.topMargin: Style.current.smallPadding
         anchors.left: accountImage.right
@@ -68,7 +68,7 @@ Rectangle {
     }
 
     StatusContextMenuButton {
-        property int iconSize: 14
+        property int iconSize: 14 * scaleAction.factor
         id: menuButton
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right

@@ -19,13 +19,13 @@ Item {
         return chatType
     }
     property string identicon
-    property int identiconSize: 40
+    property int identiconSize: 40 * scaleAction.factor
     property bool isCompact: false
     property bool muted: false
 
     property string profileImage: realChatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
 
-    height: 48
+    height: 48 * scaleAction.factor
     width: nameAndInfo.width + chatIdenticon.width + Style.current.smallPadding
 
     Connections {
@@ -44,8 +44,8 @@ Item {
         chatId: root.chatId
         chatName: root.chatName
         identicon: root.profileImage || root.identicon
-        width: root.isCompact ? 20 : root.identiconSize
-        height: root.isCompact ? 20 : root.identiconSize
+        width: root.isCompact ? 20 * scaleAction.factor : root.identiconSize
+        height: root.isCompact ? 20 * scaleAction.factor : root.identiconSize
         anchors.verticalCenter: parent.verticalCenter
     }
 
@@ -68,7 +68,7 @@ Item {
             }
 
             font.weight: Font.Medium
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
         }
 
         SVGImage {
@@ -80,8 +80,8 @@ Item {
             anchors.verticalCenter: chatName.verticalCenter
             anchors.left: chatName.right
             anchors.leftMargin: 4
-            width: 12.5
-            height: 12.5
+            width: 12.5 * scaleAction.factor
+            height: 12.5 * scaleAction.factor
 
             ColorOverlay {
                 anchors.fill: parent
@@ -134,7 +134,7 @@ Item {
                     default: return "...";
                 }
             }
-            font.pixelSize: 12
+            font.pixelSize: 12 * scaleAction.factor
             anchors.top: chatName.bottom
         }
     }

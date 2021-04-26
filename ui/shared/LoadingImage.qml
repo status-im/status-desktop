@@ -4,8 +4,8 @@ import "."
 SVGImage {
     id: loadingImg
     source: "../app/img/loading.svg"
-    width: 17
-    height: 17
+    width: 17 * scaleAction.factor
+    height: 17 * scaleAction.factor
     fillMode: Image.Stretch
     RotationAnimator {
         target: loadingImg;

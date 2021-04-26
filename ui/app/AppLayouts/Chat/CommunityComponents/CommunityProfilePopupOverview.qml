@@ -25,7 +25,7 @@ Item {
         text: root.description
         wrapMode: Text.Wrap
         width: parent.width
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
     }
 
     Separator {
@@ -89,7 +89,7 @@ Item {
                             text: nbMembers.toString()
                             anchors.verticalCenter: parent.verticalCenter
                             padding: 0
-                            font.pixelSize: 15
+                            font.pixelSize: 15 * scaleAction.factor
                             color: Style.current.secondaryText
                         }
 
@@ -100,11 +100,11 @@ Item {
                             anchors.leftMargin: visible ? Style.current.halfPadding : 0
                             anchors.verticalCenter: parent.verticalCenter
                             color: Style.current.blue
-                            width: visible ? 22 : 0
-                            height: 22
+                            width: visible ? 22 * scaleAction.factor : 0
+                            height: 22 * scaleAction.factor
                             radius: width / 2
                             Text {
-                                font.pixelSize: 12
+                                font.pixelSize: 12 * scaleAction.factor
                                 color: Style.current.white
                                 anchors.centerIn: parent
                                 text: memberBlock.nbRequests
@@ -117,8 +117,8 @@ Item {
                             anchors.leftMargin: Style.current.padding
                             anchors.verticalCenter: parent.verticalCenter
                             source: "../../../img/caret.svg"
-                            width: 13
-                            height: 7
+                            width: 13 * scaleAction.factor
+                            height: 7 * scaleAction.factor
                             rotation: -90
                             ColorOverlay {
                                 anchors.fill: parent

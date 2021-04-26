@@ -42,7 +42,7 @@ Item {
         StyledText {
             id: labelSigningPhrase
             color: Style.current.secondaryText
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             //% "Signing phrase"
             text: qsTrId("signing-phrase")
         }
@@ -52,8 +52,8 @@ Item {
             anchors.left: labelSigningPhrase.right
             anchors.leftMargin: 7
             anchors.verticalCenter: parent.verticalCenter
-            width: 13
-            height: 13
+            width: 13 * scaleAction.factor
+            height: 13 * scaleAction.factor
             icon.width: width
             icon.height: height
             icon.name: "info"
@@ -70,7 +70,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: signingPhraseItem.bottom
         anchors.topMargin: Style.current.smallPadding
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         text: root.signingPhrase
     }
 
@@ -80,8 +80,8 @@ Item {
         anchors.leftMargin: 67
         anchors.top: txtPassword.top
         anchors.topMargin: 2
-        width: 13
-        height: 13
+        width: 13 * scaleAction.factor
+        height: 13 * scaleAction.factor
         icon.width: width
         icon.height: height
         icon.name: "info"
@@ -97,7 +97,7 @@ Item {
         anchors.top: signingPhrase.bottom
         anchors.topMargin: Style.current.bigPadding
         focus: true
-        customHeight: 56
+        customHeight: 56 * scaleAction.factor
         //% "Password"
         label: qsTrId("password")
         //% "Enter password"

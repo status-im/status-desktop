@@ -36,7 +36,7 @@ Item {
         visible: !showMoreLoader.active || root.readMore
         textFormat: Text.RichText
         wrapMode: Text.Wrap
-        font.pixelSize: Style.current.primaryTextFontSize
+        font.pixelSize: Style.current.primaryTextFontSize * scaleAction.factor
         readOnly: true
         selectByMouse: true
         color: Style.current.textColor
@@ -114,8 +114,8 @@ Item {
         sourceComponent: Component {
             SVGImage {
                 id: emojiImage
-                width: 256
-                height: 44
+                width: 256 * scaleAction.factor
+                height: 44 * scaleAction.factor
                 fillMode: Image.PreserveAspectFit
                 source: "../../../../img/read-more.svg"
                 z: 100

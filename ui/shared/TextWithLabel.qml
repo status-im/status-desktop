@@ -19,7 +19,7 @@ Item {
         id: inputLabel
         text: infoText.label
         font.weight: Font.Medium
-        font.pixelSize: 13
+        font.pixelSize: 13 * scaleAction.factor
         color: Style.current.secondaryText
     }
 
@@ -31,7 +31,7 @@ Item {
         readOnly: true
         anchors.top: inputLabel.bottom
         anchors.topMargin: 4
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         wrapMode: infoText.wrap ? Text.WordWrap : Text.NoWrap
         anchors.left: parent.left
         anchors.right: infoText.wrap ? parent.right : undefined

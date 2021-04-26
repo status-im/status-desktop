@@ -27,8 +27,8 @@ Item {
 
     Item {
         id: element
-        width: 360
-        height: 200
+        width: 360 * scaleAction.factor
+        height: 200 * scaleAction.factor
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -42,7 +42,7 @@ Item {
             id: usernameText
             text: loginModel.currentAccount.username
             font.weight: Font.Bold
-            font.pixelSize: 17
+            font.pixelSize: 17 * scaleAction.factor
             anchors.top: userImage.bottom
             anchors.topMargin: 4
             anchors.horizontalCenter: parent.horizontalCenter
@@ -70,8 +70,8 @@ Item {
         Rectangle {
             property bool isHovered: false
             id: changeAccountBtn
-            width: 24
-            height: 24
+            width: 24 * scaleAction.factor
+            height: 24 * scaleAction.factor
             anchors.left: usernameText.right
             anchors.leftMargin: 4
             anchors.verticalCenter: usernameText.verticalCenter
@@ -82,8 +82,8 @@ Item {
 
             SVGImage {
                 id: caretImg
-                width: 10
-                height: 6
+                width: 10 * scaleAction.factor
+                height: 6 * scaleAction.factor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 source: "../app/img/caret.svg"
@@ -116,9 +116,9 @@ Item {
 
         Address {
             id: addressText
-            width: 90
+            width: 90 * scaleAction.factor
             text: loginModel.currentAccount.address
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             anchors.top: usernameText.bottom
             anchors.topMargin: 4
             anchors.horizontalCenter: parent.horizontalCenter
@@ -145,8 +145,8 @@ Item {
             size: "medium"
             type: "secondary"
             icon.name: "arrow-right"
-            icon.width: 18
-            icon.height: 14
+            icon.width: 18 * scaleAction.factor
+            icon.height: 14 * scaleAction.factor
             visible: txtPassword.text.length > 0
             anchors.left: txtPassword.right
             anchors.leftMargin: Style.current.padding
@@ -181,7 +181,7 @@ Item {
             anchors.top: txtPassword.bottom
             anchors.topMargin: 16
             anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 13
+            font.pixelSize: 13 * scaleAction.factor
             type: "secondary"
             onClicked: {
                 setCurrentFlow(false);
@@ -197,7 +197,7 @@ Item {
             visible: false
             //% "Login failed. Please re-enter your password and try again."
             text: qsTrId("login-failed--please-re-enter-your-password-and-try-again-")
-            font.pixelSize: 13
+            font.pixelSize: 13 * scaleAction.factor
             color: Style.current.danger
         }
     }

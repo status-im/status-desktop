@@ -15,7 +15,7 @@ ModalPopup {
     id: popup
     //% "Create a password"
     title: qsTrId("intro-wizard-title-alt4")
-    height: 500
+    height: 500 * scaleAction.factor
 
     onOpened: {
         firstPasswordField.text = "";
@@ -73,7 +73,7 @@ ModalPopup {
         anchors.leftMargin: Style.current.xlPadding
         horizontalAlignment: Text.AlignHCenter
         color: Style.current.danger
-        font.pixelSize: 11
+        font.pixelSize: 11 * scaleAction.factor
     }
 
     StyledText {
@@ -88,7 +88,7 @@ ModalPopup {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         color: Style.current.secondaryText
-        font.pixelSize: 12
+        font.pixelSize: 12 * scaleAction.factor
     }
 
     footer: Item {

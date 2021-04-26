@@ -3,8 +3,8 @@ import QtQuick 2.3
 // This rectangle's only job is to mask the corner to make it less rounded... yep
 Rectangle {
     color: parent.color
-    width: 18
-    height: 18
+    width: 18 * scaleAction.factor
+    height: 18 * scaleAction.factor
     anchors.bottom: parent.bottom
     anchors.bottomMargin: 0
     anchors.left: !isCurrentUser ? parent.left : undefined

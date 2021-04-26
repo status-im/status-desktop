@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+<file alias="imports/Constants.qml">/Users/user/Status/status-desktop/ui/imports/Constants.qml</file>
+<file alias="imports/Style.qml">/Users/user/Status/status-desktop/ui/imports/Style.qml</file>
+<file alias="main.qml">/Users/user/Status/status-desktop/ui/main.qml</file>
+</qresource>
+</RCC>

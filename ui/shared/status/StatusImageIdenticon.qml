@@ -6,9 +6,9 @@ RoundedImage {
     id: root
     noHover: true
     source:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAg0lEQVR4nOzXwQmAMBAFURV7sQybsgybsgyr0QYUlE1g+Mw7ioQMe9lMQwhDaAyhMYTGEJqYkPnrj/t5XE/ft2UdW1yken7MRAyhMYTGEBpDaAyhKe9JbzvSX9WdLWYihtAYQuMLkcYQGkPUScxEDKExhMYQGkNoDKExhMYQmjsAAP//ZfIUZgXTZXQAAAAASUVORK5CYII="
-    width: 40
-    height: 40
-    border.width: 1
+    width: 40 * scaleAction.factor
+    height: 40 * scaleAction.factor
+    border.width: 1 * scaleAction.factor
     border.color: Style.current.borderSecondary
     smooth: false
     antialiasing: true

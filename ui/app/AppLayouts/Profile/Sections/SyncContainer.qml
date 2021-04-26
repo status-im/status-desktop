@@ -63,7 +63,7 @@ Item {
                 anchors.left: addButton.right
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: addButton.verticalCenter
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
             }
 
             MouseArea {
@@ -151,6 +151,7 @@ Item {
             anchors.leftMargin: 24
             anchors.top: addMailserver.bottom
             anchors.topMargin: 24
+            scale: scaleAction.factor
         }
 
         StatusSwitch {
@@ -172,6 +173,7 @@ Item {
             anchors.top: switchLbl.bottom
             anchors.topMargin: 24
             visible: automaticSelectionSwitch.checked
+            scale: scaleAction.factor
         }
 
         ListView {

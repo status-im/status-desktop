@@ -48,7 +48,9 @@ Item {
     anchors.top: applicationWindow.top
     anchors.left: parent.left
     visible: isVisible ? true : false
-    height: isVisible ? rectangle.height + (isCompact ? 4 : Style.current.halfPadding) : 0
+    height: isVisible ? rectangle.height + (isCompact ? 4 * scaleAction.factor
+                                                      : Style.current.halfPadding * scaleAction.factor)
+                      : 0
 
     Rectangle {
         Connections {
@@ -64,13 +66,13 @@ Item {
         id: rectangle
         color: wrapper.color
         radius: 8
-        height: !isCompact ? 64 : 40
+        height: !isCompact ? 64 * scaleAction.factor : 40 * scaleAction.factor
         width: parent.width
 
         StatusIdenticon {
             id: contactImage
-            height: !isCompact ? 40 : 28
-            width: !isCompact ? 40 : 28
+            height: !isCompact ? 40 * scaleAction.factor : 28 * scaleAction.factor
+            width: !isCompact ? 40 * scaleAction.factor : 28 * scaleAction.factor
             chatId: wrapper.chatId
             chatName: wrapper.name
             chatType: wrapper.realChatType
@@ -82,8 +84,8 @@ Item {
 
         SVGImage {
             id: channelIcon
-            width: 16
-            height: 16
+            width: 16 * scaleAction.factor
+            height: 16 * scaleAction.factor
             fillMode: Image.PreserveAspectFit
             source: "../../../img/channel-icon-" + (wrapper.realChatType === Constants.chatTypePublic ? "public-chat.svg" : "group.svg")
             anchors.left: contactImage.right
@@ -104,7 +106,7 @@ Item {
             elide: Text.ElideRight
             color: muted ? Style.current.secondaryText : Style.current.textColor
             font.weight: Font.Medium
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             anchors.left: channelIcon.visible ? channelIcon.right : contactImage.right
             anchors.leftMargin: channelIcon.visible ? 2 :
                                                       (!isCompact ? Style.current.padding : Style.current.halfPadding)
@@ -133,7 +135,7 @@ Item {
             elide: Text.ElideRight
             anchors.bottom: parent.bottom
             anchors.bottomMargin: Style.current.smallPadding
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
             anchors.left: contactImage.right
             anchors.leftMargin: Style.current.padding
             color: Style.current.secondaryText
@@ -147,13 +149,13 @@ Item {
             anchors.rightMargin: Style.current.padding
             anchors.top: parent.top
             anchors.topMargin: Style.current.smallPadding
-            font.pixelSize: 11
+            font.pixelSize: 11 * scaleAction.factor
             color: Style.current.secondaryText
         }
         Rectangle {
             id: contactNumberChatsCircle
-            width: 22
-            height: 22
+            width: 22 * scaleAction.factor
+            height: 22 * scaleAction.factor
             radius: 50
             anchors.right: parent.right
             anchors.rightMargin: !isCompact ? Style.current.padding : Style.current.smallPadding

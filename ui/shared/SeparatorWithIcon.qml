@@ -20,8 +20,8 @@ Item {
 
     SVGImage {
         id: icon
-        height: 14
-        width: 18
+        height: 14 * scaleAction.factor
+        width: 18 * scaleAction.factor
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         fillMode: Image.PreserveAspectFit

@@ -16,8 +16,8 @@ Item {
     readonly property bool hasLabel: label !== ""
     property color bgColor: Style.current.inputBackground
     property url icon: ""
-    property int iconHeight: 24
-    property int iconWidth: 24
+    property int iconHeight: 24 * scaleAction.factor
+    property int iconWidth: 24 * scaleAction.factor
     property bool copyToClipboard: false
     property bool pasteFromClipboard: false
     property bool readOnly: false
@@ -27,8 +27,8 @@ Item {
         inputValue.forceActiveFocus(Qt.MouseFocusReason)
     }
     readonly property int labelMargin: 7
-    property int customHeight: 44
-    property int fontPixelSize: 15
+    property int customHeight: 44 * scaleAction.factor
+    property int fontPixelSize: 15 * scaleAction.factor
     property alias validator: inputValue.validator
     signal editingFinished(string inputValue)
     signal textEdited(string inputValue)
@@ -52,7 +52,7 @@ Item {
         anchors.leftMargin: 0
         anchors.top: parent.top
         anchors.topMargin: 0
-        font.pixelSize: 13
+        font.pixelSize: 13 * scaleAction.factor
         color: Style.current.textColor
     }
 
@@ -144,8 +144,8 @@ Item {
                                         qsTrId("paste")
 
                         }
-                        height: 28
-                        font.pixelSize: 12
+                        height: 28 * scaleAction.factor
+                        font.pixelSize: 12 * scaleAction.factor
                         borderColor: Style.current.blue
                         showBorder: true
                         onClicked: {
@@ -176,8 +176,8 @@ Item {
         anchors.topMargin: validationErrorTopMargin
         selectByMouse: true
         readOnly: true
-        font.pixelSize: 12
-        height: 16
+        font.pixelSize: 12 * scaleAction.factor
+        height: 16 * scaleAction.factor
         color: Style.current.danger
         width: inputRectangle.width
         wrapMode: TextEdit.Wrap

@@ -24,7 +24,7 @@ Item {
             anchors.leftMargin: 24
             //% "Sound volume"
             text: qsTrId("sound-volume") + " " + volume.value
-            font.pixelSize: 15
+            font.pixelSize: 15 * scaleAction.factor
         }
 
         StatusSlider {

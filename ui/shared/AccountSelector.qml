@@ -84,9 +84,9 @@ Item {
         
         color: !root.isValid ? Style.current.danger : Style.current.secondaryText
         elide: Text.ElideRight
-        font.pixelSize: 13
+        font.pixelSize: 13 * scaleAction.factor
         horizontalAlignment: Text.AlignRight
-        height: 18
+        height: 18 * scaleAction.factor
 
         StatusToolTip {
             enabled: txtAssetBalance.truncated
@@ -109,7 +109,7 @@ Item {
         anchors.right: parent.right
 
         color: txtAssetBalance.color
-        font.pixelSize: 13
+        font.pixelSize: 13 * scaleAction.factor
         height: txtAssetBalance.height
     }
     Select {
@@ -130,8 +130,8 @@ Item {
 
             SVGImage {
                 id: selectedIconImg
-                sourceSize.height: 12
-                sourceSize.width: 12
+                sourceSize.height: 12 * scaleAction.factor
+                sourceSize.width: 12 * scaleAction.factor
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
@@ -152,9 +152,9 @@ Item {
                 anchors.right: parent.right
                 anchors.rightMargin: select.selectedItemRightMargin
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 verticalAlignment: Text.AlignVCenter
-                height: 22
+                height: 22 * scaleAction.factor
             }
         }
     }
@@ -169,16 +169,16 @@ Item {
 
         StyledText {
             id: textSelectedAddress
-            font.pixelSize: 12
+            font.pixelSize: 12 * scaleAction.factor
             elide: Text.ElideMiddle
-            height: 16
-            width: 90
+            height: 16 * scaleAction.factor
+            width: 90 * scaleAction.factor
             color: Style.current.secondaryText
         }
         StyledText {
             id: textSelectedAddressFiatBalance
-            font.pixelSize: 12
-            height: 16
+            font.pixelSize: 12 * scaleAction.factor
+            height: 16 * scaleAction.factor
             color: Style.current.secondaryText
         }
     }
@@ -203,8 +203,8 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
-                width: 12
-                height: 12
+                width: 12 * scaleAction.factor
+                height: 12 * scaleAction.factor
                 sourceSize.height: height
                 sourceSize.width: width
                 fillMode: Image.PreserveAspectFit
@@ -227,20 +227,20 @@ Item {
                     id: accountName
                     text: name
                     elide: Text.ElideRight
-                    font.pixelSize: 15
+                    font.pixelSize: 15 * scaleAction.factor
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    height: 22
+                    height: 22 * scaleAction.factor
                 }
 
                 StyledText {
                     id: accountAddress
                     text: address
                     elide: Text.ElideMiddle
-                    width: 80
+                    width: 80 * scaleAction.factor
                     color: Style.current.secondaryText
-                    font.pixelSize: 12
-                    height: 16
+                    font.pixelSize: 12 * scaleAction.factor
+                    height: 16 * scaleAction.factor
                 }
             }
             StyledText {
@@ -248,8 +248,8 @@ Item {
                 anchors.right: fiatCurrencySymbol.left
                 anchors.rightMargin: 4
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 15
-                height: 22
+                font.pixelSize: 15 * scaleAction.factor
+                height: 22 * scaleAction.factor
                 text: fiatBalance
             }
             StyledText {
@@ -257,8 +257,8 @@ Item {
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 15
-                height: 22
+                font.pixelSize: 15 * scaleAction.factor
+                height: 22 * scaleAction.factor
                 color: Style.current.secondaryText
                 text: root.currency.toUpperCase()
             }

@@ -42,7 +42,7 @@ ModalPopup {
 
                 delegate: Component {
                     StatusRadioButtonRow {
-                        height: 64
+                        height: 64 * scaleAction.factor
                         anchors.rightMargin: 0
                         text: modelData.name
                         buttonGroup: languageGroup

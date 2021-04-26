@@ -76,7 +76,7 @@ ScrollView {
 
             id: scrollDownButton
             visible: false
-            height: 32
+            height: 32 * scaleAction.factor
             width: nbMessages.width + arrowImage.width + 2 * Style.current.halfPadding + (nbMessages.visible ? scrollDownButton.buttonPadding : 0)
             anchors.bottom: parent.bottom
             anchors.right: parent.right
@@ -100,14 +100,14 @@ ScrollView {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 color: Style.current.pillButtonTextColor
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 anchors.leftMargin: Style.current.halfPadding
             }
 
             SVGImage {
                 id: arrowImage
-                width: 24
-                height: 24
+                width: 24 * scaleAction.factor
+                height: 24 * scaleAction.factor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: nbMessages.right
                 source: "../../../img/leave_chat.svg"

@@ -5,7 +5,7 @@ import "./status"
 
 Item {
     id: noContactsRect
-    width: 260
+    width: 260 * scaleAction.factor
     //% "You don’t have any contacts yet. Invite your friends to start chatting."
     property string text: qsTrId("you-don-t-have-any-contacts-yet--invite-your-friends-to-start-chatting-")
     StyledText {
@@ -17,7 +17,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         wrapMode: Text.WordWrap
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         horizontalAlignment: Text.AlignHCenter
     }
     StatusButton {

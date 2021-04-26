@@ -7,8 +7,8 @@ import "./"
 
 ModalPopup {
     id: blockContactConfirmationDialog
-    height: 237
-    width: 400
+    height: 237 * scaleAction.factor
+    width: 400 * scaleAction.factor
 
     property Popup parentPopup
     property string contactAddress: ""
@@ -22,7 +22,7 @@ ModalPopup {
     StyledText {
         //% "Blocking will remove any messages you received from %1 and stop new messages from reaching you."
         text: qsTrId("blocking-will-remove-any-messages-you-received-from--1-and-stop-new-messages-from-reaching-you-").arg(contactName)
-        font.pixelSize: 15
+        font.pixelSize: 15 * scaleAction.factor
         anchors.left: parent.left
         anchors.right: parent.right
         wrapMode: Text.WordWrap

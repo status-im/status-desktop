@@ -90,7 +90,7 @@ Item {
             StyledText {
                 //% "Open an ethereum explorer after a transaction hash or an address is entered"
                 text: qsTrId("open-an-ethereum-explorer-after-a-transaction-hash-or-an-address-is-entered")
-                font.pixelSize: 15
+                font.pixelSize: 15 * scaleAction.factor
                 color: Style.current.secondaryText
                 width: parent.width - 150
                 wrapMode: Text.WordWrap
@@ -104,6 +104,7 @@ Item {
                 anchors.leftMargin: -Style.current.padding
                 anchors.right: parent.right
                 anchors.rightMargin: -Style.current.padding
+                scale: scaleAction.factor
             }
 
             StatusSectionHeadline {

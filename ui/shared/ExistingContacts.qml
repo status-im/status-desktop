@@ -22,7 +22,8 @@ Item {
         return parts.some(p => p.startsWith(filter))
     }
 
-    height: Math.min(contactListView.contentHeight, (expanded ? 320 : 192))
+    height: Math.min(contactListView.contentHeight, (expanded ? 320 * scaleAction.factor
+                                                              : 192 * scaleAction.factor))
     ScrollView {
         anchors.fill: parent
 

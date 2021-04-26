@@ -61,8 +61,8 @@ Item {
                 transactionDialog.closed()
             }
             ensUsername: ensUsername.text || ""
-            width: 400
-            height: 400
+            width: 400 * scaleAction.factor
+            height: 400 * scaleAction.factor
         }
     }
 
@@ -77,8 +77,8 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: Style.current.bigPadding*2
             anchors.horizontalCenter: parent.horizontalCenter
-            width: 60
-            height: 60
+            width: 60 * scaleAction.factor
+            height: 60 * scaleAction.factor
             radius: 120
             color: Style.current.blue
 
@@ -87,8 +87,8 @@ Item {
                 visible: ensStatus === Constants.ens_taken
                 fillMode: Image.PreserveAspectFit
                 source: "../../../../img/block-icon-white.svg"
-                width: 20
-                height: 20
+                width: 20 * scaleAction.factor
+                height: 20 * scaleAction.factor
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -106,7 +106,7 @@ Item {
                 }
                 opacity: 0.7
                 font.weight: Font.Bold
-                font.pixelSize: 18
+                font.pixelSize: 18 * scaleAction.factor
                 color: Style.current.white
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
@@ -152,16 +152,16 @@ Item {
 
         StatusRoundButton {
             id: btnContinue
-            width: 44
-            height: 44
+            width: 44 * scaleAction.factor
+            height: 44 * scaleAction.factor
             anchors.top: circleAt.bottom
             anchors.topMargin: Style.current.bigPadding
             anchors.right: parent.right
             size: "medium"
             type: "secondary"
             icon.name: "arrow-right"
-            icon.width: 18
-            icon.height: 14
+            icon.width: 18 * scaleAction.factor
+            icon.height: 14 * scaleAction.factor
             visible: valid
             onClicked: {
                 if(!valid) return;
@@ -192,8 +192,8 @@ Item {
             border.color: Style.current.border
             color: Style.current.background
             radius: 50
-            height: 30
-            width: 350
+            height: 30 * scaleAction.factor
+            width: 350 * scaleAction.factor
 
             Item {
                 anchors.left: parent.left
@@ -201,7 +201,7 @@ Item {
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.halfPadding
                 anchors.leftMargin: Style.current.padding
-                height: 20
+                height: 20 * scaleAction.factor
 
                 StyledText {
                     text: !isStatus ? 
@@ -210,7 +210,7 @@ Item {
                         :
                         ".stateofus.eth"
                     font.weight: Font.Bold
-                    font.pixelSize: 12
+                    font.pixelSize: 12 * scaleAction.factor
                     anchors.leftMargin: Style.current.padding
                     color: Style.current.textColor
                 }
@@ -222,7 +222,7 @@ Item {
                         :
                         //% "I own a name on another domain"
                         qsTrId("ens-want-custom-domain")
-                    font.pixelSize: 12
+                    font.pixelSize: 12 * scaleAction.factor
                     color: Style.current.blue
                     anchors.right: parent.right
                     anchors.rightMargin: Style.current.padding
@@ -249,6 +249,7 @@ Item {
             anchors.top: ensTypeRect.bottom
             wrapMode: Text.WordWrap
             anchors.topMargin: Style.current.bigPadding
+            scale: scaleAction.factor
         }
     }
 }

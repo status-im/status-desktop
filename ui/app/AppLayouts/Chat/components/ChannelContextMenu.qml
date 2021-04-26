@@ -10,7 +10,7 @@ PopupMenu {
     property var contextChannel: ({})
 
     id: channelContextMenu
-    width: 175
+    width: 175 * scaleAction.factor
     subMenuIcons: [
         /* { */
         /*     source:  Qt.resolvedUrl("../../../img/bell.svg"), */
@@ -19,8 +19,8 @@ PopupMenu {
         /* }, */
         {
             source: Qt.resolvedUrl("../../../img/fetch.svg"),
-            width: 16,
-            height: 16
+            width: 16 * scaleAction.factor,
+            height: 16 * scaleAction.factor
         }
     ]
 
@@ -48,8 +48,8 @@ PopupMenu {
             return qsTrId("share-chat")
         }
         icon.source: "../../../img/group.svg"
-        icon.width: 16
-        icon.height: 16
+        icon.width: 16 * scaleAction.factor
+        icon.height: 16 * scaleAction.factor
         onTriggered: {
             if (channelContextMenu.contextChannel.chatType === Constants.chatTypeOneToOne) {
                 const userProfileImage = appMain.getProfileImage(channelContextMenu.contextChannel.id)
@@ -76,8 +76,8 @@ PopupMenu {
                   //% "Mute chat"
                   qsTrId("mute-chat")
         icon.source: "../../../img/bell.svg"
-        icon.width: 16
-        icon.height: 16
+        icon.width: 16 * scaleAction.factor
+        icon.height: 16 * scaleAction.factor
         onTriggered: {
             if (chatsModel.channelIsMuted(channelContextMenu.channelIndex)) {
                 chatsModel.unmuteChannel(channelContextMenu.channelIndex)
@@ -91,8 +91,8 @@ PopupMenu {
         //% "Mark as Read"
         text: qsTrId("mark-as-read")
         icon.source: "../../../img/check-circle.svg"
-        icon.width: 16
-        icon.height: 16
+        icon.width: 16 * scaleAction.factor
+        icon.height: 16 * scaleAction.factor
         onTriggered: {
             chatsModel.markAllChannelMessagesReadByIndex(channelContextMenu.channelIndex)
         }
@@ -102,8 +102,8 @@ PopupMenu {
         //% "Clear History"
         text: qsTrId("clear-history")
         icon.source: "../../../img/close.svg"
-        icon.width: 16
-        icon.height: 16
+        icon.width: 16 * scaleAction.factor
+        icon.height: 16 * scaleAction.factor
         onTriggered: chatsModel.clearChatHistoryByIndex(channelContextMenu.channelIndex)
     }
 
@@ -131,8 +131,8 @@ PopupMenu {
             }
             return "../../../img/leave_chat.svg"
         }
-        icon.width: 16
-        icon.height: 16
+        icon.width: 16 * scaleAction.factor
+        icon.height: 16 * scaleAction.factor
         onTriggered: chatsModel.leaveChatByIndex(channelContextMenu.channelIndex)
         enabled: !chatsModel.communities.activeCommunity.active
     }

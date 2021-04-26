@@ -77,7 +77,7 @@ Loader {
                 readOnly: true
                 selectByMouse: true
                 wrapMode: Text.Wrap
-                font.pixelSize: Style.current.secondaryTextFontSize
+                font.pixelSize: Style.current.secondaryTextFontSize * scaleAction.factor
                 anchors.left: parent.left
                 width: root.longReply ? parent.width : implicitWidth
                 z: 51
