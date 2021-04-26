@@ -362,6 +362,7 @@ RowLayout {
     }
 
     function changeAppSection(section) {
+        chatsModel.communities.activeCommunity.active = false
         sLayout.currentIndex = Utils.getAppSectionIndex(section)
     }
 

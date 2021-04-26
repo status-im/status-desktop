@@ -167,17 +167,24 @@ QtObject:
       return self.communities.activeCommunity.chats.getChannel(index)
     else:
       return self.chats.getChannel(index)
+  
+  proc getCommunityChannelById(self: ChatsView, channel: string): Chat =
+    let index = self.communities.activeCommunity.chats.chats.findIndexById(channel)
+    if (index > -1):
+      return self.communities.activeCommunity.chats.getChannel(index)
+    let chan = self.communities.activeCommunity.chats.getChannelByName(channel)
+    if not chan.isNil:
+      return chan
 
   proc getChannelById*(self: ChatsView, channel: string): Chat =
-    if (self.communities.activeCommunity.active):
-      let index = self.communities.activeCommunity.chats.chats.findIndexById(channel)
-      if (index == -1):
-        return
-      return self.communities.activeCommunity.chats.getChannel(index)
-    else:
-      let index = self.chats.chats.findIndexById(channel)
-      if (index == -1):
-        return
+    if self.communities.activeCommunity.active:
+      result = self.getCommunityChannelById(channel)
+      if not result.isNil:
+        return result
+    # even if communities are active, if we don't find a chat, it's possibly
+    # because we are looking for a normal chat, so continue below
+    let index = self.chats.chats.findIndexById(channel)
+    if index > -1:
       return self.chats.getChannel(index)
 
   proc updateChannelInRightList*(self: ChatsView, channel: Chat) =
@@ -579,8 +586,13 @@ QtObject:
     self.getLinkPreviewData("linkPreviewDataReceived", link, uuid)
 
   proc joinChat*(self: ChatsView, channel: string, chatTypeInt: int): int {.slot.} =
-    self.status.chat.join(channel, ChatType(chatTypeInt))
+    var chatType = ChatType(chatTypeInt)
+    let selectedChannel = self.getChannelById(channel)
+    if not selectedChannel.isNil:
+      chatType = selectedChannel.chatType
+    self.status.chat.join(channel, chatType)
     self.setActiveChannel(channel)
+    chatType.int
 
   proc joinChatWithENS*(self: ChatsView, channel: string, ensName: string): int {.slot.} =
     self.status.chat.join(channel, ChatType.OneToOne, ensName=status_ens.addDomain(ensName))
