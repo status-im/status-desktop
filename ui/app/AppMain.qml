@@ -372,7 +372,7 @@ RowLayout {
         property real tabButtonWidth: 20 * scaleAction.factor
 
         Layout.fillHeight: true
-        implicitWidth: tabButtonWidth + 36//78 * scaleAction.factor
+        implicitWidth: tabButtonWidth + 36
         height: parent.height
         color: Style.current.mainMenuBackground
 
