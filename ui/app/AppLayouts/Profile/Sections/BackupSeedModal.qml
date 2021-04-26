@@ -182,22 +182,22 @@ ModalPopup {
             color: Style.current.secondaryText
         }
 
-        ConfirmationDialog {
-            id: removeSeedPhraseConfirm
-            //% "Are you sure?"
-            title: qsTrId("are-you-sure?")
-            //% "You will not be able to see the whole seed phrase again"
-            confirmationText: qsTrId("are-you-sure-description")
-            onConfirmButtonClicked: {
-                profileModel.mnemonic.remove()
-                popup.close();
-                removeSeedPhraseConfirm.close();
-            }
-            onClosed: {
-                seedWord1Idx = -1;
-                seedWord2Idx = -1;
-                txtFieldWord.text = "";
-                validationError = "";
+        Component {
+            id: removeSeedPhraseConfirmDialogComponent
+            ConfirmationDialog {
+                id: confirmPopup
+                //% "Are you sure?"
+                title: qsTrId("are-you-sure?")
+                //% "You will not be able to see the whole seed phrase again"
+                confirmationText: qsTrId("are-you-sure-description")
+                onConfirmButtonClicked: {
+                    profileModel.mnemonic.remove()
+                    popup.close();
+                    confirmPopup.close();
+                }
+                onClosed: {
+                    destroy();
+                }
             }
         }
     }
@@ -260,7 +260,7 @@ ModalPopup {
 
                         validationError = "";
                         txtFieldWord.text = "";
-                        removeSeedPhraseConfirm.open();
+                        openPopup(removeSeedPhraseConfirmDialogComponent);
                     }
                 }
             }
