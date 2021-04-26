@@ -515,7 +515,7 @@ QtObject:
             channel.chatType.int,
             msg.timestamp,
             msg.identicon,
-            msg.alias,
+            msg.userName,
             msg.hasMention,
             isAddedContact,
             channel.name)
