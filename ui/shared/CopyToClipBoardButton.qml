@@ -62,7 +62,7 @@ Rectangle {
         id: toolTip
         //% "Copied!"
         text: qsTrId("copied-")
-        orientation: tooltipUnder ? "bottom" : "top"
+        orientation: tooltipUnder ? StatusToolTip.Orientation.Bottom : StatusToolTip.Orientation.Bottom
     }
 
     Timer {
