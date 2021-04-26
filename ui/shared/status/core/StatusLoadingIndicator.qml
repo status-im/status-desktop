@@ -1,14 +1,13 @@
 import QtQuick 2.13
 import "."
 
-SVGImage {
-    id: loadingImg
-    source: "../app/img/loading.svg"
-    width: 17
+StatusIcon {
+    id: root
+    icon: "loading"
     height: 17
-    fillMode: Image.Stretch
+    width: 17
     RotationAnimator {
-        target: loadingImg;
+        target: root;
         from: 0;
         to: 360;
         duration: 1200

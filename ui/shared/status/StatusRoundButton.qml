@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.13
 import QtQml 2.14
 import "../../imports"
 import "../../shared"
+import "./core"
 
 RoundButton {
     property string type: "primary"
@@ -162,8 +163,10 @@ RoundButton {
 
         Component {
             id: loadingComponent
-            LoadingImage {
-
+            StatusLoadingIndicator {
+                color: control.size === "medium" || control.size === "small" ?
+                  Style.current.roundedButtonSecondaryDisabledForegroundColor :
+                  Style.current.roundedButtonDisabledForegroundColor
             }
         }
 
@@ -191,17 +194,6 @@ RoundButton {
                     Style.current.roundedButtonDisabledForegroundColor :
                    (control.type === "warn" ? Style.current.danger :  Style.current.roundedButtonForegroundColor)
             }
-            antialiasing: true
-        }
-
-        ColorOverlay {
-            id: loadingOverlay
-            visible: loadingIndicator.active
-            anchors.fill: loadingIndicator
-            source: loadingIndicator
-            color: control.size === "medium" || control.size === "small" ?
-              Style.current.roundedButtonSecondaryDisabledForegroundColor :
-              Style.current.roundedButtonDisabledForegroundColor
             antialiasing: true
         }
     }

@@ -3,6 +3,8 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import "../imports"
+import "./status/core"
+import "./status"
 
 Item {
     id: root
@@ -32,7 +34,7 @@ Item {
 
     Component {
         id: loadingIndicator
-        LoadingImage {
+        StatusLoadingIndicator {
             width: root.width
             height: root.height
         }

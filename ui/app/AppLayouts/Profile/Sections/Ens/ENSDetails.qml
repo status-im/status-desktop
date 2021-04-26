@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
 import "../../../../../imports"
 import "../../../../../shared"
+import "../../../../../shared/status/core"
 import "../../../../../shared/status"
 
 Item {
@@ -25,7 +26,7 @@ Item {
 
     Component {
         id: loadingImageComponent
-        LoadingImage {}
+        StatusLoadingIndicator {}
     }
 
     Loader {

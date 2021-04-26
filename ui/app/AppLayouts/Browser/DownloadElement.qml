@@ -2,6 +2,7 @@ import QtQuick 2.1
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 import "../../../shared"
+import "../../../shared/status/core"
 import "../../../shared/status"
 import "../../../imports"
 
@@ -65,7 +66,7 @@ Rectangle {
 
         Component {
             id: loadingImageComponent
-            LoadingImage {}
+            StatusLoadingIndicator {}
         }
         Component {
             id: fileImageComponent
