@@ -25,6 +25,9 @@ logScope:
   topics = "main"
 
 proc mainProc() =
+  if defined(macosx) and defined(production):
+    setCurrentDir(getAppDir())
+
   let fleets =
     if defined(windows) and defined(production):
       "/../resources/fleets.json"

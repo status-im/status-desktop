@@ -298,8 +298,6 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/Resources
 	cp Info.plist $(MACOS_OUTER_BUNDLE)/Contents/
 	cp bin/nim_status_client $(MACOS_OUTER_BUNDLE)/Contents/MacOS/
-	cp nim_status_client.sh $(MACOS_OUTER_BUNDLE)/Contents/MacOS/
-	chmod +x $(MACOS_OUTER_BUNDLE)/Contents/MacOS/nim_status_client.sh
 	cp status.icns $(MACOS_OUTER_BUNDLE)/Contents/Resources/
 	cp status.svg $(MACOS_OUTER_BUNDLE)/Contents/
 	cp -R resources.rcc $(MACOS_OUTER_BUNDLE)/Contents/
@@ -312,7 +310,6 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 		$(MACOS_OUTER_BUNDLE) \
 		-executable=$(MACOS_OUTER_BUNDLE)/Contents/MacOS/nim_status_client \
 		-qmldir=ui
-	cp Info.runner.plist $(MACOS_OUTER_BUNDLE)/Contents/Info.plist
 	macdeployqt \
 		$(MACOS_INNER_BUNDLE) \
 		-executable=$(MACOS_INNER_BUNDLE)/Contents/MacOS/QtWebEngineProcess
