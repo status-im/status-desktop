@@ -133,6 +133,7 @@ PopupMenu {
         }
         icon.width: 16
         icon.height: 16
+        icon.color: Style.current.red
         onTriggered: chatsModel.leaveChatByIndex(channelContextMenu.channelIndex)
         enabled: !chatsModel.communities.activeCommunity.active
     }
