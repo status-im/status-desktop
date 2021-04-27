@@ -74,13 +74,13 @@ QtObject:
   proc profileSettingsFileChanged*(self: ProfileView) {.signal.}
 
   proc getProfileSettingsFile(self: ProfileView): string {.slot.} =
-    let address =
-      if (self.profile.address == ""):
+    let pubkey =
+      if (self.profile.pubKey == ""):
         UNKNOWN_ACCOUNT
       else:
-        self.profile.address
+        self.profile.pubKey
 
-    return os.joinPath(accountConstants.DATADIR, "qt", address)
+    return os.joinPath(accountConstants.DATADIR, "qt", pubkey)
 
   QtProperty[string] profileSettingsFile:
     read = getProfileSettingsFile
