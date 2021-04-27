@@ -282,12 +282,16 @@ ModalPopup {
                             id: contextMenu
                             Action {
                                 icon.source: "../../../img/make-admin.svg"
+                                icon.width: 16
+                                icon.height: 16
                                 //% "Make Admin"
                                 text: qsTrId("make-admin")
                                 onTriggered: chatsModel.groups.makeAdmin(popup.channel.id,  model.pubKey)
                             }
                             Action {
                                 icon.source: "../../../img/remove-from-group.svg"
+                                icon.width: 16
+                                icon.height: 16
                                 icon.color: Style.current.red
                                 //% "Remove From Group"
                                 text: qsTrId("remove-from-group")
