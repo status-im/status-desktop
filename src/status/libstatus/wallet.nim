@@ -88,6 +88,10 @@ proc startWallet*(watchNewBlocks: bool) =
 
 proc hex2Token*(input: string, decimals: int): string =
   var value = fromHex(Stuint[256], input)
+
+  if decimals == 0:
+    return fmt"{value}"
+  
   var p = u256(10).pow(decimals)
   var i = value.div(p)
   var r = value.mod(p)
