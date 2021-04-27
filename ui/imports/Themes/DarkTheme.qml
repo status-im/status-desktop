@@ -36,6 +36,7 @@ Theme {
     property color border: darkGrey
     property color borderSecondary: tenPercentWhite
     property color borderTertiary: blue
+    property color separator: tenPercentWhite
     property color textColor: white
     property color textColorTertiary: blue
     property color currentUserTextColor: white
