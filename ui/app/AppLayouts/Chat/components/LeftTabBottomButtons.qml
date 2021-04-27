@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import Qt.labs.platform 1.1
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status/buttons"
 import "../../../../shared/status"
 
 Column {
@@ -20,37 +21,57 @@ Column {
 
     StatusIconTabButton {
         id: walletBtn
+        visible: enabled
+        height: enabled ? implicitHeight: 0
+        anchors.horizontalCenter: parent.horizontalCenter
         enabled: isExperimental === "1" || appSettings.isWalletEnabled
         icon.name: "wallet"
-        icon.width: 20
-        icon.height: 20
-        section: Constants.wallet
+        checked: sLayout.currentIndex === Utils.getAppSectionIndex(Constants.wallet)
+        onClicked: {
+            chatsModel.communities.activeCommunity.active = false
+            appMain.changeAppSection(Constants.wallet)
+        }
     }
 
     StatusIconTabButton {
         id: browserBtn
+        visible: enabled
+        height: enabled ? implicitHeight: 0
+        anchors.horizontalCenter: parent.horizontalCenter
         enabled: isExperimental === "1" || appSettings.isBrowserEnabled
-        icon.name: "compass"
-        icon.width: 22
-        icon.height: 22
-        section: Constants.browser
+        icon.name: "browser"
+        checked: sLayout.currentIndex === Utils.getAppSectionIndex(Constants.browser)
+        onClicked: {
+            chatsModel.communities.activeCommunity.active = false
+            appMain.changeAppSection(Constants.browser)
+        }
     }
 
     StatusIconTabButton {
         id: timelineBtn
+        visible: enabled
+        height: enabled ? implicitHeight: 0
+        anchors.horizontalCenter: parent.horizontalCenter
         enabled: isExperimental === "1" || appSettings.timelineEnabled
-        icon.name: "timeline"
-        icon.width: 22
-        icon.height: 22
-        section: Constants.timeline
+        icon.name: "status-update"
+        checked: sLayout.currentIndex === Utils.getAppSectionIndex(Constants.timeline)
+        onClicked: {
+            chatsModel.communities.activeCommunity.active = false
+            appMain.changeAppSection(Constants.timeline)
+        }
     }
 
     StatusIconTabButton {
         id: profileBtn
+        visible: enabled
+        height: enabled ? implicitHeight: 0
+        anchors.horizontalCenter: parent.horizontalCenter
         icon.name: "profile"
-        icon.width: 22
-        icon.height: 22
-        section: Constants.profile
+        checked: sLayout.currentIndex === Utils.getAppSectionIndex(Constants.profile)
+        onClicked: {
+            chatsModel.communities.activeCommunity.active = false
+            appMain.changeAppSection(Constants.profile)
+        }
 
         Rectangle {
             id: profileBadge
@@ -70,15 +91,29 @@ Column {
 
     StatusIconTabButton {
         id: nodeBtn
+        visible: enabled
+        height: enabled ? implicitHeight: 0
+        anchors.horizontalCenter: parent.horizontalCenter
         enabled: isExperimental === "1" && appSettings.nodeManagementEnabled
         icon.name: "node"
-        section: Constants.node
+        checked: sLayout.currentIndex === Utils.getAppSectionIndex(Constants.node)
+        onClicked: {
+            chatsModel.communities.activeCommunity.active = false
+            appMain.changeAppSection(Constants.node)
+        }
     }
 
     StatusIconTabButton {
         id: uiComponentBtn
+        visible: enabled
+        height: enabled ? implicitHeight: 0
+        anchors.horizontalCenter: parent.horizontalCenter
         enabled: isExperimental === "1"
         icon.name: "node"
-        section: Constants.ui
+        checked: sLayout.currentIndex === Utils.getAppSectionIndex(Constants.ui)
+        onClicked: {
+            chatsModel.communities.activeCommunity.active = false
+            appMain.changeAppSection(Constants.ui)
+        }
     }
 }

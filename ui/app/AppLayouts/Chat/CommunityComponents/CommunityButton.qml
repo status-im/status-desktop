@@ -1,32 +1,23 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import "../../../../shared"
+import "../../../../shared/status/buttons"
 import "../../../../shared/status"
 import "../../../../imports"
 import "../components"
 
 StatusIconTabButton {
     property string communityId: ""
-    property string name: "channelName"
     property int unviewedMessagesCount: 0
     property string image
     property bool hasMentions: false
 
     id: communityButton
     anchors.horizontalCenter: parent.horizontalCenter
-    iconSource: communityButton.image
+    icon.source: communityButton.image
     anchors.topMargin: 0
 
-    section: Constants.community
-
     checked: chatsModel.communities.activeCommunity.active && chatsModel.communities.activeCommunity.id === communityId
-
-    borderOnChecked: true
-    doNotHandleClick: true
-    onClicked: {
-        appMain.changeAppSection(Constants.chat)
-        chatsModel.communities.setActiveCommunity(communityId)
-    }
 
     StatusToolTip {
         visible: communityButton.hovered

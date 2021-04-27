@@ -22,7 +22,10 @@ ListView {
         image: model.thumbnailImage
         unviewedMessagesCount: model.unviewedMessagesCount
         iconColor: model.communityColor || Style.current.blue
-        useLetterIdenticon: model.thumbnailImage === ""
+        onClicked: {
+            appMain.changeAppSection(Constants.chat)
+            chatsModel.communities.setActiveCommunity(model.id)
+        }
     }
 
     PopupMenu {

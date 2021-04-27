@@ -5,6 +5,7 @@ import QtMultimedia 5.13
 import "../imports"
 import "../sounds"
 import "../shared"
+import "../shared/status/buttons"
 import "../shared/status"
 import "./AppLayouts"
 import "./AppLayouts/Timeline"
@@ -410,11 +411,8 @@ RowLayout {
 
                 StatusIconTabButton {
                     id: chatBtn
-                    icon.name: "message"
-                    icon.width: 20
-                    icon.height: 20
-                    section: Constants.chat
-                    doNotHandleClick: true
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    icon.name: "chat"
                     onClicked: {
                         chatsModel.communities.activeCommunity.active = false
                         appMain.changeAppSection(Constants.chat)
