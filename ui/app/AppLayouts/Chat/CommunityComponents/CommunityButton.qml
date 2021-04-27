@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import "../../../../shared"
+import "../../../../shared/status/core"
 import "../../../../shared/status/buttons"
 import "../../../../shared/status"
 import "../../../../imports"
@@ -28,26 +29,16 @@ StatusIconTabButton {
         y: communityButton.height / 2 - height / 2 + 4
     }
 
-    Rectangle {
+    StatusBadge {
         id: chatBadge
-        visible: unviewedMessagesCount > 0
         anchors.top: parent.top
         anchors.left: parent.right
         anchors.leftMargin: -17
         anchors.topMargin: 1
-        radius: height / 2
-        color: Style.current.blue
-        border.color: Style.current.background
+        border.color: communityButton.hovered ? Style.current.secondaryBackground : Style.current.mainMenuBackground
         border.width: 2
-        width: unviewedMessagesCount < 10 ? 22 : messageCount.width + 14
-        height: 22
-        Text {
-            id: messageCount
-            font.pixelSize: chatsModel.unreadMessagesCount > 99 ? 10 : 12
-            color: Style.current.white
-            anchors.centerIn: parent
-            text: unviewedMessagesCount > 99 ? "99+" : unviewedMessagesCount
-        }
+        visible: unviewedMessagesCount > 0
+        value: unviewedMessagesCount
     }
 
     MouseArea {

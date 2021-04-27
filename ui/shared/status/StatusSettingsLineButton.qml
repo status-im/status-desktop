@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.12
 import "../../imports"
+import "./core"
 import ".."
 
 Rectangle {
@@ -9,7 +10,7 @@ Rectangle {
     property bool switchChecked: false
     property string currentValue
     property bool isBadge: false
-    property string badgeText: "1"
+    property int badgeValue
     property int badgeRadius: 9
     property bool isEnabled: true
     signal clicked(bool checked)
@@ -62,22 +63,13 @@ Rectangle {
         anchors.verticalCenter: textItem.verticalCenter
     }
 
-    Rectangle {
+    StatusBadge {
         id: badge
-        visible: root.isBadge & !root.isSwitch
         anchors.right: root.isSwitch ? switchItem.left : caret.left
         anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: textItem.verticalCenter
-        radius: root.badgeRadius
-        color: Style.current.blue
-        width: root.badgeSize
-        height: root.badgeSize
-        Text {
-            font.pixelSize: 12
-            color: Style.current.white
-            anchors.centerIn: parent
-            text: root.badgeText
-        }
+        value: root.badgeValue
+        visible: root.badgeValue > 0 && root.isBadge && !root.isSwitch
     }
 
     SVGImage {

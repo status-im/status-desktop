@@ -40,7 +40,7 @@ Item {
     StatusSettingsLineButton {
         id: membershipRequestsBtn
         text: qsTr("Membership requests")
-        badgeText: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests.toString()
+        badgeValue: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests
         visible: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests > 0
         badgeSize: 22
         badgeRadius: badgeSize / 2

@@ -5,6 +5,7 @@ import QtMultimedia 5.13
 import "../imports"
 import "../sounds"
 import "../shared"
+import "../shared/status/core"
 import "../shared/status/buttons"
 import "../shared/status"
 import "./AppLayouts"
@@ -420,26 +421,16 @@ RowLayout {
 
                     checked: !chatsModel.communities.activeCommunity.active  && sLayout.currentIndex === Utils.getAppSectionIndex(Constants.chat)
 
-                    Rectangle {
+                    StatusBadge {
                         id: chatBadge
                         visible: chatsModel.unreadMessagesCount > 0
+                        border.color: chatBtn.hovered ? Style.current.secondaryBackground : Style.current.mainMenuBackground
+                        border.width: 2
                         anchors.top: parent.top
                         anchors.left: parent.right
                         anchors.leftMargin: -17
                         anchors.topMargin: 1
-                        radius: height / 2
-                        color: Style.current.blue
-                        border.color: chatBtn.hovered ? Style.current.secondaryBackground : Style.current.mainMenuBackground
-                        border.width: 2
-                        width: chatsModel.unreadMessagesCount < 10 ? 22 : messageCount.width + 14
-                        height: 22
-                        Text {
-                            id: messageCount
-                            font.pixelSize: chatsModel.unreadMessagesCount > 99 ? 10 : 12
-                            color: Style.current.white
-                            anchors.centerIn: parent
-                            text: chatsModel.unreadMessagesCount > 99 ? "99+" : chatsModel.unreadMessagesCount
-                        }
+                        value: 1
                     }
                 }
 

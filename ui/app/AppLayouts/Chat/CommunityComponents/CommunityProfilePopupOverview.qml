@@ -6,6 +6,7 @@ import QtGraphicalEffects 1.13
 import QtQuick.Controls.Universal 2.12
 import "../../../../imports"
 import "../../../../shared"
+import "../../../../shared/status/core"
 import "../../../../shared/status"
 import "../ContactsColumn"
 
@@ -93,22 +94,15 @@ Item {
                             color: Style.current.secondaryText
                         }
 
-                        Rectangle {
+                        StatusBadge {
                             id: badge
-                            visible: memberBlock.nbRequests > 0
                             anchors.left: nbMemberText.right
                             anchors.leftMargin: visible ? Style.current.halfPadding : 0
                             anchors.verticalCenter: parent.verticalCenter
-                            color: Style.current.blue
-                            width: visible ? 22 : 0
+                            visible: memberBlock.nbRequests > 0
                             height: 22
-                            radius: width / 2
-                            Text {
-                                font.pixelSize: 12
-                                color: Style.current.white
-                                anchors.centerIn: parent
-                                text: memberBlock.nbRequests
-                            }
+                            width: 22
+                            value: memberBlock.nbRequests
                         }
 
                         SVGImage {

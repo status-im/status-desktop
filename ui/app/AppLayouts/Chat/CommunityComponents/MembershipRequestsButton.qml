@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import "../../../../shared"
 import "../../../../imports"
+import "../../../../shared/status/core"
 import "../components"
 import "./"
 
@@ -24,21 +25,14 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
     }
 
-    Rectangle {
+    StatusBadge {
         id: badge
         anchors.right: caret.left
         anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
-        color: Style.current.blue
         width: 22
         height: 22
-        radius: width / 2
-        Text {
-            font.pixelSize: 12
-            color: Style.current.white
-            anchors.centerIn: parent
-            text: membershipRequestsBtn.nbRequests.toString()
-        }
+        value: membershipRequestsBtn.nbRequests
     }
 
     SVGImage {
