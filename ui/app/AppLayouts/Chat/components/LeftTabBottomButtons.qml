@@ -19,21 +19,22 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    StatusIconTabButton {
+    StatusNavBarTabButton {
         id: walletBtn
         visible: enabled
-        height: enabled ? implicitHeight: 0
+        height: enabled ? implicitHeight : 0
         anchors.horizontalCenter: parent.horizontalCenter
         enabled: isExperimental === "1" || appSettings.isWalletEnabled
         icon.name: "wallet"
         checked: sLayout.currentIndex === Utils.getAppSectionIndex(Constants.wallet)
+        tooltip.text: qsTr("Wallet")
         onClicked: {
             chatsModel.communities.activeCommunity.active = false
             appMain.changeAppSection(Constants.wallet)
         }
     }
 
-    StatusIconTabButton {
+    StatusNavBarTabButton {
         id: browserBtn
         visible: enabled
         height: enabled ? implicitHeight: 0
@@ -41,13 +42,14 @@ Column {
         enabled: isExperimental === "1" || appSettings.isBrowserEnabled
         icon.name: "browser"
         checked: sLayout.currentIndex === Utils.getAppSectionIndex(Constants.browser)
+        tooltip.text: qsTr("Browser")
         onClicked: {
             chatsModel.communities.activeCommunity.active = false
             appMain.changeAppSection(Constants.browser)
         }
     }
 
-    StatusIconTabButton {
+    StatusNavBarTabButton {
         id: timelineBtn
         visible: enabled
         height: enabled ? implicitHeight: 0
@@ -55,41 +57,35 @@ Column {
         enabled: isExperimental === "1" || appSettings.timelineEnabled
         icon.name: "status-update"
         checked: sLayout.currentIndex === Utils.getAppSectionIndex(Constants.timeline)
+        tooltip.text: qsTr("Timeline")
         onClicked: {
             chatsModel.communities.activeCommunity.active = false
             appMain.changeAppSection(Constants.timeline)
         }
     }
 
-    StatusIconTabButton {
+    StatusNavBarTabButton {
         id: profileBtn
         visible: enabled
         height: enabled ? implicitHeight: 0
         anchors.horizontalCenter: parent.horizontalCenter
         icon.name: "profile"
         checked: sLayout.currentIndex === Utils.getAppSectionIndex(Constants.profile)
+
+        badge.visible: !profileModel.mnemonic.isBackedUp && sLayout.children[sLayout.currentIndex] !== profileLayoutContainer
+        badge.anchors.rightMargin: 4
+        badge.anchors.topMargin: 5
+        badge.border.color: profileBtn.hovered ? Style.current.secondaryBackground : Style.current.mainMenuBackground
+        badge.border.width: 2
+
+        tooltip.text: qsTr("Profile")
         onClicked: {
             chatsModel.communities.activeCommunity.active = false
             appMain.changeAppSection(Constants.profile)
         }
-
-        Rectangle {
-            id: profileBadge
-            visible: !profileModel.mnemonic.isBackedUp && sLayout.children[sLayout.currentIndex] !== profileLayoutContainer
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.rightMargin: 4
-            anchors.topMargin: 5
-            radius: height / 2
-            color: Style.current.blue
-            border.color: profileBtn.hovered ? Style.current.secondaryBackground : Style.current.mainMenuBackground
-            border.width: 2
-            width: 14
-            height: 14
-        }
     }
 
-    StatusIconTabButton {
+    StatusNavBarTabButton {
         id: nodeBtn
         visible: enabled
         height: enabled ? implicitHeight: 0
@@ -97,13 +93,14 @@ Column {
         enabled: isExperimental === "1" && appSettings.nodeManagementEnabled
         icon.name: "node"
         checked: sLayout.currentIndex === Utils.getAppSectionIndex(Constants.node)
+        tooltip.text: qsTr("Node")
         onClicked: {
             chatsModel.communities.activeCommunity.active = false
             appMain.changeAppSection(Constants.node)
         }
     }
 
-    StatusIconTabButton {
+    StatusNavBarTabButton {
         id: uiComponentBtn
         visible: enabled
         height: enabled ? implicitHeight: 0
@@ -111,6 +108,7 @@ Column {
         enabled: isExperimental === "1"
         icon.name: "node"
         checked: sLayout.currentIndex === Utils.getAppSectionIndex(Constants.ui)
+        tooltip.text: qsTr("Component Library")
         onClicked: {
             chatsModel.communities.activeCommunity.active = false
             appMain.changeAppSection(Constants.ui)

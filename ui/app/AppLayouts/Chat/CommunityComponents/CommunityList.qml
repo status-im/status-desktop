@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../../shared"
 import "../../../../imports"
+import "../../../../shared/status/buttons"
 import "../components"
 import "./"
 
@@ -16,13 +17,24 @@ ListView {
     verticalLayoutDirection: ListView.BottomToTop
 
     model: chatsModel.communities.joinedCommunities
-    delegate: CommunityButton {
-        communityId: model.id
+    delegate: StatusNavBarTabButton {
+        id: communityTabButton
+        anchors.horizontalCenter: parent.horizontalCenter
+        checked: chatsModel.communities.activeCommunity.active && chatsModel.communities.activeCommunity.id === model.id
+        tooltip.text: model.name
+        icon.source: model.thumbnailImage
+        icon.color: model.communityColor || Style.current.blue
         name: model.name
-        image: model.thumbnailImage
-        unviewedMessagesCount: model.unviewedMessagesCount
-        iconColor: model.communityColor || Style.current.blue
-        onClicked: {
+        badge.value: model.unviewedMessagesCount
+        badge.visible: model.unviewedMessagesCount > 0
+        badge.border.color: communityTabButton.hovered ? Style.current.secondaryBackground : Style.current.mainMenuBackground
+        badge.border.width: 2
+        onClicked: function (mouse) {
+            if (mouse.button === Qt.RightButton) {
+                commnunityMenu.communityId = model.id
+                commnunityMenu.popup()
+                return
+            }
             appMain.changeAppSection(Constants.chat)
             chatsModel.communities.setActiveCommunity(model.id)
         }
