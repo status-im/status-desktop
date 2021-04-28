@@ -63,9 +63,29 @@ ScrollView {
             }
             return 10000
         }
-        Layout.fillWidth: true
-        Layout.fillHeight: true
         verticalLayoutDirection: ListView.BottomToTop
+
+        // This header and Connections is to create an invisible padding so that the chat identifier is at the top
+        // The Connections is necessary, because doing the check inside teh ehader created a binding loop (the contentHeight includes the header height
+        // If the content height is smaller than the full height, we "show" the padding so that the chat identifier is at the top, otherwise we disable the Connections
+        header: Item {
+            height: 0
+            width: chatLogView.width
+        }
+        Connections {
+            id: contentHeightConnection
+            enabled: true
+            target: chatLogView
+            onContentHeightChanged: {
+                if (chatLogView.contentItem.height - chatLogView.headerItem.height < chatLogView.height) {
+                    chatLogView.headerItem.height = chatLogView.height - (chatLogView.contentItem.height - chatLogView.headerItem.height) - 36
+                } else {
+                    chatLogView.headerItem.height = 0
+                    contentHeightConnection.enabled = false
+                }
+            }
+        }
+
 
         Timer {
             id: timer
