@@ -4,7 +4,6 @@ import "../../../../../imports"
 
 Column {
     property string authorCurrentMsg: "authorCurrentMsg"
-    property int verticalMargin: 50
 
     property string profileImage
 
@@ -13,7 +12,7 @@ Column {
     visible: authorCurrentMsg === ""
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
-    anchors.topMargin: this.visible ? verticalMargin : 0
+    anchors.topMargin: this.visible ? Style.current.bigPadding : 0
 
     Rectangle {
         id: circleId
@@ -76,39 +75,31 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    Item {
-        id: channelDescription
-        visible: descText.visible
-        width: visible ? 330 : 0
-        height: visible ? childrenRect.height : 0
+    StyledText {
+        id: descText
+        wrapMode: Text.Wrap
         anchors.horizontalCenter: parent.horizontalCenter
-
-        StyledText {
-            id: descText
-            wrapMode: Text.Wrap
-            text: {
-                switch(chatsModel.activeChannel.chatType) {
-                    //% "Welcome to the beginning of the <span style='color: %1'>%2</span> group!"
-                    case Constants.chatTypePrivateGroupChat: return qsTrId("welcome-to-the-beginning-of-the--span-style--color---1---2--span--group-").arg(Style.current.textColor).arg(chatsModel.activeChannel.name);
-                    //% "Any messages you send here are encrypted and can only be read by you and <span style='color: %1'>%2</span>"
-                    case Constants.chatTypeOneToOne: return qsTrId("any-messages-you-send-here-are-encrypted-and-can-only-be-read-by-you-and--span-style--color---1---2--span-").arg(Style.current.textColor).arg(channelName.text)
-                    default: return "";
-                }
+        width: 310
+        text: {
+            switch(chatsModel.activeChannel.chatType) {
+                //% "Welcome to the beginning of the <span style='color: %1'>%2</span> group!"
+                case Constants.chatTypePrivateGroupChat: return qsTrId("welcome-to-the-beginning-of-the--span-style--color---1---2--span--group-").arg(Style.current.textColor).arg(chatsModel.activeChannel.name);
+                //% "Any messages you send here are encrypted and can only be read by you and <span style='color: %1'>%2</span>"
+                case Constants.chatTypeOneToOne: return qsTrId("any-messages-you-send-here-are-encrypted-and-can-only-be-read-by-you-and--span-style--color---1---2--span-").arg(Style.current.textColor).arg(channelName.text)
+                default: return "";
             }
-            font.pixelSize: 14
-            color: Style.current.secondaryText
-            anchors.left: parent.left
-            anchors.right: parent.right
-            horizontalAlignment: Text.AlignHCenter
-            textFormat: Text.RichText
         }
+        font.pixelSize: Style.current.primaryTextFontSize
+        color: Style.current.secondaryText
+        horizontalAlignment: Text.AlignHCenter
+        textFormat: Text.RichText
     }
 
     Item {
         visible: chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat && !chatsModel.activeChannel.isMember
         anchors.horizontalCenter: parent.horizontalCenter
-        width: joinChat.width
-        height: visible ? 100 : 10
+        width: visible ? joinChat.width : 0
+        height: visible ? 100 : 0
         id: joinOrDecline
 
         StyledText {
@@ -145,14 +136,6 @@ Column {
                 }
             }
         }
-    }
-
-    Item {
-        id: spacer
-        visible: chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat && chatsModel.activeChannel.isMember
-        width: parent.width
-        height: Style.current.bigPadding
-
     }
 }
 
