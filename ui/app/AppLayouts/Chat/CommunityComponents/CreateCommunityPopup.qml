@@ -48,9 +48,9 @@ ModalPopup {
         id: scrollView
         anchors.fill: parent
         rightPadding: Style.current.bigPadding
-        anchors.rightMargin: - Style.current.bigPadding
+        anchors.rightMargin: - Style.current.padding
         leftPadding: Style.current.bigPadding
-        anchors.leftMargin: - Style.current.bigPadding
+        anchors.leftMargin: - Style.current.padding
         contentHeight: content.height
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.policy: ScrollBar.AlwaysOn
@@ -62,7 +62,7 @@ ModalPopup {
 
         Item {
             id: content
-            height: childrenRect.height
+            height: childrenRect.height + 100 // Bottom padding
             width: parent.width
 
             Input {
@@ -360,7 +360,9 @@ ModalPopup {
                 anchors.top: membershipRequirementSetting.bottom
                 wrapMode: Text.WordWrap
                 anchors.topMargin: isEdit ? 0 : Style.current.halfPadding
-                width: parent.width
+                font.pixelSize: 13
+                color: Style.current.secondaryText
+                width: parent.width * 0.78
                 text: qsTr("You can require new members to meet certain criteria before they can join. This can be changed at any time")
             }
 
