@@ -8,7 +8,7 @@ import "."
 
 Rectangle {
     id: root
-    height: visible ? 220 : 0
+    height: 220
     anchors.left: parent.left
     anchors.leftMargin: Style.current.padding
     anchors.right: parent.right

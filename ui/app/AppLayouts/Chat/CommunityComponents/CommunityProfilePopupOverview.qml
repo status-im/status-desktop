@@ -220,15 +220,7 @@ Item {
                 label: qsTr("Transfer ownership")
                 iconName: "../transfer"
                 type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
-                onClicked: {
-                    const exportResult = chatsModel.communities.exportComumnity()
-                    openPopup(transferOwnershipPopup, {privateKey: exportResult})
-                }
-
-                Component {
-                    id: transferOwnershipPopup
-                    TransferOwnershipPopup {}
-                }
+                onClicked: openPopup(transferOwnershipPopup, {privateKey: chatsModel.communities.exportComumnity()})
             }
         }
 
