@@ -33,7 +33,7 @@ Item {
         target: profileModel.contacts.list
         onContactChanged: {
             if (pubkey === root.chatId) {
-                root.profileImage = appMain.getProfileImage(root.chatId)
+                root.profileImage = appMain.getProfileImage(root.chatId) || ""
             }
         }
     }

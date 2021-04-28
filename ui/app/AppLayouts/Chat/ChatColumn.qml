@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import QtGraphicalEffects 1.0
 import "../../../shared"
 import "../../../shared/status"
 import "../../../imports"
@@ -23,12 +24,14 @@ StackLayout {
     property bool isConnected: false
     property string contactToRemove: ""
 
+    property var doNotShowAddToContactBannerToThose: ([])
+
     property var onActivated: function () {
         chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    property bool isBlocked: profileModel.contacts.isContactBlocked(chatsModel.activeChannel.id)
-
+    property string activeChatId: chatsModel.activeChannel.id
+    property bool isBlocked: profileModel.contacts.isContactBlocked(activeChatId)
 
     Component.onCompleted: {
         chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
@@ -101,7 +104,7 @@ StackLayout {
 
     function requestAddressForTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
         amount =  utilsModel.eth2Wei(amount.toString(), tokenDecimals)
-        chatsModel.transactions.requestAddress(chatsModel.activeChannel.id,
+        chatsModel.transactions.requestAddress(activeChatId,
                                                address,
                                                amount,
                                                tokenAddress)
@@ -109,7 +112,7 @@ StackLayout {
     }
     function requestTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
         amount =  utilsModel.eth2Wei(amount.toString(), tokenDecimals)
-        chatsModel.transactions.request(chatsModel.activeChannel.id,
+        chatsModel.transactions.request(activeChatId,
                                         address,
                                         amount,
                                         tokenAddress)
@@ -119,7 +122,7 @@ StackLayout {
     Connections {
         target: profileModel.contacts
         onContactListChanged: {
-            isBlocked = profileModel.contacts.isContactBlocked(chatsModel.activeChannel.id);
+            isBlocked = profileModel.contacts.isContactBlocked(activeChatId);
         }
     }
 
@@ -177,6 +180,56 @@ StackLayout {
                         connectedStatusRect.visible = true;
                     }
                 }
+            }
+        }
+
+        Item {
+            visible: chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne &&
+                     !profileModel.contacts.isAdded(activeChatId) &&
+                     !doNotShowAddToContactBannerToThose.includes(activeChatId)
+            Layout.alignment: Qt.AlignTop
+            Layout.fillWidth: true
+            height: 36
+
+            SVGImage {
+                source: "../../img/plusSign.svg"
+                anchors.right: addToContactsTxt.left
+                anchors.rightMargin: Style.current.smallPadding
+                anchors.verticalCenter: parent.verticalCenter
+                layer.enabled: true
+                layer.effect: ColorOverlay { color: addToContactsTxt.color }
+            }
+
+            StyledText {
+                id: addToContactsTxt
+                text: qsTr("Add to contacts")
+                color: Style.current.primary
+                anchors.centerIn: parent
+            }
+
+            Separator {
+                anchors.bottom: parent.bottom
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: profileModel.contacts.addContact(activeChatId)
+            }
+
+            StatusIconButton {
+                id: closeBtn
+                icon.name: "close"
+                onClicked: {
+                    const newArray = Object.assign([], doNotShowAddToContactBannerToThose)
+                    newArray.push(activeChatId)
+                    doNotShowAddToContactBannerToThose = newArray
+                }
+                width: 20
+                height: 20
+                anchors.right: parent.right
+                anchors.rightMargin: Style.current.halfPadding
+                anchors.verticalCenter: parent.verticalCenter
             }
         }
 
@@ -358,7 +411,7 @@ StackLayout {
                 return {
                     address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
                     alias: chatsModel.activeChannel.alias,
-                    identicon: chatsModel.activeChannel.identicon,
+                    identicon: activeChatIdenticon,
                     name: chatsModel.activeChannel.name,
                     type: RecipientSelector.Type.Contact
                 }
@@ -385,7 +438,7 @@ StackLayout {
                 return {
                     address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
                     alias: chatsModel.activeChannel.alias,
-                    identicon: chatsModel.activeChannel.identicon,
+                    identicon: activeChatIdenticon,
                     name: chatsModel.activeChannel.name,
                     type: RecipientSelector.Type.Contact
                 }
@@ -409,7 +462,7 @@ StackLayout {
                 return {
                     address: "",
                     alias: chatsModel.activeChannel.alias,
-                    identicon: chatsModel.activeChannel.identicon,
+                    identicon: activeChatIdenticon,
                     name: chatsModel.activeChannel.name,
                     type: RecipientSelector.Type.Contact,
                     ensVerified: true

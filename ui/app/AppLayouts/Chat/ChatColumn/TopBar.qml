@@ -6,12 +6,10 @@ import "../../../../shared/status"
 import "../../../../imports"
 import "../components"
 
-Rectangle {
+Item {
     property int iconSize: 16
     id: chatTopBarContent
-    color: Style.current.background
     height: 56
-    Layout.fillWidth: true
 
     Loader {
       property bool isGroupChatOrOneToOne: (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat || 
@@ -65,7 +63,6 @@ Rectangle {
             muted: chatsModel.activeChannel.muted
         }
     }
-
 
     StatusContextMenuButton {
         id: moreActionsBtn
