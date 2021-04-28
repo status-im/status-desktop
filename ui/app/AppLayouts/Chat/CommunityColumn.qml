@@ -26,6 +26,11 @@ Rectangle {
         }
     }
 
+    Component {
+        id: transferOwnershipPopup
+        TransferOwnershipPopup {}
+    }
+
     Item {
         id: communityHeader
         width: parent.width
@@ -119,7 +124,7 @@ Rectangle {
         leftPadding: Style.current.halfPadding
         rightPadding: Style.current.halfPadding
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        contentHeight: channelList.height + emptyViewAndSuggestions.height + 2 * Style.current.padding
+        contentHeight: channelList.height + emptyViewAndSuggestionsLoader.height + backUpBannerLoader.height + 2 * Style.current.padding
         clip: true
 
         ChannelList {
@@ -128,12 +133,27 @@ Rectangle {
             channelModel: chatsModel.communities.activeCommunity.chats
         }
 
-        CommunityWelcomeBanner {
-            id: emptyViewAndSuggestions
-            visible: !appSettings.hiddenCommunityWelcomeBanners.includes(chatsModel.communities.activeCommunity.id) && chatsModel.communities.activeCommunity.admin
+        Loader {
+            id: emptyViewAndSuggestionsLoader
+            active: !appSettings.hiddenCommunityWelcomeBanners.includes(chatsModel.communities.activeCommunity.id) && chatsModel.communities.activeCommunity.admin
             width: parent.width
+            height: active ? item.height : 0
             anchors.top: channelList.bottom
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: active ? Style.current.padding : 0
+            sourceComponent: Component {
+                CommunityWelcomeBanner {}
+            }
+        }
+        Loader {
+            id: backUpBannerLoader
+            active:  chatsModel.communities.activeCommunity.admin
+            width: parent.width
+            height: active ? item.height : 0
+            anchors.top: emptyViewAndSuggestionsLoader.bottom
+            anchors.topMargin: active ? Style.current.padding : 0
+            sourceComponent: Component {
+                BackUpCommuntyBanner {}
+            }
         }
 
         CommunityProfilePopup {

@@ -130,6 +130,7 @@ DISTFILES += \
     app/AppLayouts/Chat/ChatColumn/MessageComponents/qmldir \
     app/AppLayouts/Chat/CommunityColumn.qml \
     app/AppLayouts/Chat/CommunityComponents/AccessExistingCommunityPopup.qml \
+    app/AppLayouts/Chat/CommunityComponents/BackUpCommuntyBanner.qml \
     app/AppLayouts/Chat/CommunityComponents/CommunitiesPopup.qml \
     app/AppLayouts/Chat/CommunityComponents/CommunityButton.qml \
     app/AppLayouts/Chat/CommunityComponents/CommunityDetailPopup.qml \
