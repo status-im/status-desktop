@@ -45,5 +45,9 @@ Item {
         visible: !root.hideSeparator
         anchors.top: radioDesc.bottom
         anchors.topMargin: visible ? Style.current.halfPadding : 0
+        anchors.left: parent.left
+        anchors.leftMargin: -Style.current.halfPadding
+        anchors.right: parent.right
+        anchors.rightMargin: -Style.current.halfPadding
     }
 }

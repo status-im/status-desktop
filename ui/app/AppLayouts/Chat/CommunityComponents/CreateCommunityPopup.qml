@@ -47,10 +47,12 @@ ModalPopup {
 
         id: scrollView
         anchors.fill: parent
-        rightPadding: Style.current.bigPadding
-        anchors.rightMargin: - Style.current.padding
-        leftPadding: Style.current.bigPadding
-        anchors.leftMargin: - Style.current.padding
+        rightPadding: Style.current.padding
+        anchors.rightMargin: -Style.current.padding
+        anchors.topMargin: -Style.current.padding
+        leftPadding: Style.current.padding
+        topPadding: Style.current.padding
+        anchors.leftMargin: -Style.current.padding
         contentHeight: content.height
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.policy: ScrollBar.AlwaysOn
@@ -333,6 +335,10 @@ ModalPopup {
                 id: separator1
                 anchors.top: colorPicker.bottom
                 anchors.topMargin: isEdit ? 0 : Style.current.bigPadding
+                anchors.left: parent.left
+                anchors.leftMargin: -Style.current.padding
+                anchors.right: parent.right
+                anchors.rightMargin: -Style.current.padding
                 visible: !isEdit
             }
 
