@@ -410,27 +410,22 @@ RowLayout {
                     }
                 }
 
-                StatusIconTabButton {
+                StatusNavBarTabButton {
                     id: chatBtn
                     anchors.horizontalCenter: parent.horizontalCenter
+
                     icon.name: "chat"
+                    checked: !chatsModel.communities.activeCommunity.active  && sLayout.currentIndex === Utils.getAppSectionIndex(Constants.chat)
+
+                    badge.visible: chatsModel.unreadMessagesCount > 0
+                    badge.border.color: chatBtn.hovered ? Style.current.secondaryBackground : Style.current.mainMenuBackground
+                    badge.border.width: 2
+                    badge.value: chatsModel.unreadMessagesCount
+                    tooltip.text: qsTr("Chat")
+
                     onClicked: {
                         chatsModel.communities.activeCommunity.active = false
                         appMain.changeAppSection(Constants.chat)
-                    }
-
-                    checked: !chatsModel.communities.activeCommunity.active  && sLayout.currentIndex === Utils.getAppSectionIndex(Constants.chat)
-
-                    StatusBadge {
-                        id: chatBadge
-                        visible: chatsModel.unreadMessagesCount > 0
-                        border.color: chatBtn.hovered ? Style.current.secondaryBackground : Style.current.mainMenuBackground
-                        border.width: 2
-                        anchors.top: parent.top
-                        anchors.left: parent.right
-                        anchors.leftMargin: -17
-                        anchors.topMargin: 1
-                        value: 1
                     }
                 }
 
