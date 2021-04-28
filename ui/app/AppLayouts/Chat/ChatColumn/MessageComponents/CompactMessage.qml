@@ -63,7 +63,7 @@ Item {
         anchors.topMargin: dateGroupLbl.visible ? Style.current.padding : 0
         height: childrenRect.height
                 + (chatName.visible || emojiReactionLoader.active ? Style.current.smallPadding : 0)
-                + (chatName.visible && emojiReactionLoader.active ? 5 : 0)
+                + (chatName.visible && emojiReactionLoader.active ? Style.current.padding : 0)
                 + (emojiReactionLoader.active ? emojiReactionLoader.height: 0)
                 + (retry.visible && !chatTime.visible ? Style.current.smallPadding : 0)
         width: parent.width
