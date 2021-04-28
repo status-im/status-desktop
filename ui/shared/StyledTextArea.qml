@@ -52,6 +52,7 @@ Item {
             id: textArea
             text: ""
             font.pixelSize: 15
+            selectByMouse: true
             wrapMode: Text.WrapAnywhere
             placeholderText: inputBox.placeholderText
             anchors.rightMargin: Style.current.smallPadding
@@ -61,18 +62,10 @@ Item {
             anchors.fill: parent
             font.family: Style.current.fontRegular.name
             color: Style.current.textColor
-            placeholderTextColor: Style.current.darkGrey
+            placeholderTextColor: Style.current.secondaryText
             selectionColor: Style.current.primarySelectionColor
 
             Keys.onPressed: inputBox.keyPressed(event)
-        }
-
-        MouseArea {
-            id: mouseArea
-            anchors.fill: parent
-            onClicked: {
-                textArea.forceActiveFocus(Qt.MouseFocusReason)
-            }
         }
     }
 

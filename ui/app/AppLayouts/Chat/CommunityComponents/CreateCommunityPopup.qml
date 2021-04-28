@@ -108,7 +108,6 @@ ModalPopup {
                 anchors.top: nameInput.bottom
                 anchors.topMargin: Style.current.bigPadding
                 customHeight: 88
-                textField.selectByMouse: true
                 textField.wrapMode: TextEdit.Wrap
 
                 property bool isValid: false
