@@ -84,7 +84,8 @@ proc validateMnemonic*(mnemonic: string): string =
   result = $status_go.validateMnemonic(mnemonic)
 
 proc startWallet*(watchNewBlocks: bool) =
-  discard status_go.startWallet(watchNewBlocks) # TODO: true  to watch trx
+  # this will be fixed in a later PR
+  discard
 
 proc hex2Token*(input: string, decimals: int): string =
   var value = fromHex(Stuint[256], input)
