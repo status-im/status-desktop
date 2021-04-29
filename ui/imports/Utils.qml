@@ -371,7 +371,6 @@ QtObject {
         }
 
         // Community
-        // TODO this will probably change
         index = link.lastIndexOf("/cc/")
         if (index > -1) {
             const communityId = link.substring(index + 4)
@@ -379,8 +378,10 @@ QtObject {
             const communityName = chatsModel.communities.getCommunityNameById(communityId)
 
             if (!communityName) {
-                // Unknown community
-                // TODO use a function to fetch that community?
+                // Unknown community, fetch the info if possible
+                chatsModel.communities.requestCommunityInfo(communityId)
+                result.communityId = communityId
+                result.fetching = true
                 return result
             }
 
@@ -423,6 +424,7 @@ QtObject {
             site: qsTr("Status app link"),
             title: result.title,
             communityId: result.communityId,
+            fetching: result.fetching,
             thumbnailUrl: "../../../../img/status.png",
             contentType: "",
             height: 0,

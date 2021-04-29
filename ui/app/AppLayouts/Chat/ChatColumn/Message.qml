@@ -29,6 +29,22 @@ Item {
     property string communityId: ""
     property int stickerPackId: -1
 
+    property string displayUserName: {
+        if (isCurrentUser) {
+            //% "You"
+            return qsTrId("You")
+        }
+
+        if (localName !== "") {
+            return localName
+        }
+
+        if (userName !== "") {
+            return Utils.removeStatusEns(userName)
+        }
+        return Utils.removeStatusEns(alias)
+    }
+
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
 

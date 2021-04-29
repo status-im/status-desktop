@@ -169,11 +169,14 @@ QtObject:
       result = fmt"Error joining the community: {e.msg}"
 
   proc membershipRequestChanged*(self: CommunitiesView, communityName: string, accepted: bool) {.signal.}
+  
+  proc communityAdded*(self: CommunitiesView, communityId: string) {.signal.}
 
   proc addCommunityToList*(self: CommunitiesView, community: Community) =
     let communityCheck = self.communityList.getCommunityById(community.id)
     if (communityCheck.id == ""):
       self.communityList.addCommunityItemToList(community)
+      self.communityAdded(community.id)
     else:
       self.communityList.replaceCommunity(community)
 
@@ -341,6 +344,12 @@ QtObject:
       error "Error declining request to join the community", msg = e.msg
       return "Error declining request to join the community"
     return ""
+
+  proc requestCommunityInfo*(self: CommunitiesView, communityId: string) {.slot.} =
+    try:
+      self.status.chat.requestCommunityInfo(communityId)
+    except Exception as e:
+      error "Error fetching community info", msg = e.msg
 
   proc getChannel*(self: CommunitiesView, channelId: string): Chat =
     for community in self.joinedCommunityList.communities:
