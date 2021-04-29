@@ -117,6 +117,7 @@ RowLayout {
         property bool timelineEnabled: true
         property var recentEmojis: []
         property var hiddenCommunityWelcomeBanners: []
+        property var hiddenCommunityBackUpBanners: []
         property real volume: 0.2
         property int notificationSetting: Constants.notifyAllMessages
         property bool notificationSoundsEnabled: true

@@ -135,7 +135,7 @@ Rectangle {
 
         Loader {
             id: emptyViewAndSuggestionsLoader
-            active: !appSettings.hiddenCommunityWelcomeBanners.includes(chatsModel.communities.activeCommunity.id) && chatsModel.communities.activeCommunity.admin
+            active: chatsModel.communities.activeCommunity.admin && !appSettings.hiddenCommunityWelcomeBanners.includes(chatsModel.communities.activeCommunity.id)
             width: parent.width
             height: active ? item.height : 0
             anchors.top: channelList.bottom
@@ -146,7 +146,7 @@ Rectangle {
         }
         Loader {
             id: backUpBannerLoader
-            active:  chatsModel.communities.activeCommunity.admin
+            active: chatsModel.communities.activeCommunity.admin && !appSettings.hiddenCommunityBackUpBanners.includes(chatsModel.communities.activeCommunity.id)
             width: parent.width
             height: active ? item.height : 0
             anchors.top: emptyViewAndSuggestionsLoader.bottom
