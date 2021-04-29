@@ -223,6 +223,14 @@ proc init*(self: ChatModel, pubKey: string) =
     self.mailserverReady = true
     self.requestMissingCommunityInfos()
 
+  if (topics.len == 0): 
+    warn "No topics found for chats. Cannot load past messages"
+  else:
+    self.events.once("mailserverAvailable") do(a: Args):
+      self.mailserverReady = true
+      self.requestMissingCommunityInfos()
+      self.events.emit("mailserverTopics", TopicArgs(topics: topics));
+
   self.events.on("contactUpdate") do(a: Args):
     var evArgs = ContactUpdateArgs(a)
     self.updateContacts(evArgs.contacts)
