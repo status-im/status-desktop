@@ -53,7 +53,12 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: backUpText.bottom
         anchors.topMargin: Style.current.padding
-        onClicked: openPopup(transferOwnershipPopup, {privateKey: chatsModel.communities.exportComumnity()})
+        onClicked: {
+            let hiddenBannerIds = appSettings.hiddenCommunityBackUpBanners
+            hiddenBannerIds.push(chatsModel.communities.activeCommunity.id)
+            appSettings.hiddenCommunityBackUpBanners = hiddenBannerIds
+            openPopup(transferOwnershipPopup, {privateKey: chatsModel.communities.exportComumnity()})
+        }
     }
 }
 
