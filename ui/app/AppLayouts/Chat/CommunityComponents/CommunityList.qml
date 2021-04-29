@@ -9,7 +9,7 @@ import "./"
 ListView {
     id: communityListView
     spacing: 12
-    height: childrenRect.height
+    height: contentHeight
     visible: height > 10
     width:parent.width
     interactive: false
