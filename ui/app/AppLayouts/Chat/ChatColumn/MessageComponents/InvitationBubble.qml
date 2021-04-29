@@ -1,4 +1,5 @@
 import QtQuick 2.3
+import QtQuick.Dialogs 1.3
 import "../../../../../shared"
 import "../../../../../shared/status"
 import "../../../../../imports"
@@ -9,7 +10,6 @@ Item {
     property string communityId
     property var invitedCommunity
     property int innerMargin: 12
-    property bool joined: false
     property bool isLink: false
 
     id: root
@@ -125,18 +125,79 @@ Item {
                 }
 
                 StatusButton {
+                    property int access: invitedCommunity.access
+                    property bool isPendingRequest: {
+                        if (invitedCommunity.access !== Constants.communityChatOnRequestAccess) {
+                            return false
+                        }
+                        return chatsModel.communities.isCommunityRequestPending(communityId)
+                    }
+                    id: joinBtn
                     type: "secondary"
                     anchors.top: sep2.bottom
                     width: parent.width
                     height: 44
-                    enabled: !invitedCommunity.joined && !root.joined
-                    //% "Joined"
-                    text: root.joined || invitedCommunity.joined || invitedCommunity.isMember ? qsTrId("joined") :
-                        //% "Join"
-                        qsTrId("join")
+                    enabled: {
+                        if (invitedCommunity.ensOnly && !profileModel.profile.ensVerified) {
+                            return false
+                        }
+                        if (joinBtn.access === Constants.communityChatInvitationOnlyAccess || isPendingRequest) {
+                            return false
+                        }
+                        if (invitedCommunity.canJoin) {
+                            return true
+                        }
+                        return !invitedCommunity.joined
+                    }
+                    text: {
+                        if (invitedCommunity.ensOnly && !profileModel.profile.ensVerified) {
+                            return qsTr("Membership requires an ENS username")
+                        }
+                        if (invitedCommunity.canJoin) {
+                            return qsTr("Join")
+                        }
+                        if (invitedCommunity.joined || invitedCommunity.isMember) {
+                            return qsTr("Joined")
+                        }
+                        if (isPendingRequest) {
+                             return qsTr("Pending")
+                        }
+
+                        switch(joinBtn.access) {
+                        case Constants.communityChatPublicAccess: return qsTr("Join")
+                        case Constants.communityChatInvitationOnlyAccess: return qsTr("You need to be invited");
+                        case Constants.communityChatOnRequestAccess: return qsTr("Request to join")
+                        default: return qsTr("Unknown community");
+                        }
+                    }
+
                     onClicked: {
-                        chatsModel.communities.joinCommunity(communityId, true)
-                        root.joined = true
+                        let error
+                        if (joinBtn.access === Constants.communityChatOnRequestAccess) {
+                            error = chatsModel.communities.requestToJoinCommunity(communityId,
+                                                                      profileModel.profile.ensVerified ? profileModel.profile.username : "")
+                            if (!error) {
+                                enabled = false
+                                text = qsTr("Pending")
+                            }
+                        } else {
+                            error = chatsModel.communities.joinCommunity(communityId, true)
+                            enabled = false
+                            text = qsTr("Joined")
+                        }
+
+                        if (error) {
+                            joiningError.text = error
+                            return joiningError.open()
+                        }
+                    }
+
+                    MessageDialog {
+                        id: joiningError
+                        //% "Error joining the community"
+                        title: qsTrId("error-joining-the-community")
+                        icon: StandardIcon.Critical
+                        standardButtons: StandardButton.Ok
                     }
                 }
             }

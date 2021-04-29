@@ -35,7 +35,7 @@ ModalPopup {
             anchors.top: titleText.bottom
             anchors.topMargin: 2
             font.pixelSize: 15
-            color: Style.current.darkGrey
+            color: Style.current.secondaryText
         }
 
         Separator {
@@ -103,7 +103,7 @@ ModalPopup {
                     anchors.rightMargin: Style.current.padding
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: 15
-                    color: Style.current.darkGrey
+                    color: Style.current.secondaryText
                 }
 
                 SVGImage {

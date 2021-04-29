@@ -227,11 +227,11 @@ ModalPopup {
                 if (ensOnly && !profileModel.profile.ensVerified) {
                     return false
                 }
-                if (canJoin) {
-                    return true
-                }
                 if (access === Constants.communityChatInvitationOnlyAccess || isPendingRequest) {
                     return false
+                }
+                if (canJoin) {
+                    return true
                 }
                 return true
             }
