@@ -155,6 +155,46 @@ void dos_qguiapplication_quit()
     qGuiApp->quit();
 }
 
+class DockClicker : public QObject
+{
+    Q_OBJECT
+
+    private:
+        Qt::ApplicationState _prevAppState;
+        QQmlApplicationEngine* _engine;
+
+    protected:
+        bool eventFilter(QObject *obj, QEvent *event) override;
+
+    public:
+        DockClicker(::DosQQmlApplicationEngine *vptr) {
+            auto engine = static_cast<QQmlApplicationEngine *>(vptr);
+            _engine = engine;
+        }
+};
+
+bool DockClicker::eventFilter(QObject *obj, QEvent *event)
+{
+    #ifdef Q_OS_MACOS
+        if (obj == qApp) {
+            if (event->type() == QEvent::ApplicationStateChange) {
+                auto ev = static_cast<QApplicationStateChangeEvent*>(event);
+                if (_prevAppState == Qt::ApplicationActive && ev->applicationState() == Qt::ApplicationActive) {
+                    QObject *topLevel = _engine->rootObjects().value(0);
+                    QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
+                    window->setVisible(true);
+                    window->showNormal();
+                }
+                _prevAppState = ev->applicationState();
+                return true;
+            } else {
+                return false;
+            }
+        }
+    #endif // Q_OS_MACOS
+        return QObject::eventFilter(obj, event);
+}
+
 void dos_qapplication_create(char *appName)
 {
     static int argc = 1;
@@ -183,6 +223,12 @@ void dos_qapplication_icon(const char *filename)
 void dos_qapplication_quit()
 {
     qApp->quit();
+}
+
+void dos_qapplication_installEventFilter(::DosQQmlApplicationEngine *vptr)
+{
+    DockClicker *dockClicker = new DockClicker(vptr);
+    qApp->installEventFilter(dockClicker);
 }
 
 ::DosQQmlApplicationEngine *dos_qqmlapplicationengine_create()
@@ -1273,3 +1319,4 @@ char *dos_qurl_replaceHostAndAddPath(char* url, char* newScheme, char* newHost, 
 
     return convert_to_cstring(newQurl.toString());
 }
+#include "DOtherSide.moc"

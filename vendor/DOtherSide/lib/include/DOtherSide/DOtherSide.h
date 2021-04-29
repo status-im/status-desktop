@@ -83,6 +83,8 @@ DOS_API void DOS_CALL dos_qguiapplication_delete(void);
 
 DOS_API void dos_qapplication_clipboard_setText(const char* text);
 
+DOS_API void dos_qapplication_installEventFilter(DosQQmlApplicationEngine *vptr);
+
 /// @}
 
 /// \defgroup QApplication QApplication
