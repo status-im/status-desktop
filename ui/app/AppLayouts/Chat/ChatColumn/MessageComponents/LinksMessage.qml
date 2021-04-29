@@ -55,6 +55,8 @@ Column {
                 }
             }
             Connections {
+                id: linkFetchConnections
+                enabled: false
                 target: chatsModel
                 onLinkPreviewDataWasReceived: {
                     let response
@@ -69,6 +71,8 @@ Column {
 
                     if (response.uuid !== root.uuid) return
 
+                    linkFetchConnections.enabled = false
+
                     if (!response.success) {
                         console.error(response.result.error)
                         return undefined
@@ -81,6 +85,27 @@ Column {
                     }
                     if (linkData.site && linkData.title) {
                         linkData.address = link
+                        return linkMessageLoader.sourceComponent = unfurledLinkComponent
+                    }
+                }
+            }
+
+            Connections {
+                id: linkCommunityFetchConnections
+                enabled: false
+                target: chatsModel.communities
+                onCommunityAdded: {
+                    if (communityId !== linkData.communityId) {
+                        return
+                    }
+                    linkCommunityFetchConnections.enabled = false
+                    const data = Utils.getLinkDataForStatusLinks(link)
+                    if (data) {
+                        linkData = data
+                        if (!data.fetching && data.communityId) {
+                            return linkMessageLoader.sourceComponent = invitationBubble
+                        }
+
                         return linkMessageLoader.sourceComponent = unfurledLinkComponent
                     }
                 }
@@ -117,6 +142,10 @@ Column {
                     const data = Utils.getLinkDataForStatusLinks(link)
                     if (data) {
                         linkData = data
+                        if (data.fetching && data.communityId) {
+                            linkCommunityFetchConnections.enabled = true
+                            return
+                        }
                         if (data.communityId) {
                             return invitationBubble
                         }
@@ -124,6 +153,7 @@ Column {
                         return unfurledLinkComponent
                     }
 
+                    linkFetchConnections.enabled = true
                     return chatsModel.getLinkPreviewData(link, root.uuid)
                 }
                 // setting the height to 0 allows the "enable link" dialog to

@@ -12,21 +12,7 @@ Item {
 
     StyledTextEdit {
         id: chatName
-        text: {
-            if (isCurrentUser) {
-                //% "You"
-                return qsTrId("You")
-            }
-
-            if (localName !== "") {
-                return localName
-            }
-
-            if (userName !== "") {
-                return Utils.removeStatusEns(userName)
-            }
-            return Utils.removeStatusEns(alias)
-        }
+        text: displayUserName
         color: text.startsWith("@") || isCurrentUser || localName !== "" ? Style.current.blue : Style.current.secondaryText
         font.weight: Font.Medium
         font.pixelSize: Style.current.secondaryTextFontSize

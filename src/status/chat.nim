@@ -53,6 +53,8 @@ type
   ChatModel* = ref object
     publicKey*: string
     events*: EventEmitter
+    communitiesToFetch*: seq[string]
+    mailserverReady*: bool
     contacts*: Table[string, Profile]
     channels*: Table[string, Chat]
     msgCursor*: Table[string, string]
@@ -68,6 +70,8 @@ include chat/utils
 proc newChatModel*(events: EventEmitter): ChatModel =
   result = ChatModel()
   result.events = events
+  result.mailserverReady = false
+  result.communitiesToFetch = @[]
   result.contacts = initTable[string, Profile]()
   result.channels = initTable[string, Chat]()
   result.msgCursor = initTable[string, string]()
@@ -160,6 +164,11 @@ proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
     self.contacts[c.id] = c
   self.events.emit("chatUpdate", ChatUpdateArgs(contacts: contacts))
 
+proc requestMissingCommunityInfos*(self: ChatModel) =
+  if (self.communitiesToFetch.len == 0):
+    return
+  for communityId in self.communitiesToFetch:
+    status_chat.requestCommunityInfo(communityId)
 
 proc init*(self: ChatModel, pubKey: string) =
   self.publicKey = pubKey
@@ -228,6 +237,8 @@ proc init*(self: ChatModel, pubKey: string) =
     warn "No topics found for chats. Cannot load past messages"
   else:
     self.events.once("mailserverAvailable") do(a: Args):
+      self.mailserverReady = true
+      self.requestMissingCommunityInfos()
       self.events.emit("mailserverTopics", TopicArgs(topics: topics));
 
   self.events.on("contactUpdate") do(a: Args):
@@ -462,6 +473,10 @@ proc joinCommunity*(self: ChatModel, communityId: string) =
   status_chat.joinCommunity(communityId)
 
 proc requestCommunityInfo*(self: ChatModel, communityId: string) =
+  if (not self.mailserverReady):
+    self.communitiesToFetch.add(communityId)
+    self.communitiesToFetch = self.communitiesToFetch.deduplicate()
+    return
   status_chat.requestCommunityInfo(communityId)
 
 proc leaveCommunity*(self: ChatModel, communityId: string) =

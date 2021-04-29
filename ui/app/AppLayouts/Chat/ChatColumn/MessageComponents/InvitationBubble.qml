@@ -71,7 +71,7 @@ Item {
                 StyledText {
                     id: invitedYou
                     //% "%1 invited you to join a community"
-                    text: qsTrId("-1-invited-you-to-join-a-community").arg(userName)
+                    text: qsTrId("-1-invited-you-to-join-a-community").arg(displayUserName)
                     anchors.top: title.bottom
                     anchors.topMargin: 4
                     anchors.left: parent.left
