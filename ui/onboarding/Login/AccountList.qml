@@ -13,6 +13,7 @@ ListView {
     model: accounts
     focus: true
     spacing: Style.current.smallPadding
+    clip: true
 
     delegate: AddressView {
         username: model.username

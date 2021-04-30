@@ -100,6 +100,7 @@ ModalPopup {
         Layout.fillWidth: true
         Layout.fillHeight: true
         model: community.members
+        clip: true
         delegate: Item {
             id: contactRow
             width: parent.width
