@@ -15,7 +15,7 @@ Item {
     id: root
     anchors.left: parent.left
     height: childrenRect.height
-    width: rectangleBubbleLoader.width + chatImage.width
+    width: rectangleBubbleLoader.width
 
     Component.onCompleted: {
         chatsModel.communities.setObservedCommunity(root.communityId)
@@ -23,23 +23,11 @@ Item {
         root.invitedCommunity = chatsModel.communities.observedCommunity
     }
 
-    UserImage {
-        id: chatImage
-        visible: (!isLink && authorCurrentMsg !== authorPrevMsg && !isCurrentUser) ||
-                 (appSettings.useCompactMode && isCurrentUser && authorCurrentMsg !== authorPrevMsg)
-        anchors.left: parent.left
-        anchors.leftMargin: visible ? Style.current.padding : 0
-        anchors.top: parent.top
-    }
-
     Loader {
         id: rectangleBubbleLoader
         active: !!invitedCommunity
         width: item.width
         height: item.height
-        anchors.left: !isLink && (!isCurrentUser || (isCurrentUser === appSettings.useCompactMode)) ? chatImage.right : undefined
-        anchors.leftMargin: isLink ? 0 : Style.current.smallPadding
-        anchors.right: !appSettings.useCompactMode && isCurrentUser ? parent.right : undefined
 
         sourceComponent: Component {
             Rectangle {
