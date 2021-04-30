@@ -22,10 +22,21 @@ ModalPopup {
         anchors.fill: parent
 
         Input {
+            property string elidedPkey: popup.privateKey.substring(0, 15) + "..." + popup.privateKey.substring(popup.privateKey.length - 16)
+
             id: pKeyInput
             label: qsTr("Community private key")
-            text: popup.privateKey
-            copyToClipboard: popup.privateKey
+            text: elidedPkey
+            textField.onFocusChanged: {
+                if (textField.focus) {
+                   pKeyInput.text =  popup.privateKey
+                } else {
+                    pKeyInput.text =  elidedPkey
+                }
+            }
+
+            copyToClipboard: true
+            textToCopy: popup.privateKey
         }
 
         StyledText {

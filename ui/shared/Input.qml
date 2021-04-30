@@ -19,6 +19,7 @@ Item {
     property int iconHeight: 24
     property int iconWidth: 24
     property bool copyToClipboard: false
+    property string textToCopy
     property bool pasteFromClipboard: false
     property bool readOnly: false
 
@@ -150,7 +151,7 @@ Item {
                         showBorder: true
                         onClicked: {
                             if (inputBox.copyToClipboard) {
-                                chatsModel.copyToClipboard(inputValue.text)
+                                chatsModel.copyToClipboard(inputBox.textToCopy ? inputBox.textToCopy : inputValue.text)
                             } else {
                                 if (inputValue.canPaste) {
                                     inputValue.paste()
