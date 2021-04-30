@@ -62,8 +62,9 @@ Item {
         anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
         anchors.topMargin: dateGroupLbl.visible ? Style.current.padding : 0
         height: childrenRect.height
-                + (chatName.visible || emojiReactionLoader.active ? Style.current.smallPadding : 0)
+                + (chatName.visible || emojiReactionLoader.active ? Style.current.halfPadding : 0)
                 + (chatName.visible && emojiReactionLoader.active ? Style.current.padding : 0)
+                + (!chatName.visible && chatImageContent.active ? 6 : 0)
                 + (emojiReactionLoader.active ? emojiReactionLoader.height: 0)
                 + (retry.visible && !chatTime.visible ? Style.current.smallPadding : 0)
         width: parent.width
@@ -134,6 +135,7 @@ Item {
                 id: chatImageContent
                 active: isImage
                 anchors.top: parent.top
+                anchors.topMargin: active ? 6 : 0
                 z: 51
 
                 sourceComponent: Component {
@@ -216,6 +218,19 @@ Item {
                     TransactionBubble {}
                 }
             }
+
+            Loader {
+                active: contentType === Constants.communityInviteType
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.topMargin: active ? 8 : 0
+                sourceComponent: Component {
+                    id: invitationBubble
+                    InvitationBubble {
+                        communityId: container.communityId
+                    }
+                }
+            }
         }
 
 
@@ -253,7 +268,7 @@ Item {
         id: emojiReactionLoader
         active: emojiReactionsModel.length
         anchors.bottom: messageContainer.bottom
-        anchors.bottomMargin: Style.current.smallPadding
+        anchors.bottomMargin: Style.current.halfPadding
         anchors.left: messageContainer.left
         anchors.leftMargin: messageContainer.chatText.textField.leftPadding
 

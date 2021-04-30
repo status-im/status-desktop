@@ -171,8 +171,6 @@ Item {
                     return fetchMoreMessagesButtonComponent
                 case Constants.systemMessagePrivateGroupType:
                     return privateGroupHeaderComponent
-                case Constants.communityInviteType:
-                    return invitationBubble
                 default:
                     return isStatusUpdate ? statusUpdateComponent :
                                             (appSettings.useCompactMode ? compactMessageComponent : messageComponent)
@@ -300,15 +298,6 @@ Item {
             isCurrentUser: root.isCurrentUser
             contentType: root.contentType
             container: root
-        }
-    }
-
-    Component {
-        id: invitationBubble
-        InvitationBubble {
-            communityId: root.communityId
-            anchors.right: !appSettings.useCompactMode && isCurrentUser ? parent.right : undefined
-            anchors.rightMargin: Style.current.padding
         }
     }
 }
