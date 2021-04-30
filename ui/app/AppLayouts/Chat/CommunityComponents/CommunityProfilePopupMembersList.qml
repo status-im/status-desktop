@@ -12,7 +12,7 @@ Item {
     property string headerTitle: ""
     property string headerDescription: ""
     property string headerImageSource: ""
-    height: 300
+    height: 450
 
     CommunityPopupButton {
         id: inviteBtn
@@ -71,8 +71,9 @@ Item {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottomMargin: Style.current.halfPadding
+        anchors.bottomMargin: Style.current.bigPadding
         spacing: 4
+        clip: true
         model: community.members
         delegate: Rectangle {
             id: contactRow
