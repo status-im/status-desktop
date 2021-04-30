@@ -33,7 +33,6 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	run-linux \
 	run-macos \
 	run-windows \
-	set-status-macos-dev-icon \
 	status-go \
 	update
 
@@ -408,17 +407,20 @@ $(ICON_TOOL):
 # Currently not in use: https://github.com/status-im/status-desktop/pull/1858
 # STATUS_PORT ?= 30306
 
-set-status-macos-dev-icon: $(ICON_TOOL)
-	npx fileicon set bin/nim_status_client status-dev.icns
-
 run-linux:
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
 	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)" \
 	./bin/nim_status_client
 
-run-macos: set-status-macos-dev-icon
-	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
-	./bin/nim_status_client
+run-macos: $(ICON_TOOL)
+	mkdir -p bin/StatusDev.app/Contents/{MacOS,Resources}
+	cp Info.dev.plist bin/StatusDev.app/Contents/Info.plist
+	cp status-dev.icns bin/StatusDev.app/Contents/Resources/
+	cd bin/StatusDev.app/Contents/MacOS && \
+		ln -fs ../../../nim_status_client ./
+	npx fileicon set bin/nim_status_client status-dev.icns
+	echo -e "\e[92mRunning:\e[39m bin/StatusDev.app/Contents/MacOS/nim_status_client"
+	./bin/StatusDev.app/Contents/MacOS/nim_status_client
 
 run-windows: $(NIM_WINDOWS_PREBUILT_DLLS)
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client.exe"
