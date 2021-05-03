@@ -205,6 +205,7 @@ ModalPopup {
 
         TextWithLabel {
             id: chatSettings
+            visible: profileModel.profile.pubKey !== fromAuthor
             //% "Chat settings"
             label: qsTrId("chat-settings")
             //% "Nickname"
@@ -215,6 +216,7 @@ ModalPopup {
 
         SVGImage {
             id: nicknameCaret
+            visible: profileModel.profile.pubKey !== fromAuthor
             source: "../../../img/caret.svg"
             rotation: -90
             anchors.right: parent.right
@@ -233,6 +235,7 @@ ModalPopup {
 
         StyledText {
             id: nicknameText
+            visible: profileModel.profile.pubKey !== fromAuthor
             //% "None"
             text: nickname ? nickname : qsTrId("none")
             anchors.right: nicknameCaret.left
