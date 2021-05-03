@@ -42,6 +42,7 @@ Column {
             Connections {
                 target: appSettings
                 onWhitelistedUnfurlingSitesChanged: {
+                    fetched = false
                     linkMessageLoader.sourceComponent = undefined
                     linkMessageLoader.sourceComponent = linkMessageLoader.getSourceComponent()
                 }
