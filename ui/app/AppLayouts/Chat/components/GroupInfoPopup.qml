@@ -229,9 +229,10 @@ ModalPopup {
                     text: !model.userName.endsWith(".eth") && !!contactRow.nickname ?
                               contactRow.nickname : Utils.removeStatusEns(model.userName)
                     anchors.left: identicon.right
-                    anchors.leftMargin: Style.current.smallPadding
+                    anchors.leftMargin: Style.current.padding
                     anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 13
+                    font.pixelSize: 17
+
                     StyledText {
                         visible: model.pubKey === profileModel.profile.pubKey
                         anchors.left: parent.right
