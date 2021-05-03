@@ -134,8 +134,22 @@ PopupMenu {
         icon.width: 16
         icon.height: 16
         icon.color: Style.current.red
-        onTriggered: chatsModel.leaveChatByIndex(channelContextMenu.channelIndex)
+        onTriggered: openPopup(deleteChatConfirmationDialogComponent)
         enabled: !chatsModel.communities.activeCommunity.active
+    }
+
+    Component {
+        id: deleteChatConfirmationDialogComponent
+        ConfirmationDialog {
+            btnType: "warn"
+            onClosed: {
+                destroy()
+            }
+            onConfirmButtonClicked: {
+                chatsModel.leaveChatByIndex(channelContextMenu.channelIndex)
+                close();
+            }
+        }
     }
 }
 
