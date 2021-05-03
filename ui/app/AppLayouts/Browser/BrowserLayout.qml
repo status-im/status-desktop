@@ -77,7 +77,7 @@ Rectangle {
     }
 
     // TODO we'll need a new dialog at one point because this one is not using the same call, but it's good for now
-    property Component sendTransactionModalComponent: SignTransactionModal {}
+property Component sendTransactionModalComponent: SignTransactionModal {}
 
     property Component signMessageModalComponent: SignMessageModal {}
 
@@ -228,7 +228,6 @@ Rectangle {
                     sendDialog.destroy()
                 }
 
-                sendDialog.estimateGas()
                 sendDialog.open();
                 walletModel.getGasPricePredictions()
             } else if (request.type === Constants.web3SendAsyncReadOnly && ["eth_sign", "personal_sign", "eth_signTypedData", "eth_signTypedData_v3"].indexOf(request.payload.method) > -1) {
