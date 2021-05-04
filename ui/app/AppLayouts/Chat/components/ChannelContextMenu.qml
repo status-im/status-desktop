@@ -142,6 +142,7 @@ PopupMenu {
         id: deleteChatConfirmationDialogComponent
         ConfirmationDialog {
             btnType: "warn"
+            confirmationText: qsTr("Are you sure you want to leave this chat?")
             onClosed: {
                 destroy()
             }
