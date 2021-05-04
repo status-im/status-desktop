@@ -81,6 +81,7 @@ proc mainProc() =
 
   let engine = newQQmlApplicationEngine()
   engine.setNetworkAccessManagerFactory(networkAccessFactory)
+  app.installEventFilter(engine)
 
   let netAccMgr = newQNetworkAccessManager(engine.getNetworkAccessManager())
 
