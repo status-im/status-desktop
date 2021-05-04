@@ -100,3 +100,9 @@
 [submodule "vendor/nim-confutils"]
 	path = vendor/nim-confutils
 	url = https://github.com/status-im/nim-confutils.git
+[submodule "vendor/status-qml"]
+	path = vendor/status-qml
+	url = https://github.com/PascalPrecht/status-qml
+[submodule "ui/StatusQ"]
+	path = ui/StatusQ
+	url = https://github.com/status-im/StatusQ

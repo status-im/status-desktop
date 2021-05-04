@@ -80,6 +80,7 @@ proc mainProc() =
   let networkAccessFactory = newQNetworkAccessManagerFactory(TMPDIR & "netcache")
 
   let engine = newQQmlApplicationEngine()
+  engine.addImportPath("qrc:/./StatusQ/src")
   engine.setNetworkAccessManagerFactory(networkAccessFactory)
 
   let netAccMgr = newQNetworkAccessManager(engine.getNetworkAccessManager())
