@@ -1,0 +1,6 @@
+singleton StatusColors 0.1 StatusColors.qml
+ThemePalette 0.1 ThemePalette.qml
+StatusLightTheme 0.1 StatusLightTheme.qml
+StatusDarkTheme 0.1 StatusDarkTheme.qml
+singleton Theme 0.1 Theme.qml
+
