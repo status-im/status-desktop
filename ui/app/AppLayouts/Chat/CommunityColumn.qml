@@ -98,12 +98,40 @@ Rectangle {
         }
     }
 
+    Item {
+        id: descriptionItem
+        height: childrenRect.height
+        anchors.left: parent.left
+        anchors.leftMargin: 18
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding
+        anchors.top: communityHeader.bottom
+        anchors.topMargin:  Style.current.halfPadding
+
+        SVGImage {
+            id: listImg
+            source: "../../img/community-list.svg"
+            width: 15
+            height: 15
+        }
+
+        StyledText {
+            text: chatsModel.communities.activeCommunity.description
+            color: Style.current.secondaryText
+            font.pixelSize: 13
+            wrapMode: Text.WordWrap
+            anchors.left: listImg.right
+            anchors.leftMargin: 4
+            anchors.right: parent.right
+        }
+    }
+
     Loader {
         id: membershipRequestsLoader
         width: parent.width
         active: chatsModel.communities.activeCommunity.admin
-        anchors.top: communityHeader.bottom
-        anchors.topMargin: item && item.visible ? Style.current.halfPadding : 0
+        anchors.top: descriptionItem.bottom
+        anchors.topMargin: active ? Style.current.halfPadding : 0
 
         sourceComponent: Component {
             MembershipRequestsButton {}
