@@ -82,6 +82,7 @@ proc mainProc() =
   let engine = newQQmlApplicationEngine()
   engine.addImportPath("qrc:/./StatusQ/src")
   engine.setNetworkAccessManagerFactory(networkAccessFactory)
+  app.installEventFilter(engine)
 
   let netAccMgr = newQNetworkAccessManager(engine.getNetworkAccessManager())
 
