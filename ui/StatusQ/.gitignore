@@ -1,1 +1,12 @@
 .DS_Store
+moc_*
+*.pro.user
+qrc_*
+*.o
+build-*
+*.qmlc
+bin
+*.app
+*.autosave
+Makefile
+.qmake.stash

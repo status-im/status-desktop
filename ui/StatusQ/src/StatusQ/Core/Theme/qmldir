@@ -1,3 +1,5 @@
+module StatusQ.Core.Theme
+
 singleton StatusColors 0.1 StatusColors.qml
 ThemePalette 0.1 ThemePalette.qml
 StatusLightTheme 0.1 StatusLightTheme.qml
