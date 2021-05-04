@@ -65,9 +65,7 @@ ListView {
             icon.source: "../../../img/arrow-left.svg"
             icon.width: 12
             icon.height: 9
-            onTriggered: {
-                chatsModel.communities.leaveCommunity(commnunityMenu.communityId)
-            }
+            onTriggered: chatsModel.communities.leaveCommunity(commnunityMenu.communityId)
         }
     }
 }

@@ -229,6 +229,7 @@ Item {
             label: qsTrId("leave-community")
             iconName: "leave"
             type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
+            onClicked: chatsModel.communities.leaveCommunity(communityId)
         }
     }
 }
