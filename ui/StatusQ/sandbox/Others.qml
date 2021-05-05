@@ -13,4 +13,8 @@ GridLayout {
     StatusLoadingIndicator {
         color: parent.theme.directColor4
     }
+
+    StatusLetterIdenticon {
+        name: "#status"
+    }
 }

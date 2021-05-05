@@ -1,3 +1,4 @@
 module StatusQ.Components
 
+StatusLetterIdenticon 0.1 StatusLetterIdenticon.qml
 StatusLoadingIndicator 0.1 StatusLoadingIndicator.qml
