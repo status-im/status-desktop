@@ -124,6 +124,9 @@ StackLayout {
         onContactListChanged: {
             isBlocked = profileModel.contacts.isContactBlocked(activeChatId);
         }
+        onContactBlocked: {
+            chatsModel.removeMessagesByUserId(publicKey)
+        }
     }
 
     Timer {
