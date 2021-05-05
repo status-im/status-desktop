@@ -1,4 +1,5 @@
 module StatusQ.Core
 
+StatusBaseText 0.1 StatusBaseText.qml
 StatusIcon 0.1 StatusIcon.qml
 
