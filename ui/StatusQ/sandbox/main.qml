@@ -29,6 +29,11 @@ Window {
             checkable: true
             text: "Icons"
         }
+        Button {
+            id: otherTab
+            checkable: true
+            text: "Other"
+        }
     }
 
     ScrollView {
@@ -62,6 +67,8 @@ Window {
                         switch(topicsGroup.checkedButton) {
                         case iconsTab:
                             return iconsComponent;
+                        case otherTab:
+                            return othersComponent;
                         default:
                             return null;
                         }
@@ -88,6 +95,8 @@ Window {
                         switch(topicsGroup.checkedButton) {
                         case iconsTab:
                             return iconsComponent;
+                        case otherTab:
+                            return othersComponent;
                         default:
                             return null;
                         }
@@ -130,6 +139,14 @@ Window {
         Icons {
             anchors.centerIn: parent
             iconColor: parent? parent.currentTheme.primaryColor1 : "#ffffff"
+        }
+    }
+
+    Component {
+        id: othersComponent
+        Others {
+            anchors.centerIn: parent
+            theme: parent.currentTheme
         }
     }
 }

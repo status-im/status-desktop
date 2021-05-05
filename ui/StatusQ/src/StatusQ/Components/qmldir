@@ -1,0 +1,3 @@
+module StatusQ.Components
+
+StatusLoadingIndicator 0.1 StatusLoadingIndicator.qml
