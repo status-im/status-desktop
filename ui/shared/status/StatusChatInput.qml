@@ -887,14 +887,14 @@ Rectangle {
                     StatusChatInputTextFormationAction {
                         wrapper: "~~"
                         icon.name: "format-text-strike-through"
-                        icon.height: 18
+                        icon.width: 45
                         //% "Strikethrough"
                         text: qsTrId("strikethrough")
                     }
                     StatusChatInputTextFormationAction {
                         wrapper: "`"
                         icon.name: "format-text-code"
-                        icon.height: 18
+                        icon.width: 45
                         //% "Code"
                         text: qsTrId("code")
                     }
