@@ -33,7 +33,7 @@ StackLayout {
     property string activeChatId: chatsModel.activeChannel.id
     property bool isBlocked: profileModel.contacts.isContactBlocked(activeChatId)
     
-    property var input: chatInput
+    property alias input: chatInput
 
     Component.onCompleted: {
         chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
