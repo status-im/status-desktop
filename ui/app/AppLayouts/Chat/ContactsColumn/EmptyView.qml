@@ -43,21 +43,18 @@ Rectangle {
             height: 50
         }
 
-        SVGImage {
+        StatusIconButton {
+            icon.name: "close"
             id: closeImg
             anchors.top: parent.top
             anchors.topMargin: 10
             anchors.right: parent.right
             anchors.rightMargin: 10
-            source: "../../../img/close.svg"
-            height: 20
-            width: 20
+            icon.height: 20
+            icon.width: 20
+            iconColor: Style.current.darkGrey
         }
-        ColorOverlay {
-            anchors.fill: closeImg
-            source: closeImg
-            color: Style.current.darkGrey
-        }
+
         MouseArea {
             anchors.fill: closeImg
             cursorShape: Qt.PointingHandCursor
