@@ -61,7 +61,7 @@ QtObject {
                         `line-height: 22px;` +
                     `}` +
                     `a {` +
-                        `color: ${isCurrentUser && !useCompactMode ? Style.current.white : Style.current.textColor};` +
+                        `color: ${Style.current.linkColor};` +
                     `}` +
                     `a.mention {` +
                         `color: ${Style.current.mentionColor};` +

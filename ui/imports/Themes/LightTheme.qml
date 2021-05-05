@@ -39,6 +39,7 @@ Theme {
     property color separator: grey
     property color textColor: black
     property color textColorTertiary: blue
+    property color linkColor: blue
     property color currentUserTextColor: white
     property color secondaryBackground: lightBlue
     property color inputBackground: grey
