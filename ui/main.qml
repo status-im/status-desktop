@@ -275,7 +275,9 @@ ApplicationWindow {
                     )
                 ) ||
                 // in timeline view
-                loader.item.currentView === timelineView
+                loader.item.currentView === timelineView ||
+                // In community section
+                chatsModel.communities.activeCommunity.active 
             )
 
         width: applicationWindow.width
