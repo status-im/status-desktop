@@ -109,20 +109,20 @@ Item {
             }
         }
 
-        StatusSettingsLineButton {
-            //% "Node Management"
-            text: qsTrId("node-management")
-            isSwitch: true
-            switchChecked: appSettings.nodeManagementEnabled
-            onClicked: {
-                if (!appSettings.nodeManagementEnabled) {
-                    confirmationPopup.settingsProp = "nodeManagementEnabled"
-                    confirmationPopup.open()
-                } else {
-                    appSettings.nodeManagementEnabled = false
-                }
-            }
-        }
+        // StatusSettingsLineButton {
+        //     //% "Node Management"
+        //     text: qsTrId("node-management")
+        //     isSwitch: true
+        //     switchChecked: appSettings.nodeManagementEnabled
+        //     onClicked: {
+        //         if (!appSettings.nodeManagementEnabled) {
+        //             confirmationPopup.settingsProp = "nodeManagementEnabled"
+        //             confirmationPopup.open()
+        //         } else {
+        //             appSettings.nodeManagementEnabled = false
+        //         }
+        //     }
+        // }
     }
 
     NetworksModal {
