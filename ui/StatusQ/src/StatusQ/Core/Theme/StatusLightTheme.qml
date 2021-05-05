@@ -69,10 +69,6 @@ ThemePalette {
     baseColor1: getColor('grey5')
     baseColor2: getColor('grey4')
     baseColor3: getColor('grey3')
-
-    baseColor1: getColor('grey5')
-    baseColor2: getColor('grey4')
-    baseColor3: getColor('grey3')
     baseColor4: getColor('grey2')
     baseColor5: getColor('grey')
 
