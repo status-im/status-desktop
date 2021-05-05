@@ -258,9 +258,9 @@ Rectangle {
             interrogateMessage();
         } else {
             if (event.key === Qt.Key_Asterisk ||
-                event.key === Qt.Key_QuoteLeft ||
-                event.key === Qt.Key_Space ||
-                event.key === Qt.Key_AsciiTilde) {
+                    event.key === Qt.Key_QuoteLeft ||
+                    event.key === Qt.Key_Space ||
+                    event.key === Qt.Key_AsciiTilde) {
                 formatInputMessage()
             }
         }
@@ -424,7 +424,7 @@ Rectangle {
         const index = message.data.lastIndexOf(':', message.cursor);
         if (index >= 0) {
             emojiEvent = validSubstr(message.data.substr(index, message.cursor - index));
-        } 
+        }
     }
 
     function validSubstr(substr) {
@@ -564,18 +564,27 @@ Rectangle {
             let nameLen = aliasName.length + 2 // We're doing a +2 here because of the `@` and the trailing whitespace
             let position = 0;
             let text = ""
+            let cursorPositionMention = 0
             const spanPlusAlias = `${Constants.mentionSpanTag}@${aliasName}</span> `
             if (currentText === "@") {
                 position = nameLen
                 text = spanPlusAlias
             } else {
                 let left = currentText.substring(0, lastAtPosition)
+
+                // If there is an odd number of mentions, it means we are rewritting an old mention
+                let matches = left.match(/[[mention]]/g)
+                if (!!matches && matches.length % 2 === 1) {
+                    let index = left.lastIndexOf('[[mention]]')
+                    left = left.substring(0, index)
+                    cursorPositionMention = lastAtPosition - index
+                }
                 let right = currentText.substring(hasEmoji ? lastCursorPosition + 2 : lastCursorPosition)
                 text = `${left} ${spanPlusAlias}${right}`
             }
 
             messageInputField.text = parseBackText(text)
-            messageInputField.cursorPosition = lastAtPosition + aliasName.length + 2
+            messageInputField.cursorPosition = lastAtPosition + aliasName.length + 2 - cursorPositionMention
             if (messageInputField.cursorPosition === 0) {
                 // It reset to 0 for some reason, go back to the end
                 messageInputField.cursorPosition = messageInputField.length
