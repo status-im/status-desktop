@@ -39,6 +39,7 @@ Theme {
     property color separator: tenPercentWhite
     property color textColor: white
     property color textColorTertiary: blue
+    property color linkColor: blue
     property color currentUserTextColor: white
     property color secondaryBackground: "#353a4d"
     property color inputBackground: darkGrey
