@@ -6,8 +6,64 @@ ThemePalette {
         source: "../../../assets/fonts/Inter/Inter-Regular.otf"
     }
 
+    property QtObject baseFontThin: FontLoader {
+        source: "../../../assets/fonts/Inter/Inter-Thin.otf"
+    }
+
+    property QtObject baseFontExtraLight: FontLoader {
+        source: "../../../assets/fonts/Inter/Inter-ExtraLight.otf"
+    }
+
+    property QtObject baseFontLight: FontLoader {
+        source: "../../../assets/fonts/Inter/Inter-Light.otf"
+    }
+
+    property QtObject baseFontMedium: FontLoader {
+        source: "../../../assets/fonts/Inter/Inter-Medium.otf"
+    }
+
+    property QtObject baseFontBold: FontLoader {
+        source: "../../../assets/fonts/Inter/Inter-Bold.otf"
+    }
+
+    property QtObject baseFontExtraBold: FontLoader {
+        source: "../../../assets/fonts/Inter/Inter-ExtraBold.otf"
+    }
+
+    property QtObject baseFontBlack: FontLoader {
+        source: "../../../assets/fonts/Inter/Inter-Black.otf"
+    }
+
     property QtObject monoFont: FontLoader {
         source: "../../../assets/fonts/InterStatus/InterStatus-Regular.otf"
+    }
+
+    property QtObject monoFontThin: FontLoader {
+        source: "../../../assets/fonts/InterStatus/InterStatus-Thin.otf"
+    }
+
+    property QtObject monoFontExtraLight: FontLoader {
+        source: "../../../assets/fonts/InterStatus/InterStatus-ExtraLight.otf"
+    }
+
+    property QtObject monoFontLight: FontLoader {
+        source: "../../../assets/fonts/InterStatus/InterStatus-Light.otf"
+    }
+
+    property QtObject monoFontMedium: FontLoader {
+        source: "../../../assets/fonts/InterStatus/InterStatus-Medium.otf"
+    }
+
+    property QtObject monoFontBold: FontLoader {
+        source: "../../../assets/fonts/InterStatus/InterStatus-Bold.otf"
+    }
+
+    property QtObject monoFontExtraBold: FontLoader {
+        source: "../../../assets/fonts/InterStatus/InterStatus-ExtraBold.otf"
+    }
+
+    property QtObject monoFontBlack: FontLoader {
+        source: "../../../assets/fonts/InterStatus/InterStatus-Black.otf"
     }
 
     baseColor1: getColor('graphite5')

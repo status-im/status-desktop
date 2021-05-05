@@ -4,8 +4,23 @@ QtObject {
     
     id: theme
 
-    property QtObject baseFont
-    property QtObject monoFont
+    property FontLoader baseFont
+    property FontLoader baseFontThin
+    property FontLoader baseFontExtraLight
+    property FontLoader baseFontLight
+    property FontLoader baseFontMedium
+    property FontLoader baseFontBold
+    property FontLoader baseFontExtraBold
+    property FontLoader baseFontBlack
+
+    property FontLoader monoFont
+    property FontLoader monoFontThin
+    property FontLoader monoFontExtraLight
+    property FontLoader monoFontLight
+    property FontLoader monoFontMedium
+    property FontLoader monoFontBold
+    property FontLoader monoFontExtraBold
+    property FontLoader monoFontBlack
 
     property color baseColor1
     property color baseColor2
