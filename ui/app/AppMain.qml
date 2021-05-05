@@ -418,7 +418,10 @@ RowLayout {
                     section: Constants.chat
                     doNotHandleClick: true
                     onClicked: {
-                        chatsModel.communities.activeCommunity.active = false
+                        if (chatsModel.communities.activeCommunity.active) {
+                            chatLayoutContainer.chatColumn.input.hideExtendedArea();
+                            chatsModel.communities.activeCommunity.active = false
+                        }
                         appMain.changeAppSection(Constants.chat)
                     }
 
