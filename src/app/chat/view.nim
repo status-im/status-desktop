@@ -902,6 +902,10 @@ QtObject:
       ChatViewRoles.MessageList.int:"messages"
     }.toTable
 
+  proc removeMessagesByUserId(self: ChatsView, publicKey: string) {.slot.} =
+    for k in self.messageList.keys:
+      self.messageList[k].removeMessagesByUserId(publicKey)
+
   proc getMessageListIndex(self: ChatsView): int {.slot.} =
     var idx = -1
     for msg in toSeq(self.messageList.values):

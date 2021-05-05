@@ -286,6 +286,21 @@ QtObject:
 
     self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.Username.int])
 
+  proc removeMessagesByUserId*(self: ChatMessageList, publicKey: string) =
+    var msgIdxToDelete: seq[int] = @[]
+    var msgIdToDelete: seq[string] = @[]
+    for m in self.messages.mitems:
+      if m.fromAuthor == publicKey:
+        # Can't delete on a loop
+        msgIdxToDelete.add(self.messageIndex[m.id])
+        msgIdToDelete.add(m.id)
+    for m in msgIdxToDelete:
+      self.beginRemoveRows(newQModelIndex(), m, m)
+      self.messages.delete(m)
+      self.endRemoveRows()
+    for m in msgIdToDelete:
+      self.messageIndex.del(m)
+
 
   proc getID*(self: ChatMessageList):string  {.slot.} =
     self.id

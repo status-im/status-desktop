@@ -174,8 +174,11 @@ QtObject:
     self.contactListChanged()
     discard self.status.contacts.unblockContact(publicKey)
 
+  proc contactBlocked*(self: ContactsView, publicKey: string) {.signal.}
+
   proc blockContact*(self: ContactsView, publicKey: string): string {.slot.} =
     self.contactListChanged()
+    self.contactBlocked(publicKey)
     return self.status.contacts.blockContact(publicKey)
 
   proc removeContact*(self: ContactsView, publicKey: string) {.slot.} =
