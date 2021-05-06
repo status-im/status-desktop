@@ -30,6 +30,11 @@ Window {
             text: "Icons"
         }
         Button {
+            id: controlsTab
+            checkable: true
+            text: "Controls"
+        }
+        Button {
             id: otherTab
             checkable: true
             text: "Other"
@@ -67,6 +72,8 @@ Window {
                         switch(topicsGroup.checkedButton) {
                         case iconsTab:
                             return iconsComponent;
+                        case controlsTab:
+                            return controlsComponent;
                         case otherTab:
                             return othersComponent;
                         default:
@@ -95,6 +102,8 @@ Window {
                         switch(topicsGroup.checkedButton) {
                         case iconsTab:
                             return iconsComponent;
+                        case controlsTab:
+                            return controlsComponent;
                         case otherTab:
                             return othersComponent;
                         default:
@@ -139,6 +148,14 @@ Window {
         Icons {
             anchors.centerIn: parent
             iconColor: parent? parent.currentTheme.primaryColor1 : "#ffffff"
+        }
+    }
+
+    Component {
+        id: controlsComponent
+        Controls {
+            anchors.centerIn: parent
+            theme: parent.currentTheme
         }
     }
 

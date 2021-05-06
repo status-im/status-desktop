@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>Controls.qml</file>
         <file>Icons.qml</file>
         <file>Others.qml</file>
     </qresource>

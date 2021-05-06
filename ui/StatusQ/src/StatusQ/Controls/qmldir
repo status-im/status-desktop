@@ -1,0 +1,4 @@
+module StatusQ.Controls
+
+StatusIconTabButton 0.1 StatusIconTabButton.qml
+
