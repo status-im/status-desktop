@@ -50,4 +50,39 @@ GridLayout {
             y: parent.height / 2 - height / 2 + 4
         }
     }
+
+    StatusNavBarTabButton {
+        icon.name: "chat"
+        tooltip.text: "Chat"
+    }
+
+    StatusNavBarTabButton {
+        name: "#status"
+        tooltip.text: "Some Channel"
+    }
+
+    StatusNavBarTabButton {
+        icon.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        tooltip.text: "Some Community"
+    }
+
+    StatusNavBarTabButton {
+        icon.name: "profile"
+        tooltip.text: "Profile"
+        badge.value: 0
+        badge.visible: true
+        badge.anchors.leftMargin:-16
+    }
+
+    StatusNavBarTabButton {
+        icon.name: "chat"
+        tooltip.text: "Chat"
+        badge.value: 35
+    }
+
+    StatusNavBarTabButton {
+        icon.name: "chat"
+        tooltip.text: "Chat"
+        badge.value: 100
+    }
 }
