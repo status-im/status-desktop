@@ -105,15 +105,6 @@ Rectangle {
         return false
     }
 
-    function parseMarkdown(markdownText) {
-        const htmlText = markdownText
-          .replace(/\~\~([^*]+)\~\~/gim, '~~<span style="text-decoration: line-through">$1</span>~~')
-          .replace(/\*\*([^*]+)\*\*/gim, ':asterisk::asterisk:<b>$1</b>:asterisk::asterisk:')
-          .replace(/\`([^*]+)\`/gim, '`<code>$1</code>`')
-          .replace(/\*([^*]+)\*/gim, ':asterisk:<i>$1</i>:asterisk:')
-        return htmlText.replace(/\:asterisk\:/gim, "*")
-    }
-
     function onKeyPress(event){
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
             if (checkTextInsert()) {
@@ -194,7 +185,7 @@ Rectangle {
 
     function wrapSelection(wrapWith) {
         if (messageInputField.selectionStart - messageInputField.selectionEnd === 0) return
-        
+
         insertInTextInput(messageInputField.selectionStart, wrapWith);
         insertInTextInput(messageInputField.selectionEnd, wrapWith);
 
@@ -230,19 +221,89 @@ Rectangle {
         return currentText.replace(/\[\[mention\]\]/g, '')
     }
 
+    function parseMarkdown(markdownText) {
+        const htmlText = markdownText
+          .replace(/\~\~([^*]+)\~\~/gim, '~~<span style="text-decoration: line-through">$1</span>~~')
+          .replace(/\*\*([^*]+)\*\*/gim, ':asterisk::asterisk:<b>$1</b>:asterisk::asterisk:')
+          .replace(/\`([^*]+)\`/gim, '`<code>$1</code>`')
+          .replace(/\*([^*]+)\*/gim, ':asterisk:<i>$1</i>:asterisk:')
+        return htmlText.replace(/\:asterisk\:/gim, "*")
+    }
+
     function parseBackText(plainText) {
-        plainText = plainText.replace(/\[\[mention\]\](@([a-z\.]+(\ ?[a-z]+\ ?[a-z]+)?))\[\[mention\]\]/gi, `${Constants.mentionSpanTag}$1</span>`)
-
-
         return parseMarkdown(Emoji.parse(plainText.replace(/\n/g, "<br />")))
+    }
+
+    function getFormattedText(start, end) {
+        start = start || 0
+        end = end || messageInputField.length
+
+        const oldFormattedText = messageInputField.getFormattedText(start, end)
+
+        const found = oldFormattedText.match(/<!--StartFragment-->([\w\W\s]*)<!--EndFragment-->/m);
+
+        return found[1]
+    }
+
+    function setFormatInInput(formationFunction, startTag, endTag, formationChar, numFormationChars) {
+        const inputText = getFormattedText()
+        const plainInputText = messageInputField.getText(0, messageInputField.length)
+
+        let lengthDifference
+
+        try {
+            const result = formationFunction(inputText)
+
+            if (!result) {
+                return
+            }
+            const parsed = JSON.parse(result)
+
+            let substring
+            let nbEmojis
+            parsed.forEach(function (match) {
+                match[1] += 1
+                const truncatedInputText = inputText.substring(0, match[1] + numFormationChars)
+                const truncatedPlainText = plainInputText.substring(0, messageInputField.cursorPosition)
+
+                const lengthDifference = truncatedInputText.length - truncatedPlainText.length
+
+                nbEmojis = Emoji.nbEmojis(truncatedInputText)
+
+
+                match[1] += (nbEmojis * -2)
+                match[0] += (nbEmojis * -2)
+                substring = inputText.substring(match[0], match[1])
+
+                if (plainInputText.charAt(match[0] - 1) !== formationChar) {
+                    match[0] -= lengthDifference
+                    match[1] -= lengthDifference
+                } else {
+                    match[1] -= lengthDifference
+                }
+
+                messageInputField.remove(match[0], match[1])
+                insertInTextInput(match[0], `${startTag}${substring}${endTag}`)
+            })
+        } catch (e) {
+            //
+        }
     }
 
     function formatInputMessage() {
         const posBeforeEnd = messageInputField.length - messageInputField.cursorPosition;
-        const plainText = getPlainText()
-        const formatted = parseBackText(plainText)
-        messageInputField.text = formatted.replace(/  /g, '&nbsp;&nbsp;')
-        messageInputField.cursorPosition = messageInputField.length - posBeforeEnd;
+
+        // Remove align center spans
+        // TODO fix Those spans are added automatically by QT when you press space after an emoji. They break the code formation process
+
+        // strikethrough
+        setFormatInInput(chatsModel.formatInputStrikeThrough, '<span style=" text-decoration: line-through;">', '</span>', '~', 2)
+        // bold
+        setFormatInInput(chatsModel.formatInputBold, '<b>', '</b>', '*', 2)
+        // code
+        setFormatInInput(chatsModel.formatInputCode, '<code>', '</code>', '`', 1)
+        // italic
+        setFormatInInput(chatsModel.formatInputItalic, '<i>', '</i>', '*', 1)
     }
 
     function onRelease(event) {
@@ -254,13 +315,17 @@ Rectangle {
         // we can only get it in the `released` event
         if (paste) {
             paste = false;
-            formatInputMessage()
             interrogateMessage();
+            // TODO use the new formatInputMessage function instead
+            const plainText = getPlainText()
+            const newText = parseBackText(plainText)
+            messageInputField.remove(0, messageInputField.length)
+            insertInTextInput(0, newText)
         } else {
             if (event.key === Qt.Key_Asterisk ||
-                    event.key === Qt.Key_QuoteLeft ||
-                    event.key === Qt.Key_Space ||
-                    event.key === Qt.Key_AsciiTilde) {
+                event.key === Qt.Key_QuoteLeft ||
+                event.key === Qt.Key_Space ||
+                event.key === Qt.Key_AsciiTilde) {
                 formatInputMessage()
             }
         }
@@ -274,8 +339,9 @@ Rectangle {
     }
 
     function interrogateMessage() {
+        // TODO change this function to use remove and insert instead of replcing the whole text
         const text = chatsModel.plainText(Emoji.deparse(messageInputField.text));
-        
+
         var words = text.split(' ');
 
         let madeChanges = false
@@ -304,31 +370,30 @@ Rectangle {
     }
 
     // since emoji length is not 1 we need to match that position that TextArea returns
-    // to the actual position in the string. 
+    // to the actual position in the string.
     function extrapolateCursorPosition() {
         // we need only the message part to be html
         const text = getPlainText()
         const completelyPlainText = removeMentions(text)
         const plainText = Emoji.parse(text);
 
-
         var bracketEvent = false;
         var almostMention = false;
         var mentionEvent = false;
         var length = 0;
 
-
-
         // This loop calculates the cursor position inside the plain text which contains the image tags (<img>) and the mention tags ([[mention]])
         const cursorPos = messageInputField.cursorPosition
-        for (var i = 0; i < plainText.length;) {
+        let character = ""
+        for (var i = 0; i < plainText.length; i++) {
             if (length >= cursorPos) break;
 
-            if (!bracketEvent && plainText.charAt(i) !== '<' && !mentionEvent && plainText.charAt(i) !== '[')  {
+            character = plainText.charAt(i)
+            if (!bracketEvent && character !== '<' && !mentionEvent && character !== '[')  {
                 length++;
-            } else if (!bracketEvent && plainText.charAt(i) === '<') {
+            } else if (!bracketEvent && character === '<') {
                 bracketEvent = true;
-            } else if (bracketEvent && plainText.charAt(i) === '>') {
+            } else if (bracketEvent && character === '>') {
                 bracketEvent = false;
                 length++;
             } else if (!mentionEvent && almostMention && plainText.charAt(i) === '[') {
@@ -344,7 +409,6 @@ Rectangle {
                 almostMention = false
                 mentionEvent = false
             }
-            i++
         }
 
         let textBeforeCursor = Emoji.deparseFromParse(plainText.substr(0, i));
@@ -410,11 +474,8 @@ Rectangle {
 
     function replaceWithEmoji(message, shortname, codePoint) {
         const encodedCodePoint = Emoji.getEmojiCodepoint(codePoint)
-        const newMessage = message.data
-            .replace(shortname, encodedCodePoint)
-            .replace(/ /g, "&nbsp;");
-        messageInputField.remove(0, messageInputField.cursorPosition);
-        insertInTextInput(0, parseBackText(newMessage));
+        messageInputField.remove(messageInputField.cursorPosition - shortname.length, messageInputField.cursorPosition);
+        insertInTextInput(messageInputField.cursorPosition, Emoji.parse(encodedCodePoint) + " ");
         emojiSuggestions.close()
         emojiEvent = false
     }
@@ -438,7 +499,7 @@ Rectangle {
 
     function isKeyValid(key) {
         if (key === Qt.Key_Space || key ===  Qt.Key_Tab ||
-            (key >= Qt.Key_Exclam && key <= Qt.Key_Slash) || 
+            (key >= Qt.Key_Exclam && key <= Qt.Key_Slash) ||
             (key >= Qt.Key_Semicolon && key <= Qt.Key_Question) ||
             (key >= Qt.Key_BracketLeft && key <= Qt.Key_hyphen))
             return false;
@@ -550,41 +611,22 @@ Rectangle {
         property: "ensName, localNickname, alias"
         onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
             const hasEmoji = Emoji.hasEmoji(messageInputField.text)
-            const currentText = getPlainText()
-
-            const completelyPlainText = removeMentions(currentText)
-
-            lastAtPosition += currentText.length - completelyPlainText.length
-            lastCursorPosition += currentText.length - completelyPlainText.length
 
             const properties = "ensName, alias"; // Ignore localNickname
 
             let aliasName = item[properties.split(",").map(p => p.trim()).find(p => !!item[p])]
             aliasName = aliasName.replace(/(\.stateofus)?\.eth/, "")
-            let nameLen = aliasName.length + 2 // We're doing a +2 here because of the `@` and the trailing whitespace
-            let position = 0;
-            let text = ""
-            let cursorPositionMention = 0
+
             const spanPlusAlias = `${Constants.mentionSpanTag}@${aliasName}</span> `
-            if (currentText === "@") {
-                position = nameLen
-                text = spanPlusAlias
-            } else {
-                let left = currentText.substring(0, lastAtPosition)
 
-                // If there is an odd number of mentions, it means we are rewritting an old mention
-                let matches = left.match(/[[mention]]/g)
-                if (!!matches && matches.length % 2 === 1) {
-                    let index = left.lastIndexOf('[[mention]]')
-                    left = left.substring(0, index)
-                    cursorPositionMention = lastAtPosition - index
-                }
-                let right = currentText.substring(hasEmoji ? lastCursorPosition + 2 : lastCursorPosition)
-                text = `${left} ${spanPlusAlias}${right}`
-            }
+            let rightIndex = hasEmoji ? lastCursorPosition + 2 : lastCursorPosition
 
-            messageInputField.text = parseBackText(text)
-            messageInputField.cursorPosition = lastAtPosition + aliasName.length + 2 - cursorPositionMention
+            messageInputField.remove(lastAtPosition, rightIndex)
+
+            messageInputField.insert(lastAtPosition, spanPlusAlias)
+
+
+            messageInputField.cursorPosition = lastAtPosition + aliasName.length + 2
             if (messageInputField.cursorPosition === 0) {
                 // It reset to 0 for some reason, go back to the end
                 messageInputField.cursorPosition = messageInputField.length
