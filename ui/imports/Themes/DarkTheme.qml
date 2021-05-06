@@ -68,6 +68,7 @@ Theme {
     property color emojiReactionActiveBackgroundHovered: "#cbd5f1"
     property color mentionColor: "#7BE5FF"
     property color mentionBgColor: "#1a0da4c9"
+    property color mentionBgHoverColor: "#4d0da4c9"
     property color mentionMessageColor: "#1a0da4c9"
     property color mentionMessageHoverColor: "#330da4c9"
     property color replyBackground: "#484848"

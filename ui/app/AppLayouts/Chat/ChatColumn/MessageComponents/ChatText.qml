@@ -79,7 +79,7 @@ Item {
             if(isEmoji) {
                 return Emoji.parse(msg, Emoji.size.middle);
             } else {
-                return Utils.getMessageWithStyle(Emoji.parse(msg), appSettings.useCompactMode, isCurrentUser)
+                return Utils.getMessageWithStyle(Emoji.parse(msg), appSettings.useCompactMode, isCurrentUser, hoveredLink)
             }
         }
     }
