@@ -1,5 +1,6 @@
 module StatusQ.Components
 
+StatusBadge 0.1 StatusBadge.qml
 StatusLetterIdenticon 0.1 StatusLetterIdenticon.qml
 StatusLoadingIndicator 0.1 StatusLoadingIndicator.qml
 StatusRoundedImage 0.1 StatusRoundedImage.qml
