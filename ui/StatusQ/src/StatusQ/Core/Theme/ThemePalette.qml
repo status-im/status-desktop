@@ -22,6 +22,9 @@ QtObject {
     property FontLoader monoFontExtraBold
     property FontLoader monoFontBlack
 
+    property color black: getColor('black')
+    property color white: getColor('white')
+
     property color baseColor1
     property color baseColor2
     property color baseColor3
