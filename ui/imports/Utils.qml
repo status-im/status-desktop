@@ -49,7 +49,7 @@ QtObject {
         return Style.current.accountColors[colorIndex]
     }
 
-    function getMessageWithStyle(msg, useCompactMode, isCurrentUser) {
+    function getMessageWithStyle(msg, useCompactMode, isCurrentUser, hoveredLink = "") {
         return `<style type="text/css">` +
                     `p, img, a, del, code, blockquote { margin: 0; padding: 0; }` +
                     `code {` +
@@ -67,7 +67,9 @@ QtObject {
                         `color: ${Style.current.mentionColor};` +
                         `background-color: ${Style.current.mentionBgColor};` +
                         `text-decoration: none;` +
+                        `padding: 0px 2px;` +
                     `}` +
+                    (hoveredLink !== "" ? `a.mention[href="${hoveredLink}"] { background-color: ${Style.current.mentionBgHoverColor}; }` : ``) +
                     `del {` +
                         `text-decoration: line-through;` +
                     `}` +
