@@ -135,6 +135,17 @@ Item {
         }
     }
 
+    Connections {
+        target: profileModel.contacts
+        onContactBlocked: {
+            // This hack is used because removeMessagesByUserId sometimes does not remove the messages
+            if(publicKey === fromAuthor){
+                root.visible = 0;
+                root.height = 0;
+            }
+        }
+    }
+
     id: root
     width: parent.width
     anchors.right: !isCurrentUser ? undefined : parent.right
