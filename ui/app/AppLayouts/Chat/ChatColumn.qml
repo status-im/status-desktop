@@ -72,13 +72,11 @@ StackLayout {
         for (let i = 0; i < len; i++) {
             const contactAddr = chatsModel.suggestionList.rowData(i, "address");
             if(idMap[contactAddr]) continue;
-            const contactIndex = profileModel.contacts.list.getContactIndexByPubkey(chatsModel.suggestionList.rowData(i, "address"));
-
             suggestionsObj.push({
                                     alias: chatsModel.suggestionList.rowData(i, "alias"),
                                     ensName: chatsModel.suggestionList.rowData(i, "ensName"),
                                     address: contactAddr,
-                                    identicon: profileModel.contacts.list.rowData(contactIndex, "thumbnailImage"),
+                                    identicon: getProfileImage(contactAddr, false, false) || chatsModel.suggestionList.rowData(i, "identicon"),
                                     localNickname: chatsModel.suggestionList.rowData(i, "localNickname")
                                 })
 
@@ -283,6 +281,13 @@ StackLayout {
             }
             onMessagePushed: {
                 addSuggestionFromMessageList(messageIndex);
+            }
+        }
+
+        Connections {
+            target: profileModel
+            onContactsChanged: {
+                populateSuggestions();
             }
         }
 
