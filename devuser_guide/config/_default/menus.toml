@@ -5,16 +5,28 @@
   url = "/docs/prologue/"
 
 [[docs]]
-  name = "Test"
-  weight = 10
-  identifier = "test"
-  url = "/docs/test/"
-
-[[docs]]
   name = "Browser"
   weight = 11
   identifier = "browser"
   url = "/docs/browser/"
+
+[[docs]]
+  name = "Timelines"
+  weight = 11
+  identifier = "timelines"
+  url = "/docs/timelines/"
+
+[[docs]]
+  name = "Chat"
+  weight = 11
+  identifier = "chat"
+  url = "/docs/chat/"
+
+[[docs]]
+  name = "Wallet"
+  weight = 11
+  identifier = "wallet"
+  url = "/docs/wallet/"
 
 [[dev]]
   name = "Browser"
