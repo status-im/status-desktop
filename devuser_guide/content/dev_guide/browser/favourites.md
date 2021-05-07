@@ -22,7 +22,7 @@ key source file: [`src/app/browser/view.nim`](https://github.com/status-im/statu
 
 #### with the Star icon
 
-// TODO
+key source file: [`ui/app/AppLayouts/Browser/BrowserHeader.qml`](https://github.com/status-im/status-desktop/blob/17b3a444589725f1723bda8549623e14a0277b2d/ui/app/AppLayouts/Browser/BrowserHeader.qml#L155)
 
 #### with the Add favourite button
 
