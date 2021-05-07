@@ -10,7 +10,7 @@ These modules are:
 - [StatusQ.Core](https://github.com/status-im/StatusQ/blob/master/src/StatusQ/Core/qmldir)
 - [StatusQ.Core.Theme](https://github.com/status-im/StatusQ/blob/master/src/StatusQ/Core/Theme/qmldir)
 - [StatusQ.Components](https://github.com/status-im/StatusQ/blob/master/src/StatusQ/Controls/qmldir)
-- [StatusQ.Components](https://github.com/status-im/StatusQ/blob/master/src/StatusQ/Components/qmldir)
+- [StatusQ.Controls](https://github.com/status-im/StatusQ/blob/master/src/StatusQ/Components/qmldir)
 
 Provided components can be viewed and tested in the [sandbox application](#viewing-and-testing-components) that comes with this repository.
 Other than that, modules and components can be used as expected.
