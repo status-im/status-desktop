@@ -1,0 +1,66 @@
+{
+  "name": "@hyas/doks",
+  "description": "Doks theme",
+  "version": "0.2.3",
+  "hugo-bin": {
+    "buildTags": "extended"
+  },
+  "browserslist": [
+    "defaults"
+  ],
+  "repository": "https://github.com/h-enk/doks",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "init": "rimraf .git && git init -b main",
+    "create": "hugo new",
+    "prestart": "npm run clean",
+    "start": "hugo server --bind=0.0.0.0 --disableFastRender",
+    "prebuild": "npm run clean",
+    "build": "hugo --gc --minify && npm run build:functions",
+    "build:functions": "netlify-lambda build assets/lambda",
+    "build:preview": "npm run build -D -F",
+    "clean": "rimraf public resources functions",
+    "lint": "npm run -s lint:scripts && npm run -s lint:styles && npm run -s lint:markdown",
+    "lint:scripts": "eslint assets/js assets/lambda config",
+    "lint:styles": "stylelint \"assets/scss/**/*.{css,sass,scss,sss,less}\"",
+    "lint:markdown": "markdownlint *.md content/**/*.md",
+    "release": "standard-version",
+    "release:dry-run": "standard-version --dry-run",
+    "server": "hugo server",
+    "test": "npm run -s lint",
+    "env": "env",
+    "precheck": "npm version",
+    "check": "hugo version",
+    "copy:katex-fonts": "shx cp ./node_modules/katex/dist/fonts/* ./static/fonts/"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.13",
+    "@babel/core": "^7.13",
+    "@babel/preset-env": "^7.13",
+    "@fullhuman/postcss-purgecss": "^4.0",
+    "autoprefixer": "^10.2",
+    "bootstrap": "^5.0.0-beta3",
+    "clipboard": "^2.0",
+    "eslint": "^7.23",
+    "flexsearch": "^0.6",
+    "highlight.js": "^10.7",
+    "hugo-bin": "^0.70",
+    "instant.page": "^5.1",
+    "katex": "^0.13",
+    "lazysizes": "^5.3",
+    "markdownlint-cli": "^0.27",
+    "mermaid": "^8.9.2",
+    "netlify-lambda": "^2.0",
+    "postcss": "^8.2",
+    "postcss-cli": "^8.3",
+    "purgecss-whitelister": "^2.4",
+    "rimraf": "^3.0",
+    "shx": "^0.3.3",
+    "standard-version": "^9.2",
+    "stylelint": "^13.12",
+    "stylelint-config-standard": "^21.0"
+  }
+}
