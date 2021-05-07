@@ -35,3 +35,4 @@ Desktop client for the [Status Network](https://statusnetwork.com/) built with [
 ### License
 
 Licensed under the [Mozilla Public License Version 2.0](https://github.com/status-im/nim-status-client/blob/master/LICENSE.md)
+
