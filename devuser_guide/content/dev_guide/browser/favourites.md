@@ -20,11 +20,11 @@ key source file: [`src/status/libstatus/browser.nim`](https://github.com/status-
 
 key source file: [`src/app/browser/view.nim`](https://github.com/status-im/status-desktop/blob/d2b6bf9310df088c89abcca7c1df42abc3999b18/src/app/browser/view.nim#L46)
 
-#### with the Star icon
+### with the Star icon
 
 key source file: [`ui/app/AppLayouts/Browser/BrowserHeader.qml`](https://github.com/status-im/status-desktop/blob/17b3a444589725f1723bda8549623e14a0277b2d/ui/app/AppLayouts/Browser/BrowserHeader.qml#L155)
 
-#### with the Add favourite button
+### with the Add favourite button
 
 key source file: [`ui/app/AppLayouts/Browser/FavoritesList.qml`](https://github.com/status-im/status-desktop/blob/d2b6bf9310df088c89abcca7c1df42abc3999b18/ui/app/AppLayouts/Browser/FavoritesList.qml#L39)
 
@@ -40,11 +40,11 @@ key source file: [`src/app/browser/view.nim`](https://github.com/status-im/statu
 
 key source file: [`src/app/browser/views/bookmark_list.nim`](https://github.com/status-im/status-desktop/blob/17b3a444589725f1723bda8549623e14a0277b2d/src/app/browser/views/bookmark_list.nim#L5)
 
-#### In the Toolbar
+### In the Toolbar
 
 key source file: [`ui/app/AppLayouts/Browser/FavoritesBar.qml`](https://github.com/status-im/status-desktop/blob/d2b6bf9310df088c89abcca7c1df42abc3999b18/ui/app/AppLayouts/Browser/FavoritesBar.qml#L12)
 
-#### in the blank page
+### In the blank page
 
 key source file: [`ui/app/AppLayouts/Browser/BrowserLayout.qml`](https://github.com/status-im/status-desktop/blob/d2b6bf9310df088c89abcca7c1df42abc3999b18/ui/app/AppLayouts/Browser/BrowserLayout.qml#L670)
 

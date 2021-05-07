@@ -18,7 +18,7 @@ toc: true
 
 There are two ways to add a favourite.
 
-#### Star icon
+### Star icon
 
 Click the star icon
 ![url_bar](/images/browser/url_bar.png)
@@ -27,7 +27,7 @@ A dialog will open, confirm the details and click "Done"
 
 ![star_modal](/images/browser/star_modal.png)
 
-#### Add favourite button
+### Add favourite button
 
 Another way to add a favourite is through the Add Favourite button in a blank tab
 ![add_favourite](/images/browser/add_favourite.png)
