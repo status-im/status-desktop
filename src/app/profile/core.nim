@@ -108,6 +108,7 @@ proc init*(self: ProfileController, account: Account) =
   self.status.events.on("contactRemoved") do(e: Args):
     let contacts = self.status.contacts.getContacts()
     self.view.contacts.setContactList(contacts)
+    self.view.contactsChanged()
 
   self.status.events.on("mailserver:changed") do(e: Args):
     let mailserverArg = MailserverArgs(e)
