@@ -95,7 +95,7 @@ proc cleanSpamChatGroups(self: ChatModel, chats: seq[Chat], contacts: seq[Profil
             if contact.address == member.id:
               isContact = true
       if not isContact and not joined:
-        status_chat.deactivateChat(chat)
+        discard status_chat.deactivateChat(chat)
       else:
         result.add(chat)
     else:
@@ -128,28 +128,17 @@ proc hasChannel*(self: ChatModel, chatId: string): bool =
 proc getActiveChannel*(self: ChatModel): string =
   if (self.channels.len == 0): "" else: toSeq(self.channels.values)[self.channels.len - 1].id
 
-proc join*(self: ChatModel, chatId: string, chatType: ChatType, ensName: string = "", pubKey: string = "") =
-  if self.hasChannel(chatId): return
-
-  var chat = newChat(chatId, ChatType(chatType))
-  self.channels[chat.id] = chat
-  let joined = times.toUnix(times.getTime()) * 1000
-  status_chat.saveChat(chatId, chatType, color=chat.color, ensName=ensName, profile=pubKey, joined=joined)
-  if ensName != "":
-    chat.name = ensName
-    chat.ensName = ensName
-    
+proc emitTopicAndJoin(self: ChatModel, chat: Chat) =
   let filterResult = status_chat.loadFilters(@[status_chat.buildFilter(chat)])
-
   var topics:seq[MailserverTopic] = @[]
   let parsedResult = parseJson(filterResult)["result"]
   for topicObj in parsedResult:
-    if ($topicObj["chatId"].getStr == chatId):
+    if ($topicObj["chatId"].getStr == chat.id):
       topics.add(MailserverTopic(
         topic: $topicObj["topic"].getStr,
         discovery: topicObj["discovery"].getBool,
         negotiated: topicObj["negotiated"].getBool,
-        chatIds: @[chatId],
+        chatIds: @[chat.id],
         lastRequest: 1
       ))
 
@@ -159,6 +148,34 @@ proc join*(self: ChatModel, chatId: string, chatType: ChatType, ensName: string 
     self.events.emit("mailserverTopics", TopicArgs(topics: topics));
 
   self.events.emit("channelJoined", ChannelArgs(chat: chat))
+
+
+proc join*(self: ChatModel, chatId: string, chatType: ChatType, ensName: string = "", pubKey: string = "") =
+  if self.hasChannel(chatId): return
+  var chat = newChat(chatId, ChatType(chatType))
+  self.channels[chat.id] = chat
+  status_chat.saveChat(chatId, chatType, color=chat.color, ensName=ensName, profile=pubKey)
+  self.emitTopicAndJoin(chat)
+
+
+proc createOneToOneChat*(self: ChatModel, publicKey: string, ensName: string = "") =
+  if self.hasChannel(publicKey): return
+  var chat = newChat(publicKey, ChatType.OneToOne)
+  if ensName != "":
+    chat.name = ensName
+    chat.ensName = ensName
+  self.channels[chat.id] = chat
+  discard status_chat.createOneToOneChat(publicKey)
+  self.emitTopicAndJoin(chat)
+
+
+proc createPublicChat*(self: ChatModel, chatId: string) =
+  if self.hasChannel(chatId): return
+  var chat = newChat(chatId, ChatType.Public)
+  self.channels[chat.id] = chat
+  discard status_chat.createPublicChat(chatId)
+  self.emitTopicAndJoin(chat)
+
 
 proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
   for c in contacts:
@@ -253,7 +270,7 @@ proc leave*(self: ChatModel, chatId: string) =
     let leaveGroupResponse = status_chat.leaveGroupChat(chatId)
     self.emitUpdate(leaveGroupResponse)
 
-  status_chat.deactivateChat(self.channels[chatId])
+  discard status_chat.deactivateChat(self.channels[chatId])
 
   # TODO: REMOVE MAILSERVER TOPIC
   self.channels.del(chatId)

@@ -71,7 +71,7 @@ proc addContact*(self: ContactModel, id: string, localNickname: string): string 
   let updating = contact.systemTags.contains(":contact/added")
   if not updating:
     contact.systemTags.add(":contact/added")
-    status_chat.saveChat(getTimelineChatId(contact.id), ChatType.Profile, ensName=contact.ensName, profile=contact.id)
+    discard status_chat.createProfileChat(contact.id)
   let nickname =
     if (localNickname == ""):
       contact.localNickname

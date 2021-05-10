@@ -585,18 +585,21 @@ QtObject:
   proc getLinkPreviewData*(self: ChatsView, link: string, uuid: string) {.slot.} =
     self.getLinkPreviewData("linkPreviewDataReceived", link, uuid)
 
-  proc joinChat*(self: ChatsView, channel: string, chatTypeInt: int): int {.slot.} =
-    var chatType = ChatType(chatTypeInt)
+  proc getChatType*(self: ChatsView, channel: string): int {.slot.} =
     let selectedChannel = self.getChannelById(channel)
-    if not selectedChannel.isNil:
-      chatType = selectedChannel.chatType
-    self.status.chat.join(channel, chatType)
-    self.setActiveChannel(channel)
-    chatType.int
+    if selectedChannel == nil:
+      return -1
+    selectedChannel.chatType.int
 
-  proc joinChatWithENS*(self: ChatsView, channel: string, ensName: string): int {.slot.} =
-    self.status.chat.join(channel, ChatType.OneToOne, ensName=status_ens.addDomain(ensName))
+  proc joinPublicChat*(self: ChatsView, channel: string): int {.slot.} =
+    self.status.chat.createPublicChat(channel)
     self.setActiveChannel(channel)
+    ChatType.Public.int
+
+  proc joinPrivateChat*(self: ChatsView, pubKey: string, ensName: string): int {.slot.} =
+    self.status.chat.createOneToOneChat(pubKey, if ensName != "": status_ens.addDomain(ensName) else: "")
+    self.setActiveChannel(pubKey)
+    ChatType.OneToOne.int
 
   proc messagesLoaded*(self: ChatsView) {.signal.}
 

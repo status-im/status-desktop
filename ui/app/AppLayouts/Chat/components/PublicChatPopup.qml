@@ -28,7 +28,7 @@ ModalPopup {
         if (!validate()) {
             return
         }
-        chatsModel.joinChat(channelName.text, Constants.chatTypePublic);
+        chatsModel.joinPublicChat(channelName.text);
         popup.close();
     }
 
