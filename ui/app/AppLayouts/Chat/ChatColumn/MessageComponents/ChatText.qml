@@ -48,7 +48,7 @@ Item {
                 const chatType = chatsModel.communities.activeCommunity.active ? Constants.chatTypeCommunity : Constants.chatTypePublic;
                 const foundChatType = chatsModel.getChatType(channelName);
 
-                if(foundChatType == -1 || foundChatType !== Constants.chatTypePublic){
+                if(foundChatType === -1 || foundChatType !== Constants.chatTypePublic){
                     chatsModel.joinPublicChat(channelName);
                     if(chatsModel.communities.activeCommunity.active) {
                         chatsModel.communities.activeCommunity.active = false
