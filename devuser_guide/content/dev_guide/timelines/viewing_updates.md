@@ -1,5 +1,5 @@
 ---
-title : "Other options"
+title : "Seeing Updates"
 description: ""
 lead: ""
 date: 2020-10-06T08:48:23+00:00
@@ -8,13 +8,12 @@ draft: false
 images: []
 menu:
   dev:
-    parent: "browser"
+    parent: "timelines"
 toc: true
 ---
 
-## other options
-### zoom
-### find
-### compatibility mode
-### developer tools
-### incognito mode
+## viewing updates
+
+## fetching more updates
+
+## default when there are no updates

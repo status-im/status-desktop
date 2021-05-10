@@ -1,5 +1,5 @@
 ---
-title : "Other options"
+title : "Account Details & Balances"
 description: ""
 lead: ""
 date: 2020-10-06T08:48:23+00:00
@@ -8,13 +8,11 @@ draft: false
 images: []
 menu:
   dev:
-    parent: "browser"
+    parent: "wallet"
 toc: true
 ---
 
-## other options
-### zoom
-### find
-### compatibility mode
-### developer tools
-### incognito mode
+## Assets
+## Collectibles
+## History
+## Editing Account name & color
