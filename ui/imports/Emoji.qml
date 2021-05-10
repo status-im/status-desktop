@@ -67,4 +67,25 @@ QtObject {
         })
         return String.fromCodePoint(...codePointParts);
     }
+
+    function getShortcodeFromId(emojiId) {
+        switch (emojiId) {
+            case 1: return ":heart:"
+            case 2: return ":thumbsup:"
+            case 3: return ":thumbsdown:"
+            case 4: return ":laughing:"
+            case 5: return ":cry:"
+            case 6: return ":angry:"
+            default: return undefined
+        }
+    }
+
+    function getEmojiFromId(emojiId) {
+        let shortcode = Emoji.getShortcodeFromId(emojiId)
+        let emojiUnicode = Emoji.getEmojiUnicode(shortcode)
+        if (emojiUnicode) {
+            return Emoji.fromCodePoint(emojiUnicode)
+        }
+        return undefined
+    }
 }
