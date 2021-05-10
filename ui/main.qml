@@ -86,8 +86,12 @@ ApplicationWindow {
     }
 
     onClosing: {
-        if(loader.sourceComponent == app){
-            if(loader.item.appSettings.quitOnClose){
+        if (loader.sourceComponent == login) {
+            applicationWindow.visible = false;
+            close.accepted = false;
+        }
+        else if (loader.sourceComponent == app) {
+            if (loader.item.appSettings.quitOnClose) {
                 Qt.quit();
             } else {
                 applicationWindow.visible = false;
