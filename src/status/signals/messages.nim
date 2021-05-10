@@ -1,4 +1,4 @@
-import json, random, strutils, sequtils, sugar, chronicles
+import json, random, strutils, sequtils, sugar, chronicles, tables
 import json_serialization
 import ../libstatus/utils
 import ../libstatus/accounts as status_accounts
@@ -283,8 +283,12 @@ proc toMessage*(jsonMsg: JsonNode, pk: string): Message =
       hasMention: false
     )
 
-  if jsonMsg["parsedText"].kind != JNull: 
-    for text in jsonMsg["parsedText"]:
+  if contentType == ContentType.Gap:
+    message.gapFrom = jsonMsg["gapParameters"]["from"].getInt
+    message.gapTo = jsonMsg["gapParameters"]["to"].getInt
+
+  if jsonMsg.contains("parsedText") and jsonMsg{"parsedText"}.kind != JNull: 
+    for text in jsonMsg{"parsedText"}:
       message.parsedText.add(text.toTextItem)
 
   message.linkUrls = concat(message.parsedText.map(t => t.children.filter(c => c.textType == "link")))

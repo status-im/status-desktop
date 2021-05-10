@@ -45,6 +45,12 @@ proc requestMessages*(topics: seq[string], symKeyID: string, peer: string, numbe
     }
   ])
 
+proc requestAllHistoricMessages*(): string =
+  return callPrivateRPC("requestAllHistoricMessages".prefix, %*[])
+
+proc fillGaps*(chatId: string, messageIds: seq[string]): string =
+  return callPrivateRPC("fillGaps".prefix, %*[chatId, messageIds])
+
 proc getMailserverTopics*(): string =
   return callPrivateRPC("mailservers_getMailserverTopics", %*[])
 

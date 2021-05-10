@@ -719,6 +719,12 @@ QtObject:
       )
     mailserverWorker.start(task)
 
+
+  proc fillGaps*(self: ChatsView, messageId: string) {.slot.} =
+    self.loadingMessages = true
+    self.loadingMessagesChanged(true)
+    discard status_mailservers.fillGaps(self.activeChannel.id, @[messageId])
+
   proc leaveActiveChat*(self: ChatsView) {.slot.} =
     self.status.chat.leave(self.activeChannel.id)
     let
