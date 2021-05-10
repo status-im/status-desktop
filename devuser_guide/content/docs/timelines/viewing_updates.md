@@ -14,6 +14,16 @@ toc: true
 
 ## viewing updates
 
+![url_bar](/images/timelines/updates.png)
+
 ## fetching more updates
 
 ## default when there are no updates
+
+![url_bar](/images/timelines/initial.png)
+
+## emoji reactions
+
+![url_bar](/images/timelines/reactions.png)
+
+![url_bar](/images/timelines/reactions2.png)

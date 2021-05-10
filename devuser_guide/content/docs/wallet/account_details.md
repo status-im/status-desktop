@@ -13,6 +13,23 @@ toc: true
 ---
 
 ## Assets
+![url_bar](/images/wallet/assets_list.png)
+
 ## Collectibles
+
+## account with collectibles
+
+![url_bar](/images/wallet/collectibles1.png)
+
+![url_bar](/images/wallet/collectibles2.png)
+
+![url_bar](/images/wallet/edit_account1.png)
+
+### account without known collectibles
+![url_bar](/images/wallet/collectibles_empty.png)
+
 ## History
+
 ## Editing Account name & color
+
+![url_bar](/images/wallet/edit_account2.png)

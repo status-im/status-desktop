@@ -11,3 +11,21 @@ menu:
     parent: "timelines"
 toc: true
 ---
+
+
+## Posting updates
+
+![url_bar](/images/timelines/initial.png)
+
+![url_bar](/images/timelines/initial2.png)
+
+## Posting updates with images
+
+### with upload button
+![url_bar](/images/timelines/upload.png)
+
+![url_bar](/images/timelines/upload2.png)
+
+### with drag and drop
+
+![url_bar](/images/timelines/upload2.png)
