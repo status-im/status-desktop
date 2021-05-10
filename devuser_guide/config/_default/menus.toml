@@ -4,17 +4,11 @@
   identifier = "prologue"
   url = "/docs/prologue/"
 
-[[docs]]
-  name = "Browser"
-  weight = 11
-  identifier = "browser"
-  url = "/docs/browser/"
-
-[[docs]]
-  name = "Timelines"
-  weight = 11
-  identifier = "timelines"
-  url = "/docs/timelines/"
+[[dev]]
+  name = "Prologue"
+  weight = 10
+  identifier = "prologue"
+  url = "/dev_guide/prologue/"
 
 [[docs]]
   name = "Chat"
@@ -22,23 +16,59 @@
   identifier = "chat"
   url = "/docs/chat/"
 
+[[dev]]
+  name = "Chat"
+  weight = 11
+  identifier = "chat"
+  url = "/dev_guide/chat/"
+
+[[docs]]
+  name = "Timelines"
+  weight = 12
+  identifier = "timelines"
+  url = "/docs/timelines/"
+
+[[dev]]
+  name = "Timelines"
+  weight = 12
+  identifier = "timelines"
+  url = "/dev_guide/timelines/"
+
+[[docs]]
+  name = "Browser"
+  weight = 13
+  identifier = "browser"
+  url = "/docs/browser/"
+
+[[dev]]
+  name = "Browser"
+  weight = 13
+  identifier = "browser"
+  url = "/dev_guide/browser/"
+
 [[docs]]
   name = "Wallet"
-  weight = 11
+  weight = 14
   identifier = "wallet"
   url = "/docs/wallet/"
 
 [[dev]]
-  name = "Browser"
-  weight = 11
-  identifier = "browser"
-  url = "/dev_guide/browser/"
+  name = "Wallet"
+  weight = 14
+  identifier = "wallet"
+  url = "/dev_guide/wallet/"
 
 [[docs]]
   name = "Help"
   weight = 60
   identifier = "help"
   url = "/docs/help/"
+
+[[dev]]
+  name = "Help"
+  weight = 60
+  identifier = "help"
+  url = "/dev_guide/help/"
 
 [[main]]
   name = "Docs"
@@ -47,7 +77,7 @@
 
 [[main]]
   name = "Dev Guide"
-  url = "/dev_guide/"
+  url = "/dev_guide/prologue/introduction"
   weight = 11
 
 [[main]]

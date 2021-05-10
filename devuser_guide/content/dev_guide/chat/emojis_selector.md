@@ -1,5 +1,5 @@
 ---
-title : "Other options"
+title : "Emojis Selector"
 description: ""
 lead: ""
 date: 2020-10-06T08:48:23+00:00
@@ -8,13 +8,13 @@ draft: false
 images: []
 menu:
   dev:
-    parent: "browser"
+    parent: "chat"
 toc: true
 ---
 
-## other options
-### zoom
-### find
-### compatibility mode
-### developer tools
-### incognito mode
+#### Choosing an emoji
+#### Searching for an Emojis
+#### Categories
+#### See also
+
+Text Input Box
