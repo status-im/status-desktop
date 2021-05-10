@@ -17,3 +17,5 @@ toc: true
 ## fetching more updates
 
 ## default when there are no updates
+
+## emoji reactions
