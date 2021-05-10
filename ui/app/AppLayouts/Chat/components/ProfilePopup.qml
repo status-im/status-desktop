@@ -341,7 +341,7 @@ ModalPopup {
             width: visible ? implicitWidth : 0
             onClicked: {
                 appMain.changeAppSection(Constants.chat)
-                chatsModel.joinChat(fromAuthor, Constants.chatTypeOneToOne)
+                chatsModel.joinPrivateChat(fromAuthor, "");
                 popup.close()
             }
         }

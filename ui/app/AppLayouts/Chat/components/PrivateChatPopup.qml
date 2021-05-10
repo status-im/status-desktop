@@ -8,12 +8,7 @@ import "./"
 
 ModalPopup {
     function doJoin(pk, ensName) {
-        if(Utils.isChatKey(pk)){
-            chatsModel.joinChat(pk, Constants.chatTypeOneToOne);
-        } else {
-            chatsModel.joinChatWithENS(pk, ensName);
-        }
-
+        chatsModel.joinPrivateChat(pk, Utils.isChatKey(pk) ? "" : ensName);
         popup.close();
     }
 
@@ -35,12 +30,7 @@ ModalPopup {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         onUserClicked: function (isContact, pubKey, ensName) {
-            if(Utils.isChatKey(pubKey)){
-                chatsModel.joinChat(pubKey, Constants.chatTypeOneToOne);
-            } else {
-                chatsModel.joinChatWithENS(pubKey, ensName);
-            }
-
+            chatsModel.joinPrivateChat(pubKey, Utils.isChatKey(pubKey) ? "" : ensName);
             popup.close();
         }
     }

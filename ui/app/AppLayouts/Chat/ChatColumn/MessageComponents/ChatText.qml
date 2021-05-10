@@ -44,12 +44,20 @@ Item {
         clip: true
         onLinkActivated: function (link) {
             if(link.startsWith("#")) {
+                const channelName = link.substring(1);
                 const chatType = chatsModel.communities.activeCommunity.active ? Constants.chatTypeCommunity : Constants.chatTypePublic;
-                const foundChatType = chatsModel.joinChat(link.substring(1), chatType);
-                if (foundChatType === Constants.chatTypePublic && chatsModel.communities.activeCommunity.active) {
-                    chatsModel.communities.activeCommunity.active = false
-                    appMain.changeAppSection(Constants.chat)
+                const foundChatType = chatsModel.getChatType(channelName);
+
+                if(foundChatType == -1 || foundChatType !== Constants.chatTypePublic){
+                    chatsModel.joinPublicChat(channelName);
+                    if(chatsModel.communities.activeCommunity.active) {
+                        chatsModel.communities.activeCommunity.active = false
+                        appMain.changeAppSection(Constants.chat)
+                    } 
+                } else {
+                    chatsModel.setActiveChannel(channelName);
                 }
+
                 return;
             }
 

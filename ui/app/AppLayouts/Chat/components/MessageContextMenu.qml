@@ -200,7 +200,7 @@ PopupMenu {
         onTriggered: {
             if (messageContextMenu.isProfile) {
                 appMain.changeAppSection(Constants.chat)
-                chatsModel.joinChat(fromAuthor, Constants.chatTypeOneToOne)
+                chatsModel.joinPrivateChat(fromAuthor, "")
             } else {
               showReplyArea()
             }

@@ -37,9 +37,18 @@ proc saveChat*(chatId: string, chatType: ChatType, active: bool = true, color: s
     }
   ])
 
-proc deactivateChat*(chat: Chat) =
+proc createPublicChat*(chatId: string):string =
+  callPrivateRPC("createPublicChat".prefix, %* [{"ID": chatId}])
+
+proc createOneToOneChat*(chatId: string):string =
+  callPrivateRPC("createOneToOneChat".prefix, %* [{"ID": chatId}])
+
+proc deactivateChat*(chat: Chat):string =
   chat.isActive = false
-  discard callPrivateRPC("saveChat".prefix, %* [chat.toJsonNode])
+  callPrivateRPC("deactivateChat".prefix, %* [{ "ID": chat.id }])
+
+proc createProfileChat*(pubKey: string):string =
+  callPrivateRPC("createProfileChat".prefix, %* [{ "ID": pubKey }])
 
 proc sortChats(x, y: Chat): int =
   var t1 = x.lastMessage.whisperTimestamp
