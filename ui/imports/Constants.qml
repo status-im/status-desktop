@@ -63,6 +63,7 @@ QtObject {
     readonly property int imageType: 7
     readonly property int audioType: 8
     readonly property int communityInviteType: 9
+    readonly property int gapType: 10
 
     readonly property string watchWalletType: "watch"
     readonly property string keyWalletType: "key"

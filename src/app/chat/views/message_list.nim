@@ -37,6 +37,8 @@ type
     CommunityId = UserRole + 27
     HasMention = UserRole + 28
     StickerPackId = UserRole + 29
+    GapFrom = UserRole + 30
+    GapTo = UserRole + 31
 
 QtObject:
   type
@@ -172,6 +174,8 @@ QtObject:
       }))
       of ChatMessageRoles.Alias: result = newQVariant(message.alias)
       of ChatMessageRoles.LocalName: result = newQVariant(message.localName)
+      of ChatMessageRoles.GapFrom: result = newQVariant(message.gapFrom)
+      of ChatMessageRoles.GapTo: result = newQVariant(message.gapTo)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -202,7 +206,9 @@ QtObject:
       ChatMessageRoles.Alias.int:"alias",
       ChatMessageRoles.HasMention.int:"hasMention",
       ChatMessageRoles.LocalName.int:"localName",
-      ChatMessageRoles.StickerPackId.int:"stickerPackId"
+      ChatMessageRoles.StickerPackId.int:"stickerPackId",
+      ChatMessageRoles.GapFrom.int:"gapFrom",
+      ChatMessageRoles.GapTo.int:"gapTo"
     }.toTable
 
   proc getMessageIndex(self: ChatMessageList, messageId: string): int {.slot.} =

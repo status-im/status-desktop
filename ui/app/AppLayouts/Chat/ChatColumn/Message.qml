@@ -28,6 +28,8 @@ Item {
     property bool placeholderMessage: false
     property string communityId: ""
     property int stickerPackId: -1
+    property int gapFrom: 0
+    property int gapTo: 0
 
     property string displayUserName: {
         if (isCurrentUser) {
@@ -198,6 +200,8 @@ Item {
                     return fetchMoreMessagesButtonComponent
                 case Constants.systemMessagePrivateGroupType:
                     return privateGroupHeaderComponent
+                case Constants.gapType:
+                    return gapComponent
                 default:
                     return isStatusUpdate ? statusUpdateComponent :
                                             (appSettings.useCompactMode ? compactMessageComponent : messageComponent)
@@ -208,6 +212,54 @@ Item {
 
     Timer {
         id: timer
+    }
+
+    Component {
+        id: gapComponent
+        Item {
+            id: wrapper
+            height: childrenRect.height + Style.current.smallPadding * 2
+            anchors.left: parent.left
+            anchors.right: parent.right
+            Separator {
+                id: sep1
+            }
+            StyledText {
+                id: fetchMoreButton
+                font.weight: Font.Medium
+                font.pixelSize: Style.current.primaryTextFontSize
+                color: Style.current.blue
+                //% "↓ "
+                text: qsTr("Fetch messages")
+                horizontalAlignment: Text.AlignHCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: sep1.bottom
+                anchors.topMargin: Style.current.smallPadding
+                MouseArea {
+                    cursorShape: Qt.PointingHandCursor
+                    anchors.fill: parent
+                    onClicked: {
+                        chatsModel.fillGaps(messageId)
+                        root.visible = false;
+                        root.height = 0;
+                    }
+                }
+            }
+            StyledText {
+                id: fetchDate
+                anchors.top: fetchMoreButton.bottom
+                anchors.topMargin: 3
+                anchors.horizontalCenter: parent.horizontalCenter
+                horizontalAlignment: Text.AlignHCenter
+                color: Style.current.secondaryText
+                //% "before %1"
+                text: qsTr("Between %1 and %2").arg(new Date(root.gapFrom*1000)).arg(new Date(root.gapTo*1000))
+            }
+            Separator {
+                anchors.top: fetchDate.bottom
+                anchors.topMargin: Style.current.smallPadding
+            }
+        }
     }
 
     Component {

@@ -13,6 +13,7 @@ type ContentType* {.pure.} = enum
   Image = 7,
   Audio = 8
   Community = 9
+  Gap = 10
 
 type TextItem* = object
   textType*: string
@@ -36,6 +37,8 @@ type Message* = object
   localName*: string
   chatId*: string
   clock*: int
+  gapFrom*: int
+  gapTo*: int
   commandParameters*: CommandParameters
   contentType*: ContentType
   ensName*: string

@@ -6,6 +6,7 @@ import
 
 import # status-desktop libs
   ../../status/chat/chat as status_chat, ./views/communities,
+  ../../status/libstatus/mailservers as status_mailservers,
   ../../status/tasks/marathon,
   ../../status/tasks/marathon/mailserver/worker,
   ../../status/libstatus/mailservers # TODO: needed for MailserverTopic type, remove?
@@ -144,6 +145,7 @@ proc handleMailserverEvents(self: ChatController) =
     mailserverWorker.start(task)
 
   self.status.events.on("mailserverAvailable") do(e:Args):
+    discard status_mailservers.requestAllHistoricMessages()
     let task = GetMailserverTopicsTaskArg(
       `method`: "getMailserverTopics",
       vptr: cast[ByteAddress](self.view.vptr),
