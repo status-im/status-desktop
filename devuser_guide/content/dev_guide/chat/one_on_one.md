@@ -13,6 +13,8 @@ toc: true
 ---
 
 ## sending images
+### with upload button
+### with drag & drop
 ## transactions
 ### send transaction
 ### request payment
@@ -20,4 +22,3 @@ toc: true
 ### with existing contact
 ### by ENS username
 ### by chat key
-## join or start a public chat

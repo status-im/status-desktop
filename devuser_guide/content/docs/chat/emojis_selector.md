@@ -12,9 +12,18 @@ menu:
 toc: true
 ---
 
-#### Choosing an emoji
-#### Searching for an Emojis
-#### Categories
-#### See also
+## Choosing an emoji
+
+![url_bar](/images/chats/emojis/emoji_picker.png)
+
+## Searching for an Emojis
+
+![url_bar](/images/chats/emojis/emoji_search.png)
+
+## Categories
+
+![url_bar](/images/chats/emojis/emoji_category.png)
+
+## See also
 
 Text Input Box
