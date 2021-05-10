@@ -46,16 +46,11 @@ Item {
 
         //% " reacted with "
         tooltip += qsTrId("-reacted-with-");
-
-        switch (emojiId) {
-        case 1: return tooltip + ":heart:"
-        case 2: return tooltip + ":thumbsup:"
-        case 3: return tooltip + ":thumbsdown:"
-        case 4: return tooltip + ":laughing:"
-        case 5: return tooltip + ":cry:"
-        case 6: return tooltip + ":angry:"
-        default: return tooltip
+        let emojiHtml = Emoji.getEmojiFromId(emojiId);
+        if (emojiHtml) {
+            tooltip += emojiHtml;
         }
+        return tooltip
     }
 
     Row {
