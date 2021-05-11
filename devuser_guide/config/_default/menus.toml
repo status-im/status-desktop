@@ -1,14 +1,20 @@
 [[docs]]
   name = "Prologue"
-  weight = 10
+  weight = 9
   identifier = "prologue"
   url = "/docs/prologue/"
 
 [[dev]]
   name = "Prologue"
-  weight = 10
+  weight = 9
   identifier = "prologue"
   url = "/dev_guide/prologue/"
+
+[[docs]]
+  name = "Onboarding"
+  weight = 10
+  identifier = "onboarding"
+  url = "/docs/onboarding/"
 
 [[docs]]
   name = "Chat"
