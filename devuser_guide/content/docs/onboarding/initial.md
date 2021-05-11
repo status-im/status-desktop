@@ -12,6 +12,10 @@ menu:
 toc: true
 ---
 
+## Disclaimer
+
+![url_bar](/images/onboarding/disclaimer.png)
+
 ## First Time
 
 ![url_bar](/images/onboarding/initial.png)

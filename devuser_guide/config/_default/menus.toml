@@ -1,8 +1,8 @@
 [[docs]]
-  name = "Prologue"
+  name = "Intro"
   weight = 9
-  identifier = "prologue"
-  url = "/docs/prologue/"
+  identifier = "intro"
+  url = "/docs/intro/"
 
 [[dev]]
   name = "Prologue"
@@ -65,6 +65,12 @@
   url = "/dev_guide/wallet/"
 
 [[docs]]
+  name = "Settings"
+  weight = 15
+  identifier = "settings"
+  url = "/docs/settings/"
+
+[[docs]]
   name = "Help"
   weight = 60
   identifier = "help"
@@ -78,7 +84,7 @@
 
 [[main]]
   name = "Docs"
-  url = "/docs/prologue/introduction/"
+  url = "/docs/intro/introduction"
   weight = 10
 
 [[main]]

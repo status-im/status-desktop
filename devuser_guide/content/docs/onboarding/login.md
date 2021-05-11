@@ -14,4 +14,12 @@ toc: true
 
 ![url_bar](/images/onboarding/login.png)
 
+## multiple accounts
+
 ![url_bar](/images/onboarding/login2.png)
+
+## with only 1 account
+
+it will ask if you want to add an existing key or crate a new one
+
+![url_bar](/images/onboarding/login3.png)
