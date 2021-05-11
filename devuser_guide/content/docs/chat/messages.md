@@ -13,13 +13,49 @@ toc: true
 ---
 
 ## Normal Messages
-## Stickers
-## Images
-## URL Unfurling
-### Enable Unfurling
-## Reactions
-## Replying to messages
-## profile options
-### view profile
-### send message
 
+![url_bar](/images/chats/messages/normal_message.png)
+
+## Stickers
+
+## Images
+
+## URLs
+
+![url_bar](/images/chats/messages/url_message.png)
+
+### Unfurling
+
+![url_bar](/images/chats/messages/url_message_preview.png)
+
+### Enable Unfurling
+
+![url_bar](/images/chats/messages/url_message_unfurl.png)
+
+### Copying a link from a message
+
+![url_bar](/images/chats/messages/url_message_right_click.png)
+
+## Message actions
+
+![url_bar](/images/chats/messages/right_click.png)
+
+### Reactions
+
+![url_bar](/images/chats/messages/emoji_reaction.png)
+
+![url_bar](/images/chats/messages/emoji_reaction2.png)
+
+### Replying to messages
+
+![url_bar](/images/chats/messages/reply.png)
+
+![url_bar](/images/chats/messages/reply2.png)
+
+## profile options
+
+![url_bar](/images/chats/messages/message_profile.png)
+
+### view profile
+
+### send message
