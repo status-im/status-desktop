@@ -13,7 +13,29 @@ toc: true
 ---
 
 ## Changing currency
+
+![url_bar](/images/wallet/context_menu_currency.png)
+
+![url_bar](/images/wallet/currency_modal.png)
+
 ## Managing Tokens
+
+![url_bar](/images/wallet/context_menu_assets.png)
+
+### Searching for a token
+
+![url_bar](/images/wallet/filter_assets.png)
+
 ### Enabling Tokens
+
+![url_bar](/images/wallet/select_tokens.png)
+
 ### Disabling Tokens
-### Add custom Tokens
+
+![url_bar](/images/wallet/select_tokens.png)
+
+### Adding custom Tokens
+
+![url_bar](/images/wallet/add_custom_token.png)
+
+![url_bar](/images/wallet/assets_list.png)

@@ -12,5 +12,16 @@ menu:
 toc: true
 ---
 
+## Sending funds
+
+![url_bar](/images/wallet/actions_send.png)
+
 ## Choosing Recipient
+
+![url_bar](/images/wallet/send_modal.png)
+
 ## Choosing Amounts, Token, gas values
+
+![url_bar](/images/wallet/send_modal2.png)
+![url_bar](/images/wallet/send_modal3.png)
+![url_bar](/images/wallet/send_modal4.png)

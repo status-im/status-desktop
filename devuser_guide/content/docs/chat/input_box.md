@@ -12,10 +12,16 @@ menu:
 toc: true
 ---
 
-#### mentions
-#### Emojis
-#### code tags
-#### markdown
-#### Text Formatter
-#### Sending file attachments
-#### special commands (e.g /shrug)
+## mentions
+
+## Emojis
+
+## code tags
+
+## markdown
+
+## Text Formatter
+
+## Sending file attachments
+
+## special commands (e.g /shrug)
