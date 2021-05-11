@@ -76,6 +76,10 @@ QtObject {
     property color miscColor10
     property color miscColor11
 
+    property QtObject statusAppNavBar: QtObject {
+        property color backgroundColor
+    }
+
     function alphaColor(color, alpha) {
         let actualColor = Qt.darker(color, 1)
         actualColor.a = alpha

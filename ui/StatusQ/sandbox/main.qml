@@ -45,6 +45,11 @@ Window {
             text: "Controls"
         }
         Button {
+            id: layoutTab
+            checkable: true
+            text: "Layout"
+        }
+        Button {
             id: otherTab
             checkable: true
             text: "Other"
@@ -87,6 +92,8 @@ Window {
                         return iconsComponent;
                     case controlsTab:
                         return controlsComponent;
+                    case layoutTab:
+                        return layoutComponent;
                     case otherTab:
                         return othersComponent;
                     case buttonsTab:
@@ -96,6 +103,7 @@ Window {
                     }
                 }
             }
+
             Row {
                 id: switchRow
                 scale: 0.8
@@ -164,6 +172,14 @@ Window {
     Component {
         id: controlsComponent
         Controls {
+            anchors.centerIn: parent
+            theme: Theme.palette
+        }
+    }
+
+    Component {
+        id: layoutComponent
+        Layout {
             anchors.centerIn: parent
             theme: Theme.palette
         }
