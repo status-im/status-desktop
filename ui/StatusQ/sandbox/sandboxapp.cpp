@@ -1,7 +1,7 @@
 #include "sandboxapp.h"
 
 #include <QQmlContext>
-
+#include <QWindow>
 #include <QDebug>
 
 SandboxApp::SandboxApp(int &argc, char **argv)
@@ -25,12 +25,23 @@ void SandboxApp::startEngine()
                 QCoreApplication::exit(-1);
         }, Qt::QueuedConnection);
     m_engine.load(url);
+
+    QWindow *rootWindow = qobject_cast<QWindow*>(m_engine.rootObjects().at(0));
+    if (rootWindow) {
+        removeTitleBar(rootWindow->winId());
+    } else {
+        qDebug() << "Window doesn't exist";
+    }
 }
 
 void SandboxApp::restartEngine()
 {
     const QUrl url(applicationDirPath() + "/../main.qml");
-    m_engine.rootObjects().at(0)->deleteLater();
+    QWindow *rootWindow = qobject_cast<QWindow*>(m_engine.rootObjects().at(0));
+    if (rootWindow) {
+
+        rootWindow->close();
+    }
     m_engine.clearComponentCache();
     m_engine.load(url);
 }

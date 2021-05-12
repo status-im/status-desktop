@@ -11,6 +11,9 @@ SOURCES += \
         main.cpp \
         sandboxapp.cpp
 
+OBJECTIVE_SOURCES += \
+        sandboxapp_mac.mm
+
 RESOURCES += qml.qrc
 
 DESTDIR = $$PWD/bin
