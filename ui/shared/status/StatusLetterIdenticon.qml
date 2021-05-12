@@ -7,7 +7,7 @@ Rectangle {
 
     property string chatId
     property string chatName
-    property int letterSize: root.isCompact ? 15 : 21
+    property int letterSize: 15
 
     width: 40
     height: 40
