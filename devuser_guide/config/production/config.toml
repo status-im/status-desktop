@@ -1,2 +1,2 @@
-baseurl = "https://doks.netlify.app/"
+baseurl = "https://status-im.github.io/status-desktop/public/"
 canonifyURLs = true
