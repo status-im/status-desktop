@@ -1,2 +1,2 @@
-baseurl = "https://status-im.github.io/status-desktop/public/"
+baseurl = "https://status-im.github.io/status-desktop/"
 canonifyURLs = true
