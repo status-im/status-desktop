@@ -11,3 +11,15 @@ menu:
     parent: "settings"
 toc: true
 ---
+
+## Syncing Devices
+
+![url_bar](/images/settings/syncing/syncing.png)
+
+## Syncing Chat history
+
+![url_bar](/images/settings/syncing/history_nodes.png)
+
+![url_bar](/images/settings/syncing/history_nodes2.png)
+
+![url_bar](/images/settings/syncing/history_nodes3.png)

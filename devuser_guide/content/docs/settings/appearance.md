@@ -11,3 +11,15 @@ menu:
     parent: "settings"
 toc: true
 ---
+
+## Appearance section
+
+![url_bar](/images/settings/appearance/appearance.png)
+
+## Changing font size
+
+![url_bar](/images/settings/appearance/font_size.png)
+
+## Changing theme to light or dark
+
+![url_bar](/images/settings/appearance/theme.png)

@@ -1,5 +1,5 @@
 ---
-title : "Language"
+title : "Other"
 description: ""
 lead: ""
 date: 2020-10-06T08:48:23+00:00
@@ -12,8 +12,10 @@ menu:
 toc: true
 ---
 
-## changing language
+## Help section
 
-![url_bar](/images/settings/language/language.png)
+![url_bar](/images/settings/other/help.png)
 
-![url_bar](/images/settings/language/language_modal.png)
+## About Section
+
+![url_bar](/images/settings/other/about.png)
