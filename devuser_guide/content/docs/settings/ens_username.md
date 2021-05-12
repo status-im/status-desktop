@@ -11,3 +11,15 @@ menu:
     parent: "settings"
 toc: true
 ---
+
+## Registering stateofus.eth username
+
+![url_bar](/images/settings/ens_username/ens_intro.png)
+
+![url_bar](/images/settings/ens_username/ens2.png)
+
+![url_bar](/images/settings/ens_username/ens3.png)
+
+## Using a custom ENS domain
+
+![url_bar](/images/settings/ens_username/custom_ens.png)
