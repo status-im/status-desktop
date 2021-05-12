@@ -5,16 +5,22 @@
   url = "/docs/intro/"
 
 [[dev]]
-  name = "Prologue"
+  name = "Intro"
   weight = 9
-  identifier = "prologue"
-  url = "/dev_guide/prologue/"
+  identifier = "intro"
+  url = "/dev_guide/intro/"
 
 [[docs]]
   name = "Onboarding"
   weight = 10
   identifier = "onboarding"
   url = "/docs/onboarding/"
+
+[[dev]]
+  name = "Onboarding"
+  weight = 10
+  identifier = "onboarding"
+  url = "/dev_guide/onboarding/"
 
 [[docs]]
   name = "Chat"
@@ -69,6 +75,12 @@
   weight = 15
   identifier = "settings"
   url = "/docs/settings/"
+
+[[dev]]
+  name = "Settings"
+  weight = 15
+  identifier = "settings"
+  url = "/dev_guide/settings/"
 
 [[docs]]
   name = "Help"
