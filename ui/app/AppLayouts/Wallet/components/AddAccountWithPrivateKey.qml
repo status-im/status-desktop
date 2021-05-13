@@ -126,13 +126,20 @@ ModalPopup {
                 return loading = false
             }
 
-            const error = walletModel.addAccountsFromPrivateKey(accountPKeyInput.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
+            const result = walletModel.addAccountsFromPrivateKey(accountPKeyInput.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
             
             loading = false
-            if (error) {
-                errorSound.play()
-                accountError.text = error
-                return accountError.open()
+            if (result) {
+                let resultJson = JSON.parse(result);
+                errorSound.play();
+                if (Utils.isInvalidPasswordMessage(resultJson.error)) {
+                    //% "Wrong password"
+                    popup.passwordValidationError = qsTrId("wrong-password")
+                } else {
+                    accountError.text = resultJson.error
+                    accountError.open()
+                }
+                return
             }
 
             popup.close();

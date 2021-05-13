@@ -11,6 +11,7 @@ import ../../status/libstatus/eth/contracts
 import ../../status/ens as status_ens
 import views/[asset_list, account_list, account_item, token_list, transaction_list, collectibles_list]
 import ../../status/tasks/[qt, task_runner_impl]
+import ../../status/signals/types as signal_types
 
 type
   SendTransactionTaskArg = ref object of QObjectTaskArg
@@ -390,16 +391,25 @@ QtObject:
     result = fmt"{ethValue}"
 
   proc generateNewAccount*(self: WalletView, password: string, accountName: string, color: string): string {.slot.} =
-    result = self.status.wallet.generateNewAccount(password, accountName, color)
+    try:
+      self.status.wallet.generateNewAccount(password, accountName, color)
+    except StatusGoException as e:
+      result = StatusGoError(error: e.msg).toJson
 
   proc addAccountsFromSeed*(self: WalletView, seed: string, password: string, accountName: string, color: string): string {.slot.} =
-    result = self.status.wallet.addAccountsFromSeed(seed.strip(), password, accountName, color)
+    try:
+      self.status.wallet.addAccountsFromSeed(seed.strip(), password, accountName, color)
+    except StatusGoException as e:
+      result = StatusGoError(error: e.msg).toJson
 
   proc addAccountsFromPrivateKey*(self: WalletView, privateKey: string, password: string, accountName: string, color: string): string {.slot.} =
-    result = self.status.wallet.addAccountsFromPrivateKey(privateKey, password, accountName, color)
+    try:
+      self.status.wallet.addAccountsFromPrivateKey(privateKey, password, accountName, color)
+    except StatusGoException as e:
+      result = StatusGoError(error: e.msg).toJson
 
   proc addWatchOnlyAccount*(self: WalletView, address: string, accountName: string, color: string): string {.slot.} =
-    result = self.status.wallet.addWatchOnlyAccount(address, accountName, color)
+    self.status.wallet.addWatchOnlyAccount(address, accountName, color)
 
   proc changeAccountSettings*(self: WalletView, address: string, accountName: string, color: string): string {.slot.} =
     result = self.status.wallet.changeAccountSettings(address, accountName, color)

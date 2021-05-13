@@ -538,4 +538,11 @@ QtObject {
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|_|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
     }
+
+    function isInvalidPasswordMessage(msg) {
+        return (
+            msg.includes("could not decrypt key with given password") ||
+            msg.includes("invalid password")
+        );
+    }
 }

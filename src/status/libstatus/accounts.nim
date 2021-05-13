@@ -218,7 +218,15 @@ proc loadAccount*(address: string, password: string): GeneratedAccount =
     "password": hashedPassword
   }
   let loadResult = $status_go.multiAccountLoadAccount($inputJson)
-  result = Json.decode(loadResult, GeneratedAccount)
+  let parsedLoadResult = loadResult.parseJson
+  let error = parsedLoadResult{"error"}.getStr
+
+  if error == "":
+    debug "Account loaded succesfully"
+    result = Json.decode(loadResult, GeneratedAccount)
+    return
+
+  raise newException(StatusGoException, "Error loading wallet account: " & error)
 
 proc verifyAccountPassword*(address: string, password: string): bool =
   let hashedPassword = hashPassword(password)
