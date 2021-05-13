@@ -12,6 +12,8 @@ menu:
 toc: true
 ---
 
+[Dev Docs for this section](/dev_guide/onboarding/account_creation/)
+
 ## create account
 
 ![url_bar](/images/onboarding/choose_name.png)
