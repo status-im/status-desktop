@@ -215,7 +215,7 @@ property Component sendTransactionModalComponent: SignTransactionModal {}
                         toastMessage.link = `${_walletModel.etherscanLink}/${responseObj.result.result}`
                         toastMessage.open()
                     } catch (e) {
-                        if (e.message.includes("could not decrypt key with given password")){
+                        if (Utils.isInvalidPasswordMessage(e.message)){
                             //% "Wrong password"
                             sendDialog.transactionSigner.validationError = qsTrId("wrong-password")
                             return
@@ -256,7 +256,7 @@ property Component sendTransactionModalComponent: SignTransactionModal {}
                             throw new Error(responseObj.error)
                         }
                     } catch (e) {
-                        if (e.message.includes("could not decrypt key with given password")){
+                        if (Utils.isInvalidPasswordMessage(e.message)){
                             //% "Wrong password"
                             signDialog.transactionSigner.validationError = qsTrId("wrong-password")
                             return
