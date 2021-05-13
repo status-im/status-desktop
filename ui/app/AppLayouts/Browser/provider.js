@@ -855,6 +855,7 @@ You may add additional accurate notices of copyright ownership.
     
       window.ethereum.on("connected", () => {}); // TODO: Dummy event. Will need to be replaced once connecte/disconnected provider logic is implemented in status-go
       window.ethereum.emit("connected", {"chainId": backend.networkId.toString()});
+      window.ethereum.on("accountsChanged", () => {});
     });
 
     const bridgeSend = data => {
