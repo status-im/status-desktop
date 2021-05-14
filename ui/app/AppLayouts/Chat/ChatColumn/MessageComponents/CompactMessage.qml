@@ -161,7 +161,8 @@ Item {
             id: messageContent
             height: childrenRect.height + (isEmoji ? 2 : 0)
             anchors.top: chatName.visible ? chatName.bottom :
-                                            chatReply.active ? chatReply.bottom : parent.top
+                                            chatReply.active ? chatReply.bottom :
+                                                pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
             anchors.left: chatImage.right
             anchors.leftMargin: root.chatHorizontalPadding
             anchors.right: parent.right

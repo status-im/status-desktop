@@ -249,7 +249,6 @@ QtObject:
   proc add*(self: ChatMessageList, message: Message) =
     if self.messageIndex.hasKey(message.id): return # duplicated msg
 
-    debug "New message", chatId = self.id, id = message.id, text = message.text
     self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len)
     self.messageIndex[message.id] = self.messages.len
     self.messages.add(message)
