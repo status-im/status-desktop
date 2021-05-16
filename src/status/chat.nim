@@ -447,6 +447,15 @@ proc createCommunity*(self: ChatModel, name: string, description: string, access
 proc createCommunityChannel*(self: ChatModel, communityId: string, name: string, description: string): Chat =
   result = status_chat.createCommunityChannel(communityId, name, description)
 
+proc createCommunityCategory*(self: ChatModel, communityId: string, name: string, channels: seq[string]): CommunityCategory =
+  result = status_chat.createCommunityCategory(communityId, name, channels)
+
+proc deleteCommunityCategory*(self: ChatModel, communityId: string, categoryId: string) =
+  status_chat.deleteCommunityCategory(communityId, categoryId)
+
+proc reorderCommunityChannel*(self: ChatModel, communityId: string, categoryId: string, chatId: string, position: int) =
+  status_chat.reorderCommunityChat(communityId, categoryId, chatId, position)
+
 proc joinCommunity*(self: ChatModel, communityId: string) =
   status_chat.joinCommunity(communityId)
 

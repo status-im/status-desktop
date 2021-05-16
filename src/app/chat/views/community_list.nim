@@ -129,6 +129,13 @@ QtObject:
     let index = self.communities.findIndexById(communityId)
     self.communities[index] = community
 
+  proc addCategoryToCommunity*(self: CommunityList, communityId: string, category: CommunityCategory) =
+    var community = self.getCommunityById(communityId)
+    community.categories.add(category)
+
+    let index = self.communities.findIndexById(communityId)
+    self.communities[index] = community
+
   proc replaceCommunity*(self: CommunityList, community: Community) =
     let index = self.communities.findIndexById(community.id)
     if (index == -1):
@@ -137,3 +144,11 @@ QtObject:
     let bottomRight = self.createIndex(index, index, nil)
     self.communities[index] = community
     self.dataChanged(topLeft, bottomRight, @[CommunityRoles.Name.int, CommunityRoles.Description.int, CommunityRoles.UnviewedMessagesCount.int])
+
+  proc removeCategoryFromCommunity*(self: CommunityList, communityId: string, categoryId:string) =
+    var community = self.getCommunityById(communityId)
+    let idx = community.categories.findIndexById(categoryId)
+    if idx == -1: return
+    community.categories.delete(idx)
+    let index = self.communities.findIndexById(communityId)
+    self.communities[index] = community

@@ -10,6 +10,7 @@ Item {
     property var channelModel
     property alias channelListCount: chatGroupsListView.count
     property string searchStr: ""
+    property string categoryId: ""
     id: channelListContent
     width: parent.width
     height: childrenRect.height
@@ -39,6 +40,8 @@ Item {
             hasMentions: model.hasMentions
             contentType: model.contentType
             searchStr: channelListContent.searchStr
+            categoryId: model.categoryId
+            filterCategory: channelListContent.categoryId
             chatId: model.id
         }
         onCountChanged: {
