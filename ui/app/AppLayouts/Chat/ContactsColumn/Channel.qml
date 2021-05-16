@@ -7,6 +7,7 @@ import "../components"
 
 Item {
     property string chatId: ""
+    property string categoryId: ""
     property string name: "channelName"
     property string lastMessage: "My latest message\n with a return"
     property string timestamp: "1605212622434"
@@ -22,6 +23,7 @@ Item {
         return chatType
     }
 
+    property string filterCategory: ""
     property string searchStr: ""
     property bool isCompact: appSettings.useCompactMode
     property int contentType: 1
@@ -41,7 +43,7 @@ Item {
     property string profileImage: realChatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
 
     // Hide the box if it is filtered out
-    property bool isVisible: searchStr === "" || name.includes(searchStr)
+    property bool isVisible: categoryId == filterCategory && (searchStr === "" || name.includes(searchStr))
 
     id: wrapper
     anchors.right: parent.right

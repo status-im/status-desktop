@@ -201,12 +201,21 @@ proc toCommunity*(jsonCommunity: JsonNode): Community =
     for chatId, chat in jsonCommunity{"chats"}:
       result.chats.add(Chat(
         id: result.id & chatId,
+        categoryId: chat{"categoryID"}.getStr(),
         communityId: result.id,
         name: chat{"name"}.getStr,
         canPost: chat{"canPost"}.getBool,
         chatType: ChatType.CommunityChat
         # TODO get this from access
         #chat{"permissions"}{"access"}.getInt,
+      ))
+
+  if jsonCommunity.hasKey("categories") and jsonCommunity["categories"].kind != JNull:
+    for catId, cat in jsonCommunity{"categories"}:
+      result.categories.add(CommunityCategory(
+        id: catId,
+        name: cat{"name"}.getStr,
+        position: cat{"position"}.getInt
       ))
 
   if jsonCommunity.hasKey("members") and jsonCommunity["members"].kind != JNull:

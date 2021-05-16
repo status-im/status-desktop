@@ -332,6 +332,42 @@ proc createCommunityChannel*(communityId: string, name: string, description: str
   if rpcResult{"result"}.kind != JNull:
     result = rpcResult["result"]["chats"][0].toChat()
 
+proc createCommunityCategory*(communityId: string, name: string, channels: seq[string]): CommunityCategory =
+  let rpcResult = callPrivateRPC("createCommunityCategory".prefix, %*[
+    {
+      "communityId": communityId,
+      "categoryName": name,
+      "chatIds": channels
+    }]).parseJSON()
+
+  if rpcResult.contains("error"):
+    raise newException(StatusGoException, rpcResult["error"]["message"].getStr())
+  else:
+    for k, v in rpcResult["result"]["communityChanges"].getElems()[0]["categoriesAdded"].pairs():
+      result.id = v["category_id"].getStr()
+      result.name = v["name"].getStr()
+      result.position = v{"position"}.getInt()
+
+proc reorderCommunityChat*(communityId: string, categoryId: string, chatId: string, position: int) =
+  let rpcResult = callPrivateRPC("reorderCommunityChat".prefix, %*[
+    {
+      "communityId": communityId,
+      "categoryId": categoryId,
+      "chatId": chatId,
+      "position": position
+    }]).parseJSON()
+  if rpcResult.contains("error"):
+    raise newException(StatusGoException, rpcResult["error"]["message"].getStr())
+
+proc deleteCommunityCategory*(communityId: string, categoryId: string) =
+  let rpcResult = callPrivateRPC("deleteCommunityCategory".prefix, %*[
+    {
+      "communityId": communityId,
+      "categoryId": categoryId
+    }]).parseJSON()
+  if rpcResult.contains("error"):
+    raise newException(StatusGoException, rpcResult["error"]["message"].getStr())
+
 proc requestCommunityInfo*(communityId: string) =
   discard callPrivateRPC("requestCommunityInfoFromMailserver".prefix, %*[communityId])
 

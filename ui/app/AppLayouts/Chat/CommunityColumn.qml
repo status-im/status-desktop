@@ -27,6 +27,15 @@ Rectangle {
     }
 
     Component {
+        id: createCategoryPopup
+        CreateCategoryPopup {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+    Component {
         id: transferOwnershipPopup
         TransferOwnershipPopup {}
     }
@@ -81,6 +90,17 @@ Rectangle {
                     icon.height: 20
                     onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
                 }
+
+                 Action {
+                    enabled: chatsModel.communities.activeCommunity.admin
+                    text: qsTr("Create category")
+                    icon.source: "../../img/create-category.svg"
+                    icon.width: 20
+                    icon.height: 20
+                    onTriggered: openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
+                }
+
+                Separator {}
 
                 Action {
                     text: qsTr("Invite People")
@@ -152,13 +172,20 @@ Rectangle {
         leftPadding: Style.current.halfPadding
         rightPadding: Style.current.halfPadding
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        contentHeight: channelList.height + emptyViewAndSuggestionsLoader.height + backUpBannerLoader.height + 2 * Style.current.padding
+        contentHeight: categoryList.height + channelList.height + emptyViewAndSuggestionsLoader.height + backUpBannerLoader.height + 2 * Style.current.padding
         clip: true
 
         ChannelList {
             id: channelList
             searchStr: ""
+            categoryId: ""
             channelModel: chatsModel.communities.activeCommunity.chats
+        }
+
+        CategoryList {
+            id: categoryList
+            anchors.top: channelList.bottom
+            categoryModel: chatsModel.communities.activeCommunity.categories
         }
 
         Loader {
@@ -166,7 +193,7 @@ Rectangle {
             active: chatsModel.communities.activeCommunity.admin && !appSettings.hiddenCommunityWelcomeBanners.includes(chatsModel.communities.activeCommunity.id)
             width: parent.width
             height: active ? item.height : 0
-            anchors.top: channelList.bottom
+            anchors.top: categoryList.bottom
             anchors.topMargin: active ? Style.current.padding : 0
             sourceComponent: Component {
                 CommunityWelcomeBanner {}
