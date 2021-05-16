@@ -3,6 +3,7 @@ import ../../../status/[chat/chat, status]
 import channels_list
 import ../../../eventemitter
 import community_members_list
+import category_list
 import community_membership_request_list
 
 QtObject:
@@ -10,6 +11,7 @@ QtObject:
     communityItem*: Community
     communityMembershipRequestList*: CommunityMembershipRequestList
     chats*: ChannelsList
+    categories*: CategoryList
     members*: CommunityMembersView
     status*: Status
     active*: bool
@@ -19,6 +21,7 @@ QtObject:
 
   proc delete*(self: CommunityItemView) =
     if not self.chats.isNil: self.chats.delete
+    if not self.categories.isNil: self.categories.delete
     self.QObject.delete
 
   proc newCommunityItemView*(status: Status): CommunityItemView =
@@ -27,6 +30,7 @@ QtObject:
     result.status = status
     result.active = false
     result.chats = newChannelsList(status)
+    result.categories = newCategoryList(status)
     result.communityMembershipRequestList = newCommunityMembershipRequestList()
     result.members = newCommunityMembersView(status)
     result.setup
@@ -36,6 +40,7 @@ QtObject:
   proc setCommunityItem*(self: CommunityItemView, communityItem: Community) =
     self.communityItem = communityItem
     self.chats.setChats(communityItem.chats)
+    self.categories.setCategories(communityItem.categories)
     self.members.setMembers(communityItem.members)
     self.nbMembersChanged()
     self.communityMembershipRequestList.setNewData(communityItem.membershipRequests)
@@ -135,6 +140,9 @@ QtObject:
   proc getChats*(self: CommunityItemView): QVariant {.slot.} =
     result = newQVariant(self.chats)
 
+  proc getCategories*(self: CommunityItemView): QVariant {.slot.} =
+    result = newQVariant(self.categories)
+
   proc changeChats*(self: CommunityItemView, chats: seq[Chat]) =
     self.communityItem.chats = chats
     self.chats.setChats(chats)
@@ -145,8 +153,24 @@ QtObject:
     discard self.chats.addChatItemToList(chat)
     self.chatsChanged()
 
+  proc addCategoryToList*(self: CommunityItemView, category: CommunityCategory) =
+    self.communityItem.categories.add(category)
+    discard self.categories.addCategoryToList(category)
+    self.chatsChanged()
+
+  proc removeCategoryFromList*(self: CommunityItemView, categoryId: string) =
+    discard self.categories.removeCategoryFromList(categoryId)
+    let idx = self.communityItem.categories.findIndexById(categoryId)
+    self.chatsChanged()
+    if idx == -1: return
+    self.communityItem.categories.delete(idx)
+
   QtProperty[QVariant] chats:
     read = getChats
+    notify = chatsChanged
+
+  QtProperty[QVariant] categories:
+    read = getCategories
     notify = chatsChanged
 
   proc getMembers*(self: CommunityItemView): QVariant {.slot.} =

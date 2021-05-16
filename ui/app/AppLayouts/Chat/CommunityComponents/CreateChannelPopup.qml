@@ -8,6 +8,7 @@ import "../../../../shared/status"
 
 ModalPopup {
     property string communityId
+    property string categoryId: ""
     readonly property int maxDescChars: 140
     property string nameValidationError: ""
     property bool isValid:
@@ -176,7 +177,8 @@ ModalPopup {
             }
             const error = chatsModel.communities.createCommunityChannel(communityId,
                                                             Utils.filterXSS(nameInput.text),
-                                                            Utils.filterXSS(descriptionTextArea.text))
+                                                            Utils.filterXSS(descriptionTextArea.text),
+                                                            categoryId)
 
             if (error) {
                 creatingError.text = error

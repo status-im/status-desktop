@@ -54,8 +54,9 @@ QtObject:
     var found = false
     for chat in community.chats:
       if (chat.id == newChat.id):
-        # canPost is not available in the newChat so we need to check what we had before
+        # canPost and categoryId are not available in the newChat so we need to check what we had before
         newChat.canPost = community.chats[i].canPost
+        newChat.categoryId = community.chats[i].categoryId
         community.chats[i] = newChat
         found = true
       i = i + 1
@@ -225,7 +226,7 @@ QtObject:
       error "Error creating the community", msg = e.msg
       result = fmt"Error creating the community: {e.msg}"
 
-  proc createCommunityChannel*(self: CommunitiesView, communityId: string, name: string, description: string): string {.slot.} =
+  proc createCommunityChannel*(self: CommunitiesView, communityId: string, name: string, description: string, categoryId: string): string {.slot.} =
     result = ""
     try:
       let chat = self.status.chat.createCommunityChannel(communityId, name, description)
@@ -233,11 +234,37 @@ QtObject:
       if (chat.id == ""):
         return "Chat was not created. Please try again later"
 
+      if categoryId != "":
+        self.status.chat.reorderCommunityChannel(communityId, categoryId, chat.id.replace(communityId, ""), 0)
+
+      chat.categoryId = categoryId
       self.joinedCommunityList.addChannelToCommunity(communityId, chat)
       self.activeCommunity.addChatItemToList(chat)
     except Exception as e:
       error "Error creating the channel", msg = e.msg
       result = fmt"Error creating the channel: {e.msg}"
+
+  proc createCommunityCategory*(self: CommunitiesView, communityId: string, name: string, channels: string): string {.slot.} =
+    result = ""
+    try:
+      let channelSeq = map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr().replace(communityId, ""))
+      let category = self.status.chat.createCommunityCategory(communityId, name, channelSeq)
+      self.joinedCommunityList.addCategoryToCommunity(communityId, category)
+      self.activeCommunity.addCategoryToList(category)
+    except Exception as e:
+      error "Error creating the category", msg = e.msg
+      result = fmt"Error creating the category: {e.msg}"
+
+  proc deleteCommunityCategory*(self: CommunitiesView, communityId: string, categoryId: string): string {.slot.} =
+    result = ""
+    try:
+      self.status.chat.deleteCommunityCategory(communityId, categoryId)
+      self.joinedCommunityList.removeCategoryFromCommunity(communityId, categoryId)
+      self.activeCommunity.removeCategoryFromList(categoryId)
+    except Exception as e:
+      error "Error creating the category", msg = e.msg
+      result = fmt"Error creating the category: {e.msg}"
+
 
   proc observedCommunityChanged*(self: CommunitiesView) {.signal.}
 

@@ -60,6 +60,7 @@ proc toJsonNode*(self: seq[ChatMembershipEvent]): seq[JsonNode] =
 type Chat* = ref object
   id*: string # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat
   communityId*: string
+  categoryId*: string
   name*: string
   description*: string
   color*: string
@@ -92,12 +93,18 @@ type CommunityMembershipRequest* = object
   state*: int
   our*: string
 
+type CommunityCategory* = object
+  id*: string
+  name*: string
+  position*: int
+
 type Community* = object
   id*: string
   name*: string
   lastChannelSeen*: string
   description*: string
   chats*: seq[Chat]
+  categories*: seq[CommunityCategory]
   members*: seq[string]
   access*: int
   unviewedMessagesCount*: int
@@ -154,6 +161,15 @@ proc findIndexById*(self: seq[Community], id: string): int =
       break
 
 proc findIndexById*(self: seq[CommunityMembershipRequest], id: string): int =
+  result = -1
+  var idx = -1
+  for item in self:
+    inc idx
+    if(item.id == id):
+      result = idx
+      break
+
+proc findIndexById*(self: seq[CommunityCategory], id: string): int =
   result = -1
   var idx = -1
   for item in self:

@@ -19,6 +19,7 @@ type
     Muted = UserRole + 10
     Id = UserRole + 11
     Description = UserRole + 12
+    CategoryId = UserRole + 13
 
 QtObject:
   type
@@ -76,6 +77,7 @@ QtObject:
       of ChannelsRoles.HasMentions: result = newQVariant(chatItem.hasMentions)
       of ChannelsRoles.Muted: result = newQVariant(chatItem.muted.bool)
       of ChannelsRoles.Id: result = newQVariant($chatItem.id)
+      of ChannelsRoles.CategoryId: result = newQVariant(chatItem.categoryId)
       of ChannelsRoles.Description: result = newQVariant(chatItem.description)
 
   method roleNames(self: ChannelsList): Table[int, string] =
@@ -91,7 +93,8 @@ QtObject:
       ChannelsRoles.ContentType.int: "contentType",
       ChannelsRoles.Muted.int: "muted",
       ChannelsRoles.Id.int: "id",
-      ChannelsRoles.Description.int: "description"
+      ChannelsRoles.Description.int: "description",
+      ChannelsRoles.CategoryId.int: "categoryId"
     }.toTable
 
   proc setChats*(self: ChannelsList, chats: seq[Chat]) =
