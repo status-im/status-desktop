@@ -253,12 +253,11 @@ ScrollView {
             width: parent.width
 
             StatusSettingsLineButton {
-                //% "Receive notifications from non-contacts"
-                text: qsTrId("receive-notifications-from-non-contacts")
+                text: qsTr("Notify on new requests")
                 isSwitch: true
-                switchChecked: appSettings.allowNotificationsFromNonContacts
+                switchChecked: appSettings.notifyOnNewRequests
                 onClicked: {
-                    appSettings.allowNotificationsFromNonContacts = checked
+                    appSettings.notifyOnNewRequests = checked
                 }
             }
 

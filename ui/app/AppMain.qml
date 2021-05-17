@@ -123,7 +123,7 @@ RowLayout {
         property bool notificationSoundsEnabled: true
         property bool useOSNotifications: true
         property int notificationMessagePreviewSetting: Constants.notificationPreviewNameAndMessage
-        property bool allowNotificationsFromNonContacts: false
+        property bool notifyOnNewRequests: true
         property var whitelistedUnfurlingSites: ({})
         property bool neverAskAboutUnfurlingAgain: false
         property bool hideChannelSuggestions: false
