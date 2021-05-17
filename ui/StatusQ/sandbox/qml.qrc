@@ -4,5 +4,6 @@
         <file>Controls.qml</file>
         <file>Icons.qml</file>
         <file>Others.qml</file>
+        <file>Buttons.qml</file>
     </qresource>
 </RCC>

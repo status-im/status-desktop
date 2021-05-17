@@ -29,3 +29,8 @@ OTHER_FILES += $$files($$PWD/../src/*, true)
 HEADERS += \
     handler.h \
     sandboxapp.h
+
+DISTFILES += \
+    ../src/StatusQ/Controls/StatusBaseButton.qml \
+    ../src/StatusQ/Controls/StatusButton.qml \
+    ../src/StatusQ/Controls/StatusFlatRoundButton.qml
