@@ -188,6 +188,7 @@ QtObject:
           "error": errorMessage,
           "result": {
             "jsonrpc": "2.0",
+            "id": data.payload.id,
             "result": if (success): response else: ""
           }
         }
