@@ -101,7 +101,7 @@ Item {
             text: wrapper.realChatType !== Constants.chatTypePublic ?
                       Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(wrapper.name))) :
                       "#" + Utils.filterXSS(wrapper.name)
-            anchors.right: contactTime.left
+            anchors.right: contactTime.visible ? contactTime.left : parent.right
             anchors.rightMargin: Style.current.smallPadding
             elide: Text.ElideRight
             color: muted ? Style.current.secondaryText : Style.current.textColor
