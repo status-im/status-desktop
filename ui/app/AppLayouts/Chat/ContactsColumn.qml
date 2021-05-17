@@ -122,6 +122,9 @@ Rectangle {
     Connections {
         target: profileModel.contacts
         onContactRequestAdded: {
+            if (!appSettings.notifyOnNewRequests) {
+                return
+            }
             systemTray.showMessage(qsTr("New contact request"),
                                    qsTr("%1 requests to become contacts").arg(Utils.removeStatusEns(name)),
                                    SystemTrayIcon.NoIcon,
