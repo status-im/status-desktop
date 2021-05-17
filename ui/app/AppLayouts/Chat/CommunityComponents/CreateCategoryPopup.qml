@@ -8,17 +8,28 @@ import "../../../../shared/status"
 
 ModalPopup {
     property string communityId
+    property string categoryId
+    property string categoryName: ""
+    property var channels: []
+
+    property bool isEdit: false
+    readonly property int maxDescChars: 140
     property string nameValidationError: ""
     property bool isValid: nameInput.isValid 
 
-    property var channels: []
 
     id: popup
     height: 453
 
     onOpened: {
-        nameInput.text = "";
+        nameInput.text = isEdit ? categoryName : "";
+        if(isEdit){
+            channels = JSON.parse(chatsModel.communities.activeCommunity.getChatIdsByCategory(categoryId))
+        }
         nameInput.forceActiveFocus(Qt.MouseFocusReason)
+        if(isEdit){
+            validate();
+        }
     }
     onClosed: destroy()
 
@@ -27,7 +38,9 @@ ModalPopup {
         return isValid
     }
 
-    title: qsTr("New category")
+    title: isEdit ?
+            qsTr("Edit category") : 
+            qsTr("New category")
 
     ScrollView {
         property ScrollBar vScrollBar: ScrollBar.vertical
@@ -86,12 +99,13 @@ ModalPopup {
 
             StatusSectionHeadline {
                 id: chatsTitle
-                text: qsTr("Chats")
+                text: qsTr("Channels")
                 anchors.top: sep.bottom
                 anchors.topMargin: Style.current.smallPadding
             }
 
             ListView {
+                id: communityChannelList
                 height: childrenRect.height
                 model: chatsModel.communities.activeCommunity.chats
                 anchors.top: chatsTitle.bottom
@@ -102,6 +116,8 @@ ModalPopup {
                     name: model.name
                     channelId: model.id
                     categoryId: model.categoryId
+                    checked: popup.isEdit ? channels.indexOf(model.id) > - 1 : false
+                    visible: popup.isEdit ? model.categoryId == popup.categoryId || model.categoryId == "" : model.categoryId == ""
                     onItemChecked: function(channelId, itemChecked){
                         var idx = channels.indexOf(channelId)
                         if(itemChecked){
@@ -117,14 +133,88 @@ ModalPopup {
                 }
             }
 
+            Separator {
+                id: sep2
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: communityChannelList.bottom
+                anchors.topMargin: Style.current.padding
+                anchors.leftMargin: -Style.current.padding
+                anchors.rightMargin: -Style.current.padding
+            }
+
+            Item {
+                id: deleteCategory
+                anchors.top: sep2.bottom
+                anchors.topMargin: Style.current.padding
+                width: deleteBtn.width + deleteTxt.width + Style.current.padding
+                height: deleteBtn.height
+
+
+                StatusRoundButton {
+                    id: deleteBtn
+                    icon.name: "delete"
+                    size: "medium"
+                    type: "warn"
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                StyledText {
+                    id: deleteTxt
+                    text: qsTr("Delete category")
+                    color: Style.current.red
+                    anchors.left: deleteBtn.right
+                    anchors.leftMargin: Style.current.padding
+                    anchors.verticalCenter: deleteBtn.verticalCenter
+                    font.pixelSize: 15
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        openPopup(deleteCategoryConfirmationDialogComponent, {
+                            title: qsTr("Delete %1 category").arg(categoryName),
+                            confirmationText: qsTr("Are you sure you want to delete %1 category? Channels inside the category won’t be deleted.").arg(categoryName)
+                            
+                        })
+                    }
+                }
+
+                Component {
+                    id: deleteCategoryConfirmationDialogComponent
+                    ConfirmationDialog {
+                        btnType: "warn"
+                        height: 216
+                        showCancelButton: true
+                        onClosed: {
+                            destroy()
+                        }
+                        onCancelButtonClicked: {
+                            close();
+                        }
+                        onConfirmButtonClicked: function(){
+                            const error = chatsModel.communities.deleteCommunityCategory(chatsModel.communities.activeCommunity.id, popup.categoryId)
+                            if (error) {
+                                creatingError.text = error
+                                return creatingError.open()
+                            }
+                            close();
+                            popup.close()
+                        }
+                    }
+                }
+            }
+
 
         }
     }
 
     footer: StatusButton {
         enabled: popup.isValid
-        //% "Create"
-        text: qsTrId("create")
+        text: isEdit ?
+            qsTr("Save") :
+            qsTr("Create")
         anchors.right: parent.right
         onClicked: {
             if (!validate()) {
@@ -132,19 +222,27 @@ ModalPopup {
                 return
             }
 
-            const error = chatsModel.communities.createCommunityCategory(communityId, Utils.filterXSS(nameInput.text), JSON.stringify(channels))
+            let error = ""
+
+            if(isEdit){
+                error = chatsModel.communities.editCommunityCategory(communityId, categoryId, Utils.filterXSS(nameInput.text), JSON.stringify(channels))
+            } else {
+                error = chatsModel.communities.createCommunityCategory(communityId, Utils.filterXSS(nameInput.text), JSON.stringify(channels))
+            }
 
             if (error) {
-                creatingError.text = error
-                return creatingError.open()
+                categoryError.text = error
+                return categoryError.open()
             }
 
             popup.close()
         }
 
         MessageDialog {
-            id: creatingError
-            title: qsTr("Error creating the category")
+            id: categoryError
+            title: isEdit ? 
+                    qsTr("Error editing the category") :
+                    qsTr("Error creating the category")
             icon: StandardIcon.Critical
             standardButtons: StandardButton.Ok
         }

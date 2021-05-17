@@ -472,6 +472,9 @@ proc createCommunityChannel*(self: ChatModel, communityId: string, name: string,
 proc createCommunityCategory*(self: ChatModel, communityId: string, name: string, channels: seq[string]): CommunityCategory =
   result = status_chat.createCommunityCategory(communityId, name, channels)
 
+proc editCommunityCategory*(self: ChatModel, communityId: string, categoryId: string, name: string, channels: seq[string]) =
+  status_chat.editCommunityCategory(communityId, categoryId, name, channels)
+
 proc deleteCommunityCategory*(self: ChatModel, communityId: string, categoryId: string) =
   status_chat.deleteCommunityCategory(communityId, categoryId)
 

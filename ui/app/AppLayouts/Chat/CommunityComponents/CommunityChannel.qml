@@ -8,11 +8,12 @@ import "../../../../shared/status"
 Rectangle {
     property string name: "channel-name"
     property string channelId: "channel-id"
+    property bool isEdit: false
+    property alias checked: chk.checked
     property string categoryId: ""
     property var onItemChecked
     property bool isHovered: false
     id: container
-    visible: categoryId == ""
     height: visible ? 52 : 0
     width: 425
     anchors.left: parent.left

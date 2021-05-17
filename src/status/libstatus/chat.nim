@@ -330,6 +330,18 @@ proc createCommunityCategory*(communityId: string, name: string, channels: seq[s
       result.name = v["name"].getStr()
       result.position = v{"position"}.getInt()
 
+
+proc editCommunityCategory*(communityId: string, categoryId: string, name: string, channels: seq[string]) =
+  let rpcResult = callPrivateRPC("editCommunityCategory".prefix, %*[
+    {
+      "communityId": communityId,
+      "categoryId": categoryId,
+      "categoryName": name,
+      "chatIds": channels
+    }]).parseJSON()
+  if rpcResult.contains("error"):
+    raise newException(StatusGoException, rpcResult["error"]["message"].getStr())
+
 proc reorderCommunityChat*(communityId: string, categoryId: string, chatId: string, position: int) =
   let rpcResult = callPrivateRPC("reorderCommunityChat".prefix, %*[
     {

@@ -255,6 +255,17 @@ QtObject:
       error "Error creating the category", msg = e.msg
       result = fmt"Error creating the category: {e.msg}"
 
+
+  proc editCommunityCategory*(self: CommunitiesView, communityId: string, categoryId: string, name: string, channels: string): string {.slot.} =
+    result = ""
+    try:
+      let channelSeq = map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr().replace(communityId, ""))
+      self.status.chat.editCommunityCategory(communityId, categoryId, name, channelSeq)
+    except Exception as e:
+      error "Error editing the category", msg = e.msg
+      result = fmt"Error editing the category: {e.msg}"
+
+
   proc deleteCommunityCategory*(self: CommunitiesView, communityId: string, categoryId: string): string {.slot.} =
     result = ""
     try:
