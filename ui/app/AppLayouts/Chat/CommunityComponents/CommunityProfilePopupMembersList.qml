@@ -163,15 +163,16 @@ Item {
                             text: qsTrId("kick")
                             onTriggered: chatsModel.communities.removeUserFromCommunity(model.pubKey)
                         }
-                        /* Action { */
-                        /*     icon.source: "../../../img/communities/menu/ban.svg" */
-                        /*     icon.width: 16 */
-                        /*     icon.height: 16 */
-                        /*     icon.color: Style.current.red */
-                        /*     //% "Ban" */
-                        /*     text: qsTrId("ban") */
-                        /*     onTriggered: console.log("TODO") */
-                        /* } */
+                        Action {
+                            property string type: "danger"
+                            icon.source: "../../../img/communities/menu/ban.svg"
+                            icon.width: 16
+                            icon.height: 16
+                            icon.color: Style.current.red
+                            //% "Ban"
+                            text: qsTrId("ban")
+                            onTriggered: chatsModel.communities.banUserFromCommunity(model.pubKey, chatsModel.communities.activeCommunity.id)
+                        }
                         /* Separator {} */
                         /* Action { */
                         /*     icon.source: "../../../img/communities/menu/transfer-ownership.svg" */
