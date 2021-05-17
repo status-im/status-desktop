@@ -14,6 +14,7 @@ Item {
     property string filterText: ""
     property bool expanded: true
     property bool showCheckbox: false
+    property bool hideCommunityMembers: false
     property var pubKeys: ([])
     signal contactClicked(var contact)
 
@@ -47,7 +48,8 @@ Item {
                 visible: model.isContact && (root.filterText === "" ||
                     root.matchesAlias(model.name.toLowerCase(), root.filterText.toLowerCase()) ||
                     model.name.toLowerCase().includes(root.filterText.toLowerCase()) ||
-                    model.address.toLowerCase().includes(root.filterText.toLowerCase()))
+                    model.address.toLowerCase().includes(root.filterText.toLowerCase())) &&
+                    (!root.hideCommunityMembers || !chatsModel.communities.activeCommunity.hasMember(model.pubKey))
                 onContactClicked: function () {
                     root.contactClicked(model)
                 }

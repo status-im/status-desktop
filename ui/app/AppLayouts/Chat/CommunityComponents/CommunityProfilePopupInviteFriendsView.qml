@@ -53,5 +53,6 @@ Item {
         anchors.top: sep.bottom
         anchors.topMargin: Style.current.smallPadding
         showCheckbox: true
+        hideCommunityMembers: true
     }
 }

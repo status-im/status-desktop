@@ -18,6 +18,7 @@ Item {
     property bool showContactList: true
     signal userClicked(bool isContact, string pubKey, string ensName, string address)
     property var pubKeys: ([])
+    property bool hideCommunityMembers: false
 
     id: root
     width: parent.width
@@ -141,6 +142,7 @@ Item {
     ExistingContacts {
         id: existingContacts
         visible: showContactList
+        hideCommunityMembers: root.hideCommunityMembers
         anchors.topMargin: this.height > 0 ? Style.current.xlPadding : 0
         anchors.top: chatKey.bottom
         showCheckbox: root.showCheckbox

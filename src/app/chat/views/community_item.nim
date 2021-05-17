@@ -152,6 +152,9 @@ QtObject:
   proc getMembers*(self: CommunityItemView): QVariant {.slot.} =
     result = newQVariant(self.members)
 
+  proc hasMember*(self: CommunityItemView, pubKey: string): bool {.slot.} =
+    result = self.members.members.contains(pubKey)
+
   QtProperty[QVariant] members:
     read = getMembers
 
