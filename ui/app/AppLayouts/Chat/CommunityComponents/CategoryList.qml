@@ -100,6 +100,14 @@ Column {
                             icon.source: "../../../img/edit.svg"
                             icon.width: 20
                             icon.height: 20
+                            onTriggered: {
+                                openPopup(createCategoryPopup, {
+                                    communityId: chatsModel.communities.activeCommunity.id,
+                                    isEdit: true,
+                                    categoryId: model.categoryId,
+                                    categoryName: model.name
+                                })
+                            }
                         }
 
                         Separator {
@@ -159,7 +167,7 @@ Column {
                 channelModel: chatsModel.communities.activeCommunity.chats
             }
 
-             MessageDialog {
+            MessageDialog {
                 id: deleteError
                 title: qsTr("Error deleting the category")
                 icon: StandardIcon.Critical

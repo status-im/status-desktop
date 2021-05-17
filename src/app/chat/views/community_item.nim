@@ -1,4 +1,4 @@
-import NimQml, std/wrapnils
+import NimQml, std/wrapnils, json
 import ../../../status/[chat/chat, status]
 import channels_list
 import ../../../eventemitter
@@ -181,6 +181,13 @@ QtObject:
 
   QtProperty[QVariant] members:
     read = getMembers
+
+  proc getChatIdsByCategory*(self: CommunityItemView, categoryId: string): string {.slot.} =
+    var res:seq[string] = @[]
+    for chat in self.communityItem.chats:
+      if chat.categoryId == categoryId:
+        res.add(chat.id)
+    return $(%*res)
 
   proc getCommunityMembershipRequest*(self: CommunityItemView): QVariant {.slot.} =
     result = newQVariant(self.communityMembershipRequestList)
