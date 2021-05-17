@@ -318,6 +318,8 @@ QtObject:
     except Exception as e:
       error "Error removing user from the community", msg = e.msg
 
+  proc banUserFromCommunity*(self: CommunitiesView, pubKey: string, communityId: string) {.slot.} =
+    discard self.status.chat.banUserFromCommunity(pubKey, communityId)
 
   proc requestToJoinCommunity*(self: CommunitiesView, communityId: string, ensName: string) {.slot.} =
     try:

@@ -491,6 +491,9 @@ proc inviteUsersToCommunity*(self: ChatModel, communityId: string, pubKeys: seq[
 proc removeUserFromCommunity*(self: ChatModel, communityId: string, pubKey: string) =
   status_chat.removeUserFromCommunity(communityId, pubKey)
 
+proc banUserFromCommunity*(self: ChatModel, pubKey: string, communityId: string): string =
+  return status_chat.banUserFromCommunity(pubKey, communityId)
+
 proc exportCommunity*(self: ChatModel, communityId: string): string =
   result = status_chat.exportCommunity(communityId)
 

@@ -382,3 +382,9 @@ proc myPendingRequestsToJoin*(): seq[CommunityMembershipRequest] =
       communityRequests.add(jsonCommunityReqest.toCommunityMembershipRequest())
 
   return communityRequests
+
+proc banUserFromCommunity*(pubKey: string, communityId: string): string =
+  return callPrivateRPC("banUserFromCommunity".prefix, %*[{
+    "communityId": communityId,
+    "user": pubKey
+  }])
