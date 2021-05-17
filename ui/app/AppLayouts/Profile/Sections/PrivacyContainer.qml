@@ -109,6 +109,15 @@ Item {
             currentValue: appSettings.openLinksInStatus ? "Status" : qsTrId("my-default-browser")
             onClicked: openPopup(openLinksWithModal)
         }
+
+        StatusSettingsLineButton {
+            text: qsTr("Allow new contact requests")
+            isSwitch: true
+            switchChecked: !profileModel.profile.messagesFromContactsOnly
+            onClicked: function (checked) {
+                profileModel.setMessagesFromContactsOnly(!checked)
+            }
+        }
     }
 }
 

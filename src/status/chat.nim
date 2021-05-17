@@ -51,6 +51,7 @@ type
 
   ChatModel* = ref object
     publicKey*: string
+    messagesFromContactsOnly*: bool
     events*: EventEmitter
     communitiesToFetch*: seq[string]
     mailserverReady*: bool
@@ -69,6 +70,7 @@ include chat/utils
 
 proc newChatModel*(events: EventEmitter): ChatModel =
   result = ChatModel()
+  result.messagesFromContactsOnly = false
   result.events = events
   result.mailserverReady = false
   result.communitiesToFetch = @[]
@@ -105,8 +107,10 @@ proc cleanSpamChatGroups(self: ChatModel, chats: seq[Chat], contacts: seq[Profil
 proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest], pinnedMessages: seq[Message]) =
   var contacts = getAddedContacts()
 
-  # Automatically decline chat group invitations if admin is not a contact
-  var chatList = self.cleanSpamChatGroups(chats, contacts)
+  var chatList = chats
+  if (self.messagesFromContactsOnly):
+    # Automatically decline chat group invitations if admin is not a contact
+    chatList = self.cleanSpamChatGroups(chats, contacts)
 
   for chat in chatList:
     if chat.isActive:
@@ -172,12 +176,15 @@ proc requestMissingCommunityInfos*(self: ChatModel) =
   for communityId in self.communitiesToFetch:
     status_chat.requestCommunityInfo(communityId)
 
-proc init*(self: ChatModel, pubKey: string) =
+proc init*(self: ChatModel, pubKey: string, messagesFromContactsOnly: bool) =
   self.publicKey = pubKey
+  self.messagesFromContactsOnly = messagesFromContactsOnly
 
   var contacts = getAddedContacts()
+  var chatList = status_chat.loadChats()
 
-  var chatList = self.cleanSpamChatGroups(status_chat.loadChats(), contacts)
+  if (messagesFromContactsOnly):
+    chatList = self.cleanSpamChatGroups(chatList, contacts)
 
   let profileUpdatesChatIds = chatList.filter(c => c.chatType == ChatType.Profile).map(c => c.id)
 

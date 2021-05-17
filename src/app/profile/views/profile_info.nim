@@ -13,6 +13,7 @@ QtObject:
     pubKey*: string
     appearance*: int
     ensVerified*: bool
+    messagesFromContactsOnly*: bool
 
   proc setup(self: ProfileInfoView) =
     self.QObject.setup
@@ -29,6 +30,7 @@ QtObject:
     result.appearance = 0
     result.identityImage = IdentityImage()
     result.ensVerified = false
+    result.messagesFromContactsOnly = false
     result.setup
 
   proc profileChanged*(self: ProfileInfoView) {.signal.}
@@ -43,6 +45,7 @@ QtObject:
     self.address = profile.address
     self.ensVerified = profile.ensVerified
     self.identityImage = profile.identityImage
+    self.messagesFromContactsOnly = profile.messagesFromContactsOnly
     self.profileChanged()
 
   proc setIdentityImage*(self: ProfileInfoView, identityImage: IdentityImage) =
@@ -68,6 +71,18 @@ QtObject:
     read = appearance
     write = setAppearance
     notify = profileChanged
+
+  proc messagesFromContactsOnly*(self: ProfileInfoView): bool {.slot.} = result = self.messagesFromContactsOnly
+  proc setMessagesFromContactsOnly*(self: ProfileInfoView, messagesFromContactsOnly: bool) {.slot.} =
+    if self.messagesFromContactsOnly == messagesFromContactsOnly:
+      return
+    self.messagesFromContactsOnly = messagesFromContactsOnly
+    self.profileChanged()
+  QtProperty[bool] messagesFromContactsOnly:
+    read = messagesFromContactsOnly
+    write = setMessagesFromContactsOnly
+    notify = profileChanged
+
 
   proc identicon*(self: ProfileInfoView): string {.slot.} = result = self.identicon
   QtProperty[string] identicon:
