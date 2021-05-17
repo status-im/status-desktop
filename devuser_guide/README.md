@@ -1,4 +1,6 @@
 ```bash
 npm install
-hugo server
+npx hugo server
 ```
+
+Navigate to http://localhost:1313
