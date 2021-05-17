@@ -171,6 +171,7 @@ type
     Currency = "currency"
     EtherscanLink = "etherscan-link"
     InstallationId = "installation-id"
+    MessagesFromContactsOnly = "messages-from-contacts-only"
     Mnemonic = "mnemonic"
     Networks_Networks = "networks/networks"
     Networks_CurrentNetwork = "networks/current-network"

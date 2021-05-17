@@ -35,9 +35,10 @@ proc init*(self: ChatController) =
   self.handleSignals()
 
   let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+  let messagesFromContactsOnly = status_settings.getSetting[bool](Setting.MessagesFromContactsOnly, false, true)
 
   self.view.pubKey = pubKey
-  self.status.chat.init(pubKey)
+  self.status.chat.init(pubKey, messagesFromContactsOnly)
   self.status.stickers.init()
   self.view.reactions.init()
 
