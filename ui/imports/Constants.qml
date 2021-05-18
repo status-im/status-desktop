@@ -123,7 +123,7 @@ QtObject {
 
     readonly property string deepLinkPrefix: 'statusim://'
     readonly property string joinStatusLink: 'join.status.im'
-    readonly property string communityLinkPrefix: 'https://join.status.im/cc/'
+    readonly property string communityLinkPrefix: 'https://join.status.im/c/'
     readonly property string userLinkPrefix: 'https://join.status.im/u/'
 
     readonly property int maxUploadFiles: 5
