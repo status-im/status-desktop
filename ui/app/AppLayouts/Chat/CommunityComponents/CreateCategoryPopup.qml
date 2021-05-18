@@ -117,7 +117,7 @@ ModalPopup {
                     channelId: model.id
                     categoryId: model.categoryId
                     checked: popup.isEdit ? channels.indexOf(model.id) > - 1 : false
-                    visible: popup.isEdit ? model.categoryId == popup.categoryId || model.categoryId == "" : model.categoryId == ""
+                    visible: popup.isEdit ? model.categoryId === popup.categoryId || model.categoryId === "" : model.categoryId === ""
                     onItemChecked: function(channelId, itemChecked){
                         var idx = channels.indexOf(channelId)
                         if(itemChecked){
