@@ -104,7 +104,7 @@ proc checkPendingTransactions*(self: WalletModel) =
     let latestBlock = parseInt($fromHex(Stuint[256], response["result"]["number"].getStr))
     let pendingTransactions = status_wallet.getPendingTransactions()
     if (pendingTransactions != ""):
-      self.confirmTransactionStatus(pendingTransactions.parseJson["result"], latestBlock)
+      self.confirmTransactionStatus(pendingTransactions.parseJson{"result"}, latestBlock)
     
 
 proc checkPendingTransactions*(self: WalletModel, address: string, blockNumber: int) =
