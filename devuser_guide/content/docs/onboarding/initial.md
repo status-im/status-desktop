@@ -12,6 +12,8 @@ menu:
 toc: true
 ---
 
+[Dev Docs for this section](/dev_guide/onboarding/initial/)
+
 ## Disclaimer
 
 ![url_bar](/images/onboarding/disclaimer.png)

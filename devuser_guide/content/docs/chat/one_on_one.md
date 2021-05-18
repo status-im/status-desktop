@@ -12,6 +12,8 @@ menu:
 toc: true
 ---
 
+[Dev Docs for this section](/dev_guide/chat/one_on_one/)
+
 ## sending images
 
 Sending images works on 1 on 1 chats (and in Communities), you can send an image by pressing the upload image button or by drag and dropping an image into the chat

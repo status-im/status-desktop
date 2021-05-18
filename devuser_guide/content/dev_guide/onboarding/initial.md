@@ -12,6 +12,8 @@ menu:
 toc: true
 ---
 
+[User Docs for this section](/docs/onboarding/initial/)
+
 ## Disclaimer
 
 key source file: [`ui/onboarding/Intro.qml`](https://github.com/status-im/status-desktop/blob/65a0cfbcd30eb7bde4e24cdb1680b3e03d8b1992/ui/onboarding/Intro.qml#L9)
