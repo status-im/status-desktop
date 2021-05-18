@@ -8,7 +8,6 @@ import "../../../../shared/status"
 
 ModalPopup {
     property string communityId
-    readonly property int maxDescChars: 140
     property string nameValidationError: ""
     property bool isValid: nameInput.isValid 
 
