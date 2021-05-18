@@ -76,7 +76,6 @@ ScrollView {
             }
         }
 
-
         Timer {
             id: timer
         }
