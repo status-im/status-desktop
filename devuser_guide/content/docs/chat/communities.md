@@ -62,6 +62,26 @@ toc: true
 
 ![url_bar](/images/communities/new_channel.png)
 
+### Creating Categories
+
+![url_bar](/images/communities/category_menu.png)
+
+![url_bar](/images/communities/category_popup.png)
+
+![url_bar](/images/communities/category_list.png)
+
+### Editing Categories
+
+![url_bar](/images/communities/category_menu_context.png)
+
+![url_bar](/images/communities/category_popup_edit.png)
+
+### Delete Categories
+
+![url_bar](/images/communities/category_menu_context.png)
+
+![url_bar](/images/communities/category_delete_confirm.png)
+
 ### Transfer ownership
 
 ![url_bar](/images/communities/transfer_ownership.png)

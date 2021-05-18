@@ -135,6 +135,7 @@ ModalPopup {
 
             Separator {
                 id: sep2
+                visible: isEdit
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: communityChannelList.bottom
@@ -145,6 +146,7 @@ ModalPopup {
 
             Item {
                 id: deleteCategory
+                visible: isEdit
                 anchors.top: sep2.bottom
                 anchors.topMargin: Style.current.padding
                 width: deleteBtn.width + deleteTxt.width + Style.current.padding
