@@ -111,7 +111,7 @@ QtObject:
     let pendingTransactions = status_wallet.getPendingTransactions()
     if (pendingTransactions == ""):
       return
-    for trx in pendingTransactions.parseJson["result"].getElems():
+    for trx in pendingTransactions.parseJson{"result"}.getElems():
       if trx["type"].getStr == $PendingTransactionType.RegisterENS:
         self.usernames.add trx["additionalData"].getStr
         self.pendingUsernames.incl trx["additionalData"].getStr

@@ -147,7 +147,7 @@ QtObject:
     let pendingTransactions = status_wallet.getPendingTransactions()
     var pendingStickerPacks = initHashSet[int]()
     if (pendingTransactions != ""):
-      for trx in pendingTransactions.parseJson["result"].getElems():
+      for trx in pendingTransactions.parseJson{"result"}.getElems():
         if trx["type"].getStr == $PendingTransactionType.BuyStickerPack:
           pendingStickerPacks.incl(trx["additionalData"].getStr.parseInt)
 
