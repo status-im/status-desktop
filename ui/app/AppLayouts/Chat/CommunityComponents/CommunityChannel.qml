@@ -15,10 +15,7 @@ Rectangle {
     visible: categoryId == ""
     height: visible ? 52 : 0
     width: 425
-    anchors.right: parent.right
     anchors.left: parent.left
-    anchors.leftMargin: 0
-    anchors.rightMargin: 0
     border.width: 0
     radius: Style.current.radius
     color: isHovered ? Style.current.backgroundHover : Style.current.transparent
