@@ -20,6 +20,8 @@ Item {
     property string address: ""
     property bool resultClickable: true
 
+    property bool isAddedContact: pubKey != "" ? chatsModel.isAddedContact(pubKey) : false
+
     signal resultClicked(string pubKey)
     signal addToContactsButtonClicked(string pubKey)
 
@@ -118,7 +120,7 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
-            visible: !chatsModel.isAddedContact(root.pubKey) && !checkIcon.visible
+            visible: !isAddedContact && !checkIcon.visible
             MouseArea {
                 anchors.fill: parent
                 hoverEnabled: true
@@ -144,7 +146,7 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding * 2
             anchors.verticalCenter: parent.verticalCenter
-            visible: foundContact.hovered && chatsModel.isAddedContact(root.pubKey)
+            visible: foundContact.hovered && isAddedContact
         }
     }
 
