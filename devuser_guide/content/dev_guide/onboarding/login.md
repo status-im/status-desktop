@@ -12,6 +12,8 @@ menu:
 toc: true
 ---
 
+[User Docs for this section](/docs/onboarding/login/)
+
 key source file: [`ui/onboarding/Login.qml`]()
 
 ## login process
