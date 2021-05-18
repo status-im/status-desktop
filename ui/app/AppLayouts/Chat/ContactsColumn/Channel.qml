@@ -43,7 +43,7 @@ Item {
     property string profileImage: realChatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
 
     // Hide the box if it is filtered out
-    property bool isVisible: categoryId == filterCategory && (searchStr === "" || name.includes(searchStr))
+    property bool isVisible: categoryId === filterCategory && (searchStr === "" || name.includes(searchStr))
 
     id: wrapper
     anchors.right: parent.right
