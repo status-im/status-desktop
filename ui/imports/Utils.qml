@@ -373,9 +373,9 @@ QtObject {
         }
 
         // Community
-        index = link.lastIndexOf("/cc/")
+        index = link.lastIndexOf("/c/")
         if (index > -1) {
-            const communityId = link.substring(index + 4)
+            const communityId = link.substring(index + 3)
 
             const communityName = chatsModel.communities.getCommunityNameById(communityId)
 
