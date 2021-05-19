@@ -21,6 +21,7 @@ macro(add_target name type)
         include/DOtherSide/DosQAbstractItemModel.h
         include/DOtherSide/Utils.h
         include/DOtherSide/DosDockClicker.h
+        include/DOtherSide/DOtherSideStatusWindow.h
         src/DOtherSide.cpp
         src/DosQMetaObject.cpp
         src/DosQDeclarative.cpp
@@ -30,7 +31,14 @@ macro(add_target name type)
         src/DosQAbstractItemModel.cpp
         src/DosQQuickImageProvider.cpp
         src/DosDockClicker.cpp
+        src/DOtherSideStatusWindow.cpp
     )
+
+    if (APPLE)
+        target_sources(${name} PUBLIC src/DOtherSideStatusWindow_osx.mm)
+    else()
+        target_sources(${name} PUBLIC ${CMAKE_SOURCE_DIR}/lib/src/DOtherSideStatusWindow_other.cpp)
+    endif()
 
     if (WIN32)
         target_compile_definitions(${name} PRIVATE -DWIN32)
