@@ -58,12 +58,14 @@
 #include "DOtherSide/DosQDeclarative.h"
 #include "DOtherSide/DosQQuickImageProvider.h"
 #include "DOtherSide/DosDockClicker.h"
+#include "DOtherSide/DOtherSideStatusWindow.h"
 
 namespace {
 
 void register_meta_types()
 {
     qRegisterMetaType<QVector<int>>();
+    qmlRegisterType<StatusWindow>("DotherSide", 0 , 1, "StatusWindow");
 }
 
 }
