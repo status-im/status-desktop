@@ -89,7 +89,7 @@ StatusWindow {
 
     //! Workaround for custom QQuickWindow
     Connections {
-        target: applicationWindow
+        target: c
         onClosing: {
             if (loader.sourceComponent == login) {
                 applicationWindow.visible = false;
@@ -106,7 +106,7 @@ StatusWindow {
         }
 
         onActiveChanged: {
-            if (active && currentlyHasANotification) {
+            if (applicationWindow.active && currentlyHasANotification) {
                 currentlyHasANotification = false
                 // QML doesn't have a function to hide notifications, but this does the trick
                 systemTray.hide()
@@ -408,6 +408,15 @@ StatusWindow {
 
     NotificationWindow {
         id: notificationWindow
+    }
+
+    MacTrafficLights {
+        parent: Overlay.overlay
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.margins: 13
+
+        visible: Qt.platform.os === "osx" && !applicationWindow.isFullScreen
     }
 }
 

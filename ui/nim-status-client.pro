@@ -387,6 +387,7 @@ DISTFILES += \
     shared/ImageCropperModal.qml \
     shared/Input.qml \
     shared/LabelValueRow.qml \
+    shared/MacTrafficLights.qml \
     shared/ModalPopup.qml \
     shared/NotificationWindow.qml \
     shared/PopupMenu.qml \
