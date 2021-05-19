@@ -9,13 +9,15 @@ import QtQml 2.13
 import QtQuick.Window 2.0
 import QtQuick.Controls.Universal 2.12
 
+import DotherSide 0.1
+
 import "./onboarding"
 import "./app"
 import "./sounds"
 import "./shared"
 import "./imports"
 
-ApplicationWindow {
+StatusWindow {
     property bool hasAccounts: !!loginModel.rowCount()
     property bool removeMnemonicAfterLogin: false
     property alias dragAndDrop: dragTarget
@@ -85,17 +87,30 @@ ApplicationWindow {
         }
     }
 
-    onClosing: {
-        if (loader.sourceComponent == login) {
-            applicationWindow.visible = false;
-            close.accepted = false;
-        }
-        else if (loader.sourceComponent == app) {
-            if (loader.item.appSettings.quitOnClose) {
-                Qt.quit();
-            } else {
+    //! Workaround for custom QQuickWindow
+    Connections {
+        target: applicationWindow
+        onClosing: {
+            if (loader.sourceComponent == login) {
                 applicationWindow.visible = false;
                 close.accepted = false;
+            }
+            else if (loader.sourceComponent == app) {
+                if (loader.item.appSettings.quitOnClose) {
+                    Qt.quit();
+                } else {
+                    applicationWindow.visible = false;
+                    close.accepted = false;
+                }
+            }
+        }
+
+        onActiveChanged: {
+            if (active && currentlyHasANotification) {
+                currentlyHasANotification = false
+                // QML doesn't have a function to hide notifications, but this does the trick
+                systemTray.hide()
+                systemTray.show()
             }
         }
     }
@@ -110,21 +125,12 @@ ApplicationWindow {
     
     property bool currentlyHasANotification: false
 
-    onActiveChanged: {
-        if (active && currentlyHasANotification) {
-            currentlyHasANotification = false
-            // QML doesn't have a function to hide notifications, but this does the trick
-            systemTray.hide()
-            systemTray.show()
-        }
-    }
-
     SystemTrayIcon {
         id: systemTray
         visible: true
         icon.source: applicationWindow.Universal.theme === Universal.Dark ?
-            "shared/img/status-logo.svg" :
-            "shared/img/status-logo-light-theme.svg";
+                         "shared/img/status-logo.svg" :
+                         "shared/img/status-logo-light-theme.svg";
         menu: Menu {
             MenuItem {
                 visible: !applicationWindow.visible
@@ -135,7 +141,7 @@ ApplicationWindow {
                 }
             }
             
-            MenuSeparator { 
+            MenuSeparator {
                 visible: !applicationWindow.visible
             }
 
@@ -268,21 +274,21 @@ ApplicationWindow {
         readonly property int chatView: Utils.getAppSectionIndex(Constants.chat)
         readonly property int timelineView: Utils.getAppSectionIndex(Constants.timeline)
         property bool enabled: containsDrag && loader.item &&
-            (
-                // in chat view
-                (loader.item.currentView === chatView &&
-                    (
-                        // in a one-to-one chat
-                        chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne ||
-                        // in a private group chat
-                        chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat
-                    )
-                ) ||
-                // in timeline view
-                loader.item.currentView === timelineView ||
-                // In community section
-                chatsModel.communities.activeCommunity.active 
-            )
+                               (
+                                   // in chat view
+                                   (loader.item.currentView === chatView &&
+                                    (
+                                        // in a one-to-one chat
+                                        chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne ||
+                                        // in a private group chat
+                                        chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat
+                                        )
+                                    ) ||
+                                   // in timeline view
+                                   loader.item.currentView === timelineView ||
+                                   // In community section
+                                   chatsModel.communities.activeCommunity.active
+                                   )
 
         width: applicationWindow.width
         height: applicationWindow.height
@@ -292,11 +298,11 @@ ApplicationWindow {
         }
 
         onDropped: (drop) => {
-            if (enabled) {
-                droppedOnValidScreen(drop)
-            }
-            cleanup()
-        }
+                       if (enabled) {
+                           droppedOnValidScreen(drop)
+                       }
+                       cleanup()
+                   }
         onEntered: {
             // needed because drag.urls is not a normal js array
             rptDraggedPreviews.model = drag.urls.filter(img => Utils.hasDragNDropImageExtension(img))
