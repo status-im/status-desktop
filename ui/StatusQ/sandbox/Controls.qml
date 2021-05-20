@@ -85,4 +85,8 @@ GridLayout {
         tooltip.text: "Chat"
         badge.value: 100
     }
+
+    StatusSwitch {
+
+    }
 }

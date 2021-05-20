@@ -8,4 +8,5 @@ StatusButton 0.1 StatusButton.qml
 StatusFlatButton 0.1 StatusFlatButton.qml
 StatusRoundButton 0.1 StatusRoundButton.qml
 StatusFlatRoundButton 0.1 StatusFlatRoundButton.qml
+StatusSwitch 0.1 StatusSwitch.qml
 
