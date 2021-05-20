@@ -1,4 +1,4 @@
-#include "sandboxapp.h"
+#include "statuswindow.h"
 
 #include <QColor>
 
@@ -7,7 +7,7 @@
 #include <AppKit/NSWindow.h>
 #include <AppKit/NSColor.h>
 
-void SandboxApp::removeTitleBar(WId wid)
+void StatusWindow::removeTitleBar(WId wid)
 {
     NSView *nsView = reinterpret_cast<NSView*>(wid);
     NSWindow *window = [nsView window];

@@ -4,6 +4,8 @@
 #include <QWindow>
 #include <QDebug>
 
+#include "statuswindow.h"
+
 SandboxApp::SandboxApp(int &argc, char **argv)
     : QGuiApplication(argc, argv),
       m_handler(new Handler(this))
@@ -13,6 +15,8 @@ SandboxApp::SandboxApp(int &argc, char **argv)
 
 void SandboxApp::startEngine()
 {
+    qmlRegisterType<StatusWindow>("Sandbox", 0, 1, "StatusWindow");
+
     const QUrl url(applicationDirPath() + "/../main.qml");
 
     m_engine.rootContext()->setContextProperty("app", m_handler);
@@ -25,13 +29,6 @@ void SandboxApp::startEngine()
                 QCoreApplication::exit(-1);
         }, Qt::QueuedConnection);
     m_engine.load(url);
-
-    QWindow *rootWindow = qobject_cast<QWindow*>(m_engine.rootObjects().at(0));
-    if (rootWindow) {
-        removeTitleBar(rootWindow->winId());
-    } else {
-        qDebug() << "Window doesn't exist";
-    }
 }
 
 void SandboxApp::restartEngine()

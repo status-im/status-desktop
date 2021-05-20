@@ -13,8 +13,6 @@ public:
 
     void startEngine();
 
-    void removeTitleBar(WId wid);
-
 public slots:
     void restartEngine();
 

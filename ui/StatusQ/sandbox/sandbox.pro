@@ -12,7 +12,7 @@ SOURCES += \
         sandboxapp.cpp
 
 OBJECTIVE_SOURCES += \
-        sandboxapp_mac.mm
+    statuswindow_mac.mm
 
 RESOURCES += qml.qrc
 
@@ -28,7 +28,8 @@ OTHER_FILES += $$files($$PWD/../src/*, true)
 
 HEADERS += \
     handler.h \
-    sandboxapp.h
+    sandboxapp.h \
+    statuswindow.h
 
 DISTFILES += \
     ../src/StatusQ/Controls/StatusBaseButton.qml \

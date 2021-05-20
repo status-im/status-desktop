@@ -2,10 +2,12 @@ import QtQuick 2.14
 import QtQuick.Window 2.14
 import QtQuick.Controls 2.14
 
+import Sandbox 0.1
+
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
-Window {
+StatusWindow {
     id: rootWindow
     width: 1024
     height: 840
