@@ -33,6 +33,7 @@ RadioButton {
     }
     contentItem: StatusBaseText {
         text: statusRadioButton.text
+        color: Theme.palette.directColor1
         verticalAlignment: Text.AlignVCenter
         leftPadding: !!statusRadioButton.text ? statusRadioButton.indicator.width + statusRadioButton.spacing
                                               : statusRadioButton.indicator.width
