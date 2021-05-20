@@ -19,6 +19,14 @@ GridLayout {
     }
 
     StatusIconTabButton {
+        icon.color: Theme.palette.miscColor9
+        // This icon source is flawed and demonstrates the fallback case
+        // when the image source can't be loaded
+        icon.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jp"
+        name: "Pascal"
+    }
+
+    StatusIconTabButton {
         name: "#status"
     }
 
