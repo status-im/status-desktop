@@ -93,4 +93,6 @@ GridLayout {
     StatusRadioButton {
         text: "i'm radio!"
     }
+
+    StatusCheckBox {}
 }

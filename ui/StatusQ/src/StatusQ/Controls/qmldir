@@ -10,3 +10,4 @@ StatusRoundButton 0.1 StatusRoundButton.qml
 StatusFlatRoundButton 0.1 StatusFlatRoundButton.qml
 StatusSwitch 0.1 StatusSwitch.qml
 StatusRadioButton 0.1 StatusRadioButton.qml
+StatusCheckBox 0.1 StatusCheckBox.qml
