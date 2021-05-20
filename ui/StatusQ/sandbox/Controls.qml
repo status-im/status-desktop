@@ -89,4 +89,8 @@ GridLayout {
     StatusSwitch {
 
     }
+
+    StatusRadioButton {
+        text: "i'm radio!"
+    }
 }
