@@ -8,10 +8,9 @@ GridLayout {
     columns: 6
     columnSpacing: 5
     rowSpacing: 5
-    property ThemePalette theme
 
     StatusLoadingIndicator {
-        color: parent.theme.directColor4
+        color: Theme.palette.directColor4
     }
 
     StatusLetterIdenticon {

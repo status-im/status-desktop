@@ -175,7 +175,6 @@ StatusWindow {
         id: controlsComponent
         Controls {
             anchors.centerIn: parent
-            theme: Theme.palette
         }
     }
 
@@ -183,7 +182,6 @@ StatusWindow {
         id: layoutComponent
         Layout {
             anchors.centerIn: parent
-            theme: Theme.palette
         }
     }
 
@@ -191,7 +189,6 @@ StatusWindow {
         id: othersComponent
         Others {
             anchors.centerIn: parent
-            theme: Theme.palette
         }
     }
 

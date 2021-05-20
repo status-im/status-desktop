@@ -9,7 +9,6 @@ GridLayout {
     columns: 6
     columnSpacing: 5
     rowSpacing: 5
-    property ThemePalette theme
 
     StatusIconTabButton {
         icon.name: "chat"
