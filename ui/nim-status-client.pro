@@ -382,6 +382,7 @@ DISTFILES += \
     shared/CropCornerRectangle.qml \
     shared/DelegateModelGeneralized.qml \
     shared/FormGroup.qml \
+    shared/GasSelectorButton.qml \
     shared/IconButton.qml \
     shared/ImageCropper.qml \
     shared/ImageCropperModal.qml \
