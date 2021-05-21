@@ -18,8 +18,6 @@ The wallet model (exposed as `chatsModel`) is used for functions pertaining to c
 
 Methods can be invoked by calling them directly on the `chatsModel`, ie `chatsModel.getOldestMessageTimestamp()`.
 
-
-
 #### `getOldestMessageTimestamp()` : `QVariant<int64>`
 
 Returns the last set UNIX timestamp of the oldest message. See `setLastMessageTimestamp` for logic on how this is determined.
