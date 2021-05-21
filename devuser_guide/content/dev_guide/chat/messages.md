@@ -12,14 +12,32 @@ menu:
 toc: true
 ---
 
-## Normal Messages
-## Stickers
-## Images
-## URL Unfurling
-### Enable Unfurling
-## Reactions
-## Replying to messages
-## profile options
-### view profile
-### send message
+## Receiving messages
 
+key source file: [`src/nim_status_client.nim`](https://github.com/status-im/status-desktop/blob/65a0cfbcd30eb7bde4e24cdb1680b3e03d8b1992/src/nim_status_client.nim#L210)
+
+key source file: [`src/status/signals/core.nim`](https://github.com/status-im/status-desktop/blob/65a0cfbcd30eb7bde4e24cdb1680b3e03d8b1992/src/status/signals/core.nim#L50)
+
+key source file: [`src/status/signals/messages.nim`](https://github.com/status-im/status-desktop/blob/65a0cfbcd30eb7bde4e24cdb1680b3e03d8b1992/src/status/signals/messages.nim#L26)
+
+// TODO: process that adds new messages to the UI
+
+## Normal Messages
+
+## Stickers
+
+## Images
+
+## URL Unfurling
+
+### Enable Unfurling
+
+## Reactions
+
+## Replying to messages
+
+## profile options
+
+### view profile
+
+### send message

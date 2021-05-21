@@ -13,4 +13,5 @@ toc: true
 ---
 
 ## notification types
+
 ## notification settings
