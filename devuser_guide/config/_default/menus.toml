@@ -105,8 +105,8 @@
   weight = 11
 
 [[main]]
-  name = "Blog"
-  url = "/blog/"
+  name = "APIs"
+  url = "/api/"
   weight = 20
 
 [[social]]
