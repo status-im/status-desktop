@@ -70,7 +70,7 @@ StatusWindow {
         width: parent.width
         anchors.top: tabs.bottom
         anchors.bottom: parent.bottom
-        contentHeight: rootWindow.height * rootWindow.factor
+        contentHeight: lightThemeBg.height * rootWindow.factor
         contentWidth: rootWindow.width * rootWindow.factor
         clip: true
 
@@ -79,12 +79,14 @@ StatusWindow {
             id: lightThemeBg
 
             width: rootWindow.width
-            height: parent.height
+            height: page.height + 64
+            anchors.topMargin: 32
             color: Theme.palette.baseColor5
             clip: true
             scale: rootWindow.factor
 
             Loader {
+                id: page
                 active: true
                 anchors.centerIn: parent
 
