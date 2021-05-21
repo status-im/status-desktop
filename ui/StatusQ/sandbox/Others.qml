@@ -34,4 +34,8 @@ GridLayout {
     StatusBadge {
         value: 100
     }
+
+    StatusRoundIcon {
+        icon.name: "info"
+    }
 }
