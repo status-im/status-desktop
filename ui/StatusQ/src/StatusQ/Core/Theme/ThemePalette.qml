@@ -82,6 +82,10 @@ QtObject {
         property color backgroundColor
     }
 
+    property QtObject statusListItem: QtObject {
+        property color backgroundColor
+    }
+
     property QtObject statusBadge: QtObject {
         property color foregroundColor
     }

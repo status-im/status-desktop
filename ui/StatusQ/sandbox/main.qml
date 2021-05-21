@@ -47,6 +47,11 @@ StatusWindow {
             text: "Controls"
         }
         Button {
+            id: listItemsTab
+            checkable: true
+            text: "List Items"
+        }
+        Button {
             id: layoutTab
             checkable: true
             text: "Layout"
@@ -96,6 +101,8 @@ StatusWindow {
                         return iconsComponent;
                     case controlsTab:
                         return controlsComponent;
+                    case listItemsTab:
+                        return listItemsComponent;
                     case layoutTab:
                         return layoutComponent;
                     case otherTab:
@@ -176,6 +183,13 @@ StatusWindow {
     Component {
         id: controlsComponent
         Controls {
+            anchors.centerIn: parent
+        }
+    }
+
+    Component {
+        id: listItemsComponent
+        ListItems {
             anchors.centerIn: parent
         }
     }

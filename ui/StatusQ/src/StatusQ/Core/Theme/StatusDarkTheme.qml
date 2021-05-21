@@ -121,6 +121,10 @@ ThemePalette {
         property color backgroundColor: baseColor5
     }
 
+    property QtObject statusListItem: QtObject {
+        property color backgroundColor: baseColor3
+    }
+
     property QtObject statusBadge: QtObject {
         property color foregroundColor: baseColor3
     }
