@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>QML API on</title><link>https://status-im.github.io/status-desktop/api/qml/</link><description>Recent content in QML API on</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Tue, 06 Oct 2020 08:48:23 +0000</lastBuildDate><atom:link href="https://status-im.github.io/status-desktop/api/qml/index.xml" rel="self" type="application/rss+xml"/><item><title>Chat API</title><link>https://status-im.github.io/status-desktop/api/qml/chat/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/api/qml/chat/</guid><description>The wallet model (exposed as chatsModel) is used for functions pertaining to chatting.
+Methods Methods can be invoked by calling them directly on the chatsModel, ie chatsModel.getOldestMessageTimestamp().
+getOldestMessageTimestamp() : QVariant&amp;lt;int64&amp;gt; Returns the last set UNIX timestamp of the oldest message. See setLastMessageTimestamp for logic on how this is determined.
+WIP
+chatsModel.sendMessage(message: string) - send a message to currently active channel
+chatsModel.joinChat(channel: string, chatTypeInt: int) - join a channel
+chatsModel.groups.join() - confirm joining group</description></item><item><title>Wallet API</title><link>https://status-im.github.io/status-desktop/api/qml/wallet/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/api/qml/wallet/</guid><description>The wallet model (exposed as walletModel) is used for functions pertaining to the wallet and accounts on the node.
+Methods Methods can be invoked by calling them directly on the walletModel, ie walletModel.getSigningPhrase().
+getEtherscanLink() : QVariant&amp;lt;string&amp;gt; Gets the link to Etherscan from the current network settings
+getSigningPhrase() : QVariant&amp;lt;string&amp;gt; Gets the link to Etherscan from the current network settings
+getStatusToken() : string Gets the Status token for the current network (ie SNT for mainnet and STT for Ropsten) and returns a stringified JSON object containing name, symbol, and address for the token.</description></item></channel></rss>

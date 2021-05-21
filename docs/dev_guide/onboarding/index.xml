@@ -8,4 +8,22 @@ The list of accounts is a QAbstrastListModel defined as onboardingModel (/src/ap
 choosing an account key source file: src/app/onboarding/view.nim
 key source file: src/app/onboarding/views/account_info.nim
 key source file: src/status/libstatus/types.nim
-onNextClick(selectedIndex) is defined at GenKey.qml and called in GenKeyModal.qml when an account is selected</description></item><item><title>Initial Screen</title><link>https://status-im.github.io/status-desktop/dev_guide/onboarding/initial/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/dev_guide/onboarding/initial/</guid><description>Disclaimer First Time With Existing Accounts</description></item><item><title>Login</title><link>https://status-im.github.io/status-desktop/dev_guide/onboarding/login/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/dev_guide/onboarding/login/</guid><description>multiple accounts with only 1 account</description></item></channel></rss>
+onNextClick(selectedIndex) is defined at GenKey.qml and called in GenKeyModal.qml when an account is selected</description></item><item><title>Initial Screen</title><link>https://status-im.github.io/status-desktop/dev_guide/onboarding/initial/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/dev_guide/onboarding/initial/</guid><description>User Docs for this section
+Disclaimer key source file: ui/onboarding/Intro.qml
+First Time key source file: ui/onboarding/KeysMain.qml
+key source file: ui/main.qml
+the screens change using applicationWindow.navigateTo(&amp;quot;GenKey&amp;quot;)
+With Existing Accounts see Login</description></item><item><title>Login</title><link>https://status-im.github.io/status-desktop/dev_guide/onboarding/login/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/dev_guide/onboarding/login/</guid><description>User Docs for this section
+key source file: ui/onboarding/Login.qml
+login process key source file: ui/onboarding/Login.qml
+key source file: src/app/login/view.nim
+key source file: src/status/accounts.nim
+key source file: src/status/libstatus/accounts.nim
+The view will call loginModel.login(password), the account to login is previously set by calling loginModel.setCurrentAccount(index)
+multiple accounts key source file: ui/onboarding/Login.qml
+key source file: ui/onboarding/Login/SelectAnotherAccountModal.qml
+key source file: ui/onboarding/Login/SelectAnotherAccountModal.qml
+key source file: src/app/login/view.nim
+key source file: src/app/login/core.nim
+key source file: src/status/accounts.nim
+key source file: src/status/libstatus/accounts.</description></item></channel></rss>
