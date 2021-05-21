@@ -105,9 +105,27 @@
   weight = 11
 
 [[main]]
-  name = "APIs"
-  url = "/api/"
+  name = "Architecture & APIs"
+  url = "/api/intro/intro"
   weight = 20
+
+[[api]]
+  name = "Intro"
+  identifier = "intro"
+  url = "/api/qml"
+  weight = 10
+
+[[api]]
+  name = "Architecture & Development"
+  identifier = "architecture_development"
+  url = "/api/architecture_development"
+  weight = 20
+
+[[api]]
+  name = "QML"
+  identifier = "qml"
+  url = "/api/qml"
+  weight = 30
 
 [[social]]
   name = "Twitter"
