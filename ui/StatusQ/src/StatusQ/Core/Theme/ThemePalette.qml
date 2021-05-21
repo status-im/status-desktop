@@ -82,6 +82,10 @@ QtObject {
         property color backgroundColor
     }
 
+    property QtObject statusBadge: QtObject {
+        property color foregroundColor
+    }
+
     function alphaColor(color, alpha) {
         let actualColor = Qt.darker(color, 1)
         actualColor.a = alpha

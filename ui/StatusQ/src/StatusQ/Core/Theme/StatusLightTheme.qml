@@ -120,5 +120,9 @@ ThemePalette {
     property QtObject statusAppNavBar: QtObject {
         property color backgroundColor: baseColor4
     }
+
+    property QtObject statusBadge: QtObject {
+        property color foregroundColor: white
+    }
 }
 
