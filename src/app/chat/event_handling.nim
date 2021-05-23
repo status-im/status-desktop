@@ -125,31 +125,20 @@ proc handleChatEvents(self: ChatController) =
 
 proc handleMailserverEvents(self: ChatController) =
   let mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
-
-  self.status.events.on("mailserverTopics") do(e: Args):
-    var topics = TopicArgs(e).topics
-    for topic in topics:
-      topic.lastRequest = times.toUnix(times.getTime())
-      let task = AddMailserverTopicTaskArg(
-        `method`: "addMailserverTopic",
-        topic: topic
-      )
-      mailserverWorker.start(task)
-
+  # TODO: test mailserver topics when joining chat
+  
+  self.status.events.on("channelJoined") do(e:Args):
     let task = IsActiveMailserverAvailableTaskArg(
       `method`: "isActiveMailserverAvailable",
       vptr: cast[ByteAddress](self.view.vptr),
-      slot: "isActiveMailserverResult",
-      topics: topics
+      slot: "isActiveMailserverResult"
     )
     mailserverWorker.start(task)
-
   self.status.events.on("mailserverAvailable") do(e:Args):
-    discard status_mailservers.requestAllHistoricMessages()
-    let task = GetMailserverTopicsTaskArg(
-      `method`: "getMailserverTopics",
+    let task = RequestMessagesTaskArg(
+      `method`: "requestMessages",
       vptr: cast[ByteAddress](self.view.vptr),
-      slot: "getMailserverTopicsResult"
+      slot: "requestAllHistoricMessagesResult"
     )
     mailserverWorker.start(task)
     

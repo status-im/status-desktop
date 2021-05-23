@@ -41,8 +41,6 @@ type
   CommunityActiveChangedArgs* = ref object of Args
     active*: bool
 
-  TopicArgs* = ref object of Args
-    topics*: seq[MailserverTopic]
 
   MsgsLoadedArgs* = ref object of Args
     messages*: seq[Message]
@@ -130,23 +128,6 @@ proc getActiveChannel*(self: ChatModel): string =
 
 proc emitTopicAndJoin(self: ChatModel, chat: Chat) =
   let filterResult = status_chat.loadFilters(@[status_chat.buildFilter(chat)])
-  var topics:seq[MailserverTopic] = @[]
-  let parsedResult = parseJson(filterResult)["result"]
-  for topicObj in parsedResult:
-    if ($topicObj["chatId"].getStr == chat.id):
-      topics.add(MailserverTopic(
-        topic: $topicObj["topic"].getStr,
-        discovery: topicObj["discovery"].getBool,
-        negotiated: topicObj["negotiated"].getBool,
-        chatIds: @[chat.id],
-        lastRequest: 1
-      ))
-
-  if (topics.len == 0): 
-    warn "No topics found for chats. Cannot load past messages"
-  else:
-    self.events.emit("mailserverTopics", TopicArgs(topics: topics));
-
   self.events.emit("channelJoined", ChannelArgs(chat: chat))
 
 
@@ -234,30 +215,10 @@ proc init*(self: ChatModel, pubKey: string) =
 
   self.events.emit("chatsLoaded", ChatArgs(chats: chatList))
 
-  var topics:seq[MailserverTopic] = @[]
-  let parsedResult = parseJson(filterResult)["result"]
-  for filter in parsedResult:
-    # Only add topics for chats the user has joined
-    let topic_chat = filter["chatId"].getStr
-    let identity = filter["identity"].getStr
-    let chatId = if self.channels.hasKey(topic_chat): topic_chat else: "0x" & identity
 
-    if self.channels.hasKey(chatId) and self.channels[chatId].isActive:
-      topics.add(MailserverTopic(
-        topic: $filter["topic"].getStr,
-        discovery: filter["discovery"].getBool,
-        negotiated: filter["negotiated"].getBool,
-        chatIds: @[chatId],
-        lastRequest: 1
-      ))
-
-  if (topics.len == 0): 
-    warn "No topics found for chats. Cannot load past messages"
-  else:
-    self.events.once("mailserverAvailable") do(a: Args):
-      self.mailserverReady = true
-      self.requestMissingCommunityInfos()
-      self.events.emit("mailserverTopics", TopicArgs(topics: topics));
+  self.events.once("mailserverAvailable") do(a: Args):
+    self.mailserverReady = true
+    self.requestMissingCommunityInfos()
 
   self.events.on("contactUpdate") do(a: Args):
     var evArgs = ContactUpdateArgs(a)
@@ -272,7 +233,6 @@ proc leave*(self: ChatModel, chatId: string) =
 
   discard status_chat.deactivateChat(self.channels[chatId])
 
-  # TODO: REMOVE MAILSERVER TOPIC
   self.channels.del(chatId)
   discard status_chat.clearChatHistory(chatId)
   self.events.emit("channelLeft", ChatIdArg(chatId: chatId))
