@@ -345,6 +345,12 @@ ScrollView {
                 }
                 return -1;
             }
+            nextMessageIndex: {
+                if (msgDelegate.DelegateModel.itemsIndex <= 1) {
+                    return -1
+                }
+                return messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index
+            }
             scrollToBottom: chatLogView.scrollToBottom
             timeout: model.timeout
         }

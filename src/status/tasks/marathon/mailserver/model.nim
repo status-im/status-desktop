@@ -36,7 +36,6 @@ type
     events*: MailserverEvents
     nodes*: Table[string, MailserverStatus]
     activeMailserver*: string
-    topics*: HashSet[string]
     lastConnectionAttempt*: float
     fleet*: FleetModel
 
@@ -101,12 +100,11 @@ proc connect(self: MailserverModel, enode: string) =
   # Connected
 
   if self.nodes.hasKey(enode) and self.nodes[enode] == MailserverStatus.Connected:
-    status_mailservers.update(enode)
     connected = true
   else:
     # Attempt to connect to mailserver by adding it as a peer
+    status_mailservers.update(enode)
     self.nodes[enode] = MailserverStatus.Connecting
-    addPeer(enode)
     self.lastConnectionAttempt = cpuTime()
 
   if connected:
@@ -118,6 +116,7 @@ proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
   # change the status of the nodes the app is connected to
   # Connected / Disconnected and emit peerConnected / peerDisconnected
   # events.
+
   var mailserverAvailable = false
   for knownPeer in self.nodes.keys:
     if not peers.contains(knownPeer) and self.nodes[knownPeer] != MailserverStatus.Disconnected: 
@@ -139,59 +138,17 @@ proc peerSummaryChange*(self: MailserverModel, peers: seq[string]) =
         if self.activeMailserver == peer:
           mailserverAvailable = true
       
-      status_mailservers.update(peer)
-
   if mailserverAvailable:
     debug "Mailserver available"
     self.events.emit("mailserverAvailable", MailserverArgs())
 
-proc requestMessages*(self: MailserverModel, topics: seq[string], fromValue: int64 = 0, toValue: int64 = 0, force: bool = false) =
+proc requestMessages*(self: MailserverModel) =
   debug "Requesting messages from", mailserver=self.activeMailserver
-  let generatedSymKey = status_chat.generateSymKeyFromPassword()
-  status_mailservers.requestMessages(topics, generatedSymKey, self.activeMailserver, 1000, fromValue, toValue, force)
+  discard status_mailservers.requestAllHistoricMessages()
 
-proc getMailserverTopics*(self: MailserverModel): seq[MailserverTopic] =
-  let response = status_mailservers.getMailserverTopics()
-  let topics = parseJson(response)["result"]
-  var newTopic: MailserverTopic
-  result = @[]
-  if topics.kind != JNull:
-    for topic in topics:
-      newTopic = MailserverTopic(
-        topic: topic["topic"].getStr,
-        discovery: topic["discovery?"].getBool,
-        negotiated: topic["negotiated?"].getBool,
-        lastRequest: topic["last-request"].getInt
-      )
-      if (topic["chat-ids"].kind != JNull):
-        newTopic.chatIds = topic["chat-ids"].to(seq[string])
-
-      result.add(newTopic)
-
-proc getMailserverTopicsByChatIds*(self: MailserverModel, chatIds: seq[string]): seq[MailServerTopic] =
-  var topics: seq[MailserverTopic] = @[]
-  for chatId in chatIds:
-    let filtered = self.getMailserverTopics().filter(topic => topic.chatIds.contains(chatId))
-    topics = topics.concat(filtered)
-  result = topics
-
-proc getMailserverTopicsByChatId*(self: MailserverModel, chatId: string): seq[MailServerTopic] =
-  result = self.getMailserverTopics()
-      .filter(topic => topic.chatIds.contains(chatId))
-
-proc addMailserverTopic*(self: MailserverModel, topic: MailserverTopic) =
-  discard status_mailservers.addMailserverTopic(topic)
-
-proc deleteMailserverTopic*(self: MailserverModel, chatId: string) =
-  var topics = self.getMailserverTopicsByChatId(chatId)
-  if topics.len == 0:
-    return
-
-  var topic:MailserverTopic = topics[0]
-  if(topic.chatIds.len > 1):
-    discard status_mailservers.addMailserverTopic(topic)
-  else:
-    discard status_mailservers.deleteMailserverTopic(topic.topic)
+proc requestMoreMessages*(self: MailserverModel, chatId: string) =
+  debug "Requesting more messages from", mailserver=self.activeMailserver, chatId=chatId
+  discard status_mailservers.syncChatFromSyncedFrom(chatId)
 
 proc findNewMailserver(self: MailserverModel) =
   warn "Finding a new mailserver..."

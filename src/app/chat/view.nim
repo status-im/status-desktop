@@ -116,7 +116,6 @@ QtObject:
       channelOpenTime*: Table[string, int64]
       connected: bool
       unreadMessageCnt: int
-      oldestMessageTimestamp: int64
       loadingMessages: bool
       timelineChat: Chat
       pubKey*: string
@@ -192,39 +191,6 @@ QtObject:
       self.communities.activeCommunity.chats.updateChat(channel)
     else:
       self.chats.updateChat(channel)
-
-  proc oldestMessageTimestampChanged*(self: ChatsView) {.signal.}
-
-  proc getOldestMessageTimestamp*(self: ChatsView): QVariant {.slot.}  =
-    newQVariant($self.oldestMessageTimestamp)
-
-  QtProperty[QVariant] oldestMsgTimestamp:
-    read = getOldestMessageTimestamp
-    notify = oldestMessageTimestampChanged
-
-  proc setLastMessageTimestamp*(self: ChatsView, force = false) = 
-    if self.status.chat.lastMessageTimestamps.hasKey(self.activeChannel.id):
-      if force or self.status.chat.lastMessageTimestamps[self.activeChannel.id] <= self.oldestMessageTimestamp:
-        self.oldestMessageTimestamp = self.status.chat.lastMessageTimestamps[self.activeChannel.id]
-        self.oldestMessageTimestampChanged()
-    else:
-      let
-        mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
-        task = GetMailserverTopicsByChatIdTaskArg(
-          `method`: "getMailserverTopicsByChatId",
-          vptr: cast[ByteAddress](self.vptr),
-          slot: "getMailserverTopicsByChatIdResult",
-          chatId: self.activeChannel.id
-        )
-      mailserverWorker.start(task)
-
-  proc getMailserverTopicsByChatIdResult(self: ChatsView, topicsEncoded: string) {.slot.} =
-    let topicsTuple = decode[tuple[topics: seq[MailserverTopic], fetchRange: int]](topicsEncoded)
-    if topicsTuple.topics.len > 0:
-      self.oldestMessageTimestamp = topicsTuple.topics[0].lastRequest
-    else:
-      self.oldestMessageTimestamp = times.toUnix(times.getTime())
-    self.oldestMessageTimestampChanged()
 
   proc getChatsList(self: ChatsView): QVariant {.slot.} =
     newQVariant(self.chats)
@@ -417,7 +383,6 @@ QtObject:
     self.activeChannel.setChatItem(selectedChannel)
     
     discard self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
-    self.setLastMessageTimestamp(true)
     self.activeChannelChanged()
 
   proc getActiveChannel*(self: ChatsView): QVariant {.slot.} =
@@ -607,8 +572,6 @@ QtObject:
     trace "Loading more messages", chaId = self.activeChannel.id
     self.status.chat.chatMessages(self.activeChannel.id, false)
     self.status.chat.chatReactions(self.activeChannel.id, false)
-    if self.status.chat.msgCursor[self.activeChannel.id] == "":
-      self.setLastMessageTimestamp()
     self.messagesLoaded();
 
   proc loadMoreMessagesWithIndex*(self: ChatsView, channelIndex: int) {.slot.} =
@@ -618,7 +581,6 @@ QtObject:
     trace "Loading more messages", chaId = selectedChannel.id
     self.status.chat.chatMessages(selectedChannel.id, false)
     self.status.chat.chatReactions(selectedChannel.id, false)
-    self.setLastMessageTimestamp()
     self.messagesLoaded();
 
   proc loadingMessagesChanged*(self: ChatsView, value: bool) {.signal.}
@@ -653,56 +615,15 @@ QtObject:
     write = setLoadingMessages
     notify = loadingMessagesChanged
 
-  proc getMailserverTopicsByChatIdResult2(self: ChatsView, topicsEncoded: string) {.slot.} =
-    let
-      topicsTuple = decode[tuple[topics: seq[MailserverTopic], fetchRange: int]](topicsEncoded)
-      currentOldestMessageTimestamp = self.oldestMessageTimestamp
-    self.oldestMessageTimestamp = self.oldestMessageTimestamp - topicsTuple.fetchRange
-
-    let
-      mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
-      task = RequestMessagesTaskArg(
-        `method`: "requestMessages",
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "requestMessagesResult",
-        topics: topicsTuple.topics.map(topic => topic.topic),
-        fromValue: self.oldestMessageTimestamp,
-        toValue: currentOldestMessageTimestamp,
-        force: true
-      )
-    mailserverWorker.start(task)
-
   proc requestMoreMessages*(self: ChatsView, fetchRange: int) {.slot.} =
     self.loadingMessages = true
     self.loadingMessagesChanged(true)
     let mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
-
-    if(self.activeChannel.isTimelineChat):
-      var chatIds: seq[string] = @[]
-      for contact in self.status.contacts.getContacts():
-        chatIds.add(getTimelineChatId(contact.id))
-
-      let task = GetMailserverTopicsByChatIdsTaskArg(
-        `method`: "getMailserverTopicsByChatIds",
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "getMailserverTopicsByChatIdResult2",
-        chatIds: chatIds,
-        fetchRange: fetchRange
-      )
-      mailserverWorker.start(task)
-    else:
-      let task = GetMailserverTopicsByChatIdTaskArg(
-        `method`: "getMailserverTopicsByChatId",
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "getMailserverTopicsByChatIdResult2",
-        chatId: self.activeChannel.id,
-        fetchRange: fetchRange
-      )
-      mailserverWorker.start(task)
-
-  proc requestMessagesResult(self: ChatsView, resultEncoded: string) {.slot.} =
-    self.oldestMessageTimestampChanged()
-    self.messagesLoaded();
+    let task = RequestMessagesTaskArg(
+      `method`: "requestMoreMessages",
+      chatId: self.activeChannel.id
+    )
+    mailserverWorker.start(task)
 
   proc leaveChatByIndex*(self: ChatsView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
@@ -711,14 +632,6 @@ QtObject:
     if (self.activeChannel.id == selectedChannel.id):
       self.activeChannel.chatItem = nil
     self.status.chat.leave(selectedChannel.id)
-    let
-      mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
-      task = DeleteMailserverTopicTaskArg(
-        `method`: "deleteMailserverTopic",
-        chatId: selectedChannel.id
-      )
-    mailserverWorker.start(task)
-
 
   proc fillGaps*(self: ChatsView, messageId: string) {.slot.} =
     self.loadingMessages = true
@@ -727,13 +640,6 @@ QtObject:
 
   proc leaveActiveChat*(self: ChatsView) {.slot.} =
     self.status.chat.leave(self.activeChannel.id)
-    let
-      mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
-      task = DeleteMailserverTopicTaskArg(
-        `method`: "deleteMailserverTopic",
-        chatId: self.activeChannel.id
-      )
-    mailserverWorker.start(task)
 
   proc removeChat*(self: ChatsView, chatId: string) =
     discard self.chats.removeChatItemFromList(chatId)
@@ -930,34 +836,16 @@ QtObject:
     return idx
 
   proc isActiveMailserverResult(self: ChatsView, resultEncoded: string) {.slot.} =
-    let arg = decode[tuple[isActiveMailserverAvailable: bool, topics: seq[MailserverTopic]]](resultEncoded)
-
-    if arg.isActiveMailserverAvailable:
+    let isActiveMailserverAvailable = decode[bool](resultEncoded)
+    if isActiveMailserverAvailable:
       self.setLoadingMessages(true)
       let
         mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
-        task = RequestMessagesTaskArg(
-          `method`: "requestMessages",
-          topics: arg.topics.map(t => t.topic)
-        )
+        task = RequestMessagesTaskArg(`method`: "requestMessages")
       mailserverWorker.start(task)
 
-  proc getMailserverTopicsResult(self: ChatsView, resultEncoded: string) {.slot.} =
-    let mailserverTopics = decode[seq[MailserverTopic]](resultEncoded)
-    var fromValue = times.toUnix(times.getTime()) - 86400 # today - 24 hours
-
-    if mailserverTopics.len > 0:
-      fromValue = min(mailserverTopics.map(topic => topic.lastRequest))
-    
+  proc requestAllHistoricMessagesResult(self: ChatsView, resultEncoded: string) {.slot.} =
     self.setLoadingMessages(true)
-    let
-      mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
-      task = RequestMessagesTaskArg(
-        `method`: "requestMessages",
-        topics: mailserverTopics.map(t => t.topic),
-        fromValue: fromValue
-      )
-    mailserverWorker.start(task)
 
   proc formatInputStuff(self: ChatsView, regex: Regex, inputText: string): string =
     var matches: seq[tuple[first, last: int]] = @[(-1, 0)]

@@ -1,5 +1,7 @@
 import QtQuick 2.13
 import "../../../../shared"
+import "../../../../shared/status"
+import "../../../../shared/status/core"
 import "../../../../imports"
 import "./MessageComponents"
 import "../components"
@@ -22,6 +24,7 @@ Item {
     property string messageId: ""
     property string emojiReactions: ""
     property int prevMessageIndex: -1
+    property int nextMessageIndex: -1
     property bool timeout: false
     property bool hasMention: false
     property string linkUrls: ""
@@ -51,6 +54,8 @@ Item {
     property string authorPrevMsg: "authorPrevMsg"
 
     property string prevMsgTimestamp: chatsModel.messageList.getMessageData(prevMessageIndex, "timestamp")
+    property string nextMsgTimestamp: chatsModel.messageList.getMessageData(nextMessageIndex, "timestamp")
+
     property bool shouldRepeatHeader: ((parseInt(timestamp, 10) - parseInt(prevMsgTimestamp, 10)) / 60 / 1000) > Constants.repeatHeaderInterval
 
     property bool isEmoji: contentType === Constants.emojiType
@@ -181,16 +186,6 @@ Item {
     }
 
     Loader {
-        active: {
-            if (contentType === Constants.fetchMoreMessagesButton) {
-                const gapNowAndOldestTimestamp = Date.now() / 1000 - chatsModel.oldestMsgTimestamp
-                return gapNowAndOldestTimestamp < Constants.maxNbDaysToFetch * Constants.fetchRangeLast24Hours &&
-                        (chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember)
-            }
-
-            return true
-        }
-
         width: parent.width
         sourceComponent: {
             switch(contentType) {
@@ -272,6 +267,20 @@ Item {
             Separator {
                 id: sep1
             }
+
+             Loader {
+                id: fetchLoaderIndicator
+                anchors.top: sep1.bottom
+                anchors.topMargin: Style.current.padding
+                anchors.left: parent.left
+                anchors.right: parent.right
+                active: false
+                sourceComponent: StatusLoadingIndicator {
+                    width: 12
+                    height: 12
+                }
+             }
+            
             StyledText {
                 id: fetchMoreButton
                 font.weight: Font.Medium
@@ -288,8 +297,14 @@ Item {
                     anchors.fill: parent
                     onClicked: {
                         chatsModel.requestMoreMessages(Constants.fetchRangeLast24Hours);
+                        fetchLoaderIndicator.active = true;
+                        fetchMoreButton.visible = false;
+                        fetchDate.visible = false;
                         timer.setTimeout(function(){
-                            chatsModel.hideLoadingIndicator()
+                            chatsModel.hideLoadingIndicator();
+                            fetchLoaderIndicator.active = false;
+                            fetchMoreButton.visible = true;
+                            fetchDate.visible = true;
                         }, 3000);
                     }
                 }
@@ -302,7 +317,7 @@ Item {
                 horizontalAlignment: Text.AlignHCenter
                 color: Style.current.secondaryText
                 //% "before %1"
-                text: qsTrId("before--1").arg(new Date(chatsModel.oldestMsgTimestamp*1000).toDateString())
+                text: qsTrId("before--1").arg((nextMessageIndex > -1 ? new Date(nextMsgTimestamp * 1) : new Date()).toLocaleString(Qt.locale(globalSettings.locale)))
             }
             Separator {
                 anchors.top: fetchDate.bottom

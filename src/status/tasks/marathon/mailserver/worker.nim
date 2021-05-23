@@ -19,17 +19,11 @@ type
   MailserverWorker* = ref object of MarathonWorker
 
   # below are all custom marathon task arg definitions
-  GetMailserverTopicsTaskArg* = ref object of MarathonTaskArg
   IsActiveMailserverAvailableTaskArg* = ref object of MarathonTaskArg
-    topics*: seq[MailserverTopic]
   GetActiveMailserverTaskArg* = ref object of MarathonTaskArg
   RequestMessagesTaskArg* = ref object of MarathonTaskArg
-    topics*: seq[string]
-    fromValue*: int64
-    toValue*: int64
-    force*: bool
+    chatId*: string
   AddMailserverTopicTaskArg* = ref object of MarathonTaskArg
-    topic*: MailserverTopic
   PeerSummaryChangeTaskArg* = ref object of MarathonTaskArg
     peers*: seq[string]
   GetMailserverTopicsByChatIdTaskArg* = ref object of MarathonTaskArg
@@ -38,8 +32,7 @@ type
   GetMailserverTopicsByChatIdsTaskArg* = ref object of MarathonTaskArg
     chatIds*: seq[string]
     fetchRange*: int
-  DeleteMailserverTopicTaskArg* = ref object of MarathonTaskArg
-    chatId*: string
+
 
 const
   WORKER_NAME = "mailserver"
@@ -85,22 +78,24 @@ proc processMessage(mailserverModel: MailserverModel, received: string) =
   trace "initiating mailserver task", methodName=methodName, messageType=messageType
 
   case methodName
-  of "getMailserverTopics":
-    let
-      taskArg = decode[GetMailserverTopicsTaskArg](received)
-      output = mailserverModel.getMailserverTopics()
-    taskArg.finish(output)
+  of "requestAllHistoricMessages":
+    let taskArg = decode[RequestMessagesTaskArg](received)
+    mailserverModel.requestMessages()
+    taskArg.finish("") # TODO:
 
   of "isActiveMailserverAvailable":
     let
       taskArg = decode[IsActiveMailserverAvailableTaskArg](received)
       output = mailserverModel.isActiveMailserverAvailable()
-      payload: tuple[isActiveMailserverAvailable: bool, topics: seq[MailserverTopic]] = (output, taskArg.topics)
-    taskArg.finish(payload)
+    taskArg.finish(output)
 
   of "requestMessages":
     let taskArg = decode[RequestMessagesTaskArg](received)
-    mailserverModel.requestMessages(taskArg.topics, taskArg.fromValue, taskArg.toValue, taskArg.force)
+    mailserverModel.requestMessages()
+
+  of "requestMoreMessages":
+    let taskArg = decode[RequestMessagesTaskArg](received)
+    mailserverModel.requestMoreMessages(taskArg.chatId)
 
   of "getActiveMailserver":
     let
@@ -108,31 +103,9 @@ proc processMessage(mailserverModel: MailserverModel, received: string) =
       output = mailserverModel.getActiveMailserver()
     taskArg.finish(output)
 
-  of "getMailserverTopicsByChatId":
-    let
-      taskArg = decode[GetMailserverTopicsByChatIdTaskArg](received)
-      output = mailserverModel.getMailserverTopicsByChatId(taskArg.chatId)
-      payload: tuple[topics: seq[MailserverTopic], fetchRange: int] = (output, taskArg.fetchRange)
-    taskArg.finish(payload)
-
-  of "getMailserverTopicsByChatIds":
-    let
-      taskArg = decode[GetMailserverTopicsByChatIdsTaskArg](received)
-      output = mailserverModel.getMailserverTopicsByChatIds(taskArg.chatIds)
-      payload: tuple[topics: seq[MailserverTopic], fetchRange: int] = (output, taskArg.fetchRange)
-    taskArg.finish(payload)
-
-  of "addMailserverTopic":
-    let taskArg = decode[AddMailserverTopicTaskArg](received)
-    mailserverModel.addMailserverTopic(taskArg.topic)
-
   of "peerSummaryChange":
     let taskArg = decode[PeerSummaryChangeTaskArg](received)
     mailserverModel.peerSummaryChange(taskArg.peers)
-
-  of "deleteMailserverTopic":
-    let taskArg = decode[DeleteMailserverTopicTaskArg](received)
-    mailserverModel.deleteMailserverTopic(taskArg.chatId)
 
   else:
     error "unknown message", message=received
