@@ -44,6 +44,7 @@ Column {
                     font.weight: Font.Medium
                     font.pixelSize: 15
                     anchors.left: parent.left
+                    anchors.right: parent.right
                     anchors.leftMargin: Style.current.halfPadding
                     anchors.verticalCenter: parent.verticalCenter
                 }
