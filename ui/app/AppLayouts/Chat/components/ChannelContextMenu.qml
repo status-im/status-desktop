@@ -97,7 +97,7 @@ PopupMenu {
             chatsModel.markAllChannelMessagesReadByIndex(channelContextMenu.channelIndex)
         }
     }
-    FetchMoreMessages {}
+    // FetchMoreMessages {}  // TODO: disabling it temporarily because wakuext_syncChatFromSyncedFrom does not support specifying a date range
     Action {
         //% "Clear History"
         text: qsTrId("clear-history")
