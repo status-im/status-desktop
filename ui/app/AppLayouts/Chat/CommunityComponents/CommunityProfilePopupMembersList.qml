@@ -152,6 +152,7 @@ Item {
                         /* } */
                         Separator {
                             height: 10
+                            visible: chatsModel.communities.activeCommunity.admin
                         }
                         Action {
                             property string type: "danger"
@@ -161,6 +162,7 @@ Item {
                             icon.color: Style.current.red
                             //% "Kick"
                             text: qsTrId("kick")
+                            enabled: chatsModel.communities.activeCommunity.admin
                             onTriggered: chatsModel.communities.removeUserFromCommunity(model.pubKey)
                         }
                         Action {
@@ -171,6 +173,7 @@ Item {
                             icon.color: Style.current.red
                             //% "Ban"
                             text: qsTrId("ban")
+                            enabled: chatsModel.communities.activeCommunity.admin
                             onTriggered: chatsModel.communities.banUserFromCommunity(model.pubKey, chatsModel.communities.activeCommunity.id)
                         }
                         /* Separator {} */

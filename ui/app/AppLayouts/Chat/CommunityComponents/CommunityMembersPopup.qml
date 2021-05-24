@@ -155,9 +155,12 @@ ModalPopup {
                             icon.height: 16
                             //% "Roles"
                             text: qsTrId("roles")
+                            enabled: chatsModel.communities.activeCommunity.admin
                             onTriggered: console.log("TODO")
                         }
-                        Separator {}
+                        Separator {
+                            visible: chatsModel.communities.activeCommunity.admin
+                        }
                         Action {
                             icon.source: "../../../img/communities/menu/kick.svg"
                             icon.width: 16
@@ -165,6 +168,7 @@ ModalPopup {
                             icon.color: Style.current.red
                             //% "Kick"
                             text: qsTrId("kick")
+                            enabled: chatsModel.communities.activeCommunity.admin
                             onTriggered: chatsModel.communities.removeUserFromCommunity(model.pubKey)
                         }
                         Action {
@@ -174,9 +178,12 @@ ModalPopup {
                             icon.color: Style.current.red
                             //% "Ban"
                             text: qsTrId("ban")
+                            enabled: chatsModel.communities.activeCommunity.admin
                             onTriggered: console.log("TODO")
                         }
-                        Separator {}
+                        Separator {
+                            visible: chatsModel.communities.activeCommunity.admin
+                        }
                         Action {
                             icon.source: "../../../img/communities/menu/transfer-ownership.svg"
                             icon.width: 16
@@ -184,6 +191,7 @@ ModalPopup {
                             icon.color: Style.current.red
                             //% "Transfer ownership"
                             text: qsTrId("transfer-ownership")
+                            enabled: chatsModel.communities.activeCommunity.admin
                             onTriggered: console.log("TODO")
                         }
                     }
