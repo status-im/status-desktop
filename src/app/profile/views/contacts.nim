@@ -168,7 +168,7 @@ QtObject:
     var nicknameToSet = nickname
     if (nicknameToSet == ""):
       nicknameToSet = DELETE_CONTACT
-    discard self.status.contacts.addContact(publicKey, nicknameToSet)
+    discard self.status.contacts.setNickName(publicKey, nicknameToSet)
 
   proc unblockContact*(self: ContactsView, publicKey: string) {.slot.} =
     self.contactListChanged()
