@@ -274,6 +274,9 @@ RowLayout {
         id: editCommunityPopup
         CreateCommunityPopup {
             isEdit: true
+            onClosed: {
+                destroy()
+            }
         }
     }
 

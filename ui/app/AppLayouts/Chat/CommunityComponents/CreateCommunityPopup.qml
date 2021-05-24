@@ -24,6 +24,11 @@ ModalPopup {
         if (isEdit) {
             nameInput.text = community.name;
             descriptionTextArea.text = community.description;
+            colorPicker.defaultColor = community.communityColor;
+            if (community.largeImage) {
+                addImageButton.selectedImage = community.largeImage
+            }
+            membershipRequirementSettingPopup.checkedMembership = community.access
         }
         nameInput.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -279,7 +284,7 @@ ModalPopup {
             }
 
             Input {
-                property string defaultColor: "#4360DF"
+                property string defaultColor: Style.current.blue
                 property bool isValid: true
 
                 id: colorPicker
@@ -348,9 +353,9 @@ ModalPopup {
                 text: qsTr("Membership requirement")
                 currentValue: {
                     switch (membershipRequirementSettingPopup.checkedMembership) {
-                    case Constants.communityChatInvitationOnlyAccess: return qsTr("Require invite from another member")
-                    case Constants.communityChatOnRequestAccess: return qsTr("Require approval")
-                    default: return qsTr("No requirement")
+                        case Constants.communityChatInvitationOnlyAccess: return qsTr("Require invite from another member")
+                        case Constants.communityChatOnRequestAccess: return qsTr("Require approval")
+                        default: return qsTr("No requirement")
                     }
                 }
                 onClicked: {
@@ -418,49 +423,78 @@ ModalPopup {
         }
     }
 
-    footer: StatusButton {
-        text: isEdit ?
-              //% "Edit"
-              qsTrId("edit") :
-              //% "Create"
-              qsTrId("create")
+    footer: Item {
+        anchors.left: parent.left
         anchors.right: parent.right
-        onClicked: {
-            if (!validate()) {
-                scrollView.scrollBackUp()
-                return
-            }
+        anchors.bottom: parent.bottom
+        height: btnCreateEdit.height
 
-            let error = false;
-            if(isEdit) {
-                console.log("TODO: implement this (not available in status-go yet)");
-            } else {
-                error = chatsModel.communities.createCommunity(Utils.filterXSS(nameInput.text),
-                                                   Utils.filterXSS(descriptionTextArea.text),
-                                                   membershipRequirementSettingPopup.checkedMembership,
-                                                   false, // ensOnlySwitch.switchChecked, // TODO:
-                                                   colorPicker.text,
-                                                   addImageButton.selectedImage,
-                                                   imageCropperModal.aX,
-                                                   imageCropperModal.aY,
-                                                   imageCropperModal.bX,
-                                                   imageCropperModal.bY)
-            }
-
-            if (error) {
-                creatingError.text = error
-                return creatingError.open()
-            }
-
-            popup.close()
+        StatusRoundButton {
+            id: btnBack
+            anchors.left: parent.left
+            visible: isEdit
+            icon.name: "arrow-right"
+            icon.width: 20
+            icon.height: 16
+            rotation: 180
+            onClicked: popup.destroy()
         }
+        StatusButton {
+            id: btnCreateEdit
+            text: isEdit ?
+                //% "Save"
+                qsTrId("Save") :
+                //% "Create"
+                qsTrId("create")
+            anchors.right: parent.right
+            onClicked: {
+                if (!validate()) {
+                    scrollView.scrollBackUp()
+                    return
+                }
 
-        MessageDialog {
-            id: creatingError
-            //% "Error creating the community"
-            title: qsTrId("error-creating-the-community")
-            icon: StandardIcon.Critical
-            standardButtons: StandardButton.Ok
+                let error = false;
+                if(isEdit) {
+                    error = chatsModel.communities.editCommunity(community.id,
+                                                    Utils.filterXSS(nameInput.text),
+                                                    Utils.filterXSS(descriptionTextArea.text),
+                                                    membershipRequirementSettingPopup.checkedMembership,
+                                                    false,
+                                                    colorPicker.text,
+                                                    // to retain the existing image, pass "" for the image path
+                                                    addImageButton.selectedImage ===  community.largeImage ? "" : addImageButton.selectedImage,
+                                                    imageCropperModal.aX,
+                                                    imageCropperModal.aY,
+                                                    imageCropperModal.bX,
+                                                    imageCropperModal.bY)
+                } else {
+                    error = chatsModel.communities.createCommunity(Utils.filterXSS(nameInput.text),
+                                                    Utils.filterXSS(descriptionTextArea.text),
+                                                    membershipRequirementSettingPopup.checkedMembership,
+                                                    false, // ensOnlySwitch.switchChecked, // TODO:
+                                                    colorPicker.text,
+                                                    addImageButton.selectedImage,
+                                                    imageCropperModal.aX,
+                                                    imageCropperModal.aY,
+                                                    imageCropperModal.bX,
+                                                    imageCropperModal.bY)
+                }
+
+                if (error) {
+                    creatingError.text = error.error
+                    return creatingError.open()
+                }
+
+                popup.close()
+            }
+
+            MessageDialog {
+                id: creatingError
+                //% "Error creating the community"
+                title: qsTrId("error-creating-the-community")
+                icon: StandardIcon.Critical
+                standardButtons: StandardButton.Ok
+            }
         }
     }
 }

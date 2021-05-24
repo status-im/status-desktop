@@ -12,6 +12,7 @@ Item {
     property string headerTitle: ""
     property string headerDescription: ""
     property string headerImageSource: ""
+    property alias members: memberList.model
     height: 450
 
     CommunityPopupButton {
@@ -74,7 +75,6 @@ Item {
         anchors.bottomMargin: Style.current.bigPadding
         spacing: 4
         clip: true
-        model: community.members
         delegate: Rectangle {
             id: contactRow
             width: parent.width

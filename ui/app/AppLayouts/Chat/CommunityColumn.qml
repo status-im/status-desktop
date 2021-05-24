@@ -213,6 +213,14 @@ Rectangle {
 
         CommunityProfilePopup {
             id: communityProfilePopup
+            communityId: chatsModel.communities.activeCommunity.id
+            name: chatsModel.communities.activeCommunity.name
+            description: chatsModel.communities.activeCommunity.description
+            access: chatsModel.communities.activeCommunity.access
+            nbMembers: chatsModel.communities.activeCommunity.nbMembers
+            isAdmin: chatsModel.communities.activeCommunity.admin
+            source: chatsModel.communities.activeCommunity.thumbnailImage
+            communityColor: chatsModel.communities.activeCommunity.communityColor
         }
     }
 }

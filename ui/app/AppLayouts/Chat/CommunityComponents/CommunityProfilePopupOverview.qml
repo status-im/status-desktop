@@ -202,13 +202,14 @@ Item {
         }
 
         Loader {
-            // TODO once Edit is vailable in the app, put back isAdmin
-            active: false//isAdmin
+            // TODO: once Edit is vailable in the app, put back isAdmin
+            active: isAdmin
             width: parent.width
             sourceComponent: CommunityPopupButton {
                 //% "Edit community"
                 label: qsTrId("edit-community")
                 iconName: "edit"
+                type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
                 onClicked: openPopup(editCommunityPopup)
             }
         }

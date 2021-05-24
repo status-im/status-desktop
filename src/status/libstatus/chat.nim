@@ -304,7 +304,34 @@ proc createCommunity*(name: string, description: string, access: int, ensOnly: b
       "imageBy": bY
     }]).parseJSON()
 
-  if rpcResult{"result"}.kind != JNull:
+  if rpcResult{"error"} != nil:
+    let error = Json.decode($rpcResult{"error"}, RpcError)
+    raise newException(RpcException, "Error editing community channel: " & error.message)
+
+  if rpcResult{"result"} != nil and rpcResult{"result"}.kind != JNull:
+    result = rpcResult["result"]["communities"][0].toCommunity()
+
+proc editCommunity*(communityId: string, name: string, description: string, access: int, ensOnly: bool, color: string, imageUrl: string, aX: int, aY: int, bX: int, bY: int): Community =
+  let rpcResult = callPrivateRPC("editCommunity".prefix, %*[{
+      # TODO this will need to be renamed membership (small m)
+      "CommunityID": communityId,
+      "Membership": access,
+      "name": name,
+      "description": description,
+      "ensOnly": ensOnly,
+      "color": color,
+      "image": imageUrl,
+      "imageAx": aX,
+      "imageAy": aY,
+      "imageBx": bX,
+      "imageBy": bY
+    }]).parseJSON()
+
+  if rpcResult{"error"} != nil:
+    let error = Json.decode($rpcResult{"error"}, RpcError)
+    raise newException(RpcException, "Error editing community channel: " & error.message)
+
+  if rpcResult{"result"} != nil and rpcResult{"result"}.kind != JNull:
     result = rpcResult["result"]["communities"][0].toCommunity()
 
 proc createCommunityChannel*(communityId: string, name: string, description: string): Chat =
