@@ -15,7 +15,7 @@ ModalPopup {
         descriptionTextArea.isValid
 
     id: popup
-    height: 600
+    height: 500
 
     onOpened: {
         nameInput.text = "";
@@ -136,6 +136,7 @@ ModalPopup {
                 id: privateSwitcher
                 height: privateSwitch.height
                 width: parent.width
+                visible: false
                 anchors.top: separator1.bottom
                 anchors.topMargin: Style.current.smallPadding * 2
 
@@ -153,7 +154,7 @@ ModalPopup {
 
             StyledText {
                 id: privateExplanation
-                anchors.top: privateSwitcher.bottom
+                anchors.top: separator1.bottom
                 color: Style.current.secondaryText
                 wrapMode: Text.WordWrap
                 anchors.topMargin: Style.current.smallPadding * 2
