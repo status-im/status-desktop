@@ -78,14 +78,6 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         onClicked: {
-          communityProfilePopup.communityId = chatsModel.communities.activeCommunity.id;
-          communityProfilePopup.name = chatsModel.communities.activeCommunity.name;
-          communityProfilePopup.description = chatsModel.communities.activeCommunity.description;
-          communityProfilePopup.access = chatsModel.communities.activeCommunity.access;
-          communityProfilePopup.nbMembers = chatsModel.communities.activeCommunity.nbMembers;
-          communityProfilePopup.isAdmin = chatsModel.communities.activeCommunity.admin;
-          communityProfilePopup.source = chatsModel.communities.activeCommunity.thumbnailImage
-          communityProfilePopup.communityColor = chatsModel.communities.activeCommunity.communityColor
           communityProfilePopup.open()
         }
     }

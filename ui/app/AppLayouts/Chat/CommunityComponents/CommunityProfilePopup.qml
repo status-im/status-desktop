@@ -10,15 +10,14 @@ import "../../../../shared/status"
 import "../ContactsColumn"
 
 ModalPopup {
-    property QtObject community: chatsModel.communities.activeCommunity
-    property string communityId: community.id
-    property string name: community.name
-    property string description: community.description
-    property int access: community.access
-    property string source: ""
-    property string communityColor: ""
-    property int nbMembers: community.nbMembers
-    property bool isAdmin: false
+    property string communityId: chatsModel.communities.activeCommunity.id
+    property string name: chatsModel.communities.activeCommunity.name
+    property string description: chatsModel.communities.activeCommunity.description
+    property int access: chatsModel.communities.activeCommunity.access
+    property string source: chatsModel.communities.activeCommunity.source
+    property string communityColor: chatsModel.communities.activeCommunity.communityColor
+    property int nbMembers: chatsModel.communities.activeCommunity.nbMembers
+    property bool isAdmin: chatsModel.communities.activeCommunity.isAdmin
     height: stack.currentItem.height + modalHeader.height + modalFooter.height + Style.current.padding * 3
     id: popup
 
@@ -126,6 +125,7 @@ ModalPopup {
             CommunityProfilePopupMembersList {
                 headerTitle: qsTr("Members")
                 headerDescription: popup.nbMembers.toString()
+                members: chatsModel.communities.activeCommunity.members
             }
         }
 
@@ -133,7 +133,7 @@ ModalPopup {
             id: profileOverview
             CommunityProfilePopupOverview {
                 property bool useLetterIdenticon: !!!popup.source
-                headerTitle: popup.name
+                headerTitle: chatsModel.communities.activeCommunity.name
                 headerDescription: {
                     switch(access) {
                         //% "Public community"
@@ -146,8 +146,8 @@ ModalPopup {
                         default: return qsTrId("unknown-community");
                     }
                 }
-                headerImageSource: popup.source
-                description: popup.description
+                headerImageSource: chatsModel.communities.activeCommunity.thumbnailImage
+                description: chatsModel.communities.activeCommunity.description
             }
         }
     }

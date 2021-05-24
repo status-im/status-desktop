@@ -6,6 +6,8 @@ import ./community_item
 import ./community_membership_request_list
 import ./channels_list
 import ../../utils/image_utils
+import ../../../status/signals/types as signal_types
+import ../../../status/libstatus/types
 
 
 logScope:
@@ -222,9 +224,26 @@ QtObject:
       self.joinedCommunityList.addCommunityItemToList(community)
       self.setActiveCommunity(community.id)
       self.communitiesChanged()
-    except Exception as e:
+    except RpcException as e:
       error "Error creating the community", msg = e.msg
-      result = fmt"Error creating the community: {e.msg}"
+      result = StatusGoError(error: e.msg).toJson
+
+  proc editCommunity*(self: CommunitiesView, id: string, name: string, description: string, access: int, ensOnly: bool, color: string, imagePath: string, aX: int, aY: int, bX: int, bY: int): string {.slot.} =
+    result = ""
+    try:
+      var image = image_utils.formatImagePath(imagePath)
+      let community = self.status.chat.editCommunity(id, name, description, access, ensOnly, color, image, aX, aY, bX, bY)
+     
+      if (community.id == ""):
+        return "Community was not edited. Please try again later"
+      self.communityList.replaceCommunity(community)
+      self.joinedCommunityList.replaceCommunity(community)
+      self.setActiveCommunity(community.id)
+      self.communitiesChanged()
+      self.activeCommunityChanged()
+    except RpcException as e:
+      error "Error editing the community", msg = e.msg
+      result = StatusGoError(error: e.msg).toJson
 
   proc createCommunityChannel*(self: CommunitiesView, communityId: string, name: string, description: string, categoryId: string): string {.slot.} =
     result = ""

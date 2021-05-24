@@ -143,7 +143,7 @@ QtObject:
     let topLeft = self.createIndex(index, index, nil)
     let bottomRight = self.createIndex(index, index, nil)
     self.communities[index] = community
-    self.dataChanged(topLeft, bottomRight, @[CommunityRoles.Name.int, CommunityRoles.Description.int, CommunityRoles.UnviewedMessagesCount.int])
+    self.dataChanged(topLeft, bottomRight, @[CommunityRoles.Name.int, CommunityRoles.Description.int, CommunityRoles.UnviewedMessagesCount.int, CommunityRoles.ThumbnailImage.int])
 
   proc removeCategoryFromCommunity*(self: CommunityList, communityId: string, categoryId:string) =
     var community = self.getCommunityById(communityId)
