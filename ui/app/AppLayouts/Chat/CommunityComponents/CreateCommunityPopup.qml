@@ -348,6 +348,9 @@ ModalPopup {
 
             StatusSettingsLineButton {
                 id: membershipRequirementSetting
+                // TODO: remove 'isEnabled: false' when we no longer need to force
+                // "request access" membership
+                isEnabled: false
                 anchors.top: separator1.bottom
                 anchors.topMargin: Style.current.halfPadding
                 text: qsTr("Membership requirement")
@@ -420,6 +423,9 @@ ModalPopup {
 
         MembershipRequirementPopup {
             id: membershipRequirementSettingPopup
+            // TODO: remove the 'checkedMemership' setting when we no longer need
+            // to force "require approval" membership
+            checkedMembership: Constants.communityChatOnRequestAccess
         }
     }
 
