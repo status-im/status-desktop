@@ -53,13 +53,14 @@ proc getContacts*(self: ContactModel): seq[Profile] =
   result = getAllContacts()
   self.events.emit("contactUpdate", ContactUpdateArgs(contacts: result))
 
-proc addContact*(self: ContactModel, id: string, localNickname: string): string =
-  var contact = self.getContactByID(id)
-  if contact == nil:
+proc getOrCreateContact*(self: ContactModel, id: string): Profile =
+  result = self.getContactByID(id)
+  if result == nil:
     let alias = status_accounts.generateAlias(id)
-    contact = Profile(
+    result = Profile(
       id: id,
       username: alias,
+      localNickname: "",
       identicon: status_accounts.generateIdenticon(id),
       alias: alias,
       ensName: "",
@@ -68,10 +69,8 @@ proc addContact*(self: ContactModel, id: string, localNickname: string): string 
       systemTags: @[]
     )
 
-  let updating = contact.systemTags.contains(":contact/added")
-  if not updating:
-    contact.systemTags.add(":contact/added")
-    discard status_chat.createProfileChat(contact.id)
+proc setNickName*(self: ContactModel, id: string, localNickname: string): string =
+  var contact = self.getOrCreateContact(id)
   let nickname =
     if (localNickname == ""):
       contact.localNickname
@@ -83,8 +82,22 @@ proc addContact*(self: ContactModel, id: string, localNickname: string): string 
   var thumbnail = ""
   if contact.identityImage != nil:
     thumbnail = contact.identityImage.thumbnail
-
   result = status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.alias, contact.identicon, thumbnail, contact.systemTags, nickname)
+  self.events.emit("contactAdded", Args())
+  discard requestContactUpdate(contact.id)
+
+
+proc addContact*(self: ContactModel, id: string): string =
+  var contact = self.getOrCreateContact(id)
+  let updating = contact.systemTags.contains(":contact/added")
+  if not updating:
+    contact.systemTags.add(":contact/added")
+    discard status_chat.createProfileChat(contact.id)
+  var thumbnail = ""
+  if contact.identityImage != nil:
+    thumbnail = contact.identityImage.thumbnail
+
+  result = status_contacts.saveContact(contact.id, contact.ensVerified, contact.ensName, contact.alias, contact.identicon, thumbnail, contact.systemTags, contact.localNickname)
   self.events.emit("contactAdded", Args())
   discard requestContactUpdate(contact.id)
 
@@ -98,12 +111,9 @@ proc addContact*(self: ContactModel, id: string, localNickname: string): string 
       ensVerified: contact.ensVerified,
       appearance: 0,
       systemTags: contact.systemTags,
-      localNickname: nickname
+      localNickname: contact.localNickname
     )
     self.events.emit("contactUpdate", ContactUpdateArgs(contacts: @[profile]))
-
-proc addContact*(self: ContactModel, id: string): string =
-  result = self.addContact(id, "")
 
 proc removeContact*(self: ContactModel, id: string) =
   let contact = self.getContactByID(id)
