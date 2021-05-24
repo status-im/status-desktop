@@ -180,7 +180,13 @@ Item {
             }
             userClicked(false, pubKey, chatKey.text, searchResults.address)
         }
-        onAddToContactsButtonClicked: profileModel.contacts.addContact(pubKey)
+        onAddToContactsButtonClicked: {
+            if(Utils.isValidETHNamePrefix(chatKey.text)) {
+                profileModel.contacts.addContactWithENS(pubKey, chatKey.text)
+            } else {
+                profileModel.contacts.addContact(pubKey)
+            }
+        }
     }
 
     NoFriendsRectangle {

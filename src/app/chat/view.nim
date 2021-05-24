@@ -595,6 +595,8 @@ QtObject:
     chatType.int
 
   proc joinChatWithENS*(self: ChatsView, channel: string, ensName: string): int {.slot.} =
+    let contact = self.status.contacts.getOrCreateContact(channel, status_ens.addDomain(ensName))
+    self.status.chat.updateContacts(@[contact])
     self.status.chat.join(channel, ChatType.OneToOne, ensName=status_ens.addDomain(ensName))
     self.setActiveChannel(channel)
 

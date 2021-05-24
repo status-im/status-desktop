@@ -164,6 +164,11 @@ QtObject:
     self.status.chat.join(status_utils.getTimelineChatId(publicKey), ChatType.Profile, "", publicKey)
     self.contactChanged(publicKey, true)
 
+  proc addContactWithENS*(self: ContactsView, publicKey: string, ensName: string): string {.slot.} =
+    result = self.status.contacts.addContact(publicKey, ensName)
+    self.status.chat.join(status_utils.getTimelineChatId(publicKey), ChatType.Profile, "", publicKey)
+    self.contactChanged(publicKey, true)
+
   proc changeContactNickname*(self: ContactsView, publicKey: string, nickname: string) {.slot.} =
     var nicknameToSet = nickname
     if (nicknameToSet == ""):

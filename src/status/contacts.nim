@@ -53,7 +53,7 @@ proc getContacts*(self: ContactModel): seq[Profile] =
   result = getAllContacts()
   self.events.emit("contactUpdate", ContactUpdateArgs(contacts: result))
 
-proc getOrCreateContact*(self: ContactModel, id: string): Profile =
+proc getOrCreateContact*(self: ContactModel, id: string, ensName: string = ""): Profile =
   result = self.getContactByID(id)
   if result == nil:
     let alias = status_accounts.generateAlias(id)
@@ -63,11 +63,13 @@ proc getOrCreateContact*(self: ContactModel, id: string): Profile =
       localNickname: "",
       identicon: status_accounts.generateIdenticon(id),
       alias: alias,
-      ensName: "",
-      ensVerified: false,
+      ensName: ensName,
+      ensVerified: if ensName != "": true else: false,
       appearance: 0,
       systemTags: @[]
     )
+    discard status_contacts.saveContact(result.id, result.ensVerified, result.ensName, result.alias, result.identicon, "", result.systemTags, "")
+    discard status_contacts.ensVerified(result.id, result.ensName)
 
 proc setNickName*(self: ContactModel, id: string, localNickname: string): string =
   var contact = self.getOrCreateContact(id)
@@ -87,8 +89,8 @@ proc setNickName*(self: ContactModel, id: string, localNickname: string): string
   discard requestContactUpdate(contact.id)
 
 
-proc addContact*(self: ContactModel, id: string): string =
-  var contact = self.getOrCreateContact(id)
+proc addContact*(self: ContactModel, id: string, ensName: string = ""): string =
+  var contact = self.getOrCreateContact(id, ensName)
   let updating = contact.systemTags.contains(":contact/added")
   if not updating:
     contact.systemTags.add(":contact/added")

@@ -56,3 +56,7 @@ proc saveContact*(id: string, ensVerified: bool, ensName: string, alias: string,
 proc requestContactUpdate*(publicKey: string): string =
   result = callPrivateRPC("sendContactUpdate".prefix, %* [publicKey, "", ""])
   dirty.store(true)
+
+proc ensVerified*(publicKey: string, ensName: string): string =
+  result = callPrivateRPC("ensVerified".prefix, %* [publicKey, ensName])
+  dirty.store(true)

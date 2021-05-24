@@ -7,16 +7,6 @@ import "../../../../shared/status"
 import "./"
 
 ModalPopup {
-    function doJoin(pk, ensName) {
-        if(Utils.isChatKey(pk)){
-            chatsModel.joinChat(pk, Constants.chatTypeOneToOne);
-        } else {
-            chatsModel.joinChatWithENS(pk, ensName);
-        }
-
-        popup.close();
-    }
-
     id: popup
     //% "New chat"
     title: qsTrId("new-chat")
@@ -35,7 +25,7 @@ ModalPopup {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         onUserClicked: function (isContact, pubKey, ensName) {
-            if(Utils.isChatKey(pubKey)){
+            if(Utils.isChatKey(ensName)){
                 chatsModel.joinChat(pubKey, Constants.chatTypeOneToOne);
             } else {
                 chatsModel.joinChatWithENS(pubKey, ensName);
