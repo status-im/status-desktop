@@ -10,6 +10,27 @@ GridLayout {
     columnSpacing: 5
     rowSpacing: 5
 
+    StatusNavigationListItem {
+        title: "Menu Item"
+    }
+
+    StatusNavigationListItem {
+        title: "Menu Item"
+        icon.name: "info"
+    }
+
+    StatusNavigationListItem {
+        title: "Menu Item"
+        icon.name: "info"
+        badge.value: 1
+    }
+    StatusNavigationListItem {
+        title: "Menu Item (selected)"
+        selected: true
+        icon.name: "info"
+        badge.value: 1
+    }
+
     StatusChatListItem {
         id: test
         name: "public-channel"

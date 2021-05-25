@@ -132,6 +132,11 @@ ThemePalette {
         property color selectedBackgroundColor: directColor7
     }
 
+    property QtObject statusNavigationListItem: QtObject {
+        property color hoverBackgroundColor: directColor8
+        property color selectedBackgroundColor: directColor7
+    }
+
     property QtObject statusBadge: QtObject {
         property color foregroundColor: baseColor3
     }

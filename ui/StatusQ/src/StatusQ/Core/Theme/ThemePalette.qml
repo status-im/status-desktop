@@ -93,6 +93,11 @@ QtObject {
         property color selectedBackgroundColor
     }
 
+    property QtObject statusNavigationListItem: QtObject {
+        property color hoverBackgroundColor
+        property color selectedBackgroundColor
+    }
+
     property QtObject statusBadge: QtObject {
         property color foregroundColor
     }
