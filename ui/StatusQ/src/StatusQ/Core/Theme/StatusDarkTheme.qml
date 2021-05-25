@@ -2,6 +2,8 @@ import QtQuick 2.13
 
 ThemePalette {
 
+    name: "dark"
+
     property QtObject baseFont: FontLoader {
         source: "../../../assets/fonts/Inter/Inter-Regular.otf"
     }
@@ -123,6 +125,11 @@ ThemePalette {
 
     property QtObject statusListItem: QtObject {
         property color backgroundColor: baseColor3
+    }
+
+    property QtObject statusChatListItem: QtObject {
+        property color hoverBackgroundColor: directColor8
+        property color selectedBackgroundColor: directColor7
     }
 
     property QtObject statusBadge: QtObject {

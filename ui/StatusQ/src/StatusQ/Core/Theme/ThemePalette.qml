@@ -4,6 +4,8 @@ QtObject {
     
     id: theme
 
+    property string name
+
     property FontLoader baseFont
     property FontLoader baseFontThin
     property FontLoader baseFontExtraLight
@@ -84,6 +86,11 @@ QtObject {
 
     property QtObject statusListItem: QtObject {
         property color backgroundColor
+    }
+
+    property QtObject statusChatListItem: QtObject {
+        property color hoverBackgroundColor
+        property color selectedBackgroundColor
     }
 
     property QtObject statusBadge: QtObject {

@@ -10,6 +10,65 @@ GridLayout {
     columnSpacing: 5
     rowSpacing: 5
 
+    StatusChatListItem {
+        id: test
+        name: "public-channel"
+        type: StatusChatListItem.Type.PublicChat
+    }
+
+    StatusChatListItem {
+        name: "group-chat"
+        type: StatusChatListItem.Type.GroupChat
+    }
+
+    StatusChatListItem {
+        name: "community-channel"
+        type: StatusChatListItem.Type.CommunityChat
+    }
+
+    StatusChatListItem {
+        name: "community-channel-with-image"
+        image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        type: StatusChatListItem.Type.CommunityChat
+    }
+
+    StatusChatListItem {
+        name: "Weird Crazy Otter"
+        image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        type: StatusChatListItem.Type.OneToOneChat
+    }
+
+    StatusChatListItem {
+        name: "has-unread-messages"
+        type: StatusChatListItem.Type.PublicChat
+        hasUnreadMessages: true
+    }
+
+    StatusChatListItem {
+        name: "has-mentions"
+        type: StatusChatListItem.Type.PublicChat
+        badge.value: 1
+    }
+
+    StatusChatListItem {
+        name: "is-muted"
+        type: StatusChatListItem.Type.PublicChat
+        muted: true
+        onUnmute: muted = false
+    }
+
+    StatusChatListItem {
+        name: "selected-channel"
+        type: StatusChatListItem.Type.PublicChat
+        selected: true
+    }
+    StatusChatListItem {
+        name: "selected-muted-channel"
+        type: StatusChatListItem.Type.PublicChat
+        selected: true
+        muted: true
+    }
+
     StatusListItem {
         title: "Title"
     }
