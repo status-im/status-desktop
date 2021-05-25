@@ -134,7 +134,6 @@ Column {
                 }
 
                 StatusIconButton {
-                    visible: hhandler.hovered
                     id: showBtn
                     icon.name: showCategory ? "hide-category" : "show-category"
                     width: 20
