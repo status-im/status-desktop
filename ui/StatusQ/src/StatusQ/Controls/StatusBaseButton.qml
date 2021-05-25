@@ -16,7 +16,10 @@ Rectangle {
         Danger
     }
 
-    property alias iconName: icon.icon
+    property StatusIconSettings icon: StatusIconSettings {
+        width: 24
+        height: 24
+    }
 
     property bool loading: false
 
@@ -87,9 +90,12 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 4
             StatusIcon {
-                id: icon
+                id: statusIcon
+                width: statusBaseButton.icon.width
+                height: statusBaseButton.icon.height
+                icon: statusBaseButton.icon.name
                 anchors.verticalCenter: parent.verticalCenter
-                visible: !loading && iconName !== ""
+                visible: !loading && statusBaseButton.icon.name !== ""
                 color: statusBaseButton.enabled ? textColor
                                                 : disabledTextColor
             } // Icon

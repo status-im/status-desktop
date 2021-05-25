@@ -7,7 +7,28 @@ import StatusQ.Components 0.1
 Rectangle {
     id: statusRoundButton
 
-    property alias icon: iconSettings.name
+    property StatusIconSettings icon: StatusIconSettings {
+        width: 23
+        height: 23
+
+        color: {
+            switch(statusRoundButton.type) {
+            case StatusRoundButton.Type.Primary:
+                return Theme.palette.primaryColor1;
+            case StatusRoundButton.Type.Secondary:
+                return Theme.palette.indirectColor1;
+            }
+        }
+
+        property color disabledColor: {
+            switch(statusRoundButton.type) {
+            case StatusRoundButton.Type.Primary:
+                return Theme.palette.baseColor1;
+            case StatusRoundButton.Type.Secondary:
+                return Theme.palette.indirectColor1;
+            }
+        }
+    }
 
     property bool loading: false
 
@@ -26,28 +47,6 @@ Rectangle {
 
 
     /// Implementation
-
-    QtObject {
-        id: iconSettings
-        property alias name: statusIcon.icon
-        property color color: {
-            switch(statusRoundButton.type) {
-            case StatusRoundButton.Type.Primary:
-                return Theme.palette.primaryColor1;
-            case StatusRoundButton.Type.Secondary:
-                return Theme.palette.indirectColor1;
-            }
-        }
-
-        property color disabledColor: {
-            switch(statusRoundButton.type) {
-            case StatusRoundButton.Type.Primary:
-                return Theme.palette.baseColor1;
-            case StatusRoundButton.Type.Secondary:
-                return Theme.palette.indirectColor1;
-            }
-        }
-    }
 
     QtObject {
         id: backgroundSettings
@@ -107,14 +106,16 @@ Rectangle {
             anchors.centerIn: parent
             visible: !loading
 
-            width: statusRoundButton.width -  20
-            height: statusRoundButton.height - 20
+            icon: statusRoundButton.icon.name
+
+            width: statusRoundButton.icon.width
+            height: statusRoundButton.icon.height
 
             color: {
                 if (statusRoundButton.enabled) {
-                    return iconSettings.color
+                    return statusRoundButton.icon.color
                 } else {
-                    return iconSettings.disabledColor
+                    return statusRoundButton.icon.disabledColor
                 }
             }
         } // Icon
@@ -124,9 +125,9 @@ Rectangle {
             sourceComponent: StatusLoadingIndicator {
                 color: {
                     if (statusRoundButton.enabled) {
-                        return iconSettings.color
+                        return statusRoundButton.icon.color
                     } else {
-                        return iconSettings.disabledColor
+                        return statusRoundButton.icon.disabledColor
                     }
                 }
             } // Indicator

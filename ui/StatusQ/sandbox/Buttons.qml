@@ -137,16 +137,16 @@ Grid {
     // blue
 
     StatusRoundButton {
-        icon: "info"
+        icon.name: "info"
     }
 
     StatusRoundButton {
-        icon: "info"
+        icon.name: "info"
         enabled: false
     }
 
     StatusRoundButton {
-        icon: "info"
+        icon.name: "info"
         loading: true
     }
 
@@ -154,18 +154,18 @@ Grid {
 
     StatusRoundButton {
         type: StatusRoundButton.Type.Secondary
-        icon: "info"
+        icon.name: "info"
     }
 
     StatusRoundButton {
         type: StatusRoundButton.Type.Secondary
-        icon: "info"
+        icon.name: "info"
         enabled: false
     }
 
     StatusRoundButton {
         type: StatusRoundButton.Type.Secondary
-        icon: "info"
+        icon.name: "info"
         loading: true
     }
 
@@ -175,20 +175,20 @@ Grid {
         width: 44
         height: 44
 
-        icon: "info"
+        icon.name: "info"
     }
 
     StatusFlatRoundButton {
         width: 44
         height: 44
-        icon: "info"
+        icon.name: "info"
         enabled: false
     }
 
     StatusFlatRoundButton {
         width: 44
         height: 44
-        icon: "info"
+        icon.name: "info"
         loading: true
     }
 
@@ -199,14 +199,14 @@ Grid {
         width: 44
         height: 44
 
-        icon: "info"
+        icon.name: "info"
     }
 
     StatusFlatRoundButton {
         type: StatusFlatRoundButton.Type.Secondary
         width: 44
         height: 44
-        icon: "info"
+        icon.name: "info"
         enabled: false
     }
 
@@ -214,24 +214,24 @@ Grid {
         type: StatusFlatRoundButton.Type.Secondary
         width: 44
         height: 44
-        icon: "info"
+        icon.name: "info"
         loading: true
     }
 
     StatusFlatButton {
-        iconName: "info"
+        icon.name: "info"
         text: "Button"
         size: StatusBaseButton.Size.Small
     }
     StatusFlatButton {
-        iconName: "info"
+        icon.name: "info"
         text: "Button"
         enabled: false
         size: StatusBaseButton.Size.Small
     }
 
     StatusFlatButton {
-        iconName: "info"
+        icon.name: "info"
         text: "Button"
         loading: true
         size: StatusBaseButton.Size.Small

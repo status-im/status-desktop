@@ -7,7 +7,28 @@ import StatusQ.Components 0.1
 Rectangle {
     id: statusFlatRoundButton
 
-    property alias icon: iconSettings.name
+    property StatusIconSettings icon: StatusIconSettings {
+        width: 23
+        height: 23
+
+        color: {
+            switch(statusFlatRoundButton.type) {
+            case StatusFlatRoundButton.Type.Secondary:
+                return Theme.palette.directColor1;
+            case StatusFlatRoundButton.Type.Primary:
+                return Theme.palette.primaryColor1;
+            }
+        }
+
+        property color disabledColor: {
+            switch(statusFlatRoundButton.type) {
+            case StatusFlatRoundButton.Type.Secondary:
+                return Theme.palette.baseColor1;
+            case StatusFlatRoundButton.Type.Primary:
+                return Theme.palette.baseColor1;
+            }
+        }
+    }
 
     property bool loading: false
 
@@ -26,28 +47,6 @@ Rectangle {
 
 
     /// Implementation
-
-    QtObject {
-        id: iconSettings
-        property alias name: statusIcon.icon
-        property color color: {
-            switch(statusFlatRoundButton.type) {
-            case StatusFlatRoundButton.Type.Secondary:
-                return Theme.palette.directColor1;
-            case StatusFlatRoundButton.Type.Primary:
-                return Theme.palette.primaryColor1;
-            }
-        }
-
-        property color disabledColor: {
-            switch(statusFlatRoundButton.type) {
-            case StatusFlatRoundButton.Type.Secondary:
-                return Theme.palette.baseColor1;
-            case StatusFlatRoundButton.Type.Primary:
-                return Theme.palette.baseColor1;
-            }
-        }
-    }
 
     QtObject {
         id: backgroundSettings
@@ -105,14 +104,16 @@ Rectangle {
             anchors.centerIn: parent
             visible: !loading
 
-            width: statusFlatRoundButton.width -  20
-            height: statusFlatRoundButton.height - 20
+            icon: statusFlatRoundButton.icon.name
+
+            width: statusFlatRoundButton.icon.width
+            height: statusFlatRoundButton.icon.height
 
             color: {
                 if (statusFlatRoundButton.enabled) {
-                    return iconSettings.color
+                    return statusFlatRoundButton.icon.color
                 } else {
-                    return iconSettings.disabledColor
+                    return statusFlatRoundButton.icon.disabledColor
                 }
             }
         } // Icon
@@ -122,9 +123,9 @@ Rectangle {
             sourceComponent: StatusLoadingIndicator {
                 color: {
                     if (statusFlatRoundButton.enabled) {
-                        return iconSettings.color
+                        return statusFlatRoundButton.icon.color
                     } else {
-                        return iconSettings.disabledColor
+                        return statusFlatRoundButton.icon.disabledColor
                     }
                 }
             } // Indicator
