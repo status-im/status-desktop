@@ -65,10 +65,17 @@ const asyncMessageLoadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
   if(reactionsCallSuccess):
     reactions = reactionsCallResult.parseJson()["result"]
 
+  var pinnedMessages: JsonNode
+  var pinnedMessagesCallSuccess: bool
+  let pinnedMessagesCallResult = rpcPinnedChatMessages(arg.chatId, newJString(""), 20, pinnedMessagesCallSuccess)
+  if(reactionsCallSuccess):
+    pinnedMessages = pinnedMessagesCallResult.parseJson()["result"]
+
   let responseJson = %*{
     "chatId": arg.chatId,
     "messages": messages,
-    "reactions": reactions
+    "reactions": reactions,
+    "pinnedMessages": pinnedMessages
   }
   arg.finish(responseJson)
 
@@ -104,6 +111,7 @@ QtObject:
       currentSuggestions*: SuggestionsList
       callResult: string
       messageList*: OrderedTable[string, ChatMessageList]
+      pinnedMessagesList*: OrderedTable[string, ChatMessageList]
       reactions*: ReactionView
       stickers*: StickersView
       groups*: GroupsView
@@ -129,11 +137,14 @@ QtObject:
     self.currentSuggestions.delete
     for msg in self.messageList.values:
       msg.delete
+    for msg in self.pinnedMessagesList.values:
+      msg.delete
     self.reactions.delete
     self.stickers.delete
     self.groups.delete
     self.transactions.delete
     self.messageList = initOrderedTable[string, ChatMessageList]()
+    self.pinnedMessagesList = initOrderedTable[string, ChatMessageList]()
     self.communities.delete
     self.channelOpenTime = initTable[string, int64]()
     self.QAbstractListModel.delete
@@ -147,6 +158,7 @@ QtObject:
     result.contextChannel = newChatItemView(status)
     result.currentSuggestions = newSuggestionsList()
     result.messageList = initOrderedTable[string, ChatMessageList]()
+    result.pinnedMessagesList = initOrderedTable[string, ChatMessageList]()
     result.reactions = newReactionView(status, result.messageList.addr, result.activeChannel)
     result.stickers = newStickersView(status, result.activeChannel)
     result.groups = newGroupsView(status,result.activeChannel)
@@ -431,6 +443,7 @@ QtObject:
     if not self.messageList.hasKey(channel):
       self.beginInsertRows(newQModelIndex(), self.messageList.len, self.messageList.len)
       self.messageList[channel] = newChatMessageList(channel, self.status, not chat.isNil and chat.chatType != ChatType.Profile)
+      self.pinnedMessagesList[channel] = newChatMessageList(channel, self.status, false)
       self.channelOpenTime[channel] = now().toTime.toUnix * 1000
       self.endInsertRows();
 
@@ -450,6 +463,13 @@ QtObject:
   
   proc isAddedContact*(self: ChatsView, id: string): bool {.slot.} =
     result = self.status.contacts.isAdded(id)
+
+  proc pushPinnedMessages*(self:ChatsView, messages: var seq[Message]) =
+    for msg in messages.mitems:
+      self.upsertChannel(msg.chatId)
+      self.pinnedMessagesList[msg.chatId].add(msg)
+      # put the message as pinned in the message list
+      self.messageList[msg.chatId].changeMessagePinned(msg.id, true)
 
   proc pushMessages*(self:ChatsView, messages: var seq[Message]) =
     for msg in messages.mitems:
@@ -532,6 +552,14 @@ QtObject:
     read = getMessageList
     notify = activeChannelChanged
 
+  proc getPinnedMessagesList(self: ChatsView): QVariant {.slot.} =
+    self.upsertChannel(self.activeChannel.id)
+    return newQVariant(self.pinnedMessagesList[self.activeChannel.id])
+
+  QtProperty[QVariant] pinnedMessagesList:
+    read = getPinnedMessagesList
+    notify = activeChannelChanged
+
   proc pushChatItem*(self: ChatsView, chatItem: Chat) =
     discard self.chats.addChatItemToList(chatItem)
     self.messagePushed(self.messageList[chatItem.id].messages.len - 1)
@@ -598,6 +626,10 @@ QtObject:
     if(rpcResponseObj["reactions"].kind != JNull):
       let reactions = parseReactionsResponse(rpcResponseObj["chatId"].getStr, rpcResponseObj["reactions"])
       self.status.chat.chatReactions(rpcResponseObj["chatId"].getStr, true, reactions[0], reactions[1])
+
+    if(rpcResponseObj["pinnedMessages"].kind != JNull):
+      let pinnedMessages = parseChatMessagesResponse(rpcResponseObj["chatId"].getStr, rpcResponseObj["pinnedMessages"])
+      self.status.chat.pinnedMessagesByChatID(rpcResponseObj["chatId"].getStr, pinnedMessages[0], pinnedMessages[1])
 
   proc hideLoadingIndicator*(self: ChatsView) {.slot.} =
     self.loadingMessages = false
@@ -834,6 +866,35 @@ QtObject:
       idx = idx + 1
       if(id == msg.id): return idx
     return idx
+
+  proc addPinMessage*(self: ChatsView, messageId: string, chatId: string) =
+    self.upsertChannel(chatId)
+    self.messageList[chatId].changeMessagePinned(messageId, true)
+    self.pinnedMessagesList[chatId].add(self.messageList[chatId].getMessageById(messageId))
+
+  proc removePinMessage*(self: ChatsView, messageId: string, chatId: string) =
+    self.upsertChannel(chatId)
+    self.messageList[chatId].changeMessagePinned(messageId, false)
+    try:
+      self.pinnedMessagesList[chatId].remove(messageId)
+    except Exception as e:
+      error "Error removing ", msg = e.msg
+    
+
+  proc pinMessage*(self: ChatsView, messageId: string, chatId: string) {.slot.} =
+    self.status.chat.setPinMessage(messageId, chatId, true)
+    self.addPinMessage(messageId, chatId)
+
+  proc unPinMessage*(self: ChatsView, messageId: string, chatId: string) {.slot.} =
+    self.status.chat.setPinMessage(messageId, chatId, false)
+    self.removePinMessage(messageId, chatId)
+
+  proc addPinnedMessages*(self: ChatsView, pinnedMessages: seq[Message]) =
+    for pinnedMessage in pinnedMessages:
+      if (pinnedMessage.isPinned):
+        self.addPinMessage(pinnedMessage.id, pinnedMessage.localChatId)
+      else:
+        self.removePinMessage(pinnedMessage.id, pinnedMessage.localChatId)
 
   proc isActiveMailserverResult(self: ChatsView, resultEncoded: string) {.slot.} =
     let isActiveMailserverAvailable = decode[bool](resultEncoded)

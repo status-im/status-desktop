@@ -1,7 +1,7 @@
 import json, json, options, json_serialization, stint, chronicles
 import core, types, utils, strutils, strformat
 import utils
-from status_go import validateMnemonic, startWallet
+from status_go import validateMnemonic#, startWallet
 import ../wallet/account
 import web3/ethtypes
 import ./types

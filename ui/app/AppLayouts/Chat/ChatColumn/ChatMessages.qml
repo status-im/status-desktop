@@ -335,6 +335,7 @@ ScrollView {
             communityId: model.communityId
             hasMention: model.hasMention
             stickerPackId: model.stickerPackId
+            pinnedMessage: model.isPinned
             gapFrom: model.gapFrom
             gapTo: model.gapTo
             prevMessageIndex: {

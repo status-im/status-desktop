@@ -96,5 +96,26 @@ Rectangle {
               text: qsTrId("message-reply")
             }
         }
+
+        StatusIconButton {
+            id: otherBtn
+            icon.name: "dots-icon"
+            width: 32
+            height: 32
+            onClicked: {
+                if (typeof isMessageActive !== "undefined") {
+                    isMessageActive = true
+                }
+                clickMessage(false, isSticker, false, null, false, true)
+            }
+            onHoveredChanged: {
+                buttonsContainer.hoverChanged(this.hovered)
+            }
+
+            StatusToolTip {
+                visible: otherBtn.hovered
+                text: qsTr("More")
+            }
+        }
     }
 }

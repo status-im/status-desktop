@@ -72,6 +72,11 @@ QtObject {
     property color tooltipBackgroundColor
     property color tooltipForegroundColor
 
+    property color pinnedMessageBorder
+    property color pinnedMessageBackground
+    property color pinnedMessageBackgroundHovered
+    property color pinnedRectangleBackground
+
     property int xlPadding: 32
     property int bigPadding: 24
     property int padding: 16

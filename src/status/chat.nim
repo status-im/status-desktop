@@ -24,6 +24,7 @@ type
   ChatUpdateArgs* = ref object of Args
     chats*: seq[Chat]
     messages*: seq[Message]
+    pinnedMessages*: seq[Message]
     contacts*: seq[Profile]
     emojiReactions*: seq[Reaction]
     communities*: seq[Community]
@@ -56,6 +57,7 @@ type
     contacts*: Table[string, Profile]
     channels*: Table[string, Chat]
     msgCursor*: Table[string, string]
+    pinnedMsgCursor*: Table[string, string]
     emojiCursor*: Table[string, string]
     lastMessageTimestamps*: Table[string, int64]
     
@@ -73,6 +75,7 @@ proc newChatModel*(events: EventEmitter): ChatModel =
   result.contacts = initTable[string, Profile]()
   result.channels = initTable[string, Chat]()
   result.msgCursor = initTable[string, string]()
+  result.pinnedMsgCursor = initTable[string, string]()
   result.emojiCursor = initTable[string, string]()
   result.lastMessageTimestamps = initTable[string, int64]()
 
@@ -99,7 +102,7 @@ proc cleanSpamChatGroups(self: ChatModel, chats: seq[Chat], contacts: seq[Profil
     else:
       result.add(chat)
 
-proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest]) =
+proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest], pinnedMessages: seq[Message]) =
   var contacts = getAddedContacts()
 
   # Automatically decline chat group invitations if admin is not a contact
@@ -118,7 +121,7 @@ proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiRea
       if self.lastMessageTimestamps[chatId] > ts:
         self.lastMessageTimestamps[chatId] = ts
       
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chatList, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chatList, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests, pinnedMessages: pinnedMessages))
 
 proc hasChannel*(self: ChatModel, chatId: string): bool =
   self.channels.hasKey(chatId)
@@ -504,3 +507,20 @@ proc pendingRequestsToJoinForCommunity*(self: ChatModel, communityKey: string): 
 
 proc myPendingRequestsToJoin*(self: ChatModel): seq[CommunityMembershipRequest] =
   result = status_chat.myPendingRequestsToJoin()
+
+proc setPinMessage*(self: ChatModel, messageId: string, chatId: string, pinned: bool) =
+  status_chat.setPinMessage(messageId, chatId, pinned)
+
+proc pinnedMessagesByChatID*(self: ChatModel, chatId: string): seq[Message] =
+  if not self.pinnedMsgCursor.hasKey(chatId):
+    self.pinnedMsgCursor[chatId] = "";
+
+  let messageTuple = status_chat.pinnedMessagesByChatID(chatId, self.pinnedMsgCursor[chatId])
+  self.pinnedMsgCursor[chatId] = messageTuple[0];
+
+  result = messageTuple[1]
+
+proc pinnedMessagesByChatID*(self: ChatModel, chatId: string, cursor: string = "", pinnedMessages: seq[Message]) =
+  self.msgCursor[chatId] = cursor
+
+  self.events.emit("pinnedMessagesLoaded", MsgsLoadedArgs(messages: pinnedMessages))
