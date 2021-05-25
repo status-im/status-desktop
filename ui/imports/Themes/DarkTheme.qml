@@ -90,6 +90,11 @@ Theme {
     property color contextMenuButtonForegroundColor: midGrey
     property color contextMenuButtonBackgroundHoverColor: Qt.hsla(white.hslHue, white.hslSaturation, white.hslLightness, 0.05)
 
+    property color pinnedMessageBorder: "#FFA67B"
+    property color pinnedMessageBackground: "#1afe8f59"
+    property color pinnedMessageBackgroundHovered: "#33fe8f59"
+    property color pinnedRectangleBackground: "#1afe8f59"
+
     property color roundedButtonForegroundColor: white
     property color roundedButtonBackgroundColor: buttonBackgroundColor
     property color roundedButtonSecondaryForegroundColor: black

@@ -63,9 +63,28 @@ proc fromEvent*(event: JsonNode): Signal =
       signal.communities.add(jsonCommunity.toCommunity)
 
   if event["event"]{"requestsToJoinCommunity"} != nil:
-    debug "requests", event = event["event"]["requestsToJoinCommunity"]
     for jsonCommunity in event["event"]["requestsToJoinCommunity"]:
       signal.membershipRequests.add(jsonCommunity.toCommunityMembershipRequest)
+
+  if event["event"]{"pinMessages"} != nil:
+    for jsonPinnedMessage in event["event"]["pinMessages"]:
+      var contentType: ContentType
+      try:
+        contentType = ContentType(jsonPinnedMessage{"contentType"}.getInt)
+      except:
+        warn "Unknown content type received", type = jsonPinnedMessage{"contentType"}.getInt
+        contentType = ContentType.Message
+      signal.pinnedMessages.add(Message(
+        id: jsonPinnedMessage{"message_id"}.getStr,
+        chatId: jsonPinnedMessage{"chat_id"}.getStr,
+        localChatId: jsonPinnedMessage{"localChatId"}.getStr,
+        fromAuthor: jsonPinnedMessage{"from"}.getStr,
+        identicon: jsonPinnedMessage{"identicon"}.getStr,
+        alias: jsonPinnedMessage{"alias"}.getStr,
+        clock: jsonPinnedMessage{"clock"}.getInt,
+        isPinned: jsonPinnedMessage{"pinned"}.getBool,
+        contentType: contentType
+      ))
 
   result = signal
 
@@ -205,8 +224,6 @@ proc toCommunity*(jsonCommunity: JsonNode): Community =
         name: chat{"name"}.getStr,
         canPost: chat{"canPost"}.getBool,
         chatType: ChatType.CommunityChat
-        # TODO get this from access
-        #chat{"permissions"}{"access"}.getInt,
       ))
 
   if jsonCommunity.hasKey("members") and jsonCommunity["members"].kind != JNull:

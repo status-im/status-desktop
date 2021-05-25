@@ -29,6 +29,8 @@ Item {
     property bool hasMention: false
     property string linkUrls: ""
     property bool placeholderMessage: false
+    property bool pinnedMessage: false
+    property bool forceHoverHandler: false // Used to force the HoverHandler to be active (useful for messages in popups)
     property string communityId: ""
     property int stickerPackId: -1
     property int gapFrom: 0
@@ -164,7 +166,7 @@ Item {
         }
     }
 
-    function clickMessage(isProfileClick, isSticker = false, isImage = false, image = null, emojiOnly = false) {
+    function clickMessage(isProfileClick, isSticker = false, isImage = false, image = null, emojiOnly = false, hideEmojiPicker = false) {
         if (isImage) {
             imageClick(image);
             return;
@@ -176,13 +178,18 @@ Item {
 
         // Get contact nickname
         let nickname = appMain.getUserNickname(fromAuthor)
+        messageContextMenu.messageId = root.messageId
         messageContextMenu.linkUrls = root.linkUrls
         messageContextMenu.isProfile = !!isProfileClick
         messageContextMenu.isSticker = isSticker
         messageContextMenu.emojiOnly = emojiOnly
-        messageContextMenu.show(userName, fromAuthor, root.profileImageSource || identicon, "", nickname, emojiReactionsModel)
+        messageContextMenu.hideEmojiPicker = hideEmojiPicker
+        messageContextMenu.pinnedMessage = pinnedMessage
+        messageContextMenu.show(userName, fromAuthor, root.profileImageSource || identicon, plainText, nickname, emojiReactionsModel)
         // Position the center of the menu where the mouse is
-        messageContextMenu.x = messageContextMenu.x - messageContextMenu.width / 2
+        if (messageContextMenu.x + messageContextMenu.width + Style.current.padding < root.width) {
+            messageContextMenu.x = messageContextMenu.x - messageContextMenu.width / 2
+        }
     }
 
     Loader {

@@ -8,9 +8,12 @@ import "../../../../shared/status"
 import "./"
 
 PopupMenu {
+    property string messageId
     property bool isProfile: false
     property bool isSticker: false
     property bool emojiOnly: false
+    property bool hideEmojiPicker: false
+    property bool pinnedMessage: false
     property string linkUrls: ""
     property alias emojiContainer: emojiContainer
 
@@ -53,7 +56,7 @@ PopupMenu {
 
     Item {
         id: emojiContainer
-        visible: messageContextMenu.emojiOnly || !messageContextMenu.isProfile
+        visible: !hideEmojiPicker && (messageContextMenu.emojiOnly || !messageContextMenu.isProfile)
         width: emojiRow.width
         height: visible ? emojiRow.height : 0
 
@@ -132,6 +135,37 @@ PopupMenu {
     Separator {
         anchors.bottom: viewProfileAction.top
         visible: !messageContextMenu.emojiOnly
+    }
+
+    Action {
+        id: pinAction
+        text: pinnedMessage ? qsTr("Unpin") :
+                              qsTr("Pin")
+        onTriggered: {
+            if (pinnedMessage) {
+                chatsModel.unPinMessage(messageId, chatsModel.activeChannel.id)
+                return
+            }
+
+            chatsModel.pinMessage(messageId, chatsModel.activeChannel.id)
+            messageContextMenu.close()
+        }
+        icon.source: "../../../img/pin"
+        icon.width: 16
+        icon.height: 16
+        enabled: chatsModel.activeChannel.chatType !== Constants.chatTypePublic
+    }
+
+    Action {
+        id: copyAction
+        text: qsTr("Copy")
+        onTriggered: {
+            chatsModel.copyToClipboard(messageContextMenu.text)
+            messageContextMenu.close()
+        }
+        icon.source: "../../../../shared/img/copy-to-clipboard-icon"
+        icon.width: 16
+        icon.height: 16
     }
 
     Action {

@@ -18,6 +18,9 @@ proc handleChatEvents(self: ChatController) =
   # Display emoji reactions
   self.status.events.on("reactionsLoaded") do(e:Args):
     self.view.reactions.push(ReactionsLoadedArgs(e).reactions)
+  # Display already pinned messages
+  self.status.events.on("pinnedMessagesLoaded") do(e:Args):
+    self.view.pushPinnedMessages(MsgsLoadedArgs(e).messages)
 
   self.status.events.on("contactUpdate") do(e: Args):
     var evArgs = ContactUpdateArgs(e)
@@ -40,6 +43,8 @@ proc handleChatEvents(self: ChatController) =
         self.view.communities.addCommunityToList(community)
     if (evArgs.communityMembershipRequests.len > 0):
       self.view.communities.addMembershipRequests(evArgs.communityMembershipRequests)
+    if (evArgs.pinnedMessages.len > 0):
+      self.view.addPinnedMessages(evArgs.pinnedMessages)
 
   self.status.events.on("channelUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)

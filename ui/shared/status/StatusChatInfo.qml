@@ -137,6 +137,59 @@ Item {
             font.pixelSize: 12
             anchors.top: chatName.bottom
         }
+
+        Item {
+            property bool hovered: false
+
+            id: pinnedMessagesGroup
+            visible: chatType !== Constants.chatTypePublic && chatsModel.pinnedMessagesList.count > 0
+            width: childrenRect.width
+            height: vertiSep.height
+            anchors.left: chatInfo.right
+            anchors.leftMargin: 4
+            anchors.verticalCenter: chatInfo.verticalCenter
+
+            Rectangle {
+                id: vertiSep
+                height: 12
+                width: 1
+                color: Style.current.border
+            }
+
+            SVGImage {
+                id: pinImg
+                source: "../../app/img/pin.svg"
+                height: 14
+                width: 14
+                anchors.left: vertiSep.right
+                anchors.leftMargin: 4
+                anchors.verticalCenter: vertiSep.verticalCenter
+
+                ColorOverlay {
+                    anchors.fill: parent
+                    source: parent
+                    color: pinnedMessagesGroup.hovered ? Style.current.textColor : Style.current.secondaryText
+                }
+            }
+
+            StyledText {
+                id: nbPinnedMessagesText
+                color: pinnedMessagesGroup.hovered ? Style.current.textColor : Style.current.secondaryText
+                text: chatsModel.pinnedMessagesList.count
+                font.pixelSize: 12
+                font.underline: pinnedMessagesGroup.hovered
+                anchors.left: pinImg.right
+                anchors.verticalCenter: vertiSep.verticalCenter
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onEntered: pinnedMessagesGroup.hovered = true
+                onExited: pinnedMessagesGroup.hovered = false
+                onClicked: pinnedMessagesPopup.open()
+            }
+        }
     }
 }
 

@@ -67,13 +67,61 @@ Item {
                 + (!chatName.visible && chatImageContent.active ? 6 : 0)
                 + (emojiReactionLoader.active ? emojiReactionLoader.height: 0)
                 + (retry.visible && !chatTime.visible ? Style.current.smallPadding : 0)
+                + (pinnedRectangleLoader.active ? Style.current.smallPadding : 0)
         width: parent.width
 
-        color: root.isHovered || isMessageActive ? (hasMention ? Style.current.mentionMessageHoverColor : Style.current.backgroundHoverLight) :
+        color: {
+            if (pinnedMessage) {
+                return root.isHovered || isMessageActive ? Style.current.pinnedMessageBackgroundHovered : Style.current.pinnedMessageBackground
+            }
+
+            return root.isHovered || isMessageActive ? (hasMention ? Style.current.mentionMessageHoverColor : Style.current.backgroundHoverLight) :
                                                    (hasMention ? Style.current.mentionMessageColor : Style.current.transparent)
+        }
+
+        Loader {
+            id: pinnedRectangleLoader
+            active: pinnedMessage
+            anchors.left: chatName.left
+            anchors.top: parent.top
+            anchors.topMargin: active ? Style.current.halfPadding : 0
+
+            sourceComponent: Component {
+                Rectangle {
+                    id: pinnedRectangle
+                    height: 24
+                    width: childrenRect.width + Style.current.smallPadding
+                    color: Style.current.pinnedRectangleBackground
+                    radius: 12
+
+                    SVGImage {
+                        id: pinImage
+                        source: "../../../../img/pin.svg"
+                        anchors.left: parent.left
+                        anchors.leftMargin: 3
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        ColorOverlay {
+                            anchors.fill: parent
+                            source: parent
+                            color: Style.current.pinnedMessageBorder
+                        }
+                    }
+
+                    StyledText {
+                        text: qsTr("Pinned")
+                        anchors.left: pinImage.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.pixelSize: 13
+                    }
+                }
+            }
+        }
 
         ChatReply {
             id: chatReply
+            anchors.top: pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
+            anchors.topMargin: active ? 4 : 0
             anchors.left: chatImage.left
             longReply: active && textFieldImplicitWidth > width
             container: root.container
@@ -87,8 +135,9 @@ Item {
             active: isMessage && headerRepeatCondition
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
-            anchors.top: chatReply.active ? chatReply.bottom : parent.top
-            anchors.topMargin: Style.current.smallPadding
+            anchors.top: chatReply.active ? chatReply.bottom :
+                                            pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
+            anchors.topMargin: chatReply.active || pinnedRectangleLoader.active ? 4 : Style.current.smallPadding
         }
 
         UsernameLabel {
@@ -245,14 +294,15 @@ Item {
     }
 
     Loader {
-        active: hasMention
+        active: hasMention || pinnedMessage
         height: messageContainer.height
         anchors.left: messageContainer.left
+        anchors.top: messageContainer.top
 
         sourceComponent: Component {
             Rectangle {
                 id: mentionBorder
-                color: Style.current.mentionColor
+                color: pinnedMessage ? Style.current.pinnedMessageBorder : Style.current.mentionColor
                 width: 2
                 height: parent.height
             }
@@ -260,7 +310,7 @@ Item {
     }
 
     HoverHandler {
-        enabled: typeof messageContextMenu !== "undefined" && typeof profilePopupOpened !== "undefined" && !messageContextMenu.opened && !profilePopupOpened && !popupOpened
+        enabled: forceHoverHandler || (typeof messageContextMenu !== "undefined" && typeof profilePopupOpened !== "undefined" && !messageContextMenu.opened && !profilePopupOpened && !popupOpened)
         onHoveredChanged: setHovered(messageId, hovered)
     }
 

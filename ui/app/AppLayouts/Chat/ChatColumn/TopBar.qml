@@ -64,6 +64,9 @@ Item {
         }
     }
 
+    PinnedMessagesPopup {
+        id: pinnedMessagesPopup
+    }
     StatusContextMenuButton {
         id: moreActionsBtn
         anchors.verticalCenter: parent.verticalCenter

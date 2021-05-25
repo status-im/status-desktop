@@ -162,6 +162,7 @@ DISTFILES += \
     app/AppLayouts/Chat/components/EmojiReaction.qml \
     app/AppLayouts/Chat/components/LeftTabBottomButtons.qml \
     app/AppLayouts/Chat/components/NoFriendsRectangle.qml \
+    app/AppLayouts/Chat/components/PinnedMessagesPopup.qml \
     app/AppLayouts/Chat/components/ProfilePopup.qml \
     app/AppLayouts/Chat/components/EmojiSection.qml \
     app/AppLayouts/Chat/components/InviteFriendsPopup.qml \

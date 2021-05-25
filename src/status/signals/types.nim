@@ -29,6 +29,7 @@ type EnvelopeExpiredSignal* = ref object of Signal
 
 type MessageSignal* = ref object of Signal
   messages*: seq[Message]
+  pinnedMessages*: seq[Message]
   chats*: seq[Chat]
   contacts*: seq[Profile]
   installations*: seq[Installation]
