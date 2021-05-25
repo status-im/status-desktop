@@ -18,6 +18,11 @@ Rectangle {
     property StatusIconSettings icon: StatusIconSettings {
         height: 20
         width: 20
+        background: StatusIconBackgroundSettings {
+            width: 40
+            height: 40
+            color: Theme.palette.primaryColor3
+        }
     }
     property StatusImageSettings image: StatusImageSettings {}
     property string label: ""
@@ -51,7 +56,12 @@ Rectangle {
         Component {
             id: statusRoundedIcon
             StatusRoundIcon {
-                icon: statusListItem.icon
+                icon.width: statusListItem.icon.width
+                icon.height: statusListItem.icon.height
+                icon.name: statusListItem.icon.name
+                color: statusListItem.icon.background.color
+                width: statusListItem.icon.background.width
+                height: statusListItem.icon.background.height
             }
         }
 

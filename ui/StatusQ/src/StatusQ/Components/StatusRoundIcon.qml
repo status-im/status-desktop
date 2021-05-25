@@ -5,15 +5,21 @@ import StatusQ.Core.Theme 0.1
 Rectangle {
     id: statusRoundedIcon
 
-    implicitWidth: 40
-    implicitHeight: 40
-    radius: width / 2;
-
-    color: Theme.palette.primaryColor3;
     property StatusIconSettings icon: StatusIconSettings {
         width: 24
         height: 24
+        background: StatusIconBackgroundSettings {
+            width: 40
+            height: 40
+            color: Theme.palette.primaryColor3
+        }
     }
+
+    color: icon.background.color
+    implicitWidth: icon.background.width
+    implicitHeight: icon.background.height
+    radius: icon.background.width / 2
+
 
     StatusIcon {
         id: statusIcon

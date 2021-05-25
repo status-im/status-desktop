@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import StatusQ.Core 0.1
 
 QtObject {
     id: statusIconSettings
@@ -8,4 +9,5 @@ QtObject {
     property real height
     property color color
     property url source
+    property StatusIconBackgroundSettings background: StatusIconBackgroundSettings {}
 }
