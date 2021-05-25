@@ -65,7 +65,7 @@ Rectangle {
             case StatusFlatRoundButton.Type.Primary:
                 return Theme.palette.primaryColor2;
             case StatusFlatRoundButton.Type.Secondary:
-                return "transparent";
+                return Theme.palette.baseColor2;
             }
         }
 
