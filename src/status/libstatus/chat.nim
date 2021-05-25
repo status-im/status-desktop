@@ -73,13 +73,13 @@ proc loadChats*(): seq[Chat] =
         result.add(chat)
   result.sort(sortChats)
 
-proc parseChatMessagesResponse*(chatId: string, rpcResult: JsonNode): (string, seq[Message]) =
+proc parseChatMessagesResponse*(chatId: string, rpcResult: JsonNode, isPin: bool = false): (string, seq[Message]) =
   let pk = status_settings.getSetting[string](Setting.PublicKey, "0x0")
   var messages: seq[Message] = @[]
   var msg: Message
   if rpcResult["messages"].kind != JNull:
     for jsonMsg in rpcResult["messages"]:
-      messages.add(jsonMsg.toMessage(pk))
+      messages.add(jsonMsg.toMessage(pk, isPin))
   return (rpcResult{"cursor"}.getStr, messages)
 
 proc rpcChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
@@ -426,7 +426,7 @@ proc pinnedMessagesByChatID*(chatId: string, cursor: string): (string, seq[Messa
   var success: bool
   let callResult = rpcPinnedChatMessages(chatId, cursorVal, 20, success)
   if success:
-    result = parseChatMessagesResponse(chatId, callResult.parseJson()["result"])
+    result = parseChatMessagesResponse(chatId, callResult.parseJson()["result"], true)
 
 proc setPinMessage*(messageId: string, chatId: string, pinned: bool) =
   discard callPrivateRPC("sendPinMessage".prefix, %*[{

@@ -99,6 +99,8 @@ Item {
                         source: "../../../../img/pin.svg"
                         anchors.left: parent.left
                         anchors.leftMargin: 3
+                        width: 16
+                        height: 16
                         anchors.verticalCenter: parent.verticalCenter
 
                         ColorOverlay {
@@ -109,7 +111,7 @@ Item {
                     }
 
                     StyledText {
-                        text: qsTr("Pinned")
+                        text: qsTr("Pinned by %1").arg(chatsModel.alias(pinnedBy))
                         anchors.left: pinImage.right
                         anchors.verticalCenter: parent.verticalCenter
                         font.pixelSize: 13

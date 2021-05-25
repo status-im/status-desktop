@@ -69,6 +69,7 @@ type Message* = object
   audioDurationMs*: int
   hasMention*: bool
   isPinned*: bool
+  pinnedBy*: string
 
 type Reaction* = object
   id*: string

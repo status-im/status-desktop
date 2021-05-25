@@ -14,6 +14,8 @@ import "../Wallet"
 StackLayout {
     id: chatColumnLayout
 
+    property alias pinnedMessagesPopupComponent: pinnedMessagesPopupComponent
+
     property int chatGroupsListViewCount: 0
     
     property bool isReply: false
@@ -35,6 +37,25 @@ StackLayout {
     
     property alias input: chatInput
 
+    property string hoveredMessage
+    property string activeMessage
+
+    function setHovered(messageId, hovered) {
+        if (hovered) {
+            hoveredMessage = messageId
+        } else if (hoveredMessage === messageId) {
+            hoveredMessage = ""
+        }
+    }
+
+    function setMessageActive(messageId, active) {
+        if (active) {
+            activeMessage = messageId
+        } else if (activeMessage === messageId) {
+            activeMessage = ""
+        }
+    }
+
     Component.onCompleted: {
         chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -45,6 +66,21 @@ StackLayout {
 
     currentIndex:  chatsModel.activeChannelIndex > -1 && chatGroupsListViewCount > 0 ? 0 : 1
 
+    Component {
+        id: pinnedMessagesPopupComponent
+        PinnedMessagesPopup {
+            id: pinnedMessagesPopup
+            onClosed: destroy()
+        }
+    }
+
+    StatusImageModal {
+        id: imagePopup
+    }
+
+    MessageContextMenu {
+        id: messageContextMenu
+    }
 
     property var idMap: ({})
     property var suggestionsObj: ([])
@@ -263,16 +299,8 @@ StackLayout {
             }
         }
 
-        StatusImageModal {
-            id: imagePopup
-        }
-
         EmojiReactions {
             id: reactionModel
-        }
-
-        MessageContextMenu {
-            id: messageContextMenu
         }
 
         Connections {

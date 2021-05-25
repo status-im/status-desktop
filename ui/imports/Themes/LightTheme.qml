@@ -93,7 +93,7 @@ Theme {
     property color pinnedMessageBorder: "#FE8F59"
     property color pinnedMessageBackground: "#1aFF9F0F"
     property color pinnedMessageBackgroundHovered: "#33FF9F0F"
-    property color pinnedRectangleBackground: "#1affffff"
+    property color pinnedRectangleBackground: "#1aFE8F59"
 
     property color roundedButtonForegroundColor: buttonForegroundColor
     property color roundedButtonBackgroundColor: secondaryBackground

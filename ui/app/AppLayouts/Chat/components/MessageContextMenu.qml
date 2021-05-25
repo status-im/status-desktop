@@ -134,7 +134,7 @@ PopupMenu {
 
     Separator {
         anchors.bottom: viewProfileAction.top
-        visible: !messageContextMenu.emojiOnly
+        visible: !messageContextMenu.emojiOnly && !messageContextMenu.hideEmojiPicker
     }
 
     Action {
@@ -153,7 +153,17 @@ PopupMenu {
         icon.source: "../../../img/pin"
         icon.width: 16
         icon.height: 16
-        enabled: chatsModel.activeChannel.chatType !== Constants.chatTypePublic
+        enabled: {
+            switch (chatsModel.activeChannel.chatType) {
+            case Constants.chatTypePublic: return false
+            case Constants.chatTypeStatusUpdate: return false
+            case Constants.chatTypeOneToOne: return true
+            case Constants.chatTypePrivateGroupChat: return chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
+            case Constants.chatTypeCommunity: return chatsModel.communities.activeCommunity.admin
+            }
+
+            return false
+        }
     }
 
     Action {

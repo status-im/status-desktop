@@ -330,6 +330,8 @@ QtObject:
   proc sendingMessageFailed*(self: ChatsView) {.signal.}
 
   proc alias*(self: ChatsView, pubKey: string): string {.slot.} =
+    if (pubKey == ""):
+      return ""
     generateAlias(pubKey)
 
   proc userNameOrAlias*(self: ChatsView, pubKey: string): string {.slot.} =
@@ -464,12 +466,17 @@ QtObject:
   proc isAddedContact*(self: ChatsView, id: string): bool {.slot.} =
     result = self.status.contacts.isAdded(id)
 
-  proc pushPinnedMessages*(self:ChatsView, messages: var seq[Message]) =
-    for msg in messages.mitems:
+  proc pushPinnedMessages*(self:ChatsView, pinnedMessages: var seq[Message]) =
+    for msg in pinnedMessages.mitems:
       self.upsertChannel(msg.chatId)
-      self.pinnedMessagesList[msg.chatId].add(msg)
+
+      var message = self.messageList[msg.chatId].getMessageById(msg.id)
+      message.pinnedBy = msg.pinnedBy
+      message.isPinned = true
+
+      self.pinnedMessagesList[msg.chatId].add(message)
       # put the message as pinned in the message list
-      self.messageList[msg.chatId].changeMessagePinned(msg.id, true)
+      self.messageList[msg.chatId].changeMessagePinned(msg.id, true, msg.pinnedBy)
 
   proc pushMessages*(self:ChatsView, messages: var seq[Message]) =
     for msg in messages.mitems:
@@ -628,7 +635,7 @@ QtObject:
       self.status.chat.chatReactions(rpcResponseObj["chatId"].getStr, true, reactions[0], reactions[1])
 
     if(rpcResponseObj["pinnedMessages"].kind != JNull):
-      let pinnedMessages = parseChatMessagesResponse(rpcResponseObj["chatId"].getStr, rpcResponseObj["pinnedMessages"])
+      let pinnedMessages = parseChatMessagesResponse(rpcResponseObj["chatId"].getStr, rpcResponseObj["pinnedMessages"], true)
       self.status.chat.pinnedMessagesByChatID(rpcResponseObj["chatId"].getStr, pinnedMessages[0], pinnedMessages[1])
 
   proc hideLoadingIndicator*(self: ChatsView) {.slot.} =
@@ -867,14 +874,16 @@ QtObject:
       if(id == msg.id): return idx
     return idx
 
-  proc addPinMessage*(self: ChatsView, messageId: string, chatId: string) =
+  proc addPinMessage*(self: ChatsView, messageId: string, chatId: string, pinnedBy: string) =
     self.upsertChannel(chatId)
-    self.messageList[chatId].changeMessagePinned(messageId, true)
-    self.pinnedMessagesList[chatId].add(self.messageList[chatId].getMessageById(messageId))
+    self.messageList[chatId].changeMessagePinned(messageId, true, pinnedBy)
+    var message = self.messageList[chatId].getMessageById(messageId)
+    message.pinnedBy = pinnedBy
+    self.pinnedMessagesList[chatId].add(message)
 
   proc removePinMessage*(self: ChatsView, messageId: string, chatId: string) =
     self.upsertChannel(chatId)
-    self.messageList[chatId].changeMessagePinned(messageId, false)
+    self.messageList[chatId].changeMessagePinned(messageId, false, "")
     try:
       self.pinnedMessagesList[chatId].remove(messageId)
     except Exception as e:
@@ -883,7 +892,7 @@ QtObject:
 
   proc pinMessage*(self: ChatsView, messageId: string, chatId: string) {.slot.} =
     self.status.chat.setPinMessage(messageId, chatId, true)
-    self.addPinMessage(messageId, chatId)
+    self.addPinMessage(messageId, chatId, self.pubKey)
 
   proc unPinMessage*(self: ChatsView, messageId: string, chatId: string) {.slot.} =
     self.status.chat.setPinMessage(messageId, chatId, false)
@@ -892,7 +901,7 @@ QtObject:
   proc addPinnedMessages*(self: ChatsView, pinnedMessages: seq[Message]) =
     for pinnedMessage in pinnedMessages:
       if (pinnedMessage.isPinned):
-        self.addPinMessage(pinnedMessage.id, pinnedMessage.localChatId)
+        self.addPinMessage(pinnedMessage.id, pinnedMessage.localChatId, pinnedMessage.pinnedBy)
       else:
         self.removePinMessage(pinnedMessage.id, pinnedMessage.localChatId)
 

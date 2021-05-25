@@ -187,7 +187,7 @@ Item {
                 hoverEnabled: true
                 onEntered: pinnedMessagesGroup.hovered = true
                 onExited: pinnedMessagesGroup.hovered = false
-                onClicked: pinnedMessagesPopup.open()
+                onClicked: openPopup(pinnedMessagesPopupComponent)
             }
         }
     }
