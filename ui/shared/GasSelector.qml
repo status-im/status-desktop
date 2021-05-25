@@ -32,10 +32,6 @@ Item {
 
     property bool advancedMode: false
 
-    function defaultGasPrice() {
-        return ((50 * (root.fastestGasPrice - root.slowestGasPrice) / 100) + root.slowestGasPrice)
-    }
-
     function updateGasEthValue() {
         // causes error on application load without this null check
         if (!inputGasPrice || !inputGasLimit) {
@@ -47,6 +43,8 @@ Item {
         selectedGasEthValue = ethValue
         selectedGasFiatValue = fiatValue
     }
+
+    Component.onCompleted: updateGasEthValue()
 
     function validate() {
         // causes error on application load without a null check
@@ -125,6 +123,7 @@ Item {
             onChecked: inputGasPrice.text = price
         }
         GasSelectorButton {
+            id: optimalGasButton
             buttonGroup: gasGroup
             checkedByDefault: true
             text: qsTr("Optimal")
@@ -183,7 +182,7 @@ Item {
             anchors.right: parent.right
             width: 130
             customHeight: 56
-            text: root.defaultGasPrice()
+            text: optimalGasButton.price
             placeholderText: "20"
             onTextChanged: {
                 if (root.validate()) {

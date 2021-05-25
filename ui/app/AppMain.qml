@@ -287,6 +287,7 @@ RowLayout {
     // Add SendModal here as it is used by the Wallet as well as the Browser
     Loader {
         id: sendModal
+        active: false
 
         function open() {
             this.active = true
