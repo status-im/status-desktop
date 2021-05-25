@@ -13,7 +13,7 @@ import types
 import web3/conversions
 from ../libstatus/utils import parseAddress, wei2Eth
 
-proc toMessage*(jsonMsg: JsonNode, pk: string): Message
+proc toMessage*(jsonMsg: JsonNode, pk: string, isPin: bool = false): Message
 
 proc toChat*(jsonChat: JsonNode): Chat
 
@@ -78,7 +78,7 @@ proc fromEvent*(event: JsonNode): Signal =
         id: jsonPinnedMessage{"message_id"}.getStr,
         chatId: jsonPinnedMessage{"chat_id"}.getStr,
         localChatId: jsonPinnedMessage{"localChatId"}.getStr,
-        fromAuthor: jsonPinnedMessage{"from"}.getStr,
+        pinnedBy: jsonPinnedMessage{"from"}.getStr,
         identicon: jsonPinnedMessage{"identicon"}.getStr,
         alias: jsonPinnedMessage{"alias"}.getStr,
         clock: jsonPinnedMessage{"clock"}.getInt,
@@ -267,7 +267,7 @@ proc toTextItem*(jsonText: JsonNode): TextItem =
       result.children.add(child.toTextItem)
 
 
-proc toMessage*(jsonMsg: JsonNode, pk: string): Message =
+proc toMessage*(jsonMsg: JsonNode, pk: string, isPin: bool = false): Message =
   var contentType: ContentType
   try:
     contentType = ContentType(jsonMsg{"contentType"}.getInt)
@@ -308,6 +308,10 @@ proc toMessage*(jsonMsg: JsonNode, pk: string): Message =
       audioDurationMs: jsonMsg{"audioDurationMs"}.getInt,
       hasMention: false
     )
+
+  if isPin:
+    message.pinnedBy = message.fromAuthor
+    message.fromAuthor = ""
 
   if contentType == ContentType.Gap:
     message.gapFrom = jsonMsg["gapParameters"]["from"].getInt

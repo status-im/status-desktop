@@ -22,25 +22,6 @@ ScrollView {
     property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
     property int newMessages: 0
 
-    property string hoveredMessage
-    property string activeMessage
-
-    function setHovered(messageId, hovered) {
-        if (hovered) {
-            hoveredMessage = messageId
-        } else if (hoveredMessage === messageId) {
-            hoveredMessage = ""
-        }
-    }
-
-    function setMessageActive(messageId, active) {
-        if (active) {
-            activeMessage = messageId
-        } else if (activeMessage === messageId) {
-            activeMessage = ""
-        }
-    }
-
     contentItem: chatLogView
     Layout.fillWidth: true
     Layout.fillHeight: true
@@ -336,6 +317,7 @@ ScrollView {
             hasMention: model.hasMention
             stickerPackId: model.stickerPackId
             pinnedMessage: model.isPinned
+            pinnedBy: model.pinnedBy
             gapFrom: model.gapFrom
             gapTo: model.gapTo
             prevMessageIndex: {

@@ -15,6 +15,7 @@ ModalPopup {
     property var pubKeys: []
     property var channel
     property bool isAdmin: false
+    property Component pinnedMessagesPopupComponent
 
     function resetSelectedMembers(){
         pubKeys = [];
@@ -98,7 +99,7 @@ ModalPopup {
           anchors.top: groupName.bottom
           anchors.topMargin: 2
           font.pixelSize: 14
-          color: Style.current.darkGrey
+          color: Style.current.secondaryText
       }
 
       Rectangle {
@@ -107,7 +108,7 @@ ModalPopup {
             height: 24
             width: 24
             anchors.verticalCenter: groupName.verticalCenter
-            anchors.leftMargin: 4
+            anchors.leftMargin: Style.current.halfPadding
             anchors.left: groupName.right
             radius: 8
 
@@ -199,16 +200,44 @@ ModalPopup {
             anchors.rightMargin: -Style.current.padding
         }
 
+        StatusSettingsLineButton {
+            property int pinnedCount: chatsModel.pinnedMessagesList.count
+
+            id: pinnedMessagesBtn
+            visible: pinnedCount > 0
+            height: visible ? implicitHeight : 0
+            text: qsTr("Pinned messages")
+            currentValue: pinnedCount
+            anchors.top: separator.bottom
+            anchors.topMargin: visible ? Style.current.halfPadding : 0
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
+            onClicked: openPopup(pinnedMessagesPopupComponent)
+            iconSource: "../../../img/pin.svg"
+        }
+
+        Separator {
+            id: separator2
+            visible: pinnedMessagesBtn.visible
+            anchors.left: parent.left
+            anchors.leftMargin: -Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: -Style.current.padding
+            anchors.top: pinnedMessagesBtn.bottom
+            anchors.topMargin: visible ? Style.current.halfPadding : 0
+        }
+
         ListView {
             id: memberList
-            anchors.fill: parent
-            anchors.top: separator.bottom
+            anchors.top: separator2.bottom
             anchors.bottom: popup.bottom
-            anchors.topMargin: addMembers ? 30 : 15
+            anchors.topMargin: addMembers ? 30 : Style.current.padding
             anchors.bottomMargin: Style.current.padding
-            anchors.leftMargin: 15
-            anchors.rightMargin: 15
-            spacing: 15
+            anchors.left: parent.left
+            anchors.leftMargin: Style.current.padding
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.padding
+            spacing: Style.current.padding
             Layout.fillWidth: true
             Layout.fillHeight: true
             model: popup.channel.members

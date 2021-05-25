@@ -30,11 +30,20 @@ Item {
     property string linkUrls: ""
     property bool placeholderMessage: false
     property bool pinnedMessage: false
+    property string pinnedBy
     property bool forceHoverHandler: false // Used to force the HoverHandler to be active (useful for messages in popups)
     property string communityId: ""
     property int stickerPackId: -1
     property int gapFrom: 0
     property int gapTo: 0
+
+    z: {
+        if (typeof chatLogView === "undefined") {
+            return 1
+        }
+
+        return chatLogView.count - index
+    }
 
     property string displayUserName: {
         if (isCurrentUser) {

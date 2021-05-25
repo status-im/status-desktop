@@ -38,8 +38,9 @@ type
     HasMention = UserRole + 28
     StickerPackId = UserRole + 29
     IsPinned = UserRole + 30
-    GapFrom = UserRole + 31
-    GapTo = UserRole + 32
+    PinnedBy = UserRole + 31
+    GapFrom = UserRole + 32
+    GapTo = UserRole + 33
 
 QtObject:
   type
@@ -172,6 +173,7 @@ QtObject:
       of ChatMessageRoles.CommunityId: result = newQVariant(message.communityId)
       of ChatMessageRoles.HasMention: result = newQVariant(message.hasMention)
       of ChatMessageRoles.IsPinned: result = newQVariant(message.isPinned)
+      of ChatMessageRoles.PinnedBy: result = newQVariant(message.pinnedBy)
       # Pass the command parameters as a JSON string
       of ChatMessageRoles.CommandParameters: result = newQVariant($(%*{
         "id": message.commandParameters.id,
@@ -217,6 +219,7 @@ QtObject:
       ChatMessageRoles.Alias.int:"alias",
       ChatMessageRoles.HasMention.int:"hasMention",
       ChatMessageRoles.IsPinned.int:"isPinned",
+      ChatMessageRoles.PinnedBy.int:"pinnedBy",
       ChatMessageRoles.LocalName.int:"localName",
       ChatMessageRoles.StickerPackId.int:"stickerPackId",
       ChatMessageRoles.GapFrom.int:"gapFrom",
@@ -293,15 +296,16 @@ QtObject:
     let bottomRight = self.createIndex(msgIdx, 0, nil)
     self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.EmojiReactions.int])
 
-  proc changeMessagePinned*(self: ChatMessageList, messageId: string, pinned: bool) =
+  proc changeMessagePinned*(self: ChatMessageList, messageId: string, pinned: bool, pinnedBy: string) =
     if not self.messageIndex.hasKey(messageId): return
     let msgIdx = self.messageIndex[messageId]
     var message = self.messages[msgIdx]
     message.isPinned = pinned
+    message.pinnedBy = pinnedBy
     self.messages[msgIdx] = message
     let topLeft = self.createIndex(msgIdx, 0, nil)
     let bottomRight = self.createIndex(msgIdx, 0, nil)
-    self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.IsPinned.int])
+    self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.IsPinned.int, ChatMessageRoles.PinnedBy.int])
 
   proc markMessageAsSent*(self: ChatMessageList, messageId: string)=
     let topLeft = self.createIndex(0, 0, nil)

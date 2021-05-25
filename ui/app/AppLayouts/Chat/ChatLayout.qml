@@ -46,7 +46,9 @@ SplitView {
 
     Component {
         id: groupInfoPopupComponent
-        GroupInfoPopup {}
+        GroupInfoPopup {
+            pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
+        }
     }
 
     ChatColumn {

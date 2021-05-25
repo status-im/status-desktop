@@ -15,9 +15,10 @@ Rectangle {
     signal clicked(bool checked)
     property bool isHovered: false
     property int badgeSize: 18
+    property url iconSource
 
     id: root
-    height: 52
+    implicitHeight: 52
     color: isHovered ? Style.current.backgroundHover : Style.current.transparent
     radius: Style.current.radius
     border.width: 0
@@ -26,9 +27,24 @@ Rectangle {
     anchors.right: parent.right
     anchors.rightMargin: -Style.current.padding
 
+    RoundedIcon {
+        id: pinImage
+        visible: !!root.iconSource.toString()
+        source: root.iconSource
+        iconColor: Style.current.primary
+        color: Style.current.secondaryBackground
+        width: 40
+        height: 40
+        iconWidth: 24
+        iconHeight: 24
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
+        anchors.verticalCenter: parent.verticalCenter
+    }
+
     StyledText {
         id: textItem
-        anchors.left: parent.left
+        anchors.left: pinImage.visible ? pinImage.right : parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
         text: root.text

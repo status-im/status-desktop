@@ -11,7 +11,7 @@ Rectangle {
     property int contentType: 2
 
     id: buttonsContainer
-    visible: (buttonsContainer.parentIsHovered || isMessageActive) && contentType != Constants.transactionType
+    visible: (buttonsContainer.parentIsHovered || isMessageActive) && contentType !== Constants.transactionType
     width: buttonRow.width + buttonsContainer.containerMargin * 2
     height: 36
     radius: Style.current.radius
@@ -61,10 +61,12 @@ Rectangle {
             onClicked: {
                 setMessageActive(messageId, true)
                 clickMessage(false, false, false, null, true)
-                messageContextMenu.x = buttonsContainer.x + buttonsContainer.width - messageContextMenu.width
+                if (!forceHoverHandler) {
+                    messageContextMenu.x = buttonsContainer.x + buttonsContainer.width - messageContextMenu.width
 
-                // The Math.max is to make sure that the menu is rendered
-                messageContextMenu.y -= Math.max(messageContextMenu.emojiContainer.height, 56) + Style.current.padding
+                    // The Math.max is to make sure that the menu is rendered
+                    messageContextMenu.y -= Math.max(messageContextMenu.emojiContainer.height, 56) + Style.current.padding
+                }
             }
             onHoveredChanged: {
                 buttonsContainer.hoverChanged(this.hovered)
@@ -104,7 +106,7 @@ Rectangle {
             height: 32
             onClicked: {
                 if (typeof isMessageActive !== "undefined") {
-                    isMessageActive = true
+                    setMessageActive(messageId, true)
                 }
                 clickMessage(false, isSticker, false, null, false, true)
             }
