@@ -119,6 +119,10 @@ ThemePalette {
     miscColor10: getColor('brown')
     miscColor11: getColor('brown2')
 
+    property QtObject statusAppLayout: QtObject {
+        property color backgroundColor: white
+    }
+
     property QtObject statusAppNavBar: QtObject {
         property color backgroundColor: baseColor4
     }
