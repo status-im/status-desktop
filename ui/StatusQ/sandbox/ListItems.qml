@@ -206,4 +206,18 @@ GridLayout {
             }
         ]
     }
+
+    StatusDescriptionListItem {
+        title: "Title"
+        subTitle: "Subtitle"
+    }
+
+    StatusDescriptionListItem {
+        title: "Title"
+        subTitle: "Subtitle"
+        tooltip.text: "Tooltip"
+        icon.name: "info"
+        iconButton.onClicked: tooltip.visible = !tooltip.visible
+    }
+
 }
