@@ -63,6 +63,8 @@ QtObject:
     )
     result.setup
 
+  proc contactListChanged*(self: ContactsView) {.signal.}
+
   proc updateContactList*(self: ContactsView, contacts: seq[Profile]) =
     for contact in contacts:
       self.contactList.updateContact(contact)
@@ -72,8 +74,7 @@ QtObject:
         self.blockedContacts.updateContact(contact)
       if contact.systemTags.contains(contactRequest) and not contact.systemTags.contains(contactAdded) and not contact.systemTags.contains(contactBlocked):
         self.contactRequests.updateContact(contact)
-
-  proc contactListChanged*(self: ContactsView) {.signal.}
+      self.contactListChanged()
 
   proc getContactList(self: ContactsView): QVariant {.slot.} =
     return newQVariant(self.contactList)
@@ -89,7 +90,7 @@ QtObject:
 
   proc notifyOnNewContactRequests*(self: ContactsView, contacts: seq[Profile]) =
     for contact in contacts:
-      if contact.systemTags.contains(contactRequest) and not contact.systemTags.contains(contactAdded) and not contact.systemTags.contains(contactBlocked):
+      if contact.systemTags.contains(contactRequest) and not contact.systemTags.contains(contactBlocked):
         self.contactRequestAdded(status_ens.userNameOrAlias(contact), contact.address)
 
   QtProperty[QVariant] list:
