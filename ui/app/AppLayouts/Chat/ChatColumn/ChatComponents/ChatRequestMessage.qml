@@ -4,7 +4,7 @@ import "../../../../../shared"
 import "../../../../../shared/status"
 
 Item {
-    visible: chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne && !isContact
+    visible: chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne && (!isContact || !contactRequestReceived)
     width: parent.width
     height: childrenRect.height
 
@@ -18,7 +18,8 @@ Item {
 
     StyledText {
         id: contactText1
-        text: qsTr("You need to be mutual contacts with this person for them to receive your messages")
+        text: !isContact ? qsTr("You need to be mutual contacts with this person for them to receive your messages") :
+                           qsTr("Waiting for %1 to accept your request").arg(Utils.removeStatusEns(chatsModel.activeChannel.name))
         anchors.top: waveImg.bottom
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
@@ -29,7 +30,8 @@ Item {
 
     StyledText {
         id: contactText2
-        text: qsTr("Just click this button to add them as contact. They will receive a notification all once they accept you as contact as well, you'll be able to chat")
+        visible: !isContact
+        text: qsTr("Just click this button to add them as contact. They will receive a notification. Once they accept the request, you'll be able to chat")
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
         anchors.top: contactText1.bottom
@@ -39,6 +41,7 @@ Item {
     }
 
     StatusButton {
+        visible: !isContact
         text: qsTr("Add to contacts")
         anchors.top: contactText2.bottom
         anchors.topMargin: Style.current.smallPadding

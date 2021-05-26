@@ -35,6 +35,7 @@ StackLayout {
     property string activeChatId: chatsModel.activeChannel.id
     property bool isBlocked: profileModel.contacts.isContactBlocked(activeChatId)
     property bool isContact: profileModel.contacts.isAdded(activeChatId)
+    property bool contactRequestReceived: profileModel.contacts.contactRequestReceived(activeChatId)
     
     property string currentNotificationChatId
     property string currentNotificationCommunityId
@@ -343,10 +344,13 @@ StackLayout {
             StatusChatInput {
                 id: chatInput
                 visible: {
-                    const community = chatsModel.communities.activeCommunity
                     if (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat) {
                         return chatsModel.activeChannel.isMember
                     }
+                    if (chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne) {
+                        return isContact && contactRequestReceived
+                    }
+                    const community = chatsModel.communities.activeCommunity
                     return !community.active ||
                             community.access === Constants.communityChatPublicAccess ||
                             community.admin ||

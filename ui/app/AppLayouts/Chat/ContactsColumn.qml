@@ -125,8 +125,11 @@ Rectangle {
             if (!appSettings.notifyOnNewRequests) {
                 return
             }
-            systemTray.showMessage(qsTr("New contact request"),
-                                   qsTr("%1 requests to become contacts").arg(Utils.removeStatusEns(name)),
+            const isContact = profileModel.contacts.isAdded(address)
+            systemTray.showMessage(isContact ? qsTr("Contact request accepted") :
+                                               qsTr("New contact request"),
+                                   isContact ? qsTr("You can now chat with %1").arg(Utils.removeStatusEns(name)) :
+                                               qsTr("%1 requests to become contacts").arg(Utils.removeStatusEns(name)),
                                    SystemTrayIcon.NoIcon,
                                    Constants.notificationPopupTTL)
         }
