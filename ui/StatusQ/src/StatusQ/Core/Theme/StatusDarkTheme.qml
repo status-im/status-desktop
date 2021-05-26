@@ -139,6 +139,8 @@ ThemePalette {
 
     property QtObject statusBadge: QtObject {
         property color foregroundColor: baseColor3
+        property color borderColor: baseColor5
+        property color hoverBorderColor: "#353A4D"
     }
 }
 

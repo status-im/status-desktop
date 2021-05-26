@@ -100,6 +100,8 @@ QtObject {
 
     property QtObject statusBadge: QtObject {
         property color foregroundColor
+        property color borderColor
+        property color hoverBorderColor
     }
 
     function alphaColor(color, alpha) {

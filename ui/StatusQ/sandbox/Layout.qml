@@ -28,6 +28,8 @@ GridLayout {
             icon.name: "chat"
             badge.value: 33
             badge.visible: true
+            badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+            badge.border.width: 2
             tooltip.text: "Chat"
         }
     }
@@ -37,6 +39,8 @@ GridLayout {
             icon.name: "chat"
             badge.value: 33
             badge.visible: true
+            badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+            badge.border.width: 2
             tooltip.text: "Chat"
         }
 
@@ -72,7 +76,7 @@ GridLayout {
                 badge.visible: true
                 badge.anchors.rightMargin: 4
                 badge.anchors.topMargin: 5
-                badge.border.color: Theme.palette.statusAppNavBar.backgroundColor
+                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
 
                 tooltip.text: "Profile"
@@ -85,6 +89,8 @@ GridLayout {
             icon.name: "chat"
             badge.value: 33
             badge.visible: true
+            badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+            badge.border.width: 2
             tooltip.text: "Chat"
         }
 
@@ -118,6 +124,8 @@ GridLayout {
             icon.name: "chat"
             badge.value: 33
             badge.visible: true
+            badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+            badge.border.width: 2
             tooltip.text: "Chat"
         }
 
@@ -166,7 +174,7 @@ GridLayout {
                 badge.visible: true
                 badge.anchors.rightMargin: 4
                 badge.anchors.topMargin: 5
-                badge.border.color: Theme.palette.statusAppNavBar.backgroundColor
+                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
 
                 tooltip.text: "Profile"
@@ -180,6 +188,8 @@ GridLayout {
             icon.name: "chat"
             badge.value: 33
             badge.visible: true
+            badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+            badge.border.width: 2
             tooltip.text: "Chat"
         }
 
@@ -247,7 +257,7 @@ GridLayout {
                 badge.visible: true
                 badge.anchors.rightMargin: 4
                 badge.anchors.topMargin: 5
-                badge.border.color: Theme.palette.statusAppNavBar.backgroundColor
+                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
 
                 tooltip.text: "Profile"
