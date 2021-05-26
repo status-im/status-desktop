@@ -62,7 +62,7 @@ Rectangle {
         property color hoverColor: {
             switch(statusFlatRoundButton.type) {
             case StatusFlatRoundButton.Type.Primary:
-                return Theme.palette.primaryColor2;
+                return Theme.palette.primaryColor3;
             case StatusFlatRoundButton.Type.Secondary:
                 return Theme.palette.baseColor2;
             }
