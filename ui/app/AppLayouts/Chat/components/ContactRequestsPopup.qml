@@ -87,6 +87,7 @@ ModalPopup {
 
         StatusButton {
             id: blockBtn
+            enabled: contactList.count > 0
             anchors.right: addToContactsButton.left
             anchors.rightMargin: Style.current.padding
             anchors.bottom: parent.bottom
@@ -97,6 +98,7 @@ ModalPopup {
 
         StatusButton {
             id: addToContactsButton
+            enabled: contactList.count > 0
             anchors.right: parent.right
             text: qsTr("Accept all")
             anchors.bottom: parent.bottom
