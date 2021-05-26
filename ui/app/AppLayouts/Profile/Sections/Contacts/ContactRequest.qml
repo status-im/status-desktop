@@ -76,7 +76,10 @@ Rectangle {
     StatusIconButton {
         id: acceptBtn
         icon.name: "check-circle"
-        onClicked: profileModel.contacts.addContact(container.address)
+        onClicked: {
+            chatsModel.joinPrivateChat(container.address, "")
+            profileModel.contacts.addContact(container.address)
+        }
         width: 32
         height: 32
         padding: 6
