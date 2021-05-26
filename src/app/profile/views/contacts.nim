@@ -1,4 +1,4 @@
-import NimQml, chronicles, sequtils, sugar, strutils
+import NimQml, chronicles, sequtils, sugar, strutils, json
 import ../../../status/libstatus/utils as status_utils
 import ../../../status/status
 import ../../../status/chat/chat
@@ -34,6 +34,7 @@ QtObject:
   type ContactsView* = ref object of QObject
     status: Status
     contactList*: ContactList
+    contactRequests*: ContactList
     addedContacts*: ContactList
     blockedContacts*: ContactList
     contactToAdd*: Profile
@@ -44,6 +45,7 @@ QtObject:
   proc delete*(self: ContactsView) =
     self.contactList.delete
     self.addedContacts.delete
+    self.contactRequests.delete
     self.blockedContacts.delete
     self.QObject.delete
 
@@ -51,6 +53,7 @@ QtObject:
     new(result, delete)
     result.status = status
     result.contactList = newContactList()
+    result.contactRequests = newContactList()
     result.addedContacts = newContactList()
     result.blockedContacts = newContactList()
     result.contactToAdd = Profile(
@@ -63,10 +66,12 @@ QtObject:
   proc updateContactList*(self: ContactsView, contacts: seq[Profile]) =
     for contact in contacts:
       self.contactList.updateContact(contact)
-      if contact.systemTags.contains(":contact/added"):
-          self.addedContacts.updateContact(contact)
-      if contact.systemTags.contains(":contact/blocked"):
-          self.blockedContacts.updateContact(contact)
+      if contact.systemTags.contains(contactAdded):
+        self.addedContacts.updateContact(contact)
+      if contact.systemTags.contains(contactBlocked):
+        self.blockedContacts.updateContact(contact)
+      if contact.systemTags.contains(contactRequest) and not contact.systemTags.contains(contactAdded) and not contact.systemTags.contains(contactBlocked):
+        self.contactRequests.updateContact(contact)
 
   proc contactListChanged*(self: ContactsView) {.signal.}
 
@@ -75,9 +80,17 @@ QtObject:
 
   proc setContactList*(self: ContactsView, contactList: seq[Profile]) =
     self.contactList.setNewData(contactList)
-    self.addedContacts.setNewData(contactList.filter(c => c.systemTags.contains(":contact/added")))
-    self.blockedContacts.setNewData(contactList.filter(c => c.systemTags.contains(":contact/blocked")))
+    self.addedContacts.setNewData(contactList.filter(c => c.systemTags.contains(contactAdded)))
+    self.blockedContacts.setNewData(contactList.filter(c => c.systemTags.contains(contactBlocked)))
+    self.contactRequests.setNewData(contactList.filter(c => c.systemTags.contains(contactRequest) and not c.systemTags.contains(contactAdded) and not c.systemTags.contains(contactBlocked)))
     self.contactListChanged()
+
+  proc contactRequestAdded*(self: ContactsView, name: string, address: string) {.signal.}
+
+  proc notifyOnNewContactRequests*(self: ContactsView, contacts: seq[Profile]) =
+    for contact in contacts:
+      if contact.systemTags.contains(contactRequest) and not contact.systemTags.contains(contactAdded) and not contact.systemTags.contains(contactBlocked):
+        self.contactRequestAdded(status_ens.userNameOrAlias(contact), contact.address)
 
   QtProperty[QVariant] list:
     read = getContactList
@@ -104,6 +117,13 @@ QtObject:
         return true
     return false
 
+  proc getContactRequests(self: ContactsView): QVariant {.slot.} =
+    return newQVariant(self.contactRequests)
+
+  QtProperty[QVariant] contactRequests:
+    read = getContactRequests
+    notify = contactListChanged
+
   proc contactToAddChanged*(self: ContactsView) {.signal.}
 
   proc getContactToAddUsername(self: ContactsView): QVariant {.slot.} =
@@ -128,6 +148,10 @@ QtObject:
   proc isAdded*(self: ContactsView, id: string): bool {.slot.} =
     if id == "": return false
     self.status.contacts.isAdded(id)
+
+  proc contactRequestReceived*(self: ContactsView, id: string): bool {.slot.} =
+    if id == "": return false
+    self.status.contacts.contactRequestReceived(id)
 
   proc lookupContact*(self: ContactsView, value: string) {.slot.} =
     if value == "":
@@ -163,6 +187,19 @@ QtObject:
     result = self.status.contacts.addContact(publicKey)
     self.status.chat.join(status_utils.getTimelineChatId(publicKey), ChatType.Profile, "", publicKey)
     self.contactChanged(publicKey, true)
+
+  proc rejectContactRequest*(self: ContactsView, publicKey: string) {.slot.} =
+    self.status.contacts.rejectContactRequest(publicKey)
+
+  proc rejectContactRequests*(self: ContactsView, publicKeysJSON: string) {.slot.} =
+    let publicKeys = publicKeysJSON.parseJson
+    for pubkey in publicKeys:
+      self.rejectContactRequest(pubkey.getStr)
+
+  proc acceptContactRequests*(self: ContactsView, publicKeysJSON: string) {.slot.} =
+    let publicKeys = publicKeysJSON.parseJson
+    for pubkey in publicKeys:
+      discard self.addContact(pubkey.getStr)
 
   proc changeContactNickname*(self: ContactsView, publicKey: string, nickname: string) {.slot.} =
     var nicknameToSet = nickname

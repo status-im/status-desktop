@@ -49,6 +49,8 @@ QtObject:
   proc activeChanged*(self: CommunityItemView) {.signal.}
 
   proc setActive*(self: CommunityItemView, value: bool) {.slot.} =
+    if (self.active == value):
+      return
     self.active = value
     self.status.events.emit("communityActiveChanged", CommunityActiveChangedArgs(active: value))
     self.activeChanged()

@@ -119,19 +119,22 @@ Item {
             text: {
                 switch(root.realChatType){
                     //% "Public chat"
-                    case Constants.chatTypePublic: return qsTrId("public-chat")
-                    case Constants.chatTypeOneToOne: return (profileModel.contacts.isAdded(root.chatId) ?
-                    //% "Contact"
-                    qsTrId("chat-is-a-contact") :
-                    //% "Not a contact"
-                    qsTrId("chat-is-not-a-contact"))
-                    case Constants.chatTypePrivateGroupChat: 
-                        let cnt = chatsModel.activeChannel.members.rowCount();
-                        //% "%1 members"
-                        if(cnt > 1) return qsTrId("%1-members").arg(cnt);
-                        //% "1 member"
-                        return qsTrId("1-member");
-                    default: return "...";
+                case Constants.chatTypePublic: return qsTrId("public-chat")
+                case Constants.chatTypeOneToOne: return (profileModel.contacts.isAdded(root.chatId) ?
+                                                             profileModel.contacts.contactRequestReceived(root.chatId) ?
+                                                                 //% "Contact"
+                                                                 qsTrId("chat-is-a-contact") :
+                                                                 qsTr("Contact request pending") :
+
+                                                         //% "Not a contact"
+                                                         qsTrId("chat-is-not-a-contact"))
+                case Constants.chatTypePrivateGroupChat:
+                    let cnt = chatsModel.activeChannel.members.rowCount();
+                    //% "%1 members"
+                    if(cnt > 1) return qsTrId("%1-members").arg(cnt);
+                    //% "1 member"
+                    return qsTrId("1-member");
+                default: return "...";
                 }
             }
             font.pixelSize: 12
