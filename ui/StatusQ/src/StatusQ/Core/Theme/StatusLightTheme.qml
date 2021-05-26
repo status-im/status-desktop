@@ -121,6 +121,7 @@ ThemePalette {
 
     property QtObject statusAppLayout: QtObject {
         property color backgroundColor: white
+        property color rightPanelBackgroundColor: white
     }
 
     property QtObject statusAppNavBar: QtObject {

@@ -82,6 +82,7 @@ QtObject {
 
     property QtObject statusAppLayout: QtObject {
         property color backgroundColor
+        property color rightPanelBackgroundColor
     }
 
     property QtObject statusAppNavBar: QtObject {
