@@ -230,7 +230,7 @@ ModalPopup {
         ListView {
             id: memberList
             anchors.top: separator2.bottom
-            anchors.bottom: popup.bottom
+            anchors.bottom: parent.bottom
             anchors.topMargin: addMembers ? 30 : Style.current.padding
             anchors.bottomMargin: Style.current.padding
             anchors.left: parent.left
