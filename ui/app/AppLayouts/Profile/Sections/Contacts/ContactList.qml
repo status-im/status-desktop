@@ -61,7 +61,7 @@ ListView {
     // TODO: Make ConfirmationDialog a dynamic component on a future refactor
     ConfirmationDialog {
         id: removeContactConfirmationDialog
-        title: qsTrId("remove-contact")
+        title: qsTr("Remove contact")
         //% "Are you sure you want to remove this contact?"
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {

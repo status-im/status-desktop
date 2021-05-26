@@ -96,10 +96,13 @@ DISTFILES += \
     app/AppLayouts/Browser/FavoritesBar.qml \
     app/AppLayouts/Browser/FavoritesList.qml \
     app/AppLayouts/Browser/components/BookmarkButton.qml \
+    app/AppLayouts/Chat/ChatColumn/ChatComponents/AddToContactBanner.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandButton.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandModal.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatCommandsPopup.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatInputButton.qml \
+    app/AppLayouts/Chat/ChatColumn/ChatComponents/ChatRequestMessage.qml \
+    app/AppLayouts/Chat/ChatColumn/ChatComponents/InputArea.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/RequestModal.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/SignTransactionModal.qml \
     app/AppLayouts/Chat/ChatColumn/CompactMessage.qml \
@@ -156,6 +159,7 @@ DISTFILES += \
     app/AppLayouts/Chat/components/CommunitiesPopup.qml \
     app/AppLayouts/Chat/components/CommunityDetailPopup.qml \
     app/AppLayouts/Chat/components/ContactList.qml \
+    app/AppLayouts/Chat/components/ContactRequestsPopup.qml \
     app/AppLayouts/Chat/components/CreateCommunityPopup.qml \
     app/AppLayouts/Chat/components/EmojiCategoryButton.qml \
     app/AppLayouts/Chat/components/EmojiPopup.qml \
@@ -175,6 +179,7 @@ DISTFILES += \
     app/AppLayouts/Profile/LeftTab/components/MenuButton.qml \
     app/AppLayouts/Chat/data/EmojiReactions.qml \
     app/AppLayouts/Profile/Sections/AppearanceContainer.qml \
+    app/AppLayouts/Profile/Sections/Contacts/ContactRequest.qml \
     app/AppLayouts/Profile/Sections/NetworksModal.qml \
     app/AppLayouts/Profile/Sections/BackupSeedModal.qml \
     app/AppLayouts/Profile/Sections/BrowserContainer.qml \

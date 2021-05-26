@@ -7,6 +7,7 @@ import QtQml.Models 2.13
 import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
 import "../../../../shared"
+import "../../../../shared/status"
 import "../../../../imports"
 import "../components"
 import "./samples/"
@@ -31,8 +32,6 @@ ScrollView {
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
     ListView {
-        property string currentNotificationChatId
-
         id: chatLogView
         anchors.fill: parent
         anchors.bottomMargin: Style.current.bigPadding
@@ -47,23 +46,33 @@ ScrollView {
         verticalLayoutDirection: ListView.BottomToTop
 
         // This header and Connections is to create an invisible padding so that the chat identifier is at the top
-        // The Connections is necessary, because doing the check inside teh ehader created a binding loop (the contentHeight includes the header height
+        // The Connections is necessary, because doing the check inside the header created a binding loop (the contentHeight includes the header height
         // If the content height is smaller than the full height, we "show" the padding so that the chat identifier is at the top, otherwise we disable the Connections
         header: Item {
             height: 0
             width: chatLogView.width
         }
+        function checkHeaderHeight() {
+            if (!chatLogView.headerItem) {
+                return
+            }
+
+            if (chatLogView.contentItem.height - chatLogView.headerItem.height < chatLogView.height) {
+                chatLogView.headerItem.height = chatLogView.height - (chatLogView.contentItem.height - chatLogView.headerItem.height) - 36
+            } else {
+                chatLogView.headerItem.height = 0
+            }
+        }
+
         Connections {
             id: contentHeightConnection
             enabled: true
             target: chatLogView
             onContentHeightChanged: {
-                if (chatLogView.contentItem.height - chatLogView.headerItem.height < chatLogView.height) {
-                    chatLogView.headerItem.height = chatLogView.height - (chatLogView.contentItem.height - chatLogView.headerItem.height) - 36
-                } else {
-                    chatLogView.headerItem.height = 0
-                    contentHeightConnection.enabled = false
-                }
+                chatLogView.checkHeaderHeight()
+            }
+            onHeightChanged: {
+                chatLogView.checkHeaderHeight()
             }
         }
 
@@ -148,14 +157,6 @@ ScrollView {
             return true
         }
 
-        function clickOnNotification(chatId) {
-            applicationWindow.show()
-            applicationWindow.raise()
-            applicationWindow.requestActivate()
-            chatsModel.setActiveChannel(chatId)
-            appMain.changeAppSection(Constants.chat)
-        }
-
         Connections {
             target: chatsModel
             onMessagesLoaded: {
@@ -191,7 +192,8 @@ ScrollView {
                         return
                     }
 
-                    chatLogView.currentNotificationChatId = chatId
+                    chatColumnLayout.currentNotificationChatId = chatId
+                    chatColumnLayout.currentNotificationCommunityId = null
 
                     let name;
                     if (appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous) {
@@ -223,7 +225,7 @@ ScrollView {
                                                SystemTrayIcon.NoIcon,
                                                Constants.notificationPopupTTL)
                     } else {
-                        notificationWindow.notifyUser(chatId, name, message, chatType, identicon, chatLogView.clickOnNotification)
+                        notificationWindow.notifyUser(chatId, name, message, chatType, identicon, chatColumnLayout.clickOnNotification)
                     }
                 }
             }
@@ -232,7 +234,9 @@ ScrollView {
         Connections {
             target: chatsModel.communities
 
-             onMembershipRequestChanged: function (communityName, accepted) {
+            onMembershipRequestChanged: function (communityId, communityName, accepted) {
+                chatColumnLayout.currentNotificationChatId = null
+                chatColumnLayout.currentNotificationCommunityId = communityId
                 systemTray.showMessage("Status",
                                        accepted ? qsTr("You have been accepted into the ‘%1’ community").arg(communityName) :
                                                   qsTr("Your request to join the ‘%1’ community was declined").arg(communityName),
@@ -240,18 +244,13 @@ ScrollView {
                                        Constants.notificationPopupTTL)
             }
 
-            onMembershipRequestPushed: function (communityName, pubKey) {
+            onMembershipRequestPushed: function (communityId, communityName, pubKey) {
+                chatColumnLayout.currentNotificationChatId = null
+                chatColumnLayout.currentNotificationCommunityId = communityId
                 systemTray.showMessage(qsTr("New membership request"),
                                        qsTr("%1 asks to join ‘%2’").arg(Utils.getDisplayName(pubKey)).arg(communityName),
                                        SystemTrayIcon.NoIcon,
                                        Constants.notificationPopupTTL)
-            }
-        }
-
-        Connections {
-            target: systemTray
-            onMessageClicked: {
-                chatLogView.clickOnNotification(chatLogView.currentNotificationChatId)
             }
         }
 

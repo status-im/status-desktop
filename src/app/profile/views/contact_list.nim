@@ -16,6 +16,7 @@ type
     LocalNickname = UserRole + 9
     ThumbnailImage = UserRole + 10
     LargeImage = UserRole + 11
+    RequestReceived = UserRole + 12
 
 QtObject:
   type ContactList* = ref object of QAbstractListModel
@@ -37,6 +38,15 @@ QtObject:
 
   method rowCount(self: ContactList, index: QModelIndex = nil): int =
     return self.contacts.len
+
+  proc countChanged*(self: ContactList) {.signal.}
+
+  proc count*(self: ContactList): int {.slot.}  =
+    self.contacts.len
+
+  QtProperty[int] count:
+    read = count
+    notify = countChanged
 
   proc userName*(self: ContactList, pubKey: string, defaultValue: string = ""): string {.slot.} =
     for contact in self.contacts:
@@ -66,6 +76,7 @@ QtObject:
       of "localNickname": result = $contact.localNickname
       of "thumbnailImage": result = $contact.identityImage.thumbnail
       of "largeImage": result = $contact.identityImage.large
+      of "requestReceived": result = $contact.requestReceived()
 
   method data(self: ContactList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
@@ -85,6 +96,7 @@ QtObject:
       of ContactRoles.LocalNickname: result = newQVariant(contact.localNickname)
       of ContactRoles.ThumbnailImage: result = newQVariant(contact.identityImage.thumbnail)
       of ContactRoles.LargeImage: result = newQVariant(contact.identityImage.large)
+      of ContactRoles.RequestReceived: result = newQVariant(contact.requestReceived())
 
   method roleNames(self: ContactList): Table[int, string] =
     {
@@ -98,13 +110,15 @@ QtObject:
       ContactRoles.LocalNickname.int:"localNickname",
       ContactRoles.EnsVerified.int:"ensVerified",
       ContactRoles.ThumbnailImage.int:"thumbnailImage",
-      ContactRoles.LargeImage.int:"largeImage"
+      ContactRoles.LargeImage.int:"largeImage",
+      ContactRoles.RequestReceived.int:"requestReceived"
     }.toTable
 
   proc addContactToList*(self: ContactList, contact: Profile) =
     self.beginInsertRows(newQModelIndex(), self.contacts.len, self.contacts.len)
     self.contacts.add(contact)
     self.endInsertRows()
+    self.countChanged()
 
   proc hasAddedContacts(self: ContactList): bool {.slot.} = 
     for c in self.contacts:
@@ -134,3 +148,4 @@ QtObject:
     self.beginResetModel()
     self.contacts = contactList
     self.endResetModel()
+    self.countChanged()

@@ -74,7 +74,7 @@ QtObject:
   proc pendingRequestsToJoinForCommunity*(self: CommunitiesView, communityId: string): seq[CommunityMembershipRequest] =
     result = self.status.chat.pendingRequestsToJoinForCommunity(communityId)
 
-  proc membershipRequestPushed*(self: CommunitiesView, communityName: string, pubKey: string) {.signal.}
+  proc membershipRequestPushed*(self: CommunitiesView, communityId: string, communityName: string, pubKey: string) {.signal.}
 
   proc addMembershipRequests*(self: CommunitiesView, membershipRequests: seq[CommunityMembershipRequest]) =
     var communityId: string
@@ -87,7 +87,7 @@ QtObject:
       let alreadyPresentRequestIdx = community.membershipRequests.findIndexById(request.id)
       if (alreadyPresentRequestIdx == -1): 
         community.membershipRequests.add(request)
-        self.membershipRequestPushed(community.name, request.publicKey)
+        self.membershipRequestPushed(community.id, community.name, request.publicKey)
       else:
         community.membershipRequests[alreadyPresentRequestIdx] = request
       self.joinedCommunityList.replaceCommunity(community)
@@ -171,7 +171,7 @@ QtObject:
       error "Error joining the community", msg = e.msg
       result = fmt"Error joining the community: {e.msg}"
 
-  proc membershipRequestChanged*(self: CommunitiesView, communityName: string, accepted: bool) {.signal.}
+  proc membershipRequestChanged*(self: CommunitiesView, communityId: string, communityName: string, accepted: bool) {.signal.}
   
   proc communityAdded*(self: CommunitiesView, communityId: string) {.signal.}
 
@@ -200,7 +200,7 @@ QtObject:
       var i = 0
       for communityRequest in self.myCommunityRequests:
         if (communityRequest.communityId == community.id):
-          self.membershipRequestChanged(community.name, true)
+          self.membershipRequestChanged(community.id, community.name, true)
           self.myCommunityRequests.delete(i, i)
           break
         i = i + 1

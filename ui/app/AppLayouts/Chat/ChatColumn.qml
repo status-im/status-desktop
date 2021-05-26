@@ -29,13 +29,17 @@ StackLayout {
     property var doNotShowAddToContactBannerToThose: ([])
 
     property var onActivated: function () {
-        chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
+        inputArea.chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
     property string activeChatId: chatsModel.activeChannel.id
     property bool isBlocked: profileModel.contacts.isContactBlocked(activeChatId)
+    property bool isContact: profileModel.contacts.isAdded(activeChatId)
     
-    property alias input: chatInput
+    property alias input: inputArea.chatInput
+
+    property string currentNotificationChatId
+    property string currentNotificationCommunityId
 
     property string hoveredMessage
     property string activeMessage
@@ -57,7 +61,7 @@ StackLayout {
     }
 
     Component.onCompleted: {
-        chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
+        inputArea.chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
     Layout.fillHeight: true
@@ -95,12 +99,12 @@ StackLayout {
                                 identicon: chatsModel.messageList.getMessageData(i, "identicon"),
                                 localNickname: chatsModel.messageList.getMessageData(i, "localName")
                             })
-        chatInput.suggestionsList.append(suggestionsObj[suggestionsObj.length - 1]);
+        inputArea.chatInput.suggestionsList.append(suggestionsObj[suggestionsObj.length - 1]);
         idMap[contactAddr] = true;
     }
 
     function populateSuggestions() {
-        chatInput.suggestionsList.clear()
+        inputArea.chatInput.suggestionsList.clear()
         const len = chatsModel.suggestionList.rowCount()
 
         idMap = {}
@@ -116,7 +120,7 @@ StackLayout {
                                     localNickname: chatsModel.suggestionList.rowData(i, "localNickname")
                                 })
 
-            chatInput.suggestionsList.append(suggestionsObj[suggestionsObj.length - 1]);
+            inputArea.chatInput.suggestionsList.append(suggestionsObj[suggestionsObj.length - 1]);
             idMap[contactAddr] = true;
         }
         const len2 = chatsModel.messageList.rowCount();
@@ -135,7 +139,7 @@ StackLayout {
         let message = chatsModel.messageList.getMessageData(replyMessageIndex, "message")
         let identicon = chatsModel.messageList.getMessageData(replyMessageIndex, "identicon")
 
-        chatInput.showReplyArea(userName, message, identicon)
+        inputArea.chatInput.showReplyArea(userName, message, identicon)
     }
 
     function requestAddressForTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
@@ -162,6 +166,25 @@ StackLayout {
         }
         onContactBlocked: {
             chatsModel.removeMessagesByUserId(publicKey)
+        }
+    }
+
+    function clickOnNotification() {
+        applicationWindow.show()
+        applicationWindow.raise()
+        applicationWindow.requestActivate()
+        appMain.changeAppSection(Constants.chat)
+        if (currentNotificationChatId) {
+            chatsModel.setActiveChannel(currentNotificationChatId)
+        } else if (currentNotificationCommunityId) {
+            chatsModel.communities.setActiveCommunity(currentNotificationCommunityId)
+        }
+    }
+
+    Connections {
+        target: systemTray
+        onMessageClicked: function () {
+            clickOnNotification()
         }
     }
 
@@ -222,54 +245,9 @@ StackLayout {
             }
         }
 
-        Item {
-            visible: chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne &&
-                     !profileModel.contacts.isAdded(activeChatId) &&
-                     !doNotShowAddToContactBannerToThose.includes(activeChatId)
+        AddToContactBanner {
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
-            height: 36
-
-            SVGImage {
-                source: "../../img/plusSign.svg"
-                anchors.right: addToContactsTxt.left
-                anchors.rightMargin: Style.current.smallPadding
-                anchors.verticalCenter: parent.verticalCenter
-                layer.enabled: true
-                layer.effect: ColorOverlay { color: addToContactsTxt.color }
-            }
-
-            StyledText {
-                id: addToContactsTxt
-                text: qsTr("Add to contacts")
-                color: Style.current.primary
-                anchors.centerIn: parent
-            }
-
-            Separator {
-                anchors.bottom: parent.bottom
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: profileModel.contacts.addContact(activeChatId)
-            }
-
-            StatusIconButton {
-                id: closeBtn
-                icon.name: "close"
-                onClicked: {
-                    const newArray = Object.assign([], doNotShowAddToContactBannerToThose)
-                    newArray.push(activeChatId)
-                    doNotShowAddToContactBannerToThose = newArray
-                }
-                width: 20
-                height: 20
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.halfPadding
-                anchors.verticalCenter: parent.verticalCenter
-            }
         }
 
         StackLayout {
@@ -306,8 +284,8 @@ StackLayout {
         Connections {
             target: chatsModel
             onActiveChannelChanged: {
-                chatInput.suggestions.hide();
-                chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
+                inputArea.chatInput.suggestions.hide();
+                inputArea.chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
                 populateSuggestions();
             }
             onMessagePushed: {
@@ -322,97 +300,17 @@ StackLayout {
             }
         }
 
-        Rectangle {
+        ChatRequestMessage {
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
+            Layout.fillWidth: true
+            Layout.bottomMargin: Style.current.bigPadding
+        }
+
+        InputArea {
             id: inputArea
             Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
             Layout.fillWidth: true
             Layout.preferredWidth: parent.width
-            height: chatInput.height
-            Layout.preferredHeight: height
-            color: "transparent"
-            
-            Connections {
-                target: chatsModel
-                onLoadingMessagesChanged:
-                    if(value){
-                        loadingMessagesIndicator.active = true
-                    } else {
-                         timer.setTimeout(function(){ 
-                            loadingMessagesIndicator.active = false;
-                        }, 5000);
-                    }
-            }
-
-            Loader {
-                id: loadingMessagesIndicator
-                active: chatsModel.loadingMessages
-                sourceComponent: loadingIndicator
-                anchors.right: parent.right
-                anchors.bottom: chatInput.top
-                anchors.rightMargin: Style.current.padding
-                anchors.bottomMargin: Style.current.padding
-            }
-
-            Component {
-                id: loadingIndicator
-                LoadingAnimation {}
-            }
-
-            StatusChatInput {
-                id: chatInput
-                visible: {
-                    const community = chatsModel.communities.activeCommunity
-                    if (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat) {
-                        return chatsModel.activeChannel.isMember
-                    }
-                    return !community.active ||
-                            community.access === Constants.communityChatPublicAccess ||
-                            community.admin ||
-                            chatsModel.activeChannel.canPost
-                }
-                enabled: !isBlocked
-                chatInputPlaceholder: isBlocked ?
-                        //% "This user has been blocked."
-                        qsTrId("this-user-has-been-blocked-") :
-                        //% "Type a message."
-                        qsTrId("type-a-message-")
-                anchors.bottom: parent.bottom
-                recentStickers: chatsModel.stickers.recent
-                stickerPackList: chatsModel.stickers.stickerPacks
-                chatType: chatsModel.activeChannel.chatType
-                onSendTransactionCommandButtonClicked: {
-                    if (chatsModel.activeChannel.ensVerified) {
-                        txModalLoader.sourceComponent = cmpSendTransactionWithEns
-                    } else {
-                        txModalLoader.sourceComponent = cmpSendTransactionNoEns
-                    }
-                    txModalLoader.item.open()
-                }
-                onReceiveTransactionCommandButtonClicked: {
-                    txModalLoader.sourceComponent = cmpReceiveTransaction
-                    txModalLoader.item.open()
-                }
-                onStickerSelected: {
-                    chatsModel.stickers.send(hashId, packId)
-                }
-                onSendMessage: {
-                    if (chatInput.fileUrls.length > 0){
-                        chatsModel.sendImages(JSON.stringify(fileUrls));
-                    }
-                    let msg = chatsModel.plainText(Emoji.deparse(chatInput.textInput.text))
-                    if (msg.length > 0){
-                        msg = chatInput.interpretMessage(msg)
-                        chatsModel.sendMessage(msg, chatInput.isReply ? SelectedMessage.messageId : "", Utils.isOnlyEmoji(msg) ? Constants.emojiType : Constants.messageType, false, JSON.stringify(suggestionsObj));
-                        if(event) event.accepted = true
-                        sendMessageSound.stop();
-                        Qt.callLater(sendMessageSound.play);
-
-                        chatInput.textInput.clear();
-                        chatInput.textInput.textFormat = TextEdit.PlainText;
-                        chatInput.textInput.textFormat = TextEdit.RichText;
-                    }
-                }
-            }
         }
     }
 

@@ -8,11 +8,19 @@ type Profile* = ref object
   appearance*: int
   systemTags*: seq[string]
 
+
+const contactAdded* = ":contact/added"
+const contactBlocked* = ":contact/blocked"
+const contactRequest* = ":contact/request-received"
+
 proc isContact*(self: Profile): bool =
-  result = self.systemTags.contains(":contact/added") and not self.systemTags.contains(":contact/blocked")
+  result = self.systemTags.contains(contactAdded) and not self.systemTags.contains(":contact/blocked")
 
 proc isBlocked*(self: Profile): bool =
-  result = self.systemTags.contains(":contact/blocked")
+  result = self.systemTags.contains(contactBlocked)
+
+proc requestReceived*(self: Profile): bool =
+  result = self.systemTags.contains(contactRequest)
 
 proc toProfileModel*(account: Account): Profile =
   result = Profile(

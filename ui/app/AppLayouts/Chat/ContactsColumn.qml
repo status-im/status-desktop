@@ -1,9 +1,11 @@
 import QtQuick 2.13
+import Qt.labs.platform 1.1
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import "../../../imports"
 import "../../../shared"
+import "../../../shared/status"
 import "./components"
 import "./ContactsColumn"
 import "./CommunityComponents"
@@ -90,6 +92,15 @@ Rectangle {
         }
     }
 
+    Component {
+        id: contactRequestsPopup
+        ContactRequestsPopup {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
     SearchBox {
         id: searchBox
         anchors.top: title.bottom
@@ -108,9 +119,37 @@ Rectangle {
         anchors.topMargin: Style.current.padding
     }
 
+    Connections {
+        target: profileModel.contacts
+        onContactRequestAdded: {
+            systemTray.showMessage(qsTr("New contact request"),
+                                   qsTr("%1 requests to become contacts").arg(Utils.removeStatusEns(name)),
+                                   SystemTrayIcon.NoIcon,
+                                   Constants.notificationPopupTTL)
+        }
+    }
+
+    StatusSettingsLineButton {
+        property int nbRequests: profileModel.contacts.contactRequests.count
+
+        id: contactRequest
+        anchors.top: searchBox.bottom
+        anchors.topMargin: visible ? Style.current.padding : 0
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.halfPadding
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.halfPadding
+        visible: nbRequests > 0
+        height: visible ? implicitHeight : 0
+        text: qsTr("Contact requests")
+        isBadge: true
+        badgeText: nbRequests.toString()
+        onClicked: openPopup(contactRequestsPopup)
+    }
+
     ScrollView {
         id: chatGroupsContainer
-        anchors.top: searchBox.bottom
+        anchors.top: contactRequest.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: parent.bottom
         anchors.left: parent.left
