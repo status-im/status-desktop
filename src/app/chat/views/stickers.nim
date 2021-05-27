@@ -1,10 +1,14 @@
-import NimQml, tables, json, chronicles, sets, strutils
-import ../../../status/[status, stickers]
-import ../../../status/libstatus/[types, utils]
-import ../../../status/libstatus/stickers as status_stickers
-import ../../../status/libstatus/wallet as status_wallet
-import sticker_pack_list, sticker_list, chat_item
-import ../../../status/tasks/[qt, task_runner_impl]
+import # std libs
+  atomics, json, sets, strutils, tables
+
+import # vendor libs
+  chronicles, NimQml
+
+import # status-desktop libs
+  ../../../status/[status, stickers], ../../../status/libstatus/[types, utils],
+  ../../../status/libstatus/stickers as status_stickers,
+  ../../../status/libstatus/wallet as status_wallet, sticker_pack_list,
+  sticker_list, chat_item, ../../../status/tasks/[qt, task_runner_impl]
 
 logScope:
   topics = "stickers-view"
@@ -16,6 +20,7 @@ type
     price: string
     uuid: string
   ObtainAvailableStickerPacksTaskArg = ref object of QObjectTaskArg
+    running*: ByteAddress # pointer to threadpool's `.running` Atomic[bool]
 
 # The pragmas `{.gcsafe, nimcall.}` in this context do not force the compiler
 # to accept unsafe code, rather they work in conjunction with the proc
@@ -49,7 +54,8 @@ proc estimate[T](self: T, slot: string, packId: int, address: string, price: str
 
 const obtainAvailableStickerPacksTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[ObtainAvailableStickerPacksTaskArg](argEncoded)
-  let availableStickerPacks = status_stickers.getAvailableStickerPacks()
+  var running = cast[ptr Atomic[bool]](arg.running)
+  let availableStickerPacks = status_stickers.getAvailableStickerPacks(running[])
   var packs: seq[StickerPack] = @[]
   for packId, stickerPack in availableStickerPacks.pairs:
     packs.add(stickerPack)
@@ -59,7 +65,9 @@ proc obtainAvailableStickerPacks[T](self: T, slot: string) =
   let arg = ObtainAvailableStickerPacksTaskArg(
     tptr: cast[ByteAddress](obtainAvailableStickerPacksTask),
     vptr: cast[ByteAddress](self.vptr),
-    slot: slot)
+    slot: slot,
+    running: cast[ByteAddress](addr self.status.tasks.threadpool.running)
+  )
   self.status.tasks.threadpool.start(arg)
 
 QtObject:

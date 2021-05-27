@@ -1,17 +1,20 @@
-import NimQml, Tables, strformat, strutils, chronicles, sequtils, json, std/wrapnils, parseUtils, stint, tables
-import ../../status/[status, wallet]
-import ../../status/wallet/collectibles as status_collectibles
-import ../../status/libstatus/accounts/constants
-import ../../status/libstatus/wallet as status_wallet
-import ../../status/libstatus/settings as status_settings
-import ../../status/libstatus/tokens
-import ../../status/libstatus/types
-import ../../status/libstatus/utils as status_utils
-import ../../status/libstatus/eth/contracts
-import ../../status/ens as status_ens
-import views/[asset_list, account_list, account_item, token_list, transaction_list, collectibles_list]
-import ../../status/tasks/[qt, task_runner_impl]
-import ../../status/signals/types as signal_types
+import # std libs
+  atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables
+
+import # vendor libs
+  NimQml, chronicles, stint
+
+import # status-desktop libs
+  ../../status/[status, wallet],
+  ../../status/wallet/collectibles as status_collectibles,
+  ../../status/libstatus/accounts/constants,
+  ../../status/libstatus/wallet as status_wallet,
+  ../../status/libstatus/settings as status_settings,
+  ../../status/libstatus/tokens, ../../status/libstatus/types,
+  ../../status/libstatus/utils as status_utils,
+  ../../status/libstatus/eth/contracts, ../../status/ens as status_ens,
+  views/[asset_list, account_list, account_item, token_list, transaction_list, collectibles_list],
+  ../../status/tasks/[qt, task_runner_impl], ../../status/signals/types as signal_types
 
 type
   SendTransactionTaskArg = ref object of QObjectTaskArg
@@ -29,6 +32,7 @@ type
   LoadCollectiblesTaskArg = ref object of QObjectTaskArg
     address: string
     collectiblesType: string
+    running*: ByteAddress # pointer to threadpool's `.running` Atomic[bool]
   GasPredictionsTaskArg = ref object of QObjectTaskArg
   LoadTransactionsTaskArg = ref object of QObjectTaskArg
     address: string
@@ -91,6 +95,7 @@ proc initBalances[T](self: T, slot: string, address: string, tokenList: seq[stri
 
 const loadCollectiblesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[LoadCollectiblesTaskArg](argEncoded)
+  var running = cast[ptr Atomic[bool]](arg.running)
   var collectiblesOrError = ""
   case arg.collectiblesType:
     of status_collectibles.CRYPTOKITTY:
@@ -100,7 +105,7 @@ const loadCollectiblesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
     of status_collectibles.ETHERMON:
       collectiblesOrError = status_collectibles.getEthermons(arg.address)
     of status_collectibles.STICKER:
-      collectiblesOrError = status_collectibles.getStickers(arg.address)
+      collectiblesOrError = status_collectibles.getStickers(arg.address, running[])
 
   let output = %*{
     "address": arg.address,
@@ -116,6 +121,7 @@ proc loadCollectibles[T](self: T, slot: string, address: string, collectiblesTyp
     slot: slot,
     address: address,
     collectiblesType: collectiblesType,
+    running: cast[ByteAddress](addr self.status.tasks.threadpool.running)
   )
   self.status.tasks.threadpool.start(arg)
 

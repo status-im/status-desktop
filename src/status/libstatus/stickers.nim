@@ -1,9 +1,14 @@
-import ./core as status, ./types, ./eth/contracts, ./settings, ./edn_helpers
-import
-  json, json_serialization, tables, chronicles, sequtils, httpclient, net,
-  stint, libp2p/[multihash, multicodec, cid], web3/[ethtypes, conversions]
+import # std libs
+  atomics, json, tables, sequtils, httpclient, net
 from strutils import parseHexInt, parseInt
+  
+import # vendor libs
+  json_serialization, chronicles, libp2p/[multihash, multicodec, cid], stint,
+  web3/[ethtypes, conversions]
 from nimcrypto import fromHex
+
+import # status-desktop libs
+  ./core as status, ./types, ./eth/contracts, ./settings, ./edn_helpers
 
 proc decodeContentHash*(value: string): string =
   if value == "":
@@ -95,7 +100,7 @@ proc getPackCount*(): int =
   result = parseHexInt(response.result)
 
 # Gets sticker pack data
-proc getPackData*(id: Stuint[256]): StickerPack =
+proc getPackData*(id: Stuint[256], running: var Atomic[bool]): StickerPack =
   let
     contract = contracts.getContract("stickers")
     contractMethod = contract.methods["getPackData"]
@@ -110,6 +115,10 @@ proc getPackData*(id: Stuint[256]): StickerPack =
     raise newException(RpcException, "Error getting sticker pack data: " & response.error.message)
 
   let packData = contracts.decodeContractResponse[PackData](response.result)
+
+  if not running.load():
+    trace "Sticker pack task interrupted, exiting sticker pack loading"
+    return
 
   # contract response includes a contenthash, which needs to be decoded to reveal
   # an IPFS identifier. Once decoded, download the content from IPFS. This content
@@ -200,13 +209,16 @@ proc getRecentStickers*(): seq[Sticker] =
     # inserting recent stickers at the front of the list
     result.insert(Sticker(hash: $hash, packId: packId), 0)
 
-proc getAvailableStickerPacks*(): Table[int, StickerPack] =
+proc getAvailableStickerPacks*(running: var Atomic[bool]): Table[int, StickerPack] =
   var availableStickerPacks = initTable[int, StickerPack]()
   try:
     let numPacks = getPackCount()
     for i in 0..<numPacks:
+      if not running.load():
+        trace "Sticker pack task interrupted, exiting sticker pack loading"
+        break
       try:
-        let stickerPack = getPackData(i.u256)
+        let stickerPack = getPackData(i.u256, running)
         availableStickerPacks[stickerPack.id] = stickerPack
       except:
         continue
