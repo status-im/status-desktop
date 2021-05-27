@@ -38,10 +38,7 @@ StatusIconTabButton {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: function (mouse) {
-            statusNavBarTabButton.checked = !statusNavBarTabButton.checked
-            statusNavBarTabButton.clicked(mouse)
-        }
+        onClicked: statusNavBarTabButton.clicked(mouse)
     }
 }
 
