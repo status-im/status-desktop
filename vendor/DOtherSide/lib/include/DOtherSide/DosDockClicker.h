@@ -4,7 +4,7 @@
 #include <QObject>
 
 #include <QQmlApplicationEngine>
-#include "DOtherSidetypes.h"
+#include "DOtherSideTypes.h"
 
 class DockClicker : public QObject
 {
