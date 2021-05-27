@@ -32,7 +32,7 @@ StatusListItem {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor 
         hoverEnabled: true
-        onClicked: statusNavigationListitem.clicked(mouse)
+        onClicked: statusNavigationListItem.clicked(mouse)
     }
 
     components: [
