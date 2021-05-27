@@ -431,8 +431,10 @@ RowLayout {
                     checked: !chatsModel.communities.activeCommunity.active  && sLayout.currentIndex === Utils.getAppSectionIndex(Constants.chat)
 
                     Rectangle {
+                        property int badgeCount: chatsModel.unreadMessagesCount + profileModel.contacts.contactRequests.count
+
                         id: chatBadge
-                        visible: chatsModel.unreadMessagesCount > 0
+                        visible: chatBadge.badgeCount > 0
                         anchors.top: parent.top
                         anchors.left: parent.right
                         anchors.leftMargin: -17
@@ -441,14 +443,14 @@ RowLayout {
                         color: Style.current.blue
                         border.color: chatBtn.hovered ? Style.current.secondaryBackground : Style.current.mainMenuBackground
                         border.width: 2
-                        width: chatsModel.unreadMessagesCount < 10 ? 22 : messageCount.width + 14
+                        width: chatBadge.badgeCount < 10 ? 22 : messageCount.width + 14
                         height: 22
                         Text {
                             id: messageCount
-                            font.pixelSize: chatsModel.unreadMessagesCount > 99 ? 10 : 12
+                            font.pixelSize: chatBadge.badgeCount > 99 ? 10 : 12
                             color: Style.current.white
                             anchors.centerIn: parent
-                            text: chatsModel.unreadMessagesCount > 99 ? "99+" : chatsModel.unreadMessagesCount
+                            text: chatBadge.badgeCount > 99 ? "99+" : chatBadge.badgeCount
                         }
                     }
                 }
