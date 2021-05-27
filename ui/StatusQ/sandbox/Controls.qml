@@ -102,4 +102,36 @@ GridLayout {
     }
 
     StatusCheckBox {}
+
+    StatusChatInfoButton {
+        title: "Iuri Matias"
+        subTitle: "Contact"
+        icon.color: Theme.palette.miscColor7
+        image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        type: StatusChatInfoButton.Type.OneToOneChat
+        muted: true
+        pinnedMessagesCount: 1
+    }
+
+    StatusChatInfoButton {
+        title: "group"
+        subTitle: "Group Chat"
+        pinnedMessagesCount: 1
+        icon.color: Theme.palette.miscColor7
+        type: StatusChatInfoButton.Type.GroupChat
+    }
+
+    StatusChatInfoButton {
+        title: "public-chat"
+        subTitle: "Public Chat"
+        icon.color: Theme.palette.miscColor7
+        type: StatusChatInfoButton.Type.PublicChat
+    }
+
+    StatusChatInfoButton {
+        title: "community-channel"
+        subTitle: "Community Chat"
+        icon.color: Theme.palette.miscColor7
+        type: StatusChatInfoButton.Type.CommunityChat
+    }
 }

@@ -147,5 +147,9 @@ ThemePalette {
         property color borderColor: baseColor5
         property color hoverBorderColor: "#353A4D"
     }
+
+    property QtObject statusChatInfoButton: QtObject {
+        property color backgroundColor: baseColor3
+    }
 }
 
