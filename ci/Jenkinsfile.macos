@@ -1,4 +1,4 @@
-library 'status-jenkins-lib@v1.2.15'
+library 'status-jenkins-lib@ci-macos-notarization'
 
 pipeline {
   agent {
@@ -36,6 +36,8 @@ pipeline {
     PATH = "${env.QTDIR}/bin:${env.PATH}"
     /* Control output the filename */
     STATUS_CLIENT_DMG = "pkg/${utils.pkgFilename('dmg')}"
+    /* Apple Team ID for Notarization */
+    MACOS_NOTARIZE_TEAM_ID = "DTX7Z4U3YA"
   }
 
   stages {
@@ -67,28 +69,16 @@ pipeline {
     }
 
     stage('Package') {
-      steps {
-        withCredentials([
-          string(
-            credentialsId: 'macos-keychain-identity',
-            variable: 'MACOS_CODESIGN_IDENT'
-          ),
-          string(
-            credentialsId: 'macos-keychain-pass',
-            variable: 'MACOS_KEYCHAIN_PASS'
-          ),
-          file(
-            credentialsId: 'macos-keychain-file',
-            variable: 'MACOS_KEYCHAIN_FILE'
-          ),
-          string(
-            credentialsId: utils.getInfuraTokenCred(),
-            variable: 'INFURA_TOKEN'
-          )
-        ]) {
-          sh 'make pkg-macos'
-        }
-      }
+      steps { script {
+        macos.bundle()
+      } }
+    }
+
+    stage('Notarize') {
+      when { expression { utils.isReleaseBuild() } }
+      steps { script {
+        macos.notarize()
+      } }
     }
 
     stage('Parallel Upload') {
