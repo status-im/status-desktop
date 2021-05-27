@@ -122,14 +122,19 @@ proc worker(arg: WorkerThreadArg) {.async, gcsafe, nimcall.} =
   let mailserverModel = newMailserverModel(arg.vptr)
 
   var unprocessedMsgs: seq[string] = @[]
+  # wait for "loggedIn" before initing mailserverModel and continuing
   while true:
     let received = $(await chanRecvFromMain.recv())
     if received == "loggedIn":
-      mailserverModel.init()
       break
+    elif received == "shutdown":
+      trace "received 'shutdown'"
+      trace "stopping worker"
+      return
     else:
       unprocessedMsgs.add received
 
+  mailserverModel.init()
   discard mailserverModel.checkConnection()
  
   for msg in unprocessedMsgs.items:

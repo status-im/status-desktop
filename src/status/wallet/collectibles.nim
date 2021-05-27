@@ -1,11 +1,14 @@
-import strformat, httpclient, json, chronicles, sequtils, strutils, tables, sugar, net
-import ../libstatus/core as status
-import ../libstatus/eth/contracts as contracts
-import ../libstatus/stickers as status_stickers
-import ../libstatus/types
-import web3/[conversions, ethtypes], stint
-import ../libstatus/utils
-import account
+import # std libs
+  atomics, strformat, httpclient, json, chronicles, sequtils, strutils, tables,
+  sugar, net
+
+import # vendor libs
+  stint
+
+import # status-desktop libs
+  ../libstatus/core as status, ../libstatus/eth/contracts as contracts,
+  ../libstatus/stickers as status_stickers, ../libstatus/types,
+  web3/[conversions, ethtypes], ../libstatus/utils, account
 
 const CRYPTOKITTY* = "cryptokitty"
 const KUDO* = "kudo"
@@ -198,7 +201,7 @@ proc getKudos*(address: string): string =
   let eth_address = parseAddress(address)
   result = getKudos(eth_address)
 
-proc getStickers*(address: Address): string =
+proc getStickers*(address: Address, running: var Atomic[bool]): string =
   try:
     var stickers: seq[Collectible]
     stickers = @[]
@@ -215,7 +218,7 @@ proc getStickers*(address: Address): string =
     if (purchasedStickerPacks.len == 0):
       return $(%*stickers)
     # TODO find a way to keep those in memory so as not to reload it each time
-    let availableStickerPacks = getAvailableStickerPacks()
+    let availableStickerPacks = getAvailableStickerPacks(running)
 
     var index = 0
     for stickerId in purchasedStickerPacks:
@@ -234,6 +237,6 @@ proc getStickers*(address: Address): string =
     error "Error getting Stickers", msg = e.msg
     result = e.msg
 
-proc getStickers*(address: string): string =
+proc getStickers*(address: string, running: var Atomic[bool]): string =
   let eth_address = parseAddress(address)
-  result = getStickers(eth_address)
+  result = getStickers(eth_address, running)

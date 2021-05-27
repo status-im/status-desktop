@@ -1,5 +1,5 @@
 import # global deps
-  tables, strutils, sequtils
+  atomics, sequtils, strutils, tables
 
 import # project deps
   chronicles, web3/[ethtypes, conversions], stint
@@ -107,7 +107,7 @@ proc getInstalledStickerPacks*(self: StickersModel): Table[int, StickerPack] =
   self.installedStickerPacks = status_stickers.getInstalledStickerPacks()
   result = self.installedStickerPacks
 
-proc getAvailableStickerPacks*(): Table[int, StickerPack] = status_stickers.getAvailableStickerPacks()
+proc getAvailableStickerPacks*(running: var Atomic[bool]): Table[int, StickerPack] = status_stickers.getAvailableStickerPacks(running)
 
 proc getRecentStickers*(self: StickersModel): seq[Sticker] =
   result = status_stickers.getRecentStickers()

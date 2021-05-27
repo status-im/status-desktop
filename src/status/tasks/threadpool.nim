@@ -1,5 +1,5 @@
 import # std libs
-  json, sequtils, tables
+  atomics, json, sequtils, tables
 
 import # vendor libs
   chronicles, chronos, json_serialization, task_runner
@@ -19,6 +19,7 @@ type
     chanSendToPool: AsyncChannel[ThreadSafeString]
     thread: Thread[PoolThreadArg]
     size: int
+    running*: Atomic[bool]
   PoolThreadArg = object
     chanSendToMain: AsyncChannel[ThreadSafeString]
     chanRecvFromMain: AsyncChannel[ThreadSafeString]
@@ -42,6 +43,7 @@ proc newThreadPool*(size: int = MaxThreadPoolSize): ThreadPool =
   result.chanSendToPool = newAsyncChannel[ThreadSafeString](-1)
   result.thread = Thread[PoolThreadArg]()
   result.size = size
+  result.running.store(false)
 
 proc init*(self: ThreadPool) =
   self.chanRecvFromPool.open()
@@ -56,6 +58,7 @@ proc init*(self: ThreadPool) =
   discard $(self.chanRecvFromPool.recvSync())
 
 proc teardown*(self: ThreadPool) =
+  self.running.store(false)
   self.chanSendToPool.sendSync("shutdown".safe)
   self.chanRecvFromPool.close()
   self.chanSendToPool.close()
@@ -64,6 +67,7 @@ proc teardown*(self: ThreadPool) =
 
 proc start*[T: TaskArg](self: Threadpool, arg: T) =
   self.chanSendToPool.sendSync(arg.encode.safe)
+  self.running.store(true)
 
 proc runner(arg: TaskThreadArg) {.async.} =
   arg.chanRecvFromPool.open()
