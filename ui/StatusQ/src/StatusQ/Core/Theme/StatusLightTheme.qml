@@ -125,7 +125,7 @@ ThemePalette {
     }
 
     property QtObject statusAppNavBar: QtObject {
-        property color backgroundColor: baseColor4
+        property color backgroundColor: baseColor2
     }
 
     property QtObject statusListItem: QtObject {
