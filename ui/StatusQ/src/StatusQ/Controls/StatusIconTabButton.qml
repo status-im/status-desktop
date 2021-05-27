@@ -45,24 +45,17 @@ TabButton {
                 height: 28
                 StatusRoundedImage {
                     id: statusRoundImage
+                    showLoadingIndicator: true
                     width: parent.width
                     height: parent.height
                     image.source: icon.source
                 }
                 Loader {
-                    sourceComponent: {
-                        switch (statusRoundImage.image.status) {
-                            case Image.Loading:
-                              return statusLoadingIndicator
-                              break;
-                            case Image.Error:
-                              return letterIdenticon
-                              break;
-                        }
-                    }
+                    sourceComponent:letterIdenticon
+
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
-                    active: statusRoundImage.image.status === Image.Loading || statusRoundImage.image.status === Image.Error
+                    active: statusRoundImage.image.status === Image.Error
                 }
 
                 Component {

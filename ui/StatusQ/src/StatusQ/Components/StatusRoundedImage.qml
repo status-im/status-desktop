@@ -5,6 +5,9 @@ import StatusQ.Core.Theme 0.1
 
 Rectangle {
     id: statusRoundImage
+
+    property bool showLoadingIndicator: false
+
     property alias image: image
 
     implicitWidth: 40
@@ -27,5 +30,16 @@ Rectangle {
         sourceSize.height: parent.implicitHeight
         fillMode: Image.PreserveAspectFit
         cache: true
+    }
+
+    Loader {
+        id: itemSelector
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+        active: showLoadingIndicator && image.status === Image.Loading
+        sourceComponent: StatusLoadingIndicator {
+            color: Theme.palette.directColor6
+
+        }
     }
 }
