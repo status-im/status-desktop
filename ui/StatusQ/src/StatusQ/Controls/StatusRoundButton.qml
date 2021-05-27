@@ -32,6 +32,8 @@ Rectangle {
 
     property bool loading: false
 
+    property alias hovered: sensor.containsMouse
+
     property int type: StatusRoundButton.Type.Primary
 
     signal pressed(var mouse)
