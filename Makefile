@@ -340,6 +340,12 @@ ifdef MACOS_CODESIGN_IDENT
 	scripts/sign-macos-pkg.sh $(STATUS_CLIENT_DMG) $(MACOS_CODESIGN_IDENT)
 endif
 
+notarize-macos: export CHECK_INTERVAL_SEC ?= 30
+notarize-macos: export CHECK_RETRY_LIMIT ?= 20
+notarize-macos: export MACOS_BUNDLE_ID ?= im.status.ethereum.desktop
+notarize-macos:
+	scripts/notarize-macos-pkg.sh $(STATUS_CLIENT_DMG)
+
 NIM_WINDOWS_PREBUILT_DLLS ?= tmp/windows/tools/pcre.dll
 
 $(NIM_WINDOWS_PREBUILT_DLLS):
