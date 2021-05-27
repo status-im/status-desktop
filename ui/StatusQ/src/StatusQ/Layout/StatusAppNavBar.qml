@@ -47,8 +47,9 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 48
         anchors.horizontalCenter: parent.horizontalCenter
-        height: statusAppNavBar.navBarChatButton.height
-        width: statusAppNavBar.navBarChatButton.width
+        height: visible ? statusAppNavBar.navBarChatButton.height : 0
+        width: visible ? statusAppNavBar.navBarChatButton.width : 0
+        visible: !!statusAppNavBar.navBarChatButton
     }
 
     Rectangle {
