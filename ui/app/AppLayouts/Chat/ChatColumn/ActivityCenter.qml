@@ -49,36 +49,51 @@ Popup {
         anchors.topMargin: 13
         width: parent.width
 
+        property Component profilePopupComponent: ProfilePopup {
+            id: profilePopup
+            onClosed: destroy()
+        }
+
+        // TODO remove this once it is handled by the activity center
+        Repeater {
+            id: contactList
+            model: profileModel.contacts.contactRequests
+
+            delegate: ContactRequest {
+                visible: activityCenter.currentFilter === ActivityCenter.Filter.All || activityCenter.currentFilter === ActivityCenter.Filter.ContactRequests
+                name: Utils.removeStatusEns(model.name)
+                address: model.address
+                localNickname: model.localNickname
+                identicon: model.thumbnailImage || model.identicon
+                // TODO set to transparent bg if the notif is read
+                color: Utils.setColorAlpha(Style.current.blue, 0.1)
+                radius: 0
+                profileClick: function (showFooter, userName, fromAuthor, identicon, textParam, nickName) {
+                    var popup = profilePopupComponent.createObject(contactList);
+                    popup.openPopup(showFooter, userName, fromAuthor, identicon, textParam, nickName);
+                }
+                onBlockContactActionTriggered: {
+                    blockContactConfirmationDialog.contactName = name
+                    blockContactConfirmationDialog.contactAddress = address
+                    blockContactConfirmationDialog.open()
+                }
+            }
+        }
+
         StyledText {
             text: "Today"
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
             font.pixelSize: 15
+            bottomPadding: 4
+            topPadding: Style.current.halfPadding
             color: Style.current.secondaryText
-            height: implicitHeight + 4
-        }
-
-        ContactRequest {
-            name: "@alice.eth"
-            address: "0x04db719bf99bee817c97cab909c682d43e1ffa58c4f24edaa0cb7e97e6779dbfd44f430d9a4777e0faa45d74bdbe70240cbea9db8e2cf9a8111374ef4f5d50ac24"
-            identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAb0lEQVR4Ae3UQQqAIBRF0Wj9ba9Bq6l5JBQqfn/ngDMH3YS3AAB/tO3H+XRG3b9bR/+gVoREI2RapVXpfd5+X5oXERKNkHS+rk3tOpWkeREh0QiZVu91ql2zNC8iJBoh0yqtSqt1slpCghICANDPBc0ESPh0bHkHAAAAAElFTkSuQmCC"
-            // TODO set to transparent bg if the notif is read
-            color: Utils.setColorAlpha(Style.current.blue, 0.1)
-            radius: 0
-        }
-
-        ContactRequest {
-            name: "@bob.eth"
-            address: "0x04db719bf99bee817c97cab909c682d43e1ffa58c4f24edaa0cb7e97e6779dbfd44f430d9a4777e0faa45d74bdbe70240cbea9db8e2cf9a8111374ef4f5d50ac24"
-            identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAjUlEQVR4nOzWwQmEUAwG4V2xF+sTLEOwPqvRBhSUEBh/5jt6eDIEQoZfCENoDKExhMYQmpiQsevhbV+Pq+/ztPw7/hczEUNoDKEpb5C77fRWdZvFTMQQGkNoHt9a3bdT9f2YiRhCY4iaxEzEEBpDaMq3Vjdvra8yhCYmJEbMRAyhMYTGEBpDaM4AAAD//8vbFGZ2G0s4AAAAAElFTkSuQmCC"
-            // TODO set to transparent bg if the notif is read
-            color: Utils.setColorAlpha(Style.current.blue, 0.1)
-            radius: 0
         }
 
         Rectangle {
+            visible: activityCenter.currentFilter === ActivityCenter.Filter.All || activityCenter.currentFilter === ActivityCenter.Filter.Mentions
             width: parent.width
-            height: childrenRect.height + Style.current.smallPadding
+            height: visible ? childrenRect.height + Style.current.smallPadding : 0
             color: Utils.setColorAlpha(Style.current.blue, 0.1)
 
             Message {
