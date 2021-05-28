@@ -95,6 +95,7 @@ proc handleChatEvents(self: ChatController) =
   self.status.events.on("channelLeft") do(e: Args):
     let chatId = ChatIdArg(e).chatId
     self.view.removeChat(chatId)
+    self.view.calculateUnreadMessages()
     self.view.removeMessagesFromTimeline(chatId)
 
   self.status.events.on("activeChannelChanged") do(e: Args):
