@@ -9,7 +9,7 @@ Rectangle {
     property int menuItemId: -1
     property bool hovered: false
     property bool active: false
-    property url source: "../../../../img/add_watch_only.svg"
+    property url source: "../../../../img/eye.svg"
     property string text: "My Profile"
     property var onClicked: function () {}
 

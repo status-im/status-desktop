@@ -176,6 +176,10 @@ Item {
     }
 
     function clickMessage(isProfileClick, isSticker = false, isImage = false, image = null, emojiOnly = false, hideEmojiPicker = false) {
+        if (placeholderMessage) {
+            return
+        }
+
         if (isImage) {
             imageClick(image);
             return;

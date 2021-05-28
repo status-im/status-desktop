@@ -64,73 +64,126 @@ Item {
         }
     }
 
-    StatusContextMenuButton {
-        id: moreActionsBtn
-        anchors.verticalCenter: parent.verticalCenter
+    Row {
+        height: parent.height
         anchors.right: parent.right
         anchors.rightMargin: Style.current.smallPadding
+        spacing: 12
 
-        onClicked: {
-            var menu = chatContextMenu;
-            var isPrivateGroupChat = chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat
-            if(isPrivateGroupChat){
-                menu = groupContextMenu
+        StatusContextMenuButton {
+            id: moreActionsBtn
+            anchors.verticalCenter: parent.verticalCenter
+
+            onClicked: {
+                var menu = chatContextMenu;
+                var isPrivateGroupChat = chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat
+                if(isPrivateGroupChat){
+                    menu = groupContextMenu
+                }
+
+                if (menu.opened) {
+                    return menu.close()
+                }
+
+                if (isPrivateGroupChat) {
+                    menu.popup(moreActionsBtn.x, moreActionsBtn.height)
+                } else {
+                    menu.openMenu(chatsModel.activeChannel, chatsModel.getActiveChannelIdx(),
+                                  moreActionsBtn.x - chatContextMenu.width + moreActionsBtn.width + 4,
+                                  moreActionsBtn.height - 4)
+                }
             }
 
-            if (menu.opened) {
-                return menu.close()
+            ChannelContextMenu {
+                id: chatContextMenu
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
             }
 
-            if (isPrivateGroupChat) {
-                menu.popup(moreActionsBtn.x, moreActionsBtn.height)
-            } else {
-                menu.openMenu(chatsModel.activeChannel, chatsModel.getActiveChannelIdx(),
-                              moreActionsBtn.x - chatContextMenu.width + moreActionsBtn.width + 4,
-                              moreActionsBtn.height - 4)
-            }
-        }
-
-        ChannelContextMenu {
-            id: chatContextMenu
-            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-        }
-
-        PopupMenu {
-            id: groupContextMenu
-            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-            Action {
-                icon.source: "../../../img/group_chat.svg"
-                icon.width: chatTopBarContent.iconSize
-                icon.height: chatTopBarContent.iconSize
-                //% "Group Information"
-                text: qsTrId("group-information")
-                onTriggered: openPopup(groupInfoPopupComponent, {channel: chatsModel.activeChannel})
-            }
-            Action {
-                icon.source: "../../../img/close.svg"
-                icon.width: chatTopBarContent.iconSize
-                icon.height: chatTopBarContent.iconSize
-                //% "Clear History"
-                text: qsTrId("clear-history")
-                onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
-            }
-            Action {
-                icon.source: "../../../img/leave_chat.svg"
-                icon.width: chatTopBarContent.iconSize
-                icon.height: chatTopBarContent.iconSize
-                //% "Leave group"
-                text: qsTrId("leave-group")
-                onTriggered: {
-                  //% "Leave group"
-                  deleteChatConfirmationDialog.title = qsTrId("leave-group")
-                  //% "Leave group"
-                  deleteChatConfirmationDialog.confirmButtonLabel = qsTrId("leave-group")
-                  //% "Are you sure you want to leave this chat?"
-                  deleteChatConfirmationDialog.confirmationText = qsTrId("are-you-sure-you-want-to-leave-this-chat-")
-                  deleteChatConfirmationDialog.open()
+            PopupMenu {
+                id: groupContextMenu
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+                Action {
+                    icon.source: "../../../img/group_chat.svg"
+                    icon.width: chatTopBarContent.iconSize
+                    icon.height: chatTopBarContent.iconSize
+                    //% "Group Information"
+                    text: qsTrId("group-information")
+                    onTriggered: openPopup(groupInfoPopupComponent, {channel: chatsModel.activeChannel})
+                }
+                Action {
+                    icon.source: "../../../img/close.svg"
+                    icon.width: chatTopBarContent.iconSize
+                    icon.height: chatTopBarContent.iconSize
+                    //% "Clear History"
+                    text: qsTrId("clear-history")
+                    onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
+                }
+                Action {
+                    icon.source: "../../../img/leave_chat.svg"
+                    icon.width: chatTopBarContent.iconSize
+                    icon.height: chatTopBarContent.iconSize
+                    //% "Leave group"
+                    text: qsTrId("leave-group")
+                    onTriggered: {
+                      //% "Leave group"
+                      deleteChatConfirmationDialog.title = qsTrId("leave-group")
+                      //% "Leave group"
+                      deleteChatConfirmationDialog.confirmButtonLabel = qsTrId("leave-group")
+                      //% "Are you sure you want to leave this chat?"
+                      deleteChatConfirmationDialog.confirmationText = qsTrId("are-you-sure-you-want-to-leave-this-chat-")
+                      deleteChatConfirmationDialog.open()
+                    }
                 }
             }
         }
+
+        Rectangle {
+              id: separator
+              width: 1
+              height: 24
+              color: Style.current.separator
+              anchors.verticalCenter: parent.verticalCenter
+        }
+
+        StatusIconButton {
+            id: activityCenterBtn
+            icon.name: "bell"
+            iconColor: Style.current.contextMenuButtonForegroundColor
+            hoveredIconColor: Style.current.contextMenuButtonForegroundColor
+            highlightedBackgroundColor: Style.current.contextMenuButtonBackgroundHoverColor
+            anchors.verticalCenter: parent.verticalCenter
+
+            onClicked: activityCenter.open()
+
+            Rectangle {
+                // TODO unhardcode this
+                property int nbUnseenNotifs: 3
+
+                id: badge
+                visible: nbUnseenNotifs > 0
+                anchors.top: parent.top
+                anchors.topMargin: -2
+                anchors.left: parent.right
+                anchors.leftMargin: -17
+                radius: height / 2
+                color: Style.current.blue
+                border.color: activityCenterBtn.hovered ? Style.current.secondaryBackground : Style.current.background
+                border.width: 2
+                width: badge.nbUnseenNotifs < 10 ? 18 : badge.width + 14
+                height: 18
+
+                Text {
+                    font.pixelSize: 12
+                    color: Style.current.white
+                    anchors.centerIn: parent
+                    text: badge.nbUnseenNotifs
+                }
+            }
+        }
+    }
+
+    ActivityCenter {
+        id: activityCenter
     }
 
     ConfirmationDialog {
