@@ -17,6 +17,8 @@ import views/[channels_list, message_list, chat_item, suggestions_list, reaction
 import ../utils/image_utils
 import ../../status/tasks/[qt, task_runner_impl]
 import ../../status/tasks/marathon/mailserver/worker
+import ../../status/signals/types as signal_types
+import ../../status/libstatus/types
 
 logScope:
   topics = "chats-view"
@@ -972,3 +974,29 @@ QtObject:
   proc formatInputCode(self: ChatsView, inputText: string): string {.slot.} =
     let strikeThroughRegex = re"""(?<!\>)`(?!<span style=" font-family:'monospace';">)([^*]+)(?!<\/span>)`"""
     self.formatInputStuff(strikeThroughRegex, inputText)
+
+  proc createCommunityChannel*(self: ChatsView, communityId: string, name: string, description: string, categoryId: string): string {.slot.} =
+    try:
+      let chat = self.status.chat.createCommunityChannel(communityId, name, description)
+      if categoryId != "":
+        self.status.chat.reorderCommunityChannel(communityId, categoryId, chat.id.replace(communityId, ""), 0)
+
+      chat.categoryId = categoryId
+      self.communities.joinedCommunityList.addChannelToCommunity(communityId, chat)
+      self.communities.activeCommunity.addChatItemToList(chat)
+      self.setActiveChannel(chat.id)
+    except RpcException as e:
+      error "Error creating channel", msg=e.msg, name, description
+      result = StatusGoError(error: e.msg).toJson
+
+  proc editCommunityChannel*(self: ChatsView, communityId: string, channelId: string, name: string, description: string, categoryId: string): string {.slot.} =
+    try:
+      let chat = self.status.chat.editCommunityChannel(communityId, channelId, name, description)
+
+      chat.categoryId = categoryId
+      self.communities.joinedCommunityList.replaceChannelInCommunity(communityId, chat)
+      self.communities.activeCommunity.updateChatItemInList(chat)
+      self.setActiveChannel(chat.id)
+    except RpcException as e:
+      error "Error editing channel", msg=e.msg, channelId, name, description
+      result = StatusGoError(error: e.msg).toJson

@@ -20,6 +20,29 @@ toc: true
 
 ### `createCommunity`
 
+### `createCommunityChannel`
+Creates a community channel with the given name and description, belonging to the community specified by the `communityId`.
+Returns a `Chat` object containing the created community channel.
+Throws an`RpcException` if there is an error returned from status-go.
+*Parameters*
+| Name          | Type     | Description  |
+|---------------|----------|--------------|
+| `communityId` | `string` | community id |
+| `name` | `string` | community name |
+| `description` | `string` | community description |
+
+### `editCommunityChannel`
+Edits a community channel, specified by `communityId` and `channelId`, with the given name and description.
+Returns a `Chat` object with the edited community channel.
+Throws an `RpcException` if there is an error returned from status-go.
+*Parameters*
+| Name          | Type     | Description  |
+|---------------|----------|--------------|
+| `communityId` | `string` | community id |
+| `channelId` | `string` | channel id |
+| `name` | `string` | community name |
+| `description` | `string` | community description |
+
 ### `createCommunityChat`
 
 ### `createCommunityCategory`

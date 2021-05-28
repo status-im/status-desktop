@@ -44,7 +44,8 @@ proc handleChatEvents(self: ChatController) =
         if (self.view.communities.activeCommunity.active and self.view.communities.activeCommunity.communityItem.id == community.id):
           if (self.view.activeChannel.chatItem != nil):
             let communityChannel = self.view.communities.activeCommunity.chats.getChannelById(self.view.activeChannel.chatItem.id)
-            self.view.activeChannel.chatItem.canPost = communityChannel.canPost
+            if communityChannel != nil:
+              self.view.activeChannel.chatItem.canPost = communityChannel.canPost
           self.view.activeChannelChanged()
 
     if (evArgs.communityMembershipRequests.len > 0):

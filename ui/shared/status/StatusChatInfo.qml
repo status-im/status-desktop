@@ -26,7 +26,6 @@ Item {
     property string profileImage: realChatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
 
     height: 48
-    width: nameAndInfo.width + chatIdenticon.width + Style.current.smallPadding
 
     Connections {
         enabled: realChatType === Constants.chatTypeOneToOne
@@ -52,7 +51,7 @@ Item {
     Item {
         id: nameAndInfo
         height: chatName.height + chatInfo.height
-        width: childrenRect.width
+        width: parent.width
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: chatIdenticon.right
         anchors.leftMargin: Style.current.smallPadding
@@ -116,7 +115,13 @@ Item {
         StyledText {
             id: chatInfo
             color: Style.current.secondaryText
+            wrapMode: Text.Wrap
+            width: parent.width
+            elide: Text.ElideRight
             text: {
+                if (root.chatType === Constants.chatTypeCommunity) {
+                    return chatsModel.activeChannel.description
+                }
                 switch(root.realChatType){
                     //% "Public chat"
                 case Constants.chatTypePublic: return qsTrId("public-chat")
@@ -139,6 +144,7 @@ Item {
             }
             font.pixelSize: 12
             anchors.top: chatName.bottom
+            anchors.topMargin: 2
         }
 
         Item {
