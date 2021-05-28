@@ -59,6 +59,7 @@ type
     channels*: Table[string, Chat]
     msgCursor*: Table[string, string]
     pinnedMsgCursor*: Table[string, string]
+    activityCenterCursor*: string
     emojiCursor*: Table[string, string]
     lastMessageTimestamps*: Table[string, int64]
     
@@ -176,6 +177,21 @@ proc requestMissingCommunityInfos*(self: ChatModel) =
   for communityId in self.communitiesToFetch:
     status_chat.requestCommunityInfo(communityId)
 
+proc activityCenterNotification*(self: ChatModel, initialLoad:bool = true) =
+  # Notifications were already loaded, since cursor will 
+  # be nil/empty if there are no more notifs
+  if(not initialLoad and self.activityCenterCursor == ""): return
+
+  status_chat.activityCenterNotification(self.activityCenterCursor)
+  # self.activityCenterCursor[chatId] = messageTuple[0];
+
+  # if messageTuple[1].len > 0:
+  #   let lastMsgIndex = messageTuple[1].len - 1
+  #   let ts = times.convert(Milliseconds, Seconds, messageTuple[1][lastMsgIndex].whisperTimestamp.parseInt())
+  #   self.lastMessageTimestamps[chatId] = ts
+
+  # self.events.emit("messagesLoaded", MsgsLoadedArgs(messages: messageTuple[1]))
+
 proc init*(self: ChatModel, pubKey: string, messagesFromContactsOnly: bool) =
   self.publicKey = pubKey
   self.messagesFromContactsOnly = messagesFromContactsOnly
@@ -185,6 +201,8 @@ proc init*(self: ChatModel, pubKey: string, messagesFromContactsOnly: bool) =
 
   if (messagesFromContactsOnly):
     chatList = self.cleanSpamChatGroups(chatList, contacts)
+
+  # self.activityCenterNotification()
 
   let profileUpdatesChatIds = chatList.filter(c => c.chatType == ChatType.Profile).map(c => c.id)
 
