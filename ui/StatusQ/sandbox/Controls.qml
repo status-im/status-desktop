@@ -134,4 +134,11 @@ GridLayout {
         icon.color: Theme.palette.miscColor7
         type: StatusChatInfoButton.Type.CommunityChat
     }
+
+    StatusSlider {
+        width: 360
+        from: 0
+        to: 100
+        value: 40
+    }
 }
