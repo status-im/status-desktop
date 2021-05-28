@@ -57,13 +57,6 @@ TabButton {
                     anchors.horizontalCenter: parent.horizontalCenter
                     active: statusRoundImage.image.status === Image.Error
                 }
-
-                Component {
-                    id: statusLoadingIndicator
-                    StatusLoadingIndicator {
-                        color: Theme.palette.directColor6
-                    }
-                }
             }
         }
 

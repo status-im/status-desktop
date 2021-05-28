@@ -68,28 +68,13 @@ Rectangle {
                     width: parent.width
                     height: parent.height
                     image.source: statusChatInfoButton.image.source
+                    showLoadingIndicator: true
                 }
                 Loader {
-                    sourceComponent: {
-                        switch (statusRoundImage.image.status) {
-                            case Image.Loading:
-                              return statusLoadingIndicator
-                              break;
-                            case Image.Error:
-                              return statusLetterIdenticonComponent
-                              break;
-                        }
-                    }
+                    sourceComponent: statusLetterIdenticonComponent
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenter: parent.horizontalCenter
-                    active: statusRoundImage.image.status === Image.Loading || statusRoundImage.image.status === Image.Error
-                }
-
-                Component {
-                    id: statusLoadingIndicator
-                    StatusLoadingIndicator {
-                        color: Theme.palette.directColor6
-                    }
+                    active: statusRoundImage.image.status === Image.Error
                 }
             }
         }
