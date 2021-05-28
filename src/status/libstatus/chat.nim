@@ -509,3 +509,25 @@ proc setPinMessage*(messageId: string, chatId: string, pinned: bool) =
     "pinned": pinned,
     "chat_id": chatId
   }])
+
+proc rpcActivityCenterNotifications*(cursorVal: JsonNode, limit: int, success: var bool): string =
+  success = true
+  try:
+    result = callPrivateRPC("activityCenterNotifications".prefix, %* [cursorVal, limit])
+  except RpcException as e:
+    success = false
+    result = e.msg
+
+proc activityCenterNotification*(cursor: string = "") =
+  var cursorVal: JsonNode
+  
+  if cursor == "":
+    cursorVal = newJNull()
+  else:
+    cursorVal = newJString(cursor)
+
+  var success: bool
+  let callResult = rpcActivityCenterNotifications(cursorVal, 20, success)
+  debug "Activity center", callResult
+  # if success:
+  #   result = parseChatMessagesResponse(chatId, callResult.parseJson()["result"])
