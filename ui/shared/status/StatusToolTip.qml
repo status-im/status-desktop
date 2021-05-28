@@ -25,8 +25,8 @@ ToolTip {
         }
         Rectangle {
             color: tooltipContentBg.color
-            height: orientation === "top" || orientation === "bottom" ? 24 : 24
-            width: orientation === "top" || orientation === "bottom" ? 24 : 24
+            height: 26
+            width: 26
             rotation: 45
             radius: 1
             x: {
@@ -34,18 +34,18 @@ ToolTip {
                     return tooltipBg.width / 2 - width / 2
                 }
                 if (orientation === "left") {
-                    return tooltipContentBg.width - (width / 2) - 4
+                    return tooltipContentBg.width - (width / 2) - 7
                 }
                 if (orientation === "right") {
-                    return -width/2 + 4
+                    return -width/2 + 7
                 }
             }
             y: {
                 if (orientation === "bottom") {
-                    return -height / 2
+                    return -height / 2 + 5
                 }
                 if (orientation === "top") {
-                    return tooltipBg.height - height
+                    return tooltipBg.height - height - 5
                 }
                 if (orientation === "left" || orientation === "right") {
                     return tooltipContentBg.height / 2 - (height / 2)

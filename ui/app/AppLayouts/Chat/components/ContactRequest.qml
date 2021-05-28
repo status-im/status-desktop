@@ -1,9 +1,9 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import "../../../../../imports"
-import "../../../../../shared"
-import "../../../../../shared/status"
+import "../../../../imports"
+import "../../../../shared"
+import "../../../../shared/status"
 
 Rectangle {
     property string name
@@ -110,7 +110,7 @@ Rectangle {
                 id: contactContextMenu
                 hasArrow: false
                 Action {
-                    icon.source: "../../../../img/profileActive.svg"
+                    icon.source: "../../../img/profileActive.svg"
                     icon.width: menuButton.iconSize
                     icon.height: menuButton.iconSize
                     //% "View Profile"
@@ -120,7 +120,7 @@ Rectangle {
                 }
                 Separator {}
                 Action {
-                    icon.source: "../../../../img/block-icon.svg"
+                    icon.source: "../../../img/block-icon.svg"
                     icon.width: menuButton.iconSize
                     icon.height: menuButton.iconSize
                     icon.color: Style.current.danger

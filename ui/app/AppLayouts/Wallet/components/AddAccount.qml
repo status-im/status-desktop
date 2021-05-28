@@ -52,7 +52,7 @@ StatusRoundButton {
         Action {
             //% "Add a watch-only address"
             text: qsTrId("add-a-watch-account")
-            icon.source: "../../../img/add_watch_only.svg"
+            icon.source: "../../../img/eye.svg"
             icon.width: 19
             icon.height: 19
             onTriggered: {

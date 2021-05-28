@@ -10,6 +10,7 @@ Item {
     property string chatName
     property int chatType
     property string identicon
+    property int letterSize: 15
 
     width: 40
     height: 40
@@ -27,6 +28,7 @@ Item {
             chatName: root.chatName
             width: parent.width
             height: parent.height
+            letterSize: root.letterSize
         }
     }
 
