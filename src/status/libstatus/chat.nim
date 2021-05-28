@@ -356,7 +356,41 @@ proc createCommunityChannel*(communityId: string, name: string, description: str
       }
     }]).parseJSON()
 
-  if rpcResult{"result"}.kind != JNull:
+  if rpcResult{"error"} != nil:
+    let error = Json.decode($rpcResult{"error"}, RpcError)
+    raise newException(RpcException, "Error creating community channel: " & error.message)
+
+  if rpcResult{"result"} != nil and rpcResult{"result"}.kind != JNull:
+    result = rpcResult["result"]["chats"][0].toChat()
+
+proc editCommunityChannel*(communityId: string, channelId: string, name: string, description: string): Chat =
+  let rpcResult = callPrivateRPC("editCommunityChat".prefix, %*[
+    communityId,
+    channelId.replace(communityId, ""),
+    {
+      "permissions": {
+        "access": 1 # TODO get this from user selected privacy setting
+      },
+      "identity": {
+        "display_name": name,
+        "description": description#,
+        # "color": color#,
+        # TODO add images once it is supported by Status-Go
+        # "images": [
+        #   {
+        #     "payload": image,
+        #     # TODO get that from an enum
+        #     "image_type": 1 # 1 is a raw payload
+        #   }
+        # ]
+      }
+    }]).parseJSON()
+
+  if rpcResult{"error"} != nil:
+    let error = Json.decode($rpcResult{"error"}, RpcError)
+    raise newException(RpcException, "Error editing community channel: " & error.message)
+
+  if rpcResult{"result"} != nil and rpcResult{"result"}.kind != JNull:
     result = rpcResult["result"]["chats"][0].toChat()
 
 proc createCommunityCategory*(communityId: string, name: string, channels: seq[string]): CommunityCategory =

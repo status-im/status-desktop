@@ -150,6 +150,7 @@ proc toChat*(jsonChat: JsonNode): Chat =
     id: jsonChat{"id"}.getStr,
     communityId: jsonChat{"communityId"}.getStr,
     name: jsonChat{"name"}.getStr,
+    description: jsonChat{"description"}.getStr,
     identicon: "",
     color: jsonChat{"color"}.getStr,
     isActive: jsonChat{"active"}.getBool,
@@ -161,7 +162,8 @@ proc toChat*(jsonChat: JsonNode): Chat =
     hasMentions: false,
     muted: false,
     ensName: "",
-    joined: 0
+    joined: 0,
+    private: jsonChat{"private"}.getBool
   )
 
   if jsonChat.hasKey("muted") and jsonChat["muted"].kind != JNull: 
@@ -223,8 +225,10 @@ proc toCommunity*(jsonCommunity: JsonNode): Community =
         categoryId: chat{"categoryID"}.getStr(),
         communityId: result.id,
         name: chat{"name"}.getStr,
+        description: chat{"description"}.getStr,
         canPost: chat{"canPost"}.getBool,
-        chatType: ChatType.CommunityChat
+        chatType: ChatType.CommunityChat,
+        private: chat{"permissions"}{"private"}.getBool
       ))
 
   if jsonCommunity.hasKey("categories") and jsonCommunity["categories"].kind != JNull:

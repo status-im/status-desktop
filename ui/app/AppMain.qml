@@ -280,6 +280,16 @@ RowLayout {
         }
     }
 
+    Component {
+        id: editChannelPopup
+        CreateChannelPopup {
+            isEdit: true
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
     ToastMessage {
         id: toastMessage
     }

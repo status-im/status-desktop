@@ -61,6 +61,11 @@ toc: true
 ![url_bar](/images/communities/community_menu.png)
 
 ![url_bar](/images/communities/new_channel.png)
+### Editing Channels
+
+![url_bar](/images/communities/community_edit_menu.png)
+
+![url_bar](/images/communities/edit_channel.png)
 
 ### Creating Categories
 

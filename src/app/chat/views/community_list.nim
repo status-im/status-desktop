@@ -128,6 +128,13 @@ QtObject:
 
     let index = self.communities.findIndexById(communityId)
     self.communities[index] = community
+  
+  proc replaceChannelInCommunity*(self: CommunityList, communityId: string, channel: Chat) =
+    var community = self.getCommunityById(communityId)
+    if community.id != "":
+      let channelIdx = community.chats.findIndexById(channel.id)
+      if channelIdx > -1:
+        community.chats[channelIdx] = channel
 
   proc addCategoryToCommunity*(self: CommunityList, communityId: string, category: CommunityCategory) =
     var community = self.getCommunityById(communityId)

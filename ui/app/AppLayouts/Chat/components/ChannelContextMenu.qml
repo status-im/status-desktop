@@ -106,6 +106,14 @@ PopupMenu {
         icon.height: 16
         onTriggered: chatsModel.clearChatHistoryByIndex(channelContextMenu.channelIndex)
     }
+    Action {
+        enabled: chatsModel.communities.activeCommunity.active && chatsModel.communities.activeCommunity.admin
+        text: qsTr("Edit Channel")
+        icon.source: "../../../img/edit.svg"
+        icon.width: 16
+        icon.height: 16
+        onTriggered: openPopup(editChannelPopup, {communityId: chatsModel.communities.activeCommunity.id, channel: chatsModel.activeChannel})
+    }
 
     Separator {
         visible: deleteAction.enabled

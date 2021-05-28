@@ -8,6 +8,8 @@ import "../../../../shared/status"
 
 ModalPopup {
     property string communityId
+    property QtObject channel
+    property bool isEdit: false
     property string categoryId: ""
     readonly property int maxDescChars: 140
     property string nameValidationError: ""
@@ -16,10 +18,16 @@ ModalPopup {
         descriptionTextArea.isValid
 
     id: popup
-    height: 500
+    height: 400
 
     onOpened: {
         nameInput.text = "";
+        if (isEdit) {
+            nameInput.text = channel.name;
+            descriptionTextArea.text = channel.description;
+            // TODO: re-enable once private channels are implemented
+            // privateSwitch.checked = channel.private
+        }
         nameInput.forceActiveFocus(Qt.MouseFocusReason)
     }
     onClosed: destroy()
@@ -59,7 +67,7 @@ ModalPopup {
                 placeholderText: qsTrId("a-cool-name")
                 validationError: popup.nameValidationError
 
-                property bool isValid: false
+                property bool isValid: false || isEdit
 
                 onTextEdited: {
                     if (text.includes(" ")) {
@@ -97,7 +105,7 @@ ModalPopup {
                 anchors.topMargin: Style.current.bigPadding
                 customHeight: 88
 
-                property bool isValid: false
+                property bool isValid: false || isEdit
                 onTextChanged: validate()
 
                 function resetValidation() {
@@ -127,62 +135,80 @@ ModalPopup {
                 color: !descriptionTextArea.validationError ? Style.current.textColor : Style.current.danger
             }
 
-            Separator {
-                id: separator1
-                anchors.top: charLimit.bottom
-                anchors.topMargin: Style.current.bigPadding
-            }
+            // Separator {
+            //     id: separator1
+            //     anchors.top: charLimit.bottom
+            //     anchors.topMargin: Style.current.bigPadding
+            // }
 
-            Item {
-                id: privateSwitcher
-                height: privateSwitch.height
-                width: parent.width
-                visible: false
-                anchors.top: separator1.bottom
-                anchors.topMargin: Style.current.smallPadding * 2
+            // TODO: use the switch below to enable private channels
+            // Item {
+            //     id: privateSwitcher
+            //     height: privateSwitch.height
+            //     width: parent.width
+            //     anchors.top: separator1.bottom
+            //     anchors.topMargin: Style.current.smallPadding * 2
 
-                StyledText {
-                    //% "Private channel"
-                    text: qsTrId("private-channel")
-                    anchors.verticalCenter: parent.verticalCenter
-                }
+            //     StyledText {
+            //         //% "Private channel"
+            //         text: qsTrId("private-channel")
+            //         anchors.verticalCenter: parent.verticalCenter
+            //     }
 
-                StatusSwitch {
-                    id: privateSwitch
-                    anchors.right: parent.right
-                }
-            }
+            //     StatusSwitch {
+            //         id: privateSwitch
+            //         anchors.right: parent.right
+            //     }
+            // }
 
-            StyledText {
-                id: privateExplanation
-                anchors.top: separator1.bottom
-                color: Style.current.secondaryText
-                wrapMode: Text.WordWrap
-                anchors.topMargin: Style.current.smallPadding * 2
-                width: parent.width
-                //% "By making a channel private, only members with selected permission will be able to access it"
-                text: qsTrId("by-making-a-channel-private--only-members-with-selected-permission-will-be-able-to-access-it")
-            }
+            // StyledText {
+            //     id: privateExplanation
+            //     anchors.top: privateSwitcher.bottom
+            //     color: Style.current.secondaryText
+            //     wrapMode: Text.WordWrap
+            //     anchors.topMargin: Style.current.smallPadding * 2
+            //     width: parent.width
+            //     //% "By making a channel private, only members with selected permission will be able to access it"
+            //     text: qsTrId("by-making-a-channel-private--only-members-with-selected-permission-will-be-able-to-access-it")
+            // }
         }
     }
 
     footer: StatusButton {
         enabled: popup.isValid
-        //% "Create"
-        text: qsTrId("create")
+        text: isEdit ?
+              qsTr("Save") :
+              //% "Create"
+              qsTrId("create")
         anchors.right: parent.right
         onClicked: {
             if (!validate()) {
                 scrollView.scrollBackUp()
                 return
             }
-            const error = chatsModel.communities.createCommunityChannel(communityId,
+            let error = "";
+            if (!isEdit) {
+                error = chatsModel.createCommunityChannel(communityId,
                                                             Utils.filterXSS(nameInput.text),
                                                             Utils.filterXSS(descriptionTextArea.text),
-                                                            categoryId)
+							    categoryId)
+                                                            // TODO: pass the private value when private channels
+                                                            // are implemented
+                                                            //privateSwitch.checked)
+            } else {
+                error = chatsModel.editCommunityChannel(communityId,
+                                                            channel.id,
+                                                            Utils.filterXSS(nameInput.text),
+                                                            Utils.filterXSS(descriptionTextArea.text),
+							    categoryId)
+                                                            // TODO: pass the private value when private channels
+                                                            // are implemented
+                                                            //privateSwitch.checked)
+            }
 
             if (error) {
-                creatingError.text = error
+                const errorJson = JSON.parse(error)
+                creatingError.text = errorJson.error
                 return creatingError.open()
             }
 

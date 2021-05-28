@@ -39,6 +39,16 @@ QtObject:
   QtProperty[string] id:
     read = id
 
+  proc description*(self: ChatItemView): string {.slot.} = result = ?.self.chatItem.description
+  
+  QtProperty[string] description:
+    read = description
+
+  proc private*(self: ChatItemView): bool {.slot.} = result = ?.self.chatItem.private
+  
+  QtProperty[bool] private:
+    read = private
+
   proc contactsUpdated*(self: ChatItemView) {.signal}
 
   proc userNameOrAlias(self: ChatItemView, pubKey: string): string {.slot.} =

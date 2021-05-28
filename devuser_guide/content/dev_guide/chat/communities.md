@@ -33,7 +33,7 @@ toc: true
 - [`src/app/chat/view.nim`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/src/app/chat/view.nim#L166)
 - [`src/app/chat/views/community_list.nim`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/src/app/chat/views/community_list.nim#L40)
 - [`src/app/chat/views/communities.nim`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/src/app/chat/views/communities.nim#L109)
-- [`src/status/chat.nim#](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/src/status/chat.nim#L441)
+- [`src/status/chat.nim`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/src/status/chat.nim#L441)
 - [`src/status/libstatus/chat.nim`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/src/status/libstatus/chat.nim#L272)
 
 #### selecting a community
@@ -78,6 +78,24 @@ toc: true
 ## Manage Community
 
 ### Creating Channels
+**Key source files**
+- [`ui/app/AppLayouts/Chat/CommunityComponents/CreateChannelPopup.qml`](https://github.com/status-im/status-desktop/blob/4a407d920499e3c31244f019afc0ab20f2c8f5e3/ui/app/AppLayouts/Chat/CommunityComponents/CreateChannelPopup.qml)
+- [`ui/app/AppLayouts/Chat/CommunityColumn.qml`](https://github.com/status-im/status-desktop/blob/1f585d159b9814198863b729ed26a218c09ea56d/ui/app/AppLayouts/Chat/CommunityColumn.qml#L84-L92)
+- [`src/status/chat.nim`](https://github.com/status-im/status-desktop/blob/1f585d159b9814198863b729ed26a218c09ea56d/src/status/chat.nim#L478-L479)
+- [`src/status/libstatus/chat.nim`](https://github.com/status-im/status-desktop/blob/1f585d159b9814198863b729ed26a218c09ea56d/src/status/libstatus/chat.nim#L337-L364)
+- [`src/app/chat/view.nim#L978-L990`](https://github.com/status-im/status-desktop/blob/1f585d159b9814198863b729ed26a218c09ea56d/src/app/chat/view.nim#L978-L990)
+
+### Editing Channels
+**Key source files**
+- [`ui/app/AppLayouts/Chat/CommunityComponents/CreateChannelPopup.qml`](https://github.com/status-im/status-desktop/blob/4a407d920499e3c31244f019afc0ab20f2c8f5e3/ui/app/AppLayouts/Chat/CommunityComponents/CreateChannelPopup.qml#L179-L182)
+- [`ui/app/AppLayouts/Chat/components/ChannelContextMenu.qml`](https://github.com/status-im/status-desktop/blob/1f585d159b9814198863b729ed26a218c09ea56d/ui/app/AppLayouts/Chat/components/ChannelContextMenu.qml#L109-L116)
+- [`ui/app/AppMain.qml`](https://github.com/status-im/status-desktop/blob/1f585d159b9814198863b729ed26a218c09ea56d/ui/app/AppMain.qml#L283-L291)
+- [`src/status/chat.nim`](https://github.com/status-im/status-desktop/blob/1f585d159b9814198863b729ed26a218c09ea56d/src/status/chat.nim#L481-L482)
+- [`src/status/libstatus/chat.nim`](https://github.com/status-im/status-desktop/blob/1f585d159b9814198863b729ed26a218c09ea56d/src/status/libstatus/chat.nim#L366-L394)
+- [`src/app/chat/view.nim`](https://github.com/status-im/status-desktop/blob/1f585d159b9814198863b729ed26a218c09ea56d/src/app/chat/view.nim#L992-L1002)
+
+**Notes**
+Editing a channel reuses the same modal popup used to create a channel, the difference being that it's prefilled with information from the selected channel, and has the `isEdit` attribute set to true, which determines the UI behavior for editing the channel as well as knowing the right slot to call.
 
 ### Categories
 Channels within a community might be organized in categories. Only the community admin might create/edit/delete a category. Creating a channel in a category works by calling `wakuext_reorderCommunityChat` after the chat is created, then the `Chat` is immediatly assigned a `categoryId`.

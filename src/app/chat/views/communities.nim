@@ -245,23 +245,6 @@ QtObject:
       error "Error editing the community", msg = e.msg
       result = StatusGoError(error: e.msg).toJson
 
-  proc createCommunityChannel*(self: CommunitiesView, communityId: string, name: string, description: string, categoryId: string): string {.slot.} =
-    result = ""
-    try:
-      let chat = self.status.chat.createCommunityChannel(communityId, name, description)
-     
-      if (chat.id == ""):
-        return "Chat was not created. Please try again later"
-
-      if categoryId != "":
-        self.status.chat.reorderCommunityChannel(communityId, categoryId, chat.id.replace(communityId, ""), 0)
-
-      chat.categoryId = categoryId
-      self.joinedCommunityList.addChannelToCommunity(communityId, chat)
-      self.activeCommunity.addChatItemToList(chat)
-    except Exception as e:
-      error "Error creating the channel", msg = e.msg
-      result = fmt"Error creating the channel: {e.msg}"
 
   proc createCommunityCategory*(self: CommunitiesView, communityId: string, name: string, channels: string): string {.slot.} =
     result = ""
@@ -294,7 +277,6 @@ QtObject:
     except Exception as e:
       error "Error creating the category", msg = e.msg
       result = fmt"Error creating the category: {e.msg}"
-
 
   proc observedCommunityChanged*(self: CommunitiesView) {.signal.}
 

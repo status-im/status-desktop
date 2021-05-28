@@ -155,6 +155,10 @@ QtObject:
     self.communityItem.chats.add(chat)
     discard self.chats.addChatItemToList(chat)
     self.chatsChanged()
+  
+  proc updateChatItemInList*(self: CommunityItemView, chat: Chat) =
+    self.chats.updateChat(chat)
+    self.chatsChanged()
 
   proc addCategoryToList*(self: CommunityItemView, category: CommunityCategory) =
     self.communityItem.categories.add(category)

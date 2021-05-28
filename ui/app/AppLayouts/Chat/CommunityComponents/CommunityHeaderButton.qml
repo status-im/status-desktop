@@ -8,7 +8,7 @@ import "../components"
 import "./"
 
 Button {
-    implicitWidth: Math.max(communityImage.width + communityName.width + Style.current.padding, 200)
+    implicitWidth: Math.max(communityImage.width + communityName.width + (Style.current.halfPadding * 3), 200)
     implicitHeight: communityImage.height + Style.current.padding
 
     background: Rectangle {
