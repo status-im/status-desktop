@@ -12,14 +12,52 @@ menu:
 toc: true
 ---
 
+## Enabling communities
+
+**Key source files**
+- [`ui/app/AppLayouts/Profile/Sections/AdvancedContainer.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Profile/Sections/AdvancedContainer.qml#L101)
+- [`ui/app/AppMain.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppMain.qml#L398)
+- [`ui/app/AppLayouts/Chat/ContactsColumn/AddChat.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/ContactsColumn/AddChat.qml#L55)
+
 ## General
+
 ### Joining a community
+
+#### join community popup
+- [`ui/app/AppLayouts/Chat/ContactsColumn/AddChat.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/ContactsColumn/AddChat.qml#L55)
+- [`ui/app/AppLayouts/Chat/ContactsColumn.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/ContactsColumn.qml#L58)
+- [`ui/app/AppLayouts/Chat/CommunityComponents/CommunitiesPopup.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/CommunityComponents/CommunitiesPopup.qml#L10)
+
+#### listing communities
+- [`ui/app/AppLayouts/Chat/CommunityComponents/CommunitiesPopup.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/CommunityComponents/CommunitiesPopup.qml#L138)
+- [`src/app/chat/view.nim`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/src/app/chat/view.nim#L166)
+- [`src/app/chat/views/community_list.nim`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/src/app/chat/views/community_list.nim#L40)
+- [`src/app/chat/views/communities.nim`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/src/app/chat/views/communities.nim#L109)
+- [`src/status/chat.nim#](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/src/status/chat.nim#L441)
+- [`src/status/libstatus/chat.nim`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/src/status/libstatus/chat.nim#L272)
+
+#### selecting a community
+- [`ui/app/AppLayouts/Chat/CommunityComponents/CommunitiesPopup.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/CommunityComponents/CommunitiesPopup.qml#L212)
+- [`src/app/chat/view.nim`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/src/app/chat/view.nim#L166)
+
+#### joining a community
+
+
 ### Creating a community
+- [`ui/app/AppLayouts/Chat/ContactsColumn.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/ContactsColumn.qml#L67)
+
+#### uploading a thumbnail image
+
+#### setting community color
+
+#### setting membership requirement
+
 ### Leaving a community
+
 ## Manage Community
+
 ### Creating Channels
-#### Public Channels
-#### Private Channels
+
 ### Categories
 Channels within a community might be organized in categories. Only the community admin might create/edit/delete a category. Creating a channel in a category works by calling `wakuext_reorderCommunityChat` after the chat is created, then the `Chat` is immediatly assigned a `categoryId`.
 #### Creating Categories
@@ -79,8 +117,17 @@ Deleting a category will remove the `categoryId` from any chat assigned to the c
 
 
 ### Transfer ownership
+
 ### Share Community
+
 ### See Members
+
 ### Kick Member
+
 ### Invite People
+
 ### Back up Community
+
+## Context menu on the nav bar
+
+## Initial Community
