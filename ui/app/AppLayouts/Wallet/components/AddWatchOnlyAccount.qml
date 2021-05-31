@@ -14,6 +14,7 @@ ModalPopup {
     property string addressError: ""
     property string accountNameValidationError: ""
     property bool loading: false
+    property var onAfterAddAccount: function() {}
 
     function validate() {
         if (addressInput.text === "") {
@@ -107,7 +108,7 @@ ModalPopup {
                 accountError.text = error
                 return accountError.open()
             }
-
+            popup.onAfterAddAccount()
             popup.close();
         }
     }

@@ -5,7 +5,7 @@ import
   web3/[conversions, ethtypes], stint
 
 # TODO: make this public in nim-web3 lib
-template stripLeadingZeros(value: string): string =
+template stripLeadingZeros*(value: string): string =
   var cidx = 0
   # ignore the last character so we retain '0' on zero value
   while cidx < value.len - 1 and value[cidx] == '0':

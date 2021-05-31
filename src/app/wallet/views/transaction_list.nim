@@ -21,6 +21,7 @@ type
 QtObject:
   type TransactionList* = ref object of QAbstractListModel
     transactions*: seq[Transaction]
+    hasMore*: bool
 
   proc setup(self: TransactionList) = self.QAbstractListModel.setup
 
@@ -31,13 +32,28 @@ QtObject:
   proc newTransactionList*(): TransactionList =
     new(result, delete)
     result.transactions = @[]
+    result.hasMore = true
     result.setup
 
-  proc getLastTxBlockNumber*(self: TransactionList): string =
+  proc getLastTxBlockNumber*(self: TransactionList): string {.slot.} =
     return self.transactions[^1].blockNumber
 
   method rowCount*(self: TransactionList, index: QModelIndex = nil): int =
     return self.transactions.len
+
+  proc hasMoreChanged*(self: TransactionList) {.signal.}
+
+  proc getHasMore*(self: TransactionList): bool {.slot.} =
+    return self.hasMore
+
+  proc setHasMore*(self: TransactionList, hasMore: bool) {.slot.} =
+    self.hasMore = hasMore
+    self.hasMoreChanged()
+
+  QtProperty[bool] hasMore:
+    read = getHasMore
+    write = setHasMore
+    notify = currentTransactionsChanged
 
   method data(self: TransactionList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:

@@ -288,12 +288,6 @@ returns `true` if the specified address is in the list of default or custom (use
 
 Returns stringified JSON result of the decoding. The JSON will contain only an `error` field if there was an error during decoding. Otherwise, it will contain a `symbol` (the token symbol) and an `amount` (amount approved to spend) field.
 
-#### `isHistoryFetched(address: string)` : `bool`
-
-* `address` (`string`): address of the account to check
-
-returns `true` if `status-go` has returned transfer history for the specified account (result of `wallet_getTransfersByAddress`)
-
 #### `loadTransactionsForAccount(address: string)` : `void`
 
 * `address` (`string`): address of the account to load transactions for
@@ -343,7 +337,6 @@ The `walletModel` exposes the following signals, which can be consumed in QML us
 | `transactionWasSent` | `txResult` (`string`): JSON stringified result of sending a transaction | fired when accounts on the node have chagned |
 | `defaultCurrencyChanged` | none | fired when the user's default currency has chagned |
 | `gasPricePredictionsChanged` | none | fired when the gas price predictions have changed, typically after getting a gas price prediction response |
-| `historyWasFetched` | none | fired when `status-go` completes fetching of transaction history |
 | `loadingTrxHistoryChanged` | `isLoading` (`bool`): `true` if the transaction history is loading | fired when the loading of transfer history starts and completes |
 | `ensWasResolved` | `resolvedAddress` (`string`): address resolved from the ENS name<br>`uuid` (`string`): unique identifier that was used to identify the request in QML so that only specific components can respond when needed | fired when an ENS name was resolved |
 | `transactionCompleted` | `success` (`bool`): `true` if the transaction was successful<br>`txHash` (`string`): has of the transaction<br>`revertReason` (`string`): reason transaction was reverted (if provided and if the transaction was reverted) | fired when a tracked transction (from the wallet or ENS) was completed |

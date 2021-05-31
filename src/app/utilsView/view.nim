@@ -87,7 +87,7 @@ QtObject:
     # somehow this value crashes the app
     if value == "0x0":
       return "0"
-    return stripTrailingZeroes(stint.toString(stint.fromHex(StUint[256], value)))
+    return $stint.fromHex(StUint[256], value)
 
   proc urlFromUserInput*(self: UtilsView, input: string): string {.slot.} =
     result = url_fromUserInput(input)

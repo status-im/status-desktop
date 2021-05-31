@@ -1,8 +1,13 @@
-import json, random, strutils, strformat, tables, chronicles, unicode
-import stint
-from times import getTime, toUnix, nanosecond
-import accounts/signing_phrases
+import # std libs
+  json, random, strutils, strformat, tables, times, unicode
+from sugar import `=>`, `->`
+
+import # vendor libs
+  stint, chronicles
 from web3 import Address, fromHex
+
+import # status-desktop libs
+  accounts/signing_phrases
 
 proc getTimelineChatId*(pubKey: string = ""): string =
   if pubKey == "":
@@ -116,5 +121,35 @@ proc find*[T](s: seq[T], pred: proc(x: T): bool {.closure.}): T {.inline.} =
     return default(type(T))
   result = results[0]
 
+proc find*[T](s: seq[T], pred: proc(x: T): bool {.closure.}, found: var bool): T {.inline.} =
+  let results = s.filter(pred)
+  if results.len == 0:
+    found = false
+    return default(type(T))
+  result = results[0]
+  found = true
+
 proc parseAddress*(strAddress: string): Address =
   fromHex(Address, strAddress)
+
+proc hex2Time*(hex: string): Time =
+  # represents the time since 1970-01-01T00:00:00Z
+  fromUnix(fromHex[int64](hex))
+
+proc hex2LocalDateTime*(hex: string): DateTime =
+  # Convert hex time (since 1970-01-01T00:00:00Z) into a DateTime using the
+  # local timezone. 
+  hex.hex2Time.local
+
+proc isUnique*[T](key: T, existingKeys: var seq[T]): bool =
+  # If the key doesn't exist in the existingKeys seq, add it and return true.
+  # Otherwise, the key already existed, so return false.
+  # Can be used to deduplicate sequences with `deduplicate[T]`.
+  if not existingKeys.contains(key):
+    existingKeys.add key
+    return true
+  return false
+
+proc deduplicate*[T](txs: var seq[T], key: (T) -> string) =
+  var existingKeys: seq[string] = @[]
+  txs.keepIf(tx => tx.key().isUnique(existingKeys))

@@ -23,7 +23,6 @@ ColumnLayout {
             onboardingModel.firstTimeLogin = false
             walletModel.setInitialRange()
         }
-        walletModel.checkRecentHistory()
     }
 
     Timer {
@@ -120,7 +119,6 @@ ColumnLayout {
                             anchors.leftMargin: 32
                             //% "History"
                             btnText: qsTrId("history")
-                            onClicked: historyTab.checkIfHistoryIsBeingFetched()
                         }
                     }
 

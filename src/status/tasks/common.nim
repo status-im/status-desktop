@@ -1,5 +1,8 @@
 import # vendor libs
-  json_serialization
+  json_serialization#, stint
+from eth/common/eth_types_json_serialization import writeValue, readValue
+
+export writeValue, readValue
 
 export json_serialization
 

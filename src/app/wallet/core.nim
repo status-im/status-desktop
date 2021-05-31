@@ -1,4 +1,4 @@
-import NimQml, strformat, strutils, chronicles
+import NimQml, strformat, strutils, chronicles, sugar, sequtils
 
 import view
 import views/[asset_list, account_list, account_item]
@@ -34,7 +34,7 @@ proc init*(self: WalletController) =
   for account in accounts:
     self.view.addAccountToList(account)
 
-  self.view.initBalances()
+  self.view.checkRecentHistory()
   self.view.setDappBrowserAddress()
 
   self.status.events.on("accountsUpdated") do(e: Args):
@@ -63,14 +63,16 @@ proc init*(self: WalletController) =
           # TODO: show notification
 
       of "new-transfers":
-        for acc in data.accounts:
-          self.view.loadTransactionsForAccount(acc)
-          self.view.initBalances(false)
+        self.view.initBalances(data.accounts)
       of "recent-history-fetching":
         self.view.setHistoryFetchState(data.accounts, true)
       of "recent-history-ready":
+        self.view.initBalances(data.accounts)
         self.view.setHistoryFetchState(data.accounts, false)
-        self.view.initBalances(false)
+      of "non-archival-node-detected":
+        self.view.setHistoryFetchState(self.status.wallet.accounts.map(account => account.address), false)
+        self.view.setNonArchivalNode()
+        error "Non-archival node detected, please check your Infura key or your connected node"
       else:
         error "Unhandled wallet signal", eventType=data.eventType
 
