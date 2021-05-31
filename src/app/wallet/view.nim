@@ -1,5 +1,6 @@
 import # std libs
-  atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables
+  algorithm, atomics, sequtils, strformat, strutils, sugar, sequtils, json,
+  parseUtils, std/wrapnils, tables
 
 import # vendor libs
   NimQml, chronicles, stint
@@ -36,7 +37,9 @@ type
   GasPredictionsTaskArg = ref object of QObjectTaskArg
   LoadTransactionsTaskArg = ref object of QObjectTaskArg
     address: string
-    blockNumber: string
+    toBlock: Uint256
+    limit: int
+    loadMore: bool
   ResolveEnsTaskArg = ref object of QObjectTaskArg
     ens: string
     uuid: string
@@ -144,16 +147,20 @@ const loadTransactionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
     arg = decode[LoadTransactionsTaskArg](argEncoded)
     output = %*{
       "address": arg.address,
-      "history": getTransfersByAddress(arg.address)
+      "history": getTransfersByAddress(arg.address, arg.toBlock, arg.limit, arg.loadMore),
+      "loadMore": arg.loadMore
     }
   arg.finish(output)
 
-proc loadTransactions[T](self: T, slot: string, address: string) =
+proc loadTransactions[T](self: T, slot: string, address: string, toBlock: Uint256, limit: int, loadMore: bool) =
   let arg = LoadTransactionsTaskArg(
     tptr: cast[ByteAddress](loadTransactionsTask),
     vptr: cast[ByteAddress](self.vptr),
     slot: slot,
-    address: address
+    address: address,
+    toBlock: toBlock,
+    limit: limit,
+    loadMore: loadMore
   )
   self.status.tasks.threadpool.start(arg)
 
@@ -211,6 +218,7 @@ QtObject:
       defaultGasLimit: string
       signingPhrase: string
       fetchingHistoryState: Table[string, bool]
+      isNonArchivalNode: bool
 
   proc delete(self: WalletView) =
     self.accounts.delete
@@ -249,6 +257,7 @@ QtObject:
     result.defaultGasLimit = "21000"
     result.signingPhrase = ""
     result.fetchingHistoryState = initTable[string, bool]()
+    result.isNonArchivalNode = false
     result.setup
 
   proc etherscanLinkChanged*(self: WalletView) {.signal.}
@@ -325,7 +334,8 @@ QtObject:
     self.setCurrentCollectiblesLists(selectedAccount.collectiblesLists)
     self.loadCollectiblesForAccount(selectedAccount.address, selectedAccount.collectiblesLists)
 
-    self.setCurrentTransactions(selectedAccount.transactions)
+    self.currentTransactions.setHasMore(selectedAccount.transactions.hasMore)
+    self.setCurrentTransactions(selectedAccount.transactions.data)
 
   proc getCurrentAccount*(self: WalletView): QVariant {.slot.} =
     result = newQVariant(self.currentAccount)
@@ -616,6 +626,18 @@ QtObject:
     self.loadCollectibles("setCollectiblesResult", address, collectibleType)
     self.currentCollectiblesLists.setLoadingByType(collectibleType, 1)
 
+  proc isNonArchivalNodeChanged*(self: WalletView) {.signal.}
+
+  proc setNonArchivalNode*(self: WalletView, isNonArchivalNode: bool = true) {.slot.} =
+    self.isNonArchivalNode = isNonArchivalNode
+    self.isNonArchivalNodeChanged()
+
+  proc isNonArchivalNode*(self: WalletView): bool {.slot.} = result = ?.self.isNonArchivalNode
+  QtProperty[bool] isNonArchivalNode:
+    read = isNonArchivalNode
+    write = setNonArchivalNode
+    notify = isNonArchivalNodeChanged
+
   proc gasPricePredictionsChanged*(self: WalletView) {.signal.}
 
   proc getGasPricePredictions*(self: WalletView) {.slot.} =
@@ -685,50 +707,78 @@ QtObject:
     
     return """{"error":"Unknown token address"}""";
 
-  proc historyWasFetched*(self: WalletView) {.signal.}
+  proc isFetchingHistory*(self: WalletView): bool {.slot.} =
+    if self.fetchingHistoryState.hasKey(self.currentAccount.address):
+      return self.fetchingHistoryState[self.currentAccount.address]
+    return false
+
+  proc loadingTrxHistoryChanged*(self: WalletView, isLoading: bool, address: string) {.signal.}
+
+  proc loadTransactionsForAccount*(self: WalletView, address: string, toBlock: string = "0x0", limit: int = 20, loadMore: bool = false) {.slot.} =
+    self.loadingTrxHistoryChanged(true, address)
+    let toBlockParsed = stint.fromHex(Uint256, toBlock)
+    self.loadTransactions("setTrxHistoryResult", address, toBlockParsed, limit, loadMore)
 
   proc setHistoryFetchState*(self: WalletView, accounts: seq[string], isFetching: bool) =
     for acc in accounts:
       self.fetchingHistoryState[acc] = isFetching
-    if not isFetching: self.historyWasFetched()
+      self.loadingTrxHistoryChanged(isFetching, acc)
 
-  proc isFetchingHistory*(self: WalletView, address: string): bool {.slot.} =
-    if self.fetchingHistoryState.hasKey(address):
-      return self.fetchingHistoryState[address]
-    return true
+  proc initBalance(self: WalletView, acc: WalletAccount, loadTransactions: bool = true) =
+    let
+      accountAddress = acc.address
+      tokenList = acc.assetList.filter(proc(x:Asset): bool = x.address != "").map(proc(x: Asset): string = x.address)
+    self.initBalances("getAccountBalanceSuccess", accountAddress, tokenList)
+    if loadTransactions: 
+      self.loadTransactionsForAccount(accountAddress)
 
-  proc isHistoryFetched*(self: WalletView, address: string): bool {.slot.} =
-    return self.currentTransactions.rowCount() > 0
-
-  proc loadingTrxHistoryChanged*(self: WalletView, isLoading: bool) {.signal.}
-
-  proc loadTransactionsForAccount*(self: WalletView, address: string) {.slot.} =
-    self.loadingTrxHistoryChanged(true)
-    self.loadTransactions("setTrxHistoryResult", address)
-
-  proc getLatestTransactionHistory*(self: WalletView, accounts: seq[string]) =
-    for acc in accounts:
-      self.loadTransactionsForAccount(acc)
+  proc initBalance(self: WalletView, accountAddress: string, loadTransactions: bool = true) =
+    var found = false
+    let acc = self.status.wallet.accounts.find(acc => acc.address.toLowerAscii == accountAddress.toLowerAscii, found)
+    if not found:
+      error "Failed to init balance: could not find account", account=accountAddress
+      return
+    self.initBalance(acc, loadTransactions)
 
   proc initBalances*(self: WalletView, loadTransactions: bool = true) =
     for acc in self.status.wallet.accounts:
-      let accountAddress = acc.address
-      let tokenList = acc.assetList.filter(proc(x:Asset): bool = x.address != "").map(proc(x: Asset): string = x.address)
-      self.initBalances("getAccountBalanceSuccess", accountAddress, tokenList)
-      if loadTransactions: 
-        self.loadTransactionsForAccount(accountAddress)
+      self.initBalance(acc, loadTransactions)
+
+  proc initBalances*(self: WalletView, accounts: seq[string], loadTransactions: bool = true) =
+    for acc in accounts:
+      self.initBalance(acc, loadTransactions)
 
   proc setTrxHistoryResult(self: WalletView, historyJSON: string) {.slot.} =
-    let historyData = parseJson(historyJSON)
-    let transactions = historyData["history"].to(seq[Transaction]);
-    let address = historyData["address"].getStr
-    let index = self.accounts.getAccountindexByAddress(address)
+    let
+      historyData = parseJson(historyJSON)
+      transactions = historyData["history"].to(seq[Transaction])
+      address = historyData["address"].getStr
+      wasFetchMore = historyData["loadMore"].getBool
+      isCurrentAccount = address.toLowerAscii == self.currentAccount.address.toLowerAscii
+      index = self.accounts.getAccountindexByAddress(address)
     if index == -1: return
-    self.accounts.getAccount(index).transactions = transactions
-    if address == self.currentAccount.address:
-      self.setCurrentTransactions(
-            self.accounts.getAccount(index).transactions)
-    self.loadingTrxHistoryChanged(false)
+
+    let account = self.accounts.getAccount(index)
+    # concatenate the new page of txs to existing account transactions,
+    # sort them by block number and nonce, then deduplicate them based on their
+    # transaction id.
+    let existingAcctTxIds = account.transactions.data.map(tx => tx.id)
+    let hasNewTxs = transactions.len > 0 and transactions.any(tx => not existingAcctTxIds.contains(tx.id))
+    if hasNewTxs or not wasFetchMore:
+      var allTxs: seq[Transaction] = account.transactions.data.concat(transactions)
+      allTxs.sort(cmpTransactions, SortOrder.Descending)
+      allTxs.deduplicate(tx => tx.id)
+      account.transactions.data = allTxs
+      account.transactions.hasMore = true
+      if isCurrentAccount:
+        self.currentTransactions.setHasMore(true)
+        self.setCurrentTransactions(allTxs)
+    else:
+      account.transactions.hasMore = false
+      if isCurrentAccount:
+        self.currentTransactions.setHasMore(false)
+        self.currentTransactionsChanged()
+    self.loadingTrxHistoryChanged(false, address)
 
   proc resolveENS*(self: WalletView, ens: string, uuid: string) {.slot.} =
     self.resolveEns("ensResolved", ens, uuid)

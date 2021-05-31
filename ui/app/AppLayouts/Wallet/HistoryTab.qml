@@ -9,8 +9,9 @@ import "../../../shared/status/core"
 import "../../../shared/status"
 
 Item {
+    property int pageSize: 20 // number of transactions per page
     property var tokens: {
-        const count = walletModel.defaultTokenList.rowCount()
+        let count = walletModel.defaultTokenList.rowCount()
         const toks = []
         for (var i = 0; i < count; i++) {
             toks.push({
@@ -18,26 +19,25 @@ Item {
                           "symbol": walletModel.defaultTokenList.rowData(i, 'symbol')
                       })
         }
+        count = walletModel.customTokenList.rowCount()
+        for (var i = 0; i < count; i++) {
+            toks.push({
+                          "address": walletModel.customTokenList.rowData(i, 'address'),
+                          "symbol": walletModel.customTokenList.rowData(i, 'symbol')
+                      })
+        }
         return toks
     }
 
-    function checkIfHistoryIsBeingFetched() {
-        loadMoreButton.loadedMore = false;
-
-        // prevent history from being fetched everytime you click on
-        // the history tab
-        if (walletModel.isHistoryFetched(walletModel.currentAccount.account))
-            return;
-
-        fetchHistory();
-    }
-
     function fetchHistory() {
-        if (walletModel.isFetchingHistory(walletModel.currentAccount.address)) {
+        if (walletModel.isFetchingHistory()) {
             loadingImg.active = true
         } else {
             walletModel.loadTransactionsForAccount(
-                        walletModel.currentAccount.address)
+                        walletModel.currentAccount.address, 
+                        walletModel.transactions.getLastTxBlockNumber(),
+                        pageSize,
+                        true)
         }
     }
 
@@ -50,7 +50,6 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         anchors.top: parent.top
-        anchors.topMargin: Style.currentPadding
     }
 
     Component {
@@ -60,9 +59,10 @@ Item {
 
     Connections {
         target: walletModel
-        onHistoryWasFetched: checkIfHistoryIsBeingFetched()
         onLoadingTrxHistoryChanged: {
-            loadingImg.active = isLoading
+            if (walletModel.currentAccount.address.toLowerCase() === address.toLowerCase()) {
+                loadingImg.active = isLoading
+            }
         }
     }
 
@@ -73,6 +73,7 @@ Item {
             id: transactionListItem
             property bool isHovered: false
             property string symbol: ""
+            property bool isIncoming: to === walletModel.currentAccount.address
             anchors.right: parent.right
             anchors.left: parent.left
             height: 64
@@ -107,7 +108,12 @@ Item {
                 id: transactionModal
             }
 
-            Item {
+            Row {
+                anchors.left: parent.left
+                anchors.leftMargin: Style.current.smallPadding
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 5
+
                 Image {
                     id: assetIcon
                     width: 40
@@ -115,9 +121,7 @@ Item {
                     source: "../../img/tokens/"
                             + (transactionListItem.symbol
                                != "" ? transactionListItem.symbol : "ETH") + ".png"
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    anchors.topMargin: 12
+                    anchors.verticalCenter: parent.verticalCenter
                     onStatusChanged: {
                         if (assetIcon.status == Image.Error) {
                             assetIcon.source = "../../img/tokens/DEFAULT-TOKEN@3x.png"
@@ -129,100 +133,107 @@ Item {
 
                 StyledText {
                     id: transferIcon
-                    anchors.topMargin: 25
-                    anchors.top: parent.top
-                    anchors.left: assetIcon.right
-                    anchors.leftMargin: 22
+                    anchors.verticalCenter: parent.verticalCenter
                     height: 15
                     width: 15
-                    color: to !== walletModel.currentAccount.address ? "#4360DF" : "green"
-                    text: to !== walletModel.currentAccount.address ? "↑" : "↓"
+                    color: isIncoming ? Style.current.success : Style.current.danger
+                    text: isIncoming ? "↓" : "↑"
                 }
 
                 StyledText {
                     id: transactionValue
-                    anchors.left: transferIcon.right
-                    anchors.leftMargin: Style.current.smallPadding
-                    anchors.top: parent.top
-                    anchors.topMargin: Style.current.bigPadding
-                    font.pixelSize: 15
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: Style.current.primaryTextFontSize
                     text: utilsModel.hex2Eth(value) + " " + transactionListItem.symbol
                 }
             }
 
-            Item {
+            Row {
                 anchors.right: timeInfo.left
+                anchors.rightMargin: Style.current.smallPadding
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.bigPadding
-                width: children[0].width + children[1].width
+                spacing: 5
 
                 StyledText {
-                    text: to !== walletModel.currentAccount.address ?
-                              //% "To "
-                              qsTrId("to-") :
-                              //% "From "
-                              qsTrId("from-")
-                    anchors.right: addressValue.left
+                    text: isIncoming ?
+                            //% "From "
+                            qsTrId("from-") :
+                            //% "To "
+                            qsTrId("to-")
                     color: Style.current.secondaryText
-                    anchors.top: parent.top
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     font.strikeout: false
                 }
 
-                StyledText {
+                Address {
                     id: addressValue
-                    font.family: Style.current.fontHexRegular.name
-                    text: to
-                    width: 100
-                    elide: Text.ElideMiddle
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    font.pixelSize: 15
+                    text: isIncoming ? fromAddress : to
+                    maxWidth: 120
+                    width: 120
+                    horizontalAlignment: Text.AlignRight
+                    font.pixelSize: Style.current.primaryTextFontSize
+                    color: Style.current.textColor
                 }
             }
 
-            Item {
+            Row {
                 id: timeInfo
                 anchors.right: parent.right
+                anchors.rightMargin: Style.current.smallPadding
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.bigPadding
-                width: children[0].width + children[1].width + children[2].width
+                spacing: 5
 
                 StyledText {
-                    text: "• "
+                    text: " • "
                     font.weight: Font.Bold
-                    anchors.right: timeIndicator.left
                     color: Style.current.secondaryText
-                    anchors.top: parent.top
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                 }
 
                 StyledText {
                     id: timeIndicator
-                    text: "At "
-                    anchors.right: timeValue.left
+                    text: qsTr("At ")
                     color: Style.current.secondaryText
-                    anchors.top: parent.top
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     font.strikeout: false
                 }
-
                 StyledText {
                     id: timeValue
-                    text: timestamp
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    font.pixelSize: 15
+                    text: new Date(timestamp).toLocaleString(globalSettings.locale)
+                    font.pixelSize: Style.current.primaryTextFontSize
                     anchors.rightMargin: Style.current.smallPadding
                 }
             }
         }
     }
 
+    StyledText {
+        id: nonArchivalNodeError
+        visible: walletModel.isNonArchivalNode
+        height: visible ? implicitHeight : 0
+        anchors.top: parent.top
+        text: qsTr("Status Desktop is connected to a non-archival node. Transaction history may be incomplete.")
+        font.pixelSize: Style.current.primaryTextFontSize
+        color: Style.current.danger
+    }
+
+    StyledText {
+        id: noTxs
+        anchors.top: nonArchivalNodeError.bottom
+        visible: transactionListRoot.count === 0
+        height: visible ? implicitHeight : 0
+        text: qsTr("No transactions found")
+        font.pixelSize: Style.current.primaryTextFontSize
+    }
+
     ListView {
         id: transactionListRoot
-        anchors.topMargin: 20
-        height: parent.height - extraButtons.height
+        anchors.top: noTxs.bottom
+        anchors.topMargin: Style.current.padding
+        anchors.bottom: loadMoreButton.top
+        anchors.bottomMargin: Style.current.padding
         width: parent.width
         clip: true
         boundsBehavior: Flickable.StopAtBounds
@@ -238,26 +249,21 @@ Item {
         }
     }
 
-    RowLayout {
-        id: extraButtons
-        anchors.left: parent.left
+    StatusButton {
+        id: loadMoreButton
+        //% "Load More"
+        text: qsTrId("load-more")
+        // TODO: handle case when requested limit === transaction count -- there
+        // is currently no way to know that there are no more results
+        enabled: !loadingImg.active && walletModel.transactions.hasMore
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        height: loadMoreButton.height
+        anchors.bottomMargin: Style.current.padding
+        property bool loadedMore: false
 
-        StatusButton {
-            id: loadMoreButton
-            //% "Load More"
-            text: qsTrId("load-more")
-            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            property bool loadedMore: false
-
-            Connections {
-                onClicked: {
-                    fetchHistory()
-                    loadMoreButton.loadedMore = true
-                }
-            }
+        onClicked: {
+            fetchHistory()
+            loadMoreButton.loadedMore = true
         }
     }
 }

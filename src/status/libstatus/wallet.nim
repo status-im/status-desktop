@@ -1,10 +1,12 @@
-import json, json, options, json_serialization, stint, chronicles
-import core, types, utils, strutils, strformat
-import utils
-from status_go import validateMnemonic#, startWallet
-import ../wallet/account
-import web3/ethtypes
-import ./types
+import # std libs
+  json, times, options, strutils, strformat
+
+import # vendor libs
+  json_serialization, stint, chronicles, web3/ethtypes
+from status_go import validateMnemonic
+
+import # status-desktop libs
+  ../wallet/account, ./types, ./conversions, ./core, ./types, ./utils
 
 proc getWalletAccounts*(): seq[WalletAccount] =
   try:
@@ -33,20 +35,24 @@ proc getWalletAccounts*(): seq[WalletAccount] =
 proc getTransactionReceipt*(transactionHash: string): string =
   result = callPrivateRPC("eth_getTransactionReceipt", %* [transactionHash])
 
-proc getTransfersByAddress*(address: string): seq[types.Transaction] =
+proc getTransfersByAddress*(address: string, toBlock: Uint256, limit: int, loadMore: bool = false): seq[types.Transaction] =
   try:
-    let transactionsResponse = getTransfersByAddress(address, "0x14")
-    let transactions = parseJson(transactionsResponse)["result"]
+    let
+      toBlockParsed = "0x" & stint.toHex(toBlock)
+      limitParsed = "0x" & limit.toHex.stripLeadingZeros
+      transactionsResponse = getTransfersByAddress(address, toBlockParsed, limitParsed, loadMore)
+      transactions = parseJson(transactionsResponse)["result"]
     var accountTransactions: seq[types.Transaction] = @[]
 
     for transaction in transactions:
       accountTransactions.add(types.Transaction(
+        id: transaction["id"].getStr,
         typeValue: transaction["type"].getStr,
         address: transaction["address"].getStr,
         contract: transaction["contract"].getStr,
         blockNumber: transaction["blockNumber"].getStr,
         blockHash: transaction["blockhash"].getStr,
-        timestamp: transaction["timestamp"].getStr,
+        timestamp: $hex2LocalDateTime(transaction["timestamp"].getStr()),
         gasPrice: transaction["gasPrice"].getStr,
         gasLimit: transaction["gasLimit"].getStr,
         gasUsed: transaction["gasUsed"].getStr,

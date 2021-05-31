@@ -1,4 +1,4 @@
-import json, strformat, strutils, chronicles, sequtils, httpclient, tables, net
+import json, strformat, strutils, chronicles, sequtils, sugar, httpclient, tables, net
 import json_serialization, stint
 from web3/ethtypes import Address, EthSend, Quantity
 from web3/conversions import `$`
@@ -244,6 +244,11 @@ proc addNewGeneratedAccount(self: WalletModel, generatedAccount: GeneratedAccoun
     var derivedAccount: DerivedAccount = status_accounts.saveAccount(generatedAccount, password, color, accountType, isADerivedAccount, walletIndex)
     var account = self.newAccount(accountType, derivedAccount.derivationPath, accountName, derivedAccount.address, color, fmt"0.00 {self.defaultCurrency}", derivedAccount.publicKey)
     self.accounts.add(account)
+    # wallet_checkRecentHistory is required to be called when a new account is
+    # added before wallet_getTransfersByAddress can be called. This is because
+    # wallet_checkRecentHistory populates the status-go db that
+    # wallet_getTransfersByAddress reads from
+    discard status_wallet.checkRecentHistory(self.accounts.map(account => account.address))
     self.events.emit("newAccountAdded", AccountArgs(account: account))
   except Exception as e:
     raise newException(StatusGoException, fmt"Error adding new account: {e.msg}")
@@ -314,6 +319,7 @@ proc changeAccountSettings*(self: WalletModel, address: string, accountName: str
 
 proc deleteAccount*(self: WalletModel, address: string): string =
   result = status_accounts.deleteAccount(address)
+  self.accounts = self.accounts.filter(acc => acc.address.toLowerAscii != address.toLowerAscii)
 
 proc toggleAsset*(self: WalletModel, symbol: string) =
   self.tokens = status_tokens.toggleAsset(symbol)
@@ -333,8 +339,8 @@ proc hideAsset*(self: WalletModel, symbol: string) =
 proc addCustomToken*(self: WalletModel, symbol: string, enable: bool, address: string, name: string, decimals: int, color: string) =
   addCustomToken(address, name, symbol, decimals, color)
 
-proc getTransfersByAddress*(self: WalletModel, address: string): seq[Transaction] =
- result = status_wallet.getTransfersByAddress(address)
+proc getTransfersByAddress*(self: WalletModel, address: string, toBlock: Uint256, limit: int, loadMore: bool): seq[Transaction] =
+ result = status_wallet.getTransfersByAddress(address, toBlock, limit, loadMore)
 
 proc validateMnemonic*(self: WalletModel, mnemonic: string): string =
   result = status_wallet.validateMnemonic(mnemonic).parseJSON()["error"].getStr

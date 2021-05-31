@@ -14,6 +14,7 @@ ModalPopup {
     property string seedValidationError: ""
     property string accountNameValidationError: ""
     property bool loading: false
+    property var onAfterAddAccount: function() {}
 
     function reset() {
         passwordInput.text = ""
@@ -142,6 +143,7 @@ ModalPopup {
                 }
                 return
             }
+            popup.onAfterAddAccount()
             popup.reset()
             popup.close();
         }

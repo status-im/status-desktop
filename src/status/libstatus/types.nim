@@ -1,7 +1,11 @@
-import json, options, typetraits, tables, sequtils
-import web3/ethtypes, json_serialization, stint
-import accounts/constants
-import ../../eventemitter
+import # std libs
+  json, options, typetraits, tables, sequtils, strutils
+
+import # vendor libs
+  web3/ethtypes, json_serialization, stint
+
+import # status-desktop libs
+  accounts/constants, ../../eventemitter
 
 type SignalType* {.pure.} = enum
   Message = "messages.new"
@@ -109,6 +113,7 @@ type
 
 type
   Transaction* = ref object
+    id*: string
     typeValue*: string
     address*: string
     blockNumber*: string
@@ -123,6 +128,13 @@ type
     value*: string
     fromAddress*: string
     to*: string
+  
+proc cmpTransactions*(x, y: Transaction): int =
+  # Sort proc to compare transactions from a single account.
+  # Compares first by block number, then by nonce
+  result = cmp(x.blockNumber.parseHexInt, y.blockNumber.parseHexInt)
+  if result == 0:
+    result = cmp(x.nonce, y.nonce)
 
 type
   RpcException* = object of CatchableError

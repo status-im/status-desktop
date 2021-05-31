@@ -1,4 +1,4 @@
-import NimQml, Tables, random, strformat, json_serialization
+import NimQml, Tables, random, strformat, strutils, json_serialization
 import sequtils as sequtils
 import account_item, asset_list
 from ../../../status/wallet import WalletAccount, Asset, CollectibleList
@@ -54,7 +54,7 @@ QtObject:
   proc getAccountindexByAddress*(self: AccountList, address: string): int =
     var i = 0
     for accountView in self.accounts:
-      if (accountView.account.address == address):
+      if (accountView.account.address.toLowerAscii == address.toLowerAscii):
         return i
       i = i + 1
     return -1

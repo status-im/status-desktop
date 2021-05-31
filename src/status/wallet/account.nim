@@ -22,7 +22,7 @@ type WalletAccount* = ref object
     assetList*: seq[Asset]
     wallet*, chat*: bool
     collectiblesLists*: seq[CollectibleList]
-    transactions*: seq[Transaction]
+    transactions*: tuple[hasMore: bool, data: seq[Transaction]]
 
 type AccountArgs* = ref object of Args
     account*: WalletAccount

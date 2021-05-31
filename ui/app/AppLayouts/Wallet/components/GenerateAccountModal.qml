@@ -14,6 +14,7 @@ ModalPopup {
     property string passwordValidationError: ""
     property string accountNameValidationError: ""
     property bool loading: false
+    property var onAfterAddAccount: function() {}
 
     function validate() {
         if (passwordInput.text === "") {
@@ -114,7 +115,7 @@ ModalPopup {
                 }
                 return
             }
-
+            popup.onAfterAddAccount();
             popup.close();
         }
     }

@@ -12,6 +12,9 @@ StatusRoundButton {
     type: "secondary"
     width: 36
     height: 36
+    readonly property var onAfterAddAccount: function() {
+        walletInfoContainer.changeSelectedAccount(walletModel.accounts.rowCount() - 1)
+    }
 
     onClicked: {
         if (newAccountMenu.opened) {
@@ -24,15 +27,19 @@ StatusRoundButton {
 
     GenerateAccountModal {
         id: generateAccountModal
+        onAfterAddAccount: function() { btnAdd.onAfterAddAccount() }
     }
     AddAccountWithSeed {
         id: addAccountWithSeedModal
+        onAfterAddAccount: function() { btnAdd.onAfterAddAccount() }
     }
     AddAccountWithPrivateKey {
         id: addAccountWithPrivateKeydModal
+        onAfterAddAccount: function() { btnAdd.onAfterAddAccount() }
     }
     AddWatchOnlyAccount {
         id: addWatchOnlyAccountModal
+        onAfterAddAccount: function() { btnAdd.onAfterAddAccount() }
     }
 
     PopupMenu {

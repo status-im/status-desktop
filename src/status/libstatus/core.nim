@@ -47,8 +47,9 @@ proc getContactByID*(id: string): string =
 proc getBlockByNumber*(blockNumber: string): string =
   result = callPrivateRPC("eth_getBlockByNumber", %* [blockNumber, false])
 
-proc getTransfersByAddress*(address: string, limit: string, fetchMore: bool = false): string =
-  result = callPrivateRPC("wallet_getTransfersByAddress", %* [address, newJNull(), limit, fetchMore])
+proc getTransfersByAddress*(address: string, toBlock: string, limit: string, fetchMore: bool = false): string =
+  let toBlockParsed = if not fetchMore: newJNull() else: %toBlock
+  result = callPrivateRPC("wallet_getTransfersByAddress", %* [address, toBlockParsed, limit, fetchMore])
 
 proc signMessage*(rpcParams: string): string =
   return $status_go.signMessage(rpcParams)
