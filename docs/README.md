@@ -16,7 +16,7 @@ Desktop client for the [Status Network](https://statusnetwork.com/) built with [
 ### Architecture & Development
 * [Project Architecture & Structure](https://github.com/status-im/nim-status-client/blob/master/docs/structure.md)
 * [Common development errors aand how to solve them](https://github.com/status-im/nim-status-client/blob/master/docs/common_errors.md)
-* [tips & tricks](tips.md)
+* [tips & tricks](https://github.com/status-im/nim-status-client/blob/master/docs/tips.md)
 
 ### Guides & Tutorials
 * [Tutorial - how to add a new section](https://github.com/status-im/nim-status-client/blob/master/docs/tutorial_adding_section.md)
