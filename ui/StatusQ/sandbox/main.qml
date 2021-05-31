@@ -48,6 +48,18 @@ StatusWindow {
                         checked = !checked
                         demoAppButton.checked = false
                     }
+                },
+                StatusNavBarTabButton {
+                    id: demoAppButton
+                    icon.name: "status"
+                    tooltip.text: "Demo Application"
+                    checked: stackView.currentItem == demoAppCmp
+                    onClicked: {
+                        stackView.clear()
+                        stackView.push(demoAppCmp)
+                        checked = !checked
+                        apiDocsButton.checked = false
+                    }
                 }
             ]
         }
@@ -215,5 +227,28 @@ StatusWindow {
     Component {
         id: buttonsComponent
         Buttons {}
+    }
+
+    Component {
+        id: demoAppCmp
+
+        Rectangle {
+            anchors.fill: parent
+            color: Theme.palette.baseColor3
+            DemoApp {
+                id: demoApp
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+            DropShadow {
+                anchors.fill: demoApp
+                source: demoApp
+                horizontalOffset: 0
+                verticalOffset: 5
+                radius: 20
+                samples: 20
+                color: "#22000000"
+            }
+        }
     }
 }
