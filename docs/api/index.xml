@@ -1,1 +1,50 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Architecture &amp; APIs on</title><link>https://status-im.github.io/status-desktop/api/</link><description>Recent content in Architecture &amp; APIs on</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Tue, 06 Oct 2020 08:48:23 +0000</lastBuildDate><atom:link href="https://status-im.github.io/status-desktop/api/index.xml" rel="self" type="application/rss+xml"/><item><title>Intro</title><link>https://status-im.github.io/status-desktop/api/intro/intro/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/api/intro/intro/</guid><description>This section describes the Architecture &amp;amp; stack, documents APIs &amp;amp; describes how to implement specific things such as functionality that might need to be in a threadpool, adding new sections to the app, etc..</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Status-Go API on</title><link>https://status-im.github.io/status-desktop/api/</link><description>Recent content in Status-Go API on</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Tue, 06 Oct 2020 08:48:23 +0000</lastBuildDate><atom:link href="https://status-im.github.io/status-desktop/api/index.xml" rel="self" type="application/rss+xml"/><item><title>Accounts</title><link>https://status-im.github.io/status-desktop/api/statusgo/accounts/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/api/statusgo/accounts/</guid><description>RPC Calls accounts_getAccounts accounts_saveAccounts accounts_deleteAccount %* [address])
+multiaccounts_storeIdentityImage %* [keyUID, imagePath, aX, aY, bX, bY]).parseJson
+multiaccounts_getIdentityImages %* [keyUID]).parseJson
+multiaccounts_deleteIdentityImage %* [keyUID]).parseJson
+Library Calls multiAccountGenerateAndDeriveAddresses($multiAccountConfig) generateAlias(publicKey) identicon(publicKey) openAccounts(STATUSGODIR).parseJson saveAccountAndLogin(accountData, hashedPassword, settingsJSON, configJSON, $subaccountData) multiAccountStoreDerivedAccounts($multiAccount); multiAccountLoadAccount($inputJson) verifyAccountPassword(KEYSTOREDIR, address, hashedPassword) multiAccountImportMnemonic($mnemonicJson) multiAccountImportPrivateKey($privateKeyJson) multiAccountStoreAccount($(%*{&amp;quot;accountID&amp;quot;: account.id, &amp;quot;password&amp;quot;: hashedPassword}))); multiAccountDeriveAddresses($deriveJson)) validateMnemonic(mnemonic)</description></item><item><title>Browser</title><link>https://status-im.github.io/status-desktop/api/statusgo/browser/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/api/statusgo/browser/</guid><description>browsers_storeBookmark browsers_updateBookmark browsers_getBookmarks browsers_deleteBookmark</description></item><item><title>Chat</title><link>https://status-im.github.io/status-desktop/api/statusgo/chat/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/api/statusgo/chat/</guid><description>mailservers_addMailserver mailservers_getMailservers loadFilters %* [filter(filters, proc(x:JsonNode):bool = x.kind != JNull)])
+removeFilters saveChat createPublicChat %* [{&amp;ldquo;ID&amp;rdquo;: chatId}])
+createOneToOneChat %* [{&amp;ldquo;ID&amp;rdquo;: chatId}])
+deactivateChat %* [{ &amp;ldquo;ID&amp;rdquo;: chat.id }])
+createProfileChat %* [{ &amp;ldquo;ID&amp;rdquo;: pubKey }])
+chats chatMessages %* [chatId, cursorVal, limit])
+emojiReactionsByChatID %* [chatId, cursorVal, limit])
+sendEmojiReaction %* [chatId, messageId, emojiId]))[&amp;ldquo;result&amp;rdquo;]
+sendEmojiReactionRetraction %* [emojiReactionId]))[&amp;ldquo;result&amp;rdquo;]
+waku_generateSymKeyFromPassword sendChatMessage sendChatMessages %* [imagesJson])
+markAllRead %* [chatId])
+markMessagesSeen %* [chatId, messageIds])
+deleteMessagesByChatID %* [chatId])
+updateMessageOutgoingStatus %* [messageId, status])</description></item><item><title>Communities</title><link>https://status-im.github.io/status-desktop/api/statusgo/communities/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/api/statusgo/communities/</guid><description>RPC Calls communities joinedCommunities createCommunity createCommunityChat createCommunityCategory editCommunityCategory reorderCommunityChat deleteCommunityCategory requestCommunityInfoFromMailserver %*[communityId])
+joinCommunity %*[communityId])
+leaveCommunity %*[communityId])
+inviteUsersToCommunity exportCommunity %*[communityId]).parseJson()[&amp;ldquo;result&amp;rdquo;].getStr
+importCommunity %*[communityKey])
+removeUserFromCommunity %*[communityId, pubKey])
+requestToJoinCommunity acceptRequestToJoinCommunity declineRequestToJoinCommunity pendingRequestsToJoinForCommunity %*[communityId]).parseJSON()
+myPendingRequestsToJoin banUserFromCommunity chatPinnedMessages %* [chatId, cursorVal, limit])
+sendPinMessage</description></item><item><title>Contacts</title><link>https://status-im.github.io/status-desktop/api/statusgo/contacts/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/api/statusgo/contacts/</guid><description>blockContact getContactByID %* [id])
+contacts saveContact sendContactUpdate %* [publicKey, &amp;ldquo;&amp;rdquo;, &amp;ldquo;&amp;quot;])</description></item><item><title>Ethereum</title><link>https://status-im.github.io/status-desktop/api/statusgo/ethereum/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/api/statusgo/ethereum/</guid><description>eth_getTransactionReceipt %* [transactionHash])
+eth_getBalance eth_call eth_getBlockByNumber %* [blockNumber, false])
+eth_accounts eth_estimateGas %*[%tx])</description></item><item><title>General</title><link>https://status-im.github.io/status-desktop/api/statusgo/general/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/api/statusgo/general/</guid><description>RPC Calls setInstallationMetadata %* [installationId, {&amp;ldquo;name&amp;rdquo;: deviceName, &amp;ldquo;deviceType&amp;rdquo;: deviceType}])
+getOurInstallations %* []).parseJSON()[&amp;ldquo;result&amp;rdquo;]
+syncDevices %* [preferredName, photoPath])
+sendPairInstallation &amp;ldquo;.prefix)
+enableInstallation %* [installationId])
+disableInstallation %* [installationId])
+settings_getSettings settings_saveSetting %* [key, value])
+web3_clientVersion startMessenger admin_addPeer %* [peer])
+admin_removePeer %* [peer])
+markTrustedPeer %* [peer])
+Library Calls callRPC(inputJSON) callPrivateRPC(inputJSON) signMessage(rpcParams) signTypedData(data, address, password) initKeystore(KEYSTOREDIR) addPeer(peer) login($toJson(account), hashedPassword) logout(), StatusGoError)</description></item><item><title>Group Chats</title><link>https://status-im.github.io/status-desktop/api/statusgo/group_chats/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/api/statusgo/group_chats/</guid><description>RPC Calls confirmJoiningGroup %* [chatId])
+leaveGroupChat %* [nil, chatId, true])
+changeGroupChatName %* [nil, chatId, newName])
+createGroupChatWithMembers %* [nil, groupName, pubKeys])
+addMembersToGroupChat %* [nil, chatId, pubKeys])
+removeMemberFromGroupChat %* [nil, chatId, pubKey])
+addAdminsToGroupChat %* [nil, chatId, [pubKey]])</description></item><item><title>Intro</title><link>https://status-im.github.io/status-desktop/api/intro/intro/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/api/intro/intro/</guid><description>This section describes the Architecture &amp;amp; stack, documents APIs &amp;amp; describes how to implement specific things such as functionality that might need to be in a threadpool, adding new sections to the app, etc..</description></item><item><title>Wallet &amp; Transactions</title><link>https://status-im.github.io/status-desktop/api/statusgo/wallet/</link><pubDate>Tue, 06 Oct 2020 08:48:23 +0000</pubDate><guid>https://status-im.github.io/status-desktop/api/statusgo/wallet/</guid><description>RPC Calls wallet_storePendingTransaction wallet_getPendingTransactions wallet_getPendingOutboundTransactionsByAddress wallet_deletePendingTransaction wallet_setInitialBlocksRange wallet_watchTransaction wallet_checkRecentHistory wallet_getCustomTokens wallet_addCustomToken wallet_deleteCustomToken wallet_getTokensBalances Library Calls acceptRequestAddressForTransaction %* [messageId, address])
+declineRequestAddressForTransaction %* [messageId])
+declineRequestTransaction %* [messageId])
+requestAddressForTransaction %* [chatId, fromAddress, amount, tokenAddress])
+requestTransaction %* [chatId, amount, tokenAddress, fromAddress])
+sendTransaction(inputJSON, hashed_password) wallet_getTransfersByAddress %* [address, newJNull(), limit, fetchMore])</description></item></channel></rss>
