@@ -68,7 +68,7 @@ const asyncMessageLoadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
   var pinnedMessages: JsonNode
   var pinnedMessagesCallSuccess: bool
   let pinnedMessagesCallResult = rpcPinnedChatMessages(arg.chatId, newJString(""), 20, pinnedMessagesCallSuccess)
-  if(reactionsCallSuccess):
+  if(pinnedMessagesCallSuccess):
     pinnedMessages = pinnedMessagesCallResult.parseJson()["result"]
 
   let responseJson = %*{
@@ -445,9 +445,10 @@ QtObject:
     if not self.messageList.hasKey(channel):
       self.beginInsertRows(newQModelIndex(), self.messageList.len, self.messageList.len)
       self.messageList[channel] = newChatMessageList(channel, self.status, not chat.isNil and chat.chatType != ChatType.Profile)
-      self.pinnedMessagesList[channel] = newChatMessageList(channel, self.status, false)
       self.channelOpenTime[channel] = now().toTime.toUnix * 1000
       self.endInsertRows();
+    if not self.pinnedMessagesList.hasKey(channel):
+      self.pinnedMessagesList[channel] = newChatMessageList(channel, self.status, false)
 
   proc messagePushed*(self: ChatsView, messageIndex: int) {.signal.}
   proc newMessagePushed*(self: ChatsView) {.signal.}
@@ -624,19 +625,27 @@ QtObject:
     self.asyncMessageLoad("asyncMessageLoaded", chatId)
 
   proc asyncMessageLoaded*(self: ChatsView, rpcResponse: string) {.slot.} =
-    let rpcResponseObj = rpcResponse.parseJson
+    let
+      rpcResponseObj = rpcResponse.parseJson
+      chatId = rpcResponseObj{"chatId"}.getStr
 
-    if(rpcResponseObj["messages"].kind != JNull):
-      let chatMessages = parseChatMessagesResponse(rpcResponseObj["chatId"].getStr, rpcResponseObj["messages"])
-      self.status.chat.chatMessages(rpcResponseObj["chatId"].getStr, true, chatMessages[0], chatMessages[1])
+    if chatId == "": # .getStr() returns "" when field is not found
+      return
 
-    if(rpcResponseObj["reactions"].kind != JNull):
-      let reactions = parseReactionsResponse(rpcResponseObj["chatId"].getStr, rpcResponseObj["reactions"])
-      self.status.chat.chatReactions(rpcResponseObj["chatId"].getStr, true, reactions[0], reactions[1])
+    let messages = rpcResponseObj{"messages"}
+    if(messages != nil and messages.kind != JNull):
+      let chatMessages = parseChatMessagesResponse(chatId, messages)
+      self.status.chat.chatMessages(chatId, true, chatMessages[0], chatMessages[1])
 
-    if(rpcResponseObj["pinnedMessages"].kind != JNull):
-      let pinnedMessages = parseChatMessagesResponse(rpcResponseObj["chatId"].getStr, rpcResponseObj["pinnedMessages"], true)
-      self.status.chat.pinnedMessagesByChatID(rpcResponseObj["chatId"].getStr, pinnedMessages[0], pinnedMessages[1])
+    let rxns = rpcResponseObj{"reactions"}
+    if(rxns != nil and rxns.kind != JNull):
+      let reactions = parseReactionsResponse(chatId, rxns)
+      self.status.chat.chatReactions(chatId, true, reactions[0], reactions[1])
+
+    let pinnedMsgs = rpcResponseObj{"pinnedMessages"}
+    if(pinnedMsgs != nil and pinnedMsgs.kind != JNull):
+      let pinnedMessages = parseChatMessagesResponse(chatId, pinnedMsgs, true)
+      self.status.chat.pinnedMessagesByChatID(chatId, pinnedMessages[0], pinnedMessages[1])
 
   proc hideLoadingIndicator*(self: ChatsView) {.slot.} =
     self.loadingMessages = false
