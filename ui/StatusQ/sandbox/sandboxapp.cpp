@@ -36,8 +36,8 @@ void SandboxApp::restartEngine()
     const QUrl url(applicationDirPath() + "/../main.qml");
     QWindow *rootWindow = qobject_cast<QWindow*>(m_engine.rootObjects().at(0));
     if (rootWindow) {
-
         rootWindow->close();
+        rootWindow->deleteLater();
     }
     m_engine.clearComponentCache();
     m_engine.load(url);

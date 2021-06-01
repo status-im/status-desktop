@@ -10,6 +10,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Layout 0.1
+import StatusQ.Platform 0.1
 
 StatusWindow {
     id: rootWindow
@@ -29,6 +30,8 @@ StatusWindow {
     Component.onCompleted: {
         Theme.palette = lightTheme
         apiDocsButton.checked = true
+
+        rootWindow.updatePosition();
     }
 
     StatusAppLayout {
@@ -249,6 +252,24 @@ StatusWindow {
                 samples: 20
                 color: "#22000000"
             }
+        }
+    }
+
+    StatusMacTrafficLights {
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.margins: 13
+
+        onClose: {
+            rootWindow.close()
+        }
+
+        onMinimised: {
+            rootWindow.showMinimized()
+        }
+
+        onMaximized: {
+            rootWindow.toggleFullScreen()
         }
     }
 }

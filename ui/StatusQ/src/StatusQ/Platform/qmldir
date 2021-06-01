@@ -1,0 +1,5 @@
+module StatusQ.Platform
+
+StatusMacTrafficLights 0.1 StatusMacTrafficLights.qml
+
+

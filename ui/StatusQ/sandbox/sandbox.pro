@@ -32,9 +32,11 @@ HEADERS += \
     statuswindow.h
 
 DISTFILES += \
+    ../src/StatusQ/Components/StatusMacWindowButtons.qml \
     ../src/StatusQ/Controls/StatusBaseButton.qml \
     ../src/StatusQ/Controls/StatusButton.qml \
     ../src/StatusQ/Controls/StatusCheckBox.qml \
     ../src/StatusQ/Controls/StatusFlatRoundButton.qml \
     ../src/StatusQ/Controls/StatusRadioButton.qml \
+    ../src/StatusQ/Controls/StatusSlider.qml \
     ../src/StatusQ/Controls/StatusSwitch.qml
