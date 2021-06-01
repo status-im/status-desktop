@@ -39,20 +39,41 @@ toc: true
 #### selecting a community
 - [`ui/app/AppLayouts/Chat/CommunityComponents/CommunitiesPopup.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/CommunityComponents/CommunitiesPopup.qml#L212)
 - [`src/app/chat/view.nim`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/src/app/chat/view.nim#L166)
+- [`src/app/chat/views/communities.nim`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/src/app/chat/views/communities.nim#L146)
+- [`src/app/chat/views/community_item.nim`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/src/app/chat/views/community_item.nim#L40)
 
 #### joining a community
-
+- [`ui/app/AppLayouts/Chat/ContactsColumn.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/ContactsColumn.qml#L85)
+- [`ui/app/AppLayouts/Chat/CommunityComponents/CommunityDetailPopup.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/CommunityComponents/CommunityDetailPopup.qml#L243)
+- [`src/app/chat/views/communities.nim`](https://github.com/status-im/status-desktop/blob/af2ec66e0c7912baad871aea34efcc493e02de27/src/app/chat/views/communities.nim#L381)
+- [`src/status/chat.nim`](https://github.com/status-im/status-desktop/blob/af2ec66e0c7912baad871aea34efcc493e02de27/src/status/chat.nim#L524)
+- [`src/status/libstatus/chat.nim`](https://github.com/status-im/status-desktop/blob/af2ec66e0c7912baad871aea34efcc493e02de27/src/status/libstatus/chat.nim#L434)
 
 ### Creating a community
+- [`ui/app/AppLayouts/Chat/CommunityComponents/CommunitiesPopup.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/CommunityComponents/CommunitiesPopup.qml#L230)
 - [`ui/app/AppLayouts/Chat/ContactsColumn.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/ContactsColumn.qml#L67)
+- [`ui/app/AppLayouts/Chat/CommunityComponents/CreateCommunityPopup.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/CommunityComponents/CreateCommunityPopup.qml#L438)
+- [`src/app/chat/views/communities.nim`](https://github.com/status-im/status-desktop/blob/af2ec66e0c7912baad871aea34efcc493e02de27/src/app/chat/views/communities.nim#L214)
+- [`src/status/chat.nim`](https://github.com/status-im/status-desktop/blob/af2ec66e0c7912baad871aea34efcc493e02de27/src/status/chat.nim#L472)
+- [`src/status/libstatus/chat.nim`](https://github.com/status-im/status-desktop/blob/af2ec66e0c7912baad871aea34efcc493e02de27/src/status/libstatus/chat.nim#L292)
 
 #### uploading a thumbnail image
 
+// TODO: describe choosing file dialog, cropping image, uploading image
+
 #### setting community color
+- [`ColorDialog QML Type`](https://doc.qt.io/qt-5/qml-qtquick-dialogs-colordialog.html)
+- [`ui/app/AppLayouts/Chat/CommunityComponents/CreateCommunityPopup.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/CommunityComponents/CreateCommunityPopup.qml#L323)
 
 #### setting membership requirement
+- [`ui/app/AppLayouts/Chat/CommunityComponents/CreateCommunityPopup.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/CommunityComponents/CreateCommunityPopup.qml#L350)
+- [`ui/app/AppLayouts/Chat/CommunityComponents/MembershipRequirementPopup.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/CommunityComponents/MembershipRequirementPopup.qml#L9)
 
 ### Leaving a community
+- [`ui/app/AppLayouts/Chat/CommunityComponents/CommunityList.qml`](https://github.com/status-im/status-desktop/blob/358091a8eb19f36c9843b42d61473e35ea87d05b/ui/app/AppLayouts/Chat/CommunityComponents/CommunityList.qml#L68)
+- [`src/app/chat/views/communities.nim`](https://github.com/status-im/status-desktop/blob/af2ec66e0c7912baad871aea34efcc493e02de27/src/app/chat/views/communities.nim#L318)
+- [`src/status/chat.nim`](https://github.com/status-im/status-desktop/blob/af2ec66e0c7912baad871aea34efcc493e02de27/src/status/chat.nim#L503)
+- [`src/status/libstatus/chat.nim`](https://github.com/status-im/status-desktop/blob/af2ec66e0c7912baad871aea34efcc493e02de27/src/status/libstatus/chat.nim#L416)
 
 ## Manage Community
 
