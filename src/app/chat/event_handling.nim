@@ -40,6 +40,10 @@ proc handleChatEvents(self: ChatController) =
     self.view.reactions.push(evArgs.emojiReactions)
     if (evArgs.communities.len > 0):
       for community in evArgs.communities:
+        if self.view.communities.isUserMemberOfCommunity(community.id) and not community.admin and not community.isMember:
+          discard self.view.communities.leaveCommunity(community.id)
+          continue
+        
         self.view.communities.addCommunityToList(community)
         if (self.view.communities.activeCommunity.active and self.view.communities.activeCommunity.communityItem.id == community.id):
           if (self.view.activeChannel.chatItem != nil):
