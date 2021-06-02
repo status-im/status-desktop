@@ -42,8 +42,9 @@ proc handleChatEvents(self: ChatController) =
       for community in evArgs.communities:
         self.view.communities.addCommunityToList(community)
         if (self.view.communities.activeCommunity.active and self.view.communities.activeCommunity.communityItem.id == community.id):
-          let communityChannel = self.view.communities.activeCommunity.chats.getChannelById(self.view.activeChannel.chatItem.id)
-          self.view.activeChannel.chatItem.canPost = communityChannel.canPost
+          if (self.view.activeChannel.chatItem != nil):
+            let communityChannel = self.view.communities.activeCommunity.chats.getChannelById(self.view.activeChannel.chatItem.id)
+            self.view.activeChannel.chatItem.canPost = communityChannel.canPost
           self.view.activeChannelChanged()
 
     if (evArgs.communityMembershipRequests.len > 0):
