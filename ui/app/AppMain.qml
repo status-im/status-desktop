@@ -284,6 +284,7 @@ RowLayout {
         id: editChannelPopup
         CreateChannelPopup {
             isEdit: true
+            pinnedMessagesPopupComponent: chatLayoutContainer.chatColumn.pinnedMessagesPopupComponent
             onClosed: {
                 destroy()
             }
