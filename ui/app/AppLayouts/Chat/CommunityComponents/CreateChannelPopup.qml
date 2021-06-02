@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
 import "../../../../imports"
+import "../components"
 import "../../../../shared"
 import "../../../../shared/status"
 
@@ -18,7 +19,7 @@ ModalPopup {
         descriptionTextArea.isValid
 
     id: popup
-    height: 400
+    height: 475
 
     onOpened: {
         nameInput.text = "";
@@ -171,6 +172,57 @@ ModalPopup {
             //     //% "By making a channel private, only members with selected permission will be able to access it"
             //     text: qsTrId("by-making-a-channel-private--only-members-with-selected-permission-will-be-able-to-access-it")
             // }
+
+            Component {
+                id: pinnedMessagesPopupComponent
+                PinnedMessagesPopup {
+                    id: pinnedMessagesPopup
+                    onClosed: destroy()
+                }
+            }
+
+            CommunityPopupButton {
+                id: memberBtn
+                label: qsTr("Pinned messages")
+                iconName: "../pin"
+                txtColor: Style.current.textColor
+                onClicked: openPopup(pinnedMessagesPopupComponent)
+                anchors.top: charLimit.bottom
+                anchors.topMargin: Style.current.bigPadding
+                
+                Item {
+                    anchors.right: parent.right
+                    anchors.rightMargin: Style.current.padding
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: childrenRect.width
+                    height: memberBtn.height
+
+                    StyledText {
+                        id: nbPinMessagesText
+                        text: chatsModel.pinnedMessagesList.count
+                        anchors.verticalCenter: parent.verticalCenter
+                        padding: 0
+                        font.pixelSize: 15
+                        color: Style.current.secondaryText
+                    }
+
+                    SVGImage {
+                        id: caret
+                        anchors.left: nbPinMessagesText.right
+                        anchors.leftMargin: Style.current.padding
+                        anchors.verticalCenter: parent.verticalCenter
+                        source: "../../../img/caret.svg"
+                        width: 13
+                        height: 7
+                        rotation: -90
+                        ColorOverlay {
+                            anchors.fill: parent
+                            source: parent
+                            color: Style.current.secondaryText
+                        }
+                    }
+                }
+            }
         }
     }
 
