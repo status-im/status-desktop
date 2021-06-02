@@ -68,6 +68,8 @@ ThemePalette {
         source: "../../../assets/fonts/InterStatus/InterStatus-Black.otf"
     }
 
+    property color dropShadow: getColor('black', 0.08)
+
     baseColor1: getColor('graphite5')
     baseColor2: getColor('graphite4')
     baseColor3: getColor('graphite3')
