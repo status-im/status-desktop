@@ -10,10 +10,12 @@ MouseArea {
     width: layout.implicitWidth
     height: layout.implicitHeight
 
-    readonly property color inactive: Style.current.name === Constants.lightThemeName ? "#D5CDCF"
-                                                                                      : "#524d51"
-    readonly property color inactiveBorder: Style.current.name === Constants.lightThemeName ? "#B3ABAD"
-                                                                                            : "#D14C40"
+    readonly property color inactive: Style.current.name === Constants.lightThemeName ? "#10000000"
+                                                                                      : "#10FFFFFF"
+    readonly property color inactiveBorder: Style.current.name === Constants.lightThemeName ? "#10000000"
+                                                                                            : "#10FFFFFF"
+
+
 
 
 
