@@ -41,7 +41,9 @@ SplitView {
 
     Component {
         id: communtiyColumnComponent
-        CommunityColumn {}
+        CommunityColumn {
+            pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
+        }
     }
 
     Component {

@@ -12,6 +12,7 @@ import "./CommunityComponents"
 Rectangle {
     // TODO unhardcode
     property int chatGroupsListViewCount: channelList.channelListCount
+    property Component pinnedMessagesPopupComponent
 
     id: root
     Layout.fillHeight: true
@@ -20,6 +21,7 @@ Rectangle {
     Component {
         id: createChannelPopup
         CreateChannelPopup {
+            pinnedMessagesPopupComponent: root.pinnedMessagesPopupComponent
             onClosed: {
                 destroy()
             }

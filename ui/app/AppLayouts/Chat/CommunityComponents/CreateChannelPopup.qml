@@ -14,6 +14,9 @@ ModalPopup {
     property string categoryId: ""
     readonly property int maxDescChars: 140
     property string nameValidationError: ""
+    
+    property Component pinnedMessagesPopupComponent
+
     property bool isValid:
         nameInput.isValid &&
         descriptionTextArea.isValid
@@ -172,14 +175,6 @@ ModalPopup {
             //     //% "By making a channel private, only members with selected permission will be able to access it"
             //     text: qsTrId("by-making-a-channel-private--only-members-with-selected-permission-will-be-able-to-access-it")
             // }
-
-            Component {
-                id: pinnedMessagesPopupComponent
-                PinnedMessagesPopup {
-                    id: pinnedMessagesPopup
-                    onClosed: destroy()
-                }
-            }
 
             CommunityPopupButton {
                 id: memberBtn
