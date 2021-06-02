@@ -82,6 +82,10 @@ StackLayout {
         id: messageContextMenu
     }
 
+    StatusImageModal {
+        id: imagePopup
+    }
+
     property var idMap: ({})
     property var suggestionsObj: ([])
 
