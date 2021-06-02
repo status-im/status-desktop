@@ -25,7 +25,6 @@ Image {
         color: statusIcon.color
         antialiasing: true
         smooth: true
-        rotation: statusIcon.rotation
     }
 }
 
