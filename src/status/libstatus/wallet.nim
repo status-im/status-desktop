@@ -94,8 +94,8 @@ proc hex2Token*(input: string, decimals: int): string =
   result = $i
   if(r > 0): result = fmt"{result}.{d}"
 
-proc trackPendingTransaction*(transactionHash: string, fromAddress: string, toAddress: string, trxType: PendingTransactionType, data: string) =
-  let payload = %* [{"transactionHash": transactionHash, "from": fromAddress, "to": toAddress, "type": $trxType, "additionalData": data, "data": "",  "value": 0, "timestamp": 0, "gasPrice": 0, "gasLimit": 0}]
+proc trackPendingTransaction*(hash: string, fromAddress: string, toAddress: string, trxType: PendingTransactionType, data: string) =
+  let payload = %* [{"hash": hash, "from": fromAddress, "to": toAddress, "type": $trxType, "additionalData": data, "data": "",  "value": 0, "timestamp": 0, "gasPrice": 0, "gasLimit": 0}]
   discard callPrivateRPC("wallet_storePendingTransaction", payload)
 
 proc getPendingTransactions*(): string =

@@ -87,12 +87,12 @@ proc getTransactionReceipt*(self: WalletModel, transactionHash: string): JsonNod
 
 proc confirmTransactionStatus(self: WalletModel, pendingTransactions: JsonNode, blockNumber: int) =
   for trx in pendingTransactions.getElems():
-    let transactionReceipt = self.getTransactionReceipt(trx["transactionHash"].getStr)
+    let transactionReceipt = self.getTransactionReceipt(trx["hash"].getStr)
     if transactionReceipt.kind != JNull:
-      status_wallet.deletePendingTransaction(trx["transactionHash"].getStr)
+      status_wallet.deletePendingTransaction(trx["hash"].getStr)
       let ev = TransactionMinedArgs(
                 data: trx["data"].getStr,
-                transactionHash: trx["transactionHash"].getStr,
+                transactionHash: trx["hash"].getStr,
                 success: transactionReceipt{"status"}.getStr == "0x1",
                 revertReason: ""
                )
