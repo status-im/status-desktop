@@ -152,6 +152,12 @@ StatusWindow {
                             selected: page.sourceComponent == othersComponent
                             onClicked: page.sourceComponent = othersComponent
                         }
+                        NavigationHeader { text: "StatusQ.Popup" }
+                        StatusNavigationListItem { 
+                            title: "StatusPopupMenu"
+                            selected: page.sourceComponent == popupMenuComponent
+                            onClicked: page.sourceComponent = popupMenuComponent
+                        }
                     }
                 }
             }
@@ -237,6 +243,11 @@ StatusWindow {
     Component {
         id: buttonsComponent
         Buttons {}
+    }
+
+    Component {
+        id: popupMenuComponent
+        StatusPopupMenuPage {}
     }
 
     Component {

@@ -153,5 +153,11 @@ ThemePalette {
     property QtObject statusChatInfoButton: QtObject {
         property color backgroundColor: baseColor3
     }
+
+    property QtObject statusPopupMenu: QtObject {
+        property color backgroundColor: baseColor2
+        property color hoverBackgroundColor: directColor7
+        property color separatorColor: directColor7
+    }
 }
 

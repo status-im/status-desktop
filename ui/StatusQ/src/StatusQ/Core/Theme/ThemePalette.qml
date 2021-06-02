@@ -111,6 +111,13 @@ QtObject {
 
     property QtObject statusChatInfoButton: QtObject {
         property color backgroundColor
+        property color hoverBackgroundColor
+    }
+
+    property QtObject statusPopupMenu: QtObject {
+        property color backgroundColor
+        property color hoverBackgroundColor
+        property color separatorColor
     }
 
     function alphaColor(color, alpha) {

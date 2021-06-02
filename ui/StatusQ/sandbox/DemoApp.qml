@@ -6,6 +6,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Layout 0.1
+import StatusQ.Popups 0.1
 
 Rectangle {
     id: demoApp
@@ -180,9 +181,37 @@ Rectangle {
 
                     notificationCount: 1
 
-                    onMenuButtonClicked: notificationCount += 1
+                    onMenuButtonClicked: contextMenu.popup()
                     onNotificationButtonClicked: notificationCount = 0
+
+                    StatusPopupMenu {
+                        id: contextMenu
+
+                        StatusMenuItem {
+                            text: "Mute Chat"
+                            icon.name: "notification"
+                        }
+                        StatusMenuItem {
+                            text: "Mark as Read"
+                            icon.name: "checkmark-circle"
+                        }
+                        StatusMenuItem {
+                            text: "Clear History"
+                            icon.name: "close-circle"
+                        }
+
+                        StatusMenuSeparator {}
+
+                        StatusMenuItem {
+                            text: "Leave Chat"
+                            icon.name: "arrow-right"
+                            icon.width: 14
+                            iconRotation: 180
+                            type: StatusMenuItem.Type.Danger
+                        }
+                    }
                 }
+
             }
         }
     }
