@@ -78,10 +78,6 @@ StackLayout {
         }
     }
 
-    StatusImageModal {
-        id: imagePopup
-    }
-
     MessageContextMenu {
         id: messageContextMenu
     }
