@@ -144,10 +144,8 @@ Item {
                         if (joinBtn.access === Constants.communityChatInvitationOnlyAccess || isPendingRequest) {
                             return false
                         }
-                        if (invitedCommunity.canJoin) {
-                            return true
-                        }
-                        return !invitedCommunity.joined
+                        
+                        return true
                     }
                     text: {
                         if (invitedCommunity.ensOnly && !profileModel.profile.ensVerified) {
@@ -157,7 +155,7 @@ Item {
                             return qsTr("Join")
                         }
                         if (invitedCommunity.joined || invitedCommunity.isMember) {
-                            return qsTr("Joined")
+                            return qsTr("View")
                         }
                         if (isPendingRequest) {
                              return qsTr("Pending")
@@ -173,6 +171,12 @@ Item {
 
                     onClicked: {
                         let error
+
+                        if (invitedCommunity.joined || invitedCommunity.isMember) {
+                            chatsModel.communities.setActiveCommunity(communityId);
+                            return
+                        }
+
                         if (joinBtn.access === Constants.communityChatOnRequestAccess) {
                             error = chatsModel.communities.requestToJoinCommunity(communityId,
                                                                       profileModel.profile.ensVerified ? profileModel.profile.username : "")
