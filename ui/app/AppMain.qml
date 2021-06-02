@@ -295,10 +295,6 @@ RowLayout {
         id: toastMessage
     }
 
-    StatusImageModal {
-        id: imagePopup
-    }
-
     // Add SendModal here as it is used by the Wallet as well as the Browser
     Loader {
         id: sendModal
