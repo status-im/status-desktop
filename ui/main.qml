@@ -89,7 +89,7 @@ StatusWindow {
 
     //! Workaround for custom QQuickWindow
     Connections {
-        target: c
+        target: applicationWindow
         onClosing: {
             if (loader.sourceComponent == login) {
                 applicationWindow.visible = false;
@@ -411,12 +411,34 @@ StatusWindow {
     }
 
     MacTrafficLights {
-        parent: Overlay.overlay
+//        parent: Overlay.overlay
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.margins: 13
 
         visible: Qt.platform.os === "osx" && !applicationWindow.isFullScreen
+
+        onClose: {
+            if (loader.sourceComponent == login ||
+                    loader.sourceComponent == intro) {
+                applicationWindow.visible = false;
+            }
+            else if (loader.sourceComponent == app) {
+                if (loader.item.appSettings.quitOnClose) {
+                    Qt.quit();
+                } else {
+                    applicationWindow.visible = false;
+                }
+            }
+        }
+
+        onMinimised: {
+            applicationWindow.showMinimized()
+        }
+
+        onMaximized: {
+            applicationWindow.toggleFullScreen()
+        }
     }
 }
 
