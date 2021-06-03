@@ -3,26 +3,44 @@ import QtQuick.Controls 2.14
 
 import StatusQ.Controls 0.1
 
-Row {
-    id: themeSwitch
+Item {
+    id: themeSwitchWrapper
     signal checkedChanged()
 
-    spacing: 2
+    width: themeSwitch.width
+    height: themeSwitch.height
 
-    Text {
-        text: "🌤"
-        font.pixelSize: 15
-        anchors.verticalCenter: parent.verticalCenter
-    }
+    MouseArea {
+        id: sensor
+        hoverEnabled: true
+        anchors.fill: parent
 
-    StatusSwitch {
-        onCheckedChanged: themeSwitch.checkedChanged()
-    }
+        Row {
+            id: themeSwitch
+            spacing: 2
 
-    Text {
-        text: "🌙"
-        font.pixelSize: 15
-        anchors.verticalCenter: parent.verticalCenter
+            Text {
+                text: "🌤"
+                font.pixelSize: 15
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            StatusSwitch {
+                onCheckedChanged: themeSwitchWrapper.checkedChanged()
+
+                StatusToolTip {
+                    text: "Toggle Theme"
+                    visible: sensor.containsMouse
+                    orientation: StatusToolTip.Orientation.Bottom
+                    y: themeSwitchWrapper.y + 16
+                }
+            }
+
+            Text {
+                text: "🌙"
+                font.pixelSize: 15
+                anchors.verticalCenter: parent.verticalCenter
+            }
+        }
     }
 }
-
