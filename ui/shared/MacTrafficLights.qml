@@ -5,6 +5,10 @@ import "../imports"
 MouseArea {
     id: statusMacWindowButtons
 
+    signal close()
+    signal minimised()
+    signal maximized()
+
     hoverEnabled: true
 
     width: layout.implicitWidth
@@ -14,10 +18,6 @@ MouseArea {
                                                                                       : "#10FFFFFF"
     readonly property color inactiveBorder: Style.current.name === Constants.lightThemeName ? "#10000000"
                                                                                             : "#10FFFFFF"
-
-
-
-
 
     Row {
         id: layout
@@ -48,7 +48,7 @@ MouseArea {
                 id: closeSensor
                 anchors.fill: parent
 
-                onClicked: applicationWindow.close()
+                onClicked: statusMacWindowButtons.close()
             }
         }
 
@@ -77,7 +77,7 @@ MouseArea {
                 id: miniSensor
                 anchors.fill: parent
 
-                onClicked: applicationWindow.showMinimized()
+                onClicked: statusMacWindowButtons.minimised()
             }
         }
 
@@ -105,7 +105,7 @@ MouseArea {
                 id: maxiSensor
                 anchors.fill: parent
 
-                onClicked: applicationWindow.toggleFullScreen()
+                onClicked: statusMacWindowButtons.maximized()
             }
         }
     }
