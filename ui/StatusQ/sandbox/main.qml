@@ -40,6 +40,13 @@ StatusWindow {
 
         appNavBar: StatusAppNavBar {
             height: rootWindow.height
+
+            navBarChatButton: StatusNavBarTabButton {
+                icon.name: "refresh"
+                tooltip.text: "Reload App"
+                onClicked: app.restartQml()
+            }
+
             navBarTabButtons: [
                 StatusNavBarTabButton {
                     id: apiDocsButton
