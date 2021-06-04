@@ -230,6 +230,7 @@ type
     Prod = "eth.prod",
     Staging = "eth.staging",
     Test = "eth.test",
+    WakuV2Prod = "wakuv2.prod"
     WakuV2Test = "wakuv2.test"
 
   FleetNodes* {.pure.} = enum
@@ -263,8 +264,12 @@ proc toFleetConfig*(jsonString: string): FleetConfig =
 
 
 proc getNodes*(self: FleetConfig, fleet: Fleet, nodeType: FleetNodes = FleetNodes.Bootnodes): seq[string] =
+  if not self.fleet[$fleet].hasKey($nodeType): return
   result = toSeq(self.fleet[$fleet][$nodeType].values)
 
 proc getMailservers*(self: FleetConfig, fleet: Fleet): Table[string, string] =
+  if not self.fleet[$fleet].hasKey($FleetNodes.Mailservers): 
+    result = initTable[string,string]()
+    return
   result = self.fleet[$fleet][$FleetNodes.Mailservers]
 
