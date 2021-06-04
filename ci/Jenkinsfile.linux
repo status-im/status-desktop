@@ -40,6 +40,7 @@ pipeline {
     QTDIR = "/opt/qt/5.14.0/gcc_64"
     /* Control output the filename */
     STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename('AppImage')}"
+    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename('tar.gz')}"
   }
 
   stages {
@@ -68,7 +69,7 @@ pipeline {
           credentialsId: utils.getInfuraTokenCred(),
           variable: 'INFURA_TOKEN'
         )]) {
-          sh 'make pkg-linux'
+          sh 'make tgz-linux'
         }
       }
     }
@@ -77,13 +78,13 @@ pipeline {
       parallel {
         stage('Upload') {
           steps { script {
-            env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_APPIMAGE)
+            env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_TARBALL)
             jenkins.setBuildDesc(AppImage: env.PKG_URL)
           } }
         }
         stage('Archive') {
           steps { script {
-            archiveArtifacts(env.STATUS_CLIENT_APPIMAGE)
+            archiveArtifacts(env.STATUS_CLIENT_TARBALL)
           } }
         }
       }
