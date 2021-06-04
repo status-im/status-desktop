@@ -245,6 +245,7 @@ $(APPIMAGE_TOOL):
 	chmod +x $(APPIMAGE_TOOL)
 
 STATUS_CLIENT_APPIMAGE ?= pkg/Status.AppImage
+STATUS_CLIENT_TARBALL ?= pkg/Status.tar.gz
 
 $(STATUS_CLIENT_APPIMAGE): override RESOURCES_LAYOUT := -d:production
 $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
@@ -279,6 +280,11 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 
 	mkdir -p pkg
 	$(APPIMAGE_TOOL) tmp/linux/dist $(STATUS_CLIENT_APPIMAGE)
+
+$(STATUS_CLIENT_TARBALL): $(STATUS_CLIENT_APPIMAGE)
+	tar czvf $(STATUS_CLIENT_TARBALL) \
+		-C $(shell dirname $(STATUS_CLIENT_APPIMAGE)) \
+		$(shell basename $(STATUS_CLIENT_APPIMAGE))
 
 DMG_TOOL := node_modules/.bin/create-dmg
 
@@ -392,6 +398,8 @@ endif
 pkg: $(PKG_TARGET)
 
 pkg-linux: check-pkg-target-linux $(STATUS_CLIENT_APPIMAGE)
+
+tgz-linux: $(STATUS_CLIENT_TARBALL)
 
 pkg-macos: check-pkg-target-macos $(STATUS_CLIENT_DMG)
 
