@@ -10,6 +10,7 @@ Rectangle {
     property StatusIconSettings icon: StatusIconSettings {
         width: 23
         height: 23
+        rotation: 0
 
         color: {
             switch(statusFlatRoundButton.type) {
@@ -107,6 +108,7 @@ Rectangle {
             visible: !loading
 
             icon: statusFlatRoundButton.icon.name
+            rotation: statusFlatRoundButton.icon.rotation
 
             width: statusFlatRoundButton.icon.width
             height: statusFlatRoundButton.icon.height
