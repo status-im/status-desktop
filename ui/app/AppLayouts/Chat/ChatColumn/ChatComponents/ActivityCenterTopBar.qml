@@ -71,7 +71,9 @@ Item {
            icon.height: 24
            width: 32
            height: 32
-           onClicked: console.log('TODO mark all as read')
+           onClicked: {
+               errorText.text = chatsModel.activityNotificationList.markAllActivityCenterNotificationsRead()
+           }
 
            StatusToolTip {
              visible: markAllReadBtn.hovered
@@ -108,5 +110,13 @@ Item {
                }
            }
        }
+    }
+
+    StyledText {
+        id: errorText
+        visible: !!text
+        anchors.top: filterButtons.bottom
+        anchors.topMargin: Style.current.smallPadding
+        color: Style.current.danger
     }
 }

@@ -146,6 +146,11 @@ QtObject:
     if (channel == nil): return
     return channel.color
 
+  proc getChannelType*(self: ChannelsList, id: string): int {.slot.} =
+    let channel = self.getChannelById(id)
+    if (channel == nil): return ChatType.Unknown.int
+    return channel.chatType.int
+
   proc updateChat*(self: ChannelsList, channel: Chat) =
     let idx = self.upsertChannel(channel)
     if idx == -1: return

@@ -22,6 +22,9 @@ proc handleChatEvents(self: ChatController) =
   self.status.events.on("pinnedMessagesLoaded") do(e:Args):
     self.view.pushPinnedMessages(MsgsLoadedArgs(e).messages)
 
+  self.status.events.on("activityCenterNotificationsLoaded") do(e:Args):
+    self.view.pushActivityCenterNotifications(ActivityCenterNotificationsArgs(e).activityCenterNotifications)
+
   self.status.events.on("contactUpdate") do(e: Args):
     var evArgs = ContactUpdateArgs(e)
     self.view.updateUsernames(evArgs.contacts)
@@ -51,6 +54,8 @@ proc handleChatEvents(self: ChatController) =
       self.view.communities.addMembershipRequests(evArgs.communityMembershipRequests)
     if (evArgs.pinnedMessages.len > 0):
       self.view.addPinnedMessages(evArgs.pinnedMessages)
+    if (evArgs.activityCenterNotifications.len > 0):
+      self.view.addActivityCenterNotification(evArgs.activityCenterNotifications)
 
   self.status.events.on("channelUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)

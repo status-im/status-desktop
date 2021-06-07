@@ -8,7 +8,7 @@ Rectangle {
     property string chatId: ""
     property string name: "channelName"
     property string identicon
-    property int chatType: Constants.chatTypePublic
+    property int chatType: chatsModel.chats.getChannelType(chatId)
     property int realChatType: {
         if (chatType === Constants.chatTypeCommunity) {
             // TODO add a check for private community chats once it is created

@@ -11,6 +11,12 @@ type ChatType* {.pure.}= enum
   Timeline = 5
   CommunityChat = 6
 
+type ActivityCenterNotificationType* {.pure.}= enum
+  Unknown = 0,
+  NewOneToOne = 1, 
+  NewPrivateGroupChat = 2,
+  Mention = 3
+
 proc isOneToOne*(self: ChatType): bool = self == ChatType.OneToOne
 proc isTimeline*(self: ChatType): bool = self == ChatType.Timeline
 
@@ -120,6 +126,17 @@ type Community* = object
   communityImage*: IdentityImage
   membershipRequests*: seq[CommunityMembershipRequest]
   communityColor*: string
+
+type ActivityCenterNotification* = ref object of RootObj
+  id*: string # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat
+  chatId*: string
+  name*: string
+  notificationType*: ActivityCenterNotificationType
+  message*: Message
+  timestamp*: int64
+  read*: bool
+  dismissed*: bool
+  accepted*: bool
 
 proc `$`*(self: Chat): string =
   result = fmt"Chat(id:{self.id}, name:{self.name}, active:{self.isActive}, type:{self.chatType})"

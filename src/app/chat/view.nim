@@ -13,7 +13,7 @@ import ../../status/ens as status_ens
 import ../../status/chat/[chat, message]
 import ../../status/profile/profile
 import web3/[conversions, ethtypes]
-import views/[channels_list, message_list, chat_item, suggestions_list, reactions, stickers, groups, transactions, communities, community_list, community_item]
+import views/[channels_list, message_list, chat_item, suggestions_list, reactions, stickers, groups, transactions, communities, community_list, community_item, activity_notification_list]
 import ../utils/image_utils
 import ../../status/tasks/[qt, task_runner_impl]
 import ../../status/tasks/marathon/mailserver/worker
@@ -27,6 +27,7 @@ type
   GetLinkPreviewDataTaskArg = ref object of QObjectTaskArg
     link: string
     uuid: string
+  AsyncActivityNotificationLoadTaskArg = ref object of QObjectTaskArg
   AsyncMessageLoadTaskArg = ref object of QObjectTaskArg
     chatId: string
   ResolveEnsTaskArg = ref object of QObjectTaskArg
@@ -79,12 +80,33 @@ const asyncMessageLoadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
   }
   arg.finish(responseJson)
 
+const asyncActivityNotificationLoadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncActivityNotificationLoadTaskArg](argEncoded)
+  var activityNotifications: JsonNode
+  var activityNotificationsCallSuccess: bool
+  let activityNotificationsCallResult = rpcActivityCenterNotifications(newJString(""), 20, activityNotificationsCallSuccess)
+  if(activityNotificationsCallSuccess):
+    activityNotifications = activityNotificationsCallResult.parseJson()["result"]
+
+  let responseJson = %*{
+    "activityNotifications": activityNotifications
+  }
+  arg.finish(responseJson)
+
 proc asyncMessageLoad[T](self: T, slot: string, chatId: string) =
   let arg = AsyncMessageLoadTaskArg(
     tptr: cast[ByteAddress](asyncMessageLoadTask),
     vptr: cast[ByteAddress](self.vptr),
     slot: slot,
     chatId: chatId
+  )
+  self.status.tasks.threadpool.start(arg)
+
+proc asyncActivityNotificationLoad[T](self: T, slot: string) =
+  let arg = AsyncActivityNotificationLoadTaskArg(
+    tptr: cast[ByteAddress](asyncActivityNotificationLoadTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot
   )
   self.status.tasks.threadpool.start(arg)
 
@@ -109,6 +131,7 @@ QtObject:
       status: Status
       chats*: ChannelsList
       currentSuggestions*: SuggestionsList
+      activityNotificationList*: ActivityNotificationList
       callResult: string
       messageList*: OrderedTable[string, ChatMessageList]
       pinnedMessagesList*: OrderedTable[string, ChatMessageList]
@@ -135,6 +158,7 @@ QtObject:
     self.activeChannel.delete
     self.contextChannel.delete
     self.currentSuggestions.delete
+    self.activityNotificationList.delete
     for msg in self.messageList.values:
       msg.delete
     for msg in self.pinnedMessagesList.values:
@@ -157,6 +181,7 @@ QtObject:
     result.activeChannel = newChatItemView(status)
     result.contextChannel = newChatItemView(status)
     result.currentSuggestions = newSuggestionsList()
+    result.activityNotificationList = newActivityNotificationList(status)
     result.messageList = initOrderedTable[string, ChatMessageList]()
     result.pinnedMessagesList = initOrderedTable[string, ChatMessageList]()
     result.reactions = newReactionView(status, result.messageList.addr, result.activeChannel)
@@ -436,6 +461,15 @@ QtObject:
   QtProperty[QVariant] suggestionList:
     read = getCurrentSuggestions
 
+  proc activityNotificationsChanged*(self: ChatsView) {.signal.}
+
+  proc getActivityNotificationList(self: ChatsView): QVariant {.slot.} =
+    return newQVariant(self.activityNotificationList)
+
+  QtProperty[QVariant] activityNotificationList:
+    read = getActivityNotificationList
+    notify = activityNotificationsChanged
+
   proc upsertChannel(self: ChatsView, channel: string) =
     var chat: Chat = nil
     if self.status.chat.channels.hasKey(channel):
@@ -478,6 +512,15 @@ QtObject:
       self.pinnedMessagesList[msg.chatId].add(message)
       # put the message as pinned in the message list
       self.messageList[msg.chatId].changeMessagePinned(msg.id, true, msg.pinnedBy)
+
+  proc pushActivityCenterNotifications*(self:ChatsView, activityCenterNotifications: seq[ActivityCenterNotification]) =
+    self.activityNotificationList.setNewData(activityCenterNotifications)
+    self.activityNotificationsChanged()
+
+  proc addActivityCenterNotification*(self:ChatsView, activityCenterNotifications: seq[ActivityCenterNotification]) =
+    for activityCenterNotification in activityCenterNotifications:
+      self.activityNotificationList.addActivityNotificationItemToList(activityCenterNotification)
+    self.activityNotificationsChanged()
 
   proc pushMessages*(self:ChatsView, messages: var seq[Message]) =
     for msg in messages.mitems:
@@ -624,6 +667,9 @@ QtObject:
   proc asyncMessageLoad*(self: ChatsView, chatId: string) {.slot.} =
     self.asyncMessageLoad("asyncMessageLoaded", chatId)
 
+  proc asyncActivityNotificationLoad*(self: ChatsView) {.slot.} =
+    self.asyncActivityNotificationLoad("asyncActivityNotificationLoaded")
+
   proc asyncMessageLoaded*(self: ChatsView, rpcResponse: string) {.slot.} =
     let
       rpcResponseObj = rpcResponse.parseJson
@@ -634,7 +680,7 @@ QtObject:
 
     let messages = rpcResponseObj{"messages"}
     if(messages != nil and messages.kind != JNull):
-      let chatMessages = parseChatMessagesResponse(chatId, messages)
+      let chatMessages = parseChatMessagesResponse(messages)
       self.status.chat.chatMessages(chatId, true, chatMessages[0], chatMessages[1])
 
     let rxns = rpcResponseObj{"reactions"}
@@ -644,8 +690,15 @@ QtObject:
 
     let pinnedMsgs = rpcResponseObj{"pinnedMessages"}
     if(pinnedMsgs != nil and pinnedMsgs.kind != JNull):
-      let pinnedMessages = parseChatMessagesResponse(chatId, pinnedMsgs, true)
+      let pinnedMessages = parseChatMessagesResponse(pinnedMsgs, true)
       self.status.chat.pinnedMessagesByChatID(chatId, pinnedMessages[0], pinnedMessages[1])
+
+  proc asyncActivityNotificationLoaded*(self: ChatsView, rpcResponse: string) {.slot.} =
+    let rpcResponseObj = rpcResponse.parseJson
+
+    if(rpcResponseObj["activityNotifications"].kind != JNull):
+      let activityNotifications = parseActivityCenterNotifications(rpcResponseObj["activityNotifications"])
+      self.status.chat.activityCenterNotifications(activityNotifications[0], activityNotifications[1])
 
   proc hideLoadingIndicator*(self: ChatsView) {.slot.} =
     self.loadingMessages = false

@@ -137,49 +137,49 @@ Item {
             }
         }
 
-//        Rectangle {
-//              id: separator
-//              width: 1
-//              height: 24
-//              color: Style.current.separator
-//              anchors.verticalCenter: parent.verticalCenter
-//        }
+        Rectangle {
+              id: separator
+              width: 1
+              height: 24
+              color: Style.current.separator
+              anchors.verticalCenter: parent.verticalCenter
+        }
 
-//        StatusIconButton {
-//            id: activityCenterBtn
-//            icon.name: "bell"
-//            iconColor: Style.current.contextMenuButtonForegroundColor
-//            hoveredIconColor: Style.current.contextMenuButtonForegroundColor
-//            highlightedBackgroundColor: Style.current.contextMenuButtonBackgroundHoverColor
-//            anchors.verticalCenter: parent.verticalCenter
+        StatusIconButton {
+            id: activityCenterBtn
+            icon.name: "bell"
+            iconColor: Style.current.contextMenuButtonForegroundColor
+            hoveredIconColor: Style.current.contextMenuButtonForegroundColor
+            highlightedBackgroundColor: Style.current.contextMenuButtonBackgroundHoverColor
+            anchors.verticalCenter: parent.verticalCenter
 
-//            onClicked: activityCenter.open()
+            onClicked: activityCenter.open()
 
-//            Rectangle {
-//                // TODO unhardcode this
-//                property int nbUnseenNotifs: 3
+            Rectangle {
+                property int nbUnseenNotifs: chatsModel.activityNotificationList.unreadCount
 
-//                id: badge
-//                visible: nbUnseenNotifs > 0
-//                anchors.top: parent.top
-//                anchors.topMargin: -2
-//                anchors.left: parent.right
-//                anchors.leftMargin: -17
-//                radius: height / 2
-//                color: Style.current.blue
-//                border.color: activityCenterBtn.hovered ? Style.current.secondaryBackground : Style.current.background
-//                border.width: 2
-//                width: badge.nbUnseenNotifs < 10 ? 18 : badge.width + 14
-//                height: 18
+                id: badge
+                visible: nbUnseenNotifs > 0
+                anchors.top: parent.top
+                anchors.topMargin: -2
+                anchors.left: parent.right
+                anchors.leftMargin: -17
+                radius: height / 2
+                color: Style.current.blue
+                border.color: activityCenterBtn.hovered ? Style.current.secondaryBackground : Style.current.background
+                border.width: 2
+                width: badge.nbUnseenNotifs < 10 ? 18 : badgeText.width + 14
+                height: 18
 
-//                Text {
-//                    font.pixelSize: 12
-//                    color: Style.current.white
-//                    anchors.centerIn: parent
-//                    text: badge.nbUnseenNotifs
-//                }
-//            }
-//        }
+                Text {
+                    id: badgeText
+                    font.pixelSize: 12
+                    color: Style.current.white
+                    anchors.centerIn: parent
+                    text: badge.nbUnseenNotifs
+                }
+            }
+        }
     }
 
     ActivityCenter {
