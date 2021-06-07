@@ -148,6 +148,7 @@ Rectangle {
             font.weight: statusChatListItem.hasMention || 
               statusChatListItem.hasUnreadMessages ||
               statusBadge.visible ? Font.Bold : Font.Medium
+            font.pixelSize: 15
         }
 
         StatusBadge {
