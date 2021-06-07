@@ -210,21 +210,20 @@ Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter
                     spacing: 4
 
-                    StatusChatListItem {
-                        name: "general"
-                        type: StatusChatListItem.Type.CommunityChat
-                        selected: true
+                    StatusChatListCategoryItem {
+                        id: publicCategory
+                        title: "Public"
+                        onClicked: opened = !opened
+                        onToggleButtonClicked: opened = !opened
                     }
 
-                    StatusChatListItem {
-                        name: "random"
-                        type: StatusChatListItem.Type.CommunityChat
-                    }
+                    StatusChatList {
+                        anchors.horizontalCenter: parent.horizontalCenter
 
-                    StatusChatListItem {
-                        name: "watercooler"
-                        type: StatusChatListItem.Type.CommunityChat
-                        muted: true
+                        selectedChatId: "0"
+                        chatListItems.model: demoCommunityChatListItems
+                        onChatItemSelected: selectedChatId = id
+                        visible: publicCategory.opened
                     }
                 }
             }
@@ -292,6 +291,40 @@ Rectangle {
             hasUnreadMessages: false
             iconColor: "Orange"
             unreadMessagesCount: 0
+        }
+    }
+
+    ListModel {
+        id: demoCommunityChatListItems
+        ListElement {
+            chatId: "0"
+            name: "general"
+            chatType: StatusChatListItem.Type.CommunityChat
+            muted: false
+            hasUnreadMessages: false
+            hasMention: false
+            unreadMessagesCount: 0
+            iconColor: "orange"
+        }
+        ListElement {
+            chatId: "1"
+            name: "random"
+            chatType: StatusChatListItem.Type.CommunityChat
+            muted: false
+            hasUnreadMessages: false
+            hasMention: false
+            unreadMessagesCount: 0
+            iconColor: "orange"
+        }
+        ListElement {
+            chatId: "2"
+            name: "watercooler"
+            chatType: StatusChatListItem.Type.CommunityChat
+            muted: false
+            hasUnreadMessages: false
+            hasMention: false
+            unreadMessagesCount: 0
+            iconColor: "orange"
         }
     }
 }

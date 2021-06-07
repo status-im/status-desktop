@@ -37,6 +37,16 @@ GridLayout {
         type: StatusChatListItem.Type.PublicChat
     }
 
+    StatusChatListCategoryItem {
+        title: "Chat list category"
+        opened: false
+    }
+
+    StatusChatListCategoryItem {
+        title: "Chat list category (opened)"
+        opened: true
+    }
+
     StatusChatListItem {
         name: "group-chat"
         type: StatusChatListItem.Type.GroupChat

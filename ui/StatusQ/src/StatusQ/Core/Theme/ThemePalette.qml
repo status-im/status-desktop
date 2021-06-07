@@ -98,6 +98,10 @@ QtObject {
         property color selectedBackgroundColor
     }
 
+    property QtObject statusChatListCategoryItem: QtObject {
+        property color buttonHoverBackgroundColor
+    }
+
     property QtObject statusNavigationListItem: QtObject {
         property color hoverBackgroundColor
         property color selectedBackgroundColor

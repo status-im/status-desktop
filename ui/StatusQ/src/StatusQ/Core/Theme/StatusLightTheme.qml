@@ -137,6 +137,10 @@ ThemePalette {
         property color selectedBackgroundColor: baseColor3
     }
 
+    property QtObject statusChatListCategoryItem: QtObject {
+        property color buttonHoverBackgroundColor: directColor8
+    }
+
     property QtObject statusNavigationListItem: QtObject {
         property color hoverBackgroundColor: baseColor2
         property color selectedBackgroundColor: baseColor3
