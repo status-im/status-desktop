@@ -9,5 +9,6 @@ QtObject {
     property real height
     property color color
     property url source
+    property int rotation
     property StatusIconBackgroundSettings background: StatusIconBackgroundSettings {}
 }
