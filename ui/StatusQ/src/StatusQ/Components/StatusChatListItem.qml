@@ -7,6 +7,7 @@ import StatusQ.Controls 0.1
 Rectangle {
     id: statusChatListItem
 
+    property string chatId: ""
     property string name: ""
     property alias badge: statusBadge
     property bool hasUnreadMessages: false

@@ -127,42 +127,22 @@ Rectangle {
             leftPanel: Item {
                 anchors.fill: parent
 
-                Column {
+                StatusChatList {
                     anchors.top: parent.top
                     anchors.topMargin: 64
                     anchors.horizontalCenter: parent.horizontalCenter
 
-                    spacing: 4
-
-                    StatusChatListItem {
-                        name: "#status"
-                        type: StatusChatListItem.Type.PublicChat
+                    selectedChatId: "0"
+                    chatListItems.model: demoChatListItems
+                    onChatItemSelected: selectedChatId = id
+                    onChatItemUnmuted: {
+                        for (var i = 0; i < demoChatListItems.count; i++) {
+                            let item = demoChatListItems.get(i);
+                            if (item.chatId === id) {
+                                demoChatListItems.setProperty(i, "muted", false)
+                            }
+                        }
                     }
-
-                    StatusChatListItem {
-                        name: "#status-desktop"
-                        type: StatusChatListItem.Type.PublicChat
-                        hasUnreadMessages: true
-                        badge.value: 1
-                    }
-
-                    StatusChatListItem {
-                        name: "Amazing Funny Squirrel"
-                        type: StatusChatListItem.Type.OneToOneChat
-                        selected: true
-                    }
-
-                    StatusChatListItem {
-                        name: "Black Ops"
-                        type: StatusChatListItem.Type.GroupChat
-                    }
-
-                    StatusChatListItem {
-                        name: "Spectacular Growling Otter"
-                        type: StatusChatListItem.Type.OneToOneChat
-                        muted: true
-                    }
-
                 }
             }
 
@@ -261,6 +241,57 @@ Rectangle {
                     chatInfoButton.type: StatusChatInfoButton.Type.CommunityChat
                 }
             }
+        }
+    }
+
+    ListModel {
+        id: demoChatListItems
+        ListElement {
+            chatId: "0"
+            name: "#status"
+            chatType: StatusChatListItem.Type.PublicChat
+            muted: false
+            hasUnreadMessages: false
+            hasMention: false
+            unreadMessagesCount: 0
+            iconColor: "blue"
+        }
+        ListElement {
+            chatId: "1"
+            name: "#status-desktop"
+            chatType: StatusChatListItem.Type.PublicChat
+            muted: false
+            hasUnreadMessages: true
+            iconColor: "red"
+            unreadMessagesCount: 1
+        }
+        ListElement {
+            chatId: "2"
+            name: "Amazing Funny Squirrel"
+            chatType: StatusChatListItem.Type.OneToOneChat
+            muted: false
+            hasUnreadMessages: false
+            iconColor: "green"
+            identicon: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+            unreadMessagesCount: 0
+        }
+        ListElement {
+            chatId: "3"
+            name: "Black Ops"
+            chatType: StatusChatListItem.Type.GroupChat
+            muted: false
+            hasUnreadMessages: false
+            iconColor: "purple"
+            unreadMessagesCount: 0
+        }
+        ListElement {
+            chatId: "4"
+            name: "Spectacular Growing Otter"
+            chatType: StatusChatListItem.Type.OneToOneChat
+            muted: true
+            hasUnreadMessages: false
+            iconColor: "Orange"
+            unreadMessagesCount: 0
         }
     }
 }
