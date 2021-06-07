@@ -15,6 +15,8 @@ Rectangle {
 
     property string title: ""
     property string subTitle: ""
+    property real leftPadding: 16
+    property real rightPadding: 16
     property StatusIconSettings icon: StatusIconSettings {
         height: 20
         width: 20
@@ -26,6 +28,10 @@ Rectangle {
     }
     property StatusImageSettings image: StatusImageSettings {}
     property string label: ""
+
+    property alias sensor: sensor
+    property alias statusListItemTitle: statusListItemTitle
+    property alias statusListItemComponentsSlot: statusListItemComponentsSlot
 
     property list<Item> components
 
@@ -47,7 +53,7 @@ Rectangle {
         Loader {
             id: iconOrImage
             anchors.left: parent.left
-            anchors.leftMargin: 16
+            anchors.leftMargin: statusListItem.leftPadding
             anchors.verticalCenter: parent.verticalCenter
             sourceComponent: !!statusListItem.icon.name ? statusRoundedIcon : statusRoundedImage
             active: !!statusListItem.icon.name || !!statusListItem.image.source.toString()
@@ -74,7 +80,7 @@ Rectangle {
 
         Item {
             anchors.left: iconOrImage.active ? iconOrImage.right : parent.left
-            anchors.leftMargin: 16
+            anchors.leftMargin: statusListItem.leftPadding
             anchors.verticalCenter: parent.verticalCenter
             height: statusListItemTitle.height + (statusListItemSubTitle.visible ? statusListItemSubTitle.height : 0)
 
@@ -111,7 +117,7 @@ Rectangle {
         Row {
             id: statusListItemComponentsSlot
             anchors.right: parent.right
-            anchors.rightMargin: 16
+            anchors.rightMargin: statusListItem.rightPadding
             anchors.verticalCenter: parent.verticalCenter
             spacing: 10
         }
