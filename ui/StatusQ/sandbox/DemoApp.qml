@@ -210,20 +210,56 @@ Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter
                     spacing: 4
 
-                    StatusChatListCategoryItem {
-                        id: publicCategory
-                        title: "Public"
-                        onClicked: opened = !opened
-                        onToggleButtonClicked: opened = !opened
+                    StatusChatList {
+                        id: statusChatList
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        chatListItems.model: demoCommunityChatListItems
                     }
 
-                    StatusChatList {
-                        anchors.horizontalCenter: parent.horizontalCenter
+                    StatusChatListCategory {
+                        name: "Public"
 
-                        selectedChatId: "0"
-                        chatListItems.model: demoCommunityChatListItems
-                        onChatItemSelected: selectedChatId = id
-                        visible: publicCategory.opened
+                        chatList.chatListItems.model: demoCommunityChatListItems
+                        chatList.selectedChatId: "0"
+                        chatList.onChatItemSelected: chatList.selectedChatId = id
+                        popupMenu: categoryPopupCmp
+                    }
+
+                    StatusChatListCategory {
+                        name: "Development"
+
+                        chatList.chatListItems.model: demoCommunityChatListItems
+                        chatList.onChatItemSelected: chatList.selectedChatId = id
+                        popupMenu: categoryPopupCmp
+                    }
+                }
+
+                Component {
+                    id: categoryPopupCmp
+
+                    StatusPopupMenu {
+                        StatusMenuItem {
+                            text: "Mute Category"
+                            icon.name: "notification"
+                        }
+
+                        StatusMenuItem { 
+                            text: "Mark as Read"
+                            icon.name: "checkmark-circle"
+                        }
+
+                        StatusMenuItem { 
+                            text: "Edit Category"
+                            icon.name: "edit"
+                        }
+
+                        StatusMenuSeparator {}
+
+                        StatusMenuItem {
+                            text: "Delete Category"
+                            icon.name: "delete"
+                            type: StatusMenuItem.Type.Danger
+                        }
                     }
                 }
             }
