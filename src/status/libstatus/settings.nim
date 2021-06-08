@@ -73,12 +73,12 @@ proc getCurrentNetwork*(): Network =
     result = Network.Poa
   else:
     result = Network.Other
-    
+
 proc getCurrentNetworkDetails*(): NetworkDetails =
   let currNetwork = getSetting[string](Setting.Networks_CurrentNetwork, constants.DEFAULT_NETWORK_NAME)
   let networks = getSetting[seq[NetworkDetails]](Setting.Networks_Networks)
   networks.find((network: NetworkDetails) => network.id == currNetwork)
-    
+
 proc getLinkPreviewWhitelist*(): JsonNode =
   result = callPrivateRPC("getLinkPreviewWhitelist".prefix, %* []).parseJSON()["result"]
 
