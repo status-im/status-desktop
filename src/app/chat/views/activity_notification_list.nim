@@ -48,6 +48,15 @@ QtObject:
     read = unreadCount
     notify = unreadCountChanged
 
+  proc hasMoreToShowChanged*(self: ActivityNotificationList) {.signal.}
+
+  proc hasMoreToShow*(self: ActivityNotificationList): bool {.slot.}  =
+    self.status.chat.activityCenterCursor != ""
+
+  QtProperty[bool] hasMoreToShow:
+    read = hasMoreToShow
+    notify = hasMoreToShowChanged
+
   method rowCount*(self: ActivityNotificationList, index: QModelIndex = nil): int = self.activityCenterNotifications.len
 
   method data(self: ActivityNotificationList, index: QModelIndex, role: int): QVariant =
@@ -97,6 +106,10 @@ QtObject:
       NotifRoles.Accepted.int: "accepted"
     }.toTable
 
+  proc loadMoreNotifications(self: ActivityNotificationList) {.slot.} =
+    self.status.chat.activityCenterNotifications(false)
+    self.hasMoreToShowChanged()
+
   proc markAllActivityCenterNotificationsRead(self: ActivityNotificationList): string {.slot.} =
     let error = self.status.chat.markAllActivityCenterNotificationsRead()
     if (error != ""):
@@ -135,15 +148,23 @@ QtObject:
  
     self.endResetModel()
 
-    self.nbUnreadNotifications = self.status.chat.unreadActivityCenterNotificationsCount()
-    self.unreadCountChanged()
-
-  proc addActivityNotificationItemToList*(self: ActivityNotificationList, activityCenterNotification: ActivityCenterNotification) =
+  proc addActivityNotificationItemToList*(self: ActivityNotificationList, activityCenterNotification: ActivityCenterNotification, addToCount: bool = true) =
     self.beginInsertRows(newQModelIndex(), self.activityCenterNotifications.len, self.activityCenterNotifications.len)
 
     self.activityCenterNotifications.add(self.toActivityCenterNotificationViewItem(activityCenterNotification))
 
     self.endInsertRows()
 
-    if (not activityCenterNotification.read):
+    if (addToCount and not activityCenterNotification.read):
       self.nbUnreadNotifications = self.nbUnreadNotifications + 1
+
+  proc addActivityNotificationItemsToList*(self: ActivityNotificationList, activityCenterNotifications: seq[ActivityCenterNotification]) =
+    if (self.activityCenterNotifications.len == 0):
+      self.setNewData(activityCenterNotifications)
+    else:
+      for activityCenterNotification in activityCenterNotifications:
+        self.addActivityNotificationItemToList(activityCenterNotification, false)
+
+    self.nbUnreadNotifications = self.status.chat.unreadActivityCenterNotificationsCount()
+    self.unreadCountChanged()
+    self.hasMoreToShowChanged()

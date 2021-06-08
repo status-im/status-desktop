@@ -552,7 +552,6 @@ proc activityCenterNotifications*(self: ChatModel, initialLoad: bool = true) =
 
   self.events.emit("activityCenterNotificationsLoaded", ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotificationsTuple[1]))
 
-
 proc activityCenterNotifications*(self: ChatModel, cursor: string = "", activityCenterNotifications: seq[ActivityCenterNotification]) =
   self.activityCenterCursor = cursor
 

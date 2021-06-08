@@ -212,15 +212,19 @@ Popup {
                 }
             }
 
-            //        StyledText {
-            //            text: "Today"
-            //            anchors.left: parent.left
-            //            anchors.leftMargin: Style.current.padding
-            //            font.pixelSize: 15
-            //            bottomPadding: 4
-            //            topPadding: Style.current.halfPadding
-            //            color: Style.current.secondaryText
-            //        }
+            Item {
+                visible: chatsModel.activityNotificationList.hasMoreToShow
+                width: parent.width
+                height: visible ? showMoreBtn.height + showMoreBtn.anchors.topMargin : 0
+                StatusButton {
+                    id: showMoreBtn
+                    text: qsTr("Show more")
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.top
+                    anchors.topMargin: Style.current.smallPadding
+                    onClicked: chatsModel.activityNotificationList.loadMoreNotifications()
+                }
+            }
         }
     }
 }
