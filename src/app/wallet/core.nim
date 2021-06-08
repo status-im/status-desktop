@@ -3,10 +3,10 @@ import NimQml, strformat, strutils, chronicles
 import view
 import views/[asset_list, account_list, account_item]
 import ../../status/libstatus/wallet as status_wallet
-import ../../status/libstatus/settings as status_settings
+# import ../../status/libstatus/settings as status_settings
 import ../../status/libstatus/types as status_types
 import ../../status/signals/types
-import ../../status/[status, wallet]
+import ../../status/[status, wallet, settings]
 import ../../status/wallet/account as WalletTypes
 import ../../eventemitter
 
@@ -48,8 +48,8 @@ proc init*(self: WalletController) =
   self.status.events.on("assetChanged") do(e: Args):
     self.view.updateView()
 
-  self.view.setEtherscanLink(status_settings.getCurrentNetworkDetails().etherscanLink)
-  self.view.setSigningPhrase(status_settings.getSetting[string](Setting.SigningPhrase))
+  self.view.setSigningPhrase(self.status.settings.getSetting[string](Setting.SigningPhrase))
+  self.view.setEtherscanLink(self.status.settings.getCurrentNetworkDetails().etherscanLink)
 
   self.status.events.on(SignalType.Wallet.event) do(e:Args):
     var data = WalletSignal(e)
