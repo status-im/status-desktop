@@ -1,6 +1,5 @@
 import NimQml, json, strutils, sugar, sequtils, tables
 import json_serialization
-import ../../status/libstatus/mailservers as status_mailservers
 import ../../status/signals/types
 import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/types as status_types

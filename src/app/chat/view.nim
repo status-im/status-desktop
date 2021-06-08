@@ -1,8 +1,7 @@
 import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat, algorithm
-import ../../status/status
+import ../../status/[status, mailservers]
 import ../../status/libstatus/chat as libstatus_chat
 import ../../status/libstatus/accounts/constants
-import ../../status/libstatus/mailservers as status_mailservers
 import ../../status/libstatus/chat as core_chat
 import ../../status/libstatus/utils as status_utils
 import ../../status/accounts as status_accounts
@@ -684,7 +683,7 @@ QtObject:
   proc fillGaps*(self: ChatsView, messageId: string) {.slot.} =
     self.loadingMessages = true
     self.loadingMessagesChanged(true)
-    discard status_mailservers.fillGaps(self.activeChannel.id, @[messageId])
+    discard self.status.mailservers.fillGaps(self.activeChannel.id, @[messageId])
 
   proc leaveActiveChat*(self: ChatsView) {.slot.} =
     self.status.chat.leave(self.activeChannel.id)

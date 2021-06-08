@@ -6,7 +6,6 @@ import
 
 import # status-desktop libs
   ../../status/chat/chat as status_chat, ./views/communities,
-  ../../status/libstatus/mailservers as status_mailservers,
   ../../status/tasks/marathon,
   ../../status/tasks/marathon/mailserver/worker,
   ../../status/libstatus/mailservers # TODO: needed for MailserverTopic type, remove?
