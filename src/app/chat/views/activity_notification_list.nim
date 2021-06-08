@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles
+import NimQml, Tables, chronicles, json, sequtils, strformat
 import ../../../status/chat/chat
 import ../../../status/status
 import ../../../status/accounts
@@ -125,6 +125,30 @@ QtObject:
     let bottomRight = self.createIndex(self.activityCenterNotifications.len - 1, 0, nil)
     self.dataChanged(topLeft, bottomRight, @[NotifRoles.Read.int])
 
+  proc markActivityCenterNotificationsRead(self: ActivityNotificationList, idsJson: string): string {.slot.} =
+    let ids = map(parseJson(idsJson).getElems(), proc(x:JsonNode):string = x.getStr())
+
+    let error = self.status.chat.markActivityCenterNotificationsRead(ids)
+    if (error != ""):
+      return error
+
+    self.nbUnreadNotifications = self.nbUnreadNotifications - ids.len
+    if (self.nbUnreadNotifications < 0):
+      self.nbUnreadNotifications = 0
+    self.unreadCountChanged()
+
+    var i = 0
+    for activityCenterNotification in self.activityCenterNotifications:
+      for id in ids:
+        if (activityCenterNotification.id == id):
+          activityCenterNotification.read = true
+          let topLeft = self.createIndex(i, 0, nil)
+          let bottomRight = self.createIndex(i, 0, nil)
+          self.dataChanged(topLeft, bottomRight, @[NotifRoles.Read.int])
+      i = i + 1
+    
+  proc markActivityCenterNotificationRead(self: ActivityNotificationList, id: string): string {.slot.} =
+    self.markActivityCenterNotificationsRead(fmt"[""{id}""]")
 
   proc toActivityCenterNotificationViewItem*(self: ActivityNotificationList, activityCenterNotification: ActivityCenterNotification): ActivityCenterNotificationViewItem =
     ActivityCenterNotificationViewItem(

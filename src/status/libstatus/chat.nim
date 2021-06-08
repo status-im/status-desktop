@@ -591,6 +591,9 @@ proc activityCenterNotification*(cursor: string = ""): (string, seq[ActivityCent
 proc markAllActivityCenterNotificationsRead*() =
   discard callPrivateRPC("markAllActivityCenterNotificationsRead".prefix, %*[])
 
+proc markActivityCenterNotificationsRead*(ids: seq[string]) =
+  let res = callPrivateRPC("markActivityCenterNotificationsRead".prefix, %*[ids])
+
 proc unreadActivityCenterNotificationsCount*(): int =
   let rpcResult = callPrivateRPC("unreadActivityCenterNotificationsCount".prefix, %*[]).parseJson
 

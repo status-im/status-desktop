@@ -176,29 +176,28 @@ Popup {
                                 prevMsgTimestamp: notificationDelegate.idx === 0 ? "" : chatsModel.activityNotificationList.getNotificationData(prevMessageIndex, "timestamp")
                             }
 
-                            // TODO add this back when single MarkAsRead is available
-                            //                        StatusIconButton {
-                            //                            id: markReadBtn
-                            //                            icon.name: "double-check"
-                            //                            iconColor: Style.current.primary
-                            //                            icon.width: 24
-                            //                            icon.height: 24
-                            //                            width: 32
-                            //                            height: 32
-                            //                            onClicked: console.log('TODO mark read')
-                            //                            anchors.right: parent.right
-                            //                            anchors.rightMargin: 12
-                            //                            anchors.verticalCenter: notificationMessage.verticalCenter
-                            //                            z: 52
+                            StatusIconButton {
+                                id: markReadBtn
+                                icon.name: "double-check"
+                                iconColor: Style.current.primary
+                                icon.width: 24
+                                icon.height: 24
+                                width: 32
+                                height: 32
+                                onClicked: chatsModel.activityNotificationList.markActivityCenterNotificationRead(model.id)
+                                anchors.right: parent.right
+                                anchors.rightMargin: 12
+                                anchors.verticalCenter: notificationMessage.verticalCenter
+                                z: 52
 
-                            //                            StatusToolTip {
-                            //                                visible: markReadBtn.hovered
-                            //                                text: qsTr("Mark as Read")
-                            //                                orientation: "left"
-                            //                                x: - width - Style.current.padding
-                            //                                y: markReadBtn.height / 2 - height / 2 + 4
-                            //                            }
-                            //                        }
+                                StatusToolTip {
+                                    visible: markReadBtn.hovered
+                                    text: qsTr("Mark as Read")
+                                    orientation: "left"
+                                    x: - width - Style.current.padding
+                                    y: markReadBtn.height / 2 - height / 2 + 4
+                                }
+                            }
 
                             ActivityChannelBadge {
                                 name: model.name
