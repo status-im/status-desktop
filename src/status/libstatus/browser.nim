@@ -1,4 +1,4 @@
-import core, types, json, chronicles
+import core, ../types, json, chronicles
 
 proc storeBookmark*(url: string, name: string): Bookmark =
   let payload = %* [{"url": url, "name": name}]

@@ -2,7 +2,7 @@ import json, times, strutils, sequtils, chronicles, json_serialization, algorith
 import core, utils
 import ../chat/[chat, message]
 import ../signals/messages
-import ./types
+import ../types
 import ./settings as status_settings
 
 proc buildFilter*(chat: Chat):JsonNode =

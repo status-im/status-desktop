@@ -8,7 +8,7 @@ import ../../status/contacts as status_contacts
 import ../../status/status
 import ../../status/ens as status_ens
 import ../../status/chat/chat
-import ../../status/libstatus/types
+import ../../status/types
 import ../../status/libstatus/accounts/constants as accountConstants
 import qrcode/qrcode
 import ../utils/image_utils

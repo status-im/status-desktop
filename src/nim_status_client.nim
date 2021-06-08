@@ -10,7 +10,7 @@ import app/onboarding/core as onboarding
 import app/login/core as login
 import app/provider/core as provider
 import status/signals/core as signals
-import status/libstatus/types
+import status/types
 import status/libstatus/accounts/constants
 import status_go
 import status/status as statuslib

@@ -1,5 +1,5 @@
 import NimQml, tables, json, chronicles, strutils, json_serialization
-import ../libstatus/types as status_types
+import ../types as status_types
 import types, messages, discovery, whisperFilter, envelopes, expired, wallet, mailserver, communities
 import ../status
 import ../../eventemitter

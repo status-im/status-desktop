@@ -9,7 +9,7 @@ import # status-desktop libs
   ../../status/wallet/collectibles as status_collectibles,
   ../../status/libstatus/accounts/constants,
   ../../status/libstatus/wallet as status_wallet,
-  ../../status/libstatus/tokens, ../../status/libstatus/types,
+  ../../status/libstatus/tokens, ../../status/types,
   ../../status/libstatus/utils as status_utils,
   ../../status/libstatus/eth/contracts, ../../status/ens as status_ens,
   views/[asset_list, account_list, account_item, token_list, transaction_list, collectibles_list],

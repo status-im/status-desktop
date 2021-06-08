@@ -6,7 +6,7 @@ import json_serialization
 import tables
 import strformat
 import libstatus/core
-import libstatus/types
+import types
 import libstatus/utils
 import libstatus/wallet
 import stew/byteutils

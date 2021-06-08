@@ -5,7 +5,7 @@ import
   stint, web3/ethtypes
 
 import
-  libstatus/types
+  types
 from libstatus/utils as status_utils import toUInt64, gwei2Wei, parseAddress
 
 proc buildTransaction*(source: Address, value: Uint256, gas = "", gasPrice = "", data = ""): EthSend =

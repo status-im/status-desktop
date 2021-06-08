@@ -1,6 +1,6 @@
 import typetraits
 import edn, chronicles
-import ./types # FIXME: there should be no type deps
+import ../types # FIXME: there should be no type deps
 
 # forward declaration:
 proc parseNode[T](node: EdnNode, searchName: string): T

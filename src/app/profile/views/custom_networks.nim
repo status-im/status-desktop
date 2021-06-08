@@ -2,7 +2,7 @@ import NimQml
 import Tables
 import json, sequtils, sugar
 import ../../../status/libstatus/settings
-import ../../../status/libstatus/types
+import ../../../status/types
 
 type
   CustomNetworkRoles {.pure.} = enum

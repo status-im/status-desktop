@@ -2,7 +2,7 @@ import NimQml, json, strutils, sugar, sequtils, tables
 import json_serialization
 import ../../status/signals/types
 import ../../status/libstatus/accounts/constants
-import ../../status/libstatus/types as status_types
+import ../../status/types as status_types
 import ../../status/profile/[profile, mailserver]
 import ../../status/[status, settings]
 import ../../status/contacts as status_contacts

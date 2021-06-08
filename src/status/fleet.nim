@@ -1,5 +1,5 @@
 import json
-import libstatus/types
+import types
 
 type
   FleetModel* = ref object

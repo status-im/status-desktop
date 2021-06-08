@@ -1,5 +1,5 @@
 import NimQml
-import ../../../status/libstatus/types
+import ../../../status/types
 import std/wrapnils
 
 QtObject:

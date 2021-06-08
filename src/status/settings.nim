@@ -8,7 +8,7 @@ import ../eventemitter
 import signals/types
 
 #TODO: temporary?
-import libstatus/types as LibStatusTypes
+import types as LibStatusTypes
 
 type
     SettingsModel* = ref object

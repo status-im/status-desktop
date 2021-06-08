@@ -7,7 +7,7 @@ import ./community_membership_request_list
 import ./channels_list
 import ../../utils/image_utils
 import ../../../status/signals/types as signal_types
-import ../../../status/libstatus/types
+import ../../../status/types
 
 
 logScope:

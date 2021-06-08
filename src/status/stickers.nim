@@ -5,7 +5,7 @@ import # project deps
   chronicles, web3/[ethtypes, conversions], stint
 
 import # local deps
-  libstatus/types, libstatus/eth/contracts as status_contracts,
+  types, libstatus/eth/contracts as status_contracts,
   libstatus/stickers as status_stickers, transactions,
   libstatus/wallet, ../eventemitter
 from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, toUInt64, parseAddress

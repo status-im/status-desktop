@@ -1,7 +1,7 @@
 import NimQml, json, chronicles
 import ../../status/status
 import ../../status/libstatus/browser as status_browser
-import ../../status/libstatus/types
+import ../../status/types
 import views/bookmark_list
 
 QtObject:

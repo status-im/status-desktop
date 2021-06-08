@@ -1,6 +1,6 @@
 import NimQml, chronicles, strutils
 import ../../../status/[status, settings]
-import ../../../status/libstatus/types
+import ../../../status/types
 import options
 
 logScope:

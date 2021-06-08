@@ -4,7 +4,7 @@ import ../../status/[status, wallet]
 import ../../status/stickers
 import ../../status/libstatus/accounts/constants as accountConstants
 import ../../status/libstatus/tokens
-import ../../status/libstatus/types
+import ../../status/types
 import ../../status/libstatus/settings
 import ../../status/libstatus/utils as status_utils
 import ../../status/ens as status_ens

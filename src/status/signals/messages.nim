@@ -5,7 +5,7 @@ import ../libstatus/accounts as status_accounts
 import ../libstatus/accounts/constants as constants
 import ../libstatus/settings as status_settings
 import ../libstatus/tokens as status_tokens
-import ../libstatus/types as status_types
+import ../types as status_types
 import ../libstatus/eth/contracts as status_contracts
 import ../chat/[chat, message]
 import ../profile/[profile, devices]
