@@ -1,10 +1,9 @@
 import NimQml, os, strformat, strutils, parseUtils, chronicles
 import stint
-import ../../status/[status, wallet]
+import ../../status/[status, wallet, settings]
 import ../../status/stickers
-import ../../status/libstatus/tokens
+import ../../status/tokens as status_tokens
 import ../../status/types
-import ../../status/libstatus/settings
 import ../../status/utils as status_utils
 import ../../status/ens as status_ens
 import ../utils/image_utils
@@ -43,11 +42,11 @@ QtObject:
     result = os.joinPath(start, middle, ending)
 
   proc getSNTAddress*(self: UtilsView): string {.slot.} =
-    result = getSNTAddress()
+    result = status_tokens.getSNTAddress()
 
   proc getSNTBalance*(self: UtilsView): string {.slot.} =
     let currAcct = self.status.wallet.getWalletAccounts()[0]
-    result = getSNTBalance($currAcct.address)
+    result = status_tokens.getSNTBalance($currAcct.address)
 
   proc eth2Wei*(self: UtilsView, eth: string, decimals: int): string {.slot.} =
     let uintValue = status_utils.eth2Wei(parseFloat(eth), decimals)
@@ -102,7 +101,7 @@ QtObject:
     result = self.status.accounts.generateIdenticon(pk)
 
   proc getNetworkName*(self: UtilsView): string {.slot.} =
-    getCurrentNetworkDetails().name
+    self.status.settings.getCurrentNetworkDetails().name
 
   proc getFileSize*(self: UtilsView, filename: string): string {.slot.} =
     var f: File = nil
@@ -113,4 +112,4 @@ QtObject:
         close(f)
     else:
       raise newException(IOError, "cannot open: " & filename)
-  
+ 

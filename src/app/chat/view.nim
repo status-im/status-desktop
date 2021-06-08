@@ -2,7 +2,6 @@ import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, o
 import ../../status/[status, mailservers]
 import ../../status/libstatus/chat as libstatus_chat
 import ../../status/constants
-import ../../status/libstatus/chat as core_chat
 import ../../status/utils as status_utils
 import ../../status/chat as status_chat
 import ../../status/messages as status_messages

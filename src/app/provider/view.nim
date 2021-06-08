@@ -309,6 +309,5 @@ QtObject:
   proc signMessage*(self: Web3ProviderView, payload: string, password: string) {.slot.} =
     let jsonPayload = payload.parseJson
 
-
   proc init*(self: Web3ProviderView) =
-    self.setDappsAddress(status_settings.getSetting[string](Setting.DappsAddress))
+    self.setDappsAddress(self.status.settings.getSetting[:string](Setting.DappsAddress))
