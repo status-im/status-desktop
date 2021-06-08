@@ -514,7 +514,7 @@ QtObject:
       self.messageList[msg.chatId].changeMessagePinned(msg.id, true, msg.pinnedBy)
 
   proc pushActivityCenterNotifications*(self:ChatsView, activityCenterNotifications: seq[ActivityCenterNotification]) =
-    self.activityNotificationList.setNewData(activityCenterNotifications)
+    self.activityNotificationList.addActivityNotificationItemsToList(activityCenterNotifications)
     self.activityNotificationsChanged()
 
   proc addActivityCenterNotification*(self:ChatsView, activityCenterNotifications: seq[ActivityCenterNotification]) =
