@@ -7,7 +7,7 @@ import
   ../../../libstatus/settings as status_settings,
   ../../../libstatus/mailservers as status_mailservers,
   ../../../libstatus/core as status_core, ../../../libstatus/chat as status_chat,
-  ../../../libstatus/types, ../../../fleet,
+  ../../../types, ../../../fleet,
   ./events as mailserver_events
 
 logScope:

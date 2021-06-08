@@ -3,7 +3,7 @@ import Tables
 import json
 import sequtils
 import strutils
-from ../../../status/libstatus/types import Setting, PendingTransactionType, RpcException
+from ../../../status/types import Setting, PendingTransactionType, RpcException
 import ../../../status/ens as status_ens
 import ../../../status/libstatus/wallet as status_wallet
 import ../../../status/libstatus/settings as status_settings

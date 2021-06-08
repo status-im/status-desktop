@@ -3,7 +3,7 @@ import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
 import libstatus/chatCommands as status_chat_commands
 import libstatus/accounts/constants as constants
-import libstatus/types
+import types
 import libstatus/utils as status_utils
 import libstatus/contacts as status_contacts
 import stickers

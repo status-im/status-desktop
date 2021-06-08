@@ -1,6 +1,5 @@
 import NimQml, chronicles
 import ../../status/status
-import ../../status/libstatus/types as status_types
 import view
 
 logScope:

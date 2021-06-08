@@ -1,6 +1,6 @@
 import NimQml
 import chronicles, strutils
-import ../../../status/libstatus/types as status_types
+import ../../../status/types as status_types
 import ../../../status/[status, settings, accounts]
 
 QtObject:

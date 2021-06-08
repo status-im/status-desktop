@@ -1,6 +1,6 @@
 import json, strutils, sequtils, sugar, chronicles
 import json_serialization
-import ../libstatus/types as status_types
+import ../types as status_types
 import ../chat/[chat]
 import types, messages
 

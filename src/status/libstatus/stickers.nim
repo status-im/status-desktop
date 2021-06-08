@@ -8,7 +8,7 @@ import # vendor libs
 from nimcrypto import fromHex
 
 import # status-desktop libs
-  ./core as status, ./types, ./eth/contracts, ./settings, ./edn_helpers
+  ./core as status, ../types, ./eth/contracts, ./settings, ./edn_helpers
 
 proc decodeContentHash*(value: string): string =
   if value == "":

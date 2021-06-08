@@ -5,7 +5,7 @@ import
   nimcrypto, web3/[encoding, ethtypes]
 
 import 
-  ../coder, eth, transactions, ../types # FIXME: 'types' produces a compiler warning, but doesn't compiler without it 🤷‍♂️
+  ../coder, eth, transactions, ../../types # FIXME: 'types' produces a compiler warning, but doesn't compiler without it 🤷‍♂️
 
 export sendTransaction
 

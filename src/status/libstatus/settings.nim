@@ -5,7 +5,7 @@ import
   json_serialization, chronicles, uuids
 
 import
-  ./core, ./types, ../signals/types as statusgo_types, ./accounts/constants,
+  ./core, ../types, ../signals/types as statusgo_types, ./accounts/constants,
   ./utils
 
 var

@@ -1,6 +1,6 @@
 import strformat, json, sequtils
 from message import Message
-import ../libstatus/types
+import ../types
 
 type ChatType* {.pure.}= enum
   Unknown = 0,

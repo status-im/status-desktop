@@ -1,5 +1,5 @@
 import NimQml, chronicles, options, std/wrapnils
-import ../../status/libstatus/types as status_types
+import ../../status/types as status_types
 import ../../status/signals/types
 import ../../status/status
 import view
