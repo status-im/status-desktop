@@ -353,3 +353,18 @@ proc getGasPricePredictions*(): GasPricePrediction =
   except Exception as e:
     echo "error getting gas price predictions"
     echo e.msg
+
+proc checkRecentHistory*(self: WalletModel, addresses: seq[string]): string =
+  result = status_wallet.checkRecentHistory(addresses)
+
+proc setInitialBlocksRange*(self: WalletModel): string =
+  result = status_wallet.setInitialBlocksRange()
+
+proc getWalletAccounts*(self: WalletModel): seq[WalletAccount] =
+  result = status_wallet.getWalletAccounts()
+
+proc watchTransaction*(self: WalletModel, transactionHash: string): string =
+  result = status_wallet.watchTransaction(transactionHash)
+
+proc getPendingTransactions*(self: WalletModel): string =
+  result = status_wallet.getPendingTransactions()

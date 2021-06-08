@@ -544,7 +544,7 @@ QtObject:
     var addresses:seq[string] = @[]
     for acc in self.status.wallet.accounts:
       addresses.add(acc.address)
-    discard status_wallet.checkRecentHistory(addresses)
+    discard self.status.wallet.checkRecentHistory(addresses)
 
   proc transactionWatchResultReceived(self: WalletView, watchResult: string) {.slot.} =
     let wTxRes = watchResult.parseJSON()["result"].getStr().parseJson(){"result"}
@@ -653,7 +653,7 @@ QtObject:
     read = defaultGasLimit
 
   proc getDefaultAddress*(self: WalletView): string {.slot.} =
-    result = $status_wallet.getWalletAccounts()[0].address
+    result = $self.status.wallet.getWalletAccounts()[0].address
 
   proc getDefaultTokenList(self: WalletView): QVariant {.slot.} =
     self.defaultTokenList.loadDefaultTokens()
@@ -766,4 +766,4 @@ QtObject:
     notify = dappBrowserAccountChanged
 
   proc setInitialRange*(self: WalletView) {.slot.} = 
-    discard status_wallet.setInitialBlocksRange()
+    discard self.status.wallet.setInitialBlocksRange()

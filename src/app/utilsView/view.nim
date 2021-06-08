@@ -1,13 +1,12 @@
 import NimQml, os, strformat, strutils, parseUtils, chronicles
 import stint
-import ../../status/status
+import ../../status/[status, wallet]
 import ../../status/accounts as status_accounts
 import ../../status/stickers
 import ../../status/libstatus/accounts/constants as accountConstants
 import ../../status/libstatus/tokens
 import ../../status/libstatus/types
 import ../../status/libstatus/settings
-import ../../status/libstatus/wallet as status_wallet
 import ../../status/libstatus/utils as status_utils
 import ../../status/ens as status_ens
 import ../utils/image_utils
@@ -49,7 +48,7 @@ QtObject:
     result = getSNTAddress()
 
   proc getSNTBalance*(self: UtilsView): string {.slot.} =
-    let currAcct = status_wallet.getWalletAccounts()[0]
+    let currAcct = self.status.wallet.getWalletAccounts()[0]
     result = getSNTBalance($currAcct.address)
 
   proc eth2Wei*(self: UtilsView, eth: string, decimals: int): string {.slot.} =
