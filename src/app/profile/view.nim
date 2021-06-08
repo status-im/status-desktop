@@ -5,7 +5,6 @@ import ../chat/views/channels_list
 import ../../status/profile/profile
 import ../../status/profile as status_profile
 import ../../status/contacts as status_contacts
-import ../../status/accounts as status_accounts
 import ../../status/status
 import ../../status/ens as status_ens
 import ../../status/chat/chat

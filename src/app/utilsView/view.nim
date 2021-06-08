@@ -1,7 +1,6 @@
 import NimQml, os, strformat, strutils, parseUtils, chronicles
 import stint
 import ../../status/[status, wallet]
-import ../../status/accounts as status_accounts
 import ../../status/stickers
 import ../../status/libstatus/accounts/constants as accountConstants
 import ../../status/libstatus/tokens
@@ -98,10 +97,10 @@ QtObject:
     return status_utils.wei2Eth(weiValue, decimals)
 
   proc generateAlias*(self: UtilsView, pk: string): string {.slot.} =
-    result = status_accounts.generateAlias(pk)
+    result = self.status.accounts.generateAlias(pk)
 
   proc generateIdenticon*(self: UtilsView, pk: string): string {.slot.} =
-    result = status_accounts.generateIdenticon(pk)
+    result = self.status.accounts.generateIdenticon(pk)
 
   proc getNetworkName*(self: UtilsView): string {.slot.} =
     getCurrentNetworkDetails().name

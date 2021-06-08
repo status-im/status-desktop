@@ -1,6 +1,5 @@
 import NimQml, Tables,
   ../../../status/[status, ens]
-import ../../../status/accounts as status_accounts
 type
   CommunityMembersRoles {.pure.} = enum
     UserName = UserRole + 1,
@@ -58,13 +57,13 @@ QtObject:
     if self.status.chat.contacts.hasKey(pk):
       result = self.status.chat.contacts[pk].identicon
     else:
-      result = status_accounts.generateIdenticon(pk)
+      result = self.status.accounts.generateIdenticon(pk)
 
   proc alias(self: CommunityMembersView, pk: string): string =
     if self.status.chat.contacts.hasKey(pk):
       result = self.status.chat.contacts[pk].alias
     else:
-      result = status_accounts.generateAlias(pk)
+      result = self.status.accounts.generateAlias(pk)
 
 
   method data(self: CommunityMembersView, index: QModelIndex, role: int): QVariant =
