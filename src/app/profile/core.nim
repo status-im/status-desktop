@@ -1,7 +1,6 @@
 import NimQml, json, strutils, sugar, sequtils, tables
 import json_serialization
 import ../../status/signals/types
-import ../../status/libstatus/accounts/constants
 import ../../status/types as status_types
 import ../../status/profile/[profile, mailserver]
 import ../../status/[status, settings]
@@ -16,6 +15,8 @@ import views/[ens_manager, devices, network, mailservers, contacts]
 import ../chat/views/channels_list
 import chronicles
 import ../../status/tasks/marathon/mailserver/events
+
+const DEFAULT_NETWORK_NAME* = "mainnet_rpc"
 
 type ProfileController* = ref object
   view*: ProfileView
@@ -36,7 +37,7 @@ proc init*(self: ProfileController, account: Account) =
   let profile = account.toProfileModel()
 
   let pubKey = self.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
-  let network = self.status.settings.getSetting[:string](Setting.Networks_CurrentNetwork, constants.DEFAULT_NETWORK_NAME)
+  let network = self.status.settings.getSetting[:string](Setting.Networks_CurrentNetwork, DEFAULT_NETWORK_NAME)
   let appearance = self.status.settings.getSetting[:int](Setting.Appearance)
   let messagesFromContactsOnly = self.status.settings.getSetting[:bool](Setting.MessagesFromContactsOnly)
   profile.appearance = appearance
