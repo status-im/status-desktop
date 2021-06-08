@@ -8,7 +8,7 @@ import ../../../status/ens as status_ens
 import ../../../status/libstatus/wallet as status_wallet
 import ../../../status/libstatus/settings as status_settings
 import ../../../status/libstatus/utils as libstatus_utils
-import ../../../status/status
+import ../../../status/[status, settings]
 import ../../../status/wallet
 import sets
 import web3/ethtypes
@@ -105,7 +105,7 @@ QtObject:
     result.setup
 
   proc init*(self: EnsManager) =
-    self.usernames = status_settings.getSetting[seq[string]](Setting.Usernames, @[])
+    self.usernames = getSetting[seq[string]](self.status.settings, Setting.Usernames, @[])
     
     # Get pending ens names
     let pendingTransactions = status_wallet.getPendingTransactions()
@@ -131,7 +131,7 @@ QtObject:
     self.endInsertRows()
 
   proc getPreferredUsername(self: EnsManager): string {.slot.} =
-    result = status_settings.getSetting[string](Setting.PreferredUsername, "")
+    result = self.status.settings.getSetting[:string](Setting.PreferredUsername, "")
 
   proc preferredUsernameChanged(self: EnsManager) {.signal.}
 
@@ -143,7 +143,7 @@ QtObject:
 
   proc setPreferredUsername(self: EnsManager, newENS: string) {.slot.} =
     if not self.isPending(newENS):
-      discard status_settings.saveSetting(Setting.PreferredUsername, newENS)
+      discard self.status.settings.saveSetting(Setting.PreferredUsername, newENS)
       self.preferredUsernameChanged()
 
   QtProperty[string] preferredUsername:
@@ -152,9 +152,9 @@ QtObject:
     write = setPreferredUsername
   
   proc connect(self: EnsManager, ensUsername: string) =
-    var usernames = status_settings.getSetting[seq[string]](Setting.Usernames, @[])
+    var usernames = getSetting[seq[string]](self.status.settings, Setting.Usernames, @[])
     usernames.add ensUsername
-    discard status_settings.saveSetting(Setting.Usernames, %*usernames)
+    discard self.status.settings.saveSetting(Setting.Usernames, %*usernames)
   
   proc loading(self: EnsManager, isLoading: bool) {.signal.}
 
@@ -235,14 +235,14 @@ QtObject:
 
   proc registerENSGasEstimate(self: EnsManager, ensUsername: string, address: string): int {.slot.} =
     var success: bool
-    let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    let pubKey = self.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
     result = registerUsernameEstimateGas(ensUsername, address, pubKey, success)
     if not success:
       result = 380000
   
   proc registerENS*(self: EnsManager, username: string, address: string, gas: string, gasPrice: string, password: string): string {.slot.} =
     var success: bool
-    let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    let pubKey = self.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
     let response = registerUsername(username, pubKey, address, gas, gasPrice, password, success)
     result = $(%* { "result": %response, "success": %success })
 
@@ -254,14 +254,14 @@ QtObject:
 
   proc setPubKeyGasEstimate(self: EnsManager, ensUsername: string, address: string): int {.slot.} =
     var success: bool
-    let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    let pubKey = self.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
     result = setPubKeyEstimateGas(ensUsername, address, pubKey, success)
     if not success:
       result = 80000
 
   proc setPubKey(self: EnsManager, username: string, address: string, gas: string, gasPrice: string, password: string): string {.slot.} =
     var success: bool
-    let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    let pubKey = self.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
     let response = setPubKey(username, pubKey, address, gas, gasPrice, password, success)
     result = $(%* { "result": %response, "success": %success })
     if success:
