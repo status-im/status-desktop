@@ -1,10 +1,11 @@
 import options, chronicles, json, json_serialization, sequtils, sugar
 import libstatus/accounts as status_accounts
 import libstatus/settings as status_settings
-import libstatus/accounts/constants
 import types
 import utils
 import ../eventemitter
+
+const DEFAULT_NETWORK_NAME* = "mainnet_rpc"
 
 type
   AccountModel* = ref object
@@ -92,5 +93,5 @@ proc changeNetwork*(self: AccountModel, fleetConfig: FleetConfig, network: strin
 proc getNodeConfig*(self: AccountModel, fleetConfig: FleetConfig, installationId: string, networkConfig: JsonNode, fleet: Fleet = Fleet.PROD): JsonNode =
   result = status_accounts.getNodeConfig(fleetConfig, installationId, networkConfig, fleet)
 
-proc getNodeConfig*(self: AccountModel, fleetConfig: FleetConfig, installationId: string, currentNetwork: string = constants.DEFAULT_NETWORK_NAME, fleet: Fleet = Fleet.PROD): JsonNode =
+proc getNodeConfig*(self: AccountModel, fleetConfig: FleetConfig, installationId: string, currentNetwork: string = DEFAULT_NETWORK_NAME, fleet: Fleet = Fleet.PROD): JsonNode =
   result = status_accounts.getNodeConfig(fleetConfig, installationId, currentNetwork, fleet)

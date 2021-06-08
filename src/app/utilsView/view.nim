@@ -2,7 +2,6 @@ import NimQml, os, strformat, strutils, parseUtils, chronicles
 import stint
 import ../../status/[status, wallet]
 import ../../status/stickers
-import ../../status/libstatus/accounts/constants as accountConstants
 import ../../status/libstatus/tokens
 import ../../status/types
 import ../../status/libstatus/settings

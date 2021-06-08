@@ -7,13 +7,14 @@ import # vendor libs
 import # status-desktop libs
   ../../status/[status, wallet, settings],
   ../../status/wallet/collectibles as status_collectibles,
-  ../../status/libstatus/accounts/constants,
   ../../status/libstatus/wallet as status_wallet,
   ../../status/libstatus/tokens, ../../status/types,
   ../../status/utils as status_utils,
   ../../status/libstatus/eth/contracts, ../../status/ens as status_ens,
   views/[asset_list, account_list, account_item, token_list, transaction_list, collectibles_list],
   ../../status/tasks/[qt, task_runner_impl], ../../status/signals/types as signal_types
+
+const ZERO_ADDRESS* = "0x0000000000000000000000000000000000000000"
 
 type
   SendTransactionTaskArg = ref object of QObjectTaskArg

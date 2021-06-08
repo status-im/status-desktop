@@ -2,7 +2,6 @@ import json, strutils, sequtils, tables, chronicles, times, sugar
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
 import libstatus/chatCommands as status_chat_commands
-import libstatus/accounts/constants as constants
 import types
 import utils as status_utils
 import libstatus/contacts as status_contacts
@@ -19,6 +18,7 @@ logScope:
   topics = "chat-model"
 
 const backToFirstChat* = "__goBackToFirstChat"
+const ZERO_ADDRESS* = "0x0000000000000000000000000000000000000000"
 
 type 
   ChatUpdateArgs* = ref object of Args
@@ -454,12 +454,12 @@ proc declineRequestTransaction*(self: ChatModel, messageId: string) =
   self.processUpdateForTransaction(messageId, response)
 
 proc requestAddressForTransaction*(self: ChatModel, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
-  let address = if (tokenAddress == constants.ZERO_ADDRESS): "" else: tokenAddress
+  let address = if (tokenAddress == ZERO_ADDRESS): "" else: tokenAddress
   let response = status_chat_commands.requestAddressForTransaction(chatId, fromAddress, amount, address)
   discard self.processMessageUpdateAfterSend(response)
 
 proc requestTransaction*(self: ChatModel, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
-  let address = if (tokenAddress == constants.ZERO_ADDRESS): "" else: tokenAddress
+  let address = if (tokenAddress == ZERO_ADDRESS): "" else: tokenAddress
   let response = status_chat_commands.requestTransaction(chatId, fromAddress, amount, address)
   discard self.processMessageUpdateAfterSend(response)
 

@@ -11,7 +11,7 @@ import app/login/core as login
 import app/provider/core as provider
 import status/signals/core as signals
 import status/types
-import status/libstatus/accounts/constants
+import status/constants
 import status_go
 import status/status as statuslib
 import ./eventemitter
