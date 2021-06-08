@@ -7,8 +7,7 @@ import
 import # status-desktop libs
   ../../status/chat/chat as status_chat, ./views/communities,
   ../../status/tasks/marathon,
-  ../../status/tasks/marathon/mailserver/worker,
-  ../../status/libstatus/mailservers # TODO: needed for MailserverTopic type, remove?
+  ../../status/tasks/marathon/mailserver/worker
 
 proc handleChatEvents(self: ChatController) =
   # Display already saved messages

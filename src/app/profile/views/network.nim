@@ -22,7 +22,7 @@ QtObject:
   proc newNetworkView*(status: Status): NetworkView =
     new(result, delete)
     result.status = status
-    result.customNetworkList = newCustomNetworkList()
+    result.customNetworkList = newCustomNetworkList(status)
     result.setup
 
   proc networkChanged*(self: NetworkView) {.signal.}
