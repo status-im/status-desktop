@@ -78,6 +78,16 @@ If you are using an `Input` QML prop, to get the current value use `idName.TextF
 
 a common scenario this error can happen is when trying to immediatly access something in status-go when the app starts before the node is ready. it can also happen due to 2 threads attempting to call & change something from status-go at the same time
 
+### Error: type mismatch: got <> but expected one of:
+
+Sometimes this can happen when using generics, it can be solved by either passing the parameters explicitily:
+
+`getSetting[string](self.status.settings, Setting.SigningPhrase)`
+
+or using typedesc param with `:` like:
+
+`self.status.settings.getSetting[:string](Setting.SigningPhrase)`
+
 ## Warnings
 
 ### QML anchor warnings
