@@ -1,5 +1,5 @@
 import json, nimcrypto, chronicles
-import status_go, utils
+import status_go, ../utils
 
 logScope:
   topics = "rpc"

@@ -3,7 +3,7 @@ import libstatus/accounts as status_accounts
 import libstatus/settings as status_settings
 import libstatus/accounts/constants
 import types
-import libstatus/utils
+import utils
 import ../eventemitter
 
 type

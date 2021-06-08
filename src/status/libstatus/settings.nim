@@ -6,7 +6,7 @@ import
 
 import
   ./core, ../types, ../signals/types as statusgo_types, ./accounts/constants,
-  ./utils
+  ../utils
 
 var
   settings {.threadvar.}: JsonNode

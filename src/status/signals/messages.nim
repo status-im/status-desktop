@@ -1,6 +1,6 @@
 import json, random, strutils, sequtils, sugar, chronicles, tables
 import json_serialization
-import ../libstatus/utils
+import ../utils
 import ../libstatus/accounts as status_accounts
 import ../libstatus/accounts/constants as constants
 import ../libstatus/settings as status_settings
@@ -11,7 +11,7 @@ import ../chat/[chat, message]
 import ../profile/[profile, devices]
 import types
 import web3/conversions
-from ../libstatus/utils import parseAddress, wei2Eth
+from ../utils import parseAddress, wei2Eth
 
 proc toMessage*(jsonMsg: JsonNode, pk: string, isPin: bool = false): Message
 

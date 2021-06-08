@@ -8,7 +8,7 @@ import # local deps
   types, libstatus/eth/contracts as status_contracts,
   libstatus/stickers as status_stickers, transactions,
   libstatus/wallet, ../eventemitter
-from libstatus/utils as libstatus_utils import eth2Wei, gwei2Wei, toUInt64, parseAddress
+from utils as libstatus_utils import eth2Wei, gwei2Wei, toUInt64, parseAddress
 
 
 logScope:

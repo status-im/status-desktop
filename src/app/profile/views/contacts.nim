@@ -1,5 +1,5 @@
 import NimQml, chronicles, sequtils, sugar, strutils, json
-import ../../../status/libstatus/utils as status_utils
+import ../../../status/utils as status_utils
 import ../../../status/status
 import ../../../status/chat/chat
 import contact_list

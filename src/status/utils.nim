@@ -1,7 +1,7 @@
 import json, random, strutils, strformat, tables, chronicles, unicode
 import stint
 from times import getTime, toUnix, nanosecond
-import accounts/signing_phrases
+import libstatus/accounts/signing_phrases
 from web3 import Address, fromHex
 
 proc getTimelineChatId*(pubKey: string = ""): string =

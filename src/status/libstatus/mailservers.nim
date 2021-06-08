@@ -1,5 +1,5 @@
 import json, times
-import core, utils
+import core, ../utils
 
 proc ping*(mailservers: seq[string], timeoutMs: int): string =
   var addresses: seq[string] = @[]

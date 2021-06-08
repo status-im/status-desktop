@@ -7,7 +7,7 @@ import
 import 
   ./settings, ./core, ./wallet, ./eth/contracts
 from ../types import Setting, Network, RpcResponse, RpcException
-from utils import parseAddress
+from ../utils import parseAddress
 
 logScope:
   topics = "wallet"

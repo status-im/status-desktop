@@ -1,5 +1,5 @@
 import json, strmisc, atomics
-import core, utils, ../types, settings
+import core, ../utils, ../types, settings
 from ../profile/profile import Profile
 
 var

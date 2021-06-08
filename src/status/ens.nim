@@ -7,7 +7,7 @@ import tables
 import strformat
 import libstatus/core
 import types
-import libstatus/utils
+import utils
 import libstatus/wallet
 import stew/byteutils
 import unicode

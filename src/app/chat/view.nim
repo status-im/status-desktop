@@ -3,7 +3,7 @@ import ../../status/[status, mailservers]
 import ../../status/libstatus/chat as libstatus_chat
 import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/chat as core_chat
-import ../../status/libstatus/utils as status_utils
+import ../../status/utils as status_utils
 import ../../status/chat as status_chat
 import ../../status/messages as status_messages
 import ../../status/contacts as status_contacts
