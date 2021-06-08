@@ -1,5 +1,5 @@
 import json, times, strutils, sequtils, chronicles, json_serialization, algorithm, strformat, sugar
-import core, utils
+import core, ../utils
 import ../chat/[chat, message]
 import ../signals/messages
 import ../types

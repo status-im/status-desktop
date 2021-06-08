@@ -2,7 +2,7 @@ import json, sequtils, sugar, chronicles
 import libstatus/contacts as status_contacts
 import libstatus/accounts as status_accounts
 import libstatus/chat as status_chat
-import libstatus/utils as status_utils
+import utils as status_utils
 import chat/chat
 #import chat/utils
 import profile/profile

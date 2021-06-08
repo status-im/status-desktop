@@ -6,7 +6,7 @@ import ../../status/libstatus/accounts/constants as accountConstants
 import ../../status/libstatus/tokens
 import ../../status/types
 import ../../status/libstatus/settings
-import ../../status/libstatus/utils as status_utils
+import ../../status/utils as status_utils
 import ../../status/ens as status_ens
 import ../utils/image_utils
 import web3/[ethtypes, conversions]

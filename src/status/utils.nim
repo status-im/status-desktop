@@ -1,13 +1,8 @@
-import # std libs
-  json, random, strutils, strformat, tables, times, unicode
-from sugar import `=>`, `->`
-
-import # vendor libs
-  stint, chronicles
+import json, random, strutils, strformat, tables, chronicles, unicode
+import stint
+from times import getTime, toUnix, nanosecond
+import libstatus/accounts/signing_phrases
 from web3 import Address, fromHex
-
-import # status-desktop libs
-  accounts/signing_phrases
 
 proc getTimelineChatId*(pubKey: string = ""): string =
   if pubKey == "":

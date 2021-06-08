@@ -1,7 +1,7 @@
 import NimQml, Tables, std/wrapnils
 import ../../../status/[chat/chat, status, ens, accounts, settings]
 from ../../../status/types import Setting
-import ../../../status/libstatus/utils as status_utils
+import ../../../status/utils as status_utils
 
 import chat_members
 

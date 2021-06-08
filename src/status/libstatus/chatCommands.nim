@@ -1,5 +1,5 @@
 import json, chronicles
-import core, utils
+import core, ../utils
 
 proc acceptRequestAddressForTransaction*(messageId: string, address: string): string =
   result = callPrivateRPC("acceptRequestAddressForTransaction".prefix, %* [messageId, address])

@@ -2,7 +2,7 @@ import json, os, nimcrypto, uuids, json_serialization, chronicles, strutils
 
 from status_go import multiAccountGenerateAndDeriveAddresses, generateAlias, identicon, saveAccountAndLogin, login, openAccounts
 import core
-import utils as utils
+import ../utils as utils
 import ../types as types
 import accounts/constants
 import ../signals/types as signal_types

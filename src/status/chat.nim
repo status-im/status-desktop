@@ -4,7 +4,7 @@ import libstatus/mailservers as status_mailservers
 import libstatus/chatCommands as status_chat_commands
 import libstatus/accounts/constants as constants
 import types
-import libstatus/utils as status_utils
+import utils as status_utils
 import libstatus/contacts as status_contacts
 import stickers
 import ../eventemitter
