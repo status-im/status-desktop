@@ -1,6 +1,5 @@
 import NimQml, json, chronicles
-import ../../status/status
-import ../../status/libstatus/browser as status_browser
+import ../../status/[status, browser]
 import ../../status/types
 import views/bookmark_list
 
@@ -25,7 +24,7 @@ QtObject:
   proc init*(self: BrowserView) =
     var bookmarks: seq[Bookmark] = @[]
     try:
-      let responseResult = status_browser.getBookmarks().parseJson["result"]
+      let responseResult = self.status.browser.getBookmarks().parseJson["result"]
       if responseResult.kind != JNull:
         for bookmark in responseResult:
           bookmarks.add(Bookmark(url: bookmark["url"].getStr, name: bookmark["name"].getStr, imageUrl: bookmark["imageUrl"].getStr))
@@ -44,7 +43,7 @@ QtObject:
     notify = bookmarksChanged
 
   proc addBookmark*(self: BrowserView, url: string, name: string) {.slot.} =
-    let bookmark = status_browser.storeBookmark(url, name)
+    let bookmark = self.status.browser.storeBookmark(url, name)
     self.bookmarks.addBookmarkItemToList(bookmark)
     self.bookmarksChanged()
 
@@ -53,7 +52,7 @@ QtObject:
     if index == -1:
       return
     self.bookmarks.removeBookmarkItemFromList(index)
-    status_browser.deleteBookmark(url)
+    self.status.browser.deleteBookmark(url)
     self.bookmarksChanged()
 
   proc modifyBookmark*(self: BrowserView, ogUrl: string, newUrl: string, newName: string) {.slot.} =
@@ -63,5 +62,5 @@ QtObject:
       self.addBookmark(newUrl, newName)
       return
     self.bookmarks.modifyBookmarkItemFromList(index, newUrl, newName)
-    status_browser.updateBookmark(ogUrl, newUrl, newName)
+    self.status.browser.updateBookmark(ogUrl, newUrl, newName)
     self.bookmarksChanged()
