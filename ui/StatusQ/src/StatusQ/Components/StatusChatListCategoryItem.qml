@@ -15,6 +15,7 @@ StatusListItem {
     rightPadding: 8
 
     property bool opened: true
+    property bool highlighted: false
     property alias addButton: addButton
     property alias menuButton: menuButton
     property alias toggleButton: toggleButton
@@ -24,7 +25,7 @@ StatusListItem {
     signal menuButtonClicked(var mouse)
     signal toggleButtonClicked(var mouse)
 
-    color: sensor.containsMouse ? Theme.palette.baseColor2 : "transparent"
+    color: sensor.containsMouse || highlighted ? Theme.palette.baseColor2 : "transparent"
 
     sensor.onClicked: statusChatListCategoryItem.clicked(mouse)
 
@@ -38,7 +39,7 @@ StatusListItem {
             id: addButton
             icon.name: "add"
             icon.width: 20
-            visible: statusChatListCategoryItem.sensor.containsMouse
+            visible: statusChatListCategoryItem.sensor.containsMouse || statusChatListCategoryItem.highlighted
             onClicked: statusChatListCategoryItem.addButtonClicked(mouse)
             tooltip.text: "Add channel inside category"
         },
@@ -46,7 +47,7 @@ StatusListItem {
             id: menuButton
             icon.name: "more"
             icon.width: 21
-            visible: statusChatListCategoryItem.sensor.containsMouse
+            visible: statusChatListCategoryItem.sensor.containsMouse || statusChatListCategoryItem.highlighted
             onClicked: statusChatListCategoryItem.menuButtonClicked(mouse)
             tooltip.text: "More"
         },
