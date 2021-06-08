@@ -563,7 +563,13 @@ proc markAllActivityCenterNotificationsRead*(self: ChatModel): string =
   except Exception as e:
     error "Error marking all as read", msg = e.msg
     result = e.msg
-  
+
+proc markActivityCenterNotificationsRead*(self: ChatModel, ids: seq[string]): string =
+  try:
+    status_chat.markActivityCenterNotificationsRead(ids)
+  except Exception as e:
+    error "Error marking as read", msg = e.msg
+    result = e.msg
 
 proc unreadActivityCenterNotificationsCount*(self: ChatModel): int =
   status_chat.unreadActivityCenterNotificationsCount()

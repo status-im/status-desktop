@@ -1,4 +1,4 @@
-import NimQml, json, sequtils, chronicles, strutils, strformat, json
+import NimQml, json, sequtils, chronicles, strutils, strformat
 import ../../../status/status
 import ../../../status/chat/chat
 import ./community_list
