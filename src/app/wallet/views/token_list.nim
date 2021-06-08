@@ -5,8 +5,7 @@ import # vendor libs
   NimQml
 
 import # status-desktop libs
-  ../../../status/[utils],
-  ../../../status/libstatus/[tokens, settings, eth/contracts],
+  ../../../status/[utils, tokens, settings],
   ../../../status/tasks/[qt, task_runner_impl], ../../../status/status
 from web3/conversions import `$`
 
@@ -72,7 +71,7 @@ QtObject:
 
   proc loadCustomTokens*(self: TokenList) =
     self.beginResetModel()
-    self.tokens = getCustomTokens()
+    self.tokens = self.status.tokens.getCustomTokens()
     self.tokensLoaded(self.tokens.len)
     self.isCustom = true
     self.endResetModel()

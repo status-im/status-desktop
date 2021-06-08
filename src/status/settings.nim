@@ -45,5 +45,8 @@ proc saveMailserver*(self: SettingsModel, name, enode: string) =
 proc getFleet*(self: SettingsModel): Fleet =
     result = status_settings.getFleet()
 
-proc getCurrentNetwork*(self: SettingsModel): Network =
+proc getCurrentNetwork*(): Network =
     result = status_settings.getCurrentNetwork()
+
+proc getCurrentNetwork*(self: SettingsModel): Network =
+    result = getCurrentNetwork()
