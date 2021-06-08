@@ -1,8 +1,9 @@
 import NimQml
 import Tables
 import json, sequtils, sugar
-import ../../../status/libstatus/settings
+import ../../../status/settings
 import ../../../status/types
+import ../../../status/status
 
 type
   CustomNetworkRoles {.pure.} = enum
@@ -13,25 +14,27 @@ const defaultNetworks = @["mainnet_rpc", "testnet_rpc", "rinkeby_rpc", "goerli_r
 
 QtObject:
   type CustomNetworkList* = ref object of QAbstractListModel
+    status*: Status
 
   proc setup(self: CustomNetworkList) = self.QAbstractListModel.setup
 
   proc delete(self: CustomNetworkList) =
     self.QAbstractListModel.delete
 
-  proc newCustomNetworkList*(): CustomNetworkList =
+  proc newCustomNetworkList*(status: Status): CustomNetworkList =
     new(result, delete)
+    result.status = status
     result.setup
 
   method rowCount(self: CustomNetworkList, index: QModelIndex = nil): int =
-    let networks = getSetting[JsonNode](Setting.Networks_Networks)
+    let networks = getSetting[JsonNode](self.status.settings, Setting.Networks_Networks)
     return networks.getElems().filterIt(it["id"].getStr() notin defaultNetworks).len
 
   method data(self: CustomNetworkList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
 
-    let networks = getSetting[JsonNode](Setting.Networks_Networks).getElems().filterIt(it["id"].getStr() notin defaultNetworks)
+    let networks = getSetting[JsonNode](self.status.settings, Setting.Networks_Networks).getElems().filterIt(it["id"].getStr() notin defaultNetworks)
     if index.row < 0 or index.row >= networks.len:
       return
     let network = networks[index.row]
