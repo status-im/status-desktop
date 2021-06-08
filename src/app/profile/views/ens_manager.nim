@@ -8,7 +8,7 @@ import ../../../status/ens as status_ens
 import ../../../status/libstatus/wallet as status_wallet
 import ../../../status/libstatus/settings as status_settings
 import ../../../status/libstatus/utils as libstatus_utils
-import ../../../status/[status, settings]
+import ../../../status/[status, settings, wallet]
 import ../../../status/wallet
 import sets
 import web3/ethtypes
@@ -108,7 +108,7 @@ QtObject:
     self.usernames = getSetting[seq[string]](self.status.settings, Setting.Usernames, @[])
     
     # Get pending ens names
-    let pendingTransactions = status_wallet.getPendingTransactions()
+    let pendingTransactions = self.status.wallet.getPendingTransactions()
     if (pendingTransactions == ""):
       return
     for trx in pendingTransactions.parseJson{"result"}.getElems():

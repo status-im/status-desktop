@@ -5,10 +5,8 @@ import # vendor libs
   chronicles, NimQml
 
 import # status-desktop libs
-  ../../../status/[status, stickers], ../../../status/libstatus/[types, utils],
-  ../../../status/libstatus/stickers as status_stickers,
-  ../../../status/libstatus/wallet as status_wallet, sticker_pack_list,
-  sticker_list, chat_item, ../../../status/tasks/[qt, task_runner_impl]
+  ../../../status/[status, stickers, wallet], ../../../status/libstatus/[types, utils],
+  ../../../status/libstatus/stickers as status_stickers, sticker_pack_list, sticker_list, chat_item, ../../../status/tasks/[qt, task_runner_impl]
 
 logScope:
   topics = "stickers-view"
@@ -143,7 +141,7 @@ QtObject:
 
   proc setAvailableStickerPacks*(self: StickersView, availableStickersJSON: string) {.slot.} =
     let
-      accounts = status_wallet.getWalletAccounts() # TODO: make generic
+      accounts = self.status.wallet.getWalletAccounts() # TODO: make generic
       installedStickerPacks = self.status.stickers.getInstalledStickerPacks()
     var
       purchasedStickerPacks: seq[int]
@@ -152,7 +150,7 @@ QtObject:
       purchasedStickerPacks = self.status.stickers.getPurchasedStickerPacks(address)
     let availableStickers = JSON.decode($availableStickersJSON, seq[StickerPack])
 
-    let pendingTransactions = status_wallet.getPendingTransactions()
+    let pendingTransactions = self.status.wallet.getPendingTransactions()
     var pendingStickerPacks = initHashSet[int]()
     if (pendingTransactions != ""):
       for trx in pendingTransactions.parseJson{"result"}.getElems():
