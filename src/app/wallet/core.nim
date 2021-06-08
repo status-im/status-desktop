@@ -48,7 +48,7 @@ proc init*(self: WalletController) =
   self.status.events.on("assetChanged") do(e: Args):
     self.view.updateView()
 
-  self.view.setSigningPhrase(self.status.settings.getSetting[string](Setting.SigningPhrase))
+  self.view.setSigningPhrase(self.status.settings.getSetting[:string](Setting.SigningPhrase))
   self.view.setEtherscanLink(self.status.settings.getCurrentNetworkDetails().etherscanLink)
 
   self.status.events.on(SignalType.Wallet.event) do(e:Args):
