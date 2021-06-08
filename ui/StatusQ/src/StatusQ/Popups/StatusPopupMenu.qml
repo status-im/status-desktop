@@ -16,6 +16,13 @@ Menu {
 
     property int menuItemCount: 0
     property var subMenuItemIcons: []
+    property var closeHandler
+
+    onClosed: {
+        if (typeof closeHandler === "function") {
+            closeHandler()
+        }
+    }
 
     delegate: MenuItem {
         id: statusPopupMenuItem
