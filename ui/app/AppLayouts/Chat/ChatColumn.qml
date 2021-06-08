@@ -439,7 +439,7 @@ StackLayout {
                 return {
                     address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
                     alias: chatsModel.activeChannel.alias,
-                    identicon: activeChatIdenticon,
+                    identicon: chatsModel.activeChannel.identicon,
                     name: chatsModel.activeChannel.name,
                     type: RecipientSelector.Type.Contact
                 }
@@ -466,7 +466,7 @@ StackLayout {
                 return {
                     address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
                     alias: chatsModel.activeChannel.alias,
-                    identicon: activeChatIdenticon,
+                    identicon: chatsModel.activeChannel.identicon,
                     name: chatsModel.activeChannel.name,
                     type: RecipientSelector.Type.Contact
                 }
@@ -480,7 +480,7 @@ StackLayout {
         SendModal {
             id: sendTransactionWithEns
             onOpened: {
-                walletModel.getGasPricePredictions()
+                walletModel.gasView.getGasPricePredictions()
             }
             onClosed: {
                 txModalLoader.closed()
@@ -490,7 +490,7 @@ StackLayout {
                 return {
                     address: "",
                     alias: chatsModel.activeChannel.alias,
-                    identicon: activeChatIdenticon,
+                    identicon: chatsModel.activeChannel.identicon,
                     name: chatsModel.activeChannel.name,
                     type: RecipientSelector.Type.Contact,
                     ensVerified: true

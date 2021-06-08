@@ -31,8 +31,8 @@ Item {
         if (!tokenAmount || !token.symbol) {
             return "0"
         }
-        var defaultFiatSymbol = walletModel.defaultCurrency
-        return walletModel.getFiatValue(tokenAmount, token.symbol, defaultFiatSymbol) + " " + defaultFiatSymbol.toUpperCase()
+        var defaultFiatSymbol = walletModel.balanceView.defaultCurrency
+        return walletModel.balanceView.getFiatValue(tokenAmount, token.symbol, defaultFiatSymbol) + " " + defaultFiatSymbol.toUpperCase()
     }
     property int state: commandParametersObject.commandState
     property bool outgoing: {

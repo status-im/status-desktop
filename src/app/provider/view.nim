@@ -7,12 +7,6 @@ import nbaser
 import stew/byteutils
 from base32 import nil
 
-const HTTPS_SCHEME = "https"
-const IPFS_GATEWAY =  ".infura.status.im"
-const SWARM_GATEWAY = "swarm-gateways.net"
-
-const base58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-
 logScope:
   topics = "provider-view"
 
@@ -68,30 +62,14 @@ QtObject:
     self.status.permissions.clearPermissions()
 
   proc ensResourceURL*(self: Web3ProviderView, ens: string, url: string): string {.slot.} =
-    let contentHash = contenthash(ens)
-    if contentHash == "": # ENS does not have a content hash
-      return url_replaceHostAndAddPath(url, url_host(url), HTTPS_SCHEME)
-
-    let decodedHash = contentHash.decodeENSContentHash()
-    case decodedHash[0]:
-    of ENSType.IPFS:
-      let base32Hash = base32.encode(string.fromBytes(base58.decode(decodedHash[1]))).toLowerAscii().replace("=", "")
-      result = url_replaceHostAndAddPath(url, base32Hash & IPFS_GATEWAY, HTTPS_SCHEME)
-    of ENSType.SWARM:
-      result = url_replaceHostAndAddPath(url, SWARM_GATEWAY, HTTPS_SCHEME, "/bzz:/" & decodedHash[1] & "/")
-    of ENSType.IPNS:
-      result = url_replaceHostAndAddPath(url, decodedHash[1], HTTPS_SCHEME)
-    else: 
-      warn "Unknown content for", ens, contentHash
+    let (url, base, http_scheme, path_prefix, hasContentHash) = self.status.provider.ensResourceURL(ens, url)
+    result = url_replaceHostAndAddPath(url, (if hasContentHash: base else: url_host(base)), http_scheme, path_prefix)
 
   proc replaceHostByENS*(self: Web3ProviderView, url: string, ens: string): string {.slot.} =
     result = url_replaceHostAndAddPath(url, ens)
 
   proc getHost*(self: Web3ProviderView, url: string): string {.slot.} =
     result = url_host(url)
-
-  proc signMessage*(self: Web3ProviderView, payload: string, password: string) {.slot.} =
-    let jsonPayload = payload.parseJson
 
   proc init*(self: Web3ProviderView) =
     self.setDappsAddress(self.status.settings.getSetting[:string](Setting.DappsAddress))

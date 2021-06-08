@@ -14,7 +14,7 @@ ModalPopup {
     property bool showBackBtn: false
 
     Component.onCompleted: {
-        walletModel.getGasPricePredictions()
+        walletModel.gasView.getGasPricePredictions()
     }
 
     //% "Authorize %1 %2"
@@ -72,15 +72,15 @@ ModalPopup {
 
             AccountSelector {
                 id: selectFromAccount
-                accounts: walletModel.accounts
+                accounts: walletModel.accountsView.accounts
                 selectedAccount: {
-                    const currAcc = walletModel.currentAccount
+                    const currAcc = walletModel.accountsView.currentAccount
                     if (currAcc.walletType !== Constants.watchWalletType) {
                         return currAcc
                     }
                     return null
                 }
-                currency: walletModel.defaultCurrency
+                currency: walletModel.balanceView.defaultCurrency
                 width: stack.width
                 //% "Choose account"
                 label: qsTrId("choose-account")
@@ -91,7 +91,7 @@ ModalPopup {
             RecipientSelector {
                 id: selectRecipient
                 visible: false
-                accounts: walletModel.accounts
+                accounts: walletModel.accountsView.accounts
                 contacts: profileModel.contacts.addedContacts
                 selectedRecipient: { "address": utilsModel.stickerMarketAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
@@ -100,11 +100,11 @@ ModalPopup {
             GasSelector {
                 id: gasSelector
                 visible: false
-                slowestGasPrice: parseFloat(walletModel.safeLowGasPrice)
-                fastestGasPrice: parseFloat(walletModel.fastestGasPrice)
-                getGasEthValue: walletModel.getGasEthValue
-                getFiatValue: walletModel.getFiatValue
-                defaultCurrency: walletModel.defaultCurrency
+                slowestGasPrice: parseFloat(walletModel.gasView.safeLowGasPrice)
+                fastestGasPrice: parseFloat(walletModel.gasView.fastestGasPrice)
+                getGasEthValue: walletModel.gasView.getGasEthValue
+                getFiatValue: walletModel.balanceView.getFiatValue
+                defaultCurrency: walletModel.balanceView.defaultCurrency
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     if (!(root.stickerPackId > -1 && selectFromAccount.selectedAccount && root.packPrice && parseFloat(root.packPrice) > 0)) {
                         selectedGasLimit = 325000
@@ -153,9 +153,9 @@ ModalPopup {
                 }
                 toAccount: selectRecipient.selectedRecipient
                 asset: root.asset
-                currency: walletModel.defaultCurrency
+                currency: walletModel.balanceView.defaultCurrency
                 amount: {
-                    const fiatValue = walletModel.getFiatValue(root.packPrice || 0, root.asset.symbol, currency)
+                    const fiatValue = walletModel.balanceView.getFiatValue(root.packPrice || 0, root.asset.symbol, currency)
                     return { "value": root.packPrice, "fiatValue": fiatValue }
                 }
             }
@@ -170,7 +170,7 @@ ModalPopup {
             TransactionSigner {
                 id: transactionSigner
                 width: stack.width
-                signingPhrase: walletModel.signingPhrase
+                signingPhrase: walletModel.utilsView.signingPhrase
             }
         }
     }
@@ -220,7 +220,7 @@ ModalPopup {
                 toastMessage.source = "../../../img/loading.svg"
                 toastMessage.iconColor = Style.current.primary
                 toastMessage.iconRotates = true
-                toastMessage.link = `${walletModel.etherscanLink}/${txResult}`
+                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txResult}`
                 toastMessage.open()
             }
             onTransactionCompleted: {
@@ -238,7 +238,7 @@ ModalPopup {
                     toastMessage.iconColor = Style.current.danger
                 }
 
-                toastMessage.link = `${walletModel.etherscanLink}/${txHash}`
+                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txHash}`
                 toastMessage.open()
             }
         }

@@ -96,9 +96,22 @@ Typically this means the method has no return type and so `result =` isn't neces
 
 This usually means a method that has no return type is being discarded
 
-###   required type for <variable>: <Type> but expression '<variable>' is of type: <Type>
+###  required type for <variable>: <Type> but expression '<variable>' is of type: <Type>
 
 This tpyically means there is an import missing
+
+### type mismatch: got <Type>
+
+```
+Error: type mismatch: got <WalletView>
+but expected one of:
+template `.`(a: Wrapnil; b): untyped
+  first type mismatch at position: 1
+  required type for a: Wrapnil
+  but expression 'self' is of type: WalletView
+```
+
+There is likely a typo or the method is not public
 
 ## Warnings
 

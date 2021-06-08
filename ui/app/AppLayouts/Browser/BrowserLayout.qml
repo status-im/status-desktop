@@ -212,7 +212,7 @@ property Component sendTransactionModalComponent: SignTransactionModal {}
                         toastMessage.source = "../../img/loading.svg"
                         toastMessage.iconColor = Style.current.primary
                         toastMessage.iconRotates = true
-                        toastMessage.link = `${_walletModel.etherscanLink}/${responseObj.result.result}`
+                        toastMessage.link = `${_walletModel.utilsView.etherscanLink}/${responseObj.result.result}`
                         toastMessage.open()
                     } catch (e) {
                         if (Utils.isInvalidPasswordMessage(e.message)){
@@ -229,7 +229,7 @@ property Component sendTransactionModalComponent: SignTransactionModal {}
                 }
 
                 sendDialog.open();
-                walletModel.getGasPricePredictions()
+                walletModel.gasView.getGasPricePredictions()
             } else if (request.type === Constants.web3SendAsyncReadOnly && ["eth_sign", "personal_sign", "eth_signTypedData", "eth_signTypedData_v3"].indexOf(request.payload.method) > -1) {
                 const signDialog = signMessageModalComponent.createObject(browserWindow, {
                         request,

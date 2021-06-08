@@ -27,7 +27,7 @@ ModalPopup {
 
     function sendTransaction() {
         stack.currentGroup.isPending = true
-        walletModel.sendTransaction(selectFromAccount.selectedAccount.address,
+        walletModel.transactionsView.sendTransaction(selectFromAccount.selectedAccount.address,
                                                  selectRecipient.selectedRecipient.address,
                                                  txtAmount.selectedAsset.address,
                                                  txtAmount.selectedAmount,
@@ -55,15 +55,15 @@ ModalPopup {
 
             AccountSelector {
                 id: selectFromAccount
-                accounts: walletModel.accounts
+                accounts: walletModel.accountsView.accounts
                 selectedAccount: {
-                    const currAcc = walletModel.currentAccount
+                    const currAcc = walletModel.accountsView.currentAccount
                     if (currAcc.walletType !== Constants.watchWalletType) {
                         return currAcc
                     }
                     return null
                 }
-                currency: walletModel.defaultCurrency
+                currency: walletModel.balanceView.defaultCurrency
                 width: stack.width
                 //% "From account"
                 label: qsTrId("from-account")
@@ -76,7 +76,7 @@ ModalPopup {
             }
             RecipientSelector {
                 id: selectRecipient
-                accounts: walletModel.accounts
+                accounts: walletModel.accountsView.accounts
                 contacts: profileModel.contacts.addedContacts
                 //% "Recipient"
                 label: qsTrId("recipient")
@@ -96,9 +96,9 @@ ModalPopup {
             AssetAndAmountInput {
                 id: txtAmount
                 selectedAccount: selectFromAccount.selectedAccount
-                defaultCurrency: walletModel.defaultCurrency
-                getFiatValue: walletModel.getFiatValue
-                getCryptoValue: walletModel.getCryptoValue
+                defaultCurrency: walletModel.balanceView.defaultCurrency
+                getFiatValue: walletModel.balanceView.getFiatValue
+                getCryptoValue: walletModel.balanceView.getCryptoValue
                 width: stack.width
                 onSelectedAssetChanged: if (isValid) { gasSelector.estimateGas() }
                 onSelectedAmountChanged: if (isValid) { gasSelector.estimateGas() }
@@ -107,11 +107,11 @@ ModalPopup {
                 id: gasSelector
                 anchors.top: txtAmount.bottom
                 anchors.topMargin: Style.current.bigPadding * 2
-                slowestGasPrice: parseFloat(walletModel.safeLowGasPrice)
-                fastestGasPrice: parseFloat(walletModel.fastestGasPrice)
-                getGasEthValue: walletModel.getGasEthValue
-                getFiatValue: walletModel.getFiatValue
-                defaultCurrency: walletModel.defaultCurrency
+                slowestGasPrice: parseFloat(walletModel.gasView.safeLowGasPrice)
+                fastestGasPrice: parseFloat(walletModel.gasView.fastestGasPrice)
+                getGasEthValue: walletModel.gasView.getGasEthValue
+                getFiatValue: walletModel.balanceView.getFiatValue
+                defaultCurrency: walletModel.balanceView.defaultCurrency
                 width: stack.width
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
@@ -119,7 +119,7 @@ ModalPopup {
                         txtAmount.selectedAsset && txtAmount.selectedAsset.address &&
                         txtAmount.selectedAmount)) return
                     
-                    let gasEstimate = JSON.parse(walletModel.estimateGas(
+                    let gasEstimate = JSON.parse(walletModel.gasView.estimateGas(
                         selectFromAccount.selectedAccount.address,
                         selectRecipient.selectedRecipient.address,
                         txtAmount.selectedAsset.address,
@@ -163,7 +163,7 @@ ModalPopup {
                 toAccount: selectRecipient.selectedRecipient
                 asset: txtAmount.selectedAsset
                 amount: { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount }
-                currency: walletModel.defaultCurrency
+                currency: walletModel.balanceView.defaultCurrency
             }
             SendToContractWarning {
                 id: sendToContractWarning
@@ -181,7 +181,7 @@ ModalPopup {
             TransactionSigner {
                 id: transactionSigner
                 width: stack.width
-                signingPhrase: walletModel.signingPhrase
+                signingPhrase: walletModel.utilsView.signingPhrase
             }
         }
     }
@@ -221,7 +221,7 @@ ModalPopup {
         }
 
         Connections {
-            target: walletModel
+            target: walletModel.transactionsView
             onTransactionWasSent: {
                 try {
                     let response = JSON.parse(txResult)
@@ -245,7 +245,7 @@ ModalPopup {
                     toastMessage.source = "../../img/loading.svg"
                     toastMessage.iconColor = Style.current.primary
                     toastMessage.iconRotates = true
-                    toastMessage.link = `${walletModel.etherscanLink}/${response.result}`
+                    toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
                     toastMessage.open()
                     root.close()
                 } catch (e) {
@@ -264,7 +264,7 @@ ModalPopup {
                     toastMessage.source = "../../img/block-icon.svg"
                     toastMessage.iconColor = Style.current.danger
                 }
-                toastMessage.link = `${walletModel.etherscanLink}/${txHash}`
+                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txHash}`
                 toastMessage.open()
             }
         }

@@ -109,9 +109,9 @@ Popup {
             anchors.left: parent.left
             anchors.right: copyBtn.left
             anchors.rightMargin: Style.current.padding
-            accounts: walletModel.accounts
+            accounts: walletModel.accountsView.accounts
             selectedAccount: walletModel.dappBrowserAccount
-            currency: walletModel.defaultCurrency
+            currency: walletModel.balanceView.defaultCurrency
             onSelectedAccountChanged: {
                 if (!accountSelectorRow.currentAddress) {
                     // We just set the account for the first time. Nothing to do here

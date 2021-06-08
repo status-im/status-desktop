@@ -283,7 +283,7 @@ Item {
             toastMessage.source = "../../../img/loading.svg"
             toastMessage.iconColor = Style.current.primary
             toastMessage.iconRotates = true
-            toastMessage.link = `${walletModel.etherscanLink}/${txResult}`
+            toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txResult}`
             toastMessage.open()
         }
         onTransactionCompleted: {
@@ -314,7 +314,7 @@ Item {
                 toastMessage.iconColor = Style.current.danger
             }
 
-            toastMessage.link = `${walletModel.etherscanLink}/${txHash}`
+            toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txHash}`
             toastMessage.open()
         }
     }

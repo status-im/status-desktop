@@ -72,7 +72,7 @@ ModalPopup {
     TransactionSigner {
         id: transactionSigner
         width: parent.width
-        signingPhrase: walletModel.signingPhrase
+        signingPhrase: walletModel.utilsView.signingPhrase
         visible: showSigningPhrase
     }
 

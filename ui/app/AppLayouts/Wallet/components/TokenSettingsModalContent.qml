@@ -62,10 +62,10 @@ Item {
             }
             StatusCheckBox  {
                 id: assetCheck
-                checked: walletModel.hasAsset(symbol)
+                checked: walletModel.tokensView.hasAsset(symbol)
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.smallPadding
-                onClicked: walletModel.toggleAsset(symbol)
+                onClicked: walletModel.tokensView.toggleAsset(symbol)
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -79,7 +79,7 @@ Item {
                         return contextMenu.popup(assetSymbol.x - 100, assetSymbol.y + 25)
                     }
                     assetCheck.checked = !assetCheck.checked
-                    walletModel.toggleAsset(symbol)
+                    walletModel.tokensView.toggleAsset(symbol)
                 }
                 onEntered: {
                     tokenContainer.hovered = true
@@ -101,7 +101,7 @@ Item {
                         enabled: isCustom
                         //% "Remove token"
                         text: qsTrId("remove-token")
-                        onTriggered: walletModel.removeCustomToken(address)
+                        onTriggered: walletModel.tokensView.removeCustomToken(address)
                     }
                 }
             }
@@ -142,14 +142,14 @@ Item {
 
                 Repeater {
                     id: customTokensRepeater
-                    model: walletModel.customTokenList
+                    model: walletModel.tokensView.customTokenList
                     delegate: tokenComponent
                     anchors.top: customLbl.bottom
                     anchors.topMargin: Style.current.smallPadding
                 }
 
                 Connections {
-                    target: walletModel.customTokenList
+                    target: walletModel.tokensView.customTokenList
                     onTokensLoaded: {
                         customLbl.visible = cnt > 0
                     }
@@ -172,7 +172,7 @@ Item {
                 }
 
                 Repeater {
-                    model: walletModel.defaultTokenList
+                    model: walletModel.tokensView.defaultTokenList
                     delegate: tokenComponent
                     anchors.top: defaultLbl.bottom
                     anchors.topMargin: Style.current.smallPadding
