@@ -68,15 +68,15 @@ ModalPopup {
 
             AccountSelector {
                 id: selectFromAccount
-                accounts: walletModel.accounts
+                accounts: walletModel.accountsView.accounts
                 selectedAccount: {
-                    const currAcc = walletModel.currentAccount
+                    const currAcc = walletModel.accountsView.currentAccount
                     if (currAcc.walletType !== Constants.watchWalletType) {
                         return currAcc
                     }
                     return null
                 }
-                currency: walletModel.defaultCurrency
+                currency: walletModel.balanceView.defaultCurrency
                 width: stack.width
                 //% "Choose account"
                 label: qsTrId("choose-account")
@@ -87,7 +87,7 @@ ModalPopup {
             RecipientSelector {
                 id: selectRecipient
                 visible: false
-                accounts: walletModel.accounts
+                accounts: walletModel.accountsView.accounts
                 contacts: profileModel.contacts.addedContacts
                 selectedRecipient: { "address": utilsModel.ensRegisterAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
@@ -96,11 +96,11 @@ ModalPopup {
             GasSelector {
                 id: gasSelector
                 visible: false
-                slowestGasPrice: parseFloat(walletModel.safeLowGasPrice)
-                fastestGasPrice: parseFloat(walletModel.fastestGasPrice)
-                getGasEthValue: walletModel.getGasEthValue
-                getFiatValue: walletModel.getFiatValue
-                defaultCurrency: walletModel.defaultCurrency
+                slowestGasPrice: parseFloat(walletModel.gasView.safeLowGasPrice)
+                fastestGasPrice: parseFloat(walletModel.gasView.fastestGasPrice)
+                getGasEthValue: walletModel.gasView.getGasEthValue
+                getFiatValue: walletModel.balanceView.getFiatValue
+                defaultCurrency: walletModel.balanceView.defaultCurrency
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     if (!(root.ensUsername !== "" && selectFromAccount.selectedAccount)) {
                         selectedGasLimit = 80000;
@@ -137,9 +137,9 @@ ModalPopup {
                 }
                 toAccount: selectRecipient.selectedRecipient
                 asset: root.asset
-                currency: walletModel.defaultCurrency
+                currency: walletModel.balanceView.defaultCurrency
                 amount: {
-                    const fiatValue = walletModel.getFiatValue(0, root.asset.symbol, currency)
+                    const fiatValue = walletModel.balanceView.getFiatValue(0, root.asset.symbol, currency)
                     return { "value": 0, "fiatValue": fiatValue }
                 }
             }
@@ -154,7 +154,7 @@ ModalPopup {
             TransactionSigner {
                 id: transactionSigner
                 width: stack.width
-                signingPhrase: walletModel.signingPhrase
+                signingPhrase: walletModel.utilsView.signingPhrase
             }
         }
     }

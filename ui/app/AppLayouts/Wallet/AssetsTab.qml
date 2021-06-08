@@ -59,7 +59,7 @@ Item {
             StyledText {
                 id: assetFiatValue
                 color: Style.current.secondaryText
-                text: Utils.toLocaleString(fiatBalance, globalSettings.locale) + " " + walletModel.defaultCurrency.toUpperCase()
+                text: Utils.toLocaleString(fiatBalance, globalSettings.locale) + " " + walletModel.balanceView.defaultCurrency.toUpperCase()
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.bottom: parent.bottom
@@ -93,7 +93,7 @@ Item {
             spacing: Style.current.padding * 2
             anchors.fill: parent
     //        model: exampleModel
-            model: walletModel.assets
+            model: walletModel.tokensView.assets
             delegate: assetViewDelegate
             boundsBehavior: Flickable.StopAtBounds
         }

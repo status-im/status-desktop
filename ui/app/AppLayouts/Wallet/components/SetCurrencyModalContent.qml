@@ -59,7 +59,7 @@ Item {
                     anchors.rightMargin: Style.current.padding
                     anchors.verticalCenter: parent.verticalCenter
                     ButtonGroup.group: currencyGroup
-                    onClicked: { walletModel.setDefaultCurrency(key) }
+                    onClicked: { walletModel.balanceView.setDefaultCurrency(key) }
                 }
 
                 MouseArea {
@@ -75,7 +75,7 @@ Item {
                     onClicked: {
                         currencyRadioBtn.checked = !currencyRadioBtn.checked
                         modalBody.currency = key
-                        walletModel.setDefaultCurrency(key)
+                        walletModel.balanceView.setDefaultCurrency(key)
                     }
                 }
             }

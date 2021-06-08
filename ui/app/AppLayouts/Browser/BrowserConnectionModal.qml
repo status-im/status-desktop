@@ -117,9 +117,9 @@ Popup {
             width: 190
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             showAccountDetails: false
-            accounts: walletModel.accounts
+            accounts: walletModel.accountsView.accounts
             selectedAccount: walletModel.dappBrowserAccount
-            currency: walletModel.defaultCurrency
+            currency: walletModel.balanceView.defaultCurrency
             onSelectedAccountChanged: {
                 if (!root.currentAddress) {
                     // We just set the account for the first time. Nothing to do here

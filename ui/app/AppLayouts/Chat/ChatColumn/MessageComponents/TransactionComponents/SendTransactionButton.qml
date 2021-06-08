@@ -30,8 +30,8 @@ Item {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                walletModel.setFocusedAccountByAddress(commandParametersObject.fromAddress)
-                var acc = walletModel.focusedAccount
+                walletModel.accountsView.setFocusedAccountByAddress(commandParametersObject.fromAddress)
+                var acc = walletModel.accountsView.focusedAccount
                 openPopup(signTxComponent, {selectedAccount: {
                                   name: acc.name,
                                   address: commandParametersObject.fromAddress,
@@ -46,7 +46,7 @@ Item {
         id: signTxComponent
         SignTransactionModal {
             onOpened: {
-                walletModel.getGasPricePredictions()
+                walletModel.gasView.getGasPricePredictions()
             }
             onClosed: {
                 destroy();

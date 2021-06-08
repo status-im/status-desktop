@@ -11,12 +11,12 @@ import "../../../shared/status"
 Item {
     property int pageSize: 20 // number of transactions per page
     property var tokens: {
-        let count = walletModel.defaultTokenList.rowCount()
+        const count = walletModel.tokensView.defaultTokenList.rowCount()
         const toks = []
         for (var i = 0; i < count; i++) {
             toks.push({
-                          "address": walletModel.defaultTokenList.rowData(i, 'address'),
-                          "symbol": walletModel.defaultTokenList.rowData(i, 'symbol')
+                          "address": walletModel.tokensView.defaultTokenList.rowData(i, 'address'),
+                          "symbol": walletModel.tokensView.defaultTokenList.rowData(i, 'symbol')
                       })
         }
         count = walletModel.customTokenList.rowCount()
@@ -41,6 +41,17 @@ Item {
         }
     }
 
+    // function checkIfHistoryIsBeingFetched() {
+    //     loadMoreButton.loadedMore = false;
+
+    //     // prevent history from being fetched everytime you click on
+    //     // the history tab
+    //     if (walletModel.historyView.isHistoryFetched(walletModel.accountsView.currentAccount.account))
+    //         return;
+
+    //     fetchHistory();
+    // }
+
     id: root
 
     Loader {
@@ -58,7 +69,8 @@ Item {
     }
 
     Connections {
-        target: walletModel
+        target: walletModel.historyView
+        // onHistoryWasFetched: checkIfHistoryIsBeingFetched()
         onLoadingTrxHistoryChanged: {
             if (walletModel.currentAccount.address.toLowerCase() === address.toLowerCase()) {
                 loadingImg.active = isLoading
@@ -73,7 +85,7 @@ Item {
             id: transactionListItem
             property bool isHovered: false
             property string symbol: ""
-            property bool isIncoming: to === walletModel.currentAccount.address
+            property bool isIncoming: to === walletModel.accountsView.currentAccount.address
             anchors.right: parent.right
             anchors.left: parent.left
             height: 64
@@ -237,7 +249,7 @@ Item {
         width: parent.width
         clip: true
         boundsBehavior: Flickable.StopAtBounds
-        model: walletModel.transactions
+        model: walletModel.transactionsView.transactions
         delegate: transactionListItemCmp
         ScrollBar.vertical: ScrollBar {
             id: scrollBar

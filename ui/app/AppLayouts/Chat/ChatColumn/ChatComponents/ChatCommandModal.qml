@@ -35,15 +35,15 @@ ModalPopup {
 
             AccountSelector {
                 id: selectFromAccount
-                accounts: walletModel.accounts
+                accounts: walletModel.accountsView.accounts
                 selectedAccount: {
-                    const currAcc = walletModel.currentAccount
+                    const currAcc = walletModel.accountsView.currentAccount
                     if (currAcc.walletType !== Constants.watchWalletType) {
                         return currAcc
                     }
                     return null
                 }
-                currency: walletModel.defaultCurrency
+                currency: walletModel.balanceView.defaultCurrency
                 width: stack.width
                 label: {
                     return root.isRequested ? 
@@ -73,7 +73,7 @@ ModalPopup {
 
             RecipientSelector {
                 id: selectRecipient
-                accounts: walletModel.accounts
+                accounts: walletModel.accountsView.accounts
                 contacts: profileModel.contacts.addedContacts
                 label: root.isRequested ?
                   //% "From"
@@ -97,9 +97,9 @@ ModalPopup {
             AssetAndAmountInput {
                 id: txtAmount
                 selectedAccount: selectFromAccount.selectedAccount
-                defaultCurrency: walletModel.defaultCurrency
-                getFiatValue: walletModel.getFiatValue
-                getCryptoValue: walletModel.getCryptoValue
+                defaultCurrency: walletModel.balanceView.defaultCurrency
+                getFiatValue: walletModel.balanceView.getFiatValue
+                getCryptoValue: walletModel.balanceView.getCryptoValue
                 validateBalance: !root.isRequested
                 width: stack.width
             }
@@ -121,7 +121,7 @@ ModalPopup {
                 asset: txtAmount.selectedAsset
                 amount: { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount }
                 toWarn: addressRequiredValidator.isWarn
-                currency: walletModel.defaultCurrency
+                currency: walletModel.balanceView.defaultCurrency
             }
 
             AddressRequiredValidator {

@@ -40,8 +40,8 @@ ModalPopup {
         id: accountSelector
         label: ""
         showAccountDetails: false
-        accounts: walletModel.accounts
-        currency: walletModel.defaultCurrency
+        accounts: walletModel.accountsView.accounts
+        currency: walletModel.balanceView.defaultCurrency
         anchors.top: qrCodeBox.bottom
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter

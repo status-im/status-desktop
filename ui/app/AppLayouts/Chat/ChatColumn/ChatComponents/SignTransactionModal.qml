@@ -19,7 +19,7 @@ ModalPopup {
     property alias transactionSigner: transactionSigner
 
     property var sendTransaction: function(selectedGasLimit, selectedGasPrice, enteredPassword) {
-        let responseStr = walletModel.sendTransaction(selectFromAccount.selectedAccount.address,
+        let responseStr = walletModel.transactionsView.sendTransaction(selectFromAccount.selectedAccount.address,
                                                  selectRecipient.selectedRecipient.address,
                                                  root.selectedAsset.address,
                                                  root.selectedAmount,
@@ -64,7 +64,7 @@ ModalPopup {
             id: groupSelectAcct
             headerText: {
                 if(trxData.startsWith("0x095ea7b3")){
-                    const approveData = JSON.parse(walletModel.decodeTokenApproval(selectedRecipient.address, trxData))
+                    const approveData = JSON.parse(walletModel.tokensView.decodeTokenApproval(selectedRecipient.address, trxData))
                     if(approveData.symbol)
                         //% "Authorize %1 %2"
                         return qsTrId("authorize--1--2").arg(approveData.amount).arg(approveData.symbol)    
@@ -81,8 +81,8 @@ ModalPopup {
             }
             AccountSelector {
                 id: selectFromAccount
-                accounts: walletModel.accounts
-                currency: walletModel.defaultCurrency
+                accounts: walletModel.accountsView.accounts
+                currency: walletModel.balanceView.defaultCurrency
                 width: stack.width
                 selectedAccount: root.selectedAccount
                 //% "Choose account"
@@ -94,7 +94,7 @@ ModalPopup {
             RecipientSelector {
                 id: selectRecipient
                 visible: false
-                accounts: walletModel.accounts
+                accounts: walletModel.accountsView.accounts
                 contacts: profileModel.contacts.addedContacts
                 selectedRecipient: root.selectedRecipient
                 readOnly: true
@@ -113,11 +113,11 @@ ModalPopup {
             GasSelector {
                 id: gasSelector
                 anchors.topMargin: Style.current.bigPadding
-                slowestGasPrice: parseFloat(walletModel.safeLowGasPrice)
-                fastestGasPrice: parseFloat(walletModel.fastestGasPrice)
-                getGasEthValue: walletModel.getGasEthValue
-                getFiatValue: walletModel.getFiatValue
-                defaultCurrency: walletModel.defaultCurrency
+                slowestGasPrice: parseFloat(walletModel.gasView.safeLowGasPrice)
+                fastestGasPrice: parseFloat(walletModel.gasView.fastestGasPrice)
+                getGasEthValue: walletModel.gasView.getGasEthValue
+                getFiatValue: walletModel.balanceView.getFiatValue
+                defaultCurrency: walletModel.balanceView.defaultCurrency
                 width: stack.width
     
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
@@ -129,7 +129,7 @@ ModalPopup {
                         return
                     }
                     
-                    let gasEstimate = JSON.parse(walletModel.estimateGas(
+                    let gasEstimate = JSON.parse(walletModel.gasView.estimateGas(
                         selectFromAccount.selectedAccount.address,
                         selectRecipient.selectedRecipient.address,
                         root.selectedAsset.address,
@@ -183,7 +183,7 @@ ModalPopup {
                 toAccount: selectRecipient.selectedRecipient
                 asset: root.selectedAsset
                 amount: { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount }
-                currency: walletModel.defaultCurrency
+                currency: walletModel.balanceView.defaultCurrency
                 isFromEditable: false
                 trxData: root.trxData
                 isGasEditable: true
@@ -224,7 +224,7 @@ ModalPopup {
             TransactionSigner {
                 id: transactionSigner
                 width: stack.width
-                signingPhrase: walletModel.signingPhrase
+                signingPhrase: walletModel.utilsView.signingPhrase
             }
         }
     }
@@ -273,7 +273,7 @@ ModalPopup {
         }
 
         Connections {
-            target: walletModel
+            target: walletModel.transactionsView
             onTransactionWasSent: {
                 try {
                     let response = JSON.parse(txResult)
@@ -297,7 +297,7 @@ ModalPopup {
                     toastMessage.source = "../../../../img/loading.svg"
                     toastMessage.iconColor = Style.current.primary
                     toastMessage.iconRotates = true
-                    toastMessage.link = `${walletModel.etherscanLink}/${response.result}`
+                    toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
                     toastMessage.open()
                     root.close()
                 } catch (e) {

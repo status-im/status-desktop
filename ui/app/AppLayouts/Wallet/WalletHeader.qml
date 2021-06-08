@@ -7,7 +7,7 @@ import "../../../shared/status"
 import "./components"
 
 Item {
-    property var currentAccount: walletModel.currentAccount
+    property var currentAccount: walletModel.accountsView.currentAccount
     property var changeSelectedAccount
 
     id: walletHeader
@@ -175,7 +175,7 @@ Item {
                     icon.height: 16
                     onTriggered: {
                         openPopup(tokenSettingsModalComponent)
-                        walletModel.loadCustomTokens()
+                        walletModel.tokensView.loadCustomTokens()
                     }
                 }
                 Action {
@@ -186,7 +186,7 @@ Item {
                     icon.height: 16
                     onTriggered: {
                         openPopup(setCurrencyModalComponent, { 
-                            defaultCurrency: walletModel.defaultCurrency
+                            defaultCurrency: walletModel.balanceView.defaultCurrency
                         })
                     }
                 }

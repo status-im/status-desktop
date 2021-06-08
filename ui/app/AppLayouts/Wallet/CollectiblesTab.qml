@@ -45,7 +45,7 @@ Item {
 
         Repeater {
             id: collectiblesRepeater
-            model: walletModel.collectiblesLists
+            model: walletModel.collectiblesView.collectiblesLists
 
             CollectiblesContainer {
                 property var collectibleData: CollectiblesData.collectiblesData[model.collectibleType]
@@ -63,7 +63,7 @@ Item {
     }
 
     Connections {
-        target: walletModel.collectiblesLists
+        target: walletModel.collectiblesView.collectiblesLists
         onDataChanged: {
             checkCollectiblesVisibility()
         }
