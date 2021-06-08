@@ -1,7 +1,6 @@
 import NimQml, tables, json, chronicles
-import ../../../status/[status, chat/message, chat/chat]
+import ../../../status/[status, chat/message, chat/chat, settings]
 import message_list, chat_item
-import ../../../status/libstatus/settings as status_settings
 import ../../../status/libstatus/utils as status_utils
 import ../../../status/libstatus/types
 
@@ -30,7 +29,7 @@ QtObject:
     result.setup
 
   proc init*(self: ReactionView) =
-    self.pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    self.pubKey = self.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
 
   proc messageEmojiReactionId(self: ReactionView, chatId: string, messageId: string, emojiId: int): string =
     let chat = self.status.chat.channels[chatId]
