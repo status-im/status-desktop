@@ -35,6 +35,8 @@ Rectangle {
 
     property alias hovered: sensor.containsMouse
 
+    property bool highlighted: false
+
     property int type: StatusFlatRoundButton.Type.Primary
 
     signal pressed(var mouse)
@@ -46,8 +48,6 @@ Rectangle {
         Primary,
         Secondary
     }
-
-
 
     /// Implementation
 
@@ -86,7 +86,7 @@ Rectangle {
 
     color: {
         if (statusFlatRoundButton.enabled) {
-            return sensor.containsMouse ? backgroundSettings.hoverColor
+            return sensor.containsMouse || highlighted ? backgroundSettings.hoverColor
                                         : backgroundSettings.color
         } else {
             return backgroundSettings.disabledColor

@@ -161,10 +161,9 @@ Rectangle {
 
                     notificationCount: 1
 
-                    onMenuButtonClicked: contextMenu.popup()
                     onNotificationButtonClicked: notificationCount = 0
 
-                    StatusPopupMenu {
+                    popupMenu: StatusPopupMenu {
                         id: contextMenu
 
                         StatusMenuItem {

@@ -14,9 +14,17 @@ Rectangle {
     property alias chatInfoButton: statusChatInfoButton
     property int notificationCount: 0
 
+    property Component popupMenu
+
     signal chatInfoButtonClicked()
     signal menuButtonClicked()
     signal notificationButtonClicked()
+
+    onPopupMenuChanged: {
+        if (!!popupMenu) {
+            popupMenuSlot.sourceComponent = popupMenu
+        }
+    }
 
     StatusChatInfoButton {
         id: statusChatInfoButton
@@ -34,12 +42,18 @@ Rectangle {
         spacing: 8
 
         StatusFlatRoundButton {
+            id: menuButton
             width: 32
             height: 32
             icon.name: "more"
             type: StatusFlatRoundButton.Type.Secondary
+            visible: !!statusChatToolBar.popupMenu
 
-            onClicked: statusChatToolBar.menuButtonClicked()
+            onClicked: {
+                statusChatToolBar.menuButtonClicked()
+                highlighted = true
+                popupMenuSlot.item.popup()
+            }
         }
 
         Rectangle {
@@ -47,9 +61,11 @@ Rectangle {
             width: 1
             color: Theme.palette.directColor7
             anchors.verticalCenter: parent.verticalCenter
+            visible: menuButton.visible && notificationButton.visible
         }
 
         StatusFlatRoundButton {
+            id: notificationButton
             width: 32
             height: 32
 
@@ -82,6 +98,16 @@ Rectangle {
             }
         }
 
+    }
+
+    Loader {
+        id: popupMenuSlot
+        active: !!statusChatToolBar.popupMenu
+        onLoaded: {
+            popupMenuSlot.item.closeHandler = function () {
+                menuButton.highlighted = false
+            }
+        }
     }
 }
 
