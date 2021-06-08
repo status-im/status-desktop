@@ -137,3 +137,9 @@ proc addStickerToRecent*(self: StickersModel, sticker: Sticker, save: bool = fal
     self.recentStickers = self.recentStickers[0..23] # take top 24 most recent
   if save:
     status_stickers.saveRecentStickers(self.recentStickers)
+
+proc decodeContentHash*(value: string): string =
+  result = status_stickers.decodeContentHash(value)
+
+proc getPackIdFromTokenId*(tokenId: Stuint[256]): int =
+  result = status_stickers.getPackIdFromTokenId(tokenId)
