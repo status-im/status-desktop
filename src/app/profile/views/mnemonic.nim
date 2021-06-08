@@ -1,6 +1,5 @@
 import NimQml, chronicles, strutils
-import ../../../status/status
-import ../../../status/libstatus/settings as status_settings
+import ../../../status/[status, settings]
 import ../../../status/libstatus/types
 import options
 
@@ -25,7 +24,7 @@ QtObject:
 
   proc isBackedUp*(self: MnemonicView): bool {.slot.} =
     if self.isMnemonicBackedUp.isNone:
-      self.isMnemonicBackedUp = some(status_settings.getSetting[string](Setting.Mnemonic, "") == "")
+      self.isMnemonicBackedUp = some(self.status.settings.getSetting[:string](Setting.Mnemonic, "") == "")
     self.isMnemonicBackedUp.get()
   
   proc seedPhraseRemoved*(self: MnemonicView) {.signal.}
@@ -36,7 +35,7 @@ QtObject:
 
   proc getMnemonic*(self: MnemonicView): QVariant {.slot.} =
     # Do not keep the mnemonic in memory, so fetch it when necessary
-    let mnemonic = status_settings.getSetting[string](Setting.Mnemonic, "")
+    let mnemonic = self.status.settings.getSetting[:string](Setting.Mnemonic, "")
     return newQVariant(mnemonic)
 
   QtProperty[QVariant] get:
@@ -44,12 +43,12 @@ QtObject:
     notify = seedPhraseRemoved
 
   proc remove*(self: MnemonicView) {.slot.} =
-    discard status_settings.saveSetting(Setting.Mnemonic, "")
+    discard self.status.settings.saveSetting(Setting.Mnemonic, "")
     self.isMnemonicBackedUp = some(true)
     self.seedPhraseRemoved()
 
   proc getWord*(self: MnemonicView, idx: int): string {.slot.} =
-    let mnemonics = status_settings.getSetting[string](Setting.Mnemonic, "").split(" ")
+    let mnemonics = self.status.settings.getSetting[:string](Setting.Mnemonic, "").split(" ")
     return mnemonics[idx]
 
 

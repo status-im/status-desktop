@@ -5,11 +5,10 @@ import # vendor libs
   NimQml, chronicles, stint
 
 import # status-desktop libs
-  ../../status/[status, wallet],
+  ../../status/[status, wallet, settings],
   ../../status/wallet/collectibles as status_collectibles,
   ../../status/libstatus/accounts/constants,
   ../../status/libstatus/wallet as status_wallet,
-  ../../status/libstatus/settings as status_settings,
   ../../status/libstatus/tokens, ../../status/libstatus/types,
   ../../status/libstatus/utils as status_utils,
   ../../status/libstatus/eth/contracts, ../../status/ens as status_ens,
@@ -751,7 +750,7 @@ QtObject:
   proc setDappBrowserAddress*(self: WalletView) {.slot.} =
     if(self.accounts.rowCount() == 0): return
 
-    let dappAddress = status_settings.getSetting[string](Setting.DappsAddress)
+    let dappAddress = self.status.settings.getSetting[:string](Setting.DappsAddress)
     var index = self.accounts.getAccountIndexByAddress(dappAddress)
     if index == -1: index = 0
     let selectedAccount = self.accounts.getAccount(index)

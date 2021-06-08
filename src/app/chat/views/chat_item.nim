@@ -1,7 +1,6 @@
 import NimQml, Tables, std/wrapnils
-import ../../../status/[chat/chat, status, ens, accounts]
+import ../../../status/[chat/chat, status, ens, accounts, settings]
 from ../../../status/libstatus/types import Setting
-import ../../../status/libstatus/settings as status_settings
 import ../../../status/libstatus/utils as status_utils
 
 import chat_members
@@ -140,7 +139,7 @@ QtObject:
 
   proc isMember*(self: ChatItemView): bool {.slot.} =
     if self.chatItem.isNil: return false
-    let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    let pubKey = self.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
     return self.chatItem.isMember(pubKey)
 
   QtProperty[bool] isMember:

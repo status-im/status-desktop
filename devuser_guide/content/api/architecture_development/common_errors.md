@@ -88,6 +88,14 @@ or using typedesc param with `:` like:
 
 `self.status.settings.getSetting[:string](Setting.SigningPhrase)`
 
+### undeclared identifier: 'result'
+
+Typically this means the method has no return type and so `result =` isn't necessary
+
+### expression 'method(param)' has no type (or is ambiguous)
+
+This usually means a method that has no return type is being discarded
+
 ## Warnings
 
 ### QML anchor warnings

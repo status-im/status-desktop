@@ -1,8 +1,7 @@
 import NimQml, chronicles
-import ../../../status/status
+import ../../../status/[status, settings]
 import ../../../status/profile/mailserver
 import mailservers_list
-import ../../../status/libstatus/settings as status_settings
 import ../../../status/tasks/marathon/mailserver/worker
 
 logScope:
@@ -51,18 +50,18 @@ QtObject:
     self.activeMailserverChanged(activeMailserver)
 
   proc getAutomaticSelection(self: MailserversView): bool {.slot.} =
-    status_settings.getPinnedMailserver() == ""
+    self.status.settings.getPinnedMailserver() == ""
 
   QtProperty[bool] automaticSelection:
     read = getAutomaticSelection
 
   proc setMailserver(self: MailserversView, id: string) {.slot.} =
     let enode = self.mailserversList.getMailserverEnode(id)
-    status_settings.pinMailserver(enode)
+    self.status.settings.pinMailserver(enode)
 
   proc enableAutomaticSelection(self: MailserversView, value: bool) {.slot.} =
     if value:
-      status_settings.pinMailserver()
+      self.status.settings.pinMailserver()
     else:
       let
         mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
@@ -74,8 +73,8 @@ QtObject:
       mailserverWorker.start(task)
 
   proc getActiveMailserverResult2(self: MailserversView, activeMailserver: string) {.slot.} =
-    status_settings.pinMailserver(activeMailserver)
+    self.status.settings.pinMailserver(activeMailserver)
 
   proc save(self: MailserversView, name: string, address: string) {.slot.} =
-    status_settings.saveMailserver(name, address)
+    self.status.settings.saveMailserver(name, address)
     self.mailserversList.add(Mailserver(name: name, endpoint: address))

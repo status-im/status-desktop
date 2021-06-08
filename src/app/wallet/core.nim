@@ -3,7 +3,6 @@ import NimQml, strformat, strutils, chronicles
 import view
 import views/[asset_list, account_list, account_item]
 import ../../status/libstatus/wallet as status_wallet
-# import ../../status/libstatus/settings as status_settings
 import ../../status/libstatus/types as status_types
 import ../../status/signals/types
 import ../../status/[status, wallet, settings]

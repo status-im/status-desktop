@@ -1,5 +1,5 @@
 import NimQml
-import ../../status/[status, ens, chat/stickers, wallet]
+import ../../status/[status, ens, chat/stickers, wallet, settings]
 import ../../status/libstatus/types
 import ../../status/libstatus/accounts
 import ../../status/libstatus/core

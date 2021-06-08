@@ -4,9 +4,8 @@ import ../../status/libstatus/mailservers as status_mailservers
 import ../../status/signals/types
 import ../../status/libstatus/accounts/constants
 import ../../status/libstatus/types as status_types
-import ../../status/libstatus/settings as status_settings
 import ../../status/profile/[profile, mailserver]
-import ../../status/status
+import ../../status/[status, settings]
 import ../../status/contacts as status_contacts
 import ../../status/chat as status_chat
 import ../../status/devices as status_devices
@@ -37,10 +36,10 @@ proc delete*(self: ProfileController) =
 proc init*(self: ProfileController, account: Account) =
   let profile = account.toProfileModel()
 
-  let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
-  let network = status_settings.getSetting[string](Setting.Networks_CurrentNetwork, constants.DEFAULT_NETWORK_NAME)
-  let appearance = status_settings.getSetting[int](Setting.Appearance)
-  let messagesFromContactsOnly = status_settings.getSetting[bool](Setting.MessagesFromContactsOnly)
+  let pubKey = self.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
+  let network = self.status.settings.getSetting[:string](Setting.Networks_CurrentNetwork, constants.DEFAULT_NETWORK_NAME)
+  let appearance = self.status.settings.getSetting[:int](Setting.Appearance)
+  let messagesFromContactsOnly = self.status.settings.getSetting[:bool](Setting.MessagesFromContactsOnly)
   profile.appearance = appearance
   profile.id = pubKey
   profile.address = account.keyUid
@@ -58,11 +57,11 @@ proc init*(self: ProfileController, account: Account) =
   self.view.ens.init()
   self.view.initialized()
 
-  for name, endpoint in self.status.fleet.config.getMailservers(status_settings.getFleet()).pairs():
+  for name, endpoint in self.status.fleet.config.getMailservers(self.status.settings.getFleet()).pairs():
     let mailserver = MailServer(name: name, endpoint: endpoint)
     self.view.mailservers.add(mailserver)
 
-  for mailserver in status_settings.getMailservers().getElems():
+  for mailserver in self.status.settings.getMailservers().getElems():
     let mailserver = MailServer(name: mailserver["name"].getStr(), endpoint: mailserver["address"].getStr())
     self.view.mailservers.add(mailserver)
 

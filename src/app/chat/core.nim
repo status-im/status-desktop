@@ -3,8 +3,7 @@ import ../../status/chat as chat_model
 import ../../status/messages as messages_model
 import ../../status/signals/types
 import ../../status/libstatus/types as status_types
-import ../../status/libstatus/settings as status_settings
-import ../../status/[chat, contacts, status, wallet, stickers]
+import ../../status/[chat, contacts, status, wallet, stickers, settings]
 import view, views/channels_list, views/message_list, views/reactions, views/stickers as stickers_view
 import ../../eventemitter
 
@@ -34,8 +33,8 @@ proc init*(self: ChatController) =
   self.handleChatEvents()
   self.handleSignals()
 
-  let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
-  let messagesFromContactsOnly = status_settings.getSetting[bool](Setting.MessagesFromContactsOnly, false, true)
+  let pubKey = self.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
+  let messagesFromContactsOnly = self.status.settings.getSetting[:bool](Setting.MessagesFromContactsOnly, false, true)
 
   self.view.pubKey = pubKey
   self.status.chat.init(pubKey, messagesFromContactsOnly)
