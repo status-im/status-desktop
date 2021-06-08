@@ -1,8 +1,7 @@
 import NimQml
 import chronicles, strutils
 import ../../../status/libstatus/types as status_types
-import ../../../status/libstatus/accounts as status_accounts
-import ../../../status/[status, settings]
+import ../../../status/[status, settings, accounts]
 
 QtObject:
   type Fleets * = ref object of QObject
@@ -29,7 +28,7 @@ QtObject:
     discard self.status.settings.saveSetting(Setting.Fleet, newFleet)
     let fleet = parseEnum[Fleet](newFleet)
     let installationId = self.status.settings.getSetting[:string](Setting.InstallationId)
-    let updatedNodeConfig = status_accounts.getNodeConfig(self.status.fleet.config, installationId, $self.status.settings.getCurrentNetwork(), fleet)
+    let updatedNodeConfig = self.status.accounts.getNodeConfig(self.status.fleet.config, installationId, $self.status.settings.getCurrentNetwork(), fleet)
     discard self.status.settings.saveSetting(Setting.NodeConfig, updatedNodeConfig)
 
     self.fleetChanged(newFleet)

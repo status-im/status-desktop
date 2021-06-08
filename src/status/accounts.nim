@@ -1,6 +1,7 @@
 import options, chronicles, json, json_serialization, sequtils, sugar
 import libstatus/accounts as status_accounts
 import libstatus/settings as status_settings
+import libstatus/accounts/constants
 import libstatus/types
 import libstatus/utils
 import ../eventemitter
@@ -54,6 +55,12 @@ proc generateAlias*(publicKey: string): string =
 proc generateIdenticon*(publicKey: string): string =
   result = status_accounts.generateIdenticon(publicKey)
 
+proc generateAlias*(self: AccountModel, publicKey: string): string =
+  result = generateAlias(publicKey)
+
+proc generateIdenticon*(self: AccountModel, publicKey: string): string =
+  result = generateIdenticon(publicKey)
+
 proc changeNetwork*(self: AccountModel, fleetConfig: FleetConfig, network: string) =
 
   # 1. update current network setting
@@ -81,3 +88,9 @@ proc changeNetwork*(self: AccountModel, fleetConfig: FleetConfig, network: strin
   statusGoResult = status_settings.saveSetting(Setting.Stickers_Recent, %* {})
   if statusGoResult.error != "":
     error "Error removing all recent stickers", msg=statusGoResult.error
+
+proc getNodeConfig*(self: AccountModel, fleetConfig: FleetConfig, installationId: string, networkConfig: JsonNode, fleet: Fleet = Fleet.PROD): JsonNode =
+  result = status_accounts.getNodeConfig(fleetConfig, installationId, networkConfig, fleet)
+
+proc getNodeConfig*(self: AccountModel, fleetConfig: FleetConfig, installationId: string, currentNetwork: string = constants.DEFAULT_NETWORK_NAME, fleet: Fleet = Fleet.PROD): JsonNode =
+  result = status_accounts.getNodeConfig(fleetConfig, installationId, currentNetwork, fleet)
