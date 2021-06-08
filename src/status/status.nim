@@ -2,7 +2,7 @@ import libstatus/accounts as libstatus_accounts
 import libstatus/core as libstatus_core
 import libstatus/settings as libstatus_settings
 import libstatus/types as libstatus_types
-import chat, accounts, wallet, node, network, messages, contacts, profile, stickers, permissions, fleet
+import chat, accounts, wallet, node, network, messages, contacts, profile, stickers, permissions, fleet, settings
 import ../eventemitter
 import ./tasks/task_runner_impl
 
@@ -22,6 +22,7 @@ type Status* = ref object
   stickers*: StickersModel
   permissions*: PermissionsModel
   tasks*: TaskRunner
+  settings*: SettingsModel
 
 proc newStatusInstance*(fleetConfig: string): Status =
   result = Status()
@@ -39,6 +40,7 @@ proc newStatusInstance*(fleetConfig: string): Status =
   result.network = network.newNetworkModel(result.events)
   result.stickers = stickers.newStickersModel(result.events)
   result.permissions = permissions.newPermissionsModel(result.events)
+  result.settings = settings.newSettingsModel(result.events)
 
 proc initNode*(self: Status) =
   self.tasks.init()
@@ -62,5 +64,6 @@ proc reset*(self: Status) =
 proc getNodeVersion*(self: Status): string =
   libstatus_settings.getWeb3ClientVersion()
 
+# TODO: duplicated??
 proc saveSetting*(self: Status, setting: Setting, value: string | bool) =
   discard libstatus_settings.saveSetting(setting, value)
