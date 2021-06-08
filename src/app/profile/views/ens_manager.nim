@@ -7,7 +7,7 @@ from ../../../status/types import Setting, PendingTransactionType, RpcException
 import ../../../status/ens as status_ens
 import ../../../status/libstatus/wallet as status_wallet
 import ../../../status/libstatus/settings as status_settings
-import ../../../status/libstatus/utils as libstatus_utils
+import ../../../status/utils as status_utils
 import ../../../status/[status, settings, wallet]
 import ../../../status/wallet
 import sets
@@ -204,7 +204,7 @@ QtObject:
 
 
   proc getPrice(self: EnsManager): string {.slot.} =
-    result = libstatus_utils.wei2Eth(getPrice())
+    result = status_utils.wei2Eth(getPrice())
 
   proc getUsernameRegistrar(self: EnsManager): string {.slot.} =
     result = statusRegistrarAddress()

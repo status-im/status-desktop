@@ -1,7 +1,7 @@
 import NimQml, tables, json, chronicles
 import ../../../status/[status, chat/message, chat/chat, settings]
 import message_list, chat_item
-import ../../../status/libstatus/utils as status_utils
+import ../../../status/utils as status_utils
 import ../../../status/types
 
 logScope:

@@ -5,7 +5,8 @@ import # vendor libs
   NimQml
 
 import # status-desktop libs
-  ../../../status/libstatus/[tokens, settings, utils, eth/contracts],
+  ../../../status/[utils],
+  ../../../status/libstatus/[tokens, settings, eth/contracts],
   ../../../status/tasks/[qt, task_runner_impl], ../../../status/status
 from web3/conversions import `$`
 

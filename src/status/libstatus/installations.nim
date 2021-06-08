@@ -1,4 +1,4 @@
-import json, core, utils, system
+import json, core, ../utils, system
 
 var installations: JsonNode = %*{}
 var dirty: bool = true

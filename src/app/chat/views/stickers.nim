@@ -5,7 +5,7 @@ import # vendor libs
   chronicles, NimQml
 
 import # status-desktop libs
-  ../../../status/[status, stickers, wallet, types], ../../../status/libstatus/utils,
+  ../../../status/[status, stickers, wallet, types, utils],
   ../../../status/libstatus/stickers as status_stickers, sticker_pack_list, sticker_list, chat_item, ../../../status/tasks/[qt, task_runner_impl]
 
 logScope:

@@ -1,6 +1,6 @@
 import NimQml, Tables, sequtils, sugar
 import ../../../status/chat/stickers, ./sticker_list
-import ../../../status/types, ../../../status/libstatus/utils
+import ../../../status/types, ../../../status/utils
 
 type
   StickerPackRoles {.pure.} = enum
