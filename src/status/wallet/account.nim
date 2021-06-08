@@ -1,5 +1,5 @@
 from ../../eventemitter import Args
-import ../libstatus/types
+import ../types
 import options
 
 type CollectibleList* = ref object

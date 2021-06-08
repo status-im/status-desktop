@@ -1,11 +1,7 @@
-import # std libs
-  json, options, typetraits, tables, sequtils, strutils
-
-import # vendor libs
-  web3/ethtypes, json_serialization, stint
-
-import # status-desktop libs
-  accounts/constants, ../../eventemitter
+import json, options, typetraits, tables, sequtils
+import web3/ethtypes, json_serialization, stint
+import libstatus/accounts/constants
+import ../eventemitter
 
 type SignalType* {.pure.} = enum
   Message = "messages.new"
@@ -270,3 +266,4 @@ proc getNodes*(self: FleetConfig, fleet: Fleet, nodeType: FleetNodes = FleetNode
 
 proc getMailservers*(self: FleetConfig, fleet: Fleet): Table[string, string] =
   result = self.fleet[$fleet][$FleetNodes.Mailservers]
+

@@ -2,7 +2,7 @@ import NimQml, chronicles, tables
 import ../../status/chat as chat_model
 import ../../status/messages as messages_model
 import ../../status/signals/types
-import ../../status/libstatus/types as status_types
+import ../../status/types as status_types
 import ../../status/[chat, contacts, status, wallet, stickers, settings]
 import view, views/channels_list, views/message_list, views/reactions, views/stickers as stickers_view
 import ../../eventemitter

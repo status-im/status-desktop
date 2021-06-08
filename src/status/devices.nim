@@ -1,6 +1,6 @@
 import system
 import libstatus/settings
-import libstatus/types
+import types
 import libstatus/installations
 import profile/devices
 import json

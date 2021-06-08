@@ -1,5 +1,5 @@
 import json
-import libstatus/types
+import types
 import profile/profile
 import libstatus/core as libstatus_core
 import libstatus/accounts as status_accounts

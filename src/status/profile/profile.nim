@@ -1,5 +1,5 @@
 import json
-import ../libstatus/types
+import ../types
 
 type Profile* = ref object
   id*, alias*, username*, identicon*, address*, ensName*, localNickname*: string

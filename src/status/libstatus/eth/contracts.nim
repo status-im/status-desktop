@@ -5,7 +5,7 @@ import
   web3/ethtypes, stew/byteutils, nimcrypto, json_serialization, chronicles
 
 import
-  ../types, ../settings, ../coder, transactions, methods, ../utils
+  ../../types, ../settings, ../coder, transactions, methods, ../utils
 
 export
   GetPackData, PackData, BuyToken, ApproveAndCall, Transfer, BalanceOf, Register, SetPubkey,

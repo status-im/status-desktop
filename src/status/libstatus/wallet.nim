@@ -1,12 +1,9 @@
-import # std libs
-  json, times, options, strutils, strformat
-
-import # vendor libs
-  json_serialization, stint, chronicles, web3/ethtypes
-from status_go import validateMnemonic
-
-import # status-desktop libs
-  ../wallet/account, ./types, ./conversions, ./core, ./types, ./utils
+import json, json, options, json_serialization, stint, chronicles
+import core, ../types, utils, strutils, strformat
+import utils
+from status_go import validateMnemonic#, startWallet
+import ../wallet/account
+import web3/ethtypes
 
 proc getWalletAccounts*(): seq[WalletAccount] =
   try:

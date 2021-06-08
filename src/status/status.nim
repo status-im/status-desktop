@@ -1,7 +1,7 @@
 import libstatus/accounts as libstatus_accounts
 import libstatus/core as libstatus_core
 import libstatus/settings as libstatus_settings
-import libstatus/types as libstatus_types
+import types as libstatus_types
 import chat, accounts, wallet, node, network, messages, contacts, profile, stickers, permissions, fleet, settings, mailservers
 import ../eventemitter
 import ./tasks/task_runner_impl

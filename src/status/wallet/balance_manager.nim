@@ -1,7 +1,7 @@
 import strformat, strutils, stint, httpclient, json, chronicles, net
 import ../libstatus/wallet as status_wallet
 import ../libstatus/tokens as status_tokens
-import ../libstatus/types as status_types
+import ../types as status_types
 import ../utils/cache
 import account
 import options
