@@ -9,7 +9,7 @@ import ../../status/status
 import ../../status/ens as status_ens
 import ../../status/chat/chat
 import ../../status/types
-import ../../status/libstatus/accounts/constants as accountConstants
+import ../../status/constants as accountConstants
 import qrcode/qrcode
 import ../utils/image_utils
 
