@@ -1,6 +1,5 @@
 import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat, algorithm
 import ../../status/[status, mailservers]
-import ../../status/libstatus/chat as libstatus_chat
 import ../../status/constants
 import ../../status/utils as status_utils
 import ../../status/chat as status_chat
@@ -34,7 +33,7 @@ const getLinkPreviewDataTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
   var success: bool
   # We need to call directly on libstatus because going through the status model is not thread safe
   let
-    response = libstatus_chat.getLinkPreviewData(arg.link, success)
+    response = status_chat.getLinkPreviewData(arg.link, success)
     responseJson = %* { "result": %response, "success": %success, "uuid": %arg.uuid }
   arg.finish(responseJson)
 
@@ -52,19 +51,19 @@ const asyncMessageLoadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
   let arg = decode[AsyncMessageLoadTaskArg](argEncoded)
   var messages: JsonNode
   var msgCallSuccess: bool
-  let msgCallResult = rpcChatMessages(arg.chatId, newJString(""), 20, msgCallSuccess)
+  let msgCallResult = status_chat.rpcChatMessages(arg.chatId, newJString(""), 20, msgCallSuccess)
   if(msgCallSuccess):
     messages = msgCallResult.parseJson()["result"]
 
   var reactions: JsonNode
   var reactionsCallSuccess: bool
-  let reactionsCallResult = rpcReactions(arg.chatId, newJString(""), 20, reactionsCallSuccess)
+  let reactionsCallResult = status_chat.rpcReactions(arg.chatId, newJString(""), 20, reactionsCallSuccess)
   if(reactionsCallSuccess):
     reactions = reactionsCallResult.parseJson()["result"]
 
   var pinnedMessages: JsonNode
   var pinnedMessagesCallSuccess: bool
-  let pinnedMessagesCallResult = rpcPinnedChatMessages(arg.chatId, newJString(""), 20, pinnedMessagesCallSuccess)
+  let pinnedMessagesCallResult = status_chat.rpcPinnedChatMessages(arg.chatId, newJString(""), 20, pinnedMessagesCallSuccess)
   if(pinnedMessagesCallSuccess):
     pinnedMessages = pinnedMessagesCallResult.parseJson()["result"]
 
@@ -631,17 +630,17 @@ QtObject:
 
     let messages = rpcResponseObj{"messages"}
     if(messages != nil and messages.kind != JNull):
-      let chatMessages = parseChatMessagesResponse(chatId, messages)
+      let chatMessages = status_chat.parseChatMessagesResponse(chatId, messages)
       self.status.chat.chatMessages(chatId, true, chatMessages[0], chatMessages[1])
 
     let rxns = rpcResponseObj{"reactions"}
     if(rxns != nil and rxns.kind != JNull):
-      let reactions = parseReactionsResponse(chatId, rxns)
+      let reactions = status_chat.parseReactionsResponse(chatId, rxns)
       self.status.chat.chatReactions(chatId, true, reactions[0], reactions[1])
 
     let pinnedMsgs = rpcResponseObj{"pinnedMessages"}
     if(pinnedMsgs != nil and pinnedMsgs.kind != JNull):
-      let pinnedMessages = parseChatMessagesResponse(chatId, pinnedMsgs, true)
+      let pinnedMessages = status_chat.parseChatMessagesResponse(chatId, pinnedMsgs, true)
       self.status.chat.pinnedMessagesByChatID(chatId, pinnedMessages[0], pinnedMessages[1])
 
   proc hideLoadingIndicator*(self: ChatsView) {.slot.} =

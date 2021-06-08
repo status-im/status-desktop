@@ -552,3 +552,21 @@ proc pinnedMessagesByChatID*(self: ChatModel, chatId: string, cursor: string = "
   self.msgCursor[chatId] = cursor
 
   self.events.emit("pinnedMessagesLoaded", MsgsLoadedArgs(messages: pinnedMessages))
+
+proc getLinkPreviewData*(link: string, success: var bool): JsonNode =
+  result = status_chat.getLinkPreviewData(link, success)
+
+proc rpcChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
+  result = status_chat.rpcChatMessages(chatId, cursorVal, limit, success)
+
+proc rpcReactions*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
+  result = status_chat.rpcReactions(chatId, cursorVal, limit, success)
+
+proc rpcPinnedChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
+  result = status_chat.rpcPinnedChatMessages(chatId, cursorVal, limit, success)
+
+proc parseReactionsResponse*(chatId: string, rpcResult: JsonNode): (string, seq[Reaction]) =
+  result = status_chat.parseReactionsResponse(chatId, rpcResult)
+
+proc parseChatMessagesResponse*(chatId: string, rpcResult: JsonNode, isPin: bool = false): (string, seq[Message]) =
+  result = status_chat.parseChatMessagesResponse(chatId, rpcResult, isPin)
