@@ -6,7 +6,7 @@ import # vendor libs
 
 import # status-desktop libs
   ../../../status/[status, stickers, wallet, types, utils],
-  ../../../status/libstatus/stickers as status_stickers, sticker_pack_list, sticker_list, chat_item, ../../../status/tasks/[qt, task_runner_impl]
+  sticker_pack_list, sticker_list, chat_item, ../../../status/tasks/[qt, task_runner_impl]
 
 logScope:
   topics = "stickers-view"
@@ -53,7 +53,7 @@ proc estimate[T](self: T, slot: string, packId: int, address: string, price: str
 const obtainAvailableStickerPacksTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[ObtainAvailableStickerPacksTaskArg](argEncoded)
   var running = cast[ptr Atomic[bool]](arg.running)
-  let availableStickerPacks = status_stickers.getAvailableStickerPacks(running[])
+  let availableStickerPacks = getAvailableStickerPacks(running[])
   var packs: seq[StickerPack] = @[]
   for packId, stickerPack in availableStickerPacks.pairs:
     packs.add(stickerPack)
