@@ -5,8 +5,6 @@ import sequtils
 import strutils
 from ../../../status/types import Setting, PendingTransactionType, RpcException
 import ../../../status/ens as status_ens
-import ../../../status/libstatus/wallet as status_wallet
-import ../../../status/libstatus/settings as status_settings
 import ../../../status/utils as status_utils
 import ../../../status/[status, settings, wallet]
 import ../../../status/wallet
