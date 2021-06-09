@@ -55,7 +55,8 @@ Rectangle {
             onClicked: {
                 statusChatToolBar.menuButtonClicked()
                 highlighted = true
-                popupMenuSlot.item.popup(actionButtons.x + menuButton.width - popupMenuSlot.item.width, menuButton.height + 4)
+                let p = menuButton.mapToItem(statusChatToolBar, menuButton.x, menuButton.y)
+                popupMenuSlot.item.popup(p.x + menuButton.width - popupMenuSlot.item.width, p.y + 4 + menuButton.height)
             }
         }
 

@@ -35,7 +35,9 @@ Column {
         onMenuButtonClicked: {
             highlighted = true
             menuButton.highlighted = true
-            popupMenuSlot.item.popup()
+            let p = menuButton.mapToItem(statusChatListCategoryItem, menuButton.x, menuButton.y)
+            let menuWidth = popupMenuSlot.item.width
+            popupMenuSlot.item.popup(p.x - menuWidth, p.y + menuButton.height + 4)
         }
     }
 
