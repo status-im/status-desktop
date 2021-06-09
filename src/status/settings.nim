@@ -3,7 +3,7 @@ import json, json_serialization
 import 
   sugar, sequtils, strutils, atomics
 
-import libstatus/settings as status_settings
+import libstatus/settings as libstatus_settings
 import ../eventemitter
 import signals/types
 
@@ -19,40 +19,41 @@ proc newSettingsModel*(events: EventEmitter): SettingsModel =
   result.events = events
 
 proc saveSetting*(self: SettingsModel, key: Setting, value: string | JsonNode | bool): StatusGoError =
-    result = status_settings.saveSetting(key, value)
+    result = libstatus_settings.saveSetting(key, value)
 
 proc getSetting*[T](self: SettingsModel, name: Setting, defaultValue: T, useCached: bool = true): T =
-  result = status_settings.getSetting(name, defaultValue, useCached)
+  result = libstatus_settings.getSetting(name, defaultValue, useCached)
 
 proc getSetting*[T](self: SettingsModel, name: Setting, useCached: bool = true): T =
-  result = status_settings.getSetting[T](name, useCached)
+  result = libstatus_settings.getSetting[T](name, useCached)
 
-proc getSetting*[T](name: Setting, defaultValue: T, useCached: bool = true): T =
-  result = status_settings.getSetting(name, defaultValue, useCached)
+# TODO: name with a 2 due to namespace conflicts that need to be addressed in subsquent PRs
+proc getSetting2*[T](name: Setting, defaultValue: T, useCached: bool = true): T =
+  result = libstatus_settings.getSetting(name, defaultValue, useCached)
 
-proc getSetting*[T](name: Setting, useCached: bool = true): T =
-  result = status_settings.getSetting[T](name, useCached)
+proc getSetting2*[T](name: Setting, useCached: bool = true): T =
+  result = libstatus_settings.getSetting[T](name, useCached)
 
 proc getCurrentNetworkDetails*(self: SettingsModel): LibStatusTypes.NetworkDetails =
-  result = status_settings.getCurrentNetworkDetails()
+  result = libstatus_settings.getCurrentNetworkDetails()
 
 proc getMailservers*(self: SettingsModel):JsonNode =
-  result = status_settings.getMailservers()
+  result = libstatus_settings.getMailservers()
 
 proc getPinnedMailserver*(self: SettingsModel): string =
-  result = status_settings.getPinnedMailserver()
+  result = libstatus_settings.getPinnedMailserver()
 
 proc pinMailserver*(self: SettingsModel, enode: string = "") =
-  status_settings.pinMailserver(enode)
+  libstatus_settings.pinMailserver(enode)
 
 proc saveMailserver*(self: SettingsModel, name, enode: string) =
-  status_settings.saveMailserver(name, enode)
+  libstatus_settings.saveMailserver(name, enode)
 
 proc getFleet*(self: SettingsModel): Fleet =
-    result = status_settings.getFleet()
+    result = libstatus_settings.getFleet()
 
 proc getCurrentNetwork*(): Network =
-    result = status_settings.getCurrentNetwork()
+    result = libstatus_settings.getCurrentNetwork()
 
 proc getCurrentNetwork*(self: SettingsModel): Network =
     result = getCurrentNetwork()
