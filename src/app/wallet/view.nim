@@ -5,12 +5,13 @@ import # vendor libs
   NimQml, chronicles, stint
 
 import # status-desktop libs
-  ../../status/[status, wallet, settings],
+  ../../status/[status, wallet, settings, tokens],
   ../../status/wallet/collectibles as status_collectibles,
-  ../../status/libstatus/wallet as status_wallet,
-  ../../status/libstatus/tokens, ../../status/types,
+  ../../status/wallet as status_wallet,
+  ../../status/types,
   ../../status/utils as status_utils,
-  ../../status/libstatus/eth/contracts, ../../status/ens as status_ens,
+  ../../status/tokens as status_tokens,
+  ../../status/ens as status_ens,
   views/[asset_list, account_list, account_item, token_list, transaction_list, collectibles_list],
   ../../status/tasks/[qt, task_runner_impl], ../../status/signals/types as signal_types
 
@@ -75,7 +76,7 @@ const initBalancesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[InitBalancesTaskArg](argEncoded)
   var tokenBalances = initTable[string, string]()
   for token in arg.tokenList:
-    tokenBalances[token] = getTokenBalance(token, arg.address)
+    tokenBalances[token] = status_tokens.getTokenBalance(token, arg.address)
   let output = %* {
     "address": arg.address,
     "eth": getEthBalance(arg.address),
@@ -144,7 +145,7 @@ const loadTransactionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
     arg = decode[LoadTransactionsTaskArg](argEncoded)
     output = %*{
       "address": arg.address,
-      "history": getTransfersByAddress(arg.address)
+      "history": status_wallet.getTransfersByAddress(arg.address)
     }
   arg.finish(output)
 
@@ -369,7 +370,6 @@ QtObject:
     write = setCurrentAssetList
     notify = currentAssetListChanged
 
-
   proc totalFiatBalanceChanged*(self: WalletView) {.signal.}
 
   proc getTotalFiatBalance(self: WalletView): string {.slot.} =
@@ -516,10 +516,10 @@ QtObject:
     self.currentAccountChanged()
 
   proc removeCustomToken*(self: WalletView, tokenAddress: string) {.slot.} =
-    let t = getCustomTokens().getErc20ContractByAddress(parseAddress(tokenAddress))
+    let t = self.status.tokens.getCustomTokens().getErc20ContractByAddress(parseAddress(tokenAddress))
     if t == nil: return
     self.status.wallet.hideAsset(t.symbol)
-    removeCustomToken(tokenAddress)
+    self.status.tokens.removeCustomToken(tokenAddress)
     self.customTokenList.loadCustomTokens()
     for account in self.status.wallet.accounts:
       if account.address == self.currentAccount.address:
@@ -677,12 +677,12 @@ QtObject:
 
   proc decodeTokenApproval*(self: WalletView, tokenAddress: string, data: string): string {.slot.} =
     let amount = data[74..len(data)-1]
-    let token = getToken(tokenAddress)
-    
+    let token = self.status.tokens.getToken(tokenAddress)
+
     if(token != nil):
-      let amountDec = $hex2Token(amount, token.decimals)
+      let amountDec = $self.status.wallet.hex2Token(amount, token.decimals)
       return $(%* {"symbol": token.symbol, "amount": amountDec})
-    
+
     return """{"error":"Unknown token address"}""";
 
   proc historyWasFetched*(self: WalletView) {.signal.}

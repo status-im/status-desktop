@@ -31,7 +31,6 @@ type
 const getLinkPreviewDataTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[GetLinkPreviewDataTaskArg](argEncoded)
   var success: bool
-  # We need to call directly on libstatus because going through the status model is not thread safe
   let
     response = status_chat.getLinkPreviewData(arg.link, success)
     responseJson = %* { "result": %response, "success": %success, "uuid": %arg.uuid }

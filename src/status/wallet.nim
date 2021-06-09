@@ -368,3 +368,12 @@ proc watchTransaction*(self: WalletModel, transactionHash: string): string =
 
 proc getPendingTransactions*(self: WalletModel): string =
   result = status_wallet.getPendingTransactions()
+
+proc getTransfersByAddress*(address: string): seq[types.Transaction] =
+  result = status_wallet.getTransfersByAddress(address)
+
+proc watchTransaction*(transactionHash: string): string =
+  result = status_wallet.watchTransaction(transactionHash)
+
+proc hex2Token*(self: WalletModel, input: string, decimals: int): string =
+  result = status_wallet.hex2Token(input, decimals)
