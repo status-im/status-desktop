@@ -114,16 +114,16 @@ Rectangle {
             icon: {
                 switch (statusChatListItem.type) {
                     case StatusChatListItem.Type.PublicCat:
-                        return Theme.palette.name == "light" ? "public-chat" : "public-chat-white"
+                        return Theme.palette.name == "light" ? "tiny/public-chat" : "tiny/public-chat-white"
                         break;
                     case StatusChatListItem.Type.GroupChat:
-                        return Theme.palette.name == "light" ? "group" : "group-white"
+                        return Theme.palette.name == "light" ? "tiny/group" : "tiny/group-white"
                         break;
                     case StatusChatListItem.Type.CommunityChat:
-                        return Theme.palette.name == "light" ? "channel" : "channel-white"
+                        return Theme.palette.name == "light" ? "tiny/channel" : "tiny/channel-white"
                         break;
                     default:
-                        return Theme.palette.name == "light" ? "public-chat" : "public-chat-white"
+                        return Theme.palette.name == "light" ? "tiny/public-chat" : "tiny/public-chat-white"
                 }
             }
         }
@@ -170,7 +170,7 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             width: 14
             opacity: mutedIconSensor.containsMouse ? 1.0 : 0.2
-            icon: Theme.palette.name === "light" ? "muted" : "muted-white"
+            icon: Theme.palette.name === "light" ? "tiny/muted" : "tiny/muted-white"
             visible: statusChatListItem.muted
 
             MouseArea {

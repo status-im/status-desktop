@@ -111,16 +111,16 @@ Rectangle {
                 icon: {
                     switch (statusChatInfoButton.type) {
                         case StatusChatInfoButton.Type.PublicCat:
-                            return "public-chat"
+                            return "tiny/public-chat"
                             break;
                         case StatusChatInfoButton.Type.GroupChat:
-                            return "group"
+                            return "tiny/group"
                             break;
                         case StatusChatInfoButton.Type.CommunityChat:
-                            return "channel"
+                            return "tiny/channel"
                             break;
                         default:
-                            return "public-chat"
+                            return "tiny/public-chat"
                     }
                 }
             }
@@ -145,7 +145,7 @@ Rectangle {
                 anchors.top: chatName.top
                 anchors.topMargin: -2
                 width: 13
-                icon: "muted"
+                icon: "tiny/muted"
                 color: mutedIconSensor.containsMouse ? Theme.palette.directColor1 : Theme.palette.baseColor1
                 visible: statusChatInfoButton.muted
 
