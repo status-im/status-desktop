@@ -76,9 +76,10 @@ proc loadChats*(): seq[Chat] =
 proc parseChatMessagesResponse*(rpcResult: JsonNode, isPin: bool = false): (string, seq[Message]) =
   let pk = status_settings.getSetting[string](Setting.PublicKey, "0x0")
   var messages: seq[Message] = @[]
-  var msg: Message
-  if rpcResult["messages"].kind != JNull:
-    for jsonMsg in rpcResult["messages"]:
+  let messagesObj = rpcResult{"messages"}
+  if(messagesObj != nil and messagesObj.kind != JNull):
+    let pk = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    for jsonMsg in messagesObj:
       messages.add(jsonMsg.toMessage(pk, isPin))
   return (rpcResult{"cursor"}.getStr, messages)
 
