@@ -10,6 +10,12 @@ import nbaser
 import stew/byteutils
 from base32 import nil
 
+const HTTPS_SCHEME = "https"
+const IPFS_GATEWAY =  ".infura.status.im"
+const SWARM_GATEWAY = "swarm-gateways.net"
+
+const base58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+
 logScope:
   topics = "provider-model"
 
@@ -238,3 +244,20 @@ proc postMessage*(self: ProviderModel, message: string): string =
     of RequestTypes.HistoryStateChanged: """{"type":"TODO-IMPLEMENT-THIS"}""" ############# TODO:
     of RequestTypes.APIRequest: self.process(message.toAPIRequest())
     else:  """{"type":"TODO-IMPLEMENT-THIS"}""" ##################### TODO:
+
+proc ensResourceURL*(self: ProviderModel, ens: string, url: string): (string, string, string, string, bool) =
+    let contentHash = contenthash(ens)
+    if contentHash == "": # ENS does not have a content hash
+      return (url, url, HTTPS_SCHEME, "", false)
+
+    let decodedHash = contentHash.decodeENSContentHash()
+    case decodedHash[0]:
+    of ENSType.IPFS:
+      let base32Hash = base32.encode(string.fromBytes(base58.decode(decodedHash[1]))).toLowerAscii().replace("=", "")
+      result = (url, base32Hash & IPFS_GATEWAY, HTTPS_SCHEME, "", true)
+    of ENSType.SWARM:
+      result = (url, SWARM_GATEWAY, HTTPS_SCHEME, "/bzz:/" & decodedHash[1] & "/", true)
+    of ENSType.IPNS:
+      result = (url, decodedHash[1], HTTPS_SCHEME, "", true)
+    else: 
+      warn "Unknown content for", ens, contentHash
