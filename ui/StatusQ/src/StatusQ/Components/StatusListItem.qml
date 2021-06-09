@@ -48,6 +48,7 @@ Rectangle {
 
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor 
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
 
         Loader {

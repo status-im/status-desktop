@@ -30,7 +30,14 @@ Column {
         title: statusChatListCategory.name
         opened: statusChatListCategory.opened
 
-        onClicked: statusChatListCategory.opened = !opened
+        onClicked: {
+            if (mouse.button === Qt.RightButton) {
+                highlighted = true
+                popupMenuSlot.item.popup(mouse.x + 4, mouse.y + 6)
+                return
+            }
+            statusChatListCategory.opened = !opened
+        }
         onToggleButtonClicked: statusChatListCategory.opened = !opened
         onMenuButtonClicked: {
             highlighted = true
