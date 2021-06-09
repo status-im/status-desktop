@@ -1,3 +1,4 @@
+import sequtils
 import strutils
 import profile/profile
 import nimcrypto
@@ -16,6 +17,9 @@ import algorithm
 import web3/[ethtypes, conversions], stew/byteutils, stint
 import libstatus/eth/contracts
 import chronicles, libp2p/[multihash, multicodec, cid]
+
+import ./settings as settings
+import ./wallet as status_wallet
 
 const domain* = ".stateofus.eth"
 
@@ -307,3 +311,28 @@ proc decodeENSContentHash*(value: string): tuple[ensType: ENSType, output: strin
     return (ENSType.IPNS, parseHexStr(value[12..value.len-1]))
 
   return (ENSType.UNKNOWN, "")
+
+proc validateEnsName*(ens: string, isStatus: bool, usernames: seq[string]): string =
+  var username = ens & (if(isStatus): domain else: "")
+  result = ""
+  if usernames.filter(proc(x: string):bool = x == username).len > 0:
+    result = "already-connected"
+  else:
+    let ownerAddr = owner(username)
+    if ownerAddr == "" and isStatus:
+      result = "available"
+    else:
+      let userPubKey = getSetting[string](settings, Setting.PublicKey, "0x0")
+      let userWallet = status_wallet.getWalletAccounts()[0].address
+      let ens_pubkey = pubkey(ens)
+      if ownerAddr != "":
+        if ens_pubkey == "" and ownerAddr == userWallet:
+          result = "owned" # "Continuing will connect this username with your chat key."
+        elif ens_pubkey == userPubkey:
+          result = "connected"
+        elif ownerAddr == userWallet:
+          result = "connected-different-key" #  "Continuing will require a transaction to connect the username with your current chat key.",
+        else:
+          result = "taken"
+      else:
+        result = "taken"
