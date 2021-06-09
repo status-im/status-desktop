@@ -363,6 +363,9 @@ proc setInitialBlocksRange*(self: WalletModel): string =
 proc getWalletAccounts*(self: WalletModel): seq[WalletAccount] =
   result = status_wallet.getWalletAccounts()
 
+proc getWalletAccounts*(): seq[WalletAccount] =
+  result = status_wallet.getWalletAccounts()
+
 proc watchTransaction*(self: WalletModel, transactionHash: string): string =
   result = status_wallet.watchTransaction(transactionHash)
 

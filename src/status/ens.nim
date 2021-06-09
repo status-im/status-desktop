@@ -18,7 +18,7 @@ import web3/[ethtypes, conversions], stew/byteutils, stint
 import libstatus/eth/contracts
 import chronicles, libp2p/[multihash, multicodec, cid]
 
-import ./settings as settings
+import ./settings as status_settings
 import ./wallet as status_wallet
 
 const domain* = ".stateofus.eth"
@@ -322,7 +322,7 @@ proc validateEnsName*(ens: string, isStatus: bool, usernames: seq[string]): stri
     if ownerAddr == "" and isStatus:
       result = "available"
     else:
-      let userPubKey = getSetting[string](settings, Setting.PublicKey, "0x0")
+      let userPubKey = status_settings.getSetting2[string](Setting.PublicKey, "0x0")
       let userWallet = status_wallet.getWalletAccounts()[0].address
       let ens_pubkey = pubkey(ens)
       if ownerAddr != "":
