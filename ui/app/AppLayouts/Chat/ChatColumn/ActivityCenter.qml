@@ -203,6 +203,8 @@ Popup {
                             ActivityChannelBadge {
                                 name: model.name
                                 chatId: model.chatId
+                                notificationType: model.notificationType
+                                responseTo: model.message.responseTo
                                 anchors.top: notificationMessage.bottom
                                 anchors.left: parent.left
                                 anchors.leftMargin: 61 // TODO find a way to align with the text of the message
