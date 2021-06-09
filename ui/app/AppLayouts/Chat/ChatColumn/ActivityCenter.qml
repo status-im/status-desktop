@@ -16,6 +16,9 @@ Popup {
         ContactRequests
     }
     property int currentFilter: ActivityCenter.Filter.All
+    property bool hasMentions: false
+    property bool hasReplies: false
+    property bool hasContactRequests: contactList.count > 0
 
     id: activityCenter
     modal: true
@@ -111,15 +114,32 @@ Popup {
 
                     property int idx: DelegateModel.itemsIndex
 
+                    Component.onCompleted: {
+                        switch (model.notificationType) {
+                        case Constants.acitivtyCenterNotificationTypeMention:
+                            if (!hasMentions) {
+                                hasMentions = true
+                            }
+                            break
+
+                        case Constants.acitivtyCenterNotificationTypeReply:
+                            if (!hasReplies) {
+                                hasReplies = true
+                            }
+                            break
+
+                        }
+                    }
 
                     Loader {
                         id: notifLoader
                         anchors.top: parent.top
                         active: !!sourceComponent
                         width: parent.width
+                        height: active && item.visible ? item.height : 0
                         sourceComponent: {
                             switch (model.notificationType) {
-                            case Constants.acitivtyCenterNotificationTypeMention:
+                            case Constants.acitivtyCenterNotificationTypeMention:return messageNotificationComponent
                             case Constants.acitivtyCenterNotificationTypeReply: return messageNotificationComponent
                             default: return null
                             }
@@ -130,7 +150,9 @@ Popup {
                         id: messageNotificationComponent
 
                         Rectangle {
-                            visible: activityCenter.currentFilter === ActivityCenter.Filter.All || activityCenter.currentFilter === ActivityCenter.Filter.Mentions
+                            visible: activityCenter.currentFilter === ActivityCenter.Filter.All ||
+                                     (model.notificationType === Constants.acitivtyCenterNotificationTypeMention && activityCenter.currentFilter === ActivityCenter.Filter.Mentions) ||
+                                     (model.notificationType === Constants.acitivtyCenterNotificationTypeReply && activityCenter.currentFilter === ActivityCenter.Filter.Replies)
                             width: parent.width
                             height: childrenRect.height + Style.current.smallPadding
                             color: model.read ? Style.current.transparent : Utils.setColorAlpha(Style.current.blue, 0.1)
