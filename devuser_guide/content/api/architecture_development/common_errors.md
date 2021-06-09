@@ -96,6 +96,10 @@ Typically this means the method has no return type and so `result =` isn't neces
 
 This usually means a method that has no return type is being discarded
 
+###   required type for <variable>: <Type> but expression '<variable>' is of type: <Type>
+
+This tpyically means there is an import missing
+
 ## Warnings
 
 ### QML anchor warnings
