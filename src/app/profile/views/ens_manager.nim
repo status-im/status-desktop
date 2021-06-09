@@ -28,29 +28,7 @@ type
 const validateTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let
     arg = decode[ValidateTaskArg](argEncoded)
-    username = arg.ens & (if(arg.isStatus): status_ens.domain else: "")
-  var output = ""
-  if arg.usernames.filter(proc(x: string):bool = x == username).len > 0:
-    output = "already-connected"
-  else:
-    let ownerAddr = status_ens.owner(username)
-    if ownerAddr == "" and arg.isStatus:
-      output = "available"
-    else:
-      let userPubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
-      let userWallet = status_wallet.getWalletAccounts()[0].address
-      let pubkey = status_ens.pubkey(arg.ens)
-      if ownerAddr != "":
-        if pubkey == "" and ownerAddr == userWallet:
-          output = "owned" # "Continuing will connect this username with your chat key."
-        elif pubkey == userPubkey:
-          output = "connected"
-        elif ownerAddr == userWallet:
-          output = "connected-different-key" #  "Continuing will require a transaction to connect the username with your current chat key.",
-        else:
-          output = "taken"
-      else:
-        output = "taken"
+  var output = status_ens.validateEnsName(arg.ens, arg.isStatus, arg.usernames)
   arg.finish(output)
 
 proc validate[T](self: T, slot: string, ens: string, isStatus: bool, usernames: seq[string]) =
