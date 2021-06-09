@@ -27,6 +27,12 @@ proc getSetting*[T](self: SettingsModel, name: Setting, defaultValue: T, useCach
 proc getSetting*[T](self: SettingsModel, name: Setting, useCached: bool = true): T =
   result = status_settings.getSetting[T](name, useCached)
 
+proc getSetting*[T](name: Setting, defaultValue: T, useCached: bool = true): T =
+  result = status_settings.getSetting(name, defaultValue, useCached)
+
+proc getSetting*[T](name: Setting, useCached: bool = true): T =
+  result = status_settings.getSetting[T](name, useCached)
+
 proc getCurrentNetworkDetails*(self: SettingsModel): LibStatusTypes.NetworkDetails =
   result = status_settings.getCurrentNetworkDetails()
 
