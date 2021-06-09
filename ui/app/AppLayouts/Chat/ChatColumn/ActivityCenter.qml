@@ -119,8 +119,8 @@ Popup {
                         width: parent.width
                         sourceComponent: {
                             switch (model.notificationType) {
-                                // TODO add to constants (mention)
-                            case 3: return messageNotificationComponent
+                            case Constants.acitivtyCenterNotificationTypeMention:
+                            case Constants.acitivtyCenterNotificationTypeReply: return messageNotificationComponent
                             default: return null
                             }
                         }
