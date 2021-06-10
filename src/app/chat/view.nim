@@ -746,7 +746,11 @@ QtObject:
       self.chats.updateChat(chat)
       if(self.activeChannel.id == chat.id):
         self.activeChannel.setChatItem(chat)
+        self.activeChannelChanged()
         self.currentSuggestions.setNewData(self.status.contacts.getContacts())
+      if self.contextChannel.id == chat.id:
+        self.contextChannel.setChatItem(chat)
+        self.contextChannelChanged()
     self.calculateUnreadMessages()
 
   proc deleteMessage*(self: ChatsView, channelId: string, messageId: string) =

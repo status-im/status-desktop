@@ -96,7 +96,7 @@ Column {
     }
 
     Item {
-        visible: chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat && !chatsModel.activeChannel.isMember
+        visible: chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat && chatsModel.activeChannel.isMemberButNotJoined
         anchors.horizontalCenter: parent.horizontalCenter
         width: visible ? joinChat.width : 0
         height: visible ? 100 : 0
@@ -115,7 +115,6 @@ Column {
                 anchors.fill: parent
                 onClicked: {
                     chatsModel.groups.join()
-                    joinOrDecline.visible = false;
                 }
             }
         }
