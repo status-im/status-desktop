@@ -12,7 +12,7 @@ import # status-desktop libs
   ../../status/utils as status_utils,
   ../../status/tokens as status_tokens,
   ../../status/ens as status_ens,
-  views/[asset_list, account_list, account_item, token_list, transaction_list, collectibles_list],
+  views/[asset_list, accounts, account_list, account_item, token_list, transaction_list, collectibles_list],
   ../../status/tasks/[qt, task_runner_impl], ../../status/signals/types as signal_types
 
 const ZERO_ADDRESS* = "0x0000000000000000000000000000000000000000"
@@ -193,12 +193,8 @@ proc watchTransaction[T](self: T, slot: string, transactionHash: string) =
 QtObject:
   type
     WalletView* = ref object of QAbstractListModel
-      accounts*: AccountList
       currentAssetList*: AssetList
       currentCollectiblesLists*: CollectiblesList
-      currentAccount: AccountItemView
-      focusedAccount: AccountItemView
-      dappBrowserAccount: AccountItemView
       currentTransactions: TransactionList
       defaultTokenList: TokenList
       customTokenList: TokenList
@@ -212,30 +208,29 @@ QtObject:
       defaultGasLimit: string
       signingPhrase: string
       fetchingHistoryState: Table[string, bool]
+      accountsView: AccountsView
+      dappBrowserAccount*: AccountItemView
 
   proc delete(self: WalletView) =
-    self.accounts.delete
+    self.accountsView.delete
     self.currentAssetList.delete
-    self.currentAccount.delete
-    self.focusedAccount.delete
-    self.dappBrowserAccount.delete
     self.currentTransactions.delete
     self.defaultTokenList.delete
     self.customTokenList.delete
+    self.dappBrowserAccount.delete
     self.QAbstractListModel.delete
 
   proc setup(self: WalletView) =
     self.QAbstractListModel.setup
 
-  proc setDappBrowserAddress*(self: WalletView)
-
   proc newWalletView*(status: Status): WalletView =
     new(result, delete)
     result.status = status
-    result.accounts = newAccountList()
-    result.currentAccount = newAccountItemView()
-    result.focusedAccount = newAccountItemView()
+
+    #TODO: rename to accounts
+    result.accountsView = newAccountsView(status)
     result.dappBrowserAccount = newAccountItemView()
+
     result.currentAssetList = newAssetList()
     result.currentTransactions = newTransactionList()
     result.currentCollectiblesLists = newCollectiblesList()
@@ -251,6 +246,16 @@ QtObject:
     result.signingPhrase = ""
     result.fetchingHistoryState = initTable[string, bool]()
     result.setup
+
+  proc getAccounts(self: WalletView): QVariant {.slot.} =
+    newQVariant(self.accountsView)
+
+  QtProperty[QVariant] accountsView:
+    read = getAccounts
+
+  proc setDappBrowserAddress*(self: WalletView)
+
+  proc setCurrentAssetList*(self: WalletView, assetList: seq[Asset])
 
   proc etherscanLinkChanged*(self: WalletView) {.signal.}
 
@@ -279,8 +284,6 @@ QtObject:
     notify = signingPhraseChanged
 
   proc getStatusToken*(self: WalletView): string {.slot.} = self.status.wallet.getStatusToken
-
-  proc setCurrentAssetList*(self: WalletView, assetList: seq[Asset])
 
   proc currentCollectiblesListsChanged*(self: WalletView) {.signal.}
 
@@ -311,50 +314,6 @@ QtObject:
     notify = currentTransactionsChanged
 
   proc loadCollectiblesForAccount*(self: WalletView, address: string, currentCollectiblesList: seq[CollectibleList])
-  proc currentAccountChanged*(self: WalletView) {.signal.}
-
-  proc setCurrentAccountByIndex*(self: WalletView, index: int) {.slot.} =
-    if(self.accounts.rowCount() == 0): return
-
-    let selectedAccount = self.accounts.getAccount(index)
-    if self.currentAccount.address == selectedAccount.address: return
-    self.currentAccount.setAccountItem(selectedAccount)
-    self.currentAccountChanged()
-    self.setCurrentAssetList(selectedAccount.assetList)
-
-    # Display currently known collectibles, and get latest from API/Contracts
-    self.setCurrentCollectiblesLists(selectedAccount.collectiblesLists)
-    self.loadCollectiblesForAccount(selectedAccount.address, selectedAccount.collectiblesLists)
-
-    self.setCurrentTransactions(selectedAccount.transactions)
-
-  proc getCurrentAccount*(self: WalletView): QVariant {.slot.} =
-    result = newQVariant(self.currentAccount)
-
-  QtProperty[QVariant] currentAccount:
-    read = getCurrentAccount
-    write = setCurrentAccountByIndex
-    notify = currentAccountChanged
-
-  proc focusedAccountChanged*(self: WalletView) {.signal.}
-
-  proc setFocusedAccountByAddress*(self: WalletView, address: string) {.slot.} =
-    if(self.accounts.rowCount() == 0): return
-
-    var index = self.accounts.getAccountindexByAddress(address)
-    if index == -1: index = 0
-    let selectedAccount = self.accounts.getAccount(index)
-    if self.focusedAccount.address == selectedAccount.address: return
-    self.focusedAccount.setAccountItem(selectedAccount)
-    self.focusedAccountChanged()
-
-  proc getFocusedAccount*(self: WalletView): QVariant {.slot.} =
-    result = newQVariant(self.focusedAccount)
-
-  QtProperty[QVariant] focusedAccount:
-    read = getFocusedAccount
-    write = setFocusedAccountByAddress
-    notify = focusedAccountChanged
 
   proc currentAssetListChanged*(self: WalletView) {.signal.}
 
@@ -384,16 +343,6 @@ QtObject:
     write = setTotalFiatBalance
     notify = totalFiatBalanceChanged
 
-  proc accountListChanged*(self: WalletView) {.signal.}
-
-  proc addAccountToList*(self: WalletView, account: WalletAccount) =
-    self.accounts.addAccountToList(account)
-    # If it's the first account we ever get, use its list as our first lists
-    if (self.accounts.rowCount == 1):
-      self.setCurrentAssetList(account.assetList)
-      self.setCurrentAccountByIndex(0)
-    self.accountListChanged()
-
   proc getFiatValue*(self: WalletView, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string {.slot.} =
     if (cryptoBalance == "" or cryptoSymbol == "" or fiatSymbol == ""): return "0.00"
     let val = self.status.wallet.convertValue(cryptoBalance, cryptoSymbol, fiatSymbol)
@@ -412,52 +361,7 @@ QtObject:
     let weiValue = gweiValueInt.u256 * 1000000000.u256 * gasLimitInt.u256
     let ethValue = wei2Eth(weiValue)
     result = fmt"{ethValue}"
-
-  proc generateNewAccount*(self: WalletView, password: string, accountName: string, color: string): string {.slot.} =
-    try:
-      self.status.wallet.generateNewAccount(password, accountName, color)
-    except StatusGoException as e:
-      result = StatusGoError(error: e.msg).toJson
-
-  proc addAccountsFromSeed*(self: WalletView, seed: string, password: string, accountName: string, color: string): string {.slot.} =
-    try:
-      self.status.wallet.addAccountsFromSeed(seed.strip(), password, accountName, color)
-    except StatusGoException as e:
-      result = StatusGoError(error: e.msg).toJson
-
-  proc addAccountsFromPrivateKey*(self: WalletView, privateKey: string, password: string, accountName: string, color: string): string {.slot.} =
-    try:
-      self.status.wallet.addAccountsFromPrivateKey(privateKey, password, accountName, color)
-    except StatusGoException as e:
-      result = StatusGoError(error: e.msg).toJson
-
-  proc addWatchOnlyAccount*(self: WalletView, address: string, accountName: string, color: string): string {.slot.} =
-    self.status.wallet.addWatchOnlyAccount(address, accountName, color)
-
-  proc changeAccountSettings*(self: WalletView, address: string, accountName: string, color: string): string {.slot.} =
-    result = self.status.wallet.changeAccountSettings(address, accountName, color)
-    if (result == ""):
-      self.currentAccountChanged()
-      self.accountListChanged()
-      self.accounts.forceUpdate()
-
-  proc deleteAccount*(self: WalletView, address: string): string {.slot.} =
-    result = self.status.wallet.deleteAccount(address)
-    if (result == ""):
-      let index = self.accounts.getAccountindexByAddress(address)
-      if (index == -1):
-        return fmt"Unable to find the account with the address {address}"
-      self.accounts.deleteAccountAtIndex(index)
-      self.accountListChanged()
-      self.accounts.forceUpdate()
-
-  proc getAccountList(self: WalletView): QVariant {.slot.} =
-    return newQVariant(self.accounts)
-
-  QtProperty[QVariant] accounts:
-    read = getAccountList
-    notify = accountListChanged
-  
+ 
   proc estimateGas*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string, data: string = ""): string {.slot.} =
     var
       response: string
@@ -485,9 +389,6 @@ QtObject:
   proc sendTransaction*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string, gas: string, gasPrice: string, password: string, uuid: string) {.slot.} =
     self.sendTransaction("transactionSent", from_addr, to, assetAddress, value, gas, gasPrice, password, uuid)
 
-  proc getDefaultAccount*(self: WalletView): string {.slot.} =
-    self.currentAccount.address
-
   proc defaultCurrency*(self: WalletView): string {.slot.} =
     self.status.wallet.getDefaultCurrency()
 
@@ -507,13 +408,7 @@ QtObject:
 
   proc toggleAsset*(self: WalletView, symbol: string) {.slot.} =
     self.status.wallet.toggleAsset(symbol)
-    for account in self.status.wallet.accounts:
-      if account.address == self.currentAccount.address:
-        self.currentAccount.setAccountItem(account)
-      else:
-        self.accounts.updateAssetsInList(account.address, account.assetList)
-    self.accountListChanged()
-    self.currentAccountChanged()
+    self.accountsView.setAccountItems()
 
   proc removeCustomToken*(self: WalletView, tokenAddress: string) {.slot.} =
     let t = self.status.tokens.getCustomTokens().getErc20ContractByAddress(parseAddress(tokenAddress))
@@ -521,13 +416,7 @@ QtObject:
     self.status.wallet.hideAsset(t.symbol)
     self.status.tokens.removeCustomToken(tokenAddress)
     self.customTokenList.loadCustomTokens()
-    for account in self.status.wallet.accounts:
-      if account.address == self.currentAccount.address:
-        self.currentAccount.setAccountItem(account)
-      else: 
-        self.accounts.updateAssetsInList(account.address, account.assetList)
-    self.accountListChanged()
-    self.currentAccountChanged()
+    self.accountsView.setAccountItems()
 
   proc addCustomToken*(self: WalletView, address: string, name: string, symbol: string, decimals: string) {.slot.} =
     self.status.wallet.addCustomToken(symbol, true, address, name, parseInt(decimals), "")
@@ -535,11 +424,11 @@ QtObject:
   proc updateView*(self: WalletView) =
     self.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
     self.totalFiatBalanceChanged()
-    self.currentAccount.assetList.setNewData(self.currentAccount.account.assetList)
-    self.currentAccountChanged()
-    self.accountListChanged()
-    self.accounts.forceUpdate()
-    self.setCurrentAssetList(self.currentAccount.account.assetList)
+
+    self.accountsView.currentAccount.assetList.setNewData(self.accountsView.currentAccount.account.assetList)
+    self.accountsView.triggerUpdateAccounts()
+
+    self.setCurrentAssetList(self.accountsView.currentAccount.account.assetList)
 
   proc checkRecentHistory*(self:WalletView) {.slot.} =
     var addresses:seq[string] = @[]
@@ -558,16 +447,14 @@ QtObject:
     let jsonObj = jsonResponse.parseJson()
     self.status.wallet.update(jsonObj["address"].getStr(), jsonObj["eth"].getStr(), jsonObj["tokens"])
     self.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
-    self.accounts.forceUpdate()
-    self.currentAccountChanged()
+    self.accountsView.triggerUpdateAccounts()
     self.updateView()
-
 
   proc loadCollectiblesForAccount*(self: WalletView, address: string, currentCollectiblesList: seq[CollectibleList]) =
     if (currentCollectiblesList.len > 0):
       return
     # Add loading state if it is the current account
-    if address == self.currentAccount.address:
+    if address == self.accountsView.currentAccount.address:
       for collectibleType in status_collectibles.COLLECTIBLE_TYPES:
         self.currentCollectiblesLists.addCollectibleListToList(CollectibleList(
           collectibleType: collectibleType,
@@ -600,11 +487,11 @@ QtObject:
       return
 
     # Add the collectibles to the WalletAccount
-    let index = self.accounts.getAccountindexByAddress(address)
+    let index = self.accountsView.accounts.getAccountindexByAddress(address)
     if index == -1: return
-    self.accounts.addCollectibleListToAccount(index, collectibleType, $collectibles)
-    
-    if address == self.currentAccount.address:
+    self.accountsView.accounts.addCollectibleListToAccount(index, collectibleType, $collectibles)
+
+    if address == self.accountsView.currentAccount.address:
       # Add CollectibleListJSON to the right list
       self.currentCollectiblesLists.setCollectiblesJSONByType(
         collectibleType,
@@ -612,7 +499,7 @@ QtObject:
       )
 
   proc reloadCollectible*(self: WalletView, collectibleType: string) {.slot.} =
-    let address = self.currentAccount.address
+    let address = self.accountsView.currentAccount.address
     self.loadCollectibles("setCollectiblesResult", address, collectibleType)
     self.currentCollectiblesLists.setLoadingByType(collectibleType, 1)
 
@@ -671,7 +558,7 @@ QtObject:
 
   QtProperty[QVariant] customTokenList:
     read = getCustomTokenList
-  
+
   proc isKnownTokenContract*(self: WalletView, address: string): bool {.slot.} =
     return self.status.wallet.getKnownTokenContract(parseAddress(address)) != nil
 
@@ -722,12 +609,12 @@ QtObject:
     let historyData = parseJson(historyJSON)
     let transactions = historyData["history"].to(seq[Transaction]);
     let address = historyData["address"].getStr
-    let index = self.accounts.getAccountindexByAddress(address)
+    let index = self.accountsView.accounts.getAccountindexByAddress(address)
     if index == -1: return
-    self.accounts.getAccount(index).transactions = transactions
-    if address == self.currentAccount.address:
+    self.accountsView.accounts.getAccount(index).transactions = transactions
+    if address == self.accountsView.currentAccount.address:
       self.setCurrentTransactions(
-            self.accounts.getAccount(index).transactions)
+            self.accountsView.accounts.getAccount(index).transactions)
     self.loadingTrxHistoryChanged(false)
 
   proc resolveENS*(self: WalletView, ens: string, uuid: string) {.slot.} =
@@ -743,18 +630,43 @@ QtObject:
     if address == "0x":
       address = ""
     self.ensWasResolved(address, uuid)
-  
+
   proc transactionCompleted*(self: WalletView, success: bool, txHash: string, revertReason: string = "") {.signal.}
+
+  proc setInitialRange*(self: WalletView) {.slot.} = 
+    discard self.status.wallet.setInitialBlocksRange()
+
+  proc setCurrentAccountByIndex*(self: WalletView, index: int) {.slot.} =
+    if self.accountsView.setCurrentAccountByIndex(index):
+      # TODO: get the account from above instead
+      let selectedAccount = self.accountsView.accounts.getAccount(index)
+
+      self.setCurrentAssetList(selectedAccount.assetList)
+
+      # Display currently known collectibles, and get latest from API/Contracts
+      self.setCurrentCollectiblesLists(selectedAccount.collectiblesLists)
+      self.loadCollectiblesForAccount(selectedAccount.address, selectedAccount.collectiblesLists)
+
+      self.setCurrentTransactions(selectedAccount.transactions)
+
+  proc addAccountToList*(self: WalletView, account: WalletAccount) =
+    self.accountsView.addAccountToList(account)
+    # If it's the first account we ever get, use its list as our first lists
+    if (self.accountsView.accounts.rowCount == 1):
+      self.setCurrentAssetList(account.assetList)
+      # discard self.accountsView.setCurrentAccountByIndex(0)
+      discard self.accountsView.setCurrentAccountByIndex(0)
+    # self.accountsView.accountListChanged()
 
   proc dappBrowserAccountChanged*(self: WalletView) {.signal.}
 
   proc setDappBrowserAddress*(self: WalletView) {.slot.} =
-    if(self.accounts.rowCount() == 0): return
+    if(self.accountsView.accounts.rowCount() == 0): return
 
     let dappAddress = self.status.settings.getSetting[:string](Setting.DappsAddress)
-    var index = self.accounts.getAccountIndexByAddress(dappAddress)
+    var index = self.accountsView.accounts.getAccountIndexByAddress(dappAddress)
     if index == -1: index = 0
-    let selectedAccount = self.accounts.getAccount(index)
+    let selectedAccount = self.accountsView.accounts.getAccount(index)
     if self.dappBrowserAccount.address == selectedAccount.address: return
     self.dappBrowserAccount.setAccountItem(selectedAccount)
     self.dappBrowserAccountChanged()
@@ -765,6 +677,3 @@ QtObject:
   QtProperty[QVariant] dappBrowserAccount:
     read = getDappBrowserAccount
     notify = dappBrowserAccountChanged
-
-  proc setInitialRange*(self: WalletView) {.slot.} = 
-    discard self.status.wallet.setInitialBlocksRange()

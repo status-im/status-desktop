@@ -117,7 +117,7 @@ Popup {
             width: 190
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             showAccountDetails: false
-            accounts: walletModel.accounts
+            accounts: walletModel.accountsView.accounts
             selectedAccount: walletModel.dappBrowserAccount
             currency: walletModel.defaultCurrency
             onSelectedAccountChanged: {

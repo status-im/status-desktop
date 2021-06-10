@@ -7,7 +7,7 @@ import "../../../shared"
 import "../../../shared/status"
 
 ModalPopup {
-    property var currentAccount: walletModel.currentAccount
+    property var currentAccount: walletModel.accountsView.currentAccount
     property var changeSelectedAccount
     id: popup
     // TODO add icon when we have that feature
@@ -138,7 +138,7 @@ ModalPopup {
                 icon: StandardIcon.Warning
                 standardButtons: StandardButton.Yes |  StandardButton.No
                 onAccepted: {
-                    const error = walletModel.deleteAccount(currentAccount.address);
+                    const error = walletModel.accountsView.deleteAccount(currentAccount.address);
                     if (error) {
                         errorSound.play()
                         deleteError.text = error
@@ -178,7 +178,7 @@ ModalPopup {
                     return
                 }
 
-                const error = walletModel.changeAccountSettings(currentAccount.address, accountNameInput.text, accountColorInput.selectedColor);
+                const error = walletModel.accountsView.changeAccountSettings(currentAccount.address, accountNameInput.text, accountColorInput.selectedColor);
 
                 if (error) {
                     errorSound.play()

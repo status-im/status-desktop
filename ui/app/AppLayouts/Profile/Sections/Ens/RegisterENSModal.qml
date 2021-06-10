@@ -63,9 +63,9 @@ ModalPopup {
 
             AccountSelector {
                 id: selectFromAccount
-                accounts: walletModel.accounts
+                accounts: walletModel.accountsView.accounts
                 selectedAccount: {
-                    const currAcc = walletModel.currentAccount
+                    const currAcc = walletModel.accountsView.currentAccount
                     if (currAcc.walletType !== Constants.watchWalletType) {
                         return currAcc
                     }
@@ -82,7 +82,7 @@ ModalPopup {
             RecipientSelector {
                 id: selectRecipient
                 visible: false
-                accounts: walletModel.accounts
+                accounts: walletModel.accountsView.accounts
                 contacts: profileModel.contacts.addedContacts
                 selectedRecipient: { "address": utilsModel.ensRegisterAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true

@@ -126,7 +126,7 @@ ModalPopup {
                 return loading = false
             }
 
-            const result = walletModel.addAccountsFromPrivateKey(accountPKeyInput.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
+            const result = walletModel.accountsView.addAccountsFromPrivateKey(accountPKeyInput.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
             
             loading = false
             if (result) {

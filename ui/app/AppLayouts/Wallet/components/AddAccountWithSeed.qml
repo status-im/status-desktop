@@ -128,7 +128,7 @@ ModalPopup {
                 return loading = false
             }
 
-            const result = walletModel.addAccountsFromSeed(seedPhraseTextArea.textArea.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
+            const result = walletModel.accountsView.addAccountsFromSeed(seedPhraseTextArea.textArea.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
             loading = false
             if (result) {
                 let resultJson = JSON.parse(result);

@@ -7,7 +7,7 @@ import "../../../shared/status"
 import "./components"
 
 Item {
-    property var currentAccount: walletModel.currentAccount
+    property var currentAccount: walletModel.accountsView.currentAccount
     property var changeSelectedAccount
 
     id: walletHeader

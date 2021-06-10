@@ -26,18 +26,18 @@ Item {
 
         // prevent history from being fetched everytime you click on
         // the history tab
-        if (walletModel.isHistoryFetched(walletModel.currentAccount.account))
+        if (walletModel.isHistoryFetched(walletModel.accountsView.currentAccount.account))
             return;
 
         fetchHistory();
     }
 
     function fetchHistory() {
-        if (walletModel.isFetchingHistory(walletModel.currentAccount.address)) {
+        if (walletModel.isFetchingHistory(walletModel.accountsView.currentAccount.address)) {
             loadingImg.active = true
         } else {
             walletModel.loadTransactionsForAccount(
-                        walletModel.currentAccount.address)
+                        walletModel.accountsView.currentAccount.address)
         }
     }
 
@@ -135,8 +135,8 @@ Item {
                     anchors.leftMargin: 22
                     height: 15
                     width: 15
-                    color: to !== walletModel.currentAccount.address ? "#4360DF" : "green"
-                    text: to !== walletModel.currentAccount.address ? "↑" : "↓"
+                    color: to !== walletModel.accountsView.currentAccount.address ? "#4360DF" : "green"
+                    text: to !== walletModel.accountsView.currentAccount.address ? "↑" : "↓"
                 }
 
                 StyledText {
@@ -157,7 +157,7 @@ Item {
                 width: children[0].width + children[1].width
 
                 StyledText {
-                    text: to !== walletModel.currentAccount.address ?
+                    text: to !== walletModel.accountsView.currentAccount.address ?
                               //% "To "
                               qsTrId("to-") :
                               //% "From "

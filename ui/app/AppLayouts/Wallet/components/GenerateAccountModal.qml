@@ -100,7 +100,7 @@ ModalPopup {
                 return loading = false
             }
 
-            const result = walletModel.generateNewAccount(passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
+            const result = walletModel.accountsView.generateNewAccount(passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
             loading = false
             if (result) {
                 let resultJson = JSON.parse(result);

@@ -100,7 +100,7 @@ ModalPopup {
                 return loading = false
             }
 
-            const error = walletModel.addWatchOnlyAccount(addressInput.text, accountNameInput.text, accountColorInput.selectedColor);
+            const error = walletModel.accountsView.addWatchOnlyAccount(addressInput.text, accountNameInput.text, accountColorInput.selectedColor);
             loading = false
             if (error) {
                 errorSound.play()

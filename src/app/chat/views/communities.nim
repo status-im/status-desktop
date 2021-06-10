@@ -9,7 +9,6 @@ import ../../utils/image_utils
 import ../../../status/signals/types as signal_types
 import ../../../status/types
 
-
 logScope:
   topics = "communities-view"
 

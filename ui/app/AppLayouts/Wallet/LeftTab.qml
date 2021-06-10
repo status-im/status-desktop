@@ -9,11 +9,11 @@ import "./components"
 Rectangle {
     property int selectedAccount: 0
     property var changeSelectedAccount: function(newIndex) {
-        if (newIndex > walletModel.accounts) {
+        if (newIndex > walletModel.accountsView.accounts) {
             return
         }
         selectedAccount = newIndex
-        walletModel.setCurrentAccountByIndex(newIndex)
+        walletModel.accountsView.setCurrentAccountByIndex(newIndex)
         walletTabBar.currentIndex = 0;
     }
     id: walletInfoContainer
@@ -210,7 +210,7 @@ Rectangle {
                 }
             }
 
-            model: walletModel.accounts
+            model: walletModel.accountsView.accounts
             //        model: exampleWalletModel
         }
     }

@@ -55,9 +55,9 @@ ModalPopup {
 
             AccountSelector {
                 id: selectFromAccount
-                accounts: walletModel.accounts
+                accounts: walletModel.accountsView.accounts
                 selectedAccount: {
-                    const currAcc = walletModel.currentAccount
+                    const currAcc = walletModel.accountsView.currentAccount
                     if (currAcc.walletType !== Constants.watchWalletType) {
                         return currAcc
                     }
@@ -76,7 +76,7 @@ ModalPopup {
             }
             RecipientSelector {
                 id: selectRecipient
-                accounts: walletModel.accounts
+                accounts: walletModel.accountsView.accounts
                 contacts: profileModel.contacts.addedContacts
                 //% "Recipient"
                 label: qsTrId("recipient")

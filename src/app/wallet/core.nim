@@ -40,7 +40,7 @@ proc init*(self: WalletController) =
 
   self.status.events.on("newAccountAdded") do(e: Args):
     var account = WalletTypes.AccountArgs(e)
-    self.view.accounts.addAccountToList(account.account)
+    self.view.addAccountToList(account.account)
     self.view.updateView()
 
   self.status.events.on("assetChanged") do(e: Args):

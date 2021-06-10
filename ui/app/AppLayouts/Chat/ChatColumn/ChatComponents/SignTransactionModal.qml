@@ -81,7 +81,7 @@ ModalPopup {
             }
             AccountSelector {
                 id: selectFromAccount
-                accounts: walletModel.accounts
+                accounts: walletModel.accountsView.accounts
                 currency: walletModel.defaultCurrency
                 width: stack.width
                 selectedAccount: root.selectedAccount
@@ -94,7 +94,7 @@ ModalPopup {
             RecipientSelector {
                 id: selectRecipient
                 visible: false
-                accounts: walletModel.accounts
+                accounts: walletModel.accountsView.accounts
                 contacts: profileModel.contacts.addedContacts
                 selectedRecipient: root.selectedRecipient
                 readOnly: true

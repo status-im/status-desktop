@@ -20,7 +20,7 @@ ModalPopup {
       anchors.rightMargin: Style.current.padding
       AccountSelector {
           id: selectFromAccount
-          accounts: walletModel.accounts
+          accounts: walletModel.accountsView.accounts
           currency: walletModel.defaultCurrency
           width: parent.width
           //% "Choose account"
