@@ -16,7 +16,7 @@ proc processChatUpdate(self: ChatModel, response: JsonNode): (seq[Chat], seq[Mes
   let pk = status_settings.getSetting[string](Setting.PublicKey, "0x0")
   var chats: seq[Chat] = @[]
   var messages: seq[Message] = @[]
-  if response{"result"}{"chats"} != nil:
+  if response{"result"}{"messages"} != nil:
     for jsonMsg in response["result"]["messages"]:
       messages.add(jsonMsg.toMessage(pk))
   if response{"result"}{"chats"} != nil:

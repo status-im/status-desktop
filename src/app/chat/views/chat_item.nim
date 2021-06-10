@@ -131,6 +131,7 @@ QtObject:
 
   QtProperty[QVariant] members:
     read = getMembers
+    notify = membershipChanged
 
   proc isTimelineChat*(self: ChatItemView): bool {.slot.} = result = ?.self.chatItem.id == status_utils.getTimelineChatId()
 
@@ -155,6 +156,15 @@ QtObject:
 
   QtProperty[bool] isMember:
     read = isMember
+    notify = membershipChanged
+
+  proc isMemberButNotJoined*(self: ChatItemView): bool {.slot.} =
+    if self.chatItem.isNil: return false
+    let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    return self.chatItem.isMemberButNotJoined(pubKey)
+
+  QtProperty[bool] isMemberButNotJoined:
+    read = isMemberButNotJoined
     notify = membershipChanged
 
   proc mutedChanged*(self: ChatItemView) {.signal.}

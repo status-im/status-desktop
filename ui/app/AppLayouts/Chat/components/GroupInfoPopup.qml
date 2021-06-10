@@ -8,12 +8,23 @@ import "./"
 
 ModalPopup {
     id: popup
+    enum ChannelType {
+        ActiveChannel,
+        ContextChannel
+    }
     property bool addMembers: false
     property int currMemberCount: 1
     property int memberCount: 1
     readonly property int maxMembers: 10
     property var pubKeys: []
-    property var channel
+    property int channelType: GroupInfoPopup.ChannelType.ActiveChannel
+    property QtObject channel: {
+        if (channelType === GroupInfoPopup.ChannelType.ActiveChannel) {
+            return chatsModel.activeChannel
+         } else if (channelType === GroupInfoPopup.ChannelType.ContextChannel) {
+            return chatsModel.contextChannel
+         }
+    }
     property bool isAdmin: false
     property Component pinnedMessagesPopupComponent
 
@@ -225,6 +236,22 @@ ModalPopup {
             anchors.rightMargin: -Style.current.padding
             anchors.top: pinnedMessagesBtn.bottom
             anchors.topMargin: visible ? Style.current.halfPadding : 0
+        }
+
+        Connections {
+            target: chatsModel
+            onActiveChannelChanged: {
+                if (popup.channelType === GroupInfoPopup.ChannelType.ActiveChannel) {
+                    popup.channel = chatsModel.activeChannel
+                    resetSelectedMembers()
+                }
+            }
+            onContextChannelChanged: {
+                if (popup.channelType === GroupInfoPopup.ChannelType.ContextChannel) {
+                    popup.channel = chatsModel.contextChannel
+                    resetSelectedMembers()
+                }
+            }
         }
 
         ListView {

@@ -41,7 +41,7 @@ Item {
             onClicked: {
                 switch (chatsModel.activeChannel.chatType) {
                     case Constants.chatTypePrivateGroupChat:
-                        openPopup(groupInfoPopupComponent, {channel: chatsModel.activeChannel})
+                        openPopup(groupInfoPopupComponent, {channelType: GroupInfoPopup.ChannelType.ActiveChannel})
                         break;
                     case Constants.chatTypeOneToOne:
                         const profileImage = appMain.getProfileImage(chatsModel.activeChannel.id)
@@ -106,7 +106,7 @@ Item {
                 icon.height: chatTopBarContent.iconSize
                 //% "Group Information"
                 text: qsTrId("group-information")
-                onTriggered: openPopup(groupInfoPopupComponent, {channel: chatsModel.activeChannel})
+                    onTriggered: openPopup(groupInfoPopupComponent, {channelType: GroupInfoPopup.ChannelType.ActiveChannel })
             }
             Action {
                 icon.source: "../../../img/close.svg"

@@ -183,7 +183,14 @@ proc findIndexById*(self: seq[CommunityCategory], id: string): int =
 
 proc isMember*(self: Chat, pubKey: string): bool =
   for member in self.members:
-    if member.id == pubKey and member.joined: return true
+    if member.id == pubKey:
+      return member.joined
+  return false
+
+proc isMemberButNotJoined*(self: Chat, pubKey: string): bool =
+  for member in self.members:
+    if member.id == pubKey:
+      return not member.joined
   return false
 
 proc contains*(self: Chat, pubKey: string): bool =
@@ -193,5 +200,6 @@ proc contains*(self: Chat, pubKey: string): bool =
 
 proc isAdmin*(self: Chat, pubKey: string): bool =
   for member in self.members:
-    if member.id == pubKey and member.joined and member.admin: return true
+    if member.id == pubKey:
+      return member.joined and member.admin
   return false

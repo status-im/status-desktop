@@ -60,7 +60,7 @@ PopupMenu {
                 )
             }
             if (channelContextMenu.contextChannel.chatType === Constants.chatTypePrivateGroupChat) {
-                return openPopup(groupInfoPopupComponent, {channel: channelContextMenu.contextChannel})
+                return openPopup(groupInfoPopupComponent, {channelType: GroupInfoPopup.ChannelType.ContextChannel})
             }
         }
     }
