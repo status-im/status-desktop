@@ -11,7 +11,9 @@ Rectangle {
     property int contentType: 2
 
     id: buttonsContainer
-    visible: (buttonsContainer.parentIsHovered || isMessageActive) && contentType !== Constants.transactionType
+    visible: !activityCenterMessage &&
+             (buttonsContainer.parentIsHovered || isMessageActive)
+             && contentType !== Constants.transactionType
     width: buttonRow.width + buttonsContainer.containerMargin * 2
     height: 36
     radius: Style.current.radius

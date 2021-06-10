@@ -183,6 +183,18 @@ Popup {
                                 pinnedBy: model.message.pinnedBy
                                 pinnedMessage: model.message.isPinned
                                 activityCenterMessage: true
+                                clickMessage: function (isProfileClick) {
+                                    if (isProfileClick) {
+                                        const pk = model.message.fromAuthor
+                                        const userProfileImage = appMain.getProfileImage(pk)
+                                        return openProfilePopup(chatsModel.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
+                                    }
+
+                                    activityCenter.close()
+                                    chatsModel.setActiveChannel(model.message.chatId)
+                                    positionAtMessage(model.message.messageId)
+                                }
+
                                 prevMessageIndex: {
                                     if (notificationDelegate.idx === 0) {
                                         return 0
@@ -223,6 +235,7 @@ Popup {
                             //                        }
 
                             ActivityChannelBadge {
+                                id: badge
                                 name: model.name
                                 chatId: model.chatId
                                 notificationType: model.notificationType
