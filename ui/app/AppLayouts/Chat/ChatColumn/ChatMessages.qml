@@ -6,6 +6,7 @@ import QtQuick.Layouts 1.13
 import QtQml.Models 2.13
 import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
+import SortFilterProxyModel 0.2
 import "../../../../shared"
 import "../../../../shared/status"
 import "../../../../imports"
@@ -264,26 +265,9 @@ ScrollView {
         }
 
 
-        model: messageListDelegate
+        model: messageProxyModel
         section.property: "sectionIdentifier"
         section.criteria: ViewSection.FullString
-    }
-
-    MessageDialog {
-        id: sendingMsgFailedPopup
-        standardButtons: StandardButton.Ok
-        //% "Failed to send message."
-        text: qsTrId("failed-to-send-message-")
-        icon: StandardIcon.Critical
-    }
-
-    DelegateModelGeneralized {
-        id: messageListDelegate
-        lessThan: [
-            function(left, right) { return left.clock > right.clock }
-        ]
-
-        model: messageList
 
         delegate: Message {
             id: msgDelegate
@@ -315,22 +299,33 @@ ScrollView {
             pinnedBy: model.pinnedBy
             gapFrom: model.gapFrom
             gapTo: model.gapTo
-            prevMessageIndex: {
-                // This is used in order to have access to the previous message and determine the timestamp
-                // we can't rely on the index because the sequence of messages is not ordered on the nim side
-                if (msgDelegate.DelegateModel.itemsIndex < messageListDelegate.items.count - 1) {
-                    return messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex + 1).model.index
-                }
-                return -1;
-            }
-            nextMessageIndex: {
-                if (msgDelegate.DelegateModel.itemsIndex <= 1) {
-                    return -1
-                }
-                return messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index
-            }
+
+            // This is used in order to have access to the previous message and determine the timestamp
+            // we can't rely on the index because the sequence of messages is not ordered on the nim side
+            prevMessageIndex: msgDelegate.DelegateModel.itemsIndex < messageProxyModel.count - 1 ? msgDelegate.DelegateModel.itemsIndex + 1 : -1;
+            prevMsgTimestamp: prevMessageIndex > -1 ? messageProxyModel.get(prevMessageIndex).timestamp : ""
+            nextMessageIndex: msgDelegate.DelegateModel.itemsIndex <= 1 ? -1 :  msgDelegate.DelegateModel.itemsIndex - 1;
+            nextMsgTimestamp: nextMessageIndex > -1 ? messageProxyModel.get(nextMessageIndex).timestamp : ""
             scrollToBottom: chatLogView.scrollToBottom
             timeout: model.timeout
+        }
+    }
+
+    MessageDialog {
+        id: sendingMsgFailedPopup
+        standardButtons: StandardButton.Ok
+        //% "Failed to send message."
+        text: qsTrId("failed-to-send-message-")
+        icon: StandardIcon.Critical
+    }
+
+    SortFilterProxyModel {
+        id: messageProxyModel
+        sourceModel: messageList
+        sorters: ExpressionSorter {
+            expression: {
+                return modelLeft.clock > modelRight.clock;
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 import QtQml.Models 2.13
 import QtQuick.Layouts 1.13
+import SortFilterProxyModel 0.2
 import "../../../imports"
 import "../../../shared"
 import "../../../shared/status"
@@ -110,18 +111,9 @@ ScrollView {
             flickDeceleration: 10000
             interactive: false
 
-            model: messageListDelegate
+            model: messageProxyModel
             section.property: "sectionIdentifier"
             section.criteria: ViewSection.FullString
-        }
-
-        DelegateModelGeneralized {
-            id: messageListDelegate
-            lessThan: [
-                function(left, right) { return left.clock > right.clock }
-            ]
-
-            model: chatsModel.messageList
 
             delegate: Message {
                 id: msgDelegate
@@ -145,16 +137,26 @@ ScrollView {
                 messageId: model.messageId
                 emojiReactions: model.emojiReactions
                 isStatusUpdate: true
-                prevMessageIndex: {
-                    // This is used in order to have access to the previous message and determine the timestamp
-                    // we can't rely on the index because the sequence of messages is not ordered on the nim side
-                    if(msgDelegate.DelegateModel.itemsIndex > 0){
-                        return messageListDelegate.items.get(msgDelegate.DelegateModel.itemsIndex - 1).model.index
-                    }
-                    return -1;
-                }
+                // This is used in order to have access to the previous message and determine the timestamp
+                // we can't rely on the index because the sequence of messages is not ordered on the nim side
+                prevMessageIndex: msgDelegate.DelegateModel.itemsIndex < messageProxyModel.count - 1 ? msgDelegate.DelegateModel.itemsIndex + 1 : -1;
+                prevMsgTimestamp: prevMessageIndex > -1 ? messageProxyModel.get(prevMessageIndex).timestamp : ""
+                nextMessageIndex: msgDelegate.DelegateModel.itemsIndex <= 1 ? -1 :  msgDelegate.DelegateModel.itemsIndex - 1;
+                nextMsgTimestamp: nextMessageIndex > -1 ? messageProxyModel.get(nextMessageIndex).timestamp : ""
+                
                 timeout: model.timeout
             }
         }
+
+        SortFilterProxyModel {
+            id: messageProxyModel
+            sourceModel: chatsModel.messageList
+            sorters: ExpressionSorter {
+                expression: {
+                    return modelLeft.clock > modelRight.clock;
+                }
+            }
+        }
+
     }
 }
