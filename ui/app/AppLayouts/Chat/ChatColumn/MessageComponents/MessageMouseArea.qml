@@ -3,13 +3,16 @@ import "../../../../../shared"
 import "../../../../../imports"
 
 MouseArea {
-    enabled: !placeholderMessage && !activityCenterMessage
+    enabled: !placeholderMessage
     cursorShape: chatText.hoveredLink ? Qt.PointingHandCursor : undefined
-    acceptedButtons: Qt.RightButton | Qt.LeftButton
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
     z: 50
     onClicked: {
-        if(mouse.button & Qt.RightButton) {
-            clickMessage(false, isSticker, false);
+        if (activityCenterMessage) {
+            return clickMessage(false, isSticker, false)
+        }
+        if(mouse.button === Qt.RightButton) {
+            clickMessage(false, isSticker, false)
             if (typeof isMessageActive !== "undefined") {
                 setMessageActive(messageId, true)
             }

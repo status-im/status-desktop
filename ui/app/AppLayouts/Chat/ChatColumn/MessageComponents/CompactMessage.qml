@@ -23,10 +23,12 @@ Item {
             + (dateGroupLbl.visible ? dateGroupLbl.height + dateGroupLbl.anchors.topMargin : 0)
 
     MouseArea {
-        enabled: !placeholderMessage && !activityCenterMessage
+        enabled: !placeholderMessage
         anchors.fill: messageContainer
-        acceptedButtons: Qt.RightButton
-        onClicked: messageMouseArea.clicked(mouse)
+        acceptedButtons: activityCenterMessage ? Qt.LeftButton : Qt.RightButton
+        onClicked: {
+            messageMouseArea.clicked(mouse)
+        }
     }
 
     ChatButtons {
@@ -238,6 +240,7 @@ Item {
             MessageMouseArea {
                 id: messageMouseArea
                 anchors.fill: stickerLoader.active ? stickerLoader : chatText
+                z: activityCenterMessage ? chatText.z + 1 : chatText.z -1
             }
 
             Loader {
@@ -320,7 +323,8 @@ Item {
     }
 
     HoverHandler {
-        enabled: forceHoverHandler || (typeof messageContextMenu !== "undefined" && typeof profilePopupOpened !== "undefined" && !messageContextMenu.opened && !profilePopupOpened && !popupOpened)
+        enabled: !activityCenterMessage &&
+                 (forceHoverHandler || (typeof messageContextMenu !== "undefined" && typeof profilePopupOpened !== "undefined" && !messageContextMenu.opened && !profilePopupOpened && !popupOpened))
         onHoveredChanged: setHovered(messageId, hovered)
     }
 

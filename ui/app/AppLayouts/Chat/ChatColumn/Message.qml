@@ -176,7 +176,7 @@ Item {
         }
     }
 
-    function clickMessage(isProfileClick, isSticker = false, isImage = false, image = null, emojiOnly = false, hideEmojiPicker = false) {
+    property var clickMessage: function(isProfileClick, isSticker = false, isImage = false, image = null, emojiOnly = false, hideEmojiPicker = false) {
         if (placeholderMessage || activityCenterMessage) {
             return
         }
