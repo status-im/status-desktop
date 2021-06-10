@@ -17,6 +17,7 @@ ScrollView {
     id: root
 
     property alias chatLogView: chatLogView
+    property alias scrollToMessage: chatLogView.scrollToMessage
     
     property var messageList: MessagesData {}
     property bool loadingMessages: false
@@ -61,6 +62,17 @@ ScrollView {
                 chatLogView.headerItem.height = chatLogView.height - (chatLogView.contentItem.height - chatLogView.headerItem.height) - 36
             } else {
                 chatLogView.headerItem.height = 0
+            }
+        }
+
+        property var scrollToMessage: function (messageId) {
+            let item
+            for (let i = 0; i < messageListDelegate.count; i++) {
+                item = messageListDelegate.items.get(i)
+                if (item.model.messageId === messageId) {
+                    chatLogView.positionViewAtIndex(i, ListView.Center)
+                    return
+                }
             }
         }
 

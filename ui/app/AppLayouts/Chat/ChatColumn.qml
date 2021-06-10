@@ -191,6 +191,10 @@ StackLayout {
     Timer {
         id: timer
     }
+
+    function positionAtMessage(messageId) {
+        stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].item.scrollToMessage(messageId)
+    }
     
     ColumnLayout {
         spacing: 0
