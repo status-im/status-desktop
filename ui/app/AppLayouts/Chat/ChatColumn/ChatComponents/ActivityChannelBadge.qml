@@ -49,6 +49,10 @@ Rectangle {
             property string repliedMessageContent: replyMessageIndex > -1 ? chatsModel.getMessageData(chatId, replyMessageIndex, "message") : "";
 
 
+            onReplyMessageIndexChanged: {
+                wrapper.visible = replyMessageIndex > -1
+            }
+
             width: childrenRect.width
             height: parent.height
             SVGImage {
