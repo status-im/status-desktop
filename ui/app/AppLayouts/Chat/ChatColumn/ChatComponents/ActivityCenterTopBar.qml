@@ -94,11 +94,11 @@ Item {
                y: moreActionsBtn.height + 4
 
                Action {
-                   icon.source: "../../../../img/eye-barred.svg"
+                   icon.source: hideReadNotifications ? "../../../../img/eye.svg" : "../../../../img/eye-barred.svg"
                    icon.width: 16
                    icon.height: 16
-                   text: qsTr("Hide read notifications")
-                   onTriggered: console.log('TODO Change settings')
+                   text: hideReadNotifications ? qsTr("Show read notifications") : qsTr("Hide read notifications")
+                   onTriggered: hideReadNotifications = !hideReadNotifications
                }
                Action {
                    icon.source: "../../../../img/bell.svg"

@@ -20,6 +20,8 @@ Popup {
     property bool hasReplies: false
     property bool hasContactRequests: contactList.count > 0
 
+    property bool hideReadNotifications: false
+
     id: activityCenter
     modal: true
 
@@ -75,7 +77,8 @@ Popup {
                 model: profileModel.contacts.contactRequests
 
                 delegate: ContactRequest {
-                    visible: activityCenter.currentFilter === ActivityCenter.Filter.All || activityCenter.currentFilter === ActivityCenter.Filter.ContactRequests
+                    visible: !hideReadNotifications &&
+                             (activityCenter.currentFilter === ActivityCenter.Filter.All || activityCenter.currentFilter === ActivityCenter.Filter.ContactRequests)
                     name: Utils.removeStatusEns(model.name)
                     address: model.address
                     localNickname: model.localNickname
@@ -150,9 +153,15 @@ Popup {
                         id: messageNotificationComponent
 
                         Rectangle {
-                            visible: activityCenter.currentFilter === ActivityCenter.Filter.All ||
-                                     (model.notificationType === Constants.acitivtyCenterNotificationTypeMention && activityCenter.currentFilter === ActivityCenter.Filter.Mentions) ||
-                                     (model.notificationType === Constants.acitivtyCenterNotificationTypeReply && activityCenter.currentFilter === ActivityCenter.Filter.Replies)
+                            visible: {
+                                if (hideReadNotifications && model.read) {
+                                    return false
+                                }
+
+                                return activityCenter.currentFilter === ActivityCenter.Filter.All ||
+                                        (model.notificationType === Constants.acitivtyCenterNotificationTypeMention && activityCenter.currentFilter === ActivityCenter.Filter.Mentions) ||
+                                        (model.notificationType === Constants.acitivtyCenterNotificationTypeReply && activityCenter.currentFilter === ActivityCenter.Filter.Replies)
+                            }
                             width: parent.width
                             height: childrenRect.height + Style.current.smallPadding
                             color: model.read ? Style.current.transparent : Utils.setColorAlpha(Style.current.blue, 0.1)
