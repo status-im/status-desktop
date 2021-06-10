@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import QtQml.Models 2.3
 import QtGraphicalEffects 1.13
+import SortFilterProxyModel 0.2
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
@@ -106,7 +107,7 @@ ModalPopup {
 
         ListView {
             anchors.fill: parent
-            model: communitiesDelegateModel
+            model: communitiesProxyModel
             spacing: 4
             clip: true
             id: communitiesList
@@ -125,27 +126,8 @@ ModalPopup {
                 }
             }
 
-        }
-
-        DelegateModelGeneralized {
-            id: communitiesDelegateModel
-            lessThan: [
-                function(left, right) {
-                    return left.name.toLowerCase() < right.name.toLowerCase()
-                }
-            ]
-
-            model: chatsModel.communities.list
             delegate: Item {
-                // TODO add the search for the name and category once they exist
-                visible: {
-                    if (!searchBox.text) {
-                        return true
-                    }
-                    const lowerCaseSearchStr = searchBox.text.toLowerCase()
-                    return name.toLowerCase().includes(lowerCaseSearchStr) || description.toLowerCase().includes(lowerCaseSearchStr)
-                }
-                height: visible ? communityImage.height + Style.current.padding : 0
+                height: communityImage.height + Style.current.padding
                 width: parent.width
 
                 Loader {
@@ -217,6 +199,28 @@ ModalPopup {
                         }
                         popup.close()
                     }
+                }
+            }
+        }
+
+        SortFilterProxyModel {
+            id: communitiesProxyModel
+            sourceModel: chatsModel.communities.list
+            sorters: StringSorter { 
+                roleName: "name"
+                caseSensitivity: Qt.CaseInsensitive
+            }
+            filters: AnyOf {
+                // TODO add the search for the category once it exist
+                RegExpFilter {
+                    roleName: "name"
+                    pattern: searchBox.text
+                    caseSensitivity: Qt.CaseInsensitive
+                }
+                RegExpFilter {
+                    roleName: "description"
+                    pattern: searchBox.text
+                    caseSensitivity: Qt.CaseInsensitive
                 }
             }
         }

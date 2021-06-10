@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import SortFilterProxyModel 0.2
 import "../../../../shared"
 import "../../../../imports"
 import "../components"
@@ -19,6 +20,18 @@ Item {
         id: timer
     }
 
+    SortFilterProxyModel {
+        id: channelProxyModel
+        sourceModel: channelListContent.channelModel
+        filters: [
+            RegExpFilter {
+                roleName: "name"
+                pattern: channelListContent.searchStr
+                caseSensitivity: Qt.CaseInsensitive
+            }
+        ]
+    }
+
     ListView {
         id: chatGroupsListView
         spacing: 0
@@ -28,7 +41,7 @@ Item {
         anchors.right: parent.right
         anchors.left: parent.left
         interactive: false
-        model: channelListContent.channelModel
+        model: channelProxyModel
         delegate: Channel {
             name: model.name
             muted: model.muted
@@ -39,7 +52,6 @@ Item {
             unviewedMessagesCount: model.unviewedMessagesCount
             hasMentions: model.hasMentions
             contentType: model.contentType
-            searchStr: channelListContent.searchStr
             categoryId: model.categoryId
             filterCategory: channelListContent.categoryId
             chatId: model.id

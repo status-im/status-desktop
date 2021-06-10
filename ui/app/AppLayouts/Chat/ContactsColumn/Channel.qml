@@ -24,7 +24,6 @@ Item {
     }
 
     property string filterCategory: ""
-    property string searchStr: ""
     property bool isCompact: appSettings.useCompactMode
     property int contentType: 1
     property bool muted: false
@@ -43,7 +42,7 @@ Item {
     property string profileImage: realChatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
 
     // Hide the box if it is filtered out
-    property bool isVisible: categoryId === filterCategory && (searchStr === "" || name.includes(searchStr))
+    property bool isVisible: categoryId === filterCategory
 
     id: wrapper
     anchors.right: parent.right
