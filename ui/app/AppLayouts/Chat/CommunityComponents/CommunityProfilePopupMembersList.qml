@@ -94,13 +94,23 @@ Item {
             }
 
             StyledText {
+                id: txtUsername
                 text: !model.userName.endsWith(".eth") && !!contactRow.nickname ?
                             contactRow.nickname : Utils.removeStatusEns(model.userName)
                 anchors.left: identicon.right
                 anchors.leftMargin: Style.current.smallPadding
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: 15
+            }
+            StyledText {
+                text: " (" + qsTr("You") + ")"
+                visible: !moreActionsBtn.visible
+                anchors.left: txtUsername.right
+                anchors.leftMargin: Style.current.smallPadding
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.smallPadding
                 anchors.verticalCenter: parent.verticalCenter
+                color: Style.current.secondaryText
                 font.pixelSize: 15
             }
 
@@ -119,6 +129,7 @@ Item {
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
+                visible: model.pubKey.toLowerCase() !== profileModel.profile.pubKey.toLowerCase()
                 MouseArea {
                     anchors.fill: parent
                     onClicked: contextMenu.popup(-contextMenu.width + moreActionsBtn.width, moreActionsBtn.height + 4)
