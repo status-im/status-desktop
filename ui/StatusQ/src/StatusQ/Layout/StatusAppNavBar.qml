@@ -79,7 +79,7 @@ Rectangle {
                 bottomPadding = 16
                 topPadding = 16
             } else {
-                height = navBarCommunityTabButtonsSlot.implicitHeight
+                height = navBarCommunityTabButtons.count > 0 ? navBarCommunityTabButtonsSlot.implicitHeight : 0
             }
         }
 
@@ -107,7 +107,7 @@ Rectangle {
         height: 1
         width: 30
         color: Theme.palette.directColor7
-        anchors.top: navBarCommunityTabButtons.model && navBarCommunityTabButtons.model.count > 0 ? navBarScrollSection.bottom : navBarChatButtonSlot.bottom
+        anchors.top: !!navBarCommunityTabButtons.model && navBarCommunityTabButtons.count > 0 ? navBarScrollSection.bottom : navBarChatButtonSlot.bottom
         anchors.topMargin: navBarScrollSection.height < navBarCommunityTabButtonsSlot.implicitHeight ? 0 : 16
         anchors.horizontalCenter: parent.horizontalCenter
         visible: navBarChatButton !== null && navBarTabButtons.length > 0
