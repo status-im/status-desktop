@@ -17,7 +17,7 @@ Loader {
     property int nameMargin: 6
 
     id: root
-    active: responseTo != "" && replyMessageIndex > -1
+    active: responseTo !== "" && replyMessageIndex > -1 && !activityCenterMessage
 
     sourceComponent: Component {
         Item {
@@ -141,19 +141,7 @@ Loader {
                 Component.onCompleted: textFieldImplicitWidth = implicitWidth
                 anchors.top: lblReplyAuthor.bottom
                 anchors.topMargin: nameMargin
-                text: `<style type="text/css">`+
-                        `a {`+
-                            `color: ${isCurrentUser && !appSettings.useCompactMode ? Style.current.white : Style.current.textColor};`+
-                        `}`+
-                        `a.mention {`+
-                            `color: ${isCurrentUser ? Style.current.cyan : Style.current.turquoise};`+
-                        `}`+
-                        `</style>`+
-                    `</head>`+
-                    `<body>`+
-                        `${Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), "26x26")}`+
-                    `</body>`+
-                `</html>`
+                text: Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), Emoji.size.small), isCurrentUser, appSettings.useCompactMode)
                 textFormat: Text.RichText
                 color: root.elementsColor
                 readOnly: true
