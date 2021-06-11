@@ -57,7 +57,7 @@ ScrollView {
                     anchors.top: somethingWentWrongText.bottom
                     anchors.topMargin: Style.current.halfPadding
                     onClicked: {
-                        walletModel.reloadCollectible(collectibleType)
+                        walletModel.collectiblesView.reloadCollectible(collectibleType)
                     }
                 }
             }
