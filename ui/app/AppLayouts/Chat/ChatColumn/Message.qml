@@ -29,6 +29,7 @@ Item {
     property bool hasMention: false
     property string linkUrls: ""
     property bool placeholderMessage: false
+    property bool activityCenterMessage: false
     property bool pinnedMessage: false
     property string pinnedBy
     property bool forceHoverHandler: false // Used to force the HoverHandler to be active (useful for messages in popups)
@@ -176,7 +177,7 @@ Item {
     }
 
     function clickMessage(isProfileClick, isSticker = false, isImage = false, image = null, emojiOnly = false, hideEmojiPicker = false) {
-        if (placeholderMessage) {
+        if (placeholderMessage || activityCenterMessage) {
             return
         }
 
@@ -300,7 +301,7 @@ Item {
                     height: 12
                 }
              }
-            
+
             StyledText {
                 id: fetchMoreButton
                 font.weight: Font.Medium

@@ -3,20 +3,29 @@ import "../../../../../shared"
 import "../../../../../imports"
 
 StyledText {
+    property int previousMessageIndex: -1
+    property string previousMessageTimestamp
+    property string messageTimestamp
+
     id: dateGroupLbl
     font.pixelSize: 13
     color: Style.current.secondaryText
     horizontalAlignment: Text.AlignHCenter
-    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.horizontalCenter: activityCenterMessage ? undefined : parent.horizontalCenter
+    anchors.top: parent.top
+    anchors.topMargin: visible ? (activityCenterMessage ? Style.current.halfPadding : 20) : 0
+    anchors.left: parent.left
+    anchors.leftMargin: activityCenterMessage ? Style.current.padding : 0
+
     text: {
-        if (prevMessageIndex == -1) return ""; // identifier
+        if (previousMessageIndex === -1) return ""; // identifier
 
         let now = new Date()
         let yesterday = new Date()
         yesterday.setDate(now.getDate()-1)
 
-        var currentMsgDate = new Date(parseInt(timestamp, 10));
-        var prevMsgDate = prevMsgTimestamp === "" ? new Date(0) : new Date(parseInt(prevMsgTimestamp, 10));
+        var currentMsgDate = new Date(parseInt(messageTimestamp, 10));
+        var prevMsgDate = previousMessageTimestamp === "" ? new Date(0) : new Date(parseInt(previousMessageTimestamp, 10));
 
         if (currentMsgDate.getDay() === prevMsgDate.getDay()) {
             return ""
@@ -59,6 +68,4 @@ StyledText {
         }
     }
     visible: text !== ""
-    anchors.top: parent.top
-    anchors.topMargin: this.visible ? 20 : 0
 }

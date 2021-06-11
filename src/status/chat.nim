@@ -29,6 +29,7 @@ type
     emojiReactions*: seq[Reaction]
     communities*: seq[Community]
     communityMembershipRequests*: seq[CommunityMembershipRequest]
+    activityCenterNotifications*: seq[ActivityCenterNotification]
 
   ChatIdArg* = ref object of Args
     chatId*: string
@@ -42,9 +43,11 @@ type
   CommunityActiveChangedArgs* = ref object of Args
     active*: bool
 
-
   MsgsLoadedArgs* = ref object of Args
     messages*: seq[Message]
+
+  ActivityCenterNotificationsArgs* = ref object of Args
+    activityCenterNotifications*: seq[ActivityCenterNotification]
 
   ReactionsLoadedArgs* = ref object of Args
     reactions*: seq[Reaction]
@@ -105,7 +108,7 @@ proc cleanSpamChatGroups(self: ChatModel, chats: seq[Chat], contacts: seq[Profil
     else:
       result.add(chat)
 
-proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest], pinnedMessages: seq[Message]) =
+proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest], pinnedMessages: seq[Message], activityCenterNotifications: seq[ActivityCenterNotification]) =
   var contacts = getAddedContacts()
 
   var chatList = chats
@@ -126,7 +129,7 @@ proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiRea
       if self.lastMessageTimestamps[chatId] > ts:
         self.lastMessageTimestamps[chatId] = ts
       
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chatList, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests, pinnedMessages: pinnedMessages))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages,chats: chatList, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests, pinnedMessages: pinnedMessages, activityCenterNotifications: activityCenterNotifications))
 
 proc hasChannel*(self: ChatModel, chatId: string): bool =
   self.channels.hasKey(chatId)
@@ -177,21 +180,6 @@ proc requestMissingCommunityInfos*(self: ChatModel) =
   for communityId in self.communitiesToFetch:
     status_chat.requestCommunityInfo(communityId)
 
-proc activityCenterNotification*(self: ChatModel, initialLoad:bool = true) =
-  # Notifications were already loaded, since cursor will 
-  # be nil/empty if there are no more notifs
-  if(not initialLoad and self.activityCenterCursor == ""): return
-
-  status_chat.activityCenterNotification(self.activityCenterCursor)
-  # self.activityCenterCursor[chatId] = messageTuple[0];
-
-  # if messageTuple[1].len > 0:
-  #   let lastMsgIndex = messageTuple[1].len - 1
-  #   let ts = times.convert(Milliseconds, Seconds, messageTuple[1][lastMsgIndex].whisperTimestamp.parseInt())
-  #   self.lastMessageTimestamps[chatId] = ts
-
-  # self.events.emit("messagesLoaded", MsgsLoadedArgs(messages: messageTuple[1]))
-
 proc init*(self: ChatModel, pubKey: string, messagesFromContactsOnly: bool) =
   self.publicKey = pubKey
   self.messagesFromContactsOnly = messagesFromContactsOnly
@@ -201,8 +189,6 @@ proc init*(self: ChatModel, pubKey: string, messagesFromContactsOnly: bool) =
 
   if (messagesFromContactsOnly):
     chatList = self.cleanSpamChatGroups(chatList, contacts)
-
-  # self.activityCenterNotification()
 
   let profileUpdatesChatIds = chatList.filter(c => c.chatType == ChatType.Profile).map(c => c.id)
 
@@ -555,3 +541,31 @@ proc pinnedMessagesByChatID*(self: ChatModel, chatId: string, cursor: string = "
   self.msgCursor[chatId] = cursor
 
   self.events.emit("pinnedMessagesLoaded", MsgsLoadedArgs(messages: pinnedMessages))
+
+proc activityCenterNotifications*(self: ChatModel, initialLoad: bool = true) =
+  # Notifications were already loaded, since cursor will 
+  # be nil/empty if there are no more notifs
+  if(not initialLoad and self.activityCenterCursor == ""): return
+
+  let activityCenterNotificationsTuple = status_chat.activityCenterNotification(self.activityCenterCursor)
+  self.activityCenterCursor = activityCenterNotificationsTuple[0];
+
+  self.events.emit("activityCenterNotificationsLoaded", ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotificationsTuple[1]))
+
+
+proc activityCenterNotifications*(self: ChatModel, cursor: string = "", activityCenterNotifications: seq[ActivityCenterNotification]) =
+  self.activityCenterCursor = cursor
+
+  self.events.emit("activityCenterNotificationsLoaded", ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotifications))
+
+proc markAllActivityCenterNotificationsRead*(self: ChatModel): string =
+  try:
+    status_chat.markAllActivityCenterNotificationsRead()
+  except Exception as e:
+    error "Error marking all as read", msg = e.msg
+    result = e.msg
+  
+
+proc unreadActivityCenterNotificationsCount*(self: ChatModel): int =
+  status_chat.unreadActivityCenterNotificationsCount()
+  
