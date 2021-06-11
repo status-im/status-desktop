@@ -7,9 +7,10 @@ import "../../../shared/status"
 import "."
 import "components"
 
-SplitView {
+import StatusQ.Layout 0.1
+
+StatusAppTwoPanelLayout {
     id: chatView
-    handle: SplitViewHandle {}
 
     property alias chatColumn: chatColumn
     property bool stickersLoaded: false
@@ -27,10 +28,28 @@ SplitView {
         chatColumn.onActivated()
     }
 
-    Loader {
-        id: contactColumnLoader
-        SplitView.preferredWidth: Style.current.leftTabPreferredSize
-        sourceComponent: appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
+    leftPanel: Item {
+        anchors.fill: parent
+
+        Loader {
+            id: contactColumnLoader
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: parent.width
+            anchors.horizontalCenter: parent.horizontalCenter
+            sourceComponent: appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communtiyColumnComponent : contactsColumnComponent
+        }
+    }
+
+    rightPanel: Item {
+        anchors.fill: parent
+
+        ChatColumn {
+            id: chatColumn
+            anchors.fill: parent
+            chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
+        }
+
     }
 
     Component {
@@ -49,11 +68,6 @@ SplitView {
         GroupInfoPopup {
             pinnedMessagesPopupComponent: chatColumn.pinnedMessagesPopupComponent
         }
-    }
-
-    ChatColumn {
-        id: chatColumn
-        chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
     }
 
     Component {
