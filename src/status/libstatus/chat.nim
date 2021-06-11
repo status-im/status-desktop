@@ -73,13 +73,13 @@ proc loadChats*(): seq[Chat] =
         result.add(chat)
   result.sort(sortChats)
 
-proc parseChatMessagesResponse*(chatId: string, rpcResult: JsonNode, isPin: bool = false): (string, seq[Message]) =
-  let pk = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+proc parseChatMessagesResponse*(chatId: string, rpcResult: JsonNode): (string, seq[Message]) =
   var messages: seq[Message] = @[]
-  var msg: Message
-  if rpcResult["messages"].kind != JNull:
-    for jsonMsg in rpcResult["messages"]:
-      messages.add(jsonMsg.toMessage(pk, isPin))
+  let messagesObj = rpcResult{"messages"}
+  if(messagesObj != nil and messagesObj.kind != JNull):
+    let pk = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    for jsonMsg in messagesObj:
+      messages.add(jsonMsg.toMessage(pk))
   return (rpcResult{"cursor"}.getStr, messages)
 
 proc rpcChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
@@ -516,10 +516,24 @@ proc banUserFromCommunity*(pubKey: string, communityId: string): string =
     "user": pubKey
   }])
 
+
+proc parseChatPinnedMessagesResponse*(chatId: string, rpcResult: JsonNode): (string, seq[Message]) =
+  var messages: seq[Message] = @[]
+  let messagesObj = rpcResult{"pinnedMessages"}
+  if(messagesObj != nil and messagesObj.kind != JNull):
+    let pk = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    var msg: Message
+    for jsonMsg in messagesObj:
+      msg = jsonMsg["message"].toMessage(pk)
+      msg.pinnedBy = $jsonMsg{"pinnedBy"}.getStr
+      messages.add(msg)
+  return (rpcResult{"cursor"}.getStr, messages)
+
 proc rpcPinnedChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
   success = true
   try:
     result = callPrivateRPC("chatPinnedMessages".prefix, %* [chatId, cursorVal, limit])
+    debug "chatPinnedMessages", result
   except RpcException as e:
     success = false
     result = e.msg
@@ -535,7 +549,7 @@ proc pinnedMessagesByChatID*(chatId: string, cursor: string): (string, seq[Messa
   var success: bool
   let callResult = rpcPinnedChatMessages(chatId, cursorVal, 20, success)
   if success:
-    result = parseChatMessagesResponse(chatId, callResult.parseJson()["result"], true)
+    result = parseChatPinnedMessagesResponse(chatId, callResult.parseJson()["result"])
 
 proc setPinMessage*(messageId: string, chatId: string, pinned: bool) =
   discard callPrivateRPC("sendPinMessage".prefix, %*[{

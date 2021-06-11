@@ -646,7 +646,7 @@ QtObject:
 
     let pinnedMsgs = rpcResponseObj{"pinnedMessages"}
     if(pinnedMsgs != nil and pinnedMsgs.kind != JNull):
-      let pinnedMessages = parseChatMessagesResponse(chatId, pinnedMsgs, true)
+      let pinnedMessages = parseChatPinnedMessagesResponse(chatId, pinnedMsgs)
       self.status.chat.pinnedMessagesByChatID(chatId, pinnedMessages[0], pinnedMessages[1])
 
   proc hideLoadingIndicator*(self: ChatsView) {.slot.} =

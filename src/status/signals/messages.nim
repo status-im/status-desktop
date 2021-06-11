@@ -13,7 +13,7 @@ import types
 import web3/conversions
 from ../libstatus/utils import parseAddress, wei2Eth
 
-proc toMessage*(jsonMsg: JsonNode, pk: string, isPin: bool = false): Message
+proc toMessage*(jsonMsg: JsonNode, pk: string): Message
 
 proc toChat*(jsonChat: JsonNode): Chat
 
@@ -271,7 +271,7 @@ proc toTextItem*(jsonText: JsonNode): TextItem =
       result.children.add(child.toTextItem)
 
 
-proc toMessage*(jsonMsg: JsonNode, pk: string, isPin: bool = false): Message =
+proc toMessage*(jsonMsg: JsonNode, pk: string): Message =
   var contentType: ContentType
   try:
     contentType = ContentType(jsonMsg{"contentType"}.getInt)
@@ -312,10 +312,6 @@ proc toMessage*(jsonMsg: JsonNode, pk: string, isPin: bool = false): Message =
       audioDurationMs: jsonMsg{"audioDurationMs"}.getInt,
       hasMention: false
     )
-
-  if isPin:
-    message.pinnedBy = message.fromAuthor
-    message.fromAuthor = ""
 
   if contentType == ContentType.Gap:
     message.gapFrom = jsonMsg["gapParameters"]["from"].getInt
