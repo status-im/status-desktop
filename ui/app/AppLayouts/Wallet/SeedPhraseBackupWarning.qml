@@ -11,7 +11,6 @@ Rectangle {
     id: root
     visible: !profileModel.mnemonic.isBackedUp
     height: visible ? 32 : 0
-    Layout.fillWidth: true
     color: Style.current.red
 
     Row {

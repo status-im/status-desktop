@@ -5,67 +5,59 @@ import "../../../imports"
 import "../../../shared"
 import "."
 
-ColumnLayout {
+import StatusQ.Layout 0.1
+
+Item {
+    id: walletView
+
     property bool hideSignPhraseModal: false
 
-    SignPhraseModal {
-        id: signPhrasePopup
-    }
-    
     function showSigningPhrasePopup(){
         if(!hideSignPhraseModal && !appSettings.hideSignPhraseModal){
             signPhrasePopup.open();
         }
     }
 
-    Component.onCompleted: {
-        if(onboardingModel.firstTimeLogin){
-            onboardingModel.firstTimeLogin = false
-            walletModel.setInitialRange()
-        }
+    SignPhraseModal {
+        id: signPhrasePopup
+    }
+        
+    SeedPhraseBackupWarning { 
+        id: seedPhraseWarning
+        width: parent.width
+        anchors.top: parent.top
     }
 
-    Timer {
-        id: recentHistoryTimer
-        interval: Constants.walletFetchRecentHistoryInterval
-        running: true
-        repeat: true
-        onTriggered: walletModel.checkRecentHistory()
-    }
-    
-    SeedPhraseBackupWarning { }
-    
-    SplitView {
-        id: walletView
-        Layout.fillHeight: true
-        Layout.fillWidth: true
+    StatusAppTwoPanelLayout {
+        anchors.top: seedPhraseWarning.bottom
+        height: walletView.height - seedPhraseWarning.height
+        width: walletView.width
 
-        handle: SplitViewHandle {}
-
-        Connections {
-            target: appMain
-            onSettingsLoaded: {
-                // Add recent
-                walletView.restoreState(appSettings.walletSplitView)
+        Component.onCompleted: {
+            if(onboardingModel.firstTimeLogin){
+                onboardingModel.firstTimeLogin = false
+                walletModel.setInitialRange()
             }
         }
-        Component.onDestruction: appSettings.walletSplitView = this.saveState()
 
-        LeftTab {
-            id: leftTab
-            SplitView.preferredWidth: Style.current.leftTabPreferredSize
+        Timer {
+            id: recentHistoryTimer
+            interval: Constants.walletFetchRecentHistoryInterval
+            running: true
+            repeat: true
+            onTriggered: walletModel.checkRecentHistory()
         }
         
-        Item {
+        leftPanel: LeftTab {
+            id: leftTab
+            anchors.fill: parent
+        }
+
+        rightPanel: Item {
+        
+            anchors.fill: parent
+
             id: walletContainer
-            anchors.top: parent.top
-            anchors.topMargin: 0
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 0
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: leftTab.right
-            anchors.leftMargin: 0
 
             WalletHeader {
                 id: walletHeader
@@ -100,7 +92,6 @@ ColumnLayout {
                         background: Rectangle {
                             color: Style.current.transparent
                         }
-
                         StatusTabButton {
                             id: assetBtn
                             //% "Assets"
@@ -119,6 +110,7 @@ ColumnLayout {
                             anchors.leftMargin: 32
                             //% "History"
                             btnText: qsTrId("history")
+                            onClicked: historyTab.checkIfHistoryIsBeingFetched()
                         }
                     }
 
