@@ -11,7 +11,7 @@ Item {
     property alias textField: chatText
 
     id: root
-    visible: contentType == Constants.messageType || isEmoji
+    visible: contentType === Constants.messageType || isEmoji
     z: 51
 
     implicitHeight: visible ? (showMoreLoader.active ? childrenRect.height - 10 : chatText.height) : 0

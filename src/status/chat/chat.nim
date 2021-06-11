@@ -16,6 +16,7 @@ type ActivityCenterNotificationType* {.pure.}= enum
   NewOneToOne = 1, 
   NewPrivateGroupChat = 2,
   Mention = 3
+  Reply = 4
 
 proc isOneToOne*(self: ChatType): bool = self == ChatType.OneToOne
 proc isTimeline*(self: ChatType): bool = self == ChatType.Timeline
