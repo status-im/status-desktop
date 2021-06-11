@@ -1,12 +1,21 @@
 import QtQuick 2.13
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
     
 StatusIconTabButton {
     id: statusNavBarTabButton 
     property alias badge: statusBadge
     property alias tooltip: statusTooltip
+    property Component popupMenu
+
     signal clicked(var mouse)
+
+    onPopupMenuChanged: {
+        if (!!popupMenu) {
+            popupMenuSlot.sourceComponent = popupMenu
+        }
+    }
 
     StatusToolTip {
         id: statusTooltip
@@ -38,7 +47,27 @@ StatusIconTabButton {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: statusNavBarTabButton.clicked(mouse)
+        onClicked: {
+            if (mouse.button === Qt.RightButton) {
+                if (popupMenuSlot.active) {
+                    statusNavBarTabButton.highlighted = true
+                    let btnWidth = statusNavBarTabButton.width
+                    popupMenuSlot.item.popup(parent.x + btnWidth + 4, parent.y - 2)
+                }
+                return
+            }
+            statusNavBarTabButton.clicked(mouse)
+        }
+    }
+
+    Loader {
+        id: popupMenuSlot
+        active: !!statusNavBarTabButton.popupMenu
+        onLoaded: {
+            popupMenuSlot.item.closeHandler = function () {
+                statusNavBarTabButton.highlighted = false
+            }
+        }
     }
 }
 

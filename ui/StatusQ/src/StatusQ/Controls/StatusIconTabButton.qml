@@ -9,6 +9,7 @@ TabButton {
     id: statusIconTabButton
 
     property string name: ""
+    property bool highlighted: false
 
     implicitWidth: 40
     implicitHeight: 40
@@ -34,7 +35,7 @@ TabButton {
                 icon: statusIconTabButton.icon.name
                 height: statusIconTabButton.icon.height
                 width: statusIconTabButton.icon.width
-                color: (statusIconTabButton.hovered || statusIconTabButton.checked) ? Theme.palette.primaryColor1 : statusIconTabButton.icon.color
+                color: (statusIconTabButton.hovered || highlighted || statusIconTabButton.checked) ? Theme.palette.primaryColor1 : statusIconTabButton.icon.color
             }
         }
 
@@ -67,13 +68,13 @@ TabButton {
                 height: 26
                 letterSize: 15
                 name: statusIconTabButton.name
-                color: (statusIconTabButton.hovered || statusIconTabButton.checked) ? Theme.palette.primaryColor1 : statusIconTabButton.icon.color
+                color: (statusIconTabButton.hovered || highlighted || statusIconTabButton.checked) ? Theme.palette.primaryColor1 : statusIconTabButton.icon.color
             }
         }
     }
 
     background: Rectangle {
-        color: hovered || ((!!icon.source.toString() || !!name) && checked) ? Theme.palette.primaryColor3 : "transparent"
+        color: hovered || highlighted || ((!!icon.source.toString() || !!name) && checked) ? Theme.palette.primaryColor3 : "transparent"
         border.color: Theme.palette.primaryColor1
         border.width: (!!icon.source.toString() || !!name) && checked ? 1 : 0
         radius: statusIconTabButton.width / 2

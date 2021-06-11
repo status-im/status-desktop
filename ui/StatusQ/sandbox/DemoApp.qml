@@ -57,6 +57,8 @@ Rectangle {
 
         appNavBar: StatusAppNavBar {
 
+            id: navBar
+
             navBarChatButton: StatusNavBarTabButton {
                 icon.name: "chat"
                 tooltip.text: "Chat"
@@ -74,6 +76,7 @@ Rectangle {
             }
 
             navBarCommunityTabButtons.delegate: StatusNavBarTabButton {
+                id: communityBtn
                 anchors.horizontalCenter: parent.horizontalCenter
                 name: model.name
                 tooltip.text: model.tooltipText
@@ -83,6 +86,35 @@ Rectangle {
                 onClicked: {
                     appView.sourceComponent = statusAppCommunityView
                 }
+
+                popupMenu: StatusPopupMenu {
+
+                    StatusMenuItem {
+                        text: qsTr("Invite People")
+                        icon.name: "share-ios"
+                    }
+
+                    StatusMenuItem {
+                        text: qsTr("View Community")
+                        icon.name: "group"
+                    }
+
+                    StatusMenuItem {
+                        text: qsTr("Edit Community")
+                        icon.name: "edit"
+                    }
+
+                    StatusMenuSeparator {}
+
+                    StatusMenuItem {
+                        text: qsTr("Leave Community")
+                        icon.name: "arrow-right"
+                        icon.width: 14
+                        iconRotation: 180
+                        type: StatusMenuItem.Type.Danger
+                    }
+                }
+
             }
 
             navBarTabButtons: [
