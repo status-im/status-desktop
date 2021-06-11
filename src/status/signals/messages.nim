@@ -23,6 +23,8 @@ proc toCommunity*(jsonCommunity: JsonNode): Community
 
 proc toCommunityMembershipRequest*(jsonCommunityMembershipRequest: JsonNode): CommunityMembershipRequest
 
+proc toActivityCenterNotification*(jsonNotification: JsonNode, pk: string): ActivityCenterNotification
+
 proc fromEvent*(event: JsonNode): Signal = 
   var signal:MessageSignal = MessageSignal()
   signal.messages = @[]
@@ -65,6 +67,10 @@ proc fromEvent*(event: JsonNode): Signal =
   if event["event"]{"requestsToJoinCommunity"} != nil:
     for jsonCommunity in event["event"]["requestsToJoinCommunity"]:
       signal.membershipRequests.add(jsonCommunity.toCommunityMembershipRequest)
+
+  if event["event"]{"activityCenterNotifications"} != nil:
+    for jsonNotification in event["event"]["activityCenterNotifications"]:
+      signal.activityCenterNotification.add(jsonNotification.toActivityCenterNotification(pk))
 
   if event["event"]{"pinMessages"} != nil:
     for jsonPinnedMessage in event["event"]["pinMessages"]:
@@ -365,3 +371,24 @@ proc toReaction*(jsonReaction: JsonNode): Reaction =
       emojiId: jsonReaction{"emojiId"}.getInt,
       retracted: jsonReaction{"retracted"}.getBool
     )
+
+proc toActivityCenterNotification*(jsonNotification: JsonNode, pk: string): ActivityCenterNotification =
+  var activityCenterNotificationType: ActivityCenterNotificationType
+  try:
+    activityCenterNotificationType = ActivityCenterNotificationType(jsonNotification{"type"}.getInt)
+  except:
+    warn "Unknown notification type received", type = jsonNotification{"type"}.getInt
+    activityCenterNotificationType = ActivityCenterNotificationType.Unknown
+  result = ActivityCenterNotification(
+      id: jsonNotification{"id"}.getStr,
+      chatId: jsonNotification{"chatId"}.getStr,
+      name: jsonNotification{"name"}.getStr,
+      notificationType: activityCenterNotificationType,
+      timestamp: jsonNotification{"timestamp"}.getInt,
+      read: jsonNotification{"read"}.getBool,
+      dismissed: jsonNotification{"dismissed"}.getBool,
+      accepted: jsonNotification{"accepted"}.getBool
+    )
+
+  if jsonNotification.contains("message") and jsonNotification{"message"}.kind != JNull: 
+    result.message = jsonNotification{"message"}.toMessage(pk)

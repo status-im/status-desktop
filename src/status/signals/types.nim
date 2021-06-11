@@ -36,6 +36,7 @@ type MessageSignal* = ref object of Signal
   emojiReactions*: seq[Reaction]
   communities*: seq[Community]
   membershipRequests*: seq[CommunityMembershipRequest]
+  activityCenterNotification*: seq[ActivityCenterNotification]
 
 type CommunitySignal* = ref object of Signal
   community*: Community

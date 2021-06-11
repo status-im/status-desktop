@@ -23,7 +23,7 @@ Item {
             + (dateGroupLbl.visible ? dateGroupLbl.height + dateGroupLbl.anchors.topMargin : 0)
 
     MouseArea {
-        enabled: !placeholderMessage
+        enabled: !placeholderMessage && !activityCenterMessage
         anchors.fill: messageContainer
         acceptedButtons: Qt.RightButton
         onClicked: messageMouseArea.clicked(mouse)
@@ -53,6 +53,9 @@ Item {
 
     DateGroup {
         id: dateGroupLbl
+        previousMessageIndex: prevMessageIndex
+        previousMessageTimestamp: prevMsgTimestamp
+        messageTimestamp: timestamp
     }
 
     Rectangle {
@@ -60,7 +63,7 @@ Item {
 
         id: messageContainer
         anchors.top: dateGroupLbl.visible ? dateGroupLbl.bottom : parent.top
-        anchors.topMargin: dateGroupLbl.visible ? Style.current.padding : 0
+        anchors.topMargin: dateGroupLbl.visible ? (activityCenterMessage ? 4 : Style.current.padding) : 0
         height: childrenRect.height
                 + (chatName.visible || emojiReactionLoader.active ? Style.current.halfPadding : 0)
                 + (chatName.visible && emojiReactionLoader.active ? Style.current.padding : 0)
@@ -71,6 +74,10 @@ Item {
         width: parent.width
 
         color: {
+            if (placeholderMessage || activityCenterMessage) {
+                return Style.current.transparent
+            }
+
             if (pinnedMessage) {
                 return root.isHovered || isMessageActive ? Style.current.pinnedMessageBackgroundHovered : Style.current.pinnedMessageBackground
             }
@@ -297,7 +304,7 @@ Item {
     }
 
     Loader {
-        active: hasMention || pinnedMessage
+        active: !activityCenterMessage && (hasMention || pinnedMessage)
         height: messageContainer.height
         anchors.left: messageContainer.left
         anchors.top: messageContainer.top

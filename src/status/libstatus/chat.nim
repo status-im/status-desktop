@@ -73,7 +73,7 @@ proc loadChats*(): seq[Chat] =
         result.add(chat)
   result.sort(sortChats)
 
-proc parseChatMessagesResponse*(chatId: string, rpcResult: JsonNode): (string, seq[Message]) =
+proc parseChatMessagesResponse*(rpcResult: JsonNode): (string, seq[Message]) =
   var messages: seq[Message] = @[]
   let messagesObj = rpcResult{"messages"}
   if(messagesObj != nil and messagesObj.kind != JNull):
@@ -81,6 +81,15 @@ proc parseChatMessagesResponse*(chatId: string, rpcResult: JsonNode): (string, s
     for jsonMsg in messagesObj:
       messages.add(jsonMsg.toMessage(pk))
   return (rpcResult{"cursor"}.getStr, messages)
+
+proc parseActivityCenterNotifications*(rpcResult: JsonNode): (string, seq[ActivityCenterNotification]) =
+  let pk = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+  var notifs: seq[ActivityCenterNotification] = @[]
+  var msg: Message
+  if rpcResult{"notifications"}.kind != JNull:
+    for jsonMsg in rpcResult["notifications"]:
+      notifs.add(jsonMsg.toActivityCenterNotification(pk))
+  return (rpcResult{"cursor"}.getStr, notifs)
 
 proc rpcChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
   success = true
@@ -101,7 +110,7 @@ proc chatMessages*(chatId: string, cursor: string = ""): (string, seq[Message]) 
   var success: bool
   let callResult = rpcChatMessages(chatId, cursorVal, 20, success)
   if success:
-    result = parseChatMessagesResponse(chatId, callResult.parseJson()["result"])
+    result = parseChatMessagesResponse(callResult.parseJson()["result"])
 
 proc parseReactionsResponse*(chatId: string, rpcResult: JsonNode): (string, seq[Reaction]) =
   var reactions: seq[Reaction] = @[]
@@ -517,7 +526,7 @@ proc banUserFromCommunity*(pubKey: string, communityId: string): string =
   }])
 
 
-proc parseChatPinnedMessagesResponse*(chatId: string, rpcResult: JsonNode): (string, seq[Message]) =
+proc parseChatPinnedMessagesResponse*(rpcResult: JsonNode): (string, seq[Message]) =
   var messages: seq[Message] = @[]
   let messagesObj = rpcResult{"pinnedMessages"}
   if(messagesObj != nil and messagesObj.kind != JNull):
@@ -549,7 +558,7 @@ proc pinnedMessagesByChatID*(chatId: string, cursor: string): (string, seq[Messa
   var success: bool
   let callResult = rpcPinnedChatMessages(chatId, cursorVal, 20, success)
   if success:
-    result = parseChatPinnedMessagesResponse(chatId, callResult.parseJson()["result"])
+    result = parseChatPinnedMessagesResponse(callResult.parseJson()["result"])
 
 proc setPinMessage*(messageId: string, chatId: string, pinned: bool) =
   discard callPrivateRPC("sendPinMessage".prefix, %*[{
@@ -566,7 +575,7 @@ proc rpcActivityCenterNotifications*(cursorVal: JsonNode, limit: int, success: v
     success = false
     result = e.msg
 
-proc activityCenterNotification*(cursor: string = "") =
+proc activityCenterNotification*(cursor: string = ""): (string, seq[ActivityCenterNotification]) =
   var cursorVal: JsonNode
   
   if cursor == "":
@@ -576,6 +585,14 @@ proc activityCenterNotification*(cursor: string = "") =
 
   var success: bool
   let callResult = rpcActivityCenterNotifications(cursorVal, 20, success)
-  debug "Activity center", callResult
-  # if success:
-  #   result = parseChatMessagesResponse(chatId, callResult.parseJson()["result"])
+  if success:
+    result = parseActivityCenterNotifications(callResult.parseJson()["result"])
+
+proc markAllActivityCenterNotificationsRead*() =
+  discard callPrivateRPC("markAllActivityCenterNotificationsRead".prefix, %*[])
+
+proc unreadActivityCenterNotificationsCount*(): int =
+  let rpcResult = callPrivateRPC("unreadActivityCenterNotificationsCount".prefix, %*[]).parseJson
+
+  if rpcResult{"result"}.kind != JNull:
+    return rpcResult["result"].getInt

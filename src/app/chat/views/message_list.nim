@@ -1,4 +1,4 @@
-import NimQml, Tables, sets, json, sugar, chronicles
+import NimQml, Tables, sets, json, sugar, chronicles, sequtils
 import ../../../status/status
 import ../../../status/accounts
 import ../../../status/chat
@@ -6,6 +6,7 @@ import ../../../status/chat/[message,stickers]
 import ../../../status/profile/profile
 import ../../../status/ens
 import strformat, strutils
+import message_format
 
 type
   ChatMessageRoles {.pure.} = enum
@@ -60,8 +61,6 @@ QtObject:
 
   proc setup(self: ChatMessageList) =
     self.QAbstractListModel.setup
-
-  include message_format
 
   proc fetchMoreMessagesButton(self: ChatMessageList): Message =
     result = Message()
@@ -148,7 +147,7 @@ QtObject:
     let chatMessageRole = role.ChatMessageRoles
     case chatMessageRole:
       of ChatMessageRoles.UserName: result = newQVariant(message.userName)
-      of ChatMessageRoles.Message: result = newQVariant(self.renderBlock(message))
+      of ChatMessageRoles.Message: result = newQVariant(renderBlock(message, self.status.chat.contacts))
       of ChatMessageRoles.PlainText: result = newQVariant(message.text)
       of ChatMessageRoles.Timestamp: result = newQVariant(message.timestamp)
       of ChatMessageRoles.Clock: result = newQVariant($message.clock)
@@ -236,13 +235,13 @@ QtObject:
 
     let message = self.messages[index]
     case data:
-    of "userName": result = (message.userName)
-    of "publicKey": result = (message.fromAuthor)
-    of "alias": result = (message.alias)
-    of "localName": result = (message.localName)
-    of "ensName": result = (message.ensName)
-    of "message": result = (self.renderBlock(message))
-    of "identicon": result = (message.identicon)
+    of "userName": result = message.userName
+    of "publicKey": result = message.fromAuthor
+    of "alias": result = message.alias
+    of "localName": result = message.localName
+    of "ensName": result = message.ensName
+    of "message": result = (renderBlock(message, self.status.chat.contacts))
+    of "identicon": result = message.identicon
     of "timestamp": result = $(message.timestamp)
     of "image": result = $(message.image)
     of "contentType": result = $(message.contentType.int)

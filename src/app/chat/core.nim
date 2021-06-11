@@ -41,6 +41,8 @@ proc init*(self: ChatController) =
   self.status.chat.init(pubKey, messagesFromContactsOnly)
   self.status.stickers.init()
   self.view.reactions.init()
+  
+  self.view.asyncActivityNotificationLoad()
 
   let recentStickers = self.status.stickers.getRecentStickers()
   for sticker in recentStickers:

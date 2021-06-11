@@ -18,6 +18,9 @@ Item {
 
     DateGroup {
         id: dateGroupLbl
+        previousMessageIndex: prevMessageIndex
+        previousMessageTimestamp: prevMsgTimestamp
+        messageTimestamp: timestamp
     }
 
     UserImage {
