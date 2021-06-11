@@ -13,16 +13,22 @@ import "./AppLayouts/Chat/components"
 import "./AppLayouts/Chat/CommunityComponents"
 import Qt.labs.settings 1.0
 
-RowLayout {
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Layout 0.1
+import StatusQ.Popups 0.1
+
+StatusAppLayout {
     id: appMain
-    property int currentView: sLayout.currentIndex
-    property bool popupOpened: false
-    spacing: 0
-    Layout.fillHeight: true
-    Layout.fillWidth: true
+    anchors.fill: parent
 
     property alias appSettings: appSettings
+    signal settingsLoaded()
 
+    function changeAppSection(section) {
+        chatsModel.communities.activeCommunity.active = false
+        appView.currentIndex = Utils.getAppSectionIndex(section)
+    }
 
     function getProfileImage(pubkey, isCurrentUser, useLargeImage) {
         if (isCurrentUser || (isCurrentUser === undefined && pubkey === profileModel.profile.pubKey)) {
@@ -86,7 +92,6 @@ RowLayout {
         return ""
     }
 
-
     function openLink(link) {
         if (appSettings.showBrowserSelector) {
             appMain.openPopup(chooseBrowserPopupComponent, {link: link})
@@ -100,399 +105,126 @@ RowLayout {
         }
     }
 
-    signal settingsLoaded()
 
-    Settings {
-        id: appSettings
-        fileName: profileModel.profileSettingsFile
-        property var chatSplitView
-        property var walletSplitView
-        property var profileSplitView
-        property bool communitiesEnabled: false
-        property bool isWalletEnabled: false
-        property bool nodeManagementEnabled: false
-        property bool isBrowserEnabled: false
-        property bool displayChatImages: false
-        property bool useCompactMode: true
-        property bool timelineEnabled: true
-        property var recentEmojis: []
-        property var hiddenCommunityWelcomeBanners: []
-        property var hiddenCommunityBackUpBanners: []
-        property real volume: 0.2
-        property int notificationSetting: Constants.notifyAllMessages
-        property bool notificationSoundsEnabled: true
-        property bool useOSNotifications: true
-        property int notificationMessagePreviewSetting: Constants.notificationPreviewNameAndMessage
-        property bool notifyOnNewRequests: true
-        property var whitelistedUnfurlingSites: ({})
-        property bool neverAskAboutUnfurlingAgain: false
-        property bool hideChannelSuggestions: false
-        property int fontSize: Constants.fontSizeM
-        property bool hideSignPhraseModal: false
-        property bool onlyShowContactsProfilePics: true
-        property bool quitOnClose: false
+    appNavBar: StatusAppNavBar {
+        height: appMain.height
 
-        // Browser settings
-        property bool showBrowserSelector: true
-        property bool openLinksInStatus: true
-        property bool shouldShowFavoritesBar: true
-        property string browserHomepage: ""
-        property int shouldShowBrowserSearchEngine: Constants.browserSearchEngineDuckDuckGo
-        property int useBrowserEthereumExplorer: Constants.browserEthereumExplorerEtherscan
-        property bool autoLoadImages: true
-        property bool javaScriptEnabled: true
-        property bool errorPageEnabled: true
-        property bool pluginsEnabled: true
-        property bool autoLoadIconsForPage: true
-        property bool touchIconsEnabled: true
-        property bool webRTCPublicInterfacesOnly: false
-        property bool devToolsEnabled: false
-        property bool pdfViewerEnabled: true
-        property bool compatibilityMode: true
-    }
+        navBarChatButton: StatusNavBarTabButton {
+            icon.name: "chat"
+            checked: !chatsModel.communities.activeCommunity.active  && appView.currentIndex === Utils.getAppSectionIndex(Constants.chat)
+            tooltip.text: qsTr("Chat")
+            onClicked: {
+                if (chatsModel.communities.activeCommunity.active) {
+                    chatLayoutContainer.chatColumn.input.hideExtendedArea();
+                    chatsModel.communities.activeCommunity.active = false
+                }
+                appMain.changeAppSection(Constants.chat)
+            }
+        }
 
-    ErrorSound {
-        id: errorSound
-    }
-
-    Audio {
-        id: sendMessageSound
-        audioRole: Audio.NotificationRole
-        source: "../../../../sounds/send_message.wav"
-        volume: appSettings.volume
-        muted: !appSettings.notificationSoundsEnabled
-    }
-
-    Audio {
-        id: notificationSound
-        audioRole: Audio.NotificationRole
-        source: "../../../../sounds/notification.wav"
-        volume: appSettings.volume
-        muted: !appSettings.notificationSoundsEnabled
-    }
-
-
-    Connections {
-        target: profileModel
-        onProfileSettingsFileChanged: {
-            profileModel.changeLocale(globalSettings.locale)
-
-
-            // Since https://github.com/status-im/status-desktop/commit/93668ff75
-            // we're hiding the setting to change appearance for compact normal mode
-            // of the UI. For now, compact mode is the new default.
-            //
-            // Prior to this change, most likely many users are still using the
-            // normal mode configuration, so we have to enforce compact mode for
-            // those.
-            if (!appSettings.useCompactMode) {
-                appSettings.useCompactMode = true
+        navBarCommunityTabButtons.model: chatsModel.communities.joinedCommunities
+        navBarCommunityTabButtons.delegate: StatusNavBarTabButton {
+            onClicked: {
+                if (mouse.button === Qt.RightButton) {
+                    chatsModel.communities.setObservedCommunity(model.id)
+                    communityContextMenu.popup()
+                    return
+                }
+                appMain.changeAppSection(Constants.chat)
+                chatsModel.communities.setActiveCommunity(model.id)
             }
 
-            const whitelist = profileModel.getLinkPreviewWhitelist()
-            try {
-                const whiteListedSites = JSON.parse(whitelist)
-                let settingsUpdated = false
+            anchors.horizontalCenter: parent.horizontalCenter
 
-                // Add Status links to whitelist
-                whiteListedSites.push({title: "Status", address: Constants.deepLinkPrefix, imageSite: false})
-                whiteListedSites.push({title: "Status", address: Constants.joinStatusLink, imageSite: false})
+            checked: chatsModel.communities.activeCommunity.active && chatsModel.communities.activeCommunity.id === model.id
+            name: model.name
+            tooltip.text: model.name
+            icon.color: model.communityColor
+            icon.source: model.thumbnailImage
 
-                const settings = appSettings.whitelistedUnfurlingSites
+            badge.visible: model.unviewedMessagesCount > 0
+            badge.value: model.unviewedMessagesCount
+            badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+            badge.border.width: 2
 
-                // Set Status links as true. We intercept thoseURLs so it is privacy-safe
-                if (!settings[Constants.deepLinkPrefix] || !settings[Constants.joinStatusLink]) {
-                    settings[Constants.deepLinkPrefix] = true
-                    settings[Constants.joinStatusLink] = true
-                    settingsUpdated = true
+            StatusPopupMenu {
+                id: communityContextMenu
+
+                StatusMenuItem {
+                    text: qsTr("Invite People")
+                    icon.name: "share-ios"
+                    enabled: chatsModel.communities.observedCommunity.canManageUsers
+                    onTriggered: openPopup(inviteFriendsToCommunityPopup, { communityId: model.id })
                 }
 
-                const whitelistedHostnames = []
-
-                // Add whitelisted sites in to app settings that are not already there
-                whiteListedSites.forEach(site => {
-                                             if (!settings.hasOwnProperty(site.address))  {
-                                                 settings[site.address] = false
-                                                 settingsUpdated = true
-                                             }
-                                             whitelistedHostnames.push(site.address)
-                                         })
-                // Remove any whitelisted sites from app settings that don't exist in the
-                // whitelist from status-go
-                Object.keys(settings).forEach(settingsHostname => {
-                    if (!whitelistedHostnames.includes(settingsHostname)) {
-                        delete settings[settingsHostname]
-                        settingsUpdated = true
-                    }
-                })
-                if (settingsUpdated) {
-                    appSettings.whitelistedUnfurlingSites = settings
-                }
-            } catch (e) {
-                console.error('Could not parse the whitelist for sites', e)
-            }
-            appMain.settingsLoaded()
-        }
-    }
-    Connections {
-        target: profileModel
-        ignoreUnknownSignals: true
-        enabled: removeMnemonicAfterLogin
-        onInitialized: {
-            profileModel.mnemonic.remove()
-        }
-    }
-
-    Component {
-        id: chooseBrowserPopupComponent
-        ChooseBrowserPopup {
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
-    Component {
-        id: inviteFriendsToCommunityPopup
-        InviteFriendsToCommunityPopup {
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
-    Component {
-        id: communityMembersPopup
-        CommunityMembersPopup {
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
-    Component {
-        id: editCommunityPopup
-        CreateCommunityPopup {
-            isEdit: true
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
-    Component {
-        id: editChannelPopup
-        CreateChannelPopup {
-            isEdit: true
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
-    ToastMessage {
-        id: toastMessage
-    }
-
-    // Add SendModal here as it is used by the Wallet as well as the Browser
-    Loader {
-        id: sendModal
-        active: false
-
-        function open() {
-            this.active = true
-            this.item.open()
-        }
-        function closed() {
-            // this.sourceComponent = undefined // kill an opened instance
-            this.active = false
-        }
-        sourceComponent: SendModal {
-            onOpened: {
-                walletModel.getGasPricePredictions()
-            }
-            onClosed: {
-                sendModal.closed()
-            }
-        }
-    }
-
-    Action {
-        shortcut: "Ctrl+1"
-        onTriggered: changeAppSection(Constants.chat)
-    }
-    Action {
-        shortcut: "Ctrl+2"
-        onTriggered: changeAppSection(Constants.browser)
-    }
-    Action {
-        shortcut: "Ctrl+3"
-        onTriggered: changeAppSection(Constants.wallet)
-    }
-    Action {
-        shortcut: "Ctrl+4, Ctrl+,"
-        onTriggered: changeAppSection(Constants.profile)
-    }
-    Action {
-        shortcut: "Ctrl+K"
-        onTriggered: {
-            if (channelPicker.opened) {
-                channelPicker.close()
-            } else {
-                channelPicker.open()
-            }
-        }
-    }
-    Component {
-        id: statusIdenticonComponent
-        StatusIdenticon {}
-    }
-
-    StatusInputListPopup {
-        id: channelPicker
-        //% "Where do you want to go?"
-        title: qsTrId("where-do-you-want-to-go-")
-        showSearchBox: true
-        width: 350
-        x: parent.width / 2 - width / 2
-        y: parent.height / 2 - height / 2
-        modelList: chatsModel.chats
-        getText: function (modelData) {
-            return modelData.name
-        }
-        getImageComponent: function (parent, modelData) {
-            return statusIdenticonComponent.createObject(parent, {
-                                                             width: channelPicker.imageWidth,
-                                                             height: channelPicker.imageHeight,
-                                                             chatName: modelData.name,
-                                                             chatType: modelData.chatType,
-                                                             identicon: modelData.identicon
-                                                         });
-        }
-        onClicked: function (index) {
-            chatsModel.setActiveChannelByIndex(index)
-            appMain.changeAppSection(Constants.chat)
-            channelPicker.close()
-        }
-    }
-
-    function changeAppSection(section) {
-        chatsModel.communities.activeCommunity.active = false
-        sLayout.currentIndex = Utils.getAppSectionIndex(section)
-    }
-
-
-    Rectangle {
-        id: leftTab
-        Layout.maximumWidth: 78
-        Layout.minimumWidth: 78
-        Layout.preferredWidth: 78
-        Layout.fillHeight: true
-        height: parent.height
-        color: Style.current.mainMenuBackground
-
-        ScrollView {
-            id: scrollView
-            width: leftTab.width
-            anchors.top: parent.top
-            anchors.topMargin: 50
-            anchors.bottom: leftTabButtons.visible ? leftTabButtons.top : parent.bottom
-            anchors.bottomMargin: tabBar.spacing
-            clip: true
-
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-
-            Column {
-                id: tabBar
-                spacing: 12
-                width: scrollView.width
-
-                Loader {
-                    id: communitiesListLoader
-                    active: appSettings.communitiesEnabled
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width: parent.width
-                    height: {
-                        if (item && active) {
-                            return item.height
-                        }
-
-                        return 0
-                    }
-                    sourceComponent: Component {
-                        CommunityList {}
-                    }
+                StatusMenuItem {
+                    text: qsTr("View Community")
+                    icon.name: "group"
+                    onTriggered: openPopup(communityMembersPopup, {community: chatsModel.communities.observedCommunity})
                 }
 
-                StatusIconTabButton {
-                    id: chatBtn
-                    icon.name: "message"
-                    icon.width: 20
-                    icon.height: 20
-                    section: Constants.chat
-                    doNotHandleClick: true
-                    onClicked: {
-                        if (chatsModel.communities.activeCommunity.active) {
-                            chatLayoutContainer.chatColumn.input.hideExtendedArea();
-                            chatsModel.communities.activeCommunity.active = false
-                        }
-                        appMain.changeAppSection(Constants.chat)
-                    }
-
-                    checked: !chatsModel.communities.activeCommunity.active  && sLayout.currentIndex === Utils.getAppSectionIndex(Constants.chat)
-
-                    Rectangle {
-                        property int badgeCount: chatsModel.unreadMessagesCount + profileModel.contacts.contactRequests.count
-
-                        id: chatBadge
-                        visible: chatBadge.badgeCount > 0
-                        anchors.top: parent.top
-                        anchors.left: parent.right
-                        anchors.leftMargin: -17
-                        anchors.topMargin: 1
-                        radius: height / 2
-                        color: Style.current.blue
-                        border.color: chatBtn.hovered ? Style.current.secondaryBackground : Style.current.mainMenuBackground
-                        border.width: 2
-                        width: chatBadge.badgeCount < 10 ? 22 : messageCount.width + 14
-                        height: 22
-                        Text {
-                            id: messageCount
-                            font.pixelSize: chatBadge.badgeCount > 99 ? 10 : 12
-                            color: Style.current.white
-                            anchors.centerIn: parent
-                            text: chatBadge.badgeCount > 99 ? "99+" : chatBadge.badgeCount
-                        }
-                    }
+                StatusMenuItem {
+                    enabled: false//chatsModel.communities.observedCommunity.admin
+                    text: qsTr("Edit Community")
+                    icon.name: "edit"
+                    onTriggered: openPopup(editCommunityPopup, {community: chatsModel.communities.observedCommunity})
                 }
 
-                Loader {
-                    active: !leftTabButtons.visible
-                    width: parent.width
-                    height: {
-                        if (item && active) {
-                            return item.height
-                        }
-                        return 0
-                    }
-                    sourceComponent: LeftTabBottomButtons {}
+                StatusMenuSeparator {}
+
+                StatusMenuItem {
+                    text: qsTr("Leave Community")
+                    icon.name: "arrow-right"
+                    icon.width: 14
+                    iconRotation: 180
+                    type: StatusMenuItem.Type.Danger
+                    onTriggered: chatsModel.communities.leaveCommunity(model.id)
                 }
             }
         }
 
-        LeftTabBottomButtons {
-            id: leftTabButtons
-            visible: scrollView.contentHeight > leftTab.height
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: Style.current.padding
-        }
+        navBarTabButtons: [
+            StatusNavBarTabButton {
+                icon.name: "wallet"
+                tooltip.text: qsTr("Wallet")
+                /* enabled: isExperimental === "1" || appSettings.isWalletEnabled */
+                onClicked: appMain.changeAppSection(Constants.wallet)
+            },
+
+            StatusNavBarTabButton {
+                enabled: isExperimental === "1" || appSettings.isBrowserEnabled
+                visible: enabled
+                tooltip.text: qsTr("Browser")
+                icon.name: "browser"
+                onClicked: appMain.changeAppSection(Constants.browser)
+            },
+
+            StatusNavBarTabButton {
+                enabled: isExperimental === "1" || appSettings.timelineEnabled
+                visible: enabled
+                tooltip.text: qsTr("Timeline")
+                icon.name: "status-update"
+                onClicked: appMain.changeAppSection(Constants.timeline)
+            },
+
+            StatusNavBarTabButton {
+                id: profileBtn
+                tooltip.text: qsTr("Profile")
+                icon.name: "profile"
+                onClicked: appMain.changeAppSection(Constants.profile)
+
+                badge.visible: !profileModel.mnemonic.isBackedUp && appView.children[appView.currentIndex] !== profileLayoutContainer
+                badge.anchors.rightMargin: 4
+                badge.anchors.topMargin: 5
+                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
+                badge.border.width: 2
+            }
+        ]
     }
 
-    StackLayout {
-        id: sLayout
-        Layout.fillWidth: true
-        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-        Layout.fillHeight: true
+    appView: StackLayout {
+        id: appView
+        anchors.fill: parent
         currentIndex: 0
         onCurrentIndexChanged: {
             if (typeof this.children[currentIndex].onActivated === "function") {
@@ -574,6 +306,278 @@ RowLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true
+        }
+    }
+
+    Settings {
+        id: appSettings
+        fileName: profileModel.profileSettingsFile
+        property var chatSplitView
+        property var walletSplitView
+        property var profileSplitView
+        property bool communitiesEnabled: false
+        property bool isWalletEnabled: false
+        property bool nodeManagementEnabled: false
+        property bool isBrowserEnabled: false
+        property bool displayChatImages: false
+        property bool useCompactMode: true
+        property bool timelineEnabled: true
+        property var recentEmojis: []
+        property var hiddenCommunityWelcomeBanners: []
+        property var hiddenCommunityBackUpBanners: []
+        property real volume: 0.2
+        property int notificationSetting: Constants.notifyAllMessages
+        property bool notificationSoundsEnabled: true
+        property bool useOSNotifications: true
+        property int notificationMessagePreviewSetting: Constants.notificationPreviewNameAndMessage
+        property bool notifyOnNewRequests: true
+        property var whitelistedUnfurlingSites: ({})
+        property bool neverAskAboutUnfurlingAgain: false
+        property bool hideChannelSuggestions: false
+        property int fontSize: Constants.fontSizeM
+        property bool hideSignPhraseModal: false
+        property bool onlyShowContactsProfilePics: true
+        property bool quitOnClose: false
+
+        // Browser settings
+        property bool showBrowserSelector: true
+        property bool openLinksInStatus: true
+        property bool shouldShowFavoritesBar: true
+        property string browserHomepage: ""
+        property int shouldShowBrowserSearchEngine: Constants.browserSearchEngineDuckDuckGo
+        property int useBrowserEthereumExplorer: Constants.browserEthereumExplorerEtherscan
+        property bool autoLoadImages: true
+        property bool javaScriptEnabled: true
+        property bool errorPageEnabled: true
+        property bool pluginsEnabled: true
+        property bool autoLoadIconsForPage: true
+        property bool touchIconsEnabled: true
+        property bool webRTCPublicInterfacesOnly: false
+        property bool devToolsEnabled: false
+        property bool pdfViewerEnabled: true
+        property bool compatibilityMode: true
+    }
+
+    ErrorSound {
+        id: errorSound
+    }
+
+    Audio {
+        id: sendMessageSound
+        audioRole: Audio.NotificationRole
+        source: "../../../../sounds/send_message.wav"
+        volume: appSettings.volume
+        muted: !appSettings.notificationSoundsEnabled
+    }
+
+    Audio {
+        id: notificationSound
+        audioRole: Audio.NotificationRole
+        source: "../../../../sounds/notification.wav"
+        volume: appSettings.volume
+        muted: !appSettings.notificationSoundsEnabled
+    }
+
+    Connections {
+        target: profileModel
+        onProfileSettingsFileChanged: {
+            profileModel.changeLocale(globalSettings.locale)
+
+            // Since https://github.com/status-im/status-desktop/commit/93668ff75
+            // we're hiding the setting to change appearance for compact normal mode
+            // of the UI. For now, compact mode is the new default.
+            //
+            // Prior to this change, most likely many users are still using the
+            // normal mode configuration, so we have to enforce compact mode for
+            // those.
+            if (!appSettings.useCompactMode) {
+                appSettings.useCompactMode = true
+            }
+
+            const whitelist = profileModel.getLinkPreviewWhitelist()
+            try {
+                const whiteListedSites = JSON.parse(whitelist)
+                let settingsUpdated = false
+
+                // Add Status links to whitelist
+                whiteListedSites.push({title: "Status", address: Constants.deepLinkPrefix, imageSite: false})
+                whiteListedSites.push({title: "Status", address: Constants.joinStatusLink, imageSite: false})
+
+                const settings = appSettings.whitelistedUnfurlingSites
+
+                // Set Status links as true. We intercept thoseURLs so it is privacy-safe
+                if (!settings[Constants.deepLinkPrefix] || !settings[Constants.joinStatusLink]) {
+                    settings[Constants.deepLinkPrefix] = true
+                    settings[Constants.joinStatusLink] = true
+                    settingsUpdated = true
+                }
+
+                const whitelistedHostnames = []
+
+                // Add whitelisted sites in to app settings that are not already there
+                whiteListedSites.forEach(site => {
+                                             if (!settings.hasOwnProperty(site.address))  {
+                                                 settings[site.address] = false
+                                                 settingsUpdated = true
+                                             }
+                                             whitelistedHostnames.push(site.address)
+                                         })
+                // Remove any whitelisted sites from app settings that don't exist in the
+                // whitelist from status-go
+                Object.keys(settings).forEach(settingsHostname => {
+                    if (!whitelistedHostnames.includes(settingsHostname)) {
+                        delete settings[settingsHostname]
+                        settingsUpdated = true
+                    }
+                })
+                if (settingsUpdated) {
+                    appSettings.whitelistedUnfurlingSites = settings
+                }
+            } catch (e) {
+                console.error('Could not parse the whitelist for sites', e)
+            }
+            appMain.settingsLoaded()
+        }
+    }
+
+    Connections {
+        target: profileModel
+        ignoreUnknownSignals: true
+        enabled: removeMnemonicAfterLogin
+        onInitialized: {
+            profileModel.mnemonic.remove()
+        }
+    }
+    Component {
+        id: chooseBrowserPopupComponent
+        ChooseBrowserPopup {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+    Component {
+        id: inviteFriendsToCommunityPopup
+        InviteFriendsToCommunityPopup {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+    Component {
+        id: communityMembersPopup
+        CommunityMembersPopup {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+    Component {
+        id: editCommunityPopup
+        CreateCommunityPopup {
+            isEdit: true
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+    Component {
+        id: editChannelPopup
+        CreateChannelPopup {
+            isEdit: true
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+    ToastMessage {
+        id: toastMessage
+    }
+    // Add SendModal here as it is used by the Wallet as well as the Browser
+    Loader {
+        id: sendModal
+        active: false
+
+        function open() {
+            this.active = true
+            this.item.open()
+        }
+        function closed() {
+            // this.sourceComponent = undefined // kill an opened instance
+            this.active = false
+        }
+        sourceComponent: SendModal {
+            onOpened: {
+                walletModel.getGasPricePredictions()
+            }
+            onClosed: {
+                sendModal.closed()
+            }
+        }
+    }
+
+    Action {
+        shortcut: "Ctrl+1"
+        onTriggered: changeAppSection(Constants.chat)
+    }
+    Action {
+        shortcut: "Ctrl+2"
+        onTriggered: changeAppSection(Constants.browser)
+    }
+    Action {
+        shortcut: "Ctrl+3"
+        onTriggered: changeAppSection(Constants.wallet)
+    }
+    Action {
+        shortcut: "Ctrl+4, Ctrl+,"
+        onTriggered: changeAppSection(Constants.profile)
+    }
+    Action {
+        shortcut: "Ctrl+K"
+        onTriggered: {
+            if (channelPicker.opened) {
+                channelPicker.close()
+            } else {
+                channelPicker.open()
+            }
+        }
+    }
+
+    Component {
+        id: statusIdenticonComponent
+        StatusIdenticon {}
+    }
+
+    StatusInputListPopup {
+        id: channelPicker
+        //% "Where do you want to go?"
+        title: qsTrId("where-do-you-want-to-go-")
+        showSearchBox: true
+        width: 350
+        x: parent.width / 2 - width / 2
+        y: parent.height / 2 - height / 2
+        modelList: chatsModel.chats
+        getText: function (modelData) {
+            return modelData.name
+        }
+        getImageComponent: function (parent, modelData) {
+            return statusIdenticonComponent.createObject(parent, {
+                                                             width: channelPicker.imageWidth,
+                                                             height: channelPicker.imageHeight,
+                                                             chatName: modelData.name,
+                                                             chatType: modelData.chatType,
+                                                             identicon: modelData.identicon
+                                                         });
+        }
+        onClicked: function (index) {
+            chatsModel.setActiveChannelByIndex(index)
+            appMain.changeAppSection(Constants.chat)
+            channelPicker.close()
         }
     }
 }
