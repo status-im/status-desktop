@@ -24,10 +24,10 @@ StyledText {
         let yesterday = new Date()
         yesterday.setDate(now.getDate()-1)
 
-        var currentMsgDate = new Date(parseInt(messageTimestamp, 10));
-        var prevMsgDate = previousMessageTimestamp === "" ? new Date(0) : new Date(parseInt(previousMessageTimestamp, 10));
+        let currentMsgDate = new Date(parseInt(messageTimestamp, 10));
+        let prevMsgDate = previousMessageTimestamp === "" ? undefined : new Date(parseInt(previousMessageTimestamp, 10));
 
-        if (currentMsgDate.getDay() === prevMsgDate.getDay()) {
+        if (!!prevMsgDate && currentMsgDate.getDay() === prevMsgDate.getDay()) {
             return ""
         }
 

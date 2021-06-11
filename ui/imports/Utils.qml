@@ -89,6 +89,22 @@ QtObject {
                 `${msg}`
     }
 
+    function getReplyMessageStyle(msg, isCurrentUser, useCompactMode) {
+        return `<style type="text/css">`+
+                                `a {`+
+                                    `color: ${isCurrentUser && !useCompactMode ? Style.current.white : Style.current.textColor};`+
+                                `}`+
+                                `a.mention {`+
+                                    `color: ${isCurrentUser ? Style.current.cyan : Style.current.turquoise};`+
+                                `}`+
+                                `</style>`+
+                            `</head>`+
+                            `<body>`+
+                                `${msg}`+
+                            `</body>`+
+                        `</html>`
+    }
+
     function getAppSectionIndex(section) {
         let sectionId = -1
         switch (section) {

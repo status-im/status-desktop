@@ -13,6 +13,10 @@ QtObject {
     readonly property int communityChatInvitationOnlyAccess: 2
     readonly property int communityChatOnRequestAccess: 3
 
+
+    readonly property int acitivtyCenterNotificationTypeMention: 3
+    readonly property int acitivtyCenterNotificationTypeReply: 4
+
     readonly property int maxNbDaysToFetch: 30
     readonly property int fetchRangeLast24Hours: 86400
     readonly property int fetchRangeLast2Days: 172800

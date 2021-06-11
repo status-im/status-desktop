@@ -225,12 +225,12 @@ QtObject:
       ChatMessageRoles.GapTo.int:"gapTo"
     }.toTable
 
-  proc getMessageIndex(self: ChatMessageList, messageId: string): int {.slot.} =
+  proc getMessageIndex*(self: ChatMessageList, messageId: string): int {.slot.} =
     if not self.messageIndex.hasKey(messageId): return -1
     result = self.messageIndex[messageId]
 
   # TODO: see how to use data() instead of this function
-  proc getMessageData(self: ChatMessageList, index: int, data: string): string {.slot.} =
+  proc getMessageData*(self: ChatMessageList, index: int, data: string): string {.slot.} =
     if index < 0 or index >= self.messages.len: return ("")
 
     let message = self.messages[index]

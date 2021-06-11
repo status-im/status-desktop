@@ -31,6 +31,7 @@ Item {
            id: mentionsBtn
            text: qsTr("Mentions")
            type: "secondary"
+           enabled: hasMentions
            size: "small"
            highlighted: activityCenter.currentFilter === ActivityCenter.Filter.Mentions
            onClicked: activityCenter.currentFilter = ActivityCenter.Filter.Mentions
@@ -39,6 +40,7 @@ Item {
        StatusButton {
            id: repliesbtn
            text: qsTr("Replies")
+           enabled: hasReplies
            type: "secondary"
            size: "small"
            highlighted: activityCenter.currentFilter === ActivityCenter.Filter.Replies
@@ -48,6 +50,7 @@ Item {
        StatusButton {
            id: contactRequestsBtn
            text: qsTr("Contact requests")
+           enabled: hasContactRequests
            type: "secondary"
            size: "small"
            highlighted: activityCenter.currentFilter === ActivityCenter.Filter.ContactRequests
