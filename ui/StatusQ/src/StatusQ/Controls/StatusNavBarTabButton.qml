@@ -53,8 +53,8 @@ StatusIconTabButton {
                     statusNavBarTabButton.highlighted = true
                     let btnWidth = statusNavBarTabButton.width
                     popupMenuSlot.item.popup(parent.x + btnWidth + 4, parent.y - 2)
+                    return
                 }
-                return
             }
             statusNavBarTabButton.clicked(mouse)
         }
