@@ -27,7 +27,7 @@ Menu {
     delegate: MenuItem {
         id: statusPopupMenuItem
 
-        implicitHeight: 38
+        implicitHeight: action.enabled ? 38 : 0
 
         property int subMenuIndex
 
@@ -71,8 +71,9 @@ Menu {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: 8
-            active: parent.subMenu && !!statusPopupMenu.subMenuItemIcons[parent.subMenuIndex] ||
-                !!statusPopupMenuItem.action.icon.name
+            active: (parent.subMenu && !!statusPopupMenu.subMenuItemIcons[parent.subMenuIndex] ||
+                !!statusPopupMenuItem.action.icon.name) &&
+                statusPopupMenuItem.action.enabled
         }
 
         contentItem: StatusBaseText {
@@ -94,6 +95,7 @@ Menu {
             }
             font.pixelSize: 13
             elide: Text.ElideRight
+            visible: statusPopupMenuItem.action.enabled
         }
 
         arrow: StatusIcon {
@@ -120,7 +122,7 @@ Menu {
 
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor 
-            hoverEnabled: true
+            hoverEnabled: statusPopupMenuItem.action.enabled
             onPressed: mouse.accepted = false
         }
     }

@@ -102,6 +102,7 @@ Rectangle {
                     StatusMenuItem {
                         text: qsTr("Edit Community")
                         icon.name: "edit"
+                        enabled: false
                     }
 
                     StatusMenuSeparator {}
