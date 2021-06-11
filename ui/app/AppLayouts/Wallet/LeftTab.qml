@@ -13,7 +13,7 @@ Rectangle {
             return
         }
         selectedAccount = newIndex
-        walletModel.accountsView.setCurrentAccountByIndex(newIndex)
+        walletModel.setCurrentAccountByIndex(newIndex)
         walletTabBar.currentIndex = 0;
     }
     id: walletInfoContainer
