@@ -12,15 +12,15 @@ Item {
     height: 56
 
     Loader {
-      property bool isGroupChatOrOneToOne: (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat || 
-        chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne)
-      anchors.left: parent.left
-      anchors.leftMargin: this.isGroupChatOrOneToOne ? Style.current.padding : Style.current.padding + 4
-      anchors.top: parent.top
-      anchors.topMargin: 4
-      anchors.right: moreActionsBtn.left
-      anchors.rightMargin: Style.current.padding + moreActionsBtn.width
-      sourceComponent:  this.isGroupChatOrOneToOne ? chatInfoButton : chatInfo
+        property bool isGroupChatOrOneToOne: (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat ||
+                                              chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne)
+        anchors.left: parent.left
+        anchors.leftMargin: this.isGroupChatOrOneToOne ? Style.current.padding : Style.current.padding + 4
+        anchors.top: parent.top
+        anchors.topMargin: 4
+        anchors.right: moreActionsBtn.left
+        anchors.rightMargin: Style.current.padding + moreActionsBtn.width
+        sourceComponent:  this.isGroupChatOrOneToOne ? chatInfoButton : chatInfo
     }
 
     Component {
@@ -40,15 +40,15 @@ Item {
 
             onClicked: {
                 switch (chatsModel.activeChannel.chatType) {
-                    case Constants.chatTypePrivateGroupChat:
-                        openPopup(groupInfoPopupComponent, {channelType: GroupInfoPopup.ChannelType.ActiveChannel})
-                        break;
-                    case Constants.chatTypeOneToOne:
-                        const profileImage = appMain.getProfileImage(chatsModel.activeChannel.id)
-                        openProfilePopup(chatsModel.userNameOrAlias(chatsModel.activeChannel.id),
-                                        chatsModel.activeChannel.id, profileImage || chatsModel.activeChannel.identicon,
-                                        "", chatsModel.activeChannel.nickname)
-                        break;
+                case Constants.chatTypePrivateGroupChat:
+                    openPopup(groupInfoPopupComponent, {channelType: GroupInfoPopup.ChannelType.ActiveChannel})
+                    break;
+                case Constants.chatTypeOneToOne:
+                    const profileImage = appMain.getProfileImage(chatsModel.activeChannel.id)
+                    openProfilePopup(chatsModel.userNameOrAlias(chatsModel.activeChannel.id),
+                                     chatsModel.activeChannel.id, profileImage || chatsModel.activeChannel.identicon,
+                                     "", chatsModel.activeChannel.nickname)
+                    break;
                 }
             }
         }
@@ -66,81 +66,85 @@ Item {
         }
     }
 
-    StatusContextMenuButton {
-        id: moreActionsBtn
-        anchors.verticalCenter: parent.verticalCenter
+    Row {
+        height: parent.height
         anchors.right: parent.right
         anchors.rightMargin: Style.current.smallPadding
+        spacing: 12
 
-        onClicked: {
-            var menu = chatContextMenu;
-            var isPrivateGroupChat = chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat
-            if(isPrivateGroupChat){
-                menu = groupContextMenu
+        StatusContextMenuButton {
+            id: moreActionsBtn
+            anchors.verticalCenter: parent.verticalCenter
+
+            onClicked: {
+                var menu = chatContextMenu;
+                var isPrivateGroupChat = chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat
+                if(isPrivateGroupChat){
+                    menu = groupContextMenu
+                }
+
+                if (menu.opened) {
+                    return menu.close()
+                }
+
+                if (isPrivateGroupChat) {
+                    menu.popup(moreActionsBtn.x, moreActionsBtn.height)
+                } else {
+                    menu.openMenu(chatsModel.activeChannel, chatsModel.getActiveChannelIdx(),
+                                  moreActionsBtn.x - chatContextMenu.width + moreActionsBtn.width + 4,
+                                  moreActionsBtn.height - 4)
+                }
             }
 
-            if (menu.opened) {
-                return menu.close()
+            ChannelContextMenu {
+                id: chatContextMenu
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
             }
 
-            if (isPrivateGroupChat) {
-                menu.popup(moreActionsBtn.x, moreActionsBtn.height)
-            } else {
-                menu.openMenu(chatsModel.activeChannel, chatsModel.getActiveChannelIdx(),
-                                moreActionsBtn.x - chatContextMenu.width + moreActionsBtn.width + 4,
-                                moreActionsBtn.height - 4)
-            }
-        }
-
-        ChannelContextMenu {
-            id: chatContextMenu
-            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-        }
-
-        PopupMenu {
-            id: groupContextMenu
-            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-            Action {
-                icon.source: "../../../img/group_chat.svg"
-                icon.width: chatTopBarContent.iconSize
-                icon.height: chatTopBarContent.iconSize
-                //% "Group Information"
-                text: qsTrId("group-information")
+            PopupMenu {
+                id: groupContextMenu
+                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+                Action {
+                    icon.source: "../../../img/group_chat.svg"
+                    icon.width: chatTopBarContent.iconSize
+                    icon.height: chatTopBarContent.iconSize
+                    //% "Group Information"
+                    text: qsTrId("group-information")
                     onTriggered: openPopup(groupInfoPopupComponent, {channelType: GroupInfoPopup.ChannelType.ActiveChannel })
-            }
-            Action {
-                icon.source: "../../../img/close.svg"
-                icon.width: chatTopBarContent.iconSize
-                icon.height: chatTopBarContent.iconSize
-                //% "Clear History"
-                text: qsTrId("clear-history")
-                onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
-            }
-            Action {
-                icon.source: "../../../img/leave_chat.svg"
-                icon.width: chatTopBarContent.iconSize
-                icon.height: chatTopBarContent.iconSize
-                //% "Leave group"
-                text: qsTrId("leave-group")
-                onTriggered: {
+                }
+                Action {
+                    icon.source: "../../../img/close.svg"
+                    icon.width: chatTopBarContent.iconSize
+                    icon.height: chatTopBarContent.iconSize
+                    //% "Clear History"
+                    text: qsTrId("clear-history")
+                    onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
+                }
+                Action {
+                    icon.source: "../../../img/leave_chat.svg"
+                    icon.width: chatTopBarContent.iconSize
+                    icon.height: chatTopBarContent.iconSize
                     //% "Leave group"
-                    deleteChatConfirmationDialog.title = qsTrId("leave-group")
-                    //% "Leave group"
-                    deleteChatConfirmationDialog.confirmButtonLabel = qsTrId("leave-group")
-                    //% "Are you sure you want to leave this chat?"
-                    deleteChatConfirmationDialog.confirmationText = qsTrId("are-you-sure-you-want-to-leave-this-chat-")
-                    deleteChatConfirmationDialog.open()
+                    text: qsTrId("leave-group")
+                    onTriggered: {
+                        //% "Leave group"
+                        deleteChatConfirmationDialog.title = qsTrId("leave-group")
+                        //% "Leave group"
+                        deleteChatConfirmationDialog.confirmButtonLabel = qsTrId("leave-group")
+                        //% "Are you sure you want to leave this chat?"
+                        deleteChatConfirmationDialog.confirmationText = qsTrId("are-you-sure-you-want-to-leave-this-chat-")
+                        deleteChatConfirmationDialog.open()
+                    }
                 }
             }
         }
-    }
 
         Rectangle {
-              id: separator
-              width: 1
-              height: 24
-              color: Style.current.separator
-              anchors.verticalCenter: parent.verticalCenter
+            id: separator
+            width: 1
+            height: 24
+            color: Style.current.separator
+            anchors.verticalCenter: parent.verticalCenter
         }
 
         StatusIconButton {
