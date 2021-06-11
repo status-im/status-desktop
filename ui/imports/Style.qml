@@ -2,18 +2,34 @@ pragma Singleton
 
 import QtQuick 2.13
 import QtQuick.Controls.Universal 2.12
-import "./Themes"
+import "./Themes" as Legacy
+
+import StatusQ.Core.Theme 0.1
 
 QtObject {
-    property Theme current: lightTheme
-    property Theme lightTheme: LightTheme {}
-    property Theme darkTheme: DarkTheme {}
+    property Legacy.Theme current: lightTheme
+    property Legacy.Theme lightTheme: Legacy.LightTheme {}
+    property Legacy.Theme darkTheme: Legacy.DarkTheme {}
+
+
+    property ThemePalette statusQLightTheme: StatusLightTheme {}
+    property ThemePalette statusQDarkTheme: StatusDarkTheme {}
+
 
     property var changeTheme: function (theme) {
         switch (theme) {
-            case Universal.Light: current = lightTheme; break;
-            case Universal.Dark: current = darkTheme; break;
-            default: current = lightTheme; console.log('Unknown theme. Valid themes are "light" and "dark"')
+            case Universal.Light:
+              current = lightTheme; 
+              Theme.palette = statusQLightTheme
+              break;
+            case Universal.Dark:
+              current = darkTheme; 
+              Theme.palette = statusQDarkTheme
+              break;
+            default: 
+              current = lightTheme; 
+              Theme.palette = statusQLightTheme
+              console.log('Unknown theme. Valid themes are "light" and "dark"')
         }
     }
 
