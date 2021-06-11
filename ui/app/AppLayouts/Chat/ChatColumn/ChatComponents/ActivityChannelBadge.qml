@@ -34,8 +34,8 @@ Rectangle {
         height: parent.height
         sourceComponent: {
             switch (model.notificationType) {
-            case Constants.acitivtyCenterNotificationTypeMention: return channelComponent
-            case Constants.acitivtyCenterNotificationTypeReply: return replyComponent
+            case Constants.activityCenterNotificationTypeMention: return channelComponent
+            case Constants.activityCenterNotificationTypeReply: return replyComponent
             default: return channelComponent
             }
         }

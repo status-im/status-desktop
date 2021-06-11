@@ -119,13 +119,13 @@ Popup {
 
                     Component.onCompleted: {
                         switch (model.notificationType) {
-                        case Constants.acitivtyCenterNotificationTypeMention:
+                        case Constants.activityCenterNotificationTypeMention:
                             if (!hasMentions) {
                                 hasMentions = true
                             }
                             break
 
-                        case Constants.acitivtyCenterNotificationTypeReply:
+                        case Constants.activityCenterNotificationTypeReply:
                             if (!hasReplies) {
                                 hasReplies = true
                             }
@@ -142,8 +142,8 @@ Popup {
                         height: active && item.visible ? item.height : 0
                         sourceComponent: {
                             switch (model.notificationType) {
-                            case Constants.acitivtyCenterNotificationTypeMention:return messageNotificationComponent
-                            case Constants.acitivtyCenterNotificationTypeReply: return messageNotificationComponent
+                            case Constants.activityCenterNotificationTypeMention:return messageNotificationComponent
+                            case Constants.activityCenterNotificationTypeReply: return messageNotificationComponent
                             default: return null
                             }
                         }
@@ -159,8 +159,8 @@ Popup {
                                 }
 
                                 return activityCenter.currentFilter === ActivityCenter.Filter.All ||
-                                        (model.notificationType === Constants.acitivtyCenterNotificationTypeMention && activityCenter.currentFilter === ActivityCenter.Filter.Mentions) ||
-                                        (model.notificationType === Constants.acitivtyCenterNotificationTypeReply && activityCenter.currentFilter === ActivityCenter.Filter.Replies)
+                                        (model.notificationType === Constants.activityCenterNotificationTypeMention && activityCenter.currentFilter === ActivityCenter.Filter.Mentions) ||
+                                        (model.notificationType === Constants.activityCenterNotificationTypeReply && activityCenter.currentFilter === ActivityCenter.Filter.Replies)
                             }
                             width: parent.width
                             height: childrenRect.height + Style.current.smallPadding
