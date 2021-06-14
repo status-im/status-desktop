@@ -13,7 +13,7 @@ import # status-desktop libs
   ../../status/utils as status_utils,
   ../../status/tokens as status_tokens,
   ../../status/ens as status_ens,
-  views/[asset_list, accounts, account_list, account_item, token_list, transaction_list, collectibles_list, collectibles, transactions, gas, tokens, ens],
+  views/[asset_list, accounts, account_list, account_item, token_list, transaction_list, collectibles_list, collectibles, transactions, gas, tokens, ens, dapp_browser],
   ../../status/tasks/[qt, task_runner_impl], ../../status/signals/types as signal_types
 
 const ZERO_ADDRESS* = "0x0000000000000000000000000000000000000000"
@@ -58,14 +58,13 @@ QtObject:
       collectiblesView: CollectiblesView
       transactionsView*: TransactionsView
       tokensView*: TokensView
+      dappBrowserView*: DappBrowserView
       gasView*: GasView
       ensView*: EnsView
-      dappBrowserAccount*: AccountItemView
 
   proc delete(self: WalletView) =
     self.accountsView.delete
     self.gasView.delete
-    self.dappBrowserAccount.delete
     self.ensView.delete
     self.QAbstractListModel.delete
 
@@ -82,7 +81,7 @@ QtObject:
     result.tokensView = newTokensView(status, result.accountsView)
     result.gasView = newGasView(status)
     result.ensView = newEnsView(status)
-    result.dappBrowserAccount = newAccountItemView()
+    result.dappBrowserView = newDappBrowserView(status, result.accountsView)
 
     # result.currentTransactions = newTransactionList()
     result.totalFiatBalance = ""
@@ -126,8 +125,6 @@ QtObject:
 
   QtProperty[QVariant] ensView:
     read = getEns
-
-  proc setDappBrowserAddress*(self: WalletView)
 
   proc etherscanLinkChanged*(self: WalletView) {.signal.}
 
@@ -280,24 +277,7 @@ QtObject:
       discard self.accountsView.setCurrentAccountByIndex(0)
     # self.accountsView.accountListChanged()
 
-  proc dappBrowserAccountChanged*(self: WalletView) {.signal.}
+  proc transactionCompleted*(self: WalletView, success: bool, txHash: string, revertReason: string = "") {.signal.}
 
   proc setDappBrowserAddress*(self: WalletView) {.slot.} =
-    if(self.accountsView.accounts.rowCount() == 0): return
-
-    let dappAddress = self.status.settings.getSetting[:string](Setting.DappsAddress)
-    var index = self.accountsView.accounts.getAccountIndexByAddress(dappAddress)
-    if index == -1: index = 0
-    let selectedAccount = self.accountsView.accounts.getAccount(index)
-    if self.dappBrowserAccount.address == selectedAccount.address: return
-    self.dappBrowserAccount.setAccountItem(selectedAccount)
-    self.dappBrowserAccountChanged()
-
-  proc getDappBrowserAccount*(self: WalletView): QVariant {.slot.} =
-    result = newQVariant(self.dappBrowserAccount)
-
-  QtProperty[QVariant] dappBrowserAccount:
-    read = getDappBrowserAccount
-    notify = dappBrowserAccountChanged
-
-  proc transactionCompleted*(self: WalletView, success: bool, txHash: string, revertReason: string = "") {.signal.}
+    self.dappBrowserView.setDappBrowserAddress()
