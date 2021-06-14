@@ -10,6 +10,7 @@ Rectangle {
     property StatusIconSettings icon: StatusIconSettings {
         width: 23
         height: 23
+        rotation: 0
 
         color: {
             switch(statusRoundButton.type) {
@@ -33,6 +34,8 @@ Rectangle {
     property bool loading: false
 
     property alias hovered: sensor.containsMouse
+
+    property bool highlighted: false
 
     property int type: StatusRoundButton.Type.Primary
 
@@ -87,7 +90,7 @@ Rectangle {
 
     color: {
         if (statusRoundButton.enabled) {
-            return sensor.containsMouse ? backgroundSettings.hoverColor
+            return sensor.containsMouse || highlighted ? backgroundSettings.hoverColor
                                         : backgroundSettings.color
         } else {
             return backgroundSettings.disabledColor
@@ -109,6 +112,7 @@ Rectangle {
             visible: !loading
 
             icon: statusRoundButton.icon.name
+            rotation: statusRoundButton.icon.rotation
 
             width: statusRoundButton.icon.width
             height: statusRoundButton.icon.height
