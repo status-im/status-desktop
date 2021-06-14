@@ -18,8 +18,6 @@ Item {
         anchors.leftMargin: this.isGroupChatOrOneToOne ? Style.current.padding : Style.current.padding + 4
         anchors.top: parent.top
         anchors.topMargin: 4
-        anchors.right: moreActionsBtn.left
-        anchors.rightMargin: Style.current.padding + moreActionsBtn.width
         sourceComponent:  this.isGroupChatOrOneToOne ? chatInfoButton : chatInfo
     }
 
