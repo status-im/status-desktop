@@ -72,7 +72,7 @@ Column {
                 }
 
                 StatusIconButton {
-                    visible: hhandler.hovered
+                    visible: hhandler.hovered && chatsModel.communities.activeCommunity.admin
                     id: moreBtn
                     icon.name: "more"
                     width: 20
