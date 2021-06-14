@@ -162,5 +162,9 @@ ThemePalette {
         property color hoverBackgroundColor: baseColor2
         property color separatorColor: baseColor2
     }
+
+    property QtObject statusModal: QtObject {
+        property color backgroundColor: white
+    }
 }
 

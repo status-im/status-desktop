@@ -165,6 +165,12 @@ StatusWindow {
                             selected: page.sourceComponent == popupMenuComponent
                             onClicked: page.sourceComponent = popupMenuComponent
                         }
+
+                        StatusNavigationListItem {
+                            title: "StatusModal"
+                            selected: page.sourceComponent == statusModalComponent
+                            onClicked: page.sourceComponent = statusModalComponent
+                        }
                     }
                 }
             }
@@ -260,6 +266,11 @@ StatusWindow {
     Component {
         id: chatInfoToolBarComponent
         StatusChatInfoToolBarPage {}
+    }
+
+    Component {
+        id: statusModalComponent
+        Popups {}
     }
 
     Component {

@@ -10,22 +10,22 @@ import StatusQ.Controls 0.1
 Rectangle {
     id: statusModalFooter
 
-    property bool showBack: true
+    property list<Item> leftButtons
+    property list<StatusBaseButton> rightButtons
 
-    property list<StatusBaseButton> buttons
-
-    color: Theme.palette.statusModal.backgroundColor
-
-    signal clicked(var buttonIndex)
-    signal back
-
-    radius: 6
+    radius: 8
 
     color: Theme.palette.indirectColor1
 
-    onButtonsChanged: {
-        for (let idx in buttons) {
-            buttons[idx].parent = buttonsLayout
+    onLeftButtonsChanged: {
+        for (let idx in leftButtons) {
+            leftButtons[idx].parent = leftButtonsLayout
+        }
+    }
+
+    onRightButtonsChanged: {
+        for (let idx in rightButtons) {
+            rightButtons[idx].parent = rightButtonsLayout
         }
     }
 
@@ -39,10 +39,11 @@ Rectangle {
         anchors.leftMargin: 16
         anchors.rightMargin: 18
 
-        StatusRoundButton {
+        Row {
+            id: leftButtonsLayout
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-            icon.name: "arrow-left"
-            visible: statusModalFooter.showBack
+
+            spacing: 16
         }
 
         Item {
@@ -51,7 +52,7 @@ Rectangle {
         }
 
         Row {
-            id: buttonsLayout
+            id: rightButtonsLayout
             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
 
             spacing: 16

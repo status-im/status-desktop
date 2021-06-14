@@ -15,7 +15,7 @@ Rectangle {
     property alias image: imageWithTitle.image
     property bool editable: false
 
-    signal editClicked
+    signal editButtonClicked
     signal close
 
     implicitHeight: imageWithTitle.implicitHeight + 32
@@ -39,33 +39,24 @@ Rectangle {
     Loader {
         id: actionButtonLoader
         anchors.right: closeButton.left
-        anchors.rightMargin: 24.5
+        anchors.rightMargin: 8
         anchors.top: parent.top
-        anchors.topMargin: 18
-
-        type: StatusFlatRoundButton.Type.Secondary
-        width: 20
-        height: 20
-
-        icon.width: detailsButtonSettings.width
-        icon.height: detailsButtonSettings.height
-        icon.name: detailsButtonSettings.name
-        icon.color: detailsButtonSettings.color
-
-        onClicked: statusModalHeader.detailsClicked()
+        anchors.topMargin: 16
     }
 
     StatusFlatRoundButton {
         id: closeButton
         anchors.right: parent.right
-        anchors.rightMargin: 22.5
+        anchors.rightMargin: 20
         anchors.top: parent.top
-        anchors.topMargin: 22.5
-        width: 11.5
-        height: 11.5
+        anchors.topMargin: 16
+        width: 32
+        height: 32
         type: StatusFlatRoundButton.Type.Secondary
         icon.name: "close"
         icon.color: Theme.palette.directColor1
+        icon.width: 20
+        icon.height: 20
 
         onClicked: statusModalHeader.close()
     }

@@ -28,6 +28,7 @@ QtObject {
     property color white: getColor('white')
 
     property color dropShadow: getColor('black', 0.12)
+    property color backdropColor: getColor('black', 0.4)
 
     property color baseColor1
     property color baseColor2
@@ -123,6 +124,10 @@ QtObject {
         property color backgroundColor
         property color hoverBackgroundColor
         property color separatorColor
+    }
+
+    property QtObject statusModal: QtObject {
+        property color backgroundColor
     }
 
     function alphaColor(color, alpha) {

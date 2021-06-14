@@ -251,13 +251,15 @@ Rectangle {
 
                 StatusChatInfoToolBar {
                     id: statusChatInfoToolBar
+
                     anchors.top: parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
 
                     chatInfoButton.title: "Cryptokitties"        
                     chatInfoButton.subTitle: "128 Members"
                     chatInfoButton.image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
                     chatInfoButton.icon.color: Theme.palette.miscColor6
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    chatInfoButton.onClicked: demoCommunityDetailModal.open()
 
                     popupMenu: StatusPopupMenu {
 
@@ -427,6 +429,110 @@ Rectangle {
 
             rightPanel: Item {
                 anchors.fill: parent
+            }
+        }
+    }
+
+    StatusModal {
+        id: demoCommunityDetailModal
+
+        anchors.centerIn: parent
+
+        header.title: "Cryptokitties"        
+        header.subTitle: "Public Community"
+        header.image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+
+        content: Column {
+            width: demoCommunityDetailModal.width
+
+            StatusModalDivider { 
+                bottomPadding: 8 
+            }
+
+            StatusBaseText {
+                text: "A community of cat lovers, meow!"
+                verticalAlignment: Text.AlignVCenter
+                font.pixelSize: 15
+                height: 46
+                color: Theme.palette.directColor1
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: 16
+                anchors.rightMargin: 16
+            }
+
+            StatusModalDivider {
+                topPadding: 8
+                bottomPadding: 8
+            }
+
+            StatusDescriptionListItem {
+                title: "Share community"
+                subTitle: "https://join.status.im/u/0x04...45f19"
+                tooltip.text: "Copy to clipboard"
+                icon.name: "copy"
+                iconButton.onClicked: tooltip.visible = !tooltip.visible
+                width: parent.width
+            }
+
+            StatusModalDivider {
+                topPadding: 8
+                bottomPadding: 8
+            }
+
+            StatusListItem {
+                anchors.horizontalCenter: parent.horizontalCenter
+                statusListItemTitle.font.pixelSize: 17
+                title: "Members"
+                icon.name: "group-chat"
+                label: "184"
+                components: [
+                    StatusIcon {
+                        icon: "chevron-down"
+                        rotation: 270
+                        color: Theme.palette.baseColor1
+                    }
+                ]
+            }
+
+            StatusListItem {
+                anchors.horizontalCenter: parent.horizontalCenter
+                statusListItemTitle.font.pixelSize: 17
+                title: "Notifications"
+                icon.name: "notification"
+                components: [
+                    StatusSwitch {}
+                ]
+            }
+
+            StatusModalDivider {
+                topPadding: 8
+                bottomPadding: 8
+            }
+
+            StatusListItem {
+                anchors.horizontalCenter: parent.horizontalCenter
+                statusListItemTitle.font.pixelSize: 17
+                title: "Edit community"
+                icon.name: "edit"
+                type: StatusListItem.Type.Secondary
+            }
+
+            StatusListItem {
+                anchors.horizontalCenter: parent.horizontalCenter
+                statusListItemTitle.font.pixelSize: 17
+                title: "Transfer ownership"
+                icon.name: "exchange"
+                type: StatusListItem.Type.Secondary
+            }
+
+            StatusListItem {
+                anchors.horizontalCenter: parent.horizontalCenter
+                statusListItemTitle.font.pixelSize: 17
+                title: "Leave community"
+                icon.name: "arrow-right"
+                icon.rotation: 180
+                type: StatusListItem.Type.Secondary
             }
         }
     }

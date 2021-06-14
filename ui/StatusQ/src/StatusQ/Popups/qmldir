@@ -3,4 +3,5 @@ module StatusQ.Popups
 StatusMenuSeparator 0.1 StatusMenuSeparator.qml
 StatusPopupMenu 0.1 StatusPopupMenu.qml
 StatusMenuItem 0.1 StatusMenuItem.qml
+StatusModal 0.1 StatusModal.qml
 StatusModalDivider 0.1 StatusModalDivider.qml
