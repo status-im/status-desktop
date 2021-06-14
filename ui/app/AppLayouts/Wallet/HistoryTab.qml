@@ -26,17 +26,17 @@ Item {
 
         // prevent history from being fetched everytime you click on
         // the history tab
-        if (walletModel.isHistoryFetched(walletModel.accountsView.currentAccount.account))
+        if (walletModel.historyView.isHistoryFetched(walletModel.accountsView.currentAccount.account))
             return;
 
         fetchHistory();
     }
 
     function fetchHistory() {
-        if (walletModel.isFetchingHistory(walletModel.accountsView.currentAccount.address)) {
+        if (walletModel.historyView.isFetchingHistory(walletModel.accountsView.currentAccount.address)) {
             loadingImg.active = true
         } else {
-            walletModel.loadTransactionsForAccount(
+            walletModel.historyView.loadTransactionsForAccount(
                         walletModel.accountsView.currentAccount.address)
         }
     }
@@ -59,7 +59,7 @@ Item {
     }
 
     Connections {
-        target: walletModel
+        target: walletModel.historyView
         onHistoryWasFetched: checkIfHistoryIsBeingFetched()
         onLoadingTrxHistoryChanged: {
             loadingImg.active = isLoading

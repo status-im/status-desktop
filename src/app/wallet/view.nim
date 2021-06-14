@@ -13,7 +13,7 @@ import # status-desktop libs
   ../../status/utils as status_utils,
   ../../status/tokens as status_tokens,
   ../../status/ens as status_ens,
-  views/[asset_list, accounts, account_list, account_item, token_list, transaction_list, collectibles_list, collectibles, transactions, gas, tokens, ens, dapp_browser],
+  views/[asset_list, accounts, account_list, account_item, token_list, transaction_list, collectibles_list, collectibles, transactions, gas, tokens, ens, dapp_browser, history],
   ../../status/tasks/[qt, task_runner_impl], ../../status/signals/types as signal_types
 
 const ZERO_ADDRESS* = "0x0000000000000000000000000000000000000000"
@@ -52,7 +52,6 @@ QtObject:
       totalFiatBalance: string
       etherscanLink: string
       signingPhrase: string
-      fetchingHistoryState: Table[string, bool]
       # currentTransactions: TransactionList
       accountsView: AccountsView
       collectiblesView: CollectiblesView
@@ -61,6 +60,7 @@ QtObject:
       dappBrowserView*: DappBrowserView
       gasView*: GasView
       ensView*: EnsView
+      historyView*: HistoryView
 
   proc delete(self: WalletView) =
     self.accountsView.delete
@@ -82,12 +82,12 @@ QtObject:
     result.gasView = newGasView(status)
     result.ensView = newEnsView(status)
     result.dappBrowserView = newDappBrowserView(status, result.accountsView)
+    result.historyView = newHistoryView(status, result.accountsView, result.transactionsView)
 
     # result.currentTransactions = newTransactionList()
     result.totalFiatBalance = ""
     result.etherscanLink = ""
     result.signingPhrase = ""
-    result.fetchingHistoryState = initTable[string, bool]()
     result.setup
 
   proc getAccounts(self: WalletView): QVariant {.slot.} =
@@ -125,6 +125,12 @@ QtObject:
 
   QtProperty[QVariant] ensView:
     read = getEns
+
+  proc getHistory(self: WalletView): QVariant {.slot.} =
+    newQVariant(self.historyView)
+
+  QtProperty[QVariant] historyView:
+    read = getHistory
 
   proc etherscanLinkChanged*(self: WalletView) {.signal.}
 
@@ -207,50 +213,13 @@ QtObject:
   proc getDefaultAddress*(self: WalletView): string {.slot.} =
     result = $self.status.wallet.getWalletAccounts()[0].address
 
-  proc historyWasFetched*(self: WalletView) {.signal.}
-
-  proc setHistoryFetchState*(self: WalletView, accounts: seq[string], isFetching: bool) =
-    for acc in accounts:
-      self.fetchingHistoryState[acc] = isFetching
-    if not isFetching: self.historyWasFetched()
-
-  proc isFetchingHistory*(self: WalletView, address: string): bool {.slot.} =
-    if self.fetchingHistoryState.hasKey(address):
-      return self.fetchingHistoryState[address]
-    return true
-
-  proc isHistoryFetched*(self: WalletView, address: string): bool {.slot.} =
-    return self.transactionsView.currentTransactions.rowCount() > 0
-
-  proc loadingTrxHistoryChanged*(self: WalletView, isLoading: bool) {.signal.}
-
-  proc loadTransactionsForAccount*(self: WalletView, address: string) {.slot.} =
-    self.loadingTrxHistoryChanged(true)
-    self.transactionsView.loadTransactions("setTrxHistoryResult", address)
-
-  proc getLatestTransactionHistory*(self: WalletView, accounts: seq[string]) =
-    for acc in accounts:
-      self.loadTransactionsForAccount(acc)
-
   proc initBalances*(self: WalletView, loadTransactions: bool = true) =
     for acc in self.status.wallet.accounts:
       let accountAddress = acc.address
       let tokenList = acc.assetList.filter(proc(x:Asset): bool = x.address != "").map(proc(x: Asset): string = x.address)
       self.initBalances("getAccountBalanceSuccess", accountAddress, tokenList)
       if loadTransactions: 
-        self.loadTransactionsForAccount(accountAddress)
-
-  proc setTrxHistoryResult(self: WalletView, historyJSON: string) {.slot.} =
-    let historyData = parseJson(historyJSON)
-    let transactions = historyData["history"].to(seq[Transaction]);
-    let address = historyData["address"].getStr
-    let index = self.accountsView.accounts.getAccountindexByAddress(address)
-    if index == -1: return
-    self.accountsView.accounts.getAccount(index).transactions = transactions
-    if address == self.accountsView.currentAccount.address:
-      self.transactionsView.setCurrentTransactions(
-            self.accountsView.accounts.getAccount(index).transactions)
-    self.loadingTrxHistoryChanged(false)
+        self.historyView.loadTransactionsForAccount(accountAddress)
 
   proc setInitialRange*(self: WalletView) {.slot.} = 
     discard self.status.wallet.setInitialBlocksRange()
@@ -281,3 +250,9 @@ QtObject:
 
   proc setDappBrowserAddress*(self: WalletView) {.slot.} =
     self.dappBrowserView.setDappBrowserAddress()
+
+  proc loadTransactionsForAccount*(self: WalletView, address: string) {.slot.} =
+    self.historyView.loadTransactionsForAccount(address)
+
+  proc setHistoryFetchState*(self: WalletView, accounts: seq[string], isFetching: bool) =
+    self.historyView.setHistoryFetchState(accounts, isFetching)
