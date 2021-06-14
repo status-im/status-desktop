@@ -13,7 +13,7 @@ import # status-desktop libs
   ../../status/utils as status_utils,
   ../../status/tokens as status_tokens,
   ../../status/ens as status_ens,
-  views/[asset_list, accounts, account_list, account_item, token_list, transaction_list, collectibles_list, collectibles, transactions, gas, tokens],
+  views/[asset_list, accounts, account_list, account_item, token_list, transaction_list, collectibles_list, collectibles, transactions, gas, tokens, ens],
   ../../status/tasks/[qt, task_runner_impl], ../../status/signals/types as signal_types
 
 const ZERO_ADDRESS* = "0x0000000000000000000000000000000000000000"
@@ -22,9 +22,6 @@ type
   InitBalancesTaskArg = ref object of QObjectTaskArg
     address: string
     tokenList: seq[string]
-  ResolveEnsTaskArg = ref object of QObjectTaskArg
-    ens: string
-    uuid: string
 
 const initBalancesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[InitBalancesTaskArg](argEncoded)
@@ -48,22 +45,6 @@ proc initBalances[T](self: T, slot: string, address: string, tokenList: seq[stri
   )
   self.status.tasks.threadpool.start(arg)
 
-const resolveEnsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let
-    arg = decode[ResolveEnsTaskArg](argEncoded)
-    output = %* { "address": status_ens.address(arg.ens), "uuid": arg.uuid }
-  arg.finish(output)
-
-proc resolveEns[T](self: T, slot: string, ens: string, uuid: string) =
-  let arg = ResolveEnsTaskArg(
-    tptr: cast[ByteAddress](resolveEnsTask),
-    vptr: cast[ByteAddress](self.vptr),
-    slot: slot,
-    ens: ens,
-    uuid: uuid
-  )
-  self.status.tasks.threadpool.start(arg)
-
 QtObject:
   type
     WalletView* = ref object of QAbstractListModel
@@ -78,12 +59,14 @@ QtObject:
       transactionsView*: TransactionsView
       tokensView*: TokensView
       gasView*: GasView
+      ensView*: EnsView
       dappBrowserAccount*: AccountItemView
 
   proc delete(self: WalletView) =
     self.accountsView.delete
     self.gasView.delete
     self.dappBrowserAccount.delete
+    self.ensView.delete
     self.QAbstractListModel.delete
 
   proc setup(self: WalletView) =
@@ -98,6 +81,7 @@ QtObject:
     result.transactionsView = newTransactionsView(status, result.accountsView)
     result.tokensView = newTokensView(status, result.accountsView)
     result.gasView = newGasView(status)
+    result.ensView = newEnsView(status)
     result.dappBrowserAccount = newAccountItemView()
 
     # result.currentTransactions = newTransactionList()
@@ -136,6 +120,12 @@ QtObject:
 
   QtProperty[QVariant] tokensView:
     read = getTokens
+
+  proc getEns(self: WalletView): QVariant {.slot.} =
+    newQVariant(self.ensView)
+
+  QtProperty[QVariant] ensView:
+    read = getEns
 
   proc setDappBrowserAddress*(self: WalletView)
 
@@ -264,20 +254,6 @@ QtObject:
       self.transactionsView.setCurrentTransactions(
             self.accountsView.accounts.getAccount(index).transactions)
     self.loadingTrxHistoryChanged(false)
-
-  proc resolveENS*(self: WalletView, ens: string, uuid: string) {.slot.} =
-    self.resolveEns("ensResolved", ens, uuid)
-
-  proc ensWasResolved*(self: WalletView, resolvedAddress: string, uuid: string) {.signal.}
-
-  proc ensResolved(self: WalletView, addressUuidJson: string) {.slot.} =
-    var
-      parsed = addressUuidJson.parseJson
-      address = parsed["address"].to(string)
-      uuid = parsed["uuid"].to(string)
-    if address == "0x":
-      address = ""
-    self.ensWasResolved(address, uuid)
 
   proc setInitialRange*(self: WalletView) {.slot.} = 
     discard self.status.wallet.setInitialBlocksRange()
