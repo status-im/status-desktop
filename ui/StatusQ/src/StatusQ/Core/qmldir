@@ -5,4 +5,5 @@ StatusIcon 0.1 StatusIcon.qml
 StatusIconSettings 0.1 StatusIconSettings.qml
 StatusIconBackgroundSettings 0.1 StatusIconBackgroundSettings.qml
 StatusImageSettings 0.1 StatusImageSettings.qml
+StatusModalHeaderSettings 0.1 StatusModalHeaderSettings.qml
 
