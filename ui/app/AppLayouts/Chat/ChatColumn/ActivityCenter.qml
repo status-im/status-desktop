@@ -152,7 +152,7 @@ Popup {
                     Component {
                         id: messageNotificationComponent
 
-                        Rectangle {
+                        Item {
                             visible: {
                                 if (hideReadNotifications && model.read) {
                                     return false
@@ -163,61 +163,7 @@ Popup {
                                         (model.notificationType === Constants.activityCenterNotificationTypeReply && activityCenter.currentFilter === ActivityCenter.Filter.Replies)
                             }
                             width: parent.width
-                            height: childrenRect.height + Style.current.smallPadding
-                            color: model.read ? Style.current.transparent : Utils.setColorAlpha(Style.current.blue, 0.1)
-
-                            Message {
-                                id: notificationMessage
-                                anchors.right: undefined
-                                fromAuthor: model.message.fromAuthor
-                                chatId: model.message.chatId
-                                userName: model.message.userName
-                                alias: model.message.alias
-                                localName: model.message.localName
-                                message: model.message.message
-                                plainText: model.message.plainText
-                                identicon: model.message.identicon
-                                isCurrentUser: model.message.isCurrentUser
-                                timestamp: model.message.timestamp
-                                sticker: model.message.sticker
-                                contentType: model.message.contentType
-                                outgoingStatus: model.message.outgoingStatus
-                                responseTo: model.message.responseTo
-                                imageClick: imagePopup.openPopup.bind(imagePopup)
-                                messageId: model.message.messageId
-                                linkUrls: model.message.linkUrls
-                                communityId: model.message.communityId
-                                hasMention: model.message.hasMention
-                                stickerPackId: model.message.stickerPackId
-                                pinnedBy: model.message.pinnedBy
-                                pinnedMessage: model.message.isPinned
-                                activityCenterMessage: true
-                                clickMessage: function (isProfileClick) {
-                                    if (isProfileClick) {
-                                        const pk = model.message.fromAuthor
-                                        const userProfileImage = appMain.getProfileImage(pk)
-                                        return openProfilePopup(chatsModel.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
-                                    }
-
-                                    activityCenter.close()
-                                    chatsModel.setActiveChannel(model.message.chatId)
-                                    positionAtMessage(model.message.messageId)
-                                }
-
-                                prevMessageIndex: {
-                                    if (notificationDelegate.idx === 0) {
-                                        return 0
-                                    }
-
-                                    // This is used in order to have access to the previous message and determine the timestamp
-                                    // we can't rely on the index because the sequence of messages is not ordered on the nim side
-                                    if (notificationDelegate.idx < notifDelegateList.items.count - 1) {
-                                        return notifDelegateList.items.get(notificationDelegate.idx - 1).model.index
-                                    }
-                                    return -1;
-                                }
-                                prevMsgTimestamp: notificationDelegate.idx === 0 ? "" : chatsModel.activityNotificationList.getNotificationData(prevMessageIndex, "timestamp")
-                            }
+                            height: messageNotificationContent.height
 
                             StatusIconButton {
                                 id: markReadBtn
@@ -230,7 +176,7 @@ Popup {
                                 onClicked: chatsModel.activityNotificationList.markActivityCenterNotificationRead(model.id)
                                 anchors.right: parent.right
                                 anchors.rightMargin: 12
-                                anchors.verticalCenter: notificationMessage.verticalCenter
+                                anchors.verticalCenter: messageNotificationContent.verticalCenter
                                 z: 52
 
                                 StatusToolTip {
@@ -242,15 +188,84 @@ Popup {
                                 }
                             }
 
-                            ActivityChannelBadge {
-                                id: badge
-                                name: model.name
-                                chatId: model.chatId
-                                notificationType: model.notificationType
-                                responseTo: model.message.responseTo
-                                anchors.top: notificationMessage.bottom
-                                anchors.left: parent.left
-                                anchors.leftMargin: 61 // TODO find a way to align with the text of the message
+                            Item {
+                                id: messageNotificationContent
+                                width: parent.width
+                                height: childrenRect.height
+
+                                Message {
+                                    id: notificationMessage
+                                    anchors.right: undefined
+                                    fromAuthor: model.message.fromAuthor
+                                    chatId: model.message.chatId
+                                    userName: model.message.userName
+                                    alias: model.message.alias
+                                    localName: model.message.localName
+                                    message: model.message.message
+                                    plainText: model.message.plainText
+                                    identicon: model.message.identicon
+                                    isCurrentUser: model.message.isCurrentUser
+                                    timestamp: model.message.timestamp
+                                    sticker: model.message.sticker
+                                    contentType: model.message.contentType
+                                    outgoingStatus: model.message.outgoingStatus
+                                    responseTo: model.message.responseTo
+                                    imageClick: imagePopup.openPopup.bind(imagePopup)
+                                    messageId: model.message.messageId
+                                    linkUrls: model.message.linkUrls
+                                    communityId: model.message.communityId
+                                    hasMention: model.message.hasMention
+                                    stickerPackId: model.message.stickerPackId
+                                    pinnedBy: model.message.pinnedBy
+                                    pinnedMessage: model.message.isPinned
+                                    activityCenterMessage: true
+                                    read: model.read
+                                    clickMessage: function (isProfileClick) {
+                                        if (isProfileClick) {
+                                            const pk = model.message.fromAuthor
+                                            const userProfileImage = appMain.getProfileImage(pk)
+                                            return openProfilePopup(chatsModel.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
+                                        }
+
+                                        activityCenter.close()
+                                        chatsModel.setActiveChannel(model.message.chatId)
+                                        positionAtMessage(model.message.messageId)
+                                    }
+
+                                    prevMessageIndex: {
+                                        if (notificationDelegate.idx === 0) {
+                                            return 0
+                                        }
+
+                                        // This is used in order to have access to the previous message and determine the timestamp
+                                        // we can't rely on the index because the sequence of messages is not ordered on the nim side
+                                        if (notificationDelegate.idx < notifDelegateList.items.count - 1) {
+                                            return notifDelegateList.items.get(notificationDelegate.idx - 1).model.index
+                                        }
+                                        return -1;
+                                    }
+                                    prevMsgTimestamp: notificationDelegate.idx === 0 ? "" : chatsModel.activityNotificationList.getNotificationData(prevMessageIndex, "timestamp")
+                                }
+
+                                ActivityChannelBadge {
+                                    id: badge
+                                    name: model.name
+                                    chatId: model.chatId
+                                    notificationType: model.notificationType
+                                    responseTo: model.message.responseTo
+                                    anchors.top: notificationMessage.bottom
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 61 // TODO find a way to align with the text of the message
+                                }
+
+                                Rectangle {
+                                    anchors.top: notificationMessage.bottom
+                                    anchors.bottom: badge.bottom
+                                    anchors.bottomMargin: -Style.current.smallPadding
+                                    width: parent.width
+                                    color: model.read ? Style.current.transparent : Utils.setColorAlpha(Style.current.blue, 0.1)
+
+                                }
                             }
                         }
                     }

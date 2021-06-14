@@ -31,6 +31,7 @@ Item {
     property bool placeholderMessage: false
     property bool activityCenterMessage: false
     property bool pinnedMessage: false
+    property bool read: true
     property string pinnedBy
     property bool forceHoverHandler: false // Used to force the HoverHandler to be active (useful for messages in popups)
     property string communityId: ""
