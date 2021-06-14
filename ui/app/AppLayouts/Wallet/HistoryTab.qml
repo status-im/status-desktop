@@ -10,12 +10,12 @@ import "../../../shared/status"
 
 Item {
     property var tokens: {
-        const count = walletModel.defaultTokenList.rowCount()
+        const count = walletModel.tokensView.defaultTokenList.rowCount()
         const toks = []
         for (var i = 0; i < count; i++) {
             toks.push({
-                          "address": walletModel.defaultTokenList.rowData(i, 'address'),
-                          "symbol": walletModel.defaultTokenList.rowData(i, 'symbol')
+                          "address": walletModel.tokensView.defaultTokenList.rowData(i, 'address'),
+                          "symbol": walletModel.tokensView.defaultTokenList.rowData(i, 'symbol')
                       })
         }
         return toks

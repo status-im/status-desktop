@@ -51,7 +51,7 @@ ModalPopup {
     }
 
     property var getTokenDetails: Backpressure.debounce(popup, 500, function (tokenAddress){
-        walletModel.customTokenList.getTokenDetails(tokenAddress)
+        walletModel.tokensView.customTokenList.getTokenDetails(tokenAddress)
     });
 
     function onKeyReleased(){
@@ -64,7 +64,7 @@ ModalPopup {
 
     Item {
         Connections {
-            target: walletModel.customTokenList
+            target: walletModel.tokensView.customTokenList
             onTokenDetailsWereResolved: {
                 const jsonObj = JSON.parse(tokenDetails)
                 if (jsonObj.error) {
@@ -153,7 +153,7 @@ ModalPopup {
             enabled: validationError === "" && addressInput.text !== "" && nameInput.text !== "" && symbolInput.text !== "" && decimalsInput.text !== ""
 
             onClicked : {
-                const error = walletModel.addCustomToken(addressInput.text, nameInput.text, symbolInput.text, decimalsInput.text);
+                const error = walletModel.tokensView.addCustomToken(addressInput.text, nameInput.text, symbolInput.text, decimalsInput.text);
 
                 if (error) {
                     errorSound.play()
@@ -162,7 +162,7 @@ ModalPopup {
                     return
                 }
 
-                walletModel.loadCustomTokens()                
+                walletModel.tokensView.loadCustomTokens()                
                 popup.close();
             }
         }

@@ -5,14 +5,15 @@ import # vendor libs
   NimQml, chronicles, stint
 
 import # status-desktop libs
-  ../../status/[status, wallet, settings, tokens],
+  # ../../status/[status, wallet, settings, tokens],
+  ../../status/[status, wallet, settings],
   ../../status/wallet/collectibles as status_collectibles,
   ../../status/wallet as status_wallet,
   ../../status/types,
   ../../status/utils as status_utils,
   ../../status/tokens as status_tokens,
   ../../status/ens as status_ens,
-  views/[asset_list, accounts, account_list, account_item, token_list, transaction_list, collectibles_list, collectibles, transactions, gas],
+  views/[asset_list, accounts, account_list, account_item, token_list, transaction_list, collectibles_list, collectibles, transactions, gas, tokens],
   ../../status/tasks/[qt, task_runner_impl], ../../status/signals/types as signal_types
 
 const ZERO_ADDRESS* = "0x0000000000000000000000000000000000000000"
@@ -66,26 +67,22 @@ proc resolveEns[T](self: T, slot: string, ens: string, uuid: string) =
 QtObject:
   type
     WalletView* = ref object of QAbstractListModel
-      currentAssetList*: AssetList
-      defaultTokenList: TokenList
-      customTokenList: TokenList
       status: Status
       totalFiatBalance: string
       etherscanLink: string
       signingPhrase: string
       fetchingHistoryState: Table[string, bool]
+      # currentTransactions: TransactionList
       accountsView: AccountsView
       collectiblesView: CollectiblesView
       transactionsView*: TransactionsView
+      tokensView*: TokensView
       gasView*: GasView
       dappBrowserAccount*: AccountItemView
 
   proc delete(self: WalletView) =
     self.accountsView.delete
     self.gasView.delete
-    self.currentAssetList.delete
-    self.defaultTokenList.delete
-    self.customTokenList.delete
     self.dappBrowserAccount.delete
     self.QAbstractListModel.delete
 
@@ -99,13 +96,11 @@ QtObject:
     result.accountsView = newAccountsView(status)
     result.collectiblesView = newCollectiblesView(status, result.accountsView)
     result.transactionsView = newTransactionsView(status, result.accountsView)
+    result.tokensView = newTokensView(status, result.accountsView)
     result.gasView = newGasView(status)
     result.dappBrowserAccount = newAccountItemView()
 
-    result.currentAssetList = newAssetList()
     # result.currentTransactions = newTransactionList()
-    result.defaultTokenList = newTokenList(status)
-    result.customTokenList = newTokenList(status)
     result.totalFiatBalance = ""
     result.etherscanLink = ""
     result.signingPhrase = ""
@@ -136,9 +131,13 @@ QtObject:
   QtProperty[QVariant] gasView:
     read = getGas
 
-  proc setDappBrowserAddress*(self: WalletView)
+  proc getTokens(self: WalletView): QVariant {.slot.} =
+    newQVariant(self.tokensView)
 
-  proc setCurrentAssetList*(self: WalletView, assetList: seq[Asset])
+  QtProperty[QVariant] tokensView:
+    read = getTokens
+
+  proc setDappBrowserAddress*(self: WalletView)
 
   proc etherscanLinkChanged*(self: WalletView) {.signal.}
 
@@ -165,22 +164,6 @@ QtObject:
   QtProperty[QVariant] signingPhrase:
     read = getSigningPhrase
     notify = signingPhraseChanged
-
-  proc getStatusToken*(self: WalletView): string {.slot.} = self.status.wallet.getStatusToken
-
-  proc currentAssetListChanged*(self: WalletView) {.signal.}
-
-  proc getCurrentAssetList(self: WalletView): QVariant {.slot.} =
-    return newQVariant(self.currentAssetList)
-
-  proc setCurrentAssetList*(self: WalletView, assetList: seq[Asset]) =
-    self.currentAssetList.setNewData(assetList)
-    self.currentAssetListChanged()
-
-  QtProperty[QVariant] assets:
-    read = getCurrentAssetList
-    write = setCurrentAssetList
-    notify = currentAssetListChanged
 
   proc totalFiatBalanceChanged*(self: WalletView) {.signal.}
 
@@ -218,24 +201,6 @@ QtObject:
     write = setDefaultCurrency
     notify = defaultCurrencyChanged
 
-  proc hasAsset*(self: WalletView, symbol: string): bool {.slot.} =
-    self.status.wallet.hasAsset(symbol)
-
-  proc toggleAsset*(self: WalletView, symbol: string) {.slot.} =
-    self.status.wallet.toggleAsset(symbol)
-    self.accountsView.setAccountItems()
-
-  proc removeCustomToken*(self: WalletView, tokenAddress: string) {.slot.} =
-    let t = self.status.tokens.getCustomTokens().getErc20ContractByAddress(parseAddress(tokenAddress))
-    if t == nil: return
-    self.status.wallet.hideAsset(t.symbol)
-    self.status.tokens.removeCustomToken(tokenAddress)
-    self.customTokenList.loadCustomTokens()
-    self.accountsView.setAccountItems()
-
-  proc addCustomToken*(self: WalletView, address: string, name: string, symbol: string, decimals: string) {.slot.} =
-    self.status.wallet.addCustomToken(symbol, true, address, name, parseInt(decimals), "")
-
   proc updateView*(self: WalletView) =
     self.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
     self.totalFiatBalanceChanged()
@@ -243,7 +208,7 @@ QtObject:
     self.accountsView.currentAccount.assetList.setNewData(self.accountsView.currentAccount.account.assetList)
     self.accountsView.triggerUpdateAccounts()
 
-    self.setCurrentAssetList(self.accountsView.currentAccount.account.assetList)
+    self.tokensView.setCurrentAssetList(self.accountsView.currentAccount.account.assetList)
 
   proc getAccountBalanceSuccess*(self: WalletView, jsonResponse: string) {.slot.} =
     let jsonObj = jsonResponse.parseJson()
@@ -254,35 +219,6 @@ QtObject:
 
   proc getDefaultAddress*(self: WalletView): string {.slot.} =
     result = $self.status.wallet.getWalletAccounts()[0].address
-
-  proc getDefaultTokenList(self: WalletView): QVariant {.slot.} =
-    self.defaultTokenList.loadDefaultTokens()
-    result = newQVariant(self.defaultTokenList)
-
-  QtProperty[QVariant] defaultTokenList:
-    read = getDefaultTokenList
-
-  proc loadCustomTokens(self: WalletView) {.slot.} =
-    self.customTokenList.loadCustomTokens()
-
-  proc getCustomTokenList(self: WalletView): QVariant {.slot.} =
-    result = newQVariant(self.customTokenList)
-
-  QtProperty[QVariant] customTokenList:
-    read = getCustomTokenList
-
-  proc isKnownTokenContract*(self: WalletView, address: string): bool {.slot.} =
-    return self.status.wallet.getKnownTokenContract(parseAddress(address)) != nil
-
-  proc decodeTokenApproval*(self: WalletView, tokenAddress: string, data: string): string {.slot.} =
-    let amount = data[74..len(data)-1]
-    let token = self.status.tokens.getToken(tokenAddress)
-
-    if(token != nil):
-      let amountDec = $self.status.wallet.hex2Token(amount, token.decimals)
-      return $(%* {"symbol": token.symbol, "amount": amountDec})
-
-    return """{"error":"Unknown token address"}""";
 
   proc historyWasFetched*(self: WalletView) {.signal.}
 
@@ -351,7 +287,7 @@ QtObject:
       # TODO: get the account from above instead
       let selectedAccount = self.accountsView.accounts.getAccount(index)
 
-      self.setCurrentAssetList(selectedAccount.assetList)
+      self.tokensView.setCurrentAssetList(selectedAccount.assetList)
 
       # Display currently known collectibles, and get latest from API/Contracts
       self.collectiblesView.setCurrentCollectiblesLists(selectedAccount.collectiblesLists)
@@ -363,7 +299,7 @@ QtObject:
     self.accountsView.addAccountToList(account)
     # If it's the first account we ever get, use its list as our first lists
     if (self.accountsView.accounts.rowCount == 1):
-      self.setCurrentAssetList(account.assetList)
+      self.tokensView.setCurrentAssetList(account.assetList)
       # discard self.accountsView.setCurrentAccountByIndex(0)
       discard self.accountsView.setCurrentAccountByIndex(0)
     # self.accountsView.accountListChanged()

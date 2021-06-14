@@ -93,7 +93,7 @@ Item {
             spacing: Style.current.padding * 2
             anchors.fill: parent
     //        model: exampleModel
-            model: walletModel.assets
+            model: walletModel.tokensView.assets
             delegate: assetViewDelegate
             boundsBehavior: Flickable.StopAtBounds
         }

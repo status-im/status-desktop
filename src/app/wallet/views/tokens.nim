@@ -1,0 +1,107 @@
+import # std libs
+  atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables, chronicles, web3/[ethtypes, conversions], stint
+
+import NimQml, json, sequtils, chronicles, strutils, strformat, json
+import ../../../status/[status, settings, wallet, tokens]
+import ../../../status/wallet/collectibles as status_collectibles
+import ../../../status/signals/types as signal_types
+import ../../../status/types
+
+import # status-desktop libs
+  ../../../status/wallet as status_wallet,
+  ../../../status/utils as status_utils,
+  ../../../status/tokens as status_tokens,
+  ../../../status/tasks/[qt, task_runner_impl]
+
+import account_list, account_item, transaction_list, accounts, asset_list, token_list
+
+logScope:
+  topics = "tokens-view"
+
+QtObject:
+  type TokensView* = ref object of QObject
+      status: Status
+      accountsView: AccountsView
+      currentAssetList*: AssetList
+      defaultTokenList: TokenList
+      customTokenList: TokenList
+
+  proc setup(self: TokensView) =
+    self.QObject.setup
+
+  proc delete(self: TokensView) =
+    self.currentAssetList.delete
+    self.defaultTokenList.delete
+    self.customTokenList.delete
+
+  proc newTokensView*(status: Status, accountsView: AccountsView): TokensView =
+    new(result, delete)
+    result.status = status
+    result.accountsView = accountsView
+    result.currentAssetList = newAssetList()
+    result.defaultTokenList = newTokenList(status)
+    result.customTokenList = newTokenList(status)
+    result.setup
+
+  proc hasAsset*(self: TokensView, symbol: string): bool {.slot.} =
+    self.status.wallet.hasAsset(symbol)
+
+  proc toggleAsset*(self: TokensView, symbol: string) {.slot.} =
+    self.status.wallet.toggleAsset(symbol)
+    self.accountsView.setAccountItems()
+
+  proc removeCustomToken*(self: TokensView, tokenAddress: string) {.slot.} =
+    let t = self.status.tokens.getCustomTokens().getErc20ContractByAddress(parseAddress(tokenAddress))
+    if t == nil: return
+    self.status.wallet.hideAsset(t.symbol)
+    self.status.tokens.removeCustomToken(tokenAddress)
+    self.customTokenList.loadCustomTokens()
+    self.accountsView.setAccountItems()
+
+  proc addCustomToken*(self: TokensView, address: string, name: string, symbol: string, decimals: string) {.slot.} =
+    self.status.wallet.addCustomToken(symbol, true, address, name, parseInt(decimals), "")
+
+  proc getDefaultTokenList(self: TokensView): QVariant {.slot.} =
+    self.defaultTokenList.loadDefaultTokens()
+    result = newQVariant(self.defaultTokenList)
+
+  QtProperty[QVariant] defaultTokenList:
+    read = getDefaultTokenList
+
+  proc loadCustomTokens(self: TokensView) {.slot.} =
+    self.customTokenList.loadCustomTokens()
+
+  proc getCustomTokenList(self: TokensView): QVariant {.slot.} =
+    result = newQVariant(self.customTokenList)
+
+  QtProperty[QVariant] customTokenList:
+    read = getCustomTokenList
+
+  proc isKnownTokenContract*(self: TokensView, address: string): bool {.slot.} =
+    return self.status.wallet.getKnownTokenContract(parseAddress(address)) != nil
+
+  proc decodeTokenApproval*(self: TokensView, tokenAddress: string, data: string): string {.slot.} =
+    let amount = data[74..len(data)-1]
+    let token = self.status.tokens.getToken(tokenAddress)
+
+    if(token != nil):
+      let amountDec = $self.status.wallet.hex2Token(amount, token.decimals)
+      return $(%* {"symbol": token.symbol, "amount": amountDec})
+
+    return """{"error":"Unknown token address"}""";
+
+  proc getStatusToken*(self: TokensView): string {.slot.} = self.status.wallet.getStatusToken
+
+  proc currentAssetListChanged*(self: TokensView) {.signal.}
+
+  proc getCurrentAssetList(self: TokensView): QVariant {.slot.} =
+    return newQVariant(self.currentAssetList)
+
+  proc setCurrentAssetList*(self: TokensView, assetList: seq[Asset]) =
+    self.currentAssetList.setNewData(assetList)
+    self.currentAssetListChanged()
+
+  QtProperty[QVariant] assets:
+    read = getCurrentAssetList
+    write = setCurrentAssetList
+    notify = currentAssetListChanged

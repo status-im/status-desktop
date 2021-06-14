@@ -21,7 +21,7 @@ Item {
             return root.isValid
         }
         txtValidationError.text = ""
-        if (walletModel.isKnownTokenContract(selectedRecipient.address)) {
+        if (walletModel.tokensView.isKnownTokenContract(selectedRecipient.address)) {
             // do not set isValid = false here because it would make the
             // TransactionStackGroup invalid and therefore not let the user
             // continue in the modal

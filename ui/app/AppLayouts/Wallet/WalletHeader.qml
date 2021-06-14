@@ -175,7 +175,7 @@ Item {
                     icon.height: 16
                     onTriggered: {
                         openPopup(tokenSettingsModalComponent)
-                        walletModel.loadCustomTokens()
+                        walletModel.tokensView.loadCustomTokens()
                     }
                 }
                 Action {

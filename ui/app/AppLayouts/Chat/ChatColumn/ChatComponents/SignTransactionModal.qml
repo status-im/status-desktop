@@ -64,7 +64,7 @@ ModalPopup {
             id: groupSelectAcct
             headerText: {
                 if(trxData.startsWith("0x095ea7b3")){
-                    const approveData = JSON.parse(walletModel.decodeTokenApproval(selectedRecipient.address, trxData))
+                    const approveData = JSON.parse(walletModel.tokensView.decodeTokenApproval(selectedRecipient.address, trxData))
                     if(approveData.symbol)
                         //% "Authorize %1 %2"
                         return qsTrId("authorize--1--2").arg(approveData.amount).arg(approveData.symbol)    

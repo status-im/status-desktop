@@ -23,7 +23,7 @@ ColumnLayout {
             onboardingModel.firstTimeLogin = false
             walletModel.setInitialRange()
         }
-        walletModel.checkRecentHistory()
+        walletModel.transactionsView.checkRecentHistory()
     }
 
     Timer {
@@ -31,7 +31,7 @@ ColumnLayout {
         interval: Constants.walletFetchRecentHistoryInterval
         running: true
         repeat: true
-        onTriggered: walletModel.checkRecentHistory()
+        onTriggered: walletModel.transactionsView.checkRecentHistory()
     }
     
     SeedPhraseBackupWarning { }
