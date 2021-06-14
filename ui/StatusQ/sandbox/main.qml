@@ -14,8 +14,10 @@ import StatusQ.Platform 0.1
 
 StatusWindow {
     id: rootWindow
-    width: 1024
-    height: 840
+    width: Qt.platform.os == "ios" || Qt.platform.os == "android" ? Screen.width
+                                                                  :  1024
+    height: Qt.platform.os == "ios" || Qt.platform.os == "android" ? Screen.height
+                                                                   :840
     visible: true
     title: qsTr("StatusQ Documentation App")
 
