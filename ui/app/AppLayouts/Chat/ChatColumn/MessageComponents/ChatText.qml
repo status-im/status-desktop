@@ -41,7 +41,7 @@ Item {
         selectByMouse: true
         color: Style.current.textColor
         height: root.veryLongChatText && !root.readMore ? Math.min(implicitHeight, 200) : implicitHeight
-        clip: true
+        clip: height < implicitHeight
         onLinkActivated: function (link) {
             if(link.startsWith("#")) {
                 const channelName = link.substring(1);

@@ -76,7 +76,11 @@ Item {
         width: parent.width
 
         color: {
-            if (placeholderMessage || activityCenterMessage) {
+            if (activityCenterMessage) {
+                return read ? Style.current.transparent : Utils.setColorAlpha(Style.current.blue, 0.1)
+            }
+
+            if (placeholderMessage) {
                 return Style.current.transparent
             }
 
