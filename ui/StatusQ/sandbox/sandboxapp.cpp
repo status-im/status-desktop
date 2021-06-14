@@ -17,20 +17,11 @@ void SandboxApp::startEngine()
 {
     qmlRegisterType<StatusWindow>("Sandbox", 0, 1, "StatusWindow");
 
-#ifdef QT_DEBUG
     const QUrl url(applicationDirPath() + "/../main.qml");
-#else
-    const QUrl url(QStringLiteral("qrc:/main.qml"));
-#endif
 
     m_engine.rootContext()->setContextProperty("app", m_handler);
 
-
-#ifdef QT_DEBUG
     m_engine.addImportPath(applicationDirPath() + "/../../src");
-#else
-    m_engine.addImportPath(QStringLiteral("qrc:/src"));
-#endif
     qDebug() << m_engine.importPathList();
     QObject::connect(&m_engine, &QQmlApplicationEngine::objectCreated,
         this, [url](QObject *obj, const QUrl &objUrl) {
