@@ -26,11 +26,15 @@ Rectangle {
             color: Theme.palette.primaryColor3
         }
     }
-    property StatusImageSettings image: StatusImageSettings {}
+    property StatusImageSettings image: StatusImageSettings {
+        width: 40
+        height: 40
+    }
     property string label: ""
 
     property alias sensor: sensor
     property alias statusListItemTitle: statusListItemTitle
+    property alias statusListItemSubTitle: statusListItemSubTitle
     property alias statusListItemComponentsSlot: statusListItemComponentsSlot
 
     property list<Item> components
@@ -47,7 +51,7 @@ Rectangle {
         id: sensor
 
         anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor 
+        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
 
@@ -76,6 +80,8 @@ Rectangle {
             id: statusRoundedImage
             StatusRoundedImage {
                 image.source: statusListItem.image.source
+                image.height: statusListItem.image.height
+                image.width: statusListItem.image.width
             }
         }
 
