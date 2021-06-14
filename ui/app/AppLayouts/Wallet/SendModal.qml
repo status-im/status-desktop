@@ -27,7 +27,7 @@ ModalPopup {
 
     function sendTransaction() {
         stack.currentGroup.isPending = true
-        walletModel.sendTransaction(selectFromAccount.selectedAccount.address,
+        walletModel.transactionsView.sendTransaction(selectFromAccount.selectedAccount.address,
                                                  selectRecipient.selectedRecipient.address,
                                                  txtAmount.selectedAsset.address,
                                                  txtAmount.selectedAmount,
@@ -221,7 +221,7 @@ ModalPopup {
         }
 
         Connections {
-            target: walletModel
+            target: walletModel.transactionsView
             onTransactionWasSent: {
                 try {
                     let response = JSON.parse(txResult)

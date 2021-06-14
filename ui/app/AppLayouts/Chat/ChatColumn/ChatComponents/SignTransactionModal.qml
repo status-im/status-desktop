@@ -19,7 +19,7 @@ ModalPopup {
     property alias transactionSigner: transactionSigner
 
     property var sendTransaction: function(selectedGasLimit, selectedGasPrice, enteredPassword) {
-        let responseStr = walletModel.sendTransaction(selectFromAccount.selectedAccount.address,
+        let responseStr = walletModel.transactionsView.sendTransaction(selectFromAccount.selectedAccount.address,
                                                  selectRecipient.selectedRecipient.address,
                                                  root.selectedAsset.address,
                                                  root.selectedAmount,
@@ -273,7 +273,7 @@ ModalPopup {
         }
 
         Connections {
-            target: walletModel
+            target: walletModel.transactionsView
             onTransactionWasSent: {
                 try {
                     let response = JSON.parse(txResult)
