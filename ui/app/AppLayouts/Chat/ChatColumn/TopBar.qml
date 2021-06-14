@@ -139,6 +139,7 @@ Item {
 
         Rectangle {
             id: separator
+            visible: activityCenterBtn.visible
             width: 1
             height: 24
             color: Style.current.separator
@@ -147,6 +148,7 @@ Item {
 
         StatusIconButton {
             id: activityCenterBtn
+            visible: appSettings.isActivityCenterEnabled
             icon.name: "bell"
             iconColor: Style.current.contextMenuButtonForegroundColor
             hoveredIconColor: Style.current.contextMenuButtonForegroundColor

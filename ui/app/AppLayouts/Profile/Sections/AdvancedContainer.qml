@@ -109,6 +109,20 @@ Item {
             }
         }
 
+        StatusSettingsLineButton {
+            text: qsTr("Activity Center")
+            isSwitch: true
+            switchChecked: appSettings.isActivityCenterEnabled
+            onClicked: {
+                if (!appSettings.isActivityCenterEnabled) {
+                    confirmationPopup.settingsProp = "isActivityCenterEnabled"
+                    confirmationPopup.open()
+                } else {
+                    appSettings.isActivityCenterEnabled = false
+                }
+            }
+        }
+
         // StatusSettingsLineButton {
         //     //% "Node Management"
         //     text: qsTrId("node-management")
