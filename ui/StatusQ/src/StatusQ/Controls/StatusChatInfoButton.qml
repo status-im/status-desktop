@@ -35,7 +35,7 @@ Rectangle {
     }
 
     radius: 8
-    color: sensor.containsMouse ? Theme.palette.baseColor2 : Theme.palette.statusChatInfoButton.backgroundColor
+    color: sensor.containsMouse ? Theme.palette.baseColor2 : "transparent"
 
     MouseArea {
         id: sensor

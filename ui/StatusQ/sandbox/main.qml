@@ -150,6 +150,11 @@ StatusWindow {
                             onClicked: page.sourceComponent = listItemsComponent
                         }
                         StatusNavigationListItem { 
+                            title: "StatusChatInfoToolBar"
+                            selected: page.sourceComponent == chatInfoToolBarComponent
+                            onClicked: page.sourceComponent = chatInfoToolBarComponent
+                        }
+                        StatusNavigationListItem { 
                             title: "Others"
                             selected: page.sourceComponent == othersComponent
                             onClicked: page.sourceComponent = othersComponent
@@ -250,6 +255,11 @@ StatusWindow {
     Component {
         id: popupMenuComponent
         StatusPopupMenuPage {}
+    }
+
+    Component {
+        id: chatInfoToolBarComponent
+        StatusChatInfoToolBarPage {}
     }
 
     Component {

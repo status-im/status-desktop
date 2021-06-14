@@ -236,6 +236,35 @@ Rectangle {
             leftPanel: Item {
                 anchors.fill: parent
 
+                StatusChatInfoToolBar {
+                    chatInfoButton.title: "Cryptokitties"        
+                    chatInfoButton.subTitle: "128 Members"
+                    chatInfoButton.image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+                    chatInfoButton.icon.color: Theme.palette.miscColor6
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    popupMenu: StatusPopupMenu {
+
+                        StatusMenuItem {
+                            text: "Create channel"
+                            icon.name: "channel"
+                        }
+
+                        StatusMenuItem {
+                            text: "Create category"
+                            icon.name: "channel-category"
+                        }
+
+                        StatusMenuSeparator {}
+
+                        StatusMenuItem {
+                            text: "Invite people"
+                            icon.name: "share-ios"
+                        }
+
+                    }
+                }
+
                 Column {
                     anchors.top: parent.top
                     anchors.topMargin: 64
