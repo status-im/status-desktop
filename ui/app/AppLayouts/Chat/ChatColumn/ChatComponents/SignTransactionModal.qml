@@ -113,9 +113,9 @@ ModalPopup {
             GasSelector {
                 id: gasSelector
                 anchors.topMargin: Style.current.bigPadding
-                slowestGasPrice: parseFloat(walletModel.safeLowGasPrice)
-                fastestGasPrice: parseFloat(walletModel.fastestGasPrice)
-                getGasEthValue: walletModel.getGasEthValue
+                slowestGasPrice: parseFloat(walletModel.gasView.safeLowGasPrice)
+                fastestGasPrice: parseFloat(walletModel.gasView.fastestGasPrice)
+                getGasEthValue: walletModel.gasView.getGasEthValue
                 getFiatValue: walletModel.getFiatValue
                 defaultCurrency: walletModel.defaultCurrency
                 width: stack.width
@@ -129,7 +129,7 @@ ModalPopup {
                         return
                     }
                     
-                    let gasEstimate = JSON.parse(walletModel.estimateGas(
+                    let gasEstimate = JSON.parse(walletModel.gasView.estimateGas(
                         selectFromAccount.selectedAccount.address,
                         selectRecipient.selectedRecipient.address,
                         root.selectedAsset.address,

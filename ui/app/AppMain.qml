@@ -299,7 +299,7 @@ RowLayout {
         }
         sourceComponent: SendModal {
             onOpened: {
-                walletModel.getGasPricePredictions()
+                walletModel.gasView.getGasPricePredictions()
             }
             onClosed: {
                 sendModal.closed()

@@ -12,7 +12,7 @@ import # status-desktop libs
   ../../status/utils as status_utils,
   ../../status/tokens as status_tokens,
   ../../status/ens as status_ens,
-  views/[asset_list, accounts, account_list, account_item, token_list, transaction_list, collectibles_list, collectibles, transactions],
+  views/[asset_list, accounts, account_list, account_item, token_list, transaction_list, collectibles_list, collectibles, transactions, gas],
   ../../status/tasks/[qt, task_runner_impl], ../../status/signals/types as signal_types
 
 const ZERO_ADDRESS* = "0x0000000000000000000000000000000000000000"
@@ -21,7 +21,6 @@ type
   InitBalancesTaskArg = ref object of QObjectTaskArg
     address: string
     tokenList: seq[string]
-  GasPredictionsTaskArg = ref object of QObjectTaskArg
   ResolveEnsTaskArg = ref object of QObjectTaskArg
     ens: string
     uuid: string
@@ -45,20 +44,6 @@ proc initBalances[T](self: T, slot: string, address: string, tokenList: seq[stri
     slot: slot,
     address: address,
     tokenList: tokenList
-  )
-  self.status.tasks.threadpool.start(arg)
-
-const getGasPredictionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let
-    arg = decode[GasPredictionsTaskArg](argEncoded)
-    output = %getGasPricePredictions()
-  arg.finish(output)
-
-proc getGasPredictions[T](self: T, slot: string) =
-  let arg = GasPredictionsTaskArg(
-    tptr: cast[ByteAddress](getGasPredictionsTask),
-    vptr: cast[ByteAddress](self.vptr),
-    slot: slot
   )
   self.status.tasks.threadpool.start(arg)
 
@@ -87,20 +72,17 @@ QtObject:
       status: Status
       totalFiatBalance: string
       etherscanLink: string
-      safeLowGasPrice: string
-      standardGasPrice: string
-      fastGasPrice: string
-      fastestGasPrice: string
-      defaultGasLimit: string
       signingPhrase: string
       fetchingHistoryState: Table[string, bool]
       accountsView: AccountsView
       collectiblesView: CollectiblesView
       transactionsView*: TransactionsView
+      gasView*: GasView
       dappBrowserAccount*: AccountItemView
 
   proc delete(self: WalletView) =
     self.accountsView.delete
+    self.gasView.delete
     self.currentAssetList.delete
     self.defaultTokenList.delete
     self.customTokenList.delete
@@ -117,6 +99,7 @@ QtObject:
     result.accountsView = newAccountsView(status)
     result.collectiblesView = newCollectiblesView(status, result.accountsView)
     result.transactionsView = newTransactionsView(status, result.accountsView)
+    result.gasView = newGasView(status)
     result.dappBrowserAccount = newAccountItemView()
 
     result.currentAssetList = newAssetList()
@@ -125,11 +108,6 @@ QtObject:
     result.customTokenList = newTokenList(status)
     result.totalFiatBalance = ""
     result.etherscanLink = ""
-    result.safeLowGasPrice = "0"
-    result.standardGasPrice = "0"
-    result.fastGasPrice = "0"
-    result.fastestGasPrice = "0"
-    result.defaultGasLimit = "21000"
     result.signingPhrase = ""
     result.fetchingHistoryState = initTable[string, bool]()
     result.setup
@@ -151,6 +129,12 @@ QtObject:
 
   QtProperty[QVariant] transactionsView:
     read = getTransactions
+
+  proc getGas(self: WalletView): QVariant {.slot.} =
+    newQVariant(self.gasView)
+
+  QtProperty[QVariant] gasView:
+    read = getGas
 
   proc setDappBrowserAddress*(self: WalletView)
 
@@ -220,32 +204,6 @@ QtObject:
   proc getCryptoValue*(self: WalletView, fiatBalance: string, fiatSymbol: string, cryptoSymbol: string): string {.slot.} =
     result = fmt"{self.status.wallet.convertValue(fiatBalance, fiatSymbol, cryptoSymbol)}"
 
-  proc getGasEthValue*(self: WalletView, gweiValue: string, gasLimit: string): string {.slot.} =
-    var gweiValueInt:int
-    var gasLimitInt:int
-
-    discard gweiValue.parseInt(gweiValueInt)
-    discard gasLimit.parseInt(gasLimitInt)
-
-    let weiValue = gweiValueInt.u256 * 1000000000.u256 * gasLimitInt.u256
-    let ethValue = wei2Eth(weiValue)
-    result = fmt"{ethValue}"
- 
-  proc estimateGas*(self: WalletView, from_addr: string, to: string, assetAddress: string, value: string, data: string = ""): string {.slot.} =
-    var
-      response: string
-      success: bool
-    if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
-      response = self.status.wallet.estimateTokenGas(from_addr, to, assetAddress, value, success)
-    else:
-      response = self.status.wallet.estimateGas(from_addr, to, value, data, success)
-
-    if success == true:
-      let res = fromHex[int](response)
-      result = $(%* { "result": %res, "success": %success })
-    else:
-      result = $(%* { "result": "-1", "success": %success, "error": { "message": %response } })
-
   proc defaultCurrency*(self: WalletView): string {.slot.} =
     self.status.wallet.getDefaultCurrency()
 
@@ -293,43 +251,6 @@ QtObject:
     self.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
     self.accountsView.triggerUpdateAccounts()
     self.updateView()
-
-  proc gasPricePredictionsChanged*(self: WalletView) {.signal.}
-
-  proc getGasPricePredictions*(self: WalletView) {.slot.} =
-    self.getGasPredictions("getGasPricePredictionsResult")
-
-  proc getGasPricePredictionsResult(self: WalletView, gasPricePredictionsJson: string) {.slot.} =
-    let prediction = Json.decode(gasPricePredictionsJson, GasPricePrediction)
-    self.safeLowGasPrice = fmt"{prediction.safeLow:.3f}"
-    self.standardGasPrice = fmt"{prediction.standard:.3f}"
-    self.fastGasPrice = fmt"{prediction.fast:.3f}"
-    self.fastestGasPrice = fmt"{prediction.fastest:.3f}"
-    self.gasPricePredictionsChanged()
-
-  proc safeLowGasPrice*(self: WalletView): string {.slot.} = result = ?.self.safeLowGasPrice
-  QtProperty[string] safeLowGasPrice:
-    read = safeLowGasPrice
-    notify = gasPricePredictionsChanged
-
-  proc standardGasPrice*(self: WalletView): string {.slot.} = result = ?.self.standardGasPrice
-  QtProperty[string] standardGasPrice:
-    read = standardGasPrice
-    notify = gasPricePredictionsChanged
-
-  proc fastGasPrice*(self: WalletView): string {.slot.} = result = ?.self.fastGasPrice
-  QtProperty[string] fastGasPrice:
-    read = fastGasPrice
-    notify = gasPricePredictionsChanged
-
-  proc fastestGasPrice*(self: WalletView): string {.slot.} = result = ?.self.fastestGasPrice
-  QtProperty[string] fastestGasPrice:
-    read = fastestGasPrice
-    notify = gasPricePredictionsChanged
-
-  proc defaultGasLimit*(self: WalletView): string {.slot.} = result = ?.self.defaultGasLimit
-  QtProperty[string] defaultGasLimit:
-    read = defaultGasLimit
 
   proc getDefaultAddress*(self: WalletView): string {.slot.} =
     result = $self.status.wallet.getWalletAccounts()[0].address

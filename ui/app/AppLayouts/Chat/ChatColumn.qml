@@ -476,7 +476,7 @@ StackLayout {
         SendModal {
             id: sendTransactionWithEns
             onOpened: {
-                walletModel.getGasPricePredictions()
+                walletModel.gasView.getGasPricePredictions()
             }
             onClosed: {
                 txModalLoader.closed()
