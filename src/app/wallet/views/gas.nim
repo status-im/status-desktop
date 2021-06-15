@@ -1,16 +1,8 @@
-import # std libs
-  atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables, chronicles, web3/[ethtypes, conversions], stint
-
+import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables, chronicles, web3/[ethtypes, conversions], stint
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
-import ../../../status/[status, settings, wallet, tokens]
-import ../../../status/wallet/collectibles as status_collectibles
-import ../../../status/signals/types as signal_types
-import ../../../status/types
 
-import # status-desktop libs
-  ../../../status/wallet as status_wallet,
-  ../../../status/utils as status_utils,
-  ../../../status/tokens as status_tokens,
+import
+  ../../../status/[status, settings, wallet, tokens, utils, types],
   ../../../status/tasks/[qt, task_runner_impl]
 
 import account_list, account_item, transaction_list, accounts
@@ -45,27 +37,13 @@ QtObject:
       fastGasPrice: string
       fastestGasPrice: string
       defaultGasLimit: string
-    #   transactionsView*: GasView
-    #   currentGas*: TransactionList
 
-  proc setup(self: GasView) =
-    self.QObject.setup
-
-  proc delete(self: GasView) =
-    echo "delete"
-    # self.safeLowGasPrice.delete
-    # self.standardGasPrice.delete
-    # self.fastGasPrice.delete
-    # self.fastestGasPrice.delete
-    # self.defaultGasLimit.delete
-    # self.currentGas.delete
-    # self.currentCollectiblesLists.delete
+  proc setup(self: GasView) = self.QObject.setup
+  proc delete(self: GasView) = self.QObject.delete
 
   proc newGasView*(status: Status): GasView =
     new(result, delete)
     result.status = status
-    # result.currentCollectiblesLists = newCollectiblesList()
-    # result.currentGas = newTransactionList()
     result.safeLowGasPrice = "0"
     result.standardGasPrice = "0"
     result.fastGasPrice = "0"

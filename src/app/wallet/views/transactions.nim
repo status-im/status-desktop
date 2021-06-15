@@ -1,13 +1,8 @@
-import # std libs
-  atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables
-
+import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
-import ../../../status/[status, settings, wallet]
-import ../../../status/wallet/collectibles as status_collectibles
-import ../../../status/signals/types as signal_types
-import ../../../status/types
 
-import # status-desktop libs
+import
+  ../../../status/[status, settings, wallet, tokens],
   ../../../status/wallet as status_wallet,
   ../../../status/tasks/[qt, task_runner_impl]
 
@@ -50,15 +45,9 @@ proc sendTransaction[T](self: T, slot: string, from_addr: string, to: string, as
   let arg = SendTransactionTaskArg(
     tptr: cast[ByteAddress](sendTransactionTask),
     vptr: cast[ByteAddress](self.vptr),
-    slot: slot,
-    from_addr: from_addr,
-    to: to,
-    assetAddress: assetAddress,
-    value: value,
-    gas: gas,
-    gasPrice: gasPrice,
-    password: password,
-    uuid: uuid
+    slot: slot, from_addr: from_addr, to: to,
+    assetAddress: assetAddress, value: value, gas: gas,
+    gasPrice: gasPrice, password: password, uuid: uuid
   )
   self.status.tasks.threadpool.start(arg)
 
@@ -75,8 +64,7 @@ proc loadTransactions*[T](self: T, slot: string, address: string) =
   let arg = LoadTransactionsTaskArg(
     tptr: cast[ByteAddress](loadTransactionsTask),
     vptr: cast[ByteAddress](self.vptr),
-    slot: slot,
-    address: address
+    slot: slot, address: address
   )
   self.status.tasks.threadpool.start(arg)
 
@@ -91,8 +79,7 @@ proc watchTransaction[T](self: T, slot: string, transactionHash: string) =
   let arg = WatchTransactionTaskArg(
     tptr: cast[ByteAddress](watchTransactionTask),
     vptr: cast[ByteAddress](self.vptr),
-    slot: slot,
-    transactionHash: transactionHash
+    slot: slot, transactionHash: transactionHash
   )
   self.status.tasks.threadpool.start(arg)
 
@@ -103,17 +90,14 @@ QtObject:
       transactionsView*: TransactionsView
       currentTransactions*: TransactionList
 
-  proc setup(self: TransactionsView) =
-    self.QObject.setup
-
+  proc setup(self: TransactionsView) = self.QObject.setup
   proc delete(self: TransactionsView) =
     self.currentTransactions.delete
-    # self.currentCollectiblesLists.delete
+    self.QObject.delete
 
   proc newTransactionsView*(status: Status, accountsView: AccountsView): TransactionsView =
     new(result, delete)
     result.status = status
-    # result.currentCollectiblesLists = newCollectiblesList()
     result.accountsView = accountsView # TODO: not ideal but a solution for now
     result.currentTransactions = newTransactionList()
     result.setup

@@ -1,17 +1,8 @@
-import # std libs
-  atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables, chronicles, web3/[ethtypes, conversions], stint
-
+import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables, chronicles, web3/[ethtypes, conversions], stint
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
-import ../../../status/[status, settings, wallet, tokens]
-import ../../../status/wallet/collectibles as status_collectibles
-import ../../../status/signals/types as signal_types
-import ../../../status/types
 
-import # status-desktop libs
-  ../../../status/wallet as status_wallet,
-  ../../../status/utils as status_utils,
-  ../../../status/tokens as status_tokens,
-  ../../../status/ens as status_ens,
+import
+  ../../../status/[status, settings, wallet, tokens],
   ../../../status/tasks/[qt, task_runner_impl]
 
 import account_list, account_item, transaction_list, accounts, asset_list, token_list, transactions
@@ -26,11 +17,8 @@ QtObject:
       transactionsView*: TransactionsView
       fetchingHistoryState: Table[string, bool]
 
-  proc setup(self: HistoryView) =
-    self.QObject.setup
-
-  proc delete(self: HistoryView) =
-    echo "delete"
+  proc setup(self: HistoryView) = self.QObject.setup
+  proc delete(self: HistoryView) = self.QObject.delete
 
   proc newHistoryView*(status: Status, accountsView: AccountsView, transactionsView: TransactionsView): HistoryView =
     new(result, delete)

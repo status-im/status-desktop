@@ -1,16 +1,8 @@
-import # std libs
-  atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables, chronicles, web3/[ethtypes, conversions], stint
-
+import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables, chronicles, web3/[ethtypes, conversions], stint
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
-import ../../../status/[status, settings, wallet, tokens]
-import ../../../status/wallet/collectibles as status_collectibles
-import ../../../status/signals/types as signal_types
-import ../../../status/types
 
-import # status-desktop libs
-  ../../../status/wallet as status_wallet,
-  ../../../status/utils as status_utils,
-  ../../../status/tokens as status_tokens,
+import
+  ../../../status/[status, settings, wallet, tokens],
   ../../../status/ens as status_ens,
   ../../../status/tasks/[qt, task_runner_impl]
 
@@ -34,9 +26,7 @@ proc resolveEns[T](self: T, slot: string, ens: string, uuid: string) =
   let arg = ResolveEnsTaskArg(
     tptr: cast[ByteAddress](resolveEnsTask),
     vptr: cast[ByteAddress](self.vptr),
-    slot: slot,
-    ens: ens,
-    uuid: uuid
+    slot: slot, ens: ens, uuid: uuid
   )
   self.status.tasks.threadpool.start(arg)
 
@@ -44,11 +34,8 @@ QtObject:
   type EnsView* = ref object of QObject
       status: Status
 
-  proc setup(self: EnsView) =
-    self.QObject.setup
-
-  proc delete(self: EnsView) =
-    echo "delete"
+  proc setup(self: EnsView) = self.QObject.setup
+  proc delete(self: EnsView) = self.QObject.delete
 
   proc newEnsView*(status: Status): EnsView =
     new(result, delete)

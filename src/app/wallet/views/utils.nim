@@ -1,39 +1,19 @@
-import # std libs
-  atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables, chronicles, web3/[ethtypes, conversions], stint
-
+import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables, chronicles, web3/[ethtypes, conversions], stint
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
-import ../../../status/[status, settings, wallet, tokens]
-import ../../../status/wallet/collectibles as status_collectibles
-import ../../../status/signals/types as signal_types
-import ../../../status/types
-
-import # status-desktop libs
-  ../../../status/wallet as status_wallet,
-  ../../../status/utils as status_utils,
-  ../../../status/tokens as status_tokens,
-  ../../../status/ens as status_ens,
-  ../../../status/tasks/[qt, task_runner_impl]
-
-import account_list, account_item, transaction_list, accounts, asset_list, token_list, transactions
 
 logScope:
   topics = "utils-view"
 
 QtObject:
   type UtilsView* = ref object of QObject
-      status: Status
-      etherscanLink: string
-      signingPhrase: string
+    etherscanLink: string
+    signingPhrase: string
 
-  proc setup(self: UtilsView) =
-    self.QObject.setup
+  proc setup(self: UtilsView) = self.QObject.setup
+  proc delete(self: UtilsView) = self.QObject.delete
 
-  proc delete(self: UtilsView) =
-    echo "delete"
-
-  proc newUtilsView*(status: Status): UtilsView =
+  proc newUtilsView*(): UtilsView =
     new(result, delete)
-    result.status = status
     result.etherscanLink = ""
     result.signingPhrase = ""
     result.setup

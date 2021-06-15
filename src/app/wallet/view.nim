@@ -1,20 +1,9 @@
-import # std libs
-  atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables
+import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables
+import NimQml, chronicles, stint
 
-import # vendor libs
-  NimQml, chronicles, stint
-
-import # status-desktop libs
-  # ../../status/[status, wallet, settings, tokens],
-  ../../status/[status, wallet, settings],
-  ../../status/wallet/collectibles as status_collectibles,
-  ../../status/wallet as status_wallet,
-  ../../status/types,
-  ../../status/utils as status_utils,
-  ../../status/tokens as status_tokens,
-  ../../status/ens as status_ens,
-  views/[asset_list, accounts, account_list, account_item, token_list, transaction_list, collectibles_list, collectibles, transactions, gas, tokens, ens, dapp_browser, history, balance, utils],
-  ../../status/tasks/[qt, task_runner_impl], ../../status/signals/types as signal_types
+import
+  ../../status/[status, wallet],
+  views/[accounts, collectibles, transactions, tokens, gas, ens, dapp_browser, history, balance, utils, asset_list, account_list]
 
 QtObject:
   type
@@ -54,61 +43,43 @@ QtObject:
     result.dappBrowserView = newDappBrowserView(status, result.accountsView)
     result.historyView = newHistoryView(status, result.accountsView, result.transactionsView)
     result.balanceView = newBalanceView(status, result.accountsView, result.transactionsView, result.historyView)
-    result.utilsView = newUtilsView(status)
+    result.utilsView = newUtilsView()
 
     result.setup
 
-  proc getAccounts(self: WalletView): QVariant {.slot.} =
-    newQVariant(self.accountsView)
-
+  proc getAccounts(self: WalletView): QVariant {.slot.} = newQVariant(self.accountsView)
   QtProperty[QVariant] accountsView:
     read = getAccounts
 
-  proc getCollectibles(self: WalletView): QVariant {.slot.} =
-    newQVariant(self.collectiblesView)
-
+  proc getCollectibles(self: WalletView): QVariant {.slot.} = newQVariant(self.collectiblesView)
   QtProperty[QVariant] collectiblesView:
     read = getCollectibles
 
-  proc getTransactions(self: WalletView): QVariant {.slot.} =
-    newQVariant(self.transactionsView)
-
+  proc getTransactions(self: WalletView): QVariant {.slot.} = newQVariant(self.transactionsView)
   QtProperty[QVariant] transactionsView:
     read = getTransactions
 
-  proc getGas(self: WalletView): QVariant {.slot.} =
-    newQVariant(self.gasView)
-
+  proc getGas(self: WalletView): QVariant {.slot.} = newQVariant(self.gasView)
   QtProperty[QVariant] gasView:
     read = getGas
 
-  proc getTokens(self: WalletView): QVariant {.slot.} =
-    newQVariant(self.tokensView)
-
+  proc getTokens(self: WalletView): QVariant {.slot.} = newQVariant(self.tokensView)
   QtProperty[QVariant] tokensView:
     read = getTokens
 
-  proc getEns(self: WalletView): QVariant {.slot.} =
-    newQVariant(self.ensView)
-
+  proc getEns(self: WalletView): QVariant {.slot.} = newQVariant(self.ensView)
   QtProperty[QVariant] ensView:
     read = getEns
 
-  proc getHistory(self: WalletView): QVariant {.slot.} =
-    newQVariant(self.historyView)
-
+  proc getHistory(self: WalletView): QVariant {.slot.} = newQVariant(self.historyView)
   QtProperty[QVariant] historyView:
     read = getHistory
 
-  proc getBalance(self: WalletView): QVariant {.slot.} =
-    newQVariant(self.balanceView)
-
+  proc getBalance(self: WalletView): QVariant {.slot.} = newQVariant(self.balanceView)
   QtProperty[QVariant] balanceView:
     read = getBalance
 
-  proc getUtils(self: WalletView): QVariant {.slot.} =
-    newQVariant(self.utilsView)
-
+  proc getUtils(self: WalletView): QVariant {.slot.} = newQVariant(self.utilsView)
   QtProperty[QVariant] utilsView:
     read = getUtils
 
@@ -133,12 +104,10 @@ QtObject:
 
   proc setCurrentAccountByIndex*(self: WalletView, index: int) {.slot.} =
     if self.accountsView.setCurrentAccountByIndex(index):
-      # TODO: get the account from above instead
       let selectedAccount = self.accountsView.accounts.getAccount(index)
 
       self.tokensView.setCurrentAssetList(selectedAccount.assetList)
 
-      # Display currently known collectibles, and get latest from API/Contracts
       self.collectiblesView.setCurrentCollectiblesLists(selectedAccount.collectiblesLists)
       self.collectiblesView.loadCollectiblesForAccount(selectedAccount.address, selectedAccount.collectiblesLists)
 
@@ -149,9 +118,7 @@ QtObject:
     # If it's the first account we ever get, use its list as our first lists
     if (self.accountsView.accounts.rowCount == 1):
       self.tokensView.setCurrentAssetList(account.assetList)
-      # discard self.accountsView.setCurrentAccountByIndex(0)
       discard self.accountsView.setCurrentAccountByIndex(0)
-    # self.accountsView.accountListChanged()
 
   proc transactionCompleted*(self: WalletView, success: bool, txHash: string, revertReason: string = "") {.signal.}
 

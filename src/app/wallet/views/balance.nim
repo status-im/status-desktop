@@ -1,17 +1,9 @@
-import # std libs
-  atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables, chronicles, web3/[ethtypes, conversions], stint
-
+import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables, chronicles, web3/[ethtypes, conversions], stint
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
-import ../../../status/[status, settings, wallet, tokens]
-import ../../../status/wallet/collectibles as status_collectibles
-import ../../../status/signals/types as signal_types
-import ../../../status/types
 
-import # status-desktop libs
-  ../../../status/wallet as status_wallet,
-  ../../../status/utils as status_utils,
+import
+  ../../../status/[status, settings, wallet, tokens],
   ../../../status/tokens as status_tokens,
-  ../../../status/ens as status_ens,
   ../../../status/tasks/[qt, task_runner_impl]
 
 import account_list, account_item, transaction_list, accounts, asset_list, token_list, transactions, history
@@ -40,9 +32,7 @@ proc initBalances[T](self: T, slot: string, address: string, tokenList: seq[stri
   let arg = InitBalancesTaskArg(
     tptr: cast[ByteAddress](initBalancesTask),
     vptr: cast[ByteAddress](self.vptr),
-    slot: slot,
-    address: address,
-    tokenList: tokenList
+    slot: slot, address: address, tokenList: tokenList
   )
   self.status.tasks.threadpool.start(arg)
 
@@ -54,11 +44,8 @@ QtObject:
       transactionsView*: TransactionsView
       historyView*: HistoryView
 
-  proc setup(self: BalanceView) =
-    self.QObject.setup
-
-  proc delete(self: BalanceView) =
-    echo "delete"
+  proc setup(self: BalanceView) = self.QObject.setup
+  proc delete(self: BalanceView) = self.QObject.delete
 
   proc newBalanceView*(status: Status, accountsView: AccountsView, transactionsView: TransactionsView, historyView: HistoryView): BalanceView =
     new(result, delete)

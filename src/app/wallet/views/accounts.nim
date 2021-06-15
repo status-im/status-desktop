@@ -1,9 +1,8 @@
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
-import ../../../status/[status, settings]
-import ../../../status/signals/types as signal_types
-import ../../../status/types
 
-import # status-desktop libs
+import
+  ../../../status/[status, settings, types],
+  ../../../status/signals/types as signal_types,
   ../../../status/wallet as status_wallet
 
 import account_list, account_item
@@ -17,16 +16,13 @@ QtObject:
       accounts*: AccountList
       currentAccount*: AccountItemView
       focusedAccount*: AccountItemView
-    #   dappBrowserAccount*: AccountItemView
 
-  proc setup(self: AccountsView) =
-    self.QObject.setup
-
+  proc setup(self: AccountsView) = self.QObject.setup
   proc delete(self: AccountsView) =
     self.accounts.delete
     self.currentAccount.delete
     self.focusedAccount.delete
-    # self.dappBrowserAccount.delete
+    self.QObject.delete
 
   proc newAccountsView*(status: Status): AccountsView =
     new(result, delete)
@@ -35,7 +31,6 @@ QtObject:
     result.currentAccount = newAccountItemView()
     result.focusedAccount = newAccountItemView()
     result.setup
-    # result.dappBrowserAccount = newAccountItemView()
 
   proc generateNewAccount*(self: AccountsView, password: string, accountName: string, color: string): string {.slot.} =
     try:

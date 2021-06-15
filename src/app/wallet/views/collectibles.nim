@@ -1,18 +1,12 @@
-import # std libs
-  atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables
-
+import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
-import ../../../status/[status, settings]
-import ../../../status/wallet/collectibles as status_collectibles
-import ../../../status/signals/types as signal_types
-import ../../../status/types
 
-import # status-desktop libs
-  ../../../status/wallet as status_wallet,
+import
+  ../../../status/[status, settings, wallet, tokens, utils, types],
+  ../../../status/wallet/collectibles as status_collectibles,
   ../../../status/tasks/[qt, task_runner_impl]
 
-import collectibles_list, accounts
-import account_list, account_item
+import collectibles_list, accounts, account_list, account_item
 
 logScope:
   topics = "collectibles-view"
@@ -48,9 +42,7 @@ proc loadCollectibles[T](self: T, slot: string, address: string, collectiblesTyp
   let arg = LoadCollectiblesTaskArg(
     tptr: cast[ByteAddress](loadCollectiblesTask),
     vptr: cast[ByteAddress](self.vptr),
-    slot: slot,
-    address: address,
-    collectiblesType: collectiblesType,
+    slot: slot, address: address, collectiblesType: collectiblesType,
     running: cast[ByteAddress](addr self.status.tasks.threadpool.running)
   )
   self.status.tasks.threadpool.start(arg)
@@ -61,11 +53,10 @@ QtObject:
       accountsView*: AccountsView
       currentCollectiblesLists*: CollectiblesList
 
-  proc setup(self: CollectiblesView) =
-    self.QObject.setup
-
+  proc setup(self: CollectiblesView) = self.QObject.setup
   proc delete(self: CollectiblesView) =
     self.currentCollectiblesLists.delete
+    self.QObject.delete
 
   proc newCollectiblesView*(status: Status, accountsView: AccountsView): CollectiblesView =
     new(result, delete)
