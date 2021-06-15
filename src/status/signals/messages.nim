@@ -385,6 +385,7 @@ proc toActivityCenterNotification*(jsonNotification: JsonNode, pk: string): Acti
       id: jsonNotification{"id"}.getStr,
       chatId: jsonNotification{"chatId"}.getStr,
       name: jsonNotification{"name"}.getStr,
+      author: jsonNotification{"author"}.getStr,
       notificationType: activityCenterNotificationType,
       timestamp: jsonNotification{"timestamp"}.getInt,
       read: jsonNotification{"read"}.getBool,

@@ -19,6 +19,7 @@ type
     Read = UserRole + 7
     Dismissed = UserRole + 8
     Accepted = UserRole + 9
+    Author = UserRole + 10
 
 QtObject:
   type
@@ -71,6 +72,7 @@ QtObject:
       of NotifRoles.Id: result = newQVariant(acitivityNotificationItem.id)
       of NotifRoles.ChatId: result = newQVariant(acitivityNotificationItem.chatId)
       of NotifRoles.Name: result = newQVariant(acitivityNotificationItem.name)
+      of NotifRoles.Author: result = newQVariant(acitivityNotificationItem.author)
       of NotifRoles.NotificationType: result = newQVariant(acitivityNotificationItem.notificationType.int)
       of NotifRoles.Message: result = newQVariant(acitivityNotificationItem.messageItem)
       of NotifRoles.Timestamp: result = newQVariant(acitivityNotificationItem.timestamp)
@@ -86,6 +88,7 @@ QtObject:
     of "id": result = notif.id
     of "chatId": result = notif.chatId
     of "name": result = notif.name
+    of "author": result = notif.author
     of "notificationType": result = $(notif.notificationType.int)
     of "timestamp": result = $(notif.timestamp)
     of "read": result = $(notif.read)
@@ -98,6 +101,7 @@ QtObject:
       NotifRoles.Id.int:"id",
       NotifRoles.ChatId.int:"chatId",
       NotifRoles.Name.int: "name",
+      NotifRoles.Author.int: "author",
       NotifRoles.NotificationType.int: "notificationType",
       NotifRoles.Message.int: "message",
       NotifRoles.Timestamp.int: "timestamp",
@@ -145,10 +149,53 @@ QtObject:
           let topLeft = self.createIndex(i, 0, nil)
           let bottomRight = self.createIndex(i, 0, nil)
           self.dataChanged(topLeft, bottomRight, @[NotifRoles.Read.int])
+          break
       i = i + 1
     
   proc markActivityCenterNotificationRead(self: ActivityNotificationList, id: string): string {.slot.} =
     self.markActivityCenterNotificationsRead(fmt"[""{id}""]")
+
+  proc removeNotifications(self: ActivityNotificationList, ids: seq[string]) =
+    var i = 0
+    var indexesToDelete: seq[int] = @[]
+    for activityCenterNotification in self.activityCenterNotifications:
+      for id in ids:
+        if (activityCenterNotification.id == id):
+          indexesToDelete.add(i)
+          break
+      i = i + 1
+    
+    i = 0
+    for index in indexesToDelete:
+      let indexUpdated = index - i
+      self.beginRemoveRows(newQModelIndex(), indexUpdated, indexUpdated)
+      self.activityCenterNotifications.delete(indexUpdated)
+      self.endRemoveRows()
+      i = i + 1
+
+  proc acceptActivityCenterNotifications(self: ActivityNotificationList, idsJson: string): string {.slot.} =
+    let ids = map(parseJson(idsJson).getElems(), proc(x:JsonNode):string = x.getStr())
+
+    let error = self.status.chat.acceptActivityCenterNotifications(ids)
+    if (error != ""):
+      return error
+
+    self.removeNotifications(ids)
+
+  proc acceptActivityCenterNotification(self: ActivityNotificationList, id: string): string {.slot.} =
+    self.acceptActivityCenterNotifications(fmt"[""{id}""]")
+
+  proc dismissActivityCenterNotifications(self: ActivityNotificationList, idsJson: string): string {.slot.} =
+    let ids = map(parseJson(idsJson).getElems(), proc(x:JsonNode):string = x.getStr())
+
+    let error = self.status.chat.dismissActivityCenterNotifications(ids)
+    if (error != ""):
+      return error
+
+    self.removeNotifications(ids)
+
+  proc dismissActivityCenterNotification(self: ActivityNotificationList, id: string): string {.slot.} =
+    self.dismissActivityCenterNotifications(fmt"[""{id}""]")
 
   proc toActivityCenterNotificationViewItem*(self: ActivityNotificationList, activityCenterNotification: ActivityCenterNotification): ActivityCenterNotificationViewItem =
     let communityId = self.status.chat.getCommunityIdForChat(activityCenterNotification.chatId)
@@ -158,6 +205,7 @@ QtObject:
           chatId: activityCenterNotification.chatId,
           name: activityCenterNotification.name,
           notificationType: activityCenterNotification.notificationType,
+          author: activityCenterNotification.author,
           timestamp: activityCenterNotification.timestamp,
           read: activityCenterNotification.read,
           dismissed: activityCenterNotification.dismissed,

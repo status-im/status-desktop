@@ -104,6 +104,7 @@ Popup {
 
             DelegateModelGeneralized {
                 id: notifDelegateList
+
                 lessThan: [
                     function(left, right) { return left.timestamp > right.timestamp }
                 ]
@@ -135,15 +136,30 @@ Popup {
                     }
 
                     Loader {
+                        property int previousNotificationIndex: {
+                            if (notificationDelegate.idx === 0) {
+                                return 0
+                            }
+
+                            // This is used in order to have access to the previous message and determine the timestamp
+                            // we can't rely on the index because the sequence of messages is not ordered on the nim side
+                            if (notificationDelegate.idx < notifDelegateList.items.count - 1) {
+                                return notifDelegateList.items.get(notificationDelegate.idx - 1).model.index
+                            }
+                            return -1;
+                        }
+                        property string previousNotificationTimestamp: notificationDelegate.idx === 0 ? "" : chatsModel.activityNotificationList.getNotificationData(previousNotificationIndex, "timestamp")
+
+
                         id: notifLoader
                         anchors.top: parent.top
                         active: !!sourceComponent
                         width: parent.width
-                        height: active && item.visible ? item.height : 0
                         sourceComponent: {
                             switch (model.notificationType) {
                             case Constants.activityCenterNotificationTypeMention:return messageNotificationComponent
                             case Constants.activityCenterNotificationTypeReply: return messageNotificationComponent
+                            case Constants.activityCenterNotificationTypeGroupRequest: return groupRequestNotificationComponent
                             default: return null
                             }
                         }
@@ -152,128 +168,13 @@ Popup {
                     Component {
                         id: messageNotificationComponent
 
-                        Item {
-                            visible: {
-                                if (hideReadNotifications && model.read) {
-                                    return false
-                                }
+                        ActivityCenterMessageComponent {}
+                    }
 
-                                return activityCenter.currentFilter === ActivityCenter.Filter.All ||
-                                        (model.notificationType === Constants.activityCenterNotificationTypeMention && activityCenter.currentFilter === ActivityCenter.Filter.Mentions) ||
-                                        (model.notificationType === Constants.activityCenterNotificationTypeReply && activityCenter.currentFilter === ActivityCenter.Filter.Replies)
-                            }
-                            width: parent.width
-                            height: messageNotificationContent.height
+                    Component {
+                        id: groupRequestNotificationComponent
 
-                            StatusIconButton {
-                                id: markReadBtn
-                                icon.name: "double-check"
-                                iconColor: Style.current.primary
-                                icon.width: 24
-                                icon.height: 24
-                                width: 32
-                                height: 32
-                                onClicked: chatsModel.activityNotificationList.markActivityCenterNotificationRead(model.id)
-                                anchors.right: parent.right
-                                anchors.rightMargin: 12
-                                anchors.verticalCenter: messageNotificationContent.verticalCenter
-                                z: 52
-
-                                StatusToolTip {
-                                    visible: markReadBtn.hovered
-                                    text: qsTr("Mark as Read")
-                                    orientation: "left"
-                                    x: - width - Style.current.padding
-                                    y: markReadBtn.height / 2 - height / 2 + 4
-                                }
-                            }
-
-                            Item {
-                                id: messageNotificationContent
-                                width: parent.width
-                                height: childrenRect.height
-
-                                Message {
-                                    id: notificationMessage
-                                    anchors.right: undefined
-                                    fromAuthor: model.message.fromAuthor
-                                    chatId: model.message.chatId
-                                    userName: model.message.userName
-                                    alias: model.message.alias
-                                    localName: model.message.localName
-                                    message: model.message.message
-                                    plainText: model.message.plainText
-                                    identicon: model.message.identicon
-                                    isCurrentUser: model.message.isCurrentUser
-                                    timestamp: model.message.timestamp
-                                    sticker: model.message.sticker
-                                    contentType: model.message.contentType
-                                    outgoingStatus: model.message.outgoingStatus
-                                    responseTo: model.message.responseTo
-                                    imageClick: imagePopup.openPopup.bind(imagePopup)
-                                    messageId: model.message.messageId
-                                    linkUrls: model.message.linkUrls
-                                    communityId: model.message.communityId
-                                    hasMention: model.message.hasMention
-                                    stickerPackId: model.message.stickerPackId
-                                    pinnedBy: model.message.pinnedBy
-                                    pinnedMessage: model.message.isPinned
-                                    activityCenterMessage: true
-                                    read: model.read
-                                    clickMessage: function (isProfileClick) {
-                                        if (isProfileClick) {
-                                            const pk = model.message.fromAuthor
-                                            const userProfileImage = appMain.getProfileImage(pk)
-                                            return openProfilePopup(chatsModel.userNameOrAlias(pk), pk, userProfileImage || utilsModel.generateIdenticon(pk))
-                                        }
-
-                                        activityCenter.close()
-
-                                        if (model.message.communityId) {
-                                            chatsModel.communities.setActiveCommunity(model.message.communityId)
-                                        }
-
-                                        chatsModel.channelView.setActiveChannel(model.message.chatId)
-                                        positionAtMessage(model.message.messageId)
-                                    }
-
-                                    prevMessageIndex: {
-                                        if (notificationDelegate.idx === 0) {
-                                            return 0
-                                        }
-
-                                        // This is used in order to have access to the previous message and determine the timestamp
-                                        // we can't rely on the index because the sequence of messages is not ordered on the nim side
-                                        if (notificationDelegate.idx < notifDelegateList.items.count - 1) {
-                                            return notifDelegateList.items.get(notificationDelegate.idx - 1).model.index
-                                        }
-                                        return -1;
-                                    }
-                                    prevMsgTimestamp: notificationDelegate.idx === 0 ? "" : chatsModel.activityNotificationList.getNotificationData(prevMessageIndex, "timestamp")
-                                }
-
-                                Rectangle {
-                                    anchors.top: notificationMessage.bottom
-                                    anchors.bottom: badge.bottom
-                                    anchors.bottomMargin: -Style.current.smallPadding
-                                    width: parent.width
-                                    color: model.read ? Style.current.transparent : Utils.setColorAlpha(Style.current.blue, 0.1)
-
-                                }
-
-                                ActivityChannelBadge {
-                                    id: badge
-                                    name: model.name
-                                    chatId: model.chatId
-                                    notificationType: model.notificationType
-                                    responseTo: model.message.responseTo
-                                    communityId: model.message.communityId
-                                    anchors.top: notificationMessage.bottom
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 61 // TODO find a way to align with the text of the message
-                                }
-                            }
-                        }
+                        ActivityCenterGroupRequest {}
                     }
                 }
             }

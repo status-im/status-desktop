@@ -97,6 +97,8 @@ DISTFILES += \
     app/AppLayouts/Browser/FavoritesList.qml \
     app/AppLayouts/Browser/components/BookmarkButton.qml \
     app/AppLayouts/Chat/ChatColumn/ActivityCenter.qml \
+    app/AppLayouts/Chat/ChatColumn/ChatComponents/ActivityCenterGroupRequest.qml \
+    app/AppLayouts/Chat/ChatColumn/ChatComponents/ActivityCenterMessageComponent.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ActivityCenterTopBar.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/ActivityChannelBadge.qml \
     app/AppLayouts/Chat/ChatColumn/ChatComponents/AddToContactBanner.qml \
@@ -155,6 +157,7 @@ DISTFILES += \
     app/AppLayouts/Chat/CommunityComponents/TransferOwnershipPopup.qml \
     app/AppLayouts/Chat/ContactsColumn/AddChat.qml \
     app/AppLayouts/Chat/ContactsColumn/ClosedEmptyView.qml \
+    app/AppLayouts/Chat/components/AcceptRejectOptionsButtons.qml \
     app/AppLayouts/Chat/components/ChooseBrowserPopup.qml \
     app/AppLayouts/Chat/ContactsColumn/CommunityButton.qml \
     app/AppLayouts/Chat/ContactsColumn/CommunityList.qml \

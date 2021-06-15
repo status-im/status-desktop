@@ -604,7 +604,13 @@ proc markAllActivityCenterNotificationsRead*() =
   discard callPrivateRPC("markAllActivityCenterNotificationsRead".prefix, %*[])
 
 proc markActivityCenterNotificationsRead*(ids: seq[string]) =
-  let res = callPrivateRPC("markActivityCenterNotificationsRead".prefix, %*[ids])
+  discard callPrivateRPC("markActivityCenterNotificationsRead".prefix, %*[ids])
+
+proc acceptActivityCenterNotifications*(ids: seq[string]): string =
+  result =  callPrivateRPC("acceptActivityCenterNotifications".prefix, %*[ids])
+
+proc dismissActivityCenterNotifications*(ids: seq[string]): string =
+  result =  callPrivateRPC("dismissActivityCenterNotifications".prefix, %*[ids])
 
 proc unreadActivityCenterNotificationsCount*(): int =
   let rpcResult = callPrivateRPC("unreadActivityCenterNotificationsCount".prefix, %*[]).parseJson
