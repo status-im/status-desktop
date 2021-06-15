@@ -1,0 +1,4 @@
+make clean
+qmake sandbox.pro -spec macx-clang CONFIG+=debug CONFIG+=x86_64 && /usr/bin/make qmake_all
+make
+

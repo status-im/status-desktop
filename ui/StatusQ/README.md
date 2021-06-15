@@ -43,8 +43,7 @@ To run the sandbox from within a command line interface, run the following comma
 ```
 $ git clone https://github.com/status-im/StatusQ
 $ cd StatusQ/sandbox
-$ qmake sandbox.pro -spec macx-clang CONFIG+=debug CONFIG+=x86_64 && /usr/bin/make qmake_all
-$ make
+$ ./scripts/build
 ```
 
 Once that is done, the sandbox can be started with the generated executable:
