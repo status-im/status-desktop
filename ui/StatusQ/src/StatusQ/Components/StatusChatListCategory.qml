@@ -31,6 +31,8 @@ Column {
         title: statusChatListCategory.name
         opened: statusChatListCategory.opened
 
+        showMenuButton: !!statusChatListCategory.popupMenu
+
         onClicked: {
             if (mouse.button === Qt.RightButton) {
                 highlighted = true

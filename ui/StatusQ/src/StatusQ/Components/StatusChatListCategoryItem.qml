@@ -17,6 +17,8 @@ StatusListItem {
     property bool opened: true
     property bool highlighted: false
     property bool showActionButtons: false
+    property bool showMenuButton: showActionButtons
+    property bool showAddButton: showActionButtons
     property alias addButton: addButton
     property alias menuButton: menuButton
     property alias toggleButton: toggleButton
@@ -40,7 +42,7 @@ StatusListItem {
             id: addButton
             icon.name: "add"
             icon.width: 20
-            visible: statusChatListCategoryItem.showActionButtons && 
+            visible: statusChatListCategoryItem.showAddButton && 
                 (statusChatListCategoryItem.highlighted ||
                 statusChatListCategoryItem.sensor.containsMouse)
             onClicked: statusChatListCategoryItem.addButtonClicked(mouse)
@@ -50,7 +52,7 @@ StatusListItem {
             id: menuButton
             icon.name: "more"
             icon.width: 21
-            visible: statusChatListCategoryItem.showActionButtons && 
+            visible: statusChatListCategoryItem.showMenuButton && 
                 (statusChatListCategoryItem.highlighted ||
                 statusChatListCategoryItem.sensor.containsMouse)
             onClicked: statusChatListCategoryItem.menuButtonClicked(mouse)
