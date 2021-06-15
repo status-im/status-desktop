@@ -51,15 +51,23 @@ Column {
 
     StatusChatList {
         id: statusChatList
-
         anchors.horizontalCenter: parent.horizontalCenter
         visible: statusChatListCategory.opened
+        categoryId: statusChatListCategory.categoryId
+        filterFn: function (model) {
+            return !!model.categoryId && model.categoryId == statusChatList.categoryId
+        }
     }
 
     Loader {
         id: popupMenuSlot
         active: !!statusChatListCategory.popupMenu
         onLoaded: {
+            popupMenuSlot.item.openHandler = function () {
+                if (popupMenuSlot.item.hasOwnProperty('categoryId')) {
+                    popupMenuSlot.item.categoryId = statusChatListCategory.categoryId
+                }
+            }
             popupMenuSlot.item.closeHandler = function () {
                 statusChatListCategoryItem.highlighted = false
                 statusChatListCategoryItem.menuButton.highlighted = false
