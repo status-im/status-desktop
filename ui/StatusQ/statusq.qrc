@@ -234,5 +234,9 @@
         <file>src/assets/img/icons/add-contact.svg</file>
         <file>src/assets/img/icons/add-circle.svg</file>
         <file>src/assets/img/icons/activity.svg</file>
+        <file>src/StatusQ/Components/StatusChatListCategoryItem.qml</file>
+        <file>src/StatusQ/Components/StatusChatListCategory.qml</file>
+        <file>src/StatusQ/Controls/StatusChatListCategoryItemButton.qml</file>
+        <file>src/StatusQ/Components/StatusChatList.qml</file>
     </qresource>
 </RCC>

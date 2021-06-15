@@ -5,6 +5,12 @@
         <file>Icons.qml</file>
         <file>Others.qml</file>
         <file>Buttons.qml</file>
+        <file>DemoApp.qml</file>
+        <file>ListItems.qml</file>
         <file>StatusChatInfoToolBarPage.qml</file>
+        <file>StatusPopupMenuPage.qml</file>
+        <file>NavigationHeader.qml</file>
+        <file>ThemeSwitch.qml</file>
+        <file>Layout.qml</file>
     </qresource>
 </RCC>
