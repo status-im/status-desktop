@@ -12,6 +12,7 @@ Column {
     property string name: ""
     property bool opened: true
 
+    property alias showActionButtons: statusChatListCategoryItem.showActionButtons
     property alias addButton: statusChatListCategoryItem.addButton
     property alias menuButton: statusChatListCategoryItem.menuButton
     property alias toggleButton: statusChatListCategoryItem.toggleButton

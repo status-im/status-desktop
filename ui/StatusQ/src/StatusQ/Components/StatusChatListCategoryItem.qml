@@ -16,6 +16,7 @@ StatusListItem {
 
     property bool opened: true
     property bool highlighted: false
+    property bool showActionButtons: false
     property alias addButton: addButton
     property alias menuButton: menuButton
     property alias toggleButton: toggleButton
@@ -39,7 +40,9 @@ StatusListItem {
             id: addButton
             icon.name: "add"
             icon.width: 20
-            visible: statusChatListCategoryItem.sensor.containsMouse || statusChatListCategoryItem.highlighted
+            visible: statusChatListCategoryItem.showActionButtons && 
+                (statusChatListCategoryItem.highlighted ||
+                statusChatListCategoryItem.sensor.containsMouse)
             onClicked: statusChatListCategoryItem.addButtonClicked(mouse)
             tooltip.text: "Add channel inside category"
         },
@@ -47,7 +50,9 @@ StatusListItem {
             id: menuButton
             icon.name: "more"
             icon.width: 21
-            visible: statusChatListCategoryItem.sensor.containsMouse || statusChatListCategoryItem.highlighted
+            visible: statusChatListCategoryItem.showActionButtons && 
+                (statusChatListCategoryItem.highlighted ||
+                statusChatListCategoryItem.sensor.containsMouse)
             onClicked: statusChatListCategoryItem.menuButtonClicked(mouse)
             tooltip.text: "More"
         },

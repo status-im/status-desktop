@@ -40,10 +40,17 @@ GridLayout {
     StatusChatListCategoryItem {
         title: "Chat list category"
         opened: false
+        showActionButtons: true
     }
 
     StatusChatListCategoryItem {
         title: "Chat list category (opened)"
+        opened: true
+        showActionButtons: true
+    }
+
+    StatusChatListCategoryItem {
+        title: "Chat list category (no buttons)"
         opened: true
     }
 
