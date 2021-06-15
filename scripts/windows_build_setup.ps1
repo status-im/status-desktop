@@ -22,8 +22,8 @@ function Install-Dependencies {
 
 function Install-Qt-SDK {
     Write-Host "Installing Qt $QtVersion SDK..."
-    pip install aqtinstall
-    aqt install --output "C:\Qt" $QtVersion windows desktop win64_msvc2017_64 -m qtwebengine
+    pip install -e 'git://github.com/miurahr/aqtinstall.git@v1.2.0b4#egg=aqtinstall'
+    aqt install -c ../ci/scripts/aqt.ini --output "C:\Qt" $QtVersion windows desktop win64_msvc2017_64 -m qtwebengine
 }
 
 # Install Microsoft Visual C++ Build Tools 15.8.9

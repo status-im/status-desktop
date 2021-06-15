@@ -6,30 +6,25 @@ FROM ubuntu:18.04 AS qt-install
 ARG QT_VERSION
 
 RUN apt update && apt full-upgrade -y && apt install -y --no-install-recommends \
-    sudo python3 python3-pip \
+    sudo python3 python3-pip git \
     && apt-get -qq clean
 
 RUN python3 -m pip install setuptools
 
-RUN chmod -R 777 /opt
+RUN mkdir -p /opt/qt
+RUN chmod -R 777 /opt/qt
 
-RUN groupadd -r user && useradd --create-home --gid user user && echo 'user ALL=NOPASSWD: ALL' > /etc/sudoers.d/user
+COPY scripts/install-qt.sh /tmp/scripts/
+COPY scripts/aqt.ini /tmp/scripts/
 
+RUN chmod a+x /tmp/scripts/install-qt.sh
 
-COPY scripts/install-qt.sh /home/user/
-RUN chown user:user /home/user/install-qt.sh
-RUN chmod a+x /home/user/install-qt.sh
-
-USER user
-WORKDIR /home/user
-
-ENV HOME /home/user
-ENV QT_VERSION=$QT_VERSION
+ENV QT_VERSION=$QT_VERSION \
+    QT_PATH=/opt/qt
 
 # Install QT
-RUN /home/user/install-qt.sh
-
-
+WORKDIR /tmp/scripts
+RUN /tmp/scripts/install-qt.sh
 
 # Build Image ------------------------------------------------------------------
 FROM ubuntu:18.04
@@ -102,7 +97,7 @@ RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales \
 
 # Copy QT toolchain
 RUN chmod -R 777 /opt && mkdir -p /opt/qt/$QT_VERSION
-COPY --from=qt-install /home/user/$QT_VERSION /opt/qt/$QT_VERSION/.
+COPY --from=qt-install /opt/qt/$QT_VERSION /opt/qt/$QT_VERSION/.
 
 USER user
 WORKDIR /home/user
