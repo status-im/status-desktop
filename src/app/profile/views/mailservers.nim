@@ -3,6 +3,7 @@ import ../../../status/[status, settings]
 import ../../../status/profile/mailserver
 import mailservers_list
 import ../../../status/tasks/marathon/mailserver/worker
+import ../../../status/libstatus/types as status_types
 
 logScope:
   topics = "mailservers-view"
@@ -54,6 +55,20 @@ QtObject:
 
   QtProperty[bool] automaticSelection:
     read = getAutomaticSelection
+
+  proc getDefaultSyncPeriod(self: MailserversView): int {.slot.} =
+    status_settings.getSetting[int](Setting.DefaulySyncPeriod)
+
+  proc defaultSyncPeriodChanged(self: MailserversView) {.signal.}
+
+  proc setDefaultSyncPeriod(self: MailserversView, newSyncPeriod: int) {.slot.} =
+    discard status_settings.saveSetting(Setting.DefaulySyncPeriod, newSyncPeriod)
+    self.defaultSyncPeriodChanged()
+
+  QtProperty[int] DefaultSyncPeriod:
+    read = getDefaultSyncPeriod
+    write = setDefaultSyncPeriod
+    notify = defaultSyncPeriodChanged
 
   proc setMailserver(self: MailserversView, id: string) {.slot.} =
     let enode = self.mailserversList.getMailserverEnode(id)
