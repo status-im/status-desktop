@@ -21,6 +21,7 @@ Item {
         previousMessageIndex: prevMessageIndex
         previousMessageTimestamp: prevMsgTimestamp
         messageTimestamp: timestamp
+        isActivityCenterMessage: activityCenterMessage
     }
 
     UserImage {

@@ -3,6 +3,7 @@ import "../../../../../shared"
 import "../../../../../imports"
 
 StyledText {
+    property bool isActivityCenterMessage: false
     property int previousMessageIndex: -1
     property string previousMessageTimestamp
     property string messageTimestamp
@@ -11,11 +12,11 @@ StyledText {
     font.pixelSize: 13
     color: Style.current.secondaryText
     horizontalAlignment: Text.AlignHCenter
-    anchors.horizontalCenter: activityCenterMessage ? undefined : parent.horizontalCenter
+    anchors.horizontalCenter: isActivityCenterMessage ? undefined : parent.horizontalCenter
     anchors.top: parent.top
-    anchors.topMargin: visible ? (activityCenterMessage ? Style.current.halfPadding : 20) : 0
+    anchors.topMargin: visible ? (isActivityCenterMessage ? Style.current.halfPadding : 20) : 0
     anchors.left: parent.left
-    anchors.leftMargin: activityCenterMessage ? Style.current.padding : 0
+    anchors.leftMargin: isActivityCenterMessage ? Style.current.padding : 0
 
     text: {
         if (previousMessageIndex === -1) return ""; // identifier

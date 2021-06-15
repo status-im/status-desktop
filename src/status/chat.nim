@@ -52,7 +52,6 @@ type
 
   ChatModel* = ref object
     publicKey*: string
-    messagesFromContactsOnly*: bool
     events*: EventEmitter
     communitiesToFetch*: seq[string]
     mailserverReady*: bool
@@ -72,7 +71,6 @@ include chat/utils
 
 proc newChatModel*(events: EventEmitter): ChatModel =
   result = ChatModel()
-  result.messagesFromContactsOnly = false
   result.events = events
   result.mailserverReady = false
   result.communitiesToFetch = @[]
@@ -86,37 +84,9 @@ proc newChatModel*(events: EventEmitter): ChatModel =
 proc delete*(self: ChatModel) =
   discard
 
-proc cleanSpamChatGroups(self: ChatModel, chats: seq[Chat], contacts: seq[Profile]): seq[Chat] =
-  for chat in chats:
-    if not chat.isActive: continue
-    if chat.chatType == ChatType.PrivateGroupChat:
-      var isContact = false
-      var joined = false
-      for member in chat.members:
-        if member.id == self.publicKey and member.joined:
-          joined = true
-        if member.admin and member.joined:
-          for contact in contacts:
-            if contact.address == member.id:
-              isContact = true
-      if not isContact and not joined:
-        discard status_chat.deactivateChat(chat)
-      else:
-        result.add(chat)
-    else:
-      result.add(chat)
-
 proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest], pinnedMessages: seq[Message], activityCenterNotifications: seq[ActivityCenterNotification]) =
-  var contacts = getAddedContacts()
-
-  var chatList = chats
-  if (self.messagesFromContactsOnly):
-    # Automatically decline chat group invitations if admin is not a contact
-    chatList = self.cleanSpamChatGroups(chats, contacts)
-
-  for chat in chatList:
-    if chat.isActive:
-      self.channels[chat.id] = chat
+  for chat in chats:
+    self.channels[chat.id] = chat
 
   for message in messages:
     let chatId = message.chatId
@@ -127,7 +97,7 @@ proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiRea
       if self.lastMessageTimestamps[chatId] > ts:
         self.lastMessageTimestamps[chatId] = ts
       
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages,chats: chatList, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests, pinnedMessages: pinnedMessages, activityCenterNotifications: activityCenterNotifications))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages,chats: chats, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests, pinnedMessages: pinnedMessages, activityCenterNotifications: activityCenterNotifications))
 
 proc hasChannel*(self: ChatModel, chatId: string): bool =
   self.channels.hasKey(chatId)
@@ -178,15 +148,11 @@ proc requestMissingCommunityInfos*(self: ChatModel) =
   for communityId in self.communitiesToFetch:
     status_chat.requestCommunityInfo(communityId)
 
-proc init*(self: ChatModel, pubKey: string, messagesFromContactsOnly: bool) =
+proc init*(self: ChatModel, pubKey: string) =
   self.publicKey = pubKey
-  self.messagesFromContactsOnly = messagesFromContactsOnly
 
   var contacts = getAddedContacts()
   var chatList = status_chat.loadChats()
-
-  if (messagesFromContactsOnly):
-    chatList = self.cleanSpamChatGroups(chatList, contacts)
 
   let profileUpdatesChatIds = chatList.filter(c => c.chatType == ChatType.Profile).map(c => c.id)
 
@@ -574,6 +540,25 @@ proc markActivityCenterNotificationsRead*(self: ChatModel, ids: seq[string]): st
     status_chat.markActivityCenterNotificationsRead(ids)
   except Exception as e:
     error "Error marking as read", msg = e.msg
+    result = e.msg
+
+proc acceptActivityCenterNotifications*(self: ChatModel, ids: seq[string]): string =
+  try:
+    let response = status_chat.acceptActivityCenterNotifications(ids)
+
+    let resultTuple = self.processChatUpdate(parseJson(response))
+    let (chats, messages) = resultTuple
+    self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats))
+
+  except Exception as e:
+    error "Error marking as accepted", msg = e.msg
+    result = e.msg
+
+proc dismissActivityCenterNotifications*(self: ChatModel, ids: seq[string]): string =
+  try:
+    discard status_chat.dismissActivityCenterNotifications(ids)
+  except Exception as e:
+    error "Error marking as dismissed", msg = e.msg
     result = e.msg
 
 proc unreadActivityCenterNotificationsCount*(self: ChatModel): int =
