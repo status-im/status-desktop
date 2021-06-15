@@ -16,7 +16,14 @@ Menu {
 
     property int menuItemCount: 0
     property var subMenuItemIcons: []
+    property var openHandler
     property var closeHandler
+
+    onOpened: {
+        if (typeof openHandler === "function") {
+            openHandler()
+        }
+    }
 
     onClosed: {
         if (typeof closeHandler === "function") {
