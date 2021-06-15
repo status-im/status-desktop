@@ -17,7 +17,7 @@ import # status-desktop libs
 import account_list, account_item, transaction_list, accounts, asset_list, token_list, transactions
 
 logScope:
-  topics = "ens-view"
+  topics = "history-view"
 
 QtObject:
   type HistoryView* = ref object of QObject

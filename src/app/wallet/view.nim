@@ -13,43 +13,15 @@ import # status-desktop libs
   ../../status/utils as status_utils,
   ../../status/tokens as status_tokens,
   ../../status/ens as status_ens,
-  views/[asset_list, accounts, account_list, account_item, token_list, transaction_list, collectibles_list, collectibles, transactions, gas, tokens, ens, dapp_browser, history],
+  views/[asset_list, accounts, account_list, account_item, token_list, transaction_list, collectibles_list, collectibles, transactions, gas, tokens, ens, dapp_browser, history, balance],
   ../../status/tasks/[qt, task_runner_impl], ../../status/signals/types as signal_types
 
 const ZERO_ADDRESS* = "0x0000000000000000000000000000000000000000"
-
-type
-  InitBalancesTaskArg = ref object of QObjectTaskArg
-    address: string
-    tokenList: seq[string]
-
-const initBalancesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[InitBalancesTaskArg](argEncoded)
-  var tokenBalances = initTable[string, string]()
-  for token in arg.tokenList:
-    tokenBalances[token] = status_tokens.getTokenBalance(token, arg.address)
-  let output = %* {
-    "address": arg.address,
-    "eth": getEthBalance(arg.address),
-    "tokens": tokenBalances
-  }
-  arg.finish(output)
-
-proc initBalances[T](self: T, slot: string, address: string, tokenList: seq[string]) =
-  let arg = InitBalancesTaskArg(
-    tptr: cast[ByteAddress](initBalancesTask),
-    vptr: cast[ByteAddress](self.vptr),
-    slot: slot,
-    address: address,
-    tokenList: tokenList
-  )
-  self.status.tasks.threadpool.start(arg)
 
 QtObject:
   type
     WalletView* = ref object of QAbstractListModel
       status: Status
-      totalFiatBalance: string
       etherscanLink: string
       signingPhrase: string
       # currentTransactions: TransactionList
@@ -61,6 +33,7 @@ QtObject:
       gasView*: GasView
       ensView*: EnsView
       historyView*: HistoryView
+      balanceView*: BalanceView
 
   proc delete(self: WalletView) =
     self.accountsView.delete
@@ -83,9 +56,9 @@ QtObject:
     result.ensView = newEnsView(status)
     result.dappBrowserView = newDappBrowserView(status, result.accountsView)
     result.historyView = newHistoryView(status, result.accountsView, result.transactionsView)
+    result.balanceView = newBalanceView(status, result.accountsView, result.transactionsView, result.historyView)
 
     # result.currentTransactions = newTransactionList()
-    result.totalFiatBalance = ""
     result.etherscanLink = ""
     result.signingPhrase = ""
     result.setup
@@ -132,6 +105,12 @@ QtObject:
   QtProperty[QVariant] historyView:
     read = getHistory
 
+  proc getBalance(self: WalletView): QVariant {.slot.} =
+    newQVariant(self.balanceView)
+
+  QtProperty[QVariant] balanceView:
+    read = getBalance
+
   proc etherscanLinkChanged*(self: WalletView) {.signal.}
 
   proc getEtherscanLink*(self: WalletView): QVariant {.slot.} =
@@ -158,45 +137,9 @@ QtObject:
     read = getSigningPhrase
     notify = signingPhraseChanged
 
-  proc totalFiatBalanceChanged*(self: WalletView) {.signal.}
-
-  proc getTotalFiatBalance(self: WalletView): string {.slot.} =
-    self.status.wallet.getTotalFiatBalance()
-
-  proc setTotalFiatBalance*(self: WalletView, newBalance: string) =
-    self.totalFiatBalance = newBalance
-    self.totalFiatBalanceChanged()
-
-  QtProperty[string] totalFiatBalance:
-    read = getTotalFiatBalance
-    write = setTotalFiatBalance
-    notify = totalFiatBalanceChanged
-
-  proc getFiatValue*(self: WalletView, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string {.slot.} =
-    if (cryptoBalance == "" or cryptoSymbol == "" or fiatSymbol == ""): return "0.00"
-    let val = self.status.wallet.convertValue(cryptoBalance, cryptoSymbol, fiatSymbol)
-    result = fmt"{val:.2f}"
-
-  proc getCryptoValue*(self: WalletView, fiatBalance: string, fiatSymbol: string, cryptoSymbol: string): string {.slot.} =
-    result = fmt"{self.status.wallet.convertValue(fiatBalance, fiatSymbol, cryptoSymbol)}"
-
-  proc defaultCurrency*(self: WalletView): string {.slot.} =
-    self.status.wallet.getDefaultCurrency()
-
-  proc defaultCurrencyChanged*(self: WalletView) {.signal.}
-
-  proc setDefaultCurrency*(self: WalletView, currency: string) {.slot.} =
-    self.status.wallet.setDefaultCurrency(currency)
-    self.defaultCurrencyChanged()
-
-  QtProperty[string] defaultCurrency:
-    read = defaultCurrency
-    write = setDefaultCurrency
-    notify = defaultCurrencyChanged
-
   proc updateView*(self: WalletView) =
-    self.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
-    self.totalFiatBalanceChanged()
+    self.balanceView.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
+    self.balanceView.totalFiatBalanceChanged()
 
     self.accountsView.currentAccount.assetList.setNewData(self.accountsView.currentAccount.account.assetList)
     self.accountsView.triggerUpdateAccounts()
@@ -204,22 +147,11 @@ QtObject:
     self.tokensView.setCurrentAssetList(self.accountsView.currentAccount.account.assetList)
 
   proc getAccountBalanceSuccess*(self: WalletView, jsonResponse: string) {.slot.} =
-    let jsonObj = jsonResponse.parseJson()
-    self.status.wallet.update(jsonObj["address"].getStr(), jsonObj["eth"].getStr(), jsonObj["tokens"])
-    self.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
-    self.accountsView.triggerUpdateAccounts()
+    self.balanceView.getAccountBalanceSuccess(jsonResponse)
     self.updateView()
 
   proc getDefaultAddress*(self: WalletView): string {.slot.} =
     result = $self.status.wallet.getWalletAccounts()[0].address
-
-  proc initBalances*(self: WalletView, loadTransactions: bool = true) =
-    for acc in self.status.wallet.accounts:
-      let accountAddress = acc.address
-      let tokenList = acc.assetList.filter(proc(x:Asset): bool = x.address != "").map(proc(x: Asset): string = x.address)
-      self.initBalances("getAccountBalanceSuccess", accountAddress, tokenList)
-      if loadTransactions: 
-        self.historyView.loadTransactionsForAccount(accountAddress)
 
   proc setInitialRange*(self: WalletView) {.slot.} = 
     discard self.status.wallet.setInitialBlocksRange()
@@ -256,3 +188,6 @@ QtObject:
 
   proc setHistoryFetchState*(self: WalletView, accounts: seq[string], isFetching: bool) =
     self.historyView.setHistoryFetchState(accounts, isFetching)
+
+  proc initBalances*(self: WalletView, loadTransactions: bool = true) =
+    self.balanceView.initBalances(loadTransactions)

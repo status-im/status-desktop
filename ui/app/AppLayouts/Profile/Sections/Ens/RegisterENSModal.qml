@@ -71,7 +71,7 @@ ModalPopup {
                     }
                     return null
                 }
-                currency: walletModel.defaultCurrency
+                currency: walletModel.balanceView.defaultCurrency
                 width: stack.width
                 //% "Choose account"
                 label: qsTrId("choose-account")
@@ -94,8 +94,8 @@ ModalPopup {
                 slowestGasPrice: parseFloat(walletModel.gasView.safeLowGasPrice)
                 fastestGasPrice: parseFloat(walletModel.gasView.fastestGasPrice)
                 getGasEthValue: walletModel.gasView.getGasEthValue
-                getFiatValue: walletModel.getFiatValue
-                defaultCurrency: walletModel.defaultCurrency
+                getFiatValue: walletModel.balanceView.getFiatValue
+                defaultCurrency: walletModel.balanceView.defaultCurrency
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     if (!(root.ensUsername !== "" && selectFromAccount.selectedAccount)) {
                         selectedGasLimit = 380000
@@ -132,9 +132,9 @@ ModalPopup {
                 }
                 toAccount: selectRecipient.selectedRecipient
                 asset: root.asset
-                currency: walletModel.defaultCurrency
+                currency: walletModel.balanceView.defaultCurrency
                 amount: {
-                    const fiatValue = walletModel.getFiatValue(root.ensPrice || 0, root.asset.symbol, currency)
+                    const fiatValue = walletModel.balanceView.getFiatValue(root.ensPrice || 0, root.asset.symbol, currency)
                     return { "value": root.ensPrice, "fiatValue": fiatValue }
                 }
             }

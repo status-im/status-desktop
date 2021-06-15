@@ -63,7 +63,7 @@ ModalPopup {
                     }
                     return null
                 }
-                currency: walletModel.defaultCurrency
+                currency: walletModel.balanceView.defaultCurrency
                 width: stack.width
                 //% "From account"
                 label: qsTrId("from-account")
@@ -96,9 +96,9 @@ ModalPopup {
             AssetAndAmountInput {
                 id: txtAmount
                 selectedAccount: selectFromAccount.selectedAccount
-                defaultCurrency: walletModel.defaultCurrency
-                getFiatValue: walletModel.getFiatValue
-                getCryptoValue: walletModel.getCryptoValue
+                defaultCurrency: walletModel.balanceView.defaultCurrency
+                getFiatValue: walletModel.balanceView.getFiatValue
+                getCryptoValue: walletModel.balanceView.getCryptoValue
                 width: stack.width
                 onSelectedAssetChanged: if (isValid) { gasSelector.estimateGas() }
                 onSelectedAmountChanged: if (isValid) { gasSelector.estimateGas() }
@@ -110,8 +110,8 @@ ModalPopup {
                 slowestGasPrice: parseFloat(walletModel.gasView.safeLowGasPrice)
                 fastestGasPrice: parseFloat(walletModel.gasView.fastestGasPrice)
                 getGasEthValue: walletModel.gasView.getGasEthValue
-                getFiatValue: walletModel.getFiatValue
-                defaultCurrency: walletModel.defaultCurrency
+                getFiatValue: walletModel.balanceView.getFiatValue
+                defaultCurrency: walletModel.balanceView.defaultCurrency
                 width: stack.width
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
@@ -163,7 +163,7 @@ ModalPopup {
                 toAccount: selectRecipient.selectedRecipient
                 asset: txtAmount.selectedAsset
                 amount: { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount }
-                currency: walletModel.defaultCurrency
+                currency: walletModel.balanceView.defaultCurrency
             }
             SendToContractWarning {
                 id: sendToContractWarning

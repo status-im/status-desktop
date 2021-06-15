@@ -82,7 +82,7 @@ ModalPopup {
             AccountSelector {
                 id: selectFromAccount
                 accounts: walletModel.accountsView.accounts
-                currency: walletModel.defaultCurrency
+                currency: walletModel.balanceView.defaultCurrency
                 width: stack.width
                 selectedAccount: root.selectedAccount
                 //% "Choose account"
@@ -116,8 +116,8 @@ ModalPopup {
                 slowestGasPrice: parseFloat(walletModel.gasView.safeLowGasPrice)
                 fastestGasPrice: parseFloat(walletModel.gasView.fastestGasPrice)
                 getGasEthValue: walletModel.gasView.getGasEthValue
-                getFiatValue: walletModel.getFiatValue
-                defaultCurrency: walletModel.defaultCurrency
+                getFiatValue: walletModel.balanceView.getFiatValue
+                defaultCurrency: walletModel.balanceView.defaultCurrency
                 width: stack.width
     
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
@@ -183,7 +183,7 @@ ModalPopup {
                 toAccount: selectRecipient.selectedRecipient
                 asset: root.selectedAsset
                 amount: { "value": root.selectedAmount, "fiatValue": root.selectedFiatAmount }
-                currency: walletModel.defaultCurrency
+                currency: walletModel.balanceView.defaultCurrency
                 isFromEditable: false
                 trxData: root.trxData
                 isGasEditable: true

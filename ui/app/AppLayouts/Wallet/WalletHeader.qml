@@ -186,7 +186,7 @@ Item {
                     icon.height: 16
                     onTriggered: {
                         openPopup(setCurrencyModalComponent, { 
-                            defaultCurrency: walletModel.defaultCurrency
+                            defaultCurrency: walletModel.balanceView.defaultCurrency
                         })
                     }
                 }
