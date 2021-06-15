@@ -157,23 +157,18 @@ Rectangle {
 
         StatusAppTwoPanelLayout {
 
-            leftPanel: Item {
+            leftPanel: StatusChatListAndCategories {
                 anchors.fill: parent
+                anchors.topMargin: 64
 
-                StatusChatList {
-                    anchors.top: parent.top
-                    anchors.topMargin: 64
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    selectedChatId: "0"
-                    chatListItems.model: demoChatListItems
-                    onChatItemSelected: selectedChatId = id
-                    onChatItemUnmuted: {
-                        for (var i = 0; i < demoChatListItems.count; i++) {
-                            let item = demoChatListItems.get(i);
-                            if (item.chatId === id) {
-                                demoChatListItems.setProperty(i, "muted", false)
-                            }
+                chatList.model: demoChatListItems
+                selectedChatId: "0"
+                onChatItemSelected: selectedChatId = id
+                onChatItemUnmuted: {
+                    for (var i = 0; i < demoChatListItems.count; i++) {
+                        let item = demoChatListItems.get(i);
+                        if (item.chatId === id) {
+                            demoChatListItems.setProperty(i, "muted", false)
                         }
                     }
                 }
@@ -233,10 +228,16 @@ Rectangle {
 
         StatusAppTwoPanelLayout {
 
+
+
+
             leftPanel: Item {
                 anchors.fill: parent
 
                 StatusChatInfoToolBar {
+                    id: statusChatInfoToolBar
+                    anchors.top: parent.top
+
                     chatInfoButton.title: "Cryptokitties"        
                     chatInfoButton.subTitle: "128 Members"
                     chatInfoButton.image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
@@ -265,41 +266,22 @@ Rectangle {
                     }
                 }
 
-                Column {
-                    anchors.top: parent.top
-                    anchors.topMargin: 64
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: 4
+                StatusChatListAndCategories {
+                    anchors.top: statusChatInfoToolBar.bottom
+                    anchors.topMargin: 8
+                    anchors.bottom: parent.bottom
+                    width: parent.width
 
-                    StatusChatList {
-                        id: statusChatList
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        chatListItems.model: demoCommunityChatListItems
-                    }
+                    chatList.model: demoCommunityChatListItems
+                    categoryList.model: demoCommunityCategoryItems
 
-                    StatusChatListCategory {
-                        name: "Public"
-                        showActionButtons: true
-                        chatList.chatListItems.model: demoCommunityChatListItems
-                        chatList.selectedChatId: "0"
-                        chatList.onChatItemSelected: chatList.selectedChatId = id
-                        popupMenu: categoryPopupCmp
-                    }
+                    showCategoryActionButtons: true
+                    onChatItemSelected: selectedChatId = id
 
-                    StatusChatListCategory {
-                        name: "Development"
+                    categoryPopupMenu: StatusPopupMenu {
 
-                        showActionButtons: true
-                        chatList.chatListItems.model: demoCommunityChatListItems
-                        chatList.onChatItemSelected: chatList.selectedChatId = id
-                        popupMenu: categoryPopupCmp
-                    }
-                }
+                        property string categoryId
 
-                Component {
-                    id: categoryPopupCmp
-
-                    StatusPopupMenu {
                         StatusMenuItem {
                             text: "Mute Category"
                             icon.name: "notification"
@@ -323,8 +305,29 @@ Rectangle {
                             type: StatusMenuItem.Type.Danger
                         }
                     }
+
+
+                    popupMenu: StatusPopupMenu {
+                        StatusMenuItem {
+                            text: "Create channel"
+                            icon.name: "channel"
+                        }
+
+                        StatusMenuItem {
+                            text: "Create category"
+                            icon.name: "channel-category"
+                        }
+
+                        StatusMenuSeparator {}
+
+                        StatusMenuItem {
+                            text: "Invite people"
+                            icon.name: "share-ios"
+                        }
+                    }
                 }
             }
+
             rightPanel: Item {
                 anchors.fill: parent
 
@@ -413,6 +416,7 @@ Rectangle {
             hasMention: false
             unreadMessagesCount: 0
             iconColor: "orange"
+            categoryId: "public"
         }
         ListElement {
             chatId: "2"
@@ -423,6 +427,30 @@ Rectangle {
             hasMention: false
             unreadMessagesCount: 0
             iconColor: "orange"
+            categoryId: "public"
+        }
+        ListElement {
+            chatId: "3"
+            name: "language-design"
+            chatType: StatusChatListItem.Type.CommunityChat
+            muted: false
+            hasUnreadMessages: false
+            hasMention: false
+            unreadMessagesCount: 0
+            iconColor: "orange"
+            categoryId: "dev"
+        }
+    }
+
+    ListModel {
+        id: demoCommunityCategoryItems
+        ListElement {
+            categoryId: "public"
+            name: "Public"
+        }
+        ListElement {
+            categoryId: "dev"
+            name: "Development"
         }
     }
 }

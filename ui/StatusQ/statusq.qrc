@@ -18,6 +18,7 @@
         <file>src/StatusQ/Popups/StatusMenuItem.qml</file>
         <file>src/StatusQ/Components/qmldir</file>
         <file>src/StatusQ/Components/StatusChatListItem.qml</file>
+        <file>src/StatusQ/Components/StatusChatListAndCategories.qml</file>
         <file>src/StatusQ/Components/StatusChatInfoToolBar.qml</file>
         <file>src/StatusQ/Components/StatusNavigationListItem.qml</file>
         <file>src/StatusQ/Components/StatusChatToolBar.qml</file>

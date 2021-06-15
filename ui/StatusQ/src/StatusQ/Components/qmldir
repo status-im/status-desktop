@@ -6,6 +6,7 @@ StatusChatList 0.1 StatusChatList.qml
 StatusChatListItem 0.1 StatusChatListItem.qml
 StatusChatListCategory 0.1 StatusChatListCategory.qml
 StatusChatListCategoryItem 0.1 StatusChatListCategoryItem.qml
+StatusChatListAndCategories 0.1 StatusChatListAndCategories.qml
 StatusChatToolBar 0.1 StatusChatToolBar.qml
 StatusDescriptionListItem 0.1 StatusDescriptionListItem.qml
 StatusLetterIdenticon 0.1 StatusLetterIdenticon.qml
