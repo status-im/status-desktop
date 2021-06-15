@@ -212,7 +212,7 @@ property Component sendTransactionModalComponent: SignTransactionModal {}
                         toastMessage.source = "../../img/loading.svg"
                         toastMessage.iconColor = Style.current.primary
                         toastMessage.iconRotates = true
-                        toastMessage.link = `${_walletModel.etherscanLink}/${responseObj.result.result}`
+                        toastMessage.link = `${_walletModel.utilsView.etherscanLink}/${responseObj.result.result}`
                         toastMessage.open()
                     } catch (e) {
                         if (Utils.isInvalidPasswordMessage(e.message)){

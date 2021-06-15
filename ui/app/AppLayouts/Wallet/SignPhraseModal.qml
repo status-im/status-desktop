@@ -47,7 +47,7 @@ ModalPopup {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 15
-                text: walletModel.signingPhrase
+                text: walletModel.utilsView.signingPhrase
             }
         }
 

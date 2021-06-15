@@ -224,7 +224,7 @@ ModalPopup {
             TransactionSigner {
                 id: transactionSigner
                 width: stack.width
-                signingPhrase: walletModel.signingPhrase
+                signingPhrase: walletModel.utilsView.signingPhrase
             }
         }
     }
@@ -297,7 +297,7 @@ ModalPopup {
                     toastMessage.source = "../../../../img/loading.svg"
                     toastMessage.iconColor = Style.current.primary
                     toastMessage.iconRotates = true
-                    toastMessage.link = `${walletModel.etherscanLink}/${response.result}`
+                    toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
                     toastMessage.open()
                     root.close()
                 } catch (e) {

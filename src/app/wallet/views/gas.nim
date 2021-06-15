@@ -15,6 +15,8 @@ import # status-desktop libs
 
 import account_list, account_item, transaction_list, accounts
 
+const ZERO_ADDRESS* = "0x0000000000000000000000000000000000000000"
+
 type
   GasPredictionsTaskArg = ref object of QObjectTaskArg
 

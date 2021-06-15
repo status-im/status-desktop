@@ -13,18 +13,13 @@ import # status-desktop libs
   ../../status/utils as status_utils,
   ../../status/tokens as status_tokens,
   ../../status/ens as status_ens,
-  views/[asset_list, accounts, account_list, account_item, token_list, transaction_list, collectibles_list, collectibles, transactions, gas, tokens, ens, dapp_browser, history, balance],
+  views/[asset_list, accounts, account_list, account_item, token_list, transaction_list, collectibles_list, collectibles, transactions, gas, tokens, ens, dapp_browser, history, balance, utils],
   ../../status/tasks/[qt, task_runner_impl], ../../status/signals/types as signal_types
-
-const ZERO_ADDRESS* = "0x0000000000000000000000000000000000000000"
 
 QtObject:
   type
     WalletView* = ref object of QAbstractListModel
       status: Status
-      etherscanLink: string
-      signingPhrase: string
-      # currentTransactions: TransactionList
       accountsView: AccountsView
       collectiblesView: CollectiblesView
       transactionsView*: TransactionsView
@@ -34,11 +29,13 @@ QtObject:
       ensView*: EnsView
       historyView*: HistoryView
       balanceView*: BalanceView
+      utilsView*: UtilsView
 
   proc delete(self: WalletView) =
     self.accountsView.delete
     self.gasView.delete
     self.ensView.delete
+    self.utilsView.delete
     self.QAbstractListModel.delete
 
   proc setup(self: WalletView) =
@@ -57,10 +54,8 @@ QtObject:
     result.dappBrowserView = newDappBrowserView(status, result.accountsView)
     result.historyView = newHistoryView(status, result.accountsView, result.transactionsView)
     result.balanceView = newBalanceView(status, result.accountsView, result.transactionsView, result.historyView)
+    result.utilsView = newUtilsView(status)
 
-    # result.currentTransactions = newTransactionList()
-    result.etherscanLink = ""
-    result.signingPhrase = ""
     result.setup
 
   proc getAccounts(self: WalletView): QVariant {.slot.} =
@@ -111,31 +106,11 @@ QtObject:
   QtProperty[QVariant] balanceView:
     read = getBalance
 
-  proc etherscanLinkChanged*(self: WalletView) {.signal.}
+  proc getUtils(self: WalletView): QVariant {.slot.} =
+    newQVariant(self.utilsView)
 
-  proc getEtherscanLink*(self: WalletView): QVariant {.slot.} =
-    newQVariant(self.etherscanLink.replace("/address", "/tx"))
-
-  proc setEtherscanLink*(self: WalletView, link: string) =
-    self.etherscanLink = link
-    self.etherscanLinkChanged()
-
-  proc signingPhraseChanged*(self: WalletView) {.signal.}
-
-  proc getSigningPhrase*(self: WalletView): QVariant {.slot.} =
-    newQVariant(self.signingPhrase)
-
-  proc setSigningPhrase*(self: WalletView, signingPhrase: string) =
-    self.signingPhrase = signingPhrase
-    self.signingPhraseChanged()
-
-  QtProperty[QVariant] etherscanLink:
-    read = getEtherscanLink
-    notify = etherscanLinkChanged
-
-  QtProperty[QVariant] signingPhrase:
-    read = getSigningPhrase
-    notify = signingPhraseChanged
+  QtProperty[QVariant] utilsView:
+    read = getUtils
 
   proc updateView*(self: WalletView) =
     self.balanceView.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
@@ -191,3 +166,9 @@ QtObject:
 
   proc initBalances*(self: WalletView, loadTransactions: bool = true) =
     self.balanceView.initBalances(loadTransactions)
+
+  proc setSigningPhrase*(self: WalletView, signingPhrase: string) =
+    self.utilsView.setSigningPhrase(signingPhrase)
+
+  proc setEtherscanLink*(self: WalletView, link: string) =
+    self.utilsView.setEtherscanLink(link)
