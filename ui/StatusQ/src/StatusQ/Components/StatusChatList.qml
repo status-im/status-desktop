@@ -10,8 +10,11 @@ Column {
 
     spacing: 4
 
+    property string categoryId: ""
     property string selectedChatId: ""
     property alias chatListItems: statusChatListItems
+
+    property var filterFn
 
     signal chatItemSelected(string id)
     signal chatItemUnmuted(string id)
@@ -33,6 +36,12 @@ Column {
 
             onClicked: statusChatList.chatItemSelected(model.chatId)
             onUnmute: statusChatList.chatItemUnmuted(model.chatId)
+            visible: {
+                if (!!statusChatList.filterFn) {
+                    return statusChatList.filterFn(model, statusChatList.categoryId)
+                }
+                return true
+            }
         }
     }
 }
