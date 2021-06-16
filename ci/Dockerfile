@@ -1,11 +1,45 @@
+ARG QT_VERSION=5.15.2
+
+# QT Installation Image --------------------------------------------------------
+FROM ubuntu:18.04 AS qt-install
+
+ARG QT_VERSION
+
+RUN apt update && apt full-upgrade -y && apt install -y --no-install-recommends \
+    sudo python3 python3-pip \
+    && apt-get -qq clean
+
+RUN python3 -m pip install setuptools
+
+RUN chmod -R 777 /opt
+
+RUN groupadd -r user && useradd --create-home --gid user user && echo 'user ALL=NOPASSWD: ALL' > /etc/sudoers.d/user
+
+
+COPY scripts/install-qt.sh /home/user/
+RUN chown user:user /home/user/install-qt.sh
+RUN chmod a+x /home/user/install-qt.sh
+
+USER user
+WORKDIR /home/user
+
+ENV HOME /home/user
+ENV QT_VERSION=$QT_VERSION
+
+# Install QT
+RUN /home/user/install-qt.sh
+
+
+
+# Build Image ------------------------------------------------------------------
 FROM ubuntu:18.04
 
-# Adapted from a12e/docker-qt by 
-
 ARG OPENSSL_VERSION=1.1.1d
-ARG QT_VERSION=5.15.2
-ARG SDL_VERSION=2.0.10
 ARG LINUXDEPLOYQT_VERSION=continuous
+ARG QT_VERSION
+
+
+# Adapted from a12e/docker-qt by Aurélien Brooke
 
 ENV DEBIAN_FRONTEND=noninteractive \
     OPENSSL_PREFIX=/usr/local/ssl \
@@ -17,18 +51,10 @@ ENV DEBIAN_FRONTEND=noninteractive \
 ENV \
     PATH=${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}/bin:${OPENSSL_PREFIX}/bin:$PATH
 
-# Install updates & requirements:
-#  * git, openssh-client, ca-certificates - clone & build
-#  * locales, sudo - useful to set utf-8 locale & sudo usage
-#  * curl - to download Qt bundle
-#  * build-essential, pkg-config, libgl1-mesa-dev - basic Qt build requirements
-#  * libsm6, libice6, libxext6, libxrender1, libfontconfig1, libdbus-1-3 - dependencies of the Qt bundle run-file
-#  * wget - another download utility
-#  * libz-dev - OpenSSL dependencies
-#  * fuse, file - linuxdeployqt dependencies
-#  * libxkbcommon-x11-0 - run-time dependencies
-#  * libgstreamer-plugins-base1.0-0 - QtMultimedia run-time dependencies
-RUN apt update && apt full-upgrade -y && apt install -y --no-install-recommends \
+
+RUN apt update -yq && apt install -yq software-properties-common \
+&& add-apt-repository -y ppa:git-core/ppa \
+ && apt update -yq && apt full-upgrade -yq && apt install -yq --no-install-recommends --fix-missing  \
     git \
     openssh-client \
     ca-certificates \
@@ -44,28 +70,26 @@ RUN apt update && apt full-upgrade -y && apt install -y --no-install-recommends 
     libxrender1 \
     libfontconfig1 \
     libdbus-1-3 \
-    wget \
     libz-dev \
     fuse \
     file \
     libxkbcommon-x11-0 \
     wget \
-    p7zip-full \
-    make build-essential libssl-dev zlib1g-dev \
-    libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
+    make libssl-dev zlib1g-dev \
+    libbz2-dev libreadline-dev libsqlite3-dev llvm \
     libncurses5-dev libncursesw5-dev xz-utils tk-dev \
     libgstreamer-plugins-base1.0-0 \
-    python3 python3-pip \
+    cmake s3cmd libpcre3-dev libnss3 libxcomposite1 libxtst6 jq \
+    gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly \ 
+    gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-alsa libpulse-mainloop-glib0 \
+    gstreamer1.0-pulseaudio libxrandr2 libxcursor1 libxi6 libxcb-icccm4 libxcb-image0 \
+    libxcb-keysyms1 libxcb-render-util0 libxcb-render0 libxcb-xinerama0 \
     && apt-get -qq clean
 
 COPY scripts/* /tmp/build/
 
 # Download and install OpenSSL
 RUN /tmp/build/install-openssl-linux.sh
-
-# Download & unpack Qt toolchain
-RUN /tmp/build/install-qt.sh
-
 
 # Download & install linuxdeployqt
 RUN /tmp/build/install-linuxdeployqt.sh
@@ -75,19 +99,14 @@ RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales \
 # Add group & user
     && groupadd -r user && useradd --create-home --gid user user && echo 'user ALL=NOPASSWD: ALL' > /etc/sudoers.d/user
 
-
-RUN python3 -m pip install setuptools
-
-RUN chmod -R 777 /opt
+# Copy QT toolchain
+RUN chmod -R 777 /opt && mkdir -p /opt/qt/$QT_VERSION
+COPY --from=qt-install /home/user/$QT_VERSION /opt/qt/$QT_VERSION/.
 
 USER user
 WORKDIR /home/user
 ENV HOME /home/user
 
-# Install QT
-RUN python3 -m pip install -U pip
-RUN python3 -m pip install aqtinstall
-RUN python3 -m aqt install --output "$QT_PATH" ${QT_VERSION} linux desktop -m qtwebengine
 
 
 # $QT_PATH/$QT_VERSION/$QT_PLATFORM/bin is already prepended to $PATH
@@ -95,18 +114,6 @@ ENV QTDIR="${QT_PATH}/${QT_VERSION}/${QT_PLATFORM}"
 ENV LD_LIBRARY_PATH="${QTDIR}/lib:${LD_LIBRARY_PATH}"
 # $OPENSSL_PREFIX is provided by the docker image
 ENV LIBRARY_PATH="${OPENSSL_PREFIX}/lib:${LIBRARY_PATH}"
-
-RUN export DEBIAN_FRONTEND=noninteractive \
- && sudo apt update -yq \
- && sudo apt install -yq software-properties-common \
- && sudo add-apt-repository -y ppa:git-core/ppa \
- && sudo apt update -yq \
- && sudo apt install -yq --fix-missing \
-      build-essential cmake git s3cmd libpcre3-dev libnss3 libxcomposite1 libxtst6 jq \
-      gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly \ 
-      gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-alsa libpulse-mainloop-glib0 \
-      gstreamer1.0-pulseaudio libxrandr2 libxcursor1 libxi6 libxcb-icccm4 libxcb-image0 \
-      libxcb-keysyms1 libxcb-render-util0 libxcb-render0 libxcb-xinerama0
 
 
 # Installing Golang
