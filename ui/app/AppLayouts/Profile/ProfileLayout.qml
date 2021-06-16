@@ -5,51 +5,38 @@ import "../../../imports"
 import "../../../shared"
 import "./Sections"
 
-SplitView {
+import StatusQ.Layout 0.1
+
+StatusAppTwoPanelLayout {
+
+    id: profileView
+
     property int contentMaxWidth: 624
     property int contentMinWidth: 450
     property int topMargin: 46
     property alias changeProfileSection: leftTab.changeProfileSection
 
-    id: profileView
-    Layout.fillHeight: true
-    Layout.fillWidth: true
-
-    handle: SplitViewHandle {}
-
-    Connections {
-        target: appMain
-        onSettingsLoaded: {
-            // Add recent
-            profileView.restoreState(appSettings.profileSplitView)
-        }
-    }
-    Component.onDestruction: appSettings.profileSplitView = this.saveState()
-
-    LeftTab {
+    leftPanel: LeftTab {
         id: leftTab
-        SplitView.preferredWidth: Style.current.leftTabPreferredSize
+        anchors.fill:parent
     }
 
-    StackLayout {
-        property int profileContentWidth: Math.max(contentMinWidth, Math.min(profileContainer.width * 0.8, contentMaxWidth))
-
+    rightPanel: StackLayout {
         id: profileContainer
-        anchors.top: parent.top
-        anchors.topMargin: 0
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
-        currentIndex: leftTab.currentTab
+        property int profileContentWidth: Math.max(contentMinWidth, Math.min(profileContainer.width * 0.8, contentMaxWidth))
+        anchors.fill: parent
 
-        // This list needs to match LeftTab/constants.js
-        // Would be better if we could make them match automatically
-        MyProfileContainer {}
+        currentIndex: leftTab.currentTab
 
         onCurrentIndexChanged: {
             if(visibleChildren[0] === ensContainer){
                 ensContainer.goToStart();
             }
         }
+
+        // This list needs to match LeftTab/constants.js
+        // Would be better if we could make them match automatically
+        MyProfileContainer {}
 
         ContactsContainer {}
 
