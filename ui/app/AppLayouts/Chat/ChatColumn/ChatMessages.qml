@@ -179,7 +179,7 @@ SplitView {
 
             Connections {
                 target: chatsModel.messageView
-                onMessagesLoaded: {
+                function onMessagesLoaded() {
                     loadingMessages = false;
                 }
 
@@ -252,7 +252,7 @@ SplitView {
             Connections {
                 target: chatsModel.communities
 
-                onMembershipRequestChanged: function (communityId, communityName, accepted) {
+                function onMembershipRequestChanged(communityId, communityName, accepted) {
                     chatColumnLayout.currentNotificationChatId = null
                     chatColumnLayout.currentNotificationCommunityId = communityId
                     systemTray.showMessage("Status",
@@ -262,7 +262,7 @@ SplitView {
                                         Constants.notificationPopupTTL)
                 }
 
-                onMembershipRequestPushed: function (communityId, communityName, pubKey) {
+                function onMembershipRequestPushed(communityId, communityName, pubKey) {
                     chatColumnLayout.currentNotificationChatId = null
                     chatColumnLayout.currentNotificationCommunityId = communityId
                     systemTray.showMessage(qsTr("New membership request"),
