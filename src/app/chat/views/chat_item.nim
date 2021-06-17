@@ -2,6 +2,7 @@ import NimQml, Tables, std/wrapnils
 import ../../../status/[chat/chat, status, ens, accounts, settings]
 from ../../../status/types import Setting
 import ../../../status/utils as status_utils
+# import ../../../status/settings as status_settings
 
 import chat_members
 
@@ -159,7 +160,7 @@ QtObject:
 
   proc isMemberButNotJoined*(self: ChatItemView): bool {.slot.} =
     if self.chatItem.isNil: return false
-    let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+    let pubKey = self.status.settings.getSetting[:string](Setting.PublicKey, "0x0")
     return self.chatItem.isMemberButNotJoined(pubKey)
 
   QtProperty[bool] isMemberButNotJoined:

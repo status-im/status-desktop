@@ -1,4 +1,4 @@
-import json, options, typetraits, tables, sequtils
+import json, options, typetraits, tables, sequtils, strutils
 import web3/ethtypes, json_serialization, stint
 import libstatus/accounts/constants
 import ../eventemitter

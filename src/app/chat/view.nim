@@ -14,7 +14,10 @@ import ../utils/image_utils
 import ../../status/tasks/[qt, task_runner_impl]
 import ../../status/tasks/marathon/mailserver/worker
 import ../../status/signals/types as signal_types
-import ../../status/libstatus/types
+import ../../status/types
+
+# TODO: remove me
+import ../../status/libstatus/chat as libstatus_chat
 
 logScope:
   topics = "chats-view"
@@ -81,7 +84,7 @@ const asyncActivityNotificationLoadTask: Task = proc(argEncoded: string) {.gcsaf
   let arg = decode[AsyncActivityNotificationLoadTaskArg](argEncoded)
   var activityNotifications: JsonNode
   var activityNotificationsCallSuccess: bool
-  let activityNotificationsCallResult = rpcActivityCenterNotifications(newJString(""), 20, activityNotificationsCallSuccess)
+  let activityNotificationsCallResult = libstatus_chat.rpcActivityCenterNotifications(newJString(""), 20, activityNotificationsCallSuccess)
   if(activityNotificationsCallSuccess):
     activityNotifications = activityNotificationsCallResult.parseJson()["result"]
 
@@ -687,7 +690,7 @@ QtObject:
 
     let messages = rpcResponseObj{"messages"}
     if(messages != nil and messages.kind != JNull):
-      let chatMessages = status_chat.parseChatMessagesResponse(chatId, messages)
+      let chatMessages = libstatus_chat.parseChatMessagesResponse(messages)
       self.status.chat.chatMessages(chatId, true, chatMessages[0], chatMessages[1])
 
     let rxns = rpcResponseObj{"reactions"}
@@ -697,7 +700,7 @@ QtObject:
 
     let pinnedMsgs = rpcResponseObj{"pinnedMessages"}
     if(pinnedMsgs != nil and pinnedMsgs.kind != JNull):
-      let pinnedMessages = status_chat.parseChatMessagesResponse(chatId, pinnedMsgs, true)
+      let pinnedMessages = libstatus_chat.parseChatMessagesResponse(pinnedMsgs)
       self.status.chat.pinnedMessagesByChatID(chatId, pinnedMessages[0], pinnedMessages[1])
 
   proc asyncActivityNotificationLoaded*(self: ChatsView, rpcResponse: string) {.slot.} =

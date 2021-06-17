@@ -1,4 +1,5 @@
-import json, random, strutils, strformat, tables, chronicles, unicode
+import json, random, strutils, strformat, tables, chronicles, unicode, times
+from sugar import `=>`, `->`
 import stint
 from times import getTime, toUnix, nanosecond
 import libstatus/accounts/signing_phrases
