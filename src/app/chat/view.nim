@@ -9,7 +9,7 @@ import ../../status/ens as status_ens
 import ../../status/chat/[chat, message]
 import ../../status/profile/profile
 import web3/[conversions, ethtypes]
-import views/[channels_list, message_list, chat_item, suggestions_list, reactions, stickers, groups, transactions, communities, community_list, community_item, format_input, activity_notification_list]
+import views/[channels_list, message_list, chat_item, suggestions_list, reactions, stickers, groups, transactions, communities, community_list, community_item, format_input, ens, activity_notification_list]
 import ../utils/image_utils
 import ../../status/tasks/[qt, task_runner_impl]
 import ../../status/tasks/marathon/mailserver/worker
@@ -31,8 +31,6 @@ type
   AsyncActivityNotificationLoadTaskArg = ref object of QObjectTaskArg
   AsyncMessageLoadTaskArg = ref object of QObjectTaskArg
     chatId: string
-  ResolveEnsTaskArg = ref object of QObjectTaskArg
-    ens: string
 
 const getLinkPreviewDataTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[GetLinkPreviewDataTaskArg](argEncoded)
@@ -110,26 +108,12 @@ proc asyncActivityNotificationLoad[T](self: T, slot: string) =
   )
   self.status.tasks.threadpool.start(arg)
 
-const resolveEnsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let
-    arg = decode[ResolveEnsTaskArg](argEncoded)
-    output = %* { "address": status_ens.address(arg.ens), "pubkey": status_ens.pubkey(arg.ens) }
-  arg.finish(output)
-
-proc resolveEns[T](self: T, slot: string, ens: string) =
-  let arg = ResolveEnsTaskArg(
-    tptr: cast[ByteAddress](resolveEnsTask),
-    vptr: cast[ByteAddress](self.vptr),
-    slot: slot,
-    ens: ens
-  )
-  self.status.tasks.threadpool.start(arg)
-
 QtObject:
   type
     ChatsView* = ref object of QAbstractListModel
       status: Status
       formatInputView: FormatInputView
+      ensView: EnsView
       chats*: ChannelsList
       currentSuggestions*: SuggestionsList
       activityNotificationList*: ActivityNotificationList
@@ -157,6 +141,7 @@ QtObject:
   proc delete(self: ChatsView) = 
     self.chats.delete
     self.formatInputView.delete
+    self.ensView.delete
     self.activeChannel.delete
     self.contextChannel.delete
     self.currentSuggestions.delete
@@ -179,6 +164,7 @@ QtObject:
     new(result, delete)
     result.status = status
     result.formatInputView = newFormatInputView()
+    result.ensView = newEnsView(status)
 
     result.connected = false
     result.chats = newChannelsList(status)
@@ -203,6 +189,14 @@ QtObject:
   proc getFormatInput(self: ChatsView): QVariant {.slot.} = newQVariant(self.formatInputView)
   QtProperty[QVariant] formatInputView:
     read = getFormatInput
+
+  proc getEns(self: ChatsView): QVariant {.slot.} = newQVariant(self.ensView)
+  QtProperty[QVariant] ensView:
+    read = getEns
+
+  proc getCommunities*(self: ChatsView): QVariant {.slot.} = newQVariant(self.communities)
+  QtProperty[QVariant] communities:
+    read = getCommunities
 
   proc getMessageListIndexById(self: ChatsView, id: string): int
 
@@ -242,12 +236,6 @@ QtObject:
 
   QtProperty[QVariant] chats:
     read = getChatsList
-
-  proc getCommunities*(self: ChatsView): QVariant {.slot.} =
-    newQVariant(self.communities)
-
-  QtProperty[QVariant] communities:
-    read = getCommunities
 
   proc getChannelColor*(self: ChatsView, channel: string): string {.slot.} =
     if (channel == ""): return
@@ -824,29 +812,6 @@ QtObject:
 
   proc deleteMessage*(self: ChatsView, channelId: string, messageId: string) =
     self.messageList[channelId].deleteMessage(messageId)
-
-  proc isEnsVerified*(self: ChatsView, id: string): bool {.slot.} =
-    if id == "": return false
-    let contact = self.status.contacts.getContactByID(id)
-    if contact == nil:
-      return false
-    result = contact.ensVerified
-
-  proc formatENSUsername*(self: ChatsView, username: string): string {.slot.} =
-    result = status_ens.addDomain(username)
-
-  # Resolving a ENS name
-  proc resolveENS*(self: ChatsView, ens: string) {.slot.} =
-    self.resolveEns("ensResolved", ens) # Call self.ensResolved(string) when ens is resolved
-
-  proc ensWasResolved*(self: ChatsView, resolvedPubKey: string, resolvedAddress: string) {.signal.}
-
-  proc ensResolved(self: ChatsView, addressPubkeyJson: string) {.slot.} =
-    var
-      parsed = addressPubkeyJson.parseJson
-      address = parsed["address"].to(string)
-      pubkey = parsed["pubkey"].to(string)
-    self.ensWasResolved(pubKey, address)
 
   proc isConnected*(self: ChatsView): bool {.slot.} =
     result = self.status.network.isConnected
