@@ -164,6 +164,12 @@ endif
 
 NIM_PARAMS += --outdir:./bin
 
+
+# App version
+VERSIONFILE=VERSION
+DESKTOP_VERSION=`cat $(VERSIONFILE)`
+NIM_PARAMS += -d:DESKTOP_VERSION="$(DESKTOP_VERSION)"
+
 $(DOTHERSIDE): | deps
 	echo -e $(BUILD_MSG) "DOtherSide"
 	+ cd vendor/DOtherSide && \

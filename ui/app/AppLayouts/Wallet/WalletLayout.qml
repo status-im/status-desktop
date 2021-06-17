@@ -3,8 +3,8 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import "../../../imports"
 import "../../../shared"
+import "../Profile/Sections"
 import "."
-
 import StatusQ.Layout 0.1
 
 Item {
@@ -21,17 +21,9 @@ Item {
     SignPhraseModal {
         id: signPhrasePopup
     }
-        
-    SeedPhraseBackupWarning { 
-        id: seedPhraseWarning
-        width: parent.width
-        anchors.top: parent.top
-    }
 
     StatusAppTwoPanelLayout {
-        anchors.top: seedPhraseWarning.bottom
-        height: walletView.height - seedPhraseWarning.height
-        width: walletView.width
+        anchors.fill: parent
 
         Component.onCompleted: {
             if(onboardingModel.firstTimeLogin){
