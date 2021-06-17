@@ -124,6 +124,8 @@ QtObject:
     self.status.chat.setActiveChannel(selectedChannel.id)
 
   proc setActiveChannelByIndex*(self: ChannelView, index: int) {.slot.} =
+    if self.previousActiveChannelIndex == -1 and self.chats.rowCount() > -1:
+      self.previousActiveChannelIndex = 0
     self.setActiveChannelByIndexWithForce(index, false)
 
   proc getActiveChannelIdx(self: ChannelView): int {.slot.} =
