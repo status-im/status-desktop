@@ -141,6 +141,11 @@ Rectangle {
                     badge.border.width: 2
 
                     tooltip.text: "Profile"
+
+                    checked: appView.sourceComponent == statusAppProfileSettingsView
+                    onClicked: {
+                        appView.sourceComponent = statusAppProfileSettingsView
+                    }
                 }
             ]
         }
@@ -354,6 +359,78 @@ Rectangle {
         }
     }
 
+    Component {
+        id: statusAppProfileSettingsView
+
+        StatusAppTwoPanelLayout {
+
+            leftPanel: Item {
+                anchors.fill: parent
+
+                StatusNavigationPanelHeadline {
+                    id: profileHeadline
+                    anchors.top: parent.top
+                    anchors.topMargin: 16
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: "Profile"
+                }
+
+                ScrollView {
+                    anchors.top: profileHeadline.bottom
+                    anchors.topMargin: 16
+                    anchors.bottom: parent.bottom
+                    width: parent.width
+
+                    contentHeight: profileMenuItems.height + 8
+                    contentWidth: parent.width
+                    clip: true
+
+                    Column {
+                        id: profileMenuItems
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        spacing: 4
+
+                        Repeater {
+                            model: demoProfileGeneralMenuItems
+                            delegate: StatusNavigationListItem {
+                                title: model.title
+                                icon.name: model.icon
+                            }
+                        }
+
+                        StatusListSectionHeadline { text: "Settings" }
+
+                        Repeater {
+                            model: demoProfileSettingsMenuItems
+                            delegate: StatusNavigationListItem {
+                                title: model.title
+                                icon.name: model.icon
+                            }
+                        }
+
+                        Item { 
+                            id: invisibleSeparator
+                            height: 16
+                            width: parent.width
+                        }
+
+                        Repeater {
+                            model: demoProfileOtherMenuItems
+                            delegate: StatusNavigationListItem {
+                                title: model.title
+                                icon.name: model.icon
+                            }
+                        }
+                    }
+                }
+            }
+
+            rightPanel: Item {
+                anchors.fill: parent
+            }
+        }
+    }
+
     ListModel {
         id: demoChatListItems
         ListElement {
@@ -461,6 +538,90 @@ Rectangle {
         ListElement {
             categoryId: "dev"
             name: "Development"
+        }
+    }
+
+    ListModel {
+        id: demoProfileGeneralMenuItems
+
+        ListElement {
+            title: "My Profile"
+            icon: "profile"
+        }
+
+        ListElement {
+            title: "Contacts"
+            icon: "contact"
+        }
+
+        ListElement {
+            title: "ENS Usernames"
+            icon: "username"
+        }
+
+    }
+
+    ListModel {
+        id: demoProfileSettingsMenuItems
+
+        ListElement {
+            title: "Privacy & Security"
+            icon: "security"
+        }
+
+        ListElement {
+            title: "Appearance"
+            icon: "appearance"
+        }
+
+        ListElement {
+            title: "Browser"
+            icon: "browser"
+        }
+
+        ListElement {
+            title: "Sounds"
+            icon: "sound"
+        }
+
+        ListElement {
+            title: "Language"
+            icon: "language"
+        }
+
+        ListElement {
+            title: "Notifications"
+            icon: "notification"
+        }
+
+        ListElement {
+            title: "Sync settings"
+            icon: "mobile"
+        }
+
+        ListElement {
+            title: "Advanced"
+            icon: "settings"
+        }
+
+    }
+
+    ListModel {
+        id: demoProfileOtherMenuItems
+
+        ListElement {
+            title: "Need help?"
+            icon: "help"
+        }
+
+        ListElement {
+            title: "About"
+            icon: "info"
+        }
+
+        ListElement {
+            title: "Sign out & Quit"
+            icon: "logout"
         }
     }
 }
