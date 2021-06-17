@@ -41,13 +41,13 @@ Item {
         id: chatInput
         visible: {
             const community = chatsModel.communities.activeCommunity
-            if (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat) {
-                return chatsModel.activeChannel.isMember
+            if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypePrivateGroupChat) {
+                return chatsModel.channelView.activeChannel.isMember
             }
             return !community.active ||
                     community.access === Constants.communityChatPublicAccess ||
                     community.admin ||
-                    chatsModel.activeChannel.canPost
+                    chatsModel.channelView.activeChannel.canPost
         }
         enabled: !isBlocked
         chatInputPlaceholder: isBlocked ?
@@ -58,9 +58,9 @@ Item {
         anchors.bottom: parent.bottom
         recentStickers: chatsModel.stickers.recent
         stickerPackList: chatsModel.stickers.stickerPacks
-        chatType: chatsModel.activeChannel.chatType
+        chatType: chatsModel.channelView.activeChannel.chatType
         onSendTransactionCommandButtonClicked: {
-            if (chatsModel.activeChannel.ensVerified) {
+            if (chatsModel.channelView.activeChannel.ensVerified) {
                 txModalLoader.sourceComponent = cmpSendTransactionWithEns
             } else {
                 txModalLoader.sourceComponent = cmpSendTransactionNoEns

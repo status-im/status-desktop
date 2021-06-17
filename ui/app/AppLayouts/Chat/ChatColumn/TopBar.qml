@@ -12,8 +12,8 @@ Item {
     height: 56
 
     Loader {
-        property bool isGroupChatOrOneToOne: (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat ||
-                                              chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne)
+        property bool isGroupChatOrOneToOne: (chatsModel.channelView.activeChannel.chatType === Constants.chatTypePrivateGroupChat ||
+                                              chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne)
         anchors.left: parent.left
         anchors.leftMargin: this.isGroupChatOrOneToOne ? Style.current.padding : Style.current.padding + 4
         anchors.top: parent.top
@@ -24,28 +24,28 @@ Item {
     Component {
         id: chatInfoButton
         StatusChatInfoButton {
-            chatId: chatsModel.activeChannel.id
+            chatId: chatsModel.channelView.activeChannel.id
             chatName: {
-                if (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat) {
-                    return chatsModel.activeChannel.name
+                if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypePrivateGroupChat) {
+                    return chatsModel.channelView.activeChannel.name
                 }
-                chatsModel.userNameOrAlias(chatsModel.activeChannel.id)
+                chatsModel.userNameOrAlias(chatsModel.channelView.activeChannel.id)
             }
-            chatType: chatsModel.activeChannel.chatType
-            identicon: chatsModel.activeChannel.identicon
-            muted: chatsModel.activeChannel.muted
+            chatType: chatsModel.channelView.activeChannel.chatType
+            identicon: chatsModel.channelView.activeChannel.identicon
+            muted: chatsModel.channelView.activeChannel.muted
             identiconSize: 36
 
             onClicked: {
-                switch (chatsModel.activeChannel.chatType) {
+                switch (chatsModel.channelView.activeChannel.chatType) {
                 case Constants.chatTypePrivateGroupChat:
                     openPopup(groupInfoPopupComponent, {channelType: GroupInfoPopup.ChannelType.ActiveChannel})
                     break;
                 case Constants.chatTypeOneToOne:
-                    const profileImage = appMain.getProfileImage(chatsModel.activeChannel.id)
-                    openProfilePopup(chatsModel.userNameOrAlias(chatsModel.activeChannel.id),
-                                     chatsModel.activeChannel.id, profileImage || chatsModel.activeChannel.identicon,
-                                     "", chatsModel.activeChannel.nickname)
+                    const profileImage = appMain.getProfileImage(chatsModel.channelView.activeChannel.id)
+                    openProfilePopup(chatsModel.userNameOrAlias(chatsModel.channelView.activeChannel.id),
+                                     chatsModel.channelView.activeChannel.id, profileImage || chatsModel.channelView.activeChannel.identicon,
+                                     "", chatsModel.channelView.activeChannel.nickname)
                     break;
                 }
             }
@@ -56,11 +56,11 @@ Item {
         id: chatInfo
         StatusChatInfo {
             identiconSize: 36
-            chatId: chatsModel.activeChannel.id
-            chatName: chatsModel.activeChannel.name
-            chatType: chatsModel.activeChannel.chatType
-            identicon: chatsModel.activeChannel.identicon
-            muted: chatsModel.activeChannel.muted
+            chatId: chatsModel.channelView.activeChannel.id
+            chatName: chatsModel.channelView.activeChannel.name
+            chatType: chatsModel.channelView.activeChannel.chatType
+            identicon: chatsModel.channelView.activeChannel.identicon
+            muted: chatsModel.channelView.activeChannel.muted
         }
     }
 
@@ -76,7 +76,7 @@ Item {
 
             onClicked: {
                 var menu = chatContextMenu;
-                var isPrivateGroupChat = chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat
+                var isPrivateGroupChat = chatsModel.channelView.activeChannel.chatType === Constants.chatTypePrivateGroupChat
                 if(isPrivateGroupChat){
                     menu = groupContextMenu
                 }
@@ -88,7 +88,7 @@ Item {
                 if (isPrivateGroupChat) {
                     menu.popup(moreActionsBtn.x, moreActionsBtn.height)
                 } else {
-                    menu.openMenu(chatsModel.activeChannel, chatsModel.getActiveChannelIdx(),
+                    menu.openMenu(chatsModel.channelView.activeChannel, chatsModel.channelView.getActiveChannelIdx(),
                                   moreActionsBtn.x - chatContextMenu.width + moreActionsBtn.width + 4,
                                   moreActionsBtn.height - 4)
                 }
@@ -116,7 +116,7 @@ Item {
                     icon.height: chatTopBarContent.iconSize
                     //% "Clear History"
                     text: qsTrId("clear-history")
-                    onTriggered: chatsModel.clearChatHistory(chatsModel.activeChannel.id)
+                    onTriggered: chatsModel.channelView.clearChatHistory(chatsModel.channelView.activeChannel.id)
                 }
                 Action {
                     icon.source: "../../../img/leave_chat.svg"
@@ -192,7 +192,7 @@ Item {
         id: deleteChatConfirmationDialog
         btnType: "warn"
         onConfirmButtonClicked: {
-            chatsModel.leaveActiveChat()
+            chatsModel.channelView.leaveActiveChat()
             deleteChatConfirmationDialog.close()
         }
     }

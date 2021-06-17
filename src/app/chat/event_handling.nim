@@ -47,10 +47,10 @@ proc handleChatEvents(self: ChatController) =
         
         self.view.communities.addCommunityToList(community)
         if (self.view.communities.activeCommunity.active and self.view.communities.activeCommunity.communityItem.id == community.id):
-          if (self.view.activeChannel.chatItem != nil):
-            let communityChannel = self.view.communities.activeCommunity.chats.getChannelById(self.view.activeChannel.chatItem.id)
+          if (self.view.channelView.activeChannel.chatItem != nil):
+            let communityChannel = self.view.communities.activeCommunity.chats.getChannelById(self.view.channelView.activeChannel.chatItem.id)
             if communityChannel != nil:
-              self.view.activeChannel.chatItem.canPost = communityChannel.canPost
+              self.view.channelView.activeChannel.chatItem.canPost = communityChannel.canPost
           self.view.activeChannelChanged()
 
     if (evArgs.communityMembershipRequests.len > 0):
@@ -78,7 +78,7 @@ proc handleChatEvents(self: ChatController) =
       self.view.setTimelineChat(channel.chat)
     # Do not add community chats to the normal chat list
     elif channel.chat.chatType != ChatType.Profile and channel.chat.chatType != status_chat.ChatType.CommunityChat:
-      discard self.view.chats.addChatItemToList(channel.chat)
+      discard self.view.channelView.chats.addChatItemToList(channel.chat)
     self.view.asyncMessageLoad(channel.chat.id)
 
   self.status.events.on("chatsLoaded") do(e:Args):
@@ -101,7 +101,7 @@ proc handleChatEvents(self: ChatController) =
     if channel.chat.chatType == ChatType.Timeline:
       self.view.setTimelineChat(channel.chat)
     elif channel.chat.chatType != ChatType.Profile:
-      discard self.view.chats.addChatItemToList(channel.chat)
+      discard self.view.channelView.chats.addChatItemToList(channel.chat)
       self.view.setActiveChannel(channel.chat.id)
     self.status.chat.chatMessages(channel.chat.id)
     self.status.chat.chatReactions(channel.chat.id)
@@ -142,7 +142,6 @@ proc handleChatEvents(self: ChatController) =
     else:
       self.view.stickers.resetBuyAttempt(tx.data.parseInt)
 
-
 proc handleMailserverEvents(self: ChatController) =
   let mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
   # TODO: test mailserver topics when joining chat
@@ -161,4 +160,3 @@ proc handleMailserverEvents(self: ChatController) =
       slot: "requestAllHistoricMessagesResult"
     )
     mailserverWorker.start(task)
-    

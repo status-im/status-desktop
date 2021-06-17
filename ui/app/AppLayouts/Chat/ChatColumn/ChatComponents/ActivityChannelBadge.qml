@@ -10,7 +10,7 @@ Rectangle {
     property string identicon
     property string responseTo
     property int notificationType
-    property int chatType: chatsModel.chats.getChannelType(chatId)
+    property int chatType: chatsModel.channelView.chats.getChannelType(chatId)
     property int realChatType: {
         if (chatType === Constants.chatTypeCommunity) {
             // TODO add a check for private community chats once it is created

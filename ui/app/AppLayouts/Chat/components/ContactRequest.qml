@@ -77,7 +77,7 @@ Rectangle {
         id: acceptBtn
         icon.name: "check-circle"
         onClicked: {
-            chatsModel.joinPrivateChat(container.address, "")
+            chatsModel.channelView.joinPrivateChat(container.address, "")
             profileModel.contacts.addContact(container.address)
         }
         width: 32

@@ -49,13 +49,13 @@ Item {
                 const foundChatType = chatsModel.getChatType(channelName);
 
                 if(foundChatType === -1 || foundChatType !== Constants.chatTypePublic){
-                    chatsModel.joinPublicChat(channelName);
+                    chatsModel.channelView.joinPublicChat(channelName);
                     if(chatsModel.communities.activeCommunity.active) {
                         chatsModel.communities.activeCommunity.active = false
                         appMain.changeAppSection(Constants.chat)
                     } 
                 } else {
-                    chatsModel.setActiveChannel(channelName);
+                    chatsModel.channelView.setActiveChannel(channelName);
                 }
 
                 return;

@@ -177,7 +177,7 @@ property Component sendTransactionModalComponent: SignTransactionModal {}
                     selectedRecipient: {
                         address: request.payload.params[0].to,
                         identicon: utilsModel.generateIdenticon(request.payload.params[0].to),
-                        name: chatsModel.activeChannel.name,
+                        name: chatsModel.channelView.activeChannel.name,
                         type: RecipientSelector.Type.Address
                     },
                     selectedAsset: {

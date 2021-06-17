@@ -169,7 +169,7 @@ Rectangle {
         ChannelList {
             id: channelList
             searchStr: contactsColumn.searchStr.toLowerCase()
-            channelModel: chatsModel.chats
+            channelModel: chatsModel.channelView.chats
         }
 
         EmptyView {

@@ -5,7 +5,7 @@ import "../../../../../shared"
 import "../../../../../shared/status"
 
 Item {
-    visible: chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne &&
+    visible: chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne &&
              !isContact &&
              !doNotShowAddToContactBannerToThose.includes(activeChatId)
     height: 36

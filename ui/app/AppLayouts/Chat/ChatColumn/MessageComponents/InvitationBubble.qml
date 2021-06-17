@@ -59,7 +59,7 @@ Item {
                 StyledText {
                     id: invitedYou
                     text: isCurrentUser ? 
-                        qsTr("You invited %1 to join a community").arg(chatsModel.userNameOrAlias(chatsModel.activeChannel.id))
+                        qsTr("You invited %1 to join a community").arg(chatsModel.userNameOrAlias(chatsModel.channelView.activeChannel.id))
                         //% "%1 invited you to join a community"
                         : qsTrId("-1-invited-you-to-join-a-community").arg(displayUserName)
                     anchors.top: title.bottom

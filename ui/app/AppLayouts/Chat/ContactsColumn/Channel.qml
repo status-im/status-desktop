@@ -188,12 +188,12 @@ Item {
             }
             onClicked: {
                 if (mouse.button & Qt.RightButton) {
-                    chatsModel.setContextChannel(chatId)
-                    channelContextMenu.openMenu(chatsModel.contextChannel, index)
+                    chatsModel.channelView.setContextChannel(chatId)
+                    channelContextMenu.openMenu(chatsModel.channelView.contextChannel, index)
                     return;
                 }
                 chatGroupsListView.currentIndex = index
-                chatsModel.setActiveChannelByIndex(index)
+                chatsModel.channelView.setActiveChannelByIndex(index)
             }
         }
 

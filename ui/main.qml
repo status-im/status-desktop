@@ -279,9 +279,9 @@ StatusWindow {
                                    (loader.item.currentView === chatView &&
                                     (
                                         // in a one-to-one chat
-                                        chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne ||
+                                        chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne ||
                                         // in a private group chat
-                                        chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat
+                                        chatsModel.channelView.activeChannel.chatType === Constants.chatTypePrivateGroupChat
                                         )
                                     ) ||
                                    // in timeline view

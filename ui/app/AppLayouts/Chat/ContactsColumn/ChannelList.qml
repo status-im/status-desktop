@@ -45,10 +45,10 @@ Item {
             chatId: model.id
         }
         onCountChanged: {
-            if (count > 0 && chatsModel.activeChannelIndex > -1) {
-                currentIndex = chatsModel.activeChannelIndex;
+            if (count > 0 && chatsModel.channelView.activeChannelIndex > -1) {
+                currentIndex = chatsModel.channelView.activeChannelIndex;
             } else {
-                if (chatsModel.activeChannelIndex > -1) {
+                if (chatsModel.channelView.activeChannelIndex > -1) {
                     chatGroupsListView.currentIndex = 0;
                 } else {
                     // Initial state. No chat has been selected yet
@@ -81,21 +81,21 @@ Item {
     }
 
     Connections {
-        target: chatsModel.chats
+        target: chatsModel.channelView.chats
         onDataChanged: {
             // If the current active channel receives messages and changes its position,
             // refresh the currentIndex accordingly
-            if(chatsModel.activeChannelIndex !== chatGroupsListView.currentIndex){
-                chatGroupsListView.currentIndex = chatsModel.activeChannelIndex
+            if(chatsModel.channelView.activeChannelIndex !== chatGroupsListView.currentIndex){
+                chatGroupsListView.currentIndex = chatsModel.channelView.activeChannelIndex
             }
         }
     }
 
     Connections {
-        target: chatsModel
+        target: chatsModel.channelView
         onActiveChannelChanged: {
             chatsModel.hideLoadingIndicator()
-            chatGroupsListView.currentIndex = chatsModel.activeChannelIndex
+            chatGroupsListView.currentIndex = chatsModel.channelView.activeChannelIndex
             SelectedMessage.reset();
             chatColumn.isReply = false;
         }

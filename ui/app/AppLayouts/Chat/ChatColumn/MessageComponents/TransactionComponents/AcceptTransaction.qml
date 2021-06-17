@@ -98,8 +98,8 @@ Item {
             selectedRecipient: {
                 return {
                     address: commandParametersObject.address,
-                    identicon: chatsModel.activeChannel.identicon,
-                    name: chatsModel.activeChannel.name,
+                    identicon: chatsModel.channelView.activeChannel.identicon,
+                    name: chatsModel.channelView.activeChannel.name,
                     type: RecipientSelector.Type.Contact
                 }
             }

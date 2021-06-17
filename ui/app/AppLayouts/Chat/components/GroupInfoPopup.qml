@@ -20,9 +20,9 @@ ModalPopup {
     property int channelType: GroupInfoPopup.ChannelType.ActiveChannel
     property QtObject channel: {
         if (channelType === GroupInfoPopup.ChannelType.ActiveChannel) {
-            return chatsModel.activeChannel
+            return chatsModel.channelView.activeChannel
          } else if (channelType === GroupInfoPopup.ChannelType.ContextChannel) {
-            return chatsModel.contextChannel
+            return chatsModel.channelView.contextChannel
          }
     }
     property bool isAdmin: false
@@ -239,16 +239,16 @@ ModalPopup {
         }
 
         Connections {
-            target: chatsModel
+            target: chatsModel.channelView
             onActiveChannelChanged: {
                 if (popup.channelType === GroupInfoPopup.ChannelType.ActiveChannel) {
-                    popup.channel = chatsModel.activeChannel
+                    popup.channel = chatsModel.channelView.activeChannel
                     resetSelectedMembers()
                 }
             }
             onContextChannelChanged: {
                 if (popup.channelType === GroupInfoPopup.ChannelType.ContextChannel) {
-                    popup.channel = chatsModel.contextChannel
+                    popup.channel = chatsModel.channelView.contextChannel
                     resetSelectedMembers()
                 }
             }

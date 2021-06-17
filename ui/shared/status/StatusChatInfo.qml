@@ -95,7 +95,7 @@ Item {
                 onEntered: bellImg.hovered = true
                 onExited: bellImg.hovered = false
                 onClicked: {
-                    chatsModel.unmuteCurrentChannel()
+                    chatsModel.channelView.unmuteCurrentChannel()
                 }
             }
         }
@@ -120,7 +120,7 @@ Item {
             elide: Text.ElideRight
             text: {
                 if (root.chatType === Constants.chatTypeCommunity) {
-                    return chatsModel.activeChannel.description
+                    return chatsModel.channelView.activeChannel.description
                 }
                 switch(root.realChatType){
                     //% "Public chat"
@@ -134,7 +134,7 @@ Item {
                                                          //% "Not a contact"
                                                          qsTrId("chat-is-not-a-contact"))
                 case Constants.chatTypePrivateGroupChat:
-                    let cnt = chatsModel.activeChannel.members.rowCount();
+                    let cnt = chatsModel.channelView.activeChannel.members.rowCount();
                     //% "%1 members"
                     if(cnt > 1) return qsTrId("%1-members").arg(cnt);
                     //% "1 member"

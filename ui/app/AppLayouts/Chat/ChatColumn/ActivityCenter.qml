@@ -228,7 +228,7 @@ Popup {
                                         }
 
                                         activityCenter.close()
-                                        chatsModel.setActiveChannel(model.message.chatId)
+                                        chatsModel.channelView.setActiveChannel(model.message.chatId)
                                         positionAtMessage(model.message.messageId)
                                     }
 
