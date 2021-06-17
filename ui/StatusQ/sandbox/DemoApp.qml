@@ -157,18 +157,32 @@ Rectangle {
 
         StatusAppTwoPanelLayout {
 
-            leftPanel: StatusChatListAndCategories {
+            leftPanel: Item {
                 anchors.fill: parent
-                anchors.topMargin: 64
 
-                chatList.model: demoChatListItems
-                selectedChatId: "0"
-                onChatItemSelected: selectedChatId = id
-                onChatItemUnmuted: {
-                    for (var i = 0; i < demoChatListItems.count; i++) {
-                        let item = demoChatListItems.get(i);
-                        if (item.chatId === id) {
-                            demoChatListItems.setProperty(i, "muted", false)
+                StatusNavigationPanelHeadline {
+                    id: headline
+                    anchors.top: parent.top
+                    anchors.topMargin: 16
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: "Chat"
+                }
+
+                StatusChatListAndCategories {
+                    anchors.top: headline.bottom
+                    anchors.topMargin: 16
+                    anchors.bottom: parent.bottom
+                    width: parent.width
+
+                    chatList.model: demoChatListItems
+                    selectedChatId: "0"
+                    onChatItemSelected: selectedChatId = id
+                    onChatItemUnmuted: {
+                        for (var i = 0; i < demoChatListItems.count; i++) {
+                            let item = demoChatListItems.get(i);
+                            if (item.chatId === id) {
+                                demoChatListItems.setProperty(i, "muted", false)
+                            }
                         }
                     }
                 }
@@ -218,7 +232,6 @@ Rectangle {
                         }
                     }
                 }
-
             }
         }
     }
@@ -227,9 +240,6 @@ Rectangle {
         id: statusAppCommunityView
 
         StatusAppTwoPanelLayout {
-
-
-
 
             leftPanel: Item {
                 anchors.fill: parent

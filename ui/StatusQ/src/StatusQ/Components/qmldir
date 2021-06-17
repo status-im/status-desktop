@@ -13,6 +13,7 @@ StatusLetterIdenticon 0.1 StatusLetterIdenticon.qml
 StatusListItem 0.1 StatusListItem.qml
 StatusLoadingIndicator 0.1 StatusLoadingIndicator.qml
 StatusNavigationListItem 0.1 StatusNavigationListItem.qml
+StatusNavigationPanelHeadline 0.1 StatusNavigationPanelHeadline.qml
 StatusRoundIcon 0.1 StatusRoundIcon.qml
 StatusRoundedImage 0.1 StatusRoundedImage.qml
 StatusMacWindowButtons 0.1 StatusMacWindowButtons.qml

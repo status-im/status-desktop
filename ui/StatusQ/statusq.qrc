@@ -21,6 +21,7 @@
         <file>src/StatusQ/Components/StatusChatListAndCategories.qml</file>
         <file>src/StatusQ/Components/StatusChatInfoToolBar.qml</file>
         <file>src/StatusQ/Components/StatusNavigationListItem.qml</file>
+        <file>src/StatusQ/Components/StatusNavigationPanelHeadline.qml</file>
         <file>src/StatusQ/Components/StatusChatToolBar.qml</file>
         <file>src/StatusQ/Components/StatusRoundedImage.qml</file>
         <file>src/StatusQ/Components/StatusRoundIcon.qml</file>
