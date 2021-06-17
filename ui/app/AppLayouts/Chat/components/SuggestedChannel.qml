@@ -29,7 +29,7 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            chatsModel.joinPublicChat(channel);
+            chatsModel.channelView.joinPublicChat(channel);
             onJoin()
         }
         cursorShape: Qt.PointingHandCursor

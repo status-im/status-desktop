@@ -19,7 +19,7 @@ ScrollView {
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     
     property var onActivated: function () {
-        chatsModel.setActiveChannelToTimeline()
+        chatsModel.channelView.setActiveChannelToTimeline()
         statusUpdateInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 

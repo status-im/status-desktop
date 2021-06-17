@@ -23,7 +23,7 @@ SplitView {
     }
 
     property var onActivated: function () {
-        chatsModel.restorePreviousActiveChannel()
+        chatsModel.channelView.restorePreviousActiveChannel()
         chatColumn.onActivated()
     }
 

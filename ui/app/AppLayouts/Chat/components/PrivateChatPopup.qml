@@ -8,7 +8,7 @@ import "./"
 
 ModalPopup {
     function doJoin(pk, ensName) {
-        chatsModel.joinPrivateChat(pk, Utils.isChatKey(pk) ? "" : ensName);
+        chatsModel.channelView.joinPrivateChat(pk, Utils.isChatKey(pk) ? "" : ensName);
         popup.close();
     }
 
@@ -30,7 +30,7 @@ ModalPopup {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         onUserClicked: function (isContact, pubKey, ensName) {
-            chatsModel.joinPrivateChat(pubKey, Utils.isChatKey(pubKey) ? "" : ensName);
+            chatsModel.channelView.joinPrivateChat(pubKey, Utils.isChatKey(pubKey) ? "" : ensName);
             popup.close();
         }
     }

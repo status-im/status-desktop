@@ -143,22 +143,22 @@ PopupMenu {
                               qsTr("Pin")
         onTriggered: {
             if (pinnedMessage) {
-                chatsModel.unPinMessage(messageId, chatsModel.activeChannel.id)
+                chatsModel.unPinMessage(messageId, chatsModel.channelView.activeChannel.id)
                 return
             }
 
-            chatsModel.pinMessage(messageId, chatsModel.activeChannel.id)
+            chatsModel.pinMessage(messageId, chatsModel.channelView.activeChannel.id)
             messageContextMenu.close()
         }
         icon.source: "../../../img/pin"
         icon.width: 16
         icon.height: 16
         enabled: {
-            switch (chatsModel.activeChannel.chatType) {
+            switch (chatsModel.channelView.activeChannel.chatType) {
             case Constants.chatTypePublic: return false
             case Constants.chatTypeStatusUpdate: return false
             case Constants.chatTypeOneToOne: return true
-            case Constants.chatTypePrivateGroupChat: return chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
+            case Constants.chatTypePrivateGroupChat: return chatsModel.channelView.activeChannel.isAdmin(profileModel.profile.pubKey)
             case Constants.chatTypeCommunity: return chatsModel.communities.activeCommunity.admin
             }
 
@@ -244,7 +244,7 @@ PopupMenu {
         onTriggered: {
             if (messageContextMenu.isProfile) {
                 appMain.changeAppSection(Constants.chat)
-                chatsModel.joinPrivateChat(fromAuthor, "")
+                chatsModel.channelView.joinPrivateChat(fromAuthor, "")
             } else {
               showReplyArea()
             }

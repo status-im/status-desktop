@@ -62,7 +62,7 @@ Rectangle {
                 contactContextMenu.popup()
                 return
             }
-            chatsModel.joinPrivateChat(container.address, "");
+            chatsModel.channelView.joinPrivateChat(container.address, "");
             changeAppSection(Constants.chat)
         }
     }
@@ -111,7 +111,7 @@ Rectangle {
                     text: qsTrId("send-message")
                     onTriggered: {
                       changeAppSection(Constants.chat)
-                      chatsModel.joinPrivateChat(address, "")
+                      chatsModel.channelView.joinPrivateChat(address, "")
                     }
                     enabled: !container.isBlocked
                 }

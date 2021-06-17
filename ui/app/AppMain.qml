@@ -358,7 +358,7 @@ RowLayout {
         width: 350
         x: parent.width / 2 - width / 2
         y: parent.height / 2 - height / 2
-        modelList: chatsModel.chats
+        modelList: chatsModel.channelView.chats
         getText: function (modelData) {
             return modelData.name
         }
@@ -372,7 +372,7 @@ RowLayout {
                                                          });
         }
         onClicked: function (index) {
-            chatsModel.setActiveChannelByIndex(index)
+            chatsModel.channelView.setActiveChannelByIndex(index)
             appMain.changeAppSection(Constants.chat)
             channelPicker.close()
         }

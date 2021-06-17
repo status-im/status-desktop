@@ -20,7 +20,7 @@ ModalPopup {
 
     onOpened: {
         groupName.forceActiveFocus(Qt.MouseFocusReason)
-        groupName.text = chatsModel.activeChannel.name
+        groupName.text = chatsModel.channelView.activeChannel.name
     }
 
     Input {

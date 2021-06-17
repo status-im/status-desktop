@@ -14,7 +14,7 @@ Rectangle {
     radius: width / 2
 
     color: {
-        const color = chatsModel.getChannelColor(chatId)
+        const color = chatsModel.channelView.getChannelColor(chatId)
         if (!color) {
             return Style.current.orange
         }

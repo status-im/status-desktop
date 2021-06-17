@@ -26,7 +26,7 @@ Item {
             height: contactImage.height
             radius: 50
             color: {
-                const color = chatsModel.getChannelColor(channelName)
+                const color = chatsModel.channelView.getChannelColor(channelName)
                 if (!color) {
                     return Style.current.transparent
                 }

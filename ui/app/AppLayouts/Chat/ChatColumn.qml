@@ -32,7 +32,7 @@ StackLayout {
         chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    property string activeChatId: chatsModel.activeChannel.id
+    property string activeChatId: chatsModel.channelView.activeChannel.id
     property bool isBlocked: profileModel.contacts.isContactBlocked(activeChatId)
     property bool isContact: profileModel.contacts.isAdded(activeChatId)
     property bool contactRequestReceived: profileModel.contacts.contactRequestReceived(activeChatId)
@@ -68,7 +68,7 @@ StackLayout {
     Layout.fillWidth: true
     Layout.minimumWidth: 300
 
-    currentIndex:  chatsModel.activeChannelIndex > -1 && chatGroupsListViewCount > 0 ? 0 : 1
+    currentIndex:  chatsModel.channelView.activeChannelIndex > -1 && chatGroupsListViewCount > 0 ? 0 : 1
 
     Component {
         id: pinnedMessagesPopupComponent
@@ -175,7 +175,7 @@ StackLayout {
         applicationWindow.requestActivate()
         appMain.changeAppSection(Constants.chat)
         if (currentNotificationChatId) {
-            chatsModel.setActiveChannel(currentNotificationChatId)
+            chatsModel.channelView.setActiveChannel(currentNotificationChatId)
         } else if (currentNotificationCommunityId) {
             chatsModel.communities.setActiveCommunity(currentNotificationCommunityId)
         }
@@ -271,9 +271,9 @@ StackLayout {
             }
 
             Connections {
-                target: chatsModel
+                target: chatsModel.channelView
                 onActiveChannelChanged: {
-                    stackLayoutChatMessages.currentIndex = chatsModel.getMessageListIndex(chatsModel.activeChannelIndex)
+                    stackLayoutChatMessages.currentIndex = chatsModel.getMessageListIndex(chatsModel.channelView.activeChannelIndex)
                     if(stackLayoutChatMessages.currentIndex > -1 && !stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].active){
                         stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].active = true;
                     }
@@ -286,12 +286,16 @@ StackLayout {
         }
 
         Connections {
-            target: chatsModel
+            target: chatsModel.channelView
             onActiveChannelChanged: {
                 chatInput.suggestions.hide();
                 chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
                 populateSuggestions();
             }
+        }
+
+        Connections {
+            target: chatsModel
             onMessagePushed: {
                 addSuggestionFromMessageList(messageIndex);
             }
@@ -348,17 +352,17 @@ StackLayout {
             StatusChatInput {
                 id: chatInput
                 visible: {
-                    if (chatsModel.activeChannel.chatType === Constants.chatTypePrivateGroupChat) {
-                        return chatsModel.activeChannel.isMember
+                    if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypePrivateGroupChat) {
+                        return chatsModel.channelView.activeChannel.isMember
                     }
-                    if (chatsModel.activeChannel.chatType === Constants.chatTypeOneToOne) {
+                    if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
                         return isContact && contactRequestReceived
                     }
                     const community = chatsModel.communities.activeCommunity
                     return !community.active ||
                             community.access === Constants.communityChatPublicAccess ||
                             community.admin ||
-                            chatsModel.activeChannel.canPost
+                            chatsModel.channelView.activeChannel.canPost
                 }
                 enabled: !isBlocked
                 chatInputPlaceholder: isBlocked ?
@@ -369,9 +373,9 @@ StackLayout {
                 anchors.bottom: parent.bottom
                 recentStickers: chatsModel.stickers.recent
                 stickerPackList: chatsModel.stickers.stickerPacks
-                chatType: chatsModel.activeChannel.chatType
+                chatType: chatsModel.channelView.activeChannel.chatType
                 onSendTransactionCommandButtonClicked: {
-                    if (chatsModel.activeChannel.ensVerified) {
+                    if (chatsModel.channelView.activeChannel.ensVerified) {
                         txModalLoader.sourceComponent = cmpSendTransactionWithEns
                     } else {
                         txModalLoader.sourceComponent = cmpSendTransactionNoEns
@@ -438,9 +442,9 @@ StackLayout {
             selectRecipient.selectedRecipient: {
                 return {
                     address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
-                    alias: chatsModel.activeChannel.alias,
-                    identicon: chatsModel.activeChannel.identicon,
-                    name: chatsModel.activeChannel.name,
+                    alias: chatsModel.channelView.activeChannel.alias,
+                    identicon: chatsModel.channelView.activeChannel.identicon,
+                    name: chatsModel.channelView.activeChannel.name,
                     type: RecipientSelector.Type.Contact
                 }
             }
@@ -465,9 +469,9 @@ StackLayout {
             selectRecipient.selectedRecipient: {
                 return {
                     address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
-                    alias: chatsModel.activeChannel.alias,
-                    identicon: chatsModel.activeChannel.identicon,
-                    name: chatsModel.activeChannel.name,
+                    alias: chatsModel.channelView.activeChannel.alias,
+                    identicon: chatsModel.channelView.activeChannel.identicon,
+                    name: chatsModel.channelView.activeChannel.name,
                     type: RecipientSelector.Type.Contact
                 }
             }
@@ -489,9 +493,9 @@ StackLayout {
             selectRecipient.selectedRecipient: {
                 return {
                     address: "",
-                    alias: chatsModel.activeChannel.alias,
-                    identicon: chatsModel.activeChannel.identicon,
-                    name: chatsModel.activeChannel.name,
+                    alias: chatsModel.channelView.activeChannel.alias,
+                    identicon: chatsModel.channelView.activeChannel.identicon,
+                    name: chatsModel.channelView.activeChannel.name,
                     type: RecipientSelector.Type.Contact,
                     ensVerified: true
                 }

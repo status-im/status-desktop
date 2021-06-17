@@ -383,7 +383,7 @@ QtObject {
             const pk = link.substring(index + 3)
             result.title = qsTr("Start a 1 on 1 chat with %1").arg(utilsModel.generateAlias(pk))
             result.callback = function () {
-                chatsModel.joinPrivateChat(pk, "");
+                chatsModel.channelView.joinPrivateChat(pk, "");
             }
             return result
         }
@@ -423,7 +423,7 @@ QtObject {
             const chatId = link.substring(index + 1)
             result.title = qsTr("Join the %1 public channel").arg(chatId)
             result.callback = function () {
-                chatsModel.joinPublicChat(chatId);
+                chatsModel.channelView.joinPublicChat(chatId);
             }
             return result
         }

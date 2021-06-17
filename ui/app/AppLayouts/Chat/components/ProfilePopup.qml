@@ -337,11 +337,11 @@ ModalPopup {
             anchors.bottom: parent.bottom
             //% "Send message"
             text: qsTrId("send-message")
-            visible: !isBlocked && chatsModel.activeChannel.id !== popup.fromAuthor
+            visible: !isBlocked && chatsModel.channelView.activeChannel.id !== popup.fromAuthor
             width: visible ? implicitWidth : 0
             onClicked: {
                 appMain.changeAppSection(Constants.chat)
-                chatsModel.joinPrivateChat(fromAuthor, "");
+                chatsModel.channelView.joinPrivateChat(fromAuthor, "");
                 popup.close()
             }
         }

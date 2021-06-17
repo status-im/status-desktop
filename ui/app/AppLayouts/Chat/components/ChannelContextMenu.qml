@@ -79,11 +79,11 @@ PopupMenu {
         icon.width: 16
         icon.height: 16
         onTriggered: {
-            if (chatsModel.channelIsMuted(channelContextMenu.channelIndex)) {
-                chatsModel.unmuteChannel(channelContextMenu.channelIndex)
+            if (chatsModel.channelView.channelIsMuted(channelContextMenu.channelIndex)) {
+                chatsModel.channelView.unmuteChannel(channelContextMenu.channelIndex)
                 return
             }
-            chatsModel.muteChannel(channelContextMenu.channelIndex)
+            chatsModel.channelView.muteChannel(channelContextMenu.channelIndex)
         }
     }
 
@@ -94,7 +94,7 @@ PopupMenu {
         icon.width: 16
         icon.height: 16
         onTriggered: {
-            chatsModel.markAllChannelMessagesReadByIndex(channelContextMenu.channelIndex)
+            chatsModel.channelView.markAllChannelMessagesReadByIndex(channelContextMenu.channelIndex)
         }
     }
     // FetchMoreMessages {}  // TODO: disabling it temporarily because wakuext_syncChatFromSyncedFrom does not support specifying a date range
@@ -104,7 +104,7 @@ PopupMenu {
         icon.source: "../../../img/close.svg"
         icon.width: 16
         icon.height: 16
-        onTriggered: chatsModel.clearChatHistoryByIndex(channelContextMenu.channelIndex)
+        onTriggered: chatsModel.channelView.clearChatHistoryByIndex(channelContextMenu.channelIndex)
     }
     Action {
         enabled: chatsModel.communities.activeCommunity.active && chatsModel.communities.activeCommunity.admin
@@ -112,7 +112,7 @@ PopupMenu {
         icon.source: "../../../img/edit.svg"
         icon.width: 16
         icon.height: 16
-        onTriggered: openPopup(editChannelPopup, {communityId: chatsModel.communities.activeCommunity.id, channel: chatsModel.activeChannel})
+        onTriggered: openPopup(editChannelPopup, {communityId: chatsModel.communities.activeCommunity.id, channel: chatsModel.channelView.activeChannel})
     }
 
     Separator {
@@ -155,7 +155,7 @@ PopupMenu {
                 destroy()
             }
             onConfirmButtonClicked: {
-                chatsModel.leaveChatByIndex(channelContextMenu.channelIndex)
+                chatsModel.channelView.leaveChatByIndex(channelContextMenu.channelIndex)
                 close();
             }
         }
