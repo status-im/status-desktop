@@ -589,5 +589,5 @@ proc rpcPinnedChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, suc
 proc parseReactionsResponse*(chatId: string, rpcResult: JsonNode): (string, seq[Reaction]) =
   result = status_chat.parseReactionsResponse(chatId, rpcResult)
 
-proc parseChatMessagesResponse*(chatId: string, rpcResult: JsonNode, isPin: bool = false): (string, seq[Message]) =
-  result = status_chat.parseChatMessagesResponse(chatId, rpcResult, isPin)
+proc parseChatMessagesResponse*(rpcResult: JsonNode): (string, seq[Message]) =
+  result = status_chat.parseChatMessagesResponse(rpcResult)

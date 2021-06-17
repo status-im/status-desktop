@@ -378,8 +378,11 @@ proc watchTransaction*(self: WalletModel, transactionHash: string): string =
 proc getPendingTransactions*(self: WalletModel): string =
   result = status_wallet.getPendingTransactions()
 
-proc getTransfersByAddress*(address: string): seq[types.Transaction] =
-  result = status_wallet.getTransfersByAddress(address)
+# proc getTransfersByAddress*(address: string): seq[types.Transaction] =
+  # result = status_wallet.getTransfersByAddress(address)
+
+proc getTransfersByAddress*(address: string, toBlock: Uint256, limit: int, loadMore: bool): seq[Transaction] =
+ result = status_wallet.getTransfersByAddress(address, toBlock, limit, loadMore)
 
 proc watchTransaction*(transactionHash: string): string =
   result = status_wallet.watchTransaction(transactionHash)
