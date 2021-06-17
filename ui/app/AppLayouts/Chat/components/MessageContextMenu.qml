@@ -168,6 +168,7 @@ PopupMenu {
 
     Action {
         id: copyAction
+        enabled: !emojiOnly
         text: qsTr("Copy")
         onTriggered: {
             chatsModel.copyToClipboard(messageContextMenu.text)
