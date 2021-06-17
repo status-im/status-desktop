@@ -118,21 +118,21 @@ StatusWindow {
                         anchors.horizontalCenter: parent.horizontalCenter
                         spacing: 0
 
-                        NavigationHeader { text: "StatusQ.Core" }
+                        StatusListSectionHeadline { text: "StatusQ.Core" }
                         StatusNavigationListItem { 
                             title: "Icons" 
                             selected: page.sourceComponent == iconsComponent
                             onClicked: page.sourceComponent = iconsComponent
                         }
 
-                        NavigationHeader { text: "StatusQ.Layout" }
+                        StatusListSectionHeadline { text: "StatusQ.Layout" }
                         StatusNavigationListItem { 
                             title: "Layouts" 
                             selected: page.sourceComponent == layoutComponent
                             onClicked: page.sourceComponent = layoutComponent
                         }
 
-                        NavigationHeader { text: "StatusQ.Controls" }
+                        StatusListSectionHeadline { text: "StatusQ.Controls" }
                         StatusNavigationListItem { 
                             title: "Buttons" 
                             selected: page.sourceComponent == buttonsComponent
@@ -143,7 +143,7 @@ StatusWindow {
                             selected: page.sourceComponent == controlsComponent
                             onClicked: page.sourceComponent = controlsComponent
                         }
-                        NavigationHeader { text: "StatusQ.Components" }
+                        StatusListSectionHeadline { text: "StatusQ.Components" }
                         StatusNavigationListItem { 
                             title: "List Items"
                             selected: page.sourceComponent == listItemsComponent
@@ -159,7 +159,7 @@ StatusWindow {
                             selected: page.sourceComponent == othersComponent
                             onClicked: page.sourceComponent = othersComponent
                         }
-                        NavigationHeader { text: "StatusQ.Popup" }
+                        StatusListSectionHeadline { text: "StatusQ.Popup" }
                         StatusNavigationListItem { 
                             title: "StatusPopupMenu"
                             selected: page.sourceComponent == popupMenuComponent

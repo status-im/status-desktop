@@ -4,15 +4,18 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 Item {
-    height: 34
-    width: 176
+    implicitHeight: 34
+    implicitWidth: 176
+
     property alias text: label.text
 
     StatusBaseText {
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 4
+        anchors.leftMargin: 16
         id: label
         font.pixelSize: 15
         color: Theme.palette.baseColor1
     }
 }
-

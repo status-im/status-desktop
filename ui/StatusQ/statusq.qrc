@@ -26,6 +26,7 @@
         <file>src/StatusQ/Components/StatusRoundedImage.qml</file>
         <file>src/StatusQ/Components/StatusRoundIcon.qml</file>
         <file>src/StatusQ/Components/StatusListItem.qml</file>
+        <file>src/StatusQ/Components/StatusListSectionHeadline.qml</file>
         <file>src/StatusQ/Components/StatusDescriptionListItem.qml</file>
         <file>src/StatusQ/Components/StatusBadge.qml</file>
         <file>src/StatusQ/Components/StatusLetterIdenticon.qml</file>

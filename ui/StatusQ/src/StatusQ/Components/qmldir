@@ -11,6 +11,7 @@ StatusChatToolBar 0.1 StatusChatToolBar.qml
 StatusDescriptionListItem 0.1 StatusDescriptionListItem.qml
 StatusLetterIdenticon 0.1 StatusLetterIdenticon.qml
 StatusListItem 0.1 StatusListItem.qml
+StatusListSectionHeadline 0.1 StatusListSectionHeadline.qml
 StatusLoadingIndicator 0.1 StatusLoadingIndicator.qml
 StatusNavigationListItem 0.1 StatusNavigationListItem.qml
 StatusNavigationPanelHeadline 0.1 StatusNavigationPanelHeadline.qml
