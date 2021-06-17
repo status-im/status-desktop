@@ -129,6 +129,12 @@ QtObject:
     let bottomRight = self.createIndex(self.activityCenterNotifications.len - 1, 0, nil)
     self.dataChanged(topLeft, bottomRight, @[NotifRoles.Read.int])
 
+  proc reduceUnreadCount(self: ActivityNotificationList, numberNotifs: int) =
+    self.nbUnreadNotifications = self.nbUnreadNotifications - numberNotifs
+    if (self.nbUnreadNotifications < 0):
+      self.nbUnreadNotifications = 0
+    self.unreadCountChanged()
+
   proc markActivityCenterNotificationsRead(self: ActivityNotificationList, idsJson: string): string {.slot.} =
     let ids = map(parseJson(idsJson).getElems(), proc(x:JsonNode):string = x.getStr())
 
@@ -136,10 +142,7 @@ QtObject:
     if (error != ""):
       return error
 
-    self.nbUnreadNotifications = self.nbUnreadNotifications - ids.len
-    if (self.nbUnreadNotifications < 0):
-      self.nbUnreadNotifications = 0
-    self.unreadCountChanged()
+    self.reduceUnreadCount(ids.len)
 
     var i = 0
     for activityCenterNotification in self.activityCenterNotifications:
@@ -172,6 +175,8 @@ QtObject:
       self.activityCenterNotifications.delete(indexUpdated)
       self.endRemoveRows()
       i = i + 1
+
+    self.reduceUnreadCount(ids.len)
 
   proc acceptActivityCenterNotifications(self: ActivityNotificationList, idsJson: string): string {.slot.} =
     let ids = map(parseJson(idsJson).getElems(), proc(x:JsonNode):string = x.getStr())
