@@ -21,13 +21,12 @@ QtObject:
     previousActiveChannelIndex*: int
     contextChannel*: ChatItemView
 
-  proc setup(self: ChannelView) =
+  proc setup(self: ChannelView) = self.QObject.setup
+  proc delete*(self: ChannelView) =
     self.chats.delete
     self.activeChannel.delete
     self.contextChannel.delete
-    self.QObject.setup
-
-  proc delete*(self: ChannelView) = self.QObject.delete
+    self.QObject.delete
 
   proc newChannelView*(status: Status, communities: CommunitiesView): ChannelView =
     new(result, delete)
