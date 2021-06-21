@@ -28,6 +28,7 @@ ModalPopup {
         nameInput.text = "";
         if (isEdit) {
             nameInput.text = channel.name;
+            title = qsTr("Edit #%1").arg(channel.name);
             descriptionTextArea.text = channel.description;
             // TODO: re-enable once private channels are implemented
             // privateSwitch.checked = channel.private
