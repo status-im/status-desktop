@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import QtGraphicalEffects 1.13
 import "../../../../../imports"
 import "../../../../../shared"
 import "../../../../../shared/status"
@@ -9,6 +10,7 @@ Rectangle {
     property string name: "channelName"
     property string identicon
     property string responseTo
+    property string communityId
     property int notificationType
     property int chatType: chatsModel.channelView.chats.getChannelType(chatId)
     property int realChatType: {
@@ -34,7 +36,7 @@ Rectangle {
         height: parent.height
         sourceComponent: {
             switch (model.notificationType) {
-            case Constants.activityCenterNotificationTypeMention: return channelComponent
+            case Constants.activityCenterNotificationTypeMention: return wrapper.communityId ? communityComponent : channelComponent
             case Constants.activityCenterNotificationTypeReply: return replyComponent
             default: return channelComponent
             }
@@ -78,6 +80,133 @@ Rectangle {
                 font.pixelSize: 13
                 anchors.verticalCenter: parent.verticalCenter
                 selectByMouse: true
+                readOnly: true
+            }
+        }
+    }
+
+    Component {
+        id: communityComponent
+
+        Item {
+            property int communityIndex: chatsModel.communities.joinedCommunities.getCommunityIndex(wrapper.communityId)
+
+            property string image: communityIndex > -1 ? chatsModel.communities.joinedCommunities.rowData(communityIndex, "thumbnailImage") : ""
+            property string iconColor: !image && communityIndex > -1 ? chatsModel.communities.joinedCommunities.rowData(communityIndex, "communityColor"): ""
+            property bool useLetterIdenticon: !image
+            property string communityName: communityIndex > -1 ? chatsModel.communities.joinedCommunities.rowData(communityIndex, "name") : ""
+            property string channelName: chatsModel.getChannelNameById(wrapper.chatId)
+
+            id: communityBadge
+            width: childrenRect.width
+            height: parent.height
+            SVGImage {
+                id: communityIcon
+                width: 16
+                height: 16
+                source: "../../../../img/communities.svg"
+                anchors.left: parent.left
+                anchors.leftMargin: 4
+                anchors.verticalCenter:parent.verticalCenter
+
+                ColorOverlay {
+                    anchors.fill: parent
+                    source: parent
+                    color: Style.current.secondaryText
+                }
+            }
+
+            Loader {
+                id: communityImageLoader
+                active: true
+                anchors.left: communityIcon.right
+                anchors.leftMargin: 2
+                anchors.verticalCenter: parent.verticalCenter
+                sourceComponent: communityBadge.useLetterIdenticon ? letterIdenticon :imageIcon
+            }
+
+            Component {
+                id: imageIcon
+                RoundedImage {
+                    source: communityBadge.image
+                    noMouseArea: true
+                    noHover: true
+                    width: 16
+                    height: 16
+                }
+            }
+
+            Component {
+                id: letterIdenticon
+                StatusLetterIdenticon {
+                    width: 16
+                    height: 16
+                    letterSize: 12
+                    chatName: communityBadge.communityName
+                    color: communityBadge.iconColor
+                }
+            }
+
+            function getLinkStyle(link, hoveredLink) {
+                return `<style type="text/css">` +
+                        `a {` +
+                        `color: ${Style.current.secondaryText};` +
+                        `text-decoration: none;` +
+                        `}` +
+                        (hoveredLink !== "" ? `a[href="${hoveredLink}"] { text-decoration: underline; }` : "") +
+                        `</style>` +
+                        `<a href="${link}">${link}</a>`
+            }
+
+            StyledTextEdit {
+                id: communityName
+                text: communityBadge.getLinkStyle(communityBadge.communityName, hoveredLink)
+                height: 18
+                readOnly: true
+                textFormat: Text.RichText
+                width: implicitWidth > 300 ? 300 : implicitWidth
+                clip: true
+                anchors.left: communityImageLoader.right
+                anchors.leftMargin: 4
+                color: Style.current.secondaryText
+                font.pixelSize: 13
+                anchors.verticalCenter: parent.verticalCenter
+                onLinkActivated: function () {
+                    chatsModel.communities.setActiveCommunity(wrapper.communityId)
+                }
+            }
+
+            SVGImage {
+                id: caretImage
+                source: "../../../../img/show-category.svg"
+                width: 16
+                height: 16
+                anchors.left: communityName.right
+                anchors.verticalCenter: parent.verticalCenter
+
+                ColorOverlay {
+                    anchors.fill: parent
+                    source: parent
+                    color: Style.current.secondaryText
+                }
+            }
+
+            StyledTextEdit {
+                id: channelName
+                text: communityBadge.getLinkStyle(communityBadge.channelName || wrapper.name, hoveredLink)
+                height: 18
+                readOnly: true
+                textFormat: Text.RichText
+                width: implicitWidth > 300 ? 300 : implicitWidth
+                clip: true
+                anchors.left: caretImage.right
+                color: Style.current.secondaryText
+                font.pixelSize: 13
+                anchors.verticalCenter: parent.verticalCenter
+                onLinkActivated: function () {
+                    chatsModel.communities.setActiveCommunity(wrapper.communityId)
+                    chatsModel.setActiveChannel(model.message.chatId)
+                }
             }
         }
     }

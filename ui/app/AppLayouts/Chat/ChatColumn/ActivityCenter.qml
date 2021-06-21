@@ -228,6 +228,11 @@ Popup {
                                         }
 
                                         activityCenter.close()
+
+                                        if (model.message.communityId) {
+                                            chatsModel.communities.setActiveCommunity(model.message.communityId)
+                                        }
+
                                         chatsModel.channelView.setActiveChannel(model.message.chatId)
                                         positionAtMessage(model.message.messageId)
                                     }
@@ -247,17 +252,6 @@ Popup {
                                     prevMsgTimestamp: notificationDelegate.idx === 0 ? "" : chatsModel.activityNotificationList.getNotificationData(prevMessageIndex, "timestamp")
                                 }
 
-                                ActivityChannelBadge {
-                                    id: badge
-                                    name: model.name
-                                    chatId: model.chatId
-                                    notificationType: model.notificationType
-                                    responseTo: model.message.responseTo
-                                    anchors.top: notificationMessage.bottom
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 61 // TODO find a way to align with the text of the message
-                                }
-
                                 Rectangle {
                                     anchors.top: notificationMessage.bottom
                                     anchors.bottom: badge.bottom
@@ -265,6 +259,18 @@ Popup {
                                     width: parent.width
                                     color: model.read ? Style.current.transparent : Utils.setColorAlpha(Style.current.blue, 0.1)
 
+                                }
+
+                                ActivityChannelBadge {
+                                    id: badge
+                                    name: model.name
+                                    chatId: model.chatId
+                                    notificationType: model.notificationType
+                                    responseTo: model.message.responseTo
+                                    communityId: model.message.communityId
+                                    anchors.top: notificationMessage.bottom
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 61 // TODO find a way to align with the text of the message
                                 }
                             }
                         }

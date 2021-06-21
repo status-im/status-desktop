@@ -45,6 +45,44 @@ QtObject:
 
   method rowCount*(self: CommunityList, index: QModelIndex = nil): int = self.communities.len
 
+  proc getCommunityIndex(self: CommunityList, communityId: string): int {.slot.} =
+    var i = 0
+    for community in self.communities:
+      if (community.id == communityId):
+        return i
+      i = i + 1
+    return -1
+
+  proc rowData(self: CommunityList, index: int, column: string): string {.slot.} =
+    if (index > self.communities.len - 1):
+      return
+    let community = self.communities[index]
+    case column:
+      of "name": result = community.name
+      of "description": result = community.description
+      of "id": result = community.id
+      of "access": result = $community.access
+      of "admin": result = $community.admin
+      of "verified": result = $community.verified
+      of "joined": result = $community.joined
+      of "ensOnly": result = $community.ensOnly
+      of "canRequestAccess": result = $community.canRequestAccess
+      of "canJoin": result = $community.canJoin
+      of "isMember": result = $community.isMember
+      of "nbMembers": result = $community.members.len
+      of "unviewedMessagesCount": result = $community.unviewedMessagesCount
+      of "thumbnailImage":
+        if (not community.communityImage.isNil):
+          result = community.communityImage.thumbnail
+        else:
+          result = ""
+      of "largeImage":
+        if (not community.communityImage.isNil):
+          result = community.communityImage.large
+        else:
+          result = ""
+      of "communityColor": result = community.communityColor
+
   method data(self: CommunityList, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
