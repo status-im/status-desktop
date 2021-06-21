@@ -461,7 +461,6 @@ QtObject:
 
   proc getMessageList(self: ChatsView): QVariant {.slot.} =
     self.upsertChannel(self.channelView.activeChannel.id)
-    echo self.channelView.activeChannel.id
     return newQVariant(self.messageList[self.channelView.activeChannel.id])
 
   QtProperty[QVariant] messageList:
