@@ -170,7 +170,7 @@ ScrollView {
         }
 
         Connections {
-            target: chatsModel
+            target: chatsModel.messageView
             onMessagesLoaded: {
                 loadingMessages = false;
             }
@@ -266,7 +266,7 @@ ScrollView {
         property var loadMsgs : Backpressure.oneInTime(chatLogView, 500, function() {
             if(loadingMessages) return;
             loadingMessages = true;
-            chatsModel.loadMoreMessages();
+            chatsModel.messageView.loadMoreMessages();
         });
 
         onContentYChanged: {
