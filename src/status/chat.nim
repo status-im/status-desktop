@@ -573,12 +573,18 @@ proc markActivityCenterNotificationsRead*(self: ChatModel, ids: seq[string]): st
 
 proc unreadActivityCenterNotificationsCount*(self: ChatModel): int =
   status_chat.unreadActivityCenterNotificationsCount()
-  
+
 proc getLinkPreviewData*(link: string, success: var bool): JsonNode =
   result = status_chat.getLinkPreviewData(link, success)
 
 proc rpcChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
   result = status_chat.rpcChatMessages(chatId, cursorVal, limit, success)
+
+proc getCommunityIdForChat*(self: ChatModel, chatId: string): string =
+  if (not self.hasChannel(chatId)):
+    return ""
+  return self.channels[chatId].communityId
+  
 
 proc rpcReactions*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
   result = status_chat.rpcReactions(chatId, cursorVal, limit, success)

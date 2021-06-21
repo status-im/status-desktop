@@ -151,6 +151,8 @@ QtObject:
     self.markActivityCenterNotificationsRead(fmt"[""{id}""]")
 
   proc toActivityCenterNotificationViewItem*(self: ActivityNotificationList, activityCenterNotification: ActivityCenterNotification): ActivityCenterNotificationViewItem =
+    let communityId = self.status.chat.getCommunityIdForChat(activityCenterNotification.chatId)
+    activityCenterNotification.message.communityId = communityId
     ActivityCenterNotificationViewItem(
           id: activityCenterNotification.id,
           chatId: activityCenterNotification.chatId,

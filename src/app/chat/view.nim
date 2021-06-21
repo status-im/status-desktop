@@ -776,6 +776,10 @@ QtObject:
       error "Error editing channel", msg=e.msg, channelId, name, description
       result = StatusGoError(error: e.msg).toJson
 
+  proc getChannelNameById*(self: ChatsView, channelId: string): string {.slot.} =
+    if self.status.chat.channels.hasKey(channelId):
+      result = self.status.chat.channels[channelId].name
+
   proc setActiveChannelByIndex*(self: ChatsView, index: int) {.slot.} =
     self.channelView.setActiveChannelByIndex(index)
 
