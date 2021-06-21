@@ -16,6 +16,7 @@
         <file>src/StatusQ/Popups/StatusPopupMenu.qml</file>
         <file>src/StatusQ/Popups/StatusMenuSeparator.qml</file>
         <file>src/StatusQ/Popups/StatusMenuItem.qml</file>
+        <file>src/StatusQ/Popups/StatusModalDivider.qml</file>
         <file>src/StatusQ/Components/qmldir</file>
         <file>src/StatusQ/Components/StatusChatListItem.qml</file>
         <file>src/StatusQ/Components/StatusChatListAndCategories.qml</file>
