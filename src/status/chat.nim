@@ -538,8 +538,7 @@ proc pinnedMessagesByChatID*(self: ChatModel, chatId: string): seq[Message] =
   result = messageTuple[1]
 
 proc pinnedMessagesByChatID*(self: ChatModel, chatId: string, cursor: string = "", pinnedMessages: seq[Message]) =
-  self.msgCursor[chatId] = cursor
-
+  self.pinnedMsgCursor[chatId] = cursor
   self.events.emit("pinnedMessagesLoaded", MsgsLoadedArgs(messages: pinnedMessages))
 
 proc activityCenterNotifications*(self: ChatModel, initialLoad: bool = true) =

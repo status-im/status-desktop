@@ -19,7 +19,7 @@ ScrollView {
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     
     property var onActivated: function () {
-        chatsModel.channelView.setActiveChannelToTimeline()
+        chatsModel.setActiveChannelToTimeline()
         statusUpdateInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
@@ -121,7 +121,7 @@ ScrollView {
                 function(left, right) { return left.clock > right.clock }
             ]
 
-            model: chatsModel.messageList
+            model: chatsModel.timelineMessageList
 
             delegate: Message {
                 id: msgDelegate
