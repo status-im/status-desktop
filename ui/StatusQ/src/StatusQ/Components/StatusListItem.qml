@@ -10,7 +10,20 @@ Rectangle {
     implicitWidth: 448
     implicitHeight: 64
 
-    color: sensor.containsMouse ? Theme.palette.baseColor2 : Theme.palette.statusListItem.backgroundColor
+    enum Type {
+        Primary,
+        Secondary
+    }
+
+    color: {
+        if (sensor.containsMouse) {
+            return type === StatusListItem.Type.Primary ?
+                Theme.palette.baseColor2 :
+                Theme.palette.statusListItem.secondaryHoverBackgroundColor
+        }
+        return Theme.palette.statusListItem.backgroundColor
+    }
+
     radius: 8
 
     property string title: ""
@@ -20,10 +33,13 @@ Rectangle {
     property StatusIconSettings icon: StatusIconSettings {
         height: 20
         width: 20
+        rotation: 0
         background: StatusIconBackgroundSettings {
             width: 40
             height: 40
-            color: Theme.palette.primaryColor3
+            color: type === StatusListItem.Type.Primary ? 
+                Theme.palette.primaryColor3 :
+                "transparent"
         }
     }
     property StatusImageSettings image: StatusImageSettings {
@@ -31,6 +47,8 @@ Rectangle {
         height: 40
     }
     property string label: ""
+
+    property int type: StatusListItem.Type.Primary
 
     property alias sensor: sensor
     property alias statusListItemTitle: statusListItemTitle
@@ -70,6 +88,7 @@ Rectangle {
                 icon.width: statusListItem.icon.width
                 icon.height: statusListItem.icon.height
                 icon.name: statusListItem.icon.name
+                icon.rotation: statusListItem.icon.rotation
                 color: statusListItem.icon.background.color
                 width: statusListItem.icon.background.width
                 height: statusListItem.icon.background.height
@@ -95,7 +114,12 @@ Rectangle {
                 id: statusListItemTitle
                 text: statusListItem.title
                 font.pixelSize: 15
-                color: Theme.palette.directColor1
+                color: {
+                  if (statusListItem.type === StatusListItem.Type.Primary) {
+                      return Theme.palette.directColor1
+                  }
+                  return Theme.palette.primaryColor1
+                }
             }
 
             StatusBaseText {

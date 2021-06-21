@@ -13,6 +13,7 @@ QtObject {
         'blue3': '#88B0FF',
         'blue4': '#869EFF',
         'blue5': '#AAC6FF',
+        'blue6': '#ECEFFC',
 
         'brown': '#8B3131',
         'brown2': '#9B832F',
