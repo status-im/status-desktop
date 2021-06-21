@@ -12,19 +12,20 @@ Image {
     sourceSize.height: height
     fillMode: Image.PreserveAspectFit
 
+    antialiasing: true
+    mipmap: true
+
     onIconChanged: {
         if (icon !== "") {
             source = "../../assets/img/icons/" + icon + ".svg";
         }
     }
 
-    ColorOverlay {
-        visible: !Qt.colorEqual(statusIcon.color, "transparent")
-        anchors.fill: statusIcon
-        source: statusIcon
+    layer.mipmap: true
+    layer.smooth: true
+    layer.format: ShaderEffectSource.RGBA
+    layer.enabled:!Qt.colorEqual(statusIcon.color, "transparent")
+    layer.effect: ColorOverlay {
         color: statusIcon.color
-        antialiasing: true
-        smooth: true
     }
 }
-
