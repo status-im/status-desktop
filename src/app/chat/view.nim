@@ -192,6 +192,12 @@ QtObject:
   QtProperty[QVariant] channelView:
     read = getChannelView
 
+  proc triggerActiveChannelChange*(self:ChatsView) {.signal.}
+
+  proc activeChannelChanged*(self: ChatsView) {.slot.} =
+    self.channelView.activeChannelChanged()
+    self.triggerActiveChannelChange()
+
   proc getMessageListIndexById(self: ChatsView, id: string): int
 
   proc replaceMentionsWithPubKeys(self: ChatsView, mentions: seq[string], contacts: seq[Profile], message: string, predicate: proc (contact: Profile): string): string =
@@ -378,7 +384,7 @@ QtObject:
     if not self.channelView.activeChannel.chatItem.isNil:
       self.channelView.previousActiveChannelIndex = self.channelView.chats.chats.findIndexById(self.channelView.activeChannel.id)
     self.channelView.activeChannel.setChatItem(self.timelineChat)
-    self.channelView.activeChannelChanged()
+    self.activeChannelChanged()
 
   proc pushMessages*(self:ChatsView, messages: var seq[Message]) =
     for msg in messages.mitems:
@@ -390,7 +396,7 @@ QtObject:
         if (chat.chatType == ChatType.Profile):
           let timelineChatId = status_utils.getTimelineChatId()
           self.messageList[timelineChatId].add(msg)
-          if self.channelView.activeChannel.id == timelineChatId: self.channelView.activeChannelChanged()
+          if self.channelView.activeChannel.id == timelineChatId: self.activeChannelChanged()
           msgIndex = self.messageList[timelineChatId].messages.len - 1
         else:
           self.messageList[msg.chatId].add(msg)
@@ -433,7 +439,7 @@ QtObject:
         self.channelView.chats.updateChat(channel)
         if (self.channelView.activeChannel.id == channel.id):
           self.channelView.activeChannel.setChatItem(channel)
-          self.channelView.activeChannelChanged()
+          self.activeChannelChanged()
 
 
   proc markMessageAsSent*(self:ChatsView, chat: string, messageId: string) =
@@ -455,11 +461,12 @@ QtObject:
 
   proc getMessageList(self: ChatsView): QVariant {.slot.} =
     self.upsertChannel(self.channelView.activeChannel.id)
+    echo self.channelView.activeChannel.id
     return newQVariant(self.messageList[self.channelView.activeChannel.id])
 
   QtProperty[QVariant] messageList:
     read = getMessageList
-    notify = activeChannelChanged
+    notify = triggerActiveChannelChange
 
   proc getPinnedMessagesList(self: ChatsView): QVariant {.slot.} =
     self.upsertChannel(self.channelView.activeChannel.id)
@@ -467,7 +474,7 @@ QtObject:
 
   QtProperty[QVariant] pinnedMessagesList:
     read = getPinnedMessagesList
-    notify = activeChannelChanged
+    notify = triggerActiveChannelChange
 
   proc pushChatItem*(self: ChatsView, chatItem: Chat) =
     discard self.channelView.chats.addChatItemToList(chatItem)
@@ -594,7 +601,7 @@ QtObject:
 
   proc removeMessagesFromTimeline*(self: ChatsView, chatId: string) =
     self.messageList[status_utils.getTimelineChatId()].deleteMessagesByChatId(chatId)
-    self.channelView.activeChannelChanged()
+    self.activeChannelChanged()
 
   proc unreadMessages*(self: ChatsView): int {.slot.} =
     result = self.unreadMessageCnt
@@ -622,7 +629,7 @@ QtObject:
       self.channelView.chats.updateChat(chat)
       if(self.channelView.activeChannel.id == chat.id):
         self.channelView.activeChannel.setChatItem(chat)
-        self.channelView.activeChannelChanged()
+        self.activeChannelChanged()
         self.currentSuggestions.setNewData(self.status.contacts.getContacts())
       if self.channelView.contextChannel.id == chat.id:
         self.channelView.contextChannel.setChatItem(chat)
@@ -779,5 +786,3 @@ QtObject:
   proc setActiveChannel*(self: ChatsView, channel: string) {.slot.} =
     self.channelView.setActiveChannel(channel)
 
-  proc activeChannelChanged*(self: ChatsView) =
-    self.channelView.activeChannelChanged()
