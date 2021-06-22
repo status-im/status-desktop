@@ -28,7 +28,7 @@ StatusWindow {
     Settings {
         id: globalSettings
         category: "global"
-        fileName: profileModel.globalSettingsFile
+        fileName: profileModel.settings.globalSettingsFile
         property string locale: "en"
         property int theme: 2
     }

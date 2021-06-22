@@ -265,7 +265,7 @@ ScrollView {
                 //% "Muted users"
                 text: qsTrId("muted-users")
                 //% "None"
-                currentValue: profileModel.mutedContacts.rowCount() > 0 ? profileModel.mutedContacts.rowCount() : qsTrId("none")
+                currentValue: profileModel.mutedChats.contacts.rowCount() > 0 ? profileModel.mutedChats.contacts.rowCount() : qsTrId("none")
                 isSwitch: false
                 onClicked: {
                     const mutedChatsModal = notificationsContainer.mutedChatsModalComponent.createObject(notificationsContainer, {
@@ -281,7 +281,7 @@ ScrollView {
                 //% "Muted chats"
                 text: qsTrId("muted-chats")
                 //% "None"
-                currentValue: profileModel.mutedChats.rowCount() > 0 ? profileModel.mutedChats.rowCount() : qsTrId("none")
+                currentValue: profileModel.mutedChats.chats.rowCount() > 0 ? profileModel.mutedChats.chats.rowCount() : qsTrId("none")
                 isSwitch: false
                 onClicked: {
                     const mutedChatsModal = notificationsContainer.mutedChatsModalComponent.createObject(notificationsContainer, {

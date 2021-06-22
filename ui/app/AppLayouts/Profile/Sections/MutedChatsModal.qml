@@ -22,7 +22,7 @@ ModalPopup {
         visible: true
         anchors.left: parent.left
         anchors.right: parent.right
-        model: root.showMutedContacts ? profileModel.mutedContacts : profileModel.mutedChats
+        model: root.showMutedContacts ? profileModel.mutedChats.contacts : profileModel.mutedChats.chats
         delegate: Rectangle {
             id: channelItem
             property bool isHovered: false
@@ -74,7 +74,7 @@ ModalPopup {
                 //% "Unmute"
                 text: qsTrId("unmute")
                 onClicked: {
-                    profileModel.unmuteChannel(model.id)
+                    profileModel.mutedChats.unmuteChannel(model.id)
                 }
                 MouseArea {
                     anchors.fill: parent

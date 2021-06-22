@@ -11,7 +11,7 @@ import ../../status/chat/chat
 import ../../status/wallet
 import ../../eventemitter
 import view
-import views/[ens_manager, devices, network, mailservers, contacts]
+import views/[ens_manager, devices, network, mailservers, contacts, muted_chats]
 import ../chat/views/channels_list
 import chronicles
 import ../../status/tasks/marathon/mailserver/events
@@ -73,25 +73,25 @@ proc init*(self: ProfileController, account: Account) =
     var channel = ChannelArgs(e)
     if channel.chat.muted:
       if channel.chat.chatType.isOneToOne:
-        discard self.view.mutedContacts.addChatItemToList(channel.chat)
+        discard self.view.mutedChats.mutedContacts.addChatItemToList(channel.chat)
         return
-      discard self.view.mutedChats.addChatItemToList(channel.chat)
+      discard self.view.mutedChats.mutedChats.addChatItemToList(channel.chat)
 
   self.status.events.on("channelJoined") do(e: Args):
     var channel = ChannelArgs(e)
     if channel.chat.muted:
       if channel.chat.chatType.isOneToOne:
-        discard self.view.mutedContacts.addChatItemToList(channel.chat)
+        discard self.view.mutedChats.mutedContacts.addChatItemToList(channel.chat)
         return
-      discard self.view.mutedChats.addChatItemToList(channel.chat)
+      discard self.view.mutedChats.mutedChats.addChatItemToList(channel.chat)
 
   self.status.events.on("chatsLoaded") do(e:Args):
-    self.view.mutedChatsListChanged()
-    self.view.mutedContactsListChanged()
+    self.view.mutedChats.mutedChatsListChanged()
+    self.view.mutedChats.mutedContactsListChanged()
 
   self.status.events.on("chatUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)
-    self.view.updateChats(evArgs.chats)
+    self.view.mutedChats.updateChats(evArgs.chats)
 
   self.status.events.on("contactAdded") do(e: Args):
     let contacts = self.status.contacts.getContacts()

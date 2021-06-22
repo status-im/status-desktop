@@ -317,7 +317,7 @@ StatusAppLayout {
 
     Settings {
         id: appSettings
-        fileName: profileModel.profileSettingsFile
+        fileName: profileModel.settings.settingsFile
         property var chatSplitView
         property var walletSplitView
         property var profileSplitView
@@ -386,8 +386,8 @@ StatusAppLayout {
     }
 
     Connections {
-        target: profileModel
-        onProfileSettingsFileChanged: {
+        target: profileModel.settings
+        onSettingsFileChanged: {
             profileModel.changeLocale(globalSettings.locale)
 
             // Since https://github.com/status-im/status-desktop/commit/93668ff75

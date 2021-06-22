@@ -60,7 +60,7 @@ ModalPopup {
             selectedImage: popup.selectedImage
             ratio: "1:1"
             onCropFinished: {
-                uploadError = profileModel.uploadNewProfilePic(selectedImage, aX, aY, bX, bY)
+                uploadError = profileModel.picture.upload(selectedImage, aX, aY, bX, bY)
             }
         }
     }
@@ -80,7 +80,7 @@ ModalPopup {
             anchors.rightMargin: Style.current.padding
             anchors.bottom: parent.bottom
             onClicked: {
-                uploadError = profileModel.deleteProfilePic()
+                uploadError = profileModel.picture.remove()
             }
         }
 
