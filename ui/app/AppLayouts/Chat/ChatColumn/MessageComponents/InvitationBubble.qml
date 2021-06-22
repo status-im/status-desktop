@@ -101,7 +101,7 @@ Item {
                             invitedCommunity.canRequestAccess
                         PropertyChanges {
                             target: joinBtn
-                            text: qsTr("Request to join")
+                            text: qsTr("Request Access")
 
                         }
                     },
