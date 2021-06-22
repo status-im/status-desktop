@@ -118,7 +118,7 @@ Popup {
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             showAccountDetails: false
             accounts: walletModel.accountsView.accounts
-            selectedAccount: walletModel.dappBrowserAccount
+            selectedAccount: walletModel.dappBrowserView.dappBrowserAccount
             currency: walletModel.balanceView.defaultCurrency
             onSelectedAccountChanged: {
                 if (!root.currentAddress) {

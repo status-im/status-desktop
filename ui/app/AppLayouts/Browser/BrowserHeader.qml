@@ -226,8 +226,8 @@ Rectangle {
                 icon.source: "../../img/walletIcon.svg"
                 icon.width: 18
                 icon.height: 18
-                icon.color: walletModel.dappBrowserAccount.iconColor
-                text: walletModel.dappBrowserAccount.name
+                icon.color: walletModel.dappBrowserView.dappBrowserAccount.iconColor
+                text: walletModel.dappBrowserView.dappBrowserAccount.name
                 implicitHeight: 32
                 type: "secondary"
                 onClicked: {

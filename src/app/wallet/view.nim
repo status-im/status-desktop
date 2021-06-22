@@ -85,6 +85,10 @@ QtObject:
   QtProperty[QVariant] utilsView:
     read = getUtils
 
+  proc getDappBrowserView(self: WalletView): QVariant {.slot.} = newQVariant(self.dappBrowserView)
+  QtProperty[QVariant] dappBrowserView:
+    read = getDappBrowserView
+
   proc updateView*(self: WalletView) =
     self.balanceView.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
     self.balanceView.totalFiatBalanceChanged()

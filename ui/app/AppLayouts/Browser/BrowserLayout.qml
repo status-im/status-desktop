@@ -164,7 +164,7 @@ property Component sendTransactionModalComponent: SignTransactionModal {}
                 }
             } else if (request.type === Constants.web3SendAsyncReadOnly &&
                        request.payload.method === "eth_sendTransaction") {
-                var acc = walletModel.dappBrowserAccount
+                var acc = walletModel.dappBrowserView.dappBrowserAccount
                 const value = utilsModel.wei2Eth(request.payload.params[0].value, 18);
                 const sendDialog = sendTransactionModalComponent.createObject(browserWindow, {
                     trxData: request.payload.params[0].data || "",
@@ -234,8 +234,8 @@ property Component sendTransactionModalComponent: SignTransactionModal {}
                 const signDialog = signMessageModalComponent.createObject(browserWindow, {
                         request,
                         selectedAccount: {
-                            name: walletModel.dappBrowserAccount.name,
-                            iconColor: walletModel.dappBrowserAccount.iconColor
+                            name: walletModel.dappBrowserView.dappBrowserAccount.name,
+                            iconColor: walletModel.dappBrowserView.dappBrowserAccount.iconColor
                         }
                     });
                 signDialog.web3Response = web3Response

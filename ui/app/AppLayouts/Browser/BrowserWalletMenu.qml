@@ -110,7 +110,7 @@ Popup {
             anchors.right: copyBtn.left
             anchors.rightMargin: Style.current.padding
             accounts: walletModel.accountsView.accounts
-            selectedAccount: walletModel.dappBrowserAccount
+            selectedAccount: walletModel.dappBrowserView.dappBrowserAccount
             currency: walletModel.balanceView.defaultCurrency
             onSelectedAccountChanged: {
                 if (!accountSelectorRow.currentAddress) {
