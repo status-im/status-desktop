@@ -127,7 +127,12 @@ Item {
             buttonGroup: gasGroup
             checkedByDefault: true
             text: qsTr("Optimal")
-            price: (fastestGasPrice + slowestGasPrice) / 2
+            price: {
+                const price = (fastestGasPrice + slowestGasPrice) / 2
+                // Setting the gas price field here because the binding didn't work
+                inputGasPrice.text = price
+                return price
+            }
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
             getGasEthValue: root.getGasEthValue
             getFiatValue: root.getFiatValue
@@ -182,7 +187,6 @@ Item {
             anchors.right: parent.right
             width: 130
             customHeight: 56
-            text: optimalGasButton.price
             placeholderText: "20"
             onTextChanged: {
                 if (root.validate()) {
