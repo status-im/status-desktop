@@ -411,7 +411,11 @@ QtObject {
                     chatsModel.communities.setActiveCommunity(communityId)
                     return
                 }
-                chatsModel.communities.joinCommunity(communityId, true)
+                const userCanJoin = chatsModel.communities.userCanJoin(communityId)
+                // TODO find what to do when you can't join
+                if (userCanJoin) {
+                    chatsModel.communities.joinCommunity(communityId, true)
+                }
             }
             return result
         }

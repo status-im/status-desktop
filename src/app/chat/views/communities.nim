@@ -141,6 +141,13 @@ QtObject:
       if community.id == communityId:
         return community.joined and community.isMember
     return false
+  
+  proc userCanJoin*(self: CommunitiesView, communityId: string): bool {.slot.} =
+    let communities = self.getCommunitiesIfNotFetched()
+    for community in communities.communities:
+      if community.id == communityId:
+        return community.canJoin
+    return false
 
   proc activeCommunityChanged*(self: CommunitiesView) {.signal.}
 
@@ -162,6 +169,8 @@ QtObject:
   proc joinCommunity*(self: CommunitiesView, communityId: string, setActive: bool = true): string {.slot.} =
     result = ""
     try:
+      if (not self.userCanJoin(communityId) or self.isUserMemberOfCommunity(communityId)):
+        return
       self.status.chat.joinCommunity(communityId)
       self.joinedCommunityList.addCommunityItemToList(self.communityList.getCommunityById(communityId))
       if (setActive):
