@@ -12,6 +12,7 @@ These modules are:
 - [StatusQ.Components](https://github.com/status-im/StatusQ/blob/master/src/StatusQ/Controls/qmldir)
 - [StatusQ.Controls](https://github.com/status-im/StatusQ/blob/master/src/StatusQ/Components/qmldir)
 - [StatusQ.Layout](https://github.com/status-im/StatusQ/blob/master/src/StatusQ/Layout/qmldir)
+- [StatusQ.Platform](https://github.com/status-im/StatusQ/blob/master/src/StatusQ/Platform/qmldir)
 - [StatusQ.Popups](https://github.com/status-im/StatusQ/blob/master/src/StatusQ/Popups/qmldir)
 
 Provided components can be viewed and tested in the [sandbox application](#viewing-and-testing-components) that comes with this repository.
@@ -49,5 +50,5 @@ $ ./scripts/build
 Once that is done, the sandbox can be started with the generated executable:
 
 ```
-$ ./bin
+$ ./bin/sandbox
 ```
