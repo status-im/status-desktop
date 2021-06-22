@@ -173,13 +173,13 @@ Rectangle {
                     text: "Chat"
                 }
 
-                StatusChatListAndCategories {
+                StatusChatList {
                     anchors.top: headline.bottom
                     anchors.topMargin: 16
                     anchors.bottom: parent.bottom
-                    width: parent.width
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                    chatList.model: demoChatListItems
+                    chatListItems.model: demoChatListItems
                     selectedChatId: "0"
                     onChatItemSelected: selectedChatId = id
                     onChatItemUnmuted: {
@@ -247,6 +247,7 @@ Rectangle {
         StatusAppTwoPanelLayout {
 
             leftPanel: Item {
+                id: leftPanel
                 anchors.fill: parent
 
                 StatusChatInfoToolBar {
@@ -255,7 +256,7 @@ Rectangle {
                     anchors.top: parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
 
-                    chatInfoButton.title: "Cryptokitties"        
+                    chatInfoButton.title: "CryptoKitties"
                     chatInfoButton.subTitle: "128 Members"
                     chatInfoButton.image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
                     chatInfoButton.icon.color: Theme.palette.miscColor6
@@ -283,63 +284,74 @@ Rectangle {
                     }
                 }
 
-                StatusChatListAndCategories {
+                ScrollView {
+                    id: scrollView
+
                     anchors.top: statusChatInfoToolBar.bottom
                     anchors.topMargin: 8
                     anchors.bottom: parent.bottom
-                    width: parent.width
+                    width: leftPanel.width
 
-                    chatList.model: demoCommunityChatListItems
-                    categoryList.model: demoCommunityCategoryItems
+                    contentHeight: communityCategories.height
+                    clip: true
 
-                    showCategoryActionButtons: true
-                    onChatItemSelected: selectedChatId = id
+                    StatusChatListAndCategories {
+                        id: communityCategories
+                        height: implicitHeight > (leftPanel.height - 64) ? implicitHeight + 8 : leftPanel.height - 64
+                        width: leftPanel.width
 
-                    categoryPopupMenu: StatusPopupMenu {
+                        chatList.model: demoCommunityChatListItems
+                        categoryList.model: demoCommunityCategoryItems
 
-                        property string categoryId
+                        showCategoryActionButtons: true
+                        onChatItemSelected: selectedChatId = id
 
-                        StatusMenuItem {
-                            text: "Mute Category"
-                            icon.name: "notification"
+                        categoryPopupMenu: StatusPopupMenu {
+
+                            property string categoryId
+
+                            StatusMenuItem {
+                                text: "Mute Category"
+                                icon.name: "notification"
+                            }
+
+                            StatusMenuItem { 
+                                text: "Mark as Read"
+                                icon.name: "checkmark-circle"
+                            }
+
+                            StatusMenuItem { 
+                                text: "Edit Category"
+                                icon.name: "edit"
+                            }
+
+                            StatusMenuSeparator {}
+
+                            StatusMenuItem {
+                                text: "Delete Category"
+                                icon.name: "delete"
+                                type: StatusMenuItem.Type.Danger
+                            }
                         }
 
-                        StatusMenuItem { 
-                            text: "Mark as Read"
-                            icon.name: "checkmark-circle"
-                        }
 
-                        StatusMenuItem { 
-                            text: "Edit Category"
-                            icon.name: "edit"
-                        }
+                        popupMenu: StatusPopupMenu {
+                            StatusMenuItem {
+                                text: "Create channel"
+                                icon.name: "channel"
+                            }
 
-                        StatusMenuSeparator {}
+                            StatusMenuItem {
+                                text: "Create category"
+                                icon.name: "channel-category"
+                            }
 
-                        StatusMenuItem {
-                            text: "Delete Category"
-                            icon.name: "delete"
-                            type: StatusMenuItem.Type.Danger
-                        }
-                    }
+                            StatusMenuSeparator {}
 
-
-                    popupMenu: StatusPopupMenu {
-                        StatusMenuItem {
-                            text: "Create channel"
-                            icon.name: "channel"
-                        }
-
-                        StatusMenuItem {
-                            text: "Create category"
-                            icon.name: "channel-category"
-                        }
-
-                        StatusMenuSeparator {}
-
-                        StatusMenuItem {
-                            text: "Invite people"
-                            icon.name: "share-ios"
+                            StatusMenuItem {
+                                text: "Invite people"
+                                icon.name: "share-ios"
+                            }
                         }
                     }
                 }

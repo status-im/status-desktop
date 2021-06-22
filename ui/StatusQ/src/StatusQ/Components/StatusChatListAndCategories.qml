@@ -4,11 +4,11 @@ import QtQuick.Controls 2.14
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
-ScrollView {
+Item {
     id: statusChatListAndCategories
 
-    clip: true
-    contentHeight: chatListsAndCategories.height + 8
+    implicitHeight: chatListsAndCategories.height
+    implicitWidth: chatListsAndCategories.width
 
     property string selectedChatId: ""
     property bool showCategoryActionButtons: false
@@ -32,7 +32,7 @@ ScrollView {
     MouseArea {
         id: sensor
         anchors.top: parent.top
-        width: parent.width
+        width: statusChatListAndCategories.width
         height: statusChatListAndCategories.height
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: {
