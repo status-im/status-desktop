@@ -1,7 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import SortFilterProxyModel 0.2
 import "../imports"
 import "./status"
 // TODO move Contact into shared to get rid of that import
@@ -26,12 +25,6 @@ Item {
 
     height: Math.min(contactListView.contentHeight, (expanded ? 320 : 192))
 
-    SortFilterProxyModel {
-        id: contactListProxyModel
-        sourceModel: profileModel.contacts.list
-        sorters: StringSorter { roleName: "name" }
-    }
-
     ScrollView {
         anchors.fill: parent
 
@@ -43,7 +36,7 @@ Item {
             spacing: 0
             clip: true
             id: contactListView
-            model: contactListProxyModel
+            model: profileModel.contacts.list
             delegate: Contact {
                 showCheckbox: root.showCheckbox
                 isChecked: root.pubKeys.indexOf(model.pubKey) > -1
