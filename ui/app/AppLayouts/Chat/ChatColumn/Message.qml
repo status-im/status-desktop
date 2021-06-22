@@ -66,8 +66,8 @@ Item {
     property string authorCurrentMsg: "authorCurrentMsg"
     property string authorPrevMsg: "authorPrevMsg"
 
-    property string prevMsgTimestamp: ""
-    property string nextMsgTimestamp: ""
+    property string prevMsgTimestamp: chatsModel.messageList.getMessageData(prevMessageIndex, "timestamp")
+    property string nextMsgTimestamp: chatsModel.messageList.getMessageData(nextMessageIndex, "timestamp")
 
     property bool shouldRepeatHeader: ((parseInt(timestamp, 10) - parseInt(prevMsgTimestamp, 10)) / 60 / 1000) > Constants.repeatHeaderInterval
 
