@@ -28,9 +28,6 @@ QtObject:
     result.dappsAddress = ""
     result.setup
 
-  proc hasPermission*(self: Web3ProviderView, hostname: string, permission: string): bool {.slot.} =
-    result = self.status.permissions.hasPermission(hostname, permission.toPermission())
-
   proc disconnect*(self: Web3ProviderView) {.slot.} =
     self.status.permissions.revoke("web3".toPermission())
 
@@ -57,6 +54,9 @@ QtObject:
     read = getDappsAddress
     notify = dappsAddressChanged
     write = setDappsAddress
+
+  proc hasPermission*(self: Web3ProviderView, hostname: string, permission: string): bool {.slot.} =
+    result = self.status.permissions.hasPermission(hostname, permission.toPermission())
 
   proc clearPermissions*(self: Web3ProviderView): string {.slot.} =
     self.status.permissions.clearPermissions()
