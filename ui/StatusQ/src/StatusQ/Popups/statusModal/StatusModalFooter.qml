@@ -15,7 +15,7 @@ Rectangle {
 
     radius: 8
 
-    color: Theme.palette.indirectColor1
+    color: Theme.palette.statusModal.backgroundColor
 
     onLeftButtonsChanged: {
         for (let idx in leftButtons) {
