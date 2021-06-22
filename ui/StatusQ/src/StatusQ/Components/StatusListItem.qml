@@ -37,9 +37,9 @@ Rectangle {
         background: StatusIconBackgroundSettings {
             width: 40
             height: 40
-            color: type === StatusListItem.Type.Primary ? 
-                Theme.palette.primaryColor3 :
-                "transparent"
+            color: sensor.containsMouse && type === StatusListItem.Type.Secondary ?
+                      "transparent" :
+                      Theme.palette.primaryColor3
         }
     }
     property StatusImageSettings image: StatusImageSettings {

@@ -224,6 +224,12 @@ GridLayout {
         ]
     }
 
+    StatusListItem {
+        title: "Title"
+        icon.name: "info"
+        type: StatusListItem.Type.Secondary
+    }
+
     StatusDescriptionListItem {
         title: "Title"
         subTitle: "Subtitle"
