@@ -559,7 +559,7 @@ Rectangle {
             hasUnreadMessages: false
             hasMention: false
             unreadMessagesCount: 0
-            iconColor: "blue"
+            color: "blue"
         }
         ListElement {
             chatId: "1"
@@ -567,7 +567,7 @@ Rectangle {
             chatType: StatusChatListItem.Type.PublicChat
             muted: false
             hasUnreadMessages: true
-            iconColor: "red"
+            color: "red"
             unreadMessagesCount: 1
         }
         ListElement {
@@ -576,7 +576,7 @@ Rectangle {
             chatType: StatusChatListItem.Type.OneToOneChat
             muted: false
             hasUnreadMessages: false
-            iconColor: "green"
+            color: "green"
             identicon: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
             unreadMessagesCount: 0
         }
@@ -586,7 +586,7 @@ Rectangle {
             chatType: StatusChatListItem.Type.GroupChat
             muted: false
             hasUnreadMessages: false
-            iconColor: "purple"
+            color: "purple"
             unreadMessagesCount: 0
         }
         ListElement {
@@ -595,7 +595,7 @@ Rectangle {
             chatType: StatusChatListItem.Type.OneToOneChat
             muted: true
             hasUnreadMessages: false
-            iconColor: "Orange"
+            color: "Orange"
             unreadMessagesCount: 0
         }
     }
@@ -610,7 +610,7 @@ Rectangle {
             hasUnreadMessages: false
             hasMention: false
             unreadMessagesCount: 0
-            iconColor: "orange"
+            color: "orange"
         }
         ListElement {
             chatId: "1"
@@ -620,7 +620,7 @@ Rectangle {
             hasUnreadMessages: false
             hasMention: false
             unreadMessagesCount: 0
-            iconColor: "orange"
+            color: "orange"
             categoryId: "public"
         }
         ListElement {
@@ -631,7 +631,7 @@ Rectangle {
             hasUnreadMessages: false
             hasMention: false
             unreadMessagesCount: 0
-            iconColor: "orange"
+            color: "orange"
             categoryId: "public"
         }
         ListElement {
@@ -642,7 +642,7 @@ Rectangle {
             hasUnreadMessages: false
             hasMention: false
             unreadMessagesCount: 0
-            iconColor: "orange"
+            color: "orange"
             categoryId: "dev"
         }
     }

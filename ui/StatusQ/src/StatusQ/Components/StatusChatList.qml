@@ -32,7 +32,7 @@ Column {
             badge.value: model.unreadMessagesCount || 0
             selected: model.chatId === statusChatList.selectedChatId
 
-            icon.color: model.iconColor || ""
+            icon.color: model.color || ""
             image.source: model.identicon || ""
 
             onClicked: statusChatList.chatItemSelected(model.chatId)
