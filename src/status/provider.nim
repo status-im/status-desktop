@@ -1,4 +1,4 @@
-import ens, chat/stickers, wallet, settings, permissions
+import ens, wallet, permissions
 import ../eventemitter
 import types
 import libstatus/accounts

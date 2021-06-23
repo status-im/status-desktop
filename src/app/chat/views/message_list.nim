@@ -5,7 +5,7 @@ import ../../../status/chat
 import ../../../status/chat/[message,stickers]
 import ../../../status/profile/profile
 import ../../../status/ens
-import strformat, strutils
+import strutils
 import message_format
 
 type

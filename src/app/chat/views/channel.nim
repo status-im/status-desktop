@@ -1,11 +1,10 @@
-import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat, algorithm
+import NimQml, Tables, json, sequtils, chronicles, strutils
 
-import ../../../status/[status, contacts, types]
-import ../../../status/signals/types as signal_types
+import ../../../status/[status, contacts]
 import ../../../status/ens as status_ens
 import ../../../status/chat as status_chat
-import ../../../status/chat/[chat, message]
-import ../../../status/tasks/[qt, task_runner_impl]
+import ../../../status/chat/[chat]
+import ../../../status/tasks/[task_runner_impl]
 
 import communities, chat_item, channels_list, communities, community_list
 

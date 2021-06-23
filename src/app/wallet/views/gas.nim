@@ -1,11 +1,11 @@
-import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables, chronicles, web3/[ethtypes, conversions], stint
+import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, chronicles, web3/[ethtypes, conversions], stint
 import NimQml, json, sequtils, chronicles, strutils, strformat, json
 
 import
-  ../../../status/[status, settings, wallet, tokens, utils, types],
+  ../../../status/[status, wallet, utils, types],
   ../../../status/tasks/[qt, task_runner_impl]
 
-import account_list, account_item, transaction_list, accounts
+import account_item
 
 const ZERO_ADDRESS* = "0x0000000000000000000000000000000000000000"
 

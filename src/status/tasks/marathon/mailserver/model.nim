@@ -1,12 +1,12 @@
 import
-  algorithm, chronos, chronicles, json, math, os, random, sequtils, sets, sugar,
+  algorithm, chronos, chronicles, json, math, os, random, sequtils, sets,
   tables
 from times import cpuTime
 
 import
   ../../../libstatus/settings as status_settings,
   ../../../libstatus/mailservers as status_mailservers,
-  ../../../libstatus/core as status_core, ../../../libstatus/chat as status_chat,
+  ../../../libstatus/core as status_core,
   ../../../types, ../../../fleet,
   ./events as mailserver_events
 

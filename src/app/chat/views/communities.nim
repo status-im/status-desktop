@@ -4,7 +4,6 @@ import ../../../status/chat/chat
 import ./community_list
 import ./community_item
 import ./community_membership_request_list
-import ./channels_list
 import ../../utils/image_utils
 import ../../../status/signals/types as signal_types
 import ../../../status/types

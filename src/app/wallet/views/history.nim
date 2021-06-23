@@ -1,13 +1,13 @@
-import algorithm, atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables, chronicles, web3/[ethtypes, conversions], stint, sugar
+import algorithm, atomics, strutils, sequtils, json, tables, chronicles, web3/[ethtypes, conversions], stint, sugar
 from sugar import `=>`, `->`
-import NimQml, json, sequtils, chronicles, strutils, strformat, json
+import NimQml, json, sequtils, chronicles, strutils, json
 
 import
-  ../../../status/[status, settings, wallet, tokens, types, utils],
+  ../../../status/[status, wallet, types, utils],
   ../../../status/wallet as status_wallet,
   ../../../status/tasks/[qt, task_runner_impl]
 
-import account_list, account_item, transaction_list, accounts, asset_list, token_list, transactions
+import account_list, account_item, transaction_list, accounts, transactions
 
 logScope:
   topics = "history-view"

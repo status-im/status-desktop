@@ -1,9 +1,9 @@
-import atomics, strformat, strutils, sequtils, json, std/wrapnils, parseUtils, tables, chronicles, web3/[ethtypes, conversions], stint
-import NimQml, json, sequtils, chronicles, strutils, strformat, json
+import sequtils, json, chronicles, web3/[ethtypes, conversions], stint
+import NimQml, json, sequtils, chronicles, strutils, json
 
-import ../../../status/[status, settings, wallet, tokens, types]
+import ../../../status/[status, settings, wallet, types]
 
-import account_list, account_item, transaction_list, accounts, asset_list, token_list
+import account_list, account_item, accounts
 
 logScope:
   topics = "ens-view"

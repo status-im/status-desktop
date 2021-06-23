@@ -1,8 +1,8 @@
-import NimQml, Tables, sets, json, sugar, re
+import NimQml, Tables, json, re
 import ../../../status/status
 import ../../../status/accounts
 import ../../../status/chat
-import ../../../status/chat/[message,stickers]
+import ../../../status/chat/[message]
 import ../../../status/profile/profile
 import ../../../status/ens
 import strformat, strutils, sequtils
