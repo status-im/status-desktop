@@ -169,6 +169,14 @@ ScrollView {
         }
 
         Connections {
+            target: chatsModel
+
+            onAppReady: {
+                chatLogView.scrollToBottom(true)
+            }
+        }
+
+        Connections {
             target: chatsModel.messageView
             onMessagesLoaded: {
                 loadingMessages = false;
@@ -186,10 +194,6 @@ ScrollView {
                 if (!chatLogView.scrollToBottom()) {
                     root.newMessages++
                 }
-            }
-
-            onAppReady: {
-                chatLogView.scrollToBottom(true)
             }
 
             onMessageNotificationPushed: function(chatId, msg, messageType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
