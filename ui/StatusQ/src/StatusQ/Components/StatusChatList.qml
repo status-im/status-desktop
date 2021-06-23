@@ -9,6 +9,7 @@ Column {
     id: statusChatList
 
     spacing: 4
+    width: 288
 
     property string categoryId: ""
     property string selectedChatId: ""

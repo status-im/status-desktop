@@ -31,7 +31,7 @@ Rectangle {
         OneToOneChat
     }
 
-    implicitWidth: 287
+    implicitWidth: 288
     implicitHeight: 40
 
     radius: 8
