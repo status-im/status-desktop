@@ -4,12 +4,39 @@ import NimQml, json, sequtils, chronicles, strutils, strformat, json
 
 import
   ../../../status/[status, settings, wallet, tokens, types, utils],
+  ../../../status/wallet as status_wallet,
   ../../../status/tasks/[qt, task_runner_impl]
 
 import account_list, account_item, transaction_list, accounts, asset_list, token_list, transactions
 
 logScope:
   topics = "history-view"
+
+type
+  LoadTransactionsTaskArg = ref object of QObjectTaskArg
+    address: string
+    toBlock: Uint256
+    limit: int
+    loadMore: bool
+
+const loadTransactionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let
+    arg = decode[LoadTransactionsTaskArg](argEncoded)
+    output = %*{
+      "address": arg.address,
+      "history": status_wallet.getTransfersByAddress(arg.address, arg.toBlock, arg.limit, arg.loadMore),
+      "loadMore": arg.loadMore
+    }
+  arg.finish(output)
+
+proc loadTransactions*[T](self: T, slot: string, address: string, toBlock: Uint256, limit: int, loadMore: bool) =
+  let arg = LoadTransactionsTaskArg(
+    tptr: cast[ByteAddress](loadTransactionsTask),
+    vptr: cast[ByteAddress](self.vptr),
+    slot: slot, address: address,
+    toBlock: toBlock, limit: limit, loadMore: loadMore
+  )
+  self.status.tasks.threadpool.start(arg)
 
 QtObject:
   type HistoryView* = ref object of QObject
@@ -46,18 +73,10 @@ QtObject:
 
   proc loadingTrxHistoryChanged*(self: HistoryView, isLoading: bool, address: string) {.signal.}
 
-  # proc loadTransactionsForAccount*(self: HistoryView, address: string) {.slot.} =
-  #   self.loadingTrxHistoryChanged(true)
-  #   self.transactionsView.loadTransactions("setTrxHistoryResult", address)
-
   proc loadTransactionsForAccount*(self: HistoryView, address: string, toBlock: string = "0x0", limit: int = 20, loadMore: bool = false) {.slot.} =
     self.loadingTrxHistoryChanged(true, address)
     let toBlockParsed = stint.fromHex(Uint256, toBlock)
     self.loadTransactions("setTrxHistoryResult", address, toBlockParsed, limit, loadMore)
-
-  # proc getLatestTransactionHistory*(self: HistoryView, accounts: seq[string]) =
-  #   for acc in accounts:
-  #     self.loadTransactionsForAccount(acc)
 
   proc setTrxHistoryResult(self: HistoryView, historyJSON: string) {.slot.} =
     let

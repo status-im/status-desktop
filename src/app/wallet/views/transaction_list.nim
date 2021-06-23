@@ -36,6 +36,8 @@ QtObject:
     result.setup
 
   proc getLastTxBlockNumber*(self: TransactionList): string {.slot.} =
+    if (self.transactions.len == 0):
+      return "0x0"
     return self.transactions[^1].blockNumber
 
   method rowCount*(self: TransactionList, index: QModelIndex = nil): int =

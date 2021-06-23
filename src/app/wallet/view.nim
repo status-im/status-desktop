@@ -131,9 +131,6 @@ QtObject:
   proc setDappBrowserAddress*(self: WalletView) {.slot.} =
     self.dappBrowserView.setDappBrowserAddress()
 
-  proc loadTransactionsForAccount*(self: WalletView, address: string) {.slot.} =
-    self.historyView.loadTransactionsForAccount(address)
-
   proc setHistoryFetchState*(self: WalletView, accounts: seq[string], isFetching: bool) =
     self.historyView.setHistoryFetchState(accounts, isFetching)
 

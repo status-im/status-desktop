@@ -30,12 +30,12 @@ Item {
     }
 
     function fetchHistory() {
-        if (walletModel.isFetchingHistory()) {
+        if (walletModel.historyView.isFetchingHistory(walletModel.accountsView.currentAccount.address)) {
             loadingImg.active = true
         } else {
-            walletModel.loadTransactionsForAccount(
-                        walletModel.currentAccount.address, 
-                        walletModel.transactions.getLastTxBlockNumber(),
+            walletModel.historyView.loadTransactionsForAccount(
+                        walletModel.accountsView.currentAccount.address, 
+                        walletModel.transactionsView.transactions.getLastTxBlockNumber(),
                         pageSize,
                         true)
         }
@@ -72,7 +72,7 @@ Item {
         target: walletModel.historyView
         // onHistoryWasFetched: checkIfHistoryIsBeingFetched()
         onLoadingTrxHistoryChanged: {
-            if (walletModel.currentAccount.address.toLowerCase() === address.toLowerCase()) {
+            if (walletModel.accountsView.currentAccount.address.toLowerCase() === address.toLowerCase()) {
                 loadingImg.active = isLoading
             }
         }
@@ -267,7 +267,7 @@ Item {
         text: qsTrId("load-more")
         // TODO: handle case when requested limit === transaction count -- there
         // is currently no way to know that there are no more results
-        enabled: !loadingImg.active && walletModel.transactions.hasMore
+        enabled: !loadingImg.active && walletModel.transactionsView.transactions.hasMore
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
