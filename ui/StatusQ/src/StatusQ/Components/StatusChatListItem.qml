@@ -25,10 +25,13 @@ Rectangle {
     signal unmute()
 
     enum Type {
-        PublicChat,
-        GroupChat,
-        CommunityChat,
-        OneToOneChat
+        Unknown0, // 0
+        OneToOneChat, // 1
+        PublicChat, // 2
+        GroupChat, // 3
+        Unknown1, // 4
+        Unknown2, // 5
+        CommunityChat // 6
     }
 
     implicitWidth: 288
