@@ -26,9 +26,12 @@ Rectangle {
 
     Image {
         id: image
-        sourceSize.width: parent.implicitWidth
-        sourceSize.height: parent.implicitHeight
+        width: statusRoundImage.width
+        height: statusRoundImage.height
+        sourceSize.width: parent.width * 2
+        sourceSize.height: parent.height * 2
         fillMode: Image.PreserveAspectFit
+        anchors.centerIn: parent
         cache: true
     }
 
