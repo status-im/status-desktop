@@ -17,6 +17,7 @@ Item {
     property alias sensor: sensor
 
     property Component categoryPopupMenu
+    property Component chatListPopupMenu
     property Component popupMenu
 
     signal chatItemSelected(string id)
@@ -76,6 +77,7 @@ Item {
                     chatList.onChatItemSelected: statusChatListAndCategories.chatItemSelected(id)
 
                     popupMenu: statusChatListAndCategories.categoryPopupMenu
+                    chatListPopupMenu: statusChatListAndCategories.chatListPopupMenu
                 }
             }
         }

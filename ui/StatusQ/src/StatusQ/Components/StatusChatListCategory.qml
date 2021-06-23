@@ -18,6 +18,7 @@ Column {
     property alias toggleButton: statusChatListCategoryItem.toggleButton
     property alias chatList: statusChatList
 
+    property Component chatListPopupMenu
     property Component popupMenu
 
     onPopupMenuChanged: {
@@ -59,6 +60,8 @@ Column {
         filterFn: function (model) {
             return !!model.categoryId && model.categoryId == statusChatList.categoryId
         }
+
+        popupMenu: statusChatListCategory.chatListPopupMenu
     }
 
     Loader {

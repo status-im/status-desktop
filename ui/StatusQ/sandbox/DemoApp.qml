@@ -181,6 +181,7 @@ Rectangle {
 
                     chatListItems.model: demoChatListItems
                     selectedChatId: "0"
+
                     onChatItemSelected: selectedChatId = id
                     onChatItemUnmuted: {
                         for (var i = 0; i < demoChatListItems.count; i++) {
@@ -188,6 +189,41 @@ Rectangle {
                             if (item.chatId === id) {
                                 demoChatListItems.setProperty(i, "muted", false)
                             }
+                        }
+                    }
+
+                    popupMenu: StatusPopupMenu {
+
+                        property string chatId
+
+                        StatusMenuItem {
+                            text: "View Profile"
+                            icon.name: "group-chat"
+                        }
+
+                        StatusMenuSeparator {}
+
+                        StatusMenuItem {
+                            text: "Mute chat"
+                            icon.name: "notification"
+                        }
+
+                        StatusMenuItem {
+                            text: "Mark as Read"
+                            icon.name: "checkmark-circle"
+                        }
+
+                        StatusMenuItem {
+                            text: "Clear history"
+                            icon.name: "close-circle"
+                        }
+
+                        StatusMenuSeparator {}
+
+                        StatusMenuItem {
+                            text: "Delete chat"
+                            icon.name: "delete"
+                            type: StatusMenuItem.Type.Danger
                         }
                     }
                 }
@@ -334,6 +370,33 @@ Rectangle {
                             }
                         }
 
+                        chatListPopupMenu: StatusPopupMenu {
+
+                            property string chatId
+
+                            StatusMenuItem {
+                                text: "Mute chat"
+                                icon.name: "notification"
+                            }
+
+                            StatusMenuItem {
+                                text: "Mark as Read"
+                                icon.name: "checkmark-circle"
+                            }
+
+                            StatusMenuItem {
+                                text: "Clear history"
+                                icon.name: "close-circle"
+                            }
+
+                            StatusMenuSeparator {}
+
+                            StatusMenuItem {
+                                text: "Delete chat"
+                                icon.name: "delete"
+                                type: StatusMenuItem.Type.Danger
+                            }
+                        }
 
                         popupMenu: StatusPopupMenu {
                             StatusMenuItem {

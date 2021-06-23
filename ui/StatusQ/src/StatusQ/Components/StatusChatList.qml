@@ -15,15 +15,24 @@ Column {
     property string selectedChatId: ""
     property alias chatListItems: statusChatListItems
 
+    property Component popupMenu
+
     property var filterFn
 
     signal chatItemSelected(string id)
     signal chatItemUnmuted(string id)
 
+    onPopupMenuChanged: {
+        if (!!popupMenu) {
+            popupMenuSlot.sourceComponent = popupMenu
+        }
+    }
+
     Repeater {
         id: statusChatListItems
         delegate: StatusChatListItem {
-            chatId: model.chatId
+            id: statusChatListItem
+            chatId: model.chatId || model.id
             name: model.name
             type: model.chatType
             muted: !!model.muted
@@ -35,8 +44,36 @@ Column {
             icon.color: model.color || ""
             image.source: model.identicon || ""
 
-            onClicked: statusChatList.chatItemSelected(model.chatId)
-            onUnmute: statusChatList.chatItemUnmuted(model.chatId)
+            onClicked: {
+                if (mouse.button === Qt.RightButton && !!statusChatList.popupMenu) {
+                    highlighted = true
+
+                    let originalOpenHandler = popupMenuSlot.item.openHandler
+                    let originalCloseHandler = popupMenuSlot.item.closeHandler
+
+                    popupMenuSlot.item.openHandler = function () {
+                        if (popupMenuSlot.item.hasOwnProperty('chatId')) {
+                            popupMenuSlot.item.chatId = model.chatId || model.id
+                        }
+                        if (!!originalOpenHandler) {
+                            originalOpenHandler()
+                        }
+                    }
+
+                    popupMenuSlot.item.closeHandler = function () {
+                        highlighted = false
+                        if (!!originalCloseHandler) {
+                            originalCloseHandler()
+                        }
+                    }
+
+                    popupMenuSlot.item.popup(mouse.x + 4, statusChatListItem.y + mouse.y + 6)
+                    popupMenuSlot.item.openHandler = originalOpenHandler
+                    return
+                }
+                statusChatList.chatItemSelected(model.chatId || model.id)
+            }
+            onUnmute: statusChatList.chatItemUnmuted(model.chatId || model.id)
             visible: {
                 if (!!statusChatList.filterFn) {
                     return statusChatList.filterFn(model, statusChatList.categoryId)
@@ -44,5 +81,10 @@ Column {
                 return true
             }
         }
+    }
+
+    Loader {
+        id: popupMenuSlot
+        active: !!statusChatList.popupMenu
     }
 }
