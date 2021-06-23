@@ -23,11 +23,6 @@ type
     gasPrice: string
     password: string
     uuid: string
-  LoadTransactionsTaskArg = ref object of QObjectTaskArg
-    address: string
-    toBlock: Uint256
-    limit: int
-    loadMore: bool
   WatchTransactionTaskArg = ref object of QObjectTaskArg
     transactionHash: string
 
@@ -50,25 +45,6 @@ proc sendTransaction[T](self: T, slot: string, from_addr: string, to: string, as
     slot: slot, from_addr: from_addr, to: to,
     assetAddress: assetAddress, value: value, gas: gas,
     gasPrice: gasPrice, password: password, uuid: uuid
-  )
-  self.status.tasks.threadpool.start(arg)
-
-const loadTransactionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let
-    arg = decode[LoadTransactionsTaskArg](argEncoded)
-    output = %*{
-      "address": arg.address,
-      "history": status_wallet.getTransfersByAddress(arg.address, arg.toBlock, arg.limit, arg.loadMore),
-      "loadMore": arg.loadMore
-    }
-  arg.finish(output)
-
-proc loadTransactions*[T](self: T, slot: string, address: string, toBlock: Uint256, limit: int, loadMore: bool) =
-  let arg = LoadTransactionsTaskArg(
-    tptr: cast[ByteAddress](loadTransactionsTask),
-    vptr: cast[ByteAddress](self.vptr),
-    slot: slot, address: address,
-    toBlock: toBlock, limit: limit, loadMore: loadMore
   )
   self.status.tasks.threadpool.start(arg)
 
