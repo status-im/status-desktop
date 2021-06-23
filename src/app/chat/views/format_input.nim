@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat, algorithm
+import NimQml, json, sequtils, chronicles, re, strutils
 
 logScope:
   topics = "formatinput-view"

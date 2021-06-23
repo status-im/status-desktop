@@ -1,11 +1,7 @@
-import json, json_serialization
-
-import 
-  sugar, sequtils, strutils, atomics
+import json
 
 import libstatus/mailservers as status_mailservers
 import ../eventemitter
-import signals/types
 
 #TODO: temporary?
 import types as LibStatusTypes

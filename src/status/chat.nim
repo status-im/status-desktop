@@ -1,10 +1,8 @@
 import json, strutils, sequtils, tables, chronicles, times, sugar
 import libstatus/chat as status_chat
-import libstatus/mailservers as status_mailservers
 import libstatus/chatCommands as status_chat_commands
 import types
 import utils as status_utils
-import libstatus/contacts as status_contacts
 import stickers
 import ../eventemitter
 

@@ -1,6 +1,6 @@
 import NimQml
 import Tables
-import json, sequtils, sugar
+import json, sequtils
 import ../../../status/settings
 import ../../../status/types
 import ../../../status/status

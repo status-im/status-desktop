@@ -1,8 +1,5 @@
 import # std libs
-  sugar, sequtils, times, strutils
-
-import
-  stew/faux_closures
+  strutils
 
 import # status-desktop libs
   ../../status/chat/chat as status_chat, ./views/communities,

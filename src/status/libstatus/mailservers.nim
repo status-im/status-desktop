@@ -1,4 +1,4 @@
-import json, times
+import json
 import core, ../utils
 
 proc ping*(mailservers: seq[string], timeoutMs: int): string =

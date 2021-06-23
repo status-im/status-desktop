@@ -1,5 +1,5 @@
-import NimQml, Tables, json, sequtils, chronicles, times, re, sugar, strutils, os, strformat, algorithm
-import ../../status/[status, mailservers]
+import NimQml, Tables, json, sequtils, chronicles, strutils, os, strformat
+import ../../status/[status]
 import ../../status/constants
 import ../../status/utils as status_utils
 import ../../status/chat as status_chat
