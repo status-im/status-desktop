@@ -243,4 +243,8 @@ GridLayout {
         iconButton.onClicked: tooltip.visible = !tooltip.visible
     }
 
+    StatusContactRequestsIndicatorListItem {
+        title: "Contact requests"
+        requestsCount: 3
+    }
 }

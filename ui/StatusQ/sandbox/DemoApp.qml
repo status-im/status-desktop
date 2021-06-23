@@ -44,7 +44,6 @@ Rectangle {
         }
     }
 
-
     StatusAppLayout {
         id: statusAppLayout
         anchors.top: demoApp.top
@@ -173,57 +172,67 @@ Rectangle {
                     text: "Chat"
                 }
 
-                StatusChatList {
+                Column {
                     anchors.top: headline.bottom
                     anchors.topMargin: 16
-                    anchors.bottom: parent.bottom
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width
+                    spacing: 8
 
-                    chatListItems.model: demoChatListItems
-                    selectedChatId: "0"
-
-                    onChatItemSelected: selectedChatId = id
-                    onChatItemUnmuted: {
-                        for (var i = 0; i < demoChatListItems.count; i++) {
-                            let item = demoChatListItems.get(i);
-                            if (item.chatId === id) {
-                                demoChatListItems.setProperty(i, "muted", false)
-                            }
-                        }
+                    StatusContactRequestsIndicatorListItem {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        title: "Contact requests"
+                        requestsCount: 3
+                        sensor.onClicked: demoContactRequestsModal.open()
                     }
 
-                    popupMenu: StatusPopupMenu {
+                    StatusChatList {
+                        anchors.horizontalCenter: parent.horizontalCenter
 
-                        property string chatId
-
-                        StatusMenuItem {
-                            text: "View Profile"
-                            icon.name: "group-chat"
+                        chatListItems.model: demoChatListItems
+                        selectedChatId: "0"
+                        onChatItemSelected: selectedChatId = id
+                        onChatItemUnmuted: {
+                            for (var i = 0; i < demoChatListItems.count; i++) {
+                                let item = demoChatListItems.get(i);
+                                if (item.chatId === id) {
+                                    demoChatListItems.setProperty(i, "muted", false)
+                                }
+                            }
                         }
 
-                        StatusMenuSeparator {}
+                        popupMenu: StatusPopupMenu {
 
-                        StatusMenuItem {
-                            text: "Mute chat"
-                            icon.name: "notification"
-                        }
+                            property string chatId
 
-                        StatusMenuItem {
-                            text: "Mark as Read"
-                            icon.name: "checkmark-circle"
-                        }
+                            StatusMenuItem {
+                                text: "View Profile"
+                                icon.name: "group-chat"
+                            }
 
-                        StatusMenuItem {
-                            text: "Clear history"
-                            icon.name: "close-circle"
-                        }
+                            StatusMenuSeparator {}
 
-                        StatusMenuSeparator {}
+                            StatusMenuItem {
+                                text: "Mute chat"
+                                icon.name: "notification"
+                            }
 
-                        StatusMenuItem {
-                            text: "Delete chat"
-                            icon.name: "delete"
-                            type: StatusMenuItem.Type.Danger
+                            StatusMenuItem {
+                                text: "Mark as Read"
+                                icon.name: "checkmark-circle"
+                            }
+
+                            StatusMenuItem {
+                                text: "Clear history"
+                                icon.name: "close-circle"
+                            }
+
+                            StatusMenuSeparator {}
+
+                            StatusMenuItem {
+                                text: "Delete chat"
+                                icon.name: "delete"
+                                type: StatusMenuItem.Type.Danger
+                            }
                         }
                     }
                 }
@@ -506,6 +515,41 @@ Rectangle {
                 anchors.fill: parent
             }
         }
+    }
+
+    StatusModal {
+        id: demoContactRequestsModal
+        anchors.centerIn: parent
+
+        header.title: "Contact Requests"
+        headerActionButton: StatusFlatRoundButton {
+            type: StatusFlatRoundButton.Type.Secondary
+            width: 32
+            height: 32
+
+            icon.width: 20
+            icon.height: 20
+            icon.name: "notification"
+        }
+
+        content: StatusBaseText {
+            anchors.centerIn: parent
+            text: "Contact request will be shown here"
+            font.pixelSize: 15
+            color: Theme.palette.directColor1
+        }
+
+        rightButtons: [
+            StatusButton {
+                text: "Decline all"
+                type: StatusBaseButton.Type.Danger
+                onClicked: demoContactRequestsModal.close()
+            },
+            StatusButton {
+                text: "Accept all"
+                onClicked: demoContactRequestsModal.close()
+            }
+        ]
     }
 
     StatusModal {
