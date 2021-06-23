@@ -18,6 +18,7 @@ Rectangle {
         color: Theme.palette.miscColor5
     }
     property int type: StatusChatListItem.Type.PublicChat
+    property bool highlighted: false
     property bool selected: false
 
     signal clicked(var mouse)
@@ -39,7 +40,7 @@ Rectangle {
         if (selected) {
             return Theme.palette.statusChatListItem.selectedBackgroundColor
         }
-        return sensor.containsMouse ? Theme.palette.statusChatListItem.hoverBackgroundColor : Theme.palette.baseColor4
+        return sensor.containsMouse || highlighted ? Theme.palette.statusChatListItem.hoverBackgroundColor : Theme.palette.baseColor4
     }
 
     MouseArea {
@@ -47,6 +48,7 @@ Rectangle {
 
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor 
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
 
         onClicked: statusChatListItem.clicked(mouse)
@@ -101,12 +103,13 @@ Rectangle {
             width: 14
             visible: statusChatListItem.type !== StatusChatListItem.Type.OneToOneChat
             opacity: {
-                if (statusChatListItem.muted && !sensor.containsMouse) {
+                if (statusChatListItem.muted && !sensor.containsMouse && !statusChatListItem.highlighted) {
                     return 0.4
                 }
                 return statusChatListItem.hasMention || 
                   statusChatListItem.hasUnreadMessages || 
                   statusChatListItem.selected ||
+                  statusChatListItem.highlighted ||
                   statusBadge.visible ||
                   sensor.containsMouse ? 1.0 : 0.7
             }
@@ -136,12 +139,13 @@ Rectangle {
 
             text: statusChatListItem.name
             color: {
-                if (statusChatListItem.muted && !sensor.containsMouse) {
+                if (statusChatListItem.muted && !sensor.containsMouse && !statusChatListItem.highlighted) {
                     return Theme.palette.directColor5
                 }
                 return statusChatListItem.hasMention || 
                   statusChatListItem.hasUnreadMessages ||
                   statusChatListItem.selected ||
+                  statusChatListItem.highlighted ||
                   sensor.containsMouse ||
                   statusBadge.visible ? Theme.palette.directColor1 : Theme.palette.directColor4
             }
