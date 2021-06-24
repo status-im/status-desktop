@@ -18,6 +18,7 @@ Column {
     property Component popupMenu
 
     property var filterFn
+    property var profileImageFn
 
     signal chatItemSelected(string id)
     signal chatItemUnmuted(string id)
@@ -42,7 +43,13 @@ Column {
             selected: model.chatId === statusChatList.selectedChatId
 
             icon.color: model.color || ""
-            image.source: model.identicon || ""
+            image.source: {
+                let profileImage = ""
+                if (typeof statusChatList.profileImageFn === "function") {
+                    profileImage = statusChatList.profileImageFn(model.chatId || model.id)
+                }
+                return profileImage || model.identityImage || model.identicon || ""
+            }
 
             onClicked: {
                 if (mouse.button === Qt.RightButton && !!statusChatList.popupMenu) {
