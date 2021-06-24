@@ -168,5 +168,9 @@ ThemePalette {
     property QtObject statusModal: QtObject {
         property color backgroundColor: baseColor3
     }
+
+    property QtObject statusRoundedImage: QtObject {
+        property color backgroundColor: baseColor3
+    }
 }
 

@@ -166,5 +166,9 @@ ThemePalette {
     property QtObject statusModal: QtObject {
         property color backgroundColor: white
     }
+
+    property QtObject statusRoundedImage: QtObject {
+        property color backgroundColor: white
+    }
 }
 

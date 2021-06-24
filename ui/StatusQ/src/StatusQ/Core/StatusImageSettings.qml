@@ -6,5 +6,6 @@ QtObject {
     property url source
     property real width
     property real height
+    property bool isIdenticon: false
 }
 

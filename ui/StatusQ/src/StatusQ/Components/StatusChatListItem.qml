@@ -88,6 +88,11 @@ Rectangle {
                     height: parent.height
                     image.source: statusChatListItem.image.source
                     showLoadingIndicator: true
+                    color: statusChatListItem.image.isIdenticon ?
+                        Theme.palette.statusRoundedImage.backgroundColor :
+                        "transparent"
+                    border.width: statusChatListItem.image.isIdenticon ? 1 : 0
+                    border.color: Theme.palette.directColor7
                 }
 
                 Loader {

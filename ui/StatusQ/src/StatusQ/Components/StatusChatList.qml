@@ -32,7 +32,17 @@ Column {
     Repeater {
         id: statusChatListItems
         delegate: StatusChatListItem {
+
             id: statusChatListItem
+
+            property string profileImage: ""
+
+            Component.onCompleted: {
+                if (typeof statusChatList.profileImageFn === "function") {
+                    profileImage = statusChatList.profileImageFn(model.chatId || model.id) || ""
+                }
+            }
+
             chatId: model.chatId || model.id
             name: model.name
             type: model.chatType
@@ -43,13 +53,8 @@ Column {
             selected: model.chatId === statusChatList.selectedChatId
 
             icon.color: model.color || ""
-            image.source: {
-                let profileImage = ""
-                if (typeof statusChatList.profileImageFn === "function") {
-                    profileImage = statusChatList.profileImageFn(model.chatId || model.id)
-                }
-                return profileImage || model.identityImage || model.identicon || ""
-            }
+            image.isIdenticon: !!!profileImage && !!!model.identityImage && !!model.identicon
+            image.source: profileImage || model.identityImage || model.identicon || ""
 
             onClicked: {
                 if (mouse.button === Qt.RightButton && !!statusChatList.popupMenu) {
