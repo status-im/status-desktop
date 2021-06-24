@@ -1,8 +1,11 @@
-import NimQml, Tables, chronicles
-import ../../../status/chat/chat
-import ../../../status/status
-import ../../../status/accounts
-import strutils
+import # std libs
+  NimQml, Tables, json, strutils
+
+import # vendor libs
+  chronicles, json_serialization
+
+import # status-desktop libs
+  ../../../status/chat/chat, ../../../status/status, ../../../status/accounts
 
 type
   CommunityRoles {.pure.} = enum
@@ -117,6 +120,11 @@ QtObject:
         else:
           result = newQVariant("")
       of CommunityRoles.CommunityColor: result = newQVariant(communityItem.communityColor)
+  
+  proc getCommunityByIdJson(self: CommunityList, communityId: string): string {.slot.} =
+    for community in self.communities:
+      if (community.id == communityId):
+        result = Json.encode(community)
 
   method roleNames(self: CommunityList): Table[int, string] =
     {

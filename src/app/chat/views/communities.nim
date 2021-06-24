@@ -174,28 +174,35 @@ QtObject:
   
   proc communityAdded*(self: CommunitiesView, communityId: string) {.signal.}
 
+  proc observedCommunityChanged*(self: CommunitiesView) {.signal.}
+  proc communityChanged*(self: CommunitiesView, communityId: string) {.signal.}
+
   proc addCommunityToList*(self: CommunitiesView, community: Community) =
     let communityCheck = self.communityList.getCommunityById(community.id)
     if (communityCheck.id == ""):
       self.communityList.addCommunityItemToList(community)
       self.communityAdded(community.id)
+      self.communityChanged(community.id)
     else:
       self.communityList.replaceCommunity(community)
+      self.communityChanged(community.id)
 
     if (self.activeCommunity.active and self.activeCommunity.communityItem.id == community.id):
       self.activeCommunity.setCommunityItem(community)
 
     if (self.observedCommunity.communityItem.id == community.id):
       self.observedCommunity.setCommunityItem(community)
+      self.observedCommunityChanged()
 
-    if (community.joined == true):
+    if (community.joined == true and community.isMember == true):
       let joinedCommunityCheck = self.joinedCommunityList.getCommunityById(community.id)
       if (joinedCommunityCheck.id == ""):
         self.joinedCommunityList.addCommunityItemToList(community)
       else:
         self.joinedCommunityList.replaceCommunity(community)
-    elif (community.isMember == true):
-      discard self.joinCommunity(community.id, false)
+      self.joinedCommunitiesChanged()
+
+    if (community.isMember == true):
       var i = 0
       for communityRequest in self.myCommunityRequests:
         if (communityRequest.communityId == community.id):
@@ -203,6 +210,9 @@ QtObject:
           self.myCommunityRequests.delete(i, i)
           break
         i = i + 1
+    # TODO: handle membership request rejection
+    # @cammellos mentioned this would likely changed in Communities Phase 3, so
+    # no need to polish now.
 
   proc isCommunityRequestPending*(self: CommunitiesView, communityId: string): bool {.slot.} =
     for communityRequest in self.myCommunityRequests:
@@ -277,8 +287,6 @@ QtObject:
       error "Error creating the category", msg = e.msg
       result = fmt"Error creating the category: {e.msg}"
 
-  proc observedCommunityChanged*(self: CommunitiesView) {.signal.}
-
   proc setObservedCommunity*(self: CommunitiesView, communityId: string) {.slot.} =
     if(communityId == ""): return
     var community = self.communityList.getCommunityById(communityId) 
@@ -303,9 +311,12 @@ QtObject:
       if (communityId == self.activeCommunity.communityItem.id):
         self.activeCommunity.setActive(false)
       self.joinedCommunityList.removeCommunityItemFromList(communityId)
+      self.joinedCommunitiesChanged()
       var updatedCommunity = self.communityList.getCommunityById(communityId)
       updatedCommunity.joined = false
       self.communityList.replaceCommunity(updatedCommunity)
+      self.communitiesChanged()
+      self.communityChanged(communityId)
     except Exception as e:
       error "Error leaving the community", msg = e.msg
       result = fmt"Error leaving the community: {e.msg}"
@@ -367,10 +378,21 @@ QtObject:
     except Exception as e:
       error "Error requesting to join the community", msg = e.msg
 
+  proc removeMembershipRequest(self: CommunitiesView, requestId: string, accepted: bool) =
+    var i = 0
+    for request in self.myCommunityRequests:
+      if (request.id == requestId):
+        self.myCommunityRequests.delete(i, i)
+        let name = self.getCommunityNameById(request.communityId)
+        self.membershipRequestChanged(request.communityId, name, accepted)
+        break
+      i = i + 1
+    self.activeCommunity.communityMembershipRequestList.removeCommunityMembershipRequestItemFromList(requestId)
+
   proc acceptRequestToJoinCommunity*(self: CommunitiesView, requestId: string): string {.slot.} =
     try:
       self.status.chat.acceptRequestToJoinCommunity(requestId)
-      self.activeCommunity.communityMembershipRequestList.removeCommunityMembershipRequestItemFromList(requestId)
+      self.removeMembershipRequest(requestId, true)
     except Exception as e:
       error "Error accepting request to join the community", msg = e.msg
       return "Error accepting request to join the community"
@@ -379,7 +401,7 @@ QtObject:
   proc declineRequestToJoinCommunity*(self: CommunitiesView, requestId: string): string {.slot.} =
     try:
       self.status.chat.declineRequestToJoinCommunity(requestId)
-      self.activeCommunity.communityMembershipRequestList.removeCommunityMembershipRequestItemFromList(requestId)
+      self.removeMembershipRequest(requestId, false)
     except Exception as e:
       error "Error declining request to join the community", msg = e.msg
       return "Error declining request to join the community"
