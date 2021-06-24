@@ -18,7 +18,7 @@ Rectangle {
     signal editButtonClicked
     signal close
 
-    implicitHeight: imageWithTitle.implicitHeight + 32
+    implicitHeight: Math.max(closeButton.height, imageWithTitle.implicitHeight) + 32
     implicitWidth: 480
 
     radius: 16
