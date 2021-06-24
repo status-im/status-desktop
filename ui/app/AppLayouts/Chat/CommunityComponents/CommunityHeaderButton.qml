@@ -8,7 +8,7 @@ import "../components"
 import "./"
 
 Button {
-    implicitWidth: Math.max(communityImage.width + communityName.width + (Style.current.halfPadding * 3), 200)
+    width: parent.width
     implicitHeight: communityImage.height + Style.current.padding
 
     background: Rectangle {
@@ -49,16 +49,18 @@ Button {
 
         Item { 
             height: childrenRect.height
-            width: childrenRect.width
             anchors.left: communityImage.right
             anchors.leftMargin: Style.current.halfPadding
+            anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
 
             StyledText {
                 id: communityName
+                width: parent.width
                 text: chatsModel.communities.activeCommunity.name
                 font.pixelSize: 15
                 font.weight: Font.Bold
+                elide: Text.ElideRight
             }
 
             StyledText {
