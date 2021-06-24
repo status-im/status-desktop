@@ -65,14 +65,27 @@ ModalPopup {
 
         StyledTextEdit {
             id: communityName
-            text: modalHeader.title
+            text: textMetrics.elidedText
             anchors.top: parent.top
             anchors.topMargin: 2
             anchors.left: communityImg.active ? communityImg.right : parent.left
             anchors.leftMargin: communityImg.active ? Style.current.smallPadding : 0
+            anchors.right: parent.right
+            /* Because of ModalPopup's close button we must set rightMargin,
+               cause we don't want overlap it.
+               This should be generally fixed in ModalPopup file. */
+            anchors.rightMargin: 40
             font.bold: true
             font.pixelSize: 17
             readOnly: true
+        }
+
+        TextMetrics {
+            id: textMetrics
+            font: communityName.font
+            text: modalHeader.title
+            elideWidth: communityName.width
+            elide: Text.ElideMiddle
         }
 
         StyledText {

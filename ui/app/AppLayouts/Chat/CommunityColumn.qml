@@ -15,7 +15,6 @@ Rectangle {
     property Component pinnedMessagesPopupComponent
 
     id: root
-    Layout.fillHeight: true
     color: Style.current.secondaryMenuBackground
 
     Component {
@@ -56,6 +55,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.topMargin: -4
+            width: parent.width - optionsBtn.width - optionsBtn.anchors.rightMargin
         }
 
         StatusRoundButton {
