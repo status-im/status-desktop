@@ -17,11 +17,27 @@ Item {
     height: childrenRect.height
     width: rectangleBubbleLoader.width
 
-    Component.onCompleted: {
-        chatsModel.communities.setObservedCommunity(root.communityId)
-
-        root.invitedCommunity = chatsModel.communities.observedCommunity
+    function getCommunity() {
+        let community = JSON.parse(chatsModel.communities.list.getCommunityByIdJson(communityId));
+        if (community) {
+            community.nbMembers = community.members.length;
+        }
+        return community
     }
+
+    Component.onCompleted: {
+        root.invitedCommunity = getCommunity()
+    }
+
+    Connections {
+        target: chatsModel.communities
+        onCommunityChanged: function (communityId) {
+            if (communityId === root.communityId) {
+                root.invitedCommunity = getCommunity()
+            }
+        }
+    }
+
 
     Loader {
         id: rectangleBubbleLoader
@@ -32,12 +48,82 @@ Item {
         sourceComponent: Component {
             Rectangle {
                 id: rectangleBubble
+                property alias button: joinBtn
+                property bool isPendingRequest: chatsModel.communities.isCommunityRequestPending(communityId)
                 width: 270
                 height: childrenRect.height + Style.current.halfPadding
                 radius: 16
                 color: Style.current.background
                 border.color: Style.current.border
                 border.width: 1
+
+                states: [
+                    State {
+                        name: "requiresEns"
+                        when: invitedCommunity.ensOnly && !profileModel.profile.ensVerified
+                        PropertyChanges {
+                            target: joinBtn
+                            text: qsTr("Membership requires an ENS username")
+                            enabled: false
+                        }
+                    },
+                    State {
+                        name: "inviteOnly"
+                        when: invitedCommunity.access === Constants.communityChatInvitationOnlyAccess
+                        PropertyChanges {
+                            target: joinBtn
+                            text: qsTr("You need to be invited")
+                            enabled: false
+                        }
+                    },
+                    State {
+                        name: "pending"
+                        when: invitedCommunity.access === Constants.communityChatOnRequestAccess &&
+                              rectangleBubble.isPendingRequest
+                        PropertyChanges {
+                            target: joinBtn
+                            text: qsTr("Pending")
+                            enabled: false
+                        }
+                    },
+                    State {
+                        name: "joined"
+                        when: invitedCommunity.joined && invitedCommunity.isMember
+                        PropertyChanges {
+                            target: joinBtn
+                            text: qsTr("View")
+                        }
+                    },
+                    State {
+                        name: "requestToJoin"
+                        when: invitedCommunity.access === Constants.communityChatOnRequestAccess &&
+                            //   !invitedCommunity.joined && !invitedCommunity.isMember
+                            invitedCommunity.canRequestAccess
+                        PropertyChanges {
+                            target: joinBtn
+                            text: qsTr("Request to join")
+
+                        }
+                    },
+                    State {
+                        name: "unjoined"
+                        when: invitedCommunity.access === Constants.communityChatOnRequestAccess &&
+                              invitedCommunity.isMember
+                        PropertyChanges {
+                            target: joinBtn
+                            text: qsTr("Join")
+                        }
+                    }
+                ]
+
+                Connections {
+                    target: chatsModel.communities
+                    onMembershipRequestChanged: function(communityId, communityName, requestAccepted) {
+                        if (communityId === root.communityId) {
+                            rectangleBubble.isPendingRequest = false
+                        }
+                    }
+                }
 
                 // TODO add check if verified
                 StyledText {
@@ -58,10 +144,18 @@ Item {
 
                 StyledText {
                     id: invitedYou
-                    text: isCurrentUser ? 
+                    text: {
+                        if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
+                            return isCurrentUser ? 
                         qsTr("You invited %1 to join a community").arg(chatsModel.userNameOrAlias(chatsModel.channelView.activeChannel.id))
-                        //% "%1 invited you to join a community"
-                        : qsTrId("-1-invited-you-to-join-a-community").arg(displayUserName)
+                                //% "%1 invited you to join a community"
+                                : qsTrId("-1-invited-you-to-join-a-community").arg(displayUserName)
+                        } else {
+                            return isCurrentUser ? 
+                                qsTr("You shared a community")
+                                : qsTr("A community has been shared")
+                        }
+                    }
                     anchors.top: title.bottom
                     anchors.topMargin: 4
                     anchors.left: parent.left
@@ -127,69 +221,29 @@ Item {
                 }
 
                 StatusButton {
-                    property int access: invitedCommunity.access
-                    property bool isPendingRequest: {
-                        if (invitedCommunity.access !== Constants.communityChatOnRequestAccess) {
-                            return false
-                        }
-                        return chatsModel.communities.isCommunityRequestPending(communityId)
-                    }
                     id: joinBtn
                     type: "secondary"
                     anchors.top: sep2.bottom
                     width: parent.width
                     height: 44
-                    enabled: {
-                        if (invitedCommunity.ensOnly && !profileModel.profile.ensVerified) {
-                            return false
-                        }
-                        if (joinBtn.access === Constants.communityChatInvitationOnlyAccess || isPendingRequest) {
-                            return false
-                        }
-                        
-                        return true
-                    }
-                    text: {
-                        if (invitedCommunity.ensOnly && !profileModel.profile.ensVerified) {
-                            return qsTr("Membership requires an ENS username")
-                        }
-                        if (invitedCommunity.canJoin) {
-                            return qsTr("Join")
-                        }
-                        if (invitedCommunity.joined || invitedCommunity.isMember) {
-                            return qsTr("View")
-                        }
-                        if (isPendingRequest) {
-                             return qsTr("Pending")
-                        }
-
-                        switch(joinBtn.access) {
-                        case Constants.communityChatPublicAccess: return qsTr("Join")
-                        case Constants.communityChatInvitationOnlyAccess: return qsTr("You need to be invited");
-                        case Constants.communityChatOnRequestAccess: return qsTr("Request to join")
-                        default: return qsTr("Unknown community");
-                        }
-                    }
+                    enabled: true
+                    text: qsTr("Unsupported state")
 
                     onClicked: {
                         let error
 
-                        if (invitedCommunity.joined || invitedCommunity.isMember) {
+                        if (rectangleBubble.state === "joined") {
                             chatsModel.communities.setActiveCommunity(communityId);
                             return
+                        } else if (rectangleBubble.state === "unjoined") {
+                            error = chatsModel.communities.joinCommunity(communityId, true)
                         }
-
-                        if (joinBtn.access === Constants.communityChatOnRequestAccess) {
+                        else if (rectangleBubble.state === "requestToJoin") {
                             error = chatsModel.communities.requestToJoinCommunity(communityId,
                                                                       profileModel.profile.ensVerified ? profileModel.profile.username : "")
                             if (!error) {
-                                enabled = false
-                                text = qsTr("Pending")
+                                rectangleBubble.isPendingRequest = chatsModel.communities.isCommunityRequestPending(communityId)
                             }
-                        } else {
-                            error = chatsModel.communities.joinCommunity(communityId, true)
-                            enabled = false
-                            text = qsTr("Joined")
                         }
 
                         if (error) {

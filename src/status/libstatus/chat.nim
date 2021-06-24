@@ -315,7 +315,7 @@ proc createCommunity*(name: string, description: string, access: int, ensOnly: b
 
   if rpcResult{"error"} != nil:
     let error = Json.decode($rpcResult{"error"}, RpcError)
-    raise newException(RpcException, "Error editing community channel: " & error.message)
+    raise newException(RpcException, "Error creating community: " & error.message)
 
   if rpcResult{"result"} != nil and rpcResult{"result"}.kind != JNull:
     result = rpcResult["result"]["communities"][0].toCommunity()
@@ -338,7 +338,7 @@ proc editCommunity*(communityId: string, name: string, description: string, acce
 
   if rpcResult{"error"} != nil:
     let error = Json.decode($rpcResult{"error"}, RpcError)
-    raise newException(RpcException, "Error editing community channel: " & error.message)
+    raise newException(RpcException, "Error editing community: " & error.message)
 
   if rpcResult{"result"} != nil and rpcResult{"result"}.kind != JNull:
     result = rpcResult["result"]["communities"][0].toCommunity()
@@ -481,8 +481,7 @@ proc requestToJoinCommunity*(communityId: string, ensName: string): seq[Communit
   }]).parseJSON()
 
   var communityRequests: seq[CommunityMembershipRequest] = @[]
-
-  if rpcResult{"result"}{"requestsToJoinCommunity"}.kind != JNull:
+  if rpcResult{"result"}{"requestsToJoinCommunity"} != nil and rpcResult{"result"}{"requestsToJoinCommunity"}.kind != JNull:
     for jsonCommunityReqest in rpcResult["result"]["requestsToJoinCommunity"]:
       communityRequests.add(jsonCommunityReqest.toCommunityMembershipRequest())
 
