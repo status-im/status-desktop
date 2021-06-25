@@ -145,7 +145,10 @@ Rectangle {
             anchors.leftMargin: statusIcon.visible ? 1 : 8
             anchors.verticalCenter: parent.verticalCenter
 
-            text: statusChatListItem.name
+            text: statusChatListItem.type === StatusChatListItem.Type.PublicChat &&
+                !statusChatListItem.name.startsWith("#") ?
+                "#" + statusChatListItem.name :
+                statusChatListItem.name
             color: {
                 if (statusChatListItem.muted && !sensor.containsMouse && !statusChatListItem.highlighted) {
                     return Theme.palette.directColor5
