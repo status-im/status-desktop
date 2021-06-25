@@ -42,6 +42,56 @@ Rectangle {
         TransferOwnershipPopup {}
     }
 
+    CommunityProfilePopup {
+        id: communityProfilePopup
+        communityId: chatsModel.communities.activeCommunity.id
+        name: chatsModel.communities.activeCommunity.name
+        description: chatsModel.communities.activeCommunity.description
+        access: chatsModel.communities.activeCommunity.access
+        nbMembers: chatsModel.communities.activeCommunity.nbMembers
+        isAdmin: chatsModel.communities.activeCommunity.admin
+        source: chatsModel.communities.activeCommunity.thumbnailImage
+        communityColor: chatsModel.communities.activeCommunity.communityColor
+    }
+
+    PopupMenu {
+        id: optionsMenu
+
+        Action {
+            enabled: chatsModel.communities.activeCommunity.admin
+            //% "Create channel"
+            text: qsTrId("create-channel")
+            icon.source: "../../img/hash.svg"
+            icon.width: 20
+            icon.height: 20
+            onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
+        }
+
+         Action {
+            enabled: chatsModel.communities.activeCommunity.admin
+            text: qsTr("Create category")
+            icon.source: "../../img/create-category.svg"
+            icon.width: 20
+            icon.height: 20
+            onTriggered: openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
+        }
+
+        Separator {}
+
+        Action {
+            text: qsTr("Invite People")
+            enabled: chatsModel.communities.activeCommunity.canManageUsers
+            icon.source: "../../img/export.svg"
+            icon.width: 20
+            icon.height: 20
+            onTriggered: openPopup(inviteFriendsToCommunityPopup, {communityId: chatsModel.communities.activeCommunity.id})
+        }
+
+        onAboutToHide: {
+            optionsBtn.state = "default"
+        }
+    }
+
     Item {
         id: communityHeader
         width: parent.width
@@ -74,48 +124,13 @@ Rectangle {
 
             onClicked: {
                 optionsBtn.state = "pressed"
+
                 let x = optionsBtn.iconX + optionsBtn.icon.width / 2 - optionsMenu.width / 2
-                optionsMenu.popup(x, optionsBtn.icon.height + 14)
-            }
+                let y = optionsBtn.height + 4
 
-            PopupMenu {
-                id: optionsMenu
-                x: optionsBtn.x + optionsBtn.width / 2 - optionsMenu.width / 2
-                y: optionsBtn.height
+                let point = optionsBtn.mapToItem(root, x, y)
 
-                Action {
-                    enabled: chatsModel.communities.activeCommunity.admin
-                    //% "Create channel"
-                    text: qsTrId("create-channel")
-                    icon.source: "../../img/hash.svg"
-                    icon.width: 20
-                    icon.height: 20
-                    onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
-                }
-
-                 Action {
-                    enabled: chatsModel.communities.activeCommunity.admin
-                    text: qsTr("Create category")
-                    icon.source: "../../img/create-category.svg"
-                    icon.width: 20
-                    icon.height: 20
-                    onTriggered: openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
-                }
-
-                Separator {}
-
-                Action {
-                    text: qsTr("Invite People")
-                    enabled: chatsModel.communities.activeCommunity.canManageUsers
-                    icon.source: "../../img/export.svg"
-                    icon.width: 20
-                    icon.height: 20
-                    onTriggered: openPopup(inviteFriendsToCommunityPopup, {communityId: chatsModel.communities.activeCommunity.id})
-                }
-
-                onAboutToHide: {
-                    optionsBtn.state = "default"
-                }
+                optionsMenu.popup(point.x, point.y)
             }
         }
     }
@@ -174,8 +189,30 @@ Rectangle {
         leftPadding: Style.current.halfPadding
         rightPadding: Style.current.halfPadding
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        contentHeight: categoryList.height + channelList.height + emptyViewAndSuggestionsLoader.height + backUpBannerLoader.height + 2 * Style.current.padding
+        contentHeight: categoryList.height
+                       + channelList.height
+                       + emptyViewAndSuggestionsLoader.height
+                       + backUpBannerLoader.height
+                       + 2 * Style.current.padding
         clip: true
+
+        background: Item {
+            anchors.fill: parent
+
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.RightButton
+
+                onClicked: {
+                    let x = mouse.x + 4
+                    let y = mouse.y + 4
+
+                    let point = chatGroupsContainer.mapToItem(root, x, y)
+
+                    optionsMenu.popup(point.x, point.y)
+                }
+            }
+        }
 
         ChannelList {
             id: channelList
@@ -211,18 +248,6 @@ Rectangle {
             sourceComponent: Component {
                 BackUpCommuntyBanner {}
             }
-        }
-
-        CommunityProfilePopup {
-            id: communityProfilePopup
-            communityId: chatsModel.communities.activeCommunity.id
-            name: chatsModel.communities.activeCommunity.name
-            description: chatsModel.communities.activeCommunity.description
-            access: chatsModel.communities.activeCommunity.access
-            nbMembers: chatsModel.communities.activeCommunity.nbMembers
-            isAdmin: chatsModel.communities.activeCommunity.admin
-            source: chatsModel.communities.activeCommunity.thumbnailImage
-            communityColor: chatsModel.communities.activeCommunity.communityColor
         }
     }
 }
