@@ -6,7 +6,7 @@ StatusIcon {
     icon: "loading"
     height: 17
     width: 17
-    RotationAnimator {
+    RotationAnimation {
         target: statusIcon;
         from: 0;
         to: 360;
