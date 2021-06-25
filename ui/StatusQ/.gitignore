@@ -10,3 +10,5 @@ bin
 *.autosave
 Makefile
 .qmake.stash
+*_qml.cpp
+*_qmlcache.qrc
