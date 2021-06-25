@@ -15,6 +15,16 @@ Rectangle {
     radius: 16
     color: Style.current.transparent
 
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.RightButton
+        onClicked: {
+            /* Prevents sending events to the component beneath
+               if Right Mouse Button is clicked. */
+            mouse.accepted = false;
+        }
+    }
+
     Rectangle {
         width: 66
         height: 4

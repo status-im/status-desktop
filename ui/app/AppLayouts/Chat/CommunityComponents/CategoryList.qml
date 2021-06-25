@@ -37,6 +37,16 @@ Column {
                 height: 40
                 width:  categoryListContent.width
 
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.RightButton
+                    onClicked: {
+                        /* Prevents sending events to the component beneath
+                           if Right Mouse Button is clicked. */
+                        mouse.accepted = false;
+                    }
+                }
+
                 StyledText {
                     text: model.name
                     elide: Text.ElideRight
