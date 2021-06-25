@@ -143,12 +143,16 @@ Rectangle {
             id: chatName
             anchors.left: statusIcon.visible ? statusIcon.right : identicon.right
             anchors.leftMargin: statusIcon.visible ? 1 : 8
+            anchors.right: statusBadge.visible ? statusBadge.left :
+                mutedIcon.visible ? mutedIcon.left : parent.right
+            anchors.rightMargin: 6
             anchors.verticalCenter: parent.verticalCenter
 
             text: statusChatListItem.type === StatusChatListItem.Type.PublicChat &&
                 !statusChatListItem.name.startsWith("#") ?
                 "#" + statusChatListItem.name :
                 statusChatListItem.name
+            elide: Text.ElideRight
             color: {
                 if (statusChatListItem.muted && !sensor.containsMouse && !statusChatListItem.highlighted) {
                     return Theme.palette.directColor5

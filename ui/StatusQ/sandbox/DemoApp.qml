@@ -714,6 +714,15 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             color: "Orange"
             unreadMessagesCount: 0
         }
+        ListElement {
+            chatId: "5"
+            name: "channel-with-a-super-duper-long-name"
+            chatType: StatusChatListItem.Type.PublicChat
+            muted: false
+            hasUnreadMessages: false
+            color: "green"
+            unreadMessagesCount: 0
+        }
     }
 
     ListModel {
