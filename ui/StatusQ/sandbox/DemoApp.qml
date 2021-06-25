@@ -204,6 +204,10 @@ Rectangle {
 
                             property string chatId
 
+                            openHandler: function (id) {
+                                chatId = id
+                            }
+
                             StatusMenuItem {
                                 text: "View Profile"
                                 icon.name: "group-chat"
@@ -354,6 +358,10 @@ Rectangle {
                         categoryPopupMenu: StatusPopupMenu {
 
                             property string categoryId
+
+                            openHandler: function (id) {
+                                categoryId = id
+                            }
 
                             StatusMenuItem {
                                 text: "Mute Category"

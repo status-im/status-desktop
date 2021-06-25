@@ -68,14 +68,21 @@ Column {
         id: popupMenuSlot
         active: !!statusChatListCategory.popupMenu
         onLoaded: {
+            let originalOpenHandler = popupMenuSlot.item.openHandler
+            let originalCloseHandler = popupMenuSlot.item.closeHandler
+
             popupMenuSlot.item.openHandler = function () {
-                if (popupMenuSlot.item.hasOwnProperty('categoryId')) {
-                    popupMenuSlot.item.categoryId = statusChatListCategory.categoryId
+                if (!!originalOpenHandler) {
+                    originalOpenHandler(statusChatListCategory.categoryId)
                 }
             }
+
             popupMenuSlot.item.closeHandler = function () {
                 statusChatListCategoryItem.highlighted = false
                 statusChatListCategoryItem.menuButton.highlighted = false
+                if (!!originalCloseHandler) {
+                    originalCloseHandler()
+                }
             }
         }
     }

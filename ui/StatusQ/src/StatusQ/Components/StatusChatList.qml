@@ -50,7 +50,7 @@ Column {
             hasUnreadMessages: !!model.hasUnreadMessages
             hasMention: !!model.hasMention
             badge.value: model.unreadMessagesCount || 0
-            selected: model.chatId === statusChatList.selectedChatId
+            selected: (model.chatId || model.id) === statusChatList.selectedChatId
 
             icon.color: model.color || ""
             image.isIdenticon: !!!profileImage && !!!model.identityImage && !!model.identicon
@@ -64,11 +64,8 @@ Column {
                     let originalCloseHandler = popupMenuSlot.item.closeHandler
 
                     popupMenuSlot.item.openHandler = function () {
-                        if (popupMenuSlot.item.hasOwnProperty('chatId')) {
-                            popupMenuSlot.item.chatId = model.chatId || model.id
-                        }
                         if (!!originalOpenHandler) {
-                            originalOpenHandler()
+                            originalOpenHandler((model.chatId || model.id))
                         }
                     }
 
