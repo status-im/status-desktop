@@ -101,14 +101,27 @@ QtObject:
       if loadTransactions: 
         self.historyView.loadTransactionsForAccount(accountAddress)
 
+  proc initBalance(self: BalanceView, acc: WalletAccount, loadTransactions: bool = true) =
+    let
+      accountAddress = acc.address
+      tokenList = acc.assetList.filter(proc(x:Asset): bool = x.address != "").map(proc(x: Asset): string = x.address)
+    self.initBalances("getAccountBalanceSuccess", accountAddress, tokenList)
+    if loadTransactions: 
+      self.historyView.loadTransactionsForAccount(accountAddress)
+
   proc initBalance*(self: BalanceView, accountAddress: string, loadTransactions: bool = true) =
-    echo "initBalance"
-    #var found = false
-    #let acc = self.status.wallet.accounts.find(acc => acc.address.toLowerAscii == accountAddress.toLowerAscii, found)
-    #if not found:
-    #  error "Failed to init balance: could not find account", account=accountAddress
-    #  return
-    #self.initBalance(acc, loadTransactions)
+    var found = false
+    var acc: WalletAccount
+    for a in self.status.wallet.accounts:
+      if a.address.toLowerAscii == accountAddress.toLowerAscii:
+        found = true
+        acc = a
+        break
+      
+    if not found:
+     error "Failed to init balance: could not find account", account=accountAddress
+     return
+    self.initBalance(acc, loadTransactions)
 
   proc getAccountBalanceSuccess*(self: BalanceView, jsonResponse: string) {.slot.} =
     let jsonObj = jsonResponse.parseJson()

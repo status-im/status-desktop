@@ -11,19 +11,19 @@ import "../../../shared/status"
 Item {
     property int pageSize: 20 // number of transactions per page
     property var tokens: {
-        const count = walletModel.tokensView.defaultTokenList.rowCount()
+        let count = walletModel.tokensView.defaultTokenList.rowCount()
         const toks = []
-        for (var i = 0; i < count; i++) {
+        for (let i = 0; i < count; i++) {
             toks.push({
                           "address": walletModel.tokensView.defaultTokenList.rowData(i, 'address'),
                           "symbol": walletModel.tokensView.defaultTokenList.rowData(i, 'symbol')
                       })
         }
-        count = walletModel.customTokenList.rowCount()
-        for (var i = 0; i < count; i++) {
+        count = walletModel.tokensView.customTokenList.rowCount()
+        for (let j = 0; j < count; j++) {
             toks.push({
-                          "address": walletModel.customTokenList.rowData(i, 'address'),
-                          "symbol": walletModel.customTokenList.rowData(i, 'symbol')
+                          "address": walletModel.customTokenList.rowData(j, 'address'),
+                          "symbol": walletModel.customTokenList.rowData(j, 'symbol')
                       })
         }
         return toks
