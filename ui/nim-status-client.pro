@@ -347,7 +347,6 @@ DISTFILES += \
     onboarding/ExistingKey.qml \
     onboarding/GenKey.qml \
     onboarding/GenKeyModal.qml \
-    onboarding/Intro.qml \
     onboarding/KeysMain.qml \
     onboarding/Login.qml \
     onboarding/Login/AccountList.qml \
@@ -358,7 +357,6 @@ DISTFILES += \
     onboarding/Login/samples/AccountsData.qml \
     onboarding/Login/samples/qmldir \
     onboarding/OnboardingMain.qml \
-    onboarding/Slide.qml \
     onboarding/img/browser-dark@2x.jpg \
     onboarding/img/browser-dark@3x.jpg \
     onboarding/img/browser@2x.jpg \

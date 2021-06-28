@@ -7,6 +7,7 @@ import "../imports"
 Popup {
     property string title
     property bool noTopMargin: false
+    property bool displayCloseButton: true
     default property alias content: popupContent.children
     property alias contentWrapper: popupContent
     property alias header: headerContent.children
@@ -18,7 +19,8 @@ Popup {
     Overlay.modal: Rectangle {
         color: Qt.rgba(0, 0, 0, 0.4)
     }
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    closePolicy: displayCloseButton? Popup.CloseOnEscape | Popup.CloseOnPressOutside
+                                   : Popup.NoAutoClose
     parent: Overlay.overlay
     x: Math.round(((parent ? parent.width : 0) - width) / 2)
     y: Math.round(((parent ? parent.height : 0) - height) / 2)
@@ -71,6 +73,7 @@ Popup {
         Rectangle {
             id: closeButton
             property bool hovered: false
+            visible: displayCloseButton
             height: 32
             width: 32
             anchors.top: parent.top
