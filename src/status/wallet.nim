@@ -340,7 +340,7 @@ proc addCustomToken*(self: WalletModel, symbol: string, enable: bool, address: s
   addCustomToken(address, name, symbol, decimals, color)
 
 proc getTransfersByAddress*(self: WalletModel, address: string, toBlock: Uint256, limit: int, loadMore: bool): seq[Transaction] =
- result = status_wallet.getTransfersByAddress(address, toBlock, limit, loadMore)
+  result = status_wallet.getTransfersByAddress(address, toBlock, limit, loadMore)
 
 proc validateMnemonic*(self: WalletModel, mnemonic: string): string =
   result = status_wallet.validateMnemonic(mnemonic).parseJSON()["error"].getStr

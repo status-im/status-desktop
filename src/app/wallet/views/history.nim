@@ -33,8 +33,11 @@ proc loadTransactions*[T](self: T, slot: string, address: string, toBlock: Uint2
   let arg = LoadTransactionsTaskArg(
     tptr: cast[ByteAddress](loadTransactionsTask),
     vptr: cast[ByteAddress](self.vptr),
-    slot: slot, address: address,
-    toBlock: toBlock, limit: limit, loadMore: loadMore
+    slot: slot,
+    address: address,
+    toBlock: toBlock,
+    limit: limit,
+    loadMore: loadMore
   )
   self.status.tasks.threadpool.start(arg)
 
@@ -58,10 +61,12 @@ QtObject:
 
   proc historyWasFetched*(self: HistoryView) {.signal.}
 
+  proc loadingTrxHistoryChanged*(self: HistoryView, isLoading: bool, address: string) {.signal.}
+
   proc setHistoryFetchState*(self: HistoryView, accounts: seq[string], isFetching: bool) =
     for acc in accounts:
       self.fetchingHistoryState[acc] = isFetching
-    if not isFetching: self.historyWasFetched()
+      self.loadingTrxHistoryChanged(isFetching, acc)
 
   proc isFetchingHistory*(self: HistoryView, address: string): bool {.slot.} =
     if self.fetchingHistoryState.hasKey(address):
@@ -70,8 +75,6 @@ QtObject:
 
   proc isHistoryFetched*(self: HistoryView, address: string): bool {.slot.} =
     return self.transactionsView.currentTransactions.rowCount() > 0
-
-  proc loadingTrxHistoryChanged*(self: HistoryView, isLoading: bool, address: string) {.signal.}
 
   proc loadTransactionsForAccount*(self: HistoryView, address: string, toBlock: string = "0x0", limit: int = 20, loadMore: bool = false) {.slot.} =
     self.loadingTrxHistoryChanged(true, address)
