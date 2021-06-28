@@ -169,12 +169,7 @@ StatusWindow {
 
         DSM.State {
             id: onboardingState
-            initialState: hasAccounts ? stateLogin : stateIntro
-
-            DSM.State {
-                id: stateIntro
-                onEntered: loader.sourceComponent = intro
-            }
+            initialState: hasAccounts ? stateLogin : keysMainState
 
             DSM.State {
                 id: keysMainState
@@ -227,7 +222,7 @@ StatusWindow {
             }
 
             DSM.SignalTransition {
-                targetState: hasAccounts ? stateLogin : stateIntro
+                targetState: hasAccounts ? stateLogin : keysMainState
                 signal: applicationWindow.navigateTo
                 guard: path === "InitialState"
             }
@@ -353,15 +348,9 @@ StatusWindow {
     }
 
     Component {
-        id: intro
-        Intro {
-            btnGetStarted.onClicked: applicationWindow.navigateTo("KeysMain")
-        }
-    }
-
-    Component {
         id: keysMain
         KeysMain {
+            displayBeforeGetStartedModal: !hasAccounts
             btnGenKey.onClicked: applicationWindow.navigateTo("GenKey")
             btnExistingKey.onClicked: applicationWindow.navigateTo("ExistingKey")
         }
@@ -419,8 +408,7 @@ StatusWindow {
         visible: Qt.platform.os === "osx" && !applicationWindow.isFullScreen
 
         onClose: {
-            if (loader.sourceComponent == login ||
-                    loader.sourceComponent == intro) {
+            if (loader.sourceComponent == login) {
                 applicationWindow.visible = false;
             }
             else if (loader.sourceComponent == app) {
