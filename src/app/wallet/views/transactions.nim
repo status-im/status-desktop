@@ -1,5 +1,6 @@
 import algorithm, atomics, sequtils, strformat, strutils, sugar, sequtils, json, parseUtils, std/wrapnils, tables
 import NimQml, json, sequtils, chronicles, strutils, strformat, json, stint
+import web3/ethhexstrings
 
 import
   ../../../status/[status, settings, wallet, tokens],
@@ -107,6 +108,41 @@ QtObject:
 
   proc sendTransaction*(self: TransactionsView, from_addr: string, to: string, assetAddress: string, value: string, gas: string, gasPrice: string, password: string, uuid: string) {.slot.} =
     self.sendTransaction("transactionSent", from_addr, to, assetAddress, value, gas, gasPrice, password, uuid)
+
+  proc transferEth*(self: TransactionsView, from_addr: string, to_addr: string, value: string, gas: string, gasPrice: string, password: string, uuid: string): bool {.slot.} =
+    try: 
+      if not validate(HexDataStr(from_addr)): return false
+      if from_addr.len != 42: return false
+      if not validate(HexDataStr(to_addr)): return false
+      if to_addr.len != 42: return false
+      if parseFloat(value) < 0: return false
+      if parseInt(gas) < 0: return false
+      if parseFloat(gasPrice) <= 0: return false
+      if uuid.isEmptyOrWhitespace(): return false
+
+      self.sendTransaction("transactionSent", from_addr, to_addr, ZERO_ADDRESS, value, gas, gasPrice, password, uuid)
+    except Exception as e:
+      error "Error sending eth transfer transaction", msg = e.msg
+      return false
+    return true
+
+  proc transferTokens*(self: TransactionsView, from_addr: string, to_addr: string, assetAddress: string, value: string, gas: string, gasPrice: string, password: string, uuid: string): bool {.slot.} =   
+    try: 
+      if not validate(HexDataStr(from_addr)): return false
+      if from_addr.len != 42: return false
+      if not validate(HexDataStr(to_addr)): return false
+      if to_addr.len != 42: return false
+      if not validate(HexDataStr(assetAddress)): return false
+      if assetAddress.len != 42: return false
+      if parseFloat(value) <= 0: return false
+      if parseInt(gas) <= 0: return false
+      if parseFloat(gasPrice) <= 0: return false
+      if uuid.isEmptyOrWhitespace(): return false
+      self.sendTransaction("transactionSent", from_addr, to_addr, assetAddress, value, gas, gasPrice, password, uuid)
+    except Exception as e:
+      error "Error sending token transfer transaction", msg = e.msg
+      return false
+    return true
 
   proc checkRecentHistory*(self: TransactionsView) {.slot.} =
     var addresses:seq[string] = @[]

@@ -9,6 +9,7 @@ import chronicles
 import nbaser
 import stew/byteutils
 from base32 import nil
+import web3/ethhexstrings
 
 const HTTPS_SCHEME = "https"
 const IPFS_GATEWAY =  ".infura.status.im"
@@ -91,6 +92,19 @@ proc toAPIRequest(message: string): APIRequest =
     hostname: data{"hostname"}.getStr()
   )
 
+proc validateInput(from_addr, to_addr, value, gas, gasPrice, data: string): bool =
+  if not validate(HexDataStr(from_addr)): return false
+  if from_addr.len != 42: return false
+  if to_addr != "":
+    if not validate(HexDataStr(to_addr)): return false
+    if to_addr.len != 42: return false
+  if parseFloat(value) < 0: return false
+  if parseInt(gas) <= 0: return false
+  if parseFloat(gasPrice) <= 0: return false
+  if data != "":
+    if not validate(HexDataStr(data)): return false
+  return true
+
 proc process(self: ProviderModel, data: Web3SendAsyncReadOnly): string =
   if AUTH_METHODS.contains(data.payload.rpcMethod) and not self.permissions.hasPermission(data.hostname, Permission.Web3):
     return $ %* {
@@ -118,16 +132,26 @@ proc process(self: ProviderModel, data: Web3SendAsyncReadOnly): string =
       else:
         ""
 
+      let validInput = validateInput(fromAddress, to, value, selectedGasLimit, selectedGasPrice, txData)
+
       var success: bool
-      # TODO make this async
-      let response = wallet.sendTransaction(fromAddress, to, value, selectedGasLimit, selectedGasPrice, password, success, txData)
-      let errorMessage = if not success:
-        if response == "":
-          "web3-response-error"
+      var errorMessage = ""
+      var response = ""
+
+      if validInput:
+        # TODO make this async
+        response = wallet.sendTransaction(fromAddress, to, value, selectedGasLimit, selectedGasPrice, password, success, txData)
+        errorMessage = if not success:
+          if response == "":
+            "web3-response-error"
+          else:
+            response
         else:
-          response
+          ""
       else:
-        ""
+        success = false
+        errorMessage = "Invalid input"
+
 
       return $ %* {
         "type": ResponseTypes.Web3SendAsyncCallback,
