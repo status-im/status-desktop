@@ -29,4 +29,28 @@ StatusInput {
 }
 ```
 
+## Viewing and testing components
+
+To make viewing and testing components easy, we've added a sandbox application to this repository in which StatusQ components are being build. This is the first place where components see the light of the world and can be run in a proper application environment.
+
+### Using Qt Creator
+
+The easiest way to run the sandbox application is to simply open the provided `sandbox.pro` file using Qt Creator.
+
+### Using command line interface
+
+To run the sandbox from within a command line interface, run the following commands:
+
+```
+$ git clone https://github.com/status-im/StatusQ
+$ cd StatusQ/sandbox
+$ ./scripts/build
+```
+
+Once that is done, the sandbox can be started with the generated executable:
+
+```
+$ ./bin/sandbox
+```
+
 More Documentation available on the [wiki](https://hackmd.io/@status-desktop/B1naRjxh_/%2FwFtiXvOiQqCdw2lk6gbOLA)
