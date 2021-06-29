@@ -319,8 +319,10 @@ Rectangle {
             // TODO use the new formatInputMessage function instead
             const plainText = getPlainText()
             const newText = parseBackText(plainText)
+            const finalText = newText.replace("<", "&lt;")
+
             messageInputField.remove(0, messageInputField.length)
-            insertInTextInput(0, newText)
+            insertInTextInput(0, finalText)
         } else {
             if (event.key === Qt.Key_Asterisk ||
                 event.key === Qt.Key_QuoteLeft ||
