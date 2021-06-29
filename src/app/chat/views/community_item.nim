@@ -55,7 +55,6 @@ QtObject:
     self.status.events.emit("communityActiveChanged", CommunityActiveChangedArgs(active: value))
     self.activeChanged()
 
-
   proc removeMember*(self: CommunityItemView, pubKey: string) =
     self.members.removeMember(pubKey)
     self.nbMembersChanged()
@@ -101,6 +100,18 @@ QtObject:
   
   QtProperty[bool] verified:
     read = verified
+
+  proc mutedChanged*(self: CommunityItemView) {.signal.}
+
+  proc setMuted*(self: CommunityItemView, muted: bool) {.slot.} =
+    self.communityItem.muted = muted
+    self.mutedChanged()
+
+  proc muted*(self: CommunityItemView): bool {.slot.} = result = ?.self.communityItem.muted
+  
+  QtProperty[bool] muted:
+    read = muted
+    notify = mutedChanged
 
   proc ensOnly*(self: CommunityItemView): bool {.slot.} = result = ?.self.communityItem.ensOnly
   

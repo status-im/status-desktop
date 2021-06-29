@@ -158,29 +158,28 @@ Item {
 //            }
 //        }
 
-        // TODO re-add when this is supported
-//        CommunityPopupButton {
-//            id: notificationsBtn
-//            //% "Notifications"
-//            label: qsTrId("notifications")
-//            iconName: "notifications"
-//            width: parent.width
-//            txtColor: Style.current.textColor
-//            type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
-//            onClicked: function(){
-//                notificationSwitch.checked = !notificationSwitch.checked
-//            }
-//            StatusSwitch {
-//                id: notificationSwitch
-//                anchors.right: parent.right
-//                anchors.rightMargin: Style.current.padding
-//                anchors.verticalCenter: parent.verticalCenter
-//                onCheckedChanged: function(value) {
-//                    // TODO: enable/disable notifications
-//                    console.log("TODO: toggle")
-//                }
-//            }
-//        }
+        CommunityPopupButton {
+            id: notificationsBtn
+            //% "Notifications"
+            label: qsTrId("notifications")
+            iconName: "notifications"
+            width: parent.width
+            txtColor: Style.current.textColor
+            type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
+            onClicked: function(){
+                notificationSwitch.clicked()
+            }
+            StatusSwitch {
+                id: notificationSwitch
+                checked: !chatsModel.communities.activeCommunity.muted
+                anchors.right: parent.right
+                anchors.rightMargin: Style.current.padding
+                anchors.verticalCenter: parent.verticalCenter
+                onClicked: function () {
+                    chatsModel.communities.setCommunityMuted(chatsModel.communities.activeCommunity.id, notificationSwitch.checked)
+                }
+            }
+        }
 
         Item {
             id: spacer1

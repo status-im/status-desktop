@@ -520,6 +520,9 @@ proc declineRequestToJoinCommunity*(self: ChatModel, requestId: string) =
 proc pendingRequestsToJoinForCommunity*(self: ChatModel, communityKey: string): seq[CommunityMembershipRequest] =
   result = status_chat.pendingRequestsToJoinForCommunity(communityKey)
 
+proc setCommunityMuted*(self: ChatModel, communityId: string, muted: bool) =
+  status_chat.setCommunityMuted(communityId, muted)
+
 proc myPendingRequestsToJoin*(self: ChatModel): seq[CommunityMembershipRequest] =
   result = status_chat.myPendingRequestsToJoin()
 
