@@ -13,29 +13,29 @@ ModalPopup {
     property var channels: []
 
     property bool isEdit: false
-    readonly property int maxDescChars: 140
-    property string nameValidationError: ""
-    property bool isValid: nameInput.isValid 
 
+    readonly property int maxCategoryNameLength: 30
+    readonly property var categoryNameValidator: Utils.Validate.NoEmpty
+                                                 | Utils.Validate.TextLength
+                                                 | Utils.Validate.TextLowercase
 
     id: popup
     height: 453
 
     onOpened: {
-        nameInput.text = isEdit ? categoryName : "";
         if(isEdit){
+            nameInput.text = categoryName
             channels = JSON.parse(chatsModel.communities.activeCommunity.getChatIdsByCategory(categoryId))
         }
         nameInput.forceActiveFocus(Qt.MouseFocusReason)
-        if(isEdit){
-            validate();
-        }
     }
     onClosed: destroy()
 
-    function validate() {
-        nameInput.validate()
-        return isValid
+    function isFormValid() {
+        return Utils.validateAndReturnError(nameInput.text,
+                                            categoryNameValidator,
+                                            qsTr("category name"),
+                                            maxCategoryNameLength) === ""
     }
 
     title: isEdit ?
@@ -65,25 +65,15 @@ ModalPopup {
             Input {
                 id: nameInput
                 placeholderText: qsTr("Category title")
-                validationError: popup.nameValidationError
-
-                property bool isValid: false
+                maxLength: maxCategoryNameLength
 
                 onTextEdited: {
-                    validate()
-                }
+                    text = Utils.convertSpacesToDashesAndUpperToLowerCase(text);
 
-                function validate() {
-                    validationError = ""
-                    if (nameInput.text === "") {
-                        //% "You need to enter a name"
-                        validationError = qsTrId("you-need-to-enter-a-name")
-                    } else if (nameInput.text.length > 100) {
-                        //% "Your name needs to be 100 characters or shorter"
-                        validationError = qsTrId("your-name-needs-to-be-100-characters-or-shorter")
-                    }
-                    isValid = validationError === ""
-                    return validationError
+                    validationError = Utils.validateAndReturnError(text,
+                                                                   categoryNameValidator,
+                                                                   qsTr("category name"),
+                                                                   maxCategoryNameLength)
                 }
             }
 
@@ -213,13 +203,13 @@ ModalPopup {
     }
 
     footer: StatusButton {
-        enabled: popup.isValid
+        enabled: isFormValid()
         text: isEdit ?
             qsTr("Save") :
             qsTr("Create")
         anchors.right: parent.right
         onClicked: {
-            if (!validate()) {
+            if (!isFormValid()) {
                 scrollView.scrollBackUp()
                 return
             }
