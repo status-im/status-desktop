@@ -301,6 +301,7 @@ proc toMessage*(jsonMsg: JsonNode, pk: string): Message =
       localChatId: jsonMsg{"localChatId"}.getStr,
       messageType: jsonMsg{"messageType"}.getStr,
       replace: jsonMsg{"replace"}.getStr,
+      editedAt: $jsonMsg{"editedAt"}.getInt,
       responseTo: jsonMsg{"responseTo"}.getStr,
       rtl: jsonMsg{"rtl"}.getBool,
       seen: jsonMsg{"seen"}.getBool,

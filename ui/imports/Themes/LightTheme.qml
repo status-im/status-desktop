@@ -29,6 +29,7 @@ Theme {
     property color green: "#4EBC60"
     property color turquoise: "#007b7d"
     property color tenPercentBlack: Qt.rgba(0, 0, 0, 0.1)
+    property color fivePercentBlack: "#E5E5E5"
     property color tenPercentBlue: Qt.rgba(67, 96, 223, 0.1)
 
     property color background: white
@@ -43,6 +44,7 @@ Theme {
     property color currentUserTextColor: white
     property color secondaryBackground: lightBlue
     property color inputBackground: grey
+    property color secondaryinputBackground: fivePercentBlack
     property color inputBorderFocus: blue
     property color secondaryMenuBorder: grey3
     property color inputColor: black

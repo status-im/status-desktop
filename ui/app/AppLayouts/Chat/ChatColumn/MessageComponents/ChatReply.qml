@@ -91,6 +91,15 @@ Loader {
                 profileImage: repliedMessageUserImage
             }
 
+            Connections {
+                target: chatsModel.messageView
+                onMessageEdited: {
+                    if (responseTo === editedMessageId){
+                        lblReplyMessage.text = Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(editedMessageContent + Constants.editLabel), Emoji.size.small), isCurrentUser, appSettings.useCompactMode)
+                    }
+                }
+            }
+
             StyledTextEdit {
                 id: lblReplyAuthor
                 text: repliedMessageAuthor
@@ -141,7 +150,14 @@ Loader {
                 Component.onCompleted: textFieldImplicitWidth = implicitWidth
                 anchors.top: lblReplyAuthor.bottom
                 anchors.topMargin: nameMargin
-                text: Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), Emoji.size.small), isCurrentUser, appSettings.useCompactMode)
+                text: {
+                    if (repliedMessageIsEdited){
+                        let index = repliedMessageContent.length - 4
+                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent.slice(0, index) + Constants.editLabel + repliedMessageContent.slice(index)), Emoji.size.small), isCurrentUser, appSettings.useCompactMode)
+                    } else {
+                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), Emoji.size.small), isCurrentUser, appSettings.useCompactMode)
+                    }
+                }
                 textFormat: Text.RichText
                 color: root.elementsColor
                 readOnly: true

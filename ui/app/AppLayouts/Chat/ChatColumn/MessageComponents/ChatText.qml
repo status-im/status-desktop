@@ -11,7 +11,7 @@ Item {
     property alias textField: chatText
 
     id: root
-    visible: contentType === Constants.messageType || isEmoji
+    visible: isText || isEmoji 
     z: 51
 
     implicitHeight: visible ? (showMoreLoader.active ? childrenRect.height - 10 : chatText.height) : 0
@@ -87,6 +87,10 @@ Item {
             if(isEmoji) {
                 return Emoji.parse(msg, Emoji.size.middle);
             } else {
+                if(isEdited){
+                    let index = msg.length - 4
+                    return Utils.getMessageWithStyle(Emoji.parse(msg.slice(0, index) + Constants.editLabel + msg.slice(index)), appSettings.useCompactMode, isCurrentUser, hoveredLink)
+                }
                 return Utils.getMessageWithStyle(Emoji.parse(msg), appSettings.useCompactMode, isCurrentUser, hoveredLink)
             }
         }

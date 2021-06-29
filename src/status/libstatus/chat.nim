@@ -119,6 +119,14 @@ proc parseReactionsResponse*(chatId: string, rpcResult: JsonNode): (string, seq[
       reactions.add(jsonMsg.toReaction)
   return (rpcResult{"cursor"}.getStr, reactions)
 
+proc editMessage*(messageId: string, msg: string): string =
+  callPrivateRPC("editMessage".prefix, %* [
+    {
+      "id": messageId,
+      "text": msg
+    }
+  ])
+
 proc rpcReactions*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
   success = true
   try:
@@ -237,6 +245,9 @@ proc leaveGroupChat*(chatId: string): string =
 
 proc clearChatHistory*(chatId: string): string =
   callPrivateRPC("deleteMessagesByChatID".prefix, %* [chatId])
+
+proc deleteMessage*(messageId: string): string =
+  callPrivateRPC("deleteMessage".prefix, %* [messageId])
 
 proc renameGroup*(chatId: string, newName: string): string =
   callPrivateRPC("changeGroupChatName".prefix, %* [nil, chatId, newName])

@@ -68,6 +68,7 @@ QtObject {
     readonly property int audioType: 8
     readonly property int communityInviteType: 9
     readonly property int gapType: 10
+    readonly property int editType: 11
 
     readonly property string watchWalletType: "watch"
     readonly property string keyWalletType: "key"
@@ -146,6 +147,8 @@ QtObject {
     readonly property string ens_already_connected: "already-connected"
     readonly property string ens_connected: "connected"
     readonly property string ens_connected_dkey: "connected-different-key"
+
+    readonly property string editLabel: ` <span class="isEdited">` + qsTr("(edited)") + `</span>`
 
     readonly property var ensState: {
         //% "Username already taken :("

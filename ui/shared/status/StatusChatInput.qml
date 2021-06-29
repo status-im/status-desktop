@@ -23,6 +23,7 @@ Rectangle {
     property bool isColonPressed: false;
     property bool isReply: false
     property bool isImage: false
+    property bool isEdit: false
 
     property var recentStickers
     property var stickerPackList
@@ -66,8 +67,8 @@ Rectangle {
     anchors.left: parent.left
     anchors.right: parent.right
 
-    color: Style.current.background
-
+    color: Style.current.transparent
+    
     function calculateExtraHeightFactor() {
         const factor = (messageInputField.length / 500) + 1;
         return (factor > 5) ? 5 : factor;
@@ -694,7 +695,7 @@ Rectangle {
         anchors.leftMargin: 4
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 16
-        visible: control.chatType === Constants.chatTypeOneToOne && !control.isStatusUpdateInput
+        visible: !isEdit && control.chatType === Constants.chatTypeOneToOne && !control.isStatusUpdateInput
         onClicked: {
             highlighted = true
             chatCommandsPopup.open()
@@ -710,8 +711,8 @@ Rectangle {
         anchors.leftMargin: chatCommandsBtn.visible ? 2 : 4
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 16
-        visible: control.chatType !== Constants.chatTypePublic && !control.isStatusUpdateInput
-
+        visible: !isEdit && control.chatType !== Constants.chatTypePublic && !control.isStatusUpdateInput
+        
         onClicked: {
             highlighted = true
             imageDialog.open()
@@ -739,7 +740,7 @@ Rectangle {
             return messageInputField.implicitHeight
         }
 
-        color: Style.current.inputBackground
+        color: isEdit ? Style.current.secondaryinputBackground : Style.current.inputBackground
         radius: control.isStatusUpdateInput ? 36 :
           height > defaultInputFieldHeight + 1 || extendedArea.visible ? 16 : 32
 
@@ -783,7 +784,7 @@ Rectangle {
             anchors.bottom: control.isStatusUpdateInput ? undefined : messageInput.top
             anchors.top: control.isStatusUpdateInput ? messageInput.bottom : undefined
             anchors.topMargin: control.isStatusUpdateInput ? -Style.current.halfPadding : 0
-            color: Style.current.inputBackground
+            color: isEdit ? Style.current.secondaryinputBackground : Style.current.inputBackground
             radius: control.isStatusUpdateInput ? 36 : 16
 
             Rectangle {
@@ -1091,7 +1092,7 @@ Rectangle {
                 anchors.leftMargin: 2
                 anchors.bottom: parent.bottom
                 icon.name: "stickers_icon"
-                visible: profileModel.network.current === Constants.networkMainnet && emojiBtn.visible
+                visible: !isEdit && profileModel.network.current === Constants.networkMainnet && emojiBtn.visible
                 width: visible ? 32 : 0
                 type: "secondary"
                 onClicked: {
