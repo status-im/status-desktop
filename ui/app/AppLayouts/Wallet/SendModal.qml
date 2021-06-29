@@ -27,7 +27,19 @@ ModalPopup {
 
     function sendTransaction() {
         stack.currentGroup.isPending = true
-        walletModel.transactionsView.sendTransaction(selectFromAccount.selectedAccount.address,
+        let success = false
+        if(txtAmount.selectedAsset.address == ""){
+            success = walletModel.transactionsView.transferEth(
+                                                 selectFromAccount.selectedAccount.address,
+                                                 selectRecipient.selectedRecipient.address,
+                                                 txtAmount.selectedAmount,
+                                                 gasSelector.selectedGasLimit,
+                                                 gasSelector.selectedGasPrice,
+                                                 transactionSigner.enteredPassword,
+                                                 stack.uuid)
+        } else {
+            success = walletModel.transactionsView.transferTokens(
+                                                 selectFromAccount.selectedAccount.address,
                                                  selectRecipient.selectedRecipient.address,
                                                  txtAmount.selectedAsset.address,
                                                  txtAmount.selectedAmount,
@@ -35,6 +47,12 @@ ModalPopup {
                                                  gasSelector.selectedGasPrice,
                                                  transactionSigner.enteredPassword,
                                                  stack.uuid)
+        }
+
+        if(!success){
+            sendingError.text = qsTr("Invalid transaction parameters")
+            return sendingError.open()
+        }
     }
 
     TransactionStackView {

@@ -19,7 +19,19 @@ ModalPopup {
     property alias transactionSigner: transactionSigner
 
     property var sendTransaction: function(selectedGasLimit, selectedGasPrice, enteredPassword) {
-        let responseStr = walletModel.transactionsView.sendTransaction(selectFromAccount.selectedAccount.address,
+        let success = false
+        if(root.selectedAsset.address == Constants.zeroAddress){
+            success = walletModel.transactionsView.transferEth(
+                                                selectFromAccount.selectedAccount.address,
+                                                 selectRecipient.selectedRecipient.address,
+                                                 root.selectedAmount,
+                                                 selectedGasLimit,
+                                                 selectedGasPrice,
+                                                 enteredPassword,
+                                                 stack.uuid)
+        } else {
+            success = walletModel.transactionsView.transferTokens(
+                                                 selectFromAccount.selectedAccount.address,
                                                  selectRecipient.selectedRecipient.address,
                                                  root.selectedAsset.address,
                                                  root.selectedAmount,
@@ -27,6 +39,13 @@ ModalPopup {
                                                  selectedGasPrice,
                                                  enteredPassword,
                                                  stack.uuid)
+        }
+
+        if(!success){
+            sendingError.text = qsTr("Invalid transaction parameters")
+            return sendingError.open()
+        }
+
 
         root.close()
     }
