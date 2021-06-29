@@ -220,6 +220,9 @@ DEFAULT_TOKEN := 220a1abb4b6943a093c35d0ce4fb0732
 INFURA_TOKEN ?= $(DEFAULT_TOKEN)
 NIM_PARAMS += -d:INFURA_TOKEN:"$(INFURA_TOKEN)"
 
+# generate a status-desktop.log file with chronicles output. This file will be truncated each time the app starts
+NIM_PARAMS += -d:chronicles_sinks="textlines[stdout],textlines[nocolors,file(status-desktop.log,truncate)]"
+
 RESOURCES_LAYOUT := -d:development
 
 nim_status_client: NIM_PARAMS += $(RESOURCES_LAYOUT)
