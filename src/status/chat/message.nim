@@ -14,6 +14,7 @@ type ContentType* {.pure.} = enum
   Audio = 8
   Community = 9
   Gap = 10
+  Edit = 11
 
 type TextItem* = object
   textType*: string
@@ -58,6 +59,7 @@ type Message* = object
   stickerPackId*: int
   text*: string
   timestamp*: string
+  editedAt*: string
   whisperTimestamp*: string
   isCurrentUser*: bool
   stickerHash*: string

@@ -101,6 +101,28 @@ Rectangle {
             }
         }
 
+        Loader {
+            id: editBtn
+            active: isText && !isEdit && isCurrentUser
+            sourceComponent: StatusIconButton {
+                id: btn
+                icon.name: "edit-message"
+                width: 32
+                height: 32
+                onClicked: {
+                    isEdit = true
+                }
+                onHoveredChanged: {
+                    buttonsContainer.hoverChanged(btn.hovered)
+                }
+
+                StatusToolTip {
+                    visible: btn.hovered
+                    text: qsTr("Edit")
+                }
+            }
+        }
+
         StatusIconButton {
             id: otherBtn
             icon.name: "dots-icon"

@@ -38,6 +38,9 @@ Item {
     property int stickerPackId: -1
     property int gapFrom: 0
     property int gapTo: 0
+    property bool isEdit: false
+    property string replaces: ""
+    property bool isEdited: false
 
     z: {
         if (typeof chatLogView === "undefined") {
@@ -76,7 +79,7 @@ Item {
     property bool isAudio: contentType === Constants.audioType
     property bool isStatusMessage: contentType === Constants.systemMessagePrivateGroupType
     property bool isSticker: contentType === Constants.stickerType
-    property bool isText: contentType === Constants.messageType
+    property bool isText: contentType === Constants.messageType || contentType === Constants.editType
     property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
                              || contentType === Constants.communityInviteType || contentType === Constants.transactionType
 
@@ -87,6 +90,7 @@ Item {
     property string repliedMessageAuthor: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "userName") : "";
     property string repliedMessageAuthorPubkey: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "publicKey") : "";
     property bool repliedMessageAuthorIsCurrentUser: replyMessageIndex > -1 ? repliedMessageAuthorPubkey === profileModel.profile.pubKey : "";
+    property bool repliedMessageIsEdited: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "isEdited") === "true" : false;
     property string repliedMessageContent: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "message") : "";
     property int repliedMessageType: replyMessageIndex > -1 ? parseInt(chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "contentType")) : 0;
     property string repliedMessageImage: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "image") : "";
@@ -160,6 +164,17 @@ Item {
         onContactBlocked: {
             // This hack is used because removeMessagesByUserId sometimes does not remove the messages
             if(publicKey === fromAuthor){
+                root.visible = 0;
+                root.height = 0;
+            }
+        }
+    }
+
+    Connections {
+        target: chatsModel.messageView
+        onHideMessage: {
+            // This hack is used because message_list deleteMessage sometimes does not remove the messages (there might be an issue with the delegate model)
+            if(mId === messageId){
                 root.visible = 0;
                 root.height = 0;
             }

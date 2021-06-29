@@ -42,6 +42,8 @@ type
     PinnedBy = UserRole + 31
     GapFrom = UserRole + 32
     GapTo = UserRole + 33
+    Replace = UserRole + 34
+    IsEdited = UserRole + 35
 
 QtObject:
   type
@@ -50,11 +52,13 @@ QtObject:
       status: Status
       id*: string
       messageIndex: Table[string, int]
+      isEdited*: Table[string, bool]
       messageReactions*: Table[string, string]
       timedoutMessages: HashSet[string]
 
   proc delete(self: ChatMessageList) =
     self.messages = @[]
+    self.isEdited = initTable[string, bool]()
     self.messageIndex = initTable[string, int]()
     self.timedoutMessages = initHashSet[string]()
     self.QAbstractListModel.delete
@@ -85,8 +89,16 @@ QtObject:
 
     result.messageIndex = initTable[string, int]()
     result.timedoutMessages = initHashSet[string]()
+    result.isEdited = initTable[string, bool]()
     result.status = status
     result.setup
+
+  
+  proc hasMessage*(self: ChatMessageList, messageId: string): bool =
+    return self.messageIndex.hasKey(messageId)
+
+  proc getMessage*(self: ChatMessageList, messageId: string): Message =
+    return self.messages[self.messageIndex[messageId]]
 
   proc deleteMessage*(self: ChatMessageList, messageId: string) =
     if not self.messageIndex.hasKey(messageId): return
@@ -95,6 +107,9 @@ QtObject:
     self.messages.delete(messageIndex)
     self.messageIndex.del(messageId)
     self.messageReactions.del(messageId)
+     # update indexes
+    for i in countup(0, self.messages.len - 1):
+      self.messageIndex[self.messages[i].id] = i
     self.endRemoveRows()
 
   proc deleteMessagesByChatId*(self: ChatMessageList, chatId: string) =
@@ -102,6 +117,14 @@ QtObject:
     for message in messages:
       self.deleteMessage(message.id)
 
+  proc replaceMessage*(self: ChatMessageList, message: Message) =
+    let msgIdx = self.messageIndex[message.id]
+    let topLeft = self.createIndex(msgIdx, 0, nil)
+    let bottomRight = self.createIndex(msgIdx, 0, nil)
+    self.messages[msgIdx].parsedText = message.parsedText
+    self.messages[msgIdx].text = message.text
+    self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.Message.int, ChatMessageRoles.PlainText.int, ChatMessageRoles.IsEdited.int])
+  
   proc resetTimeOut*(self: ChatMessageList, messageId: string) =
     if not self.messageIndex.hasKey(messageId): return
     let msgIdx = self.messageIndex[messageId]
@@ -145,6 +168,7 @@ QtObject:
       return
     let message = self.messages[index.row]
     let chatMessageRole = role.ChatMessageRoles
+    let isEdited = if self.isEdited.hasKey(message.id): self.isEdited[message.id] else: false
     case chatMessageRole:
       of ChatMessageRoles.UserName: result = newQVariant(message.userName)
       of ChatMessageRoles.Message: result = newQVariant(renderBlock(message, self.status.chat.contacts))
@@ -188,6 +212,8 @@ QtObject:
       of ChatMessageRoles.LocalName: result = newQVariant(message.localName)
       of ChatMessageRoles.GapFrom: result = newQVariant(message.gapFrom)
       of ChatMessageRoles.GapTo: result = newQVariant(message.gapTo)
+      of ChatMessageRoles.Replace: result = newQVariant(message.replace)
+      of ChatMessageRoles.IsEdited: result = newQVariant(isEdited)
 
   method roleNames(self: ChatMessageList): Table[int, string] =
     {
@@ -222,7 +248,9 @@ QtObject:
       ChatMessageRoles.LocalName.int:"localName",
       ChatMessageRoles.StickerPackId.int:"stickerPackId",
       ChatMessageRoles.GapFrom.int:"gapFrom",
-      ChatMessageRoles.GapTo.int:"gapTo"
+      ChatMessageRoles.GapTo.int:"gapTo",
+      ChatMessageRoles.Replace.int:"replaces",
+      ChatMessageRoles.IsEdited.int:"isEdited"
     }.toTable
 
   proc getMessageIndex*(self: ChatMessageList, messageId: string): int {.slot.} =
@@ -246,10 +274,17 @@ QtObject:
     of "image": result = $(message.image)
     of "contentType": result = $(message.contentType.int)
     of "sticker": result = $(message.stickerHash.decodeContentHash())
+    of "isEdited": result = if self.isEdited.hasKey(message.id): $self.isEdited[message.id] else: $false
     else: result = ("")
 
   proc add*(self: ChatMessageList, message: Message) =
-    if self.messageIndex.hasKey(message.id): return # duplicated msg
+    if self.messageIndex.hasKey(message.id) and message.editedAt == "0": return # duplicated msg
+    
+    if message.editedAt != "0": 
+      self.isEdited[message.id] = true
+      if self.messageIndex.hasKey(message.id):
+        self.replaceMessage(message)
+        return
 
     self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len)
     self.messageIndex[message.id] = self.messages.len

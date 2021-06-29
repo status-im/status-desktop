@@ -118,7 +118,9 @@ QtObject:
 
     result = updatedMessage
 
-  proc sendMessage*(self: MessageView, message: string, replyTo: string, contentType: int = ContentType.Message.int, isStatusUpdate: bool = false, contactsString: string = "") {.slot.} =
+  proc hideMessage(self: MessageView, mId: string) {.signal.}
+
+  proc sendOrEditMessage*(self: MessageView, message: string, replyTo: string, contentType: int = ContentType.Message.int, isStatusUpdate: bool = false, contactsString: string = "", isEdit: bool = false, messageId: string = "") {.slot.} =
     let aliasPattern = re(r"(@[A-z][a-z]+ [A-z][a-z]* [A-z][a-z]*)", flags = {reStudy, reIgnoreCase})
     let ensPattern = re(r"(@\w+(?=(\.stateofus)?\.eth))", flags = {reStudy, reIgnoreCase})
     let namePattern = re(r"(@\w+)", flags = {reStudy, reIgnoreCase})
@@ -149,7 +151,13 @@ QtObject:
     if isStatusUpdate:
       channelId = "@" & self.pubKey
 
-    self.status.chat.sendMessage(channelId, m, replyTo, contentType)
+    if not isEdit:
+      self.status.chat.sendMessage(channelId, m, replyTo, contentType)
+    else:
+      self.status.chat.editMessage(messageId, m)
+
+  proc sendMessage*(self: MessageView, message: string, replyTo: string, contentType: int = ContentType.Message.int, isStatusUpdate: bool = false, contactsString: string = "") {.slot.} =
+    self.sendOrEditMessage(message, replyTo, contentType, isStatusUpdate, contactsString, false, "")
 
   proc verifyMessageSent*(self: MessageView, data: string) {.slot.} =
     let messageData = data.parseJson
@@ -163,6 +171,12 @@ QtObject:
   proc sendingMessage*(self: MessageView) {.signal.}
 
   proc sendingMessageFailed*(self: MessageView) {.signal.}
+
+  proc messageEdited(self: MessageView, editedMessageId: string, editedMessageContent: string) {.signal.}
+
+  proc editMessage*(self: MessageView, messageId: string, originalMessageId: string, message: string, contactsString: string = "") {.slot.} =
+    self.sendOrEditMessage(message, "", ContentType.Message.int, false, contactsString, true, originalMessageId)
+    self.messageEdited(originalMessageId, message)
 
   proc messagePushed*(self: MessageView, messageIndex: int) {.signal.}
   proc newMessagePushed*(self: MessageView) {.signal.}
@@ -357,6 +371,7 @@ QtObject:
 
   proc deleteMessage*(self: MessageView, channelId: string, messageId: string) =
     self.messageList[channelId].deleteMessage(messageId)
+    self.hideMessage(messageId)
 
   proc removeMessagesByUserId(self: MessageView, publicKey: string) {.slot.} =
     for k in self.messageList.keys:

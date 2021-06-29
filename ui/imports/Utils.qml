@@ -85,6 +85,10 @@ QtObject {
                     `.emoji {` +
                         `vertical-align: bottom;` +
                     `}` +
+                    `span.isEdited {` +
+                        `color: ${Style.current.secondaryText};` +
+                        `margin-left: 5px` +
+                    `}` +
                 `</style>` +
                 `${msg}`
     }

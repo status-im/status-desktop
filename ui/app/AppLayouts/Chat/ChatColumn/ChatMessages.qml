@@ -313,6 +313,8 @@ ScrollView {
             sticker: model.sticker
             contentType: model.contentType
             outgoingStatus: model.outgoingStatus
+            replaces: model.replaces
+            isEdited: model.isEdited
             responseTo: model.responseTo
             authorCurrentMsg: msgDelegate.ListView.section
             // The previous message is actually the nextSection since we reversed the list order

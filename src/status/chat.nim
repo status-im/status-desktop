@@ -263,7 +263,7 @@ proc setActiveChannel*(self: ChatModel, chatId: string) =
 proc processMessageUpdateAfterSend(self: ChatModel, response: string, forceActiveChat: bool = false): (seq[Chat], seq[Message])  =
   result = self.processChatUpdate(parseJson(response))
   var (chats, messages) = result
-  if chats.len == 0 or messages.len == 0:
+  if chats.len == 0 and messages.len == 0:
     self.events.emit("sendingMessageFailed", MessageArgs())
   else:
     if (forceActiveChat):
@@ -275,6 +275,10 @@ proc processMessageUpdateAfterSend(self: ChatModel, response: string, forceActiv
 proc sendMessage*(self: ChatModel, chatId: string, msg: string, replyTo: string = "", contentType: int = ContentType.Message.int, communityId: string = "", forceActiveChat: bool = false) =
   var response = status_chat.sendChatMessage(chatId, msg, replyTo, contentType, communityId)
   discard self.processMessageUpdateAfterSend(response, forceActiveChat)
+
+proc editMessage*(self: ChatModel, messageId: string, msg: string) =
+  var response = status_chat.editMessage(messageId, msg)
+  discard self.processMessageUpdateAfterSend(response, false)
 
 proc sendImage*(self: ChatModel, chatId: string, image: string) =
   var response = status_chat.sendImageMessage(chatId, image)

@@ -33,7 +33,7 @@ Item {
 
     ChatButtons {
         contentType: root.contentType
-        parentIsHovered: root.isHovered
+        parentIsHovered: !isEdit && root.isHovered
         onHoverChanged: hovered && setHovered(messageId, hovered)
         anchors.right: parent.right
         anchors.rightMargin: 20
@@ -73,9 +73,14 @@ Item {
                 + (emojiReactionLoader.active ? emojiReactionLoader.height: 0)
                 + (retry.visible && !chatTime.visible ? Style.current.smallPadding : 0)
                 + (pinnedRectangleLoader.active ? Style.current.smallPadding : 0)
+                + (isEdit ? 25 : 0)
         width: parent.width
 
         color: {
+            if (isEdit) {
+                return Style.current.backgroundHoverLight
+            }
+
             if (activityCenterMessage) {
                 return read ? Style.current.transparent : Utils.setColorAlpha(Style.current.blue, 0.1)
             }
@@ -157,7 +162,7 @@ Item {
 
         UsernameLabel {
             id: chatName
-            visible: isMessage && headerRepeatCondition
+            visible: !isEdit && isMessage && headerRepeatCondition
             anchors.leftMargin: root.chatHorizontalPadding
             anchors.top: chatImage.top
             anchors.left: chatImage.right
@@ -165,11 +170,66 @@ Item {
 
         ChatTime {
             id: chatTime
-            visible: headerRepeatCondition
+            visible: !isEdit && headerRepeatCondition
             anchors.verticalCenter: chatName.verticalCenter
             anchors.left: chatName.right
             anchors.leftMargin: 4
             color: Style.current.secondaryText
+        }
+
+        Loader {
+            id: editMessageLoader
+            active: isEdit
+            anchors.top: chatReply.active ? chatReply.bottom : parent.top
+            anchors.left: chatImage.right
+            anchors.leftMargin: root.chatHorizontalPadding
+            anchors.right: parent.right
+            anchors.rightMargin: root.chatHorizontalPadding
+            height: (item !== null && typeof(item)!== 'undefined')? item.height: 0
+            sourceComponent: Item {
+                id: editText
+                height: childrenRect.height
+                StatusChatInput {
+                    Component.onCompleted: {
+                        textInput.forceActiveFocus();
+                        textInput.cursorPosition = textInput.length
+                    }
+                    id: editTextInput
+                    chatInputPlaceholder: qsTrId("type-a-message-")
+                    chatType: chatsModel.channelView.activeChannel.chatType
+                    isEdit: true
+                    textInput.text: Emoji.parse(message.replace(/(<a href="\/\/0x[0-9A-Fa-f]+" class="mention">)/g, "$1@"))
+                }
+
+                StatusButton {
+                    id: cancelBtn
+                    anchors.left: parent.left
+                    anchors.leftMargin: Style.current.halfPadding
+                    anchors.top: editTextInput.bottom
+                    bgColor: Style.current.transparent
+                    text: qsTr("Cancel")
+                    onClicked: {
+                        isEdit = false
+                        editTextInput.textInput.text = Emoji.parse(message)
+                    }
+                }
+
+                StatusButton {
+                    id: saveBtn
+                    anchors.left: cancelBtn.right
+                    anchors.leftMargin: Style.current.halfPadding
+                    anchors.top: editTextInput.bottom
+                    text: qsTr("Save")
+                    onClicked: {
+                        let msg = chatsModel.plainText(Emoji.deparse(editTextInput.textInput.text))
+                        if (msg.length > 0){
+                            msg = chatInput.interpretMessage(msg)
+                            isEdit = false
+                            chatsModel.messageView.editMessage(messageId, contentType == Constants.editType ? replaces : messageId, msg, JSON.stringify(suggestionsObj));
+                        }
+                    }
+                }
+            }
         }
 
         Item {
@@ -182,7 +242,8 @@ Item {
             anchors.leftMargin: root.chatHorizontalPadding
             anchors.right: parent.right
             anchors.rightMargin: root.chatHorizontalPadding
-
+            visible: !isEdit
+            
             ChatText {
                 readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + root.chatHorizontalPadding
                 id: chatText

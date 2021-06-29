@@ -14,6 +14,8 @@ PopupMenu {
     property bool emojiOnly: false
     property bool hideEmojiPicker: false
     property bool pinnedMessage: false
+    property bool isText: false
+    property bool isCurrentUser: false
     property string linkUrls: ""
     property alias emojiContainer: emojiContainer
 
@@ -26,6 +28,8 @@ PopupMenu {
     property var fromAuthor: ""
     property var text: ""
     property var emojiReactionsReactedByUser: []
+    property var onClickEdit: function(){}
+
     subMenuIcons: [
         {
             source: Qt.resolvedUrl("../../../../shared/img/copy-to-clipboard-icon"),
@@ -236,6 +240,19 @@ PopupMenu {
         icon.height: 16
         enabled: !emojiOnly && !copyLinkAction.enabled
     }
+
+    Action {
+        id: editMessageAction
+        text: qsTr("Edit message")
+        onTriggered: {
+            onClickEdit();
+        }
+        icon.source: "../../../img/profileActive.svg"
+        icon.width: 16
+        icon.height: 16
+        enabled: isCurrentUser && isText
+    }
+
     Action {
         text: messageContextMenu.isProfile ?
                   //% "Send message"
