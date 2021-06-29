@@ -12,14 +12,17 @@ ModalPopup {
     property QtObject channel
     property bool isEdit: false
     property string categoryId: ""
-    readonly property int maxDescChars: 140
-    property string nameValidationError: ""
+
+    readonly property int maxChannelNameLength: 30
+    readonly property var channelNameValidator: Utils.Validate.NoEmpty
+                                                | Utils.Validate.TextLength
+                                                | Utils.Validate.TextLowercaseLettersNumberAndDashes
+
+    readonly property int maxChannelDescLength: 140
+    readonly property var channelDescValidator: Utils.Validate.NoEmpty
+                                                | Utils.Validate.TextLength
     
     property Component pinnedMessagesPopupComponent
-
-    property bool isValid:
-        nameInput.isValid &&
-        descriptionTextArea.isValid
 
     id: popup
     height: 475
@@ -37,10 +40,15 @@ ModalPopup {
     }
     onClosed: destroy()
 
-    function validate() {
-        nameInput.validate()
-        descriptionTextArea.validate()
-        return isValid
+    function isFormValid() {
+        return Utils.validateAndReturnError(nameInput.text,
+                                            channelNameValidator,
+                                            qsTr("channel name"),
+                                            maxChannelNameLength) === ""
+               && Utils.validateAndReturnError(descriptionTextArea.text,
+                                               channelDescValidator,
+                                               qsTr("channel decription"),
+                                               maxChannelDescLength) === ""
     }
 
     //% "New channel"
@@ -70,30 +78,15 @@ ModalPopup {
                 id: nameInput
                 //% "A cool name"
                 placeholderText: qsTrId("a-cool-name")
-                validationError: popup.nameValidationError
-
-                property bool isValid: false || isEdit
+                maxLength: popup.maxChannelNameLength
 
                 onTextEdited: {
-                    if (text.includes(" ")) {
-                        text = text.replace(" ", "-")
-                    }
-                    validate()
-                }
+                    text = Utils.convertSpacesToDashesAndUpperToLowerCase(text);
 
-                function validate() {
-                    validationError = ""
-                    if (nameInput.text === "") {
-                        //% "You need to enter a name"
-                        validationError = qsTrId("you-need-to-enter-a-name")
-                    } else if (!(/^[a-z0-9\-]+$/.test(nameInput.text))) {
-                        validationError = qsTr("Use only lowercase letters (a to z), numbers & dashes (-). Do not use chat keys.")
-                    } else if (nameInput.text.length > 100) {
-                        //% "Your name needs to be 100 characters or shorter"
-                        validationError = qsTrId("your-name-needs-to-be-100-characters-or-shorter")
-                    }
-                    isValid = validationError === ""
-                    return validationError
+                    validationError = Utils.validateAndReturnError(text,
+                                                                   channelNameValidator,
+                                                                   qsTr("channel name"),
+                                                                   maxChannelNameLength)
                 }
             }
 
@@ -103,36 +96,28 @@ ModalPopup {
                 label: qsTrId("channel-description")
                 //% "What your channel is about"
                 placeholderText: qsTrId("what-your-channel-is-about")
-                //% "The description cannot exceed %1 characters"
-                validationError: descriptionTextArea.text.length > popup.maxDescChars ? qsTrId("the-description-cannot-exceed-140-characters") :
-                                                                                  popup.descriptionValidationError || ""
+
                 anchors.top: nameInput.bottom
                 anchors.topMargin: Style.current.bigPadding
                 customHeight: 88
 
-                property bool isValid: false || isEdit
-                onTextChanged: validate()
-
-                function resetValidation() {
-                    isValid = false
-                    validationError = ""
-                }
-
-                function validate() {
-                    validationError = ""
-                    if (text.length > popup.maxDescChars) {
-                        validationError = qsTrId("the-description-cannot-exceed-140-characters")
+                onTextChanged: {
+                    if(text.length > maxChannelDescLength)
+                    {
+                        textField.remove(maxChannelDescLength, text.length)
+                        return
                     }
-                    if (text === "") {
-                        validationError = qsTr("You need to enter a description")
-                    }
-                    isValid = validationError === ""
+
+                    validationError = Utils.validateAndReturnError(text,
+                                                                   channelDescValidator,
+                                                                   qsTr("channel decription"),
+                                                                   maxChannelDescLength)
                 }
             }
 
             StyledText {
                 id: charLimit
-                text: `${descriptionTextArea.text.length}/${maxDescChars}`
+                text: `${descriptionTextArea.text.length}/${maxChannelDescLength}`
                 anchors.top: descriptionTextArea.bottom
                 anchors.topMargin: !descriptionTextArea.validationError ? 5 : - Style.current.smallPadding
                 anchors.right: descriptionTextArea.right
@@ -223,14 +208,14 @@ ModalPopup {
     }
 
     footer: StatusButton {
-        enabled: popup.isValid
+        enabled: isFormValid()
         text: isEdit ?
               qsTr("Save") :
               //% "Create"
               qsTrId("create")
         anchors.right: parent.right
         onClicked: {
-            if (!validate()) {
+            if (!isFormValid()) {
                 scrollView.scrollBackUp()
                 return
             }

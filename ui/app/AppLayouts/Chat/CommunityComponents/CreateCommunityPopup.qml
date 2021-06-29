@@ -7,15 +7,20 @@ import "../../../../shared"
 import "../../../../shared/status"
 
 ModalPopup {
-    readonly property int maxDescChars: 140
-
     property QtObject community: chatsModel.communities.activeCommunity
 
     property bool isEdit: false
-    property bool isValid:
-        nameInput.isValid &&
-        descriptionTextArea.isValid &&
-        colorPicker.isValid
+
+    readonly property int maxCommunityNameLength: 30
+    readonly property var communityNameValidator: Utils.Validate.NoEmpty
+                                                  | Utils.Validate.TextLength
+
+    readonly property int maxCommunityDescLength: 140
+    readonly property var communityDescValidator: Utils.Validate.NoEmpty
+                                                  | Utils.Validate.TextLength
+
+    readonly property var communityColorValidator: Utils.Validate.NoEmpty
+                                                   | Utils.Validate.TextHexColor
 
     id: popup
     height: 600
@@ -34,11 +39,17 @@ ModalPopup {
     }
     onClosed: destroy()
 
-    function validate() {
-        nameInput.validate()
-        descriptionTextArea.validate()
-        colorPicker.validate()
-        return isValid
+    function isFormValid() {
+        return Utils.validateAndReturnError(nameInput.text,
+                                            communityNameValidator,
+                                            qsTr("community name"),
+                                            maxCommunityNameLength) === ""
+               && Utils.validateAndReturnError(descriptionTextArea.text,
+                                               communityDescValidator,
+                                               qsTr("community decription"),
+                                               maxCommunityDescLength) === ""
+               && Utils.validateAndReturnError(colorPicker.text,
+                                               communityColorValidator) === ""
     }
 
     title: isEdit ?
@@ -78,28 +89,13 @@ ModalPopup {
                 label: qsTrId("name-your-community")
                 //% "A catchy name"
                 placeholderText: qsTrId("name-your-community-placeholder")
-                property bool isValid: false
+                maxLength: maxCommunityNameLength
 
                 onTextEdited: {
-                    if (text.includes(" ")) {
-                        text = text.replace(" ", "-")
-                    }
-                    validate()
-                }
-
-                function validate() {
-                    validationError = ""
-                    if (nameInput.text === "") {
-                        //% "You need to enter a name"
-                        validationError = qsTrId("you-need-to-enter-a-name")
-                    } else if (!(/^[a-z0-9\-]+$/.test(nameInput.text))) {
-                        validationError = qsTr("Use only lowercase letters (a to z), numbers & dashes (-). Do not use chat keys.")
-                    } else if (nameInput.text.length > 100) {
-                        //% "Your name needs to be 100 characters or shorter"
-                        validationError = qsTrId("your-name-needs-to-be-100-characters-or-shorter")
-                    }
-                    isValid = validationError === ""
-                    return validationError
+                    validationError = Utils.validateAndReturnError(text,
+                                                                   communityNameValidator,
+                                                                   qsTr("community name"),
+                                                                   maxCommunityNameLength)
                 }
             }
 
@@ -109,37 +105,29 @@ ModalPopup {
                 label: qsTrId("give-a-short-description-community")
                 //% "What your community is about"
                 placeholderText: qsTrId("what-your-community-is-about")
-                //% "The description cannot exceed 140 characters"
-                validationError: descriptionTextArea.text.length > popup.maxDescChars ? qsTrId("the-description-cannot-exceed-140-characters") :
-                                                                                  popup.descriptionValidationError || ""
+
                 anchors.top: nameInput.bottom
                 anchors.topMargin: Style.current.bigPadding
                 customHeight: 88
                 textField.wrapMode: TextEdit.Wrap
 
-                property bool isValid: false
-                onTextChanged: validate()
-
-                function resetValidation() {
-                    isValid = false
-                    validationError = ""
-                }
-
-                function validate() {
-                    validationError = ""
-                    if (text.length > popup.maxDescChars) {
-                        validationError = qsTrId("the-description-cannot-exceed-140-characters")
+                onTextChanged: {
+                    if(text.length > maxCommunityDescLength)
+                    {
+                        textField.remove(maxCommunityDescLength, text.length)
+                        return
                     }
-                    if (text === "") {
-                        validationError = qsTr("You need to enter a description")
-                    }
-                    isValid = validationError === ""
+
+                    validationError = Utils.validateAndReturnError(text,
+                                                                   communityDescValidator,
+                                                                   qsTr("community decription"),
+                                                                   maxCommunityDescLength)
                 }
             }
 
             StyledText {
                 id: charLimit
-                text: `${descriptionTextArea.text.length}/${popup.maxDescChars}`
+                text: `${descriptionTextArea.text.length}/${maxCommunityDescLength}`
                 anchors.top: descriptionTextArea.bottom
                 anchors.topMargin: !descriptionTextArea.validationError ? 5 : - Style.current.smallPadding
                 anchors.right: descriptionTextArea.right
@@ -285,7 +273,6 @@ ModalPopup {
 
             Input {
                 property string defaultColor: Style.current.blue
-                property bool isValid: true
 
                 id: colorPicker
                 label: qsTr("Community color")
@@ -295,21 +282,8 @@ ModalPopup {
                 textField.text: defaultColor
                 textField.onReleased: colorDialog.open()
 
-                onTextChanged: validate()
-
-                function resetValidation() {
-                    isValid = true
-                    validationError = ""
-                }
-
-                function validate() {
-                    validationError = ""
-                    if (text === "") {
-                        validationError = qsTr("Please enter a color")
-                    } else if (!Utils.isHexColor(colorPicker.text)) {
-                        validationError = qsTr("Must be an hexadecimal color (eg: #4360DF)")
-                    }
-                    isValid = validationError === ""
+                onTextChanged: {
+                    validationError = Utils.validateAndReturnError(text, communityColorValidator)
                 }
 
                 StatusIconButton {
@@ -447,6 +421,7 @@ ModalPopup {
         }
         StatusButton {
             id: btnCreateEdit
+            enabled: isFormValid()
             text: isEdit ?
                 //% "Save"
                 qsTrId("Save") :
@@ -454,7 +429,7 @@ ModalPopup {
                 qsTrId("create")
             anchors.right: parent.right
             onClicked: {
-                if (!validate()) {
+                if (!isFormValid()) {
                     scrollView.scrollBackUp()
                     return
                 }

@@ -552,6 +552,57 @@ QtObject {
         return Array.from(new Set(array))
     }
 
+    function hasUpperCaseLetter(str) {
+        return (/[A-Z]/.test(str))
+    }
+
+    function convertSpacesToDashesAndUpperToLowerCase(str)
+    {
+        if (str.includes(" "))
+            str = str.replace(/ /g, "-")
+
+        if(hasUpperCaseLetter(str))
+            str = str.toLowerCase()
+
+        return str
+    }
+
+    /* Validation section start */
+
+    enum Validate {
+        NoEmpty = 0x01,
+        TextLength = 0x02,
+        TextHexColor = 0x04,
+        TextLowercaseLettersNumberAndDashes = 0x08
+    }
+
+    function validateAndReturnError(str, validation, fieldName = "field", limit = 0)
+    {
+        let errMsg = ""
+
+        if(validation & Utils.Validate.NoEmpty && str === "") {
+            errMsg = qsTr("You need to enter a %1").arg(fieldName)
+        }
+
+        if(validation & Utils.Validate.TextLength && str.length > limit) {
+            errMsg = qsTr("The %1 cannot exceed %2 characters").arg(fieldName, limit)
+        }
+
+        if(validation & Utils.Validate.TextHexColor && !isHexColor(str)) {
+            errMsg = qsTr("Must be an hexadecimal color (eg: #4360DF)")
+        }
+
+        if(validation & Utils.Validate.TextLowercaseLettersNumberAndDashes && !isValidChannelName(str)) {
+            errMsg = qsTr("Use only lowercase letters (a to z), numbers & dashes (-). Do not use chat keys.")
+        }
+
+        return errMsg
+    }
+
+    /* Validation section end */
+
+
+
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|_|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)

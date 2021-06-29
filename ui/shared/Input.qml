@@ -9,6 +9,7 @@ Item {
     property string placeholderText: "My placeholder"
     property string placeholderTextColor: Style.current.secondaryText
     property alias text: inputValue.text
+    property alias maxLength: inputValue.maximumLength
     property string validationError: ""
     property alias validationErrorAlignment: validationErrorText.horizontalAlignment
     property int validationErrorTopMargin: 1
