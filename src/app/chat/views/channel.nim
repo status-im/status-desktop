@@ -113,13 +113,14 @@ QtObject:
     if (self.communities.activeCommunity.active and self.communities.activeCommunity.communityItem.lastChannelSeen != selectedChannel.id):
       self.communities.activeCommunity.communityItem.lastChannelSeen = selectedChannel.id
       self.communities.joinedCommunityList.replaceCommunity(self.communities.activeCommunity.communityItem)
+    else:
+      self.previousActiveChannelIndex = index
 
     if not forceUpdate and self.activeChannel.id == selectedChannel.id: return
 
     if selectedChannel.chatType.isOneToOne and selectedChannel.id == selectedChannel.name:
       selectedChannel.name = self.userNameOrAlias(selectedChannel.id)
 
-    self.previousActiveChannelIndex = index
     self.activeChannel.setChatItem(selectedChannel)
     self.status.chat.setActiveChannel(selectedChannel.id)
 
