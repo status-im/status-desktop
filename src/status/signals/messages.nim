@@ -212,6 +212,7 @@ proc toCommunity*(jsonCommunity: JsonNode): Community =
     canManageUsers: jsonCommunity{"canManageUsers"}.getBool,
     canJoin: jsonCommunity{"canJoin"}.getBool,
     isMember: jsonCommunity{"isMember"}.getBool,
+    muted: jsonCommunity{"muted"}.getBool,
     chats: newSeq[Chat](),
     members: newSeq[string](),
     communityColor: jsonCommunity{"color"}.getStr,

@@ -524,6 +524,8 @@ proc banUserFromCommunity*(pubKey: string, communityId: string): string =
     "user": pubKey
   }])
 
+proc setCommunityMuted*(communityId: string, muted: bool) =
+  discard callPrivateRPC("setCommunityMuted".prefix, %*[communityId, muted])
 
 proc parseChatPinnedMessagesResponse*(rpcResult: JsonNode): (string, seq[Message]) =
   var messages: seq[Message] = @[]

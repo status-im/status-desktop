@@ -425,6 +425,16 @@ QtObject:
     for community in self.joinedCommunityList.communities:
       for chat in community.chats:
         if (chat.id == channelId):
+          if community.muted:
+            chat.muted = true
           return chat
-      
+  
+  proc setCommunityMuted*(self: CommunitiesView, communityId: string, muted: bool) {.slot.} =
+    self.status.chat.setCommunityMuted(communityId, muted)
+    if (communityId == self.activeCommunity.communityItem.id):
+      self.activeCommunity.setMuted(muted)
+
+    var community = self.joinedCommunityList.getCommunityById(communityId)
+    community.muted = muted
+    self.joinedCommunityList.replaceCommunity(community)
     

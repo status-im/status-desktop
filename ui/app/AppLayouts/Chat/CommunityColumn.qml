@@ -246,7 +246,23 @@ Rectangle {
             anchors.top: emptyViewAndSuggestionsLoader.bottom
             anchors.topMargin: active ? Style.current.padding : 0
             sourceComponent: Component {
-                BackUpCommuntyBanner {}
+                Item {
+                    width: parent.width
+                    height: backupBanner.height
+
+                    BackUpCommuntyBanner {
+                        id: backupBanner
+                    }
+                    MouseArea {
+                        anchors.fill: backupBanner
+                        acceptedButtons: Qt.RightButton
+                        onClicked: {
+                            /* Prevents sending events to the component beneath
+                               if Right Mouse Button is clicked. */
+                            mouse.accepted = false;
+                        }
+                    }
+                }
             }
         }
     }

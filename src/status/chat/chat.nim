@@ -125,6 +125,7 @@ type Community* = object
   canManageUsers*: bool
   canJoin*: bool
   isMember*: bool
+  muted*: bool
   communityImage*: IdentityImage
   membershipRequests*: seq[CommunityMembershipRequest]
   communityColor*: string

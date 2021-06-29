@@ -26,6 +26,7 @@ type
     IsMember = UserRole + 15
     UnviewedMessagesCount = UserRole + 16
     CommunityColor = UserRole + 17
+    Muted = UserRole + 18
 
 QtObject:
   type
@@ -106,6 +107,7 @@ QtObject:
       of CommunityRoles.CanRequestAccess: result = newQVariant(communityItem.canRequestAccess.bool)
       of CommunityRoles.CanManageUsers: result = newQVariant(communityItem.canManageUsers.bool)
       of CommunityRoles.CanJoin: result = newQVariant(communityItem.canJoin.bool)
+      of CommunityRoles.Muted: result = newQVariant(communityItem.muted.bool)
       of CommunityRoles.IsMember: result = newQVariant(communityItem.isMember.bool)
       of CommunityRoles.NumMembers: result = newQVariant(communityItem.members.len)
       of CommunityRoles.UnviewedMessagesCount: result = newQVariant(communityItem.unviewedMessagesCount)
@@ -140,6 +142,7 @@ QtObject:
       CommunityRoles.CanManageUsers.int: "canManageUsers",
       CommunityRoles.CanJoin.int: "canJoin",
       CommunityRoles.IsMember.int: "isMember",
+      CommunityRoles.Muted.int: "muted",
       CommunityRoles.NumMembers.int: "nbMembers",
       CommunityRoles.UnviewedMessagesCount.int: "unviewedMessagesCount",
       CommunityRoles.ThumbnailImage.int:"thumbnailImage",
