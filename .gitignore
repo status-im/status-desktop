@@ -29,3 +29,4 @@ resources.qrc
 status-react-translations/
 /.update.timestamp
 notarization.log
+status-desktop.log
