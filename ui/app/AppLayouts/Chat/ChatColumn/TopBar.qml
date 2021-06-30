@@ -70,6 +70,19 @@ Item {
         anchors.rightMargin: Style.current.smallPadding
         spacing: 12
 
+        StatusIconButton {
+            id: showUsersBtn
+            anchors.verticalCenter: parent.verticalCenter
+            icon.name: "channel-icon-group"
+            iconColor: showUsers ? Style.current.contextMenuButtonForegroundColor : Style.current.contextMenuButtonBackgroundHoverColor
+            hoveredIconColor: Style.current.contextMenuButtonForegroundColor
+            highlightedBackgroundColor: Style.current.contextMenuButtonBackgroundHoverColor
+            onClicked: {
+                showUsers = !showUsers
+            }
+            visible: appSettings.showOnlineUsers && chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne
+        }
+
         StatusContextMenuButton {
             id: moreActionsBtn
             anchors.verticalCenter: parent.verticalCenter

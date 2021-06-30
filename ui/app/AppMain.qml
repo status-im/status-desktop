@@ -326,6 +326,7 @@ StatusAppLayout {
         property bool nodeManagementEnabled: false
         property bool isBrowserEnabled: false
         property bool isActivityCenterEnabled: false
+        property bool showOnlineUsers: false
         property bool displayChatImages: false
         property bool useCompactMode: true
         property bool timelineEnabled: true
