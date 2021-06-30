@@ -7,6 +7,7 @@ import ../../../status/profile/profile
 import ../../../status/ens
 import strutils
 import message_format
+import user_list
 
 type
   ChatMessageRoles {.pure.} = enum
@@ -55,6 +56,7 @@ QtObject:
       isEdited*: Table[string, bool]
       messageReactions*: Table[string, string]
       timedoutMessages: HashSet[string]
+      userList: UserListView
 
   proc delete(self: ChatMessageList) =
     self.messages = @[]
@@ -90,6 +92,7 @@ QtObject:
     result.messageIndex = initTable[string, int]()
     result.timedoutMessages = initHashSet[string]()
     result.isEdited = initTable[string, bool]()
+    result.userList = newUserListView(status)
     result.status = status
     result.setup
 
@@ -292,6 +295,7 @@ QtObject:
     self.beginInsertRows(newQModelIndex(), self.messages.len, self.messages.len)
     self.messageIndex[message.id] = self.messages.len
     self.messages.add(message)
+    self.userList.add(message)
     self.countChanged()
     self.endInsertRows()
 
@@ -301,6 +305,7 @@ QtObject:
       if self.messageIndex.hasKey(message.id): continue
       self.messageIndex[message.id] = self.messages.len
       self.messages.add(message)
+      self.userList.add(message)
     self.countChanged()
     self.endInsertRows()
 
@@ -364,6 +369,7 @@ QtObject:
           m.userName = userNameOrAlias(c)
           m.alias = c.alias
           m.localName = c.localNickname
+          self.userList.updateUsernames(c.id, m.username, m.alias, m.localname)
 
     self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.Username.int])
 
@@ -377,3 +383,9 @@ QtObject:
 
   proc getID*(self: ChatMessageList):string  {.slot.} =
     self.id
+
+  proc getUserList*(self: ChatMessageList): QVariant {.slot.} =
+    newQVariant(self.userList)
+
+  QtProperty[QVariant] userList:
+    read = getUserList

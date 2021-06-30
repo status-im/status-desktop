@@ -123,6 +123,15 @@ Item {
             }
         }
 
+        StatusSettingsLineButton {
+            text: qsTr("Online users")
+            isSwitch: true
+            switchChecked: appSettings.showOnlineUsers
+            onClicked: {
+                appSettings.showOnlineUsers = !appSettings.showOnlineUsers
+            }
+        }
+
         // StatusSettingsLineButton {
         //     //% "Node Management"
         //     text: qsTrId("node-management")

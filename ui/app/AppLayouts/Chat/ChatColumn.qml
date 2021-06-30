@@ -25,6 +25,8 @@ StackLayout {
 
     property bool isConnected: false
     property string contactToRemove: ""
+    
+    property bool showUsers: false
 
     property var doNotShowAddToContactBannerToThose: ([])
 
@@ -62,6 +64,17 @@ StackLayout {
 
     Component.onCompleted: {
         chatInput.textInput.forceActiveFocus(Qt.MouseFocusReason)
+    }
+
+    property var currentTime: 0
+
+    Timer {
+        interval: 60000; // 1 min
+        running: true;
+        repeat: true
+        onTriggered: {
+            chatColumnLayout.currentTime = Date.now()
+        }
     }
 
     Layout.fillHeight: true
@@ -266,6 +279,7 @@ StackLayout {
                     sourceComponent: ChatMessages {
                         id: chatMessages
                         messageList: model.messages
+                        currentTime: chatColumnLayout.currentTime
                     }
                 }
             }

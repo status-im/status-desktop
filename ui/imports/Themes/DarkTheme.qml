@@ -31,6 +31,7 @@ Theme {
     property color tenPercentWhite: Qt.rgba(255, 255, 255, 0.1)
     property color fivePercentBlack: "#E5E5E5"
     property color tenPercentBlue: Qt.rgba(67, 96, 223, 0.1)
+    property color orange: "#FFA500"
 
     property color background: "#2C2C2C"
     property color appBarDividerColor: darkGrey
