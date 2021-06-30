@@ -4,6 +4,7 @@ import stint
 from times import getTime, toUnix, nanosecond
 import libstatus/accounts/signing_phrases
 from web3 import Address, fromHex
+import web3/ethhexstrings
 
 proc getTimelineChatId*(pubKey: string = ""): string =
   if pubKey == "":
@@ -130,6 +131,28 @@ proc find*[T](s: seq[T], pred: proc(x: T): bool {.closure.}, found: var bool): T
 
 proc parseAddress*(strAddress: string): Address =
   fromHex(Address, strAddress)
+
+proc isAddress*(strAddress: string): bool =
+  try:
+    discard parseAddress(strAddress)
+  except:
+    return false
+  return true
+
+proc validateTransactionInput*(from_addr, to_addr, assetAddress, value, gas, gasPrice, data, uuid: string) =
+  if not isAddress(from_addr): raise newException(ValueError, "from_addr is not a valid ETH address")
+  if not isAddress(to_addr): raise newException(ValueError, "to_addr is not a valid ETH address")
+  if parseFloat(value) < 0: raise newException(ValueError, "value should be a number >= 0")
+  if parseInt(gas) <= 0: raise newException(ValueError, "gas should be a number > 0")
+  if parseFloat(gasPrice) <= 0: raise newException(ValueError, "gasPrice should be a number > 0")
+  if uuid.isEmptyOrWhitespace(): raise newException(ValueError, "uuid is required")
+
+  if assetAddress != "": # If a token is being used
+    if not isAddress(assetAddress): raise newException(ValueError, "assetAddress is not a valid ETH address")
+    if assetAddress == "0x0000000000000000000000000000000000000000":  raise newException(ValueError, "assetAddress requires a valid token address")
+
+  if data != "": # If data is being used
+    if not validate(HexDataStr(data)): raise newException(ValueError, "data should contain a valid hex string")
 
 proc hex2Time*(hex: string): Time =
   # represents the time since 1970-01-01T00:00:00Z
