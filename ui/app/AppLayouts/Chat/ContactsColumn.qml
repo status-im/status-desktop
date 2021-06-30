@@ -10,23 +10,233 @@ import "./components"
 import "./ContactsColumn"
 import "./CommunityComponents"
 
-Rectangle {
-    property alias chatGroupsListViewCount: channelList.channelListCount
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
+
+Item {
+    property int chatGroupsListViewCount: channelList.chatListItems.count
     property alias searchStr: searchBox.text
 
     id: contactsColumn
-    Layout.fillHeight: true
-    color: Style.current.secondaryMenuBackground
 
-    StyledText {
-        id: title
-        //% "Chat"
-        text: qsTrId("chat")
+    Layout.fillHeight: true
+    width: 304
+
+    StatusNavigationPanelHeadline {
+        id: headline
         anchors.top: parent.top
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: 16
         anchors.horizontalCenter: parent.horizontalCenter
-        font.weight: Font.Bold
-        font.pixelSize: 17
+        text: qsTr("Chat")
+    }
+
+    SearchBox {
+        id: searchBox
+        anchors.top: headline.bottom
+        anchors.topMargin: Style.current.padding
+        anchors.right: addChat.left
+        anchors.rightMargin: Style.current.padding
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
+    }
+
+    AddChat {
+        id: addChat
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.padding
+        anchors.top: headline.bottom
+        anchors.topMargin: Style.current.padding
+    }
+
+    StatusContactRequestsIndicatorListItem {
+        id: contactRequests
+
+        property int nbRequests: profileModel.contacts.contactRequests.count
+
+        anchors.top: searchBox.bottom
+        anchors.topMargin: visible ? Style.current.padding : 0
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        visible: nbRequests > 0
+        height: visible ? implicitHeight : 0
+
+        title: qsTr("Contact requests")
+        requestsCount: nbRequests
+
+        sensor.onClicked: openPopup(contactRequestsPopup)
+    }
+
+    ScrollView {
+        id: chatGroupsContainer
+
+        anchors.top: contactRequests.bottom
+        anchors.topMargin: Style.current.padding
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        width: parent.width
+
+        leftPadding: Style.current.halfPadding
+        rightPadding: Style.current.halfPadding
+
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+
+        contentHeight: channelList.height + 2 * Style.current.padding + emptyViewAndSuggestions.height + emptyViewAndSuggestions.anchors.topMargin
+        clip: true
+
+        Item {
+            id: noSearchResults
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width
+            visible: !!!channelList.height && contactsColumn.searchStr !== ""
+            height: visible ? 300 : 0
+
+            StatusBaseText {
+                font.pixelSize: 15
+                color: Theme.palette.directColor5
+                anchors.centerIn: parent
+                text: qsTr("No search results")
+            }
+        }
+
+        StatusChatList {
+            id: channelList
+
+            chatNameFn: function (chatItem) {
+                return chatItem.chatType !== Constants.chatTypePublic ?
+                    Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(chatItem.name))) :
+                    Utils.filterXSS(chatItem.name)
+            }
+
+            profileImageFn: function (id) {
+                return appMain.getProfileImage(id)
+            }
+
+            filterFn: function (chatListItem) {
+                return !!!contactsColumn.searchStr || chatListItem.name.toLowerCase().includes(contactsColumn.searchStr.toLowerCase())
+            }
+
+            Connections {
+                target: profileModel.contacts.list
+                onContactChanged: {
+                    for (var i = 0; i < channelList.chatListItems.count; i++) {
+                        let chatItem = channelList.chatListItems.itemAt(i);
+                        if (chatItem.chatId === pubkey) {
+                            let profileImage = appMain.getProfileImage(pubkey)
+                            if (!!profileImage) {
+                                chatItem.image.isIdenticon = false
+                                chatItem.image.source = profileImage
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            chatListItems.model: chatsModel.channelView.chats
+            selectedChatId: chatsModel.channelView.activeChannel.id
+
+            onChatItemSelected: chatsModel.channelView.setActiveChannel(id)
+            onChatItemUnmuted: chatsModel.channelView.unmuteChatItem(id)
+
+            popupMenu: StatusPopupMenu {
+
+                id: chatListContextMenu
+
+                property var chatItem
+
+                openHandler: function (id) {
+                    chatItem = chatsModel.channelView.getChatItemById(id)
+                }
+
+                StatusMenuItem {
+                    id: viewProfileMenuItem
+                    text: {
+                        if (chatItem) {
+                            switch (chatItem.chatType) {
+                                case Constants.chatTypeOneToOne:
+                                  return qsTr("View Profile")
+                                  break;
+                                case Constants.chatTypePrivateGroupChat:
+                                  return qsTr("View Group")
+                                  break;
+                                default:
+                                  return qsTr("Share Chat")
+                                  break;
+                            }
+                        }
+                        return ""
+                    }
+                    icon.name: "group-chat"
+                    enabled: chatItem && chatItem.chatType !== Constants.chatTypePublic
+                    onTriggered: {
+                        if (chatItem.chatType === Constants.chatTypeOneToOne) {
+                            const userProfileImage = appMain.getProfileImage(chatItem.id)
+                            return openProfilePopup(
+                              chatItem.name,
+                              chatItem.id,
+                              userProfileImage || chatItem.identicon
+                            )
+                        }
+                        if (chatItem.chatType === Constants.chatTypePrivateGroupChat) {
+                            return openPopup(groupInfoPopupComponent, {channelType: GroupInfoPopup.ChannelType.ContextChannel})
+                        }
+                    }
+                }
+
+                StatusMenuSeparator {
+                    visible: viewProfileMenuItem.enabled
+                }
+
+                StatusMenuItem {
+                    text: chatItem && chatItem.muted ? 
+                          qsTr("Unmute chat") : 
+                          qsTr("Mute chat")
+                    icon.name: "notification"
+                    onTriggered: {
+                        if (chatItem && chatItem.muted) {
+                            return chatsModel.channelView.unmuteChatItem(chatItem.id)
+                        }
+                        chatsModel.channelView.muteChatItem(chatItem.id)
+                    }
+                }
+
+                StatusMenuItem {
+                    text: "Mark as Read"
+                    icon.name: "checkmark-circle"
+                    onTriggered: chatsModel.channelView.markChatItemAsRead(chatItem.id)
+                }
+
+                StatusMenuItem {
+                    text: "Clear history"
+                    icon.name: "close-circle"
+                    onTriggered: chatsModel.channelView.clearChatHistory(chatItem.id)
+                }
+
+                StatusMenuSeparator {}
+
+                StatusMenuItem {
+                    text: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? "Delete chat" : "Leave chat"
+                    icon.name: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? "delete" : "arrow-right"
+                    icon.width: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? 18 : 14
+                    iconRotation: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? 0 : 180
+
+                    type: StatusMenuItem.Type.Danger
+                    onTriggered: openPopup(deleteChatConfirmationDialogComponent, { chatId: chatItem.id })
+                }
+            }
+        }
+
+        EmptyView {
+            id: emptyViewAndSuggestions
+            width: parent.width
+            visible: !appSettings.hideChannelSuggestions && !noSearchResults.visible
+            anchors.top: noSearchResults.visible ? noSearchResults.bottom : channelList.bottom
+            anchors.topMargin: 32
+        }
     }
 
     Component {
@@ -101,84 +311,22 @@ Rectangle {
         }
     }
 
-    SearchBox {
-        id: searchBox
-        anchors.top: title.bottom
-        anchors.topMargin: Style.current.padding
-        anchors.right: addChat.left
-        anchors.rightMargin: Style.current.padding
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
-    }
-
-    AddChat {
-        id: addChat
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        anchors.top: title.bottom
-        anchors.topMargin: Style.current.padding
-    }
-
-    Connections {
-        target: profileModel.contacts
-        onContactRequestAdded: {
-            if (!appSettings.notifyOnNewRequests) {
-                return
+    Component {
+        id: deleteChatConfirmationDialogComponent
+        ConfirmationDialog {
+            property string chatId
+            btnType: "warn"
+            confirmationText: qsTr("Are you sure you want to leave this chat?")
+            onClosed: {
+                destroy()
             }
-            const isContact = profileModel.contacts.isAdded(address)
-            systemTray.showMessage(isContact ? qsTr("Contact request accepted") :
-                                               qsTr("New contact request"),
-                                   isContact ? qsTr("You can now chat with %1").arg(Utils.removeStatusEns(name)) :
-                                               qsTr("%1 requests to become contacts").arg(Utils.removeStatusEns(name)),
-                                   SystemTrayIcon.NoIcon,
-                                   Constants.notificationPopupTTL)
+            onConfirmButtonClicked: {
+                chatsModel.channelView.leaveChat(chatId)
+                close();
+            }
         }
     }
 
-    StatusSettingsLineButton {
-        property int nbRequests: profileModel.contacts.contactRequests.count
-
-        id: contactRequest
-        anchors.top: searchBox.bottom
-        anchors.topMargin: visible ? Style.current.padding : 0
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.halfPadding
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.halfPadding
-        visible: nbRequests > 0
-        height: visible ? implicitHeight : 0
-        text: qsTr("Contact requests")
-        isBadge: true
-        badgeText: nbRequests.toString()
-        onClicked: openPopup(contactRequestsPopup)
-    }
-
-    ScrollView {
-        id: chatGroupsContainer
-        anchors.top: contactRequest.bottom
-        anchors.topMargin: Style.current.padding
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        leftPadding: Style.current.halfPadding
-        rightPadding: Style.current.halfPadding
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        contentHeight: channelList.height + 2 * Style.current.padding + emptyViewAndSuggestions.height
-        clip: true
-
-        ChannelList {
-            id: channelList
-            searchStr: contactsColumn.searchStr.toLowerCase()
-            channelModel: chatsModel.channelView.chats
-        }
-
-        EmptyView {
-            id: emptyViewAndSuggestions
-            width: parent.width
-            anchors.top: channelList.bottom
-            anchors.topMargin: Style.current.smallPadding
-        }
-    }
 }
 
 /*##^##
