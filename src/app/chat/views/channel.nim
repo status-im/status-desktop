@@ -19,6 +19,7 @@ QtObject:
     activeChannel*: ChatItemView
     previousActiveChannelIndex*: int
     contextChannel*: ChatItemView
+    chatItemViews: Table[string, ChatItemView]
 
   proc setup(self: ChannelView) = self.QObject.setup
   proc delete*(self: ChannelView) =
@@ -84,9 +85,18 @@ QtObject:
 
   proc contextChannelChanged*(self: ChannelView) {.signal.}
 
+  # TODO(pascal): replace with `markChatItemAsRead`, which is id based
+  # instead of index based, when refactoring/removing  `CommunityColumn` and `ChannelContextMenu` 
+  # (they still make use of this)
   proc markAllChannelMessagesReadByIndex*(self: ChannelView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
     let selectedChannel = self.getChannel(channelIndex)
+    if (selectedChannel == nil): return
+    discard self.status.chat.markAllChannelMessagesRead(selectedChannel.id)
+
+  proc markChatItemAsRead*(self: ChannelView, id: string) {.slot.} =
+    if (self.chats.chats.len == 0): return
+    let selectedChannel = self.getChannelById(id)
     if (selectedChannel == nil): return
     discard self.status.chat.markAllChannelMessagesRead(selectedChannel.id)
 
@@ -188,9 +198,20 @@ QtObject:
     self.setActiveChannel(pubKey)
     ChatType.OneToOne.int
 
+  # TODO(pascal): replace with `leaveChat`, which is id based
+  # instead of index based, when refactoring/removing  `CommunityColumn` and `ChannelContextMenu` 
+  # (they still make use of this)
   proc leaveChatByIndex*(self: ChannelView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
     let selectedChannel = self.getChannel(channelIndex)
+    if (selectedChannel == nil): return
+    if (self.activeChannel.id == selectedChannel.id):
+      self.activeChannel.chatItem = nil
+    self.status.chat.leave(selectedChannel.id)
+
+  proc leaveChat*(self: ChannelView, id: string) {.slot.} =
+    if (self.chats.chats.len == 0): return
+    let selectedChannel = self.getChannelById(id)
     if (selectedChannel == nil): return
     if (self.activeChannel.id == selectedChannel.id):
       self.activeChannel.chatItem = nil
@@ -220,6 +241,9 @@ QtObject:
     channel.muted = false
     self.updateChannelInRightList(channel)
 
+  # TODO(pascal): replace with `muteChatItem`, which is id based
+  # instead of index based, when refactoring/removing  `CommunityColumn` and `ChannelContextMenu` 
+  # (they still make use of this)
   proc muteChannel*(self: ChannelView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
     let selectedChannel = self.getChannel(channelIndex)
@@ -231,9 +255,34 @@ QtObject:
     self.status.chat.muteChat(selectedChannel)
     self.updateChannelInRightList(selectedChannel)
 
+  proc muteChatItem*(self: ChannelView, id: string) {.slot.} =
+    if (self.chats.chats.len == 0): return
+    let selectedChannel = self.getChannelById(id)
+    if (selectedChannel == nil): return
+    if (selectedChannel.id == self.activeChannel.id):
+      self.muteCurrentChannel()
+      return
+    selectedChannel.muted = true
+    self.status.chat.muteChat(selectedChannel)
+    self.updateChannelInRightList(selectedChannel)
+
+  # TODO(pascal): replace with `unmuteChatItem`, which is id based
+  # instead of index based, when refactoring/removing  `CommunityColumn` and `ChannelContextMenu` 
+  # (they still make use of this)
   proc unmuteChannel*(self: ChannelView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
     let selectedChannel = self.getChannel(channelIndex)
+    if (selectedChannel == nil): return
+    if (selectedChannel.id == self.activeChannel.id):
+      self.unmuteCurrentChannel()
+      return
+    selectedChannel.muted = false
+    self.status.chat.unmuteChat(selectedChannel)
+    self.updateChannelInRightList(selectedChannel)
+
+  proc unmuteChatItem*(self: ChannelView, id: string) {.slot.} =
+    if (self.chats.chats.len == 0): return
+    let selectedChannel = self.getChannelById(id)
     if (selectedChannel == nil): return
     if (selectedChannel.id == self.activeChannel.id):
       self.unmuteCurrentChannel()
@@ -247,3 +296,11 @@ QtObject:
     let selectedChannel = self.getChannel(channelIndex)
     if (selectedChannel == nil): return false
     result = selectedChannel.muted  
+
+  proc getChatItemById*(self: ChannelView, id: string): QObject {.slot.} =
+    if self.chatItemViews.hasKey(id): return self.chatItemViews[id]
+    let chat = self.getChannelById(id)
+    let chatItemView = newChatItemView(self.status)
+    chatItemView.setChatItem(chat)
+    self.chatItemViews[id] = chatItemView
+    return chatItemView
