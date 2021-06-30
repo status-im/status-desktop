@@ -9,7 +9,6 @@ import chronicles
 import nbaser
 import stew/byteutils
 from base32 import nil
-import web3/ethhexstrings
 
 const HTTPS_SCHEME = "https"
 const IPFS_GATEWAY =  ".infura.status.im"
@@ -92,19 +91,6 @@ proc toAPIRequest(message: string): APIRequest =
     hostname: data{"hostname"}.getStr()
   )
 
-proc validateInput(from_addr, to_addr, value, gas, gasPrice, data: string): bool =
-  if not validate(HexDataStr(from_addr)): return false
-  if from_addr.len != 42: return false
-  if to_addr != "":
-    if not validate(HexDataStr(to_addr)): return false
-    if to_addr.len != 42: return false
-  if parseFloat(value) < 0: return false
-  if parseInt(gas) <= 0: return false
-  if parseFloat(gasPrice) <= 0: return false
-  if data != "":
-    if not validate(HexDataStr(data)): return false
-  return true
-
 proc process(self: ProviderModel, data: Web3SendAsyncReadOnly): string =
   if AUTH_METHODS.contains(data.payload.rpcMethod) and not self.permissions.hasPermission(data.hostname, Permission.Web3):
     return $ %* {
@@ -132,11 +118,17 @@ proc process(self: ProviderModel, data: Web3SendAsyncReadOnly): string =
       else:
         ""
 
-      let validInput = validateInput(fromAddress, to, value, selectedGasLimit, selectedGasPrice, txData)
-
       var success: bool
       var errorMessage = ""
       var response = ""
+      var validInput: bool = true
+
+      try:
+        validateTransactionInput(fromAddress, to, "", value, selectedGasLimit, selectedGasPrice, txData, "dummy")
+      except Exception as e:
+        validInput = false
+        success = false
+        errorMessage = e.msg
 
       if validInput:
         # TODO make this async
@@ -148,10 +140,6 @@ proc process(self: ProviderModel, data: Web3SendAsyncReadOnly): string =
             response
         else:
           ""
-      else:
-        success = false
-        errorMessage = "Invalid input"
-
 
       return $ %* {
         "type": ResponseTypes.Web3SendAsyncCallback,
