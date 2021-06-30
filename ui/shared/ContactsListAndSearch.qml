@@ -50,6 +50,7 @@ Item {
         //% "Enter ENS username or chat key"
         placeholderText: qsTrId("enter-contact-code")
         Keys.onReleased: {
+            successMessage = ""
             searchResults.pubKey = ""
             if (!validate()) {
                 searchResults.showProfileNotFoundMessage = false
@@ -143,8 +144,8 @@ Item {
         id: existingContacts
         visible: showContactList
         hideCommunityMembers: root.hideCommunityMembers
-        anchors.topMargin: this.height > 0 ? Style.current.xlPadding : 0
-        anchors.top: chatKey.bottom
+        anchors.topMargin: this.height > 0 ? Style.current.halfPadding : 0
+        anchors.top: message.visible? message.bottom : chatKey.bottom
         showCheckbox: root.showCheckbox
         filterText: chatKey.text
         pubKeys: root.pubKeys
@@ -168,8 +169,9 @@ Item {
 
     SearchResults {
         id: searchResults
-        anchors.top: existingContacts.visible ? existingContacts.bottom : chatKey.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.top: existingContacts.visible ? existingContacts.bottom :
+                                                message.visible? message.bottom : chatKey.bottom
+        anchors.topMargin: Style.current.halfPadding
         hasExistingContacts: existingContacts.visible
         loading: false
         width: searchResultsWidth > 0 ? searchResultsWidth : parent.width
