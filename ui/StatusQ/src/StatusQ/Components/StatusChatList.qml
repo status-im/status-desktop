@@ -19,6 +19,7 @@ Column {
 
     property var filterFn
     property var profileImageFn
+    property var chatNameFn
 
     signal chatItemSelected(string id)
     signal chatItemUnmuted(string id)
@@ -44,7 +45,7 @@ Column {
             }
 
             chatId: model.chatId || model.id
-            name: model.name
+            name: !!statusChatList.chatNameFn ? statusChatList.chatNameFn(model) : model.name
             type: model.chatType
             muted: !!model.muted
             hasUnreadMessages: !!model.hasUnreadMessages || model.unviewedMessagesCount > 0
