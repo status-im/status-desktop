@@ -169,6 +169,15 @@ StackLayout {
         }
     }
 
+    Connections {
+        target: chatsModel.channelView
+        onActiveChannelChanged: {
+            chatsModel.messageView.hideLoadingIndicator()
+            SelectedMessage.reset();
+            chatColumn.isReply = false;
+        }
+    }
+
     function clickOnNotification() {
         applicationWindow.show()
         applicationWindow.raise()

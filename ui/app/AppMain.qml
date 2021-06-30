@@ -11,6 +11,7 @@ import "./AppLayouts/Timeline"
 import "./AppLayouts/Wallet"
 import "./AppLayouts/Chat/components"
 import "./AppLayouts/Chat/CommunityComponents"
+import Qt.labs.platform 1.1
 import Qt.labs.settings 1.0
 
 import StatusQ.Core.Theme 0.1
@@ -453,6 +454,22 @@ StatusAppLayout {
         enabled: removeMnemonicAfterLogin
         onInitialized: {
             profileModel.mnemonic.remove()
+        }
+    }
+
+    Connections {
+        target: profileModel.contacts
+        onContactRequestAdded: {
+            if (!appSettings.notifyOnNewRequests) {
+                return
+            }
+            const isContact = profileModel.contacts.isAdded(address)
+            systemTray.showMessage(isContact ? qsTr("Contact request accepted") :
+                                               qsTr("New contact request"),
+                                   isContact ? qsTr("You can now chat with %1").arg(Utils.removeStatusEns(name)) :
+                                               qsTr("%1 requests to become contacts").arg(Utils.removeStatusEns(name)),
+                                   SystemTrayIcon.NoIcon,
+                                   Constants.notificationPopupTTL)
         }
     }
 
