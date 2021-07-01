@@ -274,6 +274,8 @@ QtObject:
     self.upsertChannel(self.channelView.activeChannel.id)
     return newQVariant(self.messageList[self.channelView.activeChannel.id])
 
+  proc activeChannelChanged*(self: MessageView) {.signal.}
+
   QtProperty[QVariant] messageList:
     read = getMessageList
     notify = activeChannelChanged
@@ -328,7 +330,7 @@ QtObject:
 
     let pinnedMsgs = rpcResponseObj{"pinnedMessages"}
     if(pinnedMsgs != nil and pinnedMsgs.kind != JNull):
-      let pinnedMessages = libstatus_chat.parseChatMessagesResponse(pinnedMsgs)
+      let pinnedMessages = libstatus_chat.parseChatPinnedMessagesResponse(pinnedMsgs)
       self.status.chat.pinnedMessagesByChatID(chatId, pinnedMessages[0], pinnedMessages[1])
 
   proc hideLoadingIndicator*(self: MessageView) {.slot.} =

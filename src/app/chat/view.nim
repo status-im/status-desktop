@@ -411,6 +411,7 @@ QtObject:
 
   proc setActiveChannel*(self: ChatsView, channel: string) {.slot.} =
     self.channelView.setActiveChannel(channel)
+    self.messageView.activeChannelChanged()
 
   # proc activeChannelChanged*(self: ChatsView) =
   #   self.channelView.activeChannelChanged()
