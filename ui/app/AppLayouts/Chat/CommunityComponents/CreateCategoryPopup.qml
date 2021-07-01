@@ -17,7 +17,6 @@ ModalPopup {
     readonly property int maxCategoryNameLength: 30
     readonly property var categoryNameValidator: Utils.Validate.NoEmpty
                                                  | Utils.Validate.TextLength
-                                                 | Utils.Validate.TextLowercase
 
     id: popup
     height: 453
@@ -68,8 +67,6 @@ ModalPopup {
                 maxLength: maxCategoryNameLength
 
                 onTextEdited: {
-                    text = Utils.convertSpacesToDashesAndUpperToLowerCase(text);
-
                     validationError = Utils.validateAndReturnError(text,
                                                                    categoryNameValidator,
                                                                    qsTr("category name"),
