@@ -171,6 +171,13 @@ QtObject:
   proc muted*(self: ChatItemView): bool {.slot.} =
     return ?.self.chatItem.muted
 
+  proc joined*(self: ChatItemView): string {.slot.} = 
+    if self.chatItem.isNil: return ""
+    return $self.chatItem.joined
+
+  QtProperty[string] joined:
+    read = joined
+
   QtProperty[bool] muted:
     read = muted
     notify = mutedChanged
