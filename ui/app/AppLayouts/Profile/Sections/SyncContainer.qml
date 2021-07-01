@@ -18,8 +18,13 @@ Item {
         }
     }
 
-    SyncHistoryModal {
-        id: syncHistoryModal
+    Component {
+        id: syncHistoryModalComponent
+        SyncHistoryModal {
+            onClosed: {
+                destroy()
+            }
+        }
     }
 
      Column {
@@ -41,7 +46,7 @@ Item {
                     case Constants.fetchRangeLast31Days: return qsTr("One month")
                 }
             }
-            onClicked: syncHistoryModal.open()
+            onClicked: openPopup(syncHistoryModalComponent)
         }
 
         Item {

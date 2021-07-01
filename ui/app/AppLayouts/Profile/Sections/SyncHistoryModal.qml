@@ -8,13 +8,12 @@ import "../../../../shared/status"
 ModalPopup {
     id: popup
     title: qsTr("Sync history for")
+
+    property int defaultSyncPeriod: profileModel.mailservers.DefaultSyncPeriod 
     
     Column {
         id: column
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors.fill: parent
         anchors.rightMargin: Style.current.padding
         anchors.leftMargin: Style.current.padding
 
@@ -25,7 +24,7 @@ ModalPopup {
         StatusRadioButtonRow {
             text: qsTr("One day")
             buttonGroup: syncSettings
-            checked: profileModel.mailservers.DefaultSyncPeriod === Constants.fetchRangeLast24Hours
+            checked: defaultSyncPeriod === Constants.fetchRangeLast24Hours
             onRadioCheckedChanged: {
                 if (checked) {
                     profileModel.mailservers.setDefaultSyncPeriod(Constants.fetchRangeLast24Hours)
@@ -36,7 +35,7 @@ ModalPopup {
         StatusRadioButtonRow {
             text: qsTr("Three days")
             buttonGroup: syncSettings
-            checked: profileModel.mailservers.DefaultSyncPeriod === Constants.fetchRangeLast3Days
+            checked: defaultSyncPeriod === Constants.fetchRangeLast3Days
             onRadioCheckedChanged: {
                 if (checked) {
                     profileModel.mailservers.setDefaultSyncPeriod(Constants.fetchRangeLast3Days)
@@ -47,7 +46,7 @@ ModalPopup {
         StatusRadioButtonRow {
             text: qsTr("One week")
             buttonGroup: syncSettings
-            checked: profileModel.mailservers.DefaultSyncPeriod === Constants.fetchRangeLast7Days
+            checked: defaultSyncPeriod === Constants.fetchRangeLast7Days
             onRadioCheckedChanged: {
                 if (checked) {
                     profileModel.mailservers.setDefaultSyncPeriod(Constants.fetchRangeLast7Days)
@@ -58,7 +57,7 @@ ModalPopup {
         StatusRadioButtonRow {
             text: qsTr("One month")
             buttonGroup: syncSettings
-            checked: profileModel.mailservers.DefaultSyncPeriod === Constants.fetchRangeLast31Days
+            checked: defaultSyncPeriod === Constants.fetchRangeLast31Days
             onRadioCheckedChanged: {
                 if (checked) {
                     profileModel.mailservers.setDefaultSyncPeriod(Constants.fetchRangeLast31Days)
