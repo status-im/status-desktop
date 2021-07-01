@@ -198,7 +198,7 @@ Item {
                     chatInputPlaceholder: qsTrId("type-a-message-")
                     chatType: chatsModel.channelView.activeChannel.chatType
                     isEdit: true
-                    textInput.text: Emoji.parse(message.replace(/(<a href="\/\/0x[0-9A-Fa-f]+" class="mention">)/g, "$1@"))
+                    textInput.text: Utils.getMessageWithStyle(Emoji.parse(message.replace(/(<a href="\/\/0x[0-9A-Fa-f]+" class="mention">)/g, "$1@")))
                 }
 
                 StatusButton {

@@ -277,6 +277,9 @@ QtObject:
     of "isEdited": result = if self.isEdited.hasKey(message.id): $self.isEdited[message.id] else: $false
     else: result = ("")
 
+  proc contains*(self: ChatMessageList, message: Message):bool =
+    return self.messageIndex.hasKey(message.id)
+
   proc add*(self: ChatMessageList, message: Message) =
     if self.messageIndex.hasKey(message.id) and message.editedAt == "0": return # duplicated msg
     
