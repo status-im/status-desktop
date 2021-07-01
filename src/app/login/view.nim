@@ -46,6 +46,7 @@ QtObject:
       name: currNodeAcct.name,
       identicon: currNodeAcct.identicon,
       address: currNodeAcct.keyUid,
+      keyUid: currNodeAcct.keyUid,
       identityImage: currNodeAcct.identityImage
     ))
 

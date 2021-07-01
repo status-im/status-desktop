@@ -96,7 +96,7 @@ type
     error*: RpcError
 
 proc toAccount*(account: GeneratedAccount): Account =
-  result = Account(name: account.name, identityImage: account.identityImage, identicon: account.identicon, keyUid: account.address)
+  result = Account(name: account.name, identityImage: account.identityImage, identicon: account.identicon, keyUid: account.keyUid)
 
 proc toAccount*(account: NodeAccount): Account =
   result = Account(name: account.name, identityImage: account.identityImage, identicon: account.identicon, keyUid: account.keyUid)
