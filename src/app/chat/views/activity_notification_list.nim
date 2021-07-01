@@ -128,35 +128,36 @@ QtObject:
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.activityCenterNotifications.len - 1, 0, nil)
     self.dataChanged(topLeft, bottomRight, @[NotifRoles.Read.int])
-
+  
   proc reduceUnreadCount(self: ActivityNotificationList, numberNotifs: int) =
     self.nbUnreadNotifications = self.nbUnreadNotifications - numberNotifs
     if (self.nbUnreadNotifications < 0):
       self.nbUnreadNotifications = 0
     self.unreadCountChanged()
 
-  proc markActivityCenterNotificationsRead(self: ActivityNotificationList, idsJson: string): string {.slot.} =
-    let ids = map(parseJson(idsJson).getElems(), proc(x:JsonNode):string = x.getStr())
+  proc markActivityCenterNotificationRead(self: ActivityNotificationList, notificationId: string,
+  communityId: string, channelId: string, nType: int): void {.slot.} =
 
-    let error = self.status.chat.markActivityCenterNotificationsRead(ids)
+    let notificationType = ActivityCenterNotificationType(nType)
+    let markAsReadProps = MarkAsReadNotificationProperties(communityId: communityId,
+    channelId: channelId, notificationTypes: @[notificationType])
+
+    let error = self.status.chat.markActivityCenterNotificationRead(notificationId, markAsReadProps)
     if (error != ""):
-      return error
-
-    self.reduceUnreadCount(ids.len)
+      return
+    
+    self.nbUnreadNotifications = self.nbUnreadNotifications - 1
+    if (self.nbUnreadNotifications < 0):
+      self.nbUnreadNotifications = 0
+    self.unreadCountChanged()
 
     var i = 0
-    for activityCenterNotification in self.activityCenterNotifications:
-      for id in ids:
-        if (activityCenterNotification.id == id):
-          activityCenterNotification.read = true
-          let topLeft = self.createIndex(i, 0, nil)
-          let bottomRight = self.createIndex(i, 0, nil)
-          self.dataChanged(topLeft, bottomRight, @[NotifRoles.Read.int])
-          break
-      i = i + 1
-    
-  proc markActivityCenterNotificationRead(self: ActivityNotificationList, id: string): string {.slot.} =
-    self.markActivityCenterNotificationsRead(fmt"[""{id}""]")
+    for acnViewItem in self.activityCenterNotifications:
+      if (acnViewItem.id == notificationId):
+        acnViewItem.read = true
+        let index = self.createIndex(i, 0, nil)
+        self.dataChanged(index, index, @[NotifRoles.Read.int])
+      i.inc
 
   proc removeNotifications(self: ActivityNotificationList, ids: seq[string]) =
     var i = 0

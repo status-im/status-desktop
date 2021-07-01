@@ -91,10 +91,11 @@ QtObject:
     discard self.status.chat.markAllChannelMessagesRead(selectedChannel.id)
 
   proc clearUnreadIfNeeded*(self: ChannelView, channel: var Chat) =
-    if (not channel.isNil and (channel.unviewedMessagesCount > 0 or channel.hasMentions)):
+    if (not channel.isNil and (channel.unviewedMessagesCount > 0 or channel.mentionsCount > 0)):
       var response = self.status.chat.markAllChannelMessagesRead(channel.id)
       if not response.hasKey("error"):
-        self.chats.clearUnreadMessagesCount(channel)
+        self.chats.clearUnreadMessages(channel.id)
+        self.chats.clearAllMentionsFromChannelWithId(channel.id)
 
   proc userNameOrAlias(self: ChannelView, pubKey: string): string =
     if self.status.chat.contacts.hasKey(pubKey):

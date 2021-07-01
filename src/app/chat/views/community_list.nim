@@ -208,3 +208,48 @@ QtObject:
     community.categories.delete(idx)
     let index = self.communities.findIndexById(communityId)
     self.communities[index] = community
+
+  proc clearUnreadMessages*(self: CommunityList, communityId: string, clearFromChannels : bool) =
+    let idx = self.communities.findIndexById(communityId)
+    if (idx == -1): 
+      return
+
+    if (clearFromChannels):
+      # Clear unread messages for each channel in community. 
+      for c in self.communities[idx].chats:
+        c.unviewedMessagesCount = 0
+
+    let index = self.createIndex(idx, 0, nil)
+    self.communities[idx].unviewedMessagesCount = 0
+
+    self.dataChanged(index, index, @[CommunityRoles.UnviewedMessagesCount.int])
+  
+  proc clearAllMentions*(self: CommunityList, communityId: string, clearFromChannels : bool) =
+    let idx = self.communities.findIndexById(communityId)
+    if (idx == -1): 
+      return
+
+    if (clearFromChannels):
+      # Clear mentions for each chat in community. No need to emit dataChanged
+      # as mentins are not exposed to qml using roles from this model.
+      for c in self.communities[idx].chats:
+        c.mentionsCount = 0
+
+    # If we decide in one moment to expose mention role we should do that here.
+
+  proc decrementMentions*(self: CommunityList, communityId: string, channelId : string) =
+    let comIndex = self.communities.findIndexById(communityId)
+    if (comIndex == -1): 
+      return
+
+    let chatIndex = self.communities[comIndex].chats.findIndexById(channelId)
+    if (chatIndex == -1): 
+      return
+
+    self.communities[comIndex].chats[chatIndex].mentionsCount.dec
+
+  proc incrementMentions*(self: CommunityList, channelId : string) =
+    for c in self.communities:
+      let chatIndex = c.chats.findIndexById(channelId)
+      if (chatIndex != -1): 
+        c.chats[chatIndex].mentionsCount.inc
