@@ -138,10 +138,10 @@ QtObject:
     read = isTimelineChat
 
 
-  proc hasMentions*(self: ChatItemView): bool {.slot.} = result = ?.self.chatItem.hasMentions
+  proc mentionsCount*(self: ChatItemView): int {.slot.} = result = ?.self.chatItem.mentionsCount
 
-  QtProperty[bool] hasMentions:
-    read = hasMentions
+  QtProperty[int] mentionsCount:
+    read = mentionsCount
 
   proc canPost*(self: ChatItemView): bool {.slot.} = result = ?.self.chatItem.canPost
 

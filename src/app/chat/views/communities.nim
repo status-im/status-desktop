@@ -1,6 +1,7 @@
 import NimQml, json, sequtils, chronicles, strutils, strformat
 import ../../../status/status
 import ../../../status/chat/chat
+import ./channels_list
 import ./community_list
 import ./community_item
 import ./community_membership_request_list
@@ -57,6 +58,7 @@ QtObject:
         # canPost and categoryId are not available in the newChat so we need to check what we had before
         newChat.canPost = community.chats[i].canPost
         newChat.categoryId = community.chats[i].categoryId
+        newChat.mentionsCount = community.chats[i].mentionsCount
         community.chats[i] = newChat
         found = true
       i = i + 1
@@ -428,13 +430,66 @@ QtObject:
           if community.muted:
             chat.muted = true
           return chat
-  
-  proc setCommunityMuted*(self: CommunitiesView, communityId: string, muted: bool) {.slot.} =
-    self.status.chat.setCommunityMuted(communityId, muted)
-    if (communityId == self.activeCommunity.communityItem.id):
-      self.activeCommunity.setMuted(muted)
 
-    var community = self.joinedCommunityList.getCommunityById(communityId)
-    community.muted = muted
-    self.joinedCommunityList.replaceCommunity(community)
-    
+  proc markNotificationsAsRead*(self: CommunitiesView, markAsReadProps: MarkAsReadNotificationProperties) =
+    if(markAsReadProps.communityId.len == 0 and markAsReadProps.channelId.len == 0):
+      # Remove all notifications from all communities and their channels for set types.
+
+      for t in markAsReadProps.notificationTypes:
+        case t:
+          of ActivityCenterNotificationType.NewOneToOne:
+            debug "Clear all one to one notifications"
+          of ActivityCenterNotificationType.NewPrivateGroupChat:
+            debug "Clear all private group chat notifications"
+          of ActivityCenterNotificationType.Mention:
+            self.activeCommunity.chats.clearAllMentionsFromAllChannels()
+  
+            for c in self.joinedCommunityList.communities:
+              # We don't need to update channels from the currently active community.
+              let clearChannels = c.id != self.activeCommunity.communityItem.id
+              self.joinedCommunityList.clearAllMentions(c.id, clearChannels)
+
+          of ActivityCenterNotificationType.Reply:
+            debug "Clear all reply notifications"
+          else:
+            debug "Unknown notifications"
+
+    else:
+      # Remove single notification from the channel (channelId) of community (communityId) for set types.
+      for t in markAsReadProps.notificationTypes:
+        case t:
+          of ActivityCenterNotificationType.NewOneToOne:
+            debug "Clear one to one notification"
+          of ActivityCenterNotificationType.NewPrivateGroupChat:
+            debug "Clear private group chat notification"
+          of ActivityCenterNotificationType.Mention:
+            if (markAsReadProps.communityId == self.activeCommunity.communityItem.id):
+              self.activeCommunity.chats.decrementMentions(markAsReadProps.channelId)
+            else:
+              for c in self.joinedCommunityList.communities:
+                # We don't need to update channels from the currently active community.
+                if (c.id != self.activeCommunity.communityItem.id):
+                  self.joinedCommunityList.decrementMentions(c.id, markAsReadProps.channelId)
+
+          of ActivityCenterNotificationType.Reply:
+            debug "Clear reply notification"
+          else:
+            debug "Unknown notification"
+
+  proc updateNotifications*(self: CommunitiesView, notifications: seq[ActivityCenterNotification]) =
+    for n in notifications:
+      if (not n.read):
+        case n.notificationType:
+          of ActivityCenterNotificationType.NewOneToOne:
+            debug "Update one to one notification"
+          of ActivityCenterNotificationType.NewPrivateGroupChat:
+            debug "Update private group chat notification"
+          of ActivityCenterNotificationType.Mention:
+            let incremented = self.activeCommunity.chats.incrementMentions(n.chatId)
+            if (not incremented):
+              self.joinedCommunityList.incrementMentions(n.chatId)
+          
+          of ActivityCenterNotificationType.Reply:
+            debug "Update reply notification"
+          else:
+            debug "Unknown notification"

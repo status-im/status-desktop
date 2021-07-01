@@ -49,7 +49,7 @@ proc fromEvent*(event: JsonNode): Signal =
     for jsonChat in event["event"]["chats"]:
       var chat = jsonChat.toChat
       if chatsWithMentions.contains(chat.id):
-        chat.hasMentions = true
+        chat.mentionsCount.inc
       signal.chats.add(chat)
 
   if event["event"]{"installations"} != nil:
@@ -135,7 +135,7 @@ proc newChat*(id: string, chatType: ChatType): Chat =
     lastClockValue: 0,
     deletedAtClockValue: 0, 
     unviewedMessagesCount: 0,
-    hasMentions: false,
+    mentionsCount: 0,
     members: @[]
   )
 
@@ -165,7 +165,7 @@ proc toChat*(jsonChat: JsonNode): Chat =
     lastClockValue: jsonChat{"lastClockValue"}.getBiggestInt,
     deletedAtClockValue: jsonChat{"deletedAtClockValue"}.getBiggestInt, 
     unviewedMessagesCount: jsonChat{"unviewedMessagesCount"}.getInt,
-    hasMentions: false,
+    mentionsCount: 0,
     muted: false,
     ensName: "",
     joined: 0,

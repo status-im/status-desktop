@@ -13,7 +13,7 @@ Item {
     property string timestamp: "1605212622434"
     property string unviewedMessagesCount: "2"
     property string identicon
-    property bool hasMentions: false
+    property int mentionsCount: 0
     property int chatType: Constants.chatTypePublic
     property int realChatType: {
         if (chatType === Constants.chatTypeCommunity) {
@@ -163,10 +163,10 @@ Item {
             anchors.bottomMargin: !isCompact ? Style.current.smallPadding : 0
             anchors.verticalCenter: !isCompact ? undefined : parent.verticalCenter
             color: Style.current.blue
-            visible: (unviewedMessagesCount > 0) || wrapper.hasMentions
+            visible: (unviewedMessagesCount > 0) || wrapper.mentionsCount > 0
             StyledText {
                 id: contactNumberChats
-                text: wrapper.hasMentions ? '@' : (wrapper.unviewedMessagesCount < 100 ? wrapper.unviewedMessagesCount : "99+")
+                text: wrapper.mentionsCount > 0 ? '@' : (wrapper.unviewedMessagesCount < 100 ? wrapper.unviewedMessagesCount : "99+")
                 font.pixelSize: 12
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter

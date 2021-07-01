@@ -14,7 +14,7 @@ type
     Identicon = UserRole + 5
     ChatType = UserRole + 6
     Color = UserRole + 7
-    HasMentions = UserRole + 8
+    MentionsCount = UserRole + 8
     ContentType = UserRole + 9
     Muted = UserRole + 10
     Id = UserRole + 11
@@ -74,7 +74,7 @@ QtObject:
       of ChannelsRoles.Identicon: result = newQVariant(chatItem.identicon)
       of ChannelsRoles.ChatType: result = newQVariant(chatItem.chatType.int)
       of ChannelsRoles.Color: result = newQVariant(chatItem.color)
-      of ChannelsRoles.HasMentions: result = newQVariant(chatItem.hasMentions)
+      of ChannelsRoles.MentionsCount: result = newQVariant(chatItem.mentionsCount.int)
       of ChannelsRoles.Muted: result = newQVariant(chatItem.muted.bool)
       of ChannelsRoles.Id: result = newQVariant($chatItem.id)
       of ChannelsRoles.CategoryId: result = newQVariant(chatItem.categoryId)
@@ -89,7 +89,7 @@ QtObject:
       ChannelsRoles.Identicon.int: "identicon",
       ChannelsRoles.ChatType.int: "chatType",
       ChannelsRoles.Color.int: "color",
-      ChannelsRoles.HasMentions.int: "hasMentions",
+      ChannelsRoles.MentionsCount.int: "mentionsCount",
       ChannelsRoles.ContentType.int: "contentType",
       ChannelsRoles.Muted.int: "muted",
       ChannelsRoles.Id.int: "id",
@@ -160,19 +160,53 @@ QtObject:
 
     self.chats[idx] = channel
 
-    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.Description.int, ChannelsRoles.ContentType.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int, ChannelsRoles.HasMentions.int, ChannelsRoles.Muted.int])
+    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.Description.int, ChannelsRoles.ContentType.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int, ChannelsRoles.MentionsCount.int, ChannelsRoles.Muted.int])
 
-  proc clearUnreadMessagesCount*(self: ChannelsList, channel: var Chat) =
-    let idx = self.chats.findIndexById(channel.id)
-    if idx == -1: return
+  proc clearUnreadMessages*(self: ChannelsList, channelId: string) =
+    let idx = self.chats.findIndexById(channelId)
+    if idx == -1: 
+      return
 
-    let topLeft = self.createIndex(0, 0, nil)
-    let bottomRight = self.createIndex(self.chats.len, 0, nil)
-    channel.unviewedMessagesCount = 0
-    channel.hasMentions = false
-    self.chats[idx] = channel
+    let index = self.createIndex(idx, 0, nil)
+    self.chats[idx].unviewedMessagesCount = 0
 
-    self.dataChanged(topLeft, bottomRight, @[ChannelsRoles.Name.int, ChannelsRoles.Description.int, ChannelsRoles.ContentType.int, ChannelsRoles.LastMessage.int, ChannelsRoles.Timestamp.int, ChannelsRoles.UnreadMessages.int, ChannelsRoles.Identicon.int, ChannelsRoles.ChatType.int, ChannelsRoles.Color.int, ChannelsRoles.HasMentions.int, ChannelsRoles.Muted.int])
+    self.dataChanged(index, index, @[ChannelsRoles.UnreadMessages.int])
+
+  proc clearAllMentionsFromChannelWithId*(self: ChannelsList, channelId: string) =
+    let idx = self.chats.findIndexById(channelId)
+    if idx == -1: 
+      return
+
+    let index = self.createIndex(idx, 0, nil)
+    self.chats[idx].mentionsCount = 0
+
+    self.dataChanged(index, index, @[ChannelsRoles.MentionsCount.int])
+
+  proc clearAllMentionsFromAllChannels*(self: ChannelsList) =
+    for c in self.chats:
+      self.clearAllMentionsFromChannelWithId(c.id)
+
+  proc decrementMentions*(self: ChannelsList, channelId: string) =
+    let idx = self.chats.findIndexById(channelId)
+    if idx == -1: 
+      return
+
+    let index = self.createIndex(idx, 0, nil)
+    self.chats[idx].mentionsCount.dec
+
+    self.dataChanged(index, index, @[ChannelsRoles.MentionsCount.int])
+
+  proc incrementMentions*(self: ChannelsList, channelId: string) : bool =
+    result = false
+    let idx = self.chats.findIndexById(channelId)
+    if idx == -1: 
+      return
+
+    let index = self.createIndex(idx, 0, nil)
+    self.chats[idx].mentionsCount.inc
+    result = true
+
+    self.dataChanged(index, index, @[ChannelsRoles.MentionsCount.int])
 
   proc renderInline(self: ChannelsList, elem: TextItem): string =
     case elem.textType:

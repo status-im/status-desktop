@@ -67,6 +67,11 @@ type
     id*: string
     channel*: string
 
+  MarkAsReadNotificationProperties* = ref object of Args
+    communityId*: string
+    channelId*: string
+    notificationTypes*: seq[ActivityCenterNotificationType]
+
 include chat/utils
 
 proc newChatModel*(events: EventEmitter): ChatModel =
@@ -534,13 +539,25 @@ proc markAllActivityCenterNotificationsRead*(self: ChatModel): string =
   except Exception as e:
     error "Error marking all as read", msg = e.msg
     result = e.msg
+  
+  # This proc should accept ActivityCenterNotificationType in order to clear all notifications
+  # per type, that's why we have this part here. If we add all types to notificationsType that 
+  # means that we need to clear all notifications for all types.
+  var types : seq[ActivityCenterNotificationType]
+  for t in ActivityCenterNotificationType:
+    types.add(t)
 
-proc markActivityCenterNotificationsRead*(self: ChatModel, ids: seq[string]): string =
+  self.events.emit("markNotificationsAsRead", MarkAsReadNotificationProperties(notificationTypes: types))
+
+proc markActivityCenterNotificationRead*(self: ChatModel, notificationId: string,
+markAsReadProps: MarkAsReadNotificationProperties): string =
   try:
-    status_chat.markActivityCenterNotificationsRead(ids)
+    status_chat.markActivityCenterNotificationsRead(@[notificationId])
   except Exception as e:
     error "Error marking as read", msg = e.msg
     result = e.msg
+  
+  self.events.emit("markNotificationsAsRead", markAsReadProps)
 
 proc acceptActivityCenterNotifications*(self: ChatModel, ids: seq[string]): string =
   try:

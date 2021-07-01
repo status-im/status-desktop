@@ -18,7 +18,9 @@ proc handleChatEvents(self: ChatController) =
     self.view.pushPinnedMessages(MsgsLoadedArgs(e).messages)
 
   self.status.events.on("activityCenterNotificationsLoaded") do(e:Args):
-    self.view.pushActivityCenterNotifications(ActivityCenterNotificationsArgs(e).activityCenterNotifications)
+    let notifications = ActivityCenterNotificationsArgs(e).activityCenterNotifications
+    self.view.pushActivityCenterNotifications(notifications)
+    self.view.communities.updateNotifications(notifications)
 
   self.status.events.on("contactUpdate") do(e: Args):
     var evArgs = ContactUpdateArgs(e)
@@ -56,6 +58,7 @@ proc handleChatEvents(self: ChatController) =
       self.view.addPinnedMessages(evArgs.pinnedMessages)
     if (evArgs.activityCenterNotifications.len > 0):
       self.view.addActivityCenterNotification(evArgs.activityCenterNotifications)
+      self.view.communities.updateNotifications(evArgs.activityCenterNotifications)
 
   self.status.events.on("channelUpdate") do(e: Args):
     var evArgs = ChatUpdateArgs(e)
@@ -138,6 +141,12 @@ proc handleChatEvents(self: ChatController) =
       self.view.stickers.install(tx.data.parseInt)
     else:
       self.view.stickers.resetBuyAttempt(tx.data.parseInt)
+
+  self.status.events.on("markNotificationsAsRead") do(e:Args):
+    let markAsReadProps = MarkAsReadNotificationProperties(e)
+
+    #Notifying communities about this change.
+    self.view.communities.markNotificationsAsRead(markAsReadProps)
 
 proc handleMailserverEvents(self: ChatController) =
   let mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]

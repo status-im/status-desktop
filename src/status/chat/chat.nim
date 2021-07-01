@@ -83,7 +83,7 @@ type Chat* = ref object
   lastMessage*: Message
   members*: seq[ChatMember]
   membershipUpdateEvents*: seq[ChatMembershipEvent]
-  hasMentions*: bool
+  mentionsCount*: int
   muted*: bool
   canPost*: bool
   ensName*: string

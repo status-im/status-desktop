@@ -37,7 +37,7 @@ Item {
             chatType: model.chatType
             identicon: model.identicon
             unviewedMessagesCount: model.unviewedMessagesCount
-            hasMentions: model.hasMentions
+            mentionsCount: model.mentionsCount
             contentType: model.contentType
             searchStr: channelListContent.searchStr
             categoryId: model.categoryId
