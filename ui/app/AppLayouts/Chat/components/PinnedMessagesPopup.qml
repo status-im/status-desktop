@@ -92,6 +92,7 @@ ModalPopup {
                 pinnedMessage: true
                 pinnedBy: model.pinnedBy
                 forceHoverHandler: true
+                isEdited: model.isEdited
             }
         }
     }

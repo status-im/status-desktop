@@ -236,6 +236,8 @@ QtObject:
           msgIndex = self.messageList[timelineChatId].messages.len - 1
         else:
           self.messageList[msg.chatId].add(msg)
+          if self.pinnedMessagesList[msg.chatId].contains(msg):
+            self.pinnedMessagesList[msg.chatId].add(msg)
           msgIndex = self.messageList[msg.chatId].messages.len - 1
       self.messagePushed(msgIndex)
       if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
