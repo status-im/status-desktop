@@ -99,7 +99,7 @@ Item {
 
         Loader {
             id: pinnedRectangleLoader
-            active: pinnedMessage
+            active: !isEdit && pinnedMessage
             anchors.left: chatName.left
             anchors.top: parent.top
             anchors.topMargin: active ? Style.current.halfPadding : 0
