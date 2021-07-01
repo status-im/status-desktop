@@ -115,8 +115,7 @@ Item {
         StyledText {
             id: chatInfo
             color: Style.current.secondaryText
-            wrapMode: Text.Wrap
-            width: parent.width
+            width: topBar.childrenRect.width - 200
             elide: Text.ElideRight
             text: {
                 if (root.chatType === Constants.chatTypeCommunity) {
@@ -145,6 +144,7 @@ Item {
             font.pixelSize: 12
             anchors.top: chatName.bottom
             anchors.topMargin: 2
+            anchors.left: chatName.left
         }
 
         Item {
