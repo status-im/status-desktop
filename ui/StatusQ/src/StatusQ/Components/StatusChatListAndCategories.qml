@@ -53,7 +53,7 @@ Item {
             StatusChatList {
                 id: statusChatList
                 anchors.horizontalCenter: parent.horizontalCenter
-                visible: !!chatListItems.model && chatListItems.model.count > 0
+                visible: !!chatListItems.model && chatListItems.count > 0
                 selectedChatId: statusChatListAndCategories.selectedChatId
                 onChatItemSelected: statusChatListAndCategories.chatItemSelected(id)
                 onChatItemUnmuted: statusChatListAndCategories.chatItemUnmuted(id)
