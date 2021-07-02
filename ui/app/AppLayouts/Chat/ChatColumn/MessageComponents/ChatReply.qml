@@ -27,7 +27,7 @@ Loader {
             id: chatReply
             // childrenRect.height shows a binding loop for some reason, so we use heights instead
             height: {
-                const h = userImage.height + 2
+                const h = userImage.height + 4
                 if (repliedMessageType === Constants.imageType) {
                     return h + imgReplyImage.height
                 }
@@ -149,7 +149,7 @@ Loader {
                 font.pixelSize: Style.current.secondaryTextFontSize
                 anchors.left: userImage.left
                 width: root.longReply ? parent.width : implicitWidth
-                height: 18
+                height: 20
                 clip: true
                 z: 51
             }
