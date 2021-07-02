@@ -59,7 +59,7 @@ Column {
 
             onClicked: {
                 if (mouse.button === Qt.RightButton && !!statusChatList.popupMenu) {
-                    highlighted = true
+                    statusChatListItem.highlighted = true
 
                     let originalOpenHandler = popupMenuSlot.item.openHandler
                     let originalCloseHandler = popupMenuSlot.item.closeHandler
@@ -71,7 +71,7 @@ Column {
                     }
 
                     popupMenuSlot.item.closeHandler = function () {
-                        highlighted = false
+                        statusChatListItem.highlighted = false
                         if (!!originalCloseHandler) {
                             originalCloseHandler()
                         }
