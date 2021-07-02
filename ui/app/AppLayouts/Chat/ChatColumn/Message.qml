@@ -283,12 +283,13 @@ Item {
         id: fetchMoreMessagesButtonComponent
         Item {
             id: wrapper
-            property int gapNowAndOldest: nextMessageIndex > -1 ? (Date.now() / 1000 - nextMsgTimestamp / 1000) : 0
-            property int gapNowAndJoined: Date.now() / 1000 - +chatsModel.channelView.activeChannel.joined / 1000
+            readonly property int gapNowAndOldest: nextMessageIndex > -1 ? (Date.now() / 1000 - nextMsgTimestamp / 1000) : 0
+            readonly property int gapNowAndJoined: Date.now() / 1000 - +chatsModel.channelView.activeChannel.joined / 1000
+            readonly property int maxGapInSeconds: Constants.maxNbDaysToFetch * Constants.fetchRangeLast24Hours
 
             visible: {
-                return gapNowAndOldest < Constants.maxNbDaysToFetch * Constants.fetchRangeLast24Hours
-                        && gapNowAndJoined > Constants.maxNbDaysToFetch * Constants.fetchRangeLast24Hours
+                return gapNowAndOldest < maxGapInSeconds
+                        && gapNowAndJoined > maxGapInSeconds
                         && (chatsModel.activeChannel.chatType !== Constants.chatTypePrivateGroupChat || chatsModel.activeChannel.isMember)
             }
             height: childrenRect.height + Style.current.smallPadding * 2
