@@ -512,6 +512,7 @@ property Component sendTransactionModalComponent: SignTransactionModal {}
                 anchors.top: parent.top
                 anchors.topMargin: browserHeader.height
                 focus: true
+                url: "https://dap.ps"
                 webChannel: channel
                 onLinkHovered: function(hoveredUrl) {
                     if (hoveredUrl === "")

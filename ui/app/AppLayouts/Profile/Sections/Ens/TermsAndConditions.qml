@@ -228,7 +228,7 @@ Item {
                 //% "Wallet address"
                 label: qsTrId("wallet-address")
                 text: walletModel.getDefaultAddress()
-                textToCopy: profileModel.profile.address
+                textToCopy: text
                 anchors.left: parent.left
                 anchors.leftMargin: 24
                 anchors.top: ensUsername.bottom
@@ -294,11 +294,9 @@ Item {
         Image {
             id: image1
             height: 50
-            width: 50
-            sourceSize.width: width
-            sourceSize.height: height
-            fillMode: Image.PreserveAspectFit
-            source: "../../../../../shared/img/status-logo.png"
+            width: height
+            source: Style.current.name === Constants.lightThemeName ? "../../../../../shared/img/status-logo-light-theme.svg" : "../../../../../shared/img/status-logo.svg"
+            sourceSize: Qt.size(width, height)
         }
         
         StyledText {
