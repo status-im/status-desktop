@@ -1,21 +1,270 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
+
+import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
 
 import "../../../imports"
 import "../../../shared"
 import "../../../shared/status"
-import "./ContactsColumn"
 import "./CommunityComponents"
 
-Rectangle {
+
+Item {
     // TODO unhardcode
-    property int chatGroupsListViewCount: channelList.channelListCount
+    property int chatGroupsListViewCount: communityChatListAndCategories.chatList.count
     property Component pinnedMessagesPopupComponent
 
     id: root
-    color: Style.current.secondaryMenuBackground
+
+    Layout.fillHeight: true
+    width: 304
+
+    StatusChatInfoToolBar {
+        id: communityHeader
+        anchors.top: parent.top
+        anchors.topMargin: 5
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        chatInfoButton.title: chatsModel.communities.activeCommunity.name
+        chatInfoButton.subTitle: chatsModel.communities.activeCommunity.nbMembers === 1 ? 
+            qsTr("1 Member") : 
+            qsTr("%1 Members").arg(chatsModel.communities.activeCommunity.nbMembers)
+        chatInfoButton.image.source: chatsModel.communities.activeCommunity.thumbnailImage
+        chatInfoButton.icon.color: chatsModel.communities.activeCommunity.communityColor
+        chatInfoButton.onClicked: communityProfilePopup.open()
+
+        popupMenu: StatusPopupMenu {
+
+            StatusMenuItem {
+                text: qsTr("Create channel")
+                icon.name: "channel"
+                enabled: chatsModel.communities.activeCommunity.admin
+                onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
+            }
+
+            StatusMenuItem {
+                text: qsTr("Create category")
+                icon.name: "channel-category"
+                enabled: chatsModel.communities.activeCommunity.admin
+                onTriggered: openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
+            }
+
+            StatusMenuSeparator {}
+
+            StatusMenuItem {
+                text: qsTr("Invite people")
+                icon.name: "share-ios"
+                enabled: chatsModel.communities.activeCommunity.canManageUsers
+                onTriggered: openPopup(inviteFriendsToCommunityPopup, {communityId: chatsModel.communities.activeCommunity.id})
+            }
+        }
+    }
+
+    Loader {
+        id: membershipRequests
+
+        property int nbRequests: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests
+
+        anchors.top: communityHeader.bottom
+        anchors.topMargin: active ? 8 : 0
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        active: chatsModel.communities.activeCommunity.admin && nbRequests > 0
+        sourceComponent: Component {
+            StatusContactRequestsIndicatorListItem {
+                title: qsTr("Membership requests")
+                requestsCount: membershipRequests.nbRequests
+                sensor.onClicked: membershipRequestPopup.open()
+            }
+        }
+    }
+
+    ScrollView {
+        id: chatGroupsContainer
+        anchors.top: membershipRequests.bottom
+        anchors.topMargin: Style.current.padding
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        width: parent.width
+
+        leftPadding: Style.current.halfPadding
+        rightPadding: Style.current.halfPadding
+
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        clip: true
+        contentHeight: communityChatListAndCategories.height
+                       + emptyViewAndSuggestionsLoader.height
+                       + backUpBannerLoader.height 
+                       + 16
+
+        StatusChatListAndCategories {
+            id: communityChatListAndCategories
+
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: root.width
+            height: {
+                if (!emptyViewAndSuggestionsLoader.active &&
+                    !backUpBannerLoader.active) {
+                    return implicitHeight > (root.height - 82) ? implicitHeight + 8 : root.height - 82
+                }
+                return implicitHeight
+            }
+              
+            chatList.model: chatsModel.communities.activeCommunity.chats
+            categoryList.model: chatsModel.communities.activeCommunity.categories
+
+            showCategoryActionButtons: chatsModel.communities.activeCommunity.admin
+            selectedChatId: chatsModel.channelView.activeChannel.id
+
+            onChatItemSelected: chatsModel.channelView.setActiveChannel(id)
+            onChatItemUnmuted: chatsModel.channelView.unmuteChatItem(id)
+            onCategoryAddButtonClicked: openPopup(createChannelPopup, {
+                communityId: chatsModel.communities.activeCommunity.id,
+                categoryId: id
+            })
+
+            popupMenu: StatusPopupMenu {
+
+                StatusMenuItem {
+                    text: qsTr("Create channel")
+                    icon.name: "channel"
+                    enabled: chatsModel.communities.activeCommunity.admin
+                    onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
+                }
+
+                StatusMenuItem {
+                    text: qsTr("Create category")
+                    icon.name: "channel-category"
+                    enabled: chatsModel.communities.activeCommunity.admin
+                    onTriggered: openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
+                }
+
+                StatusMenuSeparator {}
+
+                StatusMenuItem {
+                    text: qsTr("Invite people")
+                    icon.name: "share-ios"
+                    enabled: chatsModel.communities.activeCommunity.canManageUsers
+                    onTriggered: openPopup(inviteFriendsToCommunityPopup, {communityId: chatsModel.communities.activeCommunity.id})
+                }
+            }
+
+            categoryPopupMenu: StatusPopupMenu {
+
+                property var categoryItem
+
+                openHandler: function (id) {
+                    categoryItem = chatsModel.communities.activeCommunity.getCommunityCategoryItemById(id)
+                }
+
+                StatusMenuItem { 
+                    enabled: chatsModel.communities.activeCommunity.admin
+                    text: qsTr("Edit Category")
+                    icon.name: "edit"
+                    onTriggered: {
+                        openPopup(createCategoryPopup, {
+                            communityId: chatsModel.communities.activeCommunity.id,
+                            isEdit: true,
+                            categoryId: categoryItem.id,
+                            categoryName: categoryItem.name
+                        })
+                    }
+                }
+
+                StatusMenuSeparator {
+                    visible: chatsModel.communities.activeCommunity.admin
+                }
+
+                StatusMenuItem {
+                    enabled: chatsModel.communities.activeCommunity.admin
+                    text: qsTr("Delete Category")
+                    icon.name: "delete"
+                    type: StatusMenuItem.Type.Danger
+                    onTriggered: {
+                        openPopup(deleteCategoryConfirmationDialogComponent, {
+                            title: qsTr("Delete %1 category").arg(categoryItem.name),
+                            confirmationText: qsTr("Are you sure you want to delete %1 category? Channels inside the category won’t be deleted.")
+                                .arg(categoryItem.name),
+                            categoryId: categoryItem.id
+                        })
+                    }
+                }
+            }
+
+            chatListPopupMenu: StatusPopupMenu {
+
+                property var chatItem
+
+                openHandler: function (id) {
+                    chatItem = chatsModel.channelView.getChatItemById(id)
+                }
+
+                StatusMenuItem {
+                    text: chatItem && chatItem.muted ? 
+                          qsTr("Unmute chat") : 
+                          qsTr("Mute chat")
+                    icon.name: "notification"
+                    onTriggered: {
+                        if (chatItem && chatItem.muted) {
+                            return chatsModel.channelView.unmuteChatItem(chatItem.id)
+                        }
+                        chatsModel.channelView.muteChatItem(chatItem.id)
+                    }
+                }
+
+                StatusMenuItem {
+                    text: "Mark as Read"
+                    icon.name: "checkmark-circle"
+                    onTriggered: chatsModel.channelView.markChatItemAsRead(chatItem.id)
+                }
+
+                StatusMenuItem {
+                    text: "Clear history"
+                    icon.name: "close-circle"
+                    onTriggered: chatsModel.channelView.clearChatHistory(chatItem.id)
+                }
+
+                StatusMenuItem {
+                    text: qsTr("Edit Channel")
+                    icon.name: "edit"
+                    enabled: chatsModel.communities.activeCommunity.admin
+                    onTriggered: openPopup(editChannelPopup, {
+                        communityId: chatsModel.communities.activeCommunity.id,
+                        channel: chatItem
+                    })
+                }
+            }
+        }
+
+        Loader {
+            id: emptyViewAndSuggestionsLoader
+            active: chatsModel.communities.activeCommunity.admin && !appSettings.hiddenCommunityWelcomeBanners.includes(chatsModel.communities.activeCommunity.id)
+            width: parent.width
+            height: active ? item.height : 0
+            anchors.top: communityChatListAndCategories.bottom
+            anchors.topMargin: active ? Style.current.padding : 0
+            sourceComponent: Component {
+                CommunityWelcomeBanner {}
+            }
+        }
+
+        Loader {
+            id: backUpBannerLoader
+            active: chatsModel.communities.activeCommunity.admin && !appSettings.hiddenCommunityBackUpBanners.includes(chatsModel.communities.activeCommunity.id)
+            width: parent.width
+            height: active ? item.height : 0
+            anchors.top: emptyViewAndSuggestionsLoader.bottom
+            anchors.topMargin: active ? Style.current.padding : 0
+            sourceComponent: Component {
+                BackUpCommuntyBanner {}
+            }
+        }
+    }
 
     Component {
         id: createChannelPopup
@@ -53,202 +302,39 @@ Rectangle {
         communityColor: chatsModel.communities.activeCommunity.communityColor
     }
 
-    PopupMenu {
-        id: optionsMenu
-
-        Action {
-            enabled: chatsModel.communities.activeCommunity.admin
-            //% "Create channel"
-            text: qsTrId("create-channel")
-            icon.source: "../../img/hash.svg"
-            icon.width: 20
-            icon.height: 20
-            onTriggered: openPopup(createChannelPopup, {communityId: chatsModel.communities.activeCommunity.id})
-        }
-
-         Action {
-            enabled: chatsModel.communities.activeCommunity.admin
-            text: qsTr("Create category")
-            icon.source: "../../img/create-category.svg"
-            icon.width: 20
-            icon.height: 20
-            onTriggered: openPopup(createCategoryPopup, {communityId: chatsModel.communities.activeCommunity.id})
-        }
-
-        Separator {}
-
-        Action {
-            text: qsTr("Invite People")
-            enabled: chatsModel.communities.activeCommunity.canManageUsers
-            icon.source: "../../img/export.svg"
-            icon.width: 20
-            icon.height: 20
-            onTriggered: openPopup(inviteFriendsToCommunityPopup, {communityId: chatsModel.communities.activeCommunity.id})
-        }
-
-        onAboutToHide: {
-            optionsBtn.state = "default"
-        }
-    }
-
-    Item {
-        id: communityHeader
-        width: parent.width
-        height: communityHeaderButton.height
-        anchors.left: parent.left
-        anchors.leftMargin: 12
-        anchors.top: parent.top
-        anchors.topMargin: Style.current.padding
-
-        CommunityHeaderButton {
-            id: communityHeaderButton
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.topMargin: -4
-            width: parent.width - optionsBtn.width - optionsBtn.anchors.rightMargin
-        }
-
-        StatusRoundButton {
-            id: optionsBtn
-            pressedIconRotation: 45
-            icon.name: "plusSign"
-            size: "medium"
-            type: "secondary"
-            width: 36
-            height: 36
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.bigPadding
-            anchors.top: parent.top
-            anchors.topMargin: 8
-            visible: chatsModel.communities.activeCommunity.admin
-
-            onClicked: {
-                optionsBtn.state = "pressed"
-
-                let x = optionsBtn.iconX + optionsBtn.icon.width / 2 - optionsMenu.width / 2
-                let y = optionsBtn.height + 4
-
-                let point = optionsBtn.mapToItem(root, x, y)
-
-                optionsMenu.popup(point.x, point.y)
+    Component {
+        id: deleteCategoryConfirmationDialogComponent
+        ConfirmationDialog {
+            property string categoryId
+            btnType: "warn"
+            height: 216
+            showCancelButton: true
+            onClosed: {
+                destroy()
+            }
+            onCancelButtonClicked: {
+                close();
+            }
+            onConfirmButtonClicked: function(){
+                const error = chatsModel.communities.deleteCommunityCategory(chatsModel.communities.activeCommunity.id, categoryId)
+                if (error) {
+                    creatingError.text = error
+                    return creatingError.open()
+                }
+                close();
             }
         }
     }
 
-    Item {
-        id: descriptionItem
-        height: childrenRect.height
-        anchors.left: parent.left
-        anchors.leftMargin: 18
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        anchors.top: communityHeader.bottom
-        anchors.topMargin:  Style.current.halfPadding
-
-        SVGImage {
-            id: listImg
-            source: "../../img/community-list.svg"
-            width: 15
-            height: 15
-        }
-
-        StyledText {
-            text: chatsModel.communities.activeCommunity.description
-            color: Style.current.secondaryText
-            font.pixelSize: 13
-            wrapMode: Text.WordWrap
-            anchors.left: listImg.right
-            anchors.leftMargin: 4
-            anchors.right: parent.right
-        }
-    }
-
-    Loader {
-        id: membershipRequestsLoader
-        width: parent.width
-        active: chatsModel.communities.activeCommunity.admin
-        anchors.top: descriptionItem.bottom
-        anchors.topMargin: active ? Style.current.halfPadding : 0
-
-        sourceComponent: Component {
-            MembershipRequestsButton {}
-        }
+    MessageDialog {
+        id: deleteError
+        title: qsTr("Error deleting the category")
+        icon: StandardIcon.Critical
+        standardButtons: StandardButton.Ok
     }
 
     MembershipRequestsPopup {
         id: membershipRequestPopup
-    }
-
-    ScrollView {
-        id: chatGroupsContainer
-        anchors.top: membershipRequestsLoader.bottom
-        anchors.topMargin: Style.current.padding
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        leftPadding: Style.current.halfPadding
-        rightPadding: Style.current.halfPadding
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        contentHeight: categoryList.height
-                       + channelList.height
-                       + emptyViewAndSuggestionsLoader.height
-                       + backUpBannerLoader.height
-                       + 2 * Style.current.padding
-        clip: true
-
-        background: Item {
-            anchors.fill: parent
-
-            MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.RightButton
-
-                onClicked: {
-                    let x = mouse.x + 4
-                    let y = mouse.y + 4
-
-                    let point = chatGroupsContainer.mapToItem(root, x, y)
-
-                    optionsMenu.popup(point.x, point.y)
-                }
-            }
-        }
-
-        ChannelList {
-            id: channelList
-            searchStr: ""
-            categoryId: ""
-            channelModel: chatsModel.communities.activeCommunity.chats
-        }
-
-        CategoryList {
-            id: categoryList
-            anchors.top: channelList.bottom
-            categoryModel: chatsModel.communities.activeCommunity.categories
-        }
-
-        Loader {
-            id: emptyViewAndSuggestionsLoader
-            active: chatsModel.communities.activeCommunity.admin && !appSettings.hiddenCommunityWelcomeBanners.includes(chatsModel.communities.activeCommunity.id)
-            width: parent.width
-            height: active ? item.height : 0
-            anchors.top: categoryList.bottom
-            anchors.topMargin: active ? Style.current.padding : 0
-            sourceComponent: Component {
-                CommunityWelcomeBanner {}
-            }
-        }
-        Loader {
-            id: backUpBannerLoader
-            active: chatsModel.communities.activeCommunity.admin && !appSettings.hiddenCommunityBackUpBanners.includes(chatsModel.communities.activeCommunity.id)
-            width: parent.width
-            height: active ? item.height : 0
-            anchors.top: emptyViewAndSuggestionsLoader.bottom
-            anchors.topMargin: active ? Style.current.padding : 0
-            sourceComponent: Component {
-                BackUpCommuntyBanner {}
-            }
-        }
     }
 }
 

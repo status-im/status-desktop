@@ -54,6 +54,11 @@ QtObject:
     self.categories = categories
     self.endResetModel()
 
+  proc getCategoryById*(self: CategoryList, id: string): CommunityCategory =
+    for category in self.categories:
+      if category.id == id:
+        return category
+
   proc addCategoryToList*(self: CategoryList, category: CommunityCategory): int =
     self.beginInsertRows(newQModelIndex(), 0, 0)
     self.categories.insert(category, 0)
