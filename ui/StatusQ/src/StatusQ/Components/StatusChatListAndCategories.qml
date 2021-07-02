@@ -76,6 +76,7 @@ Item {
                     chatList.chatListItems.model: statusChatListAndCategories.chatList.model
                     chatList.selectedChatId: statusChatListAndCategories.selectedChatId
                     chatList.onChatItemSelected: statusChatListAndCategories.chatItemSelected(id)
+                    chatList.onChatItemUnmuted: statusChatListAndCategories.chatItemUnmuted(id)
 
                     popupMenu: statusChatListAndCategories.categoryPopupMenu
                     chatListPopupMenu: statusChatListAndCategories.chatListPopupMenu
