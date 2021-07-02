@@ -35,7 +35,7 @@ Column {
         showMenuButton: !!statusChatListCategory.popupMenu
 
         onClicked: {
-            if (mouse.button === Qt.RightButton) {
+            if (mouse.button === Qt.RightButton && !!statusChatListCategory.popupMenu) {
                 highlighted = true
                 popupMenuSlot.item.popup(mouse.x + 4, mouse.y + 6)
                 return
