@@ -3,7 +3,7 @@ import ../../../status/[chat/chat, status]
 import channels_list
 import ../../../eventemitter
 import community_members_list
-import category_list
+import category_list, category_item
 import community_membership_request_list
 
 QtObject:
@@ -15,6 +15,7 @@ QtObject:
     members*: CommunityMembersView
     status*: Status
     active*: bool
+    categoryItemViews: Table[string, CategoryItemView]
 
   proc setup(self: CommunityItemView) =
     self.QObject.setup
@@ -237,3 +238,11 @@ QtObject:
 
   QtProperty[string] largeImage:
     read = largeImage
+
+  proc getCommunityCategoryItemById*(self: CommunityItemView, id: string): QObject {.slot.} =
+    if self.categoryItemViews.hasKey(id): return self.categoryItemViews[id]
+    let category = self.categories.getCategoryById(id)
+    let categoryItemView = newCategoryItemView()
+    categoryItemView.setCategoryItem(category)
+    self.categoryItemViews[id] = categoryItemView
+    return categoryItemView
