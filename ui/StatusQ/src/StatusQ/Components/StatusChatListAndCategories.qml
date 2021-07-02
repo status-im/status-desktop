@@ -60,6 +60,7 @@ Item {
                 filterFn: function (model) {
                     return !!!model.categoryId
                 }
+                popupMenu: statusChatListAndCategories.chatListPopupMenu
             }
 
             Repeater {
