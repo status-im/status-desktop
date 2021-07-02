@@ -87,7 +87,7 @@ QtObject:
   proc contextChannelChanged*(self: ChannelView) {.signal.}
 
   # TODO(pascal): replace with `markChatItemAsRead`, which is id based
-  # instead of index based, when refactoring/removing  `CommunityColumn` and `ChannelContextMenu` 
+  # instead of index based, when refactoring/removing `ChannelContextMenu` 
   # (they still make use of this)
   proc markAllChannelMessagesReadByIndex*(self: ChannelView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
@@ -198,7 +198,7 @@ QtObject:
     ChatType.OneToOne.int
 
   # TODO(pascal): replace with `leaveChat`, which is id based
-  # instead of index based, when refactoring/removing  `CommunityColumn` and `ChannelContextMenu` 
+  # instead of index based, when refactoring/removing `ChannelContextMenu` 
   # (they still make use of this)
   proc leaveChatByIndex*(self: ChannelView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
@@ -241,7 +241,7 @@ QtObject:
     self.updateChannelInRightList(channel)
 
   # TODO(pascal): replace with `muteChatItem`, which is id based
-  # instead of index based, when refactoring/removing  `CommunityColumn` and `ChannelContextMenu` 
+  # instead of index based, when refactoring/removing `ChannelContextMenu` 
   # (they still make use of this)
   proc muteChannel*(self: ChannelView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
@@ -266,7 +266,7 @@ QtObject:
     self.updateChannelInRightList(selectedChannel)
 
   # TODO(pascal): replace with `unmuteChatItem`, which is id based
-  # instead of index based, when refactoring/removing  `CommunityColumn` and `ChannelContextMenu` 
+  # instead of index based, when refactoring/removing `ChannelContextMenu` 
   # (they still make use of this)
   proc unmuteChannel*(self: ChannelView, channelIndex: int) {.slot.} =
     if (self.chats.chats.len == 0): return
