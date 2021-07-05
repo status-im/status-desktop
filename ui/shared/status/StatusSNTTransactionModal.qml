@@ -114,6 +114,8 @@ ModalPopup {
                 getFiatValue: walletModel.balanceView.getFiatValue
                 defaultCurrency: walletModel.balanceView.defaultCurrency
                 width: stack.width
+                maxPriorityFeePerGas: walletModel.gasView.maxPriorityFeePerGas
+                
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     return root.estimateGasFunction(selectFromAccount.selectedAccount, uuid);
                 })
