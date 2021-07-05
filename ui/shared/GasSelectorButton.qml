@@ -17,11 +17,17 @@ Rectangle {
     property bool checkedByDefault: false
     property var getGasEthValue: function () {}
     property var getFiatValue: function () {}
+
+
+    function formatDec(num, dec){
+       return Math.round((num + Number.EPSILON) * Math.pow(10, dec)) / Math.pow(10, dec)
+    }
+
     property double ethValue: {
         if (!gasLimit) {
             return 0
         }
-        return getGasEthValue(price, gasLimit)
+        return formatDec(parseFloat(getGasEthValue(price, gasLimit)), 6)
     }
     property double fiatValue: getFiatValue(ethValue, "ETH", defaultCurrency)
     signal checked()

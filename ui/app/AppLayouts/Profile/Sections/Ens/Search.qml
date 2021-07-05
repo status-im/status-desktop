@@ -51,7 +51,7 @@ Item {
         id: transactionDialogComponent
         StatusETHTransactionModal {
             onOpened: {
-                walletModel.gasView.getGasPricePredictions()
+                walletModel.gasView.getGasPrice()
             }
             title: qsTr("Connect username with your pubkey")
             onClosed: {

@@ -198,7 +198,8 @@ proc mainProc() =
     utilsController.init()
     browserController.init()
     node.init()
-    wallet.checkPendingTransactions()
+
+    wallet.onLogin()
 
   # this should be the last defer in the scope
   defer:
