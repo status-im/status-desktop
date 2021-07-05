@@ -89,7 +89,7 @@ Item {
         id: signTxComponent
         SignTransactionModal {
             onOpened: {
-                walletModel.gasView.getGasPricePredictions()
+                walletModel.gasView.getGasPrice()
             }
             onClosed: {
                 destroy();

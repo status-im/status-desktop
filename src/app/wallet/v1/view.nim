@@ -99,6 +99,8 @@ QtObject:
     read = getDappBrowserView
 
   proc updateView*(self: WalletView) =
+    self.transactionsView.triggerEIP1559Check()
+
     self.balanceView.setTotalFiatBalance(self.status.wallet.getTotalFiatBalance())
     self.balanceView.totalFiatBalanceChanged()
 

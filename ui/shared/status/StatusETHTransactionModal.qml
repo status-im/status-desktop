@@ -5,6 +5,7 @@ import QtQuick.Dialogs 1.3
 import "../../imports"
 import "../../shared"
 import "../../shared/status"
+import "../../app/AppLayouts/Wallet/"
 
 ModalPopup {
     id: root
@@ -20,14 +21,17 @@ ModalPopup {
         walletModel.gasView.getGasPricePredictions()
     }
 
+    height: 540
 
     function sendTransaction() {
         try {
-            let responseStr = onSendTransaction(selectFromAccount.selectedAccount.address,
-                                            gasSelector.selectedGasLimit,
-                                            gasSelector.selectedGasPrice,
-                                            transactionSigner.enteredPassword);
-
+            let responseStr = profileModel.ens.setPubKey(root.ensUsername,
+                                                        selectFromAccount.selectedAccount.address,
+                                                        gasSelector.selectedGasLimit,
+                                                        gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                                                        gasSelector.selectedTipLimit,
+                                                        gasSelector.selectedOverallLimit,
+                                                        transactionSigner.enteredPassword)
             let response = JSON.parse(responseStr)
 
             if (!response.success) {
@@ -105,11 +109,11 @@ ModalPopup {
                 visible: true
                 anchors.top: selectFromAccount.bottom
                 anchors.topMargin: Style.current.bigPadding * 2
-                slowestGasPrice: parseFloat(walletModel.gasView.safeLowGasPrice)
-                fastestGasPrice: parseFloat(walletModel.gasView.fastestGasPrice)
+                gasPrice: parseFloat(walletModel.gasView.gasPrice)
                 getGasEthValue: walletModel.gasView.getGasEthValue
                 getFiatValue: walletModel.balanceView.getFiatValue
                 defaultCurrency: walletModel.balanceView.defaultCurrency
+                
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     let estimatedGas = root.estimateGasFunction(selectFromAccount.selectedAccount);
                     gasSelector.selectedGasLimit = estimatedGas
@@ -168,7 +172,7 @@ ModalPopup {
         width: parent.width
         height: btnNext.height
 
-        StatusRoundButton {
+         StatusRoundButton {
             id: btnBack
             anchors.left: parent.left
             icon.name: "arrow-right"
@@ -185,6 +189,13 @@ ModalPopup {
             }
         }
         
+        Component {
+            id: transactionSettingsConfirmationPopupComponent
+            TransactionSettingsConfirmationPopup {
+
+            }
+        }
+        
         StatusButton {
             id: btnNext
             anchors.right: parent.right
@@ -197,6 +208,27 @@ ModalPopup {
                     if (stack.isLastGroup) {
                         return root.sendTransaction()
                     }
+
+                    if(gasSelector.eip1599Enabled && stack.currentGroup === group2 && gasSelector.advancedMode){
+                        if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
+                            openPopup(transactionSettingsConfirmationPopupComponent, {
+                                currentBaseFee: gasSelector.latestBaseFeeGwei,
+                                currentMinimumTip: gasSelector.perGasTipLimitFloor,
+                                currentAverageTip: gasSelector.perGasTipLimitAverage,
+                                tipLimit: gasSelector.selectedTipLimit,
+                                suggestedTipLimit: gasSelector.perGasTipLimitFloor,
+                                priceLimit: gasSelector.selectedOverallLimit,
+                                suggestedPriceLimit: gasSelector.latestBaseFeeGwei + gasSelector.perGasTipLimitFloor,
+                                showPriceLimitWarning: gasSelector.showPriceLimitWarning,
+                                showTipLimitWarning: gasSelector.showTipLimitWarning,
+                                onConfirm: function(){
+                                    stack.next();
+                                }
+                            })
+                            return
+                        }
+                    }
+                    
                     stack.next()
                 }
             }

@@ -77,7 +77,7 @@ Rectangle {
     }
 
     // TODO we'll need a new dialog at one point because this one is not using the same call, but it's good for now
-property Component sendTransactionModalComponent: SignTransactionModal {}
+    property Component sendTransactionModalComponent: SignTransactionModal {}
 
     property Component signMessageModalComponent: SignMessageModal {}
 
@@ -190,9 +190,11 @@ property Component sendTransactionModalComponent: SignTransactionModal {}
                 });
 
                 // TODO change sendTransaction function to the postMessage one
-                sendDialog.sendTransaction = function (selectedGasLimit, selectedGasPrice, enteredPassword) {
+                sendDialog.sendTransaction = function (selectedGasLimit, selectedGasPrice, selectedTipLimit, selectedOverallLimit, enteredPassword) {
                     request.payload.selectedGasLimit = selectedGasLimit
                     request.payload.selectedGasPrice = selectedGasPrice
+                    request.payload.selectedTipLimit = selectedTipLimit
+                    request.payload.selectedOverallLimit = selectedOverallLimit
                     request.payload.password = enteredPassword
                     request.payload.params[0].value = value
 
@@ -229,7 +231,7 @@ property Component sendTransactionModalComponent: SignTransactionModal {}
                 }
 
                 sendDialog.open();
-                walletModel.gasView.getGasPricePredictions()
+                walletModel.gasView.getGasPrice()
             } else if (request.type === Constants.web3SendAsyncReadOnly && ["eth_sign", "personal_sign", "eth_signTypedData", "eth_signTypedData_v3"].indexOf(request.payload.method) > -1) {
                 const signDialog = signMessageModalComponent.createObject(browserWindow, {
                         request,
@@ -516,6 +518,7 @@ property Component sendTransactionModalComponent: SignTransactionModal {}
                 anchors.top: parent.top
                 anchors.topMargin: browserHeader.height
                 focus: true
+                url: "https://dap.ps"
                 webChannel: channel
                 onLinkHovered: function(hoveredUrl) {
                     if (hoveredUrl === "")

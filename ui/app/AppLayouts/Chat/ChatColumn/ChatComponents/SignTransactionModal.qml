@@ -5,6 +5,7 @@ import QtQuick.Dialogs 1.3
 import "../../../../../imports"
 import "../../../../../shared"
 import "../../../../../shared/status"
+import "../../../Wallet/"
 
 ModalPopup {
     property var selectedAccount
@@ -18,7 +19,7 @@ ModalPopup {
 
     property alias transactionSigner: transactionSigner
 
-    property var sendTransaction: function(selectedGasLimit, selectedGasPrice, enteredPassword) {
+    property var sendTransaction: function(selectedGasLimit, selectedGasPrice, selectedTipLimit, selectedOveralLimit, enteredPassword) {
         let success = false
         if(root.selectedAsset.address == Constants.zeroAddress){
             success = walletModel.transactionsView.transferEth(
@@ -26,7 +27,9 @@ ModalPopup {
                                                  selectRecipient.selectedRecipient.address,
                                                  root.selectedAmount,
                                                  selectedGasLimit,
-                                                 selectedGasPrice,
+                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                                                 gasSelector.selectedTipLimit,
+                                                 gasSelector.selectedOverallLimit,
                                                  enteredPassword,
                                                  stack.uuid)
         } else {
@@ -36,7 +39,9 @@ ModalPopup {
                                                  root.selectedAsset.address,
                                                  root.selectedAmount,
                                                  selectedGasLimit,
-                                                 selectedGasPrice,
+                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                                                 gasSelector.selectedTipLimit,
+                                                 gasSelector.selectedOverallLimit,
                                                  enteredPassword,
                                                  stack.uuid)
         }
@@ -52,7 +57,7 @@ ModalPopup {
 
     //% "Send"
     title: qsTrId("command-button-send")
-    height: 504
+    height: 540
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
@@ -60,7 +65,6 @@ ModalPopup {
         title: qsTrId("error-sending-the-transaction")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
-        onAccepted: root.close()
     }
 
     onClosed: {
@@ -122,8 +126,7 @@ ModalPopup {
             id: groupSelectGas
             //% "Network fee"
             headerText: qsTrId("network-fee")
-            //% "Preview"
-            footerText: qsTrId("preview")
+            footerText: qsTr("Continue")
             showNextBtn: false
             onBackClicked: function() {
                 stack.pop()
@@ -131,8 +134,7 @@ ModalPopup {
             GasSelector {
                 id: gasSelector
                 anchors.topMargin: Style.current.bigPadding
-                slowestGasPrice: parseFloat(walletModel.gasView.safeLowGasPrice)
-                fastestGasPrice: parseFloat(walletModel.gasView.fastestGasPrice)
+                gasPrice: parseFloat(walletModel.gasView.gasPrice)
                 getGasEthValue: walletModel.gasView.getGasEthValue
                 getFiatValue: walletModel.balanceView.getFiatValue
                 defaultCurrency: walletModel.balanceView.defaultCurrency
@@ -144,6 +146,7 @@ ModalPopup {
                         root.selectedAsset && root.selectedAsset.address &&
                         root.selectedAmount)) {
                         selectedGasLimit = 250000
+                        defaultGasLimit = selectedGasLimit
                         return
                     }
                     
@@ -164,6 +167,7 @@ ModalPopup {
                         return
                     }
                     selectedGasLimit = gasEstimate.result
+                    defaultGasLimit = selectedGasLimit
                 })
             }
             GasValidator {
@@ -267,6 +271,14 @@ ModalPopup {
                 stack.back()
             }
         }
+
+        Component {
+            id: transactionSettingsConfirmationPopupComponent
+            TransactionSettingsConfirmationPopup {
+
+            }
+        }
+
         StatusButton {
             id: btnNext
             anchors.right: parent.right
@@ -279,9 +291,33 @@ ModalPopup {
                 if (validity.isValid && !validity.isPending) {
                     if (stack.isLastGroup) {
                         return root.sendTransaction(gasSelector.selectedGasLimit,
-                                                    gasSelector.selectedGasPrice,
+                                                    gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                                                    gasSelector.selectedTipLimit,
+                                                    gasSelector.selectedOverallLimit,
                                                     transactionSigner.enteredPassword)
                     }
+
+                    if(gasSelector.eip1599Enabled && stack.currentGroup === groupSelectGas && gasSelector.advancedMode){
+                        if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
+                            openPopup(transactionSettingsConfirmationPopupComponent, {
+                                currentBaseFee: gasSelector.latestBaseFeeGwei,
+                                currentMinimumTip: gasSelector.perGasTipLimitFloor,
+                                currentAverageTip: gasSelector.perGasTipLimitAverage,
+                                tipLimit: gasSelector.selectedTipLimit,
+                                suggestedTipLimit: gasSelector.perGasTipLimitFloor, // TODO:
+                                priceLimit: gasSelector.selectedOverallLimit,
+                                suggestedPriceLimit: gasSelector.latestBaseFeeGwei + gasSelector.perGasTipLimitFloor,
+                                showPriceLimitWarning: gasSelector.showPriceLimitWarning,
+                                showTipLimitWarning: gasSelector.showTipLimitWarning,
+                                onConfirm: function(){
+                                    stack.next();
+                                }
+                            })
+                            return
+                        }
+                    }
+
+
                     if (typeof stack.currentGroup.onNextClicked === "function") {
                         return stack.currentGroup.onNextClicked()
                     }

@@ -5,6 +5,7 @@ import QtQuick.Dialogs 1.3
 import "../../imports"
 import "../../shared"
 import "../../shared/status"
+import "../../app/AppLayouts/Wallet/"
 
 ModalPopup {
     id: root
@@ -12,12 +13,14 @@ ModalPopup {
     property string assetPrice
     property string contractAddress
     property var estimateGasFunction: (function(userAddress, uuid) { return 0; })
-    property var onSendTransaction: (function(userAddress, gasLimit, gasPrice, password){ return ""; })
+    property var onSendTransaction: (function(userAddress, gasLimit, gasPrice, tipLimit, overallLimit, password){ return ""; })
     property var onSuccess: (function(){})
 
     Component.onCompleted: {
-        walletModel.gasView.getGasPricePredictions()
+        walletModel.gasView.getGasPrice()
     }
+
+    height: 540
 
     //% "Authorize %1 %2"
     title: qsTrId("authorize--1--2").arg(Utils.stripTrailingZeros(assetPrice)).arg(asset.symbol)
@@ -33,13 +36,16 @@ ModalPopup {
     function setAsyncGasLimitResult(uuid, value) {
         if (uuid === gasSelector.uuid) {
             gasSelector.selectedGasLimit = value
+            gasSelector.defaultGasLimit = value
         }
     }
 
     function sendTransaction() {
         let responseStr = onSendTransaction(selectFromAccount.selectedAccount.address,
                                          gasSelector.selectedGasLimit,
-                                         gasSelector.selectedGasPrice,
+                                         gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                                         gasSelector.selectedTipLimit,
+                                         gasSelector.selectedOverallLimit,
                                          transactionSigner.enteredPassword);
 
         let response = JSON.parse(responseStr)
@@ -108,12 +114,12 @@ ModalPopup {
                 id: gasSelector
                 anchors.top: selectFromAccount.bottom
                 anchors.topMargin: Style.current.bigPadding * 2
-                slowestGasPrice: parseFloat(walletModel.gasView.safeLowGasPrice)
-                fastestGasPrice: parseFloat(walletModel.gasView.fastestGasPrice)
+                gasPrice: parseFloat(walletModel.gasView.gasPrice)
                 getGasEthValue: walletModel.gasView.getGasEthValue
                 getFiatValue: walletModel.balanceView.getFiatValue
                 defaultCurrency: walletModel.balanceView.defaultCurrency
                 width: stack.width
+                
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     let estimatedGas = root.estimateGasFunction(selectFromAccount.selectedAccount, uuid);
                     gasSelector.selectedGasLimit = estimatedGas
@@ -190,6 +196,14 @@ ModalPopup {
                 stack.back()
             }
         }
+
+        Component {
+            id: transactionSettingsConfirmationPopupComponent
+            TransactionSettingsConfirmationPopup {
+
+            }
+        }
+
         StatusButton {
             id: btnNext
             anchors.right: parent.right
@@ -203,6 +217,27 @@ ModalPopup {
                     if (stack.isLastGroup) {
                         return root.sendTransaction()
                     }
+
+                    if(gasSelector.eip1599Enabled && stack.currentGroup === group2 && gasSelector.advancedMode){
+                        if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
+                            openPopup(transactionSettingsConfirmationPopupComponent, {
+                                currentBaseFee: gasSelector.latestBaseFeeGwei,
+                                currentMinimumTip: gasSelector.perGasTipLimitFloor,
+                                currentAverageTip: gasSelector.perGasTipLimitAverage,
+                                tipLimit: gasSelector.selectedTipLimit,
+                                suggestedTipLimit: gasSelector.perGasTipLimitFloor, // TODO:
+                                priceLimit: gasSelector.selectedOverallLimit,
+                                suggestedPriceLimit: gasSelector.latestBaseFeeGwei + gasSelector.perGasTipLimitFloor,
+                                showPriceLimitWarning: gasSelector.showPriceLimitWarning,
+                                showTipLimitWarning: gasSelector.showTipLimitWarning,
+                                onConfirm: function(){
+                                    stack.next();
+                                }
+                            })
+                            return
+                        }
+                    }
+
                     stack.next()
                 }
             }

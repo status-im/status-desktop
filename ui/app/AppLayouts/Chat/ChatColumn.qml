@@ -498,7 +498,7 @@ Item {
             SendModal {
                 id: sendTransactionWithEns
                 onOpened: {
-                    walletModel.gasView.getGasPricePredictions()
+                    walletModel.gasView.getGasPrice()
                 }
                 onClosed: {
                     txModalLoader.closed()
@@ -622,8 +622,8 @@ Item {
         Connections {
             target: chatsModel.stickers
             onTransactionWasSent: {
-                //% "Transaction pending"
-                toastMessage.title = qsTrId("transaction-pending")
+                //% "Transaction pending..."
+                toastMessage.title = qsTr("Transaction pending...")
                 toastMessage.source = "../../../img/loading.svg"
                 toastMessage.iconColor = Style.current.primary
                 toastMessage.iconRotates = true

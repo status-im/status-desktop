@@ -34,7 +34,9 @@ ModalPopup {
                                                  selectRecipient.selectedRecipient.address,
                                                  txtAmount.selectedAmount,
                                                  gasSelector.selectedGasLimit,
-                                                 gasSelector.selectedGasPrice,
+                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                                                 gasSelector.selectedTipLimit,
+                                                 gasSelector.selectedOverallLimit,
                                                  transactionSigner.enteredPassword,
                                                  stack.uuid)
         } else {
@@ -44,7 +46,9 @@ ModalPopup {
                                                  txtAmount.selectedAsset.address,
                                                  txtAmount.selectedAmount,
                                                  gasSelector.selectedGasLimit,
-                                                 gasSelector.selectedGasPrice,
+                                                 gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                                                 gasSelector.selectedTipLimit,
+                                                 gasSelector.selectedOverallLimit,
                                                  transactionSigner.enteredPassword,
                                                  stack.uuid)
         }
@@ -53,7 +57,6 @@ ModalPopup {
             //% "Invalid transaction parameters"
             sendingError.text = qsTrId("invalid-transaction-parameters")
             sendingError.open()
-            root.close()
         }
     }
 
@@ -111,7 +114,7 @@ ModalPopup {
             //% "Send"
             headerText: qsTrId("command-button-send")
             //% "Preview"
-            footerText: qsTrId("preview")
+            footerText: qsTr("Continue")
 
             AssetAndAmountInput {
                 id: txtAmount
@@ -127,11 +130,11 @@ ModalPopup {
                 id: gasSelector
                 anchors.top: txtAmount.bottom
                 anchors.topMargin: Style.current.bigPadding * 2
-                slowestGasPrice: parseFloat(walletModel.gasView.safeLowGasPrice)
-                fastestGasPrice: parseFloat(walletModel.gasView.fastestGasPrice)
+                gasPrice: parseFloat(walletModel.gasView.gasPrice)
                 getGasEthValue: walletModel.gasView.getGasEthValue
                 getFiatValue: walletModel.balanceView.getFiatValue
                 defaultCurrency: walletModel.balanceView.defaultCurrency
+                
                 width: stack.width
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
@@ -151,7 +154,9 @@ ModalPopup {
                         console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
                         return
                     }
+
                     selectedGasLimit = gasEstimate.result
+                    defaultGasLimit = selectedGasLimit
                 })
             }
             GasValidator {
@@ -222,6 +227,14 @@ ModalPopup {
                 stack.back()
             }
         }
+
+        Component {
+            id: transactionSettingsConfirmationPopupComponent
+            TransactionSettingsConfirmationPopup {
+                
+            }
+        }
+
         StatusButton {
             id: btnNext
             anchors.right: parent.right
@@ -235,6 +248,27 @@ ModalPopup {
                     if (stack.isLastGroup) {
                         return root.sendTransaction()
                     }
+
+                    if(gasSelector.eip1599Enabled && stack.currentGroup === group2 && gasSelector.advancedMode){
+                        if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
+                            openPopup(transactionSettingsConfirmationPopupComponent, {
+                                currentBaseFee: gasSelector.latestBaseFeeGwei,
+                                currentMinimumTip: gasSelector.perGasTipLimitFloor,
+                                currentAverageTip: gasSelector.perGasTipLimitAverage,
+                                tipLimit: gasSelector.selectedTipLimit,
+                                suggestedTipLimit: gasSelector.perGasTipLimitFloor,
+                                priceLimit: gasSelector.selectedOverallLimit,
+                                suggestedPriceLimit: gasSelector.latestBaseFeeGwei + gasSelector.perGasTipLimitFloor,
+                                showPriceLimitWarning: gasSelector.showPriceLimitWarning,
+                                showTipLimitWarning: gasSelector.showTipLimitWarning,
+                                onConfirm: function(){
+                                    stack.next();
+                                }
+                            })
+                            return
+                        }
+                    }
+
                     stack.next()
                 }
             }
