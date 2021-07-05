@@ -58,6 +58,15 @@ QtObject:
     discard gweiValue.parseInt(gweiValueInt)
     discard gasLimit.parseInt(gasLimitInt)
 
+    # The following two check prevents app crash, cause we're trying to promote 
+    # gweiValueInt and gasLimitInt to unsigned 256 int, and these two numbers
+    # must be positive numbers, because of overflow.
+    if (gweiValueInt < 0):
+      gweiValueInt = 0
+    
+    if (gasLimitInt < 0):
+      gasLimitInt = 0
+    
     let weiValue = gweiValueInt.u256 * 1000000000.u256 * gasLimitInt.u256
     let ethValue = wei2Eth(weiValue)
     result = fmt"{ethValue}"

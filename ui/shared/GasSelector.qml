@@ -69,10 +69,10 @@ Item {
         }
         let inputLimit = parseFloat(inputGasLimit.text || "0.00")
         let inputPrice = parseFloat(inputGasPrice.text || "0.00")
-        if (inputLimit === 0.00) {
+        if (inputLimit <= 0) {
             inputGasLimit.validationError = root.greaterThan0ErrorMessage
         }
-        if (inputPrice === 0.00) {
+        if (inputPrice <= 0) {
             inputGasPrice.validationError = root.greaterThan0ErrorMessage
         }
         const isValid = inputGasLimit.validationError === "" && inputGasPrice.validationError === ""
