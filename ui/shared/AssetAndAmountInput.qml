@@ -43,7 +43,7 @@ Item {
         } else if (isNaN(inputAmount.text)) {
             error = invalidInputErrorMessage
             isValid = false
-        } else if (input === 0.00 && hasTyped) {
+        } else if (input <= 0.00 && hasTyped) {
             error = greaterThan0ErrorMessage
             isValid = false
         } else if (validateBalance && input > balance && !noInput) {

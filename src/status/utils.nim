@@ -45,7 +45,10 @@ proc handleRPCErrors*(response: string) =
 proc toStUInt*[bits: static[int]](flt: float, T: typedesc[StUint[bits]]): T =
   var stringValue =  fmt"{flt:<.0f}"
   stringValue.removeSuffix('.')
-  result = parse($stringValue, StUint[bits])
+  if (flt >= 0):
+    result = parse($stringValue, StUint[bits])
+  else:
+    result = parse("0", StUint[bits])
 
 proc toUInt256*(flt: float): UInt256 =
   toStUInt(flt, StUInt[256])
