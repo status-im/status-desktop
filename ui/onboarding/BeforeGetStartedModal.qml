@@ -24,19 +24,19 @@ ModalPopup {
         }
 
         StatusCheckBox {
-            id: termsOfService
+            id: termsOfUse
             Layout.preferredWidth: parent.width
 
             contentItem: Row {
                 spacing: 4
-                leftPadding: termsOfService.indicator.width + termsOfService.spacing
+                leftPadding: termsOfUse.indicator.width + termsOfUse.spacing
 
                 StyledText {
                     text: qsTr("I accept")
                 }
 
                 StyledText {
-                    text: qsTr("Terms of Service")
+                    text: qsTr("Terms of Use")
                     color: Style.current.blue
 
                     MouseArea {
@@ -54,44 +54,49 @@ ModalPopup {
                         }
                     }
                 }
-
-                StyledText {
-                    id: orText
-                    text: "&"
-                }
-
-                StyledText {
-                    text: qsTr("Privacy Policy")
-                    color: Style.current.blue
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        hoverEnabled: true
-                        onEntered: {
-                            parent.font.underline = true
-                        }
-                        onExited: {
-                            parent.font.underline = false
-                        }
-                        onClicked: {
-                            Qt.openUrlExternally("https://status.im/privacy-policy/")
-                        }
-                    }
-                }
             }
         }
     }
 
-    footer: StatusButton {
-        anchors.right: parent.right
-        enabled: acknowledge.checked && termsOfService.checked
-        width: 146
-        height: 44
-        text: qsTr("Get Started")
+    footer: Item {
+        width: parent.width
+        implicitHeight: getStartedButton.height > ppText.height?
+                            getStartedButton.height : ppText.height
 
-        onClicked: {
-            popup.close()
+        StyledText {
+            id: ppText
+            text: qsTr("Privacy Policy")
+            color: Style.current.blue
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onEntered: {
+                    parent.font.underline = true
+                }
+                onExited: {
+                    parent.font.underline = false
+                }
+                onClicked: {
+                    Qt.openUrlExternally("https://status.im/privacy-policy/")
+                }
+            }
+        }
+
+        StatusButton {
+            id: getStartedButton
+            anchors.right: parent.right
+            enabled: acknowledge.checked && termsOfUse.checked
+            width: 146
+            height: 44
+            text: qsTr("Get Started")
+
+            onClicked: {
+                popup.close()
+            }
         }
     }
 }
