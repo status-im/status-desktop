@@ -295,7 +295,7 @@ Item {
             id: image1
             height: 50
             width: height
-            source: Style.current.name === Constants.lightThemeName ? "../../../../../shared/img/status-logo-light-theme.svg" : "../../../../../shared/img/status-logo.svg"
+            source: "../../../../../shared/img/status-logo.svg"
             sourceSize: Qt.size(width, height)
         }
         

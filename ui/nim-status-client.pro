@@ -420,7 +420,7 @@ DISTFILES += \
     shared/img/close.svg \
     shared/img/loading.png \
     shared/img/loading.svg \
-    shared/img/status-logo.png \
+    shared/img/status-logo.svg \
     shared/qmldir \
     shared/status/StatusChatInputTextFormationAction.qml \
     shared/status/StatusEmojiSuggestionPopup.qml \
