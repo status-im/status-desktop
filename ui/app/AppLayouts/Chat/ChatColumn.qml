@@ -2,6 +2,12 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.0
+
+import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+
 import "../../../shared"
 import "../../../shared/status"
 import "../../../imports"
@@ -222,11 +228,79 @@ StackLayout {
     ColumnLayout {
         spacing: 0
 
-        TopBar {
+        StatusChatToolBar {
             id: topBar
-            z: 60
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             Layout.fillWidth: true
+
+            property string chatId: chatsModel.channelView.activeChannel.id
+            property string profileImage: appMain.getProfileImage(chatId) || ""
+
+            chatInfoButton.title: {
+                if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
+                    return Utils.removeStatusEns(chatsModel.userNameOrAlias(chatsModel.channelView.activeChannel.id))
+                }
+                return chatsModel.channelView.activeChannel.name
+            }
+            chatInfoButton.subTitle: {
+                switch (chatsModel.channelView.activeChannel.chatType) {
+                    case Constants.chatTypeOneToOne:
+                        return (profileModel.contacts.isAdded(topBar.chatId) ?
+                            profileModel.contacts.contactRequestReceived(topBar.chatId) ?
+                                qsTr("Contact") :
+                                qsTr("Contact request pending") :
+                            qsTr("Not a contact"))
+                        break;
+                    case Constants.chatTypePublic:
+                        return qsTr("Public chat")
+                    case Constants.chatTypePrivateGroupChat:
+                        let cnt = chatsModel.channelView.activeChannel.members.rowCount();
+                        if(cnt > 1) return qsTr("%1 members").arg(cnt);
+                        return qsTr("1 member");
+                        break;
+                    case Constants.chatTypeCommunity:
+                    default:
+                        return ""
+                        break;
+                }
+            }
+            chatInfoButton.image.source: profileImage || chatsModel.channelView.activeChannel.identicon
+            chatInfoButton.image.isIdenticon: !!!profileImage && chatsModel.channelView.activeChannel.identicon
+            chatInfoButton.icon.color: chatsModel.channelView.activeChannel.color
+            chatInfoButton.type: chatsModel.channelView.activeChannel.chatType
+            chatInfoButton.pinnedMessagesCount: chatsModel.messageView.pinnedMessagesList.count
+            chatInfoButton.muted: chatsModel.channelView.activeChannel.muted
+
+            chatInfoButton.onPinnedMessagesCountClicked: openPopup(pinnedMessagesPopupComponent)
+            chatInfoButton.onUnmute: chatsModel.channelView.unmuteChatItem(chatsModel.channelView.activeChannel.id)
+
+            chatInfoButton.sensor.enabled: chatsModel.channelView.activeChannel.chatType !== Constants.chatTypePublic &&
+                                           chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeCommunity
+            chatInfoButton.onClicked: {
+                switch (chatsModel.channelView.activeChannel.chatType) {
+                    case Constants.chatTypePrivateGroupChat:
+                        openPopup(groupInfoPopupComponent, {channelType: GroupInfoPopup.ChannelType.ActiveChannel})
+                        break;
+                    case Constants.chatTypeOneToOne:
+                        openProfilePopup(chatsModel.userNameOrAlias(chatsModel.channelView.activeChannel.id),
+                                        chatsModel.channelView.activeChannel.id, profileImage || chatsModel.channelView.activeChannel.identicon,
+                                        "", chatsModel.channelView.activeChannel.nickname)
+                        break;
+                }
+            }
+
+            searchButton.visible: false
+            membersButton.visible: appSettings.showOnlineUsers && chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne
+            notificationButton.visible: appSettings.isActivityCenterEnabled
+            notificationCount: chatsModel.activityNotificationList.unreadCount
+
+            onMembersButtonClicked: showUsers = !showUsers
+            onNotificationButtonClicked: activityCenter.open()
+
+            popupMenu: ChatContextMenu {
+                openHandler: {
+                    chatItem = chatsModel.channelView.activeChannel
+                }
+            }
         }
 
         Rectangle {
@@ -526,6 +600,12 @@ StackLayout {
             }
             selectRecipient.selectedType: RecipientSelector.Type.Contact
         }
+    }
+
+    ActivityCenter {
+        id: activityCenter
+        height: chatColumnLayout.height - (topBar.height * 2) // TODO get screen size
+        y: topBar.height
     }
 }
 
