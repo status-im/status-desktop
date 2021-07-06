@@ -341,8 +341,13 @@ ModalPopup {
             width: visible ? implicitWidth : 0
             onClicked: {
                 appMain.changeAppSection(Constants.chat)
-                chatsModel.channelView.joinPrivateChat(fromAuthor, "");
+                chatsModel.channelView.joinPrivateChat(fromAuthor, "")
                 popup.close()
+                let pp = parentPopup
+                while (pp) {
+                    pp.close()
+                    pp = pp.parentPopup
+                }
             }
         }
 
