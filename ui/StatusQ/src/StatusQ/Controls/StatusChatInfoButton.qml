@@ -22,6 +22,7 @@ Rectangle {
     property StatusIconSettings icon: StatusIconSettings {}
     property int type: StatusChatInfoButton.Type.PublicChat
     property alias tooltip: statusToolTip
+    property alias sensor: sensor
 
     signal clicked(var mouse)
     signal pinnedMessagesCountClicked(var mouse)
@@ -38,13 +39,13 @@ Rectangle {
     }
 
     radius: 8
-    color: sensor.containsMouse ? Theme.palette.baseColor2 : "transparent"
+    color: sensor.enabled && sensor.containsMouse ? Theme.palette.baseColor2 : "transparent"
 
     MouseArea {
         id: sensor
         anchors.fill: parent
         hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
+        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
 
         onClicked: statusChatInfoButton.clicked(mouse)
 
