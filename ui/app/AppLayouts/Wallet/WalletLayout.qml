@@ -110,7 +110,6 @@ Item {
                             anchors.leftMargin: 32
                             //% "History"
                             btnText: qsTrId("history")
-                            onClicked: historyTab.checkIfHistoryIsBeingFetched()
                         }
                     }
 
