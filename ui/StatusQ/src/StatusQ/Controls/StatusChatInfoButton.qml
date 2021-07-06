@@ -97,6 +97,7 @@ Rectangle {
         Item {
             id: statusChatInfoButtonTitle
             anchors.top: identicon.top
+            anchors.topMargin: statusChatInfoButtonSubTitle.visible ? 0 : 8
             anchors.left: identicon.right
             anchors.leftMargin: 8
 
@@ -175,7 +176,8 @@ Rectangle {
             id: statusChatInfoButtonSubTitle
             anchors.left: statusChatInfoButtonTitle.left
             anchors.top: statusChatInfoButtonTitle.bottom
-            height: chatType.height
+            visible: !!statusChatInfoButton.subTitle
+            height: visible ? chatType.height : 0
             width: childrenRect.width
 
             StatusBaseText {
