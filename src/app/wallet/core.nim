@@ -70,7 +70,7 @@ proc init*(self: WalletController) =
       of "non-archival-node-detected":
         self.view.setHistoryFetchState(self.status.wallet.accounts.map(account => account.address), false)
         self.view.setNonArchivalNode()
-        error "Non-archival node detected, please check your Infura key or your connected node"
+        warn "Non-archival node detected, please check your Infura key or your connected node"
       else:
         error "Unhandled wallet signal", eventType=data.eventType
 
