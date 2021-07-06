@@ -303,7 +303,7 @@ ModalPopup {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             const userProfileImage = appMain.getProfileImage(model.pubKey)
-                            openProfilePopup(model.userName, model.pubKey, userProfileImage || model.identicon, '', contactRow.nickname)
+                            openProfilePopup(model.userName, model.pubKey, userProfileImage || model.identicon, '', contactRow.nickname, popup)
                         }
                     }
                 }
