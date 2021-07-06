@@ -74,7 +74,7 @@ Item {
 
         Rectangle {
             anchors.left: contactImage.right
-            anchors.leftMargin: -10
+            anchors.leftMargin: -Style.current.smallPadding
             anchors.bottom: contactImage.bottom
             height: 10
             width: 10
