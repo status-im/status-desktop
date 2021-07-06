@@ -1,4 +1,4 @@
-import json, random, strutils, sequtils, sugar, chronicles
+import json, random, strutils, sequtils, sugar, chronicles, tables
 import json_serialization
 import ../utils
 import ../libstatus/accounts as status_accounts
@@ -218,6 +218,8 @@ proc toCommunity*(jsonCommunity: JsonNode): Community =
     communityColor: jsonCommunity{"color"}.getStr,
     communityImage: IdentityImage()
   )
+  
+  result.lastSeen = initOrderedTable[string, string]()
 
   if jsonCommunity.hasKey("images") and jsonCommunity["images"].kind != JNull:
     if jsonCommunity["images"].hasKey("thumbnail"):

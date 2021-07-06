@@ -1,4 +1,4 @@
-import NimQml, json, sequtils, chronicles, strutils, strformat
+import NimQml, json, sequtils, chronicles, strutils, strformat, tables
 import ../../../status/status
 import ../../../status/chat/chat
 import ./channels_list
@@ -46,6 +46,12 @@ QtObject:
       unreadTotal = unreadTotal + chatItem.unviewedMessagesCount
     if unreadTotal != community.unviewedMessagesCount:
       community.unviewedMessagesCount = unreadTotal
+
+  proc updateMemberVisibility*(self: CommunitiesView, communityId, pubKey, timestamp: string) =
+    self.joinedCommunityList.updateMemberVisibility(communityId, pubKey, timestamp)
+    if communityId == self.activeCommunity.communityItem.id:
+      self.activeCommunity.setCommunityItem(self.joinedCommunityList.getCommunityById(communityId))
+      self.activeCommunity.triggerMemberUpdate()
 
   proc updateCommunityChat*(self: CommunitiesView, newChat: Chat) =
     var community = self.joinedCommunityList.getCommunityById(newChat.communityId)
@@ -187,7 +193,7 @@ QtObject:
   proc observedCommunityChanged*(self: CommunitiesView) {.signal.}
   proc communityChanged*(self: CommunitiesView, communityId: string) {.signal.}
 
-  proc addCommunityToList*(self: CommunitiesView, community: Community) =
+  proc addCommunityToList*(self: CommunitiesView, community: var Community) =
     let communityCheck = self.communityList.getCommunityById(community.id)
     if (communityCheck.id == ""):
       self.communityList.addCommunityItemToList(community)
@@ -251,7 +257,7 @@ QtObject:
     result = ""
     try:
       var image = image_utils.formatImagePath(imagePath)
-      let community = self.status.chat.editCommunity(id, name, description, access, ensOnly, color, image, aX, aY, bX, bY)
+      var community = self.status.chat.editCommunity(id, name, description, access, ensOnly, color, image, aX, aY, bX, bY)
      
       if (community.id == ""):
         return "Community was not edited. Please try again later"

@@ -85,3 +85,7 @@ QtObject:
       CommunityMembersRoles.PubKey.int:"pubKey",
       CommunityMembersRoles.Identicon.int:"identicon"
     }.toTable
+
+  proc triggerUpdate*(self: CommunityMembersView) =
+    self.beginResetModel()
+    self.endResetModel()

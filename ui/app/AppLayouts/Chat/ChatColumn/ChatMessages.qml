@@ -13,6 +13,7 @@ import "../components"
 import "./samples/"
 import "./MessageComponents"
 import "../ContactsColumn"
+import "../CommunityComponents"
 
 SplitView {
     id: svRoot
@@ -363,9 +364,28 @@ SplitView {
         }
     }
 
-    UserList {
-        id: userList
+    Loader {
+        property int defaultWidth: 250
+        SplitView.preferredWidth: active ? defaultWidth : 0
+        SplitView.minimumWidth: active ? 50 : 0
+        active: showUsers && chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        sourceComponent:appSettings.communitiesEnabled && chatsModel.communities.activeCommunity.active ? communityUserListComponent : userListComponent
     }
+
+    Component {
+        id: communityUserListComponent
+        CommunityUserList { }
+    }
+
+    Component {
+        id: userListComponent
+        UserList { }
+    }
+    
+
+    
 }
 
 /*##^##

@@ -1,4 +1,4 @@
-import NimQml, std/wrapnils, json
+import NimQml, std/wrapnils, json, tables
 import ../../../status/[chat/chat, status]
 import channels_list
 import ../../../eventemitter
@@ -193,6 +193,15 @@ QtObject:
 
   proc getMembers*(self: CommunityItemView): QVariant {.slot.} =
     result = newQVariant(self.members)
+
+  proc triggerMemberUpdate*(self: CommunityItemView) =
+    self.members.triggerUpdate()
+
+  proc memberLastSeen*(self: CommunityItemView, pubKey: string): string {.slot.} =
+    if self.communityItem.lastSeen.hasKey(pubKey):
+      result = self.communityItem.lastSeen[pubKey]
+    else:
+      result = "0"
 
   proc hasMember*(self: CommunityItemView, pubKey: string): bool {.slot.} =
     result = self.members.members.contains(pubKey)

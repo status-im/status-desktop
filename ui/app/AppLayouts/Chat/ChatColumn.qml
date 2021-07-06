@@ -72,6 +72,7 @@ StackLayout {
         interval: 60000; // 1 min
         running: true;
         repeat: true
+        triggeredOnStart: true
         onTriggered: {
             chatColumnLayout.currentTime = Date.now()
         }

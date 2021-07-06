@@ -39,7 +39,7 @@ proc handleChatEvents(self: ChatController) =
         self.view.deleteMessage(message.chatId, message.replace)
     self.view.reactions.push(evArgs.emojiReactions)
     if (evArgs.communities.len > 0):
-      for community in evArgs.communities:
+      for community in evArgs.communities.mitems:
         if self.view.communities.isUserMemberOfCommunity(community.id) and not community.admin and not community.isMember:
           discard self.view.communities.leaveCommunity(community.id)
           continue
