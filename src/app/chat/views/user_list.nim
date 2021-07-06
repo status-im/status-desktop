@@ -50,15 +50,15 @@ QtObject:
     if index.row < 0 or index.row >= self.users.len:
       return
     
-    let user = self.users[index.row]
+    let pubkey = self.users[index.row]
 
     case role.UserListRoles:
-      of UserListRoles.UserName: result = newQVariant(self.userDetails[user].userName)
-      of UserListRoles.LastSeen: result = newQVariant(self.userDetails[user].lastSeen)
-      of UserListRoles.Alias: result = newQVariant(self.userDetails[user].alias)
-      of UserListRoles.LocalName: result = newQVariant(self.userDetails[user].localName)
-      of UserListRoles.PublicKey: result = newQVariant(user)
-      of UserListRoles.Identicon: result = newQVariant(self.userdetails[user].identicon)
+      of UserListRoles.UserName: result = newQVariant(self.userDetails[pubkey].userName)
+      of UserListRoles.LastSeen: result = newQVariant(self.userDetails[pubkey].lastSeen)
+      of UserListRoles.Alias: result = newQVariant(self.userDetails[pubkey].alias)
+      of UserListRoles.LocalName: result = newQVariant(self.userDetails[pubkey].localName)
+      of UserListRoles.PublicKey: result = newQVariant(pubkey)
+      of UserListRoles.Identicon: result = newQVariant(self.userdetails[pubkey].identicon)
 
   method roleNames(self: UserListView): Table[int, string] =
     {

@@ -363,48 +363,8 @@ SplitView {
         }
     }
 
-
-    Rectangle {
+    UserList {
         id: userList
-        visible: showUsers && chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne
-
-        property int defaultWidth: 250
-
-        SplitView.preferredWidth: visible ? defaultWidth : 0
-        SplitView.minimumWidth: 50
-        
-        color: Style.current.secondaryMenuBackground
-
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-
-        height: childrenRect.height
-
-        ListView {
-            id: userListView
-            anchors.fill: parent
-            anchors.bottomMargin: Style.current.bigPadding
-            spacing: 0
-            boundsBehavior: Flickable.StopAtBounds
-            model: userListDelegate
-        }
-       
-        DelegateModelGeneralized {
-            id: userListDelegate
-            lessThan: [
-                function(left, right) { 
-                    return left.lastSeen > right.lastSeen 
-                }
-            ]
-            model: messageList.userList
-            delegate: User {
-                publicKey: model.publicKey
-                name: model.userName
-                identicon: model.identicon
-                lastSeen: model.lastSeen
-                currentTime: svRoot.currentTime
-            }
-        }
     }
 }
 
