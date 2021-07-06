@@ -31,12 +31,10 @@ Popup {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     parent: Overlay.overlay
     width: 560
-    height: chatColumnLayout.height - (chatTopBarContent.height * 2) // TODO get screen size
     background: Rectangle {
         color: Style.current.background
         radius: Style.current.radius
     }
-    y: chatTopBarContent.height
     x: applicationWindow.width - activityCenter.width - Style.current.halfPadding
     onOpened: {
         popupOpened = true

@@ -141,90 +141,9 @@ Item {
             onChatItemSelected: chatsModel.channelView.setActiveChannel(id)
             onChatItemUnmuted: chatsModel.channelView.unmuteChatItem(id)
 
-            popupMenu: StatusPopupMenu {
-
-                id: chatListContextMenu
-
-                property var chatItem
-
+            popupMenu: ChatContextMenu {
                 openHandler: function (id) {
                     chatItem = chatsModel.channelView.getChatItemById(id)
-                }
-
-                StatusMenuItem {
-                    id: viewProfileMenuItem
-                    text: {
-                        if (chatItem) {
-                            switch (chatItem.chatType) {
-                                case Constants.chatTypeOneToOne:
-                                  return qsTr("View Profile")
-                                  break;
-                                case Constants.chatTypePrivateGroupChat:
-                                  return qsTr("View Group")
-                                  break;
-                                default:
-                                  return qsTr("Share Chat")
-                                  break;
-                            }
-                        }
-                        return ""
-                    }
-                    icon.name: "group-chat"
-                    enabled: chatItem && chatItem.chatType !== Constants.chatTypePublic
-                    onTriggered: {
-                        if (chatItem.chatType === Constants.chatTypeOneToOne) {
-                            const userProfileImage = appMain.getProfileImage(chatItem.id)
-                            return openProfilePopup(
-                              chatItem.name,
-                              chatItem.id,
-                              userProfileImage || chatItem.identicon
-                            )
-                        }
-                        if (chatItem.chatType === Constants.chatTypePrivateGroupChat) {
-                            return openPopup(groupInfoPopupComponent, {channelType: GroupInfoPopup.ChannelType.ContextChannel})
-                        }
-                    }
-                }
-
-                StatusMenuSeparator {
-                    visible: viewProfileMenuItem.enabled
-                }
-
-                StatusMenuItem {
-                    text: chatItem && chatItem.muted ? 
-                          qsTr("Unmute chat") : 
-                          qsTr("Mute chat")
-                    icon.name: "notification"
-                    onTriggered: {
-                        if (chatItem && chatItem.muted) {
-                            return chatsModel.channelView.unmuteChatItem(chatItem.id)
-                        }
-                        chatsModel.channelView.muteChatItem(chatItem.id)
-                    }
-                }
-
-                StatusMenuItem {
-                    text: "Mark as Read"
-                    icon.name: "checkmark-circle"
-                    onTriggered: chatsModel.channelView.markChatItemAsRead(chatItem.id)
-                }
-
-                StatusMenuItem {
-                    text: "Clear history"
-                    icon.name: "close-circle"
-                    onTriggered: chatsModel.channelView.clearChatHistory(chatItem.id)
-                }
-
-                StatusMenuSeparator {}
-
-                StatusMenuItem {
-                    text: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? "Delete chat" : "Leave chat"
-                    icon.name: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? "delete" : "arrow-right"
-                    icon.width: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? 18 : 14
-                    iconRotation: chatItem && chatItem.chatType === Constants.chatTypeOneToOne ? 0 : 180
-
-                    type: StatusMenuItem.Type.Danger
-                    onTriggered: openPopup(deleteChatConfirmationDialogComponent, { chatId: chatItem.id })
                 }
             }
         }
@@ -309,23 +228,6 @@ Item {
             }
         }
     }
-
-    Component {
-        id: deleteChatConfirmationDialogComponent
-        ConfirmationDialog {
-            property string chatId
-            btnType: "warn"
-            confirmationText: qsTr("Are you sure you want to leave this chat?")
-            onClosed: {
-                destroy()
-            }
-            onConfirmButtonClicked: {
-                chatsModel.channelView.leaveChat(chatId)
-                close();
-            }
-        }
-    }
-
 }
 
 /*##^##

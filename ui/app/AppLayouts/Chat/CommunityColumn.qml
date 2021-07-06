@@ -10,6 +10,7 @@ import StatusQ.Popups 0.1
 import "../../../imports"
 import "../../../shared"
 import "../../../shared/status"
+import "./components"
 import "./CommunityComponents"
 
 
@@ -196,47 +197,9 @@ Item {
                 }
             }
 
-            chatListPopupMenu: StatusPopupMenu {
-
-                property var chatItem
-
+            chatListPopupMenu: ChatContextMenu {
                 openHandler: function (id) {
                     chatItem = chatsModel.channelView.getChatItemById(id)
-                }
-
-                StatusMenuItem {
-                    text: chatItem && chatItem.muted ? 
-                          qsTr("Unmute chat") : 
-                          qsTr("Mute chat")
-                    icon.name: "notification"
-                    onTriggered: {
-                        if (chatItem && chatItem.muted) {
-                            return chatsModel.channelView.unmuteChatItem(chatItem.id)
-                        }
-                        chatsModel.channelView.muteChatItem(chatItem.id)
-                    }
-                }
-
-                StatusMenuItem {
-                    text: "Mark as Read"
-                    icon.name: "checkmark-circle"
-                    onTriggered: chatsModel.channelView.markChatItemAsRead(chatItem.id)
-                }
-
-                StatusMenuItem {
-                    text: "Clear history"
-                    icon.name: "close-circle"
-                    onTriggered: chatsModel.channelView.clearChatHistory(chatItem.id)
-                }
-
-                StatusMenuItem {
-                    text: qsTr("Edit Channel")
-                    icon.name: "edit"
-                    enabled: chatsModel.communities.activeCommunity.admin
-                    onTriggered: openPopup(editChannelPopup, {
-                        communityId: chatsModel.communities.activeCommunity.id,
-                        channel: chatItem
-                    })
                 }
             }
         }

@@ -1,8 +1,6 @@
 StatusButton 1.0 StatusButton.qml
 StatusChatCommandButton 1.0 StatusChatCommandButton.qml
 StatusChatCommandPopup 1.0 StatusChatCommandPopup.qml
-StatusChatInfo 1.0 StatusChatInfo.qml
-StatusChatInfoButton 1.0 StatusChatInfoButton.qml
 StatusChatInput 1.0 StatusChatInput.qml
 StatusEmojiCategoryButton 1.0 StatusEmojiCategoryButton.qml
 StatusEmojiPopup 1.0 StatusEmojiPopup.qml
