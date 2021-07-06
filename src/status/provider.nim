@@ -1,4 +1,4 @@
-import ens, wallet, permissions
+import ens, wallet, permissions, utils
 import ../eventemitter
 import types
 import utils
