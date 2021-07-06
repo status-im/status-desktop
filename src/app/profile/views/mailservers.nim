@@ -3,7 +3,7 @@ import ../../../status/[status, settings]
 import ../../../status/profile/mailserver
 import mailservers_list
 import ../../../status/tasks/marathon/mailserver/worker
-import ../../../status/libstatus/types as status_types
+import ../../../status/types as status_types
 
 logScope:
   topics = "mailservers-view"
@@ -57,12 +57,12 @@ QtObject:
     read = getAutomaticSelection
 
   proc getDefaultSyncPeriod(self: MailserversView): int {.slot.} =
-    status_settings.getSetting[int](Setting.DefaulySyncPeriod)
+    self.status.settings.getSetting[:int](Setting.DefaultSyncPeriod)
 
   proc defaultSyncPeriodChanged(self: MailserversView) {.signal.}
 
   proc setDefaultSyncPeriod(self: MailserversView, newSyncPeriod: int) {.slot.} =
-    discard status_settings.saveSetting(Setting.DefaulySyncPeriod, newSyncPeriod)
+    self.status.saveSetting(Setting.DefaultSyncPeriod, newSyncPeriod)
     self.defaultSyncPeriodChanged()
 
   QtProperty[int] DefaultSyncPeriod:

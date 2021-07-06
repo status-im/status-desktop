@@ -196,7 +196,7 @@ type
     Fleet = "fleet"
     VisibleTokens = "wallet/visible-tokens"
     PinnedMailservers = "pinned-mailservers"
-    DefaulySyncPeriod = "default-sync-period"
+    DefaultSyncPeriod = "default-sync-period"
 
   UpstreamConfig* = ref object
     enabled* {.serializedFieldName("Enabled").}: bool
