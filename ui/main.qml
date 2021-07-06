@@ -128,9 +128,7 @@ StatusWindow {
     SystemTrayIcon {
         id: systemTray
         visible: true
-        icon.source: applicationWindow.Universal.theme === Universal.Dark ?
-                         "shared/img/status-logo.svg" :
-                         "shared/img/status-logo-light-theme.svg";
+        icon.source: "shared/img/status-logo.svg"
         menu: Menu {
             MenuItem {
                 visible: !applicationWindow.visible
