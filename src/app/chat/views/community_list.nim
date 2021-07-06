@@ -1,5 +1,5 @@
 import # std libs
-  NimQml, Tables, json, strutils
+  NimQml, json, strutils, tables
 
 import # vendor libs
   chronicles, json_serialization
@@ -171,6 +171,16 @@ QtObject:
       if community.id == communityId:
         return community
 
+  proc updateMemberVisibility*(self: CommunityList, communityId, pubKey, timestamp: string) =
+    for community in self.communities.mitems:
+      if community.id != communityId: continue
+      if community.lastSeen.haskey(pubKey):
+        if parseBiggestInt(timestamp) >  parseBiggestInt(community.lastSeen[pubKey]):
+          community.lastSeen[pubKey] = timestamp
+      else:
+        community.lastSeen[pubKey] = timestamp
+      break
+    
   proc addChannelToCommunity*(self: CommunityList, communityId: string, chat: Chat) =
     var community = self.getCommunityById(communityId)
     community.chats.add(chat)
@@ -192,12 +202,14 @@ QtObject:
     let index = self.communities.findIndexById(communityId)
     self.communities[index] = community
 
-  proc replaceCommunity*(self: CommunityList, community: Community) =
+  proc replaceCommunity*(self: CommunityList, community: var Community) =
     let index = self.communities.findIndexById(community.id)
     if (index == -1):
       return
     let topLeft = self.createIndex(index, index, nil)
     let bottomRight = self.createIndex(index, index, nil)
+    var oldCommunity = self.communities[index]
+    community.lastSeen = oldCommunity.lastSeen
     self.communities[index] = community
     self.dataChanged(topLeft, bottomRight, @[CommunityRoles.Name.int, CommunityRoles.Description.int, CommunityRoles.UnviewedMessagesCount.int, CommunityRoles.ThumbnailImage.int])
 

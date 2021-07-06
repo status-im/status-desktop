@@ -246,7 +246,8 @@ QtObject:
           channel = self.communities.getChannel(msg.chatId)
           if (channel == nil):
             continue
-
+          else:
+            self.communities.updateMemberVisibility(channel.communityId, msg.fromAuthor, msg.timestamp)            
         if msg.chatId == self.channelView.activeChannel.id:
           discard self.status.chat.markMessagesSeen(msg.chatId, @[msg.id])
           self.newMessagePushed()

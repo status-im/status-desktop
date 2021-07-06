@@ -10,19 +10,16 @@ import "../../../../shared"
 import "../../../../shared/status"
 import "../../../../imports"
 import "../components"
-import "./samples/"
-import "./MessageComponents"
+import "../ChatColumn/MessageComponents"
+import "../ChatColumn/"
 import "../ContactsColumn"
 
-
 Rectangle {
-    id: userList
+    property QtObject community: chatsModel.communities.activeCommunity
 
+    id: root
 
-    
     color: Style.current.secondaryMenuBackground
-
-
 
     ListView {
         id: userListView
@@ -40,12 +37,15 @@ Rectangle {
                 return left.lastSeen > right.lastSeen 
             }
         ]
-        model: messageList.userList
+        model: community.members
         delegate: User {
-            publicKey: model.publicKey
-            name: model.userName
+            property string nickname: appMain.getUserNickname(model.pubKey)
+
+            publicKey: model.pubKey
+            name: !model.userName.endsWith(".eth") && !!nickname ?
+                        nickname : Utils.removeStatusEns(model.userName)
             identicon: model.identicon
-            lastSeen: model.lastSeen
+            lastSeen: chatsModel.communities.activeCommunity.memberLastSeen(model.pubKey)
             currentTime: svRoot.currentTime
         }
     }
