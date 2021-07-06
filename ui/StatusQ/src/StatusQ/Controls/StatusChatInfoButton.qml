@@ -137,7 +137,10 @@ Rectangle {
                 anchors.leftMargin: statusIcon.visible ? 1 : 0
                 anchors.top: parent.top
 
-                text: statusChatInfoButton.title
+                text: statusChatInfoButton.type === StatusChatInfoButton.Type.PublicChat &&
+                    !statusChatInfoButton.title.startsWith("#") ?
+                    "#" + statusChatInfoButton.title :
+                    statusChatInfoButton.title
                 color: statusChatInfoButton.muted ? Theme.palette.directColor5 : Theme.palette.directColor1
                 font.pixelSize: 15
                 font.weight: Font.Medium
