@@ -71,7 +71,9 @@ Column {
                     }
 
                     popupMenuSlot.item.closeHandler = function () {
-                        statusChatListItem.highlighted = false
+                        if (statusChatListItem) {
+                            statusChatListItem.highlighted = false
+                        }
                         if (!!originalCloseHandler) {
                             originalCloseHandler()
                         }
