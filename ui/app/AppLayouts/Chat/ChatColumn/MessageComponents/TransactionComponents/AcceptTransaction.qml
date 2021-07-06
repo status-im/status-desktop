@@ -112,7 +112,7 @@ Item {
     SelectAccountModal {
         id: selectAccountModal
         onSelectAndShareAddressButtonClicked: {
-            chatsModel.transactions.acceptAddressRequest(messageId, accountSelector.selectedAccount)
+            chatsModel.transactions.acceptAddressRequest(messageId, accountSelector.selectedAccount.address)
             selectAccountModal.close()
         }
     }
