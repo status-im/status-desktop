@@ -73,6 +73,8 @@ Rectangle {
                     height: parent.height
                     image.source: statusChatInfoButton.image.source
                     showLoadingIndicator: true
+                    border.width: statusChatInfoButton.image.isIdenticon ? 1 : 0
+                    border.color: Theme.palette.directColor7
                 }
                 Loader {
                     sourceComponent: statusLetterIdenticonComponent
