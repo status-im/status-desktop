@@ -5,6 +5,8 @@ import "../../../../shared"
 import "../../../../shared/status"
 
 Item {
+    id: wrapper
+
     property color textColor: Style.current.textColor
     property string chatId: ""
     property string name: "channelName"
@@ -21,7 +23,6 @@ Item {
 
     property string profileImage: realChatType === Constants.chatTypeOneToOne ? appMain.getProfileImage(chatId) || ""  : ""
 
-    id: wrapper
     height: 24
     width: childrenRect.width
 
