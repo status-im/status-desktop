@@ -134,8 +134,8 @@ QtObject:
     discard self.status.wallet.checkRecentHistory(addresses)
 
   proc transactionWatchResultReceived(self: TransactionsView, watchResult: string) {.slot.} =
-    let wTxRes = watchResult.parseJSON()["result"].getStr().parseJson(){"result"}
-    if wTxRes.kind == JNull:
+    let wTxRes = watchResult.parseJSON()
+    if not wTxRes.contains("result"):
       self.checkRecentHistory()
     else:
       discard #TODO: Ask Simon if should we show an error popup indicating the trx wasn't mined in 10m or something
