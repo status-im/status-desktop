@@ -8,7 +8,7 @@ Item {
     property string filter: ""
     property int cursorPosition: 0
     property int lastAtPosition: 0
-    property string property: ""
+    property var property: ([])
 
     Connections {
         onFilterChanged: invalidateFilter()
@@ -41,8 +41,7 @@ Item {
     }
 
     function isAcceptedItem(item) {
-        let properties = this.property.split(",")
-            .map(p => p.trim())
+        let properties = this.property
             .filter(p => !!item[p])
 
         if (properties.length === 0 || this.filter.length === 0 || this.cursorPosition === 0) {
@@ -80,7 +79,7 @@ Item {
     }
 
     function isFilteringPropertyOk() {
-        if(this.property === undefined || this.property === "") {
+        if(this.property === undefined || this.property.length === 0) {
             return false
         }
         return true

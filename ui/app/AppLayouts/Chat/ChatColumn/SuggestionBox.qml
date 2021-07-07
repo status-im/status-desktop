@@ -31,6 +31,13 @@ Rectangle {
     property Item delegate
     property alias suggestionsModel: filterItem.model
     property alias filter: filterItem.filter
+    property string plainTextFilter: chatsModel.plainText(filter)
+    property string formattedPlainTextFilter: {
+        if (plainTextFilter.startsWith("@")) {
+            return plainTextFilter.substring(1).toLowerCase()
+        }
+        return plainTextFilter.toLowerCase()
+    }
     property alias property: filterItem.property
     property int cursorPosition
     signal itemSelected(var item, int lastAtPosition, int lastCursorPosition)
@@ -95,7 +102,7 @@ Rectangle {
 
     ListView {
         id: listView
-        model: container.suggestionsModel
+        model: mentionsListDelegate
         keyNavigationEnabled: true
         anchors.fill: parent
         anchors.topMargin: Style.current.halfPadding
@@ -108,42 +115,60 @@ Rectangle {
         property var selectedItem: selectedIndex == -1 ? null : model[selectedIndex]
         signal suggestionClicked(var item)
 
-        delegate: Rectangle {
-            id: rectangle
-            color: listView.currentIndex === index ? Style.current.backgroundHover : Style.current.transparent
-            border.width: 0
-            width: parent.width
-            height: 42
-            radius: Style.current.radius
+        DelegateModelGeneralized {
+            id: mentionsListDelegate
+            lessThan: [
+                function(left, right) {
+                    if (!formattedPlainTextFilter) {
+                        return true
+                    }
 
-            StatusImageIdenticon {
-                id: accountImage
-                width: 32
-                height: 32
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.leftMargin: Style.current.smallPadding
-                source: model.identicon
-            }
+                    const leftMatches = left[container.property.find(p => !!left[p])].toLowerCase().startsWith(formattedPlainTextFilter)
 
-            StyledText {
-                text: model[container.property.split(",").map(p => p.trim()).find(p => !!model[p])]
-                color: Style.current.textColor
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: accountImage.right
-                anchors.leftMargin: Style.current.smallPadding
-                font.pixelSize: 15
-            }
+                    const rightMatches = right[container.property.find(p => !!right[p])].toLowerCase().startsWith(formattedPlainTextFilter)
 
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: parent
-                hoverEnabled: true
-                onEntered: {
-                    listView.currentIndex = index
+                    return leftMatches && !rightMatches
                 }
-                onClicked: {
-                    container.itemSelected(model, filterItem.lastAtPosition, filterItem.cursorPosition)
+            ]
+
+            model: container.suggestionsModel
+
+            delegate: Rectangle {
+                color: listView.currentIndex === index ? Style.current.backgroundHover : Style.current.transparent
+                border.width: 0
+                width: parent.width
+                height: 42
+                radius: Style.current.radius
+
+                StatusImageIdenticon {
+                    id: accountImage
+                    width: 32
+                    height: 32
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: Style.current.smallPadding
+                    source: model.identicon
+                }
+
+                StyledText {
+                    text: model[container.property.find(p => !!model[p])]
+                    color: Style.current.textColor
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: accountImage.right
+                    anchors.leftMargin: Style.current.smallPadding
+                    font.pixelSize: 15
+                }
+
+                MouseArea {
+                    cursorShape: Qt.PointingHandCursor
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: {
+                        listView.currentIndex = index
+                    }
+                    onClicked: {
+                        container.itemSelected(model, filterItem.lastAtPosition, filterItem.cursorPosition)
+                    }
                 }
             }
         }
