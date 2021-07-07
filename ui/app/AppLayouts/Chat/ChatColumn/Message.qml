@@ -303,6 +303,9 @@ Item {
             readonly property int maxGapInSeconds: Constants.maxNbDaysToFetch * Constants.fetchRangeLast24Hours
 
             visible: {
+                if (!chatsModel.activeChannel) {
+                    return false
+                }
                 return gapNowAndOldest < maxGapInSeconds
                         && gapNowAndJoined > maxGapInSeconds
                         && (chatsModel.channelView.activeChannel.chatType !== Constants.chatTypePrivateGroupChat || chatsModel.channelView.activeChannel.isMember)
