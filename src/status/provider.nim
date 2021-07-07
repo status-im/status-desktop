@@ -1,6 +1,7 @@
 import ens, wallet, permissions
 import ../eventemitter
 import types
+import utils
 import libstatus/accounts
 import libstatus/core
 import libstatus/settings as status_settings
