@@ -7,8 +7,7 @@ import "../imports"
 Item {
     //% "Insufficient balance"
     property string balanceErrorMessage: qsTrId("insufficient-balance")
-    //% "Must be greater than 0"
-    property string greaterThan0ErrorMessage: qsTrId("must-be-greater-than-0")
+    property string greaterThanOrEqualTo0ErrorMessage: qsTr("Must be greater than or equal to 0")
     //% "This needs to be a number"
     property string invalidInputErrorMessage: qsTrId("this-needs-to-be-a-number")
     //% "Please enter an amount"
@@ -23,6 +22,8 @@ Item {
     property bool isDirty: false
     property bool validateBalance: true
     property bool isValid: false
+    property string validationError
+    property var formattedInputValue
 
     id: root
 
@@ -35,7 +36,7 @@ Item {
         let error = ""
         const hasTyped = checkDirty ? isDirty : true
         const balance = parseFloat(txtBalance.text || "0.00")
-        const input = parseFloat(inputAmount.text || "0.00")
+        formattedInputValue = parseFloat(inputAmount.text || "0.00")
         const noInput = inputAmount.text === ""
         if (noInput && hasTyped) {
             error = noInputErrorMessage
@@ -43,19 +44,19 @@ Item {
         } else if (isNaN(inputAmount.text)) {
             error = invalidInputErrorMessage
             isValid = false
-        } else if (input <= 0.00 && hasTyped) {
-            error = greaterThan0ErrorMessage
+        } else if (formattedInputValue < 0.00 && hasTyped) {
+            error = greaterThanOrEqualTo0ErrorMessage
             isValid = false
-        } else if (validateBalance && input > balance && !noInput) {
+        } else if (validateBalance && formattedInputValue > balance && !noInput) {
             error = balanceErrorMessage
             isValid = false
         }
         if (!isValid) {
-            inputAmount.validationError = error
+            root.validationError = error
             txtBalanceDesc.color = Style.current.danger
             txtBalance.color = Style.current.danger
         } else {
-            inputAmount.validationError = ""
+            root.validationError = ""
             txtBalanceDesc.color = Style.current.secondaryText
             txtBalance.color = Qt.binding(function() { return txtBalance.hovered ? Style.current.textColor : Style.current.secondaryText })
         }
@@ -127,6 +128,17 @@ Item {
         customHeight: 56
         validationErrorAlignment: TextEdit.AlignRight
         validationErrorTopMargin: 8
+        validationErrorColor: formattedInputValue === 0 ? Style.current.warning : Style.current.danger
+        validationError: {
+            if (root.validationError) {
+                return root.validationError
+            }
+            if (formattedInputValue === 0) {
+                return qsTr("The amount is 0. Proceed only if this is desired.")
+            }
+            return ""
+        }
+
         Keys.onReleased: {
             let amount = inputAmount.text.trim()
 

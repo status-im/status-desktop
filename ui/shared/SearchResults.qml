@@ -152,7 +152,7 @@ Item {
 
     StyledText {
         id: profileNotFoundMessage
-        color: Style.current.darkGrey
+        color: Style.current.secondaryText
         visible: root.showProfileNotFoundMessage
         font.pixelSize: 15
         anchors.horizontalCenter: parent.horizontalCenter
