@@ -59,6 +59,7 @@ Theme {
     property color primary: blue
     property color danger: red
     property color success: green
+    property color warning: orange
     property color primaryMenuItemHover: blue
     property color primaryMenuItemTextHover: white
     property color backgroundTertiary: tenPercentBlue

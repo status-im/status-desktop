@@ -13,6 +13,7 @@ Item {
     property string validationError: ""
     property alias validationErrorAlignment: validationErrorText.horizontalAlignment
     property int validationErrorTopMargin: 1
+    property color validationErrorColor: Style.current.danger
     property string label: ""
     readonly property bool hasLabel: label !== ""
     property color bgColor: Style.current.inputBackground
@@ -70,7 +71,7 @@ Item {
         border.width: (!!validationError || inputValue.focus) ? 1 : 0
         border.color: {
             if (!!validationError) {
-                return Style.current.danger
+                return validationErrorColor
             }
             if (!inputBox.readOnly && inputValue.focus) {
                 return Style.current.inputBorderFocus
@@ -180,7 +181,7 @@ Item {
         readOnly: true
         font.pixelSize: 12
         height: 16
-        color: Style.current.danger
+        color: validationErrorColor
         width: inputRectangle.width
         wrapMode: TextEdit.Wrap
     }
