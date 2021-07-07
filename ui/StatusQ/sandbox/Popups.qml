@@ -33,6 +33,11 @@ Column {
         onClicked: modalExample.open()
     }
 
+    StatusButton {
+        text: "Modal with changable content"
+        onClicked: modalWithContentAccess.open()
+    }
+
     StatusModal {
         id: simpleModal
         anchors.centerIn: parent
@@ -141,5 +146,29 @@ Column {
             icon.height: 20
             icon.name: "info"
         }
+    }
+
+    StatusModal {
+        id: modalWithContentAccess
+        anchors.centerIn: parent
+        header.title: "Header"
+        header.subTitle: "SubTitle"
+
+        content: StatusBaseText {
+            id: text
+            anchors.centerIn: parent
+            text: "Some text content"
+            font.pixelSize: 15
+            color: Theme.palette.directColor1
+        }
+
+        rightButtons: [
+            StatusButton {
+                text: "Change text"
+                onClicked: {
+                    modalWithContentAccess.contentComponent.text = "Changed!"
+                }
+            }
+        ]
     }
 }

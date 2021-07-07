@@ -16,6 +16,7 @@ QC.Popup {
     property alias headerActionButton: headerImpl.actionButton
 
     property StatusModalHeaderSettings header: StatusModalHeaderSettings {}
+    property alias contentComponent: contentLoader.item
     property alias rightButtons: footerImpl.rightButtons
     property alias leftButtons: footerImpl.leftButtons
 
@@ -56,6 +57,7 @@ QC.Popup {
         }
 
         Loader {
+            id: contentLoader
             active: true
             anchors.horizontalCenter: parent.horizontalCenter
             sourceComponent: statusModal.content
