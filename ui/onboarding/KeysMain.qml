@@ -9,15 +9,16 @@ Page {
     id: page
     property alias btnExistingKey: btnExistingKey
     property alias btnGenKey: btnGenKey
-    property bool displayBeforeGetStartedModal: true
 
     background: Rectangle {
         color: Style.current.background
     }
 
     Component.onCompleted: {
-        if(displayBeforeGetStartedModal)
+        if(displayBeforeGetStartedModal) {
+            displayBeforeGetStartedModal = false
             beforeGetStartedModal.open()
+        }
     }
 
     BeforeGetStartedModal {

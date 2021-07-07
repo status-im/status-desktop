@@ -22,6 +22,7 @@ StatusWindow {
     property bool removeMnemonicAfterLogin: false
     property alias dragAndDrop: dragTarget
     property bool popupOpened: false
+    property bool displayBeforeGetStartedModal: !hasAccounts
 
     Universal.theme: Universal.System
 
@@ -348,7 +349,6 @@ StatusWindow {
     Component {
         id: keysMain
         KeysMain {
-            displayBeforeGetStartedModal: !hasAccounts
             btnGenKey.onClicked: applicationWindow.navigateTo("GenKey")
             btnExistingKey.onClicked: applicationWindow.navigateTo("ExistingKey")
         }

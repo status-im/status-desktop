@@ -29,13 +29,15 @@ Item {
     }
 
     MnemonicRecoverySuccessModal {
+        property bool wentNext: false
         id: recoverySuccessModal
         onButtonClicked: {
+            recoverySuccessModal.wentNext = true
             recoverySuccessModal.close()
             createPasswordModal.open()
         }
         onClosed: function () {
-            if (!enterSeedPhraseModal.wentNext) {
+            if (!recoverySuccessModal.wentNext) {
                 existingKeyView.onClosed()
             }
         }
