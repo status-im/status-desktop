@@ -42,7 +42,7 @@ Item {
         color: Style.current.textColor
         height: root.veryLongChatText && !root.readMore ? Math.min(implicitHeight, 200) : implicitHeight
         clip: height < implicitHeight
-        onLinkActivated: function (link) {
+        onLinkActivated: {
             if(link.startsWith("#")) {
                 const channelName = link.substring(1);
                 const chatType = chatsModel.communities.activeCommunity.active ? Constants.chatTypeCommunity : Constants.chatTypePublic;
@@ -55,6 +55,7 @@ Item {
                         appMain.changeAppSection(Constants.chat)
                     } 
                 } else {
+                    appMain.changeAppSection(Constants.chat)
                     chatsModel.channelView.setActiveChannel(channelName);
                 }
 

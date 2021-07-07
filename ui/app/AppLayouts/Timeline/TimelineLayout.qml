@@ -121,14 +121,14 @@ ScrollView {
                 function(left, right) { return left.clock > right.clock }
             ]
 
-            model: chatsModel.messageList
+            model: chatsModel.messageView.messageList
             delegate: Message {
                 id: msgDelegate
                 fromAuthor: model.fromAuthor
                 chatId: model.chatId
                 userName: model.userName
-                localName: model.localName
                 alias: model.alias
+                localName: model.localName
                 message: model.message
                 plainText: model.plainText
                 identicon: model.identicon
