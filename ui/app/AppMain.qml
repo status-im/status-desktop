@@ -346,6 +346,7 @@ StatusAppLayout {
         property bool hideSignPhraseModal: false
         property bool onlyShowContactsProfilePics: true
         property bool quitOnClose: false
+        property string skinColor: ""
 
         // Browser settings
         property bool showBrowserSelector: true

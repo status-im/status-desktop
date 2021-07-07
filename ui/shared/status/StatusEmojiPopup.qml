@@ -8,11 +8,12 @@ import "../../shared"
 import "./emojiList.js" as EmojiJSON
 
 Popup {
+    id: popup
     property var emojiSelected: function () {}
     property var categories: []
     property alias searchString: searchBox.text
+    property var skinColors: ["1f3fb", "1f3fc", "1f3fd", "1f3fe", "1f3ff"]
 
-    id: popup
     modal: false
     width: 360
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -29,6 +30,12 @@ Popup {
             cached: true
             color: "#22000000"
         }
+    }
+
+    function containsSkinColor(code) {
+      return skinColors.some(function (color) {
+        return code.includes(color)
+      });
     }
 
     function addEmoji(emoji) {
@@ -76,18 +83,98 @@ Popup {
                 categoryNames[emoji.category] = newCategories.length
                 newCategories.push([])
             }
-            newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode + '.svg'}))
+
+            var emojisWithColors = [
+                        "1f64c",
+                        "1f44f",
+                        "1f44b",
+                        "1f44d",
+                        "1f44e",
+                        "1f44a",
+                        "270a",
+                        "270c",
+                        "1f44c",
+                        "270b",
+                        "1f450",
+                        "1f4aa",
+                        "1f64f",
+                        "261d",
+                        "1f446",
+                        "1f447",
+                        "1f448",
+                        "1f449",
+                        "1f595",
+                        "1f590",
+                        "1f918",
+                        "1f596",
+                        "270d",
+                        "1f485",
+                        "1f442",
+                        "1f443",
+                        "1f476",
+                        "1f466",
+                        "1f467",
+                        "1f468",
+                        "1f469",
+                        "1f471",
+                        "1f474",
+                        "1f475",
+                        "1f472",
+                        "1f473",
+                        "1f46e",
+                        "1f477",
+                        "1f482",
+                        "1f385",
+                        "1f47c",
+                        "1f478",
+                        "1f470",
+                        "1f6b6",
+                        "1f3c3",
+                        "1f483",
+                        "1f647",
+                        "1f481",
+                        "1f645",
+                        "1f646",
+                        "1f64b",
+                        "1f64e",
+                        "1f64d",
+                        "1f487",
+                        "1f486",
+                        "1f6a3",
+                        "1f3ca",
+                        "1f3c4",
+                        "1f6c0",
+                        "26f9",
+                        "1f3cb",
+                        "1f6b4",
+                        "1f6b5",
+                        "1f3c7",
+                        "1f575"
+                    ]
+
+
+            if (appSettings.skinColor !== "") {
+                if (emoji.unicode.includes(appSettings.skinColor)) {
+                    newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode + '.svg'}));
+                } else {
+                    if (!emojisWithColors.includes(emoji.unicode) && !containsSkinColor(emoji.unicode))  {
+                        newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode + '.svg'}));
+                    }
+                }
+            } else {
+                if (!containsSkinColor(emoji.unicode)) {
+                    newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode + '.svg'}));
+                }
+            }
         })
 
         if (newCategories[categoryNames.recent].length === 0) {
-            newCategories[categoryNames.recent].push({
-                category: "recent",
-                empty: true
-            })
+            newCategories[categoryNames.recent].push({category: "recent", empty: true })
         }
 
-        categories = newCategories
+        categories = newCategories;
     }
+
     Connections {
         id: connectionSettings
         target: appMain
@@ -120,29 +207,60 @@ Popup {
             height: searchBox.height + emojiHeader.headerMargin
 
             SearchBox {
-               id: searchBox
-               anchors.right: skinToneEmoji.left
-               anchors.rightMargin: emojiHeader.headerMargin
-               anchors.top: parent.top
-               anchors.topMargin: emojiHeader.headerMargin
-               anchors.left: parent.left
-               anchors.leftMargin: emojiHeader.headerMargin
+                id: searchBox
+                anchors.right: skinToneEmoji.left
+                anchors.rightMargin: emojiHeader.headerMargin
+                anchors.top: parent.top
+                anchors.topMargin: emojiHeader.headerMargin
+                anchors.left: parent.left
+                anchors.leftMargin: emojiHeader.headerMargin
+            }
+
+            Row {
+                id: skinToneEmoji
+                property bool expandSkinColorOptions: false
+                width: expandSkinColorOptions ? (22 * skinColorEmojiRepeater.count) : 22
+                height: 22
+                opacity: expandSkinColorOptions ? 1.0 : 0.0
+                Behavior on width { NumberAnimation  { duration: 400 } }
+                Behavior on opacity { NumberAnimation  { duration: 200 } }
+                visible: (opacity > 0.1)
+                anchors.verticalCenter: searchBox.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: emojiHeader.headerMargin
+                Repeater {
+                    id: skinColorEmojiRepeater
+                    model: ["1f590-1f3fb", "1f590-1f3fc", "1f590-1f3fd", "1f590-1f3fe", "1f590-1f3ff", "1f590"]
+                    delegate: SVGImage {
+                        width: 22
+                        height: 22
+                        source: "../../imports/twemoji/72x72/" + modelData + ".png"
+                        MouseArea {
+                            cursorShape: Qt.PointingHandCursor
+                            anchors.fill: parent
+                            onClicked: {
+                                appSettings.skinColor = (index === 5) ? "" : modelData.split("-")[1];
+                                popup.populateCategories();
+                                skinToneEmoji.expandSkinColorOptions = false;
+                            }
+                        }
+                    }
+                }
             }
 
             SVGImage {
-                id: skinToneEmoji
                 width: 22
                 height: 22
                 anchors.verticalCenter: searchBox.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: emojiHeader.headerMargin
-                source: "../../../../imports/twemoji/72x72/1f590.png"
-
+                visible: !skinToneEmoji.expandSkinColorOptions
+                source: "../../imports/twemoji/72x72/1f590" + ((appSettings.skinColor !== "" && visible) ? ("-" + appSettings.skinColor) : "") + ".png"
                 MouseArea {
                     cursorShape: Qt.PointingHandCursor
                     anchors.fill: parent
-                    onClicked: function () {
-                       console.log('Change skin tone')
+                    onClicked: {
+                        skinToneEmoji.expandSkinColorOptions = true;
                     }
                 }
             }

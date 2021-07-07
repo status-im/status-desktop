@@ -5,6 +5,7 @@ import "../../shared"
 
 
 Item {
+    id: emojiSection
     property string searchString: ""
     property string searchStringLowercase: searchString.toLowerCase()
     property int imageWidth: 26
@@ -13,7 +14,6 @@ Item {
     property var allEmojis: modelData
     property var addEmoji: function () {}
 
-    id: emojiSection
     visible: emojis.length > 0 || !!(modelData && modelData.length && modelData[0].empty && searchString === "")
 
     anchors.top: index === 0 ? parent.top : parent.children[index - 1].bottom
@@ -57,7 +57,7 @@ Item {
     }
 
     onAllEmojisChanged: {
-        if (this.allEmojis[0].empty) {
+        if (!!emojiSection.allEmojis[0] && this.allEmojis[0].empty) {
             return
         }
         this.emojis = this.allEmojis
