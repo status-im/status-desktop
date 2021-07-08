@@ -338,9 +338,11 @@ QtObject:
     let bottomRight = self.createIndex(msgIdx, 0, nil)
     self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.EmojiReactions.int])
 
-  proc changeMessagePinned*(self: ChatMessageList, messageId: string, pinned: bool, pinnedBy: string) =
-    if not self.messageIndex.hasKey(messageId): return
+  proc changeMessagePinned*(self: ChatMessageList, messageId: string, pinned: bool, pinnedBy: string): bool {.discardable.} =
+    if not self.messageIndex.hasKey(messageId): return false
     let msgIdx = self.messageIndex[messageId]
+    if msgIdx < 0: return false
+    if msgIdx >= self.messages.len: return false
     var message = self.messages[msgIdx]
     message.isPinned = pinned
     message.pinnedBy = pinnedBy
@@ -348,6 +350,7 @@ QtObject:
     let topLeft = self.createIndex(msgIdx, 0, nil)
     let bottomRight = self.createIndex(msgIdx, 0, nil)
     self.dataChanged(topLeft, bottomRight, @[ChatMessageRoles.IsPinned.int, ChatMessageRoles.PinnedBy.int])
+    return true
 
   proc markMessageAsSent*(self: ChatMessageList, messageId: string)=
     let topLeft = self.createIndex(0, 0, nil)
