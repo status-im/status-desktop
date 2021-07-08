@@ -9,6 +9,7 @@ Rectangle {
         width: 24
         height: 24
         rotation: 0
+        color: Theme.palette.primaryColor1
         background: StatusIconBackgroundSettings {
             width: 40
             height: 40
@@ -29,7 +30,7 @@ Rectangle {
         width: statusRoundedIcon.icon.width
         height: statusRoundedIcon.icon.height
 
-        color: Theme.palette.primaryColor1
+        color: statusRoundedIcon.icon.color
         icon: statusRoundedIcon.icon.name
         rotation: statusRoundedIcon.icon.rotation
     }
