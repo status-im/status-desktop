@@ -230,6 +230,12 @@ GridLayout {
         type: StatusListItem.Type.Secondary
     }
 
+    StatusListItem {
+        title: "Title"
+        icon.isLetterIdenticon: true
+        icon.background.color: "orange"
+    }
+
     StatusDescriptionListItem {
         title: "Title"
         subTitle: "Subtitle"

@@ -34,6 +34,7 @@ Rectangle {
         height: 20
         width: 20
         rotation: 0
+        isLetterIdenticon: false
         background: StatusIconBackgroundSettings {
             width: 40
             height: 40
@@ -78,8 +79,15 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: statusListItem.leftPadding
             anchors.verticalCenter: parent.verticalCenter
-            sourceComponent: !!statusListItem.icon.name ? statusRoundedIcon : statusRoundedImage
-            active: !!statusListItem.icon.name || !!statusListItem.image.source.toString()
+            sourceComponent: {
+                if (statusListItem.icon.isLetterIdenticon) {
+                    return statusLetterIdenticon
+                }
+                return !!statusListItem.icon.name ? statusRoundedIcon : statusRoundedImage
+            }
+            active: statusListItem.icon.isLetterIdenticon || 
+                    !!statusListItem.icon.name || 
+                    !!statusListItem.image.source.toString()
         }
 
         Component {
@@ -101,6 +109,16 @@ Rectangle {
                 image.source: statusListItem.image.source
                 image.height: statusListItem.image.height
                 image.width: statusListItem.image.width
+            }
+        }
+
+        Component {
+            id: statusLetterIdenticon
+            StatusLetterIdenticon {
+                width: statusListItem.icon.background.width
+                height: statusListItem.icon.background.height
+                color: statusListItem.icon.background.color
+                name: statusListItem.title
             }
         }
 
