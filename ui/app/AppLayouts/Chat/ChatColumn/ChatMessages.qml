@@ -18,7 +18,7 @@ SplitView {
     id: svRoot
     property alias chatLogView: chatLogView
     property alias scrollToMessage: chatLogView.scrollToMessage
-    
+
     property var messageList: MessagesData {}
     property bool loadingMessages: false
     property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
@@ -32,12 +32,12 @@ SplitView {
 
     ScrollView {
         id: root
-
         contentItem: chatLogView
         
         SplitView.fillWidth: true
         SplitView.minimumWidth: 200
 
+        height: parent.height
         ScrollBar.vertical.policy: chatLogView.contentHeight > chatLogView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
@@ -178,6 +178,14 @@ SplitView {
             }
 
             Connections {
+                target: chatsModel
+
+                onAppReady: {
+                    chatLogView.scrollToBottom(true)
+                }
+            }
+
+            Connections {
                 target: chatsModel.messageView
                 onMessagesLoaded: {
                     loadingMessages = false;
@@ -195,10 +203,6 @@ SplitView {
                     if (!chatLogView.scrollToBottom()) {
                         root.newMessages++
                     }
-                }
-
-                onAppReady: {
-                    chatLogView.scrollToBottom(true)
                 }
 
                 onMessageNotificationPushed: function(chatId, msg, messageType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
