@@ -236,6 +236,12 @@ GridLayout {
         icon.background.color: "orange"
     }
 
+    StatusListItem {
+        title: "Title"
+        icon.name: "delete"
+        type: StatusListItem.Type.Danger
+    }
+
     StatusDescriptionListItem {
         title: "Title"
         subTitle: "Subtitle"

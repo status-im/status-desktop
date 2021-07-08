@@ -12,14 +12,20 @@ Rectangle {
 
     enum Type {
         Primary,
-        Secondary
+        Secondary,
+        Danger
     }
 
     color: {
         if (sensor.containsMouse) {
-            return type === StatusListItem.Type.Primary ?
-                Theme.palette.baseColor2 :
-                Theme.palette.statusListItem.secondaryHoverBackgroundColor
+            switch(type) {
+                case StatusListItem.Type.Primary:
+                    return Theme.palette.baseColor2
+                case StatusListItem.Type.Secondary:
+                    return Theme.palette.statusListItem.secondaryHoverBackgroundColor
+                case StatusListItem.Type.Danger:
+                    return Theme.palette.dangerColor3
+            }
         }
         return Theme.palette.statusListItem.backgroundColor
     }
@@ -35,12 +41,20 @@ Rectangle {
         width: 20
         rotation: 0
         isLetterIdenticon: false
+        color: type === StatusListItem.Type.Danger ? 
+            Theme.palette.dangerColor1 : Theme.palette.primaryColor1
         background: StatusIconBackgroundSettings {
             width: 40
             height: 40
-            color: sensor.containsMouse && type === StatusListItem.Type.Secondary ?
-                      "transparent" :
-                      Theme.palette.primaryColor3
+            color: {
+                if (sensor.containsMouse) {
+                    return type === StatusListItem.Type.Secondary ||
+                           type === StatusListItem.Type.Danger ? "transparent" :
+                           Theme.palette.primaryColor3     
+                }
+                return type === StatusListItem.Type.Danger ? 
+                    Theme.palette.dangerColor3 : Theme.palette.primaryColor3
+            }        
         }
     }
     property StatusImageSettings image: StatusImageSettings {
@@ -97,6 +111,7 @@ Rectangle {
                 icon.height: statusListItem.icon.height
                 icon.name: statusListItem.icon.name
                 icon.rotation: statusListItem.icon.rotation
+                icon.color: statusListItem.icon.color
                 color: statusListItem.icon.background.color
                 width: statusListItem.icon.background.width
                 height: statusListItem.icon.background.height
@@ -133,10 +148,14 @@ Rectangle {
                 text: statusListItem.title
                 font.pixelSize: 15
                 color: {
-                  if (statusListItem.type === StatusListItem.Type.Primary) {
-                      return Theme.palette.directColor1
+                  switch (statusListItem.type) {
+                      case StatusListItem.Type.Primary:
+                          return Theme.palette.directColor1
+                      case StatusListItem.Type.Secondary:
+                          return Theme.palette.primaryColor1
+                      case StatusListItem.Type.Danger:
+                          return Theme.palette.dangerColor1
                   }
-                  return Theme.palette.primaryColor1
                 }
             }
 
