@@ -178,12 +178,10 @@ StatusWindow {
             rightPanel: Item {
                 id: rightPanel
                 anchors.fill: parent
-
                 ScrollView {
-                    width: parent.width
-                    height: parent.height
+                    anchors.fill: parent
                     contentHeight: (pageWrapper.height + pageWrapper.anchors.topMargin) * rootWindow.factor
-                    contentWidth: pageWrapper.width * rootWindow.factor
+                    contentWidth: (pageWrapper.width * rootWindow.factor)
                     clip: true
 
                     Item {
