@@ -294,3 +294,7 @@ QtObject:
     chatItemView.setChatItem(chat)
     self.chatItemViews[id] = chatItemView
     return chatItemView
+
+  proc removeChat*(self: ChannelView, chatId: string) =
+    discard self.chats.removeChatItemFromList(chatId)
+    self.setActiveChannel(backToFirstChat)
