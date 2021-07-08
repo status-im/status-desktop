@@ -398,18 +398,18 @@ QtObject:
 
   proc addPinMessage*(self: MessageView, messageId: string, chatId: string, pinnedBy: string) =
     self.upsertChannel(chatId)
-    self.messageList[chatId].changeMessagePinned(messageId, true, pinnedBy)
-    var message = self.messageList[chatId].getMessageById(messageId)
-    message.pinnedBy = pinnedBy
-    self.pinnedMessagesList[chatId].add(message)
+    if self.messageList[chatId].changeMessagePinned(messageId, true, pinnedBy):
+      var message = self.messageList[chatId].getMessageById(messageId)
+      message.pinnedBy = pinnedBy
+      self.pinnedMessagesList[chatId].add(message)
 
   proc removePinMessage*(self: MessageView, messageId: string, chatId: string) =
     self.upsertChannel(chatId)
-    self.messageList[chatId].changeMessagePinned(messageId, false, "")
-    try:
-      self.pinnedMessagesList[chatId].remove(messageId)
-    except Exception as e:
-      error "Error removing ", msg = e.msg
+    if self.messageList[chatId].changeMessagePinned(messageId, false, ""):
+      try:
+        self.pinnedMessagesList[chatId].remove(messageId)
+      except Exception as e:
+        error "Error removing ", msg = e.msg
 
   proc pinMessage*(self: MessageView, messageId: string, chatId: string) {.slot.} =
     self.status.chat.setPinMessage(messageId, chatId, true)
