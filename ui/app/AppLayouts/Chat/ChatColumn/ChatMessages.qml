@@ -118,16 +118,16 @@ SplitView {
                     radius: 16
                 }
                 onClicked: {
-                    svRoot.newMessages = 0
+                    newMessages = 0
                     scrollDownButton.visible = false
                     chatLogView.scrollToBottom(true)
                 }
 
                 StyledText {
                     id: nbMessages
-                    visible: svRoot.newMessages > 0
+                    visible: newMessages > 0
                     width: visible ? implicitWidth : 0
-                    text: svRoot.newMessages
+                    text: newMessages
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     color: Style.current.pillButtonTextColor
@@ -202,7 +202,7 @@ SplitView {
 
                 onNewMessagePushed: {
                     if (!chatLogView.scrollToBottom()) {
-                        svRoot.newMessages++
+                        newMessages++
                     }
                 }
 
