@@ -172,7 +172,7 @@ Item {
 
     Connections {
         target: chatsModel.messageView
-        onHideMessage: {
+        function onHideMessage(mId) {
             // This hack is used because message_list deleteMessage sometimes does not remove the messages (there might be an issue with the delegate model)
             if(mId === messageId){
                 root.visible = 0;

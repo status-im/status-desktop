@@ -89,10 +89,10 @@ SplitView {
                 id: contentHeightConnection
                 enabled: true
                 target: chatLogView
-                onContentHeightChanged: {
+                function onContentHeightChanged() {
                     chatLogView.checkHeaderHeight()
                 }
-                onHeightChanged: {
+                function onHeightChanged() {
                     chatLogView.checkHeaderHeight()
                 }
             }
@@ -178,30 +178,33 @@ SplitView {
             }
 
             Connections {
+                target: chatsModel
+                function onAppReady() {
+                    chatLogView.scrollToBottom(true)
+                }
+            }
+
+            Connections {
                 target: chatsModel.messageView
                 function onMessagesLoaded() {
                     loadingMessages = false;
                 }
 
-                onSendingMessage: {
+                function onSendingMessage() {
                     chatLogView.scrollToBottom(true)
                 }
 
-                onSendingMessageFailed: {
+                function onSendingMessageFailed() {
                     sendingMsgFailedPopup.open();
                 }
 
-                onNewMessagePushed: {
+                function onNewMessagePushed() {
                     if (!chatLogView.scrollToBottom()) {
                         root.newMessages++
                     }
                 }
 
-                onAppReady: {
-                    chatLogView.scrollToBottom(true)
-                }
-
-                onMessageNotificationPushed: function(chatId, msg, messageType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
+                function onMessageNotificationPushed(chatId, msg, messageType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
                     if (messageType == Constants.editType) return;
                     if (appSettings.notificationSetting == Constants.notifyAllMessages || 
                         (appSettings.notificationSetting == Constants.notifyJustMentions && hasMention)) {
