@@ -287,8 +287,13 @@ StackLayout {
             Connections {
                 target: chatsModel.channelView
                 onActiveChannelChanged: {
-                    stackLayoutChatMessages.currentIndex = chatsModel.messageView.getMessageListIndex(chatsModel.channelView.activeChannelIndex)
-                    if(stackLayoutChatMessages.currentIndex > -1 && !stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].active){
+                    newIndex = chatsModel.messageView.getMessageListIndex(chatsModel.channelView.activeChannelIndex)
+                    if(newIndex <= -1 && newIndex >= stackLayoutChatMessages.children.length) {
+                        return
+                    }
+
+                    stackLayoutChatMessages.currentIndex = newIndex
+                    if(!stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].active){
                         stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].active = true;
                     }
                 }
