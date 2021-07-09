@@ -124,6 +124,13 @@ Item {
                 }
             }
         } // Flickable
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.IBeamCursor
+            enabled: !edit.activeFocus
+            onClicked: edit.forceActiveFocus()
+        }
     } // Rectangle
 
     StatusFlatRoundButton {
