@@ -259,6 +259,7 @@ Item {
     Component {
         id: createCategoryPopup
         CreateCategoryPopup {
+            anchors.centerIn: parent
             onClosed: {
                 destroy()
             }
