@@ -4,6 +4,7 @@ Item {
     id: component
     property alias model: filterModel
 
+    property string formattedFilter
     property QtObject sourceModel: undefined
     property string filter: ""
     property int cursorPosition: 0
@@ -74,6 +75,7 @@ Item {
 
         let filterWithoutAt = filter.substring(lastAtPosition + 1, this.cursorPosition)
         filterWithoutAt = filterWithoutAt.replace(/\*/g, "")
+        component.formattedFilter = filterWithoutAt
 
         return !properties.every(p => item[p].toLowerCase().match(filterWithoutAt.toLowerCase()) === null)
     }
