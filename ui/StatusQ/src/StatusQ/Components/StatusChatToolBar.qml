@@ -55,6 +55,13 @@ Rectangle {
             icon.name: "search"
             type: StatusFlatRoundButton.Type.Secondary
             onClicked: statusChatToolBar.searchButtonClicked()
+
+            StatusToolTip {
+                visible: !!text && parent.hovered
+                text: "Search"
+                orientation: StatusToolTip.Orientation.Bottom
+                y: parent.height + 12
+            }
         }
 
         StatusFlatRoundButton {
@@ -64,6 +71,13 @@ Rectangle {
             icon.name: "group-chat"
             type: StatusFlatRoundButton.Type.Secondary
             onClicked: statusChatToolBar.membersButtonClicked()
+
+            StatusToolTip {
+                visible: !!text && parent.hovered
+                text: "Members"
+                orientation: StatusToolTip.Orientation.Bottom
+                y: parent.height + 12
+            }
         }
 
         StatusFlatRoundButton {
@@ -78,6 +92,13 @@ Rectangle {
                 statusChatToolBar.menuButtonClicked()
                 highlighted = true
                 popupMenuSlot.item.popup(-popupMenuSlot.item.width + menuButton.width, menuButton.height + 4)
+            }
+
+            StatusToolTip {
+                visible: !!text && parent.hovered && !popupMenuSlot.item.opened
+                text: "More"
+                orientation: StatusToolTip.Orientation.Bottom
+                y: parent.height + 12
             }
 
             Loader {
@@ -131,6 +152,13 @@ Rectangle {
                 value: statusChatToolBar.notificationCount
                 border.width: 2
                 border.color: parent.hovered ? Theme.palette.baseColor2 : Theme.palette.statusAppLayout.backgroundColor
+            }
+
+            StatusToolTip {
+                visible: !!text && parent.hovered
+                text: "Activity"
+                orientation: StatusToolTip.Orientation.Bottom
+                y: parent.height + 12
             }
         }
 
