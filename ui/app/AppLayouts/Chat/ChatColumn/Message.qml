@@ -41,6 +41,7 @@ Item {
     property bool isEdit: false
     property string replaces: ""
     property bool isEdited: false
+    property bool showEdit: true
 
     z: {
         if (typeof chatLogView === "undefined") {
@@ -435,6 +436,7 @@ Item {
             linkUrls: root.linkUrls
             isCurrentUser: root.isCurrentUser
             contentType: root.contentType
+            showEdit: root.showEdit
             container: root
         }
     }
