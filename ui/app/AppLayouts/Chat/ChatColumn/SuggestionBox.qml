@@ -123,11 +123,43 @@ Rectangle {
                         return true
                     }
 
-                    const leftMatches = left[container.property.find(p => !!left[p])].toLowerCase().startsWith(formattedPlainTextFilter)
+                    // Priorities:
+                    // 1. Match at the start
+                    // 2. Match in the start of one of the three words
+                    // 3. Alphabetical order (also in case of multiple matches at the start of the name)
 
-                    const rightMatches = right[container.property.find(p => !!right[p])].toLowerCase().startsWith(formattedPlainTextFilter)
+                    const leftProp = left[container.property.find(p => !!left[p])].toLowerCase()
+                    const rightProp = right[container.property.find(p => !!right[p])].toLowerCase()
 
-                    return leftMatches && !rightMatches
+                    // check the start of the string
+                    const leftMatches = leftProp.startsWith(formattedPlainTextFilter)
+
+                    const rightMatches = rightProp.startsWith(formattedPlainTextFilter)
+
+                    if (leftMatches === true && rightMatches === true) {
+                        return leftProp < rightProp
+                    }
+
+                    if (leftMatches || rightMatches) {
+                        return leftMatches && !rightMatches
+                    }
+
+                    // Check for the start of the 3 word names
+                    let leftMatchesIndex = leftProp.indexOf(" " + formattedPlainTextFilter)
+                    let rightMatchesIndex = rightProp.indexOf(" " + formattedPlainTextFilter)
+                    if (leftMatchesIndex === rightMatchesIndex) {
+                        return leftProp < rightProp
+                    }
+
+                    // Change index so that -1 is not the smallest
+                    if (leftMatchesIndex === -1) {
+                        leftMatchesIndex = 999
+                    }
+                    if (rightMatchesIndex === -1) {
+                        rightMatchesIndex = 999
+                    }
+
+                    return leftMatchesIndex < rightMatchesIndex
                 }
             ]
 
