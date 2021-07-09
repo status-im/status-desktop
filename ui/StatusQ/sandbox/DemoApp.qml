@@ -255,6 +255,8 @@ Rectangle {
                     chatInfoButton.type: StatusChatInfoButton.Type.OneToOneChat
                     chatInfoButton.pinnedMessagesCount: 1
 
+                    searchButton.visible: false
+                    membersButton.visible: false
                     notificationCount: 1
 
                     onNotificationButtonClicked: notificationCount = 0

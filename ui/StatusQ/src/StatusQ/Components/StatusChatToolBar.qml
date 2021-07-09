@@ -14,6 +14,8 @@ Rectangle {
     property alias chatInfoButton: statusChatInfoButton
     property alias menuButton: menuButton
     property alias notificationButton: notificationButton
+    property alias membersButton: membersButton
+    property alias searchButton: searchButton
     property int notificationCount: 0
 
     property Component popupMenu
@@ -21,6 +23,8 @@ Rectangle {
     signal chatInfoButtonClicked()
     signal menuButtonClicked()
     signal notificationButtonClicked()
+    signal membersButtonClicked()
+    signal searchButtonClicked()
 
     onPopupMenuChanged: {
         if (!!popupMenu) {
@@ -45,6 +49,24 @@ Rectangle {
         spacing: 8
 
         StatusFlatRoundButton {
+            id: searchButton
+            width: 32
+            height: 32
+            icon.name: "search"
+            type: StatusFlatRoundButton.Type.Secondary
+            onClicked: statusChatToolBar.searchButtonClicked()
+        }
+
+        StatusFlatRoundButton {
+            id: membersButton
+            width: 32
+            height: 32
+            icon.name: "group-chat"
+            type: StatusFlatRoundButton.Type.Secondary
+            onClicked: statusChatToolBar.membersButtonClicked()
+        }
+
+        StatusFlatRoundButton {
             id: menuButton
             width: 32
             height: 32
@@ -55,8 +77,17 @@ Rectangle {
             onClicked: {
                 statusChatToolBar.menuButtonClicked()
                 highlighted = true
-                let p = menuButton.mapToItem(statusChatToolBar, menuButton.x, menuButton.y)
-                popupMenuSlot.item.popup(p.x + menuButton.width - popupMenuSlot.item.width, p.y + 4 + menuButton.height)
+                popupMenuSlot.item.popup(-popupMenuSlot.item.width + menuButton.width, menuButton.height + 4)
+            }
+
+            Loader {
+                id: popupMenuSlot
+                active: !!statusChatToolBar.popupMenu
+                onLoaded: {
+                    popupMenuSlot.item.closeHandler = function () {
+                        menuButton.highlighted = false
+                    }
+                }
             }
         }
 
@@ -65,7 +96,8 @@ Rectangle {
             width: 1
             color: Theme.palette.directColor7
             anchors.verticalCenter: parent.verticalCenter
-            visible: menuButton.visible && notificationButton.visible
+            visible: notificationButton.visible &&
+                (menuButton.visible || membersButton.visible || searchButton.visible)
         }
 
         StatusFlatRoundButton {
@@ -102,16 +134,6 @@ Rectangle {
             }
         }
 
-    }
-
-    Loader {
-        id: popupMenuSlot
-        active: !!statusChatToolBar.popupMenu
-        onLoaded: {
-            popupMenuSlot.item.closeHandler = function () {
-                menuButton.highlighted = false
-            }
-        }
     }
 }
 
