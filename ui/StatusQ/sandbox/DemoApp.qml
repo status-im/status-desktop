@@ -671,9 +671,8 @@ Rectangle {
             name: "#status"
             chatType: StatusChatListItem.Type.PublicChat
             muted: false
-            hasUnreadMessages: false
-            hasMention: false
             unreadMessagesCount: 0
+            mentionsCount: 0
             color: "blue"
         }
         ListElement {
@@ -681,16 +680,15 @@ Rectangle {
             name: "status-desktop"
             chatType: StatusChatListItem.Type.PublicChat
             muted: false
-            hasUnreadMessages: true
             color: "red"
             unreadMessagesCount: 1
+            mentionsCount: 1
         }
         ListElement {
             chatId: "2"
             name: "Amazing Funny Squirrel"
             chatType: StatusChatListItem.Type.OneToOneChat
             muted: false
-            hasUnreadMessages: false
             color: "green"
             identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
 CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
@@ -701,7 +699,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Black Ops"
             chatType: StatusChatListItem.Type.GroupChat
             muted: false
-            hasUnreadMessages: false
             color: "purple"
             unreadMessagesCount: 0
         }
@@ -710,7 +707,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Spectacular Growing Otter"
             chatType: StatusChatListItem.Type.OneToOneChat
             muted: true
-            hasUnreadMessages: false
             color: "Orange"
             unreadMessagesCount: 0
         }
@@ -719,7 +715,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "channel-with-a-super-duper-long-name"
             chatType: StatusChatListItem.Type.PublicChat
             muted: false
-            hasUnreadMessages: false
             color: "green"
             unreadMessagesCount: 0
         }
@@ -732,8 +727,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "general"
             chatType: StatusChatListItem.Type.CommunityChat
             muted: false
-            hasUnreadMessages: false
-            hasMention: false
             unreadMessagesCount: 0
             color: "orange"
         }
@@ -742,8 +735,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "random"
             chatType: StatusChatListItem.Type.CommunityChat
             muted: false
-            hasUnreadMessages: false
-            hasMention: false
             unreadMessagesCount: 0
             color: "orange"
             categoryId: "public"
@@ -753,8 +744,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "watercooler"
             chatType: StatusChatListItem.Type.CommunityChat
             muted: false
-            hasUnreadMessages: false
-            hasMention: false
             unreadMessagesCount: 0
             color: "orange"
             categoryId: "public"
@@ -764,8 +753,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "language-design"
             chatType: StatusChatListItem.Type.CommunityChat
             muted: false
-            hasUnreadMessages: false
-            hasMention: false
             unreadMessagesCount: 0
             color: "orange"
             categoryId: "dev"

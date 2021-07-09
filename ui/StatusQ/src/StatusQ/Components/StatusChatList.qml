@@ -49,8 +49,8 @@ Column {
             type: model.chatType
             muted: !!model.muted
             hasUnreadMessages: !!model.hasUnreadMessages || model.unviewedMessagesCount > 0
-            hasMention: !!model.hasMention
-            badge.value: model.unviewedMessagesCount || 0
+            hasMention: model.mentionsCount > 0
+            badge.value: model.mentionsCount || 0
             selected: (model.chatId || model.id) === statusChatList.selectedChatId
 
             icon.color: model.color || ""
