@@ -20,6 +20,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
+import QtQml.Models 2.13
 import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
@@ -31,18 +32,23 @@ Rectangle {
     property Item delegate
     property alias suggestionsModel: filterItem.model
     property alias filter: filterItem.filter
-    property string plainTextFilter: chatsModel.plainText(filter)
-    property string formattedPlainTextFilter: {
-        if (plainTextFilter.startsWith("@")) {
-            return plainTextFilter.substring(1).toLowerCase()
-        }
-        return plainTextFilter.toLowerCase()
-    }
+    property alias formattedPlainTextFilter: filterItem.formattedFilter
     property alias property: filterItem.property
     property int cursorPosition
     signal itemSelected(var item, int lastAtPosition, int lastCursorPosition)
     property alias listView: listView
     property bool shouldHide: false
+
+    Timer {
+        id: timer
+    }
+
+    onFormattedPlainTextFilterChanged: {
+        // We need to callLater because the sort needs to happen before setting the index
+        Qt.callLater(function () {
+            listView.currentIndex = 0
+        })
+    }
 
     onCursorPositionChanged: {
         if (shouldHide) {
@@ -55,7 +61,7 @@ Rectangle {
     }
 
     function selectCurrentItem() {
-        container.itemSelected(listView.model.get(listView.currentIndex), filterItem.lastAtPosition, filterItem.cursorPosition)
+        container.itemSelected(mentionsListDelegate.items.get(listView.currentIndex).model, filterItem.lastAtPosition, filterItem.cursorPosition)
     }
 
     onVisibleChanged: {
@@ -117,12 +123,9 @@ Rectangle {
 
         DelegateModelGeneralized {
             id: mentionsListDelegate
+
             lessThan: [
                 function(left, right) {
-                    if (!formattedPlainTextFilter) {
-                        return true
-                    }
-
                     // Priorities:
                     // 1. Match at the start
                     // 2. Match in the start of one of the three words
@@ -130,6 +133,10 @@ Rectangle {
 
                     const leftProp = left[container.property.find(p => !!left[p])].toLowerCase()
                     const rightProp = right[container.property.find(p => !!right[p])].toLowerCase()
+
+                    if (!formattedPlainTextFilter) {
+                        return leftProp < rightProp
+                    }
 
                     // check the start of the string
                     const leftMatches = leftProp.startsWith(formattedPlainTextFilter)
@@ -166,7 +173,8 @@ Rectangle {
             model: container.suggestionsModel
 
             delegate: Rectangle {
-                color: listView.currentIndex === index ? Style.current.backgroundHover : Style.current.transparent
+                id: itemDelegate
+                color: ListView.isCurrentItem ? Style.current.backgroundHover : Style.current.transparent
                 border.width: 0
                 width: parent.width
                 height: 42
@@ -196,7 +204,7 @@ Rectangle {
                     anchors.fill: parent
                     hoverEnabled: true
                     onEntered: {
-                        listView.currentIndex = index
+                        listView.currentIndex = itemDelegate.DelegateModel.itemsIndex
                     }
                     onClicked: {
                         container.itemSelected(model, filterItem.lastAtPosition, filterItem.cursorPosition)
