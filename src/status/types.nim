@@ -197,6 +197,7 @@ type
     VisibleTokens = "wallet/visible-tokens"
     PinnedMailservers = "pinned-mailservers"
     WakuBloomFilterMode = "waku-bloom-filter-mode"
+    SendUserStatus = "send-status-updates?"
 
   UpstreamConfig* = ref object
     enabled* {.serializedFieldName("Enabled").}: bool
