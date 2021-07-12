@@ -144,6 +144,7 @@ QtObject:
 
   proc activeChannelChanged*(self: ChatsView) {.slot.} =
     self.channelView.activeChannelChanged()
+    self.messageView.activeChannelChanged()
     self.triggerActiveChannelChange()
 
   proc getMessageView*(self: ChatsView): QVariant {.slot.} = newQVariant(self.messageView)
@@ -412,9 +413,6 @@ QtObject:
   proc setActiveChannel*(self: ChatsView, channel: string) {.slot.} =
     self.channelView.setActiveChannel(channel)
     self.messageView.activeChannelChanged()
-
-  # proc activeChannelChanged*(self: ChatsView) =
-  #   self.channelView.activeChannelChanged()
 
   proc requestMoreMessages*(self: ChatsView, fetchRange: int) {.slot.} =
     self.messageView.loadingMessages = true
