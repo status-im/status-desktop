@@ -249,18 +249,15 @@ StackLayout {
                                 qsTr("Contact") :
                                 qsTr("Contact request pending") :
                             qsTr("Not a contact"))
-                        break;
                     case Constants.chatTypePublic:
                         return qsTr("Public chat")
                     case Constants.chatTypePrivateGroupChat:
                         let cnt = chatsModel.channelView.activeChannel.members.rowCount();
                         if(cnt > 1) return qsTr("%1 members").arg(cnt);
                         return qsTr("1 member");
-                        break;
                     case Constants.chatTypeCommunity:
                     default:
                         return ""
-                        break;
                 }
             }
             chatInfoButton.image.source: profileImage || chatsModel.channelView.activeChannel.identicon
@@ -291,6 +288,11 @@ StackLayout {
             membersButton.visible: appSettings.showOnlineUsers && chatsModel.channelView.activeChannel.chatType !== Constants.chatTypeOneToOne
             notificationButton.visible: appSettings.isActivityCenterEnabled
             notificationCount: chatsModel.activityNotificationList.unreadCount
+
+            onSearchButtonClicked: searchPopup.open()
+            SearchPopup {
+                id: searchPopup
+            }
 
             onMembersButtonClicked: showUsers = !showUsers
             onNotificationButtonClicked: activityCenter.open()
