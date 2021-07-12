@@ -38,6 +38,30 @@ Item {
         }
     }
 
+    Component {
+        id: confirmationPopupComponent
+        ConfirmationDialog {
+            property string settingsProp: ""
+            property var onConfirmed: (function(){})
+            height: 310
+            showCancelButton: true
+            confirmationText: qsTr("This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.")
+            confirmButtonLabel: qsTr("I understand")
+            onConfirmButtonClicked: {
+                appSettings.communitiesEnabled = true
+                onConfirmed()
+                close()
+            }
+
+            onCancelButtonClicked: {
+                close()
+            }
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+    
 
     Loader {
         id: rectangleBubbleLoader
@@ -228,27 +252,36 @@ Item {
                     height: 44
                     enabled: true
                     text: qsTr("Unsupported state")
-
                     onClicked: {
-                        let error
+                        let onBtnClick = function(){
+                            let error
 
-                        if (rectangleBubble.state === "joined") {
-                            chatsModel.communities.setActiveCommunity(communityId);
-                            return
-                        } else if (rectangleBubble.state === "unjoined") {
-                            error = chatsModel.communities.joinCommunity(communityId, true)
-                        }
-                        else if (rectangleBubble.state === "requestToJoin") {
-                            error = chatsModel.communities.requestToJoinCommunity(communityId,
-                                                                      profileModel.profile.ensVerified ? profileModel.profile.username : "")
-                            if (!error) {
-                                rectangleBubble.isPendingRequest = chatsModel.communities.isCommunityRequestPending(communityId)
+                            if (rectangleBubble.state === "joined") {
+                                chatsModel.communities.setActiveCommunity(communityId);
+                                return
+                            } else if (rectangleBubble.state === "unjoined") {
+                                error = chatsModel.communities.joinCommunity(communityId, true)
+                            }
+                            else if (rectangleBubble.state === "requestToJoin") {
+                                error = chatsModel.communities.requestToJoinCommunity(communityId,
+                                                                        profileModel.profile.ensVerified ? profileModel.profile.username : "")
+                                if (!error) {
+                                    rectangleBubble.isPendingRequest = chatsModel.communities.isCommunityRequestPending(communityId)
+                                }
+                            }
+
+                            if (error) {
+                                joiningError.text = error
+                                return joiningError.open()
                             }
                         }
 
-                        if (error) {
-                            joiningError.text = error
-                            return joiningError.open()
+                        if(appSettings.communitiesEnabled){
+                            onBtnClick();
+                        } else {
+                            openPopup(confirmationPopupComponent, {
+                                onConfirmed: onBtnClick
+                            });
                         }
                     }
 
