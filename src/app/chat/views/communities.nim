@@ -380,7 +380,8 @@ QtObject:
       result = fmt"Error inviting to the community: {e.msg}"
 
   proc inviteUsersToCommunity*(self: CommunitiesView, pubKeysJSON: string): string {.slot.} =
-    self.inviteUsersToCommunityById(self.activeCommunity.id(), pubKeysJSON)
+    result = self.inviteUsersToCommunityById(self.activeCommunity.id(), pubKeysJSON)
+    self.status.chat.statusUpdates()
 
   proc exportCommunity*(self: CommunitiesView): string {.slot.} =
     try:
@@ -441,6 +442,7 @@ QtObject:
     try:
       self.status.chat.acceptRequestToJoinCommunity(requestId)
       self.removeMembershipRequest(requestId, true)
+      self.status.chat.statusUpdates()
     except Exception as e:
       error "Error accepting request to join the community", msg = e.msg
       return "Error accepting request to join the community"
