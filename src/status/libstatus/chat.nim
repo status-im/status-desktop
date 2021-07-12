@@ -89,6 +89,12 @@ proc parseActivityCenterNotifications*(rpcResult: JsonNode): (string, seq[Activi
       notifs.add(jsonMsg.toActivityCenterNotification())
   return (rpcResult{"cursor"}.getStr, notifs)
 
+proc statusUpdates*(): seq[StatusUpdate] =
+  let rpcResult = callPrivateRPC("statusUpdates".prefix, %* []).parseJson()["result"]
+  if rpcResult != nil and rpcResult{"statusUpdates"} != nil and rpcResult["statusUpdates"].len != 0:
+    for jsonStatusUpdate in rpcResult["statusUpdates"]:
+      result.add(jsonStatusUpdate.toStatusUpdate)
+
 proc rpcChatMessages*(chatId: string, cursorVal: JsonNode, limit: int, success: var bool): string =
   success = true
   try:
