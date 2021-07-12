@@ -62,15 +62,13 @@ QtObject:
 
   proc name*(self: ChatItemView): string {.slot.} = 
     if self.chatItem != nil and self.chatItem.chatType.isOneToOne:
-      if self.chatItem.name == self.chatItem.id:
-        result = self.userNameOrAlias(self.chatItem.id)
+      if self.status.chat.contacts.hasKey(self.chatItem.id) and self.status.chat.contacts[self.chatItem.id].hasNickname():
+        return self.status.chat.contacts[self.chatItem.id].localNickname
+      let username = self.userNameOrAlias(self.chatItem.id)
+      if username != "":
+        result = username.userName(true)      
       else:
-        if self.status.chat.contacts.hasKey(self.chatItem.id) and self.status.chat.contacts[self.chatItem.id].hasNickname():
-          return self.status.chat.contacts[self.chatItem.id].localNickname
-        if self.chatItem.ensName != "":
-          result = "@" & userName(self.chatItem.ensName).userName(true)      
-        else:
-          result = self.chatItem.name
+        result = self.chatItem.name
     else:
       result = ?.self.chatItem.name
     

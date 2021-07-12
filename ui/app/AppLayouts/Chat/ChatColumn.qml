@@ -235,12 +235,7 @@ StackLayout {
             property string chatId: chatsModel.channelView.activeChannel.id
             property string profileImage: appMain.getProfileImage(chatId) || ""
 
-            chatInfoButton.title: {
-                if (chatsModel.channelView.activeChannel.chatType === Constants.chatTypeOneToOne) {
-                    return Utils.removeStatusEns(chatsModel.userNameOrAlias(chatsModel.channelView.activeChannel.id))
-                }
-                return chatsModel.channelView.activeChannel.name
-            }
+            chatInfoButton.title: Utils.removeStatusEns(chatsModel.channelView.activeChannel.name)
             chatInfoButton.subTitle: {
                 switch (chatsModel.channelView.activeChannel.chatType) {
                     case Constants.chatTypeOneToOne:

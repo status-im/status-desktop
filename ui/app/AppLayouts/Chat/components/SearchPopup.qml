@@ -60,8 +60,8 @@ Popup {
         SVGImage {
             id: searchImage
             source: "../../../img/search.svg"
-            width: 28
-            height: 28
+            width: 40
+            height: 40
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
@@ -128,13 +128,14 @@ Popup {
         }
 
         BadgeContent {
-            chatId: chatId
-            name: chatsModel.channelView.activeChannel.name
+            chatId: popup.chatId
+            name: Utils.removeStatusEns(chatsModel.channelView.activeChannel.name)
             identicon: chatsModel.channelView.activeChannel.identicon
             communityId: chatsModel.channelView.activeChannel.communityId
             anchors.left: inText.right
             anchors.leftMargin: 4
             anchors.verticalCenter: parent.verticalCenter
+            hideSecondIcon: true
         }
     }
 
