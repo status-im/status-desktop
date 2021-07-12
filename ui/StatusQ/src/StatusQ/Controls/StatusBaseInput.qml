@@ -53,6 +53,9 @@ Item {
 
         clip: true
 
+        border.width: 1
+        border.color: edit.activeFocus ? Theme.palette.primaryColor1 : "transparent"
+
         Flickable {
             id: flick
 
