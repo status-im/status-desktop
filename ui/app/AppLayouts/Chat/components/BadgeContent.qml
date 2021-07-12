@@ -12,6 +12,7 @@ Item {
     property string name: "channelName"
     property string identicon
     property string communityId
+    property bool hideSecondIcon: false
     property int chatType: chatsModel.channelView.chats.getChannelType(chatId)
     property int realChatType: {
         if (chatType === Constants.chatTypeCommunity) {
@@ -49,6 +50,7 @@ Item {
             height: parent.height
             SVGImage {
                 id: communityIcon
+                visible: !hideSecondIcon
                 width: 16
                 height: 16
                 source: "../../../img/communities.svg"
@@ -65,7 +67,7 @@ Item {
             Loader {
                 id: communityImageLoader
                 active: true
-                anchors.left: communityIcon.right
+                anchors.left: communityIcon.visible ? communityIcon.right : parent.left
                 anchors.leftMargin: 2
                 anchors.verticalCenter: parent.verticalCenter
                 sourceComponent: communityBadge.useLetterIdenticon ? letterIdenticon :imageIcon
