@@ -15,3 +15,6 @@ proc requestAddressForTransaction*(chatId: string, fromAddress: string, amount: 
 
 proc requestTransaction*(chatId: string, fromAddress: string, amount: string, tokenAddress: string): string =
   result = callPrivateRPC("requestTransaction".prefix, %* [chatId, amount, tokenAddress, fromAddress])
+
+proc acceptRequestTransaction*(transactionHash: string, messageId: string, signature: string): string =
+  result = callPrivateRPC("acceptRequestTransaction".prefix, %* [transactionHash, messageId, signature])

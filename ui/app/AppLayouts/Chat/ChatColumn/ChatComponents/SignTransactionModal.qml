@@ -45,9 +45,6 @@ ModalPopup {
             sendingError.text = qsTr("Invalid transaction parameters")
             sendingError.open()
         }
-
-
-        root.close()
     }
 
     id: root
@@ -62,6 +59,7 @@ ModalPopup {
         title: qsTrId("error-sending-the-transaction")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
+        onAccepted: root.close()
     }
 
     onClosed: {
@@ -158,7 +156,7 @@ ModalPopup {
                     if (!gasEstimate.success) {
                         //% "Error estimating gas: %1"
                         let message = qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message)
-                        console.warn(message)
+
                         //% ". The transaction will probably fail."
                         gasEstimateErrorPopup.confirmationText = message + qsTrId("--the-transaction-will-probably-fail-")
                         gasEstimateErrorPopup.open()
@@ -296,28 +294,33 @@ ModalPopup {
             onTransactionWasSent: {
                 try {
                     let response = JSON.parse(txResult)
+                    if (response.uuid !== stack.uuid)
+                        return
 
-                    if (response.uuid !== stack.uuid) return
-                    
-                    stack.currentGroup.isPending = false
+                    let transactionId = response.result
 
                     if (!response.success) {
-                        if (Utils.isInvalidPasswordMessage(response.result)){
+                        if (Utils.isInvalidPasswordMessage(transactionId)){
                             //% "Wrong password"
                             transactionSigner.validationError = qsTrId("wrong-password")
                             return
                         }
-                        sendingError.text = response.result
+                        sendingError.text = transactionId
                         return sendingError.open()
                     }
+
+                    chatsModel.transactions.acceptRequestTransaction(transactionId,
+                                                            messageId,
+                                                            profileModel.profile.pubKey + transactionId.substr(2))
 
                     //% "Transaction pending..."
                     toastMessage.title = qsTrId("ens-transaction-pending")
                     toastMessage.source = "../../../../img/loading.svg"
                     toastMessage.iconColor = Style.current.primary
                     toastMessage.iconRotates = true
-                    toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
+                    toastMessage.link = `${walletModel.utilsView.etherscanLink}/${transactionId}`
                     toastMessage.open()
+
                     root.close()
                 } catch (e) {
                     console.error('Error parsing the response', e)
@@ -326,10 +329,4 @@ ModalPopup {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/
 

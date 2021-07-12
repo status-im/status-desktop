@@ -430,8 +430,11 @@ QtObject:
   proc hideLoadingIndicator*(self: ChatsView) {.slot.} =
     self.messageView.hideLoadingIndicator()
 
-  proc deleteMessage*(self: ChatsView, channelId: string, messageId: string) =
-    self.messageView.deleteMessage(channelId, messageId)
+  proc deleteMessage*(self: ChatsView, channelId: string, messageId: string): bool =
+    result = self.messageView.deleteMessage(channelId, messageId)
+
+  proc deleteMessageWhichReplacedMessageWithId*(self: ChatsView, channelId: string, messageId: string): bool =
+    result = self.messageView.deleteMessageWhichReplacedMessageWithId(channelId, messageId)
 
   proc addPinnedMessages*(self: ChatsView, pinnedMessages: seq[Message]) =
     self.messageView.addPinnedMessages(pinnedMessages)

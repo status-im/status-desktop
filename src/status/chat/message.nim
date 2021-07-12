@@ -32,6 +32,9 @@ type CommandParameters* = object
   commandState*: int
   signature*: string
 
+proc `$`*(self: CommandParameters): string =
+  result = fmt"CommandParameters(id:{self.id}, fromAddr:{self.fromAddress}, addr:{self.address}, contract:{self.contract}, value:{self.value}, transactionHash:{self.transactionHash}, commandState:{self.commandState}, signature:{self.signature})"
+
 type Message* = object
   alias*: string
   userName*: string

@@ -36,7 +36,13 @@ proc handleChatEvents(self: ChatController) =
     for message in evArgs.messages:
       if (message.replace != ""):
         # Delete the message that this message replaces
-        self.view.deleteMessage(message.chatId, message.replace)
+        if (not self.view.deleteMessage(message.chatId, message.replace)):
+          # In cases where new message need to replace a message which already replaced initial message 
+          # "replace" property contains id of the initial message, but not the id of the message which 
+          # replaced the initial one. That's why we call this proce here in case message with "message.replace"
+          # was not deleted.
+          discard self.view.deleteMessageWhichReplacedMessageWithId(message.chatId, message.replace)
+
     self.view.reactions.push(evArgs.emojiReactions)
     if (evArgs.communities.len > 0):
       for community in evArgs.communities.mitems:
@@ -66,7 +72,7 @@ proc handleChatEvents(self: ChatController) =
 
   self.status.events.on("messageDeleted") do(e: Args):
     var evArgs = MessageArgs(e)
-    self.view.deleteMessage(evArgs.channel, evArgs.id)
+    discard self.view.deleteMessage(evArgs.channel, evArgs.id)
 
   self.status.events.on("chatHistoryCleared") do(e: Args):
     var args = ChannelArgs(e)
