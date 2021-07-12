@@ -416,6 +416,10 @@ proc requestAddressForTransaction*(self: ChatModel, chatId: string, fromAddress:
   let response = status_chat_commands.requestAddressForTransaction(chatId, fromAddress, amount, address)
   discard self.processMessageUpdateAfterSend(response)
 
+proc acceptRequestTransaction*(self: ChatModel, transactionHash: string, messageId: string, signature: string) =
+  let response = status_chat_commands.acceptRequestTransaction(transactionHash, messageId, signature)
+  discard self.processMessageUpdateAfterSend(response)
+
 proc requestTransaction*(self: ChatModel, chatId: string, fromAddress: string, amount: string, tokenAddress: string) =
   let address = if (tokenAddress == ZERO_ADDRESS): "" else: tokenAddress
   let response = status_chat_commands.requestTransaction(chatId, fromAddress, amount, address)

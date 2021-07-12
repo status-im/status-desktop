@@ -24,6 +24,7 @@ Item {
             }
         }
     }
+
     property var token: JSON.parse(commandParametersObject.contract) // TODO: handle {}
     property string tokenAmount: commandParametersObject.value
     property string tokenSymbol: token.symbol || ""
@@ -35,18 +36,10 @@ Item {
         return walletModel.balanceView.getFiatValue(tokenAmount, token.symbol, defaultFiatSymbol) + " " + defaultFiatSymbol.toUpperCase()
     }
     property int state: commandParametersObject.commandState
-    property bool outgoing: {
-        switch (root.state) {
-            case Constants.pending:
-            case Constants.confirmed:
-            case Constants.transactionRequested:
-            case Constants.addressRequested: return isCurrentUser
-            case Constants.declined:
-            case Constants.transactionDeclined:
-            case Constants.addressReceived: return !isCurrentUser
-            default: return false
-        }
-    }
+
+    // Any transaction where isCurrentUser is true is actually outgoing transaction.
+    property bool outgoing: isCurrentUser
+
     property int innerMargin: 12
     property bool isError: commandParametersObject.contract === "{}"
     onTokenSymbolChanged: {
@@ -74,11 +67,12 @@ Item {
             color: Style.current.secondaryText
             text: {
                 if (root.state === Constants.transactionRequested) {
-                    let prefix = root.outgoing ? "↓ ": "↑ " 
+                    let prefix = outgoing? "↑ " : "↓ "
                     //% "Transaction request"
                     return prefix + qsTrId("transaction-request")
                 }
-                return root.outgoing ? 
+
+                return outgoing ?
                     //% "↑ Outgoing transaction"
                     qsTrId("--outgoing-transaction") :
                     //% "↓ Incoming transaction"
@@ -208,9 +202,3 @@ Item {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#4c4e50";formeditorZoom:1.25}
-}
-##^##*/

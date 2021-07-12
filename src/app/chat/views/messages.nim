@@ -415,9 +415,24 @@ QtObject:
       self.unreadDirectMessagesAndMentionsCount = currentUnreadDirectMessagesAndMentionsCount
       self.unreadDirectMessagesAndMentionsCountChanged()
 
-  proc deleteMessage*(self: MessageView, channelId: string, messageId: string) =
-    self.messageList[channelId].deleteMessage(messageId)
-    self.hideMessage(messageId)
+  proc deleteMessage*(self: MessageView, channelId: string, messageId: string): bool =
+    result = self.messageList[channelId].deleteMessage(messageId)
+    if (result):
+      self.hideMessage(messageId)
+
+  proc deleteMessageWhichReplacedMessageWithId*(self: MessageView, channelId: string, messageId: string): bool =
+    var msgIdToBeDeleted: string
+    for message in self.messageList[channelId].messages:
+      if (message.replace == messageId):
+        msgIdToBeDeleted = message.id
+        break
+    
+    if (msgIdToBeDeleted.len == 0):
+      return false
+
+    result = self.messageList[channelId].deleteMessage(msgIdToBeDeleted)
+    if (result):
+      self.hideMessage(msgIdToBeDeleted)
 
   proc removeMessagesByUserId(self: MessageView, publicKey: string) {.slot.} =
     for k in self.messageList.keys:

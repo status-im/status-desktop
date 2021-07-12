@@ -34,3 +34,6 @@ QtObject:
 
   proc declineRequest*(self: TransactionsView, messageId: string) {.slot.} =
     self.status.chat.declineRequestTransaction(messageId)
+  
+  proc acceptRequestTransaction*(self: TransactionsView, transactionHash: string, messageId: string, signature: string) {.slot.} =
+    self.status.chat.acceptRequestTransaction(transactionHash, messageId, signature)

@@ -103,8 +103,10 @@ QtObject:
   proc getMessage*(self: ChatMessageList, messageId: string): Message =
     return self.messages[self.messageIndex[messageId]]
 
-  proc deleteMessage*(self: ChatMessageList, messageId: string) =
-    if not self.messageIndex.hasKey(messageId): return
+  proc deleteMessage*(self: ChatMessageList, messageId: string): bool =
+    if not self.messageIndex.hasKey(messageId): 
+      return false
+
     let messageIndex = self.messageIndex[messageId]
     self.beginRemoveRows(newQModelIndex(), messageIndex, messageIndex)
     self.messages.delete(messageIndex)
@@ -115,10 +117,12 @@ QtObject:
       self.messageIndex[self.messages[i].id] = i
     self.endRemoveRows()
 
+    return true
+
   proc deleteMessagesByChatId*(self: ChatMessageList, chatId: string) =
     let messages = self.messages.filter(m => m.chatId == chatId)
     for message in messages:
-      self.deleteMessage(message.id)
+      discard self.deleteMessage(message.id)
 
   proc replaceMessage*(self: ChatMessageList, message: Message) =
     let msgIdx = self.messageIndex[message.id]
@@ -382,7 +386,7 @@ QtObject:
       if m.fromAuthor == publicKey: # Can't delete on a loop
         msgIdxToDelete.add(m.id)
     for m in msgIdxToDelete:
-      self.deleteMessage(m)
+      discard self.deleteMessage(m)
 
   proc getID*(self: ChatMessageList):string  {.slot.} =
     self.id
