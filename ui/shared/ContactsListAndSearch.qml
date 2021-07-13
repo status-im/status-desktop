@@ -34,16 +34,16 @@ Item {
     function validate() {
         if (!Utils.isChatKey(chatKey.text) && !Utils.isValidETHNamePrefix(chatKey.text)) {
             //% "Enter a valid chat key or ENS username"
-            validationError = qsTrId("enter-a-valid-chat-key-or-ens-username");
+            root.validationError = "enter-a-valid-chat-key-or-ens-username";
             pubKey = ""
             ensUsername = "";
         } else if (profileModel.profile.pubKey === chatKey.text) {
             //% "Can't chat with yourself"
-            validationError = qsTrId("can-t-chat-with-yourself");
+            root.validationError = qsTrId("can-t-chat-with-yourself");
         } else {
-            validationError = ""
+            root.validationError = "";
         }
-        return validationError === ""
+        return root.validationError === "";
     }
 
     Input {
@@ -51,35 +51,39 @@ Item {
         //% "Enter ENS username or chat key"
         placeholderText: qsTrId("enter-contact-code")
         Keys.onReleased: {
-            successMessage = ""
-            searchResults.pubKey = ""
-            if (!validate()) {
-                searchResults.showProfileNotFoundMessage = false
-                noContactsRect.visible = false
-                return;
-            }
-
-            chatKey.text = chatKey.text.trim();
-
-            if (Utils.isChatKey(chatKey.text)){
-                pubKey = chatKey.text;
-                if (!profileModel.contacts.isAdded(pubKey)) {
-                    searchResults.username = utilsModel.generateAlias(pubKey)
-                    searchResults.userAlias = Utils.compactAddress(pubKey, 4)
-                    searchResults.pubKey = pubKey
+            successMessage = "";
+            searchResults.pubKey = "";
+            if (chatKey.text !== "") {
+                if (!validate()) {
+                    searchResults.showProfileNotFoundMessage = false;
+                    noContactsRect.visible = false;
+                    return;
                 }
-                noContactsRect.visible = false
-                return;
-            }
 
-            Qt.callLater(resolveENS, chatKey.text)
+                chatKey.text = chatKey.text.trim();
+
+                if (Utils.isChatKey(chatKey.text)) {
+                    pubKey = chatKey.text;
+                    if (!profileModel.contacts.isAdded(pubKey)) {
+                        searchResults.username = utilsModel.generateAlias(pubKey);
+                        searchResults.userAlias = Utils.compactAddress(pubKey, 4);
+                        searchResults.pubKey = pubKey
+                    }
+                    noContactsRect.visible = false;
+                    return;
+                }
+
+                Qt.callLater(resolveENS, chatKey.text);
+            } else {
+                root.validationError = "";
+            }
         }
         textField.anchors.rightMargin: clearBtn.width + Style.current.padding + 2
 
         Connections {
             target: chatsModel.ensView
             onEnsWasResolved: {
-                if(chatKey.text == ""){
+                if (chatKey.text == "") {
                     ensUsername.text = "";
                     pubKey = "";
                 } else if(resolvedPubKey == ""){
@@ -90,7 +94,7 @@ Item {
                 } else {
                     if (profileModel.profile.pubKey === resolvedPubKey) {
                         //% "Can't chat with yourself"
-                        validationError = qsTrId("can-t-chat-with-yourself");
+                        root.validationError = qsTrId("can-t-chat-with-yourself");
                     } else {
                         searchResults.username = chatsModel.ensView.formatENSUsername(chatKey.text)
                         let userAlias = utilsModel.generateAlias(resolvedPubKey)
@@ -119,23 +123,23 @@ Item {
             anchors.rightMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
             onClicked: {
-                chatKey.text = ""
-                chatKey.forceActiveFocus(Qt.MouseFocusReason)
-                searchResults.showProfileNotFoundMessage = false
-                searchResults.pubKey = pubKey = ""
-                noContactsRect.visible = false
-                searchResults.loading = false
-                validationError = ""
+                chatKey.text = "";
+                chatKey.forceActiveFocus(Qt.MouseFocusReason);
+                searchResults.showProfileNotFoundMessage = false;
+                searchResults.pubKey = pubKey = "";
+                noContactsRect.visible = false;
+                searchResults.loading = false;
+                root.validationError = "";
             }
         }
     }
 
     StyledText {
         id: message
-        text: validationError || successMessage
-        visible: validationError !== "" || successMessage !== ""
+        text: root.validationError || successMessage
+        visible: root.validationError !== "" || successMessage !== ""
         font.pixelSize: 13
-        color: !!validationError ? Style.current.danger : Style.current.success
+        color: !!root.validationError ? Style.current.danger : Style.current.success
         anchors.top: chatKey.bottom
         anchors.topMargin: Style.current.smallPadding
         anchors.horizontalCenter: parent.horizontalCenter

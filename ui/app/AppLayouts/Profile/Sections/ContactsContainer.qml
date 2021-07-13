@@ -135,9 +135,9 @@ Item {
                 } else if (profileModel.profile.pubKey === value) {
                     addContactModal.validationError = qsTr("You can't add yourself");
                 } else {
-                    addContactModal.validationError = ""
+                    addContactModal.validationError = "";
                 }
-                return addContactModal.validationError === ""
+                return addContactModal.validationError === "";
             }
 
             property var lookupContact: Backpressure.debounce(addContactSearchInput, 400, function (value) {
@@ -158,13 +158,17 @@ Item {
                 customHeight: 44
                 fontPixelSize: 15
                 Keys.onReleased: {
-                    if (!addContactModal.validate(addContactSearchInput.text)) {
-                        searchResults.reset()
-                        contactsContainer.isPending = false
-                        return;
-                    }
+                    if (text !== "") {
+                        if (!addContactModal.validate(addContactSearchInput.text)) {
+                            searchResults.reset();
+                            contactsContainer.isPending = false;
+                            return;
+                        }
 
-                    Qt.callLater(addContactModal.lookupContact, addContactSearchInput.text)
+                        Qt.callLater(addContactModal.lookupContact, addContactSearchInput.text);
+                    } else {
+                        addContactModal.validationError = "";
+                    }
                 }
 
 
