@@ -78,6 +78,15 @@ Rectangle {
                 return "transparent";
             }
         }
+
+        property color highlightedColor: {
+            switch(statusFlatRoundButton.type) {
+            case StatusFlatRoundButton.Type.Primary:
+                return Theme.palette.primaryColor3;
+            case StatusFlatRoundButton.Type.Secondary:
+                return Theme.palette.baseColor4;
+            }
+        }
     }
 
     implicitWidth: 44
@@ -86,8 +95,10 @@ Rectangle {
 
     color: {
         if (statusFlatRoundButton.enabled) {
-            return sensor.containsMouse || highlighted ? backgroundSettings.hoverColor
-                                        : backgroundSettings.color
+            if (sensor.containsMouse) {
+                return backgroundSettings.hoverColor
+            }
+            return highlighted ? backgroundSettings.highlightedColor : backgroundSettings.color
         } else {
             return backgroundSettings.disabledColor
         }

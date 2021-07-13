@@ -450,6 +450,9 @@ Rectangle {
                     chatInfoButton.subTitle: "Community Chat"
                     chatInfoButton.icon.color: Theme.palette.miscColor6
                     chatInfoButton.type: StatusChatInfoButton.Type.CommunityChat
+
+                    searchButton.onClicked: searchButton.highlighted = !searchButton.highlighted
+                    membersButton.onClicked: membersButton.highlighted = !membersButton.highlighted
                 }
             }
         }
