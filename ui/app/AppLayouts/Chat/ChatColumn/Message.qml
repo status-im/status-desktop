@@ -304,7 +304,7 @@ Item {
             readonly property int maxGapInSeconds: Constants.maxNbDaysToFetch * Constants.fetchRangeLast24Hours
 
             visible: {
-                if (!chatsModel.activeChannel) {
+                if (!chatsModel.channelView.activeChannel) {
                     return false
                 }
                 return gapNowAndOldest < maxGapInSeconds
