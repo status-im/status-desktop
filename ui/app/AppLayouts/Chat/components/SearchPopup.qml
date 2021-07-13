@@ -52,6 +52,13 @@ Popup {
     }
     padding: 0
 
+    Connections {
+        target: chatsModel.channelView
+        onActiveChannelChanged: {
+            searchInput.text = ""
+        }
+    }
+
     Item {
         id: searchHeader
         width: parent.width
@@ -97,7 +104,7 @@ Popup {
             background: Rectangle {
                 color: Style.current.transparent
             }
-            Keys.onReleased: Qt.callLater(searchHeader.searchMessages, searchInput.text)
+            onTextChanged: Qt.callLater(searchHeader.searchMessages, searchInput.text)
         }
 
         Separator {
