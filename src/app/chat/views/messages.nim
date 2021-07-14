@@ -219,7 +219,7 @@ QtObject:
   proc isAddedContact*(self: MessageView, id: string): bool {.slot.} =
     result = self.status.contacts.isAdded(id)
 
-  proc messageNotificationPushed*(self: MessageView, chatId: string, text: string, messageType: string, chatType: int, timestamp: string, identicon: string, username: string, hasMention: bool, isAddedContact: bool, channelName: string) {.signal.}
+  proc messageNotificationPushed*(self: MessageView, chatId: string, text: string, contentType: int, chatType: int, timestamp: string, identicon: string, username: string, hasMention: bool, isAddedContact: bool, channelName: string) {.signal.}
 
   proc pushMessages*(self:MessageView, messages: var seq[Message]) =
     for msg in messages.mitems:
@@ -255,7 +255,7 @@ QtObject:
         if not channel.muted:
           let isAddedContact = channel.chatType.isOneToOne and self.isAddedContact(channel.id)
           if msg.editedAt == "0": # Do not push notifications for edit messages
-            self.messageNotificationPushed(msg.chatId, escape_html(msg.text), msg.messageType, channel.chatType.int, msg.timestamp, msg.identicon, msg.userName, msg.hasMention, isAddedContact, channel.name)
+            self.messageNotificationPushed(msg.chatId, escape_html(msg.text), msg.contentType.int, channel.chatType.int, msg.timestamp, msg.identicon, msg.userName, msg.hasMention, isAddedContact, channel.name)
 
   proc markMessageAsSent*(self:MessageView, chat: string, messageId: string) =
     if self.messageList.contains(chat):
