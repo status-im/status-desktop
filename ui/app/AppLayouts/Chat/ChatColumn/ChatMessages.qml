@@ -206,8 +206,9 @@ SplitView {
                     }
                 }
 
-                onMessageNotificationPushed: function(chatId, msg, messageType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
-                    if (messageType == Constants.editType) return;
+                onMessageNotificationPushed: function(chatId, msg, contentType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
+                    if (contentType == Constants.editType) return;
+
                     if (appSettings.notificationSetting == Constants.notifyAllMessages || 
                         (appSettings.notificationSetting == Constants.notifyJustMentions && hasMention)) {
                         if (chatId === chatsModel.channelView.activeChannel.id && applicationWindow.active === true) {
@@ -229,7 +230,7 @@ SplitView {
 
                         let message;
                         if (appSettings.notificationMessagePreviewSetting > Constants.notificationPreviewNameOnly) {
-                            switch(messageType){
+                            switch(contentType){
                             //% "Image"
                             case Constants.imageType: message = qsTrId("image"); break
                             //% "Sticker"
