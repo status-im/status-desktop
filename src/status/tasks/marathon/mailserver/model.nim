@@ -150,6 +150,10 @@ proc requestMoreMessages*(self: MailserverModel, chatId: string) =
   debug "Requesting more messages from", mailserver=self.activeMailserver, chatId=chatId
   discard status_mailservers.syncChatFromSyncedFrom(chatId)
 
+proc fillGaps*(self: MailserverModel, chatId: string, messageIds: seq[string]) =
+  debug "Requesting fill gaps from", mailserver=self.activeMailserver, chatId=chatId
+  discard status_mailservers.fillGaps(chatId, messageIds)
+
 proc findNewMailserver(self: MailserverModel) =
   warn "Finding a new mailserver..."
   

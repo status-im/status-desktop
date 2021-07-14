@@ -23,6 +23,9 @@ type
   GetActiveMailserverTaskArg* = ref object of MarathonTaskArg
   RequestMessagesTaskArg* = ref object of MarathonTaskArg
     chatId*: string
+  FillGapsTaskArg* = ref object of MarathonTaskArg
+    chatId*: string
+    messageIds*: seq[string]
   AddMailserverTopicTaskArg* = ref object of MarathonTaskArg
   PeerSummaryChangeTaskArg* = ref object of MarathonTaskArg
     peers*: seq[string]
@@ -96,6 +99,10 @@ proc processMessage(mailserverModel: MailserverModel, received: string) =
   of "requestMoreMessages":
     let taskArg = decode[RequestMessagesTaskArg](received)
     mailserverModel.requestMoreMessages(taskArg.chatId)
+
+  of "fillGaps":
+    let taskArg = decode[FillGapsTaskArg](received)
+    mailserverModel.fillGaps(taskArg.chatId, taskArg.messageIds)
 
   of "getActiveMailserver":
     let
