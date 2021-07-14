@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.0
+import Qt.labs.platform 1.1
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -601,6 +602,59 @@ StackLayout {
         id: activityCenter
         height: chatColumnLayout.height - (topBar.height * 2) // TODO get screen size
         y: topBar.height
+    }
+
+    Connections {
+        target: chatsModel.messageView
+
+        onMessageNotificationPushed: function(chatId, msg, contentType, chatType, timestamp, identicon, username, hasMention, isAddedContact, channelName) {
+            if (contentType == Constants.editType)
+                return;
+
+            if (appSettings.notificationSetting == Constants.notifyAllMessages ||
+                (appSettings.notificationSetting == Constants.notifyJustMentions && hasMention)) {
+                if (chatId === chatsModel.channelView.activeChannel.id && applicationWindow.active === true) {
+                    // Do not show the notif if we are in the channel already and the window is active and focused
+                    return
+                }
+
+                chatColumnLayout.currentNotificationChatId = chatId
+                chatColumnLayout.currentNotificationCommunityId = null
+
+                let name;
+                if (appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous) {
+                    name = "Status"
+                } else if (chatType === Constants.chatTypePublic) {
+                    name = chatId
+                } else {
+                    name = chatType === Constants.chatTypePrivateGroupChat ? Utils.filterXSS(channelName) : Utils.removeStatusEns(username)
+                }
+
+                let message;
+                if (appSettings.notificationMessagePreviewSetting > Constants.notificationPreviewNameOnly) {
+                    switch(contentType){
+                    //% "Image"
+                    case Constants.imageType: message = qsTrId("image"); break
+                    //% "Sticker"
+                    case Constants.stickerType: message = qsTrId("sticker"); break
+                    default: message = msg // don't parse emojis here as it emits HTML
+                    }
+                } else {
+                    //% "You have a new message"
+                    message = qsTrId("you-have-a-new-message")
+                }
+
+                currentlyHasANotification = true
+                if (appSettings.useOSNotifications && systemTray.supportsMessages) {
+                    systemTray.showMessage(name,
+                                        message,
+                                        SystemTrayIcon.NoIcon,
+                                        Constants.notificationPopupTTL)
+                } else {
+                    notificationWindow.notifyUser(chatId, name, message, chatType, identicon, chatColumnLayout.clickOnNotification)
+                }
+            }
+        }
     }
 }
 
