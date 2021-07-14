@@ -164,5 +164,14 @@ ScrollView {
                 timeout: model.timeout
             }
         }
+
+        Loader {
+            active: chatsModel.messageView.loadingMessages
+            sourceComponent: LoadingAnimation {}
+            anchors.right: timelineContainer.right
+            anchors.top: statusUpdateInput.bottom
+            anchors.rightMargin: Style.current.padding
+            anchors.topMargin: Style.current.padding
+        }
     }
 }

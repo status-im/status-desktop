@@ -9,6 +9,7 @@ import ../../../status/utils as status_utils
 import ../../../status/chat/[chat, message]
 import ../../../status/profile/profile
 import ../../../status/tasks/[qt, task_runner_impl]
+import ../../../status/tasks/marathon/mailserver/worker
 
 import communities, chat_item, channels_list, communities, community_list, message_list, channel, message_item
 
@@ -375,9 +376,10 @@ QtObject:
     notify = loadingMessagesChanged
 
   proc fillGaps*(self: MessageView, messageId: string) {.slot.} =
-    self.loadingMessages = true
-    self.loadingMessagesChanged(true)
-    discard self.status.mailservers.fillGaps(self.channelView.activeChannel.id, @[messageId])
+    self.setLoadingMessages(true)
+    let mailserverWorker = self.status.tasks.marathon[MailserverWorker().name]
+    let task = FillGapsTaskArg( `method`: "fillGaps", chatId: self.channelView.activeChannel.id, messageIds: @[messageId])
+    mailserverWorker.start(task)
 
   proc unreadMessages*(self: MessageView): int {.slot.} =
     result = self.unreadMessageCnt
