@@ -59,25 +59,13 @@ Item {
         color: Style.current.textColor
     }
 
-    Rectangle {
-        id: inputRectangle
-        height: customHeight
-        color: bgColor
-        radius: Style.current.radius
-        anchors.top: inputBox.hasLabel ? inputLabel.bottom : parent.top
-        anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
+    Item {
+        id: inputField
         anchors.right: parent.right
         anchors.left: parent.left
-        border.width: (!!validationError || inputValue.focus) ? 1 : 0
-        border.color: {
-            if (!!validationError) {
-                return validationErrorColor
-            }
-            if (!inputBox.readOnly && inputValue.focus) {
-                return Style.current.inputBorderFocus
-            }
-            return Style.current.transparent
-        }
+        height: customHeight
+        anchors.top: inputBox.hasLabel ? inputLabel.bottom : parent.top
+        anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
 
         StyledTextField {
             id: inputValue
@@ -97,7 +85,20 @@ Item {
             font.pixelSize: fontPixelSize
             readOnly: inputBox.readOnly
             background: Rectangle {
-                color: Style.current.transparent
+                id: inputRectangle
+                anchors.fill: parent
+                color: bgColor
+                radius: Style.current.radius
+                border.width: (!!validationError || inputValue.focus) ? 1 : 0
+                border.color: {
+                    if (!!validationError) {
+                        return validationErrorColor
+                    }
+                    if (!inputBox.readOnly && inputValue.focus) {
+                        return Style.current.inputBorderFocus
+                    }
+                    return Style.current.transparent
+                }
             }
             onEditingFinished: inputBox.editingFinished(inputBox.text)
             onTextEdited: inputBox.textEdited(inputBox.text)

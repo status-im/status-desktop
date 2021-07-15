@@ -231,10 +231,6 @@ Rectangle {
         return htmlText.replace(/\:asterisk\:/gim, "*")
     }
 
-    function parseBackText(plainText) {
-        return parseMarkdown(Emoji.parse(plainText.replace(/\n/g, "<br />")))
-    }
-
     function getFormattedText(start, end) {
         start = start || 0
         end = end || messageInputField.length
@@ -311,26 +307,18 @@ Rectangle {
         if (event.key === Qt.Key_Backspace && textFormatMenu.opened) {
             textFormatMenu.close()
         }
-
         // the text doesn't get registered to the textarea fast enough
         // we can only get it in the `released` event
         if (paste) {
             paste = false;
-            interrogateMessage();
-            // TODO use the new formatInputMessage function instead
-            const plainText = getPlainText()
-            const newText = parseBackText(plainText)
-            const finalText = newText.replace("<", "&lt;")
-
-            messageInputField.remove(0, messageInputField.length)
-            insertInTextInput(0, finalText)
-        } else {
-            if (event.key === Qt.Key_Asterisk ||
-                    event.key === Qt.Key_QuoteLeft ||
-                    event.key === Qt.Key_Space ||
-                    event.key === Qt.Key_AsciiTilde) {
-                formatInputMessage()
-            }
+            const plainText = messageInputField.getText(0, messageInputField.length);
+            messageInputField.remove(0, messageInputField.length);
+            insertInTextInput(0, plainText);
+        } else if (event.key === Qt.Key_Asterisk ||
+                   event.key === Qt.Key_QuoteLeft ||
+                   event.key === Qt.Key_Space ||
+                   event.key === Qt.Key_AsciiTilde) {
+            formatInputMessage()
         }
 
         if (event.key !== Qt.Key_Escape) {
@@ -338,37 +326,6 @@ Rectangle {
             if (!emojiEvent) {
                 emojiSuggestions.close()
             }
-        }
-    }
-
-    function interrogateMessage() {
-        // TODO change this function to use remove and insert instead of replcing the whole text
-        const text = chatsModel.plainText(Emoji.deparse(messageInputField.text));
-
-        var words = text.split(' ');
-
-        let madeChanges = false
-        let transform = true;
-        for (var i = 0; i < words.length; i++) {
-            transform = true;
-            if (words[i].charAt(0) === ':') {
-                for (var j = 0; j < words[i].length; j++) {
-                    if (Utils.isSpace(words[i].charAt(j)) === true || Utils.isPunct(words[i].charAt(j)) === true) {
-                        transform = false;
-                    }
-                }
-
-                if (transform) {
-                    madeChanges = true
-                    const codePoint = Emoji.getEmojiUnicode(words[i]);
-                    words[i] = words[i].replace(words[i], (codePoint !== undefined) ? Emoji.fromCodePoint(codePoint) : words[i]);
-                }
-            }
-        }
-
-        if (madeChanges) {
-            messageInputField.remove(0, messageInputField.length);
-            insertInTextInput(0, Emoji.parse(words.join('&nbsp;')));
         }
     }
 
