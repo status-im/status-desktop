@@ -85,6 +85,9 @@ proc handleChatEvents(self: ChatController) =
     # Do not add community chats to the normal chat list
     elif channel.chat.chatType != ChatType.Profile and channel.chat.chatType != status_chat.ChatType.CommunityChat:
       discard self.view.channelView.chats.addChatItemToList(channel.chat)
+
+    if channel.chat.chatType == status_chat.ChatType.CommunityChat:
+      self.view.communities.updateCommunityChat(channel.chat)
     self.view.asyncMessageLoad(channel.chat.id)
 
   self.status.events.on("chatsLoaded") do(e:Args):
