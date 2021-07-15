@@ -272,6 +272,7 @@ Item {
 
     CommunityProfilePopup {
         id: communityProfilePopup
+        anchors.centerIn: parent
         communityId: chatsModel.communities.activeCommunity.id
         name: chatsModel.communities.activeCommunity.name
         description: chatsModel.communities.activeCommunity.description
