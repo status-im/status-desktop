@@ -49,7 +49,7 @@ MouseArea {
 
         ChatTime {
             id: chatTime
-            formatDateTime: true
+            formatAge: true
             visible: chatName.visible
             anchors.verticalCenter: chatName.verticalCenter
             anchors.left: chatName.right

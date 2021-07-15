@@ -96,7 +96,7 @@ ScrollView {
             anchors.top: statusUpdateInput.bottom
             anchors.topMargin: 40
             anchors.horizontalCenter: parent.horizontalCenter
-            visible: chatsModel.messageView.messageList.rowCount() === 0
+            visible: chatLogView.count === 0
         }
 
         ListView {
