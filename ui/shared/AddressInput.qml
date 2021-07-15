@@ -46,6 +46,7 @@ Item {
         id: contactFieldAndList
         anchors.top: parent.top
         anchors.bottom: parent.bottom
+        width: parent.width
         showContactList: false
         onUserClicked: function (isContact, pubKey, ensName, address) {
             chatKey.text = address

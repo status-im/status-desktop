@@ -52,6 +52,7 @@ Item {
         id: contactFieldAndList
         anchors.top: sep.bottom
         anchors.topMargin: Style.current.smallPadding
+        width: parent.width
         showCheckbox: true
         hideCommunityMembers: true
     }

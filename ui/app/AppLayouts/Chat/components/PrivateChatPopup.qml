@@ -29,6 +29,7 @@ ModalPopup {
         id: contactFieldAndList
         anchors.top: parent.top
         anchors.bottom: parent.bottom
+        width: parent.width
         addContactEnabled: false
         onUserClicked: function (isContact, pubKey, ensName) {
             chatsModel.channelView.joinPrivateChat(pubKey, Utils.isChatKey(pubKey) ? "" : ensName);
