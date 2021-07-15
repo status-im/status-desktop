@@ -27,7 +27,6 @@ Item {
     StatusChatInfoToolBar {
         id: communityHeader
         anchors.top: parent.top
-        anchors.topMargin: 5
         anchors.horizontalCenter: parent.horizontalCenter
 
         chatInfoButton.title: chatsModel.communities.activeCommunity.name
