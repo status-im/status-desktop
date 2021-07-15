@@ -60,6 +60,7 @@ Rectangle {
     property StatusImageSettings image: StatusImageSettings {
         width: 40
         height: 40
+        isIdenticon: false
     }
     property string label: ""
 
@@ -124,6 +125,11 @@ Rectangle {
                 image.source: statusListItem.image.source
                 image.height: statusListItem.image.height
                 image.width: statusListItem.image.width
+                color: statusListItem.image.isIdenticon ?
+                    Theme.palette.statusRoundedImage.backgroundColor :
+                    "transparent"
+                border.width: statusListItem.image.isIdenticon ? 1 : 0
+                border.color: Theme.palette.directColor7
             }
         }
 
