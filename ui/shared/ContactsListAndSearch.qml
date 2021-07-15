@@ -22,7 +22,7 @@ Item {
     property bool addContactEnabled: true
 
     id: root
-    width: parent.width
+    height: childrenRect.height + 24
 
     property var resolveENS: Backpressure.debounce(root, 500, function (ensName) {
         noContactsRect.visible = false
