@@ -7,16 +7,15 @@ import "../../../../imports"
 import "../../../../shared"
 import "../../../../shared/status"
 
-Item {
+import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
+
+Column {
     id: root
 
     property string headerTitle: ""
-    property string headerDescription: ""
-    property string headerImageSource: ""
 
     property alias contactListSearch: contactFieldAndList
-
-    height: 400
 
     function sendInvites(pubKeys) {
         const error = chatsModel.communities.inviteUsersToCommunityById(popup.communityId, JSON.stringify(pubKeys))
@@ -28,31 +27,32 @@ Item {
         contactFieldAndList.successMessage = qsTr("Invite successfully sent")
     }
 
-    TextWithLabel {
-        id: shareCommunity
-        anchors.top: parent.top
-        anchors.topMargin: 0
-        //% "Share community"
-        label: qsTrId("share-community")
-        text: `${Constants.communityLinkPrefix}${communityId.substring(0, 4)}...${communityId.substring(communityId.length -2)}`
-        textToCopy: Constants.communityLinkPrefix + communityId
+    StatusModalDivider {
+        bottomPadding: 8
     }
 
-    Separator {
-        id: sep
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: shareCommunity.bottom
-        anchors.topMargin: Style.current.smallPadding
-        anchors.leftMargin: -Style.current.padding
-        anchors.rightMargin: -Style.current.padding
+    StatusDescriptionListItem {
+        title: qsTr("Share community")
+        subTitle: `${Constants.communityLinkPrefix}${communityId.substring(0, 4)}...${communityId.substring(communityId.length -2)}`
+        tooltip.text: qsTr("Copy to clipboard")
+        icon.name: "copy"
+        iconButton.onClicked: {
+            let link = `${Constants.communityLinkPrefix}${communityId}`
+            chatsModel.copyToClipboard(link)
+            tooltip.visible = !tooltip.visible
+        }
+        width: parent.width
+    }
+
+    StatusModalDivider {
+        bottomPadding: 16
     }
 
     ContactsListAndSearch {
         id: contactFieldAndList
-        anchors.top: sep.bottom
         anchors.topMargin: Style.current.smallPadding
-        width: parent.width
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: parent.width - 32
         showCheckbox: true
         hideCommunityMembers: true
     }
