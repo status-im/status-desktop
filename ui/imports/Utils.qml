@@ -244,7 +244,8 @@ QtObject {
         return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
     }
 
-    function formatAgeFromTime(timestamp) {
+    function formatAgeFromTime(timestamp, epoch) {
+        epoch++ // pretending the parameter is not unused
         const now = new Date()
         const messageDate = new Date(Math.floor(timestamp))
         const diffMs = now - messageDate

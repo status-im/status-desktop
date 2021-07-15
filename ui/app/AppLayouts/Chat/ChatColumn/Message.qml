@@ -86,6 +86,7 @@ Item {
 
     property bool isExpired: (outgoingStatus === "sending" && (Math.floor(timestamp) + 180000) < Date.now())
     property bool isStatusUpdate: false
+    property int statusAgeEpoch: 0
 
     property int replyMessageIndex: chatsModel.messageView.messageList.getMessageIndex(responseTo);
     property string repliedMessageAuthor: replyMessageIndex > -1 ? chatsModel.messageView.messageList.getMessageData(replyMessageIndex, "userName") : "";
@@ -428,6 +429,7 @@ Item {
     Component {
         id: statusUpdateComponent
         StatusUpdate {
+            statusAgeEpoch: root.statusAgeEpoch
             clickMessage: root.clickMessage
             container: root
         }

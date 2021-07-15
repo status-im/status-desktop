@@ -122,6 +122,15 @@ ScrollView {
             }
         }
 
+        Timer {
+            id: ageUpdateTimer
+            property int epoch: 0
+            running: true
+            repeat: true
+            interval: 60000 // 1 min
+            onTriggered: epoch = epoch + 1
+        }
+
         DelegateModelGeneralized {
             id: messageListDelegate
             lessThan: [
@@ -151,6 +160,7 @@ ScrollView {
                 messageId: model.messageId
                 emojiReactions: model.emojiReactions
                 isStatusUpdate: true
+                statusAgeEpoch: ageUpdateTimer.epoch
                 // This is used in order to have access to the previous message and determine the timestamp
                 // we can't rely on the index because the sequence of messages is not ordered on the nim side
                 prevMessageIndex: {
