@@ -23,6 +23,14 @@ Item {
     Layout.fillHeight: true
     width: 304
 
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            //steal focus from search field
+            addChat.forceActiveFocus();
+        }
+    }
+
     StatusNavigationPanelHeadline {
         id: headline
         anchors.top: parent.top
@@ -39,6 +47,9 @@ Item {
         anchors.rightMargin: Style.current.padding
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
+        Keys.onEscapePressed: {
+            addChat.forceActiveFocus();
+        }
     }
 
     AddChat {
@@ -70,19 +81,19 @@ Item {
     ScrollView {
         id: chatGroupsContainer
 
+        width: parent.width
+        height: (contentHeight < (parent.height - contactRequests.height - Style.current.padding)) ? contentHeight : (parent.height - contactRequests.height - Style.current.padding)
         anchors.top: contactRequests.bottom
         anchors.topMargin: Style.current.padding
-        anchors.bottom: parent.bottom
+        contentHeight: channelList.height + 2 * Style.current.padding + emptyViewAndSuggestions.height + emptyViewAndSuggestions.anchors.topMargin
         anchors.horizontalCenter: parent.horizontalCenter
 
-        width: parent.width
 
         leftPadding: Style.current.halfPadding
         rightPadding: Style.current.halfPadding
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-        contentHeight: channelList.height + 2 * Style.current.padding + emptyViewAndSuggestions.height + emptyViewAndSuggestions.anchors.topMargin
         clip: true
 
         Item {
@@ -106,8 +117,8 @@ Item {
 
             chatNameFn: function (chatItem) {
                 return chatItem.chatType !== Constants.chatTypePublic ?
-                    Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(chatItem.name))) :
-                    Utils.filterXSS(chatItem.name)
+                            Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(chatItem.name))) :
+                            Utils.filterXSS(chatItem.name)
             }
 
             profileImageFn: function (id) {
