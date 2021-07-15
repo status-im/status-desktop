@@ -492,6 +492,7 @@ StatusAppLayout {
     Component {
         id: inviteFriendsToCommunityPopup
         InviteFriendsToCommunityPopup {
+            anchors.centerIn: parent
             onClosed: {
                 destroy()
             }
@@ -501,6 +502,7 @@ StatusAppLayout {
     Component {
         id: communityMembersPopup
         CommunityMembersPopup {
+            anchors.centerIn: parent
             onClosed: {
                 destroy()
             }
@@ -510,6 +512,7 @@ StatusAppLayout {
     Component {
         id: editCommunityPopup
         CreateCommunityPopup {
+            anchors.centerIn: parent
             isEdit: true
             onClosed: {
                 destroy()

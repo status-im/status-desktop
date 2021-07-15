@@ -1,236 +1,166 @@
 import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Dialogs 1.3
 import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.13
-import QtQuick.Controls.Universal 2.12
-import "../../../../imports"
-import "../../../../shared"
-import "../../../../shared/status"
-import "../ContactsColumn"
 
-Item {
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
+
+import "../../../../imports"
+
+Column {
     id: root
 
     property string headerTitle: ""
-    property string headerDescription: ""
+    property string headerSubtitle: ""
     property string headerImageSource: ""
     property string description: ""
 
-    width: parent.width
-    height: childrenRect.height
+    signal membersListButtonClicked()
+    signal notificationsButtonClicked(bool checked)
+    signal editButtonClicked()
+    signal transferOwnershipButtonClicked()
+    signal leaveButtonClicked()
 
-    StyledText {
-        id: descriptionText
-        text: root.description
-        wrapMode: Text.Wrap
+    StatusModalDivider {
+        bottomPadding: 8
+    }
+
+    Item {
+        height: 46
         width: parent.width
-        font.pixelSize: 15
-    }
-
-    Separator {
-        id: sep1
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: descriptionText.bottom
-        anchors.topMargin: Style.current.smallPadding
-        anchors.leftMargin: -Style.current.padding
-        anchors.rightMargin: -Style.current.padding
-    }
-
-    TextWithLabel {
-        id: shareCommunity
-        anchors.top: sep1.bottom
-        anchors.topMargin: Style.current.bigPadding
-        //% "Share community"
-        label: qsTrId("share-community")
-        text: `${Constants.communityLinkPrefix}${communityId.substring(0, 4)}...${communityId.substring(communityId.length -2)}`
-        textToCopy: Constants.communityLinkPrefix + communityId
-    }
-
-    Separator {
-        id: sep2
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: shareCommunity.bottom
-        anchors.topMargin: Style.current.smallPadding
-        anchors.leftMargin: -Style.current.padding
-        anchors.rightMargin: -Style.current.padding
-    }
-
-    Column {
-        anchors.top: sep2.bottom
-        anchors.topMargin: Style.current.halfPadding
-        width: parent.width
-        
-        Loader {
-            width: parent.width
-            sourceComponent: Component {
-                CommunityPopupButton {
-                    id: memberBtn
-                    label: qsTr("Members")
-                    iconName: "members"
-                    txtColor: Style.current.textColor
-                    onClicked: stack.push(membersList)
-                    type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
-
-                    Item {
-                        property int nbRequests: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests
-
-                        id: memberBlock
-                        anchors.right: parent.right
-                        anchors.rightMargin: Style.current.padding
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: childrenRect.width
-                        height: memberBtn.height
-
-                        StyledText {
-                            id: nbMemberText
-                            text: nbMembers.toString()
-                            anchors.verticalCenter: parent.verticalCenter
-                            padding: 0
-                            font.pixelSize: 15
-                            color: Style.current.secondaryText
-                        }
-
-                        Rectangle {
-                            id: badge
-                            visible: memberBlock.nbRequests > 0
-                            anchors.left: nbMemberText.right
-                            anchors.leftMargin: visible ? Style.current.halfPadding : 0
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: Style.current.blue
-                            width: visible ? 22 : 0
-                            height: 22
-                            radius: width / 2
-                            Text {
-                                font.pixelSize: 12
-                                color: Style.current.white
-                                anchors.centerIn: parent
-                                text: memberBlock.nbRequests
-                            }
-                        }
-
-                        SVGImage {
-                            id: caret
-                            anchors.left: badge.right
-                            anchors.leftMargin: Style.current.padding
-                            anchors.verticalCenter: parent.verticalCenter
-                            source: "../../../img/caret.svg"
-                            width: 13
-                            height: 7
-                            rotation: -90
-                            ColorOverlay {
-                                anchors.fill: parent
-                                source: parent
-                                color: Style.current.secondaryText
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // TODO add this back when roles exist
-//        Loader {
-//            active: isAdmin
-//            width: parent.width
-//            sourceComponent: CommunityPopupButton {
-//                label: qsTr("Roles")
-//                iconName: "roles"
-//                width: parent.width
-//                onClicked: console.log("TODO:")
-//                txtColor: Style.current.textColor
-//                SVGImage {
-//                    anchors.verticalCenter: parent.verticalCenter
-//                    anchors.right: parent.right
-//                    anchors.rightMargin: Style.current.padding
-//                    source: "../../../img/caret.svg"
-//                    width: 13
-//                    height: 7
-//                    rotation: -90
-//                    ColorOverlay {
-//                        anchors.fill: parent
-//                        source: parent
-//                        color: Style.current.secondaryText
-//                    }
-//                }
-//            }
-//        }
-
-        CommunityPopupButton {
-            id: notificationsBtn
-            //% "Notifications"
-            label: qsTrId("notifications")
-            iconName: "notifications"
-            width: parent.width
-            txtColor: Style.current.textColor
-            type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
-            onClicked: function(){
-                notificationSwitch.clicked()
-            }
-            StatusSwitch {
-                id: notificationSwitch
-                checked: !chatsModel.communities.activeCommunity.muted
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.padding
-                anchors.verticalCenter: parent.verticalCenter
-                onClicked: function () {
-                    chatsModel.communities.setCommunityMuted(chatsModel.communities.activeCommunity.id, notificationSwitch.checked)
-                }
-            }
-        }
-
-        Item {
-            id: spacer1
-            width: parent.width
-            height: Style.current.halfPadding
-        }
-
-        Separator {
+        StatusBaseText {
+            id: communityDescription
+            anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
-            anchors.leftMargin: -Style.current.padding
-        }
-
-        Item {
-            id: spacer2
-            width: parent.width
-            height: Style.current.halfPadding
-        }
-
-        Loader {
-            // TODO: once Edit is vailable in the app, put back isAdmin
-            active: isAdmin
-            width: parent.width
-            sourceComponent: CommunityPopupButton {
-                //% "Edit community"
-                label: qsTrId("edit-community")
-                iconName: "edit"
-                type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
-                onClicked: openPopup(editCommunityPopup)
-            }
-        }
-
-        Loader {
-            active: isAdmin
-            width: parent.width
-            sourceComponent: CommunityPopupButton {
-                label: qsTr("Transfer ownership")
-                iconName: "../transfer"
-                type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
-                onClicked: openPopup(transferOwnershipPopup, {privateKey: chatsModel.communities.exportComumnity()})
-            }
-        }
-
-        CommunityPopupButton {
-            //% "Leave community"
-            label: qsTrId("leave-community")
-            iconName: "leave"
-            type: "warn"
-            txtColor: Style.current.red
-            onClicked: chatsModel.communities.leaveCommunity(communityId)
+            anchors.leftMargin: 16
+            anchors.rightMargin: 16
+            text: root.description
+            font.pixelSize: 15
+            color: Theme.palette.directColor1
+            wrapMode: Text.Wrap
         }
     }
+
+    StatusModalDivider {
+        topPadding: 8
+        bottomPadding: 8
+    }
+
+    StatusDescriptionListItem {
+        title: qsTr("Share community")
+        subTitle: `${Constants.communityLinkPrefix}${communityId.substring(0, 4)}...${communityId.substring(communityId.length -2)}`
+        tooltip.text: qsTr("Copy to clipboard")
+        icon.name: "copy"
+        iconButton.onClicked: {
+            let link = `${Constants.communityLinkPrefix}${communityId}`
+            chatsModel.copyToClipboard(link)
+            tooltip.visible = !tooltip.visible
+        }
+        width: parent.width
+    }
+
+    StatusModalDivider {
+        topPadding: 8
+        bottomPadding: 8
+    }
+
+    StatusListItem {
+        id: membersListItem
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        property int nbRequests: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests
+
+        title: qsTr("Members")
+        icon.name: "group-chat"
+        label: nbMembers.toString()
+        sensor.onClicked: root.membersListButtonClicked()
+
+        components: [
+            StatusBadge {
+                visible: !!membersListItem.nbRequests
+                value: membersListItem.nbRequests
+            },
+            StatusIcon {
+                icon: "chevron-down"
+                rotation: 270
+                color: Theme.palette.baseColor1
+            }
+        ]
+    }
+
+    StatusListItem {
+        anchors.horizontalCenter: parent.horizontalCenter
+        title: qsTr("Notifications")
+        icon.name: "notification"
+        components: [
+            StatusSwitch {
+                checked: !chatsModel.communities.activeCommunity.muted
+                onClicked: root.notificationsButtonClicked(checked)
+            }
+        ]
+    }
+
+    StatusModalDivider {
+        topPadding: 8
+        bottomPadding: 8
+    }
+
+    StatusListItem {
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: isAdmin
+        title: qsTr("Edit community")
+        icon.name: "edit"
+        type: StatusListItem.Type.Secondary
+        sensor.onClicked: root.editButtonClicked()
+    }
+
+    StatusListItem {
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: isAdmin
+        title: qsTr("Transfer ownership")
+        icon.name: "exchange"
+        type: StatusListItem.Type.Secondary
+        sensor.onClicked: root.transferOwnershipButtonClicked()
+    }
+
+    StatusListItem {
+        anchors.horizontalCenter: parent.horizontalCenter
+        title: qsTr("Leave community")
+        icon.name: "arrow-right"
+        icon.height: 16
+        icon.width: 20
+        icon.rotation: 180
+        type: StatusListItem.Type.Secondary
+        sensor.onClicked: root.leaveButtonClicked()
+    }
+
+    /*     // TODO add this back when roles exist */
+/* //        Loader { */
+/* //            active: isAdmin */
+/* //            width: parent.width */
+/* //            sourceComponent: CommunityPopupButton { */
+/* //                label: qsTr("Roles") */
+/* //                iconName: "roles" */
+/* //                width: parent.width */
+/* //                onClicked: console.log("TODO:") */
+/* //                txtColor: Style.current.textColor */
+/* //                SVGImage { */
+/* //                    anchors.verticalCenter: parent.verticalCenter */
+/* //                    anchors.right: parent.right */
+/* //                    anchors.rightMargin: Style.current.padding */
+/* //                    source: "../../../img/caret.svg" */
+/* //                    width: 13 */
+/* //                    height: 7 */
+/* //                    rotation: -90 */
+/* //                    ColorOverlay { */
+/* //                        anchors.fill: parent */
+/* //                        source: parent */
+/* //                        color: Style.current.secondaryText */
+/* //                    } */
+/* //                } */
+/* //            } */
+/* //        } */
 }

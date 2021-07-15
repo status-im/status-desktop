@@ -1,206 +1,205 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import QtQuick.Controls.Universal 2.12
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+
 import "../../../../imports"
 import "../../../../shared"
-import "../../../../shared/status"
-import "./"
-import "../components"
 
 Item {
+    id: root
+    height: childrenRect.height
+    implicitWidth: 480
+
     property string headerTitle: ""
-    property string headerDescription: ""
+    property string headerSubtitle: ""
     property string headerImageSource: ""
     property alias members: memberList.model
-    height: 450
 
-    CommunityPopupButton {
-        id: inviteBtn
-        visible: isAdmin
-        //% "Invite People"
-        label: qsTrId("invite-people")
-        width: parent.width
-        type: globalSettings.theme === Universal.Dark ? "secondary" : "primary"
-        iconName: "invite"
-        onClicked: stack.push(inviteFriendsView)
-        height: visible ? 64 : 0
-    }
+    signal inviteButtonClicked()
 
-    Separator {
-        id: sep
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: inviteBtn.bottom
-        anchors.topMargin: Style.current.smallPadding
-        anchors.leftMargin: -Style.current.padding
-        anchors.rightMargin: -Style.current.padding
-        visible: inviteBtn.visible
-    }
+    Column {
 
-    StatusSettingsLineButton {
-        id: membershipRequestsBtn
-        text: qsTr("Membership requests")
-        badgeText: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests.toString()
-        visible: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests > 0
-        badgeSize: 22
-        badgeRadius: badgeSize / 2
-        isBadge: true
-        height: 64
-        anchors.top: sep.bottom
-        anchors.topMargin: visible ? Style.current.smallPadding : 0
-        anchors.leftMargin: 0
-        anchors.rightMargin: 0
-        onClicked: membershipRequestPopup.open()
-    }
+        id: memberSearchAndInviteButton
 
-    Separator {
-        id: sep2
-        visible: membershipRequestsBtn.visible
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: membershipRequestsBtn.bottom
-        anchors.topMargin: Style.current.smallPadding
-        anchors.leftMargin: -Style.current.padding
-        anchors.rightMargin: -Style.current.padding
-    }
+        StatusModalDivider {}
 
-    ListView {
-        id: memberList
-        anchors.top: sep2.visible ? sep2.bottom : sep.bottom
-        anchors.topMargin: Style.current.smallPadding
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottomMargin: Style.current.bigPadding
-        spacing: 4
-        clip: true
-        delegate: Rectangle {
-            id: contactRow
+        Item {
             width: parent.width
-            height: 64
-            radius: Style.current.radius
-            color: isHovered ? Style.current.backgroundHover : Style.current.transparent
+            height: 76
 
-            property bool isHovered: false
-            property string nickname: appMain.getUserNickname(model.pubKey)
-
-            StatusImageIdenticon {
-                id: identicon
-                anchors.left: parent.left
-                anchors.leftMargin: Style.current.padding
-                anchors.verticalCenter: parent.verticalCenter
-                source: model.identicon
+            Input {
+                id: memberSearch
+                width: parent.width - 32
+                anchors.centerIn: parent
+                placeholderText: qsTr("Member name")
             }
+        }
 
-            StyledText {
-                id: txtUsername
-                text: !model.userName.endsWith(".eth") && !!contactRow.nickname ?
-                            contactRow.nickname : Utils.removeStatusEns(model.userName)
-                anchors.left: identicon.right
-                anchors.leftMargin: Style.current.smallPadding
-                anchors.verticalCenter: parent.verticalCenter
+        StatusListItem {
+            id: inviteButton
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: isAdmin
+            title: qsTr("Invite People")
+            icon.name: "share-ios"
+            type: StatusListItem.Type.Secondary
+            sensor.onClicked: root.inviteButtonClicked()
+        }
+
+        StatusModalDivider {
+            visible: inviteButton.visible && memberRequestsButton.visible
+            topPadding: 8
+            bottomPadding: 8
+        }
+
+        StatusContactRequestsIndicatorListItem {
+
+            id: memberRequestsButton
+
+            property int nbRequests: chatsModel.communities.activeCommunity.communityMembershipRequests.nbRequests
+            width: parent.width - 32
+            visible: isAdmin && nbRequests > 0
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            title: qsTr("Membership requests")
+            requestsCount: nbRequests
+            sensor.onClicked: membershipRequestPopup.open()
+        }
+
+        StatusModalDivider {
+            topPadding: !memberRequestsButton.visible && !inviteButton.visible ? 0 : 8
+            bottomPadding: 8
+        }
+    }
+
+    ScrollView {
+        id: scrollView
+        width: parent.width
+        height: 300
+        anchors.top: memberSearchAndInviteButton.bottom
+
+        contentHeight: Math.max(300, memberListColumn.height)
+        clip: true
+
+        Item {
+            width: parent.width
+            height: 300
+            visible: memberList.count === 0
+
+            StatusBaseText {
+                anchors.centerIn: parent
+                text: qsTr("Community members will appear here")
                 font.pixelSize: 15
+                color: Theme.palette.baseColor1
             }
-            StyledText {
-                text: " (" + qsTr("You") + ")"
-                visible: !moreActionsBtn.visible
-                anchors.left: txtUsername.right
-                anchors.leftMargin: Style.current.smallPadding
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.smallPadding
-                anchors.verticalCenter: parent.verticalCenter
-                color: Style.current.secondaryText
+        }
+
+        Item {
+            width: parent.width
+            height: 300
+            visible: !!memberSearch.text && !!memberList.count && !memberListColumn.height
+
+            StatusBaseText {
+                anchors.centerIn: parent
+                text: qsTr("No contacts found")
                 font.pixelSize: 15
+                color: Theme.palette.baseColor1
             }
+        }
 
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: parent
-                hoverEnabled: true
-                onEntered: contactRow.isHovered = true
-                onExited: contactRow.isHovered = false
-                acceptedButtons: Qt.LeftButton | Qt.RightButton
-                onClicked: openProfilePopup(model.userName, model.pubKey, model.identicon, '', contactRow.nickname)
-            }
+        Column {
+            id: memberListColumn
+            width: parent.width
+            visible: memberList.count > 0 || height > 0
+            anchors.horizontalCenter: parent.horizontalCenter
 
-            StatusContextMenuButton {
-                id: moreActionsBtn
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.padding
-                anchors.verticalCenter: parent.verticalCenter
-                visible: model.pubKey.toLowerCase() !== profileModel.profile.pubKey.toLowerCase()
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: contextMenu.popup(-contextMenu.width + moreActionsBtn.width, moreActionsBtn.height + 4)
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onExited: {
-                        contactRow.isHovered = false
-                        moreActionsBtn.highlighted = false
+            Repeater {
+                id: memberList
+                delegate: StatusListItem {
+
+                    id: memberItem
+
+                    property string nickname: appMain.getUserNickname(model.pubKey)
+                    property string profileImage: appMain.getProfileImage(model.pubKey)
+
+                    visible: !!!memberSearch.text || 
+                        model.userName.toLowerCase().includes(memberSearch.text.toLowerCase()) ||
+                        nickname.toLowerCase().includes(memberSearch.text.toLowerCase())
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    image.isIdenticon: !profileImage
+                    image.source: profileImage || model.identicon
+
+                    title: {
+                        if (menuButton.visible) {
+                            return !model.userName.endsWith(".eth") && !!nickname ?
+                                nickname : Utils.removeStatusEns(model.userName)
+                        }
+                        return qsTr("You")
                     }
-                    onEntered: {
-                        contactRow.isHovered = true
-                        moreActionsBtn.highlighted = true
-                    }
-                    PopupMenu {
-                        id: contextMenu
-                        Action {
-                            icon.source: "../../../img/communities/menu/view-profile.svg"
-                            icon.width: 16
-                            icon.height: 16
-                            //% "View Profile"
-                            text: qsTrId("view-profile")
-                            onTriggered: openProfilePopup(model.userName, model.pubKey, model.identicon, '', contactRow.nickname)
+
+                    components: [
+                        StatusFlatRoundButton {
+                            id: menuButton
+                            width: 32
+                            height: 32
+                            visible: model.pubKey.toLowerCase() !== profileModel.profile.pubKey.toLowerCase()
+                            icon.name: "more"
+                            type: StatusFlatRoundButton.Type.Secondary
+                            onClicked: {
+                                highlighted = true
+                                communityMemberContextMenu.popup(-communityMemberContextMenu.width+menuButton.width, menuButton.height + 4)
+                            }
+
+                            StatusPopupMenu {
+
+                                id: communityMemberContextMenu
+
+                                onClosed: {
+                                    menuButton.highlighted = false
+                                }
+
+                                StatusMenuItem {
+                                    text: qsTr("View Profile")
+                                    icon.name: "channel"
+                                    onTriggered: openProfilePopup(model.userName, model.pubKey, memberItem.image.source, '', memberItem.nickname)
+                                }
+
+                                StatusMenuSeparator {
+                                    visible: chatsModel.communities.activeCommunity.admin
+                                }
+
+                                StatusMenuItem {
+                                    text: qsTr("Kick")
+                                    icon.name: "arrow-right"
+                                    iconRotation: 180
+                                    type: StatusMenuItem.Type.Danger
+                                    enabled: chatsModel.communities.activeCommunity.admin
+                                    onTriggered: chatsModel.communities.removeUserFromCommunity(model.pubKey)
+                                }
+
+                                StatusMenuItem {
+                                    text: qsTr("Ban")
+                                    icon.name: "cancel"
+                                    type: StatusMenuItem.Type.Danger
+                                    enabled: chatsModel.communities.activeCommunity.admin
+                                    onTriggered: chatsModel.communities.banUserFromCommunity(model.pubKey, chatsModel.communities.activeCommunity.id)
+                                }
+                            }
                         }
-                        /* Action { */
-                        /*     icon.source: "../../../img/communities/menu/roles.svg" */
-                        /*     icon.width: 16 */
-                        /*     icon.height: 16 */
-                        /*     //% "Roles" */
-                        /*     text: qsTrId("roles") */
-                        /*     onTriggered: console.log("TODO") */
-                        /* } */
-                        Separator {
-                            height: 10
-                            visible: chatsModel.communities.activeCommunity.admin
-                        }
-                        Action {
-                            property string type: "danger"
-                            icon.source: "../../../img/communities/menu/kick.svg"
-                            icon.width: 16
-                            icon.height: 16
-                            icon.color: Style.current.red
-                            //% "Kick"
-                            text: qsTrId("kick")
-                            enabled: chatsModel.communities.activeCommunity.admin
-                            onTriggered: chatsModel.communities.removeUserFromCommunity(model.pubKey)
-                        }
-                        Action {
-                            property string type: "danger"
-                            icon.source: "../../../img/communities/menu/ban.svg"
-                            icon.width: 16
-                            icon.height: 16
-                            icon.color: Style.current.red
-                            //% "Ban"
-                            text: qsTrId("ban")
-                            enabled: chatsModel.communities.activeCommunity.admin
-                            onTriggered: chatsModel.communities.banUserFromCommunity(model.pubKey, chatsModel.communities.activeCommunity.id)
-                        }
-                        /* Separator {} */
-                        /* Action { */
-                        /*     icon.source: "../../../img/communities/menu/transfer-ownership.svg" */
-                        /*     icon.width: 16 */
-                        /*     icon.height: 16 */
-                        /*     icon.color: Style.current.red */
-                        /*     //% "Transfer ownership" */
-                        /*     text: qsTrId("transfer-ownership") */
-                        /*     onTriggered: console.log("TODO") */
-                        /* } */
-                    }
+                    ]
                 }
             }
         }
     }
 
+    StatusModalDivider { 
+      anchors.top: scrollView.bottom
+      topPadding: 8 
+    }
 }
