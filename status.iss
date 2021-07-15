@@ -1,5 +1,4 @@
 #define   Name       "Status"
-#define   Version    "0.0.1"
 #define   Publisher  "Status.im"
 #define   URL        "https://status.im"
 #define   ExeName    "Status.exe"
@@ -16,14 +15,17 @@ AppPublisherURL={#URL}
 AppSupportURL={#URL}
 AppUpdatesURL={#URL}
 
+WizardStyle=modern
+
+UninstallDisplayIcon={app}\Status.exe
+
 ; Defalut install path
-DefaultDirName={pf}\{#Name}
+DefaultDirName={commonpf}\{#Name}
 
 DefaultGroupName={#Name}
 
 ; output dir for installer
-OutputDir=.
-OutputBaseFileName=status-setup
+OutputBaseFileName={#BaseName}
 
 ; Icon file
 SetupIconFile=resources\status.ico
@@ -32,25 +34,35 @@ SetupIconFile=resources\status.ico
 Compression=lzma
 SolidCompression=yes
 
-;[Languages] - if needed
-;Name: "english"; MessagesFile: "compiler:Default.isl"; LicenseFile: "License_ENG.txt"
-;Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"; LicenseFile: "License_RUS.txt"
+[Languages]
+Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "it"; MessagesFile: "compiler:Languages\Italian.isl"
+Name: "es"; MessagesFile: "compiler:Languages\Spanish.isl"
+Name: "de"; MessagesFile: "compiler:Languages\German.isl"
+Name: "nl"; MessagesFile: "compiler:Languages\Dutch.isl"
+Name: "pt_BR"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
+Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
+Name: "fr"; MessagesFile: "compiler:Languages\French.isl"
+Name: "ua"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Files]
 
 ; Path to exe on 
-Source: "Status.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: {#ExeName}; DestDir: "{app}"; Flags: ignoreversion
 
 ; Resources
-Source: "bin\Status.exe"; DestDir: "{app}\bin"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 Source: "resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 Source: "vendor\*"; DestDir: "{app}\vendor"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+[UninstallDelete]
+Type: filesandordirs; Name: "{app}"
 
 
 [Registry]
 Root: HKCU; Subkey: "Software\Classes\status-im"; ValueType: "string"; ValueData: "URL:status-im protocol"; Flags: uninsdeletekey
 Root: HKCU; Subkey: "Software\Classes\status-im"; ValueType: "string"; ValueName: "URL Protocol"; ValueData: ""
 Root: HKCU; Subkey: "Software\Classes\status-im\DefaultIcon"; ValueType: "string"; ValueData: "{app}\Status.exe,1"
-Root: HKCU; Subkey: "Software\Classes\status-im\shell\open\command"; ValueType: "string"; ValueData: """{app}\Status.exe"" "--url="%1"""
+Root: HKCU; Subkey: "Software\Classes\status-im\shell\open\command"; ValueType: "string"; ValueData: """{app}\Status.exe"" ""--url=""%1"""
