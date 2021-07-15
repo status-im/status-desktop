@@ -244,6 +244,25 @@ QtObject {
         return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
     }
 
+    function formatAgeFromTime(timestamp) {
+        const now = new Date()
+        const messageDate = new Date(Math.floor(timestamp))
+        const diffMs = now - messageDate
+        const diffMin = Math.floor(diffMs / 60000)
+        if (diffMin < 1) {
+            return qsTr("NOW")
+        }
+        const diffHour = Math.floor(diffMin / 60)
+        if (diffHour < 1) {
+            return qsTr("%1M").arg(diffMin)
+        }
+        const diffDay = Math.floor(diffHour / 24)
+        if (diffDay < 1) {
+            return qsTr("%1H").arg(diffHour)
+        }
+        return qsTr("%1D").arg(diffDay)
+    }
+
     function formatShortDateStr(longStr) {
         const dmKeys = {
             // Days

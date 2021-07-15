@@ -4,11 +4,11 @@ import "../../../../../shared/status"
 import "../../../../../imports"
 
 StyledText {
-    property bool formatDateTime: false
+    property bool formatAge: false
     id: chatTime
     visible: isMessage
     color: Style.current.secondaryText
-    text: formatDateTime ? Utils.formatDateTime(timestamp, globalSettings.locale) : Utils.formatTime(timestamp, globalSettings.locale)
+    text: formatAge ? Utils.formatAgeFromTime(timestamp) : Utils.formatTime(timestamp)
     font.pixelSize: Style.current.asideTextFontSize
     
     StatusToolTip {
