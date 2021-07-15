@@ -37,6 +37,7 @@ StatusModal {
         contentComponent.channelName.text = ""
         if (isEdit) {
             header.title = qsTr("Edit #%1").arg(channel.name);
+            contentComponent.channelName.text = channel.name
         }
         contentComponent.channelName.forceActiveFocus(Qt.MouseFocusReason)
     }

@@ -520,6 +520,7 @@ StatusAppLayout {
     Component {
         id: editChannelPopup
         CreateChannelPopup {
+            anchors.centerIn: parent
             isEdit: true
             pinnedMessagesPopupComponent: chatLayoutContainer.chatColumn.pinnedMessagesPopupComponent
             onClosed: {
