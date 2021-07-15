@@ -96,16 +96,43 @@ GridLayout {
     }
 
     StatusChatListItem {
+        name: "muted-with-mentions"
+        type: StatusChatListItem.Type.PublicChat
+        muted: true
+        hasUnreadMessages: true
+        badge.value: 1
+    }
+
+    StatusChatListItem {
         name: "selected-channel"
         type: StatusChatListItem.Type.PublicChat
         selected: true
     }
+
     StatusChatListItem {
         name: "selected-muted-channel"
         type: StatusChatListItem.Type.PublicChat
         selected: true
         muted: true
     }
+
+    StatusChatListItem {
+        name: "selected-muted-channel-with-unread-messages"
+        type: StatusChatListItem.Type.PublicChat
+        selected: true
+        muted: true
+        hasUnreadMessages: true
+    }
+
+    StatusChatListItem {
+        name: "selected-muted-with-mentions"
+        type: StatusChatListItem.Type.PublicChat
+        selected: true
+        muted: true
+        hasUnreadMessages: true
+        badge.value: 1
+    }
+
 
     StatusListItem {
         title: "Title"

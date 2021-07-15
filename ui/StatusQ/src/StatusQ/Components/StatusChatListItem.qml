@@ -143,8 +143,8 @@ Rectangle {
             id: chatName
             anchors.left: statusIcon.visible ? statusIcon.right : identicon.right
             anchors.leftMargin: statusIcon.visible ? 1 : 8
-            anchors.right: statusBadge.visible ? statusBadge.left :
-                mutedIcon.visible ? mutedIcon.left : parent.right
+            anchors.right: mutedIcon.visible ? mutedIcon.left :
+                statusBadge.visible ? statusBadge.left : parent.right
             anchors.rightMargin: 6
             anchors.verticalCenter: parent.verticalCenter
 
@@ -164,27 +164,16 @@ Rectangle {
                   sensor.containsMouse ||
                   statusBadge.visible ? Theme.palette.directColor1 : Theme.palette.directColor4
             }
-            font.weight: statusChatListItem.hasMention || 
+            font.weight: !statusChatListItem.muted &&
+              (statusChatListItem.hasMention || 
               statusChatListItem.hasUnreadMessages ||
-              statusBadge.visible ? Font.Bold : Font.Medium
+              statusBadge.visible) ? Font.Bold : Font.Medium
             font.pixelSize: 15
-        }
-
-        StatusBadge {
-            id: statusBadge
-
-            anchors.right: mutedIcon.visible ? mutedIcon.left : parent.right
-            anchors.rightMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-
-            border.width: 4
-            border.color: color
-            visible: statusBadge.value > 0
         }
 
         StatusIcon {
             id: mutedIcon
-            anchors.right: parent.right
+            anchors.right: statusBadge.visible ? statusBadge.left : parent.right
             anchors.rightMargin: 8
             anchors.verticalCenter: parent.verticalCenter
             width: 14
@@ -205,5 +194,19 @@ Rectangle {
                 visible: mutedIconSensor.containsMouse
             }
         }
+
+        StatusBadge {
+            id: statusBadge
+
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+
+            color: statusChatListItem.muted ? Theme.palette.primaryColor2 : Theme.palette.primaryColor1
+            border.width: 4
+            border.color: color
+            visible: statusBadge.value > 0
+        }
+
     }
 }
