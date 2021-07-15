@@ -1,4 +1,4 @@
-library 'status-jenkins-lib@v1.2.18'
+library 'status-jenkins-lib@feat/windows-installer'
 
 pipeline {
   agent { label 'windows' }
@@ -30,7 +30,7 @@ pipeline {
     /* Disable colors in Nim compiler logs */
     NIMFLAGS = '--colors:off'
     /* Control output the filename */
-    STATUS_CLIENT_ZIP = "pkg/${utils.pkgFilename('zip')}"
+    STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename('exe')}"
     /* RFC 3161 timestamping URL for DigiCert */
     WINDOWS_CODESIGN_TIMESTAMP_URL = 'http://timestamp.digicert.com'
   }
@@ -57,7 +57,7 @@ pipeline {
 
     stage('Package') {
       steps { script {
-        windows.bundle()
+        windows.bundle(env.STATUS_CLIENT_EXE)
       } }
     }
 
@@ -65,13 +65,13 @@ pipeline {
       parallel {
         stage('Upload') {
           steps { script {
-            env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_ZIP)
-            jenkins.setBuildDesc(Zip: env.PKG_URL)
+            env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_EXE)
+            jenkins.setBuildDesc(Exe: env.PKG_URL)
           } }
         }
         stage('Archive') {
           steps { script {
-            archiveArtifacts(env.STATUS_CLIENT_ZIP)
+            archiveArtifacts(env.STATUS_CLIENT_EXE)
           } }
         }
       }
