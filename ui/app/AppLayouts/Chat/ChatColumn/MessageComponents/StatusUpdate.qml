@@ -10,6 +10,7 @@ MouseArea {
     property var clickMessage: function () {}
     property bool hovered: containsMouse
     property var container
+    property int statusAgeEpoch: 0
 
     anchors.top: parent.top
     anchors.topMargin: 0
@@ -49,7 +50,9 @@ MouseArea {
 
         ChatTime {
             id: chatTime
-            formatAge: true
+            // statusAgeEpoch is used to trigger Qt property update
+            // since the returned string will be the same in 99% cases, this should not trigger ChatTime re-rendering
+            text: Utils.formatAgeFromTime(timestamp, statusAgeEpoch)
             visible: chatName.visible
             anchors.verticalCenter: chatName.verticalCenter
             anchors.left: chatName.right
